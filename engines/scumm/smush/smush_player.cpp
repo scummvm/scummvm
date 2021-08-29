@@ -539,8 +539,10 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
-	SmushFont *sf = getFont(0);
+	bool isCJKComi = (_vm->_game.id == GID_CMI && _vm->_useCJKMode);
 	int color = 15;
+	int fontId = isCJKComi ? 1 : 0;
+
 	while (*str == '/') {
 		str++; // For Full Throttle text resources
 	}
@@ -563,9 +565,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		switch (str[1]) {
 		case 'f':
 		{
-			int id = str[3] - '0';
+			fontId = str[3] - '0';
 			str += 4;
-			sf = getFont(id);
 		}
 		break;
 		case 'c':
@@ -578,6 +579,16 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			error("invalid escape code in text string");
 		}
 	}
+
+	// This is a hack from the original COMI CJK interpreter. Its purpose is to avoid
+	// ugly combinations of two byte characters (rendered with the respective special
+	// font) and standard one byte (NUT font) characters (see bug #11947).
+	if (isCJKComi && !(fontId == 0 && color == 1)) {
+		fontId = 1;
+		color = 255;
+	}
+
+	SmushFont *sf = getFont(fontId);
 
 	// HACK. This is to prevent bug #2220. In updated Win95 dig
 	// there is such line:

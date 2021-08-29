@@ -30,12 +30,6 @@
 #include "ags/shared/util/stdio_compat.h"
 
 namespace AGS3 {
-
-// TODO: implement proper portable path length
-#ifndef MAX_PATH
-#define MAX_PATH 512
-#endif
-
 namespace AGS {
 namespace Shared {
 
@@ -126,15 +120,15 @@ String GetDirectoryPath(const String &path) {
 }
 
 bool IsSameOrSubDir(const String &parent, const String &path) {
-	char can_parent[MAX_PATH];
-	char can_path[MAX_PATH];
-	char relative[MAX_PATH];
+	char can_parent[MAX_PATH_SZ];
+	char can_path[MAX_PATH_SZ];
+	char relative[MAX_PATH_SZ];
 	// canonicalize_filename treats "." as "./." (file in working dir)
 	const char *use_parent = parent == "." ? "./" : parent.GetCStr();
 	const char *use_path = path == "." ? "./" : path.GetCStr();
-	canonicalize_filename(can_parent, use_parent, MAX_PATH);
-	canonicalize_filename(can_path, use_path, MAX_PATH);
-	const char *pstr = make_relative_filename(relative, can_parent, can_path, MAX_PATH);
+	canonicalize_filename(can_parent, use_parent, sizeof(can_parent));
+	canonicalize_filename(can_path, use_path, sizeof(can_path));
+	const char *pstr = make_relative_filename(relative, can_parent, can_path, sizeof(relative));
 	if (!pstr)
 		return false;
 	for (pstr = strstr(pstr, ".."); pstr && *pstr; pstr = strstr(pstr, "..")) {
@@ -188,29 +182,29 @@ String MakeAbsolutePath(const String &path) {
 #if AGS_PLATFORM_OS_WINDOWS
 	// NOTE: cannot use long path names in the engine, because it does not have unicode strings support
 	//
-	//char long_path_buffer[MAX_PATH];
-	//if (GetLongPathNameA(path, long_path_buffer, MAX_PATH) > 0)
+	//char long_path_buffer[MAX_PATH_SZ];
+	//if (GetLongPathNameA(path, long_path_buffer, MAX_PATH_SZ) > 0)
 	//{
 	//    abs_path = long_path_buffer;
 	//}
 #endif
-	char buf[MAX_PATH];
-	canonicalize_filename(buf, abs_path.GetCStr(), MAX_PATH);
+	char buf[MAX_PATH_SZ];
+	canonicalize_filename(buf, abs_path.GetCStr(), sizeof(buf));
 	abs_path = buf;
 	FixupPath(abs_path);
 	return abs_path;
 }
 
 String MakeRelativePath(const String &base, const String &path) {
-	char can_parent[MAX_PATH];
-	char can_path[MAX_PATH];
-	char relative[MAX_PATH];
+	char can_parent[MAX_PATH_SZ];
+	char can_path[MAX_PATH_SZ];
+	char relative[MAX_PATH_SZ];
 	// canonicalize_filename treats "." as "./." (file in working dir)
 	const char *use_parent = base == "." ? "./" : base.GetCStr();
 	const char *use_path = path == "." ? "./" : path.GetCStr(); // FIXME?
-	canonicalize_filename(can_parent, use_parent, MAX_PATH);
-	canonicalize_filename(can_path, use_path, MAX_PATH);
-	String rel_path = make_relative_filename(relative, can_parent, can_path, MAX_PATH);
+	canonicalize_filename(can_parent, use_parent, sizeof(can_parent));
+	canonicalize_filename(can_path, use_path, sizeof(can_path));
+	String rel_path = make_relative_filename(relative, can_parent, can_path, sizeof(relative));
 	FixupPath(rel_path);
 	return rel_path;
 }
@@ -269,8 +263,8 @@ String FixupSharedFilename(const String &filename) {
 
 String GetPathInASCII(const String &path) {
 #if AGS_PLATFORM_OS_WINDOWS
-	char ascii_buffer[MAX_PATH];
-	if (GetShortPathNameA(path.GetCStr(), ascii_buffer, MAX_PATH) == 0)
+	char ascii_buffer[MAX_PATH_SZ];
+	if (GetShortPathNameA(path.GetCStr(), ascii_buffer, MAX_PATH_SZ) == 0)
 		return "";
 	return ascii_buffer;
 #else
@@ -281,12 +275,12 @@ String GetPathInASCII(const String &path) {
 
 #if AGS_PLATFORM_OS_WINDOWS
 String WidePathNameToAnsi(LPCWSTR pathw) {
-	WCHAR short_path[MAX_PATH];
-	char ascii_buffer[MAX_PATH];
+	WCHAR short_path[MAX_PATH_SZ];
+	char ascii_buffer[MAX_PATH_SZ];
 	LPCWSTR arg_path = pathw;
-	if (GetShortPathNameW(arg_path, short_path, MAX_PATH) == 0)
+	if (GetShortPathNameW(arg_path, short_path, MAX_PATH_SZ) == 0)
 		return "";
-	WideCharToMultiByte(CP_ACP, 0, short_path, -1, ascii_buffer, MAX_PATH, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, short_path, -1, ascii_buffer, MAX_PATH_SZ, NULL, NULL);
 	return ascii_buffer;
 }
 #endif

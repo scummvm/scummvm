@@ -39,6 +39,7 @@
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/collision.h"
+#include "twine/scene/extra.h"
 #include "twine/scene/grid.h"
 #include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
@@ -46,6 +47,8 @@
 #include "twine/text.h"
 
 namespace TwinE {
+
+Redraw::Redraw(TwinEEngine *engine) : _engine(engine), _bubbleSpriteIndex(SPRITEHQR_DIAG_BUBBLE_LEFT) {}
 
 void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 	const int32 area = (redrawArea.right - redrawArea.left) * (redrawArea.bottom - redrawArea.top);
@@ -600,7 +603,7 @@ void Redraw::renderOverlays() {
 			}
 			case OverlayType::koInventoryItem: {
 				const int32 item = overlay->info0;
-				const Common::Rect rect(10, 10, 69, 69);
+				const Common::Rect rect(10, 10, 79, 79);
 
 				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 				_engine->_interface->setClip(rect);

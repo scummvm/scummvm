@@ -31,6 +31,7 @@
 #include "base/main.h"
 #include "audio/mixer_intern.h"
 #include "backends/graphics/graphics.h"
+#include "backends/log/log.h"
 #include "backends/platform/3ds/sprite.h"
 #include "common/rect.h"
 #include "common/queue.h"
@@ -201,8 +202,12 @@ private:
 	void flushGameScreen();
 	void flushCursor();
 
+	virtual Common::String getDefaultLogFileName();
+	virtual Common::WriteStream *createLogFile();
+
 protected:
 	Audio::MixerImpl *_mixer;
+	Backends::Log::Log *_logger;
 
 private:
 	u16 _gameWidth, _gameHeight;
@@ -286,6 +291,8 @@ private:
 	u16 _magX, _magY;
 	u16 _magWidth, _magHeight;
 	u16 _magCenterX, _magCenterY;
+
+	Common::String _logFilePath;
 
 public:
 	// Pause

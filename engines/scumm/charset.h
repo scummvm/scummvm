@@ -97,7 +97,7 @@ public:
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
 
-	int getStringWidth(int a, const byte *str);
+	int getStringWidth(int a, const byte *str, uint strLenMax = 100000);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 

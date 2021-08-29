@@ -22,6 +22,7 @@
 
 #include "backends/keymapper/keymapper.h"
 
+#include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/rect.h"
 
@@ -144,6 +145,10 @@ Common::Error AsylumEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 
+	// Set up achievements system
+	Common::String gameTarget = ConfMan.getActiveDomainName();
+	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
+
 	// Send init event to our default event handler
 	AsylumEvent initEvt(EVENT_ASYLUM_INIT);
 	if (_handler)
@@ -156,6 +161,9 @@ Common::Error AsylumEngine::run() {
 		_system->delayMillis(10);
 
 		_system->updateScreen();
+
+		if (_scene)
+			checkAchievements();
 	}
 
 	return Common::kNoError;
@@ -548,6 +556,75 @@ bool AsylumEngine::isGameFlagSet(GameFlag flag) const {
 
 bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
 	return ((1 << (flag % 32)) & _gameFlags[flag / 32]) >> (flag % 32) == 0;
+}
+
+bool AsylumEngine::areGameFlagsSet(uint from, uint to) const {
+	while (from <= to)
+		if (isGameFlagNotSet((GameFlag)from++))
+			return false;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Steam achievements
+//////////////////////////////////////////////////////////////////////////
+void AsylumEngine::unlockAchievement(const Common::String &id) {
+	AchMan.setAchievement(id);
+}
+
+void AsylumEngine::checkAchievements() {
+	switch (_scene->worldstats()->chapter) {
+	default:
+		return;
+
+	case kChapter2:
+		if (isGameFlagSet(kGameFlag128) && !isGameFlagSet(kGameFlag3189)) {
+			unlockAchievement("ASYLUM_HIDE_AND_SEEK");
+			setGameFlag(kGameFlag3189);
+		}
+		break;
+
+	case kChapter3:
+		if (isGameFlagSet(kGameFlag86) && !isGameFlagSet(kGameFlag3386))
+			setGameFlag(kGameFlag3386);
+		if (isGameFlagSet(kGameFlag87) && !isGameFlagSet(kGameFlag3387))
+			setGameFlag(kGameFlag3387);
+		if (isGameFlagSet(kGameFlag88) && !isGameFlagSet(kGameFlag3388))
+			setGameFlag(kGameFlag3388);
+
+		if (areGameFlagsSet(kGameFlag3386, kGameFlag3388) && !isGameFlagSet(kGameFlag3389)) {
+			unlockAchievement("ASYLUM_DANCE");
+			setGameFlag(kGameFlag3389);
+		}
+		break;
+
+	case kChapter5:
+		if (!isGameFlagSet(kGameFlag3351) && areGameFlagsSet(kGameFlag284, kGameFlag289)) {
+			unlockAchievement("ASYLUM_PASSWORD");
+			setGameFlag(kGameFlag3351);
+		}
+		break;
+
+	case kChapter6:
+		if (!isGameFlagSet(kGameFlag3754) && isGameFlagSet(kGameFlagSolveHiveMachine) && !isGameFlagSet(kGameFlag3755)) {
+			unlockAchievement("ASYLUM_MELODY");
+			setGameFlag(kGameFlag3755);
+		}
+		break;
+
+	case kChapter8:
+		if (!isGameFlagSet(kGameFlag3842) && areGameFlagsSet(kGameFlag3810, kGameFlag3823)) {
+			unlockAchievement("ASYLUM_SOCIAL");
+			setGameFlag(kGameFlag3842);
+		}
+
+		if (!isGameFlagSet(kGameFlag3843) && isGameFlagSet(kGameFlag899)) {
+			unlockAchievement("ASYLUM_SORT");
+			setGameFlag(kGameFlag3843);
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

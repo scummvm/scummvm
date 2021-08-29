@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/keyboard.h"
+
 #include "saga2/saga2.h"
 #include "saga2/document.h"
 #include "saga2/script.h"
@@ -160,13 +162,13 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	origText = new char[textSize + 1];
 
 	// and fill it
-	Common::strlcpy(origText, buffer, textSize);
+	Common::strlcpy(origText, buffer, textSize + 1);
 
 	// make a working buffer
 	text = new char[textSize + 1];
 
 	// and fill it
-	Common::strlcpy(text, origText, textSize);
+	Common::strlcpy(text, origText, textSize + 1);
 
 	textFont        = font;
 	textHeight      = (textFont ? textFont->height : 0);
@@ -235,25 +237,22 @@ bool CDocument::activate(gEventType why) {
 	return false;
 }
 
-#define SpecialKey(k) ((k>>8)+0x80)
-
-
 bool CDocument::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
 	switch (msg.key) {
-	case 0x1B:
+	case Common::ASCII_ESCAPE:
 		cmdDocumentEsc(ev);
 		return true;
-	case SpecialKey(leftArrowKey):
+	case Common::KEYCODE_LEFT:
 		cmdDocumentLt(ev);
 		return true;
-	case SpecialKey(rightArrowKey):
+	case Common::KEYCODE_RIGHT:
 		cmdDocumentRt(ev);
 		return true;
-	case SpecialKey(upArrowKey):
+	case Common::KEYCODE_UP:
 		cmdDocumentUp(ev);
 		return true;
-	case SpecialKey(downArrowKey):
+	case Common::KEYCODE_DOWN:
 		cmdDocumentDn(ev);
 		return true;
 	default:
@@ -265,11 +264,11 @@ bool CDocument::keyStroke(gPanelMessage &msg) {
 
 gPanel *CDocument::keyTest(int16 key) {
 	switch (key) {
-	case 0x1B:
-	case SpecialKey(leftArrowKey):
-	case SpecialKey(rightArrowKey):
-	case SpecialKey(upArrowKey):
-	case SpecialKey(downArrowKey):
+	case Common::ASCII_ESCAPE:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
 		return this;
 	default:
 		return NULL;
@@ -280,14 +279,14 @@ gPanel *CDocument::keyTest(int16 key) {
 void CDocument::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		if (app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
+			if (pos.y < _extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
 			else                            setMouseImage(kMousePgDownImage, -7, -7);
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
+			if (pos.x < _extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
 			else                            setMouseImage(kMousePgRightImage, -7, -7);
 		}
 	} else if (msg.pointerLeave) {
@@ -306,15 +305,15 @@ void CDocument::pointerDrag(gPanelMessage &) {
 bool CDocument::pointerHit(gPanelMessage &msg) {
 	Point16 pos     = msg.pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		gEvent ev;
 		if (app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < extent.height / 2)   cmdDocumentUp(ev); //gotoPage( currentPage - app.numPages );
+			if (pos.y < _extent.height / 2)   cmdDocumentUp(ev); //gotoPage( currentPage - app.numPages );
 			else                            cmdDocumentDn(ev); //gotoPage( currentPage + app.numPages );
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < extent.width / 2)    cmdDocumentLt(ev); //gotoPage( currentPage - app.numPages );
+			if (pos.x < _extent.width / 2)    cmdDocumentLt(ev); //gotoPage( currentPage - app.numPages );
 			else                            cmdDocumentRt(ev); //gotoPage( currentPage + app.numPages );
 		}
 	} else {
@@ -466,7 +465,7 @@ bool CDocument::checkForImage(char      *string,
 
 void CDocument::makePages(void) {
 	// copy the original text back to the working buffer
-	Common::strlcpy(text, origText, textSize);
+	Common::strlcpy(text, origText, textSize + 1);
 
 
 	char    *str            = text;
@@ -558,7 +557,7 @@ void CDocument::renderText(void) {
 
 	assert(textFont);
 
-	Rect16  bltRect(0, 0, extent.width, extent.height);
+	Rect16  bltRect(0, 0, _extent.width, _extent.height);
 
 	if (NewTempPort(tPort, bltRect.width, bltRect.height)) {
 		// clear out the text buffer
@@ -573,8 +572,8 @@ void CDocument::renderText(void) {
 
 		// draw a new copy of the background to the temp port
 		drawClipped(tPort,
-		            Point16(extent.x, extent.y),
-		            Rect16(0, 0, extent.width, extent.height));
+		            Point16(_extent.x, _extent.y),
+		            Rect16(0, 0, _extent.width, _extent.height));
 
 		tPort.setFont(textFont);         // setup the string pointer
 		for (pageIndex = 0; pageIndex < currentPage; pageIndex++) {
@@ -657,7 +656,7 @@ void CDocument::drawClipped(
 
 void CDocument::draw(void) {         // redraw the window
 	// draw the book image
-	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 
 	// draw the text onto the book
 	renderText();
@@ -733,7 +732,7 @@ int16 openScroll(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	// close button
-	gCompButton     *closeScroll;
+	GfxCompButton     *closeScroll;
 	void            **closeBtnImage;
 	uint16          buttonResID     = 0;
 	hResContext     *decRes;
@@ -748,7 +747,7 @@ int16 openScroll(uint16 textScript) {
 	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	closeScroll = new gCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
 
 	closeScroll->accelKey = 0x1B;
 
@@ -791,7 +790,7 @@ int16 openBook(uint16 textScript) {
 	// point to book
 	CDocument       *win = NULL;
 
-	gCompButton *closeBook;
+	GfxCompButton *closeBook;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
@@ -800,7 +799,7 @@ int16 openBook(uint16 textScript) {
 	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	closeBook = new gCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
+	closeBook = new GfxCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
 	closeBook->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
@@ -837,7 +836,7 @@ int16 openParchment(uint16 textScript) {
 	// point to book
 	CDocument       *win = NULL;
 
-	gCompButton *closeParchment;
+	GfxCompButton *closeParchment;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
@@ -845,7 +844,7 @@ int16 openParchment(uint16 textScript) {
 	// create the window
 	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, NULL);
 	// make the quit button
-	closeParchment = new gCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
+	closeParchment = new GfxCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
 	closeParchment->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book

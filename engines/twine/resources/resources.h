@@ -25,6 +25,7 @@
 
 #include "common/hashmap.h"
 #include "common/scummsys.h"
+#include "twine/parser/body.h"
 #include "twine/parser/holomap.h"
 #include "twine/parser/sprite.h"
 #include "twine/parser/text.h"

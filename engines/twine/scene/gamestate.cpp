@@ -118,7 +118,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	_engine->_quitGame = -1;
-	_engine->_scene->_mecaPinguinIdx = -1;
+	_engine->_scene->_mecaPenguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
 
 	_inventoryNumLeafs = 0;
@@ -281,8 +281,14 @@ bool GameState::saveGame(Common::WriteStream *file) {
 }
 
 void GameState::setGameFlag(uint8 index, uint8 value) {
+	if (_gameStateFlags[index] == value) {
+		return;
+	}
 	debug(2, "Set gameStateFlags[%u]=%u", index, value);
 	_gameStateFlags[index] = value;
+	if (!value) {
+		return;
+	}
 
 	if ((index == GAMEFLAG_VIDEO_BAFFE || index == GAMEFLAG_VIDEO_BAFFE2 || index == GAMEFLAG_VIDEO_BAFFE3 || index == GAMEFLAG_VIDEO_BAFFE5) &&
 		_gameStateFlags[GAMEFLAG_VIDEO_BAFFE] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE2] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE3] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE5] != 0) {
@@ -611,6 +617,16 @@ int16 GameState::setLeafBoxes(int16 val) {
 
 void GameState::addLeafBoxes(int16 val) {
 	setLeafBoxes(_inventoryNumLeafsBox + val);
+}
+
+void GameState::clearGameFlags() {
+	debug(2, "Clear all gameStateFlags");
+	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+}
+
+uint8 GameState::hasGameFlag(uint8 index) const {
+	debug(6, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
+	return _gameStateFlags[index];
 }
 
 } // namespace TwinE

@@ -311,6 +311,9 @@ void SceneScriptNR05::talkToEarlyQ() {
 			// It makes no sense that McCoy will next find EarlyQ at the VIP area (this area, nr05)
 			// and casually ask him about who the woman is in this photo.
 			// (McCoy won't be able to even find EarlyQ there again).
+			// Maybe it's another photo of Dektora needed here
+			// --- Animoid Row? Why would McCoy suspect that woman?
+			// --- Hawker's Bar? Can we find a Dektora pic in SHP resources?
 			DM_Add_To_List_Never_Repeat_Once_Selected(910, 5, 5, 5); // BLOND WOMAN
 		}
 	}
@@ -362,9 +365,19 @@ void SceneScriptNR05::talkToEarlyQ() {
 		Actor_Says(kActorMcCoy, 3515, 14);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
 		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
+			// A BUG?
 			// TODO why is Grigorian's Note needed here, for EarlyQ to reveal who Hecuba is?
 			// TODO could CrazysInvolvement also do here?
 			//      maybe another clue should be required in its place or some additional ones?
+			// Early Q acknowledges he knows Dektora, and also reveals Hecuba is her stage name
+			// (Early Q also mentions Hecuba in the JEWELRY question but does not connect her with Dektora)
+			// This dialogue thread assumes:
+			// - Early Q has told McCoy about JEWELRY (weak, not necessarily)
+			// --- If McCoy has not discussed the JEWELRY topic with EarlyQ yet, 
+			// --- then he should NOT be able to do this AFTER this conversation IF McCoy has the clue condition
+			// --- for this specific bit of dialogue which reveals Hecuba's identity.
+			// --- Otherwiase it would create inconsistency to what is known about Hecuba
+			// - Dektora/Hecuba has *not* performed her act yet
 			Actor_Says(kActorEarlyQ, 580, 12);
 			Actor_Says(kActorMcCoy, 3560, 13);
 			Actor_Says(kActorEarlyQ, 590, 16);
@@ -374,6 +387,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 			Actor_Says(kActorEarlyQ, 620, 15);
 			Actor_Says(kActorMcCoy, 3575, 13);
 		} else {
+			// Early Q denies recongnizing Dektora
 			Actor_Says(kActorEarlyQ, 640, 13);
 			Actor_Says(kActorMcCoy, 3580, 15);
 			Actor_Says(kActorEarlyQ, 660, 12);

@@ -27,6 +27,7 @@
 
 namespace TwinE {
 
+// SCENE_SIZE_MAX
 #define MAX_TARGET_ACTOR_DISTANCE 0x7D00
 
 class TwinEEngine;

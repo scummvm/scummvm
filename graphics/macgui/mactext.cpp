@@ -1057,10 +1057,10 @@ void MacText::recalcDims() {
 		// We must calculate width first, because it enforces
 		// the computation. Calling Height() will return cached value!
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
-		y += getLineHeight(i) + _interLinear;
+		y += MAX(getLineHeight(i), _interLinear);
 	}
 
-	_textMaxHeight = y - _interLinear;
+	_textMaxHeight = y;
 
 	if (!_fixedDims) {
 		int newBottom = _dims.top + _textMaxHeight + (2 * _border) + _gutter + _shadow;
@@ -1278,7 +1278,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	if (_textShadow)
 		g->blitFrom(*_shadowSurface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff + _textShadow, yoff + _textShadow));
 
-	g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff), 0xff);
+	g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff), _bgcolor);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;

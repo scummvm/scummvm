@@ -108,13 +108,21 @@ void NewRoom(int nrnum) {
 		_G(inv_screen_newroom) = nrnum;
 		return;
 	} else if ((_G(inside_script) == 0) & (_G(in_graph_script) == 0)) {
+		// Compatibility: old games had a *possibly unintentional* effect:
+		// if a character was walking, and a "change room" is called
+		// *NOT* from a script, but by some other trigger,
+		// they ended up forced to a walkable area in the next room.
+		if (_G(loaded_game_file_version) < kGameVersion_300) {
+			_G(new_room_placeonwalkable) = is_char_walking_ndirect(_G(playerchar));
+		}
+
 		new_room(nrnum, _G(playerchar));
 		return;
 	} else if (_G(inside_script)) {
 		_G(curscript)->queue_action(ePSANewRoom, nrnum, "NewRoom");
 		// we might be within a MoveCharacterBlocking -- the room
 		// change should abort it
-		if ((_G(playerchar)->walking > 0) && (_G(playerchar)->walking < TURNING_AROUND)) {
+		if (is_char_walking_ndirect(_G(playerchar))) {
 			// nasty hack - make sure it doesn't move the character
 			// to a walkable area
 			_G(mls)[_G(playerchar)->walking].direct = 1;

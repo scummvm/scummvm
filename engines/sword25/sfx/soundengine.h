@@ -261,6 +261,8 @@ private:
 	SndHandle _handles[SOUND_HANDLES];
 
 	uint32 _maxHandleId;
+
+	bool _noMusic;
 };
 
 } // End of namespace Sword25

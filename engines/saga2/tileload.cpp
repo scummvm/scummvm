@@ -40,7 +40,6 @@ const uint16 tileBankCount = 64;
 const uint32 tileImageID = MKTAG('T', 'I', 'L',  0);
 
 
-extern int16                currentMapNum;
 extern hResource           *objResFile;
 extern hResContext          *tileRes;       // tile resource handle
 
@@ -121,7 +120,7 @@ void drawPlatform(
 					uint8 *imageData;
 					int16 trFlags;
 
-					TileInfo *ti = p.fetchTile(currentMapNum, pCoords, origin, &imageData, h, trFlags);
+					TileInfo *ti = p.fetchTile(g_vm->_currentMapNum, pCoords, origin, &imageData, h, trFlags);
 					if (ti == NULL)
 						continue;
 

@@ -96,7 +96,7 @@ void OSystem_SDL_Symbian::initBackend() {
 #warning "set debuglevel = 20"
 	ConfMan.set("debuglevel", "20");
 	if (!ConfMan.hasKey("debuglevel"))
-		printf("debuglevel not set!\n");
+		warning("debuglevel not set!\n");
 #endif
 	// Ensure that the current set path (might have been altered by the user) exists.
 	Common::String currentPath = ConfMan.get("savepath");
@@ -173,9 +173,7 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
 		return false;
-#if defined(USE_CLOUD)
 	if (f == kFeatureOpenUrl) return true;
-#endif
 
 	return OSystem_SDL::hasFeature(f);
 }
@@ -192,8 +190,6 @@ const size_t kOpera10500_UID = 537056398;
 const char kFailMsg[] = "RApaLsSession failed: error = %d";
 
 bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
-#if defined(USE_CLOUD)
-#ifdef __S60_3X__
 	TAutoClose2<RApaLsSession> appArcSession;
 	TInt error = appArcSession->Connect();
 	if (error != KErrNone) {
@@ -240,8 +236,6 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 		warning("Failure while browser starts = %d", error);
 
 	CleanupStack::PopAndDestroy(addr);
-#endif //__S60_3X__
-#endif //USE_CLOUD
 	return false;
 }
 

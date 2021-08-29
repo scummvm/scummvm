@@ -148,6 +148,8 @@ void cleanupSAGAThreads(void);
 //  Dispose of an active SAGA thread
 void deleteThread(Thread *p);
 
+void newThread(Thread *p, ThreadID id);
+
 void newThread(Thread *p);
 
 //  Return the ID of the specified SAGA thread
@@ -242,7 +244,7 @@ public:
 	//  Constructor -- reconstruct from archive buffer
 	Thread(void **buf);
 
-	Thread(Common::SeekableReadStream *stream);
+	Thread(Common::SeekableReadStream *stream, ThreadID id);
 
 	//  Destructor
 	~Thread();

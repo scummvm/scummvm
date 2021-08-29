@@ -174,6 +174,8 @@ protected:
 	 */
 	void clearGraphicsModes();
 
+	enum GraphicsManagerType { GraphicsManagerSDL, GraphicsManagerOpenGL };
+	virtual GraphicsManagerType getDefaultGraphicsManager() const { return GraphicsManagerSDL; }
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool setGraphicsMode(int mode, uint flags) override;

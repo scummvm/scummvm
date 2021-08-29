@@ -109,34 +109,29 @@ GuiManager::~GuiManager() {
 void GuiManager::computeScaleFactor() {
 	uint16 w = g_system->getOverlayWidth();
 	uint16 h = g_system->getOverlayHeight();
-	uint scale = g_system->getFeatureState(OSystem::kFeatureHiDPI) ? 2 : 1;
 
-	_baseHeight = 0;	// Clean up from previous iteration
+	_scaleFactor = g_system->getHiDPIScreenFactor();
+	if (ConfMan.hasKey("gui_scale"))
+		_scaleFactor *= ConfMan.getInt("gui_scale") / 100.f;
 
-	if (ConfMan.hasKey("gui_base")) {
-		_baseHeight = ConfMan.getInt("gui_base");
-
-		if (h < _baseHeight)
-			_baseHeight = 0; // Switch to auto for lower resolutions
-	}
-
-	if (_baseHeight == 0) {	// auto
-		if (h < 240 * scale) {	// 320 x 200
-			_baseHeight = MIN<int16>(200, h);
-		} else if (h < 400 * scale) {	// 320 x 240
-			_baseHeight = 240;
-		} else if (h < 480 * scale) {	// 640 x 400
-			_baseHeight = 400;
-		} else if (h < 720 * scale) {	// 640 x 480
-			_baseHeight = 480;
-		} else {				// 960 x 720
-			_baseHeight = 720;
-		}
-	}
-
-	_scaleFactor = (float)h / (float)_baseHeight;
-
+	_baseHeight = (int16)((float)h / _scaleFactor);
 	_baseWidth = (int16)((float)w / _scaleFactor);
+
+	// Never go below 320x200. Our GUI layout is not designed to go below that.
+	// On the DS, this causes issues at 256x192 due to the use of non-scalable
+	// BDF fonts.
+#ifndef __DS__
+	if (_baseHeight < 200) {
+		_baseHeight = 200;
+		_scaleFactor = (float)h / (float)_baseHeight;
+		_baseWidth = (int16)((float)w / _scaleFactor);
+	}
+	if (_baseWidth < 320) {
+		_baseWidth = 320;
+		_scaleFactor = (float)w / (float)_baseWidth;
+		_baseHeight = (int16)((float)h / _scaleFactor);
+	}
+#endif
 
 	if (_theme)
 		_theme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);

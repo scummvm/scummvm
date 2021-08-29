@@ -152,7 +152,7 @@ void Lingo::cleanupXLibs() {
 
 Common::String Lingo::normalizeXLibName(Common::String name) {
 	Common::Platform platform = _vm->getPlatform();
-	if (platform == Common::kPlatformMacintosh) {
+	if (platform == Common::kPlatformMacintosh || platform == Common::kPlatformMacintoshII) {
 		int pos = name.findLastOf(':');
 		name = name.substr(pos + 1, name.size());
 		if (name.hasSuffixIgnoreCase(".xlib"))
@@ -271,9 +271,8 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
-	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		_functionHandlers[name] = sym;
-	} else {
+	_functionHandlers[name] = sym;
+	if (g_lingo->_eventHandlerTypeIds.contains(name)) {
 		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
 	}
 
@@ -769,7 +768,10 @@ Datum DigitalVideoCastMember::getField(int field) {
 		d = _directToStage;
 		break;
 	case kTheDuration:
-		d = _duration;
+		// sometimes, we will get duration before we start video.
+		// _duration is initialized in startVideo, thus we will not get the correct number.
+		d.type = INT;
+		d.u.i = getDuration();
 		break;
 	case kTheFrameRate:
 		d = _frameRate;

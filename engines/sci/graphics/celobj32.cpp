@@ -38,7 +38,7 @@
 namespace Sci {
 #pragma mark CelScaler
 
-Common::ScopedPtr<CelScaler> CelObj::_scaler;
+CelScaler *CelObj::_scaler = nullptr;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	for (int i = 0; i < ARRAYSIZE(_scaleTables); ++i) {
@@ -90,13 +90,15 @@ void CelObj::init() {
 	CelObj::deinit();
 	_drawBlackLines = false;
 	_nextCacheId = 1;
-	_scaler.reset(new CelScaler());
-	_cache.reset(new CelCache(100));
+	_scaler = new CelScaler();
+	_cache = new CelCache(100);
 }
 
 void CelObj::deinit() {
-	_scaler.reset();
-	_cache.reset();
+	delete _scaler;
+	_scaler = nullptr;
+	delete _cache;
+	_cache = nullptr;
 }
 
 #pragma mark -
@@ -686,7 +688,7 @@ void CelObj::submitPalette() const {
 #pragma mark CelObj - Caching
 
 int CelObj::_nextCacheId = 1;
-Common::ScopedPtr<CelCache> CelObj::_cache;
+CelCache *CelObj::_cache = nullptr;
 
 int CelObj::searchCache(const CelInfo32 &celInfo, int *const nextInsertIndex) const {
 	*nextInsertIndex = -1;

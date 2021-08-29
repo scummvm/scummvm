@@ -358,6 +358,12 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		return 1;
 	}
 
+	// WORKAROUND: $You$ substitution on win/lose message
+	if ((winflag || deadflag) && pronoun_mode && match_str(pvarname, "YOU$")) {
+		youme("I", "you");
+		return 1;
+	}
+
 	if (context == MSG_MAIN) return 0;
 
 	if (context == MSG_PARSE) {
@@ -383,7 +389,7 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		just_seen_adj = get_adj(dobj_rec, fill_buff);
 		return 1;
 	}
-	if (match_str(pvarname, "PREP$"))
+	if (match_str(pvarname, "PREP$") || match_str(pvarname, "PREP_$"))
 		d2buff(prep);
 	if (match_str(pvarname, "N_PRO$"))
 		d2buff(it_pronoun(dobj, 0));

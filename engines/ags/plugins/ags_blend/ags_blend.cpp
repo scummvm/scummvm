@@ -348,9 +348,9 @@ void AGSBlend::Blur(ScriptMethodParams &params) {
 		}
 	}
 
-	delete [] Pixels;
-	delete [] Dest;
-	delete [] Temp;
+	delete[] Pixels;
+	delete[] Dest;
+	delete[] Temp;
 	_engine->ReleaseBitmapSurface(src);
 	delete srclongbuffer;
 	delete srccharbuffer;

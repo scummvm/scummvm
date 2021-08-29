@@ -3004,23 +3004,30 @@ uint32 Item::I_getWeightIncludingContents(const uint8 *args,
 uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(str);
-	if (id_item == 666) item = getItem(1);
-	if (!item) return 0;    // Hack!
+	if (id_item == 666)
+		item = getItem(1);
+
+	if (!item) {
+		// Hack! Items should always be valid?
+		warning("skipping bark of '%s' because item invalid.", str.c_str());
+		return 0;
+	}
 
 	uint32 shapenum = item->getShape();
-	if (id_item == 666) shapenum = 666; // Hack for guardian barks
-	Gump *_gump = new BarkGump(item->getObjId(), str, shapenum);
+	if (id_item == 666)
+		shapenum = 666; // Hack for guardian barks
+	Gump *gump = new BarkGump(item->getObjId(), str, shapenum);
 
 	if (item->getObjId() < 256) { // CONSTANT!
 		GumpNotifyProcess *notifyproc;
 		notifyproc = new ActorBarkNotifyProcess(item->getObjId());
 		Kernel::get_instance()->addProcess(notifyproc);
-		_gump->SetNotifyProcess(notifyproc);
+		gump->SetNotifyProcess(notifyproc);
 	}
 
-	_gump->InitGump(0);
+	gump->InitGump(0);
 
-	return _gump->GetNotifyProcess()->getPid();
+	return gump->GetNotifyProcess()->getPid();
 }
 
 uint32 Item::I_look(const uint8 *args, unsigned int /*argsize*/) {

@@ -134,18 +134,23 @@ public:
 
 
 	inline void rgbBlend(uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
-		// Original logic has uint32 src and dst colors as RGB888
-		// if (alpha)
-		//     ++alpha;
-		// uint32 res = ((src & 0xFF00FF) - (dst & 0xFF00FF)) * alpha / 256 + dst;
-		// dst &= 0x00FF00;
-		// src &= 0x00FF00;
-		// uint32 g = (src - dst) * alpha / 256 + dst;
-		// return (res & 0xFF00FF) | (g & 0x00FF00)
-		double sAlpha = (double)(alpha & 0xff) / 255.0;
-		rDest = static_cast<uint8>(rSrc * sAlpha + rDest * (1. - sAlpha));
-		gDest = static_cast<uint8>(gSrc * sAlpha + gDest * (1. - sAlpha));
-		bDest = static_cast<uint8>(bSrc * sAlpha + bDest * (1. - sAlpha));
+		// Note: the original's handling varies slightly for R & B vs G.
+		// We need to exactly replicate it to ensure Lamplight City's
+		// calendar puzzle works correctly
+		if (alpha)
+			alpha++;
+
+		uint32 x = ((uint32)rSrc << 16) | ((uint32)gSrc << 8) | (uint32)bSrc;
+		uint32 y = ((uint32)rDest << 16) | ((uint32)gDest << 8) | (uint32)bDest;
+
+		uint32 res = ((x & 0xFF00FF) - (y & 0xFF00FF)) * alpha / 256 + y;
+		y &= 0xFF00;
+		x &= 0xFF00;
+		uint32 g = (x - y) * alpha / 256 + y;
+
+		rDest = (res >> 16) & 0xff;
+		gDest = (g >> 8) & 0xff;
+		bDest = res & 0xff;
 	}
 
 	inline void argbBlend(uint32 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest) const {

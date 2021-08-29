@@ -476,11 +476,24 @@ public:
 	}
 
 	/**
+	 * Clears the pointer without destroying the old object.
+	 */
+	void disownPtr() {
+		_pointer = nullptr;
+		_dispose = DisposeAfterUse::NO;
+	}
+
+	/**
 	 * Returns the plain pointer value.
 	 *
 	 * @return the pointer the DisposablePtr manages
 	 */
 	PointerType get() const { return _pointer; }
+
+	/**
+	 * Returns the pointer's dispose flag.
+	 */
+	DisposeAfterUse::Flag getDispose() const { return _dispose; }
 
 private:
 	PointerType           _pointer;

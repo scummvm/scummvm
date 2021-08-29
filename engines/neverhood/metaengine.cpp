@@ -148,8 +148,6 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 		if (error == Neverhood::NeverhoodEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 
-			desc.setDeletableFlag(false);
-			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
 			int day = (header.saveDate >> 24) & 0xFF;
 			int month = (header.saveDate >> 16) & 0xFF;

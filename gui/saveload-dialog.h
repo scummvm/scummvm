@@ -110,6 +110,8 @@ protected:
 	*/
 	virtual void listSaves();
 
+	void activate(int slot, const Common::U32String &description);
+
 	const bool					_saveMode;
 	const MetaEngine		    *_metaEngine;
 	bool						_delSupport;
@@ -120,6 +122,7 @@ protected:
 	Common::String				_target;
 	bool _dialogWasShown;
 	SaveStateList				_saveList;
+	Common::U32String			_resultString;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
@@ -165,8 +168,6 @@ private:
 	StaticTextWidget	*_time;
 	StaticTextWidget	*_playtime;
 	StaticTextWidget	*_pageTitle;
-
-	U32String			_resultString;
 
 	void addThumbnailContainer();
 	void updateSelection(bool redraw);
@@ -227,7 +228,6 @@ private:
 
 	ContainerWidget *_newSaveContainer;
 	int _nextFreeSaveSlot;
-	Common::U32String _resultString;
 
 	SavenameDialog _savenameDialog;
 	bool selectDescription();

@@ -33,7 +33,7 @@
 
 namespace Saga2 {
 
-const uint16 indefinitely = CalenderTime::framesPerDay;
+const uint16 kIndefiniteTime = CalenderTime::kFramesPerDay;
 
 /* ===================================================================== *
    ActorAssignment member functions
@@ -41,22 +41,22 @@ const uint16 indefinitely = CalenderTime::framesPerDay;
 
 //  Constructor
 ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
-	startFrame(calender.frameInDay()),
-	endFrame(until) {
+	_startFrame(g_vm->_calender->frameInDay()),
+	_endFrame(until) {
 	_actor = a;
 	debugC(2, kDebugActors, "New assignment for %p (%s) from %d until %d: %p",
-	      (void *)a, a->objName(), startFrame, endFrame, (void *)this);
+	      (void *)a, a->objName(), _startFrame, _endFrame, (void *)this);
 	a->_assignment = this;
-	a->flags |= hasAssignment;
+	a->_flags |= hasAssignment;
 }
 
 ActorAssignment::ActorAssignment(Actor *ac, Common::SeekableReadStream *stream) {
-	startFrame = stream->readUint16LE();
-	endFrame = stream->readUint16LE();
+	_startFrame = stream->readUint16LE();
+	_endFrame = stream->readUint16LE();
 
 	_actor = ac;
 	ac->_assignment = this;
-	ac->flags |= hasAssignment;
+	ac->_flags |= hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -68,15 +68,15 @@ ActorAssignment::~ActorAssignment(void) {
 	      (void *)a, a->objName(), (void *)this);
 
 	//  Determine if the actor has a task initiated by this assignment
-	if (a->currentGoal == actorGoalFollowAssignment
-	        &&  a->curTask != NULL) {
+	if (a->_currentGoal == actorGoalFollowAssignment
+	        &&  a->_curTask != NULL) {
 		//  If so, abort it
-		a->curTask->abortTask();
-		delete a->curTask;
-		a->curTask = NULL;
+		a->_curTask->abortTask();
+		delete a->_curTask;
+		a->_curTask = NULL;
 	}
 
-	a->flags &= ~hasAssignment;
+	a->_flags &= ~hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -84,22 +84,22 @@ ActorAssignment::~ActorAssignment(void) {
 //	assignment
 
 inline int32 ActorAssignment::archiveSize(void) const {
-	return sizeof(startFrame) + sizeof(endFrame);
+	return sizeof(_startFrame) + sizeof(_endFrame);
 }
 
 void ActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
-	out->writeUint16LE(startFrame);
-	out->writeUint16LE(endFrame);
+	out->writeUint16LE(_startFrame);
+	out->writeUint16LE(_endFrame);
 }
 
 //----------------------------------------------------------------------
 //	Determine if the time limit for this assignment has been exceeded
 
 bool ActorAssignment::isValid(void) {
-	uint16  frame = calender.frameInDay();
+	uint16  frame = g_vm->_calender->frameInDay();
 
-	return      frame < endFrame
-	            || (startFrame >= endFrame && frame >= startFrame);
+	return      frame < _endFrame
+	            || (_startFrame >= _endFrame && frame >= _startFrame);
 }
 
 //----------------------------------------------------------------------
@@ -145,8 +145,8 @@ void ActorAssignment::handleTaskCompletion(TaskResult) {
 void ActorAssignment::startTask(void) {
 	Actor   *a = getActor();
 
-	if (a->currentGoal == actorGoalFollowAssignment)
-		a->curTask = createTask();
+	if (a->_currentGoal == actorGoalFollowAssignment)
+		a->_curTask = createTask();
 }
 
 //----------------------------------------------------------------------
@@ -171,11 +171,11 @@ PatrolRouteAssignment::PatrolRouteAssignment(
     int16   start,
     int16   end) :
 	ActorAssignment(a, until),
-	routeNo(rteNo),
-	startingWayPoint(start),
-	endingWayPoint(end),
-	routeFlags(patrolFlags),
-	flags(0) {
+	_routeNo(rteNo),
+	_startingWayPoint(start),
+	_endingWayPoint(end),
+	_routeFlags(patrolFlags),
+	_flags(0) {
 }
 
 PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, Common::SeekableReadStream *stream) :
@@ -183,16 +183,16 @@ PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, Common::SeekableReadStrea
 	debugC(4, kDebugSaveload, "... Loading PatrolRouteAssignment");
 
 	//  Restore route number
-	routeNo = stream->readSint16LE();
+	_routeNo = stream->readSint16LE();
 	//  Restore the starting way point
-	startingWayPoint = stream->readSint16LE();
+	_startingWayPoint = stream->readSint16LE();
 	//  Restore the ending way point
-	endingWayPoint = stream->readSint16LE();
+	_endingWayPoint = stream->readSint16LE();
 
 	//  Restore the route flags
-	routeFlags = stream->readByte();
+	_routeFlags = stream->readByte();
 	//  Restore the assignment flags
-	flags = stream->readByte();
+	_flags = stream->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -201,11 +201,11 @@ PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, Common::SeekableReadStrea
 
 inline int32 PatrolRouteAssignment::archiveSize(void) const {
 	return      ActorAssignment::archiveSize()
-	            +   sizeof(routeNo)
-	            +   sizeof(startingWayPoint)
-	            +   sizeof(endingWayPoint)
-	            +   sizeof(routeFlags)
-	            +   sizeof(flags);
+	            +   sizeof(_routeNo)
+	            +   sizeof(_startingWayPoint)
+	            +   sizeof(_endingWayPoint)
+	            +   sizeof(_routeFlags)
+	            +   sizeof(_flags);
 }
 
 void PatrolRouteAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
@@ -215,14 +215,14 @@ void PatrolRouteAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	ActorAssignment::write(out);
 
 	//  Store the route number
-	out->writeSint16LE(routeNo);
-	out->writeSint16LE(startingWayPoint);
-	out->writeSint16LE(endingWayPoint);
+	out->writeSint16LE(_routeNo);
+	out->writeSint16LE(_startingWayPoint);
+	out->writeSint16LE(_endingWayPoint);
 
 	//  Store the route flags
-	out->writeByte(routeFlags);
+	out->writeByte(_routeFlags);
 	//  Store the assignment flags
-	out->writeByte(flags);
+	out->writeByte(_flags);
 }
 
 //----------------------------------------------------------------------
@@ -238,7 +238,7 @@ int16 PatrolRouteAssignment::type(void) const {
 //	of a task which the assignment had created.
 
 void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
-	if (result == taskSucceeded) flags |= routeCompleted;
+	if (result == taskSucceeded) _flags |= routeCompleted;
 }
 
 //----------------------------------------------------------------------
@@ -247,7 +247,7 @@ void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
 bool PatrolRouteAssignment::isValid(void) {
 	//  If the route has already been completed, then the assignment is
 	//  no longer valid
-	if (flags & routeCompleted) return false;
+	if (_flags & routeCompleted) return false;
 
 	return ActorAssignment::isValid();
 }
@@ -257,22 +257,22 @@ bool PatrolRouteAssignment::isValid(void) {
 
 bool PatrolRouteAssignment::taskNeeded(void) {
 	//  If the route has already been completed, then no task is needed
-	return !(flags & routeCompleted);
+	return !(_flags & routeCompleted);
 }
 
 //----------------------------------------------------------------------
 //	Construct a Task for this assignment
 
 Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
-	int16       startPoint = startingWayPoint;
+	int16       startPoint = _startingWayPoint;
 	uint8       mapNum = getActor()->getMapNum();
 
-	startingWayPoint = -1;
+	_startingWayPoint = -1;
 
 	if (startPoint == -1) {
 		int16               i;
 		uint16              bestDist = maxuint16;
-		const PatrolRoute   &route = patrolRouteList[mapNum]->getRoute(routeNo);
+		const PatrolRoute   &route = patrolRouteList[mapNum]->getRoute(_routeNo);
 		TilePoint           actorLoc = getActor()->getLocation();
 
 		for (i = 0; i < route.vertices(); i++) {
@@ -280,7 +280,7 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 
 			if (dist < bestDist) {
 				bestDist = dist;
-				startPoint = (routeFlags & patrolRouteReverse) ? i : (i + 1) % route.vertices();
+				startPoint = (_routeFlags & patrolRouteReverse) ? i : (i + 1) % route.vertices();
 			}
 		}
 	}
@@ -289,13 +289,13 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 	PatrolRouteIterator
 	iter =  PatrolRouteIterator(
 	            mapNum,
-	            routeNo,
-	            routeFlags,
+	            _routeNo,
+	            _routeFlags,
 	            startPoint);
 
 	//  Construct a FollowPatrolRouteTask
-	return  endingWayPoint != -1
-	        ?   new FollowPatrolRouteTask(ts, iter, endingWayPoint)
+	return  _endingWayPoint != -1
+	        ?   new FollowPatrolRouteTask(ts, iter, _endingWayPoint)
 	        :   new FollowPatrolRouteTask(ts, iter);
 }
 
@@ -304,13 +304,13 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
  * ===================================================================== */
 
 HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const TilePoint &tp, uint16 r) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(LocationTarget(tp), r);
 }
 
 //  Construct with no time limit and an abstract target
 HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const Target &targ, uint16 r) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(targ, r);
 }
 
@@ -321,11 +321,11 @@ HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const T
 void HuntToBeNearLocationAssignment::initialize(
     const Target    &targ,
     uint16          r) {
-	assert(targ.size() <= sizeof(targetMem));
+	assert(targ.size() <= sizeof(_targetMem));
 	//  Make a copy of the target
-	targ.clone(targetMem);
+	targ.clone(_targetMem);
 
-	range = r;
+	_range = r;
 }
 
 HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, Common::SeekableReadStream *stream) :
@@ -333,10 +333,10 @@ HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, Common:
 	debugC(4, kDebugSaveload, "... Loading HuntToBeNearLocationAssignment");
 
 	//  Restore the target
-	readTarget(targetMem, stream);
+	readTarget(_targetMem, stream);
 
 	//  Restore the range
-	range = stream->readUint16LE();
+	_range = stream->readUint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -346,7 +346,7 @@ HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, Common:
 inline int32 HuntToBeNearLocationAssignment::archiveSize(void) const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
-	            +   sizeof(range);
+	            +   sizeof(_range);
 }
 
 void HuntToBeNearLocationAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
@@ -359,7 +359,7 @@ void HuntToBeNearLocationAssignment::write(Common::MemoryWriteStreamDynamic *out
 	writeTarget(getTarget(), out);
 
 	//  Store the range
-	out->writeUint16LE(range);
+	out->writeUint16LE(_range);
 }
 
 //----------------------------------------------------------------------
@@ -377,14 +377,14 @@ bool HuntToBeNearLocationAssignment::taskNeeded(void) {
 	Actor       *a  = getActor();
 	TilePoint   actorLoc = a->getLocation();
 
-	return !a->inRange(getTarget()->where(a->world(), actorLoc), range);
+	return !a->inRange(getTarget()->where(a->world(), actorLoc), _range);
 }
 
 //----------------------------------------------------------------------
 //	Construct a Task for this assignment
 
 Task *HuntToBeNearLocationAssignment::getTask(TaskStack *ts) {
-	return new HuntToBeNearLocationTask(ts, *getTarget(), range);
+	return new HuntToBeNearLocationTask(ts, *getTarget(), _range);
 }
 
 /* ===================================================================== *
@@ -396,7 +396,7 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
 	Actor               *a,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), r, trackFlag);
 }
@@ -407,7 +407,7 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
 	const ActorTarget   &at,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(at, r, trackFlag);
 }
 
@@ -419,26 +419,26 @@ void HuntToBeNearActorAssignment::initialize(
     const ActorTarget   &at,
     uint16              r,
     bool                trackFlag) {
-	assert(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(_targetMem));
 
 	//  Copy the target
-	at.clone(targetMem);
+	at.clone(_targetMem);
 
-	range = r;
-	flags = trackFlag ? track : 0;
+	_range = r;
+	_flags = trackFlag ? track : 0;
 }
 
 HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, Common::SeekableReadStream *stream) :
 	ActorAssignment(a, stream) {
 	debugC(4, kDebugSaveload, "... Loading HuntToBeNearActorAssignment");
 
-	readTarget(targetMem, stream);
+	readTarget(_targetMem, stream);
 
 	//  Restore the range
-	range = stream->readUint16LE();
+	_range = stream->readUint16LE();
 
 	//  Restore the flags
-	flags = stream->readByte();
+	_flags = stream->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -448,8 +448,8 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, Common::Seeka
 inline int32 HuntToBeNearActorAssignment::archiveSize(void) const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
-	            +   sizeof(range)
-	            +   sizeof(flags);
+	            +   sizeof(_range)
+	            +   sizeof(_flags);
 }
 
 void HuntToBeNearActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
@@ -462,10 +462,10 @@ void HuntToBeNearActorAssignment::write(Common::MemoryWriteStreamDynamic *out) c
 	writeTarget(getTarget(), out);
 
 	//  Store the range
-	out->writeUint16LE(range);
+	out->writeUint16LE(_range);
 
 	//  Store the flags
-	out->writeByte(flags);
+	out->writeByte(_flags);
 }
 
 //----------------------------------------------------------------------
@@ -484,7 +484,7 @@ bool HuntToBeNearActorAssignment::taskNeeded(void) {
 	TilePoint   actorLoc = a->getLocation(),
 	            targetLoc = getTarget()->where(a->world(), actorLoc);
 
-	return      !a->inRange(targetLoc, range)
+	return      !a->inRange(targetLoc, _range)
 	            ||  a->inRange(targetLoc, HuntToBeNearActorTask::tooClose);
 }
 
@@ -495,8 +495,8 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 	return new HuntToBeNearActorTask(
 	           ts,
 	           *getTarget(),
-	           range,
-	           (flags & track) != false);
+	           _range,
+	           (_flags & track) != false);
 }
 
 /* ===================================================================== *
@@ -505,7 +505,7 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 
 //  Construct with no time limit and specific actor
 HuntToKillAssignment::HuntToKillAssignment(Actor *a, bool trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), trackFlag, true);
 }
@@ -515,7 +515,7 @@ HuntToKillAssignment::HuntToKillAssignment(
 	Actor *a,
 	const ActorTarget   &at,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(at, trackFlag, false);
 }
 
@@ -528,12 +528,12 @@ void HuntToKillAssignment::initialize(
     const ActorTarget   &at,
     bool                trackFlag,
     bool                specificActorFlag) {
-	assert(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(_targetMem));
 
 	//  Copy the target
-	at.clone(targetMem);
+	at.clone(_targetMem);
 
-	flags = (trackFlag ? track : 0)
+	_flags = (trackFlag ? track : 0)
 	        | (specificActorFlag ? specificActor : 0);
 }
 
@@ -544,7 +544,7 @@ void HuntToKillAssignment::initialize(
 inline int32 HuntToKillAssignment::archiveSize(void) const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
-	            +   sizeof(flags);
+	            +   sizeof(_flags);
 }
 
 void HuntToKillAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
@@ -557,7 +557,7 @@ void HuntToKillAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	writeTarget(getTarget(), out);
 
 	//  Store the flags
-	out->writeByte(flags);
+	out->writeByte(_flags);
 }
 
 //----------------------------------------------------------------------
@@ -566,7 +566,7 @@ void HuntToKillAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 bool HuntToKillAssignment::isValid(void) {
 	//  If the target actor is already dead, then this is not a valid
 	//  assignment
-	if (flags & specificActor) {
+	if (_flags & specificActor) {
 		const SpecificActorTarget *sat = (const SpecificActorTarget *)getTarget();
 
 		if (sat->getTargetActor()->isDead()) return false;
@@ -591,7 +591,7 @@ int16 HuntToKillAssignment::type(void) const {
 bool HuntToKillAssignment::taskNeeded(void) {
 	//  If we're hunting a specific actor, we only need a task if that
 	//  actor is still alive.
-	if (flags & specificActor) {
+	if (_flags & specificActor) {
 		const SpecificActorTarget *sat = (const SpecificActorTarget *)getTarget();
 
 		return !sat->getTargetActor()->isDead();
@@ -608,7 +608,7 @@ Task *HuntToKillAssignment::getTask(TaskStack *ts) {
 	return new HuntToKillTask(
 	           ts,
 	           *getTarget(),
-	           (flags & track) != false);
+	           (_flags & track) != false);
 }
 
 /* ===================================================================== *
@@ -619,10 +619,10 @@ TetheredAssignment::TetheredAssignment(Actor *ac, Common::SeekableReadStream *st
 	debugC(4, kDebugSaveload, "... Loading TetheredAssignment");
 
 	//  Read data from buffer
-	minU = stream->readSint16LE();
-	minV = stream->readSint16LE();
-	maxU = stream->readSint16LE();
-	maxV = stream->readSint16LE();
+	_minU = stream->readSint16LE();
+	_minV = stream->readSint16LE();
+	_maxU = stream->readSint16LE();
+	_maxV = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -631,10 +631,10 @@ TetheredAssignment::TetheredAssignment(Actor *ac, Common::SeekableReadStream *st
 
 inline int32 TetheredAssignment::archiveSize(void) const {
 	return      ActorAssignment::archiveSize()
-	            +   sizeof(minU)
-	            +   sizeof(minV)
-	            +   sizeof(maxU)
-	            +   sizeof(maxV);
+	            +   sizeof(_minU)
+	            +   sizeof(_minV)
+	            +   sizeof(_maxU)
+	            +   sizeof(_maxV);
 }
 
 void TetheredAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
@@ -644,10 +644,10 @@ void TetheredAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	ActorAssignment::write(out);
 
 	//  Copy data to buffer
-	out->writeSint16LE(minU);
-	out->writeSint16LE(minV);
-	out->writeSint16LE(maxU);
-	out->writeSint16LE(maxV);
+	out->writeSint16LE(_minU);
+	out->writeSint16LE(_minV);
+	out->writeSint16LE(_maxU);
+	out->writeSint16LE(_maxV);
 }
 
 /* ===================================================================== *
@@ -676,7 +676,7 @@ int16 TetheredWanderAssignment::type(void) const {
 //	Construct a Task for this assignment
 
 Task *TetheredWanderAssignment::getTask(TaskStack *ts) {
-	return new TetheredWanderTask(ts, minU, minV, maxU, maxV);
+	return new TetheredWanderTask(ts, _minU, _minV, _maxU, _maxV);
 }
 
 /* ===================================================================== *
@@ -688,7 +688,7 @@ Task *TetheredWanderAssignment::getTask(TaskStack *ts) {
 
 AttendAssignment::AttendAssignment(Actor *a, uint16 until, GameObject *o) :
 	ActorAssignment(a, until),
-	obj(o) {
+	_obj(o) {
 }
 
 AttendAssignment::AttendAssignment(Actor *a, Common::SeekableReadStream *stream) : ActorAssignment(a, stream) {
@@ -700,7 +700,7 @@ AttendAssignment::AttendAssignment(Actor *a, Common::SeekableReadStream *stream)
 	objID = stream->readUint16LE();
 
 	//  Convert the object ID to an object pointer
-	obj = objID != Nothing ? GameObject::objectAddress(objID) : NULL;
+	_obj = objID != Nothing ? GameObject::objectAddress(objID) : NULL;
 }
 
 //----------------------------------------------------------------------
@@ -721,7 +721,7 @@ void AttendAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	ObjectID    objID;
 
 	//  Convert the object pointer to an object ID
-	objID = obj != NULL ? obj->thisID() : Nothing;
+	objID = _obj != NULL ? _obj->thisID() : Nothing;
 
 	//  Store the object ID
 	out->writeUint16LE(objID);
@@ -739,7 +739,7 @@ int16 AttendAssignment::type(void) const {
 //	Construct a Task for this assignment
 
 Task *AttendAssignment::getTask(TaskStack *ts) {
-	return new AttendTask(ts, obj);
+	return new AttendTask(ts, _obj);
 }
 
 /* ===================================================================== *

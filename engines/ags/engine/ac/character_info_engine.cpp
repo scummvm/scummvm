@@ -31,7 +31,6 @@
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
-#include "ags/engine/main/main_defines_ex.h"    // RETURN_CONTINUE
 #include "ags/engine/main/update.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/ags.h"

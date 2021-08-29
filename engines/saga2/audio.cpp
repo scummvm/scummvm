@@ -40,8 +40,6 @@
 
 namespace Saga2 {
 
-audioInterface *audio;
-
 static const StaticPoint32 VeryFarAway = {32767, 32766};
 
 const uint32 fullVolumeDist = 75;
@@ -56,13 +54,7 @@ const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
 extern hResource *soundResFile;          // script resources
 extern hResource *voiceResFile;          // script resources
 
-extern int32 clickSizes[];
-extern uint8 *clickData[];
-
-soundSegment currentLoop;
-
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
-
 
 bool haveKillerSoundCard(void);
 void writeConfig(void);
@@ -88,7 +80,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 //-----------------------------------------------------------------------
 //	our distance based volume attenuator
 
-static byte volumeFromDist(sampleLocation loc, byte maxVol) {
+static byte volumeFromDist(Point32 loc, byte maxVol) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
@@ -129,15 +121,37 @@ void startAudio(void) {
 	if (voiceRes == NULL)
 		error("Laryngitis Error (No voice resource context)!\n");
 
-	audio->initAudioInterface(musicRes);
+	g_vm->_audio->initAudioInterface(musicRes);
 
 	// kludgy in memory click sounds
-	clickSizes[0] = 0;
-	clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
-	clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
-	clickData[0] = NULL;
-	clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
-	clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
+	g_vm->_audio->_clickSizes[0] = 0;
+	g_vm->_audio->_clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
+	g_vm->_audio->_clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
+	g_vm->_audio->_clickData[0] = NULL;
+	g_vm->_audio->_clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
+	g_vm->_audio->_clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
+}
+
+void cleanupAudio() {
+	if (g_vm->_audio) {
+		delete g_vm->_audio;
+		g_vm->_audio = nullptr;
+
+		delete musicRes;
+		musicRes = nullptr;
+
+		delete soundRes;
+		soundRes = nullptr;
+
+		delete longRes;
+		longRes = nullptr;
+
+		delete loopRes;
+		loopRes = nullptr;
+
+		delete voiceRes;
+		voiceRes = nullptr;
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -145,8 +159,8 @@ void startAudio(void) {
 
 
 void audioEventLoop(void) {
-	if (audio->playFlag())
-		audio->playMe();
+	if (g_vm->_audio->playFlag())
+		g_vm->_audio->playMe();
 
 	audioEnvironmentCheck();
 }
@@ -214,17 +228,17 @@ void resumeMusic(void) {
 }
 
 void suspendAudio(void) {
-	if (audio) {
+	if (g_vm->_audio) {
 		suspendMusic();
 		suspendLoops();
-		audio->suspend();
+		g_vm->_audio->suspend();
 	}
 }
 
 void resumeAudio(void) {
-	if (audio) {
+	if (g_vm->_audio) {
 		if (soundRes != NULL || voiceRes != NULL) {
-			audio->resume();
+			g_vm->_audio->resume();
 			resumeLoops();
 			resumeMusic();
 		}
@@ -235,15 +249,15 @@ void resumeAudio(void) {
 //  UI volume change hook
 
 void volumeChanged(void) {
-	if (audio->getVolume(kVolSfx))
+	if (g_vm->_audio->getVolume(kVolSfx))
 		resumeLoops();
 	else
 		suspendLoops();
 
-	if (audio->getVolume(kVolMusic)) {
+	if (g_vm->_audio->getVolume(kVolMusic)) {
 		resumeMusic();
 
-		audio->_music->syncSoundSettings();
+		g_vm->_audio->_music->syncSoundSettings();
 	} else
 		suspendMusic();
 }
@@ -270,9 +284,9 @@ void playMusic(uint32 s) {
 	debugC(1, kDebugSound, "playMusic(%s)", tag2strP(s));
 
 	if (hResCheckResID(musicRes, s)) {
-		audio->playMusic(s, 0);
+		g_vm->_audio->playMusic(s, 1);
 	} else
-		audio->stopMusic();
+		g_vm->_audio->stopMusic();
 }
 
 //-----------------------------------------------------------------------
@@ -281,9 +295,9 @@ void playMusic(uint32 s) {
 void playMemSound(uint32 s) {
 	debugC(1, kDebugSound, "playMemSound(%s)", tag2strP(s));
 
-	Audio::AudioStream *aud = Audio::makeRawStream(clickData[s], clickSizes[s], 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
+	Audio::AudioStream *aud = Audio::makeRawStream(g_vm->_audio->_clickData[s], g_vm->_audio->_clickSizes[s], 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &audio->_clickSoundHandle, aud);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &g_vm->_audio->_clickSoundHandle, aud);
 }
 
 //-----------------------------------------------------------------------
@@ -293,7 +307,7 @@ void playSound(uint32 s) {
 	debugC(1, kDebugSound, "playSound(%s)", tag2strP(s));
 
 	if (hResCheckResID(soundRes, s))
-		audio->queueSound(s, 1, Here);
+		g_vm->_audio->queueSound(s, 1, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -303,9 +317,9 @@ void playLongSound(uint32 s) {
 	debugC(1, kDebugSound, "playLongSound(%s)", tag2strP(s));
 
 	if (hResCheckResID(longRes, s))
-		audio->queueVoice(s);
+		g_vm->_audio->queueVoice(s);
 	else
-		audio->stopVoice();
+		g_vm->_audio->stopVoice();
 }
 
 //-----------------------------------------------------------------------
@@ -316,9 +330,9 @@ void playVoice(uint32 s) {
 
 	if (hResCheckResID(voiceRes, s)) {
 		if (s)
-			audio->queueVoice(s, Here);
+			g_vm->_audio->queueVoice(s, Here);
 		else
-			audio->stopVoice();
+			g_vm->_audio->stopVoice();
 	}
 }
 
@@ -336,8 +350,8 @@ bool sayVoice(uint32 s[]) {
 	bool worked = false;
 
 	if (hResCheckResID(voiceRes, s)) {
-		audio->queueVoice(s, Here);
-		if (audio->talking())
+		g_vm->_audio->queueVoice(s, Here);
+		if (g_vm->_audio->talking())
 			worked = true;
 	}
 
@@ -348,16 +362,15 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	currentLoop = s;
-	if (currentLoop == audio->currentLoop())
+	if (s == g_vm->_audio->currentLoop())
 		return;
 
-	audio->stopLoop();
+	g_vm->_audio->stopLoop();
 
 	if (!s)
 		return;
 
-	audio->playLoop(s, 0, Here);
+	g_vm->_audio->playLoop(s, 0, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -378,7 +391,7 @@ void playSoundAt(uint32 s, Point32 p) {
 	debugC(1, kDebugSound, "playSoundAt(%s, %d,%d)", tag2strP(s), p.x, p.y);
 
 	if (hResCheckResID(soundRes, s))
-		audio->queueSound(s, 1, p);
+		g_vm->_audio->queueSound(s, 1, p);
 }
 
 void playSoundAt(uint32 s, Location playAt) {
@@ -398,7 +411,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 
 	debugC(1, kDebugSound, "], %d,%d)", p.x, p.y);
 
-	audio->queueVoice(s, p);
+	g_vm->_audio->queueVoice(s, p);
 
 	return true;
 }
@@ -417,13 +430,13 @@ void playLoopAt(uint32 s, Point32 loc) {
 	debugC(1, kDebugSound, "playLoopAt(%s, %d,%d)", tag2strP(s), loc.x, loc.y);
 
 	if (hResCheckResID(loopRes, s))
-		audio->playLoop(s, 0, loc);
+		g_vm->_audio->playLoop(s, 0, loc);
 	else
-		audio->stopLoop();
+		g_vm->_audio->stopLoop();
 }
 
-void addAuxTheme(Location loc, soundSegment lid);
-void killAuxTheme(soundSegment lid);
+void addAuxTheme(Location loc, uint32 lid);
+void killAuxTheme(uint32 lid);
 void killAllAuxThemes(void);
 
 void playLoopAt(uint32 s, Location playAt) {
@@ -440,7 +453,7 @@ void playLoopAt(uint32 s, Location playAt) {
 // loop attenuation
 
 void moveLoop(Point32 loc) {
-	audio->setLoopPosition(loc);
+	g_vm->_audio->setLoopPosition(loc);
 }
 
 void moveLoop(Location loc) {
@@ -454,7 +467,7 @@ void moveLoop(Location loc) {
 // supplemental interface check for speech
 
 bool stillDoingVoice(uint32 sampno) {
-	bool result = audio->saying(sampno);
+	bool result = g_vm->_audio->saying(sampno);
 
 	debugC(1, kDebugSound, "stillDoingVoice(%s) -> %d", tag2strP(sampno), result);
 
@@ -465,7 +478,7 @@ bool stillDoingVoice(uint32 s[]) {
 	uint32 *p = s;
 
 	while (*p) {
-		if (audio->saying(*p++))
+		if (g_vm->_audio->saying(*p++))
 			return true;
 	}
 
@@ -545,36 +558,37 @@ void PlayMusic(char IDstr[]) {
 ////////////////////////////////////////////////////////////////
 
 bool initAudio() {
-	audio = new audioInterface();
+	g_vm->_audio = new AudioInterface();
 	return true;
 }
 
-void cleanupAudio() {
-	delete audio;
-}
-
-audioInterface::audioInterface() {
+AudioInterface::AudioInterface() {
 	_music = nullptr;
 	_mixer = g_system->getMixer();
+
+	memset(_clickSizes, 0, sizeof(_clickSizes));
+	memset(_clickData, 0, sizeof(_clickData));
 }
 
-audioInterface::~audioInterface() {
+AudioInterface::~AudioInterface() {
 	delete _music;
+	free(_clickData[1]);
+	free(_clickData[2]);
 }
 
-void audioInterface::initAudioInterface(hResContext *musicContext) {
+void AudioInterface::initAudioInterface(hResContext *musicContext) {
 	_music = new Music(musicContext);
 }
 
-bool audioInterface::playFlag(void) {
-	debugC(5, kDebugSound, "audioInterface::playFlag()");
+bool AudioInterface::playFlag(void) {
+	debugC(5, kDebugSound, "AudioInterface::playFlag()");
 	if (_speechQueue.size() == 0 && !_mixer->isSoundHandleActive(_speechSoundHandle))
 		_currentSpeech.seg = 0;
 
 	return _speechQueue.size() > 0 || _sfxQueue.size() > 0;
 }
 
-void audioInterface::playMe(void) {
+void AudioInterface::playMe(void) {
 	if (_speechQueue.size() > 0 && !_mixer->isSoundHandleActive(_speechSoundHandle)) {
 		SoundInstance si = _speechQueue.front();
 		_speechQueue.pop_front();
@@ -583,7 +597,7 @@ void audioInterface::playMe(void) {
 
 		Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
 		Audio::AudioStream *aud = makeShortenStream(*stream);
-		byte vol = volumeFromDist(si.loc, getVolume(kVolVoice));
+		byte vol = g_vm->_speechVoice ? volumeFromDist(si.loc, getVolume(kVolVoice)) : 0;
 
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud, -1, vol);
 
@@ -601,7 +615,7 @@ void audioInterface::playMe(void) {
 	}
 }
 
-void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::playMusic(uint32 s, int16 loopFactor, Point32 where) {
 	_music->play(s, loopFactor ? MUSIC_LOOP : MUSIC_NORMAL);
 
 	_currentMusic.seg = s;
@@ -609,11 +623,11 @@ void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation 
 	_currentMusic.loc = where;
 }
 
-void audioInterface::stopMusic(void) {
+void AudioInterface::stopMusic(void) {
 	_music->stop();
 }
 
-void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::queueSound(uint32 s, int16 loopFactor, Point32 where) {
 	SoundInstance si;
 
 	si.seg = s;
@@ -623,7 +637,7 @@ void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation
 	_sfxQueue.push(si);
 }
 
-void audioInterface::playLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::playLoop(uint32 s, int16 loopFactor, Point32 where) {
 	_currentLoop.seg = s;
 	_currentLoop.loop = loopFactor;
 	_currentLoop.loc = where;
@@ -633,14 +647,14 @@ void audioInterface::playLoop(soundSegment s, int16 loopFactor, sampleLocation w
 	Audio::AudioStream *laud = Audio::makeLoopingAudioStream(aud, loopFactor);
 	byte vol = volumeFromDist(where, getVolume(kVolSfx));
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_loopSoundHandle, laud, -1, vol);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_vm->_audio->_loopSoundHandle, laud, -1, vol);
 }
 
-void audioInterface::stopLoop(void) {
+void AudioInterface::stopLoop(void) {
 	_mixer->stopHandle(_loopSoundHandle);
 }
 
-void audioInterface::setLoopPosition(sampleLocation newLoc) {
+void AudioInterface::setLoopPosition(Point32 newLoc) {
 	if (_currentLoop.loc == newLoc)
 		return;
 
@@ -650,7 +664,7 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 	_mixer->setChannelVolume(_loopSoundHandle, vol);
 }
 
-void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
+void AudioInterface::queueVoice(uint32 s, Point32 where) {
 	SoundInstance si;
 
 	si.seg = s;
@@ -660,10 +674,10 @@ void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
 	_speechQueue.push_back(si);
 }
 
-void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
+void AudioInterface::queueVoice(uint32 s[], Point32 where) {
 	SoundInstance si;
 
-	soundSegment *p = s;
+	uint32 *p = s;
 	while (*p) {
 		si.seg = *p;
 		si.loop = false;
@@ -674,15 +688,15 @@ void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
 	}
 }
 
-void audioInterface::stopVoice(void) {
+void AudioInterface::stopVoice(void) {
 	_mixer->stopHandle(_speechSoundHandle);
 }
 
-bool audioInterface::talking(void) {
+bool AudioInterface::talking(void) {
 	return _mixer->isSoundHandleActive(_speechSoundHandle);
 }
 
-bool audioInterface::saying(soundSegment s) {
+bool AudioInterface::saying(uint32 s) {
 	if (_currentSpeech.seg == s)
 		return true;
 
@@ -693,7 +707,7 @@ bool audioInterface::saying(soundSegment s) {
 	return false;
 }
 
-byte audioInterface::getVolume(VolumeTarget src) {
+byte AudioInterface::getVolume(VolumeTarget src) {
 	switch (src) {
 	case kVolMusic:
 		return ConfMan.getInt("music_volume");
@@ -708,11 +722,11 @@ byte audioInterface::getVolume(VolumeTarget src) {
 	return 0;
 }
 
-void audioInterface::suspend(void) {
+void AudioInterface::suspend(void) {
 	_mixer->pauseAll(true);
 }
 
-void audioInterface::resume(void) {
+void AudioInterface::resume(void) {
 	_mixer->pauseAll(false);
 }
 

@@ -82,7 +82,7 @@ protected:
 
 	byte *_stack;
 
-	byte *_code, *_subCode;
+	byte *_code, *_subCode, *_codeStart;
 	byte *_localData;
 	bool _switchLocalDataNear, _switchLocalDataFar, _switchLocalDataToStack;
 	bool _cmpBitTest;

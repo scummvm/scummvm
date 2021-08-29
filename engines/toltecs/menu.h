@@ -113,6 +113,7 @@ protected:
 	ItemID _editingDescriptionID;
 	Item *_editingDescriptionItem;
 	bool _needRedraw;
+	bool _returnToGame;
 
 	Common::Array<Item> _items;
 	Common::Array<SavegameItem> _savegames;

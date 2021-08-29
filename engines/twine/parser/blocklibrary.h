@@ -34,7 +34,7 @@ struct BlockDataEntry {
 	uint8 brickShape;
 	uint8 brickType;
 	/**
-	 * Index is not starting a 0 - but at 1.
+	 * Index is not starting at 0 - but at 1. A 0 indicates an empty brick
 	 */
 	uint16 brickIdx;
 	uint8 sound;
@@ -48,7 +48,8 @@ class BlockLibraryData : public Parser {
 private:
 	Common::Array<BlockData> _layouts;
 	bool parseLayout(BlockData &blockData, Common::SeekableReadStream &stream, bool lba1);
-
+protected:
+	void reset() override;
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 	const BlockData *getLayout(int index) const;

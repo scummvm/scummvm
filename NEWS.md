@@ -7,7 +7,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Grim Fandango.
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
-   - Added support for Hades' Challenge.
    - Added support for Little Big Adventure.
    - Added support for Red Comrades 1: Save the Galaxy.
    - Added support for Red Comrades 2: For the Great Justice.
@@ -24,6 +23,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Nightlong: Union City Conspiracy.
    - Added support for The Journeyman Project 2: Buried in Time.
    - Added support for Crusader: No Remorse.
+   - Added support for L-ZONE.
+   - Added support for Spaceship Warlock.
 
  New ports:
    - The Nintendo DS port got a major rewrite.
@@ -38,12 +39,25 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added HiDPI support to the ScummVM GUI.
    - Added command line option --window-size for specifying ScummVM window size,
      applicable only to the OpenGL renderer.
+   - Fixed switching to the default graphics mode. This was sometimes not applied
+     until restarting ScummVM or starting a game.
+   - ScummVM GUI has been fully translated into Korean and Japanese.
+
+ ADL:
+   - Added support for Mystery House French translation.
+   - Added support for several game variants.
 
  AGI:
    - Added support for Russian versions. Input now works.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
+
+ CGE:
+   - Added option to use Text To Speech for Soltys.
+
+ CGE2:
+   - Added option to use Text To Speech for Sfinx.
 
  Dreamweb:
    - Rendering fixes for Russian fan translation.
@@ -60,6 +74,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Griffon:
    - Fixed Return to Launcher from The Griffon Legend.
+   - Added option to use Text To Speech in The Griffon Legend
 
  Grim:
    - Added support for Brazillian Portuguese Grim Fandango.
@@ -67,6 +82,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the Japanese Sega-CD version of Eye of the Beholder.
    - Added support for the Hebrew fan translation of Legend of Kyrandia.
+   - Added support for the Hebrew fan translation of Legend of Kyrandia 2.
    - Added support for the Simplified Chinese version of Legend of Kyrandia 3.
    - Added support for the playable demo of Lands of Lore.
 
@@ -147,13 +163,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved Digital iMUSE accuracy for Full Throttle and The Curse of Monkey Island. These improvements also fix
      several audio related bugs for both games.
    - Fixed a very old regression in the walk code for Full Throttle which softlocked the game.
-   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island. 
+   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island.
    - Fixed a bug in The Curse of Monkey Island which prevented, during the cannon minigame in Part 1, the destruction
      of one of the three destroyable turrets in the fort.
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
      version of Monkey Island 1. It was present in earlier versions.
-   - Restored some missing Lemonhead lines in the English and Italian CD
-     versions of Monkey Island 1.
+   - Restored some missing Lemonhead lines in the English, Italian and German CD
+     versions as well as the English Macintosh, FM-Towns and Sega CD versions
+     of Monkey Island 1.
    - Made the clock tower in Monkey Island 1 behave the same in the CD version
      as in earlier versions, i.e. after examining it you have to leave the
      room and come back again for its description to change.
@@ -196,6 +213,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  macOS port:
    - Add support for Dark Mode.
+   - Use OpenGL renderer by default, providing better support for HiDPI displays.
 
  MorphOS port:
    - Added native system file browser feature.

@@ -20,32 +20,65 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN_MAIN_HEADER_H
-#define AGS_ENGINE_MAIN_MAIN_HEADER_H
+#ifndef TWINE_PARSER_BODYTYPES_H
+#define TWINE_PARSER_BODYTYPES_H
 
-#include "ags/shared/core/platform.h"
-#include "ags/engine/main/main_defines_ex.h"
-#include "ags/engine/ac/math.h"
-#include "ags/engine/script/script_runtime.h"
-#include "ags/engine/gui/animating_gui_button.h"
-#include "ags/shared/gui/gui_button.h"
-#include "ags/engine/gfx/gfxfilter.h"
-#include "ags/shared/util/string_utils.h"
-#include "ags/engine/device/mouse_w32.h"
-#include "ags/engine/ac/route_finder.h"
-#include "ags/shared/script/cc_error.h"
+#include "common/array.h"
+#include "twine/shared.h"
+#include "twine/parser/anim.h"
 
-// include last since we affect windows includes
-#include "ags/engine/ac/file.h"
+namespace TwinE {
 
-#if AGS_PLATFORM_OS_ANDROID
-//include <sys/stat.h>
-//include <android/log.h>
+struct BodyVertex {
+	int16 x;
+	int16 y;
+	int16 z;
+	uint16 bone;
+};
 
-namespace AGS3 {
-extern "C" void selectLatestSavegame();
-extern bool psp_load_latest_savegame;
-} // namespace AGS3
-#endif
+struct BodyLine {
+	uint8 color;
+	uint8 unk1;
+	uint16 unk2;
+	uint16 vertex1;
+	uint16 vertex2;
+};
+
+struct BodySphere {
+	uint8 unk1;
+	uint8 color;
+	uint16 unk2;
+	uint16 radius;
+	uint16 vertex;
+};
+
+struct BodyBone {
+	uint16 parent;
+	uint16 vertex;
+	int16 firstVertex;
+	int16 numVertices;
+	int32 numOfShades;
+	BoneFrame initalBoneState;
+
+	inline bool isRoot() const {
+		return parent == 0xffff;
+	}
+};
+
+struct BodyShade {
+	int16 col1;
+	int16 col2;
+	int16 col3;
+	uint16 unk4;
+};
+
+struct BodyPolygon {
+	Common::Array<uint16> indices;
+	Common::Array<uint16> intensities;
+	int8 renderType = 0;
+	int16 color = 0;
+};
+
+}
 
 #endif

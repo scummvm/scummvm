@@ -103,6 +103,20 @@ void Overlay_SetY(ScriptOverlay *scover, int newy) {
 	_G(screenover)[ovri].y = data_to_game_coord(newy);
 }
 
+int Overlay_GetWidth(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return game_to_data_coord(_G(screenover)[ovri].pic->GetWidth());
+}
+
+int Overlay_GetHeight(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return game_to_data_coord(_G(screenover)[ovri].pic->GetHeight());
+}
+
 int Overlay_GetValid(ScriptOverlay *scover) {
 	if (scover->overlayId == -1)
 		return 0;
@@ -372,6 +386,14 @@ RuntimeScriptValue Sc_Overlay_SetY(void *self, const RuntimeScriptValue *params,
 	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetY);
 }
 
+RuntimeScriptValue Sc_Overlay_GetWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetWidth);
+}
+
+RuntimeScriptValue Sc_Overlay_GetHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetHeight);
+}
+
 //=============================================================================
 //
 // Exclusive API for Plugins
@@ -395,6 +417,8 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_X", Sc_Overlay_SetX);
 	ccAddExternalObjectFunction("Overlay::get_Y", Sc_Overlay_GetY);
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
+	ccAddExternalObjectFunction("Overlay::get_Width", Sc_Overlay_GetWidth);
+	ccAddExternalObjectFunction("Overlay::get_Height", Sc_Overlay_GetHeight);
 }
 
 } // namespace AGS3

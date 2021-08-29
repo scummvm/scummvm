@@ -321,10 +321,10 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	int poly_colors[4] = { 0, 0, 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
-		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
-		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0);		// red
-		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0);	// yellow
+		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0, true);   // green
+		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255, true);   // blue
+		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0, true);   // red
+		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0, true); // yellow
 #ifdef ENABLE_SCI32
 	} else {
 		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
@@ -360,8 +360,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	int point_colors[2] = { 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);	// green
-		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);	// blue
+		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0, true); // green
+		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255, true); // blue
 #ifdef ENABLE_SCI32
 	} else {
 		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);		// green
@@ -401,7 +401,7 @@ static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 #endif
 
 	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
-	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type)) & ~0x10; // ignore kMergePoly flag
 	Common::Point first, prev;
 	int i;
 
@@ -1005,7 +1005,25 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 					// We need to break in this case, otherwise we'll end in an infinite
 					// loop.
 					warning("AvoidPath: start point is contained in multiple polygons");
-					break;
+
+					// WORKAROUND: LB2 room 530 has two barred access polygons obstacles with
+					// the second completely contained in the first. To walk down the stairs,
+					// the script places ego within the inner polygon to walk along a path
+					// that's also contained by both polygons. Our algorithm fixes up the
+					// start point against the first polygon that contains it, and so the
+					// staircase polygon is ignored. Instead ego's start position is set just
+					// outside the first (outer) polygon. The destination is then unreachable
+					// and so the script proceeds without ego ever walking down the stairs.
+					// The workaround is to ignore the fixup against the first polygon.
+					bool ignoreEarlierPolygon = g_sci->getGameId() == GID_LAURABOW2 &&
+												g_sci->getEngineState()->currentRoomNumber() == 530 &&
+												(*it)->vertices.size() == 14;
+					if (ignoreEarlierPolygon) {
+						delete s->_prependPoint;
+						s->_prependPoint = NULL;
+					} else {
+						break;
+					}
 				}
 
 				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {

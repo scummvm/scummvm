@@ -380,7 +380,7 @@ static const char *ItemNames[] = {
 	"MrMiesPass",
 	"ProtoPack",
 	"Snowboard",
-	"Pinguin",
+	"Penguin",
 	"GasItem",
 	"PirateFlag",
 	"MagicFlute",

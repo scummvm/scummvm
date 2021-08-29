@@ -264,6 +264,7 @@ ConfigDialog::ConfigDialog() :
 
 	const Common::String &gameDomain = ConfMan.getActiveDomainName();
 	const MetaEngine *metaEngine = g_engine->getMetaEngine();
+	const MetaEngineDetection &metaEngineDetection = g_engine->getMetaEngineDetection();
 
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
@@ -276,6 +277,8 @@ ConfigDialog::ConfigDialog() :
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		_engineOptions = metaEngine->buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
+		if (!_engineOptions)
+			_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GlobalConfig_Engine.Container", gameDomain);
 	}
 
 	if (_engineOptions) {

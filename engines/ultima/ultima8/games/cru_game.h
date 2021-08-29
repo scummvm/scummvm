@@ -54,6 +54,14 @@ public:
 
 	/** Play credits but without showing a menu at the end - just finish. */
 	ProcId playCreditsNoMenu();
+
+	void setSkipIntroMovie() {
+		_skipIntroMovie = true;
+	}
+
+private:
+	/** Whether this game should skip the intro movie on startup */
+	bool _skipIntroMovie;
 };
 
 } // End of namespace Ultima8

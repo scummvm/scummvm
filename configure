@@ -201,6 +201,7 @@ _no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
+_curl=yes
 _lld=no
 _gold=yes
 # Default vkeybd/eventrec options
@@ -251,10 +252,9 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
-PANDOC=""
-_pandocpath="$PATH"
 _pandocformat="default"
 _pandocext="default"
+_manualversion="latest"
 # Detection features to be linked into executable or not
 _detection_features_static=yes
 _detection_features_full=yes
@@ -563,6 +563,9 @@ get_system_exe_extension() {
 		;;
 	mingw* | *os2-emx)
 		_exeext=".exe"
+		;;
+	emscripten)
+		_exeext=".html"
 		;;
 	*)
 		_exeext=""
@@ -913,6 +916,10 @@ Optional Features:
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
 
+Optional Documentation Options:
+  --with-manual-version=VERSION version to use when generating the manual (optional)
+  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
@@ -998,8 +1005,6 @@ Optional Libraries:
 
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
-
-  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
 
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
@@ -1427,6 +1432,10 @@ for ac_option in $@; do
 		_pandocformat="$arg"
 		_pandoc=yes
 		;;
+	--with-manual-version=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_manualversion="$arg"
+		;;
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1736,6 +1745,13 @@ switch)
 	# Switch SDK has C++11 constructs so we must enable it
 	_use_cxx11=yes
 	;;
+wasm32-*)
+	_endian=little # the endian check below fails, but emscripten is always little endian anyway
+	_host_os=emscripten
+	_host_cpu=wasm32
+	datadir='/scummvm'
+	CXX="em++"
+	;;
 wii)
 	_host_os=wii
 	_host_cpu=powerpc
@@ -1819,6 +1835,12 @@ android)
 dreamcast)
 	if test -z "$RONINDIR"; then
 		echo "Please set RONINDIR in your environment. export RONINDIR=<path to libronin>"
+		exit 1
+	fi
+	;;
+emscripten)
+	if test -z "$EMSDK"; then
+		echo "Please set EMSDK in your environment. export EMSDK=<path to emscripten sdk>"
 		exit 1
 	fi
 	;;
@@ -2586,6 +2608,9 @@ case $_host_cpu in
 	amd64 | x86_64)
 		echo "x86_64"
 		;;
+	wasm32)
+		echo "wasm32"
+		;;
 	*)
 		echo "unknown ($_host_cpu)"
 		;;
@@ -2893,6 +2918,7 @@ EOF
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
 		append_var CXXFLAGS "-fno-strict-aliasing"
+		append_var CXXFLAGS "-fno-threadsafe-statics"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		# Supress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
@@ -2909,6 +2935,24 @@ EOF
 		append_var LIBS "-lmm9"
 		append_var LIBS "-lnds9"
 		;;
+	emscripten)
+		# mandatory emscripten flags
+		append_var LDFLAGS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1 -s ALLOW_MEMORY_GROWTH=1"
+		# enable emscripten-ports and set up paths accordingly
+		append_var LDFLAGS "-s USE_SDL=2 -s USE_SDL_MIXER=2  -s USE_OGG=1 -s USE_VORBIS=1  -s USE_LIBJPEG=1  -s USE_FREETYPE=1 -s USE_ZLIB"
+		_sdlpath="$EMSDK/upstream/emscripten/system/bin/"
+		_pngpath="$EMSDK/upstream/emscripten/cache/"
+		_freetypepath="$EMSDK/upstream/emscripten/cache/ports-builds/freetype/"
+		VORBIS_CFLAGS="-I$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/include"
+		VORBIS_LIBS="-L$EMSDK/upstream/emscripten/cache/ports-builds/vorbis/lib"
+		FREETYPE2_CFLAGS="-I$_freetypepath/include"
+		_freetype_found="true"
+		if test "$_debug_build" = no; then
+			_optimization_level=-O3 -g4
+		else
+			_optimization_level=-O2
+		fi
+	;;
 	freebsd* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -3245,6 +3289,15 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
+		wasm*-emscripten)
+			_backend="sdl"
+			HOSTEXEPRE=
+			HOSTEXEEXT=.html
+			_ar="emar cru"
+			_ranlib="emranlib"
+			_opengl_mode=gles2
+			_opengl_game_es2=yes
+			;;
 		raspberrypi)
 			_libcurlpath=$RPI_ROOT/usr/bin
 			# This is needed because the official cross compiler doesn't have multiarch enabled
@@ -3300,9 +3353,8 @@ if test -n "$_host"; then
 			if test "$_dynamic_modules" = yes ; then
 				_detection_features_static=no
 				_plugins_default=dynamic
-			else
-				_detection_features_full=no
 			fi
+			_detection_features_full=no
 			if test "$_debug_build" != yes; then
 				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			fi
@@ -3967,6 +4019,9 @@ case $_host_os in
 	os2-emx*)
 		_posix=yes	# FIXME: Really???
 		;;
+	emscripten)
+		_posix=yes
+		;;
 	*)
 		# given this is a shell script, we might assume some type of posix.
 		# However, the host system might be a totally different one, so
@@ -3987,7 +4042,7 @@ if test "$_posix" = yes ; then
 #include <spawn.h>
 int main(void) { return posix_spawn(0, 0, 0, 0, 0, 0); }
 EOF
-	cc_check && _has_posix_spawn=yes
+	cc_check && test "$_host_os" != "emscripten" && _has_posix_spawn=yes
 	echo $_has_posix_spawn
 	if test "$_has_posix_spawn" = yes ; then
 		append_var DEFINES "-DHAS_POSIX_SPAWN"
@@ -4034,6 +4089,18 @@ _mak_plugins=
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
+	emscripten)
+		_plugin_prefix="lib"
+		_plugin_suffix=".wasm"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS ""
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s EXPORT_ALL=1
+PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
+POST_OBJS_FLAGS :=
+'
+		;;
 	3ds)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
@@ -5673,25 +5740,25 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 if test "$_pandoc" = yes ; then
 	echocheck "pandoc"
 
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-
-	for path_dir in $_pandocpath; do
-		if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
-			PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
-			break
-		fi
-	done
-
-	IFS="$ac_save_ifs"
-
-	if ! test "$PANDOC" ; then
-		_pandoc=no
-	fi
+	command -v pandoc >/dev/null 2>&1 && _pandoc=yes || _pandoc=no
 
 	echo $_pandoc
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+#
+# Check for curl
+#
+if test "$_curl" = yes ; then
+	echocheck "curl"
+
+	command -v curl >/dev/null 2>&1 && _curl=yes || _curl=no
+
+	echo $_curl
+fi
+
+define_in_config_if_yes $_curl 'USE_CURL'
 
 #
 # Check for FriBidi
@@ -6264,9 +6331,11 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
-PANDOC := $PANDOC
+PANDOC := pandoc
+CURL := curl
 PANDOCFORMAT := $_pandocformat
 PANDOCEXT := $_pandocext
+MANUALVERSION := $_manualversion
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 

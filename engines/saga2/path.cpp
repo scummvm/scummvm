@@ -1389,7 +1389,7 @@ static void push(
 PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	actor       = a;
 	smartness   = howSmart;
-	mTask       = actor->moveTask;
+	mTask       = actor->_moveTask;
 	flags       = mTask->flags & MotionTask::requestRun ? run : 0;
 
 	if (path == nullptr)
@@ -1463,7 +1463,7 @@ void PathRequest::initialize(void) {
 	        baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
-	GameObject              *obj;
+	GameObject *obj = nullptr;
 
 	for (iter.first(&obj);
 	        obj != nullptr;
@@ -1994,7 +1994,7 @@ PathResult PathRequest::findPath(void) {
 			            +   dir
 			            - (qi.direction != dirInvalid
 			               ?   qi.direction
-			               :   actor->currentFacing)];
+			               :   actor->_currentFacing)];
 
 #if VISUAL1
 			TPLine(centerPt, testPt);
@@ -2497,7 +2497,7 @@ TilePoint selectNearbySite(
 	        baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
-	GameObject              *obj;
+	GameObject *obj = nullptr;
 
 	for (iter.first(&obj);
 	        obj != nullptr;
@@ -2676,7 +2676,7 @@ TilePoint selectNearbySite(
 			spush(TilePoint(qi.u + tDir->u,
 			                qi.v + tDir->v,
 			                testPt.z),
-			      qi.cost + (g_vm->_rnd->getRandomNumber(65534) & 3),
+			      qi.cost + g_vm->_rnd->getRandomNumber(3),
 			      dir);
 		}
 	}

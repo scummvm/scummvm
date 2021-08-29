@@ -35,21 +35,8 @@ namespace Saga2 {
 #define AUXTHEMES 2
 #define USEAUXTHEME 0xe0
 
-struct auxAudioTheme {
-	bool active;
-	StaticLocation l;
-	soundSegment loopID;
-};
-
-static const StaticTilePoint NullTile = {(int16)minint16, (int16)minint16, (int16)minint16};
-
-static auxAudioTheme aats[AUXTHEMES] = {
-	{false, {NullTile, 0}, 0},
-	{false, {NullTile, 0}, 0}
-};
-
-void addAuxTheme(Location loc, soundSegment lid);
-void killAuxTheme(soundSegment lid);
+void addAuxTheme(Location loc, uint32 lid);
+void killAuxTheme(uint32 lid);
 void killAllAuxThemes(void);
 
 
@@ -65,6 +52,10 @@ enum audioTerrains {
 	kAudioTerrainFire,
 
 	kAudioTerrainLIMIT
+};
+
+enum {
+	kCheckGameTime = 1000
 };
 
 struct IntermittentAudioRecord {
@@ -120,15 +111,12 @@ inline int8 musicMapping(int16 musicChoice) {
 
 const static StaticTilePoint AudibilityVector = { 1, 1, 0 };
 
-const int32 checkGameTime = 1000;
-
 /* ===================================================================== *
    Imports
  * ===================================================================== */
 
 extern volatile int32           gameTime;
 
-extern int16                currentMapNum;          // which map is in use
 extern uint16               rippedRoofID;
 
 extern GameObject *getViewCenterObject(void);
@@ -138,45 +126,6 @@ extern bool debugAudioThemes;
 #endif
 
 /* ===================================================================== *
-   Locals
- * ===================================================================== */
-
-static uint32 currentTheme = 0;
-static uint32 auxTheme = 0;
-static StaticPoint32 themeAt = {0, 0};
-
-static int32 lastGameTime = 0;
-static int32 elapsedGameTime = 0;
-
-static bool playingExternalLoop = false;
-
-int activeFactions[maxFactions];
-
-
-static StaticTilePoint themeVectors[MaxThemes] = {
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0},
-	{0, 0, 0}
-};
-
-
-
-int16 themeCount[MaxThemes];
-
-/* ===================================================================== *
    Prototypes
  * ===================================================================== */
 
@@ -184,7 +133,7 @@ int16 themeCount[MaxThemes];
 
 inline metaTileNoise getSound(MetaTilePtr mt) {
 	int hmm = mt->HeavyMetaMusic();
-	return (hmm >= 0 && hmm < MaxThemes) ? hmm : 0;
+	return (hmm >= 0 && hmm < kMaxThemes) ? hmm : 0;
 }
 inline uint32 metaNoiseID(metaTileNoise mtnID) {
 	return mtnID ? MKTAG('T', 'E', 'R', mtnID) : 0;
@@ -207,28 +156,28 @@ void initAudioEnvirons(void) {
    Looped sound engine
  * ===================================================================== */
 
-void addAuxTheme(Location loc, soundSegment lid) {
+void addAuxTheme(Location loc, uint32 lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
-		if (!aats[i].active) {
-			aats[i].l.set(loc, loc.context);
-			aats[i].loopID = lid;
-			aats[i].active = true;
+		if (!g_vm->_grandMasterFTA->_aats[i].active) {
+			g_vm->_grandMasterFTA->_aats[i].l = loc;
+			g_vm->_grandMasterFTA->_aats[i].loopID = lid;
+			g_vm->_grandMasterFTA->_aats[i].active = true;
 			return;
 		}
 	}
 }
 
-void killAuxTheme(soundSegment lid) {
+void killAuxTheme(uint32 lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
-		if (aats[i].active &&   aats[i].loopID == lid) {
-			aats[i].active = false;
+		if (g_vm->_grandMasterFTA->_aats[i].active &&   g_vm->_grandMasterFTA->_aats[i].loopID == lid) {
+			g_vm->_grandMasterFTA->_aats[i].active = false;
 		}
 	}
 }
 
 void killAllAuxThemes(void) {
 	for (int i = 0; i < AUXTHEMES; i++) {
-		aats[i].active = false;
+		g_vm->_grandMasterFTA->_aats[i].active = false;
 	}
 }
 
@@ -236,35 +185,34 @@ void killAllAuxThemes(void) {
 // Hooks to allow other loops to play
 
 void disableBGLoop(bool s) {
-	playingExternalLoop = s;
+	g_vm->_grandMasterFTA->_playingExternalLoop = s;
 }
 
 void enableBGLoop(void) {
-	uint32 cr = currentTheme;
-	playingExternalLoop = false;
-	currentTheme = 0;
-	audioEnvironmentUseSet(cr, auxTheme, themeAt);
+	uint32 cr = g_vm->_grandMasterFTA->_currentTheme;
+	g_vm->_grandMasterFTA->_playingExternalLoop = false;
+	g_vm->_grandMasterFTA->_currentTheme = 0;
+	audioEnvironmentUseSet(cr, g_vm->_grandMasterFTA->_auxTheme, g_vm->_grandMasterFTA->_themeAt);
 }
 
 //-----------------------------------------------------------------------
 // Main loop selection routine - called from Tile.cpp
 
-static int32 pct = 0;
 void setAreaSound(const TilePoint &) {
-	pct = (pct + 1) % 8;
-	if (pct == 0) {
-		if (!playingExternalLoop) {
+	g_vm->_grandMasterFTA->_pct = (g_vm->_grandMasterFTA->_pct + 1) % 8;
+	if (g_vm->_grandMasterFTA->_pct == 0) {
+		if (!g_vm->_grandMasterFTA->_playingExternalLoop) {
 			TilePoint baseCoords = centerActorCoords() >> kTileUVShift;
 			TilePoint       mtPos;
 			metaTileNoise   loopID = 0;
-			soundSegment ss = 0;
+			uint32 ss = 0;
 			Point32 themePos;
 			for (int r = 1; r < 5 && loopID == 0 ; r++) {
 				TileRegion  regn;
 				TilePoint AudVec = TilePoint(AudibilityVector);
 				regn.max = baseCoords + ((AudVec * r) << kPlatShift) ; ///kTileUVSize;
 				regn.min = baseCoords - ((AudVec * r) << kPlatShift); ///kTileUVSize;
-				MetaTileIterator    mIter(currentMapNum, regn);
+				MetaTileIterator    mIter(g_vm->_currentMapNum, regn);
 				int i = 0;
 				int j = 0;
 
@@ -273,16 +221,11 @@ void setAreaSound(const TilePoint &) {
 				themePos.x = dist.u;
 				themePos.y = dist.v;
 				MetaTilePtr     mt = mIter.first(&mtPos);
-				for (i = 0; i < 16; i++) {
-					themeVectors[i].set(0, 0, 0);
-				}
 				while (mt) {
 					i++;
 					if (getSound(mt)) {
 						j++;
 						TilePoint thisDist = mtPos - baseCoords;
-						int theme = getSound(mt);
-						themeCount[theme]++;
 						if (thisDist.magnitude() < dist.magnitude()) {
 							dist = thisDist;
 							loopID = getSound(mt);
@@ -293,14 +236,14 @@ void setAreaSound(const TilePoint &) {
 					mt = mIter.next(&mtPos);
 				}
 				for (i = 0; i < AUXTHEMES; i++) {
-					if (aats[i].active) {
+					if (g_vm->_grandMasterFTA->_aats[i].active) {
 						Location loc = getCenterActor()->notGetWorldLocation();
-						if (aats[i].l.context == Nothing || loc.context == aats[i].l.context) {
-							TilePoint tp = (aats[i].l.tile >> kTileUVShift) - baseCoords;
+						if (g_vm->_grandMasterFTA->_aats[i].l.context == Nothing || loc.context == g_vm->_grandMasterFTA->_aats[i].l.context) {
+							TilePoint tp = (g_vm->_grandMasterFTA->_aats[i].l >> kTileUVShift) - baseCoords;
 							if (tp.magnitude() < dist.magnitude()) {
 								dist = tp;
 								loopID = USEAUXTHEME;
-								ss = aats[i].loopID;
+								ss = g_vm->_grandMasterFTA->_aats[i].loopID;
 								themePos.x = tp.u;
 								themePos.y = tp.v;
 							}
@@ -312,8 +255,8 @@ void setAreaSound(const TilePoint &) {
 				loopID = 0;
 			}
 			audioEnvironmentUseSet(loopID, ss, themePos << kPlatShift);
-		} else if (playingExternalLoop) {
-			audioEnvironmentUseSet(playingExternalLoop, 0, Point16(0, 0)); //themePos << kPlatShift);
+		} else if (g_vm->_grandMasterFTA->_playingExternalLoop) {
+			audioEnvironmentUseSet(g_vm->_grandMasterFTA->_playingExternalLoop, 0, Point16(0, 0)); //themePos << kPlatShift);
 		}
 	}
 }
@@ -329,24 +272,24 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 		res = metaNoiseID(audioSet);
 	else
 		res = 0;
-	if (currentTheme != (uint16)audioSet || auxTheme != (uint32)auxID) {
-		currentTheme = audioSet;
-		auxTheme = auxID;
-		themeAt.x = relPos.x;
-		themeAt.y = relPos.y;
+	if (g_vm->_grandMasterFTA->_currentTheme != (uint16)audioSet || g_vm->_grandMasterFTA->_auxTheme != (uint32)auxID) {
+		g_vm->_grandMasterFTA->_currentTheme = audioSet;
+		g_vm->_grandMasterFTA->_auxTheme = auxID;
+		g_vm->_grandMasterFTA->_themeAt.x = relPos.x;
+		g_vm->_grandMasterFTA->_themeAt.y = relPos.y;
 		_playLoop(0);
-		if (currentTheme)
-			playLoopAt(res, themeAt);
+		if (g_vm->_grandMasterFTA->_currentTheme)
+			playLoopAt(res, g_vm->_grandMasterFTA->_themeAt);
 
-	} else if (currentTheme && themeAt != relPos) {
+	} else if (g_vm->_grandMasterFTA->_currentTheme && g_vm->_grandMasterFTA->_themeAt != relPos) {
 #if DEBUG
 		if (debugAudioThemes) {
-			WriteStatusF(9, "Thm: %2.2d (%d,%d) was (%d,%d)   ", audioSet, relPos.x, relPos.y, themeAt.x, themeAt.y);
+			WriteStatusF(9, "Thm: %2.2d (%d,%d) was (%d,%d)   ", audioSet, relPos.x, relPos.y, g_vm->_grandMasterFTA->_themeAt.x, g_vm->_grandMasterFTA->_themeAt.y);
 		}
 #endif
-		themeAt.x = relPos.x;
-		themeAt.y = relPos.y;
-		moveLoop(themeAt);
+		g_vm->_grandMasterFTA->_themeAt.x = relPos.x;
+		g_vm->_grandMasterFTA->_themeAt.y = relPos.y;
+		moveLoop(g_vm->_grandMasterFTA->_themeAt);
 	}
 }
 
@@ -355,14 +298,14 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 
 void audioEnvironmentCheck(void) {
 
-	uint32 delta = gameTime - lastGameTime;
-	lastGameTime = gameTime;
-	if (currentTheme) {
-		elapsedGameTime += delta;
-		if (elapsedGameTime > checkGameTime) {
+	uint32 delta = gameTime - g_vm->_grandMasterFTA->_lastGameTime;
+	g_vm->_grandMasterFTA->_lastGameTime = gameTime;
+	if (g_vm->_grandMasterFTA->_currentTheme > 0 && g_vm->_grandMasterFTA->_currentTheme <= kAudioTerrainLIMIT) {
+		g_vm->_grandMasterFTA->_elapsedGameTime += delta;
+		if (g_vm->_grandMasterFTA->_elapsedGameTime > kCheckGameTime) {
 			int i;
-			elapsedGameTime = 0;
-			const IntermittentAudioRecord &iar = intermittentAudioRecords[currentTheme];
+			g_vm->_grandMasterFTA->_elapsedGameTime = 0;
+			const IntermittentAudioRecord &iar = intermittentAudioRecords[g_vm->_grandMasterFTA->_currentTheme];
 			int16 totalProb = iar.noSoundOdds;
 			for (i = 0; i < 4; i++)
 				totalProb += iar.soundOdds[i];
@@ -375,16 +318,17 @@ void audioEnvironmentCheck(void) {
 			for (i = 0; i < 4; i++) {
 				if (pval < iar.soundOdds[i]) {
 					//GameObject *go=getViewCenterObject();
-					//Location cal=Location(TilePoint(themeAt.x,themeAt.y,0),go->IDParent());
-					//playSound(metaNoiseID((currentTheme*10)+i));
-					playSoundAt(metaNoiseID((currentTheme * 10) + i), themeAt);
+					//Location cal=Location(TilePoint(g_vm->_grandMasterFTA->_themeAt.x,g_vm->_grandMasterFTA->_themeAt.y,0),go->IDParent());
+					//playSound(metaNoiseID((g_vm->_grandMasterFTA->_currentTheme*10)+i));
+					playSoundAt(metaNoiseID((g_vm->_grandMasterFTA->_currentTheme * 10) + i), g_vm->_grandMasterFTA->_themeAt);
 					return;
 				} else
 					pval -= iar.soundOdds[i];
 			}
 
 		}
-	}
+	} else if (g_vm->_grandMasterFTA->_currentTheme)
+		warning("currentTheme out of range: %d", g_vm->_grandMasterFTA->_currentTheme);
 
 }
 
@@ -395,9 +339,6 @@ void audioEnvironmentCheck(void) {
 //-----------------------------------------------------------------------
 // Intermittent sound check
 
-int Deejay::current = 0;
-int Deejay::currentID = 0;
-
 void Deejay::select(void) {
 	int choice = 0;
 #if DEBUG & 0
@@ -405,33 +346,33 @@ void Deejay::select(void) {
 		choice = 0;
 	else
 #endif
-		if (susp)
+		if (_susp)
 			choice = 0;
-		else if (enemy >= 0)
-			choice = enemy + 6;
-		else if (aggr)
+		else if (_enemy >= 0)
+			choice = _enemy + 6;
+		else if (_aggr)
 			choice = 5;
-		else if (ugd)
+		else if (_ugd)
 			choice = 3;
 	//else if ( !day )
 	//  choice=4;
-		else if (current != 4 && (current > 2 || current < 1)) {
+		else if (_current != 4 && (_current > 2 || _current < 1)) {
 			choice = 1 + g_vm->_rnd->getRandomNumber(2);
 			if (choice == 3) choice++;
 		} else
-			choice = current;
+			choice = _current;
 
-	if (currentID != musicMapping(choice)) {
-		currentID = musicMapping(choice);
-		if (currentID)
-			playMusic(musicResID(currentID));
+	if (_currentID != musicMapping(choice)) {
+		_currentID = musicMapping(choice);
+		if (_currentID)
+			playMusic(musicResID(_currentID));
 		else
 			playMusic(0);
 	}
-	current = choice;
+	_current = choice;
 #if DEBUG
 	if (debugAudioThemes) {
-		WriteStatusF(8, "Music: %2.2d => %2.2d    ", current, currentID);
+		WriteStatusF(8, "Music: %2.2d => %2.2d    ", _current, _currentID);
 	}
 #endif
 
@@ -441,27 +382,27 @@ void Deejay::select(void) {
 // Faction enumeration routines
 
 void clearActiveFactions(void) {
-	for (int i = 0; i < maxFactions; i++)
-		activeFactions[i] = 0;
+	for (int i = 0; i < kMaxFactions; i++)
+		g_vm->_grandMasterFTA->_activeFactions[i] = 0;
 }
 
 void incrementActiveFaction(Actor *a) {
-	activeFactions[a->faction]++;
+	g_vm->_grandMasterFTA->_activeFactions[a->_faction]++;
 }
 
 void useActiveFactions(void) {
 	int highCount = 0;
 	int highFaction = 0;
-	for (int i = 0; i < maxFactions; i++) {
-		if (activeFactions[i] > highCount) {
-			highCount = activeFactions[i];
+	for (int i = 0; i < kMaxFactions; i++) {
+		if (g_vm->_grandMasterFTA->_activeFactions[i] > highCount) {
+			highCount = g_vm->_grandMasterFTA->_activeFactions[i];
 			highFaction = i;
 		}
 	}
 	if (highCount)
 		g_vm->_grandMasterFTA->setEnemy(highFaction);
 	else
-		g_vm->_grandMasterFTA->setEnemy(NoEnemy);
+		g_vm->_grandMasterFTA->setEnemy(kNoEnemy);
 }
 
 //-----------------------------------------------------------------------

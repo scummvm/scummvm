@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	parser/anim.o \
 	parser/blocklibrary.o \
 	parser/body.o \
-	parser/brick.o \
 	parser/entity.o \
 	parser/holomap.o \
 	parser/parser.o \
@@ -47,6 +46,7 @@ MODULE_OBJS := \
 	holomap.o \
 	input.o \
 	metaengine.o \
+	shared.o \
 	text.o \
 	twine.o
 

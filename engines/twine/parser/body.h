@@ -27,60 +27,11 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "twine/parser/anim.h"
+#include "twine/parser/bodytypes.h"
 #include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
-
-struct BodyVertex {
-	int16 x;
-	int16 y;
-	int16 z;
-	uint16 bone;
-};
-
-struct BodyBone {
-	uint16 parent;
-	uint16 vertex;
-	int16 firstVertex;
-	int16 numVertices;
-	int32 numOfShades;
-	BoneFrame initalBoneState;
-
-	inline bool isRoot() const {
-		return parent == 0xffff;
-	}
-};
-
-struct BodyShade {
-	int16 col1;
-	int16 col2;
-	int16 col3;
-	uint16 unk4;
-};
-
-struct BodyPolygon {
-	Common::Array<uint16> indices;
-	Common::Array<uint16> intensities;
-	int8 renderType = 0;
-	int16 color = 0;
-};
-
-struct BodyLine {
-	uint8 color;
-	uint8 unk1;
-	uint16 unk2;
-	uint16 vertex1;
-	uint16 vertex2;
-};
-
-struct BodySphere {
-	uint8 unk1;
-	uint8 color;
-	uint16 unk2;
-	uint16 radius;
-	uint16 vertex;
-};
 
 class BodyData : public Parser {
 private:
@@ -100,34 +51,17 @@ private:
 
 	BoneFrame _boneStates[560];
 
+protected:
+	void reset() override;
+
 public:
-	union BodyFlags {
-		struct BitMask {
-			uint32 unk1 : 1;            // 1 << 0
-			uint32 animated : 1;        // 1 << 1
-			uint32 unk3 : 1;            // 1 << 2
-			uint32 unk4 : 1;            // 1 << 3
-			uint32 unk5 : 1;            // 1 << 4
-			uint32 unk6 : 1;            // 1 << 5
-			uint32 unk7 : 1;            // 1 << 6
-			uint32 alreadyPrepared : 1; // 1 << 7
-			uint32 unk9 : 1;            // 1 << 8
-			uint32 unk10 : 1;           // 1 << 9
-			uint32 unk11 : 1;           // 1 << 10
-			uint32 unk12 : 1;           // 1 << 11
-			uint32 unk13 : 1;           // 1 << 12
-			uint32 unk14 : 1;           // 1 << 13
-			uint32 unk15 : 1;           // 1 << 14
-			uint32 unk16 : 1;           // 1 << 15
-		} mask;
-		uint32 value;
-	} bodyFlag;
+	bool animated = false;
 
 	BoundingBox bbox;
 	int16 offsetToData = 0;
 
 	inline bool isAnimated() const {
-		return bodyFlag.mask.animated;
+		return animated;
 	}
 
 	inline uint getNumBones() const {

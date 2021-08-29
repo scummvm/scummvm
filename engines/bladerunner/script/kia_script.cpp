@@ -844,14 +844,15 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3470);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1300);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1310);
-		if (_vm->_cutContent
-		    && (_vm->_language == Common::ES_ESP
-		        || _vm->_language == Common::IT_ITA)
-		) {
-			//
-			// in ITA and ESP the 3490 quote is the second half of the sentence starting in previous quote (3480)
+		if (_vm->_cutContent) {
+			KIA_Play_Actor_Dialogue(kActorSteele, 3260); // And eliminating the glitches...
 			KIA_Play_Actor_Dialogue(kActorSteele, 3480);
-			KIA_Play_Actor_Dialogue(kActorSteele, 3490);
+		    if (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA) {
+				//
+				// in ITA and ESP the 3490 quote is the second half of the sentence starting in previous quote (3480)
+				KIA_Play_Actor_Dialogue(kActorSteele, 3490);
+			}
 		} else {
 			// the 3490 quote is *BOOP* in the ENG and DEU versions
 			// the 3490 quote is also redundant in FRA version, since it's only the first half of the previous quote (3480)

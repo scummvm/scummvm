@@ -433,7 +433,6 @@ void AgiEngine::initialize() {
 			_soundemu = SOUND_EMU_AMIGA;
 			break;
 		default:
-			debug(0, "DEF");
 			_soundemu = SOUND_EMU_MIDI;
 			break;
 		}

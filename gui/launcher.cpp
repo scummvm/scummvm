@@ -295,9 +295,8 @@ void LauncherDialog::updateListing() {
 		}
 
 		if (description.empty()) {
-			String gameid(iter->_value.getVal("gameid"));
-
-			if (gameid.empty())
+			String gameid;
+			if (!iter->_value.tryGetVal("gameid", gameid))
 				gameid = iter->_key;
 
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
@@ -315,8 +314,8 @@ void LauncherDialog::updateListing() {
 		color = ThemeEngine::kFontColorNormal;
 
 		if (scanEntries) {
-			Common::FSNode path(iter->domain->getVal("path"));
-			if (!path.isDirectory()) {
+			Common::String path;
+			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) {
 				color = ThemeEngine::kFontColorAlternate;
 				// If more conditions which grey out entries are added we should consider
 				// enabling this so that it is easy to spot why a certain game entry cannot

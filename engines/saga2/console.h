@@ -109,6 +109,9 @@ private:
 
     // Input: <Voice ID>. Plays a voice track.
 	bool cmdPlayVoice(int argc, const char **argv);
+
+	// Input: <1/0>. Sets the invisibility effect on the party.
+	bool cmdInvisibility(int argc, const char **argv);
 };
 
 }

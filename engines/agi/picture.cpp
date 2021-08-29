@@ -212,7 +212,6 @@ void PictureMgr::plotPattern(int x, int y) {
 
 	int pen_x = x;
 	int pen_y = y;
-	uint16 texture_num = 0;
 	uint16 pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
@@ -247,7 +246,7 @@ void PictureMgr::plotPattern(int x, int y) {
 
 	pen_final_y = pen_y;    // used in plotrelated
 
-	t = (uint8)(texture_num | 0x01);        // even
+	t = (uint8)(_patNum | 0x01);     // even
 
 	// new purpose for temp16
 
@@ -270,7 +269,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	} else {
 		circleCond = ((_patCode & 0x10) != 0);
 		counterStep = 4;
-		ditherCond = 0x01;
+		ditherCond = 0x02;
 	}
 
 	for (; pen_y < pen_final_y; pen_y++) {
@@ -308,9 +307,10 @@ void PictureMgr::plotBrush() {
 
 	for (;;) {
 		if (_patCode & 0x20) {
-			if ((_patNum = getNextByte()) >= _minCommand)
+			byte b = getNextByte();
+			if (b >= _minCommand)
 				break;
-			_patNum = (_patNum >> 1) & 0x7f;
+			_patNum = b;
 		}
 
 		if ((x1 = getNextByte()) >= _minCommand)

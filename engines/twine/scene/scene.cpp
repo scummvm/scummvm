@@ -28,6 +28,7 @@
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
+#include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -153,8 +154,8 @@ bool Scene::loadSceneLBA2() {
 	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
-	_alphaLight = ClampAngle(stream.readUint16LE());
-	_betaLight = ClampAngle(stream.readUint16LE());
+	_alphaLight = ClampAngle((int16)stream.readUint16LE());
+	_betaLight = ClampAngle((int16)stream.readUint16LE());
 	debug(2, "Using %i and %i as light vectors", _alphaLight, _betaLight);
 
 	_isOutsideScene = stream.readByte();
@@ -177,34 +178,34 @@ bool Scene::loadSceneLBA2() {
 	_sceneHeroPos.y = stream.readSint16LE();
 	_sceneHeroPos.z = stream.readSint16LE();
 
-	_sceneHero->_moveScriptSize = stream.readUint16LE();
+	_sceneHero->_moveScriptSize = (int16)stream.readUint16LE();
 	_sceneHero->_moveScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_moveScriptSize);
 
-	_sceneHero->_lifeScriptSize = stream.readUint16LE();
+	_sceneHero->_lifeScriptSize = (int16)stream.readUint16LE();
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
 
-	_sceneNumActors = stream.readUint16LE();
+	_sceneNumActors = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _sceneNumActors; a++, cnt++) {
 		_engine->_actor->resetActor(a);
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
-		act->loadModel(stream.readUint16LE(), false);
+		act->loadModel((int16)stream.readUint16LE(), false);
 
 		act->_body = (BodyType)stream.readSint16LE();
 		act->_anim = (AnimationTypes)stream.readByte();
-		act->_sprite = stream.readUint16LE();
-		act->_pos.x = stream.readUint16LE();
-		act->_pos.y = stream.readUint16LE();
-		act->_pos.z = stream.readUint16LE();
+		act->_sprite = (int16)stream.readUint16LE();
+		act->_pos.x = (int16)stream.readUint16LE();
+		act->_pos.y = (int16)stream.readUint16LE();
+		act->_pos.z = (int16)stream.readUint16LE();
 		act->_collisionPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
-		act->_angle = stream.readUint16LE();
-		act->_speed = stream.readUint16LE();
+		act->_angle = (int16)stream.readUint16LE();
+		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readByte();
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
@@ -222,11 +223,11 @@ bool Scene::loadSceneLBA2() {
 		act->_armor = stream.readByte();
 		act->setLife(stream.readByte());
 
-		act->_moveScriptSize = stream.readUint16LE();
+		act->_moveScriptSize = (int16)stream.readUint16LE();
 		act->_moveScript = _currentScene + stream.pos();
 		stream.skip(act->_moveScriptSize);
 
-		act->_lifeScriptSize = stream.readUint16LE();
+		act->_lifeScriptSize = (int16)stream.readUint16LE();
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
@@ -236,7 +237,7 @@ bool Scene::loadSceneLBA2() {
 		}
 	}
 
-	_sceneNumZones = stream.readUint16LE();
+	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
 		ZoneStruct *zone = &_sceneZones[i];
 		zone->mins.x = stream.readSint32LE();
@@ -260,7 +261,7 @@ bool Scene::loadSceneLBA2() {
 		zone->snap = stream.readUint16LE();
 	}
 
-	_sceneNumTracks = stream.readUint16LE();
+	_sceneNumTracks = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumTracks; i++) {
 		IVec3 *point = &_sceneTracks[i];
 		point->x = stream.readSint32LE();
@@ -268,8 +269,8 @@ bool Scene::loadSceneLBA2() {
 		point->z = stream.readSint32LE();
 	}
 
-	int32 sceneNumPatches = stream.readUint16LE();
-	for (int32 i = 0; i < sceneNumPatches; i++) {
+	uint16 sceneNumPatches = stream.readUint16LE();
+	for (uint16 i = 0; i < sceneNumPatches; i++) {
 		/*size = */stream.readUint16LE();
 		/*offset = */stream.readUint16LE();
 	}
@@ -287,8 +288,8 @@ bool Scene::loadSceneLBA1() {
 
 	// FIXME: Workaround to fix lighting issue - not using proper dark light
 	// Using 1215 and 1087 as light vectors - scene 8
-	_alphaLight = ClampAngle(stream.readUint16LE());
-	_betaLight = ClampAngle(stream.readUint16LE());
+	_alphaLight = ClampAngle((int16)stream.readUint16LE());
+	_betaLight = ClampAngle((int16)stream.readUint16LE());
 	debug(2, "Using %i and %i as light vectors", _alphaLight, _betaLight);
 
 	for (int i = 0; i < 4; ++i) {
@@ -303,19 +304,19 @@ bool Scene::loadSceneLBA1() {
 	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	_sceneHeroPos.x = stream.readUint16LE();
-	_sceneHeroPos.y = stream.readUint16LE();
-	_sceneHeroPos.z = stream.readUint16LE();
+	_sceneHeroPos.x = (int16)stream.readUint16LE();
+	_sceneHeroPos.y = (int16)stream.readUint16LE();
+	_sceneHeroPos.z = (int16)stream.readUint16LE();
 
-	_sceneHero->_moveScriptSize = stream.readUint16LE();
+	_sceneHero->_moveScriptSize = (int16)stream.readUint16LE();
 	_sceneHero->_moveScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_moveScriptSize);
 
-	_sceneHero->_lifeScriptSize = stream.readUint16LE();
+	_sceneHero->_lifeScriptSize = (int16)stream.readUint16LE();
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
 
-	_sceneNumActors = stream.readUint16LE();
+	_sceneNumActors = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _sceneNumActors; a++, cnt++) {
 		_engine->_actor->resetActor(a);
@@ -327,15 +328,15 @@ bool Scene::loadSceneLBA1() {
 
 		act->_body = (BodyType)stream.readByte();
 		act->_anim = (AnimationTypes)stream.readByte();
-		act->_sprite = stream.readUint16LE();
-		act->_pos.x = stream.readUint16LE();
-		act->_pos.y = stream.readUint16LE();
-		act->_pos.z = stream.readUint16LE();
+		act->_sprite = (int16)stream.readUint16LE();
+		act->_pos.x = (int16)stream.readUint16LE();
+		act->_pos.y = (int16)stream.readUint16LE();
+		act->_pos.z = (int16)stream.readUint16LE();
 		act->_collisionPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
-		act->_angle = stream.readUint16LE();
-		act->_speed = stream.readUint16LE();
+		act->_angle = (int16)stream.readUint16LE();
+		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readUint16LE();
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
@@ -348,11 +349,11 @@ bool Scene::loadSceneLBA1() {
 		act->_armor = stream.readByte();
 		act->setLife(stream.readByte());
 
-		act->_moveScriptSize = stream.readUint16LE();
+		act->_moveScriptSize = (int16)stream.readUint16LE();
 		act->_moveScript = _currentScene + stream.pos();
 		stream.skip(act->_moveScriptSize);
 
-		act->_lifeScriptSize = stream.readUint16LE();
+		act->_lifeScriptSize = (int16)stream.readUint16LE();
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
@@ -362,23 +363,23 @@ bool Scene::loadSceneLBA1() {
 		}
 	}
 
-	_sceneNumZones = stream.readUint16LE();
+	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
 		ZoneStruct *zone = &_sceneZones[i];
-		zone->mins.x = stream.readUint16LE();
-		zone->mins.y = stream.readUint16LE();
-		zone->mins.z = stream.readUint16LE();
+		zone->mins.x = (int16)stream.readUint16LE();
+		zone->mins.y = (int16)stream.readUint16LE();
+		zone->mins.z = (int16)stream.readUint16LE();
 
-		zone->maxs.x = stream.readUint16LE();
-		zone->maxs.y = stream.readUint16LE();
-		zone->maxs.z = stream.readUint16LE();
+		zone->maxs.x = (int16)stream.readUint16LE();
+		zone->maxs.y = (int16)stream.readUint16LE();
+		zone->maxs.z = (int16)stream.readUint16LE();
 
 		zone->type = (ZoneType)stream.readUint16LE();
 
-		zone->infoData.generic.info0 = stream.readUint16LE();
-		zone->infoData.generic.info1 = stream.readUint16LE();
-		zone->infoData.generic.info2 = stream.readUint16LE();
-		zone->infoData.generic.info3 = stream.readUint16LE();
+		zone->infoData.generic.info0 = (int16)stream.readUint16LE();
+		zone->infoData.generic.info1 = (int16)stream.readUint16LE();
+		zone->infoData.generic.info2 = (int16)stream.readUint16LE();
+		zone->infoData.generic.info3 = (int16)stream.readUint16LE();
 
 		zone->snap = stream.readUint16LE();
 	}
@@ -386,9 +387,9 @@ bool Scene::loadSceneLBA1() {
 	_sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumTracks; i++) {
 		IVec3 *point = &_sceneTracks[i];
-		point->x = stream.readUint16LE();
-		point->y = stream.readUint16LE();
-		point->z = stream.readUint16LE();
+		point->x = (int16)stream.readUint16LE();
+		point->y = (int16)stream.readUint16LE();
+		point->z = (int16)stream.readUint16LE();
 	}
 
 	if (_engine->_debugScene->_useScenePatches) {
@@ -733,12 +734,12 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
-					_engine->_renderer->_destPos.x += _engine->_movements->_processActor.x;
-					_engine->_renderer->_destPos.z += _engine->_movements->_processActor.z;
+					IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+					destPos.x += _engine->_movements->_processActor.x;
+					destPos.z += _engine->_movements->_processActor.z;
 
-					if (_engine->_renderer->_destPos.x >= 0 && _engine->_renderer->_destPos.z >= 0 && _engine->_renderer->_destPos.x <= 0x7E00 && _engine->_renderer->_destPos.z <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->_destPos.x, actor->_pos.y + ANGLE_90, _engine->_renderer->_destPos.z) != ShapeType::kNone) {
+					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) { // SCENE_SIZE_MAX
+						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + ANGLE_90, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder

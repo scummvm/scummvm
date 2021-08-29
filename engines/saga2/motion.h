@@ -280,7 +280,7 @@ private:
 			flags &= ~reset;
 		}
 
-		if (a->currentFacing != direction)
+		if (a->_currentFacing != direction)
 			a->turn(direction);
 		else
 			remove(motionCompleted);
@@ -571,7 +571,8 @@ inline void MotionTask::walkTo(
     bool            run,
     bool            canAgitate) {
 	walkTo(actor, target, run, canAgitate);
-	if (actor.moveTask != NULL) actor.moveTask->thread = th;
+	if (actor._moveTask != NULL)
+		actor._moveTask->thread = th;
 }
 
 inline void MotionTask::walkToDirect(
@@ -581,12 +582,14 @@ inline void MotionTask::walkToDirect(
     bool            run,
     bool            canAgitate) {
 	walkToDirect(actor, target, run, canAgitate);
-	if (actor.moveTask != NULL) actor.moveTask->thread = th;
+	if (actor._moveTask != NULL)
+		actor._moveTask->thread = th;
 }
 
 inline void MotionTask::turn(ThreadID th, Actor &actor, Direction dir) {
 	turn(actor, dir);
-	if (actor.moveTask != NULL) actor.moveTask->thread = th;
+	if (actor._moveTask != NULL)
+		actor._moveTask->thread = th;
 }
 
 inline void MotionTask::turnTowards(
@@ -594,12 +597,14 @@ inline void MotionTask::turnTowards(
     Actor           &actor,
     const TilePoint &where) {
 	turnTowards(actor, where);
-	if (actor.moveTask != NULL) actor.moveTask->thread = th;
+	if (actor._moveTask != NULL)
+		actor._moveTask->thread = th;
 }
 
 inline void MotionTask::give(ThreadID th, Actor &actor, Actor &givee) {
 	give(actor, givee);
-	if (actor.moveTask != NULL) actor.moveTask->thread = th;
+	if (actor._moveTask != NULL)
+		actor._moveTask->thread = th;
 }
 
 /* ===================================================================== *

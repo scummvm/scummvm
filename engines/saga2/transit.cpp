@@ -35,14 +35,6 @@
 
 namespace Saga2 {
 
-extern  int16               currentMapNum;          // which map is in use
-
-/* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-static gPalette     newPalette;
-
 /* ===================================================================== *
    Prototypes
  * ===================================================================== */
@@ -71,33 +63,31 @@ void dayNightUpdate(void) {
 
 	audioEnvironmentSetDaytime(isDayTime());
 
-
-	static uint32   prevLightLevel = 0;
-	uint32          lightLevel = calender.lightLevel(MAX_LIGHT);
+	uint32 lightLevel = g_vm->_calender->lightLevel(MAX_LIGHT);
 
 	//  Code to avoid unneccessary fades.
-	if (lightLevel != prevLightLevel) {
-		prevLightLevel = lightLevel;
+	if (lightLevel != g_vm->_pal->_prevLightLevel) {
+		g_vm->_pal->_prevLightLevel = lightLevel;
 
-		createPalette(
-		    &newPalette,
-		    midnightPalette,
-		    noonPalette,
+		g_vm->_pal->createPalette(
+		    &g_vm->_pal->_newPalette,
+		    g_vm->_pal->_midnightPalette,
+		    g_vm->_pal->_noonPalette,
 		    lightLevel,
 		    MAX_LIGHT);
 
-		if (currentMapNum == 0)
-			beginFade(&newPalette, 100);
+		if (g_vm->_currentMapNum == 0)
+			g_vm->_pal->beginFade(&g_vm->_pal->_newPalette, 100);
 	}
 
-	if (!updatePalette()) {
+	if (!g_vm->_pal->updatePalette()) {
 		gPalettePtr     neededPalette;
 		gPalette        currentPalette;
 
-		neededPalette = currentMapNum == 0 ? &newPalette : noonPalette;
-		getCurrentPalette(&currentPalette);
+		neededPalette = g_vm->_currentMapNum == 0 ? &g_vm->_pal->_newPalette : g_vm->_pal->_noonPalette;
+		g_vm->_pal->getCurrentPalette(&currentPalette);
 		if (memcmp(&currentPalette, neededPalette, sizeof(gPalette)) != 0)
-			setCurrentPalette(neededPalette);
+			g_vm->_pal->setCurrentPalette(neededPalette);
 	}
 }
 
@@ -105,7 +95,6 @@ void SystemEventLoop(void);
 //-----------------------------------------------------------------------
 //	Fade to black
 
-static int fadeDepth = 1;
 void clearTileAreaPort(void);
 void reDrawScreen(void) ;
 void updateMainDisplay(void);
@@ -119,9 +108,9 @@ void disableUserControls(void);
 void enableUserControls(void);
 
 void fadeDown(void) {
-	if (fadeDepth++ == 0) {
-		beginFade(darkPalette, 20);
-		while (updatePalette());
+	if (g_vm->_fadeDepth++ == 0) {
+		g_vm->_pal->beginFade(g_vm->_pal->_darkPalette, 20);
+		while (g_vm->_pal->updatePalette());
 		clearTileAreaPort();
 		blackOut();
 		disablePaletteChanges();
@@ -132,14 +121,14 @@ void fadeDown(void) {
 //	Fade to many colors
 
 void fadeUp(void) {
-	if (--fadeDepth == 0) {
+	if (--g_vm->_fadeDepth == 0) {
 		enableUserControls();
 		updateMainDisplay();
 		drawMainDisplay();
 		reDrawScreen();
 		enablePaletteChanges();
-		beginFade(currentMapNum != 0 ? noonPalette : &newPalette, 20);
-		while (updatePalette()) ;
+		g_vm->_pal->beginFade(g_vm->_currentMapNum != 0 ? g_vm->_pal->_noonPalette : &g_vm->_pal->_newPalette, 20);
+		while (g_vm->_pal->updatePalette()) ;
 	}
 }
 

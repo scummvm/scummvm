@@ -1,4 +1,4 @@
- /* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -31,8 +31,12 @@
 namespace TwinE {
 
 class Parser {
+protected:
+	virtual void reset() {}
 public:
-	virtual ~Parser() {}
+	virtual ~Parser() {
+		reset();
+	}
 	virtual bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) = 0;
 
 	bool loadFromBuffer(const uint8 *buf, uint32 size, bool lba1);

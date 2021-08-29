@@ -31,6 +31,10 @@ public:
 	virtual void init() override;
 	virtual void initBackend() override;
 
+#ifdef USE_OPENGL
+	virtual GraphicsManagerType getDefaultGraphicsManager() const override;
+#endif
+
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
 	virtual bool hasFeature(Feature f) override;

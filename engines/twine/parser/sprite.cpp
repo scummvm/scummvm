@@ -46,7 +46,15 @@ bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream, b
 	return !stream.err();
 }
 
+void SpriteData::reset() {
+	for (int i = 0; i < _sprites; ++i) {
+		_surfaces[i].free();
+	}
+	_sprites = 0;
+}
+
 bool SpriteData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	reset();
 	if (_bricks) {
 		// brick sprites don't have the offsets
 		return loadSprite(stream, 0);

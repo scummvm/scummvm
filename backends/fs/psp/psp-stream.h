@@ -33,7 +33,7 @@
 /**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
-class PspIoStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable, public Suspendable {
+class PspIoStream final : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable, public Suspendable {
 protected:
 	SceUID _handle;		// file handle
 	Common::String _path;
@@ -67,7 +67,7 @@ public:
 	static PspIoStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	PspIoStream(const Common::String &path, bool writeMode);
-	virtual ~PspIoStream();
+	virtual ~PspIoStream() override;
 
 	SceUID open();		// open the file pointed to by the file path
 

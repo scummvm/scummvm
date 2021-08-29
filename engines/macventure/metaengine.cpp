@@ -85,12 +85,7 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
-		SaveStateDescriptor desc;
-		// Do not allow save slot 0 (used for auto-saving) to be deleted or
-		// overwritten.
-		desc.setDeletableFlag(slotNum != 0);
-		desc.setWriteProtectedFlag(slotNum == 0);
-
+		SaveStateDescriptor desc(slotNum, Common::U32String());
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
@@ -143,7 +138,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 		delete in;
 		return desc;
 	}
-	return SaveStateDescriptor(-1, "");
+	return SaveStateDescriptor();
 }
 
 } // End of namespace MacVenture

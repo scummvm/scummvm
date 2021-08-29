@@ -149,10 +149,10 @@ void clearEnchantments(Actor *a) {
 	ea->firstAid    = ba->firstAid;
 	ea->spotHidden  = ba->spotHidden;
 
-	a->enchantmentFlags     = a->getBaseEnchantmentEffects();
-	a->effectiveResistance  = a->getBaseResistance();
-	a->effectiveImmunity    = a->getBaseImmunity();
-	a->recPointsPerUpdate       = a->getBaseRecovery();
+	a->_enchantmentFlags     = a->getBaseEnchantmentEffects();
+	a->_effectiveResistance  = a->getBaseResistance();
+	a->_effectiveImmunity    = a->getBaseImmunity();
+	a->_recPointsPerUpdate       = a->getBaseRecovery();
 }
 
 void addEnchantment(Actor *a, uint16 enchantmentID) {
@@ -188,7 +188,7 @@ void addEnchantment(Actor *a, uint16 enchantmentID) {
 //	Function to eval the enchantments on an actor
 
 void evalActorEnchantments(Actor *a) {
-	GameObject          *obj;
+	GameObject          *obj = nullptr;
 	ObjectID            id;
 	PlayerActorID       playerID;
 	EnchantmentIterator iter(a);
@@ -211,8 +211,8 @@ void evalActorEnchantments(Actor *a) {
 
 		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
-			a->effectiveResistance  |= proto->resistance;
-			a->effectiveImmunity    |= proto->immunity;
+			a->_effectiveResistance  |= proto->resistance;
+			a->_effectiveImmunity    |= proto->immunity;
 		}
 	}
 

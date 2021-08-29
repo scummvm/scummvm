@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/events.h"
+
 #include "saga2/saga2.h"
 #include "saga2/tilemode.h"
 #include "saga2/tile.h"
@@ -206,11 +208,6 @@ extern hResContext          *imageRes;              // image resource handle
 
 //  Combat related data
 static bool         aggressiveActFlag = false;  //  Indicates wether or not
-//  there has been an
-//  aggressive act
-static CalenderTime timeOfLastAggressiveAct;    //  Used to determine the
-//  mode state
-
 static bool         inCombat,
        combatPaused;
 
@@ -341,7 +338,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 			handlePlayerActorAttacked(playerID);
 
 		aggressiveActFlag = true;
-		timeOfLastAggressiveAct = calender;
+		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calender;
 	}
 }
 
@@ -350,7 +347,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 //	involving a player actor
 
 uint16 timeSinceLastAggressiveAct(void) {
-	return aggressiveActFlag ? calender - timeOfLastAggressiveAct : maxuint16;
+	return aggressiveActFlag ? *g_vm->_calender - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
 }
 
 //-----------------------------------------------------------------------
@@ -358,12 +355,12 @@ uint16 timeSinceLastAggressiveAct(void) {
 
 bool areThereActiveEnemies(void) {
 	ActiveRegionObjectIterator  iter;
-	GameObject                  *obj;
+	GameObject                  *obj = nullptr;
 
 	for (iter.first(&obj); obj != NULL; iter.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->disposition == dispositionEnemy)
+		        && ((Actor *)obj)->_disposition == dispositionEnemy)
 			return true;
 	}
 
@@ -399,8 +396,8 @@ void CheckCombatMood(void) {
 	for (iter8.first(&obj); obj != NULL; iter8.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->disposition == dispositionEnemy) {
-			if (agress || !(((Actor *)obj)->flags & Actor::afraid)) {
+		        && ((Actor *)obj)->_disposition == dispositionEnemy) {
+			if (agress || !(((Actor *)obj)->_flags & Actor::afraid)) {
 				incrementActiveFaction((Actor *) obj);
 				wasHostile = true;
 			}
@@ -576,7 +573,7 @@ static void evalMouseState(void) {
 		if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
 			if (g_vm->_mouseInfo->getDoable()
 			        &&  !navigationDelayed) {
-				MotionTask  *mt = a->moveTask;
+				MotionTask  *mt = a->_moveTask;
 
 				if (mt == NULL || !mt->isWalk()) {
 					navigateDirect(walkToPos, runFlag);
@@ -621,7 +618,7 @@ void saveTileModeState(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
 
 	if (aggressiveActFlag)
-		timeOfLastAggressiveAct.write(out);
+		g_vm->_tmm->_timeOfLastAggressiveAct->write(out);
 	CHUNK_END;
 }
 
@@ -638,7 +635,7 @@ void loadTileModeState(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
 
 	if (aggressiveActFlag)
-		timeOfLastAggressiveAct.read(in);
+		g_vm->_tmm->_timeOfLastAggressiveAct->read(in);
 
 	tileLockFlag = false;
 }
@@ -1041,7 +1038,14 @@ static APPFUNC(cmdClickTileMap) {
 		selectedObject = pickedObject;
 #endif
 		if (g_vm->_teleportOnClick) {
-			getCenterActor()->setLocation(walkToPos);
+			if (g_vm->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
+				for (ObjectID pid = ActorBaseID; pid < ActorBaseID + kPlayerActors; ++pid) {
+					Actor *p = (Actor *)GameObject::objectAddress(pid);
+					p->setLocation(walkToPos);
+				}
+			} else {
+				getCenterActor()->setLocation(walkToPos);
+			}
 		} else if (isActor(pickedObject)) {
 			PlayerActorID       playerID;
 
@@ -1253,8 +1257,8 @@ static APPFUNC(cmdClickTileMap) {
 				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
 					Actor   *a = getCenterActor();
 
-					if (a->moveTask && a->moveTask->isWalk())
-						a->moveTask->finishWalk();
+					if (a->_moveTask && a->_moveTask->isWalk())
+						a->_moveTask->finishWalk();
 				}
 				navigationDelayed = false;
 			} else {
@@ -1350,7 +1354,7 @@ void navigatePath(TilePoint pick) {
 	if (a) {
 		if (a->isMoving())
 			//  if motion task already exists, change the target
-			a->moveTask->changeTarget(pick);
+			a->_moveTask->changeTarget(pick);
 		else
 			//  else create a new motion task
 			MotionTask::walkTo(*a, pick, false, false);
@@ -1463,6 +1467,14 @@ void gStickyDragControl::pointerRelease(gPanelMessage &msg) {
 void noStickyMap(void) {
 	((gPanel *)tileMapControl)->deactivate();
 	mousePressed = false;
+}
+
+TileModeManager::TileModeManager() {
+	_timeOfLastAggressiveAct = new CalenderTime;
+}
+
+TileModeManager::~TileModeManager() {
+	delete _timeOfLastAggressiveAct;
 }
 
 } // end of namespace Saga2

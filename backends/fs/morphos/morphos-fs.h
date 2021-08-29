@@ -42,7 +42,7 @@
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class MorphOSFilesystemNode : public AbstractFSNode {
+class MorphOSFilesystemNode final : public AbstractFSNode {
 protected:
 	/**
 	 * The main file lock.
@@ -100,24 +100,24 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~MorphOSFilesystemNode();
+	virtual ~MorphOSFilesystemNode() override;
 
-	virtual bool exists() const;
-	virtual Common::String getDisplayName() const { return _sDisplayName; }
-	virtual Common::String getName() const { return _sDisplayName; }
-	virtual Common::String getPath() const { return _sPath; }
-	virtual bool isDirectory() const { return _bIsDirectory; }
-	virtual bool isReadable() const { return true; }
-	virtual bool isWritable() const { return true; }
+	virtual bool exists() const override;
+	virtual Common::U32String getDisplayName() const override { return _sDisplayName; }
+	virtual Common::String getName() const override { return _sDisplayName; }
+	virtual Common::String getPath() const override { return _sPath; }
+	virtual bool isDirectory() const override { return _bIsDirectory; }
+	virtual bool isReadable() const override { return true; }
+	virtual bool isWritable() const override { return true; }
 
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const override;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	virtual AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::SeekableWriteStream *createWriteStream();
-	virtual bool createDirectory();
+	virtual Common::SeekableReadStream *createReadStream() override;
+	virtual Common::SeekableWriteStream *createWriteStream() override;
+	virtual bool createDirectory() override;
 };
 
 

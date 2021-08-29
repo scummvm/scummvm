@@ -199,8 +199,6 @@ bool OSystem_iOS7::getFeatureState(Feature f) {
 		return _videoContext->asprectRatioCorrection;
 	case kFeatureVirtualKeyboard:
 		return isKeyboardShown();
-	case kFeatureHiDPI:
-		return true;
 
 	default:
 		return false;

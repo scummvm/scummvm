@@ -69,13 +69,7 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 				if (slotNum > maxSlot)
 					continue;
 
-				SaveStateDescriptor desc;
-				desc.setSaveSlot(slotNum);
-				desc.setDescription(rich_media_header.getSaveName());
-
-				if (slotNum == getAutosaveSlot())
-					desc.setWriteProtectedFlag(true);
-
+				SaveStateDescriptor desc(slotNum, rich_media_header.getSaveName());
 				saveList.push_back(desc);
 			}
 		}
@@ -117,12 +111,7 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 		rich_media_header.ReadFromFile(&saveFile);
 
 		if (rich_media_header.dwMagicNumber == RM_MAGICNUMBER) {
-			SaveStateDescriptor desc;
-			desc.setSaveSlot(slot);
-			if (slot == getAutosaveSlot()) {
-				desc.setAutosave(true);
-				desc.setWriteProtectedFlag(true);
-			}
+			SaveStateDescriptor desc(slot, Common::U32String());
 
 			// Thumbnail handling
 			if (rich_media_header.dwThumbnailOffsetLowerDword != 0 &&

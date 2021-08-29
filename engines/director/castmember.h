@@ -153,6 +153,7 @@ public:
 	void stopVideo(Channel *channel);
 
 	uint getMovieCurrentTime();
+	uint getDuration();
 	uint getMovieTotalTime();
 	void seekMovie(int stamp);
 	void setStopTime(int stamp);
@@ -223,8 +224,8 @@ public:
 	void setText(const Common::U32String &text);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	virtual bool isEditable() override;
-	virtual void setEditable(bool editable) override;
+	virtual bool isEditable() override { return _editable; }
+	virtual void setEditable(bool editable) override { _editable = editable; }
 	virtual void updateFromWidget(Graphics::MacWidget *widget) override;
 	Graphics::TextAlign getAlignment();
 

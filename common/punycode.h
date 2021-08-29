@@ -50,30 +50,29 @@
 namespace Common {
 
 /**
- * Convert Binary to Punycode. Returns the encoded string.
+ * Convert UTF-32 to Punycode. Returns the encoded string.
  */
-String punycode_encode(const String src);
+String punycode_encode(const U32String src);
 
 /**
- * Convert Punycode to Binary. Returns the decoded string
+ * Convert Punycode to UTF-32. Returns the decoded string
  */
-String punycode_decode(const String src);
+U32String punycode_decode(const String src);
 
-String punycode_encodefilename(const String src1);
-String punycode_encodepath(const String src);
+String punycode_encodefilename(const U32String src1);
 
 /**
  * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
  */
-String punycode_decodefilename(const String src1);
+U32String punycode_decodefilename(const String src1);
 
 /**
- * Convert path with '/' as separators from Punycode
+ * Convert path from Punycode
  */
 Path punycode_decodepath(const Path &src);
 
 /**
- * Convert path to Punycode with '/' as separators
+ * Convert path to Punycode
  */
 Path punycode_encodepath(const Path &src);
 

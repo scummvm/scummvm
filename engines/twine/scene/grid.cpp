@@ -351,7 +351,7 @@ void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			const int32 gridIdx = stream.readUint16LE();
+			const uint16 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}
@@ -380,7 +380,7 @@ void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize,
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			const int32 gridIdx = stream.readUint16LE();
+			const uint16 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}
@@ -391,10 +391,9 @@ void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize,
 }
 
 void Grid::createGridMap() {
-	int32 currOffset = 0;
+	int32 blockOffset = 0;
 
 	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
-		int32 blockOffset = currOffset;
 		const int32 gridIdx = z * GRID_SIZE_X;
 
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
@@ -402,16 +401,14 @@ void Grid::createGridMap() {
 			createGridColumn(_currentGrid + gridOffset, _currentGridSize - gridOffset, _blockBuffer + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * GRID_SIZE_Y;
 		}
-		currOffset += GRID_SIZE_X * (2 * GRID_SIZE_Y);
 	}
 }
 
 void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 	int32 currGridOffset = 0;
-	int32 currOffset = 0;
+	int32 blockOffset = 0;
 
 	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
-		int32 blockOffset = currOffset;
 		const uint8 *tempGridPtr = gridPtr + currGridOffset;
 
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
@@ -420,8 +417,7 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, _blockBuffer + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * GRID_SIZE_Y;
 		}
-		currGridOffset += GRID_SIZE_X+ GRID_SIZE_Z;
-		currOffset += GRID_SIZE_X * (2 * GRID_SIZE_Y);
+		currGridOffset += GRID_SIZE_X + GRID_SIZE_Z;
 	}
 }
 
@@ -704,12 +700,12 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		return ShapeType::kNone;
 	}
 
-	uint8 *blockBufferPtr = _blockBuffer;
+	const uint8 *blockBufferPtr = _blockBuffer;
 	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
 	blockBufferPtr += collision.y * 2;
 	blockBufferPtr += (collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
 
-	uint8 blockIdx = *blockBufferPtr;
+	const uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
@@ -792,7 +788,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	return ShapeType::kNone;
 }
 
-int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
+uint8 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
@@ -820,7 +816,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 		return blockPtr->brickType;
 	}
 
-	return 0xF0;
+	return 0xF0U;
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {

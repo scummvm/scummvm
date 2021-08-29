@@ -157,7 +157,7 @@ void checkSensors(void) {
 			uint32      sFlags = nonActorSenseFlags;
 			if (isActor(senseobj)) {
 				Actor *a = (Actor *)senseobj;
-				sFlags = a->enchantmentFlags;
+				sFlags = a->_enchantmentFlags;
 			}
 
 			if (sensor->check(info, sFlags)) {
@@ -482,15 +482,15 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	    getObject()->world(),
 	    getObject()->getLocation(),
 	    getRange() != 0 ? getRange() : kTileUVSize * kPlatformWidth * 8);
-	GameObject              *objToTest;
+	GameObject              *objToTest = nullptr;
 	iter.first(&objToTest);
-	bool                    objToTestIsActor = isActor(objToTest);
 
 	for (iter.first(&objToTest);
 	        objToTest != NULL;
 	        iter.next(&objToTest)) {
 		if (senseFlags & (1 << actorBlind))
 			continue;
+		bool objToTestIsActor = isActor(objToTest);
 
 		//  This extra test is a HACK to ensure that the center actor
 		//  will be able to sense a protaganist even if the protaganist

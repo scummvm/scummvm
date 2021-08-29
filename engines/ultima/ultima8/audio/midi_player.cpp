@@ -34,7 +34,7 @@ namespace Ultima8 {
 
 byte MidiPlayer::_callbackData[2];
 
-MidiPlayer::MidiPlayer() : _parser(nullptr) {
+MidiPlayer::MidiPlayer() : _parser(nullptr), _transitionParser(nullptr), _playingTransition(false) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
@@ -74,6 +74,12 @@ MidiPlayer::~MidiPlayer() {
 		_parser = 0;
 	}
 
+	if (_transitionParser) {
+		_transitionParser->unloadMusic();
+		delete _transitionParser;
+		_transitionParser = 0;
+	}
+
 	if (_driver) {
 		_driver->close();
 		delete _driver;
@@ -81,7 +87,7 @@ MidiPlayer::~MidiPlayer() {
 	}
 }
 
-void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
+void MidiPlayer::load(byte *data, size_t size, int seqNo) {
 	if (!_driver)
 		return;
 
@@ -103,14 +109,28 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
 
 		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());
-		if (speedHack)
-			_parser->setTempo(_driver->getBaseTempo() * 2);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 		_parser->property(MidiParser::mpDisableAutoStartPlayback, 1);
 
 		if (!_parser->loadMusic(data, size))
 			error("load() wrong music resource");
 	}
+}
+
+void MidiPlayer::loadTransitionData(byte* data, size_t size) {
+	if (size < 4)
+		error("loadTransitionData() wrong music resource size");
+
+	if (READ_BE_UINT32(data) != MKTAG('F', 'O', 'R', 'M'))
+		error("loadTransitionData() Unexpected signature");
+
+	_transitionParser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
+	_transitionParser->setMidiDriver(_driver);
+	_transitionParser->setTimerRate(_driver->getBaseTempo());
+	_transitionParser->property(MidiParser::mpDisableAutoStartPlayback, 1);
+
+	if (!_transitionParser->loadMusic(data, size))
+		error("loadTransitionData() wrong music resource");
 }
 
 void MidiPlayer::play(int trackNo, int branchIndex) {
@@ -133,29 +153,61 @@ void MidiPlayer::play(int trackNo, int branchIndex) {
 	if (_driver->isFading(0))
 		_driver->abortFade(0);
 	_driver->resetSourceVolume(0);
+	if (_transitionParser) {
+		_transitionParser->stopPlaying();
+		_playingTransition = false;
+	}
 
 	if (!_parser->startPlaying()) {
 		warning("play() failed to start playing");
 	}
 }
 
+void MidiPlayer::playTransition(int trackNo, bool overlay) {
+	if (!overlay && _parser)
+		_parser->stopPlaying();
+
+	if (!_transitionParser) {
+		warning("playTransition() transition data not loaded");
+		if (_parser)
+			_parser->stopPlaying();
+		return;
+	}
+
+	_transitionParser->setTrack(trackNo);
+	if (overlay)
+		_transitionParser->setTempo(_driver->getBaseTempo() * 2);
+	_transitionParser->property(MidiParser::mpDisableAllNotesOffMidiEvents, overlay);
+
+	_transitionParser->startPlaying();
+	_playingTransition = true;
+}
+
 void MidiPlayer::stop() {
 	if (_parser)
 		_parser->stopPlaying();
+	if (_transitionParser) {
+		_transitionParser->stopPlaying();
+		_playingTransition = false;
+	}
 }
 
 void MidiPlayer::pause(bool pause) {
-	if (_parser) {
-		if (pause) {
+	if (pause) {
+		if (_parser)
 			_parser->pausePlaying();
-		} else {
+		if (_transitionParser)
+			_transitionParser->pausePlaying();
+	} else {
+		if (_parser)
 			_parser->resumePlaying();
-		}
+		if (_transitionParser)
+			_transitionParser->resumePlaying();
 	}
 }
 
 bool MidiPlayer::isPlaying() {
-	return _parser && _parser->isPlaying();
+	return (_parser && _parser->isPlaying()) || _playingTransition;
 }
 
 void MidiPlayer::startFadeOut(uint16 length) {
@@ -191,6 +243,17 @@ void MidiPlayer::xmidiCallback(byte eventData, void *data) {
 void MidiPlayer::onTimer() {
 	if (_parser)
 		_parser->onTimer();
+	if (_transitionParser) {
+		_transitionParser->onTimer();
+		if (_playingTransition && !_transitionParser->isPlaying()) {
+			// Transition has finished.
+			if (_parser)
+				// Stop the main track (which is still playing if the
+				// transition was overlaid).
+				_parser->stopPlaying();
+			_playingTransition = false;
+		}
+	}
 }
 
 void MidiPlayer::timerCallback(void *data) {

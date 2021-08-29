@@ -87,6 +87,23 @@ public:
 	 */
 	Common::Rect getDesktopResolution();
 
+	/*
+	 * Get the scaling between the SDL Window size and the SDL
+	 * drawable area size. On some system, when HiDPI support is
+	 * enabled, those two sizes are different.
+	 *
+	 * To convert from window coordinate to drawable area coordinate,
+	 * multiple the coordinate by this scaling factor. To convert
+	 * from drawable area coordinate to window coordinate, divide the
+	 * coordinate by this scaling factor.
+	 */
+	float getSdlDpiScalingFactor() const;
+
+	/**
+	 * Returns the scaling mode based on the display DPI
+	 */
+	virtual float getDpiScalingFactor() const;
+
 	bool mouseIsGrabbed() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
@@ -107,6 +124,9 @@ public:
 private:
 	Common::Rect _desktopRes;
 	bool _inputGrabState, _inputLockState;
+
+protected:
+	void getDisplayDpi(float *dpi, float *defaultDpi) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:

@@ -573,6 +573,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// 50 - Macintosh Centris 610	D4
 		// 52 - PowerBook 145			D4
 		// 53 - PowerComputing 8100/100	D5
+		// 70 - PowerBook 540C			D6 // "Director 6 Demystified" p.818
 		// 73 - Power Macintosh 6100/60	D5
 		// 76 - Macintosh Quadra 840av	D4
 		// 256 - IBM PC-type machine	D3
@@ -1279,19 +1280,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = channel->_constraint;
 		break;
 	case kTheCursor:
-		if (channel->_cursor._cursorResId) {
-			d.u.i = channel->_cursor._cursorResId;
-		} else {
-			d.type = ARRAY;
-			d.u.farr = new FArray(2);
-
-			// TODO: How is this handled with multiple casts in D5?
-			d.u.farr->arr[0] = (int)channel->_cursor._cursorCastId.member;
-			d.u.farr->arr[1] = (int)channel->_cursor._cursorMaskId.member;
-		}
+		d = channel->_cursor._cursorResId;
 		break;
 	case kTheEditableText:
-		d.u.i = sprite->_cast ? sprite->_cast->isEditable() : 0;
+		d.u.i = sprite->_editable;
 		break;
 	case kTheForeColor:
 		d.u.i = sprite->_foreColor;
@@ -1453,7 +1445,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			}
 
 			if (castId != sprite->_castId) {
-				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+				if (!sprite->_trails) {
+					g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+					channel->_dirty = true;
+				}
 				channel->setCast(castId);
 				channel->_dirty = true;
 			}
@@ -1482,23 +1477,15 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCursor:
-		if (d.type == INT && channel->_cursor._cursorResId != d.asInt()) {
-			channel->_cursor.readFromResource(d.asInt());
-			score->_cursorDirty = true;
-		} else if (d.type == ARRAY && d.u.farr->arr.size() == 2) {
-			CastMemberID cursorId =	d.u.farr->arr[0].asMemberID();
-			CastMemberID maskId = d.u.farr->arr[1].asMemberID();
-
-			if (cursorId == channel->_cursor._cursorCastId &&
-					maskId == channel->_cursor._cursorMaskId)
-				break;
-
-			channel->_cursor.readFromCast(cursorId, maskId);
-			score->_cursorDirty = true;
+		if (d.type == INT) {
+			channel->_cursor.readFromResource(d);
+		} else {
+			channel->_cursor.readFromCast(d);
 		}
+		score->_cursorDirty = true;
 		break;
 	case kTheEditableText:
-		channel->setEditable(d.asInt());
+		channel->_sprite->_editable = d.asInt();
 		break;
 	case kTheForeColor:
 		if ((uint32)d.asInt() != sprite->_foreColor) {
@@ -1539,16 +1526,22 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
-			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			// adding the dirtyRect only when the trails is false. Other changes which will add dirtyRect may also apply this patch
+			// this is for fixing the bug in jman-win. Currently, i've only patched the LocH, LocV and castNum since those are the only ones used in jman
+			if (!channel->_sprite->_trails) {
+				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				channel->_dirty = true;
+			}
 			channel->_currentPoint.x = d.asInt();
-			channel->_dirty = true;
 		}
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
-			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			if (!channel->_sprite->_trails) {
+				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				channel->_dirty = true;
+			}
 			channel->_currentPoint.y = d.asInt();
-			channel->_dirty = true;
 		}
 		break;
 	case kTheMoveableSprite:

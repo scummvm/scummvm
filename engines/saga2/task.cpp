@@ -193,7 +193,7 @@ void TaskStackList::read(Common::InSaveFile *in) {
 		ts->read(in);
 
 		//  Plug this TaskStack into the Actor
-		ts->getActor()->curTask = ts;
+		ts->getActor()->_curTask = ts;
 	}
 }
 
@@ -824,7 +824,7 @@ int16 WanderTask::getType(void) const {
 
 void WanderTask::abortTask(void) {
 	//  if the actor has a wander motion, abort it
-	MotionTask *actorMotion = stack->getActor()->moveTask;
+	MotionTask *actorMotion = stack->getActor()->_moveTask;
 
 	if (actorMotion && actorMotion->isWander()) actorMotion->finishWalk();
 }
@@ -861,7 +861,7 @@ bool WanderTask::operator == (const Task &t) const {
 //	Update function used when task is not paused
 
 TaskResult WanderTask::handleWander(void) {
-	MotionTask  *actorMotion = stack->getActor()->moveTask;
+	MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 	//  If the actor is not already wandering, start a wander motion
 	//  task
@@ -980,7 +980,7 @@ void TetheredWanderTask::abortTask(void) {
 		delete gotoTether;
 		gotoTether = NULL;
 	} else {
-		MotionTask *actorMotion = stack->getActor()->moveTask;
+		MotionTask *actorMotion = stack->getActor()->_moveTask;
 
 		//  if the actor has a tethered wander motion, abort it
 		if (actorMotion && actorMotion->isTethered())
@@ -1025,7 +1025,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 		bool            startWander = false;
 		TileRegion      motionTether;
 
-		MotionTask  *actorMotion = a->moveTask;
+		MotionTask  *actorMotion = a->_moveTask;
 
 		if (actorMotion) {
 			TileRegion  motionTeth = actorMotion->getTether();
@@ -1134,7 +1134,7 @@ void GotoTask::abortTask(void) {
 		delete wander;
 		wander = NULL;
 	} else {
-		MotionTask  *actorMotion = stack->getActor()->moveTask;
+		MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 		if (actorMotion && actorMotion->isWalk()) actorMotion->finishWalk();
 	}
@@ -1178,7 +1178,7 @@ TaskResult GotoTask::update(void) {
 
 		//  Determine if there is aready a motion task, and if so,
 		//  wether or not it needs to be modified.
-		MotionTask  *actorMotion = a->moveTask;
+		MotionTask  *actorMotion = a->_moveTask;
 		TilePoint   actorLoc = a->getLocation();
 
 		if (actorMotion != NULL && actorMotion->isWalkToDest()) {
@@ -1782,7 +1782,7 @@ TaskResult GoAwayFromTask::update(void) {
 		dest.v = actorLoc.v + ((int32)repulsionVector.v * 64 / repulsionDist);
 		dest.z = actorLoc.z;
 	} else
-		dest = actorLoc + dirTable_[a->currentFacing];
+		dest = actorLoc + dirTable_[a->_currentFacing];
 
 	if (goTask != NULL) {
 		if (goTask->getTarget() != dest)
@@ -2063,7 +2063,7 @@ TaskResult HuntTask::evaluate(void) {
 TaskResult HuntTask::update(void) {
 	Actor       *a = stack->getActor();
 
-	if (a->moveTask && a->moveTask->isPrivledged()) return taskNotDone;
+	if (a->_moveTask && a->_moveTask->isPrivledged()) return taskNotDone;
 
 	//  Reevaluate the target
 	evaluateTarget();
@@ -2975,8 +2975,8 @@ HuntToKillTask::HuntToKillTask(
 	debugC(2, kDebugTasks, " - HuntToKillTask");
 	Actor       *a = stack->getActor();
 
-	if (isActor(a->currentTarget))
-		currentTarget = (Actor *)a->currentTarget;
+	if (isActor(a->_currentTarget))
+		currentTarget = (Actor *)a->_currentTarget;
 
 	a->setFightStance(true);
 }
@@ -3039,7 +3039,7 @@ void HuntToKillTask::abortTask(void) {
 
 	Actor       *a = stack->getActor();
 
-	a->flags &= ~Actor::specialAttack;
+	a->_flags &= ~Actor::specialAttack;
 
 	a->setFightStance(false);
 }
@@ -3048,7 +3048,7 @@ void HuntToKillTask::abortTask(void) {
 
 TaskResult HuntToKillTask::update(void) {
 	if (specialAttackCtr == 0) {
-		stack->getActor()->flags |= Actor::specialAttack;
+		stack->getActor()->_flags |= Actor::specialAttack;
 		//  A little hack to make monsters with 99 spellcraft cast spells more often
 		if (stack->getActor()->getStats()->spellcraft >= 99)
 			specialAttackCtr = 3;
@@ -3204,7 +3204,7 @@ void HuntToKillTask::evaluateTarget(void) {
 			//  action currently taking place
 			if (atTarget()) atTargetabortTask();
 			currentTarget = bestTarget;
-			a->currentTarget = currentTarget;
+			a->_currentTarget = currentTarget;
 		}
 
 		flags |= evalWeapon;
@@ -3248,7 +3248,7 @@ TaskResult HuntToKillTask::atTargetUpdate(void) {
 	Actor   *a = stack->getActor();
 
 	//  If we're ready to attack, attack
-	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(6) == 0) {
+	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(7) == 0) {
 		a->attack(currentTarget);
 		flags |= evalWeapon;
 	}
@@ -3434,9 +3434,9 @@ TaskResult HuntToGiveTask::atTargetUpdate(void) {
 bool BandTask::BandingRepulsorIterator::first(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	assert(a->leader != NULL && a->leader->followers != NULL);
+	assert(a->_leader != NULL && a->_leader->_followers != NULL);
 
-	band = a->leader->followers;
+	band = a->_leader->_followers;
 	bandIndex = 0;
 
 	while (bandIndex < band->size()) {
@@ -3460,8 +3460,8 @@ bool BandTask::BandingRepulsorIterator::first(
 bool BandTask::BandingRepulsorIterator::next(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	assert(a->leader != NULL && a->leader->followers != NULL);
-	assert(band == a->leader->followers);
+	assert(a->_leader != NULL && a->_leader->_followers != NULL);
+	assert(band == a->_leader->_followers);
 	assert(bandIndex < band->size());
 
 	bandIndex++;
@@ -3567,7 +3567,7 @@ bool BandTask::operator == (const Task &t) const {
 
 void BandTask::evaluateTarget(void) {
 	if (targetEvaluateCtr == 0) {
-		Actor           *leader = stack->getActor()->leader;
+		Actor           *leader = stack->getActor()->_leader;
 		TilePoint       actorLoc = stack->getActor()->getLocation(),
 		                movementVector;
 		TilePoint       repulsorVector;
@@ -3719,7 +3719,7 @@ TaskResult BandTask::atTargetUpdate(void) {
 	if (attend != NULL)
 		attend->update();
 	else {
-		attend = new AttendTask(stack, a->leader);
+		attend = new AttendTask(stack, a->_leader);
 		if (attend != NULL)
 			attend->update();
 	}
@@ -4107,7 +4107,7 @@ int16 AttendTask::getType(void) const {
 //----------------------------------------------------------------------
 
 void AttendTask::abortTask(void) {
-	MotionTask  *actorMotion = stack->getActor()->moveTask;
+	MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 	//  Determine if we need to abort the actor motion
 	if (actorMotion != NULL && actorMotion->isTurn())
@@ -4128,9 +4128,9 @@ TaskResult AttendTask::update(void) {
 	TilePoint   attendLoc = obj->getWorldLocation();
 
 	//  Determine if we are facing the object
-	if (a->currentFacing != (attendLoc - a->getLocation()).quickDir()) {
+	if (a->_currentFacing != (attendLoc - a->getLocation()).quickDir()) {
 		//  If not, turn
-		if (!a->moveTask || !a->moveTask->isTurn())
+		if (!a->_moveTask || !a->_moveTask->isTurn())
 			MotionTask::turnTowards(*a, attendLoc);
 	}
 

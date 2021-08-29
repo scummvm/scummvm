@@ -134,6 +134,15 @@ struct errcxdef {
 	  (e) = fr_.errcode; \
 	  (ctx)->errcxptr = fr_.errprv;
 
+#define ERRCATCH_ERRCODE_UNUSED(ctx) \
+	  assert(1==1 && (ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv; \
+	} \
+	else \
+	{ \
+	  assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv;
+
 /* retrieve argument (int, string) in current error frame */
 #define errargint(argnum) (fr_.erraav[argnum].erraint)
 #define errargstr(argnum) (fr_.erraav[argnum].errastr)

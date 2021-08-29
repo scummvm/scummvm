@@ -119,6 +119,10 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	}
 }
 
+float OSystem_iOS7::getHiDPIScreenFactor() const {
+	return [UIScreen mainScreen].scale;
+}
+
 void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
 
@@ -593,5 +597,13 @@ void OSystem_iOS7::setShowKeyboard(bool show) {
 }
 
 bool OSystem_iOS7::isKeyboardShown() const {
-	return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+	} else {
+		__block bool shown = false;
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			 shown = [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+		});
+		return shown;
+	}
 }

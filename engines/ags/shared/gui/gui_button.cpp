@@ -86,6 +86,10 @@ const String &GUIButton::GetText() const {
 	return _text;
 }
 
+bool GUIButton::IsImageButton() const {
+	return Image != 0;
+}
+
 bool GUIButton::IsClippingImage() const {
 	return (Flags & kGUICtrl_Clip) != 0;
 }
@@ -93,7 +97,6 @@ bool GUIButton::IsClippingImage() const {
 void GUIButton::Draw(Bitmap *ds) {
 	bool draw_disabled = !IsGUIEnabled(this);
 
-	check_font(&Font);
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
 	if (_G(gui_disabled_style) == GUIDIS_UNCHANGED ||
 	        _G(gui_disabled_style) == GUIDIS_GUIOFF) {
@@ -108,7 +111,7 @@ void GUIButton::Draw(Bitmap *ds) {
 		return;
 
 	// CHECKME: why testing both CurrentImage and Image?
-	if (CurrentImage > 0 && Image > 0)
+	if (CurrentImage > 0 && IsImageButton())
 		DrawImageButton(ds, draw_disabled);
 	// CHECKME: why don't draw frame if no Text? this will make button completely invisible!
 	else if (!_text.IsEmpty())
@@ -143,32 +146,48 @@ void GUIButton::SetText(const String &text) {
 	NotifyParentChanged();
 }
 
+
 bool GUIButton::OnMouseDown() {
-	if (PushedImage > 0)
-		CurrentImage = PushedImage;
+	int new_image = (PushedImage > 0) ? PushedImage : CurrentImage;
+	if (CurrentImage != new_image || !IsImageButton())
+		NotifyParentChanged();
+	CurrentImage = new_image;
 	IsPushed = true;
 	return false;
 }
 
 void GUIButton::OnMouseEnter() {
-	CurrentImage = IsPushed ? PushedImage : MouseOverImage;
+	int new_image = (IsPushed && PushedImage > 0) ? PushedImage :
+		(MouseOverImage > 0) ? MouseOverImage : Image;
+	if ((CurrentImage != new_image) || (IsPushed && !IsImageButton())) {
+		CurrentImage = new_image;
+		NotifyParentChanged();
+	}
 	IsMouseOver = true;
 }
 
 void GUIButton::OnMouseLeave() {
-	CurrentImage = Image;
+	if ((CurrentImage != Image) || (IsPushed && !IsImageButton())) {
+		CurrentImage = Image;
+		NotifyParentChanged();
+	}
 	IsMouseOver = false;
 }
 
 void GUIButton::OnMouseUp() {
+	int new_image;
 	if (IsMouseOver) {
-		CurrentImage = MouseOverImage;
+		new_image = MouseOverImage;
 		if (IsGUIEnabled(this) && IsClickable())
 			IsActivated = true;
 	} else {
-		CurrentImage = Image;
+		new_image = Image;
 	}
 
+	if ((CurrentImage != new_image) || (IsPushed && !IsImageButton())) {
+		CurrentImage = new_image;
+		NotifyParentChanged();
+	}
 	IsPushed = false;
 }
 
@@ -299,7 +318,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		                                   _GP(spriteset)[CurrentImage]->GetWidth(),
 		                                   _GP(spriteset)[CurrentImage]->GetHeight()));
 	}
-	ds->SetClip(Rect(0, 0, ds->GetWidth() - 1, ds->GetHeight() - 1));
+	ds->ResetClip();
 
 	// Don't print Text of (INV) (INVSHR) (INVNS)
 	if (_placeholder == kButtonPlace_None && !_unnamed)

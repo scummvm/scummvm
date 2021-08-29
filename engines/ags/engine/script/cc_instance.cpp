@@ -517,6 +517,10 @@ int ccInstance::Run(int32_t curpc) {
 			DumpInstruction(codeOp);
 		}
 
+		if (curpc == 546 && pc >= 3400 && pc <= 3447) {
+			warning("X\n");
+		}
+
 		switch (codeOp.Instruction.Code) {
 		case SCMD_LINENUM:
 			line_number = arg1.IValue;
@@ -1466,16 +1470,16 @@ void ccInstance::Free() {
 	code = nullptr;
 	strings = nullptr;
 
-	delete [] stack;
-	delete [] stackdata;
-	delete [] exports;
+	delete[] stack;
+	delete[] stackdata;
+	delete[] exports;
 	stack = nullptr;
 	stackdata = nullptr;
 	exports = nullptr;
 
 	if ((flags & INSTF_SHAREDATA) == 0) {
-		delete [] resolved_imports;
-		delete [] code_fixups;
+		delete[] resolved_imports;
+		delete[] code_fixups;
 	}
 	resolved_imports = nullptr;
 	code_fixups = nullptr;

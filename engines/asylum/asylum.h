@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "asylum/resources/data.h"
@@ -161,6 +162,7 @@ public:
 	void toggleGameFlag(GameFlag flag);
 	bool isGameFlagSet(GameFlag flag) const;
 	bool isGameFlagNotSet(GameFlag flag) const;
+	bool areGameFlagsSet(uint from, uint to) const;
 	void resetFlags();
 
 	// Misc
@@ -168,6 +170,10 @@ public:
 	uint getRandomBit()      { return _rnd->getRandomBit(); }
 
 	bool rectContains(const int16 (*rectPtr)[4], const Common::Point &p) const;
+
+	// Steam achievements
+	void unlockAchievement(const Common::String &id);
+	void checkAchievements();
 
 	/**
 	 * Switch message handler.
@@ -190,6 +196,8 @@ public:
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
+
+	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
 
 private:
 	const ADGameDescription *_gameDescription;

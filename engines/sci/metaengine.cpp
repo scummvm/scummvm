@@ -353,12 +353,8 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				}
 				SaveStateDescriptor descriptor(slotNr, meta.name);
 
-				if (slotNr == 0) {
-					// ScummVM auto-save slot
-					descriptor.setWriteProtectedFlag(true);
+				if (descriptor.isAutosave()) {
 					hasAutosave = true;
-				} else {
-					descriptor.setWriteProtectedFlag(false);
 				}
 
 				saveList.push_back(descriptor);
@@ -382,15 +378,6 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	const Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 	SaveStateDescriptor descriptor(slotNr, "");
-
-	if (slotNr == 0) {
-		// ScummVM auto-save slot
-		descriptor.setWriteProtectedFlag(true);
-		descriptor.setDeletableFlag(false);
-	} else {
-		descriptor.setWriteProtectedFlag(false);
-		descriptor.setDeletableFlag(true);
-	}
 
 	if (in) {
 		SavegameMetadata meta;

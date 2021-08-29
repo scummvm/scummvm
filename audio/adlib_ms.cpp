@@ -25,12 +25,14 @@
 #include "common/debug.h"
 
 bool OplInstrumentDefinition::isEmpty() {
-	// An instrument with 0 attack, decay, sustain and release produces no
-	// sound. Check this as a shorthand for checking every field for 0.
-	return operator0.decayAttack == 0 && operator0.releaseSustain == 0 &&
-		   operator1.decayAttack == 0 && operator1.releaseSustain == 0 &&
-		   (!fourOperator || (operator2.decayAttack == 0 && operator2.releaseSustain == 0 &&
-							  operator3.decayAttack == 0 && operator3.releaseSustain == 0));
+	return operator0.freqMultMisc == 0 && operator0.level == 0 && operator0.decayAttack == 0 &&
+		operator0.releaseSustain == 0 && operator0.waveformSelect == 0 &&
+		operator1.freqMultMisc == 0 && operator1.level == 0 && operator1.decayAttack == 0 &&
+		operator1.releaseSustain == 0 && operator1.waveformSelect == 0 && connectionFeedback0 == 0 &&
+		(!fourOperator || (operator2.freqMultMisc == 0 && operator2.level == 0 && operator2.decayAttack == 0 &&
+			operator2.releaseSustain == 0 && operator2.waveformSelect == 0 &&
+			operator3.freqMultMisc == 0 && operator3.level == 0 && operator3.decayAttack == 0 &&
+			operator3.releaseSustain == 0 && operator3.waveformSelect == 0 && connectionFeedback1 == 0));
 }
 
 uint8 OplInstrumentDefinition::getNumberOfOperators() {
@@ -950,10 +952,14 @@ void MidiDriver_ADLIB_Multisource::initOpl() {
 		writeRegister(OPL_REGISTER_TEST | OPL_REGISTER_SET_2_OFFSET, _oplType == OPL::Config::kOpl3 ? 0 : 0x20, true);
 	}
 
-	// Stop and mask the timers and reset the interrupt.
+	// Clear, stop and mask the timers and reset the interrupt.
+	writeRegister(OPL_REGISTER_TIMER1, 0, true);
+	writeRegister(OPL_REGISTER_TIMER2, 0, true);
 	writeRegister(OPL_REGISTER_TIMERCONTROL, 0x60, true);
 	writeRegister(OPL_REGISTER_TIMERCONTROL, 0x80, true);
 	if (_oplType == OPL::Config::kDualOpl2) {
+		writeRegister(OPL_REGISTER_TIMER1 | OPL_REGISTER_SET_2_OFFSET, 0, true);
+		writeRegister(OPL_REGISTER_TIMER2 | OPL_REGISTER_SET_2_OFFSET, 0, true);
 		writeRegister(OPL_REGISTER_TIMERCONTROL | OPL_REGISTER_SET_2_OFFSET, 0x60, true);
 		writeRegister(OPL_REGISTER_TIMERCONTROL | OPL_REGISTER_SET_2_OFFSET, 0x80, true);
 	}

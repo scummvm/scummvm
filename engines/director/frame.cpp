@@ -145,19 +145,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_tempo = stream->readByte();
 		_transType = static_cast<TransitionType>(stream->readByte());
 		_sound1 = CastMemberID(stream->readUint16(), 0);
+		_sound2 = CastMemberID(stream->readUint16(), 0);
+		_soundType2 = stream->readByte();
 
-		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-			_sound2 = CastMemberID(stream->readUint16(), 0);
-			_soundType2 = stream->readByte();
-		} else {
-			stream->read(unk, 3);
-			if (unk[0] != 0 || unk[1] != 0 || unk[2] != 0)
-				warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
-		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
 
-		if (_vm->getPlatform() != Common::kPlatformMacintosh) {
+		if (_vm->getPlatform() == Common::kPlatformWindows) {
 			_sound2 = CastMemberID(stream->readUint16(), 0);
 			_soundType2 = stream->readByte();
 		}
@@ -190,7 +184,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 
 		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 
-		if (_vm->getPlatform() == Common::kPlatformMacintosh)
+		if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformMacintoshII)
 			stream->read(unk, 3);
 	} else if (version >= kFileVer400 && version < kFileVer500) {
 		// Sound/Tempo/Transition

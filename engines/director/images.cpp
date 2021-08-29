@@ -144,48 +144,17 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
-	// Initial implementation of 32-bit images to palettised sprites.
-	switch (fromBpp) {
-	case 4:
-		switch (toBpp) {
-		case 1:
-			// maybe this parts should also calculated by wm->findBestColor
-			if (red == 255 && blue == 255 && green == 255) {
-				*((byte*)surfacePointer) = 255;
-			} else if (red == 0 && blue == 0 && green == 0) {
-				*((byte*)surfacePointer) = 0;
-			} else {
-				for (byte p = 0; p < _paletteColorCount; p++) {
-					if (_palette[p * 3 + 0] == red &&
-						_palette[p * 3 + 1] == green &&
-						_palette[p * 3 + 2] == blue) {
-						*((byte*)surfacePointer) = p;
-					}
-				}
-			}
-			break;
-
-		default:
-			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-				fromBpp, toBpp);
-		}
+	switch (toBpp) {
+	case 1:
+		*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
 		break;
 
-	case 2:
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			break;
-
-		default:
-			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-					fromBpp, toBpp);
-		}
+	case 4:
+		*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
 		break;
 
 	default:
-		warning("BITDDecoder::convertPixelIntoSurface(): could not convert from %d to %d",
-			fromBpp, toBpp);
+		warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
 		break;
 	}
 }
@@ -197,7 +166,22 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
-	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && _version < kFileVer400 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
+	int bytesNeed = _surface->w * _surface->h * _bitsPerPixel / 8;
+	bool skipCompression = false;
+	if (_bitsPerPixel != 1) {
+		if (_version < kFileVer300) {
+			skipCompression = stream.size() >= bytesNeed;
+		} else if (_version < kFileVer400) {
+			// for D3, looks like it will round up the _surface->w to align 2
+			// not sure whether D2 will have the same logic.
+			// check lzone-mac data/r-c/tank.a-1 and lzone-mac data/r-a/station-b.01.
+			if (_surface->w & 1)
+				bytesNeed += _surface->h * _bitsPerPixel / 8;
+			skipCompression = stream.size() == bytesNeed;
+		}
+	}
+
+	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || skipCompression) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());
@@ -272,17 +256,29 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					convertPixelIntoSurface(_surface->getBasePtr(x, y),
-						(_bitsPerPixel / 8),
-						_surface->format.bytesPerPixel,
-						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					if (_version < kFileVer400) {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0x1f) << 3);
+					} else {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					}
 					x++;
 					break;
 
 				case 32:
+					// if we have the issue in D3 32bpp images, then the way to fix it should be the same as 16bpp images.
+					// check the code above, there is different behaviour between in D4 and D3. Currently we are only using D4.
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
 						(_bitsPerPixel / 8),
 						_surface->format.bytesPerPixel,

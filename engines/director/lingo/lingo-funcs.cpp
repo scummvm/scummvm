@@ -313,15 +313,13 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	func_goto(frame, movie);
 }
 
-void Lingo::func_cursor(CastMemberID cursorId, CastMemberID maskId) {
+void Lingo::func_cursor(Datum cursorDatum) {
 	Score *score = _vm->getCurrentMovie()->getScore();
-	score->_defaultCursor.readFromCast(cursorId, maskId);
-	score->_cursorDirty = true;
-}
-
-void Lingo::func_cursor(int cursorId) {
-	Score *score = _vm->getCurrentMovie()->getScore();
-	score->_defaultCursor.readFromResource(cursorId);
+	if (cursorDatum.type == ARRAY){
+		score->_defaultCursor.readFromCast(cursorDatum);
+	} else {
+		score->_defaultCursor.readFromResource(cursorDatum);
+	}
 	score->_cursorDirty = true;
 }
 

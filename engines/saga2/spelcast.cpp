@@ -36,7 +36,6 @@ namespace Saga2 {
 
 extern WorldMapData                     *mapList;
 extern SpellStuff                       *spellBook;
-extern bool                             gameRunning;  // kludge
 extern PlatformHandle   platformList;       // platform resource hunk
 
 /* ===================================================================== *
@@ -634,7 +633,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, Spell
 
 
 SpellInstance::~SpellInstance() {
-	if (age < implementAge && gameRunning)
+	if (age < implementAge && g_vm->_gameRunning)
 		spellBook[spell].implement(caster, target);
 	for (int32 i = 0; i < eList.count; i++) {
 		if (eList.displayList[i].efx)
@@ -797,7 +796,6 @@ Effectron::Effectron(uint16 newPos, uint16 newDir) {
 	age = 0;
 	pos = (newDir << 16) + newPos;
 	flags = 0;
-	flags = effectronDead;
 	parent = nullptr;
 	partno = 0;
 	totalSteps = stepNo = 0;
@@ -1027,7 +1025,7 @@ int16 tileNopeHeight(
 GameObject *objectNollision(Effectron *obj, const TilePoint &loc) {
 //    ProtoObj        *proto = obj->proto();
 	TileRegion      volume;
-	GameObject      *obstacle;
+	GameObject      *obstacle = nullptr;
 
 	volume.min.u = loc.u - obj->brdCall();
 	volume.min.v = loc.v - obj->brdCall();

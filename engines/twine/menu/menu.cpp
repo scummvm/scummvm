@@ -1057,6 +1057,9 @@ void Menu::processBehaviourMenu() {
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		FrameMarker frame(_engine, 50);
 		_engine->readKeys();
+		if (_engine->shouldQuit()) {
+			break;
+		}
 
 #if 0
 		if (isBehaviourHovered(HeroBehaviourType::kNormal)) {

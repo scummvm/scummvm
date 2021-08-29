@@ -52,7 +52,12 @@ void AnimData::loadKeyFrames(Common::SeekableReadStream &stream) {
 	}
 }
 
+void AnimData::reset() {
+	_keyframes.clear();
+}
+
 bool AnimData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	reset();
 	_numKeyframes = stream.readUint16LE();
 	_numBoneframes = stream.readUint16LE();
 	_loopFrame = stream.readUint16LE();

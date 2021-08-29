@@ -524,7 +524,23 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 	Screen::FontId oldFont = _screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
 	_screen->_charSpacing = -2;
 
-	_screen->printText((const char *)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xF6 : 0);
+	Common::String strr((const char *)str);
+	Common::String revBuffer;
+	Common::String lineBuffer;
+	const char *tmp = strr.c_str();
+	if (_flags.lang == Common::HE_ISR) {
+		for (int i = strr.size() - 1; i >= 0; --i) {
+			if (str[i] != '\r') {
+				lineBuffer += str[i];
+			} else {
+				revBuffer = lineBuffer + '\r' + revBuffer;
+				lineBuffer.clear();
+			}
+		}
+		tmp = revBuffer.c_str();
+	}
+
+	_screen->printText(tmp, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xF6 : 0);
 
 	_screen->_charSpacing = 0;
 	_screen->setFont(oldFont);

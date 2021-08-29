@@ -26,6 +26,7 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/str-array.h"
+#include "common/queue.h"
 #include "common/rect.h"
 
 #include "director/types.h"
@@ -310,7 +311,7 @@ public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	void processEvents();
+	void processEvents(Common::Queue<LingoEvent> &queue);
 
 public:
 	void execute();
@@ -357,8 +358,7 @@ public:
 	void func_gotoprevious();
 	void func_play(Datum &frame, Datum &movie);
 	void func_playdone();
-	void func_cursor(CastMemberID cursorId, CastMemberID maskId);
-	void func_cursor(int cursorId);
+	void func_cursor(Datum cursorDatum);
 	int func_marker(int m);
 	uint16 func_label(Datum &label);
 

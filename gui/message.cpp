@@ -31,15 +31,19 @@
 namespace GUI {
 
 enum {
-	kOkCmd = 'OK  ',
-	kCancelCmd = 'CNCL'
+	kDefaultCmd = 'DFLT',
+	kAltCmd = 'ALTC'
 };
 
 
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-void MessageDialog::init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url) {
+void MessageDialog::init(const Common::U32String &message,
+						 const Common::U32String &defaultButton,
+						 const Common::U32StringArray &altButtons,
+						 Graphics::TextAlign alignment,
+						 const char *url) {
 	_url = url;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -53,19 +57,20 @@ void MessageDialog::init(const Common::U32String &message, const Common::U32Stri
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
 	Common::Array<Common::U32String> lines;
-	int lineCount, okButtonPos, cancelButtonPos;
-	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
+	int lineCount;
+	const int horizontalMargin = 10;
+	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * horizontalMargin - 20, lines);
+	const int buttonCount = altButtons.size() + 1;
+	const int buttonSpacing = 10;
+	const int buttonsTotalWidth = buttonCount * buttonWidth + (buttonCount - 1) * buttonSpacing;
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
-	if (!altButton.empty())
-		_w = MAX(maxlineWidth, (2 * buttonWidth) + 10) + 20;
-	else
-		_w = MAX(maxlineWidth, buttonWidth) + 20;
+	_w = MAX(maxlineWidth, buttonsTotalWidth) + 2 * horizontalMargin;
 
 	lineCount = lines.size();
 
 	_h = 16;
-	if (!defaultButton.empty() || !altButton.empty())
+	if (!defaultButton.empty() || !altButtons.empty())
 		_h += buttonHeight + 8;
 
 	// Limit the number of lines so that the dialog still fits on the screen.
@@ -80,52 +85,73 @@ void MessageDialog::init(const Common::U32String &message, const Common::U32Stri
 
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], alignment);
+		new StaticTextWidget(this, horizontalMargin, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], alignment);
 	}
 
-	if (!defaultButton.empty() && !altButton.empty()) {
-		okButtonPos = (_w - (buttonWidth * 2)) / 2;
-		cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
-	} else {
-		okButtonPos = cancelButtonPos = (_w - buttonWidth) / 2;
-	}
+	// Assume defaultButton is always given
+	int buttonPos = (_w - buttonsTotalWidth) / 2;
 
 	if (!defaultButton.empty()) {
 		// Confirm dialog
-		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(), kOkCmd, Common::ASCII_RETURN);
+		new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(), kDefaultCmd, Common::ASCII_RETURN);
+		buttonPos += buttonWidth + buttonSpacing;
 	}
 
-	if (!altButton.empty()) {
-		// Cancel dialog
-		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
+	int buttonHotKey = altButtons.size() == 1 ? Common::ASCII_ESCAPE : 0;
+	for (size_t i = 0, total = altButtons.size(); i < total; ++i) {
+		new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButtons[i], Common::U32String(), kAltCmd + i, buttonHotKey);
+		buttonHotKey = 0;
+		buttonPos += buttonWidth + buttonSpacing;
 	}
 }
 
-MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url)
+MessageDialog::MessageDialog(const Common::U32String &message,
+							 const Common::U32String &defaultButton,
+							 const Common::U32String &altButton,
+							 Graphics::TextAlign alignment,
+							 const char *url)
 	: Dialog(30, 20, 260, 124) {
 
-	init(message, defaultButton, altButton, alignment, url);
+	init(message, defaultButton,
+		 altButton.empty() ? Common::U32StringArray() : Common::U32StringArray(1, altButton),
+		 alignment, url);
 }
 
-MessageDialog::MessageDialog(const Common::String &message, const Common::String &defaultButton, const Common::String &altButton, Graphics::TextAlign alignment, const char *url)
+MessageDialog::MessageDialog(const Common::String &message,
+							 const Common::String &defaultButton,
+							 const Common::String &altButton,
+							 Graphics::TextAlign alignment,
+							 const char *url)
 	: Dialog(30, 20, 260, 124) {
 
-	init(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment, url);
+	init(Common::U32String(message), Common::U32String(defaultButton),
+		 altButton.empty() ? Common::U32StringArray() : Common::U32StringArray(1, Common::U32String(altButton)),
+		 alignment, url);
+}
+
+MessageDialog::MessageDialog(const Common::U32String &message,
+							 const Common::U32String &defaultButton,
+							 const Common::U32StringArray &altButtons,
+							 Graphics::TextAlign alignment)
+	: Dialog(30, 20, 260, 124) {
+
+	init(message, defaultButton, altButtons, alignment, nullptr);
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	// FIXME: It's a really bad thing that we use two arbitrary constants
-	if (cmd == kOkCmd) {
+	if (cmd == kDefaultCmd) {
 		setResult(kMessageOK);
 		close();
-	} else if (cmd == kCancelCmd) {
+		return;
+	}
+	if (cmd >= kAltCmd) {
 		if (_url) {
 			if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
 				g_system->openUrl(_url);
 
 			setResult(kMessageOK);
 		} else {
-			setResult(kMessageCancel);
+			setResult(kMessageAlt + cmd - kAltCmd);
 		}
 		close();
 	} else {

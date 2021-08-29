@@ -93,24 +93,19 @@ class GameObject;
     Compressed image class
  * ======================================================================= */
 
-class gCompImage : public gControl {
+class GfxCompImage : public gControl {
 private:
 
-	enum {
-		textSize    = 128
-	};
-
 	// number of image pointer allocated
-	uint16      numPtrAlloc;
-	bool        internalAlloc;
+	uint16      _numPtrAlloc;
+	bool        _internalAlloc;
 
 protected:
-	void        **compImages;       // double pointer(s) the compressed image(s)
-	uint16      currentImage;       // current image index
-	uint16      max, min;           // min max of the index
-	textPallete textPal;            // contains info about coloring for multi-depth text rendering
-	gFont       *textFont;          // pointer to font for this button
-//	char     imageText[textSize];  // text to render on button
+	void        **_compImages;       // double pointer(s) the compressed image(s)
+	uint16      _currentImage;       // current image index
+	uint16      _max, _min;           // min max of the index
+	textPallete _textPal;            // contains info about coloring for multi-depth text rendering
+	gFont       *_textFont;          // pointer to font for this button
 
 protected:
 	virtual void    *getCurrentCompImage(void);      // get the current image
@@ -124,18 +119,18 @@ public:
 		leave = (1 << 1)
 	};
 
-	gCompImage(gPanelList &, const Rect16 &, void *, uint16, AppFunc *cmd = NULL);
+	GfxCompImage(gPanelList &, const Rect16 &, void *, uint16, AppFunc *cmd = NULL);
 
-	gCompImage(gPanelList &, const Rect16 &, void *, const char *,
+	GfxCompImage(gPanelList &, const Rect16 &, void *, const char *,
 	           textPallete &, uint16, AppFunc *cmd = NULL);
 
-	gCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
+	GfxCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
 	           uint16, AppFunc *cmd = NULL);
 
-	gCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
+	GfxCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
 	           const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
-	gCompImage(gPanelList &list,
+	GfxCompImage(gPanelList &list,
 	           const Rect16 &box,
 	           uint32 contextID,
 	           char a, char b, char c,
@@ -144,25 +139,25 @@ public:
 	           uint16 ident,
 	           AppFunc *cmd);
 
-	gCompImage(gPanelList &, const StaticRect &, void **, int16, int16,
+	GfxCompImage(gPanelList &, const StaticRect &, void **, int16, int16,
 	           const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
-	~gCompImage(void);
+	~GfxCompImage(void);
 
 	void    pointerMove(gPanelMessage &msg);
 	void    enable(bool);
 	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
 	int16   getCurrent(void)       {
-		return currentImage;
+		return _currentImage;
 	}
 	int16   getMin(void)           {
-		return min;
+		return _min;
 	}
 	int16   getMax(void)           {
-		return max;
+		return _max;
 	}
 	void    setCurrent(uint16 val) {
-		currentImage = clamp(min, val, max);
+		_currentImage = clamp(_min, val, _max);
 	}
 	void    setExtent(const Rect16 &rect);
 	void    select(uint16 val);
@@ -176,18 +171,18 @@ public:
 	                            const  Rect16 &);
 };
 
-class gSpriteImage : public gCompImage {
+class GfxSpriteImage : public GfxCompImage {
 private:
 
 	//  Color set to draw the object.
-	ColorTable  objColors;
+	ColorTable  _objColors;
 
 protected:
-	Sprite      *sprPtr;
+	Sprite      *_sprPtr;
 
 public:
 	// this one takes a sprite pointer
-	gSpriteImage(gPanelList &, const Rect16 &, GameObject *, char,
+	GfxSpriteImage(gPanelList &, const Rect16 &, GameObject *, char,
 	             uint16, AppFunc *cmd = NULL);
 
 
@@ -200,56 +195,56 @@ public:
     Compressed image button
  * ======================================================================= */
 
-class gCompButton : public gCompImage {
+class GfxCompButton : public GfxCompImage {
 protected:
-	void        *forImage;  // pointer to forground compress image data
-	void        *resImage;  // pointer to resessed compressed image data
-	void        *dimImage;  // pointer to dimmed commpressed image data
-	Rect16      extent;         // area that image covers
-	bool        dimmed;         // duh dim bit
-	bool        internalAlloc;  // set if memory allocated in class
+	void        *_forImage;  // pointer to forground compress image data
+	void        *_resImage;  // pointer to resessed compressed image data
+	void        *_dimImage;  // pointer to dimmed commpressed image data
+	Rect16      _extent;         // area that image covers
+	bool        _dimmed;         // duh dim bit
+	bool        _internalAlloc;  // set if memory allocated in class
 
 public:
 
-	gCompButton(gPanelList &, const Rect16 &, hResContext *, hResID res1, hResID res2,
+	GfxCompButton(gPanelList &, const Rect16 &, hResContext *, hResID res1, hResID res2,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResID contextID, hResID res1, hResID res2,
+	GfxCompButton(gPanelList &, const Rect16 &, hResID contextID, hResID res1, hResID res2,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResContext *, char, char, char, int16, int16,
+	GfxCompButton(gPanelList &, const Rect16 &, hResContext *, char, char, char, int16, int16,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResID, char, char, char, int16, int16,
+	GfxCompButton(gPanelList &, const Rect16 &, hResID, char, char, char, int16, int16,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResContext *, uint32 resID, int8, int8,
+	GfxCompButton(gPanelList &, const Rect16 &, hResContext *, uint32 resID, int8, int8,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResID, uint32, int8, int8,
+	GfxCompButton(gPanelList &, const Rect16 &, hResID, uint32, int8, int8,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, hResContext *, int16,
+	GfxCompButton(gPanelList &, const Rect16 &, hResContext *, int16,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, void **, int16,
+	GfxCompButton(gPanelList &, const Rect16 &, void **, int16,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, void **, int16,
+	GfxCompButton(gPanelList &, const Rect16 &, void **, int16,
 	            const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, void **, int16, void *, bool,
+	GfxCompButton(gPanelList &, const Rect16 &, void **, int16, void *, bool,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, void *,
+	GfxCompButton(gPanelList &, const Rect16 &, void *,
 	            uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const StaticRect &, void **, int16,
+	GfxCompButton(gPanelList &, const StaticRect &, void **, int16,
 	            const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
-	gCompButton(gPanelList &, const Rect16 &, AppFunc *cmd = NULL);
+	GfxCompButton(gPanelList &, const Rect16 &, AppFunc *cmd = NULL);
 
-	~gCompButton(void);
+	~GfxCompButton(void);
 
 
 	bool            activate(gEventType why);        // activate the control
@@ -261,10 +256,10 @@ public:
 	void    draw(void);                          // redraw the panel.
 	void    dim(bool);
 	void    setForImage(void *image) {
-		if (image) forImage = image;
+		if (image) _forImage = image;
 	}
 	void    setResImage(void *image) {
-		if (image) resImage = image;
+		if (image) _resImage = image;
 	}
 
 private:
@@ -279,43 +274,15 @@ protected:
 	virtual void    *getCurrentCompImage(void);
 };
 
-
 /************************************************************************
-* gToggleCompButton -- like a gCompButton but toggle on and off.        *
-************************************************************************/
-
-class gToggleCompButton : public gCompButton {
-public:
-	gToggleCompButton(gPanelList &, const Rect16 &, hResContext *, char, char, char, int16, int16,
-	                  uint16, AppFunc *cmd = NULL);
-
-	gToggleCompButton(gPanelList &, const Rect16 &, hResContext *, int16,
-	                  uint16, AppFunc *cmd = NULL);
-
-	gToggleCompButton(gPanelList &, const Rect16 &, void **, int16,
-	                  uint16, AppFunc *cmd = NULL);
-
-	gToggleCompButton(gPanelList &, const Rect16 &, void **, int16,
-	                  char *, textPallete &, uint16, AppFunc *cmd = NULL);
-
-protected:
-	bool activate(gEventType why);       // activate the control
-	bool pointerHit(gPanelMessage &msg);
-
-public:
-	void select(uint16 val);
-
-};
-
-/************************************************************************
-* gOwnerSelCompButton -- like a gCompButton but does not chage the      *
+* GfxOwnerSelCompButton -- like a GfxCompButton but does not chage the      *
 * selector bit                                                          *
 ************************************************************************/
 
-class gOwnerSelCompButton : public gCompButton {
+class GfxOwnerSelCompButton : public GfxCompButton {
 public:
 
-	gOwnerSelCompButton(gPanelList &, const Rect16 &, void **, int16,
+	GfxOwnerSelCompButton(gPanelList &, const Rect16 &, void **, int16,
 	                    uint16, AppFunc *cmd = NULL);
 
 	//protected:
@@ -325,51 +292,52 @@ public:
 };
 
 /************************************************************************
-* gMultCompButton -- like gCompButton but does any number of images     *
+* GfxMultCompButton -- like GfxCompButton but does any number of images     *
 ************************************************************************/
 
-class gMultCompButton : public gCompButton {
+class GfxMultCompButton : public GfxCompButton {
 private:
-	bool    response;   // tells whether to display an image when hit.
+	bool    _response;   // tells whether to display an image when hit.
 
 protected:
-	void    **images;
-	Rect16  extent;
-	int16   current;
-	int16   min;
-	int16   max;
+	void    **_images;
+	Rect16  _extent;
+	int16   _current;
+	int16   _min;
+	int16   _max;
 
 
 public:
-	gMultCompButton(gPanelList &, const Rect16 &, hResContext *, char, char, char, int16, int16, int16,
+	GfxMultCompButton(gPanelList &, const Rect16 &, hResContext *, char, char, char, int16, int16, int16,
 	                uint16, AppFunc *cmd = NULL);
 
-	gMultCompButton(gPanelList &, const Rect16 &, void **, int16, int16,
+	GfxMultCompButton(gPanelList &, const Rect16 &, void **, int16, int16,
 	                uint16, AppFunc *cmd = NULL);
 
-	gMultCompButton(gPanelList &, const Rect16 &, void **,
+	GfxMultCompButton(gPanelList &, const Rect16 &, void **,
 	                int16, int16, bool,
 	                uint16, AppFunc *cmd = NULL);
 
-	~gMultCompButton(void);
+	~GfxMultCompButton(void);
 
 	int16   getCurrent(void)       {
-		return current;
+		return _current;
 	}
 	int16   getMin(void)           {
-		return min;
+		return _min;
 	}
 	int16   getMax(void)           {
-		return max;
+		return _max;
 	}
 	void    setCurrent(int16 val)  {
-		current = clamp(min, val, max);
+		_current = clamp(_min, val, _max);
 	}
 	void    setImages(void **newImages) {
-		if (images && newImages) images = newImages;
+		if (_images && newImages)
+			_images = newImages;
 	}
 	void setResponse(bool resp) {
-		response = resp;
+		_response = resp;
 	}
 
 protected:
@@ -380,19 +348,19 @@ protected:
 
 
 /* ===================================================================== *
-   gSlider class
+   GfxSlider class
  * ===================================================================== */
 
-class gSlider : public gMultCompButton {
+class GfxSlider : public GfxMultCompButton {
 protected:
-	Rect16  imageRect;
-	int16   slValMin;
-	int16   slValMax;
-	int16   slCurrent;
-	int16   imagePosX;
+	Rect16  _imageRect;
+	int16   _slValMin;
+	int16   _slValMax;
+	int16   _slCurrent;
+	int16   _imagePosX;
 
 public:
-	gSlider(gPanelList &, const Rect16 &, const Rect16 &, int16, int16,
+	GfxSlider(gPanelList &, const Rect16 &, const Rect16 &, int16, int16,
 	        void **, int16, int16,
 	        uint16, AppFunc *cmd = NULL);
 
@@ -410,10 +378,10 @@ private:
 
 public:
 	void    setSliderCurrent(int16 val) {
-		slCurrent = val;
+		_slCurrent = val;
 	}
 	int16   getSliderCurrent(void) {
-		return slCurrent;
+		return _slCurrent;
 	}
 	int16   getSliderLenVal(void);
 	virtual void    *getCurrentCompImage(void);

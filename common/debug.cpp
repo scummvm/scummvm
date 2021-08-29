@@ -32,6 +32,11 @@
 int gDebugLevel = -1;
 bool gDebugChannelsOnly = false;
 
+const DebugChannelDef gDebugChannels[] = {
+	{ kDebugLevelEventRec,   "eventrec",  "Event recorder debug level" },
+	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
+	DEBUG_CHANNEL_END
+};
 namespace Common {
 
 DECLARE_SINGLETON(DebugManager);
@@ -49,6 +54,12 @@ struct DebugLevelComperator {
 DebugManager::DebugManager() :
 	_debugChannelsEnabled(0) {
 	addDebugChannels(gDebugChannels);
+
+	// Create global debug channels mask
+	_globalChannelsMask = 0;
+	for (uint i = 0; gDebugChannels[i].channel != 0; ++i) {
+		_globalChannelsMask |= gDebugChannels[i].channel;
+	}
 }
 
 bool DebugManager::addDebugChannel(uint32 channel, const String &name, const String &description) {
@@ -78,9 +89,12 @@ void DebugManager::addAllDebugChannels(const DebugChannelDef *channels) {
 }
 
 void DebugManager::removeAllDebugChannels() {
+	uint32 globalChannels = _debugChannelsEnabled & _globalChannelsMask;
 	_debugChannelsEnabled = 0;
 	_debugChannels.clear();
 	addDebugChannels(gDebugChannels);
+
+	_debugChannelsEnabled |= globalChannels;
 }
 
 bool DebugManager::enableDebugChannel(const String &name) {

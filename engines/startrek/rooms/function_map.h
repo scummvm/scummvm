@@ -49,9 +49,9 @@ extern const RoomTextOffsets loveTextOffsets[];
 extern const RoomAction mudd0ActionList[], mudd1ActionList[], mudd2ActionList[], mudd3ActionList[];
 extern const RoomAction mudd4ActionList[], mudd5ActionList[];
 extern const RoomTextOffsets mudd0TextOffsets[], mudd1TextOffsets[], mudd2TextOffsets[], mudd3TextOffsets[];
-extern const RoomTextOffsets /*mudd4TextOffsets[],*/ mudd5TextOffsets[];
+extern const RoomTextOffsets mudd4TextOffsets[], mudd5TextOffsets[];
 extern const RoomText mudd0Texts[], mudd1Texts[], mudd2Texts[], mudd3Texts[];
-extern const RoomText /*mudd4Texts[],*/ mudd5Texts[];
+extern const RoomText mudd4Texts[], mudd5Texts[];
 extern const RoomTextOffsets muddTextOffsets[];
 
 extern const RoomAction feather0ActionList[], feather1ActionList[], feather2ActionList[], feather3ActionList[];
@@ -79,12 +79,12 @@ extern const RoomText sins4Texts[], sins5Texts[];
 extern const RoomAction veng0ActionList[], veng1ActionList[], veng2ActionList[], veng3ActionList[];
 extern const RoomAction veng4ActionList[], veng5ActionList[], veng6ActionList[], veng7ActionList[];
 extern const RoomAction veng8ActionList[];
-extern const RoomTextOffsets veng0TextOffsets[], veng1TextOffsets[], veng2TextOffsets[];//, veng3TextOffsets[];
-extern const RoomTextOffsets veng4TextOffsets[];//, veng5TextOffsets[], veng6TextOffsets[], veng7TextOffsets[];
-//extern const RoomTextOffsets veng8TextOffsets[];
-extern const RoomText veng0Texts[], veng1Texts[], veng2Texts[];//, veng3Texts[];
-extern const RoomText veng4Texts[];//, veng5Texts[], veng6Texts[], veng7Texts[];
-//extern const RoomText veng8Texts[];
+extern const RoomTextOffsets veng0TextOffsets[], veng1TextOffsets[], veng2TextOffsets[], veng3TextOffsets[];
+extern const RoomTextOffsets veng4TextOffsets[], veng5TextOffsets[], veng6TextOffsets[], veng7TextOffsets[];
+extern const RoomTextOffsets veng8TextOffsets[];
+extern const RoomText veng0Texts[], veng1Texts[], veng2Texts[], veng3Texts[];
+extern const RoomText veng4Texts[], veng5Texts[], veng6Texts[], veng7Texts[];
+extern const RoomText veng8Texts[];
 extern const RoomTextOffsets vengTextOffsets[];
 
 }

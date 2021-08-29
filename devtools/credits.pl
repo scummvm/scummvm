@@ -586,11 +586,16 @@ begin_credits("Credits");
 			# if one wants different sorting (e.g. based on the full engine name, not
 			# just the abbreviation used for the directory name), then somewhat more
 			# sophistication is needed
-			my $file;
-			my @files = `ls engines/*/credits.pl | sort`;
-			foreach $file (@files) {
-				my $credits_pl = readfile($file);
-				eval $credits_pl;
+			my $dir;
+			my @dirs = `ls -d engines/*/ | sort`;
+			foreach $dir (@dirs) {
+				my $file = "${dir}/credits.pl";
+				$file =~ s/\R//g;
+
+				if (-e $file) {
+					my $credits_pl = readfile($file);
+					eval $credits_pl;
+				}
 			}
 		end_section();
 
@@ -723,6 +728,7 @@ begin_credits("Credits");
 				add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
 				add_person("Dani&euml;l ter Laan", "NoiZe", "Restoring original Drascula tracks, and writing convert_dxa.bat");
 				add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
+				add_person("Coen Rampen", "NMIError", "Sound improvements");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 			end_section();
 		end_section();

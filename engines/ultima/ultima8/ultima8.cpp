@@ -982,7 +982,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 
 bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
 	// Check for gumps that prevent saving
-	if ( _desktopGump->FindGump(&HasPreventSaveFlag, true)) {
+	if (_desktopGump->FindGump(&HasPreventSaveFlag, true)) {
 		pout << "Can't save: open gump preventing save." << Std::endl;
 		return false;
 	}
@@ -1173,8 +1173,8 @@ void Ultima8Engine::setupCoreGumps() {
 		_objectManager->reserveObjId(i);
 }
 
-bool Ultima8Engine::newGame(int saveSlot, int difficulty) {
-	debugN(MM_INFO, "Starting New Game (slot %d difficulty %d)... \n", saveSlot, difficulty);
+bool Ultima8Engine::newGame(int saveSlot) {
+	debugN(MM_INFO, "Starting New Game (slot %d)... \n", saveSlot);
 
 	// First validate we still have a save file for the slot
 	if (saveSlot != -1) {
@@ -1215,12 +1215,6 @@ bool Ultima8Engine::newGame(int saveSlot, int difficulty) {
 	//	av->teleport(54, 14783,5959,8); // shrine of the Ancient Ones; Hanoi
 	//	av->teleport(5, 5104,22464,48); // East road (tenebrae end)
 
-	_game->startInitialUsecode(saveSlot);
-
-	if (difficulty > 0) {
-		_world->get_instance()->setGameDifficulty(difficulty);
-	}
-
 	if (GAME_IS_CRUSADER) {
 		_kernel->addProcess(new TargetReticleProcess());
 		_kernel->addProcess(new ItemSelectionProcess());
@@ -1228,6 +1222,8 @@ bool Ultima8Engine::newGame(int saveSlot, int difficulty) {
 		_kernel->addProcess(new CycleProcess());
 		_kernel->addProcess(new SnapProcess());
 	}
+
+	_game->startInitialUsecode(saveSlot);
 
 	if (saveSlot == -1)
 		ConfMan.set("lastSave", "");

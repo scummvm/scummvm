@@ -46,8 +46,6 @@ public:
 	void OnFocus(bool gain) override;
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	static Gump *showLoadSaveGump(Gump *parent, bool save);
-
 private:
 	int _highlighted;
 	int32 _buttonWidth;

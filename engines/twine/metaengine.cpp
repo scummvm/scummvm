@@ -28,10 +28,12 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 #include "twine/achievements_tables.h"
 #include "twine/detection.h"
 #include "twine/input.h"
+#include "twine/renderer/screens.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -60,132 +62,18 @@ public:
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
-	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override {
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override {
 		return TwinE::achievementDescriptionList;
 	}
 
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
-static const ExtraGuiOption OptWallCollision = {
-	_s("Enable wall collisions"),
-	_s("Enable the original wall collision damage"),
-	"wallcollision",
-	false
-};
-
-static const ExtraGuiOption OptCrossFade = {
-	_s("Enable cross fade"),
-	_s("Enable cross fading of images and scenes"),
-	"crossfade",
-	false
-};
-
-// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
-static const ExtraGuiOption OptDisableSaveMenu = {
-	_s("Disable save menu"),
-	_s("The original only had autosaves. This allows you to save whenever you want."),
-	"useautosaving",
-	false
-};
-
-static const ExtraGuiOption OptDebug = {
-	_s("Enable debug mode"),
-	_s("Enable the debug mode"),
-	"debug",
-	false
-};
-
-static const ExtraGuiOption OptUseCD = {
-	_s("Enable audio CD"),
-	_s("Enable the original audio cd track"),
-	"usecd",
-	false
-};
-
-static const ExtraGuiOption OptSound = {
-	_s("Enable sound"),
-	_s("Enable the sound for the game"),
-	"sound",
-	true
-};
-
-static const ExtraGuiOption OptVoices = {
-	_s("Enable voices"),
-	_s("Enable the voices for the game"),
-	"voice",
-	true
-};
-
-static const ExtraGuiOption OptText = {
-	_s("Enable text"),
-	_s("Enable the text for the game"),
-	"displaytext",
-	true
-};
-
-static const ExtraGuiOption OptMovies = {
-	_s("Enable movies"),
-	_s("Enable the cutscenes for the game"),
-	"movie",
-	true
-};
-
-static const ExtraGuiOption OptMouse = {
-	_s("Enable mouse"),
-	_s("Enable the mouse for the UI"),
-	"mouse",
-	true
-};
-
-static const ExtraGuiOption OptUSAVersion = {
-	_s("Use the USA version"),
-	_s("Enable the USA specific version flags"),
-	"version",
-	false
-};
-
-static const ExtraGuiOption OptHighRes = {
-	_s("Enable high resolution"),
-	_s("Enable a higher resolution for the game"),
-	"usehighres",
-	false
-};
-
-#ifdef USE_TTS
-static const ExtraGuiOption OptTextToSpeech = {
-	_s("TTS Narrator"),
-	_s("Use TTS to read the descriptions (if TTS is available)"),
-	"tts_narrator",
-	false
-};
-#endif
-
-const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(OptWallCollision);
-	options.push_back(OptCrossFade);
-	options.push_back(OptDisableSaveMenu);
-	options.push_back(OptMouse);
-	options.push_back(OptHighRes);
-	options.push_back(OptSound);
-	options.push_back(OptUseCD);
-	// TODO: only 7 are shown right onw - see GUI::ExtraGuiOptionsWidget
-	options.push_back(OptMovies);
-	options.push_back(OptUSAVersion);
-	options.push_back(OptVoices);
-	options.push_back(OptText);
-	options.push_back(OptDebug);
-#ifdef USE_TTS
-	options.push_back(OptTextToSpeech);
-#endif
-	return options;
-}
-
 void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	thumb.copyFrom(((TwinEEngine*)g_engine)->_workVideoBuffer);
+	TwinEEngine *engine = (TwinEEngine *)g_engine;
+	const Graphics::ManagedSurface &managedSurface = engine->_workVideoBuffer;
+	const Graphics::Surface &screenSurface = managedSurface.rawSurface();
+	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette);
 }
 
 //
@@ -258,6 +146,11 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
+		act = new Action("DEBUGPLACEACTORATCENTEROFSCREEN", _("Place actor at center of screen"));
+		act->setCustomEngineActionEvent(TwinEActionType::DebugPlaceActorAtCenterOfScreen);
+		act->addDefaultInputMapping("v");
+		gameKeyMap->addAction(act);
+
 		act = new Action("DEBUGMENU", _("Debug Menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugMenu);
 		act->addDefaultInputMapping("MOUSE_RIGHT");
@@ -319,6 +212,11 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
 		act->addDefaultInputMapping("JOY_X");
+		gameKeyMap->addAction(act);
+
+		act = new Action("MENU", _("Global Main Menu"));
+		act->addDefaultInputMapping("F5");
+		act->setEvent(EVENT_MAINMENU);
 		gameKeyMap->addAction(act);
 
 		act = new Action("OPTIONSMENU", _("Options Menu"));

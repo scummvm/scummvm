@@ -20,9 +20,21 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN_MAIN_DEFINES_EX_H
-#define AGS_ENGINE_MAIN_MAIN_DEFINES_EX_H
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#define RETURN_CONTINUE      1
+#include "backends/platform/sdl/macosx/macosx-window.h"
+#include <AppKit/NSWindow.h>
 
+float SdlWindow_MacOSX::getDpiScalingFactor() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+	SDL_SysWMinfo wmInfo;
+	if (getSDLWMInformation(&wmInfo)) {
+		NSWindow *nswindow = wmInfo.info.cocoa.window;
+		if (nswindow)
+			return [nswindow backingScaleFactor];
+	}
 #endif
+
+	return SdlWindow::getDpiScalingFactor();
+}

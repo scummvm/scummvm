@@ -26,6 +26,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
+#include "common/achievements.h"
 #include "common/translation.h"
 
 #include "asylum/asylum.h"
@@ -44,6 +45,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
 };
 
 bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -96,6 +98,16 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);
+}
+
+const Common::AchievementDescriptionList *AsylumMetaEngine::getAchievementDescriptionList() const {
+	static const Common::AchievementDescriptionList achievementDescriptionList[] = {
+		{"asylum", Common::STEAM_ACHIEVEMENTS, "284050"},
+
+		ACHIEVEMENT_DESC_TABLE_END_MARKER
+	};
+
+	return achievementDescriptionList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ASYLUM)

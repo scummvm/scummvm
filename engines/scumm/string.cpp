@@ -92,7 +92,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 void ScummEngine_v8::printString(int m, const byte *msg) {
 	if (m == 4) {
 		const StringTab &st = _string[m];
-		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, st.center);
+		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, st.center, st.wrapping);
 	} else {
 		ScummEngine::printString(m, msg);
 	}
@@ -145,7 +145,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 #pragma mark -
 
 
-void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
@@ -161,6 +161,26 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 	}
 
 	convertMessageToString(text, bt.text, sizeof(bt.text));
+
+	// HACK: This corrects the vertical placement of the object descriptions in COMI. The original text renderer does this in the same way
+	// we do in smush_font.cpp, lines 338 - 344: The dimensions of the whole block of text get measured first and then the necessary changes
+	// will be made before printing. Unfortunately, the way our ScummEngine_v7::CHARSET_1() is implemented we can't properly adjust
+	// the y postion there: If we have already printed several lines of text and then realize that we're getting out of bounds then it is too
+	// late, we can't move up the text we've already printed. The same applies to horizontal fixes: if we have already printed several lines
+	// and then encounter a line that is out of bounds we can't move the whole block to the left or right any more (as we should).
+	// Possible TODO: moving the measuring logic contained in SmushFont::drawStringWrap() to ScummEngine_v6 to make it available here, too.
+	if (_game.id == GID_CMI && wrapped) {
+		int of = _charset->getCurID();
+		_charset->setCurID(charset);
+		// Note that this won't detect (and measure correctly) 1-byte characters contained
+		// in 2-byte strings. For now, I trust that it won't happen with the object strings.
+		int clipHeight = _charset->getCharHeight(*bt.text) + 1;
+		_charset->setCurID(of);
+
+		clipHeight = clipHeight + clipHeight / 2;
+		y = MIN<int>(y, 470 - clipHeight);
+	}
+
 	bt.xpos = x;
 	bt.ypos = y;
 	bt.color = color;

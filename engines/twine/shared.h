@@ -26,6 +26,12 @@
 #include "common/scummsys.h"
 
 #define NUM_GAME_FLAGS 255
+
+/** Number of colors used in the game */
+#define NUMOFCOLORS 256
+
+#define NUM_LOCATIONS 150
+
 #define NUM_INVENTORY_ITEMS 28
 /**
  * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
@@ -71,6 +77,9 @@
 #define GAMEFLAG_VIDEO_SENDEL 218
 // Twinsun explosion
 #define GAMEFLAG_VIDEO_EXPLODE2 219
+
+#define OWN_ACTOR_SCENE_INDEX 0
+#define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
 
 namespace TwinE {
 
@@ -123,6 +132,28 @@ inline constexpr IVec3 operator-(const IVec3 &lhs, const IVec3 &rhs) {
 inline constexpr IVec3 operator-(const IVec3 &v) {
 	return IVec3{-v.x, -v.y, -v.z};
 }
+
+/**
+ * Get distance value in 2D
+ * @param x1 Actor 1 X coordinate
+ * @param z1 Actor 1 Z coordinate
+ * @param x2 Actor 2 X coordinate
+ * @param z2 Actor 2 Z coordinate
+ */
+int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2);
+int32 getDistance2D(const IVec3 &v1, const IVec3 &v2);
+
+/**
+ * Get distance value in 3D
+ * @param x1 Actor 1 X coordinate
+ * @param y1 Actor 1 Y coordinate
+ * @param z1 Actor 1 Z coordinate
+ * @param x2 Actor 2 X coordinate
+ * @param y2 Actor 2 Y coordinate
+ * @param z2 Actor 2 Z coordinate
+ */
+int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2);
+int32 getDistance3D(const IVec3 &v1, const IVec3 &v2);
 
 /**
  * @brief Axis aligned bounding box
@@ -227,6 +258,19 @@ enum class AnimationTypes {
 	kCarStopping = 306,
 	kCarFrozen = 307,
 	kAnimInvalid = 255
+};
+
+enum class AnimType {
+	kAnimationTypeLoop = 0,
+	kAnimationType_1 = 1,
+	// play animation and let animExtra follow as next animation
+	// if there is already a next animation set - replace the value
+	kAnimationType_2 = 2,
+	// replace animation and let the current animation follow
+	kAnimationType_3 = 3,
+	// play animation and let animExtra follow as next animation
+	// but don't take the current state in account
+	kAnimationType_4 = 4
 };
 
 /** Hero behaviour
@@ -506,7 +550,7 @@ enum InventoryItems {
 	kMrMiesPass = 11,
 	kiProtoPack = 12,
 	kSnowboard = 13,
-	kiPinguin = 14,
+	kiPenguin = 14,
 	kGasItem = 15,
 	kPirateFlag = 16,
 	kMagicFlute = 17,
@@ -584,6 +628,32 @@ template<typename T>
 inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 	return (((1 << bits) - 1) & (value >> offset));
 }
+
+#define COLOR_BLACK 0
+#define COLOR_BRIGHT_BLUE 4
+#define COLOR_9 9
+#define COLOR_14 14
+// color 1 = yellow
+// color 2 - 15 = white
+// color 16 - 19 = brown
+// color 20 - 24 = orange to yellow
+// color 25 orange
+// color 26 - 30 = bright gray or white
+#define COlOR_31 31 // green dark
+#define COlOR_47 47 // green bright
+#define COLOR_48 48 // brown dark
+#define COLOR_63 63 // brown bright
+#define COLOR_64 64 // blue dark
+#define COLOR_68 68 // blue
+#define COLOR_73 73 // blue
+#define COLOR_75 75
+#define COLOR_79 79 // blue bright
+#define COLOR_80 80
+#define COLOR_91 91
+#define COLOR_BRIGHT_BLUE2 69
+#define COLOR_WHITE 15
+#define COLOR_GOLD 155
+#define COLOR_158 158
 
 }
 

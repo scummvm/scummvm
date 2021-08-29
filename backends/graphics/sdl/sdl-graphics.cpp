@@ -227,10 +227,12 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
 
 	int showCursor = SDL_DISABLE;
-	// DPI aware scaling to mouse position
-	uint scale = getFeatureState(BaseBackend::kFeatureHiDPI) ? 2 : 1;
-	mouse.x *= scale;
-	mouse.y *= scale;
+	// Currently on macOS we need to scale the events for HiDPI screen, but on
+	// Windows we do not. We can find out if we need to do it by querying the
+	// SDL window size vs the SDL drawable size.
+	float dpiScale = _window->getSdlDpiScalingFactor();
+	mouse.x = (int)(mouse.x * dpiScale + 0.5f);
+	mouse.y = (int)(mouse.y * dpiScale + 0.5f);
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
 		_cursorLastInActiveArea = true;
@@ -354,11 +356,19 @@ void SdlGraphicsManager::saveScreenshot() {
 			debug("Saved screenshot '%s' in current directory", filename.c_str());
 		else
 			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+
+#ifdef USE_OSD
+		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+#endif
 	} else {
 		if (screenshotsPath.empty())
 			warning("Could not save screenshot in current directory");
 		else
 			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+
+#ifdef USE_OSD
+		displayMessageOnOSD(_("Could not save screenshot"));
+#endif
 	}
 }
 

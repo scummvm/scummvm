@@ -256,7 +256,9 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 				*dst = p->_wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
 			break;
 		case kInkTypeAdd:
-				*dst = p->_wm->findBestColor(abs(rSrc + rDst) % 0xff + 1, abs(gSrc + gDst) % 0xff + 1, abs(bSrc + bDst) % 0xff + 1);
+			// in basilisk, D3.1 is exactly using this method, adding color directly without preventing the overflow.
+			// but i think min(src + dst, 255) will give us a better visual effect
+				*dst = p->_wm->findBestColor(rSrc + rDst, gSrc + gDst, bSrc + bDst);
 			break;
 		case kInkTypeSubPin:
 				*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
@@ -287,32 +289,13 @@ Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 void DirectorPlotData::setApplyColor() {
 	applyColor = false;
 
-	if (foreColor == colorBlack && backColor == colorWhite)
-		applyColor = false;
-
-	switch (ink) {
-	case kInkTypeReverse:
-	case kInkTypeNotReverse:
-	case kInkTypeAddPin:
-	case kInkTypeAdd:
- 	case kInkTypeSubPin:
-	case kInkTypeLight:
-	case kInkTypeSub:
-	case kInkTypeDark:
-	case kInkTypeBackgndTrans:
-		applyColor = false;
-	default:
-		break;
-	}
-
 	if (foreColor != colorBlack) {
 		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
 			applyColor = true;
 	}
 
 	if (backColor != colorWhite) {
-		if (ink != kInkTypeTransparent &&
-				ink != kInkTypeNotTrans)
+		if (ink != kInkTypeTransparent && ink != kInkTypeNotTrans && ink != kInkTypeBackgndTrans)
 			applyColor = true;
 	}
 }

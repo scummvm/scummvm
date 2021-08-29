@@ -27,13 +27,14 @@
 #include "twine/parser/blocklibrary.h"
 #include "twine/parser/sprite.h"
 #include "twine/shared.h"
-#include "twine/twine.h"
 
 namespace Graphics {
 class ManagedSurface;
 }
 
 namespace TwinE {
+
+class ActorStruct;
 
 /** Block fragment entry */
 struct BlockEntry {
@@ -75,9 +76,11 @@ struct BrickEntry {
 #define BRICK_SIZE 512
 #define BRICK_HEIGHT 256
 
-// short max
+// short max 32767 0x7FFF
+//           32256 0x7E00
+//           32000 0x7D00
 #define SCENE_SIZE_MAX (BRICK_SIZE * GRID_SIZE_X - 1)
-// short min
+// short min -32768
 #define SCENE_SIZE_MIN (-BRICK_SIZE * GRID_SIZE_X)
 #define SCENE_SIZE_HALF (BRICK_SIZE * GRID_SIZE_X / 2)
 #define SCENE_SIZE_HALFF (BRICK_SIZE * GRID_SIZE_X / 2.0f)
@@ -289,7 +292,7 @@ public:
 
 	ShapeType getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2);
 
-	int32 getBrickSoundType(int32 x, int32 y, int32 z);
+	uint8 getBrickSoundType(int32 x, int32 y, int32 z);
 
 	inline ShapeType getBrickShape(const IVec3 &pos) {
 		return getBrickShape(pos.x, pos.y, pos.z);
@@ -299,7 +302,7 @@ public:
 		return getBrickShapeFull(pos.x, pos.y, pos.z, y2);
 	}
 
-	inline int32 getBrickSoundType(const IVec3 &pos) {
+	inline uint8 getBrickSoundType(const IVec3 &pos) {
 		return getBrickSoundType(pos.x, pos.y, pos.z);
 	}
 };

@@ -72,9 +72,6 @@
 #include "twine/script/script_move_v1.h"
 #include "twine/text.h"
 
-#define ORIGINAL_WIDTH 640
-#define ORIGINAL_HEIGHT 480
-
 namespace TwinE {
 
 ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {
@@ -272,13 +269,12 @@ Common::Error TwinEEngine::run() {
 			}
 		}
 	}
-	while (!shouldQuit()) {
+	bool quitGame = false;
+	while (!quitGame && !shouldQuit()) {
 		readKeys();
 		switch (_state) {
 		case EngineState::QuitGame: {
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			_system->getEventManager()->pushEvent(event);
+			quitGame = true;
 			break;
 		}
 		case EngineState::LoadedGame:
@@ -644,25 +640,26 @@ void TwinEEngine::processInventoryAction() {
 			_actor->setBehaviour(HeroBehaviourType::kProtoPack);
 		}
 		break;
-	case kiPinguin: {
-		ActorStruct *pinguin = _scene->getActor(_scene->_mecaPinguinIdx);
+	case kiPenguin: {
+		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		pinguin->_pos.x = _renderer->_destPos.x + _scene->_sceneHero->_pos.x;
-		pinguin->_pos.y = _scene->_sceneHero->_pos.y;
-		pinguin->_pos.z = _renderer->_destPos.z + _scene->_sceneHero->_pos.z;
-		pinguin->_angle = _scene->_sceneHero->_angle;
+		const IVec3 &destPos = _movements->rotateActor(0, 800, penguin->_angle);
 
-		_movements->rotateActor(0, 800, pinguin->_angle);
+		penguin->_pos = _scene->_sceneHero->_pos;
+		penguin->_pos.x += destPos.x;
+		penguin->_pos.z += destPos.z;
 
-		if (!_collision->checkCollisionWithActors(_scene->_mecaPinguinIdx)) {
-			pinguin->setLife(kActorMaxLife);
-			pinguin->_body = BodyType::btNone;
-			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPinguinIdx);
-			pinguin->_dynamicFlags.bIsDead = 0;
-			pinguin->setBrickShape(ShapeType::kNone);
-			_movements->moveActor(pinguin->_angle, pinguin->_angle, pinguin->_speed, &pinguin->_move);
-			_gameState->removeItem(InventoryItems::kiPinguin);
-			pinguin->_delayInMillis = _lbaTime + 1500;
+		penguin->_angle = _scene->_sceneHero->_angle;
+
+		if (!_collision->checkCollisionWithActors(_scene->_mecaPenguinIdx)) {
+			penguin->setLife(kActorMaxLife);
+			penguin->_body = BodyType::btNone;
+			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
+			penguin->_dynamicFlags.bIsDead = 0;
+			penguin->setBrickShape(ShapeType::kNone);
+			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
+			_gameState->removeItem(InventoryItems::kiPenguin);
+			penguin->_delayInMillis = _lbaTime + 1500;
 		}
 		break;
 	}
@@ -708,7 +705,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	}
 
 	if (_scene->_needChangeScene > -1) {
-		if (isDemo() && isLBA1()) {
+		if (!isMod() && isDemo() && isLBA1()) {
 			// the demo only has these two scenes
 			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel) {
 				return 1;
@@ -868,7 +865,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else {
 				_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 
-				if (a == _scene->_mecaPinguinIdx) {
+				if (a == _scene->_mecaPenguinIdx) {
 					_extra->addExtraExplode(actor->pos());
 				}
 			}
@@ -903,23 +900,22 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			int32 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
-			if ((brickSound & 0xF0) == 0xF0) {
-				if ((brickSound & 0x0F) == 1) {
+			if ((brickSound & 0xF0U) == 0xF0U) {
+				if ((brickSound & 0x0FU) == 1) {
 					if (IS_HERO(a)) {
+						// we are dying if we aren't using the protopack to fly over water
 						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
 							if (!_actor->_cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
-								_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
-								_actor->_cropBottomScreen = _renderer->_projPos.y;
 							}
-							_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
+							const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
 							actor->_controlMode = ControlMode::kNoMove;
 							actor->setLife(-1);
-							_actor->_cropBottomScreen = _renderer->_projPos.y;
-							actor->_staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
+							_actor->_cropBottomScreen = projPos.y;
+							actor->_staticFlags.bDoesntCastShadow = 1;
 						}
 					} else {
 						_sound->playSample(Samples::Explode, 1, actor->pos(), a);

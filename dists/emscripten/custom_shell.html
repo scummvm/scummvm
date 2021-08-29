@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="scummvm-192.png">
+  <title>ScummVM</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: none
+    }
+
+    .emscripten {
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+
+    textarea.emscripten {
+      font-family: monospace;
+      width: 80%;
+    }
+
+    div.emscripten {
+      text-align: center;
+    }
+
+    div.emscripten_border {
+      border: 1px solid black;
+    }
+
+    /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+    canvas.emscripten {
+      border: 0px none;
+      background-color: #c60;
+
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      margin: 0px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: block;
+    }
+
+
+    #progress {
+      top: 0px;
+      left: 0px;
+      height: 10px;
+      width: 100%;
+      overflow: hidden;
+      display: block;
+      position: absolute;
+      z-index: 2;
+      border: 0px;
+      background: #c60
+    }
+
+    progress::-moz-progress-bar {
+      background: #f6e08a;
+    }
+
+    progress::-webkit-progress-value {
+      background: #f6e08a;
+    }
+
+    progress {
+      color: #f6e08a;
+    }
+
+    #status {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      z-index: 3;
+      background: #f6e08a;
+      font: bold large/1.4 "Trebuchet MS", Verdana, Tahoma, Sans-Serif;
+    }
+
+
+    #status.error {
+      background: red
+    }
+  </style>
+</head>
+
+<body>
+  <div class=emscripten>
+    <progress hidden id=progress max=100 value=0></progress>
+  </div>
+  <div class="emscripten" id="status">Downloading...</div>
+
+  <div class=emscripten_border>
+    <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+  </div>
+
+  <hr>
+  <textarea class="emscripten" id="output" rows="8"></textarea>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js"
+    integrity="sha512-mz0EI+Ay1uIJP7rZEX8C/JlTAcHRIQ8Sny4vxmmj8MSzDJgG9NxxY2pUmOGv1lO7imFIFMyjjCzEXEywNgaUdQ=="
+    crossorigin="anonymous"></script>
+  <script type='text/javascript'>
+    var statusElement = document.getElementById('status');
+    var progressElement = document.getElementById('progress');
+
+    function loadingDoneMessage() {
+      document.getElementById("progress").style.zIndex = 0;
+      return "All downloads complete."
+    }
+    function setupBrowserFS() {
+      addRunDependency('browserfs-setup');
+      // default values, created by running scummvm with --add --recursive --path=/data/games
+      defaultLocalStorage = {
+        "/": btoa("\u0000\u0010\u0000\u0000ÿA\u0000p\u0005àJ\u009bwB\u0000p\u0005àJ\u009bwB\u0000p\u0005àJ\u009bwBb3da6754-64c0-40f0-92ad-83b6ca6ffec9"),
+        "70879b79-8d58-400c-8143-332242320b34": btoa("©\u000f\u0000\u0000¶\u0081\u0000\u0010ï\u0083B\u009cwB\u0000\u0090<Ú\u0081\u000ewB\u0000\u0010ï\u0083B\u009cwB1b4a97d1-4ce0-417f-985c-e0f22ca21aef"),
+        "b3da6754-64c0-40f0-92ad-83b6ca6ffec9": btoa("{\"scummvm.ini\":\"70879b79-8d58-400c-8143-332242320b34\"}"),
+        "1b4a97d1-4ce0-417f-985c-e0f22ca21aef": "W3NjdW1tdm1dCmZpbHRlcmluZz1mYWxzZQptaWRpX2dhaW49MTAwCm11dGU9ZmFsc2UKZ3VpX3VzZV9nYW1lX2xhbmd1YWdlPWZhbHNlCnNwZWVjaF92b2x1bWU9MTkyCm5hdGl2ZV9tdDMyPWZhbHNlCm9wbF9kcml2ZXI9YXV0bwptdDMyX2RldmljZT1udWxsCmxhc3Rfd2luZG93X3dpZHRoPTM0MjYKdGFsa3NwZWVkPTYwCmNvbmZpcm1fZXhpdD1mYWxzZQpnZnhfbW9kZT1vcGVuZ2wKZ3VpX2Jhc2U9MApndWlfcmV0dXJuX3RvX2xhdW5jaGVyX2F0X2V4aXQ9ZmFsc2UKc3VidGl0bGVzPWZhbHNlCm11bHRpX21pZGk9ZmFsc2UKZnVsbHNjcmVlbj1mYWxzZQpndWlfYnJvd3Nlcl9zaG93X2hpZGRlbj1mYWxzZQpsYXN0X3dpbmRvd19oZWlnaHQ9NTI0CmJyb3dzZXJfbGFzdHBhdGg9L2RhdGEvZ2FtZXMvdGVzdGJlZApnbV9kZXZpY2U9bnVsbApzZnhfdm9sdW1lPTE5MgptdXNpY192b2x1bWU9MTkyCmF1dG9zYXZlX3BlcmlvZD0zMDAKbGFzdHNlbGVjdGVkZ2FtZT1sc2w3LWRlbW8KbXVzaWNfZHJpdmVyPWF1dG8Kc3RyZXRjaF9tb2RlPWZpdApyZW5kZXJlcj1vcGVuZ2xfc2hhZGVycwp2c3luYz1mYWxzZQphc3BlY3RfcmF0aW89dHJ1ZQp2ZXJzaW9uaW5mbz0yLjMuMGdpdDE4NTYyLWc1MGU2OTk1YzY2LWRpcnR5CnNwZWVjaF9tdXRlPWZhbHNlCmVuYWJsZV9ncz1mYWxzZQoKW3Rlc3RiZWRdCmRlc2NyaXB0aW9uPVRlc3RiZWQ6IFRoZSBCYWNrZW5kIFRlc3RpbmcgRnJhbWV3b3JrIChET1MvRW5nbGlzaCkKcGF0aD0vZGF0YS9nYW1lcy90ZXN0YmVkCmVuZ2luZWlkPXRlc3RiZWQKZ2FtZWlkPXRlc3RiZWQKbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09cGMKZ3Vpb3B0aW9ucz1sYXVuY2hOb0xvYWQgbGFuZ19FbmdsaXNoCgpbc2t5XQpkZXNjcmlwdGlvbj1CZW5lYXRoIGEgU3RlZWwgU2t5ICh2MC4wMzQ4IGZsb3BweSkKZXh0cmE9djAuMDM0OCBmbG9wcHkKcGF0aD0vZGF0YS9nYW1lcy9iYXNzLWZsb3BweQplbmdpbmVpZD1za3kKZ2FtZWlkPXNreQpndWlvcHRpb25zPXNuZE5vU3BlZWNoCgpbY29taS1kZW1vXQpkZXNjcmlwdGlvbj1UaGUgQ3Vyc2Ugb2YgTW9ua2V5IElzbGFuZCAoRGVtby9XaW5kb3dzKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvY29taS13aW4tbGFyZ2UtZGVtby1lbgplbmdpbmVpZD1zY3VtbQpnYW1laWQ9Y29taQpwbGF0Zm9ybT13aW5kb3dzCmd1aW9wdGlvbnM9c25kTm9NSURJIG5vQXNwZWN0CgpbZHJhc2N1bGFdCmRlc2NyaXB0aW9uPURyYXNjdWxhOiBUaGUgVmFtcGlyZSBTdHJpa2VzIEJhY2sgKERPUy9FbmdsaXNoKQpwYXRoPS9kYXRhL2dhbWVzL2RyYXNjdWxhCmVuZ2luZWlkPWRyYXNjdWxhCmdhbWVpZD1kcmFzY3VsYQpsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vTUlESSBzbmRMaW5rU3BlZWNoVG9TZnggbGFuZ19FbmdsaXNoCgpbbW9ua2V5NC1kZW1vLXdpbl0KZGVzY3JpcHRpb249RXNjYXBlIEZyb20gTW9ua2V5IElzbGFuZCAoRGVtby9XaW5kb3dzL0VuZ2xpc2gpCmV4dHJhPURlbW8KY2hlY2tfZ2FtZWRhdGE9ZmFsc2UKZGF0YXVzcl9sb2FkPWZhbHNlCnBhdGg9L2RhdGEvZ2FtZXMvZW1pLXdpbi1kZW1vLWVuCmVuZ2luZWlkPWdyaW0KZ2FtZWlkPW1vbmtleTQKbGFuZ3VhZ2U9ZW4Kc2hvd19mcHM9dHJ1ZQpwbGF0Zm9ybT13aW5kb3dzCmd1aW9wdGlvbnM9c25kTm9NSURJIGdhbWVPcHRpb24xIGdhbWVPcHRpb24yIGxhbmdfRW5nbGlzaAoKW2ZlZWJsZS1kZW1vXQpkZXNjcmlwdGlvbj1UaGUgRmVlYmxlIEZpbGVzIChEZW1vL0RPUy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvZmVlYmxlLWRvcy1uaS1kZW1vLWVuCmVuZ2luZWlkPWFnb3MKZ2FtZWlkPWZlZWJsZQpsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vU3VicyBzbmROb011c2ljIGxhdW5jaE5vTG9hZCBub0FzcGVjdCBsYW5nX0VuZ2xpc2gKCltxdWVlbl0KZGVzY3JpcHRpb249RmxpZ2h0IG9mIHRoZSBBbWF6b24gUXVlZW4gKEZsb3BweS9ET1MvRW5nbGlzaCkKZXh0cmE9RmxvcHB5CnBhdGg9L2RhdGEvZ2FtZXMvZm90YXEtZmxvcHB5L0ZPVEFRX0Zsb3BweQplbmdpbmVpZD1xdWVlbgpnYW1laWQ9cXVlZW4KbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09cGMKZ3Vpb3B0aW9ucz1zbmROb1NwZWVjaCBsYW5nX0VuZ2xpc2gKCltmdC1kZW1vXQpkaW11c2VfdGVtcG89MTAKZGVzY3JpcHRpb249RnVsbCBUaHJvdHRsZSAoRGVtby9ET1MvRW5nbGlzaCkKZXh0cmE9RGVtbwpwYXRoPS9kYXRhL2dhbWVzL2Z0LWRvcy1kZW1vLWVuCmVuZ2luZWlkPXNjdW1tCmdhbWVpZD1mdApsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vTUlESSBsYW5nX0VuZ2xpc2gKCltsc2w3LWRlbW9dCmRlc2NyaXB0aW9uPUxlaXN1cmUgU3VpdCBMYXJyeSA3OiBMb3ZlIGZvciBTYWlsISAoRGVtby9ET1MvRW5nbGlzaCkKZXh0cmE9RGVtbwpwYXRoPS9kYXRhL2dhbWVzL2xzbDctZG9zLWRlbW8tZW4KZW5naW5laWQ9c2NpCmdhbWVpZD1sc2w3Cmxhbmd1YWdlPWVuCnBsYXRmb3JtPXBjCmd1aW9wdGlvbnM9c25kTm9NSURJIGxhdW5jaE5vTG9hZCBub0FzcGVjdCBnYW1lT3B0aW9uQyBsYW5nX0VuZ2xpc2gKCltsdXJlXQpkZXNjcmlwdGlvbj1MdXJlIG9mIHRoZSBUZW1wdHJlc3MgKFZHQS9ET1MvRW5nbGlzaCkKZXh0cmE9VkdBCnBhdGg9L2RhdGEvZ2FtZXMvbHVyZS9sdXJlCmVuZ2luZWlkPWx1cmUKZ2FtZWlkPWx1cmUKbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09cGMKZ3Vpb3B0aW9ucz1zbmROb1NwZWVjaCBsYW5nX0VuZ2xpc2gKCltteXN0LWRlbW8td2luXQpkZXNjcmlwdGlvbj1NeXN0IChEZW1vL1dpbmRvd3MvRW5nbGlzaCkKZXh0cmE9RGVtbwpwYXRoPS9kYXRhL2dhbWVzL215c3Qtd2luLWRlbW8tZW4vTVlTVAplbmdpbmVpZD1tb2hhd2sKZ2FtZWlkPW15c3QKbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09d2luZG93cwpndWlvcHRpb25zPXNuZE5vU3VicyBzbmROb01JREkgbGF1bmNoTm9Mb2FkIG5vQXNwZWN0IGdhbWVPcHRpb24zIGxhbmdfRW5nbGlzaAoKW3BoYW50YXNtYWdvcmlhLWRlbW9dCmRlc2NyaXB0aW9uPVBoYW50YXNtYWdvcmlhIChEZW1vL0RPUy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvcGhhbnRhc21hZ29yaWEtZG9zLXdpbi1kZW1vLWVuCmVuZ2luZWlkPXNjaQpnYW1laWQ9cGhhbnRhc21hZ29yaWEKbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09cGMKZ3Vpb3B0aW9ucz1zbmROb1N1YnMgc25kTGlua1NwZWVjaFRvU2Z4IGxhdW5jaE5vTG9hZCBub0FzcGVjdCBnYW1lT3B0aW9uOSBnYW1lT3B0aW9uQSBsYW5nX0VuZ2xpc2gKCltyaXZlbi1kZW1vXQpkZXNjcmlwdGlvbj1SaXZlbjogVGhlIFNlcXVlbCB0byBNeXN0IChEZW1vL1dpbmRvd3MvRW5nbGlzaCkKZXh0cmE9RGVtbwpwYXRoPS9kYXRhL2dhbWVzL3JpdmVuLXdpbi1kZW1vLWVuCmVuZ2luZWlkPW1vaGF3awpnYW1laWQ9cml2ZW4KbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09d2luZG93cwpndWlvcHRpb25zPXNuZE5vU3VicyBzbmROb1NwZWVjaCBzbmROb01JREkgbGF1bmNoTm9Mb2FkIG5vQXNwZWN0IGdhbWVPcHRpb24zIGxhbmdfRW5nbGlzaAoKW3N3b3JkMmRlbW9dCmRlc2NyaXB0aW9uPUJyb2tlbiBTd29yZCBJSTogVGhlIFNtb2tpbmcgTWlycm9yIChEZW1vKQpwYXRoPS9kYXRhL2dhbWVzL3N3b3JkMi13aW4tZGVtby1lbgplbmdpbmVpZD1zd29yZDIKZ2FtZWlkPXN3b3JkMmRlbW8KZ3Vpb3B0aW9ucz1zbmROb01JREkgbm9Bc3BlY3QKCltncmltLWRlbW8td2luLTFdCmRlc2NyaXB0aW9uPUdyaW0gRmFuZGFuZ28gKERlbW8vV2luZG93cy9FbmdsaXNoKQpleHRyYT1EZW1vCmRhdGF1c3JfbG9hZD1mYWxzZQpwYXRoPS9kYXRhL2dhbWVzL2dyaW0td2luLWRlbW8yLWVuCmVuZ2luZWlkPWdyaW0KZ2FtZWlkPWdyaW0KbGFuZ3VhZ2U9ZW4Kc2hvd19mcHM9ZmFsc2UKcGxhdGZvcm09d2luZG93cwpndWlvcHRpb25zPXNuZE5vTUlESSBnYW1lT3B0aW9uMSBnYW1lT3B0aW9uMiBsYW5nX0VuZ2xpc2gKCg=="
+      }
+      if (localStorage.getItem("/") === null) {
+        for (key in defaultLocalStorage) {
+          localStorage.setItem(key, defaultLocalStorage[key]);
+        }
+      }
+      BrowserFS.FileSystem.HTTPRequest.Create({
+        index: "/games/index.json",
+        baseUrl: "/games/"
+      }, function (err, xhrfs) {
+        if (err) throw err
+        BrowserFS.FileSystem.LocalStorage.Create(function (err, lsfs) {
+          if (err) throw err
+          BrowserFS.FileSystem.MountableFileSystem.Create({
+            '/games': xhrfs,
+            '/local': lsfs
+          }, function (err, mfs) {
+            if (err) throw err
+            BrowserFS.initialize(mfs);
+            // BFS is now ready to use!
+
+            var BFS = new BrowserFS.EmscriptenFS();
+            // Mount the file system into Emscripten.
+            FS.mkdir('/data');
+            FS.mount(BFS, { root: '/' }, '/data');
+            removeRunDependency('browserfs-setup');
+          });
+        });
+      });
+    }
+
+    var Module = {
+      preRun: [setupBrowserFS],
+      postRun: [],
+      print: (function () {
+        var element = document.getElementById('output');
+        if (element) element.value = ''; // clear browser cache
+        return function (text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          // These replacements are necessary if you render to raw HTML
+          //text = text.replace(/&/g, "&amp;");
+          //text = text.replace(/</g, "&lt;");
+          //text = text.replace(/>/g, "&gt;");
+          //text = text.replace('\n', '<br>', 'g');
+          console.log(text);
+          if (element) {
+            element.value += text + "\n";
+            element.scrollTop = element.scrollHeight; // focus on bottom
+          }
+        };
+      })(),
+      printErr: function (text) {
+        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+        console.error(text);
+      },
+      canvas: (function () {
+        var canvas = document.getElementById('canvas');
+
+        // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+        // application robust, you may want to override this behavior before shipping!
+        // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+        canvas.addEventListener("webglcontextlost", function (e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+        return canvas;
+      })(),
+      setStatus: function (text) {
+        if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+        if (text === Module.setStatus.last.text) return;
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+        Module.setStatus.last.time = now;
+        Module.setStatus.last.text = text;
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2]) * 100;
+          progressElement.max = parseInt(m[4]) * 100;
+          progressElement.hidden = false;
+
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+        }
+        statusElement.innerHTML = text;
+      },
+      totalDependencies: 0,
+      monitorRunDependencies: function (left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : loadingDoneMessage());
+      }
+    };
+    Module.setStatus('Downloading...');
+    window.onerror = function () {
+      statusElement.classList.add("error")
+      Module.setStatus('Exception thrown, see JavaScript console');
+      Module.setStatus = function (text) {
+        if (text) Module.printErr('[post-exception status] ' + text);
+      };
+    };
+
+  </script>
+
+  <script async type="text/javascript" src="files.js"></script>
+  {{{ SCRIPT }}}
+</body>
+
+</html>

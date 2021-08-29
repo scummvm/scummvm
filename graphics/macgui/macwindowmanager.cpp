@@ -1295,6 +1295,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	_paletteSize = size;
 
 	_colorHash.clear();
+	_invertColorHash.clear();
 
 	LOOKUPCOLOR(White);
 	LOOKUPCOLOR(Gray80);
@@ -1352,6 +1353,24 @@ void MacWindowManager::decomposeColor(uint32 color, byte &r, byte &g, byte &b) {
 	} else {
 		_pixelformat.colorToRGB(color, r, g, b);
 	}
+}
+
+uint MacWindowManager::inverter(uint src) {
+	if (_invertColorHash.contains(src))
+		return _invertColorHash[src];
+
+	if (_pixelformat.bytesPerPixel == 1) {
+		byte r, g, b;
+		decomposeColor(src, r, g, b);
+		r = ~r;
+		g = ~g;
+		b = ~b;
+		_invertColorHash[src] = findBestColor(r, g, b);
+	} else {
+		uint32 alpha = _pixelformat.ARGBToColor(255, 0, 0, 0);
+		_invertColorHash[src] = ~(src & ~alpha) | alpha;
+	}
+	return _invertColorHash[src];
 }
 
 PauseToken MacWindowManager::pauseEngine() {

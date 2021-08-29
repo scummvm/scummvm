@@ -321,7 +321,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 		}
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // Restored feature - Original: it is impossible to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
@@ -476,6 +476,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorMcCoy, 4355, 19);
 			Actor_Says(kActorCrazylegs, 1040, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 4360, 16);
+			// NOTE McCoy's 4365 cue does NOT exist in the game files
 			Actor_Says(kActorMcCoy, 4365, 14);
 			Actor_Says(kActorCrazylegs, 1050, kAnimationModeTalk);
 			Actor_Says(kActorCrazylegs, 1060, kAnimationModeTalk);
@@ -509,6 +510,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 				//       in order to show up in the ESP version
 				Actor_Says_With_Pause(kActorGrigorian, 340, 0.0f, 14);
 			}
+			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansResources, true, kActorGrigorian);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4375, 18);
 		}
@@ -522,12 +524,24 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		Actor_Says(kActorMcCoy, 4385, 19);
 		Actor_Says(kActorGrigorian, 370, 13);
 		Actor_Says(kActorMcCoy, 4390, 19);
-		// TODO McCoy needs to have the Registration Clues (1 or 3)
-		//      and probably have talked at least once with CrazyLegs
-		//      for this next quote to make sense
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// McCoy needs to have the Registration Clues (1 or 3)
+		// and probably have talked at least once with CrazyLegs (TODO?)
+		// for this next quote to make sense
+		// If arrested, Crazylegs will be right there, but he won't say anything relevant, so this won't make much sense.
+		// So Crazylegs:
+		// - should not be arrested yet
+		// - nor talked to about (Grigorian's) Note already
+		if (!Game_Flag_Query(kFlagCrazylegsArrested)
+		    && (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
+		        || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3))
+		) {
+			Actor_Says(kActorMcCoy, 4395, 18);    // How was Crazylegs supposed to help them?
+			Actor_Says(kActorGrigorian, 380, 14);
+		}
+#else
 		Actor_Says(kActorMcCoy, 4395, 18);    // How was Crazylegs supposed to help them?
 		Actor_Says(kActorGrigorian, 380, 14);
-#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGrigorian, 390, 12); // boop placeholder
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);

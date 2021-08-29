@@ -38,6 +38,7 @@
 #include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "common/rendermode.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -144,8 +145,8 @@ static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("E
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
 static const char *guiBaseLabels[] = {
-	// I18N: Automatic GUI scaling
-	_s("Auto"),
+	// I18N: Very large GUI scale
+	_s("Very large"),
 	// I18N: Large GUI scale
 	_s("Large"),
 	// I18N: Medium GUI scale
@@ -154,7 +155,7 @@ static const char *guiBaseLabels[] = {
 	_s("Small"),
 	nullptr
 };
-static const int guiBaseValues[] = { 0, 240, 480, 720, -1 };
+static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
@@ -2152,8 +2153,8 @@ void GlobalOptionsDialog::build() {
 #endif
 
 	// Misc Tab
-	_guiBasePopUp->setSelected(1);
-	int value = ConfMan.getInt("gui_base");
+	_guiBasePopUp->setSelected(2);
+	int value = ConfMan.getInt("gui_scale");
 	for (int i = 0; guiBaseLabels[i]; i++) {
 		if (value == guiBaseValues[i])
 			_guiBasePopUp->setSelected(i);
@@ -2537,6 +2538,93 @@ void GlobalOptionsDialog::addOnlineControls(GuiObject *boss, const Common::Strin
 }
 #endif // USE_BYONLINE
 
+struct ExistingSave {
+	MetaEngine *metaEngine;
+	Common::String target;
+	SaveStateDescriptor desc;
+
+	ExistingSave(MetaEngine *_metaEngine, const Common::String &_target, const SaveStateDescriptor &_desc) :
+		metaEngine(_metaEngine),
+		target(_target),
+		desc(_desc)
+	{}
+};
+
+bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
+	const int oldAutosavePeriod = ConfMan.getInt("autosave_period");
+	if (oldAutosavePeriod != 0 || newValue <= 0)
+		return true;
+	typedef Common::Array<ExistingSave> ExistingSaveList;
+	ExistingSaveList saveList;
+	using Common::ConfigManager;
+	const int maxListSize = 10;
+	bool hasMore = false;
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	for (ConfigManager::DomainMap::const_iterator it = domains.begin(), end = domains.end(); it != end; ++it) {
+		const Common::String target = it->_key;
+		const ConfigManager::Domain domain = it->_value;
+		const Common::String engine = domain["engineid"];
+		if (const Plugin *detectionPlugin = EngineMan.findPlugin(engine)) {
+			if (const Plugin *plugin = PluginMan.getEngineFromMetaEngine(detectionPlugin)) {
+				MetaEngine &metaEngine = plugin->get<MetaEngine>();
+				const int autoSaveSlot = metaEngine.getAutosaveSlot();
+				if (autoSaveSlot < 0)
+					continue;
+				SaveStateDescriptor desc = metaEngine.querySaveMetaInfos(target.c_str(), autoSaveSlot);
+				if (desc.getSaveSlot() != -1 && !desc.getDescription().empty() && !desc.hasAutosaveName()) {
+					if (saveList.size() >= maxListSize) {
+						hasMore = true;
+						break;
+					}
+					saveList.push_back(ExistingSave(&metaEngine, target, desc));
+				}
+			}
+		}
+	}
+	if (!saveList.empty()) {
+		Common::U32StringArray altButtons;
+		altButtons.push_back(_("Ignore"));
+		altButtons.push_back(_("Disable autosave"));
+		Common::U32String message = _("WARNING: Autosave was enabled. Some of your games have existing "
+				  "saved games on the autosave slot. You can either move the "
+				  "existing saves to new slots, disable autosave, or ignore (you "
+				  "will be prompted when autosave is about to overwrite a save).\n"
+				  "List of games:\n");
+		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
+			message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+		message.deleteLastChar();
+		if (hasMore)
+			message += _("\nAnd more...");
+		GUI::MessageDialog warn(message, _("Move"), altButtons);
+		switch (warn.runModal()) {
+		case GUI::kMessageOK: {
+			ExistingSaveList failedSaves;
+			for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it) {
+				if (it->metaEngine->copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
+					g_system->getSavefileManager()->removeSavefile(
+							it->metaEngine->getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
+				} else {
+					failedSaves.push_back(*it);
+				}
+			}
+			if (!failedSaves.empty()) {
+				Common::U32String failMessage = _("ERROR: Failed to move the following saved games:\n");
+				for (ExistingSaveList::const_iterator it = failedSaves.begin(), end = failedSaves.end(); it != end; ++it)
+					failMessage += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+				failMessage.deleteLastChar();
+				GUI::MessageDialog(failMessage).runModal();
+			}
+			break;
+		}
+		case GUI::kMessageAlt:
+			break;
+		case GUI::kMessageAlt + 1:
+			return false;
+		}
+	}
+	return true;
+}
+
 void GlobalOptionsDialog::apply() {
 	OptionsDialog::apply();
 
@@ -2578,12 +2666,16 @@ void GlobalOptionsDialog::apply() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
-	int oldGuiBase = ConfMan.getInt("gui_base");
-	ConfMan.setInt("gui_base", _guiBasePopUp->getSelectedTag(), _domain);
-	if (oldGuiBase != (int)_guiBasePopUp->getSelectedTag())
+	int oldGuiScale = ConfMan.getInt("gui_scale");
+	ConfMan.setInt("gui_scale", _guiBasePopUp->getSelectedTag(), _domain);
+	if (oldGuiScale != (int)_guiBasePopUp->getSelectedTag())
 		g_gui.computeScaleFactor();
 
-	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
+	const int autosavePeriod = _autosavePeriodPopUp->getSelectedTag();
+	if (updateAutosavePeriod(autosavePeriod))
+		ConfMan.setInt("autosave_period", autosavePeriod, _domain);
+	else
+		_autosavePeriodPopUp->setSelected(0);
 
 #ifdef USE_UPDATES
 	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());

@@ -167,6 +167,10 @@ const char *gScummVMFeatures = ""
 	"taskbar "
 #endif
 
+#ifdef USE_TTS
+	"TTS "
+#endif
+
 #ifdef USE_CLOUD
 	"cloud ("
 #ifdef USE_LIBCURL

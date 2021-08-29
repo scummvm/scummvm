@@ -26,6 +26,7 @@
 #include "common/macresman.h"
 #include "common/substream.h"
 #include "common/winexe.h"
+#include "graphics/wincursor.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -38,7 +39,7 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getPlatform() == Common::kPlatformMacintosh) {
+	if (getPlatform() != Common::kPlatformWindows) {
 		if (getVersion() < 400)
 			return new MacArchive();
 		else
@@ -153,14 +154,20 @@ void Window::probeMacBinary(MacArchive *archive) {
 				error("No strings in Projector file");
 
 			Common::String sname = name->readPascalString();
+			Common::String moviePath = pathMakeRelative(sname);
+			if (testPath(moviePath)) {
+				_nextMovie.movie = moviePath;
+				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
-			_nextMovie.movie = pathMakeRelative(sname);
-			warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+				delete _currentMovie;
+				_currentMovie = nullptr;
 
-			delete _currentMovie;
-			_currentMovie = nullptr;
-
+			} else {
+				warning("Couldn't find score with name: %s", sname.c_str());
+			}
 			delete name;
+
+
 		}
 	}
 
@@ -235,6 +242,13 @@ void Window::loadEXE(const Common::String movie) {
 			delete info;
 
 		}
+
+		Common::Array<Common::WinResourceID> idList = exe->getIDList(Common::kWinGroupCursor);
+		for (uint i = 0; i < idList.size(); i++) {
+			Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, idList[i]);
+			g_director->_winCursor.push_back(group);
+		}
+
 		delete exe;
 
 		exeStream->seek(-4, SEEK_END);
@@ -412,7 +426,7 @@ void Window::loadMac(const Common::String movie) {
 }
 
 void Window::loadStartMovieXLibs() {
-	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() == Common::kPlatformMacintosh) {
+	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() != Common::kPlatformWindows) {
 		g_lingo->openXLib("FPlayXObj", kXObj);
 	}
 	g_lingo->openXLib("SerialPort", kXObj);

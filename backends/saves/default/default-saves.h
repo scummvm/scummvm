@@ -38,12 +38,13 @@ public:
 	DefaultSaveFileManager();
 	DefaultSaveFileManager(const Common::String &defaultSavepath);
 
-	virtual void updateSavefilesList(Common::StringArray &lockedFiles);
-	virtual Common::StringArray listSavefiles(const Common::String &pattern);
-	virtual Common::InSaveFile *openRawFile(const Common::String &filename);
-	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
-	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
-	virtual bool removeSavefile(const Common::String &filename);
+	void updateSavefilesList(Common::StringArray &lockedFiles) override;
+	Common::StringArray listSavefiles(const Common::String &pattern) override;
+	Common::InSaveFile *openRawFile(const Common::String &filename) override;
+	Common::InSaveFile *openForLoading(const Common::String &filename) override;
+	Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) override;
+	bool removeSavefile(const Common::String &filename) override;
+	bool exists(const Common::String &filename) override;
 
 #ifdef USE_LIBCURL
 

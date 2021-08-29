@@ -125,14 +125,15 @@ void OSystem_Win32::initBackend() {
 	_textToSpeechManager = new WindowsTextToSpeechManager();
 #endif
 
-#ifdef USE_OPENGL
-	ConfMan.registerDefault("gfx_mode", "opengl");
-#endif
-
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 }
 
+#ifdef USE_OPENGL
+OSystem_SDL::GraphicsManagerType OSystem_Win32::getDefaultGraphicsManager() const {
+	return GraphicsManagerOpenGL;
+}
+#endif
 
 bool OSystem_Win32::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)

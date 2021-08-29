@@ -31,13 +31,13 @@
  * features. Instances are, for example, the FluidSynth code, and the POSIX
  * plugin code.
  */
-class ChRootFilesystemFactory : public FilesystemFactory {
+class ChRootFilesystemFactory final : public FilesystemFactory {
 public:
 	explicit ChRootFilesystemFactory(const Common::String &root);
 
-	virtual AbstractFSNode *makeRootFileNode() const;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const override;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 private:
 	const Common::String _root;

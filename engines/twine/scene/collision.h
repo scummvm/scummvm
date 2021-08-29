@@ -24,16 +24,19 @@
 #define TWINE_SCENE_COLLISION_H
 
 #include "common/scummsys.h"
-#include "twine/scene/extra.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
+class ActorStruct;
+struct ExtraListStruct;
 class TwinEEngine;
 
 class Collision {
 private:
 	TwinEEngine *_engine;
 
+	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, const ActorStruct *actor, ActorStruct *actorTest);
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */

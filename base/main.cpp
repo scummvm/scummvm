@@ -303,6 +303,10 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
+	// Purge queued input events that may remain from the GUI (such as key-up)
+	system.getEventManager()->purgeKeyboardEvents();
+	system.getEventManager()->purgeMouseEvents();
+
 	// Run the engine
 	Common::Error result = engine->run();
 
@@ -440,6 +444,16 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debug-channels-only"))
 		gDebugChannelsOnly = true;
 
+
+	// Now we want to enable global flags if any
+	Common::StringTokenizer tokenizer(specialDebug, " ,");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+		if (token.equalsIgnoreCase("all"))
+			DebugMan.enableAllDebugChannels();
+		else
+			DebugMan.enableDebugChannel(token);
+	}
 
 	ConfMan.registerDefault("always_run_fallback_detection_extern", true);
 	PluginManager::instance().init();

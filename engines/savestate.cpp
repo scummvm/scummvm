@@ -21,7 +21,9 @@
  */
 
 #include "engines/savestate.h"
+#include "engines/engine.h"
 #include "graphics/surface.h"
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -32,16 +34,23 @@ SaveStateDescriptor::SaveStateDescriptor()
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int s, const Common::U32String &d)
-	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
-	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0),
-	_thumbnail(), _saveType(kSaveTypeUndetermined) {
+SaveStateDescriptor::SaveStateDescriptor(int slot, const Common::U32String &d)
+	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0) {
+	initSaveType();
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
-	: _slot(s), _description(Common::U32String(d)), _isDeletable(true), _isWriteProtected(false),
-	_isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0),
-	_thumbnail(), _saveType(kSaveTypeUndetermined) {
+SaveStateDescriptor::SaveStateDescriptor(int slot, const Common::String &d)
+	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0) {
+	initSaveType();
+}
+
+void SaveStateDescriptor::initSaveType() {
+	// Do not allow auto-save slot to be deleted or overwritten.
+	const bool autosave =
+			g_engine && ConfMan.getInt("autosave_period") && _slot == g_engine->getAutosaveSlot();
+	_isWriteProtected = autosave;
+	_saveType = autosave ? kSaveTypeAutosave : kSaveTypeRegular;
+	_isDeletable = !autosave;
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
@@ -78,6 +87,11 @@ bool SaveStateDescriptor::isAutosave() const {
 	if (_saveType != kSaveTypeUndetermined) {
 		return _saveType == kSaveTypeAutosave;
 	} else {
-		return _description == _("Autosave");
+		return hasAutosaveName();
 	}
+}
+
+bool SaveStateDescriptor::hasAutosaveName() const
+{
+	return _description.contains(_("Autosave"));
 }

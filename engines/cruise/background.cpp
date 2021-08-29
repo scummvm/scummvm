@@ -21,8 +21,8 @@
  */
 
 #include "common/textconsole.h"
-
 #include "cruise/cruise_main.h"
+#include "cruise/cruise.h"
 
 namespace Cruise {
 
@@ -89,6 +89,11 @@ int loadBackground(const char *name, int idx) {
 	uint8 *ptrToFree;
 
 	debug(1, "Loading BG: %s", name);
+
+	// WORKAROUND: Don't allow saving during endgame
+	if (!strcmp(name, "DGF1.PI1")) {
+		userEnabled = false;
+	}
 
 	if (!backgroundScreens[idx]) {
 		backgroundScreens[idx] = (uint8 *)mallocAndZero(320 * 200);

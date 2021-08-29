@@ -74,7 +74,7 @@ protected:
 	bool _bricks = false;
 
 	bool loadSprite(Common::SeekableReadStream &stream, uint32 offset);
-
+	void reset() override;
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 

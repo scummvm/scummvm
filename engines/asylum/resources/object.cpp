@@ -428,8 +428,8 @@ void Object::playSounds() {
 		} else {
 			Common::Rect rect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
-			point.x = (int16)(x + (rect.width()  * 2));
-			point.y = (int16)(x + (rect.height() * 2));
+			point.x = (int16)(x + (rect.width()  / 2));
+			point.y = (int16)(y + (rect.height() / 2));
 		}
 	}
 
@@ -457,6 +457,7 @@ void Object::playSounds() {
 				getSound()->setVolume(item->resourceId, volume);
 			} else {
 				getSound()->stop(item->resourceId);
+				item->resourceId = kResourceNone;
 			}
 		}
 	}

@@ -1849,7 +1849,24 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		if (_game.platform == Common::kPlatformMacintosh) {
 			expectedSize -= 4;
 			scriptOffset -= 4;
+		} else if (_game.platform == Common::kPlatformFMTowns) {
+			expectedSize = 82817;
+			scriptOffset = 73794;
+		} else if (_game.platform == Common::kPlatformSegaCD) {
+			expectedSize = 61844;
+			scriptOffset = 51703;
 		}
+		break;
+	case Common::DE_DEU:
+		expectedSize = 83554;
+		scriptOffset = 74198;
+		scriptLength = 632;
+		expectedMd5 = "27d6d8eab4e0f66792e10769090ae047";
+		patchOffset = 170;
+		patchLength = 23;
+		lang[0] = 'D';
+		lang[1] = 'E';
+		lang[2] = 'U';
 		break;
 	case Common::IT_ITA:
 		expectedSize = 83211;

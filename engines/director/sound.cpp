@@ -383,9 +383,24 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 }
 
 void DirectorSound::changingMovie() {
-	for (uint i = 0; i < _channels.size(); i++) {
-		setPuppetSound(SoundID(), i + 1); // disable puppet sound
-		_channels[i].movieChanged = true;
+	for (uint i = 1; i < _channels.size(); i++) {
+		_channels[i - 1].movieChanged = true;
+		if (isChannelPuppet(i)) {
+			setPuppetSound(SoundID(), i); // disable puppet sound
+		} else if (isChannelActive(i)) {
+			// Don't stop this sound until there's a new, non-zero sound in this channel.
+			_channels[i - 1].stopOnZero = false;
+
+			// If this is a looping sound, make it loop automatically until that happens.
+			const SoundID &lastPlayedSound = _channels[i - 1].lastPlayedSound;
+			if (lastPlayedSound.type == kSoundCast) {
+				CastMemberID memberID(lastPlayedSound.u.cast.member, lastPlayedSound.u.cast.castLib);
+				CastMember *soundCast = _window->getCurrentMovie()->getCastMember(memberID);
+				if (soundCast && soundCast->_type == kCastSound && static_cast<SoundCastMember *>(soundCast)->_looping) {
+					_mixer->loopChannel(_channels[i - 1].handle);
+				}
+			}
+		}
 	}
 	unloadSampleSounds(); // TODO: we can possibly keep this between movies
 }
@@ -632,7 +647,7 @@ bool SNDDecoder::processCommands(Common::SeekableReadStreamEndian &stream) {
 	uint16 cmdCount = stream.readUint16();
 	for (uint16 i = 0; i < cmdCount; i++) {
 		uint16 cmd = stream.readUint16();
-		if (cmd == 0x8051) {
+		if (cmd == 0x8050 || cmd == 0x8051) {
 			if (!processBufferCommand(stream))
 				return false;
 		} else {
@@ -781,7 +796,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		if (looping && forPuppet) {
 			// If this is for a puppet, return an automatically looping stream.
 			// Otherwise, the sound will be looped by the score
-				return new Audio::LoopingAudioStream(stream, 0);
+			return new Audio::LoopingAudioStream(stream, 0);
 		}
 		return stream;
 	}

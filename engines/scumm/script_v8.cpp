@@ -1337,7 +1337,7 @@ void ScummEngine_v8::o8_getStringWidth() {
 	// Skip to the next instruction
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-	translateText(msg, transBuf);
+	convertMessageToString(msg, transBuf, 512);
 	msg = transBuf;
 
 	// Temporary set the specified charset id

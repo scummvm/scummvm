@@ -317,6 +317,7 @@ protected:
 	PopUpWidget *_updatesPopUp;
 #endif
 
+	bool updateAutosavePeriod(int newValue);
 	void addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
 #ifdef USE_CLOUD

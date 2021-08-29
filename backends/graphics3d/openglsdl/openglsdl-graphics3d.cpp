@@ -180,7 +180,13 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 		// So check if the window needs to be recreated.
 
 		int currentSamples = 0;
+		#if defined(__EMSCRIPTEN__)
+		// SDL_GL_MULTISAMPLESAMPLES isn't available on a  WebGL 1.0 context 
+		// (or not bridged in Emscripten?). This forces a windows reset.
+		currentSamples = -1;
+		#else
 		SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &currentSamples);
+		#endif
 
 		// When rendering to a framebuffer, MSAA is enabled on that framebuffer, not on the screen
 		int targetSamples = shouldRenderToFramebuffer() ? 0 : _antialiasing;

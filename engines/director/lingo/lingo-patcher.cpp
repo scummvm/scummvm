@@ -120,6 +120,11 @@ struct ScriptPatch {
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
+	// Non-existent menu cast reference
+	{"warlock", nullptr, kPlatformWindows, "STARBIRD:ABOUT", kScoreScript, 4, 0,
+			1, "installmenu A13",
+				""},
+
 
 	// Patching dead loop which was fixed in v2
 	{"lzone", "", kPlatformMacintosh, "DATA:R-A:Ami-00", kScoreScript, 3, 0,
@@ -146,6 +151,19 @@ struct ScriptPatch {
 
 	{"jman", "", kPlatformWindows, "mmm:Mars Space Game 05", kMovieScript, 10, 0,
 			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
+
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+			187, "set the trails of sprite 19 to 0", "set the locH of sprite 19 to 408"},
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+		188, "set the locH of sprite 19 to 408", "set the locV of sprite 19 to 168"},
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+		189, "set the locV of sprite 19 to 168", "set the text of field \"Description\" = description"},
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+		190, "set the text of field \"Description\" = description", "set the castnum of sprite 19 to the number of cast \"Description\""},
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+		191, "set the castnum of sprite 19 to the number of cast \"Description\"", "updateStage"},
+	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
+		192, "updateStage", "set the trails of sprite 19 to 0"},
 
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };

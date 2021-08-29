@@ -157,6 +157,7 @@ private:
 
 	DebugChannelMap _debugChannels;
 	uint32 _debugChannelsEnabled;
+	uint32 _globalChannelsMask;
 
 	friend class Singleton<SingletonBaseType>;
 

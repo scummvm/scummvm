@@ -141,26 +141,11 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 	return ClampAngle(finalAngle);
 }
 
-void Movements::rotateActor(int32 x, int32 z, int32 angle) {
+IVec3 Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = AngleToRadians(angle);
-	_engine->_renderer->_destPos.x = (int32)(x * cos(radians) + z * sin(radians));
-	_engine->_renderer->_destPos.z = (int32)(-x * sin(radians) + z * cos(radians));
-}
-
-int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const {
-	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
-}
-
-int32 Movements::getDistance2D(const IVec3 &v1, const IVec3 &v2) const {
-	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.z - v1.z) * (v2.z - v1.z)));
-}
-
-int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) const {
-	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
-}
-
-int32 Movements::getDistance3D(const IVec3 &v1, const IVec3 &v2) const {
-	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)));
+	const int32 vx = (int32)(x * cos(radians) + z * sin(radians));
+	const int32 vz = (int32)(-x * sin(radians) + z * cos(radians));
+	return IVec3(vx, 0, vz);
 }
 
 void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const { // ManualRealAngle

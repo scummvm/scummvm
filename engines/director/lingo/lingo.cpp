@@ -236,15 +236,15 @@ Common::String LingoArchive::getName(uint16 id) {
 
 Symbol Lingo::getHandler(const Common::String &name) {
 	Symbol sym;
-	if (!_eventHandlerTypeIds.contains(name)) {
-		// local functions
-		if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
-			return _currentScriptContext->_functionHandlers[name];
 
-		sym = g_director->getCurrentMovie()->getHandler(name);
-		if (sym.type != VOIDSYM)
-			return sym;
-	}
+	// local functions
+	if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
+		return _currentScriptContext->_functionHandlers[name];
+
+	sym = g_director->getCurrentMovie()->getHandler(name);
+	if (sym.type != VOIDSYM)
+		return sym;
+
 	sym.type = VOIDSYM;
 	sym.name = new Common::String(name);
 	return sym;

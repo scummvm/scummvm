@@ -993,6 +993,13 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 
 // Loads a Sierra Hercules font file
 void GfxFont::loadFontHercules() {
+
+	if (_vm->getLanguage() == Common::RU_RUS) {
+		warning("Hercules font does not contain Russian characters, switching to default");
+
+		return;
+	}
+
 	Common::File fontFile;
 	int32 fontFileSize = 0;
 	byte *fontData = nullptr;

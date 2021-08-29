@@ -222,14 +222,14 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 	EditWidget *widget = dynamic_cast<EditWidget *>(child);
 	if (widget && message == EditWidget::EDIT_ENTER) {
-		// _save
+		// save
 		assert(_save);
 
 		Std::string name = widget->getText();
 		if (name.empty()) return;
 
-		if (savegame(widget->GetIndex() + 6 * _page, name))
-			_parent->Close(); // close PagedGump (and us)
+		// Note: this might close us, so we should return right after.
+		savegame(widget->GetIndex() + 6 * _page, name);
 
 		return;
 	}
@@ -271,6 +271,10 @@ bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 	pout << "Save " << saveIndex << ": \"" << name << "\"" << Std::endl;
 
 	if (name.empty()) return false;
+
+	// We are saving, close parent (and ourselves) first so it doesn't
+	// block the save or appear in the screenshot
+	_parent->Close();
 
 	Ultima8Engine::get_instance()->saveGame(saveIndex, name);
 	return true;

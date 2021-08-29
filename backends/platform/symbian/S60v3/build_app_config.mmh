@@ -94,7 +94,8 @@ LIBRARY cone.lib  eikcore.lib euser.lib apparc.lib
 LIBRARY fbscli.lib estlib.lib apgrfx.lib gdi.lib
 LIBRARY hal.lib bitgdi.lib mediaclientaudiostream.lib
 LIBRARY efsrv.lib ws32.lib avkon.lib bafl.lib esock.lib
-LIBRARY  remconcoreapi.lib remconinterfacebase.lib apmime.lib drtaeabi.lib // libcurl.dll
+LIBRARY remconcoreapi.lib remconinterfacebase.lib
+LIBRARY charconv.lib apmime.lib drtaeabi.lib // libcurl.dll
 
 SOURCEPATH ..\..\sdl
 SOURCE sdl-window.cpp

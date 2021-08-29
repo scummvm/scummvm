@@ -33,7 +33,6 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
-#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"

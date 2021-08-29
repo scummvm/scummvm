@@ -140,6 +140,9 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 				Actor_Says(kActorRunciter, 640, 17);
 				Actor_Says(kActorMcCoy, 4790, -1);
 				Actor_Says(kActorRunciter, 650, 18);
+				if (_vm->_cutContent) {
+					Actor_Says(kActorMcCoy, 4800, -1);
+				}
 				Actor_Says(kActorRunciter, 660, 19);
 				Actor_Clue_Acquire(kActorMcCoy, kClueRuncitersConfession1, true, kActorRunciter);
 			} else {

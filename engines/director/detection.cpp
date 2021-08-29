@@ -99,6 +99,8 @@ public:
 		return debugFlagList;
 	}
 
+	bool canPlayUnknownVariants() const override { return true; }
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
 };
 

@@ -37,26 +37,37 @@ class CalenderTime {
 public:
 	enum {
 		//  Basic constants
-		daysPerWeek     = 7,
-		daysPerYear     = 365,
-		hoursPerDay     = 24,
-		realMinutesPerDay = 30,
+		kDaysPerWeek     = 7,
+		kDaysPerYear     = 365,
+		kHoursPerDay     = 24,
+		kRealMinutesPerDay = 30,
 
 		//  Number of animation frames per day
-		framesPerDay    = 10 * 60 * realMinutesPerDay,
+		kFramesPerDay    = 10 * 60 * kRealMinutesPerDay,
 
 		//  Derived variables
-		framesPerHour   = (framesPerDay / hoursPerDay),
-		framesAtNoon    = (framesPerDay / 2)
+		kFramesPerHour   = (kFramesPerDay / kHoursPerDay),
+		kFramesAtNoon    = (kFramesPerDay / 2),
+
+		kDayBias = kFramesAtNoon / 6,
+
+		kGameStartHour = 5
 	};
 
-	uint16      years,
-	            weeks,
-	            days,
-	            dayInYear,
-	            dayInWeek,
-	            hour,
-	            frameInHour;
+	uint16      _years,
+	            _weeks,
+	            _days,
+	            _dayInYear,
+	            _dayInWeek,
+	            _hour,
+	            _frameInHour;
+
+	bool _calenderPaused;
+
+	CalenderTime() {
+		_years = _weeks = _days = _dayInYear = _dayInWeek = _hour = _frameInHour = 0;
+		_calenderPaused = false;
+	}
 
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
@@ -65,7 +76,7 @@ public:
 	int lightLevel(int maxLevel);
 
 	uint16 frameInDay(void) {
-		return hour * framesPerHour + frameInHour;
+		return _hour * kFramesPerHour + _frameInHour;
 	}
 };
 
@@ -74,8 +85,8 @@ public:
  * ===================================================================== */
 
 class FrameAlarm {
-	uint16      baseFrame,
-	            duration;
+	uint16      _baseFrame,
+	            _duration;
 public:
 	void set(uint16 dur);
 	bool check(void);
@@ -101,12 +112,6 @@ void saveCalender(Common::OutSaveFile *outS);
 void loadCalender(Common::InSaveFile *in);
 
 bool isDayTime(void);
-
-/* ===================================================================== *
-   Global calender
- * ===================================================================== */
-
-extern CalenderTime calender;
 
 const int MAX_LIGHT = 12;       // maximum light level
 

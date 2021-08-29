@@ -116,12 +116,12 @@ int16 ProtoDrainage::currentLevel(Actor *a, effectDrainsTypes edt) {
 	case drainsManaGreen:
 	case drainsManaBlue:
 	case drainsManaViolet:
-		return (&a->effectiveStats.redMana)[edt - drainsManaRed];
+		return (&a->_effectiveStats.redMana)[edt - drainsManaRed];
 
 	case drainsLifeLevel:
 		return (a->getBaseStats())->vitality;
 	case drainsVitality:
-		return a->effectiveStats.vitality;
+		return a->_effectiveStats.vitality;
 	default:
 		return 0;
 	}
@@ -137,10 +137,10 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 	case drainsManaViolet:
 		{
 			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - drainsManaRed));
-			(&a->effectiveStats.redMana)[aType] =
+			(&a->_effectiveStats.redMana)[aType] =
 				clamp(
 					0,
-					(&a->effectiveStats.redMana)[aType] - amt,
+					(&a->_effectiveStats.redMana)[aType] - amt,
 					(&(a->getBaseStats())->redMana)[aType]);
 		}
 		break;
@@ -436,7 +436,7 @@ SPECIALSPELL(DeathSpell) {
 		Actor *a = (Actor *) trg->getObject();
 		if (!a->makeSavingThrow()) {
 			a->acceptDamage(cst->thisID(),
-			                a->effectiveStats.vitality,
+			                a->_effectiveStats.vitality,
 			                kDamageEnergy, 1, 2, 0);
 			a->die();
 		}

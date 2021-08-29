@@ -243,6 +243,10 @@ int16 ModularGraphicsBackend::getOverlayWidth() {
 	return _graphicsManager->getOverlayWidth();
 }
 
+float ModularGraphicsBackend::getHiDPIScreenFactor() const {
+	return _graphicsManager->getHiDPIScreenFactor();
+}
+
 bool ModularGraphicsBackend::showMouse(bool visible) {
 	return _graphicsManager->showMouse(visible);
 }

@@ -34,9 +34,6 @@ namespace Saga2 {
 INITIALIZER(initSystemConfig);
 // uses null cleanup
 
-INITIALIZER(initMemPool);
-TERMINATOR(termMemPool);
-
 INITIALIZER(initPlayIntro);
 TERMINATOR(termPlayOutro);
 

@@ -49,6 +49,7 @@ enum TwinEActionType {
 	DebugGridCameraPressDown,
 	DebugGridCameraPressLeft,
 	DebugGridCameraPressRight,
+	DebugPlaceActorAtCenterOfScreen,
 	DebugMenu,
 	DebugMenuActivate,
 	QuickBehaviourNormal,

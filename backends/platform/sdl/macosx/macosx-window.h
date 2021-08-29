@@ -20,39 +20,20 @@
  *
  */
 
-#ifndef TWINE_PARSER_BRICK_H
-#define TWINE_PARSER_BRICK_H
+#ifndef BACKENDS_PLATFORM_SDL_MACOSX_MACOSX_WINDOW_H
+#define BACKENDS_PLATFORM_SDL_MACOSX_MACOSX_WINDOW_H
 
-#include "common/memstream.h"
-#include "common/stream.h"
-#include "graphics/managed_surface.h"
-#include "twine/parser/parser.h"
-#include "twine/shared.h"
+#ifdef MACOSX
 
-namespace TwinE {
+#include "backends/platform/sdl/sdl-window.h"
 
-class BrickData : public Parser {
-private:
-	Graphics::ManagedSurface _surface;
-	int _offsetX = 0;
-	int _offsetY = 0;
-
+class SdlWindow_MacOSX final : public SdlWindow {
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
-
-	inline const Graphics::ManagedSurface &surface() const {
-		return _surface;
-	}
-
-	inline int offsetX() const {
-		return _offsetX;
-	}
-
-	inline int offsetY() const {
-		return _offsetY;
-	}
+	// Use an iconless window on OS X, as we use a nicer external icon there.
+	virtual void setupIcon() override {}
+	virtual float getDpiScalingFactor() const override;
 };
 
-} // End of namespace TwinE
+#endif
 
 #endif

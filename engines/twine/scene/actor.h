@@ -25,10 +25,8 @@
 
 #include "common/scummsys.h"
 #include "twine/parser/anim.h"
-#include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
-#include "twine/text.h"
 
 namespace TwinE {
 
@@ -134,19 +132,6 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-enum class AnimType {
-	kAnimationTypeLoop = 0,
-	kAnimationType_1 = 1,
-	// play animation and let animExtra follow as next animation
-	// if there is already a next animation set - replace the value
-	kAnimationType_2 = 2,
-	// replace animation and let the current animation follow
-	kAnimationType_3 = 3,
-	// play animation and let animExtra follow as next animation
-	// but don't take the current state in account
-	kAnimationType_4 = 4
-};
-
 #define kActorMaxLife 50
 
 /**
@@ -241,7 +226,7 @@ public:
 	int32 _animPosition = 0;
 	AnimType _animType = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
-	int32 _brickSound = 0;
+	uint8 _brickSound = 0U;
 
 	BoundingBox _boudingBox;
 	ActorMoveStruct _move;

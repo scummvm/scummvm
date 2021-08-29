@@ -102,10 +102,9 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
-					*src = ~(*src);
+					*src = _wm->inverter(*src);
 		}
 	} else {
-		uint32 alpha = _wm->_pixelformat.ARGBToColor(255, 0, 0, 0);
 
 		for (int i = 0; i < srcRect.height(); i++) {
 			uint32 *src = (uint32 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
@@ -113,7 +112,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
-					*src = ~(*src & ~alpha) | alpha;
+					*src = _wm->inverter(*src);
 		}
 	}
 }
@@ -208,7 +207,8 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 			inkBlitSurface(&pd, srcRect, channel->getMask());
 		}
 	} else {
-		warning("Window::inkBlitFrom: No source surface: spriteType: %d, castType: %d, castId: %s", channel->_sprite->_spriteType, channel->_sprite->_cast ? channel->_sprite->_cast->_type : 0, channel->_sprite->_castId.asString().c_str());
+		if (debugChannelSet(kDebugImages, 2))
+			warning("Window::inkBlitFrom: No source surface: spriteType: %d, castType: %d, castId: %s", channel->_sprite->_spriteType, channel->_sprite->_cast ? channel->_sprite->_cast->_type : 0, channel->_sprite->_castId.asString().c_str());
 	}
 }
 
@@ -457,6 +457,8 @@ bool Window::step() {
 
 	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
+		_soundManager->changingMovie();
+
 		_newMovieStarted = true;
 
 		_currentPath = getPath(_nextMovie.movie, _currentPath);
@@ -504,7 +506,6 @@ bool Window::step() {
 		} else {
 			delete sharedCast;
 		}
-		_soundManager->changingMovie();
 
 		_nextMovie.movie.clear();
 	}

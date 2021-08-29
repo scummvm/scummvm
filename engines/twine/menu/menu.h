@@ -23,7 +23,6 @@
 #ifndef TWINE_MENU_H
 #define TWINE_MENU_H
 
-#include "twine/scene/actor.h"
 #include "twine/twine.h"
 #include "twine/text.h"
 
@@ -34,6 +33,7 @@ namespace TwinE {
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
+class BodyData;
 class SpriteData;
 
 class MenuSettings {

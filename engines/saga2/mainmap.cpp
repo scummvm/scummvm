@@ -28,16 +28,13 @@
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/mainmap.h"
+#include "saga2/timers.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
 void parseCommandLine(int argc, char *argv[]) {
 	warning("STUB: parseCommandLine()");
-}
-
-uint32 pickHeapSize(uint32 minHeap) {
-	warning("STUB: pickHeapSize()");
-	return 0;
 }
 
 void initCleanup() {
@@ -50,22 +47,24 @@ bool initializeGame() {
 	return false;
 }
 void shutdownGame() {
-	warning("STUB: shutdownGame");
+	cleanupGame();
 }
 
 bool initSystemTimer() {
-	warning("STUB: initSystemTimer()");
+	initTimer();
 	return true;
 }
+
 void cleanupSystemTimer() {
-	warning("STUB: cleanupSystemTimer()");
+	cleanupTimer();
 }
 
 void cleanupSystemTasks() {
 	warning("STUB: cleanupSystemTasks()");
 }
+
 void cleanupPaletteData() {
-	warning("STUB: cleanupPaletteData()");
+	g_vm->_pal->cleanupPalettes();
 }
 
 } // end of namespace Saga2

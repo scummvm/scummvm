@@ -34,11 +34,14 @@
 #include "saga2/mission.h"
 #include "saga2/hresmgr.h"
 #include "saga2/saveload.h"
+#include "saga2/actor.h"
 
 namespace Saga2 {
 
-#define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8))
-#define BRANCH(w)       pc = codeSeg + (w)
+#define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8)); \
+	debugC(3, kDebugScripts, "IMMED_WORD(%d 0x%04x)", w, w)
+#define BRANCH(w)       pc = codeSeg + (w); \
+	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", pc - codeSeg, pc - codeSeg)
 
 const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
                     dataSegID   = MKTAG('_', '_', 'D', 'A'),
@@ -242,6 +245,15 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		debugC(3, kDebugScripts, "byteAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, *segmentAddress(seg, offset));
 		*pcPtr = pc;
+
+		// FIXME: WORKAROUND: Fixes Captain Navis (5299, 17715, 80) in Maldavith not allowing passage to the Tamnath Ruins through sail even if Muybridge is dead.
+		if (seg == 130 && offset == 2862) {
+			warning("WORKAROUND: byteAddress: far");
+			Actor *boss = (Actor *)GameObject::objectAddress(32880);
+			if (boss->isDead())
+				return segmentAddress(130, 0);
+		}
+
 		return segmentAddress(seg, offset);
 
 	case addr_array:
@@ -550,6 +562,9 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 }
 
 #define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
+#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, *stack)
+#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *stack)
+#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *addr)
 
 bool Thread::interpret(void) {
 	uint8               *pc,
@@ -570,9 +585,9 @@ bool Thread::interpret(void) {
 
 		switch (op = *pc++) {
 		case op_dup:
-			D_OP(op_dup);
 			--stack;
 			*stack = stack[1];              // duplicate value on stack
+			D_OP1(op_dup);
 			break;
 
 		case op_drop:                           // drop word on stack
@@ -592,27 +607,31 @@ bool Thread::interpret(void) {
 
 		case op_strlit:                         // string literal (also pushes word)
 		case op_constint:                       // constant integer
-			D_OP(op_strlit);
 			IMMED_WORD(w);                      // pick up word after opcode
 			*--stack = w;                       // push integer on stack
+
+			if (op == op_strlit)
+				D_OP1(op_strlit);
+			else
+				D_OP1(op_constint);
 			break;
 
 		case op_getflag:                        // get a flag
-			D_OP(op_getflag);
 			addr = bitAddress(this, &pc, &w);    // get address of bit
 			*--stack = ((*addr) & w) ? 1 : 0;     // true or false if bit set
+			D_OP2(op_getflag);
 			break;
 
 		case op_getint:                         // read from integer field (mode)
-			D_OP(op_getint);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;         // get integer from address
+			D_OP2(op_getint);
 			break;
 
 		case op_getbyte:                        // read from integer field (mode)
-			D_OP(op_getbyte);
 			addr = byteAddress(this, &pc);       // get address of integer
 			*--stack = *addr;                   // get byte from address
+			D_OP2(op_getbyte);
 			break;
 
 		//  Note that in the current implementation, "put" ops leave
@@ -620,41 +639,41 @@ bool Thread::interpret(void) {
 		//  'vput' which consumes the variable.
 
 		case op_putflag:                    // put to flag bit (mode)
-			D_OP(op_putflag);
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack) *addr |= w;         // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
+			D_OP3(op_putflag);
 			break;
 
 		case op_putflag_v:                  // put to flag bit (mode)
-			D_OP(op_putflag_v);
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack++) *addr |= w;       // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
+			D_OP3(op_putflag_v);
 			break;
 
 		case op_putint:                     // put to integer field (mode)
-			D_OP(op_putint);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack;       // put integer to address
+			D_OP3(op_putint);
 			break;
 
 		case op_putint_v:                   // put to integer field (mode)
-			D_OP(op_putint_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack++;     // put integer to address
+			D_OP3(op_putint_v);
 			break;
 
 		case op_putbyte:                    // put to byte field (mode)
-			D_OP(op_putbyte);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack;                 // put integer to address
+			D_OP3(op_putbyte);
 			break;
 
 		case op_putbyte_v:                  // put to byte field (mode)
-			D_OP(op_putbyte_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack++;               // put integer to address
+			D_OP3(op_putbyte_v);
 			break;
 
 		case op_enter:
@@ -887,25 +906,33 @@ bool Thread::interpret(void) {
 		case op_jmp_true_v:
 			D_OP(op_jmp_true_v);
 			IMMED_WORD(w);               // pick up word after address
-			if (*stack++ != 0) BRANCH(w);    // if stack is non-zero, jump
+			if (*stack++ != 0) {
+				BRANCH(w);    // if stack is non-zero, jump
+			}
 			break;
 
 		case op_jmp_false_v:
 			D_OP(op_jmp_false_v);
 			IMMED_WORD(w);               // pick up word after address
-			if (*stack++ == 0) BRANCH(w);    // if stack is zero, jump
+			if (*stack++ == 0) {
+				BRANCH(w);    // if stack is zero, jump
+			}
 			break;
 
 		case op_jmp_true:
 			D_OP(op_true);
 			IMMED_WORD(w);               // pick up word after address
-			if (*stack != 0) BRANCH(w);      // if stack is non-zero. jump
+			if (*stack != 0) {
+				BRANCH(w);      // if stack is non-zero. jump
+			}
 			break;
 
 		case op_jmp_false:
 			D_OP(op_false);
 			IMMED_WORD(w);               // pick up word after address
-			if (*stack == 0) BRANCH(w);      // if stack is zero, jump
+			if (*stack == 0) {
+				BRANCH(w);      // if stack is zero, jump
+			}
 			break;
 
 		case op_jmp:
@@ -925,6 +952,7 @@ bool Thread::interpret(void) {
 				while (n--) {
 					IMMED_WORD(val);         // val = case value
 					IMMED_WORD(jmp);         // jmp = address to jump to
+					debugC(3, kDebugScripts, "Case %d: jmp %d", val, jmp);
 
 					if (w == val) {         // if case values match
 						BRANCH(jmp);         // jump to case
@@ -1168,6 +1196,8 @@ public:
 	//  Place a thread back into the inactive list
 	void deleteThread(Thread *p);
 
+	void newThread(Thread *p, ThreadID id);
+
 	void newThread(Thread *p);
 
 	//  Return the specified thread's ID
@@ -1207,7 +1237,7 @@ void ThreadList::read(Common::InSaveFile *in) {
 		id = in->readSint16LE();
 		debugC(4, kDebugSaveload, "...... id = %d", id);
 
-		new Thread(in);
+		new Thread(in, id);
 	}
 }
 
@@ -1263,6 +1293,13 @@ void ThreadList::deleteThread(Thread *p) {
 			_list[i] = nullptr;
 		}
 	}
+}
+
+void ThreadList::newThread(Thread *p, ThreadID id) {
+	if (_list[id])
+		error("Thread %d already exists", id);
+
+	_list[id] = p;
 }
 
 void ThreadList::newThread(Thread *p) {
@@ -1362,6 +1399,10 @@ void deleteThread(Thread *thread) {
 	threadList.deleteThread(thread);
 }
 
+void newThread(Thread *p, ThreadID id) {
+	threadList.newThread(p, id);
+}
+
 void newThread(Thread *thread) {
 	threadList.newThread(thread);
 }
@@ -1413,7 +1454,7 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	newThread(this);
 }
 
-Thread::Thread(Common::SeekableReadStream *stream) {
+Thread::Thread(Common::SeekableReadStream *stream, ThreadID id) {
 	int16   stackOffset;
 
 	programCounter.segment = stream->readUint16LE();
@@ -1441,7 +1482,7 @@ Thread::Thread(Common::SeekableReadStream *stream) {
 
 	stream->read(stackPtr, stackOffset);
 
-	newThread(this);
+	newThread(this, id);
 }
 
 //-----------------------------------------------------------------------
@@ -1818,10 +1859,10 @@ scriptResult runMethod(
 		th = new Thread(segNum, segOff, args);
 		thisThread = th;
 		if (th == nullptr) {
-			debugC(4, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
+			debugC(3, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
 			return scriptResultNoScript;
 		} else if (!th->_valid) {
-			debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
+			debugC(3, kDebugScripts, "Scripts: %d is not valid", lastExport);
 			return scriptResultNoScript;
 		}
 		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
@@ -1833,6 +1874,7 @@ scriptResult runMethod(
 		//  Run the thread to completion
 		result = th->run();
 		args.returnVal = th->returnVal;
+		debugC(3, kDebugScripts, "return: %d", th->returnVal);
 
 		if (result != scriptResultAsync) delete th;
 	}

@@ -278,7 +278,11 @@ void Score::step() {
 	if (_playState == kPlayStopped)
 		return;
 
-	_lingo->processEvents();
+	if (!_movie->_userEventQueue.empty()) {
+		_lingo->processEvents(_movie->_userEventQueue);
+	} else if (_vm->getVersion() >= 300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
+		_movie->processEvent(kEventIdle);
+	}
 
 	update();
 
@@ -331,7 +335,7 @@ void Score::update() {
 
 		if (keepWaiting) {
 			if (_movie->_videoPlayback) {
-				renderVideo();
+				updateWidgets(true);
 				_window->render();
 			}
 			return;
@@ -498,7 +502,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		renderSprites(frameId, mode);
 
 	int currentPalette = _frames[frameId]->_palette.paletteId;
-	if (!_puppetPalette && currentPalette != _lastPalette) {
+	if (!_puppetPalette && currentPalette != _lastPalette && currentPalette) {
 		_lastPalette = currentPalette;
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
@@ -547,8 +551,10 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		// this doesn't include changes in dimension or position!
 		bool widgetRedrawn = channel->updateWidget();
 
-		if (channel->isActiveVideo())
+		if (channel->isActiveVideo()) {
+			channel->updateVideoTime();
 			_movie->_videoPlayback = true;
+		}
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)
@@ -596,6 +602,10 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
 				return;
 
+			// try to use the cursor read from exe file.
+			// currently, we are using mac arrow to represent custom win cursor since we didn't find where it stores. So i comment it out here.
+//			if (g_director->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
+//				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, g_director->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
 			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
 			_currentCursor = _channels[spriteId]->_cursor.getRef();
 			return;
@@ -609,11 +619,11 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 	_currentCursor = _defaultCursor.getRef();
 }
 
-void Score::renderVideo() {
+void Score::updateWidgets(bool hasVideoPlayback) {
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		CastMember *cast = channel->_sprite->_cast;
-		if (cast && cast->_type == kCastDigitalVideo && cast->isModified()) {
+		if (cast && (cast->_type != kCastDigitalVideo || hasVideoPlayback) && cast->isModified()) {
 			channel->replaceWidget();
 			_window->addDirtyRect(channel->getBbox());
 		}
@@ -911,6 +921,7 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 		for (uint32 j = stringPos; j < nextStringPos; j++) {
 			label += stream.readByte();
 		}
+		label = _movie->getCast()->decodeString(label).encode(Common::kUtf8);
 
 		_labels->insert(new Label(label, frame));
 		stream.seek(streamPos);
@@ -923,7 +934,7 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 
 	debugC(2, kDebugLoading, "****** Loading labels");
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
-		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, Common::toPrintable((*j)->name).c_str());
+		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, utf8ToPrintable((*j)->name).c_str());
 	}
 }
 

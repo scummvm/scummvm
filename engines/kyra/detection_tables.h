@@ -829,6 +829,20 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
+	{ // Hebrew Fan Translation
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY2s("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032", -1,
+					   "8FAT.FNT", "12424362a537e1335b10323c4013bb1d", -1),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",

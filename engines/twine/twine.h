@@ -50,8 +50,8 @@ namespace TwinE {
 /** Default frames per second */
 #define DEFAULT_FRAMES_PER_SECOND 20
 
-/** Number of colors used in the game */
-#define NUMOFCOLORS 256
+#define ORIGINAL_WIDTH 640
+#define ORIGINAL_HEIGHT 480
 
 static const struct TwinELanguage {
 	const char *name;
@@ -245,6 +245,7 @@ public:
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
+	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
 	const char *getGameId() const;
 

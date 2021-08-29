@@ -38,7 +38,13 @@ public:
 	/**
 	 * Load the specified music data
 	 */
-	void load(byte *data, size_t size, int seqNo, bool speedHack);
+	void load(byte *data, size_t size, int seqNo);
+
+	/**
+	 * Load the XMIDI data containing the transition tracks.
+	 * Call this function before calling playTransition.
+	 */
+	void loadTransitionData(byte *data, size_t size);
 
 	/**
 	 * Play the specified music track, starting at the
@@ -46,6 +52,15 @@ public:
 	 * beginning.
 	 */
 	void play(int trackNo, int branchNo);
+
+	/**
+	 * Plays the specified transition track. If overlay is specified, the
+	 * transition is overlaid on the currently playing music track and this
+	 * track is stopped when the transition ends. If overlay is not specified,
+	 * the currently playing music track is stopped before the transition is
+	 * started.
+	 */
+	void playTransition(int trackNo, bool overlay);
 
 	/**
 	 * Stop the currently playing track.
@@ -105,8 +120,10 @@ public:
 private:
 	MidiDriver_Multisource *_driver;
 	MidiParser *_parser;
+	MidiParser *_transitionParser;
 
 	bool _isFMSynth;
+	bool _playingTransition;
 	static byte _callbackData[2];
 };
 

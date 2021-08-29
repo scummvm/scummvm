@@ -47,6 +47,7 @@ class SeekableReadStreamEndian;
 namespace Graphics {
 class MacWindowManager;
 struct MacPlotData;
+struct WinCursorGroup;
 typedef Common::Array<byte *> MacPatterns;
 
 class ManagedSurface;
@@ -250,7 +251,7 @@ public:
 
 public:
 	int _colorDepth;
-	Common::HashMap<int, int> _macKeyCodes;
+	Common::HashMap<int, int> _KeyCodes;
 	int _machineType;
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
@@ -258,6 +259,7 @@ public:
 	char _dirSeparator;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 
 protected:
 	Common::Error run() override;

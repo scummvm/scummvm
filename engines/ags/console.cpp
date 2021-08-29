@@ -239,7 +239,7 @@ bool AGSConsole::Cmd_dumpSprite(int argc, const char **argv) {
 			}
 		}
 		Image::writePNG(df, sprite->GetAllegroBitmap()->getSurface().rawSurface(), palette);
-		delete [] palette;
+		delete[] palette;
 	}
 
 	return true;

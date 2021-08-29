@@ -50,7 +50,7 @@ void Renderer::saveBackBuffer(BackBufferSource source) {
 
 		Graphics::Surface *surf = g_system->lockScreen();
 		int size = surf->w * surf->h;
-		
+
 		_savedBackBuffers[source] = new byte[size];
 		memcpy(_savedBackBuffers[source], surf->getPixels(), size);
 

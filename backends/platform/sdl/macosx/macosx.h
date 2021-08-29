@@ -29,32 +29,36 @@ class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	~OSystem_MacOSX();
 
-	virtual bool hasFeature(Feature f);
+	virtual bool hasFeature(Feature f) override;
 
-	virtual bool displayLogFile();
+	virtual bool displayLogFile() override;
 
-	virtual bool hasTextInClipboard();
-	virtual Common::U32String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::U32String &text);
+	virtual bool hasTextInClipboard() override;
+	virtual Common::U32String getTextFromClipboard() override;
+	virtual bool setTextInClipboard(const Common::U32String &text) override;
 
-	virtual bool openUrl(const Common::String &url);
+	virtual bool openUrl(const Common::String &url) override;
 
-	virtual Common::String getSystemLanguage() const;
+	virtual Common::String getSystemLanguage() const override;
 
-	virtual void init();
-	virtual void initBackend();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	virtual void init() override;
+	virtual void initBackend() override;
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+
+#ifdef USE_OPENGL
+	virtual GraphicsManagerType getDefaultGraphicsManager() const override;
+#endif
 
 	//Screenshots
-	virtual Common::String getScreenshotsPath();
+	virtual Common::String getScreenshotsPath() override;
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
-	virtual Common::String getDefaultLogFileName();
+	virtual Common::String getDefaultConfigFileName() override;
+	virtual Common::String getDefaultLogFileName() override;
 
 	// Override createAudioCDManager() to get our Mac-specific
 	// version.
-	virtual AudioCDManager *createAudioCDManager();
+	virtual AudioCDManager *createAudioCDManager() override;
 };
 
 #endif

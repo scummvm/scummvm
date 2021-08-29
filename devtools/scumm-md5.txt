@@ -312,6 +312,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
 	12cdc256eae5a461bcc9a49975999841	-1	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive
+	591bb98948d277f6c91e65db3f26c829	11210	en	Mac	-	Demo	-	einstein95
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
 	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	-	RUSCUMM
 	32765851cd5ed099f8da36a4a6144c7e	-1	ko	DOS	-	CD	Fan translation	ScummVM-Kor

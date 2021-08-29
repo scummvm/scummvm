@@ -183,6 +183,8 @@ int processMenu(menuStruct *pMenu) {
 
 		manageEvents();
 		g_system->delayMillis(10);
+		if (_vm->shouldQuit())
+			return -1;
 
 //    readKeyboard();
 	} while (!si);

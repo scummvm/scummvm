@@ -147,7 +147,9 @@ Common::Error StarTrekEngine::run() {
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
-	loadBridgeComputerTopics();
+
+	if (!isDemo)
+		loadBridgeComputerTopics();
 
 	_gfx->setMouseBitmap(!isDemo ? "pushbtn" : "cursor");
 

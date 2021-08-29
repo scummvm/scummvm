@@ -135,7 +135,22 @@ static void openFromBundle(NSString *file) {
 }
 
 - (void)openUserManual {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.scummvm.org/documentation"]];
+	// If present locally in the bundle, open that file.
+	if ([[NSFileManager defaultManager] respondsToSelector:@selector(contentsOfDirectoryAtPath:error:)]) {
+		NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+		NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
+		NSEnumerator *dirEnum = [dirContents objectEnumerator];
+		NSString *file;
+		while (file = [dirEnum nextObject]) {
+			if ([file hasPrefix:@"ScummVM Manual"] && [file hasSuffix:@".pdf"]) {
+				[[NSWorkspace sharedWorkspace] openFile:[bundlePath stringByAppendingPathComponent:file]];
+				return;
+			}
+		}
+	}
+
+	// Otherwise try to access the only version.
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://docs.scummvm.org/"]];
 }
 
 - (void)openCredits {

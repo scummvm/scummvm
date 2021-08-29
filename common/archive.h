@@ -58,7 +58,7 @@ public:
 	virtual ~ArchiveMember() { }
 	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
 	virtual String getName() const = 0; /*!< Get the name of the archive member. */
-	virtual String getDisplayName() const { return getName(); } /*!< Get the display name of the archive member. */
+	virtual U32String getDisplayName() const { return getName(); } /*!< Get the display name of the archive member. */
 };
 
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr; /*!< Shared pointer to an archive member. */

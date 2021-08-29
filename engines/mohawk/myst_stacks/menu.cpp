@@ -375,7 +375,7 @@ bool Menu::showConfirmationDialog(const Common::U32String &message, const Common
 
 	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
 
-	return dialog.runModal() !=0;
+	return dialog.runModal() == GUI::kMessageOK;
 }
 
 void Menu::resetButtons() {

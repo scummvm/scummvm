@@ -561,7 +561,7 @@ tell: tTELL expr tTO stmtoneliner				{
 		$$ = new TellNode($expr, $stmtlist); }
 	;
 
-when: tWHEN							{ $$ = new WhenNode($tWHEN.eventName, $tWHEN.stmt); } ;
+when: tWHEN '\n'					{ $$ = new WhenNode($tWHEN.eventName, $tWHEN.stmt); } ;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
 	| nonemptystmtlist

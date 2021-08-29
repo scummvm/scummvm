@@ -100,6 +100,7 @@ bool MYMIDI::is_playing() const {
 }
 
 void MYMIDI::set_volume(int volume) {
+	_vol = volume;
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 }
 

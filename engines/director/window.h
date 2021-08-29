@@ -183,7 +183,6 @@ public:
 	bool _retFreezeContext;
 	DatumHash *_retLocalVars;
 	Datum _retMe;
-	bool _hasFrozenLingo;
 
 private:
 	uint32 _stageColor;

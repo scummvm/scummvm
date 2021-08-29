@@ -23,8 +23,6 @@
 //
 // Game configuration
 //
-//include <ctype.h> // toupper
-#include "ags/shared/core/platform.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -32,17 +30,18 @@
 #include "ags/engine/ac/path_helper.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/system.h"
+#include "ags/shared/core/platform.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/main/main_header.h"
+#include "ags/engine/device/mouse_w32.h"
 #include "ags/engine/main/config.h"
+#include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/ini_util.h"
 #include "ags/shared/util/text_stream_reader.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/engine/media/audio/audio_system.h"
 #include "common/config-manager.h"
 
 namespace AGS3 {

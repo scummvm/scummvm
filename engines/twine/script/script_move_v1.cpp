@@ -24,7 +24,6 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
 #include "twine/flamovies.h"
@@ -117,10 +116,6 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	engine->_renderer->_destPos.x = sp.x;
-	engine->_renderer->_destPos.y = sp.y;
-	engine->_renderer->_destPos.z = sp.z;
-
 	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
@@ -189,10 +184,6 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	engine->_renderer->_destPos.x = sp.x;
-	engine->_renderer->_destPos.y = sp.y;
-	engine->_renderer->_destPos.z = sp.z;
-
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_speed = 0;
 	}
@@ -247,8 +238,6 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	engine->_renderer->_destPos = sp;
-
 	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
@@ -318,10 +307,6 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = trackId;
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	engine->_renderer->_destPos.x = sp.x;
-	engine->_renderer->_destPos.y = sp.y;
-	engine->_renderer->_destPos.z = sp.z;
-
 	ctx.actor->_angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 	ctx.actor->_spriteActorRotation = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.y, 0, sp.y, engine->_movements->_targetActorDistance);
 
@@ -717,7 +702,7 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, ctx);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, scriptOpcode);
+			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}
 
 		if (end < 0) {

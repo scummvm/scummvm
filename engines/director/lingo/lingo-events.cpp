@@ -102,10 +102,6 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
-int Movie::getEventCount() {
-	return _eventQueue.size();
-}
-
 void Movie::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _lingo->_eventHandlerTypes[event]);
 	LingoArchive *mainArchive = getMainLingoArch();
@@ -113,7 +109,7 @@ void Movie::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	mainArchive->addCode(code, kEventScript, event);
 }
 
-void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
+void Movie::queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId) {
 	/* When the mouseDown or mouseUp occurs over a sprite, the message
 	 * goes first to the sprite script, then to the script of the cast
 	 * member, to the frame script and finally to the movie scripts.
@@ -136,9 +132,9 @@ void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
 			if (((event == kEventMouseDown && sprite->_immediate) || (event == kEventMouseUp && !sprite->_immediate))
 					&& script->_eventHandlers.contains(kEventGeneric)) {
-				_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+				queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			} else if (script->_eventHandlers.contains(event)) {
-				_eventQueue.push(LingoEvent(event, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+				queue.push(LingoEvent(event, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
 		}
 	}
@@ -146,11 +142,11 @@ void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 	// Cast script
 	ScriptContext *script = getScriptContext(kCastScript, sprite->_castId);
 	if (script && script->_eventHandlers.contains(event)) {
-		_eventQueue.push(LingoEvent(event, eventId, kCastScript, sprite->_castId, false, spriteId));
+		queue.push(LingoEvent(event, eventId, kCastScript, sprite->_castId, false, spriteId));
 	}
 }
 
-void Movie::queueFrameEvent(LEvent event, int eventId) {
+void Movie::queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId) {
 	/* [in D4] the enterFrame, exitFrame, idle and timeout messages
 	 * are sent to a frame script and then a movie script.	If the
 	 * current frame has no frame script when the event occurs, the
@@ -172,13 +168,13 @@ void Movie::queueFrameEvent(LEvent event, int eventId) {
 		return;
 
 	if (event == kEventEnterFrame && script->_eventHandlers.contains(kEventGeneric)) {
-		_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false, 0));
+		queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false, 0));
 	} else if (script->_eventHandlers.contains(event)) {
-		_eventQueue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false, 0));
+		queue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false, 0));
 	}
 }
 
-void Movie::queueMovieEvent(LEvent event, int eventId) {
+void Movie::queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId) {
 	/* If more than one movie script handles the same message, Lingo
 	 * searches the movie scripts according to their order in the cast
 	 * window [p.81 of D4 docs]
@@ -189,7 +185,7 @@ void Movie::queueMovieEvent(LEvent event, int eventId) {
 	for (ScriptContextHash::iterator it = mainArchive->scriptContexts[kMovieScript].begin();
 			it != mainArchive->scriptContexts[kMovieScript].end(); ++it) {
 		if (it->_value->_eventHandlers.contains(event)) {
-			_eventQueue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
+			queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
 			return;
 		}
 	}
@@ -198,19 +194,19 @@ void Movie::queueMovieEvent(LEvent event, int eventId) {
 		for (ScriptContextHash::iterator it = sharedArchive->scriptContexts[kMovieScript].begin();
 				it != sharedArchive->scriptContexts[kMovieScript].end(); ++it) {
 			if (it->_value->_eventHandlers.contains(event)) {
-				_eventQueue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
+				queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
 				return;
 			}
 		}
 	}
 }
 
-void Movie::registerEvent(LEvent event, int targetId) {
+void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId) {
 	int eventId = _nextEventId++;
 	if (_nextEventId < 0)
 		_nextEventId = 0;
 
-	int oldQueueSize = _eventQueue.size();
+	int oldQueueSize = queue.size();
 
 	/* When an event occurs the message [...] is first sent to a
 	 * primary event handler: [... if exists it is executed] and the
@@ -232,7 +228,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		{
 			CastMemberID scriptID = CastMemberID(event, 0);
 			if (getScriptContext(kEventScript, scriptID)) {
-				_eventQueue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
+				queue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
 			}
 		}
 		break;
@@ -240,7 +236,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		{
 			CastMemberID scriptID = CastMemberID(targetId, 0);
 			if (getScriptContext(kEventScript, scriptID)) {
-				_eventQueue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
+				queue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
 			}
 		}
 		break;
@@ -254,12 +250,12 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventMouseUp:
 		case kEventMouseDown:
 			if (targetId) {
-				queueSpriteEvent(event, eventId, targetId);
+				queueSpriteEvent(queue, event, eventId, targetId);
 			}
 			break;
 
 		case kEventEnterFrame:
-			queueFrameEvent(event, eventId);
+			queueFrameEvent(queue, event, eventId);
 			break;
 
 		case kEventIdle:
@@ -267,7 +263,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventStartMovie:
 		case kEventStepMovie:
 		case kEventStopMovie:
-			queueMovieEvent(event, eventId);
+			queueMovieEvent(queue, event, eventId);
 			break;
 
 		default:
@@ -286,7 +282,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventMouseDown:
 		case kEventBeginSprite:
 			if (targetId) {
-				queueSpriteEvent(event, eventId, targetId);
+				queueSpriteEvent(queue, event, eventId, targetId);
 			}
 			// fall through
 
@@ -294,7 +290,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventEnterFrame:
 		case kEventExitFrame:
 		case kEventTimeout:
-			queueFrameEvent(event, eventId);
+			queueFrameEvent(queue, event, eventId);
 			// fall through
 
 		case kEventStartUp:
@@ -302,7 +298,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventStepMovie:
 		case kEventStopMovie:
 		case kEventPrepareMovie:
-			queueMovieEvent(event, eventId);
+			queueMovieEvent(queue, event, eventId);
 			break;
 
 		default:
@@ -310,28 +306,29 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		}
 	}
 
-	if (oldQueueSize == _eventQueue.size()) {
-		debugC(9, kDebugEvents, "Lingo::registerEvent(%s): no event handler", _lingo->_eventHandlerTypes[event]);
+	if (oldQueueSize == queue.size()) {
+		debugC(9, kDebugEvents, "Lingo::queueEvent(%s): no event handler", _lingo->_eventHandlerTypes[event]);
 	}
 }
 
-void Movie::processEvent(LEvent event, int targetId) {
-	registerEvent(event, targetId);
-	_vm->setCurrentMovie(this);
-	_lingo->processEvents();
+void Movie::queueUserEvent(LEvent event, int targetId) {
+	queueEvent(_userEventQueue, event, targetId);
 }
 
-void Lingo::processEvents() {
+void Movie::processEvent(LEvent event, int targetId) {
+	Common::Queue<LingoEvent> queue;
+	queueEvent(queue, event, targetId);
+	_vm->setCurrentMovie(this);
+	_lingo->processEvents(queue);
+}
+
+void Lingo::processEvents(Common::Queue<LingoEvent> &queue) {
 	int lastEventId = -1;
-	Window *window = _vm->getCurrentWindow();
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
-	if (_vm->getVersion() >= 300 && !window->_newMovieStarted && sc->_playState != kPlayStopped && movie->_eventQueue.empty())
-		movie->registerEvent(kEventIdle);
-
-	while (!movie->_eventQueue.empty()) {
-		LingoEvent el = movie->_eventQueue.pop();
+	while (!queue.empty()) {
+		LingoEvent el = queue.pop();
 
 		if (sc->_playState == kPlayStopped && el.event != kEventStopMovie)
 			continue;

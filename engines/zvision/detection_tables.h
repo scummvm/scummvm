@@ -33,6 +33,7 @@ static const PlainGameDescriptor zVisionGames[] = {
 
 static const char *directoryGlobs[] = {
 	"znemscr",
+	"taunts", // zgi mac
 	0
 };
 
@@ -285,6 +286,21 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("SCRIPTS.ZFS", "5cdc4b99c1134053af135aae71326fd1", 8338141),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor Mac CD version, reported by macca8 in bug #11756
+		{
+			"zgi",
+			"CD",
+			AD_ENTRY2s("SCRIPTS.ZFS",  "81efd40ecc3d22531e211368b779f17f", 8336944,
+					   "G0LPH10P.RAW", "c0b1f28b1cd1aaeb83c1a3985401bb14", 24462),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},

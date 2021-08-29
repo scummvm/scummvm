@@ -124,9 +124,6 @@ void initTimer(void);
 void saveTimer(Common::OutSaveFile *out);
 void loadTimer(Common::InSaveFile *in);
 
-//  Cleanup the timer -- nothing to do
-inline void cleanupTimer(void) {}
-
 void pauseTimer(void);               // pause game clock
 void resumeTimer(void);                  // resume game clock
 
@@ -167,10 +164,6 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 //  Directory control
 
 void restoreProgramDir(void);                // chdir() to program directory
-
-//  Memory allocation
-
-void  *mustAlloc(uint32 size, const char desc[]);                // alloc 'size' bytes or fail
 
 // Returns Random Number
 
@@ -223,8 +216,6 @@ extern int16            extendedThreadLevel;
 /* ===================================================================== *
    Misc Globals
  * ===================================================================== */
-
-extern bool         gameRunning;            // true while game running
 
 extern volatile int32 gameTime;             // current timer
 

@@ -38,6 +38,7 @@
 
 #include "graphics/scaler.h"
 #include "common/savefile.h"
+#include "engines/engine.h"
 
 namespace GUI {
 
@@ -330,6 +331,28 @@ void SaveLoadChooserDialog::listSaves() {
 #endif
 }
 
+void SaveLoadChooserDialog::activate(int slot, const Common::U32String &description) {
+	if (!_saveList.empty() && slot < int(_saveList.size())) {
+		const SaveStateDescriptor &desc = _saveList[slot];
+		if (_saveMode) {
+			if (g_engine) {
+				const int currentPlayTime = g_engine->getTotalPlayTime();
+				const int savedPlayTime = desc.getPlayTimeMSecs();
+				if (currentPlayTime > 0 && savedPlayTime > 0 && currentPlayTime < savedPlayTime) {
+					GUI::MessageDialog warn(
+								_("WARNING: Existing save has longer gameplay duration than the "
+								  "current state. Are you sure you want to overwrite it?"), _("Yes"), _("No"));
+					if (warn.runModal() != GUI::kMessageOK)
+						return;
+				}
+			}
+			_resultString = description.empty() ? desc.getDescription() : description;
+		}
+		setResult(desc.getSaveSlot());
+	}
+	close();
+}
+
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 void SaveLoadChooserDialog::addChooserButtons() {
 	if (_listButton) {
@@ -441,22 +464,20 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		if (selItem >= 0 && _chooseButton->isEnabled()) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
-				if (!_saveList.empty()) {
-					setResult(_saveList[selItem].getSaveSlot());
-					_resultString = _list->getSelectedString();
-				}
-				close();
+				Common::U32String description;
+				if (!_saveList.empty())
+					description = _list->getSelectedString();
+				activate(selItem, description);
 			}
 		}
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
 		if (selItem >= 0) {
-			if (!_saveList.empty()) {
-				setResult(_saveList[selItem].getSaveSlot());
-				_resultString = _list->getSelectedString();
-			}
-			close();
+			Common::U32String description;
+			if (!_saveList.empty())
+				description = _list->getSelectedString();
+			activate(selItem, description);
 		}
 		break;
 	case kListSelectionChangedCmd:
@@ -576,6 +597,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
+		if (!_saveList[selItem].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
+			_saveList[selItem] = desc;
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag() ||
@@ -793,15 +816,9 @@ const Common::U32String &SaveLoadChooserGrid::getResultString() const {
 }
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd <= _entriesPerPage && cmd + _curPage * _entriesPerPage <= _saveList.size()) {
-		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
-
-		if (_saveMode) {
-			_resultString = desc.getDescription();
-		}
-
-		setResult(desc.getSaveSlot());
-		close();
+	const int slot = cmd + _curPage * _entriesPerPage - 1;
+	if (cmd <= _entriesPerPage && slot < (int)_saveList.size()) {
+		activate(slot, Common::U32String());
 	}
 
 	switch (cmd) {
@@ -1099,6 +1116,8 @@ void SaveLoadChooserGrid::updateSaves() {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
 		SaveStateDescriptor desc =  (_saveList[i].getLocked() ? _saveList[i] : _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot));
+		if (!_saveList[i].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
+			_saveList[i] = desc;
 		SlotButton &curButton = _buttons[curNum];
 		curButton.setVisible(true);
 		const Graphics::Surface *thumbnail = desc.getThumbnail();

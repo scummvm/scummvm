@@ -63,7 +63,7 @@ Movie::Movie(Window *window) {
 
 	_currentDraggedChannel = nullptr;
 	_currentHiliteChannelId = 0;
-	_currentHandlingChannelId = 0;
+	_mouseDownWasInButton = false;
 
 	_version = 0;
 	_platform = Common::kPlatformMacintosh;
@@ -380,13 +380,12 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 }
 
 Symbol Movie::getHandler(const Common::String &name) {
-	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		if (_cast->_lingoArchive->functionHandlers.contains(name))
-			return _cast->_lingoArchive->functionHandlers[name];
+	if (_cast->_lingoArchive->functionHandlers.contains(name))
+		return _cast->_lingoArchive->functionHandlers[name];
 
-		if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
-			return _sharedCast->_lingoArchive->functionHandlers[name];
-	}
+	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
+		return _sharedCast->_lingoArchive->functionHandlers[name];
+
 	return Symbol();
 }
 

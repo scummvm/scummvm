@@ -44,15 +44,15 @@ class EnchantContainerView;
 //				FloatingWindow
 class ContainerWindow;
 class ContainerNode;
-class ContainerList;
+class ContainerManager;
 struct ContainerAppearanceDef;
 
 class CMassWeightIndicator;
 class ProtoObj;
 
-class gCompButton;
-class gCompImage;
-class gMultCompButton;
+class GfxCompButton;
+class GfxCompImage;
+class GfxMultCompButton;
 struct TilePoint;
 
 /* ===================================================================== *
@@ -140,7 +140,7 @@ public:
 	    gPanelList &,
 	    const Rect16 &,
 	    ContainerNode &nd,
-	    ContainerAppearanceDef &app,
+	    const ContainerAppearanceDef &app,
 	    AppFunc *cmd = NULL);
 
 	//  Destructor
@@ -260,7 +260,7 @@ class  EnchantmentContainerView : public ContainerView {
 public:
 	EnchantmentContainerView(gPanelList &list,
 	                         ContainerNode &nd,
-	                         ContainerAppearanceDef &app,
+	                         const ContainerAppearanceDef &app,
 	                         AppFunc *cmd = NULL);
 
 	virtual void pointerMove(gPanelMessage &msg);
@@ -273,12 +273,12 @@ public:
 
 class ContainerWindow : public FloatingWindow {
 protected:
-	gCompButton     *closeCompButton;       //  the close button object
+	GfxCompButton     *closeCompButton;       //  the close button object
 	ContainerView   *view;          //  the container view object
 
 public:
 	ContainerWindow(ContainerNode &nd,
-	                ContainerAppearanceDef &app,
+	                const ContainerAppearanceDef &app,
 	                const char saveas[]);
 
 	virtual ~ContainerWindow(void);
@@ -294,11 +294,11 @@ public:
 //  Base class for all container windows with scroll control
 class ScrollableContainerWindow : public ContainerWindow {
 protected:
-	gCompButton     *scrollCompButton;
+	GfxCompButton     *scrollCompButton;
 
 public:
 	ScrollableContainerWindow(ContainerNode &nd,
-	                          ContainerAppearanceDef &app,
+	                          const ContainerAppearanceDef &app,
 	                          const char saveas[]);
 
 	void scrollUp(void) {
@@ -314,7 +314,7 @@ public:
 //  A container window for tangible containers
 class TangibleContainerWindow : public ScrollableContainerWindow {
 private:
-	gCompImage      *containerSpriteImg;
+	GfxCompImage      *containerSpriteImg;
 	CMassWeightIndicator *massWeightIndicator;
 
 	Rect16          objRect;
@@ -326,7 +326,7 @@ private:
 public:
 
 	TangibleContainerWindow(ContainerNode &nd,
-	                        ContainerAppearanceDef &app);
+	                        const ContainerAppearanceDef &app);
 	~TangibleContainerWindow(void);
 
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
@@ -339,20 +339,20 @@ class IntangibleContainerWindow : public ScrollableContainerWindow {
 protected:
 	friend  void setMindContainer(int index, IntangibleContainerWindow &cw);
 private:
-	gMultCompButton *mindSelectorCompButton;
+	GfxMultCompButton *mindSelectorCompButton;
 
 public:
 
-	IntangibleContainerWindow(ContainerNode &nd, ContainerAppearanceDef &app);
+	IntangibleContainerWindow(ContainerNode &nd, const ContainerAppearanceDef &app);
 };
 
 class EnchantmentContainerWindow : public ContainerWindow {
 protected:
-	gCompButton     *scrollCompButton;
+	GfxCompButton     *scrollCompButton;
 
 public:
 	EnchantmentContainerWindow(ContainerNode &nd,
-	                           ContainerAppearanceDef &app);
+	                           const ContainerAppearanceDef &app);
 };
 
 /* ===================================================================== *
@@ -389,7 +389,7 @@ struct ContainerAppearanceDef {
 
 class ContainerNode {
 
-	friend class    ContainerList;
+	friend class    ContainerManager;
 	friend class    ContainerView;
 	friend class    ContainerWindow;
 
@@ -443,7 +443,7 @@ public:
 		action = 0;
 		mindType = 0;
 	}
-	ContainerNode(ContainerList &cl, ObjectID id, int type);
+	ContainerNode(ContainerManager &cl, ObjectID id, int type);
 	~ContainerNode();
 
 	static int32 archiveSize(void) {
@@ -504,7 +504,7 @@ public:
 
 //  A list of container nodes
 
-class ContainerList {
+class ContainerManager {
 public:
 	Common::List<ContainerNode *> _list;
 

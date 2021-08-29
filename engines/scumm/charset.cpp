@@ -455,7 +455,53 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, const byte *text) {
+int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
+	if (_vm->_game.id == GID_CMI) {
+		// SCUMM7 games actually use the same implemention (minus the strLenMax parameter). If
+		// any text placement bugs in one of these games come up it might be worth to look at
+		// that. Or simply for the fact that we could get rid of SmushFont::getStringWidth()...
+		if (!strLenMax)
+			return 0;
+
+		int maxWidth = 0;
+		int width = 0;
+
+		while (*text && strLenMax) {
+			while (text[0] == '^') {
+				switch (text[1]) {
+				case 'f':
+					// We should change the font on the fly at this point
+					// which would result in a different width result.
+					// This has never been observed in the game though, and
+					// as such, we don't handle it.
+					text += 4;
+					break;
+				case 'c':
+					text += 5;
+					break;
+				default:
+					error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+				}
+			}
+
+			if (is2ByteCharacter(_vm->_language, *text)) {
+				width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
+				++text;
+				--strLenMax;
+			} else if (*text == '\n') {
+				maxWidth = MAX<int>(width, maxWidth);
+				width = 0;
+			} else if (*text != '\r' && *text != _vm->_newLineCharacter) {
+				width += getCharWidth(*text);
+			}
+
+			++text;
+			--strLenMax;
+		}
+
+		return MAX<int>(width, maxWidth);
+	}
+
 	int pos = 0;
 	int width = 1;
 	int chr;
@@ -482,7 +528,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					break;
 			}
 		} else {
-			if (chr == '@' && !(_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN))
+			if (chr == '@')
 				continue;
 			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
@@ -506,16 +552,6 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					pos += 2;
 					setCurID(set);
 					continue;
-				}
-			}
-
-			// Some localizations may override colors
-			// See credits in Chinese COMI
-			if (_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN &&
-			    chr == '^' && pos == 1) {
-				if (text[pos] == 'c') {
-					pos += 4;
-					chr = text[pos++];
 				}
 			}
 		}
@@ -1853,7 +1889,7 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 
 			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
-		}			
+		}
 	}
 
 	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);

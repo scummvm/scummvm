@@ -117,16 +117,16 @@ public:
 
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
-	int getEventCount();
 	void processEvent(LEvent event, int targetId = 0);
-	void registerEvent(LEvent event, int targetId = 0);
+	void queueUserEvent(LEvent event, int targetId = 0);
 
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
 
-	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
-	void queueFrameEvent(LEvent event, int eventId);
-	void queueMovieEvent(LEvent event, int eventId);
+	void queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId = 0);
+	void queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId);
+	void queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId);
+	void queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId);
 
 public:
 	Archive *_movieArchive;
@@ -148,7 +148,7 @@ public:
 	bool _videoPlayback;
 
 	int _nextEventId;
-	Common::Queue<LingoEvent> _eventQueue;
+	Common::Queue<LingoEvent> _userEventQueue;
 
 	unsigned char _key;
 	int _keyCode;
@@ -183,7 +183,7 @@ private:
 	Common::String _script;
 	Common::String _directory;
 
-	uint16 _currentHandlingChannelId;
+	bool _mouseDownWasInButton;
 	Channel *_currentDraggedChannel;
 	Common::Point _draggingSpritePos;
 };

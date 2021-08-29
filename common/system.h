@@ -363,11 +363,6 @@ public:
 		kFeatureFilteringMode,
 
 		/**
-		 * Indicates that GUI runs in HiDPI mode
-		 */
-		kFeatureHiDPI,
-
-		/**
 		 * Indicate if stretch modes are supported by the backend.
 		 */
 		kFeatureStretchMode,
@@ -1051,6 +1046,12 @@ public:
 	 * For more information, see @ref PaletteManager.
 	 */
 	virtual PaletteManager *getPaletteManager() = 0;
+
+	/**
+	 * Return the scale factor for HiDPI screens.
+	 * Returns 1 for non-HiDPI screens, or if HiDPI display is not supported by the backend.
+	 */
+	virtual float getHiDPIScreenFactor() const { return 1.0f; }
 
 	/**
 	 * Blit a bitmap to the virtual screen.

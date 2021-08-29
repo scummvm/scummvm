@@ -30,6 +30,7 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/translation.h"
 #include "ags/engine/debugging/ags_editor_debugger.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -39,7 +40,6 @@
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/quit.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -152,9 +152,8 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 }
 
 void quit_message_on_exit(const String &qmsg, String &alertis, QuitReason qreason) {
-	// successful exit displays no messages (because Windoze closes the dos-box
-	// if it is empty).
-	if ((qreason & kQuitKind_NormalExit) == 0 && !_G(handledErrorInEditor)) {
+	// successful exit or user abort displays no messages
+	if ((qreason & (kQuitKind_NormalExit | kQuit_UserAbort)) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
 		sprintf(_G(pexbuf), "%s\n", qmsg.GetCStr());
 		alertis.Append(_G(pexbuf));

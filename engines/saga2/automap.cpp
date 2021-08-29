@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/keyboard.h"
+
 #include "saga2/saga2.h"
 #include "saga2/automap.h"
 #include "saga2/blitters.h"
@@ -52,7 +54,7 @@ requestInfo     rInfo;
 bool autoMapCheat = false;
 #endif
 
-static CAutoMap     *pAutoMap = NULL;
+static AutoMap     *pAutoMap = NULL;
 
 /* ===================================================================== *
    Constants
@@ -155,88 +157,88 @@ APPFUNC(cmdAutoMapAffFunc);
 
 
 /* ===================================================================== *
-   CAutoMap class implementation
+   AutoMap class implementation
  * ===================================================================== */
 
 // ------------------------------------------------------------------------
 // ctor
 
-CAutoMap::CAutoMap(const Rect16 box,
+AutoMap::AutoMap(const Rect16 box,
                    uint8 *summary,
                    uint16 ident,
                    AppFunc *cmd)
 	: ModalWindow(box, ident, cmd) {
 	// setup boundry definitions
-	sumMapArea  = Rect16(0, 0, sumMapAreaWidth, sumMapAreaHeight);
-	summaryData = summary;
+	_sumMapArea  = Rect16(0, 0, kSumMapAreaWidth, kSumMapAreaHeight);
+	_summaryData = summary;
 
 	// init the temporary blit surface port
-	if (!NewTempPort(tPort, sumMapArea.width, sumMapArea.height)) {
+	if (!NewTempPort(_tPort, _sumMapArea.width, _sumMapArea.height)) {
 		return;
 	}
 
-	trackPos = getCenterActor()->getLocation();
+	_trackPos = getCenterActor()->getLocation();
 
 }
 
 // ------------------------------------------------------------------------
 // dtor
 
-CAutoMap::~CAutoMap() {
+AutoMap::~AutoMap() {
 	// dispose of temporary pixelmap
-	DisposeTempPort(tPort);
+	DisposeTempPort(_tPort);
 }
 
 // ------------------------------------------------------------------------
 // read map data
 
-void CAutoMap::locateRegion(void) {
-	hResContext     *areaRes;       // tile resource handle
-	uint16          *trRes;
-	int16           regionCount;
-	struct TileRect {
-		int16       uMin, vMin, uMax, vMax;
-	} *tr;
-	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
-	int             i;
+void AutoMap::locateRegion(void) {
+	Common::SeekableReadStream *stream;
+	hResContext *areaRes;       // tile resource handle
+	int16 regionCount;
+	WorldMapData *wMap = &mapList[currentWorld->mapNum];
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
 	assert(areaRes != NULL);
 
-	trRes = (uint16 *)LoadResource(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
-	assert(trRes != NULL);
-	regionCount = *trRes;
+	stream = loadResourceToStream(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
+	regionCount = stream->readUint16LE();
 
-	centerCoords = trackPos >> (kTileUVShift + kPlatShift);
+	_centerCoords = _trackPos >> (kTileUVShift + kPlatShift);
 
-	localAreaRegion.min.u = localAreaRegion.min.v = 0;
-	localAreaRegion.max.u = localAreaRegion.max.v = wMap->mapSize;
+	_localAreaRegion.min.u = _localAreaRegion.min.v = 0;
+	_localAreaRegion.max.u = _localAreaRegion.max.v = wMap->mapSize;
 
-	for (i = 0, tr = (TileRect *)(trRes + 1); i < regionCount; i++, tr++) {
-		if (centerCoords.u >= tr->uMin
-		        &&  centerCoords.u <= tr->uMax
-		        &&  centerCoords.v >= tr->vMin
-		        &&  centerCoords.v <= tr->vMax) {
-			localAreaRegion.min.u = tr->uMin;
-			localAreaRegion.max.u = tr->uMax;
-			localAreaRegion.min.v = tr->vMin;
-			localAreaRegion.max.v = tr->vMax;
+	for (int i = 0; i < regionCount; i++) {
+		int uMin, vMin, uMax, vMax;
+		uMin = stream->readSint16LE();
+		vMin = stream->readSint16LE();
+		uMax = stream->readSint16LE();
+		vMax = stream->readSint16LE();
+		if (_centerCoords.u >= uMin
+		        &&  _centerCoords.u <= uMax
+		        &&  _centerCoords.v >= vMin
+		        &&  _centerCoords.v <= vMax) {
+			_localAreaRegion.min.u = uMin;
+			_localAreaRegion.max.u = uMax;
+			_localAreaRegion.min.v = vMin;
+			_localAreaRegion.max.v = vMax;
 			break;
 		}
 	}
 
-	free(trRes);
+	delete stream;
 
 	auxResFile->disposeContext(areaRes);
 
-	baseCoords.u = centerCoords.u - summaryRadius;
-	baseCoords.v = centerCoords.v - summaryRadius;
+	_baseCoords.u = _centerCoords.u - kSummaryRadius;
+	_baseCoords.v = _centerCoords.v - kSummaryRadius;
 }
 
 // ------------------------------------------------------------------------
 // deactivation
 
-void CAutoMap::deactivate(void) {
+void AutoMap::deactivate(void) {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -244,7 +246,7 @@ void CAutoMap::deactivate(void) {
 // ------------------------------------------------------------------------
 // activation
 
-bool CAutoMap::activate(gEventType why) {
+bool AutoMap::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
@@ -253,24 +255,22 @@ bool CAutoMap::activate(gEventType why) {
 	return false;
 }
 
-#define SpecialKey(k) ((k>>8)+0x80)
-
-bool CAutoMap::keyStroke(gPanelMessage &msg) {
+bool AutoMap::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
 	switch (msg.key) {
-	case 0x1B:
+	case Common::ASCII_ESCAPE:
 		cmdAutoMapEsc(ev);
 		return true;
-	case SpecialKey(homeKey):
+	case Common::KEYCODE_HOME:
 		cmdAutoMapHome(ev);
 		return true;
-	case SpecialKey(endKey):
+	case Common::KEYCODE_END:
 		cmdAutoMapEnd(ev);
 		return true;
-	case SpecialKey(pageUpKey):
+	case Common::KEYCODE_PAGEUP:
 		cmdAutoMapPgUp(ev);
 		return true;
-	case SpecialKey(pageDownKey):
+	case Common::KEYCODE_PAGEDOWN:
 		cmdAutoMapPgDn(ev);
 		return true;
 	default:
@@ -280,13 +280,13 @@ bool CAutoMap::keyStroke(gPanelMessage &msg) {
 
 
 
-gPanel *CAutoMap::keyTest(int16 key) {
+gPanel *AutoMap::keyTest(int16 key) {
 	switch (key) {
-	case 0x1B:
-	case SpecialKey(homeKey):
-	case SpecialKey(endKey):
-	case SpecialKey(pageUpKey):
-	case SpecialKey(pageDownKey):
+	case Common::ASCII_ESCAPE:
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN:
 		return this;
 	default:
 		return NULL;
@@ -295,20 +295,20 @@ gPanel *CAutoMap::keyTest(int16 key) {
 
 // ------------------------------------------------------------------------
 // mouse movement event handler
-void CAutoMap::pointerMove(gPanelMessage &msg) {
+void AutoMap::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickAbsPos;
 
-	if (Rect16(extent.x, extent.y, extent.width, extent.height).ptInside(pos)) {
+	if (Rect16(_extent.x, _extent.y, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
 		TileRegion      viewRegion;
 		//  Calculate the actual region we are going to draw as the intersection of
 		//  the local dungeon rectangle, and the rectangle of the scrolling map display
 		//  in metatile coords.
-		viewRegion.min.u = MAX(localAreaRegion.min.u, baseCoords.u);
-		viewRegion.max.u = MIN<int16>(localAreaRegion.max.u, baseCoords.u + (int16)summaryDiameter) - 1;
-		viewRegion.min.v = MAX(localAreaRegion.min.v, baseCoords.v);
-		viewRegion.max.v = MIN<int16>(localAreaRegion.max.v, baseCoords.v + (int16)summaryDiameter) - 1;
-		char *mtext = getMapFeaturesText(viewRegion, currentWorld->mapNum, baseCoords, pos) ;
+		viewRegion.min.u = MAX(_localAreaRegion.min.u, _baseCoords.u);
+		viewRegion.max.u = MIN<int16>(_localAreaRegion.max.u, _baseCoords.u + (int16)kSummaryDiameter) - 1;
+		viewRegion.min.v = MAX(_localAreaRegion.min.v, _baseCoords.v);
+		viewRegion.max.v = MIN<int16>(_localAreaRegion.max.v, _baseCoords.v + (int16)kSummaryDiameter) - 1;
+		char *mtext = getMapFeaturesText(viewRegion, currentWorld->mapNum, _baseCoords, pos) ;
 		g_vm->_mouseInfo->setText(mtext);
 	} else {
 		notify(gEventMouseMove, 0);
@@ -318,10 +318,10 @@ void CAutoMap::pointerMove(gPanelMessage &msg) {
 // ------------------------------------------------------------------------
 // mouse click event handler
 
-bool CAutoMap::pointerHit(gPanelMessage &msg) {
+bool AutoMap::pointerHit(gPanelMessage &msg) {
 	Point16 pos     = msg.pickAbsPos;
 
-	if (Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
 
 		if (g_vm->_teleportOnMap) {
@@ -329,7 +329,7 @@ bool CAutoMap::pointerHit(gPanelMessage &msg) {
 			                               ((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) - ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
 			                               0);
 
-			TilePoint pt = centerPt + (baseCoords << (kTileUVShift + kPlatShift));
+			TilePoint pt = centerPt + (_baseCoords << (kTileUVShift + kPlatShift));
 
 			Actor *a = getCenterActor();
 
@@ -367,7 +367,7 @@ bool CAutoMap::pointerHit(gPanelMessage &msg) {
 // ------------------------------------------------------------------------
 // mouse drag event handler
 
-void CAutoMap::pointerDrag(gPanelMessage &) {
+void AutoMap::pointerDrag(gPanelMessage &) {
 	if (selected) {
 		notify(gEventMouseDrag, 0);
 	}
@@ -376,7 +376,7 @@ void CAutoMap::pointerDrag(gPanelMessage &) {
 // ------------------------------------------------------------------------
 // mouse click release event handler
 
-void CAutoMap::pointerRelease(gPanelMessage &) {
+void AutoMap::pointerRelease(gPanelMessage &) {
 	if (selected) notify(gEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
@@ -385,15 +385,15 @@ void CAutoMap::pointerRelease(gPanelMessage &) {
 // blit
 
 // this drawclipped does not call all inherited drawclip
-void CAutoMap::drawClipped(
+void AutoMap::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &clipRect) {
 	// return if no change
-	if (!extent.overlap(clipRect)) return;
+	if (!_extent.overlap(clipRect)) return;
 
 	// clear out the buffer
-	memset(tPort.map->data, 0, sumMapArea.width * sumMapArea.height);
+	memset(_tPort.map->data, 0, _sumMapArea.width * _sumMapArea.height);
 
 	// draw the parts of the panel
 	WindowDecoration *dec;
@@ -408,10 +408,10 @@ void CAutoMap::drawClipped(
 		//  rendering
 
 		if (dec->extent.overlap(clipRect)) {
-			Point16 pos(dec->extent.x - extent.x - offset.x,
-			            dec->extent.y - extent.y - offset.y);
+			Point16 pos(dec->extent.x - _extent.x - offset.x,
+			            dec->extent.y - _extent.y - offset.y);
 
-			drawCompressedImage(tPort, pos, dec->image);
+			drawCompressedImage(_tPort, pos, dec->image);
 		}
 	}
 
@@ -423,10 +423,10 @@ void CAutoMap::drawClipped(
 
 	//  Blit the pixelmap to the main screen
 	port.setMode(drawModeMatte);
-	port.bltPixels(*tPort.map,
+	port.bltPixels(*_tPort.map,
 	               0, 0,
-	               extent.x, extent.y,
-	               sumMapArea.width, sumMapArea.height);
+	               _extent.x, _extent.y,
+	               _sumMapArea.width, _sumMapArea.height);
 
 	// show the cursor again
 	g_vm->_pointer->show();
@@ -435,16 +435,16 @@ void CAutoMap::drawClipped(
 // ------------------------------------------------------------------------
 // draw
 
-void CAutoMap::draw(void) {          // redraw the window
+void AutoMap::draw(void) {          // redraw the window
 	// draw the entire panel
-	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 }
 
 // ------------------------------------------------------------------------
 // build summary
 
 // create a summary map on the tPort gPixelMap buffer
-void CAutoMap::createSmallMap(void) {
+void AutoMap::createSmallMap(void) {
 	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
 
 	uint16          *mapData = wMap->map->mapData;
@@ -461,27 +461,27 @@ void CAutoMap::createSmallMap(void) {
 
 	//  Info about summary data
 	gPixelMap       map;
-	int16           sumSize = tileSumWidth * tileSumHeight;
-	int16           tileSumWidthHalved = tileSumWidth / 2;
+	int16           sumSize = kTileSumWidth * kTileSumHeight;
+	int16           tileSumWidthHalved = kTileSumWidth / 2;
 
 	//  Set up pixel map to blit summary data from
-	map.size = Point16(tileSumWidth, tileSumHeight);
+	map.size = Point16(kTileSumWidth, kTileSumHeight);
 
 	// optimizations done based on these numbers
 	assert(sumSize  == 64);     // opt:2
 
-	baseCoords.u = clamp(0, baseCoords.u, wMap->mapSize - summaryDiameter);
-	baseCoords.v = clamp(0, baseCoords.v, wMap->mapSize - summaryDiameter);
+	_baseCoords.u = clamp(0, _baseCoords.u, wMap->mapSize - kSummaryDiameter);
+	_baseCoords.v = clamp(0, _baseCoords.v, wMap->mapSize - kSummaryDiameter);
 
 	//  Calculate the actual region we are going to draw as the intersection of
 	//  the local dungeon rectangle, and the rectangle of the scrolling map display
 	//  in metatile coords.
-	viewRegion.min.u = MAX(localAreaRegion.min.u, baseCoords.u);
-	viewRegion.max.u = MIN<int16>(localAreaRegion.max.u, baseCoords.u + (int16)summaryDiameter) - 1;
-	viewRegion.min.v = MAX(localAreaRegion.min.v, baseCoords.v);
-	viewRegion.max.v = MIN<int16>(localAreaRegion.max.v, baseCoords.v + (int16)summaryDiameter) - 1;
+	viewRegion.min.u = MAX(_localAreaRegion.min.u, _baseCoords.u);
+	viewRegion.max.u = MIN<int16>(_localAreaRegion.max.u, _baseCoords.u + (int16)kSummaryDiameter) - 1;
+	viewRegion.min.v = MAX(_localAreaRegion.min.v, _baseCoords.v);
+	viewRegion.max.v = MIN<int16>(_localAreaRegion.max.v, _baseCoords.v + (int16)kSummaryDiameter) - 1;
 
-	topPt = viewRegion.max - baseCoords;
+	topPt = viewRegion.max - _baseCoords;
 
 	xBase = (topPt.u - topPt.v) * tileSumWidthHalved + 261;
 	yBase = 255 - (topPt.u + topPt.v) * 2;
@@ -502,10 +502,10 @@ void CAutoMap::createSmallMap(void) {
 #endif
 				    (mtile & metaTileVisited)) {
 					// get the tile data
-					map.data = &summaryData[(mtile & ~metaTileVisited) << 6];
+					map.data = &_summaryData[(mtile & ~metaTileVisited) << 6];
 
 					// blit this tile onto the temp surface
-					TBlit(tPort.map,
+					TBlit(_tPort.map,
 					      &map,
 					      x,
 					      y);
@@ -513,27 +513,27 @@ void CAutoMap::createSmallMap(void) {
 		}
 	}
 
-	drawMapFeatures(viewRegion, currentWorld->mapNum, baseCoords, tPort);
+	drawMapFeatures(viewRegion, currentWorld->mapNum, _baseCoords, _tPort);
 
 
 //	if (blink)
-	if (centerCoords.u >= viewRegion.min.u
-	        &&  centerCoords.u <= viewRegion.max.u
-	        &&  centerCoords.v >= viewRegion.min.v
-	        &&  centerCoords.v <= viewRegion.max.v) {
+	if (_centerCoords.u >= viewRegion.min.u
+	        &&  _centerCoords.u <= viewRegion.max.u
+	        &&  _centerCoords.v >= viewRegion.min.v
+	        &&  _centerCoords.v <= viewRegion.max.v) {
 		//  Calculate the position of the cross-hairs showing the position of
 		//  the center actor.
-		centerPt = trackPos - (baseCoords << (kTileUVShift + kPlatShift));
+		centerPt = _trackPos - (_baseCoords << (kTileUVShift + kPlatShift));
 
 		x = ((centerPt.u - centerPt.v) >> (kTileUVShift + kPlatShift - 2)) + 261 + 4;
 		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (kTileUVShift + kPlatShift - 1));
 
-		tPort.setColor(9 + 15);      //  black
-		tPort.fillRect(x - 3, y - 1, 7, 3);
-		tPort.fillRect(x - 1, y - 3, 3, 7);
-		tPort.setColor(9 + 1);       //  white
-		tPort.hLine(x - 2, y, 5);
-		tPort.vLine(x, y - 2, 5);
+		_tPort.setColor(9 + 15);      //  black
+		_tPort.fillRect(x - 3, y - 1, 7, 3);
+		_tPort.fillRect(x - 1, y - 3, 3, 7);
+		_tPort.setColor(9 + 1);       //  white
+		_tPort.hLine(x - 2, y, 5);
+		_tPort.vLine(x, y - 2, 5);
 	}
 }
 
@@ -546,32 +546,30 @@ int16 openAutoMap() {
 	rInfo.running   = true;
 
 	hResContext     *decRes;
-	void            *summaryData;
+	void            *_summaryData;
 	void            **closeBtnImage;
 	void            **scrollBtnImage;
 
 	uint16          closeButtonResID        = 0;
 	uint16          scrollButtonResID       = 2;
 
-	extern int16    currentMapNum;
-
-	updateMapFeatures(currentMapNum);
+	updateMapFeatures(g_vm->_currentMapNum);
 
 	// init the resource context handle
 	decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
 
 	// debug
-	summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', currentMapNum), "summary data");
+	_summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', g_vm->_currentMapNum), "summary data");
 
 	// get the graphics associated with the buttons
 	closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages);
 	scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2);
 
-	pAutoMap = new CAutoMap(autoMapRect, (uint8 *)summaryData, 0, NULL);
+	pAutoMap = new AutoMap(autoMapRect, (uint8 *)_summaryData, 0, NULL);
 
-	new gCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
+	new GfxCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
 
-	new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
+	new GfxCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
 	                         ARRAYSIZE(autoMapDecorations),
@@ -591,7 +589,7 @@ int16 openAutoMap() {
 
 	unloadImageRes(closeBtnImage, numBtnImages);
 	unloadImageRes(scrollBtnImage, 2);
-	free(summaryData);
+	free(_summaryData);
 	resFile->disposeContext(decRes);
 	decRes = NULL;
 
@@ -629,10 +627,10 @@ APPFUNC(cmdAutoMapScroll) {
 		static const Rect16             uNegRect(0, scrollBtnHeight / 2, scrollBtnWidth / 2, scrollBtnHeight / 2);
 		static const Rect16             vNegRect(scrollBtnWidth / 2, scrollBtnHeight / 2, scrollBtnWidth / 2, scrollBtnHeight / 2);
 
-		if (uPosRect.ptInside(ev.mouse))      pAutoMap->baseCoords.u += 2;
-		else if (uNegRect.ptInside(ev.mouse)) pAutoMap->baseCoords.u -= 2;
-		else if (vPosRect.ptInside(ev.mouse)) pAutoMap->baseCoords.v += 2;
-		else if (vNegRect.ptInside(ev.mouse)) pAutoMap->baseCoords.v -= 2;
+		if (uPosRect.ptInside(ev.mouse))      pAutoMap->_baseCoords.u += 2;
+		else if (uNegRect.ptInside(ev.mouse)) pAutoMap->_baseCoords.u -= 2;
+		else if (vPosRect.ptInside(ev.mouse)) pAutoMap->_baseCoords.v += 2;
+		else if (vNegRect.ptInside(ev.mouse)) pAutoMap->_baseCoords.v -= 2;
 
 		pAutoMap->draw();
 	}
@@ -656,7 +654,7 @@ APPFUNC(cmdAutoMapAppFunc) {
 	}
 }
 
-APPFUNCV(CAutoMap::cmdAutoMapEsc) {
+APPFUNCV(AutoMap::cmdAutoMapEsc) {
 	requestInfo     *ri = (requestInfo *) userData;
 	if (ri) {
 		ri->running = 0;
@@ -664,20 +662,20 @@ APPFUNCV(CAutoMap::cmdAutoMapEsc) {
 	}
 }
 
-APPFUNCV(CAutoMap::cmdAutoMapHome) {
-	baseCoords.v += 2;
+APPFUNCV(AutoMap::cmdAutoMapHome) {
+	_baseCoords.v += 2;
 	draw();
 }
-APPFUNCV(CAutoMap::cmdAutoMapEnd) {
-	baseCoords.u -= 2;
+APPFUNCV(AutoMap::cmdAutoMapEnd) {
+	_baseCoords.u -= 2;
 	draw();
 }
-APPFUNCV(CAutoMap::cmdAutoMapPgUp) {
-	baseCoords.u += 2;
+APPFUNCV(AutoMap::cmdAutoMapPgUp) {
+	_baseCoords.u += 2;
 	draw();
 }
-APPFUNCV(CAutoMap::cmdAutoMapPgDn) {
-	baseCoords.v -= 2;
+APPFUNCV(AutoMap::cmdAutoMapPgDn) {
+	_baseCoords.v -= 2;
 	draw();
 }
 

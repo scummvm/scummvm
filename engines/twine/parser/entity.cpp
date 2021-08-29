@@ -30,7 +30,7 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	body.index = stream.readByte();
 	const int32 pos = stream.pos();
 	uint8 size = stream.readByte();
-	body.bodyIndex = stream.readUint16LE();
+	body.bodyIndex = (int16)stream.readUint16LE();
 	body.actorBoundingBox.hasBoundingBox = stream.readByte();
 	if (body.actorBoundingBox.hasBoundingBox) {
 		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
@@ -155,9 +155,13 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool EntityData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+void EntityData::reset() {
 	_animations.clear();
 	_bodies.clear();
+}
+
+bool EntityData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	reset();
 	do {
 		const uint8 opcode = stream.readByte();
 		if (opcode == 1) {

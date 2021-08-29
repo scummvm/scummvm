@@ -179,9 +179,9 @@ public:
   void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
 
   // Filesystem
-  AbstractFSNode *makeRootFileNode() const;
-  AbstractFSNode *makeCurrentDirectoryFileNode() const;
-  AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+  AbstractFSNode *makeRootFileNode() const override;
+  AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+  AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
  private:
 

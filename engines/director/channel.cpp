@@ -59,7 +59,7 @@ Channel::Channel(Sprite *sp, int priority) {
 	_visible = true;
 	_dirty = true;
 
-	_sprite->updateCast();
+	_sprite->updateEditable();
 }
 
 Channel::~Channel() {
@@ -198,8 +198,10 @@ bool Channel::isActiveText() {
 }
 
 bool Channel::isMouseIn(const Common::Point &pos) {
-	Common::Rect bbox = getBbox();
+	if (!_visible)
+		return false;
 
+	Common::Rect bbox = getBbox();
 	if (!bbox.contains(pos))
 		return false;
 
@@ -281,6 +283,10 @@ bool Channel::isActiveVideo() {
 	return true;
 }
 
+void Channel::updateVideoTime() {
+	_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
+}
+
 bool Channel::isVideoDirectToStage() {
 	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
 		return false;
@@ -353,7 +359,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	// for the dirty puppet sprites, we will always replaceWidget since previousCastId is 0, but we shouldn't replace the widget of there are only position changing
 	// e.g. we won't want a puppet editable text sprite changing because that will cause the loss of text.
 	if (replace) {
-		_sprite->updateCast();
+		_sprite->updateEditable();
 		replaceWidget(previousCastId, dimsChanged || spriteTypeChanged);
 	}
 
@@ -372,6 +378,8 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 void Channel::updateTextCast() {
 	if (!_sprite->_cast || _sprite->_cast->_type != kCastText)
 		return;
+
+	_sprite->updateEditable();
 	setEditable(_sprite->_editable);
 
 	if (_widget) {
@@ -390,9 +398,6 @@ void Channel::updateTextCast() {
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
 		// if the sprite is editable, then we refresh the selEnd and setStart
-		if (_sprite->_cast->isEditable() != editable)
-			_sprite->_cast->setEditable(editable);
-
 		if (_widget) {
 			((Graphics::MacText *)_widget)->setEditable(editable);
 			// we only set the first editable text member in score active

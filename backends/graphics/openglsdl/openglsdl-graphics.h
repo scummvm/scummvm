@@ -42,6 +42,8 @@ public:
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
 	virtual void updateScreen() override;
 
+	virtual float getHiDPIScreenFactor() const override;
+
 	// EventObserver API
 	virtual bool notifyEvent(const Common::Event &event) override;
 
@@ -91,7 +93,6 @@ private:
 	bool _gotResize;
 
 	bool _wantsFullScreen;
-	bool _windowIsMaximized;
 	uint _ignoreResizeEvents;
 
 	struct VideoMode {

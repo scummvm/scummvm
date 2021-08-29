@@ -33,6 +33,7 @@
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/stxt.h"
+#include "director/sprite.h"
 
 namespace Director {
 
@@ -75,7 +76,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_bitsPerPixel = 0;
 
 	if (version < kFileVer400) {
-		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
+		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled
 
 		_bytes = stream.readUint16();
 		_initialRect = Movie::readRect(stream);
@@ -474,6 +475,17 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	return widget;
 }
 
+uint DigitalVideoCastMember::getDuration() {
+	if (!_video || !_video->isVideoLoaded()) {
+		Common::String path = getCast()->getVideoPath(_castId);
+		if (!path.empty())
+			loadVideo(pathMakeRelative(path));
+
+		_duration = getMovieTotalTime();
+	}
+	return _duration;
+}
+
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
@@ -621,7 +633,8 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			pad2 = stream.readUint16();
 			_initialRect = Movie::readRect(stream);
 			pad3 = stream.readUint16();
-			pad4 = stream.readUint16();
+			_textFlags = stream.readUint16(); // 1: editable, 2: auto tab, 4: don't wrap
+			_editable = _textFlags & 0x1;
 			totalTextHeight = stream.readUint16();
 		}
 
@@ -649,10 +662,18 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		_initialRect = Movie::readRect(stream);
 		_maxHeight = stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
-		_textFlags = stream.readByte();
+		_textFlags = stream.readByte(); // 1: editable, 2: auto tab 4: don't wrap
+		_editable = _textFlags & 0x1;
 
 		_textHeight = stream.readUint16();
 		_textSlant = 0;
+		debugC(2, kDebugLoading, "TextCastMember(): flags1: %d, border: %d gutter: %d shadow: %d textType: %d align: %04x",
+				_flags1, _borderSize, _gutterSize, _boxShadow, _textType, _textAlign);
+		debugC(2, kDebugLoading, "TextCastMember(): background rgb: 0x%04x 0x%04x 0x%04x, shadow: %d flags: %d textHeight: %d",
+				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, _textShadow, _textFlags, _textHeight);
+		if (debugChannelSet(2, kDebugLoading)) {
+			_initialRect.debugPrint(2, "TextCastMember(): rect:");
+		}
 	} else {
 		_fontId = 1;
 
@@ -758,13 +779,13 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MAX<int>(dims.bottom, dims.top + _initialRect.height());
 		}
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->setEditable(_editable);
+		((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
 		((Graphics::MacText *)widget)->draw();
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
-		if (_editable) {
+		if (channel->_sprite->_editable) {
 			Graphics::MacWidget *activeWidget = g_director->_wm->getActiveWidget();
 			if (activeWidget == nullptr || !activeWidget->isEditable())
 				g_director->_wm->setActiveWidget(widget);
@@ -807,16 +828,7 @@ void TextCastMember::setText(const Common::U32String &text) {
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ptext = text;
 	_ftext = formatting + text;
-
-	// if we have the link to widget, then we modify it directly.
-	// thus we can reach the immediate changing effect
-	if (_widget) {
-		((Graphics::MacText *)_widget)->setText(_ftext);
-		((Graphics::MacText *)_widget)->draw();
-		g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
-	} else {
-		_modified = true;
-	}
+	_modified = true;
 }
 
 // D4 dictionary book said this is line spacing
@@ -849,17 +861,6 @@ void TextCastMember::setTextSize(int textSize) {
 		_fontSize = textSize;
 		_modified = true;
 	}
-}
-
-bool TextCastMember::isEditable() {
-	return _editable;
-}
-
-void TextCastMember::setEditable(bool editable) {
-	_editable = editable;
-	// if we are linking to the widget, then we can modify it directly.
-	if (_widget)
-		((Graphics::MacText *)_widget)->setEditable(editable);
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {

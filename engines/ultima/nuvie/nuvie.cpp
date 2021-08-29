@@ -355,6 +355,12 @@ bool NuvieEngine::journeyOnwards() {
 		return _savegame->load_new();
 	}
 
+	// Load the savegame from the last slot which was used for saving
+	if (ConfMan.hasKey("latest_save")) {
+		int saveSlot = ConfMan.getInt("latest_save");
+		return loadGameState(saveSlot).getCode() == Common::kNoError;
+	}
+
 	// Otherwise start a new game
 	return _savegame->load_new();
 }

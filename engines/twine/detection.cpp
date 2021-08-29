@@ -114,7 +114,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -123,7 +123,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -132,7 +132,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -141,7 +141,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -150,7 +150,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -163,7 +163,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
+		ADGF_TESTING | TwinE::TF_VERSION_USA | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -172,7 +172,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
+		ADGF_TESTING | TwinE::TF_VERSION_USA | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -181,7 +181,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
+		ADGF_TESTING | TwinE::TF_VERSION_USA | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -190,7 +190,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
+		ADGF_TESTING | TwinE::TF_VERSION_USA | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -199,7 +199,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
+		ADGF_TESTING | TwinE::TF_VERSION_USA | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -479,6 +479,30 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// https://forum.magicball.net/showthread.php?p=386653#post386653
+	// LBA:LID Demo v1.0
+	{
+		"lba",
+		"LBA: Lupin Island Destiny",
+		AD_ENTRY1s("TEXT.HQR", "859339686e87f5c9f71253c25610a9fd", 240238),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO | TwinE::TF_MOD,
+		GUIO1(GUIO_NONE)
+	},
+
+	// https://forum.magicball.net/showthread.php?t=16549
+	// LBA:Prequel Demo v1.0
+	{
+		"lba",
+		"LBA: Prequel",
+		AD_ENTRY1s("TEXT.HQR", "79352a6f59ff2d8984573bfa421ef346", 259722),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO | TwinE::TF_MOD,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure 2
 
 	// Little Big Adventure 2 - Original European Version (EN, FR, DE, IT, ES)
@@ -534,6 +558,100 @@ static const ADGameDescription twineGameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+static const ExtraGuiOption OptWallCollision = {
+	_s("Enable wall collisions"),
+	_s("Enable the original wall collision damage"),
+	"wallcollision",
+	false
+};
+
+static const ExtraGuiOption OptCrossFade = {
+	_s("Enable cross fade"),
+	_s("Enable cross fading of images and scenes"),
+	"crossfade",
+	false
+};
+
+// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
+static const ExtraGuiOption OptDisableSaveMenu = {
+	_s("Disable save menu"),
+	_s("The original only had autosaves. This allows you to save whenever you want."),
+	"useautosaving",
+	false
+};
+
+static const ExtraGuiOption OptDebug = {
+	_s("Enable debug mode"),
+	_s("Enable the debug mode"),
+	"debug",
+	false
+};
+
+static const ExtraGuiOption OptUseCD = {
+	_s("Enable audio CD"),
+	_s("Enable the original audio cd track"),
+	"usecd",
+	false
+};
+
+static const ExtraGuiOption OptSound = {
+	_s("Enable sound"),
+	_s("Enable the sound for the game"),
+	"sound",
+	true
+};
+
+static const ExtraGuiOption OptVoices = {
+	_s("Enable voices"),
+	_s("Enable the voices for the game"),
+	"voice",
+	true
+};
+
+static const ExtraGuiOption OptText = {
+	_s("Enable text"),
+	_s("Enable the text for the game"),
+	"displaytext",
+	true
+};
+
+static const ExtraGuiOption OptMovies = {
+	_s("Enable movies"),
+	_s("Enable the cutscenes for the game"),
+	"movie",
+	true
+};
+
+static const ExtraGuiOption OptMouse = {
+	_s("Enable mouse"),
+	_s("Enable the mouse for the UI"),
+	"mouse",
+	true
+};
+
+static const ExtraGuiOption OptUSAVersion = {
+	_s("Use the USA version"),
+	_s("Enable the USA specific version flags"),
+	"version",
+	false
+};
+
+static const ExtraGuiOption OptHighRes = {
+	_s("Enable high resolution"),
+	_s("Enable a higher resolution for the game"),
+	"usehighres",
+	false
+};
+
+#ifdef USE_TTS
+static const ExtraGuiOption OptTextToSpeech = {
+	_s("TTS Narrator"),
+	_s("Use TTS to read the descriptions (if TTS is available)"),
+	"tts_narrator",
+	false
+};
+#endif
+
 class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames) {
@@ -550,6 +668,28 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Little Big Adventure (C) Adeline Software International";
 	}
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
+
+const ExtraGuiOptions TwinEMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(OptWallCollision);
+	options.push_back(OptCrossFade);
+	options.push_back(OptDisableSaveMenu);
+	options.push_back(OptMouse);
+	options.push_back(OptHighRes);
+	options.push_back(OptSound);
+	options.push_back(OptUseCD);
+	options.push_back(OptMovies);
+	options.push_back(OptUSAVersion);
+	options.push_back(OptVoices);
+	options.push_back(OptText);
+	options.push_back(OptDebug);
+#ifdef USE_TTS
+	options.push_back(OptTextToSpeech);
+#endif
+	return options;
+}
 
 REGISTER_PLUGIN_STATIC(TWINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwinEMetaEngineDetection);

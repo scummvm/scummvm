@@ -48,6 +48,8 @@ struct gPalette {
 	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
+typedef gPalette *gPalettePtr;
+
 /* ===================================================================== *
                              Prototypes
  * ===================================================================== */
@@ -55,6 +57,46 @@ struct gPalette {
 void LoadPalette(gPalette &palette);
 int32 ColorDistance(gPaletteEntry &c1, gPaletteEntry &c2);
 void CalcPens(gPalette &, gPaletteEntry *, gPen *, int16, bool);
+
+class PaletteManager {
+private:
+	gPalette _currentPalette;
+
+	gPalette _oldPalette,
+             _destPalette,
+             _quickPalette;
+
+	int32 _startTime,
+		  _totalTime;
+
+
+public:
+	gPalette _newPalette;
+	gPalettePtr _midnightPalette,
+			    _noonPalette,
+			    _darkPalette;
+
+	uint32 _prevLightLevel;
+
+	PaletteManager();
+	//~PaletteManager() {}
+
+	void assertCurrentPalette();
+	void loadPalettes();
+	void cleanupPalettes();
+	void beginFade(gPalettePtr newPalette, int32 fadeDuration);
+	bool updatePalette();
+	void createPalette(gPalettePtr newP, gPalettePtr srcP, gPalettePtr dstP,
+	                   int32 elapsedTime, int32 totalTime_);
+	void setCurrentPalette(gPalettePtr newPal);
+	void getCurrentPalette(gPalettePtr pal);
+	void initPaletteState();
+	void lightsOut();
+	void quickSavePalette();
+	void quickRestorePalette();
+	void savePaletteState(Common::OutSaveFile *outS);
+	void loadPaletteState(Common::InSaveFile *in);
+};
 
 } // end of namespace Saga2
 

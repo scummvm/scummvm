@@ -145,10 +145,6 @@ bool DebugScene::displayActors() {
 	bool state = false;
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
-		// TODO: redrawing doesn't work properly yet for moving actors
-		if (!actorPtr->_staticFlags.bIsSpriteActor) {
-			continue;
-		}
 		const IVec3 &pos = actorPtr->pos();
 		const BoundingBox &bbox = actorPtr->_boudingBox;
 		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
@@ -161,8 +157,15 @@ bool DebugScene::displayActors() {
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, false, boxwidth);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, true, boxwidth);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", pos.x, pos.y, pos.z), true, true, boxwidth);
+		const int16 rleft = positions.frontTopLeftPoint2D.x;
+		const int16 rtop = positions.backTopLeftPoint2D.y;
+		const int16 rright = positions.backTopRightPoint2D.x;
+		const int16 rbottom = positions.frontBottomRightPoint2D.y;
+		Common::Rect actorRect(rleft, rtop, rright, rbottom);
+		actorRect.extend(filledRect);
+		_engine->_redraw->addRedrawArea(actorRect);
 		state = true;
 	}
 	return state;

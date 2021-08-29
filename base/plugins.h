@@ -305,6 +305,8 @@ protected:
 
 	bool tryLoadPlugin(Plugin *plugin);
 	void addToPluginsInMemList(Plugin *plugin);
+	const Plugin *findEnginePlugin(const Common::String &engineId);
+	const Plugin *findLoadedPlugin(const Common::String &engineId);
 
 	static PluginManager *_instance;
 	PluginManager();
@@ -323,11 +325,11 @@ public:
 	 * It uses the Engine plugin's getName method, which is an identifier,
 	 * and then tries to matches it with each plugin present in memory.
 	 *
-	 * @param A plugin of type ENGINE.
+	 * @param plugin A plugin of type ENGINE.
 	 *
 	 * @return A plugin of type METAENGINE.
 	 */
-	Plugin *getMetaEngineFromEngine(const Plugin *plugin);
+	const Plugin *getMetaEngineFromEngine(const Plugin *plugin);
 
 	/**
 	 * A method which takes in a plugin of type METAENGINE,
@@ -339,7 +341,7 @@ public:
 	 *
 	 * @return A plugin of type ENGINE.
 	 */
-	Plugin *getEngineFromMetaEngine(const Plugin *plugin);
+	const Plugin *getEngineFromMetaEngine(const Plugin *plugin);
 
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}

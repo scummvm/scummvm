@@ -43,7 +43,7 @@ pkg_template = """;;;
 
 ; List of localised vendor names - one per language. At least one must be provided (English [EN]).
 ; List must correspond to list of languages specified elsewhere in the .pkg
-%%{"ScummVM"}.
+%%{"ScummVM"}
 ; The non-localised, globally unique vendor name (mandatory).
 :"ScummVM"
 

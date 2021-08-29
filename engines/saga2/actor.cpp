@@ -49,15 +49,6 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-// this is currently set to an arbitrary value for testing purposes.
-const uint16 defaultReach = 24;
-
-const uint32 actorListID = MKTAG('A', 'C', 'T', 'O');
-
-/* ===================================================================== *
    Externals
  * ===================================================================== */
 
@@ -74,18 +65,6 @@ extern ObjectSoundFXs   *objectSoundFXTable;    // the global object sound effec
 #if DEBUG
 extern bool     massAndBulkCount;
 #endif
-
-/* ===================================================================== *
-   Globals -- might as well stick it here as anywhere.
- * ===================================================================== */
-
-int16 factionTable[maxFactions][factionNumColumns];
-
-//  Indicates wether actor states should be paused
-bool actorStatesPaused;
-
-//  Indicates wether player actors should have combat behavior
-bool combatBehaviorEnabled;
 
 /* ===================================================================== *
    ActorProto member functions
@@ -189,7 +168,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	assert(isActor(dObj));
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_containerList->find(dObj, ContainerNode::deadType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::deadType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -373,7 +352,7 @@ bool ActorProto::acceptDamageAction(
 	int16       damageScore = 0;
 	Actor       *a = (Actor *)GameObject::objectAddress(dObj);
 	Actor       *enactorPtr;
-	int16       &vitality = a->effectiveStats.vitality;
+	int16       &vitality = a->_effectiveStats.vitality;
 	bool        resistant = a->resists((effectResistTypes) dType);
 	PlayerActorID   pID;
 
@@ -436,7 +415,7 @@ bool ActorProto::acceptDamageAction(
 		//  morale check
 		if (damageScore >= vitality) {
 			MotionTask::die(*a);
-			AddFactionTally(a->faction, factionNumKills, 1);
+			AddFactionTally(a->_faction, factionNumKills, 1);
 			if (enactorPtr != NULL)
 				enactorPtr->handleSuccessfulKill(a);
 		} else
@@ -480,7 +459,7 @@ bool ActorProto::acceptHealingAction(
 	assert(isActor(dObj));
 
 	Actor       *a = (Actor *)GameObject::objectAddress(dObj);
-	int16       &vitality = a->effectiveStats.vitality;
+	int16       &vitality = a->_effectiveStats.vitality;
 	int16       maxVitality = (a->getBaseStats())->vitality;
 	PlayerActorID   pID;
 
@@ -551,7 +530,7 @@ bool ActorProto::acceptStrikeAction(
 	hitChance -= armorAttribs.defenseBonus;
 
 	//  Factor in dodging bonus if any
-	if (a->moveTask != NULL && a->moveTask->isDodging(enactorPtr))
+	if (a->_moveTask != NULL && a->_moveTask->isDodging(enactorPtr))
 		hitChance -= dodgingBonus;
 
 	hitChance = MAX<uint8>(hitChance, 5);
@@ -593,7 +572,7 @@ bool ActorProto::acceptStrikeAction(
 			if (!a->isDead()) {
 				int16 pmass = a->proto()->mass;
 
-				if (pmass <= 100 || (int16)g_vm->_rnd->getRandomNumber(154) >= pmass - 100) {
+				if (pmass <= 100 || (int16)g_vm->_rnd->getRandomNumber(155) >= pmass - 100) {
 					if (g_vm->_rnd->getRandomNumber(7) == 0)
 						MotionTask::fallDown(*a, *enactorPtr);
 					else
@@ -661,9 +640,9 @@ bool ActorProto::acceptInsertionAtAction(
 	//  Determine if this object is simply being moved within this actor
 	if (oldLoc.context == dObj) {
 		//  Determine if and where the object is in use by this actor
-		if (a->leftHandObject == item)
+		if (a->_leftHandObject == item)
 			inUseType = heldInLeftHand;
-		else if (a->rightHandObject == item)
+		else if (a->_rightHandObject == item)
 			inUseType = heldInRightHand;
 		else {
 			int     i;
@@ -671,7 +650,7 @@ bool ActorProto::acceptInsertionAtAction(
 			inUseType = notInUse;
 
 			for (i = 0; i < ARMOR_COUNT; i++) {
-				if (a->armorObjects[i] == item) {
+				if (a->_armorObjects[i] == item) {
 					inUseType = worn;
 					wornWhere = i;
 					break;
@@ -728,7 +707,7 @@ void ActorProto::initiateAttack(ObjectID attacker, ObjectID target) {
 	GameObject  *targetPtr = GameObject::objectAddress(target);
 
 	//  Start the attack motion
-	if (attackerPtr->appearance != NULL) {
+	if (attackerPtr->_appearance != NULL) {
 		if (attackerPtr->isActionAvailable(actionSwingHigh))
 			MotionTask::oneHandedSwing(*attackerPtr, *targetPtr);
 		else if (attackerPtr->isActionAvailable(actionTwoHandSwingHigh))
@@ -766,16 +745,16 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 			//  If this is a temporary actor waiting for expiration,
 			//  then decrement the expiration counter and possibly
 			//  delete the actor
-			if ((a->flags & Actor::temporary) || a->isDead()) {
-				if (a->deactivationCounter <= 0) {
+			if ((a->_flags & Actor::temporary) || a->isDead()) {
+				if (a->_deactivationCounter <= 0) {
 					a->deleteObjectRecursive();
 					return;
-				} else a->deactivationCounter--;
+				} else a->_deactivationCounter--;
 			} else {
 				//  If the actor has failed morale there is a random
 				//  chance of him regaining his courage
-				if ((a->flags & Actor::afraid) && g_vm->_rnd->getRandomNumber(127) == 0)
-					a->flags &= ~Actor::afraid;
+				if ((a->_flags & Actor::afraid) && g_vm->_rnd->getRandomNumber(127) == 0)
+					a->_flags &= ~Actor::afraid;
 			}
 		}
 
@@ -940,7 +919,7 @@ struct ActorArchive {
 	int16               currentRecoveryPoints;
 	ObjectID            leaderID;
 	BandID              followersID;
-	ObjectID            armorObjects[ARMOR_COUNT];
+	ObjectID            _armorObjects[ARMOR_COUNT];
 	ObjectID            currentTargetID;
 	int16               scriptVar[actorScriptVars];
 };
@@ -960,8 +939,6 @@ void Actor::init(
     uint8   colorSchemeIndex,
     uint8   factionNum,
     uint8   initFlags) {
-	int         i;
-
 	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & actorPermanent);
 
 	//  Fixup the prototype pointer to point to an actor prototype
@@ -978,67 +955,71 @@ void Actor::init(
 	_data.hitPoints = 0;
 
 	//  Initialize actor field
-	faction             = factionNum;
-	colorScheme         = colorSchemeIndex;
-	appearanceID        = appearanceNum;
-	attitude            = 0;
-	mood                = 0;
-	disposition         = 0;
-	currentFacing       = dirDown;
-	tetherLocU          = 0;
-	tetherLocV          = 0;
-	tetherDist          = 0;
-	leftHandObject      = Nothing;
-	rightHandObject     = Nothing;
-	schedule            = 0;
-	memset(&knowledge, 0, sizeof(knowledge));
+	_faction             = factionNum;
+	_colorScheme         = colorSchemeIndex;
+	_appearanceID        = appearanceNum;
+	_attitude            = 0;
+	_mood                = 0;
+	_disposition         = 0;
+	_currentFacing       = dirDown;
+	_tetherLocU          = 0;
+	_tetherLocV          = 0;
+	_tetherDist          = 0;
+	_leftHandObject      = Nothing;
+	_rightHandObject     = Nothing;
+	_schedule            = 0;
+
+	for (uint i = 0; i < ARRAYSIZE(_knowledge); ++i)
+		_knowledge[i] = 0;
 
 	//  Initialize the rest of the data members
-	*((uint32 *)conversationMemory) = 0L;
-	currentAnimation    = actionStand;
-	currentPose         = 0;
-	animationFlags      = 0;
-	flags               = 0;
+	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
+		_conversationMemory[i] = 0;
+
+	_currentAnimation    = actionStand;
+	_currentPose         = 0;
+	_animationFlags      = 0;
+	_flags               = 0;
 	if (!(initFlags & actorPermanent))
-		flags |= temporary;
+		_flags |= temporary;
 
-	poseInfo.flags = 0;
-	poseInfo.actorFrameIndex = 0;
-	poseInfo.actorFrameBank = 0;
-	poseInfo.leftObjectIndex = 0;
-	poseInfo.rightObjectIndex = 0;
-	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
-	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+	_poseInfo.flags = 0;
+	_poseInfo.actorFrameIndex = 0;
+	_poseInfo.actorFrameBank = 0;
+	_poseInfo.leftObjectIndex = 0;
+	_poseInfo.rightObjectIndex = 0;
+	_poseInfo.leftObjectOffset.x = _poseInfo.leftObjectOffset.y = 0;
+	_poseInfo.rightObjectOffset.x = _poseInfo.rightObjectOffset.y = 0;
 
-	appearance          = NULL;
-	cycleCount          = 0;
-	kludgeCount         = 0;
-	moveTask            = NULL;
-	enchantmentFlags    = 0L;
-	curTask             = NULL;
-	currentGoal         = actorGoalFollowAssignment;
-	deactivationCounter = 0;
+	_appearance          = NULL;
+	_cycleCount          = 0;
+	_kludgeCount         = 0;
+	_moveTask            = NULL;
+	_enchantmentFlags    = 0L;
+	_curTask             = NULL;
+	_currentGoal         = actorGoalFollowAssignment;
+	_deactivationCounter = 0;
 	_assignment = nullptr;
 
 	memcpy(
-	    &effectiveStats,
+	    &_effectiveStats,
 	    &((ActorProto *)prototype)->baseStats,
-	    sizeof(effectiveStats));
-	effectiveStats.vitality = MAX<int16>(effectiveStats.vitality, 1);
+	    sizeof(_effectiveStats));
+	_effectiveStats.vitality = MAX<int16>(_effectiveStats.vitality, 1);
 
-	actionCounter       = 0;
-	effectiveResistance = 0;
-	effectiveImmunity   = 0;
-	recPointsPerUpdate      = BASE_REC_RATE;
-	currentRecoveryPoints   = 0;
-	leader              = NULL;
-	followers           = NULL;
+	_actionCounter       = 0;
+	_effectiveResistance = 0;
+	_effectiveImmunity   = 0;
+	_recPointsPerUpdate      = BASE_REC_RATE;
+	_currentRecoveryPoints   = 0;
+	_leader              = NULL;
+	_followers           = NULL;
 	_followersID = NoBand;
-	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[i] = Nothing;
-	currentTarget       = NULL;
-	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[i] = 0;
+	for (int i = 0; i < ARMOR_COUNT; i++)
+		_armorObjects[i] = Nothing;
+	_currentTarget       = NULL;
+	for (int i = 0; i < actorScriptVars; i++)
+		_scriptVar[i] = 0;
 
 	evalActorEnchantments(this);
 }
@@ -1048,138 +1029,139 @@ void Actor::init(
 //	of the rest of the data members
 Actor::Actor(void) {
 	prototype = nullptr;
-	faction             = 0;
-	colorScheme         = 0;
-	appearanceID        = 0;
-	attitude            = 0;
-	mood                = 0;
-	disposition         = 0;
-	currentFacing       = 0;
-	tetherLocU          = 0;
-	tetherLocV          = 0;
-	tetherDist          = 0;
-	leftHandObject      = 0;
-	rightHandObject     = 0;
-	schedule            = 0;
-	for (int i = 0; i < 16; ++i)
-		knowledge[i] = 0;
+	_faction             = 0;
+	_colorScheme         = 0;
+	_appearanceID        = 0;
+	_attitude            = 0;
+	_mood                = 0;
+	_disposition         = 0;
+	_currentFacing       = 0;
+	_tetherLocU          = 0;
+	_tetherLocV          = 0;
+	_tetherDist          = 0;
+	_leftHandObject      = 0;
+	_rightHandObject     = 0;
+	_schedule            = 0;
+
+	for (uint i = 0; i < ARRAYSIZE(_knowledge); ++i)
+		_knowledge[i] = 0;
 
 	//  Initialize the rest of the data members
-	for (int i = 0; i < 4; ++i)
-		conversationMemory[i] = 0;
+	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
+		_conversationMemory[i] = 0;
 
-	currentAnimation    = actionStand;
-	currentPose         = 0;
-	animationFlags      = 0;
-	flags               = 0;
+	_currentAnimation    = actionStand;
+	_currentPose         = 0;
+	_animationFlags      = 0;
+	_flags               = 0;
 
-	poseInfo.flags = 0;
-	poseInfo.actorFrameIndex = 0;
-	poseInfo.actorFrameBank = 0;
-	poseInfo.leftObjectIndex = 0;
-	poseInfo.rightObjectIndex = 0;
-	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
-	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+	_poseInfo.flags = 0;
+	_poseInfo.actorFrameIndex = 0;
+	_poseInfo.actorFrameBank = 0;
+	_poseInfo.leftObjectIndex = 0;
+	_poseInfo.rightObjectIndex = 0;
+	_poseInfo.leftObjectOffset.x = _poseInfo.leftObjectOffset.y = 0;
+	_poseInfo.rightObjectOffset.x = _poseInfo.rightObjectOffset.y = 0;
 
-	appearance          = nullptr;
-	cycleCount          = 0;
-	kludgeCount         = 0;
-	moveTask            = nullptr;
-	enchantmentFlags    = 0L;
-	curTask             = nullptr;
-	currentGoal         = actorGoalFollowAssignment;
-	deactivationCounter = 0;
+	_appearance          = nullptr;
+	_cycleCount          = 0;
+	_kludgeCount         = 0;
+	_moveTask            = nullptr;
+	_enchantmentFlags    = 0L;
+	_curTask             = nullptr;
+	_currentGoal         = actorGoalFollowAssignment;
+	_deactivationCounter = 0;
 	_assignment = nullptr;
 
-	memset(&effectiveStats, 0, sizeof(effectiveStats));
-	effectiveStats.vitality = MAX<uint16>(effectiveStats.vitality, 1);
+	memset(&_effectiveStats, 0, sizeof(_effectiveStats));
+	_effectiveStats.vitality = MAX<uint16>(_effectiveStats.vitality, 1);
 
-	actionCounter       = 0;
-	effectiveResistance = 0;
-	effectiveImmunity   = 0;
-	recPointsPerUpdate      = BASE_REC_RATE;
-	currentRecoveryPoints   = 0;
-	leader              = nullptr;
+	_actionCounter       = 0;
+	_effectiveResistance = 0;
+	_effectiveImmunity   = 0;
+	_recPointsPerUpdate      = BASE_REC_RATE;
+	_currentRecoveryPoints   = 0;
+	_leader              = nullptr;
 	_leaderID           = Nothing;
-	followers           = nullptr;
+	_followers           = nullptr;
 	_followersID = NoBand;
 	for (int i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[i] = Nothing;
-	currentTarget       = nullptr;
+		_armorObjects[i] = Nothing;
+	_currentTarget       = nullptr;
 	_currentTargetID    = Nothing;
 	for (int i = 0; i < actorScriptVars; i++)
-		scriptVar[i] = 0;
+		_scriptVar[i] = 0;
 }
 
 Actor::Actor(const ResourceActor &res) : GameObject(res) {
-	int         i;
-
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != NULL
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   NULL;
 
 	//  Copy the resource fields
-	faction             = res.faction;
-	colorScheme         = res.colorScheme;
-	appearanceID        = res.appearanceID;
-	attitude            = res.attitude;
-	mood                = res.mood;
-	disposition         = res.disposition;
-	currentFacing       = res.currentFacing;
-	tetherLocU          = res.tetherLocU;
-	tetherLocV          = res.tetherLocV;
-	tetherDist          = res.tetherDist;
-	leftHandObject      = res.leftHandObject;
-	rightHandObject     = res.rightHandObject;
-	schedule            = res.schedule;
-	memcpy(&knowledge, &res.knowledge, sizeof(knowledge));
+	_faction             = res.faction;
+	_colorScheme         = res.colorScheme;
+	_appearanceID        = res.appearanceID;
+	_attitude            = res.attitude;
+	_mood                = res.mood;
+	_disposition         = res.disposition;
+	_currentFacing       = res.currentFacing;
+	_tetherLocU          = res.tetherLocU;
+	_tetherLocV          = res.tetherLocV;
+	_tetherDist          = res.tetherDist;
+	_leftHandObject      = res.leftHandObject;
+	_rightHandObject     = res.rightHandObject;
+	_schedule            = res.schedule;
+	memcpy(&_knowledge, &res.knowledge, sizeof(_knowledge));
 
 	//  Initialize the rest of the data members
-	*((uint32 *)conversationMemory) = 0L;
-	currentAnimation    = actionStand;
-	currentPose         = 0;
-	animationFlags      = 0;
-	flags               = 0;
+	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
+		_conversationMemory[i] = 0;
 
-	poseInfo.flags = 0;
-	poseInfo.actorFrameIndex = 0;
-	poseInfo.actorFrameBank = 0;
-	poseInfo.leftObjectIndex = 0;
-	poseInfo.rightObjectIndex = 0;
-	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
-	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+	_currentAnimation    = actionStand;
+	_currentPose         = 0;
+	_animationFlags      = 0;
+	_flags               = 0;
 
-	appearance          = NULL;
-	cycleCount          = 0;
-	kludgeCount         = 0;
-	moveTask            = NULL;
-	enchantmentFlags    = 0L;
-	curTask             = NULL;
-	currentGoal         = actorGoalFollowAssignment;
-	deactivationCounter = 0;
+	_poseInfo.flags = 0;
+	_poseInfo.actorFrameIndex = 0;
+	_poseInfo.actorFrameBank = 0;
+	_poseInfo.leftObjectIndex = 0;
+	_poseInfo.rightObjectIndex = 0;
+	_poseInfo.leftObjectOffset.x = _poseInfo.leftObjectOffset.y = 0;
+	_poseInfo.rightObjectOffset.x = _poseInfo.rightObjectOffset.y = 0;
+
+	_appearance          = NULL;
+	_cycleCount          = 0;
+	_kludgeCount         = 0;
+	_moveTask            = NULL;
+	_enchantmentFlags    = 0L;
+	_curTask             = NULL;
+	_currentGoal         = actorGoalFollowAssignment;
+	_deactivationCounter = 0;
 	_assignment = nullptr;
 
 	if (prototype)
-		memcpy(&effectiveStats, &((ActorProto *)prototype)->baseStats, sizeof(effectiveStats));
+		memcpy(&_effectiveStats, &((ActorProto *)prototype)->baseStats, sizeof(_effectiveStats));
 
-	effectiveStats.vitality = MAX<uint16>(effectiveStats.vitality, 1);
+	_effectiveStats.vitality = MAX<uint16>(_effectiveStats.vitality, 1);
 
-	actionCounter       = 0;
-	effectiveResistance = 0;
-	effectiveImmunity   = 0;
-	recPointsPerUpdate      = BASE_REC_RATE;
-	currentRecoveryPoints   = 0;
-	leader              = NULL;
+	_actionCounter       = 0;
+	_effectiveResistance = 0;
+	_effectiveImmunity   = 0;
+	_recPointsPerUpdate      = BASE_REC_RATE;
+	_currentRecoveryPoints   = 0;
+	_leader              = NULL;
 	_leaderID           = Nothing;
-	followers           = NULL;
+	_followers           = NULL;
 	_followersID = NoBand;
-	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[i] = Nothing;
-	currentTarget       = NULL;
+	for (int i = 0; i < ARMOR_COUNT; i++)
+		_armorObjects[i] = Nothing;
+	_currentTarget       = NULL;
 	_currentTargetID    = Nothing;
-	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[i] = 0;
+	for (int i = 0; i < actorScriptVars; i++)
+		_scriptVar[i] = 0;
 
 	evalActorEnchantments(this);
 }
@@ -1190,106 +1172,106 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   nullptr;
 
-	faction = in->readByte();
-	colorScheme = in->readByte();
-	appearanceID = in->readSint32BE();
-	attitude = in->readSByte();
-	mood = in->readSByte();
+	_faction = in->readByte();
+	_colorScheme = in->readByte();
+	_appearanceID = in->readSint32BE();
+	_attitude = in->readSByte();
+	_mood = in->readSByte();
 
-	disposition = in->readByte();
-	currentFacing = in->readByte();
-	tetherLocU = in->readSint16LE();
-	tetherLocV = in->readSint16LE();
-	tetherDist = in->readSint16LE();
-	leftHandObject = in->readUint16LE();
-	rightHandObject = in->readUint16LE();
+	_disposition = in->readByte();
+	_currentFacing = in->readByte();
+	_tetherLocU = in->readSint16LE();
+	_tetherLocV = in->readSint16LE();
+	_tetherDist = in->readSint16LE();
+	_leftHandObject = in->readUint16LE();
+	_rightHandObject = in->readUint16LE();
 
-	for (int i = 0; i < ARRAYSIZE(knowledge); ++i)
-		knowledge[i] = in->readUint16LE();
+	for (int i = 0; i < ARRAYSIZE(_knowledge); ++i)
+		_knowledge[i] = in->readUint16LE();
 
-	schedule = in->readUint16LE();
+	_schedule = in->readUint16LE();
 
-	for (int i = 0; i < ARRAYSIZE(conversationMemory); ++i)
-		conversationMemory[i] = in->readByte();
+	for (int i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
+		_conversationMemory[i] = in->readByte();
 
-	currentAnimation = in->readByte();
-	currentPose = in->readByte();
-	animationFlags = in->readByte();
+	_currentAnimation = in->readByte();
+	_currentPose = in->readByte();
+	_animationFlags = in->readByte();
 
-	flags = in->readByte();
-	poseInfo.load(in);
-	cycleCount = in->readSint16LE();
-	kludgeCount = in->readSint16LE();
-	enchantmentFlags = in->readUint32LE();
-	currentGoal = in->readByte();
-	deactivationCounter = in->readByte();
-	effectiveStats.read(in);
-	actionCounter = in->readByte();
-	effectiveResistance = in->readUint16LE();
-	effectiveImmunity = in->readUint16LE();
-	recPointsPerUpdate = in->readSint16LE();
-	currentRecoveryPoints = in->readUint16LE();
+	_flags = in->readByte();
+	_poseInfo.load(in);
+	_cycleCount = in->readSint16LE();
+	_kludgeCount = in->readSint16LE();
+	_enchantmentFlags = in->readUint32LE();
+	_currentGoal = in->readByte();
+	_deactivationCounter = in->readByte();
+	_effectiveStats.read(in);
+	_actionCounter = in->readByte();
+	_effectiveResistance = in->readUint16LE();
+	_effectiveImmunity = in->readUint16LE();
+	_recPointsPerUpdate = in->readSint16LE();
+	_currentRecoveryPoints = in->readUint16LE();
 
 	_leaderID = in->readUint16LE();
-	leader = nullptr;
+	_leader = nullptr;
 
 	_followersID = in->readSint16LE();
-	followers = nullptr;
+	_followers = nullptr;
 
-	for (int i = 0; i < ARRAYSIZE(armorObjects); ++i)
-		armorObjects[i] = in->readUint16LE();
+	for (int i = 0; i < ARRAYSIZE(_armorObjects); ++i)
+		_armorObjects[i] = in->readUint16LE();
 
 	_currentTargetID = in->readUint16LE();
-	currentTarget = nullptr;
+	_currentTarget = nullptr;
 
-	for (int i = 0; i < ARRAYSIZE(scriptVar); ++i)
-		scriptVar[i] = in->readSint16LE();
+	for (int i = 0; i < ARRAYSIZE(_scriptVar); ++i)
+		_scriptVar[i] = in->readSint16LE();
 
-	if (flags & hasAssignment) {
+	if (_flags & hasAssignment) {
 		readAssignment(this, in);
 	} else {
 		_assignment = nullptr;
 	}
 
-	appearance = nullptr;
-	moveTask = nullptr;
-	curTask = nullptr;
+	_appearance = nullptr;
+	_moveTask = nullptr;
+	_curTask = nullptr;
 
-	debugC(4, kDebugSaveload, "... faction = %d", faction);
-	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
-	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
-	debugC(4, kDebugSaveload, "... attitude = %d", attitude);
-	debugC(4, kDebugSaveload, "... mood = %d", mood);
-	debugC(4, kDebugSaveload, "... disposition = %d", disposition);
-	debugC(4, kDebugSaveload, "... currentFacing = %d", currentFacing);
-	debugC(4, kDebugSaveload, "... tetherLocU = %d", tetherLocU);
-	debugC(4, kDebugSaveload, "... tetherLocV = %d", tetherLocV);
-	debugC(4, kDebugSaveload, "... tetherDist = %d", tetherDist);
-	debugC(4, kDebugSaveload, "... leftHandObject = %d", leftHandObject);
-	debugC(4, kDebugSaveload, "... rightHandObject = %d", rightHandObject);
+	debugC(4, kDebugSaveload, "... _faction = %d", _faction);
+	debugC(4, kDebugSaveload, "... _colorScheme = %d", _colorScheme);
+	debugC(4, kDebugSaveload, "... _appearanceID = %d", _appearanceID);
+	debugC(4, kDebugSaveload, "... _attitude = %d", _attitude);
+	debugC(4, kDebugSaveload, "... _mood = %d", _mood);
+	debugC(4, kDebugSaveload, "... _disposition = %d", _disposition);
+	debugC(4, kDebugSaveload, "... _currentFacing = %d", _currentFacing);
+	debugC(4, kDebugSaveload, "... _tetherLocU = %d", _tetherLocU);
+	debugC(4, kDebugSaveload, "... _tetherLocV = %d", _tetherLocV);
+	debugC(4, kDebugSaveload, "... _tetherDist = %d", _tetherDist);
+	debugC(4, kDebugSaveload, "... _leftHandObject = %d", _leftHandObject);
+	debugC(4, kDebugSaveload, "... _rightHandObject = %d", _rightHandObject);
 //	debugC(4, kDebugSaveload, "... knowledge = %d", knowledge);
-	debugC(4, kDebugSaveload, "... schedule = %d", schedule);
+	debugC(4, kDebugSaveload, "... _schedule = %d", _schedule);
 //	debugC(4, kDebugSaveload, "... conversationMemory = %d", conversationMemory);
-	debugC(4, kDebugSaveload, "... currentAnimation = %d", currentAnimation);
-	debugC(4, kDebugSaveload, "... currentPose = %d", currentPose);
-	debugC(4, kDebugSaveload, "... animationFlags = %d", animationFlags);
-	debugC(4, kDebugSaveload, "... flags = %d", flags);
+	debugC(4, kDebugSaveload, "... _currentAnimation = %d", _currentAnimation);
+	debugC(4, kDebugSaveload, "... _currentPose = %d", _currentPose);
+	debugC(4, kDebugSaveload, "... _animationFlags = %d", _animationFlags);
+	debugC(4, kDebugSaveload, "... _flags = %d", _flags);
 //	debugC(4, kDebugSaveload, "... out = %d", out);
-	debugC(4, kDebugSaveload, "... cycleCount = %d", cycleCount);
-	debugC(4, kDebugSaveload, "... kludgeCount = %d", kludgeCount);
-	debugC(4, kDebugSaveload, "... enchantmentFlags = %d", enchantmentFlags);
-	debugC(4, kDebugSaveload, "... currentGoal = %d", currentGoal);
-	debugC(4, kDebugSaveload, "... deactivationCounter = %d", deactivationCounter);
+	debugC(4, kDebugSaveload, "... _cycleCount = %d", _cycleCount);
+	debugC(4, kDebugSaveload, "... _kludgeCount = %d", _kludgeCount);
+	debugC(4, kDebugSaveload, "... _enchantmentFlags = %d", _enchantmentFlags);
+	debugC(4, kDebugSaveload, "... _currentGoal = %d", _currentGoal);
+	debugC(4, kDebugSaveload, "... _deactivationCounter = %d", _deactivationCounter);
 //	debugC(4, kDebugSaveload, "... out = %d", out);
-	debugC(4, kDebugSaveload, "... actionCounter = %d", actionCounter);
-	debugC(4, kDebugSaveload, "... effectiveResistance = %d", effectiveResistance);
-	debugC(4, kDebugSaveload, "... effectiveImmunity = %d", effectiveImmunity);
-	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
-	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
-	debugC(4, kDebugSaveload, "... leaderID = %d", _leaderID);
-	debugC(4, kDebugSaveload, "... followersID = %d", _followersID);
+	debugC(4, kDebugSaveload, "... _actionCounter = %d", _actionCounter);
+	debugC(4, kDebugSaveload, "... _effectiveResistance = %d", _effectiveResistance);
+	debugC(4, kDebugSaveload, "... _effectiveImmunity = %d", _effectiveImmunity);
+	debugC(4, kDebugSaveload, "... _recPointsPerUpdate = %d", _recPointsPerUpdate);
+	debugC(4, kDebugSaveload, "... _currentRecoveryPoints = %d", _currentRecoveryPoints);
+	debugC(4, kDebugSaveload, "... _leaderID = %d", _leaderID);
+	debugC(4, kDebugSaveload, "... _followersID = %d", _followersID);
 //	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
-	debugC(4, kDebugSaveload, "... currentTargetID = %d", _currentTargetID);
+	debugC(4, kDebugSaveload, "... _currentTargetID = %d", _currentTargetID);
 //	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
 }
 
@@ -1297,7 +1279,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 //	Destructor
 
 Actor::~Actor(void) {
-	if (appearance != NULL) ReleaseActorAppearance(appearance);
+	if (_appearance != NULL) ReleaseActorAppearance(_appearance);
 
 	if (getAssignment())
 		delete getAssignment();
@@ -1310,7 +1292,7 @@ int32 Actor::archiveSize(void) {
 	int32   size = GameObject::archiveSize();
 
 	size += sizeof(ActorArchive);
-	if (flags & hasAssignment)
+	if (_flags & hasAssignment)
 		size += assignmentArchiveSize(this);
 
 	return size;
@@ -1331,94 +1313,94 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Restore the prototype pointer
 	prototype = holdProto;
 
-	out->writeByte(faction);
-	out->writeByte(colorScheme);
-	out->writeSint32BE(appearanceID);
-	out->writeSByte(attitude);
-	out->writeSByte(mood);
+	out->writeByte(_faction);
+	out->writeByte(_colorScheme);
+	out->writeSint32BE(_appearanceID);
+	out->writeSByte(_attitude);
+	out->writeSByte(_mood);
 
-	out->writeByte(disposition);
-	out->writeByte(currentFacing);
-	out->writeSint16LE(tetherLocU);
-	out->writeSint16LE(tetherLocV);
-	out->writeSint16LE(tetherDist);
-	out->writeUint16LE(leftHandObject);
-	out->writeUint16LE(rightHandObject);
+	out->writeByte(_disposition);
+	out->writeByte(_currentFacing);
+	out->writeSint16LE(_tetherLocU);
+	out->writeSint16LE(_tetherLocV);
+	out->writeSint16LE(_tetherDist);
+	out->writeUint16LE(_leftHandObject);
+	out->writeUint16LE(_rightHandObject);
 
-	out->write(knowledge, sizeof(knowledge));
-	out->writeUint16LE(schedule);
-	out->write(conversationMemory, sizeof(conversationMemory));
+	out->write(_knowledge, sizeof(_knowledge));
+	out->writeUint16LE(_schedule);
+	out->write(_conversationMemory, sizeof(_conversationMemory));
 
-	out->writeByte(currentAnimation);
-	out->writeByte(currentPose);
-	out->writeByte(animationFlags);
+	out->writeByte(_currentAnimation);
+	out->writeByte(_currentPose);
+	out->writeByte(_animationFlags);
 
-	out->writeByte(flags);
-	poseInfo.write(out);
-	out->writeSint16LE(cycleCount);
-	out->writeSint16LE(kludgeCount);
-	out->writeUint32LE(enchantmentFlags);
-	out->writeByte(currentGoal);
-	out->writeByte(deactivationCounter);
-	effectiveStats.write(out);
-	out->writeByte(actionCounter);
-	out->writeUint16LE(effectiveResistance);
-	out->writeUint16LE(effectiveImmunity);
-	out->writeSint16LE(recPointsPerUpdate);
-	out->writeUint16LE(currentRecoveryPoints);
+	out->writeByte(_flags);
+	_poseInfo.write(out);
+	out->writeSint16LE(_cycleCount);
+	out->writeSint16LE(_kludgeCount);
+	out->writeUint32LE(_enchantmentFlags);
+	out->writeByte(_currentGoal);
+	out->writeByte(_deactivationCounter);
+	_effectiveStats.write(out);
+	out->writeByte(_actionCounter);
+	out->writeUint16LE(_effectiveResistance);
+	out->writeUint16LE(_effectiveImmunity);
+	out->writeSint16LE(_recPointsPerUpdate);
+	out->writeUint16LE(_currentRecoveryPoints);
 
-	int leaderID = (leader != NULL) ? leader->thisID() : Nothing;
+	_leaderID = (_leader != NULL) ? _leader->thisID() : Nothing;
 
-	out->writeUint16LE(leaderID);
+	out->writeUint16LE(_leaderID);
 
-	int followersID = (followers != NULL) ? getBandID(followers) : NoBand;
+	_followersID = (_followers != NULL) ? getBandID(_followers) : NoBand;
 
-	out->writeSint16LE(followersID);
-	out->write(armorObjects, ARMOR_COUNT * 2);
+	out->writeSint16LE(_followersID);
+	out->write(_armorObjects, ARMOR_COUNT * 2);
 
-	int currentTargetID = currentTarget != NULL ? currentTarget->thisID() : Nothing;
+	_currentTargetID = _currentTarget != NULL ? _currentTarget->thisID() : Nothing;
 
-	out->writeUint16LE(currentTargetID);
-	out->write(scriptVar, sizeof(scriptVar));
+	out->writeUint16LE(_currentTargetID);
+	out->write(_scriptVar, sizeof(_scriptVar));
 
-	if (flags & hasAssignment)
+	if (_flags & hasAssignment)
 		writeAssignment(this, out);
 
-	debugC(4, kDebugSaveload, "... faction = %d", faction);
-	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
-	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
-	debugC(4, kDebugSaveload, "... attitude = %d", attitude);
-	debugC(4, kDebugSaveload, "... mood = %d", mood);
-	debugC(4, kDebugSaveload, "... disposition = %d", disposition);
-	debugC(4, kDebugSaveload, "... currentFacing = %d", currentFacing);
-	debugC(4, kDebugSaveload, "... tetherLocU = %d", tetherLocU);
-	debugC(4, kDebugSaveload, "... tetherLocV = %d", tetherLocV);
-	debugC(4, kDebugSaveload, "... tetherDist = %d", tetherDist);
-	debugC(4, kDebugSaveload, "... leftHandObject = %d", leftHandObject);
-	debugC(4, kDebugSaveload, "... rightHandObject = %d", rightHandObject);
+	debugC(4, kDebugSaveload, "... _faction = %d", _faction);
+	debugC(4, kDebugSaveload, "... _colorScheme = %d", _colorScheme);
+	debugC(4, kDebugSaveload, "... _appearanceID = %d", _appearanceID);
+	debugC(4, kDebugSaveload, "... _attitude = %d", _attitude);
+	debugC(4, kDebugSaveload, "... _mood = %d", _mood);
+	debugC(4, kDebugSaveload, "... _disposition = %d", _disposition);
+	debugC(4, kDebugSaveload, "... _currentFacing = %d", _currentFacing);
+	debugC(4, kDebugSaveload, "... _tetherLocU = %d", _tetherLocU);
+	debugC(4, kDebugSaveload, "... _tetherLocV = %d", _tetherLocV);
+	debugC(4, kDebugSaveload, "... _tetherDist = %d", _tetherDist);
+	debugC(4, kDebugSaveload, "... _leftHandObject = %d", _leftHandObject);
+	debugC(4, kDebugSaveload, "... _rightHandObject = %d", _rightHandObject);
 //	debugC(4, kDebugSaveload, "... knowledge = %d", knowledge);
-	debugC(4, kDebugSaveload, "... schedule = %d", schedule);
+	debugC(4, kDebugSaveload, "... _schedule = %d", _schedule);
 //	debugC(4, kDebugSaveload, "... conversationMemory = %d", conversationMemory);
-	debugC(4, kDebugSaveload, "... currentAnimation = %d", currentAnimation);
-	debugC(4, kDebugSaveload, "... currentPose = %d", currentPose);
-	debugC(4, kDebugSaveload, "... animationFlags = %d", animationFlags);
-	debugC(4, kDebugSaveload, "... flags = %d", flags);
+	debugC(4, kDebugSaveload, "... _currentAnimation = %d", _currentAnimation);
+	debugC(4, kDebugSaveload, "... _currentPose = %d", _currentPose);
+	debugC(4, kDebugSaveload, "... _animationFlags = %d", _animationFlags);
+	debugC(4, kDebugSaveload, "... _flags = %d", _flags);
 //	debugC(4, kDebugSaveload, "... out = %d", out);
-	debugC(4, kDebugSaveload, "... cycleCount = %d", cycleCount);
-	debugC(4, kDebugSaveload, "... kludgeCount = %d", kludgeCount);
-	debugC(4, kDebugSaveload, "... enchantmentFlags = %d", enchantmentFlags);
-	debugC(4, kDebugSaveload, "... currentGoal = %d", currentGoal);
-	debugC(4, kDebugSaveload, "... deactivationCounter = %d", deactivationCounter);
+	debugC(4, kDebugSaveload, "... _cycleCount = %d", _cycleCount);
+	debugC(4, kDebugSaveload, "... _kludgeCount = %d", _kludgeCount);
+	debugC(4, kDebugSaveload, "... _enchantmentFlags = %d", _enchantmentFlags);
+	debugC(4, kDebugSaveload, "... _currentGoal = %d", _currentGoal);
+	debugC(4, kDebugSaveload, "... _deactivationCounter = %d", _deactivationCounter);
 //	debugC(4, kDebugSaveload, "... out = %d", out);
-	debugC(4, kDebugSaveload, "... actionCounter = %d", actionCounter);
-	debugC(4, kDebugSaveload, "... effectiveResistance = %d", effectiveResistance);
-	debugC(4, kDebugSaveload, "... effectiveImmunity = %d", effectiveImmunity);
-	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
-	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
-	debugC(4, kDebugSaveload, "... leaderID = %d", leader != NULL ? leader->thisID() : Nothing);
-	debugC(4, kDebugSaveload, "... followersID = %d", followers != NULL ? getBandID(followers) : NoBand);
+	debugC(4, kDebugSaveload, "... _actionCounter = %d", _actionCounter);
+	debugC(4, kDebugSaveload, "... _effectiveResistance = %d", _effectiveResistance);
+	debugC(4, kDebugSaveload, "... _effectiveImmunity = %d", _effectiveImmunity);
+	debugC(4, kDebugSaveload, "... _recPointsPerUpdate = %d", _recPointsPerUpdate);
+	debugC(4, kDebugSaveload, "... _currentRecoveryPoints = %d", _currentRecoveryPoints);
+	debugC(4, kDebugSaveload, "... _leaderID = %d", _leader != NULL ? _leader->thisID() : Nothing);
+	debugC(4, kDebugSaveload, "... _followersID = %d", _followers != NULL ? getBandID(_followers) : NoBand);
 //	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
-	debugC(4, kDebugSaveload, "... currentTargetID = %d", currentTarget != NULL ? currentTarget->thisID() : Nothing);
+	debugC(4, kDebugSaveload, "... _currentTargetID = %d", _currentTarget != NULL ? _currentTarget->thisID() : Nothing);
 //	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
 }
 
@@ -1444,9 +1426,9 @@ Actor *Actor::newActor(
 
 		//  Search actor list for first scavangable actor
 		for (i = kPlayerActors; i < kActorCount; i++) {
-			a = g_vm->_actorList[i];
+			a = g_vm->_act->_actorList[i];
 
-			if ((a->flags & temporary)
+			if ((a->_flags & temporary)
 			        &&  !a->isActivated()
 			        &&  isWorld(a->IDParent()))
 				break;
@@ -1475,7 +1457,7 @@ Actor *Actor::newActor(
 	    factionNum,
 	    initFlags);
 
-	if (a->flags & temporary) {
+	if (a->_flags & temporary) {
 		incTempActorCount(protoNum);
 		debugC(1, kDebugActors, "Actors: Created temp actor %d (%s) new count:%d", a->thisID() - 32768, a->objName(), getTempActorCount(protoNum));
 	}
@@ -1487,7 +1469,7 @@ Actor *Actor::newActor(
 //	Delete this actor
 
 void Actor::deleteActor(void) {
-	if (flags & temporary) {
+	if (_flags & temporary) {
 		uint16      protoNum = getProtoNum();
 
 		decTempActorCount(protoNum);
@@ -1495,33 +1477,34 @@ void Actor::deleteActor(void) {
 	}
 
 	//  Kill task
-	if (curTask != NULL) {
-		curTask->abortTask();
-		delete curTask;
-		curTask = NULL;
+	if (_curTask != NULL) {
+		_curTask->abortTask();
+		delete _curTask;
+		_curTask = NULL;
 	}
 
 	//  Kill motion task
-	if (moveTask != NULL) moveTask->remove();
+	if (_moveTask != NULL)
+		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (leader != NULL) {
-		assert(isActor(leader));
+	if (_leader != NULL) {
+		assert(isActor(_leader));
 
-		leader->removeFollower(this);
-		leader = NULL;
-	} else if (followers != NULL) {
+		_leader->removeFollower(this);
+		_leader = NULL;
+	} else if (_followers != NULL) {
 		int16       i;
 
-		for (i = 0; i < followers->size(); i++) {
-			Actor   *follower = (*followers)[i];
+		for (i = 0; i < _followers->size(); i++) {
+			Actor   *follower = (*_followers)[i];
 
-			follower->leader = NULL;
+			follower->_leader = NULL;
 			follower->evaluateNeeds();
 		}
 
-		delete followers;
-		followers = NULL;
+		delete _followers;
+		_followers = NULL;
 	}
 
 	//  Place in limbo
@@ -1536,8 +1519,8 @@ void Actor::deleteActor(void) {
 //	Cause the actor to stop his current motion task is he is interruptable
 
 void Actor::stopMoving(void) {
-	if (moveTask != NULL && isInterruptable())
-		moveTask->remove();
+	if (_moveTask != NULL && isInterruptable())
+		_moveTask->remove();
 }
 
 //-----------------------------------------------------------------------
@@ -1559,21 +1542,22 @@ void Actor::die(void) {
 	runObjectMethod(dObj, Method_Actor_onDie, scf);
 
 	//  Kill task
-	if (curTask != NULL) {
-		curTask->abortTask();
-		delete curTask;
-		curTask = NULL;
+	if (_curTask != NULL) {
+		_curTask->abortTask();
+		delete _curTask;
+		_curTask = NULL;
 	}
 
 	//  Kill motion task
-	if (moveTask != NULL) moveTask->remove();
+	if (_moveTask != NULL)
+		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (leader != NULL) {
-		assert(isActor(leader));
+	if (_leader != NULL) {
+		assert(isActor(_leader));
 
-		leader->removeFollower(this);
-		leader = NULL;
+		_leader->removeFollower(this);
+		_leader = NULL;
 	}
 
 	if (actorToPlayerID(this, playerID))
@@ -1587,7 +1571,7 @@ void Actor::imNotQuiteDead(void) {
 	if (isDead()) {
 		PlayerActorID       pID;
 
-		effectiveStats.vitality = 1;
+		_effectiveStats.vitality = 1;
 		if (actorToPlayerID(this, pID))
 			updateBrotherControls(pID);
 
@@ -1606,32 +1590,32 @@ void Actor::vitalityUpdate(void) {
 	ActorAttributes *baseStats = getBaseStats();
 
 	// first find out if this actor is wounded
-	if (effectiveStats.vitality < baseStats->vitality) {
+	if (_effectiveStats.vitality < baseStats->vitality) {
 		// whole vitality number goes here
 		int16 recover;
 		int16 fractionRecover;
 
 		// get the whole number first
-		recover = recPointsPerUpdate / recPointsPerVitality;
+		recover = _recPointsPerUpdate / recPointsPerVitality;
 
 		// get the fraction
-		fractionRecover = recPointsPerUpdate % recPointsPerVitality;
+		fractionRecover = _recPointsPerUpdate % recPointsPerVitality;
 
 		// if there is an overrun
-		if (currentRecoveryPoints + fractionRecover > recPointsPerVitality) {
+		if (_currentRecoveryPoints + fractionRecover > recPointsPerVitality) {
 			// add the overrun to the whole number
 			recover++;
-			currentRecoveryPoints = (currentRecoveryPoints + fractionRecover) - recPointsPerVitality;
+			_currentRecoveryPoints = (_currentRecoveryPoints + fractionRecover) - recPointsPerVitality;
 		} else {
-			currentRecoveryPoints += fractionRecover;
+			_currentRecoveryPoints += fractionRecover;
 		}
 
 
-		if (effectiveStats.vitality + recover >=
+		if (_effectiveStats.vitality + recover >=
 		        baseStats->vitality) {
-			effectiveStats.vitality = baseStats->vitality;
+			_effectiveStats.vitality = baseStats->vitality;
 		} else {
-			effectiveStats.vitality += recover;
+			_effectiveStats.vitality += recover;
 
 			//WriteStatusF( 5, " Healed: %d, rec: %d, part: %d ", effectiveStats.vitality,
 			//            recover, currentRecoveryPoints  );
@@ -1656,26 +1640,27 @@ void Actor::deactivateActor(void) {
 	debugC(1, kDebugActors, "Actors: De-activated %d  (%s)", thisID() - 32768, objName());
 
 	//  Kill task
-	if (curTask != NULL) {
-		curTask->abortTask();
-		delete curTask;
-		curTask = NULL;
+	if (_curTask != NULL) {
+		_curTask->abortTask();
+		delete _curTask;
+		_curTask = NULL;
 	}
 
 	//  Kill motion task
-	if (moveTask != NULL) moveTask->remove();
+	if (_moveTask != NULL)
+		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (leader != NULL) {
-		assert(isActor(leader));
+	if (_leader != NULL) {
+		assert(isActor(_leader));
 
-		leader->removeFollower(this);
-		leader = NULL;
+		_leader->removeFollower(this);
+		_leader = NULL;
 	}
 
 	//  Temporary actors get deleted upon deactivation
-	if ((flags & temporary) || isDead()) {
-		deactivationCounter = 10;       // actor lasts for 50 seconds
+	if ((_flags & temporary) || isDead()) {
+		_deactivationCounter = 10;       // actor lasts for 50 seconds
 	}
 }
 
@@ -1683,12 +1668,12 @@ void Actor::deactivateActor(void) {
 //	Delobotomize this actor
 
 void Actor::delobotomize(void) {
-	if (!(flags & lobotomized)) return;
+	if (!(_flags & lobotomized)) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
-	flags &= ~lobotomized;
+	_flags &= ~lobotomized;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1705,22 +1690,23 @@ void Actor::delobotomize(void) {
 //	Lobotomize this actor
 
 void Actor::lobotomize(void) {
-	if (flags & lobotomized) return;
+	if (_flags & lobotomized) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
 	//  Kill task
-	if (curTask != NULL) {
-		curTask->abortTask();
-		delete curTask;
-		curTask = NULL;
+	if (_curTask != NULL) {
+		_curTask->abortTask();
+		delete _curTask;
+		_curTask = NULL;
 	}
 
 	//  Kill motion task
-	if (moveTask != NULL) moveTask->remove();
+	if (_moveTask != NULL)
+		_moveTask->remove();
 
-	flags |= lobotomized;
+	_flags |= lobotomized;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1738,10 +1724,10 @@ void Actor::lobotomize(void) {
 //	structure.
 
 ActorAttributes *Actor::getBaseStats(void) {
-	if (disposition < dispositionPlayer)
+	if (_disposition < dispositionPlayer)
 		return &((ActorProto *)prototype)->baseStats;
 	else
-		return &g_vm->_playerList[disposition - dispositionPlayer]->baseStats;
+		return &g_vm->_playerList[_disposition - dispositionPlayer]->baseStats;
 }
 
 //-----------------------------------------------------------------------
@@ -1782,7 +1768,7 @@ uint16 Actor::getBaseRecovery(void) {
 //  Determine if specified point is within actor's reach
 
 bool Actor::inReach(const TilePoint &tp) {
-	return inRange(tp, defaultReach);
+	return inRange(tp, kDefaultReach);
 }
 
 //-----------------------------------------------------------------------
@@ -1791,7 +1777,7 @@ bool Actor::inReach(const TilePoint &tp) {
 bool Actor::inUseRange(const TilePoint &tp, GameObject *obj) {
 	uint16  range = obj->proto()->maximumRange;
 
-	return inRange(tp, MAX(range, defaultReach));
+	return inRange(tp, MAX(range, (uint16)kDefaultReach));
 }
 
 //-----------------------------------------------------------------------
@@ -1808,10 +1794,10 @@ bool Actor::isImmobile(void) {
 //	Return a pointer to this actor's currently readied offensive object
 
 GameObject *Actor::offensiveObject(void) {
-	if (rightHandObject != Nothing) {
-		assert(isObject(rightHandObject));
+	if (_rightHandObject != Nothing) {
+		assert(isObject(_rightHandObject));
 
-		GameObject  *obj = GameObject::objectAddress(rightHandObject);
+		GameObject  *obj = GameObject::objectAddress(_rightHandObject);
 
 		//  Any object in an actor's right hand should be a weapon
 		assert(obj->containmentSet() & ProtoObj::isWeapon);
@@ -1819,10 +1805,10 @@ GameObject *Actor::offensiveObject(void) {
 		return obj;
 	}
 
-	if (leftHandObject != Nothing) {
-		assert(isObject(leftHandObject));
+	if (_leftHandObject != Nothing) {
+		assert(isObject(_leftHandObject));
 
-		GameObject  *obj = GameObject::objectAddress(leftHandObject);
+		GameObject  *obj = GameObject::objectAddress(_leftHandObject);
 
 		if (obj->containmentSet() & ProtoObj::isWeapon)
 			return obj;
@@ -1845,15 +1831,15 @@ void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
 	                 *secondary = NULL;
 
 	//  Get a pointer to the left hand object
-	leftHandObjPtr =    leftHandObject != Nothing
-	                    ? (assert(isObject(leftHandObject))
-	                       ,   GameObject::objectAddress(leftHandObject))
+	leftHandObjPtr =    _leftHandObject != Nothing
+	                    ? (assert(isObject(_leftHandObject))
+	                       ,   GameObject::objectAddress(_leftHandObject))
 	                    :   NULL;
 
 	//  Get a pointer to the right hand object
-	rightHandObjPtr =   rightHandObject != Nothing
-	                    ? (assert(isObject(rightHandObject))
-	                       ,   GameObject::objectAddress(rightHandObject))
+	rightHandObjPtr =   _rightHandObject != Nothing
+	                    ? (assert(isObject(_rightHandObject))
+	                       ,   GameObject::objectAddress(_rightHandObject))
 	                    :   NULL;
 
 	if (leftHandObjPtr != NULL) {
@@ -1888,8 +1874,8 @@ void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
 //	blocking, if any
 
 GameObject *Actor::blockingObject(Actor *attacker) {
-	return  moveTask != NULL
-	        ?   moveTask->blockingObject(attacker)
+	return  _moveTask != NULL
+	        ?   _moveTask->blockingObject(attacker)
 	        :   NULL;
 }
 
@@ -1907,8 +1893,8 @@ void Actor::totalArmorAttributes(ArmorAttributes &armorAttribs) {
 
 	//  Accumulate values for all armor objects
 	for (i = 0; i < ARMOR_COUNT; i++) {
-		if (armorObjects[i] != Nothing) {
-			ProtoObj    *armorProto = GameObject::protoAddress(armorObjects[i]);
+		if (_armorObjects[i] != Nothing) {
+			ProtoObj    *armorProto = GameObject::protoAddress(_armorObjects[i]);
 
 			assert(armorProto != NULL);
 
@@ -1927,7 +1913,7 @@ bool Actor::inAttackRange(const TilePoint &tp) {
 	GameObject  *weapon = offensiveObject();
 	uint16      range = weapon != NULL ? weapon->proto()->maximumRange : 0;
 
-	return inRange(tp, MAX(range, defaultReach));
+	return inRange(tp, MAX(range, (uint16)kDefaultReach));
 }
 
 //-----------------------------------------------------------------------
@@ -1944,8 +1930,8 @@ void Actor::attack(GameObject *target) {
 //	Stop all attacks on a specified target
 
 void Actor::stopAttack(GameObject *target) {
-	if (moveTask && moveTask->isAttack() && moveTask->targetObj == target)
-		moveTask->finishAttack();
+	if (_moveTask && _moveTask->isAttack() && _moveTask->targetObj == target)
+		_moveTask->finishAttack();
 }
 
 //-----------------------------------------------------------------------
@@ -1955,15 +1941,15 @@ bool Actor::canDefend(void) {
 	if (isDead()) return false;
 
 	//  Look at left hand object, generally the defensive object
-	if (leftHandObject != Nothing) {
-		GameObject  *obj = GameObject::objectAddress(leftHandObject);
+	if (_leftHandObject != Nothing) {
+		GameObject  *obj = GameObject::objectAddress(_leftHandObject);
 
 		if (obj->proto()->canBlock()) return true;
 	}
 
 	//  Look at right hand object, generally the offensive object
-	if (rightHandObject != Nothing) {
-		GameObject  *obj = GameObject::objectAddress(rightHandObject);
+	if (_rightHandObject != Nothing) {
+		GameObject  *obj = GameObject::objectAddress(_rightHandObject);
 
 		if (obj->proto()->canBlock()) return true;
 	}
@@ -1988,15 +1974,15 @@ int16 Actor::offenseScore(void) {
 	}
 
 	//  Add average mana
-	score += (effectiveStats.redMana
-	          +   effectiveStats.orangeMana
-	          +   effectiveStats.yellowMana
-	          +   effectiveStats.greenMana
-	          +   effectiveStats.blueMana
-	          +   effectiveStats.violetMana)
+	score += (_effectiveStats.redMana
+	          +   _effectiveStats.orangeMana
+	          +   _effectiveStats.yellowMana
+	          +   _effectiveStats.greenMana
+	          +   _effectiveStats.blueMana
+	          +   _effectiveStats.violetMana)
 	         /   6;
 
-	score += effectiveStats.spellcraft + effectiveStats.brawn;
+	score += _effectiveStats.spellcraft + _effectiveStats.brawn;
 
 	return score;
 }
@@ -2025,7 +2011,7 @@ int16 Actor::defenseScore(void) {
 	score += (armorAttribs.defenseBonus + armorAttribs.damageAbsorbtion)
 	         *   armorAttribs.damageDivider;
 
-	score += effectiveStats.agility + effectiveStats.vitality;
+	score += _effectiveStats.agility + _effectiveStats.vitality;
 
 	return score;
 }
@@ -2037,10 +2023,10 @@ int16 Actor::defenseScore(void) {
 void Actor::getColorTranslation(ColorTable map) {
 	//  If actor has color table loaded, then calculate the
 	//  translation table.
-	if (appearance
-	        &&  appearance->schemeList) {
+	if (_appearance
+	        &&  _appearance->schemeList) {
 		buildColorTable(map,
-		                appearance->schemeList->_schemes[colorScheme]->bank,
+		                _appearance->schemeList->_schemes[_colorScheme]->bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }
@@ -2051,7 +2037,7 @@ void Actor::getColorTranslation(ColorTable map) {
 //  Each time the nextAnimationFrame() is called, it will increment
 //  to the next frame in the sequence.
 
-int16 Actor::setAction(int16 newState, int16 flags_) {
+int16 Actor::setAction(int16 newState, int16 flags) {
 	ActorAnimation      *anim;
 	int16                numPoses = 0;
 
@@ -2059,24 +2045,24 @@ int16 Actor::setAction(int16 newState, int16 flags_) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (appearance == NULL) return 0;
+	if (_appearance == NULL) return 0;
 
 	//  If this animation has no frames, then return false
-	anim = appearance->animation(newState);
+	anim = _appearance->animation(newState);
 	if (anim)
-		numPoses = anim->count[currentFacing];
+		numPoses = anim->count[_currentFacing];
 	if (numPoses <= 0) return 0;
 
 	//  Set up the animation
-	currentAnimation = newState;
-	animationFlags = flags_;
+	_currentAnimation = newState;
+	_animationFlags = flags;
 
 	//  If they haven't set the "no reset" flag, then
-	if (!(flags_ & animateNoRestart)) {
-		if (flags_ & animateReverse) currentPose = numPoses - 1;
-		else currentPose = 0;
+	if (!(flags & animateNoRestart)) {
+		if (flags & animateReverse) _currentPose = numPoses - 1;
+		else _currentPose = 0;
 	} else {
-		currentPose = clamp(0, currentPose, numPoses - 1);
+		_currentPose = clamp(0, _currentPose, numPoses - 1);
 	}
 
 	return numPoses;
@@ -2093,11 +2079,11 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (appearance == nullptr)
+	if (_appearance == nullptr)
 		return false;
 
 	//  If this animation has no frames, then return false
-	anim = appearance->animation(newState);
+	anim = _appearance->animation(newState);
 	if (anim == nullptr)
 		return false;
 
@@ -2106,7 +2092,7 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 			if (anim->count[i] > 0) return true;
 		}
 	} else {
-		if (anim->count[currentFacing] > 0) return true;
+		if (anim->count[_currentFacing] > 0) return true;
 	}
 
 	return false;
@@ -2117,12 +2103,12 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 //	specified direction
 
 int16 Actor::animationFrames(int16 actionType, Direction dir) {
-	if (appearance == nullptr)
+	if (_appearance == nullptr)
 		return 0;
 
 	ActorAnimation  *anim;
 
-	anim = appearance->animation(actionType);
+	anim = _appearance->animation(actionType);
 
 	if (!anim)
 		return 0;
@@ -2142,23 +2128,23 @@ bool Actor::nextAnimationFrame(void) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (appearance == NULL) {
-		if (animationFlags & animateOnHold) {
+	if (_appearance == NULL) {
+		if (_animationFlags & animateOnHold) {
 			return false;
-		} else if (animationFlags & animateRepeat) {
-			animationFlags |= animateOnHold;
+		} else if (_animationFlags & animateRepeat) {
+			_animationFlags |= animateOnHold;
 			return false;
 		} else {
-			animationFlags |= animateFinished;
+			_animationFlags |= animateFinished;
 			return true;
 		}
-	} else animationFlags &= ~animateOnHold;
+	} else _animationFlags &= ~animateOnHold;
 
 	//  Get the number of frames in the animation
-	anim = appearance->animation(currentAnimation);
-	numPoses = anim->count[currentFacing];
+	anim = _appearance->animation(_currentAnimation);
+	numPoses = anim->count[_currentFacing];
 	if (numPoses <= 0) {
-		animationFlags |= animateFinished;
+		_animationFlags |= animateFinished;
 		return true;                    // no poses, return DONE
 	}
 
@@ -2166,15 +2152,15 @@ bool Actor::nextAnimationFrame(void) {
 	//  been loaded, then don't update the animation state --
 	//  wait until the sprite gets loaded, and then continue
 	//  with the action.
-	if (animationFlags & animateNotLoaded) return false;
+	if (_animationFlags & animateNotLoaded) return false;
 
 	//  If the animation has reached the last frame, then exit.
-	if (animationFlags & animateFinished) return true;
+	if (_animationFlags & animateFinished) return true;
 
-	if (animationFlags & animateRandom) {
+	if (_animationFlags & animateRandom) {
 		//  Select a random frame from the series.
-		currentPose = g_vm->_rnd->getRandomNumber(numPoses - 1);
-	} else if (animationFlags & animateReverse) {
+		_currentPose = g_vm->_rnd->getRandomNumber(numPoses - 1);
+	} else if (_animationFlags & animateReverse) {
 		//  Note that the logic for forward repeats is slightly
 		//  different for reverse repeats. Specifically, the
 		//  "alternate" flag is always checked when going forward,
@@ -2182,43 +2168,43 @@ bool Actor::nextAnimationFrame(void) {
 		//  flag is also set. This means that an "alternate" with
 		//  no "repeat" will ping-pong exactly once.
 
-		if (currentPose > 0) {
-			currentPose--;
+		if (_currentPose > 0) {
+			_currentPose--;
 
 			//  Check if this is the last frame
-			if (currentPose <= 0 && !(animationFlags & animateRepeat)) {
-				animationFlags |= animateFinished;
+			if (_currentPose <= 0 && !(_animationFlags & animateRepeat)) {
+				_animationFlags |= animateFinished;
 			}
-		} else if (animationFlags & animateRepeat) {
+		} else if (_animationFlags & animateRepeat) {
 			//  If we're repeating, check for a back & forth,
 			//  or for a wraparound. Also checks for case of
 			//  a degenerate series (1 frame only)
 
-			if (animationFlags & animateAlternate) {
-				animationFlags &= ~animateReverse;
-				currentPose = MIN(1, numPoses - 1);
+			if (_animationFlags & animateAlternate) {
+				_animationFlags &= ~animateReverse;
+				_currentPose = MIN(1, numPoses - 1);
 			} else {
-				currentPose = numPoses - 1;
+				_currentPose = numPoses - 1;
 			}
 		}
 	} else {
-		if (currentPose < numPoses - 1) {
+		if (_currentPose < numPoses - 1) {
 			//  Increment the pose number
-			currentPose++;
+			_currentPose++;
 
 			//  Check if this is the last frame
-			if (currentPose >= numPoses - 1 &&
-			        !(animationFlags & (animateAlternate | animateRepeat)))
-				animationFlags |= animateFinished;
-		} else if (animationFlags & animateAlternate) {
+			if (_currentPose >= numPoses - 1 &&
+			        !(_animationFlags & (animateAlternate | animateRepeat)))
+				_animationFlags |= animateFinished;
+		} else if (_animationFlags & animateAlternate) {
 			//  At the end of the sequence, reverse direction
-			animationFlags |= animateReverse;
-			currentPose = MAX(currentPose - 1, 0);
-		} else if (animationFlags & animateRepeat) {
+			_animationFlags |= animateReverse;
+			_currentPose = MAX(_currentPose - 1, 0);
+		} else if (_animationFlags & animateRepeat) {
 			//  Wrap back to beginning
-			currentPose = 0;
+			_currentPose = 0;
 		} else //If Last Frame And Not Animate Repeat or Alternate
-			animationFlags |= animateFinished;
+			_animationFlags |= animateFinished;
 	}
 	return false;
 }
@@ -2252,20 +2238,20 @@ void Actor::dropInventory(void) {
 
 void Actor::holdInRightHand(ObjectID objID) {
 	assert(isObject(objID));
-	rightHandObject = objID;
+	_rightHandObject = objID;
 
 	if (isPlayerActor(this))
-		g_vm->_containerList->setUpdate(thisID());
+		g_vm->_cnm->setUpdate(thisID());
 
 	evalActorEnchantments(this);
 }
 
 void Actor::holdInLeftHand(ObjectID objID) {
 	assert(isObject(objID));
-	leftHandObject = objID;
+	_leftHandObject = objID;
 
 	if (isPlayerActor(this))
-		g_vm->_containerList->setUpdate(thisID());
+		g_vm->_cnm->setUpdate(thisID());
 
 	evalActorEnchantments(this);
 }
@@ -2288,10 +2274,10 @@ void Actor::wear(ObjectID objID, uint8 where) {
 	}
 #endif
 
-	armorObjects[where] = objID;
+	_armorObjects[where] = objID;
 
 	if (isPlayerActor(this))
-		g_vm->_containerList->setUpdate(thisID());
+		g_vm->_cnm->setUpdate(thisID());
 
 	evalActorEnchantments(this);
 
@@ -2307,7 +2293,7 @@ void Actor::updateAppearance(int32) {
 //    static uint16    count;
 //    count++;
 
-	if (isDead() || !isActivated() || (flags & lobotomized)) return;
+	if (isDead() || !isActivated() || (_flags & lobotomized)) return;
 
 #if DEBUG*0
 	WriteStatusF(4, "Wait Count %d Attitude %d", cycleCount, attitude);
@@ -2320,9 +2306,9 @@ void Actor::updateAppearance(int32) {
 			ShowObjectSection(this);
 #endif
 
-	if (appearance) {
-		if (animationFrames(actionStand, currentFacing) == 1) {
-			if (flags & fightStance) {
+	if (_appearance) {
+		if (animationFrames(actionStand, _currentFacing) == 1) {
+			if (_flags & fightStance) {
 				GameObject      *weapon = offensiveObject();
 
 				if (weapon == this) weapon = NULL;
@@ -2338,16 +2324,16 @@ void Actor::updateAppearance(int32) {
 						setAction(actionTwoHandSwingHigh, 0);
 				}
 
-				cycleCount = 0;
+				_cycleCount = 0;
 			} else {
-				if (cycleCount > 0) { //If In Wait State Between Wait Animation
-					cycleCount--;
+				if (_cycleCount > 0) { //If In Wait State Between Wait Animation
+					_cycleCount--;
 
 					setAction(actionStand, 0);   //Just stand still
 				} else { // Wait Animation
-					if (cycleCount == 0) { //If Just Starting Wait Animation
-						cycleCount--;
-						switch (attitude) { //Emotion And Character Type
+					if (_cycleCount == 0) { //If Just Starting Wait Animation
+						_cycleCount--;
+						switch (_attitude) { //Emotion And Character Type
 						//Currently Attitude Not Set So Always Hits Zero
 						case 0:
 							//Returns True If Successful No Checking Yet
@@ -2373,12 +2359,12 @@ void Actor::updateAppearance(int32) {
 						}
 					} else //Assume -1
 						if (nextAnimationFrame())//If Last Frame In Wait Animation
-							cycleCount = g_vm->_rnd->getRandomNumber(19);
+							_cycleCount = g_vm->_rnd->getRandomNumber(19);
 				}
 			}
 		} else {
-			if (currentAnimation != actionStand
-			        || (animationFlags & animateRepeat) == 0)
+			if (_currentAnimation != actionStand
+			        || (_animationFlags & animateRepeat) == 0)
 				setAction(actionStand, animateRepeat);
 			else
 				nextAnimationFrame();
@@ -2406,14 +2392,14 @@ bool Actor::setAvailableAction(int16 action1, int16 action2, int16 action3, int1
 //	Set a new goal for this actor
 
 void Actor::setGoal(uint8 newGoal) {
-	if (currentGoal != newGoal) {
-		if (curTask != NULL) {
-			curTask->abortTask();
-			delete curTask;
-			curTask = NULL;
+	if (_currentGoal != newGoal) {
+		if (_curTask != NULL) {
+			_curTask->abortTask();
+			delete _curTask;
+			_curTask = NULL;
 		}
 
-		currentGoal = newGoal;
+		_currentGoal = newGoal;
 	}
 }
 
@@ -2423,9 +2409,9 @@ void Actor::setGoal(uint8 newGoal) {
 void Actor::evaluateNeeds(void) {
 	if (!isDead()
 	        &&  isActivated()
-	        &&  !(flags & lobotomized)) {
-		if (disposition >= dispositionPlayer) {
-			if (combatBehaviorEnabled) {
+	        &&  !(_flags & lobotomized)) {
+		if (_disposition >= dispositionPlayer) {
+			if (g_vm->_act->_combatBehaviorEnabled) {
 				SenseInfo       info;
 
 				if (canSenseActorProperty(
@@ -2436,29 +2422,29 @@ void Actor::evaluateNeeds(void) {
 				            info,
 				            maxSenseRange,
 				            actorPropIDEnemy)) {
-					PlayerActorID   playerID = disposition - dispositionPlayer;
+					PlayerActorID   playerID = _disposition - dispositionPlayer;
 
 					if (isAggressive(playerID))
 						setGoal(actorGoalAttackEnemy);
 					else {
-						if (leader != NULL && inBandingRange())
+						if (_leader != NULL && inBandingRange())
 							setGoal(actorGoalAvoidEnemies);
 						else
 							setGoal(actorGoalPreserveSelf);
 					}
-				} else if (leader != NULL && inBandingRange()) {
+				} else if (_leader != NULL && inBandingRange()) {
 					setGoal(actorGoalFollowLeader);
 				} else {
 					setGoal(actorGoalFollowAssignment);
 				}
-			} else if (leader != NULL && inBandingRange()) {
+			} else if (_leader != NULL && inBandingRange()) {
 				setGoal(actorGoalFollowLeader);
 			} else {
 				setGoal(actorGoalFollowAssignment);
 			}
 		} else {
-			if (disposition == dispositionEnemy
-			        &&  appearance != NULL
+			if (_disposition == dispositionEnemy
+			        &&  _appearance != NULL
 			        &&  !hasEffect(actorNotDefenseless)) {
 				GameObject              *obj;
 				bool                    foundWeapon = false;
@@ -2480,17 +2466,17 @@ void Actor::evaluateNeeds(void) {
 					foundWeapon = true;
 
 				if (!foundWeapon)
-					flags |= afraid;
+					_flags |= afraid;
 			}
 
-			if (flags & afraid || hasEffect(actorFear) || hasEffect(actorRepelUndead)) {
+			if (_flags & afraid || hasEffect(actorFear) || hasEffect(actorRepelUndead)) {
 				setGoal(actorGoalPreserveSelf);
-			} else if (leader != NULL && inBandingRange()) {
-				setGoal(leader->evaluateFollowerNeeds(this));
+			} else if (_leader != NULL && inBandingRange()) {
+				setGoal(_leader->evaluateFollowerNeeds(this));
 			} else {
 				SenseInfo       info;
 
-				if (disposition == dispositionEnemy
+				if (_disposition == dispositionEnemy
 				        && (getAssignment() == NULL
 				            ||  canSenseProtaganist(
 				                info,
@@ -2507,37 +2493,32 @@ void Actor::evaluateNeeds(void) {
 	}
 }
 
-//-----------------------------------------------------------------------
-//	Update the state of this actor.
-
-static int32 updatesViaScript = 0;
-
 void Actor::updateState(void) {
 	//  The actor should not be set permanently uninterruptable when
 	//  the actor does not have a motion task
-	assert(isMoving() || actionCounter != maxuint8);
+	assert(isMoving() || _actionCounter != maxuint8);
 
 	GameObject::updateState();
 
-	if (flags & lobotomized)
+	if (_flags & lobotomized)
 		return;
 
 	//  Update the action counter
-	if (actionCounter != 0 && actionCounter != maxuint8)
-		actionCounter--;
+	if (_actionCounter != 0 && _actionCounter != maxuint8)
+		_actionCounter--;
 
-	if (appearance != NULL
+	if (_appearance != NULL
 	        &&  isDead()
 	        &&  isInterruptable()
-	        && (moveTask == NULL
-	            ||  moveTask->motionType != MotionTask::motionTypeDie)) {
+	        && (_moveTask == NULL
+	            ||  _moveTask->motionType != MotionTask::motionTypeDie)) {
 		int16       deadState = isActionAvailable(actionDead)
 		                        ?   actionDead
 		                        :   isActionAvailable(actionDie)
 		                        ?   actionDie
 		                        :   actionStand;
 
-		if (currentAnimation != deadState)
+		if (_currentAnimation != deadState)
 			MotionTask::die(*this);
 		return;
 	}
@@ -2545,36 +2526,36 @@ void Actor::updateState(void) {
 	if (!isDead()) {
 		if (this == getCenterActor()) return;
 
-		if (flags & specialAttack) {
-			flags &= ~specialAttack;
+		if (_flags & specialAttack) {
+			_flags &= ~specialAttack;
 
-			if (currentTarget != NULL) {
+			if (_currentTarget != NULL) {
 				scriptCallFrame scf;
 				ObjectID        dObj = thisID();
 
 				scf.invokedObject   = dObj;
 				scf.enactor         = dObj;
 				scf.directObject    = dObj;
-				scf.indirectObject  = currentTarget->thisID();
+				scf.indirectObject  = _currentTarget->thisID();
 				scf.value           = 0;
 
 				runObjectMethod(dObj, Method_Actor_onSpecialAttack, scf);
 
 				//  If this actor is now deactivated or lobotomized
 				//  return immediately
-				if (isDead() || !isActivated() || (flags & lobotomized))
+				if (isDead() || !isActivated() || (_flags & lobotomized))
 					return;
 			}
 		}
 
-		switch (currentGoal) {
+		switch (_currentGoal) {
 		case actorGoalFollowAssignment: {
 			ActorAssignment     *assign = getAssignment();
 
 			//  Iterate until there is no assignment, or the current
 			//  assignment is valid
 			while (assign != NULL && !assign->isValid()) {
-				updatesViaScript++;
+				g_vm->_act->_updatesViaScript++;
 				scriptCallFrame scf;
 				ObjectID        dObj = thisID();
 
@@ -2591,7 +2572,7 @@ void Actor::updateState(void) {
 
 				//  If this actor is now deactivated or lobotomized
 				//  return immediately
-				if (isDead() || !isActivated() || (flags & lobotomized))
+				if (isDead() || !isActivated() || (_flags & lobotomized))
 					return;
 
 				//  Re-get the assignment
@@ -2600,9 +2581,9 @@ void Actor::updateState(void) {
 
 			//  If there is no assignment at this point, call the
 			//  schedule to setup a new assignment.
-			if (assign == NULL && schedule != 0) {
-				updatesViaScript++;
-				assert(curTask == NULL);
+			if (assign == NULL && _schedule != 0) {
+				g_vm->_act->_updatesViaScript++;
+				assert(_curTask == NULL);
 
 				scriptCallFrame scf;
 
@@ -2612,38 +2593,38 @@ void Actor::updateState(void) {
 				scf.indirectObject  = Nothing;
 				scf.value           = 0;
 
-				runScript(schedule, scf);
+				runScript(_schedule, scf);
 
 				//  Re-get the assignment
 				assign = getAssignment();
 			}
 
 			//  Have the assignment create a new task
-			if (assign != NULL && curTask == NULL)
-				curTask = assign->createTask();
+			if (assign != NULL && _curTask == NULL)
+				_curTask = assign->createTask();
 		}
 		break;
 
 		case actorGoalPreserveSelf:
 
-			if (leader != NULL || followers != NULL)
+			if (_leader != NULL || _followers != NULL)
 				disband();
 
-			if (curTask == NULL) {
-				if ((curTask = newTaskStack(this)) != NULL) {
+			if (_curTask == NULL) {
+				if ((_curTask = newTaskStack(this)) != NULL) {
 					Task    *task = new GoAwayFromActorTask(
-					                    curTask,
+					                    _curTask,
 					                    ActorPropertyTarget(
-					                        disposition == dispositionEnemy
+					                        _disposition == dispositionEnemy
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy),
 					                    true);
 
 					if (task != NULL)
-						curTask->setTask(task);
+						_curTask->setTask(task);
 					else {
-						delete curTask;
-						curTask = NULL;
+						delete _curTask;
+						_curTask = NULL;
 					}
 				}
 			}
@@ -2651,24 +2632,24 @@ void Actor::updateState(void) {
 
 		case actorGoalAttackEnemy:
 
-			if (curTask == NULL) {
-				if ((curTask = newTaskStack(this)) != NULL) {
-					uint8   disp =  leader != NULL
-					                ?   leader->disposition
-					                :   disposition;
+			if (_curTask == NULL) {
+				if ((_curTask = newTaskStack(this)) != NULL) {
+					uint8   disp =  _leader != NULL
+					                ?   _leader->_disposition
+					                :   _disposition;
 
 					Task    *task = new    HuntToKillTask(
-					                    curTask,
+					                    _curTask,
 					                    ActorPropertyTarget(
 					                        disp == dispositionEnemy
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy));
 
 					if (task != NULL)
-						curTask->setTask(task);
+						_curTask->setTask(task);
 					else {
-						delete curTask;
-						curTask = NULL;
+						delete _curTask;
+						_curTask = NULL;
 					}
 				}
 			}
@@ -2676,28 +2657,28 @@ void Actor::updateState(void) {
 
 		case actorGoalFollowLeader:
 
-			assert(isActor(leader));
-			assert(followers == NULL);
+			assert(isActor(_leader));
+			assert(_followers == NULL);
 
-			if (curTask == NULL)
-				curTask = leader->createFollowerTask(this);
+			if (_curTask == NULL)
+				_curTask = _leader->createFollowerTask(this);
 
 			break;
 
 		case actorGoalAvoidEnemies:
 
-			assert(isActor(leader));
-			assert(followers == NULL);
+			assert(isActor(_leader));
+			assert(_followers == NULL);
 
-			if (curTask == NULL) {
-				if ((curTask = newTaskStack(this)) != NULL) {
-					Task    *task = new BandAndAvoidEnemiesTask(curTask);
+			if (_curTask == NULL) {
+				if ((_curTask = newTaskStack(this)) != NULL) {
+					Task    *task = new BandAndAvoidEnemiesTask(_curTask);
 
 					if (task != NULL)
-						curTask->setTask(task);
+						_curTask->setTask(task);
 					else {
-						delete curTask;
-						curTask = NULL;
+						delete _curTask;
+						_curTask = NULL;
 					}
 				}
 			}
@@ -2711,10 +2692,10 @@ void Actor::updateState(void) {
 
 void Actor::handleTaskCompletion(TaskResult result) {
 	//  The task is done, get rid of it
-	delete curTask;
-	curTask = NULL;
+	delete _curTask;
+	_curTask = NULL;
 
-	switch (currentGoal) {
+	switch (_currentGoal) {
 	case actorGoalFollowAssignment: {
 		ActorAssignment     *assign = getAssignment();
 
@@ -2744,9 +2725,9 @@ void Actor::handleOffensiveAct(Actor *attacker) {
 
 	runObjectMethod(dObj, Method_Actor_onAttacked, scf);
 
-	if (disposition == dispositionFriendly) {
-		if (attacker->disposition >= dispositionPlayer) {
-			disposition = dispositionEnemy;
+	if (_disposition == dispositionFriendly) {
+		if (attacker->_disposition >= dispositionPlayer) {
+			_disposition = dispositionEnemy;
 			evaluateNeeds();
 		}
 	}
@@ -2765,22 +2746,22 @@ void Actor::handleDamageTaken(uint8 damage) {
 	        &&  !isActionAvailable(actionSwingHigh)
 	        &&  !isActionAvailable(actionTwoHandSwingHigh)
 	        &&  !hasEffect(actorNotDefenseless)) {
-		flags |= afraid;
+		_flags |= afraid;
 		return;
 	}
 
 	if (combatBehavior != behaviorHungry
-	        && (flags & temporary)
+	        && (_flags & temporary)
 	        &&  !hasEffect(actorFear)
 	        &&  !hasEffect(actorRepelUndead)) {
-		if (flags & afraid) {
+		if (_flags & afraid) {
 			//  Let's give monsters a small chance of regaining their courage
-			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= 0x3fff)
-				flags &= ~afraid;
+			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= 0x3fff)
+				_flags &= ~afraid;
 		} else {
 			int16       i,
 			            fellowBandMembers,
-			            vitality = effectiveStats.vitality;
+			            vitality = _effectiveStats.vitality;
 			uint32      moraleBase = ((int32)damage << 16) / vitality,
 			            bonus = 0;
 
@@ -2795,10 +2776,10 @@ void Actor::handleDamageTaken(uint8 damage) {
 				moraleBase -= moraleBase / 2;
 
 			//  Determine how many fellow band members this actor has.
-			if (leader != NULL)
-				fellowBandMembers = leader->followers->size();
-			else if (followers != NULL)
-				fellowBandMembers = followers->size();
+			if (_leader != NULL)
+				fellowBandMembers = _leader->_followers->size();
+			else if (_followers != NULL)
+				fellowBandMembers = _followers->size();
 			else
 				fellowBandMembers = 0;
 
@@ -2811,8 +2792,8 @@ void Actor::handleDamageTaken(uint8 damage) {
 			moraleBase -= bonus * moraleBase >> 16;
 
 			//  Test this actor's morale
-			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
-				flags |= afraid;
+			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
+				_flags |= afraid;
 		}
 	}
 }
@@ -2845,7 +2826,7 @@ void Actor::handleSuccessfulKill(Actor *target) {
 	PlayerActorID       playerID;
 
 	if (this != target && actorToPlayerID(this, playerID)) {
-		static const char vowels[] = "AEIOU";
+		const char vowels[] = "AEIOU";
 
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 		int16           ratio;
@@ -2880,7 +2861,7 @@ bool Actor::canBlockWith(GameObject *defenseObj, Direction relativeDir) {
 	//  Assuming that the actor may increment or decrement their facing
 	//  to block, these masks represent the possible relative facings
 	//  based upon the current relative facing
-	static uint8    dirMaskArray[8] = {
+	const uint8 dirMaskArray[8] = {
 		0x83,       //  10000011
 		0x07,       //  00000111
 		0x0E,       //  00001110
@@ -2910,7 +2891,7 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 		//  Compute the attacker's direction relative to this actor's
 		//  facing
 		relativeDir = ((attacker->_data.location - _data.location).quickDir()
-		               -   currentFacing) & 0x7;
+		               -   _currentFacing) & 0x7;
 
 		//  Get pointers to this actors primary and secondary defensive
 		//  objects
@@ -2957,42 +2938,42 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 //	well.
 
 void Actor::bandWith(Actor *newLeader) {
-	assert(leader == NULL);
+	assert(_leader == NULL);
 
 	//  If the actor we're banding with is not the leader, then band
 	//  with his leader
-	if (newLeader->leader != NULL) {
-		newLeader = newLeader->leader;
-		assert(newLeader->leader == NULL);
+	if (newLeader->_leader != NULL) {
+		newLeader = newLeader->_leader;
+		assert(newLeader->_leader == NULL);
 	}
 
 	//  If this actor himself does not have followers then its really
 	//  simple, otherwise we need to band all of this actor's followers
 	//  with the new leader.
-	if (followers == NULL) {
-		if (newLeader->addFollower(this)) leader = newLeader;
+	if (_followers == NULL) {
+		if (newLeader->addFollower(this)) _leader = newLeader;
 	} else {
 		int16       i,
-		            oldFollowerCount = followers->size();
+		            oldFollowerCount = _followers->size();
 		Actor       **oldFollowers = new Actor * [oldFollowerCount];
 
 		if (oldFollowers != NULL) {
 			//  Copy the list followers
 			for (i = 0; i < oldFollowerCount; i++) {
-				oldFollowers[i] = (*followers)[i];
-				assert(oldFollowers[i]->leader == this);
+				oldFollowers[i] = (*_followers)[i];
+				assert(oldFollowers[i]->_leader == this);
 			}
 
 			//  Disband all of the old followers
 			for (i = 0; i < oldFollowerCount; i++)
 				oldFollowers[i]->disband();
 
-			assert(followers == NULL);
+			assert(_followers == NULL);
 
 			//  Add this actor and all of the old followers to the new
 			//  leader's followers.
 			if (newLeader->addFollower(this)) {
-				leader = newLeader;
+				_leader = newLeader;
 
 				for (i = 0; i < oldFollowerCount; i++)
 					oldFollowers[i]->bandWith(newLeader);
@@ -3009,23 +2990,23 @@ void Actor::bandWith(Actor *newLeader) {
 //	Simply causes this actor to be removed from his current band.
 
 void Actor::disband(void) {
-	if (leader != NULL) {
-		leader->removeFollower(this);
-		leader = NULL;
+	if (_leader != NULL) {
+		_leader->removeFollower(this);
+		_leader = NULL;
 
 		evaluateNeeds();
-	} else if (followers != NULL) {
+	} else if (_followers != NULL) {
 		int16       i;
 
-		for (i = 0; i < followers->size(); i++) {
-			Actor   *follower = (*followers)[i];
+		for (i = 0; i < _followers->size(); i++) {
+			Actor   *follower = (*_followers)[i];
 
-			follower->leader = NULL;
+			follower->_leader = NULL;
 			follower->evaluateNeeds();
 		}
 
-		delete followers;
-		followers = NULL;
+		delete _followers;
+		_followers = NULL;
 	}
 }
 
@@ -3035,41 +3016,41 @@ void Actor::disband(void) {
 bool Actor::addFollower(Actor *newBandMember) {
 	//  The new band member should not be a leader of another band or
 	//  a follower of another leader
-	assert(newBandMember->leader == NULL);
-	assert(newBandMember->followers == NULL);
+	assert(newBandMember->_leader == NULL);
+	assert(newBandMember->_followers == NULL);
 
 	//  Allocate a new band, if needed
-	if (followers == NULL && (followers = new Band(this)) == NULL)
+	if (_followers == NULL && (_followers = new Band(this)) == NULL)
 		return false;
 
-	return followers->add(newBandMember);
+	return _followers->add(newBandMember);
 }
 
 //-----------------------------------------------------------------------
 //	Remove the specified actor from this actor's list of followers.
 
 void Actor::removeFollower(Actor *bandMember) {
-	assert(bandMember->leader == this);
-	assert(followers != NULL);
+	assert(bandMember->_leader == this);
+	assert(_followers != NULL);
 
 	int16       i;
 
-	followers->remove(bandMember);
-	if (followers->size() == 0) {
-		delete followers;
-		followers = NULL;
+	_followers->remove(bandMember);
+	if (_followers->size() == 0) {
+		delete _followers;
+		_followers = NULL;
 	} else {
 		uint16      moraleBonus = 0;
 
-		for (i = 0; i < followers->size(); i++)
+		for (i = 0; i < _followers->size(); i++)
 			moraleBonus += ((1 << 16) - moraleBonus) >> 4;
 
-		for (i = 0; i < followers->size(); i++) {
-			Actor       *follower = (*followers)[i];
+		for (i = 0; i < _followers->size(); i++) {
+			Actor       *follower = (*_followers)[i];
 			ActorProto  *proto = (ActorProto *)follower->prototype;
 			uint8       combatBehavior = proto->combatBehavior;
 
-			if (follower->currentGoal == actorGoalAttackEnemy
+			if (follower->_currentGoal == actorGoalAttackEnemy
 			        &&  combatBehavior != behaviorHungry) {
 				uint32      moraleBase;
 
@@ -3081,8 +3062,8 @@ void Actor::removeFollower(Actor *bandMember) {
 
 				moraleBase -= moraleBase * moraleBonus >> 16;
 
-				if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
-					follower->flags |= afraid;
+				if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
+					follower->_flags |= afraid;
 			}
 		}
 	}
@@ -3093,7 +3074,7 @@ void Actor::removeFollower(Actor *bandMember) {
 //	follower has no task.
 
 TaskStack *Actor::createFollowerTask(Actor *bandMember) {
-	assert(bandMember->leader == this);
+	assert(bandMember->_leader == this);
 
 	TaskStack   *ts = NULL;
 
@@ -3115,13 +3096,13 @@ TaskStack *Actor::createFollowerTask(Actor *bandMember) {
 //	Evaluate a follower's needs and give him an approriate goal.
 
 uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
-	assert(follower->leader == this);
+	assert(follower->_leader == this);
 
 	SenseInfo       info;
 
-	if ((disposition == dispositionEnemy
+	if ((_disposition == dispositionEnemy
 	        &&  follower->canSenseProtaganist(info, maxSenseRange))
-	        || (disposition >= dispositionPlayer
+	        || (_disposition >= dispositionPlayer
 	            &&  follower->canSenseActorProperty(
 	                info,
 	                maxSenseRange,
@@ -3134,8 +3115,10 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 //  Returns 0 if not moving, 1 if path being calculated,
 //  2 if path being followed.
 bool Actor::pathFindState(void) {
-	if (moveTask == NULL) return 0;
-	if (moveTask->pathFindTask) return 1;
+	if (_moveTask == NULL)
+		return 0;
+	if (_moveTask->pathFindTask)
+		return 1;
 	return 2;
 }
 
@@ -3143,9 +3126,9 @@ bool Actor::pathFindState(void) {
 //  Add knowledge package to actor
 
 bool Actor::addKnowledge(uint16 kID) {
-	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
-		if (knowledge[i] == 0) {
-			knowledge[i] = kID;
+	for (int i = 0; i < ARRAYSIZE(_knowledge); i++) {
+		if (_knowledge[i] == 0) {
+			_knowledge[i] = kID;
 			return true;
 		}
 	}
@@ -3156,9 +3139,9 @@ bool Actor::addKnowledge(uint16 kID) {
 //  Remove knowledge package from actor
 
 bool Actor::removeKnowledge(uint16 kID) {
-	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
-		if (knowledge[i] == kID) {
-			knowledge[i] = 0;
+	for (int i = 0; i < ARRAYSIZE(_knowledge); i++) {
+		if (_knowledge[i] == kID) {
+			_knowledge[i] = 0;
 			return true;
 		}
 	}
@@ -3169,8 +3152,8 @@ bool Actor::removeKnowledge(uint16 kID) {
 //  Remove all knowledge package from actor
 
 void Actor::clearKnowledge(void) {
-	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
-		knowledge[i] = 0;
+	for (int i = 0; i < ARRAYSIZE(_knowledge); i++) {
+		_knowledge[i] = 0;
 	}
 }
 
@@ -3184,14 +3167,14 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 
 	//  First, search for the class with the best response
 
-	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
-		if (knowledge[i]) {
+	for (int i = 0; i < ARRAYSIZE(_knowledge); i++) {
+		if (_knowledge[i]) {
 			scriptResult    res;
 
 			//  Run the script to eval the response of this
 			//  knowledge package
 
-			res = runMethod(knowledge[i],
+			res = runMethod(_knowledge[i],
 			                builtinAbstract,
 			                0,
 			                Method_KnowledgePackage_evalResponse,
@@ -3213,7 +3196,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 
 					if (pri > bestResponsePri) {
 						bestResponsePri = pri;
-						bestResponseClass = knowledge[i];
+						bestResponseClass = _knowledge[i];
 						bestResponseCode = response;
 					}
 				}
@@ -3244,11 +3227,11 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 //	sense a protaganist within a specified range
 
 bool Actor::canSenseProtaganistIndirectly(SenseInfo &info, int16 range) {
-	if (followers != NULL) {
+	if (_followers != NULL) {
 		int         i;
 
-		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[i]->canSenseProtaganist(info, range))
+		for (i = 0; i < _followers->size(); i++) {
+			if ((*_followers)[i]->canSenseProtaganist(info, range))
 				return true;
 		}
 	}
@@ -3264,11 +3247,11 @@ bool Actor::canSenseSpecificActorIndirectly(
     SenseInfo   &info,
     int16       range,
     Actor       *a) {
-	if (followers != NULL) {
+	if (_followers != NULL) {
 		int         i;
 
-		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[i]->canSenseSpecificActor(info, range, a))
+		for (i = 0; i < _followers->size(); i++) {
+			if ((*_followers)[i]->canSenseSpecificActor(info, range, a))
 				return true;
 		}
 	}
@@ -3284,11 +3267,11 @@ bool Actor::canSenseSpecificObjectIndirectly(
     SenseInfo   &info,
     int16       range,
     ObjectID    obj) {
-	if (followers != NULL) {
+	if (_followers != NULL) {
 		int         i;
 
-		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[i]->canSenseSpecificObject(info, range, obj))
+		for (i = 0; i < _followers->size(); i++) {
+			if ((*_followers)[i]->canSenseSpecificObject(info, range, obj))
 				return true;
 		}
 	}
@@ -3304,11 +3287,11 @@ bool Actor::canSenseActorPropertyIndirectly(
     SenseInfo           &info,
     int16               range,
     ActorPropertyID     prop) {
-	if (followers != NULL) {
+	if (_followers != NULL) {
 		int         i;
 
-		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[i]->canSenseActorProperty(info, range, prop))
+		for (i = 0; i < _followers->size(); i++) {
+			if ((*_followers)[i]->canSenseActorProperty(info, range, prop))
 				return true;
 		}
 	}
@@ -3324,11 +3307,11 @@ bool Actor::canSenseObjectPropertyIndirectly(
     SenseInfo           &info,
     int16               range,
     ObjectPropertyID    prop) {
-	if (followers != NULL) {
+	if (_followers != NULL) {
 		int         i;
 
-		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[i]->canSenseObjectProperty(info, range, prop))
+		for (i = 0; i < _followers->size(); i++) {
+			if ((*_followers)[i]->canSenseObjectProperty(info, range, prop))
 				return true;
 		}
 	}
@@ -3350,9 +3333,9 @@ bool Actor::takeMana(ActorManaID i, int8 dMana) {
 		return true;
 #endif
 	assert(i >= manaIDRed && i <= manaIDViolet);
-	if ((&effectiveStats.redMana)[i] < dMana)
+	if ((&_effectiveStats.redMana)[i] < dMana)
 		return false;
-	(&effectiveStats.redMana)[i] -= dMana;
+	(&_effectiveStats.redMana)[i] -= dMana;
 	updateIndicators();
 	return true;
 }
@@ -3363,7 +3346,7 @@ bool Actor::hasMana(ActorManaID i, int8 dMana) {
 		return true;
 #endif
 	assert(i >= manaIDRed && i <= manaIDViolet);
-	if ((&effectiveStats.redMana)[i] < dMana)
+	if ((&_effectiveStats.redMana)[i] < dMana)
 		return false;
 	return true;
 }
@@ -3379,65 +3362,56 @@ bool Actor::makeSavingThrow(void) {
 //	Determine if the actors are currently initialized
 
 bool areActorsInitialized(void) {
-	return g_vm->_actorList.size() > 0;
+	return g_vm->_act->_actorList.size() > 0;
 }
 
 int16 GetRandomBetween(int start, int end) {
-	return g_vm->_rnd->getRandomNumberRng(start, end);
+	return g_vm->_rnd->getRandomNumberRng(start, end - 1);
 }
 
 void updateActorStates(void) {
-	if (actorStatesPaused) return;
+	if (g_vm->_act->_actorStatesPaused) return;
 
-	static const int32  evalRate = 8;
-	static const int32  evalRateMask = evalRate - 1;
-	static int32        baseActorIndex = evalRateMask;
+	int32 actorIndex;
 
-	int32               actorIndex;
-
-	actorIndex = baseActorIndex = (baseActorIndex + 1) & evalRateMask;
+	actorIndex = g_vm->_act->_baseActorIndex = (g_vm->_act->_baseActorIndex + 1) & ActorManager::kEvalRateMask;
 	while (actorIndex < kActorCount) {
-		Actor   *a = g_vm->_actorList[actorIndex];
+		Actor   *a = g_vm->_act->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
 			a->evaluateNeeds();
 
-		actorIndex += evalRate;
+		actorIndex += ActorManager::kEvalRate;
 	}
 
-	updatesViaScript = 0;
+	g_vm->_act->_updatesViaScript = 0;
 	for (actorIndex = 0; actorIndex < kActorCount; actorIndex++) {
-		Actor   *a = g_vm->_actorList[actorIndex];
+		Actor   *a = g_vm->_act->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
 			a->updateState();
 	}
-
-
-	//WriteStatusF((useLine%10)+10,"%d actor updates by script",updatesViaScript);
-	//WriteStatusF(((useLine+1)%10)+10,"                          ");
-	//useLine++;
 }
 
 //-------------------------------------------------------------------
 
 void pauseActorStates(void) {
-	actorStatesPaused = true;
+	g_vm->_act->_actorStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
 void resumeActorStates(void) {
-	actorStatesPaused = false;
+	g_vm->_act->_actorStatesPaused = false;
 }
 
 //-------------------------------------------------------------------
 
 void setCombatBehavior(bool enabled) {
-	PlayerActor                     *player;
-	LivingPlayerActorIterator       iter;
+	PlayerActor *player = nullptr;
+	LivingPlayerActorIterator iter;
 
-	combatBehaviorEnabled = enabled;
+	g_vm->_act->_combatBehaviorEnabled = enabled;
 
 	for (player = iter.first(); player != NULL; player = iter.next())
 		player->getActor()->evaluateNeeds();
@@ -3475,13 +3449,13 @@ void initActors(void) {
 	Common::SeekableReadStream *stream;
 	const int resourceActorSize = 91; // size of the packed struct
 
-	resourceActorCount = listRes->size(actorListID)
+	resourceActorCount = listRes->size(kActorListID)
 	                     / resourceActorSize;
 
 	if (resourceActorCount < 1)
 		error("Unable to load Actors");
 
-	if ((stream = loadResourceToStream(listRes, actorListID, "res actor list")) == nullptr)
+	if ((stream = loadResourceToStream(listRes, kActorListID, "res actor list")) == nullptr)
 		error("Unable to load Actors");
 
 	//  Read the resource actors
@@ -3498,7 +3472,7 @@ void initActors(void) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
 	//  Place all of the extra actors in actor limbo
@@ -3507,12 +3481,12 @@ void initActors(void) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
-	g_vm->_actorList[0]->disposition = dispositionPlayer + 0;
-	g_vm->_actorList[1]->disposition = dispositionPlayer + 1;
-	g_vm->_actorList[2]->disposition = dispositionPlayer + 2;
+	g_vm->_act->_actorList[0]->_disposition = dispositionPlayer + 0;
+	g_vm->_act->_actorList[1]->_disposition = dispositionPlayer + 1;
+	g_vm->_act->_actorList[2]->_disposition = dispositionPlayer + 2;
 }
 
 void saveActors(Common::OutSaveFile *outS) {
@@ -3525,7 +3499,7 @@ void saveActors(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; ++i)
-		g_vm->_actorList[i]->write(out);
+		g_vm->_act->_actorList[i]->write(out);
 	CHUNK_END;
 }
 
@@ -3545,21 +3519,21 @@ void loadActors(Common::InSaveFile *in) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		Actor *a = g_vm->_actorList[i];
+		Actor *a = g_vm->_act->_actorList[i];
 
-		a->leader = a->_leaderID != Nothing
+		a->_leader = a->_leaderID != Nothing
 					? (Actor *)GameObject::objectAddress(a->_leaderID)
 					:   nullptr;
 
-		a->followers = a->_followersID != NoBand
+		a->_followers = a->_followersID != NoBand
 					?   getBandAddress(a->_followersID)
 					:   nullptr;
 
-		a->currentTarget = a->_currentTargetID != Nothing
+		a->_currentTarget = a->_currentTargetID != Nothing
 						?   GameObject::objectAddress(a->_currentTargetID)
 						:   nullptr;
 	}
@@ -3569,11 +3543,11 @@ void loadActors(Common::InSaveFile *in) {
 //	Cleanup the actor list
 
 void cleanupActors(void) {
-	if (g_vm->_actorList.size() > 0) {
+	if (g_vm->_act->_actorList.size() > 0) {
 		for (int i = 0; i < kActorCount; i++)
-			delete g_vm->_actorList[i];
+			delete g_vm->_act->_actorList[i];
 
-		g_vm->_actorList.clear();
+		g_vm->_act->_actorList.clear();
 	}
 }
 
@@ -3583,8 +3557,8 @@ void cleanupActors(void) {
 
 int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 #if DEBUG
-	if (faction >= maxFactions)
-		error("Scripter: Tell Talin to increase maxFactions!\n");
+	if (faction >= kMaxFactions)
+		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
 	assert(act < factionNumColumns);
@@ -3592,43 +3566,43 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 	/*
 	        //  If faction attitude counts get to big then down-scale all of them
 	        //  in proportion.
-	    if ( factionTable[faction][act] + amt > maxint16 )
+	    if ( g_vm->_act->_factionTable[faction][act] + amt > maxint16 )
 	    {
 	        for (int i = 0; i < factionNumColumns; i++)
-	            factionTable[faction][i] >>= 1;
+	            g_vm->_act->_factionTable[faction][i] >>= 1;
 	    }
 
 	        //  Otherwise, if it doesn;t underflow, then add it in.
-	    if ( factionTable[faction][act] + amt > minint16 )
+	    if ( g_vm->_act->_factionTable[faction][act] + amt > minint16 )
 	    {
-	        factionTable[faction][act] += amt;
+	        g_vm->_act->_factionTable[faction][act] += amt;
 	    }
 	*/
-	factionTable[faction][act] = clamp(minint16,
-	                                       factionTable[faction][act] + amt,
+	g_vm->_act->_factionTable[faction][act] = clamp(minint16,
+	                                       g_vm->_act->_factionTable[faction][act] + amt,
 	                                       maxint16);
 
-	return factionTable[faction][act];
+	return g_vm->_act->_factionTable[faction][act];
 }
 
 //  Get the attitude a particular faction has for a char.
 int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 #if DEBUG
-	if (faction >= maxFactions)
-		error("Scripter: Tell Talin to increase maxFactions!\n");
+	if (faction >= kMaxFactions)
+		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
 	assert(act < factionNumColumns);
 #endif
 
-	return factionTable[faction][act];
+	return g_vm->_act->_factionTable[faction][act];
 }
 
 //-------------------------------------------------------------------
 //	Initialize the faction tally table
 
 void initFactionTallies(void) {
-	memset(&factionTable, 0, sizeof(factionTable));
+	memset(&g_vm->_act->_factionTable, 0, sizeof(g_vm->_act->_factionTable));
 }
 
 void saveFactionTallies(Common::OutSaveFile *outS) {
@@ -3636,9 +3610,9 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 
 	outS->write("FACT", 4);
 	CHUNK_BEGIN;
-	for (int i = 0; i < maxFactions; ++i) {
+	for (int i = 0; i < kMaxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
-			out->writeSint16LE(factionTable[i][j]);
+			out->writeSint16LE(g_vm->_act->_factionTable[i][j]);
 	}
 	CHUNK_END;
 }
@@ -3646,9 +3620,9 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 void loadFactionTallies(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading Faction Tallies");
 
-	for (int i = 0; i < maxFactions; ++i) {
+	for (int i = 0; i < kMaxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
-			factionTable[i][j] = in->readSint16LE();
+			g_vm->_act->_factionTable[i][j] = in->readSint16LE();
 	}
 }
 

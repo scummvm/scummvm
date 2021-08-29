@@ -232,6 +232,15 @@ protected:
 	 * dialog so that it won't appear in the thumbnail.
 	 */
 	virtual void getSavegameThumbnail(Graphics::Surface &thumb);
+
+	/**
+	 * Finds the first empty save slot that can be used for this target
+	 * @param target Name of a config manager target.
+	 *
+	 * @return The first empty save slot, or -1 if all are occupied.
+	 */
+	int findEmptySaveSlot(const char *target);
+
 public:
 	virtual ~MetaEngine() {}
 
@@ -369,29 +378,20 @@ public:
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 
 	/**
-	 * Return the extra GUI options used by the target.
-	 */
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
-		return ExtraGuiOptions();
-	}
-
-	/**
 	 * Return a GUI widget container for configuring the specified target options.
 	 *
-	 * Engines can build custom option dialogs from here, but by default a simple widget
-	 * allowing to configure the extra GUI options is used.
+	 * Engines can build custom option dialogs from here.
 	 *
-	 * The engine that builds the Engines tab in the Edit Game dialog uses a MetaEngineDetection.
-	 * The engine that specifies a custom dialog when a game is running uses a MetaEngine.
-	 *
-	 * Engines are not supposed to have an Engine tab in the Edit Game dialog
-	 * can return nullptr.
+	 * Engines that don't have an Engine tab in the Edit Game dialog, or that use
+	 * ExtraGuiOptions in MetaEngineDetection can return nullptr.
 	 *
 	 * @param boss    The widget or dialog that the returned widget is a child of.
 	 * @param name    The name that the returned widget must use.
 	 * @param target  Name of a config manager target.
 	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+		return nullptr;
+	}
 
 	/**
 	 * MetaEngine feature flags.
@@ -530,6 +530,15 @@ public:
 	void appendExtendedSaveToStream(Common::WriteStream *saveFile, uint32 playtime, Common::String desc, bool isAutosave, uint32 offset = 0);
 
 	/**
+	 * Copies an existing save file to the first empty slot which is not autosave
+	 * @param target Name of a config manager target.
+	 * @param slot   Slot number of the save state.
+	 *
+	 * @return true if an empty slot was found and the save state was copied. false otherwise.
+	 */
+	bool copySaveFileToFreeSlot(const char *target, int slot);
+
+	/**
 	 * Parse the extended savegame header to retrieve the SaveStateDescriptor information.
 	 */
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
@@ -594,9 +603,6 @@ public:
 private:
 	/** Find a game across all loaded plugins. */
 	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
-
-	/** Find a loaded plugin with the given engine ID. */
-	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
 
 	/** Use heuristics to complete a target lacking an engine ID. */
 	void upgradeTargetForEngineId(const Common::String &target) const;

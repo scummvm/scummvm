@@ -57,9 +57,14 @@ struct GameResourcePatch {
 	Common::Language gameLanguage;
 
 	/**
-	 * The resource ID to patch.
+	 * The resource type to patch.
 	 */
-	ResourceId resourceId;
+	ResourceType resourceType;
+
+	/**
+	 * The resource number to patch.
+	 */
+	uint16 resourceNumber;
 
 	/**
 	 * Patch instructions to apply to the resource.
