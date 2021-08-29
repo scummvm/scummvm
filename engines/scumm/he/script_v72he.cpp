@@ -1101,7 +1101,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	int dim1end, dim1start, dim2end, dim2start;
 	int id, len, b, c, list[128];
 	int offs, tmp, tmp2;
-	uint tmp3;
+	uint tmp3, type;
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
@@ -1187,6 +1187,79 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
+		case 138:		// SO_COMPLEX_ARRAY_MATH_OPERATION
+			{
+				// Borrowed code from script_v100he.cpp
+				// Used by script 84 (Send end of play info) in Backyard Football during online play.
+				int array2 = fetchScriptWord();
+				int array1 = fetchScriptWord();
+				type = pop();
+				int a1_dim1end = pop();
+				int a1_dim1start = pop();
+				int a1_dim2end = pop();
+				int a1_dim2start = pop();
+				int a2_dim1end = pop();
+				int a2_dim1start = pop();
+				int a2_dim2end = pop();
+				int a2_dim2start = pop();
+				dim1end = pop();
+				dim1start = pop();
+				dim2end = pop();
+				dim2start = pop();
+
+				debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
+					array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
+					" +-&|^"[type],
+					array2, a2_dim1start, a2_dim2end, a2_dim1start, a2_dim2end);
+
+				int a12_num = a1_dim2end - a1_dim2start + 1;
+				int a11_num = a1_dim1end - a1_dim1start + 1;
+				int a22_num = a2_dim2end - a2_dim2start + 1;
+				int a21_num = a2_dim1end - a2_dim1start + 1;
+				int d12_num = dim2end - dim2start + 1;
+				int d11_num = dim1end - dim1start + 1;
+
+				id = readVar(array);
+				if (id == 0) {
+					defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+				}
+				if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
+					error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+				}
+
+				for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
+					int a2dim1 = a2_dim1start;
+					int a1dim1 = a1_dim1start;
+					int dim1 = dim1start;
+					for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
+						int val1 = readArray(array1, a1_dim2start, a1dim1);
+						int val2 = readArray(array2, a2_dim2start, a2dim1);
+						int res;
+
+						switch (type) {
+						case 1: // Addition
+							res = val2 + val1;
+							break;
+						case 2: // Subtraction
+							res = val2 - val1;
+							break;
+						case 3: // Binary AND
+							res = val2 & val1;
+							break;
+						case 4: // Binary OR
+							res = val2 | val1;
+							break;
+						case 5: // Binary XOR
+							res = val2 ^ val1;
+							break;
+						default:
+							error("o72_arrayOps: case 132 unknown type %d)", type);
+						}
+						writeArray(array, dim2start, dim1, res);
+					}
+				}
+				break;
+			}
 	case 194:		// SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
@@ -1850,6 +1923,10 @@ void ScummEngine_v72he::o72_readINI() {
 	case 6: // number
 		if (!strcmp((char *)option, "DisablePrinting") || !strcmp((char *)option, "NoPrinting")) {
 			push(1);
+#ifdef USE_BYONLINE
+		} else if (!strcmp((char *)option, "DisableMaiaUpdates")) {
+			push(1);
+#endif
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
 		} else if (!strcmp((char *)option, "Disk") && (_game.id == GID_BIRTHDAYRED || _game.id == GID_BIRTHDAYYELLOW)) {

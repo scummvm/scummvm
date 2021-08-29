@@ -393,7 +393,7 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 }
 
 void ScummEngine_v90he::setResourceOffHeap(int typeId, int resId, int val) {
-	debug(0, "setResourceOffHeap: type %d resId %d toggle %d", typeId, resId, val);
+	// debug(0, "setResourceOffHeap: type %d resId %d toggle %d", typeId, resId, val);
 	ResType type;
 
 	switch (typeId) {

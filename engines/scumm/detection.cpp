@@ -63,6 +63,10 @@ static const DebugChannelDef debugFlagList[] = {
 		{Scumm::DEBUG_INSANE, "INSANE", "Track INSANE"},
 		{Scumm::DEBUG_SMUSH, "SMUSH", "Track SMUSH"},
 		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"},
+#ifdef USE_BYONLINE
+		{Scumm::DEBUG_BYONLINE, "BYONLINE", "Track Backyard Sports Online"},
+		{Scumm::DEBUG_DIRECTPLAY, "DIRECTPLAY", "Track DirectPlay"},
+#endif
 		DEBUG_CHANNEL_END
 };
 

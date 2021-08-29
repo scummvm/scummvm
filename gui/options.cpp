@@ -126,6 +126,16 @@ enum {
 };
 #endif
 
+#ifdef USE_BYONLINE
+enum {
+	kServerAddrClearCmd = 'sadr',
+	kSessionAddrClearCmd = 'ssdr',
+	kWebUrlClearCmd = 'wurl',
+	kResetSettingsCmd = 'clra',
+	kResetSettingsDevCmd = 'clrd'
+};
+#endif
+
 enum {
 	kApplyCmd = 'appl'
 };
@@ -2084,6 +2094,14 @@ void GlobalOptionsDialog::build() {
 	addAccessibilityControls(tab, "GlobalOptions_Accessibility.");
 #endif // USE_TTS
 
+#ifdef USE_BYONLINE
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Online"), "GlobalOptions_Online");
+	else
+		tab->addTab(_c("Online", "lowres"), "GlobalOptions_Online");
+	addOnlineControls(tab, "GlobalOptions_Online.", g_system->getOverlayWidth() <= 320);
+#endif // USE_BYONLINE
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -2476,6 +2494,49 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 }
 #endif // USE_TTS
 
+#ifdef USE_BYONLINE
+void GlobalOptionsDialog::addOnlineControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
+	_serverAddrDesc = new StaticTextWidget(boss, prefix + "ServerAddressDesc", _("Server Address:"), Common::U32String());
+	Common::String address;
+	if (ConfMan.hasKey("byonline_server_address"))
+		address = ConfMan.get("byonline_server_address");
+	else
+		address = Common::String("backyardsports.online");
+
+	_serverAddr = new EditTextWidget(boss, prefix + "ServerAddress", address, Common::U32String(), 0, 0);
+	_serverAddrClearButton = addClearButton(boss, prefix + "ServerAddrClearButton", kServerAddrClearCmd);
+
+	_sessionAddrDesc = new StaticTextWidget(boss, prefix + "SessionAddressDesc", _("Session Server:"), Common::U32String());
+	Common::String sessionAddress;
+	if (ConfMan.hasKey("byonline_session_address"))
+		sessionAddress = ConfMan.get("byonline_session_address");
+	else
+		sessionAddress = Common::String("backyardsports.online");
+
+	_sessionAddr = new EditTextWidget(boss, prefix + "SessionAddress", sessionAddress, Common::U32String(), 0, 0);
+	_sessionAddrClearButton = addClearButton(boss, prefix + "SessionAddrClearButton", kSessionAddrClearCmd);
+
+	_webLoginCheckbox = new CheckboxWidget(boss, prefix + "WebLoginCheckbox",
+			_("Use website to login"), _("Will login through the web instead of the server.  Can be disabled for development purposes"));
+	if (ConfMan.hasKey("byonline_web_login"))
+		_webLoginCheckbox->setState(ConfMan.getBool("byonline_web_login", _domain));
+	else
+		_webLoginCheckbox->setState(true);
+
+	Common::String webUrl;
+	if (ConfMan.hasKey("byonline_web_url"))
+		webUrl = ConfMan.get("byonline_web_url");
+	else
+		webUrl = Common::String("https://backyardsports.online/api/login");
+
+	_webUrl = new EditTextWidget(boss, prefix + "WebUrl", webUrl, Common::U32String(), 0, 0);
+	_webUrlClearButton = addClearButton(boss, prefix + "WebUrlClearButton", kWebUrlClearCmd);
+
+	_onlineResetButton = new ButtonWidget(boss, prefix + "OnlineReset", _("Default Settings"), _("Reset all settings to their defaults."), kResetSettingsCmd);
+	_onlineResetDevButton = new ButtonWidget(boss, prefix + "OnlineResetDev", _("Dev Settings"), _("Reset all settings to their development defaults."), kResetSettingsDevCmd);
+}
+#endif // USE_BYONLINE
+
 void GlobalOptionsDialog::apply() {
 	OptionsDialog::apply();
 
@@ -2663,6 +2724,13 @@ void GlobalOptionsDialog::apply() {
 		ttsMan->setVoice(selectedVoice);
 	}
 #endif // USE_TTS
+
+#ifdef USE_BYONLINE
+	ConfMan.set("byonline_server_address", _serverAddr->getEditString());
+	ConfMan.set("byonline_session_address", _sessionAddr->getEditString());
+	ConfMan.setBool("byonline_web_login", _webLoginCheckbox->getState(), _domain);
+	ConfMan.set("byonline_web_url", _webUrl->getEditString());
+#endif // USE_BYONLINE
 
 	if (isRebuildNeeded) {
 		g_gui.setLanguageRTL();
@@ -2986,6 +3054,36 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kUpdatesCheckCmd:
 		if (g_system->getUpdateManager())
 			g_system->getUpdateManager()->checkForUpdates();
+		break;
+#endif
+#ifdef USE_BYONLINE
+	case kServerAddrClearCmd:
+		_serverAddr->setEditString(Common::U32String("backyardsports.online"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kSessionAddrClearCmd:
+		_sessionAddr->setEditString(Common::U32String("backyardsports.online"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kWebUrlClearCmd:
+		_webUrl->setEditString(Common::U32String("https://backyardsports.online/api/login"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kResetSettingsCmd:
+		_serverAddr->setEditString(Common::U32String("backyardsports.online"));
+		_sessionAddr->setEditString(Common::U32String("backyardsports.online"));
+
+		_webLoginCheckbox->setState(true);
+		_webUrl->setEditString(Common::U32String("https://backyardsports.online/api/login"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kResetSettingsDevCmd:
+		_serverAddr->setEditString(Common::U32String("127.0.0.1:9130"));
+		_sessionAddr->setEditString(Common::U32String("127.0.0.1:9130"));
+
+		_webLoginCheckbox->setState(false);
+		_webUrl->setEditString(Common::U32String("http://127.0.0.1:3000/api/login"));
+		g_gui.scheduleTopDialogRedraw();
 		break;
 #endif
 	default:

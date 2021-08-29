@@ -162,6 +162,12 @@ ifdef USE_LIBCURL
 MODULE_OBJS += \
 	he/moonbase/net_main.o
 endif
+
+ifdef USE_BYONLINE
+MODULE_OBJS += \
+	he/byonline/byonline.o \
+	he/byonline/directplay.o
+endif
 endif
 
 # This module can be built as a plugin

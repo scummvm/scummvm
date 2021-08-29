@@ -535,10 +535,26 @@ void ScummEngine_v6::o6_eq() {
 	int a = pop();
 	int b = pop();
 
+	// BYOnline WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Footbal and Backyard Baseball 2001
+	// because it originally makes use of DirectPlay, which is Windows exclusive. We get around that by tricking those
+	// checks that we are playing on the Windows version.  These scripts check VAR_PLATFORM (b) against the value (2)
+	// of the Macintosh platform (a).
+#ifdef USE_BYONLINE
+	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
+		push(0);
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == 10002 || vm.slot[_currentScript].number == 2050) &&
+		a == 2 && b == 2) {
+		push(0);
+	}
+
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
 	// when checking for save game compatibility. Allows saved games to be shared between Macintosh and Windows versions.
 	// The scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
+	else if (_game.id == GID_BASEBALL2001 && (vm.slot[_currentScript].number == 291 || vm.slot[_currentScript].number == 292) &&
+#else
 	if (_game.id == GID_BASEBALL2001 && (vm.slot[_currentScript].number == 291 || vm.slot[_currentScript].number == 292) &&
+#endif
 		a == 2 && b == 1) {
 		push(1);
 	} else {
@@ -594,7 +610,19 @@ void ScummEngine_v6::o6_div() {
 
 void ScummEngine_v6::o6_land() {
 	int a = pop();
-	push(pop() && a);
+	int b = pop();
+
+	// BYOnline WORKAROUND: When entering an area, the game will check if
+	// vars 133 and 134 are set, else it will wait for 5 seconds before
+	// showing the coach list.  var133 is set 1 somewhere but var134
+	// is always set at 0.  Unless I figure something out, I am going to
+	// assume this is a script bug, so let's skip the 5 second wait.
+#ifdef USE_BYONLINE
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2122)
+		push(1);
+	else
+#endif
+		push(b && a);
 }
 
 void ScummEngine_v6::o6_lor() {
@@ -726,6 +754,18 @@ void ScummEngine_v6::o6_jump() {
 	}
 
 	_scriptPointer += offset;
+
+	// BYOnline WORKAROUND:  When getting the area popuation, the scripts does not break after getting
+	// the popuation.  Not only this may slow down the game a bit, it sends quite a bit of bandwidth
+	// considering we're outside the game.  So let's break the script for 5 seconds before jumping back to the beginning.
+#ifdef USE_BYONLINE
+	if ((_game.id == GID_BASEBALL2001 && _currentRoom == 39 && vm.slot[_currentScript].number == 2090 && offset == -904) ||
+		(_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2101 && offset == -128)) {
+		vm.slot[_currentScript].delay = 5 * 60; // 5 seconds
+		vm.slot[_currentScript].status = ssPaused;
+		o6_breakHere();
+	}
+#endif
 }
 
 void ScummEngine_v6::o6_startScript() {

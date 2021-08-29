@@ -84,6 +84,11 @@
 #include "scumm/imuse/drivers/fmtowns.h"
 #include "scumm/detection_steam.h"
 
+#ifdef USE_BYONLINE
+#include "scumm/he/byonline/byonline.h"
+#include "scumm/he/byonline/directplay.h"
+#endif
+
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/mixer.h"
@@ -978,6 +983,16 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	_videoParams.number = 0;
 	_videoParams.wizResNum = 0;
 
+#ifdef USE_BYONLINE
+	/* Online stuff for Backyard Football and Backyard Baseball 2001 */
+	_byonline = 0;
+	_directPlay = 0;
+	if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001) {
+		_byonline = new BYOnline(this);
+		_directPlay = new DirectPlay(this);
+	}
+#endif
+
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
 	VAR_NUM_SPRITES = 0xFF;
 	VAR_NUM_PALETTES = 0xFF;
@@ -990,6 +1005,12 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v90he::~ScummEngine_v90he() {
 	delete _moviePlay;
 	delete _sprite;
+
+#ifdef USE_BYONLINE
+	delete _byonline;
+	delete _directPlay;
+#endif
+
 	if (_game.heversion >= 98) {
 		delete _logicHE;
 	}

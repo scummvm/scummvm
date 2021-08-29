@@ -138,6 +138,7 @@ _ogg=auto
 _vorbis=auto
 _sdlnet=auto
 _libcurl=auto
+_enet=auto
 _tremor=auto
 _tremolo=no
 _flac=auto
@@ -176,6 +177,7 @@ _tts=auto
 _gtk=auto
 _fribidi=auto
 _discord=auto
+_byonline=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -286,6 +288,7 @@ add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature byonline "Backyard Sports Online" "_byonline"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -882,6 +885,7 @@ Optional Features:
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --disable-cloud          don't build cloud support
+  --disable-byonline       don't build Backyard Sports Online support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
   --enable-eventrecorder   enable event recording functionality
@@ -1012,6 +1016,9 @@ Optional Libraries:
   --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
 
+  --with-enet-prefix=DIR prefix where ENet is installed (optional)
+  --disable-enet         disable ENet networking library [autodetect]
+
   --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
@@ -1108,6 +1115,8 @@ for ac_option in $@; do
 	--disable-mad)                _mad=no                ;;
 	--enable-fribidi)             _fribidi=yes           ;;
 	--disable-fribidi)            _fribidi=no            ;;
+	--enable-byonline)            _byonline=yes          ;;
+	--disable-byonline)           _byonline=no           ;;
 	--enable-test-c++11)          _test_cxx11=yes        ;;
 	--disable-test-c++11)         _test_cxx11=no         ;;
 	--enable-zlib)                _zlib=yes              ;;
@@ -1146,6 +1155,8 @@ for ac_option in $@; do
 	--disable-system-dialogs)     _dialogs=no            ;;
 	--enable-sdlnet)              _sdlnet=yes            ;;
 	--disable-sdlnet)             _sdlnet=no             ;;
+	--enable-enet)                _enet=yes              ;;
+	--disable-enet)               _enet=no               ;;
 	--enable-libcurl)             _libcurl=yes           ;;
 	--disable-libcurl)            _libcurl=no            ;;
 	--enable-cloud)               _cloud=yes             ;;
@@ -1311,6 +1322,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		SDL_NET_CFLAGS="-I$arg/include"
 		SDL_NET_LIBS="-L$arg/lib"
+		;;
+	--with-enet-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ENET_CFLAGS="-I$arg/include"
+		ENET_LIBS="-L$arg/lib"
 		;;
 	--with-opengl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -3841,6 +3857,29 @@ EOF
 	echo "$_sdlnet"
 fi
 
+if test "$_enet" = auto ; then
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libenet; then
+		append_var ENET_LIBS "`$_pkgconfig --libs libenet`"
+		append_var ENET_CFLAGS "`$_pkgconfig --cflags libenet`"
+	else
+		append_var ENET_LIBS "-lenet"
+	fi
+
+	# Check for ENet
+	echocheck "ENet"
+	_enet=no
+	cat > $TMPC << EOF
+#include <enet/enet.h>
+int main(int argc, char *argv[]) { enet_initialize(); return 0; }
+EOF
+	cc_check $ENET_LIBS $LIBS $INCLUDES $ENET_CFLAGS && _enet=yes
+	if test "$_enet" = yes ; then
+		append_var LIBS "$ENET_LIBS"
+		append_var INCLUDES "$ENET_CFLAGS"
+	fi
+	define_in_config_if_yes "$_enet" 'USE_ENET'
+	echo "$_enet"
+fi
 
 #
 # Enable 16bit support only for backends which support it
@@ -4909,6 +4948,41 @@ else
 	echo  # newline
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
+
+#
+# Check whether to build BYOnline support
+#
+echo_n "Backyard Sports Online integration... "
+if test "$_byonline" = "no"; then
+	echo "no"
+else
+	_byonline=no
+	if test "$_sdlnet" = "yes"; then
+		if test "$_enet" = "yes"; then
+			if test "$_libcurl" = "yes"; then
+				_byonline=yes
+				echo_n "yes"
+			else
+				echo_n "no, curl missing"
+			fi
+		else
+			echo_n "no, ENet missing"
+			if test "$_libcurl" = "no"; then
+				echo_n ", curl missing"
+			fi
+		fi
+	else
+		echo_n "no, SDL_Net missing"
+		if test "$_enet" = "no"; then
+			echo_n ", ENet missing"
+			if test "$_libcurl" = "no"; then
+				echo_n ", curl missing"
+			fi
+		fi
+	fi
+	echo  # newline
+fi
+define_in_config_if_yes $_byonline 'USE_BYONLINE'
 
 #
 # Check is NSDockTilePlugIn protocol is supported
@@ -6001,7 +6075,11 @@ if test "$_eventrec" = yes ; then
 fi
 
 if test "$_cloud" = yes ; then
-	echo ", cloud"
+	echo_n ", cloud"
+fi
+
+if test "$_byonline" = yes ; then
+	echo ", BYOnline"
 else
 	echo
 fi

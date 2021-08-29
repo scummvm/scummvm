@@ -122,7 +122,11 @@ enum {
 	DEBUG_ACTORS	=	1 << 8,		// General Actor Debug
 	DEBUG_INSANE	=	1 << 9,		// Track INSANE
 	DEBUG_SMUSH	=	1 << 10,		// Track SMUSH
-	DEBUG_MOONBASE_AI = 1 << 11		// Moonbase AI
+	DEBUG_MOONBASE_AI = 1 << 11,		// Moonbase AI
+#ifdef USE_BYONLINE
+	DEBUG_BYONLINE = 1 << 12,		// Track Backyard Sports Online
+	DEBUG_DIRECTPLAY = 1 << 13		// Track DirectPlay
+#endif
 };
 
 struct VerbSlot;

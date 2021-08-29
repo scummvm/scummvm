@@ -202,4 +202,7 @@ const char *gScummVMFeatures = ""
 #ifdef USE_GLEW
 	"GLEW "
 #endif
+#ifdef USE_BYONLINE
+	"Backyard Sports Online"
+#endif
 	;

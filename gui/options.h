@@ -393,6 +393,25 @@ protected:
 
 	void addAccessibilityControls(GuiObject *boss, const Common::String &prefix);
 #endif
+
+#ifdef USE_BYONLINE
+	StaticTextWidget *_serverAddrDesc;
+	EditTextWidget *_serverAddr;
+	ButtonWidget *_serverAddrClearButton;
+
+	StaticTextWidget *_sessionAddrDesc;
+	EditTextWidget *_sessionAddr;
+	ButtonWidget *_sessionAddrClearButton;
+
+	CheckboxWidget *_webLoginCheckbox;
+	EditTextWidget *_webUrl;
+	ButtonWidget *_webUrlClearButton;
+
+	ButtonWidget *_onlineResetButton;
+	ButtonWidget *_onlineResetDevButton;
+
+	void addOnlineControls(GuiObject *boss, const Common::String &prefix, bool lowres);
+#endif
 };
 
 } // End of namespace GUI
