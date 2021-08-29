@@ -84,7 +84,7 @@ void T11hGame::setVariables(byte *scriptVariables) {
 * Space -2 is the next piece, outside of the box
 */
 void T11hGame::opMouseTrap() {
-	// TODO: properly implement mouse trap game
+	// FIXME: properly implement mouse trap game
 	// variable 24 is the mouse?
 	//_scriptVariables[24] = 2;
 
@@ -92,8 +92,23 @@ void T11hGame::opMouseTrap() {
 	// variable 23 is the outside piece
 	_scriptVariables[23] = 1;
 	// variable slot is the space number + 25, the left corner (Stauf's goal) is space 1, above that is space 2, the center is 13, and the right corner (goal) is space 25
-	for(int i=27; i<=49; i++)
+	for (int i = 27; i <= 49; i++) {
 		_scriptVariables[i] = 3;
+	}
+}
+
+
+void T11hGame::opBeehive() {
+	// FIXME: properly implement Beehive game
+	// for now just auto-solve the puzzle so the player can continue
+	_scriptVariables[13] = 5;
+}
+
+
+void T11hGame::opPente() {
+	// FIXME: properly implement Pente game (the final puzzle)
+	// for now just auto-solve the puzzle so the player can continue
+	_scriptVariables[5] = 4;
 }
 
 
@@ -197,7 +212,8 @@ void T11hGame::opGallery() {
 	}
 
 	int selectedPart;
-		
+
+	// TODO: copy the AI from the game
 	do {
 		selectedPart = _random.getRandomNumber(20) + 1;
 	} while (_scriptVariables[0x19 + selectedPart] != 1);
@@ -207,6 +223,7 @@ void T11hGame::opGallery() {
 }
 
 byte T11hGame::opGallerySub(int one, byte* field) {
+	// TODO
 	return 0;
 }
 

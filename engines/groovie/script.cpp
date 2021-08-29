@@ -2013,6 +2013,7 @@ void Script::o2_gamespecial() {
 
 		case 2:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv) TODO", arg);
+			_t11hGame->opBeehive();
 			break;
 
 		case 3:
@@ -2031,6 +2032,7 @@ void Script::o2_gamespecial() {
 
 		case 6:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente (pt.grv)", arg);
+			_t11hGame->opPente();
 			break;
 
 
@@ -2058,6 +2060,21 @@ void Script::o2_stub52() {
 void Script::o2_setscriptend() {
 	uint16 arg = readScript16bits();
 	debugC(1, kDebugScript, "Groovie::Script: SetScriptEnd (0x%04X)", arg);
+}
+
+void Script::o2_stub59() {
+	uint16 val1 = readScript8or16bits();
+	uint8 val2 = readScript8bits();
+
+	debugC(1, kDebugScript, "Groovie::Script: STUB59: 0x%04X 0x%02X", val1, val2);
+
+	// FIXME: bitflag 1 is set by o2_vdxtransition
+	// I believe bitflag 3 is supposed to be set by background sounds (clock chimes, wind, heart, drip in the kitchen)
+	// Currently background sounds don't work so the flag is never set
+	// Which causes the end of the game to not work properly because it's supposed to give you until the clock chimes are finished before rolling the credits
+	//_variables[val1] = char(bool(_bitflags & 5));
+	// For now, just set to 1 so the player can choose an ending
+	_variables[val1] = 1;
 }
 
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
@@ -2246,7 +2263,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_stub56,
 	&Script::o_invalid,
 	&Script::o_invalid, // 0x58
-	&Script::o_stub59
+	&Script::o2_stub59
 };
 
 } // End of Groovie namespace

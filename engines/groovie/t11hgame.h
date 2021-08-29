@@ -43,6 +43,8 @@ public:
 	void setVariables(byte *scriptVariables);
 
 	void opMouseTrap();
+	void opBeehive();
+	void opPente();
 	void opGallery();
 
 private:

@@ -249,6 +249,7 @@ private:
 	void o2_gamespecial();
 	void o2_stub52();
 	void o2_setscriptend();
+	void o2_stub59();
 };
 
 } // End of Groovie namespace
