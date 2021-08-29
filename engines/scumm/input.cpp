@@ -619,6 +619,10 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		    lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
 
+		} else if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) &&
+				   (lastKeyHit.flags & Common::KBD_CTRL) &&
+				   (lastKeyHit.keycode >= Common::KEYCODE_a && lastKeyHit.keycode <= Common::KEYCODE_z)) {
+			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_a + 1;
 		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
 			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
 			// because that's what MI2 looks for in its "instant win" cheat.
