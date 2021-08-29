@@ -316,6 +316,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 1 - English DOS Floppy with Czech patch(v1.08)
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"5e73b4a609fdd0c0db2f076b871a5d5b", 137655},
+				{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", 56448},
+				{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", 368},
+				AD_LISTEND
+			},
+			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE
+	},
+
 	// Elvira 1 - English DOS Floppy, with Spanish patch
 	{
 		{
@@ -658,6 +681,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE
+	},
+
+	// Elvira 2 - English DOS Floppy with Czech patch
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"022536512981f1962276c0813a1351d8", 122729},
+				{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+				{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+				{ "start",			GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b", 27876},
+				{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17", 81},
+				{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
+				AD_LISTEND
+			},
+			Common::CZ_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
