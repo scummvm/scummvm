@@ -55,7 +55,6 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_speedFlag = false;
 	_polyStructs = nullptr;
 	_polyStruct = nullptr;
-	_isEndGame = false;
 
 	// Setup mixer
 	syncSoundSettings();
@@ -211,7 +210,7 @@ Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc, 
 }
 
 bool CruiseEngine::canSaveGameStateCurrently() {
-	return (playerMenuEnabled != 0) && (userEnabled != 0) && !_isEndGame;
+	return (playerMenuEnabled != 0) && (userEnabled != 0);
 }
 
 const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
