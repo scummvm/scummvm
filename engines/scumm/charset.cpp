@@ -2251,6 +2251,7 @@ void CharsetRendererNES::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : CharsetRendererClassic(vm), _sjisCurChar(0) {
+	assert(vm->_game.platform == Common::kPlatformFMTowns);
 }
 
 int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
@@ -2312,11 +2313,9 @@ void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst,
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
 	bits = *src++;
 	numbits = 8;
-	byte *cmap = _vm->_charsetColorMap;
+	byte *cmap = _vm->_townsCharsetColorMap;
 	byte *dst2 = dst;
 
-	if (_vm->_game.platform == Common::kPlatformFMTowns)
-		cmap = _vm->_townsCharsetColorMap;
 	if (scale2x) {
 		dst2 += _vm->_textSurface.pitch;
 		pitch <<= 1;
@@ -2354,7 +2353,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 	processCharsetColors();
 	bool noSjis = false;
 
-	if (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_useCJKMode) {
+	if (_vm->_useCJKMode) {
 		if ((chr & 0x00ff) == 0x00fd) {
 			chr >>= 8;
 			noSjis = true;
