@@ -136,7 +136,8 @@ public:
 	Common::String _defaultCursor;
 	void disableCursor();
 	void defaultCursor();
-	void changeCursor(const Common::String &, uint32);
+	void changeCursor(const Common::String &cursor, uint32 n);
+	void changeCursor(const Common::String &cursor);
 
 	// Actions
 	void runIntro(MVideo &video);
@@ -182,20 +183,24 @@ public:
 	Videos _videosPlaying;
 
 	// Sounds
-	Common::String _music;
-	void playSound(Common::String name, uint32);
+	Filename _soundPath;
+	Filename _music;
+	void playSound(Filename name, uint32);
 	void stopSound();
 	bool isSoundActive();
 	bool _noStopSounds;
 
 	// Arcade
-	void drawShoot(Common::Point);
+	int detectTarget(Common::Point mousePos);
+	virtual void drawShoot(Common::Point);
+	void drawCursorArcade(Common::Point mousePos);
 	virtual void drawPlayer(Common::String player, MVideo &background);
-	virtual void drawHealth(const Graphics::Font &font);
+	virtual void drawHealth();
 	int _health;
 	int _maxHealth;
 	Filename _shootSound;
 	Shoots _shoots;
+	const Graphics::Font *_font;
 
 	// Conversation
 	Actions _conversation;
@@ -217,9 +222,9 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
-
+	void drawShoot(Common::Point) override;
 	void drawPlayer(Common::String player, MVideo &background) override;
-	void drawHealth(const Graphics::Font &font) override;
+	void drawHealth() override;
 };
 
 class SpiderEngine : public HypnoEngine {
@@ -227,13 +232,19 @@ public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
-
+	void drawShoot(Common::Point) override;
 	void drawPlayer(Common::String player, MVideo &background) override;
-	void drawHealth(const Graphics::Font &font) override;
+	void drawHealth() override;
 	void runPuzzle(Puzzle puzzle) override;
 
 private:
 	void runMatrix(Puzzle puzzle);
+};
+
+class BoyzEngine : public HypnoEngine {
+public:
+	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
+	void loadAssets() override;
 };
 
 } // End of namespace Hypno

@@ -7,19 +7,13 @@
 namespace Hypno {
 
 void HypnoEngine::drawPlayer(Common::String player, MVideo &background) { error("not implemented"); }
-void HypnoEngine::drawHealth(const Graphics::Font &font) { error("not implemented"); }
+void HypnoEngine::drawHealth() { error("not implemented"); }
+void HypnoEngine::drawShoot(Common::Point target) { error("not implemented"); }
 
-void HypnoEngine::drawShoot(Common::Point target) {
-	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	_compositeSurface->drawLine(80, 155, target.x, target.y + 1, c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y, c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y - 1, c);
-	playSound("c_misc/sound.lib/" + _shootSound, 1);
-}
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
 
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
@@ -27,11 +21,12 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	_shootSound = arc.shootSound;
 	_health = arc.health;
 	_maxHealth = _health;
+	_defaultCursor = "arcade";
 	_shoots.clear();
 
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);
 
-	defaultCursor();
+	changeCursor("arcade");
 	playVideo(background);
 
 	while (!shouldQuit()) {
@@ -54,6 +49,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
+				drawCursorArcade(mousePos);
 				break;
 
 			default:
@@ -83,7 +79,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 						s.video = new MVideo(it->animation, it->position, true, false, false);
 						playVideo(*s.video);
 						_shoots.push_back(s);
-						playSound("c_misc/sound.lib/" + s.startSound, 1);
+						playSound(_soundPath + s.startSound, 1);
 					}
 				}
 			}
@@ -115,44 +111,62 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		}
 
 		if (_music.empty()) {
-			_music = "c_misc/sound.lib/" + arc.music;
+			_music = _soundPath + arc.music;
 			playSound(_music, 0);
 		}
 
 		drawPlayer(arc.player, background);
-		drawHealth(font);
+		drawHealth();
 
 		drawScreen();
 		g_system->delayMillis(10);
 	}
 }
 
-bool HypnoEngine::clickedShoot(Common::Point mousePos) {
-	bool found = false;
+int HypnoEngine::detectTarget(Common::Point mousePos) {
+	int i = -1;
 	int x = 0;
 	int y = 0;
 	int w = 0;
 	int h = 0;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+		i++;
 		if (it->destroyed || !it->video->decoder)
 			continue;
 		x = mousePos.x - it->position.x;
 		y = mousePos.y - it->position.y;
 		w = it->video->decoder->getWidth();
 		h = it->video->decoder->getHeight();
-
 		if (it->video->decoder && x >= 0 && y >= 0 && x < w && y < h) {
-			uint32 c = it->video->currentFrame->getPixel(x, y);
-			//debug("inside %x", c);
-			if (c > 0) {
-				playSound("c_misc/sound.lib/" + it->endSound, 1);
-				it->destroyed = true;
-				it->video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
-				it->video->decoder->forceSeekToFrame(it->explosionFrame + 2);
-			}
+			if (it->video->currentFrame->getPixel(x, y) > 0)
+				return i;
 		}
 	}
-	return found;
+	return -1;
+}
+
+void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
+	int i = detectTarget(mousePos);
+	if (i > 0)
+		changeCursor("target");
+	else
+		changeCursor("arcade");
+
+}
+
+bool HypnoEngine::clickedShoot(Common::Point mousePos) {
+	int i = detectTarget(mousePos);
+	int w = 0;
+	int h = 0;
+	if (i > 0) {
+		playSound(_soundPath + _shoots[i].endSound, 1);
+		w = _shoots[i].video->decoder->getWidth();
+		h = _shoots[i].video->decoder->getHeight();
+		_shoots[i].destroyed = true;
+		_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+		_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
+	}
+	return (i > 0);
 }
 
 } // End of namespace Hypno

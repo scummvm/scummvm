@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	spider/arcade.o \
 	wet/wet.o \
 	wet/arcade.o \
+	boyz/boyz.o \
 	hypno.o
 
 MODULE_DIRS += \

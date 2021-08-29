@@ -79,7 +79,7 @@ void WetEngine::loadAssets() {
 		_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 		_levels[arclevel].arcade.prefix = "wetlands";
 		_levels[arclevel].arcade.levelIfLose = "<gameover>";
-		Common::replace(_levels[arclevel].arcade.music, "sound\\", "");
+		//Common::replace(_levels[arclevel].arcade.music, "sound\\", "");
 		if (k < files.size() - 1)
 			_levels[arclevel].arcade.levelIfWin = files[k + 1].name;
 	}
