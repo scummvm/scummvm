@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-28 20:51+0000\n"
-"PO-Revision-Date: 2021-08-25 15:27+0000\n"
+"PO-Revision-Date: 2021-08-29 09:32+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2432,17 +2432,13 @@ msgid "Cancel autosave"
 msgstr "Cancelar autoguardado"
 
 #: engines/engine.cpp:556
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The autosave slot has a saved game named %s. You can either move "
-#| "the existing save to a new slot, Overwrite the existing save, or cancel "
-#| "autosave (will not prompt again until restart)"
+#, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
-"AVISO: El espacio de autoguardado contiene una partida llamada %s. Puedes "
+"AVISO: El espacio de autoguardado contiene una partida llamada %S. Puedes "
 "cambiar la partida existente a otro espacio, sobrescribirla o cancelar el "
 "autoguardado (no se volverá a preguntar hasta que reinicies)."
 
