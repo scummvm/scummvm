@@ -2386,8 +2386,9 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
-"경고: 이 자동 저장 슬롯에는 '%S' 자동 저장 데이터가 존재합니다. 기존 저장 데이터를 새로운 슬롯으로 이동하거나 덮어씌우거나 자동 "
-"저장을 취소할 수 있습니다. (재시작 전까지 다시 알리지 않음)"
+"경고: 이 자동 저장 슬롯에는 '%S' 자동 저장 데이터가 존재합니다. 기존 저장 데"
+"이터를 새로운 슬롯으로 이동하거나 덮어씌우거나 자동 저장을 취소할 수 있습니"
+"다. (재시작 전까지 다시 알리지 않음)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
