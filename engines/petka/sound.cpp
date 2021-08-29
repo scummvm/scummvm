@@ -87,7 +87,7 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 	if (s) {
 		debug("SoundMgr: added sound %s", name.c_str());
 		sound = new Sound(s, type);
-		_sounds.getVal(name).reset(sound);
+		_sounds.getOrCreateVal(name).reset(sound);
 	}
 	return sound;
 }
