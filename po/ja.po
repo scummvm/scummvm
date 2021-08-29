@@ -2389,7 +2389,8 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
-"警告：オートセーブスロットに、%Sのデータが存在します。新しいスロットへセーブするか、このオートセーブを上書きするか、あるいはオートセーブ機能をキャンセル"
+"警告：オートセーブスロットに、%Sのデータが存在します。新しいスロットへセーブ"
+"するか、このオートセーブを上書きするか、あるいはオートセーブ機能をキャンセル"
 "できます(この選択はリスタートするまで適用されます)"
 
 #: engines/engine.cpp:564
