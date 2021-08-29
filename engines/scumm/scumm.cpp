@@ -1962,6 +1962,13 @@ void ScummEngine_v6::resetScumm() {
 	setDefaultCursor();
 }
 
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::resetScumm() {
+	_smushVideoShouldFinish = true;
+	ScummEngine_v6::resetScumm();
+}
+#endif
+
 void ScummEngine_v60he::resetScumm() {
 	ScummEngine_v6::resetScumm();
 
