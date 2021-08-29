@@ -252,7 +252,7 @@ void QSystem::load(Common::ReadStream *s) {
 
 	petka->setPos(pos, false);
 
-	_xOffset = CLIP<int>(pos.x - 320, 0, _sceneWidth - 640);
+	_xOffset = CLIP<int>(pos.x - 320, _sceneWidth - 640, 0);
 
 	pos.x = s->readSint32LE();
 	pos.y = s->readSint32LE();
