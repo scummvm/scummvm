@@ -90,9 +90,8 @@ int loadBackground(const char *name, int idx) {
 
 	debug(1, "Loading BG: %s", name);
 
-	// WORKAROUND: Don't allow save/loading during endgame
+	// WORKAROUND: Don't allow saving during endgame
 	if (!strcmp(name, "DGF1.PI1")) {
-		_vm->_isEndGame = true;
 		userEnabled = false;
 	}
 
