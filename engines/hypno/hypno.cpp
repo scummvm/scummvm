@@ -860,16 +860,24 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 	if (!_prefixDir.empty())
 		name = _prefixDir + "/" + name;
 	debug("trying to play %s", name.c_str());
-	ByteArray *raw;
-	Audio::LoopingAudioStream *stream;
+	ByteArray *raw = nullptr;
+	Audio::LoopingAudioStream *stream = nullptr;
 
-	for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
-		if (it->name == name) {
-			raw = new ByteArray(it->data);
-			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-			break;
+	Common::File *file = new Common::File();
+	if (file->open(name)) {
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+	} else { 
+		for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
+			if (it->name == name) {
+				raw = new ByteArray(it->data);
+				stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+				break;
+			}
 		}
+	}
+
+	if (stream) {
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	}
 }
 

@@ -35,6 +35,7 @@ namespace Hypno {
 static const PlainGameDescriptor hypnoGames[] = {
 	{"sinister-six", "Marvel Comics Spider-Man: The Sinister Six"},
 	{"wetlands", "Wetlands"},
+	{"soldier-boyz", "Soldier Boyz"},
 	{0, 0}};
 
 static const ADGameDescription gameDescriptions[] = {
@@ -68,12 +69,21 @@ static const ADGameDescription gameDescriptions[] = {
 				"install.exe", "15a6b1b3819ef002438df340509b5373", 477839),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
-	 ADGF_TESTING,
+	 ADGF_UNSUPPORTED,
+	 GUIO1(GUIO_NOMIDI)},
+	{"soldier-boyz", // Solidier Boyz (US)
+	 "",
+	 AD_ENTRY2s("boyz.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 263347,
+				"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
+	 Common::EN_USA,
+	 Common::kPlatformWindows,
+	 ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NOMIDI)},
 	AD_TABLE_END_MARKER};
 } // End of namespace Hypno
 
 static const char *const directoryGlobs[] = {
+	"boyz",
 	"sixdemo",
 	"factory",
 	"wetlands",

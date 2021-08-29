@@ -36,11 +36,14 @@ public:
 };
 
 Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	debug("gameid: %s", desc->gameId);
+	bool isDemo = desc->flags & ADGF_DEMO;
 	if (Common::String(desc->gameId) == "wetlands") {
 		*engine = (Engine *)new Hypno::WetEngine(syst, desc);
 	} else if (Common::String(desc->gameId) == "sinister-six") {
 		*engine = (Engine *)new Hypno::SpiderEngine(syst, desc);
+	} else if (Common::String(desc->gameId) == "soldier-boyz") {
+		*engine = (Engine *)new Hypno::BoyzEngine(syst, desc);
+		error("Unsupported game");
 	} else
 		return Common::kUnsupportedGameidError;
 

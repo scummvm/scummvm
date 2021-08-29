@@ -84,6 +84,7 @@ void SpiderEngine::loadAssets() {
 	matrix.puzzle.levelIfWin = "sixdemo/mis/demo.mis";
 	matrix.puzzle.levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["sixdemo/puz_matr"] = matrix;
+	_soundPath = "c_misc/sound.lib/";
 }
 
 void SpiderEngine::runPuzzle(Puzzle puzzle) {
