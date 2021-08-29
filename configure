@@ -1883,11 +1883,6 @@ riscos)
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
-	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
-		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
-	elif `which bindhelp >/dev/null 2>&1`; then
-		add_line_to_config_mk "BINDHELP := bindhelp"
-	fi
 	;;
 *)
 	;;
