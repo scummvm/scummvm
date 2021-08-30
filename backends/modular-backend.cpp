@@ -258,6 +258,15 @@ bool ModularGraphicsBackend::lockMouse(bool visible) {
 }
 
 void ModularGraphicsBackend::warpMouse(int x, int y) {
+#ifdef ENABLE_EVENTRECORDER
+	// short circuit for EventRecorder calling warpMouse inside an event poll
+	if ((g_eventRec.getRecordMode() == GUI::EventRecorder::kRecorderPlayback) ||
+		(g_eventRec.getRecordMode() == GUI::EventRecorder::kRecorderUpdate)) {
+		_graphicsManager->warpMouse(x, y);
+		return;
+	}
+#endif
+
 	_eventManager->purgeMouseEvents();
 	_graphicsManager->warpMouse(x, y);
 }
