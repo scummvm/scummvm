@@ -177,48 +177,48 @@ void AndroidGraphics3dManager::updateScreen() {
 	if (!JNI::haveSurface())
 		return;
 
-		if (_game_pbuf) {
-			int pitch = _game_texture->width() * _game_texture->getPixelFormat().bytesPerPixel;
-			_game_texture->updateBuffer(0, 0, _game_texture->width(), _game_texture->height(),
-					_game_pbuf.getRawBuffer(), pitch);
-		}
+	if (_game_pbuf) {
+		int pitch = _game_texture->width() * _game_texture->getPixelFormat().bytesPerPixel;
+		_game_texture->updateBuffer(0, 0, _game_texture->width(), _game_texture->height(),
+				_game_pbuf.getRawBuffer(), pitch);
+	}
 
-		if (!_force_redraw &&
-				!_game_texture->dirty() &&
-				!_overlay_texture->dirty() &&
-				!_mouse_texture->dirty())
-			return;
+	if (!_force_redraw &&
+			!_game_texture->dirty() &&
+			!_overlay_texture->dirty() &&
+			!_mouse_texture->dirty())
+		return;
 
-		_force_redraw = false;
+	_force_redraw = false;
 
-		if (_frame_buffer) {
-			_frame_buffer->detach();
-			glViewport(0,0, JNI::egl_surface_width, JNI::egl_surface_height);
-		}
+	if (_frame_buffer) {
+		_frame_buffer->detach();
+		glViewport(0,0, JNI::egl_surface_width, JNI::egl_surface_height);
+	}
 
-		// clear pointer leftovers in dead areas
-		clearScreen(kClear);
+	// clear pointer leftovers in dead areas
+	clearScreen(kClear);
 
-		_game_texture->drawTextureRect();
-		if (!_show_overlay) {
-			glEnable(GL_BLEND);
-			_touchControls.draw();
-		}
+	_game_texture->drawTextureRect();
+	if (!_show_overlay) {
+		glEnable(GL_BLEND);
+		_touchControls.draw();
+	}
 
-		int cs = _mouse_targetscale;
+	int cs = _mouse_targetscale;
 
+	if (_show_overlay) {
+		// ugly, but the modern theme sets a wacko factor, only god knows why
+		cs = 1;
+
+		GLCALL(_overlay_texture->drawTextureRect());
+	}
+
+	if (_show_mouse && !_mouse_texture->isEmpty()) {
+		const Common::Point &mouse = g_system->getEventManager()->getMousePos();
 		if (_show_overlay) {
-			// ugly, but the modern theme sets a wacko factor, only god knows why
-			cs = 1;
-
-			GLCALL(_overlay_texture->drawTextureRect());
+			_mouse_texture->drawTexture(mouse.x * cs, mouse.y * cs, _mouse_texture->width(), _mouse_texture->height());
 		}
-
-		if (_show_mouse && !_mouse_texture->isEmpty()) {
-			const Common::Point &mouse = g_system->getEventManager()->getMousePos();
-			if (_show_overlay) {
-				_mouse_texture->drawTexture(mouse.x * cs, mouse.y * cs, _mouse_texture->width(), _mouse_texture->height());
-			}
 	}
 
 	if (!JNI::swapBuffers())
