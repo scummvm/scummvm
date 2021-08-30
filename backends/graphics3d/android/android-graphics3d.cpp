@@ -729,6 +729,9 @@ Common::List<Graphics::PixelFormat> AndroidGraphics3dManager::getSupportedFormat
 void AndroidGraphics3dManager::updateScreenRect() {
 	Common::Rect rect(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 
+	// setup the scissor to the full screen as we enable it when overlay is hidden
+	glScissor(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
+
 	_overlay_texture->setDrawRect(rect);
 
 	uint16 w = _game_texture->width();
