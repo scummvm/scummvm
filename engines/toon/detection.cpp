@@ -99,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"toon", "",
+		"toon", "Demo",
 		{
 			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
 			{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
@@ -109,7 +109,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"toon", "",
+		"toon", "Demo",
 		{
 			{"local.pak", 0, "8ef3368078b9ea70b305c04db826feea", 2680573},
 			{"generic.svl", 0, "5c42724bb93b360dca7044d6b7ef26e5", 7739319},
