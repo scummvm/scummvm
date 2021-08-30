@@ -178,7 +178,10 @@ public:
 	bool isConnectionLimited() override;
 	Common::String getSystemLanguage() const override;
 
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags) override;
+	int getGraphicsMode() const override;
 
 	void updateEventScale(uint32 w, uint32 h);
 };
