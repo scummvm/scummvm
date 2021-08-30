@@ -1457,6 +1457,8 @@ Nintendo DS
 
    * - Bertrand Augereau
      - HQ software scaler
+   * - Cameron Cawley
+     -
    * - Neil Millstone
      -
 

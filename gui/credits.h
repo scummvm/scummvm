@@ -709,6 +709,7 @@ static const char *credits[] = {
 "C1""Nintendo DS",
 "C0""Bertrand Augereau",
 "C2""HQ software scaler",
+"C0""Cameron Cawley",
 "C0""Neil Millstone",
 "",
 "C1""Nintendo Switch",
