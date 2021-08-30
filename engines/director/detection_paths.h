@@ -112,8 +112,8 @@ const char *directoryGlobs[] = {
 	"francais",						// Rename from Français
 	"italiano",						// Virtual Tourism Paris
 	"xn--HD-g73avcj4g7a5726ctwzw3ca1i6i",	   // HDにｺﾋﾟｰして下さい
-	"please copy to hd. G2",		// Rename from HDにｺﾋﾟｰして下さい。G2
-	"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
+	"xn--HDG2-rw3c5o2dpa9kzb2170dd4tzyda5j4k", // HDにｺﾋﾟｰして下さい。G2
+	"xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k", // HDにｺﾋﾟｰして下さい。G3
 	"_files_",						// The Gate
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
@@ -142,7 +142,7 @@ const char *directoryGlobs[] = {
 	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
 	"anim",							// 1 vs 100 (Mindscape)
-	"Lingo Expo",					// D4 sample movies
+	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"toinstall",					// Jönssonligan series
 	"pingucd",
