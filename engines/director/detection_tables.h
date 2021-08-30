@@ -315,6 +315,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rhem1",				"Rhem" },
 	{ "rhlava",				"Rescue Heroes: Lava Landslide" },
 	{ "rhmeteor",			"Rescue Heroes: Meteor Madness" },
+	{ "rodneyfs",			"Rodney's Funscreen" },
+	{ "rodneyfs2",			"Rodney's Funscreen² Extreme: Dinky's Revenge" },
+	{ "rodneyww",			"Rodney's Wonder Window" },
 	{ "safecracker", 		"Safecracker" },
 	{ "sajaklucky",			"Pat Sajak's Lucky Letters" },
 	{ "screamingmetal",		"Screaming Metal" },
@@ -472,6 +475,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "potala",             "1000 Years Potala" },
 	{ "princetonsat98",		"The Princeton Review: Inside the SAT '98" },
 	{ "revwar",     		"Revolutionary War Picture CD" },
+	{ "rodneyab",			"Rodney's Art Brain" },
 	{ "saguaro",            "Saguaro & the City: Investigate the Sonoran Desert with an Interactive CD ROM" },
 	{ "saillusion",     	"Scientific American Library: Illusion" },
 	{ "sarahcatalog",     	"Sarah McLachlan Catalogue" },
@@ -526,6 +530,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "catseyeview",		"Cat's Eye View" },
 	{ "childishgambino",	"Capturing Donald Glover's Motion" },
 	{ "colormind",   		"ColorMind" },
+	{ "crybaby",   			"Crying, Screaming Baby" },
 	{ "dfireworks",			"The Digital Fireworks Stand" },
 	{ "dreidel",			"DreidelLand: An Electronic Hanukah Treat" },
 	{ "emigre",				"Emigre Signs of Type: Big Cheese" },
@@ -1080,7 +1085,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "raydream",			"Ray Dream Designer" },
 	{ "readblasterjr",		"Reading Blaster Jr." },
 	{ "redshift",			"RedShift: Multimedia Astronomy" },
-	{ "rodney",				"Rodney's Funscreen" },
 	{ "rosettastone",		"The Rosetta Stone" },
 	{ "santafe1",			"Santa Fe Mysteries: The Elk Moon Murder" },
 	{ "shanghai",			"Shanghai: Great Moments" },
@@ -1859,8 +1863,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("refixion2", "", "Museum or Hospital", "1ae45c23586b41997ba52e2e7c771c4c", 375841, Common::JA_JPN, 300),
 	MACGAME1_l("refixion3", "", "The Reindeer Story", "f5277c53bacd27936158dd3867e587e2", 392473, Common::JA_JPN, 300),
 
-	// Full game is supported in MADE engine
-	MACDEMO1("rodney", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356866, 300),
+	// Original Mac version is Director. Later DOS port uses MADE engine (also in ScummVM).
+	MACDEMO1("rodneyfs", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356866, 300),
+
+    MACGAME1("rodneyww", "", "xn--Wonder Window-8q9g", "1ae45c23586b41997ba52e2e7c771c4c", 375468, 310),
+    WINGAME1("rodneyww", "", "RWW.EXE", "dac3b117db9be024ff6747b1b6c49d9c", 408259, 310),
 
 	MACGAME1("satodesign", "Gift Disk", "Animation", "a03ae8a9bf211bcb26388b6b6da17c2b", 389109, 311),
 	MACGAME1("satohomosexual", "", "SATO&NAKAZAWA", "a03ae8a9bf211bcb26388b6b6da17c2b", 736532, 311),
@@ -2294,6 +2301,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"INIT.DIR",	 "349635e29a5e28f88a43f3cf48b13380", 57796, 404),
 
 	WINDEMO1("connections", "Demo", "CONNECT.EXE", "9ee064f5c862e75cf73ba567724dc8b9", 690023, 404),
+
+	// Rodney Alan Greenblat for Nick Games
+	// Windows version from Disc Inferno from APC magazine (Australia), Dec 1999
+	// Later Shockwave version is from Nickelodeon Clickamajigs
+	WINGAME1("crybaby", "", "crybaby.exe", "e67c787e86a948dcac23fd0d533f53ab", 1211165, 404),
 
 	// From Personal Computer World (UK) disc no. 4 - Dec 1996
 	WINDEMO2("ctrain", "Demo", "DEMO.EXE", "d8226e09cff86cece90b52bc9eeaac7b", 1585550,
@@ -3801,6 +3813,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("raveshuttle", "", "Rave Shuttle", "7b0837f93c5de519acdf1feea2a4ccf2", 705673, Common::DE_DEU, 500),
 	WINGAME1_l("raveshuttle", "", "RAVES.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1000911, Common::DE_DEU, 500),
+
+    // Released only in Japan by Interlink of Minato City, Tokyo (1997)
+    // Games play fully in English with Japanese credits only
+    MACGAME1("rodneyab", "",  "ArtBrain",	  "4023a53e495618c3edb90531e09dc2d0", 720449, 501),
+    WINGAME1("rodneyab", "",  "ARTBRAIN.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410136, 501),
+    MACGAME1("rodneyfs2", "", "FunScreen2",	  "4023a53e495618c3edb90531e09dc2d0", 719253, 501),
+    WINGAME1("rodneyfs2", "", "FSCREEN2.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1412242, 501),
 
 	MACGAME1_l("rolypolys", "", 	 "ROLY_PPC", 	 "7f6e753dda02c8aca539b21e1d3a0108", 127326, Common::JA_JPN, 501),
 	MACDEMO1_l("rolypolys2", "Demo", "CatchUp!", 	 "1da813df08575abf9f94ec1151852005", 738510, Common::JA_JPN, 501),
