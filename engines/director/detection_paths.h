@@ -140,6 +140,7 @@ const char *directoryGlobs[] = {
 	"pingucd",
 	"instdata",						// Pingu
 	"bellinin bikinit",				// Bellini 3 (Finnish)
+	"put me on your desktop",		// Betty Page
 	"abc",							// Alphabet Train
 	"123",							// Ktar Alarkam
 	"vlaams",
@@ -154,6 +155,7 @@ const char *directoryGlobs[] = {
 	"nnnn",							// Nikolai Toy Makers
 	"knights",						// Nikolai's Knights
 	"birdmpc",						// Bird's Life
+	"nemcina",						// Německá gramatika
 	"hdfiles",
 	"creator",						// Get a Head series
 	"32bit",
@@ -163,6 +165,14 @@ const char *directoryGlobs[] = {
 	"typing",						// Slam Dunk Typing
 	"ceremony",
 	"copytohd",						// Ceremony of Innocence
+	"settings",						// Saguaro & the City
+	"maccurio",
+	"wincurio",						// Curio City
+	"a.d.a.m. the inside story 1.1", // ADAM
+	"nine month miracle 1.0",		// Nine Month Miracle
+	"_setup",
+	"bin",
+	"adam resources",				// ADAM Software Products
 	0
 };
 
