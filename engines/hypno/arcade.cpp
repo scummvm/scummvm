@@ -1,15 +1,54 @@
-#include "hypno/grammar.h"
-#include "hypno/hypno.h"
-
+#include "common/tokenizer.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
 
+#include "hypno/grammar.h"
+#include "hypno/hypno.h"
+
 namespace Hypno {
+
+extern int parse_arc(const char *);
+
+void HypnoEngine::parseArcadeShooting(Common::String prefix, Common::String filename, Common::String data) {
+	debugC(1, kHypnoDebugParser, "Parsing %s%s", prefix.c_str(), filename.c_str());
+	parse_arc(data.c_str());
+	Level level;
+	level.arcade = g_parsedArc;
+	level.arcade.prefix = prefix;
+	_levels[filename] = level;
+	g_parsedArc.background.clear();
+	g_parsedArc.player.clear();
+	g_parsedArc.shoots.clear();
+}
+
+ShootSequence HypnoEngine::parseShootList(Common::String filename, Common::String data) {
+	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
+	Common::StringTokenizer tok(data, " ,\t");
+	Common::String t;
+	Common::String n;
+	ShootInfo si;
+	ShootSequence seq;
+	while (!tok.empty()) {
+		t = tok.nextToken();
+		if (t[0] == '\n')
+			continue;
+		n = tok.nextToken();
+		if (t == "Z")
+			break;
+
+		Common::replace(n, "\nS", "");
+		Common::replace(n, "\nZ\n", "");
+		si.name = n;
+		si.timestamp = atoi(t.c_str());
+		seq.push_back(si);
+		debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
+	}
+	return seq;
+}
 
 void HypnoEngine::drawPlayer(Common::String player, MVideo &background) { error("not implemented"); }
 void HypnoEngine::drawHealth() { error("not implemented"); }
 void HypnoEngine::drawShoot(Common::Point target) { error("not implemented"); }
-
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
 
@@ -44,8 +83,13 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				drawShoot(mousePos);
-				clickedShoot(mousePos);
+				if (clickedPrimaryShoot(mousePos))
+					drawShoot(mousePos);
+				break;
+
+			case Common::EVENT_RBUTTONDOWN:
+				if (clickedSecondaryShoot(mousePos))
+					drawShoot(mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -59,12 +103,20 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 		if (_health <= 0) {
 			skipVideo(background);
+			if (!arc.defeatVideos.empty()) {
+				MVideo video(arc.defeatVideos.front(), Common::Point(0, 0), false, false, false);
+				runIntro(video);
+			}
 			_nextLevel = arc.levelIfLose;
 			return;
 		}
 
 		if (background.decoder->endOfVideo()) {
 			skipVideo(background);
+			if (!arc.winVideos.empty()) {
+				MVideo video(arc.winVideos.front(), Common::Point(0, 0), false, false, false);
+				runIntro(video);
+			}
 			_nextLevel = arc.levelIfWin;
 			return;
 		}
@@ -105,7 +157,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		}
 		if (shootsToRemove.size() > 0) {
 			for (Common::List<uint32>::iterator it = shootsToRemove.begin(); it != shootsToRemove.end(); ++it) {
-				//debug("removing %d from %d size", *it, _shoots.size());
+				debugC(1, kHypnoDebugArcade, "Removing %d from %d size", *it, _shoots.size());
 				_shoots.remove_at(*it);
 			}
 		}
@@ -154,7 +206,7 @@ void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
 
 }
 
-bool HypnoEngine::clickedShoot(Common::Point mousePos) {
+bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) {
 	int i = detectTarget(mousePos);
 	int w = 0;
 	int h = 0;
@@ -166,7 +218,11 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 		_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
 		_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
 	}
-	return (i > 0);
+	return true;
+}
+
+bool HypnoEngine::clickedSecondaryShoot(Common::Point mousePos) {
+	return false;
 }
 
 } // End of namespace Hypno

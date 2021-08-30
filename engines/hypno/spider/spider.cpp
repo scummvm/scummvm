@@ -75,6 +75,8 @@ void SpiderEngine::loadAssets() {
 	parseScene("sixdemo", "mis/alley.mis");
 	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
 	_levels["sixdemo/mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
+	_levels["sixdemo/mis/alley.mis"].scene.levelIfWin = "sixdemo/mis/demo.mis";
+	_levels["sixdemo/mis/alley.mis"].scene.levelIfLose = "sixdemo/mis/demo.mis";
 
 	parseScene("sixdemo", "mis/shoctalk.mis");
 

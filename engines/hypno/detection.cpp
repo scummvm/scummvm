@@ -26,9 +26,10 @@
 #include "hypno/hypno.h"
 
 static const DebugChannelDef debugFlagList[] = {
-	{Hypno::kHypnoDebugFunction, "functions", "Function execution debug channel"},
-	{Hypno::kHypnoDebugCode, "code", "Code execution debug channel"},
-	{Hypno::kHypnoDebugScript, "script", "Script execution debug channel"},
+	{Hypno::kHypnoDebugMedia, "media", "Media debug channel"},
+	{Hypno::kHypnoDebugParser, "parser", "Parser debug channel"},
+	{Hypno::kHypnoDebugScene, "scene", "Scene debug channel"},
+	{Hypno::kHypnoDebugArcade, "arcade", "Arcade debug channel"},
 	DEBUG_CHANNEL_END};
 
 namespace Hypno {
