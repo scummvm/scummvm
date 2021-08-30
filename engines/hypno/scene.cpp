@@ -54,6 +54,7 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	level.scene.prefix = prefix;
 	level.scene.hots = *g_parsedHots;
 	_levels[filename] = level;
+	free(buf);
 }
 
 void HypnoEngine::resetSceneState() {
@@ -206,7 +207,7 @@ void HypnoEngine::runScene(Scene scene) {
 					leftClickedConversation(mousePos);
 					break;
 				}
-				if (!_nextHotsToAdd && !_nextHotsToRemove && _videosPlaying.size() == 0)
+				if (!_nextHotsToAdd && !_nextHotsToRemove /*&& _videosPlaying.size() == 0*/)
 					clickedHotspot(mousePos);
 				break;
 

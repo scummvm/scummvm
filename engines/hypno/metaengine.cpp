@@ -36,7 +36,6 @@ public:
 };
 
 Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	bool isDemo = desc->flags & ADGF_DEMO;
 	if (Common::String(desc->gameId) == "wetlands") {
 		*engine = (Engine *)new Hypno::WetEngine(syst, desc);
 	} else if (Common::String(desc->gameId) == "sinister-six") {

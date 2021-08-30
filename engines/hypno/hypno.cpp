@@ -56,7 +56,7 @@ MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent,
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0),
-	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
+	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr), _font(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
@@ -74,7 +74,16 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 HypnoEngine::~HypnoEngine() {
-	// Dispose your resources
+	// Deallocate actions
+	for (Levels::iterator it = _levels.begin(); it != _levels.end(); ++it) {
+		Level level = (*it)._value;
+		for (Hotspots::iterator itt = level.scene.hots.begin(); itt != level.scene.hots.end(); ++itt) {
+			Hotspot hot = *itt; 
+			for (Actions::iterator ittt = hot.actions.begin(); ittt != hot.actions.end(); ++ittt)
+				delete (*ittt);
+		}
+	}
+
 	delete _rnd;
 }
 
@@ -103,10 +112,10 @@ void HypnoEngine::loadLib(Common::String filename, LibData &r) {
 			if (b != 0x96 && b != 0x0)
 				f.name += tolower(char(b));
 		}
-		debug("name: %s", f.name.c_str());
+		debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
 		start = libfile.readUint32LE();
 		size = libfile.readUint32LE();
-		debug("field: %x", libfile.readUint32LE());
+		libfile.readUint32LE(); // some field? 
 
 		pos = libfile.pos();
 		libfile.seek(start);
@@ -117,7 +126,7 @@ void HypnoEngine::loadLib(Common::String filename, LibData &r) {
 				b = b ^ 0xfe;
 			f.data.push_back(b);
 		}
-		debug("size: %d", f.data.size());
+		debugC(1, kHypnoDebugParser, "size: %d", f.data.size());
 		libfile.seek(pos);
 		if (size > 0)
 			r.push_back(f);
@@ -142,6 +151,7 @@ Common::Error HypnoEngine::run() {
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
+	assert(_compositeSurface == nullptr);
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
@@ -271,14 +281,11 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
 
-	//debug("decoding %s with %d frames", path.c_str(), vd.getFrameCount());
-
 	for (int f = 0; f < n; f++)
 		vd.decodeNextFrame();
 
 	const Graphics::Surface *frame = vd.decodeNextFrame();
 	Graphics::Surface *rframe;
-	//debug("decoding: %s %d %d", name.c_str(), frame->h, frame->w);
 	if (convert) {
 		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
 	} else {
