@@ -349,7 +349,12 @@ const char *Room::getText(uint16 textId) {
 		error("Missing text ID: %d", textId);
 
 	switch (_vm->getLanguage()) {
-		// TODO: Add non-English languages
+	case Common::FR_FRA:
+		offset = offsets->offsetFrenchCD;
+		break;
+	case Common::DE_DEU:
+		offset = offsets->offsetGermanCD;
+		break;
 	default:
 		offset = isCD ? offsets->offsetEnglishCD : offsets->offsetEnglishFloppy;
 		break;
