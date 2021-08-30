@@ -71,7 +71,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_use_mouse_palette(false)
 {
 	_game_texture = new GLESFakePalette565Texture();
-	_overlay_texture = new GLES4444Texture();
+	_overlay_texture = new GLES5551Texture();
 	_mouse_texture_palette = new GLESFakePalette5551Texture();
 	_mouse_texture = _mouse_texture_palette;
 

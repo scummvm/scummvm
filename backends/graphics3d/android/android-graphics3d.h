@@ -163,7 +163,7 @@ private:
 	int _cursorX, _cursorY;
 
 	// Overlay layer
-	GLES4444Texture *_overlay_texture;
+	GLES5551Texture *_overlay_texture;
 	bool _show_overlay;
 
 	// Mouse layer
