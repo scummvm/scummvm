@@ -59,7 +59,7 @@ AndroidGraphicsManager::~AndroidGraphicsManager() {
 }
 
 void AndroidGraphicsManager::initSurface() {
-	LOGD("initializing surface");
+	LOGD("initializing 2D surface");
 
 	assert(!JNI::haveSurface());
 	JNI::initSurface();
@@ -78,7 +78,7 @@ void AndroidGraphicsManager::deinitSurface() {
 	if (!JNI::haveSurface())
 		return;
 
-	LOGD("deinitializing surface");
+	LOGD("deinitializing 2D surface");
 
 	notifyContextDestroy();
 
