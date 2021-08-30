@@ -361,7 +361,6 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	}
 #endif
 
-	String full_path = String::FromFormat("%s%s", parent_dir.BaseDir.GetCStr(), child_path.GetCStr());
 	// don't allow write operations for relative paths outside game dir
 	ResolvedPath test_rp = ResolvedPath(parent_dir, child_path, alt_path);
 	if (!read_only) {
