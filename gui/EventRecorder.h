@@ -168,6 +168,10 @@ public:
 			_initialized = _savedState;
 	}
 
+	RecordMode getRecordMode() {
+		return _recordMode;
+	}
+
 	Common::StringArray listSaveFiles(const Common::String &pattern);
 	Common::String generateRecordFileName(const Common::String &target);
 

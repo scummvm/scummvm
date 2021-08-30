@@ -205,8 +205,6 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		_processingMillis = true;
 		_fakeTimer = _nextEvent.time;
 		millis = _fakeTimer;
-		debug(3, "millis event: %u", millis);
-
 		updateSubsystems();
 		_nextEvent = _playbackFile->getNextEvent();
 		_timerManager->handler();
@@ -261,7 +259,6 @@ void EventRecorder::processScreenUpdate() {
 			}
 			_processingMillis = true;
 			_fakeTimer = _nextEvent.time;
-			debug(3, "screenUpdate event: %u", _fakeTimer);
 			updateSubsystems();
 			_nextEvent = _playbackFile->getNextEvent();
 			_timerManager->handler();
