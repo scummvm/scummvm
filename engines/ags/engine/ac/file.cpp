@@ -371,6 +371,9 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	}
 
 	rp = test_rp;
+	debugC(::AGS::kDebugFilePath, "Final path: %s", rp.FullPath.GetCStr());
+	if (!rp.AltPath.IsEmpty())
+		debugC(::AGS::kDebugFilePath, "Alt path: %s", rp.AltPath.GetCStr());
 	return true;
 }
 
