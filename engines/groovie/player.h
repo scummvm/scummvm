@@ -63,8 +63,9 @@ private:
 	bool _begunPlaying;
 	bool _overrideSpeed;
 	uint16 _fps;
-	uint16 _millisBetweenFrames;
+	float _millisBetweenFrames;
 	uint32 _lastFrameTime;
+	float _frameTimeDrift;
 
 protected:
 	void waitFrame();

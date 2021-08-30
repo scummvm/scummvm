@@ -59,9 +59,9 @@ void VideoPlayer::setOverrideSpeed(bool isOverride) {
 	_overrideSpeed = isOverride;
 	if (_fps != 0) {
 		if (isOverride)
-			_millisBetweenFrames = 1000 / 26;
+			_millisBetweenFrames = 1000.0f / 26.0f;
 		else
-			_millisBetweenFrames = 1000 / _fps;
+			_millisBetweenFrames = 1000.0f / float(_fps);
 	}
 }
 
@@ -97,16 +97,26 @@ void VideoPlayer::waitFrame() {
 	if (!_begunPlaying) {
 		_begunPlaying = true;
 		_lastFrameTime = currTime;
+		_frameTimeDrift = 0.0f;
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
-		if (millisDiff < _millisBetweenFrames) {
-			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%d)",
-					_millisBetweenFrames - millisDiff, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames);
-			_syst->delayMillis(_millisBetweenFrames - millisDiff);
+		float fMillis = _millisBetweenFrames + _frameTimeDrift;
+		// use floorf instead of roundf, because delayMillis often slightly over-sleeps
+		uint32 millisSleep = fmaxf( 0.0f, floorf(fMillis) - float(millisDiff));
+		
+		if (millisSleep > 0) {
+			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%.2f, _frameTimeDrift=%.2f)",
+				   millisSleep, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames, _frameTimeDrift);
+			_syst->delayMillis(millisSleep);
 			currTime = _syst->getMillis();
 			debugC(7, kDebugVideo, "Groovie::Player: Finished delay at %d", currTime);
 		}
-		debugC(6, kDebugVideo, "Groovie::Player: Frame displayed at %d (%f FPS)", currTime, 1000.0 / (currTime - _lastFrameTime));
+
+		_frameTimeDrift = fMillis - float(currTime - _lastFrameTime);
+		if (abs(_frameTimeDrift) >= _millisBetweenFrames) {
+			_frameTimeDrift = 0;
+		}
+		debugC(6, kDebugVideo, "Groovie::Player: Frame displayed at %d (%f FPS), _frameTimeDrift=%.2f", currTime, 1000.0 / (currTime - _lastFrameTime), _frameTimeDrift);
 		_lastFrameTime = currTime;
 	}
 }
