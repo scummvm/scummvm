@@ -59,6 +59,9 @@ void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 p
 	if (volume <= -10000)
 		return;
 
+	if (_vm->checkGameVersion("Demo") && RESOURCE_PACK(resourceId) == kResourcePackSound)
+		resourceId = MAKE_RESOURCE(kResourcePackShared, RESOURCE_INDEX(resourceId));
+
 	SoundQueueItem *item = getItem(resourceId);
 	if (item) {
 		// Duplicate the queue entry

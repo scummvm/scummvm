@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 
+#include "asylum/asylum.h"
 #include "asylum/shared.h"
 
 namespace Asylum {
@@ -71,7 +72,7 @@ private:
 
 class ResourceManager {
 public:
-	ResourceManager();
+	ResourceManager(AsylumEngine *vm);
 	~ResourceManager();
 
 	/**
@@ -114,6 +115,7 @@ private:
 
 	int            _cdNumber;
 	ResourcePackId _musicPackId;
+	AsylumEngine  *_vm;
 };
 
 } // end of namespace Asylum

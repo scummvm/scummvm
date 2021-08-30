@@ -171,6 +171,9 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	for (int32 i = 0; i < 20; i++)
 		_distancesNSEO[i] = stream->readSint32LE();
 
+	if (_vm->checkGameVersion("Demo"))
+		return;
+
 	_actionIdx2           = stream->readSint32LE();
 	_field_924            = stream->readSint32LE();
 	_lastScreenUpdate     = stream->readUint32LE();

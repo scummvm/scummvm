@@ -271,7 +271,13 @@ void Scene::load(ResourcePackId packId) {
 	_ws = new WorldStats(_vm);
 	_ws->load(fd);
 
+	if (_vm->checkGameVersion("Demo"))
+		fd->seek(0x1D72E, SEEK_SET);
+
 	_polygons = new Polygons(fd);
+
+	if (_vm->checkGameVersion("Demo"))
+		fd->seek(3 * 4, SEEK_CUR);
 
 	ScriptManager *script = getScript();
 	script->resetAll();
@@ -416,11 +422,13 @@ bool Scene::action(AsylumAction a) {
 		break;
 
 	case kAsylumActionQuickLoad:
-		getSaveLoad()->quickLoad();
+		if (!_vm->checkGameVersion("Demo"))
+			getSaveLoad()->quickLoad();
 		break;
 
 	case kAsylumActionQuickSave:
-		getSaveLoad()->quickSave();
+		if (!_vm->checkGameVersion("Demo"))
+			getSaveLoad()->quickSave();
 		break;
 
 	case kAsylumActionSwitchToSarah:
@@ -464,7 +472,8 @@ bool Scene::key(const AsylumEvent &evt) {
 			if (getCursor()->isHidden())
 				break;
 
-			_vm->switchEventHandler(_vm->menu());
+			if (!_vm->checkGameVersion("Demo"))
+				_vm->switchEventHandler(_vm->menu());
 		}
 		break;
 
@@ -2357,7 +2366,7 @@ void Scene::changePlayerUpdate(ActorIndex index) {
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
 void Scene::preload() {
-	if (!Config.showSceneLoading)
+	if (!Config.showSceneLoading || _vm->checkGameVersion("Demo"))
 		return;
 
 	SceneTitle *title = new SceneTitle(_vm);

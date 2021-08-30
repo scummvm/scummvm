@@ -119,7 +119,7 @@ Common::Error AsylumEngine::run() {
 	setDebugger(_console);
 
 	// Create resource manager
-	_resource  = new ResourceManager();
+	_resource  = new ResourceManager(this);
 	_resource->setCdNumber(1);
 
 	// Create all game classes
@@ -137,10 +137,15 @@ Common::Error AsylumEngine::run() {
 
 	// Create main menu
 	_menu  = new Menu(this);
-	_handler = _menu;
+	if (checkGameVersion("Demo")) {
+		_video->play(0, NULL);
+		restart();
+	} else {
+		_handler = _menu;
 
-	// Load config
-	Config.read();
+		// Load config
+		Config.read();
+	}
 
 	// Setup mixer
 	syncSoundSettings();
@@ -174,7 +179,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
 	// Load the default mouse cursor
-	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
+	if (!checkGameVersion("Demo"))
+		_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
 	_cursor->hide();
 
 	// Clear the graphic list
@@ -298,13 +304,13 @@ void AsylumEngine::playIntro() {
 	if (!_introPlayed) {
 		_cursor->hide();
 		_cursor->setForceHide(true);
-		if (!Config.showIntro) {
+		if (!Config.showIntro && !checkGameVersion("Demo")) {
 			if (_scene->worldstats()->chapter == kChapter1)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
 		} else {
 			_sound->playMusic(kResourceNone, 0);
 
-			_video->play(1, _menu);
+			_video->play(1, checkGameVersion("Demo") ? NULL : _menu);
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -316,10 +322,10 @@ void AsylumEngine::playIntro() {
 
 			// Play the intro speech: it is played after the intro video over a black background,
 			// and the game is "locked" until the speech is completed.
-			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
+			ResourceId introSpeech = MAKE_RESOURCE(checkGameVersion("Demo") ? kResourcePackShared : kResourcePackSound, 7);
 			_sound->playSound(introSpeech);
 
-			int8 skip = 0;
+			bool skip = false;
 			do {
 				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
@@ -468,7 +474,7 @@ void AsylumEngine::processDelayedEvents() {
 // Message handlers
 //////////////////////////////////////////////////////////////////////////
 void AsylumEngine::switchEventHandler(EventHandler *handler) {
-	if (handler == NULL)
+	if (handler == NULL && !checkGameVersion("Demo"))
 		warning("[AsylumEngine::switchMessageHandler] NULL handler parameter (shouldn't happen outside of debug commands)!");
 
 	// De-init previous handler

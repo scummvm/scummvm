@@ -48,7 +48,7 @@ const struct {
 // ResourceManager
 //////////////////////////////////////////////////////////////////////////
 
-ResourceManager::ResourceManager() : _cdNumber(-1), _musicPackId(kResourcePackInvalid) {
+ResourceManager::ResourceManager(AsylumEngine *vm) : _cdNumber(-1), _musicPackId(kResourcePackInvalid), _vm(vm) {
 }
 
 ResourceManager::~ResourceManager() {
@@ -76,9 +76,18 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 		ResourcePack *pack;
 
 		if (isMusicPack) {
-			pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
+			if (_vm->checkGameVersion("Demo"))
+				pack = new ResourcePack("res.002");
+			else
+				pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
 		} else {
 			if (packId == kResourcePackSharedSound) {
+				if (_vm->checkGameVersion("Demo")) {
+					pack = new ResourcePack("res.004");
+					cache->setVal(packId, pack);
+					return cache->getVal(packId)->get(index);
+				}
+
 				if (_cdNumber == -1)
 					error("[ResourceManager::get] Cd number has not been set!");
 

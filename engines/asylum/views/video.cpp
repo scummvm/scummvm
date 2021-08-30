@@ -73,14 +73,16 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 		break;
 
 	case EVENT_ASYLUM_INIT:
-		_previousFont = getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));
+		if (!_vm->checkGameVersion("Demo"))
+			_previousFont = getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));
 		_subtitleCounter = 0;
 		_subtitleIndex = -1;
 		break;
 
 	case EVENT_ASYLUM_DEINIT:
 		getScreen()->clear();
-		getText()->loadFont(_previousFont);
+		if (!_vm->checkGameVersion("Demo"))
+			getText()->loadFont(_previousFont);
 		break;
 
 	case EVENT_ASYLUM_SUBTITLE: {
