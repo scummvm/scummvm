@@ -49,9 +49,10 @@ namespace Hypno {
 
 // debug channels
 enum {
-	kHypnoDebugFunction = 1 << 0,
-	kHypnoDebugCode = 1 << 1,
-	kHypnoDebugScript = 1 << 2
+	kHypnoDebugMedia = 1 << 0,
+	kHypnoDebugParser = 1 << 1,
+	kHypnoDebugArcade = 1 << 2,
+	kHypnoDebugScene = 1 << 3,
 };
 
 typedef Common::Array<byte> ByteArray;
@@ -83,9 +84,9 @@ public:
 	Levels _levels;
 	LibData _soundFiles;
 	LibData _fontFiles;
-	Common::HashMap<Common::String, int> _levelState;
-	void resetLevelState();
-	bool checkLevelCompleted();
+	Common::HashMap<Common::String, int> _sceneState;
+	void resetSceneState();
+	bool checkSceneCompleted();
 	void runLevel(Common::String name);
 	void runScene(Scene scene);
 	void runArcade(ArcadeShooting arc);
@@ -102,7 +103,6 @@ public:
 
 	// User input
 	void clickedHotspot(Common::Point);
-	bool clickedShoot(Common::Point);
 	bool hoverHotspot(Common::Point);
 
 	// Cursors
@@ -192,6 +192,8 @@ public:
 
 	// Arcade
 	int detectTarget(Common::Point mousePos);
+	virtual bool clickedPrimaryShoot(Common::Point);
+	virtual bool clickedSecondaryShoot(Common::Point);
 	virtual void drawShoot(Common::Point);
 	void drawCursorArcade(Common::Point mousePos);
 	virtual void drawPlayer(Common::String player, MVideo &background);
@@ -222,6 +224,8 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
+	bool clickedSecondaryShoot(Common::Point) override;
+
 	void drawShoot(Common::Point) override;
 	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth() override;

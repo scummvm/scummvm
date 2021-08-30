@@ -6,6 +6,10 @@
 
 namespace Hypno {
 
+bool WetEngine::clickedSecondaryShoot(Common::Point mousePos) {
+	return clickedPrimaryShoot(mousePos);
+}
+
 void WetEngine::drawShoot(Common::Point mousePos) {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
@@ -19,6 +23,7 @@ void WetEngine::drawShoot(Common::Point mousePos) {
 }
 
 void WetEngine::drawPlayer(Common::String player, MVideo &background) {
+	// TARGET ACQUIRED frame
 	uint32 c = _pixelFormat.RGBToColor(32, 208, 32);
 	_compositeSurface->drawLine(113, 1, 119, 1, c);
 	_compositeSurface->drawLine(200, 1, 206, 1, c);

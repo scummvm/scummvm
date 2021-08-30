@@ -78,14 +78,19 @@ void WetEngine::loadAssets() {
 		parseArcadeShooting("wetlands", arclevel, arc);
 		_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 		_levels[arclevel].arcade.prefix = "wetlands";
-		_levels[arclevel].arcade.levelIfLose = "<gameover>";
+		//_levels[arclevel].arcade.levelIfLose = "<gameover>";
 		//Common::replace(_levels[arclevel].arcade.music, "sound\\", "");
-		if (k < files.size() - 1)
+		if (k < files.size() - 1) {
 			_levels[arclevel].arcade.levelIfWin = files[k + 1].name;
+			// failing a level in the demo takes you to the next one anyway
+			_levels[arclevel].arcade.levelIfLose = files[k + 1].name; 
+		}
+			
 	}
 
-	debug("%s", arc.c_str());
-	debug("------------------------------------");
+	// After finish the second level, it's always game over
+	_levels[files[k-1].name].arcade.levelIfWin = "<gameover>";
+	_levels[files[k-1].name].arcade.levelIfLose = "<gameover>"; 
 
 	Level over;
 	over.trans.level = "<quit>";

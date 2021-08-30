@@ -3,6 +3,8 @@ MODULE := engines/hypno
 MODULE_OBJS := \
 	cursors.o \
 	metaengine.o \
+	actions.o \
+	scene.o \
 	arcade.o \
 	lexer_mis.o \
 	grammar_mis.o \

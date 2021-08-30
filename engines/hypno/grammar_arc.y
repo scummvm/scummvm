@@ -113,6 +113,10 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 	  | BNTOK FILENAME {
 		  if (Common::String("B0") == $1)
 		  	g_parsedArc.intro = $2;
+		  else if(Common::String("B1") == $1 || Common::String("B@") == $1)
+		    g_parsedArc.winVideos.push_back($2);
+		  else if(Common::String("B3") == $1 || Common::String("B3") == $1)
+		    g_parsedArc.defeatVideos.push_back($2);
 		 	
 		  debug("BN %s", $2); 
 		}
