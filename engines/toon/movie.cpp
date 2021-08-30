@@ -87,8 +87,11 @@ void Movie::play(const Common::String &video, int32 flags) {
 	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
-	if (!_decoder->loadFile(video.c_str()))
+	if (!_decoder->loadFile(video.c_str())) {
+		if (flags & 2)
+			return;
 		error("Unable to play video %s", video.c_str());
+	}
 	_subtitle->load(video.c_str());
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(true);
