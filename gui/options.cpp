@@ -2512,7 +2512,7 @@ void GlobalOptionsDialog::addOnlineControls(GuiObject *boss, const Common::Strin
 	if (ConfMan.hasKey("byonline_session_address"))
 		sessionAddress = ConfMan.get("byonline_session_address");
 	else
-		sessionAddress = Common::String("backyardsports.online");
+		sessionAddress = Common::String("server.backyardsports.online");
 
 	_sessionAddr = new EditTextWidget(boss, prefix + "SessionAddress", sessionAddress, Common::U32String(), 0, 0);
 	_sessionAddrClearButton = addClearButton(boss, prefix + "SessionAddrClearButton", kSessionAddrClearCmd);
@@ -3150,11 +3150,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #endif
 #ifdef USE_BYONLINE
 	case kServerAddrClearCmd:
-		_serverAddr->setEditString(Common::U32String("backyardsports.online"));
+		_serverAddr->setEditString(Common::U32String("server.backyardsports.online"));
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kSessionAddrClearCmd:
-		_sessionAddr->setEditString(Common::U32String("backyardsports.online"));
+		_sessionAddr->setEditString(Common::U32String("server.backyardsports.online"));
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kWebUrlClearCmd:
@@ -3162,8 +3162,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kResetSettingsCmd:
-		_serverAddr->setEditString(Common::U32String("backyardsports.online"));
-		_sessionAddr->setEditString(Common::U32String("backyardsports.online"));
+		_serverAddr->setEditString(Common::U32String("server.backyardsports.online"));
+		_sessionAddr->setEditString(Common::U32String("server.backyardsports.online"));
 
 		_webLoginCheckbox->setState(true);
 		_webUrl->setEditString(Common::U32String("https://backyardsports.online/api/login"));

@@ -68,7 +68,7 @@ void BYOnline::connect() {
 		address = ConfMan.get("byonline_server_address");
 	else
 		// Default address
-		address = Common::String("backyardsports.online");
+		address = Common::String("server.backyardsports.online");
 
 	uint16 port = 9130;
 	if (address.contains(":")) {

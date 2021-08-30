@@ -314,7 +314,7 @@ bool DirectPlay::connectToSessionServer() {
 		host = ConfMan.get("byonline_session_address");
 	else
 		// Default address
-		host = Common::String("backyardsports.online");
+		host = Common::String("server.backyardsports.online");
 
 	uint16 port = 9130;
 	if (host.contains(":")) {
