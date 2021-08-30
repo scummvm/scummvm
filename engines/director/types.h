@@ -382,6 +382,13 @@ struct CastMemberID {
 	Common::String asString() const;
 };
 
+enum CompareResult {
+	kCompareLess,
+	kCompareEqual,
+	kCompareGreater,
+	kCompareError
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

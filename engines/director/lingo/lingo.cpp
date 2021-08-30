@@ -1006,34 +1006,41 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	return 0;
 }
 
-int Datum::compareTo(Datum &d) const {
+CompareResult Datum::compareTo(Datum &d) const {
 	int alignType = g_lingo->getAlignedType(*this, d, false);
 
 	if (alignType == FLOAT) {
 		double f1 = asFloat();
 		double f2 = d.asFloat();
 		if (f1 < f2) {
-			return -1;
+			return kCompareLess;
 		} else if (f1 == f2) {
-			return 0;
+			return kCompareEqual;
 		} else {
-			return 1;
+			return kCompareGreater;
 		}
 	} else if (alignType == INT) {
 		double i1 = asInt();
 		double i2 = d.asInt();
 		if (i1 < i2) {
-			return -1;
+			return kCompareLess;
 		} else if (i1 == i2) {
-			return 0;
+			return kCompareEqual;
 		} else {
-			return 1;
+			return kCompareGreater;
 		}
 	} else if (alignType == STRING) {
-		return compareStrings(asString(), d.asString());
+		int res = compareStrings(asString(), d.asString());
+		if (res < 0) {
+			return kCompareLess;
+		} else if (res == 0) {
+			return kCompareEqual;
+		} else {
+			return kCompareGreater;
+		}
 	} else {
 		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
-		return 0;
+		return kCompareError;
 	}
 }
 

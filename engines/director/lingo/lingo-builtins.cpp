@@ -886,7 +886,7 @@ void LB::b_max(int nargs) {
 			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
 				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item.compareTo(max) > 0) {
+				if (i == 0 || item.compareTo(max) == kCompareGreater) {
 					max = item;
 				}
 			}
@@ -899,7 +899,7 @@ void LB::b_max(int nargs) {
 			if (d.type == ARRAY) {
 				warning("b_max: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d.compareTo(max) > 0) {
+			if (i == 0 || d.compareTo(max) == kCompareGreater) {
 				max = d;
 			}
 		}
@@ -919,7 +919,7 @@ void LB::b_min(int nargs) {
 			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
 				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item.compareTo(min) < 0) {
+				if (i == 0 || item.compareTo(min) == kCompareLess) {
 					min = item;
 				}
 			}
@@ -932,7 +932,7 @@ void LB::b_min(int nargs) {
 			if (d.type == ARRAY) {
 				warning("b_min: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d.compareTo(min) < 0) {
+			if (i == 0 || d.compareTo(min) == kCompareLess) {
 				min = d;
 			}
 		}

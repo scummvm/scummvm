@@ -174,7 +174,7 @@ struct Datum {	/* interpreter stack type */
 	const char *type2str(bool isk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
-	int compareTo(Datum &d) const;
+	CompareResult compareTo(Datum &d) const;
 };
 
 struct ChunkReference {
