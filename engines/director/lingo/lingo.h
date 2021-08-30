@@ -175,6 +175,12 @@ struct Datum {	/* interpreter stack type */
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
 	CompareResult compareTo(Datum &d) const;
+
+	bool operator==(Datum &d) const;
+	bool operator>(Datum &d) const;
+	bool operator<(Datum &d) const;
+	bool operator>=(Datum &d) const;
+	bool operator<=(Datum &d) const;
 };
 
 struct ChunkReference {
