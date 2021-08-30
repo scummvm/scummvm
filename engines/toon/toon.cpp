@@ -1136,7 +1136,8 @@ Common::Error ToonEngine::run() {
 		getMoviePlayer()->play("VIELOGOM.SMK", _isDemo ? 0x12 : 0x10);
 
 		// show mainmenu
-		if (!showMainmenu(loadedGame)) {
+		// the demo does not have a menu and starts a new game right away
+		if (!_isDemo && !showMainmenu(loadedGame)) {
 			return Common::kNoError;
 		}
 	}
