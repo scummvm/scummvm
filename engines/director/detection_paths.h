@@ -55,6 +55,14 @@ const char *directoryGlobs[] = {
 	"assets",						// Barbie Nail Designer
 	"fjpc",							// Forestia Jr
 	"movies",						// Mulle Meck (Gary Gadget) series
+	"winroot",
+	"setup",
+	"program files",
+	"tohd",
+	"terzio",
+	"flugzeuge bauen",
+	"willyhau",
+	"willyraumschiff",				// Willy Werkel (Mulle Meck) series
 	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",

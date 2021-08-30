@@ -156,6 +156,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gadgetpaf",			"Gadget: Past as Future" },
 	{ "garage",				"Garage: Bad Dream Adventure" }, // English fan translation
 	{ "garfieldmadcats",	"Garfield: Mad about Cats" },
+	{ "garygadget1",		"Building Cars with Gary Gadget" }, // Sequels list under Swedish
 	{ "generations",		"Generations" },
 	{ "getaheadmath",		"Math Heads" },
 	{ "getaheadmathcr",		"Math Heads Creator" },
@@ -888,8 +889,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "alfons",				"Alfons Åberg ”Bara Överallt!”" },
 	{ "backpacker2",		"Backpacker 2" },
 	{ "ernie",				"Ernie" },
-	{ "garygadget1",		"Bygg bilar med Mulle Meck" },
-	{ "garygadget2",		"Bygg båtar med Mulle Meck" },
+	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
+	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
 	{ "garygadget5",		"Upptäck rymden med Mulle Meck" },
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
@@ -4160,12 +4161,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Miel Monteur - Miel Bouwt Auto's! localized by Transposia
     // Dutch Mac demo is found in the Flipper & Lopaka compilation
+	WINGAME1_l("garygadget1", "",	  "Willy32.exe",	   "d62438566e44826960fc16c5c23dbe43", 1518423, Common::DE_DEU, 650),
 	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "518a98696fe1122e08410b0f157f21bf", 1512519, Common::NL_NLD, 602),
 	MACDEMO1_l("garygadget1", "Demo", "Miel Monteur demo", "329aab81c0d74c5d3f31ddad26bcc639", 1029165, Common::NL_NLD, 600),
 
 	// Dutch Windows version on same disc is D8
+	MACGAME1_l("garygadget2", "", "Schiffe bauen mit Willy", "1eb3e6dd864a8a9bf5fbd63ea2bc8ebc", 1032634, Common::DE_DEU, 602),
 	MACGAME2_l("garygadget2", "", "Game",                    "1d9149b9745e35ef93ed4cdf08ec3af7", 1030361,
 								  "StartCD.dxr",             "07c672f1c05c4c12ac6abbb371a0ee1f", 24053, Common::NL_NLD, 600),
+	WINGAME1_l("garygadget2", "", "Willy2.exe",				 "d62438566e44826960fc16c5c23dbe43", 1507905, Common::DE_DEU, 650),
 
 	WINDEMO1("generations", "v4.2 Demo", "GEN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 15646702, 600),
 
@@ -4837,6 +4841,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version on same disc is D6
 	WINGAME1_l("garygadget2", "", "okki.exe", "0c81c84ca4966313ad27d47daba44537", 2513593, Common::NL_NLD, 851),
 
+    // Flugzeuge bauen mit Willy Werkel localized by Terzio Verlag, Munich (2001)
+    WINGAME1_l("garygadget3", "", "WillyFlug.exe", "70a7b053c1a60617d3baace061fcba54", 9158814, Common::DE_DEU, 800),
+
+    // Mac installers also use Director
 	MACGAME2_l("garygadget4", "", "MulleHus",	  "a44511b8ff0e46b4f9c85dd1cb58d458", 157051,
 								  "01.dxr",	 	  "a443d3493ad279d26ce08814d8636d97", 44658, Common::FI_FIN, 851),
 	MACGAME2_l("garygadget4", "", "MulleHus",	  "a44511b8ff0e46b4f9c85dd1cb58d458", 157051,
@@ -5082,9 +5090,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("eso", "", "START.EXE",	"c612aa43e7ef55aa4fd2e1085fb1ef7a", 3752491,
 						  "ESO_D1.DXR", "6d39a8ef9a8060e21616f23872c581b6", 2075636, Common::ES_ESP, 900),
 
+    // Häuser bauen mit Willy Werkel localized by Terzio Verlag, Munich (2003)
+    WINGAME1_l("garygadget4", "", "WILLYHAU.EXE", "e1cb27c285fc19a989f152b785b0f375", 137056, Common::DE_DEU, 900),
+
 	// Mac Classic OS version is D8
-	MACGAME1_l("garygadget5", "OS X", "Miel5 OSX", "d483e955df901222145267d2ad729ea2", 284016, Common::NL_NLD, 900),
-	WINGAME1_l("garygadget5", "", "Miel5.exe", "7202313e2b177197b62e84dcf24d1292", 4253422, Common::NL_NLD, 900),
+    // German Mac OS X version is D10. Classic OS is not supported.
+    // Raumschiffe bauen mit Willy Werkel published by Terzio, Munich (2005)
+	MACGAME1_l("garygadget5", "OS X", "Miel5 OSX",           "d483e955df901222145267d2ad729ea2", 284016, Common::NL_NLD, 900),
+	WINGAME1_l("garygadget5", "",     "WillyRaumschiff.exe", "6b9dc16e1d307150bfec28729b59a523", 2185322, Common::DE_DEU, 900),
+	WINGAME1_l("garygadget5", "",     "Miel5.exe",           "7202313e2b177197b62e84dcf24d1292", 4253422, Common::NL_NLD, 900),
 
 	MACGAME2("gp2006", "", "CLICK ME",	"d483e955df901222145267d2ad729ea2", 233800,
 						   "Intro.cxt", "c7d1f703b3cfa4d134f601d17f8563a1", 673544, 900),
@@ -5143,6 +5157,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// See notes in D6 entry
 	MACGAME1("checkersvillage", "OS X", "village.osx", "f991fbe24bc002a215fda2c58fbb572f", 5880680, 1010),
+
+    // German Win version is D9
+    // Installer & deinstaller also use Director
+    MACGAME1_l("garygadget5", "", "WillyRaumschiff OSX", "b7181d7af306a3d336e5cc70cc77c641", 318788, Common::DE_DEU, 1010),
 
 	// CDs 03-05 are D8 for Mac and Windows
 	// CD02 and CD13 are D8 for Windows and D10 for Mac
