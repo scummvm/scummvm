@@ -108,7 +108,8 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				runIntro(video);
 			}
 			_nextLevel = arc.levelIfLose;
-			return;
+			debugC(1, kHypnoDebugArcade, "Losing and jumping to %s", _nextLevel.c_str());
+			break;
 		}
 
 		if (background.decoder->endOfVideo()) {
@@ -118,7 +119,8 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				runIntro(video);
 			}
 			_nextLevel = arc.levelIfWin;
-			return;
+			debugC(1, kHypnoDebugArcade, "Wining and jumping to %s", _nextLevel.c_str());
+			break;
 		}
 
 		if (shootSequence.size() > 0) {
@@ -158,6 +160,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		if (shootsToRemove.size() > 0) {
 			for (Common::List<uint32>::iterator it = shootsToRemove.begin(); it != shootsToRemove.end(); ++it) {
 				debugC(1, kHypnoDebugArcade, "Removing %d from %d size", *it, _shoots.size());
+				delete _shoots[*it].video;
 				_shoots.remove_at(*it);
 			}
 		}
@@ -173,6 +176,14 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	// Deallocate shoots
+	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+		if (it->video->decoder)
+			skipVideo(*it->video);
+		delete it->video;
+	}
+
 }
 
 int HypnoEngine::detectTarget(Common::Point mousePos) {

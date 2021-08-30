@@ -111,15 +111,9 @@ public:
 	bool cursorMask(Common::Point);
 
 	//bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override {
-		return true;
-	}
-	bool canSaveAutosaveCurrently() override {
-		return false;
-	}
-	bool canSaveGameStateCurrently() override {
-		return true;
-	}
+	bool canLoadGameStateCurrently() override { return false; }
+	bool canSaveAutosaveCurrently() override { return false; }
+	bool canSaveGameStateCurrently() override { return false; }
 
 	void syncGameStream(Common::Serializer &s);
 

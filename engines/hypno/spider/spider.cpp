@@ -39,6 +39,8 @@ void SpiderEngine::loadAssets() {
 	Common::String arclevel = files[0].name;
 	parseArcadeShooting("sixdemo", arclevel, arc);
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	_levels[arclevel].arcade.levelIfWin = "sixdemo/mis/demo.mis";
+	_levels[arclevel].arcade.levelIfLose = "sixdemo/mis/demo.mis";
 
 	loadLib("sixdemo/c_misc/fonts.lib", _fontFiles);
 	loadLib("sixdemo/c_misc/sound.lib", _soundFiles);
