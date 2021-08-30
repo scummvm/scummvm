@@ -886,7 +886,7 @@ void LB::b_max(int nargs) {
 			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
 				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item.compareTo(max) == kCompareGreater) {
+				if (i == 0 || item > max) {
 					max = item;
 				}
 			}
@@ -899,7 +899,7 @@ void LB::b_max(int nargs) {
 			if (d.type == ARRAY) {
 				warning("b_max: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d.compareTo(max) == kCompareGreater) {
+			if (i == 0 || d > max) {
 				max = d;
 			}
 		}
@@ -919,7 +919,7 @@ void LB::b_min(int nargs) {
 			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
 				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item.compareTo(min) == kCompareLess) {
+				if (i == 0 || item < min) {
 					min = item;
 				}
 			}
@@ -932,7 +932,7 @@ void LB::b_min(int nargs) {
 			if (d.type == ARRAY) {
 				warning("b_min: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d.compareTo(min) == kCompareLess) {
+			if (i == 0 || d < min) {
 				min = d;
 			}
 		}
@@ -2679,7 +2679,7 @@ void LB::b_scummvmassertequal(int nargs) {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	int result = d1.equalTo(d2);
+	int result = (d1 == d2);
 	if (!result) {
 		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}

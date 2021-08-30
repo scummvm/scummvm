@@ -1302,7 +1302,7 @@ Datum LC::gtData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::gtData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) == kCompareGreater) ? 1 : 0;
+	d1.u.i = d1 > d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1318,7 +1318,7 @@ Datum LC::ltData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::ltData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) == kCompareLess) ? 1 : 0;
+	d1.u.i = d1 < d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1334,8 +1334,7 @@ Datum LC::geData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::geData, d1, d2, false, true);
 	}
-	CompareResult res = d1.compareTo(d2);
-	d1.u.i = (res == kCompareGreater || res == kCompareEqual) ? 1 : 0;
+	d1.u.i = d1 >= d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1351,8 +1350,7 @@ Datum LC::leData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::leData, d1, d2, false, true);
 	}
-	CompareResult res = d1.compareTo(d2);
-	d1.u.i = (res == kCompareLess || res == kCompareEqual) ? 1 : 0;
+	d1.u.i = d1 <= d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }

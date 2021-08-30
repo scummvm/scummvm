@@ -1006,6 +1006,28 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	return 0;
 }
 
+bool Datum::operator==(Datum &d) const {
+	return equalTo(d);
+}
+
+bool Datum::operator>(Datum &d) const {
+	return compareTo(d) == kCompareGreater;
+}
+
+bool Datum::operator<(Datum &d) const {
+	return compareTo(d) == kCompareLess;
+}
+
+bool Datum::operator>=(Datum &d) const {
+	CompareResult res = compareTo(d);
+	return res == kCompareGreater || res == kCompareEqual;
+}
+
+bool Datum::operator<=(Datum &d) const {
+	CompareResult res = compareTo(d);
+	return res == kCompareLess || res == kCompareEqual;
+}
+
 CompareResult Datum::compareTo(Datum &d) const {
 	int alignType = g_lingo->getAlignedType(*this, d, false);
 
