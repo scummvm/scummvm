@@ -2502,7 +2502,7 @@ void GlobalOptionsDialog::addOnlineControls(GuiObject *boss, const Common::Strin
 	if (ConfMan.hasKey("byonline_server_address"))
 		address = ConfMan.get("byonline_server_address");
 	else
-		address = Common::String("backyardsports.online");
+		address = Common::String("server.backyardsports.online");
 
 	_serverAddr = new EditTextWidget(boss, prefix + "ServerAddress", address, Common::U32String(), 0, 0);
 	_serverAddrClearButton = addClearButton(boss, prefix + "ServerAddrClearButton", kServerAddrClearCmd);
