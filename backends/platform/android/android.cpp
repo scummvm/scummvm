@@ -690,6 +690,21 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	return Common::String(value, len);
 }
 
+const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
+	// We only support one mode
+	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+		{ "default", "Default", 0 },
+		{ 0, 0, 0 },
+	};
+
+	return s_supportedGraphicsModes;
+}
+
+int OSystem_Android::getDefaultGraphicsMode() const {
+	// We only support one mode
+	return 0;
+}
+
 bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 	bool render3d = flags & OSystem::kGfxModeRender3d;
 
@@ -755,6 +770,11 @@ bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 	} else {
 		return _graphicsManager->setGraphicsMode(mode, flags);
 	}
+}
+
+int OSystem_Android::getGraphicsMode() const {
+	// We only support one mode
+	return 0;
 }
 
 #endif
