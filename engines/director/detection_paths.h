@@ -173,6 +173,7 @@ const char *directoryGlobs[] = {
 	"typing",						// Slam Dunk Typing
 	"ceremony",
 	"copytohd",						// Ceremony of Innocence
+	"app",							// Rodney's Wonder Window
 	"settings",						// Saguaro & the City
 	"xn--t8jo8k",					// Perfect Blue screen savers
 	"maccurio",
