@@ -589,6 +589,7 @@ begin_credits("Credits");
 
 			begin_section("Nintendo DS");
 				add_person("Bertrand Augereau", "Tramb", "HQ software scaler");
+				add_person("Cameron Cawley", "ccawley2011", "");
 				add_person("Neil Millstone", "agent-q", "");
 			end_section();
 
