@@ -134,6 +134,14 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_keyPressed = event.kbd;
 		}
 
+		// HACK: Because we use ASCII values here, it's necessary to
+		// remap keypad keys to always have a corresponding ASCII value.
+		// Normally, keypad keys would only have an ASCII value when
+		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
+		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
+		}
+
 		// FIXME: We are using ASCII values to index the _keyDownMap here,
 		// yet later one code which checks _keyDownMap will use KEYCODEs
 		// to do so. That is, we are mixing ascii and keycode values here,
@@ -149,6 +157,14 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 
 	case Common::EVENT_KEYUP:
+		// HACK: Because we use ASCII values here, it's necessary to
+		// remap keypad keys to always have a corresponding ASCII value.
+		// Normally, keypad keys would only have an ASCII value when
+		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
+		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
+		}
+
 		if (event.kbd.ascii >= 512) {
 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 		} else {
