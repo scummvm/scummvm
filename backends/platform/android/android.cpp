@@ -708,15 +708,16 @@ bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
+	debug(5, "requesting 3D: %d, supporting 3D: %d", render3d, supports3D);
 	if (render3d && !supports3D) {
-		debug(1, "switching to 3D graphics");
+		debug(5, "switching to 3D graphics");
 		delete _graphicsManager;
 		AndroidGraphics3dManager *manager = new AndroidGraphics3dManager();
 		_graphicsManager = manager;
 		androidGraphicsManager = manager;
 		switchedManager = true;
 	} else if (!render3d && supports3D) {
-		debug(1, "switching to 2D graphics");
+		debug(5, "switching to 2D graphics");
 		delete _graphicsManager;
 		AndroidGraphicsManager *manager = new AndroidGraphicsManager();
 		_graphicsManager = manager;

@@ -112,7 +112,7 @@ static void logExtensions() {
 
 
 void AndroidGraphics3dManager::initSurface() {
-	LOGD("initializing surface");
+	LOGD("initializing 3D surface");
 
 	assert(!JNI::haveSurface());
 
@@ -149,7 +149,7 @@ void AndroidGraphics3dManager::deinitSurface() {
 	if (!JNI::haveSurface())
 		return;
 
-	LOGD("deinitializing surface");
+	LOGD("deinitializing 3D surface");
 
 	_screenChangeID = JNI::surface_changeid;
 
@@ -339,7 +339,7 @@ void AndroidGraphics3dManager::clearOverlay() {
 }
 
 void AndroidGraphics3dManager::grabOverlay(Graphics::Surface &surface) const {
-	ENTER("%p, %d", buf, pitch);
+	ENTER("%p", &surface);
 
 	GLTHREADCHECK;
 
