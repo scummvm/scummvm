@@ -31,12 +31,18 @@ namespace Scumm {
 
 class GlyphRenderer_v7 {
 public:
+	enum EscapeCodeFormat {
+		kEscCodesNONE = 0,
+		kEscCodesNUT = 1
+	};
+
 	virtual int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) = 0;
 	virtual int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) = 0;
 	virtual int getCharWidth(uint16 chr) const = 0;
 	virtual int getCharHeight(uint16 chr) const = 0;
 	virtual int getFontHeight() const = 0;
 	virtual int setFont(int id) = 0;
+	virtual EscapeCodeFormat escapeCodeFormat() const = 0;
 };
 
 } // End of namespace Scumm

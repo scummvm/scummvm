@@ -321,6 +321,7 @@ public:
 	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight + 1 : _fontHeight; }
 	int getFontHeight() const override { return _fontHeight; }
 	int setFont(int) override { return 0; }
+	EscapeCodeFormat escapeCodeFormat() const override { return kEscCodesNONE; }
 
 private:
 	const int _spacing;
@@ -335,6 +336,7 @@ public:
 
 	void setCurID(int32 id) override;
 	int setFont(int id) override;
+	EscapeCodeFormat escapeCodeFormat() const override { return kEscCodesNUT; }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
 	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) override;

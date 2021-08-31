@@ -59,6 +59,7 @@ private:
 	int getCharHeight(uint16 chr) const override { return NutRenderer::getCharHeight(chr & 0xFF); }
 	int getFontHeight() const override { return NutRenderer::getFontHeight(); }
 	int setFont(int) override { return 0; }
+	EscapeCodeFormat escapeCodeFormat() const override { return kEscCodesNUT; }
 
 	TextRenderer_v7 *_r;
 	const bool _hardcodedFontColors;

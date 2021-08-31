@@ -32,8 +32,16 @@
 
 namespace Scumm {
 
-TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)
-	: _gameId(vm->_game.id), _lang(vm->_language), _2byteCharWidth(vm->_2byteWidth), _screenWidth(vm->_screenWidth), _useCJKMode(vm->_useCJKMode), _spacing(vm->_language != Common::JA_JPN ? 1 : 0), _lineBreakMarker(vm->_newLineCharacter), _gr(gr) {
+TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
+	_gameId(vm->_game.id),
+	_lang(vm->_language),
+	_2byteCharWidth(vm->_2byteWidth),
+	_screenWidth(vm->_screenWidth),
+	_useCJKMode(vm->_useCJKMode),
+	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
+	_lineBreakMarker(vm->_newLineCharacter),
+	_processEscapeCodes (gr->escapeCodeFormat() == GlyphRenderer_v7::kEscCodesNUT),
+	_gr(gr) {
 }
 
 int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
@@ -44,10 +52,9 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 
 	int maxWidth = 0;
 	int width = 0;
-	int font = _gr->setFont(-1);
 
 	while (*str && numBytesMax) {
-		if (*str == '^') {
+		if (_processEscapeCodes && *str == '^') {
 			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
@@ -78,8 +85,6 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 		--numBytesMax;
 	}
 
-	_gr->setFont(font);
-
 	return MAX<int>(width, maxWidth);
 }
 
@@ -91,10 +96,9 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 
 	int totalHeight = 0;
 	int lineHeight = 0;
-	int font = _gr->setFont(-1);
 
 	while (*str && numBytesMax) {
-		if (*str == '^') {
+		if (_processEscapeCodes && *str == '^') {
 			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
@@ -125,8 +129,6 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 		--numBytesMax;
 	}
 
-	_gr->setFont(font);
-
 	return totalHeight + (lineHeight ? lineHeight : _gr->getFontHeight()) + 1;
 }
 
@@ -137,7 +139,7 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 		}
 	} else {
 		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
-			if (str[i] == '^') {
+			if (_processEscapeCodes && str[i] == '^') {
 				if (str[i + 1] == 'f') {
 					_gr->setFont(str[i + 3] - '0');
 					i += 3;
@@ -186,7 +188,6 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	int y2 = y;
 	int maxWidth = 0;
-	int font = _gr->setFont(-1);
 
 	for (int pos = 0; pos <= totalLen; ++pos) {
 		if (str[pos] != '\0' && str[pos] != '\n')
@@ -203,8 +204,6 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 		lineStart = pos + 1;
 	}
-
-	_gr->setFont(font);
 
 	clipRect.left = center ? x - maxWidth / 2: x;
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
@@ -321,7 +320,6 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	}
 
 	int y2 = y;
-	int font = _gr->setFont(-1);
 
 	for (int i = 0; i < numSubstrings; i++) {
 		int xpos = center ? x - substrWidths[i] / 2 : x;
@@ -329,8 +327,6 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		drawSubstring(str + substrStart[i], len, buffer, clipRect, xpos, y, pitch, col);
 		y += getStringHeight(str + substrStart[i], len);
 	}
-
-	_gr->setFont(font);
 
 	clipRect.left = center ? x - maxWidth / 2 : x;
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
