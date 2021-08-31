@@ -173,6 +173,7 @@ const char *directoryGlobs[] = {
 	"_setup",
 	"bin",
 	"adam resources",				// ADAM Software Products
+	"material",						// NY Yankees Yearbook
 	0
 };
 
