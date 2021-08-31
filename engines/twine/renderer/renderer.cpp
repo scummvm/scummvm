@@ -789,12 +789,10 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 				colorSize /= hsize;
 				hsize++;
 
-				const uint8 startColorByte = startColor / 256;
-
 				if (hsize % 2) {
 					hsize /= 2;
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*out2 = startColorByte;
+						*out2 = startColor >> 8;
 					}
 					out2++;
 					currentXPos++;
@@ -805,14 +803,14 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 
 				do {
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*out2 = startColorByte;
+						*out2 = startColor >> 8;
 					}
 
 					currentXPos++;
 					startColor += colorSize;
 
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2 + 1) = startColorByte;
+						*(out2 + 1) = startColor >> 8;
 					}
 
 					currentXPos++;
@@ -1540,7 +1538,7 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		return;
 	}
 
-	int16* polygonTabPtr;
+	int16 *polygonTabPtr;
 	if (yBottom < yTop) {
 		if (yBottom < top) {
 			top = yBottom;
