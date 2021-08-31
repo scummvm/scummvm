@@ -63,7 +63,7 @@ void CommandHandler::runCommand() {
 		if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
 			int16 oldRepeat = _vm->_sound->getRepeat();
 			_vm->_sound->setRepeat(1);
-			_vm->_sound->play(Audio::Mixer::kSpeechSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
+			_vm->_sound->play(Audio::Mixer::kSpeechSoundType, _vm->_soundStat._ref[1], _vm->_soundStat._ref[0], _vm->_sound->_smpinf._span);
 			_vm->_sound->setRepeat(oldRepeat);
 			return;
 		}
@@ -607,7 +607,7 @@ void CGE2Engine::snSound(Sprite *spr, int wav, Audio::Mixer::SoundType soundType
 
 		_soundStat._ref[1] = wav;
 		_soundStat._ref[0] = !_fx->exist(_soundStat._ref[1]);
-		_sound->play(soundType, _fx->load(_soundStat._ref[1], _soundStat._ref[0]),
+		_sound->play(soundType, _soundStat._ref[1], _soundStat._ref[0],
 			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
 }
