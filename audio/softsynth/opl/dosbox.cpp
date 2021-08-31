@@ -324,7 +324,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 void OPL::generateSamples(int16 *buffer, int length) {
 	// For stereo OPL cards, we divide the sample count by 2,
 	// to match stereo AudioStream behavior.
-	if (_type != Config::kOpl2)
+	if (_type != Config::kOpl2 && _emulator->opl3Active)
 		length >>= 1;
 
 	const uint bufferLength = 512;
