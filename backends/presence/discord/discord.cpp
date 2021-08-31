@@ -24,6 +24,7 @@
 #include "backends/presence/discord/discord.h"
 
 #ifdef USE_DISCORD
+#include "common/config-manager.h"
 #include "common/translation.h"
 
 #include <discord_rpc.h>
@@ -53,7 +54,11 @@ void DiscordPresence::updateStatus(const Common::String &name, const Common::Str
 	presence.smallImageKey = "scummvm";
 	presence.smallImageText = "ScummVM";
 	presence.startTimestamp = time(0);
-	Discord_UpdatePresence(&presence);
+	if (ConfMan.getBool("discord_rpc", Common::ConfigManager::kApplicationDomain)) {
+		Discord_UpdatePresence(&presence);
+	} else {
+		Discord_ClearPresence();
+	}
 }
 
 #endif
