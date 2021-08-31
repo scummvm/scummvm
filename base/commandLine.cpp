@@ -352,6 +352,9 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("fluidsynth_misc_interpolation", "4th");
 #endif
+#ifdef USE_DISCORD
+	ConfMan.registerDefault("discord_rpc", true);
+#endif
 }
 
 static bool parseGameName(const Common::String &gameName, Common::String &engineId, Common::String &gameId) {
