@@ -21,6 +21,7 @@
  */
 
 #include "gui/console.h"
+#include "common/savefile.h"
 #include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
@@ -35,6 +36,8 @@ namespace GUI {
 
 #define kConsoleCharWidth  (_font->getCharWidth('M'))
 #define kConsoleLineHeight (_font->getFontHeight())
+
+#define HISTORY_FILENAME "scummvm-history.txt"
 
 enum {
 	kConsoleSlideDownDuration = 200	// Time in milliseconds
@@ -87,6 +90,10 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	// Display greetings & prompt
 	print(gScummVMFullVersion);
 	print("\nConsole is ready\n");
+}
+
+ConsoleDialog::~ConsoleDialog() {
+	saveHistory();
 }
 
 void ConsoleDialog::init() {
@@ -155,6 +162,10 @@ void ConsoleDialog::open() {
 		//  engine wrote onto us since the last call
 		print(PROMPT);
 		_promptStartPos = _promptEndPos = _currentPos;
+	}
+
+	if (_historySize == 0) {
+		loadHistory();
 	}
 }
 
@@ -580,6 +591,43 @@ void ConsoleDialog::killLastWord() {
 		buffer(_promptEndPos) = ' ';
 		_promptEndPos -= cnt;
 	}
+}
+
+void ConsoleDialog::loadHistory() {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::InSaveFile *loadFile = saveFileMan->openRawFile(HISTORY_FILENAME);
+	if (!loadFile) {
+		return;
+	}
+	for (int i = 0; i < kHistorySize; ++i) {
+		const Common::String &line = loadFile->readLine();
+		if (line.empty()) {
+			break;
+		}
+		addToHistory(line);
+	}
+	delete loadFile;
+	debug("Read %i history entries", _historySize);
+}
+
+void ConsoleDialog::saveHistory() {
+	if (_historySize == 0) {
+		return;
+	}
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::WriteStream *saveFile = saveFileMan->openForSaving(HISTORY_FILENAME, false);
+	if (!saveFile) {
+		warning("Failed to open " HISTORY_FILENAME " for writing");
+		return;
+	}
+
+	for (int i = 0; i < _historySize; ++i) {
+		saveFile->writeString(_history[i]);
+		saveFile->writeByte('\n');
+	}
+	saveFile->finalize();
+	delete saveFile;
+	debug("Wrote %i history entries", _historySize);
 }
 
 void ConsoleDialog::addToHistory(const Common::String &str) {
