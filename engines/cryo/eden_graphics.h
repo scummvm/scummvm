@@ -225,7 +225,7 @@ private:
 	// Original name: effet4
 	void displayEffect4();
 
-	void colimacon(int16 pattern[]);
+	void colimacon(const int16 pattern[]);
 
 	// Original name: rectanglenoir32
 	void blackRect32();

@@ -50,7 +50,7 @@ namespace Cryo {
 #define Z_DOWN -1
 
 EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
-	static uint8 statTab2CB1E[8][4] = {
+	static const uint8 statTab2CB1E[8][4] = {
 		{ 0x10, 0x81,    1, 0x90},
 		{ 0x90,    1, 0x81, 0x10},
 		{    1, 0x90, 0x10, 0x81},
@@ -1553,10 +1553,10 @@ void EdenGame::moveAllDino() {
 
 // Original name: newvallee
 void EdenGame::newValley() {
-	static int16 roomNumList[] = { 2075, 2080, 2119, -1};
+	static const int16 roomNumList[] = { 2075, 2080, 2119, -1};
 
 	perso_t *perso = &_persons[PER_UNKN_372];
-	int16 *ptr = roomNumList;
+	const int16 *ptr = roomNumList;
 	int16 roomNum = *ptr++;
 	while (roomNum != -1) {
 		perso->_roomNum = roomNum;
@@ -3091,7 +3091,7 @@ void EdenGame::specialObjects(perso_t *perso, char objid) {
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
 
-	static SpecialObject kSpecialObjectActions[] = {
+	static const SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
 		{ PersonFlags::pfType8, Objects::obShroom, &EdenGame::specialMushroom },
 		{ PersonFlags::pftTriceraptor, Objects::obNest, &EdenGame::specialEmptyNest },
@@ -3121,7 +3121,7 @@ void EdenGame::specialObjects(perso_t *perso, char objid) {
 
 	char characterType = perso->_flags & PersonFlags::pfTypeMask;
 	_curSpecialObject = &_objects[objid - 1];
-	for (SpecialObject *spcObj = kSpecialObjectActions; spcObj->_characterType != -1; spcObj++) {
+	for (const SpecialObject *spcObj = kSpecialObjectActions; spcObj->_characterType != -1; spcObj++) {
 		if (spcObj->_objectId == objid && spcObj->_characterType == characterType) {
 			(this->*spcObj->dispFct)(perso);
 			break;
@@ -3399,7 +3399,8 @@ bool EdenGame::dial_scan(Dialog *dial) {
 	} else
 		my_bulle();
 	if (!dword_30B04) {
-		static void (EdenGame::*talk_subject[])() = {
+		typedef void (EdenGame::*TalkSubject)();
+		static const TalkSubject talk_subject[] = {
 			&EdenGame::setChoiceYes,
 			&EdenGame::setChoiceNo,
 			&EdenGame::handleEloiDeparture,
@@ -4390,7 +4391,8 @@ void EdenGame::updateCursor() {
 }
 
 void EdenGame::mouse() {
-	static void (EdenGame::*mouse_actions[])() = {
+	typedef void (EdenGame::*MouseAction)();
+	static const MouseAction mouse_actions[] = {
 		&EdenGame::actionMoveNorth,
 		&EdenGame::actionMoveEast,
 		&EdenGame::actionMoveSouth,
@@ -5969,7 +5971,7 @@ void EdenGame::incPhase() {
 		void (EdenGame::*disp)();
 	};
 
-	static phase_t phases[] = {
+	static const phase_t phases[] = {
 		{ 65, &EdenGame::dialautoon },
 		{ 113, &EdenGame::phase113 },
 		{ 129, &EdenGame::dialautoon },
@@ -5999,7 +6001,7 @@ void EdenGame::incPhase() {
 	_globals->_phaseNum++;
 	debug("!!! next phase - %4X , room %4X", _globals->_phaseNum, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
-	for (phase_t *phase = phases; phase->_id != -1; phase++) {
+	for (const phase_t *phase = phases; phase->_id != -1; phase++) {
 		if (_globals->_phaseNum == phase->_id) {
 			(this->*phase->disp)();
 			break;
@@ -6128,7 +6130,8 @@ void EdenGame::phase561() {
 }
 
 void EdenGame::bigphase1() {
-	static void (EdenGame::*bigphases[])() = {
+	typedef void (EdenGame::*Phase)();
+	static const Phase bigphases[] = {
 		&EdenGame::phase16,
 		&EdenGame::phase32,
 		&EdenGame::phase48,
@@ -6946,7 +6949,8 @@ uint16 EdenGame::operFalse(uint16 v1, uint16 v2) {
 }
 
 uint16 EdenGame::operation(byte op, uint16 v1, uint16 v2) {
-	static uint16(EdenGame::*operations[16])(uint16, uint16) = {
+	typedef uint16 (EdenGame::*Operation)(uint16, uint16);
+	static const Operation operations[16] = {
 		&EdenGame::operIsEqual,
 		&EdenGame::operIsSmaller,
 		&EdenGame::operIsGreater,
