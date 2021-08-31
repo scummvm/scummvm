@@ -47,6 +47,7 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_subtitlesView = nullptr;
 	_underBarsView = nullptr;
 	_needToFade = false;
+	_eff2pat = 0;
 	
 	_savedUnderSubtitles = false;
 	_underSubtitlesViewBuf = nullptr;
@@ -893,12 +894,11 @@ void EdenGraphics::displayEffect2() {
 	static const int16 pattern3[] = { 0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14 };
 	static const int16 pattern4[] = { 0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9 };
 
-	static int eff2pat = 0;
 	if (_game->_globals->_var103 == 69) {
 		displayEffect4();
 		return;
 	}
-	switch (++eff2pat) {
+	switch (++_eff2pat) {
 	case 1:
 		colimacon(pattern1);
 		break;
@@ -911,7 +911,7 @@ void EdenGraphics::displayEffect2() {
 	case 4:
 	default:
 		colimacon(pattern4);
-		eff2pat = 0;
+		_eff2pat = 0;
 		break;
 	}
 }

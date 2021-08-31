@@ -202,6 +202,8 @@ private:
 
 	bool _needToFade;
 
+	int _eff2pat;
+
 	color3_t _newColor;
 	color_t  _oldPalette[256];    // TODO palette_t ?
 	color_t  _newPalette[256];

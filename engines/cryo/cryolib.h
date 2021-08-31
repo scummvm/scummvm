@@ -74,6 +74,7 @@ struct color_t {
 void SysBeep(int x);
 void FlushEvents(int16 arg1, int16 arg2);
 
+void CLBlitter_Init();
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2);
 void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count);
 void CLBlitter_OneBlackFlash();
