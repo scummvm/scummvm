@@ -238,7 +238,7 @@ Common::Error TwinEEngine::run() {
 	ConfMan.registerDefault("usehighres", false);
 	ConfMan.registerDefault("wallcollision", false);
 
-	Common::String gameTarget = ConfMan.getActiveDomainName();
+	const Common::String &gameTarget = ConfMan.getActiveDomainName();
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
 
 	syncSoundSettings();
