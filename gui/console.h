@@ -118,6 +118,9 @@ protected:
 	int _historyIndex;
 	int _historyLine;
 
+	void loadHistory();
+	void saveHistory();
+
 	float _widthPercent, _heightPercent;
 
 	int _leftPadding;
@@ -129,6 +132,7 @@ protected:
 
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
+	virtual ~ConsoleDialog();
 
 	void open() override;
 	void close() override;
