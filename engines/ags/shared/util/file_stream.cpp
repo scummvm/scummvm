@@ -207,7 +207,8 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 				assert(out);
 
 				out->write(data, fileSize);
-				out->seek(0, SEEK_SET);
+				if (work_mode != kFile_Write)
+					out->seek(0, SEEK_SET);
 				delete[] data;
 
 				_file = out;
