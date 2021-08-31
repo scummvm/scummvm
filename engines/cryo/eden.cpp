@@ -5759,7 +5759,7 @@ void EdenGame::edenShudown() {
 	if (_globals->_displayFlags != DisplayFlags::dfFlag2)
 		gotoPanel();
 	_curSpot2 = icon + 7;   //TODO
-	edenQuit();
+	reallyquit();
 }
 
 void EdenGame::habitants(perso_t *perso) {
