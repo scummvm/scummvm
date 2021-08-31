@@ -75,4 +75,8 @@ Common::Error CryoEngine::run() {
 	return Common::kNoError;
 }
 
+bool CryoEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher);
+}
+
 } // End of namespace Cryo

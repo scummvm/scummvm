@@ -57,6 +57,7 @@ public:
 	~CryoEngine() override;
 
 	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
