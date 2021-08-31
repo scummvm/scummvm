@@ -516,6 +516,7 @@ private:
 	void displayObject(Cube *cube);
 	void loadMap(int file_id, byte *buffer);
 	void NEWcharge_objet_mob(Cube *cube, int fileNum, byte *texturePtr);
+	void DELETEcharge_objet_mob(Cube *cubep);
 	static int nextVal(char **ptr, char *error);
 	void selectMap(int16 num);
 	void Eden_dep_and_rot();

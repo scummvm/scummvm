@@ -63,6 +63,14 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_newColor.r = _newColor.g = _newColor.b = 0;
 }
 
+EdenGraphics::~EdenGraphics() {
+	delete _underBarsView;
+	delete _view2;
+	delete _subtitlesView;
+	delete _underSubtitlesView;
+	delete _mainView;
+}
+
 void EdenGraphics::SendPalette2Screen(int16 value) {
 	CLPalette_Send2Screen(_globalPalette, 0, value);
 }
@@ -806,7 +814,7 @@ View *EdenGraphics::getUnderBarsView() {
 }
 
 void EdenGraphics::openWindow() {
-	_underBarsView = new View(320, 40); //TODO: Who deletes these?
+	_underBarsView = new View(320, 40);
 	_underBarsView->_normal._width = 320;
 
 	_view2 = new View(32, 32);

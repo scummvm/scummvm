@@ -4064,6 +4064,12 @@ void EdenGame::freebuf() {
 	free(_gameFont);
 	free(_gameLipsync);
 	free(_musicBuf);
+
+	if (_soundAllocated) {
+		free(_voiceSamplesBuffer);
+		_voiceSamplesBuffer = nullptr;
+		_soundAllocated = false;
+	}
 }
 
 void EdenGame::EmergencyExit() {
@@ -4122,6 +4128,9 @@ void EdenGame::run() {
 			_musicPlayingFlag = false;
 			_musicEnabledFlag = false;
 		}
+
+		if (_vm->getPlatform() == Common::kPlatformMacintosh)
+			DELETEcharge_objet_mob(&_cube);
 		// LostEdenMac_SavePrefs();
 	}
 
@@ -7249,6 +7258,17 @@ void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
 	cubep->_faces = tmp4;
 	cubep->_projection = projection;
 	cubep->_vertices = vertices;
+}
+
+void EdenGame::DELETEcharge_objet_mob(Cube *cubep) {
+	for (int i = 0; i < cubep->_num; i++) {
+		free(cubep->_faces[i]->_indices);
+		free(cubep->_faces[i]->_uv);
+		free(cubep->_faces[i]);
+	}
+	free(cubep->_faces);
+	free(cubep->_projection);
+	free(cubep->_vertices);
 }
 
 int EdenGame::nextVal(char **ptr, char *error) {
