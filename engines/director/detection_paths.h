@@ -103,6 +103,7 @@ const char *directoryGlobs[] = {
 	"deutsch",
 	"francais",						// Rename from Français
 	"italiano",						// Virtual Tourism Paris
+	"xn--HD-g73avcj4g7a5726ctwzw3ca1i6i",	   // HDにｺﾋﾟｰして下さい
 	"please copy to hd. G2",		// Rename from HDにｺﾋﾟｰして下さい。G2
 	"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
 	"_files_",						// The Gate
@@ -136,11 +137,32 @@ const char *directoryGlobs[] = {
 	"Lingo Expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"toinstall",					// Jönssonligan series
+	"pingucd",
+	"instdata",						// Pingu
+	"bellinin bikinit",				// Bellini 3 (Finnish)
 	"abc",							// Alphabet Train
 	"123",							// Ktar Alarkam
 	"vlaams",
 	"ned",							// I Spy School Days (Dutch)
+	"fl1",
+	"flipper",						// Flipper games (Yoram Gross)
+	"cipdemo",
+	"cipher",						// Jewels of the Oracle
+	"gems",							// Gems of Darkness / Jewels II
+	"corel cd home",
+	"the cassandra galleries",		// Cassandra Galleries
+	"nnnn",							// Nikolai Toy Makers
+	"knights",						// Nikolai's Knights
 	"birdmpc",						// Bird's Life
+	"hdfiles",
+	"creator",						// Get a Head series
+	"32bit",
+	"sd",
+	"mac install",
+	"slam dunk typing",
+	"typing",						// Slam Dunk Typing
+	"ceremony",
+	"copytohd",						// Ceremony of Innocence
 	0
 };
 
