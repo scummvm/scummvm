@@ -82,6 +82,10 @@ public:
 	void getMousePosition(int16 *x, int16 *y);
 	void setMousePosition(int16 x, int16 y);
 	bool isMouseButtonDown();
+
+private:
+	int _mouseButton;
+	// byte _keyState[256];
 };
 
 extern CryoEngine *g_ed;
