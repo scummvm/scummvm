@@ -39,11 +39,15 @@ enum {
 	kChooseCmd = 'Chos'
 };
 
-FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtension, int mode)
+FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtension, int mode, const char *fileMask)
 	: Dialog("FileBrowser"), _mode(mode), _fileExt(fileExtension) {
 
-	_fileMask = "*.";
-	_fileMask += fileExtension;
+	if (fileMask == NULL) {
+		_fileMask = "*.";
+		_fileMask += fileExtension;
+	} else {
+		_fileMask = fileMask;
+	}
 	_fileList = nullptr;
 
 	new StaticTextWidget(this, "FileBrowser.Headline", title ? Common::convertToU32String(title) :
