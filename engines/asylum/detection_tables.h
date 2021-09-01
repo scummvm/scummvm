@@ -123,6 +123,21 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"asylum",
+		"Steam",
+		{
+			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
+			{"RES.000",   0, "94f3c795599ea79492cbf81127944f37", 277935},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		"asylum",
 		"French Version",
 		{
 			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
