@@ -629,6 +629,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bobmambo5",			"Bob the Builder: Mambo No. 5" },
 	{ "chaquico1000",		"Craig Chaquico: A Thousand Pictures" },
 	{ "concentration",		"Solitudes: Natural Concentration" },
+	{ "freakshowost",		"The Residents: Freak Show: Multimedia Bonus Track" },
+	{ "gingerbreadman",		"The Residents: Gingerbread Man" },
 	{ "girlsaloudbox",		"Girls Aloud: The Singles Box Set" },
 	{ "ebntelebreakdown",	"EBN: Telecommunication Breakdown" },
 	{ "imesceneryfish",		"I Mother Earth: Scenery and Fish" },
@@ -3001,6 +3003,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("freakshow", "D4", "FreakShow Projector", "dc5a87dda7a0daf46604515f7d2cca66", 300644, 400),
 	WINGAME1("freakshow", "", "FREAKS.EXE", "b2e1c5abc0e3c31ddd2089a55a27a0a5", 695893, 400),
 
+	// http://discogs.com/release/2052805
+	// Remastered album released by Euro Ralph, Hamburg (1994)
+	MACGAME1("freakshowost", "Europe", "Power Bonus", "5bb6f4e7f9f026e2b5cf758796db3cd2", 57802, 404),
+	WINGAME1t("freakshowost", "Europe", "BONUS.EXE", "5e36d25090274a82c43f39a3e450987b", 1358749, 404),
+
 	// Should be Mac versions of these demos as well according to CONTENTS.TXT
 	WINDEMO1t("frequency", "Interview", "INTERVU.EXE", "cf6f480f58715e48a3e18d0aee6b724e", 26083203, 404),
 	WINDEMO1t("frequency", "frEQout", "FREQOUT.EXE", "ff223654239ccacd0a2e2e158187789b", 31765595, 404),
@@ -3075,6 +3082,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("gigglevania", "", "Pantsylvania", "d9082ba24e164f376ffb3090c43fa997", 304149, 404),
 	WINGAME1("gigglevania", "", "PANTS.EXE",	"1b10e3c6f6a47971802fe835642130ce", 697317, 404),
+
+	// CD-ROM Expanded Album by Ion, Los Angeles and Cryptic, San Francisco (1994)
+	// European distribution by BMG Interactive, New York
+	MACGAME1("gingerbreadman", "", "Gingerbread Man", "dc5a87dda7a0daf46604515f7d2cca66", 311476, 403),
+	WINGAME1("gingerbreadman", "", "GBMAN.EXE", "e35da92f92ee7750a02b979a28492d7d", 696963, 404),
 
 	MACGAME1("godigital", "Vol.1 No.1",	"Go Digital vol.1 no.1", "dc5a87dda7a0daf46604515f7d2cca66", 291322, 403),
 	MACGAME1("godigital", "Vol.1 No.2", "Go Digital vol 1 # 2",  "97474208c44c78f26bef8b2011d341aa", 482838, 404),
