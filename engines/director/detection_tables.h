@@ -241,6 +241,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "madtg",				"Madeline Thinking Games" },
 	{ "majestic",			"Majestic Part I: Alien Encounter" },
 	{ "maniacsports",		"Maniac Sports" },
+	{ "mask",				"The Mask: The Origin" },
 	{ "mastermansion",		"Masterpiece Mansion" },
 	{ "mastermansionex",	"Masterpiece Mansion: Art Explorer" },
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
@@ -1123,6 +1124,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pingutime",			"Time for Pingu" },
 	{ "ss007",				"The James Bond Screensaver" },
 	{ "ss102dalmations",	"102 Dalmations Screen Saver" },
+	{ "ssbudfranklouie",	"Budweiser: Frank & Louie Screen Saver" },
 	{ "sscocacola",			"Coca-Cola Screen Saver" },
 	{ "ssdietcoke",			"Diet Coke Screen Saver" },
 	{ "ssgbi",				"German Bold Italic Screen Saver" },
@@ -1720,6 +1722,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("maniacsports", "", "MANIAC.EXE", "65d06b5fef155a2473434571aff5bc29", 371274, 311),
 
 	MACDEMO1_l("marinefantasy", "Demo", "MarineFantasy", "276bee761e48a6fd709df77d5c2f60dd", 395226, Common::JA_JPN, 313),
+
+	// Mac version on same disc is D4
+	// Developed by MetroLight Studios, Los Angeles
+	// Published by Cambrix, Woodland Hills, California (1996)
+	WINGAME1("mask", "", "MASK.EXE", "c7da3e208b35c77d39af787cf74a57ae", 2377627, 311),
 
 	MACGAME1("maze", "", "Maze", "c4917547b9d9fda87567a9b3544489c4", 384534, 300),
 
@@ -2812,6 +2819,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301861, Common::JA_JPN, 400),
 	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301925, Common::JA_JPN, 400),
+
+	// Windows version on same disc is D3
+	MACGAME1("mask", "", "The Mask", "32a48ccef630fd453ac3501f72474545", 291308, 403),
 
 	MACGAME1("mastermansion", "", "Masterpiece Mansion", "bdd793ba61c4333dfeaf976d6adc38fe", 285533, 404),
 	WINGAME1("mastermansion", "", "MANSION.EXE", "b397657fec77654afc589000612de963", 84700821, 404),
@@ -4725,6 +4735,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("solmahjong", "2001 version", "Mahjong",	  "0944b962ebb00f4b5d5149d220f8449b", 112758, 702),
 	WINGAME1("solmahjong", "1999 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2757472, 702),
 	WINGAME1("solmahjong", "2001 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2832712, 702),
+
+	// https://web.archive.org/web/1id_/www.budweiser.com/screensaver/pc/screen99.exe
+	WINGAME1("ssbudfranklouie", "", "Screen99.exe", "c1a2e8b7e41fa204009324a9c7db1030", 3397601, 700),
 
 	WINGAME1("ssheidi1", "", "_heidi01.exe", "91823501d9b3f9b9ced814101312fd11", 5985066, 701),
 	WINGAME1("ssheidi2", "", "_heidi02.exe", "91823501d9b3f9b9ced814101312fd11", 7783641, 701),
