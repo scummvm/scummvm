@@ -49,6 +49,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// Sanitarium - English Alt Demo
+		"asylum",
+		"Demo",
+		AD_ENTRY2s("ASYLUM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
+				   "RES.000",    "a527449397576a019cdd4884a96403e2", 9012),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
 		"asylum",
 		"Unpatched",
 		{
