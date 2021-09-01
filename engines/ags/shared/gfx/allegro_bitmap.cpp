@@ -135,7 +135,9 @@ bool Bitmap::SaveToFile(const char *filename, const void *palette) {
 	size_t lastSlash = name.findLastOf('/');
 	if (lastSlash != Common::String::npos)
 		name = name.substr(lastSlash + 1);
-	name = ConfMan.getActiveDomainName() + "-" + name;
+	Common::String gameTarget = ConfMan.getActiveDomainName();
+	if (!name.hasPrefixIgnoreCase(gameTarget))
+		name = gameTarget + "-" + name;
 
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(name, false);
 	assert(out);
