@@ -334,8 +334,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "shrlucky",			"Schoolhouse Rock!: Lucky's Math Arcade" },
 	{ "shrmath",			"Schoolhouse Rock!: Math Rock" },
 	{ "shrmess",			"Schoolhouse Rock!: 1st-4th Grade Math Essentials" },
-	{ "simpsonplayer",		"The Simpsons Cartoon Player" },
-	{ "simpsonstudio",		"The Simpsons Cartoon Studio" },
+	{ "simpsonsplayer",		"The Simpsons Cartoon Player" },
+	{ "simpsonsstudio",		"The Simpsons Cartoon Studio" },
 	{ "sitfarm",	        "Sitting on the Farm" },
 	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" }, // Magnus & Myggen
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
@@ -3159,11 +3159,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Player app is a standalone player for cartoons created in Studio
 	// Demo is found on apcmag.cd Dec 1999 disc 3, published by Australian Consolidated Press
-	MACGAME1("simpsonstudio", "",	  "Simpsons Cartoon Studio", "cd98745b01c43b49b223ecb1543cb3b1", 317514, 403),
-	MACGAME1("simpsonplayer", "",	  "Simpsons Cartoon Player", "f18e1cf6fb9fea099aae580c2057e551", 502040, 403),
-	WINGAME1("simpsonstudio", "",	  "SIMPSONS.EXE", "358af28ffe3fa515a9b9a03149483cb1", 3368957, 404),
-	WINDEMO1("simpsonstudio", "Demo", "SIMPDEMO.EXE", "bcd332d5061ec00b103c1529b4095a49", 901047, 404),
-	WINGAME1("simpsonplayer", "",	  "SPLAYER.EXE",  "8966c096c5718316fddc7b238dd9df94", 884843, 404),
+	MACGAME1("simpsonsstudio", "",	   "Simpsons Cartoon Studio", "cd98745b01c43b49b223ecb1543cb3b1", 317514, 403),
+	MACGAME1("simpsonsplayer", "",	   "Simpsons Cartoon Player", "f18e1cf6fb9fea099aae580c2057e551", 502040, 403),
+	WINGAME1("simpsonsstudio", "",	   "SIMPSONS.EXE", "358af28ffe3fa515a9b9a03149483cb1", 3368957, 404),
+	WINDEMO1("simpsonsstudio", "Demo", "SIMPDEMO.EXE", "bcd332d5061ec00b103c1529b4095a49", 901047, 404),
+	WINGAME1("simpsonsplayer", "",	   "SPLAYER.EXE",  "8966c096c5718316fddc7b238dd9df94", 884843, 404),
 
 	// Win version is D5
 	MACGAME1("simpsontrivia", "v3.1", "Simpsons Trivia 3.1", "db9b7f11aea52a294d2986a94a184000", 58354, 403),
