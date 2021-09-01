@@ -32,7 +32,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "theapartment",		"The Apartment, Interactive demo" },
 	{ "dirmacromedia",		"Macromedia Director" },
 	{ "dirmacromind",		"MacroMind Director" },
-	{ "lingoexpo",			"Director 4 Lingo Expo and Sample Titles"},
+	{ "lingoexpo",			"Director 4 Lingo Expo and Sample Titles" },
 
 	// Commercially released games
 	{ "10plus2",			"10+2" },
@@ -68,8 +68,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "barbpauper",			"Barbie as the Princess and the Pauper" },
 	{ "barbrapunzel",		"Barbie as Rapunzel: A Creative Adventure" },
 	{ "barbswanlake",		"Barbie of Swan Lake: The Enchanted Forest" },
-	{ "basilbaker",			"Venice Under Glass: A Basil Baker Mystery Adventure"},
-	{ "bbbighelpers",		"Little Bears Make Big Helpers: Life's Little Lessons with the Berenstain Bears"},
+	{ "basilbaker",			"Venice Under Glass: A Basil Baker Mystery Adventure" },
+	{ "bbbighelpers",		"Little Bears Make Big Helpers: Life's Little Lessons with the Berenstain Bears" },
 	{ "bearfamily",			"A Bear Family Adventure" },
 	{ "beautyorbeast",		"Beauty or the Beast" },
 	{ "betterd",			"The Better Dead Ratification" },
@@ -333,9 +333,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "shrlucky",			"Schoolhouse Rock!: Lucky's Math Arcade" },
 	{ "shrmath",			"Schoolhouse Rock!: Math Rock" },
 	{ "shrmess",			"Schoolhouse Rock!: 1st-4th Grade Math Essentials" },
-	{ "simpsonplayer",		"The Simpsons Cartoon Player"},
-	{ "simpsonstudio",		"The Simpsons Cartoon Studio"},
-	{ "sitfarm",	        "Sitting on the Farm"},
+	{ "simpsonplayer",		"The Simpsons Cartoon Player" },
+	{ "simpsonstudio",		"The Simpsons Cartoon Studio" },
+	{ "sitfarm",	        "Sitting on the Farm" },
 	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" }, // Magnus & Myggen
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
 	{ "skyborg",			"SkyBorg: Into the Vortex" },
