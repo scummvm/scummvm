@@ -101,7 +101,25 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_data_455BF0 = 0;
 	_data_455BF4 = 0;
 	_keywordStartIndex = 0;
-	_keywordsOffset = _vm->checkGameVersion("Demo") ? 204 : 3681;
+
+	if (_vm->checkGameVersion("Demo")) {
+		_keywordsOffset = 204;
+	} else {
+		switch (_vm->getLanguage()) {
+		default:
+		case Common::EN_ANY:
+			_keywordsOffset = 3681;
+			break;
+
+		case Common::DE_DEU:
+			_keywordsOffset = 1760;
+			break;
+
+		case Common::FR_FRA:
+			_keywordsOffset = 1741;
+			break;
+		}
+	}
 
 	load();
 }
@@ -613,7 +631,23 @@ void Encounter::choose(int32 index) {
 		_value1 = (_item->keywords[index] & KEYWORD_MASK);
 		setVariable(1, _value1);
 
-		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + _value1))))
+		const char *goodBye;
+		switch (_vm->getLanguage()) {
+		default:
+		case Common::EN_ANY:
+			goodBye = "Goodbye";
+			break;
+
+		case Common::DE_DEU:
+			goodBye = "Auf Wiedersehen";
+			break;
+
+		case Common::FR_FRA:
+			goodBye = "Au Revoir";
+			break;
+		}
+
+		if (strcmp(goodBye, getText()->get(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + _value1))))
 			if (_index != 79)
 				BYTE1(_item->keywords[index]) |= kKeywordOptionsDisabled;
 
