@@ -696,8 +696,8 @@ FilesBioChipViewWindow::FilesBioChipViewWindow(BuriedEngine *vm, Window *parent)
 		FilesPage page;
 		page.pageID = fbcStream->readSint16LE();
 		page.returnPageIndex = fbcStream->readSint16LE();
-		page.nextButtonPageIndex = fbcStream->readSint16LE();
 		page.prevButtonPageIndex = fbcStream->readSint16LE();
+		page.nextButtonPageIndex = fbcStream->readSint16LE();
 
 		for (int i = 0; i < 6; i++) {
 			page.hotspots[i].left = fbcStream->readSint16LE();
@@ -731,8 +731,8 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 	const FilesPage &page = _navData[_curPage];
 
 	Common::Rect returnButton(343, 157, 427, 185);
-	Common::Rect next(193, 25, 241, 43);
-	Common::Rect previous(253, 25, 301, 43);
+	Common::Rect previous(193, 25, 241, 43);
+	Common::Rect next(253, 25, 301, 43);
 
 	if (page.returnPageIndex >= 0 && returnButton.contains(point)) {
 		_curPage = page.returnPageIndex;
