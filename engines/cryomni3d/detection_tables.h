@@ -535,6 +535,25 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
 	},
 
+	// Versailles 1685
+	// English DOS Non-interactive Demo (US)
+	{
+		{
+			"versailles",
+			"Demo",
+			{
+				{ "DEMO_US.HNS", 0, "3a65a984353fec354dd26a62ca2cd3fb", 68462303 },
+				{ "PLAYHNS.EXE", 0, "1c992f034f43418a5da2e8ebd0b92620", 472371 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_NO,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
