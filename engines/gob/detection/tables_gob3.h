@@ -508,7 +508,7 @@
 	{
 		"gob3",
 		"Non-interactive Demo",
-		AD_ENTRY1("intro.stk", "b9b898fccebe02b69c086052d5024a55"),
+		AD_ENTRY1s("intro.stk", "b9b898fccebe02b69c086052d5024a55", 600143),
 		UNK_LANG,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -522,7 +522,7 @@
 	{
 		"gob3",
 		"Interactive Demo",
-		AD_ENTRY1("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d"),
+		AD_ENTRY1s("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d", 270737),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -536,7 +536,7 @@
 	{
 		"gob3",
 		"Interactive Demo 2",
-		AD_ENTRY1("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d"),
+		AD_ENTRY1s("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d", 590631),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
