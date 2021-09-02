@@ -189,6 +189,20 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_DEMO,
 	},
 
+	{ // ST25 MAC demo (EN)
+		{
+			"st25",
+			"Demo",
+			AD_ENTRY1("Star Trek Data", "871fa51c7680c0a43df9622128f1569f"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_ST25,
+		GF_DEMO,
+	},
+
 	// These are commented until future notice because I don't have complete information
 	// on them (the file size for data.000 / data.001). Will be relying on people to
 	// report the missing data.
@@ -257,20 +271,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_DEMO,
-	},
-
-	{ // ST25 MAC demo ? (EN)
-		{
-			"st25",
-			"Demo",
-			AD_ENTRY1("Star Trek Data", "88f88b81d389a3217fc7efd6ee631c42"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
