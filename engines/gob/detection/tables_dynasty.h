@@ -142,5 +142,36 @@
 	kFeatures640x480,
 	"lda1.stk", 0, 0
 },
+{
+	{
+		"dynasty",
+		"Demo",
+		AD_ENTRY2s("demo.scn",	"a0d801c43a560b7471114744858b129c", 89,
+				   "demo5.vmd", "2abb7b6a26406c984f389f0b24b5e28e", 13290970),
+		EN_ANY,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeDynasty,
+	kFeatures640x480 | kFeaturesSCNDemo,
+	"demo.scn", 0, 1
+},
+// Combined demo for Woodruff and The Last Dynasty
+{
+	{
+		"dynastywood",
+		"Non-Interactive Demos",
+		AD_ENTRY2s("demo.scn",		"040a00b7276aa86fe7a51f5f362f63c7", 124,
+				   "demo5.vmd",		"2abb7b6a26406c984f389f0b24b5e28e", 13290970),
+		EN_ANY,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)	
+	},
+	kGameTypeDynastyWood,
+	kFeatures640x480 | kFeaturesSCNDemo,
+	"demo.scn", 0, 1
+},
 
 #endif // GOB_DETECTION_TABLES_DYNASTY_H

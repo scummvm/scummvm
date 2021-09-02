@@ -50,6 +50,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
+	{"dynastywood", "Woodruff and The Last Dynasty"},
 	{"urban", "Urban Runner"},
 	{"playtoons1", "Playtoons 1 - Uncle Archibald"},
 	{"playtoons2", "Playtoons 2 - The Case of the Counterfeit Collaborator"},
