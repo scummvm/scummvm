@@ -115,7 +115,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "5c42724bb93b360dca7044d6b7ef26e5", 7739319},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		// English 2-CD "Sold out" release
