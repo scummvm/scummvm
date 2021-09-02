@@ -164,10 +164,6 @@ bool FileStream::Seek(soff_t offset, StreamSeek origin) {
 	return ags_fseek(_file, (file_off_t)offset, stdclib_origin) == 0;
 }
 
-String FileStream::getSaveName(const String &filename) {
-	return String(filename.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
-}
-
 void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode) {
 	if (open_mode == kFile_Open) {
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
@@ -186,40 +182,12 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		}
 
 	} else {
+		String saveName;
 
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
-			String saveName = getSaveName(file_name);
-			Common::InSaveFile *existing = nullptr;
-
-			if (open_mode == kFile_Create &&
-				(existing = g_system->getSavefileManager()->openForLoading(saveName)) != nullptr) {
-				// kFile_Create mode allows opening existing files for read/write.
-				// Since ScummVM doesn't support this via the save file manager,
-				// we need to do a bit of a hack and load the existing contents,
-				// then recreate the file and write out the contents so that further
-				// writes will be possible without affecting the old data
-				size_t fileSize = existing->size();
-				byte *data = new byte[fileSize];
-				existing->read(data, fileSize);
-				delete existing;
-
-				Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(saveName, false);
-				assert(out);
-
-				out->write(data, fileSize);
-				if (work_mode != kFile_Write)
-					out->seek(0, SEEK_SET);
-				delete[] data;
-
-				_file = out;
-			} else {
-				_file = g_system->getSavefileManager()->openForSaving(saveName, false);
-			}
+			saveName = getSaveName(file_name);
 
 		} else {
-			if (open_mode == kFile_Create)
-				warning("Non-save file opened in kFile_Create mode");
-
 			Common::String fname = file_name;
 			if (fname.hasPrefix("./"))
 				fname = fname.substr(2);
@@ -228,12 +196,53 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 			else if (fname.findFirstOf('/') != Common::String::npos)
 				error("Invalid attempt to create file - %s", fname.c_str());
 
-			_file = g_system->getSavefileManager()->openForSaving(fname, false);
+			saveName = fname;
 		}
+
+		_file = openForWriting(saveName, open_mode, work_mode);
 
 		if (!_file)
 			error("Invalid attempt to create file - %s", file_name.GetCStr());
 	}
+}
+
+
+String FileStream::getSaveName(const String &filename) {
+	return String(filename.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+}
+
+Common::OutSaveFile *FileStream::openForWriting(const String &saveName, FileOpenMode open_mode, FileWorkMode work_mode) {
+	bool seek0 = false, duplicate = false;
+	assert(open_mode != kFile_Open);
+
+	if (work_mode == kFile_Read || work_mode == kFile_ReadWrite)
+		// In the original these modes result in [aw]+b, which seems to result
+		// in a file with arbitrary reading, but writing always appending
+		warning("FileOpen: independant read/write positions not supported");
+
+	Common::InSaveFile *existing = nullptr;
+	if (open_mode == kFile_Create &&
+		(existing = g_system->getSavefileManager()->openForLoading(saveName)) != nullptr) {
+		// kFile_Create mode allows opening existing files for read/write.
+		// Since ScummVM doesn't support this via the save file manager,
+		// we need to do a bit of a hack and load the existing contents,
+		// then recreate the file and write out the contents so that further
+		// writes will be possible without affecting the old data
+		size_t fileSize = existing->size();
+		byte *data = new byte[fileSize];
+		existing->read(data, fileSize);
+		delete existing;
+
+		Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(saveName, false);
+		assert(out);
+
+		out->write(data, fileSize);
+		delete[] data;
+
+		return out;
+	}
+
+	return g_system->getSavefileManager()->openForSaving(saveName);
 }
 
 } // namespace Shared
