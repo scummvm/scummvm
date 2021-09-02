@@ -50,7 +50,7 @@ public:
 		uint32 soundResourceSize;
 		SoundResource soundResources[3];
 		uint32 charMapSize;
-		CharMap charMap[10];
+		CharMap charMap[11];
 		bool checkForSpace;
 		uint32 space1Pos, space2Pos;
 		char solvedText[28];

@@ -47,6 +47,7 @@ static const PuzzleBoard::PuzzleData puzzleYouthData[] = {
 			{'H',  497, 198},
 			{'Y',  435, 231},
 			{'\0',   0,   0},
+			{'\0',   0,   0},
 			{'\0',   0,   0}
 		},
 		true,
@@ -71,11 +72,37 @@ static const PuzzleBoard::PuzzleData puzzleYouthData[] = {
 			{'R', 261, 194},
 			{'E', 390, 210},
 			{'D', 470, 226},
+			{'\0',  0,   0},
 			{'\0',  0,   0}
 		},
 		true,
 		12, 0,
 		"J U G E N D   D E R "
+	},
+	// French
+	{
+		55,
+		kGameFlag282,
+		503,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		11,
+		{
+			{'E',  64,  50},
+			{'S', 514,  50},
+			{'T', 192,  98},
+			{'J', 297, 114},
+			{'E', 595, 130},
+			{'S',  62, 146},
+			{'U', 376, 146},
+			{'N', 281, 162},
+			{'E', 482, 178},
+			{'E',  66, 194},
+			{'S', 133, 210},
+		},
+		true,
+		6, 0,
+		"E S T   J E U N E S S E "
 	}
 };
 

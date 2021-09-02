@@ -51,6 +51,7 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData[] = {
 			{'T',  436, 229},
 			{'O',  172, 262},
 			{'N',  393, 296},
+			{'\0',   0,   0},
 			{'\0',   0,   0}
 		},
 		false,
@@ -75,11 +76,37 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData[] = {
 			{'S', 289, 210},
 			{'U', 371, 226},
 			{'\0',  0,   0},
+			{'\0',  0,   0},
 			{'\0',  0,   0}
 		},
 		false,
 		0, 0,
 		"E R L O S U N G "
+	},
+	// French
+	{
+		31,
+		kGameFlag281,
+		431,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		7,
+		{
+			{'D',  54,  50},
+			{'U', 266,  66},
+			{'S', 540,  82},
+			{'A',  49, 130},
+			{'L', 199, 162},
+			{'U', 442, 178},
+			{'T', 369, 210},
+			{'\0',  0,   0},
+			{'\0',  0,   0},
+			{'\0',  0,   0},
+			{'\0',  0,   0}
+		},
+		true,
+		4, 0,
+		"D U   S A L U T "
 	}
 };
 
@@ -112,6 +139,11 @@ bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &) {
 
 			_solvedText[_position++] = _data.charMap[index].character;
 			_solvedText[_position++] = ' ';
+
+			if (_position == _data.space1Pos) {
+				_solvedText[_position++] = ' ';
+				_solvedText[_position++] = ' ';
+			}
 
 			updateScreen();
 		}

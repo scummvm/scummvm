@@ -47,7 +47,8 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData[] = {
 			{'O',  372, 182},
 			{'K',  210, 215},
 			{'Y',  440, 247},
-			{'T',  479, 262}
+			{'T',  479, 262},
+			{'\0',   0,   0},
 		},
 		true,
 		6, 18,
@@ -71,11 +72,37 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData[] = {
 			{'T',  33, 162},
 			{'I', 527, 162},
 			{'S', 233, 210},
+			{'\0',  0,   0},
 			{'\0',  0,   0}
 		},
 		true,
 		6, 14,
 		"W E G   I S T   Z U R "
+	},
+	// French
+	{
+		56,
+		kGameFlag283,
+		431,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		7,
+		{
+			{'E',  377,   50},
+			{'L',  357,   66},
+			{'A',  128,   98},
+			{'C',  367,  114},
+			{'L',  237,  130},
+			{'E',   25,  162},
+			{'F',   47,  194},
+			{'\0',   0,    0},
+			{'\0',   0,    0},
+			{'\0',   0,    0},
+			{'\0',   0,    0}
+		},
+		true,
+		4, 0,
+		"L A   C L E F "
 	}
 };
 
