@@ -21,6 +21,8 @@
  */
 
 #include "ags/shared/gfx/image.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/stream.h"
 #include "ags/lib/allegro.h"
 #include "common/file.h"
 #include "common/str.h"
@@ -38,9 +40,13 @@ namespace AGS3 {
 template<class DECODER>
 BITMAP *decodeImage(const char *filename, color *pal) {
 	DECODER decoder;
-	Common::File f;
 
-	if (f.open(filename) && decoder.loadStream(f)) {
+	AGS::Shared::Stream *file = AGS3::AGS::Shared::File::OpenFileRead(filename);
+	if (!file)
+		return nullptr;
+
+	AGS::Shared::ScummVMReadStream f(file);
+	if (decoder.loadStream(f)) {
 		// Create the output surface
 		const Graphics::Surface *src = decoder.getSurface();
 
