@@ -74,6 +74,18 @@ static const DMADGameDescription gameDescriptions[] = {
 		{ kDMSavePlatformAcceptAny }
 	},
 	{
+		// Added by trembyle
+		{"dm", "Apple IIgs Demo v1.4 English",
+			AD_ENTRY2s("DEMOIIGS.DAT", "6d30bde1f4d7be1cee500e7bb160658b", 190792,
+					   "DEMODUN.DAT",  "9c1b9996aceacb3fffb5bd21ca408fa8", 1487),
+			Common::EN_ANY, Common::kPlatformApple2GS, ADGF_DEMO, GUIO1(GUIO_NOMIDI),
+		},
+		kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
+		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+		{ kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+		{ kDMSavePlatformAcceptAny }
+	},
+	{
 		AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone,
 		{kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}
 	}
