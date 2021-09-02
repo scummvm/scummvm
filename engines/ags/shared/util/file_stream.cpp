@@ -212,7 +212,6 @@ String FileStream::getSaveName(const String &filename) {
 }
 
 Common::OutSaveFile *FileStream::openForWriting(const String &saveName, FileOpenMode open_mode, FileWorkMode work_mode) {
-	bool seek0 = false, duplicate = false;
 	assert(open_mode != kFile_Open);
 
 	if (work_mode == kFile_Read || work_mode == kFile_ReadWrite)
@@ -242,7 +241,7 @@ Common::OutSaveFile *FileStream::openForWriting(const String &saveName, FileOpen
 		return out;
 	}
 
-	return g_system->getSavefileManager()->openForSaving(saveName);
+	return g_system->getSavefileManager()->openForSaving(saveName, false);
 }
 
 } // namespace Shared
