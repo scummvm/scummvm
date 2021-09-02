@@ -111,9 +111,9 @@ void GameState::initEngineVars() {
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->_newHeroPos.x = 0x2000;
-	_engine->_scene->_newHeroPos.y = 0x1800;
-	_engine->_scene->_newHeroPos.z = 0x2000;
+	_engine->_scene->_newHeroPos.x = 16 * BRICK_SIZE;
+	_engine->_scene->_newHeroPos.y = 24 * BRICK_HEIGHT;
+	_engine->_scene->_newHeroPos.z = 16 * BRICK_SIZE;
 
 	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
