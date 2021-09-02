@@ -278,7 +278,6 @@ void CryoEngine::pollEvents() {
 		case Common::EVENT_KEYDOWN:
 			return;
 		case Common::EVENT_KEYUP:
-			//          _keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;

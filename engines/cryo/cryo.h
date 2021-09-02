@@ -86,7 +86,6 @@ public:
 
 private:
 	int _mouseButton;
-	// byte _keyState[256];
 };
 
 extern CryoEngine *g_ed;
