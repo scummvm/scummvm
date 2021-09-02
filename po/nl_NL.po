@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-30 20:34+0000\n"
+"POT-Creation-Date: 2021-09-01 13:39+0000\n"
 "PO-Revision-Date: 2021-08-30 10:05+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgid "Go up"
 msgstr "Ga omhoog"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:387
-#: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
+#: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:69
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:2093
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
@@ -80,7 +80,7 @@ msgstr "Ga omhoog"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
+#: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:70
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
 #: backends/dialogs/gtk/gtk-dialogs.cpp:45
 #: backends/dialogs/macosx/macosx-dialogs.mm:145
@@ -124,7 +124,7 @@ msgid ""
 msgstr "Uw verbinding lijkt beperkt. Wilt u echt bestanden ermee downloaden?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
-#: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
+#: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
 #: gui/options.cpp:2977 gui/options.cpp:3015 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
@@ -136,7 +136,7 @@ msgid "Yes"
 msgstr "Ja"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
-#: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
+#: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
 #: gui/options.cpp:2977 gui/options.cpp:3015 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:350
@@ -491,15 +491,15 @@ msgstr "Notities:"
 msgid "Ok"
 msgstr "Ok"
 
-#: gui/filebrowser-dialog.cpp:50
+#: gui/filebrowser-dialog.cpp:54
 msgid "Choose file for loading"
 msgstr "Selecteer te laden bestand"
 
-#: gui/filebrowser-dialog.cpp:50
+#: gui/filebrowser-dialog.cpp:54
 msgid "Enter filename for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
-#: gui/filebrowser-dialog.cpp:133
+#: gui/filebrowser-dialog.cpp:137
 msgid "Do you really want to overwrite the file?"
 msgstr "Wilt u dit bestand echt overschrijven?"
 
