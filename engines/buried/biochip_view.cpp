@@ -746,10 +746,6 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 		if (_curPage == 6)
 			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchBCJumpsuit = 1;
-		else if (_curPage == 21)
-			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelle = 1;
-		else if (_curPage == 31)
-			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelleBkg = 1;
 
 		return;
 	}
@@ -764,6 +760,12 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		if (page.hotspots[i].pageIndex >= 0 && Common::Rect(page.hotspots[i].left, page.hotspots[i].top, page.hotspots[i].right, page.hotspots[i].bottom).contains(point)) {
 			_curPage = page.hotspots[i].pageIndex;
 			invalidateWindow(false);
+
+			if (_curPage == 21)
+				((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelle = 1;
+			else if (_curPage == 31)
+				((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelleBkg = 1;
+
 			return;
 		}
 	}
