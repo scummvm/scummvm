@@ -108,10 +108,11 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 #else
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #endif
+	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
 
 	Graphics::ManagedSurface &src = bmp->getSurface();
-	if (bmp->format.bytesPerPixel == 1 && pal != nullptr) {
-		// We don't use the ManagedSurface palette in-game, so it is not defined yet.
+	if (bmp->format.bytesPerPixel == 1 && pal != nullptr && !src.getPalette()) {
+		// For paletted images, set up the palette as needed
 		byte palette[256 * 3];
 		for (int c = 0, i = 0 ; c < 256 ; ++c, i += 3) {
 			palette[i] = VGA_COLOR_TRANS(pal[c].r);
@@ -119,11 +120,19 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 			palette[i + 2] = VGA_COLOR_TRANS(pal[c].b);
 		}
 		src.setPalette(palette, 0, 256);
-	}
-	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
-	surface.rawBlitFrom(bmp->getSurface(), Common::Rect(0, 0, src.w, src.h),
-	                    Common::Point(0, 0), src.getPalette());
 
+		surface.rawBlitFrom(src, Common::Rect(0, 0, src.w, src.h),
+			Common::Point(0, 0), src.getPalette());
+	} else {
+		// Copy from the source surface without alpha transparency
+		Graphics::ManagedSurface temp = src;
+		temp.format.aLoss = 8;
+
+		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
+			Common::Point(0, 0), nullptr);
+	}
+
+	// Write out the bitmap
 	int dstPitch = surface.w * 3;
 	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
 	int padding = 0;
