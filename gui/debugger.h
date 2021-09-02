@@ -92,6 +92,7 @@ protected:
 	enum VarType {
 		DVAR_BYTE,
 		DVAR_INT,
+		DVAR_FLOAT,
 		DVAR_BOOL,
 		DVAR_INTARRAY,
 		DVAR_STRING
@@ -122,6 +123,10 @@ protected:
 
 	void registerVar(const Common::String &varname, int *variable) {
 		registerVarImpl(varname, variable, DVAR_INT, 0);
+	}
+
+	void registerVar(const Common::String &varname, float *variable) {
+		registerVarImpl(varname, variable, DVAR_FLOAT, 0);
 	}
 
 	void registerVar(const Common::String &varname, bool *variable) {
