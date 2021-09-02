@@ -31,18 +31,15 @@ namespace Groovie {
 
 VideoPlayer::VideoPlayer(GroovieEngine *vm) :
 	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false), _flags(0),
-	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0) {
+	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0), _frameTimeDrift(0) {
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
-	if ( _vm->getEngineVersion() != kGroovieT7G && _audioStream ) {
-		g_system->getMixer()->stopAll();
-	}
-	_audioStream = NULL;
 
+	stopAudioStream();
 	_fps = loadInternal();
 
 	if (_fps != 0) {

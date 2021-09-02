@@ -24,6 +24,7 @@
 #define GROOVIE_ROQ_H
 
 #include "groovie/player.h"
+#include "audio/mixer.h"
 
 namespace Groovie {
 
@@ -41,9 +42,19 @@ public:
 	~ROQPlayer();
 	void setOrigin(int16 x, int16 y);
 
+	Audio::SoundHandle getSoundHandle() {
+		return _soundHandle;
+	}
+
 protected:
 	uint16 loadInternal() override;
 	bool playFrameInternal() override;
+	void stopAudioStream() override;
+	virtual void createAudioStream(bool stereo);
+
+	Audio::SoundHandle _soundHandle;
+	Graphics::Surface *_bg, *_screen, *_overBuf;
+	Graphics::Surface *_currBuf, *_prevBuf;
 
 private:
 	bool readBlockHeader(ROQBlockHeader &blockHeader);
@@ -86,8 +97,6 @@ private:
 	bool _flagTwo;	// If _flagOne is set. Copy frame to the foreground otherwise to the background
 
 	// Buffers
-	Graphics::Surface *_bg, *_screen, *_overBuf;
-	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;
@@ -96,6 +105,13 @@ private:
 	byte _alpha;
 	bool _firstFrame;
 	Common::Rect *_restoreArea;	// Area to be repainted by foreground
+};
+
+class ROQSoundPlayer : public ROQPlayer {
+public:
+	ROQSoundPlayer(GroovieEngine *vm);
+	~ROQSoundPlayer();
+	void createAudioStream(bool stereo) override;
 };
 
 } // End of Groovie namespace

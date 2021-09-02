@@ -111,9 +111,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 Script::~Script() {
 	delete[] _code;
 	delete[] _savedCode;
-
 	delete _videoFile;
-
 	delete _staufsMove;
 	delete _tlcGame;
 	delete _t11hGame;
@@ -122,6 +120,18 @@ Script::~Script() {
 void Script::setVariable(uint16 variablenum, byte value) {
 	_variables[variablenum] = value;
 	debugC(1, kDebugScriptvars, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
+}
+
+void Script::setBitFlag(int bitnum, bool value) {
+	if (value) {
+		_bitflags |= (1 << bitnum);
+	} else {
+		_bitflags &= ~(1 << bitnum);
+	}
+}
+
+bool Script::getBitFlag(int bitnum) {
+	return _bitflags & (1 << bitnum);
 }
 
 void Script::setDebugger(Debugger *debugger) {
@@ -758,6 +768,24 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 	// If the file is closed, finish the playback
 	_bitflags = 0;
+	return true;
+}
+
+bool Script::playBackgroundSound(uint32 fileref, uint32 loops) {
+	if (fileref == -1) {
+		return false;
+	}
+
+	// Try to open the new file
+	Common::SeekableReadStream *_soundFile = _vm->_resMan->open(fileref);
+
+	if (_soundFile) {
+		_vm->_soundQueue.queue(_soundFile, loops);
+	} else {
+		error("Groovie::Script: Couldn't open file");
+		return false;
+	}
+
 	return true;
 }
 
@@ -2048,10 +2076,10 @@ void Script::o2_gamespecial() {
 	}
 }
 
-void Script::o2_stub52() {
+void Script::o2_copyfgtobg() {
 	uint8 arg = readScript8bits();
-	debugC(1, kDebugScript, "Groovie::Script: STUB52 (0x%02X)", arg);
-	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: STUB52 (0x%02X)", _currentInstruction-2, arg);
+	debugC(1, kDebugScript, "Groovie::Script: o2_copyfgtobg (0x%02X)", arg);
+	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: o2_copyfgtobg (0x%02X)", _currentInstruction-2, arg);
 	// return;
 
 	_vm->_graphicsMan->_background.copyFrom(_vm->_graphicsMan->_foreground);
@@ -2063,19 +2091,31 @@ void Script::o2_setscriptend() {
 	debugC(1, kDebugScript, "Groovie::Script: SetScriptEnd (0x%04X)", arg);
 }
 
-void Script::o2_stub59() {
+void Script::o2_playsound() {
+	uint32 fileref = readScript32bits();
+	uint8 loops = readScript8bits();// 0 means loop forever, 1 means play once
+	uint8 val3 = readScript8bits();
+
+	debugC(1, kDebugScript, "Groovie::Script: o2_playsound: 0x%08X 0x%02X 0x%02X", fileref, loops, val3);
+
+	if (fileref == 0 && loops == 0) {
+		_vm->_soundQueue.stopAll();
+		return;
+	}
+
+	playBackgroundSound(fileref, loops);
+}
+
+void Script::o2_check_sounds_overlays() {
 	uint16 val1 = readScript8or16bits();
 	uint8 val2 = readScript8bits();
 
 	debugC(1, kDebugScript, "Groovie::Script: STUB59: 0x%04X 0x%02X", val1, val2);
 
-	// FIXME: bitflag 1 is set by o2_vdxtransition
-	// I believe bitflag 3 is supposed to be set by background sounds (clock chimes, wind, heart, drip in the kitchen)
-	// Currently background sounds don't work so the flag is never set
-	// Which causes the end of the game to not work properly because it's supposed to give you until the clock chimes are finished before rolling the credits
-	//_variables[val1] = char(bool(_bitflags & 5));
-	// For now, just set to 1 so the player can choose an ending
-	_variables[val1] = 1;
+	// bitflag 0 is set by background sounds (clock chimes, wind, heart, drip in the kitchen)
+	// bitflag 2 is set by overlay videos
+	// this instruction is notably used at the end of the game when you have until midnight to choose a door
+	_variables[val1] = getBitFlag(0) || getBitFlag(2);
 }
 
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
@@ -2257,14 +2297,14 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o2_savescreen,
 	&Script::o2_restorescreen, // 0x50
 	&Script::o2_setvideoskip,
-	&Script::o2_stub52,
+	&Script::o2_copyfgtobg,
 	&Script::o_hotspot_outrect,
 	&Script::o_invalid, // 0x54
 	&Script::o2_setscriptend,
-	&Script::o_stub56,
+	&Script::o2_playsound,
 	&Script::o_invalid,
 	&Script::o_invalid, // 0x58
-	&Script::o2_stub59
+	&Script::o2_check_sounds_overlays
 };
 
 } // End of Groovie namespace

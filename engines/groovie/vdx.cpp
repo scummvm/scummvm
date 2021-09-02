@@ -56,6 +56,10 @@ void VDXPlayer::setOrigin(int16 x, int16 y) {
 	_origY = y;
 }
 
+void VDXPlayer::stopAudioStream() {
+	_audioStream = NULL;
+}
+
 uint16 VDXPlayer::loadInternal() {
 	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		int8 i;

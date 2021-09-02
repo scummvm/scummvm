@@ -42,6 +42,7 @@ public:
 	bool playFrame();
 	virtual void resetFlags() {}
 	virtual void setOrigin(int16 x, int16 y) {}
+	virtual void stopAudioStream() = 0;
 
 protected:
 	// To be implemented by subclasses

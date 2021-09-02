@@ -41,6 +41,7 @@ public:
 protected:
 	uint16 loadInternal() override;
 	bool playFrameInternal() override;
+	void stopAudioStream() override;
 
 private:
 	Graphics::Surface *_fg, *_bg;
