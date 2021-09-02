@@ -65,7 +65,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -76,7 +76,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -92,7 +92,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -103,7 +103,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "0d595d4b44ae1814082938d051e5174e", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -119,7 +119,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -133,7 +133,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -367,7 +367,7 @@ public:
 		// to the detection entries. In the latter case, this TODO should be
 		// replaced with an according explanation.
 		_flags = kADFlagUseExtraAsHint;
-		_guiOptions = GUIO3(GUIO_NOSUBTITLES, GUIO_NOSFX, GUIO_NOASPECT);
+		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOASPECT);
 
 		// Need MIDI directory to detect 11H Mac Installed
 		_maxScanDepth = 2;

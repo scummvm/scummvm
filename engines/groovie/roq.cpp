@@ -124,6 +124,13 @@ void ROQPlayer::setOrigin(int16 x, int16 y) {
 	_origY = y;
 }
 
+void ROQPlayer::stopAudioStream() {
+	if (_audioStream) {
+		g_system->getMixer()->stopHandle(_soundHandle);
+	}
+	_audioStream = NULL;
+}
+
 uint16 ROQPlayer::loadInternal() {
 	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		int8 i;
@@ -487,6 +494,8 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	if (height <= width / 3) {
 		_interlacedVideo = 1;
 		_offScale = 2;
+		// HACK: kill the sound queue so people can hear dialog during FMVs
+		_vm->_soundQueue.stopAll();
 	}
 	debugC(2, kDebugVideo, "Groovie::ROQ: width=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d, interl.=%d, _alpha=%d", width, height, _scaleX, _scaleY, _interlacedVideo, _offScale, _alpha);
 
@@ -677,9 +686,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 
 	// Initialize the audio stream if needed
 	if (!_audioStream && !playFirstFrame()) {
-		_audioStream = Audio::makeQueuingAudioStream(22050, false);
-		Audio::SoundHandle sound_handle;
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &sound_handle, _audioStream);
+		createAudioStream(false);
 	}
 
 	// Create the audio buffer
@@ -723,9 +730,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 
 	// Initialize the audio stream if needed
 	if (!_audioStream && !playFirstFrame()) {
-		_audioStream = Audio::makeQueuingAudioStream(22050, true);
-		Audio::SoundHandle sound_handle;
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &sound_handle, _audioStream);
+		createAudioStream(true);
 	}
 
 	// Create the audio buffer
@@ -855,6 +860,26 @@ void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
 		dst += _currBuf->pitch;
 		src += _prevBuf->pitch;
 	}
+}
+
+void ROQPlayer::createAudioStream(bool stereo) {
+	_audioStream = Audio::makeQueuingAudioStream(22050, stereo);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
+}
+
+ROQSoundPlayer::ROQSoundPlayer(GroovieEngine *vm) : ROQPlayer(vm) {
+	// HACK: we set the pixel format here to prevent a crash because this never plays any videos
+	// maybe we should just pre-create these buffers no matter what
+	_overBuf->free();
+	_overBuf->create(640, 480, _vm->_pixelFormat);
+}
+
+ROQSoundPlayer::~ROQSoundPlayer() {
+}
+
+void ROQSoundPlayer::createAudioStream(bool stereo) {
+	_audioStream = Audio::makeQueuingAudioStream(22050, stereo);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 }
 
 } // End of Groovie namespace
