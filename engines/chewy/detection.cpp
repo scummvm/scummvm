@@ -98,6 +98,23 @@ static const ChewyGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Chewy - ESC von F5 - German demo
+		// Demo version 1.1 (CHEWY.EXE - offset 0x8A520)
+		// From Blue Byte News Version III/97
+		// The source CD-ROM has the Matrix code SONOPRESS T-2037 A
+		// CD-ROM has the label "DEMO"
+		{
+			"chewy",
+			0,
+			AD_ENTRY1s("atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
