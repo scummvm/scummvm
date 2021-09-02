@@ -151,7 +151,6 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 #endif
 	}
 
-	setDebugger(new TwinEConsole(this));
 	_actor = new Actor(this);
 	_animations = new Animations(this);
 	_collision = new Collision(this);
@@ -178,6 +177,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_input = new Input(this);
 	_debug = new Debug(this);
 	_debugScene = new DebugScene(this);
+	setDebugger(new TwinEConsole(this));
 }
 
 TwinEEngine::~TwinEEngine() {
