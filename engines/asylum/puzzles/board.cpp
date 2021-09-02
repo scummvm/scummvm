@@ -20,6 +20,8 @@
 *
 */
 
+#include "common/language.h"
+
 #include "asylum/puzzles/board.h"
 
 #include "asylum/resources/worldstats.h"
@@ -34,8 +36,14 @@
 
 namespace Asylum {
 
-PuzzleBoard::PuzzleBoard(AsylumEngine *engine, const PuzzleData &data) : Puzzle(engine) {
-	_data = data;
+PuzzleBoard::PuzzleBoard(AsylumEngine *engine, const PuzzleData *data) : Puzzle(engine) {
+	const Common::Language supportedLanguages[] = {Common::EN_ANY, Common::DE_DEU, Common::FR_FRA};
+
+	int i = 0;
+	while (_vm->getLanguage() != supportedLanguages[i])
+		i++;
+
+	memcpy(&_data, &data[i], sizeof(PuzzleData));
 
 	// Init board
 	_solved = false;
