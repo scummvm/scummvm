@@ -681,6 +681,7 @@ const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterI
 	debugC(6, kDebugCharacter, "getSpecialAnimation(%d, %d)", characterId, animationId);
 
 	// very nice animation list hardcoded in the executable...
+	// TODO This list does not seem to be correct for the English demo.
 	static const SpecialCharacterAnimation anims[] = {
 		{ "TLK547_?", 9, 0, 0, 0, 0, 0, 1, 5, 8, 1, 8, 0, 255 },
 		{ "TLK555_?", 16, 0, 0, 0, 0, 6, 8, 10, 255, 6, 11, 2, 255 },

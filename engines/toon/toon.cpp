@@ -2181,6 +2181,7 @@ void ToonEngine::fadeOut(int32 numFrames) {
 }
 
 void ToonEngine::initFonts() {
+	// TODO These font files do not exist in the English demo
 	_fontRenderer = new FontRenderer(this);
 	_fontToon = new Animation(this);
 	_fontToon->loadAnimation("TOONFONT.CAF");

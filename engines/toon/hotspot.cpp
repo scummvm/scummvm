@@ -114,6 +114,8 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 	int32 rifsize2 = 0;
 
 	if (size2)
+		// TODO This is not correct for the English demo.
+		// The size seems to be a uint16?
 		rifsize2 = READ_BE_UINT32(&rifData2[4]);
 
 	_numItems = (rifsize + rifsize2) / 512;
