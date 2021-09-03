@@ -1965,40 +1965,48 @@ void CharsetRendererMac::setColor(byte color) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-int CharsetRendererV7::draw2byte(byte*, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
-	if (_vm->isScummvmKorTarget()) {
-		enableShadow(true);
-		_charPtr = _vm->get2byteCharPtr(chr);
-		_origWidth = _width = _vm->_2byteWidth;
-		_origHeight = _height = _vm->_2byteHeight;
-		_offsX = _offsY = 0;
-	} else if (!prepareDraw(chr)) {
-		return 0;
+int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	const byte *src = _vm->get2byteCharPtr(chr);
+	buffer += (y * pitch + x);
+	_origWidth = _vm->_2byteWidth;
+	_origHeight = _vm->_2byteHeight;
+	uint8 bits = 0;
+	pitch -= _origWidth;
+	while (_origHeight--) {
+		for (x = 0; x < _origWidth; ++x) {
+			if ((x % 8) == 0)
+				bits = *src++;
+			if (bits & revBitMask(x % 8)) {
+				buffer[0] = col;
+				buffer[1] = _shadowColor;
+			}
+			buffer++;
+		}
+		buffer += pitch;
 	}
-
-	_color = col;
-	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
-	drawBits1(vs, x + vs.xstart, y, _charPtr, MAX<int>(clipRect.top, y), _origWidth, _origHeight);
-
 	return _origWidth + _spacing;
 }
 
 int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
 	if (!prepareDraw(chr))
 		return 0;
-
-	if (_vm->isScummvmKorTarget()) {
-		_origWidth = _width;
-		_origHeight = _height;
-	}
-
 	_width = getCharWidth(chr);
-
 	_vm->_charsetColorMap[1] = col;
 	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
-	drawBitsN(vs, buffer + (y + _offsY) * vs.pitch + vs.xstart + x, _charPtr, *_fontPtr, y, _origWidth, _origHeight);
-
+	drawBitsN(vs, buffer + (y + _offsY) * vs.pitch + x, _charPtr, *_fontPtr, y, _origWidth, _origHeight);
 	return _width;
+}
+
+
+int CharsetRendererV7::getCharWidth(uint16 chr) const {
+	if ((chr & 0x80) && _vm->_useCJKMode)
+		return _vm->_2byteWidth + _spacing;
+
+	int offs = READ_LE_UINT32(_fontPtr + (chr & 0xFF) * 4 + 4);
+	// SCUMM7 does not use the "kerning" from _fontPtr[offs + 2] here (compare CharsetRendererClassic::getCharWidth()
+	// to see the difference. Verfied from disasm and comparison with DOSBox (hard to notice, but e. g. the 'a' character
+	// used to be too narrow by 1 pixel, so all lines containing that character were slightly off).
+	return offs ? _fontPtr[offs] : 0;
 }
 
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm) : CharsetRenderer(vm) {

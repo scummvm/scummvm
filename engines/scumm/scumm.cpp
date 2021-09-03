@@ -1076,8 +1076,9 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	clearSubtitleQueue();
 
 	_textV7 = NULL;
+	_newTextRenderStyle = (_game.version == 8 || _language == Common::JA_JPN || _language == Common::KO_KOR || _language == Common::ZH_TWN);
 	_defaultTextClipRect = Common::Rect(_screenWidth, _screenHeight);
-	_wrappedTextClipRect = Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10);
+	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10)  : Common::Rect(_screenWidth, _screenHeight);
 
 	_game.features |= GF_NEW_COSTUMES;
 }

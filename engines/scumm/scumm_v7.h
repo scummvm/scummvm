@@ -68,6 +68,7 @@ protected:
 	TextRenderer_v7 *_textV7;
 	Common::Rect _defaultTextClipRect;
 	Common::Rect _wrappedTextClipRect;
+	bool _newTextRenderStyle;
 
 	int _verbLineSpacing;
 	bool _existLanguageFile;
