@@ -355,7 +355,7 @@ const char *emiPS2_voiceMon[] = {
 	"b4a938b9c116e9370e992c8edfb00c35", // english
 };
 
-// EMI demo
+// EMI demo (CD demo does not include i9n.lab)
 
 const char *emid_i9n[] = {
 	"d913504ec3a2fe52ee02a20a154a2b17", // english patched
@@ -454,7 +454,6 @@ void MD5Check::init() {
 		}
 	} else {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
-			MD5SUM("i9n.lab", emid_i9n)
 			MD5SUM("lip.lab", emid_lip)
 			MD5SUM("MagDemo.lab", emid_MagDemo)
 			MD5SUM("tile.lab", emid_tile)

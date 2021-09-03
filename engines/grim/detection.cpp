@@ -540,12 +540,26 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
-		// Escape from Monkey Island demo (English)
+		// Escape from Monkey Island CD demo (English)
 		{
 			"monkey4",
-			"Demo",
+			"CD Demo",
 			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
-					   "i9n.lab",		 "274f8579b01e0872fe6f1ba267266149", 26951),
+					   "monkey4.exe",	"119ee6b9380cc0e373287fabb25e0578", 884736),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island web demo (English)
+		{
+			"monkey4",
+			"Web Demo",
+			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
+					   "i9n.lab",		"274f8579b01e0872fe6f1ba267266149", 26951),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,

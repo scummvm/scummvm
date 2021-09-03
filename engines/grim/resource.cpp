@@ -160,7 +160,6 @@ ResourceLoader::ResourceLoader() {
 		SearchMan.listMatchingMembers(files, emi_patches_filename);
 
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
-			SearchMan.listMatchingMembers(files, "i9n.lab");
 			SearchMan.listMatchingMembers(files, "lip.lab");
 			SearchMan.listMatchingMembers(files, "MagDemo.lab");
 			SearchMan.listMatchingMembers(files, "tile.lab");
