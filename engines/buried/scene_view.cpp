@@ -554,13 +554,13 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 			newSceneStaticData.location.environment != oldLocation.environment ||
 			newSceneStaticData.location.node != oldLocation.node) {
 		((GameUIWindow *)_parent)->_bioChipRightWindow->disableEvidenceCapture();
-		((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
+		((GameUIWindow *)_parent)->_liveTextWindow->updateLiveText();
 	}
 
 	// Disable the arrow window
 	((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
 
-	// Get thr esults from the pre-exit room function
+	// Get the results from the pre-exit room function
 	int retVal = _currentScene->preExitRoom(this, destinationData.destinationScene);
 
 	// If we died, return here
