@@ -104,6 +104,7 @@ bool VideoWindow::openVideo(const Common::String &fileName) {
 		closeVideo();
 		return false;
 	}
+	_video->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	if (!_vm->isTrueColor()) {
 		Graphics::PixelFormat videoFormat = _video->getPixelFormat();

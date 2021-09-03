@@ -144,6 +144,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 			_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectDelta = finalVolumeLevel / 16;
 			_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectStart = g_system->getMillis();
 			_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectRemaining = 2000;
+			_soundData[kAmbientIndexBase + newAmbientTrack]->_soundType = Audio::Mixer::kMusicSoundType;
 
 			// Start the new ambient
 			retVal = _soundData[kAmbientIndexBase + newAmbientTrack]->start();
@@ -155,6 +156,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 				// Set some parameters
 				_soundData[kAmbientIndexBase + newAmbientTrack]->_volume = finalVolumeLevel;
 				_soundData[kAmbientIndexBase + newAmbientTrack]->_loop = true;
+				_soundData[kAmbientIndexBase + newAmbientTrack]->_soundType = Audio::Mixer::kMusicSoundType;
 
 				// Stop the current ambient
 				delete _soundData[kAmbientIndexBase + _lastAmbient];
@@ -248,6 +250,7 @@ bool SoundManager::setSecondaryAmbientSound(const Common::String &fileName, bool
 		_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectDelta = finalVolumeLevel / 16;
 		_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectStart = g_system->getMillis();
 		_soundData[kAmbientIndexBase + newAmbientTrack]->_timedEffectRemaining = 2000;
+		_soundData[kAmbientIndexBase + newAmbientTrack]->_soundType = Audio::Mixer::kMusicSoundType;
 
 		// Start the new ambient
 		return _soundData[kAmbientIndexBase + newAmbientTrack]->start();
@@ -260,6 +263,7 @@ bool SoundManager::setSecondaryAmbientSound(const Common::String &fileName, bool
 	// Set some parameters
 	_soundData[kAmbientIndexBase + newAmbientTrack]->_volume = finalVolumeLevel;
 	_soundData[kAmbientIndexBase + newAmbientTrack]->_loop = true;
+	_soundData[kAmbientIndexBase + newAmbientTrack]->_soundType = Audio::Mixer::kMusicSoundType;
 
 	// Start the new ambient
 	return _soundData[kAmbientIndexBase + newAmbientTrack]->start();
@@ -342,6 +346,8 @@ bool SoundManager::playSynchronousAIComment(const Common::String &fileName) {
 	if (!_soundData[kAIVoiceIndex]->load(fileName))
 		return false;
 
+	_soundData[kAIVoiceIndex]->_soundType = Audio::Mixer::kSpeechSoundType;
+
 	// Play the file
 	bool retVal = _soundData[kAIVoiceIndex]->start();
 
@@ -369,6 +375,7 @@ bool SoundManager::playAsynchronousAIComment(const Common::String &fileName) {
 	// Set some parameters
 	_soundData[kAIVoiceIndex]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
 	_soundData[kAIVoiceIndex]->_volume = 127;
+	_soundData[kAIVoiceIndex]->_soundType = Audio::Mixer::kSpeechSoundType;
 
 	// Play the file
 	return _soundData[kAIVoiceIndex]->start();
@@ -410,6 +417,7 @@ int SoundManager::playSoundEffect(const Common::String &fileName, int volume, bo
 	_soundData[kEffectsIndexBase + effectChannel]->_loop = loop;
 	if (oneShot)
 		_soundData[kEffectsIndexBase + effectChannel]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
+	_soundData[kEffectsIndexBase + effectChannel]->_soundType = Audio::Mixer::kSFXSoundType;
 
 	// Play the file
 	_soundData[kEffectsIndexBase + effectChannel]->start();
@@ -530,6 +538,7 @@ bool SoundManager::playInterfaceSound(const Common::String &fileName) {
 		return false;
 
 	_soundData[kInterfaceIndex]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
+	_soundData[kInterfaceIndex]->_soundType = Audio::Mixer::kSFXSoundType;
 
 	// Play the file
 	return _soundData[kInterfaceIndex]->start();
@@ -572,6 +581,7 @@ bool SoundManager::startFootsteps(int footstepsID) {
 		// Load the footsteps sample data and modify the internal flags
 		_soundData[kFootstepsIndex]->load(_vm->getFilePath(IDS_FOOTSTEPS_FILENAME_BASE + footstepsID));
 		_soundData[kFootstepsIndex]->_loop = true;
+		_soundData[kFootstepsIndex]->_soundType = Audio::Mixer::kSFXSoundType;
 	}
 
 	// Play the footsteps
@@ -694,6 +704,7 @@ SoundManager::Sound::Sound() {
 	_timedEffectRemaining = 0;
 
 	_wasPlaying = false;
+	_soundType = Audio::Mixer::kPlainSoundType;
 }
 
 SoundManager::Sound::~Sound() {
@@ -733,7 +744,7 @@ bool SoundManager::Sound::start() {
 		disposeAfterUse = DisposeAfterUse::YES;
 	}
 
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, audioStream,
+	g_system->getMixer()->playStream(_soundType, _handle, audioStream,
 			-1, clipVolume(_volume << 1), 0, disposeAfterUse);
 
 	return true;
