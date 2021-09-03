@@ -64,7 +64,7 @@ private:
 	const int _spacing;
 	const byte _2byteCharWidth;
 	const byte _lineBreakMarker;
-	const bool _processEscapeCodes;
+	const bool _newStyle;
 	const uint16 _screenWidth;
 	GlyphRenderer_v7 *_gr;
 };

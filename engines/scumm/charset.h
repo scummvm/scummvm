@@ -310,21 +310,21 @@ public:
 #ifdef ENABLE_SCUMM_7_8
 class CharsetRendererV7 : public CharsetRendererClassic, public GlyphRenderer_v7 {
 public:
-	CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm), _spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0) {}
+	CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm), _spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0), _newStyle(vm->_useCJKMode) {}
 	~CharsetRendererV7() override {};
 
 	void printChar(int chr, bool ignoreCharsetMask) override { error("CharsetRendererV7::printChar(): Unexpected legacy function call"); }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
 	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) override;
-	int getCharWidth(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteWidth + _spacing : CharsetRendererClassic::getCharWidth(chr);	}
-	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight + 1 : _fontHeight; }
+	int getCharWidth(uint16 chr) const override;
+	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight : _fontHeight; }
 	int getFontHeight() const override { return _fontHeight; }
 	int setFont(int) override { return 0; }
-	EscapeCodeFormat escapeCodeFormat() const override { return kEscCodesNONE; }
-
+	bool newStyleWrapping() const override { return _newStyle; }
 private:
 	const int _spacing;
+	const bool _newStyle;
 };
 
 class CharsetRendererNut : public CharsetRenderer, public GlyphRenderer_v7 {
@@ -336,7 +336,7 @@ public:
 
 	void setCurID(int32 id) override;
 	int setFont(int id) override;
-	EscapeCodeFormat escapeCodeFormat() const override { return kEscCodesNUT; }
+	bool newStyleWrapping() const override { return true; }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
 	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) override;

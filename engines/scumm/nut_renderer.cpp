@@ -386,6 +386,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 	if (minX)
 		dst += minX;
 
+	int clipWdth = (_chars[chr].width - width);
 	char color = (col != -1) ? col : 1;
 
 	if (_vm->_game.version == 7) {
@@ -396,6 +397,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 					if (value != _chars[chr].transparency)
 						dst[i] = value;
 				}
+				src += clipWdth;
 				dst += pitch;
 			}
 		} else {
@@ -407,6 +409,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 					else if (value != _chars[chr].transparency)
 						dst[i] = 0;
 				}
+				src += clipWdth;
 				dst += pitch;
 			}
 		}
@@ -422,6 +425,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 					else if (value != _chars[chr].transparency)
 						dst[i] = value;
 				}
+				src += clipWdth;
 				dst += pitch;
 			}
 		} else {
@@ -431,6 +435,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 					if (value != _chars[chr].transparency)
 						dst[i] = (value == 1) ? color : value;
 				}
+				src += clipWdth;
 				dst += pitch;
 			}
 		}		
@@ -463,6 +468,7 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 		buffer += minX;
 	}
 
+	int clipWdth = (_vm->_2byteWidth - width);
 	byte bits = *src;
 	const byte *origSrc = src;
 
@@ -482,6 +488,10 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 					bits = *src++;
 				if (bits & revBitMask(i % 8))
 					dst[i] = drawColor;
+			}
+			for (int i = width; i < width + clipWdth; ++i) {
+				if (i % 8 == 0)
+					bits = *src++;
 			}
 			dst += pitch;
 		}

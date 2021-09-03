@@ -40,7 +40,7 @@ TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
 	_useCJKMode(vm->_useCJKMode),
 	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
 	_lineBreakMarker(vm->_newLineCharacter),
-	_processEscapeCodes (gr->escapeCodeFormat() == GlyphRenderer_v7::kEscCodesNUT),
+	_newStyle (gr->newStyleWrapping()),
 	_gr(gr) {
 }
 
@@ -54,7 +54,7 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 	int width = 0;
 
 	while (*str && numBytesMax) {
-		if (_processEscapeCodes && *str == '^') {
+		if (_newStyle && *str == '^') {
 			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
@@ -69,17 +69,30 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 				numBytesMax -= 2;
 				continue;
 			}
+		} else if (!_newStyle && *str == '@') {
+			str++;
+			numBytesMax--;
+			continue;
 		}
 
 		if (is2ByteCharacter(_lang, *str)) {
 			width += _2byteCharWidth + _spacing;
 			++str;
 			--numBytesMax;
-		} else if (*str == '\n') {
+		} else if (_newStyle && *str == '\n') {
 			maxWidth = MAX<int>(width, maxWidth);
 			width = 0;
-		} else if (*str != '\r' && *str != _lineBreakMarker) {
-			width += _gr->getCharWidth(*str);
+		} else if (!_newStyle && *str == '\r') {
+			break;
+		} else if (!_newStyle && *str == '\xff') {
+			++str;
+			--numBytesMax;
+			if (*str == 0 || *str == 3 || *str == 9 || *str == 1 || *str == 2 /*|| *str == 8*/)
+				return width;
+			// No handling for this, atm, SCUMM7 does not have these anyway
+			assert(*str != 8);
+		} else if (*str != '\r' && !(_newStyle && *str == _lineBreakMarker)) {
+			width += _gr->getCharWidth((uint8)*str);
 		}
 		++str;
 		--numBytesMax;
@@ -98,7 +111,7 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 	int lineHeight = 0;
 
 	while (*str && numBytesMax) {
-		if (_processEscapeCodes && *str == '^') {
+		if (_newStyle && *str == '^') {
 			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
@@ -139,7 +152,7 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 		}
 	} else {
 		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
-			if (_processEscapeCodes && str[i] == '^') {
+			if (_newStyle && str[i] == '^') {
 				if (str[i + 1] == 'f') {
 					_gr->setFont(str[i + 3] - '0');
 					i += 3;
@@ -222,6 +235,17 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	int len = (int)strlen(str);
 	Common::String spaceSeparators(Common::String::format(" %c", (char)_lineBreakMarker));
 	Common::String breakSeparators(Common::String::format(" \n%c", (char)_lineBreakMarker));
+
+	// This wouldn't work properly (at least not without careful extra work) with old style escape codes.
+	// I doubt very much that any SCUMM7 game would have them, since they don't always work properly when
+	// combined with speech playback and they also would be difficult to maintain with language bundles.
+	// Let's check for these, so I'll definitely notice during my tests...
+	if (!_newStyle) {
+		Common::String invalidChars("@\xff\x03\x09\x01\x02\x08");
+		for (int i = 0; i < len; ++i)
+		if (invalidChars.contains(str[i]))
+			assert(true == false);
+	}
 
 	int16 substrByteLength[SCUMM7_MAX_STRINGS];
 	memset(substrByteLength, 0, sizeof(substrByteLength));
@@ -307,22 +331,26 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	if (y < clipRect.top)
 		y = clipRect.top;
 
-	if (center) {
-		if (x + (maxWidth >> 1) > clipRect.right)
-			x = clipRect.right - (maxWidth >> 1);
-		if (x - (maxWidth >> 1) < clipRect.left)
-			x = clipRect.left + (maxWidth >> 1);
-	} else {
-		if (x > clipRect.right - maxWidth)
-			x = clipRect.right - maxWidth;
-		if (x < clipRect.left)
-			x = clipRect.left;
+	if (_newStyle) {
+		if (center) {
+			if (x + (maxWidth >> 1) > clipRect.right)
+				x = clipRect.right - (maxWidth >> 1);
+			if (x - (maxWidth >> 1) < clipRect.left)
+				x = clipRect.left + (maxWidth >> 1);
+		} else {
+			if (x > clipRect.right - maxWidth)
+				x = clipRect.right - maxWidth;
+			if (x < clipRect.left)
+				x = clipRect.left;
+		}
 	}
 
 	int y2 = y;
 
 	for (int i = 0; i < numSubstrings; i++) {
 		int xpos = center ? x - substrWidths[i] / 2 : x;
+		if (!_newStyle)
+			xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - substrWidths[i]);
 		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
 		drawSubstring(str + substrStart[i], len, buffer, clipRect, xpos, y, pitch, col);
 		y += getStringHeight(str + substrStart[i], len);
@@ -344,7 +372,7 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 
 	if (_useCJKMode) {
 		// The Dig expressly checks for x == 160 && y == 189 && charset == 3. Usually, if the game wants to print CJK text at the bottom
-		// of the screen it will use y = 183. So maybe this is a hack to fix some script texts that weren forgotten in the CJK converting
+		// of the screen it will use y = 183. So maybe this is a hack to fix some script texts that were forgotten in the CJK converting
 		// process.
 		if (_game.id == GID_DIG && x == 160 && y == 189 && charset == 3)
 			y -= 6;
@@ -376,12 +404,30 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		if (bt.wrap) {
 			bt.rect = _wrappedTextClipRect;
-			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getBasePtr(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+
+			// This is for the "narrow" paragraph wrapping type that the older interpreters (e. g. FT, DIG English) do.
+			if (!_newTextRenderStyle) {
+				bt.xpos = CLIP<int>(bt.xpos, 80, 240);
+				bt.ypos = CLIP<int>(bt.ypos, 1, 160);
+				int maxWidth = _string[0].right - bt.xpos - 1;
+				if (bt.center) {
+					if (maxWidth > bt.xpos)
+						maxWidth = bt.xpos;
+					bt.rect.left = MAX<int>(0, bt.xpos - maxWidth);
+					bt.rect.right = MIN<int>(_screenWidth, bt.xpos + maxWidth);
+				}
+			}
+
+			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
 		} else {
 			bt.rect = _defaultTextClipRect;
-			_textV7->drawString((const char*)bt.text, (byte*)vs->getBasePtr(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+			_textV7->drawString((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
 		}
 
+		bt.rect.top += _screenTop;
+		bt.rect.bottom += _screenTop;
+		bt.rect.left;
+		bt.rect.right;
 		markRectAsDirty(vs->number, bt.rect);
 	}
 }
@@ -454,15 +500,11 @@ void ScummEngine_v7::CHARSET_1() {
 	StringTab saveStr = _string[0];
 	if (a && _string[0].overhead) {
 		int s;
-
-		_string[0].xpos = a->getPos().x + _screenWidth / 2 - camera._cur.x;
+		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
 		s = a->_scalex * a->_talkPosX / 255;
 		_string[0].xpos += (a->_talkPosX - s) / 2 + s;
 
-		int yyy1 = a->getPos().y;
-		int yyy2 = a->getElevation();
-
-		_string[0].ypos = a->getPos().y - a->getElevation() + _screenHeight / 2 - camera._cur.y;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 		s = a->_scaley * a->_talkPosY / 255;
 		_string[0].ypos += (a->_talkPosY - s) / 2 + s;
 	}
