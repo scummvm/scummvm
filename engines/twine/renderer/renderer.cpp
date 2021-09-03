@@ -680,6 +680,7 @@ void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
 }
 
 // FIXME: buggy
+// Used e.g for the legs of the horse or the ears of most characters
 void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
@@ -823,6 +824,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 	}
 }
 
+// used for the most of the heads of the characters and the horse body
 void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
