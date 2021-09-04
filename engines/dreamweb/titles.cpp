@@ -23,6 +23,8 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 namespace DreamWeb {
 
@@ -99,6 +101,54 @@ void DreamWebEngine::gettingShot() {
 }
 
 void DreamWebEngine::bibleQuote() {
+	const char *enStory = "And I heard a great voice out of the temple saying to the seven angels, "
+						"Go your ways and pour out the vails of the wrath of god upon the earth. "
+						"Book of revelation Chapter 16 verse 1.";
+	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges: "
+						"Allez verser sur la terre les sept coupes de la col\xC3\xA8re de Dieu. "
+						"L'Apocalypse, chapitre 16, verset 1";
+	const char *esStory = "O\xC3\xAD una gran voz que dec\xC3\xAD""a"" desde el templo a los siete \xC3\xA1ngeles: "
+						"Id y derramad sobre la tierra las siete copas de la ira de Dios. "
+						"Apocalipsis, cap\xC3\xADtulo 16, vers\xC3\xAD""culo"" primero.";
+	const char *deStory = "Dann h\xC3\xB6rte ich, wie eine laute Stimme aus dem Tempel den sieben Engeln zurief: "
+						"Geht und gie\xC3\x9Ft die sieben Schalen mit dem Zorn Gottes \xC3\xBC""ber"" die Erde. "
+						"Offenbarung des Johannes. Kapitel 16 Vers 1";
+	const char *itStory = "Udii poi una gran voce dal tempio che diceva ai sette angeli: "
+						"Andate e versate sulla terra le sette coppe dell'ira di Dio. "
+						"Dal libro dell'Apocalisse, capitolo uno, primo versetto";
+	const char *ruStory = "\xD1\x83\xD1\x81\xD0\xBB\xD1\x8B\xD1\x88\xD0\xB0\xD0\xBB \xD1\x8F \xD0\xB8\xD0\xB7 \xD1\x85\xD1\x80\xD0\xB0\xD0\xBC\xD0\xB0 \xD1\x80\xD1\x8F\xD1\x89\xD0\xB8\xD0\xB9 \xD1\x81\xD0\xB5\xD0\xBC\xD0\xB8 \xD0\x90\xD0\xBD\xD0\xB3\xD0\xB5\xD0\xBB\xD0\xB0\xD0\xBC\x3A: "
+						"\xD0\xB8\xD0\xB4\xD0\xB8\xD1\x82\xD0\xB5 \xD0\xB8 \xD0\xB2\xD1\x8B\xD0\xBB\xD0\xB5\xD0\xB9\xD1\x82\xD0\xB5 \xD1\x81\xD0\xB5\xD0\xBC\xD1\x8C \xD1\x87\xD0\xB0\xD1\x88 \xD0\xB3\xD0\xBD\xD0\xB5\xD0\xB2\xD0\xB0 \xD0\x91\xD0\xBE\xD0\xB6\xD0\xB8\xD1\x8F \xD0\xBD\xD0\xB0 \xD0\xB7\xD0\xB5\xD0\xBC\xD0\xBB\xD1\x8E\x2E. "
+						"\xD0\x9E\xD0\xA2\xD0\x9A\xD0\xA0\xD0\x9E\xD0\x92\xD0\x95\xD0\x9D\xD0\x98\xD0\x95 \xD0\x98\xD0\x9E\xD0\x90\xD0\x9D\xD0\x9D\xD0\x90 \xD0\x91\xD0\x9E\xD0\x93\xD0\x9E\xD0\xA1\xD0\x9B\xD0\x9E\xD0\x92\xD0\x90 16:1";
+	const char *csStory = "Tu jsem usly\xC5\xA1""el"" mocn\xC3\xBD hlas ze svatyn\xC4\x9B, kter\xC3\xBD t\xC4\x9Bm sedmi and\xC4\x9Bl\xC5\xAFm \xC5\x99\xC3\xADkal: "
+						"Jd\xC4\x9Bte a vylejte t\xC4\x9B""ch"" sedm misek Bo\xC5\xBE\xC3\xADho hn\xC4\x9Bvu na zem. "
+						"Zjeven\xC3\xAD 16 ver\xC5\xA1 1";
+
+
+	const char *theStory;
+	switch(getLanguage()) {
+	case Common::ES_ESP:
+		theStory = esStory;
+		break;
+	case Common::FR_FRA:
+		theStory = frStory;
+		break;
+	case Common::IT_ITA:
+		theStory = itStory;
+		break;
+	case Common::DE_DEU:
+		theStory = deStory;
+		break;
+	case Common::RU_RUS:
+		theStory = ruStory;
+		break;
+	case Common::CZ_CZE:
+		theStory = csStory;
+		break;
+	default:
+		theStory = enStory;
+		break;
+	}
+
 	initGraphics(640, 480);
 
 	showPCX("I00");
@@ -110,7 +160,15 @@ void DreamWebEngine::bibleQuote() {
 		return; // "biblequotearly"
 	}
 
-	hangOne(560);
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		_ttsMan->say(theStory);
+		while (_ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
+			hangOne(1);
+		_ttsMan->stop();
+
+	} else
+		hangOne(560);
+
 	if (_lastHardKey == Common::KEYCODE_ESCAPE) {
 		_lastHardKey = Common::KEYCODE_INVALID;
 		return; // "biblequotearly"
