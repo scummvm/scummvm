@@ -27,6 +27,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
+#include "common/text-to-speech.h"
 
 #include "supernova/imageid.h"
 #include "supernova/resman.h"
@@ -286,6 +287,7 @@ void Screen::renderMessage(int stringId, MessagePosition position,
 			text = Common::String::format(text.c_str(), var1.c_str());
 	}
 
+
 	renderMessage(text, position);
 }
 
@@ -529,6 +531,10 @@ void Screen::renderMessage(const char *text, MessagePosition position, int posit
 	int x = 0;
 	int y = 0;
 	byte textColor = 0;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		ttsMan->say(text,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
 
 	while (*p != '\0') {
 		row[numRows] = p;

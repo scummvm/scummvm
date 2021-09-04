@@ -101,6 +101,7 @@ private:
 
 class GameManager {
 public:
+
 	GameManager(SupernovaEngine *vm, Sound *sound);
 	virtual ~GameManager();
 
