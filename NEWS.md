@@ -1,6 +1,14 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.4.0 (XXXX-XX-XX)
+
+ Dreamweb:
+   - Added text to speech for dialog ands and object descriptions.
+
+ Supernova:
+   - Added text to speech for dialog ands and object descriptions.
+
 #### 2.3.0 (XXXX-XX-XX)
 
  New games:
