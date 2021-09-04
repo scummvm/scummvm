@@ -4,10 +4,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.4.0 (XXXX-XX-XX)
 
  Dreamweb:
-   - Added text to speech for dialog ands and object descriptions.
+   - Added text to speech for dialogs and object descriptions.
 
  Supernova:
-   - Added text to speech for dialog ands and object descriptions.
+   - Added text to speech for dialogs and object descriptions.
 
 #### 2.3.0 (XXXX-XX-XX)
 
