@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "gui/EventRecorder.h"
 
-
 namespace Common {
 
 RandomSource::RandomSource(const String &name) {
@@ -43,6 +42,8 @@ RandomSource::RandomSource(const String &name) {
 	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
 	newSeed += time.tm_year * 86400 * 366;
 	newSeed = newSeed * 1000 + g_system->getMillis();
+	// some seeds result in loops
+	newSeed %= 100000000;
 	setSeed(newSeed);
 #endif
 }
