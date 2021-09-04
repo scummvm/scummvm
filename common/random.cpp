@@ -43,13 +43,13 @@ RandomSource::RandomSource(const String &name) {
 	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
 	newSeed += time.tm_year * 86400 * 366;
 	newSeed = newSeed * 1000 + g_system->getMillis();
-	if(newSeed == 0)
-		newSeed++;
 	setSeed(newSeed);
 #endif
 }
 
 void RandomSource::setSeed(uint32 seed) {
+	if(seed == 0)
+		seed++;
 	_randSeed = seed;
 }
 	
