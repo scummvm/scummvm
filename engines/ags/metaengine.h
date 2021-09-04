@@ -72,6 +72,14 @@ public:
 	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
+	/**
+	 * Remove the specified save state.
+	 *
+	 * @param target  Name of a config manager target.
+	 * @param slot    Slot number of the save state to be removed.
+	 */
+	void removeSaveState(const char *target, int slot) const override;
+
 	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override;
 };
 

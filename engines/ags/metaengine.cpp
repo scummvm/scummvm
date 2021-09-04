@@ -153,6 +153,10 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
+void AGSMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
 const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescriptionList() const {
 	return AGS::achievementDescriptionList;
 }
