@@ -65,6 +65,20 @@ void ListBox_Clear(GUIListBox *listbox) {
 	listbox->Clear();
 }
 
+static void FillSaveList(std::set<String> &files, const String &filePattern) {
+	size_t wildcard = filePattern.FindChar('*');
+	assert(wildcard != String::npos);
+	Common::String prefix(filePattern.GetCStr(), wildcard);
+	Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
+
+	for (uint idx = 0; idx < matches.size(); ++idx) {
+		Common::String name = matches[idx];
+		name = Common::String(name.c_str() + wildcard);
+
+		files.insert(name);
+	}
+}
+
 void FillDirList(std::set<String> &files, const String &path) {
 	String dirName = Path::GetDirectoryPath(path);
 	String filePattern = Path::get_filename(path);
@@ -76,9 +90,7 @@ void FillDirList(std::set<String> &files, const String &path) {
 		dirName = ConfMan.get("path");
 	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
 		// Save files listing
-		Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
-		for (uint idx = 0; idx < matches.size(); ++idx)
-			files.insert(matches[idx]);
+		FillSaveList(files, filePattern);
 		return;
 	}
 
