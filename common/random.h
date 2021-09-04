@@ -39,8 +39,8 @@ namespace Common {
 class String;
 
 /**
- * Simple random number generator. Although it is definitely not suitable for
- * cryptographic purposes, it serves our purposes just fine.
+ * Xorshift PRNG. Replaces the previous PRNG, as
+ * the cycles within it were detrimental to gameplay.
  */
 class RandomSource {
 private:
@@ -60,6 +60,13 @@ public:
 	uint32 getSeed() const { /*!< Get a random seed that can be used to initialize the RNG. */
 		return _randSeed;
 	}
+	
+	/**
+	* Scrambles the seed in order to get a new result.
+	* Code is shared between getRandomNumber and getRandomBit,
+	* so it is split off for clarity.
+	*/
+	inline void scrambleSeed();
 
 	/**
 	 * Generate a random unsigned integer in the interval [0, max].
