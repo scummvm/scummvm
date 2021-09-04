@@ -330,15 +330,29 @@ void FWRenderer::drawString(const char *string, byte param) {
  * @param y Top left message box corner coordinate
  * @param width Message box width
  * @param color Message box background color (Or if negative draws only the text)
+ * @param draw Draw the message box and its contents? If false then draw nothing
+ * but simply return the maximum Y position used by the message box.
  * @note Negative colors are used in Operation Stealth's timed cutscenes
  * (e.g. when first meeting The Movement for the Liberation of Santa Paragua).
+ * @return The maximum Y position used by the message box (Inclusive)
  */
-void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color) {
+int FWRenderer::drawMessage(const char *str, int x, int y, int width, int color, bool draw) {
+	// Keep a vertically overflowing message box inside the main screen (Fixes bug #11708).
+	if (draw) {
+		int maxY = this->drawMessage(str, x, y, width, color, false);
+		if (maxY > 199) {
+			y -= (maxY - 199);
+			if (y < 0) {
+				y = 0;
+			}
+		}
+	}
+
 	int i, tx, ty, tw;
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	if (color >= 0) {
+	if (draw && color >= 0) {
 		if (useTransparentDialogBoxes())
 			drawTransparentBox(x, y, width, 4);
 		else
@@ -364,7 +378,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 			}
 
 			ty += 9;
-			if (color >= 0) {
+			if (draw && color >= 0) {
 				if (useTransparentDialogBoxes())
 					drawTransparentBox(x, ty, width, 9);
 				else
@@ -381,18 +395,20 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 				extraSpace = 0;
 			}
 		} else {
-			tx = drawChar(str[i], tx, ty);
+			tx = drawChar(str[i], tx, ty, draw);
 		}
 	}
 
 	ty += 9;
-	if (color >= 0) {
+	if (draw && color >= 0) {
 		if (useTransparentDialogBoxes())
 			drawTransparentBox(x, ty, width, 4);
 		else
 			drawPlainBox(x, ty, width, 4, color);
 		drawDoubleBorder(x, y, width, ty - y + 4, (useTransparentDialogBoxes() ? transparentDialogBoxStartColor() : 0) + 2);
 	}
+
+	return ty + 4;
 }
 
 /**
@@ -503,15 +519,18 @@ void FWRenderer::drawDoubleBorder(int x, int y, int width, int height, byte colo
  * @param character Character to draw
  * @param x Character coordinate
  * @param y Character coordinate
+ * @param draw Draw the character?
  */
-int FWRenderer::drawChar(char character, int x, int y) {
+int FWRenderer::drawChar(char character, int x, int y, bool draw) {
 	int width;
 
 	if (character == ' ') {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		int idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
+		if (draw) {
+			drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
+		}
 		x += width + 1;
 	}
 
@@ -1469,15 +1488,18 @@ void OSRenderer::incrustSprite(const BGIncrust &incrust) {
  * @param character Character to draw
  * @param x Character coordinate
  * @param y Character coordinate
+ * @param draw Draw the character?
  */
-int OSRenderer::drawChar(char character, int x, int y) {
+int OSRenderer::drawChar(char character, int x, int y, bool draw) {
 	int width;
 
 	if (character == ' ') {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		int idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
+		if (draw) {
+			drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
+		}
 		x += width + 1;
 	}
 
