@@ -43,6 +43,8 @@ RandomSource::RandomSource(const String &name) {
 	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
 	newSeed += time.tm_year * 86400 * 366;
 	newSeed = newSeed * 1000 + g_system->getMillis();
+	if(newSeed == 0)
+		newSeed++;
 	setSeed(newSeed);
 #endif
 }
@@ -50,19 +52,24 @@ RandomSource::RandomSource(const String &name) {
 void RandomSource::setSeed(uint32 seed) {
 	_randSeed = seed;
 }
+	
+inline void RandomSource::scrambleSeed() {
+	//marsaglia's paper says that any of 81 triplets are feasible
+	//(11,21,13) was chosen, with (cba) and (>>,<<,>>)
+	_randSeed ^= _randSeed >> 13;
+	_randSeed ^= _randSeed << 21;
+	_randSeed ^= _randSeed >> 11;
+}
 
 uint RandomSource::getRandomNumber(uint max) {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-
+	scrambleSeed();
 	if (max == UINT_MAX)
 		return _randSeed;
 	return _randSeed % (max + 1);
 }
 
 uint RandomSource::getRandomBit() {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+	scrambleSeed();
 	return _randSeed & 1;
 }
 
