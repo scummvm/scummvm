@@ -407,6 +407,20 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // Submitted by Nyarlathotep7777 in #12812 (Italian Amiga version)
+		{
+			"os",
+			"",
+			AD_ENTRY1s("procs1", "d7458be2b14d77410e6330148ca6c371", 61682),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_OS,
+		0,
+	},
+
 	{
 		{
 			"os",
