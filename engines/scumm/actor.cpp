@@ -553,8 +553,8 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 	if (diffY < 0)
 		deltaYFactor = -deltaYFactor;
 
-	_walkdata.xfrac = _walkdata.xAdd = diffX / deltaXFactor;
-	_walkdata.yfrac = _walkdata.yAdd = diffY / deltaYFactor;
+	_walkdata.xfrac = _walkdata.xAdd = deltaXFactor ? diffX / deltaXFactor : 0;
+	_walkdata.yfrac = _walkdata.yAdd = deltaYFactor ? diffY / deltaYFactor : 0;
 	_walkdata.cur = _pos;
 	_walkdata.next = next;
 	_walkdata.deltaXFactor = deltaXFactor;
@@ -3818,8 +3818,8 @@ void Actor_v3::saveLoadWithSerializer(Common::Serializer &s) {
 			_walkdata.deltaXFactor = -_walkdata.deltaXFactor;
 		if (diffY < 0)
 			_walkdata.deltaYFactor = -_walkdata.deltaYFactor;
-		_walkdata.xfrac = _walkdata.xAdd = diffX / _walkdata.deltaXFactor;
-		_walkdata.yfrac = _walkdata.yAdd = diffY / _walkdata.deltaYFactor;
+		_walkdata.xfrac = _walkdata.xAdd = _walkdata.deltaXFactor ? diffX / _walkdata.deltaXFactor : 0;
+		_walkdata.yfrac = _walkdata.yAdd = _walkdata.deltaYFactor ? diffY / _walkdata.deltaYFactor : 0;
 
 	} else {
 		s.syncAsUint16LE(_walkdata.xAdd, VER(rev));
