@@ -69,6 +69,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Cine:
    - Added detection for Italian Amiga Operation Stealth.
+   - Fixed space missing in verb line.
    - Fixed vertically overflowing message boxes.
 
  Dreamweb:
