@@ -33,6 +33,7 @@ class File;
 
 namespace Tinsel {
 
+struct FONT;
 struct MEMHANDLE;
 
 class Handle {
@@ -45,6 +46,8 @@ public:
 	 */
 	void SetupHandleTable();
 
+	FONT *GetFont(SCNHANDLE offset);
+	SCNHANDLE GetFontImageHandle(SCNHANDLE offset);
 	byte *LockMem(SCNHANDLE offset);
 
 	void LockScene(SCNHANDLE offset);

@@ -45,8 +45,6 @@ enum {
 #define C16_MAP		0xC000
 #define C16_FLAG_MASK	(C16_240 | C16_224 | C16_MAP)
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 /**
  * Text font data structure.
  * @note only the pointer is used so the size of fontDef[] is not important.
@@ -58,23 +56,10 @@ struct FONT {
 	int xShadow;			///< x shadow offset
 	int yShadow;			///< y shadow offset
 	int spaceSize;			///< x spacing to use for a space character
-	OBJ_INIT fontInit;		///< structure used to init text objects
-	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
-} PACKED_STRUCT;
-
-
-struct T3_FONT {
-	int xSpacing;			///< x spacing between characters
-	int ySpacing;			///< y spacing between characters
-	int xShadow;			///< x shadow offset
-	int yShadow;			///< y shadow offset
-	int spaceSize;			///< x spacing to use for a space character
 	int baseColor;			///< base color which can be replaced, specific to Tinsel 3
 	OBJ_INIT fontInit;		///< structure used to init text objects
 	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
+};
 
 
 /** structure for passing the correct parameters to ObjectTextOut */
