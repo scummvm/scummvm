@@ -100,7 +100,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
-	uint32 sampleLen = _sampleStream.readUint32LE();
+	uint32 sampleLen = _sampleStream.readUint32();
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
@@ -115,6 +115,8 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 		// Play the audio stream
 		_vm->_mixer->playStream(type, &curChan.handle, xaStream);
+	} else if (TinselV1Saturn) {
+		// TODO: Sound format for the Saturn version - looks to be raw, but isn't
 	} else {
 		// allocate a buffer
 		byte *sampleBuf = (byte *)malloc(sampleLen);
@@ -499,7 +501,7 @@ void SoundManager::openSampleFiles() {
 	if (TinselV0 || (TinselV1 && !_vm->isV1CD()))
 		return;
 
-	TinselFile f;
+	TinselFile f(TinselV1Saturn);
 
 	if (_sampleIndex)
 		// already allocated
@@ -518,7 +520,7 @@ void SoundManager::openSampleFiles() {
 
 		// Load data
 		for (int i = 0; i < _sampleIndexLen; ++i) {
-			_sampleIndex[i] = f.readUint32LE();
+			_sampleIndex[i] = f.readUint32();
 			if (f.err()) {
 				showSoundError(FILE_READ_ERROR, _vm->getSampleIndex(g_sampleLanguage));
 			}

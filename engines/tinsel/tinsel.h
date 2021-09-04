@@ -107,12 +107,13 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV2Demo (TinselVersion == TINSEL_V2 && _vm->getIsADGFDemo())
 #define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
 #define TinselV1Mac (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformMacintosh)
+#define TinselV1Saturn (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformSaturn)
 
-#define READ_16(v) (TinselV1Mac ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
-#define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
-#define FROM_16(v) (TinselV1Mac ? FROM_BE_16(v) : FROM_LE_16(v))
-#define FROM_32(v) (TinselV1Mac ? FROM_BE_32(v) : FROM_LE_32(v))
-#define TO_32(v)   (TinselV1Mac ? TO_BE_32(v) : TO_LE_32(v))
+#define READ_16(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
+#define READ_32(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define FROM_16(v) (TinselV1Mac || TinselV1Saturn ? FROM_BE_16(v) : FROM_LE_16(v))
+#define FROM_32(v) (TinselV1Mac || TinselV1Saturn ? FROM_BE_32(v) : FROM_LE_32(v))
+#define TO_32(v)   (TinselV1Mac || TinselV1Saturn ? TO_BE_32(v) : TO_LE_32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;

@@ -83,7 +83,7 @@ void Handle::SetupHandleTable() {
 	int len;
 	uint i;
 	MEMHANDLE *pH;
-	TinselFile f;
+	TinselFile f(TinselV1Mac || TinselV1Saturn);
 
 	const char *indexFileName = TinselV1PSX ? PSX_INDEX_FILENAME : INDEX_FILENAME;
 
