@@ -2,6 +2,7 @@ MODULE := engines/ags
 
 MODULE_OBJS = \
 	ags.o \
+	dialogs.o \
 	events.o \
 	game_scanner.o \
 	globals.o \
