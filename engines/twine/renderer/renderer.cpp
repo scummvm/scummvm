@@ -1026,7 +1026,6 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 }
 
 void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
-#if 0
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -1038,39 +1037,42 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 	uint16 v28 = color;
 	uint16 v29 = 2;
 	while (2) {
-		uint16 v30 = *(uint16 *)(v3 + screenHeight * 2);
-		uint16 v7 = *(uint16 *)v3;
+		uint16 v30 = *(const uint16 *)(v3 + screenHeight * 2);
+		uint16 v7 = *(const uint16 *)v3;
 		v3 += 2;
 		uint16 v34 = v30 < v7;
 		uint16 v31 = v30 - v7;
 		if (v34) {
 			v2 += screenWidth;
 			--v5;
-			if (!v5)
-				return v7;
+			if (!v5) {
+				return;
+			}
 			continue;
 		}
 		uint16 v32 = v31 + 1;
 		uint8 *v33 = v7 + v2;
-		LOBYTE(v7) = v28;
-		BYTE1(v7) = v28;
-		if (v33 & 1) {
+		(*((uint8 *)&(v7) + (0))) = v28;
+		(*((uint8 *)&(v7) + (1))) = v28;
+		if ((uintptr)v33 & 1) {
 			*(uint8 *)v33++ = v28;
 			--v32;
 		}
 		v34 = v32 & 1;
-		for (k = v32 >> 1; k; --k) {
+		for (uint16 k = v32 >> 1; k; --k) {
 			*(uint16 *)v33 = v7;
 			v33 += 2;
 		}
-		for (l = __RCL__(0, v34); l; --l)
+		for (uint16 l = v34; l; --l) {
 			*(uint8 *)v33++ = v28;
+		}
 		--v29;
 		if (v29 || (v29 = 2, ++v28, v28 & 0xF)) {
 			v2 += screenWidth;
 			--v5;
-			if (!v5)
-				return v7;
+			if (!v5) {
+				return;
+			}
 			continue;
 		}
 		v29 = 2;
@@ -1078,8 +1080,9 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 		if (!(v28 & 0xF)) {
 			v2 += screenWidth;
 			--v5;
-			if (!v5)
-				return v7;
+			if (!v5) {
+				return;
+			}
 			continue;
 		}
 		break;
@@ -1087,45 +1090,48 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 	while (1) {
 		v2 += screenWidth;
 		--v5;
-		if (!v5)
-			return v7;
-		uint16 v37 = *(uint16 *)(v3 + screenHeight * 2);
-		uint16 v7 = *(uint16 *)v3;
+		if (!v5) {
+			return;
+		}
+		uint16 v37 = *(const uint16 *)(v3 + screenHeight * 2);
+		uint16 v7 = *(const uint16 *)v3;
 		v3 += 2;
 		uint16 v34 = v37 < v7;
 		uint16 v38 = v37 - v7;
 		if (!v34) {
 			uint16 v39 = v38 + 1;
-			uint16 v40 = v7 + v2;
-			LOBYTE(v7) = v28;
-			BYTE1(v7) = v28;
-			if (v40 & 1) {
+			uint8 *v40 = v7 + v2;
+			(*((uint8 *)&(v7) + (0))) = v28;
+			(*((uint8 *)&(v7) + (1))) = v28;
+			if ((uintptr)v40 & 1) {
 				*(uint8 *)v40++ = v28;
 				--v39;
 			}
-			v41 = v39 & 1;
-			for (m = v39 >> 1; m; --m) {
+			uint16 v41 = v39 & 1;
+			for (uint16 m = v39 >> 1; m; --m) {
 				*(uint16 *)v40 = v7;
 				v40 += 2;
 			}
-			for (n = __RCL__(0, v41); n; --n)
+			for (uint16 n = v41; n; --n) {
 				*(uint8 *)v40++ = v28;
+			}
 			--v29;
-			if (v29)
+			if (v29) {
 				continue;
+			}
 		}
 		v29 = 2;
 		--v28;
 		if (!(v28 & 0xF)) {
 			v2 += screenWidth;
 			--v5;
-			if (!v5)
-				return v7;
+			if (!v5) {
+				return;
+			}
 			continue;
 		}
 		break;
 	}
-#endif
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
