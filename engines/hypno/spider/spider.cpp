@@ -1,15 +1,22 @@
+#include "common/events.h"
+
+
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
-
-#include "common/events.h"
+#include "hypno/libfile.h"
 
 namespace Hypno {
 
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void SpiderEngine::loadAssets() {
-	LibData files;
-	loadLib("sixdemo/c_misc/missions.lib", files);
+
+	LibFile *missions = loadLib("", "sixdemo/c_misc/missions.lib");
+	Common::ArchiveMemberList files;
+	assert(missions->listMembers(files) > 0);
+
+	//LibData files;
+	//loadLib("sixdemo/c_misc/missions.lib", files);
 	uint32 i = 0;
 	uint32 j = 0;
 
@@ -22,30 +29,34 @@ void SpiderEngine::loadAssets() {
 
 	Common::String arc;
 	Common::String list;
-
-	debug("Splitting file: %s", files[0].name.c_str());
-	for (i = 0; i < files[0].data.size(); i++) {
-		arc += files[0].data[i];
-		if (files[0].data[i] == 'X') {
-			i++;
-			for (j = i; j < files[0].data.size(); j++) {
-				if (files[0].data[j] == 'Y')
+	Common::String arclevel = files.front()->getName();
+	Common::SeekableReadStream *file = files.front()->createReadStream();
+	debug("Splitting file: %s", arclevel);
+	byte x;
+	while (!file->eos()) {
+		x = file->readByte();
+		arc += x;
+		if (x == 'X') {
+			while (!file->eos()) {
+				x = file->readByte();
+				if (x == 'Y')
 					break;
-				list += files[0].data[j];
+				list += x;
 			}
-			break; // No need to keep parsing, no more files are used in the demo
+			break; // No need to keep parsing
 		}
 	}
-	Common::String arclevel = files[0].name;
+
+	arclevel = "sixdemo/c_misc/missions.lib/" + arclevel;
 	parseArcadeShooting("sixdemo", arclevel, arc);
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 	_levels[arclevel].arcade.levelIfWin = "sixdemo/mis/demo.mis";
 	_levels[arclevel].arcade.levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadLib("sixdemo/c_misc/fonts.lib", _fontFiles);
-	loadLib("sixdemo/c_misc/sound.lib", _soundFiles);
-	loadLib("sixdemo/demo/sound.lib", _soundFiles);
-
+	loadLib("", "sixdemo/c_misc/fonts.lib");
+	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib");
+	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib");
+	
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");
 	ChangeLevel *cl = new ChangeLevel();

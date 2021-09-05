@@ -1,4 +1,25 @@
-#include "hypno/grammar.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "hypno/hypno.h"
 
 namespace Hypno {
@@ -6,8 +27,19 @@ namespace Hypno {
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void WetEngine::loadAssets() {
-	LibData files;
-	loadLib("wetlands/c_misc/missions.lib", files);
+	//LibData files;
+	//loadLib("wetlands/c_misc/missions.lib", files);
+	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib");
+	Common::ArchiveMemberList files;
+	assert(missions->listMembers(files) > 0);
+
+	// We need the list of files in an array, instead of a list
+	Common::Array<Common::ArchiveMemberPtr> afiles;
+	for (Common::ArchiveMemberList::const_iterator it = files.begin(); it != files.end(); ++it) {
+		afiles.push_back(*it);
+	}
+
+
 	uint32 i = 0;
 	uint32 j = 0;
 	uint32 k = 0;
@@ -33,6 +65,7 @@ void WetEngine::loadAssets() {
 	h.type = MakeHotspot;
 	h.rect = Common::Rect(0, 424, 233, 462);
 	h.actions.clear();
+	h.smenu = nullptr;
 	ChangeLevel *cl = new ChangeLevel();
 	cl->level = "<intro>";
 	h.actions.push_back(cl);
@@ -50,55 +83,55 @@ void WetEngine::loadAssets() {
 	_levels["<start>"] = start;
 
 	Level intro;
-	intro.trans.level = files[0].name;
+	intro.trans.level = afiles[0]->getName();
 	intro.trans.intros.push_back("movie/nw_logo.smk");
 	intro.trans.intros.push_back("movie/hypnotix.smk");
 	intro.trans.intros.push_back("movie/wetlogo.smk");
 	_levels["<intro>"] = intro;
 
-	for (k = 0; k < files.size(); k++) {
+	byte x;
+	for (k = 0; k < afiles.size(); k++) {
 		arc.clear();
 		list.clear();
-		arclevel = files[k].name;
-
-		debug("Parsing %s", arclevel.c_str());
-		for (i = 0; i < files[k].data.size(); i++) {
-			arc += files[k].data[i];
-			if (files[k].data[i] == 'X') {
-				i++;
-				for (j = i; j < files[k].data.size(); j++) {
-					if (files[k].data[j] == 'Y')
+		arclevel = afiles[k]->getName();
+		debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
+		Common::SeekableReadStream *file = afiles[k]->createReadStream();
+		while (!file->eos()) {
+			x = file->readByte();
+			arc += x;
+			if (x == 'X') {
+				while (!file->eos()) {
+					x = file->readByte();
+					if (x == 'Y')
 						break;
-					list += files[k].data[j];
+					list += x;
 				}
 				break; // No need to keep parsing
 			}
 		}
 
 		parseArcadeShooting("wetlands", arclevel, arc);
+		_levels[arclevel].arcade.id = k;
 		_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 		_levels[arclevel].arcade.prefix = "wetlands";
-		//_levels[arclevel].arcade.levelIfLose = "<gameover>";
-		//Common::replace(_levels[arclevel].arcade.music, "sound\\", "");
 		if (k < files.size() - 1) {
-			_levels[arclevel].arcade.levelIfWin = files[k + 1].name;
+			_levels[arclevel].arcade.levelIfWin = afiles[k + 1]->getName();
 			// failing a level in the demo takes you to the next one anyway
-			_levels[arclevel].arcade.levelIfLose = files[k + 1].name; 
+			_levels[arclevel].arcade.levelIfLose = afiles[k + 1]->getName(); 
 		}
-			
 	}
 
 	// After finish the second level, it's always game over
-	_levels[files[k-1].name].arcade.levelIfWin = "<gameover>";
-	_levels[files[k-1].name].arcade.levelIfLose = "<gameover>"; 
+	_levels[afiles[k-1]->getName()].arcade.levelIfWin = "<gameover>";
+	_levels[afiles[k-1]->getName()].arcade.levelIfLose = "<gameover>"; 
 
 	Level over;
 	over.trans.level = "<quit>";
 	over.trans.intros.push_back("movie/gameover.smk");
 	_levels["<gameover>"] = over;
 
-	loadLib("wetlands/c_misc/fonts.lib", _fontFiles);
-	loadLib("wetlands/c_misc/sound.lib", _soundFiles);
+	loadLib("", "wetlands/c_misc/fonts.lib");
+	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib");
 }
 
 } // End of namespace Hypno

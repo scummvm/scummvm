@@ -32,7 +32,6 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	//void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

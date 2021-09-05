@@ -83,6 +83,11 @@ HypnoEngine::~HypnoEngine() {
 				delete (*ittt);
 		}
 	}
+	// This produces a double free
+	//for (Common::List<LibFile*>::iterator it = _archive.begin(); it != _archive.end(); ++it) {
+		//(*it)->close();
+		//delete *it;
+	//}
 
 	delete _rnd;
 }
@@ -91,47 +96,12 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-void HypnoEngine::loadLib(Common::String filename, LibData &r) {
-	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
-	Common::File libfile;
-	assert(libfile.open(filename));
-	uint32 i = 0;
-	Common::String entry = "<>";
-	FileData f;
-	f.data.push_back(0);
-	byte b;
-	uint32 start;
-	uint32 size;
-	uint32 pos;
-
-	do {
-		f.name = filename + "/";
-		f.data.clear();
-		for (i = 0; i < 12; i++) {
-			b = libfile.readByte();
-			if (b != 0x96 && b != 0x0)
-				f.name += tolower(char(b));
-		}
-		debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
-		start = libfile.readUint32LE();
-		size = libfile.readUint32LE();
-		libfile.readUint32LE(); // some field? 
-
-		pos = libfile.pos();
-		libfile.seek(start);
-
-		for (i = 0; i < size; i++) {
-			b = libfile.readByte();
-			if (b != '\n')
-				b = b ^ 0xfe;
-			f.data.push_back(b);
-		}
-		debugC(1, kHypnoDebugParser, "size: %d", f.data.size());
-		libfile.seek(pos);
-		if (size > 0)
-			r.push_back(f);
-
-	} while (size > 0);
+LibFile *HypnoEngine::loadLib(Filename prefix, Filename filename) {
+	LibFile *lib = new LibFile();
+	SearchMan.add(filename, (Common::Archive *) lib, 0, true);
+	assert(lib->open(prefix, filename));
+	_archive.push_back(lib);
+	return lib;
 }
 
 void HypnoEngine::loadAssets() { error("not implemented"); }
@@ -174,6 +144,7 @@ Common::Error HypnoEngine::run() {
 }
 
 void HypnoEngine::runLevel(Common::String name) {
+	debug("level: %s", name.c_str());
 	assert(_levels.contains(name));
 	stopSound();
 	_music = "";
@@ -297,6 +268,32 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	return rframe;
 }
 
+Frames HypnoEngine::decodeFrames(const Common::String &name) {
+	Frames frames;
+	Common::File *file = new Common::File();
+	Common::String path = convertPath(name);
+	if (!_prefixDir.empty())
+		path = _prefixDir + "/" + path;
+
+	if (!file->open(path))
+		error("unable to find video file %s", path.c_str());
+
+	Video::SmackerDecoder vd;
+	if (!vd.loadStream(file))
+		error("unable to load video %s", path.c_str());
+
+	const Graphics::Surface *frame = nullptr;
+	Graphics::Surface *rframe = nullptr;
+
+	for (int f = 0; f < vd.getFrameCount(); f++) {
+		frame = vd.decodeNextFrame();
+		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
+		frames.push_back(rframe);
+	}
+	return frames;
+}
+
+
 void HypnoEngine::changeScreenMode(Common::String mode) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, mode.c_str());
 	if (mode == "scene") {
@@ -399,23 +396,12 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 	name = convertPath(name);
 	if (!_prefixDir.empty())
 		name = _prefixDir + "/" + name;
-	ByteArray *raw = nullptr;
+	//ByteArray *raw = nullptr;
 	Audio::LoopingAudioStream *stream = nullptr;
 
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
-	} else { 
-		for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
-			if (it->name == name) {
-				raw = new ByteArray(it->data);
-				stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
-				break;
-			}
-		}
-	}
-
-	if (stream) {
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	}
 }

@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "common/tokenizer.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
@@ -46,9 +68,15 @@ ShootSequence HypnoEngine::parseShootList(Common::String filename, Common::Strin
 	return seq;
 }
 
-void HypnoEngine::drawPlayer(Common::String player, MVideo &background) { error("not implemented"); }
+void HypnoEngine::drawPlayer() { error("not implemented"); }
 void HypnoEngine::drawHealth() { error("not implemented"); }
 void HypnoEngine::drawShoot(Common::Point target) { error("not implemented"); }
+
+void HypnoEngine::hitPlayer() {
+	// if the player is hit, play the hit animation
+	if (_playerFrameIdx < _playerFrameSep)
+		_playerFrameIdx = _playerFrameSep;
+}
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
 
@@ -57,11 +85,27 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 	ShootSequence shootSequence = arc.shootSequence;
+
+	_levelId = arc.id;
 	_shootSound = arc.shootSound;
 	_health = arc.health;
 	_maxHealth = _health;
 	_defaultCursor = "arcade";
 	_shoots.clear();
+	_playerFrames = decodeFrames(arc.player);
+	_playerFrameSep = 0;
+
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
+			break; 
+		_playerFrameSep++;
+	}
+
+	if(_playerFrameSep == _playerFrames.size())
+		error("No player separator frame found!");
+
+	_playerFrameIdx = -1;
 
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);
 
@@ -69,9 +113,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	playVideo(background);
 
 	while (!shouldQuit()) {
-
-		if (background.decoder->needsUpdate())
-			updateScreen(background);
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -99,6 +140,13 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			default:
 				break;
 			}
+		}
+
+		if (background.decoder->needsUpdate()) {
+			drawScreen();
+			updateScreen(background);
+			drawPlayer();
+			drawHealth();
 		}
 
 		if (_health <= 0) {
@@ -133,7 +181,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 						s.video = new MVideo(it->animation, it->position, true, false, false);
 						playVideo(*s.video);
 						_shoots.push_back(s);
-						playSound(_soundPath + s.startSound, 1);
+						playSound(_soundPath + arc.enemySound, 1);
 					}
 				}
 			}
@@ -145,10 +193,14 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 			if (it->video->decoder) {
 				int frame = it->video->decoder->getCurFrame();
+				if (frame > 0 && frame >= it->explosionFrame - 15 && !it->destroyed) {
+					hitPlayer();
+				}
+
 				if (frame > 0 && frame >= it->explosionFrame - 3 && !it->destroyed) {
-					_health = _health - it->damage;
 					skipVideo(*it->video);
-				} else if (it->video->decoder->endOfVideo()) {
+					_health = _health - it->damage;
+				} else if (frame > 0 && frame >= it->video->decoder->getFrameCount()-2) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
 				} else if (it->video->decoder->needsUpdate()) {
@@ -167,13 +219,9 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 		if (_music.empty()) {
 			_music = _soundPath + arc.music;
-			playSound(_music, 0);
+			playSound(_music, 1);
 		}
 
-		drawPlayer(arc.player, background);
-		drawHealth();
-
-		drawScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -214,7 +262,8 @@ void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
 		changeCursor("target");
 	else
 		changeCursor("arcade");
-
+		
+	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
 bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) {

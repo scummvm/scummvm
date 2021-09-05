@@ -220,6 +220,7 @@ class Scene {
 
 class ArcadeShooting {
   public:
+    uint32 id;
 	Common::String levelIfWin;
 	Common::String levelIfLose;
 	Filenames defeatVideos;
@@ -232,6 +233,7 @@ class ArcadeShooting {
 	Shoots shoots;
 	ShootSequence shootSequence;
 	Filename shootSound;
+	Filename enemySound;
 	Filename hitSound;
 	Filename music;
 };

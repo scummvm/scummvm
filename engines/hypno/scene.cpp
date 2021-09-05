@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "common/events.h"
 
 #include "hypno/grammar.h"
@@ -92,7 +114,6 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 		}
 	}
 	if (found) {
-		//debug("Hotspot found! %x", selected.smenu);
 		if (selected.smenu) {
 			assert(selected.smenu->size() > 0);
 			_nextHotsToAdd = selected.smenu;
@@ -118,7 +139,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			else if (typeid(*action) == typeid(Quit))
 				runQuit((Quit *)action);
 			else if (typeid(*action) == typeid(Palette))
-				debug("runPalette unimplemented");
+				debugC(1, kHypnoDebugScene, "runPalette unimplemented");
 		}
 	}
 }
@@ -303,7 +324,7 @@ void HypnoEngine::runScene(Scene scene) {
 
 		if (_music.empty() && !scene.sound.empty()) {
 			_music = scene.sound;
-			playSound(_music, 0);
+			playSound(_music, 1);
 		}
 
 		if (checkSceneCompleted())
