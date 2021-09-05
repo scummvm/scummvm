@@ -141,7 +141,6 @@ Common::Error HypnoEngine::run() {
 }
 
 void HypnoEngine::runLevel(Common::String name) {
-	debug("level: %s", name.c_str());
 	assert(_levels.contains(name));
 	stopSound();
 	_music = "";

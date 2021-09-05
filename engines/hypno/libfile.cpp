@@ -71,7 +71,6 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 
 const FileEntry *LibFile::getEntry(const Common::String &name) const {
 	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
-		//debug("checking %s", it->name.c_str());
 		if (((_prefix + it->name).equalsIgnoreCase(name)) || it->name.equalsIgnoreCase(name))
 			return it;
 	}
