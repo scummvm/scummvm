@@ -504,6 +504,75 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
+#if 0
+	LOBYTE(v14) = a2;
+	HIWORD(j) = 0;
+	do {
+		stop = *(uint16 *)(polytab + 960);
+		start = *(uint16 *)polytab;
+		polytab += 2;
+		v34 = stop < (unsigned __int16)start;
+		v17 = stop - start;
+		if (!v34) {
+			LOWORD(j) = j + 1;
+			v18 = (void *)(start + v2);
+			HIBYTE(v14) = v14;
+			LOWORD(start) = v14;
+			start <<= 16;
+			LOWORD(start) = v14;
+			if ((unsigned __int8)v18 & 1) {
+				*(uint8 *)v18 = v14;
+				v18 = (char *)v18 + 1;
+				--j;
+			}
+			v19 = j;
+			v20 = (unsigned int)j >> 2;
+			memset32(v18, start, v20);
+			v21 = (int)((char *)v18 + 4 * v20);
+			for (j = v19 & 2; j; --j)
+				*(uint8 *)v21++ = start;
+			LOBYTE(v14) = v14 + 1;
+			if (!(v14 & 0xF)) {
+				while (1) {
+					LOBYTE(v14) = v14 - 1;
+					if (!(v14 & 0xF))
+						break;
+					v2 += 640;
+					--v5;
+					if (!v5)
+						return start;
+					v22 = *(uint16 *)(polytab + 960);
+					start = *(uint16 *)polytab;
+					polytab += 2;
+					v34 = v22 < (unsigned __int16)start;
+					v23 = v22 - start;
+					if (!v34) {
+						LOWORD(j) = j + 1;
+						v24 = (void *)(start + v2);
+						HIBYTE(v14) = v14;
+						LOWORD(start) = v14;
+						start <<= 16;
+						LOWORD(start) = v14;
+						if ((unsigned __int8)v24 & 1) {
+							*(uint8 *)v24 = v14;
+							v24 = (char *)v24 + 1;
+							--j;
+						}
+						v25 = j;
+						v26 = (unsigned int)j >> 2;
+						memset32(v24, start, v26);
+						v27 = (int)((char *)v24 + 4 * v26);
+						for (j = v25 & 2; j; --j)
+							*(uint8 *)v27++ = start;
+					}
+				}
+			}
+		}
+		v2 += 640;
+		--v5;
+	} while (v5);
+	return start;
+#endif
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -959,6 +1028,89 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 }
 
 void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
+#if 0
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
+	uint8 *v2 = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	//v2 = screenLockupTable[(uint16)vtop] + frontVideoBuffer;
+	int8 *v3 = (int8 *)&_polyTab[(uint16)vtop];
+	int v5 = vsize; //(uint16)vbottom - (uint16)vtop + 1;
+
+	uint16 v28 = color;
+	uint16 v29 = 2;
+	while (2) {
+		uint16 v30 = *(uint16 *)(v3 + screenHeight * 2);
+		uint16 v7 = *(uint16 *)v3;
+		v3 += 2;
+		uint16 v34 = v30 < v7;
+		uint16 v31 = v30 - v7;
+		if (v34)
+			goto LABEL_40;
+		uint16 v32 = v31 + 1;
+		uint8 *v33 = v7 + v2;
+		LOBYTE(v7) = v28;
+		BYTE1(v7) = v28;
+		if (v33 & 1) {
+			*(uint8 *)v33++ = v28;
+			--v32;
+		}
+		v34 = v32 & 1;
+		for (k = v32 >> 1; k; --k) {
+			*(uint16 *)v33 = v7;
+			v33 += 2;
+		}
+		for (l = __RCL__(0, v34); l; --l)
+			*(uint8 *)v33++ = v28;
+		--v29;
+		if (v29 || (v29 = 2, ++v28, v28 & 0xF))
+			goto LABEL_40;
+	LABEL_52:
+		v29 = 2;
+		--v28;
+		if (!(v28 & 0xF)) {
+		LABEL_40:
+			v2 += screenWidth;
+			--v5;
+			if (!v5)
+				return v7;
+			continue;
+		}
+		break;
+	}
+	while (1) {
+		v2 += screenWidth;
+		--v5;
+		if (!v5)
+			return v7;
+		uint16 v37 = *(uint16 *)(v3 + screenHeight * 2);
+		uint16 v7 = *(uint16 *)v3;
+		v3 += 2;
+		uint16 v34 = v37 < v7;
+		uint16 v38 = v37 - v7;
+		if (!v34) {
+			uint16 v39 = v38 + 1;
+			uint16 v40 = v7 + v2;
+			LOBYTE(v7) = v28;
+			BYTE1(v7) = v28;
+			if (v40 & 1) {
+				*(uint8 *)v40++ = v28;
+				--v39;
+			}
+			v41 = v39 & 1;
+			for (m = v39 >> 1; m; --m) {
+				*(uint16 *)v40 = v7;
+				v40 += 2;
+			}
+			for (n = __RCL__(0, v41); n; --n)
+				*(uint8 *)v40++ = v28;
+			--v29;
+			if (v29)
+				continue;
+		}
+		goto LABEL_52;
+	}
+#endif
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
