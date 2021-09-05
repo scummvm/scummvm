@@ -815,8 +815,8 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 
 		int16 colorSize = stopColor - startColor;
 
-		int16 stop = ptr1[screenHeight]; // stop
-		int16 start = ptr1[0];           // start
+		int16 stop = ptr1[screenHeight];
+		int16 start = ptr1[0];
 
 		ptr1++;
 		uint8 *out2 = start + out;
@@ -831,7 +831,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 
 		if (hsize == 0) {
 			if (start >= 0 && start < screenWidth) {
-				*out2 = ((startColor + stopColor) / 2) / 256; // moyenne des 2 couleurs
+				*out2 = ((startColor + stopColor) / 2) / 256; // average of the 2 colors
 			}
 		} else if (hsize > 0) {
 			if (hsize == 1) {
@@ -840,7 +840,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 				}
 
 				if (start >= 0 && start < screenWidth) {
-					*(out2) = startColor / 256;
+					*out2 = startColor / 256;
 				}
 			} else if (hsize == 2) {
 				if (start >= -2 && start < screenWidth - 2) {
@@ -852,7 +852,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 				}
 
 				if (start >= 0 && start < screenWidth) {
-					*(out2) = startColor / 256;
+					*out2 = startColor / 256;
 				}
 			} else {
 				int32 currentXPos = start;
