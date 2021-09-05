@@ -1036,8 +1036,8 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 	uint16 color2 = color;
 	uint16 v29 = 2;
 	while (2) {
-		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		uint16 start = *(const uint16 *)ptr1;
+		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
+		const uint16 start = *(const uint16 *)ptr1;
 		++ptr1;
 		if (stop < start) {
 			out += screenWidth;
@@ -1047,22 +1047,20 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 			}
 			continue;
 		}
-		uint16 hsize = stop - start;
+		const uint16 hsize = stop - start;
 		uint16 width = hsize + 1;
 		uint8 *out2 = start + out;
-		(*((uint8 *)&start)) = color2;
-		(*((uint8 *)&(start) + 1)) = color2;
 		if ((uintptr)out2 & 1) {
-			*(uint8 *)out2++ = color2;
+			*out2++ = color2;
 			--width;
 		}
-		uint16 v34 = width & 1;
-		for (uint16 k = width >> 1; k; --k) {
-			*(uint16 *)out2 = start;
-			out2 += 2;
+		for (uint16 k = width / 2; k; --k) {
+			*out2++ = color2;
+			*out2++ = color2;
 		}
+		const uint16 v34 = width & 1;
 		for (uint16 l = v34; l; --l) {
-			*(uint8 *)out2++ = color2;
+			*out2++ = color2;
 		}
 		--v29;
 		if (v29 || (v29 = 2, ++color2, color2 & 0xF)) {
@@ -1091,26 +1089,24 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 		if (!height) {
 			return;
 		}
-		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		uint16 start = *(const uint16 *)ptr1;
+		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
+		const uint16 start = *(const uint16 *)ptr1;
 		++ptr1;
 		if (stop >= start) {
-			uint16 hsize = stop - start;
+			const uint16 hsize = stop - start;
 			uint16 width = hsize + 1;
 			uint8 *out2 = start + out;
-			(*((uint8 *)&start)) = color2;
-			(*((uint8 *)&(start) + 1)) = color2;
 			if ((uintptr)out2 & 1) {
-				*(uint8 *)out2++ = color2;
+				*out2++ = color2;
 				--width;
 			}
-			uint16 v41 = width & 1;
-			for (uint16 m = width >> 1; m; --m) {
-				*(uint16 *)out2 = start;
-				out2 += 2;
+			for (uint16 m = width / 2; m; --m) {
+				*out2++ = color2;
+				*out2++ = color2;
 			}
+			const uint16 v41 = width & 1;
 			for (uint16 n = v41; n; --n) {
-				*(uint8 *)out2++ = color2;
+				*out2++ = color2;
 			}
 			--v29;
 			if (v29) {
