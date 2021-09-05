@@ -210,9 +210,9 @@ public:
 	// Conversation
 	Actions _conversation;
 	bool _refreshConversation;
-	void showConversation();
-	bool rightClickedConversation(Common::Point mousePos);
-	bool leftClickedConversation(Common::Point mousePos);
+	virtual void showConversation();
+	virtual void rightClickedConversation(Common::Point mousePos);
+	virtual void leftClickedConversation(Common::Point mousePos);
 
 	// Hardcoded puzzles
 	virtual void runPuzzle(Puzzle puzzle);
@@ -241,6 +241,10 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void runPuzzle(Puzzle puzzle) override;
+
+	void showConversation() override;
+	void rightClickedConversation(Common::Point mousePos) override;
+	void leftClickedConversation(Common::Point mousePos) override;
 
 private:
 	void runMatrix(Puzzle puzzle);

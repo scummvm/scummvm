@@ -30,7 +30,6 @@
 
 namespace Hypno {
 
-
 static const int frame_idx[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
 
 void SpiderEngine::drawShoot(Common::Point target) {

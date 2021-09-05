@@ -23,13 +23,13 @@
 #ifndef HYPNO_GRAMMAR_H
 #define HYPNO_GRAMMAR_H
 
-#include "common/str.h"
-#include "common/hash-str.h"
-#include "common/hash-ptr.h"
-#include "common/queue.h"
-#include "common/list.h"
 #include "common/array.h"
+#include "common/hash-ptr.h"
+#include "common/hash-str.h"
+#include "common/list.h"
+#include "common/queue.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 #include "video/smk_decoder.h"
 
@@ -39,16 +39,16 @@ typedef Common::String Filename;
 typedef Common::List<Filename> Filenames;
 
 enum HotspotType {
-    MakeMenu,
- 	MakeHotspot
+	MakeMenu,
+	MakeHotspot
 };
 
 class Action {
-	public:
-	virtual ~Action() {}; // needed to make Action polymorphic
+public:
+	virtual ~Action(){}; // needed to make Action polymorphic
 };
 
-typedef Common::Array<Action*> Actions;
+typedef Common::Array<Action *> Actions;
 
 class Hotspot;
 
@@ -56,9 +56,9 @@ typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
 
 class MVideo {
-  public:
-    MVideo(Filename, Common::Point, bool, bool, bool);
-    Filename path;
+public:
+	MVideo(Filename, Common::Point, bool, bool, bool);
+	Filename path;
 	Common::Point position;
 	bool scaled;
 	bool transparent;
@@ -69,10 +69,10 @@ class MVideo {
 
 typedef Common::Array<MVideo> Videos;
 
-class Hotspot { 
-  public:
-    HotspotType type;
-    Common::String stype;
+class Hotspot {
+public:
+	HotspotType type;
+	Common::String stype;
 	Common::String stypeFlag;
 	Common::Rect rect;
 	Common::String setting;
@@ -81,25 +81,25 @@ class Hotspot {
 };
 
 class Mice : public Action {
-  public:
+public:
 	Filename path;
 	uint32 index;
 };
 
 class Palette : public Action {
-  public:
+public:
 	Filename path;
 };
 
 class Background : public Action {
-  public:
+public:
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
 };
 
 class Overlay : public Action {
-  public:
+public:
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
@@ -112,12 +112,12 @@ class Quit : public Action {
 };
 
 class Cutscene : public Action {
-  public:
+public:
 	Filename path;
 };
 
 class Play : public Action {
-  public:
+public:
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -125,7 +125,7 @@ class Play : public Action {
 };
 
 class Ambient : public Action {
-  public:
+public:
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
@@ -133,7 +133,7 @@ class Ambient : public Action {
 };
 
 class WalN : public Action {
-  public:
+public:
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -141,13 +141,13 @@ class WalN : public Action {
 };
 
 class Global : public Action {
-  public:
+public:
 	Common::String variable;
 	Common::String command;
 };
 
 class TalkCommand {
-  public:
+public:
 	Common::String command;
 	Filename path;
 	uint32 num;
@@ -157,7 +157,7 @@ class TalkCommand {
 typedef Common::Array<TalkCommand> TalkCommands;
 
 class Talk : public Action {
-  public:
+public:
 	TalkCommands commands;
 	bool active;
 	Filename background;
@@ -166,13 +166,13 @@ class Talk : public Action {
 };
 
 class ChangeLevel : public Action {
-  public:
+public:
 	Filename level;
 };
 
 class Shoot {
-  public:
-    Common::String name;
+public:
+	Common::String name;
 	Filename animation;
 	Filename startSound;
 	Filename endSound;
@@ -186,8 +186,8 @@ class Shoot {
 typedef Common::Array<Shoot> Shoots;
 
 class ShootInfo {
-  public:
-    Common::String name;
+public:
+	Common::String name;
 	uint32 timestamp;
 };
 
@@ -195,13 +195,13 @@ typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::Array<Common::String> Sounds;
 
 class Transition {
-  public:
+public:
 	Common::String level;
 	Filenames intros;
 };
 
 class Puzzle {
-  public:
+public:
 	Common::String name;
 	Filenames intros;
 	Common::String levelIfWin;
@@ -209,9 +209,9 @@ class Puzzle {
 };
 
 class Scene {
-  public:
-    Filename intro;
-    Common::String prefix;
+public:
+	Filename intro;
+	Common::String prefix;
 	Hotspots hots;
 	Filename sound;
 	Common::String levelIfWin;
@@ -219,13 +219,13 @@ class Scene {
 };
 
 class ArcadeShooting {
-  public:
-    uint32 id;
+public:
+	uint32 id;
 	Common::String levelIfWin;
 	Common::String levelIfLose;
 	Filenames defeatVideos;
 	Filenames winVideos;
-    Filename intro;
+	Filename intro;
 	Filename prefix;
 	Filename background;
 	Filename player;
@@ -239,8 +239,8 @@ class ArcadeShooting {
 };
 
 class Level {
-  public:
-    Transition trans;
+public:
+	Transition trans;
 	Scene scene;
 	ArcadeShooting arcade;
 	Puzzle puzzle;

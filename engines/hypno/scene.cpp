@@ -120,7 +120,6 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			_nextHotsToAdd = selected.smenu;
 		}
 
-		//debug("hotspot clicked actions size: %d", selected.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(ChangeLevel))
@@ -335,7 +334,6 @@ void HypnoEngine::runScene(Scene scene) {
 		g_system->delayMillis(10);
 	}
 
-
 	// Deallocate videos
 	for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 		if (it->decoder)
@@ -343,4 +341,9 @@ void HypnoEngine::runScene(Scene scene) {
 	}
 }
 
-} // end of Hypno namespace
+void HypnoEngine::showConversation() { error("Not implemented"); }
+void HypnoEngine::rightClickedConversation(Common::Point mousePos) { error("Not implemented"); }
+void HypnoEngine::leftClickedConversation(Common::Point mousePos) { error("Not implemented"); }
+
+
+} // End of namespace Hypno

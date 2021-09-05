@@ -1,6 +1,5 @@
 #include "common/events.h"
 
-
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
 #include "hypno/libfile.h"
@@ -15,11 +14,6 @@ void SpiderEngine::loadAssets() {
 	Common::ArchiveMemberList files;
 	assert(missions->listMembers(files) > 0);
 
-	//LibData files;
-	//loadLib("sixdemo/c_misc/missions.lib", files);
-	uint32 i = 0;
-	uint32 j = 0;
-
 	// start level
 	Level start;
 	start.trans.level = "sixdemo/mis/demo.mis";
@@ -31,7 +25,7 @@ void SpiderEngine::loadAssets() {
 	Common::String list;
 	Common::String arclevel = files.front()->getName();
 	Common::SeekableReadStream *file = files.front()->createReadStream();
-	debug("Splitting file: %s", arclevel);
+
 	byte x;
 	while (!file->eos()) {
 		x = file->readByte();
@@ -57,7 +51,7 @@ void SpiderEngine::loadAssets() {
 	loadLib("", "sixdemo/c_misc/fonts.lib");
 	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib");
 	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib");
-	
+
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");
 	ChangeLevel *cl = new ChangeLevel();

@@ -39,7 +39,6 @@ void WetEngine::loadAssets() {
 		afiles.push_back(*it);
 	}
 
-
 	uint32 i = 0;
 	uint32 j = 0;
 	uint32 k = 0;
@@ -118,13 +117,13 @@ void WetEngine::loadAssets() {
 		if (k < files.size() - 1) {
 			_levels[arclevel].arcade.levelIfWin = afiles[k + 1]->getName();
 			// failing a level in the demo takes you to the next one anyway
-			_levels[arclevel].arcade.levelIfLose = afiles[k + 1]->getName(); 
+			_levels[arclevel].arcade.levelIfLose = afiles[k + 1]->getName();
 		}
 	}
 
 	// After finish the second level, it's always game over
-	_levels[afiles[k-1]->getName()].arcade.levelIfWin = "<gameover>";
-	_levels[afiles[k-1]->getName()].arcade.levelIfLose = "<gameover>"; 
+	_levels[afiles[k - 1]->getName()].arcade.levelIfWin = "<gameover>";
+	_levels[afiles[k - 1]->getName()].arcade.levelIfLose = "<gameover>";
 
 	Level over;
 	over.trans.level = "<quit>";

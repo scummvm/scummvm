@@ -11,4 +11,4 @@ void BoyzEngine::loadAssets() {
 	loadLib("", "boyz/preload/missions.lib");
 }
 
-}
+} // namespace Hypno

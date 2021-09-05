@@ -20,8 +20,8 @@
  *
  */
 
-#include "hypno/hypno.h"
 #include "hypno/libfile.h"
+#include "hypno/hypno.h"
 
 namespace Hypno {
 
@@ -49,7 +49,7 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 		debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
 		start = libfile.readUint32LE();
 		size = libfile.readUint32LE();
-		libfile.readUint32LE(); // some field? 
+		libfile.readUint32LE(); // some field?
 
 		pos = libfile.pos();
 		libfile.seek(start);
@@ -70,26 +70,25 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 }
 
 const FileEntry *LibFile::getEntry(const Common::String &name) const {
-        for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
-				//debug("checking %s", it->name.c_str());
-                if (((_prefix + it->name).equalsIgnoreCase(name)) || it->name.equalsIgnoreCase(name))
-                        return it;
-        }
+	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
+		//debug("checking %s", it->name.c_str());
+		if (((_prefix + it->name).equalsIgnoreCase(name)) || it->name.equalsIgnoreCase(name))
+			return it;
+	}
 
-        return nullptr;
+	return nullptr;
 }
 
 void LibFile::close() {
-    _fileEntries.clear();
+	_fileEntries.clear();
 }
 
-
-bool LibFile::hasFile(const Common::String &name) const { 
+bool LibFile::hasFile(const Common::String &name) const {
 	error("hasFile");
-    return false;
+	return false;
 }
 
-int LibFile::listMembers(Common::ArchiveMemberList &list) const { 
+int LibFile::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
 	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it)
 		list.push_back(getMember(it->name));
@@ -111,4 +110,4 @@ Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Str
 	return stream;
 }
 
-}
+} // namespace Hypno
