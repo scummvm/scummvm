@@ -64,7 +64,6 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	if (!prefix.empty())
 		filename = prefix + "/" + filename;
 	Common::File *test = new Common::File();
-	assert(isDemo());
 	assert(test->open(filename.c_str()));
 
 	const uint32 fileSize = test->size();
@@ -76,6 +75,8 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	level.scene.prefix = prefix;
 	level.scene.hots = *g_parsedHots;
 	_levels[filename] = level;
+	test->close();
+	delete test;
 	free(buf);
 }
 
@@ -332,6 +333,13 @@ void HypnoEngine::runScene(Scene scene) {
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+	}
+
+
+	// Deallocate videos
+	for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
+		if (it->decoder)
+			skipVideo(*it);
 	}
 }
 

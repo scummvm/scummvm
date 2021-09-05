@@ -109,6 +109,7 @@ void WetEngine::loadAssets() {
 				break; // No need to keep parsing
 			}
 		}
+		delete file;
 
 		parseArcadeShooting("wetlands", arclevel, arc);
 		_levels[arclevel].arcade.id = k;
