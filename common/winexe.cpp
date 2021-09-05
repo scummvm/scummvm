@@ -131,29 +131,39 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 	assert(unpackedData);
 	byte *dataPos = unpackedData;
 
+	uint32 remaining = unpackedLength;
+
 	// Apply simple LZSS decompression
 	for (;;) {
 		byte controlByte = file.readByte();
 
-		if (file.eos())
+		if (remaining == 0 || file.eos())
 			break;
 
 		for (byte i = 0; i < 8; i++) {
 			if (controlByte & (1 << i)) {
 				*dataPos++ = window[pos++] = file.readByte();
 				pos &= 0xFFF;
+				if (--remaining == 0)
+					break;
 			} else {
 				int matchPos = file.readByte();
 				int matchLen = file.readByte();
 				matchPos |= (matchLen & 0xF0) << 4;
 				matchLen = (matchLen & 0xF) + 3;
+				if ((uint32)matchLen > remaining)
+					matchLen = remaining;
+				remaining -= matchLen;
+
 				while (matchLen--) {
 					*dataPos++ = window[pos++] = window[matchPos++];
 					pos &= 0xFFF;
 					matchPos &= 0xFFF;
 				}
-			}
 
+				if (remaining == 0)
+					break;
+			}
 		}
 	}
 
