@@ -503,74 +503,49 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 
 void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
 #if 0
-	LOBYTE(v14) = a2;
-	HIWORD(j) = 0;
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
+	int32 j = 0;
+
 	do {
-		stop = *(uint16 *)(polytab + 960);
-		start = *(uint16 *)polytab;
-		polytab += 2;
-		v34 = stop < (unsigned __int16)start;
-		v17 = stop - start;
-		if (!v34) {
-			LOWORD(j) = j + 1;
-			v18 = (void *)(start + v2);
-			HIBYTE(v14) = v14;
-			LOWORD(start) = v14;
-			start <<= 16;
-			LOWORD(start) = v14;
-			if ((unsigned __int8)v18 & 1) {
-				*(uint8 *)v18 = v14;
-				v18 = (char *)v18 + 1;
-				--j;
-			}
-			v19 = j;
-			v20 = (unsigned int)j >> 2;
-			memset32(v18, start, v20);
-			v21 = (int)((char *)v18 + 4 * v20);
-			for (j = v19 & 2; j; --j)
-				*(uint8 *)v21++ = start;
-			LOBYTE(v14) = v14 + 1;
-			if (!(v14 & 0xF)) {
+		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
+		uint16 start = *(const uint16 *)ptr1;
+		++ptr1;
+		if (stop >= start) {
+			++j;
+			uint8 *out2 = out + start;
+			memset(out2, color, j);
+			++color;
+			if (!(color & 0xF)) {
 				while (1) {
-					LOBYTE(v14) = v14 - 1;
-					if (!(v14 & 0xF))
+					--color;
+					if (!(color & 0xF)) {
 						break;
-					v2 += 640;
-					--v5;
-					if (!v5)
-						return start;
-					v22 = *(uint16 *)(polytab + 960);
-					start = *(uint16 *)polytab;
-					polytab += 2;
-					v34 = v22 < (unsigned __int16)start;
-					v23 = v22 - start;
-					if (!v34) {
-						LOWORD(j) = j + 1;
-						v24 = (void *)(start + v2);
-						HIBYTE(v14) = v14;
-						LOWORD(start) = v14;
-						start <<= 16;
-						LOWORD(start) = v14;
-						if ((unsigned __int8)v24 & 1) {
-							*(uint8 *)v24 = v14;
-							v24 = (char *)v24 + 1;
-							--j;
-						}
-						v25 = j;
-						v26 = (unsigned int)j >> 2;
-						memset32(v24, start, v26);
-						v27 = (int)((char *)v24 + 4 * v26);
-						for (j = v25 & 2; j; --j)
-							*(uint8 *)v27++ = start;
+					}
+					out += screenWidth;
+					--vsize;
+					if (!vsize) {
+						return;
+					}
+					stop = *(const uint16 *)(ptr1 + screenHeight);
+					start = *(const uint16 *)ptr1;
+					++ptr1;
+					if (stop >= start) {
+						++j;
+						out2 = out + start;
+						memset(out2, color, j);
 					}
 				}
 			}
 		}
-		v2 += 640;
-		--v5;
-	} while (v5);
-	return start;
-#endif
+		out += screenWidth;
+		--vsize;
+	} while (vsize);
+#else
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -600,6 +575,7 @@ void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
 		}
 		out += screenWidth;
 	}
+#endif
 }
 
 void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
