@@ -518,8 +518,75 @@ void GfxOpenGLS::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void GfxOpenGLS::getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGLS::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+	if (_currentShadowArray) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
 
+	Math::Matrix4 modelMatrix = _currentActor->getFinalMatrix();
+	Math::Matrix4 mvpMatrix = _mvpMatrix * modelMatrix;
+
+	double top = 1000;
+	double right = -1000;
+	double left = 1000;
+	double bottom = -1000;
+
+	Math::Vector3d obj;
+	float *pVertices = nullptr;
+
+	for (uint i = 0; i < model->_numFaces; i++) {
+		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
+			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
+
+			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
+
+			Math::Vector4d v = Math::Vector4d(obj.x(), obj.y(), obj.z(), 1.0f);
+			v = mvpMatrix * v;
+			v /= v.w();
+
+			double winX = (1 + v.x()) / 2.0f * _gameWidth;
+			double winY = (1 + v.y()) / 2.0f * _gameHeight;
+
+			if (winX > right)
+				right = winX;
+			if (winX < left)
+				left = winX;
+			if (winY < top)
+				top = winY;
+			if (winY > bottom)
+				bottom = winY;
+		}
+	}
+
+	double t = bottom;
+	bottom = _gameHeight - top;
+	top = _gameHeight - t;
+
+	if (left < 0)
+		left = 0;
+	if (right >= _gameWidth)
+		right = _gameWidth - 1;
+	if (top < 0)
+		top = 0;
+	if (bottom >= _gameHeight)
+		bottom = _gameHeight - 1;
+
+	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
+
+	*x1 = (int)left;
+	*y1 = (int)(_gameHeight - bottom);
+	*x2 = (int)right;
+	*y2 = (int)(_gameHeight - top);
 }
 
 void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
