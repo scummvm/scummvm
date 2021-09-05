@@ -728,7 +728,7 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_polyTab2[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop]; // color progression
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 	int32 renderLoop = vsize;
@@ -826,7 +826,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_polyTab2[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop]; // color progression
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -839,8 +839,8 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 		renderLoop = screenHeight;
 	}
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 stop = ptr1[screenHeight]; // stop
-		int16 start = ptr1[0];           // start
+		int16 stop = ptr1[screenHeight];
+		int16 start = ptr1[0];
 		ptr1++;
 		int32 hsize = stop - start;
 		if (hsize < 0) {
@@ -856,7 +856,7 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 
 		if (hsize == 0) {
 			if (currentXPos >= 0 && currentXPos < screenWidth) {
-				*out2 = (uint8)(((startColor + stopColor) / 2) / 256);
+				*out2 = (uint8)(((startColor + stopColor) / 2) / 256); // average of the 2 colors
 			}
 		} else {
 			int16 colorSize = stopColor - startColor;
