@@ -25,6 +25,12 @@
 
 namespace Hypno {
 
+LibFile::LibFile() : Common::Archive() {
+}
+
+LibFile::~LibFile() {
+}
+
 bool LibFile::open(const Common::String &prefix, const Common::String &filename) {
 	_prefix = prefix;
 	Common::File libfile;

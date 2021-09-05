@@ -39,14 +39,17 @@ typedef struct FileEntry {
 
 class LibFile : public Common::Archive {
 public:
+	LibFile();
+	~LibFile() override;
+
 	bool open(const Common::String &prefix, const Common::String &filename);
 	void close();
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 private:
 	Common::String _prefix;
