@@ -165,7 +165,6 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 } // End of namespace Sci
 
 #include "sci/detection_tables.h"
-#include "sci/detection_options.h"
 
 namespace Sci {
 
@@ -183,7 +182,7 @@ static const char *directoryGlobs[] = {
 
 class SciMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
+	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		_matchFullPaths = true;
@@ -212,15 +211,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
-	void registerDefaultSettings(const Common::String &target) const override;
 };
-
-void SciMetaEngineDetection::registerDefaultSettings(const Common::String &target) const {
-	AdvancedMetaEngineDetection::registerDefaultSettings(target);
-
-	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
-		ConfMan.registerDefault(entry->configOption, entry->defaultState);
-}
 
 ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	/**

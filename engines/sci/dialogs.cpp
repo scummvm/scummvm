@@ -31,13 +31,7 @@
 #include "sci/dialogs.h"
 #include "sci/sci.h"
 
-/**
- * When detection is compiled dynamically, options end up in detection plugin and
- * engine cannot link to them so duplicate them in the engine in this case
- */
-#ifndef DETECTION_STATIC
 #include "sci/detection_options.h"
-#endif
 
 namespace Sci {
 
