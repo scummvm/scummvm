@@ -39,8 +39,6 @@ void WetEngine::loadAssets() {
 		afiles.push_back(*it);
 	}
 
-	uint32 i = 0;
-	uint32 j = 0;
 	uint32 k = 0;
 
 	Common::String arc;
