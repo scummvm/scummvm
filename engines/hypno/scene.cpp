@@ -20,6 +20,7 @@
  *
  */
 
+#include <typeinfo>
 #include "common/events.h"
 
 #include "hypno/grammar.h"
