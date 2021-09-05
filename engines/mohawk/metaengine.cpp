@@ -32,6 +32,8 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/riven_metaengine.h"
+#include "mohawk/myst_metaengine.h"
 
 #ifdef ENABLE_CSTIME
 #include "mohawk/cstime.h"
@@ -137,6 +139,8 @@ public:
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
+
+	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
@@ -301,6 +305,20 @@ Common::Error MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	}
 
 	return Common::kNoError;
+}
+
+void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	if (gameId == "myst" || gameId == "makingofmyst") {
+		return Mohawk::MohawkMetaEngine_Myst::registerDefaultSettings();
+	}
+
+	if (gameId == "riven") {
+		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
+	}
+
+	return MetaEngine::registerDefaultSettings(target);
 }
 
 GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {

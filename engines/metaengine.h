@@ -193,7 +193,7 @@ public:
 	 *
 	 * @param target  Name of a config manager target.
 	 */
-	virtual void registerDefaultSettings(const Common::String &target) const;
+	void registerDefaultSettings(const Common::String &target) const;
 
 	/**
 	 * Return a GUI widget container for configuring the specified target options.
@@ -209,7 +209,7 @@ public:
 	 * @param name     The name that the returned widget must use.
 	 * @param target   Name of a config manager target.
 	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 };
 
 /**
@@ -377,6 +377,14 @@ public:
 	 * Return the keymap used by the target.
 	 */
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
+
+	/**
+	 * Register the default values for the settings that the engine uses into the
+	 * configuration manager.
+	 *
+	 * @param target  Name of a config manager target.
+	 */
+	virtual void registerDefaultSettings(const Common::String &target) const {}
 
 	/**
 	 * Return a GUI widget container for configuring the specified target options.

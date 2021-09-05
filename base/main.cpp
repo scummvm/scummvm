@@ -198,6 +198,13 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
+	if (err.getCode() == Common::kNoError) {
+		// Set default values for all of the custom engine options
+		// Apparently some engines query them in their constructor, thus we
+		// need to set this up before instance creation.
+		metaEngine.registerDefaultSettings(target);
+	}
+
 	err = metaEngine.createInstance(&system, &engine);
 
 	// Check for errors

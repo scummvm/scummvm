@@ -103,8 +103,6 @@ public:
 	}
 
 	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
-
-	void registerDefaultSettings(const Common::String &target) const override;
 };
 
 DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
@@ -133,20 +131,6 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	}
 
 	return game;
-}
-
-void MohawkMetaEngineDetection::registerDefaultSettings(const Common::String &target) const {
-	Common::String gameId = ConfMan.get("gameid", target);
-
-	if (gameId == "myst" || gameId == "makingofmyst") {
-		return Mohawk::MohawkMetaEngine_Myst::registerDefaultSettings();
-	}
-
-	if (gameId == "riven") {
-		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
-	}
-
-	return AdvancedMetaEngineDetection::registerDefaultSettings(target);
 }
 
 REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MohawkMetaEngineDetection);
