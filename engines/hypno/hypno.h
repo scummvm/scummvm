@@ -28,12 +28,14 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
+#include "common/stream.h"
 #include "engines/engine.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
 
 #include "hypno/grammar.h"
+#include "hypno/libfile.h"
 
 namespace Image {
 class ImageDecoder;
@@ -62,6 +64,7 @@ typedef struct FileData {
 } FileData;
 
 typedef Common::Array<FileData> LibData;
+typedef Common::Array<Graphics::Surface *> Frames;
 
 class HypnoEngine : public Engine {
 private:
@@ -79,11 +82,10 @@ public:
 
 	Audio::SoundHandle _soundHandle;
 	Common::InstallShieldV3 _installerArchive;
+	Common::List<LibFile*> _archive;
 
 	Common::Error run() override;
 	Levels _levels;
-	LibData _soundFiles;
-	LibData _fontFiles;
 	Common::HashMap<Common::String, int> _sceneState;
 	void resetSceneState();
 	bool checkSceneCompleted();
@@ -99,7 +101,7 @@ public:
 	void parseArcadeShooting(Common::String prefix, Common::String name, Common::String data);
 	ShootSequence parseShootList(Common::String name, Common::String data);
 	void loadLib(Common::String filename, LibData &r);
-	Common::HashMap<Common::String, Common::String> _assets;
+	LibFile *loadLib(Filename prefix, Filename filename);
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -123,6 +125,7 @@ public:
 	void skipVideo(MVideo &video);
 
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
+	Frames decodeFrames(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y, bool transparent);
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 
@@ -165,6 +168,7 @@ public:
 	// levels
 	Common::String _nextLevel;
 	Common::String _currentLevel;
+	uint32 _levelId;
 
 	// hotspots
 	Hotspots *_nextHotsToAdd;
@@ -189,13 +193,18 @@ public:
 	virtual bool clickedPrimaryShoot(Common::Point);
 	virtual bool clickedSecondaryShoot(Common::Point);
 	virtual void drawShoot(Common::Point);
+	virtual void hitPlayer();
+
 	void drawCursorArcade(Common::Point mousePos);
-	virtual void drawPlayer(Common::String player, MVideo &background);
+	virtual void drawPlayer();
 	virtual void drawHealth();
 	int _health;
 	int _maxHealth;
 	Filename _shootSound;
 	Shoots _shoots;
+	Frames _playerFrames;
+	int _playerFrameIdx;
+	int _playerFrameSep;
 	const Graphics::Font *_font;
 
 	// Conversation
@@ -219,19 +228,17 @@ public:
 
 	void loadAssets() override;
 	bool clickedSecondaryShoot(Common::Point) override;
-
 	void drawShoot(Common::Point) override;
-	void drawPlayer(Common::String player, MVideo &background) override;
+	void drawPlayer() override;
 	void drawHealth() override;
 };
 
 class SpiderEngine : public HypnoEngine {
 public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
-
 	void loadAssets() override;
 	void drawShoot(Common::Point) override;
-	void drawPlayer(Common::String player, MVideo &background) override;
+	void drawPlayer() override;
 	void drawHealth() override;
 	void runPuzzle(Puzzle puzzle) override;
 
