@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
+#include "sci/dialogs.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/script.h"
@@ -282,6 +283,8 @@ public:
 	// A fallback detection method. This is not ideal as all detection lives in MetaEngine, but
 	// here fb detection has many engine dependencies.
 	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
+
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -703,6 +706,10 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 	constructFallbackDetectionEntry(gameId, platform, sciVersion, language, gameViews == kViewEga, isCD, isDemo);
 
 	return ADDetectedGame(&s_fallbackDesc);
+}
+
+GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new OptionsWidget(boss, name, target);
 }
 
 } // End of namespace Sci

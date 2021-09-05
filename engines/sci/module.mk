@@ -2,6 +2,7 @@ MODULE := engines/sci
 
 MODULE_OBJS := \
 	console.o \
+	dialogs.o \
 	event.o \
 	metaengine.o \
 	sci.o \
