@@ -46,6 +46,7 @@ void SpiderEngine::loadAssets() {
 			break; // No need to keep parsing
 		}
 	}
+	delete file;
 
 	arclevel = "sixdemo/c_misc/missions.lib/" + arclevel;
 	parseArcadeShooting("sixdemo", arclevel, arc);

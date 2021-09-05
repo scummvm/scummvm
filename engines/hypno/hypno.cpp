@@ -83,13 +83,10 @@ HypnoEngine::~HypnoEngine() {
 				delete (*ittt);
 		}
 	}
-	// This produces a double free
-	//for (Common::List<LibFile*>::iterator it = _archive.begin(); it != _archive.end(); ++it) {
-		//(*it)->close();
-		//delete *it;
-	//}
 
 	delete _rnd;
+	_compositeSurface->free();
+	delete _compositeSurface;
 }
 
 void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
@@ -396,12 +393,11 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 	name = convertPath(name);
 	if (!_prefixDir.empty())
 		name = _prefixDir + "/" + name;
-	//ByteArray *raw = nullptr;
-	Audio::LoopingAudioStream *stream = nullptr;
 
+	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO), loops);
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	}
 }

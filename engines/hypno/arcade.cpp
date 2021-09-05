@@ -232,6 +232,9 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		delete it->video;
 	}
 
+	if (background.decoder)
+		skipVideo(background);
+
 }
 
 int HypnoEngine::detectTarget(Common::Point mousePos) {
