@@ -58,6 +58,23 @@ static const CINEGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// This is the Future Wars CD version
+		// with a French translation patch (#12490).
+		{
+			"fw",
+			"Sony CD version with French translation patch",
+			AD_ENTRY2s("AUTO00.PRC",	"4fe1e7930b38e3c63f0f2474d471bf8f", -1,
+					   "PART01",		"5d1acb97abe9591f9008e00d07add95a", -1),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GType_FW,
+		GF_CD | GF_CRYPTED_BOOT_PRC,
+	},
+
+	{
 		// This is the version included in the UK "Classic Collection"
 		{
 			"fw",
