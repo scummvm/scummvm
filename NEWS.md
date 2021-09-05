@@ -68,6 +68,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added option to use Text To Speech for Sfinx.
 
  Cine:
+   - Added detection for Future Wars CD version with French translation patch.
    - Added detection for Italian Amiga Operation Stealth.
    - Fixed crash before entering secret base.
    - Fixed space missing in verb line.
