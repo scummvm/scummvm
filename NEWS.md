@@ -15,7 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos.
    - Added support for Glulx interactive fiction games.
    - Added support for Lure of the Temptress Konami release.
-   - Added support for Private Eye (US release).
+   - Added support for Private Eye.
    - Added support for Spanish Blue Force.
    - Added support for Spanish Ringworld.
    - Added support for Spanish Amazon: Guardians of Eden.
