@@ -1029,57 +1029,56 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
-	uint8 *v2 = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *v3 = &_polyTab[vtop];
-	int v5 = vsize;
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+	int height = vsize;
 
-	uint16 v28 = color;
+	uint16 color2 = color;
 	uint16 v29 = 2;
 	while (2) {
-		uint16 v30 = *(const uint16 *)(v3 + screenHeight);
-		uint16 v7 = *(const uint16 *)v3;
-		++v3;
-		uint16 v34 = v30 < v7;
-		uint16 v31 = v30 - v7;
-		if (v34) {
-			v2 += screenWidth;
-			--v5;
-			if (!v5) {
+		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
+		uint16 start = *(const uint16 *)ptr1;
+		++ptr1;
+		if (stop < start) {
+			out += screenWidth;
+			--height;
+			if (!height) {
 				return;
 			}
 			continue;
 		}
-		uint16 v32 = v31 + 1;
-		uint8 *v33 = v7 + v2;
-		(*((uint8 *)&v7)) = v28;
-		(*((uint8 *)&(v7) + 1)) = v28;
-		if ((uintptr)v33 & 1) {
-			*(uint8 *)v33++ = v28;
-			--v32;
+		uint16 hsize = stop - start;
+		uint16 width = hsize + 1;
+		uint8 *out2 = start + out;
+		(*((uint8 *)&start)) = color2;
+		(*((uint8 *)&(start) + 1)) = color2;
+		if ((uintptr)out2 & 1) {
+			*(uint8 *)out2++ = color2;
+			--width;
 		}
-		v34 = v32 & 1;
-		for (uint16 k = v32 >> 1; k; --k) {
-			*(uint16 *)v33 = v7;
-			v33 += 2;
+		uint16 v34 = width & 1;
+		for (uint16 k = width >> 1; k; --k) {
+			*(uint16 *)out2 = start;
+			out2 += 2;
 		}
 		for (uint16 l = v34; l; --l) {
-			*(uint8 *)v33++ = v28;
+			*(uint8 *)out2++ = color2;
 		}
 		--v29;
-		if (v29 || (v29 = 2, ++v28, v28 & 0xF)) {
-			v2 += screenWidth;
-			--v5;
-			if (!v5) {
+		if (v29 || (v29 = 2, ++color2, color2 & 0xF)) {
+			out += screenWidth;
+			--height;
+			if (!height) {
 				return;
 			}
 			continue;
 		}
 		v29 = 2;
-		--v28;
-		if (!(v28 & 0xF)) {
-			v2 += screenWidth;
-			--v5;
-			if (!v5) {
+		--color2;
+		if (!(color2 & 0xF)) {
+			out += screenWidth;
+			--height;
+			if (!height) {
 				return;
 			}
 			continue;
@@ -1087,32 +1086,31 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 		break;
 	}
 	while (1) {
-		v2 += screenWidth;
-		--v5;
-		if (!v5) {
+		out += screenWidth;
+		--height;
+		if (!height) {
 			return;
 		}
-		uint16 v37 = *(const uint16 *)(v3 + screenHeight);
-		uint16 v7 = *(const uint16 *)v3;
-		++v3;
-		uint16 v34 = v37 < v7;
-		uint16 v38 = v37 - v7;
-		if (!v34) {
-			uint16 v39 = v38 + 1;
-			uint8 *v40 = v7 + v2;
-			(*((uint8 *)&v7)) = v28;
-			(*((uint8 *)&(v7) + 1)) = v28;
-			if ((uintptr)v40 & 1) {
-				*(uint8 *)v40++ = v28;
-				--v39;
+		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
+		uint16 start = *(const uint16 *)ptr1;
+		++ptr1;
+		if (stop >= start) {
+			uint16 hsize = stop - start;
+			uint16 width = hsize + 1;
+			uint8 *out2 = start + out;
+			(*((uint8 *)&start)) = color2;
+			(*((uint8 *)&(start) + 1)) = color2;
+			if ((uintptr)out2 & 1) {
+				*(uint8 *)out2++ = color2;
+				--width;
 			}
-			uint16 v41 = v39 & 1;
-			for (uint16 m = v39 >> 1; m; --m) {
-				*(uint16 *)v40 = v7;
-				v40 += 2;
+			uint16 v41 = width & 1;
+			for (uint16 m = width >> 1; m; --m) {
+				*(uint16 *)out2 = start;
+				out2 += 2;
 			}
 			for (uint16 n = v41; n; --n) {
-				*(uint8 *)v40++ = v28;
+				*(uint8 *)out2++ = color2;
 			}
 			--v29;
 			if (v29) {
@@ -1120,11 +1118,11 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 			}
 		}
 		v29 = 2;
-		--v28;
-		if (!(v28 & 0xF)) {
-			v2 += screenWidth;
-			--v5;
-			if (!v5) {
+		--color2;
+		if (!(color2 & 0xF)) {
+			out += screenWidth;
+			--height;
+			if (!height) {
 				return;
 			}
 			continue;
