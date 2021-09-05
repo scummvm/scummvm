@@ -1045,8 +1045,13 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 		v3 += 2;
 		uint16 v34 = v30 < v7;
 		uint16 v31 = v30 - v7;
-		if (v34)
-			goto LABEL_40;
+		if (v34) {
+			v2 += screenWidth;
+			--v5;
+			if (!v5)
+				return v7;
+			continue;
+		}
 		uint16 v32 = v31 + 1;
 		uint8 *v33 = v7 + v2;
 		LOBYTE(v7) = v28;
@@ -1063,13 +1068,16 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 		for (l = __RCL__(0, v34); l; --l)
 			*(uint8 *)v33++ = v28;
 		--v29;
-		if (v29 || (v29 = 2, ++v28, v28 & 0xF))
-			goto LABEL_40;
-	LABEL_52:
+		if (v29 || (v29 = 2, ++v28, v28 & 0xF)) {
+			v2 += screenWidth;
+			--v5;
+			if (!v5)
+				return v7;
+			continue;
+		}
 		v29 = 2;
 		--v28;
 		if (!(v28 & 0xF)) {
-		LABEL_40:
 			v2 += screenWidth;
 			--v5;
 			if (!v5)
@@ -1108,7 +1116,16 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 			if (v29)
 				continue;
 		}
-		goto LABEL_52;
+		v29 = 2;
+		--v28;
+		if (!(v28 & 0xF)) {
+			v2 += screenWidth;
+			--v5;
+			if (!v5)
+				return v7;
+			continue;
+		}
+		break;
 	}
 #endif
 }
