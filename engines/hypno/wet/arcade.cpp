@@ -13,12 +13,12 @@ bool WetEngine::clickedSecondaryShoot(Common::Point mousePos) {
 void WetEngine::drawShoot(Common::Point mousePos) {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
-	_compositeSurface->drawLine(0, _screenH, mousePos.x-1, mousePos.y, c);
-	_compositeSurface->drawLine(0, _screenH, mousePos.x-2, mousePos.y, c);
+	_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
+	_compositeSurface->drawLine(0, _screenH, mousePos.x - 2, mousePos.y, c);
 
 	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x, mousePos.y, c);
-	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x-1, mousePos.y, c);
-	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x-2, mousePos.y, c);
+	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 1, mousePos.y, c);
+	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 2, mousePos.y, c);
 	playSound(_soundPath + _shootSound, 1);
 }
 
@@ -54,15 +54,14 @@ void WetEngine::drawPlayer() {
 }
 
 static const int uiPos[2][3][2] = {
-	{ {70, 160}, {180, 160}, {220, 185} }, // c31
-	{ {60, 167}, {190, 167}, {135, 187} }, // c52
+	{{70, 160}, {180, 160}, {220, 185}}, // c31
+	{{60, 167}, {190, 167}, {135, 187}}, // c52
 };
 
 void WetEngine::drawHealth() {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	int p = (100 * _health) / _maxHealth;
 	if (_playerFrameIdx < _playerFrameSep) {
-		// /const int *ui[3][2] = &uiPos; 
 		uint32 id = _levelId;
 		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), uiPos[id][0][0], uiPos[id][0][1], 65, c);
 		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", 0), uiPos[id][1][0], uiPos[id][1][1], 72, c);

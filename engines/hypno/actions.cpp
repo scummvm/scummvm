@@ -11,8 +11,7 @@ namespace Hypno {
 void HypnoEngine::runMenu(Hotspots hs) {
 	const Hotspot h = *hs.begin();
 	assert(h.type == MakeMenu);
-
-	debug("hotspot actions size: %d", h.actions.size());
+	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h.actions.size());
 	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
 		Action *action = *itt;
 		if (typeid(*action) == typeid(Quit))
@@ -111,9 +110,8 @@ void HypnoEngine::runChangeLevel(ChangeLevel *a) {
 }
 
 void HypnoEngine::runTalk(Talk *a) {
-	debug("adding TALK line!");
 	_conversation.push_back(a);
 	_refreshConversation = true;
 }
 
-}
+} // namespace Hypno

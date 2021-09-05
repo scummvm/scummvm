@@ -78,7 +78,7 @@ HypnoEngine::~HypnoEngine() {
 	for (Levels::iterator it = _levels.begin(); it != _levels.end(); ++it) {
 		Level level = (*it)._value;
 		for (Hotspots::iterator itt = level.scene.hots.begin(); itt != level.scene.hots.end(); ++itt) {
-			Hotspot hot = *itt; 
+			Hotspot hot = *itt;
 			for (Actions::iterator ittt = hot.actions.begin(); ittt != hot.actions.end(); ++ittt)
 				delete (*ittt);
 		}
@@ -95,7 +95,7 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 
 LibFile *HypnoEngine::loadLib(Filename prefix, Filename filename) {
 	LibFile *lib = new LibFile();
-	SearchMan.add(filename, (Common::Archive *) lib, 0, true);
+	SearchMan.add(filename, (Common::Archive *)lib, 0, true);
 	assert(lib->open(prefix, filename));
 	_archive.push_back(lib);
 	return lib;
@@ -231,8 +231,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
 	if (transparent) {
 		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), surf.getPixel(surf.w - 1, surf.h - 1));
-	}
-	else
+	} else
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
 
@@ -289,7 +288,6 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 	}
 	return frames;
 }
-
 
 void HypnoEngine::changeScreenMode(Common::String mode) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, mode.c_str());

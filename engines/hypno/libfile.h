@@ -24,10 +24,10 @@
 #define HYPNO_LIBFILE_H
 
 #include "common/archive.h"
-#include "common/file.h"
 #include "common/array.h"
-#include "common/stream.h"
+#include "common/file.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 namespace Hypno {
 
@@ -39,18 +39,19 @@ typedef struct FileEntry {
 
 class LibFile : public Common::Archive {
 public:
-        bool open(const Common::String &prefix, const Common::String &filename);
-        void close();
+	bool open(const Common::String &prefix, const Common::String &filename);
+	void close();
 
-        // Common::Archive API implementation
-        bool hasFile(const Common::String &name) const override;
-        int listMembers(Common::ArchiveMemberList &list) const override;
-        const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-        Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	// Common::Archive API implementation
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+
 private:
-        Common::String _prefix;
-        Common::Array<FileEntry> _fileEntries;
-        const FileEntry *getEntry(const Common::String &name) const;
+	Common::String _prefix;
+	Common::Array<FileEntry> _fileEntries;
+	const FileEntry *getEntry(const Common::String &name) const;
 };
 
 } // End of namespace Hypno
