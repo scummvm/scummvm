@@ -159,7 +159,7 @@ public:
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);
 
-	uint32 getVersion() {return _version;}
+	uint32 getVersion() const {return _version;}
 	bool hasTrackScreenUpdate() {return _trackScreenUpdate;}
 private:
 	Array<byte> _tmpBuffer;
