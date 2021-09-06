@@ -7,6 +7,7 @@
       use_scummvm/install_computer
       use_scummvm/the_launcher
       use_scummvm/game_files
+      use_scummvm/mac_game_files
       use_scummvm/add_play_games
       use_scummvm/save_load_games
       use_scummvm/keyboard_shortcuts
@@ -99,6 +100,8 @@ We have a user manual section covering **THE BASICS**:
       Playing games
       ^^^^^^^^^^^^^^^
       :doc:`use_scummvm/game_files`
+
+      :doc:`use_scummvm/mac_game_files`
 
       :doc:`use_scummvm/add_play_games`
 
