@@ -79,9 +79,10 @@ void CharacterDrew::playStandingAnim() {
 
 	stopSpecialAnim();
 	_animationInstance->setAnimation(_walkAnim);
-	_animationInstance->setFrame(_facing * 2);
+	int standingFrames = _vm->isEnglishDemo() ? 3 : 2;
+	_animationInstance->setFrame(_facing * standingFrames);
 	_shadowAnimationInstance->setFrame(_facing);
-	_animationInstance->setAnimationRange(_facing * 2, _facing * 2);
+	_animationInstance->setAnimationRange(_facing * standingFrames, _facing * standingFrames);
 	_animationInstance->stopAnimation();
 	_animationInstance->setLooping(true);
 	//setVisible(true);
@@ -93,7 +94,8 @@ void CharacterDrew::playWalkAnim(int32 start, int32 end) {
 	stopSpecialAnim();
 	_animationInstance->setAnimation(_walkAnim);
 	_shadowAnimationInstance->setFrame(_facing);
-	_animationInstance->setAnimationRange(16 + _facing * 14, 16 + _facing * 14 + 13);
+	int walkAnimOffset = _vm->isEnglishDemo() ? 24 : 16;
+	_animationInstance->setAnimationRange(walkAnimOffset + _facing * 14, walkAnimOffset + _facing * 14 + 13);
 	_animationInstance->playAnimation();
 	_animationInstance->setFps(16);
 	_animationInstance->setLooping(true);
