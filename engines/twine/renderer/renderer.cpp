@@ -805,7 +805,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 				*out2 = ((startColor + stopColor) / 2) / 256; // average of the 2 colors
 			}
 		} else if (hsize == 1) {
-			if (start >= -1 && start < screenWidth - 1) {
+			if (start >= 1 && start < screenWidth - 1) {
 				*(out2 + 1) = stopColor / 256;
 			}
 
@@ -813,11 +813,11 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 				*out2 = startColor / 256;
 			}
 		} else if (hsize == 2) {
-			if (start >= -2 && start < screenWidth - 2) {
+			if (start >= 2 && start < screenWidth - 2) {
 				*(out2 + 2) = stopColor / 256;
 			}
 
-			if (start >= -1 && start < screenWidth - 1) {
+			if (start >= 1 && start < screenWidth - 1) {
 				*(out2 + 1) = ((startColor + stopColor) / 2) / 256; // average of the 2 colors
 			}
 
