@@ -6090,6 +6090,12 @@ case $_host_os in
 		fi
 		;;
 	android)
+		# Force treating unqualified char variables as signed by default.
+		# NDK compiler for ARM will treat them as unsigned otherwise, which creates bugs in the code.
+		# We apply this to all Android architectures (arm, arm64, and x86, x86-64)
+		# albeit only the ARM architectures really required it (the others are not affected by this addition).
+		echo "(Android) Treating char as signed char by default"
+		append_var CXXFLAGS "-fsigned-char"
 		# ssp at this point so the cxxtests link
 		if test "$_debug_build" = yes; then
 			append_var CXXFLAGS "-fstack-protector"
