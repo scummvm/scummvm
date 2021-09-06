@@ -366,7 +366,7 @@ void FrameWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 }
 
 void FrameWindow::onTimer(uint timer) {
-	// Call the sound manager maintence callback function to refresh the buffers
+	// Call the sound manager maintenance callback function to refresh the buffers
 	_vm->_sound->timerCallback();
 }
 
