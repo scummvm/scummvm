@@ -645,6 +645,10 @@ void Encounter::choose(int32 index) {
 		case Common::FR_FRA:
 			goodBye = "Au Revoir";
 			break;
+
+		case Common::RU_RUS:
+			goodBye = "\xc4\xee\x20\xf1\xe2\xe8\xe4\xe0\xed\xe8\xff"; // До свидания
+			break;
 		}
 
 		if (strcmp(goodBye, getText()->get(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + _value1))))

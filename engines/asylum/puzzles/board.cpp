@@ -37,11 +37,23 @@
 namespace Asylum {
 
 PuzzleBoard::PuzzleBoard(AsylumEngine *engine, const PuzzleData *data) : Puzzle(engine) {
-	const Common::Language supportedLanguages[] = {Common::EN_ANY, Common::DE_DEU, Common::FR_FRA};
-
 	int i = 0;
-	while (_vm->getLanguage() != supportedLanguages[i])
-		i++;
+
+	switch (_vm->getLanguage()) {
+	default:
+	case Common::EN_ANY:
+	case Common::RU_RUS:
+		i = 0;
+		break;
+
+	case Common::DE_DEU:
+		i = 1;
+		break;
+
+	case Common::FR_FRA:
+		i = 2;
+		break;
+	}
 
 	memcpy(&_data, &data[i], sizeof(PuzzleData));
 
