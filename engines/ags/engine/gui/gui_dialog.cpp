@@ -287,7 +287,7 @@ void preparesavegamelist(int ctrllist) {
 	// fill in the list box and global savegameindex[] array for backward compatibilty
 	for (_G(numsaves) = 0; _G(numsaves) < (int)saveList.size(); ++_G(numsaves)) {
 		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0,
-		                       saveList[_G(numsaves)].getDescription().c_str());
+		                       saveList[_G(numsaves)].getDescription().encode().c_str());
 		_G(filenumbers)[_G(numsaves)] = saveList[_G(numsaves)].getSaveSlot();
 		_G(filedates)[_G(numsaves)] = 0;
 		//(long int)saveList[_G(numsaves)].FileTime;
