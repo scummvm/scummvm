@@ -103,7 +103,7 @@ class PlaybackFile {
 		kHashSectionTag = MKTAG('H','A','S','H'),
 		kRandomSectionTag = MKTAG('R','A','N','D'),
 		kEventTag = MKTAG('E','V','N','T'),
-		kScreenShotTag = MKTAG('B','M','H','T'),
+		kScreenShotTag = MKTAG('T','H','M','B'),
 		kSettingsSectionTag = MKTAG('S','E','T','T'),
 		kAuthorTag = MKTAG('H','A','U','T'),
 		kCommentsTag = MKTAG('H','C','M','T'),
