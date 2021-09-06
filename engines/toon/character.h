@@ -103,7 +103,7 @@ public:
 	virtual void plotPath(Graphics::Surface& surface);
 
 	int32 getFacingFromDirection(int16 dx, int16 dy);
-	static const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);
+	const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);
 
 protected:
 	ToonEngine *_vm;

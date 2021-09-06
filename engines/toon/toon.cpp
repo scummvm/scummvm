@@ -1163,6 +1163,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_showConversationText = true;
 	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
+	_isEnglishDemo = _isDemo && _gameDescription->language == Common::EN_ANY;
 
 	_resources = NULL;
 	_animationManager = NULL;
