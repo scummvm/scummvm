@@ -200,6 +200,7 @@ public:
 	virtual void drawHealth();
 	int _health;
 	int _maxHealth;
+	int _score;
 	Filename _shootSound;
 	Shoots _shoots;
 	Frames _playerFrames;
@@ -217,6 +218,12 @@ public:
 	// Hardcoded puzzles
 	virtual void runPuzzle(Puzzle puzzle);
 
+	// Transitions
+	void runTransition(Transition trans);
+
+	// Credits
+	virtual void showCredits();
+
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
@@ -227,6 +234,7 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
+	void showCredits() override;
 	bool clickedSecondaryShoot(Common::Point) override;
 	void drawShoot(Common::Point) override;
 	void drawPlayer() override;

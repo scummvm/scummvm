@@ -61,10 +61,12 @@ static const int uiPos[2][3][2] = {
 void WetEngine::drawHealth() {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	int p = (100 * _health) / _maxHealth;
+	int s = _score;
 	if (_playerFrameIdx < _playerFrameSep) {
 		uint32 id = _levelId;
 		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), uiPos[id][0][0], uiPos[id][0][1], 65, c);
-		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", 0), uiPos[id][1][0], uiPos[id][1][1], 72, c);
+		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", s), uiPos[id][1][0], uiPos[id][1][1], 72, c);
+		// Objectives are always in the zero in the demo
 		_font->drawString(_compositeSurface, Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
 	}
 }

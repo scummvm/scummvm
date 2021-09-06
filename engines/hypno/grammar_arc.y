@@ -91,10 +91,14 @@ hline:  CTOK NUM  { debug("C %d", $2); }
       | VTOK NUM NUM { debug("V %d %d", $2, $3); }
       | OTOK NUM NUM { debug("O %d %d", $2, $3); }
 	  | O1TOK NUM NUM { debug("O1 %d %d", $2, $3); }
-	  | TPTOK FILENAME NUM FILENAME { 
+	  | TPTOK FILENAME NUM FILENAME {
+		  g_parsedArc.transitionVideo = $2;
+		  g_parsedArc.transitionTime = $3;
 		  debug("Tp %s %d %s", $2, $3, $4); 
 		}
 	  | TTOK FILENAME NUM { 
+		  g_parsedArc.transitionVideo = $2;
+		  g_parsedArc.transitionTime = $3;
 		  debug("T %s %d", $2, $3); 
 		}
 	  | TTOK NONETOK NUM { 

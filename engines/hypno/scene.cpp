@@ -176,6 +176,15 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	return false;
 }
 
+void HypnoEngine::runTransition(Transition trans) {
+	_nextLevel = trans.level;
+	for (Filenames::iterator it = trans.intros.begin(); it != trans.intros.end(); ++it) {
+		MVideo v(*it, Common::Point(0, 0), false, true, false);
+		runIntro(v);
+	}
+}
+
+
 void HypnoEngine::runScene(Scene scene) {
 	_refreshConversation = false;
 	_conversation.clear();
