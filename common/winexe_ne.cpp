@@ -52,6 +52,7 @@ bool NEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag 
 		return false;
 
 	_exe = stream;
+	_disposeFileHandle = disposeFileHandle;
 
 	uint32 offsetResourceTable = getResourceTableOffset();
 	if (offsetResourceTable == 0xFFFFFFFF)
