@@ -1850,7 +1850,7 @@ void LB::b_installMenu(int nargs) {
 				while (mainArchive->getScriptContext(kEventScript, commandId)) {
 					commandId++;
 				}
-				mainArchive->addCode(command.decode(Common::kMacRoman), kEventScript, commandId);
+				mainArchive->replaceCode(command.decode(Common::kMacRoman), kEventScript, commandId);
 				submenuText += Common::String::format("[%d];", commandId);
 			} else {
 				submenuText += ';';

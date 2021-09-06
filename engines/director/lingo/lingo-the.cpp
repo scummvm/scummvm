@@ -1219,7 +1219,7 @@ void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &me
 			int commandId = 100;
 			while (mainArchive->getScriptContext(kEventScript, commandId))
 				commandId++;
-			mainArchive->addCode(d.asString(), kEventScript, commandId);
+			mainArchive->replaceCode(d.asString(), kEventScript, commandId);
 
 			if (menuId.type == STRING && menuItemId.type == STRING)
 				g_director->_wm->setMenuItemAction(menuId.asString(), menuItemId.asString(), commandId);

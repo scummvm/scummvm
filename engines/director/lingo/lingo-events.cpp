@@ -106,7 +106,7 @@ void Movie::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _lingo->_eventHandlerTypes[event]);
 	LingoArchive *mainArchive = getMainLingoArch();
 	mainArchive->primaryEventHandlers[event] = code;
-	mainArchive->addCode(code, kEventScript, event);
+	mainArchive->replaceCode(code, kEventScript, event);
 }
 
 void Movie::queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId) {
