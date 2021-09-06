@@ -75,7 +75,8 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 	return true;
 }
 
-const FileEntry *LibFile::getEntry(const Common::String &name) const {
+const FileEntry *LibFile::getEntry(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
 		if (((_prefix + it->name).equalsIgnoreCase(name)) || it->name.equalsIgnoreCase(name))
 			return it;
@@ -88,9 +89,9 @@ void LibFile::close() {
 	_fileEntries.clear();
 }
 
-bool LibFile::hasFile(const Common::String &name) const {
-	error("hasFile");
-	return false;
+bool LibFile::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
+	return getEntry(name) != nullptr;
 }
 
 int LibFile::listMembers(Common::ArchiveMemberList &list) const {
@@ -101,12 +102,13 @@ int LibFile::listMembers(Common::ArchiveMemberList &list) const {
 	return list.size();
 }
 
-const Common::ArchiveMemberPtr LibFile::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr LibFile::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::String &name) const {
-	//error("Not implemented %s", name.c_str());
+Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	const FileEntry *entry = getEntry(name);
 	Common::MemoryReadStream *stream = nullptr;
 	if (entry != nullptr)
