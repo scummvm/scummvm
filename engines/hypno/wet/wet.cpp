@@ -84,6 +84,8 @@ void WetEngine::loadAssets() {
 	intro.trans.intros.push_back("movie/nw_logo.smk");
 	intro.trans.intros.push_back("movie/hypnotix.smk");
 	intro.trans.intros.push_back("movie/wetlogo.smk");
+	intro.trans.frameImage = "wetlands/c_misc/c.s";
+	intro.trans.frameNumber = 0;
 	_levels["<intro>"] = intro;
 
 	byte x;

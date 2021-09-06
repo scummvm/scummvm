@@ -177,11 +177,24 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 }
 
 void HypnoEngine::runTransition(Transition trans) {
-	_nextLevel = trans.level;
 	for (Filenames::iterator it = trans.intros.begin(); it != trans.intros.end(); ++it) {
 		MVideo v(*it, Common::Point(0, 0), false, true, false);
 		runIntro(v);
 	}
+
+	if (!trans.frameImage.empty()) {
+		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans.frameImage.c_str());
+		Graphics::Surface *frame = decodeFrame(trans.frameImage, trans.frameNumber);
+		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
+		drawImage(*sframe, 0, 0, false);
+		drawScreen();
+		frame->free();
+		delete frame;
+		sframe->free();
+		delete sframe;
+		assert(installTimer(2 * 1000000, &trans.level));
+	} else
+		_nextLevel = trans.level;
 }
 
 
