@@ -1150,8 +1150,16 @@ void MacText::resize(int w, int h) {
 	if (_surface->w == w && _surface->h == h)
 		return;
 
-	_maxWidth = w;
-	setMaxWidth(_maxWidth);
+	setMaxWidth(w);
+	if (_composeSurface->w != w || _composeSurface->h != h) {
+		delete _composeSurface;
+		_composeSurface = new Graphics::ManagedSurface(w, h);
+		_dims.right = _dims.left + w;
+		_dims.bottom = _dims.top + h;
+
+		_contentIsDirty = true;
+		_fullRefresh = true;
+	}
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
