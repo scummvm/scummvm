@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-02 11:25+0000\n"
+"POT-Creation-Date: 2021-09-06 13:21+0000\n"
 "PO-Revision-Date: 2021-08-29 11:25+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4177,7 +4177,7 @@ msgstr "Автор перевода не желает, чтобы его пер�
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:985
 #: engines/saga/detection_tables.h:1044 engines/sci/detection_tables.h:4899
 #: engines/sci/detection_tables.h:4907 engines/sherlock/detection_tables.h:214
-#: engines/stark/detection.cpp:305 engines/teenagent/detection.cpp:118
+#: engines/stark/detection.cpp:320 engines/teenagent/detection.cpp:118
 #: engines/zvision/detection_tables.h:191
 #: engines/zvision/detection_tables.h:211
 msgid "Missing game code"
@@ -7159,19 +7159,19 @@ msgstr "Переключить быстрый режим"
 msgid "Toggle really fast mode"
 msgstr "Переключить очень быстрый режим"
 
-#: engines/stark/detection.cpp:361
+#: engines/stark/detection.cpp:376
 msgid "Load modded assets"
 msgstr "Загрузить данные мода"
 
-#: engines/stark/detection.cpp:362
+#: engines/stark/detection.cpp:377
 msgid "Enable loading of external replacement assets."
 msgstr "Включить загрузку внешних файлов замены игровых ресурсов."
 
-#: engines/stark/detection.cpp:370
+#: engines/stark/detection.cpp:385
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Включить линейную фильтрацию фоновых изображений"
 
-#: engines/stark/detection.cpp:371
+#: engines/stark/detection.cpp:386
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7179,19 +7179,19 @@ msgstr ""
 "Линейная фильтрация сглаживает фоновые изображения за счёт некоторой потери "
 "детализации."
 
-#: engines/stark/detection.cpp:379 engines/ultima/detection.cpp:119
+#: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
 msgid "Enable font anti-aliasing"
 msgstr "Включить сглаживание шрифтов"
 
-#: engines/stark/detection.cpp:380 engines/ultima/detection.cpp:120
+#: engines/stark/detection.cpp:395 engines/ultima/detection.cpp:120
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Если сглаживание шрифтов включено, шрифты рисуются без зубцов."
 
-#: engines/stark/stark.cpp:284
+#: engines/stark/stark.cpp:285
 msgid "You are missing recommended data files:"
 msgstr "Не хватает следующих файлов данных игры:"
 
-#: engines/stark/stark.cpp:298
+#: engines/stark/stark.cpp:299
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7200,7 +7200,7 @@ msgstr ""
 "Папка 'fonts' необходима для отрисовки стилей текста. Однако, она "
 "отсутствует в релизе игры на Steam. Вы можете взять её из демо-версии игры."
 
-#: engines/stark/stark.cpp:305
+#: engines/stark/stark.cpp:306
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7208,13 +7208,13 @@ msgstr ""
 "Файл 'gui.ini' рекомендован, чтобы правильно отрисовывать шрифты в "
 "локализациях."
 
-#: engines/stark/stark.cpp:311
+#: engines/stark/stark.cpp:312
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "Файл 'language.ini' рекомендован, чтобы получить переведённые диалоги "
 "подтверждения."
 
-#: engines/stark/stark.cpp:317
+#: engines/stark/stark.cpp:318
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "Файл 'game.exe' рекомендован, чтобы получить стили диалогов подтверждения."
