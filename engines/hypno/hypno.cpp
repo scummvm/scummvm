@@ -149,11 +149,7 @@ void HypnoEngine::runLevel(Common::String name) {
 
 	if (!_levels[name].trans.level.empty()) {
 		debugC(1, kHypnoDebugScene, "Executing transition level %s", name.c_str());
-		_nextLevel = _levels[name].trans.level;
-		for (Filenames::iterator it = _levels[name].trans.intros.begin(); it != _levels[name].trans.intros.end(); ++it) {
-			MVideo v(*it, Common::Point(0, 0), false, true, false);
-			runIntro(v);
-		}
+		runTransition(_levels[name].trans);
 
 	} else if (!_levels[name].arcade.background.empty()) {
 		debugC(1, kHypnoDebugArcade, "Executing arcade level %s", name.c_str());
@@ -220,6 +216,8 @@ void HypnoEngine::runIntro(MVideo &video) {
 }
 
 void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); }
+
+void HypnoEngine::showCredits() { error("credits"); /* Nothing */ };
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d, %d)", __FUNCTION__, name.c_str(), x, y, transparent);
@@ -377,6 +375,8 @@ void HypnoEngine::playVideo(MVideo &video) {
 }
 
 void HypnoEngine::skipVideo(MVideo &video) {
+	if (!video.decoder)
+		return;
 	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
 	video.decoder->close();
 	delete video.decoder;

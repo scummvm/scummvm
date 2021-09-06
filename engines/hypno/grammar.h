@@ -223,6 +223,8 @@ public:
 	uint32 id;
 	Common::String levelIfWin;
 	Common::String levelIfLose;
+	Filename transitionVideo;
+	uint32 transitionTime;
 	Filenames defeatVideos;
 	Filenames winVideos;
 	Filename intro;

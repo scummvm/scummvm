@@ -132,4 +132,10 @@ void WetEngine::loadAssets() {
 	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib");
 }
 
+void WetEngine::showCredits() {
+	MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);
+	runIntro(video);
+}
+
+
 } // End of namespace Hypno
