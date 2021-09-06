@@ -15,12 +15,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Crimson Crown hinzugefügt.
    - Unterstützung für OO-Topos hinzugefügt.
    - Unterstützung für die Glulx interactive fiction-Spiele hinzugefügt.
-   - Unterstützung für die US-Version von Private Eye hinzugefügt.
-   - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
    - Unterstützung für das Konami-Release von Lure of the Temptress hinzugefügt.
+   - Unterstützung für Private Eye hinzugefügt.
    - Unterstützung für die spanische Version von Blue Force hinzugefügt.
    - Unterstützung für die spanische Version von Ringworld hinzugefügt.
    - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
+   - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
    - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
    - Unterstützung für The Journeyman Project 2: Buried in Time hinzugefügt.
    - Unterstützung für Crusader: No Remorse hinzugefügt.
