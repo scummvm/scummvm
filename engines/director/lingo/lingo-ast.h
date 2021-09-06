@@ -396,7 +396,7 @@ struct GlobalNode : StmtNode {
 
 	GlobalNode(IDList *namesIn) : StmtNode(kGlobalNode), names(namesIn) {}
 	virtual ~GlobalNode() {
-		delete names;
+		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitGlobalNode(this);
@@ -410,7 +410,7 @@ struct PropertyNode : StmtNode {
 
 	PropertyNode(IDList *namesIn) : StmtNode(kPropertyNode), names(namesIn) {}
 	virtual ~PropertyNode() {
-		delete names;
+		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitPropertyNode(this);
@@ -424,7 +424,7 @@ struct InstanceNode : StmtNode {
 
 	InstanceNode(IDList *namesIn) : StmtNode(kInstanceNode), names(namesIn) {}
 	virtual ~InstanceNode() {
-		delete names;
+		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitInstanceNode(this);
