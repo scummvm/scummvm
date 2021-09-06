@@ -153,10 +153,8 @@ void StarkEngine::mainLoop() {
 
 		processEvents();
 
-		if (StarkUserInterface->shouldExit()) {
-			quitGame();
+		if (StarkUserInterface->shouldExit())
 			break;
-		}
 
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
 			StarkGlobal->setNormalSpeed();
