@@ -112,7 +112,8 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 	changeCursor("arcade");
 	playVideo(background);
-	bool shooting = false;
+	bool shootingPrimary = false;
+	bool shootingSecondary = false;
 
 	while (!shouldQuit()) {
 
@@ -135,12 +136,16 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (clickedPrimaryShoot(mousePos))
-					shooting = true;
+					shootingPrimary = true;
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
 				if (clickedSecondaryShoot(mousePos))
-					shooting = true;
+					shootingSecondary = true;
+				break;
+
+			case Common::EVENT_RBUTTONUP:
+				shootingSecondary = false;
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -155,9 +160,10 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		if (background.decoder->needsUpdate()) {
 			drawScreen();
 			updateScreen(background);
-			if (shooting) {
+			if (shootingPrimary || shootingSecondary) {
+				shoot(mousePos);
 				drawShoot(mousePos);
-				shooting = false;
+				shootingPrimary = false;
 			}
 
 			drawPlayer();
@@ -171,7 +177,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				runIntro(video);
 			}
 			_nextLevel = arc.levelIfLose;
-			debugC(1, kHypnoDebugArcade, "Losing and jumping to %s", _nextLevel.c_str());
+			debugC(1, kHypnoDebugArcade, "Losing level and jumping to %s", _nextLevel.c_str());
 			break;
 		}
 
@@ -190,7 +196,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				runIntro(video);
 			}
 			_nextLevel = arc.levelIfWin;
-			debugC(1, kHypnoDebugArcade, "Wining and jumping to %s", _nextLevel.c_str());
+			debugC(1, kHypnoDebugArcade, "Wining level and jumping to %s", _nextLevel.c_str());
 			break;
 		}
 
@@ -292,7 +298,9 @@ void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
 	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
-bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) {
+bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) { return true; };
+
+void HypnoEngine::shoot(Common::Point mousePos) {
 	int i = detectTarget(mousePos);
 	int w = 0;
 	int h = 0;
@@ -305,7 +313,6 @@ bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) {
 		_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
 		_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
 	}
-	return true;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(Common::Point mousePos) {

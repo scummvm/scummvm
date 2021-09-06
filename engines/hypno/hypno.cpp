@@ -44,6 +44,7 @@ namespace Hypno {
 
 Hotspots *g_parsedHots;
 ArcadeShooting g_parsedArc;
+HypnoEngine *g_hypno;
 
 MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled, bool _loop) {
 	path = _path;
@@ -60,6 +61,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
+	g_hypno = this;
 	_defaultCursor = "";
 	// Add quit level
 	Hotspot q;
@@ -422,6 +424,20 @@ Common::String HypnoEngine::convertPath(const Common::String &name) {
 
 	path.toLowercase();
 	return path;
+}
+
+// Timers
+static void timerCallback(void *refCon) {
+	g_hypno->removeTimer();
+	g_hypno->_nextLevel = *(Common::String *)refCon;
+}
+
+bool HypnoEngine::installTimer(uint32 delay, Common::String *ns) {
+	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void *)ns, "timerCallback");
+}
+
+void HypnoEngine::removeTimer() {
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 } // End of namespace Hypno

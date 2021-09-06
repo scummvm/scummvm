@@ -193,6 +193,7 @@ public:
 	virtual bool clickedPrimaryShoot(Common::Point);
 	virtual bool clickedSecondaryShoot(Common::Point);
 	virtual void drawShoot(Common::Point);
+	virtual void shoot(Common::Point);
 	virtual void hitPlayer();
 
 	void drawCursorArcade(Common::Point mousePos);

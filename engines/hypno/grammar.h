@@ -197,6 +197,8 @@ typedef Common::Array<Common::String> Sounds;
 class Transition {
 public:
 	Common::String level;
+	Filename frameImage;
+	uint32 frameNumber;
 	Filenames intros;
 };
 
