@@ -256,6 +256,8 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 
 	if (getScriptContext(type, id)) {
 		// Replace the pre-existing context but warn about it.
+		// For cases where replacing the script context is expected (e.g. 'when' event handlers)
+		// use replaceCode instead of addCode.
 		warning("Script already defined for type %d, id %d", type, id);
 		removeCode(type, id);
 	}
@@ -283,6 +285,11 @@ void LingoArchive::removeCode(ScriptType type, uint16 id) {
 		delete ctx;
 	}
 	scriptContexts[type].erase(id);
+}
+
+void LingoArchive::replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
+	removeCode(type, id);
+	addCode(code, type, id, scriptName);
 }
 
 void Lingo::printStack(const char *s, uint pc) {
