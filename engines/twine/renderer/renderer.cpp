@@ -48,13 +48,13 @@ Renderer::Renderer(TwinEEngine *engine) : _engine(engine) {
 
 Renderer::~Renderer() {
 	free(_polyTab);
-	free(_polyTab2);
+	free(_colorProgressionBuffer);
 }
 
 void Renderer::init(int32 w, int32 h) {
 	_polyTabSize = _engine->height() * 6;
 	_polyTab = (int16 *)malloc(_polyTabSize * sizeof(int16));
-	_polyTab2 = (int16 *)malloc(_polyTabSize * sizeof(int16));
+	_colorProgressionBuffer = (int16 *)malloc(_polyTabSize * sizeof(int16));
 	_holomap_polytab_1_1 = &_polyTab[_engine->height() * 0];
 	_holomap_polytab_1_2 = &_polyTab[_engine->height() * 2];
 	_holomap_polytab_1_3 = &_polyTab[_engine->height() * 3];
@@ -391,8 +391,8 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	int16 currentVertexY = vertices[numVertices - 1].y;
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
-	const int16 *polyTab2Begin = _polyTab2;
-	const int16 *polyTab2End = &_polyTab2[_polyTabSize - 1];
+	const int16 *polyTab2Begin = _colorProgressionBuffer;
+	const int16 *polyTab2End = &_colorProgressionBuffer[_polyTabSize - 1];
 	const int screenHeight = _engine->height();
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
@@ -448,7 +448,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 		}
 
 		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
-			int16 *outPtr2 = &_polyTab2[polyTabIndex];
+			int16 *outPtr2 = &_colorProgressionBuffer[polyTabIndex];
 
 			for (int16 i = 0; i < vsize + 2; i++) {
 				if (outPtr2 >= polyTab2Begin && outPtr2 <= polyTab2End) {
@@ -728,7 +728,7 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_polyTab2[vtop]; // color progression
+	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 	int32 renderLoop = vsize;
@@ -826,7 +826,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_polyTab2[vtop]; // color progression
+	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
