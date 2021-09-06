@@ -427,7 +427,7 @@ void EvidenceBioChipViewWindow::onPaint() {
 
 void EvidenceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	if (_status == 0) {
-		// Get the number of items urrently captured
+		// Get the number of items currently captured
 		int itemCount = ((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().evcapNumCaptured;
 
 		// Loop through the evidence piece regions, determining if we have another page to go to

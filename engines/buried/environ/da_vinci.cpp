@@ -2548,7 +2548,7 @@ bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &co
 		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0 && _globalFlags.dsCYTriedOpeningDoor == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBalconyKey);
 	case 31: // Before ever opening codex tower balcony door, after trying unsuccessfully to open door, metal bar in inventory, balcony key not in inventory
 		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0 && _globalFlags.dsCYTriedOpeningDoor == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemMetalBar) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBalconyKey);
-	case 32: // Lens filter not in ineventory
+	case 32: // Lens filter not in inventory
 		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemLensFilter);
 	case 33: // Player has not found formulae, before trying to translate any codex
 		return _globalFlags.dsCTCodexFormulaeFound == 0 && _globalFlags.dsCYTranslatedCodex == 0;
