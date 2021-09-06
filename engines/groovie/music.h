@@ -211,12 +211,21 @@ public:
 	~MusicPlayerTlc();
 
 protected:
+	virtual Common::String getFilename(uint32 fileref);
 	void updateVolume();
 	bool load(uint32 fileref, bool loop);
 	void unload();
 
 private:
 	Audio::SoundHandle _handle;
+};
+
+class MusicPlayerClan : public MusicPlayerTlc {
+public:
+	MusicPlayerClan(GroovieEngine *vm) : MusicPlayerTlc(vm) {}
+
+protected:
+	Common::String getFilename(uint32 fileref) override;
 };
 
 } // End of Groovie namespace

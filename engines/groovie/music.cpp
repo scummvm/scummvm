@@ -27,6 +27,7 @@
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
 #include "groovie/tlcgame.h"
+#include "groovie/clangame.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
@@ -768,6 +769,10 @@ void MusicPlayerTlc::unload() {
 	_vm->_system->getMixer()->stopHandle(_handle);
 }
 
+Common::String MusicPlayerTlc::getFilename(uint32 fileref) {
+	return TlcGame::getTlcMusicFilename(fileref);
+}
+
 bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	// Find correct filename
 	Common::String filename;
@@ -775,7 +780,7 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	Audio::SeekableAudioStream *seekStream = NULL;
 
 	// Create the audio stream from fileref
-	filename = TlcGame::getTlcMusicFilename(fileref);
+	filename = getFilename(fileref);
 	fileHandle->open(filename);
 	if (fileHandle->isOpen()) {
 		seekStream = Audio::makeMP3Stream(fileHandle, DisposeAfterUse::YES);
@@ -800,6 +805,10 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	// Play!
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
 	return true;
+}
+
+Common::String MusicPlayerClan::getFilename(uint32 fileref) {
+	return ClanGame::getClanMusicFilename(fileref);
 }
 
 
