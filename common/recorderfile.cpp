@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 #include "graphics/scaler.h"
 
-#define RECORD_VERSION 2
+#define RECORD_VERSION 1
 
 namespace Common {
 
@@ -47,7 +47,6 @@ PlaybackFile::PlaybackFile()
 	_headerDumped = false;
 	_recordCount = 0;
 	_eventsSize = 0;
-	_trackScreenUpdate = true;
 	_version = RECORD_VERSION;
 	memset(_tmpBuffer.data(), 1, kRecordBuffSize);
 
@@ -134,10 +133,7 @@ bool PlaybackFile::parseHeader() {
 bool PlaybackFile::checkPlaybackFileVersion() {
 	_version = _readStream->readUint32BE();
 	switch (_version) {
-	case 2:
-		break;
 	case 1:
-		_trackScreenUpdate = false;
 		break;
 	default:
 		warning("Unknown playback file version %d. Maximum supported version is %d.", _version, RECORD_VERSION);

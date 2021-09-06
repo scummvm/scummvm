@@ -50,25 +50,6 @@ namespace GUI {
 const int kMaxRecordsNames = 0x64;
 const int kDefaultScreenshotPeriod = 60000;
 
-uint32 readTime(Common::ReadStream *inFile) {
-	uint32 d = inFile->readByte();
-	if (d == 0xff) {
-		d = inFile->readUint32LE();
-	}
-
-	return d;
-}
-
-void writeTime(Common::WriteStream *outFile, uint32 d) {
-		//Simple RLE compression
-	if (d >= 0xff) {
-		outFile->writeByte(0xff);
-		outFile->writeUint32LE(d);
-	} else {
-		outFile->writeByte(d);
-	}
-}
-
 EventRecorder::EventRecorder() {
 	_timerManager = nullptr;
 	_recordMode = kPassthrough;
@@ -276,35 +257,32 @@ void EventRecorder::processScreenUpdate() {
 		break;
 	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
-		if (_playbackFile->hasTrackScreenUpdate()) {
-			// if the file has screen update support, but the next event
-			// isn't a screen update, fast forward until we find one.
-			if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
-				int numSkipped = 0;
-				while (true) {
-					_nextEvent = _playbackFile->getNextEvent();
-					numSkipped += 1;
-					if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
-						warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
-						break;
-					}
+		// if the next event isn't a screen update, fast forward until we find one.
+		if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
+			int numSkipped = 0;
+			while (true) {
+				_nextEvent = _playbackFile->getNextEvent();
+				numSkipped += 1;
+				if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
+					warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
+					break;
 				}
 			}
-			_processingMillis = true;
-			_fakeTimer = _nextEvent.time;
-			updateSubsystems();
-			_nextEvent = _playbackFile->getNextEvent();
-			if (_recordMode == kRecorderUpdate) {
-				// write event to the updated file and update screenshot if necessary
-				screenUpdateEvent.recordedtype = Common::kRecorderEventTypeScreenUpdate;
-				screenUpdateEvent.time = _fakeTimer;
-				_recordFile->writeEvent(screenUpdateEvent);
-				takeScreenshot();
-			}
-			_timerManager->handler();
-			_controlPanel->setReplayedTime(_fakeTimer);
-			_processingMillis = false;
 		}
+		_processingMillis = true;
+		_fakeTimer = _nextEvent.time;
+		updateSubsystems();
+		_nextEvent = _playbackFile->getNextEvent();
+		if (_recordMode == kRecorderUpdate) {
+			// write event to the updated file and update screenshot if necessary
+			screenUpdateEvent.recordedtype = Common::kRecorderEventTypeScreenUpdate;
+			screenUpdateEvent.time = _fakeTimer;
+			_recordFile->writeEvent(screenUpdateEvent);
+			takeScreenshot();
+		}
+		_timerManager->handler();
+		_controlPanel->setReplayedTime(_fakeTimer);
+		_processingMillis = false;
 		break;
 	default:
 		break;
