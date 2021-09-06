@@ -155,6 +155,7 @@ public:
 	bool checkForContinueGame();
 
 	void acquireRecording() {
+		assert(_acquireCount >= 0);
 		if (_acquireCount == 0) {
 			_savedState = _initialized;
 			_initialized = false;
@@ -169,7 +170,7 @@ public:
 			_initialized = _savedState;
 	}
 
-	RecordMode getRecordMode() {
+	RecordMode getRecordMode() const {
 		return _recordMode;
 	}
 
