@@ -71,7 +71,7 @@ Common::String getRendererTypeCode(RendererType type) {
 
 RendererType getBestMatchingAvailableRendererType(RendererType desired) {
 	if (desired == kRendererTypeDefault) {
-		desired = kRendererTypeOpenGL;
+		desired = kRendererTypeOpenGLShaders;
 	}
 
 #if !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2)
