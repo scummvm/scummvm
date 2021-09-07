@@ -56,13 +56,11 @@ void Renderer::init(int32 w, int32 h) {
 	_polyTab = (int16 *)malloc(_polyTabSize * sizeof(int16));
 	_colorProgressionBuffer = (int16 *)malloc(_polyTabSize * sizeof(int16));
 	_holomap_polytab_1_1 = &_polyTab[_engine->height() * 0];
-	_holomap_polytab_1_2 = &_polyTab[_engine->height() * 2];
-	_holomap_polytab_1_3 = &_polyTab[_engine->height() * 3];
-	_holomap_polytab_2_3 = &_polyTab[_engine->height() * 5];
-	_holomap_polytab_2_2 = &_polyTab[_engine->height() * 4];
 	_holomap_polytab_2_1 = &_polyTab[_engine->height() * 1];
-	_holomap_polytab_1_2_ptr = _holomap_polytab_1_2;
-	_holomap_polytab_1_3_ptr = _holomap_polytab_1_3;
+	_holomap_polytab_1_2 = &_polyTab[_engine->height() * 2];
+	_holomap_polytab_2_2 = &_polyTab[_engine->height() * 3];
+	_holomap_polytab_1_3 = &_polyTab[_engine->height() * 4];
+	_holomap_polytab_2_3 = &_polyTab[_engine->height() * 5];
 }
 
 IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {

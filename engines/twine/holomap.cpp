@@ -451,9 +451,9 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(destPos2);
 			bool visible;
 			if (lower) {
-				visible = destPos4.z <= destPos3.z;
-			} else {
 				visible = destPos3.z <= destPos4.z;
+			} else {
+				visible = destPos4.z <= destPos3.z;
 			}
 			if (!visible) {
 				continue;
