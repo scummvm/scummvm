@@ -141,6 +141,10 @@ You need to specify the correct :ref:`language <lang>` in the game-specific sett
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 First, check the `Compatibility page <https://www.scummvm.org/compatibility/>`_ on the ScummVM website to see if the game has any known issues. If not, and the crash can be reproduced, report the crash as a bug. See :doc:`report_bugs`.
 
+2.2.5. I downloaded the Broken Sword packs from your website but the game won't run. 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These are not full games, they are re-encoded cutscene (video) packs. To run the games you still need the original disks. See the `Broken Sword wiki page <https://wiki.scummvm.org/index.php/Broken_Sword_1#Cutscenes>`_.
 2.3 Audio
 ***********
 
@@ -190,3 +194,18 @@ Yes. Using the **OpenGL** graphics mode or the **SDL Surface** graphics mode wit
 2.4.3. The game colors are messed up, how do I fix them?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Ensure the correct game platform has been detected. For example, with Amiga game files, check that the :ref:`platform <platform>` is set to Amiga.
+
+3. Features
+================
+
+3.1. When will you add support for ZIP archives?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We won't. There are two main reasons: firstly, we believe that it would ease illegal distribution of games, and secondly, we already support compression of sound and speech to reduce file sizes. 
+
+3.2. Will ScummVM support other games in the future?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+That depends on a few factors. Firstly, it has to fit within the scope of ScummVM. Secondly, there has to be a developer who is interested and willing to carry out the work. 
+
+ScummVM developers are all volunteers who work on ScummVM in their spare time, solely for fun, and not for profit. Reverse engineering a completely new game without the source code is a long and difficult process. Even with source it can be tedious and time consuming. 
+
+Unless you work for a company interested in providing us with source code for one of their classic titles, or want to do the work yourself, please do not ask us to add support for a new game. 
