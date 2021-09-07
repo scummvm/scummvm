@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/audio/sound.h"
+#include "twine/debugger/debug_scene.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -36,6 +37,7 @@
 #include "twine/scene/grid.h"
 #include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -153,7 +155,7 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 		return -1;
 	}
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const EntityBody* body = actor->_entityDataPtr->getBody((int)bodyIdx);
+	const EntityBody *body = actor->_entityDataPtr->getBody((int)bodyIdx);
 	if (body == nullptr) {
 		return -1;
 	}
@@ -307,6 +309,10 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 		return;
 	}
 
+	if (IS_HERO(actorIdxAttacked) && _engine->_debugScene->_godMode) {
+		return;
+	}
+
 	actor->_hitBy = actorIdx;
 
 	if (actor->_armor <= strengthOfHit) {
@@ -380,7 +386,7 @@ void ActorStruct::loadModel(int32 modelIndex, bool lba1) {
 	if (!_staticFlags.bIsSpriteActor) {
 		debug(1, "Init actor with model %i", modelIndex);
 		if (!_entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, modelIndex, lba1)) {
-			error("Failed to load entity data for index %i",  modelIndex);
+			error("Failed to load entity data for index %i", modelIndex);
 		}
 		_entityDataPtr = &_entityData;
 	} else {

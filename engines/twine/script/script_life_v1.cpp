@@ -23,6 +23,7 @@
 #include "twine/script/script_life_v1.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/debugger/debug_scene.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/audio/music.h"
@@ -1161,9 +1162,11 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 lifeValue = ctx.stream.readByte();
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
-	otherActor->addLife(-lifeValue);
-	if (otherActor->_life < 0) {
-		otherActor->setLife(0);
+	if (!engine->_debugScene->_godMode) {
+		otherActor->addLife(-lifeValue);
+		if (otherActor->_life < 0) {
+			otherActor->setLife(0);
+		}
 	}
 
 	return 0;
