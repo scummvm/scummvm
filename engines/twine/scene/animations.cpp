@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
+#include "twine/debugger/debug_scene.h"
 #include "twine/parser/anim.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
@@ -695,7 +696,9 @@ void Animations::processActorAnimations(int32 actorIdx) {
 						_engine->_movements->_heroMoved = true;
 					}
 
-					actor->addLife(-1);
+					if (!_engine->_debugScene->_godMode) {
+						actor->addLife(-1);
+					}
 				}
 			}
 		}
@@ -713,7 +716,9 @@ void Animations::processActorAnimations(int32 actorIdx) {
 						_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 						_engine->_movements->_heroMoved = true;
-						actor->addLife(-1);
+						if (!_engine->_debugScene->_godMode) {
+							actor->addLife(-1);
+						}
 					}
 
 					// no Z coordinate issue
