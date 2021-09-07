@@ -658,7 +658,7 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
 	engine->_scene->_talkingActor = ctx.actorIdx;
 	engine->_text->drawTextProgressive(textIdx);
-	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8)/* && (*(short *)lifeScriptPosition == 0xe2 [226])*/ {
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
 		engine->unlockAchievement("LBA_ACH_008");
 	}
 	engine->_redraw->redrawEngineActions(true);

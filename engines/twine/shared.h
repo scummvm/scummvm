@@ -524,6 +524,7 @@ enum class TextId : int16 {
 	kIntroText3 = 152,
 	kBookOfBu = 161,
 	kBonusList = 162,
+	kStarWarsFanBoy = 226,
 	kDetailsPolygonsLow = 231,
 	kShadowsDisabled = 232,
 	kNoSceneryZoom = 233,
