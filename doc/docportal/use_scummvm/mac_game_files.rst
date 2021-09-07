@@ -2,9 +2,11 @@
 Handling Macintosh game files
 =======================================
 
+This section explains how to access game data files from Macintosh media. For general information on how ScummVM handles game data files, including which files are required to play a game, see :doc:`../use_scummvm/game_files`.
+
 Background
 ==============
-There are three main aspects of Macintosh floppy or CD media that can make it difficult to extract the game data; the file system, forks, and file name encoding. 
+There are three main aspects of Macintosh floppy or CD media that can make it difficult to extract the game data: the file system, forks, and file name encoding. 
 
 **HFS and HFS+ file system**
 
@@ -45,7 +47,7 @@ How to extract Macintosh game files
 
 The simplest way to extract the correct game files is to use the dumper companion created and supplied by ScummVM. The dumper can extract files from an HFS medium, encode files to the MacBinary format, and rename files with Punycode if needed.
 
-There are two versions of the dumper: a disk/ISO image version that runs in a browser, and a full-fledged version using Python. The browser-based version is the preferred method since this will work in the majority of cases, and it is comparatively simpler since there is nothing to install. 
+There are two versions of the dumper: a disk/ISO image version that runs in a browser, and a full-fledged version which uses Python. The browser-based version is the preferred method since this will work in the majority of cases, and it is less hassle because there is nothing to install. 
 
 The first step is to create an ISO image of your floppy or CD medium.
 
@@ -165,7 +167,7 @@ Creating the ISO image
 Using the browser dumper companion - preferred method
 -------------------------------------------------------
 
-The `browser based dumper companion <https://www.scummvm.org/dumper-companion>`_ supports reading HFS media as ISO and disk images. It generates a zip file that can be extracted and then imported in ScummVM.
+The `browser based dumper companion <https://www.scummvm.org/dumper-companion>`_ supports reading HFS media as ISO and disk images. It generates a ZIP file that can be extracted and then imported in ScummVM.
 
 
 #. Upload the disk/ISO image file
