@@ -26,11 +26,14 @@ The ScummVM team would be delighted if you send them your modifications, so that
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 A few engines supported by ScummVM have publicly available authoring tools. See this `wiki page <https://wiki.scummvm.org/index.php/HOWTO-Fangames>`_ for more information.
 
+1.1.4. I want to compile ScummVM myself from the source code. How do I do this?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+See the `Compiling ScummVM wiki page <https://wiki.scummvm.org/index.php?title=Compiling_ScummVM>`_. 
 
 1.2 Using ScummVM
 **********************
 
-1.1.1. How do I install ScummVM onto my device?
+1.2.1. How do I install ScummVM onto my device?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 See :ref:`firststeps`.
 
@@ -48,6 +51,7 @@ See our `Platforms <https://wiki.scummvm.org/index.php/Platforms>`_ wiki page fo
 1.2.4. Where do I find the configuration file?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 See :doc:`../advanced_topics/configuration_file`.
+
 
 1.3. Playing games
 ********************
