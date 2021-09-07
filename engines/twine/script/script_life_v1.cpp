@@ -131,7 +131,7 @@ enum LifeScriptConditions {
 };
 
 /**
- * Returns @c 1 Condition value size (1 byte), @c 2 Condition value size (2 byes)
+ * Returns @c 1 Condition value size (1 byte), @c 2 Condition value size (2 bytes)
  */
 static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 conditionValueSize = 1;
