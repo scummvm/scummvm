@@ -199,6 +199,7 @@ void Container::removeContents() {
 void Container::destroyContents() {
 	while (_contents.begin() != _contents.end()) {
 		Item *item = *(_contents.begin());
+		assert(item);
 		Container *cont = dynamic_cast<Container *>(item);
 		if (cont) cont->destroyContents();
 		item->destroy(true); // we destroy the item immediately

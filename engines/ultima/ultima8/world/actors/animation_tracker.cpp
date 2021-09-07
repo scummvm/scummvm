@@ -659,7 +659,7 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 			unsigned int i = _currentFrame;
 			if (!_firstFrame) i = getNextFrame(i);
 
-			for (; i != _endFrame; i = getNextFrame(i)) {
+			for (; _animAction && i != _endFrame; i = getNextFrame(i)) {
 				const AnimFrame &f = _animAction->getFrame(_dir, i);
 				if (f.is_onground())
 					++_targetOffGroundLeft;
