@@ -581,7 +581,7 @@ void GameManager::sentence(int number, bool brightness) {
 		}
 	}
 	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && brightness)
-		ttsMan->say(string, Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
+		ttsMan->say(string, Common::TextToSpeechManager::INTERRUPT_NO_REPEAT, Common::kDos850);
 }
 
 void GameManager::say(int textId) {
