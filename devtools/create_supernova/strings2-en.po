@@ -7,16 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mission Supernova Part 2 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-13 00:06+0100\n"
-"PO-Revision-Date: 2019-09-13 00:00+0000\n"
+"POT-Creation-Date: 2021-09-07 21:01+0100\n"
+"PO-Revision-Date: 2021-09-07 20:12+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: none\n"
+"Language-Team: English <https://translations.scummvm.org/projects/"
+"mission-supernova/ms2/en/>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: ../../ms2/ms2.c:1641
 msgid "Gehe"
@@ -1022,8 +1023,8 @@ msgid ""
 "An der Wand steht:|\"Ich kenne eine tolle Geheimschrift:|A=Z, B=Y, C=X ...|"
 "0=0, 1=9, 2=8 ...\""
 msgstr ""
-"Something is written on the wall:|\"I know a great cipher:|A=Z, B=Y, C=X "
-"...|0=0, 1=9, 2=8 ...\""
+"Something is written on the wall:|\"I know a great cipher:|A=Z, B=Y, C=X ...|"
+"0=0, 1=9, 2=8 ...\""
 
 #: ../../ms2/ms2_r1.c:657
 msgid "Ok, ich nehme es."
@@ -1488,10 +1489,12 @@ msgid "Schînes Wetter heute!"
 msgstr "Nice weather today!"
 
 #: ../../ms2/ms2_r2.c:49
-msgid ""
-"Kînnen Sie mir sagen, von wem ich eine Eintrittskarte fÅr den "
-"Musikwettbewerb kriegen kann?"
-msgstr "Can you tell me who can get me a ticket for the music contest?"
+msgid "Kînnen Sie mir sagen, von wem ich eine Eintrittskarte"
+msgstr "Can you tell me who can get me a ticket for"
+
+#: ../../ms2/ms2_r2.c:50
+msgid "fÅr den Musikwettbewerb kriegen kann?"
+msgstr "the music contest?"
 
 #: ../../ms2/ms2_r2.c:55
 msgid "Ok, hier haben Sie den Xa."
@@ -2063,9 +2066,12 @@ msgid "Wie gro· ist mein Anteil?"
 msgstr "How big is my share?"
 
 #: ../../ms2/ms2_r2.c:695
-msgid ""
-"Machen Sie es immer so, da· Sie Ihre Komplizen Åber ein Graffitti anwerben?"
-msgstr "Do you always use graffiti to recruit your accomplices?"
+msgid "Machen Sie es immer so, da· Sie Ihre Komplizen Åber"
+msgstr "Do you always use graffiti to recruit your"
+
+#: ../../ms2/ms2_r2.c:696
+msgid "ein Graffitti anwerben?"
+msgstr "accomplices?"
 
 #: ../../ms2/ms2_r2.c:722
 msgid "Hmm, Moment mal, ich frage den Boss."

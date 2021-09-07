@@ -101,7 +101,7 @@ enum StringId2 {
 	kStringFaceDescription, kStringBooks, kStringDictionary, kStringPlant, kStringMask,
 	kStringSnake, kStringCup, kStringJoystick, kStringToothbrushDescription, kStringMusic,
 	kStringMusicDescription, kStringBottle, kStringBottleDescription, kStringBox, kStringSeller,
-	kStringWhat, kStringNotInformed, kStringHorstHummel, kStringNiceWeather, kStringTellTicket,
+	kStringWhat, kStringNotInformed, kStringHorstHummel, kStringNiceWeather, kUnused1,
 	kStringHereIsXa, kString500Xa, kString1000Xa, kString5000Xa, kString10000Xa,
 	// 350
 	kStringThankYou, kStringWhatYouOffer, kStringHello2, kStringWhatYouWant, kStringWhoAreYou,
@@ -132,7 +132,7 @@ enum StringId2 {
 	kStringAppearance25, kStringAppearance26, kStringAppearance27, kStringAppearance28, kStringAppearance29,
 	kStringAppearance30, kStringAppearance31, kStringElevator1, kStringElevator2, kStringElevator3,
 	kStringElevator4, kStringElevator5, kStringElevator6, kStringElevator7, kStringElevator8,
-	kStringElevator9, kStringElevator10, kStringElevator11, kStringElevator12, kStringElevator13,
+	kStringElevator9, kUnused2, kStringElevator11, kStringElevator12, kStringElevator13,
 	// 475
 	kStringElevator14, kStringElevator15, kStringElevator16, kStringElevator17, kStringElevator18,
 	kStringElevator19, kStringElevator20, kStringElevator21, kStringElevator22, kStringElevator23,
@@ -170,7 +170,7 @@ enum StringId2 {
 	kStringIntroTV15, kStringIntroTV16, kStringIntro9, kStringIntro10, kStringIntro11,
 	kStringIntro12, kStringIntro13, kStringIntro14, kStringMonsterDescription, kStringPyramid16,
 	// 625
-	kStringMuseum11
+	kStringMuseum11, kStringTellTicket1, kStringTellTicket2, kStringElevator10a, kStringElevator10b
 };
 }
 
