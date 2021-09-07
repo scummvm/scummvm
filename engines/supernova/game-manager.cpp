@@ -606,6 +606,17 @@ void GameManager::say(const char *text) {
 		}
 	}
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		Common::String ttsText;
+		for (uint i = 0; i < numRows; ++i) {
+			if (!ttsText.empty())
+				ttsText += ' ';
+			ttsText += row[i];
+		}
+		ttsMan->say(ttsText,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
+	}
+
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
 	for (uint r = 0; r < numRows; ++r)
