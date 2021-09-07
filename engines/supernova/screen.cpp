@@ -532,10 +532,6 @@ void Screen::renderMessage(const char *text, MessagePosition position, int posit
 	int y = 0;
 	byte textColor = 0;
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
-		ttsMan->say(text,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
-
 	while (*p != '\0') {
 		row[numRows] = p;
 		++numRows;
@@ -551,6 +547,17 @@ void Screen::renderMessage(const char *text, MessagePosition position, int posit
 		int rowWidth = textWidth(row[i]);
 		if (rowWidth > rowWidthMax)
 			rowWidthMax = rowWidth;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		Common::String ttsText;
+		for (uint i = 0; i < numRows; ++i) {
+			if (!ttsText.empty())
+				ttsText += ' ';
+			ttsText += row[i];
+		}
+		ttsMan->say(ttsText,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
 	}
 
 	switch (position) {
