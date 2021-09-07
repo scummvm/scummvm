@@ -96,7 +96,8 @@ public:
 	* Code is shared between getRandomNumber and getRandomBit,
 	* so it is split off for clarity.
 	*/
-	private inline void scrambleSeed();
+private:
+	inline void scrambleSeed();
 };
 
 /** @} */
