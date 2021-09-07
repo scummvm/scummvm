@@ -83,6 +83,7 @@ namespace {
 static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
 static const char msg_fanTrans_missingLangResources[]	= _s("Missing language specific game code and/or resources for this fan translation.");
 static const char msg_fanTrans_unsupportiveTranslator[]	= _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
+static const char msg_nonEngineDemo[]					= _s("Demo plays simple animations without using Westwood's Engine.");
 
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
@@ -1881,7 +1882,7 @@ const KYRAGameDescription adGameDescs[] = {
 					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_DEMO,
 			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
 		},
 		LOL_CD_DEMO_FLAGS
@@ -1895,7 +1896,7 @@ const KYRAGameDescription adGameDescs[] = {
 					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_DEMO,
 			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
 		},
 		LOL_CD_DEMO_FLAGS
@@ -1909,7 +1910,7 @@ const KYRAGameDescription adGameDescs[] = {
 					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_DEMO,
 			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
 		},
 		LOL_CD_DEMO_FLAGS
@@ -2073,6 +2074,18 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB2_FLAGS
 	},
 
+	{ // Autodesk (Flic) demo
+		{
+			"eob2",
+			msg_nonEngineDemo, // Reason for being unsupported
+			AD_ENTRY1s("DARKMOON", "46b94e1308764864746db07df64ddcc0", -1),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
+			0
+		},
+		EOB2_FLAGS
+	},
 
 	{
 		{
