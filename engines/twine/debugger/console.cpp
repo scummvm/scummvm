@@ -105,7 +105,7 @@ bool TwinEConsole::doToggleGodMode(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_useScenePatches, "use scene patches\n")
+	TOGGLE_DEBUG(_engine->_scene->_useScenePatches, "use scene patches\n")
 	return true;
 }
 
