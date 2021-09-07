@@ -53,7 +53,7 @@ See our `Platforms <https://wiki.scummvm.org/index.php/Platforms>`_ wiki page fo
 See :doc:`../advanced_topics/configuration_file`.
 
 
-1.3. Playing games
+1.3 Playing games
 ********************
 
 1.3.1. Can I only play LucasArts SCUMM games?
@@ -115,7 +115,11 @@ If you are using a computer, you can run ScummVM from the :doc:`command line <..
 
 You can also find error messages in the ScummVM log file. See :ref:`logfile`.
 
-2.1.2. I think I found a bug. What do I do?
+2.1.2. I get "Failed to save game state to file:  ". What's going on?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Check that your :ref:`save path <savepath>` is a writeable directory. 
+
+2.1.3. I think I found a bug. What do I do?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 See :doc:`report_bugs`.
 
@@ -149,6 +153,7 @@ First, check the `Compatibility page <https://www.scummvm.org/compatibility/>`_ 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 These are not full games, they are re-encoded cutscene (video) packs. To run the games you still need the original disks. See the `Broken Sword wiki page <https://wiki.scummvm.org/index.php/Broken_Sword_1#Cutscenes>`_.
+
 2.3 Audio
 ***********
 
@@ -202,11 +207,14 @@ Ensure the correct game platform has been detected. For example, with Amiga game
 3. Features
 ================
 
-3.1. When will you add support for ZIP archives?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3.1 Requests
+*****************
+
+3.1.1. When will you add support for ZIP archives?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 We won't. There are two main reasons: firstly, we believe that it would ease illegal distribution of games, and secondly, we already support compression of sound and speech to reduce file sizes. 
 
-3.2. Will ScummVM support other games in the future?
+3.1.2. Will ScummVM support other games in the future?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 That depends on a few factors. Firstly, it has to fit within the scope of ScummVM. Secondly, there has to be a developer who is interested and willing to carry out the work. 
 
