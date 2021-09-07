@@ -1028,6 +1028,13 @@ static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 sceneIdx = ctx.stream.readByte();
 	engine->_scene->_needChangeScene = sceneIdx;
 	engine->_scene->_heroPositionType = ScenePositionType::kScene;
+	// TODO: dotemu _currentSceneIdx == 6 and _needChangeScene == 11 (harbours) and sceneNumZones > 14
+	// they have changed position type to kZone and use zone index 15 and scene track index 8 to place
+	// the actor - this looks like the harbour door entrance
+	// herox = zone.info1 - zone.mins.x + track.x
+	// heroy = zone.info2 - (unknown) + unknown
+	// heroz = zone.info3 - zone.mins.z + track.z
+	// heroPositionType = ScenePositionType::kZone;
 	return 0;
 }
 
