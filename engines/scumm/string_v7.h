@@ -43,6 +43,8 @@ public:
 	int getStringWidth(const char *str) { return getStringWidth(str, 100000); }
 	int getStringHeight(const char *str) { return getStringHeight(str, 100000); }
 
+	Common::Rect calcStringDimensions(const char *str, int x, int y, bool center);
+
 	static inline bool is2ByteCharacter(Common::Language lang, byte c) {
 		if (lang == Common::JA_JPN)
 			return (c >= 0x80 && c <= 0x9F) || (c >= 0xE0 && c <= 0xFD);

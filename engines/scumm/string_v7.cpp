@@ -362,6 +362,17 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	clipRect.bottom = y;
 }
 
+Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y, bool center) {
+	int wdth = getStringWidth(str);
+	if (_gameId == GID_CMI && _useCJKMode)
+		y += 2;
+	
+	if (center)
+		x -= (wdth >> 1);
+
+	return Common::Rect(x, y, x + wdth, y + getStringHeight(str));
+}
+
 void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
 	assert(gr);
 	_textV7 = new TextRenderer_v7(this, gr);
