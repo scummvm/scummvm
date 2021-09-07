@@ -26,6 +26,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/string_v7.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -1012,35 +1013,32 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		int textWidth = 0;
-		vs->curRect.bottom = 0;
-		const byte *msg2 = msg;
-		while (*msg2) {
-			const int charWidth = _charset->getCharWidth(*msg2);
-			const int charHeight = _charset->getCharHeight(*msg2);
-			textWidth += charWidth;
-			if (vs->curRect.bottom < charHeight)
-				vs->curRect.bottom = charHeight;
-			msg2++;
-		}
-		vs->curRect.bottom += vs->curRect.top;
-		vs->oldRect = vs->curRect;
+		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, vs->origLeft, vs->curRect.top, vs->center);
+		
+		const int maxWidth = /*_language == Common::HE_ISR ? vs->curRect.right + 1 :*/ _screenWidth - vs->curRect.left;
+		int finalWidth = maxWidth;
 
-		const int maxWidth = _language == Common::HE_ISR ? vs->curRect.right + 1 : _screenWidth - vs->curRect.left;
-		if (_game.version == 8 && _charset->getStringWidth(0, buf) > maxWidth) {
+		if (_game.version == 8 && _textV7->getStringWidth((const char*)buf) > maxWidth) {
 			byte tmpBuf[384];
-			memcpy(tmpBuf, msg, 384);
+			int len = resStrLen(msg);
+			memcpy(tmpBuf, msg, len);
+			len--;
 
-			int len = resStrLen(tmpBuf) - 1;
 			while (len >= 0) {
 				if (tmpBuf[len] == ' ') {
 					tmpBuf[len] = 0;
-					if (_charset->getStringWidth(0, tmpBuf) <= maxWidth) {
+					if ((finalWidth = _textV7->getStringWidth((const char*)tmpBuf)) <= maxWidth) {
 						break;
 					}
 				}
 				--len;
 			}
+
+			enqueueText(tmpBuf, vs->origLeft, vs->curRect.top, color, vs->charset_nr, vs->center);
+			enqueueText(&msg[len + 1], vs->origLeft, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
+			vs->curRect.right = vs->curRect.left + finalWidth;
+			vs->curRect.bottom += _verbLineSpacing;
+			/*
 			int16 leftPos = vs->curRect.left;
 			if (_language == Common::HE_ISR)
 				vs->curRect.left = vs->origLeft = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
@@ -1052,13 +1050,14 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 					leftPos = vs->curRect.right - _charset->getStringWidth(0, &msg[len + 1]);
 				enqueueText(&msg[len + 1], leftPos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
 				vs->curRect.bottom += _verbLineSpacing;
-			}
-		} else {
+			}*/
+		} else {/*
 			if (_language == Common::HE_ISR)
 				vs->curRect.left = vs->origLeft = vs->curRect.right - textWidth;
 			else
 				vs->curRect.right = vs->curRect.left + textWidth;
-			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);*/
+			enqueueText(msg, vs->origLeft, vs->curRect.top, color, vs->charset_nr, vs->center);
 		}
 		_charset->setCurID(oldID);
 	}

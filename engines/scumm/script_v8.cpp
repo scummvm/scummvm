@@ -980,7 +980,7 @@ void ScummEngine_v8::o8_verbOps() {
 		if (_language == Common::HE_ISR)
 			vs->curRect.right = _screenWidth - 1 - pop();
 		else
-			vs->curRect.left = vs->origLeft = pop();
+			vs->origLeft = pop();
 		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
 		vs->curmode = 1;
