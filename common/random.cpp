@@ -56,7 +56,7 @@ void RandomSource::setSeed(uint32 seed) {
 uint RandomSource::getRandomNumber(uint max) {
 	scrambleSeed();
 	if (max == UINT_MAX)
-		return _randSeed;
+		return (_randSeed * 0xDEADBF03);
 	return (_randSeed * 0xDEADBF03) % (max + 1);
 }
 
