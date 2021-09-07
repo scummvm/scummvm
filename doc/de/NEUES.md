@@ -61,6 +61,13 @@ Programmcodes finden Sie auf Englisch unter:
  CGE2:
    - Unterstützung für Sprachausgabe in Sfinx hinzugefügt.
 
+ Cine:
+   - Die CD-Version von Future Wars mit einem französischen Übersetzungs-Patch wird jetzt erkannt.
+   - Die italienische Amiga-Version von Operation Stealth wird jetzt erkannt.
+   - Absturz behoben, der auftritt, bevor die Geheimbasis betreten wird.
+   - Fehlendes Leerzeichen in der Verben-Zeile korrigiert.
+   - Fehler bei der Darstellung von Hinweis-Textboxen korrigiert.
+
  Dreamweb:
    - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
 
