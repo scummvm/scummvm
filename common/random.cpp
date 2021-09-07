@@ -73,7 +73,7 @@ int RandomSource::getRandomNumberRngSigned(int min, int max) {
 	return getRandomNumber(max - min) + min;
 }
 		
-private inline void RandomSource::scrambleSeed() {
+inline void RandomSource::scrambleSeed() {
 	//marsaglia's paper says that any of 81 triplets are feasible
 	//(11,21,13) was chosen, with (cba) and (>>,<<,>>)
 	_randSeed ^= _randSeed >> 13;
