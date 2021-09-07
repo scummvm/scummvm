@@ -468,6 +468,20 @@ void Scene::reloadCurrentScene() {
 }
 
 void Scene::changeScene() {
+	if (_engine->_debugScene->_useScenePatches) {
+		if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor && _sceneNumZones > 14) {
+			const ZoneStruct *zone = &_sceneZones[15];
+			const IVec3 &track = _sceneTracks[8];
+			IVec3 &pos = _zoneHeroPos;
+			pos.x = zone->infoData.ChangeScene.x - zone->mins.x + track.x;
+			pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
+			pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
+			_engine->_scene->_heroPositionType = ScenePositionType::kZone;
+			// otherActorIdx = lactorIdx;
+			debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+		}
+	}
+
 	// change twinsen house destroyed hard-coded
 	if (_needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		_needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;

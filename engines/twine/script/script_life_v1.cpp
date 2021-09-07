@@ -1028,23 +1028,6 @@ static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 sceneIdx = ctx.stream.readByte();
 	engine->_scene->_needChangeScene = sceneIdx;
 	engine->_scene->_heroPositionType = ScenePositionType::kScene;
-#if 0
-	if (engine->_debugScene->_useScenePatches) {
-		// TODO: dotemu _currentSceneIdx == 6 and _needChangeScene == 11 (harbours) and sceneNumZones > 14
-		// they have changed position type to kZone and use zone index 15 and scene track index 8 to place
-		// the actor - this looks like the harbour door entrance
-		if (engine->_scene->_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && engine->_scene->_needChangeScene == LBA1SceneId::Principal_Island_Harbor && engine->_scene->_sceneNumZones > 14) {
-			ZoneStruct *zone = &engine->_scene->_sceneZones[15];
-			const IVec3 &track = engine->_scene->_sceneTracks[8];
-			engine->_scene->_zoneHeroPos.x = (zone->infoData.generic.info1 - zone->mins.x) + track.x;
-			engine->_scene->_zoneHeroPos.y = (zone->infoData.generic.info2 - zone->mins.field_0x2) + track.field_0x2;
-			engine->_scene->_zoneHeroPos.z = (zone->infoData.generic.info3 - zone->mins.z) + track.z;
-			engine->_scene->_heroPositionType = ScenePositionType::kZone;
-			// otherActorIdx = lactorIdx;
-		}
-	}
-#endif
-
 	return 0;
 }
 
