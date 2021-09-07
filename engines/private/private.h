@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
+#include "graphics/palette.h"
 
 #include "private/grammar.h"
 

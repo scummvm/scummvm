@@ -200,10 +200,20 @@ Common::Error PrivateEngine::run() {
 	assert(maps.constants.size() > 0);
 
 	// Initialize graphics
+
+#ifdef PLAYSTATION3
+
+	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(_screenW, _screenH, &_pixelFormat);
+
+#else
+
 	initGraphics(_screenW, _screenH, nullptr);
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
+
+#endif
 
 	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
 	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
@@ -1267,9 +1277,34 @@ void PrivateEngine::drawMask(Graphics::Surface *surf) {
 	_compositeSurface->transBlitFrom(*surf, _origin, _transparentColor);
 }
 
+#ifdef PLAYSTATION3
+
 void PrivateEngine::drawScreen() {
 	Graphics::ManagedSurface *surface = _compositeSurface;
+	const Graphics::Surface *frame;
+	if (_videoDecoder && !_videoDecoder->isPaused()) {
+		frame = _videoDecoder->decodeNextFrame();
+		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
+		surface->rawBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), center, (const uint32*) _videoDecoder->getPalette());
+		if (_videoDecoder->getPalette() != nullptr)
+			g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
 
+	}
+
+	if (_mode == 1) {
+		drawScreenFrame();
+	}
+
+	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
+	Graphics::Surface sa = surface->getSubArea(w);
+	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
+	g_system->updateScreen();
+}
+
+#else
+
+void PrivateEngine::drawScreen() {
+	Graphics::ManagedSurface *surface = _compositeSurface;
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
@@ -1286,10 +1321,10 @@ void PrivateEngine::drawScreen() {
 	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
 	Graphics::Surface sa = surface->getSubArea(w);
 	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
-	//if (_image->getPalette() != nullptr)
-	//	g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
 	g_system->updateScreen();
 }
+
+#endif
 
 bool PrivateEngine::getRandomBool(uint p) {
 	uint r = _rnd->getRandomNumber(100);
