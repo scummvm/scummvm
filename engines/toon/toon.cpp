@@ -3189,8 +3189,10 @@ void ToonEngine::newGame() {
 	if (_isDemo) {
 		addItemToInventory(59);
 		addItemToInventory(67);
-		addItemToInventory(11);
-		addItemToInventory(19);
+		if (!_isEnglishDemo) {
+			addItemToInventory(11);
+			addItemToInventory(19);
+		}
 		loadScene(22);
 		//loadScene(_gameState->_currentScene);
 	} else {
