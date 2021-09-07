@@ -967,6 +967,7 @@ void GameManager::dead(int messageId) {
 	_vm->paletteFadeOut();
 	_vm->removeMessage();
 
+	_inventory.clear();
 	destroyRooms();
 	initRooms();
 	initState();
@@ -975,7 +976,6 @@ void GameManager::dead(int messageId) {
 	else if (_vm->_MSPart == 2)
 		changeRoom(AIRPORT);
 	initGui();
-	_inventory.clear();
 	g_system->fillScreen(kColorBlack);
 	_vm->paletteFadeIn();
 
