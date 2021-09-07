@@ -1244,7 +1244,7 @@ const char *gameText2[] = {
 	"Sie sind wohl nicht ganz \201ber|die aktuellen Preise informiert!",    //You are probably not completely|informed about the current prices!
 	"Ich bin's, Horst Hummel!",    //It's me, Horst Hummel!
 	"Sch\224nes Wetter heute!",    //Nice weather today!
-	"K\224nnen Sie mir sagen, von wem ich eine Eintrittskarte f\201r den Musikwettbewerb kriegen kann?",    //Can you tell me who can get me a ticket for the music contest?
+	"",    //unused
 	// 345
 	"Ok, hier haben Sie den Xa.",    //OK, here is the Xa.
 	"Ich biete Ihnen 500 Xa.",    //I offer you 500 Xa.
@@ -1397,7 +1397,7 @@ const char *gameText2[] = {
 	"\216h - k\224nnten Sie mir das Ganze nochmal erkl\204ren?",    //Uh - could you explain that to me again?
 	// 470
 	"Wie gro\341 ist mein Anteil?",    //How big is my share?
-	"Machen Sie es immer so, da\341 Sie Ihre Komplizen \201ber ein Graffitti anwerben?",    //Do you always use graffiti to recruit your accomplices?
+	"",    //unused
 	"Hmm, Moment mal, ich frage den Boss.",    //Hmm wait, I will ask the boss.
 	"Kurze Zeit sp\204ter ...",    //A short while later ...
 	"Ok, der Boss will dich sprechen.",    //OK, the boss wants to talk to you.
@@ -1582,7 +1582,11 @@ const char *gameText2[] = {
 	"Sieht gef\204hrlich aus!", //Looks dangerous
 	"Das Auge ist schon offen.", //This Eye is already opened
 	// 625
-	"Es gelingt dir, zu fliehen.", //You manage to escape
+	"Es gelingt dir, zu fliehen.", //You manage to escape,
+	"K\224nnen Sie mir sagen, von wem ich eine Eintrittskarte", //Can you tell me who can get me a ticket for
+	"f\201r den Musikwettbewerb kriegen kann?",    //the music contest?
+	"Machen Sie es immer so, da\341 Sie Ihre Komplizen \201ber", //Do you always use graffiti to recruit
+	"ein Graffitti anwerben?",    //your accomplices?
 	NULL
 };
 

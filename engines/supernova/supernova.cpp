@@ -201,6 +201,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 		_gameStrings.push_back(s);
 		size -= s.size() + 1;
 	}
+
 	return Common::kNoError;
 }
 

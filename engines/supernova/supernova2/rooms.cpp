@@ -836,10 +836,11 @@ void CulturePalace::notEnoughMoney() {
 }
 
 bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
-	static int dial1[3] = {
+	static int dial1[4] = {
 		kStringHorstHummel,
 		kStringNiceWeather,
-		kStringTellTicket,
+		kStringTellTicket1,
+		kStringTellTicket2
 	};
 	static byte dials1[] = {1, 1, 2};
 
@@ -1721,12 +1722,14 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void Elevator2::jobDescription() {
-	static int dialBoss2[3] = {
+	static int dialBoss2[5] = {
 		kStringElevator8,
 		kStringElevator9,
-		kStringElevator10
+		kStringElevator10a,
+		kStringElevator10b,
+		kStringNo2
 	};
-	byte dialsBoss2[4] = {1,1,1,1};
+	byte dialsBoss2[4] = {1,1,2,1};
 
 	_gm->reply(kStringElevator29, 1, 1 + kSectionInvert);
 	_gm->reply(kStringElevator30, 1, 1 + kSectionInvert);
