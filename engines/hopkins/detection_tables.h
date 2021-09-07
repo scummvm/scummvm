@@ -30,7 +30,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Linux Demo UK 1.00 and 1.02
 		{
 			"hopkins",
-			"Linux Demo",
+			"Demo",
 			AD_ENTRY1s("RES_VAN.RES", "29414c05be8f9fe794c61572a65def12", 16060544),
 			Common::EN_ANY,
 			Common::kPlatformLinux,
@@ -154,7 +154,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// CHECKME: No voice! a second file is required though... Also, it has multi-language support
 		{
 			"hopkins",
-			"Win95 Demo",
+			"Demo",
 			AD_ENTRY1s("Hopkins.exe", "0c9ebfe371f4dcf84a49f333f04839a0", 376897),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -166,7 +166,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Win95 Polish Demo, provided by Strangerke
 		{
 			"hopkins",
-			"Win95 Demo",
+			"Demo",
 			AD_ENTRY1s("RES_VAN.RES", "8262cfba261c200af4451902689dffe0", 12233202),
 			Common::PL_POL,
 			Common::kPlatformWindows,
