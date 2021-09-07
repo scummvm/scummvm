@@ -52,20 +52,12 @@ void RandomSource::setSeed(uint32 seed) {
 		seed++;
 	_randSeed = seed;
 }
-	
-inline void RandomSource::scrambleSeed() {
-	//marsaglia's paper says that any of 81 triplets are feasible
-	//(11,21,13) was chosen, with (cba) and (>>,<<,>>)
-	_randSeed ^= _randSeed >> 13;
-	_randSeed ^= _randSeed << 21;
-	_randSeed ^= _randSeed >> 11;
-}
 
 uint RandomSource::getRandomNumber(uint max) {
 	scrambleSeed();
 	if (max == UINT_MAX)
 		return _randSeed;
-	return _randSeed % (max + 1);
+	return (_randSeed * 0xDEADBF03) % (max + 1);
 }
 
 uint RandomSource::getRandomBit() {
@@ -79,6 +71,14 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 int RandomSource::getRandomNumberRngSigned(int min, int max) {
 	return getRandomNumber(max - min) + min;
+}
+		
+private inline void RandomSource::scrambleSeed() {
+	//marsaglia's paper says that any of 81 triplets are feasible
+	//(11,21,13) was chosen, with (cba) and (>>,<<,>>)
+	_randSeed ^= _randSeed >> 13;
+	_randSeed ^= _randSeed << 21;
+	_randSeed ^= _randSeed >> 11;
 }
 
 } // End of namespace Common
