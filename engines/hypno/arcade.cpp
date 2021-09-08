@@ -320,3 +320,4 @@ bool HypnoEngine::clickedSecondaryShoot(Common::Point mousePos) {
 }
 
 } // End of namespace Hypno
+

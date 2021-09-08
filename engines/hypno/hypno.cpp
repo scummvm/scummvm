@@ -441,3 +441,4 @@ void HypnoEngine::removeTimer() {
 }
 
 } // End of namespace Hypno
+

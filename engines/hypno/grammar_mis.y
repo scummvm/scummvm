@@ -296,3 +296,4 @@ flag:   FLAG 		{ $$ = $1; debug("flag: %s", $1); }
 gsswitch: GSSWITCH 	{ $$ = $1; debug("switch %s", $1); }
 	| /* nothing */ { $$ = scumm_strdup(""); }
 	;
+
