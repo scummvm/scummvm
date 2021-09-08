@@ -839,10 +839,6 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	for (uint i = 0; i < ARRAYSIZE(_blastObjectQueue); i++) {
 		_blastObjectQueue[i].clear();
 	}
-	_blastTextQueuePos = 0;
-	for (uint i = 0; i < ARRAYSIZE(_blastTextQueue); i++) {
-		_blastTextQueue[i].clear();
-	}
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -1062,6 +1058,10 @@ void ScummEngine_vCUPhe::parseEvents() {
 #ifdef ENABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
+	_blastTextQueuePos = 0;
+	for (uint i = 0; i < ARRAYSIZE(_blastTextQueue); i++) {
+		_blastTextQueue[i].clear();
+	}
 	_verbLineSpacing = 10;
 
 	_smushFrameRate = 0;
