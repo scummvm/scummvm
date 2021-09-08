@@ -35,6 +35,7 @@ void WetEngine::loadAssets() {
 
 	// We need the list of files in an array, instead of a list
 	Common::Array<Common::ArchiveMemberPtr> afiles;
+	afiles.reserve(files.size());
 	for (Common::ArchiveMemberList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		afiles.push_back(*it);
 	}
