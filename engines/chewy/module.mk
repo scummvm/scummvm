@@ -2,16 +2,7 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	chewy.o \
-	cursor.o \
-	console.o \
-	events.o \
-	graphics.o \
-	metaengine.o \
-	resource.o \
-	scene.o \
-	sound.o \
-	text.o \
-	video/cfo_decoder.o
+	metaengine.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)

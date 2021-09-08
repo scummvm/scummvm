@@ -20,23 +20,9 @@
  */
 
 #include "common/config-manager.h"
-#include "common/error.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "graphics/palette.h"
-
-#include "engines/engine.h"
+#include "common/fs.h"
 #include "engines/util.h"
-
 #include "chewy/chewy.h"
-#include "chewy/console.h"
-#include "chewy/cursor.h"
-#include "chewy/events.h"
-#include "chewy/graphics.h"
-#include "chewy/resource.h"
-#include "chewy/scene.h"
-#include "chewy/sound.h"
-#include "chewy/text.h"
 
 namespace Chewy {
 
@@ -57,26 +43,9 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 }
 
 ChewyEngine::~ChewyEngine() {
-	delete _events;
-	delete _text;
-	delete _sound;
-	delete _cursor;
-	delete _scene;
-	delete _graphics;
 }
 
 void ChewyEngine::initialize() {
-	setDebugger(new Console(this));
-	_cursor = new Cursor();
-	_graphics = new Graphics(this);
-	_scene = new Scene(this);
-	_sound = new Sound(_mixer);
-	_text = new Text();
-	_events = new Events(this);
-
-	_curCursor = 0;
-	_elapsedFrames = 0;
-	_videoNum = -1;
 }
 
 Common::Error ChewyEngine::run() {
@@ -85,38 +54,6 @@ Common::Error ChewyEngine::run() {
 	initGraphics(320, 200);
 
 	initialize();
-
-	/*for (uint i = 0; i < 161; i++) {
-		debug("Video %d", i);
-		_graphics->playVideo(i);
-	}*/
-
-	//_graphics->playVideo(0);
-
-	_scene->change(0);
-	//_sound->playSpeech(1);
-	//_sound->playSound(1);
-	//_sound->playMusic(2);
-
-	// Run a dummy loop
-	while (!shouldQuit()) {
-		_events->processEvents();
-
-		// Cursor animation
-		if (_elapsedFrames % 30 == 0)
-			_cursor->animateCursor();
-
-		if (_videoNum >= 0) {
-			_graphics->playVideo(_videoNum);
-			_scene->draw();
-			_videoNum = -1;
-		}
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-
-		_elapsedFrames++;
-	}
 
 	return Common::kNoError;
 }
