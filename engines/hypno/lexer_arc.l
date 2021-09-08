@@ -41,22 +41,22 @@
 
 %%
 NONE						return NONETOK;
-C				    		return CTOK;
-D                           return DTOK;
-HE                          return HETOK;
-H                           return HTOK;
+C							return CTOK;
+D							return DTOK;
+HE							return HETOK;
+H							return HTOK;
 P							return PTOK;
 A							return ATOK;
 V							return VTOK;
-O 							return OTOK;
+O							return OTOK;
 O1							return O1TOK;
-N 							return NTOK;
-R 							return RTOK;
-I 							return ITOK;
+N							return NTOK;
+R							return RTOK;
+I							return ITOK;
 Q							return QTOK;
 Z							return ZTOK;
 W							return WTOK;
-X 							return XTOK;
+X							return XTOK;
 T							return TTOK;
 Tp							return TPTOK;
 F[0-9]						return FNTOK;
@@ -68,14 +68,14 @@ K0							return K0TOK;
 P0							return P0TOK;
 Y[A-Z0-9]					return YXTOK;
 22[k|K]						return ENCTOK;
-[A-Za-z_][A-Za-z_0-9]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
-[A-Za-z][A-Za-z_0-9\\\.]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
-[\-]?[0-9]+		        	HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
+[A-Za-z_][A-Za-z_0-9]*		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
+[A-Za-z][A-Za-z_0-9\\\.]*	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
+[\-]?[0-9]+					HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
 \n							return RETTOK;
-\xb3                        return CB3TOK;
-\x02                        return C02TOK;
-[ \t]+		            	/* ignore whitespace */;
-.				        	debug("notparsed: 0x%d",*yytext); return *yytext;
+\xb3						return CB3TOK;
+\x02						return C02TOK;
+[ \t]+						/* ignore whitespace */;
+.							debug("notparsed: 0x%d",*yytext); return *yytext;
 %%
 
 namespace Hypno {
@@ -91,3 +91,4 @@ int parse_arc(const char *code) {
 }
 
 } // End of namespace Hypno
+
