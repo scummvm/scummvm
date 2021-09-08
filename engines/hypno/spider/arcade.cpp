@@ -30,13 +30,18 @@
 
 namespace Hypno {
 
-static const int frame_idx[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
+static const int orientationIndex[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
+static const int shootOriginIndex[9][2] = {
+	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
 void SpiderEngine::drawShoot(Common::Point target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	_compositeSurface->drawLine(80, 155, target.x, target.y + 1, c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y, c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y - 1, c);
+	uint32 idx = std::min(2, target.x / (_screenW / 3)) + 3 * std::min(2, target.y / (_screenH / 3));
+	uint32 ox = 60  + shootOriginIndex[idx][0];
+	uint32 oy = 129 + shootOriginIndex[idx][1];
+	_compositeSurface->drawLine(ox, oy, target.x + 2, target.y, c);
+	_compositeSurface->drawLine(ox, oy, target.x, target.y, c);
+	_compositeSurface->drawLine(ox, oy, target.x - 2, target.y, c);
 	playSound(_soundPath + _shootSound, 1);
 }
 
@@ -44,7 +49,8 @@ void SpiderEngine::drawPlayer() {
 
 	if (_playerFrameIdx < _playerFrameSep) {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		_playerFrameIdx = frame_idx[std::min(2, mousePos.x / (_screenW / 3)) + 3 * std::min(2, mousePos.y / (_screenH / 3))];
+		uint32 idx = std::min(2, mousePos.x / (_screenW / 3)) + 3 * std::min(2, mousePos.y / (_screenH / 3));
+		_playerFrameIdx = orientationIndex[idx];
 	} else {
 		_playerFrameIdx++;
 		if (_playerFrameIdx >= _playerFrames.size())
