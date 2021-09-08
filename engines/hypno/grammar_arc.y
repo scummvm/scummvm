@@ -45,12 +45,12 @@ void HYPNO_ARC_xerror(const char *str) {
 }
 
 int HYPNO_ARC_wrap() {
-    return 1;
+	return 1;
 }
 
 using namespace Hypno;
 
-%} 
+%}
 
 %union {
 	char *s; /* string value */
@@ -75,139 +75,134 @@ using namespace Hypno;
 %%
 
 start: YXTOK header body
-      ;
+	;
 
 
 header:  hline RETTOK header
-       | hline
-	   | RETTOK header      
-	   ; 
+	| hline
+	| RETTOK header
+	; 
 
 hline:  CTOK NUM  { debug("C %d", $2); }
-      | FTOK NUM { debug("F %d", $2); }
-      | DTOK NUM  { debug("D %d", $2); }
-      | PTOK NUM NUM { debug("P %d %d", $2, $3); }
-      | ATOK NUM NUM { debug("A %d %d", $2, $3); }
-      | VTOK NUM NUM { debug("V %d %d", $2, $3); }
-      | OTOK NUM NUM { debug("O %d %d", $2, $3); }
-	  | O1TOK NUM NUM { debug("O1 %d %d", $2, $3); }
-	  | TPTOK FILENAME NUM FILENAME {
-		  g_parsedArc.transitionVideo = $2;
-		  g_parsedArc.transitionTime = $3;
-		  debug("Tp %s %d %s", $2, $3, $4); 
+	| FTOK NUM { debug("F %d", $2); }
+	| DTOK NUM  { debug("D %d", $2); }
+	| PTOK NUM NUM { debug("P %d %d", $2, $3); }
+	| ATOK NUM NUM { debug("A %d %d", $2, $3); }
+	| VTOK NUM NUM { debug("V %d %d", $2, $3); }
+	| OTOK NUM NUM { debug("O %d %d", $2, $3); }
+	| O1TOK NUM NUM { debug("O1 %d %d", $2, $3); }
+	| TPTOK FILENAME NUM FILENAME {
+		g_parsedArc.transitionVideo = $2;
+		g_parsedArc.transitionTime = $3;
+		debug("Tp %s %d %s", $2, $3, $4); 
+	}
+	| TTOK FILENAME NUM { 
+		g_parsedArc.transitionVideo = $2;
+		g_parsedArc.transitionTime = $3;
+		debug("T %s %d", $2, $3); 
+	}
+	| TTOK NONETOK NUM { debug("T NONE %d", $3); }
+	| NTOK FILENAME  { 
+		g_parsedArc.background = $2; 
+		debug("N %s", $2); 
+	}
+	| RTOK FILENAME  { debug("R %s", $2); }
+	| ITOK FILENAME { 
+		g_parsedArc.player = $2; 
+		debug("I %s", $2); 
 		}
-	  | TTOK FILENAME NUM { 
-		  g_parsedArc.transitionVideo = $2;
-		  g_parsedArc.transitionTime = $3;
-		  debug("T %s %d", $2, $3); 
-		}
-	  | TTOK NONETOK NUM { 
-		  debug("T NONE %d", $3); 
-		}
-	  | NTOK FILENAME  { 
-		  g_parsedArc.background = $2; 
-		  debug("N %s", $2); 
-		}
-	  | RTOK FILENAME  { debug("R %s", $2); }
-	  | ITOK FILENAME { 
-  		  g_parsedArc.player = $2; 
-		  debug("I %s", $2); 
-		}
-	  | QTOK NUM NUM { debug("Q %d %d", $2, $3); }
-	  | BNTOK FILENAME {
-		  if (Common::String("B0") == $1)
-		  	g_parsedArc.intro = $2;
-		  else if(Common::String("B1") == $1 || Common::String("B2") == $1)
-		    g_parsedArc.winVideos.push_back($2);
-		  else if(Common::String("B3") == $1 || Common::String("B4") == $1)
-		    g_parsedArc.defeatVideos.push_back($2);
-		 	
-		  debug("BN %s", $2); 
-		}
-	  | SNTOK FILENAME enc {
-		  if (Common::String("S0") == $1)
-		  	g_parsedArc.music = $2;
-		  else if (Common::String("S1") == $1)
-		  	g_parsedArc.shootSound = $2;
-		  else if (Common::String("S4") == $1)
-		    g_parsedArc.enemySound = $2; 
+	| QTOK NUM NUM { debug("Q %d %d", $2, $3); }
+	| BNTOK FILENAME {
+		if (Common::String("B0") == $1)
+			g_parsedArc.intro = $2;
+		else if(Common::String("B1") == $1 || Common::String("B2") == $1)
+			g_parsedArc.winVideos.push_back($2);
+		else if(Common::String("B3") == $1 || Common::String("B4") == $1)
+			g_parsedArc.defeatVideos.push_back($2);
 
-		  debug("SN %s", $2); 
-		}
-	  | HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
-	  | HTOK CB3TOK NUM NUM { 
-		  g_parsedArc.health = $3;
-		  debug("H %d %d", $3, $4); }
-	  | ZTOK RETTOK { debug("Z"); }
-	  ;
+		debug("BN %s", $2); 
+	}
+	| SNTOK FILENAME enc {
+		if (Common::String("S0") == $1)
+			g_parsedArc.music = $2;
+		else if (Common::String("S1") == $1)
+			g_parsedArc.shootSound = $2;
+		else if (Common::String("S4") == $1)
+			g_parsedArc.enemySound = $2; 
+
+		debug("SN %s", $2); 
+	}
+	| HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
+	| HTOK CB3TOK NUM NUM { 
+		g_parsedArc.health = $3;
+		debug("H %d %d", $3, $4); 
+	}
+	| ZTOK RETTOK { debug("Z"); }
+	;
 
 enc: ENCTOK
-   | /* nothing */
-   ;
+	| /* nothing */
+	;
 
 body: bline RETTOK body
-    | bline RETTOK XTOK
+	| bline RETTOK XTOK
 
 bline: FNTOK FILENAME { 
 		shoot = new Shoot();
 		shoot->animation = $2;
 		debug("FN %s", $2); 
-	 	}
-	 | FNTOK NONETOK { 
+	}
+	| FNTOK NONETOK { 
 		shoot = new Shoot();
 		shoot->animation = "NONE";
 		debug("FN NONE"); 
-	 	}
-	 | FTOK FILENAME { 
+	}
+	| FTOK FILENAME { 
 		shoot = new Shoot();
 		shoot->animation = $2;
 		debug("FN %s", $2); 
-	 	}
-     | ITOK  NAME  { 
-		 shoot->name = $2;
-		 debug("I %s", $2); 
-	   }
-     | ITOK  BNTOK  {  // Workaround for NAME == B1
-		 shoot->name = $2;
-		 debug("I %s", $2); 
-	   }
-	 | A0TOK NUM NUM { 
-		 shoot->position = Common::Point($2, $3);
-		 debug("A0 %d %d", $2, $3); 
-		}
-	 | RTOK NUM NUM  { debug("R %d %d", $2, $3); }
-	 | BNTOK NUM NUM { 
-
-		 debug("BN %d %d", $2, $3); }
-	 | K0TOK NUM NUM { 
-		 shoot->explosionFrame = $3;
-		 debug("K0 %d %d", $2, $3);
-		}
-	 | P0TOK NUM NUM {
-		debug("P0 %d %d", $2, $3); 
-	   }
-	 | OTOK NUM NUM { 
+	}
+	| ITOK  NAME  { 
+		shoot->name = $2;
+		debug("I %s", $2); 
+	}
+	| ITOK  BNTOK  {  // Workaround for NAME == B1
+		shoot->name = $2;
+		debug("I %s", $2); 
+	}
+	| A0TOK NUM NUM { 
+		shoot->position = Common::Point($2, $3);
+		debug("A0 %d %d", $2, $3); 
+	}
+	| RTOK NUM NUM  { debug("R %d %d", $2, $3); }
+	| BNTOK NUM NUM { debug("BN %d %d", $2, $3); }
+	| K0TOK NUM NUM { 
+		shoot->explosionFrame = $3;
+		debug("K0 %d %d", $2, $3);
+	}
+	| P0TOK NUM NUM { debug("P0 %d %d", $2, $3); }
+	| OTOK NUM NUM { 
 		debug("O %d %d", $2, $3); 
-	   }
-	 | CTOK NUM  { debug("C %d", $2); } 
-	 | HTOK NUM  { debug("H %d", $2); }
-	 | WTOK NUM  { debug("W %d", $2); }
-	 | DTOK NUM  { 
-		 shoot->damage = $2;
-		 debug("D %d", $2); 
-		}
-	 | SNTOK FILENAME enc { 
-		  if (Common::String("S1") == $1)
-		  	shoot->endSound = $2;
-		  //else if (Common::String("S2") == $1)
-		  //	shoot->startSound = $2;
+	}
+	| CTOK NUM  { debug("C %d", $2); } 
+	| HTOK NUM  { debug("H %d", $2); }
+	| WTOK NUM  { debug("W %d", $2); }
+	| DTOK NUM  { 
+		shoot->damage = $2;
+		debug("D %d", $2); 
+	}
+	| SNTOK FILENAME enc { 
+		if (Common::String("S1") == $1)
+			shoot->endSound = $2;
+		//else if (Common::String("S2") == $1)
+		//	shoot->startSound = $2;
 		 
-		 debug("SN %s", $2); }
-	 | NTOK { debug("N"); }
-	 | ZTOK {
+		debug("SN %s", $2); }
+	| NTOK { debug("N"); }
+	| ZTOK {
 		g_parsedArc.shoots.push_back(*shoot); 
 		//delete shoot; 
 		//shoot = nullptr;
-	    debug("Z"); 
-		}
-     ;
+		debug("Z"); 
+	}
+	;
