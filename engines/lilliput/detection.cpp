@@ -99,6 +99,19 @@ static const LilliputGameDescription gameDescriptions[] = {
 		},
 		kGameTypeRobin
 	},
+	// Rome Demo
+	{
+		{
+			"rome", "Demo",
+			AD_ENTRY2s("rules.prg",	 "bdf4173fe294cae627903d9731549cac", 746,
+					   "isomap.dta", "48eaaa382c4cb7a5c200ffc48c9bab1c", 16384),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO0()
+		},
+		kGameTypeRome
+	},
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
