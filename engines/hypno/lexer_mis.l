@@ -40,21 +40,21 @@
 %}
 
 %%
-\;[A-Za-z_0-9 \t\*]*	    /* return COMMENT; */
-MENU				    	return MENUTOK;
+\;[A-Za-z_0-9 \t\*]*		/* return COMMENT; */
+MENU						return MENUTOK;
 AMBI						return AMBITOK;
-BACK                    	return BACKTOK;
-CUTS                    	return CUTSTOK;
+BACK						return BACKTOK;
+CUTS						return CUTSTOK;
 GLOB						return GLOBTOK;
 PALE						return PALETOK;
-HOTS                        return HOTSTOK;
-WAL[0-1]                    return WALNTOK;
-MICE                        return MICETOK;
-END                         return ENDTOK;
+HOTS						return HOTSTOK;
+WAL[0-1]					return WALNTOK;
+MICE						return MICETOK;
+END							return ENDTOK;
 TIME						return TIMETOK;
-OVER                        return OVERTOK;
-SMEN                        return SMENTOK;
-ESCP                        return ESCPTOK;
+OVER						return OVERTOK;
+SMEN						return SMENTOK;
+ESCP						return ESCPTOK;
 PLAY						return PLAYTOK;
 TALK						return TALKTOK;
 INACTIVE					return INACTOK;
@@ -68,16 +68,16 @@ BOXX						return BOXXTOK;
 \|D[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
 \|F[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
 \|E							return PE;
-NO_RETURN                   return NRTOK;
-GS_[A-Z_0-9]+           	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
+NO_RETURN					return NRTOK;
+GS_[A-Z_0-9]+				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
 \/BBOX\=					return BBOXTOK;
-\/[A-Za-z_0-9]*  			HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
-[A-Za-z_][A-Za-z_0-9]*  	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
-[A-Za-z][A-Za-z_0-9\\\.]*  	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
-[\-]?[0-9]+		        	HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
+\/[A-Za-z_0-9]*				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
+[A-Za-z_][A-Za-z_0-9]*		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
+[A-Za-z][A-Za-z_0-9\\\.]*	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
+[\-]?[0-9]+					HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
 \r\n						return RETTOK;
-[ \t]+		            	/* ignore whitespace */;
-.				        	debug("<no match>"); return *yytext;
+[ \t]+						/* ignore whitespace */;
+.							debug("<no match>"); return *yytext;
 %%
 
 namespace Hypno {
