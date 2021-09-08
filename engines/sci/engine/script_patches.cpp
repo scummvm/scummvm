@@ -11686,7 +11686,7 @@ static const uint16 pq4LastActionHeroTimerPatch[] = {
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true,     6, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
-	{  true,     9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
+	{  false,    9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
 	{  true,    42, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
 	{  true,    42, "speech+subtitles talker compatibility (2/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature2,            pq4CdSpeechAndSubtitlesTalkerPatch2 },
 	{  true,    43, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
@@ -22201,6 +22201,15 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
+				}
+				break;
+			case GID_PQ4:
+				if (g_sci->getLanguage() == Common::EN_ANY) {
+					// The in-game UI option for speech+subtitles makes sense only for the
+					// English version.
+					// French and German versions feature localized text with English voices.
+					// Also, our injected speech+subtitles view is currently only in English.
+					enablePatch(signatureTable, "add speech+subtitles to in-game UI");
 				}
 				break;
 			case GID_SQ1:
