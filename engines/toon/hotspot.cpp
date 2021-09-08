@@ -106,7 +106,9 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 
 	uint32 size2 = 0;
 	uint8 *rifData2 = 0;
-	if (additionalRifName.size())
+
+	// English demo seems to have some invalid additional Rif data so do not load it
+	if (!_vm->isEnglishDemo() && additionalRifName.size())
 		rifData2 = _vm->resources()->getFileData(additionalRifName, &size2);
 
 	// figure out the number of hotspots based on file size
@@ -114,8 +116,6 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 	int32 rifsize2 = 0;
 
 	if (size2)
-		// TODO This is not correct for the English demo.
-		// The size seems to be a uint16?
 		rifsize2 = READ_BE_UINT32(&rifData2[4]);
 
 	_numItems = (rifsize + rifsize2) / 512;
