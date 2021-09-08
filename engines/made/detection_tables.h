@@ -29,6 +29,7 @@
 namespace Made {
 
 static const MadeGameDescription gameDescriptions[] = {
+
 	{
 		// NOTE: Return to Zork entries with *.dat are used to detect the game via rtzcd.dat,
 		// which is packed inside rtzcd.red. Entries with *.red refer to the packed file
@@ -325,20 +326,56 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Return to Zork - Demo from Zork Anthology CD
-		// Bugreport #11202
+		// Return to Zork - Standalone CD Demo v1.1
 		{
 			"rtz",
-			"Demo",
-			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 130683),
+			"V1.1, 12/6/93, Demo CD",
+			AD_ENTRY1s("rtzcd.red", "827cfb323eae37b385985a2359fae3e9", 133784),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_CD,
 			GUIO0()
 		},
 		GID_RTZ,
 		0,
-		GF_DEMO,
+		GF_CD_COMPRESSED,
+		3,
+	},
+
+	{
+		// Return to Zork - Demo from Zork Anthology CD
+		// Bugreport #11202
+		{
+			"rtz",
+			"V1.2, 9/8/94, Demo CD",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 130683),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_CD,
+			GUIO0()
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
+		3,
+	},
+
+	{
+		// Return to Zork - Mac Demo from Zork Anthology CD
+		// Same disc as DOS version (on ISO-9660)
+		// The only resource fork is in the executable
+		{
+			"rtz",
+			"V1.2, 5/4/94, Demo CD",
+			AD_ENTRY1s("Return To Zork", "0c1377afd4b6fc4ee900e1882ac13895", 1714320),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO | ADGF_CD | ADGF_MACRESFORK,
+			GUIO0()
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
 		3,
 	},
 
