@@ -131,7 +131,8 @@ void Encounter::load() {
 	Common::File file;
 
 	if (!file.open("sntrm.dat"))
-		error("[Encounter::load] Could not open encounter data!");
+		if (!file.open("asylum.dat"))
+			error("[Encounter::load] Could not open encounter data!");
 
 	// Load the variables
 	uint16 count = file.readUint16LE();
@@ -844,7 +845,7 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	}
 
 	_data_455BE0 = true;
-	_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId + _vm->checkGameVersion("Demo"));
+	_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId + _vm->checkGameVersion("Demo") + 7 * _vm->isAltDemo());
 	//_soundResourceId = MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId); // todo replace with speech (this is being override by the actor speechs)
 	//getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId)); 
 }

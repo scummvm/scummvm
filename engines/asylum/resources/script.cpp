@@ -943,6 +943,12 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene)
+	if (_vm->isAltDemo()) {
+		Engine::quitGame();
+		_done = true;
+		return;
+	}
+
 	uint32 tick = _vm->getTick();
 	getScene()->getActor(0)->changeStatus(kActorStatusDisabled);
 	resetQueue();

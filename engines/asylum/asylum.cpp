@@ -83,6 +83,9 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "vids");
 	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "music");
 
+	if (checkGameVersion("Steam") || isAltDemo())
+		ConfMan.setInt("scale_factor", 1);
+
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
 }
@@ -145,7 +148,8 @@ Common::Error AsylumEngine::run() {
 	// Create main menu
 	_menu  = new Menu(this);
 	if (checkGameVersion("Demo")) {
-		_video->play(0, NULL);
+		if (!isAltDemo())
+			_video->play(0, NULL);
 		restart();
 	} else {
 		_handler = _menu;

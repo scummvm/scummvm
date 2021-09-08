@@ -23,6 +23,7 @@
 #ifndef ASYLUM_ASYLUM_H
 #define ASYLUM_ASYLUM_H
 
+#include "common/file.h"
 #include "common/language.h"
 #include "common/random.h"
 #include "common/rect.h"
@@ -199,6 +200,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &s);
 
 	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
+	bool isAltDemo() { return Common::File::exists("asylum.dat"); }
 	Common::Language getLanguage() { return _gameDescription->language; }
 
 private:

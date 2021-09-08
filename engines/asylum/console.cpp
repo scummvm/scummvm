@@ -524,7 +524,16 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 
 	// Check if the video exists
 	char filename[20];
-	snprintf(filename, 20, "mov%03d.smk", index);
+	const char *extension;
+
+	if (_vm->checkGameVersion("Steam"))
+		extension = "_smk.ogv";
+	else if (_vm->isAltDemo())
+		extension = ".avi";
+	else
+		extension = ".smk";
+
+	snprintf(filename, 20, "mov%03d%s", index, extension);
 	if (!SearchMan.hasFile(filename)) {
 		debugPrintf("[Error] Movie %d does not exists\n", index);
 		return true;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "video/avi_decoder.h"
 #include "video/smk_decoder.h"
 #include "video/theora_decoder.h"
 
@@ -55,6 +56,8 @@ VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine
 #else
 		error("The Steam version of the game uses Theora videos but ScummVM has been compiled without Theora support");
 #endif
+	} else if (_vm->isAltDemo()) {
+		_decoder = new Video::AVIDecoder();
 	} else {
 		_decoder = new Video::SmackerDecoder();
 	}
@@ -151,6 +154,8 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	Common::String filename;
 	if (_vm->checkGameVersion("Steam"))
 		filename = videoNumber == 0 ? "mov000_2_smk.ogv" : Common::String::format("mov%03d_smk.ogv", videoNumber);
+	else if (_vm->isAltDemo())
+		filename = Common::String::format("mov%03d.avi", videoNumber);
 	else
 		filename = Common::String::format("mov%03d.smk", videoNumber);
 	play(filename, Config.showMovieSubtitles);
@@ -184,7 +189,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	int32 currentSubtitle = 0;
 
 	_decoder->start();
-	if (_vm->checkGameVersion("Steam")) {
+	if (_vm->checkGameVersion("Steam") || _vm->isAltDemo()) {
 		_vm->_system->showOverlay();
 		_vm->_system->clearOverlay();
 	}
@@ -200,6 +205,11 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 
 			if (_vm->checkGameVersion("Steam")) {
 				_vm->_system->copyRectToOverlay((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			} else if (_vm->isAltDemo()) {
+				Graphics::Surface *frame1 = frame->convertTo(_vm->_system->getOverlayFormat());
+				_vm->_system->copyRectToOverlay((const byte *)frame1->getPixels(), frame1->pitch, x, y, frame1->w, frame1->h);
+				frame1->free();
+				delete frame1;
 			} else {
 				if (_decoder->hasDirtyPalette())
 					setupPalette();
@@ -232,7 +242,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 		g_system->delayMillis(10);
 	}
 
-	if (_vm->checkGameVersion("Steam"))
+	if (_vm->checkGameVersion("Steam") || _vm->isAltDemo())
 		_vm->_system->hideOverlay();
 
 	_decoder->close();
