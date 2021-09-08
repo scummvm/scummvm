@@ -81,7 +81,7 @@ init: {
 
 lines:   line RETTOK lines
 	| line
-	| end lines            
+	| end lines
 	; 
 
 end: RETTOK  { debug("implicit END"); }
@@ -224,7 +224,7 @@ line: MENUTOK NAME mflag  {
 		g_parsedHots = stack.back(); 
 		stack.pop_back();
 		smenu_idx.pop_back();
-	}   		               
+	}
 	;
 
 alloctalk: { 
