@@ -24,25 +24,15 @@
 
 
 #include "common/scummsys.h"
+#include "common/error.h"
 #include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/random.h"
-
+#include "common/textconsole.h"
 #include "engines/engine.h"
 
 namespace Chewy {
 
 struct ChewyGameDescription;
-class Console;
-class Cursor;
-class Events;
-class Graphics;
-class Scene;
-class Sound;
-class Text;
 
 class ChewyEngine : public Engine {
 public:
@@ -57,14 +47,6 @@ public:
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
 
-	void setPlayVideo(uint num) { _videoNum = num; }
-
-	Graphics *_graphics;
-	Cursor *_cursor;
-	Scene *_scene;
-	Sound *_sound;
-	Text *_text;
-
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -72,12 +54,6 @@ protected:
 
 	void initialize();
 	void shutdown();
-
-	Events *_events;
-
-	uint _curCursor;
-	uint _elapsedFrames;
-	int _videoNum;
 };
 
 } // End of namespace Chewy
