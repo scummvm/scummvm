@@ -1,7 +1,7 @@
 MODULE := engines/hypno
 
 MODULE_OBJS := \
-    libfile.o \
+	libfile.o \
 	cursors.o \
 	metaengine.o \
 	actions.o \
