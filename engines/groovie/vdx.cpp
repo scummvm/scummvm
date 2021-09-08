@@ -185,10 +185,8 @@ bool VDXPlayer::playFrameInternal() {
 	}
 
 	// Wait until the current frame can be shown
+	waitFrame();
 
-	if (!DebugMan.isDebugChannelEnabled(kDebugFast)) {
-		waitFrame();
-	}
 	// TODO: Move it to a better place
 	// Update the screen
 	if (currRes == 0x25) {
@@ -534,7 +532,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	if (getOverrideSpeed())
 		setOverrideSpeed(false);
 
-	if (!_audioStream) {
+	if (!_audioStream && !isFastForwarding()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &sound_handle, _audioStream);
@@ -542,8 +540,10 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 
 	byte *data = (byte *)malloc(60000);
 	int chunksize = in->read(data, 60000);
-	if (!DebugMan.isDebugChannelEnabled(kDebugFast)) {
+	if (!isFastForwarding()) {
 		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	} else {
+		free(data);
 	}
 }
 

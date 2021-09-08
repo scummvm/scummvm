@@ -26,6 +26,7 @@
 #include "groovie/player.h"
 #include "groovie/groovie.h"
 #include "audio/mixer.h"
+#include "common/debug-channels.h"
 
 namespace Groovie {
 
@@ -62,6 +63,15 @@ void VideoPlayer::setOverrideSpeed(bool isOverride) {
 	}
 }
 
+void VideoPlayer::fastForward() {
+	_millisBetweenFrames = 0;
+	_frameTimeDrift = 0;
+}
+
+bool VideoPlayer::isFastForwarding() {
+	return DebugMan.isDebugChannelEnabled(kDebugFast) || _millisBetweenFrames <= 0;
+}
+
 bool VideoPlayer::playFrame() {
 	bool end = true;
 
@@ -76,9 +86,10 @@ bool VideoPlayer::playFrame() {
 
 		// Wait for pending audio
 		if (_audioStream) {
-			if (_audioStream->endOfData()) {
+			if (_audioStream->endOfData() || isFastForwarding()) {
 				// Mark the audio stream as finished (no more data will be appended)
 				_audioStream->finish();
+				_audioStream = NULL;
 			} else {
 				// Don't end if there's still audio playing
 				end = false;
@@ -90,6 +101,9 @@ bool VideoPlayer::playFrame() {
 }
 
 void VideoPlayer::waitFrame() {
+	if (isFastForwarding()) {
+		return;
+	}
 	uint32 currTime = _syst->getMillis();
 	if (!_begunPlaying) {
 		_begunPlaying = true;

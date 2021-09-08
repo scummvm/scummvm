@@ -43,6 +43,8 @@ public:
 	virtual void resetFlags() {}
 	virtual void setOrigin(int16 x, int16 y) {}
 	virtual void stopAudioStream() = 0;
+	void fastForward();
+	bool isFastForwarding();
 
 protected:
 	// To be implemented by subclasses

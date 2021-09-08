@@ -480,6 +480,9 @@ void SoundEffectQueue::tick() {
 	_file->seek(0);
 	_player->load(_file, 0);
 	_player->playFrame();
+	if (_player->isFastForwarding()) {
+		stopAll();
+	}
 #endif
 }
 
