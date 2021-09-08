@@ -671,8 +671,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 6 - vertical fix (COMI)     0x40        (COMI handles this in the printing method, but I haven't seen a case where it is used)
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
-
-	if ((flags & 4) || _vm->_language == Common::HE_ISR) {
+	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
+	if ((flg & kStyleWordWrap) || _vm->_language == Common::HE_ISR) {
 		// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
 		// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
 		// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
@@ -683,12 +683,12 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			height = _height - 20;
 		}
 		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flags & 1);
+		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
 	} else {
 		// Similiar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
 		// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
 		Common::Rect clipRect(0, 0, _width, _height);
-		sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flags & 1);
+		sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
 	}
 
 	free(string);

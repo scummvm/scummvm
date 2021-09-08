@@ -29,6 +29,14 @@
 
 namespace Scumm {
 
+enum TextStyleFlags {
+	kStyleAlignLeft		=	0x00,
+	kStyleAlignCenter	=	0x01,
+	kStyleAlignRight	=	0x02,
+	kStyleWordWrap		=	0x04
+	// There are more flags, but I'll add them only as needed
+};
+
 class GlyphRenderer_v7 {
 public:
 	virtual int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) = 0;

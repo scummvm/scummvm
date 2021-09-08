@@ -25,6 +25,7 @@
 #ifdef ENABLE_SCUMM_7_8
 
 #include "scumm/scumm_v6.h"
+#include "scumm/charset_v7.h"
 
 namespace Scumm {
 
@@ -140,7 +141,7 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap = false);
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
 	void removeBlastTexts() override;
 	void actorTalk(const byte *msg) override;
@@ -156,14 +157,11 @@ protected:
 
 	struct BlastText : TextObject {
 		Common::Rect rect;
-		bool center;
-		bool wrap;
+		TextStyleFlags flags;
 
 		void clear() {
 			this->TextObject::clear();
 			rect = Common::Rect();
-			center = false;
-			wrap = false;
 		}
 	};
 
