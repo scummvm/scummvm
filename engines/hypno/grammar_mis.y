@@ -47,7 +47,7 @@ void HYPNO_MIS_xerror(const char *str) {
 }
 
 int HYPNO_MIS_wrap() {
-    return 1;
+	return 1;
 }
 
 using namespace Hypno;
@@ -72,224 +72,227 @@ using namespace Hypno;
 %%
 
 start: init lines 
-       ;
+	;
 
-init: { smenu_idx.push_back(-1);
-	    stack.push_back(new Hotspots()); }
+init: { 
+	smenu_idx.push_back(-1);
+	stack.push_back(new Hotspots());
+}
 
 lines:   line RETTOK lines
-       | line
-	   | end lines            
-	   ; 
+	| line
+	| end lines            
+	; 
 
 end: RETTOK  { debug("implicit END"); }
-    ; 
+	; 
 
-line:    MENUTOK NAME mflag  {
-	     Hotspot *hot = new Hotspot(); 
-		 hot->type = MakeMenu;
-		 hot->stype = $2;
-		 hot->smenu = NULL;
-		 debug("MENU %d.", hot->type);
-		 Hotspots *cur = stack.back();
-		 cur->push_back(*hot);
+line: MENUTOK NAME mflag  {
+		Hotspot *hot = new Hotspot(); 
+		hot->type = MakeMenu;
+		hot->stype = $2;
+		hot->smenu = NULL;
+		debug("MENU %d.", hot->type);
+		Hotspots *cur = stack.back();
+		cur->push_back(*hot);
 
-		 // We don't care about menus, only hotspots
-     	 int idx = smenu_idx.back();
-		 idx++;
-		 smenu_idx.pop_back();
-		 smenu_idx.push_back(idx);
+		// We don't care about menus, only hotspots
+		int idx = smenu_idx.back();
+		idx++;
+		smenu_idx.pop_back();
+		smenu_idx.push_back(idx);
+	}
+	| HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
+		Hotspot *hot = new Hotspot(); 
+		hot->type = MakeHotspot;
+		hot->smenu = NULL;
+		hot->rect = Common::Rect($3, $4, $5, $6);
+		debug("HOTS %d.", hot->type);
+		Hotspots *cur = stack.back();
+		cur->push_back(*hot); 
+	}
+	|  SMENTOK { 
+		// This should always point to a hotspot
+		int idx = smenu_idx.back();
+		idx++;
+		smenu_idx.pop_back();
+		smenu_idx.push_back(idx);
 
-	  }
-      |	 HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
-	     Hotspot *hot = new Hotspot(); 
-		 hot->type = MakeHotspot;
-		 hot->smenu = NULL;
-		 hot->rect = Common::Rect($3, $4, $5, $6);
-		 debug("HOTS %d.", hot->type);
-		 Hotspots *cur = stack.back();
-		 cur->push_back(*hot); 
-      }
-	  |  SMENTOK { 
-		  // This should always point to a hotspot
-		  int idx = smenu_idx.back();
-		  idx++;
-		  smenu_idx.pop_back();
-		  smenu_idx.push_back(idx);
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &(*cur)[idx];
 
-		  Hotspots *cur = stack.back();
-		  Hotspot *hot = &(*cur)[idx];
+		smenu_idx.push_back(-1);
+		hot->smenu = new Hotspots();
+		stack.push_back(hot->smenu);
+		debug("SUBMENU"); 
+	}
+	|  ESCPTOK  {
+		Escape *a = new Escape();
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debug("ESC SUBMENU"); }
+	|  TIMETOK NUM  { debug("TIME %d", $2); } 
+	|  BACKTOK FILENAME NUM NUM gsswitch flag {
+		Background *a = new Background();
+		a->path = $2;
+		a->origin = Common::Point($3, $4);
+		a->condition = $5;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debug("BACK");
+	}
+	|  GLOBTOK GSSWITCH NAME  { 
+		Global *a = new Global();
+		a->variable = $2;
+		a->command = $3;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debug("GLOB."); 
+	}
+	|  AMBITOK FILENAME NUM NUM flag { 
+		Ambient *a = new Ambient();
+		a->path = $2;
+		a->origin = Common::Point($3, $4);
+		a->flag = $5;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);			
+		debug("AMBI %d %d.", $3, $4); }
+	|  PLAYTOK FILENAME NUM NUM gsswitch flag { 
+		Play *a = new Play();
+		a->path = $2;
+		a->origin = Common::Point($3, $4);
+		a->condition = $5;
+		a->flag = $6;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);		  
+		debug("PLAY %s.", $2); }
+	|  OVERTOK FILENAME NUM NUM flag { 
+		Overlay *a = new Overlay();
+		a->path = $2;
+		a->origin = Common::Point($3, $4);
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+	}
+	|  PALETOK FILENAME {
+		Palette *a = new Palette();
+		a->path = $2; 
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debug("PALE");
+	}
+	|  CUTSTOK FILENAME { 
+		Cutscene *a = new Cutscene();
+		a->path = $2;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);		  
+		debug("CUTS %s.", $2); 
+	}
+	|  WALNTOK FILENAME NUM NUM gsswitch flag  { 
+		WalN *a = new WalN();
+		a->path = $2;
+		a->origin = Common::Point($3, $4);
+		a->condition = $5;
+		a->flag = $6;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);		  
+		debug("WALN %s %d %d.", $2, $3, $4); } 
+	|  MICETOK FILENAME NUM {
+		Mice *a = new Mice();
+		a->path = $2; 
+		a->index = $3-1;
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+	}
+	|  TALKTOK alloctalk talk { 
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(talk_action);
+		talk_action = nullptr;
+		debug("TALK"); }
+	|  ENDTOK RETTOK { 
+		debug("explicit END");
+		g_parsedHots = stack.back(); 
+		stack.pop_back();
+		smenu_idx.pop_back();
+	}   		               
+	;
 
-		  smenu_idx.push_back(-1);
-		  hot->smenu = new Hotspots();
-	      stack.push_back(hot->smenu);
-		  debug("SUBMENU"); 
-		}
-      |  ESCPTOK  {
-			Escape *a = new Escape();
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-		  	debug("ESC SUBMENU"); }
-	  |  TIMETOK NUM  { debug("TIME %d", $2); } 
-      |  BACKTOK FILENAME NUM NUM gsswitch flag {
-			Background *a = new Background();
-			a->path = $2;
-			a->origin = Common::Point($3, $4);
-			a->condition = $5;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-			debug("BACK");
-		}
-      |  GLOBTOK GSSWITCH NAME  { 
-		    Global *a = new Global();
-			a->variable = $2;
-			a->command = $3;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-			debug("GLOB."); 
-		}
-		|  AMBITOK FILENAME NUM NUM flag { 
-			Ambient *a = new Ambient();
-			a->path = $2;
-			a->origin = Common::Point($3, $4);
-			a->flag = $5;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);			
-			debug("AMBI %d %d.", $3, $4); }
-	    |  PLAYTOK FILENAME NUM NUM gsswitch flag { 
-			Play *a = new Play();
-			a->path = $2;
-			a->origin = Common::Point($3, $4);
-			a->condition = $5;
-			a->flag = $6;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);		  
-		    debug("PLAY %s.", $2); }
-      |  OVERTOK FILENAME NUM NUM flag { 
-		  	Overlay *a = new Overlay();
-			a->path = $2;
-			a->origin = Common::Point($3, $4);
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-	   }
-	  |  PALETOK FILENAME {
-			Palette *a = new Palette();
-			a->path = $2; 
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-			debug("PALE");
-		}
-	  |  CUTSTOK FILENAME { 
-		  	Cutscene *a = new Cutscene();
-			a->path = $2;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);		  
-		    debug("CUTS %s.", $2); 
-		}
-	  |  WALNTOK FILENAME NUM NUM gsswitch flag  { 
-			WalN *a = new WalN();
-			a->path = $2;
-			a->origin = Common::Point($3, $4);
-			a->condition = $5;
-			a->flag = $6;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);		  
-		    debug("WALN %s %d %d.", $2, $3, $4); } 
-	  |  MICETOK FILENAME NUM {
-		  	Mice *a = new Mice();
-			a->path = $2; 
-			a->index = $3-1;
-			Hotspots *cur = stack.back();
-		    Hotspot *hot = &cur->back();
-			hot->actions.push_back(a);
-	  }
-	  |  TALKTOK alloctalk talk { 
-		  Hotspots *cur = stack.back();
-		  Hotspot *hot = &cur->back();
-		  hot->actions.push_back(talk_action);
-		  talk_action = nullptr;
-		  debug("TALK"); }
-	  |  ENDTOK RETTOK { 
-		  debug("explicit END");
-		  g_parsedHots = stack.back(); 
-		  stack.pop_back();
-		  smenu_idx.pop_back();
-		  }   		               
-	  ;
+alloctalk: { 
+	assert(talk_action == nullptr);
+	talk_action = new Talk();
+	talk_action->active = true; 
+}
 
-alloctalk: { assert(talk_action == nullptr);
-	        talk_action = new Talk();
-		    talk_action->active = true; }
-
-talk:   INACTOK talk {
-	      talk_action->active = false; 
-	      debug("inactive"); }
-      | FDTOK talk { debug("inactive"); }
-	  | BACKTOK FILENAME NUM NUM gsswitch flag { 
-		  talk_action->background = $2;
-		  talk_action->position = Common::Point($3, $4);
-		  debug("BACK in TALK"); }
-	  | BOXXTOK NUM NUM { debug("BOXX %d %d", $2, $3); }
-      | PG talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "G";
-		  talk_cmd.path = $1+2;
-		  talk_action->commands.push_back(talk_cmd); 
-	      debug("%s", $1); }
-      | PH talk { debug("%s", $1); }
-      | PF talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "F";
-		  talk_cmd.num = atoi($1+2)-1;
-		  talk_action->commands.push_back(talk_cmd); 
-		  debug("%s", $1); }
-      | PA talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "A";
-		  talk_cmd.num = atoi($1+2)-1;
-		  talk_action->commands.push_back(talk_cmd); 
-		  debug("|A%d", talk_cmd.num); } 
-      | PD talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "D";
-		  talk_cmd.num = atoi($1+2)-1;
-		  talk_action->commands.push_back(talk_cmd); 
-		  debug("%s", $1); }
-      | PP NUM NUM talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "P";
-		  talk_cmd.path = $1+2;
-		  talk_cmd.position = Common::Point($2, $3);
-		  talk_action->commands.push_back(talk_cmd);
-		  debug("%s %d %d", $1, $2, $3); }
-      | PI NUM NUM talk { 
-		  TalkCommand talk_cmd;
-		  talk_cmd.command = "I";
-		  talk_cmd.path = $1+2;
-		  talk_cmd.position = Common::Point($2, $3);
-		  talk_action->commands.push_back(talk_cmd);		  
-		  debug("%s %d %d", $1, $2, $3); }
-	  | PE { debug("|E"); }
-      | /*nothing*/ { debug("nothing in talk"); }
-	  ;
+talk: INACTOK talk {
+		talk_action->active = false; 
+		debug("inactive"); }
+	| FDTOK talk { debug("inactive"); }
+	| BACKTOK FILENAME NUM NUM gsswitch flag { 
+		talk_action->background = $2;
+		talk_action->position = Common::Point($3, $4);
+		debug("BACK in TALK"); }
+	| BOXXTOK NUM NUM { debug("BOXX %d %d", $2, $3); }
+	| PG talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "G";
+		talk_cmd.path = $1+2;
+		talk_action->commands.push_back(talk_cmd); 
+		debug("%s", $1); }
+	| PH talk { debug("%s", $1); }
+	| PF talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "F";
+		talk_cmd.num = atoi($1+2)-1;
+		talk_action->commands.push_back(talk_cmd); 
+		debug("%s", $1); }
+	| PA talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "A";
+		talk_cmd.num = atoi($1+2)-1;
+		talk_action->commands.push_back(talk_cmd); 
+		debug("|A%d", talk_cmd.num); } 
+	| PD talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "D";
+		talk_cmd.num = atoi($1+2)-1;
+		talk_action->commands.push_back(talk_cmd); 
+		debug("%s", $1); }
+	| PP NUM NUM talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "P";
+		talk_cmd.path = $1+2;
+		talk_cmd.position = Common::Point($2, $3);
+		talk_action->commands.push_back(talk_cmd);
+		debug("%s %d %d", $1, $2, $3); }
+	| PI NUM NUM talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "I";
+		talk_cmd.path = $1+2;
+		talk_cmd.position = Common::Point($2, $3);
+		talk_action->commands.push_back(talk_cmd);		  
+		debug("%s %d %d", $1, $2, $3); }
+	| PE { debug("|E"); }
+	| /*nothing*/
+	;
 
 mflag:  NRTOK
-      | /*nothing*/
-	  ;
+	| /*nothing*/
+	;
 
-flag:   FLAG             { $$ = $1; debug("flag: %s", $1); }
-      | /* nothing */	 { $$ = scumm_strdup(""); }
-	  ;
+flag:   FLAG 		{ $$ = $1; debug("flag: %s", $1); }
+	| /* nothing */	{ $$ = scumm_strdup(""); }
+	;
 
-gsswitch:   GSSWITCH                      { $$ = $1; debug("switch %s", $1); }
-          | /* nothing */                 { $$ = scumm_strdup(""); }
-	      ;
+gsswitch: GSSWITCH 	{ $$ = $1; debug("switch %s", $1); }
+	| /* nothing */ { $$ = scumm_strdup(""); }
+	;
