@@ -39,9 +39,7 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override {
-		// The original allows saveslot 000 to 099 and reserves higher slots
-		// for special purposes.
-		return 99;
+		return 998;
 	}
 
 	/**
