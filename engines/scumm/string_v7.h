@@ -37,8 +37,8 @@ public:
 	TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr);
 	~TextRenderer_v7() {}
 
-	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, bool center);
-	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, bool center);
+	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags);
+	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags);
 
 	int getStringWidth(const char *str) { return getStringWidth(str, 100000); }
 	int getStringHeight(const char *str) { return getStringHeight(str, 100000); }

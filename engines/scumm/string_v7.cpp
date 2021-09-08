@@ -184,8 +184,8 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 
 #define SCUMM7_MAX_STRINGS		80
 
-void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, bool center) {
-	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawString(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), center: %d)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, center);
+void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
+	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawString(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), flags: 0x%02x)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, flags);
 
 	int totalLen = (int)strlen(str);
 	int lineStart = 0;
@@ -211,21 +211,21 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 		if (y < clipRect.bottom) {
 			int width = getStringWidth(str + lineStart, len);
 			maxWidth = MAX<int>(maxWidth, width);
-			drawSubstring(str + lineStart, len, buffer, clipRect, center ? (x - width / 2) : x, y, pitch, col);
+			drawSubstring(str + lineStart, len, buffer, clipRect, (flags & kStyleAlignCenter) ? (x - width / 2) : x, y, pitch, col);
 			y += height;
 		}
 
 		lineStart = pos + 1;
 	}
 
-	clipRect.left = center ? x - maxWidth / 2: x;
+	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2: x;
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
 }
 
-void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, bool center) {
-	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawStringWrap(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), center: %d)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, center);
+void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
+	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawStringWrap(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), flags: 0x%02x)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, flags);
 	// This implementation is from COMI. Things are done a bit differently than in the older implementations.
 	// In particular, the older version would insert '\0' chars into the string to cut off the sub strings
 	// before calling getStringWidth(), getStringHeight() or drawSubstring() and replace these chars with the
@@ -332,7 +332,7 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		y = clipRect.top;
 
 	if (_newStyle) {
-		if (center) {
+		if (flags & kStyleAlignCenter) {
 			if (x + (maxWidth >> 1) > clipRect.right)
 				x = clipRect.right - (maxWidth >> 1);
 			if (x - (maxWidth >> 1) < clipRect.left)
@@ -348,7 +348,7 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	int y2 = y;
 
 	for (int i = 0; i < numSubstrings; i++) {
-		int xpos = center ? x - substrWidths[i] / 2 : x;
+		int xpos = (flags & kStyleAlignCenter) ? x - substrWidths[i] / 2 : x;
 		if (!_newStyle)
 			xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - substrWidths[i]);
 		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
@@ -356,7 +356,7 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		y += getStringHeight(str + substrStart[i], len);
 	}
 
-	clipRect.left = center ? x - maxWidth / 2 : x;
+	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : x;
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
@@ -382,7 +382,7 @@ void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
 #pragma mark --- V7 blast text queue code ---
 #pragma mark -
 
-void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap) {
+void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags) {
 	assert(_blastTextQueuePos + 1 <= ARRAYSIZE(_blastTextQueue));
 
 	if (_useCJKMode) {
@@ -405,8 +405,7 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.ypos = y;
 	bt.color = color;
 	bt.charset = charset;
-	bt.center = center;
-	bt.wrap = wrap;
+	bt.flags = flags;
 }
 
 void ScummEngine_v7::drawBlastTexts() {
@@ -417,7 +416,7 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		_charset->setCurID(_blastTextQueue[i].charset);
 
-		if (bt.wrap) {
+		if (bt.flags & kStyleWordWrap) {
 			bt.rect = _wrappedTextClipRect;
 
 			// This is for the "narrow" paragraph wrapping type that the older interpreters (e. g. FT, DIG English) do.
@@ -425,7 +424,7 @@ void ScummEngine_v7::drawBlastTexts() {
 				bt.xpos = CLIP<int>(bt.xpos, 80, 240);
 				bt.ypos = CLIP<int>(bt.ypos, 1, 160);
 				int maxWidth = _string[0].right - bt.xpos - 1;
-				if (bt.center) {
+				if (bt.flags & kStyleAlignCenter) {
 					if (maxWidth > bt.xpos)
 						maxWidth = bt.xpos;
 					bt.rect.left = MAX<int>(0, bt.xpos - maxWidth);
@@ -433,10 +432,10 @@ void ScummEngine_v7::drawBlastTexts() {
 				}
 			}
 
-			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.flags);
 		} else {
 			bt.rect = _defaultTextClipRect;
-			_textV7->drawString((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+			_textV7->drawString((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.flags);
 		}
 
 		bt.rect.top += _screenTop;
@@ -459,7 +458,10 @@ void ScummEngine_v7::removeBlastTexts() {
 void ScummEngine_v8::printString(int m, const byte *msg) {
 	if (m == 4) {
 		const StringTab &st = _string[m];
-		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, st.center, st.wrapping);
+		int flags = st.wrapping ? kStyleWordWrap : 0;
+		if (st.center)
+			flags |= kStyleAlignCenter;
+		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, (TextStyleFlags)flags);
 	} else {
 		ScummEngine::printString(m, msg);
 	}
@@ -475,7 +477,10 @@ void ScummEngine_v7::processSubtitleQueue() {
 		if (!st->actorSpeechMsg && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0))
 			// no subtitles and there's a speech variant of the message, don't display the text
 			continue;
-		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, st->center, st->wrap);
+		int flags = st->wrap ? kStyleWordWrap : 0;
+		if (st->center)
+			flags |= kStyleAlignCenter;
+		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)flags);
 	}
 }
 

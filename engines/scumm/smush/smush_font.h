@@ -38,12 +38,12 @@ public:
 
 	~SmushFont() override {	delete _r;}
 
-	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, bool center) {
-		_r->drawString(str, buffer, clipRect, x, y, _vm->_screenWidth, col, center);
+	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
+		_r->drawString(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
 	}
 
-	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, bool center) {
-		_r->drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, center);
+	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
+		_r->drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
 	}
 
 private:

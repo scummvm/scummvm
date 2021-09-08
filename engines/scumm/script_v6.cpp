@@ -2586,7 +2586,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 		break;
 	case 16:
 	case 17:
-		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
+		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16) ? kStyleAlignCenter : kStyleAlignLeft);
 		break;
 	case 20:
 		_imuseDigital->setRadioChatterSFX(args[1]);

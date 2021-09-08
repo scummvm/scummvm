@@ -994,6 +994,8 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		else if (mode && vs->hicolor)
 			color = vs->hicolor;
 
+		TextStyleFlags flags = vs->center ? kStyleAlignCenter : kStyleAlignLeft;
+
 		const byte *msg = getResourceAddress(rtVerb, verb);
 		if (!msg)
 			return;
@@ -1034,8 +1036,8 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 				--len;
 			}
 
-			enqueueText(tmpBuf, vs->origLeft, vs->curRect.top, color, vs->charset_nr, vs->center);
-			enqueueText(&msg[len + 1], vs->origLeft, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
+			enqueueText(tmpBuf, vs->origLeft, vs->curRect.top, color, vs->charset_nr, flags);
+			enqueueText(&msg[len + 1], vs->origLeft, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, flags);
 			vs->curRect.right = vs->curRect.left + finalWidth;
 			vs->curRect.bottom += _verbLineSpacing;
 			/*
@@ -1057,7 +1059,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			else
 				vs->curRect.right = vs->curRect.left + textWidth;
 			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);*/
-			enqueueText(msg, vs->origLeft, vs->curRect.top, color, vs->charset_nr, vs->center);
+			enqueueText(msg, vs->origLeft, vs->curRect.top, color, vs->charset_nr, flags);
 		}
 		_charset->setCurID(oldID);
 	}
