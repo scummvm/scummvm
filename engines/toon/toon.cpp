@@ -625,6 +625,7 @@ static const MenuFile mainMenuFiles[] = {
 };
 
 #define OPTIONMENU_ENTRYCOUNT 27
+#define OPTIONMENU_ENTRYCOUNT_ENGLISH_DEMO 11
 static const MenuFile optionMenuFiles[] = {
 	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_PLAY,        "PLAYBUTN.CAF", 0 }, // "Start" button
 	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_QUIT,        "QUITBUTN.CAF", 0 }, // "Intro" button
@@ -681,9 +682,11 @@ bool ToonEngine::showOptions() {
 	bool oldMouseHidden = _gameState->_mouseHidden;
 	_gameState->_mouseHidden = false;
 
-	MenuEntry entries[OPTIONMENU_ENTRYCOUNT];
+	// English demo options menu has less animations and no SFX
+	int optionMenuEntryCount = _isEnglishDemo ? OPTIONMENU_ENTRYCOUNT_ENGLISH_DEMO : OPTIONMENU_ENTRYCOUNT;
+	MenuEntry *entries = new MenuEntry[optionMenuEntryCount];
 
-	for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+	for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
 		entries[entryNr].menuMask = optionMenuFiles[entryNr].menuMask;
 		entries[entryNr].id = optionMenuFiles[entryNr].id;
 		entries[entryNr].animation = new Animation(this);
@@ -740,7 +743,7 @@ bool ToonEngine::showOptions() {
 			}
 			clearDirtyRects();
 
-			for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+			for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
 				if (entries[entryNr].menuMask & menuMask) {
 					if (entries[entryNr].animateOnFrame) {
 						entries[entryNr].animateCurFrame++;
@@ -776,7 +779,7 @@ bool ToonEngine::showOptions() {
 			if (_mouseButton & 1) {
 				// left mouse button pushed down
 				clickingOn = OPTIONMENUHOTSPOT_NONE;
-				for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+				for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
 					if (entries[entryNr].menuMask & menuMask) {
 						if (entries[entryNr].id != OPTIONMENUHOTSPOT_NONE) {
 							if (entries[entryNr].rect.contains(_mouseX, _mouseY)) {
@@ -843,7 +846,8 @@ bool ToonEngine::showOptions() {
 				entries[9].activeFrame = 0;
 				_audioManager->muteMusic(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE) {
@@ -854,7 +858,8 @@ bool ToonEngine::showOptions() {
 				entries[7].activeFrame = 0;
 				_audioManager->muteVoice(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMESFX) {
@@ -865,7 +870,8 @@ bool ToonEngine::showOptions() {
 				entries[5].activeFrame = 0;
 				_audioManager->muteSfx(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERBUTTON) {
@@ -876,7 +882,8 @@ bool ToonEngine::showOptions() {
 			entries[19].playOnce = true;
 
 			playSFX(-10, 128);
-			_audioManager->playVoice(316, true);
+			if (!_isEnglishDemo)
+				_audioManager->playVoice(316, true);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERLEVER) {
@@ -889,7 +896,8 @@ bool ToonEngine::showOptions() {
 			} else {
 				entries[20].playOnce = true;
 			}
-			playSFX(-9, 128);
+			if (!_isEnglishDemo)
+				playSFX(-9, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_TEXT) {
@@ -907,7 +915,8 @@ bool ToonEngine::showOptions() {
 				entries[4].activeFrame = 0;
 			}
 
-			playSFX(-9, 128);
+			if (!_isEnglishDemo)
+				playSFX(-9, 128);
 		}
 
 		// don't allow change to video mode
@@ -918,14 +927,16 @@ bool ToonEngine::showOptions() {
 		if (clickingOn == OPTIONMENUHOTSPOT_PLAY) {
 			doExit = true;
 			exitGame = false;
-			_audioManager->playSFX(10, 128, true);
+			if (!_isEnglishDemo)
+				_audioManager->playSFX(10, 128, true);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_QUIT) {
 			doExit = true;
 			exitGame = true;
 			_shouldQuit = true;
-			_audioManager->playSFX(10, 128, true);
+			if (!_isEnglishDemo)
+				_audioManager->playSFX(10, 128, true);
 		}
 	}
 
@@ -938,6 +949,7 @@ bool ToonEngine::showOptions() {
 	restorePalette();
 	dirtyAllScreen();
 
+	delete[] entries;
 	delete optionPicture;
 
 	return exitGame;
