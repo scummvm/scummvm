@@ -1309,6 +1309,9 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		//  saving a previously restored game.
 		// We set the current savedgame-id directly and remove the script
 		//  code concerning this via script patch.
+		// We also set this in kSaveGame so that the global is correct even if no restoring occurs,
+		//  otherwise the auto-delete script at the end of the SCI1.1 floppy version breaks if
+		//  the game is played from start to finish. (bug #5294)
 		s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
 		break;
 	case GID_JONES:
