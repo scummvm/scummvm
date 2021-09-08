@@ -728,6 +728,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 		return true;
 	} else if (_eventMouseClicked == 2) {
 		_vm->_videoPlayer->fastForward();
+		_eventMouseClicked = 0;
 	}
 
 	// Video available, play one frame
