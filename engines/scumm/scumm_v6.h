@@ -84,22 +84,6 @@ protected:
 	int _blastObjectQueuePos;
 	BlastObject _blastObjectQueue[200];
 
-	struct BlastText : TextObject {
-		Common::Rect rect;
-		bool center;
-		bool wrap;
-
-		void clear() {
-			this->TextObject::clear();
-			rect = Common::Rect();
-			center = false;
-			wrap = false;
-		}
-	};
-
-	int _blastTextQueuePos;
-	BlastText _blastTextQueue[50];
-
 	// Akos Class
 	struct {
 		int16 cmd;
@@ -160,8 +144,8 @@ protected:
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
 
-	virtual void drawBlastTexts();
-	void removeBlastTexts();
+	virtual void drawBlastTexts() {}
+	virtual void removeBlastTexts() {}
 
 	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
 	                   int objectHeight, int scaleX, int scaleY, int image, int mode);

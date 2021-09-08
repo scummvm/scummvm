@@ -378,6 +378,10 @@ void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
 	_textV7 = new TextRenderer_v7(this, gr);
 }
 
+#pragma mark -
+#pragma mark --- V7 blast text queue code ---
+#pragma mark -
+
 void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap) {
 	assert(_blastTextQueuePos + 1 <= ARRAYSIZE(_blastTextQueue));
 
@@ -441,6 +445,15 @@ void ScummEngine_v7::drawBlastTexts() {
 		bt.rect.right;
 		markRectAsDirty(vs->number, bt.rect);
 	}
+}
+
+void ScummEngine_v7::removeBlastTexts() {
+	int i;
+
+	for (i = 0; i < _blastTextQueuePos; i++) {
+		restoreBackground(_blastTextQueue[i].rect);
+	}
+	_blastTextQueuePos = 0;
 }
 
 void ScummEngine_v8::printString(int m, const byte *msg) {

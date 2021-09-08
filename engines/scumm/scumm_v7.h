@@ -142,6 +142,7 @@ protected:
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap = false);
 	void drawBlastTexts() override;
+	void removeBlastTexts() override;
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;
 	void loadLanguageBundle() override;
@@ -152,6 +153,22 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 	void o6_kernelSetFunctions() override;
+
+	struct BlastText : TextObject {
+		Common::Rect rect;
+		bool center;
+		bool wrap;
+
+		void clear() {
+			this->TextObject::clear();
+			rect = Common::Rect();
+			center = false;
+			wrap = false;
+		}
+	};
+
+	int _blastTextQueuePos;
+	BlastText _blastTextQueue[50];
 };
 
 
