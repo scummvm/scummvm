@@ -1162,11 +1162,9 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 lifeValue = ctx.stream.readByte();
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
-	if (!engine->_debugScene->_godMode) {
-		otherActor->addLife(-lifeValue);
-		if (otherActor->_life < 0) {
-			otherActor->setLife(0);
-		}
+	otherActor->addLife(-lifeValue);
+	if (otherActor->_life < 0) {
+		otherActor->setLife(0);
 	}
 
 	return 0;
