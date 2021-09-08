@@ -75,6 +75,21 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Rex Nebular and the Cosmic Gender Bender DOS English Demo
+		{
+			"nebular",
+			"Demo",
+			AD_ENTRY1s("section1.hag", "ead7ea63459173c32569feecac608c4f", 192065),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
+		},
+		GType_RexNebular,
+		0
+	},
+
 #ifdef ENABLE_MADSV2
 
 	{
@@ -86,6 +101,21 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_EASY_MOUSE)
+		},
+		GType_Phantom,
+		0
+	},
+
+	{
+		// Return of the Phantom DOS English Demo
+		{
+			"phantom",
+			"Demo",
+			AD_ENTRY1s("section1.hag", "ad738c8edb139790ebaf78f8ceceb182", 123627),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GAMEOPTION_EASY_MOUSE)
 		},
 		GType_Phantom,
