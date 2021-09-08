@@ -66,6 +66,7 @@ void VideoPlayer::setOverrideSpeed(bool isOverride) {
 void VideoPlayer::fastForward() {
 	_millisBetweenFrames = 0;
 	_frameTimeDrift = 0;
+	stopAudioStream();
 }
 
 bool VideoPlayer::isFastForwarding() {
