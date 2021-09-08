@@ -381,9 +381,7 @@ void Collision::stopFalling() { // ReceptionObj()
 			if (fall >= BRICK_HEIGHT * 16) {
 				_engine->_actor->_processActorPtr->setLife(0);
 			} else {
-				if (!_engine->_debugScene->_godMode) {
-					_engine->_actor->_processActorPtr->addLife(-1);
-				}
+				_engine->_actor->_processActorPtr->addLife(-1);
 			}
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		} else if (fall > 10) {
