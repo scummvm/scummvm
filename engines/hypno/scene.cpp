@@ -64,20 +64,19 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	filename = convertPath(filename);
 	if (!prefix.empty())
 		filename = prefix + "/" + filename;
-	Common::File *test = new Common::File();
-	assert(test->open(filename.c_str()));
+	Common::File test;
+	assert(test.open(filename.c_str()));
 
-	const uint32 fileSize = test->size();
+	const uint32 fileSize = test.size();
 	char *buf = (char *)malloc(fileSize + 1);
-	test->read(buf, fileSize);
+	test.read(buf, fileSize);
+	test.close();
 	buf[fileSize] = '\0';
 	parse_mis(buf);
 	Level level;
 	level.scene.prefix = prefix;
 	level.scene.hots = *g_parsedHots;
 	_levels[filename] = level;
-	test->close();
-	delete test;
 	free(buf);
 }
 
@@ -117,7 +116,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 	}
 	if (found) {
 		if (selected.smenu) {
-			assert(selected.smenu->size() > 0);
+			assert(!selected.smenu->empty());
 			_nextHotsToAdd = selected.smenu;
 		}
 
@@ -251,7 +250,7 @@ void HypnoEngine::runScene(Scene scene) {
 					leftClickedConversation(mousePos);
 					break;
 				}
-				if (!_nextHotsToAdd && !_nextHotsToRemove /*&& _videosPlaying.size() == 0*/)
+				if (!_nextHotsToAdd && !_nextHotsToRemove /*&& _videosPlaying.empty()*/)
 					clickedHotspot(mousePos);
 				break;
 
@@ -260,7 +259,7 @@ void HypnoEngine::runScene(Scene scene) {
 				//changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
-				if (stack.empty() || !_conversation.empty() || _videosPlaying.size() > 0)
+				if (stack.empty() || !_conversation.empty() || !_videosPlaying.empty())
 					break;
 
 				if (hoverHotspot(mousePos)) {
@@ -281,7 +280,7 @@ void HypnoEngine::runScene(Scene scene) {
 		}
 
 		// Movies
-		if (_nextSequentialVideoToPlay.size() > 0 && _videosPlaying.empty()) {
+		if (!_nextSequentialVideoToPlay.empty() && _videosPlaying.empty()) {
 			playVideo(*_nextSequentialVideoToPlay.begin());
 			_videosPlaying.push_back(*_nextSequentialVideoToPlay.begin());
 			_nextSequentialVideoToPlay.remove_at(0);
@@ -308,7 +307,7 @@ void HypnoEngine::runScene(Scene scene) {
 			}
 			i++;
 		}
-		if (videosToRemove.size() > 0) {
+		if (!videosToRemove.empty()) {
 
 			for (Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
 				debugC(1, kHypnoDebugScene, "removing %d from %d size", *it, _videosPlaying.size());
@@ -316,7 +315,7 @@ void HypnoEngine::runScene(Scene scene) {
 			}
 
 			// Nothing else to play
-			if (_videosPlaying.size() == 0 && _nextSequentialVideoToPlay.size() == 0) {
+			if (_videosPlaying.empty() && _nextSequentialVideoToPlay.empty()) {
 				if (!_conversation.empty())
 					_refreshConversation = true;
 				else if (!stack.empty()) {
@@ -326,7 +325,7 @@ void HypnoEngine::runScene(Scene scene) {
 			}
 		}
 
-		if (_videosPlaying.size() > 0 || _nextSequentialVideoToPlay.size() > 0) {
+		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
 			continue;
 		}
