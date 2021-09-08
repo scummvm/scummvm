@@ -262,8 +262,7 @@ void HypnoEngine::runScene(Scene scene) {
 				if (stack.empty() || !_conversation.empty() || !_videosPlaying.empty())
 					break;
 
-				if (hoverHotspot(mousePos)) {
-				} else
+				if (!hoverHotspot(mousePos))
 					defaultCursor();
 				break;
 
