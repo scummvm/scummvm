@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-08 20:34+0000\n"
+"POT-Creation-Date: 2021-09-08 21:24+0000\n"
 "PO-Revision-Date: 2021-08-22 12:25+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Gå op"
 #: gui/saveload-dialog.cpp:63 gui/saveload-dialog.cpp:419
 #: gui/saveload-dialog.cpp:490 gui/saveload-dialog.cpp:794
 #: gui/saveload-dialog.cpp:1187 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:692
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:709
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -162,7 +162,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:388
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
 #: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1188
-#: engines/engine.cpp:508 engines/engine.cpp:532
+#: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -787,14 +787,14 @@ msgstr "Søg i spilliste"
 msgid "Search:"
 msgstr "Søg:"
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:842
+#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:859
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Indlæs spil:"
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:842
+#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:859
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
@@ -1712,7 +1712,7 @@ msgid ""
 "And more..."
 msgstr "Tilføj spil..."
 
-#: gui/options.cpp:2537 engines/engine.cpp:560
+#: gui/options.cpp:2537 engines/engine.cpp:577
 #, fuzzy
 msgid "Move"
 msgstr "Flyt bagud"
@@ -2259,7 +2259,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~R~etur til oversigt"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:871 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:888 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2278,7 +2278,7 @@ msgstr "~R~etur til oversigt"
 msgid "Save game:"
 msgstr "Gemt spil:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:871 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:888 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2326,43 +2326,43 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "~F~ortryd"
 
-#: engines/engine.cpp:325
+#: engines/engine.cpp:342
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Kunne ikke skifte til opløsningen '%dx%d'."
 
-#: engines/engine.cpp:334
+#: engines/engine.cpp:351
 msgid "Could not initialize color format."
 msgstr "Kunne ikke initialisere farveformat."
 
-#: engines/engine.cpp:343
+#: engines/engine.cpp:360
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Kunne ikke skifte til videotilstanden '%s'."
 
-#: engines/engine.cpp:351
+#: engines/engine.cpp:368
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Kunne ikke skifte til stræktilstanden '%s'."
 
-#: engines/engine.cpp:358
+#: engines/engine.cpp:375
 msgid "Could not apply aspect ratio setting."
 msgstr "Kunne ikke anvende rettelse af højde-/breddeforhold-indstilling."
 
-#: engines/engine.cpp:363
+#: engines/engine.cpp:380
 msgid "Could not apply fullscreen setting."
 msgstr "Kunne ikke anvende fuldskærm indstilling."
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:385
 msgid "Could not apply filtering setting."
 msgstr "Kunne ikke anvende filtrerings indstilling."
 
-#: engines/engine.cpp:426
+#: engines/engine.cpp:443
 #, fuzzy
 msgid "Error"
 msgstr "Ingen fejl"
 
-#: engines/engine.cpp:504
+#: engines/engine.cpp:521
 #, fuzzy
 #| msgid ""
 #| "You appear to be playing this game directly\n"
@@ -2383,7 +2383,7 @@ msgstr ""
 "datafiler til din harddisk i stedet.\n"
 "Se README fil for detaljer."
 
-#: engines/engine.cpp:528
+#: engines/engine.cpp:545
 #, fuzzy
 #| msgid ""
 #| "This game has audio tracks in its disk. These\n"
@@ -2404,16 +2404,16 @@ msgstr ""
 "for at lytte til spillets musik.\n"
 "Se README fil for detaljer."
 
-#: engines/engine.cpp:553
+#: engines/engine.cpp:570
 msgid "Overwrite"
 msgstr ""
 
-#: engines/engine.cpp:554
+#: engines/engine.cpp:571
 #, fuzzy
 msgid "Cancel autosave"
 msgstr "Unavngivet savegame"
 
-#: engines/engine.cpp:556
+#: engines/engine.cpp:573
 #, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
@@ -2421,23 +2421,23 @@ msgid ""
 "autosave (will not prompt again until restart)"
 msgstr ""
 
-#: engines/engine.cpp:564
+#: engines/engine.cpp:581
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 
-#: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
+#: engines/engine.cpp:604 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
 msgstr "Autogem:"
 
-#: engines/engine.cpp:595
+#: engines/engine.cpp:612
 #, fuzzy
 msgid "Error occurred making autosave"
 msgstr "Fejl ved læsning af gemt fil"
 
-#: engines/engine.cpp:670
+#: engines/engine.cpp:687
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2446,17 +2446,17 @@ msgstr ""
 "Kunne ikke indlæse gemte spil (%s)! Se venligst README for grundlæggende "
 "oplysninger, og for at få instruktioner om, hvordan man får yderligere hjælp."
 
-#: engines/engine.cpp:688
+#: engines/engine.cpp:705
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:688
+#: engines/engine.cpp:705
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "Fuld titel på spillet"
 
-#: engines/engine.cpp:689
+#: engines/engine.cpp:706
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2466,16 +2466,16 @@ msgstr ""
 "ScummVM. Således, er det sandsynligt, at det er ustabilt, og alle gemte spil "
 "du foretager fungerer muligvis ikke i fremtidige versioner af ScummVM."
 
-#: engines/engine.cpp:692 engines/wintermute/wintermute.cpp:183
+#: engines/engine.cpp:709 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "Start alligevel"
 
-#: engines/engine.cpp:699
+#: engines/engine.cpp:716
 #, fuzzy
 msgid "This game is not supported."
 msgstr "Spil-id ikke understøttet"
 
-#: engines/engine.cpp:699
+#: engines/engine.cpp:716
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2483,11 +2483,11 @@ msgstr ""
 "Det spil er ikke understøttet af følgende årsag:\n"
 "\n"
 
-#: engines/engine.cpp:838
+#: engines/engine.cpp:855
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:867
+#: engines/engine.cpp:884
 msgid "Saving game is currently unavailable"
 msgstr ""
 
