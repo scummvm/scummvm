@@ -479,7 +479,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL7,           -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when looking at the swordfish in the kitchen
 	{ GID_MOTHERGOOSE256, -1,     0,  0,                 "MG", "doit",                            NULL,     5,     5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game - bug #5224
 	{ GID_MOTHERGOOSE256, -1,   992,  0,             "AIPath", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #5269
-	{ GID_MOTHERGOOSE256, 90,    90,  0,        "introScript", "changeState",                     NULL,    65,    65, { WORKAROUND_FAKE,   0 } }, // SCI1(CD): At the very end, after the game is completed and restarted - bug #5626
+	{ GID_MOTHERGOOSE256, 90,    90,  0,        "introScript", "changeState",                     NULL,    64,    65, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed and restarted (floppy: temp 64, CD: temp 65) - bug #5626
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,               "View", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
@@ -859,6 +859,7 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
+	{ GID_MOTHERGOOSE256, -1,    90,  0,        "introScript", "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE,    0 } }, // happens when restoring after completing a game in SCI1.1 floppy, 2nd parameter is an object from previous game
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
