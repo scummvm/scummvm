@@ -610,6 +610,11 @@ void Script::o_bf7on() {			// 0x07
 	_bitflags |= 1 << 7;
 }
 
+void Script::o2_bf0on() { // v2 0x0A
+	debugC(1, kDebugScript, "Groovie::Script: BF0ON: bitflag 0 turned on");
+	_bitflags |= 1;
+}
+
 void Script::o_setbackgroundsong() {			// 0x08
 	uint16 fileref = readScript16bits();
 	debugC(1, kDebugScript, "Groovie::Script: SetBackgroundSong(0x%04X)", fileref);
@@ -2227,7 +2232,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_nop,
 	&Script::o2_setbackgroundsong, // 0x08
 	&Script::o2_videofromref,
-	&Script::o_bf5on,
+	&Script::o2_bf0on,
 	&Script::o_inputloopstart,
 	&Script::o_keyboardaction, // 0x0C
 	&Script::o_hotspot_rect,
