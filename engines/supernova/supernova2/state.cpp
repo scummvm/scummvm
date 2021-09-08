@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "gui/message.h"
@@ -933,16 +935,30 @@ bool GameManager2::talk(int mod1, int mod2, int rest, MessagePosition pos, int i
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(id);
 
+	Common::TextToSpeechManager *ttsMan = nullptr;
+	if (ConfMan.getBool("tts_enabled"))
+		ttsMan = g_system->getTextToSpeechManager();
+
+	// Wait for the end of the current speech
+	if (ttsMan && ttsMan->isSpeaking())
+		wait(0, true, ttsMan);
+
 	_vm->renderMessage(text, pos);
 	int animation_count = (text.size() + 20) * (10 - rest) * _vm->_textSpeed / 400;
 	_restTime =  (text.size() + 20) * rest * _vm->_textSpeed / 400;
 
-	while (animation_count) {
+	// We only wait for TTS below if there is no rest time
+	if (_restTime)
+		ttsMan = nullptr;
+
+	while (animation_count || (ttsMan && ttsMan->isSpeaking())) {
 		if (mod1)
 			_vm->renderImage(mod1);
 
 		if (waitOnInput(2, key)) {
 			_vm->removeMessage();
+			if (ttsMan)
+				ttsMan->stop();
 			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		if (mod2)
@@ -950,9 +966,12 @@ bool GameManager2::talk(int mod1, int mod2, int rest, MessagePosition pos, int i
 
 		if (waitOnInput(2, key)) {
 			_vm->removeMessage();
+			if (ttsMan)
+				ttsMan->stop();
 			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
-		animation_count--;
+		if (animation_count)
+			animation_count--;
 	}
 	if (_restTime == 0)
 		_vm->removeMessage();
@@ -961,19 +980,28 @@ bool GameManager2::talk(int mod1, int mod2, int rest, MessagePosition pos, int i
 }
 
 bool GameManager2::talkRest(int mod1, int mod2, int rest) {
+	Common::TextToSpeechManager *ttsMan = nullptr;
+	if (ConfMan.getBool("tts_enabled"))
+		ttsMan = g_system->getTextToSpeechManager();
+
 	Common::KeyCode key = Common::KEYCODE_INVALID;
-	while (rest) {
+	while (rest || (ttsMan && ttsMan->isSpeaking())) {
 		_vm->renderImage(mod1);
 		if (waitOnInput(2, key)) {
 			_vm->removeMessage();
+			if (ttsMan)
+				ttsMan->stop();
 			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		_vm->renderImage(mod2);
 		if (waitOnInput(2, key)) {
 			_vm->removeMessage();
+			if (ttsMan)
+				ttsMan->stop();
 			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
-		rest--;
+		if (rest)
+			rest--;
 	}
 	return true;
 }
