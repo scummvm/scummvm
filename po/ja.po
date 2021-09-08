@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-06 19:01+0000\n"
+"POT-Creation-Date: 2021-09-08 00:14+0000\n"
 "PO-Revision-Date: 2021-08-29 09:33+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3750,7 +3750,7 @@ msgstr "アップデートを確認中..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:934
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:302 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:455 engines/teenagent/resources.cpp:98
+#: engines/supernova/supernova.cpp:456 engines/teenagent/resources.cpp:98
 #: engines/tony/tony.cpp:188 engines/toon/toon.cpp:4943
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -3758,7 +3758,7 @@ msgstr "%sエンジンのデータファイルが見つかりません。"
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
-#: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:460
+#: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:461
 #: engines/tony/tony.cpp:201 engines/toon/toon.cpp:4956
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -7130,7 +7130,7 @@ msgstr "スタイルが適用された確認ダイアログを使用するには
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr "%s語用のテキストがエンジンデータファイル内に存在しません。"
 
-#: engines/supernova/supernova.cpp:467
+#: engines/supernova/supernova.cpp:468
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -7138,17 +7138,17 @@ msgstr ""
 "エンジン%sの、正しくないバージョンのデータを発見しました。想定バージョンは%d"
 "ですが、取得されたのは%dです。"
 
-#: engines/supernova/supernova.cpp:477
+#: engines/supernova/supernova.cpp:478
 #, c-format
 msgid "Unable to find block for part %d"
 msgstr "パーツ%dのブロックが見つかりません"
 
-#: engines/supernova/supernova.cpp:520
+#: engines/supernova/supernova.cpp:521
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "ゲームフォルダー、またはエンジンのデータファイルに%sが見つかりません。"
 
-#: engines/supernova/supernova.cpp:824
+#: engines/supernova/supernova.cpp:825
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
@@ -7156,7 +7156,7 @@ msgstr ""
 "一時セーブに失敗しました。ディレクトリーがScummVMに設定されており、書き込み可"
 "能である事を確認してください。"
 
-#: engines/supernova/supernova.cpp:825
+#: engines/supernova/supernova.cpp:826
 msgid "Failed to load temporary game state."
 msgstr "一時保存データのロードに失敗しました。"
 

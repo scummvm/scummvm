@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-06 19:01+0000\n"
+"POT-Creation-Date: 2021-09-08 00:14+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3665,7 +3665,7 @@ msgstr ""
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:934
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:302 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:455 engines/teenagent/resources.cpp:98
+#: engines/supernova/supernova.cpp:456 engines/teenagent/resources.cpp:98
 #: engines/tony/tony.cpp:188 engines/toon/toon.cpp:4943
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -3673,7 +3673,7 @@ msgstr ""
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
-#: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:460
+#: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:461
 #: engines/tony/tony.cpp:201 engines/toon/toon.cpp:4956
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -6791,29 +6791,29 @@ msgstr ""
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr ""
 
-#: engines/supernova/supernova.cpp:467
+#: engines/supernova/supernova.cpp:468
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
 
-#: engines/supernova/supernova.cpp:477
+#: engines/supernova/supernova.cpp:478
 #, c-format
 msgid "Unable to find block for part %d"
 msgstr ""
 
-#: engines/supernova/supernova.cpp:520
+#: engines/supernova/supernova.cpp:521
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
 
-#: engines/supernova/supernova.cpp:824
+#: engines/supernova/supernova.cpp:825
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
 
-#: engines/supernova/supernova.cpp:825
+#: engines/supernova/supernova.cpp:826
 msgid "Failed to load temporary game state."
 msgstr ""
 
