@@ -367,5 +367,5 @@ void HypnoEngine::showConversation() { error("Not implemented"); }
 void HypnoEngine::rightClickedConversation(Common::Point mousePos) { error("Not implemented"); }
 void HypnoEngine::leftClickedConversation(Common::Point mousePos) { error("Not implemented"); }
 
-
 } // End of namespace Hypno
+

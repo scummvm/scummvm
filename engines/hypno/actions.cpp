@@ -136,4 +136,5 @@ void HypnoEngine::runTalk(Talk *a) {
 	_refreshConversation = true;
 }
 
-} // namespace Hypno
+} // End of namespace Hypno
+

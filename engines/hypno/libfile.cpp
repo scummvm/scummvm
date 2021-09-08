@@ -118,3 +118,4 @@ Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Pat
 }
 
 } // namespace Hypno
+

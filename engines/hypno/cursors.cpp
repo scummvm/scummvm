@@ -129,3 +129,4 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n) {
 }
 
 } // End of namespace Hypno
+

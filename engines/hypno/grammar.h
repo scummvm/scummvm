@@ -257,3 +257,4 @@ extern ArcadeShooting g_parsedArc;
 } // End of namespace Hypno
 
 #endif
+
