@@ -494,8 +494,6 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	if (height <= width / 3) {
 		_interlacedVideo = 1;
 		_offScale = 2;
-		// HACK: kill the sound queue so people can hear dialog during FMVs
-		_vm->_soundQueue.stopAll();
 	}
 	debugC(2, kDebugVideo, "Groovie::ROQ: width=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d, interl.=%d, _alpha=%d", width, height, _scaleX, _scaleY, _interlacedVideo, _offScale, _alpha);
 
