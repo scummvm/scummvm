@@ -31,8 +31,8 @@ using namespace AGS; // FIXME later
 
 struct NewControl {
 	int x, y, wid, hit, state, typeandflags, wlevel;
-	char visible, enabled;        // not implemented
-	char needredraw;
+	int8 visible, enabled;        // not implemented
+	int8 needredraw;
 	virtual void draw(Shared::Bitmap *ds) = 0;
 	virtual int pressedon(int mousex, int mousey) = 0;
 	virtual int processmessage(int, int, NumberPtr) = 0;
