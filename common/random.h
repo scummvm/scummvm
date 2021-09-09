@@ -39,7 +39,7 @@ namespace Common {
 class String;
 
 /**
- * Simple random number generator. Although it is definitely not suitable for
+ * Xorshift* random number generator. Although it is definitely not suitable for
  * cryptographic purposes, it serves our purposes just fine.
  */
 class RandomSource {
@@ -90,6 +90,14 @@ public:
 	 * @return	a random number in the interval [min, max]
 	 */
 	int getRandomNumberRngSigned(int min, int max);
+	
+	/**
+	* Scrambles the seed in order to get a new result.
+	* Code is shared between getRandomNumber and getRandomBit,
+	* so it is split off for clarity.
+	*/
+private:
+	inline void scrambleSeed();
 };
 
 /** @} */
