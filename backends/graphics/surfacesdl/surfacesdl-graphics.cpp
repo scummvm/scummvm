@@ -732,7 +732,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 			// assumed to be available at any reasonable factor,
 			// and is - of course -the only one that has a 1x mode.
 			const Common::Array<uint> &factors = _scalerPlugins[mode]->get<ScalerPluginObject>().getFactors();
-			if (Common::find(factors.begin(), factors.end(), scaleFactor) == factors.end()) {
+			if (Common::find(factors.begin(), factors.end(), (uint)scaleFactor) == factors.end()) {
 				mode = ScalerMan.findScalerPluginIndex("normal");
 			}
 		}
