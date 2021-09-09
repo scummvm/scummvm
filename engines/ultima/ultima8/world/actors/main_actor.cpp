@@ -995,8 +995,9 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 	int energy = getMana();
 	Kernel *kernel = Kernel::get_instance();
 
-	if (shieldtype && firetype && firetype->getShieldCost() && (firetype->getShieldMask() & shieldtype) && damage < energy) {
-		setMana(energy - damage);
+	if (shieldtype && firetype && firetype->getShieldCost() && (firetype->getShieldMask() & shieldtype)
+			&& firetype->getShieldCost() <= energy) {
+		setMana(energy - firetype->getShieldCost());
 		damage = 0;
 		AudioProcess *audio = AudioProcess::get_instance();
 		audio->playSFX(0x48, 0x10, _objId, 1, true);
