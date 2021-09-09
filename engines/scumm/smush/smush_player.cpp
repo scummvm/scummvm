@@ -661,6 +661,12 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// changes on the fly will be ignored for Smush texts, since our code design does
 	// not permit it and the feature isn't used anyway).
 
+	if (_vm->_language == Common::HE_ISR && !(flags & kStyleAlignCenter)) {
+		flags |= kStyleAlignRight;
+		pos_x = _width - 1 - pos_x;
+	}
+
+	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
 	// flags:
 	// bit 0 - center                  0x01
 	// bit 1 - not used (align right)  0x02
@@ -671,8 +677,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 6 - vertical fix (COMI)     0x40        (COMI handles this in the printing method, but I haven't seen a case where it is used)
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
-	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
-	if ((flg & kStyleWordWrap) || _vm->_language == Common::HE_ISR) {
+
+	if (flg & kStyleWordWrap) {
 		// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
 		// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
 		// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell

@@ -48,7 +48,7 @@ protected:
 	byte *_paletteMap;
 	byte _bpp;
 	byte _palette[16];
-	const bool _direction;
+	const int _direction;
 
 	const int8 *_2byteShadowXOffsetTable;
 	const int8 *_2byteShadowYOffsetTable;

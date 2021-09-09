@@ -977,10 +977,7 @@ void ScummEngine_v8::o8_verbOps() {
 		break;
 	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
 		vs->curRect.top = pop();
-		if (_language == Common::HE_ISR)
-			vs->curRect.right = _screenWidth - 1 - pop();
-		else
-			vs->origLeft = pop();
+		vs->origLeft = pop();
 		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
 		vs->curmode = 1;

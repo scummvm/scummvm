@@ -994,7 +994,15 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		else if (mode && vs->hicolor)
 			color = vs->hicolor;
 
-		TextStyleFlags flags = vs->center ? kStyleAlignCenter : kStyleAlignLeft;
+		TextStyleFlags flags = kStyleAlignLeft;
+		int xpos = vs->origLeft;
+
+		if (vs->center) {
+			flags = kStyleAlignCenter;
+		} else if (_language == Common::HE_ISR) {
+			flags = kStyleAlignRight;
+			xpos = _screenWidth - 1 - vs->origLeft;
+		}
 
 		const byte *msg = getResourceAddress(rtVerb, verb);
 		if (!msg)
@@ -1015,9 +1023,9 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, vs->origLeft, vs->curRect.top, vs->center ? kStyleAlignCenter : kStyleAlignLeft);
+		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
 		
-		const int maxWidth = /*_language == Common::HE_ISR ? vs->curRect.right + 1 :*/ _screenWidth - vs->curRect.left;
+		const int maxWidth = _screenWidth - vs->curRect.left;
 		int finalWidth = maxWidth;
 
 		if (_game.version == 8 && _textV7->getStringWidth((const char*)buf) > maxWidth) {
@@ -1036,30 +1044,12 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 				--len;
 			}
 
-			enqueueText(tmpBuf, vs->origLeft, vs->curRect.top, color, vs->charset_nr, flags);
-			enqueueText(&msg[len + 1], vs->origLeft, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, flags);
+			enqueueText(tmpBuf, xpos, vs->curRect.top, color, vs->charset_nr, flags);
+			enqueueText(&msg[len + 1], xpos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, flags);
 			vs->curRect.right = vs->curRect.left + finalWidth;
-			vs->curRect.bottom += _verbLineSpacing;
-			/*
-			int16 leftPos = vs->curRect.left;
-			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->origLeft = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
-			else
-				vs->curRect.right = vs->curRect.left + _charset->getStringWidth(0, tmpBuf);
-			enqueueText(tmpBuf, leftPos, vs->curRect.top, color, vs->charset_nr, vs->center);
-			if (len >= 0) {
-				if (_language == Common::HE_ISR)
-					leftPos = vs->curRect.right - _charset->getStringWidth(0, &msg[len + 1]);
-				enqueueText(&msg[len + 1], leftPos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
-				vs->curRect.bottom += _verbLineSpacing;
-			}*/
-		} else {/*
-			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->origLeft = vs->curRect.right - textWidth;
-			else
-				vs->curRect.right = vs->curRect.left + textWidth;
-			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);*/
-			enqueueText(msg, vs->origLeft, vs->curRect.top, color, vs->charset_nr, flags);
+			vs->curRect.bottom += _verbLineSpacing;			
+		} else {
+			enqueueText(msg, xpos, vs->curRect.top, color, vs->charset_nr, flags);
 		}
 		_charset->setCurID(oldID);
 	}

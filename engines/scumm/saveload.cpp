@@ -821,8 +821,8 @@ static void syncWithSerializer(Common::Serializer &s, ObjectData &od) {
 	s.syncAsByte(od.flags, VER(46));
 }
 
-static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs, bool isISR) {
-	s.syncAsSint16LE(!isISR ? vs.curRect.left : vs.origLeft, VER(8));
+static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs, bool isV7orISR) {
+	s.syncAsSint16LE(!isV7orISR ? vs.curRect.left : vs.origLeft, VER(8));
 	s.syncAsSint16LE(vs.curRect.top, VER(8));
 	s.syncAsSint16LE(vs.curRect.right, VER(8));
 	s.syncAsSint16LE(vs.curRect.bottom, VER(8));
@@ -844,15 +844,15 @@ static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs, bool isISR) 
 	s.syncAsByte(vs.center, VER(8));
 	s.syncAsByte(vs.prep, VER(8));
 	s.syncAsUint16LE(vs.imgindex, VER(8));
-	if (isISR && s.isLoading() && s.getVersion() >= 8)
+	if (isV7orISR && s.isLoading() && s.getVersion() >= 8)
 		vs.curRect.left = vs.origLeft;
 }
 
-static void syncWithSerializerNonISR(Common::Serializer &s, VerbSlot &vs) {
+static void syncWithSerializerDef(Common::Serializer &s, VerbSlot &vs) {
 	syncWithSerializer(s, vs, false);
 }
 
-static void syncWithSerializerISR(Common::Serializer &s, VerbSlot &vs) {
+static void syncWithSerializerV7orISR(Common::Serializer &s, VerbSlot &vs) {
 	syncWithSerializer(s, vs, true);
 }
 
@@ -1239,7 +1239,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	//
 	// Save/load misc stuff
 	//
-	s.syncArray(_verbs, _numVerbs, _language != Common::HE_ISR ? syncWithSerializerNonISR : syncWithSerializerISR);
+	s.syncArray(_verbs, _numVerbs, (_game.version < 7 && _language != Common::HE_ISR) ? syncWithSerializerDef : syncWithSerializerV7orISR);
 	s.syncArray(vm.nest, 16, syncWithSerializer);
 	s.syncArray(_sentence, 6, syncWithSerializer);
 	s.syncArray(_string, 6, syncWithSerializer);

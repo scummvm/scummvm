@@ -63,7 +63,8 @@ private:
 	const Common::Language _lang;
 	const byte _gameId;
 	const bool _useCJKMode;
-	const bool _direction;
+	const int _direction;
+	const int _rtlCenteredOffset;
 	const int _spacing;
 	const byte _2byteCharWidth;
 	const byte _lineBreakMarker;

@@ -1294,14 +1294,18 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 
 	assert(sf != NULL);
 
+	if (_vm->_language == Common::HE_ISR && !(flags & kStyleAlignCenter)) {
+		flags |= kStyleAlignRight;
+		pos_x = _player->_width - 1 - pos_x;
+	}
+	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
 	// flags:
 	// bit 0 - center                  0x01
 	// bit 1 - not used (align right)  0x02
 	// bit 2 - word wrap               0x04
 	// bit 3 - switchable              0x08
 	// bit 4 - fill background         0x10
-	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
-	if ((flg & kStyleWordWrap) || _vm->_language == Common::HE_ISR) {
+	if (flg & kStyleWordWrap) {
 		Common::Rect clipRect(0, 0, _player->_width, _player->_height);
 		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, color, flg);
 	} else {

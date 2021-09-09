@@ -39,6 +39,7 @@ TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
 	_screenWidth(vm->_screenWidth),
 	_useCJKMode(vm->_useCJKMode),
 	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
+	_rtlCenteredOffset(vm->_language == Common::HE_ISR ? 1 : 0),
 	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
 	_lineBreakMarker(vm->_newLineCharacter),
 	_newStyle (gr->newStyleWrapping()),
@@ -147,39 +148,33 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 }
 
 void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col, TextStyleFlags flags) {
-	if (_lang == Common::HE_ISR) {
-		for (int i = numBytesMax; i > 0; i--) {
-			x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i - 1]);
-		}
-	} else {
-		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
-			if (_newStyle && str[i] == '^') {
-				if (str[i + 1] == 'f') {
-					_gr->setFont(str[i + 3] - '0');
-					i += 3;
-					numBytesMax -= 4;
-					continue;
-				} else if (str[i + 1] == 'c') {
-					col = str[i + 4] - '0' + 10 *(str[i + 3] - '0');
-					i += 4;
-					numBytesMax -= 5;
-					continue;
-				} else if (str[i + 1] == 'l') {
-					i++;
-					numBytesMax -= 2;
-					continue;
-				}
+	for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
+		if (_newStyle && str[i] == '^') {
+			if (str[i + 1] == 'f') {
+				_gr->setFont(str[i + 3] - '0');
+				i += 3;
+				numBytesMax -= 4;
+				continue;
+			} else if (str[i + 1] == 'c') {
+				col = str[i + 4] - '0' + 10 *(str[i + 3] - '0');
+				i += 4;
+				numBytesMax -= 5;
+				continue;
+			} else if (str[i + 1] == 'l') {
+				i++;
+				numBytesMax -= 2;
+				continue;
 			}
+		}
 
-			if (is2ByteCharacter(_lang, str[i])) {
-				x += _gr->draw2byte(buffer, clipRect, x, y, pitch, col, (byte)str[i] + 256 * (byte)str[i + 1]);
-				++i;
-				--numBytesMax;
-			} else if (str[i] != '\n' && str[i] != _lineBreakMarker) {
-				x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i]);
-			}
+		if (is2ByteCharacter(_lang, str[i])) {
+			x += _gr->draw2byte(buffer, clipRect, x, y, pitch, col, (byte)str[i] + 256 * (byte)str[i + 1]);
+			++i;
 			--numBytesMax;
+		} else if (str[i] != '\n' && str[i] != _lineBreakMarker) {
+			x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i]);
 		}
+		--numBytesMax;
 	}
 }
 
@@ -215,21 +210,25 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 			int xpos = x;
 			if (flags & kStyleAlignCenter)
-				xpos = x - _direction * width / 2;
-			else if (((flags & kStyleAlignRight) && _direction == 1) || ((flags & kStyleAlignLeft) && _direction == -1))
+				xpos = x - _direction * width / 2 + (_rtlCenteredOffset & width);
+			else if (((flags & kStyleAlignRight) && _direction == 1) || (!(flags & kStyleAlignRight) && _direction == -1))
+				// The original interpreter apparently does not expect a right-to-left written language when the kStyleAlignRight flag is set.
+				// It just right-aligns a left-to-right string. So we now move xpos to the left like the original interpreter would if it is a
+				// left-to-right string, but leave it on the right in case of a right-to-left string (and vice versa for right-to-left strings
+				// with kStyleAlignLeft flag).
 				xpos = x - _direction * width;
 
 			if (!_newStyle)
-				xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - width);
+				xpos = (_direction == 1) ? CLIP<int>(xpos, clipRect.left, _screenWidth - width) : CLIP<int>(xpos, clipRect.left + width, _screenWidth - 1);
 
-			drawSubstring(str + lineStart, len, buffer, clipRect, _direction * width, y, pitch, col, flags);
+			drawSubstring(str + lineStart, len, buffer, clipRect, xpos, y, pitch, col, flags);
 			y += height;
 		}
 
 		lineStart = pos + 1;
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2: ((flags & kStyleAlignRight) ? x - maxWidth : x);
+	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
@@ -349,7 +348,7 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 			if (x - (maxWidth >> 1) < clipRect.left)
 				x = clipRect.left + (maxWidth >> 1);
 		} else if (flags & kStyleAlignRight) {
-			if (x < clipRect.right)
+			if (x > clipRect.right)
 				x = clipRect.right;
 			if (x < clipRect.left + maxWidth);
 				x = clipRect.left + maxWidth;
@@ -366,12 +365,16 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	for (int i = 0; i < numSubstrings; i++) {
 		int xpos = x;
 		if (flags & kStyleAlignCenter)
-			xpos = x - _direction * substrWidths[i] / 2;
-		else if (((flags & kStyleAlignRight) && _direction == 1) || ((flags & kStyleAlignLeft) && _direction == -1))
+			xpos = x - _direction * substrWidths[i] / 2 + (_rtlCenteredOffset & substrWidths[i]);
+		else if (((flags & kStyleAlignRight) && _direction == 1) || (!(flags & kStyleAlignRight) && _direction == -1))
+			// The original interpreter apparently does not expect a right-to-left written language when the kStyleAlignRight flag is set.
+			// It just right-aligns a left-to-right string. So we now move xpos to the left like the original interpreter would if it is a
+			// left-to-right string, but leave it on the right in case of a right-to-left string (and vice versa for right-to-left strings
+			// with kStyleAlignLeft flag).
 			xpos = x - _direction * substrWidths[i];
 
 		if (!_newStyle)
-			xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - substrWidths[i]);
+			xpos = (_direction == 1) ? CLIP<int>(xpos, clipRect.left, _screenWidth - substrWidths[i]) : CLIP<int>(xpos, clipRect.left + substrWidths[i], _screenWidth - 1);
 
 		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
 		drawSubstring(str + substrStart[i], len, buffer, clipRect, xpos, y, pitch, col, flags);
@@ -439,6 +442,12 @@ void ScummEngine_v7::drawBlastTexts() {
 		BlastText &bt = _blastTextQueue[i];
 
 		_charset->setCurID(_blastTextQueue[i].charset);
+
+		// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
+		if (_language == Common::HE_ISR && !(bt.flags & (kStyleAlignCenter | kStyleAlignRight))) {
+			bt.flags = (TextStyleFlags)(bt.flags | kStyleAlignRight);
+			bt.xpos = _screenWidth - 1 - bt.xpos;
+		}
 
 		if (bt.flags & kStyleWordWrap) {
 			bt.rect = _wrappedTextClipRect;
