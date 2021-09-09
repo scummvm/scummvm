@@ -179,6 +179,20 @@ static const Myst3GameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Myst 3 PS2 Preview Build 6/02
+		{
+			"myst3",
+			_s("PS2 version is not yet supported"),
+			AD_ENTRY1s("RSRC.m3r", "1850580ada496acdc06b41f1d82b4ede", 331930989),
+			Common::UNK_LANG,
+			Common::kPlatformPS2,
+			ADGF_UNSUPPORTED,
+			GUIO_NONE
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
