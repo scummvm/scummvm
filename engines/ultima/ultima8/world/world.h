@@ -148,9 +148,8 @@ public:
 	uint8 getGameDifficulty() const {
 		return _difficulty;
 	}
-	void setGameDifficulty(uint8 difficulty) {
-		_difficulty = difficulty;
-	}
+
+	void setGameDifficulty(uint8 difficulty);
 
 	uint16 getControlledNPCNum() const {
 		return _controlledNPCNum;
