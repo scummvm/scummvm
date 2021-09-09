@@ -257,6 +257,21 @@ static const uint16 sig_uninitread_qfg1vga_1[] = {
 	SIG_END
 };
 
+//                Game: Quest for Glory 1 VGA
+//      Calling method: Encounter::init (although class names are blank in Mac)
+//   Subroutine offset: 0x0f22 (script 210)
+// Applies to at least: Mac floppy
+static const uint16 sig_uninitread_qfg1vga_2[] = {
+	0x3f, 0x02,                      // link 02
+	0x87, 0x00,                      // lap param[0]
+	0x30, SIG_UINT16(0x000c),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0x30, SIG_UINT16(0x0007),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0xa5, 0x01,                      // sat temp[1]
+	SIG_END
+};
+
 //                Game: Quest for Glory 2
 //      Calling method: abdulS::changeState, jabbarS::changeState
 //   Subroutine offset: English 0x2d22 (script 260)
@@ -500,6 +515,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",           sig_uninitread_qfg1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
+	{ GID_QFG1VGA,        -1,   210,  0,                 NULL, "init",        sig_uninitread_qfg1vga_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: going to the brigands hideout - bug #5515. object is "Encounter" but Mac version has blank names
 	{ GID_QFG1VGA,        58,    58,  0,                 NULL, "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,  18 } }, // qfg1vga: casting "detect magic" at giant's cave, temp 0 used instead of spell number. object is "rm58" but Mac version has blank names
 	{ GID_QFG1VGA,        96,    96,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: when yorick throws an object
 	{ GID_QFG1VGA,       320,   320,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: first time entering room 320 when centaur offers fruits and vegetables
