@@ -43,19 +43,10 @@
 /**
  * This is the namespace of the Asylum engine.
  *
- * Status of this engine:
- *  - Script interpreters for main game and encounters are implemented
- *  - Object handling, player reaction and special chapter logic is implemented
- *  - Scene parsing and drawing, movie playing, mouse cursor and menu handling are almost complete
- *  - Sound code is almost complete (music is still WIP)
- *  - Almost all puzzles are implemented
- *  - Walking is partialy implemented but the primitive pathfinding is missing
+ * Status of this engine: Complete
  *
- * Maintainers:
- *  alexbevi, alexandrefontoura, bluegr, littleboy, midstream, deledrius
- *
- * Supported games:
- *  - Sanitarium
+ * Games using this engine:
+ * - Sanitarium
  */
 
 struct ADGameDescription;
