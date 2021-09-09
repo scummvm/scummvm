@@ -37,7 +37,7 @@ namespace AGS3 {
 
 struct OriGameSetupStruct {
 	char              gamename[30];
-	char              options[20];
+	int8              options[20];
 	unsigned char     paluses[256];
 	RGB               defpal[256];
 	InterfaceElement  iface[10];
@@ -72,7 +72,7 @@ struct OriGameSetupStruct {
 
 struct OriGameSetupStruct2 : public OriGameSetupStruct {
 	unsigned char   fontflags[10];
-	char            fontoutline[10];
+	int8            fontoutline[10];
 	int             numgui;
 	WordsDictionary *dict;
 	int             reserved2[8];

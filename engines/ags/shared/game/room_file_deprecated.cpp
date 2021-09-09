@@ -42,8 +42,8 @@ struct AnimationStruct {
 	int   data;
 	int   object;
 	int   speed;
-	char  action;
-	char  wait;
+	int8  action;
+	int8  wait;
 	AnimationStruct() {
 		action = 0;
 		object = 0;

@@ -63,8 +63,8 @@ struct RoomStatus {
 	EventBlock objcond[MAX_ROOM_OBJECTS];
 	EventBlock misccond;
 #endif
-	char  hotspot_enabled[MAX_ROOM_HOTSPOTS];
-	char  region_enabled[MAX_ROOM_REGIONS];
+	int8  hotspot_enabled[MAX_ROOM_HOTSPOTS];
+	int8  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];
 	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
 

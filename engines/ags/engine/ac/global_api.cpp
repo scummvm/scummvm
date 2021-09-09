@@ -374,7 +374,7 @@ RuntimeScriptValue Sc_FileReadInt(const RuntimeScriptValue *params, int32_t para
 	API_SCALL_INT_PINT(FileReadInt);
 }
 
-// char (int handle)
+// int8 (int handle)
 RuntimeScriptValue Sc_FileReadRawChar(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(FileReadRawChar);
 }
