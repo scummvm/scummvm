@@ -1965,6 +1965,12 @@ void CharsetRendererMac::setColor(byte color) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
+CharsetRendererV7::CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm),
+	_spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
+	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
+	_newStyle(vm->_useCJKMode) {
+}
+
 int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
 	const byte *src = _vm->get2byteCharPtr(chr);
 	buffer += (y * pitch + x);
@@ -1987,14 +1993,16 @@ int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, in
 	return _origWidth + _spacing;
 }
 
-int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
+int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
 	if (!prepareDraw(chr))
 		return 0;
 	_width = getCharWidth(chr);
+	if (_direction < 0)
+		x -= _width;
 	_vm->_charsetColorMap[1] = col;
 	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
 	drawBitsN(vs, buffer + (y + _offsY) * vs.pitch + x, _charPtr, *_fontPtr, y, _origWidth, _origHeight);
-	return _width;
+	return _direction * _width;
 }
 
 
@@ -2066,9 +2074,9 @@ int CharsetRendererNut::draw2byte(byte *buffer, Common::Rect &clipRect, int x, i
 	return _current->draw2byte(buffer, clipRect, x, y, pitch, col, chr);
 }
 
-int CharsetRendererNut::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
+int CharsetRendererNut::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
 	assert(_current);
-	return _current->drawChar(buffer, clipRect, x, y, pitch, col, chr);
+	return _current->drawChar(buffer, clipRect, x, y, pitch, col, flags, chr);
 }
 #endif
 

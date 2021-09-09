@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "graphics/surface.h"
+#include "scumm/charset_v7.h"
 
 namespace Scumm {
 
@@ -47,6 +48,7 @@ protected:
 	byte *_paletteMap;
 	byte _bpp;
 	byte _palette[16];
+	const bool _direction;
 
 	const int8 *_2byteShadowXOffsetTable;
 	const int8 *_2byteShadowYOffsetTable;
@@ -74,7 +76,7 @@ public:
 
 	void drawFrame(byte *dst, int c, int x, int y);
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr);
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr, bool hardcodedColors = false, bool smushColorMode = false);
+	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors = false, bool smushColorMode = false);
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;

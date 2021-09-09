@@ -43,7 +43,7 @@ public:
 	int getStringWidth(const char *str) { return getStringWidth(str, 100000); }
 	int getStringHeight(const char *str) { return getStringHeight(str, 100000); }
 
-	Common::Rect calcStringDimensions(const char *str, int x, int y, bool center);
+	Common::Rect calcStringDimensions(const char *str, int x, int y, TextStyleFlags flags);
 
 	static inline bool is2ByteCharacter(Common::Language lang, byte c) {
 		if (lang == Common::JA_JPN)
@@ -58,11 +58,12 @@ public:
 private:
 	int getStringWidth(const char *str, uint numBytesMax);
 	int getStringHeight(const char *str, uint numBytesMax);
-	void drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col);
+	void drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col, TextStyleFlags flags);
 
 	const Common::Language _lang;
 	const byte _gameId;
 	const bool _useCJKMode;
+	const bool _direction;
 	const int _spacing;
 	const byte _2byteCharWidth;
 	const byte _lineBreakMarker;

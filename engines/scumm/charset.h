@@ -310,13 +310,13 @@ public:
 #ifdef ENABLE_SCUMM_7_8
 class CharsetRendererV7 : public CharsetRendererClassic, public GlyphRenderer_v7 {
 public:
-	CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm), _spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0), _newStyle(vm->_useCJKMode) {}
+	CharsetRendererV7(ScummEngine *vm);
 	~CharsetRendererV7() override {};
 
 	void printChar(int chr, bool ignoreCharsetMask) override { error("CharsetRendererV7::printChar(): Unexpected legacy function call"); }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) override;
+	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
 	int getCharWidth(uint16 chr) const override;
 	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight : _fontHeight; }
 	int getFontHeight() const override { return _fontHeight; }
@@ -325,6 +325,7 @@ public:
 private:
 	const int _spacing;
 	const bool _newStyle;
+	const int _direction;
 };
 
 class CharsetRendererNut : public CharsetRenderer, public GlyphRenderer_v7 {
@@ -339,7 +340,7 @@ public:
 	bool newStyleWrapping() const override { return true; }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) override;
+	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
 
 	int getFontHeight() const override;
 	int getCharWidth(uint16 chr) const override;

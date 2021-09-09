@@ -1015,7 +1015,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, vs->origLeft, vs->curRect.top, vs->center);
+		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, vs->origLeft, vs->curRect.top, vs->center ? kStyleAlignCenter : kStyleAlignLeft);
 		
 		const int maxWidth = /*_language == Common::HE_ISR ? vs->curRect.right + 1 :*/ _screenWidth - vs->curRect.left;
 		int finalWidth = maxWidth;

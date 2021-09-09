@@ -39,7 +39,8 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 	_2byteShadowYOffsetTable(0),
 	_2byteMainColor(0),
 	_spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
-	_2byteSteps(vm->_game.version == 8 ? 4 : 2) {
+	_2byteSteps(vm->_game.version == 8 ? 4 : 2),
+	_direction(vm->_language == Common::HE_ISR ? -1 : 1) {
 		static const int8 cjkShadowOffsetsX[4] = { -1, 0, 1, 0 };
 		static const int8 cjkShadowOffsetsY[4] = { 0, 1, 0, 0 };
 		_2byteShadowXOffsetTable = &cjkShadowOffsetsX[ARRAYSIZE(cjkShadowOffsetsX) - _2byteSteps];
@@ -367,7 +368,10 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	}
 }
 
-int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr, bool hardcodedColors, bool smushColorMode) {
+int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors, bool smushColorMode) {
+	if (_direction < 0)
+		x -= _chars[chr].width;
+
 	int width = MIN((int)_chars[chr].width, clipRect.right - x);
 	int height = MIN((int)_chars[chr].height, clipRect.bottom - y);
 	int minX = x < clipRect.left ? clipRect.left - x : 0;
@@ -440,7 +444,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 			}
 		}		
 	}
-	return width;
+	return _direction * width;
 }
 
 int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
