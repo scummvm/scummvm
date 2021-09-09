@@ -664,7 +664,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame, uint32 &shape
 	const ShapeInfo *shapeinfo = weapon->getShapeInfo();
 	if (!shapeinfo) return;
 
-	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
+	const WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
 	if (!weaponinfo) return;
 
 	shape = weaponinfo->_overlayShape;
