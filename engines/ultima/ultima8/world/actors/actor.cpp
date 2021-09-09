@@ -2665,7 +2665,8 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	uint16 wpntype2 = npcData->getWpnType2();
 
 	if (World::get_instance()->getGameDifficulty() == 4) {
-	   wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+		wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+		wpntype2 = wpntype;
 	}
 
 	if ((!wpntype || !wpnflag) && wpntype2) {
