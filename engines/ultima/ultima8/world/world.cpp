@@ -516,7 +516,7 @@ void World::setGameDifficulty(uint8 difficulty) {
 	   if (si && si->_weaponInfo) {
 		   WeaponInfo *wi = si->_weaponInfo;
 		   wi->_clipSize = 20;
-		   if (difficulty > 2) {
+		   if (difficulty > 1) {
 			   wi->_ammoShape = 0x33D;
 			   wi->_ammoType = 1;
 		   } else {
