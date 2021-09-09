@@ -48,7 +48,7 @@ RandomSource::RandomSource(const String &name) {
 }
 
 void RandomSource::setSeed(uint32 seed) {
-	if(seed == 0)
+	if (seed == 0)
 		seed++;
 	_randSeed = seed;
 }
