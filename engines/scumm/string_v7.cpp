@@ -38,6 +38,7 @@ TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
 	_2byteCharWidth(vm->_2byteWidth),
 	_screenWidth(vm->_screenWidth),
 	_useCJKMode(vm->_useCJKMode),
+	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
 	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
 	_lineBreakMarker(vm->_newLineCharacter),
 	_newStyle (gr->newStyleWrapping()),
@@ -145,10 +146,10 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 	return totalHeight + (lineHeight ? lineHeight : _gr->getFontHeight()) + 1;
 }
 
-void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col) {
+void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col, TextStyleFlags flags) {
 	if (_lang == Common::HE_ISR) {
 		for (int i = numBytesMax; i > 0; i--) {
-			x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, str[i - 1]);
+			x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i - 1]);
 		}
 	} else {
 		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
@@ -175,7 +176,7 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 				++i;
 				--numBytesMax;
 			} else if (str[i] != '\n' && str[i] != _lineBreakMarker) {
-				x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, str[i]);
+				x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i]);
 			}
 			--numBytesMax;
 		}
@@ -211,14 +212,24 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 		if (y < clipRect.bottom) {
 			int width = getStringWidth(str + lineStart, len);
 			maxWidth = MAX<int>(maxWidth, width);
-			drawSubstring(str + lineStart, len, buffer, clipRect, (flags & kStyleAlignCenter) ? (x - width / 2) : x, y, pitch, col);
+
+			int xpos = x;
+			if (flags & kStyleAlignCenter)
+				xpos = x - _direction * width / 2;
+			else if (((flags & kStyleAlignRight) && _direction == 1) || ((flags & kStyleAlignLeft) && _direction == -1))
+				xpos = x - _direction * width;
+
+			if (!_newStyle)
+				xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - width);
+
+			drawSubstring(str + lineStart, len, buffer, clipRect, _direction * width, y, pitch, col, flags);
 			y += height;
 		}
 
 		lineStart = pos + 1;
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2: x;
+	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2: ((flags & kStyleAlignRight) ? x - maxWidth : x);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
@@ -337,6 +348,11 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 				x = clipRect.right - (maxWidth >> 1);
 			if (x - (maxWidth >> 1) < clipRect.left)
 				x = clipRect.left + (maxWidth >> 1);
+		} else if (flags & kStyleAlignRight) {
+			if (x < clipRect.right)
+				x = clipRect.right;
+			if (x < clipRect.left + maxWidth);
+				x = clipRect.left + maxWidth;
 		} else {
 			if (x > clipRect.right - maxWidth)
 				x = clipRect.right - maxWidth;
@@ -348,29 +364,37 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	int y2 = y;
 
 	for (int i = 0; i < numSubstrings; i++) {
-		int xpos = (flags & kStyleAlignCenter) ? x - substrWidths[i] / 2 : x;
+		int xpos = x;
+		if (flags & kStyleAlignCenter)
+			xpos = x - _direction * substrWidths[i] / 2;
+		else if (((flags & kStyleAlignRight) && _direction == 1) || ((flags & kStyleAlignLeft) && _direction == -1))
+			xpos = x - _direction * substrWidths[i];
+
 		if (!_newStyle)
 			xpos = CLIP<int>(xpos, clipRect.left, _screenWidth - substrWidths[i]);
+
 		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
-		drawSubstring(str + substrStart[i], len, buffer, clipRect, xpos, y, pitch, col);
+		drawSubstring(str + substrStart[i], len, buffer, clipRect, xpos, y, pitch, col, flags);
 		y += getStringHeight(str + substrStart[i], len);
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : x;
+	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
 }
 
-Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y, bool center) {
-	int wdth = getStringWidth(str);
+Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y, TextStyleFlags flags) {
+	int width = getStringWidth(str);
 	if (_gameId == GID_CMI && _useCJKMode)
 		y += 2;
 	
-	if (center)
-		x -= (wdth >> 1);
+	if (flags & kStyleAlignCenter)
+		x -= width / 2;
+	else if (flags & kStyleAlignRight)
+		x -= width;
 
-	return Common::Rect(x, y, x + wdth, y + getStringHeight(str));
+	return Common::Rect(x, y, x + width, y + getStringHeight(str));
 }
 
 void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
