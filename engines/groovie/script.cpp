@@ -1893,8 +1893,9 @@ void Script::o2_midicontrol() {
 	case 0:
 		// Stop Playback
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d:Stop: %d", arg1, arg2);
-		_vm->_musicPlayer->setUserVolume(0);
-		// _vm->_musicPlayer->setBackgroundDelay(0);
+		_vm->_musicPlayer->stop();
+		_vm->_soundQueue.stopAll();
+		//_vm->_musicPlayer->setBackgroundDelay(0);
 		break;
 
 	case 1:
@@ -1902,8 +1903,8 @@ void Script::o2_midicontrol() {
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d: Play song %d", arg1, arg2);
 		_vm->_musicPlayer->playSong(arg2);
 		_vm->_musicPlayer->setUserVolume(100);
-//		_vm->_musicPlayer->setBackgroundSong(arg2);
-//		_vm->_musicPlayer->startBackground();
+		//_vm->_musicPlayer->setBackgroundSong(arg2);
+		//_vm->_musicPlayer->startBackground();
 		break;
 
 	case 3:
