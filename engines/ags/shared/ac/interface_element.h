@@ -38,8 +38,8 @@ struct InterfaceElement {
 	int             flags;
 	int             reserved_for_future;
 	int             popupyp;   // pops up when _G(mousey) < this
-	char            popup;     // does it pop up? (like sierra icon bar)
-	char            on;
+	int8            popup;     // does it pop up? (like sierra icon bar)
+	int8            on;
 	InterfaceElement();
 };
 

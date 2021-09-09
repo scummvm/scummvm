@@ -158,7 +158,7 @@ struct GameState {
 	int   bg_frame = 0, bg_anim_delay = 0;  // for animating backgrounds
 	int   music_vol_was = 0;  // before the volume drop
 	short wait_counter = 0;
-	char  wait_skipped_by = 0; // tells how last blocking wait was skipped [not serialized]
+	int8  wait_skipped_by = 0; // tells how last blocking wait was skipped [not serialized]
 	int   wait_skipped_by_data = 0; // extended data telling how last blocking wait was skipped [not serialized]
 	short mboundx1 = 0, mboundx2 = 0, mboundy1 = 0, mboundy2 = 0;
 	int   fade_effect = 0;
@@ -175,7 +175,7 @@ struct GameState {
 	int32_t   script_timers[MAX_TIMERS];
 	int   sound_volume = 0, speech_volume = 0;
 	int   normal_font = 0, speech_font = 0;
-	char  key_skip_wait = 0;
+	int8  key_skip_wait = 0;
 	int   swap_portrait_lastchar = 0;
 	int   swap_portrait_lastlastchar = 0;
 	int   separate_music_lib = 0;

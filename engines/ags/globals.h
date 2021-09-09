@@ -1106,21 +1106,21 @@ public:
 	 * @{
 	 */
 
-	char _currentcursor = 0;
+	int8 _currentcursor = 0;
 	// virtual mouse cursor coordinates
 	int _mousex = 0, _mousey = 0, _numcurso = -1, _hotx = 0, _hoty = 0;
 	// real mouse coordinates and bounds
 	int _real_mouse_x = 0, _real_mouse_y = 0;
 	int _boundx1 = 0, _boundx2 = 99999, _boundy1 = 0, _boundy2 = 99999;
 	int _disable_mgetgraphpos = 0;
-	char _ignore_bounds = 0;
+	int8 _ignore_bounds = 0;
 	AGS::Shared::Bitmap *_mousecurs[MAXCURSORS];
 
 	ScriptMouse *_scmouse;
 	int _cur_mode = 0, _cur_cursor = 0;
 	int _mouse_frame = 0, _mouse_delay = 0;
 	int _lastmx = -1, _lastmy = -1;
-	char _alpha_blend_cursor = 0;
+	int8 _alpha_blend_cursor = 0;
 	AGS::Shared::Bitmap *_dotted_mouse_cursor = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_mouseCursor = nullptr;
 	AGS::Shared::Bitmap *_blank_mouse_cursor = nullptr;
@@ -1359,7 +1359,7 @@ public:
 
 	char *_walkBehindExists = nullptr;  // whether a WB area is in this column
 	int *_walkBehindStartY = nullptr, *_walkBehindEndY = nullptr;
-	char _noWalkBehindsAtAll = 0;
+	int8 _noWalkBehindsAtAll = 0;
 	int _walkBehindLeft[MAX_WALK_BEHINDS], _walkBehindTop[MAX_WALK_BEHINDS];
 	int _walkBehindRight[MAX_WALK_BEHINDS], _walkBehindBottom[MAX_WALK_BEHINDS];
 	AGS::Engine::IDriverDependantBitmap *_walkBehindBitmap[MAX_WALK_BEHINDS];
