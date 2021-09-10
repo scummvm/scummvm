@@ -54,7 +54,7 @@ namespace NGI {
 
 static const NGIGameDescription gameDescriptions[] = {
 
-	// Full Pipe Russian version
+	// Magic Dream Russian version
 	{
 		{
 			"mdream",
@@ -142,7 +142,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"fullpipe",
-			0,
+			"Demo",
 			AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
@@ -152,11 +152,26 @@ static const NGIGameDescription gameDescriptions[] = {
 		GID_FULLPIPE
 	},
 
+	// Full Pipe Russian 1997 Demo version
+	// Contains General MIDI file
+	{
+		{
+			"fullpipe",
+			"Demo",
+			AD_ENTRY1s("0001.nl", "c19d5281671c8fe2584bd02209bc4a10", 8998307),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM | ADGF_DEMO,
+			0
+		},
+		GID_FULLPIPE
+	},
+
 	// Full Pipe German Demo version
 	{
 		{
 			"fullpipe",
-			0,
+			"Demo",
 			AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
