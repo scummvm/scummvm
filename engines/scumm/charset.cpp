@@ -462,9 +462,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (_vm->_game.version == 7 && chr == _vm->_newLineCharacter)
-			continue;
-		else if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
+		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
 
 		if (_vm->_game.heversion >= 72) {
@@ -687,11 +685,7 @@ int CharsetRendererV3::getCharWidth(uint16 chr) const {
 void CharsetRendererPC::enableShadow(bool enable) {
 	_shadowColor = 0;
 	_enableShadow = enable;
-
-	if (_vm->_game.version >= 7 && _vm->_useCJKMode)
-		_shadowType = kHorizontalShadowType;
-	else
-		_shadowType = kNormalShadowType;
+	_shadowType = kNormalShadowType;
 }
 
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
@@ -1174,9 +1168,6 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
 	if (is2byte) {
-		if (_vm->_game.version >= 7)
-			enableShadow(true);
-
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_width = _origWidth = _vm->_2byteWidth;
 		_height = _origHeight = _vm->_2byteHeight;
@@ -1972,6 +1963,7 @@ CharsetRendererV7::CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(v
 }
 
 int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	// I am aware of not doing anything with the clipRect here, but I currently see no need to upgrade the old rendering with that.
 	const byte *src = _vm->get2byteCharPtr(chr);
 	buffer += (y * pitch + x);
 	_origWidth = _vm->_2byteWidth;
@@ -1994,6 +1986,7 @@ int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, in
 }
 
 int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
+	// I am aware of not doing anything with the clipRect here, but I currently see no need to upgrade the old rendering with that.
 	if (!prepareDraw(chr))
 		return 0;
 	_width = getCharWidth(chr);

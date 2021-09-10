@@ -313,7 +313,7 @@ public:
 	CharsetRendererV7(ScummEngine *vm);
 	~CharsetRendererV7() override {};
 
-	void printChar(int chr, bool ignoreCharsetMask) override { error("CharsetRendererV7::printChar(): Unexpected legacy function call"); }
+	void printChar(int, bool) override { error("CharsetRendererV7::printChar(): Unexpected call to deprecated function"); }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
 	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
@@ -333,7 +333,7 @@ public:
 	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut() override;
 
-	void printChar(int chr, bool ignoreCharsetMask) override { error("CharsetRendererNut::printChar(): Unexpected legacy function call"); }
+	void printChar(int, bool) override { error("CharsetRendererNut::printChar(): Unexpected call to deprecated function"); }
 
 	void setCurID(int32 id) override;
 	int setFont(int id) override;
