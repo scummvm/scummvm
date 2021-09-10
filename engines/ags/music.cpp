@@ -81,8 +81,6 @@ void Music::playMusic(Common::SeekableReadStream *midi, bool repeat) {
 
 		_parser = parser;
 
-		syncVolume();
-
 		_isLooping = repeat;
 		_isPlaying = true;
 	} else {

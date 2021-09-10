@@ -274,4 +274,11 @@ void AGSEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
+void AGSEngine::syncSoundSettings() {
+	// Digital audio
+	Engine::syncSoundSettings();
+	// MIDI
+	_music->syncVolume();
+}
+
 } // namespace AGS
