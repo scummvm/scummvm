@@ -84,6 +84,25 @@ static const PegasusGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// The Next Generation Disc #31 - July 1997
+	// Mac Addict #12 - August 1997
+	// Publisher is Bandai Digital Entertainment Corporation
+	// File modified date is Mar 29 1997 (v1.0)
+	{
+		{
+			"pegasus",
+			"v1.0 Demo",
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 365585),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO,
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
+		},
+	},
+
+	// Official distribution from Presto website
+	// http://thejourneymanproject.com/presto/journeymanprime/demos.html
+	// File modified date is date is Dec 15 2011
 	{
 		{
 			"pegasus",
