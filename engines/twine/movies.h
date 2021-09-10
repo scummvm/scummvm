@@ -60,7 +60,7 @@ struct FLAFrameDataStruct {
 
 class TwinEEngine;
 
-class FlaMovies {
+class Movies {
 private:
 	TwinEEngine *_engine;
 
@@ -96,7 +96,7 @@ private:
 	void playGIFMovie(const char *flaName);
 
 public:
-	FlaMovies(TwinEEngine *engine);
+	Movies(TwinEEngine *engine);
 
 	/**
 	 * Play FLA movies

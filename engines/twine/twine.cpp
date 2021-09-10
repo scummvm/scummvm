@@ -49,7 +49,7 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/detection.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/holomap.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
@@ -163,7 +163,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_movements = new Movements(this);
 	_interface = new Interface(this);
 	_menu = new Menu(this);
-	_flaMovies = new FlaMovies(this);
+	_flaMovies = new Movies(this);
 	_menuOptions = new MenuOptions(this);
 	_music = new Music(this);
 	_redraw = new Redraw(this);

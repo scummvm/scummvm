@@ -30,7 +30,7 @@
 #include "common/util.h"
 #include "twine/parser/text.h"
 #include "twine/scene/collision.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/scene/grid.h"
 #include "twine/resources/hqr.h"
 #include "twine/scene/movements.h"

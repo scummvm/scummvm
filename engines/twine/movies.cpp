@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -73,7 +73,7 @@ struct FLASampleStruct {
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 
-void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
+void Movies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
 	uint8 *destPtr = (uint8 *)_flaBuffer;
 	uint8 *startOfLine = destPtr;
 
@@ -99,7 +99,7 @@ void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int3
 	}
 }
 
-void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
+void Movies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	const uint16 skip = stream.readUint16LE() * width;
 	const int32 height = stream.readSint16LE();
 
@@ -128,7 +128,7 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	}
 }
 
-void FlaMovies::scaleFla2x() {
+void Movies::scaleFla2x() {
 	uint8 *source = (uint8 *)_flaBuffer;
 	uint8 *dest = (uint8 *)_engine->_imageBuffer.getPixels();
 
@@ -162,7 +162,7 @@ void FlaMovies::scaleFla2x() {
 	}
 }
 
-void FlaMovies::processFrame() {
+void Movies::processFrame() {
 	FLASampleStruct sample;
 
 	_frameData.videoSize = _file.readSint16LE();
@@ -270,9 +270,9 @@ void FlaMovies::processFrame() {
 	}
 }
 
-FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
+Movies::Movies(TwinEEngine *engine) : _engine(engine) {}
 
-void FlaMovies::prepareGIF(int index) {
+void Movies::prepareGIF(int index) {
 	Image::GIFDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(Resources::HQR_FLAGIF_FILE, index);
 	if (stream == nullptr) {
@@ -295,7 +295,7 @@ void FlaMovies::prepareGIF(int index) {
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
-void FlaMovies::playGIFMovie(const char *flaName) {
+void Movies::playGIFMovie(const char *flaName) {
 	if (!Common::File::exists(Resources::HQR_FLAGIF_FILE)) {
 		warning("%s file doesn't exist", Resources::HQR_FLAGIF_FILE);
 		return;
@@ -343,7 +343,7 @@ void FlaMovies::playGIFMovie(const char *flaName) {
 	}
 }
 
-void FlaMovies::playFlaMovie(const char *flaName) {
+void Movies::playFlaMovie(const char *flaName) {
 	assert(_engine->isLBA1());
 	_engine->_sound->stopSamples();
 
@@ -438,7 +438,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	_engine->_sound->stopSamples();
 }
 
-void FlaMovies::playSmkMovie(int index) {
+void Movies::playSmkMovie(int index) {
 	assert(_engine->isLBA2());
 	Video::SmackerDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(TwineResource(Resources::HQR_VIDEO_FILE, index));

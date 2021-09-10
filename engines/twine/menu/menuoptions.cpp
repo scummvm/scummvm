@@ -29,7 +29,7 @@
 #include "savestate.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/scene/gamestate.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
