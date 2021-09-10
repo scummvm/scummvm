@@ -1280,7 +1280,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		if (this != getControlledActor()) {
 			target = getControlledActor();
 		} else {
-			target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
+			target = currentmap->findBestTargetItem(ix, iy, iz - z, dir, dirmode);
 		}
 	}
 
