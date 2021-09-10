@@ -42,8 +42,8 @@ static const PlainGameDescriptor hypnoGames[] = {
 static const ADGameDescription gameDescriptions[] = {
 	{"sinister-six", // Demo from the US release
 	 "Demo",
-	 AD_ENTRY2s("COMBAT.EXE", "15a6b1b3819ef002438df340509b5373", 643471,
-				"SPIDER.EXE", "15a6b1b3819ef002438df340509b5373", 603587),
+	 AD_ENTRY2s("DATA.Z",  "2a9c7cf8920ec794482f0a5873102da5", 1285960,
+				"DCINE1.SMK", "1ff3db09d148e8dd8b56d2e87e7296b8", 493752),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
 	 ADGF_TESTING | ADGF_DEMO,
@@ -86,6 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 static const char *const directoryGlobs[] = {
 	"boyz",
 	"sixdemo",
+	"demo",
 	"factory",
 	"wetlands",
 	"movie",
