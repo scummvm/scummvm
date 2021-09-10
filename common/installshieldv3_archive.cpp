@@ -53,10 +53,12 @@ bool InstallShieldV3::open(const Common::String &filename) {
 	// Let's pull some relevant data from the header
 	_stream->seek(41);
 	uint32 directoryTableOffset = _stream->readUint32LE();
-	/* uint32 directoryTableSize = */ _stream->readUint32LE();
+	/*uint32 directoryTableSize =*/ _stream->readUint32LE();
 	uint16 directoryCount = _stream->readUint16LE();
-	uint32 fileTableOffset = _stream->readUint32LE();
-	/* uint32 fileTableSize = */ _stream->readUint32LE();
+	/*uint32 fileTableOffset =*/ _stream->readUint32LE();
+	/*uint32 fileTableSize =*/ _stream->readUint32LE();
+	Common::Array<Common::String> dirNames;
+	Common::Array<int> dirSizes;
 
 	// We need to have at least one directory in order for the archive to be valid
 	if (directoryCount == 0) {
@@ -64,41 +66,53 @@ bool InstallShieldV3::open(const Common::String &filename) {
 		return false;
 	}
 
-	// TODO: Currently, we only support getting files from the first directory
-	// To that end, get the number of files from that entry
+	// Get the number of files from every directory
 	_stream->seek(directoryTableOffset);
-	uint16 fileCount = _stream->readUint16LE();
-	debug(2, "File count = %d", fileCount);
+	for (int i = 0; i < directoryCount; i++) {
+		uint16 fileCount = _stream->readUint16LE();
+		uint16 chunkSize = _stream->readUint16LE();
 
-	// Following the directory table is the file table with files stored recursively
-	// by directory. Since we're only using the first directory, we can just go
-	// right to that one.
-	_stream->seek(fileTableOffset);
-
-	for (uint16 i = 0; i < fileCount; i++) {
-		FileEntry entry;
-
-		_stream->skip(3); // Unknown
-
-		entry.uncompressedSize = _stream->readUint32LE();
-		entry.compressedSize = _stream->readUint32LE();
-		entry.offset = _stream->readUint32LE();
-
-		_stream->skip(14); // Unknown
-
-		byte nameLength = _stream->readByte();
+		byte nameLength = _stream->readUint16LE();
 		Common::String name;
 		while (nameLength--)
 			name += _stream->readByte();
 
-		_stream->skip(13); // Unknown
-
-		_map[name] = entry;
-
-		debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
-				entry.offset, entry.compressedSize, entry.uncompressedSize);
+		dirNames.push_back(name);
+		dirSizes.push_back(fileCount);
+		debug(2, "Directory = %s, file count = %d", name.c_str(), fileCount);
+		_stream->skip(chunkSize - name.size() - 6);
 	}
 
+	// Following the directory table is the file table with files stored recursively
+	// by directory
+
+	for (int i = 0; i < directoryCount; i++) {
+		for (int j = 0; j < dirSizes[i]; j++) {
+			FileEntry entry;
+
+			_stream->skip(3); // Unknown
+
+			entry.uncompressedSize = _stream->readUint32LE();
+			entry.compressedSize = _stream->readUint32LE();
+			entry.offset = _stream->readUint32LE();
+
+			_stream->skip(14); // Unknown
+
+			byte nameLength = _stream->readByte();
+			Common::String name;
+			while (nameLength--)
+				name += _stream->readByte();
+
+			_stream->skip(13); // Unknown
+
+			if (!dirNames[i].empty())
+				name = dirNames[i] + "\\" + name;
+
+			_map[name] = entry;
+			debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
+					entry.offset, entry.compressedSize, entry.uncompressedSize);
+		}
+	}
 	return true;
 }
 
@@ -126,6 +140,10 @@ const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &pa
 
 Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
+	// Make sure "/" is converted to "\"
+	while (name.contains("/"))
+		Common::replace(name, "/", "\\");
+
 	if (!_stream || !_map.contains(name))
 		return nullptr;
 
