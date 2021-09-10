@@ -268,6 +268,16 @@ int IAGSEngine::FWrite(void *buffer, int32 len, int32 handle) {
 	return _G(pl_file_stream)->Write(buffer, len);
 }
 
+bool IAGSEngine::FSeek(soff_t offset, int origin, int32 handle) {
+	if (handle != _G(pl_file_handle)) {
+		quitprintf("IAGSEngine::FWrite: invalid file handle: %d", handle);
+	}
+	if (!_G(pl_file_stream)) {
+		quit("IAGSEngine::FWrite: file stream not set");
+	}
+	return _G(pl_file_stream)->Seek(offset, (AGS::Shared::StreamSeek)origin);
+}
+
 void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int32 color, const char *text) {
 	// TODO: use generic function from the engine instead of having copy&pasted code here
 	int linespacing = getfontspacing_outlined(font);

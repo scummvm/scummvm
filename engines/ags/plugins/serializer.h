@@ -23,6 +23,7 @@
 #ifndef AGS_PLUGINS_SERIALIZER_H
 #define AGS_PLUGINS_SERIALIZER_H
 
+#include "ags/shared/api/stream_api.h"
 #include "ags/plugins/ags_plugin.h"
 #include "common/serializer.h"
 
@@ -90,6 +91,10 @@ private:
 			_engine->FRead(&value, sizeof(double), _file);
 		else
 			_engine->FWrite(&value, sizeof(double), _file);
+	}
+
+	void unreadInt() {
+		_engine->FSeek(-4, AGS::Shared::kSeekCurrent, _file);
 	}
 };
 

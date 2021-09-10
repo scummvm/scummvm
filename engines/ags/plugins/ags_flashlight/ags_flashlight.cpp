@@ -107,35 +107,39 @@ void AGSFlashlight::syncGame(Serializer &s) {
 	uint32 SaveVersion = SaveMagic;
 	s.syncAsInt(SaveVersion);
 
-	if (s.isLoading() && SaveVersion != SaveMagic)
-		_engine->AbortGame("agsflashlight: bad save.");
+	if (s.isLoading() && SaveVersion != SaveMagic) {
+		// Older versions of AGSFlashlight didn't persist their data.
+		// So in such a case, revert the 4 bytes and skip everything else
+		s.unreadInt();
 
-	s.syncAsInt(g_RedTint);
-	s.syncAsInt(g_GreenTint);
-	s.syncAsInt(g_BlueTint);
+	} else {
+		s.syncAsInt(g_RedTint);
+		s.syncAsInt(g_GreenTint);
+		s.syncAsInt(g_BlueTint);
 
-	s.syncAsInt(g_DarknessLightLevel);
-	s.syncAsInt(g_BrightnessLightLevel);
-	s.syncAsInt(g_DarknessSize);
-	s.syncAsInt(g_DarknessDiameter);
-	s.syncAsInt(g_BrightnessSize);
+		s.syncAsInt(g_DarknessLightLevel);
+		s.syncAsInt(g_BrightnessLightLevel);
+		s.syncAsInt(g_DarknessSize);
+		s.syncAsInt(g_DarknessDiameter);
+		s.syncAsInt(g_BrightnessSize);
 
-	s.syncAsInt(g_FlashlightX);
-	s.syncAsInt(g_FlashlightY);
+		s.syncAsInt(g_FlashlightX);
+		s.syncAsInt(g_FlashlightY);
 
-	s.syncAsInt(g_FlashlightFollowMouse);
+		s.syncAsInt(g_FlashlightFollowMouse);
 
-	s.syncAsInt(g_FollowCharacterId);
-	s.syncAsInt(g_FollowCharacterDx);
-	s.syncAsInt(g_FollowCharacterDy);
-	s.syncAsInt(g_FollowCharacterHorz);
-	s.syncAsInt(g_FollowCharacterVert);
+		s.syncAsInt(g_FollowCharacterId);
+		s.syncAsInt(g_FollowCharacterDx);
+		s.syncAsInt(g_FollowCharacterDy);
+		s.syncAsInt(g_FollowCharacterHorz);
+		s.syncAsInt(g_FollowCharacterVert);
 
-	if (s.isLoading()) {
-		if (g_FollowCharacterId != 0)
-			g_FollowCharacter = _engine->GetCharacter(g_FollowCharacterId);
+		if (s.isLoading()) {
+			if (g_FollowCharacterId != 0)
+				g_FollowCharacter = _engine->GetCharacter(g_FollowCharacterId);
 
-		g_BitmapMustBeUpdated = true;
+			g_BitmapMustBeUpdated = true;
+		}
 	}
 }
 

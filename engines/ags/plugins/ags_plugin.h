@@ -378,6 +378,8 @@ public:
 	AGSIFUNC(int)  FWrite(void *, int32, int32);
 	// similar to fread - buffer, size, filehandle
 	AGSIFUNC(int)  FRead(void *, int32, int32);
+	// similar to fseek
+	AGSIFUNC(bool)FSeek(soff_t offset, int origin, int32 handle);
 	// print text, wrapping as usual
 	AGSIFUNC(void) DrawTextWrapped(int32 x, int32 y, int32 width, int32 font, int32 color, const char *text);
 	// set the current active 'screen'
