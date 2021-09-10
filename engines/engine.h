@@ -631,7 +631,8 @@ public:
 	}
 
 	/**
-	 * Return the slot that should be used for autosaves.
+	 * Return the slot that should be used for autosaves, or -1 for engines that
+	 * don't support autosave.
 	 *
 	 * @note	This should match the meta engine getAutosaveSlot() method.
 	 */
