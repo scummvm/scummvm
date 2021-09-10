@@ -305,7 +305,8 @@ public:
 	SaveStateList listSaves(const char *target, bool saveMode) const;
 
 	/**
-	 * Return the slot number that is used for autosaves.
+	 * Return the slot number that is used for autosaves, or -1 for engines that
+	 * don't support autosave.
 	 *
 	 * @note This should match the engine getAutosaveSlot() method.
 	 */
