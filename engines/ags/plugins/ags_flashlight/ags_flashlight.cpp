@@ -108,7 +108,8 @@ void AGSFlashlight::syncGame(Serializer &s) {
 	s.syncAsInt(SaveVersion);
 
 	if (s.isLoading() && SaveVersion != SaveMagic) {
-		// Older versions of AGSFlashlight didn't persist their data.
+		// The real AGSFlashlight, or at least the one included with
+		// Maniac Mansion Deluxe, doesn't persist any fields.
 		// So in such a case, revert the 4 bytes and skip everything else
 		s.unreadInt();
 
@@ -200,6 +201,11 @@ void AGSFlashlight::SetFlashlightDarknessSize(ScriptMethodParams &params) {
 		g_BitmapMustBeUpdated = true;
 		g_DarknessSize = Size;
 		g_DarknessDiameter = g_DarknessSize * 2;
+
+		if (g_BrightnessSize > g_DarknessSize) {
+			ScriptMethodParams p(g_DarknessSize);
+			SetFlashlightBrightnessSize(p);
+		}
 	}
 }
 
@@ -230,6 +236,11 @@ void AGSFlashlight::SetFlashlightBrightnessSize(ScriptMethodParams &params) {
 	if (Size != g_BrightnessSize) {
 		g_BitmapMustBeUpdated = true;
 		g_BrightnessSize = Size;
+
+		if (g_DarknessSize < g_BrightnessSize) {
+			ScriptMethodParams p(g_BrightnessSize);
+			SetFlashlightDarknessSize(p);
+		}
 	}
 }
 

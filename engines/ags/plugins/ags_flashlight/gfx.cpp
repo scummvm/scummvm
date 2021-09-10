@@ -273,7 +273,7 @@ void AGSFlashlight::CreateLightBitmap() {
 		*pixel++ = (uint32)color;
 
 	// Draw light circle if wanted.
-	if (g_DarknessSize > 0) {
+	if (g_DarknessSize > 0 && g_DarknessLightLevel != g_BrightnessLightLevel) {
 		uint32 current_value = 0;
 		color = (255 - (int)((float)g_BrightnessLightLevel * 2.55f));
 		uint32 targetcolor = ((255 - (int)((float)g_DarknessLightLevel * 2.55f)));
