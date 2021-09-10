@@ -335,7 +335,7 @@ void CurrentMap::removeTargetItem(const Item *item) {
 }
 
 
-Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionMode dirmode) {
+Item *CurrentMap::findBestTargetItem(int32 x, int32 y, int32 z, Direction dir, DirectionMode dirmode) {
 	// "best" means:
 	// Shape info SI_OCCL
 	// isNPC
@@ -377,7 +377,8 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionM
 
 		int xdiff = abs(x - ix);
 		int ydiff = abs(y - iy);
-		int dist = MAX(xdiff, ydiff);
+		int zdiff = abs(z - iz);
+		int dist = MAX(MAX(xdiff, ydiff), zdiff);
 
 		if (dist < bestdist) {
 			bestitem = item;
