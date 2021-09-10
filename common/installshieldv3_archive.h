@@ -59,8 +59,6 @@ private:
 
 	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 	FileMap _map;
-
-	Common::String convertPath(const Common::String &name);
 };
 
 } // End of namespace Common
