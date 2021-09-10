@@ -166,6 +166,11 @@ public:
 	 * Save a savegame
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
+	 * Synchronize user volume settings
+	 */
+	void syncSoundSettings() override;
 };
 
 extern AGSEngine *g_vm;
