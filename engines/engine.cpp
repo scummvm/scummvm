@@ -603,6 +603,9 @@ void Engine::saveAutosaveIfEnabled() {
 	// (as is the case with the AGS engine for example, or when showing a prompt).
 	if (_autoSaving || _autosaveInterval == 0)
 		return;
+	const int autoSaveSlot = getAutosaveSlot();
+	if (autoSaveSlot < 0)
+		return;
 	_autoSaving = true;
 
 	bool saveFlag = canSaveAutosaveCurrently();
@@ -612,7 +615,7 @@ void Engine::saveAutosaveIfEnabled() {
 	if (saveFlag)
 		saveFlag = warnBeforeOverwritingAutosave();
 
-	if (saveFlag && saveGameState(getAutosaveSlot(), autoSaveName, true).getCode() != Common::kNoError) {
+	if (saveFlag && saveGameState(autoSaveSlot, autoSaveName, true).getCode() != Common::kNoError) {
 		// Couldn't autosave at the designated time
 		g_system->displayMessageOnOSD(_("Error occurred making autosave"));
 		saveFlag = false;
