@@ -1578,7 +1578,7 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBA);
-	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELLIMG, RESSHQR_TWINSEN_ZOE_SENDELLPAL);
+	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(COLOR_WHITE);
 	engine->_text->_drawTextBoxBackground = false;

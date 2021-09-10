@@ -568,6 +568,22 @@ enum InventoryItems {
 	MaxInventoryItems = 28
 };
 
+struct TwineResource {
+	const char *hqr;
+	const int32 index;
+
+	constexpr TwineResource(const char *_hqr, int32 _index) : hqr(_hqr), index(_index) {
+	}
+};
+
+struct TwineImage {
+	TwineResource image;
+	TwineResource palette;
+
+	constexpr TwineImage(const char *hqr, int32 index, int32 paletteIndex = -1) : image(hqr, index), palette(hqr, paletteIndex) {
+	}
+};
+
 // lba2 does from 0 to 0x1000
 // lba1 angles
 // TODO: wrap in a class to be able to handle lba1 and lba2

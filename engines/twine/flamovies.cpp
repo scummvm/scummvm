@@ -34,7 +34,9 @@
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/grid.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
+#include "video/smk_decoder.h"
 
 namespace TwinE {
 
@@ -342,6 +344,7 @@ void FlaMovies::playGIFMovie(const char *flaName) {
 }
 
 void FlaMovies::playFlaMovie(const char *flaName) {
+	assert(_engine->isLBA1());
 	_engine->_sound->stopSamples();
 
 	Common::String fileNamePath = Common::String::format("%s", flaName);
@@ -433,6 +436,48 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	}
 
 	_engine->_sound->stopSamples();
+}
+
+void FlaMovies::playSmkMovie(int index) {
+	assert(_engine->isLBA2());
+	Video::SmackerDecoder decoder;
+	Common::SeekableReadStream *stream = HQR::makeReadStream(TwineResource(Resources::HQR_VIDEO_FILE, index));
+	if (stream == nullptr) {
+		warning("Failed to find smacker video %i", index);
+		return;
+	}
+	if (!decoder.loadStream(stream)) {
+		warning("Failed to load smacker video %i", index);
+		return;
+	}
+	decoder.start();
+
+	for (;;) {
+		if (decoder.endOfVideo()) {
+			break;
+		}
+		FrameMarker frame(_engine);
+		_engine->_input->readKeys();
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			break;
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frameSurf = decoder.decodeNextFrame();
+			if (!frameSurf) {
+				continue;
+			}
+			if (decoder.hasDirtyPalette()) {
+				_engine->setPalette(0, 256, decoder.getPalette());
+			}
+
+			Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
+			const Common::Rect frameBounds(0, 0, frameSurf->w, frameSurf->h);
+			target.transBlitFrom(*frameSurf, frameBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+		}
+	}
+
+	decoder.close();
 }
 
 } // namespace TwinE

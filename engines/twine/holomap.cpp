@@ -121,7 +121,8 @@ void Holomap::clearHolomapPosition(int32 locationIdx) {
 }
 
 void Holomap::loadHolomapGFX() {
-	_engine->_screens->loadCustomPalette(RESSHQR_HOLOPAL);
+	constexpr TwineResource resource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPAL);
+	_engine->_screens->loadCustomPalette(resource);
 
 	int32 j = 576;
 	for (int32 i = 0; i < 96; i += 3, j += 3) {

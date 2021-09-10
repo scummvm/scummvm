@@ -48,33 +48,17 @@ namespace TwinE {
 #define RESSHQR_HOLOTWINMDL 9
 #define RESSHQR_HOLOARROWMDL 10
 #define RESSHQR_HOLOTWINARROWMDL 11
-#define RESSHQR_RELLENTIMG 12
-#define RESSHQR_RELLENTPAL 13
-#define RESSHQR_MENUIMG 14
-#define RESSHQR_INTROSCREEN1IMG 15
-#define RESSHQR_INTROSCREEN1PAL 16
-#define RESSHQR_INTROSCREEN2IMG 17
-#define RESSHQR_INTROSCREEN2PAL 18
-#define RESSHQR_INTROSCREEN3IMG 19
-#define RESSHQR_INTROSCREEN3PAL 20
+
 #define RESSHQR_GAMEOVERMDL 21
 
 #define RESSHQR_ALARMREDPAL 22
 #define RESSHQR_FLAINFO 23
 #define RESSHQR_DARKPAL 24
-#define RESSHQR_TWINSEN_ZOE_SENDELLIMG 25
-#define RESSHQR_TWINSEN_ZOE_SENDELLPAL 26
-#define RESSHQR_ADELINEIMG 27
-#define RESSHQR_ADELINEPAL 28
 
 #define RESSHQR_HOLOPOINTMDL 29
 #define RESSHQR_HOLOPOINTANIM 30
 
-#define RESSHQR_LBAIMG 49
-#define RESSHQR_LBAPAL 50
 #define RESSHQR_PLASMAEFFECT 51
-#define RESSHQR_EAIMG 52
-#define RESSHQR_EAPAL 53
 
 #define FLA_DRAGON3 "dragon3"
 #define FLA_INTROD "introd"
@@ -229,6 +213,8 @@ public:
 	static constexpr const char *HQR_LBA_BRK_FILE = "lba_brk.hqr";
 	// scenes (active area content (actors, scripts, etc.))
 	static constexpr const char *HQR_SCENE_FILE = "scene.hqr";
+	// full screen images (lba2)
+	static constexpr const char *HQR_SCREEN_FILE = "screen.hqr";
 	// sprites
 	static constexpr const char *HQR_SPRITES_FILE = "sprites.hqr";
 	/**
@@ -250,6 +236,51 @@ public:
 	static constexpr const char *HQR_FLASAMP_FILE = "flasamp.hqr";
 	static constexpr const char *HQR_MIDI_MI_DOS_FILE = "midi_mi.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_FILE = "midi_mi_win.hqr";
+
+	static constexpr const char *HQR_VIDEO_FILE = "video.hqr"; // lba2 - smk files
+
+	TwineImage adelineLogo() const {
+		if (_engine->isLBA1()) {
+			return TwineImage(Resources::HQR_RESS_FILE, 27, 28);
+		}
+		return TwineImage(Resources::HQR_SCREEN_FILE, 0, 1);
+	}
+
+	TwineImage lbaLogo() const {
+		if (_engine->isLBA1()) {
+			return TwineImage(Resources::HQR_RESS_FILE, 49, 50);
+		}
+		return TwineImage(Resources::HQR_SCREEN_FILE, 60, 61);
+	}
+
+	TwineImage eaLogo() const {
+		if (_engine->isLBA1()) {
+			return TwineImage(Resources::HQR_RESS_FILE, 52, 53);
+		}
+		return TwineImage(Resources::HQR_SCREEN_FILE, 74, 75);
+	}
+
+	TwineImage activisionLogo() const {
+		assert(_engine->isLBA2());
+		return TwineImage(Resources::HQR_SCREEN_FILE, 72, 73);
+	}
+
+	TwineImage virginLogo() const {
+		assert(_engine->isLBA2());
+		return TwineImage(Resources::HQR_SCREEN_FILE, 76, 77);
+	}
+
+	TwineImage relentLogo() const {
+		assert(_engine->isLBA1());
+		return TwineImage(Resources::HQR_RESS_FILE, 12, 13);
+	}
+
+	TwineImage menuBackground() const {
+		if (_engine->isLBA1()) {
+			return TwineImage(Resources::HQR_RESS_FILE, 14, -1);
+		}
+		return TwineImage(Resources::HQR_SCREEN_FILE, 4, 5);
+	}
 };
 
 } // namespace TwinE

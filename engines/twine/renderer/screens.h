@@ -78,7 +78,7 @@ public:
 	 * Load a custom palette
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 */
-	void loadCustomPalette(int32 index);
+	void loadCustomPalette(const TwineResource &resource);
 
 	/** Load and display Main Menu image */
 	void loadMenuImage(bool fadeIn = true);
@@ -89,7 +89,7 @@ public:
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param fadeIn if we fade in before using the palette
 	 */
-	void loadImage(int32 index, int32 paletteIndex, bool fadeIn = true);
+	void loadImage(TwineImage image, bool fadeIn = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
@@ -97,7 +97,7 @@ public:
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param seconds number of seconds to delay
 	 */
-	bool loadImageDelay(int32 index, int32 paletteIndex, int32 seconds);
+	bool loadImageDelay(TwineImage image, int32 seconds);
 
 	/**
 	 * Fade image in
