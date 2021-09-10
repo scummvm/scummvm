@@ -163,7 +163,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = true;
 			break;
 		case 3:
-			_haveMsg = (_game.version >= 7) ? 1 : 0xFF;
+			_haveMsg = 0xFF;
 			_keepText = false;
 			_msgCount = 0;
 			endLoop = true;
@@ -433,16 +433,6 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-#ifdef ENABLE_SCUMM_7_8
-	byte subtitleBuffer[200];
-	byte *subtitleLine = subtitleBuffer;
-	Common::Point subtitlePos;
-
-	if (_game.version >= 7) {
-		((ScummEngine_v7 *)this)->processSubtitleQueue();
-	}
-#endif
-
 	if (_game.heversion >= 70 && _haveMsg == 3) {
 		stopTalk();
 		return;
@@ -543,20 +533,12 @@ void ScummEngine::CHARSET_1() {
 	_talkDelay = (VAR_DEFAULT_TALK_DELAY != 0xFF) ? VAR(VAR_DEFAULT_TALK_DELAY) : 60;
 
 	if (!_keepText) {
-		if (_game.version >= 7) {
-#ifdef ENABLE_SCUMM_7_8
-			((ScummEngine_v7 *)this)->clearSubtitleQueue();
-			_nextLeft = _string[0].xpos;
-			_nextTop = _string[0].ypos + _screenTop;
-#endif
-		} else {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns)
 				towns_restoreCharsetBg();
 			else
 #endif
 				restoreCharsetBg();
-		}
 		_msgCount = 0;
 	} else if (_game.version <= 2) {
 		_talkDelay += _msgCount * _defaultTalkDelay;
@@ -597,19 +579,13 @@ void ScummEngine::CHARSET_1() {
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
-			_haveMsg = (_game.version >= 7) ? 2 : 1;
+			_haveMsg = 1;
 			_keepText = false;
 			_msgCount = 0;
 			break;
 		}
 
 		if (c == 13) {
-/*#ifdef ENABLE_SCUMM_7_8
-			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
-				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
-				subtitleLine = subtitleBuffer;
-			}
-#endif*/
 			if (!newLine())
 				break;
 			continue;
@@ -635,44 +611,32 @@ void ScummEngine::CHARSET_1() {
 			drawTextBox = true;
 		}
 
-		if (_game.version >= 7) {
-#ifdef ENABLE_SCUMM_7_8
-			if (subtitleLine == subtitleBuffer) {
-				subtitlePos.x = _charset->_left;
-				// BlastText position is relative to the top of the screen, adjust y-coordinate
-				subtitlePos.y = _charset->_top - _screenTop;
+		if (c & 0x80 && _useCJKMode) {
+			if (is2ByteCharacter(_language, c)) {
+				byte *buffer = _charsetBuffer + _charsetBufPos;
+				c += *buffer++ * 256; //LE
+				_charsetBufPos = buffer - _charsetBuffer;
 			}
-			*subtitleLine++ = c;
-			*subtitleLine = '\0';
-#endif
-		} else {
-			if (c & 0x80 && _useCJKMode) {
-				if (is2ByteCharacter(_language, c)) {
-					byte *buffer = _charsetBuffer + _charsetBufPos;
-					c += *buffer++ * 256; //LE
-					_charsetBufPos = buffer - _charsetBuffer;
-				}
-			}
-			if (_game.version <= 3) {
-				_charset->printChar(c, false);
-				_msgCount += 1;
-			} else {
-				if (_game.features & GF_16BIT_COLOR) {
-					// HE games which use sprites for subtitles
-				} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
-					// Special case for HE games
-				} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
-					// Special case for Loom (CD), since it only uses CD audio.for sound
-				} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(*_sound->_talkChannelHandle))) {
-					// Subtitles are turned off, and there is a voice version
-					// of this message -> don't print it.
-				} else {
-					_charset->printChar(c, false);
-				}
-			}
-			_nextLeft = _charset->_left;
-			_nextTop = _charset->_top;
 		}
+		if (_game.version <= 3) {
+			_charset->printChar(c, false);
+			_msgCount += 1;
+		} else {
+			if (_game.features & GF_16BIT_COLOR) {
+				// HE games which use sprites for subtitles
+			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+				// Special case for HE games
+			} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
+				// Special case for Loom (CD), since it only uses CD audio.for sound
+			} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(*_sound->_talkChannelHandle))) {
+				// Subtitles are turned off, and there is a voice version
+				// of this message -> don't print it.
+			} else {
+				_charset->printChar(c, false);
+			}
+		}
+		_nextLeft = _charset->_left;
+		_nextTop = _charset->_top;
 
 		if (drawTextBox)
 			mac_drawIndy3TextBox();
@@ -689,12 +653,6 @@ void ScummEngine::CHARSET_1() {
 	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
 		memcpy(&_curStringRect, &_charset->_str, sizeof(Common::Rect));
 #endif
-/*
-#ifdef ENABLE_SCUMM_7_8
-	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
-		((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
-	}
-#endif*/
 }
 
 void ScummEngine::drawString(int a, const byte *msg) {
@@ -710,7 +668,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	convertMessageToString(msg, buf, sizeof(buf));
 
-	if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
+	if (_game.version >= 4 && _game.heversion == 0 && _language == Common::HE_ISR) {
 		fakeBidiString(buf, false);
 	}
 

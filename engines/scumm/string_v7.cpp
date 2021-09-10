@@ -89,10 +89,12 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 		} else if (!_newStyle && *str == '\xff') {
 			++str;
 			--numBytesMax;
-			if (*str == 0 || *str == 3 || *str == 9 || *str == 1 || *str == 2 /*|| *str == 8*/)
+			if (*str == 0 || *str == 3 || *str == 9 || *str == 1 || *str == 2)
 				return width;
-			// No handling for this, atm, SCUMM7 does not have these anyway
-			assert(*str != 8);
+			// No handling for this, we shouldn't arrive here. FT still has the
+			// type 10 commmands for actor speech, but we should have handled them
+			// already...
+			assert(0);
 		} else if (*str != '\r' && !(_newStyle && *str == _lineBreakMarker)) {
 			width += _gr->getCharWidth((uint8)*str);
 		}
@@ -350,7 +352,7 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		} else if (flags & kStyleAlignRight) {
 			if (x > clipRect.right)
 				x = clipRect.right;
-			if (x < clipRect.left + maxWidth);
+			if (x < clipRect.left + maxWidth)
 				x = clipRect.left + maxWidth;
 		} else {
 			if (x > clipRect.right - maxWidth)
@@ -545,11 +547,6 @@ void ScummEngine_v7::clearSubtitleQueue() {
 }
 
 void ScummEngine_v7::CHARSET_1() {
-	if (_game.id == GID_FT) {
-		ScummEngine::CHARSET_1();
-		return;
-	}
-
 	processSubtitleQueue();
 
 	if (!_haveMsg)
