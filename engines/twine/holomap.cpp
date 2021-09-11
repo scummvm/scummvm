@@ -21,6 +21,7 @@
  */
 
 #include "twine/holomap.h"
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/stream.h"
@@ -149,10 +150,6 @@ void Holomap::loadHolomapGFX() {
 	_holomapPaletteIndex = 0;
 }
 
-static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
-	return (int)*(const int16 *)a1 - (int)*(const int16 *)a2;
-}
-
 void Holomap::prepareHolomapSurface(Common::SeekableReadStream *holomapSurfaceStream) {
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
@@ -225,7 +222,7 @@ void Holomap::prepareHolomapPolygons() {
 	assert(holomapSortArrayIdx == ARRAYSIZE(_holomapSort));
 	assert(holomapSurfaceArrayIdx == ARRAYSIZE(_holomapSurface));
 	assert(_projectedSurfaceIndex == ARRAYSIZE(_projectedSurfacePositions));
-	qsort(_holomapSort, ARRAYSIZE(_holomapSort), sizeof(HolomapSort), sortHolomapSurfaceCoordsByDepth);
+	Common::sort(_holomapSort, _holomapSort + ARRAYSIZE(_holomapSort), [](const HolomapSort &a, const HolomapSort &b) { return a.z < b.z; });
 }
 
 bool Holomap::isTriangleVisible(const Vertex *vertices) const {
