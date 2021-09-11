@@ -1675,7 +1675,8 @@ msgstr ""
 
 #: gui/options.cpp:2441
 msgid "Closing options dialog will stop the server."
-msgstr "Bij het sluiten van de Opties dialoogvenster zal ook de server stoppen."
+msgstr ""
+"Bij het sluiten van de Opties dialoogvenster zal ook de server stoppen."
 
 #: gui/options.cpp:2453
 msgid "Use Text to speech"
