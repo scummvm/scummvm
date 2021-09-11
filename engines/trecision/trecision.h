@@ -65,6 +65,11 @@ class AnimTypeManager;
 #define MAXINVENTORY    	  150            // Inventory Items
 #define MAXSAVEFILE		12
 
+enum TrecisionGameId {
+	GID_ArkOfTime = 0,
+	GID_NightLong = 1
+};
+
 enum TrecisionMessageIds {
 	kMessageSavePosition = 9,
 	kMessageEmptySpot = 10,
@@ -143,6 +148,8 @@ class TrecisionEngine : public Engine {
 	void readObj(Common::SeekableReadStream *stream);
 	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
 
+	TrecisionGameId _gameId;
+
 	char *_textArea;
 	uint16 _curScriptFrame[10];
 	char *_textPtr;
@@ -160,6 +167,7 @@ public:
 
 	// ScummVM
 	Common::Error run() override;
+	TrecisionGameId getGameId() const { return _gameId; }
 	bool isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
 	bool isAmiga() const { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool hasFeature(EngineFeature f) const override;

@@ -25,6 +25,7 @@
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor trecisionGames[] = {
+	{"aot", "Ark of Time"},
 	{"nl", "Nightlong: Union City Conspiracy"},
 	{0, 0}
 };
@@ -194,7 +195,18 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-
+	{
+		"aot",
+		_s("Missing game code"),
+		{
+			{"dialogue.dat", 0, "afc71fe29b1be3a9b145b8d61dfa4539", 166155130},
+			{"sentence.dat", 0, "f38afcd22e7de14f9a2343e911eaa126", 75668232},
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
 	AD_TABLE_END_MARKER
 };
 
