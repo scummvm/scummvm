@@ -71,8 +71,10 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	int srcFontNum = get_outline_font(fontNumber);
 	ALFONT_FONT *srcFont = nullptr;
 	if (srcFontNum != FONT_OUTLINE_NONE) {
+		// Get the font without outline (if it's loaded) for use in
+		// character widths, so it will match when non-outlined font
+		// is drawn on top of it.
 		srcFont = _fontData[srcFontNum].AlFont;
-		assert(srcFont);
 	}
 
 	// Y - 1 because it seems to get drawn down a bit
