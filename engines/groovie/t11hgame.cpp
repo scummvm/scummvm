@@ -63,12 +63,44 @@ void T11hGame::opMouseTrap() {
 	// variable 24 is the mouse?
 	//_scriptVariables[24] = 2;
 
-	// value of 0 is V, 1 is <, 2 is ^, 3 is >
-	// variable 23 is the outside piece
-	_scriptVariables[23] = 1;
-	// variable slot is the space number + 25, the left corner (Stauf's goal) is space 1, above that is space 2, the center is 13, and the right corner (goal) is space 25
-	for (int i = 27; i <= 49; i++) {
-		_scriptVariables[i] = 3;
+	switch (_scriptVariables[2]) {
+	case 0:
+		warning("mouse trap _scriptVariables[2] is 0 not implemented yet");
+		break;
+	case 1: // init board
+		// value of 0 is V, 1 is <, 2 is ^, 3 is >
+		// variable 23 is the outside piece
+		_scriptVariables[23] = _random.getRandomNumber(3);
+		// variable slot is the space number + 25, the left corner (Stauf's goal) is space 1, above that is space 2, the center is 13, and the right corner (goal) is space 25
+		for (int i = 27; i <= 49; i++) {
+			_scriptVariables[i] = _random.getRandomNumber(3);
+		}
+		break;
+	case 2: // before player choose move floor, set the banned move
+	{
+		int clicked = int(_scriptVariables[0]) * 5 + int(_scriptVariables[1]) + 1;
+		_scriptVariables[clicked + 50] = 0;
+		break;
+	}
+	case 3: // after player moving floor
+		// a bunch of hardcoded conditionals to copy variables and set the banned move
+		// this probably also sets a variable to allow the player to move the mouse, and checks for win/lose
+		break;
+	case 4: // 4 is not in the switch/case according to Ghidra
+		warning("mouse trap _scriptVariables[2] is 4? this shouldn't happen");
+		break;
+	case 5: // maybe player moving mouse
+		break;
+	case 6: // Stauf moving floor?
+		break;
+	case 7: // maybe Stauf moving mouse
+		break;
+	case 8: // samantha making a move
+		break;
+
+	default:
+		warning((Common::String("mouse trap _scriptVariables[2] is ") + int(_scriptVariables[2]) + "? this shouldn't happen").c_str());
+		break;
 	}
 }
 
