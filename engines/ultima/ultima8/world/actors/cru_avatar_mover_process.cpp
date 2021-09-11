@@ -67,7 +67,7 @@ void CruAvatarMoverProcess::run() {
 		if (_avatarAngle < 0) {
 			_avatarAngle = Direction_ToCentidegrees(avatar->getDir());
 		}
-		if (!hasMovementFlags(MOVE_FORWARD | MOVE_BACK | MOVE_JUMP | MOVE_STEP)) {
+		if (!hasMovementFlags(MOVE_FORWARD | MOVE_JUMP | MOVE_STEP)) {
 			// See comment on _avatarAngle in header about these constants
 			if (hasMovementFlags(MOVE_TURN_LEFT)) {
 				if (hasMovementFlags(MOVE_RUN))
@@ -509,7 +509,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		return;
 
 	//debug(6, "Cru avatar step: picked action %d dir %d (test result %d)", action, direction, res);
-	waitFor(avatar->doAnim(action, direction));
+	avatar->doAnim(action, direction);
 }
 
 void CruAvatarMoverProcess::tryAttack() {
