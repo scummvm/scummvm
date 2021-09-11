@@ -69,7 +69,7 @@ const byte t7gMidiInitScript[] = {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(UINT32_MAX), _staufsMove(NULL), _lastCursor(0xff),
+	_videoFile(NULL), _videoRef(UINT_MAX), _staufsMove(NULL), _lastCursor(0xff),
 	_version(version), _random("GroovieScripts"), _tlcGame(0), _t11hGame(0) {
 
 	// Initialize the opcode set depending on the engine version
@@ -696,7 +696,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 		// Close the previous video file
 		if (_videoFile) {
-			_videoRef = UINT32_MAX;
+			_videoRef = UINT_MAX;
 			delete _videoFile;
 		}
 
@@ -755,7 +755,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// Close the file
 			delete _videoFile;
 			_videoFile = NULL;
-			_videoRef = UINT32_MAX;
+			_videoRef = UINT_MAX;
 
 			// Clear the input events while playing the video
 			_eventMouseClicked = 0;
@@ -780,7 +780,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 }
 
 bool Script::playBackgroundSound(uint32 fileref, uint32 loops) {
-	if (fileref == -1) {
+	if (fileref == UINT_MAX) {
 		return false;
 	}
 
@@ -861,7 +861,7 @@ void Script::o_hotspot_rect() {
 	// TLC: The regions for many questions are in an extra database
 	if (_version == kGroovieTLC && left == 0 && top == 0 && right == 0 && bottom == 0 && _tlcGame != NULL) {
 		if (_tlcGame->getRegionNext(left, top, right, bottom) < 0) {
-			debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RECT(x,x,x,x) @0x%04X cursor=%d SKIPPED", left, top, right, bottom, address, cursor);
+			debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d SKIPPED", left, top, right, bottom, address, cursor);
 			return;
 		}
 	}
@@ -1695,7 +1695,6 @@ void Script::o_setvideoorigin() {
 	_bitflags |= 1 << 7;
 
 	debugC(1, kDebugScript, "Groovie::Script: SetVideoOrigin(0x%04X,0x%04X) (%d, %d)", origX, origY, origX, origY);
-	debugC(1, kDebugVideo, "Groovie::Script: SetVideoOrigin(0x % 04X, 0x % 04X) (%d, %d)", origX, origY, origX, origY);
 	_vm->_videoPlayer->setOrigin(origX, origY);
 }
 

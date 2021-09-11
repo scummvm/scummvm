@@ -671,7 +671,7 @@ void TlcGame::opFlags() {
 				_tatFlags[x][y] = 0;
 			}
 		}
-		debugC(1, kDebugTlcGame, "Tlc:TatFlags: Initialized fields", x, y);
+		debugC(1, kDebugTlcGame, "Tlc:TatFlags: Initialized fields (%d, %d)", x, y);
 		break;
 
 	// Get and set flags
@@ -709,18 +709,14 @@ void TlcGame::opFlags() {
 }
 
 
-void TlcGame::debugTatFlags(int y, int y2) {
-	Common::String s = "Tlc:TatFlags: ";
+void TlcGame::debugTatFlags(int y1, int y2) {
+	Common::String s1, s2;
 	for (int x = 0; x < 14; x++) {
-		s += int(_tatFlags[x][y]);
-	}
-	y = y2;
-	s += "  ";
-	for (int x = 0; x < 14; x++) {
-		s += int(_tatFlags[x][y]);
+		s1 += int(_tatFlags[x][y1]);
+		s2 += int(_tatFlags[x][y2]);
 	}
 
-	debugC(5, kDebugTlcGame, s.c_str());
+	debugC(5, kDebugTlcGame, "Tlc:TatFlags: %s  %s", s1.c_str(), s2.c_str());
 }
 
 
