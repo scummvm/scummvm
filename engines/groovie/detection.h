@@ -39,7 +39,6 @@ struct GroovieGameDescription {
 	ADGameDescription desc;
 
 	EngineVersion version; // Version of the engine
-	int indexEntry; // The index of the entry in disk.1 for V2 games
 };
 
 } // End of namespace Groovie

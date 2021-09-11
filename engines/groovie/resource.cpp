@@ -47,11 +47,11 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 		return NULL;
 	}
 
-	debugC(1, kDebugResource, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size);
+	debugC(1, kDebugResource, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size, resInfo.disks);
 
 	// Does it exist?
 	if (!Common::File::exists(_gjds[resInfo.gjd])) {
-		error("Groovie::Resource: %s not found", _gjds[resInfo.gjd].c_str());
+		error("Groovie::Resource: %s not found (resInfo.disks: %d)", _gjds[resInfo.gjd].c_str(), resInfo.disks);
 		return NULL;
 	}
 

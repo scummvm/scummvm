@@ -210,42 +210,14 @@ Common::Error GroovieEngine::run() {
 	syncSoundSettings();
 
 	// Get the name of the main script
-	Common::String filename = _gameDescription->desc.filesDescriptions[0].fileName;
+	Common::String filename;
 	if (_gameDescription->version == kGroovieT7G) {
+		filename = "script.grv";
 		// Run The 7th Guest's demo if requested
 		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode"))
 			filename = "demo.grv";
-		else if (getPlatform() == Common::kPlatformMacintosh)
-			filename = "script.grv"; // Stored inside the executable's resource fork
 	} else {
-		// Open the disk index
-		Common::File disk;
-		if (!disk.open(filename)) {
-			error("Couldn't open %s", filename.c_str());
-			return Common::kNoGameDataFoundError;
-		}
-
-		// Search the entry
-		bool found = false;
-		int index = 0;
-		while (!found && !disk.eos()) {
-			Common::String line = disk.readLine();
-			if (line.hasPrefix("title: ")) {
-				// A new entry
-				index++;
-			} else if (line.hasPrefix("boot: ") && index == _gameDescription->indexEntry) {
-				// It's the boot of the entry we're looking for,
-				// get the script filename
-				filename = line.c_str() + 6;
-				found = true;
-			}
-		}
-
-		// Couldn't find the entry
-		if (!found) {
-			error("Couldn't find entry %d in %s", _gameDescription->indexEntry, filename.c_str());
-			return Common::kUnknownError;
-		}
+		filename = _gameDescription->desc.filesDescriptions[0].fileName;
 	}
 
 	// Check the script file extension

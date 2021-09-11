@@ -67,7 +67,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS,
 			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
-		kGroovieT7G, 0
+		kGroovieT7G
 	},
 
 	// The 7th Guest Mac English
@@ -78,266 +78,124 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
 			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
-		kGroovieT7G, 0
+		kGroovieT7G
 	},
-
-#if 0
-	// These entries should now be identical to the first T7G Mac entry after
-	// changing the app to only use the data part of the resource fork. They
-	// are left disabled here as a reference.
-
-	// The 7th Guest Mac English (Aztec single disc)
-	{
-		{
-			"t7g", "",
-			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
-		},
-		kGroovieT7G, 0
-	},
-
-	// The 7th Guest Mac English (Aztec bundle, provided by Thefinaleofseem)
-	{
-		{
-			"t7g", "",
-			AD_ENTRY1s("T7GMac", "0d595d4b44ae1814082938d051e5174e", 1830783),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
-		},
-		kGroovieT7G, 0
-	},
-#endif
 
 	// The 7th Guest DOS Russian (Akella)
 	{
 		{
 			"t7g", "",
-			{
-				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
-				{ "intro.gjd", 0, NULL, 31711554},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
+						"intro.gjd", NULL, 31711554),
 			Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS,
 			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
-		kGroovieT7G, 0
+		kGroovieT7G
 	},
 
+	// The 7th Guest iOS English
 	{
 		{
 			"t7g", "",
-			{
-				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
-				{ "SeventhGuest", 0, NULL, -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
+						"SeventhGuest", NULL, -1),
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
 			GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
-		kGroovieT7G, 0
+		kGroovieT7G
 	},
 
-	// The 11th Hour DOS English
-	{
-		{
-			"11h", "CD-ROM",
-			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	{
-		{
-			"11h", "deu",
-			AD_ENTRY1s("disk.1", "3d5133fc457e80b80591086dce283792", 76),
-			Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	// The 11th Hour Macintosh English
+	// The 11th Hour DOS/Windows English (Available on Steam)
 	{
 		{
 			"11h", "",
-			AD_ENTRY1s("disk.1", "4c1d0549f544f052fba2b7a9aebd1077", 220),
+			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
+						"introd1.gjd", NULL, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
-		kGroovieT11H, 1
+		kGroovieT11H
 	},
 
-	// The 11th Hour Macintosh English
-	{
-		{
-			"11h", "",
-			AD_ENTRY2s("disk.1",					"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "The 11th Hour Installer",	"bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	// The 11th Hour Macintosh English (Installed)
-	{
-		{
-			"11h", "Installed",
-			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	// The 11th Hour Windows English (Available on Steam)
-	{
-		{
-			"11h", "Digital",
-			{
-				{ "disk.1", 0, "4c1d0549f544f052fba2b7a9aebd1077", 220},
-				{ 0, 0, 0, 0 }
-			},
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	// The 11th Hour DOS Demo English
-	{
-		{
-			"11h", "Demo",
-			AD_ENTRY1s("disk.1", "aacb32ce07e0df2894bd83a3dee40c12", 70),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 1
-	},
-
-	// The Making of The 11th Hour DOS English
+	// The Making of The 11th Hour English
 	{
 		{
 			"11h", "Making Of",
-			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
+			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
+						"atpuz.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
-		kGroovieT11H, 2
+		kGroovieT11H
 	},
 
-	// The Making of The 11th Hour Macintosh English
-	{
-		{
-			"11h", "Making Of",
-			AD_ENTRY2s("disk.1",				  "5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 2
-	},
-
-	// The Making of The 11th Hour Macintosh English (Installed)
-	{
-		{
-			"11h", "Making Of (Installed)",
-			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H, 2
-	},
-
-	// Clandestiny Trailer DOS English
+	// Clandestiny Trailer English
 	{
 		{
 			"clandestiny", "Trailer",
-			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
+			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
+						"atpuz.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
-		kGroovieCDY, 3
+		kGroovieCDY
 	},
 
-	// Clandestiny Trailer Macintosh English
-	{
-		{
-			"clandestiny", "Trailer",
-			AD_ENTRY2s("disk.1",				  "5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieCDY, 3
-	},
-
-	// Clandestiny Trailer Macintosh English (Installed)
-	{
-		{
-			"clandestiny", "Trailer (Installed)",
-			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
-					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieCDY, 3
-	},
-
-	// Clandestiny DOS English
+	// Clandestiny PC English
 	{
 		{
 			"clandestiny", "",
-			AD_ENTRY1s("disk.1", "f79fc1515174540fef6a34132efc4c53", 76),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+			AD_ENTRY2s("clanmain.grv", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
+						"ACT01MUS.MPG", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
-		kGroovieCDY, 1
+		kGroovieCDY
+	},
+
+	// Clandestiny iOS English
+	{
+		{
+			"clandestiny", "",
+			AD_ENTRY2s("clanmain.grv", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
+						"ACT01MUS.m4a", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+		},
+		kGroovieCDY
 	},
 
 	// Uncle Henry's Playhouse PC English
 	{
 		{
 			"unclehenry", "",
-			AD_ENTRY1s("disk.1", "0e1b1d3cecc4fc7efa62a968844d1f7a", 72),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
+			AD_ENTRY2s("tpot.grv", "849dc7e5309e1b9acf72d8abc9e145df", 11693,
+						"trt7g.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
-		kGroovieUHP, 1
+		kGroovieUHP
 	},
 
 	// Tender Loving Care PC English
 	{
 		{
 			"tlc", "",
-			AD_ENTRY1s("disk.1", "32a1afa68478f1f9d2b25eeea427f2e3", 84),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
+			AD_ENTRY2s("tlcmain.grv", "47c235155de5103e72675fe7294720b8", 17479,
+						"tlcnav.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
-		kGroovieTLC, 1
+		kGroovieTLC
 	},
 
-	// Tender Loving Care PC Deutsch
-	{
-		{
-			"tlc", "deu",
-			AD_ENTRY1s("disk.1", "07fd3381128b0035a72d41548241c82b", 77),
-			Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
-		},
-		kGroovieTLC, 1
-	},
-
-	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
+	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
 
 static const char *directoryGlobs[] = {
 	"MIDI",
+	"GROOVIE",
+	"MEDIA",
 	0
 };
 
