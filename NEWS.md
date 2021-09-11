@@ -42,6 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
    - ScummVM GUI has been fully translated into Korean and Japanese.
+   - Added GUI option for enabling and disabling the Discord RPC integration.
 
  ADL:
    - Added support for Mystery House French translation.
