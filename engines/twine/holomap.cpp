@@ -632,10 +632,6 @@ void Holomap::processHolomap() {
 
 		++_engine->_lbaTime;
 
-		// TODO: text afterwards on top (not before as it is currently implemented)?
-		// pos 0x140,0x19?
-
-		//_engine->restoreFrontBuffer();
 		if (fadeInPalette) {
 			fadeInPalette = false;
 			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
