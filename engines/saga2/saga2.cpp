@@ -41,6 +41,7 @@
 #include "saga2/beegee.h"
 #include "saga2/calender.h"
 #include "saga2/contain.h"
+#include "saga2/detection.h"
 #include "saga2/dispnode.h"
 #include "saga2/gdraw.h"
 #include "saga2/imagcach.h"
@@ -58,8 +59,8 @@ void main_saga2();
 
 Saga2Engine *g_vm;
 
-Saga2Engine::Saga2Engine(OSystem *syst)
-	: Engine(syst) {
+Saga2Engine::Saga2Engine(OSystem *syst, const SAGA2GameDescription *desc)
+	: Engine(syst), _gameDescription(desc) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	// Don't forget to register your random source
@@ -170,7 +171,8 @@ Common::Error Saga2Engine::run() {
 
 	readConfig();
 
-	loadExeResources();
+	if (getGameId() == GID_FTA2)
+		loadExeResources();
 
 	main_saga2();
 
@@ -183,6 +185,14 @@ bool Saga2Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);
+}
+
+int Saga2Engine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
+const ADGameFileDescription *Saga2Engine::getFilesDescriptions() const {
+	return _gameDescription->desc.filesDescriptions;
 }
 
 Common::Error Saga2Engine::loadGameStream(Common::SeekableReadStream *stream) {
