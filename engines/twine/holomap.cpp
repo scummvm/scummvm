@@ -157,7 +157,7 @@ void Holomap::prepareHolomapSurface(Common::SeekableReadStream *holomapSurfaceSt
 		int rotation = 0;
 		for (int i = 0; i <= ANGLE_11_25; ++i, rotation += ANGLE_11_25) {
 			const int32 rotX = holomapSurfaceStream->readByte();
-			const IVec3& rotVec = _engine->_renderer->getHolomapRotation(rotX, angle, rotation);
+			const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, angle, rotation);
 			_holomapSurface[holomapSurfaceArrayIdx].x = rotVec.x;
 			_holomapSurface[holomapSurfaceArrayIdx].y = rotVec.y;
 			_holomapSurface[holomapSurfaceArrayIdx].z = rotVec.z;
@@ -196,9 +196,9 @@ void Holomap::prepareHolomapPolygons() {
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
-		int rotation = 0;
+		int rotation = ANGLE_0;
 		for (int32 stepWidth = 0; stepWidth < ANGLE_11_25; ++stepWidth) {
-			IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
+			IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = destPos.z;
@@ -211,7 +211,7 @@ void Holomap::prepareHolomapPolygons() {
 			rotation += ANGLE_11_25;
 			++_projectedSurfaceIndex;
 		}
-		IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
+		IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
 		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
