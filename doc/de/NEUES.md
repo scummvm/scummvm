@@ -53,6 +53,7 @@ Programmcodes finden Sie auf Englisch unter:
      Fällen wurde die Änderung erst nach einem Neustart von ScummVM
      oder beim Start eines Spiels übernommen.
    - Die ScummVM-Benutzeroberfläche ist jetzt vollst#ndig auf koreanisch und japanisch verfügbar.
+   - Option zur ScummVM-Benutzeroberfläche hinzugefügt, mit der die Discord RPC-Integration aktiviert und deaktiviert werden kann.
 
  ADL:
    - Unterstützung für die französische Übersetzung  von Mystery House hinzugefügt.
