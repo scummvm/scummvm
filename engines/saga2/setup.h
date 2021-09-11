@@ -68,16 +68,6 @@ extern const ContainerInfo  trioReadyContInfo[];
 extern const ContainerInfo  indivReadyContInfoTop;
 extern const ContainerInfo  indivReadyContInfoBot;
 
-
-//Sets Up Filenames based on PROJECT defined in make.
-
-#define IMAGE_RESFILE   "FTAIMAGE.HRS"
-#define OBJECT_RESFILE  "FTA.HRS"
-#define AUX_RESFILE     "FTADATA.HRS"
-#define SCRIPT_RESFILE  "SCRIPTS.HRS"
-#define SOUND_RESFILE   "FTASOUND.HRS"
-#define VOICE_RESFILE   "FTAVOICE.HRS"
-
 //			char   *fileName = "FTA.HRS";
 //			char   *scriptsName = "SCRIPTS.HRS";
 //			char   *soundsName = "FTASOUND.HRS";

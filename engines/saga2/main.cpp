@@ -28,6 +28,9 @@
 #include "common/events.h"
 #include "common/memstream.h"
 
+#include "engines/advancedDetector.h"
+
+#include "saga2/detection.h"
 #include "saga2/saga2.h"
 #include "saga2/setup.h"
 #include "saga2/transit.h"
@@ -132,26 +135,26 @@ APPFUNC(cmdWindowFunc);                      // main window event handler
 
 //  Exportable prototypes
 void EventLoop(bool &running, bool modal);           // handles input and distributes
-void SystemEventLoop(void);
+void SystemEventLoop();
 
-void runPathFinder(void);
+void runPathFinder();
 
-bool setupGame(void);
+bool setupGame();
 
-void mainEnable(void);
-void mainDisable(void);
-void updateMainDisplay(void);
+void mainEnable();
+void mainDisable();
+void updateMainDisplay();
 
-void cleanupGame(void);                  // auto-cleanup function
+void cleanupGame();                  // auto-cleanup function
 void parseCommandLine(int argc, char *argv[]);
 const char *getExeFromCommandLine(int argc, char *argv[]);
 void WriteStatusF2(int16 line, const char *msg, ...);
-bool initUserDialog(void);
-void cleanupUserDialog(void);
+bool initUserDialog();
+void cleanupUserDialog();
 int16 OptionsDialog(bool disableSaveResume = false);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]);
-void displayUpdate(void);
+void displayUpdate();
 void showDebugMessages();
 
 bool initResourceHandles();
@@ -165,7 +168,7 @@ bool initGameMaps();
 /* MAIN FUNCTION                                                    */
 /*                                                                  */
 /********************************************************************/
-void termFaultHandler(void);
+void termFaultHandler();
 
 void main_saga2() {
 	gameInitialized = false;
@@ -192,7 +195,7 @@ void main_saga2() {
 // Inner chunk of main - this bizzare nesting is required because VC++
 // doesn't like  try{} catch(){ } blocks in the same routine as its
 // __try{} __except(){} blocks
-void updateActiveRegions(void);
+void updateActiveRegions();
 
 static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 	const char *exeFile = getExeFromCommandLine(argc, argv);
@@ -221,7 +224,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // ------------------------------------------------------------------------
 // Game setup function
 
-bool setupGame(void) {
+bool setupGame() {
 	g_vm->_frate = new frameSmoother(frameRate, TICKSPERSECOND, gameTime);
 	g_vm->_lrate = new frameCounter(TICKSPERSECOND, gameTime);
 
@@ -231,7 +234,7 @@ bool setupGame(void) {
 // ------------------------------------------------------------------------
 // Game cleanup function
 
-void cleanupGame(void) {
+void cleanupGame() {
 	delete g_vm->_frate;
 	delete g_vm->_lrate;
 
@@ -318,7 +321,7 @@ void processEventLoop(bool updateScreen) {
 	}
 }
 
-void displayUpdate(void) {
+void displayUpdate() {
 	if (displayEnabled()) { //updateScreen)
 		//debugC(1, kDebugEventLoop, "EventLoop: daytime transition update loop");
 		dayNightUpdate();
@@ -379,7 +382,7 @@ void showDebugMessages() {
    Abbreviated event loop
  * ===================================================================== */
 
-void SystemEventLoop(void) {
+void SystemEventLoop() {
 	if (
 #ifdef DO_OUTRO_IN_CLEANUP
 	    whichOutro == -1 &&
@@ -437,7 +440,7 @@ bool readCommandLine(int argc, char *argv[]) {
 
 // ------------------------------------------------------------------------
 // clears any queued input (mouse AND keyboard)
-void resetInputDevices(void) {
+void resetInputDevices() {
 	Common::Event event;
 	while (g_vm->getEventManager()->pollEvent(event));
 }
@@ -555,21 +558,21 @@ inline char drive(char *path) {
 //-----------------------------------------------------------------------
 //	Routine to initialize an arbitrary resource file
 
-static bool openResource(pHResource &hr, const char *fileName, const char *description) {
+static bool openResource(pHResource &hr, const char *fileName) {
 	if (hr)
 		delete hr;
 	hr = NULL;
 
-	hr = new hResource(fileName, description);
+	hr = new hResource(fileName);
 
 	while (hr == NULL || !hr->_valid) {
 		if (hr) delete hr;
 		hr = NULL;
-		hr = new hResource(fileName, description);
+		hr = new hResource(fileName);
 	}
 
 	if (hr == NULL || !hr->_valid) {
-		error("openResource: Cannot open resource: %s, %s", fileName, description);
+		error("openResource: Cannot open resource: %s, %s", fileName);
 //		return false;
 	}
 	return true;
@@ -578,36 +581,55 @@ static bool openResource(pHResource &hr, const char *fileName, const char *descr
 //-----------------------------------------------------------------------
 //	Routine to initialize all the resource files
 
-bool openResources(void) {
+bool openResources() {
+	for (const ADGameFileDescription *desc = g_vm->getFilesDescriptions(); desc->fileName; desc++) {
+		bool res = true;
 
-	if (
-	    openResource(resFile, IMAGE_RESFILE, "Imagery resource file") &&
-	    openResource(objResFile, OBJECT_RESFILE, "Object resource file") &&
-	    openResource(auxResFile, AUX_RESFILE, "Data resource file") &&
-	    openResource(scriptResFile, SCRIPT_RESFILE, "Script resource file") &&
-	    openResource(voiceResFile, VOICE_RESFILE, "Voice resource file") &&
-	    openResource(soundResFile, SOUND_RESFILE, "Sound resource file")) {
-		return true;
+		switch (desc->fileType) {
+		case GAME_RESOURCEFILE:
+			res = openResource(auxResFile, desc->fileName);
+			break;
+		case GAME_OBJRESOURCEFILE:
+			res = openResource(objResFile, desc->fileName);
+			break;
+		case GAME_SCRIPTFILE:
+			res = openResource(scriptResFile, desc->fileName);
+			break;
+		case GAME_SOUNDFILE:
+			res = openResource(soundResFile, desc->fileName);
+			break;
+		case GAME_IMAGEFILE:
+			res = openResource(resFile, desc->fileName);
+			break;
+		case GAME_VOICEFILE:
+			res = openResource(voiceResFile, desc->fileName);
+			break;
+		default:
+			break;
+		}
+
+		if (!res)
+			return false;
 	}
-	return false;
 
+	return true;
 }
 
 //-----------------------------------------------------------------------
 //	Routine to cleanup all the resource files
 
-void closeResources(void) {
-	if (soundResFile)  delete soundResFile;
+void closeResources() {
+	delete soundResFile;
 	soundResFile = NULL;
-	if (voiceResFile)  delete voiceResFile;
+	delete voiceResFile;
 	voiceResFile = NULL;
-	if (scriptResFile) delete scriptResFile;
+	delete scriptResFile;
 	scriptResFile = NULL;
-	if (auxResFile)    delete auxResFile;
+	delete auxResFile;
 	auxResFile = NULL;
-	if (objResFile)    delete objResFile;
+	delete objResFile;
 	objResFile = NULL;
-	if (resFile)       delete resFile;
+	delete resFile;
 	resFile = NULL;
 }
 
@@ -629,7 +651,7 @@ extern bool         brotherBandingEnabled,
 //-----------------------------------------------------------------------
 //	Assign initial values to miscellaneous globals
 
-void initGlobals(void) {
+void initGlobals() {
 	objectIndex = 0;
 	actorIndex = 0;
 	brotherBandingEnabled = true;
@@ -706,7 +728,7 @@ void loadGlobals(Common::InSaveFile *in) {
 // ------------------------------------------------------------------------
 // pops up a window to see if the user really wants to exit
 
-bool verifyUserExit(void) {
+bool verifyUserExit() {
 	if (!g_vm->_gameRunning)
 		return true;
 	if (FTAMessageBox("Are you sure you want to exit", ERROR_YE_BUTTON, ERROR_NO_BUTTON) != 0)
@@ -717,7 +739,7 @@ bool verifyUserExit(void) {
 //-----------------------------------------------------------------------
 //	Allocate visual messagers
 
-bool initGUIMessagers(void) {
+bool initGUIMessagers() {
 	initUserDialog();
 	for (int i = 0; i < 10; i++) {
 		char debItem[16];
@@ -736,7 +758,7 @@ bool initGUIMessagers(void) {
 //-----------------------------------------------------------------------
 //	cleanup visual messagers
 
-void cleanupGUIMessagers(void) {
+void cleanupGUIMessagers() {
 	for (int i = 0; i < 10; i++) {
 		if (Status[i]) delete Status[i];
 		Status[i] = NULL;
@@ -783,7 +805,7 @@ void WriteStatusF2(int16, const char *, ...) {}
 // Game performance can be used as a gauge of how much
 //   CPU time is available. We'd like to keep the retu
 
-int32 currentGamePerformance(void) {
+int32 currentGamePerformance() {
 	int32 framePer = 100;
 	int32 lval = int(g_vm->_lrate->frameStat());
 	int32 fval = int(g_vm->_lrate->frameStat(grFramesPerSecond));
@@ -797,14 +819,14 @@ int32 currentGamePerformance(void) {
 }
 
 
-void updateFrameCount(void) {
+void updateFrameCount() {
 	g_vm->_frate->updateFrameCount();
 }
 
 int32 eloopsPerSecond = 0;
 int32 framesPerSecond = 0;
 
-int32 gamePerformance(void) {
+int32 gamePerformance() {
 	if (framesPerSecond < frameRate) {
 		return (100 * framesPerSecond) / frameRate;
 	}
