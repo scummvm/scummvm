@@ -125,15 +125,16 @@ void Holomap::loadHolomapGFX() {
 	constexpr TwineResource resource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPAL);
 	_engine->_screens->loadCustomPalette(resource);
 
-	int32 j = 576;
-	for (int32 i = 0; i < 96; i += 3, j += 3) {
+	int32 j = HOLOMAP_PALETTE_INDEX * 3;
+	const int32 n = NUM_HOLOMAPCOLORS * 3;
+	for (int32 i = 0; i < n; i += 3, j += 3) {
 		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
 		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
 		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
 	}
 
-	j = 576;
-	for (int32 i = 96; i < 189; i += 3, j += 3) {
+	j = HOLOMAP_PALETTE_INDEX * 3;
+	for (int32 i = n; i < 2 * n - 3; i += 3, j += 3) {
 		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
 		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
 		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
@@ -377,8 +378,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
 			// animate the water surface
-			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			if (_holomapPaletteIndex == 32) {
+			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
+			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
 				_holomapPaletteIndex = 0;
 			}
 			waterPaletteChangeTimer = _engine->_lbaTime + 3;
@@ -597,8 +598,8 @@ void Holomap::processHolomap() {
 
 		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
 			// animate the water surface
-			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			if (_holomapPaletteIndex == 32) {
+			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
+			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
 				_holomapPaletteIndex = 0;
 			}
 			waterPaletteChangeTimer = _engine->_lbaTime + 3;

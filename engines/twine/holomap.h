@@ -26,6 +26,9 @@
 #include "twine/shared.h"
 #include "common/scummsys.h"
 
+#define NUM_HOLOMAPCOLORS 32
+#define HOLOMAP_PALETTE_INDEX 192
+
 namespace Common {
 class SeekableReadStream;
 }
