@@ -450,7 +450,7 @@ void SoundEffectQueue::queue(Common::SeekableReadStream *soundfile, uint32 loops
 		stopAll();
 	}
 	_queue.push({soundfile, loops});
-	for (int i = 1; i < loops; i++) {
+	for (uint32 i = 1; i < loops; i++) {
 		_queue.push({soundfile, loops});
 	}
 	tick();

@@ -122,7 +122,7 @@ private:
 
 	// Video
 	Common::SeekableReadStream *_videoFile;
-	int32 _videoRef;
+	uint32 _videoRef;
 	uint16 _bitflags;
 	uint16 _videoSkipAddress;
 
