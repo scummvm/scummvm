@@ -200,6 +200,7 @@ public:
 	void skipVideo();
 
 	Graphics::Surface *decodeImage(const Common::String &file);
+	const byte *decodePalette(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame();
 

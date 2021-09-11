@@ -205,17 +205,16 @@ Common::Error PrivateEngine::run() {
 
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_screenW, _screenH, &_pixelFormat);
-
+	_transparentColor = 250;
 #else
 
 	initGraphics(_screenW, _screenH, nullptr);
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
-
+	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
 #endif
 
-	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
 	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	changeCursor("default");
@@ -1226,9 +1225,24 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
 	return _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 }
 
+const byte *PrivateEngine::decodePalette(const Common::String &name) {
+	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
+	Common::File file;
+	Common::String path = convertPath(name);
+	if (!file.open(path))
+		error("unable to load image %s", path.c_str());
+
+	_image->loadStream(file);
+	return _image->getPalette();
+}
+
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
 	Graphics::Surface *surf = decodeImage(name);
+#ifdef PLAYSTATION3
+	const byte *palette = decodePalette(name);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+#endif
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
