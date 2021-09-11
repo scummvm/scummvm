@@ -20,6 +20,8 @@
  *
  */
 
+#include <limits.h>
+
 #include "audio/mididrv.h"
 
 #include "groovie/script.h"
