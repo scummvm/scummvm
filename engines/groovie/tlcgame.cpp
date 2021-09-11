@@ -34,7 +34,12 @@
 namespace Groovie {
 
 // This a list of files for background music. These list is hard-coded in the TLC player.
-const Common::String kTlcMusicFiles[] = {"ep01epm.mpg", "ep01tatm.mpg", "amb_hs.mpg", "amb_mr.mpg", "amb_kr.mpg", "amb_mo.mpg", "music_rc.mpg", "amb_ds.mpg", "amb_ds3.mpg", "amb_jr.mpg", "amb_mr4.mpg", "amb_jr4.mpg", "amb_jr2.mpg", "amb_kr2.mpg", "amb_mr2.mpg", "amb_br.mpg", "amb_ds2.mpg", "amb_jr3.mpg", "amb_ds4.mpg", "amb_kr3.mpg", "amb_to1.mpg", "amb_to2.mpg", "ep02epm.mpg", "ep02tatm.mpg", "ep03epm.mpg", "ep03tatm.mpg", "ep04epm.mpg", "ep04tatm.mpg", "ep05epm.mpg", "ep05tatm.mpg", "ep06epm.mpg", "ep06tatm.mpg", "ep07epm.mpg", "ep07tatm.mpg", "ep08epm.mpg", "ep08tatm.mpg", "ep09epm.mpg", "ep09tatm.mpg", "ep10epm.mpg", "ep10tatm.mpg", "ep11epm.mpg", "ep11tatm.mpg", "ep12epm.mpg", "ep12tatm.mpg", "ep13epm.mpg", "ep13tatm.mpg", "ep14epm.mpg", "ep14tatm.mpg", "ep15epm.mpg", "ep15tatm.mpg" };
+const char * kTlcMusicFiles[] = {"ep01epm.mpg", "ep01tatm.mpg", "amb_hs.mpg", "amb_mr.mpg", "amb_kr.mpg", "amb_mo.mpg", "music_rc.mpg", "amb_ds.mpg", "amb_ds3.mpg",
+								"amb_jr.mpg", "amb_mr4.mpg", "amb_jr4.mpg", "amb_jr2.mpg", "amb_kr2.mpg", "amb_mr2.mpg", "amb_br.mpg", "amb_ds2.mpg", "amb_jr3.mpg",
+								"amb_ds4.mpg", "amb_kr3.mpg", "amb_to1.mpg", "amb_to2.mpg", "ep02epm.mpg", "ep02tatm.mpg", "ep03epm.mpg", "ep03tatm.mpg", "ep04epm.mpg",
+								"ep04tatm.mpg", "ep05epm.mpg", "ep05tatm.mpg", "ep06epm.mpg", "ep06tatm.mpg", "ep07epm.mpg", "ep07tatm.mpg", "ep08epm.mpg", "ep08tatm.mpg",
+								"ep09epm.mpg", "ep09tatm.mpg", "ep10epm.mpg", "ep10tatm.mpg", "ep11epm.mpg", "ep11tatm.mpg", "ep12epm.mpg", "ep12tatm.mpg", "ep13epm.mpg",
+								"ep13tatm.mpg", "ep14epm.mpg", "ep14tatm.mpg", "ep15epm.mpg", "ep15tatm.mpg" };
 const uint8 kTlcEpQuestToPlay[] = { 0x0E, 0x0F, 0x0B, 0x10, 0x11, 0x12, 0x0C, 0x0C, 0x09, 0x06, 0x0F, 0x0C, 0x0B, 0x0D, 0x0D };
 
 
@@ -79,7 +84,7 @@ uint16 inline TlcGame::getScriptVar16(uint16 var) {
 }
 
 // Gets the filename of the background music file.
-Common::String TlcGame::getTlcMusicFilename(int musicId) {
+const char* TlcGame::getTlcMusicFilename(int musicId) {
 	return kTlcMusicFiles[musicId];
 }
 
@@ -139,37 +144,33 @@ void TlcGame::regionsInit() {
 
 // Loads the specific regions for one questions.
 void TlcGame::regionsLoad() {
-	Common::SeekableReadStream *regionsfile = 0;
-	int nameLen;
-	int i;
-	char questName[sizeof(TlcRegionsHeader::name)];
-
 	// Check if initRegions was called before
 	if (_regionHeader == NULL) {
 		error("TLC:RegionsLoad: initRegions was not called.");
 	}
 
 	// Open regions.rle
-	regionsfile = SearchMan.createReadStreamForMember("SYSTEM/REGIONS.RLE");
+	Common::SeekableReadStream *regionsfile = SearchMan.createReadStreamForMember("SYSTEM/REGIONS.RLE");
 	if (!regionsfile) {
 		error("TLC:RegionsLoad: Could not open 'SYSTEM/REGIONS.RLE'");
 	}
 
 	// Get length of question name from variables
-	nameLen = _scriptVariables[0x1B] * 10 + _scriptVariables[0x1C];
+	int nameLen = _scriptVariables[0x1B] * 10 + _scriptVariables[0x1C];
 	if (nameLen >= sizeof(TlcRegionsHeader::name)) {
 		error("TLC:RegionsLoad: Name to long for loadRegions!");
 	}
 
 	// Decoded and copy name from variables
-	for (i = 0; i < nameLen; i++) {
+	char questName[sizeof(TlcRegionsHeader::name)];
+	for (int i = 0; i < nameLen; i++) {
 		setScriptVar(0x1D + i, _scriptVariables[0x1D + i] + 0x30);
 		questName[i] = _scriptVariables[0x1D + i];
 	}
-	questName[i] = '\0';
+	questName[nameLen] = '\0';
 
 	// Search for the question entry
-	for (i = 0; i <= _numRegionHeaders; i++) {
+	for (int i = 0; i <= _numRegionHeaders; i++) {
 		if (strcmp(questName, _regionHeader[i].name) == 0) {
 
 			// move to coordinates for this question
@@ -630,28 +631,21 @@ void TlcGame::epResultEpisode() {
 	/* Select next stream according to which bin(s) are still >0. */
 	if (_epScoreBin[1] != 0 && _epScoreBin[2] == 0 && _epScoreBin[3] == 0) {
 		setScriptVar(3, 1);
-	}
-	else if (_epScoreBin[1] == 0 && _epScoreBin[2] != 0 && _epScoreBin[3] == 0) {
+	} else if (_epScoreBin[1] == 0 && _epScoreBin[2] != 0 && _epScoreBin[3] == 0) {
 		setScriptVar(3, 2);
-	}
-	else if (_epScoreBin[1] == 0 && _epScoreBin[2] == 0 && _epScoreBin[3] != 0) {
+	} else if (_epScoreBin[1] == 0 && _epScoreBin[2] == 0 && _epScoreBin[3] != 0) {
 		setScriptVar(3, 3);
-	}
-	else if (_epScoreBin[1] != 0 && _epScoreBin[2] != 0 && _epScoreBin[3] == 0) {
+	} else if (_epScoreBin[1] != 0 && _epScoreBin[2] != 0 && _epScoreBin[3] == 0) {
 		setScriptVar(3, _random.getRandomNumberRng(1, 2));
-	}
-	else if (_epScoreBin[1] != 0 && _epScoreBin[2] == 0 && _epScoreBin[3] != 0) {
+	} else if (_epScoreBin[1] != 0 && _epScoreBin[2] == 0 && _epScoreBin[3] != 0) {
 		setScriptVar(3, (_random.getRandomNumberRng(0, 1) * 2) + 1);
-	}
-	else if (_epScoreBin[1] == 0 && _epScoreBin[2] != 0 && _epScoreBin[3] != 0) {
+	} else if (_epScoreBin[1] == 0 && _epScoreBin[2] != 0 && _epScoreBin[3] != 0) {
 		setScriptVar(3, _random.getRandomNumberRng(2, 3));
-	}
-	else if (_epScoreBin[1] != 0 && _epScoreBin[2] != 0 && _epScoreBin[3] != 0) {
+	} else if (_epScoreBin[1] != 0 && _epScoreBin[2] != 0 && _epScoreBin[3] != 0) {
 		setScriptVar(3, _random.getRandomNumberRng(1, 3));
-	}
-	else {
+	} else {
 		error("Tlc:EpResultEpisode: Stream selection failed. bins[0..5] = %d, %d, %d, %d, %d, %d",
-			_epScoreBin[0], _epScoreBin[1], _epScoreBin[2], _epScoreBin[3], _epScoreBin[4], _epScoreBin[5]);
+			  _epScoreBin[0], _epScoreBin[1], _epScoreBin[2], _epScoreBin[3], _epScoreBin[4], _epScoreBin[5]);
 	}
 	debugC(1, kDebugTlcGame, "Selected stream [1..3] = %d ", _scriptVariables[3]);
 
@@ -701,32 +695,32 @@ void TlcGame::opFlags() {
 			_tatFlags[x][y] = 1;
 
 			debugC(1, kDebugTlcGame, "Tlc:TatFlags: Set x=%d, y=%d to 1", x, y);
-			debugC(5, kDebugTlcGame, "Tlc:TatFlags: %d%d%d%d%d%d%d%d%d%d%d%d%d%d  %d%d%d%d%d%d%d%d%d%d%d%d%d%d",
-				_tatFlags[0][0], _tatFlags[1][0], _tatFlags[2][0], _tatFlags[ 3][0], _tatFlags[ 4][0], _tatFlags[ 5][0], _tatFlags[ 6][0],
-				_tatFlags[7][0], _tatFlags[8][0], _tatFlags[9][0], _tatFlags[10][0], _tatFlags[11][0], _tatFlags[12][0], _tatFlags[13][0],
-				_tatFlags[0][1], _tatFlags[1][1], _tatFlags[2][1], _tatFlags[ 3][1], _tatFlags[ 4][1], _tatFlags[ 5][1], _tatFlags[ 6][1],
-				_tatFlags[7][1], _tatFlags[8][1], _tatFlags[9][1], _tatFlags[10][1], _tatFlags[11][1], _tatFlags[12][1], _tatFlags[13][1]);
-			debugC(5, kDebugTlcGame, "Tlc:TatFlags: %d%d%d%d%d%d%d%d%d%d%d%d%d%d  %d%d%d%d%d%d%d%d%d%d%d%d%d%d",
-				_tatFlags[0][2], _tatFlags[1][2], _tatFlags[2][2], _tatFlags[ 3][2], _tatFlags[ 4][2], _tatFlags[ 5][2], _tatFlags[ 6][2],
-				_tatFlags[7][2], _tatFlags[8][2], _tatFlags[9][2], _tatFlags[10][2], _tatFlags[11][2], _tatFlags[12][2], _tatFlags[13][2],
-				_tatFlags[0][3], _tatFlags[1][3], _tatFlags[2][3], _tatFlags[ 3][3], _tatFlags[ 4][3], _tatFlags[ 5][3], _tatFlags[ 6][3],
-				_tatFlags[7][3], _tatFlags[8][3], _tatFlags[9][3], _tatFlags[10][3], _tatFlags[11][3], _tatFlags[12][3], _tatFlags[13][3]);
-			debugC(5, kDebugTlcGame, "Tlc:TatFlags: %d%d%d%d%d%d%d%d%d%d%d%d%d%d  %d%d%d%d%d%d%d%d%d%d%d%d%d%d",
-				_tatFlags[0][4], _tatFlags[1][4], _tatFlags[2][4], _tatFlags[ 3][4], _tatFlags[ 4][4], _tatFlags[ 5][4], _tatFlags[ 6][4],
-				_tatFlags[7][4], _tatFlags[8][4], _tatFlags[9][4], _tatFlags[10][4], _tatFlags[11][4], _tatFlags[12][4], _tatFlags[13][4],
-				_tatFlags[0][5], _tatFlags[1][5], _tatFlags[2][5], _tatFlags[ 3][5], _tatFlags[ 4][5], _tatFlags[ 5][5], _tatFlags[ 6][5],
-				_tatFlags[7][5], _tatFlags[8][5], _tatFlags[9][5], _tatFlags[10][5], _tatFlags[11][5], _tatFlags[12][5], _tatFlags[13][5]);
-			debugC(5, kDebugTlcGame, "Tlc:TatFlags: %d%d%d%d%d%d%d%d%d%d%d%d%d%d  %d%d%d%d%d%d%d%d%d%d%d%d%d%d",
-				_tatFlags[0][6], _tatFlags[1][6], _tatFlags[2][6], _tatFlags[ 3][6], _tatFlags[ 4][6], _tatFlags[ 5][6], _tatFlags[ 6][6],
-				_tatFlags[7][6], _tatFlags[8][6], _tatFlags[9][6], _tatFlags[10][6], _tatFlags[11][6], _tatFlags[12][6], _tatFlags[13][6],
-				_tatFlags[0][7], _tatFlags[1][7], _tatFlags[2][7], _tatFlags[ 3][7], _tatFlags[ 4][7], _tatFlags[ 5][7], _tatFlags[ 6][7],
-				_tatFlags[7][7], _tatFlags[8][7], _tatFlags[9][7], _tatFlags[10][7], _tatFlags[11][7], _tatFlags[12][7], _tatFlags[13][7]);
+
+			debugTatFlags(0, 1);
+			debugTatFlags(2, 3);
+			debugTatFlags(4, 5);
+			debugTatFlags(6, 7);
 		}
 		else {
 			setScriptVar(0x01, 1);
 		}
 		break;
 	}
+}
+
+
+void TlcGame::debugTatFlags(int y, int y2) {
+	Common::String s = "Tlc:TatFlags: ";
+	for (int x = 0; x < 14; x++) {
+		s += int(_tatFlags[x][y]);
+	}
+	y = y2;
+	s += "  ";
+	for (int x = 0; x < 14; x++) {
+		s += int(_tatFlags[x][y]);
+	}
+
+	debugC(5, kDebugTlcGame, s.c_str());
 }
 
 
@@ -761,9 +755,7 @@ void TlcGame::opTat() {
 
 
 void TlcGame::tatInitRegs() {
-	int i;
-
-	for (i = 0; i < 0x10; i++) {
+	for (int i = 0; i < 0x10; i++) {
 		setScriptVar(0x4D + i, 0);
 		setScriptVar16(0x5D + i*2, 0);
 	}

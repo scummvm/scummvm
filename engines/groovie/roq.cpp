@@ -61,25 +61,19 @@ static const int kRIndex = 0;
 namespace Groovie {
 
 // Overwrites one pixel of destination regardless of the alpha value 
-static inline void copyPixelIfAlpha(byte *dst, byte *src) {
+static inline void copyPixel(byte *dst, const byte *src) {
+	*(uint32 *)dst = *(const uint32 *)src;
+}
+
+// Overwrites one pixel of destination regardless of the alpha value
+static inline void copyPixelIfAlpha(byte *dst, const byte *src) {
 	if (src[kAIndex] > 0) {
-		dst[kAIndex] = src[kAIndex];
-		dst[kRIndex] = src[kRIndex];
-		dst[kGIndex] = src[kGIndex];
-		dst[kBIndex] = src[kBIndex];
+		copyPixel(dst, src);
 	}
 }
 
-	// Overwrites one pixel of destination regardless of the alpha value 
-static inline void copyPixel(byte *dst, byte *src) {
-	dst[kAIndex] = src[kAIndex];
-	dst[kRIndex] = src[kRIndex];
-	dst[kGIndex] = src[kGIndex];
-	dst[kBIndex] = src[kBIndex];
-}
-
 // Copies one pixel to destination but respects the alpha value of the source
-static inline void copyPixelWithA(byte *dst, byte *src) {
+static inline void copyPixelWithA(byte *dst, const byte *src) {
 	if (src[kAIndex] == 255) {
 		copyPixel(dst, src);
 	} else {
@@ -223,11 +217,15 @@ void ROQPlayer::buildShowBuf() {
 		if (!_restoreArea->isEmpty()) {
 			int width = _restoreArea->right - _restoreArea->left;
 			Graphics::Surface *screen = _vm->_system->lockScreen();
+			assert(screen->format == _bg->format);
+			assert(screen->format.bytesPerPixel == 4);
 			for (int line = _restoreArea->top; line < _restoreArea->bottom; line++) {
 				byte *dst = (byte *)screen->getBasePtr(_restoreArea->left, line + screenOffset);
 				byte *src = (byte *)_bg->getBasePtr(_restoreArea->left, line);
 				byte *prv = (byte *)_prevBuf->getBasePtr((_restoreArea->left - _origX) / _scaleX, (line - _origY) / _scaleY);
 				byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
+
+				//memcpy(dst, src, width * _bg->format.bytesPerPixel);
 				for (int i = 0; i < width; i++) {
 					if (prv[kAIndex] != 0) {
 						copyPixel(dst, src);
@@ -274,17 +272,14 @@ void ROQPlayer::buildShowBuf() {
 		byte *in = (byte *)_currBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
 		byte *inOvr = (byte *)_overBuf->getBasePtr(startX, line);
 		byte *out = (byte *)destBuf->getBasePtr(startX, line + destOffset);
+		assert(destBuf->format == _currBuf->format);
+		assert(destBuf->format.bytesPerPixel == 4);
 
 		for (int x = startX; x < stopX; x++) {
 			if (destBuf == _overBuf) {
 				copyPixelIfAlpha(out, in);
 			} else {
-				if (_interlacedVideo && (line % 2) && 0) {
-					byte blackPixel[4] = { 0, 0, 0, 0 };
-					copyPixel(out, blackPixel);
-				} else {
-					copyPixelWithA(out, in);
-				}
+				copyPixelWithA(out, in);
 			}
 
 			if (_alpha && in[kAIndex] != 0 && destBuf != _overBuf) {

@@ -30,8 +30,7 @@ namespace Groovie {
 
 class GroovieEngine;
 
-class T11hGame
-{
+class T11hGame {
 public:
 	T11hGame();
 	~T11hGame();
@@ -55,7 +54,7 @@ private:
 	void inline setScriptVar16(uint16 var, uint16 value);
 	uint16 inline getScriptVar16(uint16 var);
 	byte *_scriptVariables;
-
+	static const byte kGalleryLinks[21][10];
 };
 
 } // End of Groovie namespace

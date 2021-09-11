@@ -74,7 +74,7 @@ public:
 	TlcGame();
 	~TlcGame();
 
-	static Common::String getTlcMusicFilename(int musicId);
+	static const char* getTlcMusicFilename(int musicId);
 
 	/**
 	 * Sets a pointer to the script variables. This makes it easier if we want
@@ -182,6 +182,7 @@ private:
 	void tatResultQuest();
 	void tatResultEpisode();
 	void tatGetProfile();
+	void debugTatFlags(int y, int y2);
 
 	// Variables for TAT handling
 	int _tatEpisodes;

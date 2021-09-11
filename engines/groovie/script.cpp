@@ -790,7 +790,7 @@ bool Script::playBackgroundSound(uint32 fileref, uint32 loops) {
 	if (_soundFile) {
 		_vm->_soundQueue.queue(_soundFile, loops);
 	} else {
-		error("Groovie::Script: Couldn't open file");
+		warning("Groovie::Script: Couldn't open file");
 		return false;
 	}
 
@@ -1155,7 +1155,8 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 void Script::o_copybgtofg() { // 0x22
 	debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction - 1);
-	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
+	size_t len = _vm->_graphicsMan->_foreground.pitch * _vm->_graphicsMan->_foreground.h;
+	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), len);
 }
 
 void Script::o2_copybgtofg() { // 0x22
@@ -1889,6 +1890,7 @@ void Script::o2_midicontrol() {
 	uint16 arg1 = readScript16bits();
 	uint16 arg2 = readScript16bits();
 
+	// TODO: see if we need to revisit the commented code here, maybe @Alphard-o can help
 	switch (arg1) {
 	case 0:
 		// Stop Playback

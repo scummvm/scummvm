@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/mutex.h"
+#include "common/file.h"
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
 #include "audio/mixer.h"
@@ -218,6 +219,7 @@ protected:
 
 private:
 	Audio::SoundHandle _handle;
+	Common::File *_file;
 };
 
 class MusicPlayerClan : public MusicPlayerTlc {

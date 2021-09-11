@@ -751,6 +751,7 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 
 
 MusicPlayerTlc::MusicPlayerTlc(GroovieEngine *vm) : MusicPlayer(vm) {
+	_file = NULL;
 	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
 }
 
@@ -767,6 +768,10 @@ void MusicPlayerTlc::unload() {
 	MusicPlayer::unload();
 
 	_vm->_system->getMixer()->stopHandle(_handle);
+	if (_file) {
+		delete _file;
+	}
+	_file = NULL;
 }
 
 Common::String MusicPlayerTlc::getFilename(uint32 fileref) {
@@ -774,18 +779,18 @@ Common::String MusicPlayerTlc::getFilename(uint32 fileref) {
 }
 
 bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
-	// Find correct filename
-	Common::String filename;
-	Common::File  *fileHandle = new Common::File();
-	Audio::SeekableAudioStream *seekStream = NULL;
+	unload();
+	_file = new Common::File();
 
 	// Create the audio stream from fileref
-	filename = getFilename(fileref);
-	fileHandle->open(filename);
-	if (fileHandle->isOpen()) {
-		seekStream = Audio::makeMP3Stream(fileHandle, DisposeAfterUse::YES);
+	Common::String filename = getFilename(fileref);
+	_file->open(filename);
+	Audio::SeekableAudioStream *seekStream = NULL;
+	if (_file->isOpen()) {
+		seekStream = Audio::makeMP3Stream(_file, DisposeAfterUse::NO);
 	} else {
-		delete fileHandle;
+		delete _file;
+		_file = NULL;
 	}
 
 	if (!seekStream) {
@@ -796,6 +801,9 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	Audio::AudioStream *audStream = seekStream;
 
 	// TODO: Loop if requested
+	if (!loop)
+		warning("TODO: MusicPlayerTlc::load with loop == false");
+
 	if (loop || 1)
 		audStream = Audio::makeLoopingAudioStream(seekStream, 0);
 

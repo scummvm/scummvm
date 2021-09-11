@@ -23,13 +23,11 @@
 #ifndef GROOVIE_CLANGAME_H
 #define GROOVIE_CLANGAME_H
 
-#include "common/str.h"
-
 namespace Groovie {
 
 class ClanGame {
 public:
-	static Common::String getClanMusicFilename(int musicId);
+	static const char* getClanMusicFilename(int musicId);
 };
 
 } // namespace Groovie

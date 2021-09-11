@@ -20,12 +20,12 @@
  *
  */
 
-#include "clangame.h"
+#include "groovie/clangame.h"
 
 namespace Groovie {
 
 // This a list of files for background music. These list is hard-coded in the TLC player.
-const Common::String kClanMusicFiles[] = {"mbf_arb1.mpg", "mbf_arm1.mpg", "mbf_bal1.mpg", "mbf_c2p2.mpg", "act18mus.mpg", "act15mus.mpg", "act21mus.mpg",
+const char * kClanMusicFiles[] = {"mbf_arb1.mpg", "mbf_arm1.mpg", "mbf_bal1.mpg", "mbf_c2p2.mpg", "act18mus.mpg", "act15mus.mpg", "act21mus.mpg",
 										  "act05mus.mpg", "act04mus.mpg", "act23mus.mpg", "act17mus.mpg", "act03mus.mpg", "act06mus.mpg", "act19mus.mpg",
 										  "act07mus.mpg", "mbf_mne1.mpg", "act24mus.mpg", "act24mus.mpg", "act14mus.mpg", "act20mus.mpg", "act15mus.mpg",
 										  "act13mus.mpg", "act08mus.mpg", "mbf_uph1.mpg", "mbf_uph1.mpg", "act19mus.mpg", "mbf_bol1.mpg", "mbf_cbk1.mpg",
@@ -36,7 +36,7 @@ const Common::String kClanMusicFiles[] = {"mbf_arb1.mpg", "mbf_arm1.mpg", "mbf_b
 										  "mbf_c3p2.mpg", "mbf_c3p1.mpg", "act25mus.mpg", "mbf_c4p2.mpg", "mbf_c4p1.mpg"};
 
 // Gets the filename of the background music file.
-Common::String ClanGame::getClanMusicFilename(int musicId) {
+const char* ClanGame::getClanMusicFilename(int musicId) {
 	return kClanMusicFiles[musicId];
 }
 
