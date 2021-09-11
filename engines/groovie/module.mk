@@ -18,10 +18,10 @@ MODULE_OBJS := \
 
 ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
+	clangame.o \
 	roq.o \
-	tlcgame.o \
 	t11hgame.o \
-	clangame.o
+	tlcgame.o
 endif
 
 # This module can be built as a plugin
