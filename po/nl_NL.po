@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-10 06:27+0000\n"
-"PO-Revision-Date: 2021-08-30 10:05+0000\n"
+"PO-Revision-Date: 2021-09-11 10:44+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1650,7 +1650,7 @@ msgstr "/root/ Pad:"
 
 #: gui/options.cpp:2432
 msgid "Server's port:"
-msgstr "Serverport:"
+msgstr "Serverpoort:"
 
 #: gui/options.cpp:2432
 msgid "Port for server to use"
@@ -1659,20 +1659,23 @@ msgstr "Poort die de server kan gebruiken"
 #: gui/options.cpp:2437
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "Run server om bestanden met browser te beheren (in hetzelfde netwerk)."
+msgstr ""
+"Draai server om bestanden te beheren met een browser (in hetzelfde netwerk)."
 
 #: gui/options.cpp:2438
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr "Het opties dialoogvenster sluiten zal de server stoppen."
+msgstr "Het Opties dialoogvenster sluiten stopt de server."
 
 #: gui/options.cpp:2440
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "Run server om bestanden met browser te beheren (in hetzelfde netwerk)."
+msgstr ""
+"Draai deze server om bestanden te kunnen beheren met een browser (in "
+"hetzelfde netwerk)."
 
 #: gui/options.cpp:2441
 msgid "Closing options dialog will stop the server."
-msgstr "Het opties dialoogvenster sluiten zal de server stoppen."
+msgstr "Bij het sluiten van de Opties dialoogvenster zal ook de server stoppen."
 
 #: gui/options.cpp:2453
 msgid "Use Text to speech"
@@ -3303,8 +3306,8 @@ msgid ""
 "Check whether selected port is not used by another application and try again."
 msgstr ""
 "Starten van de lokale webserver mislukt.\n"
-"Controleer of de geselecteerde port niet in gebruik is door een andere "
-"applicatie en probeer het opnieuw."
+"Controleer of de gekozen poort niet in gebruik is door een andere applicatie "
+"en probeer het opnieuw."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
