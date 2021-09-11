@@ -43,10 +43,15 @@ void Screens::loadMenuImage(bool fadeIn) {
 }
 
 void Screens::loadCustomPalette(const TwineResource &resource) {
-	if (HQR::getEntry(_palette, resource.hqr, resource.index) == 0) {
-		warning("Failed to load custom palette %i", resource.index);
+	const int32 size = HQR::getEntry(_palette, resource.hqr, resource.index);
+	if (size == 0) {
+		warning("Failed to load custom palette %s:%i", resource.hqr, resource.index);
 		return;
 	}
+	if (size != (int32)sizeof(_palette)) {
+		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
+	}
+	debug(3, "palette %s:%i with size %i", resource.hqr, resource.index, size);
 	convertPalToRGBA(_palette, _paletteRGBACustom);
 }
 
