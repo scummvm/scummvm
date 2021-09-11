@@ -50,7 +50,7 @@ public:
 	virtual uint8 *get_object(uint32 index);
 
 	//! get size of object
-	virtual uint32 get_size(uint32 index);
+	virtual uint32 get_size(uint32 index) const;
 
 	//! return object as SeekableReadStream. Delete the SeekableReadStream afterwards,
 	//! but DON'T delete/modify the buffer it points to.
