@@ -1,0 +1,43 @@
+Known bugs (not the original ones):
+1. Main hint box (location name) is wrongly positioned on x axis
+2. FIXED -- When actions menu shown, some garbage is left under cursor
+3. Moving cursor close to right edge of screen causes noticeable slowdown
+4. Doors open only half of their height
+5. In some rooms main hint box text is misplaced
+6. FIXED -- Junk under cursor when clicked on psi powers menu (maybe related to 2)
+7. FIXED -- Clicking on inventory item does nothing (should open actions menu)
+8. FIXED? -- Energy level is not animated
+9. FIXED -- Right guard is not properly drawn for a while after quest item bounce (bounce anim goes over the character)
+10. CANTREPRO -- Massive glitches on the right side when walking around the room (regression)
+11. Animation (esp. portraits) runs pretty slowly (maybe due to unoptimized code?)
+12. Closing door animation is played in wrong rooms, with trashed/invalid sprites
+13. FIXED -- CopyScreenBlockWithDotEffect (from AspirantLeave) does not fully remove sprite?
+14. FIXED -- DeProf puzzle is broken
+15. FIXED -- Wrong dialog lines when trade with Aspirant (before inventory opens)
+16. FIXED -- Zorq trader (at TMO) offers trade w/o skull at first try?
+17. Wait4/Wait command does not wait as intended?
+18. In Who Will Be Saved, Engraving opens incorrectly (maybe related to 4)
+19. Some junk is draw in The Wall
+20. Can't leave left Victory of The Faith room?
+21. Zorq trader at TMO is broken again. Now refuses to trade even when have a skull.
+
+Rooms done so far:
+DeProf - solvable (with a rope or psi)
+TheWall - missing open doors animation
+TheTwins - solvable
+TheNoose - solvable (trapdoor is glitchy, see bug 4)
+
+General TODOs:
+1. Change script vars access to proxy calls (GetByteVar(12) , SetWordVar(4, 1234))
+2. Replace CGA_SCREENBUFFER instances with frontbuffer (or screenbuffer?)
+3. Remove redundant target = frontbuffer argument in calls
+4. Move all remaining CGA low-level code to cga.c
+5. Replace CGA next/prev line calculations with a macro/func
+6. Add sound playback
+
+
+Original game bugs:
+1. Actions menu for rope in DeProf shows two "Inspect" choices with different actions
+2. SCR_2D_Wait ignores specified delay, always waits for 4 secs
+3. Trade with Skull Trader while having only a skull will cause lost of the skull?
+4. In Who Will Be Saved raised hand's part is not drawn after reentering the room?
