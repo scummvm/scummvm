@@ -132,10 +132,10 @@ private:
 	/** Preload all animations */
 	void preloadAnimations();
 	void preloadSamples();
-	void loadFlaInfo();
+	void loadMovieInfo();
 
 	using MovieInfoMap = Common::HashMap<Common::String, Common::Array<int32> >;
-	MovieInfoMap _flaMovieFrames;
+	MovieInfoMap _movieInfo;
 
 	TrajectoryData _trajectories;
 
@@ -145,7 +145,11 @@ public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
 	~Resources();
 
-	const Common::Array<int32> &getFlaMovieInfo(const Common::String &name) const;
+	/**
+	 * For lba1 this is returning the gif images that are used as a placeholder for the fla movies
+	 * For lba2 this is the list of videos that are mapped by their entry index
+	 */
+	const Common::Array<int32> &getMovieInfo(const Common::String &name) const;
 
 	/** Table with all loaded samples */
 	BodyData _inventoryTable[NUM_INVENTORY_ITEMS];

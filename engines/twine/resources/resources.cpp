@@ -204,7 +204,7 @@ void Resources::initResources() {
 		}
 	}
 
-	loadFlaInfo();
+	loadMovieInfo();
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
 	for (int32 i = 0; i < textEntryCount / 2; ++i) {
@@ -223,35 +223,46 @@ const Trajectory *Resources::getTrajectory(int index) const {
 	return _trajectories.getTrajectory(index);
 }
 
-void Resources::loadFlaInfo() {
+void Resources::loadMovieInfo() {
 	uint8 *content = nullptr;
-	const int32 size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	int32 size;
+	if (_engine->isLBA1()) {
+		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	} else {
+		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, 48);
+	}
 	if (size == 0) {
 		return;
 	}
 	const Common::String str((const char *)content, size);
 	free(content);
-
+	debug(3, "movie info:\n%s", str.c_str());
 	Common::StringTokenizer tok(str, "\r\n");
+	int videoIndex = 0;
 	while (!tok.empty()) {
 		const Common::String &line = tok.nextToken();
-		Common::StringTokenizer lineTok(line);
-		if (lineTok.empty()) {
-			continue;
+		if (_engine->isLBA1()) {
+			Common::StringTokenizer lineTok(line);
+			if (lineTok.empty()) {
+				continue;
+			}
+			const Common::String &name = lineTok.nextToken();
+			Common::Array<int32> frames;
+			while (!lineTok.empty()) {
+				const Common::String &frame = lineTok.nextToken();
+				const int32 frameIdx = atoi(frame.c_str());
+				frames.push_back(frameIdx);
+			}
+			_movieInfo.setVal(name, frames);
+		} else {
+			Common::Array<int32> info(videoIndex);
+			_movieInfo.setVal(line, info);
 		}
-		const Common::String &name = lineTok.nextToken();
-		Common::Array<int32> frames;
-		while (!lineTok.empty()) {
-			const Common::String &frame = lineTok.nextToken();
-			const int32 frameIdx = atoi(frame.c_str());
-			frames.push_back(frameIdx);
-		}
-		_flaMovieFrames.setVal(name, frames);
 	}
 }
 
-const Common::Array<int32> &Resources::getFlaMovieInfo(const Common::String &name) const {
-	return _flaMovieFrames.getVal(name);
+const Common::Array<int32> &Resources::getMovieInfo(const Common::String &name) const {
+	return _movieInfo.getVal(name);
 }
 
 } // namespace TwinE
