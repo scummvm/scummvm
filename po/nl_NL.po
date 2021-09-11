@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-10 06:27+0000\n"
-"PO-Revision-Date: 2021-09-11 10:44+0000\n"
+"PO-Revision-Date: 2021-09-11 17:43+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1215,7 +1215,7 @@ msgstr "Spraak"
 
 #: gui/options.cpp:1636 gui/options.cpp:1646
 msgid "Subtitles"
-msgstr "Tekst"
+msgstr "Ondertitels"
 
 #: gui/options.cpp:1637
 msgid "Both"
@@ -1223,7 +1223,7 @@ msgstr "Beide"
 
 #: gui/options.cpp:1639
 msgid "Subtitle speed:"
-msgstr "Snelheid tekst:"
+msgstr "Snelheid ondertitels:"
 
 #: gui/options.cpp:1641
 msgctxt "lowres"
@@ -1245,12 +1245,12 @@ msgstr "Beide"
 
 #: gui/options.cpp:1647
 msgid "Show subtitles and play speech"
-msgstr "Toon tekst en speel spraak af"
+msgstr "Toon ondertitels en speel spraak af"
 
 #: gui/options.cpp:1649
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Snelheid text:"
+msgstr "Snelheid ondertitels:"
 
 #: gui/options.cpp:1665
 msgid "Music volume:"
@@ -6207,7 +6207,7 @@ msgid ""
 msgstr ""
 "Ondertitels zijn ingeschakeld, maar de ondertiteling in King's Quest 7 was "
 "onvoltooid en uitgeschakeld in de uiteindelijke versie van het spel. ScummVM "
-"maakt het mogelijk om de ondertitles weer in te schakelen, maar omdat ze in "
+"maakt het mogelijk om de ondertitels weer in te schakelen, maar omdat ze in "
 "het originele spel verwijderd waren zullen zijn niet altijd goed getoond "
 "worden of overeenkomen met de spraak van het spel. Dit is geen ScummVM fout, "
 "maar een probleem met de speldata."
@@ -6269,12 +6269,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"GK2 heeft fan gemaakte ondertitles, beschikbaar dankzij de aardige mensen "
+"GK2 heeft fan gemaakte ondertitels, beschikbaar dankzij de aardige mensen "
 "bij SierraHelp.\n"
 "\n"
 "Installatie:\n"
-"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-"GK2Subtitles.zip\n"
+"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles"
+".zip\n"
 
 #: engines/sci/sci.cpp:838
 msgid ""
@@ -6466,11 +6466,11 @@ msgstr "Alleen Spraak"
 
 #: engines/scumm/dialogs.cpp:617
 msgid "Speech and Subtitles"
-msgstr "Spraak and Subtitels"
+msgstr "Spraak and Ondertitels"
 
 #: engines/scumm/dialogs.cpp:618
 msgid "Subtitles Only"
-msgstr "Alleen subtitels"
+msgstr "Alleen ondertitels"
 
 #: engines/scumm/dialogs.cpp:626
 msgctxt "lowres"
