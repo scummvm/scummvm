@@ -57,6 +57,9 @@ void VDXPlayer::setOrigin(int16 x, int16 y) {
 }
 
 void VDXPlayer::stopAudioStream() {
+	if (_audioStream) {
+		g_system->getMixer()->stopHandle(_soundHandle);
+	}
 	_audioStream = NULL;
 }
 
@@ -534,8 +537,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 
 	if (!_audioStream && !isFastForwarding()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
-		Audio::SoundHandle sound_handle;
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &sound_handle, _audioStream);
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 	}
 
 	byte *data = (byte *)malloc(60000);

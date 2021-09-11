@@ -24,6 +24,7 @@
 #define GROOVIE_VDX_H
 
 #include "groovie/player.h"
+#include "audio/mixer.h"
 
 namespace Common {
 class ReadStream;
@@ -46,6 +47,7 @@ protected:
 private:
 	Graphics::Surface *_fg, *_bg;
 	uint8 _palBuf[3 * 256];
+	Audio::SoundHandle _soundHandle;
 
 	// Origin
 	int16 _origX, _origY;
