@@ -103,7 +103,7 @@ public:
 	~Deejay() {}
 
 private:
-	void select(void);
+	void select();
 
 public:
 	void setEnemy(int16 enemyType = -1) {

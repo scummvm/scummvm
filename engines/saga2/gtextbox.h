@@ -118,9 +118,9 @@ private:
 protected:
 
 	void prepareEdit(int which);
-	void revertEdit(void);
-	void commitEdit(void);
-	bool changed(void);
+	void revertEdit();
+	void commitEdit();
+	bool changed();
 
 	void scroll(int8);
 
@@ -129,7 +129,7 @@ protected:
 	void reSelect(int which);
 
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
@@ -155,7 +155,7 @@ protected:
 	void handleTimerTick(int32 tick);
 
 	void editRectFill(gPort &fillPort, gPen *pen);
-	void drawContents(void);
+	void drawContents();
 
 public:
 
@@ -184,27 +184,27 @@ public:
 	void drawClipped(gPort &, const Point16 &, const Rect16 &) {
 		drawClipped();
 	}
-	void drawClipped(void);
-	void draw(void) {
+	void drawClipped();
+	void draw() {
 		drawClipped();    // redraw the panel.
 	}
 
-	bool tabSelect(void);
+	bool tabSelect();
 
 	virtual void timerTick(gPanelMessage &msg);
 
-	void scrollUp(void);
-	void scrollDown(void);
+	void scrollUp();
+	void scrollDown();
 
 	char *getLine(int8);
-	int8 getIndex(void) {
+	int8 getIndex() {
 		return index;
 	}
 
-	void killChanges(void) {
+	void killChanges() {
 		revertEdit();
 	}
-	void keepChanges(void) {
+	void keepChanges() {
 		commitEdit();
 	}
 

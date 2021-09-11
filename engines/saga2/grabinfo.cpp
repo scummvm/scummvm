@@ -172,7 +172,7 @@ uint8 GrabInfo::setIntent(uint8 in) {
 
 
 //	Make the object given into the mouse pointer
-void GrabInfo::setIcon(void) {
+void GrabInfo::setIcon() {
 	assert(
 	    pointerMap.size.x == 0
 	    &&  pointerMap.size.y == 0
@@ -214,7 +214,7 @@ void GrabInfo::setIcon(void) {
 		error("Unable to allocate mouse image buffer");
 }
 
-void GrabInfo::clearIcon(void) {
+void GrabInfo::clearIcon() {
 	assert(grabObj == nullptr);
 
 	if (pointerMap.data != nullptr) {
@@ -227,7 +227,7 @@ void GrabInfo::clearIcon(void) {
 
 //  Changes cursor image to reflect the current state of the cursor based
 //  on the intention and intentDoable data members.
-void GrabInfo::setCursor(void) {
+void GrabInfo::setCursor() {
 	if (intentDoable) {
 		switch (intention) {
 		case None:
@@ -286,7 +286,7 @@ void GrabInfo::placeObject(const Location &loc) {
 
 // this should be use to return the object to the container
 // and/or remove the object from the cursor.
-void GrabInfo::replaceObject(void) {
+void GrabInfo::replaceObject() {
 	if (grabObj == nullptr)
 		return;
 
@@ -345,7 +345,7 @@ void GrabInfo::setGauge(int16 numerator, int16 denominator) {
 }
 
 //	clear the mouse gauge
-void GrabInfo::clearGauge(void) {
+void GrabInfo::clearGauge() {
 	displayGauge = false;
 	if (grabObj == nullptr) clearMouseGauge();
 }

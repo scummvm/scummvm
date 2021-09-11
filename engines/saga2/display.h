@@ -44,22 +44,22 @@ enum DisplayDisabledBecause {
 /* ===================================================================== *
    Prototypes
  * ===================================================================== */
-void endGame(void);
+void endGame();
 
 // ------------------------------------------------------------------------
 // Display initialization
 
-void niceScreenStartup(void);
-void initBackPanel(void);
+void niceScreenStartup();
+void initBackPanel();
 
 // ------------------------------------------------------------------------
 // Display disable flags
 
 void displayEnable(DisplayDisabledBecause reason, bool onOff = true);
 bool displayEnabled(uint32 mask = 0xFFFFFFFF);
-bool displayOkay(void);
-void mainEnable(void);
-void mainDisable(void);
+bool displayOkay();
+void mainEnable();
+void mainDisable();
 
 inline void displayDisable(DisplayDisabledBecause reason, bool onOff = false) {
 	displayEnable(reason, onOff);
@@ -68,33 +68,33 @@ inline void displayDisable(DisplayDisabledBecause reason, bool onOff = false) {
 // ------------------------------------------------------------------------
 // palette changes can be disabled
 
-void enablePaletteChanges(void);
-void disablePaletteChanges(void);
-bool paletteChangesEnabled(void);
+void enablePaletteChanges();
+void disablePaletteChanges();
+bool paletteChangesEnabled();
 
 // ------------------------------------------------------------------------
 // Screen refreshes
-void delayedDisplayEnable(void);
-void externalPaletteIntrusion(void);
-void reDrawScreen(void);
-void blackOut(void);
-void showLoadMessage(void);
+void delayedDisplayEnable();
+void externalPaletteIntrusion();
+void reDrawScreen();
+void blackOut();
+void showLoadMessage();
 
 // ------------------------------------------------------------------------
 // Video mode save and restore for videos
 
-void pushVidState(void);
-void popVidState(void);
+void pushVidState();
+void popVidState();
 
 // ------------------------------------------------------------------------
 // Calls to suspend audio
 
-void suspendAudio(void);
-void resumeAudio(void);
+void suspendAudio();
+void resumeAudio();
 
 // ------------------------------------------------------------------------
 // The display may be disabled for several reasons these track them
-void blackOut(void);
+void blackOut();
 
 } // end of namespace Saga2
 

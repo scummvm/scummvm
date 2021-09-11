@@ -203,7 +203,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 // ------------------------------------------------------------------
 // init spells
 
-void initSpellState(void) {
+void initSpellState() {
 }
 
 void saveSpellState(Common::OutSaveFile *outS) {
@@ -220,7 +220,7 @@ void loadSpellState(Common::InSaveFile *in) {
 // ------------------------------------------------------------------
 // cleanup active spells
 
-void cleanupSpellState(void) {
+void cleanupSpellState() {
 	g_vm->_activeSpells->wipe();
 }
 
@@ -356,7 +356,7 @@ SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
 		effect = effect->next;
 }
 
-size_t SpellDisplayList::saveSize(void) {
+size_t SpellDisplayList::saveSize() {
 	size_t total = 0;
 
 	total += sizeof(count);
@@ -407,7 +407,7 @@ void SpellDisplayList::read(Common::InSaveFile *in) {
 	assert(tCount == count);
 }
 
-void SpellDisplayList::wipe(void) {
+void SpellDisplayList::wipe() {
 	for (int i = 0; i < maxCount; i++)
 		if (spells[i]) {
 			delete spells[i];
@@ -418,7 +418,7 @@ void SpellDisplayList::wipe(void) {
 	assert(count == 0);
 }
 
-size_t SpellInstance::saveSize(void) {
+size_t SpellInstance::saveSize() {
 	size_t total = 0;
 	total += sizeof(StorageSpellInstance);
 	if (eList.count)

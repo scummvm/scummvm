@@ -42,7 +42,7 @@ void timerCallback(void *refCon) {
 		gameTime++;
 }
 
-void initTimer(void) {
+void initTimer() {
 	gameTime = 0;
 
 	g_vm->getTimerManager()->installTimerProc(&timerCallback, 1000000 / 72, nullptr, "saga2");
@@ -99,13 +99,13 @@ void Alarm::set(uint32 dur) {
 	duration = dur;
 }
 
-bool Alarm::check(void) {
+bool Alarm::check() {
 	return ((uint32)(gameTime - basetime) > duration);
 }
 
 // time elapsed since alarm set
 
-uint32 Alarm::elapsed(void) {
+uint32 Alarm::elapsed() {
 	return (uint32)(gameTime - basetime);
 }
 
@@ -130,7 +130,7 @@ void deleteTimer(Timer *t) {
 
 //----------------------------------------------------------------------
 //	Check all active Timers
-void checkTimers(void) {
+void checkTimers() {
 	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it++) {
 		if ((*it)->_active == false)
 			continue;
@@ -153,7 +153,7 @@ void checkTimers(void) {
 //----------------------------------------------------------------------
 //	Initialize the Timers
 
-void initTimers(void) {
+void initTimers() {
 	//  Nothing to do
 }
 
@@ -255,7 +255,7 @@ void loadTimers(Common::InSaveFile *in) {
 //----------------------------------------------------------------------
 //	Cleanup the active Timers
 
-void cleanupTimers(void) {
+void cleanupTimers() {
 	while (g_vm->_timerLists.size() > 0)
 		delete g_vm->_timerLists.front();
 
@@ -332,7 +332,7 @@ Timer::~Timer() {
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in a buffer
 
-int32 Timer::archiveSize(void) {
+int32 Timer::archiveSize() {
 	return      sizeof(ObjectID)         //  obj's ID
 	            +   sizeof(TimerID)
 	            +   sizeof(int16)

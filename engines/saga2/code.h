@@ -83,9 +83,9 @@ enum op_types {
 	op_call_near,                           // call function in same segment
 	op_call_far,                            // call function in other segment
 	op_ccall,                               // call C function
-	op_ccall_v,                             // call C function (void)
+	op_ccall_v,                             // call C function ()
 	op_call_member,                         // call member function
-	op_call_member_v,                       // call member function (void)
+	op_call_member_v,                       // call member function ()
 
 	op_enter,                               // enter a function
 	op_return,                              // return from function

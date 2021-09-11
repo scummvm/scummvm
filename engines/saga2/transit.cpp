@@ -39,7 +39,7 @@ namespace Saga2 {
    Prototypes
  * ===================================================================== */
 
-bool isModalMode(void) {
+bool isModalMode() {
 	uint16  i;
 	bool    modalFlag = false;
 
@@ -55,7 +55,7 @@ bool isModalMode(void) {
 	return modalFlag;
 }
 
-void dayNightUpdate(void) {
+void dayNightUpdate() {
 	// do nothing while in modal mode
 	if (isModalMode()) {
 		return;
@@ -91,23 +91,23 @@ void dayNightUpdate(void) {
 	}
 }
 
-void SystemEventLoop(void);
+void SystemEventLoop();
 //-----------------------------------------------------------------------
 //	Fade to black
 
-void clearTileAreaPort(void);
-void reDrawScreen(void) ;
-void updateMainDisplay(void);
+void clearTileAreaPort();
+void reDrawScreen() ;
+void updateMainDisplay();
 void updateActiveRegions();
-void drawMainDisplay(void);
+void drawMainDisplay();
 void fadeUp();
 void fadeDown();
-void clearTileAreaPort(void);
-void displayUpdate(void);
-void disableUserControls(void);
-void enableUserControls(void);
+void clearTileAreaPort();
+void displayUpdate();
+void disableUserControls();
+void enableUserControls();
 
-void fadeDown(void) {
+void fadeDown() {
 	if (g_vm->_fadeDepth++ == 0) {
 		g_vm->_pal->beginFade(g_vm->_pal->_darkPalette, 20);
 		while (g_vm->_pal->updatePalette());
@@ -120,7 +120,7 @@ void fadeDown(void) {
 //-----------------------------------------------------------------------
 //	Fade to many colors
 
-void fadeUp(void) {
+void fadeUp() {
 	if (--g_vm->_fadeDepth == 0) {
 		enableUserControls();
 		updateMainDisplay();

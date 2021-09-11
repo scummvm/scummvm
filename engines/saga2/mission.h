@@ -73,8 +73,8 @@ struct ActiveMissionData {
 
 class ActiveMission {
 
-	friend void initMissions(void);
-	friend void cleanupMissions(void);
+	friend void initMissions();
+	friend void cleanupMissions();
 
 public:
 
@@ -88,9 +88,9 @@ public:
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	void cleanup(void);
+	void cleanup();
 
-	bool spaceForObject(void) {
+	bool spaceForObject() {
 		return _data.numObjectIDs < ARRAYSIZE(_data.missionObjectList);
 	}
 
@@ -106,23 +106,23 @@ public:
 	//  Add record of knowledge creation to mission
 	bool removeKnowledgeID(ObjectID actor, uint16 knowledgeID);
 
-	int16 getMissionID(void) {
+	int16 getMissionID() {
 		return _data.missionID;
 	}
 
-	uint16 getScript(void) {
+	uint16 getScript() {
 		return _data.missionScript;
 	}
 };
 
 //  Initialize the active mission list
-void initMissions(void);
+void initMissions();
 
 void saveMissions(Common::OutSaveFile *out);
 void loadMissions(Common::InSaveFile *in);
 
 //  Cleanup the active mission list
-inline void cleanupMissions(void) { /* do nothing */ }
+inline void cleanupMissions() { /* do nothing */ }
 
 } // end of namespace Saga2
 

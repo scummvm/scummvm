@@ -555,7 +555,7 @@ inline bool isUserAction(gEvent ev) {
  * ===================================================================== */
 
 
-char **initFileFields(void) {
+char **initFileFields() {
 	uint16              i;
 	SaveFileHeader      header;                 //  The save file header.
 
@@ -763,17 +763,17 @@ int16 FileDialog(int16 fileProcess) {
 /* ===================================================================== *
    Options dialog box
  * ===================================================================== */
-void reDrawScreen(void) ;
-void updateMainDisplay(void);
+void reDrawScreen() ;
+void updateMainDisplay();
 void updateActiveRegions();
-void drawMainDisplay(void);
+void drawMainDisplay();
 void fadeUp();
 void fadeDown();
-void clearTileAreaPort(void);
-void displayUpdate(void);
-void disableUserControls(void);
-void enableUserControls(void);
-void updateAllUserControls(void);
+void clearTileAreaPort();
+void displayUpdate();
+void disableUserControls();
+void enableUserControls();
+void updateAllUserControls();
 
 int16 OptionsDialog(bool disableSaveResume) {
 	// Save back buffer before opening the dialog
@@ -1009,7 +1009,7 @@ void    **udDialogPushImag;
 
 bool    udInit = false;
 
-bool initUserDialog(void) {
+bool initUserDialog() {
 
 	const   int16   dialogPushResNum    = 4;
 	// init the resource context handle
@@ -1036,11 +1036,11 @@ bool initUserDialog(void) {
 	return true;
 }
 
-bool userDialogAvailable(void) {
+bool userDialogAvailable() {
 	return udInit;
 }
 
-void cleanupUserDialog(void) {
+void cleanupUserDialog() {
 	udInit = false;
 	// remove the window all attatched controls
 	if (udWin) delete   udWin;
@@ -1131,13 +1131,13 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
    message dialog box
  * ===================================================================== */
 
-bool initUserDialog(void) {
+bool initUserDialog() {
 	return true;
 }
-bool userDialogAvailable(void) {
+bool userDialogAvailable() {
 	return true;
 }
-void cleanupUserDialog(void) {}
+void cleanupUserDialog() {}
 
 int16 userDialog(const char *title, const char *msg, const char *bMsg1,
                  const char *bMsg2,
@@ -1805,7 +1805,7 @@ APPFUNC(cmdSpeechText) {
 	}
 }
 
-void volumeChanged(void);
+void volumeChanged();
 
 // Set music volume
 

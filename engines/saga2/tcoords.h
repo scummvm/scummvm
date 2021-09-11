@@ -188,7 +188,7 @@ struct TilePoint {
 	void operator+= (TilePoint a) { u += a.u; v += a.v; z += a.z; }
 	void operator-= (TilePoint a) { u -= a.u; v -= a.v; z -= a.z; }
 
-	int16 quickHDistance(void) {
+	int16 quickHDistance() {
 		int16		au = (int16)ABS(u),
 					av = (int16)ABS(v);
 
@@ -198,9 +198,9 @@ struct TilePoint {
 			return (int16)(av + (au >> 1));
 	}
 
-	int16 quickDir(void);
+	int16 quickDir();
 
-	int16 magnitude(void);
+	int16 magnitude();
 
 	void debugPrint(int level = 0, const char *msg = "TilePoint:") {
 		debug(level, "%s %d, %d, %d", msg, u, v, z);

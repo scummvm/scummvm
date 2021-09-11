@@ -79,24 +79,24 @@ protected:
 	char        textBuf[bufSize];
 
 	// internal grab commonality
-	void setIcon(void);
-	void clearIcon(void);
+	void setIcon();
+	void clearIcon();
 
 	// set cursor image based on 'intention' and 'intentDoable'
-	void setCursor(void);
+	void setCursor();
 
 public:
 	// there will probably be only one GrabInfo, created globally
-	GrabInfo(void);
+	GrabInfo();
 
-	~GrabInfo(void);
+	~GrabInfo();
 
 	void    selectImage(uint8 index);
 
 	// set the move count based on val and whether the object is
 	// mergeable or not.
 	void    setMoveCount(int16 val);
-	int16   getMoveCount(void) {
+	int16   getMoveCount() {
 		return moveCount;
 	}
 
@@ -108,10 +108,10 @@ public:
 	void    copyObject(GameObject *obj, Intent in = Drop, int16 count = 1);
 
 	// non-destructive reads of the state
-	uint8       getIntent(void)       {
+	uint8       getIntent()       {
 		return intention;
 	}
-	bool        getDoable(void)       {
+	bool        getDoable()       {
 		return intentDoable;
 	}
 
@@ -124,16 +124,16 @@ public:
 		}
 	}
 
-	GameObject  *getObject(void)  {
+	GameObject  *getObject()  {
 		return grabObj;
 	}
-	ObjectID    getObjectId(void) {
+	ObjectID    getObjectId() {
 		return grabId;
 	}
 
 	// free the cursor
 	void placeObject(const Location &loc);
-	void replaceObject(void);
+	void replaceObject();
 
 	//  request a change to the mouse cursor text
 	void setText(const char *txt);
@@ -142,7 +142,7 @@ public:
 	void setGauge(int16 numerator, int16 denominator);
 
 	//  clear the mouse gauge
-	void clearGauge(void);
+	void clearGauge();
 };
 
 } // end of namespace Saga2

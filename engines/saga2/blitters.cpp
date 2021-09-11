@@ -387,16 +387,16 @@ void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32
 	}
 }
 
-bool initGraphics(void) {
+bool initGraphics() {
 	warning("STUB: initGraphics()");
 	return false;
 }
 
-bool initProcessResources(void) {
+bool initProcessResources() {
         return true;
 }
 
-void termProcessResources(void) {
+void termProcessResources() {
 }
 
 } // end of namespace Saga2

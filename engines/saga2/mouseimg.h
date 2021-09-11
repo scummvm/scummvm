@@ -63,7 +63,7 @@ void setMouseText(char *text);
 void setMouseGauge(int numerator, int denominator);
 
 //  Turn off the gauge on the mouse pointer
-void clearMouseGauge(void);
+void clearMouseGauge();
 
 void initCursors();
 void freeCursors();

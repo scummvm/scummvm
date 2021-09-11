@@ -73,16 +73,16 @@ void newSensor(Sensor *s, int16 ctr);
 void deleteSensor(Sensor *p);
 
 //  Check all active sensors
-void checkSensors(void);
+void checkSensors();
 //  Evaluate an event for all active sensors
 void assertEvent(const GameEvent &ev);
 
 //  Initialize the sensors
-void initSensors(void);
+void initSensors();
 void saveSensors(Common::OutSaveFile *outS);
 void loadSensors(Common::InSaveFile *in);
 //  Cleanup the active sensors
-void cleanupSensors(void);
+void cleanupSensors();
 
 /* ===================================================================== *
    GameEvent struct
@@ -130,13 +130,13 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	static int32 archiveSize(void) {
+	static int32 archiveSize() {
 		return sizeof(ObjectID);
 	}
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	GameObject *getObject(void) {
+	GameObject *getObject() {
 		return obj;
 	}
 };
@@ -166,7 +166,7 @@ public:
 	Sensor(Common::InSaveFile *in, int16 ctr);
 
 	//  Virtural destructor
-	virtual ~Sensor(void) {
+	virtual ~Sensor() {
 		deleteSensor(this);
 		SensorList *sl = fetchSensorList(obj);
 		debugC(1, kDebugSensors, "Deleting Sensor %p of %d (%s) (list = %p, total = %d)",
@@ -176,15 +176,15 @@ public:
 	virtual void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	virtual int16 getType(void) = 0;
+	virtual int16 getType() = 0;
 
-	GameObject *getObject(void) {
+	GameObject *getObject() {
 		return obj;
 	}
-	SensorID thisID(void) {
+	SensorID thisID() {
 		return id;
 	}
-	int16 getRange(void) {
+	int16 getRange() {
 		return range;
 	}
 
@@ -211,7 +211,7 @@ public:
 	}
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 	//  Determine if the object can sense what it's looking for
 	bool check(SenseInfo &info, uint32 senseFlags);
@@ -266,12 +266,12 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 	//  Determine if the object can sense what it's looking for
 	bool check(SenseInfo &info, uint32 senseFlags);
@@ -303,12 +303,12 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 private:
 	//  Determine if an object meets the search criteria
@@ -358,12 +358,12 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 	//  Determine if the object can sense what it's looking for
 	bool check(SenseInfo &info, uint32 senseFlags);
@@ -395,12 +395,12 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 private:
 	//  Determine if an actor meets the search criteria
@@ -426,12 +426,12 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
-	int16 getType(void);
+	int16 getType();
 
 	//  Determine if the object can sense what it's looking for
 	bool check(SenseInfo &info, uint32 senseFlags);

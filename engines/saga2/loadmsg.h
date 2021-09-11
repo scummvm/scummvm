@@ -30,10 +30,10 @@
 
 namespace Saga2 {
 
-void initLoadMode(void);
-void updateLoadMode(void);
-void closeLoadMode(void);
-void loadingScreen(void);
+void initLoadMode();
+void updateLoadMode();
+void closeLoadMode();
+void loadingScreen();
 
 } // end of namespace Saga2
 

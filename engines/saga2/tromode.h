@@ -29,15 +29,15 @@
 
 namespace Saga2 {
 
-void setIntroMode(void);
-void setOutroMode(void);
+void setIntroMode();
+void setOutroMode();
 void setWintroMode(int16 whichOne);
-void setLostroMode(void);
+void setLostroMode();
 
-void TroModeExternEvent(void);
+void TroModeExternEvent();
 
 // this doesn't belong here
-bool verifyUserExit(void);
+bool verifyUserExit();
 
 } // end of namespace Saga2
 

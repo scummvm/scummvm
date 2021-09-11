@@ -46,7 +46,7 @@ namespace Saga2 {
 //    which relate to spell casting
 //
 
-static void loadWeaponData(void);
+static void loadWeaponData();
 
 ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 	ProtoEffect *pe = NULL;
@@ -116,11 +116,11 @@ ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 	return pe;
 }
 
-void initWeapons(void) {
+void initWeapons() {
 	loadWeaponData();
 }
 
-void cleanupWeapons(void) {
+void cleanupWeapons() {
 	for (int i = 0; i < kMaxWeapons; i++)
 		g_vm->_weaponRack[i].killEffects();
 }
@@ -143,7 +143,7 @@ GameObject *getShieldItem(GameObject *defender) {
 /* ===================================================================== *
    WeaponProtoEffect member functions
  * ===================================================================== */
-WeaponProtoEffect::~WeaponProtoEffect(void) {
+WeaponProtoEffect::~WeaponProtoEffect() {
 	if (_effect != NULL)
 		delete _effect;
 }
@@ -186,7 +186,7 @@ WeaponStuff::~WeaponStuff() {
 	_master = kNullWeapon;
 }
 
-void WeaponStuff::killEffects(void) {
+void WeaponStuff::killEffects() {
 	while (_effects != NULL) {
 		WeaponEffect *curEffect = _effects;
 
@@ -252,7 +252,7 @@ void WeaponStuff::implement(Actor *enactor, GameObject *target, GameObject *stri
 
 //-----------------------------------------------------------------------
 
-static void loadWeaponData(void) {
+static void loadWeaponData() {
 	hResContext *spellRes = auxResFile->newContext(MKTAG('I', 'T', 'E', 'M'), "weapon resources");
 	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing weapon resource group.");

@@ -60,23 +60,23 @@ public:
 	}
 	void draw(TileRegion tr, int16 inWorld, TilePoint bc, gPort &tport);
 	bool hitCheck(TileRegion vr, int16 inWorld, TilePoint bc, TilePoint cp);
-	int16 getWorld(void) {
+	int16 getWorld() {
 		return world;
 	}
-	int16 getU(void) {
+	int16 getU() {
 		return featureCoords.u;
 	}
-	int16 getV(void) {
+	int16 getV() {
 		return featureCoords.v;
 	}
-	char *getText(void) {
+	char *getText() {
 		return name;
 	}
 
 	// The only aspect of different map features is what they look like
 	virtual void blit(gPort &tp, int32 x, int32 y) = 0;
 	virtual bool isHit(TilePoint disp, TilePoint mouse) = 0;
-	virtual void update(void) = 0;
+	virtual void update() = 0;
 };
 
 
@@ -91,7 +91,7 @@ class CStaticMapFeature : public CMapFeature {
 public:
 	CStaticMapFeature(TilePoint where, int16 inWorld, const char *desc, int16 bColor);
 	virtual void blit(gPort &tp, int32 x, int32 y);
-	virtual void update(void) {}
+	virtual void update() {}
 	virtual bool isHit(TilePoint disp, TilePoint mouse);
 };
 
@@ -105,7 +105,7 @@ class CPictureMapFeature : public CMapFeature {
 public:
 	CPictureMapFeature(TilePoint where, int16 inWorld, char *desc, gPixelMap *pm);
 	virtual void blit(gPort &tp, int32 x, int32 y);
-	virtual void update(void) {}
+	virtual void update() {}
 	virtual bool isHit(TilePoint disp, TilePoint mouse) {
 		return false;
 	}
@@ -116,13 +116,13 @@ public:
    Prototypes
  * ===================================================================== */
 
-void initMapFeatures(void) ;
+void initMapFeatures() ;
 void updateMapFeatures(int16 currentWorld);
 void drawMapFeatures(TileRegion viewRegion,
                      int16 world,
                      TilePoint baseCoords,
                      gPort &tPort);
-void termMapFeatures(void) ;
+void termMapFeatures() ;
 char *getMapFeaturesText(TileRegion viewRegion,
                          int16 inWorld,
                          TilePoint baseCoords,

@@ -29,13 +29,13 @@
 
 namespace Saga2 {
 
-void dayNightUpdate(void);
+void dayNightUpdate();
 
 //  Fade to black
-void fadeDown(void);
+void fadeDown();
 
 //  Fade to many colors
-void fadeUp(void);
+void fadeUp();
 
 } // end of namespace Saga2
 

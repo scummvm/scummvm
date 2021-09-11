@@ -65,7 +65,7 @@ extern APPFUNC(cmdWindowFunc);
 
 //  Temporary...
 void grabObject(ObjectID pickedObject);      // turn object into mouse ptr
-void releaseObject(void);                    // restore mouse pointer
+void releaseObject();                    // restore mouse pointer
 
 /* Reference Types
 ProtoObj::isTangible
@@ -306,7 +306,7 @@ bool ContainerView::isVisible(GameObject *item) {
 }
 
 //  total the mass, bulk, and number of all objects in container.
-void ContainerView::totalObjects(void) {
+void ContainerView::totalObjects() {
 	ObjectID objID;
 	GameObject *item = nullptr;
 
@@ -587,7 +587,7 @@ bool ContainerView::activate(gEventType why) {
 	return true;
 }
 
-void ContainerView::deactivate(void) {
+void ContainerView::deactivate() {
 }
 
 void ContainerView::pointerMove(gPanelMessage &msg) {
@@ -1173,9 +1173,9 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 }
 
 //  Virtual destructor (base does nothing)
-ContainerWindow::~ContainerWindow(void) {}
+ContainerWindow::~ContainerWindow() {}
 
-ContainerView &ContainerWindow::getView(void) {
+ContainerView &ContainerWindow::getView() {
 	return *view;
 }
 
@@ -1256,12 +1256,12 @@ TangibleContainerWindow::TangibleContainerWindow(
 	}
 }
 
-TangibleContainerWindow::~TangibleContainerWindow(void) {
+TangibleContainerWindow::~TangibleContainerWindow() {
 	if (massWeightIndicator)    delete massWeightIndicator;
 	if (containerSpriteImg)     delete containerSpriteImg;
 }
 
-void TangibleContainerWindow::setContainerSprite(void) {
+void TangibleContainerWindow::setContainerSprite() {
 	// pointer to sprite data that will be drawn
 	Sprite              *spr;
 	ProtoObj            *proto = view->containerObject->proto();
@@ -1411,12 +1411,12 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 }
 
 //  Return the container window for a container node, if it is visible
-ContainerWindow *ContainerNode::getWindow(void) {
+ContainerWindow *ContainerNode::getWindow() {
 	return window;
 }
 
 //  Return the container view for a container node, if it is visible
-ContainerView   *ContainerNode::getView(void) {
+ContainerView   *ContainerNode::getView() {
 	return window ? &window->getView() : NULL;
 }
 
@@ -1471,7 +1471,7 @@ void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 //  Close the container window, but leave the node.
-void ContainerNode::hide(void) {
+void ContainerNode::hide() {
 	//  close the window, but don't close the object.
 	if (type != readyType && window != NULL) {
 		position = window->getExtent();     //  Save old window position
@@ -1482,7 +1482,7 @@ void ContainerNode::hide(void) {
 }
 
 //  Open the cotainer window, given the node info.
-void ContainerNode::show(void) {
+void ContainerNode::show() {
 	ProtoObj        *proto = GameObject::protoAddress(object);
 
 	assert(proto);
@@ -1521,7 +1521,7 @@ void ContainerNode::show(void) {
 	window->open();
 }
 
-void ContainerNode::update(void) {
+void ContainerNode::update() {
 	if (type == readyType) {
 		//  Update ready containers if they are enabled
 		if (TrioCviews[owner]->getEnabled())  TrioCviews[owner]->invalidate();
@@ -1611,7 +1611,7 @@ void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	}
 }
 
-void ContainerManager::doDeferredActions(void) {
+void ContainerManager::doDeferredActions() {
 	Common::List<ContainerNode *>::iterator nextIt;
 	Actor           *a = getCenterActor();
 	TilePoint       tp = a->getLocation();
@@ -1746,14 +1746,14 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
     Misc. functions
  * ===================================================================== */
 
-void initContainers(void) {
+void initContainers() {
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
 	selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
 }
 
-void cleanupContainers(void) {
+void cleanupContainers() {
 	if (selImage)
 		g_vm->_imageCache->releaseImage(selImage);
 	if (containerRes)
@@ -1763,7 +1763,7 @@ void cleanupContainers(void) {
 	containerRes = NULL;
 }
 
-void initContainerNodes(void) {
+void initContainerNodes() {
 #if DEBUG
 	//  Verify the globalContainerList only has ready ContainerNodes
 
@@ -1843,7 +1843,7 @@ void loadContainerNodes(Common::InSaveFile *in) {
 	assert(tempList.empty());
 }
 
-void cleanupContainerNodes(void) {
+void cleanupContainerNodes() {
 	if (g_vm->_cnm == nullptr)
 		return;
 
@@ -1860,7 +1860,7 @@ void cleanupContainerNodes(void) {
 		delete deletionArray[i];
 }
 
-void updateContainerWindows(void) {
+void updateContainerWindows() {
 	g_vm->_cnm->doDeferredActions();
 }
 

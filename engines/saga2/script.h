@@ -122,13 +122,13 @@ enum builtinTypes {
  * ===================================================================== */
 
 //  Load the SAGA data segment from the resource file
-void initSAGADataSeg(void);
+void initSAGADataSeg();
 
 void saveSAGADataSeg(Common::OutSaveFile *outS);
 void loadSAGADataSeg(Common::InSaveFile *in);
 
 //  Dispose of the SAGA data segment -- do nothing
-inline void cleanupSAGADataSeg(void) {}
+inline void cleanupSAGADataSeg() {}
 
 /* ===================================================================== *
    Thread management functions
@@ -137,13 +137,13 @@ inline void cleanupSAGADataSeg(void) {}
 class Thread;
 
 //  Initialize the SAGA thread list
-void initSAGAThreads(void);
+void initSAGAThreads();
 
 void saveSAGAThreads(Common::OutSaveFile *outS);
 void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize);
 
 //  Dispose of the active SAGA threads
-void cleanupSAGAThreads(void);
+void cleanupSAGAThreads();
 
 //  Dispose of an active SAGA thread
 void deleteThread(Thread *p);
@@ -251,7 +251,7 @@ public:
 
 	//  Return the number of bytes need to archive this thread in an
 	//  arhive buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	//  Create an archive of this thread in an archive buffer
 	void *archive(void *buf);
@@ -259,10 +259,10 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Dispatch all asynchronous threads
-	static void dispatch(void);
+	static void dispatch();
 
 	//  Intepret a single thread
-	scriptResult run(void);
+	scriptResult run();
 
 	//  Tells thread to wait for an event
 	void waitForEvent(enum WaitTypes wt, ActiveItem *param) {
@@ -272,10 +272,10 @@ public:
 	}
 
 	//  Convert to extended script, and back to synchonous script
-	void setExtended(void);
-	void clearExtended(void);
+	void setExtended();
+	void clearExtended();
 
-	bool interpret(void);
+	bool interpret();
 private:
 	uint8 *strAddress(int strNum);
 

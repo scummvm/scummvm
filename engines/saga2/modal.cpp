@@ -35,9 +35,9 @@ ModalWindow *mWinPtr;
 
 APPFUNC(cmdModalWindow);
 
-void ModalModeSetup(void) {}
-void ModalModeCleanup(void) {}
-void ModalModeHandleTask(void) {}
+void ModalModeSetup() {}
+void ModalModeCleanup() {}
+void ModalModeHandleTask() {}
 void ModalModeHandleKey(short, short);
 
 GameMode        ModalMode = {
@@ -66,18 +66,18 @@ ModalWindow::ModalWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 		prevModeStackPtr[i] = 0;
 }
 
-ModalWindow::~ModalWindow(void) {
+ModalWindow::~ModalWindow() {
 
 	//  Kludge because of Visual C's patching of vptr in destructor.
 	if (isOpen()) close();
 
 }
 
-bool ModalWindow::isModal(void) {
+bool ModalWindow::isModal() {
 	return openFlag;
 }
 
-bool ModalWindow::open(void) {
+bool ModalWindow::open() {
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
 	g_vm->_mouseInfo->setText(NULL);
@@ -94,7 +94,7 @@ bool ModalWindow::open(void) {
 	return gWindow::open();
 }
 
-void ModalWindow::close(void) {
+void ModalWindow::close() {
 	gWindow::close();
 
 	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);

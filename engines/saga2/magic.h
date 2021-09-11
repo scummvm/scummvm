@@ -99,10 +99,10 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell);
 bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell);
 
 // spell saving & loading
-void initSpellState(void);
+void initSpellState();
 void saveSpellState(Common::OutSaveFile *outS);
 void loadSpellState(Common::InSaveFile *in);
-void cleanupSpellState(void);
+void cleanupSpellState();
 
 } // end of namespace Saga2
 

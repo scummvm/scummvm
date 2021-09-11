@@ -43,15 +43,15 @@ private:
 
 public:
 	CImageNode(hResContext *con, uint32 resID);
-	~CImageNode(void);
+	~CImageNode();
 
-	void    *getImagePtr(void);
+	void    *getImagePtr();
 	bool    isSameImage(hResContext *con, uint32 resID);
 	bool    isSameImage(void *imagePtr);
-	uint16  getNumRequested(void) {
+	uint16  getNumRequested() {
 		return requested;
 	}
-	bool    releaseRequest(void);
+	bool    releaseRequest();
 };
 
 
@@ -64,10 +64,10 @@ private:
 	Common::List<CImageNode *> _nodes;    // list of ImageNode
 
 public:
-	CImageCache(void) {
+	CImageCache() {
 		assert(_nodes.empty());
 	}
-	~CImageCache(void);
+	~CImageCache();
 
 	void *requestImage(hResContext *con, uint32 resID);
 	void releaseImage(void *);

@@ -56,7 +56,7 @@ CVideoBox::CVideoBox(const Rect16 &box,
 	rInfo.running = false;
 }
 
-CVideoBox::~CVideoBox(void) {
+CVideoBox::~CVideoBox() {
 	// remove the resource handle
 	if (decRes)
 		resFile->disposeContext(decRes);
@@ -66,7 +66,7 @@ CVideoBox::~CVideoBox(void) {
 	g_vm->abortVideo();
 }
 
-void CVideoBox::deactivate(void) {
+void CVideoBox::deactivate() {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -121,13 +121,13 @@ void CVideoBox::drawClipped(
 	g_vm->_pointer->show();
 }
 
-void CVideoBox::draw(void) {         // redraw the window
+void CVideoBox::draw() {         // redraw the window
 	// draw the decoration stuff
 	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 }
 
 
-void CVideoBox::init(void) {
+void CVideoBox::init() {
 	assert(resFile);
 
 	// set the result info to nominal startup values

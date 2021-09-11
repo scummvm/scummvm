@@ -180,7 +180,7 @@ struct GameObjectArchive {
 //-----------------------------------------------------------------------
 //	Default constructor
 
-GameObject::GameObject(void) {
+GameObject::GameObject() {
 	prototype   = nullptr;
 	_data.projectDummy = 0;
 	_data.location    = Nowhere;
@@ -285,7 +285,7 @@ void GameObject::read(Common::InSaveFile *in, bool expandProto) {
 //	Return the number of bytes need to archive this object in an archive
 //	buffer.
 
-int32 GameObject::archiveSize(void) {
+int32 GameObject::archiveSize() {
 	return sizeof(GameObjectArchive);
 }
 
@@ -446,13 +446,13 @@ Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
 }
 
 
-uint16 GameObject::containmentSet(void) {
+uint16 GameObject::containmentSet() {
 	return  prototype->containmentSet();
 }
 
 //  Calculates the ID of an object, given it's (implicit) address
 
-ObjectID GameObject::thisID(void) {         // calculate our own id
+ObjectID GameObject::thisID() {         // calculate our own id
 	return _index;
 }
 
@@ -479,7 +479,7 @@ ObjectID *GameObject::getHeadPtr(ObjectID parentID, TilePoint &l) {
 
 //  Removes an object from it's chain.
 
-void GameObject::remove(void) {             // removes from old list
+void GameObject::remove() {             // removes from old list
 	ObjectID        id = thisID(),
 	                *headPtr;
 
@@ -547,7 +547,7 @@ void GameObject::insert(ObjectID newPrev) {
 
 //  Returns the identity of the actor possessing the object
 
-ObjectID GameObject::possessor(void) {
+ObjectID GameObject::possessor() {
 	GameObject      *obj;
 	ObjectID        id = _data.parentID;
 
@@ -584,11 +584,11 @@ bool GameObject::getWorldLocation(Location &loc) {
 	}
 }
 
-Location GameObject::notGetLocation(void) {
+Location GameObject::notGetLocation() {
 	return Location(getLocation(), IDParent());
 }
 
-Location GameObject::notGetWorldLocation(void) {
+Location GameObject::notGetWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
 	uint8           objHeight = prototype->height;
@@ -697,7 +697,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 	}
 }
 
-bool GameObject::isTrueSkill(void) {
+bool GameObject::isTrueSkill() {
 	// figure out if it's a skill or spell
 	if (prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 		// get skill proto for this spell or skill
@@ -713,7 +713,7 @@ bool GameObject::isTrueSkill(void) {
 }
 
 //  Returns the _data.location of an object within the world
-TilePoint GameObject::getWorldLocation(void) {
+TilePoint GameObject::getWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
 	uint8           objHeight = prototype->height;
@@ -732,7 +732,7 @@ TilePoint GameObject::getWorldLocation(void) {
 }
 
 //  Return a pointer to the world on which this object resides
-GameWorld *GameObject::world(void) {
+GameWorld *GameObject::world() {
 	if (isWorld(this)) return (GameWorld *)this;
 
 	GameObject      *obj = this;
@@ -785,7 +785,7 @@ int32 GameObject::getSprOffset(int16 num) {
 }
 
 //  Remove an object from a stack of objects
-bool GameObject::unstack(void) {
+bool GameObject::unstack() {
 	GameObject  *item = nullptr,
 	            *base = nullptr,
 	             *zero = nullptr;
@@ -916,14 +916,14 @@ void GameObject::move(const Location &location, int16 num) {
 }
 
 
-int16 GameObject::getChargeType(void) {
+int16 GameObject::getChargeType() {
 	assert(prototype);
 
 	return prototype->getChargeType();
 }
 
 // this function recharges an object
-void GameObject::recharge(void) {
+void GameObject::recharge() {
 	// if this object has a charge type
 	// other then none, then reset
 	// it's charges to maximum
@@ -1243,7 +1243,7 @@ ObjectID GameObject::makeAlias(const Location &l) {
 
 //  Creates a new object (if one is available), and
 //  return it's address
-GameObject *GameObject::newObject(void) {   // get a newly created object
+GameObject *GameObject::newObject() {   // get a newly created object
 	GameObject      *limbo = objectAddress(ObjectLimbo),
 	                *obj = nullptr;
 
@@ -1287,7 +1287,7 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 //  Deletes an object by adding it to either the actor limbo list
 //  or the object limbo list.
 
-void GameObject::deleteObject(void) {
+void GameObject::deleteObject() {
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 	ContainerNode   *cn;
@@ -1351,7 +1351,7 @@ void GameObject::deleteObject(void) {
 
 //  Delete this object and every object it contains
 
-void GameObject::deleteObjectRecursive(void) {
+void GameObject::deleteObjectRecursive() {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
@@ -1407,7 +1407,7 @@ void GameObject::deleteObjectRecursive(void) {
 //-----------------------------------------------------------------------
 //	Activate this object
 
-void GameObject::activate(void) {
+void GameObject::activate() {
 	if (_data.objectFlags & objectActivated)
 		return;
 
@@ -1436,7 +1436,7 @@ void GameObject::activate(void) {
 //-----------------------------------------------------------------------
 //	Deactivate this object
 
-void GameObject::deactivate(void) {
+void GameObject::deactivate() {
 	if (!(_data.objectFlags & objectActivated))
 		return;
 
@@ -1497,7 +1497,7 @@ bool GameObject::isContaining(ObjectTarget *objTarget) {
 
 const int32 harmfulTerrain = terrainHot | terrainCold | terrainIce | terrainSlash | terrainBash;
 
-void GameObject::updateState(void) {
+void GameObject::updateState() {
 	int16            tHeight;
 	static TilePoint nullVelocity(0, 0, 0);
 	StandingTileInfo sti;
@@ -1915,7 +1915,7 @@ void GameObject::removeTimer(TimerID id) {
 //-----------------------------------------------------------------------
 //	Remove all timer's from this objects's timer list
 
-void GameObject::removeAllTimers(void) {
+void GameObject::removeAllTimers() {
 	TimerList       *timerList;
 
 	//  Get this object's timer list
@@ -2103,7 +2103,7 @@ void GameObject::removeSensor(SensorID id) {
 //-----------------------------------------------------------------------
 //	Remove all sensors from this object's sensor list
 
-void GameObject::removeAllSensors(void) {
+void GameObject::removeAllSensors() {
 	SensorList      *sensorList;
 
 	//  Get this object's sensor list
@@ -2202,7 +2202,7 @@ bool GameObject::canSenseObjectProperty(
 //-------------------------------------------------------------------
 //  Given an object, returns the prototype number
 
-int32 GameObject::getProtoNum(void) {
+int32 GameObject::getProtoNum() {
 	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
 		if (prototype == g_vm->_actorProtos[i])
 			return i;
@@ -2247,7 +2247,7 @@ void GameObject::setProtoNum(int32 nProto) {
 //-------------------------------------------------------------------
 //	Evaluate the effects of enchantments upon an object
 
-void GameObject::evalEnchantments(void) {
+void GameObject::evalEnchantments() {
 	if (isActor(this)) {
 		evalActorEnchantments((Actor *)this);
 	} else if (isObject(this)) {
@@ -2352,7 +2352,7 @@ bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
 //-------------------------------------------------------------------
 //	Return the total mass of all objects contained within this object
 
-uint16 GameObject::totalContainedMass(void) {
+uint16 GameObject::totalContainedMass() {
 	uint16              total = 0;
 	GameObject          *childObj;
 	ContainerIterator   iter(this);
@@ -2378,7 +2378,7 @@ uint16 GameObject::totalContainedMass(void) {
 //-------------------------------------------------------------------
 //	Return the total bulk of all objects contained within this object
 
-uint16 GameObject::totalContainedBulk(void) {
+uint16 GameObject::totalContainedBulk() {
 	uint16              total = 0;
 	GameObject          *childObj;
 	ContainerIterator   iter(this);
@@ -2467,7 +2467,7 @@ GameWorld::~GameWorld() {
 //-------------------------------------------------------------------
 //	Return the number of bytes need to make an archive of this world
 
-int32 GameWorld::archiveSize(void) {
+int32 GameWorld::archiveSize() {
 	int32   bytes = 0;
 
 	bytes +=    sizeof(size.u)
@@ -2480,7 +2480,7 @@ int32 GameWorld::archiveSize(void) {
 //-------------------------------------------------------------------
 //	Cleanup
 
-void GameWorld::cleanup(void) {
+void GameWorld::cleanup() {
 	if (sectorArray != nullptr) {
 		delete[] sectorArray;
 		sectorArray = nullptr;
@@ -2496,7 +2496,7 @@ extern int enchantmentProto;
 //-------------------------------------------------------------------
 //	Load and construct object and actor prototype arrays
 
-void initPrototypes(void) {
+void initPrototypes() {
 	const int resourceObjProtoSize = 52;
 	const int resourceActProtoSize = 86;
 	uint count = 0;
@@ -2696,7 +2696,7 @@ void initPrototypes(void) {
 //-------------------------------------------------------------------
 //	Cleanup the prototype lists
 
-void cleanupPrototypes(void) {
+void cleanupPrototypes() {
 	for (uint i = 0; i < nameListCount; ++i) {
 		if (g_vm->_nameList[i])
 			delete[] g_vm->_nameList[i];
@@ -2722,7 +2722,7 @@ void cleanupPrototypes(void) {
 //-------------------------------------------------------------------
 //	Load the sound effects table
 
-void initObjectSoundFXTable(void) {
+void initObjectSoundFXTable() {
 	hResContext     *itemRes;
 
 	itemRes =   auxResFile->newContext(
@@ -2746,7 +2746,7 @@ void initObjectSoundFXTable(void) {
 //-------------------------------------------------------------------
 //	Cleanup the sound effects table
 
-void cleanupObjectSoundFXTable(void) {
+void cleanupObjectSoundFXTable() {
 	if (objectSoundFXTable != nullptr) {
 		free(objectSoundFXTable);
 		objectSoundFXTable = nullptr;
@@ -2756,7 +2756,7 @@ void cleanupObjectSoundFXTable(void) {
 //-------------------------------------------------------------------
 //	Allocate array to hold the counts of the temp actors
 
-void initTempActorCount(void) {
+void initTempActorCount() {
 	uint16          i;
 
 	//  Allocate and initialize the temp actor count array
@@ -2788,7 +2788,7 @@ void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize) {
 //-------------------------------------------------------------------
 //	Cleanup the array to temp actor counts
 
-void cleanupTempActorCount(void) {
+void cleanupTempActorCount() {
 	if (tempActorCount != nullptr) {
 		delete[] tempActorCount;
 		tempActorCount = nullptr;
@@ -2819,7 +2819,7 @@ uint16 getTempActorCount(uint16 protoNum) {
 //-------------------------------------------------------------------
 //	Initialize the worlds
 
-void initWorlds(void) {
+void initWorlds() {
 	int             i;
 
 	//  worldCount must be set by the map data initialization
@@ -2899,7 +2899,7 @@ void loadWorlds(Common::InSaveFile *in) {
 //-------------------------------------------------------------------
 //	Cleanup the GameWorld list
 
-void cleanupWorlds(void) {
+void cleanupWorlds() {
 	for (int i = 0; i < worldCount; i++) {
 		GameWorld   *gw = &worldList[i];
 
@@ -2928,7 +2928,7 @@ ResourceGameObject::ResourceGameObject(Common::SeekableReadStream *stream) {
 	misc = stream->readUint16LE();
 }
 
-void initObjects(void) {
+void initObjects() {
 	int16 i, resourceObjectCount;
 	Common::Array<ResourceGameObject> resourceObjectList;
 	Common::SeekableReadStream *stream;
@@ -3080,7 +3080,7 @@ void loadObjects(Common::InSaveFile *in) {
 //-------------------------------------------------------------------
 //	Cleanup object list
 
-void cleanupObjects(void) {
+void cleanupObjects() {
 	if (objectList != nullptr)
 		delete[] objectList;
 	g_vm->_mainDisplayList->reset();
@@ -3108,7 +3108,7 @@ void getViewTrackPos(TilePoint &tp) {
 //-------------------------------------------------------------------
 //	Return a pointer to the currently viewed object
 
-GameObject *getViewCenterObject(void) {
+GameObject *getViewCenterObject() {
 	return  viewCenterObject != Nothing
 	        ?   GameObject::objectAddress(viewCenterObject)
 	        :   nullptr;
@@ -3121,7 +3121,7 @@ GameObject *getViewCenterObject(void) {
 //-------------------------------------------------------------------
 //	Activate all actors in sector if sector is not alreay active
 
-void Sector::activate(void) {
+void Sector::activate() {
 	if (activationCount++ == 0) {
 		ObjectID        id = childID;
 
@@ -3139,7 +3139,7 @@ void Sector::activate(void) {
 //	Decrement the activation count of the sector and deactivate all
 //	actors in sector if activation count has reached zero.
 
-void Sector::deactivate(void) {
+void Sector::deactivate() {
 	assert(activationCount != 0);
 
 	activationCount--;
@@ -3189,7 +3189,7 @@ void ActiveRegion::write(Common::MemoryWriteStreamDynamic *out) {
 	       region.min.u, region.min.v, region.min.z, region.max.u, region.max.v, region.max.z);
 }
 
-void ActiveRegion::update(void) {
+void ActiveRegion::update() {
 	GameObject  *obj = GameObject::objectAddress(anchor);
 	GameWorld   *world = (GameWorld *)GameObject::objectAddress(worldID);
 	ObjectID    objWorldID = obj->world()->thisID();
@@ -3297,7 +3297,7 @@ void ActiveRegion::update(void) {
 //-------------------------------------------------------------------
 //	Iterate through the active regions, updating each
 
-void updateActiveRegions(void) {
+void updateActiveRegions() {
 	int16   i;
 
 	for (i = 0; i < kPlayerActors; i++)
@@ -3314,7 +3314,7 @@ ActiveRegion *getActiveRegion(PlayerActorID id) {
 //-------------------------------------------------------------------
 //	Initialize the state of the active regions
 
-void initActiveRegions(void) {
+void initActiveRegions() {
 	static PlayerActorID    playerIDArray[kPlayerActors] =
 	{ FTA_JULIAN, FTA_PHILIP, FTA_KEVIN };
 
@@ -3793,17 +3793,17 @@ ObjectID TriangularObjectIterator::next(GameObject **obj) {
 
 //------------------------------------------------------------------------
 
-GameWorld *CenterRegionObjectIterator::CenterWorld(void) {
+GameWorld *CenterRegionObjectIterator::CenterWorld() {
 	ActiveRegion *ar = getActiveRegion(getCenterActorPlayerID());
 	return ar->getWorld();
 }
 
-TilePoint CenterRegionObjectIterator::MinCenterRegion(void) {
+TilePoint CenterRegionObjectIterator::MinCenterRegion() {
 	ActiveRegion *ar = getActiveRegion(getCenterActorPlayerID());
 	return ar->getRegion().min;
 }
 
-TilePoint CenterRegionObjectIterator::MaxCenterRegion(void) {
+TilePoint CenterRegionObjectIterator::MaxCenterRegion() {
 	ActiveRegion *ar = getActiveRegion(getCenterActorPlayerID());
 	return ar->getRegion().max;
 }
@@ -3815,7 +3815,7 @@ TilePoint CenterRegionObjectIterator::MaxCenterRegion(void) {
 
 //------------------------------------------------------------------------
 
-bool ActiveRegionObjectIterator::firstActiveRegion(void) {
+bool ActiveRegionObjectIterator::firstActiveRegion() {
 	activeRegionIndex = -1;
 
 	return nextActiveRegion();
@@ -3823,7 +3823,7 @@ bool ActiveRegionObjectIterator::firstActiveRegion(void) {
 
 //------------------------------------------------------------------------
 
-bool ActiveRegionObjectIterator::nextActiveRegion(void) {
+bool ActiveRegionObjectIterator::nextActiveRegion() {
 	int16               currentRegionSectors;
 	ActiveRegion        *currentRegion;
 	TilePoint           currentRegionSize;
@@ -3920,7 +3920,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 
 //------------------------------------------------------------------------
 
-bool ActiveRegionObjectIterator::firstSector(void) {
+bool ActiveRegionObjectIterator::firstSector() {
 	if (!firstActiveRegion())
 		return false;
 
@@ -3937,7 +3937,7 @@ bool ActiveRegionObjectIterator::firstSector(void) {
 
 //------------------------------------------------------------------------
 
-bool ActiveRegionObjectIterator::nextSector(void) {
+bool ActiveRegionObjectIterator::nextSector() {
 	int16       u, v;
 
 	do {
@@ -4070,7 +4070,7 @@ ObjectID ContainerIterator::next(GameObject **obj) {
 
 //  This class iterates through every object within a container
 
-RecursiveContainerIterator::~RecursiveContainerIterator(void) {
+RecursiveContainerIterator::~RecursiveContainerIterator() {
 	if (subIter != nullptr) delete subIter;
 }
 
@@ -4387,7 +4387,7 @@ APPFUNC(cmdBrain) {
 }
 
 //  Move to playerActor structure!!!
-void readyContainerSetup(void) {
+void readyContainerSetup() {
 	int8                    i;
 	int8                    resStart            = 28;
 
@@ -4452,7 +4452,7 @@ void readyContainerSetup(void) {
 	//new gGenericControl(*indivControls,Rect16(488,265,40,40),0,cmdBrain);
 }
 
-void cleanupReadyContainers(void) {
+void cleanupReadyContainers() {
 	if (backImages) {
 		// unload the images in the array and the array itself and nulls
 		// the appropriate pointers
@@ -4485,7 +4485,7 @@ void cleanupReadyContainers(void) {
 
 #endif
 
-void objectTest(void) {
+void objectTest() {
 }
 
 APPFUNC(cmdControl) {
@@ -4530,7 +4530,7 @@ bool                backgroundSimulationPaused;
 //	Main background simulation function
 //	This function does background processing on a few actors, objects
 
-void doBackgroundSimulation(void) {
+void doBackgroundSimulation() {
 	if (backgroundSimulationPaused) return;
 
 	//  Debug code to verify the validity of the limbo counts
@@ -4620,13 +4620,13 @@ void doBackgroundSimulation(void) {
 
 // ------------------------------------------------------------------------
 
-void pauseBackgroundSimulation(void) {
+void pauseBackgroundSimulation() {
 	backgroundSimulationPaused = true;
 }
 
 // ------------------------------------------------------------------------
 
-void resumeBackgroundSimulation(void) {
+void resumeBackgroundSimulation() {
 	backgroundSimulationPaused = false;
 }
 
@@ -4634,7 +4634,7 @@ void resumeBackgroundSimulation(void) {
 //	This function simply calls the GameObject::updateState() method
 //	for all active objects directly within a world.
 
-void updateObjectStates(void) {
+void updateObjectStates() {
 	if (objectStatesPaused) return;
 
 	GameObject          *obj,
@@ -4654,13 +4654,13 @@ void updateObjectStates(void) {
 
 //-------------------------------------------------------------------
 
-void pauseObjectStates(void) {
+void pauseObjectStates() {
 	objectStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
-void resumeObjectStates(void) {
+void resumeObjectStates() {
 	objectStatesPaused = false;
 }
 

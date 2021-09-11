@@ -42,15 +42,15 @@ TimerList *fetchTimerList(GameObject *obj);
 void deleteTimer(Timer *t);
 
 //  Check all active Timers
-void checkTimers(void);
+void checkTimers();
 
 //  Initialize the Timers
-void initTimers(void);
+void initTimers();
 void saveTimers(Common::OutSaveFile *outS);
 void loadTimers(Common::InSaveFile *in);
 void cleanupTimer();
 //  Cleanup the active Timers
-void cleanupTimers(void);
+void cleanupTimers();
 
 /* ===================================================================== *
    TimerList class
@@ -69,13 +69,13 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	static int32 archiveSize(void) {
+	static int32 archiveSize() {
 		return sizeof(ObjectID);
 	}
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	GameObject *getObject(void) {
+	GameObject *getObject() {
 		return _obj;
 	}
 
@@ -110,24 +110,24 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	static int32 archiveSize(void);
+	static int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	GameObject *getObject(void) {
+	GameObject *getObject() {
 		return _obj;
 	}
-	TimerID thisID(void) {
+	TimerID thisID() {
 		return _id;
 	}
-	int16 getInterval(void) {
+	int16 getInterval() {
 		return _interval;
 	}
 
-	bool check(void) {
+	bool check() {
 		return _alarm.check();
 	}
-	void reset(void) {
+	void reset() {
 		_alarm.set(_interval);
 	}
 };

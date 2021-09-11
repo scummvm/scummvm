@@ -138,10 +138,10 @@ void insertLocation(
    Target member functions
  * ===================================================================== */
 
-bool Target::isObjectTarget(void) const {
+bool Target::isObjectTarget() const {
 	return false;
 }
-bool Target::isActorTarget(void) const {
+bool Target::isActorTarget() const {
 	return false;
 }
 
@@ -160,7 +160,7 @@ LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 LocationTarget::archiveSize(void) const {
+inline int32 LocationTarget::archiveSize() const {
 	return sizeof(loc);
 }
 
@@ -172,14 +172,14 @@ void LocationTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 LocationTarget::getType(void) const {
+int16 LocationTarget::getType() const {
 	return locationTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t LocationTarget::size(void) const {
+size_t LocationTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -344,7 +344,7 @@ SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 SpecificTileTarget::archiveSize(void) const {
+inline int32 SpecificTileTarget::archiveSize() const {
 	return sizeof(tile);
 }
 
@@ -356,14 +356,14 @@ void SpecificTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 SpecificTileTarget::getType(void) const {
+int16 SpecificTileTarget::getType() const {
 	return specificTileTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t SpecificTileTarget::size(void) const {
+size_t SpecificTileTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -404,7 +404,7 @@ TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 TilePropertyTarget::archiveSize(void) const {
+inline int32 TilePropertyTarget::archiveSize() const {
 	return sizeof(tileProp);
 }
 
@@ -415,14 +415,14 @@ void TilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 TilePropertyTarget::getType(void) const {
+int16 TilePropertyTarget::getType() const {
 	return tilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t TilePropertyTarget::size(void) const {
+size_t TilePropertyTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -573,7 +573,7 @@ SpecificMetaTileTarget::SpecificMetaTileTarget(Common::SeekableReadStream *strea
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 SpecificMetaTileTarget::archiveSize(void) const {
+inline int32 SpecificMetaTileTarget::archiveSize() const {
 	return sizeof(MetaTileID);
 }
 
@@ -586,14 +586,14 @@ void SpecificMetaTileTarget::write(Common::MemoryWriteStreamDynamic *out) const 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 SpecificMetaTileTarget::getType(void) const {
+int16 SpecificMetaTileTarget::getType() const {
 	return specificMetaTileTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t SpecificMetaTileTarget::size(void) const {
+size_t SpecificMetaTileTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -637,7 +637,7 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *strea
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 MetaTilePropertyTarget::archiveSize(void) const {
+inline int32 MetaTilePropertyTarget::archiveSize() const {
 	return sizeof(metaProp);
 }
 
@@ -649,14 +649,14 @@ void MetaTilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 MetaTilePropertyTarget::getType(void) const {
+int16 MetaTilePropertyTarget::getType() const {
 	return metaTilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t MetaTilePropertyTarget::size(void) const {
+size_t MetaTilePropertyTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -762,7 +762,7 @@ void ObjectTarget::searchObject(
 	}
 }
 
-bool ObjectTarget::isObjectTarget(void) const {
+bool ObjectTarget::isObjectTarget() const {
 	return true;
 }
 
@@ -912,7 +912,7 @@ SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 SpecificObjectTarget::archiveSize(void) const {
+inline int32 SpecificObjectTarget::archiveSize() const {
 	return sizeof(obj);
 }
 
@@ -924,14 +924,14 @@ void SpecificObjectTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 SpecificObjectTarget::getType(void) const {
+int16 SpecificObjectTarget::getType() const {
 	return specificObjectTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t SpecificObjectTarget::size(void) const {
+size_t SpecificObjectTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -1063,7 +1063,7 @@ ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 ObjectPropertyTarget::archiveSize(void) const {
+inline int32 ObjectPropertyTarget::archiveSize() const {
 	return sizeof(objProp);
 }
 
@@ -1075,14 +1075,14 @@ void ObjectPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 ObjectPropertyTarget::getType(void) const {
+int16 ObjectPropertyTarget::getType() const {
 	return objectPropertyTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t ObjectPropertyTarget::size(void) const {
+size_t ObjectPropertyTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -1116,7 +1116,7 @@ bool ActorTarget::isTarget(GameObject *obj) const {
 	return isActor(obj) && isTarget((Actor *)obj);
 }
 
-bool ActorTarget::isActorTarget(void) const {
+bool ActorTarget::isActorTarget() const {
 	return true;
 }
 
@@ -1162,7 +1162,7 @@ SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 SpecificActorTarget::archiveSize(void) const {
+inline int32 SpecificActorTarget::archiveSize() const {
 	return sizeof(ObjectID);
 }
 
@@ -1177,14 +1177,14 @@ void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 SpecificActorTarget::getType(void) const {
+int16 SpecificActorTarget::getType() const {
 	return specificActorTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t SpecificActorTarget::size(void) const {
+size_t SpecificActorTarget::size() const {
 	return sizeof(*this);
 }
 
@@ -1346,7 +1346,7 @@ ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 ActorPropertyTarget::archiveSize(void) const {
+inline int32 ActorPropertyTarget::archiveSize() const {
 	return sizeof(actorProp);
 }
 
@@ -1358,14 +1358,14 @@ void ActorPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
-int16 ActorPropertyTarget::getType(void) const {
+int16 ActorPropertyTarget::getType() const {
 	return actorPropertyTarget;
 }
 
 //----------------------------------------------------------------------
 //	Virtual function returning the sizeof this target
 
-size_t ActorPropertyTarget::size(void) const {
+size_t ActorPropertyTarget::size() const {
 	return sizeof(*this);
 }
 

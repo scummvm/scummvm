@@ -481,7 +481,7 @@ private:
 		//  The cell array
 		PathCell    array[chunkTileDiameter][chunkTileDiameter];
 
-		PathArrayChunk(void) : mask(0) {}
+		PathArrayChunk() : mask(0) {}
 	};
 
 	//  Master array of chunk pointers
@@ -492,10 +492,10 @@ public:
 	class CellAllocationFailure {};
 
 	//  Constructor
-	PathArray(void);
+	PathArray();
 
 	//  Destructor
-	~PathArray(void);
+	~PathArray();
 
 	//  Make a new cell or access an existing cell.  If the specified
 	//  cell already exists *newCell will be set to false, else it will
@@ -511,11 +511,11 @@ public:
 	void deleteCell(int plat, int uCoord, int vCoord);
 
 	//  Delete all existing cells
-	void reset(void);
+	void reset();
 };
 
 //  Constructor
-PathArray::PathArray(void) {
+PathArray::PathArray() {
 	int     plat, chunkU, chunkV;
 
 	for (plat = 0; plat < maxPlatforms; plat++) {
@@ -527,7 +527,7 @@ PathArray::PathArray(void) {
 }
 
 //  Destructor
-PathArray::~PathArray(void) {
+PathArray::~PathArray() {
 	reset();
 }
 
@@ -631,7 +631,7 @@ void PathArray::deleteCell(int plat, int uCoord, int vCoord) {
 }
 
 //  Delete all existing cells
-void PathArray::reset(void) {
+void PathArray::reset() {
 	int     plat, chunkU, chunkV;
 
 	for (plat = 0; plat < maxPlatforms; plat++) {
@@ -727,7 +727,7 @@ private:
 	int16           arraySize;
 
 public:
-	MaskComputer(void) : arraySize(0) {
+	MaskComputer() : arraySize(0) {
 		for (int i = 0; i < 8; i++)
 			ptrArray[i] = nullptr;
 	}
@@ -1141,15 +1141,15 @@ public:
 		path = nullptr;
 	}
 
-	void requestAbort(void) {
+	void requestAbort() {
 		flags |= aborted;
 	}
 
-	virtual void initialize(void);
-	virtual void finish(void);           // completion method
-	virtual void abortReq(void);                // abnormal termination method
+	virtual void initialize();
+	virtual void finish();           // completion method
+	virtual void abortReq();                // abnormal termination method
 
-	PathResult findPath(void);
+	PathResult findPath();
 
 	//  Set and evaluate a new center location.
 	virtual bool setCenter(
@@ -1173,7 +1173,7 @@ public:
 	virtual int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform) = 0;
 
 	// NEW added by Evan 12/3
-	virtual bool timeLimitExceeded(void);
+	virtual bool timeLimitExceeded();
 
 };
 
@@ -1202,7 +1202,7 @@ public:
 	DestinationPathRequest(Actor *a, int16 howSmart);
 
 	//  Initialize the static data members for this path request.
-	void initialize(void);
+	void initialize();
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
@@ -1252,7 +1252,7 @@ public:
 	WanderPathRequest(Actor *a, int16 howSmart);
 
 	//  Initialize the static data members
-	void initialize(void);
+	void initialize();
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
@@ -1398,7 +1398,7 @@ PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	mTask->pathFindTask = this;
 }
 
-void PathRequest::initialize(void) {
+void PathRequest::initialize() {
 	ProtoObj        *proto = actor->proto();
 	TilePoint       startingCoords = actor->getLocation();
 	int             uCoord, vCoord;
@@ -1590,7 +1590,7 @@ big_break:
 	}
 }
 
-void PathRequest::finish(void) {
+void PathRequest::finish() {
 	Direction           prevDir;
 	int16               prevHeight = 0;
 	TilePoint           *resultSteps = path,
@@ -1672,7 +1672,7 @@ void PathRequest::finish(void) {
 	}
 }
 
-void PathRequest::abortReq(void) {
+void PathRequest::abortReq() {
 	debugC(4, kDebugPath, "Aborting Path Request: %p", (void *)this);
 
 	if (mTask->pathFindTask == this)
@@ -1680,7 +1680,7 @@ void PathRequest::abortReq(void) {
 }
 
 
-PathResult PathRequest::findPath(void) {
+PathResult PathRequest::findPath() {
 	assert(cellArray != nullptr);
 
 	static const uint8 costTable[] = {4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0};
@@ -2044,7 +2044,7 @@ big_continue:
 //   usually get (72/2)+(100/10) or 46 ticks.
 
 
-bool PathRequest::timeLimitExceeded(void) {
+bool PathRequest::timeLimitExceeded() {
 #ifdef OLD_PATHFINDER_TIME_MGMT
 	return (gameTime - firstTick >= timeLimit);
 #else
@@ -2073,7 +2073,7 @@ DestinationPathRequest::DestinationPathRequest(Actor *a, int16 howSmart) :
 }
 
 //  Initialize the static data members
-void DestinationPathRequest::initialize(void) {
+void DestinationPathRequest::initialize() {
 	debugC(2, kDebugPath, "Initializing Path Request: %p", (void *)this);
 
 	PathRequest::initialize();
@@ -2204,7 +2204,7 @@ WanderPathRequest::WanderPathRequest(
 }
 
 //  Initialize the static data members
-void WanderPathRequest::initialize(void) {
+void WanderPathRequest::initialize() {
 	PathRequest::initialize();
 
 	//  Initialize bestDist to zero.
@@ -2281,7 +2281,7 @@ int16 WanderPathRequest::evaluateMove(const TilePoint &testPt, uint8) {
 	return (centerCost - (dist + zDist)) >> 1;
 }
 
-void runPathFinder(void) {
+void runPathFinder() {
 	if (currentRequest == nullptr && !g_vm->_pathQueue.empty()) {
 		currentRequest = g_vm->_pathQueue.front();
 		g_vm->_pathQueue.pop_front();
@@ -2933,7 +2933,7 @@ bool checkPath(
    Path finder management functions
  * ===================================================================== */
 
-void initPathFinder(void) {
+void initPathFinder() {
 	queue = new PriorityQueue<QueueItem, 192>;
 	squeue = new PriorityQueue<QueueItem, 128>;
 	objectVolumeArray = new TileRegion[128];
@@ -2944,7 +2944,7 @@ void initPathFinder(void) {
 	PathRequest::tileArray = new PathTileRegion;
 }
 
-void cleanupPathFinder(void) {
+void cleanupPathFinder() {
 	if (pathTileArray) {
 		free(pathTileArray);
 		pathTileArray = nullptr;

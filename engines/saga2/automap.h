@@ -68,10 +68,10 @@ public:
 	void drawClipped(gPort &port,
 	                 const Point16 &offset,
 	                 const Rect16  &clipRect);
-	void draw(void);             // redraw the window
+	void draw();             // redraw the window
 
-	void createSmallMap(void);
-	void locateRegion(void);
+	void createSmallMap();
+	void locateRegion();
 	APPFUNCV(cmdAutoMapEsc);
 	APPFUNCV(cmdAutoMapHome);
 	APPFUNCV(cmdAutoMapEnd);
@@ -81,7 +81,7 @@ public:
 	gPanel *keyTest(int16 key);
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	void pointerMove(gPanelMessage &msg);
 	bool pointerHit(gPanelMessage &msg);

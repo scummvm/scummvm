@@ -34,7 +34,7 @@ namespace Saga2 {
 
 const int16 absoluteMaximumVitality = 255;
 
-extern void updateIndicators(void);      //  Kludge, put in intrface.h later (got to hurry)
+extern void updateIndicators();      //  Kludge, put in intrface.h later (got to hurry)
 
 // offensiveNotification gets 2 (Actor *) items
 // att is performing an offensive act on def

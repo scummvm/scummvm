@@ -97,7 +97,7 @@ int32 EffectDisplayPrototypeList::add(EffectDisplayPrototype *edp) {
 	return count - 1;
 }
 
-void EffectDisplayPrototypeList::cleanup(void) {
+void EffectDisplayPrototypeList::cleanup() {
 	if (maxCount && effects)
 		for (int i = 0; i < maxCount; i++)
 			if (effects[i]) {
@@ -162,12 +162,12 @@ void SpellDisplayPrototype::getColorTranslation(ColorTable map, Effectron *e) {
    SpellDisplayPrototypeList implementation
  * ===================================================================== */
 
-void SpellDisplayPrototypeList::init(void) {
+void SpellDisplayPrototypeList::init() {
 	// originally this was going to load data from the resfile
 	// that plan has been cancelled
 }
 
-void SpellDisplayPrototypeList::cleanup(void) {
+void SpellDisplayPrototypeList::cleanup() {
 	if (spells) {
 		for (int i = 0; i < maxCount; i++)
 			if (spells[i]) {
@@ -221,11 +221,11 @@ SpellDisplayList::~SpellDisplayList() {
 	cleanup();
 }
 
-void SpellDisplayList::init(void) {
+void SpellDisplayList::init() {
 	count = 0;
 }
 
-void SpellDisplayList::cleanup(void) {
+void SpellDisplayList::cleanup() {
 	if (maxCount && spells)
 		delete[] spells;
 	spells = nullptr;
@@ -237,7 +237,7 @@ void SpellDisplayList::add(SpellInstance *newSpell) {
 		spells[count++] = newSpell;
 }
 
-void SpellDisplayList::buildList(void) {
+void SpellDisplayList::buildList() {
 	if (count)
 		for (int16 i = 0; i < count; i++)   // check all active spells
 			if (!spells[i]->buildList()) {   // update

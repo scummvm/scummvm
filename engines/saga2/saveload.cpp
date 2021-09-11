@@ -46,7 +46,7 @@
 
 namespace Saga2 {
 
-void updateMainDisplay(void);
+void updateMainDisplay();
 void fadeUp();
 void fadeDown();
 void enablePaletteChanges();
@@ -111,7 +111,7 @@ void SaveFileHeader::write(Common::OutSaveFile *out) {
 //----------------------------------------------------------------------
 //	Load initial game state
 
-void initGameState(void) {
+void initGameState() {
 	pauseTimer();
 
 	initGlobals();
@@ -536,7 +536,7 @@ void loadGame(int16 saveNo) {
 //----------------------------------------------------------------------
 //	Cleanup the game state
 
-void cleanupGameState(void) {
+void cleanupGameState() {
 	cleanupContainerNodes();
 	cleanupPaletteState();
 	cleanupUIState();
@@ -579,7 +579,7 @@ void checkRestartGame(const char *exeName) {
 }
 
 
-void loadRestartGame(void) {
+void loadRestartGame() {
 	loadSavedGameState(999);
 }
 

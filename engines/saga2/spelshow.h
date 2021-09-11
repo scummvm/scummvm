@@ -167,7 +167,7 @@ public:
 	void setID(EffectID i) {
 		ID = i;
 	}
-	EffectID thisID(void) {
+	EffectID thisID() {
 		return ID;
 	}
 };
@@ -191,7 +191,7 @@ public:
 	~EffectDisplayPrototypeList();
 
 	int32 add(EffectDisplayPrototype *edp) ;
-	void cleanup(void);
+	void cleanup();
 	void append(EffectDisplayPrototype *edp, int32 acount);
 	EffectDisplayPrototype *operator[](EffectID e);
 };
@@ -259,7 +259,7 @@ public:
 	void setID(SpellID i) {
 		ID = i;
 	}
-	SpellID thisID(void) {
+	SpellID thisID() {
 		return ID;
 	}
 };
@@ -279,8 +279,8 @@ public:
 	SpellDisplayPrototypeList(uint16 s);
 	~SpellDisplayPrototypeList();
 
-	void init(void);
-	void cleanup(void);
+	void init();
+	void cleanup();
 	int32 add(SpellDisplayPrototype *sdp);
 	SpellDisplayPrototype *operator[](SpellID s);
 };
@@ -313,14 +313,14 @@ public:
 	SpellInstance(StorageSpellInstance &ssi);
 	~SpellInstance();
 
-	void init(void);
+	void init();
 	void initEffect(TilePoint);
 	void readEffect(Common::InSaveFile *in, uint16 eListSize);
 	void writeEffect(Common::MemoryWriteStreamDynamic *out);
-	void termEffect(void);
-	size_t saveSize(void);
+	void termEffect();
+	size_t saveSize();
 
-	bool buildList(void);
+	bool buildList();
 	bool updateStates(int32 deltaTime);
 };
 
@@ -337,8 +337,8 @@ class SpellDisplayList {
 public :
 	pSpellInstance              *spells;
 
-	void init(void);
-	void cleanup(void);
+	void init();
+	void cleanup();
 	SpellDisplayList(uint16 s);
 	~SpellDisplayList();
 
@@ -346,13 +346,13 @@ public :
 
 	void tidyKill(uint16 spellNo);
 
-	void buildList(void);
+	void buildList();
 	void updateStates(int32 deltaTime);
 
 	void write(Common::OutSaveFile *outD);
 	void read(Common::InSaveFile *in);
-	void wipe(void);
-	size_t saveSize(void);
+	void wipe();
+	size_t saveSize();
 };
 
 
@@ -363,38 +363,38 @@ public :
 //-----------------------------------------------------------------------
 // Some functions that require the above definitions to work
 
-inline GameWorld *Effectron::world(void) const {
+inline GameWorld *Effectron::world() const {
 	return parent->world;
 }
-inline int16 Effectron::getMapNum(void) const {
+inline int16 Effectron::getMapNum() const {
 	return parent->world->mapNum;
 }
 
-inline EffectID Effectron::spellID(void) {
+inline EffectID Effectron::spellID() {
 	return parent->spell;
 }
-inline SpellDisplayPrototype *Effectron::spell(void) {
+inline SpellDisplayPrototype *Effectron::spell() {
 	return (*g_vm->_sdpList)[(SpellID) spellID()];
 }
-inline EffectID Effectron::effectID(void) {
+inline EffectID Effectron::effectID() {
 	return spell()->effect;
 }
-inline EffectDisplayPrototype *Effectron::effect(void) {
+inline EffectDisplayPrototype *Effectron::effect() {
 	return parent->effect;
 }
-inline EffectronFlags Effectron::staCall(void) {
+inline EffectronFlags Effectron::staCall() {
 	return parent->effect->status(this);
 }
-inline TilePoint Effectron::posCall(void) {
+inline TilePoint Effectron::posCall() {
 	return parent->effect->location(this);
 }
-inline SpellSpritationSeed Effectron::sprCall(void) {
+inline SpellSpritationSeed Effectron::sprCall() {
 	return parent->effect->spriteno(this);
 }
-inline spellHeight Effectron::hgtCall(void) {
+inline spellHeight Effectron::hgtCall() {
 	return parent->effect->height(this);
 }
-inline spellBreadth Effectron::brdCall(void) {
+inline spellBreadth Effectron::brdCall() {
 	return parent->effect->breadth(this);
 }
 inline void Effectron::initCall(int16 eno) {

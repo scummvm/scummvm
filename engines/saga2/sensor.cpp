@@ -138,7 +138,7 @@ void writeSensor(Sensor *sensor, Common::MemoryWriteStreamDynamic *out) {
 
 //----------------------------------------------------------------------
 
-void checkSensors(void) {
+void checkSensors() {
 	Common::Array<Sensor *> deadSensors;
 
 	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
@@ -199,7 +199,7 @@ void assertEvent(const GameEvent &ev) {
 //----------------------------------------------------------------------
 //	Initialize the sensors
 
-void initSensors(void) {
+void initSensors() {
 	//  Nothing to do
 	assert(sizeof(ProtaganistSensor) <= maxSensorSize);
 	assert(sizeof(SpecificObjectSensor) <= maxSensorSize);
@@ -302,7 +302,7 @@ void loadSensors(Common::InSaveFile *in) {
 //----------------------------------------------------------------------
 //	Cleanup the active sensors
 
-void cleanupSensors(void) {
+void cleanupSensors() {
 	Common::List<SensorList *>::iterator sensorListNextIt;
 	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); it = sensorListNextIt) {
 		sensorListNextIt = it;
@@ -404,7 +404,7 @@ void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 ProtaganistSensor::getType(void) {
+int16 ProtaganistSensor::getType() {
 	return protaganistSensor;
 }
 
@@ -558,7 +558,7 @@ void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 SpecificObjectSensor::getType(void) {
+int16 SpecificObjectSensor::getType() {
 	return specificObjectSensor;
 }
 
@@ -636,7 +636,7 @@ void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 ObjectPropertySensor::getType(void) {
+int16 ObjectPropertySensor::getType() {
 	return objectPropertySensor;
 }
 
@@ -690,7 +690,7 @@ void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 SpecificActorSensor::getType(void) {
+int16 SpecificActorSensor::getType() {
 	return specificActorSensor;
 }
 
@@ -757,7 +757,7 @@ void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 ActorPropertySensor::getType(void) {
+int16 ActorPropertySensor::getType() {
 	return actorPropertySensor;
 }
 
@@ -806,7 +806,7 @@ void EventSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this sensor
 
-int16 EventSensor::getType(void) {
+int16 EventSensor::getType() {
 	return eventSensor;
 }
 

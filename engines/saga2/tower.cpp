@@ -40,7 +40,7 @@ namespace Saga2 {
 
 extern int maxInitState;
 extern TowerLayer tower[];
-void SystemEventLoop(void);
+void SystemEventLoop();
 
 /* ===================================================================== *
    Locals
@@ -155,7 +155,7 @@ TERMINATOR(termActiveErrors) {
 // ------------------------------------------------------------------------
 // State transition hooks
 
-int initState(void) {
+int initState() {
 	return initializationState;
 }
 

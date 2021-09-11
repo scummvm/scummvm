@@ -42,7 +42,7 @@ extern void playMemSound(uint32 s); // play click # s
     Compressed image class
  * ======================================================================= */
 
-void GfxCompImage::init(void) {
+void GfxCompImage::init() {
 	_compImages      = NULL;
 	_max             = 0;
 	_min             = 0;
@@ -168,7 +168,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **image
 }
 
 
-GfxCompImage::~GfxCompImage(void) {
+GfxCompImage::~GfxCompImage() {
 	// delete any allocated image pointers
 	// for JEFFL: I took out the winklude #ifdefs becuase I belive
 	// I fixed the problem that was causing the crash under win32
@@ -203,7 +203,7 @@ void GfxCompImage::invalidate(Rect16 *) {
 	window.update(_extent);
 }
 
-void GfxCompImage::draw(void) {
+void GfxCompImage::draw() {
 	gPort   &port = window.windowPort;
 	Rect16  rect = window.getExtent();
 
@@ -215,7 +215,7 @@ void GfxCompImage::draw(void) {
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 
-void *GfxCompImage::getCurrentCompImage(void) {
+void *GfxCompImage::getCurrentCompImage() {
 	if (_compImages) {
 		return _compImages[_currentImage];  // return the image pointed to by compImage
 	} else {
@@ -493,7 +493,7 @@ GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) 
 	_extent          = box;
 }
 
-GfxCompButton::~GfxCompButton(void) {
+GfxCompButton::~GfxCompButton() {
 	if (_internalAlloc) {
 		if (_forImage) {
 			free(_forImage);
@@ -525,7 +525,7 @@ void GfxCompButton::dim(bool enableFlag) {
 }
 
 
-void GfxCompButton::deactivate(void) {
+void GfxCompButton::deactivate() {
 	selected = 0;
 	window.update(_extent);
 	gPanel::deactivate();
@@ -584,7 +584,7 @@ void GfxCompButton::invalidate(Rect16 *) {
 }
 
 
-void GfxCompButton::draw(void) {
+void GfxCompButton::draw() {
 	gPort   &port = window.windowPort;
 	Rect16  rect = window.getExtent();
 
@@ -594,7 +594,7 @@ void GfxCompButton::draw(void) {
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 
-void *GfxCompButton::getCurrentCompImage(void) {
+void *GfxCompButton::getCurrentCompImage() {
 	if (_dimmed) {
 		return _dimImage;
 	} else if (selected) {
@@ -708,7 +708,7 @@ GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void *
 	_extent  = box;
 }
 
-GfxMultCompButton::~GfxMultCompButton(void) {
+GfxMultCompButton::~GfxMultCompButton() {
 	int16   i;
 
 	if (_images && _internalAlloc) {
@@ -744,7 +744,7 @@ bool GfxMultCompButton::pointerHit(gPanelMessage &) {
 	return activate(gEventMouseDown);
 }
 
-void *GfxMultCompButton::getCurrentCompImage(void) {
+void *GfxMultCompButton::getCurrentCompImage() {
 	return _images[_current];
 }
 
@@ -772,7 +772,7 @@ GfxSlider::GfxSlider(gPanelList &list, const Rect16 &box, const Rect16 &imageBox
 	                  _extent.width - _imageRect.x);
 }
 
-void *GfxSlider::getCurrentCompImage(void) {
+void *GfxSlider::getCurrentCompImage() {
 	int16   val;
 	int32   index;
 
@@ -789,7 +789,7 @@ void *GfxSlider::getCurrentCompImage(void) {
 	return _images[index];
 }
 
-int16 GfxSlider::getSliderLenVal(void) {
+int16 GfxSlider::getSliderLenVal() {
 	int16   val = 0;
 
 	if (_slValMin < 0 && _slValMax < 0) {
@@ -805,7 +805,7 @@ int16 GfxSlider::getSliderLenVal(void) {
 	return val;
 }
 
-void GfxSlider::draw(void) {
+void GfxSlider::draw() {
 	gPort   &port   = window.windowPort;
 	Point16 offset  = Point16(0, 0);
 
@@ -847,7 +847,7 @@ bool GfxSlider::activate(gEventType why) {
 	return false;
 }
 
-void GfxSlider::deactivate(void) {
+void GfxSlider::deactivate() {
 	selected = 0;
 	window.update(_extent);
 	gPanel::deactivate();

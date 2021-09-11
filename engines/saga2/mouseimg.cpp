@@ -212,12 +212,12 @@ inline void disposeStackedImage(gPixelMap **image) {
 //  pixel map and reset the global mouse cursor to use the new combined
 //	image.
 
-void cleanupMousePointer(void) {
+void cleanupMousePointer() {
 	if (combinedImage->data != nullptr)
 		disposeStackedImage(&combinedImage);
 }
 
-void setupMousePointer(void) {
+void setupMousePointer() {
 	int  imageIndex = 1;
 	gPixelMap  *imageArray[3];
 	int imageCenterArray[3];
@@ -275,7 +275,7 @@ void setMouseImage(gPixelMap &img, int16 x, int16 y) {
 //-----------------------------------------------------------------------
 //	Dispose of old text
 
-inline void disposeText(void) {
+inline void disposeText() {
 	mouseText[0] = '\0';
 
 	//  Free the memory previously allocated to hold the text image
@@ -414,7 +414,7 @@ void setMouseGauge(int numerator, int denominator) {
 //-----------------------------------------------------------------------
 //	Turn off the gauge on the mouse pointer
 
-void clearMouseGauge(void) {
+void clearMouseGauge() {
 	showGauge = false;
 
 	setupMousePointer();

@@ -136,19 +136,19 @@ struct TargetActorArray {
 class Target {
 public:
 	//  virtual destructor
-	virtual ~Target(void) {}
+	virtual ~Target() {}
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	virtual int32 archiveSize(void) const = 0;
+	virtual int32 archiveSize() const = 0;
 
 	virtual void write(Common::MemoryWriteStreamDynamic *out) const = 0;
 
 	//  Return an integer representing the type of target
-	virtual int16 getType(void) const = 0;
+	virtual int16 getType() const = 0;
 
 	//  Virtual function returning the sizeof this target
-	virtual size_t size(void) const = 0;
+	virtual size_t size() const = 0;
 
 	//  Create a copy of this target at the specified address
 	virtual void clone(void *mem) const = 0;
@@ -165,8 +165,8 @@ public:
 		return p;
 	}
 
-	virtual bool isObjectTarget(void) const;
-	virtual bool isActorTarget(void) const;
+	virtual bool isObjectTarget() const;
+	virtual bool isActorTarget() const;
 
 	//  Return location of closest instance of target
 	virtual TilePoint where(GameWorld *world, const TilePoint &tp) const = 0;
@@ -192,15 +192,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -254,15 +254,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -288,15 +288,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -340,15 +340,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -376,15 +376,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -415,7 +415,7 @@ class ObjectTarget : public Target {
 	    TargetLocationArray &tla) const;
 
 public:
-	bool isObjectTarget(void) const;
+	bool isObjectTarget() const;
 
 	TilePoint where(GameWorld *world, const TilePoint &tp) const;
 	int16 where(
@@ -456,15 +456,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -487,7 +487,7 @@ public:
 	    TargetObjectArray &toa) const;
 
 	//  Return a pointer to the target object, unconditionally
-	GameObject *getTargetObject(void) const {
+	GameObject *getTargetObject() const {
 		return GameObject::objectAddress(obj);
 	}
 };
@@ -507,15 +507,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -533,7 +533,7 @@ public:
 class ActorTarget : public ObjectTarget {
 
 public:
-	bool isActorTarget(void) const;
+	bool isActorTarget() const;
 
 	bool isTarget(GameObject *testObj) const;
 	virtual bool isTarget(Actor *testActor) const = 0;
@@ -562,15 +562,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;
@@ -599,7 +599,7 @@ public:
 	    TargetActorArray &taa) const;
 
 	//  Return a pointer to the target actor, unconditionally
-	Actor *getTargetActor(void) const {
+	Actor *getTargetActor() const {
 		return a;
 	}
 };
@@ -621,15 +621,15 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Virtual function returning the sizeof this target
-	size_t size(void) const;
+	size_t size() const;
 
 	//  Create a copy of this target at the specified address
 	void clone(void *mem) const;

@@ -66,10 +66,10 @@ class Task;
 class TaskStack;
 
 //  Run through the active task stacks, updating each
-void updateActorTasks(void);
+void updateActorTasks();
 
-void pauseActorTasks(void);
-void resumeActorTasks(void);
+void pauseActorTasks();
+void resumeActorTasks();
 
 //  Allocate a new task stack
 TaskStack *newTaskStack(Actor *a);
@@ -85,13 +85,13 @@ TaskStackID getTaskStackID(TaskStack *ts);
 TaskStack *getTaskStackAddress(TaskStackID id);
 
 //  Initialize the task stack list
-void initTaskStacks(void);
+void initTaskStacks();
 
 void saveTaskStacks(Common::OutSaveFile *outS);
 void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task stacks
-void cleanupTaskStacks(void);
+void cleanupTaskStacks();
 
 
 void newTask(Task *t);
@@ -107,13 +107,13 @@ TaskID getTaskID(Task *t);
 Task *getTaskAddress(TaskID id);
 
 //  Initialize the task list
-void initTasks(void);
+void initTasks();
 
 void saveTasks(Common::OutSaveFile *outS);
 void loadTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task list
-void cleanupTasks(void);
+void cleanupTasks();
 
 /* ===================================================================== *
    Task Class
@@ -143,25 +143,25 @@ public:
 	Task(Common::InSaveFile *in, TaskID id);
 
 	//  Virtual destructor -- do nothing
-	virtual ~Task(void) {
+	virtual ~Task() {
 		deleteTask(this);
 	}
 
 	//	Fixup any subtask pointers
-	virtual void fixup(void);
+	virtual void fixup();
 
 	//  Return the number of bytes necessary to archive this Task
 	//  in a buffer
-	virtual int32 archiveSize(void) const;
+	virtual int32 archiveSize() const;
 
 	virtual void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	virtual int16 getType(void) const = 0;
+	virtual int16 getType() const = 0;
 
-	virtual void abortTask(void) = 0;
-	virtual TaskResult evaluate(void) = 0;
-	virtual TaskResult update(void) = 0;
+	virtual void abortTask() = 0;
+	virtual TaskResult evaluate() = 0;
+	virtual TaskResult update() = 0;
 
 	//  Determine if the specified task is equivalent to this task
 	virtual bool operator == (const Task &t) const = 0;
@@ -192,34 +192,34 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	void abortTask();
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	TaskResult evaluate();
+	TaskResult update();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
 	//  Update function used while task is not paused
-	virtual TaskResult handleWander(void);
+	virtual TaskResult handleWander();
 
 	//  Update function used while task is paused
-	TaskResult handlePaused(void) {
+	TaskResult handlePaused() {
 		return taskNotDone;
 	}
 
 	//  Set this task into the paused state
-	void pause(void);
+	void pause();
 
 	//  Set this task into the wander state
-	void wander(void);
+	void wander();
 };
 
 /* ===================================================================== *
@@ -263,30 +263,30 @@ public:
 	TetheredWanderTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointers
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
-	void abortTask(void);
+	void abortTask();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 	//  Update function used while task is not paused
-	TaskResult handleWander(void);
+	TaskResult handleWander();
 };
 
 /* ===================================================================== *
@@ -312,29 +312,29 @@ public:
 	GotoTask(Common::InSaveFile *in, TaskID id);
 
 	//  Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 private:
-	virtual TilePoint destination(void) = 0;
-	virtual TilePoint intermediateDest(void) = 0;
-	virtual bool lineOfSight(void) = 0;
-	virtual bool run(void) = 0;
+	virtual TilePoint destination() = 0;
+	virtual TilePoint intermediateDest() = 0;
+	virtual bool lineOfSight() = 0;
+	virtual bool run() = 0;
 };
 
 /* ===================================================================== *
@@ -362,17 +362,17 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	const TilePoint getTarget(void) const {
+	const TilePoint getTarget() const {
 		return targetLoc;
 	}
 
@@ -381,10 +381,10 @@ public:
 	}
 
 private:
-	TilePoint destination(void);
-	TilePoint intermediateDest(void);
-	bool lineOfSight(void);
-	bool run(void);
+	TilePoint destination();
+	TilePoint intermediateDest();
+	bool lineOfSight();
+	bool run();
 };
 
 /* ===================================================================== *
@@ -418,21 +418,21 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 private:
-	TilePoint destination(void);
-	TilePoint intermediateDest(void);
-	bool lineOfSight(void);
-	bool run(void);
+	TilePoint destination();
+	TilePoint intermediateDest();
+	bool lineOfSight();
+	bool run();
 };
 
 /* ===================================================================== *
@@ -475,22 +475,22 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 private:
-	TilePoint destination(void);
-	TilePoint intermediateDest(void);
-	bool lineOfSight(void);
+	TilePoint destination();
+	TilePoint intermediateDest();
+	bool lineOfSight();
 
-	virtual GameObject *getObject(void) = 0;
+	virtual GameObject *getObject() = 0;
 
 protected:
-	bool tracking(void) const {
+	bool tracking() const {
 		return (flags & track) != 0;
 	}
-	bool isInSight(void) const {
+	bool isInSight() const {
 		return (flags & inSight) != 0;
 	}
 };
@@ -520,23 +520,23 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	const GameObject *getTarget(void) const {
+	const GameObject *getTarget() const {
 		return targetObj;
 	}
 
 private:
-	bool run(void);
-	GameObject *getObject(void);
+	bool run();
+	GameObject *getObject();
 };
 
 /* ===================================================================== *
@@ -558,23 +558,23 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	const Actor *getTarget(void) const {
+	const Actor *getTarget() const {
 		return targetActor;
 	}
 
 private:
-	bool run(void);
-	GameObject *getObject(void);
+	bool run();
+	GameObject *getObject();
 };
 
 /* ===================================================================== *
@@ -614,26 +614,26 @@ public:
 	GoAwayFromTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 private:
-	virtual TilePoint getRepulsionVector(void) = 0;
+	virtual TilePoint getRepulsionVector() = 0;
 };
 
 /* ===================================================================== *
@@ -656,18 +656,18 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 private:
-	TilePoint getRepulsionVector(void);
+	TilePoint getRepulsionVector();
 };
 
 /* ===================================================================== *
@@ -692,20 +692,20 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 private:
-	TilePoint getRepulsionVector(void);
+	TilePoint getRepulsionVector();
 
-	const ActorTarget *getTarget(void) const {
+	const ActorTarget *getTarget() const {
 		return (const ActorTarget *)targetMem;
 	}
 };
@@ -735,39 +735,39 @@ public:
 	HuntTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 private:
-	void removeWanderTask(void);
-	void removeGotoTask(void);
+	void removeWanderTask();
+	void removeGotoTask();
 
 protected:
-	virtual void evaluateTarget(void) = 0;
+	virtual void evaluateTarget() = 0;
 
 	virtual bool targetHasChanged(GotoTask *gotoTarget) = 0;
-	virtual GotoTask *setupGoto(void) = 0;
-	virtual TilePoint currentTargetLoc(void) = 0;
+	virtual GotoTask *setupGoto() = 0;
+	virtual TilePoint currentTargetLoc() = 0;
 
-	virtual bool atTarget(void) = 0;
-	virtual void atTargetabortTask(void) = 0;
-	virtual TaskResult atTargetEvaluate(void) = 0;
-	virtual TaskResult atTargetUpdate(void) = 0;
+	virtual bool atTarget() = 0;
+	virtual void atTargetabortTask() = 0;
+	virtual TaskResult atTargetEvaluate() = 0;
+	virtual TaskResult atTargetUpdate() = 0;
 };
 
 /* ===================================================================== *
@@ -788,16 +788,16 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
-	GotoTask *setupGoto(void);
-	TilePoint currentTargetLoc(void);
+	GotoTask *setupGoto();
+	TilePoint currentTargetLoc();
 
-	const Target *getTarget(void) const {
+	const Target *getTarget() const {
 		return (const Target *)targetMem;
 	}
 };
@@ -831,26 +831,26 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
+	void evaluateTarget();
 
-	bool atTarget(void);
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 
-	uint16 getRange(void) const {
+	uint16 getRange() const {
 		return range;
 	}
 };
@@ -875,16 +875,16 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
-	GotoTask *setupGoto(void);
-	TilePoint currentTargetLoc(void);
+	GotoTask *setupGoto();
+	TilePoint currentTargetLoc();
 
-	const ObjectTarget *getTarget(void) const {
+	const ObjectTarget *getTarget() const {
 		return (const ObjectTarget *)targetMem;
 	}
 };
@@ -920,26 +920,26 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
+	void evaluateTarget();
 
-	bool atTarget(void);
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 
-	uint16 getRange(void) const {
+	uint16 getRange() const {
 		return range;
 	}
 };
@@ -974,23 +974,23 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
-	bool atTarget(void);
+	void evaluateTarget();
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 };
 
 //const uint8 HuntToPossessTask::targetEvaluateRate = 16;
@@ -1021,20 +1021,20 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
-	GotoTask *setupGoto(void);
-	TilePoint currentTargetLoc(void);
+	GotoTask *setupGoto();
+	TilePoint currentTargetLoc();
 
-	const ActorTarget *getTarget(void) const {
+	const ActorTarget *getTarget() const {
 		return (const ActorTarget *)targetMem;
 	}
 
-	bool tracking(void) const {
+	bool tracking() const {
 		return (flags & track) != 0;
 	}
 };
@@ -1079,36 +1079,36 @@ public:
 	HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
+	void evaluateTarget();
 
-	bool atTarget(void);
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 
-	uint16 getRange(void) const {
+	uint16 getRange() const {
 		return range;
 	}
 };
@@ -1149,29 +1149,29 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	void abortTask(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult update();
 
 protected:
-	void evaluateTarget(void);
-	bool atTarget(void);
+	void evaluateTarget();
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 
 private:
-	void evaluateWeapon(void);
+	void evaluateWeapon();
 };
 
 //const uint8 HuntToKillTask::targetEvaluateRate = 16;
@@ -1205,23 +1205,23 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
-	bool atTarget(void);
+	void evaluateTarget();
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 };
 
 /* ===================================================================== *
@@ -1245,7 +1245,7 @@ public:
 
 	class RepulsorIterator {
 	public:
-		virtual ~RepulsorIterator(void) {}
+		virtual ~RepulsorIterator() {}
 
 		virtual bool first(
 		    TilePoint   &repulsorVector,
@@ -1329,41 +1329,41 @@ public:
 	BandTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	void evaluateTarget(void);
+	void evaluateTarget();
 
 	bool targetHasChanged(GotoTask *gotoTarget);
-	GotoTask *setupGoto(void);
-	TilePoint currentTargetLoc(void);
+	GotoTask *setupGoto();
+	TilePoint currentTargetLoc();
 
-	bool atTarget(void);
+	bool atTarget();
 
-	void atTargetabortTask(void);
-	TaskResult atTargetEvaluate(void);
-	TaskResult atTargetUpdate(void);
+	void atTargetabortTask();
+	TaskResult atTargetEvaluate();
+	TaskResult atTargetUpdate();
 
-	virtual int16 getRunThreshold(void);
-	virtual RepulsorIterator *getNewRepulsorIterator(void);
+	virtual int16 getRunThreshold();
+	virtual RepulsorIterator *getNewRepulsorIterator();
 };
 
 /* ===================================================================== *
@@ -1412,14 +1412,14 @@ public:
 	BandAndAvoidEnemiesTask(Common::InSaveFile *in, TaskID id) : BandTask(in, id) {}
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 protected:
-	int16 getRunThreshold(void);
-	RepulsorIterator *getNewRepulsorIterator(void);
+	int16 getRunThreshold();
+	RepulsorIterator *getNewRepulsorIterator();
 };
 
 /* ===================================================================== *
@@ -1457,41 +1457,41 @@ public:
 	FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id);
 
 	//	Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
 	//  being used.  This is used to find task leaks.
-	void mark(void);
+	void mark();
 #endif
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
 	//  Update function used if this task is not paused
-	TaskResult handleFollowPatrolRoute(void);
+	TaskResult handleFollowPatrolRoute();
 
 	//  Update function used if this task is paused
-	TaskResult handlePaused(void);
+	TaskResult handlePaused();
 
 	//  Set this task into the paused state
-	void pause(void);
+	void pause();
 
 	//  Set this task into the unpaused state
-	void followPatrolRoute(void) {
+	void followPatrolRoute() {
 		paused = false;
 	}
 };
@@ -1514,16 +1514,16 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
@@ -1551,18 +1551,18 @@ public:
 	}
 
 	//  Fixup the subtask pointer
-	void fixup(void);
+	void fixup();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
@@ -1594,14 +1594,14 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	//  Return an integer representing the type of this task
-	int16 getType(void) const;
+	int16 getType() const;
 
-	void abortTask(void);
-	TaskResult evaluate(void);
-	TaskResult update(void);
+	void abortTask();
+	TaskResult evaluate();
+	TaskResult update();
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
@@ -1641,7 +1641,7 @@ public:
 	}
 
 	//  Destructor
-	~TaskStack(void) {
+	~TaskStack() {
 		if (actor)
 			actor->_curTask = nullptr;
 		deleteTaskStack(this);
@@ -1649,7 +1649,7 @@ public:
 
 	//  Return the number of bytes necessary to archive this TaskStack
 	//  in a buffer
-	int32 archiveSize(void) {
+	int32 archiveSize() {
 		return      sizeof(ObjectID)     //  actor's id
 		            +   sizeof(stackBottomID)
 		            +   sizeof(evalCount)
@@ -1664,22 +1664,22 @@ public:
 	void setTask(Task *t);
 
 	//  Return a pointer to the bottom task in this task stack
-	const Task *getTask(void) {
+	const Task *getTask() {
 		return  stackBottomID != NoTask
 		        ?   getTaskAddress(stackBottomID)
 		        :   NULL;
 	}
 
-	Actor *getActor(void) {
+	Actor *getActor() {
 		return actor;
 	}
 
 	//  Abort all tasks in stack
-	void abortTask(void);
+	void abortTask();
 	//  Re-evaluate tasks in stack
-	TaskResult evaluate(void);
+	TaskResult evaluate();
 	//  Update the state of the tasks in stack
-	TaskResult update(void);
+	TaskResult update();
 };
 
 } // end of namespace Saga2

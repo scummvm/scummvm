@@ -44,8 +44,8 @@ namespace Saga2 {
 
 // ------------------------------------------------------------------------
 // function types for init & cleanup
-typedef bool PROGRAM_INITIALIZER(void);
-typedef void PROGRAM_TERMINATOR(void);
+typedef bool PROGRAM_INITIALIZER();
+typedef void PROGRAM_TERMINATOR();
 
 typedef PROGRAM_INITIALIZER *pPROGRAM_INITIALIZER;
 typedef PROGRAM_TERMINATOR *pPROGRAM_TERMINATOR;
@@ -66,7 +66,7 @@ struct TowerLayer {
 // ------------------------------------------------------------------------
 // state transition hooks for debugging
 
-int initState(void);
+int initState();
 void setInitState(int i);
 
 // ------------------------------------------------------------------------

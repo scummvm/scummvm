@@ -43,7 +43,7 @@ extern ReadyContainerView   *TrioCviews[kNumViews];
 extern ReadyContainerView   *indivCviewTop, *indivCviewBot;
 extern ContainerNode        *indivReadyNode;
 
-void updateMainDisplay(void);
+void updateMainDisplay();
 
 TilePoint selectNearbySite(
     ObjectID        worldID,
@@ -74,7 +74,7 @@ bool                    brotherBandingEnabled;
 //-----------------------------------------------------------------------
 //	Resolve the banding state of this actor
 
-void PlayerActor::resolveBanding(void) {
+void PlayerActor::resolveBanding() {
 	Actor *follower         = getActor();
 	Actor *centerActor_     = getCenterActor();
 
@@ -96,7 +96,7 @@ void PlayerActor::resolveBanding(void) {
 //-----------------------------------------------------------------------
 //	Re-evaluate the portrait type for this player actor
 
-void PlayerActor::recalcPortraitType(void) {
+void PlayerActor::recalcPortraitType() {
 	PortraitType    pType;
 	Actor           *a = getActor();
 	ActorAttributes &stats = getBaseStats();
@@ -123,14 +123,14 @@ void PlayerActor::recalcPortraitType(void) {
 }
 
 
-void PlayerActor::recoveryUpdate(void) { // change name to recovery update
+void PlayerActor::recoveryUpdate() { // change name to recovery update
 	manaUpdate();
 	AttribUpdate();
 }
 
 
 
-void PlayerActor::AttribUpdate(void) {
+void PlayerActor::AttribUpdate() {
 	// get the actor pointer for this character
 	Actor *actor = getActor();
 
@@ -177,7 +177,7 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 	}
 }
 
-void PlayerActor::manaUpdate(void) {
+void PlayerActor::manaUpdate() {
 	const   int numManas        = 6;
 	const   int minMana         = 0;
 
@@ -467,7 +467,7 @@ uint8 PlayerActor::getStatIndex(SkillProto *proto) {
 	return stat;
 }
 
-ActorAttributes *PlayerActor::getEffStats(void) {
+ActorAttributes *PlayerActor::getEffStats() {
 	// get the actor pointer for this character
 	Actor *actor = getActor();
 
@@ -484,7 +484,7 @@ ActorAttributes *PlayerActor::getEffStats(void) {
 //-----------------------------------------------------------------------
 //	Notify the user of attack if necessary
 
-void PlayerActor::handleAttacked(void) {
+void PlayerActor::handleAttacked() {
 	if (!notifiedOfAttack) {
 		StatusMsg(ATTACK_STATUS, getActor()->objName());
 		notifiedOfAttack = true;
@@ -519,21 +519,21 @@ PlayerActorID getPlayerActorID(PlayerActor *p) {
 //-----------------------------------------------------------------------
 //	Return a pointer the center actor's Actor structure
 
-Actor *getCenterActor(void) {
+Actor *getCenterActor() {
 	return g_vm->_playerList[centerActor]->getActor();
 }
 
 //-----------------------------------------------------------------------
 //  Return the center actor's object ID
 
-ObjectID getCenterActorID(void) {
+ObjectID getCenterActorID() {
 	return ActorBaseID + centerActor;
 }
 
 //-----------------------------------------------------------------------
 //  Return the center actor's player actor ID
 
-PlayerActorID getCenterActorPlayerID(void) {
+PlayerActorID getCenterActorPlayerID() {
 	return centerActor;
 }
 
@@ -541,7 +541,7 @@ PlayerActorID getCenterActorPlayerID(void) {
 //	Set a new center actor based upon a PlayerActor ID
 
 void setCenterActor(PlayerActorID newCenter) {
-	extern void setEnchantmentDisplay(void);
+	extern void setEnchantmentDisplay();
 
 	assert(newCenter < kPlayerActors);
 
@@ -604,7 +604,7 @@ void setCenterActor(PlayerActor *newCenter) {
 //-----------------------------------------------------------------------
 //	Return the coordinates of the current center actor
 
-TilePoint centerActorCoords(void) {
+TilePoint centerActorCoords() {
 	Actor           *a;
 
 	a = g_vm->_playerList[centerActor]->getActor();
@@ -647,7 +647,7 @@ bool isAggressive(PlayerActorID player) {
 //	Adjust the player actors aggression setting based upon their
 //	proximity to enemies
 
-void autoAdjustAggression(void) {
+void autoAdjustAggression() {
 	PlayerActorID       i;
 
 	//  Iterate through all player actors
@@ -866,7 +866,7 @@ void handlePlayerActorAttacked(PlayerActorID id) {
 
 //-----------------------------------------------------------------------
 
-void handleEndOfCombat(void) {
+void handleEndOfCombat() {
 	PlayerActorID       i;
 
 	//  Iterate through all player actors
@@ -896,7 +896,7 @@ struct PlayerActorArchive {
 //-----------------------------------------------------------------------
 //	Initialize the player list
 
-void initPlayerActors(void) {
+void initPlayerActors() {
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 0)); // Julian
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 1)); // Philip
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 2)); // Kevin
@@ -1024,7 +1024,7 @@ void loadPlayerActors(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Cleanup the player actor list
 
-void cleanupPlayerActors(void) {
+void cleanupPlayerActors() {
 	cleanupReadyContainers();
 }
 
@@ -1042,7 +1042,7 @@ struct CenterActorArchive {
 //-----------------------------------------------------------------------
 //	Initialize the center actor ID and view object ID
 
-void initCenterActor(void) {
+void initCenterActor() {
 	centerActor = FTA_JULIAN;
 	viewCenterObject = g_vm->_playerList[centerActor]->getActorID();
 
@@ -1078,24 +1078,24 @@ void loadCenterActor(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Iterates through all player actors
 
-PlayerActor *PlayerActorIterator::first(void) {
+PlayerActor *PlayerActorIterator::first() {
 	index = 0;
 	return g_vm->_playerList[index++];
 }
 
-PlayerActor *PlayerActorIterator::next(void) {
+PlayerActor *PlayerActorIterator::next() {
 	return (index < kPlayerActors) ? g_vm->_playerList[index++] : NULL;
 }
 
 //-----------------------------------------------------------------------
 //	Iterates through all player actors that are not dead.
 
-PlayerActor *LivingPlayerActorIterator::first(void) {
+PlayerActor *LivingPlayerActorIterator::first() {
 	index = 0;
 	return LivingPlayerActorIterator::next();
 }
 
-PlayerActor *LivingPlayerActorIterator::next(void) {
+PlayerActor *LivingPlayerActorIterator::next() {
 	if (index >= kPlayerActors)
 		return nullptr;
 

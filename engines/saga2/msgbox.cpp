@@ -78,7 +78,7 @@ inline Rect16 butBox(int n, int i) {
    Main message box code
  * ===================================================================== */
 
-bool userDialogAvailable(void);
+bool userDialogAvailable();
 int16 userDialog(const char *title, const char *msg, const char *btnMsg1, const char *btnMsg2, const char *btnMsg3);
 
 // ------------------------------------------------------------------------
@@ -163,7 +163,7 @@ ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMs
 
 }
 
-int16 ErrorWindow::getResult(void) {
+int16 ErrorWindow::getResult() {
 	open();
 	draw();
 	EventLoop(rInfo.running, true);
@@ -223,18 +223,18 @@ SimpleWindow::SimpleWindow(const Rect16 &r,
 	title = stitle;
 }
 
-SimpleWindow::~SimpleWindow(void) {
+SimpleWindow::~SimpleWindow() {
 	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);
 }
 
-bool SimpleWindow::isModal(void) {
+bool SimpleWindow::isModal() {
 	return true;
 }
 
 void SimpleWindow::update(const Rect16 &) {
 }
 
-void SimpleWindow::draw(void) {
+void SimpleWindow::draw() {
 	g_vm->_pointer->hide(g_vm->_mainPort, _extent);              // hide mouse pointer
 	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 	g_vm->_pointer->show(g_vm->_mainPort, _extent);              // show mouse pointer
@@ -351,7 +351,7 @@ SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title_, 
 	window = &win;
 }
 
-void SimpleButton::deactivate(void) {
+void SimpleButton::deactivate() {
 	selected = 0;
 	draw();
 	gPanel::deactivate();
@@ -392,7 +392,7 @@ void SimpleButton::pointerDrag(gPanelMessage &msg) {
 	}
 }
 
-void SimpleButton::draw(void) {
+void SimpleButton::draw() {
 	gDisplayPort    &port = window->windowPort;
 	Rect16  rect = window->getExtent();
 

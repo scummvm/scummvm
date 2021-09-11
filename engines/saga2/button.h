@@ -108,9 +108,9 @@ protected:
 	gFont       *_textFont;          // pointer to font for this button
 
 protected:
-	virtual void    *getCurrentCompImage(void);      // get the current image
+	virtual void    *getCurrentCompImage();      // get the current image
 
-	void init(void);
+	void init();
 
 public:
 
@@ -142,18 +142,18 @@ public:
 	GfxCompImage(gPanelList &, const StaticRect &, void **, int16, int16,
 	           const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
-	~GfxCompImage(void);
+	~GfxCompImage();
 
 	void    pointerMove(gPanelMessage &msg);
 	void    enable(bool);
 	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
-	int16   getCurrent(void)       {
+	int16   getCurrent()       {
 		return _currentImage;
 	}
-	int16   getMin(void)           {
+	int16   getMin()           {
 		return _min;
 	}
-	int16   getMax(void)           {
+	int16   getMax()           {
 		return _max;
 	}
 	void    setCurrent(uint16 val) {
@@ -165,7 +165,7 @@ public:
 	void    setImages(void **images);
 	void    setImage(void *image);
 
-	void            draw(void);      // redraw the panel.
+	void            draw();      // redraw the panel.
 	virtual void    drawClipped(gPort &,
 	                            const  Point16 &,
 	                            const  Rect16 &);
@@ -244,16 +244,16 @@ public:
 
 	GfxCompButton(gPanelList &, const Rect16 &, AppFunc *cmd = NULL);
 
-	~GfxCompButton(void);
+	~GfxCompButton();
 
 
 	bool            activate(gEventType why);        // activate the control
-	void            deactivate(void);
+	void            deactivate();
 
 	void    enable(bool);
 	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
 	// area for this button
-	void    draw(void);                          // redraw the panel.
+	void    draw();                          // redraw the panel.
 	void    dim(bool);
 	void    setForImage(void *image) {
 		if (image) _forImage = image;
@@ -271,7 +271,7 @@ protected:
 	bool            pointerHit(gPanelMessage &msg);
 	void            pointerDrag(gPanelMessage &msg);
 	void            pointerRelease(gPanelMessage &msg);
-	virtual void    *getCurrentCompImage(void);
+	virtual void    *getCurrentCompImage();
 };
 
 /************************************************************************
@@ -318,15 +318,15 @@ public:
 	                int16, int16, bool,
 	                uint16, AppFunc *cmd = NULL);
 
-	~GfxMultCompButton(void);
+	~GfxMultCompButton();
 
-	int16   getCurrent(void)       {
+	int16   getCurrent()       {
 		return _current;
 	}
-	int16   getMin(void)           {
+	int16   getMin()           {
 		return _min;
 	}
-	int16   getMax(void)           {
+	int16   getMax()           {
 		return _max;
 	}
 	void    setCurrent(int16 val)  {
@@ -343,7 +343,7 @@ public:
 protected:
 	bool activate(gEventType why);       // activate the control
 	bool pointerHit(gPanelMessage &msg);
-	virtual void    *getCurrentCompImage(void);
+	virtual void    *getCurrentCompImage();
 };
 
 
@@ -366,7 +366,7 @@ public:
 
 private:
 	bool    activate(gEventType why);
-	void    deactivate(void);
+	void    deactivate();
 	bool    pointerHit(gPanelMessage &msg);
 	void    pointerMove(gPanelMessage &msg);
 	void    pointerRelease(gPanelMessage &);
@@ -380,12 +380,12 @@ public:
 	void    setSliderCurrent(int16 val) {
 		_slCurrent = val;
 	}
-	int16   getSliderCurrent(void) {
+	int16   getSliderCurrent() {
 		return _slCurrent;
 	}
-	int16   getSliderLenVal(void);
-	virtual void    *getCurrentCompImage(void);
-	void    draw(void);
+	int16   getSliderLenVal();
+	virtual void    *getCurrentCompImage();
+	void    draw();
 };
 
 

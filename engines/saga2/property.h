@@ -103,7 +103,7 @@ public:
 	CompoundProperty(Property< T > **array, uint16 size);
 
 	//  Virtual destructor
-	virtual ~CompoundProperty(void);
+	virtual ~CompoundProperty();
 };
 
 template < class T >
@@ -125,7 +125,7 @@ CompoundProperty< T >::CompoundProperty(
 
 
 template < class T >
-CompoundProperty< T >::~CompoundProperty(void) {
+CompoundProperty< T >::~CompoundProperty() {
 	//  Free the array memory
 	free(propertyArray);
 }
@@ -329,7 +329,7 @@ public:
 	CompoundMetaTileProperty(MetaTileProperty **array, uint16 size);
 
 	//  Virtual destructor
-	virtual ~CompoundMetaTileProperty(void);
+	virtual ~CompoundMetaTileProperty();
 };
 
 /* ===================================================================== *

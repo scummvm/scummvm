@@ -51,7 +51,7 @@
 #include "saga2/tile.h"
 #include "saga2/tilemode.h"
 
-void drawMainDisplay(void);
+void drawMainDisplay();
 
 #define MONOLOG(s) {debugC(2, kDebugScripts, "cfunc: " #s );}
 #define OBJLOG(s) {debugC(2, kDebugScripts, "cfunc: [%s]." #s , (((ObjectData *)thisThread->thisObject)->obj)->objName() );}

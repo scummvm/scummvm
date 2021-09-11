@@ -98,7 +98,7 @@ void setAreaSound(const TilePoint &baseCoords);
 TileBankPtr tileBanks[maxBanks];
 
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
-void updateFrameCount(void);
+void updateFrameCount();
 
 /* ===================================================================== *
    Prototypes
@@ -135,15 +135,15 @@ void markMetaAsVisited(const TilePoint &pt);
  * ===================================================================== */
 
 
-extern void buildDisplayList(void);
-extern void drawDisplayList(void);
+extern void buildDisplayList();
+extern void drawDisplayList();
 //extern void evaluateActorNeeds( int32 );
-extern void updateActorTasks(void);
+extern void updateActorTasks();
 extern void updateObjectAppearances(int32 deltaTime);
 extern void getViewTrackPos(TilePoint &tp);
-extern GameObject *getViewCenterObject(void);
-extern TilePoint centerActorCoords(void);
-void freeAllTileBanks(void);
+extern GameObject *getViewCenterObject();
+extern TilePoint centerActorCoords();
+void freeAllTileBanks();
 
 void cycleTiles(uint32 elapsed);
 
@@ -286,7 +286,7 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 //-----------------------------------------------------------------------
 //	Return the map number of this active item
 
-int16 ActiveItem::getMapNum(void) {
+int16 ActiveItem::getMapNum() {
 	int16   mapNum;
 
 	//  Use a brute force search of all of the maps' active item lists
@@ -305,7 +305,7 @@ int16 ActiveItem::getMapNum(void) {
 //-----------------------------------------------------------------------
 //	Return the world context for a TAG
 
-ObjectID ActiveItem::getInstanceContext(void) {
+ObjectID ActiveItem::getInstanceContext() {
 	int16 mn = getMapNum();
 	assert(mn >= 0 && mn < 3);
 	if (mn < 0 || mn > 2)
@@ -317,7 +317,7 @@ ObjectID ActiveItem::getInstanceContext(void) {
 //-----------------------------------------------------------------------
 //	Return the Location for a TAG
 
-Location ActiveItem::getInstanceLocation(void) {
+Location ActiveItem::getInstanceLocation() {
 	return Location(_data.instance.u  << kTileUVShift,
 	                _data.instance.v  << kTileUVShift,
 	                _data.instance.h  << kTileZShift,
@@ -337,7 +337,7 @@ ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
 //-----------------------------------------------------------------------
 //	Return this active item's ID
 
-ActiveItemID ActiveItem::thisID(void) {
+ActiveItemID ActiveItem::thisID() {
 	int16   mapNum = getMapNum();
 
 	return  ActiveItemID(mapNum, _index);
@@ -742,7 +742,7 @@ TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
 //-----------------------------------------------------------------------
 //	Initialize the active item state arrays
 
-void initActiveItemStates(void) {
+void initActiveItemStates() {
 	int16       i;
 
 	stateArray = new byte *[worldCount]();
@@ -862,7 +862,7 @@ void loadActiveItemStates(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Cleanup the active item state arrays
 
-void cleanupActiveItemStates(void) {
+void cleanupActiveItemStates() {
 	int16       i;
 
 	for (i = 0; i < worldCount; i++) {
@@ -880,7 +880,7 @@ void cleanupActiveItemStates(void) {
 //-----------------------------------------------------------------------
 //	Constructor
 
-TileActivityTaskList::TileActivityTaskList(void) {
+TileActivityTaskList::TileActivityTaskList() {
 }
 
 //-----------------------------------------------------------------------
@@ -945,7 +945,7 @@ void TileActivityTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 //-----------------------------------------------------------------------
 //	Cleanup
 
-void TileActivityTaskList::cleanup(void) {
+void TileActivityTaskList::cleanup() {
 	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		delete *it;
 
@@ -1001,7 +1001,7 @@ TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
 //-----------------------------------------------------------------------
 //	When a tile activity task is finished, call this function to delete it.
 
-void TileActivityTask::remove(void) {
+void TileActivityTask::remove() {
 	debugC(3, kDebugTasks, "Removing TAT");
 
 	g_vm->_aTaskList->_list.remove(this);
@@ -1053,7 +1053,7 @@ void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, Th
 //-----------------------------------------------------------------------
 //	Routine to update positions of all active terrain using TileActivityTasks
 
-void TileActivityTask::updateActiveItems(void) {
+void TileActivityTask::updateActiveItems() {
 	int count = 0, scriptCount = 0;
 
 	for (Common::List<TileActivityTask *>::iterator it = g_vm->_aTaskList->_list.begin(); it != g_vm->_aTaskList->_list.end();) {
@@ -1161,7 +1161,7 @@ void moveActiveTerrain(int32 deltaTime) {
 //-----------------------------------------------------------------------
 //	Initialize the tile activity task list
 
-void initTileTasks(void) {
+void initTileTasks() {
 }
 
 void saveTileTasks(Common::OutSaveFile *outS) {
@@ -1188,7 +1188,7 @@ void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
 //-----------------------------------------------------------------------
 //	Cleanup the tile activity task list
 
-void cleanupTileTasks(void) {
+void cleanupTileTasks() {
 	//  Simply call the aTaskList's cleanup
 	g_vm->_aTaskList->cleanup();
 }
@@ -1316,7 +1316,7 @@ ActiveItemList::~ActiveItemList() {
 	}
 }
 
-void initMaps(void) {
+void initMaps() {
 	int16       i;
 	Common::SeekableReadStream *stream;
 	const int metaTileSize = 30;
@@ -1459,7 +1459,7 @@ void initMaps(void) {
 //-----------------------------------------------------------------------
 //	Cleanup map data
 
-void cleanupMaps(void) {
+void cleanupMaps() {
 	int16       i;
 
 	termMapFeatures();
@@ -1528,7 +1528,7 @@ void setCurrentMap(int mapNum) {
 
 //-----------------------------------------------------------------------
 
-void initAutoMap(void) {
+void initAutoMap() {
 	int16       i;
 
 	for (i = 0; i < worldCount; i++) {
@@ -1663,7 +1663,7 @@ void loadAutoMap(Common::InSaveFile *in, int32 chunkSize) {
 //-----------------------------------------------------------------------
 //	Initialize the platform cache
 
-void initPlatformCache(void) {
+void initPlatformCache() {
 	platformCache = new PlatformCacheEntry[PlatformCacheEntry::kPlatformCacheSize];
 
 	for (int i = 0; i < PlatformCacheEntry::kPlatformCacheSize; i++) {
@@ -1721,7 +1721,7 @@ TilePoint::TilePoint(Common::SeekableReadStream *stream) {
 //-----------------------------------------------------------------------
 //	Converts a UV vector into a rough direction vector.
 
-int16 TilePoint::quickDir(void) {
+int16 TilePoint::quickDir() {
 	int16           u2 = u * 2,
 	                v2 = v * 2;
 
@@ -2090,7 +2090,7 @@ RipTable *RipTable::ripTableAddress(RipTableID id) {
 //-----------------------------------------------------------------------
 //	Return a rip table's ID
 
-RipTableID RipTable::thisID(void) {
+RipTableID RipTable::thisID() {
 	return _index;
 }
 
@@ -2117,7 +2117,7 @@ MetaTileID MetaTile::thisID(int16 mapNum) {
 //-----------------------------------------------------------------------
 //	Return the audio theme associated with this metatile
 
-metaTileNoise MetaTile::HeavyMetaMusic(void) {
+metaTileNoise MetaTile::HeavyMetaMusic() {
 	return _properties & 0xFF;
 }
 
@@ -2293,7 +2293,7 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 //-----------------------------------------------------------------------
 //	Builds an active item instance hash table for tile lookup
 
-void WorldMapData::buildInstanceHash(void) {
+void WorldMapData::buildInstanceHash() {
 	int32           i;
 	int16           hashVal;
 	ActiveItem      **ail;
@@ -2338,7 +2338,7 @@ ActiveItem *WorldMapData::findHashedInstance(
    MetaTileIterator member functions
  * ====================================================================== */
 
-bool MetaTileIterator::iterate(void) {
+bool MetaTileIterator::iterate() {
 	if (++mCoords.v >= region.max.v) {
 		if (++mCoords.u >= region.max.u) return false;
 		mCoords.v = region.min.v;
@@ -2380,7 +2380,7 @@ MetaTile *MetaTileIterator::next(TilePoint *loc) {
    TileIterator member functions
  * ====================================================================== */
 
-bool TileIterator::iterate(void) {
+bool TileIterator::iterate() {
 	if (++tCoords.v >= tCoordsReg.max.v) {
 		if (++tCoords.u >= tCoordsReg.max.u) {
 			do {
@@ -2658,7 +2658,7 @@ void buildRipTable(
 //  Build the object ripping tables for the metatiles in the vicinity of
 //	the center view object
 
-void buildRipTables(void) {
+void buildRipTables() {
 	const int16         regionRadius = kTileUVSize * kPlatformWidth * 2;
 
 	TilePoint           actorCoords;
@@ -2757,7 +2757,7 @@ void buildRipTables(void) {
 //  Determine which metatiles in the local area will have
 //  cutaway roofs...
 
-void buildRoofTable(void) {
+void buildRoofTable() {
 	uint16          newRoofID = objRoofID(getViewCenterObject());
 
 	if (newRoofID != rippedRoofID) {
@@ -4104,7 +4104,7 @@ struct TileCycleArchive {
 //-----------------------------------------------------------------------
 //	Initialize the tile cycling state array
 
-void initTileCyclingStates(void) {
+void initTileCyclingStates() {
 	Common::SeekableReadStream *stream;
 	const int tileCycleDataSize = 40;
 
@@ -4157,7 +4157,7 @@ void loadTileCyclingStates(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Cleanup the tile cycling state array
 
-void cleanupTileCyclingStates(void) {
+void cleanupTileCyclingStates() {
 	if (cycleList != nullptr) {
 		delete[] cycleList;
 		cycleList = nullptr;
@@ -4295,9 +4295,9 @@ bool underSameRoof(GameObject *obj1, GameObject *obj2) {
    Main view update routine
  * ===================================================================== */
 
-extern void testSprites(void);
+extern void testSprites();
 
-void updateMainDisplay(void) {
+void updateMainDisplay() {
 	static TilePoint lastViewLoc = TilePoint(0, 0, 0);
 
 	int32           deltaTime = gameTime - lastUpdateTime;
@@ -4409,7 +4409,7 @@ void updateMainDisplay(void) {
 	cycleTiles(deltaTime);
 }
 
-void drawMainDisplay(void) {
+void drawMainDisplay() {
 
 
 	// draws tiles to g_vm->_tileDrawMap.data
@@ -4511,7 +4511,7 @@ int32 quickDistance(const Point32 &p) {
 	else return ay + (ax >> 1);
 }
 
-int16 TilePoint::magnitude(void) {
+int16 TilePoint::magnitude() {
 	int16       au = ABS(u),
 	            av = ABS(v),
 	            az = ABS(z);

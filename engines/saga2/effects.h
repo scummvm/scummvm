@@ -453,7 +453,7 @@ public:
 
 	void implement(GameObject *, SpellTarget *trg, int8 deltaDamage = 0);
 
-	bool canFail(void) {
+	bool canFail() {
 		return isSaveable(enchID);
 	}
 

@@ -67,35 +67,35 @@ public:
 	ActorAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Destructor
-	virtual ~ActorAssignment(void);
+	virtual ~ActorAssignment();
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	virtual int32 archiveSize(void) const;
+	virtual int32 archiveSize() const;
 
 	virtual void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Construct a TaskStack for this assignment
-	TaskStack *createTask(void);
+	TaskStack *createTask();
 
 	//  This function is called to notify the assignment of the
 	//  completion of a task which the assignment had created.
 	virtual void handleTaskCompletion(TaskResult result);
 
 	//  Determine if assignment's time limit is up
-	virtual bool isValid(void);
+	virtual bool isValid();
 
 	//  Return a pointer to the actor to which this assignment belongs
-	Actor *getActor(void) const;
+	Actor *getActor() const;
 
 	//  Return an integer representing the class of this assignment
-	virtual int16 type(void) const = 0;
+	virtual int16 type() const = 0;
 
 protected:
-	void startTask(void);
+	void startTask();
 
 	//  Determine if this assignment needs to create a task at this time
-	virtual bool taskNeeded(void);
+	virtual bool taskNeeded();
 
 	//  Create a Task for this assignment
 	virtual Task *getTask(TaskStack *ts) = 0;
@@ -132,23 +132,23 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this assignment
-	int16 type(void) const;
+	int16 type() const;
 
 	//  This function is called to notify the assignment of the
 	//  completion of a task which the assignment had created.
 	void handleTaskCompletion(TaskResult result);
 
 	//  Determine if assignment is still valid
-	bool isValid(void);
+	bool isValid();
 
 protected:
 	//  Determine if this assignment needs to create a task at this time
-	bool taskNeeded(void);
+	bool taskNeeded();
 
 	//  Construct a Task for this assignment
 	Task *getTask(TaskStack *ts);
@@ -200,18 +200,18 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-	int16 type(void) const;
+	int16 type() const;
 
 protected:
-	bool taskNeeded(void);
+	bool taskNeeded();
 
 	Task *getTask(TaskStack *ts);
 
-	const Target *getTarget(void) const {
+	const Target *getTarget() const {
 		return (const Target *)_targetMem;
 	}
 };
@@ -279,18 +279,18 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-	int16 type(void) const;
+	int16 type() const;
 
 protected:
-	bool taskNeeded(void);
+	bool taskNeeded();
 
 	Task *getTask(TaskStack *ts);
 
-	const ActorTarget *getTarget(void) const {
+	const ActorTarget *getTarget() const {
 		return (const ActorTarget *)_targetMem;
 	}
 };
@@ -350,22 +350,22 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Determine if assignment's time limit is up or if the actor is
 	//  already dead
-	bool isValid(void);
+	bool isValid();
 
-	int16 type(void) const;
+	int16 type() const;
 
 protected:
-	bool taskNeeded(void);
+	bool taskNeeded();
 
 	Task *getTask(TaskStack *ts);
 
-	const ActorTarget *getTarget(void) const {
+	const ActorTarget *getTarget() const {
 		return (const ActorTarget *)_targetMem;
 	}
 };
@@ -396,7 +396,7 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 };
@@ -413,7 +413,7 @@ public:
 	TetheredWanderAssignment(Actor *a, Common::SeekableReadStream *stream) : TetheredAssignment(a, stream) {}
 
 	//  Return an integer representing the type of this assignment
-	int16 type(void) const;
+	int16 type() const;
 
 protected:
 	//  Construct a Task for this assignment
@@ -435,12 +435,12 @@ public:
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
-	int32 archiveSize(void) const;
+	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this assignment
-	int16 type(void) const;
+	int16 type() const;
 
 protected:
 	//  Construct a Task for this assignment

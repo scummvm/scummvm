@@ -83,34 +83,34 @@ public:
 	void initAudioInterface(hResContext *musicContext);
 
 	// event loop calls
-	bool playFlag(void);
-	void playMe(void);
+	bool playFlag();
+	void playMe();
 
 	// music calls
 	void playMusic(uint32 s, int16 loopFactor = 1, Point32 where = Here);
-	void stopMusic(void);
+	void stopMusic();
 
 	// sound calls
 	void queueSound(uint32 s, int16 loopFactor = 1, Point32 where = Here);
 
 	// loop calls
 	void playLoop(uint32 s, int16 loopFactor = 0, Point32 where = Here);
-	void stopLoop(void);
+	void stopLoop();
 	void setLoopPosition(Point32 newLoc);
-	uint32 currentLoop(void) {
+	uint32 currentLoop() {
 		return _currentLoop.seg;
 	}
 
 	// voice calls
 	void queueVoice(uint32 s, Point32 where = Here);
 	void queueVoice(uint32 s[], Point32 where = Here);
-	void stopVoice(void);
-	bool talking(void);
+	void stopVoice();
+	bool talking();
 	bool saying(uint32 s);
 
 	byte getVolume(VolumeTarget src);
-	void suspend(void);
-	void resume(void);
+	void suspend();
+	void resume();
 };
 
 } // end of namespace Saga2

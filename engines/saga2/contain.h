@@ -160,7 +160,7 @@ public:
 	virtual bool isVisible(GameObject *obj);
 
 	//  total the mass, bulk, and number of all objects in container.
-	void totalObjects(void);
+	void totalObjects();
 
 	//  Get the Nth visible object from this container.
 	ObjectID getObject(int16 slotNum);
@@ -206,7 +206,7 @@ protected: // actions within a container
 	//  Event-handling functions
 
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	virtual void pointerMove(gPanelMessage &msg);
 	virtual bool pointerHit(gPanelMessage &msg);
@@ -281,14 +281,14 @@ public:
 	                const ContainerAppearanceDef &app,
 	                const char saveas[]);
 
-	virtual ~ContainerWindow(void);
+	virtual ~ContainerWindow();
 
-	ContainerView &getView(void);
-	GameObject *containerObject(void) {
+	ContainerView &getView();
+	GameObject *containerObject() {
 		return getView().containerObject;
 	}
 
-	virtual void massBulkUpdate(void) {}
+	virtual void massBulkUpdate() {}
 };
 
 //  Base class for all container windows with scroll control
@@ -301,11 +301,11 @@ public:
 	                          const ContainerAppearanceDef &app,
 	                          const char saveas[]);
 
-	void scrollUp(void) {
+	void scrollUp() {
 		if (view->scrollPosition > 0) view->scrollPosition--;
 	}
 
-	void scrollDown(void) {
+	void scrollDown() {
 		if (view->scrollPosition + view->visibleRows < view->totalRows)
 			view->scrollPosition++;
 	}
@@ -321,18 +321,18 @@ private:
 	bool            deathFlag;
 
 private:
-	void setContainerSprite(void);
+	void setContainerSprite();
 
 public:
 
 	TangibleContainerWindow(ContainerNode &nd,
 	                        const ContainerAppearanceDef &app);
-	~TangibleContainerWindow(void);
+	~TangibleContainerWindow();
 
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
 
 	// this sets the mass and bulk gauges for physical containers
-	void massBulkUpdate(void);
+	void massBulkUpdate();
 };
 
 class IntangibleContainerWindow : public ScrollableContainerWindow {
@@ -435,7 +435,7 @@ private:
 	};
 
 public:
-	ContainerNode(void) {
+	ContainerNode() {
 		object = 0;
 		type = 0;
 		owner = 0;
@@ -446,7 +446,7 @@ public:
 	ContainerNode(ContainerManager &cl, ObjectID id, int type);
 	~ContainerNode();
 
-	static int32 archiveSize(void) {
+	static int32 archiveSize() {
 		return sizeof(Archive);
 	}
 
@@ -454,41 +454,41 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Hide or show this container window.
-	void hide(void);
-	void show(void);
-	void update(void);                   //  Update container associated with this node
+	void hide();
+	void show();
+	void update();                   //  Update container associated with this node
 
 	//  Set for lazy deletion
-	void markForDelete(void)   {
+	void markForDelete()   {
 		action |= actionDelete;
 	}
-	void markForShow(void) {
+	void markForShow() {
 		action |= actionShow;
 		action &= ~actionHide;
 	}
-	void markForHide(void) {
+	void markForHide() {
 		action |= actionHide;
 		action &= ~actionShow;
 	}
-	void markForUpdate(void)   {
+	void markForUpdate()   {
 		action |= actionUpdate;
 	}
 
 	//  Find the address of the window and/or view
-	ContainerWindow *getWindow(void);
-	ContainerView   *getView(void);
+	ContainerWindow *getWindow();
+	ContainerView   *getView();
 
 	//  Access functions
-	uint8 getType(void) {
+	uint8 getType() {
 		return type;
 	}
-	uint8 getOwnerIndex(void) {
+	uint8 getOwnerIndex() {
 		return owner;
 	}
-	ObjectID getObject(void) {
+	ObjectID getObject() {
 		return object;
 	}
-	Rect16 &getPosition(void) {
+	Rect16 &getPosition() {
 		return position;
 	}
 	void setObject(ObjectID id) {
@@ -526,7 +526,7 @@ public:
 
 	//  Set which player is viewing the container windows.
 	void setPlayerNum(PlayerActorID playerNum);
-	void doDeferredActions(void);
+	void doDeferredActions();
 	void setUpdate(ObjectID id);
 };
 
@@ -538,15 +538,15 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type);
    Exports
  * ===================================================================== */
 
-void initContainers(void);
-void cleanupContainers(void);
+void initContainers();
+void cleanupContainers();
 
-void initContainerNodes(void);
+void initContainerNodes();
 void saveContainerNodes(Common::OutSaveFile *outS);
 void loadContainerNodes(Common::InSaveFile *in);
-void cleanupContainerNodes(void);
+void cleanupContainerNodes();
 
-extern void updateContainerWindows(void);
+extern void updateContainerWindows();
 
 extern APPFUNC(cmdCloseButtonFunc);
 extern APPFUNC(cmdMindContainerFunc);

@@ -247,7 +247,7 @@ struct ResourceActorProtoExtension {
 	uint32              baseEffectFlags;    // special effects, see EFFECTS.H
 
 	//  Default constructor -- do nothing
-	ResourceActorProtoExtension(void) {
+	ResourceActorProtoExtension() {
 		memset(&baseStats, 0, sizeof(baseStats));
 
 		combatBehavior = 0;
@@ -304,7 +304,7 @@ public:
 	}
 
 	// returns the containment type flags for this object
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	//  returns true if this object can contain another object
 	virtual bool canContain(ObjectID dObj, ObjectID item);
@@ -316,7 +316,7 @@ public:
 	    ObjectID item,
 	    const TilePoint &where);
 
-	weaponID getWeaponID(void);
+	weaponID getWeaponID();
 
 	//  use this actor
 	bool useAction(ObjectID dObj, ObjectID enactor);
@@ -393,16 +393,16 @@ public:
 	    ObjectID        enactor);               // person doing dropping
 
 public:
-	virtual uint16 getViewableRows(void) {
+	virtual uint16 getViewableRows() {
 		return ViewableRows;
 	}
-	virtual uint16 getViewableCols(void) {
+	virtual uint16 getViewableCols() {
 		return ViewableCols;
 	}
-	virtual uint16 getMaxRows(void) {
+	virtual uint16 getMaxRows() {
 		return maxRows;
 	}
-	virtual uint16 getMaxCols(void) {
+	virtual uint16 getMaxCols() {
 		return maxCols;
 	}
 
@@ -725,7 +725,7 @@ private:
 
 public:
 	//  Default constructor
-	Actor(void);
+	Actor();
 
 	//  Constructor - initial actor construction
 	Actor(const ResourceActor &res);
@@ -733,10 +733,10 @@ public:
 	Actor(Common::InSaveFile *in);
 
 	//  Destructor
-	~Actor(void);
+	~Actor();
 
 	//  Return the number of bytes needed to archive this actor
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
@@ -750,7 +750,7 @@ public:
 	    uint8   initFlags);
 
 	//  Delete this actor
-	void deleteActor(void);
+	void deleteActor();
 
 private:
 	//  Turn incrementally
@@ -767,31 +767,31 @@ public:
 
 	//  Cause the actor to stop his current motion task is he is
 	//  interruptable
-	void stopMoving(void);
+	void stopMoving();
 
 	//  Cause this actor to die
-	void die(void);
+	void die();
 
 	//  Cause this actor to return from the dead
-	void imNotQuiteDead(void);
+	void imNotQuiteDead();
 
 	// makes the actor do a vitality change test
-	void vitalityUpdate(void);
+	void vitalityUpdate();
 
 	//  Perform actor specific activation tasks
-	void activateActor(void);
+	void activateActor();
 
 	//  Perform actor specific deactivation tasks
-	void deactivateActor(void);
+	void deactivateActor();
 
 	//  De-lobotomize this actor
-	void delobotomize(void);
+	void delobotomize();
 
 	//  Lobotomize this actor
-	void lobotomize(void);
+	void lobotomize();
 
 	//  Return a pointer to the actor's current assignment
-	ActorAssignment *getAssignment(void) {
+	ActorAssignment *getAssignment() {
 		return  _flags & hasAssignment
 		        ? _assignment
 		        : nullptr;
@@ -811,16 +811,16 @@ public:
 	bool inUseRange(const TilePoint &tp, GameObject *obj);
 
 	//  Determine if actor is dead
-	bool isDead(void) {
+	bool isDead() {
 		return _effectiveStats.vitality <= 0;
 	}
 
 	//  Determine if actor is immobile (i.e. can't walk)
-	bool isImmobile(void);
+	bool isImmobile();
 
 	//  Return a pointer to this actor's currently readied offensive
 	//  object
-	GameObject *offensiveObject(void);
+	GameObject *offensiveObject();
 
 	//  Returns pointers to this actor's readied primary defensive object
 	//  and optionally their scondary defensive object
@@ -844,15 +844,15 @@ public:
 
 	//  Determine if this actor can block an attack with objects
 	//  currently being held
-	bool canDefend(void);
+	bool canDefend();
 
 	//  Return a numeric value which roughly estimates this actor's
 	//  offensive strength
-	int16 offenseScore(void);
+	int16 offenseScore();
 
 	//  Return a numeric value which roughly estimates this actor's
 	//  defensive strenght
-	int16 defenseScore(void);
+	int16 defenseScore();
 
 	//  Handle the effect of a successful hit on an opponent in combat
 	void handleSuccessfulStrike(GameObject *weapon) {
@@ -860,7 +860,7 @@ public:
 	}
 
 	//  Return the value of this actor's disposition
-	int16 getDisposition(void) {
+	int16 getDisposition() {
 		return _disposition;
 	}
 
@@ -873,23 +873,23 @@ public:
 	}
 
 	//  Return a pointer to the effective stats
-	ActorAttributes *getStats(void) {
+	ActorAttributes *getStats() {
 		return &_effectiveStats;
 	}
 
 	//  Return a pointer to this actor's base stats
-	ActorAttributes *getBaseStats(void);
+	ActorAttributes *getBaseStats();
 
 	//  Return the color remapping table
 	void getColorTranslation(ColorTable map);
 
 	//  Determine if this actor is interruptable
-	bool isInterruptable(void) {
+	bool isInterruptable() {
 		return _actionCounter == 0;
 	}
 
 	//  Determine if this actor is permanently uninterruptable
-	bool isPermanentlyUninterruptable(void) {
+	bool isPermanentlyUninterruptable() {
 		return _actionCounter == maxuint8;
 	}
 
@@ -906,7 +906,7 @@ public:
 	}
 
 	//  Drop the all of the actor's inventory
-	void dropInventory(void);
+	void dropInventory();
 
 	//  Place an object into this actor's right or left hand
 	void holdInRightHand(ObjectID objID);
@@ -935,11 +935,11 @@ public:
 	int16 animationFrames(int16 actionType, Direction dir);
 
 	//  Update the current animation sequence to the next frame
-	bool nextAnimationFrame(void);
+	bool nextAnimationFrame();
 
 	//  calculate which sprite frames to show. Return false if
 	//  sprite frames are not loaded.
-	bool calcSpriteFrames(void);
+	bool calcSpriteFrames();
 
 	//  Calculate the frame list entry, given the current actor's
 	//  body state, and facing direction.
@@ -947,17 +947,17 @@ public:
 
 	//  Returns 0 if not moving, 1 if path being calculated,
 	//  2 if path being followed.
-	bool pathFindState(void);
+	bool pathFindState();
 
 	//  High level actor behavior functions
 private:
 	void setGoal(uint8 newGoal);
 
 public:
-	void evaluateNeeds(void);
+	void evaluateNeeds();
 
 	//  Called every frame to update the state of this actor
-	void updateState(void);
+	void updateState();
 
 	void handleTaskCompletion(TaskResult result);
 	void handleOffensiveAct(Actor *attacker);
@@ -972,9 +972,9 @@ public:
 
 	//  Banding related functions
 	void bandWith(Actor *newLeader);
-	void disband(void);
+	void disband();
 
-	bool inBandingRange(void) {
+	bool inBandingRange() {
 		assert(_leader != NULL);
 
 		return      _leader->IDParent() == IDParent()
@@ -993,7 +993,7 @@ public:
 	//  Knowledge-related member functions
 	bool addKnowledge(uint16 kID);
 	bool removeKnowledge(uint16 kID);
-	void clearKnowledge(void);
+	void clearKnowledge();
 	void useKnowledge(scriptCallFrame &scf);
 
 	bool canSenseProtaganistIndirectly(SenseInfo &info, int16 range);
@@ -1019,10 +1019,10 @@ public:
 
 	bool hasMana(ActorManaID i, int8 dMana);
 
-	uint32 getBaseEnchantmentEffects(void);
-	uint16 getBaseResistance(void);
-	uint16 getBaseImmunity(void);
-	uint16 getBaseRecovery(void);
+	uint32 getBaseEnchantmentEffects();
+	uint16 getBaseResistance();
+	uint16 getBaseImmunity();
+	uint16 getBaseRecovery();
 
 	bool resists(effectResistTypes r) {
 		return _effectiveResistance & (1 << r);
@@ -1052,7 +1052,7 @@ public:
 		                   _enchantmentFlags & ~(1 << e);
 	}
 
-	bool makeSavingThrow(void);
+	bool makeSavingThrow();
 
 	void setFightStance(bool val) {
 		if (val)
@@ -1080,15 +1080,15 @@ inline bool isEnemy(ObjectID obj) {
 	        &&  isEnemy((Actor *)GameObject::objectAddress(obj));
 }
 
-void updateActorStates(void);
+void updateActorStates();
 
-void pauseActorStates(void);
-void resumeActorStates(void);
+void pauseActorStates();
+void resumeActorStates();
 
 void setCombatBehavior(bool enabled);
 
 //  Determine if the actors are currently initialized
-bool areActorsInitialized(void);
+bool areActorsInitialized();
 
 void clearEnchantments(Actor *a);
 void addEnchantment(Actor *a, uint16 enchantmentID);
@@ -1116,7 +1116,7 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act);
 int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt);
 
 //  Initialize the faction tally table
-void initFactionTallies(void);
+void initFactionTallies();
 
 //  Save the faction tallies to a save file
 void saveFactionTallies(Common::OutSaveFile *outS);
@@ -1125,7 +1125,7 @@ void saveFactionTallies(Common::OutSaveFile *outS);
 void loadFactionTallies(Common::InSaveFile *in);
 
 //  Cleanup the faction tally table
-inline void cleanupFactionTallies(void) { /* Nothing to do */ }
+inline void cleanupFactionTallies() { /* Nothing to do */ }
 
 class ActorManager {
 public:

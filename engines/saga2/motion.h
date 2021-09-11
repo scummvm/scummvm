@@ -261,18 +261,18 @@ private:
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive this MotionTask
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	// motion task is finished.
 	void remove(int16 returnVal = motionInterrupted);
 
-	TilePoint getImmediateTarget(void);      // determine immediate target
+	TilePoint getImmediateTarget();      // determine immediate target
 	// location
 
 	//  Routines to handle updating of specific motion types
-	void turnAction(void) {
+	void turnAction() {
 		Actor   *a = (Actor *)object;
 
 		if (flags & reset) {
@@ -286,47 +286,47 @@ private:
 			remove(motionCompleted);
 	}
 
-	void ballisticAction(void);
-	void walkAction(void);
-	void giveAction(void);
+	void ballisticAction();
+	void walkAction();
+	void giveAction();
 
-	void upLadderAction(void);
-	void downLadderAction(void);
+	void upLadderAction();
+	void downLadderAction();
 
 	//  Set up specified animation and run through the frames
 	void genericAnimationAction(uint8 actionType);
 
 	//  Offensive combat actions
-	void twoHandedSwingAction(void);
-	void oneHandedSwingAction(void);
-	void fireBowAction(void);
-	void castSpellAction(void);
-	void useWandAction(void);
+	void twoHandedSwingAction();
+	void oneHandedSwingAction();
+	void fireBowAction();
+	void castSpellAction();
+	void useWandAction();
 
 	//  Defensive combat actions
-	void twoHandedParryAction(void);
-	void oneHandedParryAction(void);
-	void shieldParryAction(void);
-	void dodgeAction(void);
+	void twoHandedParryAction();
+	void oneHandedParryAction();
+	void shieldParryAction();
+	void dodgeAction();
 
 	//  Other combat actions
-	void acceptHitAction(void);
-	void fallDownAction(void);
+	void acceptHitAction();
+	void fallDownAction();
 
 	//  Generic offensive melee code.  Called by twoHandedSwingAction()
 	//  and oneHandedSwingAction
-	void offensiveMeleeAction(void);
+	void offensiveMeleeAction();
 
 	//  Generic magic weapon code.  Called by useWandAction() and
 	//  useStaffAction()
-	void useMagicWeaponAction(void);
+	void useMagicWeaponAction();
 
 	//  Generic defensive melee code.  Called by twoHandedParryAction(),
 	//  oneHandedParryAction() and shieldParryAction().
-	void defensiveMeleeAction(void);
+	void defensiveMeleeAction();
 
 	//  Retrieve the next waypoint from the path list.
-	bool nextWayPoint(void);
+	bool nextWayPoint();
 	bool checkWalk(int16, int16, int16, TilePoint &);
 
 	//  Determine the velocity for a ballistic motion
@@ -443,78 +443,78 @@ public:
 	static void fallDown(Actor &obj, Actor &opponent);
 	static void die(Actor &obj);
 
-	static void updatePositions(void);
+	static void updatePositions();
 
 	int16 testCollision(GameObject &obstacle);
 
 	bool freeFall(TilePoint &newPos, StandingTileInfo &sti);
 
 	//  Determine if the motion task is a walk motion
-	bool isWalk(void);
+	bool isWalk();
 
 	//  Determine if the motion task is walking to a destination
-	bool isWalkToDest(void) {
+	bool isWalkToDest() {
 		return isWalk() && !(flags & wandering);
 	}
 
 	//  Determine if the motion task is a wandering motion
-	bool isWander(void) {
+	bool isWander() {
 		return isWalk() && (flags & wandering);
 	}
 
 	//  Determine if the motion task is tethered
-	bool isTethered(void) {
+	bool isTethered() {
 		return isWander() && (flags & tethered);
 	}
 
-	bool isRunning(void) {
+	bool isRunning() {
 		return (flags & requestRun) && runCount == 0;
 	}
 
-	bool isTurn(void) {
+	bool isTurn() {
 		return motionType == motionTypeTurn;
 	}
 
 	//  Return the wandering tether region
-	TileRegion getTether(void);
+	TileRegion getTether();
 
 	//  Return the final target location
-	TilePoint getTarget(void) {
+	TilePoint getTarget() {
 		return finalTarget;
 	}
 
 	//  Update to a new final target
 	void changeTarget(const TilePoint &newPos, bool run = false);
 	void changeDirectTarget(const TilePoint &newPos, bool run = false);
-	void finishWalk(void);                   // stop walking
-	void finishTurn(void) {
+	void finishWalk();                   // stop walking
+	void finishTurn() {
 		if (isTurn()) remove();
 	}
-	void finishTalking(void);                    // stop talking motion
+	void finishTalking();                    // stop talking motion
 
 	//  Determine if this MotionTask is a reflexive motion
-	bool isReflex(void);
+	bool isReflex();
 
 	//  Determine if this MotionTask is a defensive motion
-	bool isDefense(void);
+	bool isDefense();
 
 	//  End the defensive motion task
-	void finishDefense(void) {
+	void finishDefense() {
 		if (isDefense()) remove();
 	}
 
 	//  Determine if this MotionTask is an offensive motion
-	bool isAttack(void);
+	bool isAttack();
 
 	//  Determine if this MotionTask is an offensive melee motion
-	bool isMeleeAttack(void);
+	bool isMeleeAttack();
 
 	//  Compute the number of frames before the actual strike in an
 	//  offensive melee motion
-	uint16 framesUntilStrike(void);
+	uint16 framesUntilStrike();
 
 	//  End the offensive motion
-	void finishAttack(void) {
+	void finishAttack() {
 		if (isAttack()) remove();
 	}
 
@@ -527,9 +527,9 @@ public:
 		return motionType == motionTypeDodge && thisAttacker == d.attacker;
 	}
 
-	static void initMotionTasks(void);
+	static void initMotionTasks();
 
-	bool isPrivledged(void) {
+	bool isPrivledged() {
 		return flags & privledged;
 	}
 };
@@ -542,7 +542,7 @@ class MotionTaskList {
 
 public:
 	//  Default constructor
-	MotionTaskList(void);
+	MotionTaskList();
 
 	MotionTaskList(Common::SeekableReadStream *stream);
 
@@ -550,12 +550,12 @@ public:
 
 	//  Return the number of bytes needed to archive the motion tasks
 	//  in a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the motion tasks
-	void cleanup(void);
+	void cleanup();
 
 	MotionTask *newTask(GameObject *obj);    // get new motion task
 };
@@ -614,21 +614,21 @@ inline void MotionTask::give(ThreadID th, Actor &actor, Actor &givee) {
 //  Initiate ladder climbing
 bool checkLadder(Actor *a, const TilePoint &tp);
 
-void pauseInterruptableMotions(void);
-void resumeInterruptableMotions(void);
+void pauseInterruptableMotions();
+void resumeInterruptableMotions();
 
 /* ===================================================================== *
    MotionTask list management functions
  * ===================================================================== */
 
 //  Initialize the motion task list
-void initMotionTasks(void);
+void initMotionTasks();
 
 void saveMotionTasks(Common::OutSaveFile *out);
 void loadMotionTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the motion task list
-void cleanupMotionTasks(void);
+void cleanupMotionTasks();
 
 } // end of namespace Saga2
 

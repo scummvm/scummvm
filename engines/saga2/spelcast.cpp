@@ -79,7 +79,7 @@ SpellStuff::SpellStuff() {
 //-----------------------------------------------------------------------
 //	is this spell harmful
 
-bool SpellStuff::isOffensive(void) {
+bool SpellStuff::isOffensive() {
 	return (canTarget(spellTargActor) || canTarget(spellTargObject)) &&
 	       (!canTarget(spellTargCaster));
 }
@@ -87,7 +87,7 @@ bool SpellStuff::isOffensive(void) {
 //-----------------------------------------------------------------------
 //	determine whether an area spell protects the caster
 
-bool SpellStuff::safe(void) {
+bool SpellStuff::safe() {
 	switch (shape) {
 	case eAreaInvisible:
 	case eAreaAura:
@@ -135,7 +135,7 @@ void SpellStuff::playSound(GameObject *go) {
 //-----------------------------------------------------------------------
 //	cleanup
 
-void SpellStuff::killEffects(void) {
+void SpellStuff::killEffects() {
 	if (effects) {
 		delete effects;
 	}
@@ -377,7 +377,7 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 //-----------------------------------------------------------------------
 //	clean the target list
 
-void SpellStuff::removeTargetList(void) {
+void SpellStuff::removeTargetList() {
 	switch (shape) {
 	case eAreaInvisible:
 	case eAreaAura:
@@ -648,7 +648,7 @@ SpellInstance::~SpellInstance() {
 // ------------------------------------------------------------------
 // common initialization code
 
-void SpellInstance::init(void) {
+void SpellInstance::init() {
 	dProto = (*g_vm->_sdpList)[spell];
 	ProtoObj        *proto = caster->proto();
 	TilePoint       sPoint = caster->getWorldLocation();
@@ -671,7 +671,7 @@ void SpellInstance::init(void) {
 // ------------------------------------------------------------------
 // common cleanup
 
-void SpellInstance::termEffect(void) {
+void SpellInstance::termEffect() {
 	if (eList.count)
 		for (int32 i = 0; i < eList.count; i++) {
 			if (eList.displayList[i].efx) {
@@ -702,7 +702,7 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 // ------------------------------------------------------------------
 // visual update
 
-bool SpellInstance::buildList(void) {
+bool SpellInstance::buildList() {
 	if (eList.dissipated()) {
 		termEffect();
 		if (effect->next == NULL)
@@ -833,7 +833,7 @@ void Effectron::updateEffect(int32 deltaTime) {
 }
 
 //-----------------------------------------------------------------------
-void Effectron::bump(void) {
+void Effectron::bump() {
 	switch (parent->dProto->elasticity) {
 	case ecFlagBounce :
 		velocity = -velocity;

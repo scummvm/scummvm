@@ -57,7 +57,7 @@ int16 OptionsDialog(bool disableSaveResume = false);
 
 // helper funcs
 void initFileFields(char **fieldStrings);
-char **destroyFileFields(void);
+char **destroyFileFields();
 bool getSaveName(int8 saveNo, SaveFileHeader &header);
 int16 userDialog(const char *title, const char *msg, const char *btnMsg1,
                  const char *btnMsg2,

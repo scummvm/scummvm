@@ -37,7 +37,7 @@ namespace Saga2 {
 
 void addAuxTheme(Location loc, uint32 lid);
 void killAuxTheme(uint32 lid);
-void killAllAuxThemes(void);
+void killAllAuxThemes();
 
 
 enum audioTerrains {
@@ -119,7 +119,7 @@ extern volatile int32           gameTime;
 
 extern uint16               rippedRoofID;
 
-extern GameObject *getViewCenterObject(void);
+extern GameObject *getViewCenterObject();
 
 #if DEBUG
 extern bool debugAudioThemes;
@@ -149,7 +149,7 @@ MetaTileID lookupMetaID(TilePoint coords);
 //-----------------------------------------------------------------------
 // init
 
-void initAudioEnvirons(void) {
+void initAudioEnvirons() {
 }
 
 /* ===================================================================== *
@@ -175,7 +175,7 @@ void killAuxTheme(uint32 lid) {
 	}
 }
 
-void killAllAuxThemes(void) {
+void killAllAuxThemes() {
 	for (int i = 0; i < AUXTHEMES; i++) {
 		g_vm->_grandMasterFTA->_aats[i].active = false;
 	}
@@ -188,7 +188,7 @@ void disableBGLoop(bool s) {
 	g_vm->_grandMasterFTA->_playingExternalLoop = s;
 }
 
-void enableBGLoop(void) {
+void enableBGLoop() {
 	uint32 cr = g_vm->_grandMasterFTA->_currentTheme;
 	g_vm->_grandMasterFTA->_playingExternalLoop = false;
 	g_vm->_grandMasterFTA->_currentTheme = 0;
@@ -296,7 +296,7 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 //-----------------------------------------------------------------------
 // Intermittent sound check
 
-void audioEnvironmentCheck(void) {
+void audioEnvironmentCheck() {
 
 	uint32 delta = gameTime - g_vm->_grandMasterFTA->_lastGameTime;
 	g_vm->_grandMasterFTA->_lastGameTime = gameTime;
@@ -339,7 +339,7 @@ void audioEnvironmentCheck(void) {
 //-----------------------------------------------------------------------
 // Intermittent sound check
 
-void Deejay::select(void) {
+void Deejay::select() {
 	int choice = 0;
 #if DEBUG & 0
 	if (1)
@@ -381,7 +381,7 @@ void Deejay::select(void) {
 //-----------------------------------------------------------------------
 // Faction enumeration routines
 
-void clearActiveFactions(void) {
+void clearActiveFactions() {
 	for (int i = 0; i < kMaxFactions; i++)
 		g_vm->_grandMasterFTA->_activeFactions[i] = 0;
 }
@@ -390,7 +390,7 @@ void incrementActiveFaction(Actor *a) {
 	g_vm->_grandMasterFTA->_activeFactions[a->_faction]++;
 }
 
-void useActiveFactions(void) {
+void useActiveFactions() {
 	int highCount = 0;
 	int highFaction = 0;
 	for (int i = 0; i < kMaxFactions; i++) {

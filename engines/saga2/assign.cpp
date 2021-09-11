@@ -62,7 +62,7 @@ ActorAssignment::ActorAssignment(Actor *ac, Common::SeekableReadStream *stream) 
 //----------------------------------------------------------------------
 //	ActorAssignment destructor
 
-ActorAssignment::~ActorAssignment(void) {
+ActorAssignment::~ActorAssignment() {
 	Actor *a = getActor();
 	debugC(2, kDebugActors, "Ending assignment for %p (%s): %p",
 	      (void *)a, a->objName(), (void *)this);
@@ -83,7 +83,7 @@ ActorAssignment::~ActorAssignment(void) {
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 ActorAssignment::archiveSize(void) const {
+inline int32 ActorAssignment::archiveSize() const {
 	return sizeof(_startFrame) + sizeof(_endFrame);
 }
 
@@ -95,7 +95,7 @@ void ActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Determine if the time limit for this assignment has been exceeded
 
-bool ActorAssignment::isValid(void) {
+bool ActorAssignment::isValid() {
 	uint16  frame = g_vm->_calender->frameInDay();
 
 	return      frame < _endFrame
@@ -105,7 +105,7 @@ bool ActorAssignment::isValid(void) {
 //----------------------------------------------------------------------
 //	Create a TaskStack for this actor and plug in the assignment's Task.
 
-TaskStack *ActorAssignment::createTask(void) {
+TaskStack *ActorAssignment::createTask() {
 	if (!taskNeeded()) return NULL;
 
 	Actor       *a = getActor();
@@ -125,7 +125,7 @@ TaskStack *ActorAssignment::createTask(void) {
 	return ts;
 }
 
-Actor *ActorAssignment::getActor(void) const {
+Actor *ActorAssignment::getActor() const {
 	return _actor;
 }
 
@@ -142,7 +142,7 @@ void ActorAssignment::handleTaskCompletion(TaskResult) {
 //	Plug a new task into the actor, if the actor is currently following
 //	his assignment
 
-void ActorAssignment::startTask(void) {
+void ActorAssignment::startTask() {
 	Actor   *a = getActor();
 
 	if (a->_currentGoal == actorGoalFollowAssignment)
@@ -152,7 +152,7 @@ void ActorAssignment::startTask(void) {
 //----------------------------------------------------------------------
 //	Determine if this assignment needs to create a task at this time
 
-bool ActorAssignment::taskNeeded(void) {
+bool ActorAssignment::taskNeeded() {
 	return true;
 }
 
@@ -199,7 +199,7 @@ PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, Common::SeekableReadStrea
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 PatrolRouteAssignment::archiveSize(void) const {
+inline int32 PatrolRouteAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   sizeof(_routeNo)
 	            +   sizeof(_startingWayPoint)
@@ -229,7 +229,7 @@ void PatrolRouteAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 PatrolRouteAssignment::type(void) const {
+int16 PatrolRouteAssignment::type() const {
 	return patrolRouteAssignment;
 }
 
@@ -244,7 +244,7 @@ void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
 //----------------------------------------------------------------------
 //	Determine if assignment is still valid
 
-bool PatrolRouteAssignment::isValid(void) {
+bool PatrolRouteAssignment::isValid() {
 	//  If the route has already been completed, then the assignment is
 	//  no longer valid
 	if (_flags & routeCompleted) return false;
@@ -255,7 +255,7 @@ bool PatrolRouteAssignment::isValid(void) {
 //----------------------------------------------------------------------
 //	Determine if this assignment needs to create a task at this time
 
-bool PatrolRouteAssignment::taskNeeded(void) {
+bool PatrolRouteAssignment::taskNeeded() {
 	//  If the route has already been completed, then no task is needed
 	return !(_flags & routeCompleted);
 }
@@ -343,7 +343,7 @@ HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, Common:
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 HuntToBeNearLocationAssignment::archiveSize(void) const {
+inline int32 HuntToBeNearLocationAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
 	            +   sizeof(_range);
@@ -366,14 +366,14 @@ void HuntToBeNearLocationAssignment::write(Common::MemoryWriteStreamDynamic *out
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 HuntToBeNearLocationAssignment::type(void) const {
+int16 HuntToBeNearLocationAssignment::type() const {
 	return huntToBeNearLocationAssignment;
 }
 
 //----------------------------------------------------------------------
 //	Determine if this assignment needs to create a task at this time
 
-bool HuntToBeNearLocationAssignment::taskNeeded(void) {
+bool HuntToBeNearLocationAssignment::taskNeeded() {
 	Actor       *a  = getActor();
 	TilePoint   actorLoc = a->getLocation();
 
@@ -445,7 +445,7 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, Common::Seeka
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 HuntToBeNearActorAssignment::archiveSize(void) const {
+inline int32 HuntToBeNearActorAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
 	            +   sizeof(_range)
@@ -472,14 +472,14 @@ void HuntToBeNearActorAssignment::write(Common::MemoryWriteStreamDynamic *out) c
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 HuntToBeNearActorAssignment::type(void) const {
+int16 HuntToBeNearActorAssignment::type() const {
 	return huntToBeNearActorAssignment;
 }
 
 //----------------------------------------------------------------------
 //	Determine if this assignment needs to create a task at this time
 
-bool HuntToBeNearActorAssignment::taskNeeded(void) {
+bool HuntToBeNearActorAssignment::taskNeeded() {
 	Actor       *a  = getActor();
 	TilePoint   actorLoc = a->getLocation(),
 	            targetLoc = getTarget()->where(a->world(), actorLoc);
@@ -541,7 +541,7 @@ void HuntToKillAssignment::initialize(
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 HuntToKillAssignment::archiveSize(void) const {
+inline int32 HuntToKillAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   targetArchiveSize(getTarget())
 	            +   sizeof(_flags);
@@ -563,7 +563,7 @@ void HuntToKillAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Determine if this assignment is still valid
 
-bool HuntToKillAssignment::isValid(void) {
+bool HuntToKillAssignment::isValid() {
 	//  If the target actor is already dead, then this is not a valid
 	//  assignment
 	if (_flags & specificActor) {
@@ -581,14 +581,14 @@ bool HuntToKillAssignment::isValid(void) {
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 HuntToKillAssignment::type(void) const {
+int16 HuntToKillAssignment::type() const {
 	return huntToKillAssignment;
 }
 
 //----------------------------------------------------------------------
 //	Determine if this assignment needs to create a task at this time
 
-bool HuntToKillAssignment::taskNeeded(void) {
+bool HuntToKillAssignment::taskNeeded() {
 	//  If we're hunting a specific actor, we only need a task if that
 	//  actor is still alive.
 	if (_flags & specificActor) {
@@ -629,7 +629,7 @@ TetheredAssignment::TetheredAssignment(Actor *ac, Common::SeekableReadStream *st
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 TetheredAssignment::archiveSize(void) const {
+inline int32 TetheredAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   sizeof(_minU)
 	            +   sizeof(_minV)
@@ -668,7 +668,7 @@ TetheredWanderAssignment::TetheredWanderAssignment(
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 TetheredWanderAssignment::type(void) const {
+int16 TetheredWanderAssignment::type() const {
 	return tetheredWanderAssignment;
 }
 
@@ -707,7 +707,7 @@ AttendAssignment::AttendAssignment(Actor *a, Common::SeekableReadStream *stream)
 //	Return the number of bytes need to archive the data in this
 //	assignment
 
-inline int32 AttendAssignment::archiveSize(void) const {
+inline int32 AttendAssignment::archiveSize() const {
 	return      ActorAssignment::archiveSize()
 	            +   sizeof(ObjectID);
 }
@@ -731,7 +731,7 @@ void AttendAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the class of this object for archival
 //	reasons.
 
-int16 AttendAssignment::type(void) const {
+int16 AttendAssignment::type() const {
 	return attendAssignment;
 }
 

@@ -36,21 +36,21 @@ void main_saga2();
 void parseCommandLine(int argc, char *argv[]);
 
 // initialization & cleanup
-void initCleanup(void);
+void initCleanup();
 
-bool initializeGame(void);
-void shutdownGame(void);
+bool initializeGame();
+void shutdownGame();
 
-bool initSystemTimer(void);
-void cleanupSystemTimer(void);
+bool initSystemTimer();
+void cleanupSystemTimer();
 
-void cleanupSystemTasks(void);
-void cleanupPaletteData(void);
+void cleanupSystemTasks();
+void cleanupPaletteData();
 
 // major parts of main that are actually in main.cpp
-void cleanupGame(void);                  // auto-cleanup function
-bool setupGame(void);
-void cleanupPalettes(void);
+void cleanupGame();                  // auto-cleanup function
+bool setupGame();
+void cleanupPalettes();
 
 } // end of namespace Saga2
 

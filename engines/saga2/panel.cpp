@@ -120,7 +120,7 @@ gPanel::~gPanel() {
 	if (this == g_vm->_toolBase->activePanel)
 		g_vm->_toolBase->activePanel = NULL;
 }
-void gPanel::draw(void) {}
+void gPanel::draw() {}
 void gPanel::drawClipped(gPort &, const Point16 &, const Rect16 &) {}
 void gPanel::pointerMove(gPanelMessage &) {}
 bool gPanel::pointerHit(gPanelMessage &) {
@@ -135,7 +135,7 @@ bool gPanel::keyStroke(gPanelMessage &) {
 	return false;
 }
 void gPanel::timerTick(gPanelMessage &) {}
-void gPanel::onMouseHintDelay(void) {}
+void gPanel::onMouseHintDelay() {}
 
 void gPanel::enable(bool abled) {
 	enabled = abled ? 1 : 0;
@@ -149,7 +149,7 @@ void gPanel::ghost(bool b) {
 	ghosted = b ? 1 : 0;
 }
 
-bool gPanel::isActive(void) {
+bool gPanel::isActive() {
 	return (this == g_vm->_toolBase->activePanel);
 }
 
@@ -171,11 +171,11 @@ bool gPanel::activate(gEventType) {
 	return false;
 }
 
-void gPanel::deactivate(void) {
+void gPanel::deactivate() {
 	if (isActive()) g_vm->_toolBase->activePanel = NULL;
 }
 
-void gPanel::makeActive(void) {
+void gPanel::makeActive() {
 	g_vm->_toolBase->setActive(this);
 }
 
@@ -280,7 +280,7 @@ gPanelList::~gPanelList() {
 	window.contents.remove(this);
 }
 
-void gPanelList::removeControls(void) {
+void gPanelList::removeControls() {
 	gPanel *ctl;
 
 	//  Delete all sub-panels.
@@ -315,7 +315,7 @@ void gPanelList::invalidate(Rect16 *) {
 		}
 }
 
-void gPanelList::draw(void) {
+void gPanelList::draw() {
 	gPanel *ctl;
 
 	if (displayEnabled())
@@ -427,7 +427,7 @@ gWindow::~gWindow() {
 //	delete backSave;
 }
 
-bool gWindow::open(void) {
+bool gWindow::open() {
 	if (isOpen()) return true;
 
 	//  Send a "pointer-leave" message to mouse panel.
@@ -448,7 +448,7 @@ bool gWindow::open(void) {
 	return true;
 }
 
-void gWindow::close(void) {
+void gWindow::close() {
 	//saver.onExit(this);
 	if (!isOpen()) return;
 
@@ -473,7 +473,7 @@ void gWindow::close(void) {
 
 //  Move the window to the front...
 
-void gWindow::toFront(void) {            // re-order the windows
+void gWindow::toFront() {            // re-order the windows
 	if (!isOpen()) return;
 
 	g_vm->_toolBase->windowList.remove(this);
@@ -486,7 +486,7 @@ void gWindow::toFront(void) {            // re-order the windows
 	update(_extent);
 }
 
-bool gWindow::isModal(void) {
+bool gWindow::isModal() {
 	return false;
 }
 
@@ -522,7 +522,7 @@ void gWindow::setExtent(const Rect16 &r) {
 }
 
 //  insert window into window list
-void gWindow::insert(void) {
+void gWindow::insert() {
 	g_vm->_toolBase->windowList.push_front(this);
 }
 
@@ -530,7 +530,7 @@ void gWindow::insert(void) {
 //  REM: Need to either adjuct coords when we draw OR
 //  redefine the address of the pixel map.
 
-void gWindow::deactivate(void) {
+void gWindow::deactivate() {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -564,7 +564,7 @@ void gWindow::pointerRelease(gPanelMessage &) {
 	deactivate();
 }
 
-void gWindow::draw(void) {
+void gWindow::draw() {
 	if (displayEnabled())
 		gPanelList::draw();
 }
@@ -670,7 +670,7 @@ gPanel *gControl::keyTest(int16 key) {
 //  "clipped" one, and the normal draw routine just calls
 //  drawClipped with the main port.
 
-void gControl::draw(void) {
+void gControl::draw() {
 	g_vm->_pointer->hide(window.windowPort, _extent);
 	if (displayEnabled())
 		drawClipped(*globalPort,
@@ -694,7 +694,7 @@ bool gGenericControl::activate(gEventType) {
 	return true;
 }
 
-void gGenericControl::deactivate(void) {
+void gGenericControl::deactivate() {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -727,7 +727,7 @@ void gGenericControl::pointerRelease(gPanelMessage &) {
 }
 
 //  Generic control has no rendering code.
-void gGenericControl::draw(void) {
+void gGenericControl::draw() {
 }
 
 /* ===================================================================== *
@@ -988,7 +988,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	prevState = _curMouseState;
 }
 
-void gToolBase::leavePanel(void) {
+void gToolBase::leavePanel() {
 	msg.timeStamp = g_system->getMillis();
 
 	if (mousePanel) {
@@ -1101,14 +1101,14 @@ void initPanels(gDisplayPort &port) {
 	mainFont = &Helv11Font;
 }
 
-void cleanupPanels(void) {
+void cleanupPanels() {
 }
 
-int16 leftButtonState(void) {
+int16 leftButtonState() {
 	return g_vm->_toolBase->msg.leftButton;
 }
 
-int16 rightButtonState(void) {
+int16 rightButtonState() {
 	return g_vm->_toolBase->msg.rightButton;
 }
 

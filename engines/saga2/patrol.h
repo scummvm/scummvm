@@ -51,7 +51,7 @@ public:
 	~PatrolRoute();
 
 	// Return the number of way points
-	int16 vertices(void) const {
+	int16 vertices() const {
 		return _wayPoints;
 	}
 
@@ -70,8 +70,8 @@ public:
 //	beginning of the patrol route data.
 
 class PatrolRouteList {
-	friend void initPatrolRoutes(void);
-	friend void cleanupPatrolRoutes(void);
+	friend void initPatrolRoutes();
+	friend void cleanupPatrolRoutes();
 
 	int16 _numRoutes;
 	PatrolRoute **_routes;
@@ -81,7 +81,7 @@ public:
 	~PatrolRouteList();
 
 	// Returns the number of patrol routes in the list
-	int16 routes(void) {
+	int16 routes() {
 		return _numRoutes;
 	}
 
@@ -128,27 +128,27 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 private:
-	void increment(void);		// Increment waypoint index
-	void decrement(void);		// Decrement waypoint index
-	void altIncrement(void);	// Increment in alternate direction
-	void altDecrement(void);	// Decrement in alternate direction
+	void increment();		// Increment waypoint index
+	void decrement();		// Decrement waypoint index
+	void altIncrement();	// Increment in alternate direction
+	void altDecrement();	// Decrement in alternate direction
 
 public:
 	// Determine if the iterator will repeat infinitely
-	bool isRepeating(void) const {
+	bool isRepeating() const {
 		return _flags & (patrolRouteRepeat | patrolRouteRandom);
 	}
 
 	// Return the current way point number
-	int16 wayPointNum(void) const {
+	int16 wayPointNum() const {
 		return _vertexNo;
 	}
 
 	// Return the coordinates of the current waypoint
-	const TilePoint operator*(void) const;
+	const TilePoint operator*() const;
 
 	// Iterate
-	const PatrolRouteIterator &operator++(void);
+	const PatrolRouteIterator &operator++();
 
 	// Determine if this iterator is equivalent to the specified iterator
 	bool operator==(const PatrolRouteIterator &iter) const {
@@ -162,10 +162,10 @@ public:
  * ===================================================================== */
 
 // Load the patrol routes from the resource file
-void initPatrolRoutes(void);
+void initPatrolRoutes();
 
 // Cleanup the patrol routes
-void cleanupPatrolRoutes(void);
+void cleanupPatrolRoutes();
 
 } // end of namespace Saga2
 

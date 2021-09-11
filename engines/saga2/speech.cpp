@@ -179,7 +179,7 @@ void Speech::read(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this SpeechTask
 
-int32 Speech::archiveSize(void) {
+int32 Speech::archiveSize() {
 	return      sizeof(sampleCount)
 	            +   sizeof(charCount)
 	            +   sizeof(bounds)
@@ -260,7 +260,7 @@ bool Speech::append(char *text, int32 sampID) {
 //-----------------------------------------------------------------------
 //	Move speech to active list
 
-bool Speech::activate(void) {
+bool Speech::activate() {
 
 	//  Remove from existing list
 	speechList.remove(this);
@@ -277,7 +277,7 @@ bool Speech::activate(void) {
 //-----------------------------------------------------------------------
 //	Move speech to active list
 
-bool Speech::setupActive(void) {
+bool Speech::setupActive() {
 	int16           x, y;
 	int16           buttonNum = 0,
 	                buttonChars;
@@ -482,7 +482,7 @@ bool Speech::calcPosition(StaticPoint16 &p) {
 //-----------------------------------------------------------------------
 //	Draw the text on the back buffer
 
-bool Speech::displayText(void) {
+bool Speech::displayText() {
 	StaticPoint16 p;
 
 	//  If there are button in the speech, then don't scroll the
@@ -508,7 +508,7 @@ bool Speech::displayText(void) {
 //	Dispose of this speech object. If this is the one being displayed,
 //	then dealloc the speech image
 
-void Speech::dispose(void) {
+void Speech::dispose() {
 	if (speechList.currentActive() == this) {
 //		Actor   *a = (Actor *)sp->obj;
 //		a->animationFlags |= animateFinished;
@@ -546,7 +546,7 @@ void Speech::dispose(void) {
 //-----------------------------------------------------------------------
 //	Render the speech object at the head of the speech queue.
 
-void updateSpeech(void) {
+void updateSpeech() {
 	Speech          *sp;
 
 	//  if there is a speech object
@@ -574,7 +574,7 @@ void updateSpeech(void) {
 	} else speechList.SetLock(false);
 }
 
-bool Speech::longEnough(void) {
+bool Speech::longEnough() {
 	if (speechFlags & spHasVoice)
 		return (!stillDoingVoice(sampleID));
 	else
@@ -583,7 +583,7 @@ bool Speech::longEnough(void) {
 
 //  Gets rid of the current speech
 
-void Speech::abortSpeech(void) {
+void Speech::abortSpeech() {
 	//  Start by displaying first frame straight off, no delay
 	speechFinished.set(0);
 	if (speechFlags & spHasVoice) {
@@ -591,7 +591,7 @@ void Speech::abortSpeech(void) {
 	}
 }
 
-void abortSpeech(void) {
+void abortSpeech() {
 	if (speechList.currentActive()) speechList.currentActive()->abortSpeech();
 }
 
@@ -866,7 +866,7 @@ void SpeechTaskList::remove(Speech *p) {
 //-----------------------------------------------------------------------
 //	Initialize the SpeechTaskList
 
-SpeechTaskList::SpeechTaskList(void) {
+SpeechTaskList::SpeechTaskList() {
 	lockFlag = false;
 }
 
@@ -893,7 +893,7 @@ SpeechTaskList::SpeechTaskList(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive the speech tasks
 
-int32 SpeechTaskList::archiveSize(void) {
+int32 SpeechTaskList::archiveSize() {
 	int32       size = 0;
 
 	size += sizeof(int16);   //  Speech count
@@ -939,7 +939,7 @@ void SpeechTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 //-----------------------------------------------------------------------
 //	Cleanup the speech tasks
 
-void SpeechTaskList::cleanup(void) {
+void SpeechTaskList::cleanup() {
 	for (Common::List<Speech *>::iterator it = speechList._list.begin();
 	     it != speechList._list.end(); ++it) {
 		delete *it;
@@ -1032,7 +1032,7 @@ void SpeechTaskList::SetLock(int newState) {
 //-----------------------------------------------------------------------
 //	When a speech task is finished, call this function to delete it.
 
-void Speech::remove(void) {
+void Speech::remove() {
 	speechList.remove(this);
 }
 
@@ -1081,7 +1081,7 @@ APPFUNC(cmdClickSpeech) {
 //-----------------------------------------------------------------------
 //	Initialize the speech task list
 
-void initSpeechTasks(void) {
+void initSpeechTasks() {
 	//  Simply call the SpeechTaskList default constructor
 	new (&speechList) SpeechTaskList;
 }
@@ -1111,7 +1111,7 @@ void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize) {
 //-----------------------------------------------------------------------
 //	Cleanup the speech task list
 
-void cleanupSpeechTasks(void) {
+void cleanupSpeechTasks() {
 	//  Call speechList's cleanup() function
 	speechList.cleanup();
 }

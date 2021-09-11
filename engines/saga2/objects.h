@@ -112,22 +112,22 @@ struct ObjectData {
 
 #include "common/pack-end.h"
 
-void     initActors(void);
+void     initActors();
 void     saveActors(Common::OutSaveFile *outS);
 void     loadActors(Common::InSaveFile *in);
-void     cleanupActors(void);
+void     cleanupActors();
 class GameObject {
 
-	friend void     initWorlds(void);
-	friend void     cleanupWorlds(void);
+	friend void     initWorlds();
+	friend void     cleanupWorlds();
 
-	friend void     initObjects(void);
+	friend void     initObjects();
 	friend void     saveObjects(Common::OutSaveFile *out);
 	friend void     loadObjects(Common::InSaveFile *in);
-	friend void     cleanupObjects(void);
+	friend void     cleanupObjects();
 
-	friend void     buildDisplayList(void);
-	friend void     drawDisplayList(void);
+	friend void     buildDisplayList();
+	friend void     drawDisplayList();
 	friend void     setMindContainer(int NewContainerClass, IntangibleContainerWindow &cw);
 	friend class    EnchantmentContainerWindow;
 	friend bool     Enchantment(ObjectID, ObjectID);
@@ -157,7 +157,7 @@ private:
 
 public:
 
-	ObjectID thisID(void);               // calculate our own ID value
+	ObjectID thisID();               // calculate our own ID value
 
 	static const char *nameText(uint16 index);
 
@@ -166,7 +166,7 @@ protected:
 	static ObjectID *getHeadPtr(ObjectID parentID, TilePoint &l);
 
 	//  Object list management functions
-	void remove(void);                   // removes from old list
+	void remove();                   // removes from old list
 	void append(ObjectID newParent);         // adds to new list (no remove)
 	void insert(ObjectID newPrev);           // inserts after this item (no remove)
 
@@ -176,7 +176,7 @@ public:
 	uint _index;
 	bool _godmode;
 	//  Default constructor
-	GameObject(void);
+	GameObject();
 
 	//  Constructor -- initial construction
 	GameObject(const ResourceGameObject &res);
@@ -187,7 +187,7 @@ public:
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out, bool expandProto);
 
@@ -205,39 +205,39 @@ public:
 	static Common::Array<ObjectID> nameToID(Common::String name);
 
 	//  object creation and deletion
-	static GameObject *newObject(void);      // get a newly created object
-	void deleteObject(void);                 // delete this object and remove
-	void deleteObjectRecursive(void);        // delete this object and every
+	static GameObject *newObject();      // get a newly created object
+	void deleteObject();                 // delete this object and remove
+	void deleteObjectRecursive();        // delete this object and every
 	// object it contains
 
 	//  Return pointer to parent/child/next sibling object, if any
-	GameObject *parent(void) {
+	GameObject *parent() {
 		return _data.parentID == Nothing ? NULL : objectAddress(_data.parentID);
 	}
-	GameObject *next(void) {
+	GameObject *next() {
 		return _data.siblingID == Nothing ? NULL : objectAddress(_data.siblingID);
 	}
-	GameObject *child(void) {
+	GameObject *child() {
 		return _data.childID == Nothing ? NULL : objectAddress(_data.childID);
 	}
 
 	//  Return ID of parent/child/next sibling object, if any
-	ObjectID IDParent(void) {
+	ObjectID IDParent() {
 		return _data.parentID ;
 	}
-	ObjectID IDNext(void) {
+	ObjectID IDNext() {
 		return _data.siblingID;
 	}
-	ObjectID IDChild(void) {
+	ObjectID IDChild() {
 		return _data.childID  ;
 	}
 
 	//  Return a pointer to the world on which this object resides
-	GameWorld *world(void);
+	GameWorld *world();
 
 	//  Return the number of the map of the world on which this object
 	//  resides
-	int16 getMapNum(void);
+	int16 getMapNum();
 
 	//  graphics functions
 	int16 sprNum(int16 state);               // returns current sprite number
@@ -246,11 +246,11 @@ public:
 	int32 getSprOffset(int16 num = -1);
 
 	// completely restore the magical energy of a magical object
-	void recharge(void);
+	void recharge();
 
 	// returns the type of charge an object has
 	// be it none, red, violet, etc...
-	int16 getChargeType(void);
+	int16 getChargeType();
 
 	// use charge of this object
 	bool deductCharge(ActorManaID manaID, uint16 manaCost);
@@ -268,7 +268,7 @@ public:
 	// (assumes setLocation has been called)
 
 	//  Remove an object from a stack of objects. Returns true if it was in a stack.
-	bool unstack(void);
+	bool unstack();
 
 	// this correctly moves merged or stacked objects
 	bool moveMerged(const Location &loc);
@@ -292,10 +292,10 @@ public:
 	void move(int16 slot);                   // move to new slot in container
 
 	//  Activate the object
-	void activate(void);
+	void activate();
 
 	//  Deactivate this object
-	void deactivate(void);
+	void deactivate();
 
 	//  Determine if this object is an alias for another object
 	bool isAlias() {
@@ -446,22 +446,22 @@ public:
 	}
 
 	//  query functions:
-	ObjectID possessor(void);                // return actor posessing this object
+	ObjectID possessor();                // return actor posessing this object
 
 	//  Access functions
-	ProtoObj *proto(void) {
+	ProtoObj *proto() {
 		return prototype;
 	}
-	TilePoint getLocation(void) const {
+	TilePoint getLocation() const {
 		return _data.location;
 	}
-	TilePoint getWorldLocation(void);
+	TilePoint getWorldLocation();
 	bool getWorldLocation(Location &loc);
-	Location notGetLocation(void);
-	Location notGetWorldLocation(void);
+	Location notGetLocation();
+	Location notGetWorldLocation();
 
 	//  Return the name of this object (proper noun if it has one)
-	const char *objName(void) {
+	const char *objName() {
 		if (_data.nameIndex > 0)
 			return nameText((int16)_data.nameIndex);
 		else if (prototype)
@@ -474,10 +474,10 @@ public:
 	void objCursorText(char nameBuf[], const int8 size, int16 count = -1);
 
 	// find out if this is a trueskill
-	bool isTrueSkill(void);
+	bool isTrueSkill();
 
 	//  Access functions for name index
-	uint16 getNameIndex(void) {
+	uint16 getNameIndex() {
 		return _data.nameIndex;
 	}
 	void setNameIndex(uint16 n) {
@@ -485,36 +485,36 @@ public:
 	}
 
 	//  Return the name of this type of object
-	const char *protoName(void) {
+	const char *protoName() {
 		return nameText(prototype->nameIndex);
 	}
 
 	//  Update the state of this object.  This function is called every
 	//  frame for every active object.
-	void updateState(void);
+	void updateState();
 
 	//  Flag test functions
-	bool isOpen(void) {
+	bool isOpen() {
 		return (int16)(_data.objectFlags & objectOpen);
 	}
-	bool isLocked(void) {
+	bool isLocked() {
 		return (int16)(_data.objectFlags & objectLocked);
 	}
-	bool isImportant(void) {
+	bool isImportant() {
 		return (int16)(_data.objectFlags & objectImportant);
 	}
-	bool isGhosted(void) {
+	bool isGhosted() {
 		return (_data.objectFlags & objectGhosted)
 		       || (prototype->flags & ResourceObjectPrototype::objPropGhosted);
 	}
-	bool isInvisible(void) {
+	bool isInvisible() {
 		return (_data.objectFlags & objectInvisible)
 		       || (prototype->flags & ResourceObjectPrototype::objPropHidden);
 	}
-	bool isMoving(void) {
+	bool isMoving() {
 		return (int16)(_data.objectFlags & objectMoving);
 	}
-	bool isActivated(void) {
+	bool isActivated() {
 		return (int16)(_data.objectFlags & objectActivated);
 	}
 
@@ -524,7 +524,7 @@ public:
 		else
 			_data.objectFlags &= ~objectScavengable;
 	}
-	bool isScavengable(void) {
+	bool isScavengable() {
 		return (_data.objectFlags & objectScavengable) != 0;
 	}
 
@@ -534,7 +534,7 @@ public:
 		else
 			_data.objectFlags &= ~objectObscured;
 	}
-	bool isObscured(void) {
+	bool isObscured() {
 		return (_data.objectFlags & objectObscured) != 0;
 	}
 
@@ -544,7 +544,7 @@ public:
 		else
 			_data.objectFlags &= ~objectTriggeringTAG;
 	}
-	bool isTriggeringTAG(void) {
+	bool isTriggeringTAG() {
 		return (_data.objectFlags & objectTriggeringTAG) != 0;
 	}
 
@@ -554,7 +554,7 @@ public:
 		else
 			_data.objectFlags &= ~objectOnScreen;
 	}
-	bool isOnScreen(void) {
+	bool isOnScreen() {
 		return (_data.objectFlags & objectOnScreen) != 0;
 	}
 
@@ -564,22 +564,22 @@ public:
 		else
 			_data.objectFlags &= ~objectSightedByCenter;
 	}
-	bool isSightedByCenter(void) {
+	bool isSightedByCenter() {
 		return (_data.objectFlags & objectSightedByCenter) != 0;
 	}
 
-	bool isMissile(void) {
+	bool isMissile() {
 		return prototype->isMissile();
 	}
 
 	// image data
-	Sprite *getIconSprite(void);    // sprite when in inventory + cursor
-	Sprite *getGroundSprite(void);  // sprite when on ground
+	Sprite *getIconSprite();    // sprite when in inventory + cursor
+	Sprite *getGroundSprite();  // sprite when on ground
 
 	// world interaction type flags
-	uint16 containmentSet(void);
+	uint16 containmentSet();
 
-	uint16 scriptClass(void) {
+	uint16 scriptClass() {
 		if (_data.script)
 			return _data.script;
 		if (prototype)
@@ -590,7 +590,7 @@ public:
 	//  General access functions
 
 	//  Script access functions
-	uint16 getScript(void) {
+	uint16 getScript() {
 		return _data.script;
 	}
 	void setScript(uint16 scr) {
@@ -605,7 +605,7 @@ public:
 	}
 
 	//  Access functions for hit points
-	uint8 getHitPoints(void) {
+	uint8 getHitPoints() {
 		return _data.hitPoints;
 	}
 	void setHitPoints(uint8 hp) {
@@ -619,11 +619,11 @@ public:
 	}
 
 	//  Functions to get and set prototype (used by scripts)
-	int32 getProtoNum(void);
+	int32 getProtoNum();
 	void setProtoNum(int32 nProto);
 
 	//  Acess functions for extra data
-	uint16 getExtra(void) {
+	uint16 getExtra() {
 		return _data.massCount;
 	}
 	void setExtra(uint16 x) {
@@ -631,9 +631,9 @@ public:
 	}
 
 	//  Function to evaluate the effects of all enchantments
-	void evalEnchantments(void);
+	void evalEnchantments();
 
-	bool makeSavingThrow(void) {
+	bool makeSavingThrow() {
 		return prototype->makeSavingThrow();
 	}
 
@@ -641,11 +641,11 @@ public:
 	bool inRange(const TilePoint &tp, uint16 range);
 
 	//  Generic function to test if object can be picked up
-	bool isCarryable(void) {
+	bool isCarryable() {
 		return prototype->mass <= 200 && prototype->bulk <= 200;
 	}
 
-	bool isMergeable(void) {
+	bool isMergeable() {
 		return (prototype->flags & ResourceObjectPrototype::objPropMergeable) != 0;
 	}
 
@@ -666,7 +666,7 @@ public:
 	bool addTimer(TimerID id);
 	bool addTimer(TimerID id, int16 frameInterval);
 	void removeTimer(TimerID id);
-	void removeAllTimers(void);
+	void removeAllTimers();
 
 	//  Sensor related member functions
 private:
@@ -685,7 +685,7 @@ public:
 	    ObjectPropertyID    prop);
 	bool addEventSensor(SensorID id, int16 range, int16 eventType);
 	void removeSensor(SensorID id);
-	void removeAllSensors(void);
+	void removeAllSensors();
 
 	bool canSenseProtaganist(SenseInfo &info, int16 range);
 	bool canSenseSpecificActor(SenseInfo &info, int16 range, Actor *a);
@@ -712,21 +712,21 @@ public:
 		return prototype->canFitMasswise(this, obj);
 	}
 
-	uint16 totalContainedMass(void);
-	uint16 totalContainedBulk(void);
+	uint16 totalContainedMass();
+	uint16 totalContainedBulk();
 
-	uint16 totalMass(void) {
+	uint16 totalMass() {
 		return      prototype->mass * (isMergeable() ? getExtra() : 1)
 		            +   totalContainedMass();
 	}
-	uint16 totalBulk(void) {
+	uint16 totalBulk() {
 		return prototype->bulk * (isMergeable() ? getExtra() : 1);
 	}
 
-	uint16 massCapacity(void) {
+	uint16 massCapacity() {
 		return prototype->massCapacity(this);
 	}
-	uint16 bulkCapacity(void) {
+	uint16 bulkCapacity() {
 		return prototype->bulkCapacity(this);
 	}
 };
@@ -740,17 +740,17 @@ public:
 	uint16          activationCount;
 	ObjectID        childID;
 
-	Sector(void) :
+	Sector() :
 		activationCount(0),
 		childID(Nothing) {
 	}
 
-	bool isActivated(void) {
+	bool isActivated() {
 		return activationCount != 0;
 	}
 
-	void activate(void);
-	void deactivate(void);
+	void activate();
+	void deactivate();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
@@ -768,9 +768,9 @@ public:
 
 class GameWorld : public GameObject {
 
-	friend void     initWorlds(void);
-	friend void     cleanupWorlds(void);
-	friend void     buildDisplayList(void);
+	friend void     initWorlds();
+	friend void     cleanupWorlds();
+	friend void     buildDisplayList();
 
 	friend class    ProtoObj;
 	friend class    GameObject;
@@ -783,7 +783,7 @@ public:
 	int16           mapNum;                 // map number for this world.
 
 	//  Default constructor
-	GameWorld(void) : sectorArraySize(0), sectorArray(nullptr), mapNum(0) {}
+	GameWorld() : sectorArraySize(0), sectorArray(nullptr), mapNum(0) {}
 
 	//  Initial constructor
 	GameWorld(int16 map);
@@ -792,9 +792,9 @@ public:
 
 	~GameWorld();
 
-	int32 archiveSize(void);
+	int32 archiveSize();
 
-	void cleanup(void);
+	void cleanup();
 
 	Sector *getSector(int16 u, int16 v) {
 		if (u == -1 && v == -1)
@@ -809,7 +809,7 @@ public:
 		return &(sectorArray)[v * sectorArraySize + u];
 	}
 
-	TilePoint sectorSize(void) {         // size of map in sectors
+	TilePoint sectorSize() {         // size of map in sectors
 		return TilePoint(sectorArraySize, sectorArraySize, 0);
 	}
 
@@ -830,7 +830,7 @@ extern GameWorld    *currentWorld;
 //------------------------------------------------------------------------
 //	Return the number of the map of the world on which this object resides.
 
-inline int16 GameObject::getMapNum(void) {
+inline int16 GameObject::getMapNum() {
 	if (world())
 		return world()->mapNum;
 	else if (_data.siblingID) {
@@ -857,8 +857,8 @@ inline int16 GameObject::getMapNum(void) {
 
 class ActiveRegion {
 
-	friend void initActiveRegions(void);
-	friend void cleanupActiveRegions(void);
+	friend void initActiveRegions();
+	friend void cleanupActiveRegions();
 
 	friend class ActiveRegionObjectIterator;
 
@@ -874,13 +874,13 @@ public:
 	};
 
 	ActiveRegion() : anchor(0), worldID(0) {}
-	void update(void);
+	void update();
 
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return the current region in tile point coords
-	TileRegion getRegion(void) {
+	TileRegion getRegion() {
 		TileRegion      tReg;
 
 		tReg.min.u = region.min.u << kSectorShift;
@@ -893,20 +893,20 @@ public:
 	}
 
 	//  Return the region world
-	GameWorld *getWorld(void) {
+	GameWorld *getWorld() {
 		return (GameWorld *)GameObject::objectAddress(worldID);
 	}
 };
 
-void updateActiveRegions(void);
+void updateActiveRegions();
 
 //  Return a pointer to an active region given its PlayerActor's ID
 ActiveRegion *getActiveRegion(PlayerActorID id);
 
-void initActiveRegions(void);
+void initActiveRegions();
 void saveActiveRegions(Common::OutSaveFile *outS);
 void loadActiveRegions(Common::InSaveFile *in);
-inline void cleanupActiveRegions(void) {}
+inline void cleanupActiveRegions() {}
 
 /* ======================================================================= *
    ObjectIterator Class
@@ -918,7 +918,7 @@ inline void cleanupActiveRegions(void) {}
 class ObjectIterator {
 public:
 	//  Virtual destructor
-	virtual ~ObjectIterator(void) {}
+	virtual ~ObjectIterator() {}
 
 	//  Iteration functions
 	virtual ObjectID first(GameObject **obj) = 0;
@@ -957,7 +957,7 @@ public:
 	}
 
 protected:
-	GameWorld *getSearchWorld(void) {
+	GameWorld *getSearchWorld() {
 		return searchWorld;
 	}
 
@@ -994,7 +994,7 @@ private:
 protected:
 
 	//  Simply return the center coordinates
-	TilePoint getCenter(void) {
+	TilePoint getCenter() {
 		return center;
 	}
 
@@ -1204,13 +1204,13 @@ public:
 
 class CenterRegionObjectIterator : public RegionalObjectIterator {
 
-	static GameWorld *CenterWorld(void);
-	static TilePoint MinCenterRegion(void);
-	static TilePoint MaxCenterRegion(void);
+	static GameWorld *CenterWorld();
+	static TilePoint MinCenterRegion();
+	static TilePoint MaxCenterRegion();
 
 public:
 	//  Constructor
-	CenterRegionObjectIterator(void) :
+	CenterRegionObjectIterator() :
 		RegionalObjectIterator(CenterWorld(),
 		                       MinCenterRegion(),
 		                       MaxCenterRegion()) {}
@@ -1231,14 +1231,14 @@ class ActiveRegionObjectIterator : public ObjectIterator {
 	GameWorld       *currentWorld;
 	GameObject      *_currentObject;
 
-	bool firstActiveRegion(void);
-	bool nextActiveRegion(void);
-	bool firstSector(void);
-	bool nextSector(void);
+	bool firstActiveRegion();
+	bool nextActiveRegion();
+	bool firstSector();
+	bool nextSector();
 
 public:
 	//  Constructor
-	ActiveRegionObjectIterator(void) : activeRegionIndex(-1), sectorBitMask(0), currentWorld(nullptr), _currentObject(nullptr) {}
+	ActiveRegionObjectIterator() : activeRegionIndex(-1), sectorBitMask(0), currentWorld(nullptr), _currentObject(nullptr) {}
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
@@ -1282,7 +1282,7 @@ public:
 		id(container->IDChild()),
 		subIter(NULL) {
 	}
-	~RecursiveContainerIterator(void);
+	~RecursiveContainerIterator();
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
@@ -1393,19 +1393,19 @@ void evalActorEnchantments(Actor *a);
 void evalObjectEnchantments(GameObject *obj);
 
 //  Load prototypes from resource file
-void initPrototypes(void);
+void initPrototypes();
 
 //  Cleanup the prototype lists
-void cleanupPrototypes(void);
+void cleanupPrototypes();
 
 //  Load the sound effects table
-void initObjectSoundFXTable(void);
+void initObjectSoundFXTable();
 
 //  Cleanup the sound effects table
-void cleanupObjectSoundFXTable(void);
+void cleanupObjectSoundFXTable();
 
 //  Allocate array to hold the counts of the temp actors
-void initTempActorCount(void);
+void initTempActorCount();
 
 //  Save the array of temp actor counts
 void saveTempActorCount(Common::OutSaveFile *outS);
@@ -1414,7 +1414,7 @@ void saveTempActorCount(Common::OutSaveFile *outS);
 void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the array to temp actor counts
-void cleanupTempActorCount(void);
+void cleanupTempActorCount();
 
 //  Increment the temporary actor count for the specified prototype
 void incTempActorCount(uint16 protoNum);
@@ -1426,7 +1426,7 @@ void decTempActorCount(uint16 protoNum);
 uint16 getTempActorCount(uint16 protoNum);
 
 //  Init game worlds
-void initWorlds(void);
+void initWorlds();
 
 //  Save worlds to the save file
 void saveWorlds(Common::OutSaveFile *outS);
@@ -1435,10 +1435,10 @@ void saveWorlds(Common::OutSaveFile *outS);
 void loadWorlds(Common::InSaveFile *in);
 
 //  Cleanup game worlds
-void cleanupWorlds(void);
+void cleanupWorlds();
 
 //  Initialize object list
-void initObjects(void);
+void initObjects();
 
 //  Save the objects to the save file
 void saveObjects(Common::OutSaveFile *outS);
@@ -1447,26 +1447,26 @@ void saveObjects(Common::OutSaveFile *outS);
 void loadObjects(Common::InSaveFile *in);
 
 //  Cleanup object list
-void cleanupObjects(void);
+void cleanupObjects();
 
 //  Do background processing for objects
-void doBackgroundSimulation(void);
+void doBackgroundSimulation();
 
-void pauseBackgroundSimulation(void);
-void resumeBackgroundSimulation(void);
+void pauseBackgroundSimulation();
+void resumeBackgroundSimulation();
 
 // cleanup the ready container stuff
-void cleanupReadyContainers(void);
+void cleanupReadyContainers();
 
 //  This function simply calls the GameObject::updateState() method
 //  for all active objects directly within a world.
-void updateObjectStates(void);
+void updateObjectStates();
 
-void pauseObjectStates(void);
-void resumeObjectStates(void);
+void pauseObjectStates();
+void resumeObjectStates();
 
-void readyContainerSetup(void);
-void cleanupReadyContainers(void);
+void readyContainerSetup();
+void cleanupReadyContainers();
 
 } // end of namespace Saga2
 

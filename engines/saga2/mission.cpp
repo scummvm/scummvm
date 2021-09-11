@@ -236,7 +236,7 @@ void ActiveMission::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(4, kDebugSaveload, "... numKnowledgeIDs = %d", _data.numKnowledgeIDs);
 }
 
-void ActiveMission::cleanup(void) {
+void ActiveMission::cleanup() {
 	int             i;
 
 	for (i = 0; i < _data.numKnowledgeIDs; i++) {
@@ -262,7 +262,7 @@ void ActiveMission::cleanup(void) {
 //-----------------------------------------------------------------------
 //	Initialize the active mission list
 
-void initMissions(void) {
+void initMissions() {
 	int     i;
 
 	for (i = 0; i < ARRAYSIZE(activeMissions); i++)
