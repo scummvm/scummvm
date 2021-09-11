@@ -68,7 +68,7 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	if (y > destination->cb)  // optimisation
 		return;
 
-	int srcFontNum = get_outline_font(fontNumber);
+	int srcFontNum = get_outline_ttf_font(fontNumber);
 	ALFONT_FONT *srcFont = nullptr;
 	if (srcFontNum != FONT_OUTLINE_NONE) {
 		// Get the font without outline (if it's loaded) for use in
