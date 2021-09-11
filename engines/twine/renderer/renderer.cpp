@@ -1692,16 +1692,16 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 	computeHolomapPolygon(yTop, (uint32)(uint16)angles2.y, yBottom, (uint32)(uint16)angles1.y, polygonTabPtr);
 }
 
-void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]) {
+void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3], uint8 *holomapImage, uint32 holomapImageSize) {
 	int32 top = SCENE_SIZE_MAX;
 	int32 bottom = SCENE_SIZE_MIN;
 	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
-	renderHolomapPolygons(top, bottom);
+	renderHolomapPolygons(top, bottom, holomapImage, holomapImageSize);
 }
 
-void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
+void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize) {
 	const void *pixelBegin = _engine->_frontVideoBuffer.getBasePtr(0, 0);
 	const void *pixelEnd = _engine->_frontVideoBuffer.getBasePtr(_engine->_frontVideoBuffer.w - 1, _engine->_frontVideoBuffer.h - 1);
 	if (top < 0 || top >= _engine->_frontVideoBuffer.h) {
@@ -1732,12 +1732,12 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 			uint32 uVar3 = (uint32)x_1_2;
 			for (int16 i = 0; i < width; ++i) {
 				const uint32 holomapImageOffset = (uint32)((int32)uVar3 >> 8 & 0xffU) | (uVar1 & 0xff00);
-				assert(holomapImageOffset < _engine->_resources->_holomapImageSize);
+				assert(holomapImageOffset < holomapImageSize);
 				if (pixelBufPtr < pixelBegin || pixelBufPtr > pixelEnd) {
 					++pixelBufPtr;
 				} else {
 					//debug("holomapImageOffset: %i", holomapImageOffset);
-					*pixelBufPtr++ = _engine->_resources->_holomapImagePtr[holomapImageOffset];
+					*pixelBufPtr++ = holomapImage[holomapImageOffset];
 				}
 				uVar1 += (int32)(((uint32)x_2_3 - (uint32)x_1_3) + 1) / iWidth;
 				uVar3 += (int32)(((uint32)x_2_2 - (uint32)x_1_2) + 1) / iWidth;

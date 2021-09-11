@@ -177,11 +177,6 @@ public:
 	SpriteData _spriteShadowPtr;
 	SpriteBoundingBoxData _spriteBoundingBox;
 
-	uint32 _holomapSurfaceSize = 0;
-	uint8 *_holomapSurfacePtr = nullptr;
-	uint32 _holomapImageSize = 0;
-	uint8 *_holomapImagePtr = nullptr;
-
 	BodyData _holomapPointModelPtr;
 	BodyData _holomapTwinsenModelPtr;
 	BodyData _holomapTwinsenArrowPtr;

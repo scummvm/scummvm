@@ -41,8 +41,6 @@ Resources::~Resources() {
 		free(_samplesTable[i]);
 	}
 	free(_fontPtr);
-	free(_holomapSurfacePtr);
-	free(_holomapImagePtr);
 }
 
 void Resources::initPalettes() {
@@ -148,41 +146,31 @@ void Resources::initResources() {
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
 	if (_engine->isLBA1()) {
-		if (!_spriteShadowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW, _engine->isLBA1())) {
+		if (!_spriteShadowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW), _engine->isLBA1())) {
 			error("Failed to load shadow sprites");
 		}
 
-		if (!_spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA, _engine->isLBA1())) {
+		if (!_spriteBoundingBox.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA), _engine->isLBA1())) {
 			error("Failed to load sprite bounding box data");
 		}
 
-		_holomapSurfaceSize = HQR::getAllocEntry(&_holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
-		if (_holomapSurfaceSize == 0) {
-			error("Failed to load holomap surface");
-		}
-
-		_holomapImageSize = HQR::getAllocEntry(&_holomapImagePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
-		if (_holomapImageSize == 0) {
-			error("Failed to load holomap image");
-		}
-
-		if (!_holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL, _engine->isLBA1())) {
+		if (!_holomapTwinsenModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL), _engine->isLBA1())) {
 			error("Failed to load holomap twinsen model");
 		}
 
-		if (!_holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL, _engine->isLBA1())) {
+		if (!_holomapPointModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL), _engine->isLBA1())) {
 			error("Failed to load holomap point model");
 		}
 
-		if (!_holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL, _engine->isLBA1())) {
+		if (!_holomapArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL), _engine->isLBA1())) {
 			error("Failed to load holomap arrow model");
 		}
 
-		if (!_holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL, _engine->isLBA1())) {
+		if (!_holomapTwinsenArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL), _engine->isLBA1())) {
 			error("Failed to load holomap twinsen arrow model");
 		}
 
-		if (!_trajectories.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM, _engine->isLBA1())) {
+		if (!_trajectories.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM), _engine->isLBA1())) {
 			error("Failed to parse trajectory data");
 		}
 		debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
@@ -199,7 +187,7 @@ void Resources::initResources() {
 		error("Max body count exceeded: %i", bodyCount);
 	}
 	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!_bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i, _engine->isLBA1())) {
+		if (!_bodyData[i].loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, i), _engine->isLBA1())) {
 			error("HQR ERROR: Parsing body entity for model %i failed", i);
 		}
 	}
