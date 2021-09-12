@@ -34,7 +34,9 @@
 
 
 #include "common/debug.h"
+#include "common/file.h"
 #include "chewy/datei.h"
+
 #define GRAFIK 1
 #define SPEICHER 2
 #define DATEI 3
@@ -1580,28 +1582,24 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 }
 
 uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
-	FILE *tafhandle;
+	Common::File tafFile;
 	uint32 size = 0;
-	int16 id, i;
+	int16 id;
 	taf_dateiheader *tdh;
 	tdh = (taf_dateiheader *)tmp;
 	*tafheader = tdh;
-	for (i = 0; (i < MAXPATH - 4) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
-	i = 0;
-	if ((filename[i]) == 0)
+
+	strncpy(filename, fname, MAXPATH - 4);
+	filename[MAXPATH - 4] = '\0';
+
+	if (!filename[0])
 		get_filename(filename, MAXPATH);
+
 	if (!strchr(filename, '.'))
-		strcat(filename, ".TAF\0");
-	correct_fname(filename);
-	tafhandle = 0;
-	tafhandle = fopen(filename, "rb");
-	if (tafhandle) {
-		if (!(fread(tdh, sizeof(taf_dateiheader), 1, tafhandle))) {
-			fcode = READFEHLER;
-			modul = DATEI;
-		} else {
+		strcat(filename, ".taf");
+
+	if (tafFile.open(filename)) {
+		if (tdh->load(&tafFile)) {
 			id = get_id(tdh->id);
 			if ((id == TAFDATEI) && (tdh->mode == 19)) {
 				size = tdh->allsize + (((uint32)tdh->count) * 8l);
@@ -1612,15 +1610,20 @@ uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
 				modul = DATEI;
 				size = 0;
 			}
+		} else {
+			fcode = NOTTBF;
+			modul = DATEI;
+			size = 0;
 		}
-		fclose(tafhandle);
-	}
-	else {
+
+		tafFile.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 		size = 0;
 	}
-	return (size);
+
+	return size;
 }
 
 void datei::load_palette(const char *fname, char *palette, int16 typ) {
