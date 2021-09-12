@@ -6,18 +6,18 @@ extern unsigned int cur_dlg_index;
 
 enum DirtyRectKind {
 	DirtyRectFree = 0,
-	DirtyRectBubble = 1,	/*bubble with spike*/
-	DirtyRectSprite = 2,	/*portrait*/
-	DirtyRectText = 3		/*text bubble w/o spike*/
+	DirtyRectBubble = 1,    /*bubble with spike*/
+	DirtyRectSprite = 2,    /*portrait*/
+	DirtyRectText = 3       /*text bubble w/o spike*/
 };
 
 typedef struct dirty_rect_t {
-unsigned char kind;
-unsigned int offs;
-unsigned char width;
-unsigned char height;
-unsigned char y;		/*for DirtyRectBubble this is spike offs*/
-unsigned char x;
+	unsigned char kind;
+	unsigned int offs;
+	unsigned char width;
+	unsigned char height;
+	unsigned char y;        /*for DirtyRectBubble this is spike offs*/
+	unsigned char x;
 } dirty_rect_t;
 
 extern dirty_rect_t dirty_rects[];
@@ -41,7 +41,7 @@ void DesciTextBox(unsigned int x, unsigned int y, unsigned int width, unsigned c
 
 void PromptWait(void);
 
-unsigned char * SeekToString(unsigned char *bank, unsigned int num);
-unsigned char * SeekToStringScr(unsigned char *bank, unsigned int num, unsigned char **ptr);
+unsigned char *SeekToString(unsigned char *bank, unsigned int num);
+unsigned char *SeekToStringScr(unsigned char *bank, unsigned int num, unsigned char **ptr);
 
 #endif

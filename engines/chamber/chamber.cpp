@@ -25,37 +25,32 @@ unsigned short cpu_speed_delay;
 /*
 Prompt user to insert disk #2 to any drive
 */
-void AskDisk2(void)
-{
+void AskDisk2(void) {
 	DrawMessage(SeekToString(vepci_data, 179), frontbuffer);
 }
 
-void SaveToFile(char *filename, void *data, unsigned int size)
-{
+void SaveToFile(char *filename, void *data, unsigned int size) {
 	FILE *f = fopen(filename, "wb");
 	fwrite(data, 1, size, f);
 	fclose(f);
 }
 
-int LoadSplash(char *filename)
-{
-	if(!LoadFile(filename, scratch_mem1))
+int LoadSplash(char *filename) {
+	if (!LoadFile(filename, scratch_mem1))
 		return 0;
-	decompress(scratch_mem1 + 8, backbuffer);	/* skip compressed/decompressed size fields */
+	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */
 	return 1;
 }
 
-unsigned int BenchmarkCpu(void)
-{
+unsigned int BenchmarkCpu(void) {
 	unsigned char t;
 	unsigned int cycles = 0;
-	for(t = script_byte_vars.timer_ticks;t == script_byte_vars.timer_ticks;) ;
-	for(t = script_byte_vars.timer_ticks;t == script_byte_vars.timer_ticks;) cycles++;
+	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) ;
+	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) cycles++;
 	return cycles;
 }
 
-void Randomize(void)
-{
+void Randomize(void) {
 	union REGS reg;
 
 	reg.h.ah = 0;
@@ -64,17 +59,14 @@ void Randomize(void)
 	Rand();
 }
 
-void TRAP()
-{
+void TRAP() {
 	PromptWait();
-	for(;;) ;
+	for (;;) ;
 }
 
 /* Main Game Loop */
-void GameLoop(unsigned char *target)
-{
-	for(;;)
-	{
+void GameLoop(unsigned char *target) {
+	for (;;) {
 #if 1
 		AnimateSpots(target);
 #endif
@@ -87,80 +79,71 @@ void GameLoop(unsigned char *target)
 		PollInput();
 
 		the_command = 0;
-		if(IsCursorInRect(&room_bounds_rect))
-		{
+		if (IsCursorInRect(&room_bounds_rect)) {
 			SelectCursor(CURSOR_1);
 			command_hint = 100;
 			SelectSpotCursor();
-		}
-		else
-		{
+		} else {
 			SelectCursor(CURSOR_0);
 			object_hint = 117;
 			CheckMenuCommandHover();
 		}
 
-		if(object_hint != last_object_hint)
+		if (object_hint != last_object_hint)
 			DrawObjectHint();
 
-		if(command_hint != last_command_hint)
+		if (command_hint != last_command_hint)
 			DrawCommandHint();
 
 		DrawHintsAndCursor(target);
 
-		if(!buttons || !the_command)
-		{
+		if (!buttons || !the_command) {
 			/*Pending / AI commands*/
 
-			if(script_byte_vars.check_used_commands < script_byte_vars.used_commands)
-			{
+			if (script_byte_vars.check_used_commands < script_byte_vars.used_commands) {
 				the_command = Swap16(script_word_vars.next_command1);
-				if(the_command)
+				if (the_command)
 					goto process;
 			}
 
-			if(script_byte_vars.flag_179FB)
+			if (script_byte_vars.flag_179FB)
 				continue;
 
 			the_command = Swap16(script_word_vars.next_command2);
-			if(the_command)
+			if (the_command)
 				goto process;
 
-			if(Swap16(next_ticks3) < script_word_vars.timer_ticks2)	/*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
-			{
+			if (Swap16(next_ticks3) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
 				the_command = next_command3;
-				if(the_command)
+				if (the_command)
 					goto process;
 			}
 
-			if(Swap16(next_ticks4) < script_word_vars.timer_ticks2)	/*TODO: is this ok? ticks2 is BE, ticks4 is LE*/
-			{
+			if (Swap16(next_ticks4) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks4 is LE*/
 				the_command = next_command4;
-				if(the_command)
+				if (the_command)
 					goto process;
 			}
 
 			continue;
 
-process:;
+process:
+			;
 			UpdateUndrawCursor(target);
 			RefreshSpritesData();
 			RunCommand();
 			BlitSpritesToBackBuffer();
 			ProcessInput();
 			DrawSpots(target);
-		}
-		else
-		{
+		} else {
 			/*Player action*/
 
 			UpdateUndrawCursor(target);
 			RefreshSpritesData();
 			RunCommandKeepSp();
 			script_byte_vars.used_commands++;
-			if(script_byte_vars.dead_flag)
-			{
-				if(--script_byte_vars.tries_left == 0)
+			if (script_byte_vars.dead_flag) {
+				if (--script_byte_vars.tries_left == 0)
 					ResetAllPersons();
 			}
 			BlitSpritesToBackBuffer();
@@ -171,20 +154,18 @@ process:;
 }
 
 
-void ExitGame(void)
-{
+void ExitGame(void) {
 	SwitchToTextMode();
 	exit(0);
 }
 
-void main(void)
-{
+void main(void) {
 	unsigned char c;
 
 	SwitchToGraphicsMode();
 
 	/* Load title screen */
-	if(!LoadSplash("PRES.BIN"))
+	if (!LoadSplash("PRES.BIN"))
 		ExitGame();
 
 	/* Select intense cyan-mageta palette */
@@ -195,11 +176,11 @@ void main(void)
 
 #ifdef COPYPROT
 	/* Check if a valid floppy disk is present in any drive */
-	if(!CheckCopyProtection()) for(;;) ;
+	if (!CheckCopyProtection()) for (;;) ;
 #endif
 
 	/* Load language selection screen */
-	if(!LoadSplash("DRAP.BIN"))
+	if (!LoadSplash("DRAP.BIN"))
 		ExitGame();
 
 	/* Wait for a keypress and show the language selection screen */
@@ -209,13 +190,11 @@ void main(void)
 	ClearKeyboard();
 
 	/* Wait for a valid language choice */
-	do
-	{
+	do {
 		c = ReadKeyboardChar();
-		if(c > 'F')
+		if (c > 'F')
 			c -= ' ';
-	}
-	while(c < 'D' || c > 'F');
+	} while (c < 'D' || c > 'F');
 
 	/* Patch resource names for choosen language */
 	res_texts[0].name[4] = c;
@@ -227,15 +206,15 @@ void main(void)
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
-	if(!LoadStaticData())
+	if (!LoadStaticData())
 		ExitGame();
 
 	/* Load text resources */
-	if(!LoadVepciData() || !LoadDesciData() || !LoadDialiData())
+	if (!LoadVepciData() || !LoadDesciData() || !LoadDialiData())
 		ExitGame();
 
 	/* Load graphics resources */
-	while(!LoadFond() || !LoadSpritesData() || !LoadPersData())
+	while (!LoadFond() || !LoadSpritesData() || !LoadPersData())
 		AskDisk2();
 
 	/* Detect/Initialize input device */
@@ -254,7 +233,8 @@ void main(void)
 	cpu_speed_delay = BenchmarkCpu() / 8;
 
 	/*restart game from here*/
-restart:;
+restart:
+	;
 	Randomize();
 
 	/* Set start zone */
@@ -266,8 +246,7 @@ restart:;
 #ifdef DEBUG_SCRIPT
 	{
 		FILE *f = fopen(DEBUG_SCRIPT_LOG, "wt+");
-		if(f)
-		{
+		if (f) {
 			fclose(f);
 		}
 	}

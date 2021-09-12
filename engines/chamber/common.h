@@ -5,11 +5,11 @@
 #define LE16(x) (x)
 
 #define TODO(s) \
-{	\
-	printf(s);	\
-	PromptWait();	\
-	for(;;) ;	\
-}
+	{   \
+		printf(s);  \
+		PromptWait();   \
+		for(;;) ;   \
+	}
 
 typedef struct rect_t {
 	unsigned char sx;

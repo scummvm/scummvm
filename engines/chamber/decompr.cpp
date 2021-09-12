@@ -7,15 +7,12 @@ static struct {
 	unsigned char stackpos;
 } DecompCtx;
 
-unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned char *stack)
-{
+unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned char *stack) {
 	unsigned char n;
-	while((n = DecompCtx.coddict[code]) != 0)
-	{
-		while(n >= prev_n)
-		{
+	while ((n = DecompCtx.coddict[code]) != 0) {
+		while (n >= prev_n) {
 			n = DecompCtx.codlink[n];
-			if(n == 0)
+			if (n == 0)
 				return code;
 		}
 		/*if(DecompCtx.stackpos == 255) exit("stack exploded");*/
@@ -25,8 +22,7 @@ unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned c
 	return code;
 }
 
-unsigned long decompress(unsigned char huge *data, unsigned char huge *result)
-{
+unsigned long decompress(unsigned char huge *data, unsigned char huge *result) {
 	unsigned char dict_size, more;
 	unsigned int compsize;
 	unsigned int i;
@@ -34,52 +30,43 @@ unsigned long decompress(unsigned char huge *data, unsigned char huge *result)
 	unsigned char stack[256];
 	unsigned long decompsize = 0;
 
-	do
-	{
+	do {
 		dict_size = *data++;
 		more = *data++;
 		compsize = *data++;
 		compsize |= (*data++) << 8;
 
-		if(dict_size == 0)
-		{
+		if (dict_size == 0) {
 			/* uncompressed block */
 			decompsize += compsize;
 			while (compsize--)
 				*result++ = *data++;
-		}
-		else
-		{
+		} else {
 			/* compressed block */
 			/*
 			memcpy(DecompCtx.codes + 1, data, dict_size); data += dict_size;
 			memcpy(DecompCtx.prefix + 1, data, dict_size); data += dict_size;
 			memcpy(DecompCtx.suffix + 1, data, dict_size); data += dict_size;
 			*/
-			for(n = 1, i = 0; i < dict_size;n++, i++) DecompCtx.codes[n] = *data++;
-			for(n = 1, i = 0; i < dict_size;n++, i++) DecompCtx.prefix[n] = *data++;
-			for(n = 1, i = 0; i < dict_size;n++, i++) DecompCtx.suffix[n] = *data++;
+			for (n = 1, i = 0; i < dict_size; n++, i++) DecompCtx.codes[n] = *data++;
+			for (n = 1, i = 0; i < dict_size; n++, i++) DecompCtx.prefix[n] = *data++;
+			for (n = 1, i = 0; i < dict_size; n++, i++) DecompCtx.suffix[n] = *data++;
 
 			memset(DecompCtx.coddict, 0, 256);
-			for(n = 1, i = 0; i < dict_size;n++, i++)
-			{
+			for (n = 1, i = 0; i < dict_size; n++, i++) {
 				code = DecompCtx.codes[n];
 				DecompCtx.codlink[n] = DecompCtx.coddict[code];
 				DecompCtx.coddict[code] = n;
 			}
 
-			while(compsize-- > 0)
-			{
+			while (compsize-- > 0) {
 				code = *data++;
 
-				if(DecompCtx.coddict[code] == 0)
-				{
+				if (DecompCtx.coddict[code] == 0) {
 					/* literal */
 					*result++ = code;
 					decompsize += 1;
-				}
-				else
-				{
+				} else {
 					/* string */
 					DecompCtx.stackpos = 0;
 
@@ -87,20 +74,18 @@ unsigned long decompress(unsigned char huge *data, unsigned char huge *result)
 
 					stack[DecompCtx.stackpos++] = n;
 
-					for(code = DecompCtx.prefix[n];;code = DecompCtx.suffix[n])
-					{
+					for (code = DecompCtx.prefix[n];; code = DecompCtx.suffix[n]) {
 						suffix = decode_string(code, n, stack);
 						*result++ = suffix;
 						decompsize += 1;
-						if(DecompCtx.stackpos == 0)
+						if (DecompCtx.stackpos == 0)
 							break;
 						n = stack[--DecompCtx.stackpos];
 					}
 				}
 			}
 		}
-	}
-	while(more != 0);
+	} while (more != 0);
 
 	return decompsize;
 }
