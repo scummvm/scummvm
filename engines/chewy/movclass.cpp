@@ -521,9 +521,9 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 	int16 found_min;
 	int16 TmpKnPkt[MAX_KNOTEN_PKT];
 	int16 min_step_unerreicht;
-	int16 dir_unerreicht;
+	int16 dir_unerreicht = 0;
 	int16 KnPkt_unrreicht[MAX_KNOTEN_PKT];
-	int16 feld_unerreicht;
+	int16 feld_unerreicht = 0;
 	int16 knoten_felder[MAX_KNOTEN_PKT][6];
 
 	int16 ak_knoten;
@@ -669,7 +669,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 					found = 1;
 					if (mle.FNr == -1) {
 						mle.Steps = min_step_unerreicht;
-						mle.FNr = feld_unerreicht ;
+						mle.FNr = feld_unerreicht;
 						mle.Direction = dir_unerreicht;
 						for (i = 0; i < MAX_KNOTEN_PKT; i++)
 							mle.KnPkt[i] = KnPkt_unrreicht[i];

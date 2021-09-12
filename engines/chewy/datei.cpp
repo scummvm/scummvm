@@ -298,7 +298,7 @@ uint16 datei::select_pool_item(void *h, uint16 nr) {
 			if (!strncmp(ph->id, "NGS", 3)) {
 				if (nr >= ph->PoolAnz)
 					nr = ph->PoolAnz - 1;
-				fseek(handle, -((ph->PoolAnz - nr) * sizeof(uint32)), SEEK_END);
+				fseek(handle, -(int)((ph->PoolAnz - nr) * sizeof(uint32)), SEEK_END);
 				if (!(fread(&tmp1, sizeof(uint32), 1, handle))) {
 					modul = DATEI;
 					fcode = READFEHLER;
@@ -352,7 +352,7 @@ void datei::load_tafmcga(const char *fname, char *sp, int16 nr) {
 						}
 					}
 					else {
-						fseek(handle, (-((header->count - nr)*sizeof(uint32))), SEEK_END);
+						fseek(handle, (-(int)((header->count - nr)*sizeof(uint32))), SEEK_END);
 						if (!fread(&next, sizeof(uint32), 1, handle)) {
 							fcode = READFEHLER;
 							modul = DATEI;
@@ -491,7 +491,7 @@ void datei::load_korrektur(const char *fname, char *sp) {
 			if (fread(header, sizeof(taf_dateiheader), 1, handle)) {
 				id = get_id(header->id);
 				if ((id == TAFDATEI) && (header->korrekt > 0)) {
-					fseek(handle, -((header->count * sizeof(uint32))*header->korrekt), SEEK_END);
+					fseek(handle, -((int)(header->count * sizeof(uint32))*header->korrekt), SEEK_END);
 					if (!fread(speicher, header->count * sizeof(uint32), 1, handle)) {
 						fcode = READFEHLER;
 						modul = DATEI;
@@ -761,7 +761,7 @@ uint32 datei::load_voc(void *h, char *speicher) {
 	ChunkHead *ch;
 	ch = (ChunkHead *) tmp;
 	if (handle) {
-		fseek(handle, -sizeof(ChunkHead), SEEK_CUR);
+		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!(fread(ch, sizeof(ChunkHead), 1, handle))) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -868,7 +868,7 @@ uint32 datei::load_item(void *h, char *speicher) {
 	ChunkHead *ch;
 	ch = (ChunkHead *) tmp;
 	if (handle) {
-		fseek(handle, -sizeof(ChunkHead), SEEK_CUR);
+		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!(fread(ch, sizeof(ChunkHead), 1, handle))) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -885,7 +885,7 @@ uint32 datei::load_item(void *h, char *speicher) {
 
 uint32 datei::load_tmf(char *fname, tmf_header *th) {
 	FILE *handle;
-	uint32 size;
+	uint32 size = 0;
 	char *speicher;
 	int16 ok, i;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -954,7 +954,7 @@ uint32 datei::load_tmf(void *h, tmf_header *song) {
 	ch = (ChunkHead *) tmp;
 	speicher = (char *)song;
 	if (handle) {
-		fseek(handle, -sizeof(ChunkHead), SEEK_CUR);
+		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!(fread(ch, sizeof(ChunkHead), 1, handle))) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -1558,7 +1558,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 		} else {
 			if (!strncmp(Nph->id, "NGS", 3)) {
 				select_pool_item(handle, chunk_start);
-				fseek(handle, -(sizeof(ChunkHead)), SEEK_CUR);
+				fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 				for (i = chunk_start; (i < Nph->PoolAnz) && (!modul)
 				        && i < (chunk_start + chunk_anz); i++) {
 					if (!fread(&ch, sizeof(ChunkHead), 1, handle)) {
@@ -1767,7 +1767,7 @@ void datei::load_palette(void *h, char *palette) {
 				if (format != -1) {
 					for (i = 0; i < 768; i++)
 						palette[i] = header->palette[i];
-					fseek(handle, -sizeof(tbf_dateiheader), SEEK_CUR);
+					fseek(handle, -(int)sizeof(tbf_dateiheader), SEEK_CUR);
 				} else {
 					fcode = NOTTBF;
 					modul = DATEI;

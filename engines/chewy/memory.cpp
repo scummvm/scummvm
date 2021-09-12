@@ -95,7 +95,7 @@ taf_seq_info *memory::taf_seq_adr(void *h, int16 image_start,
 		id = file->get_id(header.id);
 		if (id == TAFDATEI) {
 			if (header.korrekt > 1) {
-				fseek(handle, (-((header.count - image_start)*sizeof(uint32))), SEEK_END);
+				fseek(handle, (-(int)((header.count - image_start)*sizeof(uint32))), SEEK_END);
 				if (!fread(&ptr, sizeof(uint32), 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
@@ -142,7 +142,7 @@ taf_seq_info *memory::taf_seq_adr(void *h, int16 image_start,
 								}
 							}
 							if (!modul) {
-								fseek(handle, (-(((header.count * 2) - image_start)*sizeof(uint32))), SEEK_END);
+								fseek(handle, (-(int)(((header.count * 2) - image_start)*sizeof(uint32))), SEEK_END);
 								if (!fread(ts_info->korrektur, image_anz * 4, 1, handle)) {
 									{
 										fcode = READFEHLER;

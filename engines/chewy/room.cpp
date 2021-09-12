@@ -260,7 +260,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 			fcode = READFEHLER;
 		}
 		if (!modul) {
-			fseek((FILE *)roomhandle[R_TGPDATEI], -sizeof(tbf_dateiheader), SEEK_CUR);
+			fseek((FILE *)roomhandle[R_TGPDATEI], -(int)sizeof(tbf_dateiheader), SEEK_CUR);
 			Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), tb.entpsize + 4);
 			if (Rb->AkAblage == -1) {
 			} else if (Rb->AkAblage >= 1000) {

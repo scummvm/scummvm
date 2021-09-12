@@ -69,24 +69,24 @@ typedef struct {
 } tbf_dateiheader;
 
 struct taf_dateiheader {
-	char id[4];
-	int16 mode;
-	int16 count;
-	uint32 allsize;
+	char id[4] = { 0 };
+	int16 mode = 0;
+	int16 count = 0;
+	uint32 allsize = 0;
 	char palette[768];
-	uint32 next;
-	int16 korrekt;
+	uint32 next = 0;
+	int16 korrekt = 0;
 
 	bool load(Common::ReadStream *src);
 };
 
-typedef struct {
-	int16 komp;
-	uint16 width;
-	uint16 height;
-	uint32 next;
-	uint32 image;
-} taf_imageheader;
+struct taf_imageheader {
+	int16 komp = 0;
+	uint16 width = 0;
+	uint16 height = 0;
+	uint32 next = 0;
+	uint32 image = 0;
+};
 
 typedef struct {
 	int16 anzahl;

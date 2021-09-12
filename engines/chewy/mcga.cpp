@@ -572,7 +572,7 @@ void mcga_grafik::set_fontadr(char *adr) {
 
 int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth,
                           const char *string, ...) {
-	int16 i, j, stelle, stellemax, mode;
+	int16 i, j, stelle, stellemax, mode = 0;
 	int16 disp_stelle = 0, disp_stellemax = 0, disp_akt = 0;
 	int16 ret = 0;
 	int16 delay_flag;
@@ -583,11 +583,11 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 	uint16 vorzeichen = 0;
 	char x_mode = 0;
 	char eing = 0;
-	uint16 izahl;
-	uint16 *intzahl;
-	int16 *intzahl1;
-	uint32 *longzahl;
-	char *charstr;
+	uint16 izahl = 0;
+	uint16 *intzahl = nullptr;
+	int16 *intzahl1 = nullptr;
+	uint32 *longzahl = nullptr;
+	char *charstr = nullptr;
 	uint32 luzahl;
 	va_list parptr;
 	va_start(parptr, string);

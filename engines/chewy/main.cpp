@@ -715,7 +715,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 	int16 x;
 	int16 y;
 	int16 i;
-	int16 anz;
+	int16 anz = 0;
 	char *str_adr;
 	str_adr = 0;
 
@@ -1364,8 +1364,8 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 	int16 ret;
 	int16 anz;
 	int16 i;
-	int16 txt_nr;
-	int16 txt_mode;
+	int16 txt_nr = 0;
+	int16 txt_mode = 0;
 	int16 ok;
 	bool disp_flag;
 	bool action_flag;
@@ -1493,7 +1493,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 int16 is_mouse_person(int16 x, int16 y) {
 	int16 is_person;
 	int16 i;
-	int16 *xy;
+	int16 *xy = nullptr;
 	int16 check;
 	is_person = -1;
 	if (flags.ShowAtsInvTxt) {
@@ -1539,7 +1539,7 @@ void calc_mouse_person(int16 x, int16 y) {
 	int16 txt_nr;
 	int16 def_nr;
 	int16 dia_nr;
-	int16 mode;
+	int16 mode = 0;
 	int16 p_nr;
 	char ch_txt[MAX_PERSON][9] = {"Chewy", "Howard", "Nichelle"};
 	dia_nr = -1;
@@ -2059,23 +2059,23 @@ ChewyFont::ChewyFont(Common::String filename) {
 
 	_fontSurface.create(_dataWidth * _count, _dataHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
-	byte cur;
+	byte curr;
 	int bitIndex = 7;
 	byte *p;
 
-	cur = stream.readByte();
+	curr = stream.readByte();
 
 	for (uint n = 0; n < _count; n++) {
 		for (uint y = 0; y < _dataHeight; y++) {
 			p = (byte *)_fontSurface.getBasePtr(n * _dataWidth, y);
 
 			for (uint x = n * _dataWidth; x < n * _dataWidth + _dataWidth; x++) {
-				*p++ = (cur & (1 << bitIndex)) ? 0 : 0xFF;
+				*p++ = (curr & (1 << bitIndex)) ? 0 : 0xFF;
 
 				bitIndex--;
 				if (bitIndex < 0) {
 					bitIndex = 7;
-					cur = stream.readByte();
+					curr = stream.readByte();
 				}
 			}
 		}

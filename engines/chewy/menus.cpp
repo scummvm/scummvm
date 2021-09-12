@@ -475,16 +475,16 @@ void invent_menu() {
 int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 	int16 ende;
 	int16 txt_start;
-	int16 txt_anz;
+	int16 txt_anz = 0;
 	int16 maus_flag;
 	int16 i, k;
 	int16 ret;
-	int16 xoff;
-	int16 yoff;
-	int16 txt_zeilen;
+	int16 xoff = 0;
+	int16 yoff = 0;
+	int16 txt_zeilen = 0;
 	int16 rect;
-	char *txt_adr;
-	char *txt_name_adr;
+	char *txt_adr = nullptr;
+	char *txt_name_adr = nullptr;
 	char c[2] = {0};
 	ret = -1;
 	ende = 0;

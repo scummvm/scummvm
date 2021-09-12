@@ -309,7 +309,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, void *handle, int16 chun
 			switch (mode) {
 			case INV_USE_DATEI:
 				mem->file->select_pool_item(atdshandle[mode], atdspooloff[mode]);
-				fseek((FILE *)atdshandle[mode], -(sizeof(ChunkHead)), SEEK_CUR);
+				fseek((FILE *)atdshandle[mode], -(int)(sizeof(ChunkHead)), SEEK_CUR);
 
 				if (!fread(&Ch, sizeof(ChunkHead), 1, (FILE *)atdshandle[mode])) {
 					modul = DATEI;
@@ -339,7 +339,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, void *handle, int16 chun
 
 void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 	FILE *handle;
-	char *tmp_adr;
+	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname_, 0, 20000);
@@ -395,7 +395,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 	txt_adr = atdsmem[mode];
 	if (handle && txt_adr) {
 		mem->file->select_pool_item(handle, chunk_nr + atdspooloff[mode]);
-		fseek(handle, -sizeof(ChunkHead), SEEK_CUR);
+		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!fread(&Ch, sizeof(ChunkHead), 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -422,7 +422,7 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	if (atdshandle[ADH_HANDLE]) {
 		mem->file->select_pool_item(atdshandle[ADH_HANDLE], dia_nr);
 
-		fseek((FILE *)atdshandle[ADH_HANDLE], -sizeof(ChunkHead), SEEK_CUR);
+		fseek((FILE *)atdshandle[ADH_HANDLE], -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!fread(&Ch, sizeof(ChunkHead), 1, (FILE *)atdshandle[ADH_HANDLE])) {
 			modul = DATEI;
 			fcode = READFEHLER;
