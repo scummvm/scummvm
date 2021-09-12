@@ -2194,13 +2194,18 @@ void ToonEngine::fadeOut(int32 numFrames) {
 }
 
 void ToonEngine::initFonts() {
-	// TODO These font files do not exist in the English demo
 	_fontRenderer = new FontRenderer(this);
-	_fontToon = new Animation(this);
-	_fontToon->loadAnimation("TOONFONT.CAF");
+	if (_isEnglishDemo) {
+		// The English demo uses a different font format. There is only one
+		// font, so the alternative font setting is ignored.
+		_fontRenderer->loadDemoFont("8FAT.FNT");
+	} else {
+		_fontToon = new Animation(this);
+		_fontToon->loadAnimation("TOONFONT.CAF");
 
-	_fontEZ = new Animation(this);
-	_fontEZ->loadAnimation("EZFONT.CAF");
+		_fontEZ = new Animation(this);
+		_fontEZ->loadAnimation("EZFONT.CAF");
+	}
 
 	setFont(false);
 }

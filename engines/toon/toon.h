@@ -428,6 +428,7 @@ protected:
 	Animation *_fontToon;
 	Animation *_fontEZ;
 	Animation *_currentFont;
+	Common::String *_currentDemoFont;
 
 	AudioManager *_audioManager;
 
