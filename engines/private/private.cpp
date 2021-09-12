@@ -1242,6 +1242,9 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 #ifdef PLAYSTATION3
 	const byte *palette = decodePalette(name);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	if (_mode == 0 && surf->getPixel(0, 0) != _transparentColor)
+		_compositeSurface->clear(surf->getPixel(0, 0));
 #endif
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
@@ -1291,32 +1294,6 @@ void PrivateEngine::drawMask(Graphics::Surface *surf) {
 	_compositeSurface->transBlitFrom(*surf, _origin, _transparentColor);
 }
 
-#ifdef PLAYSTATION3
-
-void PrivateEngine::drawScreen() {
-	Graphics::ManagedSurface *surface = _compositeSurface;
-	const Graphics::Surface *frame;
-	if (_videoDecoder && !_videoDecoder->isPaused()) {
-		frame = _videoDecoder->decodeNextFrame();
-		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
-		surface->rawBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), center, (const uint32*) _videoDecoder->getPalette());
-		if (_videoDecoder->getPalette() != nullptr)
-			g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
-
-	}
-
-	if (_mode == 1) {
-		drawScreenFrame();
-	}
-
-	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
-	Graphics::Surface sa = surface->getSubArea(w);
-	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
-	g_system->updateScreen();
-}
-
-#else
-
 void PrivateEngine::drawScreen() {
 	Graphics::ManagedSurface *surface = _compositeSurface;
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
@@ -1324,6 +1301,11 @@ void PrivateEngine::drawScreen() {
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
 		surface->blitFrom(*cframe, center);
+#ifdef PLAYSTATION3
+		if (_videoDecoder->getPalette() != nullptr)
+			g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
+#endif
+
 		cframe->free();
 		delete cframe;
 	}
@@ -1337,8 +1319,6 @@ void PrivateEngine::drawScreen() {
 	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
 	g_system->updateScreen();
 }
-
-#endif
 
 bool PrivateEngine::getRandomBool(uint p) {
 	uint r = _rnd->getRandomNumber(100);
