@@ -36,7 +36,7 @@ public:
 
 	void msg();
 	void set_user_msg(const char *msg);
-
+	Common::String get_user_msg() const { return user_msg; }
 private:
 	char err_txt[120];
 	char err_dat[80];
