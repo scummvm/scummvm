@@ -42,59 +42,51 @@ void *script_vars[ScrPools_MAX] = {
 	pers_list
 };
 
-unsigned char Rand(void)
-{
+unsigned char Rand(void) {
 	script_byte_vars.rand_value = aleat_data[++rand_seed];
 	return script_byte_vars.rand_value;
 }
 
-unsigned int RandW(void)
-{
+unsigned int RandW(void) {
 	unsigned int r = Rand() << 8;
 	return r | Rand();
 }
 
-unsigned int Swap16(unsigned int x)
-{
+unsigned int Swap16(unsigned int x) {
 	return (x << 8) | (x >> 8);
 }
 
 /*Script handlers exit codes*/
 enum CommandStatus {
-	ScriptContinue = 0,	/*run next script command normally*/
+	ScriptContinue = 0, /*run next script command normally*/
 	ScriptRerun = 1, /*abort current script, execute new command*/
 	/*TODO: maybe define ScriptRestartGame to support game restart?*/
 };
 
-unsigned int CMD_TRAP(void)
-{
+unsigned int CMD_TRAP(void) {
 	printf("CMD TRAP\n");
 	PromptWait();
-	for(;;) ;
+	for (;;) ;
 	return 0;
 }
 
-unsigned int SCR_TRAP(void)
-{
+unsigned int SCR_TRAP(void) {
 	printf("SCR TRAP 0x%02X @ 0x%X\n", *script_ptr, script_ptr - templ_data);
 	PromptWait();
-	for(;;) ;
+	for (;;) ;
 	return 0;
 }
 
 
-void ClaimTradedItems(void)
-{
+void ClaimTradedItems(void) {
 	int i;
-	for(i = 0;i < MAX_INV_ITEMS;i++)
-	{
-		if(inventory_items[i].flags == (ITEMFLG_80 | 1))
+	for (i = 0; i < MAX_INV_ITEMS; i++) {
+		if (inventory_items[i].flags == (ITEMFLG_80 | 1))
 			inventory_items[i].flags = ITEMFLG_80;
 	}
 }
 
-unsigned int SCR_1_AspirantItemTrade(void)
-{
+unsigned int SCR_1_AspirantItemTrade(void) {
 	unsigned char *old_script, *old_script_end = script_end_ptr;
 
 	item_t *item1, *item2;
@@ -102,20 +94,17 @@ unsigned int SCR_1_AspirantItemTrade(void)
 	script_ptr++;
 	old_script = script_ptr;
 
-	for(;;)
-	{
+	for (;;) {
 		inv_bgcolor = 0xFF;
 		OpenInventory(0xFE, ITEMFLG_80);
 
-		if(inv_count == 0)
-		{
+		if (inv_count == 0) {
 			the_command = 0xC1BC;
 			RunCommand();
 			break;
 		}
 
-		if(the_command == 0)
-		{
+		if (the_command == 0) {
 			the_command = 0xC1C0;
 			RunCommand();
 			break;
@@ -123,29 +112,26 @@ unsigned int SCR_1_AspirantItemTrade(void)
 
 		the_command = 0x9140;
 
-		if(pers_ptr->item == 0)
+		if (pers_ptr->item == 0)
 			break;
 
 		item1 = &inventory_items[pers_ptr->item - 1];
-		item2 = (item_t*)(script_vars[ScrPool3_CurrentItem]);
+		item2 = (item_t *)(script_vars[ScrPool3_CurrentItem]);
 
-		if(item2->flags == (ITEMFLG_80 | 1) || item1->name == item2->name)
-		{
+		if (item2->flags == (ITEMFLG_80 | 1) || item1->name == item2->name) {
 			the_command = 0xC1C0;
 			RunCommand();
 			break;
 		}
 
-		if(item2->name == 109
-		|| item2->name == 132
-		|| item2->name == 108
-		|| script_byte_vars.rand_value < 154)
-		{
+		if (item2->name == 109
+		        || item2->name == 132
+		        || item2->name == 108
+		        || script_byte_vars.rand_value < 154) {
 			item2->flags = ITEMFLG_20;
 			item1->flags = ITEMFLG_80;
 			pers_ptr->item = script_byte_vars.inv_item_index;
-			switch(item2->name)
-			{
+			switch (item2->name) {
 			case 132:
 				script_byte_vars.room_items--;
 				the_command = 0xC04B;
@@ -161,9 +147,7 @@ unsigned int SCR_1_AspirantItemTrade(void)
 			}
 			RunCommand();
 			break;
-		}
-		else
-		{
+		} else {
 			item2->flags = ITEMFLG_80 | 1;
 			the_command = 0xC1BD;
 			RunCommand();
@@ -182,48 +166,43 @@ unsigned int SCR_1_AspirantItemTrade(void)
 
 unsigned char wait_delta = 0;
 
-void Wait(unsigned char seconds)
-{
+void Wait(unsigned char seconds) {
 	struct time t;
 	unsigned int endtime;
 
 	seconds += wait_delta;
-	if(seconds > 127)	/*TODO: is this a check for an unsigned value?*/
+	if (seconds > 127)  /*TODO: is this a check for an unsigned value?*/
 		seconds = 0;
 
 	gettime(&t);
 	endtime = t.ti_sec * 100 + t.ti_hund + seconds * 100;
 
-	while(buttons == 0)
-	{
+	while (buttons == 0) {
 		unsigned int current;
 		gettime(&t);
 		current = t.ti_sec * 100 + t.ti_hund;
-		if(endtime >= 6000 && current < 2048)	/*TODO: some kind of overflow check???*/
+		if (endtime >= 6000 && current < 2048)  /*TODO: some kind of overflow check???*/
 			current += 6000;
-		if(current >= endtime)
+		if (current >= endtime)
 			break;
 	}
 }
 
-unsigned int SCR_2C_Wait4(void)
-{
+unsigned int SCR_2C_Wait4(void) {
 	script_ptr++;
 	Wait(4);
 	return 0;
 }
 
-unsigned int SCR_2D_Wait(void)
-{
+unsigned int SCR_2D_Wait(void) {
 	unsigned char seconds;
 	script_ptr++;
 	seconds = *script_ptr++;
-	Wait(4);	/*TODO: looks like a bug?*/
+	Wait(4);    /*TODO: looks like a bug?*/
 	return 0;
 }
 
-unsigned int SCR_2E_PromptWait(void)
-{
+unsigned int SCR_2E_PromptWait(void) {
 	script_ptr++;
 	PromptWait();
 	return 0;
@@ -240,20 +219,17 @@ unsigned int SCR_2E_PromptWait(void)
 
 unsigned char var_size;
 
-unsigned short LoadVar(unsigned char **ptr, unsigned char **varptr)
-{
+unsigned short LoadVar(unsigned char **ptr, unsigned char **varptr) {
 	unsigned char vartype;
 	unsigned char *varbase;
 	unsigned short value = 0;
 	var_size = VARSIZE_BYTE;
 	vartype = *((*ptr)++);
-	if(vartype & VARTYPE_VAR)
-	{
+	if (vartype & VARTYPE_VAR) {
 		/*variable*/
 		unsigned char varoffs;
-		varbase = (unsigned char*)script_vars[vartype & VARTYPE_KIND];
-		if(vartype & VARTYPE_BLOCK)
-		{
+		varbase = (unsigned char *)script_vars[vartype & VARTYPE_KIND];
+		if (vartype & VARTYPE_BLOCK) {
 			unsigned char *end;
 			unsigned char index = *((*ptr)++);
 			varbase = SeekToEntryW(varbase, index, &end);
@@ -262,8 +238,7 @@ unsigned short LoadVar(unsigned char **ptr, unsigned char **varptr)
 #if 1
 		{
 			int maxoffs = 0;
-			switch(vartype & VARTYPE_KIND)
-			{
+			switch (vartype & VARTYPE_KIND) {
 			case ScrPool0_WordVars0:
 			case ScrPool1_WordVars1:
 				maxoffs = sizeof(script_word_vars);
@@ -290,33 +265,28 @@ unsigned short LoadVar(unsigned char **ptr, unsigned char **varptr)
 				maxoffs = sizeof(pers_t);
 				break;
 			}
-			if(varoffs >= maxoffs)
-			{
+			if (varoffs >= maxoffs) {
 				printf("Scr var out of bounds @ %X (pool %d, ofs 0x%X, max 0x%X)\n", (unsigned int)(script_ptr - templ_data), vartype & VARTYPE_KIND, varoffs, maxoffs);
 				PromptWait();
 			}
 		}
 #endif
 		value = varbase[varoffs];
-		if(vartype & VARTYPE_WORD)
-		{
+		if (vartype & VARTYPE_WORD) {
 			value = (value << 8) | varbase[varoffs + 1];
 			var_size = VARSIZE_WORD;
 		}
 		*varptr = &varbase[varoffs];
 
 #if 0
-/*TODO: debug stuff, remove me*/
-		if(varoffs == 0x48)
+		/*TODO: debug stuff, remove me*/
+		if (varoffs == 0x48)
 			printf("Var 2.%X = %X\n", varoffs, value);
 #endif
-	}
-	else
-	{
+	} else {
 		/*immediate value*/
 		value = *((*ptr)++);
-		if(vartype & VARTYPE_WORD)
-		{
+		if (vartype & VARTYPE_WORD) {
 			value = (value << 8) | *((*ptr)++);
 			var_size = VARSIZE_WORD;
 		}
@@ -341,48 +311,42 @@ unsigned short LoadVar(unsigned char **ptr, unsigned char **varptr)
 #define MATHOP_LE  0x02
 #define MATHOP_GE  0x01
 
-unsigned short MathOp(unsigned char op, unsigned short op1, unsigned short op2)
-{
-	if(op & MATHOP_CMP)
-	{
-		if(op & MATHOP_EQ)
-			if(op1 == op2) return ~0;
-		if(op & MATHOP_B)
-			if(op1 < op2) return ~0;
-		if(op & MATHOP_A)
-			if(op1 > op2) return ~0;
-		if(op & MATHOP_NEQ)
-			if(op1 != op2) return ~0;
-		if(op & MATHOP_LE)
-			if((signed short)op1 <= (signed short)op2) return ~0;
-		if(op & MATHOP_GE)
-			if((signed short)op1 >= (signed short)op2) return ~0;
+unsigned short MathOp(unsigned char op, unsigned short op1, unsigned short op2) {
+	if (op & MATHOP_CMP) {
+		if (op & MATHOP_EQ)
+			if (op1 == op2) return ~0;
+		if (op & MATHOP_B)
+			if (op1 < op2) return ~0;
+		if (op & MATHOP_A)
+			if (op1 > op2) return ~0;
+		if (op & MATHOP_NEQ)
+			if (op1 != op2) return ~0;
+		if (op & MATHOP_LE)
+			if ((signed short)op1 <= (signed short)op2) return ~0;
+		if (op & MATHOP_GE)
+			if ((signed short)op1 >= (signed short)op2) return ~0;
 		return 0;
-	}
-	else
-	{
-		if(op & MATHOP_ADD)
+	} else {
+		if (op & MATHOP_ADD)
 			op1 += op2;
-		if(op & MATHOP_SUB)
+		if (op & MATHOP_SUB)
 			op1 -= op2;
-		if(op & MATHOP_AND)
+		if (op & MATHOP_AND)
 			op1 &= op2;
-		if(op & MATHOP_OR)
+		if (op & MATHOP_OR)
 			op1 |= op2;
-		if(op & MATHOP_XOR)
+		if (op & MATHOP_XOR)
 			op1 ^= op2;
 		return op1;
 	}
 }
 
-unsigned short MathExpr(unsigned char **ptr)
-{
+unsigned short MathExpr(unsigned char **ptr) {
 	unsigned char op;
 	unsigned short op1, op2;
 	unsigned char *opptr;
 	op1 = LoadVar(ptr, &opptr);
-	while(((op = *((*ptr)++)) & MATHOP_END) == 0)
-	{
+	while (((op = *((*ptr)++)) & MATHOP_END) == 0) {
 		op2 = LoadVar(ptr, &opptr);
 		op1 = MathOp(op, op1, op2);
 	}
@@ -392,8 +356,7 @@ unsigned short MathExpr(unsigned char **ptr)
 /*
 Math operations (assignment) on a variable
 */
-unsigned int SCR_3B_MathExpr(void)
-{
+unsigned int SCR_3B_MathExpr(void) {
 	unsigned short op1, op2;
 	unsigned char *opptr;
 
@@ -401,21 +364,19 @@ unsigned int SCR_3B_MathExpr(void)
 
 	op1 = LoadVar(&script_ptr, &opptr);
 	op2 = MathExpr(&script_ptr);
-	if(var_size == VARSIZE_BYTE)
+	if (var_size == VARSIZE_BYTE)
 		*opptr = op2 & 255;
-	else
-	{
-		opptr[0] = op2 >> 8;	/*store in big-endian*/
+	else {
+		opptr[0] = op2 >> 8;    /*store in big-endian*/
 		opptr[1] = op2 & 255;
 	}
 
-	/*return op1;*/	/*previous value, never used?*/
+	/*return op1;*/ /*previous value, never used?*/
 	return 0;
 }
 
 /*Jump to routine*/
-unsigned int SCR_12_Chain(void)
-{
+unsigned int SCR_12_Chain(void) {
 	script_ptr++;
 	the_command = *script_ptr++;          /*little-endian*/
 	the_command |= (*script_ptr++) << 8;
@@ -427,8 +388,7 @@ unsigned int SCR_12_Chain(void)
 Absolute jump
 Jumping past current routine ends the script
 */
-unsigned int SCR_33_Jump(void)
-{
+unsigned int SCR_33_Jump(void) {
 	unsigned short offs;
 	script_ptr++;
 	offs = *script_ptr++;          /*little-endian*/
@@ -440,19 +400,15 @@ unsigned int SCR_33_Jump(void)
 /*
 Conditional jump (IF/ELSE block)
 */
-unsigned int SCR_3C_CondExpr(void)
-{
+unsigned int SCR_3C_CondExpr(void) {
 	script_ptr++;
 
-	if(MathExpr(&script_ptr))
-	{
+	if (MathExpr(&script_ptr)) {
 		/*fall to IF block*/
 		script_ptr += 2;
-	}
-	else
-	{
+	} else {
 		/*branch to ELSE block*/
-		script_ptr -= 1;	/*simulate opcode byte for Jump handler*/
+		script_ptr -= 1;    /*simulate opcode byte for Jump handler*/
 		return SCR_33_Jump();
 	}
 	return 0;
@@ -461,8 +417,7 @@ unsigned int SCR_3C_CondExpr(void)
 /*
 Absolute subroutine call
 */
-unsigned int SCR_34_Call(void)
-{
+unsigned int SCR_34_Call(void) {
 	unsigned short offs;
 	script_ptr++;
 	offs = *script_ptr++;          /*little-endian*/
@@ -476,8 +431,7 @@ unsigned int SCR_34_Call(void)
 /*
 Return from script subroutine
 */
-unsigned int SCR_35_Ret(void)
-{
+unsigned int SCR_35_Ret(void) {
 	script_end_ptr = *(--script_stack_ptr);
 	script_ptr = *(--script_stack_ptr);
 	return 0;
@@ -485,13 +439,12 @@ unsigned int SCR_35_Ret(void)
 
 
 /*Draw portrait, pushing it from left to right*/
-unsigned int SCR_5_DrawPortraitLiftRight(void)
-{
+unsigned int SCR_5_DrawPortraitLiftRight(void) {
 	unsigned char x, y, width, height;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -500,13 +453,12 @@ unsigned int SCR_5_DrawPortraitLiftRight(void)
 }
 
 /*Draw portrait, pushing it from right to left*/
-unsigned int SCR_6_DrawPortraitLiftLeft(void)
-{
+unsigned int SCR_6_DrawPortraitLiftLeft(void) {
 	unsigned char x, y, width, height;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -515,13 +467,12 @@ unsigned int SCR_6_DrawPortraitLiftLeft(void)
 }
 
 /*Draw portrait, pushing it from top to bottom*/
-unsigned int SCR_7_DrawPortraitLiftDown(void)
-{
+unsigned int SCR_7_DrawPortraitLiftDown(void) {
 	unsigned char x, y, width, height;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -530,13 +481,12 @@ unsigned int SCR_7_DrawPortraitLiftDown(void)
 }
 
 /*Draw portrait, pushing it from bottom to top*/
-unsigned int SCR_8_DrawPortraitLiftUp(void)
-{
+unsigned int SCR_8_DrawPortraitLiftUp(void) {
 	unsigned char x, y, width, height;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -545,13 +495,12 @@ unsigned int SCR_8_DrawPortraitLiftUp(void)
 }
 
 /*Draw portrait, no special effects*/
-unsigned int SCR_9_DrawPortrait(void)
-{
+unsigned int SCR_9_DrawPortrait(void) {
 	unsigned char x, y, width, height;
 
-	script_ptr++; 
+	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
@@ -559,17 +508,15 @@ unsigned int SCR_9_DrawPortrait(void)
 }
 
 /*Draw screen pixels using 2-phase clockwise twist*/
-void TwistDraw(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *source, unsigned char *target)
-{
+void TwistDraw(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *source, unsigned char *target) {
 	int i;
 	unsigned int sx, ex, sy, ey, t;
 	sx = x * 4;
 	ex = x * 4 + width * 4 - 1;
 	sy = y;
 	ey = y + height - 1;
-	
-	for(i = 0;i < width * 4;i++)
-	{
+
+	for (i = 0; i < width * 4; i++) {
 		CGA_TraceLine(sx, ex, sy, ey, source, target);
 		WaitVBlank();
 		sx += 1;
@@ -584,8 +531,7 @@ void TwistDraw(unsigned char x, unsigned char y, unsigned char width, unsigned c
 	sy = ey;
 	ey = t;
 
-	for(i = 0;i < height;i++)
-	{
+	for (i = 0; i < height; i++) {
 		CGA_TraceLine(sx, ex, sy, ey, source, target);
 		WaitVBlank();
 		sy -= 1;
@@ -594,14 +540,13 @@ void TwistDraw(unsigned char x, unsigned char y, unsigned char width, unsigned c
 }
 
 /*Draw image with twist-effect*/
-unsigned int SCR_B_DrawPortraitTwistEffect(void)
-{
+unsigned int SCR_B_DrawPortraitTwistEffect(void) {
 	unsigned char x, y, width, height;
 	unsigned int offs;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	offs = CGA_CalcXY_p(x, y);
@@ -614,8 +559,7 @@ unsigned int SCR_B_DrawPortraitTwistEffect(void)
 }
 
 /*Draw screen pixels using arc-like sweep*/
-void ArcDraw(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *source, unsigned char *target)
-{
+void ArcDraw(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *source, unsigned char *target) {
 	int i;
 	unsigned int sx, ex, sy, ey;
 	sx = x * 4;
@@ -623,22 +567,19 @@ void ArcDraw(unsigned char x, unsigned char y, unsigned char width, unsigned cha
 	sy = y + height - 1;
 	ey = y + height - 1;
 
-	for(i = 0;i < height;i++)
-	{
+	for (i = 0; i < height; i++) {
 		CGA_TraceLine(sx, ex, sy, ey, source, target);
 		WaitVBlank();
 		sy -= 1;
 	}
 
-	for(i = 0;i < width * 4;i++)
-	{
+	for (i = 0; i < width * 4; i++) {
 		CGA_TraceLine(sx, ex, sy, ey, source, target);
 		WaitVBlank();
 		sx += 1;
 	}
 
-	for(i = 0;i < height + 1;i++)
-	{
+	for (i = 0; i < height + 1; i++) {
 		CGA_TraceLine(sx, ex, sy, ey, source, target);
 		WaitVBlank();
 		sy += 1;
@@ -646,14 +587,13 @@ void ArcDraw(unsigned char x, unsigned char y, unsigned char width, unsigned cha
 }
 
 /*Draw image with arc-effect*/
-unsigned int SCR_C_DrawPortraitArcEffect(void)
-{
+unsigned int SCR_C_DrawPortraitArcEffect(void) {
 	unsigned char x, y, width, height;
 	unsigned int offs;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	offs = CGA_CalcXY_p(x, y);
@@ -666,8 +606,7 @@ unsigned int SCR_C_DrawPortraitArcEffect(void)
 }
 
 /*Draw image with slow top-to-down reveal effect by repeatedly draw its every 17th pixel*/
-unsigned int SCR_D_DrawPortraitDotEffect(void)
-{
+unsigned int SCR_D_DrawPortraitDotEffect(void) {
 	int i;
 	unsigned char x, y, width, height;
 	unsigned int offs, step = 17;
@@ -675,30 +614,28 @@ unsigned int SCR_D_DrawPortraitDotEffect(void)
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	cur_image_end = width * height;
 
-	for(offs = 0;offs != cur_image_end;)
-	{
+	for (offs = 0; offs != cur_image_end;) {
 		target[CGA_CalcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs];
-		for(i = 0;i < 255;i++) ;	/*TODO FIXME weak delay*/
+		for (i = 0; i < 255; i++) ; /*TODO FIXME weak delay*/
 		offs += step;
-		if(offs > cur_image_end)
+		if (offs > cur_image_end)
 			offs -= cur_image_end;
 	}
 	return 0;
 }
 
 /*Draw image with slow zoom-in reveal effect*/
-unsigned int SCR_E_DrawPortraitZoomIn(void)
-{
+unsigned int SCR_E_DrawPortraitZoomIn(void) {
 	unsigned char x, y, width, height;
 
 	script_ptr++;
 
-	if(!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO*/
@@ -710,8 +647,7 @@ unsigned int SCR_E_DrawPortraitZoomIn(void)
 
 
 /*Hide portrait, pushing it from right to left*/
-unsigned int SCR_19_HidePortraitLiftLeft(void)
-{
+unsigned int SCR_19_HidePortraitLiftLeft(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -722,8 +658,7 @@ unsigned int SCR_19_HidePortraitLiftLeft(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -733,8 +668,7 @@ unsigned int SCR_19_HidePortraitLiftLeft(void)
 	/*offs = CGA_CalcXY_p(x + 1, y);*/
 	offs++;
 
-	while(--width)
-	{
+	while (--width) {
 		CGA_HideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
 
@@ -742,12 +676,11 @@ unsigned int SCR_19_HidePortraitLiftLeft(void)
 
 	/*hide leftmost line*/
 	/*TODO: move this to CGA?*/
-	while(height--)
-	{
+	while (height--) {
 		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
 		offs ^= CGA_ODD_LINES_OFS;
-		if((offs & CGA_ODD_LINES_OFS) == 0)
+		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
 
@@ -755,8 +688,7 @@ unsigned int SCR_19_HidePortraitLiftLeft(void)
 }
 
 /*Hide portrait, pushing it from left to right*/
-unsigned int SCR_1A_HidePortraitLiftRight(void)
-{
+unsigned int SCR_1A_HidePortraitLiftRight(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -767,8 +699,7 @@ unsigned int SCR_1A_HidePortraitLiftRight(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -777,8 +708,7 @@ unsigned int SCR_1A_HidePortraitLiftRight(void)
 
 	offs = CGA_CalcXY_p(x + width - 2, y);
 
-	while(--width)
-	{
+	while (--width) {
 		CGA_HideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
 
@@ -786,12 +716,11 @@ unsigned int SCR_1A_HidePortraitLiftRight(void)
 
 	/*hide leftmost line*/
 	/*TODO: move this to CGA?*/
-	while(height--)
-	{
+	while (height--) {
 		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
 		offs ^= CGA_ODD_LINES_OFS;
-		if((offs & CGA_ODD_LINES_OFS) == 0)
+		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
 
@@ -799,8 +728,7 @@ unsigned int SCR_1A_HidePortraitLiftRight(void)
 }
 
 /*Hide portrait, pushing it from bottom to top*/
-unsigned int SCR_1B_HidePortraitLiftUp(void)
-{
+unsigned int SCR_1B_HidePortraitLiftUp(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -811,23 +739,21 @@ unsigned int SCR_1B_HidePortraitLiftUp(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
 
 	offs = CGA_CalcXY_p(x, y + 1);
 
-	while(--height)
-	{
+	while (--height) {
 		CGA_HideScreenBlockLiftToUp(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
 
 	/*hide topmost line*/
 	/*TODO: move this to CGA?*/
 	offs ^= CGA_ODD_LINES_OFS;
-	if((offs & CGA_ODD_LINES_OFS) != 0)
+	if ((offs & CGA_ODD_LINES_OFS) != 0)
 		offs -= CGA_BYTES_PER_LINE;
 	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
 	return 0;
@@ -835,8 +761,7 @@ unsigned int SCR_1B_HidePortraitLiftUp(void)
 
 
 /*Hide portrait, pushing it from top to bottom*/
-unsigned int SCR_1C_HidePortraitLiftDown(void)
-{
+unsigned int SCR_1C_HidePortraitLiftDown(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -847,23 +772,21 @@ unsigned int SCR_1C_HidePortraitLiftDown(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
 
 	offs = CGA_CalcXY_p(x, y + height - 2);
 
-	while(--height)
-	{
+	while (--height) {
 		CGA_HideScreenBlockLiftToDown(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
 
 	/*hide bottommost line*/
 	/*TODO: move this to CGA?*/
 	offs ^= CGA_ODD_LINES_OFS;
-	if((offs & CGA_ODD_LINES_OFS) == 0)
+	if ((offs & CGA_ODD_LINES_OFS) == 0)
 		offs += CGA_BYTES_PER_LINE;
 	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
 	return 0;
@@ -871,8 +794,7 @@ unsigned int SCR_1C_HidePortraitLiftDown(void)
 
 
 /*Hide portrait with twist effect*/
-unsigned int SCR_1E_HidePortraitTwist(void)
-{
+unsigned int SCR_1E_HidePortraitTwist(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -883,8 +805,7 @@ unsigned int SCR_1E_HidePortraitTwist(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -895,8 +816,7 @@ unsigned int SCR_1E_HidePortraitTwist(void)
 }
 
 /*Hide portrait with arc effect*/
-unsigned int SCR_1F_HidePortraitArc(void)
-{
+unsigned int SCR_1F_HidePortraitArc(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -907,8 +827,7 @@ unsigned int SCR_1F_HidePortraitArc(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -919,8 +838,7 @@ unsigned int SCR_1F_HidePortraitArc(void)
 }
 
 /*Hide portrait with dots effect*/
-unsigned int SCR_20_HidePortraitDots(void)
-{
+unsigned int SCR_20_HidePortraitDots(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -931,8 +849,7 @@ unsigned int SCR_20_HidePortraitDots(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -945,8 +862,7 @@ unsigned int SCR_20_HidePortraitDots(void)
 }
 
 
-unsigned int SCR_39_AnimRoomDoorOpen(void)
-{
+unsigned int SCR_39_AnimRoomDoorOpen(void) {
 	unsigned char door;
 
 	script_ptr++;
@@ -955,8 +871,7 @@ unsigned int SCR_39_AnimRoomDoorOpen(void)
 	return 0;
 }
 
-unsigned int SCR_3A_AnimRoomDoorClose(void)
-{
+unsigned int SCR_3A_AnimRoomDoorClose(void) {
 	unsigned char door;
 
 	script_ptr++;
@@ -965,8 +880,7 @@ unsigned int SCR_3A_AnimRoomDoorClose(void)
 	return 0;
 }
 
-unsigned int SCR_25_ChangeZoneOnly(void)
-{
+unsigned int SCR_25_ChangeZoneOnly(void) {
 	unsigned char index;
 	unsigned char old = script_byte_vars.zone_room;
 
@@ -979,32 +893,28 @@ unsigned int SCR_25_ChangeZoneOnly(void)
 }
 
 
-void JaggedZoom(void)
-{
+void JaggedZoom(void) {
 	/*TODO*/
 }
 
-void InitStarfield(void)
-{
+void InitStarfield(void) {
 	/*TODO*/
 }
 
-void AnimStarfield(void)
-{
+void AnimStarfield(void) {
 	/*TODO*/
 }
 
-unsigned int SCR_26_GameOver(void)
-{
+unsigned int SCR_26_GameOver(void) {
 	in_de_profundis = 0;
 	script_byte_vars.game_paused = 1;
-	memset(backbuffer, 0, sizeof(backbuffer) - 2);	/*TODO: original bug?*/
+	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
 	JaggedZoom();
 	CGA_BackBufferToRealFull();
 	CGA_ColorSelect(0x30);
 	InitStarfield();
 	AnimStarfield();
-	PlayAnim(44, 156/4, 95);
+	PlayAnim(44, 156 / 4, 95);
 	script_byte_vars.zone_index = 135;
 	JaggedZoom();
 	CGA_BackBufferToRealFull();
@@ -1016,16 +926,14 @@ unsigned int SCR_26_GameOver(void)
 }
 
 
-unsigned int SCR_4C_DrawZoneObjs(void)
-{
+unsigned int SCR_4C_DrawZoneObjs(void) {
 	script_ptr++;
 	DrawZoneObjs();
 	return 0;
 }
 
 
-unsigned int SCR_13_RedrawRoomStatics(void)
-{
+unsigned int SCR_13_RedrawRoomStatics(void) {
 	unsigned char index;
 	script_ptr++;
 	index = *script_ptr++;
@@ -1036,27 +944,23 @@ unsigned int SCR_13_RedrawRoomStatics(void)
 /*
 Load and draw zone (to backbuffer)
 */
-unsigned int SCR_42_LoadZone(void)
-{
+unsigned int SCR_42_LoadZone(void) {
 	unsigned char index;
 
 	script_ptr++;
 	index = *script_ptr++;
 
 	zone_drawn = 0;
-	if(right_button)
+	if (right_button)
 		script_byte_vars.byte_179B8 = 0;
-	else
-	{
-		if((script_byte_vars.cur_spot_flags & (SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8)) == 0)
+	else {
+		if ((script_byte_vars.cur_spot_flags & (SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8)) == 0)
 			script_byte_vars.byte_179B8 = script_byte_vars.cur_spot_flags & 7;
-		else if((script_byte_vars.cur_spot_flags & ((SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8))) == SPOTFLG_8)
-		{
+		else if ((script_byte_vars.cur_spot_flags & ((SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8))) == SPOTFLG_8) {
 			zone_drawn = 1;
 			AnimRoomDoorOpen(script_byte_vars.cur_spot_idx);
 			script_byte_vars.byte_179B8 = script_byte_vars.cur_spot_flags & 7;
-		}
-		else
+		} else
 			script_byte_vars.byte_179B8 = 0;
 	}
 	UpdateZoneSpot(index);
@@ -1067,8 +971,7 @@ unsigned int SCR_42_LoadZone(void)
 
 	DrawRoomStatics();
 
-	if(script_byte_vars.byte_17A15 != 0)
-	{
+	if (script_byte_vars.byte_17A15 != 0) {
 		RedrawRoomStatics(script_byte_vars.byte_17A15, 0);
 		script_byte_vars.byte_17A15 = 0;
 	}
@@ -1082,56 +985,49 @@ unsigned int SCR_42_LoadZone(void)
 	return 0;
 }
 
-unsigned int SCR_59_BlitSpritesToBackBuffer(void)
-{
+unsigned int SCR_59_BlitSpritesToBackBuffer(void) {
 	script_ptr++;
 	BlitSpritesToBackBuffer();
 	return 0;
 }
 
-unsigned int SCR_5A_SelectPalette(void)
-{
+unsigned int SCR_5A_SelectPalette(void) {
 	script_ptr++;
 	SelectPalette();
 	return 0;
 }
 
-unsigned int SCR_43_RefreshZone(void)
-{
+unsigned int SCR_43_RefreshZone(void) {
 	script_ptr++;
 	RefreshZone();
 	return 0;
 }
 
 
-unsigned int SCR_36_ChangeZone(void)
-{
+unsigned int SCR_36_ChangeZone(void) {
 	SCR_42_LoadZone();
 	RefreshZone();
 	return 0;
 }
 
-void SCR_DrawRoomObjectBack(unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h)
-{
+void SCR_DrawRoomObjectBack(unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h) {
 	unsigned char obj[3];
 
 	script_ptr++;
-	obj[0] = *script_ptr++;	/*spr*/
-	obj[1] = *script_ptr++;	/*x*/
-	obj[2] = *script_ptr++;	/*y*/
+	obj[0] = *script_ptr++; /*spr*/
+	obj[1] = *script_ptr++; /*x*/
+	obj[2] = *script_ptr++; /*y*/
 
 	DrawRoomStaticObject(obj, x, y, w, h);
 }
 
-unsigned int SCR_5F_DrawRoomObjectBack(void)
-{
+unsigned int SCR_5F_DrawRoomObjectBack(void) {
 	unsigned char x, y, w, h;
 	SCR_DrawRoomObjectBack(&x, &y, &w, &h);
 	return 0;
 }
 
-unsigned int SCR_11_DrawRoomObject(void)
-{
+unsigned int SCR_11_DrawRoomObject(void) {
 	unsigned char x, y, w, h;
 	SCR_DrawRoomObjectBack(&x, &y, &w, &h);
 	CGA_CopyScreenBlock(backbuffer, w, h, CGA_SCREENBUFFER, CGA_CalcXY_p(x, y));
@@ -1141,8 +1037,7 @@ unsigned int SCR_11_DrawRoomObject(void)
 /*
 Draw box with item sprite and its name
 */
-unsigned int SCR_3_DrawItemBox(void)
-{
+unsigned int SCR_3_DrawItemBox(void) {
 	unsigned char current;
 
 	item_t *item;
@@ -1152,8 +1047,8 @@ unsigned int SCR_3_DrawItemBox(void)
 	script_ptr++;
 	current = *script_ptr++;
 
-	if(current)
-		item = (item_t*)script_vars[ScrPool3_CurrentItem];
+	if (current)
+		item = (item_t *)script_vars[ScrPool3_CurrentItem];
 	else
 		item = &inventory_items[pers_ptr->item - 1];
 
@@ -1168,8 +1063,7 @@ unsigned int SCR_3_DrawItemBox(void)
 }
 
 /*Draw simple bubble with text*/
-unsigned int SCR_37_DesciTextBox(void)
-{
+unsigned int SCR_37_DesciTextBox(void) {
 	unsigned char x, y, w;
 	unsigned char *msg;
 	script_ptr++;
@@ -1184,8 +1078,7 @@ unsigned int SCR_37_DesciTextBox(void)
 
 
 /*Play portrait animation*/
-unsigned int SCR_18_AnimPortrait(void)
-{
+unsigned int SCR_18_AnimPortrait(void) {
 	unsigned char layer, index, delay;
 	script_ptr++;
 
@@ -1195,12 +1088,11 @@ unsigned int SCR_18_AnimPortrait(void)
 
 	AnimPortrait(layer, index, delay);
 
-	return 0;	
+	return 0;
 }
 
 /*Play animation*/
-unsigned int SCR_38_PlayAnim(void)
-{
+unsigned int SCR_38_PlayAnim(void) {
 	unsigned char index, x, y;
 	script_ptr++;
 	index = *script_ptr++;
@@ -1211,8 +1103,7 @@ unsigned int SCR_38_PlayAnim(void)
 }
 
 /*Pop up the actions menu and handle its commands*/
-unsigned int SCR_3D_ActionsMenu(void)
-{
+unsigned int SCR_3D_ActionsMenu(void) {
 	unsigned short cmd;
 
 	unsigned char *old_script = script_ptr;
@@ -1220,16 +1111,14 @@ unsigned int SCR_3D_ActionsMenu(void)
 
 	act_menu_x = 0xFF;
 
-	for(;;)
-	{
+	for (;;) {
 		script_ptr++;
 		ActionsMenu(&script_ptr);
-		if(the_command == 0xFFFF)
+		if (the_command == 0xFFFF)
 			break;
 
 		cmd = the_command & 0xF000;
-		if(cmd == 0xC000 || cmd == 0xA000)
-		{
+		if (cmd == 0xC000 || cmd == 0xA000) {
 			return ScriptRerun;
 		}
 
@@ -1237,15 +1126,14 @@ unsigned int SCR_3D_ActionsMenu(void)
 
 		script_byte_vars.used_commands++;
 
-		if(script_byte_vars.byte_179F9 == 0 && script_byte_vars.check_used_commands < script_byte_vars.used_commands)
-		{
+		if (script_byte_vars.byte_179F9 == 0 && script_byte_vars.check_used_commands < script_byte_vars.used_commands) {
 			the_command = Swap16(script_word_vars.next_command1);
-			if(the_command)
+			if (the_command)
 				return ScriptRerun;
 		}
 
 		script_ptr = old_script;
-		if(--script_byte_vars.tries_left == 0)
+		if (--script_byte_vars.tries_left == 0)
 			ResetAllPersons();
 	}
 
@@ -1254,13 +1142,11 @@ unsigned int SCR_3D_ActionsMenu(void)
 }
 
 /*The Wall room puzzle*/
-unsigned int SCR_3E_TheWallAdvance(void)
-{
+unsigned int SCR_3E_TheWallAdvance(void) {
 	script_ptr++;
 
 	script_byte_vars.the_wall_phase = (script_byte_vars.the_wall_phase + 1) % 4;
-	switch(script_byte_vars.the_wall_phase)
-	{
+	switch (script_byte_vars.the_wall_phase) {
 	default:
 		TheWallPhase3();
 		break;
@@ -1281,8 +1167,7 @@ unsigned int SCR_3E_TheWallAdvance(void)
 /*
 When playing cups with proto
 */
-unsigned int SCR_28_MenuLoop(void)
-{
+unsigned int SCR_28_MenuLoop(void) {
 	unsigned char cursor;
 	unsigned char mask, value;
 
@@ -1295,15 +1180,14 @@ unsigned int SCR_28_MenuLoop(void)
 
 	MenuLoop(mask, value);
 
-	return 0;	
+	return 0;
 }
 
 
 /*
 Restore screen data from back buffer as specified by dirty rects of specified index
 */
-unsigned int SCR_2A_PopDialogRect(void)
-{
+unsigned int SCR_2A_PopDialogRect(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -1314,8 +1198,8 @@ unsigned int SCR_2A_PopDialogRect(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);	/*TODO: implicit target*/
-	CGA_CopyScreenBlock(backbuffer, 2, 21, CGA_SCREENBUFFER, offs = (x << 8) | y);	/*TODO: implicit target*/
+	CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs); /*TODO: implicit target*/
+	CGA_CopyScreenBlock(backbuffer, 2, 21, CGA_SCREENBUFFER, offs = (x << 8) | y);  /*TODO: implicit target*/
 
 	cur_dlg_index = 0;
 
@@ -1325,8 +1209,7 @@ unsigned int SCR_2A_PopDialogRect(void)
 /*
 Restore screen data from back buffer as specified by dirty rect of kind dialog bubble
 */
-unsigned int SCR_2B_PopAllBubbles(void)
-{
+unsigned int SCR_2B_PopAllBubbles(void) {
 	script_ptr++;
 	PopDirtyRects(DirtyRectBubble);
 	return 0;
@@ -1335,8 +1218,7 @@ unsigned int SCR_2B_PopAllBubbles(void)
 /*
 Hide a portrait, with shatter effect
 */
-unsigned int SCR_22_HidePortraitShatter(void)
-{
+unsigned int SCR_22_HidePortraitShatter(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -1347,8 +1229,7 @@ unsigned int SCR_22_HidePortraitShatter(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -1361,8 +1242,7 @@ unsigned int SCR_22_HidePortraitShatter(void)
 /*
 Hide a portrait, no special effects
 */
-unsigned int SCR_23_HidePortrait(void)
-{
+unsigned int SCR_23_HidePortrait(void) {
 	unsigned char index;
 	unsigned char kind;
 	unsigned char x, y;
@@ -1373,8 +1253,7 @@ unsigned int SCR_23_HidePortrait(void)
 	index = *script_ptr++;
 
 	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if(right_button)
-	{
+	if (right_button) {
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -1387,8 +1266,7 @@ unsigned int SCR_23_HidePortrait(void)
 /*
 Restore screen data from back buffer for all portraits
 */
-unsigned int SCR_24_PopAllPortraits(void)
-{
+unsigned int SCR_24_PopAllPortraits(void) {
 	script_ptr++;
 	PopDirtyRects(DirtyRectSprite);
 	return 0;
@@ -1397,8 +1275,7 @@ unsigned int SCR_24_PopAllPortraits(void)
 /*
 Restore screen data from back buffer for all text bubbles
 */
-unsigned int SCR_40_PopAllTextBoxes()
-{
+unsigned int SCR_40_PopAllTextBoxes() {
 	script_ptr++;
 	PopDirtyRects(DirtyRectText);
 	return 0;
@@ -1407,8 +1284,7 @@ unsigned int SCR_40_PopAllTextBoxes()
 /*
 Move a Hand in Who Will Be Saved
 */
-unsigned int SCR_41_LiftHand(void)
-{
+unsigned int SCR_41_LiftHand(void) {
 	script_ptr++;
 	RedrawRoomStatics(92, script_byte_vars.byte_179E1);
 	CGA_BackBufferToRealFull();
@@ -1418,15 +1294,14 @@ unsigned int SCR_41_LiftHand(void)
 
 unsigned char fight_mode = 0;
 
-unsigned int SCR_30_Fight(void)
-{
+unsigned int SCR_30_Fight(void) {
 	static unsigned char player_image[] = {26, 0, 0};
 	unsigned char *image = player_image;
 
 	unsigned char x, y, width, height, kind;
 	unsigned int offs;
 	unsigned char *old_script, *old_script_end = script_end_ptr;
-	pers_t *pers = (pers_t*)(script_vars[ScrPool8_CurrentPers]);
+	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
 
 	unsigned char strenght, win, rnd;
 
@@ -1438,23 +1313,19 @@ unsigned int SCR_30_Fight(void)
 
 	fight_mode = 1;
 
-	if(pers->name != 44)
-	{
-		if(next_command3 == 0xA015)
-		{
+	if (pers->name != 44) {
+		if (next_command3 == 0xA015) {
 			the_command = 0xA015;
 			RunCommand();
-			FindAndSelectSpot((pers - pers_list) * 5);	/*TODO: FindAndSelectSpot assumes plain offset, 5-byte records*/
+			FindAndSelectSpot((pers - pers_list) * 5);  /*TODO: FindAndSelectSpot assumes plain offset, 5-byte records*/
 		}
-		if(Swap16(script_word_vars.next_command1) == 0xC357)
-		{
+		if (Swap16(script_word_vars.next_command1) == 0xC357) {
 			the_command = 0xC357;
 			RunCommand();
 		}
 
-		pers = (pers_t*)(script_vars[ScrPool8_CurrentPers]);
-		if(pers->name != 56 && pers->name != 51)
-		{
+		pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+		if (pers->name != 56 && pers->name != 51) {
 			x = dirty_rects[0].x + 64 / 4;
 			y = dirty_rects[0].y;
 			fight_mode = 0;
@@ -1464,13 +1335,12 @@ unsigned int SCR_30_Fight(void)
 	/*draw player portrait*/
 	player_image[1] = x;
 	player_image[2] = y;
-	if(DrawPortrait(&image, &x, &y, &width, &height))
-        CGA_AnimLiftToLeft(width, cur_image_pixels, width, 1, height, CGA_SCREENBUFFER, CGA_CalcXY_p(x + width - 1, y));
+	if (DrawPortrait(&image, &x, &y, &width, &height))
+		CGA_AnimLiftToLeft(width, cur_image_pixels, width, 1, height, CGA_SCREENBUFFER, CGA_CalcXY_p(x + width - 1, y));
 
 	BlinkToWhite();
 
-	if(pers->name != 44 && pers->name != 56 && pers->name != 51)
-	{
+	if (pers->name != 44 && pers->name != 56 && pers->name != 51) {
 		GetDirtyRectAndFree(1, &kind, &x, &y, &width, &height, &offs);
 		CGA_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
@@ -1481,29 +1351,27 @@ unsigned int SCR_30_Fight(void)
 
 	script_byte_vars.byte_179F2 = 0;
 
-	if(script_byte_vars.byte_179F3 == 0)
-	{
+	if (script_byte_vars.byte_179F3 == 0) {
 		static unsigned char character_strenght[] = {1, 3, 1, 1, 1, 1, 5, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1};
 
 		strenght = character_strenght[pers->name - 42];
 
 		/*check if can decrease*/
-		if(strenght != 1 && (pers->flags & PERSFLG_80))
+		if (strenght != 1 && (pers->flags & PERSFLG_80))
 			strenght--;
 
-		if(script_byte_vars.room_items != 0 || script_byte_vars.byte_17A1C != 0)
+		if (script_byte_vars.room_items != 0 || script_byte_vars.byte_17A1C != 0)
 			strenght--;
 	}
 
 	/*check if can increase*/
-	if(strenght != 5)
-	{
-		if((pers->item >= 19 && pers->item < 23)
-		|| (pers->item >= 39 && pers->item < 52)
-		|| pers->item == 56 || pers->item == 57
-		|| ((pers->index >> 3) == 6))
+	if (strenght != 5) {
+		if ((pers->item >= 19 && pers->item < 23)
+		        || (pers->item >= 39 && pers->item < 52)
+		        || pers->item == 56 || pers->item == 57
+		        || ((pers->index >> 3) == 6))
 			strenght++;
-	}	
+	}
 
 	win = 1;
 	rnd = script_byte_vars.rand_value;
@@ -1512,23 +1380,16 @@ unsigned int SCR_30_Fight(void)
 	strenght = 1;
 #endif
 
-	if(strenght >= 2)
-	{
-		if(strenght == 2)
-		{
-			if(rnd >= 205)
+	if (strenght >= 2) {
+		if (strenght == 2) {
+			if (rnd >= 205)
 				win = Rand() < 128 ? 81 : 82;
-		}
-		else if(strenght == 4 && rnd < 100)
-		{
+		} else if (strenght == 4 && rnd < 100) {
 			win = Rand() < 128 ? 81 : 82;
-		}
-		else
-		{
+		} else {
 			win = 2;
-			if(strenght == 3)
-			{
-				if(rnd < 128)	/*TODO: check me, maybe original bug (checks against wrong reg?)*/
+			if (strenght == 3) {
+				if (rnd < 128)  /*TODO: check me, maybe original bug (checks against wrong reg?)*/
 					win = Rand() < 51 ? 145 : 146;
 				else
 					win = Rand() < 205 ? 49 : 50;
@@ -1547,8 +1408,8 @@ unsigned char prev_fight_mode = 0;
 unsigned short fight_pers_ofs = 0;
 
 typedef struct fightentry_t {
-unsigned char	room;
-animdesc_t		anim;
+	unsigned char   room;
+	animdesc_t      anim;
 } fightentry_t;
 
 fightentry_t fightlist1[] = {
@@ -1620,59 +1481,46 @@ fightentry_t fightlist3[] = {
 };
 
 /*Draw defeated enemy*/
-unsigned int SCR_31_Fight2(void)
-{
+unsigned int SCR_31_Fight2(void) {
 	script_ptr++;
 
-	if(script_byte_vars.byte_179F9 != 18)
-	{
-		pers_t *pers = (pers_t*)(script_vars[ScrPool8_CurrentPers]);
-		fight_pers_ofs = (unsigned char*)pers - (unsigned char*)pers_list;	/*TODO check size*/
+	if (script_byte_vars.byte_179F9 != 18) {
+		pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+		fight_pers_ofs = (unsigned char *)pers - (unsigned char *)pers_list; /*TODO check size*/
 		pers->flags |= PERSFLG_40;
 		pers->area = 0;
 		found_spot->flags &= ~SPOTFLG_80;
-		if(pers->index == 16)
-		{
+		if (pers->index == 16) {
 			pers_list[34].area = script_byte_vars.zone_area;
 			pers_list[34].flags = pers->flags;
-			if(script_byte_vars.room_items == 0)
-			{
+			if (script_byte_vars.room_items == 0) {
 				static const animdesc_t anim19 = {ANIMFLG_USESPOT | 19};
 				AnimateSpot(&anim19);
 			}
 			the_command = next_command3;
 			RunCommand();
-		}
-		else if(pers->index == 8)
-		{
+		} else if (pers->index == 8) {
 			pers_list[35].area = script_byte_vars.zone_area;
 			pers_list[35].flags = pers->flags;
-			if(script_byte_vars.room_items == 0)
-			{
+			if (script_byte_vars.room_items == 0) {
 				static const animdesc_t anim20 = {ANIMFLG_USESPOT | 20};
 				AnimateSpot(&anim20);
 			}
 			the_command = next_command3;
 			RunCommand();
-		}
-		else
-		{
-			if(prev_fight_mode == 0
-			&& script_byte_vars.room_items != 0
-			&& fight_mode == 0)
-			{
+		} else {
+			if (prev_fight_mode == 0
+			        && script_byte_vars.room_items != 0
+			        && fight_mode == 0) {
 				script_byte_vars.byte_179F2 &= ~1;
-			}
-			else
-			{
+			} else {
 				unsigned int i;
 				fightentry_t *fightlist;
 				unsigned int fightlistsize;
 				unsigned char animidx;
 
 				prev_fight_mode = 0;
-				switch(pers->name)
-				{
+				switch (pers->name) {
 				case 56:
 					animidx = 47;
 					fightlist = fightlist1;
@@ -1690,13 +1538,11 @@ unsigned int SCR_31_Fight2(void)
 					fightlistsize = 26;
 				}
 
-				for(i = 0;i < fightlistsize;i++)
-				{
-					if(fightlist[i].room == script_byte_vars.zone_room)
-					{
-						if(animidx != 0)
+				for (i = 0; i < fightlistsize; i++) {
+					if (fightlist[i].room == script_byte_vars.zone_room) {
+						if (animidx != 0)
 							fightlist[i].anim.index = animidx;
-						if(fightlist[i].anim.index == 55)
+						if (fightlist[i].anim.index == 55)
 							PlaySound(151);
 						PlayAnim(fightlist[i].anim.index, fightlist[i].anim.params.coords.x, fightlist[i].anim.params.coords.y);
 						break;
@@ -1709,23 +1555,20 @@ unsigned int SCR_31_Fight2(void)
 	return 0;
 }
 
-unsigned int SCR_32_FightWin(void)
-{
+unsigned int SCR_32_FightWin(void) {
 
 	script_ptr++;
 
 	script_byte_vars.byte_17A1D = 0;
 
-	if(script_byte_vars.byte_179F9 != 18 && *spot_sprite != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 18 && *spot_sprite != 0) {
 		CGA_RestoreImage(*spot_sprite, frontbuffer);
 		CGA_RestoreImage(*spot_sprite, backbuffer);
 
-		if(script_byte_vars.byte_179F3 == 0
-		&& script_byte_vars.byte_17A16 == 0
-		&& script_byte_vars.room_items != 0
-		&& fight_mode == 0)
-		{
+		if (script_byte_vars.byte_179F3 == 0
+		        && script_byte_vars.byte_17A16 == 0
+		        && script_byte_vars.room_items != 0
+		        && fight_mode == 0) {
 			script_byte_vars.byte_17A1D = 1;
 			PlaySound(149);
 			PlayAnim(40, found_spot->sx, found_spot->sy);
@@ -1740,20 +1583,17 @@ unsigned int SCR_32_FightWin(void)
 
 extern void ExitGame(void);
 
-unsigned int SCR_15_SelectSpot(void)
-{
+unsigned int SCR_15_SelectSpot(void) {
 	unsigned char mask, index;
 
 	script_ptr++;
 	mask = *script_ptr++;
 	index = *script_ptr++;
-	if(mask != 0)
-	{
-		index = FindSpotByFlags(mask, index);	/*TODO: return 0 if not found?*/
-		if(index == 0xFF)
-		{
+	if (mask != 0) {
+		index = FindSpotByFlags(mask, index);   /*TODO: return 0 if not found?*/
+		if (index == 0xFF) {
 			TODO("ERROR: SelectSpot: spot not found");
-			ExitGame();	/*hard abort*/
+			ExitGame(); /*hard abort*/
 		}
 	}
 	found_spot = &zone_spots[index - 1];
@@ -1762,14 +1602,13 @@ unsigned int SCR_15_SelectSpot(void)
 
 	FindPerson();
 
-	if(script_byte_vars.cur_pers == 0)
+	if (script_byte_vars.cur_pers == 0)
 		script_vars[ScrPool8_CurrentPers] = &pers_list[20];
 
 	return 0;
 }
 
-unsigned int SCR_44_BackBufferToScreen(void)
-{
+unsigned int SCR_44_BackBufferToScreen(void) {
 	script_ptr++;
 	CGA_BackBufferToRealFull();
 	return 0;
@@ -1778,8 +1617,7 @@ unsigned int SCR_44_BackBufferToScreen(void)
 /*
 Animate De Profundis room on entry
 */
-unsigned int SCR_45_DeProfundisRoomEntry(void)
-{
+unsigned int SCR_45_DeProfundisRoomEntry(void) {
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
 
@@ -1795,16 +1633,15 @@ unsigned int SCR_45_DeProfundisRoomEntry(void)
 
 	PromptWait();
 
-	for(;h;h--)
-	{
+	for (; h; h--) {
 		WaitVBlank();
 		WaitVBlank();
 		CGA_BlitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
 
 		ofs ^= CGA_ODD_LINES_OFS;
-		if((ofs & CGA_ODD_LINES_OFS) == 0)
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
 			ofs += CGA_BYTES_PER_LINE;
-	
+
 		CGA_BlitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
 	}
 
@@ -1816,8 +1653,7 @@ unsigned int SCR_45_DeProfundisRoomEntry(void)
 /*
 Animate De Profundis hook (lower)
 */
-unsigned int SCR_46_DeProfundisLowerHook(void)
-{
+unsigned int SCR_46_DeProfundisLowerHook(void) {
 	unsigned char y;
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
@@ -1829,10 +1665,9 @@ unsigned int SCR_46_DeProfundisLowerHook(void)
 
 	h = 1;
 	y = 15;
-	sprofs = y * 20 / 4 * 2;	/*TODO: 20 is the sprite width. replace with w?*/
+	sprofs = y * 20 / 4 * 2;    /*TODO: 20 is the sprite width. replace with w?*/
 
-	for(;y;y--)
-	{
+	for (; y; y--) {
 		WaitVBlank();
 		CGA_BlitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
 
@@ -1848,8 +1683,7 @@ unsigned int SCR_46_DeProfundisLowerHook(void)
 /*
 Animate De Profundis monster (rise)
 */
-unsigned int SCR_47_DeProfundisRiseMonster(void)
-{
+unsigned int SCR_47_DeProfundisRiseMonster(void) {
 	unsigned char y;
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
@@ -1862,12 +1696,11 @@ unsigned int SCR_47_DeProfundisRiseMonster(void)
 	h = 1;
 	y = 68;
 
-	for(;y;y--)
-	{
+	for (; y; y--) {
 		WaitVBlank();
 
 		ofs ^= CGA_ODD_LINES_OFS;
-		if((ofs & CGA_ODD_LINES_OFS) != 0)
+		if ((ofs & CGA_ODD_LINES_OFS) != 0)
 			ofs -= CGA_BYTES_PER_LINE;
 
 		h++;
@@ -1881,8 +1714,7 @@ unsigned int SCR_47_DeProfundisRiseMonster(void)
 /*
 Animate De Profundis monster (lower)
 */
-unsigned int SCR_48_DeProfundisLowerMonster(void)
-{
+unsigned int SCR_48_DeProfundisLowerMonster(void) {
 	unsigned char y;
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
@@ -1894,13 +1726,12 @@ unsigned int SCR_48_DeProfundisLowerMonster(void)
 
 	y = 34;
 
-	for(;y;y--)
-	{
+	for (; y; y--) {
 		WaitVBlank();
 		CGA_BlitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
 
 		ofs ^= CGA_ODD_LINES_OFS;
-		if((ofs & CGA_ODD_LINES_OFS) == 0)
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
 			ofs += CGA_BYTES_PER_LINE;
 
 		h--;
@@ -1913,8 +1744,7 @@ unsigned int SCR_48_DeProfundisLowerMonster(void)
 /*
 Animate De Profundis hook (rise)
 */
-unsigned int SCR_49_DeProfundisRiseHook(void)
-{
+unsigned int SCR_49_DeProfundisRiseHook(void) {
 	unsigned char y;
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
@@ -1927,8 +1757,7 @@ unsigned int SCR_49_DeProfundisRiseHook(void)
 	h = 16;
 	y = 15;
 
-	for(;y;y--)
-	{
+	for (; y; y--) {
 		WaitVBlank();
 		CGA_BlitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
 
@@ -1947,8 +1776,7 @@ unsigned int SCR_49_DeProfundisRiseHook(void)
 /*
 Animate De Profundis platform
 */
-unsigned int SCR_65_DeProfundisMovePlatform(void)
-{
+unsigned int SCR_65_DeProfundisMovePlatform(void) {
 	unsigned char state;
 	unsigned char x, y;
 	unsigned int w, h;
@@ -1959,26 +1787,24 @@ unsigned int SCR_65_DeProfundisMovePlatform(void)
 
 	x = 140 / 4;
 	y = 174;
-	if(state != 0)
+	if (state != 0)
 		y += 4;
 
 	/*draw Platform*/
 	sprofs = GetPuzzlSprite(3, x, y, &w, &h, &ofs);
 
 	y = 4;
-	if(state)
-	{
+	if (state) {
 		h -= 4;
 		y--;
 	}
 
-	for(;y;y--)
-	{
+	for (; y; y--) {
 		WaitVBlank();
 		CGA_BlitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
 
 		ofs ^= CGA_ODD_LINES_OFS;
-		if((ofs & CGA_ODD_LINES_OFS) == 0)
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
 			ofs += CGA_BYTES_PER_LINE;
 
 		h--;
@@ -1986,7 +1812,7 @@ unsigned int SCR_65_DeProfundisMovePlatform(void)
 		CGA_BlitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
 	}
 
-	if(state)
+	if (state)
 		CGA_BlitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
 
 	return 0;
@@ -1995,8 +1821,7 @@ unsigned int SCR_65_DeProfundisMovePlatform(void)
 /*
 Animate De Profundis monster ride to exit door
 */
-unsigned int SCR_66_DeProfundisRideToExit(void)
-{
+unsigned int SCR_66_DeProfundisRideToExit(void) {
 	unsigned int w, h;
 	unsigned int sprofs, ofs;
 
@@ -2017,8 +1842,7 @@ unsigned int SCR_66_DeProfundisRideToExit(void)
 /*
 Draw item bounce to room objects animation
 */
-unsigned int SCR_4E_BounceCurrentItemToRoom(void)
-{
+unsigned int SCR_4E_BounceCurrentItemToRoom(void) {
 	script_ptr++;
 	BounceCurrentItem(ITEMFLG_40, 43);
 	return 0;
@@ -2027,8 +1851,7 @@ unsigned int SCR_4E_BounceCurrentItemToRoom(void)
 /*
 Draw item bounce to inventory animation
 */
-unsigned int SCR_4F_BounceCurrentItemToInventory(void)
-{
+unsigned int SCR_4F_BounceCurrentItemToInventory(void) {
 	script_ptr++;
 	BounceCurrentItem(ITEMFLG_80, 85);
 	return 0;
@@ -2037,24 +1860,22 @@ unsigned int SCR_4F_BounceCurrentItemToInventory(void)
 /*
 Draw item bounce to inventory animation
 */
-unsigned int SCR_50_BounceItemToInventory(void)
-{
+unsigned int SCR_50_BounceItemToInventory(void) {
 	unsigned char itemidx;
 
 	script_ptr++;
 	itemidx = *script_ptr++;
-    script_vars[ScrPool3_CurrentItem] = &inventory_items[itemidx - 1];
+	script_vars[ScrPool3_CurrentItem] = &inventory_items[itemidx - 1];
 
 	BounceCurrentItem(ITEMFLG_80, 85);
 	return 0;
 }
 
-unsigned int SCR_51_ItemTrade(void)
-{
+unsigned int SCR_51_ItemTrade(void) {
 	unsigned char *old_script, *old_script_end = script_end_ptr;
 	unsigned char status;
 
-	if(script_byte_vars.byte_179DC >= 63)	/*TODO: hang?*/
+	if (script_byte_vars.byte_179DC >= 63)  /*TODO: hang?*/
 		return 0;
 
 	script_ptr++;
@@ -2064,30 +1885,25 @@ unsigned int SCR_51_ItemTrade(void)
 	OpenInventory(0xFF, ITEMFLG_80);
 
 	status = 1;
-	if(inv_count != 0)
-	{
+	if (inv_count != 0) {
 		status = 2;
-		if(the_command != 0)
-		{
+		if (the_command != 0) {
 			status = 3;
-			if(script_byte_vars.inv_item_index >= 6 && script_byte_vars.inv_item_index < 27)
-			{
+			if (script_byte_vars.inv_item_index >= 6 && script_byte_vars.inv_item_index < 27) {
 				the_command = 0xC204;
 				RunCommand();
 
-				((item_t*)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
+				((item_t *)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
 
 				OpenInventory(0xFF, ITEMFLG_10);
-				
+
 				status = 4;
-				if(the_command != 0)
-				{
+				if (the_command != 0) {
 					status = 5;
-					if(script_byte_vars.rand_value < 128)
-					{
+					if (script_byte_vars.rand_value < 128) {
 						status = 6;
-						((item_t*)(script_vars[ScrPool3_CurrentItem]))[-1].flags = ITEMFLG_10;	/*TODO: what's up with this index?*/
-						((item_t*)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
+						((item_t *)(script_vars[ScrPool3_CurrentItem]))[-1].flags = ITEMFLG_10; /*TODO: what's up with this index?*/
+						((item_t *)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
 					}
 				}
 			}
@@ -2102,15 +1918,13 @@ unsigned int SCR_51_ItemTrade(void)
 	return 0;
 }
 
-unsigned int SCR_52_RefreshSpritesData(void)
-{
+unsigned int SCR_52_RefreshSpritesData(void) {
 	script_ptr++;
 	RefreshSpritesData();
 	return 0;
 }
 
-unsigned int SCR_53_FindInvItem(void)
-{
+unsigned int SCR_53_FindInvItem(void) {
 	unsigned char first, count, flags, i;
 	item_t *item;
 	script_ptr++;
@@ -2118,10 +1932,8 @@ unsigned int SCR_53_FindInvItem(void)
 	count = *script_ptr++;
 	flags = *script_ptr++;
 	item = &inventory_items[first - 1];
-	for(i = 0;i < count;i++)
-	{
-		if(item[i].flags == flags)
-		{
+	for (i = 0; i < count; i++) {
+		if (item[i].flags == flags) {
 			script_vars[ScrPool3_CurrentItem] = &item[i];
 			return 0;
 		}
@@ -2131,8 +1943,7 @@ unsigned int SCR_53_FindInvItem(void)
 }
 
 
-unsigned int SCR_64_DrawBoxAroundSpot(void)
-{
+unsigned int SCR_64_DrawBoxAroundSpot(void) {
 	script_ptr++;
 	DrawBoxAroundSpot();
 	return 0;
@@ -2141,8 +1952,7 @@ unsigned int SCR_64_DrawBoxAroundSpot(void)
 /*
 Draw text box
 */
-unsigned int SCR_14_DrawDesc(void)
-{
+unsigned int SCR_14_DrawDesc(void) {
 	unsigned char *msg;
 	script_ptr++;
 	msg = SeekToStringScr(desci_data, *script_ptr, &script_ptr);
@@ -2158,8 +1968,7 @@ unsigned int SCR_14_DrawDesc(void)
 Draw dialog bubble with text for a person, wait for a key, then hide. Auto find bubble location
 Use "thought" spike
 */
-unsigned int SCR_17_DrawPersonThoughtBubbleDialog(void)
-{
+unsigned int SCR_17_DrawPersonThoughtBubbleDialog(void) {
 	unsigned char x, y;
 	unsigned char *msg;
 	script_ptr++;
@@ -2169,10 +1978,10 @@ unsigned int SCR_17_DrawPersonThoughtBubbleDialog(void)
 	x = found_spot->sx;
 	y = found_spot->sy;
 
-	if(x < 140/4)
+	if (x < 140 / 4)
 		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_BUBLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80/4, y - 40, SPIKE_BUBRIGHT | 20, msg);
+		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_BUBRIGHT | 20, msg);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
@@ -2183,8 +1992,7 @@ unsigned int SCR_17_DrawPersonThoughtBubbleDialog(void)
 Draw dialog bubble with text for a person, wait for a key, then hide. Auto find bubble location
 Use normal spike
 */
-unsigned int SCR_61_DrawPersonBubbleDialog(void)
-{
+unsigned int SCR_61_DrawPersonBubbleDialog(void) {
 	unsigned char x, y;
 	unsigned char *msg;
 	script_ptr++;
@@ -2194,10 +2002,10 @@ unsigned int SCR_61_DrawPersonBubbleDialog(void)
 	x = found_spot->sx;
 	y = found_spot->sy;
 
-	if(x < 140/4)
+	if (x < 140 / 4)
 		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80/4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
@@ -2206,35 +2014,33 @@ unsigned int SCR_61_DrawPersonBubbleDialog(void)
 
 #if 1
 #include <stdio.h>
-unsigned char * DebugString(char *msg, ...)
-{
+unsigned char *DebugString(char *msg, ...) {
 	int i;
 	unsigned char c;
 	static unsigned char m[256];
-	va_list	ap;
+	va_list ap;
 
-	va_start(ap,msg);
-	vsprintf((char*)m,msg,ap);
+	va_start(ap, msg);
+	vsprintf((char *)m, msg, ap);
 	va_end(ap);
 
-	for(i = 0;m[i];i++)
-	{
+	for (i = 0; m[i]; i++) {
 		c = m[i];
-		if(c >= 'A' && c <= 'Z')
+		if (c >= 'A' && c <= 'Z')
 			c = 0x21 + (c - 'A');
-		else if(c >= 'a' && c <= 'z')
+		else if (c >= 'a' && c <= 'z')
 			c = 0x21 + (c - 'a');
-		else if(c >= '0' && c <= '9')
+		else if (c >= '0' && c <= '9')
 			c = 0x10 + (c - '0');
-		else if(c == ' ')
+		else if (c == ' ')
 			c = 0x20;
-		else if(c == '!')
+		else if (c == '!')
 			c = 0x01;
-		else if(c == ',')
+		else if (c == ',')
 			c = 0x0C;
-		else if(c == '.')
+		else if (c == '.')
 			c = 0x0E;
-		else if(c == '\n')
+		else if (c == '\n')
 			c = 0x00;
 		else
 			c = 0x1F;
@@ -2250,28 +2056,26 @@ unsigned char * DebugString(char *msg, ...)
 /*
 Draw dialog bubble with text for gauss
 */
-unsigned int SCR_27_DrawGaussBubble(void)
-{
+unsigned int SCR_27_DrawGaussBubble(void) {
 	unsigned char *msg;
 
 	script_ptr++;
 	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
-	DrawPersonBubble(32/4, 20, 15, msg);
+	DrawPersonBubble(32 / 4, 20, 15, msg);
 	return 0;
 }
 
 /*
 Draw dialog bubble with text
 */
-unsigned int SCR_29_DialiTextBox(void)
-{
+unsigned int SCR_29_DialiTextBox(void) {
 	unsigned char x, y, f;
 	unsigned char *msg;
 	script_ptr++;
 	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
-	cur_dlg_index = cur_str_index;	/*TODO: useless?*/
+	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
 	script_ptr++;
 	x = *script_ptr++;
@@ -2285,8 +2089,7 @@ unsigned int SCR_29_DialiTextBox(void)
 /*
 Do nothing in PC/CGA version
 */
-unsigned int SCR_67_Unused(void)
-{
+unsigned int SCR_67_Unused(void) {
 	script_ptr++;
 	script_ptr++;
 	return 0;
@@ -2295,8 +2098,7 @@ unsigned int SCR_67_Unused(void)
 /*
 Do nothing in PC/CGA version
 */
-unsigned int SCR_68_Unused(void)
-{
+unsigned int SCR_68_Unused(void) {
 	script_ptr++;
 	script_ptr++;
 	return 0;
@@ -2305,8 +2107,7 @@ unsigned int SCR_68_Unused(void)
 /*
 Play sound
 */
-unsigned int SCR_69_PlaySound(void)
-{
+unsigned int SCR_69_PlaySound(void) {
 	unsigned char index;
 	script_ptr++;
 	index = *script_ptr++;
@@ -2319,8 +2120,7 @@ unsigned int SCR_69_PlaySound(void)
 /*
 Do nothing in PC/CGA version
 */
-unsigned int SCR_6A_Unused(void)
-{
+unsigned int SCR_6A_Unused(void) {
 	script_ptr++;
 	return 0;
 }
@@ -2328,8 +2128,7 @@ unsigned int SCR_6A_Unused(void)
 /*
 Open room's items inventory
 */
-unsigned int CMD_1_RoomObjects(void)
-{
+unsigned int CMD_1_RoomObjects(void) {
 	UpdateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0xAA;
 	OpenInventory((0xFF << 8) | ITEMFLG_40, (script_byte_vars.zone_area << 8) | ITEMFLG_40);
@@ -2339,23 +2138,20 @@ unsigned int CMD_1_RoomObjects(void)
 /*
 Open Psi Powers menu
 */
-unsigned int CMD_2_PsiPowers(void)
-{
+unsigned int CMD_2_PsiPowers(void) {
 	/*Psi powers bar*/
 	BackupAndShowSprite(3, 280 / 4, 40);
 	ProcessInput();
-	do
-	{
+	do {
 		PollInput();
 		SelectCursor(CURSOR_0);
 		CheckPsiCommandHover();
-		if(command_hint != 100)
+		if (command_hint != 100)
 			command_hint += 109;
-		if(command_hint != last_command_hint)
+		if (command_hint != last_command_hint)
 			DrawCommandHint();
 		DrawHintsAndCursor(CGA_SCREENBUFFER);
-	}
-	while(buttons == 0);
+	} while (buttons == 0);
 	UndrawCursor(CGA_SCREENBUFFER);
 	CGA_RestoreBackupImage(CGA_SCREENBUFFER);
 	return ScriptRerun;
@@ -2364,8 +2160,7 @@ unsigned int CMD_2_PsiPowers(void)
 /*
 Open normal inventory box
 */
-unsigned int CMD_3_Posessions(void)
-{
+unsigned int CMD_3_Posessions(void) {
 	UpdateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0x55;
 	OpenInventory(ITEMFLG_80, ITEMFLG_80);
@@ -2375,9 +2170,8 @@ unsigned int CMD_3_Posessions(void)
 /*
 Show energy level
 */
-unsigned int CMD_4_EnergyLevel(void)
-{
-	static unsigned char energy_image[] = {130, 236/4, 71};
+unsigned int CMD_4_EnergyLevel(void) {
+	static unsigned char energy_image[] = {130, 236 / 4, 71};
 	unsigned char x, y, width, height;
 	unsigned char *image = energy_image;
 	unsigned char anim = 40;
@@ -2385,21 +2179,18 @@ unsigned int CMD_4_EnergyLevel(void)
 	PopDirtyRects(DirtyRectSprite);
 	PopDirtyRects(DirtyRectBubble);
 
-	if(script_byte_vars.psy_energy != 0)
+	if (script_byte_vars.psy_energy != 0)
 		anim = 41 + (script_byte_vars.psy_energy / 16);
 
-	if(DrawPortrait(&image, &x, &y, &width, &height))
-	{
-        CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+	if (DrawPortrait(&image, &x, &y, &width, &height)) {
+		CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 	}
 
-	do
-	{
+	do {
 		AnimPortrait(1, anim, 10);
 		AnimPortrait(1, anim + 14, 10);
 		PollInput();
-	}
-	while(buttons == 0);
+	} while (buttons == 0);
 
 	PopDirtyRects(DirtyRectSprite);
 
@@ -2409,8 +2200,7 @@ unsigned int CMD_4_EnergyLevel(void)
 /*
 Advance time
 */
-unsigned int CMD_5_Wait(void)
-{
+unsigned int CMD_5_Wait(void) {
 
 	script_byte_vars.byte_179DB++;
 	script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 300);
@@ -2425,17 +2215,13 @@ unsigned int CMD_5_Wait(void)
 
 	the_command = Swap16(script_word_vars.word_17852);
 
-	if(the_command == 0)
-	{
-		if(script_word_vars.next_command1 == 0)
-		{
+	if (the_command == 0) {
+		if (script_word_vars.next_command1 == 0) {
 			the_command = 0x9005;
 			RunCommand();
 		}
-	}
-	else
-	{
-		if(script_byte_vars.byte_179DC >= 63 && script_byte_vars.zone_area < 22 && script_byte_vars.zone_area != 1)
+	} else {
+		if (script_byte_vars.byte_179DC >= 63 && script_byte_vars.zone_area < 22 && script_byte_vars.zone_area != 1)
 			the_command = 0x9005;
 		return ScriptRerun;
 	}
@@ -2446,8 +2232,7 @@ unsigned int CMD_5_Wait(void)
 /*
 Load game (menu)
 */
-unsigned int CMD_6_Load(void)
-{
+unsigned int CMD_6_Load(void) {
 	the_command = 0xC35C;
 	return ScriptRerun;
 }
@@ -2455,8 +2240,7 @@ unsigned int CMD_6_Load(void)
 /*
 Save game (menu)
 */
-unsigned int CMD_7_Save(void)
-{
+unsigned int CMD_7_Save(void) {
 	the_command = 0xC35D;
 	return ScriptRerun;
 }
@@ -2464,66 +2248,58 @@ unsigned int CMD_7_Save(void)
 /*
 Show timer
 */
-unsigned int CMD_8_Timer(void)
-{
-	static unsigned char timer_image[] = {163, 244/4, 104};
+unsigned int CMD_8_Timer(void) {
+	static unsigned char timer_image[] = {163, 244 / 4, 104};
 	unsigned char x, y, width, height;
 	unsigned char *image = timer_image;
 
-	if(DrawPortrait(&image, &x, &y, &width, &height))
-	{
-        CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+	if (DrawPortrait(&image, &x, &y, &width, &height)) {
+		CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 	}
 
-	do
-	{
+	do {
 		unsigned short timer = Swap16(script_word_vars.timer_ticks2);
 		unsigned short minutes = timer % (60 * 60);
 
-		char_draw_coords_x = 260/4;
+		char_draw_coords_x = 260 / 4;
 		char_draw_coords_y = 120;
 
 		WaitVBlank();
 		CGA_PrintChar(timer / (60 * 60) + 16, CGA_SCREENBUFFER);
-		CGA_PrintChar((minutes & 1) ? 26 : 0, CGA_SCREENBUFFER);	/*colon*/
+		CGA_PrintChar((minutes & 1) ? 26 : 0, CGA_SCREENBUFFER);    /*colon*/
 		CGA_PrintChar(minutes / (60 * 10) + 16, CGA_SCREENBUFFER);
 		CGA_PrintChar(minutes / 60 + 16, CGA_SCREENBUFFER);
 		PollInput();
-	}
-	while(buttons == 0);
+	} while (buttons == 0);
 
 	PopDirtyRects(DirtyRectSprite);
 
 	return 0;
 }
 
-int ConsumePsiEnergy(unsigned char amount)
-{
+int ConsumePsiEnergy(unsigned char amount) {
 	unsigned char current = script_byte_vars.psy_energy;
 
-	if(current < amount)
-	{
+	if (current < amount) {
 		/*no energy left*/
 		PlayAnim(68, 296 / 4, 71);
 		return 0;
 	}
-	
+
 	script_byte_vars.psy_energy = current - amount;
 
 	/*significantly changed?*/
-	if((current & 0xF0) != (script_byte_vars.psy_energy & 0xF0))
+	if ((current & 0xF0) != (script_byte_vars.psy_energy & 0xF0))
 		PlayAnim(68, 296 / 4, 71);
 
 	return 1;
 }
 
-unsigned int CMD_A_PsiSolarEyes(void)
-{
-	if(!ConsumePsiEnergy(2))
+unsigned int CMD_A_PsiSolarEyes(void) {
+	if (!ConsumePsiEnergy(2))
 		return 0;
 
-	if(zone_palette == 14)
-	{
+	if (zone_palette == 14) {
 		RedrawRoomStatics(script_byte_vars.zone_room, zone_palette);
 		zone_palette = 0;
 		CGA_BackBufferToRealFull();
@@ -2537,15 +2313,13 @@ unsigned int CMD_A_PsiSolarEyes(void)
 }
 
 
-unsigned short GetZoneObjCommand(unsigned int offs)
-{
+unsigned short GetZoneObjCommand(unsigned int offs) {
 	/*TODO: fix me: change offs/2 to index*/
 	the_command = Swap16(script_word_vars.zone_obj_cmds[(script_byte_vars.cur_spot_idx - 1) * 5 + offs / 2]);
 	return the_command;
 }
 
-void DrawStickyNet(void)
-{
+void DrawStickyNet(void) {
 	unsigned char x, y, w, h;
 
 	unsigned int ofs;
@@ -2560,22 +2334,19 @@ void DrawStickyNet(void)
 
 	/*16x30 is the net sprite size*/
 
-	for(;h;h -= 30)
-	{
+	for (; h; h -= 30) {
 		int i;
-		for(i = 0;i < w;i += 16 / 4)
+		for (i = 0; i < w; i += 16 / 4)
 			DrawSprite(sprite, frontbuffer, ofs + i);
 		ofs += CGA_BYTES_PER_LINE * 30 / 2;
 	}
 }
 
-unsigned int CMD_B_PsiStickyFingers(void)
-{
-	if(!ConsumePsiEnergy(3))
+unsigned int CMD_B_PsiStickyFingers(void) {
+	if (!ConsumePsiEnergy(3))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 0) {
 		the_command = Swap16(script_word_vars.word_178F0);
 		return ScriptRerun;
 	}
@@ -2588,74 +2359,66 @@ unsigned int CMD_B_PsiStickyFingers(void)
 	CGA_BackBufferToRealFull();
 	RestoreScreenOfSpecialRoom();
 
-	if(script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(0) == 0)
+	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(0) == 0)
 		the_command = Swap16(script_word_vars.word_17844);
 
-	if(script_byte_vars.byte_179DC >= 63
-	&& script_byte_vars.zone_area < 22
-	&& script_byte_vars.zone_area != 1)
+	if (script_byte_vars.byte_179DC >= 63
+	        && script_byte_vars.zone_area < 22
+	        && script_byte_vars.zone_area != 1)
 		the_command = 0x9005;
-	
+
 	return ScriptRerun;
 }
 
-unsigned int CMD_C_PsiKnowMind(void)
-{
-	if(!ConsumePsiEnergy(1))
+unsigned int CMD_C_PsiKnowMind(void) {
+	if (!ConsumePsiEnergy(1))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 0) {
 		the_command = Swap16(script_word_vars.word_178F2);
 		return ScriptRerun;
 	}
 
 	ProcessMenu();
 
-	if(script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(4) == 0)
+	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(4) == 0)
 		the_command = Swap16(script_word_vars.word_17846);
 
 	return ScriptRerun;
 }
 
-unsigned int CMD_D_PsiBrainwarp(void)
-{
-	if(!ConsumePsiEnergy(2))
+unsigned int CMD_D_PsiBrainwarp(void) {
+	if (!ConsumePsiEnergy(2))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 == 0)
-	{
+	if (script_byte_vars.byte_179F9 == 0) {
 		BackupScreenOfSpecialRoom();
 		ProcessMenu();
 
-		if(script_byte_vars.cur_spot_idx == 0)
-		{
+		if (script_byte_vars.cur_spot_idx == 0) {
 			the_command = Swap16(script_word_vars.word_17850);
 			script_byte_vars.dead_flag = 0;
 			return ScriptRerun;
 		}
 
-		if(GetZoneObjCommand(2) != 0)
-		{
+		if (GetZoneObjCommand(2) != 0) {
 			PlayAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
 			RestoreScreenOfSpecialRoom();
 			return ScriptRerun;
 		}
 	}
 
-	if(script_byte_vars.byte_179F9 == 18)
-	{
+	if (script_byte_vars.byte_179F9 == 18) {
 		script_byte_vars.dead_flag = 1;
 		script_byte_vars.tries_left = 2;
 		return 0;
 	}
 
-	((pers_t*)script_vars[ScrPool8_CurrentPers])->flags |= PERSFLG_80;
+	((pers_t *)script_vars[ScrPool8_CurrentPers])->flags |= PERSFLG_80;
 	script_byte_vars.dead_flag = script_byte_vars.cur_spot_idx;
 	script_byte_vars.tries_left = 2;
 	the_command = 0;
-	if(script_byte_vars.byte_179F9 == 0)
-	{
+	if (script_byte_vars.byte_179F9 == 0) {
 		PlayAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
 		RestoreScreenOfSpecialRoom();
 		return ScriptRerun;
@@ -2666,16 +2429,14 @@ unsigned int CMD_D_PsiBrainwarp(void)
 }
 
 
-unsigned int CMD_E_PsiZoneScan(void)
-{
+unsigned int CMD_E_PsiZoneScan(void) {
 	unsigned char x, y, w, h;
 	unsigned int offs;
 
-	if(!ConsumePsiEnergy(1))
+	if (!ConsumePsiEnergy(1))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 0) {
 		the_command = Swap16(script_word_vars.word_178FC);
 		return ScriptRerun;
 	}
@@ -2686,17 +2447,14 @@ unsigned int CMD_E_PsiZoneScan(void)
 	w = room_bounds_rect.ex - room_bounds_rect.sx;
 	h = room_bounds_rect.ey - room_bounds_rect.sy;
 
-	for(y = room_bounds_rect.sy;h;y++, h--)
-	{
+	for (y = room_bounds_rect.sy; h; y++, h--) {
 		spot_t *spot;
-		for(x = 0;x < w;x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
 		WaitVBlank();
-		for(x = 0;x < w;x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
 
-		for(spot = zone_spots;spot != zone_spots_end;spot++)
-		{
-			if((spot->flags & ~(SPOTFLG_40 | 7)) == (SPOTFLG_20 | SPOTFLG_8) && spot->sy == y)
-			{
+		for (spot = zone_spots; spot != zone_spots_end; spot++) {
+			if ((spot->flags & ~(SPOTFLG_40 | 7)) == (SPOTFLG_20 | SPOTFLG_8) && spot->sy == y) {
 				PlaySound(27);
 				spot->flags |= SPOTFLG_80;
 				PlayAnim(38, spot->sx, spot->sy);
@@ -2705,25 +2463,23 @@ unsigned int CMD_E_PsiZoneScan(void)
 		}
 
 		offs ^= CGA_ODD_LINES_OFS;
-		if((offs & CGA_ODD_LINES_OFS) == 0)
+		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
-	}	
+	}
 
 	RestoreScreenOfSpecialRoom();
 
 	the_command = Swap16(script_word_vars.word_17848);
-	
+
 	return ScriptRerun;
 
 }
 
-unsigned int CMD_F_PsiPsiShift(void)
-{
-	if(!ConsumePsiEnergy(3))
+unsigned int CMD_F_PsiPsiShift(void) {
+	if (!ConsumePsiEnergy(3))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 0) {
 		the_command = Swap16(script_word_vars.word_178F4);
 		return ScriptRerun;
 	}
@@ -2735,31 +2491,28 @@ unsigned int CMD_F_PsiPsiShift(void)
 	PlayAnim(39, cursor_x / 4, cursor_y);
 	RestoreScreenOfSpecialRoom();
 
-	if(script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(6) == 0)
+	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(6) == 0)
 		the_command = Swap16(script_word_vars.word_1784E);
-	
+
 	return ScriptRerun;
 }
 
-unsigned int CMD_10_PsiExtremeViolence(void)
-{
+unsigned int CMD_10_PsiExtremeViolence(void) {
 	unsigned short command;
 
-	if(!ConsumePsiEnergy(8))
+	if (!ConsumePsiEnergy(8))
 		return 0;
 
 	script_byte_vars.byte_179F3 = 1;
 
-	if(script_byte_vars.byte_179F9 != 0)
-	{
+	if (script_byte_vars.byte_179F9 != 0) {
 		the_command = Swap16(script_word_vars.word_178F6);
 		return ScriptRerun;
 	}
 
 	ProcessMenu();
 
-	if(script_byte_vars.cur_spot_idx == 0)
-	{
+	if (script_byte_vars.cur_spot_idx == 0) {
 		the_command = Swap16(script_word_vars.word_1784C);
 		script_byte_vars.byte_179F3 = 0;
 		return ScriptRerun;
@@ -2767,10 +2520,9 @@ unsigned int CMD_10_PsiExtremeViolence(void)
 
 	command = GetZoneObjCommand(8);
 
-	if((command & 0xF000) == 0x9000)
+	if ((command & 0xF000) == 0x9000)
 		script_byte_vars.byte_179F3 = 0;
-	else if(command == 0)
-	{
+	else if (command == 0) {
 		the_command = Swap16(script_word_vars.word_1784C);
 		script_byte_vars.byte_179F3 = 0;
 	}
@@ -2778,27 +2530,24 @@ unsigned int CMD_10_PsiExtremeViolence(void)
 	return ScriptRerun;
 }
 
-unsigned int CMD_11_PsiTuneIn(void)
-{
+unsigned int CMD_11_PsiTuneIn(void) {
 	unsigned short command;
 	unsigned char *msg;
 
-	if(!ConsumePsiEnergy(4))
+	if (!ConsumePsiEnergy(4))
 		return 0;
 
-	if(script_byte_vars.byte_179F9 != 0)
+	if (script_byte_vars.byte_179F9 != 0)
 		command = Swap16(script_word_vars.word_178F8);
-	else
-	{
-		if(script_byte_vars.byte_179DC < 63 || script_byte_vars.zone_area >= 22)
+	else {
+		if (script_byte_vars.byte_179DC < 63 || script_byte_vars.zone_area >= 22)
 			command = Swap16(script_word_vars.word_1784A);
 		else
 			command = 275;
 	}
 
 	/*TODO: is this really neccessary? Maybe it's always set when loaded from script vars?*/
-	if(command & 0x8000)
-	{
+	if (command & 0x8000) {
 		the_command = command;
 		return ScriptRerun;
 	}
@@ -2806,7 +2555,7 @@ unsigned int CMD_11_PsiTuneIn(void)
 	msg = SeekToString(diali_data, command);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
-	DrawPersonBubble(32/4, 20, 15, msg);
+	DrawPersonBubble(32 / 4, 20, 15, msg);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
@@ -2814,20 +2563,18 @@ unsigned int CMD_11_PsiTuneIn(void)
 	return 0;
 }
 
-void ActionForPersonChoice(unsigned short *actions)
-{
+void ActionForPersonChoice(unsigned short *actions) {
 	ProcessMenu();
-	the_command = 0x9183;	/*THERE`S NOBODY.*/
-	if(script_byte_vars.cur_spot_idx != 0 && script_byte_vars.cur_pers != 0)
-	{
-		pers_t *pers = (pers_t*)script_vars[ScrPool8_CurrentPers];
+	the_command = 0x9183;   /*THERE`S NOBODY.*/
+	if (script_byte_vars.cur_spot_idx != 0 && script_byte_vars.cur_pers != 0) {
+		pers_t *pers = (pers_t *)script_vars[ScrPool8_CurrentPers];
 		unsigned char index = pers->name;
-		if(index == 93)		/*CADAVER*/
+		if (index == 93)    /*CADAVER*/
 			index = 19 + 42;
-		else if(index == 133)	/*SCI FI*/
+		else if (index == 133)  /*SCI FI*/
 			index = 18 + 42;
 
-		index -= 42;		/*Person names: THE MASTER OF ORDEALS, etc*/
+		index -= 42;        /*Person names: THE MASTER OF ORDEALS, etc*/
 
 		the_command = actions[index];
 
@@ -2928,15 +2675,13 @@ unsigned short menu_commands_23[] = {
 	0xC32D
 };
 
-unsigned int CMD_12_(void)
-{
+unsigned int CMD_12_(void) {
 	printf("cmd 12\n");
 	ActionForPersonChoice(menu_commands_12);
 	return ScriptRerun;
 }
 
-unsigned int CMD_13_ActivateFountain(void)
-{
+unsigned int CMD_13_ActivateFountain(void) {
 	static unsigned char water1[] = {125, 156 / 4, 58};
 	static unsigned char water2[] = {126, 156 / 4, 58};
 	static unsigned char headl[] = {88, 152 / 4, 52};
@@ -2946,17 +2691,16 @@ unsigned int CMD_13_ActivateFountain(void)
 	unsigned int i, j;
 
 	script_byte_vars.byte_17A20 = 1;
-	for(i = 0;i < 10;i++)
-	{
+	for (i = 0; i < 10; i++) {
 		DrawRoomStaticObject(water1, &x, &y, &w, &h);
 		WaitVBlank();
 		CGA_BackBufferToRealFull();
-		for(j = 0;j < 0x1FFF;j++) ;	/*TODO: weak delay*/
+		for (j = 0; j < 0x1FFF; j++) ; /*TODO: weak delay*/
 
 		DrawRoomStaticObject(water2, &x, &y, &w, &h);
 		WaitVBlank();
 		CGA_BackBufferToRealFull();
-		for(j = 0;j < 0x1FFF;j++) ;	/*TODO: weak delay*/
+		for (j = 0; j < 0x1FFF; j++) ; /*TODO: weak delay*/
 	}
 
 	DrawRoomStaticObject(headl, &x, &y, &w, &h);
@@ -2967,8 +2711,7 @@ unsigned int CMD_13_ActivateFountain(void)
 }
 
 /*Vorts walking into the room*/
-unsigned int CMD_14_VortAppear(void)
-{
+unsigned int CMD_14_VortAppear(void) {
 	/*TODO: check me*/
 	pers_list[0].area = script_byte_vars.zone_area;
 	FindAndSelectSpot(0);
@@ -2984,8 +2727,8 @@ unsigned int CMD_14_VortAppear(void)
 pers_t *pers_vort_ptr;
 
 struct {
-unsigned char room;
-unsigned char field_1;
+	unsigned char room;
+	unsigned char field_1;
 } vortleave[] = {
 	{  2,  5},
 	{  3,  8},
@@ -3009,26 +2752,20 @@ unsigned char field_1;
 };
 
 /*Vorts walking out of the room*/
-unsigned int CMD_15_VortLeave(void)
-{
+unsigned int CMD_15_VortLeave(void) {
 	/*TODO: check me*/
 
 	unsigned int i;
 	animdesc_t *anim;
 	pers_t *pers;
 
-	if(pers_list[0].area != 0)
-	{
+	if (pers_list[0].area != 0) {
 		pers = &pers_list[0];
 		anim = &vortanims_ptr->field_4;
-	}
-	else if(pers_list[34].area != 0)
-	{
+	} else if (pers_list[34].area != 0) {
 		pers = &pers_list[34];
 		anim = &vortanims_ptr->field_7;
-	}
-	else
-	{
+	} else {
 		script_byte_vars.byte_179EC |= 0x80;
 
 		pers_list[35].area = 0;
@@ -3040,10 +2777,8 @@ unsigned int CMD_15_VortLeave(void)
 
 	pers->area = 0;
 	next_command3 = 0;
-	for(i = 0;i < 19;i++)
-	{
-		if(vortleave[i].room == script_byte_vars.zone_index)
-		{
+	for (i = 0; i < 19; i++) {
+		if (vortleave[i].room == script_byte_vars.zone_index) {
 			next_command3 = 0xA016;
 			next_ticks3 = Swap16(script_word_vars.timer_ticks2) + 5;
 			pers->area = vortleave[i].field_1;
@@ -3051,7 +2786,7 @@ unsigned int CMD_15_VortLeave(void)
 	}
 	pers_vort_ptr = pers;
 
-	zone_spots[(pers->flags & 15) - 1].flags &= ~SPOTFLG_80;	
+	zone_spots[(pers->flags & 15) - 1].flags &= ~SPOTFLG_80;
 
 	FindAndSelectSpot(0);
 	AnimateSpot(anim);
@@ -3062,15 +2797,13 @@ unsigned int CMD_15_VortLeave(void)
 /*
 Vorts left the room
 */
-unsigned int CMD_16_VortGone(void)
-{
+unsigned int CMD_16_VortGone(void) {
 	pers_vort_ptr->area = 0;
 	next_command3 = 0;
 	return 0;
 }
 
-unsigned int CMD_18_AspirantLeave(void)
-{
+unsigned int CMD_18_AspirantLeave(void) {
 	/*TODO: check me*/
 	static const animdesc_t anim33 = {ANIMFLG_USESPOT | 33};
 
@@ -3080,8 +2813,7 @@ unsigned int CMD_18_AspirantLeave(void)
 	pers_ptr->area = 0;
 	script_word_vars.next_command1 = BE(0);
 
-	if((pers_ptr->flags & PERSFLG_40) == 0)
-	{
+	if ((pers_ptr->flags & PERSFLG_40) == 0) {
 		spot_ptr->flags &= ~SPOTFLG_80;
 		FindAndSelectSpot(script_byte_vars.quest_item_ofs);
 		script_byte_vars.byte_179EF = 0;
@@ -3095,8 +2827,7 @@ unsigned int CMD_18_AspirantLeave(void)
 /*
 Show Holo screen anim and speech
 */
-unsigned int CMD_1B_Holo(void)
-{
+unsigned int CMD_1B_Holo(void) {
 	unsigned char x, y;
 	unsigned int num;
 	unsigned char *msg;
@@ -3104,16 +2835,16 @@ unsigned int CMD_1B_Holo(void)
 	x = found_spot->sx;
 	y = found_spot->sy;
 
-	PlayAnim(42, x + 4/4, y + 6);
+	PlayAnim(42, x + 4 / 4, y + 6);
 
-	num = 321 + ((Swap16(script_word_vars.timer_ticks2) < 60*60) ? 0 : 4) + (script_byte_vars.rand_value % 4);
+	num = 321 + ((Swap16(script_word_vars.timer_ticks2) < 60 * 60) ? 0 : 4) + (script_byte_vars.rand_value % 4);
 	msg = SeekToString(diali_data, num);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
-	if(x < 140/4)
-		DrawPersonBubble(x + 32/4, y - 40, SPIKE_DNLEFT | 20, msg);
+	if (x < 140 / 4)
+		DrawPersonBubble(x + 32 / 4, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 92/4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		DrawPersonBubble(x - 92 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
 	PlayAnim(43, x, y);
 
@@ -3128,8 +2859,7 @@ unsigned int CMD_1B_Holo(void)
 /*
 TODO: check me
 */
-unsigned int CMD_20_(void)
-{
+unsigned int CMD_20_(void) {
 	pers_list[5].area = 0;
 	next_command4 = 0;
 	return 0;
@@ -3138,15 +2868,14 @@ unsigned int CMD_20_(void)
 /*
 Talk to Vorts
 */
-unsigned int CMD_21_VortTalk(void)
-{
+unsigned int CMD_21_VortTalk(void) {
 	unsigned char x, y;
 	unsigned int num;
 	unsigned char *msg;
 
-	if(script_byte_vars.rand_value >= 85)
+	if (script_byte_vars.rand_value >= 85)
 		num = 6;
-	else if(script_byte_vars.rand_value >= 170)
+	else if (script_byte_vars.rand_value >= 170)
 		num = 7;
 	else
 		num = 35;
@@ -3157,10 +2886,10 @@ unsigned int CMD_21_VortTalk(void)
 	x = found_spot->sx;
 	y = found_spot->sy;
 
-	if(x < 140/4)
+	if (x < 140 / 4)
 		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80/4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
@@ -3168,37 +2897,32 @@ unsigned int CMD_21_VortTalk(void)
 	return 0;
 }
 
-unsigned int CMD_22_(void)
-{
+unsigned int CMD_22_(void) {
 	ActionForPersonChoice(menu_commands_22);
 	return ScriptRerun;
 }
 
-unsigned int CMD_23_(void)
-{
+unsigned int CMD_23_(void) {
 	ActionForPersonChoice(menu_commands_23);
 	return ScriptRerun;
 }
 
-unsigned int CMD_24_(void)
-{
+unsigned int CMD_24_(void) {
 	ActionForPersonChoice(menu_commands_24);
 	return ScriptRerun;
 }
 
-unsigned int CMD_25_LoadGame(void)
-{
-	if(LoadScena())
-		the_command = 0x918F;	/*error loading*/
+unsigned int CMD_25_LoadGame(void) {
+	if (LoadScena())
+		the_command = 0x918F;   /*error loading*/
 	else
 		the_command = 0x90AA;
 	return ScriptRerun;
 }
 
-unsigned int CMD_26_SaveGame(void)
-{
-	if(SaveScena())
-		the_command = 0x9190;	/*error saving*/
+unsigned int CMD_26_SaveGame(void) {
+	if (SaveScena())
+		the_command = 0x9190;   /*error saving*/
 	else
 		the_command = 0x90AA;
 	return ScriptRerun;
@@ -3225,7 +2949,7 @@ cmdhandler_t command_handlers[] = {
 	CMD_D_PsiBrainwarp,
 	CMD_E_PsiZoneScan,
 	CMD_F_PsiPsiShift,
-	CMD_10_PsiExtremeViolence,	/*10*/
+	CMD_10_PsiExtremeViolence,  /*10*/
 	CMD_11_PsiTuneIn,
 	CMD_12_,
 	CMD_13_ActivateFountain,
@@ -3241,14 +2965,14 @@ cmdhandler_t command_handlers[] = {
 	CMD_TRAP,
 	CMD_TRAP,
 	CMD_TRAP,
-	CMD_TRAP,	/*20*/
+	CMD_TRAP,   /*20*/
 	CMD_21_VortTalk,
 	CMD_22_,
 	CMD_23_,
 	CMD_24_,
 	CMD_25_LoadGame,
 	CMD_26_SaveGame
-	};
+};
 #define MAX_CMD_HANDLERS (sizeof(command_handlers) / sizeof(command_handlers[0]))
 
 cmdhandler_t script_handlers[] = {
@@ -3268,7 +2992,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_D_DrawPortraitDotEffect,
 	SCR_E_DrawPortraitZoomIn,
 	SCR_TRAP,
-	SCR_TRAP,	/*10*/
+	SCR_TRAP,   /*10*/
 	SCR_11_DrawRoomObject,
 	SCR_12_Chain,
 	SCR_13_RedrawRoomStatics,
@@ -3281,11 +3005,11 @@ cmdhandler_t script_handlers[] = {
 	SCR_1A_HidePortraitLiftRight,
 	SCR_1B_HidePortraitLiftUp,
 	SCR_1C_HidePortraitLiftDown,
-	SCR_TRAP,					/*TODO: same as SCR_23_HidePortrait , unused*/
+	SCR_TRAP,                   /*TODO: same as SCR_23_HidePortrait , unused*/
 	SCR_1E_HidePortraitTwist,
 	SCR_1F_HidePortraitArc,
-	SCR_20_HidePortraitDots,	/*20*/
-	SCR_TRAP,					/*TODO: same as SCR_23_HidePortrait , unused*/
+	SCR_20_HidePortraitDots,    /*20*/
+	SCR_TRAP,                   /*TODO: same as SCR_23_HidePortrait , unused*/
 	SCR_22_HidePortraitShatter,
 	SCR_23_HidePortrait,
 	SCR_24_PopAllPortraits,
@@ -3300,7 +3024,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_2D_Wait,
 	SCR_2E_PromptWait,
 	SCR_TRAP,
-	SCR_30_Fight,	/*30*/
+	SCR_30_Fight,   /*30*/
 	SCR_31_Fight2,
 	SCR_32_FightWin,
 	SCR_33_Jump,
@@ -3316,7 +3040,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_3D_ActionsMenu,
 	SCR_3E_TheWallAdvance,
 	SCR_TRAP,
-	SCR_40_PopAllTextBoxes,	/*40*/
+	SCR_40_PopAllTextBoxes, /*40*/
 	SCR_41_LiftHand,
 	SCR_42_LoadZone,
 	SCR_43_RefreshZone,
@@ -3332,7 +3056,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_TRAP,
 	SCR_4E_BounceCurrentItemToRoom,
 	SCR_4F_BounceCurrentItemToInventory,
-	SCR_50_BounceItemToInventory,	/*50*/
+	SCR_50_BounceItemToInventory,   /*50*/
 	SCR_51_ItemTrade,
 	SCR_52_RefreshSpritesData,
 	SCR_53_FindInvItem,
@@ -3348,7 +3072,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_TRAP,
 	SCR_TRAP,
 	SCR_5F_DrawRoomObjectBack,
-	SCR_TRAP,	/*60*/
+	SCR_TRAP,   /*60*/
 	SCR_61_DrawPersonBubbleDialog,
 	SCR_TRAP,
 	SCR_TRAP,
@@ -3359,7 +3083,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_68_Unused,
 	SCR_69_PlaySound,
 	SCR_6A_Unused,
-	};
+};
 #define MAX_SCR_HANDLERS (sizeof(script_handlers) / sizeof(script_handlers[0]))
 
 #ifdef DEBUG_SCRIPT
@@ -3367,8 +3091,7 @@ int runscr_reentr = 0;
 int runcmd_reentr = 0;
 #endif
 
-unsigned int RunScript(unsigned char *code)
-{
+unsigned int RunScript(unsigned char *code) {
 	unsigned int status = ScriptContinue;
 
 #ifdef DEBUG_SCRIPT
@@ -3376,15 +3099,13 @@ unsigned int RunScript(unsigned char *code)
 #endif
 
 	script_ptr = code;
-	while(script_ptr != script_end_ptr)
-	{
+	while (script_ptr != script_end_ptr) {
 		unsigned char opcode = *script_ptr;
 
 #ifdef DEBUG_SCRIPT
 		{
 			FILE *f = fopen(DEBUG_SCRIPT_LOG, "at");
-			if(f)
-			{
+			if (f) {
 				unsigned int offs = (script_ptr - templ_data) & 0xFFFF;
 				fprintf(f, "%04X: %02X\n", offs, opcode);
 				fclose(f);
@@ -3393,20 +3114,19 @@ unsigned int RunScript(unsigned char *code)
 #endif
 
 #ifdef DEBUG_QUEST
-		if(script_ptr - templ_data == 0x4F)
-		{
+		if (script_ptr - templ_data == 0x4F) {
 			/*manipulate rand_value to get a quest item we need*/
 			script_byte_vars.rand_value = DEBUG_QUEST;
 		}
 #endif
 
 
-		if(opcode == 0 || opcode >= 107)
+		if (opcode == 0 || opcode >= 107)
 			break;
 
 		status = script_handlers[opcode]();
 
-		if(status != ScriptContinue)
+		if (status != ScriptContinue)
 			break;
 	}
 
@@ -3417,26 +3137,24 @@ unsigned int RunScript(unsigned char *code)
 	return status;
 }
 
-unsigned char * GetScriptSubroutine(unsigned int index)
-{
+unsigned char *GetScriptSubroutine(unsigned int index) {
 	return SeekToEntry(templ_data, index, &script_end_ptr);
 }
 
-unsigned int RunCommand(void)
-{
+unsigned int RunCommand(void) {
 	unsigned int res;
 	unsigned short cmd;
-again:;
+again:
+	;
 	res = 0;
 
-	if(the_command == 0)
+	if (the_command == 0)
 		return 0;
 
 #ifdef DEBUG_SCRIPT
 	{
 		FILE *f = fopen(DEBUG_SCRIPT_LOG, "at");
-		if(f)
-		{
+		if (f) {
 			fprintf(f, "\nRunCommand 0x%04X rc: %d rs: %d\n", the_command, runcmd_reentr, runscr_reentr);
 			fclose(f);
 		}
@@ -3447,10 +3165,9 @@ again:;
 #endif
 
 	cmd = the_command & 0x3FF;
-	
-	switch(the_command & 0xF000)
-	{
-	case 0:	/*TODO what kind of call is this?*/
+
+	switch (the_command & 0xF000) {
+	case 0: /*TODO what kind of call is this?*/
 		res = RunScript(templ_data + the_command);
 		break;
 	case 0x9000:
@@ -3475,8 +3192,7 @@ again:;
 #ifdef DEBUG_SCRIPT
 	{
 		FILE *f = fopen(DEBUG_SCRIPT_LOG, "at");
-		if(f)
-		{
+		if (f) {
 			fprintf(f, "\n");
 			fclose(f);
 		}
@@ -3484,14 +3200,13 @@ again:;
 #endif
 
 	/*TODO: this is pretty hacky, original code manipulates the stack to discard old script invocation*/
-	if(res == ScriptRerun)
+	if (res == ScriptRerun)
 		goto again;
 
 	return res;
 }
 
-unsigned int RunCommandKeepSp(void)
-{
+unsigned int RunCommandKeepSp(void) {
 	/*keep_sp = sp;*/
 	return RunCommand();
 }

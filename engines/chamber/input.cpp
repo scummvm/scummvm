@@ -17,109 +17,85 @@ unsigned char key_direction_old;
 unsigned char accell_countdown;
 unsigned int accelleration = 1;
 
-void interrupt (*old_keyboard_isr)(void);
+void interrupt(*old_keyboard_isr)(void);
 
-unsigned char ReadKeyboardChar(void)
-{
+unsigned char ReadKeyboardChar(void) {
 #ifdef DEBUG
-	if(old_keyboard_isr)
-	{
-		do
-		{
+	if (old_keyboard_isr) {
+		do {
 			PollInput();
-		}
-		while(!buttons);
-	}
-	else
+		} while (!buttons);
+	} else
 #endif
-	return (unsigned char)getch();
+		return (unsigned char)getch();
 }
 
-void ClearKeyboard(void)
-{
-	while(kbhit())
-	{
+void ClearKeyboard(void) {
+	while (kbhit()) {
 		getch();
 	}
 }
 
-void interrupt NullIsr(void)
-{
+void interrupt NullIsr(void) {
 	/*nothing*/
 }
 
-void SetInputButtons(unsigned char keys)
-{
-	if(keys && buttons_repeat)
-	{
+void SetInputButtons(unsigned char keys) {
+	if (keys && buttons_repeat) {
 		/*ignore buttons repeat*/
 		buttons = 0;
 		return;
 	}
-	if(keys & 2)
+	if (keys & 2)
 		right_button = ~0;
-	if(keys & 1)
+	if (keys & 1)
 		right_button = 0;
 	buttons = keys;
 	buttons_repeat = keys;
 }
 
-unsigned char PollMouse(void)
-{
+unsigned char PollMouse(void) {
 	union REGS reg;
 	reg.x.ax = 3;
 	int86(0x33, &reg, &reg);
 	cursor_x = reg.x.cx;
 	cursor_y = reg.h.dl;
-	return reg.h.bl;	/*buttons*/
+	return reg.h.bl;    /*buttons*/
 }
 
-unsigned char PollKeyboard(void)
-{
+unsigned char PollKeyboard(void) {
 	unsigned char direction = key_direction;
-	if(direction && direction == key_direction_old)
-	{
-		if(++accell_countdown == 10)
-		{
+	if (direction && direction == key_direction_old) {
+		if (++accell_countdown == 10) {
 			accelleration++;
 			accell_countdown = 0;
 		}
-	}
-	else
-	{
+	} else {
 		accelleration = 1;
 		accell_countdown = 0;
 	}
 	key_direction_old = direction;
 
-	if(direction & 0x0F)
-	{
-		if(direction == 1)
-		{
+	if (direction & 0x0F) {
+		if (direction == 1) {
 			cursor_x += accelleration;
-			if(cursor_x >= 304)	/*TODO: >*/
+			if (cursor_x >= 304) /*TODO: >*/
 				cursor_x = 304;
-		}
-		else
-		{
+		} else {
 			cursor_x -= accelleration;
-			if((signed int)cursor_x < 0)
+			if ((signed int)cursor_x < 0)
 				cursor_x = 0;
 		}
 	}
-	
-	if(direction & 0xF0)
-	{
-		if(direction == 0x10)
-		{
+
+	if (direction & 0xF0) {
+		if (direction == 0x10) {
 			cursor_y += accelleration;
-			if(cursor_y >= 184)	/*TODO: >*/
+			if (cursor_y >= 184) /*TODO: >*/
 				cursor_y = 184;
-		}
-		else
-		{
+		} else {
 			cursor_y -= accelleration;
-			if((signed char)cursor_y < 0)
+			if ((signed char)cursor_y < 0)
 				cursor_y = 0;
 		}
 	}
@@ -127,25 +103,22 @@ unsigned char PollKeyboard(void)
 	return key_code;
 }
 
-void PollInput(void)
-{
+void PollInput(void) {
 	unsigned char keys;
-	if(have_mouse)
+	if (have_mouse)
 		keys = PollMouse();
 	else
 		keys = PollKeyboard();
 	SetInputButtons(keys);
 }
 
-void ProcessInput(void)
-{
+void ProcessInput(void) {
 	PollInput();
 	UpdateCursor();
 	DrawCursor(frontbuffer);
 }
 
-void interrupt KeyboardIsr()
-{
+void interrupt KeyboardIsr() {
 	unsigned char scan, strobe;
 	scan = inportb(0x60);
 	/*consume scan from kbd. controller*/
@@ -153,38 +126,31 @@ void interrupt KeyboardIsr()
 	outportb(0x61, strobe | 0x80);
 	outportb(0x61, strobe);
 
-	if(scan == 1)			/*esc*/
-	{
+	if (scan == 1) {        /*esc*/
 		esc_pressed = ~0;
-	}
-	else
-	{
-		if(scan & 0x80)			/*key release?*/
-		{
+	} else {
+		if (scan & 0x80) {      /*key release?*/
 			key_code = 0;
 			key_direction = 0;
-		}
-		else 
-		{
-			switch(scan)
-			{
-			case 0x39:	/*space*/
+		} else {
+			switch (scan) {
+			case 0x39:  /*space*/
 				key_code = scan;
 				key_direction = 0;
 				break;
-			case 0x48:	/*up*/
+			case 0x48:  /*up*/
 				key_code = 0;
 				key_direction = 0xF0;
 				break;
-			case 0x50:	/*down*/
+			case 0x50:  /*down*/
 				key_code = 0;
 				key_direction = 0x10;
 				break;
-			case 0x4B:	/*left*/
+			case 0x4B:  /*left*/
 				key_code = 0;
 				key_direction = 0x0F;
 				break;
-			case 0x4D:	/*right*/
+			case 0x4D:  /*right*/
 				key_code = 0;
 				key_direction = 0x01;
 				break;
@@ -194,37 +160,34 @@ void interrupt KeyboardIsr()
 	outportb(0x20, 0x20);
 }
 
-void InitInput(void)
-{
+void InitInput(void) {
 	/*disable critical errors handler*/
 	setvect(0x24, NullIsr);
 
 	/*is mouse present?*/
-	if(getvect(0x33))
-	{
+	if (getvect(0x33)) {
 		union REGS reg;
 		reg.x.ax = 0;
 		int86(0x33, &reg, &reg);
-		if(reg.x.ax == 0xFFFF)
-		{
+		if (reg.x.ax == 0xFFFF) {
 			/*mouse detected*/
 
-			reg.x.ax = 0xF;	/*set cursor speed*/
+			reg.x.ax = 0xF; /*set cursor speed*/
 			reg.x.cx = 16;
 			reg.x.dx = 16;
 			int86(0x33, &reg, &reg);
 
-			reg.x.ax = 7;	/*set x range*/
+			reg.x.ax = 7;   /*set x range*/
 			reg.x.cx = 0;
 			reg.x.dx = 303;
 			int86(0x33, &reg, &reg);
 
-			reg.x.ax = 8;	/*set y range*/
+			reg.x.ax = 8;   /*set y range*/
 			reg.x.cx = 0;
 			reg.x.dx = 183;
 			int86(0x33, &reg, &reg);
 
-			reg.x.ax = 4;	/*set coords*/
+			reg.x.ax = 4;   /*set coords*/
 			cursor_x = reg.x.cx = 10;
 			cursor_y = reg.x.dx = 10;
 			int86(0x33, &reg, &reg);
@@ -233,7 +196,7 @@ void InitInput(void)
 		}
 	}
 
-	if(have_mouse)
+	if (have_mouse)
 		return;
 
 	/*no mouse*/
@@ -242,9 +205,8 @@ void InitInput(void)
 	setvect(9, KeyboardIsr);
 }
 
-void UninitInput(void)
-{
-	if(have_mouse)
+void UninitInput(void) {
+	if (have_mouse)
 		return;
 
 	setvect(9, old_keyboard_isr);

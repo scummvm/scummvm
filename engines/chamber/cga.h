@@ -49,8 +49,8 @@ unsigned int CGA_CalcXY_p(unsigned int x, unsigned int y);
 
 void CGA_CopyScreenBlock(unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
 
-unsigned char * CGA_BackupImage(unsigned char *source, unsigned int ofs, unsigned int w, unsigned int h, unsigned char *buffer);
-unsigned char * CGA_BackupImageReal(unsigned int ofs, unsigned int w, unsigned int h);
+unsigned char *CGA_BackupImage(unsigned char *source, unsigned int ofs, unsigned int w, unsigned int h, unsigned char *buffer);
+unsigned char *CGA_BackupImageReal(unsigned int ofs, unsigned int w, unsigned int h);
 
 void CGA_RestoreImage(unsigned char *buffer, unsigned char *target);
 void CGA_RefreshImageData(unsigned char *buffer);
@@ -82,7 +82,7 @@ void DrawSpriteNFlip(unsigned char index, unsigned int x, unsigned int y, unsign
 
 void BackupAndShowSprite(unsigned char index, unsigned char x, unsigned char y);
 
-unsigned char * LoadSprite(unsigned char index, unsigned char *bank, unsigned char *buffer, unsigned char header_only);
+unsigned char *LoadSprite(unsigned char index, unsigned char *bank, unsigned char *buffer, unsigned char header_only);
 
 unsigned char *LoadSprit(unsigned char index);
 unsigned char *LoadPersSprit(unsigned char index);

@@ -2,8 +2,8 @@
 #define _RESDATA_H_
 
 typedef struct ResEntry_t {
-char	name[5 + 1 + 3 + 1];
-void    *buffer;
+	char    name[5 + 1 + 3 + 1];
+	void    *buffer;
 } ResEntry_t;
 
 /* Max resource file size among all languages */
@@ -55,8 +55,8 @@ extern unsigned char anima_data[];
 extern unsigned char anico_data[];
 extern unsigned char zones_data[];
 
-unsigned char * SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end);
-unsigned char * SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char **end);
+unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end);
+unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char **end);
 
 unsigned int LoadFile(char *filename, unsigned char *buffer);
 unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size);

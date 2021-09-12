@@ -12,7 +12,7 @@ extern unsigned char chars_color_wonb[];
 extern unsigned char chars_color_wonc[];
 
 void PrintStringCentered(unsigned char *str, unsigned char *target);
-unsigned char * PrintStringPadded(unsigned char *str, unsigned char *target);
+unsigned char *PrintStringPadded(unsigned char *str, unsigned char *target);
 
 void DrawMessage(unsigned char *msg, unsigned char *target);
 

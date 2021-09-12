@@ -35,8 +35,7 @@ unsigned char cursor_bit_shift;
 /*
 Select cursor shape and its hotspot
 */
-void SelectCursor(unsigned int num)
-{
+void SelectCursor(unsigned int num) {
 	cursor_x_shift = cursor_shifts[num][0];
 	cursor_y_shift = cursor_shifts[num][1];
 	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / CGA_PIXELS_PER_BYTE;
@@ -45,13 +44,14 @@ void SelectCursor(unsigned int num)
 /*
 Build cursor sprite for its current pixel-grained position
 */
-void UpdateCursor(void)
-{
+void UpdateCursor(void) {
 	unsigned char *cursor, *sprite, *spr;
 	unsigned char cursor_bit_shift;
 	unsigned int x, y;
-	x = cursor_x - cursor_x_shift; if((signed int)x < 0) x = 0;
-	y = cursor_y - cursor_y_shift; if((signed int)y < 0) y = 0;
+	x = cursor_x - cursor_x_shift;
+	if ((signed int)x < 0) x = 0;
+	y = cursor_y - cursor_y_shift;
+	if ((signed int)y < 0) y = 0;
 
 	cursor_bit_shift = (x % 4) * 2;
 	cursor_draw_ofs = CGA_CalcXY_p(x / 4, y);
@@ -59,14 +59,11 @@ void UpdateCursor(void)
 	cursor = cursor_shape;
 	sprite = sprit_load_buffer;
 
-	if(cursor_bit_shift == 0)
-	{
+	if (cursor_bit_shift == 0) {
 		/*pixels*/
 		spr = sprite;
-		for(y = 0;y < CURSOR_HEIGHT;y++)
-		{
-			for(x = 0;x < CURSOR_WIDTH / 4;x++)
-			{
+		for (y = 0; y < CURSOR_HEIGHT; y++) {
+			for (x = 0; x < CURSOR_WIDTH / 4; x++) {
 				unsigned char p = *cursor++;
 				spr[x * 2] = p;
 			}
@@ -76,30 +73,24 @@ void UpdateCursor(void)
 
 		/*mask*/
 		spr = sprite + 1;
-		for(y = 0;y < CURSOR_HEIGHT;y++)
-		{
-			for(x = 0;x < CURSOR_WIDTH / 4;x++)
-			{
+		for (y = 0; y < CURSOR_HEIGHT; y++) {
+			for (x = 0; x < CURSOR_WIDTH / 4; x++) {
 				unsigned char p = *cursor++;
 				spr[x * 2] = p;
 			}
 			spr[x * 2] = 0xFF;
 			spr += 5 * 2;
 		}
-	}
-	else
-	{
+	} else {
 		spr = sprite;
-		for(y = 0;y < CURSOR_HEIGHT;y++)
-		{
+		for (y = 0; y < CURSOR_HEIGHT; y++) {
 			unsigned char i;
 			unsigned char p0 = *cursor++;
 			unsigned char p1 = *cursor++;
 			unsigned char p2 = *cursor++;
 			unsigned char p3 = *cursor++;
 			unsigned char p4 = 0;
-			for(i = 0;i < cursor_bit_shift;i++)
-			{
+			for (i = 0; i < cursor_bit_shift; i++) {
 				p4 = (p4 >> 1) | (p3 << 7);
 				p3 = (p3 >> 1) | (p2 << 7);
 				p2 = (p2 >> 1) | (p1 << 7);
@@ -116,16 +107,14 @@ void UpdateCursor(void)
 		}
 
 		spr = sprite + 1;
-		for(y = 0;y < CURSOR_HEIGHT;y++)
-		{
+		for (y = 0; y < CURSOR_HEIGHT; y++) {
 			unsigned char i;
 			unsigned char p0 = *cursor++;
 			unsigned char p1 = *cursor++;
 			unsigned char p2 = *cursor++;
 			unsigned char p3 = *cursor++;
 			unsigned char p4 = 0xFF;
-			for(i = 0;i < cursor_bit_shift;i++)
-			{
+			for (i = 0; i < cursor_bit_shift; i++) {
 				p4 = (p4 >> 1) | (p3 << 7);
 				p3 = (p3 >> 1) | (p2 << 7);
 				p2 = (p2 >> 1) | (p1 << 7);
@@ -145,8 +134,7 @@ void UpdateCursor(void)
 /*
 Draw cursor sprite and backup background pixels
 */
-void DrawCursor(unsigned char *target)
-{
+void DrawCursor(unsigned char *target) {
 	last_cursor_draw_ofs = cursor_draw_ofs;
 	CGA_BlitSpriteBak(sprit_load_buffer, CURSOR_WIDTH_SPR / 4, CURSOR_WIDTH_SPR / 4, CURSOR_HEIGHT, target, cursor_draw_ofs, cursor_backup, cursor_color);
 }
@@ -154,16 +142,14 @@ void DrawCursor(unsigned char *target)
 /*
 Restore background pixels under cursor
 */
-void UndrawCursor(unsigned char *target)
-{
+void UndrawCursor(unsigned char *target) {
 	CGA_Blit(cursor_backup, CURSOR_WIDTH_SPR / 4, CURSOR_WIDTH_SPR / 4, CURSOR_HEIGHT, target, last_cursor_draw_ofs);
 }
 
 /*
 Restore pixels under cursor and update cursor sprite
 */
-void UpdateUndrawCursor(unsigned char *target)
-{
+void UpdateUndrawCursor(unsigned char *target) {
 	/*TODO: does this call order makes any sense?*/
 	UpdateCursor();
 	UndrawCursor(target);
