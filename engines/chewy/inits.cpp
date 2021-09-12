@@ -31,10 +31,6 @@
 extern int16 room_start_nr;
 
 void standard_init() {
-	int16 lw_err;
-	uint16 lw;
-	uint16 dummy = 3;
-
 	mem = new memory;
 	out = new mcga_grafik;
 	err = new fehler;

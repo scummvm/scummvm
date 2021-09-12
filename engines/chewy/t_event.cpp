@@ -839,12 +839,13 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					break;
 
 				case TXT_MARK_WALK:
-					switch (txt_nr) {
+					action_ret = false;
+					/*switch (txt_nr) {
 					default:
 						action_ret = false;
 						break;
 
-					}
+					}*/
 					break;
 
 				case TXT_MARK_TALK:
