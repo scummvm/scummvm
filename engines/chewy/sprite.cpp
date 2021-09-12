@@ -35,11 +35,11 @@ namespace Chewy {
 #define ZOBJ_NICHELLE 8
 #define MAX_ZOBJ 60
 
-typedef struct {
+struct ZObjSort {
 	uint8 ObjArt;
 	uint8 ObjNr;
 	int16 ObjZ;
-} ZObjSort;
+};
 
 int16 z_count;
 ZObjSort z_obj_sort[MAX_ZOBJ];

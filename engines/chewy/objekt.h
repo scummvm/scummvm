@@ -25,7 +25,7 @@
 
 namespace Chewy {
 
-typedef struct {
+struct RoomMovObjekt {
 	int16 RoomNr;
 
 	int16 X;
@@ -55,16 +55,15 @@ typedef struct {
 	uint8 HeldHide;
 
 	int16 ZEbene;
+};
 
-} RoomMovObjekt;
-
-typedef struct {
+struct IibDateiHeader {
 	char Id[4];
 	char Tafname[14];
 	uint32 Size;
-} IibDateiHeader;
+};
 
-typedef struct {
+struct RoomStaticInventar {
 	int16 RoomNr;
 
 	int16 X;
@@ -92,15 +91,14 @@ typedef struct {
 	int16 StaticAk;
 
 	int16 StaticOff;
+};
 
-} RoomStaticInventar;
-
-typedef struct {
+struct SibDateiHeader {
 	char Id[4];
 	int16 Anz;
-} SibDateiHeader;
+};
 
-typedef struct {
+struct RoomExit {
 	int16 RoomNr;
 	int16 X;
 	int16 Y;
@@ -115,12 +113,12 @@ typedef struct {
 	uint8 Attribut;
 
 	uint8 dummy;
-} RoomExit;
+};
 
-typedef struct {
+struct EibDateiHeader {
 	char Id[4];
 	int16 Anz;
-} EibDateiHeader;
+};
 
 #define OBJZU_AUF 0
 #define OBJZU_ZU 1

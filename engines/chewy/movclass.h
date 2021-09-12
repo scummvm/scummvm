@@ -34,7 +34,7 @@ namespace Chewy {
 #define MLE_DOWN 2
 #define MLE_LEFT 3
 
-typedef struct {
+struct MovInfo {
 	int16 XyzStart[3];
 	int16 XyzEnd[3];
 
@@ -47,10 +47,9 @@ typedef struct {
 	uint8 Id;
 
 	uint8 Mode;
+};
 
-} MovInfo;
-
-typedef struct {
+struct ObjMov {
 	int16 Xypos[3];
 	int16 Xyvo [3];
 	int16 Xyna [3][2];
@@ -66,9 +65,9 @@ typedef struct {
 	int16 Xzoom;
 	int16 Yzoom;
 	int16 StNr;
-} ObjMov;
+};
 
-typedef struct {
+struct GotoPkt {
 	int16 Sx;
 	int16 Sy;
 	int16 Dx;
@@ -79,23 +78,22 @@ typedef struct {
 	int16 Ebenen;
 	int16 AkMovEbene;
 	int16 Vorschub;
-} GotoPkt;
+};
 
-typedef struct {
+struct GotoMovLine {
 	int16 GotoFeld;
 
 	int16 MLineFeld;
-} GotoMovLine;
+};
 
-typedef struct {
+struct MovLineExit {
 	int16 Steps;
 	int16 Direction;
 	int16 FNr;
 	int16 KnPkt[MAX_KNOTEN_PKT];
+};
 
-} MovLineExit;
-
-typedef struct {
+struct AutoGoVar {
 	bool AutoGo;
 	bool Continue;
 
@@ -108,10 +106,9 @@ typedef struct {
 
 	int16 AkFeld;
 	int16 AkKnoten;
-} AutoGoVar;
+};
 
 class movclass {
-
 public:
 	movclass();
 	~movclass();

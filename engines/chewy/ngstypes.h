@@ -28,18 +28,18 @@
 
 namespace Chewy {
 
-typedef struct {
+struct TxtChunk {
 	uint32 Len;
 	int16 StrAnz;
-} TxtChunk;
+};
 
-typedef struct {
+struct TcfHeader {
 	char Id[3];
 	uint8 Crypt;
 	int16 Anz;
-} TcfHeader;
+};
 
-typedef struct {
+struct pcx_header {
 	char id;
 	char version;
 	char komp;
@@ -58,9 +58,9 @@ typedef struct {
 	int16 screenx;
 	int16 screeny;
 	char dummy[54];
-} pcx_header;
+};
 
-typedef struct {
+struct tbf_dateiheader {
 	char id[4];
 	int16 mode;
 	int16 komp;
@@ -68,7 +68,7 @@ typedef struct {
 	uint16 width;
 	uint16 height;
 	char palette [768];
-} tbf_dateiheader;
+};
 
 struct taf_dateiheader {
 	char id[4] = { 0 };
@@ -90,26 +90,26 @@ struct taf_imageheader {
 	uint32 image = 0;
 };
 
-typedef struct {
+struct taf_info {
 	int16 anzahl;
 	byte *palette;
 	int16 *korrektur;
 	byte **image;
-} taf_info;
+};
 
-typedef struct {
+struct taf_seq_info {
 	int16 anzahl;
 	int16 *korrektur;
 	byte **image;
-} taf_seq_info;
+};
 
-typedef struct {
+struct NewPhead {
 	char id[4];
 	uint16 type;
 	uint16 PoolAnz;
-} NewPhead;
+};
 
-typedef struct {
+struct tff_header {
 	char id[4];
 	uint32 size;
 	int16 count;
@@ -117,13 +117,13 @@ typedef struct {
 	int16 last;
 	int16 width;
 	int16 height;
-} tff_header;
+};
 
 #define D_GR 16
 #define MAXMENUE 50
 #define MAXKNOPF 400
 
-typedef struct {
+struct knopf {
 	int16 typ;
 	int16 enable;
 	int16 x1;
@@ -141,9 +141,9 @@ typedef struct {
 
 	int16 textptr;
 
-} knopf;
+};
 
-typedef struct {
+struct menue {
 	int16 nr;
 	int16 disp;
 	int16 typ;
@@ -156,17 +156,17 @@ typedef struct {
 	int16 spritenr;
 	char *sprite;
 	char *spritesave;
-} menue;
+};
 
-typedef struct {
+struct dialogue {
 	char id[4];
 	int16 anzmenue;
 	menue *menueliste[MAXMENUE];
 	char menuetaf[D_GR];
 	char knopftaf[D_GR];
-} dialogue;
+};
 
-typedef struct {
+struct sbi_inst {
 	uint8 id[4];
 	uint8 name[32];
 	uint8 modmulti;
@@ -181,33 +181,33 @@ typedef struct {
 	uint8 carrw;
 	uint8 rv;
 	uint8 frei[5];
-} sbi_inst;
+};
 
-typedef struct {
+struct voc_header {
 	char id[0x14];
 	uint16 offset;
 	uint8 ver_low;
 	uint8 ver_high;
 	uint16 id_code;
-} voc_header;
+};
 
-typedef struct {
+struct maus_info {
 	int16 x;
 	int16 y;
 	int16 button;
-} maus_info;
+};
 
-typedef struct {
+struct kb_info {
 	char key_code;
 	byte scan_code;
-} kb_info;
+};
 
-typedef struct {
+struct in_zeiger {
 	maus_info *minfo;
 	kb_info *kbinfo;
-} in_zeiger;
+};
 
-typedef struct {
+struct sb_vars {
 	uint16 sbase;
 	int16 SbIrq;
 	int16 DmaKanal;
@@ -219,9 +219,9 @@ typedef struct {
 	uint8 DmaDisable;
 	uint8 IrqEnable;
 	uint8 IrqDisable;
-} sb_vars;
+};
 
-typedef struct {
+struct mod_inst {
 	char name[22];
 	uint16 laenge;
 	char finetune;
@@ -229,53 +229,53 @@ typedef struct {
 	char insvol;
 	int16 repstart;
 	int16 replen;
-} mod_inst;
+};
 
-typedef struct {
+struct mod_header {
 	char name[20];
 	mod_inst instrument[31];
 	char pattern_anz;
 	char dummy;
 	char sequenz[128];
 	char id[4];
-} mod_header;
+};
 
-typedef struct {
+struct mod15_header {
 	char name[20];
 	mod_inst instrument[15];
 	char pattern_anz;
 	char dummy;
 	char sequenz[128];
 	char id[4];
-} mod15_header;
+};
 
-typedef struct {
+struct tmf_inst {
 	uint8 finetune;
 	uint8 insvol;
 	uint32 repstart;
 	uint32 replen;
 	uint32 laenge;
-} tmf_inst;
+};
 
-typedef struct {
+struct tmf_header {
 	char id[4];
 	tmf_inst instrument[31];
 	uint8 lied_len;
 	uint8 pattern_anz;
 	uint8 sequenz[128];
 	byte *ipos[31];
-} tmf_header;
+};
 
-typedef struct {
+struct musik_info {
 	int16 musik_playing;
 	int16 play_mode;
 	int16 pattern_line;
 	int16 sequence_pos;
 	int16 cur_pattnr;
 	char *cur_pattern;
-} musik_info;
+};
 
-typedef struct {
+struct channel_info {
 	uint8 finetune;
 	uint8 volume;
 	uint32 repstart;
@@ -283,15 +283,15 @@ typedef struct {
 	uint32 len;
 	uint32 pointer;
 	uint32 pos;
-} channel_info;
+};
 
-typedef struct {
+struct himem_block {
 	uint8 install;
 	char version[5];
 	uint32 size;
-} himem_block;
+};
 
-typedef struct {
+struct VesaInfo {
 	int16 ModeNr;
 	int16 ModeAvail;
 	int16 WriteWin;
@@ -304,9 +304,9 @@ typedef struct {
 	uint32 ScreenSize;
 	uint32 CopyRest;
 	char dummy[10];
-} VesaInfo;
+};
 
-typedef struct {
+struct vesa_status_block {
 	uint8 id[4];
 	uint8 ver_low;
 	uint8 ver_high;
@@ -322,9 +322,9 @@ typedef struct {
 	char *ProductRev;
 	char dummy [222];
 	char OemData[256];
-} vesa_status_block;
+};
 
-typedef struct {
+struct vesa_modus_block {
 	uint16 mflag;
 
 	uint8 fw_flag;
@@ -347,9 +347,9 @@ typedef struct {
 	uint8 model;
 	uint8 blksize;
 	char dummy[100];
-} vesa_modus_block;
+};
 
-typedef struct {
+struct DetectInfo {
 	int16 Adlib;
 	int16 Port;
 	int16 Irq;
@@ -375,9 +375,9 @@ typedef struct {
 
 	int16 Fpu;
 	int16 Manuell;
-} DetectInfo;
+};
 
-typedef struct {
+struct iog_init {
 	char id[4];
 	char save_path[30];
 
@@ -392,10 +392,9 @@ typedef struct {
 	void (*save_funktion)(void *handle); // FIXME - (FILE *handle);
 	void (*load_funktion)(void *handle); // FIXME - (FILE *handle);
 	int16 delay;
+};
 
-} iog_init;
-
-typedef struct {
+struct iot_init {
 	int16 popx;
 	int16 popy;
 	char *m_col;
@@ -408,44 +407,42 @@ typedef struct {
 	int16(*save_funktion)(char *fname);
 	int16(*load_funktion)(char *fname);
 	int16 delay;
+};
 
-} iot_init;
-
-typedef struct {
+struct mem_info_blk {
 	uint32 size;
 	uint32 akt_size;
 	uint32 biggest_block;
 	uint32 start;
-} mem_info_blk;
+};
 
-typedef struct {
+struct far_taf_info {
 	int16 anzahl;
 	uint32 palette;
 	uint32 korrektur;
 	uint32 *image;
-} far_taf_info;
+};
 
-typedef struct {
+struct GedPoolHeader {
 	char Id[4];
 	int16 Anz;
-} GedPoolHeader;
+};
 
-typedef struct {
+struct GedChunkHeader {
 	uint32 Len;
 	int16 X;
 	int16 Y;
 	int16 Ebenen;
-} GedChunkHeader;
+};
 
-typedef struct {
-
+struct GedHeader {
 	char Id[4];
 	int16 X;
 	int16 Y;
 	uint32 Len;
-} GedHeader;
+};
 
-typedef struct {
+struct cur_blk {
 	int16 page_off_x;
 	int16 page_off_y;
 	byte *cur_back;
@@ -453,15 +450,15 @@ typedef struct {
 	int16 ysize;
 	byte **sprite;
 	bool no_back;
-} cur_blk;
+};
 
-typedef struct {
+struct cur_ani {
 	uint8 ani_anf;
 	uint8 ani_end;
 	int16 delay;
-} cur_ani;
+};
 
-typedef struct {
+struct fcur_blk {
 	int16 page_off_x;
 	int16 page_off_y;
 	uint32 cur_back;
@@ -469,9 +466,9 @@ typedef struct {
 	int16 ysize;
 	uint32 *sprite;
 	bool no_back;
-} fcur_blk;
+};
 
-typedef struct {
+struct FlicHead {
 	uint32 size;
 	uint16 type;
 	uint16 frames;
@@ -491,21 +488,21 @@ typedef struct {
 	uint32 oframe1;
 	uint32 oframe2;
 	uint8 reserved3[40];
-} FlicHead;
+};
 
-typedef struct {
+struct FrameHead {
 	uint32 size;
 	uint16 type;
 	uint16 chunks;
 	uint8 reserved[8];
-} FrameHead;
+};
 
-typedef struct {
+struct ChunkHead {
 	uint32 size;
 	uint16 type;
-} ChunkHead;
+};
 
-typedef struct {
+struct CustomFlicHead {
 	char id[4];
 	uint32 size;
 	uint16 frames;
@@ -513,15 +510,15 @@ typedef struct {
 	uint16 height;
 	uint32 speed;
 	uint32 oframe1;
-} CustomFlicHead;
+};
 
-typedef struct {
+struct CustomFrameHead {
 	uint32 size;
 	uint16 type;
 	uint16 chunks;
-} CustomFrameHead;
+};
 
-typedef struct {
+struct CustomInfo {
 	char *Fname;
 	// FIXME: Was FILE
 	void *Handle;
@@ -531,9 +528,9 @@ typedef struct {
 	byte *MusicSlot;
 	uint32 MaxSoundSize;
 	uint32 MaxMusicSize;
-} CustomInfo;
+};
 
-typedef struct {
+struct real_regs {
 	uint32 edi;
 	uint32 esi;
 	uint32 ebp;
@@ -551,7 +548,7 @@ typedef struct {
 	uint16 cs;
 	uint16 sp;
 	uint16 ss;
-} real_regs;
+};
 
 } // namespace Chewy
 

@@ -38,7 +38,7 @@ namespace Chewy {
 
 #define TIMER_UNFREEZE 3
 
-typedef struct {
+struct TimerBlk {
 	int16 TimeCount;
 
 	int16 TimeEnd;
@@ -48,11 +48,9 @@ typedef struct {
 	int16 TimeMode;
 
 	int16 TimeStatus;
-
-} TimerBlk;
+};
 
 class timer {
-
 public:
 	timer(int16 max_timer, TimerBlk *t);
 	~timer();

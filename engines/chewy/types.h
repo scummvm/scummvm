@@ -29,7 +29,7 @@
 
 namespace Chewy {
 
-typedef struct {
+struct Spieler {
 	uint8 Ats[ROOM_ATS_MAX * 3];
 	uint8 InvAts[MAX_MOV_OBJ * 3];
 	uint8 InvUse[INV_USE_ATS_MAX * 3];
@@ -402,13 +402,14 @@ typedef struct {
 	bool SpeechSwitch;
 	uint8 FramesPerSecond;
 	bool DisplayText;
-} Spieler;
+};
 
-typedef struct {
+struct AutoMov {
 	int16 X;
 	int16 Y;
-} AutoMov;
-typedef struct {
+};
+
+struct MovPhasen {
 	int16 AtsText;
 	int16 Phase[4][2];
 
@@ -417,16 +418,15 @@ typedef struct {
 
 	uint8 ZoomFak;
 	uint8 Start;
+};
 
-} MovPhasen;
-
-typedef struct {
+struct MovLine {
 	int16 EndXyz[3];
 	uint8 PhNr;
 	uint8 Vorschub;
-} MovLine;
+};
 
-typedef struct {
+struct AniBlock {
 	int16 Nr;
 	uint8 Repeat;
 	uint8 Dir;
@@ -434,9 +434,9 @@ typedef struct {
 	uint8 Mode;
 
 	uint8 Dummy;
-} AniBlock;
+};
 
-typedef struct {
+struct Flags {
 	uint16 StopAutoObj : 1;
 	uint16 AniUserAction : 1;
 	uint16 AutoAniPlay : 1;
@@ -470,7 +470,7 @@ typedef struct {
 	uint16 NoShad : 1;
 	uint16 SavePersonRnr : 1;
 	uint16 CursorStatus : 1;
-} Flags;
+};
 
 } // namespace Chewy
 
