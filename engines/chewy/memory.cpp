@@ -27,7 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "engines/chewy/memory.h"
+#include "chewy/memory.h"
 
 extern int16 modul;
 extern int16 fcode;

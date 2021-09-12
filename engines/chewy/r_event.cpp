@@ -31,14 +31,14 @@
 
 #include "common/system.h"
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
-#include "engines/chewy/ani_dat.h"
-#include "engines/chewy/episode1.h"
-#include "engines/chewy/episode2.h"
-#include "engines/chewy/episode3.h"
-#include "engines/chewy/episode4.h"
+#include "chewy/ani_dat.h"
+#include "chewy/episode1.h"
+#include "chewy/episode2.h"
+#include "chewy/episode3.h"
+#include "chewy/episode4.h"
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3

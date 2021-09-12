@@ -23,16 +23,16 @@
 #ifndef CHEWY_NGSHEXT_H
 #define CHEWY_NGSHEXT_H
 
-#include "engines/chewy/memory.h"
-#include "engines/chewy/mcga.h"
-#include "engines/chewy/fehler.h"
-#include "engines/chewy/maus.h"
+#include "chewy/memory.h"
+#include "chewy/mcga.h"
+#include "chewy/fehler.h"
+#include "chewy/maus.h"
 
-#include "engines/chewy/io_game.h"
-#include "engines/chewy/cursor.h"
-#include "engines/chewy/flic.h"
+#include "chewy/io_game.h"
+#include "chewy/cursor.h"
+#include "chewy/flic.h"
 #ifdef AIL
-#include "engines/chewy/ailclass.h"
+#include "chewy/ailclass.h"
 #endif
 
 #define MAXPFAD 81

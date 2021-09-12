@@ -23,7 +23,7 @@
 #ifndef CHEWY_RAUM_H
 #define CHEWY_RAUM_H
 
-#include "engines/chewy/objekt.h"
+#include "chewy/objekt.h"
 
 #define MAX_ABLAGE 4
 

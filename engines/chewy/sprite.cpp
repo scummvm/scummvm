@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 #define ZOBJ_ANI_DETAIL 1
 #define ZOBJ_STATIC_DETAIL 2

@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/effect.h"
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/ngshext.h"
+#include "chewy/effect.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 effect::effect() {
 }

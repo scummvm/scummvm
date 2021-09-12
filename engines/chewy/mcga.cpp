@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/mcga.h"
+#include "chewy/chewy.h"
+#include "chewy/mcga.h"
 
 #define SETZEN 0
 #define UND 1

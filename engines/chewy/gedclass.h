@@ -23,7 +23,7 @@
 #ifndef CHEWY_GEDCLASS_H
 #define CHEWY_GEDCLASS_H
 
-#include "engines/chewy/ngstypes.h"
+#include "chewy/ngstypes.h"
 
 class gedclass {
 

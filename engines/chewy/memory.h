@@ -23,8 +23,8 @@
 #ifndef CHEWY_MEMORY_H
 #define CHEWY_MEMORY_H
 
-#include "engines/chewy/datei.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/datei.h"
+#include "chewy/ngstypes.h"
 
 class memory {
 public:

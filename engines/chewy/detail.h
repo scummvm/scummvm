@@ -23,8 +23,8 @@
 #ifndef CHEWY_DETAIL_H
 #define CHEWY_DETAIL_H
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/defines.h"
+#include "chewy/ngshext.h"
+#include "chewy/defines.h"
 
 #define SAVE_ROOM 0
 #define RESTORE_ROOM 1

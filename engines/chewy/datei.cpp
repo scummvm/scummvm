@@ -34,7 +34,7 @@
 
 
 #include "common/debug.h"
-#include "engines/chewy/datei.h"
+#include "chewy/datei.h"
 #define GRAFIK 1
 #define SPEICHER 2
 #define DATEI 3

@@ -25,9 +25,9 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fread
 #define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/ailclass.h"
-#include "engines/chewy/ngshext.h"
+#include "chewy/chewy.h"
+#include "chewy/ailclass.h"
+#include "chewy/ngshext.h"
 
 #define MAX_VOICES 8
 #define NORMAL_PLAYBACK 0

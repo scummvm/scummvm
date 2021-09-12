@@ -23,8 +23,8 @@
 #ifndef CHEWY_CURSOR_H
 #define CHEWY_CURSOR_H
 
-#include "engines/chewy/mcga.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/mcga.h"
+#include "chewy/ngstypes.h"
 
 extern int16 scr_w;
 

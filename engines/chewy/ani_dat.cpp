@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3

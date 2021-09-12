@@ -23,7 +23,7 @@
 #ifndef CHEWY_MAUS_H
 #define CHEWY_MAUS_H
 
-#include "engines/chewy/ngstypes.h"
+#include "chewy/ngstypes.h"
 
 void set_new_kb_handler(kb_info *key);
 void set_old_kb_handler();

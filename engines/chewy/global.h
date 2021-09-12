@@ -23,18 +23,18 @@
 #ifndef CHEWY_GLOBAL_H
 #define CHEWY_GLOBAL_H
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/types.h"
-#include "engines/chewy/atds.h"
-#include "engines/chewy/room.h"
-#include "engines/chewy/movclass.h"
-#include "engines/chewy/timer.h"
-#include "engines/chewy/gedclass.h"
-#include "engines/chewy/bitclass.h"
-#include "engines/chewy/text.h"
-#include "engines/chewy/objekte.h"
-#include "engines/chewy/effect.h"
-#include "engines/chewy/ailclass.h"
+#include "chewy/chewy.h"
+#include "chewy/types.h"
+#include "chewy/atds.h"
+#include "chewy/room.h"
+#include "chewy/movclass.h"
+#include "chewy/timer.h"
+#include "chewy/gedclass.h"
+#include "chewy/bitclass.h"
+#include "chewy/text.h"
+#include "chewy/objekte.h"
+#include "chewy/effect.h"
+#include "chewy/ailclass.h"
 
 #define MAX_RAND_NO_USE 6
 

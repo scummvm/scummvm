@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/timer.h"
-#include "engines/chewy/defines.h"
+#include "chewy/chewy.h"
+#include "chewy/timer.h"
+#include "chewy/defines.h"
 
 static int16 timer_flag;
 static int16 timer_int;

@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/movclass.h"
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/ngshext.h"
+#include "chewy/movclass.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 #define LEFT_VECT -1
 #define RIGHT_VECT 1

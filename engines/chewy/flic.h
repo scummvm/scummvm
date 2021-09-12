@@ -23,8 +23,8 @@
 #ifndef CHEWY_FLIC_H
 #define CHEWY_FLIC_H 1
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/ngshext.h"
+#include "chewy/ngstypes.h"
 
 #define taste error("aborted")
 

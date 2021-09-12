@@ -23,8 +23,8 @@
 #ifndef CHEWY_MCGA_H
 #define CHEWY_MCGA_H
 
-#include "engines/chewy/maus.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/maus.h"
+#include "chewy/ngstypes.h"
 
 extern uint8 svga;
 

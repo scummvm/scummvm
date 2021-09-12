@@ -23,8 +23,8 @@
 #ifndef CHEWY_DATEI_H
 #define CHEWY_DATEI_H
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/chewy.h"
+#include "chewy/ngstypes.h"
 
 class datei {
 public:

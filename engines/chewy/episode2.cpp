@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/ani_dat.h"
-#include "engines/chewy/episode2.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/episode2.h"
 
 void calc_person_look() {
 	int16 i;

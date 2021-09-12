@@ -26,8 +26,8 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 void game_main();
 void free_buffers();

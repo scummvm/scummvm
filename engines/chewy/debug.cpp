@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/debug.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/debug.h"
 
 void look_debug_action(int16 key_nr) {
 	int16 ende;
