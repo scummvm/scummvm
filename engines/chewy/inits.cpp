@@ -359,10 +359,12 @@ void error() {
 	in->alter_kb_handler();
 	out->rest_palette();
 	out->restore_mode();
+
+	Common::String msg = err->get_user_msg();
 	err->msg();
 	tidy();
-	// FIXME
 
+	error("%s", msg.c_str());
 }
 
 void tidy() {
@@ -390,6 +392,25 @@ void tidy() {
 	delete err;
 	delete out;
 	delete mem;
+
+	iog = nullptr;
+	cur = nullptr;
+	mov = nullptr;
+	flc = nullptr;
+	ailsnd = nullptr;
+	atds = nullptr;
+	det = nullptr;
+	uhr = nullptr;
+	obj = nullptr;
+	room = nullptr;
+	ged = nullptr;
+	bit = nullptr;
+	txt = nullptr;
+	fx = nullptr;
+	in = nullptr;
+	err = nullptr;
+	out = nullptr;
+	mem = nullptr;
 }
 
 void set_speed() {
