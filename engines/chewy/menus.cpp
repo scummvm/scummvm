@@ -24,6 +24,8 @@
 #include "chewy/global.h"
 #include "chewy/menus.h"
 
+namespace Chewy {
+
 void r44_look_news();
 void r58_look_cut_mag(int16 r_nr);
 
@@ -1030,3 +1032,5 @@ int16 del_invent_slot(int16 nr) {
 	}
 	return (ok);
 }
+
+} // namespace Chewy

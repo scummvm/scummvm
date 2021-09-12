@@ -22,6 +22,8 @@
 
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 bool taf_dateiheader::load(Common::ReadStream *src) {
 	src->read(id, 4);
 	mode = src->readSint16LE();
@@ -33,3 +35,5 @@ bool taf_dateiheader::load(Common::ReadStream *src) {
 
 	return true;
 }
+
+} // namespace Chewy

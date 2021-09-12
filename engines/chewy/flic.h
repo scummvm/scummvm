@@ -26,6 +26,8 @@
 #include "chewy/ngshext.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 #define taste error("aborted")
 
 #define FLI 0xAF11
@@ -118,4 +120,7 @@ private:
 	uint32 Ssize[50];
 	int16 CurrentFrame;
 };
+
+} // namespace Chewy
+
 #endif

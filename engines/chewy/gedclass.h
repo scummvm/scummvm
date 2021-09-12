@@ -25,8 +25,9 @@
 
 #include "chewy/ngstypes.h"
 
-class gedclass {
+namespace Chewy {
 
+class gedclass {
 public:
 	gedclass(int16(*user_func)(int16 idx_nr));
 	~gedclass();
@@ -47,4 +48,7 @@ private:
 	int16(*GedUserFunc)(int16 idx_nr);
 
 };
+
+} // namespace Chewy
+
 #endif

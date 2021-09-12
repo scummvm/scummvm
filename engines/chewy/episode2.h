@@ -23,6 +23,8 @@
 #ifndef CHEWY_EPISODE2_H
 #define CHEWY_EPISODE2_H
 
+namespace Chewy {
+
 void switch_room(int16 nr);
 void r23_cockpit();
 
@@ -226,5 +228,7 @@ void r43_night_small();
 void r43_catch_pg();
 
 void r44_look_news();
+
+} // namespace Chewy
 
 #endif

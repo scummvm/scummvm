@@ -32,6 +32,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 int16 file_icons[8 * 4] = { 14, 73, 32, 94,
                             14, 96, 32, 118,
                             36, 64, 310, 128,
@@ -704,3 +706,5 @@ void option_menue(taf_info *ti) {
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 	out->setze_zeiger(workptr);
 }
+
+} // namespace Chewy

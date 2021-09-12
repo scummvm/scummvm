@@ -35,6 +35,8 @@
 #include "chewy/ailclass.h"
 #endif
 
+namespace Chewy {
+
 #define MAXPFAD 81
 
 class sblaster;
@@ -53,5 +55,7 @@ extern ailclass *ailsnd;
 extern uint16 _stklen;
 extern int16 modul;
 extern int16 fcode;
+
+} // namespace Chewy
 
 #endif

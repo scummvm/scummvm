@@ -23,6 +23,8 @@
 #ifndef CHEWY_DEBUG_H
 #define CHEWY_DEBUG_H
 
+namespace Chewy {
+
 void get_room_nr();
 
 void room_info();
@@ -41,5 +43,7 @@ void set_z_ebene();
 void get_phase(ObjMov *om);
 //FIXME: was using FILE *
 void test_load(void *handle, taf_info *Tt, int16 anz);
+
+} // namespace Chewy
 
 #endif

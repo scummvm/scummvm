@@ -25,6 +25,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 #define LEFT_VECT -1
 #define RIGHT_VECT 1
 #define UP_VECT -gpkt->Breite
@@ -803,3 +805,5 @@ void movclass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 		om->Xyna[2][0] = 0;
 	}
 }
+
+} // namespace Chewy

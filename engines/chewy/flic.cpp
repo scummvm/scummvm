@@ -29,6 +29,8 @@
 #include "common/system.h"
 #include "chewy/flic.h"
 
+namespace Chewy {
+
 void decode_flc(byte *vscr, byte *dbuf) {
 	warning("STUB: decode_flc()");
 }
@@ -803,3 +805,5 @@ void flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
 void flic::remove_flic_user_function() {
 	flic_user = 0;
 }
+
+} // namespace Chewy

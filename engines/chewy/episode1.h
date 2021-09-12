@@ -23,6 +23,8 @@
 #ifndef CHEWY_EPISODE1_H
 #define CHEWY_EPISODE1_H
 
+namespace Chewy {
+
 void switch_room(int16 nr);
 
 void r28_free_chewy_pump();
@@ -265,5 +267,7 @@ void r24_use_hebel(int16 txt_nr);
 void r24_calc_hebel_spr();
 
 void r24_calc_animation(int16 kristall_nr);
+
+} // namespace Chewy
 
 #endif

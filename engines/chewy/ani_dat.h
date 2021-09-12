@@ -23,6 +23,8 @@
 #ifndef CHEWY_ANIDAT_H
 #define CHEWY_ANIDAT_H
 
+namespace Chewy {
+
 #define SIB_KABEL_R1 1
 #define SIB_MONOKEL 6
 #define SIB_GBUCH 7
@@ -187,5 +189,7 @@ extern AniBlock ablock35[7];
 extern AniBlock ablock38[2];
 
 extern AniBlock ablock39[3];
+
+} // namespace Chewy
 
 #endif

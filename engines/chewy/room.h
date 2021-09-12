@@ -25,6 +25,8 @@
 
 #include "chewy/objekt.h"
 
+namespace Chewy {
+
 #define MAX_ABLAGE 4
 
 #define ABLAGE_BLOCK_SIZE 64000l
@@ -146,4 +148,7 @@ private:
 	void *roomhandle[MAX_ROOM_HANDLE];
 
 };
+
+} // namespace Chewy
+
 #endif

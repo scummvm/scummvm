@@ -23,9 +23,12 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 #define NORMAL_PLAY 0
 #define SEQUENCE_PLAY 1
 #define PATTERN_PLAY 2
+
 void load_room_music(int16 room_nr) {
 	int16 ttp_index;
 	int16 volume;
@@ -212,3 +215,5 @@ void load_room_music(int16 room_nr) {
 		}
 	}
 }
+
+} // namespace Chewy

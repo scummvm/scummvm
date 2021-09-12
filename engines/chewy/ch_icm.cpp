@@ -25,6 +25,9 @@
 
 #ifdef ICM
 #include "chewy/ch_icm.h"
+
+namespace Chewy {
+
 int16 maus_rect_first;
 int16 koordinate[4] = {0};
 int16 last_debug_ani;
@@ -1363,5 +1366,7 @@ void del_inv() {
 	}
 	in->neuer_kb_handler(&kbinfo);
 }
+
+} // namespace Chewy
 
 #endif

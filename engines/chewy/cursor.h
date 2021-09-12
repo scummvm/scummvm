@@ -26,6 +26,8 @@
 #include "chewy/mcga.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 extern int16 scr_w;
 
 class cursor {
@@ -61,4 +63,7 @@ public:
 	uint8 maus_da;
 	bool sichtbar;
 };
+
+} // namespace Chewy
+
 #endif

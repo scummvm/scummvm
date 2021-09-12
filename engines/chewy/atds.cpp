@@ -32,6 +32,9 @@
 #include "chewy/atds.h"
 #include "chewy/defines.h"
 #include "chewy/global.h"
+
+namespace Chewy {
+
 extern char *err_str;
 int16 mouse_push;
 
@@ -1363,3 +1366,5 @@ int16 atdsys::get_stereo_pos(int16 x) {
 
 	return ((int16)fx_);
 }
+
+} // namespace Chewy

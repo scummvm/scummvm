@@ -23,6 +23,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 #define ZOBJ_ANI_DETAIL 1
 #define ZOBJ_STATIC_DETAIL 2
 #define ZOBJ_INVENTAR 3
@@ -1142,3 +1144,5 @@ void calc_person_ani() {
 		}
 	}
 }
+
+} // namespace Chewy

@@ -25,9 +25,10 @@
 
 #include "graphics/surface.h"
 #include "common/rect.h"
-
 #include "chewy/defines.h"
 #include "chewy/global.h"
+
+namespace Chewy {
 
 void game_main();
 void free_buffers();
@@ -82,5 +83,7 @@ public:
 extern ChewyFont *_font6;
 extern ChewyFont *_font8;
 extern FontMgr *_fontMgr;
+
+} // namespace Chewy
 
 #endif

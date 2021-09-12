@@ -22,9 +22,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "base/plugins.h"
-
 #include "engines/advancedDetector.h"
-
 #include "chewy/chewy.h"
 #include "chewy/detection.h"
 

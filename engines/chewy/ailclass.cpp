@@ -29,6 +29,8 @@
 #include "chewy/ailclass.h"
 #include "chewy/ngshext.h"
 
+namespace Chewy {
+
 #define MAX_VOICES 8
 #define NORMAL_PLAYBACK 0
 #define PATTERN_PLAYBACK 1
@@ -902,3 +904,5 @@ void DecodeChannel(int16 ch) {
 	}
 #endif
 }
+
+} // namespace Chewy

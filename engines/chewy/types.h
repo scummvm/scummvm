@@ -27,6 +27,8 @@
 #include "chewy/objekt.h"
 #include "chewy/detail.h"
 
+namespace Chewy {
+
 typedef struct {
 	uint8 Ats[ROOM_ATS_MAX * 3];
 	uint8 InvAts[MAX_MOV_OBJ * 3];
@@ -469,5 +471,7 @@ typedef struct {
 	uint16 SavePersonRnr : 1;
 	uint16 CursorStatus : 1;
 } Flags;
+
+} // namespace Chewy
 
 #endif

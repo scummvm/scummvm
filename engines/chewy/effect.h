@@ -23,6 +23,8 @@
 #ifndef CHEWY_EFFECT_H
 #define CHEWY_EFFECT_H
 
+namespace Chewy {
+
 class effect {
 
 public:
@@ -41,4 +43,7 @@ public:
 private:
 
 };
+
+} // namespace Chewy
+
 #endif

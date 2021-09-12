@@ -30,6 +30,8 @@
 #include "chewy/ngshext.h"
 #include "chewy/objekte.h"
 
+namespace Chewy {
+
 int16 action_obj_tbl[] = {
 
 	30000, 5, 8, 13, 38,
@@ -574,3 +576,5 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 	}
 	return (ret);
 }
+
+} // namespace Chewy

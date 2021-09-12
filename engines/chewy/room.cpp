@@ -31,6 +31,8 @@
 #include "chewy/room.h"
 #include "chewy/ngshext.h"
 
+namespace Chewy {
+
 Room::Room() {
 	int16 i;
 	room_timer.TimerAnz = 0;
@@ -462,3 +464,5 @@ void *Room::get_sound_handle() {
 		ret = 0;
 	return (ret);
 }
+
+} // namespace Chewy

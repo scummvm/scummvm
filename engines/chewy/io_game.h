@@ -27,6 +27,8 @@
 #include "chewy/cursor.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 #ifdef ENGLISCH
 
 #define FSTRING1 "F1 Save\0"
@@ -112,4 +114,7 @@ private:
 	int16 switch_code;
 
 };
+
+} // namespace Chewy
+
 #endif

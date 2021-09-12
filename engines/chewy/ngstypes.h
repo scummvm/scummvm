@@ -26,6 +26,8 @@
 #include "chewy/ngsdefs.h"
 #include "common/stream.h"
 
+namespace Chewy {
+
 typedef struct {
 	uint32 Len;
 	int16 StrAnz;
@@ -550,4 +552,7 @@ typedef struct {
 	uint16 sp;
 	uint16 ss;
 } real_regs;
+
+} // namespace Chewy
+
 #endif

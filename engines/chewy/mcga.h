@@ -26,6 +26,8 @@
 #include "chewy/maus.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 extern uint8 svga;
 
 void init_mcga();
@@ -193,4 +195,7 @@ private:
 	void itoa(int N, char *str, int base);
 
 };
+
+} // namespace Chewy
+
 #endif

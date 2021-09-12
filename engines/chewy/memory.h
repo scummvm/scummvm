@@ -26,6 +26,8 @@
 #include "chewy/datei.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 class memory {
 public:
 	memory();
@@ -44,4 +46,7 @@ private:
 
 	uint32 mem_avail;
 };
+
+} // namespace Chewy
+
 #endif

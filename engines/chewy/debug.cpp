@@ -24,6 +24,8 @@
 #include "chewy/global.h"
 #include "chewy/debug.h"
 
+namespace Chewy {
+
 void look_debug_action(int16 key_nr) {
 	int16 ende;
 #define TXT_MARK_NAME 0
@@ -209,3 +211,5 @@ void test_load(void *handle, taf_info *Tt, int16 anz) {
 	}
 #endif
 }
+
+} // namespace Chewy

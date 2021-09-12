@@ -23,6 +23,8 @@
 #ifndef CHEWY_OBJEKT_H
 #define CHEWY_OBJEKT_H
 
+namespace Chewy {
+
 typedef struct {
 	int16 RoomNr;
 
@@ -136,5 +138,7 @@ typedef struct {
 #define OBJZU_UNDICHT 14
 #define OBJZU_KLEMMT 15
 #define SIB_GET_INV 16
+
+} // namespace Chewy
 
 #endif

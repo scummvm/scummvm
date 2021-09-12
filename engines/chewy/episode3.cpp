@@ -25,6 +25,8 @@
 #include "chewy/ani_dat.h"
 #include "chewy/episode3.h"
 
+namespace Chewy {
+
 int16 r45_delay;
 int16 r50Wasser;
 int16 r56koch_flug;
@@ -3088,3 +3090,5 @@ void r65_atds_string_start(int16 dia_nr, int16 str_nr,
 			det->stop_detail(person_nr);
 	}
 }
+
+} // namespace Chewy

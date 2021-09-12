@@ -25,6 +25,8 @@
 
 #include "chewy/objekt.h"
 
+namespace Chewy {
+
 #define ENDLOS_FLIP_FLOP 255
 
 #define LOAD_NEW_OBJ 1
@@ -110,4 +112,7 @@ private:
 	RoomExit *Re;
 
 };
+
+} // namespace Chewy
+
 #endif

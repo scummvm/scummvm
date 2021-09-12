@@ -26,6 +26,8 @@
 #include "chewy/ngshext.h"
 #include "chewy/defines.h"
 
+namespace Chewy {
+
 #define SAVE_ROOM 0
 #define RESTORE_ROOM 1
 #define MAX_SOUNDS 3
@@ -280,5 +282,7 @@ private:
 	byte *SoundBuffer;
 	uint32 SoundBufferSize;
 };
+
+} // namespace Chewy
 
 #endif
