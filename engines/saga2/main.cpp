@@ -572,7 +572,7 @@ static bool openResource(pHResource &hr, const char *fileName) {
 	}
 
 	if (hr == NULL || !hr->_valid) {
-		error("openResource: Cannot open resource: %s, %s", fileName);
+		error("openResource: Cannot open resource: %s", fileName);
 //		return false;
 	}
 	return true;
