@@ -1257,7 +1257,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		return;
 	}
 
-	debugN("Line %3d, IP:%8d (SP:%p) ", line_num, pc, registers[SREG_SP].RValue);
+	debugN("Line %3d, IP:%8d (SP:%p) ", line_num, pc, (void *)(registers[SREG_SP].RValue));
 
 	const ScriptCommandInfo &cmd_info = sccmd_info[op.Instruction.Code];
 	debugN("%s", cmd_info.CmdName);
@@ -1286,7 +1286,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 				break;
 			case kScValStackPtr:
 			case kScValGlobalVar:
-				debugN(" %p", arg.RValue);
+				debugN(" %p", (void *)(arg.RValue));
 				break;
 			case kScValData:
 			case kScValCodePtr:
