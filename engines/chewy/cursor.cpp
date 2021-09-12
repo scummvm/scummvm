@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/chewy/cursor.h"
+#include "chewy/cursor.h"
 #include "common/textconsole.h"
 
 #define false false

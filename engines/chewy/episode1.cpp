@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/ani_dat.h"
-#include "engines/chewy/episode1.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/episode1.h"
 
 #define VOR 0
 #define RUECK 1

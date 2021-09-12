@@ -23,7 +23,7 @@
 #ifndef CHEWY_AILCLASS_H
 #define CHEWY_AILCLASS_H
 
-#include "engines/chewy/ngstypes.h"
+#include "chewy/ngstypes.h"
 
 void mod_irq();
 void check_sample_end();

@@ -23,7 +23,7 @@
 #ifndef CHEWY_NGSTYPES_H
 #define CHEWY_NGSTYPES_H
 
-#include "engines/chewy/ngsdefs.h"
+#include "chewy/ngsdefs.h"
 #include "common/scummsys.h"
 
 typedef struct {

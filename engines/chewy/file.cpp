@@ -29,8 +29,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 int16 file_icons[8 * 4] = { 14, 73, 32, 94,
                             14, 96, 32, 118,

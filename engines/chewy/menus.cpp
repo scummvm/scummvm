@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/menus.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/menus.h"
 
 void r44_look_news();
 void r58_look_cut_mag(int16 r_nr);

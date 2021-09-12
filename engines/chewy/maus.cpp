@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/chewy/maus.h"
+#include "chewy/maus.h"
 #include "common/textconsole.h"
 
 // FIXME. Externals

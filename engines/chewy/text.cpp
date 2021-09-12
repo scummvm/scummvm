@@ -21,7 +21,7 @@
  */
 
 #include "common/system.h"
-#include "engines/chewy/text.h"
+#include "chewy/text.h"
 
 text::text() {
 }

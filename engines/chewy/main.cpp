@@ -22,9 +22,9 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/main.h"
-#include "engines/chewy/menus.h"
+#include "chewy/ngshext.h"
+#include "chewy/main.h"
+#include "chewy/menus.h"
 
 #define AUSGANG_CHECK_PIX 8
 #define BLENDE1 1

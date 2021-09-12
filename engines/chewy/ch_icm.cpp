@@ -20,11 +20,11 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 #ifdef ICM
-#include "engines/chewy/ch_icm.h"
+#include "chewy/ch_icm.h"
 int16 maus_rect_first;
 int16 koordinate[4] = {0};
 int16 last_debug_ani;

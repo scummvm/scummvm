@@ -25,10 +25,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fread
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/objekte.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/ngshext.h"
+#include "chewy/objekte.h"
 
 int16 action_obj_tbl[] = {
 

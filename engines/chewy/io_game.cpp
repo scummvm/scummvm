@@ -29,7 +29,7 @@
 
 #include "common/system.h"
 
-#include "engines/chewy/io_game.h"
+#include "chewy/io_game.h"
 extern int16 scr_w;
 
 io_game::io_game(mcga_grafik *iout, maus *iin, cursor *curp) {

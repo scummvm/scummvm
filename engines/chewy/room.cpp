@@ -26,10 +26,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fseek
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
-#include "engines/chewy/room.h"
-#include "engines/chewy/ngshext.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/room.h"
+#include "chewy/ngshext.h"
 
 Room::Room() {
 	int16 i;

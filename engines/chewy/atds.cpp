@@ -28,10 +28,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 
-#include "engines/chewy/ngshext.h"
-#include "engines/chewy/atds.h"
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/ngshext.h"
+#include "chewy/atds.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 extern char *err_str;
 int16 mouse_push;
 

@@ -20,23 +20,23 @@
  *
  */
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/types.h"
-#include "engines/chewy/defines.h"
-#include "engines/chewy/ngshext.h"
+#include "chewy/chewy.h"
+#include "chewy/types.h"
+#include "chewy/defines.h"
+#include "chewy/ngshext.h"
 
-#include "engines/chewy/objekt.h"
-#include "engines/chewy/text.h"
-#include "engines/chewy/room.h"
-#include "engines/chewy/objekte.h"
-#include "engines/chewy/timer.h"
-#include "engines/chewy/detail.h"
-#include "engines/chewy/effect.h"
-#include "engines/chewy/atds.h"
-#include "engines/chewy/movclass.h"
-#include "engines/chewy/gedclass.h"
-#include "engines/chewy/bitclass.h"
-#include "engines/chewy/ailclass.h"
+#include "chewy/objekt.h"
+#include "chewy/text.h"
+#include "chewy/room.h"
+#include "chewy/objekte.h"
+#include "chewy/timer.h"
+#include "chewy/detail.h"
+#include "chewy/effect.h"
+#include "chewy/atds.h"
+#include "chewy/movclass.h"
+#include "chewy/gedclass.h"
+#include "chewy/bitclass.h"
+#include "chewy/ailclass.h"
 
 #define MAX_RAND_NO_USE 6
 uint8 rand_no_use[MAX_RAND_NO_USE] = {0, 1, 3, 4, 5, 6};

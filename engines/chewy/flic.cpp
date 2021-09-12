@@ -27,7 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "common/system.h"
-#include "engines/chewy/flic.h"
+#include "chewy/flic.h"
 
 void decode_flc(char *vscr, char *dbuf) {
 	warning("STUB: decode_flc()");

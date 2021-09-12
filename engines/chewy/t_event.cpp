@@ -20,15 +20,15 @@
  *
  */
 
-#include "engines/chewy/chewy.h"
+#include "chewy/chewy.h"
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
-#include "engines/chewy/episode1.h"
-#include "engines/chewy/episode2.h"
-#include "engines/chewy/episode3.h"
-#include "engines/chewy/episode4.h"
+#include "chewy/episode1.h"
+#include "chewy/episode2.h"
+#include "chewy/episode3.h"
+#include "chewy/episode4.h"
 
 int16 load_ads_dia(int16 dia_nr) {
 	int16 ret = false;

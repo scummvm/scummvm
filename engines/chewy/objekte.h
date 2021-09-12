@@ -23,7 +23,7 @@
 #ifndef CHEWY_OBJEKTE_H
 #define CHEWY_OBJEKTE_H
 
-#include "engines/chewy/objekt.h"
+#include "chewy/objekt.h"
 
 #define ENDLOS_FLIP_FLOP 255
 

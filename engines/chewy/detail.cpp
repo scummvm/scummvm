@@ -26,8 +26,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fseek
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "engines/chewy/detail.h"
-#include "engines/chewy/global.h"
+#include "chewy/detail.h"
+#include "chewy/global.h"
 
 detail::detail() {
 	char *tptr;

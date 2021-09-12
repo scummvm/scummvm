@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/chewy/chewy.h"
-#include "engines/chewy/gedclass.h"
+#include "chewy/chewy.h"
+#include "chewy/gedclass.h"
 
 	gedclass::gedclass(int16(*user_func)(int16 idx_nr)) {
 		warning("STUB - missing constructor gedclass");

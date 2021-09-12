@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/global.h"
+#include "chewy/defines.h"
+#include "chewy/global.h"
 
 #define NORMAL_PLAY 0
 #define SEQUENCE_PLAY 1

@@ -28,8 +28,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "common/system.h"
-#include "engines/chewy/fehler.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/fehler.h"
+#include "chewy/ngstypes.h"
 
 fehler *err;
 

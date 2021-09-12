@@ -23,9 +23,9 @@
 #ifndef CHEWY_TYPES_H
 #define CHEWY_TYPES_H
 
-#include "engines/chewy/defines.h"
-#include "engines/chewy/objekt.h"
-#include "engines/chewy/detail.h"
+#include "chewy/defines.h"
+#include "chewy/objekt.h"
+#include "chewy/detail.h"
 
 typedef struct {
 	uint8 Ats[ROOM_ATS_MAX * 3];

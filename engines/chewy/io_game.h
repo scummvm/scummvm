@@ -23,9 +23,9 @@
 #ifndef CHEWY_IOGAME_H
 #define CHEWY_IOGAME_H
 
-#include "engines/chewy/mcga.h"
-#include "engines/chewy/cursor.h"
-#include "engines/chewy/ngstypes.h"
+#include "chewy/mcga.h"
+#include "chewy/cursor.h"
+#include "chewy/ngstypes.h"
 
 #ifdef ENGLISCH
 
