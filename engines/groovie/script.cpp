@@ -1970,7 +1970,7 @@ void Script::o2_vdxtransition() {
 void Script::o2_savescreen() {
 	uint16 val = readScript16bits();
 
-	// TODO: Parameter
+	// TODO: Parameter and cleanup
 	if (val)
 		warning("Groovie::Script: o2_copyscreentobg: Param is %d", val);
 
@@ -1986,7 +1986,7 @@ void Script::o2_savescreen() {
 void Script::o2_restorescreen() {
 	uint16 val = readScript16bits();
 
-	// TODO: Parameter
+	// TODO: Parameter and cleanup
 	if (val)
 		warning("Groovie::Script: o2_copybgtoscreen: Param is %d", val);
 
