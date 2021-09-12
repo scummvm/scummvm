@@ -27,7 +27,7 @@ namespace Groovie {
 
 class ClanGame {
 public:
-	static const char* getClanMusicFilename(int musicId);
+	static const char *getClanMusicFilename(int musicId);
 };
 
 } // namespace Groovie
