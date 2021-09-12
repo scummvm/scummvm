@@ -24,7 +24,7 @@
 #define CHEWY_NGSTYPES_H
 
 #include "chewy/ngsdefs.h"
-#include "common/scummsys.h"
+#include "common/stream.h"
 
 typedef struct {
 	uint32 Len;
@@ -68,7 +68,7 @@ typedef struct {
 	char palette [768];
 } tbf_dateiheader;
 
-typedef struct {
+struct taf_dateiheader {
 	char id[4];
 	int16 mode;
 	int16 count;
@@ -76,7 +76,9 @@ typedef struct {
 	char palette[768];
 	uint32 next;
 	int16 korrekt;
-} taf_dateiheader;
+
+	bool load(Common::ReadStream *src);
+};
 
 typedef struct {
 	int16 komp;
