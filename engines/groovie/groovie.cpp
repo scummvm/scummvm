@@ -221,7 +221,7 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Check the script file extension
-	if (!filename.hasSuffix(".grv")) {
+	if (!filename.hasSuffixIgnoreCase(".grv")) {
 		error("%s isn't a valid script filename", filename.c_str());
 		return Common::kUnknownError;
 	}

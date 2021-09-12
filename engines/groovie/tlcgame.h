@@ -74,7 +74,7 @@ public:
 	TlcGame();
 	~TlcGame();
 
-	static const char* getTlcMusicFilename(int musicId);
+	static const char *getTlcMusicFilename(int musicId);
 
 	/**
 	 * Sets a pointer to the script variables. This makes it easier if we want

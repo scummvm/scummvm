@@ -105,6 +105,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G
 	},
 
+#ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS/Windows English (Available on Steam)
 	{
 		{
@@ -117,26 +118,134 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
-	// The Making of The 11th Hour English
+	// The 11th Hour Mac English
+	{
+		{
+			"11h", "",
+			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
+					"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+		},
+		kGroovieT11H
+	},
+
+	// The 11th Hour Mac English (Digital)
+	{
+		{
+			"11h", "Digital",
+			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
+					"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+		},
+		kGroovieT11H
+	},
+
+	// The 11th Hour DOS Interactive Demo English https://archive.org/details/11th_Hour_demo
+	{
+		{
+			"11h", "Interactive Demo",
+			AD_ENTRY2s("demo.grv", "5faec559b9abf18cf143751b420208dc", 15991,
+						"dvmod1a.gjd", "e304fe68f95c54fc82d785768e372892", 8068568),
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H
+	},
+
+	// The 11th Hour DOS Interactive Demo English (packaged with the Non-Interactive Demo) https://archive.org/details/11HDEMO
+	{
+		{
+			"11h", "Interactive Demo",
+			AD_ENTRY2s("demo.grv", "824b1a051f841a50ab7a6b4c10180bbc", 15898,
+						"dvmod1a.gjd", "e304fe68f95c54fc82d785768e372892", 8068568),
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H
+	},
+
+	// The 11th Hour DOS Non-Interactive Demo English https://archive.org/details/11HDEMO
+	{
+		{
+			"11h", "Non-Interactive Demo",
+			AD_ENTRY2s("niloop.grv", "b4c35a2a6ebaf72fbd830b590d48f8ea", 456,
+						"dvmod1b.gjd", "43eb268ef6d64a75b9846df5be453d30", 11264100),
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H
+	},
+
+	// The Making of The 11th Hour DOS/Windows English
 	{
 		{
 			"11h", "Making Of",
 			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
-						"atpuz.gjd", NULL, -1),
+						"zmakd2a.gjd", NULL, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieT11H
 	},
 
-	// Clandestiny Trailer English
+	// The Making of The 11th Hour Macintosh English
+	{
+		{
+			"11h", "Making Of",
+			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
+					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H
+	},
+
+	// The Making of The 11th Hour Macintosh English (Digital)
+	{
+		{
+			"11h", "Making Of (Digital)",
+			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
+					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H
+	},
+
+	// Clandestiny Trailer DOS/Windows English
 	{
 		{
 			"clandestiny", "Trailer",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"atpuz.gjd", NULL, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+		},
+		kGroovieCDY
+	},
+
+	// Clandestiny Trailer Macintosh English
+	{
+		{
+			"clandestiny", "Trailer",
+			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
+						"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieCDY
+	},
+
+	// Clandestiny Trailer Macintosh English (Digital)
+	{
+		{
+			"clandestiny", "Trailer (Digital)",
+			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
+						"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieCDY
 	},
@@ -159,7 +268,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "",
 			AD_ENTRY2s("clanmain.grv", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
 						"ACT01MUS.m4a", NULL, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+		 Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieCDY
@@ -188,6 +297,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieTLC
 	},
+#endif
 
 	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
