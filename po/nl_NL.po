@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-11 16:51+0000\n"
-"PO-Revision-Date: 2021-09-11 17:43+0000\n"
+"PO-Revision-Date: 2021-09-12 01:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1418,16 +1418,16 @@ msgstr ""
 "een spel."
 
 #: gui/options.cpp:2295
-#, fuzzy
-#| msgid "Enable content censoring"
 msgid "Enable Discord integration"
-msgstr "Censureren content inschakelen"
+msgstr "Discord integratie inschakelen"
 
 #: gui/options.cpp:2296
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Toon informatie op Discord over de spellen die u speelt wanneer de Discord "
+"client draait."
 
 #: gui/options.cpp:2305
 msgid "GUI language:"
