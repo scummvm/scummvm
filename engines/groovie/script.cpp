@@ -629,8 +629,9 @@ void Script::o_videofromref() {			// 0x09
 	}
 
 	// Determine if the MT-32 or GM initialization video is being played
-	bool gmInitVideo = _version == kGroovieT7G && fileref == 0x2460;
-	bool mt32InitVideo = _version == kGroovieT7G && fileref == 0x2461;
+	const bool enhancedMusicTracksExist = _version == kGroovieT7G && Common::File::exists("gu16.ogg");
+	const bool gmInitVideo = _version == kGroovieT7G && fileref == 0x2460 && !enhancedMusicTracksExist;
+	const bool mt32InitVideo = _version == kGroovieT7G && fileref == 0x2461 && !enhancedMusicTracksExist;
 	// Play the video
 	// If a MIDI init video is being played, loop it until the "audio"
 	// (init commands) has finished playing
