@@ -23,6 +23,8 @@
 #ifndef CHEWY_FEHLER_H
 #define CHEWY_FEHLER_H
 
+namespace Chewy {
+
 #define MAX_MODULE 6
 #define GERMAN 1
 #define ENGL 2
@@ -43,5 +45,7 @@ private:
 	int16 language;
 	const char *user_msg;
 };
+
+} // namespace Chewy
 
 #endif

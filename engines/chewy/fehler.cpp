@@ -31,6 +31,8 @@
 #include "chewy/fehler.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 fehler *err;
 
 fehler::fehler() {
@@ -117,3 +119,5 @@ void fehler::msg() {
 void fehler::set_user_msg(const char *msg) {
 	user_msg = msg;
 }
+
+} // namespace Chewy

@@ -25,6 +25,8 @@
 
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 void set_new_kb_handler(kb_info *key);
 void set_old_kb_handler();
 void del_kb_puffer();
@@ -86,4 +88,7 @@ private:
 	kb_info *kb_info_blk;
 	in_zeiger inzeig;
 };
+
+} // namespace Chewy
+
 #endif

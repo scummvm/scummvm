@@ -23,39 +23,43 @@
 #include "chewy/chewy.h"
 #include "chewy/gedclass.h"
 
-	gedclass::gedclass(int16(*user_func)(int16 idx_nr)) {
-		warning("STUB - missing constructor gedclass");
+namespace Chewy {
 
-		ged_pool_header.Anz = 0;
-		ged_pool_header.Id[0] = 0;
+gedclass::gedclass(int16(*user_func)(int16 idx_nr)) {
+	warning("STUB - missing constructor gedclass");
 
-		GedUserFunc = nullptr;
-	}
+	ged_pool_header.Anz = 0;
+	ged_pool_header.Id[0] = 0;
 
-	gedclass::~gedclass() {
-		warning("STUB - missing destructor gedclass");
-	}
+	GedUserFunc = nullptr;
+}
 
-	void gedclass::load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
-		warning("STUB - missing load_ged_pool");
-	}
+gedclass::~gedclass() {
+	warning("STUB - missing destructor gedclass");
+}
 
-	//FIXME : was FILE*
-	void gedclass::load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
-		warning("STUB - missing load_ged_pool");
-	}
+void gedclass::load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+	warning("STUB - missing load_ged_pool");
+}
 
-	int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
-		warning("STUB - missing ged_idx");
-		return 0;
-	}
+//FIXME : was FILE*
+void gedclass::load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+	warning("STUB - missing load_ged_pool");
+}
 
-	int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
-		warning("STUB - missing ged_idx");
-		return 0;
-	}
+int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
+	warning("STUB - missing ged_idx");
+	return 0;
+}
 
-	// FIXME : was FILE*
-	void gedclass::load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, byte *speicher) {
-		warning("STUB - missing load_ged_chunk");
-	}
+int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
+	warning("STUB - missing ged_idx");
+	return 0;
+}
+
+// FIXME : was FILE*
+void gedclass::load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, byte *speicher) {
+	warning("STUB - missing load_ged_chunk");
+}
+
+} // namespace Chewy

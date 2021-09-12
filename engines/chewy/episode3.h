@@ -23,6 +23,8 @@
 #ifndef CHEWY_EPISODE3_H
 #define CHEWY_EPISODE3_H
 
+namespace Chewy {
+
 void switch_room(int16 nr);
 
 void r45_entry(int16 eib_nr);
@@ -260,6 +262,8 @@ void r65_entry();
 
 void r65_exit();
 void r65_atds_string_start(int16 dia_nr, int16 str_nr,
-                           int16 person_nr, int16 mode);
+	int16 person_nr, int16 mode);
+
+} // namespace Chewy
 
 #endif

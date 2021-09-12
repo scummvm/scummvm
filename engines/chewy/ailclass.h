@@ -25,6 +25,8 @@
 
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 void mod_irq();
 void check_sample_end();
 void DecodePatternLine();
@@ -79,4 +81,7 @@ public:
 	void serve_db_samples();
 private:
 };
+
+} // namespace Chewy
+
 #endif

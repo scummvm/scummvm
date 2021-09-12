@@ -23,6 +23,8 @@
 #ifndef CHEWY_CHICM_H
 #define CHEWY_CHICM_H
 
+namespace Chewy {
+
 void set_person();
 
 void draw_ice_win();
@@ -58,5 +60,7 @@ void get_scroll_val();
 void get_zoom_value();
 
 IibDateiHeader iib_datei_header;
+
+} // namespace Chewy
 
 #endif

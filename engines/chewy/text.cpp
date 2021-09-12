@@ -23,6 +23,8 @@
 #include "common/system.h"
 #include "chewy/text.h"
 
+namespace Chewy {
+
 text::text() {
 }
 text::~text() {
@@ -49,3 +51,5 @@ char *text::str_pos(char *txt_adr, int16 pos) {
 	}
 	return (ptr);
 }
+
+} // namespace Chewy

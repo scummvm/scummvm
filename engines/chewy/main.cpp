@@ -26,6 +26,8 @@
 #include "chewy/main.h"
 #include "chewy/menus.h"
 
+namespace Chewy {
+
 #define AUSGANG_CHECK_PIX 8
 #define BLENDE1 1
 #define BLENDE2 2
@@ -2045,7 +2047,7 @@ ChewyFont::ChewyFont(Common::String filename) {
 	uint32 header = stream.readUint32BE();
 
 	if (header != headerFont)
-		error("Invalid resource - %s", filename.c_str());
+		::error("Invalid resource - %s", filename.c_str());
 
 	stream.skip(4);	// total memory
 	_count = stream.readUint16LE();
@@ -2110,3 +2112,5 @@ void ChewyFont::setDeltaX(uint16 deltaX) {
 ::Graphics::Surface *FontMgr::getLine(const Common::String &texts) {
 	return _font->getLine(texts);
 }
+
+} // namespace Chewy

@@ -25,6 +25,8 @@
 #include "chewy/ani_dat.h"
 #include "chewy/episode2.h"
 
+namespace Chewy {
+
 void calc_person_look() {
 	int16 i;
 	for (i = 1; i < MAX_PERSON; i++) {
@@ -2657,3 +2659,5 @@ void r44_look_news() {
 
 	show_person();
 }
+
+} // namespace Chewy

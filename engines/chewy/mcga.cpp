@@ -23,6 +23,8 @@
 #include "chewy/chewy.h"
 #include "chewy/mcga.h"
 
+namespace Chewy {
+
 #define SETZEN 0
 #define UND 1
 #define ODER 2
@@ -1754,3 +1756,5 @@ int16 mcga_grafik::get_vesa_info(uint16 mode, byte *iblk) {
 #endif
 	return (error);
 }
+
+} // namespace Chewy

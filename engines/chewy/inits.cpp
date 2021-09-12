@@ -28,6 +28,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 extern int16 room_start_nr;
 
 void standard_init() {
@@ -360,7 +362,7 @@ void error() {
 	err->msg();
 	tidy();
 
-	error("%s", msg.c_str());
+	::error("%s", msg.c_str());
 }
 
 void tidy() {
@@ -612,3 +614,5 @@ void sound_exit() {
 	}
 #endif
 }
+
+} // namespace Chewy

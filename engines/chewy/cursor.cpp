@@ -23,6 +23,8 @@
 #include "chewy/cursor.h"
 #include "common/textconsole.h"
 
+namespace Chewy {
+
 #define false false
 #define true true
 
@@ -204,3 +206,5 @@ void cursor::wait_taste(int16 maus_plot) {
 		if (maus_plot != false)
 			plot_cur();
 }
+
+} // namespace Chewy

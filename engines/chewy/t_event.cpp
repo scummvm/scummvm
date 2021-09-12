@@ -21,14 +21,14 @@
  */
 
 #include "chewy/chewy.h"
-
 #include "chewy/defines.h"
 #include "chewy/global.h"
-
 #include "chewy/episode1.h"
 #include "chewy/episode2.h"
 #include "chewy/episode3.h"
 #include "chewy/episode4.h"
+
+namespace Chewy {
 
 int16 load_ads_dia(int16 dia_nr) {
 	int16 ret = false;
@@ -2123,3 +2123,5 @@ void calc_person_dia(int16 p_nr) {
 
 	}
 }
+
+} // namespace Chewy

@@ -23,8 +23,9 @@
 #ifndef CHEWY_TEXT_H
 #define CHEWY_TEXT_H
 
-class text {
+namespace Chewy {
 
+class text {
 public:
 	text();
 	~text();
@@ -32,6 +33,8 @@ public:
 	void crypt(char *txt, uint32 size);
 
 	char *str_pos(char *txt_adr, int16 pos);
-
 };
+
+} // namespace Chewy
+
 #endif

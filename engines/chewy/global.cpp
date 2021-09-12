@@ -24,7 +24,6 @@
 #include "chewy/types.h"
 #include "chewy/defines.h"
 #include "chewy/ngshext.h"
-
 #include "chewy/objekt.h"
 #include "chewy/text.h"
 #include "chewy/room.h"
@@ -37,6 +36,8 @@
 #include "chewy/gedclass.h"
 #include "chewy/bitclass.h"
 #include "chewy/ailclass.h"
+
+namespace Chewy {
 
 #define MAX_RAND_NO_USE 6
 uint8 rand_no_use[MAX_RAND_NO_USE] = {0, 1, 3, 4, 5, 6};
@@ -343,3 +344,5 @@ int16 CurrentSong = -1;
 int16 EndOfPool;
 /* FILE */ void *speech_handle;
 byte *SpeechBuf[2];
+
+} // namespace Chewy

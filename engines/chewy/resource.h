@@ -23,7 +23,6 @@
 #ifndef CHEWY_RESOURCE_H
 #define CHEWY_RESOURCE_H
 
-
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/util.h"

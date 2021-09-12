@@ -24,7 +24,6 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "common/system.h"
-
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 

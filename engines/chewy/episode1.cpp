@@ -25,6 +25,8 @@
 #include "chewy/ani_dat.h"
 #include "chewy/episode1.h"
 
+namespace Chewy {
+
 #define VOR 0
 #define RUECK 1
 #define SCHLAUCH1 11
@@ -3491,3 +3493,5 @@ int16 r12_cut_serv(int16 frame) {
 		start_aad(106, 0);
 	return (0);
 }
+
+} // namespace Chewy

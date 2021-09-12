@@ -23,6 +23,8 @@
 #ifndef CHEWY_BITCLASS_H
 #define CHEWY_BITCLASS_H
 
+namespace Chewy {
+
 class bitclass {
 
 public:
@@ -37,4 +39,7 @@ public:
 	void set_bit(uint8 *value, int16 bit) { *value |= bit; }
 	void del_bit(uint8 *value, int16 bit) { *value &= ~bit;}
 };
+
+} // namespace Chewy
+
 #endif

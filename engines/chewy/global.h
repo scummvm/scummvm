@@ -36,6 +36,8 @@
 #include "chewy/effect.h"
 #include "chewy/ailclass.h"
 
+namespace Chewy {
+
 #define MAX_RAND_NO_USE 6
 
 extern uint8 rand_no_use[MAX_RAND_NO_USE];
@@ -498,5 +500,7 @@ void load_person_ani(int16 ani_id, int16 p_nr);
 void calc_person_ani();
 
 void load_room_music(int16 room_nr);
+
+} // namespace Chewy
 
 #endif

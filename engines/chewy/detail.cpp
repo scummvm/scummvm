@@ -29,6 +29,8 @@
 #include "chewy/detail.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 detail::detail() {
 	char *tptr;
 	int16 i, size;
@@ -1162,3 +1164,5 @@ void detail::load_sprite_pointer(void *h) {
 		}
 	}
 }
+
+} // namespace Chewy

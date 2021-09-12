@@ -23,6 +23,8 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
+namespace Chewy {
+
 #define ATDS_VOC_OFFSET 20
 
 #define AAD_MAX_PERSON 10
@@ -339,4 +341,7 @@ private:
 	int16 tmp_delay;
 	in_zeiger *inzeig;
 };
+
+} // namespace Chewy
+
 #endif

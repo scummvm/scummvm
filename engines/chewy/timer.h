@@ -23,6 +23,8 @@
 #ifndef CHEWY_TIMER_H
 #define CHEWY_TIMER_H
 
+namespace Chewy {
+
 #define SEC_1000_MODE 0
 #define SEC_100_MODE 1
 #define SEC_10_MODE 2
@@ -84,5 +86,7 @@ private:
 	int16 timer_max;
 
 };
+
+} // namespace Chewy
 
 #endif

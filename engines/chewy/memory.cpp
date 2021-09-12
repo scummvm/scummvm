@@ -29,6 +29,8 @@
 
 #include "chewy/memory.h"
 
+namespace Chewy {
+
 extern int16 modul;
 extern int16 fcode;
 uint32 imagesize[MAXSPRITE];
@@ -203,3 +205,5 @@ byte *memory::void_adr(const char *filename) {
 	}
 	return (ptr);
 }
+
+} // namespace Chewy

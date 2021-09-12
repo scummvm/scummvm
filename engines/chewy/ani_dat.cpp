@@ -23,6 +23,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
 #define GITTER_BLITZEN 7
@@ -251,3 +253,5 @@ AniBlock ablock39[3] = {
 	{17, 1, ANI_VOR, ANI_WAIT, 0},
 	{15, 1, ANI_RUECK, ANI_WAIT, 0},
 };
+
+} // namespace Chewy

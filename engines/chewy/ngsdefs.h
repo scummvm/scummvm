@@ -23,6 +23,8 @@
 #ifndef CHEWY_NGSDEFS_H
 #define CHEWY_NGSDEFS_H
 
+namespace Chewy {
+
 #define MAXSPRITE 350
 #define NOSPEICHER 0
 #define MAXFONTBREITE 32
@@ -273,5 +275,7 @@
 #define I386sx 3
 #define I386dx 4
 #define I486 5
+
+} // namespace Chewy
 
 #endif

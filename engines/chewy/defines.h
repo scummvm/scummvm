@@ -23,6 +23,8 @@
 #ifndef CHEWY_DEFINES_H
 #define CHEWY_DEFINES_H
 
+namespace Chewy {
+
 #define VERSION1 0
 #define VERSION2 2
 
@@ -486,5 +488,7 @@
 #define AUSGANG_UNTEN 4
 #define WAIT_TASTE_LOS while (in->get_switch_code() != 0);
 #define FILEMENUE 1
+
+} // namespace Chewy
 
 #endif

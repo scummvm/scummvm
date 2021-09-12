@@ -25,6 +25,8 @@
 #include "chewy/ani_dat.h"
 #include "chewy/episode4.h"
 
+namespace Chewy {
+
 int16 r68HohesC;
 
 void r66_entry(int16 eib_nr) {
@@ -592,3 +594,5 @@ int16 r69_use_bruecke() {
 	}
 	return (action_flag);
 }
+
+} // namespace Chewy

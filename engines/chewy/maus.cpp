@@ -23,6 +23,8 @@
 #include "chewy/maus.h"
 #include "common/textconsole.h"
 
+namespace Chewy {
+
 // FIXME. Externals
 uint8 mouse_show;
 uint8 mouse_links_los;
@@ -220,3 +222,5 @@ int16 maus::get_switch_code() {
 	}
 	return (switch_code);
 }
+
+} // namespace Chewy

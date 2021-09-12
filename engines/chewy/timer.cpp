@@ -24,6 +24,8 @@
 #include "chewy/timer.h"
 #include "chewy/defines.h"
 
+namespace Chewy {
+
 static int16 timer_flag;
 static int16 timer_int;
 static int timer_count;
@@ -184,3 +186,5 @@ void timer::disable_timer() {
 void timer::enable_timer() {
 	timer_suspend = false;
 }
+
+} // namespace Chewy

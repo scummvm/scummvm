@@ -30,15 +30,15 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "common/system.h"
-
 #include "chewy/defines.h"
 #include "chewy/global.h"
-
 #include "chewy/ani_dat.h"
 #include "chewy/episode1.h"
 #include "chewy/episode2.h"
 #include "chewy/episode3.h"
 #include "chewy/episode4.h"
+
+namespace Chewy {
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
@@ -1718,3 +1718,5 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 	}
 }
+
+} // namespace Chewy

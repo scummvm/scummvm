@@ -26,6 +26,8 @@
 #include "chewy/chewy.h"
 #include "chewy/ngstypes.h"
 
+namespace Chewy {
+
 class datei {
 public:
 	datei();
@@ -79,4 +81,7 @@ public:
 	void read_tbf_image(void *h, int16 komp, uint32 size, byte *sp);
 
 };
+
+} // namespace Chewy
+
 #endif

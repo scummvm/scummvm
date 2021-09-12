@@ -30,4 +30,4 @@ struct ChewyGameDescription {
 
 } // End of namespace Chewy
 
-#endif // CHEWY_DETECTION_H
+#endif

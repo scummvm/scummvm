@@ -25,6 +25,8 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 
+namespace Chewy {
+
 effect::effect() {
 }
 effect::~effect() {
@@ -199,3 +201,5 @@ void effect::spr_blende(byte *workpage_, byte *ablage_,
 	out->back2screen(workpage_ - 4);
 	free((char *)spr);
 }
+
+} // namespace Chewy

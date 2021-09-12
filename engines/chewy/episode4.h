@@ -23,6 +23,8 @@
 #ifndef CHEWY_EPISODE4_H
 #define CHEWY_EPISODE4_H
 
+namespace Chewy {
+
 void switch_room(int16 nr);
 
 void r66_entry(int16 eib_nr);
@@ -80,5 +82,7 @@ void r69_setup_func();
 void r69_look_schild();
 
 int16 r69_use_bruecke();
+
+} // namespace Chewy
 
 #endif

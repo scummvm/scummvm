@@ -28,8 +28,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "common/system.h"
-
 #include "chewy/io_game.h"
+
+namespace Chewy {
+
 extern int16 scr_w;
 
 io_game::io_game(mcga_grafik *iout, maus *iin, cursor *curp) {
@@ -729,3 +731,5 @@ void io_game::save_entry(int16 nr, char *fname) {
 		fclose(handle);
 	}
 }
+
+} // namespace Chewy

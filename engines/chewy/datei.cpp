@@ -37,6 +37,8 @@
 #include "common/file.h"
 #include "chewy/datei.h"
 
+namespace Chewy {
+
 #define GRAFIK 1
 #define SPEICHER 2
 #define DATEI 3
@@ -1999,3 +2001,5 @@ void datei::fcopy(const char *d_fname, const char *s_fname) {
 		modul = DATEI;
 	}
 }
+
+} // namespace Chewy

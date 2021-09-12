@@ -23,6 +23,8 @@
 #ifndef CHEWY_MOVCLASS_H
 #define CHEWY_MOVCLASS_H
 
+namespace Chewy {
+
 #define MAX_KNOTEN_PKT 15
 #define MOV_LINE_IDX 28
 #define MOV_LINE_KNOTEN 29
@@ -135,4 +137,7 @@ private:
 	GotoMovLine gml;
 	GotoPkt *gpkt;
 };
+
+} // namespace Chewy
+
 #endif
