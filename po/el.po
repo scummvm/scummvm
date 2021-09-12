@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-11 16:51+0000\n"
-"PO-Revision-Date: 2021-09-03 15:44+0000\n"
+"PO-Revision-Date: 2021-09-12 05:07+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1434,16 +1434,16 @@ msgstr ""
 "έξοδο από ένα παιχνίδι."
 
 #: gui/options.cpp:2295
-#, fuzzy
-#| msgid "Enable content censoring"
 msgid "Enable Discord integration"
-msgstr "Ενεργοποίηση λογοκρισίας περιεχομένου"
+msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
 
 #: gui/options.cpp:2296
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Εμφανίζει στο Discord πληροφορίες για τα παιχνίδια που παίζετε, αν το "
+"πρόγραμμα Discord εκτελείται."
 
 #: gui/options.cpp:2305
 msgid "GUI language:"
