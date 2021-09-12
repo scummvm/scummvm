@@ -39,7 +39,7 @@ namespace Chewy {
 #define R_GEPDATEI 2
 #define R_SPEZTAF 3
 
-typedef struct {
+struct RaumBlk {
 	byte *LowPalMem;
 	const char *InvFile;
 	const char *DetFile;
@@ -56,19 +56,18 @@ typedef struct {
 	taf_info *Fti;
 	int16 AadLoad;
 	int16 AtsLoad;
-} RaumBlk;
+};
 
-typedef struct {
+struct RaumTimer {
 	int16 TimerStart;
 	int16 TimerAnz;
 
 	uint8 ObjNr[MAX_ROOM_TIMER];
 
 	uint8 TimerNr[MAX_ROOM_TIMER];
-} RaumTimer;
+};
 
 class Room {
-
 public:
 	Room();
 	~Room();

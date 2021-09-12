@@ -34,7 +34,7 @@ namespace Chewy {
 
 #define MAX_AUTO_MOV 20
 
-typedef struct {
+struct RaumInfo {
 	uint8 RoomNr;
 	uint8 BildNr;
 
@@ -44,32 +44,31 @@ typedef struct {
 	char TafName[14];
 	uint8 ZoomFak;
 	uint8 Dummy;
+};
 
-} RaumInfo;
-
-typedef struct {
+struct RaumAutoMov {
 	int16 X;
 	int16 Y;
 	uint8 SprNr;
 
 	uint8 dummy;
-} RaumAutoMov;
+};
 
 #define MAXTAF 10
 #define MAXDETAILS 32
 #define MAX_M_ITEMS 50
 #define MAX_RDI_ROOM 100
 
-typedef struct {
+struct SprInfo {
 	byte *Image;
 	int16 ZEbene;
 	int16 X;
 	int16 Y;
 	int16 X1;
 	int16 Y1;
-} SprInfo;
+};
 
-typedef struct {
+struct sound_def_blk {
 	int16 sound_enable[MAX_SOUNDS];
 	int16 sound_index [MAX_SOUNDS];
 	int16 sound_start [MAX_SOUNDS];
@@ -77,9 +76,9 @@ typedef struct {
 	int16 volume [MAX_SOUNDS];
 	int16 repeats [MAX_SOUNDS];
 	int16 stereo [MAX_SOUNDS];
-} sound_def_blk;
+};
 
-typedef struct {
+struct ani_detail_info {
 	int16 x;
 	int16 y;
 
@@ -104,10 +103,9 @@ typedef struct {
 	int16 show_1_phase;
 
 	int16 phase_nr;
+};
 
-} ani_detail_info;
-
-typedef struct {
+struct static_detail_info {
 	int16 x;
 	int16 y;
 	int16 SprNr;
@@ -117,9 +115,9 @@ typedef struct {
 	bool Hide;
 
 	uint8 Dummy;
-} static_detail_info;
+};
 
-typedef struct {
+struct room_detail_info {
 	int16 StaticDetailAnz;
 	int16 AniDetailAnz;
 	taf_info *dptr;
@@ -131,15 +129,15 @@ typedef struct {
 	RaumAutoMov AutoMov[MAX_AUTO_MOV];
 	int16 tvp_index[MAXDETAILS * MAX_SOUNDS];
 	byte *sample[MAXDETAILS * MAX_SOUNDS];
-} room_detail_info;
+};
 
-typedef struct {
+struct RdiDateiHeader {
 	char Id[4];
 	int16 Anz;
-} RdiDateiHeader;
+};
 
 #define MAXPATH 255
-typedef struct {
+struct DeteditPrj {
 	char Id[7];
 	char IibFile[MAXPATH];
 	char SibFile[MAXPATH];
@@ -157,7 +155,7 @@ typedef struct {
 	char AdhFile[MAXPATH];
 	char TvpFile[MAXPATH];
 	char DummyFile[MAXPATH];
-} DeteditPrj;
+};
 
 class detail {
 public:

@@ -97,18 +97,18 @@ namespace Chewy {
 
 #define ADS_RESTART_BIT 4
 
-typedef struct {
+struct AdsDiaHeaders {
 	int16 Anz;
-} AdsDiaHeaders;
+};
 
-typedef struct {
+struct AdsBlock {
 	bool Show[ADS_MAX_BL_EIN];
 
 	uint8 Next[ADS_MAX_BL_EIN];
 	uint8 Steuer[ADS_MAX_BL_EIN];
-} AdsBlock;
+};
 
-typedef struct {
+struct AtdsVar {
 	byte *Font;
 	int16 Fvorx;
 	int16 Fhoehe;
@@ -124,7 +124,7 @@ typedef struct {
 	void *SpeechHandle;
 
 	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode);
-} AtdsVar;
+};
 
 #define IUID_IIB 0
 #define IUID_SIB 1
@@ -135,31 +135,31 @@ typedef struct {
 #define INV_USE_DEF 16
 #define INV_STRC_ANZ 30
 
-typedef struct {
+struct InvUse {
 	int16 ObjId;
 	int16 ObjNr;
 	int16 TxtNr;
-} InvUse;
+};
 
-typedef struct {
+struct AadInfo {
 	int16 X;
 	int16 Y;
 	int16 Color;
-} AadInfo;
+};
 
-typedef struct {
+struct AadTxtHeader {
 	int16 DiaNr;
 	int16 PerAnz;
 	int16 AMov;
 	int16 CurNr;
-} AadTxtHeader;
+};
 
-typedef struct {
+struct AadStrHeader {
 	int16 AkPerson;
 	int16 VocNr;
-} AadStrHeader;
+};
 
-typedef struct {
+struct AadVar {
 	int16 Dialog;
 
 	AadTxtHeader *TxtHeader;
@@ -169,16 +169,16 @@ typedef struct {
 	int16 StrNr;
 	int16 DelayCount;
 	int16 SilentCount;
-} AadVar;
+};
 
-typedef struct {
+struct AdsTxtHeader {
 	int16 DiaNr;
 	int16 PerAnz;
 	int16 AMov;
 	int16 CurNr;
-} AdsTxtHeader;
+};
 
-typedef struct {
+struct AdsVar {
 	int16 Dialog;
 	int16 AutoDia;
 	AdsTxtHeader *TxtHeader;
@@ -188,24 +188,24 @@ typedef struct {
 	int16 StrNr;
 	int16 DelayCount;
 	int16 SilentCount;
-} AdsVar;
+};
 
-typedef struct {
+struct AdsNextBlk {
 	int16 BlkNr;
 	int16 EndNr;
-} AdsNextBlk;
+};
 
-typedef struct {
+struct AtsTxtHeader {
 	int16 TxtNr;
 	int16 AMov;
 	int16 CurNr;
-} AtsTxtHeader;
+};
 
-typedef struct {
+struct AtsStrHeader {
 	int16 VocNr;
-} AtsStrHeader;
+};
 
-typedef struct {
+struct AtsVar {
 	bool Display;
 	AtsTxtHeader *TxtHeader;
 	AtsStrHeader *StrHeader;
@@ -215,18 +215,18 @@ typedef struct {
 	int16 TxtLen;
 	int16 Color;
 	int16 TxtMode;
-} AtsVar;
+};
 
-typedef struct {
+struct SplitStringRet {
 	char **StrPtr;
 	int16 *X;
 	int16 Y;
 	short Anz;
 	int16 Next;
 
-} SplitStringRet;
+};
 
-typedef struct {
+struct SplitStringInit {
 	char *Str;
 
 	int16 X;
@@ -237,7 +237,7 @@ typedef struct {
 
 	int16 Fvorx;
 	int16 FHoehe;
-} SplitStringInit;
+};
 
 class atdsys {
 
