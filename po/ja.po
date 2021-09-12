@@ -1409,7 +1409,9 @@ msgstr "Discordとの連携を可能にする"
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr "Discordクライアントが起動していれば、Discordでプレイ中のゲームの情報を表示します。"
+msgstr ""
+"Discordクライアントが起動していれば、Discordでプレイ中のゲームの情報を表示し"
+"ます。"
 
 #: gui/options.cpp:2305
 msgid "GUI language:"
