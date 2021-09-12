@@ -47,7 +47,7 @@ public:
 
 	void sort();
 
-	void free_inv_spr(char **inv_spr_adr);
+	void free_inv_spr(byte **inv_spr_adr);
 
 	int16 is_sib_mouse(int16 mouse_x, int16 mouse_y);
 

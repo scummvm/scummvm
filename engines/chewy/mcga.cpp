@@ -55,7 +55,7 @@ char einfuegen = 0;
 int16 crlfx = 0, crlfy = 0;
 int16 r_gef = -1, r_end = false;
 int16 *rlist = 0;
-char pal_table[768];
+byte pal_table[768];
 bool mono = false;
 
 // Missing STUBs
@@ -66,36 +66,36 @@ void vflyback_start() { warning("STUB - vflyback_start"); }
 void vflyback_end() { warning("STUB - vflyback_end"); }
 void hflyback_start() { warning("STUB - hflyback_start"); }
 void hflyback_end() { warning("STUB - hflyback_end"); }
-void set_pointer(char *ptr) { warning("STUB - set_pointer"); }
-char *get_dispoff() { warning("STUB - get_dispoff"); return nullptr; }
-void setpalette(char *palette) { warning("STUB - setpalette"); }
-void save_palette(char *pal) { warning("STUB - save_palette"); }
+void set_pointer(byte *ptr) { warning("STUB - set_pointer"); }
+byte *get_dispoff() { warning("STUB - get_dispoff"); return nullptr; }
+void setpalette(byte *palette) { warning("STUB - setpalette"); }
+void save_palette(byte *pal) { warning("STUB - save_palette"); }
 void restore_palette() { warning("STUB - restore_palette"); }
 void rastercol(int16 color, int16 rot, int16 gruen, int16 blau) { warning("STUB - rastercol"); }
-void set_palpart(char *palette, int16 startcol, int16 anz) { warning("STUB - set_palpart"); }
+void set_palpart(byte *palette, int16 startcol, int16 anz) { warning("STUB - set_palpart"); }
 void clear_mcga() { warning("STUB - clear_mcga"); }
 void setpixel_mcga(int16 x, int16 y, int16 farbe) { warning("STUB - setpixel_mcga"); }
 uint8 getpix(int16 x, int16 y) { warning("STUB - getpix"); return 0; }
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) { warning("STUB - line_mcga"); }
-void mem2mcga(char *ptr) { warning("STUB - mem2mcga"); }
-void mem2mcga_masked(char *ptr, int16 maske) { warning("STUB - mem2mcga_masked"); }
-void mcga2mem(char *ptr) { warning("STUB - mcga2mem"); }
-void mem2mem(char *ptr1, char *ptr2) { warning("STUB - mem2mem"); }
-void mem2mem_masked(char *ptr1, char *ptr2, int16 maske) { warning("STUB - mem2mem_masked"); }
-void map_spr_2screen(char *sptr, int16 x, int16 y) { warning("STUB - map_spr_2screen"); }
-void spr_save_mcga(char *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) { warning("STUB - spr_save_mcga"); }
-void spr_set_mcga(char *sptr, int16 x, int16 y, int16 scrwidth) { warning("STUB - spr_set_mcga"); }
-void mspr_set_mcga(char *sptr, int16 x, int16 y, int16 scrwidth) { warning("STUB - mspr_set_mcga"); }
-void setfont(char *adr, int16 breite, int16 hoehe, int16 first, int16 last) { warning("STUB - setfont"); }
+void mem2mcga(byte *ptr) { warning("STUB - mem2mcga"); }
+void mem2mcga_masked(byte *ptr, int16 maske) { warning("STUB - mem2mcga_masked"); }
+void mcga2mem(byte *ptr) { warning("STUB - mcga2mem"); }
+void mem2mem(byte *ptr1, byte *ptr2) { warning("STUB - mem2mem"); }
+void mem2mem_masked(byte *ptr1, byte *ptr2, int16 maske) { warning("STUB - mem2mem_masked"); }
+void map_spr_2screen(byte *sptr, int16 x, int16 y) { warning("STUB - map_spr_2screen"); }
+void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) { warning("STUB - spr_save_mcga"); }
+void spr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth) { warning("STUB - spr_set_mcga"); }
+void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth) { warning("STUB - mspr_set_mcga"); }
+void setfont(byte *adr, int16 breite, int16 hoehe, int16 first, int16 last) { warning("STUB - setfont"); }
 void upd_scr() { warning("STUB - upd_scr"); }
 void vors() { warning("STUB - vors"); }
 
-void zoom_img(char *source, char *dest, int16 xdiff_, int16 ydiff_) { warning("STUB - zoom_img"); }
-void zoom_set(char *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) { warning("STUB - zoom_set"); }
+void zoom_img(byte *source, byte *dest, int16 xdiff_, int16 ydiff_) { warning("STUB - zoom_img"); }
+void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) { warning("STUB - zoom_set"); }
 
 void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol, int16 scrwidth) { warning("STUB - putcxy"); }
 void putz(char zeichen, int16 forcol, int16 backcol, int16 scrwidth) { warning("STUB - putz"); }
-void init_svga(VesaInfo *vi_, char *virt_screen) { warning("STUB - init_svga"); }
+void init_svga(VesaInfo *vi_, byte *virt_screen) { warning("STUB - init_svga"); }
 
 
 
@@ -214,12 +214,12 @@ void mcga_grafik::skip_line(int16 lines) {
 	}
 }
 
-void mcga_grafik::setze_zeiger(char *ptr) {
+void mcga_grafik::setze_zeiger(byte *ptr) {
 	set_pointer(ptr);
 }
 
-char *mcga_grafik::get_zeiger() {
-	return ((char *)get_dispoff());
+byte *mcga_grafik::get_zeiger() {
+	return get_dispoff();
 }
 
 void mcga_grafik::set_bildbreite(int16 breite) {
@@ -232,7 +232,7 @@ void mcga_grafik::set_mono() {
 	mono = true;
 }
 
-void mcga_grafik::calc_mono(char *pal, int16 startcol, int16 anz) {
+void mcga_grafik::calc_mono(byte *pal, int16 startcol, int16 anz) {
 	int16 i, k;
 	uint8 r, g, b, grau;
 	k = startcol * 3;
@@ -248,7 +248,7 @@ void mcga_grafik::calc_mono(char *pal, int16 startcol, int16 anz) {
 	}
 }
 
-void mcga_grafik::set_palette(char *palette) {
+void mcga_grafik::set_palette(byte *palette) {
 	int16 i;
 	for (i = 0; i < 768; i++)
 		pal_table[i] = palette[i];
@@ -257,7 +257,7 @@ void mcga_grafik::set_palette(char *palette) {
 	setpalette(palette);
 }
 
-void mcga_grafik::palette_save(char *pal) {
+void mcga_grafik::palette_save(byte *pal) {
 	save_palette(pal);
 }
 
@@ -276,7 +276,7 @@ void mcga_grafik::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	rastercol(c, r, g, b);
 }
 
-void mcga_grafik::einblenden(char *palette, int16 frames) {
+void mcga_grafik::einblenden(byte *palette, int16 frames) {
 	int16 i, j, k;
 	int16 r, g, b;
 	int16 r1, g1, b1;
@@ -305,7 +305,7 @@ void mcga_grafik::einblenden(char *palette, int16 frames) {
 	}
 }
 
-void mcga_grafik::aufhellen(char *palette, int16 startcol, int16 anz, int16 stufen, int16
+void mcga_grafik::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen, int16
                             frames) {
 	int16 i = 0, j, k;
 	int16 r, g, b;
@@ -382,7 +382,7 @@ void mcga_grafik::abblenden(int16 startcol, int16 anz, int16 stufen, int16 frame
 	}
 }
 
-void mcga_grafik::set_teilpalette(char *palette, int16 startcol, int16 anz) {
+void mcga_grafik::set_teilpalette(byte *palette, int16 startcol, int16 anz) {
 	int16 i;
 	int16 k, endcol;
 	k = startcol * 3;
@@ -504,27 +504,27 @@ void mcga_grafik::y_shrumpf(char *source, char *dest, int16 faktor,
 }
 #endif
 
-void mcga_grafik::back2screen(char *ptr) {
+void mcga_grafik::back2screen(byte *ptr) {
 	mem2mcga(ptr);
 }
 
-void mcga_grafik::back2back(char *ptr1, char *ptr2) {
+void mcga_grafik::back2back(byte *ptr1, byte *ptr2) {
 	mem2mem(ptr1, ptr2);
 }
 
-void mcga_grafik::back2screen_maskiert(char *ptr, int16 maske) {
+void mcga_grafik::back2screen_maskiert(byte *ptr, int16 maske) {
 	mem2mcga_masked(ptr, maske);
 }
 
-void mcga_grafik::back2back_maskiert(char *ptr1, char *ptr2, int16 maske) {
+void mcga_grafik::back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske) {
 	mem2mem_masked(ptr1, ptr2, maske);
 }
 
-void mcga_grafik::screen2back(char *ptr) {
+void mcga_grafik::screen2back(byte *ptr) {
 	mcga2mem(ptr);
 }
 
-void mcga_grafik::sprite_save(char *sptr, int16 x,
+void mcga_grafik::sprite_save(byte *sptr, int16 x,
                               int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
 	if (breite < 4)breite = 4;
 	if (hoehe <= 0)hoehe = 1;
@@ -545,15 +545,15 @@ void mcga_grafik::sprite_save(char *sptr, int16 x,
 	spr_save_mcga(sptr, x, y, breite, hoehe, scrwidth);
 }
 
-void mcga_grafik::sprite_set(char *sptr, int16 x, int16 y, int16 scrwidth) {
+void mcga_grafik::sprite_set(byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	mspr_set_mcga(sptr, x, y, scrwidth);
 }
 
-void mcga_grafik::blockcopy(char *sptr, int16 x, int16 y, int16 scrwidth) {
+void mcga_grafik::blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	spr_set_mcga(sptr, x, y, scrwidth);
 }
 
-void mcga_grafik::map_spr2screen(char *sptr, int16 x, int16 y) {
+void mcga_grafik::map_spr2screen(byte *sptr, int16 x, int16 y) {
 	int16 br, h;
 	br = ((int16 *)sptr)[0];
 	h = ((int16 *)sptr)[1];
@@ -561,7 +561,7 @@ void mcga_grafik::map_spr2screen(char *sptr, int16 x, int16 y) {
 		map_spr_2screen(sptr, x, y);
 }
 
-void mcga_grafik::set_fontadr(char *adr) {
+void mcga_grafik::set_fontadr(byte *adr) {
 	tff_header *tff;
 	tff = (tff_header *) adr;
 	setfont(adr + sizeof(tff_header), (int16)tff->width, (int16)tff->height,
@@ -1574,18 +1574,18 @@ int16 mcga_grafik::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
 	return (diff);
 }
 
-void mcga_grafik::scale_image(char *source, char *dest, int16 xdiff_, int16 ydiff_) {
+void mcga_grafik::scale_image(byte *source, byte *dest, int16 xdiff_, int16 ydiff_) {
 	zoom_img(source, dest, xdiff_, ydiff_);
 }
 
-void mcga_grafik::scale_set(char *sptr, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
+void mcga_grafik::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
 	if ((xdiff_) || (ydiff_))
 		zoom_set(sptr, x, y, xdiff_, ydiff_, scrwidth);
 	else
 		mspr_set_mcga(sptr, x, y, scrwidth);
 }
 
-void mcga_grafik::init(uint16 mode, char *info_blk, char *vscreen) {
+void mcga_grafik::init(uint16 mode, byte *info_blk, byte *vscreen) {
 	if (!get_vesa_info(mode, info_blk)) {
 		init_svga(&vi, vscreen);
 		//delay(250);
@@ -1597,7 +1597,7 @@ void mcga_grafik::update_screen() {
 		upd_scr();
 }
 
-int16 mcga_grafik::get_vesa_info(uint16 mode, char *iblk) {
+int16 mcga_grafik::get_vesa_info(uint16 mode, byte *iblk) {
 	int16 error = 0;
 #if 0
 	vesa_status_block *vsb;

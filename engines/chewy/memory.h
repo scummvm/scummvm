@@ -36,8 +36,8 @@ public:
 	// FIXME: was using FILE
 	taf_seq_info *taf_seq_adr(void *handle, int16 image_start,
 	                          int16 image_anz);
-	void tff_adr(const char *filename, char **speicher);
-	char *void_adr(const char *filename);
+	void tff_adr(const char *filename, byte **speicher);
+	byte *void_adr(const char *filename);
 
 	datei *file;
 private:

@@ -94,7 +94,7 @@ void movclass::goto_xy(GotoPkt *gp) {
 }
 
 int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
-	char *speicher;
+	byte *speicher;
 	int16 i;
 	int16 ok;
 	int16 ret;
@@ -434,7 +434,7 @@ void movclass::get_mov_line() {
 	int16 count_vect;
 	int16 count;
 	int16 y_richtung;
-	char *speicher;
+	byte *speicher;
 	gml.GotoFeld = -1;
 	gml.MLineFeld = -1;
 	if (gpkt->Ebenen > 1) {
@@ -531,7 +531,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 	int16 tbl_dir;
 	int16 tbl_ptr;
 	int16 dir;
-	char *speicher;
+	byte *speicher;
 	for (i = 0; i < MAX_KNOTEN_PKT; i++)
 		TmpKnPkt[i] = -1;
 	if (gpkt->Ebenen > 1) {

@@ -59,8 +59,7 @@ typedef struct {
 #define MAX_RDI_ROOM 100
 
 typedef struct {
-
-	char *Image;
+	byte *Image;
 	int16 ZEbene;
 	int16 X;
 	int16 Y;
@@ -122,14 +121,14 @@ typedef struct {
 	int16 StaticDetailAnz;
 	int16 AniDetailAnz;
 	taf_info *dptr;
-	ani_detail_info Ainfo [MAXDETAILS];
-	static_detail_info Sinfo [MAXDETAILS];
-	int16 mvect [MAX_M_ITEMS * 4];
-	int16 mtxt [MAX_M_ITEMS];
+	ani_detail_info Ainfo[MAXDETAILS];
+	static_detail_info Sinfo[MAXDETAILS];
+	int16 mvect[MAX_M_ITEMS * 4];
+	int16 mtxt[MAX_M_ITEMS];
 	RaumInfo Ri;
-	RaumAutoMov AutoMov [MAX_AUTO_MOV];
+	RaumAutoMov AutoMov[MAX_AUTO_MOV];
 	int16 tvp_index[MAXDETAILS * MAX_SOUNDS];
-	char *sample [MAXDETAILS * MAX_SOUNDS];
+	byte *sample[MAXDETAILS * MAX_SOUNDS];
 } room_detail_info;
 
 typedef struct {
@@ -171,7 +170,7 @@ public:
 	void save_detail(char *fname, int16 room_nr);
 #endif
 	void set_static_spr(int16 nr, int16 spr_nr);
-	char *get_static_image(int16 det_nr);
+	byte *get_static_image(int16 det_nr);
 
 	void set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag);
 	void set_detail_pos(int16 det_nr, int16 x, int16 y);
@@ -181,7 +180,7 @@ public:
 	void unfreeze_ani();
 	void get_ani_werte(int16 ani_nr, int16 *start, int16 *end);
 	void set_ani(int16 ani_nr, int16 start, int16 end);
-	char *get_image(int16 spr_nr);
+	byte *get_image(int16 spr_nr);
 	ani_detail_info *get_ani_detail(int16 ani_nr);
 	int16 *get_korrektur_tbl();
 	void init_taf(taf_info *dptr);
@@ -229,7 +228,7 @@ public:
 	int16 mouse_on_detail(int16 mouse_x, int16 mouse_y,
 	                      int16 scrx, int16 scry);
 
-	void set_sound_area(char *buffer, uint32 size);
+	void set_sound_area(byte *buffer, uint32 size);
 	// FIXME : was FILE*
 	void load_room_sounds(void *tvp_handle);
 	void get_sound_para(int16 nr, sound_def_blk *sdb_dest);
@@ -248,7 +247,7 @@ public:
 #ifdef DETEDIT
 	void shadow_room(int16 mode);
 #endif
-	void set_taf_ani_mem(char *load_area);
+	void set_taf_ani_mem(byte *load_area);
 	// FIXME : was FILE*
 	void load_sprite_pointer(void *handle);
 
@@ -272,13 +271,13 @@ private:
 	int16 ani_freezeflag;
 	int16 fulltaf;
 	char tafname[80];
-	char *taf_load_buffer;
+	byte *taf_load_buffer;
 	int16 direct_taf_ani;
 	// FIXME : was FILE*
 	void *CurrentTaf;
 	uint32 SpritePos[MAXSPRITE];
 
-	char *SoundBuffer;
+	byte *SoundBuffer;
 	uint32 SoundBufferSize;
 };
 

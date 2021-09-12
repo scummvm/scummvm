@@ -116,7 +116,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	}
 }
 
-void Room::load_taf(const char *filename, char **speicher, char *palette, int16 sprnr) {
+void Room::load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr) {
 	uint32 imagesize[MAXSPRITE] = {0};
 	if (palette != 0)
 		mem->file->load_palette(filename, palette, TAFDATEI);
@@ -124,7 +124,7 @@ void Room::load_taf(const char *filename, char **speicher, char *palette, int16 
 		imagesize[sprnr] = 0l;
 		mem->file->imsize(filename, imagesize);
 		if (!modul) {
-			*speicher = (char *)calloc((imagesize[sprnr]) + 4l, 1);
+			*speicher = (byte *)calloc((imagesize[sprnr]) + 4l, 1);
 			if (!modul) {
 				mem->file->load_tafmcga(filename, *speicher, sprnr);
 			}
@@ -189,7 +189,7 @@ void Room::set_zoom(int16 zoom) {
 	room_info->ZoomFak = (uint8)zoom;
 }
 
-void Room::set_pal(char *src_pal, char *dest_pal) {
+void Room::set_pal(const byte *src_pal, byte *dest_pal) {
 	memcpy(dest_pal, src_pal, 768l);
 	dest_pal [767] = 63;
 	dest_pal [766] = 63;
@@ -204,7 +204,7 @@ void Room::set_ak_pal(RaumBlk *Rb) {
 }
 
 void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
-	char *tmp_inv_spr[MAX_MOV_OBJ];
+	byte *tmp_inv_spr[MAX_MOV_OBJ];
 	int16 i;
 
 	if (!modul) {
@@ -301,9 +301,9 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 void Room::init_ablage() {
 	int16 i;
 	LastAblageSave = 0;
-	Ablage[0] = (char *)calloc(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l), 1);
-	AblagePal[0] = (char *)calloc(MAX_ABLAGE * 768l, 1);
-	GedMem[0] = (char *)calloc(MAX_ABLAGE * GED_BLOCK_SIZE, 1);
+	Ablage[0] = (byte *)calloc(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l), 1);
+	AblagePal[0] = (byte *)calloc(MAX_ABLAGE * 768l, 1);
+	GedMem[0] = (byte *)calloc(MAX_ABLAGE * GED_BLOCK_SIZE, 1);
 	if (!modul) {
 		AkAblage = 0;
 		for (i = 0; i < MAX_ABLAGE; i++) {
@@ -327,8 +327,8 @@ void Room::free_ablage() {
 	AkAblage = -1;
 }
 
-char *Room::get_ablage(int16 nr) {
-	char *ret;
+byte *Room::get_ablage(int16 nr) {
+	byte *ret;
 	ret = false;
 	if (nr < MAX_ABLAGE && AkAblage != -1) {
 		ret = Ablage[nr];
@@ -336,8 +336,8 @@ char *Room::get_ablage(int16 nr) {
 	return (ret);
 }
 
-char **Room::get_ablage() {
-	char **ret;
+byte **Room::get_ablage() {
+	byte **ret;
 	ret = false;
 	if (AkAblage != -1) {
 		ret = &Ablage[0];
@@ -345,8 +345,8 @@ char **Room::get_ablage() {
 	return (ret);
 }
 
-char **Room::get_ged_mem() {
-	char **ret;
+byte **Room::get_ged_mem() {
+	byte **ret;
 	ret = false;
 	if (AkAblage != -1) {
 		ret = &GedMem[0];

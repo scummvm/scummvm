@@ -35,14 +35,14 @@ void vflyback_start();
 void vflyback_end();
 void hflyback_start();
 void hflyback_end();
-void set_pointer(char *ptr);
-char *get_dispoff();
+void set_pointer(byte *ptr);
+byte *get_dispoff();
 
-void setpalette(char *palette);
-void save_palette(char *pal);
+void setpalette(byte *palette);
+void save_palette(byte *pal);
 void restore_palette();
 void rastercol(int16 color, int16 rot, int16 gruen, int16 blau);
-void set_palpart(char *palette, int16 startcol, int16 anz);
+void set_palpart(byte *palette, int16 startcol, int16 anz);
 
 void clear_mcga();
 void setpixel_mcga(int16 x, int16 y, int16 farbe);
@@ -50,39 +50,39 @@ uint8 getpix(int16 x, int16 y);
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 
 #ifdef EFFEKTE
-void split_in(char *source);
-void fall_in(char *source);
-void over_in(char *source);
-void y_shrink(char *source, char *dest, int16 faktor, int16 zeile);
+void split_in(byte *source);
+void fall_in(byte *source);
+void over_in(byte *source);
+void y_shrink(byte *source, byte *dest, int16 faktor, int16 zeile);
 #endif
 
-void mem2mcga(char *ptr);
-void mem2mcga_masked(char *ptr, int16 maske);
-void mcga2mem(char *ptr);
-void mem2mem(char *ptr1, char *ptr2);
-void mem2mem_masked(char *ptr1, char *ptr2, int16 maske);
-void map_spr_2screen(char *sptr, int16 x, int16 y);
+void mem2mcga(byte *ptr);
+void mem2mcga_masked(byte *ptr, int16 maske);
+void mcga2mem(byte *ptr);
+void mem2mem(byte *ptr1, byte *ptr2);
+void mem2mem_masked(byte *ptr1, byte *ptr2, int16 maske);
+void map_spr_2screen(byte *sptr, int16 x, int16 y);
 
-void spr_save_mcga(char *sptr, int16 x, int16 y, int16 breite, int16 hoehe,
+void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe,
                    int16 scrwidth);
-void spr_set_mcga(char *sptr, int16 x, int16 y, int16 scrwidth);
-void mspr_set_mcga(char *sptr, int16 x, int16 y, int16 scrwidth);
-void zoom_img(char *source, char *dest, int16 xdiff,
+void spr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth);
+void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth);
+void zoom_img(byte *source, byte *dest, int16 xdiff,
               int16 ydiff);
-void zoom_set(char *source, int16 x, int16 y, int16 xdiff,
+void zoom_set(byte *source, int16 x, int16 y, int16 xdiff,
               int16 ydiff, int16 scrwidth);
 
 void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol,
             int16 scrwidth);
 void putz(char zeichen, int16 forcol, int16 backcol, int16 scrwidth);
-void setfont(char *adr, int16 breite, int16 hoehe, int16 first,
+void setfont(byte *adr, int16 breite, int16 hoehe, int16 first,
              int16 last);
 void vors();
 void movecur(int16 x, int16 y);
 
 uint8 joystick();
 
-void init_svga(VesaInfo *vi, char *virt_screen);
+void init_svga(VesaInfo *vi, byte *virt_screen);
 void upd_scr();
 
 class mcga_grafik {
@@ -103,22 +103,22 @@ public:
 	void hsync_end();
 	void skip_line(int16 lines);
 	void skip_frame(int16 frames);
-	void setze_zeiger(char *ptr);
-	char *get_zeiger();
+	void setze_zeiger(byte *ptr);
+	byte *get_zeiger();
 	void set_bildbreite(int16 breite);
 
 	void set_mono();
-	void calc_mono(char *pal, int16 startcol, int16 anz);
-	void set_palette(char *palette);
-	void palette_save(char *pal);
+	void calc_mono(byte *pal, int16 startcol, int16 anz);
+	void set_palette(byte *palette);
+	void palette_save(byte *pal);
 	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
-	void einblenden(char *palette, int16 frames);
-	void aufhellen(char *palette, int16 startcol, int16 anz, int16 stufen,
+	void einblenden(byte *palette, int16 frames);
+	void aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen,
 	               int16 frames);
 	void ausblenden(int16 frames);
 	void abblenden(int16 startcol, int16 anz, int16 stufen, int16 frames);
-	void set_teilpalette(char *palette, int16 startcol, int16 anz);
+	void set_teilpalette(byte *palette, int16 startcol, int16 anz);
 
 	void cls();
 	void punkt(int16 xpos, int16 ypos, int16 farbn);
@@ -137,30 +137,30 @@ public:
 	void leftscroll();
 	void rightscroll();
 	void set_dispoff(int16 offset);
-	void seit_in(char *source);
-	void falling_in(char *source);
-	void ueberblend(char *source);
-	void y_shrumpf(char *source, char *dest, int16 faktor,
+	void seit_in(byte *source);
+	void falling_in(byte *source);
+	void ueberblend(byte *source);
+	void y_shrumpf(byte *source, byte *dest, int16 faktor,
 	               int16 zeile);
 #endif
 
-	void back2screen(char *ptr);
-	void back2screen_maskiert(char *ptr, int16 maske);
-	void screen2back(char *ptr);
-	void back2back(char *ptr1, char *ptr2);
-	void back2back_maskiert(char *ptr1, char *ptr2, int16 maske);
+	void back2screen(byte *ptr);
+	void back2screen_maskiert(byte *ptr, int16 maske);
+	void screen2back(byte *ptr);
+	void back2back(byte *ptr1, byte *ptr2);
+	void back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske);
 
-	void sprite_save(char *sptr, int16 x, int16 y, int16 breite,
+	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
 	                 int16 hoehe, int16 scrwidth);
-	void blockcopy(char *sptr, int16 x, int16 y, int16 scrwidth);
-	void sprite_set(char *sptr, int16 x, int16 y, int16 scrwidth);
-	void scale_image(char *source, char *dest, int16 xdiff,
+	void blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth);
+	void sprite_set(byte *sptr, int16 x, int16 y, int16 scrwidth);
+	void scale_image(byte *source, byte *dest, int16 xdiff,
 	                 int16 ydiff);
-	void scale_set(char *sptr, int16 x, int16 y, int16 xdiff,
+	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
-	void map_spr2screen(char *sptr, int16 x, int16 y);
+	void map_spr2screen(byte *sptr, int16 x, int16 y);
 
-	void set_fontadr(char *adr);
+	void set_fontadr(byte *adr);
 	void plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 scrwidth,
 	                   char cursor);
 	int16 scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth, const char *string, ...);
@@ -179,8 +179,8 @@ public:
 	void move(int16 x, int16 y);
 	void get_fontinfo(int16 *vorx, int16 *vory, int16 *fntbr, int16 *fnth);
 
-	int16 get_vesa_info(uint16 mode, char *info_blk);
-	void init(uint16 mode, char *info_blk, char *vscreen);
+	int16 get_vesa_info(uint16 mode, byte *info_blk);
+	void init(uint16 mode, byte *info_blk, byte *vscreen);
 	void update_screen();
 private:
 	int16 check_stellen_anz(char *zstring, int16 *pos, int16 stellen);

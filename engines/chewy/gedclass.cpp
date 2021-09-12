@@ -36,26 +36,26 @@
 		warning("STUB - missing destructor gedclass");
 	}
 
-	void gedclass::load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, char *speicher) {
+	void gedclass::load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 		warning("STUB - missing load_ged_pool");
 	}
 
 	//FIXME : was FILE*
-	void gedclass::load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, char *speicher) {
+	void gedclass::load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 		warning("STUB - missing load_ged_pool");
 	}
 
-	int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, char *speicher) {
+	int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
 		warning("STUB - missing ged_idx");
 		return 0;
 	}
 
-	int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, char *speicher) {
+	int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
 		warning("STUB - missing ged_idx");
 		return 0;
 	}
 
 	// FIXME : was FILE*
-	void gedclass::load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, char *speicher) {
+	void gedclass::load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, byte *speicher) {
 		warning("STUB - missing load_ged_chunk");
 	}

@@ -30,14 +30,12 @@ effect::effect() {
 effect::~effect() {
 }
 
-void effect::rnd_blende(char *rnd_speicher, char *sram_speicher,
-                        char *screen, char *palette, int16 col, int16 skip_line)
-
-{
+void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher,
+		byte *screen, byte *palette, int16 col, int16 skip_line) {
 	int16 *rnd_zeiger;
 	int16 i, x, y;
-	char *sp;
-	sp = (char *)calloc(8 * 8 + 4, 1);
+	byte *sp;
+	sp = (byte *)calloc(8 * 8 + 4, 1);
 	if (!modul) {
 		rnd_zeiger = (int16 *)rnd_speicher;
 		if (col < 256) {
@@ -68,13 +66,13 @@ void effect::rnd_blende(char *rnd_speicher, char *sram_speicher,
 	}
 }
 
-void effect::blende1(char *sram_speicher, char *screen,
-                     char *palette, int16 frames, uint8 mode, int16 col) {
+void effect::blende1(byte *sram_speicher, byte *screen,
+		byte *palette, int16 frames, uint8 mode, int16 col) {
 
 	int16 i;
 	int16 x, y, x1, y1;
-	char *sp;
-	sp = (char *)calloc(8 * 8 + 4, 1);
+	byte *sp;
+	sp = (byte *)calloc(8 * 8 + 4, 1);
 	if (!modul) {
 		i = 0;
 		if (col < 256) {
@@ -158,8 +156,8 @@ void effect::blende1(char *sram_speicher, char *screen,
 	}
 }
 
-void effect::spr_blende(char *workpage_, char *ablage_,
-                        char *palette, int16 frames, int16 col) {
+void effect::spr_blende(byte *workpage_, byte *ablage_,
+                        byte *palette, int16 frames, int16 col) {
 	int16 i;
 	int16 x, y;
 	int16 zoomx, zoomy;

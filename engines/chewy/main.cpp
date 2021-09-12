@@ -88,24 +88,24 @@ void game_main() {
 	}
 
 void alloc_buffers() {
-	workpage = (char *)calloc(64004l, 1);
+	workpage = (byte *)calloc(64004l, 1);
 	ERROR
-	pal = (char *)calloc(768l, 1);
+	pal = (byte *)calloc(768l, 1);
 	ERROR
-	cur_back = (char *)calloc(16 * 16 + 4, 1);
+	cur_back = (byte *)calloc(16 * 16 + 4, 1);
 	ERROR;
 	Ci.VirtScreen = workpage;
-	Ci.TempArea = (char *)calloc(64004l, 1);
+	Ci.TempArea = (byte *)calloc(64004l, 1);
 	ERROR;
 	det->set_taf_ani_mem(Ci.TempArea);
-	Ci.MusicSlot = (char *)calloc(MUSIC_SLOT_SIZE, 1);
+	Ci.MusicSlot = (byte *)calloc(MUSIC_SLOT_SIZE, 1);
 	Ci.MaxMusicSize = MUSIC_SLOT_SIZE;
 	ERROR;
-	Ci.SoundSlot = (char *)calloc(SOUND_SLOT_SIZE, 1);
+	Ci.SoundSlot = (byte *)calloc(SOUND_SLOT_SIZE, 1);
 	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
 	ERROR;
 	Ci.Fname = fname;
-	SpeechBuf[0] = (char *)calloc(SPEECH_HALF_BUF * 2, 1);
+	SpeechBuf[0] = (byte *)calloc(SPEECH_HALF_BUF * 2, 1);
 	ERROR
 	SpeechBuf[1] = SpeechBuf[0] + SPEECH_HALF_BUF;
 }
@@ -1112,7 +1112,7 @@ void swap_if_l(int16 *x1, int16 *x2) {
 	}
 }
 
-void palcopy(char *dipal, char *sipal, int16 distart,
+void palcopy(byte *dipal, byte *sipal, int16 distart,
              int16 sistart, int16 anz) {
 	int16 i, j;
 	j = sistart;
@@ -1192,26 +1192,26 @@ void check_shad(int16 g_idx, int16 mode) {
 		switch (g_idx) {
 		case 4:
 			if (mode)
-				out->set_teilpalette((char *)pal_0, 1, 11);
-			palcopy(pal, (char *)pal_0, 0, 0, 12);
+				out->set_teilpalette((byte *)pal_0, 1, 11);
+			palcopy(pal, (byte *)pal_0, 0, 0, 12);
 			break;
 
 		case 1:
 			if (mode)
-				out->set_teilpalette((char *)pal_1, 1, 11);
-			palcopy(pal, (char *)pal_1, 0, 0, 12);
+				out->set_teilpalette((byte *)pal_1, 1, 11);
+			palcopy(pal, (byte *)pal_1, 0, 0, 12);
 			break;
 
 		case 2:
 			if (mode)
-				out->set_teilpalette((char *)pal_2, 1, 11);
-			palcopy(pal, (char *)pal_2, 0, 0, 12);
+				out->set_teilpalette((byte *)pal_2, 1, 11);
+			palcopy(pal, (byte *)pal_2, 0, 0, 12);
 			break;
 
 		case 3:
 			if (mode)
-				out->set_teilpalette((char *)pal_3, 1, 11);
-			palcopy(pal, (char *)pal_3, 0, 0, 12);
+				out->set_teilpalette((byte *)pal_3, 1, 11);
+			palcopy(pal, (byte *)pal_3, 0, 0, 12);
 			break;
 
 		}

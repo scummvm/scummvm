@@ -68,20 +68,20 @@ extern int16 FrameSpeedTmp;
 
 extern int16 show_frame;
 
-extern char **ablage;
-extern char *workpage;
-extern char *workptr;
-extern char *cur_back;
-extern char **ged_mem;
-extern char *pal;
-extern char *spblende;
+extern byte **ablage;
+extern byte *workpage;
+extern byte *workptr;
+extern byte *cur_back;
+extern byte **ged_mem;
+extern byte *pal;
+extern byte *spblende;
 
-extern char *screen0;
+extern byte *screen0;
 extern int16 scr_width;
 extern int16 fx_blende;
 
-extern char *font6x8;
-extern char *font8x8;
+extern byte *font6x8;
+extern byte *font8x8;
 extern int16 fvorx6x8;
 extern int16 fvorx8x8;
 extern int16 fvory6x8;
@@ -119,7 +119,7 @@ extern int16 ani_invent_delay[2][2];
 extern int16 ani_count[2];
 extern int16 invent_cur_mode;
 extern int16 ak_invent;
-extern char *inv_spr[MAX_MOV_OBJ];
+extern byte *inv_spr[MAX_MOV_OBJ];
 
 extern int16 life_flag;
 extern int16 life_x;
@@ -224,7 +224,7 @@ extern void *music_handle;
 extern int16 EndOfPool;
 // FIXME: was FILE*
 extern void *speech_handle;
-extern char *SpeechBuf[2];
+extern byte *SpeechBuf[2];
 extern int16 CurrentSong;
 
 void cursor_wahl(int16 nr);

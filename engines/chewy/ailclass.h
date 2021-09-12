@@ -62,7 +62,7 @@ public:
 	void fade_in(uint16 delay);
 	void fade_out(uint16 delay);
 
-	void play_voc(char *anf_adr, int16 kanal, int16 vol,
+	void play_voc(byte *anf_adr, int16 kanal, int16 vol,
 	              int16 rep);
 	void play_raw(int16 kanal, char *voc, uint32 len,
 	              uint16 freqwert, int16 volume, int16 rep);

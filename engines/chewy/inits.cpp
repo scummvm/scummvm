@@ -57,7 +57,7 @@ void standard_init() {
 	out->set_clip(0, 0, 320, 200);
 	out->set_writemode(0);
 	scr_width = 0;
-	screen0 = (char *) 0xa0000;
+	screen0 = (byte *) 0xa0000;
 	in->neuer_kb_handler(&kbinfo);
 
 	in->rectangle(0, 0, 320, 210);

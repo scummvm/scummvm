@@ -29,14 +29,14 @@ public:
 	effect();
 	~effect();
 
-	void blende1(char *sram_speicher, char *screen,
-	             char *palette, int16 frames, uint8 mode, int16 col);
+	void blende1(byte *sram_speicher, byte *screen,
+		byte *palette, int16 frames, uint8 mode, int16 col);
 
-	void rnd_blende(char *rnd_speicher, char *sram_speicher,
-	                char *screen, char *palette, int16 col, int16 skip_line);
+	void rnd_blende(byte *rnd_speicher, byte *sram_speicher,
+		byte *screen, byte *palette, int16 col, int16 skip_line);
 
-	void spr_blende(char *workpage, char *ablage,
-	                char *palette, int16 frames, int16 col);
+	void spr_blende(byte *workpage, byte *ablage,
+		byte *palette, int16 frames, int16 col);
 
 private:
 

@@ -38,10 +38,10 @@
 #define R_SPEZTAF 3
 
 typedef struct {
-	char *LowPalMem;
+	byte *LowPalMem;
 	const char *InvFile;
 	const char *DetFile;
-	char **InvSprAdr;
+	byte **InvSprAdr;
 
 	RoomMovObjekt *Rmo;
 
@@ -49,7 +49,7 @@ typedef struct {
 
 	char RoomDir[9];
 	int16 AkAblage;
-	char **DetImage;
+	byte **DetImage;
 	int16 *DetKorrekt;
 	taf_info *Fti;
 	int16 AadLoad;
@@ -78,19 +78,18 @@ public:
 
 	void load_room(RaumBlk *Rb, int16 room_nr, Spieler *player);
 
-	void load_taf(const char *filename, char **speicher, char *palette, int16 sprnr);
+	void load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr);
 
-	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx,
-	               int16 mode);
+	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode);
 	void load_sound();
 	// FIXME: was FILE*
 	void *get_sound_handle();
 
-	char *get_ablage(int16 nr);
+	byte *get_ablage(int16 nr);
 
-	char **get_ablage();
+	byte **get_ablage();
 
-	char **get_ged_mem();
+	byte **get_ged_mem();
 
 	void set_timer_start(int16 timer_start);
 
@@ -104,7 +103,7 @@ public:
 
 	void set_zoom(int16 zoom);
 
-	void set_pal(char *src_pal, char *dest_pal);
+	void set_pal(const byte *src_pal, byte *dest_pal);
 
 	void set_ak_pal(RaumBlk *Rb);
 
@@ -138,11 +137,11 @@ private:
 	int16 AkAblage;
 	int16 LastAblageSave;
 
-	char *Ablage[MAX_ABLAGE];
-	char *AblagePal[MAX_ABLAGE];
+	byte *Ablage[MAX_ABLAGE];
+	byte *AblagePal[MAX_ABLAGE];
 	int16 AblageInfo[MAX_ABLAGE][2];
 
-	char *GedMem[MAX_ABLAGE];
+	byte *GedMem[MAX_ABLAGE];
 	// FIXME: was FILE*
 	void *roomhandle[MAX_ROOM_HANDLE];
 
