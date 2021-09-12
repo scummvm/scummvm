@@ -185,7 +185,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 			Tt->anzahl = anz;
 			Tt->korrektur = (int16 *)calloc((int32)Tt->anzahl * 4l, 1);
 			if (!modul) {
-				mem->file->load_korrektur(fname_, (char *)Tt->korrektur);
+				mem->file->load_korrektur(fname_, (byte *)Tt->korrektur);
 				Tt->palette = 0;
 				CurrentTaf = fopen(fname_, "rb");
 				if (CurrentTaf) {
@@ -251,7 +251,7 @@ void detail::load_taf_seq(void *h, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 		if (fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
 			if (!Tt->image[spr_nr + i]) {
 				size = iheader.width * iheader.height ;
-				Tt->image[spr_nr + i] = (char *)calloc(size + 4l, 1);
+				Tt->image[spr_nr + i] = (byte *)calloc(size + 4l, 1);
 				((int16 *)Tt->image[spr_nr + i])[0] = iheader.width;
 				((int16 *)Tt->image[spr_nr + i])[1] = iheader.height;
 				fseek(handle, iheader.image, SEEK_SET);
@@ -469,8 +469,8 @@ void detail::show_static_spr(int16 nr) {
 		rdi.Sinfo[nr].Hide = false;
 }
 
-char *detail::get_static_image(int16 det_nr) {
-	char *ret;
+byte *detail::get_static_image(int16 det_nr) {
+	byte *ret;
 	int16 index;
 	index = rdi.Sinfo[det_nr].SprNr;
 	if (index == -1)
@@ -512,8 +512,8 @@ void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
 	rdi.Ainfo[ani_nr].end_ani = end;
 }
 
-char *detail::get_image(int16 spr_nr) {
-	char *ret;
+byte *detail::get_image(int16 spr_nr) {
+	byte *ret;
 	ret = rdi.dptr->image[spr_nr];
 	return(ret);
 }
@@ -666,7 +666,7 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end) {
 	int16 x, y;
 	int16 i;
-	char *simage;
+	byte *simage;
 	if (start > end) {
 		i = start;
 		start = end;
@@ -820,7 +820,7 @@ void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 	*ky += (int16)tmpy;
 }
 
-void detail::set_sound_area(char *buffer, uint32 size) {
+void detail::set_sound_area(byte *buffer, uint32 size) {
 	SoundBuffer = buffer;
 	SoundBufferSize = size;
 }
@@ -828,7 +828,7 @@ void detail::set_sound_area(char *buffer, uint32 size) {
 void detail::load_room_sounds(void *tvp_handle) {
 	int16 i, break_flag;
 	int16 index;
-	char *workbuf;
+	byte *workbuf;
 	uint32 size;
 	uint32 allsize;
 	if (tvp_handle) {
@@ -1102,7 +1102,7 @@ int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y,
 	return (detail_nr);
 }
 
-void detail::set_taf_ani_mem(char *load_area) {
+void detail::set_taf_ani_mem(byte *load_area) {
 	taf_load_buffer = load_area;
 	direct_taf_ani = ON;
 }

@@ -462,7 +462,7 @@ void ailclass::init_note_table(uint16 sfreq) {
 	}
 }
 
-void ailclass::play_voc(char *anf_adr, int16 kanal, int16 vol, int16 rep) {
+void ailclass::play_voc(byte *anf_adr, int16 kanal, int16 vol, int16 rep) {
 	warning("STUB: ailclass::play_voc()");
 
 #if 0

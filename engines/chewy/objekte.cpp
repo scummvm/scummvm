@@ -200,7 +200,7 @@ void objekt::sort() {
 	}
 }
 
-void objekt::free_inv_spr(char **inv_spr_adr) {
+void objekt::free_inv_spr(byte **inv_spr_adr) {
 	int16 i;
 	for (i = 0; i < MAX_MOV_OBJ; i++)
 		if (inv_spr_adr[i] != 0) {

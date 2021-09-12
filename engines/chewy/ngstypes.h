@@ -90,15 +90,15 @@ struct taf_imageheader {
 
 typedef struct {
 	int16 anzahl;
-	char *palette;
+	byte *palette;
 	int16 *korrektur;
-	char **image;
+	byte **image;
 } taf_info;
 
 typedef struct {
 	int16 anzahl;
 	int16 *korrektur;
-	char **image;
+	byte **image;
 } taf_seq_info;
 
 typedef struct {
@@ -261,7 +261,7 @@ typedef struct {
 	uint8 lied_len;
 	uint8 pattern_anz;
 	uint8 sequenz[128];
-	char *ipos[31];
+	byte *ipos[31];
 } tmf_header;
 
 typedef struct {
@@ -446,10 +446,10 @@ typedef struct {
 typedef struct {
 	int16 page_off_x;
 	int16 page_off_y;
-	char *cur_back;
+	byte *cur_back;
 	int16 xsize;
 	int16 ysize;
-	char **sprite;
+	byte **sprite;
 	bool no_back;
 } cur_blk;
 
@@ -523,10 +523,10 @@ typedef struct {
 	char *Fname;
 	// FIXME: Was FILE
 	void *Handle;
-	char *VirtScreen;
-	char *TempArea;
-	char *SoundSlot;
-	char *MusicSlot;
+	byte *VirtScreen;
+	byte *TempArea;
+	byte *SoundSlot;
+	byte *MusicSlot;
 	uint32 MaxSoundSize;
 	uint32 MaxMusicSize;
 } CustomInfo;

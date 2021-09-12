@@ -29,11 +29,11 @@
 #include "common/system.h"
 #include "chewy/flic.h"
 
-void decode_flc(char *vscr, char *dbuf) {
+void decode_flc(byte *vscr, byte *dbuf) {
 	warning("STUB: decode_flc()");
 }
 
-void decode_rle(char *vscr, char *dbuf, int br, int h) {
+void decode_rle(byte *vscr, byte *dbuf, int br, int h) {
 	warning("STUB: decode_rle()");
 }
 
@@ -47,7 +47,7 @@ flic::flic() {
 flic::~flic() {
 }
 
-void flic::play(char *fname, char *vscreen, char *load_p) {
+void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 	FILE *lhandle;
 
 	lhandle = fopen(fname, "rb");
@@ -61,7 +61,7 @@ void flic::play(char *fname, char *vscreen, char *load_p) {
 	}
 }
 
-void flic::play(void *h, char *vscreen, char *load_p) {
+void flic::play(void *h, byte *vscreen, byte *load_p) {
 	FILE *handle = (FILE *)h;
 	uint16 i;
 	size_t tmp_size;
@@ -116,7 +116,7 @@ void flic::play(void *h, char *vscreen, char *load_p) {
 
 void flic::decode_frame() {
 	uint16 i;
-	char *tmp_buf;
+	byte *tmp_buf;
 	bool update_flag;
 	tmp_buf = load_puffer;
 	update_flag = false;
@@ -186,7 +186,7 @@ void flic::decode_frame() {
 	}
 }
 
-void flic::col256_chunk(char *tmp) {
+void flic::col256_chunk(byte *tmp) {
 	short int i;
 	short int packets;
 	short int count;
@@ -226,7 +226,7 @@ void flic::col256_chunk(char *tmp) {
 	}
 }
 
-void flic::col64_chunk(char *tmp) {
+void flic::col64_chunk(byte *tmp) {
 	short int i;
 	short int packets;
 	short int count;
@@ -263,11 +263,11 @@ void flic::col64_chunk(char *tmp) {
 	}
 }
 
-void flic::delta_chunk_byte(char *tmp) {
+void flic::delta_chunk_byte(byte *tmp) {
 
 	short int *ipo;
-	char *abl;
-	char *tabl;
+	byte *abl;
+	byte *tabl;
 	short int i, j;
 	short int rest_height;
 	short signed int count;
@@ -296,7 +296,7 @@ void flic::delta_chunk_byte(char *tmp) {
 			mode_word = *ipo++;
 		} else
 			last_flag = false;
-		tmp = (char *)ipo;
+		tmp = (byte *)ipo;
 		if (mode_word) {
 			pcount = 0;
 			for (j = 0; (pcount < mode_word) && (j <= flic_header.width); ++pcount) {
@@ -414,7 +414,7 @@ void flic::decode_custom_frame(void *h) {
 	ChunkHead chead;
 	uint16 i, j;
 	tmf_header *th;
-	char *tmp;
+	byte *tmp;
 	musik_info mi;
 	long long_para;
 	th = (tmf_header *)Music;
@@ -692,7 +692,7 @@ void flic::decode_custom_frame(void *h) {
 
 void flic::decode_cframe() {
 	uint16 i;
-	char *tmp_buf;
+	byte *tmp_buf;
 	int16 update_flag;
 	tmp_buf = load_puffer;
 	update_flag = false;
@@ -767,7 +767,7 @@ void flic::decode_cframe() {
 }
 
 void flic::free_sound(int16 nr) {
-	char *fsound;
+	byte *fsound;
 	long fsize;
 	long copysize;
 	int16 i;

@@ -71,7 +71,7 @@ typedef struct {
 	int16 Sy;
 	int16 Dx;
 	int16 Dy;
-	char *Mem;
+	byte *Mem;
 	int16 Breite;
 	int16 Hoehe;
 	int16 Ebenen;

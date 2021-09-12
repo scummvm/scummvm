@@ -107,7 +107,7 @@ typedef struct {
 } AdsBlock;
 
 typedef struct {
-	char *Font;
+	byte *Font;
 	int16 Fvorx;
 	int16 Fhoehe;
 	int16 Silent;
@@ -243,7 +243,7 @@ public:
 	atdsys();
 	~atdsys();
 
-	void set_font(char *font_adr, int16 fvorx, int16 fhoehe);
+	void set_font(byte *font_adr, int16 fvorx, int16 fhoehe);
 	void set_delay(int16 *delay, int16 silent);
 	void set_display(int16 mode);
 	void set_split_win(int16 nr, SplitStringInit *ssinit);

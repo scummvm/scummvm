@@ -68,20 +68,20 @@ int16 FrameSpeedTmp;
 int16 frame_delay_count;
 int16 show_frame;
 
-char **ablage;
-char *workpage;
-char *workptr;
-char *cur_back;
-char **ged_mem;
-char *pal;
-char *spblende;
+byte **ablage;
+byte *workpage;
+byte *workptr;
+byte *cur_back;
+byte **ged_mem;
+byte *pal;
+byte *spblende;
 
-char *screen0;
+byte *screen0;
 int16 scr_width;
 int16 fx_blende;
 
-char *font6x8;
-char *font8x8;
+byte *font6x8;
+byte *font8x8;
 int16 fvorx6x8;
 int16 fvorx8x8;
 int16 fvory6x8;
@@ -113,7 +113,7 @@ int16 ani_invent_delay[3][2] = {
 };
 int16 ani_count[3] = {38, 39, 21};
 int16 invent_cur_mode;
-char *inv_spr[MAX_MOV_OBJ];
+byte *inv_spr[MAX_MOV_OBJ];
 
 int16 life_flag;
 int16 life_x;
@@ -342,4 +342,4 @@ int16 CurrentSong = -1;
 /* FILE */ void *music_handle;
 int16 EndOfPool;
 /* FILE */ void *speech_handle;
-char *SpeechBuf[2];
+byte *SpeechBuf[2];

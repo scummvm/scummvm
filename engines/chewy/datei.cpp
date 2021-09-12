@@ -76,7 +76,7 @@ datei::datei() {
 datei::~datei() {
 }
 
-void datei::load_pcx(char *fname, char *speicher, char *palette) {
+void datei::load_pcx(const char *fname, byte *speicher, byte *palette) {
 	FILE *handle;
 	pcx_header *header;
 	uint8 zeichen;
@@ -166,12 +166,12 @@ void datei::load_pcx(char *fname, char *speicher, char *palette) {
 	}
 }
 
-void datei::load_image(char *fname, char *sp, char *palette) {
+void datei::load_image(const char *fname, byte *sp, byte *palette) {
 	FILE *handle;
 	tbf_dateiheader *header;
 	uint16 i = 0;
 	int16 *abmess;
-	char *speicher;
+	byte *speicher;
 	int16 format;
 	header = (tbf_dateiheader *)tmp;
 	speicher = sp;
@@ -231,12 +231,12 @@ void datei::load_image(char *fname, char *sp, char *palette) {
 	}
 }
 
-void datei::load_image(void *h, char *sp, char *palette) {
+void datei::load_image(void *h, byte *sp, byte *palette) {
 	FILE *handle = (FILE *)h;
 	tbf_dateiheader *header;
 	uint16 i = 0;
 	int16 *abmess;
-	char *speicher;
+	byte *speicher;
 	int16 format;
 	ChunkHead ch;
 	header = (tbf_dateiheader *)tmp;
@@ -311,7 +311,7 @@ uint16 datei::select_pool_item(void *h, uint16 nr) {
 	return (nr);
 }
 
-void datei::load_tafmcga(const char *fname, char *sp, int16 nr) {
+void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
 	FILE *handle;
 	taf_dateiheader *header;
 	taf_imageheader iheader;
@@ -319,7 +319,7 @@ void datei::load_tafmcga(const char *fname, char *sp, int16 nr) {
 	int16 id, i;
 	uint16 sprcount = 0;
 	uint32 size = 0, next = 0, image = 0;
-	char *speicher;
+	byte *speicher;
 	speicher = sp;
 	header = (taf_dateiheader *)tmp;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -396,18 +396,18 @@ void datei::load_tafmcga(const char *fname, char *sp, int16 nr) {
 	}
 }
 
-void datei::load_tafmcga(void *h, int16 komp, uint32 size, char *speicher) {
+void datei::load_tafmcga(void *h, int16 komp, uint32 size, byte *speicher) {
 	read_tbf_image(h, komp, size, speicher);
 }
 
-void datei::load_full_taf(const char *fname, char *hi_sp, taf_info *tinfo) {
+void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 	FILE *handle;
 	taf_dateiheader *header;
 	taf_imageheader iheader;
 	int16 komp, id, i;
 	uint16 sprcount, anzahl, *abmess;
 	uint32 size = 0, next = 0, image = 0;
-	char *speicher;
+	byte *speicher;
 	header = (taf_dateiheader *)tmp;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
 		filename[i] = fname[i];
@@ -470,11 +470,11 @@ void datei::load_full_taf(const char *fname, char *hi_sp, taf_info *tinfo) {
 	}
 }
 
-void datei::load_korrektur(const char *fname, char *sp) {
+void datei::load_korrektur(const char *fname, byte *sp) {
 	FILE *handle;
 	taf_dateiheader *header;
 	int16 id, i;
-	char *speicher;
+	byte *speicher;
 	header = (taf_dateiheader *)tmp;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
 		filename[i] = fname[i];
@@ -519,7 +519,7 @@ void datei::load_korrektur(const char *fname, char *sp) {
 	}
 }
 
-void datei::load_tff(const char *fname, char *speicher) {
+void datei::load_tff(const char *fname, byte *speicher) {
 	FILE *handle;
 	tff_header *tff;
 	uint32 size;
@@ -556,12 +556,12 @@ void datei::load_tff(const char *fname, char *speicher) {
 	}
 }
 
-void datei::read_tbf_image(void *h, int16 komp, uint32 size, char *sp) {
+void datei::read_tbf_image(void *h, int16 komp, uint32 size, byte *sp) {
 	FILE *handle = (FILE *)h;
 	uint32 pos;
 	char zeichen;
 	uint8 count, i;
-	char *speicher;
+	byte *speicher;
 	speicher = sp;
 	pos = 0;
 	if (komp == 1) {
@@ -581,7 +581,7 @@ void datei::read_tbf_image(void *h, int16 komp, uint32 size, char *sp) {
 }
 
 void datei::read_tpf_image(void *h, int16 komp, uint32 size,
-                           char *speicher) {
+                           byte *speicher) {
 	FILE *handle = (FILE *)h;
 	uint32 pos = 0;
 	char zeichen;
@@ -610,7 +610,7 @@ void datei::read_tpf_image(void *h, int16 komp, uint32 size,
 	}
 }
 
-void datei::load_dialog(char *fname, dialogue *dial, menue *men,
+void datei::load_dialog(const char *fname, dialogue *dial, menue *men,
                         knopf *knpf) {
 	FILE *handle;
 	int16 i = 0, j = 0;
@@ -668,7 +668,7 @@ void datei::load_dialog(char *fname, dialogue *dial, menue *men,
 	}
 }
 
-void datei::load_sbi(char *fname, sbi_inst *speicher) {
+void datei::load_sbi(const char *fname, sbi_inst *speicher) {
 	FILE *handle;
 	int16 i = 0;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -703,12 +703,12 @@ void datei::load_sbi(char *fname, sbi_inst *speicher) {
 	}
 }
 
-uint32 datei::load_voc(char *fname, char *speicher) {
+uint32 datei::load_voc(const char *fname, byte *speicher) {
 	FILE *handle;
 	int16 i = 0;
 	voc_header *header;
 	uint32 s;
-	char *sp = 0;
+	byte *sp = nullptr;
 	header = (voc_header *)tmp;
 	sp = speicher;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -756,7 +756,7 @@ uint32 datei::load_voc(char *fname, char *speicher) {
 	return (s);
 }
 
-uint32 datei::load_voc(void *h, char *speicher) {
+uint32 datei::load_voc(void *h, byte *speicher) {
 	FILE *handle = (FILE *)h;
 	ChunkHead *ch;
 	ch = (ChunkHead *) tmp;
@@ -781,7 +781,7 @@ uint32 datei::load_voc(void *h, char *speicher) {
 	return (ch->size);
 }
 
-void datei::load_vocinfo(char *fname, voc_header *speicher) {
+void datei::load_vocinfo(const char *fname, voc_header *speicher) {
 	FILE *handle;
 	int16 i = 0;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -816,7 +816,7 @@ void datei::load_vocinfo(char *fname, voc_header *speicher) {
 	}
 }
 
-void datei::void_load(const char *fname, char *speicher, uint32 size) {
+void datei::void_load(const char *fname, byte *speicher, uint32 size) {
 	FILE *handle;
 	int16 i;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -837,7 +837,7 @@ void datei::void_load(const char *fname, char *speicher, uint32 size) {
 	}
 }
 
-uint32 datei::load_file(char *fname, char *speicher) {
+uint32 datei::load_file(const char *fname, byte *speicher) {
 	FILE *handle;
 	uint32 size = 0;
 	int16 i = 0;
@@ -863,7 +863,7 @@ uint32 datei::load_file(char *fname, char *speicher) {
 	return (size);
 }
 
-uint32 datei::load_item(void *h, char *speicher) {
+uint32 datei::load_item(void *h, byte *speicher) {
 	FILE *handle = (FILE *)h;
 	ChunkHead *ch;
 	ch = (ChunkHead *) tmp;
@@ -883,10 +883,10 @@ uint32 datei::load_item(void *h, char *speicher) {
 	return (ch->size);
 }
 
-uint32 datei::load_tmf(char *fname, tmf_header *th) {
+uint32 datei::load_tmf(const char *fname, tmf_header *th) {
 	FILE *handle;
 	uint32 size = 0;
-	char *speicher;
+	byte *speicher;
 	int16 ok, i;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
 		filename[i] = fname[i];
@@ -899,7 +899,7 @@ uint32 datei::load_tmf(char *fname, tmf_header *th) {
 	filename[i + 2] = 'M';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	speicher = (char *)th;
+	speicher = (byte *)th;
 	correct_fname(filename);
 	handle = fopen(filename, "rb");
 	if (handle) {
@@ -933,7 +933,7 @@ uint32 datei::load_tmf(char *fname, tmf_header *th) {
 		modul = DATEI;
 	}
 	if (!modul) {
-		speicher = (char *)th;
+		speicher = (byte *)th;
 		speicher += sizeof(tmf_header);
 		speicher += ((uint32)th->pattern_anz) * 1024l;
 		for (i = 0; i < 31; i++) {
@@ -949,10 +949,10 @@ uint32 datei::load_tmf(char *fname, tmf_header *th) {
 uint32 datei::load_tmf(void *h, tmf_header *song) {
 	FILE *handle = (FILE *)h;
 	ChunkHead *ch;
-	char *speicher;
+	byte *speicher;
 	int16 i;
 	ch = (ChunkHead *) tmp;
-	speicher = (char *)song;
+	speicher = (byte *)song;
 	if (handle) {
 		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
 		if (!(fread(ch, sizeof(ChunkHead), 1, handle))) {
@@ -966,7 +966,7 @@ uint32 datei::load_tmf(void *h, tmf_header *song) {
 					fcode = READFEHLER;
 				}
 				else {
-					speicher = (char *)song;
+					speicher = (byte *)song;
 					speicher += sizeof(tmf_header);
 					speicher += ((uint32)song->pattern_anz) * 1024l;
 					for (i = 0; i < 31; i++) {
@@ -986,11 +986,11 @@ uint32 datei::load_tmf(void *h, tmf_header *song) {
 	return (ch->size);
 }
 
-void datei::save_pcx(char *fname, char *speicher, char *palette) {
+void datei::save_pcx(const char *fname, byte *speicher, byte *palette) {
 	FILE *handle;
 	pcx_header *header;
 
-	char *line_ptr, *sptr;
+	byte *line_ptr, *sptr;
 	uint16 i;
 	int16 curr_data;
 	int16 prev_data;
@@ -1088,7 +1088,7 @@ void datei::save_pcx(char *fname, char *speicher, char *palette) {
 	}
 }
 
-void datei::save_tafmcga(char *fname, char **spvekt, char *palette,
+void datei::save_tafmcga(const char *fname, byte **spvekt, byte *palette,
                          int16 komp, int16 *korrektur) {
 	FILE *handle;
 	taf_dateiheader *header;
@@ -1096,7 +1096,7 @@ void datei::save_tafmcga(char *fname, char **spvekt, char *palette,
 	uint16 i = 0;
 	uint16 sprcount = 0;
 	int16 *abmess;
-	char *speicher;
+	byte *speicher;
 	uint32 size = 0, allsize = 0, next = 0;
 	header = (taf_dateiheader *)tmp;
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
@@ -1173,7 +1173,7 @@ void datei::save_tafmcga(char *fname, char **spvekt, char *palette,
 	}
 }
 
-void datei::save_tff(char *fname, char *speicher) {
+void datei::save_tff(const char *fname, byte *speicher) {
 	FILE *handle;
 	uint32 size;
 	uint16 i = 0;
@@ -1217,7 +1217,7 @@ void datei::save_tff(char *fname, char *speicher) {
 	}
 }
 
-void datei::write_tbf_image(void *h, int16 komp, uint32 size, char *speicher) {
+void datei::write_tbf_image(void *h, int16 komp, uint32 size, byte *speicher) {
 	FILE *handle = (FILE *)h;
 	uint32 pos = 0;
 	int16 fehler;
@@ -1247,7 +1247,7 @@ void datei::write_tbf_image(void *h, int16 komp, uint32 size, char *speicher) {
 	}
 }
 
-void datei::save_dialog(char *fname, dialogue *dial) {
+void datei::save_dialog(const char *fname, dialogue *dial) {
 	FILE *handle;
 	menue *men;
 	knopf *knpf;
@@ -1300,7 +1300,7 @@ void datei::save_dialog(char *fname, dialogue *dial) {
 	}
 }
 
-void datei::save_tmf(char *fname, tmf_header *thead) {
+void datei::save_tmf(const char *fname, tmf_header *thead) {
 	uint16 i = 0;
 	char *sp;
 	sp = (char *)thead;
@@ -1349,7 +1349,7 @@ void datei::save_tmf(char *fname, tmf_header *thead) {
 	}
 }
 
-void datei::get_tdfanz(char *fname, int16 *menueanz, int16 *knopfanz) {
+void datei::get_tdfanz(const char *fname, int16 *menueanz, int16 *knopfanz) {
 	FILE *handle;
 	menue men;
 	int16 i = 0;
@@ -1626,7 +1626,7 @@ uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
 	return size;
 }
 
-void datei::load_palette(const char *fname, char *palette, int16 typ) {
+void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 	FILE *handle;
 	uint8 zeichen;
 	uint16 j = 0;
@@ -1754,7 +1754,7 @@ void datei::load_palette(const char *fname, char *palette, int16 typ) {
 	}
 }
 
-void datei::load_palette(void *h, char *palette) {
+void datei::load_palette(void *h, byte *palette) {
 	FILE *handle = (FILE *)h;
 	tbf_dateiheader *header;
 	uint16 i = 0;
@@ -1836,7 +1836,7 @@ void datei::correct_fname(char *fname) {
 	}
 }
 
-int16 datei::get_filename(char *fname, int16 maxlen) {
+int16 datei::get_filename(const char *fname, int16 maxlen) {
 	warning("STUB - get_filename");
 
 	int16 ret = 0;
@@ -1918,7 +1918,7 @@ void datei::cd(char *dir) {
 #endif
 }
 
-void datei::write_tpf_image(void *h, int16 komp, uint32 size, char *speicher) {
+void datei::write_tpf_image(void *h, int16 komp, uint32 size, byte *speicher) {
 	FILE *handle = (FILE *)h;
 	uint32 pos = 0;
 	int16 fehler;

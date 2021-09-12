@@ -71,8 +71,8 @@ enum CustomTypes {
 	CLEAR_SCREEN = 21
 };
 
-void decode_flc(char *vscr, char *dbuf);
-void decode_rle(char *vscr, char *dbuf, int br, int h);
+void decode_flc(byte *vscr, byte *dbuf);
+void decode_rle(byte *vscr, byte *dbuf, int br, int h);
 
 static int16(*custom_user)(int16) = 0;
 static int16(*flic_user)(int16) = 0;
@@ -81,9 +81,9 @@ class flic {
 public:
 	flic();
 	~flic();
-	void play(char *fname, char *vscreen, char *load_p);
+	void play(const char *fname, byte *vscreen, byte *load_p);
 
-	void play(void *handle, char *vscreen, char *load_p);
+	void play(void *handle, byte *vscreen, byte *load_p);
 	void set_flic_user_function(int16(*user_funktion)(int16 key));
 	void remove_flic_user_function();
 	void custom_play(CustomInfo *ci);
@@ -93,17 +93,17 @@ public:
 private:
 	void decode_frame();
 	void decode_cframe();
-	void col256_chunk(char *tmp);
-	void col64_chunk(char *tmp);
-	void delta_chunk_byte(char *tmp);
+	void col256_chunk(byte *tmp);
+	void col64_chunk(byte *tmp);
+	void delta_chunk_byte(byte *tmp);
 
 	void decode_custom_frame(void *handle);
 	void free_sound(int16 nr);
 
-	char *load_puffer;
-	char *virt_screen;
-	char *Music;
-	char *Sound;
+	byte *load_puffer;
+	byte *virt_screen;
+	byte *Music;
+	byte *Sound;
 	CustomInfo *Cinfo;
 	FlicHead flic_header;
 	CustomFlicHead custom_header;
@@ -112,9 +112,9 @@ private:
 	ChunkHead *chunk_header;
 	bool fade_flag;
 	bool cls_flag;
-	char fade_pal[768];
+	byte fade_pal[768];
 	int16 fade_delay;
-	char *sounds[50];
+	byte *sounds[50];
 	uint32 Ssize[50];
 	int16 CurrentFrame;
 };
