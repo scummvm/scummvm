@@ -97,6 +97,8 @@ Common::Error StarkEngine::run() {
 
 	// Get the screen prepared
 	Gfx::Driver *gfx = Gfx::Driver::create();
+	if (gfx == nullptr)
+		return Common::kNoError;
 	gfx->init();
 
 	checkRecommendedDatafiles();
