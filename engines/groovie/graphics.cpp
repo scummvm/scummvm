@@ -51,7 +51,7 @@ void GraphicsMan::update() {
 		uint32 time = _vm->_system->getMillis() - _fadeStartTime;
 
 		// Scale the time
-		int step = (time * 15 << 3) / 1000;
+		int step = (time * 20 << 3) / 1000;
 		if (step > 256) {
 			step = 256;
 		}

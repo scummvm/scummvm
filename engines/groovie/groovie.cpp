@@ -240,7 +240,7 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Game timer counter
-	uint16 tmr = 0;
+	int tmr = 0;
 
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
@@ -306,19 +306,20 @@ Common::Error GroovieEngine::run() {
 			// Still waiting for input, just update the mouse, game timer and then wait a bit more
 			_grvCursorMan->animate();
 			_system->updateScreen();
-			tmr++;
+
+			int newTime = _system->getMillis();
 			// Wait a little bit between increments.  While mouse is moving, this triggers
 			// only negligably slower.
-			if (tmr > 4) {
+			if ( newTime - tmr >= 200) {
 				_script->timerTick();
-				tmr = 0;
+				tmr = newTime;
 			}
 
-			_system->delayMillis(50);
+			_system->delayMillis(5);
 		} else if (_graphicsMan->isFading()) {
 			// We're waiting for a fading to end, let the CPU rest
 			// for a while and continue
-			_system->delayMillis(30);
+			_system->delayMillis(5);
 		} else {
 			// Everything's fine, execute another script step
 			_script->step();
