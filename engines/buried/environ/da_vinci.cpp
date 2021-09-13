@@ -829,15 +829,18 @@ int CodexTowerOutsideDoor::mouseUp(Window *viewWindow, const Common::Point &poin
 			DestinationScene destData;
 			destData.destinationScene = _staticData.location;
 			destData.destinationScene.depth = 1;
-			destData.transitionType = TRANSITION_VIDEO;
-			destData.transitionData = 2;
-			destData.transitionStartFrame = -1;
-			destData.transitionLength = -1;
+			destData.transitionType = TRANSITION_WALK;
+			destData.transitionData = 11;
+			destData.transitionStartFrame = 196;
+			destData.transitionLength = 20;
 
 			// Play a different video otherwise
 			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 == 0) {
 				destData.transitionType = TRANSITION_VIDEO;
 				destData.transitionData = 1;
+				destData.transitionStartFrame = -1;
+				destData.transitionLength = -1;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 = 1;
 			}
 
 			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
