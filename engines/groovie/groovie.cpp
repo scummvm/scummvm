@@ -302,25 +302,27 @@ Common::Error GroovieEngine::run() {
 			continue;
 		}
 
-		if (_waitingForInput) {
-			// Still waiting for input, just update the mouse, game timer and then wait a bit more
-			_grvCursorMan->animate();
-			_system->updateScreen();
-
-			// Wait a little bit between increments.  While mouse is moving, this triggers
-			// only negligably slower.
-			if (tmr >= 250) {
-				_script->timerTick();
-				tmr = 0;
-			}
-
-			_system->delayMillis(10);
-			tmr += 10;
-		} else if (_graphicsMan->isFading()) {
+		if (_graphicsMan->isFading()) {
 			// We're waiting for a fading to end, let the CPU rest
 			// for a while and continue
 			_system->delayMillis(10);
 		} else {
+			if (_waitingForInput) {
+				// Still waiting for input, just update the mouse, game timer and then wait a bit more
+				_grvCursorMan->animate();
+				_system->updateScreen();
+
+				// Wait a little bit between increments.  While mouse is moving, this triggers
+				// only negligably slower.
+				if (tmr >= 1000) {
+					_script->timerTick();
+					tmr = 0;
+				}
+
+				_system->delayMillis(10);
+				tmr += 10;
+			}
+
 			// Everything's fine, execute another script step
 			_script->step();
 		}
