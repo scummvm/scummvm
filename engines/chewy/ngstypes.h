@@ -412,13 +412,6 @@ struct mem_info_blk {
 	uint32 start = 0;
 };
 
-struct far_taf_info {
-	int16 anzahl = 0;
-	uint32 palette = 0;
-	uint32 korrektur = 0;
-	uint32 *image = nullptr;
-};
-
 struct GedPoolHeader {
 	char Id[4] = { 0 };
 	int16 Anz = 0;
