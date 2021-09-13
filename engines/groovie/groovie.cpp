@@ -307,19 +307,19 @@ Common::Error GroovieEngine::run() {
 			_grvCursorMan->animate();
 			_system->updateScreen();
 
-			int newTime = _system->getMillis();
 			// Wait a little bit between increments.  While mouse is moving, this triggers
 			// only negligably slower.
-			if ( newTime - tmr >= 200) {
+			if (tmr >= 250) {
 				_script->timerTick();
-				tmr = newTime;
+				tmr = 0;
 			}
 
-			_system->delayMillis(5);
+			_system->delayMillis(10);
+			tmr += 10;
 		} else if (_graphicsMan->isFading()) {
 			// We're waiting for a fading to end, let the CPU rest
 			// for a while and continue
-			_system->delayMillis(5);
+			_system->delayMillis(10);
 		} else {
 			// Everything's fine, execute another script step
 			_script->step();
