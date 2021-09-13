@@ -528,7 +528,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 99	-	-	Karl Ove Hufthammer
 	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	-	-	sanguinehearts
 	56b5922751be7ffd771b38dda56b028b	34837	nl	Wii	HE 100	-	-	George Kormendi
-	3ae7f002d9256b8bdf76aaf8a3a069f8	34837	gb	Wii	HE 100	-	-	George Kormendi
+	3ae7f002d9256b8bdf76aaf8a3a069f8	34837	en	Wii	HE 100	-	-	George Kormendi
 	30d1903b0715759af064be2127381cd0	34837	de	Wii	HE 100	-	-	George Kormendi
 	4afb734df8315ee412669c812d4cf0a1	34837	fr	Wii	HE 100	-	-	George Kormendi
 	a59a438cb182124c30c4447d8ed469e9	34837	nb	Wii	HE 100	-	-	George Kormendi
