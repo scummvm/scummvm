@@ -28,46 +28,39 @@
 
 namespace Chewy {
 
-struct TxtChunk {
-	uint32 Len;
-	int16 StrAnz;
-};
-
-struct TcfHeader {
-	char Id[3];
-	uint8 Crypt;
-	int16 Anz;
-};
-
 struct pcx_header {
-	char id;
-	char version;
-	char komp;
-	char bpp;
-	int16 xmin;
-	int16 ymin;
-	int16 xmax;
-	int16 ymax;
-	int16 hodpi;
-	int16 verdpi;
-	char lcmap[16 * 3];
-	char reserviert;
-	char planes;
-	int16 bpz;
-	int16 palinfo;
-	int16 screenx;
-	int16 screeny;
-	char dummy[54];
+	int8 id = 0;
+	int8 version = 0;
+	int8 komp = 0;
+	int8 bpp = 0;
+	int16 xmin = 0;
+	int16 ymin = 0;
+	int16 xmax = 0;
+	int16 ymax = 0;
+	int16 hodpi = 0;
+	int16 verdpi = 0;
+	int8 lcmap[16 * 3] = { 0 };
+	int8 reserviert = 0;
+	int8 planes = 0;
+	int16 bpz = 0;
+	int16 palinfo = 0;
+	int16 screenx = 0;
+	int16 screeny = 0;
+	byte dummy[54];
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct tbf_dateiheader {
-	char id[4];
-	int16 mode;
-	int16 komp;
-	uint32 entpsize;
-	uint16 width;
-	uint16 height;
-	char palette [768];
+	char id[4] = { 0 };
+	int16 mode = 0;
+	int16 komp = 0;
+	uint32 entpsize = 0;
+	uint16 width = 0;
+	uint16 height = 0;
+	char palette[768];
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct taf_dateiheader {
@@ -79,7 +72,7 @@ struct taf_dateiheader {
 	uint32 next = 0;
 	int16 korrekt = 0;
 
-	bool load(Common::ReadStream *src);
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct taf_imageheader {
@@ -88,35 +81,41 @@ struct taf_imageheader {
 	uint16 height = 0;
 	uint32 next = 0;
 	uint32 image = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct taf_info {
-	int16 anzahl;
-	byte *palette;
-	int16 *korrektur;
-	byte **image;
+	int16 anzahl = 0;
+	byte *palette = nullptr;
+	int16 *korrektur = nullptr;
+	byte **image = nullptr;
 };
 
 struct taf_seq_info {
-	int16 anzahl;
-	int16 *korrektur;
-	byte **image;
+	int16 anzahl = 0;
+	int16 *korrektur = nullptr;
+	byte **image = nullptr;
 };
 
 struct NewPhead {
-	char id[4];
-	uint16 type;
-	uint16 PoolAnz;
+	char id[4] = { 0 };
+	uint16 type = 0;
+	uint16 PoolAnz = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct tff_header {
-	char id[4];
-	uint32 size;
-	int16 count;
-	int16 first;
-	int16 last;
-	int16 width;
-	int16 height;
+	char id[4] = { 0 };
+	uint32 size = 0;
+	int16 count = 0;
+	int16 first = 0;
+	int16 last = 0;
+	int16 width = 0;
+	int16 height = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 #define D_GR 16
@@ -124,51 +123,53 @@ struct tff_header {
 #define MAXKNOPF 400
 
 struct knopf {
-	int16 typ;
-	int16 enable;
-	int16 x1;
-	int16 y1;
-	int16 x2;
-	int16 y2;
-	int16 spritenr1;
+	int16 typ = 0;
+	int16 enable = 0;
+	int16 x1 = 0;
+	int16 y1 = 0;
+	int16 x2 = 0;
+	int16 y2 = 0;
+	int16 spritenr1 = 0;
+	int16 spritenr2 = 0;
+	char *inhalt1 = nullptr;
+	int16 storlen = 0;
+	int16 viewspr3 = 0;
+	int16 textptr = 0;
 
-	int16 spritenr2;
-
-	char *inhalt1;
-	int16 storlen;
-
-	int16 viewspr3;
-
-	int16 textptr;
-
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct menue {
-	int16 nr;
-	int16 disp;
-	int16 typ;
-	int16 x;
-	int16 y;
-	int16 width;
-	int16 height;
-	int16 anzknoepfe;
-	knopf *knopfliste[MAXKNOPF];
-	int16 spritenr;
-	char *sprite;
-	char *spritesave;
+	int16 nr = 0;
+	int16 disp = 0;
+	int16 typ = 0;
+	int16 x = 0;
+	int16 y = 0;
+	int16 width = 0;
+	int16 height = 0;
+	int16 anzknoepfe = 0;
+	knopf *knopfliste[MAXKNOPF] = { nullptr };
+	int16 spritenr = 0;
+	char *sprite = nullptr;
+	char *spritesave = nullptr;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct dialogue {
-	char id[4];
-	int16 anzmenue;
-	menue *menueliste[MAXMENUE];
-	char menuetaf[D_GR];
-	char knopftaf[D_GR];
+	char id[4] = { 0 };
+	int16 anzmenue = 0;
+	menue *menueliste[MAXMENUE] = { nullptr };
+	char menuetaf[D_GR] = { '\0' };
+	char knopftaf[D_GR] = { '\0' };
+
+	bool load(Common::SeekableReadStream *src);
+	bool save(Common::WriteStream *dest);
 };
 
 struct sbi_inst {
-	uint8 id[4];
-	uint8 name[32];
+	char id[4];
+	char name[32];
 	uint8 modmulti;
 	uint8 carrmulti;
 	uint8 modamp;
@@ -181,6 +182,8 @@ struct sbi_inst {
 	uint8 carrw;
 	uint8 rv;
 	uint8 frei[5];
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct voc_header {
@@ -189,36 +192,24 @@ struct voc_header {
 	uint8 ver_low;
 	uint8 ver_high;
 	uint16 id_code;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct maus_info {
-	int16 x;
-	int16 y;
-	int16 button;
+	int16 x = 0;
+	int16 y = 0;
+	int16 button = 0;
 };
 
 struct kb_info {
-	char key_code;
-	byte scan_code;
+	char key_code = '\0';
+	byte scan_code = 0;
 };
 
 struct in_zeiger {
-	maus_info *minfo;
-	kb_info *kbinfo;
-};
-
-struct sb_vars {
-	uint16 sbase;
-	int16 SbIrq;
-	int16 DmaKanal;
-	uint16 DmaPageReg;
-	uint16 DmaAdrReg;
-	uint16 DmaLenReg;
-	uint8 DmaMode;
-	uint8 DmaEnable;
-	uint8 DmaDisable;
-	uint8 IrqEnable;
-	uint8 IrqDisable;
+	maus_info *minfo = nullptr;
+	kb_info *kbinfo = nullptr;
 };
 
 struct mod_inst {
@@ -229,15 +220,19 @@ struct mod_inst {
 	char insvol;
 	int16 repstart;
 	int16 replen;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct mod_header {
-	char name[20];
+	char name[20] = { 0 };
 	mod_inst instrument[31];
-	char pattern_anz;
-	char dummy;
-	char sequenz[128];
-	char id[4];
+	char pattern_anz = 0;
+	char dummy = 0;
+	char sequenz[128] = { 0 };
+	char id[4] = { 0 };
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct mod15_header {
@@ -247,6 +242,8 @@ struct mod15_header {
 	char dummy;
 	char sequenz[128];
 	char id[4];
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct tmf_inst {
@@ -255,299 +252,297 @@ struct tmf_inst {
 	uint32 repstart;
 	uint32 replen;
 	uint32 laenge;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct tmf_header {
-	char id[4];
+	char id[4] = { 0 };
 	tmf_inst instrument[31];
-	uint8 lied_len;
-	uint8 pattern_anz;
-	uint8 sequenz[128];
-	byte *ipos[31];
+	uint8 lied_len = 0;
+	uint8 pattern_anz = 0;
+	uint8 sequenz[128] = { 0 };
+	byte *ipos[31] = { nullptr };
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct musik_info {
-	int16 musik_playing;
-	int16 play_mode;
-	int16 pattern_line;
-	int16 sequence_pos;
-	int16 cur_pattnr;
-	char *cur_pattern;
+	int16 musik_playing = 0;
+	int16 play_mode = 0;
+	int16 pattern_line = 0;
+	int16 sequence_pos = 0;
+	int16 cur_pattnr = 0;
+	char *cur_pattern = nullptr;
 };
 
 struct channel_info {
-	uint8 finetune;
-	uint8 volume;
-	uint32 repstart;
-	uint32 replen;
-	uint32 len;
-	uint32 pointer;
-	uint32 pos;
-};
-
-struct himem_block {
-	uint8 install;
-	char version[5];
-	uint32 size;
+	uint8 finetune = 0;
+	uint8 volume = 0;
+	uint32 repstart = 0;
+	uint32 replen = 0;
+	uint32 len = 0;
+	uint32 pointer = 0;
+	uint32 pos = 0;
 };
 
 struct VesaInfo {
-	int16 ModeNr;
-	int16 ModeAvail;
-	int16 WriteWin;
-	uint32 WinSize;
-	int16 Page[20];
-	int16 PageAnz;
-	uint16 WriteSeg;
-	uint16 CallSeg;
-	uint16 CallOff;
-	uint32 ScreenSize;
-	uint32 CopyRest;
-	char dummy[10];
+	int16 ModeNr = 0;
+	int16 ModeAvail = 0;
+	int16 WriteWin = 0;
+	uint32 WinSize = 0;
+	int16 Page[20] = { 0 };
+	int16 PageAnz = 0;
+	uint16 WriteSeg = 0;
+	uint16 CallSeg = 0;
+	uint16 CallOff = 0;
+	uint32 ScreenSize = 0;
+	uint32 CopyRest = 0;
+	char dummy[10] = { 0 };
 };
 
 struct vesa_status_block {
-	uint8 id[4];
-	uint8 ver_low;
-	uint8 ver_high;
-	char *name;
-	uint32 lflag;
-	uint16 *codenrs;
+	uint8 id[4] = { 0 };
+	uint8 ver_low = 0;
+	uint8 ver_high = 0;
+	char *name = nullptr;
+	uint32 lflag = 0;
+	uint16 *codenrs = nullptr;
 
-	uint16 memory;
+	uint16 memory = 0;
 
-	char *SoftwareRev;
-	char *VendorName;
-	char *ProductName;
-	char *ProductRev;
-	char dummy [222];
-	char OemData[256];
+	char *SoftwareRev = nullptr;
+	char *VendorName = nullptr;
+	char *ProductName = nullptr;
+	char *ProductRev = nullptr;
+	char dummy[222] = { 0 };
+	char OemData[256] = { 0 };
 };
 
 struct vesa_modus_block {
-	uint16 mflag;
+	uint16 mflag = 0;
 
-	uint8 fw_flag;
+	uint8 fw_flag = 0;
 
-	uint8 fs_flag;
+	uint8 fs_flag = 0;
 
-	uint16 stepgr;
-	uint16 wsize;
-	uint16 fw_seg;
-	uint16 fs_seg;
-	void (*page_set)(int16 page);
-	uint16 scr_width;
-	uint16 x_charsize;
-	uint16 y_charsize;
-	uint8 x_charwidth;
-	uint8 y_charwidth;
-	uint8 planes;
-	uint8 bppix;
-	uint8 memblks;
-	uint8 model;
-	uint8 blksize;
-	char dummy[100];
+	uint16 stepgr = 0;
+	uint16 wsize = 0;
+	uint16 fw_seg = 0;
+	uint16 fs_seg = 0;
+	void (*page_set)(int16 page) = nullptr;
+	uint16 scr_width = 0;
+	uint16 x_charsize = 0;
+	uint16 y_charsize = 0;
+	uint8 x_charwidth = 0;
+	uint8 y_charwidth = 0;
+	uint8 planes = 0;
+	uint8 bppix = 0;
+	uint8 memblks = 0;
+	uint8 model = 0;
+	uint8 blksize = 0;
+	char dummy[100] = { 0 };
 };
 
 struct DetectInfo {
-	int16 Adlib;
-	int16 Port;
-	int16 Irq;
-	int16 Dma;
-	int16 SoundSource;
+	int16 Adlib = 0;
+	int16 Port = 0;
+	int16 Irq = 0;
+	int16 Dma = 0;
+	int16 SoundSource = 0;
 
-	int16 VideoRam;
-	int16 VgaDisplay;
+	int16 VideoRam = 0;
+	int16 VgaDisplay = 0;
 
-	int16 Ems;
-	int16 EmsVerV;
-	int16 EmsVerN;
-	int16 EmsPages;
-	int16 EmsFree;
-	char *EmsPage0;
-	char *EmsPage1;
-	char *EmsPage2;
-	char *EmsPage3;
-	int16 Joy;
+	int16 Ems = 0;
+	int16 EmsVerV = 0;
+	int16 EmsVerN = 0;
+	int16 EmsPages = 0;
+	int16 EmsFree = 0;
+	char *EmsPage0 = nullptr;
+	char *EmsPage1 = nullptr;
+	char *EmsPage2 = nullptr;
+	char *EmsPage3 = nullptr;
+	int16 Joy = 0;
 
-	int16 Himem;
-	int16 CpuId;
+	int16 Himem = 0;
+	int16 CpuId = 0;
 
-	int16 Fpu;
-	int16 Manuell;
+	int16 Fpu = 0;
+	int16 Manuell = 0;
 };
 
 struct iog_init {
-	char id[4];
-	char save_path[30];
+	char id[4] = { 0 };
+	char save_path[30] = { 0 };
 
-	int16 popx;
-	int16 popy;
-	char *m_col;
-	uint8 f1;
-	uint8 f2;
-	uint8 f3;
-	uint8 f4;
-	uint8 key_nr;
-	void (*save_funktion)(void *handle); // FIXME - (FILE *handle);
-	void (*load_funktion)(void *handle); // FIXME - (FILE *handle);
-	int16 delay;
+	int16 popx = 0;
+	int16 popy = 0;
+	char *m_col = nullptr;
+	uint8 f1 = 0;
+	uint8 f2 = 0;
+	uint8 f3 = 0;
+	uint8 f4 = 0;
+	uint8 key_nr = 0;
+	void (*save_funktion)(void *handle) = nullptr; // FIXME - (FILE *handle);
+	void (*load_funktion)(void *handle) = nullptr; // FIXME - (FILE *handle);
+	int16 delay = 0;
 };
 
 struct iot_init {
-	int16 popx;
-	int16 popy;
-	char *m_col;
-	char fname[81];
-	uint8 f1;
-	uint8 f2;
-	uint8 f3;
-	uint8 abbruch;
+	int16 popx = 0;
+	int16 popy = 0;
+	char *m_col = nullptr;
+	char fname[81] = { 0 };
+	uint8 f1 = 0;
+	uint8 f2 = 0;
+	uint8 f3 = 0;
+	uint8 abbruch = 0;
 
-	int16(*save_funktion)(char *fname);
-	int16(*load_funktion)(char *fname);
-	int16 delay;
+	int16(*save_funktion)(char *fname) = nullptr;
+	int16(*load_funktion)(char *fname) = nullptr;
+	int16 delay = 0;
 };
 
 struct mem_info_blk {
-	uint32 size;
-	uint32 akt_size;
-	uint32 biggest_block;
-	uint32 start;
+	uint32 size = 0;
+	uint32 akt_size = 0;
+	uint32 biggest_block = 0;
+	uint32 start = 0;
 };
 
 struct far_taf_info {
-	int16 anzahl;
-	uint32 palette;
-	uint32 korrektur;
-	uint32 *image;
+	int16 anzahl = 0;
+	uint32 palette = 0;
+	uint32 korrektur = 0;
+	uint32 *image = nullptr;
 };
 
 struct GedPoolHeader {
-	char Id[4];
-	int16 Anz;
+	char Id[4] = { 0 };
+	int16 Anz = 0;
 };
 
 struct GedChunkHeader {
-	uint32 Len;
-	int16 X;
-	int16 Y;
-	int16 Ebenen;
+	uint32 Len = 0;
+	int16 X = 0;
+	int16 Y = 0;
+	int16 Ebenen = 0;
 };
 
 struct GedHeader {
-	char Id[4];
-	int16 X;
-	int16 Y;
-	uint32 Len;
+	char Id[4] = { 0 };
+	int16 X = 0;
+	int16 Y = 0;
+	uint32 Len = 0;
 };
 
 struct cur_blk {
-	int16 page_off_x;
-	int16 page_off_y;
-	byte *cur_back;
-	int16 xsize;
-	int16 ysize;
-	byte **sprite;
-	bool no_back;
+	int16 page_off_x = 0;
+	int16 page_off_y = 0;
+	byte *cur_back = nullptr;
+	int16 xsize = 0;
+	int16 ysize = 0;
+	byte **sprite = nullptr;
+	bool no_back = false;
 };
 
 struct cur_ani {
-	uint8 ani_anf;
-	uint8 ani_end;
-	int16 delay;
+	uint8 ani_anf = 0;
+	uint8 ani_end = 0;
+	int16 delay = 0;
 };
 
 struct fcur_blk {
-	int16 page_off_x;
-	int16 page_off_y;
-	uint32 cur_back;
-	int16 xsize;
-	int16 ysize;
-	uint32 *sprite;
-	bool no_back;
+	int16 page_off_x = 0;
+	int16 page_off_y = 0;
+	uint32 cur_back = 0;
+	int16 xsize = 0;
+	int16 ysize = 0;
+	uint32 *sprite = nullptr;
+	bool no_back = false;
 };
 
 struct FlicHead {
-	uint32 size;
-	uint16 type;
-	uint16 frames;
-	uint16 width;
-	uint16 height;
-	uint16 depth;
-	uint16 flags;
-	uint32 speed;
-	uint16 reserved1;
-	uint32 created;
-	uint32 creator;
-	uint32 updated;
-	uint32 updater;
-	uint16 aspect_dx;
-	uint16 aspect_dy;
-	uint8 reserved2[38];
-	uint32 oframe1;
-	uint32 oframe2;
-	uint8 reserved3[40];
+	uint32 size = 0;
+	uint16 type = 0;
+	uint16 frames = 0;
+	uint16 width = 0;
+	uint16 height = 0;
+	uint16 depth = 0;
+	uint16 flags = 0;
+	uint32 speed = 0;
+	uint16 reserved1 = 0;
+	uint32 created = 0;
+	uint32 creator = 0;
+	uint32 updated = 0;
+	uint32 updater = 0;
+	uint16 aspect_dx = 0;
+	uint16 aspect_dy = 0;
+	uint8 reserved2[38] = { 0 };
+	uint32 oframe1 = 0;
+	uint32 oframe2 = 0;
+	uint8 reserved3[40] = { 0 };
 };
 
 struct FrameHead {
-	uint32 size;
-	uint16 type;
-	uint16 chunks;
-	uint8 reserved[8];
+	uint32 size = 0;
+	uint16 type = 0;
+	uint16 chunks = 0;
+	uint8 reserved[8] = { 0 };
 };
 
 struct ChunkHead {
-	uint32 size;
-	uint16 type;
+	uint32 size = 0;
+	uint16 type = 0;
 };
 
 struct CustomFlicHead {
-	char id[4];
-	uint32 size;
-	uint16 frames;
-	uint16 width;
-	uint16 height;
-	uint32 speed;
-	uint32 oframe1;
+	char id[4] = { 0 };
+	uint32 size = 0;
+	uint16 frames = 0;
+	uint16 width = 0;
+	uint16 height = 0;
+	uint32 speed = 0;
+	uint32 oframe1 = 0;
 };
 
 struct CustomFrameHead {
-	uint32 size;
-	uint16 type;
-	uint16 chunks;
+	uint32 size = 0;
+	uint16 type = 0;
+	uint16 chunks = 0;
 };
 
 struct CustomInfo {
-	char *Fname;
+	char *Fname = nullptr;
 	// FIXME: Was FILE
-	void *Handle;
-	byte *VirtScreen;
-	byte *TempArea;
-	byte *SoundSlot;
-	byte *MusicSlot;
-	uint32 MaxSoundSize;
-	uint32 MaxMusicSize;
+	void *Handle = nullptr;
+	byte *VirtScreen = 0;
+	byte *TempArea = 0;
+	byte *SoundSlot = 0;
+	byte *MusicSlot = 0;
+	uint32 MaxSoundSize = 0;
+	uint32 MaxMusicSize = 0;
 };
 
 struct real_regs {
-	uint32 edi;
-	uint32 esi;
-	uint32 ebp;
-	uint32 reserved;
-	uint32 ebx;
-	uint32 edx;
-	uint32 ecx;
-	uint32 eax;
-	uint16 flags;
-	uint16 es;
-	uint16 ds;
-	uint16 fs;
-	uint16 gs;
-	uint16 ip;
-	uint16 cs;
-	uint16 sp;
-	uint16 ss;
+	uint32 edi = 0;
+	uint32 esi = 0;
+	uint32 ebp = 0;
+	uint32 reserved = 0;
+	uint32 ebx = 0;
+	uint32 edx = 0;
+	uint32 ecx = 0;
+	uint32 eax = 0;
+	uint16 flags = 0;
+	uint16 es = 0;
+	uint16 ds = 0;
+	uint16 fs = 0;
+	uint16 gs = 0;
+	uint16 ip = 0;
+	uint16 cs = 0;
+	uint16 sp = 0;
+	uint16 ss = 0;
 };
 
 } // namespace Chewy
