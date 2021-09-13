@@ -515,8 +515,8 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbj?n Andersson
-	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
-	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
+	5ebb57234b2fe5c5dff641e00184ad81	26654	fr	Windows	HE 73	-	-	gist974
+	cf8ef3a1fb483c5c4b1c584d1167b2c4	26618	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
 	64a22be96d679018696e5c8d3ca8b71d	26375	jp	Windows	HE 73	-	-	sev
 	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
@@ -525,7 +525,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	746e88c172a5b7a1ae89ac0ee3ee681a	34674	ru	Windows	HE 90	-	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
 	af2bd1a43b50b55915d87994e093203d	34829	de	Windows	HE 99	Updated	-	Lightkey
-	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 99	-	-	Karl Ove Hufthammer
+	e63a0b9249b5ca4cc4d3ac34305ae360	34829	nb	Windows	HE 99	-	-	Karl Ove Hufthammer
 	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	-	-	sanguinehearts
 	56b5922751be7ffd771b38dda56b028b	34837	nl	Wii	HE 100	-	-	George Kormendi
 	3ae7f002d9256b8bdf76aaf8a3a069f8	34837	en	Wii	HE 100	-	-	George Kormendi
@@ -534,8 +534,8 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	a59a438cb182124c30c4447d8ed469e9	34837	nb	Wii	HE 100	-	-	George Kormendi
 	880c5ca5b944648b3f8b03feb41705a8	34837	se	Wii	HE 100	-	-	George Kormendi
 
-	c7c492a107ec520d7a7943037d0ca54a	-1	nl	Windows	HE 71	Demo	-	DarthBo
-	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
+	c7c492a107ec520d7a7943037d0ca54a	9779	nl	Windows	HE 71	Demo	-	DarthBo
+	084ed0fa98a6d1e9368d67fe9cfbd417	9779	en	Windows	HE 71	Demo	-	khalek
 	e3f1f2b6ca7b55076782872cb8ff0985	9779	en	Windows	HE 71	Demo	-	Ben Castricum
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
