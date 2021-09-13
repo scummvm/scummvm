@@ -775,7 +775,11 @@ void MusicPlayerTlc::unload() {
 }
 
 Common::String MusicPlayerTlc::getFilename(uint32 fileref) {
+#ifdef ENABLE_GROOVIE2
 	return TlcGame::getTlcMusicFilename(fileref);
+#else
+	return "";
+#endif
 }
 
 bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
@@ -816,7 +820,11 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 }
 
 Common::String MusicPlayerClan::getFilename(uint32 fileref) {
+#ifdef ENABLE_GROOVIE2
 	return ClanGame::getClanMusicFilename(fileref);
+#else
+	return "";
+#endif
 }
 
 

@@ -71,6 +71,7 @@ struct TlcTatQuestions {
 class TlcGame
 {
 public:
+#ifdef ENABLE_GROOVIE2
 	TlcGame();
 	~TlcGame();
 
@@ -190,6 +191,7 @@ private:
 	TlcTatHeader *_tatHeaders;
 	TlcTatQuestions *_tatQuestions;
 	// uint8 _tatCoeffs[15][16];
+#endif
 };
 
 } // End of Groovie namespace

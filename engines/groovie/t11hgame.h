@@ -32,6 +32,7 @@ class GroovieEngine;
 
 class T11hGame {
 public:
+#ifdef ENABLE_GROOVIE2
 	T11hGame();
 	~T11hGame();
 	/**
@@ -55,6 +56,7 @@ private:
 	uint16 inline getScriptVar16(uint16 var);
 	byte *_scriptVariables;
 	static const byte kGalleryLinks[21][10];
+#endif
 };
 
 } // End of Groovie namespace

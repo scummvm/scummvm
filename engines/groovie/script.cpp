@@ -809,7 +809,9 @@ void Script::o_inputloopstart() {	//0x0B
 
 	// For TLC the regions for many questions are in an extra database. Reset internal region counters
 	if (_version == kGroovieTLC && _tlcGame != NULL) {
+#ifdef ENABLE_GROOVIE2
 		_tlcGame->getRegionRewind();
+#endif
 	}
 
 	// Reset the input action and the mouse cursor
@@ -862,10 +864,12 @@ void Script::o_hotspot_rect() {
 
 	// TLC: The regions for many questions are in an extra database
 	if (_version == kGroovieTLC && left == 0 && top == 0 && right == 0 && bottom == 0 && _tlcGame != NULL) {
+#ifdef ENABLE_GROOVIE2
 		if (_tlcGame->getRegionNext(left, top, right, bottom) < 0) {
 			debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d SKIPPED", left, top, right, bottom, address, cursor);
 			return;
 		}
+#endif
 	}
 
 	debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d", left, top, right, bottom, address, cursor);
@@ -2011,6 +2015,7 @@ void Script::o2_gamespecial() {
 	uint8 arg = readScript8bits();
 
 	switch (_version) {
+#ifdef ENABLE_GROOVIE2
 	case kGroovieTLC:
 		if (_tlcGame == NULL) {
 			_tlcGame = new TlcGame();
@@ -2081,7 +2086,7 @@ void Script::o2_gamespecial() {
 			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): T11H Invalid -> NOP", arg);
 		}
 		break;
-
+#endif
 	default:
 		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", arg);
 		warning("Groovie::Script: OpCode 0x42 for (GameSpecial) current game not implemented yet.");
