@@ -304,6 +304,17 @@ void ScummEngine_v60he::o60_setState() {
 	int state = pop();
 	int obj = pop();
 
+	// WORKAROUND for bug #4776, knocker floats while door is open
+	// This hides the knocker when the closed door object is set to hide.
+	if (_game.id == GID_FREDDI && _currentRoom == 7) {
+		if (_game.heversion == 71 && obj == 35 && state == 0) {
+			putState(26, 0);
+		}
+		if (_game.heversion == 73 && obj == 52 && state == 0) {
+			putState(43, 0);
+		}
+	}
+
 	if (state & 0x8000) {
 		state &= 0x7FFF;
 		putState(obj, state);
