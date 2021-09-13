@@ -45,9 +45,6 @@ enum {
 	kMaxOpenDistance = 32
 };
 
-// selector image pointer
-static void *selImage;
-
 /* ===================================================================== *
    Imports
  * ===================================================================== */
@@ -82,25 +79,6 @@ ProtoObj::isPsych
 ProtoObj::isSpell
 ProtoObj::isEnchantment
 */
-
-// used to ignore doubleClick when doubleClick == singleClick
-static bool alreadyDone;
-//  ID of the last object that the mouse moved over
-
-/* ===================================================================== *
-   ContainerView member functions
- * ===================================================================== */
-
-// static mouse info variables
-ObjectID    ContainerView::lastPickedObjectID = Nothing;
-int32       ContainerView::lastPickedObjectQuantity = - 1;
-bool        ContainerView::objTextAlarm = false;
-char        ContainerView::mouseText[ContainerView::bufSize] = { "" };
-bool        ContainerView::mouseInView = false;
-uint16      ContainerView::numPicked = 1;
-GameObject  *ContainerView::objToGet;
-int32       ContainerView::amountAccumulator = 0;
-int16       ContainerView::amountIndY = -1;
 
 //-----------------------------------------------------------------------
 //	Physical container appearance
@@ -438,7 +416,7 @@ void ContainerView::drawClipped(
 			    objColors);
 
 			// check to see if selecting amount for this objec
-			if (objToGet == item) {
+			if (g_vm->_cnm->_objToGet == item) {
 				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
 				                              y + ((iconHeight - selectorY) >> 1));
 
@@ -446,7 +424,7 @@ void ContainerView::drawClipped(
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				amountIndY = y - (selectorY >> 1) - 12;
+				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) - 12;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -460,10 +438,10 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	SAVE_GPORT_STATE(port);
 
 	// draw the arrow images
-	drawCompressedImage(port, pos, selImage);
+	drawCompressedImage(port, pos, g_vm->_cnm->_selImage);
 
 	// draw the number of items selected thus far
-	num = sprintf(buf, " %d ", numPicked);
+	num = sprintf(buf, " %d ", g_vm->_cnm->_numPicked);
 
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
@@ -592,21 +570,21 @@ void ContainerView::deactivate() {
 
 void ContainerView::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
-		lastPickedObjectID = Nothing;
-		lastPickedObjectQuantity = -1;
+		g_vm->_cnm->_lastPickedObjectID = Nothing;
+		g_vm->_cnm->_lastPickedObjectQuantity = -1;
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
-		mouseInView = false;
+		g_vm->_cnm->_mouseInView = false;
 		g_vm->_mouseInfo->setDoable(true);
 	} else {
 //		if( msg.pointerEnter )
 		{
 			// static bool that tells if the mouse cursor
 			// is in a panel
-			mouseInView = true;
+			g_vm->_cnm->_mouseInView = true;
 
 			GameObject *mouseObject;
 			mouseObject = g_vm->_mouseInfo->getObject();
@@ -636,11 +614,11 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	if (!g_vm->_mouseInfo->getDoable()) return false;
 
-	if (msg.doubleClick && !alreadyDone) {
+	if (msg.doubleClick && !g_vm->_cnm->_alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
 		if (mouseObject != NULL) {
-			alreadyDone = true;    // if object then no doubleClick
+			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
 			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
 				if (mouseSet & ProtoObj::isTangible) {
@@ -672,7 +650,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 			}
 		} else {
 			// default to doubleClick active
-			alreadyDone = false;
+			g_vm->_cnm->_alreadyDone = false;
 			clickOn(msg, mouseObject, slotObject);
 		}
 	}
@@ -686,13 +664,13 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 void ContainerView::pointerRelease(gPanelMessage &) {
 	// see if in multi-item get mode
-	if (objToGet) {
-		objToGet->take(getCenterActorID(), numPicked);
+	if (g_vm->_cnm->_objToGet) {
+		g_vm->_cnm->_objToGet->take(getCenterActorID(), g_vm->_cnm->_numPicked);
 
 		// reset the flags and pointer dealing with merged object movement
-		objToGet            = NULL;
-		numPicked           = 1;
-		amountIndY          = -1;
+		g_vm->_cnm->_objToGet = NULL;
+		g_vm->_cnm->_numPicked = 1;
+		g_vm->_cnm->_amountIndY = -1;
 	}
 
 	gPanel::deactivate();
@@ -701,28 +679,28 @@ void ContainerView::pointerRelease(gPanelMessage &) {
 void ContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
-	if (objToGet && amountIndY != -1) {
-		int32   rate = (amountIndY - msg.pickAbsPos.y);
+	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
+		int32   rate = (g_vm->_cnm->_amountIndY - msg.pickAbsPos.y);
 
 		rate = rate * ((rate > 0) ? rate : -rate);
 
 		//  Add to the amount accumulator based on the mouse position
-		amountAccumulator += rate / 4 /* * accelSpeed */;
+		g_vm->_cnm->_amountAccumulator += rate / 4;
 
 		//  Take the top bits of the amount accumulator and add to
 		//  the mergeable amount.
-		numPicked = clamp(1,
-		                  numPicked + (amountAccumulator >> 8),
-		                  objToGet->getExtra());
+		g_vm->_cnm->_numPicked = clamp(1,
+		                  g_vm->_cnm->_numPicked + (g_vm->_cnm->_amountAccumulator >> 8),
+		                  g_vm->_cnm->_objToGet->getExtra());
 
 		//  Now remove the bits that we added to the grab amount
 		//  keep the remaining bits to accumulate for next time
-		amountAccumulator &= 0x00ff;
+		g_vm->_cnm->_amountAccumulator &= 0x00ff;
 	}
 }
 
 void ContainerView::dblClick(GameObject *mouseObject, GameObject *slotObject, gPanelMessage &msg) {
-	alreadyDone = true;
+	g_vm->_cnm->_alreadyDone = true;
 
 	// double click stuff
 	dblClickOn(msg, mouseObject, slotObject);
@@ -742,21 +720,21 @@ void ContainerView::clickOn(
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
 				g_vm->_mouseInfo->setText(NULL);
-				mouseText[0] = 0;
+				g_vm->_cnm->_mouseText[0] = 0;
 			}
 		} else {
 			//  just get the object into the cursor
-			cObj->take(getCenterActorID(), numPicked);
+			cObj->take(getCenterActorID(), g_vm->_cnm->_numPicked);
 		}
 	}
 }
 
 void ContainerView::getMerged(GameObject *obj) {
 	// reset the number picked.
-	numPicked = 1;
+	g_vm->_cnm->_numPicked = 1;
 
 	// set the object to be gotten
-	objToGet = obj;
+	g_vm->_cnm->_objToGet = obj;
 }
 
 // Activate the double click function
@@ -809,7 +787,7 @@ void ContainerView::dropPhysical(
 			MotionTask::dropObjectOnObject(*centerActor, *mObj, *cObj, num);
 		}
 
-		alreadyDone = true;
+		g_vm->_cnm->_alreadyDone = true;
 	}
 }
 
@@ -856,7 +834,7 @@ void ContainerView::useConcept(
 			//  If there is an object here drop the mouse object onto it
 			mObj->dropOn(centerActorID, cObj->thisID());
 
-		alreadyDone = true;
+		g_vm->_cnm->_alreadyDone = true;
 	}
 }
 
@@ -877,14 +855,14 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	if (slotID == Nothing) {
 		// clear out the mouse text
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the last picked thingy
-		lastPickedObjectID          = Nothing;
-		lastPickedObjectQuantity    = -1;
+		g_vm->_cnm->_lastPickedObjectID          = Nothing;
+		g_vm->_cnm->_lastPickedObjectQuantity    = -1;
 
 		// set the display alarm to false
-		objTextAlarm = false;
+		g_vm->_cnm->_objTextAlarm = false;
 
 		return;
 	}
@@ -892,25 +870,25 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	// get handles to the object in question
 	GameObject  *slotObject = GameObject::objectAddress(slotID);
 
-	if (slotID == lastPickedObjectID && slotObject->getExtra() == lastPickedObjectQuantity) {
+	if (slotID == g_vm->_cnm->_lastPickedObjectID && slotObject->getExtra() == g_vm->_cnm->_lastPickedObjectQuantity) {
 		return; // same object, bug out
 	} else {
 		// was not same, but is now.
-		lastPickedObjectID          = slotID;
-		lastPickedObjectQuantity    = slotObject->getExtra();
+		g_vm->_cnm->_lastPickedObjectID          = slotID;
+		g_vm->_cnm->_lastPickedObjectQuantity    = slotObject->getExtra();
 
 		// clear out the mouse text
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the alarm flag
-		objTextAlarm = false;
+		g_vm->_cnm->_objTextAlarm = false;
 
 		// set the hint alarm
 		containerObjTextAlarm.set(ticksPerSecond / 2);
 
 		// put the normalized text into mouseText
-		slotObject->objCursorText(mouseText, bufSize);
+		slotObject->objCursorText(g_vm->_cnm->_mouseText, ContainerManager::kBufSize);
 	}
 }
 
@@ -1002,7 +980,7 @@ void ReadyContainerView::setScrollOffset(int8 num) {
 void ReadyContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
-	if (objToGet && amountIndY != -1) {
+	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
 		ContainerView::timerTick(msg);
 
 		// redraw the container to draw the amount indicator
@@ -1134,7 +1112,7 @@ void ReadyContainerView::drawClipped(
 			    objColors);
 
 			// check to see if selecting amount for this objec
-			if (objToGet == item) {
+			if (g_vm->_cnm->_objToGet == item) {
 				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
 				                              y + ((iconHeight - selectorY) >> 1));
 
@@ -1142,7 +1120,7 @@ void ReadyContainerView::drawClipped(
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
+				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -1750,16 +1728,16 @@ void initContainers() {
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
-	selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
+	g_vm->_cnm->_selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
 }
 
 void cleanupContainers() {
-	if (selImage)
-		g_vm->_imageCache->releaseImage(selImage);
+	if (g_vm->_cnm->_selImage)
+		g_vm->_imageCache->releaseImage(g_vm->_cnm->_selImage);
 	if (containerRes)
 		resFile->disposeContext(containerRes);
 
-	selImage = NULL;
+	g_vm->_cnm->_selImage = NULL;
 	containerRes = NULL;
 }
 

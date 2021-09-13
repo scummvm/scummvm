@@ -762,13 +762,13 @@ void TileModeHandleTask() {
 
 		// do an alarm check for container views
 		if (containerObjTextAlarm.check()) {
-			ContainerView::objTextAlarm = true;
+			g_vm->_cnm->_objTextAlarm = true;
 		}
 
-		if (ContainerView::objTextAlarm == true) {
+		if (g_vm->_cnm->_objTextAlarm == true) {
 			// if the mouse is in a container...
-			if (ContainerView::mouseInView) {
-				g_vm->_mouseInfo->setText(ContainerView::mouseText);
+			if (g_vm->_cnm->_mouseInView) {
+				g_vm->_mouseInfo->setText(g_vm->_cnm->_mouseText);
 			}
 		}
 

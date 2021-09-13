@@ -100,41 +100,6 @@ public:
 	//  Number of visible objects currently in the container
 	int16           numObjects;
 
-	// These indicators are static
-	// becuase there is only one mouse cursor,
-	// and therefore only one set of information
-	// about the last place it's been anywhere on the game screen.
-	//  ID of the last object the mouse was on
-	enum {
-		bufSize     = 60,
-		accelSpeed  = 8     // this tells the multi-item getting gadget how many items to grab per time unit
-	};
-
-	static ObjectID lastPickedObjectID;
-
-	// this will be used to hold a value of uint16 plus a -1 as a flag
-	static int32    lastPickedObjectQuantity;
-
-	// this will be used to determine if the cursor has been
-	// held over an object long enough to qualify for the hint to be displayed
-	static bool objTextAlarm;
-
-	// buffer for the mouse text
-	static char mouseText[bufSize];
-
-	// determines if the cursor is in *A* container view
-	static bool mouseInView;
-
-	// number of items to move for merged objects
-	static uint16 numPicked;
-
-	// merged object currently being gotten
-	static GameObject *objToGet;
-
-	static int32 amountAccumulator;
-
-	static int16 amountIndY;
-
 	//  Constructor
 	ContainerView(
 	    gPanelList &,
@@ -507,6 +472,53 @@ public:
 class ContainerManager {
 public:
 	Common::List<ContainerNode *> _list;
+
+	enum {
+		kBufSize     = 60,
+	};
+
+	// used to ignore doubleClick when doubleClick == singleClick
+	bool _alreadyDone;
+
+	// this will be used to determine if the cursor has been
+	// held over an object long enough to qualify for the hint to be displayed
+	bool _objTextAlarm;
+
+	// determines if the cursor is in *A* container view
+	bool _mouseInView;
+
+	ObjectID _lastPickedObjectID;
+
+	// number of items to move for merged objects
+	uint16 _numPicked;
+
+	int16 _amountIndY;
+
+	// this will be used to hold a value of uint16 plus a -1 as a flag
+	int32 _lastPickedObjectQuantity;
+
+	int32 _amountAccumulator;
+
+	// merged object currently being gotten
+	GameObject *_objToGet;
+
+	// selector image pointer
+	void *_selImage;
+
+	// buffer for the mouse text
+	char _mouseText[kBufSize];
+
+	ContainerManager() {
+		_alreadyDone = _objTextAlarm = _mouseInView = false;
+		_lastPickedObjectID = Nothing;
+		_numPicked = 1;
+		_amountIndY = -1;
+		_lastPickedObjectQuantity = - 1;
+		_amountAccumulator = 0;
+		_objToGet = nullptr;
+		_selImage = nullptr;
+		memset(_mouseText, 0, sizeof(_mouseText));
+	}
 
 	void add(ContainerNode *cn) {
 		_list.push_front(cn);
