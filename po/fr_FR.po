@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-11 16:51+0000\n"
-"PO-Revision-Date: 2021-08-28 20:54+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2021-09-13 11:26+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1428,16 +1428,16 @@ msgstr ""
 "jeu."
 
 #: gui/options.cpp:2295
-#, fuzzy
-#| msgid "Enable content censoring"
 msgid "Enable Discord integration"
-msgstr "Censurer le contenu"
+msgstr "Activer l'intégration de Discord"
 
 #: gui/options.cpp:2296
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Affiche des informations sur les jeux auxquels vous jouer sur Discord si le "
+"client Discord est lancé."
 
 #: gui/options.cpp:2305
 msgid "GUI language:"
