@@ -205,19 +205,6 @@ static const ContainerAppearanceDef enchantmentContainerAppearance = {
 //-----------------------------------------------------------------------
 //	ContainerView class
 
-//  Constructor
-/* ContainerView::ContainerView(
-    gPanelList      &list,
-    const Rect16    &box,
-    ContainerNode   &nd,
-    Point16         org,
-    Point16         space,
-    int16           numRows,
-    int16           numCols,
-    int16           totRows,
-    uint16          ident,
-    AppFunc         *cmd ) */
-
 ContainerView::ContainerView(
     gPanelList      &list,
     const Rect16    &rect,
@@ -242,31 +229,6 @@ ContainerView::ContainerView(
 //  Destructor
 ContainerView::~ContainerView() {
 }
-
-/****** contain.cpp/ContainerView::findPane ***********************
-*
-*   NAME
-*             findPane - find a ContainerView control that is
-*                        viewing the contents of the target object
-*
-*   SYNOPSIS
-*             If pane is NULL, start search at first ContainerView
-*             else, start search at pane->next.
-*
-*             Iterate through ContainerView list until a
-*             ContainerView is found that is viewing the
-*             target object (obj).
-*
-*   INPUTS
-*             obj   Target Game Object
-*             pane  Previously found pane, or NULL if search start
-*
-*   RESULT
-*             Returns a pointer to a ContainterPanel if one is found
-*             or NULL if no more found.
-*
-********************************************************************
-*/
 
 //  returns true if the object is visible for this type of
 //  container.
@@ -318,10 +280,6 @@ void ContainerView::totalObjects() {
 			totalBulk += proto->bulk * numItems;
 		}
 	}
-
-//	ContainerView *viewToUpdate = ContainerView::findPane( containerObject );
-
-//	viewToUpdate->getWindow()->update( viewToUpdate->getExtent() );
 }
 
 //  Return the Nth visible object from this container.
@@ -892,37 +850,6 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	}
 }
 
-#if 0
-//  Functions do not appear to be called
-
-void ContainerView::setCursorText(GameObject *obj) {
-	assert(obj);
-
-	const   bufSize = 40;
-	char cursorText[bufSize];
-
-	// put the normalized text into cursorText
-	obj->objCursorText(cursorText, bufSize);
-
-	g_vm->_mouseInfo->setText(cursorText);
-}
-
-void ContainerView::setDelayedCursorText(GameObject *obj) {
-	// clear out the mouse text
-	g_vm->_mouseInfo->setText(NULL);
-	mouseText[0] = 0;
-
-	// reset the alarm flag
-	objTextAlarm = false;
-
-	// set the hint alarm
-	containerObjTextAlarm.set(ticksPerSecond / 2);
-
-	// put the normalized text into mouseText
-	obj->objCursorText(mouseText, bufSize);
-}
-#endif
-
 /* ===================================================================== *
     EnchantmentContainerView member functions
  * ===================================================================== */
@@ -1187,10 +1114,6 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 TangibleContainerWindow::TangibleContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
-#if DEBUG
-	assert(view->containerObject);
-	assert(view->containerObject->proto());
-#endif
 
 	const int weightIndicatorType = 2;
 	objRect = app.iconRect;
@@ -1666,10 +1589,9 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
 		} else if (owner != ContainerNode::nobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
+		} else {
+			error("Attempt to open non-dead actor as a container");
 		}
-#if DEBUG
-		else fatal("Attempt to open non-dead actor as a container.\n");
-#endif
 	} else {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
 			owner = ContainerNode::nobody;
@@ -1742,21 +1664,15 @@ void cleanupContainers() {
 }
 
 void initContainerNodes() {
-#if DEBUG
 	//  Verify the globalContainerList only has ready ContainerNodes
 
-	ContainerNode   *node;
-	bool            onlyReady = true;
+	Common::List<ContainerNode *>::iterator it;
 
-	for (node = g_vm->_cnm->first(); node != NULL; node = node->next()) {
-		if (node->getType() != ContainerNode::readyType) {
-			onlyReady = false;
-			break;
+	for (it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
+		if ((*it)->getType() != ContainerNode::readyType) {
+			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::readyType);
 		}
 	}
-
-	assert(onlyReady);
-#endif
 }
 
 void saveContainerNodes(Common::OutSaveFile *outS) {
