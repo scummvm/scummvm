@@ -82,7 +82,7 @@ void datei::load_pcx(const char *fname, byte *speicher, byte *palette) {
 	if ((*filename) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".PCX\0");
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (chewy_fread(header, sizeof(pcx_header), 1, handle)) {
@@ -171,7 +171,7 @@ void datei::load_image(const char *fname, byte *sp, byte *palette) {
 	if ((*filename) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".TBF\0");
-	correct_fname(filename);
+
 	if ((speicher) && (palette)) {
 		handle = chewy_fopen(filename, "rb");
 		if (handle) {
@@ -315,7 +315,7 @@ void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
 	if ((*filename) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".TAF\0");
-	correct_fname(filename);
+
 	abmess = (int16 *) speicher;
 	speicher += 4;
 	if (abmess) {
@@ -403,7 +403,7 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 	if ((filename[0]) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".TAF\0");
-	correct_fname(filename);
+
 	speicher = hi_sp;
 	if (speicher) {
 		handle = chewy_fopen(filename, "rb");
@@ -470,7 +470,7 @@ void datei::load_korrektur(const char *fname, byte *sp) {
 	if ((filename[0]) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".TAF\0");
-	correct_fname(filename);
+
 	speicher = sp;
 	if (speicher) {
 		handle = chewy_fopen(filename, "rb");
@@ -519,7 +519,6 @@ void datei::load_tff(const char *fname, byte *speicher) {
 		if ((*filename) == 0)
 			get_filename(filename, MAXPATH);
 		if (!strchr(filename, '.'))strcat(filename, ".TFF\0");
-		correct_fname(filename);
 		handle = chewy_fopen(filename, "rb");
 		if (handle) {
 			if (chewy_fread(speicher, sizeof(tff_header), 1, handle)) {
@@ -616,7 +615,7 @@ void datei::load_dialog(const char *fname, dialogue *dial, menue *men,
 	filename[i + 2] = 'D';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (!(chewy_fread(dial, sizeof(dialogue), 1, handle))) {
@@ -669,7 +668,7 @@ void datei::load_sbi(const char *fname, sbi_inst *speicher) {
 	filename[i + 2] = 'B';
 	filename[i + 3] = 'I';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (!(chewy_fread(speicher, sizeof(sbi_inst), 1, handle))) {
@@ -709,7 +708,7 @@ uint32 datei::load_voc(const char *fname, byte *speicher) {
 	filename[i + 2] = 'O';
 	filename[i + 3] = 'C';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	s = size(filename, VOCDATEI);
 
 	if (!modul) {
@@ -781,7 +780,7 @@ void datei::load_vocinfo(const char *fname, voc_header *speicher) {
 	filename[i + 2] = 'O';
 	filename[i + 3] = 'C';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (!(chewy_fread(speicher, sizeof(voc_header), 1, handle))) {
@@ -806,7 +805,7 @@ void datei::void_load(const char *fname, byte *speicher, uint32 size) {
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
 		filename[i] = fname[i];
 	filename[i] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (!(chewy_fread(speicher, (uint16)size, 1, handle))) {
@@ -828,7 +827,7 @@ uint32 datei::load_file(const char *fname, byte *speicher) {
 	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
 		filename[i] = fname[i];
 	filename[i] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		chewy_fseek(handle, 0l, SEEK_END);
@@ -883,7 +882,7 @@ uint32 datei::load_tmf(const char *fname, tmf_header *th) {
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
 	speicher = (byte *)th;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		chewy_fseek(handle, 0l, SEEK_END);
@@ -995,7 +994,6 @@ void datei::save_pcx(const char *fname, byte *speicher, byte *palette) {
 	filename[i + 2] = 'C';
 	filename[i + 3] = 'X';
 	filename[i + 4] = 0;
-	correct_fname(filename);
 
 	breite = abmess[0];
 	hoehe = abmess[1];
@@ -1094,7 +1092,7 @@ void datei::save_tafmcga(const char *fname, byte **spvekt, byte *palette,
 	filename[i + 2] = 'A';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "wb");
 	if (handle) {
 		strncpy(header->id, "TAF\0", 4);
@@ -1176,7 +1174,7 @@ void datei::save_tff(const char *fname, byte *speicher) {
 		filename[i + 2] = 'F';
 		filename[i + 3] = 'F';
 		filename[i + 4] = 0;
-		correct_fname(filename);
+
 		handle = chewy_fopen(filename, "wb");
 		if (handle) {
 			tff->size = (uint32)tff->count * ((uint32)(tff->width / 8) *
@@ -1246,7 +1244,7 @@ void datei::save_dialog(const char *fname, dialogue *dial) {
 	filename[i + 2] = 'D';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "wb");
 	if (handle) {
 		strncpy(dial->id, "TDF\0", 4);
@@ -1299,7 +1297,7 @@ void datei::save_tmf(const char *fname, tmf_header *thead) {
 	filename[i + 2] = 'M';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	Stream *handle = chewy_fopen(filename, "wb");
 	if (handle) {
 		if ((chewy_fwrite(thead, sizeof(tmf_header), 1, handle))) {
@@ -1350,7 +1348,7 @@ void datei::get_tdfanz(const char *fname, int16 *menueanz, int16 *knopfanz) {
 	filename[i + 2] = 'D';
 	filename[i + 3] = 'F';
 	filename[i + 4] = 0;
-	correct_fname(filename);
+
 	handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (!(chewy_fread(&dial, sizeof(dialogue), 1, handle))) {
@@ -1396,7 +1394,7 @@ uint32 datei::size(const char *fname, int16 typ) {
 		filename[i] = fname[i];
 	filename[i] = 0;
 	i = 0;
-	correct_fname(filename);
+
 	if ((*filename) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.')) {
@@ -1642,7 +1640,6 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 		}
 	}
 	if (!modul) {
-		correct_fname(filename);
 		handle = chewy_fopen(filename, "rb");
 		if (handle) {
 			switch (typ) {
@@ -1779,7 +1776,7 @@ void datei::imsize(const char *fname, uint32 *svekt) {
 	if ((*filename) == 0)
 		get_filename(filename, MAXPATH);
 	if (!strchr(filename, '.'))strcat(filename, ".TAF\0");
-	correct_fname(filename);
+
 	Stream *handle = chewy_fopen(filename, "rb");
 	if (handle) {
 		if (chewy_fread(header, sizeof(taf_dateiheader), 1, handle)) {
@@ -1804,15 +1801,6 @@ void datei::imsize(const char *fname, uint32 *svekt) {
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
-	}
-}
-
-void datei::correct_fname(char *fname) {
-	int16 i = 0;
-	while ((fname[i] != '.') && (fname[i] != 0)) {
-		if (fname[i] == '/')
-			fname[i] = '\\';
-		i++;
 	}
 }
 

@@ -70,7 +70,7 @@ public:
 	uint32 get_tafinfo(const char *fname, taf_dateiheader **tafheader);
 	void load_palette(const char *fname, byte *palette, int16 typ);
 	void imsize(const char *fname, uint32 *svekt);
-	void correct_fname(char *fname);
+
 	short get_filename(const char *fname, int16 maxlen);
 	void respfad(char *respath, char *resdir);
 	void res2dname(char *respath, char *fnme, char *dtname);
