@@ -20,12 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "chewy/defines.h"
 #include "chewy/global.h"
 #include "chewy/room.h"
@@ -45,13 +39,13 @@ Room::~Room() {
 	int16 i;
 	for (i = 0; i < MAX_ROOM_HANDLE; i++)
 		if (roomhandle[i])
-			fclose((FILE *)roomhandle[i]);
+			chewy_fclose(roomhandle[i]);
 	free_ablage();
 }
 
 void *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
-	FILE *handle;
-	handle = fopen(fname1, fmode);
+	Stream *handle;
+	handle = chewy_fopen(fname1, fmode);
 	if (handle) {
 		close_handle(mode);
 		roomhandle[mode] = handle;
@@ -65,7 +59,7 @@ void *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
 
 void Room::close_handle(int16 mode) {
 	if (roomhandle[mode])
-		fclose((FILE *)roomhandle[mode]);
+		chewy_fclose(roomhandle[mode]);
 }
 
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
@@ -257,12 +251,12 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 	if (roomhandle[R_TGPDATEI]) {
 		mem->file->select_pool_item(roomhandle[R_TGPDATEI], nr);
 
-		if (!fread(&tb, sizeof(tbf_dateiheader), 1, (FILE *)roomhandle[R_TGPDATEI])) {
+		if (!chewy_fread(&tb, sizeof(tbf_dateiheader), 1, roomhandle[R_TGPDATEI])) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
 		if (!modul) {
-			fseek((FILE *)roomhandle[R_TGPDATEI], -(int)sizeof(tbf_dateiheader), SEEK_CUR);
+			chewy_fseek(roomhandle[R_TGPDATEI], -(int)sizeof(tbf_dateiheader), SEEK_CUR);
 			Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), tb.entpsize + 4);
 			if (Rb->AkAblage == -1) {
 			} else if (Rb->AkAblage >= 1000) {

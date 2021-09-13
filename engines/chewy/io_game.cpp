@@ -20,14 +20,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "common/system.h"
+#include "chewy/file.h"
 #include "chewy/io_game.h"
 
 namespace Chewy {
@@ -579,7 +573,7 @@ int16 io_game::get_files(char *fname) {
 	int16 ret = 0;
 	char path[80];
 	char str[4];
-	FILE *handle;
+	Stream *handle;
 	char name[USER_NAME + 3];
 	char tmp_id[9];
 	for (i = 0; i < 20; i++) {
@@ -595,15 +589,15 @@ int16 io_game::get_files(char *fname) {
 		f_ok = _dos_findfirst(path, _A_NORMAL, &f_info);
 		if (!f_ok) {
 			file_find_g[i][0] = 1;
-			handle = fopen(path, "rb");
+			handle = chewy_fopen(path, "rb");
 			if (handle) {
-				fread(&tmp_id, 4, 1, handle);
+				chewy_fread(&tmp_id, 4, 1, handle);
 				if (!strncmp(tmp_id, io->id, 3)) {
 					++ret;
-					fread(name, USER_NAME + 2, 1, handle);
+					chewy_fread(name, USER_NAME + 2, 1, handle);
 					strcpy(&file_find_g[i][1], name);
 				}
-				fclose(handle);
+				chewy_fclose(handle);
 			}
 		}
 	}
@@ -618,7 +612,7 @@ void io_game::save(int16 y, int16 nr, char *fname) {
 	char path[80];
 	int16 abfrage = 0;
 	int16 j;
-	FILE *handle;
+	Stream *handle;
 	if (nr + 1 < 10)
 		j = 2;
 	else
@@ -639,9 +633,9 @@ void io_game::save(int16 y, int16 nr, char *fname) {
 	}
 
 	else {
-		handle = fopen(path, "rb");
+		handle = chewy_fopen(path, "rb");
 		out->printxy(io->popx + 167, io->popy + 85, io->m_col[1], 300, scr_width, FSTRING7);
-		fclose(handle);
+		chewy_fclose(handle);
 		abfrage = out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[nr][1]);
 
 	}
@@ -653,19 +647,19 @@ void io_game::save(int16 y, int16 nr, char *fname) {
 	abfrage = 13;
 	if (abfrage == 13) {
 
-		handle = fopen(path, "wb+");
+		handle = chewy_fopen(path, "wb+");
 		if (handle) {
-			fwrite(io->id, sizeof(io->id), 1, handle);
-			fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
+			chewy_fwrite(io->id, sizeof(io->id), 1, handle);
+			chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
 
 			(*io->save_funktion)(handle);
-			fclose(handle);
+			chewy_fclose(handle);
 		}
 	}
 }
 
 void io_game::load(int16 nr, char *fname) {
-	FILE *handle;
+	Stream *handle;
 	char str[4];
 	char path[80];
 	int16 j;
@@ -681,12 +675,12 @@ void io_game::load(int16 nr, char *fname) {
 		itoa(nr + 1, str + j, 10);
 		strcpy(path, fname);
 		strcat(path, str);
-		handle = fopen(path, "rb");
+		handle = chewy_fopen(path, "rb");
 		if (handle) {
-			fseek(handle, sizeof(io->id) + USER_NAME + 2, 0);
+			chewy_fseek(handle, sizeof(io->id) + USER_NAME + 2, 0);
 
 			(*io->load_funktion)(handle);
-			fclose(handle);
+			chewy_fclose(handle);
 		}
 	}
 }
@@ -713,7 +707,7 @@ void io_game::save_entry(int16 nr, char *fname) {
 	char str[4];
 	char path[80];
 	int16 j;
-	FILE *handle;
+	Stream *handle;
 	if (nr + 1 < 10)
 		j = 2;
 	else
@@ -722,13 +716,13 @@ void io_game::save_entry(int16 nr, char *fname) {
 	itoa(nr + 1, str + j, 10);
 	strcpy(path, fname);
 	strcat(path, str);
-	handle = fopen(path, "wb+");
+	handle = chewy_fopen(path, "wb+");
 	if (handle) {
-		fwrite(io->id, sizeof(io->id), 1, handle);
-		fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
+		chewy_fwrite(io->id, sizeof(io->id), 1, handle);
+		chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
 
 		(*io->save_funktion)(handle);
-		fclose(handle);
+		chewy_fclose(handle);
 	}
 }
 

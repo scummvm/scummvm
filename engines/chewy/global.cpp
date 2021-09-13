@@ -23,6 +23,7 @@
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/defines.h"
+#include "chewy/file.h"
 #include "chewy/ngshext.h"
 #include "chewy/objekt.h"
 #include "chewy/text.h"
@@ -190,7 +191,7 @@ AutoMov auto_mov[MAX_AUTO_MOV];
 
 int16 HowardMov;
 
-/* FILE */ void *spz_taf_handle;
+/* Stream */ void *spz_taf_handle;
 taf_seq_info *spz_tinfo;
 int16 SpzDelay;
 int16 spz_spr_nr[MAX_SPZ_PHASEN];
@@ -340,9 +341,9 @@ SplitStringInit ssi[AAD_MAX_PERSON] = {
 
 int16 frequenz;
 int16 CurrentSong = -1;
-/* FILE */ void *music_handle;
+Stream *music_handle;
 int16 EndOfPool;
-/* FILE */ void *speech_handle;
+Stream *speech_handle;
 byte *SpeechBuf[2];
 
 } // namespace Chewy

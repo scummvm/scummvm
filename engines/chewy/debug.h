@@ -41,7 +41,7 @@ void play_last_ani(int16 nr);
 
 void set_z_ebene();
 void get_phase(ObjMov *om);
-//FIXME: was using FILE *
+//FIXME: was using Stream *
 void test_load(void *handle, taf_info *Tt, int16 anz);
 
 } // namespace Chewy

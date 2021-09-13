@@ -221,11 +221,9 @@ extern int16 spz_p_nr;
 extern int16 spz_ani[MAX_PERSON];
 
 extern int16 frequenz;
-// FIXME: was FILE*
-extern void *music_handle;
+extern Stream *music_handle;
 extern int16 EndOfPool;
-// FIXME: was FILE*
-extern void *speech_handle;
+extern Stream *speech_handle;
 extern byte *SpeechBuf[2];
 extern int16 CurrentSong;
 

@@ -23,6 +23,7 @@
 #ifndef CHEWY_DETAIL_H
 #define CHEWY_DETAIL_H
 
+#include "chewy/file.h"
 #include "chewy/ngshext.h"
 #include "chewy/defines.h"
 
@@ -229,8 +230,7 @@ public:
 	                      int16 scrx, int16 scry);
 
 	void set_sound_area(byte *buffer, uint32 size);
-	// FIXME : was FILE*
-	void load_room_sounds(void *tvp_handle);
+	void load_room_sounds(Stream *tvp_handle);
 	void get_sound_para(int16 nr, sound_def_blk *sdb_dest);
 	void set_sound_para(int16 nr, sound_def_blk *sdb_src);
 	void map_tvp2sound(int16 nr, int16 sslot, int16 tvp_index);
@@ -273,8 +273,7 @@ private:
 	char tafname[80];
 	byte *taf_load_buffer;
 	int16 direct_taf_ani;
-	// FIXME : was FILE*
-	void *CurrentTaf;
+	Stream *CurrentTaf;
 	uint32 SpritePos[MAXSPRITE];
 
 	byte *SoundBuffer;

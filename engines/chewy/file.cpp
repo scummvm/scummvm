@@ -20,16 +20,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputc
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "chewy/defines.h"
+#include "chewy/file.h"
 #include "chewy/global.h"
 
 namespace Chewy {
@@ -96,7 +88,7 @@ int16 call_fileio(int16 palette, int16 mode) {
 }
 
 void save(void *h) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	int16 spr_nr;
 	int16 i;
 	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
@@ -105,7 +97,7 @@ void save(void *h) {
 		spieler.Y[i] = spieler_vector[i].Xypos[1];
 		spieler.Phase[i] = person_end_phase[i];
 	}
-	if (!(fwrite(&spieler, sizeof(Spieler), 1, handle))) {
+	if (!(chewy_fwrite(&spieler, sizeof(Spieler), 1, handle))) {
 		fcode = WRITEFEHLER;
 		modul = DATEI;
 	} else {
@@ -115,11 +107,11 @@ void save(void *h) {
 }
 
 void load(void *h) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	exit_room(-1);
 
 	int16 i;
-	if (!(fread(&spieler, sizeof(Spieler), 1, handle))) {
+	if (!(chewy_fread(&spieler, sizeof(Spieler), 1, handle))) {
 		fcode = READFEHLER;
 		modul = DATEI;
 	} else {
@@ -159,14 +151,14 @@ void load(void *h) {
 }
 
 void append_adsh(void *sh) {
-	FILE *shandle = (FILE *)sh;
+	Stream *shandle = (Stream *)sh;
 	atds->close_handle(ADH_DATEI);
 	int16 ch;
-	FILE *handle = fopen(ADSH_TMP, "rb");
+	Stream *handle = chewy_fopen(ADSH_TMP, "rb");
 	if (handle) {
-		while ((ch = fgetc(handle)) != EOF)
-			fputc(ch, shandle);
-		fclose(handle);
+		while ((ch = chewy_fgetc(handle)) != EOF)
+			chewy_fputc(ch, shandle);
+		chewy_fclose(handle);
 		atds->open_handle(ADSH_TMP, "rb+", ADH_DATEI);
 		ERROR
 	} else {
@@ -176,14 +168,14 @@ void append_adsh(void *sh) {
 }
 
 void split_adsh(void *sh) {
-	FILE *shandle = (FILE *)sh;
+	Stream *shandle = (Stream *)sh;
 	atds->close_handle(ADH_DATEI);
 	int16 ch;
-	FILE *handle = fopen(ADSH_TMP, "wb+");
+	Stream *handle = chewy_fopen(ADSH_TMP, "wb+");
 	if (handle) {
-		while ((ch = fgetc(shandle)) != EOF)
-			fputc(ch, handle);
-		fclose(handle);
+		while ((ch = chewy_fgetc(shandle)) != EOF)
+			chewy_fputc(ch, handle);
+		chewy_fclose(handle);
 		atds->open_handle(ADSH_TMP, "rb+", ADH_DATEI);
 		ERROR
 	} else {

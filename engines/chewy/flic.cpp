@@ -20,13 +20,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "common/system.h"
+#include "chewy/file.h"
 #include "chewy/flic.h"
 
 namespace Chewy {
@@ -50,12 +45,12 @@ flic::~flic() {
 }
 
 void flic::play(const char *fname, byte *vscreen, byte *load_p) {
-	FILE *lhandle;
+	Stream *lhandle;
 
-	lhandle = fopen(fname, "rb");
+	lhandle = chewy_fopen(fname, "rb");
 	if (lhandle) {
 		play(lhandle, vscreen, load_p);
-		fclose(lhandle);
+		chewy_fclose(lhandle);
 	}
 	else {
 		modul = DATEI;
@@ -64,7 +59,7 @@ void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 }
 
 void flic::play(void *h, byte *vscreen, byte *load_p) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	uint16 i;
 	size_t tmp_size;
 	char key;
@@ -73,7 +68,7 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 
 	load_puffer = load_p;
 	virt_screen = vscreen + 4;
-	if (fread(&flic_header, sizeof(FlicHead), 1, handle)) {
+	if (chewy_fread(&flic_header, sizeof(FlicHead), 1, handle)) {
 		if (flic_header.type == FLC) {
 
 			key = 0;
@@ -83,7 +78,7 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 			cls_flag = false;
 			CurrentFrame = 0;
 			for (i = 0; (i < flic_header.frames) && (!modul) && (key != 27); i++) {
-				if (!fread(&frame_header, sizeof(FrameHead), 1, handle)) {
+				if (!chewy_fread(&frame_header, sizeof(FrameHead), 1, handle)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
@@ -94,7 +89,7 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 						start /= 0.05f;
 						start += flic_header.speed;
 						if (tmp_size) {
-							if (!fread(load_puffer, tmp_size, 1, handle)) {
+							if (!chewy_fread(load_puffer, tmp_size, 1, handle)) {
 								modul = DATEI;
 								fcode = READFEHLER;
 							}
@@ -108,7 +103,7 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 						++CurrentFrame;
 					}
 					else
-						fseek(handle, frame_header.size - (long)sizeof(FrameHead),
+						chewy_fseek(handle, frame_header.size - (long)sizeof(FrameHead),
 						      SEEK_CUR);
 				}
 			}
@@ -347,11 +342,11 @@ void flic::custom_play(CustomInfo *ci) {
 	Sound = ci->SoundSlot;
 
 	if (ci->Fname != 0) {
-		ci->Handle = fopen(ci->Fname, "rb");
-		fseek((FILE *)ci->Handle, 0, SEEK_SET);
+		ci->Handle = chewy_fopen(ci->Fname, "rb");
+		chewy_fseek((Stream *)ci->Handle, 0, SEEK_SET);
 	}
 	if (ci->Handle) {
-		if (fread(&custom_header, sizeof(CustomFlicHead), 1, (FILE *)ci->Handle)) {
+		if (chewy_fread(&custom_header, sizeof(CustomFlicHead), 1, (Stream *)ci->Handle)) {
 			if (!scumm_strnicmp(custom_header.id, "CFO\0", 4)) {
 				key = 0;
 				trace_mode = false;
@@ -362,7 +357,7 @@ void flic::custom_play(CustomInfo *ci) {
 				CurrentFrame = 0;
 				for (i = 0; (i < custom_header.frames) && (!modul) && (key != 27); i++) {
 
-					if (!fread(&custom_frame, sizeof(CustomFrameHead), 1, (FILE *)ci->Handle)) {
+					if (!chewy_fread(&custom_frame, sizeof(CustomFrameHead), 1, (Stream *)ci->Handle)) {
 						modul = DATEI;
 						fcode = READFEHLER;
 					}
@@ -373,7 +368,7 @@ void flic::custom_play(CustomInfo *ci) {
 							start /= 0.05f;
 							start += (float)custom_header.speed;
 							if (custom_frame.size) {
-								if (!fread(load_puffer, custom_frame.size, 1, (FILE *)ci->Handle)) {
+								if (!chewy_fread(load_puffer, custom_frame.size, 1, (Stream *)ci->Handle)) {
 									modul = DATEI;
 									fcode = READFEHLER;
 								}
@@ -402,7 +397,7 @@ void flic::custom_play(CustomInfo *ci) {
 			}
 		}
 		if (ci->Fname != 0)
-			fclose((FILE *)ci->Handle);
+			chewy_fclose(ci->Handle);
 	}
 	else {
 		modul = DATEI;
@@ -411,7 +406,7 @@ void flic::custom_play(CustomInfo *ci) {
 }
 
 void flic::decode_custom_frame(void *h) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	uint16 para[10];
 	ChunkHead chead;
 	uint16 i, j;
@@ -422,14 +417,14 @@ void flic::decode_custom_frame(void *h) {
 	th = (tmf_header *)Music;
 
 	for (i = 0; (i < custom_frame.chunks) && (!modul); i++) {
-		if (!fread(&chead, sizeof(ChunkHead), 1, handle)) {
+		if (!chewy_fread(&chead, sizeof(ChunkHead), 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
 		switch (chead.type) {
 
 		case FADE_IN:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -440,7 +435,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case FADE_OUT:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -448,7 +443,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case LOAD_MUSIC:
-			if (!fread(Music, chead.size, 1, handle)) {
+			if (!chewy_fread(Music, chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -466,8 +461,8 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case LOAD_RAW:
-			if ((!fread(&para[0], 2, 1, handle)) ||
-			        (!fread(Sound, chead.size - 2, 1, handle))) {
+			if ((!chewy_fread(&para[0], 2, 1, handle)) ||
+			        (!chewy_fread(Sound, chead.size - 2, 1, handle))) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -478,8 +473,8 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case LOAD_VOC:
-			if ((!fread(&para[0], 2, 1, handle)) ||
-			        (!fread(Sound, chead.size - 2, 1, handle))) {
+			if ((!chewy_fread(&para[0], 2, 1, handle)) ||
+			        (!chewy_fread(Sound, chead.size - 2, 1, handle))) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -501,7 +496,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case PLAY_SEQ:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -520,7 +515,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case PLAY_PATTERN:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -557,7 +552,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_MVOL :
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -570,7 +565,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_LOOPMODE :
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -587,7 +582,7 @@ void flic::decode_custom_frame(void *h) {
 
 		case PLAY_VOC :
 
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -604,7 +599,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_SVOL :
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -616,7 +611,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_CVOL :
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -628,7 +623,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case FREE_EFFECT:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -636,7 +631,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case MFADE_IN:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -648,7 +643,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case MFADE_OUT:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -660,7 +655,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_STEREO:
-			if (!fread(&para[0], chead.size, 1, handle)) {
+			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -670,7 +665,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_SPEED :
-			if (!fread(&long_para, chead.size, 1, handle)) {
+			if (!chewy_fread(&long_para, chead.size, 1, handle)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
