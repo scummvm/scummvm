@@ -76,13 +76,11 @@ static inline void copyPixelIfAlpha(byte *dst, const byte *src) {
 static inline void copyPixelWithA(byte *dst, const byte *src) {
 	if (src[kAIndex] == 255) {
 		copyPixel(dst, src);
-	} else {
-		if (src[kAIndex] > 0) {
-			dst[kAIndex] = MAX(src[kAIndex], dst[kAIndex]);
-			dst[kRIndex] = ((src[kRIndex] * src[kAIndex]) + dst[kRIndex] * (255 - src[kAIndex])) >> 8;
-			dst[kGIndex] = ((src[kGIndex] * src[kAIndex]) + dst[kGIndex] * (255 - src[kAIndex])) >> 8;
-			dst[kBIndex] = ((src[kBIndex] * src[kAIndex]) + dst[kBIndex] * (255 - src[kAIndex])) >> 8;
-		}
+	} else if (src[kAIndex] > 0) {
+		dst[kAIndex] = MAX(src[kAIndex], dst[kAIndex]);
+		dst[kRIndex] = ((src[kRIndex] * src[kAIndex]) + dst[kRIndex] * (255 - src[kAIndex])) >> 8;
+		dst[kGIndex] = ((src[kGIndex] * src[kAIndex]) + dst[kGIndex] * (255 - src[kAIndex])) >> 8;
+		dst[kBIndex] = ((src[kBIndex] * src[kAIndex]) + dst[kBIndex] * (255 - src[kAIndex])) >> 8;
 	}
 	// In case of alpha == 0 just do not copy
 }
@@ -225,7 +223,6 @@ void ROQPlayer::buildShowBuf() {
 				byte *prv = (byte *)_prevBuf->getBasePtr((_restoreArea->left - _origX) / _scaleX, (line - _origY) / _scaleY);
 				byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
 
-				//memcpy(dst, src, width * _bg->format.bytesPerPixel);
 				for (int i = 0; i < width; i++) {
 					if (prv[kAIndex] != 0) {
 						copyPixel(dst, src);
@@ -267,13 +264,14 @@ void ROQPlayer::buildShowBuf() {
 	int startX, startY, stopX, stopY;
 	calcStartStop(startX, stopX, _origX, _screen->w);
 	calcStartStop(startY, stopY, _origY, _screen->h);
+	assert(destBuf->format == _currBuf->format);
+	assert(destBuf->format == _overBuf->format);
+	assert(destBuf->format.bytesPerPixel == 4);
 
 	for (int line = startY; line < stopY; line++) {
 		byte *in = (byte *)_currBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
 		byte *inOvr = (byte *)_overBuf->getBasePtr(startX, line);
 		byte *out = (byte *)destBuf->getBasePtr(startX, line + destOffset);
-		assert(destBuf->format == _currBuf->format);
-		assert(destBuf->format.bytesPerPixel == 4);
 
 		for (int x = startX; x < stopX; x++) {
 			if (destBuf == _overBuf) {

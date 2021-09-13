@@ -72,7 +72,7 @@ void GrvCursorMan::setStyle(uint8 newStyle) {
 void GrvCursorMan::animate() {
 	if (_lastTime) {
 		int newTime = _syst->getMillis();
-		if (_lastTime - newTime >= 75) {
+		if (newTime - _lastTime >= 66) {
 			_lastFrame++;
 			_lastFrame %= _cursor->getFrames();
 			_cursor->showFrame(_lastFrame);
