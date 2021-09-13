@@ -244,7 +244,7 @@ Common::Error GroovieEngine::run() {
 
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
-	if (getPlatform() != Common::kPlatformIOS && _gameDescription->version != kGroovieTLC) {
+	if (getPlatform() != Common::kPlatformIOS && _gameDescription->version == kGroovieT7G) {
 		if (!existExtractedCDAudioFiles()
 		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
