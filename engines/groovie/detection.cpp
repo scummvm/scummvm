@@ -58,7 +58,7 @@ static const PlainGameDescriptor groovieGames[] = {
 };
 
 static const GroovieGameDescription gameDescriptions[] = {
-	// groovie.cpp requires the first file to be the main .grv file
+	// groovie.cpp requires the first file to be the main .grv file for v2 games, might as well stick to that convention for v1 games from now on too
 	
 	// The 7th Guest DOS English
 	{
@@ -131,10 +131,10 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
-	// The 11th Hour Mac English (Digital)
+	// The 11th Hour Mac English (Installed)
 	{
 		{
-			"11h", "Digital",
+			"11h", "Installed",
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
@@ -203,10 +203,10 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
-	// The Making of The 11th Hour Macintosh English (Digital)
+	// The Making of The 11th Hour Macintosh English (Installed)
 	{
 		{
-			"11h", "Making Of (Digital)",
+			"11h", "Making Of (Installed)",
 			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
 					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
@@ -239,14 +239,26 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieCDY
 	},
 
-	// Clandestiny Trailer Macintosh English (Digital)
+	// Clandestiny Trailer Macintosh English (Installed)
 	{
 		{
-			"clandestiny", "Trailer (Digital)",
+			"clandestiny", "Trailer (Installed)",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieCDY
+	},
+
+	// Clandestiny PC Demo English https://archive.org/details/Clandestiny_demo
+	{
+		{
+			"clandestiny", "Demo",
+			AD_ENTRY2s("clandemo.grv", "faa863738da1c93673ed58a4b9597a63", 6744,
+						"cddemo.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieCDY
 	},
@@ -294,6 +306,30 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("tlcmain.grv", "47c235155de5103e72675fe7294720b8", 17479,
 						"tlcnav.gjd", NULL, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC Demo German https://archive.org/details/Tender_Loving_Care_demo
+	{
+		{
+			"tlc", "Demo",
+			AD_ENTRY2s("tlcmain.grv", "6ec818f595eedca6570280af0c681642", 17361,
+						"tlcnav.gjd", NULL, -1),
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC Trailer https://archive.org/details/Tender_Loving_Care_demo
+	{
+		{
+			"tlc", "Trailer",
+			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
+						"drama1.gjd", NULL, -1),
+			Common::UNK_LANG, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
