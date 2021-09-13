@@ -20,12 +20,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "chewy/defines.h"
+#include "chewy/file.h"
 #include "chewy/global.h"
 
 namespace Chewy {
@@ -203,8 +199,8 @@ void init_room() {
 void init_atds() {
 	char tmp_path[MAXPFAD];
 	int16 i;
-	// FIXME: was FILE*
-	void *handle = atds->pool_handle(ATDS_TXT, "rb");
+
+	Stream *handle = atds->pool_handle(ATDS_TXT, "rb");
 	ERROR
 	atds->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
 	ERROR
@@ -268,13 +264,13 @@ void new_game() {
 	tmp = (char *)calloc(ROOM_ATS_MAX, 1);
 	ERROR
 
-	FILE *handle = fopen(ROOM_ATS_STEUER, "rb");
+	Stream *handle = chewy_fopen(ROOM_ATS_STEUER, "rb");
 	if (handle) {
-		if (!fread(tmp, ROOM_ATS_MAX, 1, handle)) {
+		if (!chewy_fread(tmp, ROOM_ATS_MAX, 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
@@ -286,13 +282,13 @@ void new_game() {
 
 	tmp = (char *)calloc(MAX_MOV_OBJ, 1);
 	ERROR
-	handle = fopen(INV_ATS_STEUER, "rb");
+	handle = chewy_fopen(INV_ATS_STEUER, "rb");
 	if (handle) {
-		if (!fread(tmp, MAX_MOV_OBJ, 1, handle)) {
+		if (!chewy_fread(tmp, MAX_MOV_OBJ, 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
@@ -337,16 +333,16 @@ void init_load() {
 }
 
 void get_detect(char *fname_) {
-	FILE *handle;
+	Stream *handle;
 	modul = 0;
 	fcode = 0;
-	handle = fopen(fname_, "rb");
+	handle = chewy_fopen(fname_, "rb");
 	if (handle) {
-		if (!fread(&detect, sizeof(DetectInfo), 1, handle)) {
+		if (!chewy_fread(&detect, sizeof(DetectInfo), 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
@@ -491,14 +487,14 @@ void sound_init() {
 	warning("STUB - Installing sound files");
 #if 0
 	system("cd sound");
-	FILE *test_handle = fopen("SET.INT", "rb");
+	Stream *test_handle = chewy_fopen("SET.INT", "rb");
 	if (!test_handle) {
-		test_handle = fopen("SET.INT", "wb");
+		test_handle = chewy_fopen("SET.INT", "wb");
 		if (test_handle) {
-			fputc('N', test_handle);
-			fputc('G', test_handle);
-			fputc('S', test_handle);
-			fclose(test_handle);
+			chewy_fputc('N', test_handle);
+			chewy_fputc('G', test_handle);
+			chewy_fputc('S', test_handle);
+			chewy_fclose(test_handle);
 		} else {
 			modul = DATEI;
 			fcode = OPENFEHLER;
@@ -552,7 +548,7 @@ void sound_init() {
 			mouse_hot_y = 0;
 		}
 	} else
-		fclose(test_handle);
+		chewy_fclose(test_handle);
 	detect.SoundSource = ailsnd->init(frequenz);
 	ERROR
 	system("cd ..");
@@ -573,16 +569,16 @@ void sound_init() {
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
 		music_handle = room->get_sound_handle();
-		fseek(music_handle, 0, SEEK_SET);
+		chewy_fseek(music_handle, 0, SEEK_SET);
 		EndOfPool = 0;
 		NewPhead Nph;
-		if (!fread(&Nph, sizeof(NewPhead), 1, music_handle)) {
+		if (!chewy_fread(&Nph, sizeof(NewPhead), 1, music_handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else
 			EndOfPool = Nph.PoolAnz - 1;
 		ERROR
-		speech_handle = fopen(SPEECH_TVP, "rb");
+		speech_handle = chewy_fopen(SPEECH_TVP, "rb");
 		if (!speech_handle) {
 			modul = DATEI;
 			fcode = OPENFEHLER;
@@ -610,7 +606,7 @@ void sound_exit() {
 		ailsnd->exit_mix_mode();
 		ailsnd->exit1();
 		if (speech_handle)
-			fclose(speech_handle);
+			chewy_fclose(speech_handle);
 	}
 #endif
 }

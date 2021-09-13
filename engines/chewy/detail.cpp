@@ -20,13 +20,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "chewy/detail.h"
+#include "chewy/file.h"
 #include "chewy/global.h"
 
 namespace Chewy {
@@ -67,20 +62,20 @@ detail::detail() {
 
 detail::~detail() {
 	if (CurrentTaf)
-		fclose((FILE *)CurrentTaf);
+		chewy_fclose(CurrentTaf);
 	direct_taf_ani = OFF;
 }
 
 void detail::load_rdi(const char *fname_, int16 room_nr) {
-	FILE *handle;
+	Stream *handle;
 	taf_info *tmprdi;
 	tmprdi = rdi.dptr;
-	handle = fopen(fname_, "rb");
+	handle = chewy_fopen(fname_, "rb");
 	if (handle) {
-		if (fread(&rdi_datei_header, sizeof(RdiDateiHeader), 1, handle)) {
+		if (chewy_fread(&rdi_datei_header, sizeof(RdiDateiHeader), 1, handle)) {
 			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
-				fseek(handle, (long)room_nr * (long)sizeof(room_detail_info), SEEK_CUR);
-				if (!fread(&rdi, sizeof(room_detail_info), 1, handle)) {
+				chewy_fseek(handle, (long)room_nr * (long)sizeof(room_detail_info), SEEK_CUR);
+				if (!chewy_fread(&rdi, sizeof(room_detail_info), 1, handle)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
@@ -92,7 +87,7 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
@@ -189,7 +184,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 			if (!modul) {
 				mem->file->load_korrektur(fname_, (byte *)Tt->korrektur);
 				Tt->palette = 0;
-				CurrentTaf = fopen(fname_, "rb");
+				CurrentTaf = chewy_fopen(fname_, "rb");
 				if (CurrentTaf) {
 					load_sprite_pointer(CurrentTaf);
 				} else {
@@ -216,7 +211,7 @@ void detail::del_taf_tbl(taf_info *Tt) {
 	free((char *) Tt);
 
 	if (CurrentTaf) {
-		fclose((FILE *)CurrentTaf);
+		chewy_fclose(CurrentTaf);
 		CurrentTaf = 0;
 	}
 }
@@ -243,23 +238,23 @@ void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 }
 
 void detail::load_taf_seq(void *h, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	uint32 size;
 	taf_imageheader iheader;
 	int16 i;
 
-	fseek(handle, SpritePos[spr_nr], SEEK_SET);
+	chewy_fseek(handle, SpritePos[spr_nr], SEEK_SET);
 	for (i = 0; i < spr_anz && !modul; i++) {
-		if (fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
+		if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
 			if (!Tt->image[spr_nr + i]) {
 				size = iheader.width * iheader.height ;
 				Tt->image[spr_nr + i] = (byte *)calloc(size + 4l, 1);
 				((int16 *)Tt->image[spr_nr + i])[0] = iheader.width;
 				((int16 *)Tt->image[spr_nr + i])[1] = iheader.height;
-				fseek(handle, iheader.image, SEEK_SET);
+				chewy_fseek(handle, iheader.image, SEEK_SET);
 				mem->file->load_tafmcga(handle, iheader.komp, size, Tt->image[spr_nr + i] + 4l);
 			}
-			fseek(handle, iheader.next, SEEK_SET);
+			chewy_fseek(handle, iheader.next, SEEK_SET);
 		} else {
 			fcode = READFEHLER;
 			modul = DATEI;
@@ -270,8 +265,8 @@ void detail::load_taf_seq(void *h, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 #ifdef ICM
 
 void detail::save_detail(char *fname, int16 room_nr) {
-	FILE *new_handle;
-	FILE *old_handle;
+	Stream *new_handle;
+	Stream *old_handle;
 	taf_info *tmprdi;
 	char tmp_name[MAXPATH + 1];
 	char *str;
@@ -294,22 +289,22 @@ void detail::save_detail(char *fname, int16 room_nr) {
 	mem->file->fcopy(tmp_name, fname);
 	remove("rdi.old\0");
 	mem->file->fcopy("rdi.old", fname);
-	old_handle = fopen("rdi.old", "rb");
+	old_handle = chewy_fopen("rdi.old", "rb");
 	if (old_handle) {
-		new_handle = fopen(fname, "wb");
+		new_handle = chewy_fopen(fname, "wb");
 		if (new_handle) {
 			strcpy(rdi_datei_header.Id, "RDI\0");
 			rdi_datei_header.Anz = MAX_RDI_ROOM;
-			if (fwrite(&rdi_datei_header, sizeof(RdiDateiHeader), 1, new_handle)) {
+			if (chewy_fwrite(&rdi_datei_header, sizeof(RdiDateiHeader), 1, new_handle)) {
 
-				fseek(old_handle, sizeof(RdiDateiHeader), SEEK_SET);
+				chewy_fseek(old_handle, sizeof(RdiDateiHeader), SEEK_SET);
 				for (i = 0; i < room_nr && !modul ; i++) {
-					if (fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
+					if (chewy_fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
 #ifdef KONVERT
 						konvert_format(&tmp_rdi, &tmp_rdi_new);
-						if (!fwrite(&tmp_rdi_new, sizeof(room_detail_info_new), 1, new_handle))
+						if (!chewy_fwrite(&tmp_rdi_new, sizeof(room_detail_info_new), 1, new_handle))
 #else
-						if (!fwrite(&tmp_rdi, sizeof(room_detail_info), 1, new_handle))
+						if (!chewy_fwrite(&tmp_rdi, sizeof(room_detail_info), 1, new_handle))
 #endif
 						{
 							modul = DATEI;
@@ -323,21 +318,21 @@ void detail::save_detail(char *fname, int16 room_nr) {
 
 #ifdef KONVERT
 				konvert_format(&rdi, &rdi_new);
-				if (fwrite(&rdi_new, sizeof(room_detail_info_new), 1, new_handle))
+				if (chewy_fwrite(&rdi_new, sizeof(room_detail_info_new), 1, new_handle))
 #else
-				if (fwrite(&rdi, sizeof(room_detail_info), 1, new_handle))
+				if (chewy_fwrite(&rdi, sizeof(room_detail_info), 1, new_handle))
 #endif
 				{
 
-					fseek(old_handle, sizeof(room_detail_info), SEEK_CUR);
+					chewy_fseek(old_handle, sizeof(room_detail_info), SEEK_CUR);
 
 					for (i = 0; i < MAX_RDI_ROOM - (room_nr + 1) && !modul ; i++) {
-						if (fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
+						if (chewy_fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
 #ifdef KONVERT
 							konvert_format(&tmp_rdi, &tmp_rdi_new);
-							if (!fwrite(&tmp_rdi_new, sizeof(room_detail_info_new), 1, new_handle))
+							if (!chewy_fwrite(&tmp_rdi_new, sizeof(room_detail_info_new), 1, new_handle))
 #else
-							if (!fwrite(&tmp_rdi, sizeof(room_detail_info), 1, new_handle))
+							if (!chewy_fwrite(&tmp_rdi, sizeof(room_detail_info), 1, new_handle))
 #endif
 							{
 								modul = DATEI;
@@ -356,12 +351,12 @@ void detail::save_detail(char *fname, int16 room_nr) {
 				modul = DATEI;
 				fcode = WRITEFEHLER;
 			}
-			fclose(new_handle);
+			chewy_fclose(new_handle);
 		} else {
 			modul = DATEI;
 			fcode = OPENFEHLER;
 		}
-		fclose(old_handle);
+		chewy_fclose(old_handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
@@ -827,7 +822,7 @@ void detail::set_sound_area(byte *buffer, uint32 size) {
 	SoundBufferSize = size;
 }
 
-void detail::load_room_sounds(void *tvp_handle) {
+void detail::load_room_sounds(Stream *tvp_handle) {
 	int16 i, break_flag;
 	int16 index;
 	byte *workbuf;
@@ -1113,13 +1108,13 @@ void detail::load_taf_ani_sprite(int16 nr) {
 	int32 size;
 	taf_imageheader iheader;
 	if (CurrentTaf) {
-		fseek((FILE *)CurrentTaf, SpritePos[nr], SEEK_SET);
+		chewy_fseek(CurrentTaf, SpritePos[nr], SEEK_SET);
 
-		if (fread(&iheader, sizeof(taf_imageheader), 1, (FILE *)CurrentTaf)) {
+		if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, CurrentTaf)) {
 			size = (int32)iheader.width * (int32)iheader.height;
 			((int16 *)taf_load_buffer)[0] = iheader.width;
 			((int16 *)taf_load_buffer)[1] = iheader.height;
-			fseek((FILE *)CurrentTaf, iheader.image, SEEK_SET);
+			chewy_fseek(CurrentTaf, iheader.image, SEEK_SET);
 			if (taf_load_buffer)
 				mem->file->load_tafmcga(CurrentTaf, iheader.komp, size, taf_load_buffer + 4l);
 			else {
@@ -1139,24 +1134,24 @@ void detail::load_taf_ani_sprite(int16 nr) {
 }
 
 void detail::load_sprite_pointer(void *h) {
-	FILE *handle = (FILE *)h;
+	Stream *handle = (Stream *)h;
 	uint16 anzahl;
 	taf_dateiheader header;
 	taf_imageheader iheader;
 	int16 i;
 	if (handle) {
-		fseek(handle, 0, SEEK_SET);
-		if (fread(&header, sizeof(taf_dateiheader), 1, handle)) {
+		chewy_fseek(handle, 0, SEEK_SET);
+		if (chewy_fread(&header, sizeof(taf_dateiheader), 1, handle)) {
 			anzahl = header.count;
-			fseek(handle, header.next, SEEK_SET);
+			chewy_fseek(handle, header.next, SEEK_SET);
 			SpritePos[0] = header.next;
 			for (i = 1; i < anzahl && !modul; i++) {
-				if (!fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
+				if (!chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				}
 				SpritePos[i] = iheader.next;
-				fseek(handle, iheader.next, SEEK_SET);
+				chewy_fseek(handle, iheader.next, SEEK_SET);
 			}
 		} else {
 			modul = DATEI;

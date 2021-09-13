@@ -20,13 +20,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
-
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
+#include "chewy/file.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {
@@ -165,7 +161,7 @@ int16 StereoPos [8] = {63};
 char *Dbuffer [8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
 uint32 DbufferLen [8] = {0};
 uint32 DbSampleLen [8] = {0};
-FILE *DbufferHandles [8] = {0};
+Stream *DbufferHandles [8] = {0};
 
 ailclass::ailclass() {
 #if 0
@@ -608,17 +604,17 @@ void ailclass::start_db_voc(void *v, int16 kanal, int16 vol) {
 		memset(Dbuffer[kanal][0], 0, DbufferLen[kanal]);
 		memset(Dbuffer[kanal][1], 0, DbufferLen[kanal]);
 		do {
-			blockt = fgetc(voc);
+			blockt = chewy_fgetc(voc);
 			if (blockt > 7)
 				blockt = 8;
-			blocklen = (uint32) fgetc(voc);
-			blocklen += ((uint32)fgetc(voc)) << 8;
-			blocklen += ((uint32)fgetc(voc)) << 16;
+			blocklen = (uint32) chewy_fgetc(voc);
+			blocklen += ((uint32)chewy_fgetc(voc)) << 8;
+			blocklen += ((uint32)chewy_fgetc(voc)) << 16;
 			if (blockt != 1)
-				fseek(voc, blocklen, SEEK_CUR);
+				chewy_fseek(voc, blocklen, SEEK_CUR);
 		} while ((blockt != 1) && (blockt != 0));
 		if ((blockt == 1) && (!modul)) {
-			freq = fgetc(voc);
+			freq = chewy_fgetc(voc);
 			RealFrq = 1000000 / (256 - freq);
 			if (blocklen > DbufferLen[kanal]) {
 				DbufferHandles[kanal] = voc;
@@ -632,7 +628,7 @@ void ailclass::start_db_voc(void *v, int16 kanal, int16 vol) {
 				                       DbufferLen[kanal]);
 			} else {
 				DbSampleLen[kanal] = 0;
-				if (!fread(Dbuffer[kanal][0], blocklen, 1, voc)) {
+				if (!chewy_fread(Dbuffer[kanal][0], blocklen, 1, voc)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
@@ -669,7 +665,7 @@ void ailclass::serve_db_samples() {
 					len = DbSampleLen[i];
 					DbSampleLen[i] = 0;
 				}
-				if (!fread(Dbuffer[i][BufNr], len, 1, DbufferHandles[i])) {
+				if (!chewy_fread(Dbuffer[i][BufNr], len, 1, DbufferHandles[i])) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else

@@ -20,17 +20,10 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
-
 #include "chewy/ngshext.h"
 #include "chewy/atds.h"
 #include "chewy/defines.h"
+#include "chewy/file.h"
 #include "chewy/global.h"
 
 namespace Chewy {
@@ -281,9 +274,9 @@ void atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 	ssi[nr] = ssinit[0];
 }
 
-void *atdsys::pool_handle(const char *fname_, const char *fmode) {
-	FILE *handle;
-	handle = fopen(fname_, fmode);
+Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
+	Stream *handle;
+	handle = chewy_fopen(fname_, fmode);
 	if (handle) {
 		close_handle(ATDS_HANDLE);
 		atdshandle[ATDS_HANDLE] = handle;
@@ -295,11 +288,11 @@ void *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	return (handle);
 }
 
-void atdsys::set_speech_handle(void *speech_handle_) {
+void atdsys::set_speech_handle(Stream *speech_handle_) {
 	atdsv.SpeechHandle = speech_handle_;
 }
 
-void atdsys::set_handle(const char *fname_, int16 mode, void *handle, int16 chunk_start, int16 chunk_anz) {
+void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr;
 	ChunkHead Ch;
 	tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
@@ -312,16 +305,16 @@ void atdsys::set_handle(const char *fname_, int16 mode, void *handle, int16 chun
 			switch (mode) {
 			case INV_USE_DATEI:
 				mem->file->select_pool_item(atdshandle[mode], atdspooloff[mode]);
-				fseek((FILE *)atdshandle[mode], -(int)(sizeof(ChunkHead)), SEEK_CUR);
+				chewy_fseek(atdshandle[mode], -(int)(sizeof(ChunkHead)), SEEK_CUR);
 
-				if (!fread(&Ch, sizeof(ChunkHead), 1, (FILE *)atdshandle[mode])) {
+				if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, atdshandle[mode])) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else {
 					inv_use_mem = (char *)calloc(Ch.size + 3l, 1);
 					if (!modul) {
 						if (Ch.size) {
-							if (!fread(inv_use_mem, Ch.size, 1, (FILE *)atdshandle[mode])) {
+							if (!chewy_fread(inv_use_mem, Ch.size, 1, atdshandle[mode])) {
 								fcode = READFEHLER;
 								modul = DATEI;
 							} else
@@ -341,13 +334,13 @@ void atdsys::set_handle(const char *fname_, int16 mode, void *handle, int16 chun
 }
 
 void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
-	FILE *handle;
+	Stream *handle;
 	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname_, 0, 20000);
 	if (!modul) {
-		handle = fopen(fname_, fmode);
+		handle = chewy_fopen(fname_, fmode);
 		if (handle) {
 			close_handle(mode);
 			atdshandle[mode] = handle;
@@ -372,7 +365,7 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 
 void atdsys::close_handle(int16 mode) {
 	if (atdshandle[mode])
-		fclose((FILE *)atdshandle[mode]);
+		chewy_fclose(atdshandle[mode]);
 	atdshandle[mode] = 0;
 	if (atdsmem[mode])
 		free(atdsmem[mode]);
@@ -391,20 +384,20 @@ char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 }
 
 void atdsys::load_atds(int16 chunk_nr, int16 mode) {
-	FILE *handle;
+	Stream *handle;
 	ChunkHead Ch;
 	char *txt_adr;
-	handle = (FILE *)atdshandle[mode];
+	handle = atdshandle[mode];
 	txt_adr = atdsmem[mode];
 	if (handle && txt_adr) {
 		mem->file->select_pool_item(handle, chunk_nr + atdspooloff[mode]);
-		fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
-		if (!fread(&Ch, sizeof(ChunkHead), 1, handle)) {
+		chewy_fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
+		if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
 			if (Ch.size) {
-				if (!fread(txt_adr, Ch.size, 1, handle)) {
+				if (!chewy_fread(txt_adr, Ch.size, 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else if (mode != ADH_DATEI)
@@ -425,14 +418,14 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	if (atdshandle[ADH_HANDLE]) {
 		mem->file->select_pool_item(atdshandle[ADH_HANDLE], dia_nr);
 
-		fseek((FILE *)atdshandle[ADH_HANDLE], -(int)sizeof(ChunkHead), SEEK_CUR);
-		if (!fread(&Ch, sizeof(ChunkHead), 1, (FILE *)atdshandle[ADH_HANDLE])) {
+		chewy_fseek(atdshandle[ADH_HANDLE], -(int)sizeof(ChunkHead), SEEK_CUR);
+		if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, atdshandle[ADH_HANDLE])) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
-			fseek((FILE *)atdshandle[ADH_HANDLE], 0, SEEK_CUR);
+			chewy_fseek(atdshandle[ADH_HANDLE], 0, SEEK_CUR);
 			if (Ch.size) {
-				if (!fwrite(atdsmem[ADH_HANDLE], Ch.size, 1, (FILE *)atdshandle[ADH_HANDLE])) {
+				if (!chewy_fwrite(atdsmem[ADH_HANDLE], Ch.size, 1, atdshandle[ADH_HANDLE])) {
 					fcode = WRITEFEHLER;
 					modul = DATEI;
 				}
@@ -1331,10 +1324,10 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 			inv_block_nr = cur_inv + 1;
 			load_atds(inv_block_nr + atdspooloff[mode], INV_USE_DATEI);
 			if (atdshandle[INV_IDX_HANDLE]) {
-				fseek((FILE *)atdshandle[INV_IDX_HANDLE], sizeof(InvUse)*inv_block_nr
+				chewy_fseek(atdshandle[INV_IDX_HANDLE], sizeof(InvUse)*inv_block_nr
 				      *INV_STRC_ANZ, SEEK_SET);
 				if
-				(!fread(atdsmem[INV_IDX_HANDLE], sizeof(InvUse)*INV_STRC_ANZ, 1, (FILE *)atdshandle[INV_IDX_HANDLE])) {
+				(!chewy_fread(atdsmem[INV_IDX_HANDLE], sizeof(InvUse)*INV_STRC_ANZ, 1, atdshandle[INV_IDX_HANDLE])) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}

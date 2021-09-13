@@ -24,6 +24,7 @@
 #define CHEWY_DATEI_H
 
 #include "chewy/chewy.h"
+#include "chewy/file.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -36,19 +37,18 @@ public:
 	void load_pcx(const char *fname, byte *speicher, byte *palette);
 	void load_image(const char *fname, byte *sp, byte *palette);
 	void load_tafmcga(const char *fname, byte *sp, int16 nr);
-// FIXME: Were using FILE*
-	/**/
-	void load_image(void *handle, byte *sp, byte *palette);
-	uint16 select_pool_item(void *handle, uint16 nr);
-	void load_tafmcga(void *handle, int16 komp, uint32 size, byte *speicher);
-	void read_tpf_image(void *handle, int16 komp, uint32 size, byte *speicher);
-	uint32 load_voc(void *handle, byte *speicher);
-	uint32 load_item(void *handle, byte *speicher);
-	uint32 load_tmf(void *handle, tmf_header *song);
-	void write_tbf_image(void *handle, int16 komp, uint32 size, byte *speicher);
-	void write_tpf_image(void *handle, int16 komp, uint32 size, byte *speicher);
-	void load_palette(void *handle, byte *palette);
-	/**/
+
+	void load_image(Stream *handle, byte *sp, byte *palette);
+	uint16 select_pool_item(Stream *handle, uint16 nr);
+	void load_tafmcga(Stream *handle, int16 komp, uint32 size, byte *speicher);
+	void read_tpf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
+	uint32 load_voc(Stream *handle, byte *speicher);
+	uint32 load_item(Stream *handle, byte *speicher);
+	uint32 load_tmf(Stream *handle, tmf_header *song);
+	void write_tbf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
+	void write_tpf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
+	void load_palette(Stream *handle, byte *palette);
+
 	void load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo);
 	void load_korrektur(const char *fname, byte *sp);
 	void load_tff(const char *fname, byte *speicher);
@@ -78,8 +78,7 @@ public:
 	void cd(char *dir);
 	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);
-	void read_tbf_image(void *h, int16 komp, uint32 size, byte *sp);
-
+	void read_tbf_image(Stream *handle, int16 komp, uint32 size, byte *sp);
 };
 
 } // namespace Chewy

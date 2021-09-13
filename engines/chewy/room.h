@@ -143,9 +143,7 @@ private:
 	int16 AblageInfo[MAX_ABLAGE][2];
 
 	byte *GedMem[MAX_ABLAGE];
-	// FIXME: was FILE*
-	void *roomhandle[MAX_ROOM_HANDLE];
-
+	Stream *roomhandle[MAX_ROOM_HANDLE];
 };
 
 } // namespace Chewy

@@ -23,6 +23,8 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
+#include "chewy/file.h"
+
 namespace Chewy {
 
 #define ATDS_VOC_OFFSET 20
@@ -120,8 +122,7 @@ struct AtdsVar {
 
 	int16 VocNr;
 
-	//FIXME : Was using FILE*
-	void *SpeechHandle;
+	Stream *SpeechHandle;
 
 	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode);
 };
@@ -258,9 +259,9 @@ public:
 	void save_ads_header(int16 dia_nr);
 
 	// FIXME: was using FILE*
-	void *pool_handle(const char *fname, const char *fmode);
-	void set_speech_handle(void *speech_handle);
-	void set_handle(const char *fname, int16 mode, void *handle, int16 chunk_start, int16 chunk_anz);
+	Stream *pool_handle(const char *fname, const char *fmode);
+	void set_speech_handle(Stream *speech_handle);
+	void set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz);
 	void open_handle(const char *fname, const char *fmode, int16 mode);
 	void close_handle(int16 mode);
 	int16 atds_get_zeilen(char *str, int16 end_txt);
@@ -311,8 +312,7 @@ private:
 
 	int16 get_delay(int16 txt_len);
 
-	// FIXME : Was using FILE*
-	void *atdshandle[MAX_HANDLE];
+	Stream *atdshandle[MAX_HANDLE];
 	char *atdsmem[MAX_HANDLE];
 	int16 atdspooloff[MAX_HANDLE];
 	char *atsmem;

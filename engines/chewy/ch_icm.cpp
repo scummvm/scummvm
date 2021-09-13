@@ -1094,29 +1094,29 @@ int16 ja_nein() {
 }
 
 void save_iib(char *fname) {
-	FILE *handle;
+	Stream *handle;
 	modul = 0;
 	fcode = 0;
-	handle = fopen(fname, "rb+");
+	handle = chewy_fopen(fname, "rb+");
 	if (handle) {
-		if (!fread(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
+		if (!chewy_fread(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
 			fcode = READFEHLER;
-			modul = DATEI;
+			moduchewy_freadATEI;
 		} else if (!strnicmp(iib_datei_header.Id, "IIB", 3)) {
-			fclose(handle);
-			handle = fopen(fname, "wb+");
+			chewy_fclose(handle);
+			handle = chewy_fopen(fname, "wb+");
 			if (handle) {
 				iib_datei_header.Size = (uint32)(sizeof(RoomMovObjekt) * MAX_MOV_OBJ);
-				if (!fwrite(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
+				if (!chewy_fwrite(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
 					modul = DATEI;
 					fcode = WRITEFEHLER;
-				} else if (!fwrite(spieler.room_m_obj, sizeof(RoomMovObjekt)*MAX_MOV_OBJ, 1, handle)) {
+				} else if (!chewy_fwrite(spieler.room_m_obj, sizeof(RoomMovObjekt)*MAX_MOV_OBJ, 1, handle)) {
 					modul = DATEI;
 					fcode = WRITEFEHLER;
 				}
 			}
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	}
 }
 

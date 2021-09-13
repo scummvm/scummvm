@@ -20,15 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-//define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fputc
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "common/system.h"
 #include "chewy/defines.h"
 #include "chewy/global.h"
@@ -1096,7 +1087,7 @@ void flic_cut(int16 nr, int16 mode) {
 	det->disable_room_sound();
 	ailsnd->end_sound();
 	g_system->delayMillis(1000); // delay(50);
-	Ci.Handle = (void *)fopen("CUT\\CUT.TAP\0", "rb");
+	Ci.Handle = chewy_fopen("CUT\\CUT.TAP\0", "rb");
 	Ci.Fname = 0;
 	if (Ci.Handle) {
 		switch (nr) {
@@ -1123,7 +1114,7 @@ void flic_cut(int16 nr, int16 mode) {
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
@@ -1132,7 +1123,7 @@ void flic_cut(int16 nr, int16 mode) {
 				out->cls();
 				flc->custom_play(&Ci);
 				if (!modul) {
-					fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+					chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 					out->cls();
 					flc->custom_play(&Ci);
 				}
@@ -1148,27 +1139,27 @@ void flic_cut(int16 nr, int16 mode) {
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				fseek((FILE *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
@@ -1236,7 +1227,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		}
-		fclose((FILE *)Ci.Handle);
+		chewy_fclose(Ci.Handle);
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;

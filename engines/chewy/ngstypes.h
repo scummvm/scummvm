@@ -24,6 +24,7 @@
 #define CHEWY_NGSTYPES_H
 
 #include "chewy/ngsdefs.h"
+#include "chewy/file.h"
 #include "common/stream.h"
 
 namespace Chewy {
@@ -384,8 +385,8 @@ struct iog_init {
 	uint8 f3 = 0;
 	uint8 f4 = 0;
 	uint8 key_nr = 0;
-	void (*save_funktion)(void *handle) = nullptr; // FIXME - (FILE *handle);
-	void (*load_funktion)(void *handle) = nullptr; // FIXME - (FILE *handle);
+	void (*save_funktion)(void *handle) = nullptr; // FIXME - (Stream *handle);
+	void (*load_funktion)(void *handle) = nullptr; // FIXME - (Stream *handle);
 	int16 delay = 0;
 };
 
@@ -515,8 +516,7 @@ struct CustomFrameHead {
 
 struct CustomInfo {
 	char *Fname = nullptr;
-	// FIXME: Was FILE
-	void *Handle = nullptr;
+	Stream *Handle = nullptr;
 	byte *VirtScreen = 0;
 	byte *TempArea = 0;
 	byte *SoundSlot = 0;

@@ -20,11 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "chewy/defines.h"
 #include "chewy/global.h"
 #include "chewy/ngshext.h"
@@ -95,16 +90,15 @@ objekt::~objekt() {
 }
 
 int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
-	FILE *handle;
-	handle = fopen(fname_, "rb");
+	Stream *handle;
+	handle = chewy_fopen(fname_, "rb");
 	if (handle) {
-
-		if (!fread(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
+		if (!chewy_fread(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
-				if (!fread(rmo, (size_t)iib_datei_header.Size, 1, handle)) {
+				if (!chewy_fread(rmo, (size_t)iib_datei_header.Size, 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -116,7 +110,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
@@ -125,16 +119,16 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 }
 
 int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
-	FILE *handle;
-	handle = fopen(fname_, "rb");
+	Stream *handle;
+	handle = chewy_fopen(fname_, "rb");
 	if (handle) {
 
-		if (!fread(&sib_datei_header, sizeof(SibDateiHeader), 1, handle)) {
+		if (!chewy_fread(&sib_datei_header, sizeof(SibDateiHeader), 1, handle)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!fread(rsi, (size_t)(sib_datei_header.Anz * sizeof(RoomStaticInventar)), 1, handle)) {
+				if (!chewy_fread(rsi, (size_t)(sib_datei_header.Anz * sizeof(RoomStaticInventar)), 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -146,7 +140,7 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
@@ -155,16 +149,16 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 }
 
 int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
-	FILE *handle;
-	handle = fopen(fname_, "rb");
+	Stream *handle;
+	handle = chewy_fopen(fname_, "rb");
 	if (handle) {
 
-		if (!fread(&eib_datei_header, sizeof(EibDateiHeader), 1, handle)) {
+		if (!chewy_fread(&eib_datei_header, sizeof(EibDateiHeader), 1, handle)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!fread(RoomEx, (size_t)(eib_datei_header.Anz * sizeof(RoomExit)), 1, handle)) {
+				if (!chewy_fread(RoomEx, (size_t)(eib_datei_header.Anz * sizeof(RoomExit)), 1, handle)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -176,7 +170,7 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		fclose(handle);
+		chewy_fclose(handle);
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
