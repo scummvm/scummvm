@@ -107,7 +107,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G
 	},
 
-#ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS/Windows English (Available on Steam)
 	{
 		{
@@ -299,7 +298,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieTLC
 	},
-#endif
 
 	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
