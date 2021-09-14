@@ -190,10 +190,10 @@ byte *memory::void_adr(const char *filename) {
 	size = file->size(filename, 200);
 
 	if (!modul) {
-		ptr = (byte *)calloc(size, sizeof(long));
+		ptr = (byte *)calloc(size, sizeof(uint32));
 		if (!modul) {
 			*(uint32 *)ptr = size;
-			file->void_load(filename, ptr + sizeof(long), size);
+			file->void_load(filename, ptr + sizeof(uint32), size);
 			if (modul)
 				free(ptr);
 		}
