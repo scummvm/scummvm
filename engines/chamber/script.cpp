@@ -1,27 +1,51 @@
-#include <stdio.h>
-#include <string.h>
-#include "common.h"
-#include "script.h"
-#include "resdata.h"
-#include "cga.h"
-#include "cursor.h"
-#include "portrait.h"
-#include "input.h"
-#include "menu.h"
-#include "room.h"
-#include "dialog.h"
-#include "print.h"
-#include "anim.h"
-#include "invent.h"
-#include "sound.h"
-#include "savegame.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "chamber/chamber.h"
+#include "chamber/common.h"
+#include "chamber/script.h"
+#include "chamber/resdata.h"
+#include "chamber/cga.h"
+#include "chamber/cursor.h"
+#include "chamber/portrait.h"
+#include "chamber/input.h"
+#include "chamber/menu.h"
+#include "chamber/room.h"
+#include "chamber/dialog.h"
+#include "chamber/print.h"
+#include "chamber/anim.h"
+#include "chamber/invent.h"
+#include "chamber/sound.h"
+#include "chamber/savegame.h"
+
 
 #if 1
 #define DEBUG_SCRIPT
 char DEBUG_SCRIPT_LOG[] = "!script.log";
 #endif
 
-#include "scrvars.h"
+#include "chamber/scrvars.h"
+
+namespace Chamber {
 
 unsigned char rand_seed;
 unsigned short the_command;
@@ -2013,7 +2037,6 @@ unsigned int SCR_61_DrawPersonBubbleDialog(void) {
 }
 
 #if 1
-#include <stdio.h>
 unsigned char *DebugString(char *msg, ...) {
 	int i;
 	unsigned char c;
@@ -3210,3 +3233,5 @@ unsigned int RunCommandKeepSp(void) {
 	/*keep_sp = sp;*/
 	return RunCommand();
 }
+
+} // End of namespace Chamber

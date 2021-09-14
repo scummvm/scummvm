@@ -1,17 +1,42 @@
-#include <string.h>
-#include "common.h"
-#include "room.h"
-#include "resdata.h"
-#include "cga.h"
-#include "print.h"
-#include "anim.h"
-#include "cursor.h"
-#include "script.h"
-#include "print.h"
-#include "input.h"
-#include "dialog.h"
-#include "portrait.h"
-#include "sound.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "chamber/chamber.h"
+#include "chamber/common.h"
+#include "chamber/room.h"
+#include "chamber/resdata.h"
+#include "chamber/cga.h"
+#include "chamber/print.h"
+#include "chamber/anim.h"
+#include "chamber/cursor.h"
+#include "chamber/script.h"
+#include "chamber/print.h"
+#include "chamber/input.h"
+#include "chamber/dialog.h"
+#include "chamber/portrait.h"
+#include "chamber/sound.h"
+
+namespace Chamber {
+
 
 unsigned char scratch_mem1[8010];
 unsigned char *scratch_mem2 = scratch_mem1 + 1500;
@@ -1680,3 +1705,5 @@ void ResetAllPersons(void) {
 		pers_list[i].flags &= ~PERSFLG_80;
 	script_byte_vars.dead_flag = 0;
 }
+
+} // End of namespace Chamber
