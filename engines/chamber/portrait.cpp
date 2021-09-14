@@ -1,14 +1,38 @@
-#include <mem.h>
-#include <stdio.h>
-#include "common.h"
-#include "portrait.h"
-#include "resdata.h"
-#include "room.h"
-#include "cga.h"
-#include "script.h"
-#include "dialog.h"
-#include "input.h"
-#include "sound.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "chamber/chamber.h"
+#include "chamber/common.h"
+#include "chamber/portrait.h"
+#include "chamber/resdata.h"
+#include "chamber/room.h"
+#include "chamber/cga.h"
+#include "chamber/script.h"
+#include "chamber/dialog.h"
+#include "chamber/input.h"
+#include "chamber/sound.h"
+
+namespace Chamber {
+
 
 extern unsigned short cpu_speed_delay;
 
@@ -324,3 +348,5 @@ void AnimPortrait(unsigned char layer, unsigned char index, unsigned char delay)
 		}
 	}
 }
+
+} // End of namespace Chamber
