@@ -415,7 +415,7 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 					for (sprcount = 0; (sprcount < anzahl) && (!modul); sprcount++) {
 						tinfo->image[sprcount] = speicher;
 						f.seek(next, SEEK_SET);
-						if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, &f)) {
+						if (iheader.load(&f)) {
 							next = iheader.next;
 							image = iheader.image;
 						} else {
@@ -539,26 +539,30 @@ void datei::load_tff(const char *fname, byte *speicher) {
 	}
 }
 
-void datei::read_tbf_image(Stream *handle, int16 komp, uint32 size, byte *sp) {
-	uint32 pos;
-	char zeichen;
+void datei::read_tbf_image(Stream *stream, int16 komp, uint32 size, byte *sp) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
+	assert(rs);
+
+	uint32 pos = 0;
+	uint8 value;
 	uint8 count, i;
 	byte *speicher;
 	speicher = sp;
-	pos = 0;
+
 	if (komp == 1) {
+		// Run length encoding using count/value pairs
 		for (pos = 0; pos < size;) {
-			count = chewy_fgetc(handle);
-			zeichen = chewy_fgetc(handle);
+			count = rs->readByte();
+			value = rs->readByte();
+
 			for (i = 0; (i < count) && (pos < size); i++) {
-				speicher[pos] = zeichen;
+				speicher[pos] = value;
 				++pos;
 			}
 		}
-	}
-	else {
-		for (pos = 0; pos < size; pos++)
-			*speicher++ = (uint8)chewy_fgetc(handle);
+	} else {
+		rs->read(speicher, size);
+		speicher += size;
 	}
 }
 
