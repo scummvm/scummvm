@@ -1462,27 +1462,21 @@ void Script::o_copyrecttobg() {	// 0x37
 		right = 640 - 1;
 	}
 
-	uint16 i, width = right - left, height = bottom - top;
+	uint16 width = right - left, height = bottom - top;
 	uint32 offset = 0;
-	byte *fg, *bg;
 	uint32 pitch = _vm->_graphicsMan->_foreground.pitch;
 
 	debugC(1, kDebugScript, "Groovie::Script: COPYRECT((%d,%d)->(%d,%d))", left, top, right, bottom);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPYRECT((%d,%d)->(%d,%d))",_currentInstruction-9, left, top, right, bottom);
 
-	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - baseTop);
-	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop);
-	for (i = 0; i < height; i++) {
+	byte *fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - baseTop);
+	byte *bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop);
+	for (uint16 i = 0; i < height; i++) {
 		memcpy(bg + offset, fg + offset, width * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
 		offset += pitch;
 	}
-	// _vm->_graphicsMan->_background.copyFrom(_vm->_graphicsMan->_foreground);
 
-	//{
-	//	Graphics::Surface *_bg = &_vm->_graphicsMan->_background;
-	//	_vm->_system->copyRectToScreen(_bg->getPixels(), _bg->pitch, 0, (_vm->_system->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
-	//}
-	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop), pitch, left, top, width, height);
+	_vm->_system->copyRectToScreen(bg, pitch, left, top, width, height);
 	_vm->_graphicsMan->change();
 }
 
@@ -1895,14 +1889,12 @@ void Script::o2_midicontrol() {
 	uint16 arg1 = readScript16bits();
 	uint16 arg2 = readScript16bits();
 
-	// TODO: see if we need to revisit the commented code here, maybe @Alphard-o can help
 	switch (arg1) {
 	case 0:
 		// Stop Playback
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d:Stop: %d", arg1, arg2);
 		_vm->_musicPlayer->stop();
 		_vm->_soundQueue.stopAll();
-		//_vm->_musicPlayer->setBackgroundDelay(0);
 		break;
 
 	case 1:
@@ -1910,8 +1902,6 @@ void Script::o2_midicontrol() {
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d: Play song %d", arg1, arg2);
 		_vm->_musicPlayer->playSong(arg2);
 		_vm->_musicPlayer->setUserVolume(100);
-		//_vm->_musicPlayer->setBackgroundSong(arg2);
-		//_vm->_musicPlayer->startBackground();
 		break;
 
 	case 3:
@@ -1975,13 +1965,10 @@ void Script::o2_vdxtransition() {
 void Script::o2_savescreen() {
 	uint16 val = readScript16bits();
 
-	// TODO: Parameter and cleanup
+	// TODO: Parameter
 	if (val)
 		warning("Groovie::Script: o2_copyscreentobg: Param is %d", val);
 
-	// Graphics::Surface *screen = _vm->_system->lockScreen();
-	// _vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
-	// _vm->_system->unlockScreen();
 	_vm->_graphicsMan->saveScreen();
 
 	debugC(1, kDebugScript, "Groovie::Script: CopyScreenToBG3: 0x%04X", val);
@@ -1991,13 +1978,10 @@ void Script::o2_savescreen() {
 void Script::o2_restorescreen() {
 	uint16 val = readScript16bits();
 
-	// TODO: Parameter and cleanup
+	// TODO: Parameter
 	if (val)
 		warning("Groovie::Script: o2_copybgtoscreen: Param is %d", val);
 
-	// Graphics::Surface *screen = _vm->_system->lockScreen();
-	// _vm->_graphicsMan->_background.copyRectToSurface(*screen, 0, 80, Common::Rect(0, 0, 640, 320 - 80));
-	// _vm->_system->unlockScreen();
 	_vm->_graphicsMan->restoreScreen();
 
 	debugC(1, kDebugScript, "Groovie::Script: CopyBG3ToScreen: 0x%04X", val);

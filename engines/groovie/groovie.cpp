@@ -321,6 +321,11 @@ Common::Error GroovieEngine::run() {
 
 				_system->delayMillis(10);
 				tmr += 10;
+
+				// the script doesn't unset _waitingForInput
+				// so we unset it here in order to let the script run as many steps as it needs to
+				// this makes the game more responsive
+				_waitingForInput = false;
 			}
 
 			// Everything's fine, execute another script step

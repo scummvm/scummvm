@@ -190,6 +190,7 @@ bool MusicPlayer::play(uint32 fileref, bool loop) {
 
 void MusicPlayer::stop() {
 	_backgroundFileRef = 0;
+	setBackgroundDelay(0);
 	unload();
 }
 
