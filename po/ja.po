@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-11 16:51+0000\n"
+"POT-Creation-Date: 2021-09-13 05:48+0000\n"
 "PO-Revision-Date: 2021-09-12 05:07+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7109,11 +7109,11 @@ msgstr ""
 "フォントにアンチエイリアスが有効である場合、テキストはより滑らかに表示されま"
 "す。"
 
-#: engines/stark/stark.cpp:283
+#: engines/stark/stark.cpp:285
 msgid "You are missing recommended data files:"
 msgstr "推奨されたデータファイルが見つかりません："
 
-#: engines/stark/stark.cpp:297
+#: engines/stark/stark.cpp:299
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7122,18 +7122,18 @@ msgstr ""
 "テキストスタイルを使用するには、fontsフォルダーが必要です。これはSteam版に存"
 "在しません。デモ版から取得してください。"
 
-#: engines/stark/stark.cpp:304
+#: engines/stark/stark.cpp:306
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr "ローカライズ用に適切なフォントを設定する場合、gui.iniが必要です。"
 
-#: engines/stark/stark.cpp:310
+#: engines/stark/stark.cpp:312
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "ローカライズされた確認ダイアログを使用するには、language.iniが必要です。"
 
-#: engines/stark/stark.cpp:316
+#: engines/stark/stark.cpp:318
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "スタイルが適用された確認ダイアログを使用するには、game.exeが必要です。"
 
