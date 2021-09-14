@@ -1375,7 +1375,7 @@ void datei::get_tdfanz(const char *fname, int16 *menueanz, int16 *knopfanz) {
 }
 
 uint32 datei::size(const char *fname, int16 typ) {
-	Stream *handle;
+	Common::File f;
 	tbf_dateiheader *tbfheader;
 	tff_header tff;
 	pcx_header *pcxheader;
@@ -1386,81 +1386,76 @@ uint32 datei::size(const char *fname, int16 typ) {
 	tbfheader = (tbf_dateiheader *)tmp;
 	pcxheader = (pcx_header *) tmp;
 	mh = (mod_header *)tmp;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
-	i = 0;
 
-	if ((*filename) == 0)
+	strncpy(filename, fname, MAXPATH - 5);
+	filename[MAXPATH - 5] = '\0';
+	if (!filename[0])
 		get_filename(filename, MAXPATH);
+
 	if (!strchr(filename, '.')) {
 		switch (typ) {
 		case TBFDATEI:
 		case TPFDATEI:
-			strcat(filename, ".TBF\0");
+			strcat(filename, ".tbf");
 			break;
 		case PCXDATEI:
-			strcat(filename, ".PCX\0");
+			strcat(filename, ".pcx");
 			break;
 		case TFFDATEI:
-			strcat(filename, ".TFF\0");
+			strcat(filename, ".tff");
 			break;
 		case VOCDATEI:
-			strcat(filename, ".VOC\0");
+			strcat(filename, ".voc");
 			break;
 		case MODDATEI:
-			strcat(filename, ".MOD\0");
+			strcat(filename, ".mod");
 			break;
 		case TMFDATEI:
-			strcat(filename, ".TMF\0");
+			strcat(filename, ".tmf");
 			typ = 300;
 			break;
 		}
 	}
-	handle = chewy_fopen(filename, "rb");
-	if (handle) {
+
+	if (f.open(filename)) {
 		switch (typ) {
 		case TBFDATEI:
 		case TPFDATEI:
-			if (chewy_fread(tbfheader, sizeof(tbf_dateiheader), 1, handle)) {
+			if (chewy_fread(tbfheader, sizeof(tbf_dateiheader), 1, &f)) {
 				id = get_id(tbfheader->id);
 				if ((id == TBFDATEI) || (id == TPFDATEI)) {
 					size = tbfheader->entpsize + 4;
-				}
-				else {
+				} else {
 					fcode = NOTTBF;
 					modul = DATEI;
 					size = 0;
 				}
-			}
-			else {
+			} else {
 				fcode = READFEHLER;
 				modul = DATEI;
 			}
 			break;
 
 		case PCXDATEI:
-			if (chewy_fread(pcxheader, sizeof(pcx_header), 1, handle)) {
+			if (chewy_fread(pcxheader, sizeof(pcx_header), 1, &f)) {
 				if ((pcxheader->id == 10) && (pcxheader->version == 5)
 				        && (pcxheader->bpp == 8)) {
 					hoehe = (pcxheader->ymax - pcxheader->ymin) + 1;
 					breite = pcxheader->bpz * pcxheader->planes;
 					size = (uint32)((long)hoehe) * ((long)breite) + 4;
-				}
-				else {
+				} else {
 					fcode = NOTTBF;
 					modul = DATEI;
 					size = 0;
 				}
-			}
-			else {
+			} else {
 				fcode = READFEHLER;
 				modul = DATEI;
 			}
 			break;
 
 		case TFFDATEI:
-			if (chewy_fread(&tff, sizeof(tff_header), 1, handle)) {
+			if (chewy_fread(&tff, sizeof(tff_header), 1, &f)) {
 				id = get_id(tff.id);
 				if (id == TFFDATEI)
 					size = tff.size + sizeof(tff_header);
@@ -1468,24 +1463,21 @@ uint32 datei::size(const char *fname, int16 typ) {
 					modul = DATEI;
 					fcode = NOTTBF;
 				}
-			}
-			else {
+			} else {
 				modul = DATEI;
 				fcode = READFEHLER;
 			}
 			break;
 
 		case VOCDATEI:
-			chewy_fseek(handle, 0, SEEK_END);
-			size = (uint32)chewy_ftell(handle);
-			size -= sizeof(voc_header);
+			size = (uint32)f.size() - sizeof(voc_header);
 			break;
 
 		case MODDATEI:
-			chewy_fseek(handle, 0, SEEK_END);
-			size = (uint32)chewy_ftell(handle);
+			size = (uint32)f.size();
 			id = 0;
-			if (chewy_fread(mh, sizeof(mod_header), 1, handle)) {
+
+			if (chewy_fread(mh, sizeof(mod_header), 1, &f)) {
 				if (!strncmp(mh->id, "M.K.", 4))
 					id = 1;
 				if (!strncmp(mh->id, "M!K!", 4))
@@ -1503,18 +1495,18 @@ uint32 datei::size(const char *fname, int16 typ) {
 			break;
 
 		default:
-			chewy_fseek(handle, 0, SEEK_END);
-			size = (uint32)chewy_ftell(handle);
+			size = (uint32)f.size();
 			break;
 		}
-		chewy_fclose(handle);
-	}
-	else {
+
+		f.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 		size = 0;
 	}
-	return (size);
+
+	return size;
 }
 
 uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
