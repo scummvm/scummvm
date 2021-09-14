@@ -202,6 +202,9 @@ public:
 	Graphics::Surface *decodeImage(const Common::String &file);
 	const byte *decodePalette(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y);
+	void composeImagePalette(Graphics::Surface *surf, const byte *palette);
+	int _paletteIndex;
+	Common::HashMap <uint32, int> _inversePalette;
 	void drawScreenFrame();
 
 	// Cursors
@@ -218,7 +221,8 @@ public:
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	Common::String _framePath;
-	Graphics::Surface *_frame;
+	Graphics::Surface *_frameImage;
+	byte *_framePalette;
 	Common::String _nextVS;
 	Common::Point _origin;
 	void drawScreen();

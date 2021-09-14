@@ -44,13 +44,13 @@
 namespace Private {
 
 PrivateEngine *g_private = NULL;
-
 extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr),
-	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
+	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr), 
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
 	// Global object for external reference
@@ -62,6 +62,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_pausedSetting = "";
 	_modified = false;
 	_mode = -1;
+	_paletteIndex = 0;
+	_inversePalette.clear();
 	_toTake = false;
 
 	// Movies
@@ -118,7 +120,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 PrivateEngine::~PrivateEngine() {
 	// Dispose your resources here
-	delete _frame;
+	delete _frameImage;
 	delete _rnd;
 
 	delete Gen::g_vm;
@@ -202,7 +204,6 @@ Common::Error PrivateEngine::run() {
 	// Initialize graphics
 
 #ifdef PLAYSTATION3
-
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_screenW, _screenH, &_pixelFormat);
 	_transparentColor = 250;
@@ -225,7 +226,10 @@ Common::Error PrivateEngine::run() {
 	_compositeSurface->setTransparentColor(_transparentColor);
 
 	// Load the game frame once
-	_frame = decodeImage(_framePath);
+	_frameImage = decodeImage(_framePath);
+	const byte *palette = decodePalette(_framePath);
+	_framePalette = (byte *) malloc(3*256);
+	memcpy(_framePalette, palette, 3*256);
 
 	// Main event loop
 	Common::Event event;
@@ -330,6 +334,10 @@ Common::Error PrivateEngine::run() {
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
+			_compositeSurface->clearPalette();
+			_paletteIndex = 0;
+			_inversePalette.clear();
+			_inversePalette[0x0000FF00] = _transparentColor;
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
@@ -1241,15 +1249,34 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	Graphics::Surface *surf = decodeImage(name);
 #ifdef PLAYSTATION3
 	const byte *palette = decodePalette(name);
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-
-	if (_mode == 0 && surf->getPixel(0, 0) != _transparentColor)
-		_compositeSurface->clear(surf->getPixel(0, 0));
+	composeImagePalette(surf, palette);
+	_compositeSurface->setTransparentColor(_transparentColor);
 #endif
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
 	_image->destroy();
+}
+
+void PrivateEngine::composeImagePalette(Graphics::Surface *surf, const byte *palette) {
+	int i,j,p,v;
+	uint32 c;
+
+	for (i = 0; i < surf->w; i++)
+		for (j = 0; j < surf->h; j++) {
+			c = surf->getPixel(i, j);
+			v = *((uint32*) (palette + 3*c)) & 0x00FFFFFF;
+
+			if (_inversePalette.contains(v))
+				p = _inversePalette[v];
+			else {
+				p = _paletteIndex;
+				_paletteIndex++;
+			}
+			surf->setPixel(i, j, p);
+			_inversePalette[v] = p;
+			_compositeSurface->setPalette(palette + 3*c, p, 1);
+		}
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1259,7 +1286,15 @@ void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
 }
 
 void PrivateEngine::drawScreenFrame() {
-	g_system->copyRectToScreen(_frame->getPixels(), _frame->pitch, 0, 0, _screenW, _screenH);
+#ifdef PLAYSTATION3
+	int p = 256-28;
+	_paletteIndex = p;
+	_frameImage = decodeImage(_framePath);
+	composeImagePalette(_frameImage, _framePalette);
+	for (int c = p; c < 256; c++)
+		g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
+#endif
+	g_system->copyRectToScreen(_frameImage->getPixels(), _frameImage->pitch, 0, 0, _screenW, _screenH);
 }
 
 Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
@@ -1284,6 +1319,11 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	_image->destroy();
 
 	if (drawn) {
+#ifdef PLAYSTATION3
+		const byte *palette = decodePalette(name);
+		composeImagePalette(surf, palette);
+		_compositeSurface->setTransparentColor(_transparentColor);
+#endif
 		drawMask(surf);
 	}
 
@@ -1308,6 +1348,11 @@ void PrivateEngine::drawScreen() {
 
 		cframe->free();
 		delete cframe;
+	} else {
+#ifdef PLAYSTATION3
+		for (int c = 0; c < 256; c++)
+			g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
+#endif
 	}
 
 	if (_mode == 1) {
