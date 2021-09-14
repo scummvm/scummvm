@@ -69,7 +69,8 @@ taf_info *memory::taf_adr(const char *filename) {
 			tinfo = 0;
 		}
 	}
-	return (tinfo);
+
+	return tinfo;
 }
 
 taf_seq_info *memory::taf_seq_adr(void *h, int16 image_start,
@@ -187,6 +188,7 @@ byte *memory::void_adr(const char *filename) {
 	uint32 size = 0;
 	byte *ptr = 0;
 	size = file->size(filename, 200);
+
 	if (!modul) {
 		ptr = (byte *)calloc(size, sizeof(long));
 		if (!modul) {
@@ -196,7 +198,8 @@ byte *memory::void_adr(const char *filename) {
 				free(ptr);
 		}
 	}
-	return (ptr);
+
+	return ptr;
 }
 
 } // namespace Chewy

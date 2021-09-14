@@ -54,7 +54,8 @@ void *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
 		fcode = OPENFEHLER;
 		err->set_user_msg(fname1);
 	}
-	return (roomhandle[mode]);
+
+	return roomhandle[mode];
 }
 
 void Room::close_handle(int16 mode) {
