@@ -796,50 +796,46 @@ void datei::load_vocinfo(const char *fname, voc_header *speicher) {
 }
 
 void datei::void_load(const char *fname, byte *speicher, uint32 size) {
-	Stream *handle;
-	int16 i;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
+	Common::File f;
 
-	handle = chewy_fopen(filename, "rb");
-	if (handle) {
-		if (!(chewy_fread(speicher, (uint16)size, 1, handle))) {
+	strncpy(filename, fname, MAXPATH - 1);
+	filename[MAXPATH - 1] = '\0';
+
+	if (f.open(filename)) {
+		if (!f.read(speicher, size)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		chewy_fclose(handle);
-	}
-	else {
+
+		f.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
 }
 
 uint32 datei::load_file(const char *fname, byte *speicher) {
-	Stream *handle;
+	Common::File f;
 	uint32 size = 0;
-	int16 i = 0;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
 
-	handle = chewy_fopen(filename, "rb");
-	if (handle) {
-		chewy_fseek(handle, 0l, SEEK_END);
-		size = chewy_ftell(handle);
-		chewy_fseek(handle, 0l, SEEK_SET);
-		if (!(chewy_fread(speicher, (size_t)size, 1, handle))) {
+	strncpy(filename, fname, MAXPATH - 1);
+	filename[MAXPATH - 1] = '\0';
+
+	if (f.open(filename)) {
+		size = f.size();
+
+		if (!f.read(speicher, size)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		chewy_fclose(handle);
-	}
-	else {
+
+		f.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
-	return (size);
+
+	return size;
 }
 
 uint32 datei::load_item(Stream *handle, byte *speicher) {
@@ -1382,7 +1378,7 @@ uint32 datei::size(const char *fname, int16 typ) {
 	mod_header *mh;
 	uint16 hoehe, breite;
 	uint32 size = 0;
-	int16 id = 0, i;
+	int16 id = 0;
 	tbfheader = (tbf_dateiheader *)tmp;
 	pcxheader = (pcx_header *) tmp;
 	mh = (mod_header *)tmp;
