@@ -23,6 +23,8 @@
 #ifndef CHEWY_OBJEKT_H
 #define CHEWY_OBJEKT_H
 
+#include "common/stream.h"
+
 namespace Chewy {
 
 struct RoomMovObjekt {
@@ -33,34 +35,28 @@ struct RoomMovObjekt {
 	uint8 XOff;
 	uint8 YOff;
 	int16 TxtNr;
-
 	int16 NeuObj;
-
 	int16 ActionObj;
-
 	uint8 ZustandAk;
-
 	uint8 ZustandOff;
-
 	uint8 ZustandFlipFlop;
-
 	uint8 AutoMov;
-
 	uint8 AniFlag;
-
 	uint8 Del;
-
 	uint8 Attribut;
-
 	uint8 HeldHide;
-
 	int16 ZEbene;
+
+	bool load(Common::SeekableReadStream *src);
+	static size_t size() { return 24; }
 };
 
 struct IibDateiHeader {
 	char Id[4];
 	char Tafname[14];
 	uint32 Size;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct RoomStaticInventar {
@@ -96,6 +92,8 @@ struct RoomStaticInventar {
 struct SibDateiHeader {
 	char Id[4];
 	int16 Anz;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct RoomExit {
