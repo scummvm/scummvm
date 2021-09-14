@@ -773,6 +773,9 @@ void cleanupGUIMessagers() {
 
 #ifdef  WriteStatus
 void WriteStatusF(int16 line, const char *msg, ...) {
+	if (!g_vm->_showStatusMsg)
+		return;
+
 	va_list         argptr;
 	if (displayEnabled()) {
 		va_start(argptr, msg);
@@ -788,6 +791,9 @@ void WriteStatusF(int16 line, const char *msg, ...) {
 }
 
 void WriteStatusF2(int16 line, const char *msg, ...) {
+	if (!g_vm->_showStatusMsg)
+		return;
+
 	va_list         argptr;
 	if (displayEnabled()) {
 		va_start(argptr, msg);

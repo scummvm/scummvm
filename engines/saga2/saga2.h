@@ -199,6 +199,7 @@ public:
 	bool _teleportOnMap;
 	bool _showPosition;
 	bool _showStats;
+	bool _showStatusMsg;
 
 	bool _indivControlsFlag;
 	bool _userControlsSetup;

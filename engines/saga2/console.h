@@ -68,6 +68,9 @@ private:
     // Input: <1/0>. Sets whether an item's stats show when holding it.
 	bool cmdStats(int argc, const char **argv);
 
+	// Input: <1/0>. Sets whether the original debug status messages show.
+	bool cmdStatusMsg(int argc, const char **argv);
+
     // Input: <1/0>. Sets whether you can teleport by right clicking on the screen.
 	bool cmdTeleportOnClick(int argc, const char **argv);
 

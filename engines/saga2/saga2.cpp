@@ -92,6 +92,7 @@ Saga2Engine::Saga2Engine(OSystem *syst, const SAGA2GameDescription *desc)
 
 	_showPosition = false;
 	_showStats = false;
+	_showStatusMsg = false;
 	_teleportOnClick = false;
 	_teleportOnMap = false;
 
