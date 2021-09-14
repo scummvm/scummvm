@@ -455,49 +455,44 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 }
 
 void datei::load_korrektur(const char *fname, byte *sp) {
-	Stream *handle;
-	taf_dateiheader *header;
-	int16 id, i;
+	Common::File f;
+	taf_dateiheader *header = (taf_dateiheader *)tmp;
+	int16 id;
 	byte *speicher;
-	header = (taf_dateiheader *)tmp;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
-	i = 0;
-	if ((filename[0]) == 0)
+
+	strncpy(filename, fname, MAXPATH - 5);
+	filename[MAXPATH - 5] = '\0';
+	if (!filename[0])
 		get_filename(filename, MAXPATH);
-	if (!strchr(filename, '.'))strcat(filename, ".TAF\0");
+	if (!strchr(filename, '.'))
+		strcat(filename, ".taf");
 
 	speicher = sp;
 	if (speicher) {
-		handle = chewy_fopen(filename, "rb");
-		if (handle) {
-			if (chewy_fread(header, sizeof(taf_dateiheader), 1, handle)) {
+		if (f.open(filename)) {
+			if (header->load(&f)) {
 				id = get_id(header->id);
 				if ((id == TAFDATEI) && (header->korrekt > 0)) {
-					chewy_fseek(handle, -((int)(header->count * sizeof(uint32))*header->korrekt), SEEK_END);
-					if (!chewy_fread(speicher, header->count * sizeof(uint32), 1, handle)) {
+					f.seek(-((int)(header->count * sizeof(uint32)) * header->korrekt), SEEK_END);
+					if (!f.read(speicher, header->count * sizeof(uint32))) {
 						fcode = READFEHLER;
 						modul = DATEI;
 					}
-				}
-				else {
+				} else {
 					fcode = NOTTBF;
 					modul = DATEI;
 				}
-			}
-			else {
+			} else {
 				fcode = READFEHLER;
 				modul = DATEI;
 			}
-			chewy_fclose(handle);
-		}
-		else {
+
+			f.close();
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
-	}
-	else {
+	} else {
 		fcode = ZEIGERFEHLER;
 		modul = GRAFIK;
 	}
