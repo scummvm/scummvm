@@ -69,10 +69,12 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	int16 ret;
 	modul = 0;
 	fcode = 0;
+
 	clear_prog_ani();
 	det->load_rdi(Rb->DetFile, room_nr);
 	ERROR
 	load_sound();
+
 	if (player->SoundSwitch == false)
 		det->disable_room_sound();
 	if (!modul) {

@@ -46,8 +46,6 @@ void standard_init() {
 	flc = new flic;
 	mov = new movclass;
 
-	init_load();
-
 	out->vsync_start();
 	out->init();
 	out->cls();
@@ -108,6 +106,7 @@ void standard_init() {
 
 	curblk.cur_back = cur_back;
 	sound_init();
+	init_load();
 }
 
 void var_init() {
@@ -177,7 +176,6 @@ void var_init() {
 }
 
 void init_room() {
-
 	room_blk.AkAblage = 0;
 	room_blk.LowPalMem = pal;
 	room_blk.InvFile = INVENTAR;
@@ -187,7 +185,7 @@ void init_room() {
 	room_blk.Rsi = spieler.room_s_obj;
 	room_blk.AadLoad = true;
 	room_blk.AtsLoad = true;
-	strcpy(room_blk.RoomDir, "room/\0");
+	strcpy(room_blk.RoomDir, "room/");
 
 	room->open_handle(&background[0], "rb", R_TGPDATEI);
 	ERROR
