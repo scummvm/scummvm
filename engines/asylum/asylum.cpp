@@ -83,9 +83,6 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "vids");
 	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "music");
 
-	if (checkGameVersion("Steam") || isAltDemo())
-		ConfMan.setInt("scale_factor", 1);
-
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
 }
