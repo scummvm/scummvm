@@ -261,6 +261,13 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 
 		_scripts.push_back(script);
 	}
+
+	// Patch for Chapter 2 Lockout bug
+	if (_vm->checkGameVersion("Unpatched") && getWorld()->chapter == kChapter2) {
+		_scripts[ 3].commands[ 2].param1 = 1506;
+		_scripts[34].commands[13].param1 =  453;
+		_scripts[43].commands[ 9].param1 =  455;
+	}
 }
 
 void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {

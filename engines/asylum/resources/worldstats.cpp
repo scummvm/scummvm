@@ -271,6 +271,14 @@ load_inventory:
 	if (_vm->checkGameVersion("Demo"))
 		return;
 
+	// Patch for Chapter 2 Lockout bug
+	if (_vm->checkGameVersion("Unpatched") && chapter == kChapter2) {
+		ActionArea *area978 = actions[getActionAreaIndexById(978)];
+		area978->flagNums[0] = -556;
+		area978->flagNums[1] = -368;
+		area978->flagNums[2] = -50;
+	}
+
 	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);
 
 	field_E848C = stream->readSint32LE();
