@@ -67,15 +67,14 @@ detail::~detail() {
 }
 
 void detail::load_rdi(const char *fname_, int16 room_nr) {
-	Stream *handle;
-	taf_info *tmprdi;
-	tmprdi = rdi.dptr;
-	handle = chewy_fopen(fname_, "rb");
-	if (handle) {
-		if (chewy_fread(&rdi_datei_header, sizeof(RdiDateiHeader), 1, handle)) {
+	Common::File f;
+	taf_info *tmprdi = rdi.dptr;
+
+	if (fname_ && f.open(fname_)) {
+		if (chewy_fread(&rdi_datei_header, sizeof(RdiDateiHeader), 1, &f)) {
 			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
-				chewy_fseek(handle, (long)room_nr * (long)sizeof(room_detail_info), SEEK_CUR);
-				if (!chewy_fread(&rdi, sizeof(room_detail_info), 1, handle)) {
+				f.seek((long)room_nr * (long)sizeof(room_detail_info), SEEK_CUR);
+				if (!chewy_fread(&rdi, sizeof(room_detail_info), 1, &f)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
@@ -87,11 +86,13 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
+
 	rdi.dptr = tmprdi;
 }
 
