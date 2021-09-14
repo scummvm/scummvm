@@ -47,7 +47,7 @@ taf_info *memory::taf_adr(const char *filename) {
 	kgroesse = 0l;
 	if (!modul) {
 		anz_image = tafheader->count;
-		kgroesse = ((uint32)anz_image) * 4l;
+		kgroesse = ((uint32)anz_image) * sizeof(byte *);
 
 		tmp1 = (byte *)calloc(size + 768l + kgroesse, 1);
 		if (!modul) {
