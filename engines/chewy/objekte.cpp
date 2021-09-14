@@ -90,19 +90,27 @@ objekt::~objekt() {
 }
 
 int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
-	Stream *handle;
-	handle = chewy_fopen(fname_, "rb");
-	if (handle) {
-		if (!chewy_fread(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
+	Common::File f;
+	bool valid = true;
+
+	if (f.open(fname_)) {
+		if (!iib_datei_header.load(&f)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
-				if (!chewy_fread(rmo, (size_t)iib_datei_header.Size, 1, handle)) {
+				assert(iib_datei_header.Size % RoomMovObjekt::size() == 0);
+
+				for (int i = 0; i < iib_datei_header.Size / RoomMovObjekt::size() && valid;
+						++i, ++rmo) {
+					valid = rmo->load(&f);
+				}
+
+				if (!valid) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
-					max_inventar_obj = (int16) iib_datei_header.Size / sizeof(RoomMovObjekt);
+					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObjekt::size();
 				}
 			} else
 				max_inventar_obj = 0;
@@ -110,25 +118,26 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
-	return (max_inventar_obj);
+
+	return max_inventar_obj;
 }
 
 int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
-	Stream *handle;
-	handle = chewy_fopen(fname_, "rb");
-	if (handle) {
+	Common::File f;
 
-		if (!chewy_fread(&sib_datei_header, sizeof(SibDateiHeader), 1, handle)) {
+	if (f.open(fname_)) {
+		if (!chewy_fread(&sib_datei_header, sizeof(SibDateiHeader), 1, &f)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!chewy_fread(rsi, (size_t)(sib_datei_header.Anz * sizeof(RoomStaticInventar)), 1, handle)) {
+				if (!chewy_fread(rsi, (size_t)(sib_datei_header.Anz * sizeof(RoomStaticInventar)), 1, &f)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -140,25 +149,26 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
-	return (max_static_inventar);
+
+	return max_static_inventar;
 }
 
 int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
-	Stream *handle;
-	handle = chewy_fopen(fname_, "rb");
-	if (handle) {
+	Common::File f;
 
-		if (!chewy_fread(&eib_datei_header, sizeof(EibDateiHeader), 1, handle)) {
+	if (f.open(fname_)) {
+		if (!chewy_fread(&eib_datei_header, sizeof(EibDateiHeader), 1, &f)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!chewy_fread(RoomEx, (size_t)(eib_datei_header.Anz * sizeof(RoomExit)), 1, handle)) {
+				if (!chewy_fread(RoomEx, (size_t)(eib_datei_header.Anz * sizeof(RoomExit)), 1, &f)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -170,12 +180,14 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
-	return (max_exit);
+
+	return max_exit;
 }
 
 void objekt::sort() {

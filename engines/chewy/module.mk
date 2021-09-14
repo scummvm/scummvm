@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	movclass.o \
 	ngstypes.o \
+	objekt.o \
 	objekte.o \
 	r_event.o \
 	room.o \
