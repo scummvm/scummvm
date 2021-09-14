@@ -1,0 +1,39 @@
+[ScummVM-Opendingux README]
+
+Controls
+========
+- Dpad/analog joy: move mouse cursor
+- A: left mouse button click
+- B: right mouse button click
+- X: '0' key
+- Y: '.' key (skips dialogue line in some engines)
+- Left Trigger: open global menu
+- Right Trigger: opens virtual keyboard
+- Select: ESC button, scene skip in some engines
+- Start: F5 key, game menu in some engines
+
+Installation from binaries
+==========================
+Copy over scummvm_$(VARIANT).opk file to the apps directory on the device.
+
+Building from binaries
+======================
+It's pretty simple if you are running Linux on an x86/amd64 machine:
+1. Download and install the desired toolchain (http://od.abstraction.se/opendingux/toolchain/) in /opt/
+2. git clone the ScummVM repository
+3. Run the backends/platform/opendingux/build_gcw0.sh or backends/platform/opendingux/build_lepus.sh script
+4. Copy the resulting file scummvm_$(VARIANT).opk to your device
+5. Enjoy
+
+Troubleshooting
+===============
+Please be advised that currently games with a resolution above 320x240
+are disabled on lepus due to the limited screen resolutions and relative
+weak processor on these devices.
+
+In case you need to submit a bugreport, you may find the log file at the
+following path:
+
+     /var/tmp/scummvm.log
+
+The log file is being overwritten at every ScummVM run.

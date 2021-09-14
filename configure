@@ -783,7 +783,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
+  --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0, opendingux,
                           gph, iphone, ios7, ios7-arm64, maemo, n64, null, openpandora,
                           psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
@@ -824,6 +824,7 @@ Special configuration feature:
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
                                            gcw0 for GCW Zero
+					   opendingux for Opendingux Beta
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone (iOS <= 6)
@@ -1584,7 +1585,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux | gcw0)
+dingux | gcw0 | opendingux)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -3389,6 +3390,17 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
+		opendingux)
+			_sysroot=`$CXX --print-sysroot`
+                        _sdlpath=$_sysroot/usr/bin
+                        append_var DEFINES "-DGCW0 -DREDUCE_MEMORY_USAGE"
+                        append_var CXXFLAGS "-funsigned-char -ffast-math -fdata-sections -ffunction-sections"
+                        append_var LDFLAGS "-Wl,--as-needed,--gc-sections"
+                        append_var LDFLAGS "-Wl,-zcommon-page-size=2097152,-zmax-page-size=2097152 -lhugetlbfs"
+                        _backend="dingux"
+                        _optimization_level=-O3
+                        _port_mk="backends/platform/opendingux/opendingux.mk"
+                        ;;
 		gp2x)
 			append_var DEFINES "-DGP2X"
 			append_var CXXFLAGS "-march=armv4t"
