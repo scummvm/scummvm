@@ -116,9 +116,9 @@ namespace Chewy {
 #define WIN_LOOK2 WIN_LOOK_X+4,WIN_LOOK_Y+4,3,3,60,0
 
 #define MAX_RAUM 70
-#define MAX_MOV_OBJ 100
+#define MAX_MOV_OBJ 140
 
-#define MAX_FEST_OBJ 100
+#define MAX_FEST_OBJ 140
 
 #define MAX_EXIT 150
 #define MAX_AUTO_MOV 20
