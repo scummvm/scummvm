@@ -35,16 +35,14 @@ namespace Chamber {
 		for(;;) ;   \
 	}
 
+#include "common/pack-start.h"
 typedef struct rect_t {
 	unsigned char sx;
 	unsigned char ex;
 	unsigned char sy;
 	unsigned char ey;
 } rect_t;
-
-#if sizeof(rect_t) != 4
-#error "rect_t must be 4 bytes long"
-#endif
+#include "common/pack-end.h"
 
 #if 0
 #define DEBUG

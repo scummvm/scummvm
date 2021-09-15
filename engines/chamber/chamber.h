@@ -23,6 +23,8 @@
 #ifndef CHAMBER_H
 #define CHAMBER_H
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"

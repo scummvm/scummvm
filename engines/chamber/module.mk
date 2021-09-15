@@ -1,8 +1,9 @@
 MODULE := engines/chamber
 
 MODULE_OBJS := \
-	metaengine.o \
-	chamber.o
+	anim.o \
+	chamber.o \
+	metaengine.o
 
 MODULE_DIRS += \
 	engines/chamber
