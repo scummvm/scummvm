@@ -214,7 +214,7 @@ void init_atds() {
 	atds->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
 	ERROR
 
-	strcpy(tmp_path + 2, ADSH_TMP);
+	strcpy(tmp_path, ADSH_TMP);
 
 	mem->file->fcopy(tmp_path, ADS_TXT_STEUER);
 	atds->open_handle(tmp_path, "rb+", ADH_DATEI);
