@@ -728,6 +728,12 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 		info.filename.deleteLastChar();
 	}
 
+	if (info.filename == "ini_sc") {
+		// This is an initialization MIDI file, which is not
+		// needed for digital tracks
+		return false;
+	}
+
 	// Create the audio stream
 	Audio::SeekableAudioStream *seekStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
 
