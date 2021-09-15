@@ -21,6 +21,8 @@
  */
 
 #include "common/debug.h"
+#include "common/system.h"
+#include "common/savefile.h"
 #include "chewy/datei.h"
 #include "chewy/file.h"
 
@@ -1926,24 +1928,21 @@ int16 datei::get_id(char *id_code) {
 }
 
 void datei::fcopy(const char *d_fname, const char *s_fname) {
-	Stream *shandle;
-	Stream *dhandle;
-	int16 ch;
-	shandle = chewy_fopen(s_fname, "rb");
-	if (shandle) {
-		dhandle = chewy_fopen(d_fname, "wb+");
-		if (shandle) {
-			while ((ch = chewy_fgetc(shandle)) != EOF)
-				chewy_fputc(ch, dhandle);
-			chewy_fclose(dhandle);
-		}
-		else {
+	Common::File src;
+	Common::OutSaveFile *dest;
+
+	if (src.open(s_fname)) {
+		dest = g_system->getSavefileManager()->openForSaving(d_fname);
+		if (dest) {
+			dest->writeStream(&src);
+			delete dest;
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
-		chewy_fclose(shandle);
-	}
-	else {
+
+		src.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
