@@ -80,6 +80,9 @@ public:
 
 	void init(const Common::String &recordFileName, RecordMode mode);
 	void deinit();
+	bool isInitialized() const {
+		return _initialized;
+	}
 	bool processDelayMillis();
 	uint32 getRandomSeed(const Common::String &name);
 	void processTimeAndDate(TimeDate &td, bool skipRecord);

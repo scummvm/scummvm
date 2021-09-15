@@ -331,6 +331,10 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
+#ifdef ENABLE_EVENTRECORDER
+	// don't show splash screen for event recorder
+	if (!g_eventRec.isInitialized())
+#endif
 	if (!splash && !GUI::GuiManager::instance()._launched)
 		splashScreen();
 
