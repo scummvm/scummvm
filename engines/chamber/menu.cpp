@@ -53,9 +53,6 @@ struct {
 	{10, 24}
 };
 
-unsigned char act_menu_x;
-unsigned char act_menu_y;
-
 /*Handle keyboard keys in actions menu (to cycle through choices with directional keys)*/
 unsigned char PollKeyboardInActionsMenu(void) {
 	if (!key_direction) {

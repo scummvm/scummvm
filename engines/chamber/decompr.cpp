@@ -49,7 +49,7 @@ unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned c
 	return code;
 }
 
-unsigned long decompress(unsigned char huge *data, unsigned char huge *result) {
+unsigned long decompress(unsigned char *data, unsigned char *result) {
 	unsigned char dict_size, more;
 	unsigned int compsize;
 	unsigned int i;
@@ -118,4 +118,3 @@ unsigned long decompress(unsigned char huge *data, unsigned char huge *result) {
 }
 
 } // End of namespace Chamber
-

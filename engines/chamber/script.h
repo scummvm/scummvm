@@ -192,6 +192,7 @@ extern script_byte_vars_t script_byte_vars;
 #define ITEMFLG_80 0x80
 
 /*TODO: manipulated from script, do not change*/
+#include "common/pack-start.h"
 typedef struct item_t {
 	unsigned char flags;
 	unsigned char flags2;
@@ -199,10 +200,7 @@ typedef struct item_t {
 	unsigned char name;     /*item name index (relative)*/
 	unsigned short command; /*TODO: warning! in native format, check if never accessed from scripts*/
 } item_t;
-
-#if sizeof(item_t) != 6
-#error "item_t must be 6 bytes long"
-#endif
+#include "common/pack-end.h"
 
 #define MAX_INV_ITEMS 63
 extern item_t inventory_items[MAX_INV_ITEMS];
