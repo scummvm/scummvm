@@ -144,8 +144,8 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
         f.locked,
         len(f.data),
         len(f.rsrc),
-        f.crdate,  # TODO: dates are wrong, investigate
-        f.mddate,  # TODO: dates are wrong, investigate
+        f.crdate,
+        f.mddate,
         0,
         newFlags,
         0,
