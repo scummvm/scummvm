@@ -35,6 +35,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/rendermode.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
@@ -177,6 +178,7 @@ static const char HELP_STRING[] =
 	"                           playback by Event Recorder\n"
 	"  --screenshot-period=NUM  When recording, trigger a screenshot every NUM milliseconds\n"
 	"                           (default: 60000)\n"
+	"  --list-records           Display a list of recordings for the target specified\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -661,6 +663,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("record-file-name")
 			END_OPTION
 
+			DO_LONG_COMMAND("list-records")
+			END_COMMAND
+
 			DO_LONG_OPTION_INT("screenshot-period")
 			END_OPTION
 #endif
@@ -1024,25 +1029,78 @@ static void listAllEngineDebugFlags() {
 		printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
 		printDebugFlags(metaEngine.getDebugChannels());
 	}
-
 }
+
+static void assembleTargets(const Common::String &singleTarget, Common::Array<Common::String> &targets) {
+	if (!singleTarget.empty()) {
+		targets.push_back(singleTarget);
+		return;
+	}
+
+	// If no target is specified, list save games for all known targets
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter;
+
+	targets.reserve(domains.size());
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		targets.push_back(iter->_key);
+	}
+}
+
+#ifdef ENABLE_EVENTRECORDER
+static Common::Error listRecords(const Common::String &singleTarget) {
+	Common::Error result = Common::kNoError;
+
+	Common::Array<Common::String> targets;
+	assembleTargets(singleTarget, targets);
+
+	// FIXME HACK
+	g_system->initBackend();
+
+	Common::String oldDomain = ConfMan.getActiveDomainName();
+
+	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i) {
+		Common::String currentTarget;
+		QualifiedGameDescriptor game;
+
+		if (ConfMan.hasGameDomain(*i)) {
+			// The name is a known target
+			currentTarget = *i;
+			EngineMan.upgradeTargetIfNecessary(*i);
+			const Plugin *metaEnginePlugin = nullptr;
+			game = EngineMan.findTarget(*i, &metaEnginePlugin);
+		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
+			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
+		} else {
+			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
+		}
+
+		const Common::String &qualifiedGameId = buildQualifiedGameName(game.engineId, game.gameId);
+		ConfMan.setActiveDomain(currentTarget);
+		Common::String pattern(currentTarget + ".r??");
+		const Common::StringArray &files = g_system->getSavefileManager()->listSavefiles(pattern);
+		if (files.empty()) {
+			continue;
+		}
+		printf("Recordings for target '%s' (gameid '%s'):\n", i->c_str(), qualifiedGameId.c_str());
+		for (Common::StringArray::const_iterator x = files.begin(); x != files.end(); ++x) {
+			printf("  %s\n", x->c_str());
+		}
+	}
+
+	// Revert to the old active domain
+	ConfMan.setActiveDomain(oldDomain);
+
+	return result;
+}
+#endif
 
 /** List all saves states for the given target. */
 static Common::Error listSaves(const Common::String &singleTarget) {
 	Common::Error result = Common::kNoError;
 
-	// If no target is specified, list save games for all known targets
 	Common::Array<Common::String> targets;
-	if (!singleTarget.empty())
-		targets.push_back(singleTarget);
-	else {
-		const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-		Common::ConfigManager::DomainMap::const_iterator iter;
-
-		targets.reserve(domains.size());
-		for (iter = domains.begin(); iter != domains.end(); ++iter)
-			targets.push_back(iter->_key);
-	}
+	assembleTargets(singleTarget, targets);
 
 	// FIXME HACK
 	g_system->initBackend();
@@ -1528,6 +1586,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "list-all-engines") {
 		listAllEngines();
 		return true;
+#ifdef ENABLE_EVENTRECORDER
+	} else if (command == "list-records") {
+		err = listRecords(settings["game"]);
+		return true;
+#endif
 	} else if (command == "list-saves") {
 		err = listSaves(settings["game"]);
 		return true;
