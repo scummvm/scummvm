@@ -226,10 +226,6 @@ struct SpriteInfo {
 	}
 };
 
-// Font renderer flags
-#define FONT_TTF_RENDERER   0x01
-#define FONT_WFN_RENDERER   0x02
-
 // Various font parameters, defining and extending font rendering behavior.
 // While FontRenderer object's main goal is to render single line of text at
 // the strictly determined position on canvas, FontInfo may additionally
@@ -250,23 +246,6 @@ struct FontInfo {
 	int           LineSpacing = 0;
 
 	FontInfo();
-
-	inline bool isTTFFont() const {
-		return (Flags & FONT_TTF_RENDERER) != 0;
-	}
-
-	inline void setTTFFont() {
-		Flags |= FONT_TTF_RENDERER;
-	}
-
-	inline bool isWFNFont() const {
-		return (Flags & FONT_WFN_RENDERER) != 0;
-	}
-
-	inline void setWFNFont() {
-		Flags |= FONT_WFN_RENDERER;
-	}
-
 };
 
 } // namespace AGS3

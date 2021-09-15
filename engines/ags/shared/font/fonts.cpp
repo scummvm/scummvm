@@ -84,7 +84,7 @@ bool font_first_renderer_loaded() {
 }
 
 bool is_font_loaded(size_t fontNumber) {
-	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;
+	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;;
 }
 
 IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
@@ -138,9 +138,9 @@ int get_font_outline(size_t font_number) {
 	return _GP(fonts)[font_number].Info.Outline;
 }
 
-int get_outline_ttf_font(size_t font_number) {
+int get_outline_font(size_t font_number) {
 	for (size_t fontNum = 0; fontNum < _GP(fonts).size(); ++fontNum) {
-		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number && _GP(fonts)[fontNum].Info.isTTFFont())
+		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number)
 			return fontNum;
 	}
 
@@ -325,7 +325,6 @@ void set_fontinfo(size_t fontNumber, const FontInfo &finfo) {
 
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
-
 	if (_GP(fonts).size() <= fontNumber)
 		_GP(fonts).resize(fontNumber + 1);
 	else
@@ -336,18 +335,15 @@ bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
-		_GP(fonts)[fontNumber].Info.setTTFFont();
 	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
-		_GP(fonts)[fontNumber].Info.setWFNFont();
 	}
 
 	if (_GP(fonts)[fontNumber].Renderer) {
 		_GP(fonts)[fontNumber].Info = font_info;
 		return true;
 	}
-
 	return false;
 }
 
