@@ -70,29 +70,22 @@ unsigned char cga_pixel_flip[256] = {
   Switch to CGA 320x200x2bpp mode
 */
 void SwitchToGraphicsMode(void) {
-	union REGS reg;
-
-	reg.x.ax = 4;
-	int86(0x10, &reg, &reg);
+	warning("STUB: SwitchToGraphicsMode()");
 }
 
 /*
   Switch to text mode
 */
 void SwitchToTextMode(void) {
-	union REGS reg;
-
-	reg.x.ax = 3;
-	int86(0x10, &reg, &reg);
+	warning("STUB: SwitchToTextMode()");
 }
 
 void WaitVBlank(void) {
-	while ((inportb(0x3DA) & 8) != 0) ;
-	while ((inportb(0x3DA) & 8) == 0) ;
 }
 
 void CGA_ColorSelect(unsigned char csel) {
-	outportb(0x3D9, csel);
+	warning("STUB: CGA_ColorSelect(%d)", csel);
+	//outportb(0x3D9, csel);
 }
 
 void CGA_BackBufferToRealFull(void) {
@@ -121,8 +114,8 @@ void CGA_SwapRealBackBuffer(void) {
 	unsigned int i;
 	unsigned short *s, *d;
 	WaitVBlank();
-	s = (unsigned short far *)CGA_SCREENBUFFER;
-	d = (unsigned short far *)backbuffer;
+	s = (unsigned short *)CGA_SCREENBUFFER;
+	d = (unsigned short *)backbuffer;
 	for (i = 0; i < sizeof(backbuffer) / 2; i++) {
 		unsigned short t = *s;
 		*s++ = *d;
@@ -192,7 +185,10 @@ unsigned char *CGA_BackupImage(unsigned char *screen, unsigned int ofs, unsigned
 }
 
 unsigned char *CGA_BackupImageReal(unsigned int ofs, unsigned int w, unsigned int h) {
-	return CGA_BackupImage(MK_FP(CGA_BASE_SEG, 0), ofs, w, h, scratch_mem2);
+	warning("STUB: CGA_BackupImageReal()");
+
+	return NULL;
+	//return CGA_BackupImage(MK_FP(CGA_BASE_SEG, 0), ofs, w, h, scratch_mem2);
 }
 
 /*

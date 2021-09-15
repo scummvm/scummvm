@@ -57,7 +57,6 @@ unsigned char cursor_y;
 unsigned char cursor_backup[CURSOR_WIDTH_SPR * CURSOR_HEIGHT / CGA_BITS_PER_PIXEL];
 unsigned int last_cursor_draw_ofs = 0;
 unsigned int cursor_draw_ofs;
-unsigned char cursor_bit_shift;
 
 /*
 Select cursor shape and its hotspot
