@@ -2,7 +2,10 @@ MODULE := engines/chamber
 
 MODULE_OBJS := \
 	anim.o \
+	bkbuff.o \
+	cga.o \
 	chamber.o \
+	cursor.o \
 	metaengine.o
 
 MODULE_DIRS += \
