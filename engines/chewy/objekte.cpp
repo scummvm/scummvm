@@ -99,9 +99,9 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 			modul = DATEI;
 		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
-				assert(iib_datei_header.Size % RoomMovObjekt::size() == 0);
+				assert(iib_datei_header.Size % RoomMovObjekt::SIZE() == 0);
 
-				for (int i = 0; i < iib_datei_header.Size / RoomMovObjekt::size() && valid;
+				for (int i = 0; i < iib_datei_header.Size / RoomMovObjekt::SIZE() && valid;
 						++i, ++rmo) {
 					valid = rmo->load(&f);
 				}
@@ -110,7 +110,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
-					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObjekt::size();
+					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObjekt::SIZE();
 				}
 			} else
 				max_inventar_obj = 0;

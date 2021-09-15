@@ -271,31 +271,31 @@ void datei::load_image(Stream *handle, byte *sp, byte *palette) {
 		chewy_fread(&ch, sizeof(ChunkHead), 1, handle);
 }
 
-uint16 datei::select_pool_item(Stream *handle, uint16 nr) {
+uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	uint32 tmp1;
 	NewPhead *ph;
 	ph = (NewPhead *)tmp;
-	if (handle) {
-		chewy_fseek(handle, 0, SEEK_SET);
-		if (!(chewy_fread(ph, sizeof(NewPhead), 1, handle))) {
+
+	if (rs) {
+		rs->seek(0, SEEK_SET);
+		if (!ph->load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
-			chewy_fseek(handle, 0, SEEK_SET);
+			rs->seek(0, SEEK_SET);
 		} else {
 			if (!strncmp(ph->id, "NGS", 3)) {
 				if (nr >= ph->PoolAnz)
 					nr = ph->PoolAnz - 1;
-				chewy_fseek(handle, -(int)((ph->PoolAnz - nr) * sizeof(uint32)), SEEK_END);
-				if (!(chewy_fread(&tmp1, sizeof(uint32), 1, handle))) {
-					modul = DATEI;
-					fcode = READFEHLER;
-					chewy_fseek(handle, 0, SEEK_SET);
-				} else
-					chewy_fseek(handle, tmp1, SEEK_SET);
+
+				rs->seek(-(int)((ph->PoolAnz - nr) * sizeof(uint32)), SEEK_END);
+				tmp1 = rs->readUint32LE();
+				rs->seek(tmp1, SEEK_SET);
 			}
 		}
 	}
-	return (nr);
+
+	return nr;
 }
 
 void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
@@ -1506,42 +1506,46 @@ uint32 datei::size(const char *fname, int16 typ) {
 }
 
 uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
-	Stream *handle;
+	Common::File f;
 	NewPhead *Nph;
 	ChunkHead ch;
 	int16 i;
 	uint32 size;
 	Nph = (NewPhead *)tmp;
 	size = 0;
-	handle = chewy_fopen(fname, "rb");
-	if (handle) {
-		if (!(chewy_fread(Nph, sizeof(NewPhead), 1, handle))) {
+
+	if (f.open(fname)) {
+		if (!Nph->load(&f)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
 			if (!strncmp(Nph->id, "NGS", 3)) {
-				select_pool_item(handle, chunk_start);
-				chewy_fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
+				select_pool_item(&f, chunk_start);
+				f.seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+
 				for (i = chunk_start; (i < Nph->PoolAnz) && (!modul)
 				        && i < (chunk_start + chunk_anz); i++) {
-					if (!chewy_fread(&ch, sizeof(ChunkHead), 1, handle)) {
+					if (!ch.load(&f)) {
 						modul = DATEI;
 						fcode = READFEHLER;
 						size = 0;
 					} else {
 						if (ch.size > size)
 							size = ch.size;
-						chewy_fseek(handle, ch.size, SEEK_CUR);
+
+						f.seek(ch.size, SEEK_CUR);
 					}
 				}
 			}
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
-	return (size);
+
+	return size;
 }
 
 uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
