@@ -35,6 +35,8 @@
 #include "groovie/tlcgame.h"
 #include "groovie/t11hgame.h"
 
+#include "gui/saveload.h"
+
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -651,6 +653,25 @@ void Script::o_videofromref() {			// 0x09
 			debugCN(1, kDebugScript, "Groovie::Script:  (This video is special somehow!)");
 			warning("Groovie::Script: (This video (0x%04X) is special somehow!)", fileref);
 		}
+		break;
+
+	case 0x2420:	// load from main menu
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0) {
+				_currentInstruction = 0x287;
+				_bitflags = 0;
+				setVariable(0x19, slot);
+			} else {
+				_currentInstruction = 0x016;	// back to main menu (load game / new game)
+			}
+
+			return;
+		}
+		break;
 
 	default:
 		break;

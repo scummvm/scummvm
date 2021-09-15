@@ -30,6 +30,7 @@
 namespace Groovie {
 
 #define GAMEOPTION_T7G_FAST_MOVIE_SPEED  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS2
 
 static const DebugChannelDef debugFlagList[] = {
 	{Groovie::kDebugVideo, "Video", "Debug video and audio playback"},
@@ -66,7 +67,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kGroovieT7G
 	},
@@ -78,7 +79,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", NULL, -1,
 						"T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kGroovieT7G
 	},
@@ -90,7 +91,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
 						"intro.gjd", NULL, 31711554),
 			Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kGroovieT7G
 	},
@@ -102,7 +103,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
 						"SeventhGuest", NULL, -1),
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
-			GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO5(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kGroovieT7G
 	},
@@ -352,6 +353,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Fast movie speed"),
 			_s("Play movies at an increased speed"),
 			"fast_movie_speed",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
 			false
 		}
 	},
