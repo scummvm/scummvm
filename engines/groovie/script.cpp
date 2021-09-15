@@ -655,9 +655,9 @@ void Script::o_videofromref() {			// 0x09
 		}
 		break;
 
-	case 0x2420:	// load from main menu
+	case 0x2420:	// load from the main menu
 		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -667,6 +667,42 @@ void Script::o_videofromref() {			// 0x09
 				setVariable(0x19, slot);
 			} else {
 				_currentInstruction = 0x016;	// back to main menu (load game / new game)
+			}
+
+			return;
+		}
+		break;
+
+	case 0x2422: // save from the in-game menu
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+			GUI::MessageDialog saveOrLoad(_("Would you like to save or restore a game?"), _("Save"), _("Restore"));
+
+			int choice = saveOrLoad.runModal();
+			if (choice == GUI::kMessageOK) {
+				// Save
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+				int slot = dialog->runModalWithCurrentTarget();
+				Common::String saveName = dialog->getResultString();
+				delete dialog;
+
+				if (slot >= 0) {
+					directGameSave(slot, saveName);
+				}
+
+				_currentInstruction = 0x17C8; // back to game menu
+			} else {
+				// Restore
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+				int slot = dialog->runModalWithCurrentTarget();
+				delete dialog;
+
+				if (slot >= 0) {
+					_currentInstruction = 0x287;
+					_bitflags = 0;
+					setVariable(0x19, slot);
+				} else {
+					_currentInstruction = 0x17C8; // back to game menu
+				}
 			}
 
 			return;
