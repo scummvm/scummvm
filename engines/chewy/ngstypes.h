@@ -489,6 +489,9 @@ struct FrameHead {
 struct ChunkHead {
 	uint32 size = 0;
 	uint16 type = 0;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() { return 6; }
 };
 
 struct CustomFlicHead {

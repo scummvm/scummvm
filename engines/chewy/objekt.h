@@ -48,7 +48,7 @@ struct RoomMovObjekt {
 	int16 ZEbene;
 
 	bool load(Common::SeekableReadStream *src);
-	static size_t size() { return 24; }
+	static constexpr size_t SIZE() { return 24; }
 };
 
 struct IibDateiHeader {

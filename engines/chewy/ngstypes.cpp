@@ -246,4 +246,11 @@ bool tmf_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
+bool ChunkHead::load(Common::SeekableReadStream *src) {
+	size = src->readUint32LE();
+	type = src->readUint16LE();
+
+	return true;
+}
+
 } // namespace Chewy
