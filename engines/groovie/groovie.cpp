@@ -179,7 +179,6 @@ Common::Error GroovieEngine::run() {
 		}
 		// else, fall through
 	case kGroovieT11H:
-	case kGroovieUHP:
 		// Create the music player
 		switch (getPlatform()) {
 		case Common::kPlatformMacintosh:
@@ -198,6 +197,7 @@ Common::Error GroovieEngine::run() {
 		break;
 
 	case kGroovieCDY:
+	case kGroovieUHP:
 		_musicPlayer = new MusicPlayerClan(this);
 		break;
 

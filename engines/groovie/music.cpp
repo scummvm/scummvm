@@ -834,5 +834,4 @@ Common::String MusicPlayerClan::getFilename(uint32 fileref) {
 #endif
 }
 
-
 } // End of Groovie namespace
