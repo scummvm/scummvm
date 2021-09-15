@@ -72,6 +72,9 @@ static String errorToString(ErrorCode errorCode) {
 	case kUserCanceled:
 		return _s("User canceled");
 
+	case kManualSaveSlotNotSupportedByNativeEngine:
+		return _s("Manual saving to this particular slot is not supported. Please try another slot");
+
 	case kUnknownError:
 	default:
 		return _s("Unknown error");

@@ -260,7 +260,7 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 	// This also secures _selectedGame which is unsigned integer (uint16)
 	// from overflowing in the subtraction below
 	if (slot < 0 || (!isAutosave && slot == 0)) {
-		return Common::kWritePermissionDenied;
+		return Common::kManualSaveSlotNotSupportedByNativeEngine;
 	}
 	// Set the save slot and save the game
 	// _selectedGame value is one unit lower than the ScummVM's Save File Manager's slot value

@@ -73,6 +73,15 @@ enum ErrorCode {
 
 	kUserCanceled,			///< User has canceled the launching of the game.
 
+	/** Manually saving to this slot is not supported (yet or at all) by the game engine.
+	 * For example:
+	 * Some engines (eg. SKY) show their save slots starting from slot 1.
+	 * GMM allows saving to slot 0, and also that slot can optionally be used for autosaves, if the game engine supports them.
+	 * If the user manually saves, using GMM, to an unsupported slot by the in-game native UI, 
+	 * they won't be able to find and restore their save game from the native UI.
+	 */
+	kManualSaveSlotNotSupportedByNativeEngine,
+
 	kUnknownError				///< Catch-all error, used if no other error code matches.
 };
 
