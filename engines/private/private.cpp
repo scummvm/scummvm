@@ -63,7 +63,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_modified = false;
 	_mode = -1;
 	_paletteIndex = 0;
-	_inversePalette.clear();
+	_colorToIndex.clear();
 	_toTake = false;
 
 	// Movies
@@ -328,6 +328,13 @@ Common::Error PrivateEngine::run() {
 				drawScreen();
 			}
 
+			_paletteIndex = 0;
+			_colorToIndex.clear();
+			_indexToColor.clear();
+			_colorToIndex[0x00000000] = 0;
+			_indexToColor[0] = 0x00000000;
+			_colorToIndex[0x0000FF00] = _transparentColor;
+			_indexToColor[_transparentColor] = 0x0000FF00;
 			g_system->delayMillis(5); // Yield to the system
 			continue;
 		}
@@ -335,9 +342,15 @@ Common::Error PrivateEngine::run() {
 		if (!_nextSetting.empty()) {
 			removeTimer();
 			_compositeSurface->clearPalette();
+			_compositeSurface->clear();
 			_paletteIndex = 0;
-			_inversePalette.clear();
-			_inversePalette[0x0000FF00] = _transparentColor;
+			_colorToIndex.clear();
+			_indexToColor.clear();
+
+			_colorToIndex[0x00000000] = 0;
+			_indexToColor[0] = 0x00000000;
+			_colorToIndex[0x0000FF00] = _transparentColor;
+			_indexToColor[_transparentColor] = 0x0000FF00;
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
@@ -1261,22 +1274,30 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 void PrivateEngine::composeImagePalette(Graphics::Surface *surf, const byte *palette) {
 	int i,j,p,v;
 	uint32 c;
-
+	//_paletteIndex = 0;
+	//debug("number of colors already in the palette %d", _colorToIndex.size());
 	for (i = 0; i < surf->w; i++)
 		for (j = 0; j < surf->h; j++) {
 			c = surf->getPixel(i, j);
 			v = *((uint32*) (palette + 3*c)) & 0x00FFFFFF;
 
-			if (_inversePalette.contains(v))
-				p = _inversePalette[v];
+			if (_colorToIndex.contains(v))
+				p = _colorToIndex[v];
 			else {
+				while (_indexToColor.contains(_paletteIndex)) {
+					//debug("increasing _paletteIndex to %d", _paletteIndex+1);
+					_paletteIndex++;
+				}
 				p = _paletteIndex;
-				_paletteIndex++;
+				if(p >= 256)
+					error("skipping remapping %.8x", v);
 			}
 			surf->setPixel(i, j, p);
-			_inversePalette[v] = p;
+			_colorToIndex[v] = p;
+			_indexToColor[p] = v;
 			_compositeSurface->setPalette(palette + 3*c, p, 1);
 		}
+	//debug("number of colors currently in the palette %d", _colorToIndex.size());
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1287,14 +1308,15 @@ void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
 
 void PrivateEngine::drawScreenFrame() {
 #ifdef PLAYSTATION3
-	int p = 256-28;
-	_paletteIndex = p;
-	_frameImage = decodeImage(_framePath);
-	composeImagePalette(_frameImage, _framePalette);
-	for (int c = p; c < 256; c++)
-		g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
-#endif
+	Graphics::Surface frame; 
+	frame.create(_frameImage->w, _frameImage->h, _frameImage->format);
+	frame.copyFrom(*_frameImage);
+	composeImagePalette(&frame, _framePalette);
+	g_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, _screenW, _screenH);
+	frame.free();
+#else
 	g_system->copyRectToScreen(_frameImage->getPixels(), _frameImage->pitch, 0, 0, _screenW, _screenH);
+#endif 
 }
 
 Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
@@ -1337,27 +1359,41 @@ void PrivateEngine::drawMask(Graphics::Surface *surf) {
 void PrivateEngine::drawScreen() {
 	Graphics::ManagedSurface *surface = _compositeSurface;
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
+
+#ifdef PLAYSTATION3
+		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
+		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
+
+		if (_videoDecoder->getPalette() != nullptr) {
+			Graphics::Surface cframe;
+			cframe.create(_frameImage->w, _frameImage->h, _frameImage->format);
+			cframe.copyFrom(*frame);
+			composeImagePalette(&cframe, _videoDecoder->getPalette());
+			//g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
+			surface->blitFrom(cframe, center);
+			cframe.free();
+		} else 
+			surface->blitFrom(*frame, center);
+#else
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
 		surface->blitFrom(*cframe, center);
-#ifdef PLAYSTATION3
-		if (_videoDecoder->getPalette() != nullptr)
-			g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
-#endif
-
 		cframe->free();
 		delete cframe;
-	} else {
-#ifdef PLAYSTATION3
-		for (int c = 0; c < 256; c++)
-			g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
 #endif
-	}
+
+	} 
 
 	if (_mode == 1) {
 		drawScreenFrame();
 	}
+
+#ifdef PLAYSTATION3
+	for (int c = 0; c < 256; c++)
+		g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
+#endif
+
 
 	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
 	Graphics::Surface sa = surface->getSubArea(w);
