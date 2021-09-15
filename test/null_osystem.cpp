@@ -21,6 +21,9 @@ void BaseBackend::initBackend() {
 void BaseBackend::fillScreen(uint32 col) {
 }
 
+void BaseBackend::printStacktrace() {
+}
+
 void EventsBaseBackend::initBackend() {
 	BaseBackend::initBackend();
 }

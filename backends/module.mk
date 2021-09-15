@@ -172,6 +172,11 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_STACKTRACES
+MODULE_OBJS += \
+	stacktraces/stacktrace.o
+endif
+
 ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \

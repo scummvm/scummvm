@@ -174,6 +174,7 @@ _tts=auto
 _gtk=auto
 _fribidi=auto
 _discord=auto
+_stacktraces=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -1022,6 +1023,8 @@ Optional Libraries:
   --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
   --disable-discord       disable Discord rich presence integration [autodetect]
 
+  --disable-stacktraces        disable stacktrace support [autodetect]
+
 Some influential environment variables:
   AR                 archiver command
   AS                 assembler command
@@ -1185,6 +1188,7 @@ for ac_option in $@; do
 	--disable-bink)               _bink=no               ;;
 	--enable-discord)             _discord=yes           ;;
 	--disable-discord)            _discord=no            ;;
+	--disable-stacktraces)        _stacktraces=no        ;;
 	--enable-verbose-build)      _verbose_build=yes      ;;
 	--enable-plugins)            _dynamic_modules=yes    ;;
 	--default-dynamic)           _plugins_default=dynamic;;
@@ -5817,6 +5821,115 @@ if test "$_discord" = yes ; then
 fi
 define_in_config_if_yes "$_discord" 'USE_DISCORD'
 echo "$_discord"
+
+#
+# Check for stacktrace support
+#
+if test "$_stacktraces" = auto ; then
+	_stacktraces=no
+	if test "$_use_cxx11" = yes ; then
+
+		#
+		# Check for libunwind
+		#
+		echocheck "libunwind"
+		_stacktraces_unwind=no
+		case "$_host_os" in
+		darwin*)
+			_stacktraces_unwind=yes
+			;;
+		*)
+			if test "$_pkg_config" = "yes" && $_pkgconfig --exists libunwind; then
+				_stacktraces_unwind=yes
+				prepend_var LIBS "`$_pkgconfig --libs libunwind`"
+				append_var INCLUDES "`$_pkgconfig --cflags libunwind`"
+			else
+				cat > $TMPC << EOF
+#include <libunwind.h>
+int main(void) { return 0; }
+EOF
+				cc_check -lunwind && _stacktraces_unwind=yes
+			fi
+			;;
+		esac
+		echo "$_stacktraces_unwind"
+
+		if test "$_stacktraces_unwind" = no; then
+			#
+			# Check for libdw
+			#
+			echocheck "libdw"
+			_stacktraces_dw=no
+			cat > $TMPC << EOF
+#include <elfutils/libdw.h>
+int main(void) { return 0; }
+EOF
+			cc_check -ldw && _stacktraces_dw=yes
+			if test "$_stacktraces_dw" = no ; then
+				cat > $TMPC << EOF
+#include <elfutils/libdwfl.h>
+int main(void) { return 0; }
+EOF
+				cc_check -ldw && _stacktraces_dw=yes
+			fi
+			echo "$_stacktraces_dw"
+
+			if test "$_stacktraces_dw" = no; then
+				#
+				# Check for libbfd
+				#
+				echocheck "libbfd"
+				_stacktraces_bfd=no
+				cat > $TMPC << EOF
+#include <bfd.h>
+int main(void) { return 0; }
+EOF
+				cc_check -lbfd && _stacktraces_bfd=yes
+				echo "$_stacktraces_bfd"
+
+				if test "$_stacktraces_bfd" = no; then
+					#
+					# Check for libdwarf
+					#
+					echocheck "libdwarf"
+					_stacktraces_dwarf=no
+					cat > $TMPC << EOF
+#include <libdwarf.h>
+#include <libelf.h>
+int main(void) { return 0; }
+EOF
+					cc_check -ldwarf -lelf && _stacktraces_dwarf=yes
+					echo "$_stacktraces_dwarf"
+				else
+					_stacktraces=yes
+				fi
+			else
+				_stacktraces=yes
+			fi
+		else
+			_stacktraces=yes
+		fi
+
+		if test "$_stacktraces_unwind" = yes; then
+			append_var LIBS "-lunwind"
+		elif test "$_stacktraces_dw" = yes; then
+			append_var LIBS "-ldw"
+		elif test "$_stacktraces_bfd" = yes; then
+			append_var LIBS "-lbfd"
+		elif test "$_stacktraces_dwarf" = yes; then
+			append_var LIBS "-lelf -ldwarf"
+		fi
+	else
+		_stacktraces=no
+	fi
+fi
+define_in_config_if_yes "$_stacktraces_dw" 'USE_STACKTRACES_DW'
+define_in_config_if_yes "$_stacktraces_bfd" 'USE_STACKTRACES_BFD'
+define_in_config_if_yes "$_stacktraces_dwarf" 'USE_STACKTRACES_DWARF'
+define_in_config_if_yes "$_stacktraces_unwind" 'USE_STACKTRACES_UNWIND'
+define_in_config_if_yes "$_stacktraces" 'USE_STACKTRACES'
+echocheck "Stacktraces"
+echo "$_stacktraces"
 
 #
 # Enable vkeybd / event recorder
