@@ -1275,7 +1275,7 @@ void PrivateEngine::composeImagePalette(const Graphics::Surface *surf, const byt
 	for (i = 0; i < surf->w; i++)
 		for (j = 0; j < surf->h; j++) {
 			c = surf->getPixel(i, j);
-			v = *((uint32*) (palette + 3*c)) & 0x00FFFFFF;
+			v = *((const uint32*) (palette + 3*c)) & 0x00FFFFFF;
 
 			if (_colorToIndex.contains(v))
 				continue;
