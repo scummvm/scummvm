@@ -61,32 +61,24 @@ struct IibDateiHeader {
 
 struct RoomStaticInventar {
 	int16 RoomNr;
-
 	int16 X;
 	int16 Y;
 	uint8 XOff;
 	uint8 YOff;
 	int16 InvNr;
-
 	int16 TxtNr;
 	uint8 HideSib;
-
 	uint8 Dummy;
 	uint8 ZustandAk;
-
 	uint8 ZustandOff;
-
 	uint8 ZustandFlipFlop;
-
 	uint8 AutoMov;
-
 	uint8 AniFlag;
-
 	uint8 HeldHide;
-
 	int16 StaticAk;
-
 	int16 StaticOff;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct SibDateiHeader {
@@ -103,19 +95,19 @@ struct RoomExit {
 	uint8 XOff;
 	uint8 YOff;
 	int16 Exit;
-
 	uint8 ExitMov;
-
 	uint8 AutoMov;
-
 	uint8 Attribut;
-
 	uint8 dummy;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct EibDateiHeader {
 	char Id[4];
 	int16 Anz;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 #define OBJZU_AUF 0
