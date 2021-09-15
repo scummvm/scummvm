@@ -420,7 +420,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	debug("Running %s", gameDescriptor.description.c_str());
 	for (FilePropertiesMap::const_iterator i = gameDescriptor.matchedFiles.begin(); i != gameDescriptor.matchedFiles.end(); ++i) {
-		debug("%s: %s, %llu bytes.", i->_key.c_str(), i->_value.md5.c_str(), unsigned long long(i->_value.size));
+		debug("%s: %s, %llu bytes.", i->_key.c_str(), i->_value.md5.c_str(), (unsigned long long)i->_value.size);
 	}
 	initSubSystems(agdDesc.desc);
 
