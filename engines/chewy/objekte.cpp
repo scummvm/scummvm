@@ -130,14 +130,19 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 
 int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 	Common::File f;
+	bool valid = true;
 
 	if (f.open(fname_)) {
-		if (!chewy_fread(&sib_datei_header, sizeof(SibDateiHeader), 1, &f)) {
+		if (!sib_datei_header.load(&f)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!chewy_fread(rsi, (size_t)(sib_datei_header.Anz * sizeof(RoomStaticInventar)), 1, &f)) {
+				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++rsi) {
+					valid = rsi->load(&f);
+				}
+
+				if (!valid) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
@@ -161,14 +166,19 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 
 int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 	Common::File f;
+	bool valid = true;
 
 	if (f.open(fname_)) {
-		if (!chewy_fread(&eib_datei_header, sizeof(EibDateiHeader), 1, &f)) {
+		if (!eib_datei_header.load(&f)) {
 			fcode = READFEHLER;
 			modul = DATEI;
 		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
-				if (!chewy_fread(RoomEx, (size_t)(eib_datei_header.Anz * sizeof(RoomExit)), 1, &f)) {
+				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++RoomEx) {
+					valid = RoomEx->load(&f);
+				}
+
+				if (!valid) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else {
