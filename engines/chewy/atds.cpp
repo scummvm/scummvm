@@ -334,17 +334,18 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 }
 
 void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
-	Stream *handle;
+	Stream *stream;
 	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname_, 0, 20000);
 	if (!modul) {
-		handle = chewy_fopen(fname_, fmode);
-		if (handle) {
+		stream = chewy_fopen(fname_, fmode);
+		if (stream) {
 			close_handle(mode);
-			atdshandle[mode] = handle;
+			atdshandle[mode] = stream;
 			atdsmem[mode] = tmp_adr;
+
 			switch (mode) {
 			case ADH_DATEI:
 				ads_block = (AdsBlock *)atdsmem[ADH_HANDLE];
@@ -354,12 +355,36 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 				atdsmem[INV_IDX_HANDLE] = (char *)calloc(INV_STRC_ANZ * sizeof(InvUse), 1);
 				break;
 
+			default:
+				break;
 			}
 		} else {
 			modul = DATEI;
 			fcode = OPENFEHLER;
 			err->set_user_msg(fname_);
 		}
+	}
+}
+
+void atdsys::open_handle(Common::SeekableReadStream *stream, int16 mode) {
+	assert(stream);
+	char *tmp_adr = (char *)malloc(stream->size());
+
+	close_handle(mode);
+	atdshandle[mode] = stream;
+	atdsmem[mode] = tmp_adr;
+
+	switch (mode) {
+	case ADH_DATEI:
+		ads_block = (AdsBlock *)atdsmem[ADH_HANDLE];
+		break;
+
+	case INV_IDX_DATEI:
+		atdsmem[INV_IDX_HANDLE] = (char *)calloc(INV_STRC_ANZ * sizeof(InvUse), 1);
+		break;
+
+	default:
+		break;
 	}
 }
 
