@@ -70,12 +70,15 @@ unsigned int BenchmarkCpu(void) {
 }
 
 void Randomize(void) {
+	warning("STUB: Randomize()");
+#if 0
 	union REGS reg;
 
 	reg.h.ah = 0;
 	int86(0x1A, &reg, &reg);
 	rand_seed = reg.h.dl;
 	Rand();
+#endif
 }
 
 void TRAP() {

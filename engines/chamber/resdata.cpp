@@ -61,6 +61,10 @@ unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char
 }
 
 unsigned int LoadFile(char *filename, unsigned char *buffer) {
+	warning("STUB: LoadFile(%s, buffer)", filename);
+	return 0;
+
+#if 0
 	int f;
 	int rlen;
 	f = open(filename, O_RDONLY | O_BINARY);
@@ -71,9 +75,13 @@ unsigned int LoadFile(char *filename, unsigned char *buffer) {
 	if (rlen == -1)
 		return 0;
 	return (unsigned int)rlen;
+#endif
 }
 
 unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size) {
+	warning("STUB: SaveFile(%s, buffer, %d)", filename, size);
+	return 0;
+#if 0
 	int f;
 	int wlen;
 	f = open(filename, O_RDONLY | O_BINARY);
@@ -84,12 +92,13 @@ unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size) 
 	if (wlen == -1)
 		return 0;
 	return (unsigned int)wlen;
+#endif
 }
 
 int LoadFilesList(ResEntry_t *entries) {
 	int i;
 	for (i = 0; entries[i].name[0] != '$'; i++) {
-		if (!LoadFile(entries[i].name, entries[i].buffer))
+		if (!LoadFile(entries[i].name, (byte *)entries[i].buffer))
 			return 0;
 	}
 	return 1;

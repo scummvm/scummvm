@@ -41,27 +41,15 @@ unsigned char key_direction_old;
 unsigned char accell_countdown;
 unsigned int accelleration = 1;
 
-void interrupt(*old_keyboard_isr)(void);
-
 unsigned char ReadKeyboardChar(void) {
-#ifdef DEBUG
-	if (old_keyboard_isr) {
-		do {
-			PollInput();
-		} while (!buttons);
-	} else
-#endif
-		return (unsigned char)getch();
+	warning("STUB: ReadKeyboardChar()");
+
+	return 0;
+
+	//return (unsigned char)getch();
 }
 
 void ClearKeyboard(void) {
-	while (kbhit()) {
-		getch();
-	}
-}
-
-void interrupt NullIsr(void) {
-	/*nothing*/
 }
 
 void SetInputButtons(unsigned char keys) {
@@ -79,12 +67,18 @@ void SetInputButtons(unsigned char keys) {
 }
 
 unsigned char PollMouse(void) {
+	warning("STUB: PollMouse()");
+
+	return 0;
+
+#if 0
 	union REGS reg;
 	reg.x.ax = 3;
 	int86(0x33, &reg, &reg);
 	cursor_x = reg.x.cx;
 	cursor_y = reg.h.dl;
 	return reg.h.bl;    /*buttons*/
+#endif
 }
 
 unsigned char PollKeyboard(void) {
@@ -142,7 +136,9 @@ void ProcessInput(void) {
 	DrawCursor(frontbuffer);
 }
 
-void interrupt KeyboardIsr() {
+void KeyboardIsr() {
+	warning("STUB: KeyboardIsr()");
+#if 0
 	unsigned char scan, strobe;
 	scan = inportb(0x60);
 	/*consume scan from kbd. controller*/
@@ -182,9 +178,13 @@ void interrupt KeyboardIsr() {
 		}
 	}
 	outportb(0x20, 0x20);
+#endif
 }
 
 void InitInput(void) {
+	warning("STUB: InitInput()");
+
+#if 0
 	/*disable critical errors handler*/
 	setvect(0x24, NullIsr);
 
@@ -227,16 +227,10 @@ void InitInput(void) {
 
 	old_keyboard_isr = getvect(9);
 	setvect(9, KeyboardIsr);
+#endif
 }
 
 void UninitInput(void) {
-	if (have_mouse)
-		return;
-
-	setvect(9, old_keyboard_isr);
-#ifdef DEBUG
-	old_keyboard_isr = 0;
-#endif
 }
 
 } // End of namespace Chamber
