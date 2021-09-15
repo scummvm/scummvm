@@ -250,9 +250,12 @@ Common::Error PrivateEngine::run() {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
+					_paletteIndex = 0;
+					_colorToIndex.clear();
+					_indexToColor.clear();
 					skipVideo();
-
+				}
 				break;
 
 			case Common::EVENT_QUIT:
@@ -317,6 +320,12 @@ Common::Error PrivateEngine::run() {
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
+			_colorToIndex.clear();
+			_indexToColor.clear();
+			_paletteIndex = 0;
+			_colorToIndex[0x0000FF00] = _transparentColor;
+			_indexToColor[_transparentColor] = 0x0000FF00;
+
 			if (_videoDecoder->getCurFrame() == 0)
 				stopSound(true);
 			if (_videoDecoder->endOfVideo()) {
@@ -327,28 +336,15 @@ Common::Error PrivateEngine::run() {
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
-
-			_paletteIndex = 0;
-			_colorToIndex.clear();
-			_indexToColor.clear();
-			_colorToIndex[0x00000000] = 0;
-			_indexToColor[0] = 0x00000000;
-			_colorToIndex[0x0000FF00] = _transparentColor;
-			_indexToColor[_transparentColor] = 0x0000FF00;
 			g_system->delayMillis(5); // Yield to the system
 			continue;
 		}
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
-			_compositeSurface->clearPalette();
-			_compositeSurface->clear();
 			_paletteIndex = 0;
 			_colorToIndex.clear();
 			_indexToColor.clear();
-
-			_colorToIndex[0x00000000] = 0;
-			_indexToColor[0] = 0x00000000;
 			_colorToIndex[0x0000FF00] = _transparentColor;
 			_indexToColor[_transparentColor] = 0x0000FF00;
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
@@ -1271,11 +1267,30 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	_image->destroy();
 }
 
+void PrivateEngine::composeImagePalette(const Graphics::Surface *surf, const byte *palette) {
+	int i,j,v;
+	uint32 c;
+	assert(_colorToIndex.size() == 1);
+
+	for (i = 0; i < surf->w; i++)
+		for (j = 0; j < surf->h; j++) {
+			c = surf->getPixel(i, j);
+			v = *((uint32*) (palette + 3*c)) & 0x00FFFFFF;
+
+			if (_colorToIndex.contains(v))
+				continue;
+
+			_colorToIndex[v] = c;
+			_indexToColor[c] = v;
+		}
+
+	_compositeSurface->setPalette(palette, 0, 256);
+}
+
 void PrivateEngine::composeImagePalette(Graphics::Surface *surf, const byte *palette) {
 	int i,j,p,v;
 	uint32 c;
-	//_paletteIndex = 0;
-	//debug("number of colors already in the palette %d", _colorToIndex.size());
+	_paletteIndex = 0;
 	for (i = 0; i < surf->w; i++)
 		for (j = 0; j < surf->h; j++) {
 			c = surf->getPixel(i, j);
@@ -1285,19 +1300,19 @@ void PrivateEngine::composeImagePalette(Graphics::Surface *surf, const byte *pal
 				p = _colorToIndex[v];
 			else {
 				while (_indexToColor.contains(_paletteIndex)) {
-					//debug("increasing _paletteIndex to %d", _paletteIndex+1);
 					_paletteIndex++;
 				}
 				p = _paletteIndex;
-				if(p >= 256)
-					error("skipping remapping %.8x", v);
+				if(p >= 256) {
+					debug("skipping remapping %.8x", v);
+					continue;
+				}
 			}
 			surf->setPixel(i, j, p);
 			_colorToIndex[v] = p;
 			_indexToColor[p] = v;
 			_compositeSurface->setPalette(palette + 3*c, p, 1);
 		}
-	//debug("number of colors currently in the palette %d", _colorToIndex.size());
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1364,16 +1379,11 @@ void PrivateEngine::drawScreen() {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
 
-		if (_videoDecoder->getPalette() != nullptr) {
-			Graphics::Surface cframe;
-			cframe.create(_frameImage->w, _frameImage->h, _frameImage->format);
-			cframe.copyFrom(*frame);
-			composeImagePalette(&cframe, _videoDecoder->getPalette());
-			//g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
-			surface->blitFrom(cframe, center);
-			cframe.free();
-		} else 
-			surface->blitFrom(*frame, center);
+		if (_videoDecoder->getPalette())
+			composeImagePalette(frame, _videoDecoder->getPalette());
+
+		surface->blitFrom(*frame, center);
+
 #else
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
@@ -1382,7 +1392,6 @@ void PrivateEngine::drawScreen() {
 		cframe->free();
 		delete cframe;
 #endif
-
 	} 
 
 	if (_mode == 1) {

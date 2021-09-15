@@ -203,6 +203,7 @@ public:
 	const byte *decodePalette(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y);
 	void composeImagePalette(Graphics::Surface *surf, const byte *palette);
+	void composeImagePalette(const Graphics::Surface *surf, const byte *palette);
 	void includePalette(const byte *palette, int start);
 	int _paletteIndex;
 	Common::HashMap <uint32, int> _colorToIndex;
