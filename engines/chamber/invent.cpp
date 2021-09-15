@@ -31,7 +31,6 @@
 
 namespace Chamber {
 
-
 /*inventory box cells*/
 #define INVENTORY_SPOTS_MAX (4 * 4)
 
@@ -113,7 +112,7 @@ void OpenInventory(unsigned short filtermask, unsigned short filtervalue) {
 	CGA_BackupImageReal(CGA_CalcXY_p(232 / 4, 56), 64 / 4, 64);
 	DrawInventoryBox(filtermask, filtervalue);
 	if (inv_count != 0) {
-		SelectCursor(CURSOR_0);
+		SelectCursor(CURSOR_FINGER);
 		ProcessInput();
 		do {
 			PollInput();

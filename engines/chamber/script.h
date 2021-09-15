@@ -210,6 +210,21 @@ extern item_t inventory_items[MAX_INV_ITEMS];
 #define PERS_MAX 41
 extern pers_t pers_list[PERS_MAX];
 
+extern unsigned char *script_stack[5 * 2];
+extern unsigned char **script_stack_ptr;
+
+extern pers_t *pers_vort_ptr;
+
+#define SPECIAL_COMMANDS_MAX 20
+extern unsigned short menu_commands_12[SPECIAL_COMMANDS_MAX];
+extern unsigned short menu_commands_22[SPECIAL_COMMANDS_MAX];
+extern unsigned short menu_commands_24[SPECIAL_COMMANDS_MAX];
+extern unsigned short menu_commands_23[SPECIAL_COMMANDS_MAX];
+
+extern unsigned short fight_pers_ofs;
+
+extern unsigned char wait_delta;
+
 extern unsigned char rand_seed;
 unsigned char Rand(void);
 unsigned int RandW(void);

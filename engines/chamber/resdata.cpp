@@ -27,6 +27,9 @@
 
 namespace Chamber {
 
+extern void AskDisk2(void);
+extern int LoadSplash(char *filename);
+
 /*
 Get bank entry
 TODO: port SeekToString to this routine
@@ -181,6 +184,7 @@ Load strings data (obj. descriptions)
 int LoadDesciData(void) {
 	while (!LoadFilesList(res_desci))
 		AskDisk2();
+	return 1;
 }
 
 ResEntry_t res_diali[] = {
@@ -194,6 +198,7 @@ Load strings data (dialogs)
 int LoadDialiData(void) {
 	while (!LoadFilesList(res_diali))
 		AskDisk2();
+	return 1;
 }
 
 } // End of namespace Chamber

@@ -114,13 +114,20 @@ extern unsigned short next_command4;
 
 extern unsigned char *sprites_list[MAX_SPRITES];
 
+#define MAX_DOORS 5
+
+extern unsigned char *doors_list[MAX_DOORS];
+
 extern unsigned char zone_palette;
 
 extern spot_t *zone_spots;
 extern spot_t *zone_spots_end;
 extern spot_t *zone_spots_cur;
 
+extern vortanims_t vortsanim_list[];
 extern vortanims_t *vortanims_ptr;
+
+extern rec7_t recs7_list[];
 extern rec7_t *rec7_ptr;
 extern pers_t *pers_ptr;
 extern spot_t *spot_ptr;
@@ -133,7 +140,27 @@ extern unsigned char zone_drawn;
 
 extern unsigned char in_de_profundis;
 
+extern unsigned char zone_name;
+extern unsigned char room_hint_bar_width;
 extern unsigned char zone_spr_index;
+extern unsigned char zone_obj_count;
+extern unsigned char room_hint_bar_coords_x;
+extern unsigned char room_hint_bar_coords_y;
+
+extern unsigned short inv_update_time;
+
+extern const unsigned char timed_seq[];
+extern const unsigned char *timed_seq_ptr;
+
+typedef struct thewalldoor_t {
+	unsigned char   height;
+	unsigned char   width;
+	unsigned int    pitch;
+	unsigned int    offs;
+	unsigned char   *pixels;
+} thewalldoor_t;
+
+extern thewalldoor_t the_wall_doors[2];
 
 int IsInRect(unsigned char x, unsigned char y, rect_t *rect);
 int IsCursorInRect(rect_t *rect);
@@ -190,8 +217,8 @@ void BounceCurrentItem(unsigned char flags, unsigned char y);
 void BackupScreenOfSpecialRoom(void);
 void RestoreScreenOfSpecialRoom(void);
 
-void TheWallPhase3(void);
-void TheWallPhase0(void);
+void TheWallPhase3_DoorOpen1(void);
+void TheWallPhase0_DoorOpen2(void);
 void TheWallPhase1_DoorClose1(void);
 void TheWallPhase2_DoorClose2(void);
 
