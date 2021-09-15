@@ -34,6 +34,7 @@ namespace Chamber {
 
 /*static room object*/
 /*TODO: manipulated from script, do not change*/
+#include "common/pack-start.h"
 typedef struct spot_t {
 	unsigned char sx;
 	unsigned char ex;
@@ -43,10 +44,7 @@ typedef struct spot_t {
 	unsigned char hint;
 	unsigned short command;
 } spot_t;
-
-#if sizeof(spot_t) != 8
-#error "spot_t must be 8 bytes long"
-#endif
+#include "common/pack-end.h"
 
 #define PERSFLAGS  0xF0
 #define PERSFLG_10 0x10
@@ -56,6 +54,7 @@ typedef struct spot_t {
 
 /*person*/
 /*TODO: manipulated from script, do not change*/
+#include "common/pack-start.h"
 typedef struct pers_t {
 	unsigned char area;     /*location*/
 	unsigned char flags;    /*flags in bits 7..4 and room index in bits 3..0*/
@@ -63,10 +62,7 @@ typedef struct pers_t {
 	unsigned char index;    /*animations index (in lutins_table) in bits 7..3 , spot index in bits 2..0*/
 	unsigned char item;     /*inventory item index (1-based)*/
 } pers_t;
-
-#if sizeof(pers_t) != 5
-#error "pers_t must be 5 bytes long"
-#endif
+#include "common/pack-end.h"
 
 #define ANIMFLG_USESPOT 0x80
 

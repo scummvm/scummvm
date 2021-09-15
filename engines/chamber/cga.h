@@ -33,7 +33,7 @@ namespace Chamber {
 #define CGA_PIXELS_PER_BYTE (8 / CGA_BITS_PER_PIXEL)
 #define CGA_BYTES_PER_LINE (CGA_WIDTH / CGA_PIXELS_PER_BYTE)
 
-#define CGA_SCREENBUFFER ((unsigned char*)MK_FP(CGA_BASE_SEG, 0))
+#define CGA_SCREENBUFFER NULL
 
 #define CGA_FONT_HEIGHT 6
 
