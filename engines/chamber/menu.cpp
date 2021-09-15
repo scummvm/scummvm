@@ -32,7 +32,6 @@
 
 namespace Chamber {
 
-
 unsigned char act_menu_x = 0;
 unsigned char act_menu_y = 0;
 
@@ -142,7 +141,7 @@ void ActionsMenu(unsigned char **pinfo) {
 	for (i = 0; i < numchoices; i++)
 		DrawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
 
-	SelectCursor(CURSOR_0);
+	SelectCursor(CURSOR_FINGER);
 	ProcessInput();
 
 	choice = 0;
@@ -201,7 +200,7 @@ void MenuLoop(unsigned char spotmask, unsigned char spotvalue) {
 }
 
 void ProcessMenu(void) {
-	SelectCursor(CURSOR_6);
+	SelectCursor(CURSOR_BODY);
 	MenuLoop(SPOTFLG_80 | SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8, SPOTFLG_80 | SPOTFLG_10);
 }
 

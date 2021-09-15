@@ -34,7 +34,6 @@ namespace Chamber {
 unsigned int cur_str_index;
 unsigned int cur_dlg_index;
 
-#define MAX_DIRTY_RECT 10
 dirty_rect_t dirty_rects[MAX_DIRTY_RECT];
 
 void AddDirtyRect(unsigned char kind, unsigned char x, unsigned char y, unsigned char w, unsigned char h, unsigned int offs) {

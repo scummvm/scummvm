@@ -38,12 +38,13 @@ enum DirtyRectKind {
 typedef struct dirty_rect_t {
 	unsigned char kind;
 	unsigned int offs;
-	unsigned char width;
 	unsigned char height;
+	unsigned char width;
 	unsigned char y;        /*for DirtyRectBubble this is spike offs*/
 	unsigned char x;
 } dirty_rect_t;
 
+#define MAX_DIRTY_RECT 10
 extern dirty_rect_t dirty_rects[];
 
 #define SPIKE_MASK     0xE0

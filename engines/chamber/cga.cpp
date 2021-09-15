@@ -21,13 +21,11 @@
  */
 
 #include "chamber/chamber.h"
-
 #include "chamber/common.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
 
 namespace Chamber {
-
 
 extern unsigned char backbuffer[0x4000];
 
@@ -737,7 +735,9 @@ void CGA_HideScreenBlockLiftToLeft(unsigned int n, unsigned char *screen, unsign
 		/*shift whole block 1 column*/
 		for (i = 0; i < h; i++) {
 			tofs = sofs - 1;
-			memcpy(target + tofs, screen + sofs, w);
+
+			/*use memmove since buffers may overlap*/
+			memmove(target + tofs, screen + sofs, w);
 
 			/*fill freed column*/
 			memcpy(target + tofs + w, source + tofs + w, 1);
@@ -759,7 +759,6 @@ void CGA_HideScreenBlockLiftToLeft(unsigned int n, unsigned char *screen, unsign
 /*offs points to block's right most column, data will be shifted to next column*/
 /*NB! w is in bytes*/
 void CGA_HideScreenBlockLiftToRight(unsigned int n, unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs) {
-	/*TODO: check me if its ok*/
 	while (n--) {
 		int i;
 		unsigned int sofs, tofs;
@@ -769,7 +768,9 @@ void CGA_HideScreenBlockLiftToRight(unsigned int n, unsigned char *screen, unsig
 		/*shift whole block 1 column*/
 		for (i = 0; i < h; i++) {
 			tofs = sofs + 1;
-			memcpy(target + tofs - w, screen + sofs - w, w);
+
+			/*use memmove since buffers may overlap*/
+			memmove(target + tofs - w, screen + sofs - w, w);
 
 			/*fill freed column*/
 			memcpy(target + tofs - w, source + tofs - w, 1);

@@ -37,15 +37,14 @@
 #include "chamber/sound.h"
 #include "chamber/savegame.h"
 
+namespace Chamber {
 
 #if 1
 #define DEBUG_SCRIPT
 char DEBUG_SCRIPT_LOG[] = "!script.log";
 #endif
 
-#include "chamber/scrvars.h"
-
-namespace Chamber {
+#include "scrvars.h"
 
 unsigned char rand_seed;
 unsigned short the_command;
@@ -1172,10 +1171,10 @@ unsigned int SCR_3E_TheWallAdvance(void) {
 	script_byte_vars.the_wall_phase = (script_byte_vars.the_wall_phase + 1) % 4;
 	switch (script_byte_vars.the_wall_phase) {
 	default:
-		TheWallPhase3();
+		TheWallPhase3_DoorOpen1();
 		break;
 	case 0:
-		TheWallPhase0();
+		TheWallPhase0_DoorOpen2();
 		break;
 	case 1:
 		TheWallPhase1_DoorClose1();
@@ -2167,7 +2166,7 @@ unsigned int CMD_2_PsiPowers(void) {
 	ProcessInput();
 	do {
 		PollInput();
-		SelectCursor(CURSOR_0);
+		SelectCursor(CURSOR_FINGER);
 		CheckPsiCommandHover();
 		if (command_hint != 100)
 			command_hint += 109;
@@ -2507,7 +2506,7 @@ unsigned int CMD_F_PsiPsiShift(void) {
 		return ScriptRerun;
 	}
 
-	SelectCursor(CURSOR_4);
+	SelectCursor(CURSOR_GRAB);
 	MenuLoop(0, 0);
 	BackupScreenOfSpecialRoom();
 	PlaySound(25);
