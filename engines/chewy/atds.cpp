@@ -293,28 +293,29 @@ void atdsys::set_speech_handle(Stream *speech_handle_) {
 }
 
 void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	char *tmp_adr;
 	ChunkHead Ch;
 	tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
 	if (!modul) {
-		if (handle) {
+		if (rs) {
 			close_handle(mode);
-			atdshandle[mode] = handle;
+			atdshandle[mode] = rs;
 			atdsmem[mode] = tmp_adr;
 			atdspooloff[mode] = chunk_start;
 			switch (mode) {
 			case INV_USE_DATEI:
-				mem->file->select_pool_item(atdshandle[mode], atdspooloff[mode]);
-				chewy_fseek(atdshandle[mode], -(int)(sizeof(ChunkHead)), SEEK_CUR);
+				mem->file->select_pool_item(rs, atdspooloff[mode]);
+				chewy_fseek(rs, -(int)(sizeof(ChunkHead)), SEEK_CUR);
 
-				if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, atdshandle[mode])) {
+				if (!Ch.load(rs)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else {
 					inv_use_mem = (char *)calloc(Ch.size + 3l, 1);
 					if (!modul) {
 						if (Ch.size) {
-							if (!chewy_fread(inv_use_mem, Ch.size, 1, atdshandle[mode])) {
+							if (!rs->read(inv_use_mem, Ch.size)) {
 								fcode = READFEHLER;
 								modul = DATEI;
 							} else
