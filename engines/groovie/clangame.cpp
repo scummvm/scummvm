@@ -24,7 +24,7 @@
 
 namespace Groovie {
 
-// This a list of files for background music. These list is hard-coded in the TLC player.
+// This a list of files for background music. This list is hardcoded in the Clandestiny player.
 const char *kClanMusicFiles[] = {"mbf_arb1.mpg", "mbf_arm1.mpg", "mbf_bal1.mpg", "mbf_c2p2.mpg", "act18mus.mpg", "act15mus.mpg", "act21mus.mpg",
 										  "act05mus.mpg", "act04mus.mpg", "act23mus.mpg", "act17mus.mpg", "act03mus.mpg", "act06mus.mpg", "act19mus.mpg",
 										  "act07mus.mpg", "mbf_mne1.mpg", "act24mus.mpg", "act24mus.mpg", "act14mus.mpg", "act20mus.mpg", "act15mus.mpg",
