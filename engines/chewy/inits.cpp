@@ -239,7 +239,7 @@ void init_atds() {
 
 void new_game() {
 	int16 i;
-	char *tmp;
+	byte *tmp;
 
 	memset(&spieler, 0, sizeof(Spieler));
 
@@ -259,39 +259,43 @@ void new_game() {
 	obj->load(EXIT_EIB, &spieler.room_e_obj[0]);
 	ERROR
 
-	tmp = (char *)calloc(ROOM_ATS_MAX, 1);
+	tmp = (byte *)calloc(ROOM_ATS_MAX, 1);
 	ERROR
 
-	Stream *handle = chewy_fopen(ROOM_ATS_STEUER, "rb");
-	if (handle) {
-		if (!chewy_fread(tmp, ROOM_ATS_MAX, 1, handle)) {
+	Common::File f;
+	if (f.open(ROOM_ATS_STEUER)) {
+		if (!f.read(tmp, ROOM_ATS_MAX)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
 	ERROR
+
 	for (i = 0; i < ROOM_ATS_MAX; i++)
 		spieler.Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
-	tmp = (char *)calloc(MAX_MOV_OBJ, 1);
+	tmp = (byte *)calloc(MAX_MOV_OBJ, 1);
 	ERROR
-	handle = chewy_fopen(INV_ATS_STEUER, "rb");
-	if (handle) {
-		if (!chewy_fread(tmp, MAX_MOV_OBJ, 1, handle)) {
+
+	if (f.open(INV_ATS_STEUER)) {
+		if (!f.read(tmp, MAX_MOV_OBJ)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		chewy_fclose(handle);
+
+		f.close();
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
 	ERROR
+
 	for (i = 0; i < MAX_MOV_OBJ; i++)
 		spieler.InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
