@@ -272,7 +272,7 @@ void DrawBackground(unsigned char *target, unsigned char vblank) {
 	int i;
 	unsigned int offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
 	unsigned char *pixels = gauss_data + 0x3C8; /*TODO: better const*/
-	for (i = 0; i < 53; i++) {
+	for (i = 0; i < 52; i++) {
 		/*draw a tile, alternating between two variants*/
 		CGA_Blit(pixels + (i & 1 ? 0 : kBgW * kBgH), kBgW, kBgW, kBgH, target, offs);
 		if (vblank)
