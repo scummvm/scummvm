@@ -196,12 +196,12 @@ void Holomap::prepareHolomapPolygons() {
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
-	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+	for (int32 alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
 		int rotation = ANGLE_0;
-		for (int32 stepWidth = 0; stepWidth < ANGLE_11_25; ++stepWidth) {
+		for (int32 beta = 0; beta < ANGLE_11_25; ++beta) {
 			IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-			if (angle != ANGLE_90) {
+			if (alpha != ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
