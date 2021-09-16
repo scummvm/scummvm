@@ -59,7 +59,7 @@ void SaveToFile(char *filename, void *data, unsigned int size) {
 	fclose(f);
 }
 
-int LoadSplash(char *filename) {
+int LoadSplash(const char *filename) {
 	if (!LoadFile(filename, scratch_mem1))
 		return 0;
 	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */

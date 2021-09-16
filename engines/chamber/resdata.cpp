@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/resdata.h"
@@ -28,7 +30,7 @@
 namespace Chamber {
 
 extern void AskDisk2(void);
-extern int LoadSplash(char *filename);
+extern int LoadSplash(const char *filename);
 
 /*
 Get bank entry
@@ -60,22 +62,15 @@ unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char
 	return p + 2;
 }
 
-unsigned int LoadFile(char *filename, unsigned char *buffer) {
-	warning("STUB: LoadFile(%s, buffer)", filename);
-	return 0;
+unsigned int LoadFile(const char *filename, unsigned char *buffer) {
+	Common::File in;
 
-#if 0
-	int f;
-	int rlen;
-	f = open(filename, O_RDONLY | O_BINARY);
-	if (f == -1)
+	in.open(filename);
+
+	if (!in.isOpen())
 		return 0;
-	rlen = read(f, buffer, 0xFFF0);
-	close(f);
-	if (rlen == -1)
-		return 0;
-	return (unsigned int)rlen;
-#endif
+
+	return in.read(buffer, 0xFFFF0);
 }
 
 unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size) {
@@ -131,7 +126,7 @@ ResEntry_t res_static[] = {
 	{"ANIMA.BIN", anima_data},
 	{"ANICO.BIN", anico_data},
 	{"ZONES.BIN", zones_data},
-	{"$"}
+	{"$", NULL}
 };
 
 /*
@@ -145,7 +140,7 @@ int LoadStaticData() {
 ResEntry_t res_texts[] = {
 	{"VEPCI.BIN", vepci_data},
 	{"MOTSI.BIN", motsi_data},
-	{"$"}
+	{"$", NULL}
 };
 
 /*
@@ -162,7 +157,7 @@ int LoadFond(void) {
 ResEntry_t res_sprites[] = {
 	{"PUZZL.BIN", puzzl_data},
 	{"SPRIT.BIN", sprit_data},
-	{"$"}
+	{"$", NULL}
 };
 
 int LoadSpritesData(void) {
@@ -172,7 +167,7 @@ int LoadSpritesData(void) {
 ResEntry_t res_person[] = {
 	{"PERS1.BIN", pers1_data},
 	{"PERS2.BIN", pers2_data},
-	{"$"}
+	{"$", NULL}
 };
 
 int LoadPersData(void) {
@@ -184,7 +179,7 @@ int LoadPersData(void) {
 
 ResEntry_t res_desci[] = {
 	{"DESCI.BIN", desci_data},
-	{"$"}
+	{"$", NULL}
 };
 
 /*
@@ -198,7 +193,7 @@ int LoadDesciData(void) {
 
 ResEntry_t res_diali[] = {
 	{"DIALI.BIN", diali_data},
-	{"$"}
+	{"$", NULL}
 };
 
 /*
