@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef GROOVIE_ROQ_H
-#define GROOVIE_ROQ_H
+#ifndef GROOVIE_VIDEO_ROQ_H
+#define GROOVIE_VIDEO_ROQ_H
 
-#include "groovie/player.h"
+#include "groovie/video/player.h"
 #include "audio/mixer.h"
 
 namespace Groovie {
@@ -116,4 +116,4 @@ public:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_ROQ_H
+#endif // GROOVIE_VIDEO_ROQ_H

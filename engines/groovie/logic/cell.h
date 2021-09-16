@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GROOVIE_CELL_H
-#define GROOVIE_CELL_H
+#ifndef GROOVIE_LOGIC_CELL_H
+#define GROOVIE_LOGIC_CELL_H
 
 #include "common/textconsole.h"
 
@@ -94,4 +94,4 @@ private:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_CELL_H
+#endif // GROOVIE_LOGIC_CELL_H

@@ -20,8 +20,8 @@
 *
 */
 
-#ifndef GROOVIE_T11HGAME_H
-#define GROOVIE_T11HGAME_H
+#ifndef GROOVIE_LOGIC_T11HGAME_H
+#define GROOVIE_LOGIC_T11HGAME_H
 
 #include "common/textconsole.h"
 #include "common/random.h"
@@ -33,22 +33,18 @@ class GroovieEngine;
 class T11hGame {
 public:
 #ifdef ENABLE_GROOVIE2
-	T11hGame();
+	T11hGame(byte *scriptVariables);
 	~T11hGame();
-	/**
-	* Sets a pointer to the script variables. This makes it easier if we want
-	* to debug write accesses to the script variables
-	* @param scriptVariables	The current variables from the script.
-	*/
-	void setVariables(byte *scriptVariables);
+
+	void handleOp(uint8 op);
+
+private:
+	Common::RandomSource _random;
 
 	void opMouseTrap();
 	void opBeehive();
 	void opPente();
 	void opGallery();
-
-private:
-	Common::RandomSource _random;
 
 	byte opGallerySub(int one, byte *field);
 	void inline setScriptVar(uint16 var, byte value);
@@ -61,4 +57,4 @@ private:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_T11HGAME_H
+#endif // GROOVIE_LOGIC_T11HGAME_H

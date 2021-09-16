@@ -132,7 +132,7 @@ private:
 	uint16 _oldInstruction;
 
 	// Special classes depending on played game
-	CellGame *_staufsMove;
+	CellGame *_cellGame;
 	TlcGame *_tlcGame;
 	T11hGame *_t11hGame;
 
@@ -230,7 +230,6 @@ private:
 	void o_loadscript();
 	void o_setvideoorigin();
 	void o_sub();
-	void o_cellmove();
 	void o_returnscript();
 	void o_sethotspotright();
 	void o_sethotspotleft();
@@ -252,7 +251,7 @@ private:
 	void o2_setvideoskip();
 	void o2_savescreen();
 	void o2_restorescreen();
-	void o2_gamespecial();
+	void o_gamelogic();
 	void o2_copyfgtobg();
 	void o2_setscriptend();
 	void o2_playsound();

@@ -27,10 +27,10 @@
 #include "groovie/script.h"
 #include "groovie/music.h"
 #include "groovie/resource.h"
-#include "groovie/vdx.h"
+#include "groovie/video/vdx.h"
 
 #ifdef ENABLE_GROOVIE2
-#include "groovie/roq.h"
+#include "groovie/video/roq.h"
 #endif
 
 #include "common/config-manager.h"

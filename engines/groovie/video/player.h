@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GROOVIE_PLAYER_H
-#define GROOVIE_PLAYER_H
+#ifndef GROOVIE_VIDEO_PLAYER_H
+#define GROOVIE_VIDEO_PLAYER_H
 
 #include "common/system.h"
 
@@ -76,4 +76,4 @@ protected:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_PLAYER_H
+#endif // GROOVIE_VIDEO_PLAYER_H

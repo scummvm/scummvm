@@ -20,7 +20,7 @@
  *
  */
 
-#include "groovie/tlcgame.h"
+#include "groovie/logic/tlcgame.h"
 #include "groovie/groovie.h"
 
 #include "common/archive.h"
@@ -43,12 +43,11 @@ const char *kTlcMusicFiles[] = {"ep01epm", "ep01tatm", "amb_hs", "amb_mr", "amb_
 const uint8 kTlcEpQuestToPlay[] = { 0x0E, 0x0F, 0x0B, 0x10, 0x11, 0x12, 0x0C, 0x0C, 0x09, 0x06, 0x0F, 0x0C, 0x0B, 0x0D, 0x0D };
 
 
-TlcGame::TlcGame() :
+TlcGame::TlcGame(byte *scriptVariables) :
 	_numRegionHeaders(0), _regionHeader(NULL), _curQuestNumAnswers(-1), _epQuestionsData(NULL),
-	_random("GroovieTlcGame"), _scriptVariables(NULL),
+	_random("GroovieTlcGame"), _scriptVariables(scriptVariables),
 	_tatHeaders(NULL), _tatQuestions(NULL) {
 }
-
 
 TlcGame::~TlcGame() {
 	delete[] _regionHeader;
@@ -57,9 +56,31 @@ TlcGame::~TlcGame() {
 	delete[] _tatQuestions;
 }
 
+void TlcGame::handleOp(uint8 op) {
+	switch (op) {
+	case 0:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Regions", op);
+		opRegions();
+		break;
 
-void TlcGame::setVariables(byte *scriptVariables) {
-	_scriptVariables = scriptVariables;
+	case 1:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Exit Polls", op);
+		opExitPoll();
+		break;
+
+	case 2:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC TATFlags", op);
+		opFlags();
+		break;
+
+	case 3:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC TATs (TODO)", op);
+		opTat();
+		break;
+
+	default:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Invalid -> NOP", op);
+	}
 }
 
 // This function is mainly for debugging purpose

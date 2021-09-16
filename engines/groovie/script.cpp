@@ -25,15 +25,15 @@
 #include "audio/mididrv.h"
 
 #include "groovie/script.h"
-#include "groovie/cell.h"
 #include "groovie/cursor.h"
 #include "groovie/graphics.h"
 #include "groovie/music.h"
-#include "groovie/player.h"
+#include "groovie/video/player.h"
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
-#include "groovie/tlcgame.h"
-#include "groovie/t11hgame.h"
+#include "groovie/logic/cell.h"
+#include "groovie/logic/tlcgame.h"
+#include "groovie/logic/t11hgame.h"
 
 #include "gui/saveload.h"
 
@@ -73,7 +73,7 @@ const byte t7gMidiInitScript[] = {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(UINT_MAX), _staufsMove(NULL), _lastCursor(0xff),
+	_videoFile(NULL), _videoRef(UINT_MAX), _cellGame(NULL), _lastCursor(0xff),
 	_version(version), _random("GroovieScripts"), _tlcGame(0), _t11hGame(0) {
 
 	// Initialize the opcode set depending on the engine version
@@ -116,7 +116,7 @@ Script::~Script() {
 	delete[] _code;
 	delete[] _savedCode;
 	delete _videoFile;
-	delete _staufsMove;
+	delete _cellGame;
 	delete _tlcGame;
 	delete _t11hGame;
 }
@@ -1781,31 +1781,6 @@ void Script::o_sub() {
 	setVariable(varnum1, _variables[varnum1] - _variables[varnum2]);
 }
 
-void Script::o_cellmove() {
-	uint16 depth = readScript8bits();
-	byte *scriptBoard = &_variables[0x19];
-	byte startX, startY, endX, endY;
-
-	debugC(1, kDebugScript, "Groovie::Script: CELL MOVE var[0x%02X]", depth);
-
-	if (!_staufsMove)
-		_staufsMove = new CellGame;
-
-	_staufsMove->playStauf(2, depth, scriptBoard);
-
-	startX = _staufsMove->getStartX();
-	startY = _staufsMove->getStartY();
-	endX = _staufsMove->getEndX();
-	endY = _staufsMove->getEndY();
-
-	// Set the movement origin
-	setVariable(0, startY); // y
-	setVariable(1, startX); // x
-	// Set the movement destination
-	setVariable(2, endY);
-	setVariable(3, endX);
-}
-
 void Script::o_returnscript() {
 	uint8 val = readScript8bits();
 
@@ -2069,106 +2044,46 @@ void Script::o2_setvideoskip() {
 
 // This function depends on the actual game played. So it is different for 
 // T7G, 11H, TLC, ...
-void Script::o2_gamespecial() {
-	uint8 arg = readScript8bits();
+void Script::o_gamelogic() {
+	uint8 param = readScript8bits();
 
 	switch (_version) {
+	case kGroovieT7G:
+		if (!_cellGame)
+			_cellGame = new CellGame;
+
+		debugC(1, kDebugScript, "Groovie::Script: CELL MOVE var[0x%02X]", param);
+
+		_cellGame->playStauf(2, param, &_variables[0x19]);
+
+		// Set the movement origin
+		setVariable(0, _cellGame->getStartY()); // y
+		setVariable(1, _cellGame->getStartX()); // x
+		// Set the movement destination
+		setVariable(2, _cellGame->getEndY());
+		setVariable(3, _cellGame->getEndX());
+		break;
+
 #ifdef ENABLE_GROOVIE2
 	case kGroovieTLC:
-		if (_tlcGame == NULL) {
-			_tlcGame = new TlcGame();
-			_tlcGame->setVariables(_variables);
-		}
-		switch (arg) {
-		case 0:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Regions", arg);
-			_tlcGame->opRegions();
-			break;
+		if (!_tlcGame)
+			_tlcGame = new TlcGame(_variables);
 
-		case 1:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Exit Polls", arg);
-			_tlcGame->opExitPoll();
-			break;
-
-		case 2:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC TATFlags", arg);
-			_tlcGame->opFlags();
-			break;
-
-		case 3:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC TATs (TODO)", arg);
-			_tlcGame->opTat();
-			break;
-
-		default:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC Invalid -> NOP", arg);
-		}
+		_tlcGame->handleOp(param);
 		break;
 
 	case kGroovieT11H:
-		if (_t11hGame == NULL) {
-			_t11hGame = new T11hGame();
-			_t11hGame->setVariables(_variables);
-		}
-		switch (arg) {
-		case 1:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv) TODO", arg);
-			break;
-
-		case 2:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv) TODO", arg);
-			_t11hGame->opBeehive();
-			break;
-
-		case 3:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv) TODO", arg);
-			_t11hGame->opGallery();
-			break;
-
-		case 4:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Triangle in the Chapel (tx.grv)", arg);
-			break;
-
-		case 5:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
-			_t11hGame->opMouseTrap();
-			break;
-
-		case 6:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente (pt.grv)", arg);
-			_t11hGame->opPente();
-			break;
-
-
-		default:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): T11H Invalid -> NOP", arg);
-		}
-		break;
 	case kGroovieUHP:
-		if (_t11hGame == NULL) {
-			_t11hGame = new T11hGame();
-			_t11hGame->setVariables(_variables);
-		}
-		switch (arg) {
-		case 2:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Beehive Puzzle", arg);
-			_t11hGame->opBeehive();
-			break;
-		case 5:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Mouse Trap", arg);
-			_t11hGame->opMouseTrap();
-			break;
-		case 8:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Othello", arg);
-			// TODO: Same as the Clandestiny Othello/Reversi puzzle (opOthello)
-			break;
-		default:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): UHP Invalid -> NOP", arg);
-		}
+		if (!_t11hGame)
+			_t11hGame = new T11hGame(_variables);
+
+		// TODO: Separate UHP game logic in 11th Hour / Clandestiny
+		_t11hGame->handleOp(param);
 		break;
+
 #endif
 	default:
-		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", arg);
+		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", param);
 		warning("Groovie::Script: OpCode 0x42 for (GameSpecial) current game not implemented yet.");
 	}
 }
@@ -2297,7 +2212,7 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o_cellmove,
+	&Script::o_gamelogic,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,
@@ -2394,7 +2309,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o2_gamespecial,
+	&Script::o_gamelogic,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,

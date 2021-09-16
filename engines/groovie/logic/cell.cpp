@@ -20,7 +20,7 @@
  *
  */
 
-#include "groovie/cell.h"
+#include "groovie/logic/cell.h"
 
 namespace Groovie {
 

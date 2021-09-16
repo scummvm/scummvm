@@ -23,7 +23,7 @@
 #include "common/debug.h"
 #include "audio/audiostream.h"
 
-#include "groovie/player.h"
+#include "groovie/video/player.h"
 #include "groovie/groovie.h"
 #include "audio/mixer.h"
 #include "common/debug-channels.h"

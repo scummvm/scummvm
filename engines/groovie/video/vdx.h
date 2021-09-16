@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef GROOVIE_VDX_H
-#define GROOVIE_VDX_H
+#ifndef GROOVIE_VIDEO_VDX_H
+#define GROOVIE_VIDEO_VDX_H
 
-#include "groovie/player.h"
+#include "groovie/video/player.h"
 #include "audio/mixer.h"
 
 namespace Common {
@@ -83,4 +83,4 @@ private:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_VDX_H
+#endif // GROOVIE_VIDEO_VDX_H

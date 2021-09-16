@@ -20,8 +20,8 @@
 *
 */
 
-#ifndef GROOVIE_TLCGAME_H
-#define GROOVIE_TLCGAME_H
+#ifndef GROOVIE_LOGIC_TLCGAME_H
+#define GROOVIE_LOGIC_TLCGAME_H
 
 #include "common/textconsole.h"
 #include "common/random.h"
@@ -72,17 +72,12 @@ class TlcGame
 {
 public:
 #ifdef ENABLE_GROOVIE2
-	TlcGame();
+	TlcGame(byte *scriptVariables);
 	~TlcGame();
 
 	static const char *getTlcMusicFilename(int musicId);
 
-	/**
-	 * Sets a pointer to the script variables. This makes it easier if we want
-	 * to debug write accesses to the script variables
-	 * @param scriptVariables	The current variables from the script.
-	 */
-	void setVariables(byte *scriptVariables);
+	void handleOp(uint8 op);
 
 	/**
 	 * Handle region commands. A region describes the coordinates of
@@ -196,4 +191,4 @@ private:
 
 } // End of Groovie namespace
 
-#endif // GROOVIE_TLCGAME_H
+#endif // GROOVIE_LOGIC_TLCGAME_H

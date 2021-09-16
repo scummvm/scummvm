@@ -20,7 +20,7 @@
  *
  */
 
-#include "groovie/clangame.h"
+#include "groovie/logic/clangame.h"
 
 namespace Groovie {
 

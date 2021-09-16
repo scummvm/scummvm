@@ -26,8 +26,8 @@
 #include "groovie/music.h"
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
-#include "groovie/tlcgame.h"
-#include "groovie/clangame.h"
+#include "groovie/logic/tlcgame.h"
+#include "groovie/logic/clangame.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"

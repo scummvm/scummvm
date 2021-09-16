@@ -20,7 +20,7 @@
  *
  */
 
-#include "groovie/vdx.h"
+#include "groovie/video/vdx.h"
 #include "groovie/graphics.h"
 #include "groovie/groovie.h"
 #include "groovie/lzss.h"

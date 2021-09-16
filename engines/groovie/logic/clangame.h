@@ -20,8 +20,8 @@
 *
 */
 
-#ifndef GROOVIE_CLANGAME_H
-#define GROOVIE_CLANGAME_H
+#ifndef GROOVIE_LOGIC_CLANGAME_H
+#define GROOVIE_LOGIC_CLANGAME_H
 
 namespace Groovie {
 
@@ -32,4 +32,4 @@ public:
 
 } // namespace Groovie
 
-#endif // GROOVIE_CLANGAME_H
+#endif // GROOVIE_LOGIC_CLANGAME_H
