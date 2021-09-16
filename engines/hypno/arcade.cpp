@@ -228,7 +228,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 				if (frame > 0 && frame >= it->explosionFrame - 3 && !it->destroyed) {
 					skipVideo(*it->video);
-					//_health = _health - it->damage;
+					_health = _health - it->damage;
 				} else if (frame > 0 && frame >= it->video->decoder->getFrameCount()-2) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
