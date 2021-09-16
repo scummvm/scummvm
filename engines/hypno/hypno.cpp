@@ -143,7 +143,8 @@ Common::Error HypnoEngine::run() {
 }
 
 void HypnoEngine::runLevel(Common::String &name) {
-	assert(_levels.contains(name));
+	if (!_levels.contains(name))
+		error("Level %s cannot be found", name.c_str());
 	stopSound();
 	_music = "";
 
@@ -429,7 +430,9 @@ Common::String HypnoEngine::convertPath(const Common::String &name) {
 // Timers
 static void timerCallback(void *refCon) {
 	g_hypno->removeTimer();
-	g_hypno->_nextLevel = *(Common::String *)refCon;
+	Common::String *level = (Common::String *)refCon;
+	g_hypno->_nextLevel = *level;
+	delete level;
 }
 
 bool HypnoEngine::installTimer(uint32 delay, Common::String *ns) {

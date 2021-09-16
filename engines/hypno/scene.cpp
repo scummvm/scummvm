@@ -191,7 +191,8 @@ void HypnoEngine::runTransition(Transition trans) {
 		delete frame;
 		sframe->free();
 		delete sframe;
-		assert(installTimer(2 * 1000000, &trans.level));
+		Common::String *ptr = new Common::String(trans.level);
+		assert(installTimer(2 * 1000000, ptr));
 	} else
 		_nextLevel = trans.level;
 }
