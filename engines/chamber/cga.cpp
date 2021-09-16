@@ -206,7 +206,7 @@ Out:
 unsigned char *CGA_BackupImage(unsigned char *screen, unsigned int ofs, unsigned int w, unsigned int h, unsigned char *buffer) {
 	*(unsigned char *)(buffer + 0) = h;
 	*(unsigned char *)(buffer + 1) = w;
-	*(unsigned int *)(buffer + 2) = ofs;
+	*(uint16 *)(buffer + 2) = ofs;
 	buffer += 4;
 	while (h--) {
 		memcpy(buffer, screen + ofs, w);
@@ -266,15 +266,15 @@ void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsign
 Restore saved image to target screen buffer
 */
 void CGA_RestoreImage(unsigned char *buffer, unsigned char *target) {
-	unsigned int w, h;
-	unsigned int ofs;
+	uint16 w, h;
+	uint16 ofs;
 
 	if (!buffer)
 		return;
 
 	h = *(unsigned char *)(buffer + 0);
 	w = *(unsigned char *)(buffer + 1);
-	ofs = *(unsigned int *)(buffer + 2);
+	ofs = *(uint16 *)(buffer + 2);
 	buffer += 4;    /*TODO: fix me for large int*/
 
 	CGA_Blit(buffer, w, w, h, target, ofs);
@@ -299,7 +299,7 @@ void CGA_RefreshImageData(unsigned char *buffer) {
 
 	h = *(unsigned char *)(buffer + 0);
 	w = *(unsigned char *)(buffer + 1);
-	ofs = *(unsigned int *)(buffer + 2);
+	ofs = *(uint16 *)(buffer + 2);
 
 	CGA_CopyScreenBlock(CGA_SCREENBUFFER, w, h, backbuffer, ofs);
 }
