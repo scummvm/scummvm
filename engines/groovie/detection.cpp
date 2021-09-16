@@ -108,6 +108,17 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G
 	},
 
+	// "Guest" early DOS demo
+	{
+		{
+			"t7g", "The early \"Guest\" demo is not supported",
+			AD_ENTRY1s("playtlc.exe", "9cff0e9649ddf49e9fe5168730aa7201", 254768),
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSUPPORTED,
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+		},
+		kGroovieT7G
+	},
+
 	// The 11th Hour DOS/Windows English (Available on Steam)
 	{
 		{
