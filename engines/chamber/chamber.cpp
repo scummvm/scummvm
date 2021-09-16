@@ -53,28 +53,6 @@ ChamberEngine::~ChamberEngine() {
 	delete _rnd;
 }
 
-Common::Error ChamberEngine::run() {
-	// Initialize graphics using following:
-	initGraphics(320, 200);
-
-	// Additional setup.
-	debug("ChamberEngine::init");
-
-	// Your main even loop should be (invoked from) here.
-	debug("ChamberEngine::go: Hello, World!");
-
-	run();
-
-	// Simple main event loop
-	Common::Event evt;
-	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(evt);
-		g_system->delayMillis(10);
-	}
-
-	return Common::kNoError;
-}
-
 bool ChamberEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||

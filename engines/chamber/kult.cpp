@@ -20,6 +20,11 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/error.h"
+#include "engines/util.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/decompr.h"
@@ -181,10 +186,11 @@ void ExitGame(void) {
 	exit(0);
 }
 
-void main(void) {
-	unsigned char c;
+Common::Error ChamberEngine::run() {
+	// Initialize graphics using following:
+	initGraphics(320, 200);
 
-	SwitchToGraphicsMode();
+	unsigned char c;
 
 	/* Load title screen */
 	if (!LoadSplash("PRES.BIN"))
@@ -296,6 +302,8 @@ restart:
 	UninitTimer();
 
 	ExitGame();
+
+	return Common::kNoError;
 }
 
 } // End of namespace Chamber

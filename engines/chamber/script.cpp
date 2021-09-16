@@ -37,14 +37,14 @@
 #include "chamber/sound.h"
 #include "chamber/savegame.h"
 
-namespace Chamber {
-
 #if 1
 #define DEBUG_SCRIPT
 char DEBUG_SCRIPT_LOG[] = "!script.log";
 #endif
 
-#include "scrvars.h"
+#include "chamber/scrvars.h"
+
+namespace Chamber {
 
 unsigned char rand_seed;
 unsigned short the_command;

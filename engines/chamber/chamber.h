@@ -51,7 +51,7 @@ public:
 	void syncGameStream(Common::Serializer &s);
 };
 
-void run(void);
+void init(void);
 
 } // End of namespace Chamber
 
