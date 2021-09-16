@@ -45,7 +45,7 @@ enum FlaFrameOpcode {
 	kLoadPalette = 1,
 	kFade = 2,
 	kPlaySample = 3,
-	kFlaUnknown4 = 4,
+	kSampleBalance = 4,
 	kStopSample = 5,
 	kDeltaFrame = 6,
 	kFlaUnknown7 = 7,
@@ -62,12 +62,9 @@ struct FLASampleStruct {
 	int16 freq = 0;
 	/** Numbers of time to repeat */
 	int16 repeat = 0;
-	/** Dummy variable */
-	int8 dummy = 0;
-	/** Unknown x */
-	uint8 x = 0;
-	/** Unknown y */
-	uint8 y = 0;
+	uint8 balance = 0;
+	uint8 volumeLeft = 0;
+	uint8 volumeRight = 0;
 };
 
 /** FLA movie extension */
@@ -221,14 +218,15 @@ void Movies::processFrame() {
 			sample.sampleNum = stream.readSint16LE();
 			sample.freq = stream.readSint16LE();
 			sample.repeat = stream.readSint16LE();
-			sample.dummy = stream.readSByte();
-			sample.x = stream.readByte();
-			sample.y = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.x, sample.y);
+			sample.balance = stream.readByte();
+			sample.volumeLeft = stream.readByte();
+			sample.volumeRight = stream.readByte();
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.volumeLeft, sample.volumeRight);
 			break;
 		}
 		case kStopSample: {
-			_engine->_sound->stopSample(sample.sampleNum);
+			const uint16 sampleNum = stream.readUint16LE();
+			_engine->_sound->stopSample(sampleNum);
 			break;
 		}
 		case kDeltaFrame: {
@@ -260,7 +258,14 @@ void Movies::processFrame() {
 			_engine->_frontVideoBuffer.addDirtyRect(rect);
 			break;
 		}
-		case kFlaUnknown4:
+		case kSampleBalance: {
+			/* int16 num = */ stream.readSint16LE();
+			/* uint8 offset = */ stream.readByte();
+			/* int16 balance = */ stream.readSint16LE();
+			/* uint8 volumeLeft = */ stream.readByte();
+			/* uint8 volumeRight = */ stream.readByte();
+			break;
+		}
 		default: {
 			break;
 		}
