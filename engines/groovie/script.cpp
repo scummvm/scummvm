@@ -47,7 +47,7 @@
 
 #include "gui/message.h"
 
-#define NUM_OPCODES 90
+const uint NUM_OPCODES = 91;
 
 namespace Groovie {
 
@@ -479,6 +479,23 @@ void Script::loadgame(uint slot) {
 
 	// Hide the mouse cursor
 	_vm->_grvCursorMan->show(false);
+}
+
+bool Script::preview_loadgame(uint slot) { // used by Clandestiny for the photos
+	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
+
+	if (!file)
+		return false;
+
+	// Loading the variables. It is endian safe because they're byte variables
+	uint32 size = 21;
+	uint32 bytes_read = file->read(_variables, size);
+	delete file;
+
+	if (bytes_read < size)
+		return false;
+
+	return true;
 }
 
 bool Script::canDirectSave() const {
@@ -2198,6 +2215,21 @@ void Script::o2_check_sounds_overlays() {
 	_variables[val1] = getBitFlag(0) || getBitFlag(2);
 }
 
+void Script::o2_preview_loadgame() {
+	uint8 save_slot = readScript8bits();
+
+	if (preview_loadgame(save_slot))
+		return;
+
+	for (int i = 0; i < 15; i++) {
+		_variables[i] = 0xf0;
+	}
+
+	for (int i = 15; i < 22; i++) {
+		_variables[i] = 0x4a;
+	}
+}
+
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_nop, // 0x00
 	&Script::o_nop,
@@ -2291,7 +2323,8 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_invalid,		// completely unimplemented, plays vdx in some way
 	//&Script::o_nop, // 0x58
 	&Script::o_invalid, // 0x58	// like above, but plays from string not ref
-	&Script::o_stub59
+	&Script::o_stub59,
+	&Script::o_invalid
 };
 
 Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
@@ -2384,7 +2417,8 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o2_playsound,
 	&Script::o_invalid,
 	&Script::o_invalid, // 0x58
-	&Script::o2_check_sounds_overlays
+	&Script::o2_check_sounds_overlays,
+	&Script::o2_preview_loadgame
 };
 
 } // End of Groovie namespace

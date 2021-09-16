@@ -150,6 +150,7 @@ private:
 	bool hotspot(Common::Rect rect, uint16 addr, uint8 cursor);
 
 	void loadgame(uint slot);
+	bool preview_loadgame(uint slot);
 	void savegame(uint slot);
 	bool playvideofromref(uint32 fileref, bool loopUntilAudioDone = false);
 	bool playBackgroundSound(uint32 fileref, uint32 loops);
@@ -256,6 +257,7 @@ private:
 	void o2_setscriptend();
 	void o2_playsound();
 	void o2_check_sounds_overlays();
+	void o2_preview_loadgame();
 };
 
 } // End of Groovie namespace
