@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "common/timer.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/cga.h"
@@ -37,44 +40,26 @@ void AnimateGauss(unsigned char *target) {
 	script_byte_vars.gauss_phase = phase;
 	sprite = gauss_data + 8 + phase * (8 * 30);
 	CGA_Blit(sprite, 8, 8, 30, target, 80); /*draw to 0:4*/
+
+	warning("Blit");
 }
 
-#if 0
-void interrupt(*old_timer_isr)();
-
-void interrupt TimerIsr() {
-	disable();
+void timerCallback(void *refCon) {
 	script_byte_vars.timer_ticks++;
 	if (!script_byte_vars.game_paused) {
-		if (script_byte_vars.timer_ticks % 16 == 0) {
-			script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 1);
+		script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 1);
 #if 1
-			AnimateGauss(frontbuffer);
+		AnimateGauss(frontbuffer);
 #endif
-		}
 	}
-	enable();
 }
 
-#endif
-
 void InitTimer(void) {
-	warning("STUB: InitTimer()");
-#if 0
-	disable();
-	old_timer_isr = getvect(0x1C);
-	setvect(0x1C, TimerIsr);
-	enable();
-#endif
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 1000000, NULL, "mainTimer");
 }
 
 void UninitTimer(void) {
-	warning("STUB: UninitTimer()");
-#if 0
-	disable();
-	setvect(0x1C, old_timer_isr);
-	enable();
-#endif
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 } // End of namespace Chamber
