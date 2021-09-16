@@ -59,13 +59,13 @@ const static char *sceneVariables[] = {
 	"GS_PUZZLELEVEL",
 	NULL};
 
-void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
+void HypnoEngine::parseScene(const Common::String &prefix, const Common::String &filename) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
-	filename = convertPath(filename);
+	Common::String name = convertPath(filename);
 	if (!prefix.empty())
-		filename = prefix + "/" + filename;
+		name = prefix + "/" + name;
 	Common::File test;
-	assert(test.open(filename.c_str()));
+	assert(test.open(name.c_str()));
 
 	const uint32 fileSize = test.size();
 	char *buf = (char *)malloc(fileSize + 1);
@@ -76,7 +76,7 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	Level level;
 	level.scene.prefix = prefix;
 	level.scene.hots = *g_parsedHots;
-	_levels[filename] = level;
+	_levels[name] = level;
 	free(buf);
 }
 
@@ -197,7 +197,7 @@ void HypnoEngine::runTransition(Transition trans) {
 }
 
 
-void HypnoEngine::runScene(Scene scene) {
+void HypnoEngine::runScene(Scene &scene) {
 	_refreshConversation = false;
 	_conversation.clear();
 	Common::Event event;
@@ -363,8 +363,8 @@ void HypnoEngine::runScene(Scene scene) {
 }
 
 void HypnoEngine::showConversation() { error("Not implemented"); }
-void HypnoEngine::rightClickedConversation(Common::Point mousePos) { error("Not implemented"); }
-void HypnoEngine::leftClickedConversation(Common::Point mousePos) { error("Not implemented"); }
+void HypnoEngine::rightClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
+void HypnoEngine::leftClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
 
 } // End of namespace Hypno
 

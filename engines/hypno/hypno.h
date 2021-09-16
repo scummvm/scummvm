@@ -57,13 +57,6 @@ enum {
 	kHypnoDebugScene = 1 << 3,
 };
 
-typedef Common::Array<byte> ByteArray;
-typedef struct FileData {
-	Common::String name;
-	ByteArray data;
-} FileData;
-
-typedef Common::Array<FileData> LibData;
 typedef Common::Array<Graphics::Surface *> Frames;
 
 class HypnoEngine : public Engine {
@@ -89,19 +82,18 @@ public:
 	Common::HashMap<Common::String, int> _sceneState;
 	void resetSceneState();
 	bool checkSceneCompleted();
-	void runLevel(Common::String name);
-	void runScene(Scene scene);
-	void runArcade(ArcadeShooting arc);
+	void runLevel(Common::String &name);
+	void runScene(Scene &scene);
+	void runArcade(ArcadeShooting &arc);
 
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	virtual void loadAssets();
-	void parseScene(Common::String prefix, Common::String filename);
-	void parseArcadeShooting(Common::String prefix, Common::String name, Common::String data);
-	ShootSequence parseShootList(Common::String name, Common::String data);
-	void loadLib(Common::String filename, LibData &r);
-	LibFile *loadLib(Filename prefix, Filename filename);
+	void parseScene(const Common::String &prefix, const Common::String &filename);
+	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
+	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
+	LibFile *loadLib(const Filename &prefix, const Filename &filename);
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -112,7 +104,6 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 
-	//bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return false; }
 	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently() override { return false; }
@@ -155,7 +146,7 @@ public:
 	// Screen
 	int _screenW, _screenH;
 	Graphics::PixelFormat _pixelFormat;
-	void changeScreenMode(Common::String mode);
+	void changeScreenMode(const Common::String &mode);
 	Graphics::ManagedSurface *_compositeSurface;
 	uint32 _transparentColor;
 	Common::Rect screenRect;
@@ -183,20 +174,20 @@ public:
 	// Sounds
 	Filename _soundPath;
 	Filename _music;
-	void playSound(Filename name, uint32);
+	void playSound(const Filename &filename, uint32);
 	void stopSound();
 	bool isSoundActive();
 	bool _noStopSounds;
 
 	// Arcade
-	int detectTarget(Common::Point mousePos);
-	virtual bool clickedPrimaryShoot(Common::Point);
-	virtual bool clickedSecondaryShoot(Common::Point);
-	virtual void drawShoot(Common::Point);
-	virtual void shoot(Common::Point);
+	int detectTarget(const Common::Point &mousePos);
+	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
+	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
+	virtual void drawShoot(const Common::Point &mousePos);
+	virtual void shoot(const Common::Point &mousePos);
 	virtual void hitPlayer();
 
-	void drawCursorArcade(Common::Point mousePos);
+	void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();
 	virtual void drawHealth();
 	int _health;
@@ -213,8 +204,8 @@ public:
 	Actions _conversation;
 	bool _refreshConversation;
 	virtual void showConversation();
-	virtual void rightClickedConversation(Common::Point mousePos);
-	virtual void leftClickedConversation(Common::Point mousePos);
+	virtual void rightClickedConversation(const Common::Point &mousePos);
+	virtual void leftClickedConversation(const Common::Point &mousePos);
 
 	// Hardcoded puzzles
 	virtual void runPuzzle(Puzzle puzzle);
@@ -236,8 +227,8 @@ public:
 
 	void loadAssets() override;
 	void showCredits() override;
-	bool clickedSecondaryShoot(Common::Point) override;
-	void drawShoot(Common::Point) override;
+	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
+	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
 };
@@ -246,14 +237,14 @@ class SpiderEngine : public HypnoEngine {
 public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
 	void loadAssets() override;
-	void drawShoot(Common::Point) override;
+	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
 	void runPuzzle(Puzzle puzzle) override;
 
 	void showConversation() override;
-	void rightClickedConversation(Common::Point mousePos) override;
-	void leftClickedConversation(Common::Point mousePos) override;
+	void rightClickedConversation(const Common::Point &mousePos) override;
+	void leftClickedConversation(const Common::Point &mousePos) override;
 
 private:
 	void runMatrix(Puzzle puzzle);

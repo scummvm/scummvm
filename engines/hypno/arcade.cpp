@@ -31,7 +31,7 @@ namespace Hypno {
 
 extern int parse_arc(const char *);
 
-void HypnoEngine::parseArcadeShooting(Common::String prefix, Common::String filename, Common::String data) {
+void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s%s", prefix.c_str(), filename.c_str());
 	parse_arc(data.c_str());
 	Level level;
@@ -43,7 +43,7 @@ void HypnoEngine::parseArcadeShooting(Common::String prefix, Common::String file
 	g_parsedArc.shoots.clear();
 }
 
-ShootSequence HypnoEngine::parseShootList(Common::String filename, Common::String data) {
+ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
 	Common::StringTokenizer tok(data, " ,\t");
 	Common::String t;
@@ -68,9 +68,9 @@ ShootSequence HypnoEngine::parseShootList(Common::String filename, Common::Strin
 	return seq;
 }
 
-void HypnoEngine::drawPlayer() { error("not implemented"); }
-void HypnoEngine::drawHealth() { error("not implemented"); }
-void HypnoEngine::drawShoot(Common::Point target) { error("not implemented"); }
+void HypnoEngine::drawPlayer() { error("Not implemented"); }
+void HypnoEngine::drawHealth() { error("Not implemented"); }
+void HypnoEngine::drawShoot(const Common::Point &target) { error("Not implemented"); }
 
 void HypnoEngine::hitPlayer() {
 	// if the player is hit, play the hit animation
@@ -78,7 +78,7 @@ void HypnoEngine::hitPlayer() {
 		_playerFrameIdx = _playerFrameSep;
 }
 
-void HypnoEngine::runArcade(ArcadeShooting arc) {
+void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	Common::Event event;
@@ -266,7 +266,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 }
 
-int HypnoEngine::detectTarget(Common::Point mousePos) {
+int HypnoEngine::detectTarget(const Common::Point &mousePos) {
 	int i = -1;
 	int x = 0;
 	int y = 0;
@@ -288,7 +288,7 @@ int HypnoEngine::detectTarget(Common::Point mousePos) {
 	return -1;
 }
 
-void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
+void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	if (i >= 0)
 		changeCursor("target");
@@ -298,9 +298,9 @@ void HypnoEngine::drawCursorArcade(Common::Point mousePos) {
 	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
-bool HypnoEngine::clickedPrimaryShoot(Common::Point mousePos) { return true; };
+bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }
 
-void HypnoEngine::shoot(Common::Point mousePos) {
+void HypnoEngine::shoot(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	int w = 0;
 	int h = 0;
@@ -315,7 +315,7 @@ void HypnoEngine::shoot(Common::Point mousePos) {
 	}
 }
 
-bool HypnoEngine::clickedSecondaryShoot(Common::Point mousePos) {
+bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return false;
 }
 

@@ -27,8 +27,6 @@ namespace Hypno {
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void WetEngine::loadAssets() {
-	//LibData files;
-	//loadLib("wetlands/c_misc/missions.lib", files);
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib");
 	Common::ArchiveMemberList files;
 	assert(missions->listMembers(files) > 0);

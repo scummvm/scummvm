@@ -6,11 +6,11 @@
 
 namespace Hypno {
 
-bool WetEngine::clickedSecondaryShoot(Common::Point mousePos) {
+bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }
 
-void WetEngine::drawShoot(Common::Point mousePos) {
+void WetEngine::drawShoot(const Common::Point &mousePos) {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
