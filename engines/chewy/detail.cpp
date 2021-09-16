@@ -94,7 +94,7 @@ bool static_detail_info::load(Common::SeekableReadStream *src) {
 	x = src->readSint16LE();
 	y = src->readSint16LE();
 	SprNr = src->readSint16LE();
-	z_ebene = src->readByte();
+	z_ebene = src->readSint16LE();
 	Hide = src->readByte();
 	Dummy = src->readByte();
 
@@ -178,10 +178,10 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 	taf_info *tmprdi = rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
-		warning("FIXME: RdiDateiHeader::load doesn't match original structure size yet");
 		if (rdi_datei_header.load(&f)) {
 			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
 				f.seek(room_nr * (int64)room_detail_info::SIZE(), SEEK_CUR);
+
 				if (!rdi.load(&f)) {
 					modul = DATEI;
 					fcode = READFEHLER;
