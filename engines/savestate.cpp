@@ -23,6 +23,7 @@
 #include "engines/savestate.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -94,4 +95,21 @@ bool SaveStateDescriptor::isAutosave() const {
 bool SaveStateDescriptor::hasAutosaveName() const
 {
 	return _description.contains(_("Autosave"));
+}
+
+bool SaveStateDescriptor::warnBeforeOverwritingOlder() const
+{
+	if (!g_engine)
+		return true;
+	const int currentPlayTime = g_engine->getTotalPlayTime();
+	const int savedPlayTime = getPlayTimeMSecs();
+	if (currentPlayTime <= 0 || savedPlayTime <= 0 || currentPlayTime >= savedPlayTime)
+		return true;
+	const Common::U32String message = isAutosave()
+			? _("WARNING: Existing save has longer gameplay duration than the "
+				"current state. Are you sure you want to overwrite it?")
+			: _("WARNING: Existing autosave has longer gameplay duration than the "
+				"current state. Do you want to overwrite it?");
+	GUI::MessageDialog warn(message, _("Yes"), _("No"));
+	return warn.runModal() == GUI::kMessageOK;
 }

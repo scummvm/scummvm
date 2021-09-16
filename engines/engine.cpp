@@ -570,7 +570,7 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	if (desc.getSaveSlot() == -1)
 		return true;
 	if (desc.hasAutosaveName())
-		return true;
+		return desc.warnBeforeOverwritingOlder();
 	Common::U32StringArray altButtons;
 	altButtons.push_back(_("Overwrite"));
 	altButtons.push_back(_("Cancel autosave"));

@@ -219,6 +219,13 @@ public:
 	 * Returns true if the save has an autosave name
 	 */
 	bool hasAutosaveName() const;
+
+	/**
+	 * Shows a warning dialog before overwriting an older game
+	 * Returns true if the current duration is longer, or the user confirmed overwriting.
+	 */
+	bool warnBeforeOverwritingOlder() const;
+
 private:
 	/**
 	 * The saveslot id, as it would be passed to the "-x" command line switch.

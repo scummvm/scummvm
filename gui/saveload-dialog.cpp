@@ -335,17 +335,8 @@ void SaveLoadChooserDialog::activate(int slot, const Common::U32String &descript
 	if (!_saveList.empty() && slot < int(_saveList.size())) {
 		const SaveStateDescriptor &desc = _saveList[slot];
 		if (_saveMode) {
-			if (g_engine) {
-				const int currentPlayTime = g_engine->getTotalPlayTime();
-				const int savedPlayTime = desc.getPlayTimeMSecs();
-				if (currentPlayTime > 0 && savedPlayTime > 0 && currentPlayTime < savedPlayTime) {
-					GUI::MessageDialog warn(
-								_("WARNING: Existing save has longer gameplay duration than the "
-								  "current state. Are you sure you want to overwrite it?"), _("Yes"), _("No"));
-					if (warn.runModal() != GUI::kMessageOK)
-						return;
-				}
-			}
+			if (!desc.warnBeforeOverwritingOlder())
+				return;
 			_resultString = description.empty() ? desc.getDescription() : description;
 		}
 		setResult(desc.getSaveSlot());
