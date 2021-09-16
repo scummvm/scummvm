@@ -245,35 +245,38 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 }
 
 int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
-	bool ret;
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
+		roomhandle[R_TGPDATEI]);
+	tbf_dateiheader tb;
+	bool ret = false;
 	int16 *tmp;
 
-	tbf_dateiheader tb;
-	ret = false;
+	if (rs) {
+		mem->file->select_pool_item(rs, nr);
 
-	if (roomhandle[R_TGPDATEI]) {
-		mem->file->select_pool_item(roomhandle[R_TGPDATEI], nr);
-
-		if (!chewy_fread(&tb, sizeof(tbf_dateiheader), 1, roomhandle[R_TGPDATEI])) {
+		if (!tb.load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
+
 		if (!modul) {
-			chewy_fseek(roomhandle[R_TGPDATEI], -(int)sizeof(tbf_dateiheader), SEEK_CUR);
+			rs->seek(-(int)tbf_dateiheader::SIZE(), SEEK_CUR);
 			Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), tb.entpsize + 4);
+
 			if (Rb->AkAblage == -1) {
 			} else if (Rb->AkAblage >= 1000) {
 				Rb->AkAblage -= 1000;
+
 			} else {
 				mem->file->
-				load_image(roomhandle[R_TGPDATEI], Ablage[Rb->AkAblage], AblagePal[Rb->AkAblage]);
+				load_image(rs, Ablage[Rb->AkAblage], AblagePal[Rb->AkAblage]);
 				if (!modul) {
 					set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), tb.entpsize);
 					ret = true;
-					if (mode == GED_LOAD) {
 
+					if (mode == GED_LOAD) {
 						ged->load_ged_pool(roomhandle[R_GEPDATEI], &GedInfo[Rb->AkAblage],
-						                    nr, GedMem[Rb->AkAblage]);
+						                   nr, GedMem[Rb->AkAblage]);
 						if (!modul) {
 							tmp = (int16 *)Ablage[Rb->AkAblage];
 							GedXAnz[Rb->AkAblage] = tmp[0] / GedInfo[Rb->AkAblage].X;
@@ -289,12 +292,12 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 				}
 			}
 		}
-
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
-	return (ret);
+
+	return ret;
 }
 
 void Room::init_ablage() {

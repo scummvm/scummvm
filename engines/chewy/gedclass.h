@@ -32,21 +32,17 @@ public:
 	gedclass(int16(*user_func)(int16 idx_nr));
 	~gedclass();
 
-	void load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
+	void load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
 
-	//FIXME : was FILE*
-	void load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
+	void load_ged_pool(Stream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
 	int16 ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher);
 	int16 ged_idx(int16 g_idx, int16 x_anz, byte *speicher);
 
 private:
-
-	// FIXME : was FILE*
-	void load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, byte *speicher);
+	void load_ged_chunk(GedChunkHeader *Gh, Stream *stream, int16 nr, byte *speicher);
 
 	GedPoolHeader ged_pool_header;
 	int16(*GedUserFunc)(int16 idx_nr);
-
 };
 
 } // namespace Chewy

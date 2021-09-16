@@ -62,6 +62,9 @@ struct tbf_dateiheader {
 	char palette[768];
 
 	bool load(Common::SeekableReadStream *src);
+	static const size_t SIZE() {
+		return 4 + 2 + 2 + 4 + 2 + 2 + 768;
+	}
 };
 
 struct taf_dateiheader {

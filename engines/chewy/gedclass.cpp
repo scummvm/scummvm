@@ -38,12 +38,11 @@ gedclass::~gedclass() {
 	warning("STUB - missing destructor gedclass");
 }
 
-void gedclass::load_ged_pool(char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void gedclass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 	warning("STUB - missing load_ged_pool");
 }
 
-//FIXME : was FILE*
-void gedclass::load_ged_pool(void *handle, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void gedclass::load_ged_pool(Stream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 	warning("STUB - missing load_ged_pool");
 }
 
@@ -57,8 +56,7 @@ int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
 	return 0;
 }
 
-// FIXME : was FILE*
-void gedclass::load_ged_chunk(GedChunkHeader *Gh, void *handle, int16 nr, byte *speicher) {
+void gedclass::load_ged_chunk(GedChunkHeader *Gh, Stream *stream, int16 nr, byte *speicher) {
 	warning("STUB - missing load_ged_chunk");
 }
 
