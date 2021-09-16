@@ -250,6 +250,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 	tbf_dateiheader tb;
 	bool ret = false;
 	int16 *tmp;
+	ret = false;
 
 	if (rs) {
 		mem->file->select_pool_item(rs, nr);
@@ -268,8 +269,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 				Rb->AkAblage -= 1000;
 
 			} else {
-				mem->file->
-				load_image(rs, Ablage[Rb->AkAblage], AblagePal[Rb->AkAblage]);
+				mem->file->load_image(rs, Ablage[Rb->AkAblage], AblagePal[Rb->AkAblage]);
 				if (!modul) {
 					set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), tb.entpsize);
 					ret = true;

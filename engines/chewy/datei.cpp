@@ -256,21 +256,19 @@ void datei::load_image(Stream *stream, byte *sp, byte *palette) {
 					               header->entpsize, speicher);
 					break;
 				}
-			}
-			else {
+			} else {
 				fcode = NOTTBF;
 				modul = DATEI;
 			}
-		}
-		else {
+		} else {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
-	}
-	else {
+	} else {
 		fcode = ZEIGERFEHLER;
 		modul = GRAFIK;
 	}
+
 	if (!modul)
 		ch.load(rs);
 }
