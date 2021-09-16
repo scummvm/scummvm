@@ -384,7 +384,7 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 
 	// Open the icons file
 	Common::File iconsFile;
-	if (!iconsFile.open("icons.ph"))
+	if (!iconsFile.open("icons.ph") && !iconsFile.open("icons.bin"))
 		error("Groovie::Cursor: Couldn't open icons.ph");
 
 	// Verify the signature

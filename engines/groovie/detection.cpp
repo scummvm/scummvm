@@ -276,6 +276,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieCDY
 	},
 
+	// Clandestiny Mac App Store (identical to iOS?)
+    {
+        {
+            "clandestiny", "",
+            AD_ENTRY2s("CLANMAIN.GRV", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
+                       "ACT01MUS.m4a", NULL, -1),
+            Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+            GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+        },
+        kGroovieCDY
+    },
+
 	// Clandestiny iOS English
 	{
 		{
