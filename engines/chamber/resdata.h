@@ -82,7 +82,7 @@ extern unsigned char zones_data[];
 unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end);
 unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char **end);
 
-unsigned int LoadFile(char *filename, unsigned char *buffer);
+unsigned int LoadFile(const char *filename, unsigned char *buffer);
 unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size);
 int LoadFilesList(ResEntry_t *entries);
 
