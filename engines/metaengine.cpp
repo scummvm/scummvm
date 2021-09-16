@@ -305,9 +305,6 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 //////////////////////////////////////////////
 
 int MetaEngine::findEmptySaveSlot(const char *target) {
-	if (!hasFeature(kSavesUseExtendedFormat))
-		return -1;
-
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	const int maxSaveSlot = getMaximumSaveSlot();
 	const int autosaveSlot = getAutosaveSlot();
