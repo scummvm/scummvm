@@ -25,15 +25,15 @@
 namespace Groovie {
 
 // This a list of files for background music. This list is hardcoded in the Clandestiny player.
-const char *kClanMusicFiles[] = {"mbf_arb1.mpg", "mbf_arm1.mpg", "mbf_bal1.mpg", "mbf_c2p2.mpg", "act18mus.mpg", "act15mus.mpg", "act21mus.mpg",
-										  "act05mus.mpg", "act04mus.mpg", "act23mus.mpg", "act17mus.mpg", "act03mus.mpg", "act06mus.mpg", "act19mus.mpg",
-										  "act07mus.mpg", "mbf_mne1.mpg", "act24mus.mpg", "act24mus.mpg", "act14mus.mpg", "act20mus.mpg", "act15mus.mpg",
-										  "act13mus.mpg", "act08mus.mpg", "mbf_uph1.mpg", "mbf_uph1.mpg", "act19mus.mpg", "mbf_bol1.mpg", "mbf_cbk1.mpg",
-										  "mbf_glf1.mpg", "mbf_bro1.mpg", "mbf_c1r1.mpg", "mbf_c1r1.mpg", "mbf_c1r1.mpg", "mbf_c1r1.mpg", "mbf_c2r1.mpg",
-										  "mbf_c2r1.mpg", "mbf_c2r1.mpg", "mbf_c2r1.mpg", "mbf_c3r1.mpg", "mbf_c3r1.mpg", "mbf_c3r1.mpg", "mbf_c4r1.mpg",
-										  "mbf_c4r1.mpg", "mbf_c1p2.mpg", "mbf_c3p3.mpg", "mbf_c1p3.mpg", "mbf_bro1.mpg", "mbf_c1p1.mpg", "act17mus.mpg",
-										  "mbf_c2p2.mpg", "mbf_c2p1.mpg", "act10mus.mpg", "mbf_c1p1.mpg", "mbf_mne1.mpg", "mbf_c3p3.mpg", "act17mus.mpg",
-										  "mbf_c3p2.mpg", "mbf_c3p1.mpg", "act25mus.mpg", "mbf_c4p2.mpg", "mbf_c4p1.mpg"};
+const char *kClanMusicFiles[] = {"mbf_arb1", "mbf_arm1", "mbf_bal1", "mbf_c2p2", "act18mus", "act15mus", "act21mus",
+										  "act05mus", "act04mus", "act23mus", "act17mus", "act03mus", "act06mus", "act19mus",
+										  "act07mus", "mbf_mne1", "act24mus", "act24mus", "act14mus", "act20mus", "act15mus",
+										  "act13mus", "act08mus", "mbf_uph1", "mbf_uph1", "act19mus", "mbf_bol1", "mbf_cbk1",
+										  "mbf_glf1", "mbf_bro1", "mbf_c1r1", "mbf_c1r1", "mbf_c1r1", "mbf_c1r1", "mbf_c2r1",
+										  "mbf_c2r1", "mbf_c2r1", "mbf_c2r1", "mbf_c3r1", "mbf_c3r1", "mbf_c3r1", "mbf_c4r1",
+										  "mbf_c4r1", "mbf_c1p2", "mbf_c3p3", "mbf_c1p3", "mbf_bro1", "mbf_c1p1", "act17mus",
+										  "mbf_c2p2", "mbf_c2p1", "act10mus", "mbf_c1p1", "mbf_mne1", "mbf_c3p3", "act17mus",
+										  "mbf_c3p2", "mbf_c3p1", "act25mus", "mbf_c4p2", "mbf_c4p1"};
 
 // Gets the filename of the background music file.
 const char *ClanGame::getClanMusicFilename(int musicId) {

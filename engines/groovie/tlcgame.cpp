@@ -34,12 +34,12 @@
 namespace Groovie {
 
 // This a list of files for background music. This list is hardcoded in the TLC player.
-const char *kTlcMusicFiles[] = {"ep01epm.mpg", "ep01tatm.mpg", "amb_hs.mpg", "amb_mr.mpg", "amb_kr.mpg", "amb_mo.mpg", "music_rc.mpg", "amb_ds.mpg", "amb_ds3.mpg",
-								"amb_jr.mpg", "amb_mr4.mpg", "amb_jr4.mpg", "amb_jr2.mpg", "amb_kr2.mpg", "amb_mr2.mpg", "amb_br.mpg", "amb_ds2.mpg", "amb_jr3.mpg",
-								"amb_ds4.mpg", "amb_kr3.mpg", "amb_to1.mpg", "amb_to2.mpg", "ep02epm.mpg", "ep02tatm.mpg", "ep03epm.mpg", "ep03tatm.mpg", "ep04epm.mpg",
-								"ep04tatm.mpg", "ep05epm.mpg", "ep05tatm.mpg", "ep06epm.mpg", "ep06tatm.mpg", "ep07epm.mpg", "ep07tatm.mpg", "ep08epm.mpg", "ep08tatm.mpg",
-								"ep09epm.mpg", "ep09tatm.mpg", "ep10epm.mpg", "ep10tatm.mpg", "ep11epm.mpg", "ep11tatm.mpg", "ep12epm.mpg", "ep12tatm.mpg", "ep13epm.mpg",
-								"ep13tatm.mpg", "ep14epm.mpg", "ep14tatm.mpg", "ep15epm.mpg", "ep15tatm.mpg" };
+const char *kTlcMusicFiles[] = {"ep01epm", "ep01tatm", "amb_hs", "amb_mr", "amb_kr", "amb_mo", "music_rc", "amb_ds", "amb_ds3",
+								"amb_jr", "amb_mr4", "amb_jr4", "amb_jr2", "amb_kr2", "amb_mr2", "amb_br", "amb_ds2", "amb_jr3",
+								"amb_ds4", "amb_kr3", "amb_to1", "amb_to2", "ep02epm", "ep02tatm", "ep03epm", "ep03tatm", "ep04epm",
+								"ep04tatm", "ep05epm", "ep05tatm", "ep06epm", "ep06tatm", "ep07epm", "ep07tatm", "ep08epm", "ep08tatm",
+								"ep09epm", "ep09tatm", "ep10epm", "ep10tatm", "ep11epm", "ep11tatm", "ep12epm", "ep12tatm", "ep13epm",
+								"ep13tatm", "ep14epm", "ep14tatm", "ep15epm", "ep15tatm" };
 const uint8 kTlcEpQuestToPlay[] = { 0x0E, 0x0F, 0x0B, 0x10, 0x11, 0x12, 0x0C, 0x0C, 0x09, 0x06, 0x0F, 0x0C, 0x0B, 0x0D, 0x0D };
 
 
