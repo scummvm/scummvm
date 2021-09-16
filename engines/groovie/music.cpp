@@ -40,6 +40,7 @@
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 #include "audio/decoders/mp3.h"
+#include "audio/decoders/quicktime.h"
 
 namespace Groovie {
 
@@ -805,7 +806,10 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	_file->open(filename);
 	Audio::SeekableAudioStream *seekStream = NULL;
 	if (_file->isOpen()) {
-		seekStream = Audio::makeMP3Stream(_file, DisposeAfterUse::NO);
+		if (filename.hasSuffix(".m4a"))
+			seekStream = Audio::makeQuickTimeStream(_file, DisposeAfterUse::NO);
+		else
+			seekStream = Audio::makeMP3Stream(_file, DisposeAfterUse::NO);
 	} else {
 		delete _file;
 		_file = NULL;
