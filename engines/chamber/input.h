@@ -34,7 +34,6 @@ extern volatile unsigned char key_direction;
 extern volatile unsigned char key_code;
 extern unsigned char key_held;
 
-unsigned char ReadKeyboardChar(void);
 void ClearKeyboard(void);
 
 unsigned char PollMouse(void);

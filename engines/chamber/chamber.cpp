@@ -43,12 +43,10 @@ ChamberEngine::ChamberEngine(OSystem *syst)
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("chamber");
 
-	debug("ChamberEngine::ChamberEngine");
+	_shouldQuit = false;
 }
 
 ChamberEngine::~ChamberEngine() {
-	debug("ChamberEngine::~ChamberEngine");
-
 	// Dispose your resources here
 	delete _rnd;
 }

@@ -215,16 +215,23 @@ Common::Error ChamberEngine::run() {
 
 	/* Wait for a keypress and show the language selection screen */
 	ClearKeyboard();
-	ReadKeyboardChar();
-	CGA_SwapRealBackBuffer();
+	readKeyboardChar();
+
+	if (_shouldQuit)
+		return Common::kNoError;
+
+	CGA_BackBufferToRealFull();
 	ClearKeyboard();
 
 	/* Wait for a valid language choice */
 	do {
-		c = ReadKeyboardChar();
+		c = readKeyboardChar();
 		if (c > 'F')
 			c -= ' ';
 	} while (c < 'D' || c > 'F');
+
+	if (_shouldQuit)
+		return Common::kNoError;
 
 	/* Patch resource names for choosen language */
 	res_texts[0].name[4] = c;
