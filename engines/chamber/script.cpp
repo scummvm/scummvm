@@ -20,6 +20,10 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/system.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/script.h"
@@ -3385,7 +3389,7 @@ unsigned int RunScript(unsigned char *code) {
 
 		status = script_handlers[opcode]();
 
-		if (status != ScriptContinue)
+		if (status != ScriptContinue || g_vm->_shouldQuit)
 			break;
 	}
 

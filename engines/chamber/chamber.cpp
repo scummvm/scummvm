@@ -36,8 +36,12 @@
 
 namespace Chamber {
 
+ChamberEngine *g_vm;
+
 ChamberEngine::ChamberEngine(OSystem *syst)
 	: Engine(syst) {
+	g_vm = this;
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	// Don't forget to register your random source

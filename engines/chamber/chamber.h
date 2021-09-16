@@ -38,7 +38,6 @@ class ChamberEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
-	bool _shouldQuit;
 
 public:
 	ChamberEngine(OSystem *syst);
@@ -53,9 +52,14 @@ public:
 	void syncGameStream(Common::Serializer &s);
 
 	byte readKeyboardChar();
+
+public:
+	bool _shouldQuit;
 };
 
 void init(void);
+
+extern ChamberEngine *g_vm;
 
 } // End of namespace Chamber
 
