@@ -276,8 +276,7 @@ public:
 	void shadow_room(int16 mode);
 #endif
 	void set_taf_ani_mem(byte *load_area);
-	// FIXME : was FILE*
-	void load_sprite_pointer(void *handle);
+	void load_sprite_pointer(Stream *stream);
 
 private:
 	void load_taf_ani_sprite(int16 nr);

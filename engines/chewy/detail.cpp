@@ -208,7 +208,7 @@ void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 	if (strcmp(tafname, fname_)) {
 		if (rdi.dptr) {
 			if (fulltaf) {
-				free((char *)rdi.dptr);
+				free(rdi.dptr);
 				rdi.dptr = 0;
 				fulltaf = false;
 			} else {
@@ -305,7 +305,8 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 			}
 		}
 	}
-	return(Tt);
+
+	return Tt;
 }
 
 void detail::del_taf_tbl(taf_info *Tt) {
@@ -1242,25 +1243,28 @@ void detail::load_taf_ani_sprite(int16 nr) {
 	}
 }
 
-void detail::load_sprite_pointer(void *h) {
-	Stream *handle = (Stream *)h;
+void detail::load_sprite_pointer(Stream *stream) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	uint16 anzahl;
 	taf_dateiheader header;
 	taf_imageheader iheader;
 	int16 i;
-	if (handle) {
-		chewy_fseek(handle, 0, SEEK_SET);
-		if (chewy_fread(&header, sizeof(taf_dateiheader), 1, handle)) {
+
+	if (rs) {
+		rs->seek(0, SEEK_SET);
+
+		if (header.load(rs)) {
 			anzahl = header.count;
-			chewy_fseek(handle, header.next, SEEK_SET);
+			rs->seek(header.next, SEEK_SET);
 			SpritePos[0] = header.next;
+
 			for (i = 1; i < anzahl && !modul; i++) {
-				if (!chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
+				if (!iheader.load(rs)) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				}
 				SpritePos[i] = iheader.next;
-				chewy_fseek(handle, iheader.next, SEEK_SET);
+				rs->seek(iheader.next, SEEK_SET);
 			}
 		} else {
 			modul = DATEI;
