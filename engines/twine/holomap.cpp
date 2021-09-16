@@ -234,12 +234,13 @@ bool Holomap::isTriangleVisible(const Vertex *vertices) const {
 	return iVar2 - iVar1 != 0 && iVar1 <= iVar2;
 }
 
+#define SURFACE_POS_OFFSET ((ANGLE_360 / ANGLE_11_25) + 1)
 void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapImageSize) {
 	prepareHolomapPolygons();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
 		assert(_holomapSort[i].projectedPosIdx + 34 < _projectedSurfaceIndex);
 		const HolomapProjectedPos &pos1 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0];
-		const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
+		const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0 + SURFACE_POS_OFFSET];
 		const HolomapProjectedPos &pos3 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
 		Vertex vertexCoordinates[3];
 		vertexCoordinates[0].x = pos1.x1;
@@ -258,8 +259,8 @@ void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapIm
 			vertexCoordinates2[2].y = pos3.y2;
 			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2, holomapImage, holomapImageSize);
 		}
-		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
-		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
+		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0 + SURFACE_POS_OFFSET];
+		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1 + SURFACE_POS_OFFSET];
 		const HolomapProjectedPos &pos6 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
 		vertexCoordinates[0].x = pos4.x1;
 		vertexCoordinates[0].y = pos4.y1;
