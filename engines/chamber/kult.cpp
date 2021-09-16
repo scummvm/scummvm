@@ -190,6 +190,8 @@ Common::Error ChamberEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200);
 
+	SwitchToGraphicsMode();
+
 	unsigned char c;
 
 	/* Load title screen */
