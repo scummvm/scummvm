@@ -41,7 +41,7 @@
 namespace TwinE {
 
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {
-	_blockBufferSize = GRID_SIZE_X * GRID_SIZE_Z * GRID_SIZE_Y * 2 * sizeof(uint8);
+	_blockBufferSize = GRID_SIZE_X * GRID_SIZE_Z * GRID_SIZE_Y * sizeof(BlockEntry);
 	_blockBuffer = (uint8 *)malloc(_blockBufferSize);
 }
 
@@ -661,8 +661,6 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 }
 
 void Grid::redrawGrid() {
-	blockMap *map = (blockMap *)_blockBuffer;
-
 	_camera.x = _newCamera.x * BRICK_SIZE;
 	_camera.y = _newCamera.y * BRICK_HEIGHT;
 	_camera.z = _newCamera.z * BRICK_SIZE;
@@ -676,13 +674,25 @@ void Grid::redrawGrid() {
 	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
 			for (int32 y = 0; y < GRID_SIZE_Y; y++) {
-				const uint8 blockIdx = (*map)[z][x][y].blockIdx;
-				if (blockIdx) {
-					drawColumnGrid(blockIdx, (*map)[z][x][y].brickBlockIdx, x, y, z);
+				const BlockEntry entry = getBlockEntry(x, y, z);
+				if (entry.blockIdx) {
+					drawColumnGrid(entry.blockIdx, entry.brickBlockIdx, x, y, z);
 				}
 			}
 		}
 	}
+}
+
+BlockEntry Grid::getBlockEntry(int32 x, int32 y, int32 z) const {
+	const uint8 *blockBufferPtr = _blockBuffer;
+	blockBufferPtr += x * GRID_SIZE_Y * 2;
+	blockBufferPtr += y * 2;
+	blockBufferPtr += (z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
+
+	BlockEntry entry;
+	entry.blockIdx = *blockBufferPtr;
+	entry.brickBlockIdx = *(blockBufferPtr + 1);
+	return entry;
 }
 
 ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
@@ -700,19 +710,12 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		return ShapeType::kNone;
 	}
 
-	const uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += collision.y * 2;
-	blockBufferPtr += (collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
-
-	const uint8 blockIdx = *blockBufferPtr;
-
-	if (blockIdx) {
-		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+	const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
+	if (entry.blockIdx) {
+		const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
 		return (ShapeType)blockPtr->brickShape;
 	}
-	return (ShapeType) * (blockBufferPtr + 1);
+	return (ShapeType)entry.brickBlockIdx;
 }
 
 const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
@@ -803,16 +806,9 @@ uint8 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 		return 0; // none
 	}
 
-	const uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += collision.y * 2;
-	blockBufferPtr += (collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
-
-	uint8 blockIdx = *blockBufferPtr;
-
-	if (blockIdx) {
-		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+	const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
+	if (entry.blockIdx) {
+		const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
 		return blockPtr->brickType;
 	}
 
