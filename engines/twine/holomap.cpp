@@ -250,14 +250,14 @@ void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapIm
 		vertexCoordinates[2].x = pos3.x1;
 		vertexCoordinates[2].y = pos3.y1;
 		if (isTriangleVisible(vertexCoordinates)) {
-			Vertex vertexCoordinates2[3];
-			vertexCoordinates2[0].x = pos1.x2;
-			vertexCoordinates2[0].y = pos1.y2;
-			vertexCoordinates2[1].x = pos2.x2;
-			vertexCoordinates2[1].y = pos2.y2;
-			vertexCoordinates2[2].x = pos3.x2;
-			vertexCoordinates2[2].y = pos3.y2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2, holomapImage, holomapImageSize);
+			Vertex textureCoordinates[3];
+			textureCoordinates[0].x = pos1.x2;
+			textureCoordinates[0].y = pos1.y2;
+			textureCoordinates[1].x = pos2.x2;
+			textureCoordinates[1].y = pos2.y2;
+			textureCoordinates[2].x = pos3.x2;
+			textureCoordinates[2].y = pos3.y2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0 + SURFACE_POS_OFFSET];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1 + SURFACE_POS_OFFSET];
@@ -269,14 +269,14 @@ void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapIm
 		vertexCoordinates[2].x = pos6.x1;
 		vertexCoordinates[2].y = pos6.y1;
 		if (isTriangleVisible(vertexCoordinates)) {
-			Vertex vertexCoordinates2[3];
-			vertexCoordinates2[0].x = pos4.x2;
-			vertexCoordinates2[0].y = pos4.y2;
-			vertexCoordinates2[1].x = pos5.x2;
-			vertexCoordinates2[1].y = pos5.y2;
-			vertexCoordinates2[2].x = pos6.x2;
-			vertexCoordinates2[2].y = pos6.y2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2, holomapImage, holomapImageSize);
+			Vertex textureCoordinates[3];
+			textureCoordinates[0].x = pos4.x2;
+			textureCoordinates[0].y = pos4.y2;
+			textureCoordinates[1].x = pos5.x2;
+			textureCoordinates[1].y = pos5.y2;
+			textureCoordinates[2].x = pos6.x2;
+			textureCoordinates[2].y = pos6.y2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
 		}
 	}
 }
