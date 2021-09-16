@@ -43,6 +43,7 @@ unsigned char right_button;
 unsigned char key_direction_old;
 unsigned char accell_countdown;
 unsigned int accelleration = 1;
+byte mouseButtons = 0;
 
 byte ChamberEngine::readKeyboardChar() {
 	Common::Event event;
@@ -141,12 +142,51 @@ unsigned char PollKeyboard(void) {
 }
 
 void PollInput(void) {
-	unsigned char keys;
-	if (have_mouse)
-		keys = PollMouse();
-	else
-		keys = PollKeyboard();
-	SetInputButtons(keys);
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				mouseButtons |= 1;
+			break;
+
+		case Common::EVENT_KEYUP:
+			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				mouseButtons &= ~1;
+			break;
+
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+		case Common::EVENT_QUIT:
+			g_vm->_shouldQuit = true;
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			cursor_x = event.mouse.x;
+			cursor_y = event.mouse.y;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			mouseButtons |= 1;
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			mouseButtons &= ~1;
+			break;
+
+		case Common::EVENT_RBUTTONDOWN:
+			mouseButtons |= 2;
+			break;
+
+		case Common::EVENT_RBUTTONUP:
+			mouseButtons &= ~2;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	SetInputButtons(mouseButtons);
 }
 
 void ProcessInput(void) {

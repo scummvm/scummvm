@@ -20,9 +20,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/error.h"
+#include "common/system.h"
 #include "engines/util.h"
 
 #include "chamber/chamber.h"
@@ -54,9 +54,12 @@ void AskDisk2(void) {
 }
 
 void SaveToFile(char *filename, void *data, unsigned int size) {
+	warning("STUB: SaveToFile(%s, data, %d)", filename, size);
+#if 0
 	FILE *f = fopen(filename, "wb");
 	fwrite(data, 1, size, f);
 	fclose(f);
+#endif
 }
 
 int LoadSplash(const char *filename) {
@@ -105,6 +108,9 @@ void GameLoop(unsigned char *target) {
 		/* Get player input */
 		PollInput();
 
+		if (g_vm->_shouldQuit)
+			return;
+
 		the_command = 0;
 		if (IsCursorInRect(&room_bounds_rect)) {
 			SelectCursor(CURSOR_TARGET);
@@ -152,6 +158,9 @@ void GameLoop(unsigned char *target) {
 					goto process;
 			}
 
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+
 			continue;
 
 process:
@@ -177,13 +186,14 @@ process:
 			ProcessInput();
 			DrawSpots(target);
 		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 }
 
 
 void ExitGame(void) {
 	SwitchToTextMode();
-	exit(0);
 }
 
 Common::Error ChamberEngine::run() {
@@ -294,6 +304,9 @@ restart:
 	the_command = 0xC001;
 	RunCommand();
 #endif
+
+	if (_shouldQuit)
+		return Common::kNoError;
 
 	/* Sync graphics */
 	BlitSpritesToBackBuffer();

@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/dialog.h"
@@ -186,6 +188,12 @@ void PromptWait(void) {
 			ShowPromptAnim();
 		}
 		PollInput();
+
+		if (g_vm->_shouldQuit)
+			break;
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	} while (!buttons);
 
 	if (cursor_anim_phase)
