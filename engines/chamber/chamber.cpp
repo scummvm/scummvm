@@ -63,6 +63,8 @@ Common::Error ChamberEngine::run() {
 	// Your main even loop should be (invoked from) here.
 	debug("ChamberEngine::go: Hello, World!");
 
+	run();
+
 	// Simple main event loop
 	Common::Event evt;
 	while (!shouldQuit()) {
