@@ -222,7 +222,8 @@ void datei::load_image(const char *fname, byte *sp, byte *palette) {
 	}
 }
 
-void datei::load_image(Stream *handle, byte *sp, byte *palette) {
+void datei::load_image(Stream *stream, byte *sp, byte *palette) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	tbf_dateiheader *header;
 	uint16 i = 0;
 	int16 *abmess;
@@ -232,8 +233,9 @@ void datei::load_image(Stream *handle, byte *sp, byte *palette) {
 	header = (tbf_dateiheader *)tmp;
 	speicher = sp;
 	abmess = (int16 *) speicher;
-	if ((speicher) && (palette) && (handle)) {
-		if (chewy_fread(header, sizeof(tbf_dateiheader), 1, handle)) {
+
+	if ((speicher) && (palette) && (rs)) {
+		if (header->load(rs)) {
 			format = get_id(header->id);
 			if (format != -1) {
 				for (i = 0; i < 768; i++)
@@ -243,14 +245,14 @@ void datei::load_image(Stream *handle, byte *sp, byte *palette) {
 					abmess[0] = header->width;
 					abmess[1] = header->height;
 					speicher += 4;
-					read_tbf_image(handle, header->komp,
+					read_tbf_image(rs, header->komp,
 					               header->entpsize, speicher);
 					break;
 				case TPFDATEI:
 					abmess[0] = header->width;
 					abmess[1] = header->height;
 					speicher += 4;
-					read_tpf_image(handle, header->komp,
+					read_tpf_image(rs, header->komp,
 					               header->entpsize, speicher);
 					break;
 				}
@@ -270,7 +272,7 @@ void datei::load_image(Stream *handle, byte *sp, byte *palette) {
 		modul = GRAFIK;
 	}
 	if (!modul)
-		chewy_fread(&ch, sizeof(ChunkHead), 1, handle);
+		ch.load(rs);
 }
 
 uint16 datei::select_pool_item(Stream *stream, uint16 nr) {

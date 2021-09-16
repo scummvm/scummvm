@@ -38,16 +38,16 @@ public:
 	void load_image(const char *fname, byte *sp, byte *palette);
 	void load_tafmcga(const char *fname, byte *sp, int16 nr);
 
-	void load_image(Stream *handle, byte *sp, byte *palette);
-	uint16 select_pool_item(Stream *handle, uint16 nr);
-	void load_tafmcga(Stream *handle, int16 komp, uint32 size, byte *speicher);
-	void read_tpf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
-	uint32 load_voc(Stream *handle, byte *speicher);
-	uint32 load_item(Stream *handle, byte *speicher);
-	uint32 load_tmf(Stream *handle, tmf_header *song);
-	void write_tbf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
-	void write_tpf_image(Stream *handle, int16 komp, uint32 size, byte *speicher);
-	void load_palette(Stream *handle, byte *palette);
+	void load_image(Stream *stream, byte *sp, byte *palette);
+	uint16 select_pool_item(Stream *stream, uint16 nr);
+	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
+	void read_tpf_image(Stream *stream, int16 komp, uint32 size, byte *speicher);
+	uint32 load_voc(Stream *stream, byte *speicher);
+	uint32 load_item(Stream *stream, byte *speicher);
+	uint32 load_tmf(Stream *stream, tmf_header *song);
+	void write_tbf_image(Stream *stream, int16 komp, uint32 size, byte *speicher);
+	void write_tpf_image(Stream *stream, int16 komp, uint32 size, byte *speicher);
+	void load_palette(Stream *stream, byte *palette);
 
 	void load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo);
 	void load_korrektur(const char *fname, byte *sp);
