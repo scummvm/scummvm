@@ -228,7 +228,6 @@ void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 		if (!fulltaf)
 			load_taf_tbl(rdi.dptr);
 	}
-
 }
 
 void detail::del_dptr() {
@@ -246,14 +245,13 @@ void detail::del_dptr() {
 }
 
 void detail::load_taf_tbl(taf_info *fti) {
-
 	int16 i;
 	if (!fti) {
 		fti = rdi.dptr;
 	}
+
 	if (!modul) {
 		if (fti) {
-
 			if (CurrentTaf) {
 				for (i = 0; i < MAXDETAILS; i++) {
 					if (rdi.Sinfo[i].SprNr != -1)
@@ -347,24 +345,26 @@ void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 	}
 }
 
-void detail::load_taf_seq(void *h, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
-	Stream *handle = (Stream *)h;
+void detail::load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	uint32 size;
 	taf_imageheader iheader;
 	int16 i;
 
-	chewy_fseek(handle, SpritePos[spr_nr], SEEK_SET);
+	rs->seek(SpritePos[spr_nr], SEEK_SET);
 	for (i = 0; i < spr_anz && !modul; i++) {
-		if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
+		if (iheader.load(rs)) {
 			if (!Tt->image[spr_nr + i]) {
 				size = iheader.width * iheader.height ;
 				Tt->image[spr_nr + i] = (byte *)calloc(size + 4l, 1);
 				((int16 *)Tt->image[spr_nr + i])[0] = iheader.width;
 				((int16 *)Tt->image[spr_nr + i])[1] = iheader.height;
-				chewy_fseek(handle, iheader.image, SEEK_SET);
-				mem->file->load_tafmcga(handle, iheader.komp, size, Tt->image[spr_nr + i] + 4l);
+
+				rs->seek(iheader.image, SEEK_SET);
+				mem->file->load_tafmcga(rs, iheader.komp, size, Tt->image[spr_nr + i] + 4l);
 			}
-			chewy_fseek(handle, iheader.next, SEEK_SET);
+
+			rs->seek(iheader.next, SEEK_SET);
 		} else {
 			fcode = READFEHLER;
 			modul = DATEI;

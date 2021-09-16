@@ -242,8 +242,7 @@ public:
 
 	void del_taf_tbl(int16 start, int16 anz, taf_info *Tt);
 
-	// FIXME : was FILE*
-	void load_taf_seq(void *handle, int16 spr_nr, int16 spr_anz,
+	void load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz,
 	                  taf_info *Tt);
 
 	void load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt);

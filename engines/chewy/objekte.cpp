@@ -101,7 +101,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 			if (iib_datei_header.Size) {
 				assert(iib_datei_header.Size % RoomMovObjekt::SIZE() == 0);
 
-				for (int i = 0; i < iib_datei_header.Size / RoomMovObjekt::SIZE() && valid;
+				for (uint i = 0; i < iib_datei_header.Size / RoomMovObjekt::SIZE() && valid;
 						++i, ++rmo) {
 					valid = rmo->load(&f);
 				}
