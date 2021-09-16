@@ -499,8 +499,21 @@ bool Script::preview_loadgame(uint slot) { // used by Clandestiny for the photos
 }
 
 bool Script::canDirectSave() const {
-	// Disallow when running a subscript
-	return _savedCode == nullptr;
+	// Disallow when running a subscript (puzzle)
+	if (_savedCode == nullptr) {
+		// UHP appears not to use "room" variables(?)
+		// 11H uses room plus 'scene' variable. 8D is set to 1 at launch, but scene is left '0' until first nav
+		// T7G and Clan only use room vars
+		// TLC uses room variables to indicate question progress
+		if (_version == kGroovieUHP)
+			return true;
+		else if (_version == kGroovieT11H)
+			return _variables[0x8C] != 0 || _variables[0x8D] != 1 || _variables[0x8E] != 0;
+		else
+			return _variables[0x8C] != 0 || _variables[0x8D] != 0;
+	}
+
+	return false;
 }
 
 void Script::directGameSave(int slot, const Common::String &desc) {
