@@ -230,13 +230,45 @@ Blit progressive image to interlaced screen buffer
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
 void CGA_Blit(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
-	while (h--) {
-		memcpy(screen + ofs, pixels, w);
-		pixels += pw;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+	byte *src = pixels;
+	uint ofs1 = ofs;
+	for (int y = 0; y < h; y++) {
+		memcpy(screen + ofs1, src, w);
+		src += pw;
+		ofs1 ^= CGA_ODD_LINES_OFS;
+		if ((ofs1 & CGA_ODD_LINES_OFS) == 0)
+			ofs1 += CGA_BYTES_PER_LINE;
 	}
+
+	// Now copy pixels to our screen
+	src = pixels;
+	int dy = ofs / 80;
+	int dx = (ofs % 80) * 4;
+
+	if (dy + h >= 200)
+		h = 199 - dy;
+
+	if (dx + w * 4 >= 320)
+		w = (320 - dx) / 4;
+
+	for (int y = 0; y < h; y++) {
+		byte *dst = scrbuffer + (y + dy) * 320 + dx;
+		byte *src1 = src;
+
+		for (int x = 0; x < w; x++) {
+			byte colors = *src1++;
+
+			for (int c = 0; c < 4; c++) {
+				byte color = (colors & 0xC0) >> 6;
+				colors <<= 2;
+
+				*dst++ = color;
+			}
+		}
+		src += pw;
+	}
+
+	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
 }
 
 /*
@@ -249,12 +281,35 @@ void CGA_BlitAndWait(unsigned char *pixels, unsigned int pw, unsigned int w, uns
 }
 
 void CGA_Fill(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
-	while (h--) {
-		memset(screen + ofs, pixel, w);
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+	uint ofs1 = ofs;
+	for (int y = 0; y < h; y++) {
+		memset(screen + ofs1, pixel, w);
+		ofs1 ^= CGA_ODD_LINES_OFS;
+		if ((ofs1 & CGA_ODD_LINES_OFS) == 0)
+			ofs1 += CGA_BYTES_PER_LINE;
 	}
+
+	// Now copy pixels to our screen
+	int dy = ofs / 80;
+	int dx = (ofs % 80) * 4;
+
+	if (dy + h >= 200)
+		h = 199 - dy;
+
+	w *= 4;
+
+	if (dx + w >= 320)
+		w = 320 - dx;
+
+	for (int y = 0; y < h; y++) {
+		byte *dst = screen + (y + dy) * 320 + dx;
+
+		for (int x = 0; x < w; x++) {
+			*dst++ = pixel;
+		}
+	}
+
+	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
 }
 
 void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
