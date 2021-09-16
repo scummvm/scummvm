@@ -113,10 +113,6 @@ AsylumEngine::~AsylumEngine() {
 	_gameDescription = NULL;
 }
 
-bool AsylumEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher);
-}
-
 Common::Error AsylumEngine::run() {
 	// Initialize the graphics
 	initGraphics(640, 480);
@@ -639,6 +635,34 @@ void AsylumEngine::checkAchievements() {
 		}
 		break;
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Save/Load
+//////////////////////////////////////////////////////////////////////////
+bool AsylumEngine::canLoadGameStateCurrently() {
+	return _handler == _scene || _handler == _menu;
+}
+
+bool AsylumEngine::canSaveGameStateCurrently() {
+	return _handler == _scene;
+}
+
+Common::Error AsylumEngine::loadGameState(int slot) {
+	savegame()->loadList();
+	savegame()->setIndex(slot);
+	startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad);
+
+	return Common::kNoError;
+}
+
+Common::Error AsylumEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	savegame()->loadList();
+	savegame()->setIndex(slot);
+	savegame()->setName(slot, desc);
+	savegame()->save(true);
+
+	return Common::kNoError;
 }
 
 //////////////////////////////////////////////////////////////////////////

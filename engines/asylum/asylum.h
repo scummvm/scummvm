@@ -194,6 +194,12 @@ public:
 	bool isAltDemo() { return Common::File::exists("asylum.dat"); }
 	Common::Language getLanguage() { return _gameDescription->language; }
 
+	// Save/Load
+	bool canLoadGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	bool canSaveGameStateCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
+
 private:
 	const ADGameDescription *_gameDescription;
 

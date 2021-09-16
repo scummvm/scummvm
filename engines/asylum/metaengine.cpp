@@ -20,14 +20,18 @@
  *
  */
 
-#include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
 #include "common/achievements.h"
+#include "common/savefile.h"
 #include "common/translation.h"
+
+#include "engines/advancedDetector.h"
+
+#include "asylum/system/savegame.h"
 
 #include "asylum/asylum.h"
 #include "asylum/shared.h"
@@ -42,14 +46,50 @@ public:
 		return "Sanitarium (c) ASC Games";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override { return 25; }
+	SaveStateList listSaves(const char *target) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
 };
 
-bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+SaveStateList AsylumMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern(getSavegameFilePattern(target));
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			SaveStateDescriptor desc = querySaveMetaInfos(target, slotNum);
+			if (desc.getSaveSlot() == -1) {
+				Common::InSaveFile *in(saveFileMan->openForLoading(*file));
+				if (in && in->size()) {
+					(void)(uint32)Asylum::Savegame::read(in, "Chapter");
+					desc.setSaveSlot(slotNum);
+					desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
+				}
+			}
+
+			saveList.push_back(desc);
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
 }
 
 Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
