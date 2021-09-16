@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/events.h"
+#include "common/system.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/input.h"
@@ -41,12 +44,28 @@ unsigned char key_direction_old;
 unsigned char accell_countdown;
 unsigned int accelleration = 1;
 
-unsigned char ReadKeyboardChar(void) {
-	warning("STUB: ReadKeyboardChar()");
+byte ChamberEngine::readKeyboardChar() {
+	Common::Event event;
 
-	return 0;
+	while (true) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				return event.kbd.ascii;
 
-	//return (unsigned char)getch();
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+			case Common::EVENT_QUIT:
+				_shouldQuit = true;
+				return 0;
+
+			default:
+				break;
+			}
+
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+	}
 }
 
 void ClearKeyboard(void) {
@@ -182,52 +201,7 @@ void KeyboardIsr() {
 }
 
 void InitInput(void) {
-	warning("STUB: InitInput()");
-
-#if 0
-	/*disable critical errors handler*/
-	setvect(0x24, NullIsr);
-
-	/*is mouse present?*/
-	if (getvect(0x33)) {
-		union REGS reg;
-		reg.x.ax = 0;
-		int86(0x33, &reg, &reg);
-		if (reg.x.ax == 0xFFFF) {
-			/*mouse detected*/
-
-			reg.x.ax = 0xF; /*set cursor speed*/
-			reg.x.cx = 16;
-			reg.x.dx = 16;
-			int86(0x33, &reg, &reg);
-
-			reg.x.ax = 7;   /*set x range*/
-			reg.x.cx = 0;
-			reg.x.dx = 303;
-			int86(0x33, &reg, &reg);
-
-			reg.x.ax = 8;   /*set y range*/
-			reg.x.cx = 0;
-			reg.x.dx = 183;
-			int86(0x33, &reg, &reg);
-
-			reg.x.ax = 4;   /*set coords*/
-			cursor_x = reg.x.cx = 10;
-			cursor_y = reg.x.dx = 10;
-			int86(0x33, &reg, &reg);
-
-			have_mouse = ~0;
-		}
-	}
-
-	if (have_mouse)
-		return;
-
-	/*no mouse*/
-
-	old_keyboard_isr = getvect(9);
-	setvect(9, KeyboardIsr);
-#endif
+	have_mouse = 1;
 }
 
 void UninitInput(void) {

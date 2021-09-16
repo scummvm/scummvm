@@ -38,6 +38,8 @@ class ChamberEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	bool _shouldQuit;
+
 public:
 	ChamberEngine(OSystem *syst);
 	~ChamberEngine();
@@ -49,6 +51,8 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
+
+	byte readKeyboardChar();
 };
 
 void init(void);
