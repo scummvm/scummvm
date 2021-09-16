@@ -64,7 +64,7 @@ void RestartGame(void) {
 #define CGA_SAVE_SCRSTACK_OFS  0x7562
 #define CGA_SAVE_TEMPL_OFS     0x182C
 #define CGA_SAVE_VORTANIMS_OFS 0xA609
-#define CGA_SAVE_RECS7_OFS     0xA74E
+#define CGA_SAVE_TURKEYANIMS_OFS 0xA74E
 #define CGA_SAVE_TIMEDSEQ_OFS  0xA7C0
 
 #define SAVEADDR(value, base, nativesize, origsize, origbase)   \
@@ -163,8 +163,8 @@ int LoadScena(void) {
 	/* vortanims_ptr */
 	POINTER((unsigned char *)vortanims_ptr, vortsanim_list, 1, 1, CGA_SAVE_VORTANIMS_OFS);
 
-	/* rec7_ptr */
-	POINTER((unsigned char *)rec7_ptr, recs7_list, 1, 1, CGA_SAVE_RECS7_OFS);
+	/* turkeyanims_ptr */
+	POINTER((unsigned char *)turkeyanims_ptr, turkeyanim_list, 1, 1, CGA_SAVE_TURKEYANIMS_OFS);
 
 	/* pers_ptr */
 	POINTER((unsigned char *)pers_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);
@@ -431,8 +431,8 @@ int SaveScena(void) {
 	/* vortanims_ptr */
 	POINTER(vortanims_ptr, vortsanim_list, 1, 1, CGA_SAVE_VORTANIMS_OFS);
 
-	/* rec7_ptr */
-	POINTER(rec7_ptr, recs7_list, 1, 1, CGA_SAVE_RECS7_OFS);
+	/* turkeyanims_ptr */
+	POINTER(turkeyanims_ptr, turkeyanim_list, 1, 1, CGA_SAVE_TURKEYANIMS_OFS);
 
 	/* pers_ptr */
 	POINTER(pers_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);

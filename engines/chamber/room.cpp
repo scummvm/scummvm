@@ -63,7 +63,7 @@ spot_t *zone_spots_end;
 spot_t *zone_spots_cur;
 
 vortanims_t *vortanims_ptr;
-rec7_t *rec7_ptr;
+turkeyanims_t *turkeyanims_ptr;
 pers_t *pers_ptr;
 spot_t *spot_ptr;
 spot_t *found_spot;
@@ -122,9 +122,9 @@ vortanims_t vortsanim_list[VORTANIMS_MAX] = {
 	{61, {29, {{23, 123}}}, {30, {{23, 123}}}, {31, {{23, 123}}}, {32, {{23, 123}}}}
 };
 
-#define RECS7_MAX 10
+#define TURKEYANIMS_MAX 10
 
-rec7_t recs7_list[RECS7_MAX] = {
+turkeyanims_t turkeyanim_list[TURKEYANIMS_MAX] = {
 	{50, {61, {{14, 140}}}, {62, {{14, 140}}}},
 	{51, {61, {{14, 143}}}, {62, {{14, 143}}}},
 	{53, {61, {{20, 153}}}, {62, {{20, 153}}}},
@@ -140,6 +140,11 @@ rec7_t recs7_list[RECS7_MAX] = {
 static const unsigned char cga_color_sels[] = {
 	0x30, 0x10, 0x30, 0x10, 0x30, 0x10, 0x10, 0x30, 0x10, 0x10, 0x10, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x10, 0x10, 0x10
 };
+
+void SelectSpecificPalette(unsigned char index) {
+	CGA_ColorSelect(cga_color_sels[index]);
+}
+
 
 void SelectPalette(void) {
 	CGA_ColorSelect(cga_color_sels[script_byte_vars.palette_index]);
@@ -340,9 +345,6 @@ void LoadZone(void) {
 }
 
 void ResetZone(void) {
-	script_word_vars.word_178EE = 0;
-	script_word_vars.word_17852 = 0;
-	script_word_vars.word_17848 = 0;
 	script_byte_vars.byte_179F9 = 0;
 	script_byte_vars.byte_17A01 = 0;
 	script_byte_vars.byte_17A17 = 0;
@@ -352,12 +354,15 @@ void ResetZone(void) {
 	script_byte_vars.byte_179EA = 0;
 	script_byte_vars.byte_179BE = 0;
 	script_byte_vars.byte_179EF = 0;
+	script_word_vars.psi_cmds[0] = BE(0x9048);
+	script_word_vars.psi_cmds[1] = BE(0xA01D);
+	script_word_vars.psi_cmds[2] = BE(0);
+	script_word_vars.psi_cmds[3] = BE(0x00F7);
+	script_word_vars.psi_cmds[4] = BE(0x9048);
+	script_word_vars.psi_cmds[5] = BE(0x9048);
 	script_word_vars.word_17850 = BE(0xA01C);
-	script_word_vars.word_1784A = BE(0x00F7);
-	script_word_vars.word_17844 = BE(0x9048);
-	script_word_vars.word_1784C = BE(0x9048);
-	script_word_vars.word_1784E = BE(0x9048);
-	script_word_vars.word_17846 = BE(0xA01D);
+	script_word_vars.word_17852 = BE(0);
+	script_word_vars.word_178EE = BE(0);
 }
 
 /*
@@ -1014,6 +1019,17 @@ void LoadLutinSprite(unsigned int lutidx) {
 }
 
 /*
+Draw specific room's person idle sprite
+*/
+void DrawCharacterSprite(unsigned char spridx, unsigned char x, unsigned char y, unsigned char *target) {
+	lutin_mem = scratch_mem2;
+
+	LoadLutinSprite(spridx);
+
+	DrawSprite(scratch_mem2, target, CGA_CalcXY_p(x, y));
+}
+
+/*
 Draw room's person idle sprite and advance sprite's animation
 Return true if a sprite was drawn
 */
@@ -1209,9 +1225,9 @@ void PrepareCommand4(void) {
 		if ((spot->flags & ~SPOTFLG_80) == (SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_1)) {
 			int i;
 
-			for (i = 0; i < RECS7_MAX; i++) {
-				if (recs7_list[i].room == script_byte_vars.zone_room) {
-					rec7_ptr = &recs7_list[i];
+			for (i = 0; i < TURKEYANIMS_MAX; i++) {
+				if (turkeyanim_list[i].room == script_byte_vars.zone_room) {
+					turkeyanims_ptr = &turkeyanim_list[i];
 					if (script_byte_vars.zone_area == pers_list[5].area) {
 						next_command4 = 0xA01F;
 						SetDelay5();
@@ -1468,7 +1484,7 @@ void DrawTheWallDoors(void) {
 	case 9:
 	case 102:
 		CGA_Blit(LoadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
-		CGA_Blit(LoadMursmSprite(1), 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
+		CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
 		break;
 	case 95:
 	case 103:
