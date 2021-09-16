@@ -170,23 +170,23 @@ void Holomap::prepareHolomapSurface(Common::SeekableReadStream *holomapSurfaceSt
 
 void Holomap::prepareHolomapProjectedPositions() {
 	int projectedIndex = 0;
-	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+	for (int32 alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
 		int rotation = 0;
-		for (int32 i = 0; i < ANGLE_11_25; ++i) {
-			_projectedSurfacePositions[projectedIndex].x2 = _engine->_screens->crossDot(0, 0xffff, ANGLE_360 - 1, rotation);
-			if (angle == ANGLE_90) {
+		for (int32 beta = 0; beta < ANGLE_11_25; ++beta) {
+			_projectedSurfacePositions[projectedIndex].x2 = _engine->_screens->lerp(0, 0xffff, ANGLE_360 - 1, rotation);
+			if (alpha == ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].y2 = -1;
 			} else {
-				_projectedSurfacePositions[projectedIndex].y2 = ((angle + ANGLE_90) * ANGLE_90) / 2;
+				_projectedSurfacePositions[projectedIndex].y2 = ((alpha + ANGLE_90) * ANGLE_90) / 2;
 			}
 			rotation += ANGLE_11_25;
 			++projectedIndex;
 		}
 		_projectedSurfacePositions[projectedIndex].x2 = -1;
-		if (angle == ANGLE_90) {
+		if (alpha == ANGLE_90) {
 			_projectedSurfacePositions[projectedIndex].y2 = -1;
 		} else {
-			_projectedSurfacePositions[projectedIndex].y2 = ((angle + ANGLE_90) * ANGLE_90) / 2;
+			_projectedSurfacePositions[projectedIndex].y2 = ((alpha + ANGLE_90) * ANGLE_90) / 2;
 		}
 		++projectedIndex;
 	}

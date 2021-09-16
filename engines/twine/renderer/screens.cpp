@@ -122,11 +122,11 @@ void Screens::fadeOut(const uint32 *pal) {
 #endif
 }
 
-int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
-	if (!param) {
-		return color;
+int32 Screens::lerp(int32 value, int32 start, int32 end, int32 t) {
+	if (!end) {
+		return start;
 	}
-	return (((color - modifier) * intensity) / param) + modifier;
+	return (((start - value) * t) / end) + value;
 }
 
 void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
@@ -142,9 +142,9 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	uint8 *newA = &paletteOut[3];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		*newR = crossDot(r, paletteIn[counter], 100, intensity);
-		*newG = crossDot(g, paletteIn[counter + 1], 100, intensity);
-		*newB = crossDot(b, paletteIn[counter + 2], 100, intensity);
+		*newR = lerp(r, paletteIn[counter], 100, intensity);
+		*newG = lerp(g, paletteIn[counter + 1], 100, intensity);
+		*newB = lerp(b, paletteIn[counter + 2], 100, intensity);
 		*newA = 0xFF;
 
 		newR += 4;
@@ -178,9 +178,9 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 		uint8 *newA = &paletteOut[counter + 3];
 
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
-			*newR = crossDot(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
-			*newG = crossDot(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
-			*newB = crossDot(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
+			*newR = lerp(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
+			*newG = lerp(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
+			*newB = lerp(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
 			*newA = 0xFF;
 
 			newR += 4;
