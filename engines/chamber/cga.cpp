@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/palette.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/resdata.h"
@@ -29,6 +32,7 @@ namespace Chamber {
 
 extern unsigned char backbuffer[0x4000];
 byte CGA_SCREENBUFFER[0x4000];
+byte scrbuffer[320*200];
 
 unsigned char carpc_data[RES_CARPC_MAX];
 
@@ -67,11 +71,18 @@ unsigned char cga_pixel_flip[256] = {
 	63, 127, 191, 255
 };
 
+static const uint8 PALETTE_CGA[4 * 3] = {
+        0x00, 0x00, 0x00, // black
+        0x55, 0xff, 0xff, // cyan
+        0xff, 0x55, 0xff, // magenta
+        0xff, 0xff, 0xff
+};
+
 /*
   Switch to CGA 320x200x2bpp mode
 */
 void SwitchToGraphicsMode(void) {
-	warning("STUB: SwitchToGraphicsMode()");
+	g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
 }
 
 /*
@@ -91,6 +102,25 @@ void CGA_ColorSelect(unsigned char csel) {
 
 void CGA_BackBufferToRealFull(void) {
 	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+
+	byte *ptr = CGA_SCREENBUFFER;
+	byte *dst = scrbuffer;
+
+	for (int y = 0; y < 200; y++) {
+		for (int x = 0; x < 320 / 4; x++) {
+			byte colors = *ptr++;
+
+			for (int c = 0; c < 4; c++) {
+				byte color = (colors & 0xC0) >> 6;
+				colors >>= 2;
+
+				*dst++ = color;
+			}
+		}
+	}
+
+	g_system->copyRectToScreen(scrbuffer, 320, 0, 0, 320, 200);
+	g_system->updateScreen();
 }
 
 void CGA_RealBufferToBackFull(void) {
