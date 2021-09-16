@@ -23,7 +23,10 @@ MODULE_OBJS := \
 	r_texts.o \
 	resdata.o \
 	room.o \
-	sound.o
+	savegame.o \
+	script.o \
+	sound.o \
+	timer.o
 
 MODULE_DIRS += \
 	engines/chamber
