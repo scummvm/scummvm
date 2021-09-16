@@ -38,21 +38,28 @@ namespace Chewy {
 struct RaumInfo {
 	uint8 RoomNr;
 	uint8 BildNr;
-
 	uint8 AutoMovAnz;
 	uint8 TafLoad;
-
 	char TafName[14];
 	uint8 ZoomFak;
 	uint8 Dummy;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 4 * 1 + 14 + 1 + 1;
+	}
 };
 
 struct RaumAutoMov {
 	int16 X;
 	int16 Y;
 	uint8 SprNr;
-
 	uint8 dummy;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 2 + 2 + 1 + 1;
+	}
 };
 
 #define MAXTAF 10
@@ -77,12 +84,16 @@ struct sound_def_blk {
 	int16 volume [MAX_SOUNDS];
 	int16 repeats [MAX_SOUNDS];
 	int16 stereo [MAX_SOUNDS];
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 7 * 2 * MAX_SOUNDS;
+	}
 };
 
 struct ani_detail_info {
 	int16 x;
 	int16 y;
-
 	uint8 start_flag;
 	uint8 repeat;
 	int16 start_ani;
@@ -91,50 +102,67 @@ struct ani_detail_info {
 	int16 delay;
 	int16 delay_count;
 	int16 reverse;
-
 	int16 timer_start;
-
 	int16 z_ebene;
-
 	uint8 load_flag;
-
 	uint8 zoom;
 	sound_def_blk sfx;
-
 	int16 show_1_phase;
-
 	int16 phase_nr;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 2 + 2 + 1 + 1 + 2 * 8 + 1 + 1 +
+			sound_def_blk::SIZE() + 2 + 2;
+	}
 };
 
 struct static_detail_info {
 	int16 x;
 	int16 y;
 	int16 SprNr;
-
 	short z_ebene;
-
 	bool Hide;
-
 	uint8 Dummy;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 2 + 2 + 2 + 1 + 1 + 1;
+	}
 };
 
 struct room_detail_info {
-	int16 StaticDetailAnz;
-	int16 AniDetailAnz;
-	taf_info *dptr;
+	int16 StaticDetailAnz = 0;
+	int16 AniDetailAnz = 0;
+	taf_info *dptr = nullptr;
 	ani_detail_info Ainfo[MAXDETAILS];
 	static_detail_info Sinfo[MAXDETAILS];
-	int16 mvect[MAX_M_ITEMS * 4];
-	int16 mtxt[MAX_M_ITEMS];
+	int16 mvect[MAX_M_ITEMS * 4] = { 0 };
+	int16 mtxt[MAX_M_ITEMS] = { 0 };
 	RaumInfo Ri;
 	RaumAutoMov AutoMov[MAX_AUTO_MOV];
-	int16 tvp_index[MAXDETAILS * MAX_SOUNDS];
-	byte *sample[MAXDETAILS * MAX_SOUNDS];
+	int16 tvp_index[MAXDETAILS * MAX_SOUNDS] = { 0 };
+	byte *sample[MAXDETAILS * MAX_SOUNDS] = { 0 };
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr size_t SIZE() {
+		return 2 + 2 + 4 +
+			(ani_detail_info::SIZE() * MAXDETAILS) +
+			(static_detail_info::SIZE() * MAXDETAILS) +
+			(2 * MAX_M_ITEMS * 4) +
+			(2 * MAX_M_ITEMS) +
+			RaumInfo::SIZE() +
+			(RaumAutoMov::SIZE() * MAX_AUTO_MOV) +
+			(2 * MAXDETAILS * MAX_SOUNDS) +
+			(4 * MAXDETAILS * MAX_SOUNDS);
+	}
 };
 
 struct RdiDateiHeader {
 	char Id[4];
 	int16 Anz;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 #define MAXPATH 255
