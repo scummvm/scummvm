@@ -39,6 +39,7 @@ void AnimateGauss(unsigned char *target) {
 	CGA_Blit(sprite, 8, 8, 30, target, 80); /*draw to 0:4*/
 }
 
+#if 0
 void interrupt(*old_timer_isr)();
 
 void interrupt TimerIsr() {
@@ -55,17 +56,25 @@ void interrupt TimerIsr() {
 	enable();
 }
 
+#endif
+
 void InitTimer(void) {
+	warning("STUB: InitTimer()");
+#if 0
 	disable();
 	old_timer_isr = getvect(0x1C);
 	setvect(0x1C, TimerIsr);
 	enable();
+#endif
 }
 
 void UninitTimer(void) {
+	warning("STUB: UninitTimer()");
+#if 0
 	disable();
 	setvect(0x1C, old_timer_isr);
 	enable();
+#endif
 }
 
 } // End of namespace Chamber

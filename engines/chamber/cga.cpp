@@ -28,6 +28,7 @@
 namespace Chamber {
 
 extern unsigned char backbuffer[0x4000];
+byte CGA_SCREENBUFFER[0x4000];
 
 unsigned char carpc_data[RES_CARPC_MAX];
 

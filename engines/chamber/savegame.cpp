@@ -80,6 +80,11 @@ void RestartGame(void) {
 	rlen = read(f, buffer, size); if(rlen != size) goto error;
 
 int LoadScena(void) {
+	warning("STUB: LoadScena()");
+
+	return 1;
+
+#if 0
 	int f;
 	int rlen;
 	unsigned short zero = 0;
@@ -345,9 +350,15 @@ error:
 	close(f);
 	script_byte_vars.game_paused = 0;
 	return 1;
+
+#endif
 }
 
 int SaveScena(void) {
+	warning("STUB: SaveScena()");
+	return 1;
+
+#if 0
 	int f;
 	int wlen;
 	unsigned short zero = 0;
@@ -600,6 +611,7 @@ error:
 	close(f);
 	script_byte_vars.game_paused = 0;
 	return 1;
+#endif
 }
 
 } // End of namespace Chamber
