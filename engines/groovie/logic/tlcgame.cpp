@@ -34,13 +34,24 @@
 namespace Groovie {
 
 // This a list of files for background music. This list is hardcoded in the TLC player.
-const char *kTlcMusicFiles[] = {"ep01epm", "ep01tatm", "amb_hs", "amb_mr", "amb_kr", "amb_mo", "music_rc", "amb_ds", "amb_ds3",
-								"amb_jr", "amb_mr4", "amb_jr4", "amb_jr2", "amb_kr2", "amb_mr2", "amb_br", "amb_ds2", "amb_jr3",
-								"amb_ds4", "amb_kr3", "amb_to1", "amb_to2", "ep02epm", "ep02tatm", "ep03epm", "ep03tatm", "ep04epm",
-								"ep04tatm", "ep05epm", "ep05tatm", "ep06epm", "ep06tatm", "ep07epm", "ep07tatm", "ep08epm", "ep08tatm",
-								"ep09epm", "ep09tatm", "ep10epm", "ep10tatm", "ep11epm", "ep11tatm", "ep12epm", "ep12tatm", "ep13epm",
-								"ep13tatm", "ep14epm", "ep14tatm", "ep15epm", "ep15tatm" };
-const uint8 kTlcEpQuestToPlay[] = { 0x0E, 0x0F, 0x0B, 0x10, 0x11, 0x12, 0x0C, 0x0C, 0x09, 0x06, 0x0F, 0x0C, 0x0B, 0x0D, 0x0D };
+const char *kTlcMusicFiles[] = {
+	"ep01epm",  "ep01tatm", "amb_hs",   "amb_mr",   "amb_kr",
+	"amb_mo",   "music_rc", "amb_ds",   "amb_ds3",  "amb_jr",
+	"amb_mr4",  "amb_jr4",  "amb_jr2",  "amb_kr2",  "amb_mr2",
+	"amb_br",   "amb_ds2",  "amb_jr3",  "amb_ds4",  "amb_kr3",
+	"amb_to1",  "amb_to2",  "ep02epm",  "ep02tatm", "ep03epm",
+	"ep03tatm", "ep04epm",  "ep04tatm", "ep05epm",  "ep05tatm",
+	"ep06epm",  "ep06tatm", "ep07epm",  "ep07tatm", "ep08epm",
+	"ep08tatm", "ep09epm",  "ep09tatm", "ep10epm",  "ep10tatm",
+	"ep11epm",  "ep11tatm", "ep12epm",  "ep12tatm", "ep13epm",
+	"ep13tatm", "ep14epm",  "ep14tatm", "ep15epm",  "ep15tatm"
+};
+
+const uint8 kTlcEpQuestToPlay[] = {
+	0x0E, 0x0F, 0x0B, 0x10, 0x11,
+	0x12, 0x0C, 0x0C, 0x09, 0x06,
+	0x0F, 0x0C, 0x0B, 0x0D, 0x0D
+};
 
 
 TlcGame::TlcGame(byte *scriptVariables) :
