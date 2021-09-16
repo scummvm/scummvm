@@ -26,6 +26,113 @@
 
 namespace Chewy {
 
+bool RaumInfo::load(Common::SeekableReadStream *src) {
+	RoomNr = src->readByte();
+	BildNr = src->readByte();
+	AutoMovAnz = src->readByte();
+	TafLoad = src->readByte();
+	src->read(TafName, 14);
+	ZoomFak = src->readByte();
+	Dummy = src->readByte();
+
+	return true;
+}
+
+bool RaumAutoMov::load(Common::SeekableReadStream *src) {
+	X = src->readSint16LE();
+	Y = src->readSint16LE();
+	SprNr = src->readByte();
+	dummy = src->readByte();
+
+	return true;
+}
+
+bool sound_def_blk::load(Common::SeekableReadStream *src) {
+	int i;
+
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		sound_enable[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		sound_index[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		sound_start[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		kanal[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		volume[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		repeats[i] = src->readSint16LE();
+	for (i = 0; i < MAX_SOUNDS; ++i)
+		stereo[i] = src->readSint16LE();
+
+	return true;
+}
+
+bool ani_detail_info::load(Common::SeekableReadStream *src) {
+	x = src->readSint16LE();
+	y = src->readSint16LE();
+	start_flag = src->readByte();
+	repeat = src->readByte();
+	start_ani = src->readSint16LE();
+	end_ani = src->readSint16LE();
+	ani_count = src->readSint16LE();
+	delay = src->readSint16LE();
+	delay_count = src->readSint16LE();
+	reverse = src->readSint16LE();
+	timer_start = src->readSint16LE();
+	z_ebene = src->readSint16LE();
+	load_flag = src->readByte();
+	zoom = src->readByte();
+	sfx.load(src);
+	show_1_phase = src->readSint16LE();
+	phase_nr = src->readSint16LE();
+
+	return true;
+}
+
+bool static_detail_info::load(Common::SeekableReadStream *src) {
+	x = src->readSint16LE();
+	y = src->readSint16LE();
+	SprNr = src->readSint16LE();
+	z_ebene = src->readByte();
+	Hide = src->readByte();
+	Dummy = src->readByte();
+
+	return true;
+}
+
+bool room_detail_info::load(Common::SeekableReadStream *src) {
+	int i;
+
+	StaticDetailAnz = src->readSint16LE();
+	AniDetailAnz = src->readSint16LE();
+	src->skip(4);	// dptr
+	for (i = 0; i < MAXDETAILS; ++i)
+		Ainfo[i].load(src);
+	for (i = 0; i < MAXDETAILS; ++i)
+		Sinfo[i].load(src);
+	for (i = 0; i < MAX_M_ITEMS * 4; ++i)
+		mvect[i] = src->readSint16LE();
+	for (i = 0; i < MAX_M_ITEMS; ++i)
+		mtxt[i] = src->readSint16LE();
+	Ri.load(src);
+	for (i = 0; i < MAX_AUTO_MOV; ++i)
+		AutoMov[i].load(src);
+	for (i = 0; i < MAXDETAILS * MAX_SOUNDS; ++i)
+		tvp_index[i] = src->readSint16LE();
+	src->skip(4 * MAXDETAILS * MAX_SOUNDS); // sample
+
+	return true;
+}
+
+bool RdiDateiHeader::load(Common::SeekableReadStream *src) {
+	src->read(Id, 4);
+	Anz = src->readSint16LE();
+
+	return true;
+}
+
+
 detail::detail() {
 	char *tptr;
 	int16 i, size;
@@ -71,10 +178,11 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 	taf_info *tmprdi = rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
-		if (chewy_fread(&rdi_datei_header, sizeof(RdiDateiHeader), 1, &f)) {
+		warning("FIXME: RdiDateiHeader::load doesn't match original structure size yet");
+		if (rdi_datei_header.load(&f)) {
 			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
-				f.seek((long)room_nr * (long)sizeof(room_detail_info), SEEK_CUR);
-				if (!chewy_fread(&rdi, sizeof(room_detail_info), 1, &f)) {
+				f.seek(room_nr * (int64)room_detail_info::SIZE(), SEEK_CUR);
+				if (!rdi.load(&f)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
