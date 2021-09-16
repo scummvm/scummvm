@@ -793,8 +793,15 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	unload();
 	_file = new Common::File();
 
-	// Create the audio stream from fileref
 	Common::String filename = getFilename(fileref);
+
+	// Apple platforms use m4a files instead of mpg
+	if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformIOS)
+		filename += ".m4a";
+	else
+		filename += ".mpg";
+
+	// Create the audio stream from fileref
 	_file->open(filename);
 	Audio::SeekableAudioStream *seekStream = NULL;
 	if (_file->isOpen()) {
