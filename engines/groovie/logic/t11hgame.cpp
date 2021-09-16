@@ -44,20 +44,22 @@ void T11hGame::handleOp(uint8 op) {
 	switch (op) {
 	case 1:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv) TODO", op);
+		opConnectFour();
 		break;
 
 	case 2:
-		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv) TODO", op);
+		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv)", op);
 		opBeehive();
 		break;
 
 	case 3:
-		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv) TODO", op);
+		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv)", op);
 		opGallery();
 		break;
 
 	case 4:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Triangle in the Chapel (tx.grv)", op);
+		opTriangle();
 		break;
 
 	case 5:
@@ -99,13 +101,16 @@ void T11hGame::handleOp(uint8 op) {
  * Space -2 is the next piece, outside of the box
  */
 void T11hGame::opMouseTrap() {
-	// FIXME: properly implement mouse trap game
+	// TODO: Finish the logic
+	byte op = _scriptVariables[2];
+
+	warning("Mousetrap subop %d", op);
+
 	// variable 24 is the mouse?
 	//_scriptVariables[24] = 2;
 
-	switch (_scriptVariables[2]) {
+	switch (op) {
 	case 0:
-		warning("mouse trap _scriptVariables[2] is 0 not implemented yet");
 		break;
 	case 1: // init board
 		// value of 0 is V, 1 is <, 2 is ^, 3 is >
@@ -118,7 +123,7 @@ void T11hGame::opMouseTrap() {
 			_scriptVariables[i] = _random.getRandomNumber(3);
 		}
 		break;
-	case 2: // before player choose move floor, set the banned move
+	case 2: // before player chooses the floor to move, set the banned move
 	{
 		int clicked = int(_scriptVariables[0]) * 5 + int(_scriptVariables[1]) + 1;
 		_scriptVariables[clicked + 50] = 0;
@@ -130,9 +135,6 @@ void T11hGame::opMouseTrap() {
 		// this probably also sets a variable to allow the player to
 		// move the mouse, and checks for win/lose
 		break;
-	case 4: // 4 is not in the switch/case according to Ghidra
-		warning("mouse trap _scriptVariables[2] is 4? this shouldn't happen");
-		break;
 	case 5: // maybe player moving mouse
 		break;
 	case 6: // Stauf moving floor?
@@ -143,9 +145,13 @@ void T11hGame::opMouseTrap() {
 		break;
 
 	default:
-		warning("unknown mouse trap op %d", _scriptVariables[2]);
+		warning("Unknown mousetrap op %d", op);
 		break;
 	}
+}
+
+void T11hGame::opConnectFour() {
+	// TODO: Finish the logic
 }
 
 /*
@@ -154,18 +160,66 @@ void T11hGame::opMouseTrap() {
  * An infection-style game in which the player must cover more
  * territory than the computer. It's similar to the microscope puzzle
  * in the 7th Guest. The playfield is a honeycomb made of 61
- * hexagons.
+ * hexagons. The hexagons are numbered starting from the top-left
+ * corner, with a direction from bottom left to top right.
  */
 void T11hGame::opBeehive() {
-	// FIXME: properly implement Beehive game
-	// for now just auto-solve the puzzle so the player can continue
-	_scriptVariables[13] = 5;
+	// TODO: Finish the logic
+	int8 *hexagons = (int8 *)_scriptVariables + 25;
+	int8 *hexDifference = (int8 *)_scriptVariables + 13;
+	byte op = _scriptVariables[14] - 1;
 
-	// TODO: Finish logic
-	switch (_scriptVariables[14]) {
-	case 1:	// init board's hexagons
+	warning("Beehive subop %d", op);
+
+	//*hexDifference = 4;
+	*hexDifference = 5; // DEBUG: set the difference to 5 to skip the game
+
+	switch (op) {
+	case 0:	// init board's hexagons
+		memset(_beehiveHexagons, 0, 60);
+		_beehiveHexagons[0] = BEEHIVE_YELLOW;
+		_beehiveHexagons[4] = BEEHIVE_RED;
+		_beehiveHexagons[34] = BEEHIVE_YELLOW;
+		_beehiveHexagons[60] = BEEHIVE_RED;
+		_beehiveHexagons[56] = BEEHIVE_YELLOW;
+		_beehiveHexagons[26] = BEEHIVE_RED;
+		break;
+	case 1:
+		memset(hexagons, 0, 60);
+		_scriptVariables[85] = 0;
+		//opBeehiveSub2();	// TODO
+		// TODO: Check opBeehiveSub2()'s result
+		//*hexDifference = opBeehiveGetHexDifference();
+		break;
+	case 2:
+		memset(hexagons, 0, 60);
+		_scriptVariables[85] = 0;
+		//opBeehiveSub4();	// TODO
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	case 6:
+		break;
+	default:
 		break;
 	}
+}
+
+int8 T11hGame::opBeehiveGetHexDifference() {
+	return (opBeehiveGetTotal(_beehiveHexagons) >= 0) + 5;
+}
+
+int8 T11hGame::opBeehiveGetTotal(int8 *hexagons) {
+	int8 result = 0;
+
+	for (int i = 0; i < 61; i++)
+		result += hexagons[i];
+
+	return result;
 }
 
 void T11hGame::opPente() {
@@ -316,6 +370,10 @@ byte T11hGame::opGallerySub(int one, byte* field) {
 	// TODO
 	warning("STUB: T11hGame::opGallerySub()");
 	return 0;
+}
+
+void T11hGame::opTriangle() {
+	// TODO
 }
 
 // This function is mainly for debugging purposes

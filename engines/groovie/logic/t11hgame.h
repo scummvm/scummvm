@@ -30,6 +30,9 @@ namespace Groovie {
 
 class GroovieEngine;
 
+#define BEEHIVE_YELLOW -1
+#define BEEHIVE_RED 1
+
 class T11hGame {
 public:
 #ifdef ENABLE_GROOVIE2
@@ -42,15 +45,22 @@ private:
 	Common::RandomSource _random;
 
 	void opMouseTrap();
+	void opConnectFour();
 	void opBeehive();
 	void opPente();
 	void opGallery();
+	void opTriangle();
 
 	byte opGallerySub(int one, byte *field);
+	int8 opBeehiveGetHexDifference();
+	int8 opBeehiveGetTotal(int8 *hexagons);
 	void inline setScriptVar(uint16 var, byte value);
 	void inline setScriptVar16(uint16 var, uint16 value);
 	uint16 inline getScriptVar16(uint16 var);
 	byte *_scriptVariables;
+
+	int8 _beehiveHexagons[61];
+
 	static const byte kGalleryLinks[21][10];
 #endif
 };
