@@ -2128,14 +2128,18 @@ void Script::o2_gamespecial() {
 		}
 		break;
 	case kGroovieUHP:
+		if (_t11hGame == NULL) {
+			_t11hGame = new T11hGame();
+			_t11hGame->setVariables(_variables);
+		}
 		switch (arg) {
 		case 2:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Beehive Puzzle", arg);
-			// TODO: Same as the 11H beehive puzzle (opBeehive)
+			_t11hGame->opBeehive();
 			break;
 		case 5:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Mouse Trap", arg);
-			// TODO: Same as the 11H mousetrap puzzle (opMouseTrap)
+			_t11hGame->opMouseTrap();
 			break;
 		case 8:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Othello", arg);
