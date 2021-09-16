@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 namespace Groovie {
 
@@ -189,7 +190,7 @@ void TlcGame::regionsLoad() {
 
 	// Get length of question name from variables
 	int nameLen = _scriptVariables[0x1B] * 10 + _scriptVariables[0x1C];
-	if (nameLen >= sizeof(TlcRegionsHeader::name)) {
+	if (nameLen >= ARRAYSIZE(TlcRegionsHeader::name)) {
 		error("TLC:RegionsLoad: Name to long for loadRegions!");
 	}
 
@@ -349,7 +350,7 @@ void TlcGame::epInit() {
 	delete epaidbfile;
 
 	// Initialize register 0x01 with values from database
-	if (_epEpisodeIdx >= sizeof(kTlcEpQuestToPlay)) {
+	if (_epEpisodeIdx >= ARRAYSIZE(kTlcEpQuestToPlay)) {
 		error("TLC:EpInit: EposdeIdx out of range for init data of reg0x01");
 	}
 	setScriptVar(2, kTlcEpQuestToPlay[_epEpisodeIdx] + 0x30);
