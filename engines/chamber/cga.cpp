@@ -103,16 +103,19 @@ void CGA_ColorSelect(unsigned char csel) {
 void CGA_BackBufferToRealFull(void) {
 	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
 
-	byte *ptr = CGA_SCREENBUFFER;
 	byte *dst = scrbuffer;
 
 	for (int y = 0; y < 200; y++) {
+		byte *ptr = CGA_SCREENBUFFER + (y >> 1) * 80;
+		if (y & 1)
+			ptr += 0x2000;
+
 		for (int x = 0; x < 320 / 4; x++) {
 			byte colors = *ptr++;
 
 			for (int c = 0; c < 4; c++) {
 				byte color = (colors & 0xC0) >> 6;
-				colors >>= 2;
+				colors <<= 2;
 
 				*dst++ = color;
 			}
