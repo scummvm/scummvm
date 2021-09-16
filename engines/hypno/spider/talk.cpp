@@ -38,7 +38,7 @@ void SpiderEngine::showConversation() {
 	delete speaker;
 }
 
-void SpiderEngine::leftClickedConversation(Common::Point mousePos) {
+void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 	Talk *t;
 	bool activeFound = false;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
@@ -74,7 +74,7 @@ void SpiderEngine::leftClickedConversation(Common::Point mousePos) {
 	}
 }
 
-void SpiderEngine::rightClickedConversation(Common::Point mousePos) {
+void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {

@@ -34,7 +34,7 @@ static const int orientationIndex[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
 static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
-void SpiderEngine::drawShoot(Common::Point target) {
+void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
 	uint32 idx = std::min(2, target.x / (_screenW / 3)) + 3 * std::min(2, target.y / (_screenH / 3));
 	uint32 ox = 60  + shootOriginIndex[idx][0];

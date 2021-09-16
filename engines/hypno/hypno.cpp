@@ -95,7 +95,7 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-LibFile *HypnoEngine::loadLib(Filename prefix, Filename filename) {
+LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename) {
 	LibFile *lib = new LibFile();
 	SearchMan.add(filename, (Common::Archive *)lib, 0, true);
 	assert(lib->open(prefix, filename));
@@ -142,7 +142,7 @@ Common::Error HypnoEngine::run() {
 	return Common::kNoError;
 }
 
-void HypnoEngine::runLevel(Common::String name) {
+void HypnoEngine::runLevel(Common::String &name) {
 	assert(_levels.contains(name));
 	stopSound();
 	_music = "";
@@ -219,7 +219,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 
 void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); }
 
-void HypnoEngine::showCredits() { error("credits"); /* Nothing */ };
+void HypnoEngine::showCredits() { error("Not implemented"); }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d, %d)", __FUNCTION__, name.c_str(), x, y, transparent);
@@ -280,7 +280,7 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 	const Graphics::Surface *frame = nullptr;
 	Graphics::Surface *rframe = nullptr;
 
-	for (int f = 0; f < vd.getFrameCount(); f++) {
+	while (!vd.endOfVideo()) {
 		frame = vd.decodeNextFrame();
 		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
 		frames.push_back(rframe);
@@ -288,7 +288,7 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 	return frames;
 }
 
-void HypnoEngine::changeScreenMode(Common::String mode) {
+void HypnoEngine::changeScreenMode(const Common::String &mode) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, mode.c_str());
 	if (mode == "scene") {
 		_screenW = 640;
@@ -387,9 +387,9 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 // Sound handling
 
-void HypnoEngine::playSound(Common::String name, uint32 loops) {
-	debugC(1, kHypnoDebugMedia, "%s(%s, %d)", __FUNCTION__, name.c_str(), loops);
-	name = convertPath(name);
+void HypnoEngine::playSound(const Common::String &filename, uint32 loops) {
+	debugC(1, kHypnoDebugMedia, "%s(%s, %d)", __FUNCTION__, filename.c_str(), loops);
+	Common::String name = convertPath(filename);
 	if (!_prefixDir.empty())
 		name = _prefixDir + "/" + name;
 
