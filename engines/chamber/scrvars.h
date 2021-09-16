@@ -145,12 +145,7 @@ script_byte_vars_t script_byte_vars = {
 };
 
 script_word_vars_t script_word_vars = {
-	BE(0x9007),     /* 00 */
-	BE(0x9007),     /* 02 */
-	BE(0x9007),     /* 04 */
-	BE(0x9007),     /* 06 */
-	BE(0x9007),     /* 08 */
-	BE(0x9007),     /* 0A */
+	{BE(0x9007), BE(0x9007), BE(0x9007), BE(0x9007), BE(0x9007), BE(0x9007)}, /* 00 .. 0B */
 	BE(0),           /* 0C */
 	BE(0),           /* 0E */
 	BE(0),           /* 10 */
