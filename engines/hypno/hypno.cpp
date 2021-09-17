@@ -103,7 +103,7 @@ LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename) 
 	return lib;
 }
 
-void HypnoEngine::loadAssets() { error("not implemented"); }
+void HypnoEngine::loadAssets() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
@@ -146,7 +146,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 	if (!_levels.contains(name))
 		error("Level %s cannot be found", name.c_str());
 	stopSound();
-	_music = "";
+	_music.clear();
 
 	disableCursor();
 
@@ -218,9 +218,9 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
-void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); }
+void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
-void HypnoEngine::showCredits() { error("Not implemented"); }
+void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d, %d)", __FUNCTION__, name.c_str(), x, y, transparent);

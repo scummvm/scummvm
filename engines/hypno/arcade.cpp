@@ -68,9 +68,9 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 	return seq;
 }
 
-void HypnoEngine::drawPlayer() { error("Not implemented"); }
-void HypnoEngine::drawHealth() { error("Not implemented"); }
-void HypnoEngine::drawShoot(const Common::Point &target) { error("Not implemented"); }
+void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::hitPlayer() {
 	// if the player is hit, play the hit animation

@@ -20,7 +20,6 @@
  *
  */
 
-#include <typeinfo>
 #include "common/events.h"
 
 #include "hypno/grammar.h"
@@ -58,13 +57,11 @@ void HypnoEngine::runMenu(Hotspots hs) {
 void HypnoEngine::runBackground(Background *a) {
 	if (a->condition.size() > 0 && !_sceneState[a->condition])
 		return;
-	Common::Point origin = a->origin;
-	loadImage(a->path, origin.x, origin.y, false);
+	loadImage(a->path, a->origin.x, a->origin.y, false);
 }
 
 void HypnoEngine::runOverlay(Overlay *a) {
-	Common::Point origin = a->origin;
-	loadImage(a->path, origin.x, origin.y, false);
+	loadImage(a->path, a->origin.x, a->origin.y, false);
 }
 
 void HypnoEngine::runMice(Mice *a) {
@@ -78,7 +75,7 @@ void HypnoEngine::runEscape(Escape *a) {
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
 	disableCursor();
-	_music = "";
+	_music.clear();
 	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
 }
 
@@ -94,19 +91,17 @@ void HypnoEngine::runGlobal(Global *a) {
 void HypnoEngine::runPlay(Play *a) {
 	if (a->condition.size() > 0 && !_sceneState[a->condition])
 		return;
-	Common::Point origin = a->origin;
 
 	if (a->flag == "/BITMAP")
-		loadImage(a->path, origin.x, origin.y, false);
+		loadImage(a->path, a->origin.x, a->origin.y, false);
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
 }
 
 void HypnoEngine::runAmbient(Ambient *a) {
-	Common::Point origin = a->origin;
 	if (a->flag == "/BITMAP")
-		loadImage(a->path, origin.x, origin.y, false);
+		loadImage(a->path, a->origin.x, a->origin.y, false);
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, a->flag == "/LOOP"));
 	}
@@ -115,9 +110,8 @@ void HypnoEngine::runAmbient(Ambient *a) {
 void HypnoEngine::runWalN(WalN *a) {
 	if (a->condition.size() > 0 && !_sceneState[a->condition])
 		return;
-	Common::Point origin = a->origin;
 	if (a->flag == "/BITMAP")
-		loadImage(a->path, origin.x, origin.y, false);
+		loadImage(a->path, a->origin.x, a->origin.y, false);
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
