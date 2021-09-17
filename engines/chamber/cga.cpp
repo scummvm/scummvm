@@ -177,6 +177,8 @@ void CGA_SwapRealBackBuffer(void) {
 		*s++ = *d;
 		*d++ = t;
 	}
+
+	CGA_blitToScreen(0, 0, 320, 200);
 }
 
 
@@ -185,6 +187,7 @@ Copy current screen's pixels to scratch mem, put new pixels to screen
 */
 void CGA_SwapScreenRect(unsigned char *pixels, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
 	unsigned char *old = scratch_mem2;
+	uint oh = h;
 	while (h--) {
 		unsigned int i;
 		for (i = 0; i < w; i++) {
@@ -195,6 +198,9 @@ void CGA_SwapScreenRect(unsigned char *pixels, unsigned int w, unsigned int h, u
 		if ((ofs & CGA_ODD_LINES_OFS) == 0)
 			ofs += CGA_BYTES_PER_LINE;
 	}
+
+	if (screen == CGA_SCREENBUFFER)
+		CGA_blitToScreen(ofs, w * 4, oh);
 }
 
 /*
@@ -765,6 +771,10 @@ void CGA_HideScreenBlockLiftToDown(unsigned int n, unsigned char *screen, unsign
 
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
+
+		if (screen == CGA_SCREENBUFFER)
+			CGA_blitToScreen(0, 0, 320, 200);
+
 		WaitVBlank();
 
 		ofs ^= CGA_ODD_LINES_OFS;
@@ -805,6 +815,10 @@ void CGA_HideScreenBlockLiftToUp(unsigned int n, unsigned char *screen, unsigned
 
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
+
+		if (screen == CGA_SCREENBUFFER)
+			CGA_blitToScreen(0, 0, 320, 200);
+
 		WaitVBlank();
 
 		ofs ^= CGA_ODD_LINES_OFS;
@@ -840,6 +854,9 @@ void CGA_HideScreenBlockLiftToLeft(unsigned int n, unsigned char *screen, unsign
 				sofs += CGA_BYTES_PER_LINE;
 		}
 
+		if (screen == CGA_SCREENBUFFER)
+			CGA_blitToScreen(0, 0, 320, 200);
+
 		WaitVBlank();
 
 		ofs--;
@@ -872,6 +889,9 @@ void CGA_HideScreenBlockLiftToRight(unsigned int n, unsigned char *screen, unsig
 			if ((sofs & CGA_ODD_LINES_OFS) == 0)
 				sofs += CGA_BYTES_PER_LINE;
 		}
+
+		if (screen == CGA_SCREENBUFFER)
+			CGA_blitToScreen(0, 0, 320, 200);
 
 		WaitVBlank();
 
@@ -1008,6 +1028,10 @@ static void FallPieces(scrpiece_t *pieces, unsigned char *source, unsigned char 
 			}
 			again = 1;
 		}
+
+		if (target == CGA_SCREENBUFFER)
+			CGA_blitToScreen(0, 0, 320, 200);
+
 		WaitVBlank();
 		t++;
 	} while (again);
@@ -1085,6 +1109,9 @@ void CGA_TraceLine(unsigned int sx, unsigned int ex, unsigned int sy, unsigned i
 		}
 		target[ofs] = (target[ofs] & ~mask) | (source[ofs] & mask);
 	}
+
+	if (target == CGA_SCREENBUFFER)
+		CGA_blitToScreen(0, 0, 320, 200);
 }
 
 } // End of namespace Chamber
