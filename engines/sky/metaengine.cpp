@@ -47,6 +47,7 @@ class SkyMetaEngine : public MetaEngine {
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -55,7 +56,8 @@ bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo);
 }
 
 bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
@@ -230,6 +232,54 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 	if (ioFailed)
 		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
+}
+
+SaveStateDescriptor SkyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+
+	if (slot > 0) {
+		// Search current save game descriptions
+		// for the description of the specified slot, if any
+		Common::String tmpSavename;
+		Common::InSaveFile *inf;
+		inf = saveFileMan->openForLoading("SKY-VM.SAV");
+		if (inf != NULL) {
+			char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+			char *tmpPtr = tmpBuf;
+			inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
+			for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
+				tmpSavename = tmpPtr;
+				tmpPtr += tmpSavename.size() + 1;
+				if (i == slot - 1) {
+					break;
+				}
+			}
+			delete inf;
+			delete[] tmpBuf;
+		}
+
+		// Make sure the file exists
+		// Note: there can be valid saved file names with empty savename
+		char fName[20];
+		sprintf(fName,"SKY-VM.%03d", slot);
+		Common::InSaveFile *in = saveFileMan->openForLoading(fName);
+		if (in) {
+			delete in;
+			SaveStateDescriptor descriptor(slot, tmpSavename);
+			return descriptor;
+		}
+	}
+
+	// Reaching here, means we selected an empty save slot, that does not correspond to a save file
+	SaveStateDescriptor emptySave;
+	// Do not allow save slot 0 (used for auto-saving) to be overwritten.
+	if (slot == 0) {
+		emptySave.setAutosave(true);
+		emptySave.setWriteProtectedFlag(true);
+	} else {
+		emptySave.setWriteProtectedFlag(false);
+	}
+	return emptySave;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
