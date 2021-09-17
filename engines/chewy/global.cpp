@@ -191,7 +191,7 @@ AutoMov auto_mov[MAX_AUTO_MOV];
 
 int16 HowardMov;
 
-/* Stream */ void *spz_taf_handle;
+Stream *spz_taf_handle;
 taf_seq_info *spz_tinfo;
 int16 SpzDelay;
 int16 spz_spr_nr[MAX_SPZ_PHASEN];

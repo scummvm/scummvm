@@ -99,7 +99,7 @@ struct taf_info {
 struct taf_seq_info {
 	int16 anzahl = 0;
 	int16 *korrektur = nullptr;
-	byte **image = nullptr;
+	byte *image[1];		// variable size
 };
 
 struct NewPhead {

@@ -208,7 +208,7 @@ extern uint8 PersonSpr[MAX_PERSON][8];
 
 extern int16 SpzDelay;
 // FIXME: was FILE*
-extern void *spz_taf_handle;
+extern Stream *spz_taf_handle;
 extern taf_seq_info *spz_tinfo;
 extern int16 spz_spr_nr[MAX_SPZ_PHASEN];
 extern int16 spz_start;
