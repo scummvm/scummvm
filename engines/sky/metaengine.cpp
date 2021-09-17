@@ -214,7 +214,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 
 	// Update the save game description at the given slot
-	savenames[slot] = "";
+	savenames[slot - 1] = "";
 
 	// Save the updated descriptions
 	Common::OutSaveFile *outf;
