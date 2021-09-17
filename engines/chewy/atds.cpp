@@ -410,20 +410,20 @@ char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 }
 
 void atdsys::load_atds(int16 chunk_nr, int16 mode) {
-	Stream *handle;
 	ChunkHead Ch;
-	char *txt_adr;
-	handle = atdshandle[mode];
-	txt_adr = atdsmem[mode];
-	if (handle && txt_adr) {
-		mem->file->select_pool_item(handle, chunk_nr + atdspooloff[mode]);
-		chewy_fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
-		if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, handle)) {
+	char *txt_adr = atdsmem[mode];
+	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(
+		atdshandle[mode]);
+
+	if (stream && txt_adr) {
+		mem->file->select_pool_item(stream, chunk_nr + atdspooloff[mode]);
+		stream->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+		if (!Ch.load(stream)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
 			if (Ch.size) {
-				if (!chewy_fread(txt_adr, Ch.size, 1, handle)) {
+				if (stream->read(txt_adr, Ch.size) != Ch.size) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				} else if (mode != ADH_DATEI)
