@@ -105,7 +105,7 @@ typedef struct script_byte_vars_t {
 	unsigned char byte_179F1;       /* 3B */
 	unsigned char byte_179F2;       /* 3C */
 	unsigned char byte_179F3;       /* 3D */
-	unsigned char byte_179F4;       /* 3E */
+	unsigned char trade_done;       /* 3E */
 	unsigned char byte_179F5;       /* 3F */
 	unsigned char byte_179F6;       /* 40 */
 	unsigned char byte_179F7;       /* 41 */
@@ -147,7 +147,7 @@ typedef struct script_byte_vars_t {
 	unsigned char byte_17A1B;       /* 65 */
 	unsigned char byte_17A1C;       /* 66 */
 	unsigned char byte_17A1D;       /* 67 */
-	unsigned char byte_17A1E;       /* 68 */
+	unsigned char zapstik_stolen;   /* 68 */
 	unsigned char byte_17A1F;       /* 69 */
 	unsigned char byte_17A20;       /* 6A */
 	unsigned char byte_17A21;       /* 6B */
