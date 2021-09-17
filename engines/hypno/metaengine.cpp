@@ -21,7 +21,6 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "graphics/scaler.h"
 
 #include "hypno/hypno.h"
 

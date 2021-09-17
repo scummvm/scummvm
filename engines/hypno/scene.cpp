@@ -65,7 +65,8 @@ void HypnoEngine::parseScene(const Common::String &prefix, const Common::String 
 	if (!prefix.empty())
 		name = prefix + "/" + name;
 	Common::File test;
-	assert(test.open(name.c_str()));
+	if (!test.open(name.c_str()))
+		error("Failed to open %s", name.c_str());
 
 	const uint32 fileSize = test.size();
 	char *buf = (char *)malloc(fileSize + 1);
@@ -116,7 +117,8 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 	}
 	if (found) {
 		if (selected.smenu) {
-			assert(!selected.smenu->empty());
+			if (selected.smenu->empty())
+				error("Invalid menu selected");
 			_nextHotsToAdd = selected.smenu;
 		}
 
@@ -192,7 +194,8 @@ void HypnoEngine::runTransition(Transition trans) {
 		sframe->free();
 		delete sframe;
 		Common::String *ptr = new Common::String(trans.level);
-		assert(installTimer(2 * 1000000, ptr));
+		if (!installTimer(2 * 1000000, ptr))
+			error("Failed to install timer");
 	} else
 		_nextLevel = trans.level;
 }

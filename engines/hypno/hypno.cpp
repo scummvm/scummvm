@@ -98,7 +98,8 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename) {
 	LibFile *lib = new LibFile();
 	SearchMan.add(filename, (Common::Archive *)lib, 0, true);
-	assert(lib->open(prefix, filename));
+	if (!lib->open(prefix, filename))
+		error("Failed to open %s%s", prefix.c_str(), filename.c_str());
 	_archive.push_back(lib);
 	return lib;
 }
@@ -120,7 +121,6 @@ Common::Error HypnoEngine::run() {
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	assert(_compositeSurface == nullptr);
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
@@ -368,7 +368,9 @@ void HypnoEngine::playVideo(MVideo &video) {
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
 
-	assert(video.decoder == nullptr);
+	if (video.decoder != nullptr)
+		error("Video %s was not previously closed and deallocated", video.path.c_str());
+
 	video.decoder = new Video::SmackerDecoder();
 
 	if (!video.decoder->loadStream(file))
