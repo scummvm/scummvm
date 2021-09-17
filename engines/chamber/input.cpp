@@ -87,18 +87,9 @@ void SetInputButtons(unsigned char keys) {
 }
 
 unsigned char PollMouse(void) {
-	warning("STUB: PollMouse()");
+	PollInput();
 
-	return 0;
-
-#if 0
-	union REGS reg;
-	reg.x.ax = 3;
-	int86(0x33, &reg, &reg);
-	cursor_x = reg.x.cx;
-	cursor_y = reg.h.dl;
-	return reg.h.bl;    /*buttons*/
-#endif
+	return buttons;
 }
 
 unsigned char PollKeyboard(void) {
