@@ -68,7 +68,7 @@ bool InstallShieldV3::open(const Common::String &filename) {
 
 	// Get the number of files from every directory
 	_stream->seek(directoryTableOffset);
-	for (int i = 0; i < directoryCount; i++) {
+	for (uint32 i = 0; i < directoryCount; i++) {
 		uint16 fileCount = _stream->readUint16LE();
 		uint16 chunkSize = _stream->readUint16LE();
 
