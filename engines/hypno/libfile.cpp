@@ -34,7 +34,8 @@ LibFile::~LibFile() {
 bool LibFile::open(const Common::String &prefix, const Common::String &filename) {
 	_prefix = prefix;
 	Common::File libfile;
-	assert(libfile.open(filename));
+	if (!libfile.open(filename))
+		error("Failed to open %s", filename.c_str());
 	byte b;
 	uint32 size;
 	FileEntry f;

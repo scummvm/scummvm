@@ -29,7 +29,8 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 void WetEngine::loadAssets() {
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib");
 	Common::ArchiveMemberList files;
-	assert(missions->listMembers(files) > 0);
+	if (missions->listMembers(files) == 0)
+		error("Failed to load any files from missions.lib");
 
 	// We need the list of files in an array, instead of a list
 	Common::Array<Common::ArchiveMemberPtr> afiles;
