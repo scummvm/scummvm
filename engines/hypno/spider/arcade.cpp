@@ -20,7 +20,6 @@
  *
  */
 
-#include <algorithm>
 
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
@@ -36,7 +35,7 @@ static const int shootOriginIndex[9][2] = {
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	uint32 idx = std::min(2, target.x / (_screenW / 3)) + 3 * std::min(2, target.y / (_screenH / 3));
+	uint32 idx = MIN(2, target.x / (_screenW / 3)) + 3 * MIN(2, target.y / (_screenH / 3));
 	uint32 ox = 60  + shootOriginIndex[idx][0];
 	uint32 oy = 129 + shootOriginIndex[idx][1];
 	_compositeSurface->drawLine(ox, oy, target.x + 2, target.y, c);
@@ -49,7 +48,7 @@ void SpiderEngine::drawPlayer() {
 
 	if (_playerFrameIdx < _playerFrameSep) {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		uint32 idx = std::min(2, mousePos.x / (_screenW / 3)) + 3 * std::min(2, mousePos.y / (_screenH / 3));
+		uint32 idx = MIN(2, mousePos.x / (_screenW / 3)) + 3 * MIN(2, mousePos.y / (_screenH / 3));
 		_playerFrameIdx = orientationIndex[idx];
 	} else {
 		_playerFrameIdx++;
