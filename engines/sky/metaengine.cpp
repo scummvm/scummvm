@@ -32,6 +32,8 @@
 #include "common/file.h"
 #include "common/fs.h"
 
+#include "gui/message.h"
+
 #include "sky/control.h"
 #include "sky/sky.h"
 
@@ -188,8 +190,15 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 
 void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
-	if (slot == 0)	// do not delete the auto save
+	if (slot == 0)	{
+		// Do not delete the auto save
+		// Note: Setting the autosave slot as write protected (with setWriteProtectedFlag())
+		//       does not disable the delete action on the slot.
+		const Common::U32String message = _("WARNING: Deleting the autosave slot is not supported by this engine");
+		GUI::MessageDialog warn(message);
+		warn.runModal();
 		return;
+	}
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
