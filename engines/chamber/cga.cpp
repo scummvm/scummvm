@@ -101,6 +101,8 @@ void CGA_ColorSelect(unsigned char csel) {
 }
 
 void CGA_blitToScreen(int dx, int dy, int w, int h) {
+	dx = dy = 0;
+	w = 320; h = 200;
 	// Align x by 4
 	int align = dx & 0x3;
 
@@ -155,12 +157,17 @@ void CGA_RealBufferToBackFull(void) {
 /*Copy interlaced screen data to another screen*/
 /*NB! w is in bytes*/
 void CGA_CopyScreenBlock(unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs) {
+	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		memcpy(target + ofs, source + ofs, w);
 		ofs ^= CGA_ODD_LINES_OFS;
 		if ((ofs & CGA_ODD_LINES_OFS) == 0)
 			ofs += CGA_BYTES_PER_LINE;
 	}
+
+	if (target == CGA_SCREENBUFFER)
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -188,6 +195,7 @@ Copy current screen's pixels to scratch mem, put new pixels to screen
 void CGA_SwapScreenRect(unsigned char *pixels, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
 	unsigned char *old = scratch_mem2;
 	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		unsigned int i;
 		for (i = 0; i < w; i++) {
@@ -200,7 +208,7 @@ void CGA_SwapScreenRect(unsigned char *pixels, unsigned int w, unsigned int h, u
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w * 4, oh);
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -247,10 +255,7 @@ unsigned char *CGA_BackupImage(unsigned char *screen, unsigned int ofs, unsigned
 }
 
 unsigned char *CGA_BackupImageReal(unsigned int ofs, unsigned int w, unsigned int h) {
-	warning("STUB: CGA_BackupImageReal()");
-
-	return NULL;
-	//return CGA_BackupImage(MK_FP(CGA_BASE_SEG, 0), ofs, w, h, scratch_mem2);
+	return CGA_BackupImage(CGA_SCREENBUFFER, ofs, w, h, scratch_mem2);
 }
 
 /*
@@ -259,17 +264,17 @@ NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
 void CGA_Blit(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
 	byte *src = pixels;
-	uint ofs1 = ofs;
+	uint oofs = ofs;
 	for (int y = 0; y < h; y++) {
-		memcpy(screen + ofs1, src, w);
+		memcpy(screen + ofs, src, w);
 		src += pw;
-		ofs1 ^= CGA_ODD_LINES_OFS;
-		if ((ofs1 & CGA_ODD_LINES_OFS) == 0)
-			ofs1 += CGA_BYTES_PER_LINE;
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w * 4, h);
+		CGA_blitToScreen(oofs, w * 4, h);
 }
 
 /*
@@ -282,16 +287,16 @@ void CGA_BlitAndWait(unsigned char *pixels, unsigned int pw, unsigned int w, uns
 }
 
 void CGA_Fill(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
-	uint ofs1 = ofs;
+	uint oofs = ofs;
 	for (int y = 0; y < h; y++) {
-		memset(screen + ofs1, pixel, w);
-		ofs1 ^= CGA_ODD_LINES_OFS;
-		if ((ofs1 & CGA_ODD_LINES_OFS) == 0)
-			ofs1 += CGA_BYTES_PER_LINE;
+		memset(screen + ofs, pixel, w);
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w * 4, h);
+		CGA_blitToScreen(oofs, w * 4, h);
 }
 
 void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
@@ -357,7 +362,6 @@ void CGA_DrawVLine(unsigned int x, unsigned int y, unsigned int l, unsigned char
 	ofs = CGA_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
 
 	uint ol = l;
-
 	while (l--) {
 		target[ofs] = (target[ofs] & mask) | pixel;
 		ofs ^= CGA_ODD_LINES_OFS;
@@ -395,7 +399,7 @@ void CGA_DrawHLine(unsigned int x, unsigned int y, unsigned int l, unsigned char
 		}
 	}
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(x, y, ol, 1);
+		CGA_blitToScreen(x, y, ol * 4, 1);
 }
 
 /*
@@ -407,12 +411,13 @@ unsigned int CGA_DrawHLineWithEnds(unsigned int bmask, unsigned int bpix, unsign
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
+	uint oofs = ofs;
 	ofs ^= CGA_ODD_LINES_OFS;
 	if ((ofs & CGA_ODD_LINES_OFS) == 0)
 		ofs += CGA_BYTES_PER_LINE;
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, l, 1);
+		CGA_blitToScreen(oofs, l * 4, 1);
 
 	return ofs;
 }
@@ -447,6 +452,7 @@ void CGA_BlitScratchBackSprite(unsigned int sprofs, unsigned int w, unsigned int
 	unsigned char x;
 	unsigned char *pixels = scratch_mem2 + 2 + sprofs;
 	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		for (x = 0; x < w; x++)
 			screen[ofs + x] = (backbuffer[ofs + x] & pixels[x * 2]) | pixels[x * 2 + 1];
@@ -457,7 +463,7 @@ void CGA_BlitScratchBackSprite(unsigned int sprofs, unsigned int w, unsigned int
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w, oh);
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 void CGA_BlitFromBackBuffer(unsigned char w, unsigned char h, unsigned char *screen, unsigned int ofs) {
@@ -471,6 +477,7 @@ NB! width and pixelswidth specify a number of bytes, not count of pixels
 void CGA_BlitSprite(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
 	unsigned char x;
 	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		for (x = 0; x < w; x++)
 			screen[ofs + x] = (screen[ofs + x] & pixels[x * 2]) | pixels[x * 2 + 1];
@@ -481,7 +488,7 @@ void CGA_BlitSprite(unsigned char *pixels, signed int pw, unsigned int w, unsign
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w, oh);
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -491,6 +498,7 @@ NB! width and pixelswidth specify a number of bytes, not count of pixels
 void CGA_BlitSpriteFlip(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
 	unsigned char x;
 	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		for (x = 0; x < w; x++)
 			screen[ofs - x] = (screen[ofs - x] & cga_pixel_flip[pixels[x * 2]]) | cga_pixel_flip[pixels[x * 2 + 1]];
@@ -501,7 +509,7 @@ void CGA_BlitSpriteFlip(unsigned char *pixels, signed int pw, unsigned int w, un
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w, oh);
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -515,6 +523,7 @@ NB! pixel+mask comes in reversed order, compared to regular BlitSprite
 void CGA_BlitSpriteBak(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs, unsigned char *backup, unsigned char mask) {
 	unsigned char x;
 	uint oh = h;
+	uint oofs = ofs;
 	while (h--) {
 		for (x = 0; x < w; x++) {
 			*backup++ = screen[ofs + x];
@@ -527,7 +536,7 @@ void CGA_BlitSpriteBak(unsigned char *pixels, signed int pw, unsigned int w, uns
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(ofs, w, oh);
+		CGA_blitToScreen(oofs, w * 4, oh);
 }
 
 
@@ -772,8 +781,10 @@ void CGA_HideScreenBlockLiftToDown(unsigned int n, unsigned char *screen, unsign
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
 
-		if (screen == CGA_SCREENBUFFER)
+		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
+			g_system->delayMillis(10);
+		}
 
 		WaitVBlank();
 
@@ -816,8 +827,10 @@ void CGA_HideScreenBlockLiftToUp(unsigned int n, unsigned char *screen, unsigned
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
 
-		if (screen == CGA_SCREENBUFFER)
+		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
+			g_system->delayMillis(10);
+		}
 
 		WaitVBlank();
 
@@ -854,8 +867,10 @@ void CGA_HideScreenBlockLiftToLeft(unsigned int n, unsigned char *screen, unsign
 				sofs += CGA_BYTES_PER_LINE;
 		}
 
-		if (screen == CGA_SCREENBUFFER)
+		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
+			g_system->delayMillis(10);
+		}
 
 		WaitVBlank();
 
@@ -890,8 +905,10 @@ void CGA_HideScreenBlockLiftToRight(unsigned int n, unsigned char *screen, unsig
 				sofs += CGA_BYTES_PER_LINE;
 		}
 
-		if (screen == CGA_SCREENBUFFER)
+		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
+			g_system->delayMillis(10);
+		}
 
 		WaitVBlank();
 
@@ -1029,8 +1046,10 @@ static void FallPieces(scrpiece_t *pieces, unsigned char *source, unsigned char 
 			again = 1;
 		}
 
-		if (target == CGA_SCREENBUFFER)
+		if (target == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
+			g_system->delayMillis(10);
+		}
 
 		WaitVBlank();
 		t++;
