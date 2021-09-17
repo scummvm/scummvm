@@ -146,7 +146,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 		file = test;
 	} else {
 		delete test;
-		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
+		if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
+			error("Failed to open SUPPORT/ASSETS.Z");
 		// if the full game is used
 		if (!isDemo()) {
 			if (_installerArchive.hasFile("GAME.DAT"))
@@ -170,7 +171,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 			}
 		}
 	}
-	assert(file != NULL);
+	if (file == NULL)
+		error("Unknown version");
 	return file;
 }
 
@@ -199,7 +201,8 @@ Common::Error PrivateEngine::run() {
 	initFuncs();
 	parse(scripts.c_str());
 	delete file;
-	assert(maps.constants.size() > 0);
+	if (maps.constants.size() == 0)
+		error("Failed to parse game script");
 
 	// Initialize graphics
 
@@ -772,7 +775,7 @@ void PrivateEngine::loadDossier() {
 	} else if (_dossierPage == 1) {
 		loadImage(m.page2, x, y);
 	} else {
-		assert(0);
+		error("Invalid page");
 	}
 }
 
@@ -1270,7 +1273,8 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 void PrivateEngine::composeImagePalette(const Graphics::Surface *surf, const byte *palette) {
 	int i,j,v;
 	uint32 c;
-	assert(_colorToIndex.size() == 1);
+	if (_colorToIndex.size() != 1)
+		error("colorToIndex had some elements");
 
 	for (i = 0; i < surf->w; i++)
 		for (j = 0; j < surf->h; j++) {
