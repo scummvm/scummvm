@@ -54,7 +54,7 @@ enum {
 	kHypnoDebugMedia = 1 << 0,
 	kHypnoDebugParser = 1 << 1,
 	kHypnoDebugArcade = 1 << 2,
-	kHypnoDebugScene = 1 << 3,
+	kHypnoDebugScene = 1 << 3
 };
 
 typedef Common::Array<Graphics::Surface *> Frames;

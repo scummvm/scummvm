@@ -268,18 +268,14 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 int HypnoEngine::detectTarget(const Common::Point &mousePos) {
 	int i = -1;
-	int x = 0;
-	int y = 0;
-	int w = 0;
-	int h = 0;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 		i++;
 		if (it->destroyed || !it->video->decoder)
 			continue;
-		x = mousePos.x - it->position.x;
-		y = mousePos.y - it->position.y;
-		w = it->video->decoder->getWidth();
-		h = it->video->decoder->getHeight();
+		int x = mousePos.x - it->position.x;
+		int y = mousePos.y - it->position.y;
+		int w = it->video->decoder->getWidth();
+		int h = it->video->decoder->getHeight();
 		if (it->video->decoder && x >= 0 && y >= 0 && x < w && y < h) {
 			if (it->video->currentFrame->getPixel(x, y) > 0)
 				return i;
@@ -302,12 +298,10 @@ bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return tr
 
 void HypnoEngine::shoot(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
-	int w = 0;
-	int h = 0;
 	if (i >= 0) {
 		playSound(_soundPath + _shoots[i].endSound, 1);
-		w = _shoots[i].video->decoder->getWidth();
-		h = _shoots[i].video->decoder->getHeight();
+		int w = _shoots[i].video->decoder->getWidth();
+		int h = _shoots[i].video->decoder->getHeight();
 		_score++;
 		_shoots[i].destroyed = true;
 		_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
