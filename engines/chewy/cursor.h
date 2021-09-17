@@ -23,7 +23,7 @@
 #ifndef CHEWY_CURSOR_H
 #define CHEWY_CURSOR_H
 
-#include "chewy/mcga.h"
+#include "chewy/mcga_grafik.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -31,7 +31,6 @@ namespace Chewy {
 extern int16 scr_w;
 
 class cursor {
-
 public:
 	cursor();
 	cursor(mcga_grafik *out, maus *in, cur_blk *curblk);

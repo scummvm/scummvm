@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	io_game.o \
 	maus.o \
 	mcga.o \
+	mcga_grafik.o \
 	memory.o \
 	menus.o \
 	metaengine.o \
