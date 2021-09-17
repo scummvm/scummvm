@@ -43,12 +43,12 @@ Room::~Room() {
 	free_ablage();
 }
 
-void *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
-	Stream *handle;
-	handle = chewy_fopen(fname1, fmode);
-	if (handle) {
+Stream *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
+	Stream *stream;
+	stream = chewy_fopen(fname1, fmode);
+	if (stream) {
 		close_handle(mode);
-		roomhandle[mode] = handle;
+		roomhandle[mode] = stream;
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;

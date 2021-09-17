@@ -72,8 +72,7 @@ public:
 	Room();
 	~Room();
 
-	// FIXME: was FILE*
-	void *open_handle(const char *fname, const char *fmode, int16 mode);
+	Stream *open_handle(const char *fname, const char *fmode, int16 mode);
 
 	void close_handle(int16 mode);
 

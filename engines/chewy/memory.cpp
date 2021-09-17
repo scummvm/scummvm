@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "chewy/memory.h"
 
 namespace Chewy {
@@ -73,9 +74,9 @@ taf_info *memory::taf_adr(const char *filename) {
 	return tinfo;
 }
 
-taf_seq_info *memory::taf_seq_adr(void *h, int16 image_start,
+taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
                                   int16 image_anz) {
-	Stream *handle = (Stream *)h;
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	taf_dateiheader header;
 	taf_imageheader iheader;
 	taf_seq_info *ts_info = nullptr;
@@ -86,69 +87,73 @@ taf_seq_info *memory::taf_seq_adr(void *h, int16 image_start,
 	int16 id;
 	byte *tmp1;
 	byte *sp_ptr;
-	chewy_fseek(handle, 0, SEEK_SET);
-	if (chewy_fread(&header, sizeof(taf_dateiheader), 1, handle)) {
+
+	rs->seek(0, SEEK_SET);
+	if (header.load(rs)) {
 		id = file->get_id(header.id);
 		if (id == TAFDATEI) {
 			if (header.korrekt > 1) {
-				chewy_fseek(handle, (-(int)((header.count - image_start)*sizeof(uint32))), SEEK_END);
-				if (!chewy_fread(&ptr, sizeof(uint32), 1, handle)) {
-					fcode = READFEHLER;
-					modul = DATEI;
-				} else {
-					chewy_fseek(handle, ptr, SEEK_SET);
-					size = 0;
-					for (i = 0; i < image_anz && !modul; i++) {
-						if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
-							size += iheader.width * iheader.height ;
-							chewy_fseek(handle, iheader.next, SEEK_SET);
-						} else {
-							modul = DATEI;
-							fcode = READFEHLER;
-						}
+				rs->seek((-(int)((header.count - image_start) * sizeof(uint32))), SEEK_END);
+				ptr = rs->readUint32LE();
+
+				rs->seek(ptr, SEEK_SET);
+				size = 0;
+				for (i = 0; i < image_anz && !modul; i++) {
+					if (iheader.load(rs)) {
+						size += iheader.width * iheader.height;
+						rs->seek(iheader.next, SEEK_SET);
+
+					} else {
+						modul = DATEI;
+						fcode = READFEHLER;
 					}
+				}
+				if (!modul) {
+					size += image_anz * 4l;
+					size += image_anz * sizeof(char *);
+					size += ((uint32)sizeof(taf_seq_info));
+					tmp1 = (byte *)calloc(size + image_anz * 4l, 1);
 					if (!modul) {
-						size += image_anz * 4l;
-						size += image_anz * sizeof(char *);
-						size += ((uint32)sizeof(taf_seq_info));
-						tmp1 = (byte *)calloc(size + image_anz * 4l, 1);
-						if (!modul) {
-							ts_info = (taf_seq_info *)tmp1;
-							ts_info->anzahl = image_anz;
-							ts_info->korrektur = (int16 *)(tmp1 + size);
-							chewy_fseek(handle, ptr, SEEK_SET);
-							sp_ptr = tmp1 + (((uint32)sizeof(taf_seq_info))
-							                 + (image_anz * sizeof(char *)));
-							for (i = 0; i < image_anz && !modul; i++) {
-								if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, handle)) {
-									ts_info->image[i] = sp_ptr;
-									abmess = (int16 *)sp_ptr;
-									abmess[0] = iheader.width;
-									abmess[1] = iheader.height;
-									sp_ptr += 4;
-									size = (uint32)((uint32)iheader.height) *
-									       ((uint32)iheader.width);
-									chewy_fseek(handle, iheader.image, SEEK_SET);
-									file->load_tafmcga(handle, iheader.komp, size, sp_ptr);
-									chewy_fseek(handle, iheader.next, SEEK_SET);
-									sp_ptr += size;
-								} else {
-									modul = DATEI;
-									fcode = READFEHLER;
-								}
+						ts_info = (taf_seq_info *)tmp1;
+						ts_info->anzahl = image_anz;
+						ts_info->korrektur = (int16 *)(tmp1 + size);
+						rs->seek(ptr, SEEK_SET);
+						sp_ptr = tmp1 + (((uint32)sizeof(taf_seq_info))
+							+ (image_anz * sizeof(char *)));
+
+						for (i = 0; i < image_anz && !modul; i++) {
+							if (iheader.load(rs)) {
+								ts_info->image[i] = sp_ptr;
+								abmess = (int16 *)sp_ptr;
+								abmess[0] = iheader.width;
+								abmess[1] = iheader.height;
+								sp_ptr += 4;
+								size = (uint32)((uint32)iheader.height) *
+									    ((uint32)iheader.width);
+
+								rs->seek(iheader.image, SEEK_SET);
+								file->load_tafmcga(rs, iheader.komp, size, sp_ptr);
+								rs->seek(iheader.next, SEEK_SET);
+								sp_ptr += size;
+							} else {
+								modul = DATEI;
+								fcode = READFEHLER;
 							}
-							if (!modul) {
-								chewy_fseek(handle, (-(int)(((header.count * 2) - image_start)*sizeof(uint32))), SEEK_END);
-								if (!chewy_fread(ts_info->korrektur, image_anz * 4, 1, handle)) {
-									{
-										fcode = READFEHLER;
-										modul = DATEI;
-									}
-								}
-							}
-							if (modul)
-								free(tmp1);
 						}
+						if (!modul) {
+							rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
+
+							if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
+								fcode = READFEHLER;
+								modul = DATEI;
+							} else {
+								int16 *p = ts_info->korrektur;
+								for (i = 0; i < (int)image_anz * 2; ++i, ++p)
+									*p = rs->readSint16LE();
+							}
+						}
+						if (modul)
+							free(tmp1);
 					}
 				}
 			} else {
