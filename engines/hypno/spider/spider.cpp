@@ -132,8 +132,6 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 	Common::Rect cell(0, 0, 27, 27);
 	uint32 activeColor = _pixelFormat.RGBToColor(0, 130, 0);
 	uint32 deactiveColor = _pixelFormat.RGBToColor(0, 0, 0);
-	int x, y;
-	bool found;
 
 	loadImage("sixdemo/puz_matr/matrixbg.smk", 0, 0, false);
 	MVideo v("sixdemo/puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
@@ -152,8 +150,8 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 			case Common::EVENT_LBUTTONDOWN:
 				playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
 				if (matrix.contains(mousePos)) {
-					x = (mousePos.x - 175) / 29;
-					y = (mousePos.y - 96) / 29;
+					int x = (mousePos.x - 175) / 29;
+					int y = (mousePos.y - 96) / 29;
 					cell.moveTo(175 + 29 * x + 1, 96 + 29 * y + 1);
 					_compositeSurface->fillRect(cell, data[x][y] ? deactiveColor : activeColor);
 					data[x][y] = !data[x][y];
@@ -165,9 +163,9 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 			}
 		}
 
-		found = true;
-		for (x = 0; x < 10; x++) {
-			for (y = 0; y < 10; y++) {
+		bool found = true;
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 10; y++) {
 				if (data[x][y] != solution[y][x]) {
 					found = false;
 					break;
