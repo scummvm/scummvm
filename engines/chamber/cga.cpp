@@ -100,18 +100,26 @@ void CGA_ColorSelect(unsigned char csel) {
 	//outportb(0x3D9, csel);
 }
 
-void CGA_BackBufferToRealFull(void) {
-	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+void CGA_blitToScreen(int dx, int dy, int w, int h) {
+	if (dy + h >= 200)
+		h = 199 - dy;
 
-	byte *dst = scrbuffer;
+	if (dx + w >= 320)
+		w = 319 - dx;
 
-	for (int y = 0; y < 200; y++) {
-		byte *ptr = CGA_SCREENBUFFER + (y >> 1) * 80;
-		if (y & 1)
-			ptr += 0x2000;
+	byte *src = CGA_SCREENBUFFER;
 
-		for (int x = 0; x < 320 / 4; x++) {
-			byte colors = *ptr++;
+	w = w / 4;
+
+	for (int y = 0; y < h; y++) {
+		byte *dst = scrbuffer + (y + dy) * 320 + dx;
+		byte *src1 = src;
+
+		if ((y + dy) & 1)
+			src1 += 0x2000;
+
+		for (int x = 0; x < w; x++) {
+			byte colors = *src1++;
 
 			for (int c = 0; c < 4; c++) {
 				byte color = (colors & 0xC0) >> 6;
@@ -120,10 +128,26 @@ void CGA_BackBufferToRealFull(void) {
 				*dst++ = color;
 			}
 		}
+
+		if ((y + dy) & 1)
+			src += 320 / 4;
 	}
 
-	g_system->copyRectToScreen(scrbuffer, 320, 0, 0, 320, 200);
+	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
 	g_system->updateScreen();
+}
+
+void CGA_blitToScreen(int ofs, int w, int h) {
+	int dy = ofs / 80;
+	int dx = (ofs % 80) * 4;
+
+	CGA_blitToScreen(dx, dy, w, h);
+}
+
+void CGA_BackBufferToRealFull(void) {
+	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+
+	CGA_blitToScreen(0, 0, 320, 200);
 }
 
 void CGA_RealBufferToBackFull(void) {
@@ -240,38 +264,8 @@ void CGA_Blit(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned i
 			ofs1 += CGA_BYTES_PER_LINE;
 	}
 
-	// Now copy pixels to our screen
-	src = pixels;
-	int dy = ofs / 80;
-	int dx = (ofs % 80) * 4;
-
-	if (dy + h >= 200)
-		h = 199 - dy;
-
-	if (dx + w * 4 >= 320)
-		w = (320 - dx) / 4;
-
-	for (int y = 0; y < h; y++) {
-		byte *dst = scrbuffer + (y + dy) * 320 + dx;
-		byte *src1 = src;
-
-		for (int x = 0; x < w; x++) {
-			byte colors = *src1++;
-
-			for (int c = 0; c < 4; c++) {
-				byte color = (colors & 0xC0) >> 6;
-				colors <<= 2;
-
-				*dst++ = color;
-			}
-		}
-		src += pw;
-	}
-
-	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
-
 	if (screen == CGA_SCREENBUFFER)
-		g_system->updateScreen();
+		CGA_blitToScreen(ofs, w * 4, h);
 }
 
 /*
@@ -292,30 +286,8 @@ void CGA_Fill(unsigned char pixel, unsigned int w, unsigned int h, unsigned char
 			ofs1 += CGA_BYTES_PER_LINE;
 	}
 
-	// Now copy pixels to our screen
-	int dy = ofs / 80;
-	int dx = (ofs % 80) * 4;
-
-	if (dy + h >= 200)
-		h = 199 - dy;
-
-	w *= 4;
-
-	if (dx + w >= 320)
-		w = 320 - dx;
-
-	for (int y = 0; y < h; y++) {
-		byte *dst = screen + (y + dy) * 320 + dx;
-
-		for (int x = 0; x < w; x++) {
-			*dst++ = pixel;
-		}
-	}
-
-	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
-
 	if (screen == CGA_SCREENBUFFER)
-		g_system->updateScreen();
+		CGA_blitToScreen(ofs, w * 4, h);
 }
 
 void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
