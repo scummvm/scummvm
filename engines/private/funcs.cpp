@@ -748,7 +748,8 @@ static void fTimer(ArgArray args) {
 	// This pointer is necessary since installTimer needs one
 	Common::String *s = new Common::String(args[1].u.sym->name->c_str());
 	if (delay > 0) {
-		assert(g_private->installTimer(delay, s));
+		if (!g_private->installTimer(delay, s))
+			error("Timer installation failed!");
 	} else if (delay == 0) {
 		g_private->_nextSetting = *s;
 		// No need to keep the pointer alive
