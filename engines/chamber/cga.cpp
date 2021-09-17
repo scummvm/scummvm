@@ -399,7 +399,7 @@ void CGA_DrawHLine(unsigned int x, unsigned int y, unsigned int l, unsigned char
 		}
 	}
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(x, y, ol * 4, 1);
+		CGA_blitToScreen(x, y, ol, 1);
 }
 
 /*
@@ -411,7 +411,7 @@ unsigned int CGA_DrawHLineWithEnds(unsigned int bmask, unsigned int bpix, unsign
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
-	uint oofs = ofs;
+	uint oofs = ofs + 1;
 	ofs ^= CGA_ODD_LINES_OFS;
 	if ((ofs & CGA_ODD_LINES_OFS) == 0)
 		ofs += CGA_BYTES_PER_LINE;
