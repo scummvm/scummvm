@@ -380,7 +380,7 @@ NB! Line must not wrap around the edge
 void CGA_DrawHLine(unsigned int x, unsigned int y, unsigned int l, unsigned char color, unsigned char *target) {
 	unsigned int ofs;
 	/*pixels are starting from top bits of byte*/
-	unsigned int mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
+	uint16 mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
 	unsigned char pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
 
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
