@@ -35,36 +35,6 @@ namespace Chewy {
 #define DATEI 3
 #define MAXSTRING 255
 
-void mcga_grafik::ltoa(long N, char *str, int base) {
-	sprintf(str, "%ld", N);
-}
-
-void mcga_grafik::ultoa(uint32 N, char *str, int base) {
-	sprintf(str, "%u", N);
-}
-
-void mcga_grafik::itoa(int N, char *str, int base) {
-	sprintf(str, "%d", N);
-}
-
-bool kbhit() {
-	warning("STUB: kbhit()");
-
-	return false;
-}
-
-char getch() {
-	warning("STUB: getch()");
-
-	return ' ';
-}
-
-void putch(char c) {
-	warning("STUB: putch()");
-}
-
-/*------------------------------------------------------*/
-
 mcga_grafik::mcga_grafik() {
 	int16 i;
 
@@ -96,6 +66,7 @@ mcga_grafik::mcga_grafik() {
 	mono = false;
 	MausMode = false;
 }
+
 mcga_grafik::~mcga_grafik() {
 }
 
@@ -1691,6 +1662,18 @@ int16 mcga_grafik::get_vesa_info(uint16 mode, byte *iblk) {
 	}
 #endif
 	return (error);
+}
+
+void mcga_grafik::ltoa(long N, char *str, int base) {
+	sprintf(str, "%ld", N);
+}
+
+void mcga_grafik::ultoa(uint32 N, char *str, int base) {
+	sprintf(str, "%u", N);
+}
+
+void mcga_grafik::itoa(int N, char *str, int base) {
+	sprintf(str, "%d", N);
 }
 
 } // namespace Chewy
