@@ -2467,10 +2467,12 @@ EOF
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-	type_ptr=uint32
+	signed_type_ptr=int32
+	unsigned_type_ptr=uint32
 	echo "no"
 else
-	type_ptr=uint64
+	signed_type_ptr=int64
+	unsigned_type_ptr=uint64
 	echo "yes"
 fi
 
@@ -6189,7 +6191,8 @@ typedef signed $type_4_byte int32;
 typedef signed $type_8_byte int64;
 #endif
 
-typedef $type_ptr  uintptr;
+typedef $signed_type_ptr intptr;
+typedef $unsigned_type_ptr uintptr;
 
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
