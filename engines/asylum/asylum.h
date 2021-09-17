@@ -193,6 +193,7 @@ public:
 	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
 	bool isAltDemo() { return Common::File::exists("asylum.dat"); }
 	Common::Language getLanguage() { return _gameDescription->language; }
+	Common::String getMoviesFileName() { return Common::String::format("%s.movies", _targetName.c_str()); }
 
 	// Save/Load
 	bool canLoadGameStateCurrently();

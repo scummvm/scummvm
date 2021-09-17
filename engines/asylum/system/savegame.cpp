@@ -47,8 +47,6 @@ namespace Asylum {
 
 #define SAVEGAME_QUICKSLOT 24
 
-#define SAVEGAME_MOVIES "asylum.movies"
-
 static const char *savegame_version = "v1.01 FINAL";
 
 Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false) {
@@ -450,7 +448,7 @@ void Savegame::setMovieViewed(uint32 index) {
 		_moviesViewed[index] = 1;
 
 		// Write data to disk
-		Common::OutSaveFile *movies = g_system->getSavefileManager()->openForSaving(SAVEGAME_MOVIES);
+		Common::OutSaveFile *movies = g_system->getSavefileManager()->openForSaving(_vm->getMoviesFileName());
 		if (!movies)
 			error("[Savegame::setMovieViewed] Could not open viewed movie list!");
 
@@ -476,11 +474,11 @@ uint32 Savegame::getMoviesViewed(int32 *movieList) const {
 }
 
 void Savegame::loadMoviesViewed() {
-	if (!isSavegamePresent(SAVEGAME_MOVIES))
+	if (!isSavegamePresent(_vm->getMoviesFileName()))
 		return;
 
 	// Load data from disk
-	Common::InSaveFile *movies = g_system->getSavefileManager()->openForLoading(SAVEGAME_MOVIES);
+	Common::InSaveFile *movies = g_system->getSavefileManager()->openForLoading(_vm->getMoviesFileName());
 	if (!movies)
 		error("[Savegame::setMovieViewed] Could not open viewed movie list!");
 
