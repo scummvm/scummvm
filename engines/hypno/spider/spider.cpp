@@ -10,12 +10,15 @@ SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEn
 
 void SpiderEngine::loadAssets() {
 
-	assert(_installerArchive.open("DATA.Z"));
+	if (!_installerArchive.open("DATA.Z"))
+		error("Failed to open DATA.Z");
+
 	SearchMan.add("DATA.Z", (Common::Archive *) &_installerArchive, 0, false);
 
 	Common::ArchiveMemberList files;
 	LibFile *missions = loadLib("", "sixdemo/c_misc/missions.lib");
-	assert(missions->listMembers(files) > 0);
+	if (missions->listMembers(files) == 0)
+		error("Failed to load any file from missions.lib");
 
 	// start level
 	Level start;
