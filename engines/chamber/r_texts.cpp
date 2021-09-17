@@ -26,7 +26,7 @@
 namespace Chamber {
 
 
-unsigned char vepci_data[RES_VEPCI_MAX];
-unsigned char motsi_data[RES_MOTSI_MAX];
+byte vepci_data[RES_VEPCI_MAX];
+byte motsi_data[RES_MOTSI_MAX];
 
 } // End of namespace Chamber

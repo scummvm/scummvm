@@ -25,7 +25,7 @@
 namespace Chamber {
 
 
-unsigned char backbuffer[0x4000];
+byte backbuffer[0x4000];
 
 } // End of namespace Chamber
 

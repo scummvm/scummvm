@@ -26,16 +26,16 @@ namespace Chamber {
 
 
 static struct {
-	unsigned char codes[256];
-	unsigned char prefix[256];
-	unsigned char suffix[256];
-	unsigned char coddict[256];
-	unsigned char codlink[256];
-	unsigned char stackpos;
+	byte codes[256];
+	byte prefix[256];
+	byte suffix[256];
+	byte coddict[256];
+	byte codlink[256];
+	byte stackpos;
 } DecompCtx;
 
-unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned char *stack) {
-	unsigned char n;
+byte decode_string(byte code, byte prev_n, byte *stack) {
+	byte n;
 	while ((n = DecompCtx.coddict[code]) != 0) {
 		while (n >= prev_n) {
 			n = DecompCtx.codlink[n];
@@ -49,13 +49,13 @@ unsigned char decode_string(unsigned char code, unsigned char prev_n, unsigned c
 	return code;
 }
 
-unsigned long decompress(unsigned char *data, unsigned char *result) {
-	unsigned char dict_size, more;
-	unsigned int compsize;
-	unsigned int i;
-	unsigned char code, n, suffix;
-	unsigned char stack[256];
-	unsigned long decompsize = 0;
+uint32 decompress(byte *data, byte *result) {
+	byte dict_size, more;
+	uint16 compsize;
+	uint16 i;
+	byte code, n, suffix;
+	byte stack[256];
+	uint32 decompsize = 0;
 
 	do {
 		dict_size = *data++;

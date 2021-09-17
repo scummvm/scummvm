@@ -25,6 +25,6 @@
 
 namespace Chamber {
 
-unsigned char puzzl_data[RES_PUZZL_MAX];
+byte puzzl_data[RES_PUZZL_MAX];
 
 } // End of namespace Chamber

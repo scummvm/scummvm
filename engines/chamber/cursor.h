@@ -42,18 +42,18 @@ enum Cursors {
 	CURSOR_MAX
 };
 
-extern unsigned int cursor_x;
-extern unsigned char cursor_y;
-extern unsigned char cursor_color;
-extern unsigned char *cursor_shape;
-extern unsigned char cursor_anim_ticks;
-extern unsigned char cursor_anim_phase;
+extern uint16 cursor_x;
+extern byte cursor_y;
+extern byte cursor_color;
+extern byte *cursor_shape;
+extern byte cursor_anim_ticks;
+extern byte cursor_anim_phase;
 
-void SelectCursor(unsigned int num);
+void SelectCursor(uint16 num);
 void UpdateCursor(void);
-void DrawCursor(unsigned char *target);
-void UndrawCursor(unsigned char *target);
-void UpdateUndrawCursor(unsigned char *target);
+void DrawCursor(byte *target);
+void UndrawCursor(byte *target);
+void UpdateUndrawCursor(byte *target);
 
 } // End of namespace Chamber
 

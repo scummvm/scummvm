@@ -24,7 +24,7 @@
 #define CHAMBER_DECOMPR_H
 
 namespace Chamber {
-unsigned long decompress(unsigned char *data, unsigned char *result);
+uint32 decompress(byte *data, byte *result);
 
 } // End of namespace Chamber
 

@@ -25,8 +25,8 @@
 
 namespace Chamber {
 
-int LoadScena(void);
-int SaveScena(void);
+int16 LoadScena(void);
+int16 SaveScena(void);
 void SaveRestartGame(void);
 void RestartGame(void);
 

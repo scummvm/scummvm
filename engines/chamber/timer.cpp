@@ -32,9 +32,9 @@
 namespace Chamber {
 
 
-void AnimateGauss(unsigned char *target) {
-	unsigned char *sprite;
-	unsigned char phase = Rand() % 4;
+void AnimateGauss(byte *target) {
+	byte *sprite;
+	byte phase = Rand() % 4;
 	if (phase == script_byte_vars.gauss_phase)
 		phase = (phase + 1) % 4;
 	script_byte_vars.gauss_phase = phase;

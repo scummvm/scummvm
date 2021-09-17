@@ -76,7 +76,7 @@ Common::Error ChamberEngine::saveGameStream(Common::WriteStream *stream, bool is
 
 void ChamberEngine::syncGameStream(Common::Serializer &s) {
 	// Use methods of Serializer to save/load fields
-	int dummy = 0;
+	int16 dummy = 0;
 	s.syncAsUint16LE(dummy);
 }
 

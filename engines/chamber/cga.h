@@ -41,87 +41,87 @@ extern byte CGA_SCREENBUFFER[0x4000];
 #define CGA_PREV_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) - (((offs) & CGA_ODD_LINES_OFS) ? CGA_BYTES_PER_LINE : 0))
 
 #define frontbuffer CGA_SCREENBUFFER
-extern unsigned char backbuffer[0x4000];
+extern byte backbuffer[0x4000];
 
-extern unsigned char sprit_load_buffer[1290];
+extern byte sprit_load_buffer[1290];
 
-extern unsigned char cga_pixel_flip[256];
+extern byte cga_pixel_flip[256];
 
-extern unsigned char char_draw_coords_x;
-extern unsigned char char_draw_coords_y;
-extern unsigned char *char_xlat_table;
-extern unsigned char string_ended;
-extern unsigned char char_draw_max_width;
-extern unsigned char char_draw_max_height;
+extern byte char_draw_coords_x;
+extern byte char_draw_coords_y;
+extern byte *char_xlat_table;
+extern byte string_ended;
+extern byte char_draw_max_width;
+extern byte char_draw_max_height;
 
 void SwitchToGraphicsMode(void);
 void SwitchToTextMode(void);
 
 void WaitVBlank(void);
 
-void CGA_ColorSelect(unsigned char csel);
+void CGA_ColorSelect(byte csel);
 void CGA_BackBufferToRealFull(void);
 void CGA_RealBufferToBackFull(void);
 void CGA_SwapRealBackBuffer(void);
 
-void CGA_SwapScreenRect(unsigned char *pixels, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
+void CGA_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
-unsigned int CGA_CalcXY(unsigned int x, unsigned int y);
-unsigned int CGA_CalcXY_p(unsigned int x, unsigned int y);
+uint16 CGA_CalcXY(uint16 x, uint16 y);
+uint16 CGA_CalcXY_p(uint16 x, uint16 y);
 
-void CGA_CopyScreenBlock(unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
+void CGA_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
 
-unsigned char *CGA_BackupImage(unsigned char *source, unsigned int ofs, unsigned int w, unsigned int h, unsigned char *buffer);
-unsigned char *CGA_BackupImageReal(unsigned int ofs, unsigned int w, unsigned int h);
+byte *CGA_BackupImage(byte *source, uint16 ofs, uint16 w, uint16 h, byte *buffer);
+byte *CGA_BackupImageReal(uint16 ofs, uint16 w, uint16 h);
 
-void CGA_RestoreImage(unsigned char *buffer, unsigned char *target);
-void CGA_RefreshImageData(unsigned char *buffer);
-void CGA_RestoreBackupImage(unsigned char *target);
+void CGA_RestoreImage(byte *buffer, byte *target);
+void CGA_RefreshImageData(byte *buffer);
+void CGA_RestoreBackupImage(byte *target);
 
-void CGA_Blit(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_BlitAndWait(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
+void CGA_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_BlitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_FillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
-void CGA_DrawVLine(unsigned int x, unsigned int y, unsigned int l, unsigned char color, unsigned char *target);
-void CGA_DrawHLine(unsigned int x, unsigned int y, unsigned int l, unsigned char color, unsigned char *target);
-unsigned int CGA_DrawHLineWithEnds(unsigned int bmask, unsigned int bpix, unsigned char color, unsigned int l, unsigned char *target, unsigned int ofs);
+void CGA_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target);
+void CGA_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target);
+uint16 CGA_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs);
 
-void CGA_PrintChar(unsigned char c, unsigned char *target);
+void CGA_PrintChar(byte c, byte *target);
 
-void CGA_BlitScratchBackSprite(unsigned int sprofs, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_BlitFromBackBuffer(unsigned char w, unsigned char h, unsigned char *screen, unsigned int ofs);
+void CGA_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs);
 
-void CGA_BlitSprite(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_BlitSpriteFlip(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
+void CGA_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
-void CGA_BlitSpriteBak(unsigned char *pixels, signed int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs, unsigned char *backup, unsigned char mask);
+void CGA_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask);
 
-void DrawSprite(unsigned char *sprite, unsigned char *screen, unsigned int ofs);
-void DrawSpriteFlip(unsigned char *sprite, unsigned char *screen, unsigned int ofs);
+void DrawSprite(byte *sprite, byte *screen, uint16 ofs);
+void DrawSpriteFlip(byte *sprite, byte *screen, uint16 ofs);
 
-void DrawSpriteN(unsigned char index, unsigned int x, unsigned int y, unsigned char *target);
-void DrawSpriteNFlip(unsigned char index, unsigned int x, unsigned int y, unsigned char *target);
+void DrawSpriteN(byte index, uint16 x, uint16 y, byte *target);
+void DrawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target);
 
-void BackupAndShowSprite(unsigned char index, unsigned char x, unsigned char y);
+void BackupAndShowSprite(byte index, byte x, byte y);
 
-unsigned char *LoadSprite(unsigned char index, unsigned char *bank, unsigned char *buffer, unsigned char header_only);
+byte *LoadSprite(byte index, byte *bank, byte *buffer, byte header_only);
 
-unsigned char *LoadSprit(unsigned char index);
-unsigned char *LoadPersSprit(unsigned char index);
+byte *LoadSprit(byte index);
+byte *LoadPersSprit(byte index);
 
-void CGA_AnimLiftToUp(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int x, unsigned int y);
-void CGA_AnimLiftToDown(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_AnimLiftToLeft(unsigned int n, unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
-void CGA_AnimLiftToRight(unsigned int n, unsigned char *pixels, unsigned int pw, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs);
+void CGA_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y);
+void CGA_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_AnimLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
+void CGA_AnimLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
-void CGA_HideScreenBlockLiftToUp(unsigned int n, unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
-void CGA_HideScreenBlockLiftToDown(unsigned int n, unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
-void CGA_HideScreenBlockLiftToLeft(unsigned int n, unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
-void CGA_HideScreenBlockLiftToRight(unsigned int n, unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
+void CGA_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
+void CGA_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
+void CGA_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
+void CGA_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
 
-void CGA_HideShatterFall(unsigned char *screen, unsigned char *source, unsigned int w, unsigned int h, unsigned char *target, unsigned int ofs);
+void CGA_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
 
-void CGA_TraceLine(unsigned int sx, unsigned int ex, unsigned int sy, unsigned int ey, unsigned char *source, unsigned char *target);
+void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target);
 
 } // End of namespace Chamber
 

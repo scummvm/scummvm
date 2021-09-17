@@ -31,29 +31,29 @@
 namespace Chamber {
 
 
-unsigned char *anima_end_ofs;
+byte *anima_end_ofs;
 
-unsigned char last_anim_y = 0;
-unsigned char last_anim_x = 0;
-unsigned char anim_shift_y = 0;
-unsigned char anim_shift_x = 0;
-unsigned char last_anim_height;
-unsigned char last_anim_width;
-unsigned char anim_cycle;
-unsigned char anim_flags;
-unsigned char anim_use_dot_effect;
-unsigned int anim_draw_delay;
-unsigned char dot_effect_step;
-unsigned int dot_effect_delay;
+byte last_anim_y = 0;
+byte last_anim_x = 0;
+byte anim_shift_y = 0;
+byte anim_shift_x = 0;
+byte last_anim_height;
+byte last_anim_width;
+byte anim_cycle;
+byte anim_flags;
+byte anim_use_dot_effect;
+uint16 anim_draw_delay;
+byte dot_effect_step;
+uint16 dot_effect_delay;
 
-extern unsigned short cpu_speed_delay;
+extern uint16 cpu_speed_delay;
 
-extern unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end);
-extern void LoadLutinSprite(unsigned int lutidx);
+extern byte *SeekToEntry(byte *bank, uint16 num, byte **end);
+extern void LoadLutinSprite(uint16 lutidx);
 
-void GetScratchBuffer(unsigned char mode) {
-	unsigned char *buffer = scratch_mem2;
-	unsigned int offs = 0;
+void GetScratchBuffer(byte mode) {
+	byte *buffer = scratch_mem2;
+	uint16 offs = 0;
 	if (mode & 0x80)
 		offs += 3200;
 	if (mode & 0x40)
@@ -61,16 +61,16 @@ void GetScratchBuffer(unsigned char mode) {
 	lutin_mem = buffer + offs;
 }
 
-void AnimLoadSprite(unsigned char **panim) {
-	unsigned char mode;
-	unsigned char index;
+void AnimLoadSprite(byte **panim) {
+	byte mode;
+	byte index;
 	mode = *((*panim)++);
 	index = *((*panim)++);
 	GetScratchBuffer(mode);
 	LoadLutinSprite(index);
 }
 
-void ClipSprite(unsigned char *x, unsigned char *y, unsigned char *sprw, unsigned char *sprh, unsigned char **sprite, signed char dx, signed char dy) {
+void ClipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
 	if (anim_flags == 7)
 		return;
 	if (anim_flags & 4) {
@@ -106,20 +106,20 @@ void ClipSprite(unsigned char *x, unsigned char *y, unsigned char *sprw, unsigne
 	}
 }
 
-void CopyScreenBlockWithDotEffect(unsigned char *source, unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *target) {
-	unsigned int offs;
-	unsigned int xx = x * 4;
-	unsigned int ww = width * 4;
-	unsigned int cur_image_end = ww * height;
+void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
+	uint16 offs;
+	uint16 xx = x * 4;
+	uint16 ww = width * 4;
+	uint16 cur_image_end = ww * height;
 
 	for (offs = 0; offs != cur_image_end;) {
-		unsigned char mask = 0xC0 >> (((xx + offs % ww) % 4) * 2);
-		unsigned int ofs = CGA_CalcXY(xx + offs % ww, y + offs / ww);
+		byte mask = 0xC0 >> (((xx + offs % ww) % 4) * 2);
+		uint16 ofs = CGA_CalcXY(xx + offs % ww, y + offs / ww);
 
 		target[ofs] = (target[ofs] & ~mask) | (source[ofs] & mask);
 
 		if (dot_effect_delay / 4 != 0) {
-			unsigned int i;
+			uint16 i;
 			for (i = 0; i < dot_effect_delay / 4; i++) ; /*TODO: weak delay*/
 		}
 
@@ -129,10 +129,10 @@ void CopyScreenBlockWithDotEffect(unsigned char *source, unsigned char x, unsign
 	}
 }
 
-void AnimDrawSprite(unsigned char x, unsigned char y, unsigned char sprw, unsigned char sprh, unsigned char *pixels, unsigned int pitch) {
-	unsigned int delay, delay2;
-	unsigned char ex, ey, updx, updy, updw, updh;
-	unsigned int ofs = CGA_CalcXY_p(x, y);
+void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
+	uint16 delay, delay2;
+	byte ex, ey, updx, updy, updw, updh;
+	uint16 ofs = CGA_CalcXY_p(x, y);
 	CGA_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
 	CGA_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	ex = x + sprw;
@@ -179,10 +179,10 @@ void AnimUndrawSprite(void) {
 	last_anim_height = 0;
 }
 
-void PlayAnimCore(unsigned char **panim) {
-	unsigned char mode;
-	unsigned int count, count2;
-	unsigned char *pframe;
+void PlayAnimCore(byte **panim) {
+	byte mode;
+	uint16 count, count2;
+	byte *pframe;
 	mode = *((*panim)++);
 	anim_flags = mode & 7;
 	count = mode >> 3;
@@ -195,11 +195,11 @@ void PlayAnimCore(unsigned char **panim) {
 		dot_effect_delay = 500;
 		count2 = mode & 7;
 		while (count2--) {
-			unsigned char *sprite;
-			unsigned char sprw, sprh;
-			unsigned char x, y;
-			signed char dx, dy;
-			unsigned int pitch;
+			byte *sprite;
+			byte sprw, sprh;
+			byte x, y;
+			int8 dx, dy;
+			uint16 pitch;
 			mode = *pframe++;
 			GetScratchBuffer(mode);
 			dy = mode & 7;
@@ -238,49 +238,49 @@ end:
 	*panim += mode & 7;
 }
 
-void Anim1(unsigned char **panim) {
+void Anim1(byte **panim) {
 	anim_cycle = 0xFF;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim2(unsigned char **panim) {
+void Anim2(byte **panim) {
 	anim_cycle = 1;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim3(unsigned char **panim) {
+void Anim3(byte **panim) {
 	anim_cycle = 1;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim4(unsigned char **panim) {
+void Anim4(byte **panim) {
 	anim_cycle = last_anim_width - 1;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim5(unsigned char **panim) {
+void Anim5(byte **panim) {
 	anim_cycle = last_anim_width - 1;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim6(unsigned char **panim) {
+void Anim6(byte **panim) {
 	anim_cycle = last_anim_height;
 	anim_use_dot_effect = 0;
 	PlayAnimCore(panim);
 }
 
-void Anim7(unsigned char **panim) {
+void Anim7(byte **panim) {
 	anim_cycle = 0xFF;
 	anim_use_dot_effect = 1;
 	PlayAnimCore(panim);
 }
 
-typedef void (*animhandler_t)(unsigned char **panim);
+typedef void (*animhandler_t)(byte **panim);
 
 animhandler_t anim_handlers[] = {
 	AnimLoadSprite,
@@ -293,9 +293,9 @@ animhandler_t anim_handlers[] = {
 	Anim7
 };
 
-void PlayAnim(unsigned char index, unsigned char x, unsigned char y) {
-	unsigned char sound;
-	unsigned char *panim;
+void PlayAnim(byte index, byte x, byte y) {
+	byte sound;
+	byte *panim;
 
 	last_anim_width = 0;
 	last_anim_height = 0;
@@ -304,7 +304,7 @@ void PlayAnim(unsigned char index, unsigned char x, unsigned char y) {
 
 	panim = SeekToEntry(anima_data, index - 1, &anima_end_ofs);
 	while (panim != anima_end_ofs) {
-		unsigned char mode = *panim;
+		byte mode = *panim;
 		switch (mode) {
 		case 0xFE:  /*set shift*/
 			panim++;

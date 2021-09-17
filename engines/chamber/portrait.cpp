@@ -34,27 +34,27 @@
 namespace Chamber {
 
 
-extern unsigned short cpu_speed_delay;
+extern uint16 cpu_speed_delay;
 
-unsigned char *cur_image_pixels;
-unsigned char cur_image_size_w;
-unsigned char cur_image_size_h;
-unsigned char cur_image_coords_x;
-unsigned char cur_image_coords_y;
-unsigned int cur_image_offs;
-unsigned int cur_image_end;
-unsigned char cur_image_idx;
-unsigned char cur_image_anim1;
-unsigned char cur_image_anim2;
-unsigned int cur_frame_width;
+byte *cur_image_pixels;
+byte cur_image_size_w;
+byte cur_image_size_h;
+byte cur_image_coords_x;
+byte cur_image_coords_y;
+uint16 cur_image_offs;
+uint16 cur_image_end;
+byte cur_image_idx;
+byte cur_image_anim1;
+byte cur_image_anim2;
+uint16 cur_frame_width;
 
 typedef struct persframe_t {
-	unsigned char height;
-	unsigned char width;
-	unsigned char topbot;   /*border and fill colors*/
-	unsigned char fill;
-	unsigned char left;
-	unsigned char right;
+	byte height;
+	byte width;
+	byte topbot;   /*border and fill colors*/
+	byte fill;
+	byte left;
+	byte right;
 } persframe_t;
 
 persframe_t pers_frames[] = {
@@ -69,8 +69,8 @@ persframe_t pers_frames[] = {
 	{27, 34,    0,    0,    0,    0}
 };
 
-void MakePortraitFrame(unsigned char index, unsigned char *target) {
-	unsigned int i;
+void MakePortraitFrame(byte index, byte *target) {
+	uint16 i;
 	persframe_t *pframe = &pers_frames[index];
 	*target++ = pframe->height;
 	*target++ = pframe->width;
@@ -90,11 +90,11 @@ void MakePortraitFrame(unsigned char index, unsigned char *target) {
 /*
 Superimpose source sprite data over target image data
 */
-void MergeImageAndSpriteData(unsigned char *target, signed int pitch, unsigned char *source, unsigned int w, unsigned int h) {
-	unsigned int x;
+void MergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
+	uint16 x;
 	while (h--) {
 		for (x = 0; x < w; x++) {
-			unsigned char m = *source++;
+			byte m = *source++;
 			*target &= m;
 			*target++ |= *source++;
 		}
@@ -106,12 +106,12 @@ void MergeImageAndSpriteData(unsigned char *target, signed int pitch, unsigned c
 /*
 Superimpose horizontally-flipped source sprite data over target image data
 */
-void MergeImageAndSpriteDataFlip(unsigned char *target, signed int pitch, unsigned char *source, unsigned int w, unsigned int h) {
-	unsigned int x;
+void MergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
+	uint16 x;
 	target += w - 1;
 	while (h--) {
 		for (x = 0; x < w; x++) {
-			unsigned char m = cga_pixel_flip[*source++];
+			byte m = cga_pixel_flip[*source++];
 			*target &= m;
 			*target |= cga_pixel_flip[*source++];
 			target -= 1;
@@ -124,13 +124,13 @@ void MergeImageAndSpriteDataFlip(unsigned char *target, signed int pitch, unsign
 /*
 Build portrait from multiple pers sprites
 */
-unsigned char *LoadPortrait(unsigned char **pinfo, unsigned char *end) {
+byte *LoadPortrait(byte **pinfo, byte *end) {
 	while (*pinfo != end) {
-		unsigned char index;
-		unsigned int flags;
-		signed int pitch;
-		unsigned char *buffer, *sprite;
-		unsigned char sprw, sprh;
+		byte index;
+		uint16 flags;
+		int16 pitch;
+		byte *buffer, *sprite;
+		byte sprw, sprh;
 
 		index = *((*pinfo)++);
 		flags = *((*pinfo)++);
@@ -154,8 +154,8 @@ unsigned char *LoadPortrait(unsigned char **pinfo, unsigned char *end) {
 	return sprit_load_buffer + 2;
 }
 
-unsigned char *LoadPortraitWithFrame(unsigned char index) {
-	unsigned char *pinfo, *end;
+byte *LoadPortraitWithFrame(byte index) {
+	byte *pinfo, *end;
 	pinfo = SeekToEntry(icone_data, index, &end);
 	MakePortraitFrame(*pinfo++, sprit_load_buffer + 2);
 	return LoadPortrait(&pinfo, end);
@@ -165,12 +165,12 @@ unsigned char *LoadPortraitWithFrame(unsigned char index) {
 #define STATIC_ANIMS_MAX 24
 
 struct {
-	unsigned char   index;
-	unsigned char   image;
-	unsigned char   x;
-	unsigned char   y;
-	unsigned char   anim1;
-	unsigned char   anim2;
+	byte   index;
+	byte   image;
+	byte   x;
+	byte   y;
+	byte   anim1;
+	byte   anim2;
 } static_anims[] = {
 	{ 24,  13, 35, 10,  4,  5},
 	{ 88,  42, 35, 10, 11, 12},
@@ -198,9 +198,9 @@ struct {
 	{248, 117, 16,  2, 33, 33}
 };
 
-unsigned char SelectCurrentAnim(unsigned char *x, unsigned char *y, unsigned char *index) {
-	int i;
-	unsigned char aniidx = ((pers_t *)(script_vars[ScrPool8_CurrentPers]))->index & ~7;
+byte SelectCurrentAnim(byte *x, byte *y, byte *index) {
+	int16 i;
+	byte aniidx = ((pers_t *)(script_vars[ScrPool8_CurrentPers]))->index & ~7;
 	for (i = 0; i < STATIC_ANIMS_MAX; i++) {
 		if (static_anims[i].index == aniidx) {
 			*x = static_anims[i].x;
@@ -216,10 +216,10 @@ unsigned char SelectCurrentAnim(unsigned char *x, unsigned char *y, unsigned cha
 }
 
 void DrawBoxAroundSpot(void) {
-	unsigned char *buffer;
-	unsigned int w, h;
-	unsigned int ofs;
-	unsigned int x, y;
+	byte *buffer;
+	uint16 w, h;
+	uint16 ofs;
+	uint16 x, y;
 
 	if (*spot_sprite == 0)
 		return;
@@ -228,8 +228,8 @@ void DrawBoxAroundSpot(void) {
 
 	buffer = *spot_sprite;
 
-	h = *(unsigned char *)(buffer + 0);
-	w = *(unsigned char *)(buffer + 1);
+	h = *(byte *)(buffer + 0);
+	w = *(byte *)(buffer + 1);
 	ofs = *(uint16 *)(buffer + 2);
 
 	/*decode ofs back to x:y*/
@@ -251,10 +251,10 @@ void DrawBoxAroundSpot(void) {
 /*Get on-screen image as specified by script to temp buffer and register it with dirty rect of kind 2
 If rmb is pressed, draw it immediately and return 0
 */
-int DrawPortrait(unsigned char **desc, unsigned char *x, unsigned char *y, unsigned char *width, unsigned char *height) {
-	unsigned char index;
-	unsigned char xx, yy;
-	unsigned char *image;
+int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
+	byte index;
+	byte xx, yy;
+	byte *image;
 
 	index = *((*desc)++);
 	if (index == 0xFF) {
@@ -292,7 +292,7 @@ int DrawPortrait(unsigned char **desc, unsigned char *x, unsigned char *y, unsig
 	return 1;
 }
 
-void BlinkWithSound(unsigned char color) {
+void BlinkWithSound(byte color) {
 	CGA_ColorSelect(color);
 	PlaySound(144);
 	SelectPalette();
@@ -306,9 +306,9 @@ void BlinkToWhite(void) {
 	BlinkWithSound(0x3F);
 }
 
-void AnimPortrait(unsigned char layer, unsigned char index, unsigned char delay) {
-	unsigned char *ani, *ani_end;
-	unsigned char temp;
+void AnimPortrait(byte layer, byte index, byte delay) {
+	byte *ani, *ani_end;
+	byte temp;
 
 	SelectCurrentAnim(&temp, &temp, &temp);
 
@@ -321,12 +321,12 @@ void AnimPortrait(unsigned char layer, unsigned char index, unsigned char delay)
 	cur_image_pixels = sprit_load_buffer + 2 + 2;
 
 	while (ani != ani_end) {
-		unsigned char kind;
-		unsigned char x, y;
-		unsigned char width, height;
-		unsigned int offs;
+		byte kind;
+		byte x, y;
+		byte width, height;
+		uint16 offs;
 
-		unsigned char portrait = *ani++;
+		byte portrait = *ani++;
 		LoadPortraitWithFrame(portrait - 1);
 		if (*ani == 0xFF) {
 			ani++;
@@ -342,7 +342,7 @@ void AnimPortrait(unsigned char layer, unsigned char index, unsigned char delay)
 				else
 					BlinkToWhite();
 			} else {
-				int i;
+				int16 i;
 				while (delay--) for (i = 0; i < cpu_speed_delay; i++) ; /*TODO: FIXME weak delay*/
 			}
 		}

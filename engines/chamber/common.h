@@ -37,10 +37,10 @@ namespace Chamber {
 
 #include "common/pack-start.h"
 typedef struct rect_t {
-	unsigned char sx;
-	unsigned char ex;
-	unsigned char sy;
-	unsigned char ey;
+	byte sx;
+	byte ex;
+	byte sy;
+	byte ey;
 } rect_t;
 #include "common/pack-end.h"
 

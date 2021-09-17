@@ -25,20 +25,20 @@
 
 namespace Chamber {
 
-extern unsigned char buttons;
-extern unsigned char right_button;
+extern byte buttons;
+extern byte right_button;
 
-extern unsigned char have_mouse;
+extern byte have_mouse;
 
-extern volatile unsigned char key_direction;
-extern volatile unsigned char key_code;
-extern unsigned char key_held;
+extern volatile byte key_direction;
+extern volatile byte key_code;
+extern byte key_held;
 
 void ClearKeyboard(void);
 
-unsigned char PollMouse(void);
-unsigned char PollKeyboard(void);
-void SetInputButtons(unsigned char keys);
+byte PollMouse(void);
+byte PollKeyboard(void);
+void SetInputButtons(byte keys);
 
 void PollInput(void);
 void ProcessInput(void);
