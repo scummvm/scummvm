@@ -469,10 +469,12 @@
 		  defined(__LP64__) || \
 		  defined(_M_ARM64)
 
+typedef int64 intptr;
 typedef uint64 uintptr;
 
 #else
 
+typedef int32 intptr;
 typedef uint32 uintptr;
 
 #endif
