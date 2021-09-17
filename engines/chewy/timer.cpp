@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "chewy/chewy.h"
 #include "chewy/timer.h"
 #include "chewy/defines.h"
