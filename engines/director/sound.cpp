@@ -786,7 +786,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		magic2 == MKTAG('W', 'A', 'V', 'E')) {
 		stream = Audio::makeWAVStream(file, disposeAfterUse);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
-				magic2 == MKTAG('A', 'I', 'F', 'F')) {
+				(magic2 == MKTAG('A', 'I', 'F', 'F') || magic2 == MKTAG('A', 'I', 'F', 'C'))) {
 		stream = Audio::makeAIFFStream(file, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());
