@@ -27,7 +27,7 @@
 namespace Chamber {
 
 
-void PlaySound(unsigned char index) {
+void PlaySound(byte index) {
 	/*TODO*/
 }
 

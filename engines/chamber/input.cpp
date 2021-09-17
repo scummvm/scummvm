@@ -32,17 +32,17 @@
 namespace Chamber {
 
 
-unsigned char have_mouse;
-unsigned char key_held;
-volatile unsigned char key_direction;
-volatile unsigned char key_code;
-volatile unsigned char esc_pressed;
-unsigned char buttons_repeat = 0;
-unsigned char buttons;
-unsigned char right_button;
-unsigned char key_direction_old;
-unsigned char accell_countdown;
-unsigned int accelleration = 1;
+byte have_mouse;
+byte key_held;
+volatile byte key_direction;
+volatile byte key_code;
+volatile byte esc_pressed;
+byte buttons_repeat = 0;
+byte buttons;
+byte right_button;
+byte key_direction_old;
+byte accell_countdown;
+uint16 accelleration = 1;
 byte mouseButtons = 0;
 
 byte ChamberEngine::readKeyboardChar() {
@@ -72,7 +72,7 @@ byte ChamberEngine::readKeyboardChar() {
 void ClearKeyboard(void) {
 }
 
-void SetInputButtons(unsigned char keys) {
+void SetInputButtons(byte keys) {
 	if (keys && buttons_repeat) {
 		/*ignore buttons repeat*/
 		buttons = 0;
@@ -86,14 +86,14 @@ void SetInputButtons(unsigned char keys) {
 	buttons_repeat = keys;
 }
 
-unsigned char PollMouse(void) {
+byte PollMouse(void) {
 	PollInput();
 
 	return buttons;
 }
 
-unsigned char PollKeyboard(void) {
-	unsigned char direction = key_direction;
+byte PollKeyboard(void) {
+	byte direction = key_direction;
 	if (direction && direction == key_direction_old) {
 		if (++accell_countdown == 10) {
 			accelleration++;
@@ -112,7 +112,7 @@ unsigned char PollKeyboard(void) {
 				cursor_x = 304;
 		} else {
 			cursor_x -= accelleration;
-			if ((signed int)cursor_x < 0)
+			if ((int16)cursor_x < 0)
 				cursor_x = 0;
 		}
 	}
@@ -124,7 +124,7 @@ unsigned char PollKeyboard(void) {
 				cursor_y = 184;
 		} else {
 			cursor_y -= accelleration;
-			if ((signed char)cursor_y < 0)
+			if ((int8)cursor_y < 0)
 				cursor_y = 0;
 		}
 	}
@@ -189,7 +189,7 @@ void ProcessInput(void) {
 void KeyboardIsr() {
 	warning("STUB: KeyboardIsr()");
 #if 0
-	unsigned char scan, strobe;
+	byte scan, strobe;
 	scan = inportb(0x60);
 	/*consume scan from kbd. controller*/
 	strobe = inportb(0x61);

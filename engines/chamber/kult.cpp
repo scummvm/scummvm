@@ -44,7 +44,7 @@
 
 namespace Chamber {
 
-unsigned short cpu_speed_delay;
+uint16 cpu_speed_delay;
 
 /*
 Prompt user to insert disk #2 to any drive
@@ -53,7 +53,7 @@ void AskDisk2(void) {
 	DrawMessage(SeekToString(vepci_data, 179), frontbuffer);
 }
 
-void SaveToFile(char *filename, void *data, unsigned int size) {
+void SaveToFile(char *filename, void *data, uint16 size) {
 	warning("STUB: SaveToFile(%s, data, %d)", filename, size);
 #if 0
 	FILE *f = fopen(filename, "wb");
@@ -62,16 +62,16 @@ void SaveToFile(char *filename, void *data, unsigned int size) {
 #endif
 }
 
-int LoadSplash(const char *filename) {
+int16 LoadSplash(const char *filename) {
 	if (!LoadFile(filename, scratch_mem1))
 		return 0;
 	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */
 	return 1;
 }
 
-unsigned int BenchmarkCpu(void) {
-	unsigned char t;
-	unsigned int cycles = 0;
+uint16 BenchmarkCpu(void) {
+	byte t;
+	uint16 cycles = 0;
 	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) ;
 	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) cycles++;
 	return cycles;
@@ -95,7 +95,7 @@ void TRAP() {
 }
 
 /* Main Game Loop */
-void GameLoop(unsigned char *target) {
+void GameLoop(byte *target) {
 	for (;;) {
 #if 1
 		AnimateSpots(target);
@@ -202,7 +202,7 @@ Common::Error ChamberEngine::run() {
 
 	SwitchToGraphicsMode();
 
-	unsigned char c;
+	byte c;
 
 	/* Load title screen */
 	if (!LoadSplash("PRES.BIN"))

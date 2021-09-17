@@ -29,18 +29,18 @@
 namespace Chamber {
 
 
-unsigned char *cur_str_end;
+byte *cur_str_end;
 
-unsigned char draw_x;
-unsigned char draw_y;
+byte draw_x;
+byte draw_y;
 
 /*
 Calculate number of string's character until whitespace
 Return current word's characters count and the next word ptr
 */
-unsigned char *CalcStringWordWidth(unsigned char *str, unsigned int *w) {
-	unsigned int ww = 0;
-	unsigned char c;
+byte *CalcStringWordWidth(byte *str, uint16 *w) {
+	uint16 ww = 0;
+	byte c;
 
 	if ((*str & 0x3F) == 0) {
 		str++;
@@ -69,9 +69,9 @@ unsigned char *CalcStringWordWidth(unsigned char *str, unsigned int *w) {
 /*
 Calculate number of text's words and max word width (in chars)
 */
-void CalcStringSize(unsigned char *str, unsigned int *w, unsigned int *n) {
-	unsigned int ww = 0, nw = 0, lw;
-	unsigned char *s = str;
+void CalcStringSize(byte *str, uint16 *w, uint16 *n) {
+	uint16 ww = 0, nw = 0, lw;
+	byte *s = str;
 	do {
 		s = CalcStringWordWidth(s, &lw);
 		if (lw > ww)
@@ -86,9 +86,9 @@ void CalcStringSize(unsigned char *str, unsigned int *w, unsigned int *n) {
 Calculate number of text's lines with respect to set max width
 If a line is longer, wrap it to the next line
 */
-unsigned int CalcTextLines(unsigned char *str) {
-	unsigned int lines = 1;
-	unsigned int w, left = char_draw_max_width;
+uint16 CalcTextLines(byte *str) {
+	uint16 lines = 1;
+	uint16 w, left = char_draw_max_width;
 	while (str != cur_str_end) {
 		str = CalcStringWordWidth(str, &w);
 		if (left > w) {
@@ -102,18 +102,18 @@ unsigned int CalcTextLines(unsigned char *str) {
 }
 
 /*; translate 1-bit raster (4 columns per byte) to 4 2-bit color pixels*/
-unsigned char chars_color_bonw[] = {0xFF, 0xFC, 0xF3, 0xF0, 0xCF, 0xCC, 0xC3, 0xC0, 0x3F, 0x3C, 0x33, 0x30, 0x0F, 0x0C,    3,    0}; /*black on white*/
-unsigned char chars_color_bonc[] = {0x55, 0x54, 0x51, 0x50, 0x45, 0x44, 0x41, 0x40, 0x15, 0x14, 0x11, 0x10,    5,    4,    1,    0}; /*black on cyan*/
-unsigned char chars_color_wonb[] = {   0,    3, 0x0C, 0x0F, 0x30, 0x33, 0x3C, 0x3F, 0xC0, 0xC3, 0xCC, 0xCF, 0xF0, 0xF3, 0xFC, 0xFF}; /*white on black*/
-unsigned char chars_color_wonc[] = {0x55, 0x57, 0x5D, 0x5F, 0x75, 0xF7, 0x7D, 0x7F, 0xD5, 0xD7, 0xDD, 0xDF, 0xF5, 0xF7, 0xFD, 0xFF}; /*white on cyan*/
+byte chars_color_bonw[] = {0xFF, 0xFC, 0xF3, 0xF0, 0xCF, 0xCC, 0xC3, 0xC0, 0x3F, 0x3C, 0x33, 0x30, 0x0F, 0x0C,    3,    0}; /*black on white*/
+byte chars_color_bonc[] = {0x55, 0x54, 0x51, 0x50, 0x45, 0x44, 0x41, 0x40, 0x15, 0x14, 0x11, 0x10,    5,    4,    1,    0}; /*black on cyan*/
+byte chars_color_wonb[] = {   0,    3, 0x0C, 0x0F, 0x30, 0x33, 0x3C, 0x3F, 0xC0, 0xC3, 0xCC, 0xCF, 0xF0, 0xF3, 0xFC, 0xFF}; /*white on black*/
+byte chars_color_wonc[] = {0x55, 0x57, 0x5D, 0x5F, 0x75, 0xF7, 0x7D, 0x7F, 0xD5, 0xD7, 0xDD, 0xDF, 0xF5, 0xF7, 0xFD, 0xFF}; /*white on cyan*/
 
-void PrintStringPad(unsigned int w, unsigned char *target) {
+void PrintStringPad(uint16 w, byte *target) {
 	while (w--)
 		CGA_PrintChar(0, target);
 }
 
-unsigned char *PrintWord(unsigned char *str, unsigned char *target) {
-	unsigned char c, f;
+byte *PrintWord(byte *str, byte *target) {
+	byte c, f;
 	if ((*str & 0x3F) == 0)
 		goto skip_1st;
 	while (str != cur_str_end) {
@@ -143,10 +143,10 @@ skip_1st:
 	return str;
 }
 
-unsigned char *PrintStringLine(unsigned char *str, unsigned int *left, unsigned char *target) {
-	unsigned int mw = char_draw_max_width;
+byte *PrintStringLine(byte *str, uint16 *left, byte *target) {
+	uint16 mw = char_draw_max_width;
 	for (;;) {
-		unsigned int w;
+		uint16 w;
 		CalcStringWordWidth(str, &w);
 		if (mw < w)
 			break;
@@ -161,8 +161,8 @@ unsigned char *PrintStringLine(unsigned char *str, unsigned int *left, unsigned 
 	return str;
 }
 
-unsigned char *PrintStringPadded(unsigned char *str, unsigned char *target) {
-	unsigned int w, n;
+byte *PrintStringPadded(byte *str, byte *target) {
+	uint16 w, n;
 	CalcStringSize(str, &w, &n);
 	if (w + 2 >= char_draw_max_width)
 		char_draw_max_width = w + 2;
@@ -172,10 +172,10 @@ unsigned char *PrintStringPadded(unsigned char *str, unsigned char *target) {
 	return str;
 }
 
-void PrintStringCentered(unsigned char *str, unsigned char *target) {
-	unsigned char pad = 0;
-	unsigned int ww = 0, lw;
-	unsigned char *s = str;
+void PrintStringCentered(byte *str, byte *target) {
+	byte pad = 0;
+	uint16 ww = 0, lw;
+	byte *s = str;
 	do {
 		s = CalcStringWordWidth(s, &lw);
 		ww += lw;
@@ -190,8 +190,8 @@ void PrintStringCentered(unsigned char *str, unsigned char *target) {
 	PrintStringPadded(str, target);
 }
 
-void CGA_DrawTextBox(unsigned char *msg, unsigned char *target) {
-	unsigned int x, y, w, i;
+void CGA_DrawTextBox(byte *msg, byte *target) {
+	uint16 x, y, w, i;
 
 	char_xlat_table = chars_color_bonc;
 
@@ -226,9 +226,9 @@ void CGA_DrawTextBox(unsigned char *msg, unsigned char *target) {
 	CGA_DrawVLine(x + w, y, 1, 0, target);              /*bottom right corner*/
 }
 
-void DrawMessage(unsigned char *msg, unsigned char *target) {
-	unsigned int x, y;
-	unsigned int w, h;
+void DrawMessage(byte *msg, byte *target) {
+	uint16 x, y;
+	uint16 w, h;
 	CalcStringSize(msg, &w, &h);
 	char_draw_max_width = (h < 5) ? (w + 2) : 20;
 	char_draw_max_height = CalcTextLines(msg) * 6 + 7;
@@ -254,9 +254,9 @@ void DrawMessage(unsigned char *msg, unsigned char *target) {
 
 #if 1
 void DebugMessage(char *msg, ...) {
-	int i;
-	unsigned char c;
-	unsigned char m[256];
+	int16 i;
+	byte c;
+	byte m[256];
 	va_list ap;
 
 	va_start(ap, msg);

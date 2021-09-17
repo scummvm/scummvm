@@ -30,15 +30,15 @@
 namespace Chamber {
 
 extern void AskDisk2(void);
-extern int LoadSplash(const char *filename);
+extern int16 LoadSplash(const char *filename);
 
 /*
 Get bank entry
 TODO: port SeekToString to this routine
 */
-unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end) {
-	unsigned char len;
-	unsigned char *p = bank;
+byte *SeekToEntry(byte *bank, uint16 num, byte **end) {
+	byte len;
+	byte *p = bank;
 
 	while (num--) {
 		len = *p;
@@ -49,9 +49,9 @@ unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char 
 	return p + 1;
 }
 
-unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char **end) {
-	unsigned int len;
-	unsigned char *p = bank;
+byte *SeekToEntryW(byte *bank, uint16 num, byte **end) {
+	uint16 len;
+	byte *p = bank;
 
 	while (num--) {
 		len = p[0] | (p[1] << 8);
@@ -62,7 +62,7 @@ unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char
 	return p + 2;
 }
 
-unsigned int LoadFile(const char *filename, unsigned char *buffer) {
+uint16 LoadFile(const char *filename, byte *buffer) {
 	Common::File in;
 
 	in.open(filename);
@@ -73,12 +73,12 @@ unsigned int LoadFile(const char *filename, unsigned char *buffer) {
 	return in.read(buffer, 0xFFFF0);
 }
 
-unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size) {
+uint16 SaveFile(char *filename, byte *buffer, uint16 size) {
 	warning("STUB: SaveFile(%s, buffer, %d)", filename, size);
 	return 0;
 #if 0
-	int f;
-	int wlen;
+	int16 f;
+	int16 wlen;
 	f = open(filename, O_RDONLY | O_BINARY);
 	if (f == -1)
 		return 0;
@@ -86,12 +86,12 @@ unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size) 
 	close(f);
 	if (wlen == -1)
 		return 0;
-	return (unsigned int)wlen;
+	return (uint16)wlen;
 #endif
 }
 
-int LoadFilesList(ResEntry_t *entries) {
-	int i;
+int16 LoadFilesList(ResEntry_t *entries) {
+	int16 i;
 	for (i = 0; entries[i].name[0] != '$'; i++) {
 		if (!LoadFile(entries[i].name, (byte *)entries[i].buffer))
 			return 0;
@@ -100,17 +100,17 @@ int LoadFilesList(ResEntry_t *entries) {
 }
 
 
-unsigned char arpla_data[RES_ARPLA_MAX];
-unsigned char aleat_data[RES_ALEAT_MAX];
-unsigned char icone_data[RES_ICONE_MAX];
-unsigned char souco_data[RES_SOUCO_MAX];
-unsigned char souri_data[RES_SOURI_MAX];
-unsigned char mursm_data[RES_MURSM_MAX];
-unsigned char gauss_data[RES_GAUSS_MAX];
-unsigned char lutin_data[RES_LUTIN_MAX];
-unsigned char anima_data[RES_ANIMA_MAX];
-unsigned char anico_data[RES_ANICO_MAX];
-unsigned char zones_data[RES_ZONES_MAX];
+byte arpla_data[RES_ARPLA_MAX];
+byte aleat_data[RES_ALEAT_MAX];
+byte icone_data[RES_ICONE_MAX];
+byte souco_data[RES_SOUCO_MAX];
+byte souri_data[RES_SOURI_MAX];
+byte mursm_data[RES_MURSM_MAX];
+byte gauss_data[RES_GAUSS_MAX];
+byte lutin_data[RES_LUTIN_MAX];
+byte anima_data[RES_ANIMA_MAX];
+byte anico_data[RES_ANICO_MAX];
+byte zones_data[RES_ZONES_MAX];
 
 ResEntry_t res_static[] = {
 	{"ARPLA.BIN", arpla_data},
@@ -133,7 +133,7 @@ ResEntry_t res_static[] = {
 Load resident data files. Original game has all these data files embedded in the executable.
 NB! Static data includes the font file, don't use any text print routines before it's loaded.
 */
-int LoadStaticData() {
+int16 LoadStaticData() {
 	return LoadFilesList(res_static);
 }
 
@@ -146,11 +146,11 @@ ResEntry_t res_texts[] = {
 /*
 Load strings data (commands/names)
 */
-int LoadVepciData() {
+int16 LoadVepciData() {
 	return LoadFilesList(res_texts);
 }
 
-int LoadFond(void) {
+int16 LoadFond(void) {
 	return LoadSplash("FOND.BIN");
 }
 
@@ -160,7 +160,7 @@ ResEntry_t res_sprites[] = {
 	{"$", NULL}
 };
 
-int LoadSpritesData(void) {
+int16 LoadSpritesData(void) {
 	return LoadFilesList(res_sprites);
 }
 
@@ -170,7 +170,7 @@ ResEntry_t res_person[] = {
 	{"$", NULL}
 };
 
-int LoadPersData(void) {
+int16 LoadPersData(void) {
 	/*Originally it tries to load pers1 + pers2 as a single contiguos resource, if have enough memory*/
 	/*If memory is low, neccessary file is loaded on demand, according to requested bank resource index*/
 	/*Here we load both parts to their own memory buffers then select one in LoadPersSprit()*/
@@ -185,7 +185,7 @@ ResEntry_t res_desci[] = {
 /*
 Load strings data (obj. descriptions)
 */
-int LoadDesciData(void) {
+int16 LoadDesciData(void) {
 	while (!LoadFilesList(res_desci))
 		AskDisk2();
 	return 1;
@@ -199,7 +199,7 @@ ResEntry_t res_diali[] = {
 /*
 Load strings data (dialogs)
 */
-int LoadDialiData(void) {
+int16 LoadDialiData(void) {
 	while (!LoadFilesList(res_diali))
 		AskDisk2();
 	return 1;

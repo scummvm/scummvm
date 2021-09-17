@@ -37,26 +37,26 @@
 
 namespace Chamber {
 
-unsigned char scratch_mem1[8010];
-unsigned char *scratch_mem2 = scratch_mem1 + 1500;
+byte scratch_mem1[8010];
+byte *scratch_mem2 = scratch_mem1 + 1500;
 
 rect_t room_bounds_rect = {0, 0, 0, 0};
-unsigned char last_object_hint = 0;
-unsigned char object_hint = 0;
-unsigned char command_hint = 0;
-unsigned char zone_name = 0;
-unsigned char room_hint_bar_width = 0;
-unsigned char last_command_hint = 0;
-unsigned char zone_spr_index = 0;
-unsigned char zone_obj_count = 0;
+byte last_object_hint = 0;
+byte object_hint = 0;
+byte command_hint = 0;
+byte zone_name = 0;
+byte room_hint_bar_width = 0;
+byte last_command_hint = 0;
+byte zone_spr_index = 0;
+byte zone_obj_count = 0;
 
-unsigned char cmd_hint_bar_width = 32;
-unsigned char cmd_hint_bar_coords_x = 188 / 4;
-unsigned char cmd_hint_bar_coords_y = 193;
-unsigned char room_hint_bar_coords_x = 0;
-unsigned char room_hint_bar_coords_y = 0;
+byte cmd_hint_bar_width = 32;
+byte cmd_hint_bar_coords_x = 188 / 4;
+byte cmd_hint_bar_coords_y = 193;
+byte room_hint_bar_coords_x = 0;
+byte room_hint_bar_coords_y = 0;
 
-unsigned char *sprites_list[MAX_SPRITES];
+byte *sprites_list[MAX_SPRITES];
 
 spot_t *zone_spots;
 spot_t *zone_spots_end;
@@ -67,27 +67,27 @@ turkeyanims_t *turkeyanims_ptr;
 pers_t *pers_ptr;
 spot_t *spot_ptr;
 spot_t *found_spot;
-unsigned char **spot_sprite;
+byte **spot_sprite;
 
-unsigned char zone_palette;
+byte zone_palette;
 
-unsigned int zsprite_draw_ofs;
-unsigned char zsprite_w;
-unsigned char zsprite_h;
+uint16 zsprite_draw_ofs;
+byte zsprite_w;
+byte zsprite_h;
 
-unsigned char *lutin_mem;
+byte *lutin_mem;
 
-unsigned short inv_update_time = 0;
+uint16 inv_update_time = 0;
 
-unsigned char in_de_profundis = 0;  /*TODO: useless?*/
+byte in_de_profundis = 0;  /*TODO: useless?*/
 
-unsigned short next_command3 = 0;
-unsigned short next_ticks3 = 0;
-unsigned short next_command4 = 0;
-unsigned short next_ticks4 = 0;
-unsigned short next_ticks2 = 0;
+uint16 next_command3 = 0;
+uint16 next_ticks3 = 0;
+uint16 next_command4 = 0;
+uint16 next_ticks4 = 0;
+uint16 next_ticks2 = 0;
 
-unsigned char zone_drawn;
+byte zone_drawn;
 
 #define VORTANIMS_MAX 25
 
@@ -137,11 +137,11 @@ turkeyanims_t turkeyanim_list[TURKEYANIMS_MAX] = {
 	{61, {61, {{56, 141}}}, {62, {{56, 141}}}}
 };
 
-static const unsigned char cga_color_sels[] = {
+static const byte cga_color_sels[] = {
 	0x30, 0x10, 0x30, 0x10, 0x30, 0x10, 0x10, 0x30, 0x10, 0x10, 0x10, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x10, 0x10, 0x10
 };
 
-void SelectSpecificPalette(unsigned char index) {
+void SelectSpecificPalette(byte index) {
 	CGA_ColorSelect(cga_color_sels[index]);
 }
 
@@ -154,9 +154,9 @@ void SelectPalette(void) {
 Blit sprites to backbuffer
 */
 void BlitSpritesToBackBuffer(void) {
-	int i;
+	int16 i;
 	for (i = 0; i < MAX_SPRITES; i++) {
-		unsigned char *sprite = sprites_list[i];
+		byte *sprite = sprites_list[i];
 		CGA_RestoreImage(sprite, backbuffer);
 	}
 }
@@ -165,9 +165,9 @@ void BlitSpritesToBackBuffer(void) {
 Copy data at sprite's rect from screen to backbuffer
 */
 void RefreshSpritesData(void) {
-	int i;
+	int16 i;
 	for (i = 0; i < MAX_SPRITES; i++) {
-		unsigned char *sprite = sprites_list[i];
+		byte *sprite = sprites_list[i];
 		CGA_RefreshImageData(sprite);
 	}
 }
@@ -175,7 +175,7 @@ void RefreshSpritesData(void) {
 /*
 Check if packed x/y coordinates are in rect
 */
-int IsInRect(unsigned char x, unsigned char y, rect_t *rect) {
+int16 IsInRect(byte x, byte y, rect_t *rect) {
 	if (x < rect->sx) return 0;
 	if (x >= rect->ex) return 0;
 	if (y < rect->sy) return 0;
@@ -186,7 +186,7 @@ int IsInRect(unsigned char x, unsigned char y, rect_t *rect) {
 /*
 Check if cursor is in rect
 */
-int IsCursorInRect(rect_t *rect) {
+int16 IsCursorInRect(rect_t *rect) {
 	return IsInRect(cursor_x / CGA_PIXELS_PER_BYTE, cursor_y, rect);
 }
 
@@ -194,7 +194,7 @@ int IsCursorInRect(rect_t *rect) {
 Find person for a current spot
 */
 void FindPerson(void) {
-	int i;
+	int16 i;
 	pers_t *pers = pers_list;
 	for (i = 0; i < PERS_MAX; i++, pers++) {
 		if ((pers->flags & 15) == script_byte_vars.cur_spot_idx) {
@@ -209,8 +209,8 @@ void FindPerson(void) {
 /*
 Select a spot under cursor if its flags are matched given criteria
 */
-void CheckHotspots(unsigned char m, unsigned char v) {
-	int i;
+void CheckHotspots(byte m, byte v) {
+	int16 i;
 	spot_t *spot = zone_spots;
 	for (i = 0; spot != zone_spots_end; i++, spot++) {
 		if (IsCursorInRect((rect_t *)spot) && (spot->flags & SPOTFLG_80) && ((spot->flags & m) == v)) {
@@ -234,7 +234,7 @@ void CheckHotspots(unsigned char m, unsigned char v) {
 Select cursor shape for current spot
 */
 void SelectSpotCursor(void) {
-	int curs = CURSOR_TARGET;
+	int16 curs = CURSOR_TARGET;
 	CheckHotspots(script_byte_vars.spot_m, script_byte_vars.spot_v);
 	if (cursor_color == 0xAA) {
 		curs = CURSOR_BODY;
@@ -251,7 +251,7 @@ void SelectSpotCursor(void) {
 #define kBgH 30
 
 /*blocks draw order (clockwise inward spiral)*/
-static const signed int background_draw_steps[] = {
+static const int16 background_draw_steps[] = {
 	kBgW, kBgW, kBgW, kBgW, kBgW, kBgW, kBgW,
 	kBgH / 2 * CGA_BYTES_PER_LINE, kBgH / 2 * CGA_BYTES_PER_LINE, kBgH / 2 * CGA_BYTES_PER_LINE, kBgH / 2 * CGA_BYTES_PER_LINE, kBgH / 2 * CGA_BYTES_PER_LINE,
 	-kBgW, -kBgW, -kBgW, -kBgW, -kBgW, -kBgW, -kBgW, -kBgW,
@@ -268,10 +268,10 @@ static const signed int background_draw_steps[] = {
 /*
 Draw main backgound pattern, in spiral-like order
 */
-void DrawBackground(unsigned char *target, unsigned char vblank) {
-	int i;
-	unsigned int offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
-	unsigned char *pixels = gauss_data + 0x3C8; /*TODO: better const*/
+void DrawBackground(byte *target, byte vblank) {
+	int16 i;
+	uint16 offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
+	byte *pixels = gauss_data + 0x3C8; /*TODO: better const*/
 	for (i = 0; i < 53; i++) {
 		/*draw a tile, alternating between two variants*/
 		CGA_Blit(pixels + (i & 1 ? 0 : kBgW * kBgH), kBgW, kBgW, kBgH, target, offs);
@@ -291,7 +291,7 @@ void DrawBackground(unsigned char *target, unsigned char vblank) {
 Load and initialize zone data
 */
 void LoadZone(void) {
-	unsigned char *zptr, *zend;
+	byte *zptr, *zend;
 
 	zptr = SeekToEntry(zones_data, script_byte_vars.zone_index - 1, &zend);
 	script_byte_vars.zone_area = *zptr++;
@@ -300,12 +300,12 @@ void LoadZone(void) {
 	zone_palette = script_byte_vars.palette_index = *zptr++;
 	zone_obj_count = *zptr++;
 	if (zone_obj_count != 0) {
-		unsigned int i;
-		unsigned short *zcmds = script_word_vars.zone_obj_cmds;
+		uint16 i;
+		uint16 *zcmds = script_word_vars.zone_obj_cmds;
 		memset(script_word_vars.zone_obj_cmds, 0, 15 * 5);  /*half of list: TODO: bug? wipe whole list?*/
 		for (i = 0; i < zone_obj_count; i++) {
 			/*load spot's reactions*/
-			unsigned short flags = (*zptr++) << 8;
+			uint16 flags = (*zptr++) << 8;
 			flags |= *zptr++;
 			if (flags & 0x10) {
 				zcmds[0] = zptr[0] | (zptr[1] << 8);    /*TODO: big-endian, but loaded here as le and converted later*/
@@ -368,7 +368,7 @@ void ResetZone(void) {
 /*
 Load puzzl sprite to buffer, return next free buffer ptr
 */
-unsigned char *LoadPuzzl(unsigned char index, unsigned char *buffer) {
+byte *LoadPuzzl(byte index, byte *buffer) {
 	if (script_byte_vars.palette_index == 14)
 		return LoadSprite(index, puzzl_data + 4, buffer, 1);
 	else
@@ -378,8 +378,8 @@ unsigned char *LoadPuzzl(unsigned char index, unsigned char *buffer) {
 /*
 Load puzzl sprite to scratch buffer, return sprite ptr
 */
-unsigned char *LoadPuzzlToScratch(unsigned char index) {
-	unsigned char *buffer = scratch_mem2;
+byte *LoadPuzzlToScratch(byte index) {
+	byte *buffer = scratch_mem2;
 	LoadPuzzl(index, buffer);
 	return buffer;
 }
@@ -387,29 +387,29 @@ unsigned char *LoadPuzzlToScratch(unsigned char index) {
 #define kNumDoorSprites 3
 
 typedef struct doorinfo_t {
-	unsigned char flipped;
+	byte flipped;
 	struct {
-		unsigned char width;
-		unsigned char height;
-		unsigned char *pixels;
-		unsigned int offs;
+		byte width;
+		byte height;
+		byte *pixels;
+		uint16 offs;
 	} layer[kNumDoorSprites];
-	unsigned char width;
-	unsigned char height;
-	unsigned int offs;
-	unsigned char sprites[1];   /*variable size*/
+	byte width;
+	byte height;
+	uint16 offs;
+	byte sprites[1];   /*variable size*/
 } doorinfo_t;
 
-unsigned char *doors_list[MAX_DOORS];
-unsigned char arpla_y_step;
+byte *doors_list[MAX_DOORS];
+byte arpla_y_step;
 
 /*
 Fill in sliding door animation information
 */
-void InitRoomDoorInfo(unsigned char index) {
-	int i;
-	unsigned char *aptr;
-	unsigned char *sprbuf;
+void InitRoomDoorInfo(byte index) {
+	int16 i;
+	byte *aptr;
+	byte *sprbuf;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	rect_t bounds = {0xFF, 0, 0xFF, 0};
 
@@ -417,8 +417,8 @@ void InitRoomDoorInfo(unsigned char index) {
 	info->flipped = (aptr[1] & 0x80) ? ~0 : 0;
 	sprbuf = info->sprites;
 	for (i = 0; i < kNumDoorSprites; i++) {
-		unsigned char x, y, w, h, ox;
-		unsigned char *sprite = sprbuf;
+		byte x, y, w, h, ox;
+		byte *sprite = sprbuf;
 		sprbuf = LoadPuzzl(aptr[0], sprbuf);
 
 		x = aptr[1];
@@ -462,13 +462,13 @@ void InitRoomDoorInfo(unsigned char index) {
 Draw sliding door
 */
 void DrawRoomDoor(void) {
-	int i;
+	int16 i;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	for (i = 0; i < kNumDoorSprites; i++) {
-		unsigned char w = info->layer[i].width;
-		unsigned char h = info->layer[i].height;
-		unsigned char *pixels = info->layer[i].pixels;
-		unsigned int offs = info->layer[i].offs;
+		byte w = info->layer[i].width;
+		byte h = info->layer[i].height;
+		byte *pixels = info->layer[i].pixels;
+		uint16 offs = info->layer[i].offs;
 
 		if (!info->flipped)
 			CGA_BlitSprite(pixels, w * 2, w, h, backbuffer, offs);
@@ -483,10 +483,10 @@ void DrawRoomDoor(void) {
 /*
 Animate sliding door open
 */
-void AnimRoomDoorOpen(unsigned char index) {
-	int i;
+void AnimRoomDoorOpen(byte index) {
+	int16 i;
 
-	unsigned char oldheight;
+	byte oldheight;
 
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 
@@ -508,11 +508,11 @@ void AnimRoomDoorOpen(unsigned char index) {
 /*
 Animate sliding door close
 */
-void AnimRoomDoorClose(unsigned char index) {
-	int i;
+void AnimRoomDoorClose(byte index) {
+	int16 i;
 
-	unsigned char oldheight;
-	unsigned char *oldpixels;
+	byte oldheight;
+	byte *oldpixels;
 
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	InitRoomDoorInfo(index);
@@ -539,10 +539,10 @@ void AnimRoomDoorClose(unsigned char index) {
 }
 
 /*Maybe FindRoomDoor?*/
-unsigned char FindInitialSpot(void) {
+byte FindInitialSpot(void) {
 	spot_t *spot;
-	unsigned char index;
-	unsigned char flags = script_byte_vars.byte_179B8;
+	byte index;
+	byte flags = script_byte_vars.byte_179B8;
 	if (flags == 0)
 		return 0;
 	flags |= SPOTFLG_80 | SPOTFLG_8;
@@ -556,9 +556,9 @@ unsigned char FindInitialSpot(void) {
 /*
 Find first spot index that matches given flags
 */
-unsigned char FindSpotByFlags(unsigned char mask, unsigned char value) {
+byte FindSpotByFlags(byte mask, byte value) {
 	spot_t *spot;
-	unsigned char index;
+	byte index;
 	for (index = 1, spot = zone_spots; spot != zone_spots_end; spot++, index++) {
 		if ((spot->flags & mask) == value)
 			return index;
@@ -570,9 +570,9 @@ unsigned char FindSpotByFlags(unsigned char mask, unsigned char value) {
 Find person's spot
 TODO: rename me
 */
-unsigned char FindAndSelectSpot(unsigned char offset) {
+byte FindAndSelectSpot(byte offset) {
 	/*TODO: replace offset arg with index?*/
-	unsigned char index = offset / 5;   /* / sizeof(pers_t) */
+	byte index = offset / 5;   /* / sizeof(pers_t) */
 
 	script_vars[ScrPool8_CurrentPers] = &pers_list[index];
 
@@ -590,7 +590,7 @@ unsigned char FindAndSelectSpot(unsigned char offset) {
 Play animation at the selected spot or specified coordinates
 */
 void AnimateSpot(const animdesc_t *info) {
-	unsigned char *sprite = *spot_sprite;
+	byte *sprite = *spot_sprite;
 	CGA_RestoreImage(sprite, backbuffer);
 	if (info->index & ANIMFLG_USESPOT) {
 		/*at selected spot*/
@@ -607,8 +607,8 @@ void AnimateSpot(const animdesc_t *info) {
 }
 
 typedef struct lutinanim_t {
-	unsigned char phase;
-	unsigned char sprites[8];
+	byte phase;
+	byte sprites[8];
 } lutinanim_t;
 
 lutinanim_t lutins_table[] = {
@@ -647,8 +647,8 @@ lutinanim_t lutins_table[] = {
 	{0, {  0,  0,  0,  0,  0,  0,  0,  0} }
 };
 
-void UpdateZoneSpot(unsigned char index) {
-	unsigned char oldspot;
+void UpdateZoneSpot(byte index) {
+	byte oldspot;
 	static const animdesc_t anim57 = {ANIMFLG_USESPOT | 57};
 	static const animdesc_t anim58 = {ANIMFLG_USESPOT | 58};
 
@@ -673,8 +673,8 @@ void UpdateZoneSpot(unsigned char index) {
 	script_byte_vars.cur_spot_idx = oldspot;
 }
 
-void ChangeZone(unsigned char index) {
-	unsigned char spridx = 0;
+void ChangeZone(byte index) {
+	byte spridx = 0;
 
 	script_byte_vars.prev_zone_index = script_byte_vars.zone_index;
 	script_byte_vars.zone_index = index;
@@ -687,7 +687,7 @@ void ChangeZone(unsigned char index) {
 		spridx = 222;
 
 	if (spridx != 0) {
-		int i;
+		int16 i;
 		lutinanim_t *la = &lutins_table[31];
 		for (i = 0; i < 8; i++)
 			la->sprites[i] = spridx;
@@ -699,8 +699,8 @@ void ChangeZone(unsigned char index) {
 
 
 void DrawZoneObjs(void) {
-	int i;
-	unsigned char index, pidx;
+	int16 i;
+	byte index, pidx;
 	spot_t *spot;
 
 	for (spot = zone_spots; spot != zone_spots_end; spot++) {
@@ -733,10 +733,10 @@ void DrawZoneObjs(void) {
 /*
 Draw room's static object to backbuffer
 */
-void DrawRoomStaticObject(unsigned char *aptr, unsigned char *rx, unsigned char *ry, unsigned char *rw, unsigned char *rh) {
-	unsigned char x, y, w, h;
-	signed int pitch;
-	unsigned char *sprite = LoadPuzzlToScratch(aptr[0]);
+void DrawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
+	byte x, y, w, h;
+	int16 pitch;
+	byte *sprite = LoadPuzzlToScratch(aptr[0]);
 	x = aptr[1];
 	y = aptr[2];
 	w = sprite[0];
@@ -784,10 +784,10 @@ Initialize room bounds rect to room's dimensions
 Draw room's name box and text
 */
 void DrawRoomStatics(void) {
-	unsigned char *aptr, *aend;
-	unsigned char doorcount = 0;
-	unsigned char x, y, w, h;
-	unsigned int xx, ww;
+	byte *aptr, *aend;
+	byte doorcount = 0;
+	byte x, y, w, h;
+	uint16 xx, ww;
 
 	DrawBackground(backbuffer, 0);
 	arpla_y_step = script_byte_vars.byte_179E1;
@@ -800,7 +800,7 @@ void DrawRoomStatics(void) {
 
 	/*load and draw room decor*/
 	for (; aptr != aend; aptr += 3) {
-		unsigned char index = *aptr;
+		byte index = *aptr;
 		/*a door ?*/
 		if (index >= 50 && index < 61) {
 			doors_list[doorcount++] = aptr - 3; /*TODO: check for list overflow?*/
@@ -851,9 +851,9 @@ void DrawRoomStatics(void) {
 /*
 Redraw all room's static objects (decorations) to backbuffer
 */
-void RedrawRoomStatics(unsigned char index, unsigned char y_step) {
-	unsigned char *aptr, *aend;
-	unsigned char x, y, w, h;
+void RedrawRoomStatics(byte index, byte y_step) {
+	byte *aptr, *aend;
+	byte x, y, w, h;
 	arpla_y_step = y_step;
 
 	aptr = SeekToEntry(arpla_data, index - 1, &aend);
@@ -867,8 +867,8 @@ void RedrawRoomStatics(unsigned char index, unsigned char y_step) {
 Draw "some item in the room" icon
 */
 void DrawRoomItemsIndicator(void) {
-	unsigned char spridx = 172;
-	int i;
+	byte spridx = 172;
+	int16 i;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
 		if (inventory_items[i].flags == ITEMFLG_40
 		        && inventory_items[i].flags2 == script_byte_vars.zone_area) {
@@ -890,7 +890,7 @@ void DrawZoneSpots(void) {
 	static const animdesc_t anim59 = {ANIMFLG_USESPOT | 59};
 	static const animdesc_t anim60 = {ANIMFLG_USESPOT | 60};
 
-	unsigned char oldspot = script_byte_vars.cur_spot_idx;
+	byte oldspot = script_byte_vars.cur_spot_idx;
 
 	if (!script_byte_vars.need_draw_spots)
 		return;
@@ -955,7 +955,7 @@ void DrawObjectHint(void) {
 /*
 Copy object hint from backbuffer to screen
 */
-void ShowObjectHint(unsigned char *target) {
+void ShowObjectHint(byte *target) {
 	if (script_byte_vars.zone_index == 135)
 		return;
 	CGA_CopyScreenBlock(backbuffer, room_hint_bar_width + 2, 9, target, CGA_CalcXY_p(room_hint_bar_coords_x - 1, room_hint_bar_coords_y - 2));
@@ -975,19 +975,19 @@ void DrawCommandHint(void) {
 /*
 Copy command hint from backbuffer to screen
 */
-void ShowCommandHint(unsigned char *target) {
+void ShowCommandHint(byte *target) {
 	CGA_CopyScreenBlock(backbuffer, cmd_hint_bar_width + 2, 9, target, CGA_CalcXY_p(cmd_hint_bar_coords_x - 1, cmd_hint_bar_coords_y - 2));
 }
 
-void LoadLutinSprite(unsigned int lutidx) {
-	unsigned char spridx;
-	unsigned int flags;
-	unsigned char *lutin_entry, *lutin_entry_end;
-	unsigned char *buffer;
-	unsigned char *sprite;
-	unsigned char sprw, sprh;
+void LoadLutinSprite(uint16 lutidx) {
+	byte spridx;
+	uint16 flags;
+	byte *lutin_entry, *lutin_entry_end;
+	byte *buffer;
+	byte *sprite;
+	byte sprw, sprh;
 
-	unsigned int i;
+	uint16 i;
 
 	buffer = lutin_mem;
 
@@ -1021,7 +1021,7 @@ void LoadLutinSprite(unsigned int lutidx) {
 /*
 Draw specific room's person idle sprite
 */
-void DrawCharacterSprite(unsigned char spridx, unsigned char x, unsigned char y, unsigned char *target) {
+void DrawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
 	lutin_mem = scratch_mem2;
 
 	LoadLutinSprite(spridx);
@@ -1033,9 +1033,9 @@ void DrawCharacterSprite(unsigned char spridx, unsigned char x, unsigned char y,
 Draw room's person idle sprite and advance sprite's animation
 Return true if a sprite was drawn
 */
-char DrawZoneAniSprite(rect_t *rect, unsigned int index, unsigned char *target) {
-	int i;
-	unsigned char spridx;
+char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
+	int16 i;
+	byte spridx;
 	pers_t *pers = pers_list;
 	for (i = 0; i < PERS_MAX; i++, pers++) {
 		if ((pers->flags & 15) == index) {
@@ -1067,9 +1067,9 @@ void SetDelay5(void) {
 Aspirants AI
 */
 void PrepareCommand1(void) {
-	unsigned char index;
-	unsigned char oldr, newr;
-	unsigned char flags;
+	byte index;
+	byte oldr, newr;
+	byte flags;
 
 	if (script_byte_vars.zone_area == 55) {
 		pers_list[1].area = 55;
@@ -1172,7 +1172,7 @@ void PrepareCommand3(void) {
 
 		for (spot = zone_spots; spot != zone_spots_end; spot++) {
 			if ((spot->flags & ~SPOTFLG_80) == (SPOTFLG_40 | SPOTFLG_10)) {
-				int i;
+				int16 i;
 				for (i = 0; i < VORTANIMS_MAX; i++) {
 					if (vortsanim_list[i].room == script_byte_vars.zone_room) {
 						vortanims_ptr = &vortsanim_list[i];
@@ -1223,7 +1223,7 @@ void PrepareCommand4(void) {
 
 	for (spot = zone_spots; spot != zone_spots_end; spot++) {
 		if ((spot->flags & ~SPOTFLG_80) == (SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_1)) {
-			int i;
+			int16 i;
 
 			for (i = 0; i < TURKEYANIMS_MAX; i++) {
 				if (turkeyanim_list[i].room == script_byte_vars.zone_room) {
@@ -1256,8 +1256,8 @@ void PrepareCommand4(void) {
 /*
 Load puzzl sprite to scratch and init draw params
 */
-unsigned int GetPuzzlSprite(unsigned char index, unsigned char x, unsigned char y, unsigned int *w, unsigned int *h, unsigned int *ofs) {
-	unsigned char *spr = LoadPuzzlToScratch(index);
+uint16 GetPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs) {
+	byte *spr = LoadPuzzlToScratch(index);
 	*w = spr[0];
 	*h = spr[1];
 	*ofs = CGA_CalcXY_p(x, y);
@@ -1290,10 +1290,10 @@ void RestoreScreenOfSpecialRoom(void) {
 	}
 }
 
-unsigned char byte_17A1C = 0;
+byte byte_17A1C = 0;
 
-void SetAnim127Sprite(unsigned char flags, unsigned char spridx) {
-	unsigned char *lutin_entry, *lutin_entry_end;
+void SetAnim127Sprite(byte flags, byte spridx) {
+	byte *lutin_entry, *lutin_entry_end;
 	lutin_entry = SeekToEntry(lutin_data, 127, &lutin_entry_end);
 	lutin_entry[2] = spridx;
 	switch (spridx) {
@@ -1308,7 +1308,7 @@ void SetAnim127Sprite(unsigned char flags, unsigned char spridx) {
 	}
 }
 
-void BounceCurrentItem(unsigned char flags, unsigned char y) {
+void BounceCurrentItem(byte flags, byte y) {
 	item_t *item = (item_t *)(script_vars[ScrPool3_CurrentItem]);
 
 	SetAnim127Sprite(flags, item->sprite);
@@ -1321,15 +1321,15 @@ void BounceCurrentItem(unsigned char flags, unsigned char y) {
 }
 
 
-unsigned char *LoadMursmSprite(unsigned char index) {
-	unsigned char *pinfo, *end;
+byte *LoadMursmSprite(byte index) {
+	byte *pinfo, *end;
 	pinfo = SeekToEntry(mursm_data, index, &end);
 
 	while (pinfo != end) {
-		unsigned int flags;
-		signed int pitch;
-		unsigned char *buffer, *sprite;
-		unsigned char sprw, sprh;
+		uint16 flags;
+		int16 pitch;
+		byte *buffer, *sprite;
+		byte sprw, sprh;
 
 		index = *pinfo++;
 		flags = *pinfo++;
@@ -1358,8 +1358,8 @@ unsigned char *LoadMursmSprite(unsigned char index) {
 
 thewalldoor_t the_wall_doors[2];
 
-void TheWallOpenRightDoor(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char limit) {
-	unsigned int offs = CGA_CalcXY_p(x + width - 2, y);
+void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
+	uint16 offs = CGA_CalcXY_p(x + width - 2, y);
 
 	while (--width) {
 		CGA_HideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
@@ -1381,8 +1381,8 @@ void TheWallOpenRightDoor(unsigned char x, unsigned char y, unsigned char width,
 	}
 }
 
-void TheWallOpenLeftDoor(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char limit) {
-	unsigned int offs = CGA_CalcXY_p(x + 1, y);
+void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
+	uint16 offs = CGA_CalcXY_p(x + 1, y);
 
 	while (--width) {
 		CGA_HideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
@@ -1437,7 +1437,7 @@ Animate The Wall doors
 Phase 1: Opened -> Half closed
 */
 void TheWallPhase1_DoorClose1(void) {
-	unsigned char *spr;
+	byte *spr;
 
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 24) ? 9 : 102;
 	LoadZone();
@@ -1459,7 +1459,7 @@ Animate The Wall doors
 Phase 2: Half closed -> Fully closed
 */
 void TheWallPhase2_DoorClose2(void) {
-	unsigned char *spr;
+	byte *spr;
 
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 9) ? 95 : 103;
 	LoadZone();
@@ -1497,11 +1497,11 @@ void DrawTheWallDoors(void) {
 /*
 Superimpose source sprite data over target sprite data
 */
-void MergeSpritesData(unsigned char *target, unsigned int pitch, unsigned char *source, unsigned int w, unsigned int h) {
-	unsigned int x;
+void MergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
+	uint16 x;
 	while (h--) {
 		for (x = 0; x < w; x++) {
-			unsigned char m = *source++;
+			byte m = *source++;
 			*target++ &= m;
 			*target &= m;
 			*target++ |= *source++;
@@ -1514,12 +1514,12 @@ void MergeSpritesData(unsigned char *target, unsigned int pitch, unsigned char *
 /*
 Superimpose horizontally-flipped source sprite data over target sprite data
 */
-void MergeSpritesDataFlip(unsigned char *target, unsigned int pitch, unsigned char *source, unsigned int w, unsigned int h) {
-	unsigned int x;
+void MergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
+	uint16 x;
 	target += w * 2 - 2;
 	while (h--) {
 		for (x = 0; x < w; x++) {
-			unsigned char m = cga_pixel_flip[*source++];
+			byte m = cga_pixel_flip[*source++];
 			*target++ &= m;
 			*target &= m;
 			*target |= cga_pixel_flip[*source++];
@@ -1534,7 +1534,7 @@ void MergeSpritesDataFlip(unsigned char *target, unsigned int pitch, unsigned ch
 Save image at the rect to buffer
 Return current and next free buffer ptr
 */
-unsigned char *BackupSpotImage(spot_t *spot, unsigned char **spotback, unsigned char *buffer) {
+byte *BackupSpotImage(spot_t *spot, byte **spotback, byte *buffer) {
 	*spotback = buffer;
 	buffer = CGA_BackupImage(backbuffer, CGA_CalcXY_p(spot->sx, spot->sy), spot->ex - spot->sx, spot->ey - spot->sy, buffer);
 	return buffer;
@@ -1545,8 +1545,8 @@ Save zone spot images to sprites list
 */
 void BackupSpotsImages(void) {
 	spot_t *spot = zone_spots;
-	unsigned char *buffer = scratch_mem1;
-	int i;
+	byte *buffer = scratch_mem1;
+	int16 i;
 	for (i = 0; i < MAX_SPRITES; i++)
 		sprites_list[i] = 0;
 	for (i = 0; spot != zone_spots_end; spot++, i++) { /*TODO: maybe don't advance it if spot is skipped?*/
@@ -1559,9 +1559,9 @@ void BackupSpotsImages(void) {
 Animate all room's persons, one per call
 TODO: rename me
 */
-void DrawSpots(unsigned char *target) {
+void DrawSpots(byte *target) {
 	spot_t *spot = zone_spots_cur;
-	unsigned char spridx = zone_spr_index;
+	byte spridx = zone_spr_index;
 	if (spot == zone_spots_end) {
 		spot = zone_spots;
 		spridx = 0;
@@ -1594,7 +1594,7 @@ void DrawSpots(unsigned char *target) {
 Animate room's persons at fixed rate
 TODO: rename me
 */
-void AnimateSpots(unsigned char *target) {
+void AnimateSpots(byte *target) {
 	if (script_byte_vars.timer_ticks % 32 == 31)
 		DrawSpots(target);
 }
@@ -1602,7 +1602,7 @@ void AnimateSpots(unsigned char *target) {
 /*
 Draw cursor and hints text on screen
 */
-void DrawHintsAndCursor(unsigned char *target) {
+void DrawHintsAndCursor(byte *target) {
 	UpdateCursor();
 	WaitVBlank();
 	UndrawCursor(target);
@@ -1619,20 +1619,20 @@ void DrawHintsAndCursor(unsigned char *target) {
 	DrawCursor(target);
 }
 
-void HideSpot(unsigned char offset) {
+void HideSpot(byte offset) {
 	FindAndSelectSpot(offset);
 	found_spot->flags &= ~SPOTFLG_80;
 }
 
-const unsigned char timed_seq[] = {56, 51, 44, 12, 10, 20, 18, 16, 14, 12, 44, 51};
-const unsigned char *timed_seq_ptr = timed_seq;
+const byte timed_seq[] = {56, 51, 44, 12, 10, 20, 18, 16, 14, 12, 44, 51};
+const byte *timed_seq_ptr = timed_seq;
 
 /*
 Protozorq AI 1
 TODO: rename this
 */
 void UpdateTimedRects1(void) {
-	unsigned int elapsed;
+	uint16 elapsed;
 
 	if (script_byte_vars.flag_179FB != 0)
 		return;
@@ -1774,7 +1774,7 @@ Protozorq AI 2
 TODO: rename this
 */
 void UpdateTimedRects2(void) {
-	unsigned int elapsed = Swap16(script_word_vars.timer_ticks2);
+	uint16 elapsed = Swap16(script_word_vars.timer_ticks2);
 
 	if (elapsed < 60 * 60)
 		return;
@@ -1812,7 +1812,7 @@ void UpdateTimedRects2(void) {
 }
 
 void UpdateTimedInventoryItems(void) {
-	int i;
+	int16 i;
 	if (Swap16(script_word_vars.timer_ticks2) - inv_update_time < 180)
 		return;
 	inv_update_time = Swap16(script_word_vars.timer_ticks2);
@@ -1826,7 +1826,7 @@ void UpdateTimedInventoryItems(void) {
 }
 
 void ResetAllPersons(void) {
-	int i;
+	int16 i;
 	for (i = 0; i < PERS_MAX; i++)
 		pers_list[i].flags &= ~PERSFLG_80;
 	script_byte_vars.dead_flag = 0;

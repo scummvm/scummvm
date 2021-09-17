@@ -25,11 +25,11 @@
 
 namespace Chamber {
 
-extern unsigned char act_menu_x;
-extern unsigned char act_menu_y;
+extern byte act_menu_x;
+extern byte act_menu_y;
 
-void ActionsMenu(unsigned char **pinfo);
-void MenuLoop(unsigned char spotmask, unsigned char spotvalue);
+void ActionsMenu(byte **pinfo);
+void MenuLoop(byte spotmask, byte spotvalue);
 void ProcessMenu(void);
 
 void CheckMenuCommandHover(void);

@@ -25,6 +25,6 @@
 
 namespace Chamber {
 
-unsigned char sprit_data[RES_SPRIT_MAX];
+byte sprit_data[RES_SPRIT_MAX];
 
 } // End of namespace Chamber

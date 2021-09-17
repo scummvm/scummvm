@@ -26,10 +26,10 @@
 namespace Chamber {
 
 
-unsigned char pers1_data[RES_PERS1_MAX];
-unsigned char pers2_data[RES_PERS2_MAX];
+byte pers1_data[RES_PERS1_MAX];
+byte pers2_data[RES_PERS2_MAX];
 
-unsigned char desci_data[RES_DESCI_MAX];
-unsigned char diali_data[RES_DIALI_MAX];
+byte desci_data[RES_DESCI_MAX];
+byte diali_data[RES_DIALI_MAX];
 
 } // End of namespace Chamber

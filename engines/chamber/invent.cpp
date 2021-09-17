@@ -35,15 +35,15 @@ namespace Chamber {
 #define INVENTORY_SPOTS_MAX (4 * 4)
 
 struct {
-	unsigned char   sx;
-	unsigned char   ex;
-	unsigned char   sy;
-	unsigned char   ey;
-	unsigned char   name;
-	unsigned char   unkn5;
-	unsigned short  command;
-	unsigned char   itemidx;
-	unsigned char   unkn9;
+	byte   sx;
+	byte   ex;
+	byte   sy;
+	byte   ey;
+	byte   name;
+	byte   unkn5;
+	uint16  command;
+	byte   itemidx;
+	byte   unkn9;
 } inventory_spots[] = {
 	{58, 62,  56,  72, 0, 0, 0, 0, 0},
 	{62, 66,  56,  72, 0, 0, 0, 0, 0},
@@ -64,15 +64,15 @@ struct {
 };
 
 
-unsigned char inv_count = 0;    /*TODO: pass this as param?*/
-unsigned char inv_bgcolor = 0;  /*TODO: pass this as param?*/
+byte inv_count = 0;    /*TODO: pass this as param?*/
+byte inv_bgcolor = 0;  /*TODO: pass this as param?*/
 
 /*Filter items and put them inventory box, then draw it if non-empty*/
-void DrawInventoryBox(unsigned short filtermask, unsigned short filtervalue) {
-	int i;
-	unsigned char count = 0;
+void DrawInventoryBox(uint16 filtermask, uint16 filtervalue) {
+	int16 i;
+	byte count = 0;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
-		unsigned short flags = (inventory_items[i].flags2 << 8) | inventory_items[i].flags;
+		uint16 flags = (inventory_items[i].flags2 << 8) | inventory_items[i].flags;
 		if ((flags & filtermask) != filtervalue)
 			continue;
 		if (count == 0) {
@@ -89,8 +89,8 @@ void DrawInventoryBox(unsigned short filtermask, unsigned short filtervalue) {
 	inv_count = count;
 }
 
-void CheckInventoryItemHover(unsigned char count) {
-	int i;
+void CheckInventoryItemHover(byte count) {
+	int16 i;
 	for (i = 0; i < count; i++) {
 		if (IsCursorInRect((rect_t *)&inventory_spots[i])) {
 			the_command = inventory_spots[i].command;
@@ -107,7 +107,7 @@ void CheckInventoryItemHover(unsigned char count) {
 	the_command = 0;
 }
 
-void OpenInventory(unsigned short filtermask, unsigned short filtervalue) {
+void OpenInventory(uint16 filtermask, uint16 filtervalue) {
 	the_command = 0;
 	CGA_BackupImageReal(CGA_CalcXY_p(232 / 4, 56), 64 / 4, 64);
 	DrawInventoryBox(filtermask, filtervalue);

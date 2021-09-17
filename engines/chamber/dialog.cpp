@@ -33,13 +33,13 @@
 
 namespace Chamber {
 
-unsigned int cur_str_index;
-unsigned int cur_dlg_index;
+uint16 cur_str_index;
+uint16 cur_dlg_index;
 
 dirty_rect_t dirty_rects[MAX_DIRTY_RECT];
 
-void AddDirtyRect(unsigned char kind, unsigned char x, unsigned char y, unsigned char w, unsigned char h, unsigned int offs) {
-	int i;
+void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
+	int16 i;
 	dirty_rect_t *r = dirty_rects;
 	for (i = 0; i < MAX_DIRTY_RECT; i++, r++) /*TODO: may go oob*/
 		if (r->kind == DirtyRectFree)
@@ -53,7 +53,7 @@ void AddDirtyRect(unsigned char kind, unsigned char x, unsigned char y, unsigned
 	script_byte_vars.dirty_rect_kind = dirty_rects[0].kind;
 }
 
-void GetDirtyRect(int index, unsigned char *kind, unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h, unsigned int *offs, unsigned char newkind) {
+void GetDirtyRect(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs, byte newkind) {
 	*kind = dirty_rects[index].kind;
 	*offs = dirty_rects[index].offs;
 	*w = dirty_rects[index].width;
@@ -65,16 +65,16 @@ void GetDirtyRect(int index, unsigned char *kind, unsigned char *x, unsigned cha
 	script_byte_vars.dirty_rect_kind = dirty_rects[0].kind;
 }
 
-void GetDirtyRectAndFree(int index, unsigned char *kind, unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h, unsigned int *offs) {
+void GetDirtyRectAndFree(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
 	GetDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectFree);
 }
 
-void GetDirtyRectAndSetSprite(int index, unsigned char *kind, unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h, unsigned int *offs) {
+void GetDirtyRectAndSetSprite(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
 	GetDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectSprite);
 }
 
-int FindDirtyRectAndFree(unsigned char kind, unsigned char *x, unsigned char *y, unsigned char *w, unsigned char *h, unsigned int *offs) {
-	int i;
+int16 FindDirtyRectAndFree(byte kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
+	int16 i;
 	for (i = 0; i < MAX_DIRTY_RECT; i++) {
 		if (dirty_rects[i].kind == kind) {
 			GetDirtyRect(i, &kind, x, y, w, h, offs, DirtyRectFree);
@@ -85,10 +85,10 @@ int FindDirtyRectAndFree(unsigned char kind, unsigned char *x, unsigned char *y,
 }
 
 /*Restore screen data from back buffer as specified by dirty rects of kind*/
-void PopDirtyRects(unsigned char kind) {
-	unsigned char x, y;
-	unsigned char width, height;
-	unsigned int offs;
+void PopDirtyRects(byte kind) {
+	byte x, y;
+	byte width, height;
+	uint16 offs;
 	while (FindDirtyRectAndFree(kind, &x, &y, &width, &height, &offs)) {
 		CGA_CopyScreenBlock(backbuffer, width, height, frontbuffer, offs);
 		if (kind == DirtyRectBubble) {
@@ -98,7 +98,7 @@ void PopDirtyRects(unsigned char kind) {
 	}
 }
 
-void DesciTextBox(unsigned int x, unsigned int y, unsigned int width, unsigned char *msg) {
+void DesciTextBox(uint16 x, uint16 y, uint16 width, byte *msg) {
 	draw_x = x;
 	draw_y = y;
 	char_draw_max_width = width;
@@ -107,9 +107,9 @@ void DesciTextBox(unsigned int x, unsigned int y, unsigned int width, unsigned c
 }
 
 /*Draw dialog bubble with text and spike*/
-void DrawPersonBubble(unsigned char x, unsigned char y, unsigned char flags, unsigned char *msg) {
-	unsigned int ofs;
-	unsigned char w, h;
+void DrawPersonBubble(byte x, byte y, byte flags, byte *msg) {
+	uint16 ofs;
+	byte w, h;
 
 	char_draw_max_width = flags & 0x1F;
 	char_xlat_table = chars_color_bonw;
@@ -182,7 +182,7 @@ void PromptWait(void) {
 	cursor_anim_phase = 0;
 
 	do {
-		unsigned char ticks = script_byte_vars.timer_ticks;
+		byte ticks = script_byte_vars.timer_ticks;
 		if ((ticks % 8) == 0 && ticks != cursor_anim_ticks) {
 			cursor_anim_ticks = ticks;
 			ShowPromptAnim();
@@ -203,9 +203,9 @@ void PromptWait(void) {
 /*
 Get string with index num from strings bank
 */
-unsigned char *SeekToString(unsigned char *bank, unsigned int num) {
-	unsigned char len;
-	unsigned char *p = bank;
+byte *SeekToString(byte *bank, uint16 num) {
+	byte len;
+	byte *p = bank;
 
 	cur_str_index = num;
 
@@ -222,9 +222,9 @@ unsigned char *SeekToString(unsigned char *bank, unsigned int num) {
 /*
 Get string with index num from strings bank, with large string index support for scripts
 */
-unsigned char *SeekToStringScr(unsigned char *bank, unsigned int num, unsigned char **ptr) {
-	unsigned char len;
-	unsigned char *p = bank;
+byte *SeekToStringScr(byte *bank, uint16 num, byte **ptr) {
+	byte len;
+	byte *p = bank;
 
 	if (num < 4) {
 		num = (num << 8) | *(++(*ptr));

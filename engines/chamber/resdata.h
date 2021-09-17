@@ -53,52 +53,52 @@ typedef struct ResEntry_t {
 #define RES_MOTSI_MAX 1082
 #define RES_VEPCI_MAX 1548
 
-extern unsigned char vepci_data[];
-extern unsigned char motsi_data[];
+extern byte vepci_data[];
+extern byte motsi_data[];
 
-extern unsigned char puzzl_data[];
-extern unsigned char sprit_data[];
+extern byte puzzl_data[];
+extern byte sprit_data[];
 
-extern unsigned char pers1_data[];
-extern unsigned char pers2_data[];
+extern byte pers1_data[];
+extern byte pers2_data[];
 
-extern unsigned char desci_data[];
-extern unsigned char diali_data[];
+extern byte desci_data[];
+extern byte diali_data[];
 
-extern unsigned char arpla_data[];
-extern unsigned char aleat_data[];
-extern unsigned char carpc_data[];
-extern unsigned char icone_data[];
-extern unsigned char souco_data[];
-extern unsigned char souri_data[];
-extern unsigned char templ_data[];
-extern unsigned char mursm_data[];
-extern unsigned char gauss_data[];
-extern unsigned char lutin_data[];
-extern unsigned char anima_data[];
-extern unsigned char anico_data[];
-extern unsigned char zones_data[];
+extern byte arpla_data[];
+extern byte aleat_data[];
+extern byte carpc_data[];
+extern byte icone_data[];
+extern byte souco_data[];
+extern byte souri_data[];
+extern byte templ_data[];
+extern byte mursm_data[];
+extern byte gauss_data[];
+extern byte lutin_data[];
+extern byte anima_data[];
+extern byte anico_data[];
+extern byte zones_data[];
 
-unsigned char *SeekToEntry(unsigned char *bank, unsigned int num, unsigned char **end);
-unsigned char *SeekToEntryW(unsigned char *bank, unsigned int num, unsigned char **end);
+byte *SeekToEntry(byte *bank, uint16 num, byte **end);
+byte *SeekToEntryW(byte *bank, uint16 num, byte **end);
 
-unsigned int LoadFile(const char *filename, unsigned char *buffer);
-unsigned int SaveFile(char *filename, unsigned char *buffer, unsigned int size);
-int LoadFilesList(ResEntry_t *entries);
+uint16 LoadFile(const char *filename, byte *buffer);
+uint16 SaveFile(char *filename, byte *buffer, uint16 size);
+int16 LoadFilesList(ResEntry_t *entries);
 
-int LoadStaticData(void);
-int LoadFond(void);
-int LoadSpritesData(void);
-int LoadPersData(void);
+int16 LoadStaticData(void);
+int16 LoadFond(void);
+int16 LoadSpritesData(void);
+int16 LoadPersData(void);
 
 extern ResEntry_t res_texts[];
-int LoadVepciData(void);
+int16 LoadVepciData(void);
 
 extern ResEntry_t res_desci[];
-int LoadDesciData(void);
+int16 LoadDesciData(void);
 
 extern ResEntry_t res_diali[];
-int LoadDialiData(void);
+int16 LoadDialiData(void);
 
 } // End of namespace Chamber
 

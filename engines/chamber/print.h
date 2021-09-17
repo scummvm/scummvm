@@ -25,22 +25,22 @@
 
 namespace Chamber {
 
-extern unsigned char *cur_str_end;
+extern byte *cur_str_end;
 
-extern unsigned char draw_x;
-extern unsigned char draw_y;
+extern byte draw_x;
+extern byte draw_y;
 
-extern unsigned char chars_color_bonw[];
-extern unsigned char chars_color_bonc[];
-extern unsigned char chars_color_wonb[];
-extern unsigned char chars_color_wonc[];
+extern byte chars_color_bonw[];
+extern byte chars_color_bonc[];
+extern byte chars_color_wonb[];
+extern byte chars_color_wonc[];
 
-void PrintStringCentered(unsigned char *str, unsigned char *target);
-unsigned char *PrintStringPadded(unsigned char *str, unsigned char *target);
+void PrintStringCentered(byte *str, byte *target);
+byte *PrintStringPadded(byte *str, byte *target);
 
-void DrawMessage(unsigned char *msg, unsigned char *target);
+void DrawMessage(byte *msg, byte *target);
 
-void CGA_DrawTextBox(unsigned char *msg, unsigned char *target);
+void CGA_DrawTextBox(byte *msg, byte *target);
 
 } // End of namespace Chamber
 

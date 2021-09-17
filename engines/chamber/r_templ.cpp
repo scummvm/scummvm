@@ -25,6 +25,6 @@
 
 namespace Chamber {
 
-unsigned char templ_data[RES_TEMPL_MAX];
+byte templ_data[RES_TEMPL_MAX];
 
 } // End of namespace Chamber

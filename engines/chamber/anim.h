@@ -25,11 +25,11 @@
 
 namespace Chamber {
 
-void PlayAnim(unsigned char index, unsigned char x, unsigned char y);
-void CopyScreenBlockWithDotEffect(unsigned char *source, unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char *target);
+void PlayAnim(byte index, byte x, byte y);
+void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target);
 
-extern unsigned char dot_effect_step;
-extern unsigned int dot_effect_delay;
+extern byte dot_effect_step;
+extern uint16 dot_effect_delay;
 
 } // End of namespace Chamber
 

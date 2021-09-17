@@ -68,10 +68,10 @@ void RestartGame(void) {
 #define CGA_SAVE_TIMEDSEQ_OFS  0xA7C0
 
 #define SAVEADDR(value, base, nativesize, origsize, origbase)   \
-	((value) ? LE16(((((unsigned char*)(value)) - (unsigned char*)(base)) / nativesize) * origsize + origbase) : 0)
+	((value) ? LE16(((((byte*)(value)) - (byte*)(base)) / nativesize) * origsize + origbase) : 0)
 
 #define LOADADDR(value, base, nativesize, origsize, origbase)   \
-	((value) ? ((((LE16(value)) - (origbase)) / origsize) * nativesize + (unsigned char*)base) : 0)
+	((value) ? ((((LE16(value)) - (origbase)) / origsize) * nativesize + (byte*)base) : 0)
 
 #define WRITE(buffer, size) \
 	wlen = write(f, buffer, size); if(wlen != size) goto error;
@@ -79,17 +79,17 @@ void RestartGame(void) {
 #define READ(buffer, size) \
 	rlen = read(f, buffer, size); if(rlen != size) goto error;
 
-int LoadScena(void) {
+int16 LoadScena(void) {
 	warning("STUB: LoadScena()");
 
 	return 1;
 
 #if 0
-	int f;
-	int rlen;
-	unsigned short zero = 0;
-	unsigned char *p;
-	int i;
+	int16 f;
+	int16 rlen;
+	uint16 zero = 0;
+	byte *p;
+	int16 i;
 
 	script_byte_vars.game_paused = 1;
 
@@ -107,12 +107,12 @@ int LoadScena(void) {
 	*/
 
 #define BYTES(buffer, size) READ(buffer, size)
-#define UBYTE(variable) { unsigned char temp_v; READ(&temp_v, 1); variable = temp_v; }
-#define SBYTE(variable) { signed char temp_v; READ(&temp_v, 1); variable = temp_v; }
-#define USHORT(variable) { unsigned short temp_v; READ(&temp_v, 2); variable = temp_v; }
-#define SSHORT(variable) { signed short temp_v; READ(&temp_v, 2); variable = temp_v; }
+#define UBYTE(variable) { byte temp_v; READ(&temp_v, 1); variable = temp_v; }
+#define SBYTE(variable) { int8 temp_v; READ(&temp_v, 1); variable = temp_v; }
+#define USHORT(variable) { uint16 temp_v; READ(&temp_v, 2); variable = temp_v; }
+#define SSHORT(variable) { int16 temp_v; READ(&temp_v, 2); variable = temp_v; }
 #define POINTER(variable, base, nativesize, origsize, origbase) \
-	{ signed short temp_v; READ(&temp_v, 2); variable = LOADADDR(temp_v, base, nativesize, origsize, origbase); }
+	{ int16 temp_v; READ(&temp_v, 2); variable = LOADADDR(temp_v, base, nativesize, origsize, origbase); }
 
 	/*script_vars pointers*/
 	POINTER(script_vars[ScrPool0_WordVars0], &script_word_vars, 2, 2, CGA_SAVE_WORD_VARS_OFS);
@@ -136,17 +136,17 @@ int LoadScena(void) {
 	}
 
 	/* zone_spots */
-	POINTER((unsigned char *)zone_spots, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
+	POINTER((byte *)zone_spots, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
 
 	/* zone_spots_end */
-	POINTER((unsigned char *)zone_spots_end, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
+	POINTER((byte *)zone_spots_end, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
 
 	/* zone_spots_cur */
-	POINTER((unsigned char *)zone_spots_cur, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
+	POINTER((byte *)zone_spots_cur, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
 
 	/* script_stack_ptr */
 	/*TODO: FIX ME: original stack works in reverse order (from higher address to lower)*/
-	POINTER((unsigned char *)script_stack_ptr, script_stack, 1, 1, CGA_SAVE_SCRSTACK_OFS);
+	POINTER((byte *)script_stack_ptr, script_stack, 1, 1, CGA_SAVE_SCRSTACK_OFS);
 
 	/* script_stack */
 	/*TODO: FIX ME: original stack works in reverse order (from higher address to lower)*/
@@ -158,25 +158,25 @@ int LoadScena(void) {
 	USHORT(zero);
 
 	/* pers_vort_ptr */
-	POINTER((unsigned char *)pers_vort_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);
+	POINTER((byte *)pers_vort_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);
 
 	/* vortanims_ptr */
-	POINTER((unsigned char *)vortanims_ptr, vortsanim_list, 1, 1, CGA_SAVE_VORTANIMS_OFS);
+	POINTER((byte *)vortanims_ptr, vortsanim_list, 1, 1, CGA_SAVE_VORTANIMS_OFS);
 
 	/* turkeyanims_ptr */
-	POINTER((unsigned char *)turkeyanims_ptr, turkeyanim_list, 1, 1, CGA_SAVE_TURKEYANIMS_OFS);
+	POINTER((byte *)turkeyanims_ptr, turkeyanim_list, 1, 1, CGA_SAVE_TURKEYANIMS_OFS);
 
 	/* pers_ptr */
-	POINTER((unsigned char *)pers_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);
+	POINTER((byte *)pers_ptr, pers_list, 1, 1, CGA_SAVE_PERS_OFS);
 
 	/* spot_ptr */
-	POINTER((unsigned char *)spot_ptr, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
+	POINTER((byte *)spot_ptr, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
 
 	/* found_spot */
-	POINTER((unsigned char *)found_spot, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
+	POINTER((byte *)found_spot, zones_data, 1, 1, CGA_SAVE_ZONES_OFS);
 
 	/* spot_sprite */
-	POINTER((unsigned char *)spot_sprite, sprites_list, sizeof(sprites_list[0]), 2, CGA_SAVE_SPRLIST_OFS);
+	POINTER((byte *)spot_sprite, sprites_list, sizeof(sprites_list[0]), 2, CGA_SAVE_SPRLIST_OFS);
 
 	/* timed_seq_ptr */
 	POINTER(timed_seq_ptr, timed_seq, 1, 1, CGA_SAVE_TIMEDSEQ_OFS);
@@ -354,16 +354,16 @@ error:
 #endif
 }
 
-int SaveScena(void) {
+int16 SaveScena(void) {
 	warning("STUB: SaveScena()");
 	return 1;
 
 #if 0
-	int f;
-	int wlen;
-	unsigned short zero = 0;
-	unsigned char *p;
-	int i;
+	int16 f;
+	int16 wlen;
+	uint16 zero = 0;
+	byte *p;
+	int16 i;
 
 	script_byte_vars.game_paused = 1;
 	BlitSpritesToBackBuffer();
@@ -375,12 +375,12 @@ int SaveScena(void) {
 	}
 
 #define BYTES(buffer, size) WRITE(buffer, size)
-#define UBYTE(variable) { unsigned char temp_v = variable; WRITE(&temp_v, 1); }
-#define SBYTE(variable) { signed char temp_v = variable; WRITE(&temp_v, 1); }
-#define USHORT(variable) { unsigned short temp_v = variable; WRITE(&temp_v, 2); }
-#define SSHORT(variable) { signed short temp_v = variable; WRITE(&temp_v, 2); }
+#define UBYTE(variable) { byte temp_v = variable; WRITE(&temp_v, 1); }
+#define SBYTE(variable) { int8 temp_v = variable; WRITE(&temp_v, 1); }
+#define USHORT(variable) { uint16 temp_v = variable; WRITE(&temp_v, 2); }
+#define SSHORT(variable) { int16 temp_v = variable; WRITE(&temp_v, 2); }
 #define POINTER(variable, base, nativesize, origsize, origbase) \
-	{ signed short temp_v = SAVEADDR(variable, base, nativesize, origsize, origbase); WRITE(&temp_v, 2); }
+	{ int16 temp_v = SAVEADDR(variable, base, nativesize, origsize, origbase); WRITE(&temp_v, 2); }
 
 	/*script_vars pointers*/
 	POINTER(script_vars[ScrPool0_WordVars0], &script_word_vars, 2, 2, CGA_SAVE_WORD_VARS_OFS);
