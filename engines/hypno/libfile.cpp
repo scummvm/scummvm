@@ -35,32 +35,27 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 	_prefix = prefix;
 	Common::File libfile;
 	assert(libfile.open(filename));
-	uint32 i = 0;
-	Common::String entry = "<>";
+	byte b;
+	uint32 size;
 	FileEntry f;
 	f.data.push_back(0);
-	byte b;
-	uint32 start;
-	uint32 size;
-	uint32 pos;
-
 	do {
 		f.name = "";
 		f.data.clear();
-		for (i = 0; i < 12; i++) {
+		for (uint32 i = 0; i < 12; i++) {
 			b = libfile.readByte();
 			if (b != 0x96 && b != 0x0)
 				f.name += tolower(char(b));
 		}
 		debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
-		start = libfile.readUint32LE();
+		uint32 start = libfile.readUint32LE();
 		size = libfile.readUint32LE();
 		libfile.readUint32LE(); // some field?
 
-		pos = libfile.pos();
+		uint32 pos = libfile.pos();
 		libfile.seek(start);
 
-		for (i = 0; i < size; i++) {
+		for (uint32 i = 0; i < size; i++) {
 			b = libfile.readByte();
 			if (b != '\n')
 				b = b ^ 0xfe;

@@ -87,7 +87,6 @@ void WetEngine::loadAssets() {
 	intro.trans.frameNumber = 0;
 	_levels["<intro>"] = intro;
 
-	byte x;
 	for (k = 0; k < afiles.size(); k++) {
 		arc.clear();
 		list.clear();
@@ -95,7 +94,7 @@ void WetEngine::loadAssets() {
 		debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
 		Common::SeekableReadStream *file = afiles[k]->createReadStream();
 		while (!file->eos()) {
-			x = file->readByte();
+			byte x = file->readByte();
 			arc += x;
 			if (x == 'X') {
 				while (!file->eos()) {
