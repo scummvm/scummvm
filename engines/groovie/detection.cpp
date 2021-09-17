@@ -300,11 +300,23 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieUHP
 	},
 
-	// Tender Loving Care PC English
+	// Tender Loving Care PC English (CD-ROM)
 	{
 		{
-			"tlc", "",
+			"tlc", "CD",
 			AD_ENTRY2s("tlcmain.grv", "47c235155de5103e72675fe7294720b8", 17479,
+						"tlcnav.gjd", NULL, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC English (DVD-ROM)
+	{
+		{
+			"tlc", "DVD",
+			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
 						"tlcnav.gjd", NULL, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
