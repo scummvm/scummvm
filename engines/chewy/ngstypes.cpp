@@ -246,6 +246,22 @@ bool tmf_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
+bool GedPoolHeader::load(Common::SeekableReadStream *src) {
+	src->read(Id, 4);
+	Anz = src->readUint16LE();
+
+	return true;
+}
+
+bool GedChunkHeader::load(Common::SeekableReadStream *src) {
+	Len = src->readUint32LE();
+	X = src->readSint16LE();
+	Y = src->readSint16LE();
+	Ebenen = src->readSint16LE();
+
+	return true;
+}
+
 bool ChunkHead::load(Common::SeekableReadStream *src) {
 	size = src->readUint32LE();
 	type = src->readUint16LE();

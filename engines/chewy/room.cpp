@@ -275,7 +275,9 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 					ret = true;
 
 					if (mode == GED_LOAD) {
-						ged->load_ged_pool(roomhandle[R_GEPDATEI], &GedInfo[Rb->AkAblage],
+						Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
+							roomhandle[R_GEPDATEI]);
+						ged->load_ged_pool(gstream, &GedInfo[Rb->AkAblage],
 						                   nr, GedMem[Rb->AkAblage]);
 						if (!modul) {
 							tmp = (int16 *)Ablage[Rb->AkAblage];

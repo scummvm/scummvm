@@ -23,26 +23,29 @@
 #ifndef CHEWY_GEDCLASS_H
 #define CHEWY_GEDCLASS_H
 
+#include "common/stream.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
 
+typedef int16(*GedUserFunc)(int16 idx_nr);
+
 class gedclass {
 public:
-	gedclass(int16(*user_func)(int16 idx_nr));
-	~gedclass();
+	gedclass(GedUserFunc func) : _gedUserFunc(func) {
+	}
 
 	void load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
 
-	void load_ged_pool(Stream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
+	void load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
 	int16 ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher);
 	int16 ged_idx(int16 g_idx, int16 x_anz, byte *speicher);
 
 private:
-	void load_ged_chunk(GedChunkHeader *Gh, Stream *stream, int16 nr, byte *speicher);
+	void load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher);
 
-	GedPoolHeader ged_pool_header;
-	int16(*GedUserFunc)(int16 idx_nr);
+	GedPoolHeader _gedPoolHeader;
+	GedUserFunc _gedUserFunc;
 };
 
 } // namespace Chewy
