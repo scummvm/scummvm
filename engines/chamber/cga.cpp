@@ -113,19 +113,14 @@ void CGA_blitToScreen(int dx, int dy, int w, int h) {
 	if (dx + w >= 320)
 		w = 320 - dx;
 
-	byte *src = CGA_SCREENBUFFER;
-
 	w = (w + 3) / 4;
 
 	for (int y = 0; y < h; y++) {
+		byte *src = CGA_SCREENBUFFER + CGA_CalcXY(dx, dy + y);
 		byte *dst = scrbuffer + (y + dy) * 320 + dx;
-		byte *src1 = src;
-
-		if ((y + dy) & 1)
-			src1 += 0x2000;
 
 		for (int x = 0; x < w; x++) {
-			byte colors = *src1++;
+			byte colors = *src++;
 
 			for (int c = 0; c < 4; c++) {
 				byte color = (colors & 0xC0) >> 6;
@@ -134,12 +129,9 @@ void CGA_blitToScreen(int dx, int dy, int w, int h) {
 				*dst++ = color;
 			}
 		}
-
-		if ((y + dy) & 1)
-			src += 320 / 4;
 	}
 
-	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
+	g_system->copyRectToScreen(scrbuffer + dy * 320 + dx, 320, dx, dy, w * 4, h);
 	g_system->updateScreen();
 }
 
