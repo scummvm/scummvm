@@ -418,6 +418,8 @@ struct mem_info_blk {
 struct GedPoolHeader {
 	char Id[4] = { 0 };
 	int16 Anz = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct GedChunkHeader {
@@ -425,6 +427,8 @@ struct GedChunkHeader {
 	int16 X = 0;
 	int16 Y = 0;
 	int16 Ebenen = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct GedHeader {

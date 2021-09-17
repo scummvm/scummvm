@@ -20,44 +20,79 @@
  *
  */
 
+#include "common/file.h"
 #include "chewy/chewy.h"
 #include "chewy/gedclass.h"
+#include "chewy/fehler.h"
+#include "chewy/ngshext.h"
 
 namespace Chewy {
 
-gedclass::gedclass(int16(*user_func)(int16 idx_nr)) {
-	warning("STUB - missing constructor gedclass");
-
-	ged_pool_header.Anz = 0;
-	ged_pool_header.Id[0] = 0;
-
-	GedUserFunc = nullptr;
-}
-
-gedclass::~gedclass() {
-	warning("STUB - missing destructor gedclass");
-}
-
 void gedclass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
-	warning("STUB - missing load_ged_pool");
+	Common::File f;
+	if (f.open(fname)) {
+		load_ged_pool(&f, Gh, ch_nr, speicher);
+	} else {
+		modul = 3;
+		fcode = 0;
+		err->set_user_msg("GED POOL");
+	}
 }
 
-void gedclass::load_ged_pool(Stream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
-	warning("STUB - missing load_ged_pool");
+void gedclass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+	if (stream) {
+		stream->seek(0, SEEK_SET);
+		if (_gedPoolHeader.load(stream)) {
+			load_ged_chunk(Gh, stream, ch_nr, speicher);
+		}
+	} else {
+		modul = 3;
+		fcode = 0;
+		err->set_user_msg("GED POOL");
+	}
+}
+
+void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher) {
+	if (stream) {
+		// Scan for the correct index entry
+		int i = 0;
+		do {
+			if (!Gh->load(stream)) {
+				modul = 3;
+				fcode = 1;
+			} else if (i != nr) {
+				// Skip over the entry's data
+				stream->seek(Gh->Len, SEEK_CUR);
+			}
+		} while (!modul && ++i <= nr);
+
+		if (!modul) {
+			if (stream->read(speicher, Gh->Len) != Gh->Len) {
+				modul = 3;
+				fcode = 1;
+			}
+		}
+	} else {
+		modul = 3;
+		fcode = 0;
+		err->set_user_msg("GED FILE");
+	}
 }
 
 int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
-	warning("STUB - missing ged_idx");
-	return 0;
+	int16 result = 0;
+	if (_gedUserFunc)
+		result = _gedUserFunc(speicher[((x / 8) * x_anz) + (y / 8)]);
+
+	return result;
 }
 
 int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
-	warning("STUB - missing ged_idx");
-	return 0;
-}
+	int16 result = 0;
+	if (_gedUserFunc)
+		result = _gedUserFunc(speicher[g_idx]);
 
-void gedclass::load_ged_chunk(GedChunkHeader *Gh, Stream *stream, int16 nr, byte *speicher) {
-	warning("STUB - missing load_ged_chunk");
+	return result;
 }
 
 } // namespace Chewy
