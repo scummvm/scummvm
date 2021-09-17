@@ -45,7 +45,7 @@ static const byte MOUSECURSOR_SCI[] = {
 	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
 	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0};
 
-static const byte circleCursor[]{
+static const byte circleCursor[] = {
 	0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0,
 	0, 0, 2, 2, 0, 0, 0, 0, 0, 2, 2, 0, 0,
 	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
@@ -58,7 +58,7 @@ static const byte circleCursor[]{
 	0, 0, 2, 2, 0, 0, 0, 0, 0, 2, 2, 0, 0,
 	0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0};
 
-static const byte targetCursor[]{
+static const byte targetCursor[] = {
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
 	0, 0, 1, 0, 0, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0,
 	0, 1, 0, 2, 2, 0, 0, 0, 0, 0, 2, 2, 0, 1, 0,
