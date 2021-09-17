@@ -32,7 +32,7 @@ namespace Chamber {
 
 unsigned char cursor_color = 0;
 
-unsigned char *cursor_shape;
+unsigned char *cursor_shape = NULL;
 unsigned char cursor_anim_ticks;
 unsigned char cursor_anim_phase;
 
@@ -71,6 +71,9 @@ void SelectCursor(unsigned int num) {
 Build cursor sprite for its current pixel-grained position
 */
 void UpdateCursor(void) {
+	if (!cursor_shape)
+		return;
+
 	unsigned char *cursor, *sprite, *spr;
 	unsigned char cursor_bit_shift;
 	unsigned int x, y;
