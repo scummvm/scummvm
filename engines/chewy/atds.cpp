@@ -83,9 +83,9 @@ char atds_id[4][4] = { "ATS",
                        "ADH",
                      };
 
-void atdsys::set_font(byte *font_adr, int16 fvorx, int16 fhoehe) {
+void atdsys::set_font(byte *font_adr, int16 fvorx_, int16 fhoehe) {
 	atdsv.Font = font_adr;
-	atdsv.Fvorx = fvorx;
+	atdsv.Fvorx = fvorx_;
 	atdsv.Fhoehe = fhoehe;
 }
 
