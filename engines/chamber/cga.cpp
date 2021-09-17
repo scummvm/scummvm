@@ -269,6 +269,9 @@ void CGA_Blit(unsigned char *pixels, unsigned int pw, unsigned int w, unsigned i
 	}
 
 	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
+
+	if (screen == CGA_SCREENBUFFER)
+		g_system->updateScreen();
 }
 
 /*
@@ -310,6 +313,9 @@ void CGA_Fill(unsigned char pixel, unsigned int w, unsigned int h, unsigned char
 	}
 
 	g_system->copyRectToScreen(scrbuffer, 320, dx, dy, w * 4, h);
+
+	if (screen == CGA_SCREENBUFFER)
+		g_system->updateScreen();
 }
 
 void CGA_FillAndWait(unsigned char pixel, unsigned int w, unsigned int h, unsigned char *screen, unsigned int ofs) {
