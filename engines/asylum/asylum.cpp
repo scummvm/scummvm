@@ -58,7 +58,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_video(NULL), _handler(NULL), _puzzles(NULL) {
 
 	// Init data
-	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	resetFlags();
 	_introPlayed = false;
 	_tickOffset = 0;
 
@@ -263,7 +263,7 @@ void AsylumEngine::restart() {
 	_cursor->hide();
 
 	// Cleanup
-	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	resetFlags();
 	delete _scene;
 	_scene = NULL;
 	delete _encounter;

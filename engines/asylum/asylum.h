@@ -156,7 +156,7 @@ public:
 	bool isGameFlagSet(GameFlag flag) const;
 	bool isGameFlagNotSet(GameFlag flag) const;
 	bool areGameFlagsSet(uint from, uint to) const;
-	void resetFlags();
+	void resetFlags() { memset(_gameFlags, 0, sizeof(_gameFlags)); }
 
 	// Misc
 	uint getRandom(uint max) { return max ? _rnd->getRandomNumber(max - 1) : 0; }
