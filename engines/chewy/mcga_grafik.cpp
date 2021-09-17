@@ -35,6 +35,9 @@ namespace Chewy {
 #define DATEI 3
 #define MAXSTRING 255
 
+byte pal_table[PALETTE_SIZE];
+
+
 mcga_grafik::mcga_grafik() {
 	int16 i;
 

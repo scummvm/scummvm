@@ -51,7 +51,7 @@ void standard_init() {
 	out->vsync_start();
 	out->init();
 	out->cls();
-	out->palette_save(0);
+	out->palette_save();
 	out->set_clip(0, 0, 320, 200);
 	out->set_writemode(0);
 	scr_width = 0;
@@ -539,7 +539,7 @@ void sound_init() {
 		out->vsync_start();
 		out->init();
 		out->cls();
-		out->palette_save(0);
+		out->palette_save();
 		out->set_clip(0, 0, 320, 200);
 		out->set_writemode(0);
 		detect.Nager = in->init();

@@ -23,10 +23,13 @@
 #ifndef CHEWY_MCGA_GRAFIK_H
 #define CHEWY_MCGA_GRAFIK_H
 
+#include "graphics/screen.h"
 #include "chewy/maus.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
+
+extern byte pal_table[PALETTE_SIZE];
 
 class mcga_grafik {
 public:
@@ -53,7 +56,7 @@ public:
 	void set_mono();
 	void calc_mono(byte *pal, int16 startcol, int16 anz);
 	void set_palette(byte *palette);
-	void palette_save(byte *pal);
+	void palette_save(byte *pal = nullptr);
 	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);
