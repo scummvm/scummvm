@@ -109,6 +109,10 @@ void T11hGame::opMouseTrap() {
 	// variable 24 is the mouse?
 	//_scriptVariables[24] = 2;
 
+	// player wins: _scriptVariables[22] = 1;
+	// stauf wins: _scriptVariables[22] = 2;
+	// allows the player to click to place the mouse somewhere? _scriptVariables[5] = 0;
+
 	switch (op) {
 	case 0:
 		break;

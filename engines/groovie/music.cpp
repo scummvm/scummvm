@@ -797,7 +797,7 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	Common::String filename = getFilename(fileref);
 
 	// Apple platforms use m4a files instead of mpg
-	if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformIOS)
+	if (_vm->getPlatform() == Common::kPlatformUnknown)
 		filename += ".m4a";
 	else
 		filename += ".mpg";
