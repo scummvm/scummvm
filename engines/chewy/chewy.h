@@ -30,6 +30,7 @@
 #include "common/error.h"
 #include "common/random.h"
 #include "engines/engine.h"
+#include "graphics/screen.h"
 
 namespace Chewy {
 
@@ -37,6 +38,17 @@ struct ChewyGameDescription;
 class Sound;
 
 class ChewyEngine : public Engine {
+protected:
+	// Engine APIs
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+
+	void initialize();
+	void shutdown();
+
+public:
+	Sound *_sound;
+	Graphics::Screen *_screen;
 public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
 	~ChewyEngine() override;
@@ -48,17 +60,9 @@ public:
 
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
-
-protected:
-	// Engine APIs
-	Common::Error run() override;
-	bool hasFeature(EngineFeature f) const override;
-
-	void initialize();
-	void shutdown();
-
-	Sound *_sound;
 };
+
+extern ChewyEngine *g_engine;
 
 } // End of namespace Chewy
 
