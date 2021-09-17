@@ -20,12 +20,13 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/palette.h"
 #include "chewy/chewy.h"
 #include "chewy/mcga.h"
 
 namespace Chewy {
 
-#define WAIT asm { NOP; NOP;NOP;NOP;NOP;NOP;NOP;NOP;NOP;NOP;}
 int16 FuNr;
 real_regs rr;
 real_regs *rp = &rr;
@@ -47,12 +48,20 @@ char einfuegen = 0;
 int16 crlfx = 0, crlfy = 0;
 int16 r_gef = -1, r_end = false;
 int16 *rlist = 0;
-byte pal_table[768];
 bool mono = false;
 uint8 svga;
+byte *screenP;
+
+static byte saved_palette[PALETTE_SIZE];
 
 void init_mcga() {
-	// No implementation needed
+	crlfx = crlfy = 0;
+	r_gef = -1;
+	r_end = false;
+	rlist = 0;
+	mono = false;
+	svga = 0;
+	screenP = (byte *)g_engine->_screen->getPixels();
 }
 
 void old_mode() {
@@ -60,40 +69,43 @@ void old_mode() {
 }
 
 void vflyback_start() {
-	warning("STUB - vflyback_start");
+	// No implementation needed
 }
 
 void vflyback_end() {
-	warning("STUB - vflyback_end");
+	// No implementation needed
 }
 
 void hflyback_start() {
-	warning("STUB - hflyback_start");
+	// No implementation needed
 }
 
 void hflyback_end() {
-	warning("STUB - hflyback_end");
+	// No implementation needed
 }
 
 void set_pointer(byte *ptr) {
-	warning("STUB - set_pointer");
+	assert(ptr);
+	screenP = ptr;
 }
 
 byte *get_dispoff() {
-	warning("STUB - get_dispoff");
-	return nullptr;
+	return screenP;
 }
 
 void setpalette(byte *palette) {
-	warning("STUB - setpalette");
+	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
 }
 
-void save_palette(byte *pal) {
-	warning("STUB - save_palette");
+void save_palette(byte *palette) {
+	if (!palette)
+		palette = saved_palette;
+
+	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
 }
 
 void restore_palette() {
-	warning("STUB - restore_palette");
+	setpalette(saved_palette);
 }
 
 void rastercol(int16 color, int16 rot, int16 gruen, int16 blau) {
@@ -101,24 +113,24 @@ void rastercol(int16 color, int16 rot, int16 gruen, int16 blau) {
 }
 
 void set_palpart(byte *palette, int16 startcol, int16 anz) {
-	warning("STUB - set_palpart");
+	g_system->getPaletteManager()->setPalette(palette, startcol, anz);
 }
 
 void clear_mcga() {
-	warning("STUB - clear_mcga");
+	g_engine->_screen->clear();
 }
 
 void setpixel_mcga(int16 x, int16 y, int16 farbe) {
-	warning("STUB - setpixel_mcga");
+	line_mcga(x, y, x, y, farbe);
 }
 
 uint8 getpix(int16 x, int16 y) {
-	warning("STUB - getpix");
-	return 0;
+	byte *pixel = (byte *)g_engine->_screen->getBasePtr(x, y);
+	return *pixel;
 }
 
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	warning("STUB - line_mcga");
+	g_engine->_screen->drawLine(x1, y1, x2, y2, farbe);
 }
 
 void mem2mcga(byte *ptr) {
@@ -161,7 +173,7 @@ void setfont(byte *adr, int16 breite, int16 hoehe, int16 first, int16 last) {
 }
 
 void upd_scr() {
-	warning("STUB - upd_scr");
+	g_engine->_screen->update();
 }
 
 void vors() {

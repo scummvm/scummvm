@@ -50,7 +50,6 @@ extern char einfuegen;
 extern int16 crlfx, crlfy;
 extern int16 r_gef, r_end;
 extern int16 *rlist;
-extern byte pal_table[768];
 extern bool mono;
 extern uint8 svga;
 
