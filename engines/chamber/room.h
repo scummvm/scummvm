@@ -26,6 +26,7 @@
 namespace Chamber {
 
 #define SPOTFLG_1  0x01
+#define SPOTFLG_2  0x02
 #define SPOTFLG_8  0x08
 #define SPOTFLG_10 0x10
 #define SPOTFLG_20 0x20

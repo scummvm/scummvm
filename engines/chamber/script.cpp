@@ -190,6 +190,129 @@ unsigned int SCR_1_AspirantItemTrade(void) {
 	return 0;
 }
 
+unsigned int SCR_2_RudeAspirantTrade(void) {
+	unsigned char *old_script, *old_script_end = script_end_ptr;
+
+	item_t *item1, *item2;
+
+	script_ptr++;
+	old_script = script_ptr;
+
+	the_command = 0x9099;   /*WHAT DO YOU WANT TO EXCHANGE?*/
+	RunCommand();
+
+	for (;;) {
+		inv_bgcolor = 0xFF;
+		OpenInventory(0xFE, ITEMFLG_80);
+
+		if (inv_count == 0) {
+			the_command = 0xC1C5;
+			RunCommand();
+			break;
+		}
+
+		if (the_command == 0)
+			break;
+
+		the_command = 0x9140;   /*NOTHING ON HIM*/
+
+		if (pers_ptr->item == 0) {
+			RunCommand();
+			break;
+		}
+
+		item1 = &inventory_items[pers_ptr->item - 1];
+		item2 = (item_t *)(script_vars[ScrPool3_CurrentItem]);
+
+		if (item2->flags == (ITEMFLG_80 | 1)) {
+			the_command = 0xC1C0;
+			RunCommand();
+			break;
+		}
+
+		if (item1->name < 104 || item1->name >= 108) {
+			RunCommand();
+			break;
+		}
+
+		if ((item1->name != item2->name)
+		        && (item2->name == 109
+		            || item2->name == 132
+		            || item2->name == 108
+		            || script_byte_vars.rand_value < 154)) {
+			script_byte_vars.trade_done = 0;
+			the_command = 0xC1C6;
+			RunCommand();
+			if (script_byte_vars.trade_done == 0)
+				break;
+			item2->flags = ITEMFLG_20;
+			item1->flags = ITEMFLG_80;
+			pers_ptr->item = script_byte_vars.inv_item_index;
+			switch (item2->name) {
+			case 132:
+				script_byte_vars.room_items--;
+				the_command = 0xC04B;
+				break;
+			case 104:
+				the_command = 0xC1BA;
+				break;
+			case 107:
+				the_command = 0xC1BB;
+				break;
+			default:
+				the_command = 0xC1B9;
+			}
+			RunCommand();
+			break;
+		} else {
+			item2->flags = ITEMFLG_80 | 1;
+			the_command = 0xC1BD;   /*not interested*/
+			RunCommand();
+			continue;
+		}
+	}
+
+	ClaimTradedItems();
+
+	script_ptr = old_script;
+	script_end_ptr = old_script_end;
+
+	return 0;
+}
+
+unsigned int SCR_4_StealZapstik(void) {
+	unsigned char *old_script;
+
+	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+
+	script_ptr++;
+	old_script = script_ptr;
+
+	if ((pers->index & ~7) != 0x30) {
+		the_command = 0x9148;   /*YOU`VE ALREADY GOT IT*/
+		RunCommand();
+	} else {
+		pers->index &= ~0x18;
+
+		script_vars[ScrPool3_CurrentItem] = &inventory_items[38 + (script_byte_vars.cur_pers - 1) - 9];
+		script_byte_vars.byte_179F1++;
+
+		BounceCurrentItem(ITEMFLG_80, 85);  /*bounce to inventory*/
+
+		the_command = 0x9147;   /*YOU GET HIS ZAPSTIK*/
+		if (script_byte_vars.zapstik_stolen == 0) {
+			RunCommand();
+			script_byte_vars.zapstik_stolen = 1;
+			the_command = 0x9032;   /*THIS SHOULD GIVE YOU THE EDGE IN MOST COMBATS!*/
+		}
+		RunCommand();
+	}
+
+	script_ptr = old_script;
+
+	return 0;
+}
+
 
 unsigned char wait_delta = 0;
 
@@ -1602,10 +1725,7 @@ unsigned int SCR_31_Fight2(void) {
 	return 0;
 }
 
-unsigned int SCR_32_FightWin(void) {
-
-	script_ptr++;
-
+void FightWin(void) {
 	script_byte_vars.byte_17A1D = 0;
 
 	if (script_byte_vars.byte_179F9 != 18 && *spot_sprite != 0) {
@@ -1624,6 +1744,13 @@ unsigned int SCR_32_FightWin(void) {
 
 	prev_fight_mode = script_byte_vars.byte_179F3;
 	script_byte_vars.byte_179F3 = 0;
+}
+
+unsigned int SCR_32_FightWin(void) {
+
+	script_ptr++;
+
+	FightWin();
 
 	return 0;
 }
@@ -1652,6 +1779,34 @@ unsigned int SCR_16_DrawDeathAnim(void) {
 
 	return 0;
 }
+
+unsigned int SCR_60_ReviveCadaver(void) {
+	pers_t *pers;
+	script_ptr++;
+
+	BlitSpritesToBackBuffer();
+
+	FindAndSelectSpot(38 * 5);
+
+	script_byte_vars.byte_17A16 = 1;
+	FightWin();
+	script_byte_vars.byte_17A16 = 0;
+	pers_list[38].area = 0;
+
+	FindAndSelectSpot(fight_pers_ofs);
+	zone_spots[5].flags = SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_2 | SPOTFLG_1;
+	found_spot->flags |= SPOTFLG_80;
+
+	pers = (pers_t *)script_vars[ScrPool8_CurrentPers];
+	pers->flags &= ~PERSFLG_40;
+	pers->area = script_byte_vars.zone_area;
+
+	DrawZoneObjs();
+	CGA_BackBufferToRealFull();
+
+	return 0;
+}
+
 
 unsigned int SCR_57_ShowCharacterSprite(void) {
 	unsigned char index, x, y;
@@ -2152,9 +2307,19 @@ unsigned int SCR_62_PsiReaction(void) {
 	return 0;
 }
 
+/*TODO: rename me*/
+unsigned int SCR_63_LiftSpot6(void) {
+	script_ptr++;
 
+	BlitSpritesToBackBuffer();
+	zone_spots[6].sy -= 5;
+	zone_spots[6].ey -= 5;
+	BackupSpotsImages();
+	DrawZoneObjs();
+	CGA_BackBufferToRealFull();
 
-
+	return 0;
+}
 
 unsigned int SCR_64_DrawBoxAroundSpot(void) {
 	script_ptr++;
@@ -3241,9 +3406,9 @@ cmdhandler_t command_handlers[] = {
 cmdhandler_t script_handlers[] = {
 	0,
 	SCR_1_AspirantItemTrade,
-	SCR_TRAP,
+	SCR_2_RudeAspirantTrade,
 	SCR_3_DrawItemBox,
-	SCR_TRAP,
+	SCR_4_StealZapstik,
 	SCR_5_DrawPortraitLiftRight,
 	SCR_6_DrawPortraitLiftLeft,
 	SCR_7_DrawPortraitLiftDown,
@@ -3335,10 +3500,10 @@ cmdhandler_t script_handlers[] = {
 	SCR_5D_DropWeapons,
 	SCR_5E_SelectTempPalette,
 	SCR_5F_DrawRoomObjectBack,
-	SCR_TRAP,   /*60*/
+	SCR_60_ReviveCadaver,   /*60*/
 	SCR_61_DrawPersonBubbleDialog,
 	SCR_62_PsiReaction,
-	SCR_TRAP,
+	SCR_63_LiftSpot6,
 	SCR_64_DrawBoxAroundSpot,
 	SCR_65_DeProfundisMovePlatform,
 	SCR_66_DeProfundisRideToExit,
