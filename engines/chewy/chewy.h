@@ -29,7 +29,6 @@
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/random.h"
-#include "common/textconsole.h"
 #include "engines/engine.h"
 
 namespace Chewy {
