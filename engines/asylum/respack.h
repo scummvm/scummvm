@@ -58,14 +58,14 @@ public:
 	ResourceEntry *get(uint16 index);
 
 protected:
-	ResourcePack(Common::String filename);
+	ResourcePack(const Common::String &filename);
 	~ResourcePack();
 
 private:
 	Common::Array<ResourceEntry> _resources;
 	Common::File _packFile;
 
-	void init(Common::String filename);
+	void init(const Common::String &filename);
 
 	friend class ResourceManager;
 };

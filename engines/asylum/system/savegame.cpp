@@ -217,7 +217,7 @@ Common::String Savegame::getFilename(uint32 index) const {
 	return _vm->getSaveStateName(index);
 }
 
-bool Savegame::isSavegamePresent(Common::String filename) const {
+bool Savegame::isSavegamePresent(const Common::String &filename) const {
 	if (g_system->getSavefileManager()->listSavefiles(filename).size() == 0)
 		return false;
 
@@ -259,7 +259,7 @@ void Savegame::writeHeader(Common::OutSaveFile *file) const {
 	write(file, SAVEGAME_BUILD, "Build");
 }
 
-bool Savegame::loadData(Common::String filename) {
+bool Savegame::loadData(const Common::String &filename) {
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(filename);
 	if (!file) {
 		getWorld()->chapter = kChapterInvalid;
@@ -294,7 +294,7 @@ bool Savegame::loadData(Common::String filename) {
 	return true;
 }
 
-bool Savegame::saveData(Common::String filename, Common::String name, ChapterIndex chapter, bool appendExtended) {
+bool Savegame::saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter, bool appendExtended) {
 	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(filename);
 	if (!file)
 		return false;
@@ -323,7 +323,7 @@ bool Savegame::saveData(Common::String filename, Common::String name, ChapterInd
 	return true;
 }
 
-void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String description) {
+void Savegame::seek(Common::InSaveFile *file, uint32 offset, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Seeking to offset: %s", description.c_str());
 
 	if (offset == 0)
@@ -340,7 +340,7 @@ void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String desc
 	}
 }
 
-uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
+uint32 Savegame::read(Common::InSaveFile *file, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Reading %s", description.c_str());
 
 	uint32 size = file->readUint32LE();
@@ -352,7 +352,7 @@ uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
 	return file->readUint32LE();
 }
 
-Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) {
+Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Reading %s (of length %d)", description.c_str(), strLength);
 
 	/*uint32 size =*/ file->readUint32LE();
@@ -372,7 +372,7 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common
 	return ret;
 }
 
-void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
+void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Reading %s (%d block(s) of size %d)", description.c_str(), size, count);
 
 	uint32 fileSize = file->readUint32LE();
@@ -390,7 +390,7 @@ void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32
 	data->saveLoadWithSerializer(ser);
 }
 
-void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, uint32 val, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Writing %s: %d", description.c_str(), val);
 
 	file->writeUint32LE(4);
@@ -399,7 +399,7 @@ void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String descr
 	file->writeUint32LE(val);
 }
 
-void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLength, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, const Common::String &val, uint32 strLength, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Writing %s (of length %d): %s", description.c_str(), strLength, val.c_str());
 
 	if (val.size() > strLength)
@@ -417,7 +417,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLe
 	}
 }
 
-void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, const Common::String &description) {
 	debugC(kDebugLevelSavegame, "[Savegame] Writing %s (%d block(s) of size %d)", description.c_str(), size, count);
 
 	file->writeUint32LE(size);
@@ -492,7 +492,7 @@ void Savegame::loadMoviesViewed() {
 //////////////////////////////////////////////////////////////////////////
 // Accessors
 //////////////////////////////////////////////////////////////////////////
-void Savegame::setName(uint32 index, Common::String name) {
+void Savegame::setName(uint32 index, const Common::String &name) {
 	if (index >= ARRAYSIZE(_names))
 		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
 

@@ -97,7 +97,7 @@ public:
 	 * @param offset 		Offset index of the info into the file
 	 * @param description   The description.
 	 */
-	static void seek(Common::InSaveFile *file, uint32 offset, Common::String description);
+	static void seek(Common::InSaveFile *file, uint32 offset, const Common::String &description);
 
 	/**
 	 * Reads data from a file.
@@ -107,7 +107,7 @@ public:
 	 *
 	 * @return the value
 	 */
-	static uint32 read(Common::InSaveFile *file, Common::String description);
+	static uint32 read(Common::InSaveFile *file, const Common::String &description);
 
 	/**
 	 * Reads data from a file.
@@ -118,7 +118,7 @@ public:
 	 *
 	 * @return the string
 	 */
-	static Common::String read(Common::InSaveFile *file, uint32 strLength, Common::String description);
+	static Common::String read(Common::InSaveFile *file, uint32 strLength, const Common::String &description);
 
 	/**
 	 * Reads data from a file.
@@ -129,7 +129,7 @@ public:
 	 * @param count 		Number of.
 	 * @param description   The description.
 	 */
-	static void read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description);
+	static void read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, const Common::String &description);
 
 	/**
 	 * Writes data to a file.
@@ -138,7 +138,7 @@ public:
 	 * @param val 			The value
 	 * @param description   The description.
 	 */
-	static void write(Common::OutSaveFile *file, uint32 val, Common::String description);
+	static void write(Common::OutSaveFile *file, uint32 val, const Common::String &description);
 
 	/**
 	 * Writes data to a file.
@@ -148,7 +148,7 @@ public:
 	 * @param strLength		The size of the string.
 	 * @param description   The description.
 	 */
-	static void write(Common::OutSaveFile *file, Common::String val, uint32 strLength, Common::String description);
+	static void write(Common::OutSaveFile *file, const Common::String &val, uint32 strLength, const Common::String &description);
 
 	/**
 	 * Writes data to a file.
@@ -159,7 +159,7 @@ public:
 	 * @param count 		Number of.
 	 * @param description   The description.
 	 */
-	static void write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description);
+	static void write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, const Common::String &description);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Movies
@@ -171,7 +171,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Accessors
 	//////////////////////////////////////////////////////////////////////////
-	void setName(uint32 index, Common::String name);
+	void setName(uint32 index, const Common::String &name);
 	Common::String getName(uint32 index) const;
 
 	Common::String *getName() { return &_names[_index]; }
@@ -218,7 +218,7 @@ private:
 	 *
 	 * @return true if savegame present, false if not.
 	 */
-	bool isSavegamePresent(Common::String filename) const;
+	bool isSavegamePresent(const Common::String &filename) const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reading & writing
@@ -247,7 +247,7 @@ private:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool loadData(Common::String filename);
+	bool loadData(const Common::String &filename);
 
 	/**
 	 * Save savegame data.
@@ -259,7 +259,7 @@ private:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool saveData(Common::String filename, Common::String name, ChapterIndex chapter, bool appendExtended = false);
+	bool saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter, bool appendExtended = false);
 };
 
 } // End of namespace Asylum

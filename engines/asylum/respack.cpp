@@ -120,7 +120,7 @@ void ResourceManager::unload(ResourcePackId id) {
 //////////////////////////////////////////////////////////////////////////
 // ResourcePack
 //////////////////////////////////////////////////////////////////////////
-ResourcePack::ResourcePack(Common::String filename) {
+ResourcePack::ResourcePack(const Common::String &filename) {
 	init(filename);
 }
 
@@ -132,7 +132,7 @@ ResourcePack::~ResourcePack() {
 	_packFile.close();
 }
 
-void ResourcePack::init(Common::String filename) {
+void ResourcePack::init(const Common::String &filename) {
 	if (!_packFile.open(filename))
 		error("[ResourcePack::init] Could not open resource file: %s", filename.c_str());
 

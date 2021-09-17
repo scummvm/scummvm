@@ -93,7 +93,7 @@ private:
 	 * @param filename 		Filename of the file.
 	 * @param showSubtitles true to show, false to hide the subtitles.
 	 */
-	void play(Common::String filename, bool showSubtitles);
+	void play(const Common::String &filename, bool showSubtitles);
 
 	/**
 	 * Sets up the palette.

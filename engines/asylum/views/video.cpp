@@ -168,7 +168,7 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	_vm->switchEventHandler(handler);
 }
 
-void VideoPlayer::play(Common::String filename, bool showSubtitles) {
+void VideoPlayer::play(const Common::String &filename, bool showSubtitles) {
 	if (!_decoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
