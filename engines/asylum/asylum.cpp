@@ -660,7 +660,7 @@ Common::Error AsylumEngine::saveGameState(int slot, const Common::String &desc, 
 	savegame()->loadList();
 	savegame()->setIndex(slot);
 	savegame()->setName(slot, desc);
-	savegame()->save(true);
+	savegame()->save();
 
 	return Common::kNoError;
 }

@@ -69,6 +69,8 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_musicVolume = 0;
 	_frameCounter = 0;
 
+	_savedScreen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
 	g_debugActors = 0;
 	g_debugObjects  = 0;
 	g_debugPolygons  = 0;
@@ -82,6 +84,8 @@ Scene::~Scene() {
 
 	// Clear script queue
 	getScript()->reset();
+
+	_savedScreen.free();
 
 	delete _polygons;
 	delete _ws;
@@ -472,8 +476,11 @@ bool Scene::key(const AsylumEvent &evt) {
 			if (getCursor()->isHidden())
 				break;
 
-			if (!_vm->checkGameVersion("Demo"))
+			if (!_vm->checkGameVersion("Demo")) {
+				_savedScreen.copyFrom(getScreen()->getSurface());
+				memcpy(_savedPalette, getScreen()->getPalette(), sizeof(_savedPalette));
 				_vm->switchEventHandler(_vm->menu());
+			}
 		}
 		break;
 

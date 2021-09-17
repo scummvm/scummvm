@@ -31,7 +31,11 @@
 
 #include "engines/advancedDetector.h"
 
+#include "graphics/scaler.h"
+
 #include "asylum/system/savegame.h"
+
+#include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
 #include "asylum/shared.h"
@@ -47,7 +51,8 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override { return 25; }
-	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
@@ -60,36 +65,31 @@ bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList AsylumMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern(getSavegameFilePattern(target));
+void AsylumMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Asylum::AsylumEngine *engine = (Asylum::AsylumEngine *)g_engine;
 
-	filenames = saveFileMan->listSavefiles(pattern);
+	if (engine->isMenuVisible()) {
+		const Graphics::Surface &savedScreen = engine->scene()->getSavedScreen();
+		::createThumbnail(&thumb, (const byte *)savedScreen.getPixels(), savedScreen.w, savedScreen.h, engine->scene()->getSavedPalette());
+	} else {
+		::createThumbnailFromScreen(&thumb);
+	}
+}
 
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+SaveStateDescriptor AsylumMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc = MetaEngine::querySaveMetaInfos(target, slot);
 
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			SaveStateDescriptor desc = querySaveMetaInfos(target, slotNum);
-			if (desc.getSaveSlot() == -1) {
-				Common::InSaveFile *in(saveFileMan->openForLoading(*file));
-				if (in && in->size()) {
-					(void)(uint32)Asylum::Savegame::read(in, "Chapter");
-					desc.setSaveSlot(slotNum);
-					desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
-				}
-			}
+	if (desc.getSaveSlot() == -1) {
+		Common::InSaveFile *in(g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target)));
 
-			saveList.push_back(desc);
+		if (in && in->size()) {
+			(void)(uint32)Asylum::Savegame::read(in, "Chapter");
+			desc.setSaveSlot(slot);
+			desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
 		}
 	}
 
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
+	return desc;
 }
 
 Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

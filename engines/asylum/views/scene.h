@@ -29,6 +29,8 @@
 
 #include "graphics/surface.h"
 
+#include "asylum/system/screen.h"
+
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
@@ -196,6 +198,9 @@ public:
 	WorldStats  *worldstats() { return _ws; }
 	uint32 getFrameCounter() { return _frameCounter; }
 
+	const byte *getSavedPalette() { return _savedPalette; }
+	const Graphics::Surface &getSavedScreen() { return _savedScreen; }
+
 private:
 	AsylumEngine  *_vm;
 
@@ -214,6 +219,9 @@ private:
 
 	Common::Array<UpdateItem> _updateList;
 	uint32 _frameCounter;
+
+	Graphics::Surface _savedScreen;
+	byte _savedPalette[PALETTE_SIZE];
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling

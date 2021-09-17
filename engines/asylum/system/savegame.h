@@ -69,11 +69,9 @@ public:
 	/**
 	 * Saves a game
 	 *
-	 * @param  appendExtended Append the extended savegame header to the stream.
-	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	void save(bool appendExtended = false);
+	void save();
 
 	/**
 	 * Quick saves a game
@@ -255,11 +253,10 @@ private:
 	 * @param filename       Filename of the file.
 	 * @param name 	         The name.
 	 * @param chapter        The chapter.
-	 * @param appendExtended Append the extended savegame header to the stream.
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter, bool appendExtended = false);
+	bool saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter);
 };
 
 } // End of namespace Asylum

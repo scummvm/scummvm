@@ -130,11 +130,11 @@ bool Savegame::quickLoad() {
 	return true;
 }
 
-void Savegame::save(bool appendExtended) {
+void Savegame::save() {
 	// Original creates a folder to hold saved games and checks for disk space, we can skip that
 	getCursor()->hide();
 
-	if (saveData(getFilename(_index), _names[_index], getWorld()->chapter, appendExtended)) {
+	if (saveData(getFilename(_index), _names[_index], getWorld()->chapter)) {
 		_savegames[_index] = true;
 
 		getMenu()->setDword455C78(true);
@@ -292,7 +292,7 @@ bool Savegame::loadData(const Common::String &filename) {
 	return true;
 }
 
-bool Savegame::saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter, bool appendExtended) {
+bool Savegame::saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter) {
 	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(filename);
 	if (!file)
 		return false;
@@ -311,10 +311,7 @@ bool Savegame::saveData(const Common::String &filename, const Common::String &na
 
 	write(file, _vm->getTick(), "Time");
 
-	if (appendExtended)
-		_vm->getMetaEngine()->appendExtendedSaveToStream(file, _vm->getTotalPlayTime() / 1000, name, false);
-	else
-		file->writeUint32LE(0);
+	_vm->getMetaEngine()->appendExtendedSaveToStream(file, _vm->getTotalPlayTime() / 1000, name, false);
 
 	delete file;
 
