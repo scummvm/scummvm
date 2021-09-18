@@ -46,6 +46,7 @@ typedef struct dirty_rect_t {
 
 #define MAX_DIRTY_RECT 10
 extern dirty_rect_t dirty_rects[];
+extern dirty_rect_t *last_dirty_rect;
 
 #define SPIKE_MASK     0xE0
 #define SPIKE_UPLEFT   0

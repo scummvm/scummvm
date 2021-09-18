@@ -669,6 +669,11 @@ uint16 SCR_9_DrawPortrait(void) {
 	return 0;
 }
 
+/*Draw portrait, no special effects*/
+uint16 SCR_A_DrawPortrait(void) {
+	return SCR_9_DrawPortrait();
+}
+
 /*Draw screen pixels using 2-phase clockwise twist*/
 void TwistDraw(byte x, byte y, byte width, byte height, byte *source, byte *target) {
 	int16 i;
@@ -797,7 +802,9 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	return 0;
 }
 
-/*Draw image with slow zoom-in reveal effect*/
+/*
+Draw image with slow zoom-in reveal effect
+*/
 uint16 SCR_E_DrawPortraitZoomIn(void) {
 	byte x, y, width, height;
 
@@ -806,13 +813,40 @@ uint16 SCR_E_DrawPortraitZoomIn(void) {
 	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
-	/*TODO*/
-
-	CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
-
+	CGA_AnimZoomIn(cur_image_pixels, cur_image_size_w, cur_image_size_h, frontbuffer, cur_image_offs);
 	return 0;
 }
 
+
+/*
+Draw image with specified w/h zoom
+*/
+uint16 SCR_10_DrawPortraitZoomed(void) {
+	byte x, y, width, height;
+	byte zwidth, zheight;
+
+	script_ptr++;
+
+	right_button = 0;   /*prevent cancel or zoom parameters won't be consumed*/
+	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+		return 0;   /*TODO: maybe just remove the if/return instead?*/
+
+	zwidth = *script_ptr++;
+	zheight = *script_ptr++;
+
+	/*adjust the rect for new size*/
+	last_dirty_rect->width = zwidth + 2;
+	last_dirty_rect->height = zheight;
+
+	CGA_ZoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, zwidth, zheight, frontbuffer, cur_image_offs);
+
+#if 0
+	/*TODO: debug wait*/
+	PromptWait();
+#endif
+
+	return 0;
+}
 
 /*Hide portrait, pushing it from right to left*/
 uint16 SCR_19_HidePortraitLiftLeft(void) {
@@ -1448,6 +1482,27 @@ uint16 SCR_23_HidePortrait(void) {
 }
 
 /*
+Hide a portrait, no special effects
+*/
+uint16 SCR_1D_HidePortrait(void) {
+	return SCR_23_HidePortrait();
+}
+
+/*
+Hide a portrait, no special effects
+*/
+uint16 SCR_21_HidePortrait(void) {
+	return SCR_23_HidePortrait();
+}
+
+/*
+Hide a portrait, no special effects
+*/
+uint16 SCR_3F_HidePortrait(void) {
+	return SCR_23_HidePortrait();
+}
+
+/*
 Restore screen data from back buffer for all portraits
 */
 uint16 SCR_24_PopAllPortraits(void) {
@@ -1533,7 +1588,7 @@ uint16 SCR_30_Fight(void) {
 
 	strenght = 0;
 
-	script_byte_vars.byte_179F2 = 0;
+	script_byte_vars.fight_status = 0;
 
 	if (script_byte_vars.byte_179F3 == 0) {
 		static byte character_strenght[] = {1, 3, 1, 1, 1, 1, 5, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -1557,6 +1612,15 @@ uint16 SCR_30_Fight(void) {
 			strenght++;
 	}
 
+	/*
+	win flags:
+	   1 - player won
+	   2 - player dead
+	0x20 - "TU NUH RAY VUN IN FAY VRABLE SIT YOU AISHUN."
+	0x40 - "OUT KUM UNSER TUN."
+	0x80 - "SIT YOU ASHUN KRITI KAL FOR TOONUH RAY VUN."
+	*/
+
 	win = 1;
 	rnd = script_byte_vars.rand_value;
 
@@ -1567,21 +1631,21 @@ uint16 SCR_30_Fight(void) {
 	if (strenght >= 2) {
 		if (strenght == 2) {
 			if (rnd >= 205)
-				win = Rand() < 128 ? 81 : 82;
+				win = Rand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
 		} else if (strenght == 4 && rnd < 100) {
-			win = Rand() < 128 ? 81 : 82;
+			win = Rand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
 		} else {
 			win = 2;
 			if (strenght == 3) {
 				if (rnd < 128)  /*TODO: check me, maybe original bug (checks against wrong reg?)*/
-					win = Rand() < 51 ? 145 : 146;
+					win = Rand() < 51 ? (0x80 | 0x10 | 1) : (0x80 | 0x10 | 2);
 				else
-					win = Rand() < 205 ? 49 : 50;
+					win = Rand() < 205 ? (0x20 | 0x10 | 1) : (0x20 | 0x10 | 2);
 			}
 		}
 	}
 
-	script_byte_vars.byte_179F2 = win;
+	script_byte_vars.fight_status = win;
 
 	script_ptr = old_script;
 	script_end_ptr = old_script_end;
@@ -1696,7 +1760,7 @@ uint16 SCR_31_Fight2(void) {
 			if (prev_fight_mode == 0
 			        && script_byte_vars.room_items != 0
 			        && fight_mode == 0) {
-				script_byte_vars.byte_179F2 &= ~1;
+				script_byte_vars.fight_status &= ~1;
 			} else {
 				uint16 i;
 				fightentry_t *fightlist;
@@ -2250,9 +2314,80 @@ uint16 SCR_53_FindInvItem(void) {
 	return 0;
 }
 
+/*
+Restore whole room from backbuffer, with dot effect
+*/
+uint16 SCR_54_DotFadeRoom(void) {
+	script_ptr++;
+
+	dot_effect_delay = 1;
+	dot_effect_step = 17;
+	CopyScreenBlockWithDotEffect(backbuffer, room_bounds_rect.sx, room_bounds_rect.sy, room_bounds_rect.ex - room_bounds_rect.sx, room_bounds_rect.ey - room_bounds_rect.sy, frontbuffer);
+
+	return 0;
+}
+
 uint16 SCR_55_DrawRoomItemsIndicator(void) {
 	script_ptr++;
 	DrawRoomItemsIndicator();
+	return 0;
+}
+
+/*
+TODO: check and rename me
+*/
+uint16 SCR_56_MorphRoom98(void) {
+	int16 h;
+	uint16 ofs;
+	script_ptr++;
+
+	RedrawRoomStatics(98, 0);
+
+	ofs = CGA_CalcXY(0, 136);
+	for (h = 60; h; h--) {
+		memcpy(frontbuffer + ofs, backbuffer + ofs, CGA_BYTES_PER_LINE);
+		WaitVBlank();
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) != 0)
+			ofs -= CGA_BYTES_PER_LINE;
+	}
+
+	BackupSpotImage(&zone_spots[3], &sprites_list[3], sprites_list[3]);
+
+	return 0;
+}
+
+extern void AskDisk2(void);
+extern int16 LoadSplash(const char *filename);
+
+/*
+TODO: check me
+*/
+uint16 SCR_5B_TheEnd(void) {
+	static byte image1[] = {167, 0, 146};
+	byte *pimage1 = image1;
+	byte *sequence = souco_data;
+
+	byte x, y, width, height;
+
+	/*script_ptr++; Useless since this handler never returns*/
+
+	script_byte_vars.game_paused = 5;
+	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
+	CGA_BackBufferToRealFull();
+	CGA_ColorSelect(0x30);
+
+	right_button = 0;
+	if (!DrawPortrait(&pimage1, &x, &y, &width, &height))
+		return 0;
+
+	/*TODO*/
+
+	while (!LoadSplash("PRES.BIN"))
+		AskDisk2();
+	CGA_BackBufferToRealFull();
+
+	for (;;) ;  /*HANG*/
 	return 0;
 }
 
@@ -2474,6 +2609,25 @@ uint16 SCR_29_DialiTextBox(void) {
 	f = *script_ptr++;
 
 	DrawPersonBubble(x, y, f, msg);
+	return 0;
+}
+
+/*
+Do nothing in PC/CGA version
+*/
+uint16 SCR_F_Unused(void) {
+	script_ptr++;
+	script_ptr++;
+	script_ptr++;
+	script_ptr++;
+	return 0;
+}
+
+/*
+Do nothing in PC/CGA version
+*/
+uint16 SCR_4A_Unused(void) {
+	script_ptr++;
 	return 0;
 }
 
@@ -3430,13 +3584,13 @@ cmdhandler_t script_handlers[] = {
 	SCR_7_DrawPortraitLiftDown,
 	SCR_8_DrawPortraitLiftUp,
 	SCR_9_DrawPortrait,
-	SCR_TRAP,
+	SCR_A_DrawPortrait,     /*TODO: same as SCR_9_DrawPortrait , unused*/
 	SCR_B_DrawPortraitTwistEffect,
 	SCR_C_DrawPortraitArcEffect,
 	SCR_D_DrawPortraitDotEffect,
 	SCR_E_DrawPortraitZoomIn,
-	SCR_TRAP,
-	SCR_TRAP,   /*10*/
+	SCR_F_Unused,
+	SCR_10_DrawPortraitZoomed,   /*10*/
 	SCR_11_DrawRoomObject,
 	SCR_12_Chain,
 	SCR_13_RedrawRoomStatics,
@@ -3449,11 +3603,11 @@ cmdhandler_t script_handlers[] = {
 	SCR_1A_HidePortraitLiftRight,
 	SCR_1B_HidePortraitLiftUp,
 	SCR_1C_HidePortraitLiftDown,
-	SCR_TRAP,                   /*TODO: same as SCR_23_HidePortrait , unused*/
+	SCR_1D_HidePortrait,        /*TODO: same as SCR_23_HidePortrait , unused*/
 	SCR_1E_HidePortraitTwist,
 	SCR_1F_HidePortraitArc,
 	SCR_20_HidePortraitDots,    /*20*/
-	SCR_TRAP,                   /*TODO: same as SCR_23_HidePortrait , unused*/
+	SCR_21_HidePortrait,        /*TODO: same as SCR_23_HidePortrait , unused*/
 	SCR_22_HidePortraitShatter,
 	SCR_23_HidePortrait,
 	SCR_24_PopAllPortraits,
@@ -3483,7 +3637,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_3C_CondExpr,
 	SCR_3D_ActionsMenu,
 	SCR_3E_TheWallAdvance,
-	SCR_TRAP,
+	SCR_3F_HidePortrait,        /*TODO: same as SCR_23_HidePortrait , unused*/
 	SCR_40_PopAllTextBoxes, /*40*/
 	SCR_41_LiftHand,
 	SCR_42_LoadZone,
@@ -3494,7 +3648,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_47_DeProfundisRiseMonster,
 	SCR_48_DeProfundisLowerMonster,
 	SCR_49_DeProfundisRiseHook,
-	SCR_TRAP,
+	SCR_4A_Unused,
 	SCR_4B_ProtoDropZapstik,
 	SCR_4C_DrawZoneObjs,
 	SCR_4D_PriorityCommand,
@@ -3504,14 +3658,14 @@ cmdhandler_t script_handlers[] = {
 	SCR_51_ItemTrade,
 	SCR_52_RefreshSpritesData,
 	SCR_53_FindInvItem,
-	SCR_TRAP,
+	SCR_54_DotFadeRoom,
 	SCR_55_DrawRoomItemsIndicator,
-	SCR_TRAP,
+	SCR_56_MorphRoom98,
 	SCR_57_ShowCharacterSprite,
 	SCR_58_DrawCharacterSprite,
 	SCR_59_BlitSpritesToBackBuffer,
 	SCR_5A_SelectPalette,
-	SCR_TRAP,
+	SCR_5B_TheEnd,
 	SCR_5C_ClearInventory,
 	SCR_5D_DropWeapons,
 	SCR_5E_SelectTempPalette,

@@ -125,6 +125,9 @@ void CGA_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *t
 
 void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target);
 
+void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs);
+void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs);
+
 } // End of namespace Chamber
 
 #endif
