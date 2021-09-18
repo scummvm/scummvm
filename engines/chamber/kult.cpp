@@ -158,9 +158,6 @@ void GameLoop(byte *target) {
 					goto process;
 			}
 
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-
 			continue;
 
 process:
@@ -186,8 +183,6 @@ process:
 			ProcessInput();
 			DrawSpots(target);
 		}
-		g_system->updateScreen();
-		g_system->delayMillis(10);
 	}
 }
 
