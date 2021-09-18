@@ -58,6 +58,8 @@ void SwitchToGraphicsMode(void);
 void SwitchToTextMode(void);
 
 void WaitVBlank(void);
+void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h);
+void CGA_blitToScreen(int16 ofs, int16 w, int16 h);
 
 void CGA_ColorSelect(byte csel);
 void CGA_BackBufferToRealFull(void);

@@ -780,13 +780,19 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 		return 0;
 
 	cur_image_end = width * height;
+	int16 count = 0;
 
 	for (offs = 0; offs != cur_image_end;) {
 		target[CGA_CalcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs];
-		for (i = 0; i < 255; i++) ; /*TODO FIXME weak delay*/
+
+		if (count % 5 == 0)
+			CGA_blitToScreen(offs, 4, 1);
+
 		offs += step;
 		if (offs > cur_image_end)
 			offs -= cur_image_end;
+
+		count++;
 	}
 	return 0;
 }
