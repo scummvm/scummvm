@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-17 20:04+0000\n"
-"PO-Revision-Date: 2021-08-29 11:25+0000\n"
+"PO-Revision-Date: 2021-09-18 10:02+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1416,16 +1416,16 @@ msgstr ""
 "Запитувати підтвердження виходу під час закриття ScummVM або виходу з гри."
 
 #: gui/options.cpp:2295
-#, fuzzy
-#| msgid "Enable content censoring"
 msgid "Enable Discord integration"
-msgstr "Ввімкнути цензуру контенту"
+msgstr "Ввімкнути інтеграцію з Discord"
 
 #: gui/options.cpp:2296
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Показувати інформацію стосовно поточної гри, якщо у вас запущено клієнт "
+"Discord."
 
 #: gui/options.cpp:2305
 msgid "GUI language:"
@@ -7167,7 +7167,7 @@ msgstr "Перемикання дуже швидкого режиму"
 
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr ""
+msgstr "УВАГА: Видалення слоту автозбереження не підтримується цим движком"
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
