@@ -321,6 +321,11 @@ void T11hGame::opBeehive() {
 	int8 *hexDifference = (int8 *)_scriptVariables + 13;
 	byte op = _scriptVariables[14] - 1;
 
+	enum kBeehiveColor {
+		kBeehiveColorYellow = -1,
+		kBeehiveColorRed = 1
+	};
+
 	warning("Beehive subop %d", op);
 
 	//*hexDifference = 4;
@@ -329,12 +334,12 @@ void T11hGame::opBeehive() {
 	switch (op) {
 	case 0:	// init board's hexagons
 		memset(_beehiveHexagons, 0, 60);
-		_beehiveHexagons[0] = BEEHIVE_YELLOW;
-		_beehiveHexagons[4] = BEEHIVE_RED;
-		_beehiveHexagons[34] = BEEHIVE_YELLOW;
-		_beehiveHexagons[60] = BEEHIVE_RED;
-		_beehiveHexagons[56] = BEEHIVE_YELLOW;
-		_beehiveHexagons[26] = BEEHIVE_RED;
+		_beehiveHexagons[0] = kBeehiveColorYellow;
+		_beehiveHexagons[4] = kBeehiveColorRed;
+		_beehiveHexagons[34] = kBeehiveColorYellow;
+		_beehiveHexagons[60] = kBeehiveColorRed;
+		_beehiveHexagons[56] = kBeehiveColorYellow;
+		_beehiveHexagons[26] = kBeehiveColorRed;
 		break;
 	case 1:
 		memset(hexagons, 0, 60);
@@ -382,8 +387,9 @@ void T11hGame::opPente() {
 
 /*
  * Puzzle in the Gallery.
- * The aim is to select the last part of the image.
- * When selecting a part, all surrounding parts are also selected
+ * The aim is to select the last piece of the image.
+ * There are 18 pieces in total.
+ * When selecting a piece, all surrounding pieces are also selected
  * 
  * +--------------------+--------------------------------+--------+
  * |         1/1A       |       2/1B                     |        |
@@ -423,6 +429,8 @@ void T11hGame::opPente() {
  */
 
 // Links between the pieces in the Gallery challenge
+// For example, the first row signifies that piece 1
+// is connected to pieces 2, 4 and 5
 const byte T11hGame::kGalleryLinks[21][10] = {
 	{ 2,  4,  5,  0,  0,  0,  0,  0,  0,  0 },	//  1
 	{ 1,  5,  3,  0,  0,  0,  0,  0,  0,  0 },	//  2
@@ -448,34 +456,33 @@ const byte T11hGame::kGalleryLinks[21][10] = {
 };
 
 void T11hGame::opGallery() {
+	const int kPieceCount = 21;
+	byte pieceStatus[kPieceCount];
+	byte var_18[kPieceCount];
+	int var_1c, linkedPiece;
+	byte curLink = 0;
 
-	byte field1[21];
-	byte field2[21];
-	byte var_18[21];
-	int var_1c, eax, edx, ecx;
+	enum kGalleryPieceStatus {
+		kPieceUnselected = 0,
+		kPieceSelected = 1
+	};
 
-	// Copy RegMem to Field1
-	for (int i = 0; i < 21; i++) {
-		field1[i] = _scriptVariables[0x1A + i];
-	}
+	memcpy(pieceStatus, _scriptVariables + 26, kPieceCount);
 
 	var_1c = 0;
-	for (int ebx = 0; ebx < 21; ebx++) {
-		var_18[ebx] = 0;
-		if (field1[ebx] != 0) {
-			memcpy(field2, field1, 21);
-
-			field2[ebx] = 0;
-			edx = kGalleryLinks[0][ebx];
-			eax = 1;
-			ecx = 0;
-			while (edx != 0) {
-				eax++;
-				field2[edx - 1] = ecx;
-				edx = kGalleryLinks[eax - 1][ebx];
+	for (int curPiece = 0; curPiece < kPieceCount; curPiece++) {
+		var_18[curPiece] = 0;
+		if (pieceStatus[curPiece] == kPieceSelected) {
+			curLink = kGalleryLinks[curPiece][0];
+			linkedPiece = 1;
+			pieceStatus[curPiece] = kPieceUnselected;
+			while (curLink != 0) {
+				linkedPiece++;
+				pieceStatus[curLink - 1] = kPieceUnselected;
+				curLink = kGalleryLinks[linkedPiece - 1][curPiece];
 			}
-			var_18[ebx] = opGallerySub(1, field2);
-			if (var_18[ebx] == 1) {
+			var_18[curPiece] = opGallerySub(1, pieceStatus);
+			if (var_18[curPiece] == 1) {
 				var_1c++;
 			}
 		}
@@ -483,9 +490,9 @@ void T11hGame::opGallery() {
 
 	if (var_1c == 0) {
 		int esi = 0;
-		for (eax = 0; eax < 21; eax++) {
-			if (var_18[eax] > esi) {
-				esi = var_18[eax];
+		for (int i = 0; i < kPieceCount; i++) {
+			if (var_18[i] > esi) {
+				esi = var_18[i];
 			}
 		}
 
@@ -499,9 +506,9 @@ void T11hGame::opGallery() {
 			}
 		}
 
-		for (eax = 0; eax < 21; eax++) {
-			if (var_18[eax] <= esi) {
-				var_18[eax] = 1;
+		for (linkedPiece = 0; linkedPiece < kPieceCount; linkedPiece++) {
+			if (var_18[linkedPiece] <= esi) {
+				var_18[linkedPiece] = 1;
 				var_1c++;
 			}
 		}

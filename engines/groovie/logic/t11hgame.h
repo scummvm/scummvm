@@ -30,9 +30,6 @@ namespace Groovie {
 
 class GroovieEngine;
 
-#define BEEHIVE_YELLOW -1
-#define BEEHIVE_RED 1
-
 class T11hGame {
 public:
 #ifdef ENABLE_GROOVIE2
