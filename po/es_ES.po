@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-17 20:04+0000\n"
-"PO-Revision-Date: 2021-09-11 22:21+0000\n"
+"PO-Revision-Date: 2021-09-18 12:49+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7226,7 +7226,7 @@ msgstr "Modo muy rápido"
 
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr ""
+msgstr "AVISO: Este motor no permite borrar el espacio de autoguardado."
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
