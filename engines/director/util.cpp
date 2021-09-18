@@ -21,6 +21,7 @@
  */
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/keyboard.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
@@ -391,37 +392,49 @@ Common::String getPath(Common::String path, Common::String cwd) {
 }
 
 bool testPath(Common::String &path, bool directory) {
-	if (directory) {
-		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
+	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 
-		// check for the game data dir
-		if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
-			path = "";
-			return true;
-		}
-
-		Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
-
-		if (d.getChild(directory_list.nextToken()).exists()) {
-			// then this part is for the "relative to current directory"
-			// we find the child directory recursively
-			directory_list.reset();
-			while (!directory_list.empty() && d.exists())
-				d = d.getChild(directory_list.nextToken());
-		} else {
+	// check for the game data dir
+	if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
+		if (!directory)
 			return false;
+		path = "";
+		return true;
+	}
+
+	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
+	Common::String newPath;
+
+	Common::FSList fslist;
+	while (!directory_list.empty()) {
+		Common::String token = directory_list.nextToken();
+		fslist.clear();
+		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
+		if (directory_list.empty() && !directory) {
+			mode = Common::FSNode::kListFilesOnly;
 		}
+		d.getChildren(fslist, mode);
 
-		return d.exists();
-	}
+		bool exists = false;
+		for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
+			// for each element in the path, choose the first FSNode
+			// with a case-insensitive matcing name
+			if (i->getName().equalsIgnoreCase(token)) {
+				exists = true;
+				newPath += i->getName();
+				if (!directory_list.empty())
+					newPath += (g_director->_dirSeparator);
 
-	Common::File f;
-	if (f.open(Common::Path(path, g_director->_dirSeparator))) {
-		if (f.size())
-			return true;
-		f.close();
+				d = Common::FSNode(*i);
+				break;
+			}
+		}
+		if (!exists)
+			return false;
 	}
-	return false;
+	// write back path with correct case
+	path = newPath;
+	return true;
 }
 
 // if we are finding the file path, then this func will return exactly the executable file path
