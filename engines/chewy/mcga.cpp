@@ -29,9 +29,13 @@ namespace Chewy {
 
 static byte saved_palette[PALETTE_SIZE];
 static byte *screenP;
+static bool screenHasDefault;
+static byte *screenDefaultP;
 
 void init_mcga() {
 	screenP = (byte *)g_engine->_screen->getPixels();
+	screenHasDefault = false;
+	screenDefaultP = nullptr;
 }
 
 void old_mode() {
@@ -55,8 +59,13 @@ void hflyback_end() {
 }
 
 void set_pointer(byte *ptr) {
-	assert(ptr);
-	screenP = ptr;
+	if (ptr) {
+		screenP = ptr;
+	} else if (screenHasDefault) {
+		screenP = screenDefaultP;
+	} else {
+		screenP = (byte *)g_engine->_screen->getPixels();
+	}
 }
 
 byte *get_dispoff() {
@@ -78,8 +87,9 @@ void restore_palette() {
 	setpalette(saved_palette);
 }
 
-void rastercol(int16 color, int16 rot, int16 gruen, int16 blau) {
-	warning("STUB - rastercol");
+void rastercol(int16 color, int16 r, int16 g, int16 b) {
+	const byte rgb[3] = { r, g, b };
+	g_system->getPaletteManager()->setPalette(&rgb[0], color, 1);
 }
 
 void set_palpart(byte *palette, int16 startcol, int16 anz) {

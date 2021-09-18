@@ -41,7 +41,7 @@ byte *get_dispoff();
 void setpalette(byte *palette);
 void save_palette(byte *pal);
 void restore_palette();
-void rastercol(int16 color, int16 rot, int16 gruen, int16 blau);
+void rastercol(int16 color, int16 r, int16 g, int16 b);
 void set_palpart(byte *palette, int16 startcol, int16 anz);
 
 void clear_mcga();
