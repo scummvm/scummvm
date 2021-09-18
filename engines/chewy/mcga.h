@@ -28,32 +28,6 @@
 
 namespace Chewy {
 
-extern uint8 svga;
-extern int16 FuNr;
-extern real_regs rr;
-extern real_regs *rp;
-extern maus_info *m_info;
-extern VesaInfo vi;
-
-extern int16 clipx1, clipx2, clipy1, clipy2;
-extern int16 gcurx, gcury, fvorx, fvory;
-extern int16 fontbr, fonth;
-extern int16 scr_w, scr_h;
-extern int16 fontfirst, fontlast;
-extern char writemode;
-
-extern char MausMode;
-extern char enter_key;
-extern char escape_key;
-extern char einfuegen;
-
-extern int16 crlfx, crlfy;
-extern int16 r_gef, r_end;
-extern int16 *rlist;
-extern bool mono;
-extern uint8 svga;
-
-
 void init_mcga();
 void old_mode();
 

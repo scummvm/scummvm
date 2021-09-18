@@ -27,40 +27,10 @@
 
 namespace Chewy {
 
-int16 FuNr;
-real_regs rr;
-real_regs *rp = &rr;
-maus_info *m_info;
-VesaInfo vi;
-
-int16 clipx1, clipx2, clipy1, clipy2;
-int16 gcurx, gcury, fvorx, fvory;
-int16 fontbr, fonth;
-int16 scr_w, scr_h;
-int16 fontfirst, fontlast;
-char writemode;
-
-char MausMode;
-char enter_key;
-char escape_key;
-char einfuegen = 0;
-
-int16 crlfx = 0, crlfy = 0;
-int16 r_gef = -1, r_end = false;
-int16 *rlist = 0;
-bool mono = false;
-uint8 svga;
-byte *screenP;
-
 static byte saved_palette[PALETTE_SIZE];
+static byte *screenP;
 
 void init_mcga() {
-	crlfx = crlfy = 0;
-	r_gef = -1;
-	r_end = false;
-	rlist = 0;
-	mono = false;
-	svga = 0;
 	screenP = (byte *)g_engine->_screen->getPixels();
 }
 
