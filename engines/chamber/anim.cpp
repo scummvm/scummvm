@@ -132,7 +132,7 @@ void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 }
 
 void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
-	uint16 delay, delay2;
+	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = CGA_CalcXY_p(x, y);
 	CGA_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);

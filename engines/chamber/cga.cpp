@@ -30,6 +30,8 @@
 
 namespace Chamber {
 
+#define ANIM_DELAY 10
+
 extern byte backbuffer[0x4000];
 byte CGA_SCREENBUFFER[0x4000];
 byte scrbuffer[320*200];
@@ -783,7 +785,7 @@ void CGA_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 
 
 		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
-			g_system->delayMillis(10);
+			g_system->delayMillis(ANIM_DELAY);
 		}
 
 		WaitVBlank();
@@ -829,7 +831,7 @@ void CGA_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w,
 
 		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
-			g_system->delayMillis(10);
+			g_system->delayMillis(ANIM_DELAY);
 		}
 
 		WaitVBlank();
@@ -869,7 +871,7 @@ void CGA_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 
 
 		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
-			g_system->delayMillis(10);
+			g_system->delayMillis(ANIM_DELAY);
 		}
 
 		WaitVBlank();
@@ -907,7 +909,7 @@ void CGA_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16
 
 		if (screen == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
-			g_system->delayMillis(10);
+			g_system->delayMillis(ANIM_DELAY);
 		}
 
 		WaitVBlank();
@@ -1048,7 +1050,7 @@ static void FallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 
 		if (target == CGA_SCREENBUFFER) {
 			CGA_blitToScreen(0, 0, 320, 200);
-			g_system->delayMillis(10);
+			g_system->delayMillis(ANIM_DELAY);
 		}
 
 		WaitVBlank();
