@@ -294,11 +294,14 @@ restart:
 	}
 #endif
 
-#if 1
-	/* Play introduction sequence */
+#ifdef DEBUG_SKIP_INTRO
+	/*bypass characters introduction*/
+	script_byte_vars.load_flag = DEBUG_SKIP_INTRO;
+#endif
+
+	/* Play introduction sequence and initialize game */
 	the_command = 0xC001;
 	RunCommand();
-#endif
 
 	if (_shouldQuit)
 		return Common::kNoError;

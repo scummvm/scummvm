@@ -49,6 +49,13 @@ typedef struct rect_t {
 #endif
 
 #if 1
+/*0 - play intro*/
+/*0xFF - skip intro, quest item and teleport*/
+/*other - skip intro, play quest item seq, teleport to room*/
+#define DEBUG_SKIP_INTRO 0xFF
+#endif
+
+#if 1
 #define DEBUG_ZONE
 #endif
 
@@ -72,7 +79,7 @@ typedef struct rect_t {
 #define DEBUG_QUEST 0xC0
 #endif
 
-#if 0
+#if 1
 #define CHEAT
 #endif
 
