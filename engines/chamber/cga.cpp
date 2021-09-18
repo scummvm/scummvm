@@ -104,10 +104,14 @@ void WaitVBlank(void) {
 }
 
 void CGA_ColorSelect(byte csel) {
+	const byte *pal;
 	if (csel & 0x20)
-		g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+		pal = PALETTE_CGA;
 	else
-		g_system->getPaletteManager()->setPalette(PALETTE_CGA2, 0, 4);
+		pal = PALETTE_CGA2;
+
+	g_system->getPaletteManager()->setPalette(pal, 0, 4);
+	g_system->setCursorPalette(pal, 0, 4);
 }
 
 void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {

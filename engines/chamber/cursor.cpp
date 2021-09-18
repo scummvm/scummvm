@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/cursor.h"
@@ -57,6 +59,7 @@ byte cursor_y;
 byte cursor_backup[CURSOR_WIDTH_SPR * CURSOR_HEIGHT / CGA_BITS_PER_PIXEL];
 uint16 last_cursor_draw_ofs = 0;
 uint16 cursor_draw_ofs;
+byte cursorImage[CURSOR_WIDTH * CURSOR_HEIGHT];
 
 /*
 Select cursor shape and its hotspot
@@ -65,114 +68,50 @@ void SelectCursor(uint16 num) {
 	cursor_x_shift = cursor_shifts[num][0];
 	cursor_y_shift = cursor_shifts[num][1];
 	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / CGA_PIXELS_PER_BYTE;
+
+	byte *src = cursor_shape;
+	byte *dst = cursorImage;
+	for (int16 y = 0; y < CURSOR_HEIGHT; y++) {
+		for (int16 x = 0; x < CURSOR_HEIGHT / 4; x++) {
+			byte colors = *src;
+			byte masks = *(src++ + CURSOR_HEIGHT * CURSOR_WIDTH / 4);
+
+			for (int16 c = 0; c < 4; c++) {
+				byte color = (colors & 0xC0) >> 6;
+				byte mask = (masks & 0xC0) >> 6;
+				colors <<= 2;
+				masks <<= 2;
+
+				if (!mask)
+					*dst++ = color;
+				else {
+					*dst++ = 255;
+				}
+			}
+		}
+	}
+
+	g_system->setMouseCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	g_system->showMouse(true);
 }
 
 /*
 Build cursor sprite for its current pixel-grained position
 */
 void UpdateCursor(void) {
-	if (!cursor_shape)
-		return;
-
-	byte *cursor, *sprite, *spr;
-	byte cursor_bit_shift;
-	uint16 x, y;
-	x = cursor_x - cursor_x_shift;
-	if ((int16)x < 0) x = 0;
-	y = cursor_y - cursor_y_shift;
-	if ((int16)y < 0) y = 0;
-
-	cursor_bit_shift = (x % 4) * 2;
-	cursor_draw_ofs = CGA_CalcXY_p(x / 4, y);
-
-	cursor = cursor_shape;
-	sprite = sprit_load_buffer;
-
-	if (cursor_bit_shift == 0) {
-		/*pixels*/
-		spr = sprite;
-		for (y = 0; y < CURSOR_HEIGHT; y++) {
-			for (x = 0; x < CURSOR_WIDTH / 4; x++) {
-				byte p = *cursor++;
-				spr[x * 2] = p;
-			}
-			spr[x * 2] = 0;
-			spr += 5 * 2;
-		}
-
-		/*mask*/
-		spr = sprite + 1;
-		for (y = 0; y < CURSOR_HEIGHT; y++) {
-			for (x = 0; x < CURSOR_WIDTH / 4; x++) {
-				byte p = *cursor++;
-				spr[x * 2] = p;
-			}
-			spr[x * 2] = 0xFF;
-			spr += 5 * 2;
-		}
-	} else {
-		spr = sprite;
-		for (y = 0; y < CURSOR_HEIGHT; y++) {
-			byte i;
-			byte p0 = *cursor++;
-			byte p1 = *cursor++;
-			byte p2 = *cursor++;
-			byte p3 = *cursor++;
-			byte p4 = 0;
-			for (i = 0; i < cursor_bit_shift; i++) {
-				p4 = (p4 >> 1) | (p3 << 7);
-				p3 = (p3 >> 1) | (p2 << 7);
-				p2 = (p2 >> 1) | (p1 << 7);
-				p1 = (p1 >> 1) | (p0 << 7);
-				p0 = (p0 >> 1) | (0 << 7);
-			}
-			spr[0] = p0;
-			spr[2] = p1;
-			spr[4] = p2;
-			spr[6] = p3;
-			spr[8] = p4;
-
-			spr += 5 * 2;
-		}
-
-		spr = sprite + 1;
-		for (y = 0; y < CURSOR_HEIGHT; y++) {
-			byte i;
-			byte p0 = *cursor++;
-			byte p1 = *cursor++;
-			byte p2 = *cursor++;
-			byte p3 = *cursor++;
-			byte p4 = 0xFF;
-			for (i = 0; i < cursor_bit_shift; i++) {
-				p4 = (p4 >> 1) | (p3 << 7);
-				p3 = (p3 >> 1) | (p2 << 7);
-				p2 = (p2 >> 1) | (p1 << 7);
-				p1 = (p1 >> 1) | (p0 << 7);
-				p0 = (p0 >> 1) | (1 << 7);
-			}
-			spr[0] = p0;
-			spr[2] = p1;
-			spr[4] = p2;
-			spr[6] = p3;
-			spr[8] = p4;
-			spr += 5 * 2;
-		}
-	}
 }
 
 /*
 Draw cursor sprite and backup background pixels
 */
 void DrawCursor(byte *target) {
-	last_cursor_draw_ofs = cursor_draw_ofs;
-	CGA_BlitSpriteBak(sprit_load_buffer, CURSOR_WIDTH_SPR / 4, CURSOR_WIDTH_SPR / 4, CURSOR_HEIGHT, target, cursor_draw_ofs, cursor_backup, cursor_color);
+	g_system->updateScreen();
 }
 
 /*
 Restore background pixels under cursor
 */
 void UndrawCursor(byte *target) {
-	CGA_Blit(cursor_backup, CURSOR_WIDTH_SPR / 4, CURSOR_WIDTH_SPR / 4, CURSOR_HEIGHT, target, last_cursor_draw_ofs);
 }
 
 /*
