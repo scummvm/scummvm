@@ -844,6 +844,8 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 
 	/*hide leftmost line*/
 	/*TODO: move this to CGA?*/
+	uint16 ooffs = offs;
+	byte oh = height;
 	while (height--) {
 		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
@@ -851,6 +853,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
+	CGA_blitToScreen(ooffs, 1, oh);
 
 	return 0;
 }
@@ -884,6 +887,8 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 
 	/*hide leftmost line*/
 	/*TODO: move this to CGA?*/
+	uint16 ooffs = offs;
+	byte oh = height;
 	while (height--) {
 		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
@@ -891,6 +896,7 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
+	CGA_blitToScreen(ooffs, 1, oh);
 
 	return 0;
 }
@@ -924,6 +930,7 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 	if ((offs & CGA_ODD_LINES_OFS) != 0)
 		offs -= CGA_BYTES_PER_LINE;
 	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+	CGA_blitToScreen(offs, width, 1);
 	return 0;
 }
 
@@ -957,6 +964,7 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 	if ((offs & CGA_ODD_LINES_OFS) == 0)
 		offs += CGA_BYTES_PER_LINE;
 	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+	CGA_blitToScreen(offs, width, 1);
 	return 0;
 }
 
@@ -2833,8 +2841,10 @@ uint16 CMD_E_PsiZoneScan(void) {
 	for (y = room_bounds_rect.sy; h; y++, h--) {
 		spot_t *spot;
 		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		CGA_blitToScreen(offs, w, 1);
 		WaitVBlank();
 		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		CGA_blitToScreen(offs, w, 1);
 
 		for (spot = zone_spots; spot != zone_spots_end; spot++) {
 			if ((spot->flags & ~(SPOTFLG_40 | 7)) == (SPOTFLG_20 | SPOTFLG_8) && spot->sy == y) {

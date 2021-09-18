@@ -1371,14 +1371,17 @@ void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 
 	/*hide remaining column*/
 	/*TODO: move this to CGA?*/
+	uint16 ooffs = offs;
+	byte oh = height;
 	while (height--) {
-		warning("STUB: TheWallOpenRightDoor()");
-		//memcpy(frontbuffer + offs, backbuffer + offs, 1);
+		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
 		offs ^= CGA_ODD_LINES_OFS;
 		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
+
+	CGA_blitToScreen(ooffs, 1, oh);
 }
 
 void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
@@ -1394,14 +1397,16 @@ void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
 
 	/*hide remaining column*/
 	/*TODO: move this to CGA?*/
+	uint16 ooffs = offs;
+	byte oh = height;
 	while (height--) {
-		warning("STUB: TheWallOpenLeftDoor()");
-		//memcpy(frontbuffer + offs, backbuffer + offs, 1);
+		memcpy(frontbuffer + offs, backbuffer + offs, 1);
 
 		offs ^= CGA_ODD_LINES_OFS;
 		if ((offs & CGA_ODD_LINES_OFS) == 0)
 			offs += CGA_BYTES_PER_LINE;
 	}
+	CGA_blitToScreen(ooffs, 1, oh);
 }
 
 /*
