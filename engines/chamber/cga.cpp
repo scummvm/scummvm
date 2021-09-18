@@ -25,6 +25,7 @@
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
+#include "chamber/input.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
 
@@ -100,6 +101,7 @@ void SwitchToTextMode(void) {
 }
 
 void WaitVBlank(void) {
+	PollInput();
 	g_system->delayMillis(10);
 }
 
