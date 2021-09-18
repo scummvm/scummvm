@@ -912,10 +912,12 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
+	{ "darylfgates",		"Police Quest Q&A with Daryl F. Gates" },
 	{ "dcanyoncd",			"Dino CD Audio Player" },
 	{ "freeallangels",		"Ash: Free All Angels Video Mixer" },
 	{ "lbfamfun",			"Little Bear Family Fun" },
 	{ "poliq",				"Political IQ Test" },
+	{ "pqmakingof",			"The Making of Police Quest" },
 	{ "scissorsnstones",	"Scissors N Stones On-Line Manual" },
 	{ "solmahjong",			"Solitudes Mahjong Game" },
 	{ "superbowltrivia",	"Super Bowl Trivia Game" },
@@ -1477,6 +1479,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is キューティ１０デモ
 	MACDEMO1_l("cutie10", "Demo", "Cutie 10 demo", "f5277c53bacd27936158dd3867e587e2", 390315, Common::JA_JPN, 311),
+
+	// From the Police Quest Collection
+	WINGAME1("darylfgates", "", "INTERVEW.EXE", "351c9f2cf2c205eea7a9ce50e73974ee", 1059729, 311),
 
 	MACGAME1("digby", "", "Start Digby's Adventures!", "7f443f2e63fd497a9ad85b10dc880a91", 383758, 313),
 	WINGAME1("digby", "", "DIGBY.EXE", "65d06b5fef155a2473434571aff5bc29", 370972, 310),
@@ -3060,6 +3065,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Plays in English, Simplified Chinese, Tibetan
 	// Alternate titles are 布达拉宫 and ཕོ་བྲང་པོ་ཏ་ལ་
 	WINGAME1("potala", "", "POTALA.EXE", "2d5780d54e3c26281ef4aadef7d004b8", 35710089, 400),
+
+	// From the Police Quest Collection
+	WINGAME1("pqmakingof", "", "MAKING.EXE", "aae6a546b0c6bc51758053d14d9f6db2", 2127119, 400),
 
 	MACGAME1("prangers1", "", "Power Rangers", "13fe5212d9fc599e34b1260dc09970be", 303281, 400),
 	MACGAME1("prangers2", "", "PR Part 2", "0ecc4b4483d638bfb727cc5472b2fde3", 303281, 400),
