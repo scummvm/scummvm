@@ -57,13 +57,11 @@ private:
 	uint16 inline getScriptVar16(uint16 var);
 
 	bool isCakeFull();
-	int cakeLineUp(int x, int start_y);
-	int cakeLineRight(int start_x, int y);
-	int cakeLineUpRight(int start_x, int start_y);
-	int cakeLineDownRight(int start_x, int start_y);
 	byte cakeGetWinner();
 	void clearCake();
 	void cakePlaceBonBon(int x, byte team);
+	byte cakeGetOpponent(byte team);
+	int cakeGetLineLen(int start_x, int start_y, int slope_x, int slope_y, byte team);
 
 	byte *_scriptVariables;
 

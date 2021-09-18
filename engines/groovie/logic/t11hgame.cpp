@@ -185,6 +185,8 @@ void T11hGame::opConnectFour() {
 }
 
 byte T11hGame::connectFourAI() {
+	// TODO: copy the AI from the game
+	// the cakeGetLineLen function returns the length of the line which should be the scoring function
 	uint slot = 0;
 	do {
 		slot = _random.getRandomNumber(7);
@@ -193,73 +195,45 @@ byte T11hGame::connectFourAI() {
 }
 
 bool T11hGame::isCakeFull() {
-	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
-		if (cake_board[x][CAKE_BOARD_HEIGHT - 1] == 0)
-			return false;
-	}
-	return true;
+	return NULL == memchr(cake_board, 0, sizeof(cake_board));
 }
 
-int T11hGame::cakeLineUp(int x, int start_y) {
-	byte team = cake_board[x][start_y];
-
-	// return 0 for worthless lines
-	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
-		return 0;
-
-	for (int y = start_y; y < start_y + CAKE_GOAL_LEN; y++) {
-		if (cake_board[x][y] != team)
-			return y - start_y;
-	}
-	return CAKE_GOAL_LEN;
+byte T11hGame::cakeGetOpponent(byte team) {
+	if (team == CAKE_TEAM_PLAYER)
+		return CAKE_TEAM_STAUF;
+	else if (team == CAKE_TEAM_STAUF)
+		return CAKE_TEAM_PLAYER;
+	return 0;
 }
 
-int T11hGame::cakeLineRight(int start_x, int y) {
-	byte team = cake_board[start_x][y];
+// also use the cakeGetLineLen function as a scoring function for the AI
+int T11hGame::cakeGetLineLen(int start_x, int start_y, int slope_x, int slope_y, byte team) {
+	byte opponent = cakeGetOpponent(team);
 
 	// return 0 for worthless lines
-	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
+	if (start_x + slope_x * CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
+		return 0;
+	if (start_x + slope_x * CAKE_GOAL_LEN < 0)
+		return 0;
+	if (start_y + slope_y * CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
+		return 0;
+	if (start_y + slope_y * CAKE_GOAL_LEN < 0)
 		return 0;
 
-	for (int x = start_x; x < start_x + CAKE_GOAL_LEN; x++) {
-		if (cake_board[x][y] != team)
-			return x - start_x;
+	// don't loop past CAKE_GOAL_LEN because more than 4 is useless to rules and the AI
+	int x = start_x;
+	int y = start_y;
+	int len = 0;
+	for (int i = 0; i < CAKE_GOAL_LEN; i++) {
+		if (cake_board[x][y] == opponent)
+			return 0; // return 0 for worthless lines
+		if (cake_board[x][y] == team)
+			len++;
+
+		x += slope_x;
+		y += slope_y;
 	}
-	return CAKE_GOAL_LEN;
-}
-
-int T11hGame::cakeLineUpRight(int start_x, int start_y) {
-	byte team = cake_board[start_x][start_y];
-
-	// return 0 for worthless lines
-	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
-		return 0;
-
-	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
-		return 0;
-
-	for (int x = start_x, y = start_y; x < start_x + CAKE_GOAL_LEN; x++, y++) {
-		if (cake_board[x][y] != team)
-			return x - start_x;
-	}
-	return CAKE_GOAL_LEN;
-}
-
-int T11hGame::cakeLineDownRight(int start_x, int start_y) {
-	byte team = cake_board[start_x][start_y];
-
-	// return 0 for worthless lines
-	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
-		return 0;
-
-	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
-		return 0;
-
-	for (int x = start_x, y = start_y; x < start_x + CAKE_GOAL_LEN; x++, y--) {
-		if (cake_board[x][y] != team)
-			return x - start_x;
-	}
-	return CAKE_GOAL_LEN;
+	return len;
 }
 
 byte T11hGame::cakeGetWinner() {
@@ -267,7 +241,7 @@ byte T11hGame::cakeGetWinner() {
 	if (isCakeFull())
 		return CAKE_TEAM_STAUF;
 
-	// search for lines of 4, we search up, right, and up-right
+	// search for lines of 4, we search up, right, up-right, and down-right
 	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
 		for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
 			byte team = cake_board[x][y];
@@ -276,10 +250,11 @@ byte T11hGame::cakeGetWinner() {
 				break;
 
 			// if we find a line, then we return the team value stored in this spot
-			int line = cakeLineUp(x, y);
-			line = MAX(cakeLineRight(x, y), line);
-			line = MAX(cakeLineUpRight(x, y), line);
-			line = MAX(cakeLineDownRight(x, y), line);
+			int line = 0;
+			line = MAX(cakeGetLineLen(x, y, 1, 0, team), line);
+			line = MAX(cakeGetLineLen(x, y, 0, 1, team), line);
+			line = MAX(cakeGetLineLen(x, y, 1, 1, team), line);
+			line = MAX(cakeGetLineLen(x, y, 1, -1, team), line);
 
 			if (line >= CAKE_GOAL_LEN)
 				return team;
@@ -290,11 +265,7 @@ byte T11hGame::cakeGetWinner() {
 }
 
 void T11hGame::clearCake() {
-	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
-		for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
-			cake_board[x][y] = 0;
-		}
-	}
+	memset(cake_board, 0, sizeof(cake_board));
 }
 
 void T11hGame::cakePlaceBonBon(int x, byte team) {
