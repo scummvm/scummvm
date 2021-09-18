@@ -101,7 +101,10 @@ void set_palpart(byte *palette, int16 startcol, int16 anz) {
 }
 
 void clear_mcga() {
-	g_engine->_screen->clear();
+	if (screenP == (byte *)g_engine->_screen->getPixels())
+		g_engine->_screen->clear();
+	else
+		Common::fill(screenP, screenP + SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
 
 void setpixel_mcga(int16 x, int16 y, int16 farbe) {
@@ -155,16 +158,64 @@ void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
 	}
 }
 
-void map_spr_2screen(byte *sptr, int16 x, int16 y) {
-	warning("STUB - map_spr_2screen");
+void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
+	int width = *((const int16 *)sptr);
+	sptr += y * width + x;
+	byte *destP = screenP;
+
+	for (int row = 0; row < SCREEN_HEIGHT;
+			++row, sptr += width, destP += SCREEN_WIDTH) {
+		Common::copy(sptr, sptr + SCREEN_WIDTH, destP);
+	}
 }
 
-void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
-	warning("STUB - spr_save_mcga");
+void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
+		int16 height, int16 scrwidth) {
+	int pitch;
+	byte *scrP;
+	*((int16 *)sptr) = width;
+	sptr += 2;
+	*((int16 *)sptr) = height;
+	sptr += 2;
+
+	if (scrwidth == 0) {
+		scrP = screenP + y * SCREEN_WIDTH + x;
+		pitch = SCREEN_WIDTH;
+	} else {
+		scrP = screenP + y * scrwidth + x;
+		pitch = scrwidth;
+	}
+
+	if (width >= 1 && height >= 1) {
+		for (int row = 0; row < height; ++row) {
+			Common::copy(scrP, scrP + width, sptr);
+			scrP += pitch;
+		}
+	}
 }
 
-void spr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth) {
-	warning("STUB - spr_set_mcga");
+void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrwidth) {
+	int pitch;
+	byte *scrP;
+	int width = *((const int16 *)sptr);
+	sptr += 2;
+	int height = *((const int16 *)sptr);
+	sptr += 2;
+
+	if (width >= 1 && height >= 1) {
+		if (scrwidth == 0) {
+			scrP = screenP + y * SCREEN_WIDTH + x;
+			pitch = SCREEN_WIDTH;
+		} else {
+			scrP = screenP + y * scrwidth + x;
+			pitch = scrwidth;
+		}
+
+		for (int row = 0; row < height; ++row) {
+			Common::copy(sptr, sptr + width, scrP);
+			scrP += pitch;
+		}
+	}
 }
 
 void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth) {

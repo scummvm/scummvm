@@ -61,19 +61,18 @@ void mem2mcga_masked(const byte *ptr, int16 maske);
 void mcga2mem(byte *ptr);
 void mem2mem(const byte *ptr1, byte *ptr2);
 void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske);
-void map_spr_2screen(byte *sptr, int16 x, int16 y);
 
-void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe,
-                   int16 scrwidth);
-void spr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth);
+void map_spr_2screen(const byte *sptr, int16 x, int16 y);
+void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
+	int16 height, int16 scrwidth);
+void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrwidth);
 void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth);
-void zoom_img(byte *source, byte *dest, int16 xdiff,
-              int16 ydiff);
+void zoom_img(byte *source, byte *dest, int16 xdiff, int16 ydiff);
 void zoom_set(byte *source, int16 x, int16 y, int16 xdiff,
-              int16 ydiff, int16 scrwidth);
+    int16 ydiff, int16 scrwidth);
 
-void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol,
-            int16 scrwidth);
+void putcxy(int16 x, int16 y, char zeichen, int16 forcol,
+	int16 backcol, int16 scrwidth);
 void putz(char zeichen, int16 forcol, int16 backcol, int16 scrwidth);
 void setfont(byte *adr, int16 breite, int16 hoehe, int16 first,
              int16 last);
