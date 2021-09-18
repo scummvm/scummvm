@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-17 10:10+0000\n"
+"POT-Creation-Date: 2021-09-17 20:04+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2458,7 +2458,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 
 #: engines/engine.cpp:607 engines/metaengine.cpp:364 engines/savestate.cpp:96
-#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:180
 #: engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
@@ -2561,7 +2561,7 @@ msgstr "Eskuin-klika"
 
 #: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
 #: engines/mohawk/myst.cpp:597 engines/mohawk/riven.cpp:861
-#: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:98
+#: engines/sky/metaengine.cpp:117 engines/twine/metaengine.cpp:98
 #: engines/wintermute/keymapper_tables.h:1532
 msgid "Pause"
 msgstr "Gelditu"
@@ -2582,7 +2582,7 @@ msgstr "Jokoaren menua"
 msgid "Skip"
 msgstr "Saltatu"
 
-#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:108
+#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:112
 msgid "Skip line"
 msgstr "Lerroa saltatu"
 
@@ -2592,7 +2592,7 @@ msgstr ""
 
 #: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:90
 #: engines/grim/grim.cpp:505 engines/grim/grim.cpp:597
-#: engines/sky/metaengine.cpp:88 engines/wintermute/keymapper_tables.h:55
+#: engines/sky/metaengine.cpp:92 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr ""
 
@@ -4973,7 +4973,7 @@ msgstr "Eskuinera irristatu"
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
-#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:141
+#: engines/sky/metaengine.cpp:86 engines/wintermute/keymapper_tables.h:141
 #: engines/wintermute/keymapper_tables.h:1476
 msgid "Use"
 msgstr "Erabili"
@@ -7177,28 +7177,32 @@ msgstr "Floppy introa"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Erabili floppy bertsioko sarrera (CD bertsioa soilik)"
 
-#: engines/sky/metaengine.cpp:76
+#: engines/sky/metaengine.cpp:80
 msgid "Walk / Look / Talk"
 msgstr ""
 
-#: engines/sky/metaengine.cpp:94
+#: engines/sky/metaengine.cpp:98
 #, fuzzy
 msgid "Skip / Close"
 msgstr "Lerroa saltatu"
 
-#: engines/sky/metaengine.cpp:102
+#: engines/sky/metaengine.cpp:106
 msgid "Open control panel"
 msgstr ""
 
-#: engines/sky/metaengine.cpp:118
+#: engines/sky/metaengine.cpp:122
 #, fuzzy
 msgid "Toggle fast mode"
 msgstr "Modu bizkorra"
 
-#: engines/sky/metaengine.cpp:123
+#: engines/sky/metaengine.cpp:127
 #, fuzzy
 msgid "Toggle really fast mode"
 msgstr "Era oso azkarrean exekutatu (*)"
+
+#: engines/sky/metaengine.cpp:197
+msgid "WARNING: Deleting the autosave slot is not supported by this engine"
+msgstr ""
 
 #: engines/stark/detection.cpp:376
 #, fuzzy
