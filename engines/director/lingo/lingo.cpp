@@ -887,7 +887,7 @@ Common::String Datum::asString(bool printonly) const {
 			if (i > 0)
 				s += ", ";
 			Datum d = u.farr->arr[i];
-			s += d.asString(printonly);
+			s += d.asString(true);
 		}
 
 		s += "]";
@@ -901,7 +901,7 @@ Common::String Datum::asString(bool printonly) const {
 				s += ", ";
 			Datum p = u.parr->arr[i].p;
 			Datum v = u.parr->arr[i].v;
-			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
+			s += Common::String::format("%s: %s", p.asString(true).c_str(), v.asString(true).c_str());
 		}
 
 		s += "]";
