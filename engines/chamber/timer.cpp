@@ -45,15 +45,17 @@ void AnimateGauss(byte *target) {
 void timerCallback(void *refCon) {
 	script_byte_vars.timer_ticks++;
 	if (!script_byte_vars.game_paused) {
-		script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 1);
+		if (script_byte_vars.timer_ticks % 16 == 0) {
+			script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 1);
 #if 1
-		AnimateGauss(frontbuffer);
+			AnimateGauss(frontbuffer);
 #endif
+		}
 	}
 }
 
 void InitTimer(void) {
-	g_system->getTimerManager()->installTimerProc(&timerCallback, 1000000, NULL, "mainTimer");
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 1000000 / 16, NULL, "mainTimer");
 }
 
 void UninitTimer(void) {
