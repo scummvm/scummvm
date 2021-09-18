@@ -34,6 +34,9 @@
 
 namespace Chewy {
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+
 struct ChewyGameDescription;
 class Sound;
 

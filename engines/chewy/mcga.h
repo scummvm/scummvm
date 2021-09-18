@@ -56,11 +56,11 @@ void over_in(byte *source);
 void y_shrink(byte *source, byte *dest, int16 faktor, int16 zeile);
 #endif
 
-void mem2mcga(byte *ptr);
-void mem2mcga_masked(byte *ptr, int16 maske);
+void mem2mcga(const byte *ptr);
+void mem2mcga_masked(const byte *ptr, int16 maske);
 void mcga2mem(byte *ptr);
-void mem2mem(byte *ptr1, byte *ptr2);
-void mem2mem_masked(byte *ptr1, byte *ptr2, int16 maske);
+void mem2mem(const byte *ptr1, byte *ptr2);
+void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske);
 void map_spr_2screen(byte *sptr, int16 x, int16 y);
 
 void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe,
