@@ -1145,4 +1145,277 @@ void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 		CGA_blitToScreen(0, 0, 320, 200);
 }
 
+/*TODO: get rid of this structure and pass everything relevant as arguments?*/
+typedef struct zoom_t {
+	byte ybase;
+	byte xbase;    /*IN: original x shift in pixels*/
+	byte xval_l;
+	byte xval_h;
+	byte xstep_l;
+	byte xstep_h;
+	byte yval_l;
+	byte yval_h;
+	byte ystep_l;
+	byte ystep_h;
+	byte ew;   /*IN: original width/height in pixels*/
+	byte eh;
+	byte scale_x;
+	byte scale_y;
+	byte oh;   /*IN: original width/height in bytes*/
+	byte ow;
+	byte *pixels;  /*IN: image pixels*/
+	byte fw;
+} zoom_t;
+
+/*
+Divide two normal values and return 8.8 quotient
+*/
+static uint16 FPDiv(uint16 a, byte b) {
+	byte hi = a / b;
+	byte lo = ((a % b) << 8) / b;
+	return (hi << 8) + lo;
+	/*is it really any better than (uint32)(a << 8) / b ?*/
+}
+
+/*
+Draw scaled image
+NB! tw/th specify target width/height in pixels
+*/
+static void CGA_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+	byte x, y;
+	uint16 finofs = ofs;
+	byte *temp = scratch_mem2;
+
+	/*calc old/new ratio*/
+	params->scale_x = tw + 1;
+	params->xstep_l = params->ew / params->scale_x;
+	params->xstep_h = (params->ew % params->scale_x) * 256 / params->scale_x;
+
+	params->scale_y = th + 1;
+	params->ystep_l = params->eh / params->scale_y;
+	params->ystep_h = (params->eh % params->scale_y) * 256 / params->scale_y;
+
+	params->yval_l = 0;
+	params->yval_h = 0;
+
+	for (y = params->scale_y;;) {
+		uint16 oofs = ofs;
+		byte *pixels = params->pixels + params->yval_l * params->ow;
+		byte sc = 4 - params->xbase;
+		/*left partial pixel*/
+		byte pix = source[ofs] >> (sc * 2);
+
+		params->xval_l = 0;
+		params->xval_h = 0;
+		params->fw = 0;
+
+		for (x = params->scale_x;;) {
+			byte p = pixels[params->xval_l / 4] << ((params->xval_l % 4) * 2);
+			pix = (pix << 2) | (p >> 6);
+			if (--sc == 0) {
+				/*inner full pixel*/
+				*temp++ = pix;
+				ofs++;
+				params->fw++;
+				sc = 4;
+			}
+			params->xval_l += params->xstep_l + ((params->xval_h + params->xstep_h) >> 8);
+			params->xval_h += params->xstep_h;
+
+			if (x == 0)
+				break;
+			if (--x == 0)
+				params->xval_l = params->ew;
+		}
+
+		/*right partial pixel*/
+		*temp++ = (source[ofs] & ~(0xFF << (sc * 2))) | (pix << (sc * 2));
+		ofs++;
+		params->fw++;
+
+		/*ofs -= params->fw;*/
+		ofs = oofs;
+
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
+
+		params->yval_l += params->ystep_l + ((params->yval_h + params->ystep_h) >> 8);
+		params->yval_h += params->ystep_h;
+
+		if (y == 0)
+			break;
+		if (--y == 0)
+			params->yval_l = params->eh;
+	}
+
+	CGA_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+}
+
+/*
+Draw scaled image
+NB! tw/th specify target width/height in pixels
+This is slightly simplified version, but should work identical to the code above
+*/
+static void CGA_ZoomOpt(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+	byte x, y;
+	uint16 finofs = ofs;
+	byte *temp = scratch_mem2;
+
+	/*calc old/new ratio*/
+	uint16 target_w = tw + 1;
+	uint16 xstep = (params->ew << 8) / target_w;    /*fixed-point 8.8 value*/
+	uint16 target_h = th + 1;
+	uint16 ystep = (params->eh << 8) / target_h;    /*fixed-point 8.8 value*/
+
+	uint16 yval = 0;
+
+	for (y = target_h;;) {
+		byte *pixels = params->pixels + (yval >> 8) * params->ow;
+		byte sc = 4 - params->xbase;
+		/*left partial pixel*/
+		byte pix = source[ofs] >> (sc * 2);
+
+		uint16 xval = 0;
+		params->fw = 0;
+
+		for (x = target_w;;) {
+			byte p = pixels[(xval >> 8) / 4] << (((xval >> 8) % 4) * 2);
+			pix = (pix << 2) | (p >> 6);
+			if (--sc == 0) {
+				/*inner full pixel*/
+				*temp++ = pix;
+				ofs++;
+				params->fw++;
+				sc = 4;
+			}
+			xval += xstep;
+
+			if (x == 0)
+				break;
+			if (--x == 0)
+				xval = params->ew << 8;
+		}
+
+		/*right partial pixel*/
+		*temp++ = (source[ofs] & ~(0xFF << (sc * 2))) | (pix << (sc * 2));
+		ofs++;
+		params->fw++;
+
+		ofs -= params->fw;
+
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
+
+		yval += ystep;
+
+		if (y == 0)
+			break;
+		if (--y == 0)
+			yval = params->eh << 8;
+	}
+
+	CGA_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+}
+
+/*
+Draw image zoomed from w:h to nw:nx to target at specified ofs
+Use backbuffer pixels to fill sides
+NB! w/nw are the number of bytes, not pixels
+*/
+void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
+	zoom_t zoom;
+
+	zoom.pixels = pixels;
+	zoom.ow = w;
+	zoom.oh = h;
+	zoom.ew = (w * 4) - 1;
+	zoom.eh = h - 1;
+	zoom.xbase = ((w * 4 / 2) - 1) % 4;
+
+	/*TODO: why this nw/nh order? maybe bug*/
+#if 0
+	CGA_Zoom(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
+#else
+	CGA_ZoomOpt(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
+#endif
+}
+
+/*
+Animate image zooming-in from origin ofs to final size w:h in specified number of steps
+Use backbuffer pixels to fill sides
+Ofs specifies zoom origin
+NB! w is the number of bytes, not pixels
+*/
+void CGA_AnimZoomOpt(zoom_t *zoom, uint16 w, uint16 h, byte steps, byte *target, uint16 ofs) {
+	uint16 xstep = FPDiv(w, steps); /*fixed-point 8.8 value*/
+	uint16 ystep = FPDiv(h, steps); /*fixed-point 8.8 value*/
+
+	uint16 xval = 0x200;
+	uint16 yval = 0x200;
+
+	for (steps = steps / 2 - 2; steps; steps--) {
+		uint16 prev;
+
+		CGA_ZoomOpt(zoom, xval >> 8, yval >> 8, backbuffer, target, ofs);
+
+		prev = yval;
+		yval += ystep;
+		if (((prev ^ yval) & 0xFF00) || ((yval & 0x100) == 0)) {
+			ofs ^= CGA_ODD_LINES_OFS;
+			if ((ofs & CGA_ODD_LINES_OFS) != 0)
+				ofs -= CGA_BYTES_PER_LINE;
+		}
+
+		prev = xval;
+		xval += xstep;
+		if (((prev ^ xval) & 0xFF00) || ((xval & 0x100) == 0)) {
+			if (zoom->xbase-- == 0) {
+				ofs -= 1;
+				zoom->xbase = 3;
+			}
+		}
+	}
+}
+
+
+/*
+Animate image zooming-in from its center to final size w:h to target at specified ofs
+Use backbuffer pixels to fill sides
+NB! w is the number of bytes, not pixels
+NB! ofs is the final image top left corner, not the zoom origin
+*/
+void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
+	uint16 finofs = ofs;
+	byte x, y, maxside;
+
+	zoom_t zoom;
+	zoom.pixels = pixels;
+	zoom.ow = w;
+	zoom.oh = h;
+	zoom.ew = (w * 4) - 1;
+	zoom.eh = h - 1;
+	zoom.xbase = ((w * 4 / 2) - 1) % 4;
+
+	/*set zoom origin*/
+	x = (w * 4 / 2) - 1;
+	y = (h / 2) - 1;
+	ofs += x / 4;
+	if (y & 1) {
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
+	}
+	ofs += (y / 2) * CGA_BYTES_PER_LINE;
+
+	maxside = w * 4;
+	if (maxside < h)
+		maxside = h;
+
+	CGA_AnimZoomOpt(&zoom, w * 4 * 2, h * 2, maxside, target, ofs);
+
+	CGA_BlitAndWait(pixels, w, w, h, target, finofs);
+}
+
 } // End of namespace Chamber

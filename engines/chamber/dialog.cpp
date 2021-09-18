@@ -37,6 +37,7 @@ uint16 cur_str_index;
 uint16 cur_dlg_index;
 
 dirty_rect_t dirty_rects[MAX_DIRTY_RECT];
+dirty_rect_t *last_dirty_rect = dirty_rects;
 
 void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
 	int16 i;
@@ -51,6 +52,7 @@ void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
 	r->y = y;
 	r->x = x;
 	script_byte_vars.dirty_rect_kind = dirty_rects[0].kind;
+	last_dirty_rect = r;
 }
 
 void GetDirtyRect(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs, byte newkind) {

@@ -184,6 +184,7 @@ void MergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, ui
 
 void RefreshSpritesData(void);
 void BlitSpritesToBackBuffer(void);
+byte *BackupSpotImage(spot_t *spot, byte **spotback, byte *buffer);
 void BackupSpotsImages(void);
 
 void SelectPalette(void);

@@ -103,7 +103,7 @@ typedef struct script_byte_vars_t {
 	byte byte_179EF;       /* 39 */
 	byte quest_item_ofs;   /* 3A */
 	byte byte_179F1;       /* 3B */
-	byte byte_179F2;       /* 3C */
+	byte fight_status;     /* 3C */
 	byte byte_179F3;       /* 3D */
 	byte trade_done;       /* 3E */
 	byte byte_179F5;       /* 3F */
