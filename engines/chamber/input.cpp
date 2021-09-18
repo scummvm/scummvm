@@ -73,11 +73,6 @@ void ClearKeyboard(void) {
 }
 
 void SetInputButtons(byte keys) {
-	if (keys && buttons_repeat) {
-		/*ignore buttons repeat*/
-		buttons = 0;
-		return;
-	}
 	if (keys & 2)
 		right_button = ~0;
 	if (keys & 1)
