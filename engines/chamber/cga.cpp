@@ -107,7 +107,7 @@ void WaitVBlank(void) {
 
 void CGA_ColorSelect(byte csel) {
 	const byte *pal;
-	if (csel & 0x20)
+	if (csel & 0x10)
 		pal = PALETTE_CGA;
 	else
 		pal = PALETTE_CGA2;
