@@ -977,6 +977,9 @@ static void ScreenToPieces(byte width, byte height, byte *screen, uint16 offs, s
 			pieces->pix1 = screen[bofs];
 			pieces->pix3 = screen[bofs + CGA_BYTES_PER_LINE];
 			pieces++;
+
+			if (delays >= piecedelays + ARRAYSIZE(piecedelays))
+				delays = piecedelays;
 		}
 		offs += CGA_BYTES_PER_LINE * 2; /*4 lines down*/
 	}
