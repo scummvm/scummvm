@@ -72,10 +72,17 @@ byte cga_pixel_flip[256] = {
 };
 
 static const uint8 PALETTE_CGA[4 * 3] = {
-        0x00, 0x00, 0x00, // black
-        0x55, 0xff, 0xff, // cyan
-        0xff, 0x55, 0xff, // magenta
-        0xff, 0xff, 0xff
+	0x00, 0x00, 0x00, // black
+	0x55, 0xff, 0xff, // cyan
+	0xff, 0x55, 0xff, // magenta
+	0xff, 0xff, 0xff
+};
+
+static const uint8 PALETTE_CGA2[4 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0x55, 0xff, 0x55, // green
+	0xff, 0x55, 0x55, // red
+	0xff, 0xff, 0x55  // yellow
 };
 
 /*
@@ -97,8 +104,10 @@ void WaitVBlank(void) {
 }
 
 void CGA_ColorSelect(byte csel) {
-	warning("STUB: CGA_ColorSelect(%d)", csel);
-	//outportb(0x3D9, csel);
+	if (csel & 0x20)
+		g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+	else
+		g_system->getPaletteManager()->setPalette(PALETTE_CGA2, 0, 4);
 }
 
 void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
