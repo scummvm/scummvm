@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "chamber/chamber.h"
 
 #include "chamber/common.h"
@@ -155,7 +157,7 @@ void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	ofs = CGA_CalcXY_p(updx, updy);
 	/*TODO looks like here was some code before*/
 	for (delay = 0; delay < anim_draw_delay; delay++) {
-		for (delay2 = 0; delay2 < cpu_speed_delay; delay2++) ; /*TODO FIXME weak delay*/
+		g_system->delayMillis(1000 / 16 / 25);
 	}
 	WaitVBlank();
 
