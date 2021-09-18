@@ -154,8 +154,156 @@ void T11hGame::opMouseTrap() {
 	}
 }
 
+/*
+* Connect Four puzzle, the cake in the dining room
+*/
 void T11hGame::opConnectFour() {
-	// TODO: Finish the logic
+	byte &last_move = _scriptVariables[1];
+	byte &winner = _scriptVariables[3];
+
+	if (last_move == 8) {
+		clearCake();
+		return;
+	}
+
+	if (last_move == 9) {
+		// samantha makes a move
+		// TODO: fix graphical bug when samantha makes a move
+		last_move = connectFourAI();
+		return;
+	}
+
+	cakePlaceBonBon(last_move, CAKE_TEAM_PLAYER);
+	winner = cakeGetWinner();
+	if (winner) {
+		return;
+	}
+
+	last_move = connectFourAI();
+	cakePlaceBonBon(last_move, CAKE_TEAM_STAUF);
+	winner = cakeGetWinner();
+}
+
+byte T11hGame::connectFourAI() {
+	uint slot = 0;
+	do {
+		slot = _random.getRandomNumber(7);
+	} while (cake_board[slot][CAKE_BOARD_HEIGHT - 1]);
+	return slot;
+}
+
+bool T11hGame::isCakeFull() {
+	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
+		if (cake_board[x][CAKE_BOARD_HEIGHT - 1] == 0)
+			return false;
+	}
+	return true;
+}
+
+int T11hGame::cakeLineUp(int x, int start_y) {
+	byte team = cake_board[x][start_y];
+
+	// return 0 for worthless lines
+	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
+		return 0;
+
+	for (int y = start_y; y < start_y + CAKE_GOAL_LEN; y++) {
+		if (cake_board[x][y] != team)
+			return y - start_y;
+	}
+	return CAKE_GOAL_LEN;
+}
+
+int T11hGame::cakeLineRight(int start_x, int y) {
+	byte team = cake_board[start_x][y];
+
+	// return 0 for worthless lines
+	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
+		return 0;
+
+	for (int x = start_x; x < start_x + CAKE_GOAL_LEN; x++) {
+		if (cake_board[x][y] != team)
+			return x - start_x;
+	}
+	return CAKE_GOAL_LEN;
+}
+
+int T11hGame::cakeLineUpRight(int start_x, int start_y) {
+	byte team = cake_board[start_x][start_y];
+
+	// return 0 for worthless lines
+	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
+		return 0;
+
+	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
+		return 0;
+
+	for (int x = start_x, y = start_y; x < start_x + CAKE_GOAL_LEN; x++, y++) {
+		if (cake_board[x][y] != team)
+			return x - start_x;
+	}
+	return CAKE_GOAL_LEN;
+}
+
+int T11hGame::cakeLineDownRight(int start_x, int start_y) {
+	byte team = cake_board[start_x][start_y];
+
+	// return 0 for worthless lines
+	if (start_x + CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
+		return 0;
+
+	if (start_y + CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
+		return 0;
+
+	for (int x = start_x, y = start_y; x < start_x + CAKE_GOAL_LEN; x++, y--) {
+		if (cake_board[x][y] != team)
+			return x - start_x;
+	}
+	return CAKE_GOAL_LEN;
+}
+
+byte T11hGame::cakeGetWinner() {
+	// make sure to check if all columns are maxed then Stauf wins
+	if (isCakeFull())
+		return CAKE_TEAM_STAUF;
+
+	// search for lines of 4, we search up, right, and up-right
+	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
+		for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
+			byte team = cake_board[x][y];
+			// if this spot is team 0 then we can move on to the next column
+			if (team == 0)
+				break;
+
+			// if we find a line, then we return the team value stored in this spot
+			int line = cakeLineUp(x, y);
+			line = MAX(cakeLineRight(x, y), line);
+			line = MAX(cakeLineUpRight(x, y), line);
+			line = MAX(cakeLineDownRight(x, y), line);
+
+			if (line >= CAKE_GOAL_LEN)
+				return team;
+		}
+	}
+
+	return 0;
+}
+
+void T11hGame::clearCake() {
+	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
+		for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
+			cake_board[x][y] = 0;
+		}
+	}
+}
+
+void T11hGame::cakePlaceBonBon(int x, byte team) {
+	for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
+		if (cake_board[x][y] == 0) {
+			cake_board[x][y] = team;
+			return;
+		}
+	}
 }
 
 /*
