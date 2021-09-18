@@ -88,7 +88,11 @@ void restore_palette() {
 }
 
 void rastercol(int16 color, int16 r, int16 g, int16 b) {
-	const byte rgb[3] = { r, g, b };
+	byte rgb[3];
+	rgb[0] = r;
+	rgb[1] = g;
+	rgb[2] = b;
+
 	g_system->getPaletteManager()->setPalette(&rgb[0], color, 1);
 }
 
@@ -113,24 +117,42 @@ void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
 	g_engine->_screen->drawLine(x1, y1, x2, y2, farbe);
 }
 
-void mem2mcga(byte *ptr) {
-	warning("STUB - mem2mcga");
+void mem2mcga(const byte *ptr) {
+	byte *destP = (byte *)g_engine->_screen->getPixels();
+	Common::copy(ptr + 4, ptr + 4 + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 }
 
-void mem2mcga_masked(byte *ptr, int16 maske) {
-	warning("STUB - mem2mcga_masked");
+void mem2mcga_masked(const byte *ptr, int16 maske) {
+	byte *destP = screenP;
+	byte pixel;
+
+	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr, ++destP) {
+		pixel = *ptr;
+		if (pixel != maske)
+			*destP = pixel;
+	}
 }
 
 void mcga2mem(byte *ptr) {
-	warning("STUB - mcga2mem");
+	const byte *srcP = screenP;
+	*((uint16 *)ptr) = SCREEN_WIDTH;
+	*((uint16 *)(ptr + 2)) = SCREEN_HEIGHT;
+
+	Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), ptr + 4);
 }
 
-void mem2mem(byte *ptr1, byte *ptr2) {
-	warning("STUB - mem2mem");
+void mem2mem(const byte *ptr1, byte *ptr2) {
+	Common::copy(ptr1, ptr1 + (SCREEN_WIDTH * SCREEN_HEIGHT), ptr2);
 }
 
-void mem2mem_masked(byte *ptr1, byte *ptr2, int16 maske) {
-	warning("STUB - mem2mem_masked");
+void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
+	byte pixel;
+
+	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr1, ++ptr2) {
+		pixel = *ptr1;
+		if (pixel != maske)
+			*ptr2 = pixel;
+	}
 }
 
 void map_spr_2screen(byte *sptr, int16 x, int16 y) {
