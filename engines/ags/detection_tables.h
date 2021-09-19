@@ -2816,6 +2816,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("kq3plus", "KQ3plus.ags", "3b7cceb3e4bdb031dc5d8f290936e94b", 11727219),
 	GAME_ENTRY("kq4retold", "King's Quest 4.exe", "da6140c1e246d5f7641464bda80c45d5", 148103603),
 	GAME_ENTRY("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 293710098),
+	GAME_ENTRY("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 312045017), // 1.04
 	GAME_ENTRY("kq4retold", "King's Quest 4.ags", "e9e8f833b86874526cb5e356d1e287eb", 145563043),
 	GAME_ENTRY("kq4retold", "ac2game.dat", "da6140c1e246d5f7641464bda80c45d5", 293710098),
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),
