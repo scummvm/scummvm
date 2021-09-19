@@ -203,6 +203,9 @@ void AndroidGraphics3dManager::updateScreen() {
 		glViewport(0,0, JNI::egl_surface_width, JNI::egl_surface_height);
 	}
 
+	// We don't use depth stencil to draw on screen
+	glDisable(GL_DEPTH_TEST);
+
 	// clear pointer leftovers in dead areas
 	clearScreen(kClear);
 
