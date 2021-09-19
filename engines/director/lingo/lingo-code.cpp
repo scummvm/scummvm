@@ -1456,7 +1456,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 			objName.type = VARREF;
 			Datum obj = g_lingo->varFetch(objName, true);
 			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
+				debugC(3, kDebugLingoExec, "Factory/XObject method called on object: <%s>", obj.asString(true).c_str());
 				AbstractObject *target = obj.u.obj;
 				if (firstArg.u.s->equalsIgnoreCase("mNew")) {
 					target = target->clone();
@@ -1475,7 +1475,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 
 		// Script/Xtra method call
 		if (firstArg.type == OBJECT && !(firstArg.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", firstArg.asString(true).c_str());
+			debugC(3, kDebugLingoExec, "Script/Xtra method called on object: <%s>", firstArg.asString(true).c_str());
 			AbstractObject *target = firstArg.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
 				target = target->clone();
