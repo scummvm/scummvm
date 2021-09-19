@@ -75,6 +75,7 @@ bool font_supports_extended_characters(size_t fontNumber);
 // at random times (usually - drawing routines).
 // Need to check whether it is safe to completely remove it.
 void ensure_text_valid_for_font(char *text, size_t fontnum);
+// Get font's scaling multiplier
 int get_font_scaling_mul(size_t fontNumber);
 // Calculate actual width of a line of text
 int wgettextwidth(const char *texx, size_t fontNumber);
@@ -86,12 +87,14 @@ int getfontheight(size_t fontNumber);
 int getfontlinespacing(size_t fontNumber);
 // Get is font is meant to use default line spacing
 bool use_default_linespacing(size_t fontNumber);
+// Get font's outline type
 int  get_font_outline(size_t font_number);
 int  get_outline_font(size_t font_number);
+// Get font's automatic outline thickness (if set)
+int  get_font_outline_thickness(size_t font_number);
+// Set font's outline type
 void set_font_outline(size_t font_number, int outline_type);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
-int getfontlinespacing(size_t fontNumber);
-// Print text on a surface using a given font
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
