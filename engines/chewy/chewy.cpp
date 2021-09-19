@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "chewy/chewy.h"
+#include "chewy/events.h"
 #include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
@@ -36,6 +37,7 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 		: Engine(syst),
 		_gameDescription(gameDesc),
 		_rnd("chewy"),
+		_events(nullptr),
 		_screen(nullptr),
 		_sound(nullptr) {
 
@@ -52,12 +54,14 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 }
 
 ChewyEngine::~ChewyEngine() {
+	delete _events;
 	delete _screen;
 	delete _sound;
 	g_engine = nullptr;
 }
 
 void ChewyEngine::initialize() {
+	_events = new EventsManager();
 	_screen = new Graphics::Screen();
 	_sound = new Sound(_mixer);
 }
@@ -70,12 +74,6 @@ Common::Error ChewyEngine::run() {
 	initialize();
 
 	game_main();
-
-	// Run a dummy loop
-	while (!shouldQuit()) {
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
 
 	return Common::kNoError;
 }
