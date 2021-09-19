@@ -31,11 +31,13 @@ LibFile::LibFile() : Common::Archive() {
 LibFile::~LibFile() {
 }
 
-bool LibFile::open(const Common::String &prefix, const Common::String &filename) {
+bool LibFile::open(const Common::String &prefix, const Common::String &filename, bool encrypted) {
 	_prefix = prefix;
 	Common::File libfile;
-	if (!libfile.open(filename))
-		error("Failed to open %s", filename.c_str());
+	if (!libfile.open(filename)) {
+		warning("Failed to open %s", filename.c_str());
+		return false;
+	}
 	byte b;
 	uint32 size;
 	FileEntry f;
@@ -58,10 +60,12 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename)
 
 		for (uint32 i = 0; i < size; i++) {
 			b = libfile.readByte();
-			if (b != '\n')
+			if (encrypted && b != '\n')
 				b = b ^ 0xfe;
 			f.data.push_back(b);
 		}
+		f.data.push_back(0x0);
+		//debug("f.data: %s", f.data.data());
 		debugC(1, kHypnoDebugParser, "size: %d", f.data.size());
 		libfile.seek(pos);
 		if (size > 0)

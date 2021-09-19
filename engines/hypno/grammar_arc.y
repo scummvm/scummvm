@@ -28,8 +28,7 @@
 %{
 
 #include "common/array.h"
-#include "hypno/grammar.h"
-#include <stdio.h>
+#include "hypno/hypno.h"
 
 #undef yyerror
 #define yyerror	 HYPNO_ARC_xerror
@@ -38,10 +37,10 @@ Hypno::Shoot *shoot;
 
 extern int HYPNO_ARC_lex();
 extern int HYPNO_ARC_parse();
-extern int yylineno;
+extern int HYPNO_ARC_lineno;
 
 void HYPNO_ARC_xerror(const char *str) {
-	error("ERROR: %s", str);
+	error("%s at line %d", str, HYPNO_ARC_lineno);
 }
 
 int HYPNO_ARC_wrap() {
@@ -60,7 +59,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME BNTOK SNTOK
 %token<i> NUM
 // header
-%token YXTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
+%token COMMENT YXTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
 %token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK ZTOK
 
 // body
@@ -74,44 +73,44 @@ using namespace Hypno;
 
 %%
 
-start: YXTOK header body
+start: YXTOK header ZTOK RETTOK body XTOK
+    | RETTOK start
 	;
 
-
-header:  hline RETTOK header
-	| hline
-	| RETTOK header
+header: hline header
+    | RETTOK header
+	| /* nothing */
 	; 
 
-hline:  CTOK NUM  { debug("C %d", $2); }
-	| FTOK NUM { debug("F %d", $2); }
-	| DTOK NUM  { debug("D %d", $2); }
-	| PTOK NUM NUM { debug("P %d %d", $2, $3); }
-	| ATOK NUM NUM { debug("A %d %d", $2, $3); }
-	| VTOK NUM NUM { debug("V %d %d", $2, $3); }
-	| OTOK NUM NUM { debug("O %d %d", $2, $3); }
-	| O1TOK NUM NUM { debug("O1 %d %d", $2, $3); }
+hline:  CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); }
+	| FTOK NUM { debugC(1, kHypnoDebugParser, "F %d", $2); }
+	| DTOK NUM  { debugC(1, kHypnoDebugParser, "D %d", $2); }
+	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
+	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
+	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
+	| OTOK NUM NUM { debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); }
+	| O1TOK NUM NUM { debugC(1, kHypnoDebugParser, "O1 %d %d", $2, $3); }
 	| TPTOK FILENAME NUM FILENAME {
 		g_parsedArc.transitionVideo = $2;
 		g_parsedArc.transitionTime = $3;
-		debug("Tp %s %d %s", $2, $3, $4); 
+		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4); 
 	}
 	| TTOK FILENAME NUM { 
 		g_parsedArc.transitionVideo = $2;
 		g_parsedArc.transitionTime = $3;
-		debug("T %s %d", $2, $3); 
+		debugC(1, kHypnoDebugParser, "T %s %d", $2, $3); 
 	}
-	| TTOK NONETOK NUM { debug("T NONE %d", $3); }
+	| TTOK NONETOK NUM { debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
 	| NTOK FILENAME  { 
 		g_parsedArc.background = $2; 
-		debug("N %s", $2); 
+		debugC(1, kHypnoDebugParser, "N %s", $2); 
 	}
-	| RTOK FILENAME  { debug("R %s", $2); }
+	| RTOK FILENAME  { debugC(1, kHypnoDebugParser, "R %s", $2); }
 	| ITOK FILENAME { 
 		g_parsedArc.player = $2; 
-		debug("I %s", $2); 
+		debugC(1, kHypnoDebugParser, "I %s", $2); 
 		}
-	| QTOK NUM NUM { debug("Q %d %d", $2, $3); }
+	| QTOK NUM NUM { debugC(1, kHypnoDebugParser, "Q %d %d", $2, $3); }
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
 			g_parsedArc.intro = $2;
@@ -120,7 +119,7 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		else if(Common::String("B3") == $1 || Common::String("B4") == $1)
 			g_parsedArc.defeatVideos.push_back($2);
 
-		debug("BN %s", $2); 
+		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}
 	| SNTOK FILENAME enc {
 		if (Common::String("S0") == $1)
@@ -130,66 +129,67 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		else if (Common::String("S4") == $1)
 			g_parsedArc.enemySound = $2; 
 
-		debug("SN %s", $2); 
+		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
-	| HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
+	| HETOK C02TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
 	| HTOK CB3TOK NUM NUM { 
 		g_parsedArc.health = $3;
-		debug("H %d %d", $3, $4); 
+		debugC(1, kHypnoDebugParser, "H %d %d", $3, $4); 
 	}
-	| ZTOK RETTOK { debug("Z"); }
 	;
 
 enc: ENCTOK
 	| /* nothing */
 	;
 
-body: bline RETTOK body
-	| bline RETTOK XTOK
+body: bline body
+	| RETTOK body
+	| /* nothing */
+	;
 
 bline: FNTOK FILENAME { 
 		shoot = new Shoot();
 		shoot->animation = $2;
-		debug("FN %s", $2); 
+		debugC(1, kHypnoDebugParser, "FN %s", $2); 
 	}
 	| FNTOK NONETOK { 
 		shoot = new Shoot();
 		shoot->animation = "NONE";
-		debug("FN NONE"); 
+		debugC(1, kHypnoDebugParser, "FN NONE"); 
 	}
 	| FTOK FILENAME { 
 		shoot = new Shoot();
 		shoot->animation = $2;
-		debug("FN %s", $2); 
+		debugC(1, kHypnoDebugParser, "FN %s", $2); 
 	}
-	| ITOK  NAME  { 
+	| ITOK NAME  { 
 		shoot->name = $2;
-		debug("I %s", $2); 
+		debugC(1, kHypnoDebugParser, "I %s", $2); 
 	}
-	| ITOK  BNTOK  {  // Workaround for NAME == B1
+	| ITOK BNTOK  {  // Workaround for NAME == B1
 		shoot->name = $2;
-		debug("I %s", $2); 
+		debugC(1, kHypnoDebugParser, "I %s", $2); 
 	}
 	| A0TOK NUM NUM { 
 		shoot->position = Common::Point($2, $3);
-		debug("A0 %d %d", $2, $3); 
+		debugC(1, kHypnoDebugParser, "A0 %d %d", $2, $3); 
 	}
-	| RTOK NUM NUM  { debug("R %d %d", $2, $3); }
-	| BNTOK NUM NUM { debug("BN %d %d", $2, $3); }
+	| RTOK NUM NUM  { debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); }
+	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
 	| K0TOK NUM NUM { 
 		shoot->explosionFrame = $3;
-		debug("K0 %d %d", $2, $3);
+		debugC(1, kHypnoDebugParser, "K0 %d %d", $2, $3);
 	}
-	| P0TOK NUM NUM { debug("P0 %d %d", $2, $3); }
+	| P0TOK NUM NUM { debugC(1, kHypnoDebugParser, "P0 %d %d", $2, $3); }
 	| OTOK NUM NUM { 
-		debug("O %d %d", $2, $3); 
+		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); 
 	}
-	| CTOK NUM  { debug("C %d", $2); } 
-	| HTOK NUM  { debug("H %d", $2); }
-	| WTOK NUM  { debug("W %d", $2); }
+	| CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); } 
+	| HTOK NUM  { debugC(1, kHypnoDebugParser, "H %d", $2); }
+	| WTOK NUM  { debugC(1, kHypnoDebugParser, "W %d", $2); }
 	| DTOK NUM  { 
 		shoot->damage = $2;
-		debug("D %d", $2); 
+		debugC(1, kHypnoDebugParser, "D %d", $2); 
 	}
 	| SNTOK FILENAME enc { 
 		if (Common::String("S1") == $1)
@@ -197,13 +197,13 @@ bline: FNTOK FILENAME {
 		//else if (Common::String("S2") == $1)
 		//	shoot->startSound = $2;
 		 
-		debug("SN %s", $2); }
-	| NTOK { debug("N"); }
+		debugC(1, kHypnoDebugParser, "SN %s", $2); }
+	| NTOK { debugC(1, kHypnoDebugParser, "N"); }
 	| ZTOK {
 		g_parsedArc.shoots.push_back(*shoot); 
 		//delete shoot; 
 		//shoot = nullptr;
-		debug("Z"); 
+		debugC(1, kHypnoDebugParser, "Z"); 
 	}
 	;
 

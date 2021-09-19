@@ -90,10 +90,13 @@ public:
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	virtual void loadAssets();
+
+	// Parsing
+	void splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list);
 	void parseScene(const Common::String &prefix, const Common::String &filename);
 	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
 	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
-	LibFile *loadLib(const Filename &prefix, const Filename &filename);
+	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -226,6 +229,9 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
+	void loadAssetsDemoDisc();
+	void loadAssetsPCW();
+	void loadAssetsPCG();
 	void showCredits() override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 	void drawShoot(const Common::Point &target) override;

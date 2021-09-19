@@ -95,11 +95,12 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename) {
+LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename, bool encrypted) {
 	LibFile *lib = new LibFile();
 	SearchMan.add(filename, (Common::Archive *)lib, 0, true);
-	if (!lib->open(prefix, filename))
-		error("Failed to open %s%s", prefix.c_str(), filename.c_str());
+	if (!lib->open(prefix, filename, encrypted)) {
+		return nullptr;
+	}
 	_archive.push_back(lib);
 	return lib;
 }
@@ -229,7 +230,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
 	if (transparent) {
-		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), surf.getPixel(surf.w - 1, surf.h - 1));
+		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), surf.getPixel(0, 0));
 	} else
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }

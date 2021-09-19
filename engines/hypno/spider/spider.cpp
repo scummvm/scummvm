@@ -16,8 +16,8 @@ void SpiderEngine::loadAssets() {
 	SearchMan.add("DATA.Z", (Common::Archive *) &_installerArchive, 0, false);
 
 	Common::ArchiveMemberList files;
-	LibFile *missions = loadLib("", "sixdemo/c_misc/missions.lib");
-	if (missions->listMembers(files) == 0)
+	LibFile *missions = loadLib("", "sixdemo/c_misc/missions.lib", true);
+	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
 	// start level
@@ -54,9 +54,9 @@ void SpiderEngine::loadAssets() {
 	_levels[arclevel].arcade.levelIfWin = "sixdemo/mis/demo.mis";
 	_levels[arclevel].arcade.levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadLib("", "sixdemo/c_misc/fonts.lib");
-	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib");
-	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib");
+	loadLib("", "sixdemo/c_misc/fonts.lib", true);
+	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib", true);
+	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib", true);
 
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");

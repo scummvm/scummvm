@@ -32,6 +32,7 @@
 %{
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define YYERROR_VERBOSE
 
 #include "hypno/hypno.h"
 #include "hypno/grammar.h"
@@ -71,9 +72,10 @@ Y[A-Z0-9]					return YXTOK;
 [A-Za-z_][A-Za-z_0-9]*		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
 [A-Za-z][A-Za-z_0-9\\\.]*	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
 [\-]?[0-9]+					HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
-\n							return RETTOK;
+[\n|\r\n]					return RETTOK;
 \xb3						return CB3TOK;
 \x02						return C02TOK;
+\;.+\r						/* ignore comment */
 [ \t]+						/* ignore whitespace */;
 .							debug("notparsed: 0x%d",*yytext); return *yytext;
 %%
@@ -81,6 +83,7 @@ Y[A-Z0-9]					return YXTOK;
 namespace Hypno {
 
 int parse_arc(const char *code) {
+	//debug("to parse:\n%s\n END", code);
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	bp = yy_scan_string(code);
