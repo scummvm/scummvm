@@ -41,6 +41,8 @@
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
+//#define ANDROID_DEBUG_GL
+//#define ANDROID_DEBUG_GL_CALLS
 // toggles end
 
 extern const char *android_log_tag;
@@ -82,7 +84,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 #define GLTHREADCHECK \
 	do { \
-		assert(pthread_self() == _main_thread); \
+		assert(dynamic_cast<OSystem_Android *>(g_system)->isRunningInMainThread()); \
 	} while (false)
 
 #else
@@ -184,6 +186,9 @@ public:
 	int getGraphicsMode() const override;
 
 	void updateEventScale(uint32 w, uint32 h);
+#ifdef ANDROID_DEBUG_GL_CALLS
+	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
+#endif
 };
 
 #endif
