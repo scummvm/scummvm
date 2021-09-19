@@ -99,13 +99,20 @@ static void post_init_font(size_t fontNumber) {
 		font.LoadedInfo.Height = height;
 		font.LoadedInfo.RealHeight = height;
 	}
-
+	// FIXME: move this out of the font module, as compatibility fixes
+	// depend on the other game data, such as format version, etc.
 	// Backward compatibility: if the real height != formal height
 	// and there's no custom linespacing, then set linespacing = formal height.
 	if ((font.LoadedInfo.RealHeight != font.LoadedInfo.Height) &&
 		(font.Info.LineSpacing == 0)) {
-		font.Info.LineSpacing = font.LoadedInfo.Height +
-			2 * get_font_outline_thickness(fontNumber);
+		font.Info.LineSpacing = font.LoadedInfo.Height;
+		if (get_font_outline(fontNumber) == FONT_OUTLINE_AUTO) {
+			// scaled up bitmap fonts have extra outline offset
+			if (is_bitmap_font(fontNumber) && get_font_scaling_mul(fontNumber) > 1)
+				font.Info.LineSpacing += get_fixed_pixel_size(2);  // FIXME: should be 2 + get_fixed_pixel_size(2)?
+			else
+				font.Info.LineSpacing += 2;
+		}
 	}
 }
 
