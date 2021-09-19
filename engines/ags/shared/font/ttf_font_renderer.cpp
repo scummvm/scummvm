@@ -61,7 +61,7 @@ int TTFFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 }
 
 int TTFFontRenderer::GetTextHeight(const char *text, int fontNumber) {
-	return alfont_text_height(_fontData[fontNumber].AlFont);
+	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
 }
 
 void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
