@@ -15,11 +15,9 @@ MODULE_OBJS := \
 	metaengine.o \
 	portrait.o \
 	print.o \
-	r_other.o \
 	r_pers.o \
 	r_puzzl.o \
 	r_sprit.o \
-	r_templ.o \
 	r_texts.o \
 	resdata.o \
 	room.o \

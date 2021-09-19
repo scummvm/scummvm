@@ -30,6 +30,12 @@ typedef struct ResEntry_t {
 	void    *buffer;
 } ResEntry_t;
 
+typedef struct ResEntry_tp {
+	char    name[5 + 1 + 3 + 1];
+	byte    **buffer;
+} ResEntry_tp;
+
+
 /* Max resource file size among all languages */
 #define RES_ALEAT_MAX 256
 #define RES_ANICO_MAX 667
@@ -65,19 +71,19 @@ extern byte pers2_data[];
 extern byte desci_data[];
 extern byte diali_data[];
 
-extern byte arpla_data[];
-extern byte aleat_data[];
-extern byte carpc_data[];
-extern byte icone_data[];
-extern byte souco_data[];
-extern byte souri_data[];
-extern byte templ_data[];
-extern byte mursm_data[];
-extern byte gauss_data[];
-extern byte lutin_data[];
-extern byte anima_data[];
-extern byte anico_data[];
-extern byte zones_data[];
+extern byte *arpla_data;
+extern byte *aleat_data;
+extern byte *carpc_data;
+extern byte *icone_data;
+extern byte *souco_data;
+extern byte *souri_data;
+extern byte *templ_data;
+extern byte *mursm_data;
+extern byte *gauss_data;
+extern byte *lutin_data;
+extern byte *anima_data;
+extern byte *anico_data;
+extern byte *zones_data;
 
 byte *SeekToEntry(byte *bank, uint16 num, byte **end);
 byte *SeekToEntryW(byte *bank, uint16 num, byte **end);
