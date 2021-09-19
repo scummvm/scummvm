@@ -38,6 +38,7 @@ namespace Chewy {
 #define SCREEN_HEIGHT 200
 
 struct ChewyGameDescription;
+class EventsManager;
 class Sound;
 
 class ChewyEngine : public Engine {
@@ -50,6 +51,7 @@ protected:
 	void shutdown();
 
 public:
+	EventsManager *_events;
 	Sound *_sound;
 	Graphics::Screen *_screen;
 public:
