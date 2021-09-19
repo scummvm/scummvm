@@ -35,8 +35,6 @@ extern byte backbuffer[0x4000];
 byte CGA_SCREENBUFFER[0x4000];
 byte scrbuffer[320*200];
 
-byte carpc_data[RES_CARPC_MAX];
-
 extern byte *scratch_mem2;
 
 byte char_draw_coords_x;

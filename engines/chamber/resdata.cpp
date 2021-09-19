@@ -100,32 +100,34 @@ int16 LoadFilesList(ResEntry_t *entries) {
 }
 
 
-byte arpla_data[RES_ARPLA_MAX];
-byte aleat_data[RES_ALEAT_MAX];
-byte icone_data[RES_ICONE_MAX];
-byte souco_data[RES_SOUCO_MAX];
-byte souri_data[RES_SOURI_MAX];
-byte mursm_data[RES_MURSM_MAX];
-byte gauss_data[RES_GAUSS_MAX];
-byte lutin_data[RES_LUTIN_MAX];
-byte anima_data[RES_ANIMA_MAX];
-byte anico_data[RES_ANICO_MAX];
-byte zones_data[RES_ZONES_MAX];
+byte *arpla_data = NULL;
+byte *aleat_data = NULL;
+byte *icone_data = NULL;
+byte *souco_data = NULL;
+byte *carpc_data = NULL;
+byte *souri_data = NULL;
+byte *templ_data = NULL;
+byte *mursm_data = NULL;
+byte *gauss_data = NULL;
+byte *lutin_data = NULL;
+byte *anima_data = NULL;
+byte *anico_data = NULL;
+byte *zones_data = NULL;
 
-ResEntry_t res_static[] = {
-	{"ARPLA.BIN", arpla_data},
-	{"ALEAT.BIN", aleat_data},
-	{"ICONE.BIN", icone_data},
-	{"SOUCO.BIN", souco_data},
-	{"CARPC.BIN", carpc_data},
-	{"SOURI.BIN", souri_data},
-	{"TEMPL.BIN", templ_data},
-	{"MURSM.BIN", mursm_data},
-	{"GAUSS.BIN", gauss_data},
-	{"LUTIN.BIN", lutin_data},
-	{"ANIMA.BIN", anima_data},
-	{"ANICO.BIN", anico_data},
-	{"ZONES.BIN", zones_data},
+ResEntry_tp res_static[] = {
+	{"ARPLA.BIN", &arpla_data},
+	{"ALEAT.BIN", &aleat_data},
+	{"ICONE.BIN", &icone_data},
+	{"SOUCO.BIN", &souco_data},
+	{"CARPC.BIN", &carpc_data},
+	{"SOURI.BIN", &souri_data},
+	{"TEMPL.BIN", &templ_data},
+	{"MURSM.BIN", &mursm_data},
+	{"GAUSS.BIN", &gauss_data},
+	{"LUTIN.BIN", &lutin_data},
+	{"ANIMA.BIN", &anima_data},
+	{"ANICO.BIN", &anico_data},
+	{"ZONES.BIN", &zones_data},
 	{"$", NULL}
 };
 
@@ -146,67 +148,86 @@ int16 LoadStaticData() {
 	for (int i = 0; i < numMods; i++)
 		modOffs[i] = modBase + pxi.readUint32BE();
 
-	for (int m = 0; m < numMods; m++) {
-		uint32 modOfs = modOffs[m];
-		pxi.seek(modOfs);
+	// So far, take only resource 0. Additional selection is required
+	uint32 modOfs = modOffs[0];
+	pxi.seek(modOfs);
 
-		uint32 modPsize = pxi.readUint32BE();
-		uint32 modUsize = pxi.readUint32BE();
+	uint32 modPsize = pxi.readUint32BE();
+	uint32 modUsize = pxi.readUint32BE();
 
-		byte *modData = new byte[modPsize];
+	byte *modData = new byte[modPsize];
 
-		pxi.read(modData, modPsize);
+	pxi.read(modData, modPsize);
 
-		warning("Module %d : at 0x%6X, psize = %6d, usize = %6d", m, modOfs, modPsize, modUsize);
+	warning("Module %d : at 0x%6X, psize = %6d, usize = %6d", 0, modOfs, modPsize, modUsize);
 
-		byte *rawData = new byte[modUsize];
-		uint32 rawSize = decompress(modData, rawData);
-		warning("decoded to %d bytes", rawSize);
+	byte *rawData = new byte[modUsize];
+	g_vm->_pxiData = rawData;
 
-		Common::DumpFile out;
-		out.open("zzdump");
-		out.write(rawData, rawSize);
-		out.close();
+	uint32 rawSize = decompress(modData, rawData);
+	warning("decoded to %d bytes", rawSize);
 
-		if (rawData[0] != 'M' || rawData[1] != 'Z')
-			error("Module decompressed, but is not an EXE file");
+	Common::DumpFile out;
+	out.open("zzdump");
+	out.write(rawData, rawSize);
+	out.close();
 
-		uint16 hdrparas = READ_LE_UINT16(rawData + 8);
-		uint32 off = hdrparas * 16;
+	if (rawData[0] != 'M' || rawData[1] != 'Z')
+		error("Module decompressed, but is not an EXE file");
 
-		warning("hdrparas: 0x%x, off: 0x%x", hdrparas, off);
+	uint16 hdrparas = READ_LE_UINT16(rawData + 8);
+	uint32 off = hdrparas * 16;
 
-		const char *firstRes = "ARPLA.";
-		int32 resOffs = -1;
+	warning("hdrparas: 0x%x, off: 0x%x", hdrparas, off);
 
-		for (int i = off; i < rawSize; i++)
-			if (!strncmp((char *)rawData + i, firstRes, strlen(firstRes))) {
-				resOffs = i;
-				break;
-			}
+	const char *firstRes = "ARPLA.";
+	int32 resOffs = -1;
 
-		if (resOffs == -1)
-			error("No internal resources table found");
-
-		warning("Found resources table at 0x%X", resOffs - off);
-
-		while (rawData[resOffs] != '$') {
-			Common::String resName((char *)rawData + resOffs);
-
-			resOffs += MAX(resName.size() + 1, 10U);
-
-			uint16 reso = READ_LE_UINT16(rawData + resOffs);
-			resOffs += 2;
-			uint16 ress = READ_LE_UINT16(rawData + resOffs);
-			resOffs += 2;
-
-			warning("%s : %X", resName.c_str(), ress * 16 + reso);
+	for (int i = off; i < rawSize; i++)
+		if (!strncmp((char *)rawData + i, firstRes, strlen(firstRes))) {
+			resOffs = i;
+			break;
 		}
 
+	if (resOffs == -1)
+		error("No internal resources table found");
+
+	warning("Found resources table at 0x%X", resOffs - off);
+
+	while (rawData[resOffs] != '$') {
+		Common::String resName((char *)rawData + resOffs);
+
+		resOffs += MAX(resName.size() + 1, 10U); // work around malformed resource entry in the US release
+
+		uint16 reso = READ_LE_UINT16(rawData + resOffs);
+		resOffs += 2;
+		uint16 ress = READ_LE_UINT16(rawData + resOffs);
+		resOffs += 2;
+
+		warning("%s : %X", resName.c_str(), ress * 16 + reso);
+
+		int i;
+		for (i = 0; res_static[i].name[0] != '$'; i++) { // Yeah, linear search
+			if (!strcmp(res_static[i].name, resName.c_str())) {
+				*res_static[i].buffer = rawData + off + ress * 16 + reso;
+				break;
+			}
+		}
+
+		if (res_static[i].name[0] == '$')
+			warning("LoadStaticData(): Extra resource %s", resName.c_str());
 	}
 
+	// And now check that everything was loaded
+	bool missing = false;
+	for (int i = 0; res_static[i].name[0] != '$'; i++) {
+		if (*res_static[i].buffer == NULL) {
+			warning("LoadStaticData(): Resource %s is not present", res_static[i].name);
+			missing = true;
+		}
+	}
 
-	return LoadFilesList(res_static);
+	return !missing;
 }
 
 ResEntry_t res_texts[] = {

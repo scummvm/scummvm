@@ -48,11 +48,13 @@ ChamberEngine::ChamberEngine(OSystem *syst)
 	_rnd = new Common::RandomSource("chamber");
 
 	_shouldQuit = false;
+	_pxiData = NULL;
 }
 
 ChamberEngine::~ChamberEngine() {
 	// Dispose your resources here
 	delete _rnd;
+	delete _pxiData;
 }
 
 bool ChamberEngine::hasFeature(EngineFeature f) const {

@@ -55,6 +55,8 @@ public:
 
 public:
 	bool _shouldQuit;
+
+	byte *_pxiData;
 };
 
 void init(void);
