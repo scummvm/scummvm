@@ -67,7 +67,7 @@ FreescapeEngine::~FreescapeEngine() {
 	delete _gfx;
 
 	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
+	//DebugMan.clearAllDebugChannels();
 }
 
 void FreescapeEngine::drawBorder() {
