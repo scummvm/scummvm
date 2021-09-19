@@ -382,6 +382,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
+static byte garbage[1024 * 1024 * 1024];
 class GroovieMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	GroovieMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
@@ -399,6 +400,7 @@ public:
 		// Need MIDI directory to detect 11H Mac Installed
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
+		memset(garbage, 1, sizeof(garbage));
 	}
 
 	const char *getEngineId() const override {

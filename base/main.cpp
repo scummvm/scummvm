@@ -314,6 +314,11 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	system.getEventManager()->purgeKeyboardEvents();
 	system.getEventManager()->purgeMouseEvents();
 
+	#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	PluginManager::instance().unloadDetectionPlugin();
+	_plugin = NULL;
+	#endif
+
 	// Run the engine
 	Common::Error result = engine->run();
 

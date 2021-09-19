@@ -104,6 +104,8 @@ public:
 		return debugFlagList;
 	}
 
+	static bool warnNoPlugin;
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		/**
 		 * Fallback detection for Wintermute heavily depends on engine resources, so it's not possible
@@ -124,10 +126,9 @@ public:
 			if (enginePlugin) {
 				return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 			} else {
-				static bool warn = true;
-				if (warn) {
+				if (warnNoPlugin) {
 					warning("Engine plugin for Wintermute not present. Fallback detection is disabled.");
-					warn = false;
+					warnNoPlugin = false;
 				}
 			}
 		}
@@ -135,6 +136,8 @@ public:
 	}
 
 };
+
+bool WintermuteMetaEngineDetection::warnNoPlugin = true;
 
 } // End of namespace Wintermute
 

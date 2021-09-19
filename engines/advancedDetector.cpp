@@ -320,6 +320,14 @@ const ExtraGuiOptions AdvancedMetaEngineDetection::getExtraGuiOptions(const Comm
 	return options;
 }
 
+const char *_strcpy(const char *s) {
+	if (s == NULL)
+		return NULL;
+	char *r = new char[strlen(s) + 1];
+	strcpy(r, s);
+	return r;
+}
+
 Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 
@@ -392,6 +400,16 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 		return Common::kNoGameDataFoundError;
 
 	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
+	ADGameDescription *desc = (ADGameDescription *)new byte[sizeof(ADGameDescription)+128];
+	memcpy(desc, agdDesc.desc, sizeof(ADGameDescription)+128);
+	ADGameDescription &d = *desc;
+	d.extra = _strcpy(d.extra);
+	d.gameId = _strcpy(d.gameId);
+	d.guiOptions = _strcpy(d.guiOptions);
+	for (auto &f : d.filesDescriptions) {
+		f.fileName = _strcpy(f.fileName);
+		f.md5 = _strcpy(f.md5);
+	}
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
@@ -422,7 +440,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	for (FilePropertiesMap::const_iterator i = gameDescriptor.matchedFiles.begin(); i != gameDescriptor.matchedFiles.end(); ++i) {
 		debug("%s: %s, %llu bytes.", i->_key.c_str(), i->_value.md5.c_str(), (unsigned long long)i->_value.size);
 	}
-	initSubSystems(agdDesc.desc);
+	initSubSystems(desc);
 
 	PluginList pl = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	Plugin *plugin = nullptr;
@@ -434,7 +452,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	if (plugin) {
 		// Call child class's createInstanceMethod.
-		return plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc);
+		return plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, desc);
 	}
 
 	return Common::Error(Common::kEnginePluginNotFound);

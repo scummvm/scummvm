@@ -9,5 +9,7 @@ MODULE_OBJS := \
 	obsolete.o \
 	savestate.o
 
+PLUGIN := 1
+
 # Include common rules
 include $(srcdir)/rules.mk
