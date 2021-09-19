@@ -24,6 +24,7 @@
 #include "graphics/palette.h"
 #include "chewy/chewy.h"
 #include "chewy/mcga.h"
+#include "chewy/mcga_grafik.h"
 
 namespace Chewy {
 
@@ -31,11 +32,18 @@ static byte saved_palette[PALETTE_SIZE];
 static byte *screenP;
 static bool screenHasDefault;
 static byte *screenDefaultP;
+static int spriteWidth;
+static byte *fontAddr;
+static size_t fontWidth, fontHeight;
+static int fontFirst, fontLast;
+static int fontX, fontY;
 
 void init_mcga() {
 	screenP = (byte *)g_engine->_screen->getPixels();
 	screenHasDefault = false;
 	screenDefaultP = nullptr;
+	spriteWidth = 0;
+	fontX = fontY = 0;
 }
 
 void old_mode() {
@@ -170,7 +178,7 @@ void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
 }
 
 void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
-		int16 height, int16 scrwidth) {
+		int16 height, int16 scrWidth) {
 	int pitch;
 	byte *scrP;
 	*((int16 *)sptr) = width;
@@ -178,12 +186,12 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
 	*((int16 *)sptr) = height;
 	sptr += 2;
 
-	if (scrwidth == 0) {
+	if (scrWidth == 0) {
 		scrP = screenP + y * SCREEN_WIDTH + x;
 		pitch = SCREEN_WIDTH;
 	} else {
-		scrP = screenP + y * scrwidth + x;
-		pitch = scrwidth;
+		scrP = screenP + y * scrWidth + x;
+		pitch = scrWidth;
 	}
 
 	if (width >= 1 && height >= 1) {
@@ -194,7 +202,7 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
 	}
 }
 
-void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrwidth) {
+void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrWidth) {
 	int pitch;
 	byte *scrP;
 	int width = *((const int16 *)sptr);
@@ -203,12 +211,12 @@ void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	sptr += 2;
 
 	if (width >= 1 && height >= 1) {
-		if (scrwidth == 0) {
+		if (scrWidth == 0) {
 			scrP = screenP + y * SCREEN_WIDTH + x;
 			pitch = SCREEN_WIDTH;
 		} else {
-			scrP = screenP + y * scrwidth + x;
-			pitch = scrwidth;
+			scrP = screenP + y * scrWidth + x;
+			pitch = scrWidth;
 		}
 
 		for (int row = 0; row < height; ++row) {
@@ -218,34 +226,106 @@ void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	}
 }
 
-void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrwidth) {
-	warning("STUB - mspr_set_mcga");}
+static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height, const byte *&srcP, byte *&destP) {
+	if (y < clipy1) {
+		int yDiff = ABS(clipy1 - y);
+		height -= yDiff;
+		srcP += yDiff * width;
+		y = clipy1;
+	}
+	if (height < 1)
+		return false;
 
-void setfont(byte *adr, int16 breite, int16 hoehe, int16 first, int16 last) {
-	warning("STUB - setfont");
+	if (x < clipx1) {
+		int xDiff = ABS(clipx1 - x);
+		width -= xDiff;
+		srcP += xDiff;
+		x = clipx1;
+	}
+	if (width < 1)
+		return false;
+
+	int x2 = x + width;
+	if (x2 > clipx2) {
+		int xDiff = x2 - clipx2;
+		width -= xDiff;
+	}
+	if (width <= 1)
+		return false;
+
+	int y2 = y + height;
+	if (y2 > clipy2) {
+		int yDiff = y2 - clipy2;
+		height -= yDiff;
+	}
+	if (height < 1)
+		return false;
+
+	destP = screenP + pitch * y + x;
+	return true;
+}
+
+void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
+	if (!sptr)
+		return;
+
+	byte *destP;
+	int width = *((const int16 *)sptr);
+	sptr += 2;
+	int height = *((const int16 *)sptr);
+	sptr += 2;
+	const byte *srcP = sptr;
+	spriteWidth = width;
+
+	if (!(height >= 1 && width >= 4))
+		return;
+
+	int pitch = scrWidth ? scrWidth : SCREEN_WIDTH;
+	if (!mspr_set_mcga_clip(x, y, pitch, width, height, srcP, destP))
+		return;
+	int destPitchRemainder = pitch - width;
+	int srcPitchRemainder = spriteWidth - width;
+
+	for (int row = 0; row < height; ++row,
+			srcP += srcPitchRemainder, destP += destPitchRemainder) {
+		for (int col = 0; col < width; ++col, ++srcP, ++destP) {
+			if (*srcP != 0)
+				*destP = *srcP;
+		}
+	}
+}
+
+void setfont(byte *addr, int16 width, int16 height, int16 first, int16 last) {
+	fontAddr = addr;
+	fontWidth = width;
+	fontHeight = height;
+	fontFirst = first;
+	fontLast = last;
 }
 
 void upd_scr() {
+	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
 }
 
 void vors() {
-	warning("STUB - vors");
+	fontX = fvorx;
+	fontY = fvory;
 }
 
 void zoom_img(byte *source, byte *dest, int16 xdiff_, int16 ydiff_) {
 	warning("STUB - zoom_img");
 }
 
-void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
+void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
 	warning("STUB - zoom_set");
 }
 
-void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol, int16 scrwidth) {
+void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol, int16 scrWidth) {
 	warning("STUB - putcxy");
 }
 
-void putz(char zeichen, int16 forcol, int16 backcol, int16 scrwidth) {
+void putz(char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
 	warning("STUB - putz");
 }
 
