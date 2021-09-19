@@ -54,7 +54,7 @@ ChamberEngine::ChamberEngine(OSystem *syst)
 ChamberEngine::~ChamberEngine() {
 	// Dispose your resources here
 	delete _rnd;
-	delete _pxiData;
+	delete[] _pxiData;
 }
 
 bool ChamberEngine::hasFeature(EngineFeature f) const {
