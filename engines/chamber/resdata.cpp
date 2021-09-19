@@ -167,10 +167,7 @@ int16 LoadStaticData() {
 	uint32 rawSize = decompress(modData, rawData);
 	warning("decoded to %d bytes", rawSize);
 
-	Common::DumpFile out;
-	out.open("zzdump");
-	out.write(rawData, rawSize);
-	out.close();
+	delete[] modData;
 
 	if (rawData[0] != 'M' || rawData[1] != 'Z')
 		error("Module decompressed, but is not an EXE file");
@@ -226,6 +223,8 @@ int16 LoadStaticData() {
 			missing = true;
 		}
 	}
+
+	delete[] modOffs;
 
 	return !missing;
 }
