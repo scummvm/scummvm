@@ -27,6 +27,7 @@
 #include "ags/shared/core/types.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/font/ags_font_renderer.h"
 
 namespace AGS3 {
 
@@ -43,6 +44,8 @@ struct Font {
 	IAGSFontRenderer *Renderer = nullptr;
 	IAGSFontRenderer2 *Renderer2 = nullptr;
 	FontInfo            Info;
+	// Values received from the renderer and saved for the reference
+	AGS3::LoadedFontInfo LoadedInfo;
 
 	Font();
 };

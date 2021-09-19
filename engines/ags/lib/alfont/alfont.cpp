@@ -98,6 +98,14 @@ void alfont_set_font_size(ALFONT_FONT *font, int size) {
 	font->_size = size;
 }
 
+int alfont_get_font_height(ALFONT_FONT *font) {
+	return font->_size;
+}
+
+int alfont_get_font_real_height(ALFONT_FONT *font) {
+	return font->_size;
+}
+
 const char *alfont_get_name(ALFONT_FONT *font) {
 	// TODO: Return ttf font name
 	return "Unsupported";

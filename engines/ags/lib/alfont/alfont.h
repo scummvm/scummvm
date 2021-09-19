@@ -58,7 +58,8 @@ extern size_t alfont_text_height(ALFONT_FONT *font);
 extern void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, ALFONT_FONT *refFont, const char *text, int x, int y, uint32 color);
 extern const char *alfont_get_name(ALFONT_FONT *font);
 extern void alfont_set_font_size(ALFONT_FONT *font, int size);
-
+extern int alfont_get_font_height(ALFONT_FONT *font);
+extern int alfont_get_font_real_height(ALFONT_FONT *font);
 
 } // namespace AGS3
 

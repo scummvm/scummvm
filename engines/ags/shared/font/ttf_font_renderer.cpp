@@ -83,14 +83,15 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
-	return LoadFromDiskEx(fontNumber, fontSize, nullptr);
+	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
 }
 
 bool TTFFontRenderer::IsBitmapFont() {
 	return false;
 }
 
-bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params) {
+bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
+		const FontRenderParams *params, LoadedFontInfo *load_info) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
 	soff_t lenof = 0;
 	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name, &lenof);
@@ -134,6 +135,12 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRen
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
+
+	if (load_info) {
+		load_info->Height = alfont_get_font_height(alfptr);
+		load_info->RealHeight = alfont_get_font_real_height(alfptr);
+	}
+
 	return true;
 }
 
