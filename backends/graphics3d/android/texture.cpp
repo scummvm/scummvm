@@ -191,7 +191,7 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, co
 	g_box_shader->setUniform("clip", clipV);
 	g_box_shader->setUniform("flipY", !_is_game_texture);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
 	clearDirty();
 }
