@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-17 20:04+0000\n"
+"POT-Creation-Date: 2021-09-18 09:29+0000\n"
 "PO-Revision-Date: 2021-09-18 12:49+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2062,11 +2062,11 @@ msgstr "Folyamatban"
 msgid "Clear value"
 msgstr "Érték törlése"
 
-#: base/main.cpp:642
+#: base/main.cpp:640
 msgid "Error running game:"
 msgstr "Hiba a játék futtatásakor:"
 
-#: base/main.cpp:689
+#: base/main.cpp:687
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nem található olyan játékmotor ami a választott játékot támogatja"
 
@@ -7141,7 +7141,8 @@ msgstr "Váltás nagyon gyors módra"
 
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr "FIGYELEM: Ez a motor nem támogatja az automatikus mentési hely törlését"
+msgstr ""
+"FIGYELEM: Ez a motor nem támogatja az automatikus mentési hely törlését"
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
