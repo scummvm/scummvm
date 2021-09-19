@@ -134,6 +134,78 @@ Load resident data files. Original game has all these data files embedded in the
 NB! Static data includes the font file, don't use any text print routines before it's loaded.
 */
 int16 LoadStaticData() {
+	Common::File pxi;
+
+	pxi.open("ere.pxi");
+
+	uint numMods = pxi.readUint16BE();
+	uint modBase = 2 + numMods * 4;
+
+	uint32 *modOffs = new uint32[numMods];
+
+	for (int i = 0; i < numMods; i++)
+		modOffs[i] = modBase + pxi.readUint32BE();
+
+	for (int m = 0; m < numMods; m++) {
+		uint32 modOfs = modOffs[m];
+		pxi.seek(modOfs);
+
+		uint32 modPsize = pxi.readUint32BE();
+		uint32 modUsize = pxi.readUint32BE();
+
+		byte *modData = new byte[modPsize];
+
+		pxi.read(modData, modPsize);
+
+		warning("Module %d : at 0x%6X, psize = %6d, usize = %6d", m, modOfs, modPsize, modUsize);
+
+		byte *rawData = new byte[modUsize];
+		uint32 rawSize = decompress(modData, rawData);
+		warning("decoded to %d bytes", rawSize);
+
+		Common::DumpFile out;
+		out.open("zzdump");
+		out.write(rawData, rawSize);
+		out.close();
+
+		if (rawData[0] != 'M' || rawData[1] != 'Z')
+			error("Module decompressed, but is not an EXE file");
+
+		uint16 hdrparas = READ_LE_UINT16(rawData + 8);
+		uint32 off = hdrparas * 16;
+
+		warning("hdrparas: 0x%x, off: 0x%x", hdrparas, off);
+
+		const char *firstRes = "ARPLA.";
+		int32 resOffs = -1;
+
+		for (int i = off; i < rawSize; i++)
+			if (!strncmp((char *)rawData + i, firstRes, strlen(firstRes))) {
+				resOffs = i;
+				break;
+			}
+
+		if (resOffs == -1)
+			error("No internal resources table found");
+
+		warning("Found resources table at 0x%X", resOffs - off);
+
+		while (rawData[resOffs] != '$') {
+			Common::String resName((char *)rawData + resOffs);
+
+			resOffs += MAX(resName.size() + 1, 10U);
+
+			uint16 reso = READ_LE_UINT16(rawData + resOffs);
+			resOffs += 2;
+			uint16 ress = READ_LE_UINT16(rawData + resOffs);
+			resOffs += 2;
+
+			warning("%s : %X", resName.c_str(), ress * 16 + reso);
+		}
+
+	}
+
+
 	return LoadFilesList(res_static);
 }
 
