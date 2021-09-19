@@ -31,8 +31,29 @@ namespace Hypno {
 
 extern int parse_arc(const char *);
 
+void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list) {
+	Common::File file;
+	if (!file.open(filename.c_str()))
+		error("Failed to open %s", filename.c_str());
+
+	while (!file.eos()) {
+		byte x = file.readByte();
+		arc += x;
+		if (x == 'X') {
+			while (!file.eos()) {
+				x = file.readByte();
+				if (x == 'Y')
+					break;
+				list += x;
+			}
+			break; // No need to keep parsing
+		}
+	}
+	file.close();
+}
+
 void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common::String &filename, const Common::String &data) {
-	debugC(1, kHypnoDebugParser, "Parsing %s%s", prefix.c_str(), filename.c_str());
+	debugC(1, kHypnoDebugParser, "Parsing %s/%s", prefix.c_str(), filename.c_str());
 	parse_arc(data.c_str());
 	Level level;
 	level.arcade = g_parsedArc;
@@ -100,11 +121,15 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
 		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
 			break; 
+		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 0, 255))
+			break; 
+
 		_playerFrameSep++;
 	}
 
 	if(_playerFrameSep == _playerFrames.size())
 		error("No player separator frame found!");
+	debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
 	_playerFrameIdx = -1;
 

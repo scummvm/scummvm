@@ -30,7 +30,7 @@ namespace Hypno {
 BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void BoyzEngine::loadAssets() {
-	loadLib("", "boyz/preload/missions.lib");
+	loadLib("", "boyz/preload/missions.lib", true);
 }
 
 } // namespace Hypno

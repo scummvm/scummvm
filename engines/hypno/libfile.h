@@ -42,7 +42,7 @@ public:
 	LibFile();
 	~LibFile() override;
 
-	bool open(const Common::String &prefix, const Common::String &filename);
+	bool open(const Common::String &prefix, const Common::String &filename, bool encrypted);
 	void close();
 
 	// Common::Archive API implementation
