@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-18 09:29+0000\n"
-"PO-Revision-Date: 2021-09-13 11:26+0000\n"
+"PO-Revision-Date: 2021-09-20 01:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7252,6 +7252,8 @@ msgstr "Act./Désact. mode très rapide"
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
+"ATTENTION : Ce moteur ne prend pas en charge la suppression de la sauvegarde "
+"auto"
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
