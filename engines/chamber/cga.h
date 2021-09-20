@@ -128,6 +128,8 @@ void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs);
 void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs);
 
+void CGA_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target);
+
 } // End of namespace Chamber
 
 #endif
