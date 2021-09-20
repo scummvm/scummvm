@@ -253,7 +253,7 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Po
 	if (picture) {
 		Common::Point dst = pos + getPosition();
 		Common::Rect srcRect = picture->getRect();
-		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
+		uint32 color = _picture->format.ARGBToColor(_alpha, 255, 255, 255);
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {
 			picture->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 		}

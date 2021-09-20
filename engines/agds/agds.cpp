@@ -674,7 +674,7 @@ Common::Error AGDSEngine::run() {
 				Common::Point dst = _mouse;
 				dst.x -= srcRect.width() / 2;
 				dst.y -= srcRect.height() / 2;
-				uint32 color = (_currentInventoryObject->alpha() << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
+				uint32 color = picture->format.ARGBToColor(_currentInventoryObject->alpha(), 255, 255, 255);
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
