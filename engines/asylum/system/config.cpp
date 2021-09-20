@@ -68,6 +68,8 @@ ConfigurationManager::ConfigurationManager() {
 
 	showMovieSubtitles = false;
 	showEncounterSubtitles = true;
+	showSceneLoading = true;
+	showIntro = true;
 
 	gammaLevel = 0;
 	performance = 0;
