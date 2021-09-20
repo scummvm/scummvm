@@ -1302,7 +1302,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		SuperSpriteProcess *ssp;
 		CrosshairProcess *chp = CrosshairProcess::get_instance();
 		assert(chp);
-		Item *crosshair = getItem(chp->getItemNum());
+		const Item *crosshair = getItem(chp->getItemNum());
 		int32 ssx, ssy, ssz;
 		if (tx != -1) {
 			// Shoot toward the target
@@ -1402,7 +1402,7 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 
 	int32 dist = 0;
 
-	CurrentMap *cm = World::get_instance()->getCurrentMap();
+	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	if (!cm)
 		return 0;
 
@@ -1475,7 +1475,7 @@ int32 Item::getTargetZRelativeToAttackerZ(int32 otherz) const {
 
 
 unsigned int Item::countNearby(uint32 shape, uint16 range) {
-	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	const CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape));
 	currentmap->areaSearch(&itemlist, script, sizeof(script),
