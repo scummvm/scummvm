@@ -2686,7 +2686,7 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("gui_language", newLang);
 		isRebuildNeeded = true;
 	}
-	bool wantsBuiltinLang = (TransMan.parseLanguage(TransMan.getCurrentLanguage()) == Common::kTranslationBuiltinId);
+	bool wantsBuiltinLang = TransMan.currentIsBuiltinLanguage();
 
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
 	ConfMan.setBool("gui_use_game_language", guiUseGameLanguage, _domain);
@@ -2733,7 +2733,7 @@ void GlobalOptionsDialog::apply() {
 		// One reason for failing to load the theme is if we want a language other than
 		// the builtin language and the theme does not have unicode fonts for those.
 		// We can detect this case as it falls back to the builtin language.
-		bool themeLangIssue = (!wantsBuiltinLang && (TransMan.parseLanguage(TransMan.getCurrentLanguage()) == Common::kTranslationBuiltinId));
+		bool themeLangIssue = (!wantsBuiltinLang && TransMan.currentIsBuiltinLanguage());
 		TransMan.setLanguage(oldLang);
 		_guiLanguagePopUp->setSelectedTag(selectedLang);
 		ConfMan.set("gui_language", oldLang);

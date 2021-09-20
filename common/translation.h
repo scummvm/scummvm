@@ -192,6 +192,16 @@ public:
 	 */
 	String getCurrentLanguage() const;
 
+	/**
+	 * Return the id of the selected translation language.
+	 */
+	int getCurrentLanguageId() const;
+
+	/**
+	 * Return true if the current language is the builtin language and false if it is another language.
+	 */
+	bool currentIsBuiltinLanguage() const;
+
 private:
 	/**
 	 * Attempt to find the given language or a derivate of it.
