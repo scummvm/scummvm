@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-09-18 09:29+0000\n"
-"PO-Revision-Date: 2021-09-12 01:46+0000\n"
+"PO-Revision-Date: 2021-09-20 12:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -7206,6 +7206,8 @@ msgstr "Zeer snelle modus aan-/uitzetten"
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
+"WAARSHUWING: Het verwijderen van de auto opslaan slot wordt niet ondersteund "
+"door deze engine"
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
