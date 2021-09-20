@@ -369,7 +369,7 @@ void PluginManagerUncached::init() {
 #ifndef DETECTION_STATIC
 			if (!foundDetectPlugin && (*pp)->isFilePluginProvider()) {
 				Common::String pName = (*p)->getFileName();
-				if (pName.hasSuffix(detectPluginName)) {
+				if (pName.hasSuffixIgnoreCase(detectPluginName)) {
 					_detectionPlugin = (*p);
 					foundDetectPlugin = true;
 					debug(9, "Detection plugin found!");
