@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/path.h"
 #include "common/ptr.h"
 #include "graphics/surface.h"
 #include "image/bmp.h"
@@ -132,16 +133,20 @@ int ResourceManager::GrpFile::listMembers(Common::ArchiveMemberList &list) const
 	return size;
 }
 
-const Common::ArchiveMemberPtr ResourceManager::GrpFile::getMember(const Common::String &name) const {
+bool ResourceManager::GrpFile::hasFile(const Common::Path &name) const {
+	return _members.find(name.toString()) != _members.end();
+}
+
+const Common::ArchiveMemberPtr ResourceManager::GrpFile::getMember(const Common::Path &name) const {
 	Common::ArchiveMemberPtr member;
-	MembersType::const_iterator i = _members.find(name);
+	MembersType::const_iterator i = _members.find(name.toString());
 	if (i != _members.end())
 		member = i->_value;
 	return member;
 }
 
-Common::SeekableReadStream *ResourceManager::GrpFile::createReadStreamForMember(const Common::String &name) const {
-	Common::ArchiveMemberPtr member = getMember(name);
+Common::SeekableReadStream *ResourceManager::GrpFile::createReadStreamForMember(const Common::Path &name) const {
+	Common::ArchiveMemberPtr member = getMember(name.toString());
 	return member ? member->createReadStream() : NULL;
 }
 

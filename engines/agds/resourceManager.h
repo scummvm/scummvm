@@ -71,12 +71,10 @@ private:
 			return _file;
 		}
 
-		virtual bool hasFile(const Common::String &name) const
-		{ return _members.find(name) != _members.end(); }
-
+		bool hasFile(const Common::Path &name) const override;
 		int listMembers(Common::ArchiveMemberList &list) const override;
-		const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-		Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+		const Common::ArchiveMemberPtr getMember(const Common::Path &name) const override;
+		Common::SeekableReadStream *createReadStreamForMember(const Common::Path &name) const override;
 	};
 
 public:
