@@ -102,6 +102,23 @@ static const char *directoryGlobs[] = {
 	kLocMulti6                                                                  \
 },
 
+#define MYST3ENTRY_XBOX_PROTO(lang, langFile, md5lang)                          \
+{                                                                               \
+	{                                                                           \
+		"myst3",                                                                \
+		_s("Xbox preview version is not yet supported"),                        \
+		{                                                                       \
+			{ "RSRC.m3r", 0, "d76d227487d146ecc5f96dd40743bb84", 1226192 },     \
+			{ langFile, 0, md5lang, -1 },                                       \
+		},                                                                      \
+		lang,                                                                   \
+		Common::kPlatformXbox,                                                  \
+		ADGF_UNSUPPORTED,                                                       \
+		GUIO_NONE                                                               \
+	},                                                                          \
+	0                                                                           \
+},
+
 
 static const Myst3GameDescription gameDescriptions[] = {
 	// Initial US release (English only)
@@ -151,6 +168,13 @@ static const Myst3GameDescription gameDescriptions[] = {
 	// Myst 3 Xbox (RUS)
 	MYST3ENTRY_XBOX(Common::RU_RUS, "ENGLISHX.m3t", "18cb50f5c5317586a128ca9eb3e03279")
 
+    // Myst 3 Xbox Preview Build 3/02
+    MYST3ENTRY_XBOX_PROTO(Common::UNK_LANG, "ENGLISHjpX.m3t", "d3fa13b052c02b1296881a27de4722f2")
+    MYST3ENTRY_XBOX_PROTO(Common::JA_JPN, "JAPANESEX.m3t", "d18e49916bd789b877a3131e076e0ac4")
+
+    // Myst 3 Xbox Preview Build 6/02
+    MYST3ENTRY_XBOX_PROTO(Common::EN_ANY, "ENGLISHX.m3t", "846c888c545560a1f7736df89602a8a1")
+
 	{
 		// Myst 3 PS2 (NTSC-U/C)
 		{
@@ -187,20 +211,6 @@ static const Myst3GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("RSRC.m3r", "1850580ada496acdc06b41f1d82b4ede", 331930989),
 			Common::UNK_LANG,
 			Common::kPlatformPS2,
-			ADGF_UNSUPPORTED,
-			GUIO_NONE
-		},
-		0
-	},
-
-	{
-		// Myst 3 Xbox Preview Build 6/02
-		{
-			"myst3",
-			_s("Xbox preview version is not yet supported"),
-			AD_ENTRY1s("RSRC.m3r", "d76d227487d146ecc5f96dd40743bb84", 1226192),
-			Common::UNK_LANG,
-			Common::kPlatformXbox,
 			ADGF_UNSUPPORTED,
 			GUIO_NONE
 		},
