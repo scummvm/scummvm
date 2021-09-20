@@ -176,6 +176,10 @@ String TranslationManager::getCurrentLanguage() const {
 	return _langs[_currentLang];
 }
 
+bool TranslationManager::currentIsBuiltinLanguage() const {
+	return (_currentLang == -1);
+}
+
 U32String TranslationManager::getTranslation(const String &message) const {
 	return getTranslation(message.c_str());
 }
