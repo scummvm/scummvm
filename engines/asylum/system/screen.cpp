@@ -589,6 +589,8 @@ void Screen::setupTransTables(uint32 count, ...) {
 		memcpy(&_transTableBuffer[index], getResource()->get(id)->data, TRANSPARENCY_TABLE_SIZE);
 		index += TRANSPARENCY_TABLE_SIZE;
 	}
+
+	va_end(va);
 }
 
 void Screen::clearTransTables() {
