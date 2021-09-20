@@ -129,10 +129,10 @@ void OpenInventory(uint16 filtermask, uint16 filtervalue) {
 	case 108:
 	case 115:
 	case 117:
-		script_byte_vars.byte_17A19 = 1;
+		script_byte_vars.bvar_63 = 1;
 		break;
 	default:
-		script_byte_vars.byte_17A19 = 0;
+		script_byte_vars.bvar_63 = 0;
 	}
 }
 

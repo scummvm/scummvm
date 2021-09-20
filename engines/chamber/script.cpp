@@ -301,7 +301,7 @@ uint16 SCR_4_StealZapstik(void) {
 		pers->index &= ~0x18;
 
 		script_vars[ScrPool3_CurrentItem] = &inventory_items[38 + (script_byte_vars.cur_pers - 1) - 9];
-		script_byte_vars.byte_179F1++;
+		script_byte_vars.bvar_3B++;
 
 		BounceCurrentItem(ITEMFLG_80, 85);  /*bounce to inventory*/
 
@@ -1322,16 +1322,16 @@ uint16 SCR_42_LoadZone(void) {
 
 	zone_drawn = 0;
 	if (right_button)
-		script_byte_vars.byte_179B8 = 0;
+		script_byte_vars.bvar_02 = 0;
 	else {
 		if ((script_byte_vars.cur_spot_flags & (SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8)) == 0)
-			script_byte_vars.byte_179B8 = script_byte_vars.cur_spot_flags & 7;
+			script_byte_vars.bvar_02 = script_byte_vars.cur_spot_flags & 7;
 		else if ((script_byte_vars.cur_spot_flags & ((SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8))) == SPOTFLG_8) {
 			zone_drawn = 1;
 			AnimRoomDoorOpen(script_byte_vars.cur_spot_idx);
-			script_byte_vars.byte_179B8 = script_byte_vars.cur_spot_flags & 7;
+			script_byte_vars.bvar_02 = script_byte_vars.cur_spot_flags & 7;
 		} else
-			script_byte_vars.byte_179B8 = 0;
+			script_byte_vars.bvar_02 = 0;
 	}
 	UpdateZoneSpot(index);
 	ChangeZone(index);
@@ -1341,9 +1341,9 @@ uint16 SCR_42_LoadZone(void) {
 
 	DrawRoomStatics();
 
-	if (script_byte_vars.byte_17A15 != 0) {
-		RedrawRoomStatics(script_byte_vars.byte_17A15, 0);
-		script_byte_vars.byte_17A15 = 0;
+	if (script_byte_vars.bvar_5F != 0) {
+		RedrawRoomStatics(script_byte_vars.bvar_5F, 0);
+		script_byte_vars.bvar_5F = 0;
 	}
 
 	BackupSpotsImages();
@@ -1504,7 +1504,7 @@ uint16 SCR_3D_ActionsMenu(void) {
 
 		script_byte_vars.used_commands++;
 
-		if (script_byte_vars.byte_179F9 == 0 && script_byte_vars.check_used_commands < script_byte_vars.used_commands) {
+		if (script_byte_vars.bvar_43 == 0 && script_byte_vars.check_used_commands < script_byte_vars.used_commands) {
 			the_command = Swap16(script_word_vars.next_command1);
 			if (the_command)
 				return ScriptRerun;
@@ -1685,7 +1685,7 @@ Move a Hand in Who Will Be Saved
 */
 uint16 SCR_41_LiftHand(void) {
 	script_ptr++;
-	RedrawRoomStatics(92, script_byte_vars.byte_179E1);
+	RedrawRoomStatics(92, script_byte_vars.bvar_2B);
 	CGA_BackBufferToRealFull();
 	PlaySound(31);
 	return 0;
@@ -1750,7 +1750,7 @@ uint16 SCR_30_Fight(void) {
 
 	script_byte_vars.fight_status = 0;
 
-	if (script_byte_vars.byte_179F3 == 0) {
+	if (script_byte_vars.bvar_3D == 0) {
 		static byte character_strenght[] = {1, 3, 1, 1, 1, 1, 5, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1};
 
 		strenght = character_strenght[pers->name - 42];
@@ -1759,7 +1759,7 @@ uint16 SCR_30_Fight(void) {
 		if (strenght != 1 && (pers->flags & PERSFLG_80))
 			strenght--;
 
-		if (script_byte_vars.room_items != 0 || script_byte_vars.byte_17A1C != 0)
+		if (script_byte_vars.room_items != 0 || script_byte_vars.bvar_66 != 0)
 			strenght--;
 	}
 
@@ -1892,7 +1892,7 @@ fightentry_t fightlist3[] = {
 uint16 SCR_31_Fight2(void) {
 	script_ptr++;
 
-	if (script_byte_vars.byte_179F9 != 18) {
+	if (script_byte_vars.bvar_43 != 18) {
 		pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
 		fight_pers_ofs = (byte *)pers - (byte *)pers_list; /*TODO check size*/
 		pers->flags |= PERSFLG_40;
@@ -1964,24 +1964,24 @@ uint16 SCR_31_Fight2(void) {
 }
 
 void FightWin(void) {
-	script_byte_vars.byte_17A1D = 0;
+	script_byte_vars.bvar_67 = 0;
 
-	if (script_byte_vars.byte_179F9 != 18 && *spot_sprite != 0) {
+	if (script_byte_vars.bvar_43 != 18 && *spot_sprite != 0) {
 		CGA_RestoreImage(*spot_sprite, frontbuffer);
 		CGA_RestoreImage(*spot_sprite, backbuffer);
 
-		if (script_byte_vars.byte_179F3 == 0
-		        && script_byte_vars.byte_17A16 == 0
+		if (script_byte_vars.bvar_3D == 0
+		        && script_byte_vars.bvar_60 == 0
 		        && script_byte_vars.room_items != 0
 		        && fight_mode == 0) {
-			script_byte_vars.byte_17A1D = 1;
+			script_byte_vars.bvar_67 = 1;
 			PlaySound(149);
 			PlayAnim(40, found_spot->sx, found_spot->sy);
 		}
 	}
 
-	prev_fight_mode = script_byte_vars.byte_179F3;
-	script_byte_vars.byte_179F3 = 0;
+	prev_fight_mode = script_byte_vars.bvar_3D;
+	script_byte_vars.bvar_3D = 0;
 }
 
 uint16 SCR_32_FightWin(void) {
@@ -2026,9 +2026,9 @@ uint16 SCR_60_ReviveCadaver(void) {
 
 	FindAndSelectSpot(38 * 5);
 
-	script_byte_vars.byte_17A16 = 1;
+	script_byte_vars.bvar_60 = 1;
 	FightWin();
-	script_byte_vars.byte_17A16 = 0;
+	script_byte_vars.bvar_60 = 0;
 	pers_list[38].area = 0;
 
 	FindAndSelectSpot(fight_pers_ofs);
@@ -2366,48 +2366,48 @@ uint16 SCR_50_BounceItemToInventory(void) {
 Take away Protozorq's zapstik and bounce it to room
 */
 uint16 SCR_4B_ProtoDropZapstik(void) {
-       pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
 
-       script_ptr++;
+	script_ptr++;
 
-       if ((pers->index & 0x38) != 0x30)
-               return 0;
+	if ((pers->index & 0x38) != 0x30)
+		return 0;
 
-       pers->index &= ~0x18;
+	pers->index &= ~0x18;
 
-       script_vars[ScrPool3_CurrentItem] = &inventory_items[38 + (script_byte_vars.cur_pers - 1) - 9];
+	script_vars[ScrPool3_CurrentItem] = &inventory_items[38 + (script_byte_vars.cur_pers - 1) - 9];
 
-       BounceCurrentItem(ITEMFLG_40, 43);
+	BounceCurrentItem(ITEMFLG_40, 43);
 
-       return 0;
+	return 0;
 }
 
 /*Take away a person's item*/
 void TakePersonsItem(void) {
-       if (pers_ptr->item != 0) {
-               item_t *item = &inventory_items[pers_ptr->item - 1];
-               pers_ptr->item = 0;
+	if (pers_ptr->item != 0) {
+		item_t *item = &inventory_items[pers_ptr->item - 1];
+		pers_ptr->item = 0;
 
-               script_vars[ScrPool3_CurrentItem] = item;
-               script_byte_vars.byte_179F1++;
-               script_byte_vars.byte_17A23[pers_ptr->index >> 6] = item->name; /*TODO: check these index bits*/
-               BounceCurrentItem(ITEMFLG_80, 85);
-               the_command = 0x90AA;   /*OK*/
-       } else
-               the_command = 0x9140;   /*NOTHING ON HIM*/
+		script_vars[ScrPool3_CurrentItem] = item;
+		script_byte_vars.bvar_3B++;
+		script_byte_vars.bvar_6D[pers_ptr->index >> 6] = item->name; /*TODO: check these index bits*/
+		BounceCurrentItem(ITEMFLG_80, 85);
+		the_command = 0x90AA;   /*OK*/
+	} else
+		the_command = 0x9140;   /*NOTHING ON HIM*/
 }
 
 uint16 SCR_2F_TakePersonsItem() {
-       script_ptr++;
-       TakePersonsItem();
-       return ScriptRerun;
+	script_ptr++;
+	TakePersonsItem();
+	return ScriptRerun;
 }
 
 uint16 SCR_51_ItemTrade(void) {
 	byte *old_script, *old_script_end = script_end_ptr;
 	byte status;
 
-	if (script_byte_vars.byte_179DC >= 63)  /*TODO: hang?*/
+	if (script_byte_vars.bvar_26 >= 63)  /*TODO: hang?*/
 		return 0;
 
 	script_ptr++;
@@ -3052,7 +3052,7 @@ Advance time
 */
 uint16 CMD_5_Wait(void) {
 
-	script_byte_vars.byte_179DB++;
+	script_byte_vars.bvar_25++;
 	script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 300);
 
 	the_command = next_command3;
@@ -3063,7 +3063,7 @@ uint16 CMD_5_Wait(void) {
 
 	script_byte_vars.used_commands = script_byte_vars.check_used_commands;
 
-	the_command = Swap16(script_word_vars.word_17852);
+	the_command = Swap16(script_word_vars.wvar_0E);
 
 	if (the_command == 0) {
 		if (script_word_vars.next_command1 == 0) {
@@ -3071,7 +3071,7 @@ uint16 CMD_5_Wait(void) {
 			RunCommand();
 		}
 	} else {
-		if (script_byte_vars.byte_179DC >= 63 && script_byte_vars.zone_area < 22 && script_byte_vars.zone_area != 1)
+		if (script_byte_vars.bvar_26 >= 63 && script_byte_vars.zone_area < 22 && script_byte_vars.zone_area != 1)
 			the_command = 0x9005;
 		return ScriptRerun;
 	}
@@ -3155,7 +3155,7 @@ uint16 CMD_A_PsiSolarEyes(void) {
 		CGA_BackBufferToRealFull();
 	}
 
-	the_command = Swap16(script_word_vars.word_178EE);
+	the_command = Swap16(script_word_vars.wvar_AA);
 	RunCommand();
 	script_byte_vars.cur_spot_flags = 0xFF;
 
@@ -3196,8 +3196,8 @@ uint16 CMD_B_PsiStickyFingers(void) {
 	if (!ConsumePsiEnergy(3))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 != 0) {
-		the_command = Swap16(script_word_vars.word_178F0);
+	if (script_byte_vars.bvar_43 != 0) {
+		the_command = Swap16(script_word_vars.wvar_AC);
 		return ScriptRerun;
 	}
 
@@ -3212,7 +3212,7 @@ uint16 CMD_B_PsiStickyFingers(void) {
 	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(0 * 2) == 0)
 		the_command = Swap16(script_word_vars.psi_cmds[0]);
 
-	if (script_byte_vars.byte_179DC >= 63
+	if (script_byte_vars.bvar_26 >= 63
 	        && script_byte_vars.zone_area < 22
 	        && script_byte_vars.zone_area != 1)
 		the_command = 0x9005;
@@ -3224,8 +3224,8 @@ uint16 CMD_C_PsiKnowMind(void) {
 	if (!ConsumePsiEnergy(1))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 != 0) {
-		the_command = Swap16(script_word_vars.word_178F2);
+	if (script_byte_vars.bvar_43 != 0) {
+		the_command = Swap16(script_word_vars.wvar_AE);
 		return ScriptRerun;
 	}
 
@@ -3241,12 +3241,12 @@ uint16 CMD_D_PsiBrainwarp(void) {
 	if (!ConsumePsiEnergy(2))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 == 0) {
+	if (script_byte_vars.bvar_43 == 0) {
 		BackupScreenOfSpecialRoom();
 		ProcessMenu();
 
 		if (script_byte_vars.cur_spot_idx == 0) {
-			the_command = Swap16(script_word_vars.word_17850);
+			the_command = Swap16(script_word_vars.wvar_0C);
 			script_byte_vars.dead_flag = 0;
 			return ScriptRerun;
 		}
@@ -3258,7 +3258,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 		}
 	}
 
-	if (script_byte_vars.byte_179F9 == 18) {
+	if (script_byte_vars.bvar_43 == 18) {
 		script_byte_vars.dead_flag = 1;
 		script_byte_vars.tries_left = 2;
 		return 0;
@@ -3268,7 +3268,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 	script_byte_vars.dead_flag = script_byte_vars.cur_spot_idx;
 	script_byte_vars.tries_left = 2;
 	the_command = 0;
-	if (script_byte_vars.byte_179F9 == 0) {
+	if (script_byte_vars.bvar_43 == 0) {
 		PlayAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
 		RestoreScreenOfSpecialRoom();
 		return ScriptRerun;
@@ -3286,8 +3286,8 @@ uint16 CMD_E_PsiZoneScan(void) {
 	if (!ConsumePsiEnergy(1))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 != 0) {
-		the_command = Swap16(script_word_vars.word_178FC);
+	if (script_byte_vars.bvar_43 != 0) {
+		the_command = Swap16(script_word_vars.wvar_B8);
 		return ScriptRerun;
 	}
 
@@ -3331,8 +3331,8 @@ uint16 CMD_F_PsiPsiShift(void) {
 	if (!ConsumePsiEnergy(3))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 != 0) {
-		the_command = Swap16(script_word_vars.word_178F4);
+	if (script_byte_vars.bvar_43 != 0) {
+		the_command = Swap16(script_word_vars.wvar_B0);
 		return ScriptRerun;
 	}
 
@@ -3355,10 +3355,10 @@ uint16 CMD_10_PsiExtremeViolence(void) {
 	if (!ConsumePsiEnergy(8))
 		return 0;
 
-	script_byte_vars.byte_179F3 = 1;
+	script_byte_vars.bvar_3D = 1;
 
-	if (script_byte_vars.byte_179F9 != 0) {
-		the_command = Swap16(script_word_vars.word_178F6);
+	if (script_byte_vars.bvar_43 != 0) {
+		the_command = Swap16(script_word_vars.wvar_B2);
 		return ScriptRerun;
 	}
 
@@ -3366,17 +3366,17 @@ uint16 CMD_10_PsiExtremeViolence(void) {
 
 	if (script_byte_vars.cur_spot_idx == 0) {
 		the_command = Swap16(script_word_vars.psi_cmds[4]);
-		script_byte_vars.byte_179F3 = 0;
+		script_byte_vars.bvar_3D = 0;
 		return ScriptRerun;
 	}
 
 	command = GetZoneObjCommand(4 * 2);
 
 	if ((command & 0xF000) == 0x9000)
-		script_byte_vars.byte_179F3 = 0;
+		script_byte_vars.bvar_3D = 0;
 	else if (command == 0) {
 		the_command = Swap16(script_word_vars.psi_cmds[4]);
-		script_byte_vars.byte_179F3 = 0;
+		script_byte_vars.bvar_3D = 0;
 	}
 
 	return ScriptRerun;
@@ -3389,10 +3389,10 @@ uint16 CMD_11_PsiTuneIn(void) {
 	if (!ConsumePsiEnergy(4))
 		return 0;
 
-	if (script_byte_vars.byte_179F9 != 0)
-		command = Swap16(script_word_vars.word_178F8);
+	if (script_byte_vars.bvar_43 != 0)
+		command = Swap16(script_word_vars.wvar_B4);
 	else {
-		if (script_byte_vars.byte_179DC < 63 || script_byte_vars.zone_area >= 22)
+		if (script_byte_vars.bvar_26 < 63 || script_byte_vars.zone_area >= 22)
 			command = Swap16(script_word_vars.psi_cmds[3]);
 		else
 			command = 275;
@@ -3542,7 +3542,7 @@ uint16 CMD_13_ActivateFountain(void) {
 	byte x, y, w, h;
 	uint16 i, j;
 
-	script_byte_vars.byte_17A20 = 1;
+	script_byte_vars.bvar_6A = 1;
 	for (i = 0; i < 10; i++) {
 		DrawRoomStaticObject(water1, &x, &y, &w, &h);
 		WaitVBlank();
@@ -3620,7 +3620,7 @@ uint16 CMD_15_VortLeave(void) {
 		pers = &pers_list[34];
 		anim = &vortanims_ptr->field_7;
 	} else {
-		script_byte_vars.byte_179EC |= 0x80;
+		script_byte_vars.bvar_36 |= 0x80;
 
 		pers_list[35].area = 0;
 		pers_list[0].flags = pers_list[35].flags;
@@ -3644,7 +3644,7 @@ uint16 CMD_15_VortLeave(void) {
 
 	FindAndSelectSpot(0);
 	AnimateSpot(anim);
-	script_byte_vars.byte_179EC &= 0x80;
+	script_byte_vars.bvar_36 &= 0x80;
 	return 0;
 }
 
@@ -3675,7 +3675,7 @@ uint16 CMD_18_AspirantLeave(void) {
 	if ((pers_ptr->flags & PERSFLG_40) == 0) {
 		spot_ptr->flags &= ~SPOTFLG_80;
 		FindAndSelectSpot(script_byte_vars.quest_item_ofs);
-		script_byte_vars.byte_179EF = 0;
+		script_byte_vars.bvar_39 = 0;
 		AnimateSpot(&anim33);
 	}
 

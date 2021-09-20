@@ -45,132 +45,138 @@ enum ScriptPools {
 typedef struct script_byte_vars_t {
 	byte zone_index;       /*  0 */
 	byte zone_room;        /*  1 */
-	byte byte_179B8;       /*  2 */
+	byte bvar_02;          /*  2 */
 	byte cur_spot_idx;     /*  3 */
 	byte the_wall_phase;   /*  4 */
 	byte prev_zone_index;  /*  5 */
-	byte unused_179BC;     /*  6 */
-	byte unused_179BD;     /*  7 */
-	byte byte_179BE;       /*  8 */
-	byte unused_179BF;     /*  9 */
-	byte unused_179C0;     /*  A */
-	byte byte_179C1;       /*  B */
+	byte bvar_06;          /*  6 */
+	byte bvar_07;          /*  7 */
+	byte bvar_08;          /*  8 */
+	byte bvar_09;          /*  9 */
+	byte bvar_0A;          /*  A */
+	byte bvar_0B;          /*  B */
 	byte zone_area;        /*  C */
 	byte dead_flag;        /*  D */
 	volatile byte timer_ticks; /*  E */
 	byte gauss_phase;      /*  F */
-	byte unused_179C6;     /* 10 */
+
+	byte bvar_10;          /* 10 */
 	byte rand_value;       /* 11 */
 	byte load_flag;        /* 12 */
 	byte spot_m;           /* 13 */
 	byte spot_v;           /* 14 */
-	byte unused_179CB;     /* 15 */
-	byte unused_179CC;     /* 16 */
-	byte unused_179CD;     /* 17 */
-	byte unused_179CE;     /* 18 */
-	byte unused_179CF;     /* 19 */
-	byte unused_179D0;     /* 1A */
-	byte unused_179D1;     /* 1B */
-	byte unused_179D2;     /* 1C */
-	byte unused_179D3;     /* 1D */
-	byte unused_179D4;     /* 1E */
-	byte unused_179D5;     /* 1F */
+	byte bvar_15;          /* 15 */
+	byte bvar_16;          /* 16 */
+	byte bvar_17;          /* 17 */
+	byte bvar_18;          /* 18 */
+	byte bvar_19;          /* 19 */
+	byte bvar_1A;          /* 1A */
+	byte bvar_1B;          /* 1B */
+	byte bvar_1C;          /* 1C */
+	byte bvar_1D;          /* 1D */
+	byte bvar_1E;          /* 1E */
+	byte bvar_1F;          /* 1F */
+
 	byte cur_pers;         /* 20 */
 	byte used_commands;    /* 21 */
 	byte tries_left;       /* 22 */
 	byte inv_item_index;   /* 23 */
-	byte unused_179DA;     /* 24 */
-	byte byte_179DB;       /* 25 */
-	byte byte_179DC;       /* 26 */
-	byte byte_179DD;       /* 27 */
-	byte byte_179DE;       /* 28 */
-	byte byte_179DF;       /* 29 */
-	byte byte_179E0;       /* 2A */
-	byte byte_179E1;       /* 2B */ /*TODO: hand height*/
+	byte bvar_24;          /* 24 */
+	byte bvar_25;          /* 25 */
+	byte bvar_26;          /* 26 */
+	byte bvar_27;          /* 27 */
+	byte bvar_28;          /* 28 */
+	byte bvar_29;          /* 29 */
+	byte bvar_2A;          /* 2A */
+	byte bvar_2B;          /* 2B */ /*TODO: hand height*/
 	byte check_used_commands; /* 2C */
-	byte byte_179E3;       /* 2D */
+	byte bvar_2D;          /* 2D */
 	byte palette_index;    /* 2E */
-	byte byte_179E5;       /* 2F */
-	byte byte_179E6;       /* 30 */
+	byte bvar_2F;          /* 2F */
+
+	byte bvar_30;          /* 30 */
 	byte room_items;       /* 31 */
-	byte byte_179E8;       /* 32 */
-	byte byte_179E9;       /* 33 */
-	byte byte_179EA;       /* 34 */
-	byte byte_179EB;       /* 35 */
-	byte byte_179EC;       /* 36 */
-	byte byte_179ED;       /* 37 */
+	byte bvar_32;          /* 32 */
+	byte bvar_33;          /* 33 */
+	byte bvar_34;          /* 34 */
+	byte bvar_35;          /* 35 */
+	byte bvar_36;          /* 36 */
+	byte bvar_37;          /* 37 */
 	byte zone_area_copy;   /* 38 */
-	byte byte_179EF;       /* 39 */
+	byte bvar_39;          /* 39 */
 	byte quest_item_ofs;   /* 3A */
-	byte byte_179F1;       /* 3B */
+	byte bvar_3B;          /* 3B */
 	byte fight_status;     /* 3C */
-	byte byte_179F3;       /* 3D */
+	byte bvar_3D;          /* 3D */
 	byte trade_done;       /* 3E */
-	byte byte_179F5;       /* 3F */
-	byte byte_179F6;       /* 40 */
-	byte byte_179F7;       /* 41 */
-	byte byte_179F8;       /* 42 */
-	byte byte_179F9;       /* 43 */
+	byte bvar_3F;          /* 3F */
+
+	byte bvar_40;          /* 40 */
+	byte bvar_41;          /* 41 */
+	byte bvar_42;          /* 42 */
+	byte bvar_43;          /* 43 */
 	byte dirty_rect_kind;  /* 44 */
-	byte flag_179FB;       /* 45 */
-	byte byte_179FC;       /* 46 */
+	byte bvar_45;          /* 45 */
+	byte bvar_46;          /* 46 */
 	byte game_paused;      /* 47 */
 	byte trade_status;     /* 48 */
 	byte cur_spot_flags;   /* 49 */
-	byte byte_17A00;       /* 4A */
-	byte byte_17A01;       /* 4B */
-	byte byte_17A02;       /* 4C */
-	byte byte_17A03;       /* 4D */
-	byte byte_17A04;       /* 4E */
-	byte byte_17A05;       /* 4F */
-	byte byte_17A06;       /* 50 */
-	byte byte_17A07;       /* 51 */
-	byte byte_17A08;       /* 52 */
-	byte byte_17A09;       /* 53 */
-	byte byte_17A0A;       /* 54 */
-	byte byte_17A0B;       /* 55 */
-	byte byte_17A0C;       /* 56 */
+	byte bvar_4A;          /* 4A */
+	byte bvar_4B;          /* 4B */
+	byte bvar_4C;          /* 4C */
+	byte bvar_4D;          /* 4D */
+	byte bvar_4E;          /* 4E */
+	byte bvar_4F;          /* 4F */
+
+	byte bvar_50;          /* 50 */
+	byte bvar_51;          /* 51 */
+	byte bvar_52;          /* 52 */
+	byte bvar_53;          /* 53 */
+	byte bvar_54;          /* 54 */
+	byte bvar_55;          /* 55 */
+	byte bvar_56;          /* 56 */
 	byte need_draw_spots;  /* 57 */
-	byte byte_17A0E;       /* 58 */
-	byte byte_17A0F;       /* 59 */
+	byte bvar_58;          /* 58 */
+	byte bvar_59;          /* 59 */
 	byte psy_energy;       /* 5A */
-	byte byte_17A11;       /* 5B */
-	byte byte_17A12;       /* 5C */
-	byte byte_17A13;       /* 5D */
-	byte byte_17A14;       /* 5E */
-	byte byte_17A15;       /* 5F */
-	byte byte_17A16;       /* 60 */
-	byte byte_17A17;       /* 61 */
-	byte byte_17A18;       /* 62 */
-	byte byte_17A19;       /* 63 */
-	byte byte_17A1A;       /* 64 */
-	byte byte_17A1B;       /* 65 */
-	byte byte_17A1C;       /* 66 */
-	byte byte_17A1D;       /* 67 */
+	byte bvar_5B;          /* 5B */
+	byte bvar_5C;          /* 5C */
+	byte bvar_5D;          /* 5D */
+	byte bvar_5E;          /* 5E */
+	byte bvar_5F;          /* 5F */
+
+	byte bvar_60;          /* 60 */
+	byte bvar_61;          /* 61 */
+	byte bvar_62;          /* 62 */
+	byte bvar_63;          /* 63 */
+	byte bvar_64;          /* 64 */
+	byte bvar_65;          /* 65 */
+	byte bvar_66;          /* 66 */
+	byte bvar_67;          /* 67 */
 	byte zapstik_stolen;   /* 68 */
-	byte byte_17A1F;       /* 69 */
-	byte byte_17A20;       /* 6A */
-	byte byte_17A21;       /* 6B */
-	byte byte_17A22;       /* 6C */
-	byte byte_17A23[4];    /* 6D */
+	byte bvar_69;          /* 69 */
+	byte bvar_6A;          /* 6A */
+	byte bvar_6B;          /* 6B */
+	byte bvar_6C;          /* 6C */
+	byte bvar_6D[4];       /* 6D */
 } script_byte_vars_t;
 
 /*2-byte long vars, in BIG-endian order*/
 typedef struct script_word_vars_t {
-	uint16 psi_cmds[6];			/*  0 */
-	uint16 word_17850;          /*  C */
-	uint16 word_17852;          /*  E */
+	uint16 psi_cmds[6];         /*  0 */
+	uint16 wvar_0C;             /*  C */
+	uint16 wvar_0E;             /*  E */
 	uint16 timer_ticks2;        /* 10 */
 	uint16 zone_obj_cmds[15 * 5];   /* 12 */
 	uint16 next_command1;       /* A8 */
-	uint16 word_178EE;          /* AA */
-	uint16 word_178F0;          /* AC */
-	uint16 word_178F2;          /* AE */
-	uint16 word_178F4;          /* B0 */
-	uint16 word_178F6;          /* B2 */
-	uint16 word_178F8;          /* B4 */
+	uint16 wvar_AA;             /* AA */
+	uint16 wvar_AC;             /* AC */
+	uint16 wvar_AE;             /* AE */
+	uint16 wvar_B0;             /* B0 */
+	uint16 wvar_B2;             /* B2 */
+	uint16 wvar_B4;             /* B4 */
 	uint16 next_command2;       /* B6 */
-	uint16 word_178FC;          /* B8 */
+	uint16 wvar_B8;             /* B8 */
 } script_word_vars_t;
 
 extern void *script_vars[ScrPools_MAX];
