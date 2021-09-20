@@ -216,7 +216,11 @@ static int findGames(Game *games, int max, bool use_ini)
   int curr_game = 0, curr_dir = 0, num_dirs = 0;
 
   if (use_ini) {
+	Common::ConfigManager::Domain *appDomain =
+	  ConfMan.getDomain(Common::ConfigManager::kApplicationDomain);
+	Common::ConfigManager::Domain savedAppDomain = *appDomain;
 	ConfMan.loadDefaultConfigFile();
+	*appDomain = savedAppDomain;
 	const Common::ConfigManager::DomainMap &game_domains = ConfMan.getGameDomains();
 	for(Common::ConfigManager::DomainMap::const_iterator i =
 	  game_domains.begin(); curr_game < max && i != game_domains.end(); i++) {
