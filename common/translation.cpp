@@ -164,12 +164,6 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 	return U32String(message);
 }
 
-String TranslationManager::getCurrentCharset() const {
-	if (_currentCharset.empty())
-		return "ASCII";
-	return _currentCharset;
-}
-
 String TranslationManager::getCurrentLanguage() const {
 	if (_currentLang == -1)
 		return "en";
