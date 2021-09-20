@@ -58,7 +58,9 @@ FontInfo::FontInfo()
 	, SizeMultiplier(1)
 	, Outline(FONT_OUTLINE_NONE)
 	, YOffset(0)
-	, LineSpacing(0) {
+	, LineSpacing(0)
+	, AutoOutlineStyle(kSquared)
+	, AutoOutlineThickness(0) {
 }
 
 
@@ -113,6 +115,9 @@ static void post_init_font(size_t fontNumber) {
 			else
 				font.Info.LineSpacing += 2;
 		}
+	}
+	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
+		font.Info.AutoOutlineThickness = 0;
 	}
 }
 
@@ -171,29 +176,26 @@ int get_font_outline(size_t font_number) {
 int get_font_outline_thickness(size_t font_number) {
 	if (font_number >= _GP(fonts).size())
 		return 0;
-	if (_GP(fonts)[font_number].Info.Outline == FONT_OUTLINE_AUTO) {
-		// scaled up bitmap font, push outline further out
-		if (is_bitmap_font(font_number) && get_font_scaling_mul(font_number) > 1)
-			return get_fixed_pixel_size(1);
-		else
-			return 1;
-	}
-	return 0;
+	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
-int get_outline_font(size_t font_number) {
+int get_font_outline_font(size_t font_number) {
 	for (size_t fontNum = 0; fontNum < _GP(fonts).size(); ++fontNum) {
 		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number)
 			return fontNum;
 	}
 
 	return FONT_OUTLINE_NONE;
+	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
-void set_font_outline(size_t font_number, int outline_type) {
+void set_font_outline(size_t font_number, int outline_type,
+	enum FontInfo::AutoOutlineStyle style, int thickness) {
 	if (font_number >= _GP(fonts).size())
 		return;
 	_GP(fonts)[font_number].Info.Outline = outline_type;
+	_GP(fonts)[font_number].Info.AutoOutlineStyle = style;
+	_GP(fonts)[font_number].Info.AutoOutlineThickness = thickness;
 }
 
 int getfontheight(size_t fontNumber) {
@@ -209,6 +211,11 @@ int getfontlinespacing(size_t fontNumber) {
 	// If the spacing parameter is not provided, then return default
 	// spacing, that is font's height.
 	return spacing > 0 ? spacing : getfontheight(fontNumber);
+}
+
+void set_font_linespacing(size_t fontNumber, int spacing) {
+	if (fontNumber < _GP(fonts).size())
+		_GP(fonts)[fontNumber].Info.LineSpacing = spacing;
 }
 
 bool use_default_linespacing(size_t fontNumber) {

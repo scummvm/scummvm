@@ -24,7 +24,7 @@
 #define AGS_SHARED_FONT_FONTS_H
 
 #include "ags/lib/std/vector.h"
-#include "ags/shared/core/types.h"
+#include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/ags_font_renderer.h"
@@ -85,15 +85,19 @@ int wgettextheight(const char *text, size_t fontNumber);
 int getfontheight(size_t fontNumber);
 // Get font's line spacing
 int getfontlinespacing(size_t fontNumber);
+// Set font's line spacing
+void set_font_linespacing(size_t fontNumber, int spacing);
 // Get is font is meant to use default line spacing
 bool use_default_linespacing(size_t fontNumber);
 // Get font's outline type
 int  get_font_outline(size_t font_number);
-int  get_outline_font(size_t font_number);
 // Get font's automatic outline thickness (if set)
 int  get_font_outline_thickness(size_t font_number);
+// get the source font associated with an outline font
+int get_font_outline_font(size_t font_number);
 // Set font's outline type
-void set_font_outline(size_t font_number, int outline_type);
+void set_font_outline(size_t font_number, int outline_type,
+	enum FontInfo::AutoOutlineStyle style = FontInfo::kSquared, int thickness = 1);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font

@@ -31,6 +31,7 @@
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/game/main_game_file.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/aligned_stream.h"
@@ -475,6 +476,15 @@ void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 				finfo.SizeMultiplier = HIRES_COORD_MULTIPLIER;
 			} else {
 				finfo.SizeMultiplier = 1;
+			}
+		}
+	}
+	if (data_ver < kGameVersion_360) {
+		for (int i = 0; i < game.numfonts; ++i) {
+			FontInfo &finfo = game.fonts[i];
+			if (finfo.Outline == FONT_OUTLINE_AUTO) {
+				finfo.AutoOutlineStyle = FontInfo::kSquared;
+				finfo.AutoOutlineThickness = 1;
 			}
 		}
 	}

@@ -146,6 +146,7 @@ enum GameDataVersion {
 	kGameVersion_341 = 48,
 	kGameVersion_341_2 = 49,
 	kGameVersion_350 = 50,
+	kGameVersion_360 = 3060000,
 	kGameVersion_Current = kGameVersion_350
 };
 
