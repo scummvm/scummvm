@@ -20,6 +20,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include <setjmp.h>
 
 #include "common/error.h"
 #include "common/system.h"
@@ -191,6 +194,8 @@ void ExitGame(void) {
 	SwitchToTextMode();
 }
 
+jmp_buf restart_jmp;
+
 Common::Error ChamberEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200);
@@ -275,8 +280,9 @@ Common::Error ChamberEngine::run() {
 	cpu_speed_delay = BenchmarkCpu() / 8;
 
 	/*restart game from here*/
-restart:
-	;
+restart:;
+	setjmp(restart_jmp);
+
 	Randomize();
 
 	/* Set start zone */
@@ -286,12 +292,7 @@ restart:
 	script_byte_vars.game_paused = 0;
 
 #ifdef DEBUG_SCRIPT
-	{
-		FILE *f = fopen(DEBUG_SCRIPT_LOG, "wt+");
-		if (f) {
-			fclose(f);
-		}
-	}
+	unlink(DEBUG_SCRIPT_LOG);
 #endif
 
 #ifdef DEBUG_SKIP_INTRO
