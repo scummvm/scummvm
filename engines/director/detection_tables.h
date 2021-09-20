@@ -893,7 +893,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Swedish titles
 	{ "alfons",				"Alfons Åberg ”Bara Överallt!”" },
 	{ "backpacker2",		"Backpacker 2" },
-	{ "ernie",				"Ernie" },
+	{ "ernie",				"Ernie: Broke in Bayonne" },
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
