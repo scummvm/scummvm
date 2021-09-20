@@ -145,7 +145,18 @@ Common::Error AsylumEngine::run() {
 			_video->play(0, NULL);
 		restart();
 	} else {
-		_handler = _menu;
+		int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+		bool noError = false;
+
+		if (saveSlot >= 0 && saveSlot < SAVEGAME_COUNT) {
+			if (loadGameState(saveSlot).getCode() != Common::kNoError)
+				warning("[AsylumEngine::run] Could not load savegame in slot %d", saveSlot);
+			else
+				noError = true;
+		}
+
+		if (!noError)
+			_handler = _menu;
 
 		// Load config
 		Config.read();
@@ -655,7 +666,10 @@ bool AsylumEngine::canSaveGameStateCurrently() {
 Common::Error AsylumEngine::loadGameState(int slot) {
 	savegame()->loadList();
 	savegame()->setIndex(slot);
-	startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad);
+	if (savegame()->hasSavegame(slot))
+		startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad);
+	else
+		return Common::kReadingFailed;
 
 	return Common::kNoError;
 }
