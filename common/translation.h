@@ -183,11 +183,6 @@ public:
 	const TLangArray getSupportedLanguageNames() const;
 
 	/**
-	 * Return the charset specified by the selected translation language.
-	 */
-	String getCurrentCharset() const;
-
-	/**
 	 * Return the currently selected translation language.
 	 */
 	String getCurrentLanguage() const;
