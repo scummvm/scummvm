@@ -253,9 +253,9 @@ uint32 PaletteFaderProcess::I_fadeToGivenColor(const uint8 *args,
 	else if (_fader) _fader->terminate();
 
 	// TODO: guessing that color order should be same as other one below?
-	ARG_UINT8(b);
 	ARG_UINT8(r);
 	ARG_UINT8(g);
+	ARG_UINT8(b);
 	ARG_UINT16(nsteps);
 	ARG_UINT16(unk);
 
@@ -326,9 +326,9 @@ uint32 PaletteFaderProcess::I_jumpToAllGivenColor(const uint8 *args,
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
-	ARG_UINT8(b);
 	ARG_UINT8(r);
 	ARG_UINT8(g);
+	ARG_UINT8(b);
 
 	// Transform matrix goes 0~2048, scale 0-63 vals from input
 	const int16 r16 = static_cast<int16>(r) * 32;

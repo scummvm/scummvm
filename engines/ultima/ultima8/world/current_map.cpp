@@ -1352,7 +1352,7 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(shape);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT16(z);
+	ARG_UINT8(z);
 	if (argsize > 8) {
 		//!! TODO: figure these out
 		ARG_UINT16(unk1); // is either 1 or 4
