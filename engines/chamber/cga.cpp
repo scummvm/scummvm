@@ -1418,4 +1418,88 @@ void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 	CGA_BlitAndWait(pixels, w, w, h, target, finofs);
 }
 
+/*
+Draw scaled image
+NB! tw/th specify target width/height in pixels
+*/
+void CGA_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+	byte x, y;
+
+	/*calc old/new ratio*/
+	params->scale_x = tw + 1;
+	params->xstep_l = (uint16)params->ew / params->scale_x;
+	params->xstep_h = (uint16)(((uint16)params->ew % params->scale_x) << 8) / params->scale_x;
+
+	params->scale_y = th + 1;
+	params->ystep_l = (uint16)params->eh / params->scale_y;
+	params->ystep_h = (uint16)(((uint16)params->eh % params->scale_y) << 8) / params->scale_y;
+
+	params->yval_l = 0;
+	params->yval_h = 0;
+
+	for (y = params->scale_y;;) {
+		uint16 oofs = ofs;
+		byte *pixels = params->pixels + params->yval_l * params->ow;
+		byte sc = 4 - params->xbase;
+		/*left partial pixel*/
+		byte pix = source[ofs] >> (sc * 2);
+
+		params->xval_l = 0;
+		params->xval_h = 0;
+		params->fw = 0;
+
+		for (x = params->scale_x;;) {
+			byte p = pixels[params->xval_l / 4] << ((params->xval_l % 4) * 2);
+			pix = (pix << 2) | (p >> 6);
+			if (--sc == 0) {
+				/*inner full pixel*/
+				target[ofs] = pix;
+				ofs++;
+				params->fw++;
+				sc = 4;
+			}
+			params->xval_l += params->xstep_l + ((params->xval_h + params->xstep_h) >> 8);
+			params->xval_h += params->xstep_h;
+
+			if (x == 0)
+				break;
+			if (--x == 0)
+				params->xval_l = params->ew;
+		}
+
+		/*right partial pixel*/
+		target[ofs] = (source[ofs] & ~(0xFF << (sc * 2))) | (pix << (sc * 2));
+		ofs++;
+		params->fw++;
+
+		/*ofs -= params->fw;*/
+		ofs = oofs;
+
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) == 0)
+			ofs += CGA_BYTES_PER_LINE;
+
+		params->yval_l += params->ystep_l + ((params->yval_h + params->ystep_h) >> 8);
+		params->yval_h += params->ystep_h;
+
+		if (y == 0)
+			break;
+		if (--y == 0)
+			params->yval_l = params->eh;
+	}
+}
+
+void CGA_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
+	zoom_t zoom;
+
+	zoom.pixels = pixels;
+	zoom.ow = w;
+	zoom.oh = h;
+	zoom.ew = (w * 4) - 1;
+	zoom.eh = h - 1;
+	zoom.xbase = x % 4;
+
+	CGA_ZoomInplace(&zoom, nw, nh, target, target, CGA_CalcXY(x, y));
+}
+
 } // End of namespace Chamber

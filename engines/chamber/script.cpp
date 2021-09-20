@@ -2505,39 +2505,184 @@ uint16 SCR_56_MorphRoom98(void) {
 	return 0;
 }
 
-extern void AskDisk2(void);
-extern int16 LoadSplash(const char *filename);
-
 /*
-TODO: check me
+Copy backbuffer to screen, with added vertical mirror
 */
-uint16 SCR_5B_TheEnd(void) {
+void ShowMirrored(uint16 h, uint16 ofs) {
+	uint16 x, ofs2 = ofs;
+
+	/*move 1 line up*/
+	ofs2 ^= CGA_ODD_LINES_OFS;
+	if ((ofs2 & CGA_ODD_LINES_OFS) != 0)
+		ofs2 -= CGA_BYTES_PER_LINE;
+
+	while (h--) {
+
+		for (x = 0; x < CGA_BYTES_PER_LINE; x++) {
+			frontbuffer[ofs2 + x] = frontbuffer[ofs + x] = backbuffer[ofs + x];
+			backbuffer[ofs + x] = 0;
+		}
+
+		/*move 1 line down*/
+		ofs += CGA_BYTES_PER_LINE;
+		ofs ^= CGA_ODD_LINES_OFS;
+		if ((ofs & CGA_ODD_LINES_OFS) != 0)
+			ofs -= CGA_BYTES_PER_LINE;
+
+		/*move 1 line up*/
+		ofs2 ^= CGA_ODD_LINES_OFS;
+		if ((ofs2 & CGA_ODD_LINES_OFS) != 0)
+			ofs2 -= CGA_BYTES_PER_LINE;
+	}
+}
+
+void LiftLines(int16 n, byte *source, uint16 sofs, byte *target, uint16 tofs) {
+	while (n--) {
+		memcpy(target + tofs, source + sofs, CGA_BYTES_PER_LINE);
+
+		sofs += CGA_BYTES_PER_LINE;
+		sofs ^= CGA_ODD_LINES_OFS;
+		if ((sofs & CGA_ODD_LINES_OFS) != 0)
+			sofs -= CGA_BYTES_PER_LINE;
+
+		tofs += CGA_BYTES_PER_LINE;
+		tofs ^= CGA_ODD_LINES_OFS;
+		if ((tofs & CGA_ODD_LINES_OFS) != 0)
+			tofs -= CGA_BYTES_PER_LINE;
+	}
+}
+
+#define kSaucerAnimFrames 53
+
+static void AnimSaucer(void) {
 	static byte image1[] = {167, 0, 146};
 	byte *pimage1 = image1;
 	byte *sequence = souco_data;
-
 	byte x, y, width, height;
+	uint16 xx, yy, ww, hh;
+	byte height_new, height_prev;
+	uint16 delay;
+	byte scroll_done = 0;
 
-	/*script_ptr++; Useless since this handler never returns*/
-
-	script_byte_vars.game_paused = 5;
 	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
 	CGA_BackBufferToRealFull();
 	CGA_ColorSelect(0x30);
 
 	right_button = 0;
 	if (!DrawPortrait(&pimage1, &x, &y, &width, &height))
-		return 0;
+		return;
 
-	/*TODO*/
+	height_prev = 200 - 1;
+	delay = 10000;
+
+	xx = x; /*TODO: is it ok? maybe need *4*/
+	yy = y;
+	ww = 254;
+	hh = 107;
+
+	for (; sequence < souco_data + kSaucerAnimFrames * 8; sequence += 8) {
+		uint16 i, ofs, ofs2, baseofs;
+
+		if (sequence != souco_data) {
+			/*reuse portrait's params for initial state*/
+			xx = (sequence[0] << 8) | sequence[1];
+			yy = (sequence[2] << 8) | sequence[3];
+			ww = (sequence[4] << 8) | sequence[5];
+			hh = (sequence[6] << 8) | sequence[7];
+		}
+
+		hh >>= 1;
+
+		height_new = yy + hh;
+		height_prev -= (yy - 1);
+
+		/*scale the saucer*/
+		CGA_ZoomInplaceXY(cur_image_pixels, width, height, ww, hh, xx, yy, backbuffer);
+
+		baseofs = CGA_CalcXY(0, yy);
+
+		if (!scroll_done) {
+			/*scroll the saucer*/
+			scroll_done = 1;
+
+			ofs2 = ofs = baseofs;
+
+			/*previous line*/
+			ofs ^= CGA_ODD_LINES_OFS;
+			if ((ofs & CGA_ODD_LINES_OFS) != 0)
+				ofs -= CGA_BYTES_PER_LINE;
+
+			for (i = 0; i < 55; i++) {
+				memcpy(backbuffer + ofs, backbuffer + ofs2, CGA_BYTES_PER_LINE);
+
+				/*next line*/
+				ofs2 += CGA_BYTES_PER_LINE;
+				ofs2 ^= CGA_ODD_LINES_OFS;
+				if ((ofs2 & CGA_ODD_LINES_OFS) != 0)
+					ofs2 -= CGA_BYTES_PER_LINE;
+
+				/*previous line line*/
+				ofs ^= CGA_ODD_LINES_OFS;
+				if ((ofs & CGA_ODD_LINES_OFS) != 0)
+					ofs -= CGA_BYTES_PER_LINE;
+			}
+
+			ofs2 = CGA_CalcXY(0, 200 - 1);
+
+			for (i = 0; i < 108; i++) {
+				LiftLines(i + 1, backbuffer, ofs, frontbuffer, ofs2);
+
+				ofs2 ^= CGA_ODD_LINES_OFS;
+				if ((ofs2 & CGA_ODD_LINES_OFS) != 0)
+					ofs2 -= CGA_BYTES_PER_LINE;
+
+				WaitVBlank();
+				WaitVBlank();
+			}
+
+			/*wipe 56 lines*/
+			memset(backbuffer + ofs2, 0, 56 / 2 * CGA_BYTES_PER_LINE);
+			ofs2 ^= CGA_ODD_LINES_OFS;
+			if ((ofs2 & CGA_ODD_LINES_OFS) == 0)
+				ofs2 += CGA_BYTES_PER_LINE;
+			memset(backbuffer + ofs2, 0, 54 / 2 * CGA_BYTES_PER_LINE);
+
+			for (i = 0xFFFF; i--;) ; /*TODO: weak delay*/
+		}
+
+		/*draw the full saucer on screen*/
+		ShowMirrored(height_prev + 1, baseofs);
+		height_prev = height_new;
+
+		WaitVBlank();
+		for (i = delay; i--;) ; /*TODO: weak delay*/
+		delay += 500;
+	}
+};
+
+extern int16 LoadSplash(const char *filename);
+
+/*
+TODO: check me
+*/
+void TheEnd(void) {
+	AnimSaucer();
 
 	while (!LoadSplash("PRES.BIN"))
 		AskDisk2();
 	CGA_BackBufferToRealFull();
+}
+
+uint16 SCR_5B_TheEnd(void) {
+	script_ptr++;   /*Useless since this handler never returns*/
+	script_byte_vars.game_paused = 5;
+
+	TheEnd();
 
 	for (;;) ;  /*HANG*/
 	return 0;
 }
+
 
 /*
 Discard all inventory items

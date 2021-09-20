@@ -196,6 +196,10 @@ void ExitGame(void) {
 
 jmp_buf restart_jmp;
 
+#ifdef DEBUG_ENDING
+extern TheEnd(void);
+#endif
+
 Common::Error ChamberEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200);
@@ -312,6 +316,12 @@ restart:;
 
 	/* Initialize cursor backup */
 	ProcessInput();
+
+#ifdef DEBUG_ENDING
+	script_byte_vars.game_paused = 5;
+	TheEnd();
+	for (;;) ;
+#endif
 
 	/* Main game loop */
 	GameLoop(frontbuffer);
