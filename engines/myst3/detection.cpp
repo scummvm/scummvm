@@ -193,6 +193,20 @@ static const Myst3GameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Myst 3 Xbox Preview Build 6/02
+		{
+			"myst3",
+			_s("Xbox preview version is not yet supported"),
+			AD_ENTRY1s("RSRC.m3r", "d76d227487d146ecc5f96dd40743bb84", 1226192),
+			Common::UNK_LANG,
+			Common::kPlatformXbox,
+			ADGF_UNSUPPORTED,
+			GUIO_NONE
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
