@@ -105,15 +105,6 @@ public:
 	 */
 	const Font *getFontByUsage(FontUsage usage) const;
 
-	/**
-	 * Get the localized font for the current TranslationManager charset from the
-	 * non localized font name
-	 *
-	 * @param filename the non-localized font file name.
-	 * @return The localized font file name.
-	 */
-	Common::String genLocalizedFontFilename(const Common::String &filename) const;
-
 	//const Font *getFontBySize(int size???) const;
 
 private:

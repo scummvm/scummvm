@@ -544,47 +544,22 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		Common::String localized = FontMan.genLocalizedFontFilename(file);
-
-		// Try localized fonts
-		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, pointsize, textId == kTextDataDefault);
+		_texts[textId]->_fontPtr = loadFont(file, scalableFile, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
-			warning("Failed to load localized font '%s'", localized.c_str());
-			// Try standard fonts
-			_texts[textId]->_fontPtr = loadFont(file, scalableFile, pointsize, textId == kTextDataDefault);
-
-			if (!_texts[textId]->_fontPtr) {
-				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
-#ifdef USE_TRANSLATION
-				TransMan.setLanguage("en");
-				Common::TextToSpeechManager *ttsMan;
-				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
-					ttsMan->setLanguage("en");
-#endif // USE_TRANSLATION
-
-				// No font, cleanup TextDrawData
-				delete _texts[textId];
-				_texts[textId] = nullptr;
-
-				return false; // fall-back attempt failed
-			}
-			// Success in fall-back attempt to standard (non-localized) font.
-			// However, still returns false here, probably to avoid ugly / garbage glyphs side-effects
-			// FIXME If we return false anyway why would we attempt the fall-back in the first place?
+			warning("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.empty()? "(none)" : scalableFile.c_str());
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("en");
 			Common::TextToSpeechManager *ttsMan;
 			if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
 				ttsMan->setLanguage("en");
 #endif // USE_TRANSLATION
-			// Returning true here, would allow falling back to standard fonts for the missing ones,
-			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
+
 			// No font, cleanup TextDrawData
 			delete _texts[textId];
 			_texts[textId] = nullptr;
 
-			return false;
+			return false; // fall-back attempt failed
 		}
 	}
 
@@ -1733,7 +1708,12 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 	if (!scalableFilename.empty())
 		font = loadScalableFont(scalableFilename, pointsize, fontName);
 
-	if (!font)
+	// We can use non-scalable fonts, but only for English
+	bool allowNonScalable = true;
+#ifdef USE_TRANSLATION
+	allowNonScalable = TransMan.currentIsBuiltinLanguage();
+#endif
+	if (!font && allowNonScalable)
 		font = loadFont(filename, fontName);
 
 	// If the font is successfully loaded store it in the font manager.
