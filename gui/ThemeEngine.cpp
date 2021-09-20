@@ -545,19 +545,14 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 		_texts[textId]->_fontPtr = _font;
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
-		const Common::String charset
-#ifdef USE_TRANSLATION
-		                            (textId == kTextDataExtraLang ? "" : TransMan.getCurrentCharset())
-#endif
-		                            ;
 
 		// Try localized fonts
-		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
+		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
 			warning("Failed to load localized font '%s'", localized.c_str());
 			// Try standard fonts
-			_texts[textId]->_fontPtr = loadFont(file, scalableFile, Common::String(), pointsize, textId == kTextDataDefault);
+			_texts[textId]->_fontPtr = loadFont(file, scalableFile, pointsize, textId == kTextDataDefault);
 
 			if (!_texts[textId]->_fontPtr) {
 				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
@@ -1663,9 +1658,9 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  * External data loading
  *********************************************************/
 
-const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name) {
+const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const int pointsize, Common::String &name) {
 #ifdef USE_FREETYPE2
-	name = Common::String::format("%s-%s@%d", filename.c_str(), charset.c_str(), pointsize);
+	name = Common::String::format("%s@%d", filename.c_str(), pointsize);
 
 	// Try already loaded fonts.
 	const Graphics::Font *font = FontMan.getFontByName(name);
@@ -1729,14 +1724,14 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Comm
 	return nullptr;
 }
 
-const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::String &charset, const int pointsize, const bool makeLocalizedFont) {
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const int pointsize, const bool makeLocalizedFont) {
 	Common::String fontName;
 
 	const Graphics::Font *font = nullptr;
 
 	// Prefer scalable fonts over non-scalable fonts
 	if (!scalableFilename.empty())
-		font = loadScalableFont(scalableFilename, charset, pointsize, fontName);
+		font = loadScalableFont(scalableFilename, pointsize, fontName);
 
 	if (!font)
 		font = loadFont(filename, fontName);
