@@ -96,6 +96,17 @@ void Peephole::startUpWater(bool flag) {
 //////////////////////////////////////////////////////////////////////////
 // Connector
 //////////////////////////////////////////////////////////////////////////
+Connector::Connector() :
+	_id(0),
+	_position(NULL),
+	_state(kBinNum0000),
+	_isConnected(false),
+	_nextConnector(NULL),
+	_type(kConnectorTypeI),
+	_nextConnectorPosition(kDirectionNowhere) {
+	memset(_nodes, 0, sizeof(_nodes));
+}
+
 void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, uint32 pos, ConnectorType type, Connector *nextConnector, Direction nextConnectorPosition) {
 	_nodes[0] = n;
 	_nodes[1] = e;

@@ -73,7 +73,7 @@ enum Direction {
 
 class Peephole {
 public:
-	Peephole() {}
+	Peephole() : _id(0) {}
 	~Peephole() {}
 
 	static bool marks[peepholesCount];
@@ -98,7 +98,7 @@ private:
 
 class Connector {
 public:
-	Connector() {}
+	Connector();
 	~Connector() {}
 
 	uint32 getId() { return _id; }
