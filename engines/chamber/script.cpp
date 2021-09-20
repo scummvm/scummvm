@@ -69,6 +69,8 @@ void *script_vars[ScrPools_MAX] = {
 	pers_list
 };
 
+extern void AskDisk2(void);
+
 byte Rand(void) {
 	script_byte_vars.rand_value = aleat_data[++rand_seed];
 	return script_byte_vars.rand_value;
@@ -1102,36 +1104,182 @@ uint16 SCR_25_ChangeZoneOnly(void) {
 	return 0;
 }
 
+#define JCOUNT 16
 
-void JaggedZoom(void) {
-	/*TODO*/
+typedef struct jpoint_t {
+	signed short x;
+	signed short y;
+} jpoint_t;
+
+static jpoint_t jdeltas[JCOUNT] = {
+	{0, -2},
+	{1, -2},
+	{2, -2},
+	{2, -1},
+	{2, 0},
+	{2, 1},
+	{2, 2},
+	{1, 2},
+	{0, 2},
+	{ -1, 2},
+	{ -2, 2},
+	{ -2, 1},
+	{ -2, 0},
+	{ -2, -1},
+	{ -2, -2},
+	{ -1, -2}
+};
+
+void JaggedZoom(byte *source, byte *target) {
+	int16 i;
+	jpoint_t points[JCOUNT + 1];
+	uint16 outside = 0;
+	uint16 cycle = 0;
+	uint16 choices = 0;
+
+	for (i = 0; i < JCOUNT; i++) {
+		points[i].x = 320;
+		points[i].y = 200;
+	}
+	points[i].x = 0;
+	points[i].y = 0;
+
+	for (;;) {
+		cycle++;
+		if (cycle % 8 == 0)
+			choices = RandW();
+
+		for (i = 0; i < JCOUNT; i++) {
+			signed short t;
+			if (choices & (1 << i)) {
+				t = points[i].x + jdeltas[i].x;
+				if (t < 0 || t >= 600) { /*TODO: 640?*/
+					outside |= 0x8000;  /*TODO: should this mask be rotated?*/
+					t = points[i].x;
+				}
+				points[i].x = t;
+
+				t = points[i].y + jdeltas[i].y;
+				if (t < 0 || t >= 400) {
+					outside |= 0x8000;
+					t = points[i].y;
+				}
+				points[i].y = t;
+			}
+		}
+
+		if (outside)
+			break;
+
+		for (i = 0; i < JCOUNT; i++) {
+			uint16 sx = points[i].x;
+			uint16 sy = points[i].y;
+			uint16 ex = points[i + 1].x;
+			uint16 ey = points[i + 1].y;
+			if (ex == 0 && ey == 0) {
+				ex = points[0].x;
+				ey = points[0].y;
+			}
+			CGA_TraceLine(sx / 2, ex / 2, sy / 2, ey / 2, source, target);
+			/*TODO: WaitVBlank(); maybe?*/
+		}
+	}
 }
 
-void InitStarfield(void) {
-	/*TODO*/
+typedef struct star_t {
+	uint16 ofs;
+	byte pixel;
+	byte mask;
+	signed short x;
+	signed short y;
+	uint16 z;
+} star_t;
+
+void RandomStar(star_t *star) {
+	star->x = RandW();
+	star->y = RandW();
+	star->z = RandW() & 0xFFF;
 }
 
-void AnimStarfield(void) {
-	/*TODO*/
+star_t *InitStarfield(void) {
+	int16 i;
+	star_t *stars = (star_t *)scratch_mem2;
+	for (i = 0; i < 300; i++) {
+		stars[i].ofs = 0;
+		stars[i].pixel = 0;
+		stars[i].mask = 0;
+		RandomStar(&stars[i]);
+	}
+	return stars;
+}
+
+void DrawStars(star_t *stars, int16 iter, byte *target) {
+	int16 i;
+	/*TODO: bug? initialized 300 stars, but animated only 256?*/
+	for (i = 0; i < 256; i++, stars++) {
+		short z, x, y;
+		byte pixel, mask;
+
+		target[stars->ofs] &= stars->mask;
+		if (stars->z < 328) {
+			if (iter >= 30) {
+				RandomStar(stars);
+				stars->z |= 0x1800;
+			}
+			continue;
+		}
+
+		stars->z -= 328;
+		z = 0xCFFFFul / (stars->z + 16);
+		x = ((long)z * stars->x) >> 16;
+		y = ((long)z * stars->y) >> 16;
+
+		x += 320 / 2;
+		y += 200 / 2;
+		if (x < 0 || x >= 320 || y < 0 || y >= 200) {
+			stars->z = 0;
+			continue;
+		}
+
+		stars->ofs = CGA_CalcXY(x, y);
+
+		pixel = (stars->z < 0xE00) ? 0xC0 : 0x40;
+		pixel >>= (x % 4) * 2;
+		mask = 0xC0;
+		mask = ~(mask >> (x % 4) * 2);
+		stars->pixel = pixel;
+		stars->mask = mask;
+
+		target[stars->ofs] &= mask;
+		target[stars->ofs] |= pixel;
+	}
+}
+
+void AnimStarfield(star_t *stars, byte *target) {
+	int16 i;
+	for (i = 100; i; i--)
+		DrawStars(stars, i, target);
 }
 
 uint16 SCR_26_GameOver(void) {
 	in_de_profundis = 0;
 	script_byte_vars.game_paused = 1;
 	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
-	JaggedZoom();
+	JaggedZoom(backbuffer, frontbuffer);
 	CGA_BackBufferToRealFull();
 	CGA_ColorSelect(0x30);
-	InitStarfield();
-	AnimStarfield();
+	AnimStarfield(InitStarfield(), frontbuffer);
 	PlayAnim(44, 156 / 4, 95);
 	script_byte_vars.zone_index = 135;
-	JaggedZoom();
-	CGA_BackBufferToRealFull();
-	/*RestartGame();*/
-	/*TODO: this should shomehow abort all current scripts/calls and restart the game*/
-	TODO("Restart");
 
+	/*reload background*/
+	while (!LoadFond())
+		AskDisk2();
+
+	JaggedZoom(backbuffer, frontbuffer);
+
+	CGA_BackBufferToRealFull();
+	RestartGame();
 	return 0;
 }
 
