@@ -2880,6 +2880,10 @@ EOF
 	dreamcast)
 		append_var DEFINES "-D__DC__"
 		append_var DEFINES "-DNONSTANDARD_PORT"
+		_detection_features_full=no
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+		fi
 		;;
 	ds)
 		_optimization_level=-Os
@@ -3323,6 +3327,7 @@ if test -n "$_host"; then
 			_backend="dc"
 			_build_scalers=no
 			_build_aspect=no
+			_tinygl=no
 			# These two are needed due to shortcomings of the
 			# detection systems.  Do not remove until auto-
 			# detection works correctly.
@@ -4112,6 +4117,7 @@ POST_OBJS_FLAGS :=
 	dreamcast)
 		_plugin_prefix=""
 		_plugin_suffix=".plg"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
 PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
