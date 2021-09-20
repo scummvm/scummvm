@@ -641,11 +641,15 @@ void AsylumEngine::checkAchievements() {
 // Save/Load
 //////////////////////////////////////////////////////////////////////////
 bool AsylumEngine::canLoadGameStateCurrently() {
-	return _handler == _scene || _handler == _menu;
+	return (!checkGameVersion("Demo")
+		&& (_handler == _scene || _handler == _menu)
+		&& !speech()->getSoundResourceId());
 }
 
 bool AsylumEngine::canSaveGameStateCurrently() {
-	return _handler == _scene;
+	return (!checkGameVersion("Demo")
+		&& (_handler == _scene)
+		&& !speech()->getSoundResourceId());
 }
 
 Common::Error AsylumEngine::loadGameState(int slot) {
