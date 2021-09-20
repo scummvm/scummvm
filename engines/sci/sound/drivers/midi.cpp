@@ -149,6 +149,7 @@ public:
 	void close() override;
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
+	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
 	bool hasRhythmChannel() const override { return true; }
 	byte getPlayId() const override;
 	int getPolyphony() const override {
@@ -179,8 +180,8 @@ private:
 	uint8 lookupGmRhythmKey(const char *iname);
 	uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins);
 
-	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &data, const int len, bool noDelay);
-	void sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &data, bool noDelay);
+	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &data, const int len, bool noDelay, bool mainThread);
+	void sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &data, bool noDelay, bool mainThread);
 	void setMt32Volume(byte volume);
 	void resetMt32();
 
@@ -507,7 +508,7 @@ void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
 	if (_hasReverb && _reverb != reverb) {
-		sendMt32SysEx(0x100001, SciSpan<const byte>(_reverbConfig[reverb], 3), true);
+		sendMt32SysEx(0x100001, SciSpan<const byte>(_reverbConfig[reverb], 3), true, true);
 	}
 
 	_reverb = reverb;
@@ -580,7 +581,7 @@ void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
 	// assign channels
 	debugC(5, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Channels assigned to MT-32 parts: 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7], msg[8]);
  	Sci::SciSpan<const byte> s(msg, 9);
-	sendMt32SysEx(0x10000D, s, false);
+	sendMt32SysEx(0x10000D, s, false, false);
 }
 
 bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
@@ -632,7 +633,7 @@ bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
 	return isMt32Gm;
 }
 
-void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &stream, int len, bool noDelay = false) {
+void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &stream, int len, bool noDelay = false, bool mainThread = true) {
 	if (len + 8 > kMaxSysExSize) {
 		warning("SysEx message exceed maximum size; ignoring");
 		return;
@@ -651,15 +652,24 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStrea
 
 	_sysExBuf[7 + len] = chk & 0x7f;
 
-	if (noDelay)
-		_driver->sysEx(_sysExBuf, len + 8);
-	else
-		sysEx(_sysExBuf, len + 8);
+	uint16 delay = sysExNoDelay(_sysExBuf, len + 8);
+	if (!noDelay && delay > 0) {
+		// Use the appropriate delay technique based on the current thread.
+		// On the main thread, use SciEngine::sleep() to keep the UI responsive,
+		// which is important because loading patches can take several seconds.
+		// On a timer thread however, SciEngine::sleep() can't be used because
+		// it polls events and updates the screen, which isn't thread safe. (bug #12947)
+		if (mainThread) {
+			g_sci->sleep(delay);
+		} else {
+			g_system->delayMillis(delay);
+		}
+	}
 }
 
-void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &buf, bool noDelay = false) {
+void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &buf, bool noDelay = false, bool mainThread = true) {
 	Common::MemoryReadStream stream(buf.toStream());
-	sendMt32SysEx(addr, stream, buf.size(), noDelay);
+	sendMt32SysEx(addr, stream, buf.size(), noDelay, mainThread);
 }
 
 
@@ -1229,7 +1239,7 @@ void MidiPlayer_Midi::resetMt32() {
 
 	if (_mt32Type != kMt32TypeEmulated) {
 		// This seems to require a longer delay than usual
-		g_sci->sleep(150);
+		g_sci->sleep(150); // note that sleep() can only be called from main thread, see bug #12947
 	}
 }
 
@@ -1409,19 +1419,26 @@ void MidiPlayer_Midi::close() {
 }
 
 void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
+	uint16 delay = sysExNoDelay(msg, length);
+
+	if (delay > 0)
+		g_system->delayMillis(delay);
+}
+
+uint16 MidiPlayer_Midi::sysExNoDelay(const byte *msg, uint16 length) {
 	_driver->sysEx(msg, length);
 
+	uint16 delay = 0;
 	if (_mt32Type != kMt32TypeEmulated) {
 		// Wait the time it takes to send the SysEx data
-		uint32 delay = (length + 2) * 1000 / 3125;
+		delay = (length + 2) * 1000 / 3125;
 
 		// Plus an additional delay for the MT-32 rev00
 		if (_mt32Type == kMt32TypeReal)
 			delay += 40;
-
-		g_system->updateScreen();
-		g_sci->sleep(delay);
 	}
+
+	return delay;
 }
 
 byte MidiPlayer_Midi::getPlayId() const {
