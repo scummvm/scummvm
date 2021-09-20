@@ -3786,8 +3786,10 @@ DrawFlags Actor::getGraphicsFlags() {
 }
 
 int32 Actor::getStride(ActorDirection dir, uint32 frameIndex) const {
+	// WORKAROUND: It seems that the original allows frameIndex to be out of range
+	uint32 index = MIN<uint32>(frameIndex, 19);
 	if (frameIndex >= ARRAYSIZE(_distancesNS))
-		debugC(kDebugLevelMain, "[Actor::getStride] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+		debugC(kDebugLevelMain, "[Actor::getStride] Invalid frame index %d for actor '%s' with direction %d", frameIndex, _name, dir);
 
 	switch (dir) {
 	default:
@@ -3795,18 +3797,17 @@ int32 Actor::getStride(ActorDirection dir, uint32 frameIndex) const {
 
 	case kDirectionN:
 	case kDirectionS:
-		// XXX it seems that the original allows frameIndex to be out of range
-		return (frameIndex < ARRAYSIZE(_distancesNS) ? _distancesNS[frameIndex] : _distancesNSEO[frameIndex % ARRAYSIZE(_distancesNS)]);
+		return _distancesNS[index];
 
 	case kDirectionNW:
 	case kDirectionSW:
 	case kDirectionSE:
 	case kDirectionNE:
-		return _distancesNSEO[frameIndex];
+		return _distancesNSEO[index];
 
 	case kDirectionW:
 	case kDirectionE:
-		return _distancesEO[frameIndex];
+		return _distancesEO[index];
 	}
 }
 
