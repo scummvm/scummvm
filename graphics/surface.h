@@ -100,6 +100,8 @@ public:
 	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
 
+	Common::Rect getRect() const;
+
 	/**
 	 * Return a pointer to the pixel data.
 	 *

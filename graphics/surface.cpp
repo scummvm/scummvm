@@ -137,6 +137,10 @@ void Surface::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool fil
 		error("Surface::drawEllipse: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
+Common::Rect Surface::getRect() const {
+	return Common::Rect(w, h);
+}
+
 // see backends/graphics/atari/atari-surface.cpp
 #ifndef ATARI
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
