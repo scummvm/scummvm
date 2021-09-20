@@ -195,8 +195,6 @@ private:
 	uint32 _keywordStartIndex;
 	uint32 _keywordsOffset;
 
-	EventHandler *_previousEventHandler;
-
 	// Internal flags
 	bool _shouldEnablePlayer;
 	bool _wasPlayerDisabled;
