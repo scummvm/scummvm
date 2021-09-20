@@ -22,6 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <setjmp.h>
+
 #include "common/system.h"
 
 #include "chamber/chamber.h"
@@ -49,6 +51,8 @@ char DEBUG_SCRIPT_LOG[] = "!script.log";
 #include "chamber/scrvars.h"
 
 namespace Chamber {
+
+jmp_buf script_jmp;
 
 byte rand_seed;
 uint16 the_command;
@@ -537,6 +541,14 @@ uint16 SCR_4D_PriorityCommand(void) {
 	the_command = *script_ptr++;          /*little-endian*/
 	the_command |= (*script_ptr++) << 8;
 	the_command |= 0xF000;
+
+	/*TODO: normally this should be called from the RunCommand() itself,
+	because command Fxxx may be issued from the other places as well (maybe it's not the case)
+	But that would require some sort of synchronization to avoid infinite loop
+	So jump to top interepter's loop directly from here for now
+	*/
+	longjmp(script_jmp, 1);
+
 	return ScriptRerun;
 }
 
@@ -4071,7 +4083,10 @@ again:;
 		break;
 	case 0xF000:
 		/*restore sp from keep_sp then run script*/
-		TODO("SCR_RESTORE\n");
+		/*currently only supposed to work correctly from the SCR_4D_PriorityCommand handler*/
+		printf("Restore: $%X 0x%X\n", the_command, cmd);
+	/*TODO("SCR_RESTORE\n");*/
+	/*fall through*/
 	default:
 		res = RunScript(GetScriptSubroutine(cmd - 1));
 	}
@@ -4099,6 +4114,7 @@ again:;
 
 uint16 RunCommandKeepSp(void) {
 	/*keep_sp = sp;*/
+	setjmp(script_jmp);
 	return RunCommand();
 }
 
