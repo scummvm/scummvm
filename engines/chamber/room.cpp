@@ -337,7 +337,7 @@ void LoadZone(void) {
 	zone_spots_cur = (spot_t *)zptr;
 	zone_spr_index = 0;
 	script_byte_vars.dead_flag = 0;
-	script_byte_vars.byte_179DB = 0;
+	script_byte_vars.bvar_25 = 0;
 	script_word_vars.next_command1 = BE(0);
 	next_command4 = 0;
 	next_command3 = 0;
@@ -345,24 +345,24 @@ void LoadZone(void) {
 }
 
 void ResetZone(void) {
-	script_byte_vars.byte_179F9 = 0;
-	script_byte_vars.byte_17A01 = 0;
-	script_byte_vars.byte_17A17 = 0;
-	script_byte_vars.flag_179FB = 0;
-	script_byte_vars.byte_179C1 = 0;
-	script_byte_vars.byte_179E9 = 0;
-	script_byte_vars.byte_179EA = 0;
-	script_byte_vars.byte_179BE = 0;
-	script_byte_vars.byte_179EF = 0;
+	script_byte_vars.bvar_43 = 0;
+	script_byte_vars.bvar_4B = 0;
+	script_byte_vars.bvar_61 = 0;
+	script_byte_vars.bvar_45 = 0;
+	script_byte_vars.bvar_0B = 0;
+	script_byte_vars.bvar_33 = 0;
+	script_byte_vars.bvar_34 = 0;
+	script_byte_vars.bvar_08 = 0;
+	script_byte_vars.bvar_39 = 0;
 	script_word_vars.psi_cmds[0] = BE(0x9048);
 	script_word_vars.psi_cmds[1] = BE(0xA01D);
 	script_word_vars.psi_cmds[2] = BE(0);
 	script_word_vars.psi_cmds[3] = BE(0x00F7);
 	script_word_vars.psi_cmds[4] = BE(0x9048);
 	script_word_vars.psi_cmds[5] = BE(0x9048);
-	script_word_vars.word_17850 = BE(0xA01C);
-	script_word_vars.word_17852 = BE(0);
-	script_word_vars.word_178EE = BE(0);
+	script_word_vars.wvar_0C = BE(0xA01C);
+	script_word_vars.wvar_0E = BE(0);
+	script_word_vars.wvar_AA = BE(0);
 }
 
 /*
@@ -542,7 +542,7 @@ void AnimRoomDoorClose(byte index) {
 byte FindInitialSpot(void) {
 	spot_t *spot;
 	byte index;
-	byte flags = script_byte_vars.byte_179B8;
+	byte flags = script_byte_vars.bvar_02;
 	if (flags == 0)
 		return 0;
 	flags |= SPOTFLG_80 | SPOTFLG_8;
@@ -679,7 +679,7 @@ void ChangeZone(byte index) {
 	script_byte_vars.prev_zone_index = script_byte_vars.zone_index;
 	script_byte_vars.zone_index = index;
 
-	if (script_byte_vars.byte_17A22 != 0)
+	if (script_byte_vars.bvar_6C != 0)
 		spridx = 229;
 	else if (script_byte_vars.zone_index == 129)
 		spridx = 221;
@@ -790,7 +790,7 @@ void DrawRoomStatics(void) {
 	uint16 xx, ww;
 
 	DrawBackground(backbuffer, 0);
-	arpla_y_step = script_byte_vars.byte_179E1;
+	arpla_y_step = script_byte_vars.bvar_2B;
 
 	aptr = SeekToEntry(arpla_data, script_byte_vars.zone_room - 1, &aend);
 	room_bounds_rect.sx = 0xFF;
@@ -806,7 +806,7 @@ void DrawRoomStatics(void) {
 			doors_list[doorcount++] = aptr - 3; /*TODO: check for list overflow?*/
 			if (doorcount == script_byte_vars.cur_spot_idx)
 				continue;
-			if (script_byte_vars.zone_room == 32 && index == 91 && (script_byte_vars.byte_179DD & 8))
+			if (script_byte_vars.zone_room == 32 && index == 91 && (script_byte_vars.bvar_27 & 8))
 				continue;   /*TODO: error? index may never be that high here*/
 		}
 		/*draw decor object*/
@@ -1086,7 +1086,7 @@ void PrepareCommand1(void) {
 	pers_list[3].area = 0;
 	pers_list[4].area = 0;
 
-	if (script_byte_vars.byte_179DC >= 63)
+	if (script_byte_vars.bvar_26 >= 63)
 		return;
 	if (script_byte_vars.zone_area >= 44)
 		return;
@@ -1122,16 +1122,16 @@ void PrepareCommand1(void) {
 			pers_ptr->area = script_byte_vars.zone_area;
 			script_word_vars.next_command1 = BE(0xA018);
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.byte_179EF = flags;
+			script_byte_vars.bvar_39 = flags;
 			script_vars[ScrPool8_CurrentPers] = pers_ptr;
 		} else if (newr < 52) {
 			script_word_vars.next_command1 = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.byte_179EF = flags;
+			script_byte_vars.bvar_39 = flags;
 			script_vars[ScrPool8_CurrentPers] = pers_ptr;
 		} else {
-			script_byte_vars.byte_179EF = 0;
+			script_byte_vars.bvar_39 = 0;
 			return;
 		}
 	} else {
@@ -1144,16 +1144,16 @@ void PrepareCommand1(void) {
 			pers_ptr->area = script_byte_vars.zone_area;
 			script_word_vars.next_command1 = BE(0xA018);
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.byte_179EF = flags;
+			script_byte_vars.bvar_39 = flags;
 			script_vars[ScrPool8_CurrentPers] = pers_ptr;
 		} else if (newr < 52) {
 			script_word_vars.next_command1 = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.byte_179EF = flags;
+			script_byte_vars.bvar_39 = flags;
 			script_vars[ScrPool8_CurrentPers] = pers_ptr;
 		} else {
-			script_byte_vars.byte_179EF = 0;
+			script_byte_vars.bvar_39 = 0;
 			return;
 		}
 	}
@@ -1165,7 +1165,7 @@ Vorts AI
 void PrepareCommand3(void) {
 	spot_t *spot;
 
-	if ((script_byte_vars.zone_area != 8) || !(script_byte_vars.byte_179EC & 0x80)) {
+	if ((script_byte_vars.zone_area != 8) || !(script_byte_vars.bvar_36 & 0x80)) {
 		pers_list[0].flags &= ~PERSFLG_40;
 		pers_list[34].flags &= ~PERSFLG_40;
 		pers_list[35].flags &= ~PERSFLG_40;
@@ -1184,7 +1184,7 @@ void PrepareCommand3(void) {
 							pers_list[0].area = 0;
 							pers_list[34].area = 0;
 							pers_list[35].area = 0;
-							script_byte_vars.byte_179EC &= 0x80;    /*TODO: is this correct? |= ?*/
+							script_byte_vars.bvar_36 &= 0x80;    /*TODO: is this correct? |= ?*/
 							if (script_byte_vars.rand_value < 39) {
 								pers_list[0].area = script_byte_vars.zone_area;
 								next_command3 = 0xA015;             /*VortLeave*/
@@ -1193,7 +1193,7 @@ void PrepareCommand3(void) {
 							else
 								return;
 						}
-						script_byte_vars.byte_179EC |= 1;
+						script_byte_vars.bvar_36 |= 1;
 						next_ticks3 = Swap16(script_word_vars.timer_ticks2) + 5;
 						return;
 					}
@@ -1205,7 +1205,7 @@ void PrepareCommand3(void) {
 	pers_list[0].area = 0;
 	pers_list[34].area = 0;
 	pers_list[35].area = 0;
-	script_byte_vars.byte_179EC &= 0x80;    /*TODO: is this correct? |= ?*/
+	script_byte_vars.bvar_36 &= 0x80;    /*TODO: is this correct? |= ?*/
 }
 
 /*
@@ -1214,7 +1214,7 @@ Turkey AI
 void PrepareCommand4(void) {
 	spot_t *spot;
 
-	if (script_byte_vars.zone_area == 59 && script_byte_vars.byte_17A04 == 0) {
+	if (script_byte_vars.zone_area == 59 && script_byte_vars.bvar_4E == 0) {
 		pers_list[5].area = 59;
 		return;
 	}
@@ -1290,8 +1290,6 @@ void RestoreScreenOfSpecialRoom(void) {
 	}
 }
 
-byte byte_17A1C = 0;
-
 void SetAnim127Sprite(byte flags, byte spridx) {
 	byte *lutin_entry, *lutin_entry_end;
 	lutin_entry = SeekToEntry(lutin_data, 127, &lutin_entry_end);
@@ -1301,9 +1299,9 @@ void SetAnim127Sprite(byte flags, byte spridx) {
 	case 58:
 	case 40:
 		if (flags == ITEMFLG_80)
-			byte_17A1C += 1;
+			script_byte_vars.bvar_66 += 1;
 		else
-			byte_17A1C -= 1;
+			script_byte_vars.bvar_66 -= 1;
 		break;
 	}
 }
@@ -1639,10 +1637,10 @@ TODO: rename this
 void UpdateTimedRects1(void) {
 	uint16 elapsed;
 
-	if (script_byte_vars.flag_179FB != 0)
+	if (script_byte_vars.bvar_45 != 0)
 		return;
 
-	if (script_byte_vars.byte_179DC >= 63)
+	if (script_byte_vars.bvar_26 >= 63)
 		return;
 
 	script_word_vars.next_command2 = BE(0);
@@ -1654,7 +1652,7 @@ void UpdateTimedRects1(void) {
 	}
 
 	if (pers_list[22].flags & PERSFLG_20)
-		script_byte_vars.byte_179E6 |= 4;
+		script_byte_vars.bvar_30 |= 4;
 
 	elapsed = Swap16(script_word_vars.timer_ticks2);
 	if (elapsed < next_ticks2)
@@ -1662,38 +1660,38 @@ void UpdateTimedRects1(void) {
 
 	next_ticks2 = elapsed + 30;
 
-	script_byte_vars.byte_179F5 = *timed_seq_ptr++;
+	script_byte_vars.bvar_3F = *timed_seq_ptr++;
 	if (timed_seq_ptr == timed_seq + sizeof(timed_seq))
 		timed_seq_ptr = timed_seq;
-	script_byte_vars.byte_179F6 = *timed_seq_ptr++;
+	script_byte_vars.bvar_40 = *timed_seq_ptr++;
 
-	if (script_byte_vars.byte_179F5 == 56) {
-		script_byte_vars.byte_179E6 &= ~4;
+	if (script_byte_vars.bvar_3F == 56) {
+		script_byte_vars.bvar_30 &= ~4;
 		pers_list[22].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
 		pers_list[22].index = 55;
 		if (pers_list[13].area == 56) {
 			pers_list[13].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
-			script_byte_vars.byte_179F7 = 1;
+			script_byte_vars.bvar_41 = 1;
 		}
 	}
 
-	if (script_byte_vars.byte_179F5 == 12 && script_byte_vars.byte_179F6 == 10) {
-		script_byte_vars.byte_179F7 = 0;
+	if (script_byte_vars.bvar_3F == 12 && script_byte_vars.bvar_40 == 10) {
+		script_byte_vars.bvar_41 = 0;
 		if (pers_list[13].area == 56) {
-			script_byte_vars.byte_179F6 = 44;
+			script_byte_vars.bvar_40 = 44;
 			timed_seq_ptr = timed_seq + 4;
 		}
 
 	}
 
-	pers_list[22].area = script_byte_vars.byte_179F6;
+	pers_list[22].area = script_byte_vars.bvar_40;
 
-	if (script_byte_vars.byte_179F7 != 0) {
-		pers_list[13].area = script_byte_vars.byte_179F6;
-		pers_list[20].area = script_byte_vars.byte_179F6;
-		pers_list[21].area = script_byte_vars.byte_179F6;
+	if (script_byte_vars.bvar_41 != 0) {
+		pers_list[13].area = script_byte_vars.bvar_40;
+		pers_list[20].area = script_byte_vars.bvar_40;
+		pers_list[21].area = script_byte_vars.bvar_40;
 
-		if (script_byte_vars.zone_area == script_byte_vars.byte_179F5) {
+		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
@@ -1707,7 +1705,7 @@ void UpdateTimedRects1(void) {
 			return;
 		}
 
-		if (script_byte_vars.zone_area == script_byte_vars.byte_179F6) {
+		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
 			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
@@ -1744,7 +1742,7 @@ void UpdateTimedRects1(void) {
 		if (pers_list[22].flags & 0x40)
 			return;
 
-		if (script_byte_vars.zone_area == script_byte_vars.byte_179F5) {
+		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
@@ -1755,7 +1753,7 @@ void UpdateTimedRects1(void) {
 			return;
 		}
 
-		if (script_byte_vars.zone_area == script_byte_vars.byte_179F6) {
+		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
 			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
@@ -1784,9 +1782,9 @@ void UpdateTimedRects2(void) {
 	if (elapsed < 60 * 60)
 		return;
 
-	if (script_byte_vars.byte_179DC < 63) {
-		script_byte_vars.byte_179ED = 3;
-		script_byte_vars.byte_179DC = (script_byte_vars.zone_area < 44) ? 255 : 63;
+	if (script_byte_vars.bvar_26 < 63) {
+		script_byte_vars.bvar_37 = 3;
+		script_byte_vars.bvar_26 = (script_byte_vars.zone_area < 44) ? 255 : 63;
 		pers_list[13].area = 0;
 		pers_list[14].area = 0;
 		pers_list[15].area = 0;
@@ -1805,8 +1803,8 @@ void UpdateTimedRects2(void) {
 		return;
 
 	if (elapsed < 120 * 60) {
-		script_byte_vars.byte_179ED = 2;
-		script_byte_vars.byte_17A04 = 1;
+		script_byte_vars.bvar_37 = 2;
+		script_byte_vars.bvar_4E = 1;
 		if ((script_byte_vars.zone_area != 61)
 		        && (script_byte_vars.zone_area >= 59 && script_byte_vars.zone_area < 75))
 			script_word_vars.next_command2 = BE(0xC012);
