@@ -2323,7 +2323,7 @@ void Scene::changePlayer(ActorIndex index) {
 		// Save scene data
 		getSharedData()->saveCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
 		getSharedData()->saveSceneFonts(_ws->font1, _ws->font2, _ws->font3);
-		getSharedData()->saveSmallCursor(_ws->smallCurDown, _ws->smallCurUp);
+		getSharedData()->saveSmallCursor(_ws->smallCurUp, _ws->smallCurDown);
 		getSharedData()->saveEncounterFrameBackground(_ws->encounterFrameBg);
 
 		// Setup new values
@@ -2345,7 +2345,7 @@ void Scene::changePlayer(ActorIndex index) {
 		// Load scene data
 		getSharedData()->loadCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
 		getSharedData()->loadSceneFonts(&_ws->font1, &_ws->font2, &_ws->font3);
-		getSharedData()->loadSmallCursor(&_ws->smallCurDown, &_ws->smallCurUp);
+		getSharedData()->loadSmallCursor(&_ws->smallCurUp, &_ws->smallCurDown);
 		getSharedData()->loadEncounterFrameBackground(&_ws->encounterFrameBg);
 
 		// Reset cursor
