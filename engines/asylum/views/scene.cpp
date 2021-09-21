@@ -800,7 +800,8 @@ void Scene::updateMouse() {
 		newDirection = kDirectionSE;
 	}
 
-	updateCursor(newDirection, actorRect);
+	if (newDirection != kDirectionInvalid)
+		updateCursor(newDirection, actorRect);
 
 	if (newDirection >= kDirectionN)
 		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2)
