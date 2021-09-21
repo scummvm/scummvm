@@ -206,6 +206,9 @@ Programmcodes finden Sie auf Englisch unter:
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
 
+ Titanic:
+   - Abstürze behoben, die auftreten, wenn ich Bots danach frage, was ich als nächstes tun soll.
+
  TsAGE:
    - Unterstützung für eine weitere Disketten-Version hinzugefügt.
    - Unterstützung für die spanischen Versionen von Ringworld und Blue Force hinzugefügt.
