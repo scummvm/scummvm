@@ -62,8 +62,10 @@ static const int16 peepholePoints[37][2] = {
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
 									15, 32, 32, 15, 15, 15, 15, 15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
 
-static BinNum calcStateFromPos(uint32 ind, ConnectorType type, uint32 position) {
-	uint32 shift = (uint32)Common::intLog2(position);
+static BinNum calcStateFromPosition(ConnectorType type, uint32 position) {
+	assert(position--);
+	uint32 shift = !!position + !!(position >> 1) + !!(position >> 2);
+
 	return BinNum((type >> shift | type << (4 - shift)) & 0xF);
 }
 
@@ -115,7 +117,7 @@ void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, uint32 
 
 	*_position = pos;
 	_type = type;
-	_state = calcStateFromPos(_id, _type, *_position);
+	_state = calcStateFromPosition(_type, *_position);
 
 	_nextConnector = nextConnector;
 	_nextConnectorPosition = nextConnectorPosition;
@@ -595,7 +597,7 @@ uint32 PuzzlePipes::checkFlags() {
 void PuzzlePipes::checkConnections() {
 	for (uint32 i = 0; i < connectorsCount; i++) {
 		uint32 oldState = _connectors[i].getState(),
-			newState = calcStateFromPos(i, _connectors[i].getType(), _positions[i]);
+			newState = calcStateFromPosition(_connectors[i].getType(), _positions[i]);
 		if (oldState != newState) {
 			do {
 				_connectors[i].turn(false);
