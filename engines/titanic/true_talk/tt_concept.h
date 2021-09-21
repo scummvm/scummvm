@@ -152,7 +152,7 @@ public:
 	/**
 	 * Find a word by it's class
 	 */
-	TTconcept *findByWordClass(WordClass wordClass);
+	static TTconcept *findByWordClass(TTconcept *conceptP, WordClass wordClass);
 
 	TTconcept *findBy20(int val);
 
