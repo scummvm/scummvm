@@ -126,7 +126,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 						"introd1.gjd", NULL, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
 	},
@@ -138,7 +138,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
 	},
@@ -150,7 +150,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
 	},
