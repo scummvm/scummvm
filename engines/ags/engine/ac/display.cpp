@@ -462,6 +462,9 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 	size_t const t_width = wgettextwidth(texx, font);
 	size_t const t_height = wgettextheight(texx, font);
+	if (t_width == 0 || t_height == 0)
+		return;
+
 	Bitmap *outline_stencil =
 		CreateTransparentBitmap(t_width, t_height + 2 * thickness, ds->GetColorDepth());
 	Bitmap *texx_stencil =
