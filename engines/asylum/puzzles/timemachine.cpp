@@ -48,10 +48,15 @@ const int16 puzzleTimeMachinePoints[5][2] = {
 
 PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
 	_leftButtonClicked = true;
+	_counter = 0;
 
 	memset(&_frameIndexes,		0, sizeof(_frameIndexes));
 	memset(&_frameCounts,		0, sizeof(_frameCounts));
 	memset(&_frameIncrements,	0, sizeof(_frameIncrements));
+	memset(&_state,				0, sizeof(_state));
+
+	_data_45AAA8 = _data_45AAAC = 0;
+	_currentFrameIndex = 0;
 
 	reset();
 }
