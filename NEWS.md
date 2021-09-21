@@ -194,6 +194,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Tinsel:
    - Enabled the Return to Launcher feature.
 
+ Titanic:
+   - Fixed crashes when asking bots what I should do.
+
  TsAGE:
    - Added support for uninstalled floppy version.
 
