@@ -28,6 +28,7 @@
 #include "ags/shared/util/string.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/ags_font_renderer.h"
+#include "ags/shared/gfx/allegro_bitmap.h"
 
 namespace AGS3 {
 
@@ -38,14 +39,17 @@ struct FontRenderParams;
 
 namespace AGS {
 namespace Shared {
-class Bitmap;
 
 struct Font {
 	IAGSFontRenderer *Renderer = nullptr;
 	IAGSFontRenderer2 *Renderer2 = nullptr;
 	FontInfo            Info;
 	// Values received from the renderer and saved for the reference
-	AGS3::LoadedFontInfo LoadedInfo;
+	FontMetrics       Metrics;
+
+	// Outline buffers
+	Bitmap TextStencil, TextStencilSub;
+	Bitmap OutlineStencil, OutlineStencilSub;
 
 	Font();
 };
@@ -102,9 +106,16 @@ void set_font_outline(size_t font_number, int outline_type,
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
+// Gets full information about the font
+FontInfo get_fontinfo(size_t font_number);
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info);
 void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
+// Allocates two outline stencil buffers, or returns previously creates ones;
+// these buffers are owned by the font, they should not be deleted by the caller.
+void alloc_font_outline_buffers(size_t font_number,
+	Shared::Bitmap **text_stencil, Shared::Bitmap **outline_stencil,
+	int text_width, int text_height, int color_depth);
 // Free particular font's data
 void wfreefont(size_t fontNumber);
 // Free all fonts data

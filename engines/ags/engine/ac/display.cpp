@@ -533,8 +533,20 @@ void wouttext_aligned(Bitmap *ds, int usexp, int yy, int oriwid, int usingfont, 
 	wouttext_outline(ds, usexp, yy, usingfont, text_color, text);
 }
 
+int get_font_outline_padding(int font) {
+	if (get_font_outline(font) == FONT_OUTLINE_AUTO) {
+		// scaled up bitmap font, push outline further out
+		if (is_bitmap_font(font) && get_font_scaling_mul(font) > 1)
+			return get_fixed_pixel_size(2); // FIXME: should be 2 + get_fixed_pixel_size(2)?
+		// otherwise, just push outline by 1 pixel
+		else
+			return 2;
+	}
+	return 0;
+}
+
 int getfontheight_outlined(int font) {
-	return getfontheight(font) + 2 * get_font_outline_thickness(font);
+	return getfontheight(font) + 2 * get_font_outline_padding(font);
 }
 
 int getfontspacing_outlined(int font) {
@@ -552,7 +564,7 @@ int getheightoflines(int font, int numlines) {
 }
 
 int wgettextwidth_compensate(const char *tex, int font) {
-	return wgettextwidth(tex, font) + 2 * get_font_outline_thickness(font);
+	return wgettextwidth(tex, font) + 2 * get_font_outline_padding(font);
 }
 
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {

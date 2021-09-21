@@ -49,7 +49,7 @@ public:
 	// IAGSFontRenderer2 implementation
 	bool IsBitmapFont() override;
 	bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
-		LoadedFontInfo *info) override;
+		FontMetrics *metrics) override;
 
 private:
 	struct FontData {
