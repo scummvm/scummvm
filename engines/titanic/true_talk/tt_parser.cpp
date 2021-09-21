@@ -927,7 +927,7 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_OWNERSHIP:
 			if (word->_id == 601) {
-				if (_conceptP->findByWordClass(WC_THING))
+				if (TTconcept::findByWordClass(_conceptP, WC_THING))
 					status = _conceptP->setOwner(word, false);
 
 				flag = true;
@@ -969,7 +969,7 @@ int TTparser::considerRequests(TTword *word) {
 				case WC_ABSTRACT:
 					if (word->_id != 300) {
 						status = processModifiers(3, word);
-					} else if (!_conceptP || !_conceptP->findByWordClass(WC_THING)) {
+					} else if (!TTconcept::findByWordClass(_conceptP, WC_THING)) {
 						status = processModifiers(3, word);
 					} else {
 						word->_id = atoi(word->_text.c_str());
@@ -980,7 +980,7 @@ int TTparser::considerRequests(TTword *word) {
 						addToConceptList(word);
 					break;
 				case WC_ADJECTIVE: {
-					TTconcept *conceptP = _conceptP->findByWordClass(WC_THING);
+					TTconcept *conceptP = TTconcept::findByWordClass(_conceptP, WC_THING);
 					if (conceptP) {
 						conceptP->_string2 += ' ';
 						conceptP->_string2 += word->getText();
@@ -997,7 +997,7 @@ int TTparser::considerRequests(TTword *word) {
 								currP->_field34 = 1;
 						}
 					} else {
-						TTconcept *conceptP = _conceptP->findByWordClass(WC_ACTION);
+						TTconcept *conceptP = TTconcept::findByWordClass(_conceptP, WC_ACTION);
 
 						if (conceptP) {
 							conceptP->_string2 += ' ';

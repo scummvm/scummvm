@@ -283,8 +283,8 @@ TTconcept *TTconcept::findByWordId(int id) {
 	return nullptr;
 }
 
-TTconcept *TTconcept::findByWordClass(WordClass wordClass) {
-	for (TTconcept *conceptP = this; conceptP; conceptP = conceptP->_nextP) {
+TTconcept *TTconcept::findByWordClass(TTconcept *conceptP, WordClass wordClass) {
+	for (; conceptP; conceptP = conceptP->_nextP) {
 		if (conceptP->_wordP && conceptP->_wordP->_wordClass == wordClass)
 			return conceptP;
 	}
