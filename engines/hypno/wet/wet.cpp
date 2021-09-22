@@ -225,16 +225,16 @@ void WetEngine::loadAssetsPCG() {
 
 
 void WetEngine::loadAssetsFullGame() {
-	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", true);
+	LibFile *missions = loadLib("", "c_misc/missions.lib", true);
 	Common::ArchiveMemberList files;
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
 	Level intro;
 	intro.trans.level = "c111.mi_";
-	intro.trans.intros.push_back("wetlands/c_misc/nw_logo.smk");
-	intro.trans.intros.push_back("wetlands/c_misc/hypnotix.smk");
-	intro.trans.intros.push_back("wetlands/c_misc/wetlogo.smk");
+	intro.trans.intros.push_back("c_misc/nw_logo.smk");
+	intro.trans.intros.push_back("c_misc/hypnotix.smk");
+	intro.trans.intros.push_back("c_misc/wetlogo.smk");
 	_levels["<start>"] = intro;
 
 	Common::String arclevel = "c111.mi_";
@@ -243,10 +243,10 @@ void WetEngine::loadAssetsFullGame() {
 	Common::String list;
 	splitArcadeFile(arclevel, arc, list);
 	debug("%s", arc.c_str());
-	parseArcadeShooting("wetlands", arclevel, arc);
+	parseArcadeShooting("", arclevel, arc);
 	_levels[arclevel].arcade.id = 0;
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.prefix = "wetlands";
+	_levels[arclevel].arcade.prefix = "";
 	//_levels[arclevel].arcade.levelIfWin = "c52.mi_";
 	//_levels[arclevel].arcade.levelIfLose = "c52.mi_";
 
@@ -266,8 +266,8 @@ void WetEngine::loadAssetsFullGame() {
 	// over.trans.intros.push_back("movie/gameover.smk");
 	// _levels["<gameover>"] = over;
 
-	loadLib("", "wetlands/c_misc/fonts.lib", true);
-	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
+	loadLib("", "c_misc/fonts.lib", true);
+	loadLib("sound/", "c_misc/sound.lib", true);
 }
 
 void WetEngine::showCredits() {
