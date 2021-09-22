@@ -54,10 +54,8 @@ public:
 
 	/**
 	 * Loads a game
-	 *
-	 * @return true if it succeeds, false if it fails.
 	 */
-	bool load();
+	void load();
 
 	/**
 	 * Quick loads a game
@@ -84,6 +82,13 @@ public:
 	 * Removes a savegame
 	 */
 	void remove();
+
+	/**
+	 * Checks if a savegame is compatible
+	 *
+	 * @return true if it is, false otherwise.
+	 */
+	bool isCompatible();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Static methods
@@ -179,6 +184,9 @@ public:
 	bool hasSavegame(uint32 index) const;
 	ResourcePackId getScenePack() { return (ResourcePackId)(_savegameToScene[_index] + 4); }
 
+	const char *getVersion() { return _version.c_str(); }
+	uint32 getBuild() { return _build; }
+
 private:
 	AsylumEngine* _vm;
 
@@ -187,18 +195,13 @@ private:
 	uint32 _savegameToScene[SAVEGAME_COUNT];
 	bool _savegames[SAVEGAME_COUNT];
 	Common::String _names[SAVEGAME_COUNT];
-	bool _valid;
+	Common::String _version;
+	uint32 _build;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Checks if a savegame is valid
-	 *
-	 * @return true if it succeeds, false if it fails.
-	 */
-	bool check();
 
 	/**
 	 * Gets a filename for a given save index
@@ -242,10 +245,8 @@ private:
 	 * Loads savegame data
 	 *
 	 * @param filename Filename of the file.
-	 *
-	 * @return true if it succeeds, false if it fails.
 	 */
-	bool loadData(const Common::String &filename);
+	void loadData(const Common::String &filename);
 
 	/**
 	 * Save savegame data.
@@ -253,10 +254,8 @@ private:
 	 * @param filename       Filename of the file.
 	 * @param name 	         The name.
 	 * @param chapter        The chapter.
-	 *
-	 * @return true if it succeeds, false if it fails.
 	 */
-	bool saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter);
+	void saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter);
 };
 
 } // End of namespace Asylum

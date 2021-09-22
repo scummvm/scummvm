@@ -49,7 +49,7 @@ namespace Asylum {
 
 static const char *savegame_version = "v1.01 FINAL";
 
-Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false) {
+Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0) {
 	memset(&_moviesViewed, 0, sizeof(_moviesViewed));
 	memset(&_savegames, 0, sizeof(_savegames));
 	memset(&_savegameToScene, 0, sizeof(_savegameToScene));
@@ -88,14 +88,7 @@ void Savegame::loadList() {
 	}
 }
 
-bool Savegame::load() {
-	if (!check()) {
-		getMenu()->setDword455C78(true);
-		getMenu()->setDword455C80(false);
-
-		return false;
-	}
-
+void Savegame::load() {
 	getCursor()->hide();
 	// Original clears the graphic cache
 	getScript()->resetQueue();
@@ -104,20 +97,12 @@ bool Savegame::load() {
 	_vm->reset();
 	// Original loads encounter data
 
-	if (!loadData(getFilename(_index))) {
-		// FIXME convert to GUI dialog
-		if (_valid)
-			error("[Savegame::load] Could not load game!");
-		else
-			error("[Savegame::load] Trying to load a game for a different version of Sanitarium!");
-	}
+	loadData(getFilename(_index));
 
 	loadMoviesViewed();
 
 	getMenu()->setDword455C80(false);
 	getScreen()->clear();
-
-	return true;
 }
 
 bool Savegame::quickLoad() {
@@ -134,17 +119,9 @@ void Savegame::save() {
 	// Original creates a folder to hold saved games and checks for disk space, we can skip that
 	getCursor()->hide();
 
-	if (saveData(getFilename(_index), _names[_index], getWorld()->chapter)) {
-		_savegames[_index] = true;
-
-		getMenu()->setDword455C78(true);
-	} else {
-		warning("[Savegame::save] Could not save game: %s", getFilename(_index).c_str());
-
-		_savegames[_index] = false;
-		_names[_index] = getText()->get(MAKE_RESOURCE(kResourcePackText, 1344));
-	}
-
+	saveData(getFilename(_index), _names[_index], getWorld()->chapter);
+	_savegames[_index] = true;
+	getMenu()->setDword455C78(true);
 	getMenu()->setDword455C80(false);
 	getCursor()->show();
 }
@@ -192,20 +169,16 @@ void Savegame::remove() {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-bool Savegame::check() {
+bool Savegame::isCompatible() {
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(_index));
-	if (!file)
-		return false;
 
+	assert(file);
 	seek(file, 2, "Level and Name");
-
-	bool valid = false;
-	if (readHeader(file))
-		valid = true;
+	bool result = readHeader(file);
 
 	delete file;
 
-	return valid;
+	return result;
 }
 
 Common::String Savegame::getFilename(uint32 index) const {
@@ -235,18 +208,11 @@ bool Savegame::isSavegamePresent(const Common::String &filename) const {
 //////////////////////////////////////////////////////////////////////////
 bool Savegame::readHeader(Common::InSaveFile *file) {
 	uint32 versionLength = read(file, "Version Length");
-	Common::String version = read(file, versionLength, "Version");
-	uint32 build = read(file, "Build");
+	_version = read(file, versionLength, "Version");
+	_build = read(file, "Build");
 
 	// Original does not do any version check
-	// Until we can verify all versions have compatible savegames, we only handle the final patched version savegames
-	if (version != Common::String(savegame_version) || build != SAVEGAME_BUILD) {
-		_valid = false;
-		return false;
-	}
-
-	_valid = true;
-	return true;
+	return !strcmp(_version.c_str(), savegame_version) && _build == SAVEGAME_BUILD;
 }
 
 void Savegame::writeHeader(Common::OutSaveFile *file) const {
@@ -257,20 +223,14 @@ void Savegame::writeHeader(Common::OutSaveFile *file) const {
 	write(file, SAVEGAME_BUILD, "Build");
 }
 
-bool Savegame::loadData(const Common::String &filename) {
+void Savegame::loadData(const Common::String &filename) {
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(filename);
-	if (!file) {
-		getWorld()->chapter = kChapterInvalid;
-		return false;
-	}
+	assert(file);
 
 	seek(file, 1, "Level");
 	seek(file, 1, "Game Name");
 
-	if (!readHeader(file)) {
-		getWorld()->chapter = kChapterInvalid;
-		return false;
-	}
+	(void)readHeader(file);
 
 	read(file, _vm, 1512, 1, "Game Stats");
 	read(file, getWorld(), 951928, 1, "World Stats");
@@ -288,14 +248,11 @@ bool Savegame::loadData(const Common::String &filename) {
 	_vm->setTick(tick);
 
 	delete file;
-
-	return true;
 }
 
-bool Savegame::saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter) {
+void Savegame::saveData(const Common::String &filename, const Common::String &name, ChapterIndex chapter) {
 	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(filename);
-	if (!file)
-		return false;
+	assert(file);
 
 	write(file, (unsigned) (int32)chapter, "Level");
 	write(file, name, SAVEGAME_NAME_SIZE, "Game Name");
@@ -314,8 +271,6 @@ bool Savegame::saveData(const Common::String &filename, const Common::String &na
 	_vm->getMetaEngine()->appendExtendedSaveToStream(file, _vm->getTotalPlayTime() / 1000, name, false);
 
 	delete file;
-
-	return true;
 }
 
 void Savegame::seek(Common::InSaveFile *file, uint32 offset, const Common::String &description) {

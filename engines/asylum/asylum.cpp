@@ -25,8 +25,11 @@
 #include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/rect.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
+
+#include "gui/message.h"
 
 #include "asylum/asylum.h"
 
@@ -193,6 +196,16 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	if (!_cursor || !_screen || !_savegame)
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
+	if (type == kStartGameLoad && !_savegame->isCompatible()) {
+		Common::U32String message = _("Attempt to load saved game from a previous version: Version %s / Build %d");
+		GUI::MessageDialog dialog(Common::U32String::format(message, _savegame->getVersion(), _savegame->getBuild()), _("Load anyway"), _("Cancel"));
+
+		if (dialog.runModal() != GUI::kMessageOK) {
+			_menu->setDword455C80(false);
+			return;
+		}
+	}
+
 	// Load the default mouse cursor
 	if (!checkGameVersion("Demo"))
 		_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
@@ -252,11 +265,10 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		break;
 
 	case kStartGameLoad:
-		if (_savegame->load()) {
-			_scene->enterLoad();
-			updateReverseStereo();
-			switchEventHandler(_scene);
-		}
+		_sound->stopAll();
+		_savegame->load();
+		_scene->enterLoad();
+		updateReverseStereo();
 		break;
 
 	case kStartGameScene:
