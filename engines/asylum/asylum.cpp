@@ -189,6 +189,10 @@ Common::Error AsylumEngine::run() {
 			checkAchievements();
 	}
 
+	// Stop all sounds & music
+	_sound->stopMusic();
+	_sound->stopAll();
+
 	return Common::kNoError;
 }
 
@@ -265,6 +269,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		break;
 
 	case kStartGameLoad:
+		// Stop all sounds & music
+		_sound->stopMusic();
 		_sound->stopAll();
 		_savegame->load();
 		_scene->enterLoad();
