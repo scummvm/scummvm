@@ -114,8 +114,6 @@ void MadeEngine::syncSoundSettings() {
 		mute = ConfMan.getBool("mute");
 
 	_music->setVolume(mute ? 0 : ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-									mute ? 0 : ConfMan.getInt("sfx_volume"));
 }
 
 int16 MadeEngine::getTicks() {

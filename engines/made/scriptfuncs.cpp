@@ -36,7 +36,7 @@
 
 namespace Made {
 
-ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false) {
+ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false), _gameAudioVolume(Audio::Mixer::kMaxChannelVolume) {
 	// Initialize the two tone generators
 	_pcSpeaker1 = new Audio::PCSpeaker();
 	_pcSpeaker2 = new Audio::PCSpeaker();
@@ -252,8 +252,8 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 	}
 	if (soundNum > 0) {
 		SoundResource *soundRes = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			soundRes->getAudioStream(_vm->_soundRate, false));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
+			soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
 		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
 		_vm->_soundEnergyIndex = 0;
 		_soundStarted = true;
@@ -641,8 +641,8 @@ int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 	stopSound();
 	if (soundNum > 0) {
 		_soundResource = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_soundResource->getAudioStream(_vm->_soundRate, false));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
+			_soundResource->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
 		_vm->_autoStopSound = true;
 		_soundStarted = true;
 	}
@@ -1013,8 +1013,9 @@ int16 ScriptFunctions::sfPlaceMenu(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetSoundVolume(int16 argc, int16 *argv) {
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, argv[0] * 25);
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[0] * 25);
+	_gameAudioVolume = argv[0] * 25;
+	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+		_vm->_mixer->setChannelVolume(_audioStreamHandle, _gameAudioVolume);
 	return 0;
 }
 

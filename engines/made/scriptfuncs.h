@@ -63,6 +63,8 @@ protected:
 	Audio::SoundHandle _voiceStreamHandle;
 	SoundResource* _soundResource;
 	bool _soundStarted;
+	// The audio volume set by the game scripts.
+	uint8 _gameAudioVolume;
 
 	// PlayNote/StopNote and PlayTele/StopTele wave generators
 	Audio::SoundHandle _pcSpeakerHandle1, _pcSpeakerHandle2;
