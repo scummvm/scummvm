@@ -27,6 +27,10 @@ namespace Hypno {
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void WetEngine::loadAssets() {
+	if (!isDemo()) {
+		loadAssetsFullGame();
+		return;
+	}
 	Common::String demoVersion = "Wetlands Demo Disc";
 	if (demoVersion == "Wetlands Demo Disc")
 		loadAssetsDemoDisc();
@@ -219,6 +223,52 @@ void WetEngine::loadAssetsPCG() {
 	loadLib("", "sound.lib", false);
 }
 
+
+void WetEngine::loadAssetsFullGame() {
+	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", true);
+	Common::ArchiveMemberList files;
+	if (missions == nullptr || missions->listMembers(files) == 0)
+		error("Failed to load any files from missions.lib");
+
+	Level intro;
+	intro.trans.level = "c111.mi_";
+	intro.trans.intros.push_back("wetlands/c_misc/nw_logo.smk");
+	intro.trans.intros.push_back("wetlands/c_misc/hypnotix.smk");
+	intro.trans.intros.push_back("wetlands/c_misc/wetlogo.smk");
+	_levels["<start>"] = intro;
+
+	Common::String arclevel = "c111.mi_";
+	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
+	Common::String arc;
+	Common::String list;
+	splitArcadeFile(arclevel, arc, list);
+	debug("%s", arc.c_str());
+	parseArcadeShooting("wetlands", arclevel, arc);
+	_levels[arclevel].arcade.id = 0;
+	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	_levels[arclevel].arcade.prefix = "wetlands";
+	//_levels[arclevel].arcade.levelIfWin = "c52.mi_";
+	//_levels[arclevel].arcade.levelIfLose = "c52.mi_";
+
+	//arclevel = "c52.mi_";
+	// arc.clear();
+	// list.clear();
+	// splitArcadeFile(arclevel, arc, list);
+	// parseArcadeShooting("wetlands", arclevel, arc);
+	// _levels[arclevel].arcade.id = 1;
+	// _levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	// _levels[arclevel].arcade.prefix = "wetlands";
+	// _levels[arclevel].arcade.levelIfWin = "<gameover>";
+	// _levels[arclevel].arcade.levelIfLose = "<gameover>";
+
+	// Level over;
+	// over.trans.level = "<quit>";
+	// over.trans.intros.push_back("movie/gameover.smk");
+	// _levels["<gameover>"] = over;
+
+	loadLib("", "wetlands/c_misc/fonts.lib", true);
+	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
+}
 
 void WetEngine::showCredits() {
 	MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);

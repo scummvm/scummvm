@@ -40,7 +40,6 @@ Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 		*engine = (Engine *)new Hypno::SpiderEngine(syst, desc);
 	} else if (Common::String(desc->gameId) == "soldier-boyz") {
 		*engine = (Engine *)new Hypno::BoyzEngine(syst, desc);
-		error("Unsupported game");
 	} else
 		return Common::kUnsupportedGameidError;
 
