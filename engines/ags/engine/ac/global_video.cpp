@@ -34,6 +34,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -46,6 +47,9 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 	if (_GP(play).fast_forward)
 		return;
 	if (_G(debug_flags) & DBG_NOVIDEO)
+		return;
+	// FIXME: Stargate Adventure videos used unsupported ix00 & ix01 audio tracks
+	if (::AGS::g_vm->getGameId() == "stargateadv")
 		return;
 
 	if ((flags < 10) && (_GP(usetup).audio_backend == 0)) {
