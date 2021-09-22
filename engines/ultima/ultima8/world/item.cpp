@@ -3881,7 +3881,7 @@ uint32 Item::I_explode(const uint8 *args, unsigned int argsize) {
 uint32 Item::I_igniteChaos(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT8(z); // unused
+	ARG_NULL8(); // z, unused
 
 	assert(GAME_IS_U8);
 

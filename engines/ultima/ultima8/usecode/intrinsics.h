@@ -90,6 +90,8 @@ typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);
 	WorldPoint x; \
 	UCMachine::get_instance()->dereferencePointer(ucptr_##x, x._buf, 5);
 
+// See comment on ARG_UINT8 for why +2 on NULL8
+#define ARG_NULL8()  args+=2;
 #define ARG_NULL16() args+=2;
 #define ARG_NULL32() args+=4;
 
