@@ -596,7 +596,7 @@ uint32 PuzzlePipes::checkFlags() {
 
 void PuzzlePipes::checkConnections() {
 	for (uint32 i = 0; i < connectorsCount; i++) {
-		uint32 oldState = _connectors[i].getState(),
+		BinNum oldState = _connectors[i].getState(),
 			newState = calcStateFromPosition(_connectors[i].getType(), _positions[i]);
 		if (oldState != newState) {
 			do {
