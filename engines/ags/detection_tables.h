@@ -1409,6 +1409,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "stanamespiepisode1", "Stan Ames PI, Episode 1" },
 	{ "stansrevenge", "Stan's Revenge" },
 	{ "stargateadv", "Stargate Adventure" },
+	{ "stargatesgc", "Stargate SGC" },
+	{ "stargatesolitaire", "Stargate Solitaire" },
 	{ "starshipcaramba", "Starship Caramba" },
 	{ "starshipposeidon", "Starship Poseidon" },
 	{ "starshipquasar", "Starship Quasar" },
@@ -2019,6 +2021,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830), // Linux
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182),
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
+	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
 	GAME_ENTRY_STEAM("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664),
 	GAME_ENTRY_GOG("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265),
 	GAME_ENTRY_GOG("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096),
@@ -2326,6 +2329,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42740200),
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
 	GAME_ENTRY("atotk", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078309),
+	GAME_ENTRY("atotk", "atotk.ags", "68d4f3488a9dcec74584651c0e29e439", 5078866), // 2.04
 	GAME_ENTRY("atotkjukebox", "jukebox.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 1631992),
 	GAME_ENTRY("atreatandsometricks", "a treat and some tricks.exe", "495d45fb8adfd49690ae3b97921feec6", 33708250),
 	GAME_ENTRY("aunaturel", "au naturel.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8499426),
@@ -3424,6 +3428,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("stanamespiepisode1", "NEW.exe", "f120690b506dd63cd7d1112ea6af2f77", 19194728),
 	GAME_ENTRY("stansrevenge", "Gameisle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 915036),
 	GAME_ENTRY("stargateadv", "StarGA.exe", "0710e2ec71042617f565c01824f0cf3c", 45738298),
+	GAME_ENTRY("stargateadv", "StarGA.exe", "0710e2ec71042617f565c01824f0cf3c", 45664346),
+	GAME_ENTRY("stargateadv", "StarGA.exe", "0710e2ec71042617f565c01824f0cf3c", 45662205),
+	GAME_ENTRY("stargatesgc", "Stargate SGC.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 2188193),
+	GAME_ENTRY("stargatesolitaire", "SolitaireSG1.exe", "5529522460cb27d6a4f2619aee618590", 11658638),
 	GAME_ENTRY("starshipcaramba", "karamba.exe", "465f972675db2da6040518221af5b0ba", 21540340),
 	GAME_ENTRY("starshipposeidon", "Starship Poseidon.exe", "5a9abb3094d0b3f4bc09c0c77fbb8024", 4163873),
 	GAME_ENTRY("starshipquasar", "quasar.exe", "8d1c6698abc66509df3dbe57a0a4144b", 11959826), // v1.1
