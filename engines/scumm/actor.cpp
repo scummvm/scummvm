@@ -805,10 +805,12 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 			abr.box = kInvalidBox;
 			_walkbox = kInvalidBox;
 		} else {
-			if (_vm->checkXYInBoxBounds(_walkdata.destbox, abr.x, abr.y)) {
-				abr.box = _walkdata.destbox;
-			} else {
-				abr = adjustXYToBeInBox(abr.x, abr.y);
+			if (_vm->_game.version < 7) {
+				if (_vm->checkXYInBoxBounds(_walkdata.destbox, abr.x, abr.y)) {
+					abr.box = _walkdata.destbox;
+				} else {
+					abr = adjustXYToBeInBox(abr.x, abr.y);
+				}
 			}
 			if (_moving && _walkdata.destdir == dir && _walkdata.dest.x == abr.x && _walkdata.dest.y == abr.y)
 				return;
