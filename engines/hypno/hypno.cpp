@@ -235,6 +235,31 @@ void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transpar
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
 
+Common::File *HypnoEngine::fixSmackerHeader(Common::File *file) {
+	Common::String magic;
+	magic += file->readByte();
+	magic += file->readByte();
+	magic += file->readByte();
+	magic += file->readByte();
+
+	if (magic == "HYP2") {
+		ByteArray *data = new ByteArray();
+		data->push_back('S');
+		data->push_back('M');
+		data->push_back('K');
+		data->push_back('2');
+		while (!file->eos()) {
+			data->push_back(file->readByte());
+		}
+		file->close();
+		delete file;
+		file = (Common::File *) new Common::MemoryReadStream(data->data(), data->size());
+	} else 
+		file->seek(0);
+
+	return file;
+}
+
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
 	Common::File *file = new Common::File();
 	Common::String path = convertPath(name);
@@ -243,6 +268,8 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
+
+	file = fixSmackerHeader(file);
 
 	Video::SmackerDecoder vd;
 	if (!vd.loadStream(file))
@@ -273,6 +300,8 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
+
+	file = fixSmackerHeader(file);
 
 	Video::SmackerDecoder vd;
 	if (!vd.loadStream(file))
@@ -368,6 +397,8 @@ void HypnoEngine::playVideo(MVideo &video) {
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
+
+	file = fixSmackerHeader(file);
 
 	if (video.decoder != nullptr)
 		error("Video %s was not previously closed and deallocated", video.path.c_str());

@@ -84,10 +84,26 @@ static const ADGameDescription gameDescriptions[] = {
 	{"wetlands", // Wetlands (US)
 	 "",
 	 AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,
-				"install.exe", "15a6b1b3819ef002438df340509b5373", 477839),
+				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
-	 ADGF_UNSUPPORTED,
+	 ADGF_TESTING,
+	 GUIO1(GUIO_NOMIDI)},
+	{"wetlands", // Wetlands (FR)
+	 "",
+	 AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 629575,
+			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
+	 Common::FR_FRA,
+	 Common::kPlatformDOS,
+	 ADGF_TESTING,
+	 GUIO1(GUIO_NOMIDI)},
+	{"wetlands", // Wetlands (ES)
+	 "",
+	 AD_ENTRY2s("wetlands.exe", "8d0f3630523da827bb25e665b7d3f879", 644055,
+			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
+	 Common::ES_ESP,
+	 Common::kPlatformDOS,
+	 ADGF_TESTING,
 	 GUIO1(GUIO_NOMIDI)},
 	{"soldier-boyz", // Solidier Boyz (US)
 	 "",
@@ -95,7 +111,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 	 Common::EN_USA,
 	 Common::kPlatformWindows,
-	 ADGF_UNSUPPORTED,
+	 ADGF_TESTING,
 	 GUIO1(GUIO_NOMIDI)},
 	AD_TABLE_END_MARKER};
 } // End of namespace Hypno

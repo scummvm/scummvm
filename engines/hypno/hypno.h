@@ -118,6 +118,7 @@ public:
 	void playVideo(MVideo &video);
 	void skipVideo(MVideo &video);
 
+	Common::File *fixSmackerHeader(Common::File *file);
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
 	Frames decodeFrames(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y, bool transparent);
@@ -232,6 +233,7 @@ public:
 	void loadAssetsDemoDisc();
 	void loadAssetsPCW();
 	void loadAssetsPCG();
+	void loadAssetsFullGame();
 	void showCredits() override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 	void drawShoot(const Common::Point &target) override;
