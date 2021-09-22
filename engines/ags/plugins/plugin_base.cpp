@@ -35,6 +35,7 @@
 #include "ags/plugins/ags_joy/ags_joy.h"
 #include "ags/plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
+#include "ags/plugins/ags_parallax/ags_parallax.h"
 #include "ags/plugins/ags_shell/ags_shell.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sock/ags_sock.h"
@@ -96,6 +97,10 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
+
+	if (fname.equalsIgnoreCase("ags_parallax") ||
+			fname.equalsIgnoreCase("AGSParallax"))
+		return new AGSParallax::AGSParallax();
 
 	if (fname.equalsIgnoreCase("ags_shell") || fname.equalsIgnoreCase("agsshell"))
 		return new AGSShell::AGSShell();
