@@ -58,8 +58,9 @@ static const ADGameDescription gameDescriptions[] = {
 	 GUIO1(GUIO_NOMIDI)},
 	{"wetlands", // Wetlands Demo Disc (November 1995)
 	 "Demo",
-	 AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
-				"wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319),
+	 AD_ENTRY3s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
+				"wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319,
+				"demo.exe", "15a6b1b3819ef002438df340509b5373", 533221),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
 	 ADGF_TESTING | ADGF_DEMO,
@@ -100,7 +101,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{"wetlands", // Wetlands (ES)
 	 "",
 	 AD_ENTRY2s("wetlands.exe", "8d0f3630523da827bb25e665b7d3f879", 644055,
-			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
+				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 	 Common::ES_ESP,
 	 Common::kPlatformDOS,
 	 ADGF_TESTING,
@@ -129,7 +130,7 @@ static const char *const directoryGlobs[] = {
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
-		_maxScanDepth = 10;
+		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
