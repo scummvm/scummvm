@@ -82,10 +82,14 @@ SaveStateDescriptor AsylumMetaEngine::querySaveMetaInfos(const char *target, int
 	if (desc.getSaveSlot() == -1) {
 		Common::InSaveFile *in(g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target)));
 
-		if (in && in->size()) {
-			(void)(uint32)Asylum::Savegame::read(in, "Chapter");
-			desc.setSaveSlot(slot);
-			desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
+		if (in) {
+			if (in->size() > 60) {
+				(void)(uint32)Asylum::Savegame::read(in, "Chapter");
+				desc.setSaveSlot(slot);
+				desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
+			}
+
+			delete in;
 		}
 	}
 
