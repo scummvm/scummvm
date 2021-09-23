@@ -199,7 +199,7 @@ static const char *credits[] = {
 "C0""Crane Yang",
 "C2""GSoC Student",
 "C0""Dmitry Iskrich",
-"C0""Dylan Servilla",
+"C0""Deborah Servilla",
 "C2""GSoC Student",
 "C0""Nathanael Gentry",
 "C2""GSoC Student",

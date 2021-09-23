@@ -370,7 +370,7 @@ Director
      - GSoC Student
    * - Dmitry Iskrich
      -
-   * - Dylan Servilla
+   * - Deborah Servilla
      - GSoC Student
    * - Nathanael Gentry
      - GSoC Student
