@@ -347,7 +347,11 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
+		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette);
+		if (track->isValid())
+			addTrack(track);
+		else
+			delete track;
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
@@ -442,6 +446,11 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Go through all chunks in the file
 	while (_fileStream->pos() < fileSize && parseNextChunk())
 		;
+
+	if (_decodedHeader) {
+		// Ensure there's at least a supported video track
+		_decodedHeader = findNextVideoTrack() != nullptr;
+	}
 
 	if (!_decodedHeader) {
 		warning("Failed to parse AVI header");
