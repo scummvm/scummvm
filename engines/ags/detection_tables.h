@@ -154,7 +154,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alum", "Alum" },
 	{ "apotheosis", "The Apotheosis Project" },
 	{ "astroloco", "Astroloco: Worst Contact"},
-	{ "atotkdeluxe", "A Tale of Two Kingdoms: Deluxe Edition" },
+	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "beer", "Beer!" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
@@ -354,7 +354,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ataintedtreat", "A Tainted Treat" },
 	{ "ataleofbetrayal", "A Tale Of Betrayal" },
 	{ "atapi", "Atapi" },
-	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "atotkjukebox", "ATOTK jukebox" },
 	{ "atreatandsometricks", "A Treat and Some Tricks" },
 	{ "aunaturel", "Au Naturel" },
@@ -1892,7 +1891,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Windows
 	GAME_ENTRY_STEAM("alum", "Alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429197066), // Linux & Mac
 	GAME_ENTRY("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 428902430),
-	GAME_ENTRY_STEAM("atotkdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719),
+	STABLE_ENTRY("atotk", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719, Common::UNK_LANG, "Steam/Deluxe"),
+	STABLE_ENTRY("atotk", "atotk.ags", "68d4f3488a9dcec74584651c0e29e439", 5078866, Common::UNK_LANG, "Steam/Deluxe"), // 2.04
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
@@ -2329,7 +2329,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42740200),
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
 	GAME_ENTRY("atotk", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078309),
-	GAME_ENTRY("atotk", "atotk.ags", "68d4f3488a9dcec74584651c0e29e439", 5078866), // 2.04
 	GAME_ENTRY("atotkjukebox", "jukebox.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 1631992),
 	GAME_ENTRY("atreatandsometricks", "a treat and some tricks.exe", "495d45fb8adfd49690ae3b97921feec6", 33708250),
 	GAME_ENTRY("aunaturel", "au naturel.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8499426),
