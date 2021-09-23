@@ -162,11 +162,9 @@ protected:
 public:
 	Plugin() : _pluginObject(0), _type(PLUGIN_TYPE_MAX) {}
 	virtual ~Plugin() {
-		//if (isLoaded())
-			//unloadPlugin();
 	}
 
-//	virtual bool isLoaded() const = 0; // TODO
+	bool isLoaded() const { return _pluginObject; }
 	virtual bool loadPlugin() = 0;     // TODO: Rename to load() ?
 	virtual void unloadPlugin() = 0;   // TODO: Rename to unload() ?
 
