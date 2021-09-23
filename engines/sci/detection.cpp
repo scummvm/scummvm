@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/engineman.h"
 #include "base/plugins.h"
 #include "common/file.h"
 #include "common/hashmap.h"

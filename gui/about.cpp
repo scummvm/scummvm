@@ -21,6 +21,7 @@
  */
 
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/events.h"

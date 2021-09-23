@@ -32,6 +32,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "engines/engine.h"
+#include "engines/engineman.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"

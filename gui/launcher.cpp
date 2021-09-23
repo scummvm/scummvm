@@ -51,7 +51,9 @@
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
+
 #include "engines/advancedDetector.h"
+#include "engines/engineman.h"
 
 #include "graphics/cursorman.h"
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)

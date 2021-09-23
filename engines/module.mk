@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	advancedDetector.o \
 	dialogs.o \
 	engine.o \
+	engineman.o \
 	game.o \
 	metaengine.o \
 	obsolete.o \

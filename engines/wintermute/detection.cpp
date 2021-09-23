@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/translation.h"
 
+#include "engines/engineman.h"
 #include "engines/metaengine.h"
 
 #include "wintermute/detection.h"

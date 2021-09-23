@@ -21,6 +21,7 @@
  */
 
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"

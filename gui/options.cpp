@@ -46,6 +46,8 @@
 #include "common/util.h"
 #include "common/text-to-speech.h"
 
+#include "engines/engineman.h"
+
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"

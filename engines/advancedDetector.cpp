@@ -34,6 +34,7 @@
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "engines/advancedDetector.h"
+#include "engines/engineman.h"
 #include "engines/obsolete.h"
 
 /**
