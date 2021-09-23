@@ -48,9 +48,6 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 		return;
 	if (_G(debug_flags) & DBG_NOVIDEO)
 		return;
-	// FIXME: Stargate Adventure videos used unsupported ix00 & ix01 audio tracks
-	if (::AGS::g_vm->getGameId() == "stargateadv")
-		return;
 
 	if ((flags < 10) && (_GP(usetup).audio_backend == 0)) {
 		// if game audio is disabled in Setup, then don't

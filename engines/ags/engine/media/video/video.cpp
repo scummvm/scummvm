@@ -64,9 +64,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 	AGS::Shared::ScummVMReadStream *stream = new AGS::Shared::ScummVMReadStream(video_stream.get(), DisposeAfterUse::NO);
 
 	if (!decoder->loadStream(stream)) {
-		delete stream;
-		if (showError)
-			Display("Unable to decode video '%s'", name);
+		warning("Unable to decode video '%s'", name);
 		return false;
 	}
 
