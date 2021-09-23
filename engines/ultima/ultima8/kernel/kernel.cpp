@@ -178,7 +178,8 @@ void Kernel::runProcesses() {
 			// for a really long time at this point.  Set it high enough that
 			// a process going through all map items should still terminate.
 			//
-			if (num_run > 65536 && !p->is_terminated()) {
+			if (((num_run > 8192 && GAME_IS_CRUSADER) || num_run > 65534)
+					&& !p->is_terminated()) {
 				warning("Seem to be stuck in process loop - killing current process");
 				p->fail();
 			}
