@@ -1946,7 +1946,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 
 static const char *mfull[] = {
 	"January", "February", "March", "April", "May", "June",
-	"July", "August" "September", "October", "November", "December"
+	"July", "August", "September", "October", "November", "December"
 };
 
 static const char *wday[] = {
