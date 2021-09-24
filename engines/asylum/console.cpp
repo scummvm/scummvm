@@ -672,6 +672,8 @@ bool Console::cmdKillScript(int argc, const char **argv) {
 bool Console::cmdChangeScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <scene number>\n", argv[0]);
+		for (int i = 0; i < 13; i++)
+			debugPrintf("        %-2d  %s\n", i + 5, getText()->get(MAKE_RESOURCE(kResourcePackText, i + 1812)));
 		return true;
 	}
 
