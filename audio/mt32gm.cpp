@@ -314,7 +314,7 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 				getPercussionChannel()->controlChange(MIDI_CONTROLLER_BANK_SELECT_LSB, 1);
 			}
 			// Patch change: 127 (CM-64/32L)
-			send(127 << 8 | MIDI_COMMAND_PROGRAM_CHANGE | 9);
+			send((127 << 8) | MIDI_COMMAND_PROGRAM_CHANGE | 9);
 
 			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
 			for (i = 0; i < 16; ++i) {
@@ -633,10 +633,14 @@ void MidiDriver_MT32GM::programChange(byte outputChannel, byte patchId, int8 sou
 		return;
 
 	if (_midiType == MT_MT32) {
-		if (outputChannel == MIDI_RHYTHM_CHANNEL)
+		if (outputChannel == MIDI_RHYTHM_CHANNEL &&
+				!(!_nativeMT32 && _enableGS && patchId == 0x7F)) {
 			// Patch changes on the rhythm channel do nothing on an MT-32.
 			// On GM/GS devices they might unintentionally change the drumkit.
+			// Exception: changing the drumkit to the MT-32 drumkit on a GS
+			// device.
 			return;
+		}
 
 		if (!_nativeMT32 && !_enableGS) {
 			// GM device: map the patch to GM equivalent
