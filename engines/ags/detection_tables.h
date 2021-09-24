@@ -2778,6 +2778,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("ioawn4t", "ioawn4t.ags", "34455803b41269a1a2dd44cc8b2d549f", 884275141), // Linux
 	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887314393), // Windows
 	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887315687),
+	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888895169),
+	GAME_ENTRY("ioawn4t", "game.ags", "11bd8123982f9442f372ed5defc88b50", 888895169),
 	GAME_ENTRY("isos", "ISOS.exe", "06a03fe35791b0578068ab1873455463", 7362937),
 	GAME_ENTRY("itsabugslife", "It's a Bugs Life.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 201172081),
 	GAME_ENTRY("iwalkedapath", "I walked a path.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 89018261),
