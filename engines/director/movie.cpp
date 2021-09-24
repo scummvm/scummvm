@@ -51,6 +51,7 @@ Movie::Movie(Window *window) {
 	_lastEventTime = _vm->getMacTicks();
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;
+	_lastClickTime2 = 0;
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
 	_nextEventId = 0;

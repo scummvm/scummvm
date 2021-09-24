@@ -436,7 +436,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheDate(field);
 		break;
 	case kTheDoubleClick:
-		getTheEntitySTUB(kTheDoubleClick);
+		d.type = INT;
+		// Always measured against the last two clicks.
+		// 25 ticks seems to be the threshold for a double click.
+		d.u.i = (movie->_lastClickTime - movie->_lastClickTime2) <= 25 ? 1 : 0;
 		break;
 	case kTheExitLock:
 		getTheEntitySTUB(kTheExitLock);
