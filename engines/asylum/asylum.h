@@ -197,6 +197,7 @@ public:
 	bool isMenuVisible() { return _handler == (EventHandler *)_menu; }
 
 	// Save/Load
+	int getAutosaveSlot() const { return getMetaEngine()->getAutosaveSlot(); }
 	bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	bool canSaveGameStateCurrently();

@@ -51,6 +51,7 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override { return 25; }
+	int getAutosaveSlot() const override { return getMaximumSaveSlot() - 1; }
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
