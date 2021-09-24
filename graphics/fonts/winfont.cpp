@@ -86,6 +86,16 @@ bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry 
 	return ok;
 }
 
+bool WinFont::loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry) {
+	Common::WinResources *exe = Common::WinResources::createFromEXE(&stream);
+	if (!exe)
+		return false;
+
+	bool ok = loadFromEXE(exe, Common::String("stream"), dirEntry);
+	delete exe;
+	return ok;
+}
+
 bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry) {
 	// Let's pull out the font directory
 	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
