@@ -100,13 +100,12 @@ void TRAP() {
 /* Main Game Loop */
 void GameLoop(byte *target) {
 	for (;;) {
-#if 1
 		AnimateSpots(target);
-#endif
+
 		/* Update/check live things */
-		UpdateTimedRects1();
-		UpdateTimedRects2();
-		UpdateTimedInventoryItems();
+		UpdateProtozorqs();
+		CheckGameTimeLimit();
+		CleanupDroppedItems();
 
 		/* Get player input */
 		PollInput();
@@ -137,7 +136,7 @@ void GameLoop(byte *target) {
 			/*Pending / AI commands*/
 
 			if (script_byte_vars.check_used_commands < script_byte_vars.used_commands) {
-				the_command = Swap16(script_word_vars.next_command1);
+				the_command = Swap16(script_word_vars.next_aspirant_cmd);
 				if (the_command)
 					goto process;
 			}
@@ -145,18 +144,18 @@ void GameLoop(byte *target) {
 			if (script_byte_vars.bvar_45)
 				continue;
 
-			the_command = Swap16(script_word_vars.next_command2);
+			the_command = Swap16(script_word_vars.next_protozorqs_cmd);
 			if (the_command)
 				goto process;
 
-			if (Swap16(next_ticks3) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
-				the_command = next_command3;
+			if (Swap16(next_vorts_ticks) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
+				the_command = next_vorts_cmd;
 				if (the_command)
 					goto process;
 			}
 
-			if (Swap16(next_ticks4) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks4 is LE*/
-				the_command = next_command4;
+			if (Swap16(next_turkey_ticks) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks4 is LE*/
+				the_command = next_turkey_cmd;
 				if (the_command)
 					goto process;
 			}

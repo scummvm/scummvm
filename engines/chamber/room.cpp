@@ -23,6 +23,7 @@
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/room.h"
+#include "chamber/enums.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
 #include "chamber/print.h"
@@ -64,8 +65,8 @@ spot_t *zone_spots_cur;
 
 vortanims_t *vortanims_ptr;
 turkeyanims_t *turkeyanims_ptr;
-pers_t *pers_ptr;
-spot_t *spot_ptr;
+pers_t *aspirant_ptr;
+spot_t *aspirant_spot;
 spot_t *found_spot;
 byte **spot_sprite;
 
@@ -77,17 +78,17 @@ byte zsprite_h;
 
 byte *lutin_mem;
 
-uint16 inv_update_time = 0;
+uint16 drops_cleanup_time = 0;
 
 byte in_de_profundis = 0;  /*TODO: useless?*/
 
-uint16 next_command3 = 0;
-uint16 next_ticks3 = 0;
-uint16 next_command4 = 0;
-uint16 next_ticks4 = 0;
-uint16 next_ticks2 = 0;
+uint16 next_vorts_cmd = 0;
+uint16 next_vorts_ticks = 0;
+uint16 next_turkey_cmd = 0;
+uint16 next_turkey_ticks = 0;
+uint16 next_protozorqs_ticks = 0;
 
-byte zone_drawn;
+byte skip_zone_transition;
 
 #define VORTANIMS_MAX 25
 
@@ -338,9 +339,9 @@ void LoadZone(void) {
 	zone_spr_index = 0;
 	script_byte_vars.dead_flag = 0;
 	script_byte_vars.bvar_25 = 0;
-	script_word_vars.next_command1 = BE(0);
-	next_command4 = 0;
-	next_command3 = 0;
+	script_word_vars.next_aspirant_cmd = BE(0);
+	next_turkey_cmd = 0;
+	next_vorts_cmd = 0;
 	script_byte_vars.used_commands = 0;
 }
 
@@ -353,7 +354,7 @@ void ResetZone(void) {
 	script_byte_vars.bvar_33 = 0;
 	script_byte_vars.bvar_34 = 0;
 	script_byte_vars.bvar_08 = 0;
-	script_byte_vars.bvar_39 = 0;
+	script_byte_vars.aspirant_flags = 0;
 	script_word_vars.psi_cmds[0] = BE(0x9048);
 	script_word_vars.psi_cmds[1] = BE(0xA01D);
 	script_word_vars.psi_cmds[2] = BE(0);
@@ -542,7 +543,7 @@ void AnimRoomDoorClose(byte index) {
 byte FindInitialSpot(void) {
 	spot_t *spot;
 	byte index;
-	byte flags = script_byte_vars.bvar_02;
+	byte flags = script_byte_vars.last_door;
 	if (flags == 0)
 		return 0;
 	flags |= SPOTFLG_80 | SPOTFLG_8;
@@ -567,10 +568,9 @@ byte FindSpotByFlags(byte mask, byte value) {
 }
 
 /*
-Find person's spot
-TODO: rename me
+Select person and its spot (if available)
 */
-byte FindAndSelectSpot(byte offset) {
+byte SelectPerson(byte offset) {
 	/*TODO: replace offset arg with index?*/
 	byte index = offset / 5;   /* / sizeof(pers_t) */
 
@@ -647,13 +647,13 @@ lutinanim_t lutins_table[] = {
 	{0, {  0,  0,  0,  0,  0,  0,  0,  0} }
 };
 
-void UpdateZoneSpot(byte index) {
+void BeforeChangeZone(byte index) {
 	byte oldspot;
 	static const animdesc_t anim57 = {ANIMFLG_USESPOT | 57};
 	static const animdesc_t anim58 = {ANIMFLG_USESPOT | 58};
 
 	script_byte_vars.need_draw_spots = 0;
-	if (pers_list[27].area != script_byte_vars.zone_area)
+	if (pers_list[kPersScifi].area != script_byte_vars.zone_area)
 		return;
 	if (index < 59 || index >= 63)
 		return;
@@ -662,11 +662,11 @@ void UpdateZoneSpot(byte index) {
 
 	script_byte_vars.need_draw_spots = ~0;
 
-	FindAndSelectSpot(27 * 5);
+	SelectPerson(PersonOffset(kPersScifi));
 	AnimateSpot(&anim57);
 
-	if (pers_list[30].area != 0) {
-		FindAndSelectSpot(30 * 5);
+	if (pers_list[kPersMonkey].area != 0) {
+		SelectPerson(PersonOffset(kPersMonkey));
 		AnimateSpot(&anim58);
 	}
 
@@ -698,7 +698,7 @@ void ChangeZone(byte index) {
 }
 
 
-void DrawZoneObjs(void) {
+void DrawPersons(void) {
 	int16 i;
 	byte index, pidx;
 	spot_t *spot;
@@ -790,7 +790,7 @@ void DrawRoomStatics(void) {
 	uint16 xx, ww;
 
 	DrawBackground(backbuffer, 0);
-	arpla_y_step = script_byte_vars.bvar_2B;
+	arpla_y_step = script_byte_vars.hands;
 
 	aptr = SeekToEntry(arpla_data, script_byte_vars.zone_room - 1, &aend);
 	room_bounds_rect.sx = 0xFF;
@@ -870,8 +870,8 @@ void DrawRoomItemsIndicator(void) {
 	byte spridx = 172;
 	int16 i;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
-		if (inventory_items[i].flags == ITEMFLG_40
-		        && inventory_items[i].flags2 == script_byte_vars.zone_area) {
+		if (inventory_items[i].flags == ITEMFLG_ROOM
+		        && inventory_items[i].area == script_byte_vars.zone_area) {
 			spridx = 173;
 			break;
 		}
@@ -879,10 +879,11 @@ void DrawRoomItemsIndicator(void) {
 	DrawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, CGA_SCREENBUFFER);
 	DrawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, backbuffer);
 
-	script_byte_vars.room_items = 0;
+	/*recalculate the number of zapstiks we have*/
+	script_byte_vars.zapstiks_owned = 0;
 	for (i = 0; i < 14; i++) {
-		if (inventory_items[i + 38].flags == ITEMFLG_80)
-			script_byte_vars.room_items++;  /*TODO: probably should be named differently*/
+		if (inventory_items[i + kItemZapstik1 - 1].flags == ITEMFLG_OWNED)
+			script_byte_vars.zapstiks_owned++;
 	}
 }
 
@@ -895,20 +896,20 @@ void DrawZoneSpots(void) {
 	if (!script_byte_vars.need_draw_spots)
 		return;
 
-	FindAndSelectSpot(27 * 5);
+	SelectPerson(PersonOffset(kPersScifi));
 	AnimateSpot(&anim59);
 
-	pers_list[27].area = script_byte_vars.zone_area;
+	pers_list[kPersScifi].area = script_byte_vars.zone_area;
 
-	if (pers_list[30].area != 0) {
-		pers_list[30].area = script_byte_vars.zone_area;
-		FindAndSelectSpot(30 * 5);
+	if (pers_list[kPersMonkey].area != 0) {
+		pers_list[kPersMonkey].area = script_byte_vars.zone_area;
+		SelectPerson(PersonOffset(kPersMonkey));
 		AnimateSpot(&anim60);
 	}
 
 	script_byte_vars.cur_spot_idx = oldspot;
 
-	DrawZoneObjs();
+	DrawPersons();
 }
 
 void RefreshZone(void) {
@@ -916,7 +917,7 @@ void RefreshZone(void) {
 	PopDirtyRects(DirtyRectBubble);
 	PopDirtyRects(DirtyRectText);
 
-	if (!zone_drawn && !right_button)
+	if (!skip_zone_transition && !right_button)
 		DrawBackground(CGA_SCREENBUFFER, 1);
 
 	CGA_BackBufferToRealFull();
@@ -1059,116 +1060,123 @@ char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 	return 0;
 }
 
-void SetDelay5(void) {
-	next_ticks4 = Swap16(script_word_vars.timer_ticks2) + 5;
-}
-
 /*
-Aspirants AI
+Initialize Aspirant
 */
-void PrepareCommand1(void) {
+void PrepareAspirant(void) {
 	byte index;
-	byte oldr, newr;
+	byte hostility, appearance;
 	byte flags;
 
-	if (script_byte_vars.zone_area == 55) {
-		pers_list[1].area = 55;
-		pers_list[2].area = 55;
-		pers_list[3].area = 55;
-		pers_list[1].name = 50; /*DIVO*/
-		pers_list[2].name = 50;
-		pers_list[3].name = 50;
+	if (script_byte_vars.zone_area == kAreaDreamsOfSlime) {
+		pers_list[kPersAspirant1].area = kAreaDreamsOfSlime;
+		pers_list[kPersAspirant2].area = kAreaDreamsOfSlime;
+		pers_list[kPersAspirant3].area = kAreaDreamsOfSlime;
+		pers_list[kPersAspirant1].name = 50; /*DIVO*/
+		pers_list[kPersAspirant2].name = 50;
+		pers_list[kPersAspirant3].name = 50;
 		return;
 	}
 
-	pers_list[1].area = 0;
-	pers_list[2].area = 0;
-	pers_list[3].area = 0;
-	pers_list[4].area = 0;
+	pers_list[kPersAspirant1].area = kAreaNone;
+	pers_list[kPersAspirant2].area = kAreaNone;
+	pers_list[kPersAspirant3].area = kAreaNone;
+	pers_list[kPersAspirant4].area = kAreaNone;
 
 	if (script_byte_vars.bvar_26 >= 63)
 		return;
-	if (script_byte_vars.zone_area >= 44)
+
+	if (script_byte_vars.zone_area >= kAreaPassage1)
 		return;
 
 	index = FindSpotByFlags(0x3F, 17);
 	if (index == 0xFF)
 		return;
-	spot_ptr = &zone_spots[index - 1];
+	aspirant_spot = &zone_spots[index - 1];
 
-	script_byte_vars.quest_item_ofs += 5;   /*FIXME: this is sizeof(pers_t), but it's used in scripts, so hardcoded*/
-	if (script_byte_vars.quest_item_ofs >= 5 * 5)
-		script_byte_vars.quest_item_ofs = 1 * 5;
-	pers_ptr = &pers_list[script_byte_vars.quest_item_ofs / 5];
+	script_byte_vars.aspirant_pers_ofs += 5;   /*FIXME: this is sizeof(pers_t), but it's used in scripts, so hardcoded*/
+	if (script_byte_vars.aspirant_pers_ofs >= PersonOffset(kPersAspirant4 + 1))
+		script_byte_vars.aspirant_pers_ofs = PersonOffset(kPersAspirant1);
+	aspirant_ptr = &pers_list[script_byte_vars.aspirant_pers_ofs / 5];
 
-	if (pers_ptr->flags & PERSFLG_40)
+	if (aspirant_ptr->flags & PERSFLG_40)
 		return;
 
-	oldr = script_byte_vars.rand_value;
-	newr = Rand();
+	hostility = script_byte_vars.rand_value;
+	appearance = Rand();
 	flags = 0;
+	/*
+	flags values:
+	     0 - passive
+		 1 - willing to trade
+		 2 - hostile
+		|4 - ?
+	*/
 
-	if (script_byte_vars.zone_area < 6) {
-		if (oldr < 90) {
-			/*TODO: merge/simplify these ifs*/
-			if (pers_ptr->item != 0) {
-				if (pers_ptr->item >= 6 && pers_ptr->item < 27) {
-					if (!(pers_ptr->item >= 19 && pers_ptr->item < 23))
-						flags = 1;
-				}
-			}
+	if (script_byte_vars.zone_area <= kAreaTheMastersOrbit3) {
+		/*at The Master's Orbit*/
+		if (hostility < 90 && aspirant_ptr->item) {
+			/* ROPE, STONE FLY, GOBLET, LANTERN, but not DAGGER*/
+			if ((aspirant_ptr->item >= kItemRope1 && aspirant_ptr->item <= kItemLantern4)
+			&& !(aspirant_ptr->item >= kItemDagger1 && aspirant_ptr->item <= kItemDagger4))
+				flags = 1;	/*willing to trade*/
 		}
-		if (newr < 23) {
-			pers_ptr->area = script_byte_vars.zone_area;
-			script_word_vars.next_command1 = BE(0xA018);
-			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.bvar_39 = flags;
-			script_vars[ScrPool8_CurrentPers] = pers_ptr;
-		} else if (newr < 52) {
-			script_word_vars.next_command1 = BE(0xA019);
+		if (appearance < 23) {
+			/*spawn in this room*/
+			aspirant_ptr->area = script_byte_vars.zone_area;
+			script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
+			script_byte_vars.check_used_commands = 3;			/*after 3 actions*/
+			script_byte_vars.aspirant_flags = flags;
+			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+		} else if (appearance < 52) {
+			script_word_vars.next_aspirant_cmd = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.bvar_39 = flags;
-			script_vars[ScrPool8_CurrentPers] = pers_ptr;
+			script_byte_vars.aspirant_flags = flags;
+			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
 		} else {
-			script_byte_vars.bvar_39 = 0;
+			/*do not spawn*/
+			script_byte_vars.aspirant_flags = 0;
 			return;
 		}
 	} else {
-		if (oldr < 39 && pers_ptr->item)
-			flags = 1;
-		if (oldr >= 166)
-			flags = 2;
+		/*at other places*/
+		if (hostility < 39 && aspirant_ptr->item)
+			flags = 1;	/*willing to trade*/
+		if (hostility >= 166)
+			flags = 2;	/*hostile*/
 
-		if (newr < 26) {
-			pers_ptr->area = script_byte_vars.zone_area;
-			script_word_vars.next_command1 = BE(0xA018);
-			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.bvar_39 = flags;
-			script_vars[ScrPool8_CurrentPers] = pers_ptr;
-		} else if (newr < 52) {
-			script_word_vars.next_command1 = BE(0xA019);
+		if (appearance < 26) {
+			/*spawn in this room*/
+			aspirant_ptr->area = script_byte_vars.zone_area;
+			script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
+			script_byte_vars.check_used_commands = 3;			/*after 3 actions*/
+			script_byte_vars.aspirant_flags = flags;
+			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+		} else if (appearance < 52) {
+			script_word_vars.next_aspirant_cmd = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
-			script_byte_vars.bvar_39 = flags;
-			script_vars[ScrPool8_CurrentPers] = pers_ptr;
+			script_byte_vars.aspirant_flags = flags;
+			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
 		} else {
-			script_byte_vars.bvar_39 = 0;
+			/*do not spawn*/
+			script_byte_vars.aspirant_flags = 0;
 			return;
 		}
 	}
 }
 
 /*
-Vorts AI
+Initialize Vorts
 */
-void PrepareCommand3(void) {
+void PrepareVorts(void) {
 	spot_t *spot;
 
-	if ((script_byte_vars.zone_area != 8) || !(script_byte_vars.bvar_36 & 0x80)) {
-		pers_list[0].flags &= ~PERSFLG_40;
-		pers_list[34].flags &= ~PERSFLG_40;
-		pers_list[35].flags &= ~PERSFLG_40;
+	if ((script_byte_vars.zone_area != kAreaTheReturn) || !(script_byte_vars.bvar_36 & 0x80)) {
+		pers_list[kPersVort].flags &= ~PERSFLG_40;
+		pers_list[kPersVort2].flags &= ~PERSFLG_40;
+		pers_list[kPersVort3].flags &= ~PERSFLG_40;
 
 		for (spot = zone_spots; spot != zone_spots_end; spot++) {
 			if ((spot->flags & ~SPOTFLG_80) == (SPOTFLG_40 | SPOTFLG_10)) {
@@ -1176,25 +1184,25 @@ void PrepareCommand3(void) {
 				for (i = 0; i < VORTANIMS_MAX; i++) {
 					if (vortsanim_list[i].room == script_byte_vars.zone_room) {
 						vortanims_ptr = &vortsanim_list[i];
-						if (script_byte_vars.zone_area == pers_list[0].area
-						        || script_byte_vars.zone_area == pers_list[34].area
-						        || script_byte_vars.zone_area == pers_list[35].area) {
-							next_command3 = 0xA015;                 /*VortLeave*/
+						if (script_byte_vars.zone_area == pers_list[kPersVort].area
+						        || script_byte_vars.zone_area == pers_list[kPersVort2].area
+						        || script_byte_vars.zone_area == pers_list[kPersVort3].area) {
+							next_vorts_cmd = 0xA015;                 /*VortLeave*/
 						} else {
-							pers_list[0].area = 0;
-							pers_list[34].area = 0;
-							pers_list[35].area = 0;
+							pers_list[kPersVort].area = 0;
+							pers_list[kPersVort2].area = 0;
+							pers_list[kPersVort3].area = 0;
 							script_byte_vars.bvar_36 &= 0x80;    /*TODO: is this correct? |= ?*/
 							if (script_byte_vars.rand_value < 39) {
-								pers_list[0].area = script_byte_vars.zone_area;
-								next_command3 = 0xA015;             /*VortLeave*/
+								pers_list[kPersVort].area = script_byte_vars.zone_area;
+								next_vorts_cmd = 0xA015;             /*VortLeave*/
 							} else if (script_byte_vars.rand_value < 78)
-								next_command3 = 0xA014;             /*VortAppear*/
+								next_vorts_cmd = 0xA014;             /*VortAppear*/
 							else
 								return;
 						}
 						script_byte_vars.bvar_36 |= 1;
-						next_ticks3 = Swap16(script_word_vars.timer_ticks2) + 5;
+						next_vorts_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 						return;
 					}
 				}
@@ -1202,24 +1210,24 @@ void PrepareCommand3(void) {
 			}
 		}
 	}
-	pers_list[0].area = 0;
-	pers_list[34].area = 0;
-	pers_list[35].area = 0;
+	pers_list[kPersVort].area = 0;
+	pers_list[kPersVort2].area = 0;
+	pers_list[kPersVort3].area = 0;
 	script_byte_vars.bvar_36 &= 0x80;    /*TODO: is this correct? |= ?*/
 }
 
 /*
-Turkey AI
+Initialize Turkey
 */
-void PrepareCommand4(void) {
+void PrepareTurkey(void) {
 	spot_t *spot;
 
-	if (script_byte_vars.zone_area == 59 && script_byte_vars.bvar_4E == 0) {
-		pers_list[5].area = 59;
+	if (script_byte_vars.zone_area == kAreaPlacatingThePowers && script_byte_vars.bvar_4E == 0) {
+		pers_list[kPersTurkey].area = kAreaPlacatingThePowers;
 		return;
 	}
 
-	pers_list[5].flags &= ~PERSFLG_40;
+	pers_list[kPersTurkey].flags &= ~PERSFLG_40;
 
 	for (spot = zone_spots; spot != zone_spots_end; spot++) {
 		if ((spot->flags & ~SPOTFLG_80) == (SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_1)) {
@@ -1228,18 +1236,18 @@ void PrepareCommand4(void) {
 			for (i = 0; i < TURKEYANIMS_MAX; i++) {
 				if (turkeyanim_list[i].room == script_byte_vars.zone_room) {
 					turkeyanims_ptr = &turkeyanim_list[i];
-					if (script_byte_vars.zone_area == pers_list[5].area) {
-						next_command4 = 0xA01F;
-						SetDelay5();
+					if (script_byte_vars.zone_area == pers_list[kPersTurkey].area) {
+						next_turkey_cmd = 0xA01F;	/*leave*/
+						next_turkey_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 					} else {
-						pers_list[5].area = 0;
+						pers_list[kPersTurkey].area = 0;
 						if (script_byte_vars.rand_value >= 217) {
-							pers_list[5].area = script_byte_vars.zone_area;
-							next_command4 = 0xA01F;
-							SetDelay5();
+							pers_list[kPersTurkey].area = script_byte_vars.zone_area;
+							next_turkey_cmd = 0xA01F;	/*leave*/
+							next_turkey_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 						} else if (script_byte_vars.rand_value >= 178) {
-							next_command4 = 0xA01E;
-							SetDelay5();
+							next_turkey_cmd = 0xA01E;	/*appear*/
+							next_turkey_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 						}
 					}
 					return;
@@ -1249,7 +1257,7 @@ void PrepareCommand4(void) {
 		}
 	}
 
-	pers_list[5].area = 0;
+	pers_list[kPersTurkey].area = 0;
 }
 
 
@@ -1290,15 +1298,18 @@ void RestoreScreenOfSpecialRoom(void) {
 	}
 }
 
+/*
+Modify anim sprite 127
+*/
 void SetAnim127Sprite(byte flags, byte spridx) {
 	byte *lutin_entry, *lutin_entry_end;
 	lutin_entry = SeekToEntry(lutin_data, 127, &lutin_entry_end);
 	lutin_entry[2] = spridx;
 	switch (spridx) {
-	case 37:
-	case 58:
-	case 40:
-		if (flags == ITEMFLG_80)
+	case 37:	/*DAGGER*/
+	case 58:	/*CHOPPER*/
+	case 40:	/*SACRIFICIAL BLADE*/
+		if (flags == ITEMFLG_OWNED)
 			script_byte_vars.bvar_66 += 1;
 		else
 			script_byte_vars.bvar_66 -= 1;
@@ -1306,19 +1317,24 @@ void SetAnim127Sprite(byte flags, byte spridx) {
 	}
 }
 
+/*
+Bounce current item to the room/inventory
+*/
 void BounceCurrentItem(byte flags, byte y) {
 	item_t *item = (item_t *)(script_vars[ScrPool3_CurrentItem]);
 
 	SetAnim127Sprite(flags, item->sprite);
 	item->flags = flags;
-	item->flags2 = script_byte_vars.zone_area;
+	item->area = script_byte_vars.zone_area;
 	BackupScreenOfSpecialRoom();
 	PlayAnim(41, 176 / 4, y);
 	DrawRoomItemsIndicator();
 	RestoreScreenOfSpecialRoom();
 }
 
-
+/*
+Load The Wall gate sprites
+*/
 byte *LoadMursmSprite(byte index) {
 	byte *pinfo, *end;
 	pinfo = SeekToEntry(mursm_data, index, &end);
@@ -1356,6 +1372,10 @@ byte *LoadMursmSprite(byte index) {
 
 thewalldoor_t the_wall_doors[2];
 
+/*
+Open The Wall's right gate
+TODO: move this to CGA?
+*/
 void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 	uint16 offs = CGA_CalcXY_p(x + width - 2, y);
 
@@ -1368,7 +1388,6 @@ void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 	offs++;
 
 	/*hide remaining column*/
-	/*TODO: move this to CGA?*/
 	uint16 ooffs = offs;
 	byte oh = height;
 	while (height--) {
@@ -1382,6 +1401,10 @@ void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 	CGA_blitToScreen(ooffs, 1, oh);
 }
 
+/*
+Open The Wall's left gate
+TODO: move this to CGA?
+*/
 void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
 	uint16 offs = CGA_CalcXY_p(x + 1, y);
 
@@ -1394,7 +1417,6 @@ void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
 	offs--;
 
 	/*hide remaining column*/
-	/*TODO: move this to CGA?*/
 	uint16 ooffs = offs;
 	byte oh = height;
 	while (height--) {
@@ -1622,19 +1644,27 @@ void DrawHintsAndCursor(byte *target) {
 	DrawCursor(target);
 }
 
-void HideSpot(byte offset) {
-	FindAndSelectSpot(offset);
+/*
+Hide a person
+*/
+void HidePerson(byte offset) {
+	SelectPerson(offset);
 	found_spot->flags &= ~SPOTFLG_80;
 }
 
-const byte timed_seq[] = {56, 51, 44, 12, 10, 20, 18, 16, 14, 12, 44, 51};
-const byte *timed_seq_ptr = timed_seq;
+const byte patrol_route[] = {
+	kAreaGuardRoom, kAreaTheConcourse,
+	kAreaPassage1, kAreaTheRing2,
+	kAreaTheRing1, kAreaTheRing6,
+	kAreaTheRing5, kAreaTheRing4,
+	kAreaTheRing3, kAreaTheRing2,
+	kAreaPassage1, kAreaTheConcourse};
+const byte *timed_seq_ptr = patrol_route;
 
 /*
-Protozorq AI 1
-TODO: rename this
+Update Protozorqs locations
 */
-void UpdateTimedRects1(void) {
+void UpdateProtozorqs(void) {
 	uint16 elapsed;
 
 	if (script_byte_vars.bvar_45 != 0)
@@ -1643,62 +1673,62 @@ void UpdateTimedRects1(void) {
 	if (script_byte_vars.bvar_26 >= 63)
 		return;
 
-	script_word_vars.next_command2 = BE(0);
+	script_word_vars.next_protozorqs_cmd = BE(0);
 
-	if (pers_list[13].flags & PERSFLG_40) {
-		pers_list[13].area = 56;
-		pers_list[13].flags &= ~(PERSFLG_10 | PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
-		pers_list[13].index = 52;
+	if (pers_list[kPersProtozorq5].flags & PERSFLG_40) {
+		pers_list[kPersProtozorq5].area = kAreaGuardRoom;
+		pers_list[kPersProtozorq5].flags &= ~(PERSFLG_10 | PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
+		pers_list[kPersProtozorq5].index = 52;
 	}
 
-	if (pers_list[22].flags & PERSFLG_20)
+	if (pers_list[kPersProtozorq14].flags & PERSFLG_20)
 		script_byte_vars.bvar_30 |= 4;
 
 	elapsed = Swap16(script_word_vars.timer_ticks2);
-	if (elapsed < next_ticks2)
+	if (elapsed < next_protozorqs_ticks)
 		return;
 
-	next_ticks2 = elapsed + 30;
+	next_protozorqs_ticks = elapsed + 30;
 
 	script_byte_vars.bvar_3F = *timed_seq_ptr++;
-	if (timed_seq_ptr == timed_seq + sizeof(timed_seq))
-		timed_seq_ptr = timed_seq;
+	if (timed_seq_ptr == patrol_route + sizeof(patrol_route))
+		timed_seq_ptr = patrol_route;
 	script_byte_vars.bvar_40 = *timed_seq_ptr++;
 
-	if (script_byte_vars.bvar_3F == 56) {
+	if (script_byte_vars.bvar_3F == kAreaGuardRoom) {
 		script_byte_vars.bvar_30 &= ~4;
-		pers_list[22].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
-		pers_list[22].index = 55;
-		if (pers_list[13].area == 56) {
-			pers_list[13].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
+		pers_list[kPersProtozorq14].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
+		pers_list[kPersProtozorq14].index = 55;
+		if (pers_list[kPersProtozorq5].area == kAreaGuardRoom) {
+			pers_list[kPersProtozorq5].flags &= ~(PERSFLG_20 | PERSFLG_40 | PERSFLG_80);
 			script_byte_vars.bvar_41 = 1;
 		}
 	}
 
-	if (script_byte_vars.bvar_3F == 12 && script_byte_vars.bvar_40 == 10) {
+	if (script_byte_vars.bvar_3F == kAreaTheRing2 && script_byte_vars.bvar_40 == kAreaTheRing1) {
 		script_byte_vars.bvar_41 = 0;
-		if (pers_list[13].area == 56) {
-			script_byte_vars.bvar_40 = 44;
-			timed_seq_ptr = timed_seq + 4;
+		if (pers_list[kPersProtozorq5].area == kAreaGuardRoom) {
+			script_byte_vars.bvar_40 = kAreaPassage1;
+			timed_seq_ptr = patrol_route + 4;
 		}
 
 	}
 
-	pers_list[22].area = script_byte_vars.bvar_40;
+	pers_list[kPersProtozorq14].area = script_byte_vars.bvar_40;
 
 	if (script_byte_vars.bvar_41 != 0) {
-		pers_list[13].area = script_byte_vars.bvar_40;
-		pers_list[20].area = script_byte_vars.bvar_40;
-		pers_list[21].area = script_byte_vars.bvar_40;
+		pers_list[kPersProtozorq5].area = script_byte_vars.bvar_40;
+		pers_list[kPersProtozorq12].area = script_byte_vars.bvar_40;
+		pers_list[kPersProtozorq13].area = script_byte_vars.bvar_40;
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
-			HideSpot(22 * 5);   /*dirct rec offset*/
-			HideSpot(13 * 5);   /*dirct rec offset*/
-			HideSpot(20 * 5);   /*dirct rec offset*/
-			HideSpot(21 * 5);   /*dirct rec offset*/
+			HidePerson(PersonOffset(kPersProtozorq14));
+			HidePerson(PersonOffset(kPersProtozorq5));
+			HidePerson(PersonOffset(kPersProtozorq12));
+			HidePerson(PersonOffset(kPersProtozorq13));
 			AnimateSpot(&anim35);
 			BlitSpritesToBackBuffer();
 			DrawCursor(frontbuffer);
@@ -1710,43 +1740,43 @@ void UpdateTimedRects1(void) {
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 
-			FindAndSelectSpot(22 * 5);
+			SelectPerson(PersonOffset(kPersProtozorq14));
 			AnimateSpot(&anim34);
 
-			if (FindAndSelectSpot(20 * 5)) {
+			if (SelectPerson(PersonOffset(kPersProtozorq12))) {
 				AnimateSpot(&anim34);
 
-				FindAndSelectSpot(13 * 5);
+				SelectPerson(PersonOffset(kPersProtozorq5));
 				AnimateSpot(&anim34);
 
-				FindAndSelectSpot(21 * 5);
+				SelectPerson(PersonOffset(kPersProtozorq13));
 				AnimateSpot(&anim34);
 			}
 
-			DrawZoneObjs();
+			DrawPersons();
 			CGA_BackBufferToRealFull();
 			BlitSpritesToBackBuffer();
 			DrawCursor(frontbuffer);
 
-			if (script_byte_vars.room_items != 0)
-				script_word_vars.next_command2 = BE(0xC1FD);
-			else if (pers_list[22].flags & 0x20)
-				script_word_vars.next_command2 = BE(0xC1E5);
-			else if (script_byte_vars.zone_area == 44)
-				script_word_vars.next_command2 = BE(0xC060);
+			if (script_byte_vars.zapstiks_owned != 0)
+				script_word_vars.next_protozorqs_cmd = BE(0xC1FD);
+			else if (pers_list[kPersProtozorq14].flags & PERSFLG_20)
+				script_word_vars.next_protozorqs_cmd = BE(0xC1E5);
+			else if (script_byte_vars.zone_area == kAreaPassage1)
+				script_word_vars.next_protozorqs_cmd = BE(0xC060);
 
 			return;
 		}
 
 	} else {
-		if (pers_list[22].flags & 0x40)
+		if (pers_list[kPersProtozorq14].flags & PERSFLG_40)
 			return;
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
-			HideSpot(22 * 5);   /*dirct rec offset*/
+			HidePerson(PersonOffset(kPersProtozorq14));
 			AnimateSpot(&anim35);
 			BlitSpritesToBackBuffer();
 			DrawCursor(frontbuffer);
@@ -1758,10 +1788,10 @@ void UpdateTimedRects1(void) {
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 
-			FindAndSelectSpot(22 * 5);
+			SelectPerson(PersonOffset(kPersProtozorq14));
 			AnimateSpot(&anim34);
 
-			DrawZoneObjs();
+			DrawPersons();
 			CGA_BackBufferToRealFull();
 			BlitSpritesToBackBuffer();
 			DrawCursor(frontbuffer);
@@ -1771,12 +1801,10 @@ void UpdateTimedRects1(void) {
 	}
 }
 
-
 /*
-Protozorq AI 2
-TODO: rename this
+Check how many time have passed and call the guards
 */
-void UpdateTimedRects2(void) {
+void CheckGameTimeLimit(void) {
 	uint16 elapsed = Swap16(script_word_vars.timer_ticks2);
 
 	if (elapsed < 60 * 60)
@@ -1784,18 +1812,18 @@ void UpdateTimedRects2(void) {
 
 	if (script_byte_vars.bvar_26 < 63) {
 		script_byte_vars.bvar_37 = 3;
-		script_byte_vars.bvar_26 = (script_byte_vars.zone_area < 44) ? 255 : 63;
-		pers_list[13].area = 0;
-		pers_list[14].area = 0;
-		pers_list[15].area = 0;
-		pers_list[16].area = 0;
-		pers_list[18].area = 0;
-		pers_list[19].area = 56;
-		pers_list[20].area = 56;
-		pers_list[21].area = 56;
-		pers_list[22].area = 56;
-		if (script_byte_vars.zone_area < 22)
-			script_word_vars.next_command2 = BE(0xC012);
+		script_byte_vars.bvar_26 = (script_byte_vars.zone_area < kAreaPassage1) ? 255 : 63;
+		pers_list[kPersProtozorq5].area = 0;
+		pers_list[kPersProtozorq6].area = 0;
+		pers_list[kPersProtozorq7].area = 0;
+		pers_list[kPersProtozorq8].area = 0;
+		pers_list[kPersProtozorq10].area = 0;
+		pers_list[kPersProtozorq11].area = kAreaGuardRoom;
+		pers_list[kPersProtozorq12].area = kAreaGuardRoom;
+		pers_list[kPersProtozorq13].area = kAreaGuardRoom;
+		pers_list[kPersProtozorq14].area = kAreaGuardRoom;
+		if (script_byte_vars.zone_area < kAreaDeProfundis)
+			script_word_vars.next_protozorqs_cmd = BE(0xC012);
 		return;
 	}
 
@@ -1805,25 +1833,29 @@ void UpdateTimedRects2(void) {
 	if (elapsed < 120 * 60) {
 		script_byte_vars.bvar_37 = 2;
 		script_byte_vars.bvar_4E = 1;
-		if ((script_byte_vars.zone_area != 61)
-		        && (script_byte_vars.zone_area >= 59 && script_byte_vars.zone_area < 75))
-			script_word_vars.next_command2 = BE(0xC012);
+		if ((script_byte_vars.zone_area != kAreaBirthOfADivineRace)
+		        && (script_byte_vars.zone_area >= kAreaPlacatingThePowers && script_byte_vars.zone_area <= kAreaCell4))
+			script_word_vars.next_protozorqs_cmd = BE(0xC012);
 		return;
 	}
 
-	script_word_vars.next_command2 = BE(0xC318);
+	script_word_vars.next_protozorqs_cmd = BE(0xC318);	/*game over*/
 }
 
-void UpdateTimedInventoryItems(void) {
+/*
+Clean up dropped items after some time
+*/
+void CleanupDroppedItems(void) {
 	int16 i;
-	if (Swap16(script_word_vars.timer_ticks2) - inv_update_time < 180)
+
+	if (Swap16(script_word_vars.timer_ticks2) - drops_cleanup_time < 180)
 		return;
-	inv_update_time = Swap16(script_word_vars.timer_ticks2);
+	drops_cleanup_time = Swap16(script_word_vars.timer_ticks2);
 
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
-		if (inventory_items[i].flags & ITEMFLG_40) {
-			if (inventory_items[i].flags2 != script_byte_vars.zone_area && inventory_items[i].flags2 < 52)
-				inventory_items[i].flags &= ~ITEMFLG_40;
+		if (inventory_items[i].flags & ITEMFLG_ROOM) {
+			if (inventory_items[i].area != script_byte_vars.zone_area && inventory_items[i].area < kAreaPassage4)
+				inventory_items[i].flags &= ~ITEMFLG_ROOM;
 		}
 	}
 }

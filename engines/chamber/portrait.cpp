@@ -337,7 +337,7 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 		CGA_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/
-				if (script_byte_vars.bvar_3D)
+				if (script_byte_vars.extreme_violence)
 					BlinkToRed();
 				else
 					BlinkToWhite();
