@@ -56,9 +56,9 @@ run_metacommand
 	0 to go on to next metacommand,
 	1 to stop running metacommands,  and
 	2 to end the turn.
-	3 indicates that redirection has just occured
-	4 indicates a subcall has just occured.
-	5 to go on to next metacommand after a return has occured.
+	3 indicates that redirection has just occurred
+	4 indicates a subcall has just occurred.
+	5 to go on to next metacommand after a return has occurred.
 	-2 means we're doing disambiguation and just hit an action token.
 
 */
@@ -493,8 +493,8 @@ static int run_metacommand(int cnum, int *redir_offset)
 	  0 to go on to next metacommand,
 	  1 to stop running metacommands,  and
 	  2 to end the turn.
-	  3 indicates that redirection has just occured
-	  4 indicates a subcall has just occured.
+	  3 indicates that redirection has just occurred
+	  4 indicates a subcall has just occurred.
 	  5 Is used to go on to the next metacommand after a Return.
 	  -2 means we're doing disambiguation and just hit an action token. */
 {
@@ -990,8 +990,8 @@ int scan_metacommand(integer m_actor, int vcode,
 /* If doing disambiguation, then -2=end of cycle, something happened;
    0 or 1=end of cycle; nothing happened; 2=end of turn, nothing happened. */
 /* If redir_flag is non-NULL, it is set when redirection occurs:
-   1+=Redirection occured
-   2=Grammar-changing redirection occured. */
+   1+=Redirection occurred
+   2=Grammar-changing redirection occurred. */
 {
 	int i, oldi;
 	word m_verb;
@@ -1001,7 +1001,7 @@ int scan_metacommand(integer m_actor, int vcode,
 			 commands)-- this is used to hold the offset
 			 of the given redirect. */
 	long redirect_count;  /* This is a safety measure: this keeps track of how
-			many redirections have occured on a single turn, and
+			many redirections have occurred on a single turn, and
 			if there are "too many" it will issue an error message
 			and stop. This is to prevent the system from getting
 			into a redirection loop. The number should be set

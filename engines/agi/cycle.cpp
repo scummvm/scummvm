@@ -125,7 +125,7 @@ void AgiEngine::resetControllers() {
 	int i;
 
 	for (i = 0; i < MAX_CONTROLLERS; i++) {
-		_game.controllerOccured[i] = false;
+		_game.controllerOccurred[i] = false;
 	}
 }
 
@@ -293,8 +293,8 @@ uint16 AgiEngine::processAGIEvents() {
 	// WORKAROUND: For Apple II gs we added a Speed menu; here the user choose some speed setting from the menu
 	if (getPlatform() == Common::kPlatformApple2GS && _game.appleIIgsSpeedControllerSlot != 0xffff)
 		for (int i = 0; i < 4; i++)
-			if (_game.controllerOccured[_game.appleIIgsSpeedControllerSlot + i]) {
-				_game.controllerOccured[_game.appleIIgsSpeedControllerSlot + i] = false;
+			if (_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i]) {
+				_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i] = false;
 				_game.setAppleIIgsSpeedLevel(i);
 			}
 

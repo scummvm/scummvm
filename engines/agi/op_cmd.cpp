@@ -2095,7 +2095,7 @@ void cmdSetKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->controllerKeyMapping[keyMappingSlot].keycode = key;
 	state->controllerKeyMapping[keyMappingSlot].controllerSlot = controllerSlot;
 
-	state->controllerOccured[controllerSlot] = false;
+	state->controllerOccurred[controllerSlot] = false;
 }
 
 void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
