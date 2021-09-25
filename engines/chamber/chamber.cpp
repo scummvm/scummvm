@@ -49,12 +49,17 @@ ChamberEngine::ChamberEngine(OSystem *syst)
 
 	_shouldQuit = false;
 	_pxiData = NULL;
+
+	_speakerHandle = NULL;
+	_speakerStream = NULL;
 }
 
 ChamberEngine::~ChamberEngine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete[] _pxiData;
+
+	deinitSound();
 }
 
 bool ChamberEngine::hasFeature(EngineFeature f) const {

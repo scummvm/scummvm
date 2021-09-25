@@ -205,6 +205,8 @@ Common::Error ChamberEngine::run() {
 
 	SwitchToGraphicsMode();
 
+	initSound();
+
 	byte c;
 
 	/* Load title screen */
