@@ -20,31 +20,32 @@
  *
  */
 
-// FIXME: This code is taken from SAGA and needs more work (e.g. setVolume).
-
-// MIDI and digital music class
+// MIDI music class
 
 #include "made/music.h"
 #include "made/redreader.h"
 #include "made/resource.h"
 
+#include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/stream.h"
 
 namespace Made {
 
-MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
-	MusicType musicType = MT_INVALID;
-	if (milesAudio) {
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		musicType = MidiDriver::getMusicType(dev);
-		Common::SeekableReadStream *adLibInstrumentStream = nullptr;
-		switch (musicType) {
-		case MT_ADLIB:
-			_milesAudioMode = true;
+MusicPlayer::MusicPlayer(bool milesAudio) : _parser(0) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	_driverType = MidiDriver::getMusicType(dev);
+	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
+		_driverType = MT_MT32;
+
+	Common::SeekableReadStream *adLibInstrumentStream = nullptr;
+	switch (_driverType) {
+	case MT_ADLIB:
+		if (milesAudio) {
 			if (Common::File::exists("rtzcd.red")) {
 				// Installing Return to Zork produces both a SAMPLE.AD and
 				// a SAMPLE.OPL file, but they are identical. The resource
@@ -53,115 +54,115 @@ MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) 
 			}
 			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL", adLibInstrumentStream);
 			delete adLibInstrumentStream;
-			break;
-		case MT_MT32:
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_MT32_create("");
-			break;
-		default:
-			_milesAudioMode = false;
-			MidiPlayer::createDriver();
-			break;
+		} else {
+			_driver = new MidiDriver_ADLIB_MADE(OPL::Config::kOpl2);
 		}
-	} else {
-			MidiPlayer::createDriver();
+		break;
+	case MT_GM:
+	case MT_MT32:
+		if (milesAudio) {
+			_driver = Audio::MidiDriver_Miles_MIDI_create(MT_MT32, "");
+		} else {
+			_driver = new MidiDriver_MT32GM(MT_MT32);
+		}
+		break;
+	default:
+		_driver = new MidiDriver_NULL_Multisource();
+		break;
 	}
 
-	int ret = _driver->open();
-	if (ret == 0) {
-		if (musicType != MT_ADLIB) {
-			if (_nativeMT32)
-				_driver->sendMT32Reset();
-			else
-				_driver->sendGMReset();
-		}
+	if (_driver) {
+		_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+		if (_driver->open() != 0)
+			error("Failed to open MIDI driver.");
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
+
+	syncSoundSettings();
 }
 
-void MusicPlayer::send(uint32 b) {
-	if (_milesAudioMode) {
-		_driver->send(b);
-		return;
+MusicPlayer::~MusicPlayer() {
+	if (_parser) {
+		_parser->stopPlaying();
+		delete _parser;
 	}
-
-	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	if (_driver) {
+		_driver->setTimerCallback(0, 0);
+		_driver->close();
+		delete _driver;
 	}
-
-	Audio::MidiPlayer::send(b);
 }
 
-void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
-	Common::StackLock lock(_mutex);
+void MusicPlayer::playXMIDI(GenericResource *midiResource) {
+	if (_parser) {
+		_parser->unloadMusic();
+	} else {
+		_parser = MidiParser::createParser_XMIDI(0, 0, 0);
 
-	if (_isPlaying)
-		return;
-
-	stop();
+		_parser->setMidiDriver(_driver);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+	}
 
 	// Load XMID resource data
 
-	_isGM = true;
-
-	MidiParser *parser = MidiParser::createParser_XMIDI();
-	if (parser->loadMusic(midiResource->getData(), midiResource->getSize())) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-
-		_parser = parser;
-
-		setVolume(127);
-
-		_isLooping = flags & MUSIC_LOOP;
-		_isPlaying = true;
-	} else {
-		delete parser;
-	}
+	_parser->loadMusic(midiResource->getData(), midiResource->getSize());
 }
 
-void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
-	Common::StackLock lock(_mutex);
+void MusicPlayer::playSMF(GenericResource *midiResource) {
+	if (_parser) {
+		_parser->unloadMusic();
+	} else {
+		_parser = MidiParser::createParser_SMF(0);
 
-	if (_isPlaying)
-		return;
-
-	stop();
+		_parser->setMidiDriver(_driver);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	}
 
 	// Load MIDI resource data
 
-	_isGM = true;
-
-	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(midiResource->getData(), midiResource->getSize())) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
-		_parser = parser;
-
-		setVolume(127);
-
-		_isLooping = flags & MUSIC_LOOP;
-		_isPlaying = true;
-	} else {
-		delete parser;
-	}
+	_parser->loadMusic(midiResource->getData(), midiResource->getSize());
 }
 
 void MusicPlayer::pause() {
-	setVolume(-1);
-	_isPlaying = false;
+	if (_parser)
+		_parser->pausePlaying();
 }
 
 void MusicPlayer::resume() {
-	setVolume(127);
-	_isPlaying = true;
+	if (_parser)
+		_parser->resumePlaying();
+}
+
+void MusicPlayer::stop() {
+	if (_parser)
+		_parser->stopPlaying();
+}
+
+bool MusicPlayer::isPlaying() {
+	return _parser ? _parser->isPlaying() : false;
+}
+
+void MusicPlayer::syncSoundSettings() {
+	if (_driver)
+		_driver->syncSoundSettings();
+}
+
+void MusicPlayer::onTimer() {
+	if (_parser)
+		_parser->onTimer();
+}
+
+void MusicPlayer::timerCallback(void *data) {
+	((MusicPlayer *)data)->onTimer();
+}
+
+MidiDriver_ADLIB_MADE::MidiDriver_ADLIB_MADE(OPL::Config::OplType oplType) : MidiDriver_ADLIB_Multisource(oplType) {
+	_modulationDepth = MODULATION_DEPTH_LOW;
+	_vibratoDepth = VIBRATO_DEPTH_LOW;
+	_defaultChannelVolume = 0x7F;
 }
 
 } // End of namespace Made

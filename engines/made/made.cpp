@@ -109,11 +109,7 @@ MadeEngine::~MadeEngine() {
 void MadeEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	_music->setVolume(mute ? 0 : ConfMan.getInt("music_volume"));
+	_music->syncSoundSettings();
 }
 
 int16 MadeEngine::getTicks() {
