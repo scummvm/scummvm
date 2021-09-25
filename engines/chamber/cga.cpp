@@ -425,13 +425,13 @@ uint16 CGA_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
-	uint16 oofs = ofs + 1;
+	uint16 oofs = ofs;
 	ofs ^= CGA_ODD_LINES_OFS;
 	if ((ofs & CGA_ODD_LINES_OFS) == 0)
 		ofs += CGA_BYTES_PER_LINE;
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, l * 4, 1);
+		CGA_blitToScreen(oofs, l * 4 + 2, 1);
 
 	return ofs;
 }
