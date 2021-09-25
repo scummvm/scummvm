@@ -30,9 +30,12 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-namespace Chamber {
+namespace Audio {
+class SoundHandle;
+class PCSpeaker;
+}
 
-class Console;
+namespace Chamber {
 
 class ChamberEngine : public Engine {
 private:
@@ -53,10 +56,16 @@ public:
 
 	byte readKeyboardChar();
 
+	void initSound();
+	void deinitSound();
+
 public:
 	bool _shouldQuit;
 
 	byte *_pxiData;
+
+	Audio::PCSpeaker *_speakerStream;
+	Audio::SoundHandle *_speakerHandle;
 };
 
 void init(void);

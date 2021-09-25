@@ -20,6 +20,9 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/sound.h"
@@ -56,29 +59,21 @@ pcsample_t pc_samples[] = {
 #undef N
 
 static void SpeakerPlay(pcsample_t *sample) {
-	warning("STUB: SpeakerPlay()");
-
-#if 0
-	unsigned short rep, freq, delay1, delay2, delay;
-	unsigned char ppi;
+	uint16 rep, freq, delay1, delay2;
 
 	freq = sample->freq;
 	delay1 = sample->delay1;
 	delay2 = sample->delay2;
 
-	disable();
-	ppi = inportb(0x61);
-
 	for (rep = 0; rep < sample->repeat; rep++) {
-		outportb(0x43, 0xB6);
-		outportb(0x42, freq & 255);
-		outportb(0x42, freq >> 8);
-		/*speaker off*/
-		outportb(0x61, ppi & ~3);
-		for (delay = delay1; delay--;) ; /*TODO: weak delay*/
-		/*speaker on*/
-		outportb(0x61, ppi | 3);
-		for (delay = delay2; delay--;) ; /*TODO: weak delay*/
+		uint32 frequency = 1193180 / freq;
+		uint32 delayOff = delay1 * 300;
+		uint32 delayOn = delay2 * 300;
+
+		warning("freq: %d delayOff: %d delayOn: %d", frequency, delayOff, delayOn);
+
+		g_vm->_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 1, delayOff);
+		g_vm->_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, delayOn);
 
 		if (sample->delay1sweep & 0xF000)
 			delay1 -= sample->delay1sweep & 0xFFF;
@@ -95,11 +90,6 @@ static void SpeakerPlay(pcsample_t *sample) {
 		else
 			freq += sample->freqsweep;
 	}
-
-	/*turn off the speaker*/
-	outportb(0x61, ppi & ~3);
-	enable();
-#endif
 }
 
 #define kMaxSounds 12
@@ -120,6 +110,9 @@ unsigned char sounds_table[kMaxSounds][3] = {
 };
 
 void PlaySound(unsigned char index) {
+	SpeakerPlay(&pc_samples[index]);
+
+#if 0
 	int i;
 	for (i = 0; i < kMaxSounds; i++) {
 		if (sounds_table[i][0] == index
@@ -129,6 +122,23 @@ void PlaySound(unsigned char index) {
 			break;
 		}
 	}
+#endif
+}
+
+void ChamberEngine::initSound() {
+	// Setup mixer
+	syncSoundSettings();
+
+	_speakerHandle = new Audio::SoundHandle();
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _speakerHandle,
+		_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+}
+
+void ChamberEngine::deinitSound() {
+	_mixer->stopHandle(*_speakerHandle);
+	delete g_vm->_speakerHandle;
+	delete g_vm->_speakerStream;
 }
 
 } // End of namespace Chamber
