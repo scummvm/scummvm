@@ -642,6 +642,7 @@ void ScummVMRendererGraphicsDriver::__fade_from_range(PALETTE source, PALETTE de
 		RenderToBackBuffer();
 		Present();
 
+		g_system->delayMillis(5);
 		sys_evt_process_pending();
 		if (_pollingCallback)
 			_pollingCallback();
