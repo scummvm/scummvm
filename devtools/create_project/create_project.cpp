@@ -1584,7 +1584,11 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			createModuleList(*i, setup.defines, setup.testDirs, in, ex, true);
 		}
 
-		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex);
+		// Add the detection plugin files.
+		// HACK: forDetection is set to false here, since this is technically not a game detector
+		createModuleList(setup.srcDir + "/base/detection", setup.defines, setup.testDirs, in, ex, false);
+
+		createProjectFile(detProject, detUUID, setup, setup.srcDir, in, ex);
 	}
 
 	if (!setup.devTools) {
@@ -1835,8 +1839,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				break;
 			}
 		} else if (*i == "MODULE_OBJS") {
-			if (tokens.size() < 3)
+			if (tokens.size() < 3) {
 				error("Malformed MODULE_OBJS definition in " + moduleMkFile);
+			}
 			++i;
 
 			// This is not exactly correct, for example an ":=" would usually overwrite
@@ -1878,6 +1883,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 							excludeList.push_back(filename);
 						}
 					}
+					++i;
+				} else if (*i == "$(DETECT_OBJS_DYNAMIC)") {
+					//Skip this, it's already handled with the forDetection argument to this function
 					++i;
 				} else {
 					const std::string filename = moduleDir + "/" + unifyPath(*i);
@@ -2073,7 +2081,7 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 
 
 			if (tokens.size() < 3)
-				error("Malformed DETECT_OBJS definition in " + moduleMkFile);
+				continue;
 			++i;
 
 			if (*i != "+=")
