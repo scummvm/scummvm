@@ -377,6 +377,7 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_isOpen(false),
 		_accuracyMode(ACCURACY_MODE_SB16_WIN95),
 		_allocationMode(ALLOCATION_MODE_DYNAMIC),
+		_defaultChannelVolume(0),
 		_noteSelect(NOTE_SELECT_MODE_0),
 		_modulationDepth(MODULATION_DEPTH_HIGH),
 		_vibratoDepth(VIBRATO_DEPTH_HIGH),
@@ -420,6 +421,13 @@ int MidiDriver_ADLIB_Multisource::open() {
 	// Initialize emulator / hardware interface.
 	if (!_opl->init())
 		return MERR_CANNOT_CONNECT;
+
+	// Set default MIDI channel volume on control data.
+	for (int i = 0; i < MAXIMUM_SOURCES; i++) {
+		for (int j = 0; j < MIDI_CHANNEL_COUNT; j++) {
+			_controlData[i][j].volume = _defaultChannelVolume;
+		}
+	}
 
 	// Set default OPL register values.
 	initOpl();
@@ -987,8 +995,9 @@ void MidiDriver_ADLIB_Multisource::initOpl() {
 			break;
 		case 1:
 			baseReg = OPL_REGISTER_BASE_LEVEL;
-			// Set default volume to 3F (maximum attenuation).
-			value = OPL_LEVEL_DEFAULT;
+			// Set volume to the default MIDI channel volume.
+			// Convert from MIDI to OPL register value.
+			value = 0x3F - (_defaultChannelVolume >> 1);
 			break;
 		case 2:
 			baseReg = OPL_REGISTER_BASE_DECAY_ATTACK;

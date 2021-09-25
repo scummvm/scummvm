@@ -1006,6 +1006,9 @@ protected:
 	// Controls the OPL channel allocation behavior.
 	ChannelAllocationMode _allocationMode;
 
+	// The default MIDI channel volume (set when opening the driver).
+	uint8 _defaultChannelVolume;
+
 	// OPL global settings. Set these, then call oplInit or open to apply the
 	// new values.
 	NoteSelectMode _noteSelect;
