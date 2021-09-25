@@ -857,7 +857,7 @@ bool GfxSlider::pointerHit(gPanelMessage &msg) {
 	// update the image index
 	updateSliderIndexes(msg.pickPos);
 
-	// redraw the control should any visual change hath occured
+	// redraw the control should any visual change hath occurred
 	window.update(_extent);
 
 	activate(gEventMouseDown);
@@ -869,7 +869,7 @@ void GfxSlider::pointerMove(gPanelMessage &msg) {
 		// update the image index
 		updateSliderIndexes(msg.pickPos);
 
-		// redraw the control should any visual change hath occured
+		// redraw the control should any visual change hath occurred
 		window.update(_extent);
 
 		notify(gEventMouseMove, _slCurrent);
@@ -889,7 +889,7 @@ void GfxSlider::pointerDrag(gPanelMessage &msg) {
 	updateSliderIndexes(msg.pickPos);
 
 	notify(gEventNewValue, _slCurrent);       // notify App of successful hit
-	// redraw the control should any visual change hath occured
+	// redraw the control should any visual change hath occurred
 	window.update(_extent);
 }
 

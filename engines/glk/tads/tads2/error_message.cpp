@@ -62,7 +62,7 @@ void lerfre(errcxdef *errcx) {
 }
 
 void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err) {
-	sprintf(outbuf, "Error #%d occured.", err);
+	sprintf(outbuf, "Error #%d occurred.", err);
 }
 
 } // End of namespace TADS2

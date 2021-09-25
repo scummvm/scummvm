@@ -384,7 +384,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	}
 
 	if (stream.err()) {
-		warning("An error occured when reading '%s'", filename.c_str());
+		warning("An error occurred when reading '%s'", filename.c_str());
 		return Common::kReadingFailed;
 	}
 
@@ -453,7 +453,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 	}
 
 	if (save->err()) {
-		warning("An error occured when writing '%s'", filename.c_str());
+		warning("An error occurred when writing '%s'", filename.c_str());
 		delete save;
 		return Common::kWritingFailed;
 	}

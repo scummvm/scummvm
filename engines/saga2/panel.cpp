@@ -925,7 +925,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	        || prevState.right != _curMouseState.right) {
 
 		//  If both buttons were previously up, then a mouse
-		//  hit must have occured.
+		//  hit must have occurred.
 
 		if (prevState.left == 0 && prevState.right == 0) {
 

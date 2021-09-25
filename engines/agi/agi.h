@@ -400,7 +400,7 @@ struct AgiGame {
 
 	unsigned int numObjects;
 
-	bool controllerOccured[MAX_CONTROLLERS];  /**< keyboard keypress events */
+	bool controllerOccurred[MAX_CONTROLLERS];  /**< keyboard keypress events */
 	AgiControllerKeyMapping controllerKeyMapping[MAX_CONTROLLER_KEYMAPPINGS];
 
 	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
@@ -495,8 +495,8 @@ struct AgiGame {
 
 		numObjects = 0;
 
-		for (uint16 i = 0; i < ARRAYSIZE(controllerOccured); i++) {
-			controllerOccured[i] = false;
+		for (uint16 i = 0; i < ARRAYSIZE(controllerOccurred); i++) {
+            controllerOccurred[i] = false;
 		}
 
 		// controllerKeyMapping defaulted by AgiControllerKeyMapping constructor

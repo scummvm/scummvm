@@ -532,7 +532,7 @@ void Lua_V2::GetMemoryCardId() {
 	// 0 - No mem card
 	// 1 - Not formatted
 	// 2 - Not enough space
-	// 3 - Error occured
+	// 3 - Error occurred
 	lua_pushnumber(4);
 }
 

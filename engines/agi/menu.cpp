@@ -511,7 +511,7 @@ void GfxMenu::keyPress(uint16 newKey) {
 			return;
 
 		// Trigger controller
-		_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+		_vm->_game.controllerOccurred[itemEntry->controllerSlot] = true;
 
 		_vm->cycleInnerLoopInactive(); // exit execute-loop
 		break;
@@ -622,7 +622,7 @@ void GfxMenu::mouseEvent(uint16 newKey) {
 				return;
 
 			// Trigger controller
-			_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+			_vm->_game.controllerOccurred[itemEntry->controllerSlot] = true;
 
 			_vm->cycleInnerLoopInactive(); // exit execute-loop
 			return;
@@ -675,7 +675,7 @@ void GfxMenu::mouseEvent(uint16 newKey) {
 			GuiMenuItemEntry *itemEntry = _itemArray[activeItemNr];
 			if (itemEntry->enabled) {
 				// Trigger controller
-				_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+				_vm->_game.controllerOccurred[itemEntry->controllerSlot] = true;
 			}
 		}
 

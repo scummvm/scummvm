@@ -3942,7 +3942,7 @@ StaticTilePoint pickTile(Point32 pos,
 	relPos.x = pos.x - curMap->mapHeight - (tileCoords.u - tileCoords.v) * kTileDX;
 	relPos.y = curMap->mapHeight - pos.y - (tileCoords.u + tileCoords.v) * kTileDY;
 
-	//  Compute which metatile the click occured on, and the tile
+	//  Compute which metatile the click occurred on, and the tile
 	//  within that metatile, and the origin coords of the metatile
 	mCoords = tileCoords >> kPlatShift;
 	tCoords.u = tileCoords.u & kPlatMask;

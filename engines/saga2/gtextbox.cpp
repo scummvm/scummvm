@@ -68,7 +68,7 @@ extern gFont        *mainFont;
 *
 *   /h2/NOTIFICATIONS
 *       This class sends a gEventNewValue whenever the text box becomes
-*       deactivated. If the deactivation occured because of the user
+*       deactivated. If the deactivation occurred because of the user
 *       hitting return, then the value of the event will be 1; In all
 *       other cases it is zero.
 *
