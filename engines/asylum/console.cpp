@@ -810,7 +810,7 @@ bool Console::cmdRunEncounter(int argc, const char **argv) {
 	}
 
 	// Check if index is valid
-	uint index = atoi(argv[1]);
+	int index = atoi(argv[1]);
 	if (argc > 2)
 		subIndex = atoi(argv[2]);
 
@@ -822,7 +822,7 @@ bool Console::cmdRunEncounter(int argc, const char **argv) {
 		if (i == -1)
 			break;
 
-		if (i == index && subIndex == data->subIndex)
+		if (i == index && subIndex == (int)data->subIndex)
 			break;
 
 		j++;
