@@ -36,7 +36,7 @@ enum ScriptPools {
 	ScrPool4_ZoneSpots,
 	ScrPool5_Persons,
 	ScrPool6_Inventory,
-	ScrPool7_Inventory38,
+	ScrPool7_Zapstiks,
 	ScrPool8_CurrentPers,
 	ScrPools_MAX
 };
@@ -45,7 +45,7 @@ enum ScriptPools {
 typedef struct script_byte_vars_t {
 	byte zone_index;       /*  0 */
 	byte zone_room;        /*  1 */
-	byte bvar_02;          /*  2 */
+	byte last_door;        /*  2 */
 	byte cur_spot_idx;     /*  3 */
 	byte the_wall_phase;   /*  4 */
 	byte prev_zone_index;  /*  5 */
@@ -88,27 +88,27 @@ typedef struct script_byte_vars_t {
 	byte bvar_28;          /* 28 */
 	byte bvar_29;          /* 29 */
 	byte bvar_2A;          /* 2A */
-	byte bvar_2B;          /* 2B */ /*TODO: hand height*/
+	byte hands;            /* 2B */
 	byte check_used_commands; /* 2C */
 	byte bvar_2D;          /* 2D */
 	byte palette_index;    /* 2E */
 	byte bvar_2F;          /* 2F */
 
 	byte bvar_30;          /* 30 */
-	byte room_items;       /* 31 */
+	byte zapstiks_owned;   /* 31 */
 	byte bvar_32;          /* 32 */
 	byte bvar_33;          /* 33 */
 	byte bvar_34;          /* 34 */
-	byte bvar_35;          /* 35 */
+	byte skulls_submitted; /* 35 */
 	byte bvar_36;          /* 36 */
 	byte bvar_37;          /* 37 */
 	byte zone_area_copy;   /* 38 */
-	byte bvar_39;          /* 39 */
-	byte quest_item_ofs;   /* 3A */
-	byte bvar_3B;          /* 3B */
+	byte aspirant_flags;   /* 39 */
+	byte aspirant_pers_ofs;/* 3A */
+	byte steals_count;     /* 3B */
 	byte fight_status;     /* 3C */
-	byte bvar_3D;          /* 3D */
-	byte trade_done;       /* 3E */
+	byte extreme_violence; /* 3D */
+	byte trade_accepted;   /* 3E */
 	byte bvar_3F;          /* 3F */
 
 	byte bvar_40;          /* 40 */
@@ -119,7 +119,7 @@ typedef struct script_byte_vars_t {
 	byte bvar_45;          /* 45 */
 	byte bvar_46;          /* 46 */
 	byte game_paused;      /* 47 */
-	byte trade_status;     /* 48 */
+	byte skull_trader_status;/* 48 */
 	byte cur_spot_flags;   /* 49 */
 	byte bvar_4A;          /* 4A */
 	byte bvar_4B;          /* 4B */
@@ -168,14 +168,14 @@ typedef struct script_word_vars_t {
 	uint16 wvar_0E;             /*  E */
 	uint16 timer_ticks2;        /* 10 */
 	uint16 zone_obj_cmds[15 * 5];   /* 12 */
-	uint16 next_command1;       /* A8 */
+	uint16 next_aspirant_cmd;   /* A8 */
 	uint16 wvar_AA;             /* AA */
 	uint16 wvar_AC;             /* AC */
 	uint16 wvar_AE;             /* AE */
 	uint16 wvar_B0;             /* B0 */
 	uint16 wvar_B2;             /* B2 */
 	uint16 wvar_B4;             /* B4 */
-	uint16 next_command2;       /* B6 */
+	uint16 next_protozorqs_cmd; /* B6 */
 	uint16 wvar_B8;             /* B8 */
 } script_word_vars_t;
 
@@ -183,20 +183,24 @@ extern void *script_vars[ScrPools_MAX];
 extern script_word_vars_t script_word_vars;
 extern script_byte_vars_t script_byte_vars;
 
-/*Trader's item*/
-#define ITEMFLG_10 0x10
+/*Don't trade this item*/
+#define ITEMFLG_DONTWANT 1
+#define ITEMFLG_04 0x04
+#define ITEMFLG_08 0x08
+/*Skull Trader's item*/
+#define ITEMFLG_TRADER 0x10
 /*Aspirant's item*/
-#define ITEMFLG_20 0x20
+#define ITEMFLG_ASPIR 0x20
 /*In a room?*/
-#define ITEMFLG_40 0x40
+#define ITEMFLG_ROOM 0x40
 /*In pocket?*/
-#define ITEMFLG_80 0x80
+#define ITEMFLG_OWNED 0x80
 
 /*TODO: manipulated from script, do not change*/
 #include "common/pack-start.h"
 typedef struct item_t {
 	byte flags;
-	byte flags2;
+	byte area;		/*item location*/
 	byte sprite;   /*item sprite index*/
 	byte name;     /*item name index (relative)*/
 	uint16 command; /*TODO: warning! in native format, check if never accessed from scripts*/
@@ -212,7 +216,7 @@ extern pers_t pers_list[PERS_MAX];
 extern byte *script_stack[5 * 2];
 extern byte **script_stack_ptr;
 
-extern pers_t *pers_vort_ptr;
+extern pers_t *vort_ptr;
 
 #define SPECIAL_COMMANDS_MAX 20
 extern uint16 menu_commands_12[SPECIAL_COMMANDS_MAX];
