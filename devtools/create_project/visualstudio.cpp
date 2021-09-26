@@ -174,16 +174,6 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 	}
 }
 
-void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
-	output << "\tProjectSection(ProjectDependencies) = postProject\n";
-
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
-	}
-
-	output << "\tEndProjectSection\n";
-}
-
 void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)

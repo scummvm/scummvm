@@ -40,7 +40,7 @@ protected:
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const std::string &objPrefix, const std::string &filePrefix) override;
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output) override;
+	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) override;
 

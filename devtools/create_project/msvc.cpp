@@ -214,6 +214,16 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	         << "EndGlobal\n";
 }
 
+void MSVCProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
+	output << "\tProjectSection(ProjectDependencies) = postProject\n";
+
+	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
+		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
+	}
+
+	output << "\tEndProjectSection\n";
+}
+
 void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 	// Create the global property file
 	createGlobalProp(setup);

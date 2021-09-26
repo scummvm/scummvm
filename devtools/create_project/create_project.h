@@ -553,13 +553,6 @@ protected:
 	                                    const std::string &objPrefix, const std::string &filePrefix) = 0;
 
 	/**
-	 * Output a list of project references to the file stream
-	 *
-	 * @param output File stream to write to.
-	 */
-	virtual void writeReferences(const BuildSetup &, std::ofstream &) {}
-
-	/**
 	 * Get the file extension for project files
 	 */
 	virtual const char *getProjectExtension() { return ""; }

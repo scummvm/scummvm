@@ -93,6 +93,8 @@ protected:
 	 */
 	virtual void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) = 0;
 
+	void writeReferences(const BuildSetup &setup, std::ofstream &output);
+
 	/**
 	 * Get the file extension for property files
 	 */

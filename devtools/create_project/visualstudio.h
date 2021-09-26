@@ -41,8 +41,6 @@ protected:
 	void writeFileToProject(std::ofstream &projectFile, const std::string &filePath, MSVC_Architecture arch,
 	                        const std::string &indentString, const std::string &toolLine);
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output);
-
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
