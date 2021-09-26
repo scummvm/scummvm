@@ -61,8 +61,8 @@ ChewyEngine::~ChewyEngine() {
 }
 
 void ChewyEngine::initialize() {
-	_events = new EventsManager();
 	_screen = new Graphics::Screen();
+	_events = new EventsManager(_screen);
 	_sound = new Sound(_mixer);
 }
 
