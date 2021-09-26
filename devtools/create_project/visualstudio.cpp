@@ -145,7 +145,9 @@ void VisualStudioProvider::outputConfiguration(std::ostream &project, const Buil
 }
 
 void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch) {
-	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
+	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\""
+			<< " ConfigurationType =\"" << (setup.featureEnabled("dynamic-modules") ? "2" : "4") << "\" "
+			<< "InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
 	        << "\t\t\t<Tool Name=\"VCCLCompilerTool\" " << toolConfig << "/>\n"
 	        << "\t\t</Configuration>\n";
 }

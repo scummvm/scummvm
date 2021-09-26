@@ -61,6 +61,8 @@ inline void outputConfigurationType(const BuildSetup &setup, std::ostream &proje
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"Configuration\">\n";
 	if (name == setup.projectName || setup.devTools || setup.tests) {
 		project << "\t\t<ConfigurationType>Application</ConfigurationType>\n";
+	} else if (setup.featureEnabled("dynamic-modules")) {
+		project << "\t\t<ConfigurationType>DynamicLibrary</ConfigurationType>\n";
 	} else {
 		project << "\t\t<ConfigurationType>StaticLibrary</ConfigurationType>\n";
 	}
