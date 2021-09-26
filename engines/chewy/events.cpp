@@ -21,6 +21,7 @@
  */
 
 #include "chewy/events.h"
+#include "chewy/global.h"
 
 namespace Chewy {
 
@@ -29,10 +30,41 @@ EventsManager *g_events;
 EventsManager::EventsManager(Graphics::Screen *screen) :
 		EventsBase(screen) {
 	g_events = this;
+	init_life_handler();
 }
 
 EventsManager::~EventsManager() {
 	g_events = nullptr;
+}
+
+void EventsManager::init_life_handler() {
+	life_anz = false;
+	life_flag = false;
+	life_handler = true;
+
+	addTimer(life_line, (uint32)(1000 / 18.2));
+}
+
+void EventsManager::life_line() {
+	if (!life_flag) {
+		life_flag = true;
+		if (life_y > 190) {
+			life_y = 0;
+			out->cls();
+		}
+		int x = strlen(life_str);
+		out->printxy(life_x, life_y, 255, 0, scr_width, life_str);
+		for (int i = 0; i < life_anz; i++)
+			out->printchar('.', 255, 0, scr_width);
+		++life_anz;
+		if (life_anz > 50 - x) {
+			life_anz = 0;
+
+			out->box_fill(x * fvorx6x8, life_y, 319, life_y + 8, 0);
+
+		}
+		life_flag = false;
+	}
 }
 
 } // namespace Chewy

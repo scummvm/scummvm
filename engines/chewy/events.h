@@ -29,6 +29,8 @@ namespace Chewy {
 
 class EventsManager : public EventsBase {
 private:
+	void init_life_handler();
+	static void life_line();
 
 public:
 	EventsManager(Graphics::Screen *screen);

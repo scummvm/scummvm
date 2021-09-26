@@ -117,7 +117,7 @@ int16 ani_count[3] = {38, 39, 21};
 int16 invent_cur_mode;
 byte *inv_spr[MAX_MOV_OBJ];
 
-int16 life_flag;
+bool life_flag;
 int16 life_x;
 int16 life_y;
 int16 life_anz;

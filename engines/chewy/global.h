@@ -123,7 +123,7 @@ extern int16 invent_cur_mode;
 extern int16 ak_invent;
 extern byte *inv_spr[MAX_MOV_OBJ];
 
-extern int16 life_flag;
+extern bool life_flag;
 extern int16 life_x;
 extern int16 life_y;
 extern int16 life_anz;
@@ -316,12 +316,6 @@ void var_init();
 void get_frame_speed(char *work_page, char *source);
 
 void set_speed();
-
-void init_life_handler();
-
-void remove_life_handler();
-
-void life_line();
 
 void new_game();
 void sound_init();
