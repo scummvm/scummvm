@@ -101,10 +101,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-			outputConfiguration(setup, project, toolConfig, "Debug", *arch);
-			outputConfiguration(setup, project, toolConfig, "Analysis", *arch);
-			outputConfiguration(setup, project, toolConfig, "LLVM", *arch);
-			outputConfiguration(setup, project, toolConfig, "Release", *arch);
+			bool dynamicLib = name == setup.projectName + "-detection" ? (!setup.useStaticDetection) : setup.featureEnabled("dynamic-modules");
+			outputConfiguration(setup, project, toolConfig, "Debug", *arch, dynamicLib);
+			outputConfiguration(setup, project, toolConfig, "Analysis", *arch, dynamicLib);
+			outputConfiguration(setup, project, toolConfig, "LLVM", *arch, dynamicLib);
+			outputConfiguration(setup, project, toolConfig, "Release", *arch, dynamicLib);
 		}
 	}
 
@@ -144,9 +145,9 @@ void VisualStudioProvider::outputConfiguration(std::ostream &project, const Buil
 	project << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch) {
+void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch, bool dynamicLib) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\""
-			<< " ConfigurationType =\"" << (setup.featureEnabled("dynamic-modules") ? "2" : "4") << "\" "
+			<< " ConfigurationType =\"" << (dynamicLib ? "2" : "4") << "\" "
 			<< "InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
 	        << "\t\t\t<Tool Name=\"VCCLCompilerTool\" " << toolConfig << "/>\n"
 	        << "\t\t</Configuration>\n";
