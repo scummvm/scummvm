@@ -721,7 +721,7 @@ Datum Datum::eval() const {
 		return g_lingo->varFetch(*this);
 	}
 
-	return *this;
+	return Datum(*this);
 }
 
 int Datum::asInt() const {
@@ -1368,8 +1368,8 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 	case CASTREF:
 	case CHUNKREF:
 		{
-			result.type = STRING;
-			result.u.s = new Common::String(evalChunkRef(var), Common::kUtf8);
+			Common::String chunk(evalChunkRef(var), Common::kUtf8);
+			result = Datum(chunk);
 		}
 		break;
 	default:
