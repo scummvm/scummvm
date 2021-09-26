@@ -292,7 +292,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	}
 	_areasByAreaID = areaMap;
 	_startArea = startArea;
-	_colorNumber = ncolor;
+	_colorNumber = ncolors;
 	_binaryBits = 8;
 }
 

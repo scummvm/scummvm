@@ -35,17 +35,19 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	// Do not initialize audio devices here
 	_hasReceivedTime = false;
 
-	_rotation[0] = 0.0f;
-	_rotation[1] = 0.0f;
-	_rotation[2] = 0.0f;
+	_rotation.X = 0.f;
+	_rotation.Y = 0.f;
+	_rotation.Z = 0.f;
 
-	_position[0] = 1000.0f;
-	_position[1] = 300.0f;
-	_position[2] = 1000.0f;
+	_position.X = 1000.0f;
+	_position.Y = 0.0f;
+	_position.Z = 1000.0f;
 
-	_velocity[0] = 0.0f;
-	_velocity[1] = 0.0f;
-	_velocity[2] = 0.0f;
+	_velocity.X = 0.0f;
+	_velocity.Y = 0.0f;
+	_velocity.Z = 0.0f;
+
+	_movementSpeed = 4.5f;
 
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
@@ -152,14 +154,75 @@ Common::Error FreescapeEngine::run() {
 	}	
 	debug("FreescapeEngine::init");
 	// Simple main event loop
-	Common::Event evt;
+	Common::Event event;
+	float lastFrame = 0.f;
 
 	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(evt);
+        float currentFrame = g_system->getMillis();
+        float deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
+					Move(FORWARD, deltaTime);
+				else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
+					Move(BACKWARD, deltaTime);
+				else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
+					Move(LEFT, deltaTime);
+				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
+					Move(RIGHT, deltaTime);
+				
+				debug("player position: %f %f %f", _position.X, _position.Y, _position.Z);
+				break;
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				return Common::kNoError;
+				break;
+			
+			default:
+				break;
+
+			}
+		}
+
 		g_system->delayMillis(10);
 	}
 
 	return Common::kNoError;
+}
+
+void FreescapeEngine::Move(CameraMovement direction, float deltaTime) {
+	float velocity = _movementSpeed * deltaTime;
+	switch (direction) {
+	case FORWARD:
+		_rotation.Z = 1.f;
+		_position = _position + _rotation * velocity;
+		_rotation.Z = 0.f;
+		break;
+	case BACKWARD:
+		_rotation.Z = -1.f;
+		_position = _position + _rotation * velocity;
+		_rotation.Z = 0.f;
+		break;
+	case LEFT:
+		_rotation.X = 1.f;
+		_position = _position + _rotation * velocity;
+		_rotation.X = 0.f;
+		break;
+	case RIGHT:
+		_rotation.X = -1.f;
+		_position = _position + _rotation * velocity;
+		_rotation.X = 0.f;
+		break;
+	}
+	// Make sure the user stays at the ground level
+	// this one-liner keeps the user at the ground level (xz plane)
+	_position.Y = 0.0f;
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
