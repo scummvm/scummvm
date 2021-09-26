@@ -398,6 +398,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 void SdlGraphicsManager::toggleFullScreen() {
 	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode) ||
 	   (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext) && g_system->hasFeature(OSystem::kFeatureOpenGLForGame))) {
+#ifdef USE_OSD
+		displayMessageOnOSD(_("Switching between fullscreen and windwed mode is not supported"));
+#endif
 		return;
 	}
 
