@@ -80,10 +80,10 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 	if (setup.devTools || setup.tests || name == setup.projectName) {
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-			outputConfiguration(project, setup, false, "Debug", *arch);
-			outputConfiguration(project, setup, false, "Analysis", *arch);
-			outputConfiguration(project, setup, false, "LLVM", *arch);
-			outputConfiguration(project, setup, true, "Release", *arch);
+			outputExecutableConfiguration(project, setup, false, "Debug", *arch);
+			outputExecutableConfiguration(project, setup, false, "Analysis", *arch);
+			outputExecutableConfiguration(project, setup, false, "LLVM", *arch);
+			outputExecutableConfiguration(project, setup, true, "Release", *arch);
 		}
 
 	} else {
@@ -102,10 +102,10 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 			bool dynamicLib = name == setup.projectName + "-detection" ? (!setup.useStaticDetection) : setup.featureEnabled("dynamic-modules");
-			outputConfiguration(setup, project, toolConfig, "Debug", *arch, dynamicLib);
-			outputConfiguration(setup, project, toolConfig, "Analysis", *arch, dynamicLib);
-			outputConfiguration(setup, project, toolConfig, "LLVM", *arch, dynamicLib);
-			outputConfiguration(setup, project, toolConfig, "Release", *arch, dynamicLib);
+			outputLibraryConfiguration(setup, project, toolConfig, "Debug", *arch, dynamicLib);
+			outputLibraryConfiguration(setup, project, toolConfig, "Analysis", *arch, dynamicLib);
+			outputLibraryConfiguration(setup, project, toolConfig, "LLVM", *arch, dynamicLib);
+			outputLibraryConfiguration(setup, project, toolConfig, "Release", *arch, dynamicLib);
 		}
 	}
 
@@ -133,7 +133,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	        << "</VisualStudioProject>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, bool isRelease, const std::string &config, const MSVC_Architecture arch) {
+void VisualStudioProvider::outputExecutableConfiguration(std::ostream &project, const BuildSetup &setup, bool isRelease, const std::string &config, const MSVC_Architecture arch) {
 	std::string libraries = outputLibraryDependencies(setup, isRelease);
 
 	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
@@ -145,7 +145,7 @@ void VisualStudioProvider::outputConfiguration(std::ostream &project, const Buil
 	project << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch, bool dynamicLib) {
+void VisualStudioProvider::outputLibraryConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch, bool dynamicLib) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\""
 			<< " ConfigurationType =\"" << (dynamicLib ? "2" : "4") << "\" "
 			<< "InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
