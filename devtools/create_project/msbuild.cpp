@@ -169,8 +169,9 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	// Output references for the main project
-	if (name == setup.projectName && !setup.featureEnabled("dynamic-modules"))
+	if (name == setup.projectName) {
 		writeReferences(setup, project);
+	}
 
 	// Output auto-generated test runner
 	if (setup.tests) {
@@ -265,13 +266,22 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
-		       << "\t\t<Project>{" << i->second << "}</Project>\n"
-		       << "\t</ProjectReference>\n";
+	if (!setup.featureEnabled("dynamic-modules")) {
+		for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
+			writeProjectReference(output, i->first, i->second);
+		}
 	}
 
+	if (setup.useStaticDetection)
+		writeProjectReference(output, setup.projectName + "-detection", _allProjUuidMap[setup.projectName + "-detection"]);
+
 	output << "\t</ItemGroup>\n";
+}
+
+void MSBuildProvider::writeProjectReference(std::ofstream &output, const std::string name, const std::string uuid) {
+	output << "\t<ProjectReference Include=\"" << name << ".vcxproj\">\n"
+		   << "\t\t<Project>{" << uuid << "}</Project>\n"
+		   << "\t</ProjectReference>\n";
 }
 
 void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {

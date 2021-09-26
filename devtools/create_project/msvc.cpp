@@ -169,7 +169,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 		solution << "Project(\"{" << solutionUUID << "}\") = \"" << setup.projectName << "\", \"" << setup.projectName << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
 		// Project dependencies are moved to vcxproj files in Visual Studio 2010
-		if (_version < 10 && !setup.featureEnabled("dynamic-modules"))
+		if (_version < 10)
 			writeReferences(setup, solution);
 
 		solution << "EndProject\n";
@@ -217,8 +217,15 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 void MSVCProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\tProjectSection(ProjectDependencies) = postProject\n";
 
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
+	if (!setup.featureEnabled("dynamic-modules")) {
+		for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
+			output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
+		}
+	}
+
+	if (setup.useStaticDetection) {
+		std::string detectionUuid = _allProjUuidMap[setup.projectName + "-detection"];
+		output << "\t\t{" << detectionUuid << "} = {" << detectionUuid << "}\n";
 	}
 
 	output << "\tEndProjectSection\n";

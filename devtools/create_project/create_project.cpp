@@ -1545,7 +1545,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	const std::string detProject = setup.projectName + "-detection";
 	const std::string detUUID = createUUID(detProject);
 	if (setup.useStaticDetection) {
-		_allProjUuidMap[detProject] = _engineUuidMap[detProject] = detUUID;
+		_allProjUuidMap[detProject] = detUUID;
 	}
 
 	createWorkspace(setup);
@@ -1554,8 +1554,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// Create project files
 	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		if (i->first == detProject)
-			continue;
 		// Retain the files between engines if we're creating a single project
 		in.clear();
 		ex.clear();
