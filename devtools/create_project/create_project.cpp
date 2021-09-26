@@ -1094,6 +1094,7 @@ const Feature s_features[] = {
 	{              "tts",                       "USE_TTS", false, true,  "Text to speech support"},
 	{"builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
 	{ "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines."},
+	{  "dynamic-modules",               "DYNAMIC_MODULES", false, false, "Dynamic modules for engines"},
 	{            "cxx11",                     "USE_CXX11", false, true,  "Compile with c++11 support"}
 };
 
