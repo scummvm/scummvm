@@ -169,7 +169,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 		solution << "Project(\"{" << solutionUUID << "}\") = \"" << setup.projectName << "\", \"" << setup.projectName << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
 		// Project dependencies are moved to vcxproj files in Visual Studio 2010
-		if (_version < 10)
+		if (_version < 10 && !setup.featureEnabled("dynamic-modules"))
 			writeReferences(setup, solution);
 
 		solution << "EndProject\n";

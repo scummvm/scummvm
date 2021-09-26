@@ -169,7 +169,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	// Output references for the main project
-	if (name == setup.projectName)
+	if (name == setup.projectName && !setup.featureEnabled("dynamic-modules"))
 		writeReferences(setup, project);
 
 	// Output auto-generated test runner
