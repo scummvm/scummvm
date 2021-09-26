@@ -16,6 +16,15 @@ namespace Freescape {
 
 class Renderer;
 
+// from shooter
+// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
+enum CameraMovement {
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
+};
+
 typedef Common::HashMap<uint16, Area *> AreaMap;
 
 typedef struct Binary {
@@ -66,7 +75,12 @@ public:
 	// Areas
 	uint16 _startArea;
 	AreaMap *_areasByAreaID;
-	float _rotation[3], _velocity[3], _position[3];
+
+
+	// Movement
+	void Move(CameraMovement direction, float deltaTime);
+	float _movementSpeed;
+	Vector3d _position, _rotation, _velocity;
 
 
 	// Rendering
