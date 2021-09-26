@@ -196,6 +196,17 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// before we instantiate the engine, we register debug channels for it
 	DebugMan.addAllDebugChannels(metaEngineDetection.getDebugChannels());
 
+	// On creation the engine should have set up all debug levels so we can use
+	// the command line arguments here
+	Common::StringTokenizer tokenizer(debugLevels, " ,");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+		if (token.equalsIgnoreCase("all"))
+			DebugMan.enableAllDebugChannels();
+		else if (!DebugMan.enableDebugChannel(token))
+			warning("Engine does not support debug level '%s'", token.c_str());
+	}
+
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 	if (err.getCode() == Common::kNoError) {
@@ -272,17 +283,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 			dir = Common::FSNode(extraPath);
 			SearchMan.addDirectory(dir.getPath(), dir);
 		}
-	}
-
-	// On creation the engine should have set up all debug levels so we can use
-	// the command line arguments here
-	Common::StringTokenizer tokenizer(debugLevels, " ,");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-		if (token.equalsIgnoreCase("all"))
-			DebugMan.enableAllDebugChannels();
-		else if (!DebugMan.enableDebugChannel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 
 #ifdef USE_TRANSLATION
