@@ -46,10 +46,6 @@ private:
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
 
-	uint16 _startArea;
-	AreaMap *_areasByAreaID;
-	float _rotation[3], _velocity[3], _position[3];
-
 public:
 	FreescapeEngine(OSystem *syst);
 	~FreescapeEngine();
@@ -58,6 +54,23 @@ public:
 	Common::Error run() override;
 	void convertBorder();
 	void drawBorder();
+
+
+	// Parsing
+	void loadAssets();
+	void load16bitBinary(Common::SeekableReadStream *file);
+	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
+
+	uint8 _binaryBits;
+
+	// Areas
+	uint16 _startArea;
+	AreaMap *_areasByAreaID;
+	float _rotation[3], _velocity[3], _position[3];
+
+
+	// Rendering
+	uint8 _colorNumber;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }

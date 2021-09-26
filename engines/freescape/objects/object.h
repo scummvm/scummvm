@@ -10,24 +10,14 @@
 #define __Phantasma__Object__
 
 #include "common/system.h"
+#include "graphics/tinygl/zmath.h"
+
 #include "freescape/gfx.h"
 
 //#include <vector>
 //#include "freescape/language/instruction.h"
 
-typedef struct Vector3d {
-	uint16 x, y, z;
-	uint16 &operator[](int index) {
-		switch (index) {
-		default:
-			return x;
-		case 1:
-			return y;
-		case 2:
-			return z;
-		}
-	};
-} Vector3d;
+typedef TinyGL::Vector3 Vector3d;
 
 class VertexBuffer;
 class DrawElementsBuffer;
