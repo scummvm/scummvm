@@ -124,8 +124,6 @@ int16 life_anz;
 char *life_str;
 int16 life_handler;
 
-void (*old1chandler)(void);
-
 void (*SetUpScreenFunc)(void);
 
 SprInfo spr_info[MAX_PROG_ANI];

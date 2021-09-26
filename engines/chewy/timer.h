@@ -38,6 +38,11 @@ namespace Chewy {
 
 #define TIMER_UNFREEZE 3
 
+extern bool timer_flag;
+extern bool timer_int;
+extern int timer_count;
+extern bool timer_suspend;
+
 struct TimerBlk {
 	int16 TimeCount;
 
@@ -74,11 +79,6 @@ public:
 	void enable_timer();
 
 private:
-
-	void init_timer_handler();
-
-	void remove_timer_handler();
-
 	TimerBlk *timer_blk;
 
 	int16 timer_max;
