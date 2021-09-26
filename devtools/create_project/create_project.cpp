@@ -1544,9 +1544,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	// Add the uuid of the detection project
 	const std::string detProject = setup.projectName + "-detection";
 	const std::string detUUID = createUUID(detProject);
-	if (setup.useStaticDetection) {
-		_allProjUuidMap[detProject] = detUUID;
-	}
+	_allProjUuidMap[detProject] = detUUID;
 
 	createWorkspace(setup);
 
@@ -1561,7 +1559,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	}
 
 	// Create engine-detection submodules.
-	if (setup.useStaticDetection) {
+	{
 		StringList in, ex;
 		std::vector<std::string> detectionModuleDirs;
 		detectionModuleDirs.reserve(setup.engines.size());
