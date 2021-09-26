@@ -19,13 +19,13 @@ static Object *load8bitObject(StreamLoader &stream) {
 	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
 	Vector3d position, v;
 
-	position.x = stream.get8() * 32;
-	position.y = stream.get8() * 32;
-	position.z = stream.get8() * 32;
+	position.X = stream.get8() * 32;
+	position.Y = stream.get8() * 32;
+	position.Z = stream.get8() * 32;
 
-	v.x = stream.get8();
-	v.y = stream.get8();
-	v.z = stream.get8();
+	v.X = stream.get8();
+	v.Y = stream.get8();
+	v.Z = stream.get8();
 
 	// object ID
 	uint16 objectID = stream.get8();
@@ -36,10 +36,10 @@ static Object *load8bitObject(StreamLoader &stream) {
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
-    debug("pos: %d %d %d", position.x, position.y, position.z);
+    debug("pos: %f %f %f", position.X, position.Y, position.Z);
 	switch (objectType) {
 	default: {
-		debug("size: %d %d %d", v.x, v.y, v.z);
+		debug("size: %f %f %f", v.X, v.Y, v.Z);
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
@@ -92,7 +92,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 	} break;
 
 	case Object::Entrance: {
-		debug("rotation: %d %d %d", v.x, v.y, v.z);
+		debug("rotation: %f %f %f", v.X, v.Y, v.Z);
 		assert(byteSizeOfObject == 0);
 		// create an entrance
 		return new Entrance(
@@ -204,44 +204,21 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	return (new Area(areaNumber, objectsByID, entrancesByID, 0, 1, raw_palette));
 }
 
-struct BinaryTable {
-	const char *filename;
-	int ncolors;
-	int offset;
-};
+// struct BinaryTable {
+// 	const char *filename;
+// 	int ncolors;
+// 	int offset;
+// };
 
-static const BinaryTable binaryTable[] = {
-	{ "DRILLE.EXE",  8,  0x9b40},
-	{ "DRILLC.EXE",  4,  0x7bb0},
-	{ "TOTE.EXE",    8,  0xcdb7},
-    //{ "TOTC.EXE",  8,  ??????},
-	{ nullptr,       0,  0  }
-};
+// static const BinaryTable binaryTable[] = {
+// 	{ "DRILLE.EXE",  8,  0x9b40},
+// 	{ "DRILLC.EXE",  4,  0x7bb0},
+// 	{ "TOTE.EXE",    8,  0xcdb7},
+//     //{ "TOTC.EXE",  8,  ??????},
+// 	{ nullptr,       0,  0  }
+// };
 
-Binary load8bitBinary(Common::String filename) {
-	int offset = 0;
-	int ncolors = 0;
-
-	const BinaryTable *entry = binaryTable;
-	while (entry->filename) {
-		debug(entry->filename);
-		if (filename == entry->filename)
-			break;
-		entry++;
-	}
-	if (!entry->filename)
-		error("Unknown game to load %s", filename.c_str());
-
-	offset = entry->offset;
-	ncolors = entry->ncolors;
-
-	Common::File *file = new Common::File();
-
-	if (!file->open(filename)) {
-		delete file;
-		error("NULL");
-	}
-
+void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
 	const uint32 fileSize = file->size();
 	byte *buf = (byte *)malloc(fileSize);
 	file->read(buf, fileSize);
@@ -313,7 +290,10 @@ Binary load8bitBinary(Common::String filename) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-	return Binary{8, startArea, areaMap, nullptr, nullptr, ncolors};
+	_areasByAreaID = areaMap;
+	_startArea = startArea;
+	_colorNumber = ncolor;
+	_binaryBits = 8;
 }
 
 } // namespace Freescape

@@ -49,12 +49,12 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 	// grab location, size
 	Vector3d position, size;
-	position.x = stream.get16();
-	position.y = stream.get16();
-	position.z = stream.get16();
-	size.x = stream.get16();
-	size.y = stream.get16();
-	size.z = stream.get16();
+	position.X = stream.get16();
+	position.Y = stream.get16();
+	position.Z = stream.get16();
+	size.X = stream.get16();
+	size.Y = stream.get16();
+	size.Z = stream.get16();
 
 	// object ID
 	uint16 objectID = stream.get16();
@@ -65,8 +65,8 @@ static Object *load16bitObject(StreamLoader &stream) {
 	uint32 byteSizeOfObject = (uint32)(stream.get16() << 1) - 20;
 
 	debug("Object %d ; type %d ; flags %d ; size %d", (int)objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
-	debug("Location: %d, %d, %d", position.x, position.y, position.z);
-	debug("Size: %d, %d, %d", size.x, size.y, size.z);
+	debug("Location: %f, %f, %f", position.X, position.Y, position.Z);
+	debug("Size: %f, %f, %f", size.X, size.Y, size.Z);
 
 	switch (objectType) {
 	default: {
@@ -222,14 +222,7 @@ Area *load16bitArea(StreamLoader &stream) {
 
 
 
-Binary load16bitBinary(Common::String filename) {
-	Common::File *file = new Common::File();
-
-	if (!file->open(filename)) {
-		delete file;
-		error("NULL");
-	}
-
+void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	const uint32 fileSize = file->size();
 	byte *buf = (byte *)malloc(fileSize);
 	file->read(buf, fileSize);
@@ -470,8 +463,24 @@ Binary load16bitBinary(Common::String filename) {
 		}
 	}
 
+	if (raw_palette) {
+		Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, colorNumber, DisposeAfterUse::NO);
+		*palette = raw_palette->data();
+		_gfx->_palette = palette;
+	}
+
+	if (raw_border) {
+		Graphics::PixelBuffer *border = new Graphics::PixelBuffer(_gfx->_originalPixelFormat, 320*200, DisposeAfterUse::NO);
+		*border = raw_border->data();
+		_border = _gfx->convertFromPalette(border);
+	}
+
 	delete[] fileOffsetForArea;
-	return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
+	_startArea = startArea;
+	_colorNumber = colorNumber;
+	_areasByAreaID = areaMap;
+	_binaryBits = 16;
+	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }
 
 } // namespace Freescape

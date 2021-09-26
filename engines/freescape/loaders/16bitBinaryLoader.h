@@ -18,8 +18,6 @@
 
 namespace Freescape {
 
-Binary load16bitBinary(Common::String);
-
 }
 
 #endif /* defined(__Phantasma___16bitBinaryLoader__) */

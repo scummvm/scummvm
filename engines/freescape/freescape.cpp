@@ -83,52 +83,64 @@ void FreescapeEngine::drawBorder() {
 	_gfx->freeTexture(t);
 }
 
-Common::Error FreescapeEngine::run() {
-	// Initialize graphics:
-	_gfx = Freescape::createRenderer(_system);
-	_gfx->init();
-	_gfx->clear();
-	
-	Binary binary;
+void FreescapeEngine::loadAssets() {
 	Common::String renderMode = "";
+	Common::SeekableReadStream *file = nullptr;
+	Common::String path = ConfMan.get("path");
+	Common::FSDirectory gameDir(path);
 
-	if (_targetName == "3Dkit")
-		binary = load16bitBinary("3DKIT.RUN");
-	else if (_targetName == "3Dkitcube")
-		binary = load16bitBinary("CUBE.RUN");
-	else if (_targetName == "Driller") {
+	if (_targetName.hasSuffix("3dkit")) {
+		Common::ArchiveMemberList files;
+        gameDir.listMatchingMembers(files, "*.RUN");
+
+		if (files.size() == 0) {
+			error("No .RUN was found in %s", path.c_str());
+		} else if (files.size() > 1) {
+			warning("More than one .RUN file found, only the first one will be used!");
+		}
+
+		file = files.begin()->get()->createReadStream();
+		load16bitBinary(file);
+	} else if (_targetName == "Driller") {
 		if (!ConfMan.hasKey("render_mode"))
 			renderMode = "ega";
 		else
 			renderMode = ConfMan.get("render_mode");
 
+		Common::File exe;	
 		debug("renderMode: %s", renderMode.c_str());
-		if (renderMode == "ega")
-			binary = load8bitBinary("DRILLE.EXE");
-		else if (renderMode == "cga")
-			binary = load8bitBinary("DRILLC.EXE");
-		else
+		bool success = false;
+		if (renderMode == "ega") {
+			file = gameDir.createReadStreamForMember("DRILLE.EXE");
+
+			if (file == nullptr)
+				error("Failed to open DRILLE.EXE");
+
+			load8bitBinary(file, 0x9b40, 8);
+		} else if (renderMode == "cga") {
+			file = gameDir.createReadStreamForMember("DRILLC.EXE");
+
+			if (file == nullptr)
+				error("Failed to open DRILLC.EXE");
+			load8bitBinary(file, 0x7bb0, 4);
+		} else
 			error("Invalid render mode %s for Driller", renderMode.c_str());
 
-	} else if (_targetName == "Castle")
-		binary = load8bitBinary("CME.EXE");
-	else
-		error("%s is an invalid game", _targetName.c_str());
+	   } else if (_targetName == "Castle") {
+			error("Unsupported game");
+	   } else
+		error("'%s' is an invalid game", _targetName.c_str());
 
-	if (binary.areasByAreaID) {
-		_areasByAreaID = binary.areasByAreaID;
-		if (binary.palette) {
-			Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, binary.ncolors, DisposeAfterUse::NO);
-			*palette = binary.palette->data();
-			_gfx->_palette = palette;
-		}
+}
 
-		if (binary.border) {
-			Graphics::PixelBuffer *border = new Graphics::PixelBuffer(_gfx->_originalPixelFormat, 320*200, DisposeAfterUse::NO);
-			*border = binary.border->data();
-			_border = _gfx->convertFromPalette(border);
-		}
+Common::Error FreescapeEngine::run() {
+	// Initialize graphics:
+	_gfx = Freescape::createRenderer(_system);
+	_gfx->init();
+	_gfx->clear();
+	loadAssets();
 
+	if (_areasByAreaID) {
 		_startArea = 1; //binary.startArea;
 
 		assert(_areasByAreaID->contains(_startArea));
