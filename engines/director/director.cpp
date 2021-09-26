@@ -100,7 +100,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
 	}
 
-	_colorDepth = 8;	// 256-color
+	if (debugChannelSet(-1, kDebug32bpp))
+		_colorDepth = 32;
+	else
+		_colorDepth = 8;	// 256-color
+
 	switch (getPlatform()) {
 	case Common::kPlatformMacintoshII:
 		_machineType = 4;
