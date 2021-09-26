@@ -20,55 +20,19 @@
  *
  */
 
-#include "common/system.h"
 #include "chewy/events.h"
 
 namespace Chewy {
 
 EventsManager *g_events;
 
-EventsManager::EventsManager() {
+EventsManager::EventsManager(Graphics::Screen *screen) :
+		EventsBase(screen) {
 	g_events = this;
 }
 
 EventsManager::~EventsManager() {
 	g_events = nullptr;
-}
-
-void EventsManager::pollEvents() {
-	Common::Event e;
-
-	while (g_system->getEventManager()->pollEvent(e)) {
-		switch (e.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			return;
-
-		case Common::EVENT_KEYDOWN:
-			_keyEvents.push(e);
-			break;
-
-		default:
-			// Add other event types to the pending events queue. If the event is a
-			// mouse move and the prior one was also, then discard the prior one.
-			// This'll help prevent too many mouse move events accumulating
-			if (e.type == Common::EVENT_MOUSEMOVE && !_pendingEvents.empty() &&
-			        _pendingEvents.back().type == Common::EVENT_MOUSEMOVE)
-				_pendingEvents.back() = e;
-			else
-				_pendingEvents.push(e);
-			break;
-		}
-	}
-}
-
-Common::Event EventsManager::readEvent() {
-	pollEvents();
-	return _pendingEvents.empty() ? Common::Event() : _pendingEvents.pop();
-}
-
-void EventsManager::warpMouse(const Common::Point &newPos) {
-	g_system->warpMouse(newPos.x, newPos.y);
 }
 
 } // namespace Chewy

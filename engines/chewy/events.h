@@ -23,54 +23,16 @@
 #ifndef CHEWY_EVENTS_H
 #define CHEWY_EVENTS_H
 
-#include "common/array.h"
-#include "common/queue.h"
-#include "common/events.h"
+#include "chewy/events_base.h"
 
 namespace Chewy {
 
-class EventsManager {
+class EventsManager : public EventsBase {
 private:
-	Common::Queue<Common::Event> _pendingEvents;
-	Common::Queue<Common::Event> _keyEvents;
 
 public:
-	EventsManager();
-	~EventsManager();
-
-	/**
-	 * Poll any pending events
-	 */
-	void pollEvents();
-
-	/**
-	 * Returns true if any unprocessed keyboard events are pending
-	 */
-	bool keyEventPending() const {
-		return !_keyEvents.empty();
-	}
-
-	/**
-	 * Returns the next pending unprocessed keyboard event
-	 */
-	Common::Event getPendingKeyEvent() {
-		return _keyEvents.pop();
-	}
-
-	/**
-	 * Returns the next event, if any
-	 */
-	Common::Event readEvent();
-
-	/**
-	 * Sets the mouse position
-	 */
-	void warpMouse(const Common::Point &newPos);
-
-	void clearEvents() {
-		_pendingEvents.clear();
-		_keyEvents.clear();
-	}
+	EventsManager(Graphics::Screen *screen);
+	virtual ~EventsManager();
 };
 
 extern EventsManager *g_events;
