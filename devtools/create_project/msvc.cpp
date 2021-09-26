@@ -181,6 +181,13 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 		         << "EndProject\n";
 	}
 
+	{
+		solution << "Project(\"{" << solutionUUID << "}\") = \"" << setup.projectName << "-detection"
+				 << "\", \"" << setup.projectName << "-detection" << getProjectExtension() << "\", \"{" << _allProjUuidMap[setup.projectName + "-detection"]
+				 << "}\"\n"
+				 << "EndProject\n";
+	}
+
 	solution << "Global\n"
 	            "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n";
 
