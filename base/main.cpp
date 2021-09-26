@@ -351,12 +351,10 @@ static void setupGraphics(OSystem &system) {
 
 		system.initSize(320, 200);
 
-		if (ConfMan.hasKey("aspect_ratio"))
-			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
-			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-		if (ConfMan.hasKey("filtering"))
-			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+		// Parse graphics configuration, implicit fallback to defaults set with RegisterDefaults()
+		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+		system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 	system.endGFXTransaction();
 
 	system.applyBackendSettings();

@@ -54,7 +54,7 @@ public:
 	void setMovementFlag(uint32 mask) {
 		_movementFlags |= mask;
 	}
-	void clearMovementFlag(uint32 mask) {
+	virtual void clearMovementFlag(uint32 mask) {
 		_movementFlags &= ~mask;
 	}
 
@@ -81,6 +81,9 @@ public:
 
 		// Firing weapon (Crusader only)
 		MOVE_ATTACKING = 0x1000,
+		// Pending turn (Crusader only)
+		MOVE_PENDING_TURN_LEFT  = 0x2000,
+		MOVE_PENDING_TURN_RIGHT = 0x4000,
 
 		MOVE_ANY_DIRECTION = MOVE_MOUSE_DIRECTION | MOVE_FORWARD | MOVE_BACK | MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN
 	};

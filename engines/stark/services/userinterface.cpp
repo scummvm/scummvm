@@ -60,7 +60,7 @@
 
 namespace Stark {
 
-UserInterface::UserInterface(Gfx::Driver *gfx) :
+UserInterface::UserInterface(StarkEngine *vm, Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursor(nullptr),
 		_diaryIndexScreen(nullptr),
@@ -82,6 +82,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_currentScreen(nullptr),
 		_gameWindowThumbnail(nullptr),
 		_modalDialog(nullptr) {
+	_vm = vm;
 }
 
 UserInterface::~UserInterface() {
@@ -114,7 +115,7 @@ void UserInterface::init() {
 	_diaryPagesScreen = new DiaryPagesScreen(_gfx, _cursor);
 	_dialogScreen = new DialogScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
-	_modalDialog = new DialogBox(_gfx, _cursor);
+	_modalDialog = new DialogBox(_vm, _gfx, _cursor);
 
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
 	_currentScreen = _fmvScreen;

@@ -41,7 +41,7 @@ struct InventoryItemInfo {
 	int  pic;
 	int  cursorPic, hotx, hoty;
 	int32_t reserved[5];
-	char flags;
+	int8 flags;
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);

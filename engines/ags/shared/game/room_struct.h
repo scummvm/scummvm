@@ -240,8 +240,8 @@ struct WalkBehind {
 #define MSG_TIMELIMIT   0x02
 
 struct MessageInfo {
-	char    DisplayAs; // 0 - std display window, >=1 - as character's speech
-	char    Flags; // combination of MSG_xxx flags
+	int8    DisplayAs; // 0 - std display window, >=1 - as character's speech
+	int8    Flags; // combination of MSG_xxx flags
 
 	MessageInfo();
 };

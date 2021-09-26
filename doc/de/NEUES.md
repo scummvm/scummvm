@@ -15,12 +15,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Crimson Crown hinzugefügt.
    - Unterstützung für OO-Topos hinzugefügt.
    - Unterstützung für die Glulx interactive fiction-Spiele hinzugefügt.
-   - Unterstützung für die US-Version von Private Eye hinzugefügt.
-   - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
    - Unterstützung für das Konami-Release von Lure of the Temptress hinzugefügt.
+   - Unterstützung für Private Eye hinzugefügt.
    - Unterstützung für die spanische Version von Blue Force hinzugefügt.
    - Unterstützung für die spanische Version von Ringworld hinzugefügt.
    - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
+   - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
    - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
    - Unterstützung für The Journeyman Project 2: Buried in Time hinzugefügt.
    - Unterstützung für Crusader: No Remorse hinzugefügt.
@@ -44,6 +44,7 @@ Programmcodes finden Sie auf Englisch unter:
      Fällen wurde die Änderung erst nach einem Neustart von ScummVM
      oder beim Start eines Spiels übernommen.
    - Die ScummVM-Benutzeroberfläche ist jetzt vollst#ndig auf koreanisch und japanisch verfügbar.
+   - Option zur ScummVM-Benutzeroberfläche hinzugefügt, mit der die Discord RPC-Integration aktiviert und deaktiviert werden kann.
 
  ADL:
    - Unterstützung für die französische Übersetzung  von Mystery House hinzugefügt.
@@ -60,6 +61,13 @@ Programmcodes finden Sie auf Englisch unter:
 
  CGE2:
    - Unterstützung für Sprachausgabe in Sfinx hinzugefügt.
+
+ Cine:
+   - Die CD-Version von Future Wars mit einem französischen Übersetzungs-Patch wird jetzt erkannt.
+   - Die italienische Amiga-Version von Operation Stealth wird jetzt erkannt.
+   - Absturz behoben, der auftritt, bevor die Geheimbasis betreten wird.
+   - Fehlendes Leerzeichen in der Verben-Zeile korrigiert.
+   - Fehler bei der Darstellung von Hinweis-Textboxen korrigiert.
 
  Dreamweb:
    - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
@@ -179,7 +187,7 @@ Programmcodes finden Sie auf Englisch unter:
      einer der drei Türme nicht zerstört werden kann.
    - Animierter Zigarrenrauch zu der Nahaufnahme von Captain Smirk in der CD-Version von
      Monkey Island 1 hinzugefügt. Er war in früheren Versionen vorhanden.
-   - Einige in der englischen, italienischen und deutschen CD- sowie der englischen
+   - Einige in der englischen, italienischen, deutschen und spanischen CD- sowie der englischen
      Macintosh-, FM-Towns- und Sega-CD-Version von Monkey Island 1 fehlende
      Dialog-Zeilen von Lemonhead wurden wiederhergestellt.
    - Der Uhren-Turm in Monkey Island 1 verhält sich nun in der CD-Version identisch zu
@@ -188,6 +196,9 @@ Programmcodes finden Sie auf Englisch unter:
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
+
+ Titanic:
+   - Abstürze behoben, die auftreten, wenn ich Bots danach frage, was ich als nächstes tun soll.
 
  TsAGE:
    - Unterstützung für eine weitere Disketten-Version hinzugefügt.

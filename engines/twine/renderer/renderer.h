@@ -173,15 +173,13 @@ private:
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr;
-	int16 *_polyTab2 = nullptr;
+	int16 *_colorProgressionBuffer = nullptr;
 	int16* _holomap_polytab_1_1 = nullptr;
 	int16* _holomap_polytab_1_2 = nullptr;
 	int16* _holomap_polytab_1_3 = nullptr;
 	int16* _holomap_polytab_2_3 = nullptr;
 	int16* _holomap_polytab_2_2 = nullptr;
 	int16* _holomap_polytab_2_1 = nullptr;
-	int16* _holomap_polytab_1_2_ptr = nullptr;
-	int16* _holomap_polytab_1_3_ptr = nullptr;
 
 	bool _isUsingOrthoProjection = false;
 

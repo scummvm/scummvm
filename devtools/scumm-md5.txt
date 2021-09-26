@@ -509,7 +509,7 @@ fbpack	Fatty Bear's Fun Pack
 	f06e66fd45b2f8b0f4a2833ff4476050	-1	he	DOS	-	-	-	sev
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
-	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
+	d4cccb5af88f3e77f370896e9ba8c5f9	26078 	en	Windows	HE 71	-	-	sev
 	01e51615b26e8ddf6ae88dd86e435d4a	-1	en	Windows	HE 71	-	-	PaulPfenning
 	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
@@ -831,7 +831,7 @@ puttputt	Putt-Putt Joins the Parade
 puttzoo	Putt-Putt Saves the Zoo
 	70b0719ac3a5b47ae233c561823d5b96	-1	nl	Mac	-	-	-	daniel9
 	58fdf4c7ad13540a734e18f8584cad89	-1	en	Mac	-	-	-	khalek
-	1005456bfe351c1b679e1ff2dc2849e9	-1	All	Windows	-	-	-	khalek
+	1005456bfe351c1b679e1ff2dc2849e9	41998	en	Windows	-	-	-	khalek
 	c3b22fa4654bb580b20325ebf4174841	-1	nl	Windows	-	-	-	joostp
 	9781422e4288dbc090720e4563168ba7	-1	fr	Windows	-	-	-	gist974
 	0f9d3317910ac7a9f449243118884ada	42070	de	Windows	-	-	-	George Kormendi

@@ -554,7 +554,7 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 			newSceneStaticData.location.environment != oldLocation.environment ||
 			newSceneStaticData.location.node != oldLocation.node) {
 		((GameUIWindow *)_parent)->_bioChipRightWindow->disableEvidenceCapture();
-		((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
+		((GameUIWindow *)_parent)->_liveTextWindow->updateLiveText();
 	}
 
 	// Disable the arrow window

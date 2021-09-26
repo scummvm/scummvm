@@ -50,6 +50,8 @@ public:
 		return static_cast<double>(_avatarAngle) / 100.0;
 	}
 
+	void clearMovementFlag(uint32 mask) override;
+
 private:
 	/** Try readying or firing weapon. */
 	void tryAttack();

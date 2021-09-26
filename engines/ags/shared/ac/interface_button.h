@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_INTERFACE_BUTTON_H
 #define AGS_SHARED_AC_INTERFACE_BUTTON_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 #define MAXBUTTON       20
@@ -33,7 +35,7 @@ struct InterfaceButton {
 	int x, y, pic, overpic, pushpic, leftclick;
 	int rightclick; // if inv, then leftclick = wid, rightclick = hit
 	int reserved_for_future;
-	char flags;
+	int8 flags;
 	void set(int xx, int yy, int picc, int overpicc, int actionn);
 };
 

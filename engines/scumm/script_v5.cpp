@@ -1383,6 +1383,16 @@ void ScummEngine_v5::o5_loadRoom() {
 
 	room = getVarOrDirectByte(PARAM_1);
 
+	// WORKAROUND bug #12420 (also occurs in original) Broken window and coat missing
+	// This happens when you skip the cutscenes in the beginning, in particular
+	// the one where Indy enters the office for the first time. If object 23 (National
+	// Archeology) is in possession of Indy (owner == 1) then it's safe to force the
+	// coat (object 24) and broken window (object 25) into the room.
+	if (_game.id == GID_INDY4 && room == 1 && _objectOwnerTable[23] == 1) {
+		putState(24, 1);
+		putState(25, 1);
+	}
+
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
@@ -2917,6 +2927,11 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 			"Oooh, che bello.\xFF\x03"
 			"Semplice.  Proprio come uno dei miei.\xFF\x03"
 			"E piccolo.  Come il mio.";
+	} else if (strncmp((const char *)ptr, "/LH.ESP/", 8) == 0) {
+		msg =
+			"Oooh, qu\x82 bonito.\xFF\x03"
+			"Simple.  Como uno de los m\xA1os.\xFF\x03"
+			"Y peque\xA4o, como los m\xA1os.";
 	}
 
 	printString(textSlot, (const byte *)msg);

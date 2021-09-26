@@ -111,6 +111,15 @@ void AGSSnowRain::srSetWindSpeed(ScriptMethodParams &params) {
 
 void AGSSnowRain::srSetBaseline(ScriptMethodParams &params) {
 	PARAMS2(int, top, int, bottom);
+
+	// FIXME: The original seems to take co-ordinates in 320x200,
+	// but still displays correctly at 640x400. So doubling must
+	// occur somewhere. For now, doing it here
+	if (_screenHeight == 400) {
+		top *= 2;
+		bottom *= 2;
+	}
+
 	_snow.SetBaseline(top, bottom);
 	_rain.SetBaseline(top, bottom);
 }

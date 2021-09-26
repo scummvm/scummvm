@@ -99,10 +99,15 @@ ResourceIndex Resource::getIndexEntry(Common::SeekableReadStream *indexFile) {
 	ResourceIndex index;
 
 	Common::String currentFile;
+	// Non-English versions contain junk characters in
+	// some file names. Skip them here
+	bool skip = false;
 	for (byte i = 0; i < 8; i++) {
 		char c = indexFile->readByte();
-		if (c)
+		if (c && !skip)
 			currentFile += c;
+		if (!c)
+			skip = true;
 	}
 
 	// The demo version has an empty entry in the end

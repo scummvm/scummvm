@@ -33,7 +33,7 @@ class IDriverDependantBitmap;
 using namespace AGS::Engine; // FIXME later
 
 // Loops game frames until certain event takes place (for blocking actions)
-void GameLoopUntilValueIsZero(const char *value);
+void GameLoopUntilValueIsZero(const int8 *value);
 void GameLoopUntilValueIsZero(const short *value);
 void GameLoopUntilValueIsZero(const int *value);
 void GameLoopUntilValueIsZeroOrLess(const short *move);

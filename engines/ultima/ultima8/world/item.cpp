@@ -1280,7 +1280,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		if (this != getControlledActor()) {
 			target = getControlledActor();
 		} else {
-			target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
+			target = currentmap->findBestTargetItem(ix, iy, iz - z, dir, dirmode);
 		}
 	}
 
@@ -3160,7 +3160,7 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 	ARG_UINT16(frame);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT16(z);
+	ARG_UINT8(z);
 
 	if (GAME_IS_CRUSADER) {
 		x *= 2;
@@ -3357,7 +3357,7 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	#if 0
-		perr << "Pushing item to ethereal void: " << item->getShape() << "," << item->getFrame() << Std::endl;
+		perr << "Pushing item to ethereal void: id: " << item->getObjId() << " shp: " << item->getShape() << "," << item->getFrame() << Std::endl;
 	#endif
 
 	item->moveToEtherealVoid();
@@ -3423,7 +3423,7 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT16(z);
+	ARG_UINT8(z);
 
 	World *w = World::get_instance();
 
@@ -3521,7 +3521,7 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT16(z);
+	ARG_UINT8(z);
 	if (!item)
 		return 0;
 
@@ -3881,7 +3881,7 @@ uint32 Item::I_explode(const uint8 *args, unsigned int argsize) {
 uint32 Item::I_igniteChaos(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_NULL8();
+	ARG_NULL8(); // z, unused
 
 	assert(GAME_IS_U8);
 

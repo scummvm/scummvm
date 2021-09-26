@@ -1931,6 +1931,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_ttsCheckbox = nullptr;
 	_ttsVoiceSelectionPopUp = nullptr;
 #endif
+#ifdef USE_DISCORD
+	_discordRpcCheckbox = nullptr;
+#endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
@@ -2304,6 +2307,15 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	);
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
+
+#ifdef USE_DISCORD
+	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
+		_("Enable Discord integration"),
+		_("Show information about the games you are playing on Discord if the Discord client is running.")
+	);
+
+	_discordRpcCheckbox->setState(ConfMan.getBool("discord_rpc", _domain));
+#endif
 
 	// TODO: joystick setting
 
@@ -2753,6 +2765,11 @@ void GlobalOptionsDialog::apply() {
 	if (_guiConfirmExit) {
 		ConfMan.setBool("confirm_exit", _guiConfirmExit->getState(), _domain);
 	}
+#ifdef USE_DISCORD
+	if (_discordRpcCheckbox) {
+		ConfMan.setBool("discord_rpc", _discordRpcCheckbox->getState(), _domain);
+	}
+#endif // USE_DISCORD
 
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 	Common::String oldGfxConfig = ConfMan.get("gui_renderer");

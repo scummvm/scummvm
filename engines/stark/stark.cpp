@@ -54,6 +54,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "gui/message.h"
 
 namespace Stark {
@@ -96,6 +97,8 @@ Common::Error StarkEngine::run() {
 
 	// Get the screen prepared
 	Gfx::Driver *gfx = Gfx::Driver::create();
+	if (gfx == nullptr)
+		return Common::kNoError;
 	gfx->init();
 
 	checkRecommendedDatafiles();
@@ -114,7 +117,7 @@ Common::Error StarkEngine::run() {
 	services.dialogPlayer = new DialogPlayer();
 	services.diary = new Diary();
 	services.gameInterface = new GameInterface();
-	services.userInterface = new UserInterface(services.gfx);
+	services.userInterface = new UserInterface(this, services.gfx);
 	services.settings = new Settings(_mixer, _gameDescription);
 	services.gameChapter = new GameChapter();
 	services.gameMessage = new GameMessage();
@@ -152,10 +155,8 @@ void StarkEngine::mainLoop() {
 
 		processEvents();
 
-		if (StarkUserInterface->shouldExit()) {
-			quitGame();
+		if (StarkUserInterface->shouldExit())
 			break;
-		}
 
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
 			StarkGlobal->setNormalSpeed();
@@ -522,5 +523,7 @@ void StarkEngine::onScreenChanged() const {
 		StarkUserInterface->onScreenChanged();
 	}
 }
+
+uint32 StarkEngine::getGameFlags() const { return _gameDescription->flags; }
 
 } // End of namespace Stark

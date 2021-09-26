@@ -121,7 +121,16 @@
 
 + (iOS7AppDelegate *)iOS7AppDelegate {
 	UIApplication *app = [UIApplication sharedApplication];
-	return (iOS7AppDelegate *) app.delegate;
+	// [UIApplication delegate] must be used from the main thread only
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		return (iOS7AppDelegate *) app.delegate;
+	} else {
+		__block iOS7AppDelegate *delegate = nil;
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			delegate = (iOS7AppDelegate *) app.delegate;
+		});
+		return delegate;
+	}
 }
 
 + (iPhoneView *)iPhoneView {

@@ -111,7 +111,7 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 		rich_media_header.ReadFromFile(&saveFile);
 
 		if (rich_media_header.dwMagicNumber == RM_MAGICNUMBER) {
-			SaveStateDescriptor desc(slot, Common::U32String());
+			SaveStateDescriptor desc(slot, rich_media_header.getSaveName());
 
 			// Thumbnail handling
 			if (rich_media_header.dwThumbnailOffsetLowerDword != 0 &&
@@ -151,6 +151,10 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 	}
 
 	return SaveStateDescriptor();
+}
+
+void AGSMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescriptionList() const {

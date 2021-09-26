@@ -395,6 +395,11 @@ protected:
 	void addAccessibilityControls(GuiObject *boss, const Common::String &prefix);
 #endif
 
+#ifdef USE_DISCORD
+	bool _enableDiscordRpc;
+	CheckboxWidget *_discordRpcCheckbox;
+#endif
+
 #ifdef USE_BYONLINE
 	StaticTextWidget *_serverAddrDesc;
 	EditTextWidget *_serverAddr;

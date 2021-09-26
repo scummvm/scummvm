@@ -57,10 +57,10 @@ struct RoomObject {
 	short baseline;       // <=0 to use Y co-ordinate; >0 for specific baseline
 	uint16_t view, loop, frame; // only used to track animation - 'num' holds the current sprite
 	short wait, moving;
-	char  cycling;        // is it currently animating?
-	char  overall_speed;
-	char  on;
-	char  flags;
+	int8  cycling;        // is it currently animating?
+	int8  overall_speed;
+	int8  on;
+	int8  flags;
 	short blocking_width, blocking_height;
 
 	RoomObject();

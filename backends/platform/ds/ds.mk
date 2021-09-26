@@ -1,29 +1,8 @@
-# To approximate the DS builds A, B, C, ... run our configure like this
-#   configure --host=ds --disable-translation --disable-all-engines OPTIONS
-# where OPTIONS is...
-# build A:  --enable-scumm
-# build B:  --enable-sky --enable-queen
-# build C:  --enable-agos
-# build D:  --enable-gob --enable-cine --enable-agi
-# build E:  --enable-saga --disable-mad
-# build F:  --enable-kyra --disable-mad
-# build G:  --enable-lure
-# build H:  --enable-parallaction
-# build I:  --enable-made --disable-mad
-# build K:  --enable-cruise --disable-mad
-#
-# However, this could be automated using a simple script, which generates
-# subdirs for each build, and runs configure in those subdirs with the right
-# parameters (all builds would still share the same set of source code files,
-# thanks to our "out of tree" building support).
-#
-# This does not currently take care of some things:
-# * It does not #define DS_BUILD_A etc. -- most uses of that should be
-#   eliminated, though. Only usage should be for selecting the default config
-#   file (and for that we should really rather allow overriding the value of
-#   DEFAULT_CONFIG_FILE).
-#   There are a few game specific hacks which are currently controlled by this,
-#   too; we need to investigate those.
+ifdef DYNAMIC_MODULES
+DESCRIPTION ?= Built with dynamic plugin support
+else
+DESCRIPTION ?= DS Port
+endif
 
 all: scummvm.nds
 
@@ -43,7 +22,7 @@ dsdist: scummvm.nds $(DIST_FILES_DOCS)
 .PHONY: dsclean dsdist
 
 %.nds: %.elf romfs
-	ndstool -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
+	ndstool -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);$(DESCRIPTION)" -d romfs
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs

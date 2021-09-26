@@ -255,10 +255,11 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), code.encode().c_str());
 
 	if (getScriptContext(type, id)) {
-		// We can't undefine context data because it could be used in e.g. symbols.
-		// Although it has a legit case when kTheScriptText re sets code.
-		// Warn on double definitions.
+		// Replace the pre-existing context but warn about it.
+		// For cases where replacing the script context is expected (e.g. 'when' event handlers)
+		// use replaceCode instead of addCode.
 		warning("Script already defined for type %d, id %d", type, id);
+		removeCode(type, id);
 	}
 
 	Common::String contextName;
@@ -272,6 +273,23 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 		scriptContexts[type][id] = sc;
 		*sc->_refCount += 1;
 	}
+}
+
+void LingoArchive::removeCode(ScriptType type, uint16 id) {
+	ScriptContext *ctx = getScriptContext(type, id);
+	if (!ctx)
+		return;
+
+	*ctx->_refCount -= 1;
+	if (*ctx->_refCount <= 0) {
+		delete ctx;
+	}
+	scriptContexts[type].erase(id);
+}
+
+void LingoArchive::replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
+	removeCode(type, id);
+	addCode(code, type, id, scriptName);
 }
 
 void Lingo::printStack(const char *s, uint pc) {

@@ -77,6 +77,7 @@ bool DefaultAudioCDManager::existExtractedCDAudioFiles() {
 		"mp3",
 #endif
 		"m4a",
+		"wav",
 		nullptr
 	};
 

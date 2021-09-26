@@ -63,7 +63,7 @@ void Sound::open() {
 	setRepeat(1);
 	if (_vm->_commandHandlerTurbo != nullptr)
 		_vm->switchSay();
-	play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(99, 99));
+	play(Audio::Mixer::kSFXSoundType, 99, 99);
 }
 
 void Sound::setRepeat(int16 count) {
@@ -74,9 +74,10 @@ int16 Sound::getRepeat() {
 	return _soundRepeatCount;
 }
 
-void Sound::play(Audio::Mixer::SoundType soundType, DataCk *wav, int pan) {
+void Sound::play(Audio::Mixer::SoundType soundType, int ref, int sub, int pan) {
+	stop();
+	DataCk *wav = _vm->_fx->load(ref, sub);
 	if (wav) {
-		stop();
 		_smpinf._saddr = &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;

@@ -87,7 +87,7 @@ void get_lastcpos(int &lastcx_, int &lastcy_) {
 static int find_route_jps(int fromx, int fromy, int destx, int desty) {
 	sync_nav_wallscreen();
 
-	static std::vector<int> path, cpath;
+	std::vector<int> path, cpath;
 	path.clear();
 	cpath.clear();
 

@@ -116,7 +116,7 @@ QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
 QUIET_LINK    = @echo '   ' LINK '   ' $@;
 QUIET_DWP     = @echo '   ' DWP '    ' $@;
 QUIET_WINDRES = @echo '   ' WINDRES '' $@;
-QUIET_CURL    = @echo '   ' CURL '   ' $@;
+QUIET_CURL		= @echo '   ' CURL '   ' $@;
 QUIET         = @
 endif
 endif
@@ -135,10 +135,7 @@ endif
 ifdef USE_CURL
 DIST_FILES_MANUAL := ScummVM\ Manual\ $(MANUALVERSION).pdf
 manual:
-	$(QUIET_CURL)$(CURL) -s "https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/" --output $(DIST_FILES_MANUAL)
-# If manual doesn't exist yet and ends up in a requisite, download it
-$(DIST_FILES_MANUAL):
-	$(QUIET)$(MAKE) manual
+	$(QUIET_CURL)$(CURL) -s https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/ --output $(DIST_FILES_MANUAL)
 else
 manual:
 endif
@@ -361,7 +358,9 @@ ifdef USE_PANDOC
 DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT)
 endif
 ifdef DIST_FILES_MANUAL
+ifneq ("$(wildcard $(DIST_FILES_MANUAL))","")
 DIST_FILES_DOCS+=$(DIST_FILES_MANUAL)
+endif
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se

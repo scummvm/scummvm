@@ -619,6 +619,16 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		    lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
 
+		} else if (lastKeyHit.flags & Common::KBD_CTRL && _game.version >= 3 && _game.version <= 7 &&
+				   (lastKeyHit.keycode >= Common::KEYCODE_a && lastKeyHit.keycode <= Common::KEYCODE_z)) {
+			// Some games (at least their DOS variants)
+			// expect Ctrl+A, B, C, etc. to generate codes 1, 2, 3, etc.
+			//
+			// This is used for several settings in the "ultimate talkie" versions of
+			// Monkey Island 1 and 2. Monkey Island 1 also uses it for Ctrl+W to immediately
+			// win the game. On other games, Ctrl+I shows the inventory, Ctrl+V shows version
+			// information. On The Dig Ctrl+B makes Boston display his muscles.
+			_mouseAndKeyboardStat = lastKeyHit.keycode & 0x1f;
 		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
 			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
 			// because that's what MI2 looks for in its "instant win" cheat.

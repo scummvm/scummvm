@@ -132,8 +132,10 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// exception here. This the same forced overwriting of the
 	// script decisions as in ScummEngine::processKeyboard.
 	// Also, disable saving when a SAN video is playing.
+	if (_game.version >= 7 && ((ScummEngine_v7 *)this)->isSmushActive())
+		return false;
 	if (_game.id == GID_CMI)
-		return !((ScummEngine_v7 *)this)->isSmushActive();
+		return true;
 #endif
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if

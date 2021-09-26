@@ -359,16 +359,15 @@ static const GrimGameDescription gameDescriptions[] = {
 		// Grim Fandango Remastered
 		{
 			"grim",
-			"Remastered",
+			_s("Missing game code"), // Reason for being unsupported
 			AD_ENTRY1s("VOX0001.LAB", "0ff872fb353707fbdb9579038d4cf31c", 382736476),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_REMASTERED,
+			ADGF_REMASTERED | ADGF_UNSUPPORTED,
 			GUI_OPTIONS_GRIME
 		},
 		GType_GRIM
 	},
-
 	{
 		// Escape from Monkey Island English
 		{

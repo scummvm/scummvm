@@ -2545,8 +2545,8 @@ uint32 Actor::I_pathfindToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
-	ARG_UINT16(z);
-	ARG_NULL16(); // unknown. Only one instance of this in U8, value is 5.
+	ARG_UINT8(z);
+	ARG_NULL16(); // unknown. Only one instance of this in U8, values are 5,1.
 	if (!actor) return 0;
 
 	if (GAME_IS_CRUSADER) {
@@ -2665,7 +2665,8 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	uint16 wpntype2 = npcData->getWpnType2();
 
 	if (World::get_instance()->getGameDifficulty() == 4) {
-	   wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+		wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+		wpntype2 = wpntype;
 	}
 
 	if ((!wpntype || !wpnflag) && wpntype2) {

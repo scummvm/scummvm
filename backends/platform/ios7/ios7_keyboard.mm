@@ -151,7 +151,8 @@
 	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
 	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
 	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
-	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, nil];
+	UIKeyCommand *escapeKey = [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags: 0 action: @selector(escapeKey:)];
+	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, escapeKey, nil];
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
@@ -168,6 +169,10 @@
 
 - (void) rightArrow: (UIKeyCommand *) keyCommand {
 	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT];
+}
+
+- (void) escapeKey: (UIKeyCommand *) keyCommand {
+	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE];
 }
 
 - (void) mainMenuKey {

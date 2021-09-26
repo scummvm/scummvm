@@ -15,7 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos.
    - Added support for Glulx interactive fiction games.
    - Added support for Lure of the Temptress Konami release.
-   - Added support for Private Eye (US release).
+   - Added support for Private Eye.
    - Added support for Spanish Blue Force.
    - Added support for Spanish Ringworld.
    - Added support for Spanish Amazon: Guardians of Eden.
@@ -42,6 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
    - ScummVM GUI has been fully translated into Korean and Japanese.
+   - Added GUI option for enabling and disabling the Discord RPC integration.
 
  ADL:
    - Added support for Mystery House French translation.
@@ -58,6 +59,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  CGE2:
    - Added option to use Text To Speech for Sfinx.
+
+ Cine:
+   - Added detection for Future Wars CD version with French translation patch.
+   - Added detection for Italian Amiga Operation Stealth.
+   - Fixed crash before entering secret base.
+   - Fixed space missing in verb line.
+   - Fixed vertically overflowing message boxes.
 
  Dreamweb:
    - Rendering fixes for Russian fan translation.
@@ -168,7 +176,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      of one of the three destroyable turrets in the fort.
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
      version of Monkey Island 1. It was present in earlier versions.
-   - Restored some missing Lemonhead lines in the English, Italian and German CD
+   - Restored some missing Lemonhead lines in the English, Italian, German and Spanish CD
      versions as well as the English Macintosh, FM-Towns and Sega CD versions
      of Monkey Island 1.
    - Made the clock tower in Monkey Island 1 behave the same in the CD version
@@ -177,6 +185,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Enabled the Return to Launcher feature.
+
+ Titanic:
+   - Fixed crashes when asking bots what I should do.
 
  TsAGE:
    - Added support for uninstalled floppy version.

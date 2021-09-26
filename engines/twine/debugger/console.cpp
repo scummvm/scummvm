@@ -50,6 +50,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
+	registerCmd("toggle_godmode", WRAP_METHOD(TwinEConsole, doToggleGodMode));
 	registerCmd("toggle_autoagressive", WRAP_METHOD(TwinEConsole, doToggleAutoAggressive));
 	registerCmd("toggle_actors", WRAP_METHOD(TwinEConsole, doToggleActorRendering));
 	registerCmd("toggle_clips", WRAP_METHOD(TwinEConsole, doToggleClipRendering));
@@ -98,8 +99,13 @@ bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
 	return true;
 }
 
+bool TwinEConsole::doToggleGodMode(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_debugScene->_godMode, "god mode\n")
+	return true;
+}
+
 bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_useScenePatches, "use scene patches\n")
+	TOGGLE_DEBUG(_engine->_scene->_useScenePatches, "use scene patches\n")
 	return true;
 }
 
@@ -349,6 +355,7 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 		return true;
 	}
 	_engine->_scene->_needChangeScene = atoi(argv[1]);
+	_engine->_scene->_heroPositionType = ScenePositionType::kScene;
 	_engine->_scene->changeScene();
 	return true;
 }

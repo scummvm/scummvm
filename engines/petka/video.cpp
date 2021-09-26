@@ -39,7 +39,7 @@ VideoSystem::VideoSystem(PetkaEngine &vm)
 	_time = g_system->getMillis();
 	_shake = false;
 	_shift = false;
-	_allowAddingRects = false;
+	_allowAddingRects = true;
 }
 
 void VideoSystem::update() {

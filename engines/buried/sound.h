@@ -26,6 +26,7 @@
 #ifndef BURIED_SOUND_H
 #define BURIED_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/str.h"
 
 namespace Audio {
@@ -134,6 +135,7 @@ private:
 		uint32 _timedEffectRemaining;             // The remaining amount of time for the effect
 
 		bool _wasPlaying;
+		Audio::Mixer::SoundType _soundType;
 	};
 
 	BuriedEngine *_vm;

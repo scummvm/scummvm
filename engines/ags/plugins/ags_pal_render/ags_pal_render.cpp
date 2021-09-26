@@ -88,13 +88,13 @@ BITMAP *rcolormap;
 BITMAP *ralphamap;
 
 struct charrefopt {
-	char reflect;
+	int8 reflect;
 	int replaceview;
 };
 
 struct objrefopt {
-	char reflect;
-	char ignorescaling;
+	int8 reflect;
+	int8 ignorescaling;
 };
 
 struct reflectionopt {

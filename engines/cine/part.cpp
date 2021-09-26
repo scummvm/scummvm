@@ -197,7 +197,8 @@ void CineEngine::readVolCnf() {
 int16 findFileInBundle(const char *fileName) {
 	// HACK: Fix underwater background palette by reading it from correct file
 	if (hacksEnabled && g_cine->getGameType() == Cine::GType_OS &&
-		scumm_stricmp(currentPrcName, "SOUSMAR2.PRC") == 0) {
+		scumm_stricmp(currentPrcName, "SOUSMAR2.PRC") == 0 &&
+		g_cine->_volumeEntriesMap.contains(fileName)) {
 		Common::Array<VolumeResource> volRes = g_cine->_volumeEntriesMap.find(fileName)->_value;
 		if (volRes.size() == 2 && scumm_stricmp(volRes[0].name, "rsc12") == 0 &&
 			scumm_stricmp(volRes[1].name, "rsc08") == 0 &&

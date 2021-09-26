@@ -75,8 +75,8 @@ public:
 	void addTargetItem(const Item *item);
 	//! Remove an item from the list of possible targets (in Crusader)
 	void removeTargetItem(const Item *item);
-	//! Find the best target item in the given direction
-	Item *findBestTargetItem(int32 x, int32 y, Direction dir, DirectionMode dirmode);
+	//! Find the best target item in the given direction from the given start point.
+	Item *findBestTargetItem(int32 x, int32 y, int32 z, Direction dir, DirectionMode dirmode);
 
 	//! Update the fast area for the cameras position
 	void updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z);

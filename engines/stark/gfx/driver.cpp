@@ -25,12 +25,15 @@
 #include "engines/stark/gfx/opengls.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "graphics/opengl/context.h"
 #endif
+
+#include "gui/error.h"
 
 #include "engines/util.h"
 
@@ -42,23 +45,23 @@ Driver *Driver::create() {
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!softRenderer) {
 		initGraphics3d(kOriginalWidth, kOriginalHeight);
 	} else {
 #endif
 		initGraphics(kOriginalWidth, kOriginalHeight, nullptr);
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	}
 #endif
 
+	Driver *driver = nullptr;
+
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+		warning("Unable to match a '%s' renderer", rendererConfig.c_str());
 	}
-
-	Driver *driver = nullptr;
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 	bool backendCapableOpenGLShaders = g_system->hasFeature(OSystem::kFeatureOpenGLForGame) && OpenGLContext.shadersSupported;
@@ -66,20 +69,20 @@ Driver *Driver::create() {
 		driver = new OpenGLSDriver();
 	}
 #endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		driver = new OpenGLDriver();
-	}
-#endif
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		//driver = CreateTinyGLDriver();
-		error("This game does not currently support software rendering");
+		//driver = new TinyGLDriver();
 	}
 
-	if (driver)
-		return driver;
-	error("No renderers have been found for this game");
+	if (!driver) {
+		if (desiredRendererType != Graphics::kRendererTypeDefault) {
+			warning("Desired a '%s' renderer is not supported", rendererConfig.c_str());
+			GUI::displayErrorDialog(Common::U32String::format("Desired a '%s' renderer is not supported", rendererConfig.c_str()));
+		} else {
+			warning("No renderers have been found for this game");
+			GUI::displayErrorDialog(Common::U32String::format(_("No renderers have been found for this game")));
+		}
+	}
+	return driver;
 }
 
 const Graphics::PixelFormat Driver::getRGBAPixelFormat() {

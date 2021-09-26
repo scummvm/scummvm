@@ -1074,6 +1074,7 @@ void playerCommandMouseLeft(uint16 &mouseButton, uint16 &mouseX, uint16 &mouseY)
 			g_cine->_commandBuffer = "";
 		} else if (g_cine->getGameType() == Cine::GType_OS) {
 			isDrawCommandEnabled = 1;
+			g_cine->_commandBuffer += " ";
 			g_cine->_commandBuffer += commandPrepositionTable[playerCommand];
 		}
 

@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES)
@@ -64,10 +66,37 @@ static void drawPluginProgress(const Common::String &filename)
   ta_txrelease(mark);
 }
 
+extern int getCdState();
+extern "C" {
+  int dummy_cdfs_get_volume_id(char *, unsigned int) {
+    return -1;
+  }
+  int cdfs_get_volume_id(char *, unsigned int) __attribute__ ((weak, alias ("dummy_cdfs_get_volume_id")));
+}
+
+class DiscLabel {
+private:
+	char buf[32];
+public:
+	DiscLabel() {
+		if (cdfs_get_volume_id(buf, 32) < 0)
+			memset(buf, '*', 32);
+	}
+
+	bool operator==(const DiscLabel &other) const {
+		return !memcmp(buf, other.buf, 32);
+	}
+
+	void get(char *p) const {
+		memcpy(p, buf, 32);
+		p[32] = 0;
+	}
+};
 
 class OSystem_Dreamcast::DCPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
+	DiscLabel _label;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func = dlsym(_dlHandle, symbol);
@@ -84,16 +113,21 @@ protected:
 		return tmp;
 	}
 
+	void checkDisc(const DiscLabel &);
+
 public:
 	DCPlugin(const Common::String &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
+		DiscLabel original;
+		checkDisc(_label);
 		drawPluginProgress(_filename);
 		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
 
 		if (!_dlHandle) {
+			checkDisc(original);
 			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
 			return false;
 		}
@@ -103,6 +137,7 @@ public:
 		if (ret)
 			dlforgetsyms(_dlHandle);
 
+		checkDisc(original);
 		return ret;
 	}
 
@@ -116,6 +151,42 @@ public:
 	}
 };
 
+void OSystem_Dreamcast::DCPlugin::checkDisc(const DiscLabel &target)
+{
+  for (;;) {
+    DiscLabel current;
+    if (current == target)
+	return;
+
+    Label lab;
+    int wasopen = 0;
+    ta_sync();
+    void *mark = ta_txmark();
+    char buf[32+24];
+    strcpy(buf, "Please insert disc '");
+    target.get(buf+strlen(buf));
+    strcat(buf, "'");
+    lab.create_texture(buf);
+    for (;;) {
+      int s = getCdState();
+      if (s >= 6)
+	wasopen = 1;
+      if (s > 0 && s < 6 && wasopen) {
+	cdfs_reinit();
+	chdir("/");
+	chdir("/");
+	ta_sync();
+	ta_txrelease(mark);
+	break;
+      }
+
+      ta_begin_frame();
+      ta_commit_end();
+      lab.draw(100.0, 200.0, 0xffffffff);
+      ta_commit_frame();
+    }
+  }
+}
 
 Plugin* OSystem_Dreamcast::createPlugin(const Common::FSNode &node) const {
 	return new DCPlugin(node.getPath());

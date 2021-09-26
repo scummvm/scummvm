@@ -945,7 +945,7 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	_G(user_disabled_for) = cached_user_disabled_for;
 }
 
-void GameLoopUntilValueIsZero(const char *value) {
+void GameLoopUntilValueIsZero(const int8 *value) {
 	GameLoopUntilEvent(UNTIL_CHARIS0, value);
 }
 

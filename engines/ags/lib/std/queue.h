@@ -33,6 +33,11 @@ namespace std {
 template<class T>
 using queue = Common::Queue<T>;
 
+/**
+ * FIXME: The current implementation requires the reverse
+ * greater/lesser comparitor than the original does.
+ * If this is fixed, also change the router finder's use
+ */
 template<class T, class Container = vector<T>, class Comparitor = typename Common::Less<T> >
 class priority_queue {
 private:

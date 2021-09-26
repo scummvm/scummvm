@@ -67,7 +67,7 @@ void CruAvatarMoverProcess::run() {
 		if (_avatarAngle < 0) {
 			_avatarAngle = Direction_ToCentidegrees(avatar->getDir());
 		}
-		if (!hasMovementFlags(MOVE_FORWARD | MOVE_BACK | MOVE_JUMP | MOVE_STEP)) {
+		if (!hasMovementFlags(MOVE_FORWARD | MOVE_JUMP | MOVE_STEP)) {
 			// See comment on _avatarAngle in header about these constants
 			if (hasMovementFlags(MOVE_TURN_LEFT)) {
 				if (hasMovementFlags(MOVE_RUN))
@@ -91,9 +91,10 @@ void CruAvatarMoverProcess::run() {
 		_avatarAngle = -1;
 		// Check for a turn request while running or walking.  This only happens
 		// once per arrow keydown, so clear the flag.
-		if (avatar->isBusy() && _isAnimRunningWalking(avatar->getLastAnim())
+		if (_isAnimRunningWalking(avatar->getLastAnim())
 			&& hasMovementFlags(MOVE_FORWARD)
-			&& (hasMovementFlags(MOVE_TURN_LEFT) || hasMovementFlags(MOVE_TURN_RIGHT))) {
+			&& (hasMovementFlags(MOVE_TURN_LEFT) || hasMovementFlags(MOVE_TURN_RIGHT) ||
+				hasMovementFlags(MOVE_PENDING_TURN_LEFT) || hasMovementFlags(MOVE_PENDING_TURN_RIGHT))) {
 			Kernel *kernel = Kernel::get_instance();
 			// Stop the current animation and turn now.
 			kernel->killProcesses(avatar->getObjId(), ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, true);
@@ -102,16 +103,29 @@ void CruAvatarMoverProcess::run() {
 			Animation::Sequence anim = hasMovementFlags(MOVE_RUN) ? Animation::run : Animation::walk;
 			DirectionMode dirmode = avatar->animDirMode(anim);
 			Direction dir = getTurnDirForTurnFlags(curdir, dirmode);
-			clearMovementFlag(MOVE_TURN_LEFT | MOVE_TURN_RIGHT);
+			clearMovementFlag(MOVE_TURN_LEFT | MOVE_TURN_RIGHT |
+							  MOVE_PENDING_TURN_LEFT | MOVE_PENDING_TURN_RIGHT);
 			step(anim, dir);
 			return;
 		}
 	}
 
+	// Pending turns shouldn't stick around.
+	clearMovementFlag(MOVE_PENDING_TURN_LEFT | MOVE_PENDING_TURN_RIGHT);
+
 	// Now do the regular process
 	AvatarMoverProcess::run();
 }
 
+void CruAvatarMoverProcess::clearMovementFlag(uint32 mask) {
+	// Set a pending turn if we haven't already cleared the turn
+	if ((mask & MOVE_TURN_LEFT) && hasMovementFlags(MOVE_TURN_LEFT))
+		setMovementFlag(MOVE_PENDING_TURN_LEFT);
+	else if ((mask & MOVE_TURN_RIGHT) && hasMovementFlags(MOVE_TURN_RIGHT))
+		setMovementFlag(MOVE_PENDING_TURN_RIGHT);
+
+	AvatarMoverProcess::clearMovementFlag(mask);
+}
 
 void CruAvatarMoverProcess::handleHangingMode() {
 	// No hanging in crusader, this shouldn't happen?
@@ -495,7 +509,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		return;
 
 	//debug(6, "Cru avatar step: picked action %d dir %d (test result %d)", action, direction, res);
-	waitFor(avatar->doAnim(action, direction));
+	avatar->doAnim(action, direction);
 }
 
 void CruAvatarMoverProcess::tryAttack() {

@@ -148,7 +148,7 @@ int FindMatchingMultiWordWord(char *thisword, const char **text) {
 int parse_sentence(const char *src_text, int *numwords, short *wordarray, short *compareto, int comparetonum) {
 	char thisword[150] = "\0";
 	int  i = 0, comparing = 0;
-	char in_optional = 0, do_word_now = 0;
+	int8 in_optional = 0, do_word_now = 0;
 	int  optional_start = 0;
 
 	numwords[0] = 0;

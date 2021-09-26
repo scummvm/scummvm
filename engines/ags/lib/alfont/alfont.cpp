@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/fonts/winfont.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
@@ -37,7 +38,16 @@ Graphics::Font *ALFONT_FONT::getFont() {
 		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
 		if (ShouldAntiAliasText())
 			renderMode = Graphics::kTTFRenderModeLight;
-		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
+		Graphics::Font *font = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
+		if (!font) {
+			// Try WinFont as TTFFont may fail loading those
+			Graphics::WinFont *winfont = new Graphics::WinFont();
+			if (winfont->loadFromFON(_ttfData))
+				font = winfont;
+			else
+				delete winfont;
+		}
+		_fonts[_size] = font;
 		assert(_fonts[_size]);
 	}
 

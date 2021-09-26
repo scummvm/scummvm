@@ -49,7 +49,7 @@ namespace Supernova {
 #define SAVEGAME_VERSION 10
 
 #define SUPERNOVA_DAT "supernova.dat"
-#define SUPERNOVA_DAT_VERSION 3
+#define SUPERNOVA_DAT_VERSION 4
 
 class GuiElement;
 class ResourceManager;

@@ -1899,11 +1899,6 @@ riscos)
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
-	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
-		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
-	elif `which bindhelp >/dev/null 2>&1`; then
-		add_line_to_config_mk "BINDHELP := bindhelp"
-	fi
 	;;
 *)
 	;;
@@ -2899,6 +2894,10 @@ EOF
 	dreamcast)
 		append_var DEFINES "-D__DC__"
 		append_var DEFINES "-DNONSTANDARD_PORT"
+		_detection_features_full=no
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+		fi
 		;;
 	ds)
 		_optimization_level=-Os
@@ -3342,6 +3341,7 @@ if test -n "$_host"; then
 			_backend="dc"
 			_build_scalers=no
 			_build_aspect=no
+			_tinygl=no
 			# These two are needed due to shortcomings of the
 			# detection systems.  Do not remove until auto-
 			# detection works correctly.
@@ -4154,6 +4154,7 @@ POST_OBJS_FLAGS :=
 	dreamcast)
 		_plugin_prefix=""
 		_plugin_suffix=".plg"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
 PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
@@ -6173,6 +6174,12 @@ case $_host_os in
 		fi
 		;;
 	android)
+		# Force treating unqualified char variables as signed by default.
+		# NDK compiler for ARM will treat them as unsigned otherwise, which creates bugs in the code.
+		# We apply this to all Android architectures (arm, arm64, and x86, x86-64)
+		# albeit only the ARM architectures really required it (the others are not affected by this addition).
+		echo "(Android) Treating char as signed char by default"
+		append_var CXXFLAGS "-fsigned-char"
 		# ssp at this point so the cxxtests link
 		if test "$_debug_build" = yes; then
 			append_var CXXFLAGS "-fstack-protector"

@@ -27,6 +27,8 @@
 namespace Common {
 
 const LanguageDescription g_languages[] = {
+	{    "ar",    "ar", "Arabic", AR_ARB }, // Modern Standard Arabic
+	{    "ca", "ca_ES", "Catalan", CA_ESP },
 	{    "nz",    "nz", "Chinese", ZH_ANY }, // Generic Chinese (when only one game version exist)
 	{ "zh-cn", "zh_CN", "Chinese (China)", ZH_CNA },
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
@@ -39,6 +41,7 @@ const LanguageDescription g_languages[] = {
 	{    "us", "en_US", "English (US)", EN_USA },
 	{    "et", "et_EE", "Estonian", ET_EST },
 	{    "fi", "fi_FI", "Finnish", FI_FIN },
+	{    "vl", "nl_BE", "Flemish", NL_BEL },
 	{    "fr", "fr_FR", "French", FR_FRA },
 	{    "de", "de_DE", "German", DE_DEU },
 	{    "gr", "el_GR", "Greek", GR_GRE },
@@ -55,12 +58,12 @@ const LanguageDescription g_languages[] = {
 	{    "br", "pt_BR", "Portuguese (Brazil)", PT_BRA },
 	{    "pt", "pt_PT", "Portuguese (Portugal)", PT_POR },
 	{    "ru", "ru_RU", "Russian", RU_RUS },
+	{    "sr", "sr_SP", "Serbian", SR_SER },
 	{    "sk", "sk_SK", "Slovak", SK_SVK },
 	{    "es", "es_ES", "Spanish", ES_ESP },
 	{    "se", "sv_SE", "Swedish", SE_SWE },
 	{    "tr", "tr_TR", "Turkish", TR_TUR },
 	{    "uk", "uk_UA", "Ukrainian", UA_UKR },
-	{    "sr", "sr_SP", "Serbian", SR_SER },
 	{ nullptr, nullptr, nullptr, UNK_LANG }
 };
 

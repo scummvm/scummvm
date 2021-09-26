@@ -28,9 +28,9 @@
 
 #include "common/language.h"
 #include "common/tokenizer.h"
+#include "common/str-enc.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/utils/convert_utf.h"
 
 namespace Wintermute {
 
@@ -52,49 +52,12 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
-	size_t wideSize = Utf8Str.size();
-
-	uint32 *wideStringNative = new uint32[wideSize + 1];
-
-	const UTF8 *sourceStart = reinterpret_cast<const UTF8 *>(Utf8Str.c_str());
-	const UTF8 *sourceEnd = sourceStart + wideSize;
-
-	UTF32 *targetStart = reinterpret_cast<UTF32 *>(wideStringNative);
-	UTF32 *targetEnd = targetStart + wideSize;
-
-	ConversionResult res = ConvertUTF8toUTF32(&sourceStart, sourceEnd, &targetStart, targetEnd, strictConversion);
-	if (res != conversionOK) {
-		delete[] wideStringNative;
-		return WideString();
-	}
-	*targetStart = 0;
-	WideString resultString(wideStringNative);
-	delete[] wideStringNative;
-	return resultString;
+	return Common::convertToU32String(Utf8Str.c_str(), Common::kUtf8);
 }
 
 //////////////////////////////////////////////////////////////////////////
 Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
-	size_t wideSize = WideStr.size();
-
-	size_t utf8Size = 4 * wideSize + 1;
-	char *utf8StringNative = new char[utf8Size];
-
-	const UTF32 *sourceStart = reinterpret_cast<const UTF32 *>(WideStr.c_str());
-	const UTF32 *sourceEnd = sourceStart + wideSize;
-
-	UTF8 *targetStart = reinterpret_cast<UTF8 *>(utf8StringNative);
-	UTF8 *targetEnd = targetStart + utf8Size;
-
-	ConversionResult res = ConvertUTF32toUTF8(&sourceStart, sourceEnd, &targetStart, targetEnd, strictConversion);
-	if (res != conversionOK) {
-		delete[] utf8StringNative;
-		return Utf8String();
-	}
-	*targetStart = 0;
-	Utf8String resultString(utf8StringNative);
-	delete[] utf8StringNative;
-	return resultString;
+	return Common::convertFromU32String(WideStr, Common::kUtf8);
 }
 
 //////////////////////////////////////////////////////////////////////////

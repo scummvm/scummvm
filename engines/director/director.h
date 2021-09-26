@@ -194,6 +194,7 @@ public:
 	void setVersion(uint16 version);
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;

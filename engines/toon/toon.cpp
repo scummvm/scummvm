@@ -1132,10 +1132,12 @@ Common::Error ToonEngine::run() {
 	if (!loadedGame) {
 
 		// play producer intro
-		getMoviePlayer()->play("VIELOGOM.SMK", 0x10);
+		// not all demo versions include the logo video
+		getMoviePlayer()->play("VIELOGOM.SMK", _isDemo ? 0x12 : 0x10);
 
 		// show mainmenu
-		if (!showMainmenu(loadedGame)) {
+		// the demo does not have a menu and starts a new game right away
+		if (!_isDemo && !showMainmenu(loadedGame)) {
 			return Common::kNoError;
 		}
 	}

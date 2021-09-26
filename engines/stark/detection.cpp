@@ -24,6 +24,7 @@
 
 #include "common/translation.h"
 
+#include "stark/detection.h"
 #include "stark/debug.h"
 
 namespace Stark {
@@ -44,6 +45,20 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 static const ADGameDescription gameDescriptions[] = {
+
+	// The Longest Journey
+	// English Steam (game.exe missing valid 147.bmp resource for dialog boxes background)
+	{
+		"tlj", "Steam",
+		AD_ENTRY3s("x.xarc",        "de8327850d7bba90b690b141eaa23f61", 3032,
+				   "chapters.ini",  "5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485,
+				   "game.exe",      "2a68bd64e71635c74a5c6bb172ec1cb1", 95744),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_MISSING_EXE_RESOURCES|ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	// The Longest Journey
 	// English DVD
 	{
