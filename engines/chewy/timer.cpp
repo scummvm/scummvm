@@ -27,24 +27,20 @@
 
 namespace Chewy {
 
-static int16 timer_flag;
-static int16 timer_int;
-static int timer_count;
-void timer_handler(void);
-void (* old1c)(void);
-static int16 timer_suspend;
+bool timer_flag;
+bool timer_int;
+int timer_count;
+bool timer_suspend;
 
 timer::timer(int16 max_t, TimerBlk *t) {
 	timer_blk = t;
 	timer_max = max_t;
 	timer_int = false;
 	timer_suspend = false;
-	init_timer_handler();
 	set_all_status(TIMER_STOP);
 }
 
 timer::~timer() {
-	remove_timer_handler();
 }
 
 float timer_freq[6] = {
@@ -140,43 +136,6 @@ void timer::set_all_status(int16 status) {
 	else {
 		for (i = 0; i < timer_max; i++)
 			timer_blk[i].TimeStatus = status;
-	}
-}
-
-void timer::init_timer_handler() {
-	warning("STUB: init_timer_handler()");
-#if 0
-	if (!timer_int) {
-		timer_int = TRUE;
-		timer_flag = FALSE;
-		timer_count = 0;
-		_disable();
-		old1c = _dos_getvect(0x1c);
-		_dos_setvect(0x1c, timer_handler);
-		_enable();
-	}
-#endif
-}
-
-void timer::remove_timer_handler() {
-	warning("STUB: remove_timer_handler()");
-#if 0
-	if (timer_int) {
-		timer_int = FALSE;
-		_disable();
-		_dos_setvect(0x1c, old1c);
-		_enable();
-	}
-#endif
-}
-
-void timer_handler(void) {
-	old1c();
-	if (timer_flag == false) {
-		timer_flag = true;
-		if (!timer_suspend)
-			++timer_count;
-		timer_flag = false;
 	}
 }
 
