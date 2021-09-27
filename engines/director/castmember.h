@@ -189,6 +189,35 @@ public:
 	Channel *_channel;
 };
 
+
+
+struct FilmLoopSprite {
+	uint16 castId;
+	Common::Rect bbox;
+	FilmLoopSprite() { castId = 0; }
+	FilmLoopSprite(uint16 castId1, Common::Rect &bbox1) { castId = castId1; bbox = bbox1; }
+};
+
+struct FilmLoopFrame {
+	Common::HashMap<int, FilmLoopSprite> sprites;
+};
+
+class FilmLoopCastMember : public CastMember {
+public:
+	FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	~FilmLoopCastMember();
+
+	void loadFilmLoopData(Common::SeekableReadStreamEndian &stream);
+
+	bool _enableSound;
+	bool _looping;
+	bool _crop;
+	bool _center;
+
+	Common::Rect _bbox;
+	Common::Array<FilmLoopFrame> _frames;
+};
+
 class SoundCastMember : public CastMember {
 public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
