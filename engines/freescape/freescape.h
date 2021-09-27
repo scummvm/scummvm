@@ -78,8 +78,15 @@ public:
 
 
 	// Movement
-	void Move(CameraMovement direction, float deltaTime);
+	void move(CameraMovement direction, float deltaTime);
+	void rotate(Common::Point lastMousePos, Common::Point mousePos);
+	// Eular Angles
+	float _yaw;
+	float _pitch;
+	// Camera options
+	float _mouseSensitivity;
 	float _movementSpeed;
+	Vector3d _front, _right;
 	Vector3d _position, _rotation, _velocity;
 
 
