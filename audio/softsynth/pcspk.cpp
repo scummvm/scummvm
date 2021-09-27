@@ -27,8 +27,8 @@
 
 namespace Audio {
 
-PCSpeaker::Command::Command(WaveForm waveForm, float frequency, uint32 length) :
-	waveForm(waveForm), frequency(frequency), length(length) { };
+PCSpeaker::Command::Command(WaveForm aWaveForm, float aFrequency, uint32 aLength) :
+	waveForm(aWaveForm), frequency(aFrequency), length(aLength) { }
 
 const PCSpeaker::generatorFunc PCSpeaker::generateWave[] =
 	{&PCSpeaker::generateSquare, &PCSpeaker::generateSine,
@@ -122,7 +122,7 @@ int PCSpeaker::readBuffer(int16 *buffer, const int numSamples) {
 			// Note that this will end playback started by the play method.
 			Command command = _commandQueue->pop();
 			_wave = command.waveForm;
-			_oscLength = _rate / command.frequency;
+			_oscLength = (uint32)(_rate / command.frequency);
 			_oscSamples = 0;
 			// Length is in microseconds.
 			_remainingSamples = (_rate * command.length) / 1000000;
