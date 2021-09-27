@@ -548,6 +548,128 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
 }
 
+/////////////////////////////////////
+// Film loops
+/////////////////////////////////////
+
+FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
+	_type = kCastFilmLoop;
+	_looping = true;
+	_enableSound = true;
+	_crop = false;
+	_center = false;
+}
+
+FilmLoopCastMember::~FilmLoopCastMember() {
+
+}
+
+void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stream) {
+	_bbox = Common::Rect();
+	_frames.clear();
+
+	uint32 size = stream.readUint32BE();
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "SCVW body:");
+		uint32 pos = stream.pos();
+		stream.seek(0);
+		stream.hexdump(size);
+		stream.seek(pos);
+	}
+	uint32 framesOffset = stream.readUint32BE();
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "SCVW header:");
+		stream.hexdump(framesOffset - 8);
+	}
+	stream.skip(6);
+	uint16 channelSize = stream.readUint16BE(); // should be 20!
+	stream.skip(framesOffset - 16);
+
+	FilmLoopFrame newFrame;
+
+	while (stream.pos() < size) {
+		uint16 frameSize = stream.readUint16BE() - 2;
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "Frame entry:");
+			stream.hexdump(frameSize);
+		}
+
+		while (frameSize > 0) {
+			uint16 msgWidth = stream.readUint16BE();
+			uint16 order = stream.readUint16BE();
+			frameSize -= 4;
+
+			int channel = (order / channelSize) - 1;
+			int channelOffset = order % channelSize;
+
+			uint16 spriteCastId = 0;
+			int16 x = 0;
+			int16 y = 0;
+			uint16 width = 0;
+			uint16 height = 0;
+			if (newFrame.sprites.contains(channel)) {
+				FilmLoopSprite s = newFrame.sprites.getVal(channel);
+				spriteCastId = s.castId;
+				x = s.bbox.left;
+				y = s.bbox.top;
+				width = s.bbox.width();
+				height = s.bbox.height();
+			}
+			debugC(8, kDebugLoading, "Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
+			if (debugChannelSet(8, kDebugLoading)) {
+				stream.hexdump(msgWidth);
+			}
+
+			for (int i = channelOffset; i < channelOffset + msgWidth; i += 2) {
+				switch (i) {
+				case 6:
+					spriteCastId = stream.readUint16BE();
+					break;
+				case 8:
+					y = stream.readSint16BE();
+					break;
+				case 10:
+					x = stream.readSint16BE();
+					break;
+				case 12:
+					height = stream.readUint16BE();
+					break;
+				case 14:
+					width = stream.readUint16BE();
+					break;
+				default:
+					stream.readUint16BE();
+					break;
+				}
+			}
+
+			frameSize -= msgWidth;
+
+			Common::Rect spriteBbox(x, y, x + width, y + height);
+			newFrame.sprites.setVal(channel, FilmLoopSprite(spriteCastId, spriteBbox));
+			if (!_bbox.isValidRect()) {
+				_bbox = spriteBbox;
+			} else {
+				_bbox.extend(spriteBbox);
+			}
+		}
+
+		if (debugChannelSet(5, kDebugLoading)) {
+			for (Common::HashMap<int, FilmLoopSprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
+				debugC(5, kDebugLoading, "FilmLoopSprite: channel %d, castId %d, bbox %d %d %d %d", s->_key,
+						s->_value.castId, s->_value.bbox.left, s->_value.bbox.top,
+						s->_value.bbox.width(), s->_value.bbox.height());
+
+			}
+		}
+
+		_frames.push_back(newFrame);
+
+	}
+
+}
+
 
 /////////////////////////////////////
 // Sound

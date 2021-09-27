@@ -42,6 +42,7 @@ struct LingoArchive;
 struct Resource;
 class Stxt;
 class BitmapCastMember;
+class FilmLoopCastMember;
 class ScriptCastMember;
 class ShapeCastMember;
 class TextCastMember;

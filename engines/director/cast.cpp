@@ -417,11 +417,6 @@ void Cast::loadCast() {
 		debug("STUB: Unhandled 'PICT' resource");
 	}
 
-	// Film Loop resources
-	if (_castArchive->hasResource(MKTAG('S', 'C', 'V', 'W'), -1)) {
-		debug("STUB: Unhandled 'SCVW' resource");
-	}
-
 	// External Cast Reference resources
 	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
 		debug("STUB: Unhandled 'SCRF' resource");
@@ -505,7 +500,31 @@ void Cast::loadCastChildren() {
 				// for D2, we shall use the castId to get the palette
 				member->_palette = g_director->getPalette(member->getID());
 			} else {
-				warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
+				warning("Cast::loadCastChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
+			}
+			continue;
+		}
+
+		// Then load film loops
+		if (c->_value->_type == kCastFilmLoop) {
+			FilmLoopCastMember *member = ((FilmLoopCastMember *)c->_value);
+
+			if (_version >= kFileVer400 && _version < kFileVer500) {
+				if (member->_children.size() == 1) {
+					uint16 filmLoopId = member->_children[0].index;
+					uint32 tag = member->_children[0].tag;
+					if (_castArchive->hasResource(tag, filmLoopId)) {
+						Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
+						debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+						member->loadFilmLoopData(*loop);
+					} else {
+						warning("Cast::loadCastChildren(): Film loop not found");
+					}
+				} else {
+					warning("Cast::loadCastChildren(): Expected 1 child for film loop cast, got %d", member->_children.size());
+				}
+			} else {
+				warning("STUB: Cast::loadCastChildren(): Film loops not supported for version %d", _version);
 			}
 			continue;
 		}
@@ -925,8 +944,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		_loadedCast->setVal(id, new DigitalVideoCastMember(this, id, castStream, _version));
 		break;
 	case kCastFilmLoop:
-		warning("STUB: Cast::loadCastData(): kCastFilmLoop (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
-		castInfoSize = 0;
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastFilmLoop (%d children)", res->children.size());
+		_loadedCast->setVal(id, new FilmLoopCastMember(this, id, castStream, _version));
 		break;
 	case kCastPalette:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastPalette (%d children)", res->children.size());
@@ -1204,6 +1223,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	// For SoundCastMember, read the flags in the CastInfo
 	if (_version >= kFileVer400 && _version < kFileVer500 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
+	}
+
+	// For FilmLoopCastMember, read the flags in the CastInfo
+	if (_version >= kFileVer400 && _version < kFileVer500 && member->_type == kCastFilmLoop) {
+		((FilmLoopCastMember *)member)->_looping = castInfo.flags & 64 ? 0 : 1;
+		((FilmLoopCastMember *)member)->_enableSound = castInfo.flags & 8 ? 1 : 0;
+		((FilmLoopCastMember *)member)->_crop = castInfo.flags & 2 ? 0 : 1;
+		((FilmLoopCastMember *)member)->_center = castInfo.flags & 1 ? 1 : 0;
 	}
 
 	ci->autoHilite = castInfo.flags & 2;
