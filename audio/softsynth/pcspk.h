@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "common/mutex.h"
+#include "common/queue.h"
 
 namespace Audio {
 
@@ -34,9 +35,21 @@ public:
 		kWaveFormSquare = 0,
 		kWaveFormSine,
 		kWaveFormSaw,
-		kWaveFormTriangle
+		kWaveFormTriangle,
+		kWaveFormSilence
 	};
 
+protected:
+	// PC speaker instruction: play this waveform at frequency x for y microseconds.
+	struct Command {
+		WaveForm waveForm;
+		float frequency;
+		uint32 length;
+
+		Command(WaveForm waveForm, float frequency, uint32 length);
+	};
+
+public:
 	PCSpeaker(int rate = 44100);
 	~PCSpeaker();
 
@@ -45,6 +58,27 @@ public:
 	 *  If length is negative, play until told to stop.
 	 */
 	void play(WaveForm wave, int freq, int32 length);
+	/**
+	 * Queue the specified playback instruction. It will be executed when all
+	 * previously queued instructions have finished. Use this method for
+	 * playback of effects which require timing precision of less than a
+	 * millisecond.
+	 *
+	 * Calling this method will terminate any waveform started with the play
+	 * method. Calling the play method will terminate the active queued
+	 * instruction and clear the instruction queue.
+	 *
+	 * Use isPlaying to check if all queued instructions have finished playing.
+	 * This will return true even if the current instruction is "playing"
+	 * silence.
+	 * 
+	 * @param wave The waveform to use. For PC speaker, use square wave or
+	 * silence.
+	 * @param freq The frequency (in Hertz) to play.
+	 * @param lengthus The length in microseconds for which to play the
+	 * waveform.
+	 */
+	void playQueue(WaveForm wave, float freq, uint32 lengthus);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
 	/** Adjust the volume. */
@@ -71,6 +105,13 @@ protected:
 	uint32 _mixedSamples;
 	byte _volume;
 
+	// The queue of playback instructions.
+	Common::Queue<Command> *_commandQueue;
+	// True if a playback instruction is currently being executed. False if
+	// current playback was started by the play method (or if there is no
+	// playback at all).
+	bool _commandActive;
+
 	typedef int8 (*generatorFunc)(uint32, uint32);
 	static const generatorFunc generateWave[];
 
@@ -78,6 +119,7 @@ protected:
 	static int8 generateSine(uint32 x, uint32 oscLength);
 	static int8 generateSaw(uint32 x, uint32 oscLength);
 	static int8 generateTriangle(uint32 x, uint32 oscLength);
+	static int8 generateSilence(uint32 x, uint32 oscLength);
 };
 
 } // End of namespace Audio
