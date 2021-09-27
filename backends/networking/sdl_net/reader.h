@@ -79,6 +79,7 @@ class Reader {
 
 	byte *_window;
 	uint32 _windowUsed, _windowSize, _windowReadPosition, _windowWritePosition;
+	uint32 _windowHash;
 
 	Common::MemoryReadWriteStream *_headersStream;
 
@@ -105,7 +106,7 @@ class Reader {
 
 	void makeWindow(uint32 size);
 	void freeWindow();
-	bool readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary);
+	bool readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary, const uint32 boundaryHash);
 
 	byte readOne();
 	uint32 bytesLeft() const;
