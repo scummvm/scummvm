@@ -43,11 +43,14 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_position.Y = 0.0f;
 	_position.Z = 1000.0f;
 
-	_velocity.X = 0.0f;
-	_velocity.Y = 0.0f;
-	_velocity.Z = 0.0f;
+	_velocity = Vector3d(0.0f, 0.0f, 0.0f);
+	_front = Vector3d(0.0f, 0.0f, 0.0f);
+	_right = Vector3d(0.0f, 0.0f, 0.0f);
 
+	_yaw = 90.0f;
+	_pitch = 0.0f;
 	_movementSpeed = 4.5f;
+	_mouseSensitivity = 0.05f;
 
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
@@ -155,6 +158,7 @@ Common::Error FreescapeEngine::run() {
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
+	Common::Point lastMousePos(0, 0);
 	float lastFrame = 0.f;
 
 	while (!shouldQuit()) {
@@ -168,13 +172,13 @@ Common::Error FreescapeEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
-					Move(FORWARD, deltaTime);
+					move(FORWARD, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
-					Move(BACKWARD, deltaTime);
+					move(BACKWARD, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
-					Move(LEFT, deltaTime);
+					move(LEFT, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
-					Move(RIGHT, deltaTime);
+					move(RIGHT, deltaTime);
 				
 				debug("player position: %f %f %f", _position.X, _position.Y, _position.Z);
 				break;
@@ -184,6 +188,11 @@ Common::Error FreescapeEngine::run() {
 				return Common::kNoError;
 				break;
 			
+			case Common::EVENT_MOUSEMOVE:
+				rotate(lastMousePos, mousePos);
+				lastMousePos = mousePos;
+				debug("player rotation (front): %f %f %f", _front.X, _front.Y, _front.Z);
+				break;
 			default:
 				break;
 
@@ -196,28 +205,52 @@ Common::Error FreescapeEngine::run() {
 	return Common::kNoError;
 }
 
-void FreescapeEngine::Move(CameraMovement direction, float deltaTime) {
+
+void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
+	float xoffset = mousePos.x - lastMousePos.x;
+	float yoffset = mousePos.y - lastMousePos.y;
+
+	xoffset *= _mouseSensitivity;
+	yoffset *= _mouseSensitivity;
+
+	_yaw += xoffset;
+	_pitch += yoffset;
+
+	// Make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (_pitch > 89.0f)
+		_pitch = 89.0f;
+	if (_pitch < -89.0f)
+		_pitch = -89.0f;
+
+	Vector3d v;
+	v.X = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
+	v.Y = sin(_pitch * M_PI / 180.0);
+	v.Z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
+	v.normalize();
+	_front = v;
+
+	// _right = _front x _up;
+	v.X = -_front.Z;
+	v.Y =  0;
+	v.Z = _front.X;
+	v.normalize();
+	_right = v;
+}
+
+void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
 	float velocity = _movementSpeed * deltaTime;
 	switch (direction) {
 	case FORWARD:
-		_rotation.Z = 1.f;
-		_position = _position + _rotation * velocity;
-		_rotation.Z = 0.f;
+		_position = _position + _front * velocity;
 		break;
 	case BACKWARD:
-		_rotation.Z = -1.f;
-		_position = _position + _rotation * velocity;
-		_rotation.Z = 0.f;
-		break;
-	case LEFT:
-		_rotation.X = 1.f;
-		_position = _position + _rotation * velocity;
-		_rotation.X = 0.f;
+		_position = _position - _front * velocity;
 		break;
 	case RIGHT:
-		_rotation.X = -1.f;
-		_position = _position + _rotation * velocity;
-		_rotation.X = 0.f;
+		_position = _position + _right * velocity;
+		break;
+	case LEFT:
+		_position = _position - _right * velocity;
 		break;
 	}
 	// Make sure the user stays at the ground level
