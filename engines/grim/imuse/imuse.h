@@ -65,7 +65,6 @@ private:
 	void fadeOutMusic(int fadeDelay);
 	void fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int hookId, int vol, int pan);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
-	Track *moveToFadeOutTrack(Track *track, int fadeDelay);
 
 	void playMusic(const ImuseTable *table, int atribPos, bool sequence);
 
