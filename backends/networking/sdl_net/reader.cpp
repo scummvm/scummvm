@@ -36,6 +36,8 @@ Reader::Reader() {
 	_window = nullptr;
 	_windowUsed = 0;
 	_windowSize = 0;
+	_windowReadPosition = 0;
+	_windowWritePosition = 0;
 
 	_headersStream = nullptr;
 	_firstBlock = true;
@@ -63,6 +65,8 @@ Reader &Reader::operator=(Reader &r) {
 	_window = r._window;
 	_windowUsed = r._windowUsed;
 	_windowSize = r._windowSize;
+	_windowReadPosition = r._windowReadPosition;
+	_windowWritePosition = r._windowWritePosition;
 	r._window = nullptr;
 
 	_headersStream = r._headersStream;
@@ -308,21 +312,24 @@ void Reader::makeWindow(uint32 size) {
 	_window = new byte[size];
 	_windowUsed = 0;
 	_windowSize = size;
+	_windowReadPosition = 0;
+	_windowWritePosition = 0;
 }
 
 void Reader::freeWindow() {
 	delete[] _window;
 	_window = nullptr;
 	_windowUsed = _windowSize = 0;
+	_windowReadPosition = _windowWritePosition = 0;
 }
 
 namespace {
-bool windowEqualsString(const byte *window, uint32 windowSize, const Common::String &boundary) {
+bool windowEqualsString(const byte *window, uint32 windowStart, uint32 windowSize, const Common::String &boundary) {
 	if (boundary.size() != windowSize)
 		return false;
 
 	for (uint32 i = 0; i < windowSize; ++i) {
-		if (window[i] != boundary[i])
+		if (window[(windowStart + i) % windowSize] != boundary[i])
 			return false;
 	}
 
@@ -332,19 +339,20 @@ bool windowEqualsString(const byte *window, uint32 windowSize, const Common::Str
 
 bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {
 	byte b = readOne();
-	_window[_windowUsed++] = b;
+	++_windowUsed;
+	_window[_windowWritePosition] = b;
+	_windowWritePosition = (_windowWritePosition + 1) % _windowSize;
 	if (_windowUsed < _windowSize)
 		return true;
 
 	//when window is filled, check whether that's the boundary
-	if (windowEqualsString(_window, _windowSize, boundary))
+	if (windowEqualsString(_window, _windowReadPosition, _windowSize, boundary))
 		return false;
 
 	//if not, add the first byte of the window to the string
 	if (stream)
-		stream->writeByte(_window[0]);
-	for (uint32 i = 1; i < _windowSize; ++i)
-		_window[i - 1] = _window[i];
+		stream->writeByte(_window[_windowReadPosition]);
+	_windowReadPosition = (_windowReadPosition + 1) % _windowSize;
 	--_windowUsed;
 	return true;
 }

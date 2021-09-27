@@ -78,7 +78,7 @@ class Reader {
 	uint32 _bytesLeft;
 
 	byte *_window;
-	uint32 _windowUsed, _windowSize;
+	uint32 _windowUsed, _windowSize, _windowReadPosition, _windowWritePosition;
 
 	Common::MemoryReadWriteStream *_headersStream;
 
