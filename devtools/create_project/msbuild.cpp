@@ -61,6 +61,9 @@ inline void outputConfigurationType(const BuildSetup &setup, std::ostream &proje
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"Configuration\">\n";
 	if (name == setup.projectName || setup.devTools || setup.tests) {
 		project << "\t\t<ConfigurationType>Application</ConfigurationType>\n";
+
+		if (!setup.devTools && !setup.tests)
+			project << "\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
 	} else {
 		if (name == setup.projectName + "-detection" ? (!setup.useStaticDetection) : setup.featureEnabled("dynamic-modules")) {
 			project << "\t\t<ConfigurationType>DynamicLibrary</ConfigurationType>\n";
@@ -411,9 +414,6 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	} else {
 		properties << "\t\t\t<SubSystem>Console</SubSystem>\n";
 	}
-
-	if (!setup.devTools && !setup.tests)
-		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
 
 	properties << "\t\t</Link>\n"
 	           << "\t\t<ResourceCompile>\n"
