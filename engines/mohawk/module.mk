@@ -88,10 +88,5 @@ include $(srcdir)/rules.mk
 
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
-
-# Skip building the following objects if a static
-# module is enabled, because it already has the contents.
-ifneq ($(ENABLE_MOHAWK), STATIC_PLUGIN)
 DETECT_OBJS += $(MODULE)/myst_metaengine.o
 DETECT_OBJS += $(MODULE)/riven_metaengine.o
-endif
