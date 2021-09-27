@@ -195,6 +195,7 @@ public:
 	Common::Language getLanguage() { return _gameDescription->language; }
 	Common::String getMoviesFileName() { return Common::String::format("%s.movies", _targetName.c_str()); }
 	bool isMenuVisible() { return _handler == (EventHandler *)_menu; }
+	EventHandler *getEventHandler() { return _handler; }
 
 	// Save/Load
 	int getAutosaveSlot() const { return getMetaEngine()->getAutosaveSlot(); }

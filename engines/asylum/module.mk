@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	system/sound.o \
 	system/speech.o \
 	system/text.o \
+	views/insertdisc.o \
 	views/menu.o \
 	views/scene.o \
 	views/scenetitle.o \

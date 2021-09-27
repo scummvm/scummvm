@@ -38,6 +38,7 @@
 #include "asylum/system/screen.h"
 #include "asylum/system/text.h"
 
+#include "asylum/views/insertdisc.h"
 #include "asylum/views/scene.h"
 #include "asylum/views/video.h"
 
@@ -252,7 +253,7 @@ static const int32 itemIndices[][16] = {
 	{69, 70, 78}
 };
 
-Console::Console(AsylumEngine *engine) : _vm(engine) {
+Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine) {
 	// Commands
 	registerCmd("help",           WRAP_METHOD(Console, cmdHelp));
 
@@ -271,6 +272,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
 	registerCmd("kill_script",    WRAP_METHOD(Console, cmdKillScript));
 
+	registerCmd("insertdisc",     WRAP_METHOD(Console, cmdInsertDisc));
 	registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
 	registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
@@ -335,6 +337,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf(" show_script - show script commands\n");
 	debugPrintf(" kill_script - terminate a script\n");
 	debugPrintf(" puzzle      - run an puzzle\n");
+	debugPrintf(" insertdisc  - show Insert Disc screen\n");
 	debugPrintf("\n");
 	debugPrintf(" get_status  - get actor's status\n");
 	debugPrintf(" set_status  - set actor's status\n");
@@ -770,6 +773,20 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 	_vm->_delayedSceneIndex = index;
 	_vm->_puzzles->reset();
 	_vm->resetFlags();
+
+	return false;
+}
+
+bool Console::cmdInsertDisc(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Syntax: %s (1|2|3)\n", argv[0]);
+		return true;
+	}
+
+	int cdNumber = CLIP<int>(atoi(argv[1]), 1, 3);
+	_insertDisc.setCdNumber(cdNumber);
+	_insertDisc.setEventHandler(_vm->getEventHandler());
+	_vm->switchEventHandler(&_insertDisc);
 
 	return false;
 }

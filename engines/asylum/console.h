@@ -27,6 +27,8 @@
 
 #include "gui/debugger.h"
 
+#include "views/insertdisc.h"
+
 namespace Asylum {
 
 enum kDebugLevels {
@@ -57,6 +59,7 @@ public:
 
 private:
 	AsylumEngine *_vm;
+	InsertDisc _insertDisc;
 
 	bool cmdHelp(int argc, const char **argv);
 
@@ -74,6 +77,7 @@ private:
 	bool cmdShowScript(int argc, const char **argv);
 	bool cmdRunScript(int argc, const char **argv);
 	bool cmdKillScript(int argc, const char **argv);
+	bool cmdInsertDisc(int argc, const char **argv);
 	bool cmdChangeScene(int argc, const char **argv);
 	bool cmdRunPuzzle(int argc, const char **argv);
 
