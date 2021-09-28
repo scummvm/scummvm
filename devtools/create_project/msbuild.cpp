@@ -48,16 +48,14 @@ const char *MSBuildProvider::getPropertiesExtension() {
 	return ".props";
 }
 
-namespace {
-
-inline void outputConfiguration(std::ostream &project, const std::string &config, MSVC_Architecture arch) {
+void MSBuildProvider::outputConfiguration(std::ostream &project, const std::string &config, MSVC_Architecture arch) {
 	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << getMSVCConfigName(arch) << "\">\n"
 	        << "\t\t\t<Configuration>" << config << "</Configuration>\n"
 	        << "\t\t\t<Platform>" << getMSVCConfigName(arch) << "</Platform>\n"
 	        << "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, MSVC_Architecture arch, const MSVCVersion &msvc) {
+void MSBuildProvider::outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, MSVC_Architecture arch) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"Configuration\">\n";
 	if (name == setup.projectName || setup.devTools || setup.tests) {
 		project << "\t\t<ConfigurationType>Application</ConfigurationType>\n";
@@ -71,22 +69,20 @@ inline void outputConfigurationType(const BuildSetup &setup, std::ostream &proje
 			project << "\t\t<ConfigurationType>StaticLibrary</ConfigurationType>\n";
 		}
 	}
-	project << "\t\t<PlatformToolset>" << (config == "LLVM" ? msvc.toolsetLLVM : msvc.toolsetMSVC ) << "</PlatformToolset>\n";
+	project << "\t\t<PlatformToolset>" << (config == "LLVM" ? _msvcVersion.toolsetLLVM : _msvcVersion.toolsetMSVC) << "</PlatformToolset>\n";
 	project << "\t\t<CharacterSet>" << (setup.useWindowsUnicode ? "Unicode" : "NotSet") << "</CharacterSet>\n";
-	if (msvc.version >= 16 && config == "Analysis") {
+	if (_msvcVersion.version >= 16 && config == "Analysis") {
 		project << "\t\t<EnableASAN>true</EnableASAN>\n";
 	}	
 	project << "\t</PropertyGroup>\n";
 }
 
-inline void outputProperties(const BuildSetup &setup, std::ostream &project, const std::string &config, MSVC_Architecture arch) {
+void MSBuildProvider::outputProperties(const BuildSetup &setup, std::ostream &project, const std::string &config, MSVC_Architecture arch) {
 	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"PropertySheets\">\n"
 	        << "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\n"
 	        << "\t\t<Import Project=\"" << setup.projectDescription + '_' << config << getMSVCArchName(arch) << ".props" << "\" />\n"
 	        << "\t</ImportGroup>\n";
 }
-
-} // End of anonymous namespace
 
 void MSBuildProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 										const StringList &includeList, const StringList &excludeList) {
@@ -126,10 +122,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfigurationType(setup, project, name, "Release", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Analysis", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "LLVM", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Debug", *arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "Release", *arch);
+		outputConfigurationType(setup, project, name, "Analysis", *arch);
+		outputConfigurationType(setup, project, name, "LLVM", *arch);
+		outputConfigurationType(setup, project, name, "Debug", *arch);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"

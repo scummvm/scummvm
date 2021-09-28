@@ -45,6 +45,9 @@ protected:
 	void writeProjectReference(std::ofstream &output, const std::string name, const std::string uuid);
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) override;
+	void outputConfiguration(std::ostream &project, const std::string &config, MSVC_Architecture arch);
+	void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, MSVC_Architecture arch);
+	void outputProperties(const BuildSetup &setup, std::ostream &project, const std::string &config, MSVC_Architecture arch);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) override;
 
