@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/noncopyable.h"
 
 
 namespace Common {
@@ -47,11 +48,8 @@ namespace Common {
  * variables (each the size of an int) it allocates for each string
  * instance.
  */
-class MemoryPool {
+class MemoryPool : NonCopyable {
 protected:
-	MemoryPool(const MemoryPool&);
-	MemoryPool& operator=(const MemoryPool&);
-
 	struct Page {
 		void *start;
 		size_t numChunks;
