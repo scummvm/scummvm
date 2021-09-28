@@ -253,7 +253,7 @@ static const int32 itemIndices[][16] = {
 	{69, 70, 78}
 };
 
-Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine) {
+Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine), _resViewer(engine) {
 	// Commands
 	registerCmd("help",           WRAP_METHOD(Console, cmdHelp));
 
@@ -287,7 +287,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine) {
 	registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
 
 	registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
-	registerCmd("draw",           WRAP_METHOD(Console, cmdDrawResource));
+	registerCmd("view",           WRAP_METHOD(Console, cmdViewResource));
 
 	registerCmd("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
@@ -350,7 +350,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf(" throw       - remove an item from inventory\n");
 	debugPrintf("\n");
 	debugPrintf(" palette     - set the screen palette\n");
-	debugPrintf(" draw        - draw a resource\n");
+	debugPrintf(" view        - view game resources\n");
 	debugPrintf("\n");
 	debugPrintf(" toggle_flag - toggle a flag\n");
 	debugPrintf("\n");
@@ -1046,22 +1046,26 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdDrawResource(int argc, const char **argv) {
-	if (argc != 3 && argc != 4) {
-		debugPrintf("Syntax: %s <pack> <index> (<frame>)\n", argv[0]);
+bool Console::cmdViewResource(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Syntax: %s <pack> (<index>)\n", argv[0]);
+		debugPrintf("\nControls:\n");
+		debugPrintf("        Space/Backspace - next/previous resource\n");
+		debugPrintf("        Enter           - toggle animation\n");
+		debugPrintf("        PageDown/PageUp - next/previous palette\n");
+		debugPrintf("        Arrow keys      - scroll the image\n");
+		debugPrintf("        Escape          - quit\n");
 		return true;
 	}
 
 	int32 pack = atoi(argv[1]);
-	int32 index = atoi(argv[2]);
-
-	int32 frame = 0;
-	if (argc == 4)
-		frame = atoi(argv[3]);
+	int32 index = pack < 18 ? 0 : 8;
+	if (argc > 2)
+		index = atoi(argv[2]);
 
 	// Check resource pack
-	if (pack < 0 || pack > 18) {
-		debugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
+	if (pack < 1 || (pack > 1 && pack < 5)|| pack > 18) {
+		debugPrintf("[Error] Invalid resource pack (was: %d - valid: [1,5-18])\n", pack);
 		return true;
 	}
 
@@ -1073,34 +1077,14 @@ bool Console::cmdDrawResource(int argc, const char **argv) {
 
 	ResourceId resourceId = MAKE_RESOURCE((uint32)pack, index);
 
-	// Try loading resource
-	GraphicResource *resource = new GraphicResource(_vm);
-	if (!resource->load(resourceId)) {
-		debugPrintf("[Error] Invalid resource index (was: %d)\n", index);
-		delete resource;
+	if (_resViewer.setResourceId(resourceId)) {
+		_resViewer.setEventHandler(_vm->getEventHandler());
+		_vm->switchEventHandler(&_resViewer);
+		return false;
+	} else {
+		debugPrintf("[Error] Could not load resource 0x%X\n", resourceId);
 		return true;
 	}
-
-	if (frame < 0 || frame >= (int32)resource->count()) {
-		debugPrintf("[Error] Invalid resource frame index (was: %d , max: %d)\n", frame, resource->count() - 1);
-		delete resource;
-		return true;
-	}
-
-	delete resource;
-
-	// Stop current event handler (to prevent screen refresh)
-	_vm->switchEventHandler(NULL);
-	getCursor()->hide();
-
-	// Draw resource
-	getScreen()->clear();
-	getScreen()->draw(resourceId, (uint32)frame, Common::Point(0, 0));
-	getScreen()->copyBackBufferToScreen();
-
-	g_system->updateScreen();
-
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

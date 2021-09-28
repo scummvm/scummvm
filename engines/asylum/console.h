@@ -28,6 +28,7 @@
 #include "gui/debugger.h"
 
 #include "views/insertdisc.h"
+#include "views/resviewer.h"
 
 namespace Asylum {
 
@@ -60,6 +61,7 @@ public:
 private:
 	AsylumEngine *_vm;
 	InsertDisc _insertDisc;
+	ResourceViewer _resViewer;
 
 	bool cmdHelp(int argc, const char **argv);
 
@@ -92,7 +94,7 @@ private:
 	bool cmdRemoveFromInventory(int argc, const char **argv);
 
 	bool cmdSetPalette(int argc, const char **argv);
-	bool cmdDrawResource(int argc, const char **argv);
+	bool cmdViewResource(int argc, const char **argv);
 
 	bool cmdToggleFlag(int argc, const char **argv);
 };

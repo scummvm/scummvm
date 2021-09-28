@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	system/text.o \
 	views/insertdisc.o \
 	views/menu.o \
+	views/resviewer.o \
 	views/scene.o \
 	views/scenetitle.o \
 	views/video.o \
