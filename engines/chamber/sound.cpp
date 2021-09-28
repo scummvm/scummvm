@@ -108,9 +108,6 @@ unsigned char sounds_table[kMaxSounds][3] = {
 };
 
 void PlaySound(unsigned char index) {
-	SpeakerPlay(&pc_samples[index]);
-
-#if 0
 	int i;
 	for (i = 0; i < kMaxSounds; i++) {
 		if (sounds_table[i][0] == index
@@ -120,7 +117,6 @@ void PlaySound(unsigned char index) {
 			break;
 		}
 	}
-#endif
 }
 
 void ChamberEngine::initSound() {
