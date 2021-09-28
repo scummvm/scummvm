@@ -212,11 +212,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
    - Fixes for character selection, deselection, and dismissing to better match original.
-   - Add support for Russian version.
+   - Added support for Russian version.
 
  AmigaOS port:
-   - Add native system file browser feature.
-   - Re-activate nuked OPL Adlib driver.
+   - Added native system file browser feature.
+   - Re-activated nuked OPL Adlib driver.
 
  Big-endian ports:
    - Fixed crashes or rendering issues with the Blazing Dragons, Duckman and
@@ -226,7 +226,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed using arrow keys on physical keyboard in iOS 15.
 
  macOS port:
-   - Add support for Dark Mode.
+   - Added support for Dark Mode.
    - Use OpenGL renderer by default, providing better support for HiDPI displays.
 
  MorphOS port:
