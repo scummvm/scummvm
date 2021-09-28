@@ -478,6 +478,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "activity", "Putt & Fatty's Actpack", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "fbpack", "fbpack", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "fbpack", "Fatty Bear's Fun Pack", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "funpack", "funpack", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "brstorm", "brstorm", kGenHEPC, UNK_LANG, UNK, 0 },
