@@ -143,16 +143,9 @@ public:
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 									float transparency = -1.0, bool additiveBlending = false) = 0;
-	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-									const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
-									Texture *texture) = 0;
 
-	virtual void drawCube(Texture **textures) = 0;
-	virtual void drawTriange() = 0;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
-	virtual Graphics::Surface *getScreenshot() = 0;
-	virtual Texture *copyScreenshotToTexture();
 
 	/** Render a Drawable in the specified window */
 	void renderDrawable(Drawable *drawable, Window *window);

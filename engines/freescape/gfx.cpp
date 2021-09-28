@@ -37,33 +37,6 @@
 
 namespace Freescape {
 
-const float Renderer::cubeVertices[] = {
-	// S     T      X      Y      Z
-	0.0f, 1.0f, -320.0f, -320.0f, -320.0f,
-	1.0f, 1.0f,  320.0f, -320.0f, -320.0f,
-	0.0f, 0.0f, -320.0f,  320.0f, -320.0f,
-	1.0f, 0.0f,  320.0f,  320.0f, -320.0f,
-	0.0f, 1.0f,  320.0f, -320.0f, -320.0f,
-	1.0f, 1.0f, -320.0f, -320.0f, -320.0f,
-	0.0f, 0.0f,  320.0f, -320.0f,  320.0f,
-	1.0f, 0.0f, -320.0f, -320.0f,  320.0f,
-	0.0f, 1.0f,  320.0f, -320.0f,  320.0f,
-	1.0f, 1.0f, -320.0f, -320.0f,  320.0f,
-	0.0f, 0.0f,  320.0f,  320.0f,  320.0f,
-	1.0f, 0.0f, -320.0f,  320.0f,  320.0f,
-	0.0f, 1.0f,  320.0f, -320.0f, -320.0f,
-	1.0f, 1.0f,  320.0f, -320.0f,  320.0f,
-	0.0f, 0.0f,  320.0f,  320.0f, -320.0f,
-	1.0f, 0.0f,  320.0f,  320.0f,  320.0f,
-	0.0f, 1.0f, -320.0f, -320.0f,  320.0f,
-	1.0f, 1.0f, -320.0f, -320.0f, -320.0f,
-	0.0f, 0.0f, -320.0f,  320.0f,  320.0f,
-	1.0f, 0.0f, -320.0f,  320.0f, -320.0f,
-	0.0f, 1.0f,  320.0f,  320.0f,  320.0f,
-	1.0f, 1.0f, -320.0f,  320.0f,  320.0f,
-	0.0f, 0.0f,  320.0f,  320.0f, -320.0f,
-	1.0f, 0.0f, -320.0f,  320.0f, -320.0f
-};
 
 Renderer::Renderer(OSystem *system)
 		: _system(system),
@@ -73,16 +46,9 @@ Renderer::Renderer(OSystem *system)
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 
-	// Compute the cube faces Axis Aligned Bounding Boxes
-	for (uint i = 0; i < ARRAYSIZE(_cubeFacesAABB); i++) {
-		for (uint j = 0; j < 4; j++) {
-			_cubeFacesAABB[i].expand(Math::Vector3d(cubeVertices[5 * (4 * i + j) + 2], cubeVertices[5 * (4 * i + j) + 3], cubeVertices[5 * (4 * i + j) + 4]));
-		}
-	}
 }
 
-Renderer::~Renderer() {
-}
+Renderer::~Renderer() {}
 
 void Renderer::initFont(const Graphics::Surface *surface) {
 	_font = createTexture(surface);
@@ -134,17 +100,6 @@ void Renderer::renderPalette(Common::Array<uint8> *raw_palette, uint16 ncolors) 
 	flipBuffer();
 	g_system->updateScreen();
 
-}
-
-Texture *Renderer::copyScreenshotToTexture() {
-	Graphics::Surface *surface = getScreenshot();
-
-	Texture *texture = createTexture(surface);
-
-	surface->free();
-	delete surface;
-
-	return texture;
 }
 
 Common::Rect Renderer::getFontCharacterRect(uint8 character) {
@@ -224,23 +179,6 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	_frustum.setup(_mvpMatrix);
 
 	_mvpMatrix.transpose();
-}
-
-bool Renderer::isCubeFaceVisible(uint face) {
-	assert(face < 6);
-
-	return _frustum.isInside(_cubeFacesAABB[face]);
-}
-
-void Renderer::flipVertical(Graphics::Surface *s) {
-	for (int y = 0; y < s->h / 2; ++y) {
-		// Flip the lines
-		byte *line1P = (byte *)s->getBasePtr(0, y);
-		byte *line2P = (byte *)s->getBasePtr(0, s->h - y - 1);
-
-		for (int x = 0; x < s->pitch; ++x)
-			SWAP(line1P[x], line2P[x]);
-	}
 }
 
 Renderer *createRenderer(OSystem *system) {
