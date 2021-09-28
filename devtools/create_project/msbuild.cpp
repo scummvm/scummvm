@@ -292,6 +292,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	bool mainToolsAndTest = setup.devTools || setup.tests || name == setup.projectName;
+	bool dynamicLib = name == setup.projectName + "-detection" ? (!setup.useStaticDetection) : setup.featureEnabled("dynamic-modules");
 
 	std::string warnings = "";
 	if (warningsIterator != _projectWarnings.end())
@@ -316,7 +317,17 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 
 	// Definitions
-	project << "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+	StringList defines;
+	defines.push_back("SCUMMVM_PROJECTNAME=" + name);
+	if (dynamicLib) {
+		if (name == setup.projectName)
+			defines.push_back("SCUMMVM_EXPORT=__declspec( dllexport )");
+		else
+			defines.push_back("SCUMMVM_EXPORT=__declspec( dllimport )");
+	} else
+		defines.push_back("SCUMMVM_EXPORT=");
+
+	project << "\t\t\t<PreprocessorDefinitions>" << getDefinesList(defines) << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
 
 	project << "\t\t</ClCompile>\n";
 
