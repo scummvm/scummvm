@@ -66,14 +66,12 @@ static void SpeakerPlay(pcsample_t *sample) {
 	delay2 = sample->delay2;
 
 	for (rep = 0; rep < sample->repeat; rep++) {
-		uint32 frequency = 1193180 / freq;
-		uint32 delayOff = delay1 * 300;
-		uint32 delayOn = delay2 * 300;
+		uint32 frequency = 1193180 / (freq ? freq : 1);
+		uint32 delayOff = delay1 * 16; // Around 335 ticks per second
+		uint32 delayOn = delay2 * 16;
 
-		warning("freq: %d delayOff: %d delayOn: %d", frequency, delayOff, delayOn);
-
-		g_vm->_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 1, delayOff);
-		g_vm->_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, delayOn);
+		g_vm->_speakerStream->playQueue(Audio::PCSpeaker::kWaveFormSilence, frequency, delayOff);
+		g_vm->_speakerStream->playQueue(Audio::PCSpeaker::kWaveFormSquare, frequency, delayOn);
 
 		if (sample->delay1sweep & 0xF000)
 			delay1 -= sample->delay1sweep & 0xFFF;
