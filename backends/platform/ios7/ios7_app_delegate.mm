@@ -91,6 +91,11 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
 	[_view applicationResume];
+
+	// Make sure we have the correct orientation in case the orientation was changed while
+	// the app was inactive.
+	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
+	[_view deviceOrientationChanged:screenOrientation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
