@@ -222,6 +222,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crashes or rendering issues with the Blazing Dragons, Duckman and
      Full Pipe games.
 
+ iOS port:
+   - Fixed using arrow keys on physical keyboard in iOS 15.
+
  macOS port:
    - Add support for Dark Mode.
    - Use OpenGL renderer by default, providing better support for HiDPI displays.
