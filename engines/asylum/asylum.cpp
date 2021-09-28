@@ -681,6 +681,11 @@ bool AsylumEngine::canSaveGameStateCurrently() {
 		&& !speech()->getSoundResourceId());
 }
 
+bool AsylumEngine::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently()
+		&& (scene()->getActor()->getStatus() == kActorStatusEnabled);
+}
+
 Common::Error AsylumEngine::loadGameState(int slot) {
 	savegame()->loadList();
 	savegame()->setIndex(slot);

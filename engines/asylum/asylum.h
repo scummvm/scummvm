@@ -202,6 +202,7 @@ public:
 	bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	bool canSaveGameStateCurrently();
+	bool canSaveAutosaveCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 private:
