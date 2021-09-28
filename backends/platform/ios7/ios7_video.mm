@@ -698,7 +698,7 @@ uint getSizeNextPOT(uint size) {
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
-    [self adjustViewFrameForSafeArea];
+	[self adjustViewFrameForSafeArea];
 }
 
 #ifndef __has_builtin
@@ -713,23 +713,23 @@ uint getSizeNextPOT(uint size) {
 	// available when running on iOS 11+ if it has been compiled on iOS 11+
 #ifdef __IPHONE_11_0
 #if __has_builtin(__builtin_available)
-    if ( @available(iOS 11,*) ) {
+	if ( @available(iOS 11,*) ) {
 #else
-    if ( [[[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets)] ) {
+	if ( [[[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets)] ) {
 #endif
-        CGRect screenSize = [[UIScreen mainScreen] bounds];
-        UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-        CGRect newFrame = screenSize;
-        if ( orientation == UIInterfaceOrientationPortrait ) {
-            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
-        } else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
-            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
-        } else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
-            newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, screenSize.size.height);
-        }
-        self.frame = newFrame;
-    }
+		CGRect screenSize = [[UIScreen mainScreen] bounds];
+		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
+		UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+		CGRect newFrame = screenSize;
+		if ( orientation == UIInterfaceOrientationPortrait ) {
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
+		} else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
+		} else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
+			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, screenSize.size.height);
+		}
+		self.frame = newFrame;
+	}
 #endif
 }
 
@@ -814,12 +814,12 @@ uint getSizeNextPOT(uint size) {
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 
-  BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
-  if (isLandscape) {
-    [self hideKeyboard];
-  } else {
-    [self showKeyboard];
-  }
+	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
+	if (isLandscape) {
+		[self hideKeyboard];
+	} else {
+		[self showKeyboard];
+	}
 }
 
 - (void)showKeyboard {
