@@ -51,6 +51,8 @@ protected:
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) override;
 
+	static std::string getDefinesList(const StringList defines);
+
 	const char *getProjectExtension() override;
 	const char *getPropertiesExtension() override;
 

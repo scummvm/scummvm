@@ -291,9 +291,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
 	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
-	// Nothing to add here, move along!
-	if ((!setup.devTools || !setup.tests) && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
-		return;
+	bool mainToolsAndTest = setup.devTools || setup.tests || name == setup.projectName;
 
 	std::string warnings = "";
 	if (warningsIterator != _projectWarnings.end())
@@ -304,7 +302,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	        << "\t\t<ClCompile>\n";
 
 	// Language Extensions
-	if (setup.devTools || setup.tests || name == setup.projectName || enableLanguageExtensions) {
+	if (mainToolsAndTest || enableLanguageExtensions) {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 		project << "\t\t\t<ConformanceMode>false</ConformanceMode>\n"; // Required for Windows SDK 8.1
 	}
@@ -317,10 +315,13 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	if (warningsIterator != _projectWarnings.end())
 		project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 
+	// Definitions
+	project << "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+
 	project << "\t\t</ClCompile>\n";
 
 	// Link configuration for main project
-	if (name == setup.projectName || setup.devTools || setup.tests) {
+	if (mainToolsAndTest) {
 		std::string libraries = outputLibraryDependencies(setup, isRelease);
 
 		// MSBuild uses ; for separators instead of spaces
@@ -357,15 +358,20 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
+std::string MSBuildProvider::getDefinesList(const StringList defines) {
+	std::string definesList;
+	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
+		definesList += *i + ';';
+	return definesList;
+}
+
 void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings += *i + ';';
 
-	std::string definesList;
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
-		definesList += *i + ';';
+	std::string definesList = getDefinesList(defines);
 
 	// Add define to include revision header
 	if (runBuildEvents)
