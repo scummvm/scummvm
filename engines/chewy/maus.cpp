@@ -20,8 +20,9 @@
  *
  */
 
-#include "chewy/maus.h"
 #include "common/textconsole.h"
+#include "chewy/maus.h"
+#include "chewy/events.h"
 
 namespace Chewy {
 
@@ -113,24 +114,7 @@ void maus::speed(int16 x, int16 y) {
 }
 
 void maus::move_mouse(int16 x, int16 y) {
-	warning("STUB - mouse_mouse");
-#if 0
-	int16 tx;
-	int16 ty;
-	tx = x;
-	ty = y;
-#pragma aux asm_move = "push ax"\
-"push cx"\
-"push dx"\
-"mov cx,tx"\
-"mov dx,ty"\
-"mov ax,4"\
-"int 033h"\
-"pop dx"\
-"pop cx"\
-"pop ax"
-	asm_move();
-#endif
+	g_events->warpMouse(Common::Point(x, y));
 }
 
 void maus::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {

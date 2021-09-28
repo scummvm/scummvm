@@ -22,9 +22,10 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
-#include "chewy/ngshext.h"
 #include "chewy/main.h"
+#include "chewy/chewy.h"
 #include "chewy/menus.h"
+#include "chewy/ngshext.h"
 
 namespace Chewy {
 
@@ -711,6 +712,8 @@ void set_up_screen(int16 mode) {
 		            spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
 		            ScrXy[0], ScrXy[1],
 		            &spieler.scrollx, &spieler.scrolly);
+
+	g_engine->_screen->update();
 }
 
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
