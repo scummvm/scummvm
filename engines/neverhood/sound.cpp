@@ -421,6 +421,11 @@ void SoundMan::deleteSoundGroup(uint32 groupNameHash) {
 		_soundIndex2 = -1;
 	}
 
+	if (_soundIndex3 != -1 && _soundItems[_soundIndex3]->getGroupNameHash() == groupNameHash) {
+		deleteSoundByIndex(_soundIndex3);
+		_soundIndex3 = -1;
+	}
+
 	for (uint index = 0; index < _soundItems.size(); ++index)
 		if (_soundItems[index] && _soundItems[index]->getGroupNameHash() == groupNameHash)
 			deleteSoundByIndex(index);
