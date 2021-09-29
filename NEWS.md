@@ -233,6 +233,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  iOS port:
    - Fixed using arrow keys on physical keyboard in iOS 15.
    - Fixed rotating the device while ScummVM is inactive.
+   - Added support for upside down portrait orientation.
 
  macOS port:
    - Added support for Dark Mode.
