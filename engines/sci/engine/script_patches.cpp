@@ -114,6 +114,7 @@ static const char *const selectorNameTable[] = {
 	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
+	"isEmpty",      // Quest For Glory 3
 	"solvePuzzle",  // Quest For Glory 3
 	"curIcon",      // Quest For Glory 3, QFG4
 	"curInvIcon",   // Quest For Glory 3, QFG4
@@ -241,6 +242,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_hide,
 	SELECTOR_say,
 	SELECTOR_script,
+	SELECTOR_isEmpty,
 	SELECTOR_solvePuzzle,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
@@ -13476,6 +13478,44 @@ static const uint16 qfg3PatchJohariManuMapBugs[] = {
 	PATCH_END
 };
 
+// Returning to room 770 after taking a gem and then angering the guardian can
+//  cause an error by sending a message to a non-object. This is due to a script
+//  bug in the Actor:ignoreBlocks method. It deletes the Actor:blocks property
+//  and sets it to zero, but it fails to check if Actor:blocks is already zero
+//  from a previous call. This is the only room that calls Actor:ignoreBlocks.
+//
+// We fix this as Sierra did in later games by adding a test to verify that
+//  Actor:blocks has been set before deleting it.
+//
+// Applies to: All versions
+// Responsible method: Actor:ignoreBlocks
+// Fixes bug: #12968
+static const uint16 qfg3SignatureActorIgnoreBlocks[] = {
+	0x39, SIG_SELECTOR8(delete),        // pushi delete
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x63, 0x74,                         // pToa blocks
+	0x4a, 0x04,                         // send 04 [ blocks delete: &rest ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(isEmpty),       // pushi isEmpty
+	0x76,                               // push0
+	0x63, 0x74,                         // pToa blocks
+	0x4a, 0x04,                         // send 04 [ blocks isEmpty: ]
+	0x30,                               // bnt [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchActorIgnoreBlocks[] = {
+	0x63, 0x74,                         // pToa blocks
+	0x31, 0x0c,                         // bnt 0c [ end of method ]
+	0x39, PATCH_SELECTOR8(delete),      // pushi delete
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	PATCH_ADDTOOFFSET(+5),
+	0x4a, 0x08,                         // send 08 [ blocks delete: &rest, isEmpty: ]
+	PATCH_END
+};
+
 // The NRS fan-patch, which is included with the GOG release, has a script bug
 //  which errors when angering the Guardian in room 770. This can be triggered
 //  by taking a second gem. The patch changes ego's moveSpeed from 0 to 2 in the
@@ -13554,6 +13594,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   170, "johari/manu map crash and message bugs",             2, qfg3SignatureJohariManuMapBugs,      qfg3PatchJohariManuMapBugs },
 	{  true,   770, "NRS: anger guardian crash",                          1, qfg3SignatureNrsAngerGuardian,       qfg3PatchNrsAngerGuardian },
 	{  true,   928, "Narrator lockup fix",                                1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
+	{  true,   998, "actor ignoreBlocks crash at guardian",               1, qfg3SignatureActorIgnoreBlocks,      qfg3PatchActorIgnoreBlocks },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
