@@ -150,7 +150,7 @@
 	// In iOS 15 the UIKeyCommand has a new property wantsPriorityOverSystemBehavior that is needed to
 	// receive some keys (such as the arrow keys).
 	if ([keyCommand respondsToSelector:@selector(setWantsPriorityOverSystemBehavior:)]) {
-		[UIKeyCommand setValue:[NSNumber numberWithBool: YES] forKey:@"wantsPriorityOverSystemBehavior"];
+		[keyCommand setValue:[NSNumber numberWithBool:YES] forKey:@"wantsPriorityOverSystemBehavior"];
 	}
 }
 
