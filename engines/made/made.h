@@ -107,6 +107,8 @@ public:
 
 	void handleEvents();
 
+protected:
+	void pauseEngineIntern(bool pause);
 };
 
 } // End of namespace Made

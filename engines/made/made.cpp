@@ -310,4 +310,16 @@ Common::Error MadeEngine::run() {
 	return Common::kNoError;
 }
 
+void MadeEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (pause) {
+		if (_music)
+			_music->pause();
+	} else {
+		if (_music)
+			_music->resume();
+	}
+}
+
 } // End of namespace Made
