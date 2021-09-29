@@ -49,12 +49,12 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 	// grab location, size
 	Vector3d position, size;
-	position.X = stream.get16();
-	position.Y = stream.get16();
-	position.Z = stream.get16();
-	size.X = stream.get16();
-	size.Y = stream.get16();
-	size.Z = stream.get16();
+	position.x() = stream.get16();
+	position.y() = stream.get16();
+	position.z() = stream.get16();
+	size.x() = stream.get16();
+	size.y() = stream.get16();
+	size.z() = stream.get16();
 
 	// object ID
 	uint16 objectID = stream.get16();
@@ -65,8 +65,8 @@ static Object *load16bitObject(StreamLoader &stream) {
 	uint32 byteSizeOfObject = (uint32)(stream.get16() << 1) - 20;
 
 	debug("Object %d ; type %d ; flags %d ; size %d", (int)objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
-	debug("Location: %f, %f, %f", position.X, position.Y, position.Z);
-	debug("Size: %f, %f, %f", size.X, size.Y, size.Z);
+	debug("Location: %f, %f, %f", position.x(), position.y(), position.z());
+	debug("Size: %f, %f, %f", size.x(), size.y(), size.z());
 
 	switch (objectType) {
 	default: {

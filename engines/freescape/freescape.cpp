@@ -35,14 +35,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	// Do not initialize audio devices here
 	_hasReceivedTime = false;
 
-	_rotation.X = 0.f;
-	_rotation.Y = 0.f;
-	_rotation.Z = 0.f;
-
-	_position.X = 1000.0f;
-	_position.Y = 0.0f;
-	_position.Z = 1000.0f;
-
+	_rotation = Vector3d(0.f, 0.f, 0.f);
+	_position = Vector3d(1000.0f, 0.0f, 1000.0f);
 	_velocity = Vector3d(0.0f, 0.0f, 0.0f);
 	_front = Vector3d(0.0f, 0.0f, 0.0f);
 	_right = Vector3d(0.0f, 0.0f, 0.0f);
@@ -180,7 +174,7 @@ Common::Error FreescapeEngine::run() {
 				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
 					move(RIGHT, deltaTime);
 				
-				debug("player position: %f %f %f", _position.X, _position.Y, _position.Z);
+				debug("player position: %f %f %f", _position.x(), _position.y(), _position.z());
 				break;
 
 			case Common::EVENT_QUIT:
@@ -191,7 +185,7 @@ Common::Error FreescapeEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				rotate(lastMousePos, mousePos);
 				lastMousePos = mousePos;
-				debug("player rotation (front): %f %f %f", _front.X, _front.Y, _front.Z);
+				debug("player rotation (front): %f %f %f", _front.x(), _front.y(), _front.z());
 				break;
 			default:
 				break;
@@ -223,16 +217,16 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 		_pitch = -89.0f;
 
 	Vector3d v;
-	v.X = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
-	v.Y = sin(_pitch * M_PI / 180.0);
-	v.Z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
+	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
+	float y = sin(_pitch * M_PI / 180.0);
+	float z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
+	v.set(x, y, z);
 	v.normalize();
 	_front = v;
 
 	// _right = _front x _up;
-	v.X = -_front.Z;
-	v.Y =  0;
-	v.Z = _front.X;
+	Vector3d up(0, 1, 0); // this should be const
+	v = Math::Vector3d::crossProduct(_front, up);
 	v.normalize();
 	_right = v;
 }
@@ -255,7 +249,7 @@ void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
 	}
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
-	_position.Y = 0.0f;
+	_position.set(_position.x(), 0, _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {

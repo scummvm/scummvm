@@ -19,13 +19,13 @@ static Object *load8bitObject(StreamLoader &stream) {
 	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
 	Vector3d position, v;
 
-	position.X = stream.get8() * 32;
-	position.Y = stream.get8() * 32;
-	position.Z = stream.get8() * 32;
+	position.x() = stream.get8() * 32;
+	position.y() = stream.get8() * 32;
+	position.z() = stream.get8() * 32;
 
-	v.X = stream.get8();
-	v.Y = stream.get8();
-	v.Z = stream.get8();
+	v.x() = stream.get8();
+	v.y() = stream.get8();
+	v.z() = stream.get8();
 
 	// object ID
 	uint16 objectID = stream.get8();
@@ -36,10 +36,10 @@ static Object *load8bitObject(StreamLoader &stream) {
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
-    debug("pos: %f %f %f", position.X, position.Y, position.Z);
+    debug("pos: %f %f %f", position.x(), position.y(), position.z());
 	switch (objectType) {
 	default: {
-		debug("size: %f %f %f", v.X, v.Y, v.Z);
+		debug("size: %f %f %f", v.x(), v.y(), v.z());
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
@@ -92,7 +92,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 	} break;
 
 	case Object::Entrance: {
-		debug("rotation: %f %f %f", v.X, v.Y, v.Z);
+		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
 		assert(byteSizeOfObject == 0);
 		// create an entrance
 		return new Entrance(
