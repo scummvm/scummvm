@@ -47,6 +47,7 @@ enum InputEvent {
 
 enum ScreenOrientation {
 	kScreenOrientationPortrait,
+	kScreenOrientationFlippedPortrait,
 	kScreenOrientationLandscape,
 	kScreenOrientationFlippedLandscape
 };
