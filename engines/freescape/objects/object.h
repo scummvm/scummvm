@@ -10,14 +10,12 @@
 #define __Phantasma__Object__
 
 #include "common/system.h"
-#include "graphics/tinygl/zmath.h"
+#include "math/vector3d.h"
 
 #include "freescape/gfx.h"
 
-//#include <vector>
-//#include "freescape/language/instruction.h"
 
-typedef TinyGL::Vector3 Vector3d;
+typedef Math::Vector3d Vector3d;
 
 class VertexBuffer;
 class DrawElementsBuffer;

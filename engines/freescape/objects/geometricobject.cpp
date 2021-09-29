@@ -96,5 +96,5 @@ GeometricObject::~GeometricObject() {
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
 	Type type = this->getType();
-	return (type >= Object::Line) || !size.X || !size.Y || !size.Z;
+	return (type >= Object::Line) || !size.x() || !size.y() || !size.z();
 }
