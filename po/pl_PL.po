@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-18 09:29+0000\n"
+"POT-Creation-Date: 2021-09-29 18:26+0000\n"
 "PO-Revision-Date: 2021-05-17 17:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -277,7 +277,7 @@ msgid "Engine"
 msgstr "Silnik"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1782 gui/options.cpp:1942
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:422
 msgid "Graphics"
 msgstr "Grafika"
 
@@ -1039,7 +1039,7 @@ msgstr "Tryb rozciągania:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:409
+#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Fullscreen mode"
 msgstr "Pełny ekran"
 
@@ -2926,20 +2926,20 @@ msgstr "Zapisz zrzut ekranu"
 msgid "Could not save screenshot"
 msgstr "Zapisz zrzut ekranu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:415
 msgid "Windowed mode"
 msgstr "Okno"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:426 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Włącz/wyłącz pełny ekran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:433 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Włącz/wyłącz przechwytywanie myszy"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:438
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2952,35 +2952,35 @@ msgstr "Włącz/wyłącz przechwytywanie myszy"
 msgid "Save screenshot"
 msgstr "Zapisz zrzut ekranu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:440
+#: backends/graphics/sdl/sdl-graphics.cpp:444
 msgid "Toggle aspect ratio correction"
 msgstr "Włącz/wyłącz korekcję formatu obrazu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:451
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Używa filtrowania dwuliniowego przy skalowaniu obrazu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "Nie udało się przełączyć w tryb wideo: '"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:460
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Increase the scale factor"
 msgstr "Zwiększ współczynnik skalowania"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:466
+#: backends/graphics/sdl/sdl-graphics.cpp:470
 msgid "Decrease the scale factor"
 msgstr "Zmniejsz współczynnik skalowania"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:472
+#: backends/graphics/sdl/sdl-graphics.cpp:476
 #, fuzzy
 #| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
 msgstr "Przełącz na skalowanie TV 2x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:477
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 #, fuzzy
 msgid "Switch to the previous scaler"
 msgstr "Przełącz na skalowanie 2xSai"
