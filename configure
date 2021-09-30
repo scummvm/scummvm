@@ -3208,6 +3208,9 @@ if test -n "$_host"; then
 			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
+			if test -z "$PKG_CONFIG_LIBDIR"; then
+				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/vfp/lib/pkgconfig"
+			fi
 			_sdlpath=$GCCSDK_INSTALL_ENV/vfp/bin
 			_freetypepath=$GCCSDK_INSTALL_ENV/vfp/bin
 			_libcurlpath=$GCCSDK_INSTALL_ENV/vfp/bin
@@ -3220,7 +3223,9 @@ if test -n "$_host"; then
 		arm-*riscos)
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
-			_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
+			if test -z "$PKG_CONFIG_LIBDIR"; then
+				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/lib/pkgconfig"
+			fi
 			_sdlpath=$GCCSDK_INSTALL_ENV/bin
 			_freetypepath=$GCCSDK_INSTALL_ENV/bin
 			_libcurlpath=$GCCSDK_INSTALL_ENV/bin
