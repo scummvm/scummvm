@@ -293,8 +293,8 @@ void TrecisionEngine::initMain() {
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
-
-	changeRoom(_curRoom);
+	else
+		changeRoom(_curRoom);
 }
 
 void TrecisionEngine::checkSystem() {

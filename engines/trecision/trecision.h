@@ -141,7 +141,6 @@ class TrecisionEngine : public Engine {
 	static bool isBetween(int a, int x, int b);
 
 	// Others
-	void performLoad(int slot, bool skipLoad);
 	bool canPlayerInteract();
 
 	// Objects
