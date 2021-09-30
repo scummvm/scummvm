@@ -443,6 +443,12 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 			return toret;
 	}
 
+	// response to a button click, better update guis
+	if (ags_strnicmp(tsname, "interface_click", 15) == 0) {
+		// interface_click(int interface, int button)
+		_GP(guis)[iparam.IValue].MarkChanged();
+	}
+
 	return RunScriptFunctionIfExists(sci, tsname, 2, params);
 }
 

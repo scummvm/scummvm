@@ -237,6 +237,7 @@ public:
 	int _mouse_accum_button_state = 0;
 	uint32 _mouse_clear_at_time = 0;
 	int _mouse_accum_relx = 0, _mouse_accum_rely = 0;
+	int _wasbutdown = 0, _wasongui = 0;
 
 	/**@}*/
 
