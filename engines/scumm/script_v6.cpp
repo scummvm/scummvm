@@ -548,6 +548,28 @@ void ScummEngine_v6::o6_eq() {
 		push(0);
 	}
 
+	// BYOnline WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
+	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
+	// "no special rules" and "3 innings".  This is a script bug which assumed to be fixed in later post-retail updates, but
+	// since we don't have access to any of those, this workaround will have to do.
+	else if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 419 && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
+		switch (a) {
+		case 9:
+			// Mountain Aire (No special rules)
+			writeVar(695, 0);
+			break;
+		case 8:
+			// Wilderness (3 innings)
+			writeVar(695, 64);
+			break;
+		}
+
+		// Clean up stack and stop the script
+		fetchScriptWord();
+		pop();
+		stopObjectCode();
+	}
+
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
 	// when checking for save game compatibility. Allows saved games to be shared between Macintosh and Windows versions.
 	// The scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
