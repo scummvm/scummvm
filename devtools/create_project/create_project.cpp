@@ -915,7 +915,7 @@ StringList BuildSetup::getEngineDefines() const {
 			std::string name = i->name;
 			std::transform(name.begin(), name.end(), name.begin(), toupper);
 			
-			if (featureEnabled("dynamic-modules")) {
+			if (featureEnabled("dynamic-modules") && !isSubEngine(name,engines)) {
 				result.push_back("ENABLE_" + name + "=DYNAMIC_PLUGIN");
 			} else {
 				result.push_back("ENABLE_" + name + "=STATIC_PLUGIN");
