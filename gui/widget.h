@@ -313,6 +313,7 @@ protected:
 class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
+	int _spacing;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
@@ -357,6 +358,7 @@ protected:
 class RadiobuttonWidget : public ButtonWidget {
 protected:
 	bool	_state;
+	int _spacing;
 	int _value;
 
 public:

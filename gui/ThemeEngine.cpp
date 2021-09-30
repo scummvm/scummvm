@@ -1053,7 +1053,7 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1075,10 +1075,10 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::U32String &s
 	drawDD(dd, r2);
 
 	if (rtl) {
-		r2.right = r2.left - checkBoxSize;
+		r2.right -= checkBoxSize + spacing;
 		r2.left = r.left;
 	} else {
-		r2.left = r2.right + checkBoxSize;
+		r2.left += checkBoxSize + spacing;
 		r2.right = r.right;
 	}
 
@@ -1088,7 +1088,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::U32String &s
 	}
 }
 
-void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1110,10 +1110,10 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::U32String
 	drawDD(dd, r2);
 
 	if (rtl) {
-		r2.right = r2.left - checkBoxSize;
+		r2.right -= checkBoxSize + spacing;
 		r2.left = r.left;
 	} else {
-		r2.left = r2.right + checkBoxSize;
+		r2.left += checkBoxSize + spacing;
 		r2.right = MAX(r2.left, r.right);
 	}
 

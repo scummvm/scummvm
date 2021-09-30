@@ -675,12 +675,14 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
+	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
 }
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
+	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
 }
 
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -700,7 +702,7 @@ void CheckboxWidget::setState(bool state) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -
@@ -738,6 +740,7 @@ RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
+	_spacing = g_gui.xmlEval()->getVar("Globals.Radiobutton.Spacing", 15);
 }
 
 RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip, uint8 hotkey)
@@ -745,6 +748,7 @@ RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
+	_spacing = g_gui.xmlEval()->getVar("Globals.Radiobutton.Spacing", 15);
 }
 
 void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -769,7 +773,7 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -
