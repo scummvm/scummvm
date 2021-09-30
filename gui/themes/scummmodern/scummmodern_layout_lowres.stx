@@ -57,6 +57,9 @@
 
 		<def var = 'DropdownButton.Width' value = '7' scalable = 'yes'/>
 
+		<def var = 'Checkbox.Spacing' value = '5' scalable = 'yes'/>
+		<def var = 'Radiobutton.Spacing' value = '5' scalable = 'yes'/>
+
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
 				textalign = 'end'
