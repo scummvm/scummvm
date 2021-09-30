@@ -285,22 +285,24 @@ void Widget::read(const Common::U32String &str) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang, bool useEllipsis)
 	: Widget(boss, x, y, w, h, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 	_align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_useEllipsis = useEllipsis;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang, bool useEllipsis)
 	: Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kStaticTextWidget;
 	_label = text;
 	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_useEllipsis = useEllipsis;
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -328,7 +330,7 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 void StaticTextWidget::drawWidget() {
 	g_gui.theme()->drawText(
 			Common::Rect(_x, _y, _x + _w, _y + _h),
-			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
+			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, _useEllipsis, _font
 	);
 }
 

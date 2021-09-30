@@ -65,7 +65,7 @@
 				textalign = 'end'
 		/>
 		<widget name = 'SmallLabel'
-				size = '18, Globals.Line.Height'
+				size = '20, Globals.Line.Height'
 		/>
 		<widget name = 'CloudTabLabel'
 				size = '180, Globals.Line.Height'
