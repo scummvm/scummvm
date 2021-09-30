@@ -20,7 +20,7 @@ ifeq ($(APP_NAME),$(BASE_APP_NAME))
 	cp ${srcdir}/dists/riscos/!Sprites,ff9 $(APP_NAME)/!Sprites,ff9
 	cp ${srcdir}/dists/riscos/!Sprites11,ff9 $(APP_NAME)/!Sprites11,ff9
 else
-	echo 'IconSprites <Obey$$Dir>.!Sprites' > $(APP_NAME)/!Boot,feb
+	cp ${srcdir}/dists/riscos/$(APP_NAME)/!Boot,feb $(APP_NAME)/!Boot,feb
 	cp ${srcdir}/dists/riscos/$(APP_NAME)/!Sprites,ff9 $(APP_NAME)/!Sprites,ff9
 	cp ${srcdir}/dists/riscos/$(APP_NAME)/!Sprites11,ff9 $(APP_NAME)/!Sprites11,ff9
 endif
@@ -58,5 +58,6 @@ clean: riscosclean
 
 riscosclean:
 	$(RM_REC) $(APP_NAME)
+	$(RM_REC) $(BASE_APP_NAME)
 
 .PHONY: riscosdist riscosclean
