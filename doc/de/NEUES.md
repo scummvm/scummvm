@@ -232,6 +232,11 @@ Programmcodes finden Sie auf Englisch unter:
  Big-Endian-Portierung:
    - Abstürze oder Darstellungsfehler in Blazing Dragons, Duckman und Full Pipe behoben.
 
+ iOS-Portierung:
+   - Die Pfeiltasten auf einer externen Tastatur funktionieren nun auch unter iOS 15 korrekt.
+   - Der Bildschirm wird nun korrekt gedreht, wenn ScumMVM inaktiv ist.
+   - Unterstützung für den umgekehrten Portrait-Modus hinzugefügt.
+
  macOS-Portierung:
    - Unterstützung für den Dunkelmodus hinzugefügt.
 
