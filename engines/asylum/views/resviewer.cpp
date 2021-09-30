@@ -126,7 +126,7 @@ void ResourceViewer::update() {
 	getScreen()->copyBackBufferToScreen();
 
 	if (_frameCount > 1 && _animate) {
-		if (_frameIndex + 1 >= _frameCount)
+		if (_frameIndex + 1 >= (int)_frameCount)
 			_frameIncrement = -1;
 		else if (_frameIndex == 0)
 			_frameIncrement =  1;
