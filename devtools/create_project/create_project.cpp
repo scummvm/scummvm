@@ -856,9 +856,13 @@ EngineDescList parseEngines(const std::string &srcDir) {
 	return engineList;
 }
 
-bool isSubEngine(const std::string &name, const EngineDescList &engines) {
+bool EngineDesc::isSubEngine(const std::string &subName) const {
+	return std::find(subEngines.begin(), subEngines.end(), subName) != subEngines.end();
+}
+
+bool isSubEngine(const std::string &subName, const EngineDescList &engines) {
 	for (EngineDescList::const_iterator i = engines.begin(); i != engines.end(); ++i) {
-		if (std::find(i->subEngines.begin(), i->subEngines.end(), name) != i->subEngines.end())
+		if (i->isSubEngine(subName))
 			return true;
 	}
 

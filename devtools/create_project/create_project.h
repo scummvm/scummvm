@@ -108,6 +108,8 @@ struct EngineDesc {
 	bool operator==(const std::string &n) const {
 		return (name == n);
 	}
+
+	bool isSubEngine(const std::string &subName) const;
 };
 
 typedef std::list<EngineDesc> EngineDescList;
@@ -129,11 +131,11 @@ EngineDescList parseEngines(const std::string &srcDir);
  * Checks whether the specified engine is a sub engine. To determine this
  * there is a fully setup engine list needed.
  *
- * @param name Name of the engine to check.
+ * @param subName Name of the engine to check.
  * @param engines List of engines.
  * @return "true", when the engine is a sub engine, "false" otherwise.
  */
-bool isSubEngine(const std::string &name, const EngineDescList &engines);
+bool isSubEngine(const std::string &subName, const EngineDescList &engines);
 
 /**
  * Enables or disables the specified engine in the engines list.
