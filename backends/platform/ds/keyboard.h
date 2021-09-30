@@ -27,7 +27,7 @@
 
 namespace DS {
 
-class Keyboard : public Common::EventSource, public Common::EventObserver {
+class Keyboard : public Common::EventSource {
 public:
 	Keyboard(Common::EventDispatcher *eventDispatcher);
 	~Keyboard();
@@ -40,8 +40,6 @@ public:
 
 	// Implementation of the EventSource interface
 	virtual bool pollEvent(Common::Event &event);
-
-	virtual bool notifyEvent(const Common::Event &event) override;
 
 protected:
 	Common::EventDispatcher *_eventDispatcher;

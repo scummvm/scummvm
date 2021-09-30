@@ -32,11 +32,9 @@ Keyboard::Keyboard(Common::EventDispatcher *eventDispatcher) :
 	_lastKey(NOKEY),
 	_visible(false) {
 	_eventDispatcher->registerSource(this, false);
-	_eventDispatcher->registerObserver(this, 10, false);
 }
 
 Keyboard::~Keyboard() {
-	_eventDispatcher->unregisterObserver(this);
 	_eventDispatcher->unregisterSource(this);
 }
 
@@ -131,17 +129,6 @@ bool Keyboard::pollEvent(Common::Event &event) {
 	// TODO: Handle flags
 
 	return true;
-}
-
-bool Keyboard::notifyEvent(const Common::Event &event) {
-	if (event.type == Common::EVENT_VIRTUAL_KEYBOARD) {
-		if (g_system->getFeatureState(OSystem::kFeatureVirtualKeyboard))
-			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		else
-			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-		return true;
-	}
-	return false;
 }
 
 } // End of namespace DS
