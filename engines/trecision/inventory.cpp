@@ -162,13 +162,13 @@ void TrecisionEngine::endUseWith() {
 	_flagUseWithStarted = false;
 	_useWith[WITH] = _curInventory;
 	_useWithInv[WITH] = true;
+	_lightIcon = 0xFF;
+
 	if (_useWith[USED] != _curInventory) {
 		doUseWith();
-		_lightIcon = 0xFF;
 	} else {
 		_animMgr->smkStop(kSmackerIcon);
 		showInventoryName(_curInventory, true);
-		_lightIcon = _curInventory;
 	}
 }
 
