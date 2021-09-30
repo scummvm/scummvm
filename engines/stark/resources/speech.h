@@ -99,6 +99,10 @@ protected:
 	Sound *_soundResource;
 	LipSync *_lipSync;
 	int32 _waitTimeRemaining;
+
+private:
+    /** Fix subtitles that do not match the spoken dialogue. */
+    Common::String correctSubtitle(Common::String phrase);
 };
 
 } // End of namespace Resources

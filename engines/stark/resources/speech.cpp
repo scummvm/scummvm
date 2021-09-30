@@ -149,8 +149,16 @@ int32 Speech::getPauseAfterSpeechDuration() const {
 void Speech::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
-	_phrase = stream->readString();
+	_phrase = correctSubtitle(stream->readString());
 	_character = stream->readSint32LE();
+}
+
+Common::String Speech::correctSubtitle(Common::String phrase) {
+	if (phrase.equals("Nyo! So it was a good thing I didn't stick my head out the door to look for you, then, si?")) {
+		// Cortez in the theater
+		Common::replace(phrase, "si?", "no?");
+	}
+	return phrase;
 }
 
 void Speech::onGameLoop() {
