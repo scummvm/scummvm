@@ -874,6 +874,8 @@ Bitmap *create_savegame_screenshot() {
 	int old_flags = _G(debug_flags);
 	_G(debug_flags) |= DBG_NOIFACE;
 	construct_game_scene(true);
+	render_to_screen();
+	_G(debug_flags) = old_flags;
 
 	int usewid = data_to_game_coord(_GP(play).screenshot_width);
 	int usehit = data_to_game_coord(_GP(play).screenshot_height);
@@ -890,8 +892,8 @@ Bitmap *create_savegame_screenshot() {
 	screenshot->GetAllegroBitmap()->makeOpaque();
 
 	// Restore original screen
-	_G(debug_flags) = old_flags;
 	construct_game_scene(true);
+	render_to_screen();
 
 	return screenshot;
 }
