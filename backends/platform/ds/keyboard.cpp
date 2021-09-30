@@ -22,6 +22,7 @@
 
 #include <nds.h>
 
+#include "backends/platform/ds/osystem_ds.h"
 #include "backends/platform/ds/keyboard.h"
 #include "common/system.h"
 
@@ -134,15 +135,20 @@ bool Keyboard::pollEvent(Common::Event &event) {
 }
 
 bool Keyboard::notifyEvent(const Common::Event &event) {
-#if 0
-	if (event.type == Common::EVENT_VIRTUAL_KEYBOARD) {
+	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
+		if (event.customType != kDSEventVirtualKeyboard)
+			return false;
+
 		if (g_system->getFeatureState(OSystem::kFeatureVirtualKeyboard))
 			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		else
 			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 		return true;
+	} else if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_END) {
+		if (event.customType == kDSEventVirtualKeyboard)
+			return true;
 	}
-#endif
+
 	return false;
 }
 

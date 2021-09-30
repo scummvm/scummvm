@@ -38,6 +38,10 @@ enum {
 	GFX_SWSCALE = 2
 };
 
+enum DSCustomEvent {
+	kDSEventVirtualKeyboard
+};
+
 class OSystem_DS : public ModularMutexBackend, public ModularMixerBackend, public PaletteManager {
 protected:
 	DS::Background _framebuffer, _overlay;
@@ -133,6 +137,7 @@ public:
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 	virtual Common::HardwareInputSet *getHardwareInputSet();
+	virtual Common::KeymapArray getGlobalKeymaps();
 
 	virtual Common::String getSystemLanguage() const;
 
