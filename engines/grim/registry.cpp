@@ -98,6 +98,12 @@ Registry::Registry() :
 	ConfMan.registerDefault("talkspeed", 179);
 	ConfMan.registerDefault("game_devel_mode", false);
 
+	// The "talkspeed" setting is by default 60 for ScummVM,
+	// detect it and convert to engine default
+	if (ConfMan.getInt("talkspeed") == 60) {
+		ConfMan.setInt("talkspeed", 179);
+	}
+
 	// Read settings
 	_spewOnError.setString(ConfMan.get("spew_on_error"));
 	_dataPath.setString(ConfMan.get("path"));
