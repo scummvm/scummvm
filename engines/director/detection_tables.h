@@ -1320,7 +1320,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("rosettastone", "Demo", "The Rosetta Stone", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1379715, Common::JA_JPN, 110),
 
 #undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 //////////////////////////////////////////////////
 //
@@ -1682,7 +1682,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("lotus123", "Tour", "Tour of 1-2-3.v3", "1ed38b71d8d0f075483117f7fa559e7c", 367333, Common::JA_JPN, 302),
 
 #undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
 	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
@@ -1991,7 +1991,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639768, Common::JA_JPN, 311),
 
 #undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	// Original AV filename is Spaceship Warlock™ AV
 	WINGAME1("warlock", "",		"SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 300),
