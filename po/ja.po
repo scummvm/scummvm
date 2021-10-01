@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-01 18:13+0100\n"
-"PO-Revision-Date: 2021-09-19 01:26+0000\n"
+"PO-Revision-Date: 2021-10-02 04:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4293,7 +4293,7 @@ msgstr "ゲームの明るいパレットモードを使用してグラフィッ
 
 #: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "オブジェクト、オプション、聖書の引用の読み上げを有効化"
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
@@ -4302,14 +4302,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
 #: engines/dreamweb/detection.cpp:86
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "音声合成をオンにする"
+msgstr "字幕の音声読み上げを有効化"
 
 #: engines/dreamweb/detection.cpp:87
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
+msgstr "音声合成で字幕を読み上げる(利用可能な場合のみ)"
 
 #: engines/glk/detection.cpp:240
 msgid "Use TTS to read the text"
@@ -4973,7 +4971,7 @@ msgstr "このファンの翻訳に言語固有のゲームコードやリソー
 
 #: engines/kyra/detection_tables.h:86
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "デモではWestwood's Engineを使わず、シンプルなアニメーションを再生します。"
 
 #: engines/kyra/detection_tables.h:1417
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -5901,15 +5899,13 @@ msgstr "Windows試用版はサポートされていません"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:663
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "Windows試用版はサポートされていません"
+msgstr "macOS用の体験版はサポートされていません"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:688
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "Windows試用版はサポートされていません"
+msgstr "Pocket PC用の体験版はサポートされていません"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
