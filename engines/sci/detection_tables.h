@@ -172,7 +172,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "063bb8ce4157c778cf30d1c912c006f1", 335631},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
-		
+
 	// Castle of Dr. Brain - German DOS Floppy 1.000 (also includes English language)
 	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
@@ -935,7 +935,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data3", 0, "f25068b408b09275d8b698866462f578", 3677599},
 		{"Data4", 0, "1cceebbe411b26c860a74f91c337fdf3", 3230086},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_TESTING, GUIO_GK1_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_GK1_MAC },
 
 #undef GUIO_GK1_FLOPPY
 #undef GUIO_GK1_CD_DOS
