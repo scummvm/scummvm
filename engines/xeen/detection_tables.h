@@ -117,7 +117,7 @@ static const XeenGameDescription gameDescriptions[] = {
 					   "dark.cc",  "437618b6b5e76f174719dcb529edbfbb", 11152923),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
@@ -193,7 +193,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("xeen.cc", "b9bb33bbd3783e7930ddedb189d7ba54", 13203565),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Clouds,
@@ -270,7 +270,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dark.cc", "437618b6b5e76f174719dcb529edbfbb", 11152923),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_DarkSide,
