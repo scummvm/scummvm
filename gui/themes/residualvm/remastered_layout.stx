@@ -58,6 +58,8 @@
 		<def var = 'Tooltip.MaxWidth' value = '200' scalable = 'yes'/>
 		<def var = 'Tooltip.XDelta' value = '16' scalable = 'yes'/> <!-- basically cursor size -->
 		<def var = 'Tooltip.YDelta' value = '32' scalable = 'yes'/>
+		<def var = 'Tooltip.XPadding' value = '2' scalable = 'yes'/>
+		<def var = 'Tooltip.YPadding' value = '2' scalable = 'yes'/>
 
 		<def var = 'Predictive.Button.Width' value = '60' scalable = 'yes'/>
 		<def var = 'Predictive.ShowDeletePic' value = '1'/>
@@ -1943,7 +1945,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'TestbedOptions'  overlays = 'screen' inset = '32' >
+	<dialog name = 'TestbedOptions' overlays = 'screen' inset = '32' >
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'

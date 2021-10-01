@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.5.1 (XXXX-XX-XX)
 
+ General:
+   - Ported ResidualVM GUI theme to remastered verion.
+
  Grim:
    - Fixed default "Talk Speed" option value.
    - Fixed black screen while entering save game name.
