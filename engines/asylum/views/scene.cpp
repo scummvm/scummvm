@@ -800,8 +800,7 @@ void Scene::updateMouse() {
 		newDirection = kDirectionSE;
 	}
 
-	if (newDirection != kDirectionInvalid)
-		updateCursor(newDirection, actorRect);
+	updateCursor(newDirection, actorRect);
 
 	if (newDirection >= kDirectionN)
 		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2)
@@ -1150,10 +1149,12 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	if (getCursor()->getState() & kCursorStateRight) {
 		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2) {
 
-			ResourceId resourceId =_ws->cursorResources[direction];
+			if (direction >= kDirectionN) {
+				ResourceId resourceId =_ws->cursorResources[direction];
 
-			if (direction >= kDirectionN && getCursor()->getResourceId() != resourceId)
-				getCursor()->set(resourceId);
+				if (getCursor()->getResourceId() != resourceId)
+					getCursor()->set(resourceId);
+			}
 		}
 
 		return;
