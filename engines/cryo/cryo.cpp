@@ -47,6 +47,8 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_showHotspots = false;
 	_timerTicks = 0;
 
+	_mouseButton = 0;
+
 	g_ed = this;
 }
 
@@ -71,6 +73,10 @@ Common::Error CryoEngine::run() {
 	_game->run();
 
 	return Common::kNoError;
+}
+
+bool CryoEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher);
 }
 
 } // End of namespace Cryo

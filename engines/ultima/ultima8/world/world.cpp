@@ -40,6 +40,7 @@
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/snap_process.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -505,6 +506,27 @@ void World::setAlertActiveRegret(bool active)
 		item->setFrame(0);
 	}
 }
+
+void World::setGameDifficulty(uint8 difficulty) {
+   _difficulty = difficulty;
+   if (GAME_IS_REMORSE) {
+	   // HACK: Set ammo data for BA-40 in higher 2 difficulty levels
+	   // This would be better handled in the ini file somehow?
+	   const ShapeInfo *si = GameData::get_instance()->getMainShapes()->getShapeInfo(0x32E);
+	   if (si && si->_weaponInfo) {
+		   WeaponInfo *wi = si->_weaponInfo;
+		   wi->_clipSize = 20;
+		   if (difficulty > 1) {
+			   wi->_ammoShape = 0x33D;
+			   wi->_ammoType = 1;
+		   } else {
+			   wi->_ammoShape = 0;
+			   wi->_ammoType = 0;
+		   }
+	   }
+   }
+}
+
 
 void World::setControlledNPCNum(uint16 num) {
 	uint16 oldnpc = _controlledNPCNum;

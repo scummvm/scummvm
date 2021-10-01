@@ -90,17 +90,14 @@ TowerLayer tower[fullyInitialized] = {
  * ===================================================================== */
 
 //#include "saga2/loadmsg.h"
-bool initGUIMessagers(void);
-void cleanupMessagers(void);
-void cleanupGUIMessagers(void);
-bool openResources(void);
-void closeResources(void);
-void initServers(void);
-void cleanupServers(void);
-void initMagic(void);
-void cleanupMagic(void);
-void cleanupMousePointer(void);
-void resetInputDevices(void);
+bool initGUIMessagers();
+void cleanupGUIMessagers();
+bool openResources();
+void closeResources();
+void initMagic();
+void cleanupMagic();
+void cleanupMousePointer();
+void resetInputDevices();
 
 extern hResContext      *tileRes;       // tile resource handle
 extern hResContext      *listRes;
@@ -459,7 +456,6 @@ TERMINATOR(termGameMode) {
 
 
 // ------------------------------------------------------------------------
-void RMemFastCleanup(void);
 
 INITIALIZER(initTop) {
 	niceScreenStartup();

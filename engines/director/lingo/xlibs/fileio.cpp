@@ -148,9 +148,13 @@ void FileIO::m_new(int nargs) {
 	Common::String option = d1.asString();
 	Common::String filename = d2.asString();
 
+	Common::String prefix = g_director->getTargetName() + '-';
+
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
-		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad);
+		Common::String mask = prefix + "*.txt";
+
+		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
@@ -158,6 +162,12 @@ void FileIO::m_new(int nargs) {
 		filename = browser.getResult();
 	} else if (!filename.hasSuffixIgnoreCase(".txt")) {
 		filename += ".txt";
+	}
+
+	// Enforce target to the created files so they do not mix up
+	if (!option.hasPrefix("?") || option.equalsIgnoreCase("write")) {
+		if (!filename.hasPrefixIgnoreCase(prefix))
+			filename = prefix + filename;
 	}
 
 	if (option.equalsIgnoreCase("read")) {
@@ -409,7 +419,13 @@ void FileIO::m_fileName(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->_filename) {
-		g_lingo->push(Datum(*me->_filename));
+		Common::String prefix = g_director->getTargetName() + '-';
+		Common::String res = *me->_filename;
+		if (res.hasPrefix(prefix)) {
+			res = Common::String(&me->_filename->c_str()[prefix.size() + 1]);
+		}
+
+		g_lingo->push(Datum(res));
 	} else {
 		warning("FileIO: No file open");
 		g_lingo->push(Datum(kErrorFileNotOpen));

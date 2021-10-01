@@ -126,6 +126,7 @@ Common::Error CineEngine::run() {
 
 		delete renderer;
 		delete[] collisionPage;
+		delete _scriptInfo;
 	} while (_restartRequested);
 
 	delete g_sound;
@@ -176,7 +177,7 @@ void CineEngine::initialize() {
 	Common::fill(g_cine->_zoneQuery.begin(), g_cine->_zoneQuery.end(), 0);
 
 	setDefaultGameSpeed();
-	setupOpcodes();
+	_scriptInfo = setupOpcodes();
 
 	initLanguage(getLanguage());
 

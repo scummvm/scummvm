@@ -45,7 +45,7 @@ CImageNode::CImageNode(hResContext *con, uint32 resID) {
 	}
 }
 
-CImageNode::~CImageNode(void) {
+CImageNode::~CImageNode() {
 	if (image) {
 		free(image);
 		image = nullptr;
@@ -74,7 +74,7 @@ bool CImageNode::isSameImage(void *imagePtr) {
 }
 
 // return true if this node needs to be deleted
-bool CImageNode::releaseRequest(void) {
+bool CImageNode::releaseRequest() {
 	// the number of requests on this resource goes down by one
 	requested--;
 
@@ -87,7 +87,7 @@ bool CImageNode::releaseRequest(void) {
 	return false;
 }
 
-void *CImageNode::getImagePtr(void) {
+void *CImageNode::getImagePtr() {
 	requested++;
 	return image;
 }
@@ -96,7 +96,7 @@ void *CImageNode::getImagePtr(void) {
    ImageCache member functions
  * ===================================================================== */
 
-CImageCache::~CImageCache(void) {
+CImageCache::~CImageCache() {
 
 	/* >>> See notes below
 	    // return if list is empty

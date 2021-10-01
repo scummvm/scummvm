@@ -474,7 +474,7 @@ bool AgiEngine::handleController(uint16 key) {
 	for (uint16 curMapping = 0; curMapping < MAX_CONTROLLER_KEYMAPPINGS; curMapping++) {
 		if (_game.controllerKeyMapping[curMapping].keycode == key) {
 			debugC(3, kDebugLevelInput, "event %d: key press", _game.controllerKeyMapping[curMapping].controllerSlot);
-			_game.controllerOccured[_game.controllerKeyMapping[curMapping].controllerSlot] = true;
+			_game.controllerOccurred[_game.controllerKeyMapping[curMapping].controllerSlot] = true;
 			return true;
 		}
 	}

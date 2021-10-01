@@ -668,14 +668,14 @@ void IllusionsEngine_BBDOU::reset() {
 
 void IllusionsEngine_BBDOU::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	// NOTE Just loads the savegame, doesn't activate it yet
-	const char *fileName = getSavegameFilename(_savegameSlotNum);
-	_loadGameResult = loadgame(fileName);
+	Common::String fileName = getSavegameFilename(_targetName, _savegameSlotNum);
+	_loadGameResult = loadgame(fileName.c_str());
 }
 
 void IllusionsEngine_BBDOU::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	// TODO
-	// const char *fileName = getSavegameFilename(slotNum);
-	_saveGameResult = false;//savegame(fileName, _savegameDescription.c_str());
+	// Common::String fileName = getSavegameFilename(_targetName, slotNum);
+	_saveGameResult = false;//savegame(fileName.c_str(), _savegameDescription.c_str());
 }
 
 void IllusionsEngine_BBDOU::activateSavegame(uint32 callingThreadId) {

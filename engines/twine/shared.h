@@ -524,6 +524,7 @@ enum class TextId : int16 {
 	kIntroText3 = 152,
 	kBookOfBu = 161,
 	kBonusList = 162,
+	kStarWarsFanBoy = 226,
 	kDetailsPolygonsLow = 231,
 	kShadowsDisabled = 232,
 	kNoSceneryZoom = 233,
@@ -565,6 +566,22 @@ enum InventoryItems {
 	kiBonusList = 26,
 	kiCloverLeaf = 27,
 	MaxInventoryItems = 28
+};
+
+struct TwineResource {
+	const char *hqr;
+	const int32 index;
+
+	constexpr TwineResource(const char *_hqr, int32 _index) : hqr(_hqr), index(_index) {
+	}
+};
+
+struct TwineImage {
+	TwineResource image;
+	TwineResource palette;
+
+	constexpr TwineImage(const char *hqr, int32 index, int32 paletteIndex = -1) : image(hqr, index), palette(hqr, paletteIndex) {
+	}
 };
 
 // lba2 does from 0 to 0x1000

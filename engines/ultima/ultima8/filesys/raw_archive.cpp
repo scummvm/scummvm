@@ -81,7 +81,7 @@ uint8 *RawArchive::get_object(uint32 index) {
 	return getRawObject(index);
 }
 
-uint32 RawArchive::get_size(uint32 index) {
+uint32 RawArchive::get_size(uint32 index) const {
 	if (index >= _count)
 		return 0;
 	return getRawSize(index);

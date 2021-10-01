@@ -186,6 +186,8 @@ void ModularGraphicsBackend::fillScreen(uint32 col) {
 
 void ModularGraphicsBackend::updateScreen() {
 #ifdef ENABLE_EVENTRECORDER
+	g_system->getMillis();		// force event recorder to update the tick count
+	g_eventRec.processScreenUpdate();
 	g_eventRec.preDrawOverlayGui();
 #endif
 
@@ -256,6 +258,15 @@ bool ModularGraphicsBackend::lockMouse(bool visible) {
 }
 
 void ModularGraphicsBackend::warpMouse(int x, int y) {
+#ifdef ENABLE_EVENTRECORDER
+	// short circuit for EventRecorder calling warpMouse inside an event poll
+	if ((g_eventRec.getRecordMode() == GUI::EventRecorder::kRecorderPlayback) ||
+		(g_eventRec.getRecordMode() == GUI::EventRecorder::kRecorderUpdate)) {
+		_graphicsManager->warpMouse(x, y);
+		return;
+	}
+#endif
+
 	_eventManager->purgeMouseEvents();
 	_graphicsManager->warpMouse(x, y);
 }

@@ -424,7 +424,7 @@ public:
 	virtual ~ProtoObj() {}
 
 	// returns the containment type flags for this object
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	//  returns true if this object can contain another object
 	virtual bool canContain(ObjectID dObj, ObjectID item);
@@ -440,9 +440,9 @@ public:
 	virtual bool isTwoHanded(ObjectID actor);
 
 	//  Determine if this type of object is a missile
-	virtual bool isMissile(void);
+	virtual bool isMissile();
 
-	virtual ObjectID placeObject(void);
+	virtual ObjectID placeObject();
 
 	//  call the object's script
 	bool invokeScript(scriptCallFrame &);
@@ -669,11 +669,11 @@ public:
 	virtual GameObject *getSpell(ObjectID obj);
 
 	//  Determine if this type of object can block an attack
-	virtual bool canBlock(void);
+	virtual bool canBlock();
 
 	//  Return a mask of bits indicating the directions relative to the
 	//  wielders facing in which this object can defend
-	virtual uint8 defenseDirMask(void);
+	virtual uint8 defenseDirMask();
 
 	//  Compute how much damage this defensive object will absorb
 	virtual uint8 adjustDamage(uint8 damage);
@@ -697,7 +697,7 @@ public:
 		return immunity & (1 << r);
 	}
 
-	virtual bool makeSavingThrow(void) {
+	virtual bool makeSavingThrow() {
 		return false;
 	}
 
@@ -717,21 +717,21 @@ public:
 
 	// this is to determine size of containers
 public:
-	virtual uint16 getViewableRows(void) {
+	virtual uint16 getViewableRows() {
 		return ViewableRows;
 	}
-	virtual uint16 getViewableCols(void) {
+	virtual uint16 getViewableCols() {
 		return ViewableCols;
 	}
-	virtual uint16 getMaxRows(void) {
+	virtual uint16 getMaxRows() {
 		return maxRows;
 	}
-	virtual uint16 getMaxCols(void) {
+	virtual uint16 getMaxCols() {
 		return maxCols;
 	}
 
 	// this returns the type of charge an item can have
-	int16 getChargeType(void) {
+	int16 getChargeType() {
 		return chargeType;
 	}
 
@@ -754,7 +754,7 @@ public:
 	InventoryProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
 	virtual ~InventoryProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	virtual bool takeAction(ObjectID dObj, ObjectID enactor, int16 num = 1);
 
@@ -809,7 +809,7 @@ public:
 	PhysicalContainerProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~PhysicalContainerProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	virtual bool canContain(ObjectID dObj, ObjectID item);
 	virtual bool canContainAt(
@@ -850,16 +850,16 @@ public:
 	    int16           num = 1);
 
 public:
-	virtual uint16 getViewableRows(void) {
+	virtual uint16 getViewableRows() {
 		return ViewableRows;
 	}
-	virtual uint16 getViewableCols(void) {
+	virtual uint16 getViewableCols() {
 		return ViewableCols;
 	}
-	virtual uint16 getMaxRows(void) {
+	virtual uint16 getMaxRows() {
 		return maxRows;
 	}
-	virtual uint16 getMaxCols(void) {
+	virtual uint16 getMaxCols() {
 		return maxCols;
 	}
 
@@ -905,7 +905,7 @@ public:
 	BottleProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~BottleProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	// Drink From Bottle
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
@@ -924,7 +924,7 @@ public:
 	FoodProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~FoodProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	// Eat it
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
@@ -943,7 +943,7 @@ public:
 	WearableProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~WearableProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 };
 
 /* ======================================================================== *
@@ -964,11 +964,11 @@ public:
 	WeaponProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~WeaponProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	//  return the address of the sprite when held in hand
 	virtual Sprite *getOrientedSprite(GameObject *obj, int16 offset);
-	weaponID getWeaponID(void);
+	weaponID getWeaponID();
 
 	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
@@ -1023,10 +1023,10 @@ public:
 	    ObjectID defender,
 	    ObjectID attacker);
 	//  Melee weapons can block attacks
-	virtual bool canBlock(void);
+	virtual bool canBlock();
 	//  Return a mask of bits indicating the directions relative to the
 	//  wielders facing in which this object can defend
-	virtual uint8 defenseDirMask(void);
+	virtual uint8 defenseDirMask();
 
 	//  Determine if the specified object's 'use' slot is available within
 	//  the specified actor
@@ -1178,7 +1178,7 @@ public:
 	bool isObjectBeingUsed(GameObject *obj);
 
 	//  Projectiles are missiles
-	virtual bool isMissile(void);
+	virtual bool isMissile();
 
 	//  Rate this weapon's goodness for a specified attack situation
 	virtual uint8 weaponRating(
@@ -1226,7 +1226,7 @@ public:
 	ArmorProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~ArmorProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1253,7 +1253,7 @@ public:
 	ShieldProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~ShieldProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1273,10 +1273,10 @@ public:
 	    ObjectID defensiveObj,
 	    ObjectID defender,
 	    ObjectID attacker);
-	virtual bool canBlock(void);
+	virtual bool canBlock();
 	//  Return a mask of bits indicating the directions relative to the
 	//  wielders facing in which this object can defend
-	virtual uint8 defenseDirMask(void);
+	virtual uint8 defenseDirMask();
 
 	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
@@ -1328,7 +1328,7 @@ public:
 	DocumentProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~DocumentProto() {}
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 
 //BookDoc
 //ScrollDoc
@@ -1421,8 +1421,8 @@ public:
 	    ObjectID droppedObj,
 	    int count);
 
-	virtual uint16 containmentSet(void);
-	virtual ObjectID placeObject(void);
+	virtual uint16 containmentSet();
+	virtual ObjectID placeObject();
 
 	//  Creates a color translation table for this object
 	virtual void getColorTranslation(ColorTable map);
@@ -1444,7 +1444,7 @@ public:
 	virtual ~IdeaProto() {}
 
 	//Talk To A Person
-	uint16 containmentSet(void);
+	uint16 containmentSet();
 
 };
 
@@ -1461,7 +1461,7 @@ public:
 	virtual ~MemoryProto() {}
 
 	//Get Info On Person Your Talking To
-	uint16 containmentSet(void);
+	uint16 containmentSet();
 
 };
 
@@ -1478,7 +1478,7 @@ public:
 	virtual ~PsychProto() {}
 
 	//Get Explanation Of Icon
-	uint16 containmentSet(void);
+	uint16 containmentSet();
 
 };
 
@@ -1526,8 +1526,8 @@ public:
 	virtual bool implementAction(SpellID dObj, ObjectID enactor, ObjectID withObj);
 	virtual bool implementAction(SpellID dObj, ObjectID enactor, ActiveItem *item);
 	virtual bool implementAction(SpellID dObj, ObjectID enactor, Location &loc);
-	uint16 containmentSet(void);
-	SpellID getSpellID(void) {
+	uint16 containmentSet();
+	SpellID getSpellID() {
 		return (SpellID) lockType;
 	}
 
@@ -1553,7 +1553,7 @@ public:
 //	virtual  bool acceptLockToggle( ObjectID dObj, ObjectID enactor, uint8 keyCode );
 
 //	virtual  ContainerWindow *makeWindow( GameObject *Obj );
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 };
 
 /* ======================================================================== *
@@ -1656,7 +1656,7 @@ public:
 	//  Do the background processing, if needed, for this object.
 	void doBackgroundUpdate(GameObject *obj);
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 };
 
 /* ======================================================================== *
@@ -1673,7 +1673,7 @@ public:
 
 	//Base class for monster, encounter, and mission generators
 
-	virtual uint16 containmentSet(void);
+	virtual uint16 containmentSet();
 };
 
 /* ======================================================================== *

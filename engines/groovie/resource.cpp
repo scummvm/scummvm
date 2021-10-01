@@ -47,11 +47,11 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 		return NULL;
 	}
 
-	debugC(1, kDebugResource, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size);
+	debugC(1, kDebugResource, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size, resInfo.disks);
 
 	// Does it exist?
 	if (!Common::File::exists(_gjds[resInfo.gjd])) {
-		error("Groovie::Resource: %s not found", _gjds[resInfo.gjd].c_str());
+		error("Groovie::Resource: %s not found (resInfo.disks: %d)", _gjds[resInfo.gjd].c_str(), resInfo.disks);
 		return NULL;
 	}
 
@@ -227,6 +227,8 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 		return false;
 	}
 
+	// resources are always in lowercase
+	name.toLowercase();
 	uint32 resNum;
 	bool found = false;
 	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
@@ -275,7 +277,7 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	}
 
 	// Read the resource information
-	rlFile.readUint32LE(); // Unknown
+	resInfo.disks = rlFile.readUint32LE(); // Seems to be a bitfield indicating on which disk(s) the file can be found
 	resInfo.offset = rlFile.readUint32LE();
 	resInfo.size = rlFile.readUint32LE();
 	resInfo.gjd = rlFile.readUint16LE();

@@ -838,7 +838,7 @@ void Grid::centerScreenOnActor() {
 	_engine->_renderer->projectPositionOnScreen(actor->_pos.x - (_newCamera.x * BRICK_SIZE),
 	                                   actor->_pos.y - (_newCamera.y * BRICK_HEIGHT),
 	                                   actor->_pos.z - (_newCamera.z * BRICK_SIZE));
-	// TODO: these border values should get scaled for hiher resolutions
+	// TODO: these border values should get scaled for higher resolutions
 	if (_engine->_renderer->_projPos.x < 80 || _engine->_renderer->_projPos.x >= _engine->width() - 60 || _engine->_renderer->_projPos.y < 80 || _engine->_renderer->_projPos.y >= _engine->height() - 50) {
 		_newCamera.x = ((actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.x) / 2;
 		_newCamera.y = actor->_pos.y / BRICK_HEIGHT;

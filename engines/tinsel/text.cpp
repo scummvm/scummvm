@@ -36,24 +36,6 @@ namespace Tinsel {
 static uint32 g_t3fontBaseColor;
 
 /**
- * Returns the handle for the character image.
- * @param pFont			Which font to use
- * @param c				Index of the character
- */
-SCNHANDLE GetFontDef(const FONT *pFont, int c)
-{
-	if (TinselV3)
-	{
-		const T3_FONT *pT3Font = (const T3_FONT *)pFont;
-		return FROM_32(pT3Font->fontDef[c]);
-	}
-	else
-	{
-		return FROM_32(pFont->fontDef[c]);
-	}
-}
-
-/**
  * Returns the length of one line of a string in pixels.
  * @param szStr			String
  * @param pFont			Which font to use for dimensions
@@ -69,7 +51,7 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 			if (c & 0x80)
 				c = ((c & ~0x80) << 8) + *++szStr;
 		}
-		hImg = GetFontDef(pFont, c);
+		hImg = pFont->fontDef[c];
 
 		if (hImg) {
 			// there is a IMAGE for this character
@@ -79,14 +61,14 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 			strLen += FROM_16(pChar->imgWidth);
 		} else
 			// use width of space character
-			strLen += FROM_32(pFont->spaceSize);
+			strLen += pFont->spaceSize;
 
 		// finally add the inter-character spacing
-		strLen += FROM_32(pFont->xSpacing);
+		strLen += pFont->xSpacing;
 	}
 
 	// return length of line in pixels - minus inter-char spacing for last character
-	strLen -= FROM_32(pFont->xSpacing);
+	strLen -= pFont->xSpacing;
 	return (strLen > 0) ? strLen : 0;
 }
 
@@ -141,15 +123,16 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	assert(pList);
 
 	// get font pointer
-	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
-	const OBJ_INIT *pFontInit = TinselV3 ? (&((const T3_FONT *)pFont)->fontInit) : (&pFont->fontInit);
+	FONT *pFont = _vm->_handle->GetFont(hFont);
+	const OBJ_INIT *pFontInit = &pFont->fontInit;
 
 	// init head of text list
 	pFirst = nullptr;
 
 	// get image for capital W
-	assert(GetFontDef(pFont, (int)'W'));
-	pImg = (const IMAGE *)_vm->_handle->LockMem(GetFontDef(pFont, (int)'W'));
+	SCNHANDLE imgHandle = pFont->fontDef[(int)'W'];
+	assert(imgHandle);
+	pImg = (const IMAGE *)_vm->_handle->LockMem(imgHandle);
 
 	// get height of capital W for offset to next line
 	yOffset = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
@@ -164,32 +147,24 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				if (c & 0x80)
 					c = ((c & ~0x80) << 8) + *++szStr;
 			}
-			hImg = GetFontDef(pFont, c);
+			hImg = pFont->fontDef[c];
 
 			if (hImg == 0) {
 				// no image for this character
 
 				// add font spacing for a space character
-				xJustify += FROM_32(pFont->spaceSize);
+				xJustify += pFont->spaceSize;
 			} else {	// printable character
 
 				int aniX, aniY;		// char image animation offsets
 
-				OBJ_INIT oi;
-				oi.hObjImg  = FROM_32(pFontInit->hObjImg);
-				oi.objFlags = FROM_32(pFontInit->objFlags);
-				oi.objID    = FROM_32(pFontInit->objID);
-				oi.objX     = FROM_32(pFontInit->objX);
-				oi.objY     = FROM_32(pFontInit->objY);
-				oi.objZ     = FROM_32(pFontInit->objZ);
-
 				// allocate and init a character object
 				if (pFirst == NULL)
 					// first time - init head of list
-					pFirst = pChar = InitObject(&oi);	// FIXME: endian issue using fontInit!!!
+					pFirst = pChar = InitObject(pFontInit);
 				else
 					// chain to multi-char list
-					pChar = pChar->pSlave = InitObject(&oi);	// FIXME: endian issue using fontInit!!!
+					pChar = pChar->pSlave = InitObject(pFontInit);
 
 				// convert image handle to pointer
 				pImg = (const IMAGE *)_vm->_handle->LockMem(hImg);
@@ -208,9 +183,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				pChar->constant = color;
 
 				// set the base font color to be replaced with supplied color, only for Tinsel V3
-				if (TinselV3) {
-					g_t3fontBaseColor = FROM_32(((const T3_FONT*)pFont)->baseColor);
-				}
+				g_t3fontBaseColor = TinselV3 ? pFont->baseColor : 0;
 
 				// get Y animation offset
 				GetAniOffset(hImg, pChar->flags, &aniX, &aniY);
@@ -232,8 +205,8 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					CopyObject(pShad, pChar);
 
 					// add shadow offsets to characters position
-					pShad->xPos += intToFrac(FROM_32(pFont->xShadow));
-					pShad->yPos += intToFrac(FROM_32(pFont->yShadow));
+					pShad->xPos += intToFrac(pFont->xShadow);
+					pShad->yPos += intToFrac(pFont->yShadow);
 
 					// shadow is behind the character
 					pShad->zPos--;
@@ -265,20 +238,22 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 			}
 
 			// finally add the inter-character spacing
-			xJustify += FROM_32(pFont->xSpacing);
+			xJustify += pFont->xSpacing;
 
 			// next character in string
 			++szStr;
 		}
 
 		// adjust the text y position and add the inter-line spacing
-		yPos += yOffset + FROM_32(pFont->ySpacing);
+		yPos += yOffset + pFont->ySpacing;
 
 		// check for newline
 		if (c == LF_CHAR)
 			// next character in string
 			++szStr;
 	}
+
+	delete pFont;
 
 	// return head of list
 	return pFirst;
@@ -298,9 +273,11 @@ bool IsCharImage(SCNHANDLE hFont, char c) {
 		return false;
 
 	// get font pointer
-	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
+	FONT *pFont = _vm->_handle->GetFont(hFont);
+	bool result = pFont->fontDef[c2] != 0;
+	delete pFont;
 
-	return GetFontDef(pFont, c2) != 0;
+	return result;
 }
 
 uint32 t3GetBaseColor()

@@ -37,7 +37,7 @@ class Band;
  * ===================================================================== */
 
 //  Allocate a new band
-Band *newBand(void);
+Band *newBand();
 Band *newBand(BandID id);
 
 //  Delete a previously allocated band
@@ -49,11 +49,11 @@ BandID getBandID(Band *b);
 Band *getBandAddress(BandID id);
 
 //  Initialize the band list
-void initBands(void);
+void initBands();
 void saveBands(Common::OutSaveFile *outS);
 void loadBands(Common::InSaveFile *in, int32 chunkSize);
 //  Cleanup the band list
-void cleanupBands(void);
+void cleanupBands();
 
 /* ===================================================================== *
    BandList class
@@ -70,22 +70,22 @@ public:
 	Band *_list[kNumBands];
 
 	//  Constructor -- initial construction
-	BandList(void);
+	BandList();
 
 	//  Destructor
-	~BandList(void);
+	~BandList();
 
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes necessary to archive this task list
 	//  in a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Place a Band from the inactive list into the active
 	//  list.
-	Band *newBand(void);
+	Band *newBand();
 	Band *newBand(BandID id);
 
 	void addBand(Band *band);
@@ -134,11 +134,11 @@ public:
 
 	//  Return the number of bytes needed to archive this object in a
 	//  buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	Actor *getLeader(void) {
+	Actor *getLeader() {
 		return _leader;
 	}
 
@@ -176,7 +176,7 @@ public:
 			_members[i] = _members[i + 1];
 	}
 
-	int size(void) {
+	int size() {
 		return _memberCount;
 	}
 	Actor *const &operator [](int index) {

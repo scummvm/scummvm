@@ -165,11 +165,11 @@ void AvatarMoverProcess::getMovementFlagAxes(int &x, int &y) {
 }
 
 Direction AvatarMoverProcess::getTurnDirForTurnFlags(Direction direction, DirectionMode dirmode) {
-	if (hasMovementFlags(MOVE_TURN_LEFT)) {
+	if (hasMovementFlags(MOVE_TURN_LEFT | MOVE_PENDING_TURN_LEFT)) {
 		direction = Direction_OneLeft(direction, dirmode);
 	}
 
-	if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+	if (hasMovementFlags(MOVE_TURN_RIGHT | MOVE_PENDING_TURN_RIGHT)) {
 		direction = Direction_OneRight(direction, dirmode);
 	}
 	return direction;

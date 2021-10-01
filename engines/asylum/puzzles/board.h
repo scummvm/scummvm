@@ -50,16 +50,18 @@ public:
 		uint32 soundResourceSize;
 		SoundResource soundResources[3];
 		uint32 charMapSize;
-		CharMap charMap[10];
+		CharMap charMap[11];
 		bool checkForSpace;
+		uint32 space1Pos, space2Pos;
 		char solvedText[28];
 	};
 
-	PuzzleBoard(AsylumEngine *engine, const PuzzleData &data);
+	PuzzleBoard(AsylumEngine *engine, const PuzzleData *data);
 
 	void reset();
 
 protected:
+	PuzzleData _data;
 	bool _solved;
 	Common::String _text;
 	bool _charUsed[20];
@@ -78,8 +80,6 @@ protected:
 	void checkSlots();
 
 private:
-	PuzzleData _data;
-
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////

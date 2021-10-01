@@ -102,6 +102,25 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_data_455BF4 = 0;
 	_keywordStartIndex = 0;
 
+	if (_vm->checkGameVersion("Demo")) {
+		_keywordsOffset = 204;
+	} else {
+		switch (_vm->getLanguage()) {
+		default:
+		case Common::EN_ANY:
+			_keywordsOffset = 3681;
+			break;
+
+		case Common::DE_DEU:
+			_keywordsOffset = 1760;
+			break;
+
+		case Common::FR_FRA:
+			_keywordsOffset = 1741;
+			break;
+		}
+	}
+
 	load();
 }
 
@@ -112,7 +131,8 @@ void Encounter::load() {
 	Common::File file;
 
 	if (!file.open("sntrm.dat"))
-		error("[Encounter::load] Could not open encounter data!");
+		if (!file.open("asylum.dat"))
+			error("[Encounter::load] Could not open encounter data!");
 
 	// Load the variables
 	uint16 count = file.readUint16LE();
@@ -212,6 +232,13 @@ void Encounter::initPortraits() {
 
 	if (_portrait2.resourceId == kResourceInvalid && getWorld()->chapter == kChapter1)
 		_portrait2.resourceId = getWorld()->graphicResourceIds[36];
+
+	if (_vm->checkGameVersion("Demo")) {
+		if (_index == 1)
+			_portrait2.resourceId = getWorld()->graphicResourceIds[35];
+		else
+			_portrait2.resourceId = getWorld()->graphicResourceIds[34];
+	}
 
 	if (_portrait2.resourceId == kResourceInvalid)
 		error("[Encounter::initPortraits] No portrait 2 for this encounter!");
@@ -585,7 +612,7 @@ int32 Encounter::getKeywordIndex() {
 			int32 x = _drawingStructs[0].point1.y + 145 * (counter % 3) + _point.x + _portrait1.rect.width() + 15;
 			int32 y = 16 * (counter / 3) + _point.y + 5;
 
-			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (_item->keywords[index] & KEYWORD_MASK))))
+			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + (_item->keywords[index] & KEYWORD_MASK))))
 			 && mousePos.y >= y && mousePos.y <= (y + 16))
 				return index;
 
@@ -605,7 +632,27 @@ void Encounter::choose(int32 index) {
 		_value1 = (_item->keywords[index] & KEYWORD_MASK);
 		setVariable(1, _value1);
 
-		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, 3681 + _value1))))
+		const char *goodBye;
+		switch (_vm->getLanguage()) {
+		default:
+		case Common::EN_ANY:
+			goodBye = "Goodbye";
+			break;
+
+		case Common::DE_DEU:
+			goodBye = "Auf Wiedersehen";
+			break;
+
+		case Common::FR_FRA:
+			goodBye = "Au Revoir";
+			break;
+
+		case Common::RU_RUS:
+			goodBye = "\xc4\xee\x20\xf1\xe2\xe8\xe4\xe0\xed\xe8\xff"; // До свидания
+			break;
+		}
+
+		if (strcmp(goodBye, getText()->get(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + _value1))))
 			if (_index != 79)
 				BYTE1(_item->keywords[index]) |= kKeywordOptionsDisabled;
 
@@ -710,7 +757,7 @@ void Encounter::resetSpeech(int16 keywordIndex, int16 a2) {
 	_data_455BCC = false;
 	_data_455B3C = 1;
 
-	if (keywordIndex) {
+	if (keywordIndex || _vm->checkGameVersion("Demo")) {
 		getSpeech()->setTextResourceId(keywordIndex + a2);
 		setupSpeechText();
 	}
@@ -798,7 +845,7 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	}
 
 	_data_455BE0 = true;
-	_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId);
+	_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId + _vm->checkGameVersion("Demo") + 7 * _vm->isAltDemo());
 	//_soundResourceId = MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId); // todo replace with speech (this is being override by the actor speechs)
 	//getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId)); 
 }
@@ -1113,10 +1160,10 @@ void Encounter::drawDialogOptions() {
 			                     _point.y + (int16)(16 * (counter / 3)));
 
 			if (getKeywordIndex() == keywordIndex)
-				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK))) + 2, 18, 0);
+				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + (keyword & KEYWORD_MASK))) + 2, 18, 0);
 
 			getText()->setPosition(coords);
-			getText()->draw(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK)));
+			getText()->draw(MAKE_RESOURCE(kResourcePackText, _keywordsOffset + (keyword & KEYWORD_MASK)));
 
 			++counter;
 			_data_455B14 = i;

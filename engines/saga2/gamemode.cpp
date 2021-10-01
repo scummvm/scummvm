@@ -46,7 +46,7 @@ int         GameMode::modeStackCtr = 0;
 int         GameMode::newmodeStackCtr = 0;
 int         GameMode::newmodeFlag = false;
 
-void GameMode::modeUnStack(void) {
+void GameMode::modeUnStack() {
 	modeStackPtr[modeStackCtr] = NULL;                        //Always Start Cleanup At modeStackCtr
 	modeStackPtr[modeStackCtr--]->cleanup();
 	return;
@@ -64,7 +64,7 @@ void GameMode::modeUnStack(int StopHere) {
 	return;
 }
 
-bool GameMode::update(void) {
+bool GameMode::update() {
 	bool            result = false;
 	int             ModeCtr = 0;
 

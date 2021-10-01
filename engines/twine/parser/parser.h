@@ -41,6 +41,10 @@ public:
 
 	bool loadFromBuffer(const uint8 *buf, uint32 size, bool lba1);
 	bool loadFromHQR(const char *name, int index, bool lba1);
+
+	inline bool loadFromHQR(const TwineResource &resource, bool lba1) {
+		return loadFromHQR(resource.hqr, resource.index, lba1);
+	}
 };
 
 } // End of namespace TwinE

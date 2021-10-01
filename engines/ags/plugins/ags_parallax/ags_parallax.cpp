@@ -127,11 +127,6 @@ void AGSParallax::Draw(bool foreground) {
 
 void AGSParallax::pxDrawSprite(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, x, int, y, int, slot, int, speed);
-#ifdef DEBUG
-	char buffer[200];
-	sprintf(buffer, "%s %d %d %d %d %d\n", "pxDrawSprite", id, x, y, slot, speed);
-	_engine->PrintDebugConsole(buffer);
-#endif
 
 	if ((id < 0) || (id >= MAX_SPRITES))
 		return;
@@ -152,11 +147,6 @@ void AGSParallax::pxDrawSprite(ScriptMethodParams &params) {
 
 void AGSParallax::pxDeleteSprite(ScriptMethodParams &params) {
 	PARAMS1(int, id);
-#ifdef DEBUG
-	char buffer[200];
-	sprintf(buffer, "%s %d\n", "pxDeleteSprite", id);
-	_engine->PrintDebugConsole(buffer);
-#endif
 
 	if ((id < 0) || (id >= MAX_SPRITES))
 		return;

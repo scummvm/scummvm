@@ -23,6 +23,9 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
+
 namespace DreamWeb {
 
 void DreamWebEngine::newPlace() {
@@ -121,6 +124,10 @@ void DreamWebEngine::lookAtPlace() {
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	findNextColon(&string);
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+		_ttsMan->say((const char *)string, _textEncoding);
+
 	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
 	printDirect(&string, 63, &y, 191, 191 & 1);
 	workToScreenM();
@@ -153,6 +160,8 @@ void DreamWebEngine::locationPic() {
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	printDirect(string, 50, 20, 241, 241 & 1);
+
+	speakObject((const char *)string);
 }
 
 void DreamWebEngine::showArrows() {

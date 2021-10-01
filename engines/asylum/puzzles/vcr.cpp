@@ -353,8 +353,9 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 		// setupPalette();
 		getScreen()->setupPalette(NULL, 0, 0);
 
-		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackTowerCells, 28));
-		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackTowerCells, 28));
+		int paletteId = _vm->checkGameVersion("Demo") ? 20 : 28;
+		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackTowerCells, paletteId));
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackTowerCells, paletteId));
 	} else {
 		getScreen()->drawGraphicsInQueue();
 	}

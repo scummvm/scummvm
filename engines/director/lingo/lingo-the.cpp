@@ -436,7 +436,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheDate(field);
 		break;
 	case kTheDoubleClick:
-		getTheEntitySTUB(kTheDoubleClick);
+		d.type = INT;
+		// Always measured against the last two clicks.
+		// 25 ticks seems to be the threshold for a double click.
+		d.u.i = (movie->_lastClickTime - movie->_lastClickTime2) <= 25 ? 1 : 0;
 		break;
 	case kTheExitLock:
 		getTheEntitySTUB(kTheExitLock);
@@ -1219,7 +1222,7 @@ void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &me
 			int commandId = 100;
 			while (mainArchive->getScriptContext(kEventScript, commandId))
 				commandId++;
-			mainArchive->addCode(d.asString(), kEventScript, commandId);
+			mainArchive->replaceCode(d.asString(), kEventScript, commandId);
 
 			if (menuId.type == STRING && menuItemId.type == STRING)
 				g_director->_wm->setMenuItemAction(menuId.asString(), menuItemId.asString(), commandId);
@@ -1943,7 +1946,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 
 static const char *mfull[] = {
 	"January", "February", "March", "April", "May", "June",
-	"July", "August" "September", "October", "November", "December"
+	"July", "August", "September", "October", "November", "December"
 };
 
 static const char *wday[] = {

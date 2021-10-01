@@ -475,7 +475,7 @@ class RandomGenerator {
 	static const uint32 b;          //  arbitrary constant
 
 public:
-	RandomGenerator(void) : a(1) {
+	RandomGenerator() : a(1) {
 	}
 	RandomGenerator(uint16 seed) {
 		a = (uint32)seed << 16;
@@ -485,7 +485,7 @@ public:
 		a = (uint32)seed << 16;
 	}
 
-	uint16 operator()(void) {
+	uint16 operator()() {
 		a = (a * b) + 1;
 		return a >> 16;
 	}
@@ -566,7 +566,7 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 #define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *stack)
 #define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *addr)
 
-bool Thread::interpret(void) {
+bool Thread::interpret() {
 	uint8               *pc,
 	                    *addr;
 	int16               *stack = (int16 *)stackPtr;
@@ -792,7 +792,7 @@ bool Thread::interpret(void) {
 			break;
 
 		case op_call_member:                // call member function
-		case op_call_member_v:              // call member function (void)
+		case op_call_member_v:              // call member function ()
 			if (op == op_call_member)
 				D_OP(op_call_member);
 			else
@@ -1177,7 +1177,7 @@ class ThreadList {
 
 public:
 	//  Constructor
-	ThreadList(void) {
+	ThreadList() {
 		for (uint i = 0; i < kNumThreads; i++)
 			_list[i] = nullptr;
 	}
@@ -1186,12 +1186,12 @@ public:
 
 	//  Return the number of bytes needed to archive this thread list
 	//  in an archive buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the active threads
-	void cleanup(void);
+	void cleanup();
 
 	//  Place a thread back into the inactive list
 	void deleteThread(Thread *p);
@@ -1216,7 +1216,7 @@ public:
 	}
 
 	//  Return a pointer to the first active thread
-	Thread *first(void);
+	Thread *first();
 
 	Thread *next(Thread *thread);
 };
@@ -1241,7 +1241,7 @@ void ThreadList::read(Common::InSaveFile *in) {
 	}
 }
 
-int32 ThreadList::archiveSize(void) {
+int32 ThreadList::archiveSize() {
 	int32 size = sizeof(int16);
 
 	for (uint i = 0; i < kNumThreads; i++) {
@@ -1277,7 +1277,7 @@ void ThreadList::write(Common::MemoryWriteStreamDynamic *out) {
 //-------------------------------------------------------------------
 //	Cleanup the active threads
 
-void ThreadList::cleanup(void) {
+void ThreadList::cleanup() {
 	for (uint i = 0; i < kNumThreads; i++) {
 		delete _list[i];
 		_list[i] = nullptr;
@@ -1316,7 +1316,7 @@ void ThreadList::newThread(Thread *p) {
 //-------------------------------------------------------------------
 //	Return a pointer to the first active thread
 
-Thread *ThreadList::first(void) {
+Thread *ThreadList::first() {
 	for (uint i = 0; i < kNumThreads; i++)
 		if (_list[i])
 			return _list[i];
@@ -1360,7 +1360,7 @@ static ThreadList &threadList = *((ThreadList *)threadListBuffer);
 //-------------------------------------------------------------------
 //	Initialize the SAGA thread list
 
-void initSAGAThreads(void) {
+void initSAGAThreads() {
 	//  Simply call the Thread List default constructor
 }
 
@@ -1387,7 +1387,7 @@ void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize) {
 //-------------------------------------------------------------------
 //	Dispose of the active SAGA threads
 
-void cleanupSAGAThreads(void) {
+void cleanupSAGAThreads() {
 	//  Simply call the ThreadList cleanup() function
 	threadList.cleanup();
 }
@@ -1505,7 +1505,7 @@ Thread::~Thread() {
 //	Return the number of bytes need to archive this thread in an arhive
 //	buffer
 
-int32 Thread::archiveSize(void) {
+int32 Thread::archiveSize() {
 	return      sizeof(programCounter)
 	            +   sizeof(stackSize)
 	            +   sizeof(flags)
@@ -1545,7 +1545,7 @@ void Thread::write(Common::MemoryWriteStreamDynamic *out) {
 //-----------------------------------------------------------------------
 //	Thread dispatcher
 
-void Thread::dispatch(void) {
+void Thread::dispatch() {
 	Thread              *th,
 	                    *nextThread;
 
@@ -1630,14 +1630,14 @@ break_thread_loop:
 //-----------------------------------------------------------------------
 //	Run scripts which are on the queue
 
-void dispatchScripts(void) {
+void dispatchScripts() {
 	Thread::dispatch();
 }
 
 //-----------------------------------------------------------------------
 //	Run a script until finished
 
-scriptResult Thread::run(void) {
+scriptResult Thread::run() {
 	int             i = 4000;
 
 	while (i--) {
@@ -1658,7 +1658,7 @@ scriptResult Thread::run(void) {
 //-----------------------------------------------------------------------
 //	Convert to extended thread
 
-void Thread::setExtended(void) {
+void Thread::setExtended() {
 	if (!(flags & extended)) {
 		flags |= extended;
 		extendedThreadLevel++;
@@ -1668,7 +1668,7 @@ void Thread::setExtended(void) {
 //-----------------------------------------------------------------------
 //	Convert back to regular thread
 
-void Thread::clearExtended(void) {
+void Thread::clearExtended() {
 	if (flags & extended) {
 		flags &= ~extended;
 		extendedThreadLevel--;
@@ -1678,7 +1678,7 @@ void Thread::clearExtended(void) {
 /* ============================================================================ *
                         Script Management functions
  * ============================================================================ */
-void initScripts(void) {
+void initScripts() {
 	//  Open the script resource group
 	scriptRes = scriptResFile->newContext(sagaID,  "script resources");
 	if (scriptRes == NULL)
@@ -1705,7 +1705,7 @@ void initScripts(void) {
 	       (void*)exportSegment, scriptRes->getSize(exportSegID, "saga export segment"), exportCount);
 }
 
-void cleanupScripts(void) {
+void cleanupScripts() {
 	if (exportSegment)
 		free(exportSegment);
 
@@ -1720,7 +1720,7 @@ void cleanupScripts(void) {
 //-----------------------------------------------------------------------
 //	Load the SAGA data segment from the resource file
 
-void initSAGADataSeg(void) {
+void initSAGADataSeg() {
 	//  Load the data segment
 	scriptRes->seek(dataSegID);
 	scriptRes->read(dataSegment, dataSegSize);

@@ -65,24 +65,5 @@ In most cases, ScummVM can use CD audio directly from the game CD. If you don't 
 
 Macintosh games
 ==================
-
-Many of the supported games also exist in versions for the Macintosh.
-
-There are three main aspects of Macintosh floppy or CD media that can make it difficult to extract the game data:
-
-* The Macintosh uses a different file system to other operating systems (HFS for older media, and HFS+ for more recent ones). On a Windows or Linux system you need additional software to view and copy the files from HFS and HFS+ floppy disks and CDs.
-* Macintosh HFS and HFS+ media have a concept called forks. For those familiar with NTFS, it's the same principle as NTFS streams. A file can consist of two forks, a data fork and a resource fork. Both are important for games to work correctly. Systems other than macOS do not support resource forks, and a regular file copy from a HFS or HFS+ media on such a system will only copy the data fork. To properly preserve the resource fork during the copy, those files need to be converted to a MacBinary file.
-* File names on a Macintosh medium may contain characters not supported on other systems, and thus files may need to be renamed.
-
-ScummVM supplies a dumper-companion that can extract data files from the iso image of a HFS medium and dump it as a zip file. Files with a resource forks are automatically converted to MacBinary files. And files are renamed if needed.
-
-1. Upload your iso here: `<https://servilla.org/dumper-companion/>`_
-2. Click the dump button
-3. Download the zip file
-4. Extract the zip file
-5. Add the extracted directory to scummvm
-
-This web dumper-companion works entirely in your web browser and does not transfer the data to any server.
-
-ScummVM also provides a more full fledged dumper-companion in python. For more information on both the web dumper and the python one, as well as other ways to access data files from a HFS or HFS+ medium, see the :doc:`../advanced_topics/mac_game_files` page.
+Many of the supported games also exist in versions for the Macintosh, however it can be tricky to extract the correct files from a Macintosh floppy or CD, especially if you are using Windows or Linux. See :doc:`../use_scummvm/mac_game_files` for an in-depth how-to guide. 
 

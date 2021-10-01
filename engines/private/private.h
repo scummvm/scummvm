@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
+#include "graphics/palette.h"
 
 #include "private/grammar.h"
 
@@ -199,7 +200,14 @@ public:
 	void skipVideo();
 
 	Graphics::Surface *decodeImage(const Common::String &file);
+	const byte *decodePalette(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y);
+	void composeImagePalette(Graphics::Surface *surf, const byte *palette);
+	void composeImagePalette(const Graphics::Surface *surf, const byte *palette);
+	void includePalette(const byte *palette, int start);
+	int _paletteIndex;
+	Common::HashMap <uint32, int> _colorToIndex;
+	Common::HashMap <int, uint32> _indexToColor;
 	void drawScreenFrame();
 
 	// Cursors
@@ -216,7 +224,8 @@ public:
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	Common::String _framePath;
-	Graphics::Surface *_frame;
+	Graphics::Surface *_frameImage;
+	byte *_framePalette;
 	Common::String _nextVS;
 	Common::Point _origin;
 	void drawScreen();

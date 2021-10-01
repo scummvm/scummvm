@@ -34,27 +34,27 @@ namespace Saga2 {
 //  Function to enable/disable user interface keys
 bool enableUIKeys(bool enabled);
 
-void toggleAutoAggression(void);
-bool isAutoAggressionSet(void);
-void toggleAutoWeapon(void);
-bool isAutoWeaponSet(void);
+void toggleAutoAggression();
+bool isAutoAggressionSet();
+void toggleAutoWeapon();
+bool isAutoWeaponSet();
 
 //  Notify this module of an aggressive act
 void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID);
 
 //  Initialize the tile mode state
-void initTileModeState(void);
+void initTileModeState();
 
 void saveTileModeState(Common::OutSaveFile *outS);
 void loadTileModeState(Common::InSaveFile *in);
 
 //  Cleanup the tile mode state
-inline void cleanupTileModeState(void) { /* do nothing */ }
+inline void cleanupTileModeState() { /* do nothing */ }
 
-void TileModeSetup(void);                        // alloc tile resources
-void TileModeCleanup(void);                      // free tile resources
+void TileModeSetup();                        // alloc tile resources
+void TileModeCleanup();                      // free tile resources
 
-void noStickyMap(void);
+void noStickyMap();
 
 class TileModeManager {
 public:

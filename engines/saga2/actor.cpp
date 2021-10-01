@@ -73,7 +73,7 @@ extern bool     massAndBulkCount;
 //-----------------------------------------------------------------------
 //	Return a bit mask indicating the properties of this object type
 
-uint16 ActorProto::containmentSet(void) {
+uint16 ActorProto::containmentSet() {
 	//  All actors may also be weapons (indicating natural attacks)
 	return ProtoObj::containmentSet() | isWeapon;
 }
@@ -113,7 +113,7 @@ bool ActorProto::canContainAt(
 	                ||  itemPtr->possessor() == dObj);
 }
 
-weaponID ActorProto::getWeaponID(void) {
+weaponID ActorProto::getWeaponID() {
 	return weaponDamage;
 }
 
@@ -1027,7 +1027,7 @@ void Actor::init(
 //-----------------------------------------------------------------------
 //  Actor constructor -- copies the resource fields and simply NULL's most
 //	of the rest of the data members
-Actor::Actor(void) {
+Actor::Actor() {
 	prototype = nullptr;
 	_faction             = 0;
 	_colorScheme         = 0;
@@ -1278,7 +1278,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 //-----------------------------------------------------------------------
 //	Destructor
 
-Actor::~Actor(void) {
+Actor::~Actor() {
 	if (_appearance != NULL) ReleaseActorAppearance(_appearance);
 
 	if (getAssignment())
@@ -1288,7 +1288,7 @@ Actor::~Actor(void) {
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this actor
 
-int32 Actor::archiveSize(void) {
+int32 Actor::archiveSize() {
 	int32   size = GameObject::archiveSize();
 
 	size += sizeof(ActorArchive);
@@ -1468,7 +1468,7 @@ Actor *Actor::newActor(
 //-----------------------------------------------------------------------
 //	Delete this actor
 
-void Actor::deleteActor(void) {
+void Actor::deleteActor() {
 	if (_flags & temporary) {
 		uint16      protoNum = getProtoNum();
 
@@ -1518,7 +1518,7 @@ void Actor::deleteActor(void) {
 //-----------------------------------------------------------------------
 //	Cause the actor to stop his current motion task is he is interruptable
 
-void Actor::stopMoving(void) {
+void Actor::stopMoving() {
 	if (_moveTask != NULL && isInterruptable())
 		_moveTask->remove();
 }
@@ -1526,7 +1526,7 @@ void Actor::stopMoving(void) {
 //-----------------------------------------------------------------------
 //	Cause this actor to die
 
-void Actor::die(void) {
+void Actor::die() {
 	if (!isDead()) return;
 
 	ObjectID        dObj = thisID();
@@ -1567,7 +1567,7 @@ void Actor::die(void) {
 //-----------------------------------------------------------------------
 //	Cause this actor to come back to life
 
-void Actor::imNotQuiteDead(void) {
+void Actor::imNotQuiteDead() {
 	if (isDead()) {
 		PlayerActorID       pID;
 
@@ -1582,7 +1582,7 @@ void Actor::imNotQuiteDead(void) {
 //-----------------------------------------------------------------------
 // Cuase the actor to re-assess his/her vitality
 
-void Actor::vitalityUpdate(void) {
+void Actor::vitalityUpdate() {
 	//  If we're dead, don't heal
 	if (isDead()) return;
 
@@ -1627,7 +1627,7 @@ void Actor::vitalityUpdate(void) {
 //-----------------------------------------------------------------------
 //	Perform actor specific activation tasks
 
-void Actor::activateActor(void) {
+void Actor::activateActor() {
 	debugC(1, kDebugActors, "Actors: Activated %d (%s)", thisID() - 32768, objName());
 
 	evaluateNeeds();
@@ -1636,7 +1636,7 @@ void Actor::activateActor(void) {
 //-----------------------------------------------------------------------
 //	Perfrom actor specific deactivation tasks
 
-void Actor::deactivateActor(void) {
+void Actor::deactivateActor() {
 	debugC(1, kDebugActors, "Actors: De-activated %d  (%s)", thisID() - 32768, objName());
 
 	//  Kill task
@@ -1667,7 +1667,7 @@ void Actor::deactivateActor(void) {
 //-----------------------------------------------------------------------
 //	Delobotomize this actor
 
-void Actor::delobotomize(void) {
+void Actor::delobotomize() {
 	if (!(_flags & lobotomized)) return;
 
 	ObjectID        dObj = thisID();
@@ -1689,7 +1689,7 @@ void Actor::delobotomize(void) {
 //-----------------------------------------------------------------------
 //	Lobotomize this actor
 
-void Actor::lobotomize(void) {
+void Actor::lobotomize() {
 	if (_flags & lobotomized) return;
 
 	ObjectID        dObj = thisID();
@@ -1723,7 +1723,7 @@ void Actor::lobotomize(void) {
 //	actor is a player actor, the base stats are in the PlayerActor
 //	structure.
 
-ActorAttributes *Actor::getBaseStats(void) {
+ActorAttributes *Actor::getBaseStats() {
 	if (_disposition < dispositionPlayer)
 		return &((ActorProto *)prototype)->baseStats;
 	else
@@ -1734,7 +1734,7 @@ ActorAttributes *Actor::getBaseStats(void) {
 //	Return the racial base enchantment flags.  If this actor
 //	is a non-player actor, the base stats are in the prototype.
 
-uint32 Actor::getBaseEnchantmentEffects(void) {
+uint32 Actor::getBaseEnchantmentEffects() {
 	//if ( disposition < dispositionPlayer )
 	return ((ActorProto *)prototype)->baseEffectFlags;
 }
@@ -1743,7 +1743,7 @@ uint32 Actor::getBaseEnchantmentEffects(void) {
 //	Return the object base resistance flags.  If this actor
 //	is a non-player actor, the base stats are in the prototype.
 
-uint16 Actor::getBaseResistance(void) {
+uint16 Actor::getBaseResistance() {
 	//if ( disposition < dispositionPlayer )
 	return ((ActorProto *)prototype)->resistance;
 }
@@ -1752,7 +1752,7 @@ uint16 Actor::getBaseResistance(void) {
 //	Return the object base immunity flags.  If this actor
 //	is a non-player actor, the base stats are in the prototype.
 
-uint16 Actor::getBaseImmunity(void) {
+uint16 Actor::getBaseImmunity() {
 	//if ( disposition < dispositionPlayer )
 	return ((ActorProto *)prototype)->immunity;
 }
@@ -1760,7 +1760,7 @@ uint16 Actor::getBaseImmunity(void) {
 //-----------------------------------------------------------------------
 //  Return the base recovery rate
 
-uint16 Actor::getBaseRecovery(void) {
+uint16 Actor::getBaseRecovery() {
 	return BASE_REC_RATE;
 }
 
@@ -1783,7 +1783,7 @@ bool Actor::inUseRange(const TilePoint &tp, GameObject *obj) {
 //-----------------------------------------------------------------------
 //	Determine if actor is immobile (i.e. can't walk)
 
-bool Actor::isImmobile(void) {
+bool Actor::isImmobile() {
 	return      isDead()
 	            ||  hasEffect(actorImmobile)
 	            ||  hasEffect(actorAsleep)
@@ -1793,7 +1793,7 @@ bool Actor::isImmobile(void) {
 //-----------------------------------------------------------------------
 //	Return a pointer to this actor's currently readied offensive object
 
-GameObject *Actor::offensiveObject(void) {
+GameObject *Actor::offensiveObject() {
 	if (_rightHandObject != Nothing) {
 		assert(isObject(_rightHandObject));
 
@@ -1937,7 +1937,7 @@ void Actor::stopAttack(GameObject *target) {
 //-----------------------------------------------------------------------
 //	Determine if this actor can block an attack
 
-bool Actor::canDefend(void) {
+bool Actor::canDefend() {
 	if (isDead()) return false;
 
 	//  Look at left hand object, generally the defensive object
@@ -1961,7 +1961,7 @@ bool Actor::canDefend(void) {
 //	Return a numeric value which roughly estimates this actor's
 //	offensive strength
 
-int16 Actor::offenseScore(void) {
+int16 Actor::offenseScore() {
 	//  REM: at this time this calculation is somewhat arbitrary
 
 	int16           score = 0;
@@ -1991,7 +1991,7 @@ int16 Actor::offenseScore(void) {
 //	Return a numeric value which roughly estimates this actor's
 //	defensive strength
 
-int16 Actor::defenseScore(void) {
+int16 Actor::defenseScore() {
 	//  REM: at this time this calculation is somewhat arbitrary
 
 	int16           score = 0;
@@ -2120,7 +2120,7 @@ int16 Actor::animationFrames(int16 actionType, Direction dir) {
 //  Update the current animation sequence to the next frame.
 //  Returns true if the animation sequence has finished.
 
-bool Actor::nextAnimationFrame(void) {
+bool Actor::nextAnimationFrame() {
 	ActorAnimation      *anim;
 	int16                numPoses;
 
@@ -2212,7 +2212,7 @@ bool Actor::nextAnimationFrame(void) {
 //-----------------------------------------------------------------------
 //	Drop the all of the actor's inventory
 
-void Actor::dropInventory(void) {
+void Actor::dropInventory() {
 	GameObject          *obj,
 	                    *nextObj;
 
@@ -2406,7 +2406,7 @@ void Actor::setGoal(uint8 newGoal) {
 //-----------------------------------------------------------------------
 //  Reevaluate actor's built-in needs
 
-void Actor::evaluateNeeds(void) {
+void Actor::evaluateNeeds() {
 	if (!isDead()
 	        &&  isActivated()
 	        &&  !(_flags & lobotomized)) {
@@ -2493,7 +2493,7 @@ void Actor::evaluateNeeds(void) {
 	}
 }
 
-void Actor::updateState(void) {
+void Actor::updateState() {
 	//  The actor should not be set permanently uninterruptable when
 	//  the actor does not have a motion task
 	assert(isMoving() || _actionCounter != maxuint8);
@@ -2989,7 +2989,7 @@ void Actor::bandWith(Actor *newLeader) {
 //-----------------------------------------------------------------------
 //	Simply causes this actor to be removed from his current band.
 
-void Actor::disband(void) {
+void Actor::disband() {
 	if (_leader != NULL) {
 		_leader->removeFollower(this);
 		_leader = NULL;
@@ -3114,7 +3114,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 
 //  Returns 0 if not moving, 1 if path being calculated,
 //  2 if path being followed.
-bool Actor::pathFindState(void) {
+bool Actor::pathFindState() {
 	if (_moveTask == NULL)
 		return 0;
 	if (_moveTask->pathFindTask)
@@ -3151,7 +3151,7 @@ bool Actor::removeKnowledge(uint16 kID) {
 //-----------------------------------------------------------------------
 //  Remove all knowledge package from actor
 
-void Actor::clearKnowledge(void) {
+void Actor::clearKnowledge() {
 	for (int i = 0; i < ARRAYSIZE(_knowledge); i++) {
 		_knowledge[i] = 0;
 	}
@@ -3354,14 +3354,14 @@ bool Actor::hasMana(ActorManaID i, int8 dMana) {
 //-----------------------------------------------------------------------
 // Saving throw funcion
 
-bool Actor::makeSavingThrow(void) {
+bool Actor::makeSavingThrow() {
 	return false;
 }
 
 //-------------------------------------------------------------------
 //	Determine if the actors are currently initialized
 
-bool areActorsInitialized(void) {
+bool areActorsInitialized() {
 	return g_vm->_act->_actorList.size() > 0;
 }
 
@@ -3369,7 +3369,7 @@ int16 GetRandomBetween(int start, int end) {
 	return g_vm->_rnd->getRandomNumberRng(start, end - 1);
 }
 
-void updateActorStates(void) {
+void updateActorStates() {
 	if (g_vm->_act->_actorStatesPaused) return;
 
 	int32 actorIndex;
@@ -3395,13 +3395,13 @@ void updateActorStates(void) {
 
 //-------------------------------------------------------------------
 
-void pauseActorStates(void) {
+void pauseActorStates() {
 	g_vm->_act->_actorStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
-void resumeActorStates(void) {
+void resumeActorStates() {
 	g_vm->_act->_actorStatesPaused = false;
 }
 
@@ -3442,7 +3442,7 @@ ResourceActor::ResourceActor(Common::SeekableReadStream *stream) : ResourceGameO
 	}
 }
 
-void initActors(void) {
+void initActors() {
 	//  Load actors
 	int i, resourceActorCount;
 	Common::Array<ResourceActor> resourceActorList;
@@ -3542,7 +3542,7 @@ void loadActors(Common::InSaveFile *in) {
 //-------------------------------------------------------------------
 //	Cleanup the actor list
 
-void cleanupActors(void) {
+void cleanupActors() {
 	if (g_vm->_act->_actorList.size() > 0) {
 		for (int i = 0; i < kActorCount; i++)
 			delete g_vm->_act->_actorList[i];
@@ -3601,7 +3601,7 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 //-------------------------------------------------------------------
 //	Initialize the faction tally table
 
-void initFactionTallies(void) {
+void initFactionTallies() {
 	memset(&g_vm->_act->_factionTable, 0, sizeof(g_vm->_act->_factionTable));
 }
 

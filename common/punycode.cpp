@@ -129,7 +129,7 @@ static size_t decode_digit(uint32 v) {
 	return SMAX;
 }
 
-String punycode_encode(U32String src) {
+String punycode_encode(const U32String &src) {
 	size_t srclen = src.size();
 	size_t h = 0, si;
 	String dst = "xn--";
@@ -194,11 +194,11 @@ String punycode_encode(U32String src) {
 	return dst;
 }
 
-bool punycode_hasprefix(const String src) {
+bool punycode_hasprefix(const String &src) {
 	return src.hasPrefix("xn--");
 }
 
-bool punycode_needEncode(const String src) {
+bool punycode_needEncode(const String &src) {
 	for (uint si = 0; si < src.size(); si++) {
 		if (src[si] & 0x80 || src[si] < 0x20 || strchr(SPECIAL_SYMBOLS, src[si])) {
 			return true;
@@ -208,7 +208,7 @@ bool punycode_needEncode(const String src) {
 	return false;
 }
 
-U32String punycode_decode(const String src1) {
+U32String punycode_decode(const String &src1) {
 	if (!src1.hasPrefix("xn--"))
 		return src1;
 
@@ -301,7 +301,7 @@ U32String punycode_decode(const String src1) {
 	return dst;
 }
 
-String punycode_encodefilename(const U32String src) {
+String punycode_encodefilename(const U32String &src) {
 	U32String dst;
 
 	for (uint i = 0; i < src.size(); i++) {
@@ -320,7 +320,7 @@ String punycode_encodefilename(const U32String src) {
 	return punycode_encode(dst);
 }
 
-U32String punycode_decodefilename(const String src1) {
+U32String punycode_decodefilename(const String &src1) {
 	U32String dst;
 	U32String src = punycode_decode(src1);
 

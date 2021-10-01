@@ -58,6 +58,23 @@ static const CINEGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// This is the Future Wars CD version
+		// with a French translation patch (#12490).
+		{
+			"fw",
+			"Sony CD version with French translation patch",
+			AD_ENTRY2s("AUTO00.PRC",	"4fe1e7930b38e3c63f0f2474d471bf8f", -1,
+					   "PART01",		"5d1acb97abe9591f9008e00d07add95a", -1),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GType_FW,
+		GF_CD | GF_CRYPTED_BOOT_PRC,
+	},
+
+	{
 		// This is the version included in the UK "Classic Collection"
 		{
 			"fw",
@@ -400,6 +417,20 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs1", "da066e6b8dd93f2502c2a3755f08dc12"),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_OS,
+		0,
+	},
+
+	{ // Submitted by Nyarlathotep7777 in #12812 (Italian Amiga version)
+		{
+			"os",
+			"",
+			AD_ENTRY1s("procs1", "d7458be2b14d77410e6330148ca6c371", 61682),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},

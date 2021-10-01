@@ -154,13 +154,13 @@ protected:
 	void drawMaskedSprite(const ObjectStruct &obj, const byte *mask);
 	virtual void drawSprite(const ObjectStruct &obj);
 
-	void drawMessage(const char *str, int x, int y, int width, int color);
+	int drawMessage(const char *str, int x, int y, int width, int color, bool draw = true);
 	void drawPlainBox(int x, int y, int width, int height, byte color);
 	byte transparentDialogBoxStartColor();
 	void drawTransparentBox(int x, int y, int width, int height);
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
-	virtual int drawChar(char character, int x, int y);
+	virtual int drawChar(char character, int x, int y, bool draw = true);
 	virtual int undrawChar(char character, int x, int y);
 	void drawLine(int x, int y, int width, int height, byte color);
 	void remaskSprite(byte *mask, Common::List<overlay>::iterator it);
@@ -260,7 +260,7 @@ protected:
 	const Cine::Palette& getFadeInSourcePalette() override;
 	void drawSprite(const ObjectStruct &obj) override;
 	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
-	int drawChar(char character, int x, int y) override;
+	int drawChar(char character, int x, int y, bool draw = true) override;
 	void drawBackground() override;
 	void renderOverlay(const Common::List<overlay>::iterator &it) override;
 

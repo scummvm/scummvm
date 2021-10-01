@@ -56,7 +56,7 @@ ActorAppearance     *tempAppearance;        // test structure
    Test spell crap
  * ===================================================================== */
 
-bool InCombatPauseKludge(void);
+bool InCombatPauseKludge();
 //void updateSpellPos( int32 delTime );
 
 //-----------------------------------------------------------------------
@@ -84,7 +84,7 @@ uint8 identityColors[256] = {
 //-----------------------------------------------------------------------
 //	build the list of stuff to draw (like guns)
 
-void buildDisplayList(void) {
+void buildDisplayList() {
 	g_vm->_mainDisplayList->buildObjects(true);
 	g_vm->_activeSpells->buildList();
 }
@@ -103,7 +103,7 @@ void updateObjectAppearances(int32 deltaTime) {
 //-----------------------------------------------------------------------
 //	Draw all sprites on the display list
 
-void drawDisplayList(void) {
+void drawDisplayList() {
 	g_vm->_mainDisplayList->draw();
 }
 
@@ -127,7 +127,7 @@ DisplayNode::DisplayNode() {
 	efx = nullptr;
 }
 
-TilePoint DisplayNode::SpellPos(void) {
+TilePoint DisplayNode::SpellPos() {
 	if (efx)
 		return efx->current;
 	return Nowhere;
@@ -156,7 +156,7 @@ void DisplayNodeList::updateEStates(const int32 deltaTime) {
 //-----------------------------------------------------------------------
 //	Draw router
 
-void DisplayNodeList::draw(void) {
+void DisplayNodeList::draw() {
 	DisplayNode     *dn;
 	SpriteSet       *objectSet,
 	                *spellSet;
@@ -349,7 +349,7 @@ const int       maxSpriteWidth = 32,
                 maxSpriteBaseLine = 16;
 #endif
 
-void DisplayNode::drawObject(void) {
+void DisplayNode::drawObject() {
 	ColorTable      mainColors,             // colors for object
 	                leftColors,             // colors for left-hand object
 	                rightColors;            // colors for right-hand object
@@ -932,7 +932,7 @@ void DisplayNodeList::buildEffects(bool) {
 	}
 }
 
-bool DisplayNodeList::dissipated(void) {
+bool DisplayNodeList::dissipated() {
 	if (count) {
 		for (int i = 0; i < count; i++) {
 			if (displayList[i].efx && !displayList[i].efx->isDead())
@@ -948,11 +948,11 @@ bool DisplayNodeList::dissipated(void) {
 //  NOTE : all spell effects currently use the center actor for their
 //         sprites.
 
-void DisplayNode::drawEffect(void) {
+void DisplayNode::drawEffect() {
 	if (efx)   efx->drawEffect();
 }
 
-void Effectron::drawEffect(void) {
+void Effectron::drawEffect() {
 	ColorTable      eColors;                // colors for object
 	bool obscured = false;
 	Point16         drawPos;

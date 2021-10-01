@@ -77,10 +77,9 @@ void Music::playMusic(Common::SeekableReadStream *midi, bool repeat) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, true);
 
 		_parser = parser;
-
-		syncVolume();
 
 		_isLooping = repeat;
 		_isPlaying = true;

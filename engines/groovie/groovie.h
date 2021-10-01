@@ -68,7 +68,8 @@ enum DebugLevels {
 	kDebugMIDI = 1 << 6,
 	kDebugScriptvars = 1 << 7,
 	kDebugCell = 1 << 8,
-	kDebugFast = 1 << 9
+	kDebugFast = 1 << 9,
+	kDebugTlcGame = 1 << 10
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 	// but some are used by system, so avoid high values.
 };
@@ -89,12 +90,34 @@ enum GameSpeed {
 
 struct GroovieGameDescription;
 
+struct SoundQueueEntry {
+	Common::SeekableReadStream *_file;
+	uint32 _loops;
+};
+
+class SoundEffectQueue {
+public:
+	SoundEffectQueue();
+	void setVM(GroovieEngine *vm);
+	void queue(Common::SeekableReadStream *soundfile, uint32 loops);
+	void tick();
+	void stopAll();
+
+protected:
+	void deleteFile();
+	VideoPlayer *_player;
+	GroovieEngine *_vm;
+	Common::Queue<SoundQueueEntry> _queue;
+	Common::SeekableReadStream *_file;
+};
+
 class GroovieEngine : public Engine {
 public:
 	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
 	~GroovieEngine() override;
 
 	Common::Platform getPlatform() const;
+	EngineVersion getEngineVersion() const;
 
 protected:
 
@@ -120,6 +143,7 @@ public:
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;
 	VideoPlayer *_videoPlayer;
+	SoundEffectQueue _soundQueue;
 	MusicPlayer *_musicPlayer;
 	GraphicsMan *_graphicsMan;
 	const Graphics::Font *_font;

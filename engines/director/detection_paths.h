@@ -55,6 +55,14 @@ const char *directoryGlobs[] = {
 	"assets",						// Barbie Nail Designer
 	"fjpc",							// Forestia Jr
 	"movies",						// Mulle Meck (Gary Gadget) series
+	"winroot",
+	"setup",
+	"program files",
+	"tohd",
+	"terzio",
+	"flugzeuge bauen",
+	"willyhau",
+	"willyraumschiff",				// Willy Werkel (Mulle Meck) series
 	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",
@@ -103,8 +111,9 @@ const char *directoryGlobs[] = {
 	"deutsch",
 	"francais",						// Rename from Français
 	"italiano",						// Virtual Tourism Paris
-	"please copy to hd. G2",		// Rename from HDにｺﾋﾟｰして下さい。G2
-	"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
+	"xn--HD-g73avcj4g7a5726ctwzw3ca1i6i",	   // HDにｺﾋﾟｰして下さい
+	"xn--HDG2-rw3c5o2dpa9kzb2170dd4tzyda5j4k", // HDにｺﾋﾟｰして下さい。G2
+	"xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k", // HDにｺﾋﾟｰして下さい。G3
 	"_files_",						// The Gate
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
@@ -133,8 +142,48 @@ const char *directoryGlobs[] = {
 	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
 	"anim",							// 1 vs 100 (Mindscape)
-	"Lingo Expo",					// D4 sample movies
+	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
+	"toinstall",					// Jönssonligan series
+	"pingucd",
+	"instdata",						// Pingu
+	"bellinin bikinit",				// Bellini 3 (Finnish)
+	"put me on your desktop",		// Betty Page
+	"abc",							// Alphabet Train
+	"123",							// Ktar Alarkam
+	"vlaams",
+	"ned",							// I Spy School Days (Dutch)
+	"fl1",
+	"flipper",						// Flipper games (Yoram Gross)
+	"cipdemo",
+	"cipher",						// Jewels of the Oracle
+	"gems",							// Gems of Darkness / Jewels II
+	"corel cd home",
+	"the cassandra galleries",		// Cassandra Galleries
+	"nnnn",							// Nikolai Toy Makers
+	"knights",						// Nikolai's Knights
+	"birdmpc",						// Bird's Life
+	"nemcina",						// Německá gramatika
+	"hdfiles",
+	"creator",						// Get a Head series
+	"32bit",
+	"sd",
+	"mac install",
+	"slam dunk typing",
+	"typing",						// Slam Dunk Typing
+	"ceremony",
+	"copytohd",						// Ceremony of Innocence
+	"app",							// Rodney's Wonder Window
+	"settings",						// Saguaro & the City
+	"xn--t8jo8k",					// Perfect Blue screen savers
+	"maccurio",
+	"wincurio",						// Curio City
+	"a.d.a.m. the inside story 1.1", // ADAM
+	"nine month miracle 1.0",		// Nine Month Miracle
+	"_setup",
+	"bin",
+	"adam resources",				// ADAM Software Products
+	"material",						// NY Yankees Yearbook
 	0
 };
 

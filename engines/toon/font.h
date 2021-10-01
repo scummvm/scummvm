@@ -27,12 +27,15 @@
 
 namespace Toon {
 
+class DemoFont;
+
 class FontRenderer {
 public:
 	FontRenderer(ToonEngine *vm);
 	~FontRenderer();
 
 	void setFont(Animation *font);
+	bool loadDemoFont(const Common::String &filename);
 	void computeSize(const Common::String &origText, int16 *retX, int16 *retY);
 	void renderText(int16 x, int16 y, const Common::String &origText, int32 mode);
 	void renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode, Graphics::Surface &frame);
@@ -40,9 +43,40 @@ public:
 	void setFontColor(int32 fontColor1, int32 fontColor2, int32 fontColor3);
 protected:
 	Animation *_currentFont;
+	DemoFont *_currentDemoFont;
 	ToonEngine *_vm;
 	byte _currentFontColor[4];
 	byte textToFont(byte c);
+};
+
+struct GlyphDimensions {
+	uint8 width;
+	uint8 heightOffset; // # lines from top
+	uint8 height;
+};
+
+// The font format used by the English demo.
+class DemoFont {
+public:
+	DemoFont(uint8 glyphWidth, uint8 glyphHeight, uint16 numGlyphs);
+	~DemoFont();
+
+	uint8 *getGlyphData();
+	uint8 *getGlyphData(uint8 glyphNum);
+
+	uint8 getGlyphWidth(uint8 glyphNum);
+	uint8 getHeight();
+	void setGlyphDimensions(uint8 glyphNum, GlyphDimensions &glyphDimensions);
+
+	void drawGlyph(Graphics::Surface &surface, int32 glyphNum, int16 xx, int16 yy, byte *colorMap);
+
+protected:
+	uint16 _numGlyphs;
+	uint8 _glyphWidth;
+	uint8 _glyphHeight;
+
+	uint8 *_glyphData;
+	GlyphDimensions *_glyphDimensions;
 };
 
 } // End of namespace Toon

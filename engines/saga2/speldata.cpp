@@ -111,8 +111,8 @@ int32                           loadedColorMaps;
    prototypes
  * ===================================================================== */
 
-static void defineEffects(void);
-static void loadMagicData(void);
+static void defineEffects();
+static void loadMagicData();
 
 /* ===================================================================== *
    code
@@ -121,7 +121,7 @@ static void loadMagicData(void);
 //-----------------------------------------------------------------------
 // InitMagic called from main startup code
 
-void initMagic(void) {
+void initMagic() {
 	g_vm->_edpList = new EffectDisplayPrototypeList(maxEffectPrototypes);
 	g_vm->_sdpList = new SpellDisplayPrototypeList(maxSpellPrototypes);
 
@@ -147,7 +147,7 @@ void initMagic(void) {
 }
 
 
-void cleanupMagic(void) {
+void cleanupMagic() {
 	g_vm->_activeSpells->cleanup();
 	for (int i = 0; i < maxSpells; i++) {
 		spellBook[i].killEffects();
@@ -176,7 +176,7 @@ void cleanupMagic(void) {
 
 //-----------------------------------------------------------------------
 
-static void defineEffects(void) {
+static void defineEffects() {
 	int16 i;
 	ADD_EFFECT(1,        invisibleSpellPos, invisibleSprites, invisibleSpellSta, ShortTillThere, ThinTillThere, invisibleSpellInit);
 	ADD_EFFECT(1,        auraSpellPos, auraSprites, auraSpellSta, ShortTillThere, ThinTillThere, auraSpellInit);
@@ -205,7 +205,7 @@ static void defineEffects(void) {
 //-----------------------------------------------------------------------
 // loadMagicData : reads magic related data from the resource file
 
-static void loadMagicData(void) {
+static void loadMagicData() {
 	int16           i;
 	hResContext     *spellRes;
 

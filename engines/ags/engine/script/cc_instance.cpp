@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
@@ -43,6 +44,7 @@
 #include "ags/engine/ac/dynobj/cc_dynamic_object_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
+#include "ags/detection.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -414,7 +416,8 @@ int ccInstance::Run(int32_t curpc) {
 	funcstart[0] = pc;
 	_G(current_instance) = this;
 	ccInstance *codeInst = runningInst;
-	int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);
+	bool write_debug_dump = ccGetOption(SCOPT_DEBUGRUN) ||
+		(gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
 	ScriptOperation codeOp;
 
 	FunctionCallStack func_callstack;
@@ -515,10 +518,6 @@ int ccInstance::Run(int32_t curpc) {
 
 		if (write_debug_dump) {
 			DumpInstruction(codeOp);
-		}
-
-		if (curpc == 546 && pc >= 3400 && pc <= 3447) {
-			warning("X\n");
 		}
 
 		switch (codeOp.Instruction.Code) {
@@ -1258,19 +1257,17 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		return;
 	}
 
-	Stream *data_s = File::OpenFileCI("script.log", kFile_Create, kFile_Write);
-	TextStreamWriter writer(data_s);
-	writer.WriteFormat("Line %3d, IP:%8d (SP:%p) ", line_num, pc, registers[SREG_SP].RValue);
+	debugN("Line %3d, IP:%8d (SP:%p) ", line_num, pc, (void *)(registers[SREG_SP].RValue));
 
 	const ScriptCommandInfo &cmd_info = sccmd_info[op.Instruction.Code];
-	writer.WriteString(cmd_info.CmdName);
+	debugN("%s", cmd_info.CmdName);
 
 	for (int i = 0; i < cmd_info.ArgCount; ++i) {
 		if (i > 0) {
-			writer.WriteChar(',');
+			debugN(",");
 		}
 		if (cmd_info.ArgIsReg[i]) {
-			writer.WriteFormat(" %s", regnames[op.Args[i].IValue]);
+			debugN(" %s", regnames[op.Args[i].IValue]);
 		} else {
 			RuntimeScriptValue arg = op.Args[i];
 			if (arg.Type == kScValStackPtr || arg.Type == kScValGlobalVar) {
@@ -1279,21 +1276,21 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 			switch (arg.Type) {
 			case kScValInteger:
 			case kScValPluginArg:
-				writer.WriteFormat(" %d", arg.IValue);
+				debugN(" %d", arg.IValue);
 				break;
 			case kScValFloat:
-				writer.WriteFormat(" %f", arg.FValue);
+				debugN(" %f", arg.FValue);
 				break;
 			case kScValStringLiteral:
-				writer.WriteFormat(" \"%s\"", arg.Ptr);
+				debugN(" \"%s\"", arg.Ptr);
 				break;
 			case kScValStackPtr:
 			case kScValGlobalVar:
-				writer.WriteFormat(" %p", arg.RValue);
+				debugN(" %p", (void *)(arg.RValue));
 				break;
 			case kScValData:
 			case kScValCodePtr:
-				writer.WriteFormat(" %p", arg.GetPtrWithOffset());
+				debugN(" %p", arg.GetPtrWithOffset());
 				break;
 			case kScValStaticArray:
 			case kScValStaticObject:
@@ -1304,20 +1301,20 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 			case kScValPluginObject: {
 				String name = _GP(simp).findName(arg);
 				if (!name.IsEmpty()) {
-					writer.WriteFormat(" &%s", name.GetCStr());
+					debugN(" &%s", name.GetCStr());
 				} else {
-					writer.WriteFormat(" %p", arg.GetPtrWithOffset());
+					debugN(" %p", arg.GetPtrWithOffset());
 				}
 			}
 			break;
 			case kScValUndefined:
-				writer.WriteString("undefined");
+				debugN("undefined");
 				break;
 			}
 		}
 	}
-	writer.WriteLineBreak();
-	// the writer will delete data stream internally
+
+	debugN("\n");
 }
 
 bool ccInstance::IsBeingRun() const {

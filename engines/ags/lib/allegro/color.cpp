@@ -187,16 +187,24 @@ void get_color(int idx, RGB *p) {
 	*p = _G(current_palette)[idx];
 }
 
-void get_palette(PALETTE p) {
-	*p = *_G(current_palette);
-}
-
 void get_palette_range(PALETTE p, int from, int to) {
 	Common::copy(&_G(current_palette)[from], &_G(current_palette)[to + 1], &p[from]);
 }
 
+void get_palette(PALETTE p) {
+	get_palette_range(p, 0, PAL_SIZE - 1);
+}
+
 void fade_interpolate(AL_CONST PALETTE source, AL_CONST PALETTE dest, PALETTE output, int pos, int from, int to) {
-	warning("TODO: fade_interpolate");
+	assert(pos >= 0 && pos <= 64);
+	assert(from >= 0 && from < PAL_SIZE);
+	assert(to >= 0 && to < PAL_SIZE);
+
+	for (int c = from; c <= to; c++) {
+		output[c].r = ((int)source[c].r * (63 - pos) + (int)dest[c].r * pos) / 64;
+		output[c].g = ((int)source[c].g * (63 - pos) + (int)dest[c].g * pos) / 64;
+		output[c].b = ((int)source[c].b * (63 - pos) + (int)dest[c].b * pos) / 64;
+	}
 }
 
 void select_palette(AL_CONST PALETTE p) {

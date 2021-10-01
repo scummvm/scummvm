@@ -87,22 +87,22 @@ public:
 	static GameMode *currentMode,           // pointer to current mode.
 	       *newMode;               // next mode to run
 
-	void (*setup)(void);                     // initialize this mode
-	void (*cleanup)(void);               // deallocate mode resources
-	void (*handleTask)(void);                // "application task" for mode
+	void (*setup)();                     // initialize this mode
+	void (*cleanup)();               // deallocate mode resources
+	void (*handleTask)();                // "application task" for mode
 	void (*handleKey)(int16 key, int16 qual);  // handle keystroke from window
-	void (*draw)(void);                          // handle draw functions for window
+	void (*draw)();                          // handle draw functions for window
 
-	static  void modeUnStack(void);
+	static  void modeUnStack();
 	static  void modeUnStack(int StopHere);
 	static  int getStack(GameMode **saveStackPtr);
 	static  void SetStack(GameMode *modeFirst, ...);
 	static  void SetStack(GameMode **newStack, int newStackSize);
-	static  bool update(void);
+	static  bool update();
 	static  void modeStack(GameMode *AddThisMode);
-	void begin(void);                        // launch this mode
-	void end(void);                          // quit this mode
-	static void modeSwitch(void);            // quit this mode
+	void begin();                        // launch this mode
+	void end();                          // quit this mode
+	static void modeSwitch();            // quit this mode
 };
 
 extern GameMode     IntroMode,
@@ -119,13 +119,13 @@ extern GameMode     IntroMode,
  * ====================================================================== */
 
 //  Initialize the timer
-void initTimer(void);
+void initTimer();
 
 void saveTimer(Common::OutSaveFile *out);
 void loadTimer(Common::InSaveFile *in);
 
-void pauseTimer(void);               // pause game clock
-void resumeTimer(void);                  // resume game clock
+void pauseTimer();               // pause game clock
+void resumeTimer();                  // resume game clock
 
 //  Alarm is a useful class for specifying time delays. It will
 //  work correctly even if the game counter wraps around.
@@ -136,8 +136,8 @@ public:
 	uint32 duration;                            // duration of alarm
 
 	void set(uint32 duration);
-	bool check(void);
-	uint32 elapsed(void);                    // time elapsed since alarm set
+	bool check();
+	uint32 elapsed();                    // time elapsed since alarm set
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
@@ -163,7 +163,7 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 
 //  Directory control
 
-void restoreProgramDir(void);                // chdir() to program directory
+void restoreProgramDir();                // chdir() to program directory
 
 // Returns Random Number
 
@@ -174,23 +174,23 @@ int16 GetRandomBetween(int start, int end);
 int16 quickDistance(const Point16 &p);
 int32 quickDistance(const Point32 &p);
 
-void initPathFinder(void);
-void cleanupPathFinder(void);
+void initPathFinder();
+void cleanupPathFinder();
 
 /* ===================================================================== *
    Miscellaneous globals management functions
  * ===================================================================== */
 
-void initGlobals(void);
+void initGlobals();
 void saveGlobals(Common::OutSaveFile *outS);
 void loadGlobals(Common::InSaveFile *in);
-inline void cleanupGlobals(void) {}      // do nothing
+inline void cleanupGlobals() {}      // do nothing
 
 /* ===================================================================== *
    General redraw routine
  * ===================================================================== */
 
-void reDrawScreen(void);
+void reDrawScreen();
 
 /* ===================================================================== *
    Script-related
@@ -206,9 +206,9 @@ void wakeUpThread(ThreadID thread);
 void wakeUpThread(ThreadID thread, int16 returnVal);
 
 //  Script system initialization and cleanup
-void initScripts(void);
-void cleanupScripts(void);
-void dispatchScripts(void);
+void initScripts();
+void cleanupScripts();
+void dispatchScripts();
 
 //  An extended script is running -- suspend all background processing.
 extern int16            extendedThreadLevel;

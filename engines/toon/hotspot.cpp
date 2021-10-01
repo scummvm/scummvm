@@ -106,7 +106,9 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 
 	uint32 size2 = 0;
 	uint8 *rifData2 = 0;
-	if (additionalRifName.size())
+
+	// English demo seems to have some invalid additional Rif data so do not load it
+	if (!_vm->isEnglishDemo() && additionalRifName.size())
 		rifData2 = _vm->resources()->getFileData(additionalRifName, &size2);
 
 	// figure out the number of hotspots based on file size

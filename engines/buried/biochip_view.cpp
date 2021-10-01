@@ -427,7 +427,7 @@ void EvidenceBioChipViewWindow::onPaint() {
 
 void EvidenceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	if (_status == 0) {
-		// Get the number of items urrently captured
+		// Get the number of items currently captured
 		int itemCount = ((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().evcapNumCaptured;
 
 		// Loop through the evidence piece regions, determining if we have another page to go to
@@ -696,8 +696,8 @@ FilesBioChipViewWindow::FilesBioChipViewWindow(BuriedEngine *vm, Window *parent)
 		FilesPage page;
 		page.pageID = fbcStream->readSint16LE();
 		page.returnPageIndex = fbcStream->readSint16LE();
-		page.nextButtonPageIndex = fbcStream->readSint16LE();
 		page.prevButtonPageIndex = fbcStream->readSint16LE();
+		page.nextButtonPageIndex = fbcStream->readSint16LE();
 
 		for (int i = 0; i < 6; i++) {
 			page.hotspots[i].left = fbcStream->readSint16LE();
@@ -731,8 +731,8 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 	const FilesPage &page = _navData[_curPage];
 
 	Common::Rect returnButton(343, 157, 427, 185);
-	Common::Rect next(193, 25, 241, 43);
-	Common::Rect previous(253, 25, 301, 43);
+	Common::Rect previous(193, 25, 241, 43);
+	Common::Rect next(253, 25, 301, 43);
 
 	if (page.returnPageIndex >= 0 && returnButton.contains(point)) {
 		_curPage = page.returnPageIndex;
@@ -746,10 +746,6 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 		if (_curPage == 6)
 			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchBCJumpsuit = 1;
-		else if (_curPage == 21)
-			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelle = 1;
-		else if (_curPage == 31)
-			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelleBkg = 1;
 
 		return;
 	}
@@ -764,6 +760,12 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		if (page.hotspots[i].pageIndex >= 0 && Common::Rect(page.hotspots[i].left, page.hotspots[i].top, page.hotspots[i].right, page.hotspots[i].bottom).contains(point)) {
 			_curPage = page.hotspots[i].pageIndex;
 			invalidateWindow(false);
+
+			if (_curPage == 21)
+				((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelle = 1;
+			else if (_curPage == 31)
+				((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelleBkg = 1;
+
 			return;
 		}
 	}

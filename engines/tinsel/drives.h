@@ -62,7 +62,9 @@ private:
 	Common::SeekableReadStream *_stream;
 	bool openInternal(const Common::String &filename);
 public:
+	// This constructor is only used for _sampleStream inside sound.h
 	TinselFile();
+	TinselFile(bool bigEndian);
 	~TinselFile() override;
 	bool open(const Common::String &filename);
 	void close();

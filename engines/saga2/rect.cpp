@@ -92,7 +92,7 @@ Rect16 intersect(const Rect16 a, const Rect16 b) {
 		return Rect16(x1, y1, width, height);
 }
 
-void Rect16::normalize(void) {
+void Rect16::normalize() {
 	if (width < 0) {
 		x += width;
 		width = -width;
@@ -147,7 +147,7 @@ Rect32 intersect(const Rect32 a, const Rect32 b) {
 	return Rect32(x1, y1, width, height);
 }
 
-void Rect32::normalize(void) {
+void Rect32::normalize() {
 	if (width < 0) {
 		x += width;
 		width = -width;

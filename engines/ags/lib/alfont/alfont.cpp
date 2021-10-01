@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/fonts/winfont.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
@@ -37,7 +38,16 @@ Graphics::Font *ALFONT_FONT::getFont() {
 		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
 		if (ShouldAntiAliasText())
 			renderMode = Graphics::kTTFRenderModeLight;
-		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
+		Graphics::Font *font = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
+		if (!font) {
+			// Try WinFont as TTFFont may fail loading those
+			Graphics::WinFont *winfont = new Graphics::WinFont();
+			if (winfont->loadFromFON(_ttfData))
+				font = winfont;
+			else
+				delete winfont;
+		}
+		_fonts[_size] = font;
 		assert(_fonts[_size]);
 	}
 
@@ -96,6 +106,14 @@ void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, ALFONT_FONT *refFont, const 
 
 void alfont_set_font_size(ALFONT_FONT *font, int size) {
 	font->_size = size;
+}
+
+int alfont_get_font_height(ALFONT_FONT *font) {
+	return font->_size;
+}
+
+int alfont_get_font_real_height(ALFONT_FONT *font) {
+	return font->_size;
 }
 
 const char *alfont_get_name(ALFONT_FONT *font) {

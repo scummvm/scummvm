@@ -81,6 +81,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Neverhood lite English demo version
+	{
+		"neverhood",
+		"Demo",
+		AD_ENTRY1s("nevdemo.blb", "816741610771f6434a673b6821e88899", 11986100),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Neverhood Russian version. Dyadyushka Risech
 	{
 		"neverhood",

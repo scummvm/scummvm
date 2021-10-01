@@ -330,8 +330,8 @@ public:
    Prototypes
  * ===================================================================== */
 
-void initSprites(void);
-void cleanupSprites(void);
+void initSprites();
+void cleanupSprites();
 
 struct TilePoint;
 

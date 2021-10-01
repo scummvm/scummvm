@@ -37,11 +37,11 @@ extern uint8 *loadingWindowPalette;
 
 static bool inLoadMode = false;
 
-void initLoadMode(void) {
+void initLoadMode() {
 	inLoadMode = true;
 }
 
-void updateLoadMode(void) {
+void updateLoadMode() {
 	if (inLoadMode) {
 		byte normalPalette[768];
 
@@ -56,12 +56,12 @@ void updateLoadMode(void) {
 	}
 }
 
-void closeLoadMode(void) {
+void closeLoadMode() {
 	inLoadMode = false;
 	//blackOut();
 }
 
-void loadingScreen(void) {
+void loadingScreen() {
 	initLoadMode();
 	updateLoadMode();
 }

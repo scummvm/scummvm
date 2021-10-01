@@ -130,7 +130,7 @@ def decode_macjapanese(text: ByteString) -> str:
 
 def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
     oldFlags = f.flags >> 8
-    newFlags = f.flags & 8
+    newFlags = f.flags & 0xFF
     macbin = pack(
         ">xB63s4s4sBxHHHBxIIIIHB14xIHBB",
         len(name),
@@ -144,8 +144,8 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
         f.locked,
         len(f.data),
         len(f.rsrc),
-        f.crdate,  # TODO: dates are wrong, investigate
-        f.mddate,  # TODO: dates are wrong, investigate
+        f.crdate,
+        f.mddate,
         0,
         newFlags,
         0,

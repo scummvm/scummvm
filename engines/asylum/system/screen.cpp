@@ -390,15 +390,10 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delt
 
 void Screen::stopPaletteFade(char red, char green, char blue) {
 	// Setup main palette
-	byte *palette = (byte *)&_mainPalette;
-	palette += 4;
-
-	for (uint32 i = 0; i < ARRAYSIZE(_mainPalette) - 3; i += 3) {
-		palette[0] = (byte)red;
-		palette[1] = (byte)green;
-		palette[2] = (byte)blue;
-
-		palette += 3;
+	for (uint i = 3; i < ARRAYSIZE(_mainPalette) - 3; i += 3) {
+		_mainPalette[i]     = (byte)red;
+		_mainPalette[i + 1] = (byte)green;
+		_mainPalette[i + 2] = (byte)blue;
 	}
 
 	stopPaletteFadeTimer();
@@ -594,6 +589,8 @@ void Screen::setupTransTables(uint32 count, ...) {
 		memcpy(&_transTableBuffer[index], getResource()->get(id)->data, TRANSPARENCY_TABLE_SIZE);
 		index += TRANSPARENCY_TABLE_SIZE;
 	}
+
+	va_end(va);
 }
 
 void Screen::clearTransTables() {

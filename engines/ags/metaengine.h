@@ -39,9 +39,7 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override {
-		// The original allows saveslot 000 to 099 and reserves higher slots
-		// for special purposes.
-		return 99;
+		return 998;
 	}
 
 	/**
@@ -53,6 +51,8 @@ public:
 	 * @param target       Game target. If omitted, then the engine ID is used.
 	 */
 	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
@@ -71,6 +71,14 @@ public:
 	 * @param slot    Slot number of the save state.
 	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	/**
+	 * Remove the specified save state.
+	 *
+	 * @param target  Name of a config manager target.
+	 * @param slot    Slot number of the save state to be removed.
+	 */
+	void removeSaveState(const char *target, int slot) const override;
 
 	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override;
 };

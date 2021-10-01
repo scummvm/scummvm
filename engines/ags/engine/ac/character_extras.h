@@ -52,8 +52,8 @@ struct CharacterExtras {
 	short tint_b;
 	short tint_level;
 	short tint_light;
-	char  process_idle_this_time;
-	char  slow_move_counter;
+	int8  process_idle_this_time;
+	int8  slow_move_counter;
 	short animwait;
 
 	void ReadFromFile(Shared::Stream *in);

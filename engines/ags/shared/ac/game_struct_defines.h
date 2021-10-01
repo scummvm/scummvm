@@ -232,18 +232,27 @@ struct SpriteInfo {
 // provide instructions on adjusting drawing position, as well as arranging
 // multiple lines, and similar cases.
 struct FontInfo {
+	enum AutoOutlineStyle : int {
+		kSquared = 0,
+		kRounded = 1,
+	};
+
 	// General font's loading and rendering flags
-	uint32_t      Flags = 0;
+	uint32_t      Flags;
 	// Font size, in points (basically means pixels in AGS)
-	int           SizePt = 0;
+	int           SizePt;
 	// Factor to multiply base font size by
-	int           SizeMultiplier = 0;
+	int           SizeMultiplier;
 	// Outlining font index, or auto-outline flag
-	char          Outline = 0;
+	int8          Outline;
 	// Custom vertical render offset, used mainly for fixing broken fonts
-	int           YOffset = 0;
+	int           YOffset;
 	// custom line spacing between two lines of text (0 = use font height)
-	int           LineSpacing = 0;
+	int           LineSpacing;
+	// When automatic outlining, thickness of the outline (0 = no auto outline)
+	int           AutoOutlineThickness;
+	// When automatic outlining, style of the outline
+	AutoOutlineStyle AutoOutlineStyle;
 
 	FontInfo();
 };

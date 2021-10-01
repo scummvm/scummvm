@@ -83,11 +83,11 @@ protected:
 	    const Point16 &offset,
 	    const Rect16  &clipRect);
 
-	void draw(void);             // redraw the window
+	void draw();             // redraw the window
 
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 	void pointerMove(gPanelMessage &msg);
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
@@ -98,15 +98,15 @@ public:
 	          uint16,
 	          AppFunc *cmd = NULL);
 
-	~CVideoBox(void);
+	~CVideoBox();
 
 	// returns the active area of this video box
-	static Rect16 getAreaRect(void) {
+	static Rect16 getAreaRect() {
 		return Rect16(x, y, xSize, ySize);
 	}
 
 	// initializes the resources for this object
-	void init(void);
+	void init();
 
 	// opens and initalizes vid box
 	int16 openVidBox(char *fileName);

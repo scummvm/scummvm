@@ -57,7 +57,7 @@ namespace Saga2 {
 // ------------------------------------------------------------------------
 // init
 
-void initMapFeatures(void) {
+void initMapFeatures() {
 	//MAP_VILLAGE(13000,12535,"DummyVillage");
 	//MAP_STARGATE(1,2,"DummyGate");
 
@@ -280,7 +280,7 @@ char *getMapFeaturesText(TileRegion viewRegion,
 // ------------------------------------------------------------------------
 // cleanup
 
-void termMapFeatures(void) {
+void termMapFeatures() {
 	for (uint i = 0; i < g_vm->_mapFeatures.size(); i++) {
 		if (g_vm->_mapFeatures[i])
 			delete g_vm->_mapFeatures[i];

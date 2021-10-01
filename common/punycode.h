@@ -52,19 +52,19 @@ namespace Common {
 /**
  * Convert UTF-32 to Punycode. Returns the encoded string.
  */
-String punycode_encode(const U32String src);
+String punycode_encode(const U32String &src);
 
 /**
  * Convert Punycode to UTF-32. Returns the decoded string
  */
-U32String punycode_decode(const String src);
+U32String punycode_decode(const String &src);
 
-String punycode_encodefilename(const U32String src1);
+String punycode_encodefilename(const U32String &src1);
 
 /**
  * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
  */
-U32String punycode_decodefilename(const String src1);
+U32String punycode_decodefilename(const String &src1);
 
 /**
  * Convert path from Punycode
@@ -76,9 +76,9 @@ Path punycode_decodepath(const Path &src);
  */
 Path punycode_encodepath(const Path &src);
 
-bool punycode_hasprefix(const String src);
+bool punycode_hasprefix(const String &src);
 
-bool punycode_needEncode(const String src);
+bool punycode_needEncode(const String &src);
 
 } // end of namespace Common
 

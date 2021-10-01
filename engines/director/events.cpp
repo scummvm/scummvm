@@ -150,6 +150,7 @@ bool Movie::processEvent(Common::Event &event) {
 		return true;
 
 	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
 		if (sc->_waitForClick) {
 			sc->_waitForClick = false;
 			sc->renderCursor(_window->getMousePos(), true);
@@ -180,6 +181,7 @@ bool Movie::processEvent(Common::Event &event) {
 				_mouseDownWasInButton = true;
 
 			_lastEventTime = g_director->getMacTicks();
+			_lastClickTime2 = _lastClickTime;
 			_lastClickTime = _lastEventTime;
 			_lastClickPos = pos;
 			if (_timeOutMouse)
@@ -197,6 +199,7 @@ bool Movie::processEvent(Common::Event &event) {
 		return true;
 
 	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
 		pos = _window->getMousePos();
 
 		if (g_director->getVersion() < 400)

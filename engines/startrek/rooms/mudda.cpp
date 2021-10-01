@@ -34,17 +34,17 @@ enum muddTextIds {
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets muddTextOffsets[] = {
-	{ TX_SPEAKER_KIRK, 2941, 0 },
-	{ TX_SPEAKER_MCCOY, 2966, 0 },
-	{ TX_SPEAKER_SPOCK, 2976, 0 },
-	{ TX_MUD0_002, 8651, 0 },
-	{ TX_MUD0_018, 2523, 0 },
-	{ TX_MUD0_019, 2473, 0 },
-	{ TX_MUD0_020, 2423, 0 },
-	{ TX_MUD0N002, 5513, 0 },
-	{ TX_MUD0N006, 2573, 0 },
-	{ TX_MUD0N011, 6036, 0 },
-	{          -1, 0,    0 }
+	{ TX_SPEAKER_KIRK, 2941, 0, 0, 0 },
+	{ TX_SPEAKER_MCCOY, 2966, 0, 0, 0 },
+	{ TX_SPEAKER_SPOCK, 2976, 0, 0, 0 },
+	{ TX_MUD0_002, 8651, 0, 0, 0 },
+	{ TX_MUD0_018, 2523, 0, 0, 0 },
+	{ TX_MUD0_019, 2473, 0, 0, 0 },
+	{ TX_MUD0_020, 2423, 0, 0, 0 },
+	{ TX_MUD0N002, 5513, 0, 0, 0 },
+	{ TX_MUD0N006, 2573, 0, 0, 0 },
+	{ TX_MUD0N011, 6036, 0, 0, 0 },
+	{          -1, 0,    0, 0, 0 }
 };
 
 // The functions here used to be independently implemented in each room of the MUDD

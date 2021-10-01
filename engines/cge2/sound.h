@@ -70,7 +70,7 @@ public:
 	~Sound();
 	void open();
 	void close();
-	void play(Audio::Mixer::SoundType soundType, DataCk *wav, int pan = 8);
+	void play(Audio::Mixer::SoundType soundType, int ref, int sub, int pan = 8);
 	int16 getRepeat();
 	void setRepeat(int16 count);
 	void stop();

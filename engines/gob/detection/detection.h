@@ -54,7 +54,8 @@ enum GameType {
 	kGameTypeLittleRed,
 	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
 	kGameTypeAJWorld,
-	kGameTypeCrousti
+	kGameTypeCrousti,
+	kGameTypeDynastyWood
 };
 
 enum Features {

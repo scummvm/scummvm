@@ -72,7 +72,7 @@ DecoratedWindow::DecoratedWindow(const Rect16 &r, uint16 ident, const char savea
 }
 
 // destructor for decorated windows
-DecoratedWindow::~DecoratedWindow(void) {
+DecoratedWindow::~DecoratedWindow() {
 	removeDecorations();
 }
 
@@ -227,7 +227,7 @@ void DecoratedWindow::setDecorations(
 
 //  Free the decorations from the memory pool
 
-void DecoratedWindow::removeDecorations(void) {
+void DecoratedWindow::removeDecorations() {
 	WindowDecoration *dec;
 	int16           i;
 
@@ -246,7 +246,7 @@ void DecoratedWindow::removeDecorations(void) {
 
 //  Redraw all of the decorations, on the main port only...
 
-void DecoratedWindow::draw(void) {               // redraw the window
+void DecoratedWindow::draw() {               // redraw the window
 	g_vm->_pointer->hide();
 	if (displayEnabled())
 		drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
@@ -255,7 +255,7 @@ void DecoratedWindow::draw(void) {               // redraw the window
 
 //  Return true if window floats above animated are
 
-bool DecoratedWindow::isBackdrop(void) {
+bool DecoratedWindow::isBackdrop() {
 	return false;
 }
 
@@ -301,13 +301,13 @@ void BackWindow::invalidate(const StaticRect *area) {
 
 //  Return true if window floats above animated are
 
-bool BackWindow::isBackdrop(void) {
+bool BackWindow::isBackdrop() {
 	return true;
 }
 
 //  A backdrop window can never go to front.
 
-void BackWindow::toFront(void) {}
+void BackWindow::toFront() {}
 
 /* ===================================================================== *
    DragBar class member functions
@@ -326,7 +326,7 @@ bool DragBar::activate(gEventType) {
 	return true;
 }
 
-void DragBar::deactivate(void) {
+void DragBar::deactivate() {
 	gPanel::deactivate();
 }
 
@@ -372,7 +372,7 @@ void DragBar::pointerRelease(gPanelMessage &) {
    gButton class member functions
  * ===================================================================== */
 
-void gButton::deactivate(void) {
+void gButton::deactivate() {
 	selected = 0;
 	draw();
 	gPanel::deactivate();
@@ -410,7 +410,7 @@ void gButton::pointerDrag(gPanelMessage &msg) {
 	}
 }
 
-void gButton::draw(void) {
+void gButton::draw() {
 	gPort           &port = window.windowPort;
 	Rect16          rect = window.getExtent();
 
@@ -581,7 +581,7 @@ void FloatingWindow::setExtent(const Rect16 &r) {
 	setPos(Point16(r.x, r.y));
 }
 
-bool FloatingWindow::open(void) {
+bool FloatingWindow::open() {
 	db->moveToBack(*this);
 
 	g_vm->_mouseInfo->replaceObject();
@@ -593,7 +593,7 @@ bool FloatingWindow::open(void) {
 }
 
 //  Close this window and redraw the screen under it.
-void FloatingWindow::close(void) {
+void FloatingWindow::close() {
 	gWindow::close();
 	updateWindowSection(_extent);
 }
@@ -605,7 +605,7 @@ void FloatingWindow::close(void) {
 //  area, and including the scrolling animated area which might
 //  overlap that area.
 
-bool checkTileAreaPort(void);
+bool checkTileAreaPort();
 
 void updateWindowSection(const Rect16 &r) {
 	gPixelMap       tempMap;
@@ -734,7 +734,7 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 	}
 }
 
-void FloatingWindow::toFront(void) {
+void FloatingWindow::toFront() {
 	gWindow::toFront();
 	draw();
 }
@@ -743,7 +743,7 @@ void FloatingWindow::toFront(void) {
    Misc functions
  * ===================================================================== */
 
-void closeAllFloatingWindows(void) {
+void closeAllFloatingWindows() {
 }
 
 extern APPFUNC(cmdWindowFunc);

@@ -32,8 +32,6 @@
 // and
 // https://github.com/soiaf/Java-Shorten-decoder
 
-// FIXME: This doesn't work yet correctly
-
 #include "common/util.h"
 
 #include "audio/decoders/raw.h"
@@ -401,7 +399,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 						for (i = 0; i < blockSize; i++) {
 							int32 sum = lpcqOffset;
 							for (j = 0; j < lpcNum; j++) {
-								// FIXME: The original code did an invalid memory access here
+								// The original code did an invalid memory access here
 								// (if i and j are 0, the array index requested is -1)
 								// I've removed those invalid writes, since they happen all the time (even when curChannel is 0)
 								if (i <= j)	// ignore invalid table/memory access

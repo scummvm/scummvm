@@ -39,6 +39,7 @@ public:
 
 	virtual Common::KeymapArray initKeymaps(const char *target) const override;
 
+	virtual void registerDefaultSettings(const Common::String &target) const override;
 	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
@@ -73,6 +74,13 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
+
+void NancyMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	ConfMan.setInt("music_volume", 54 * 255 / 100, target);
+	ConfMan.setInt("speech_volume", 54 * 255 / 100, target);
+	ConfMan.setInt("sfx_volume", 51 * 255 / 100, target);
+	ConfMan.setBool("subtitles", true, target);
+}
 
 GUI::OptionsContainerWidget *NancyMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new Nancy::NancyOptionsWidget(boss, name, target);

@@ -39,7 +39,8 @@ namespace Common {
 enum RecorderEventType {
 	kRecorderEventTypeNormal = 0,
 	kRecorderEventTypeTimer = 1,
-	kRecorderEventTypeTimeDate = 2
+	kRecorderEventTypeTimeDate = 2,
+	kRecorderEventTypeScreenUpdate = 3,
 };
 
 struct RecorderEvent : Event {
@@ -102,7 +103,7 @@ class PlaybackFile {
 		kHashSectionTag = MKTAG('H','A','S','H'),
 		kRandomSectionTag = MKTAG('R','A','N','D'),
 		kEventTag = MKTAG('E','V','N','T'),
-		kScreenShotTag = MKTAG('B','M','H','T'),
+		kScreenShotTag = MKTAG('T','H','M','B'),
 		kSettingsSectionTag = MKTAG('S','E','T','T'),
 		kAuthorTag = MKTAG('H','A','U','T'),
 		kCommentsTag = MKTAG('H','C','M','T'),
@@ -157,6 +158,8 @@ public:
 	PlaybackFileHeader &getHeader() {return _header;}
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);
+
+	uint32 getVersion() const {return _version;}
 private:
 	Array<byte> _tmpBuffer;
 	WriteStream *_recordFile;
@@ -172,6 +175,7 @@ private:
 	uint32 _eventsSize;
 	PlaybackFileHeader _header;
 	PlaybackFileState _playbackParseState;
+	uint32 _version;
 
 	void skipHeader();
 	bool parseHeader();

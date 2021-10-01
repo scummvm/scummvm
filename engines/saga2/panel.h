@@ -161,7 +161,7 @@ protected:
 	virtual void pointerRelease(gPanelMessage &msg);
 	virtual bool keyStroke(gPanelMessage &msg);
 	virtual void timerTick(gPanelMessage &msg);
-	virtual void onMouseHintDelay(void);
+	virtual void onMouseHintDelay();
 
 	void notify(enum gEventType, int32 value);
 	void notify(gEvent &ev) {
@@ -171,10 +171,10 @@ protected:
 
 
 public:
-	bool isActive(void);                     // true if we are active panel
+	bool isActive();                     // true if we are active panel
 	virtual bool activate(gEventType why);  // activate the control
-	virtual void deactivate(void);       // deactivate the control
-	virtual void draw(void);                 // redraw the panel.
+	virtual void deactivate();       // deactivate the control
+	virtual void draw();                 // redraw the panel.
 	virtual void enable(bool abled);
 	virtual void select(uint16 selected);
 	virtual void ghost(bool ghosted);
@@ -191,20 +191,20 @@ public:
 	    const Rect16  &r);
 
 //	void setCommand( AppFunc *func ) { command = func; }
-	gWindow *getWindow(void) {
+	gWindow *getWindow() {
 		return &window;
 	}
-	void makeActive(void);
-	Rect16 getExtent(void) {
+	void makeActive();
+	Rect16 getExtent() {
 		return _extent;
 	}
-	bool isSelected(void) {
+	bool isSelected() {
 		return selected != 0;
 	}
-	bool isGhosted(void) {
+	bool isGhosted() {
 		return ghosted != 0;
 	}
-	bool    getEnabled(void) const {
+	bool    getEnabled() const {
 		return (bool) enabled;
 	}
 	void    show(bool shown = true, bool inval = true) {
@@ -279,11 +279,11 @@ public:
 
 	gPanel *hitTest(const Point16 &p);
 	gPanel *keyTest(int16 key);
-	void removeControls(void);
+	void removeControls();
 
 public:
 	void invalidate(Rect16 *area = nullptr);
-	void draw(void);                         // redraw the controls
+	void draw();                         // redraw the controls
 	void drawClipped(
 	    gPort         &port,
 	    const Point16 &offset,
@@ -344,7 +344,7 @@ protected:
 
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	void pointerMove(gPanelMessage &msg);
 	bool pointerHit(gPanelMessage &msg);
@@ -362,23 +362,23 @@ private:
 	static StaticRect  dragExtent;             // dragging extent
 	static StaticPoint16 dragOffset;             // offset to window origin
 
-	void shadow(void);
+	void shadow();
 
 public:
 	void setExtent(const Rect16 &);          // set window position and size
-	Rect16 getExtent(void) {
+	Rect16 getExtent() {
 		return _extent;    // set window position and size
 	}
 protected:
 	void setPos(Point16 pos);                // set window position
-	void insert(void);                      // insert window into window list
-	virtual void toFront(void);              // re-order the windows
+	void insert();                      // insert window into window list
+	virtual void toFront();              // re-order the windows
 
 public:
-	bool isOpen(void) {
+	bool isOpen() {
 		return openFlag;    // true if window is visible
 	}
-	void draw(void);                         // redraw the panel.
+	void draw();                         // redraw the panel.
 	void drawClipped(
 	    gPort         &port,
 	    const Point16 &offset,
@@ -394,9 +394,9 @@ public:
 	void enable(bool abled);
 	void select(uint16 sel);               // activate the window
 
-	virtual bool open(void);
-	virtual void close(void);
-	virtual bool isModal(void);
+	virtual bool open();
+	virtual void close();
+	virtual bool isModal();
 
 	//  Update a region of a window, and all floaters which
 	//  might be above that window.
@@ -427,7 +427,7 @@ public:
 	void ghost(bool ghosted);
 //	virtual void newValue( void );
 
-	void draw(void);                         // redraw the control.
+	void draw();                         // redraw the control.
 };
 
 /* ===================================================================== *
@@ -441,7 +441,7 @@ public:
 	gGenericControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = NULL);
 
 	//  Disable double click for next mouse click
-	void disableDblClick(void) {
+	void disableDblClick() {
 		dblClickFlag = true;
 	}
 
@@ -452,14 +452,14 @@ public:
 
 protected:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	void pointerMove(gPanelMessage &msg);
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
 	void pointerRelease(gPanelMessage &msg);
 
-	void draw(void);                         // redraw the control.
+	void draw();                         // redraw the control.
 };
 
 
@@ -474,10 +474,10 @@ class gToolBase {
 	friend class    gWindow;
 	friend class    gPanel;
 	friend void     EventLoop(bool &running);
-	friend int16        leftButtonState(void);
-	friend int16        rightButtonState(void);
-	friend void     StageModeCleanup(void);
-	friend void     TileModeCleanup(void);
+	friend int16        leftButtonState();
+	friend int16        rightButtonState();
+	friend void     StageModeCleanup();
+	friend void     TileModeCleanup();
 	friend void dumpGBASE(char *msg);
 
 	// windows
@@ -531,21 +531,21 @@ private:
 
 public:
 	void setActive(gPanel *newActive);
-	void leavePanel(void);               // we're changing windows
+	void leavePanel();               // we're changing windows
 public:
 	void handleMouse(Common::Event &event, uint32 time);
 	void handleKeyStroke(Common::Event &event);
 	void handleTimerTick(int32 tick);
-	Common::List<gWindow *>::iterator topWindowIterator(void) {
+	Common::List<gWindow *>::iterator topWindowIterator() {
 		return windowList.end();
 	}
-	Common::List<gWindow *>::iterator bottomWindowIterator(void) {
+	Common::List<gWindow *>::iterator bottomWindowIterator() {
 		return windowList.reverse_begin();
 	}
-	gWindow *topWindow(void) {
+	gWindow *topWindow() {
 		return windowList.front();
 	}
-	gWindow *bottomWindow(void) {
+	gWindow *bottomWindow() {
 		return windowList.back();
 	}
 	bool isMousePanel(gPanel *p) {
@@ -559,12 +559,12 @@ public:
 
 void EventLoop(bool &running);
 void initPanels(gDisplayPort &port);
-void cleanupPanels(void);
+void cleanupPanels();
 
 //void writeHelpLine( char *msg, ... );
 
-int16 leftButtonState(void);
-int16 rightButtonState(void);
+int16 leftButtonState();
+int16 rightButtonState();
 
 //  Kludge structure to contain both a mouse event and a time stamp
 struct MouseExtState {

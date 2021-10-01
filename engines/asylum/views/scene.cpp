@@ -69,6 +69,8 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_musicVolume = 0;
 	_frameCounter = 0;
 
+	_savedScreen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
 	g_debugActors = 0;
 	g_debugObjects  = 0;
 	g_debugPolygons  = 0;
@@ -82,6 +84,8 @@ Scene::~Scene() {
 
 	// Clear script queue
 	getScript()->reset();
+
+	_savedScreen.free();
 
 	delete _polygons;
 	delete _ws;
@@ -271,7 +275,13 @@ void Scene::load(ResourcePackId packId) {
 	_ws = new WorldStats(_vm);
 	_ws->load(fd);
 
+	if (_vm->checkGameVersion("Demo"))
+		fd->seek(0x1D72E, SEEK_SET);
+
 	_polygons = new Polygons(fd);
+
+	if (_vm->checkGameVersion("Demo"))
+		fd->seek(3 * 4, SEEK_CUR);
 
 	ScriptManager *script = getScript();
 	script->resetAll();
@@ -416,11 +426,13 @@ bool Scene::action(AsylumAction a) {
 		break;
 
 	case kAsylumActionQuickLoad:
-		getSaveLoad()->quickLoad();
+		if (!_vm->checkGameVersion("Demo"))
+			getSaveLoad()->quickLoad();
 		break;
 
 	case kAsylumActionQuickSave:
-		getSaveLoad()->quickSave();
+		if (!_vm->checkGameVersion("Demo"))
+			getSaveLoad()->quickSave();
 		break;
 
 	case kAsylumActionSwitchToSarah:
@@ -464,7 +476,11 @@ bool Scene::key(const AsylumEvent &evt) {
 			if (getCursor()->isHidden())
 				break;
 
-			_vm->switchEventHandler(_vm->menu());
+			if (!_vm->checkGameVersion("Demo")) {
+				_savedScreen.copyFrom(getScreen()->getSurface());
+				memcpy(_savedPalette, getScreen()->getPalette(), sizeof(_savedPalette));
+				_vm->switchEventHandler(_vm->menu());
+			}
 		}
 		break;
 
@@ -1133,10 +1149,12 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	if (getCursor()->getState() & kCursorStateRight) {
 		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2) {
 
-			ResourceId resourceId =_ws->cursorResources[direction];
+			if (direction >= kDirectionN) {
+				ResourceId resourceId =_ws->cursorResources[direction];
 
-			if (direction >= kDirectionN && getCursor()->getResourceId() != resourceId)
-				getCursor()->set(resourceId);
+				if (getCursor()->getResourceId() != resourceId)
+					getCursor()->set(resourceId);
+			}
 		}
 
 		return;
@@ -2306,7 +2324,7 @@ void Scene::changePlayer(ActorIndex index) {
 		// Save scene data
 		getSharedData()->saveCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
 		getSharedData()->saveSceneFonts(_ws->font1, _ws->font2, _ws->font3);
-		getSharedData()->saveSmallCursor(_ws->smallCurDown, _ws->smallCurUp);
+		getSharedData()->saveSmallCursor(_ws->smallCurUp, _ws->smallCurDown);
 		getSharedData()->saveEncounterFrameBackground(_ws->encounterFrameBg);
 
 		// Setup new values
@@ -2328,7 +2346,7 @@ void Scene::changePlayer(ActorIndex index) {
 		// Load scene data
 		getSharedData()->loadCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
 		getSharedData()->loadSceneFonts(&_ws->font1, &_ws->font2, &_ws->font3);
-		getSharedData()->loadSmallCursor(&_ws->smallCurDown, &_ws->smallCurUp);
+		getSharedData()->loadSmallCursor(&_ws->smallCurUp, &_ws->smallCurDown);
 		getSharedData()->loadEncounterFrameBackground(&_ws->encounterFrameBg);
 
 		// Reset cursor
@@ -2357,7 +2375,7 @@ void Scene::changePlayerUpdate(ActorIndex index) {
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
 void Scene::preload() {
-	if (!Config.showSceneLoading)
+	if (!Config.showSceneLoading || _vm->checkGameVersion("Demo"))
 		return;
 
 	SceneTitle *title = new SceneTitle(_vm);

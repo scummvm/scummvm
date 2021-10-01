@@ -224,6 +224,18 @@ public:
 	void setActiveWindow(int id);
 
 	/**
+	 * Return Top Window containing a point
+	 * @param x x coordinate of point
+	 * @param y y coordiante of point
+	 */ 
+	MacWindow *findWindowAtPoint(int16 x, int16 y);
+	/**
+	 * Return Top Window containing a point
+	 * @param point Point
+	 */ 
+	MacWindow *findWindowAtPoint(Common::Point point);
+
+	/**
 	 * Mark a window for removal.
 	 * Note that the window data will be destroyed.
 	 * @param target Window to be removed.

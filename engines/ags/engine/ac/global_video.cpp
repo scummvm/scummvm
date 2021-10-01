@@ -34,6 +34,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {

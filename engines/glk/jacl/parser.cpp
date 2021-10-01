@@ -558,7 +558,7 @@ struct word_type *object_match(struct word_type *iterator, int noun_number) {
 		}
 
 		if (custom_error == TRUE) {
-			/* AN ERROR OCCURED IN THE FIRST OBJECT PLACEHOLDER, DON'T
+			/* AN ERROR OCCURRED IN THE FIRST OBJECT PLACEHOLDER, DON'T
 			 * TRY ANY OTHERS */
 			return (NULL);
 		}

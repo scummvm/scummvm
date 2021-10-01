@@ -20,6 +20,9 @@
  *
  */
 
+#include "engines/util.h"
+
+#include "video/avi_decoder.h"
 #include "video/smk_decoder.h"
 #include "video/theora_decoder.h"
 
@@ -46,7 +49,6 @@ VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine
 	if (_vm->checkGameVersion("Steam")) {
 #ifdef USE_THEORADEC
 		_decoder = new Video::TheoraDecoder();
-		_decoder->setDefaultHighColorFormat(_vm->_system->getOverlayFormat());
 
 		Common::File paletteFile;
 		paletteFile.open("palette");
@@ -55,6 +57,8 @@ VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine
 #else
 		error("The Steam version of the game uses Theora videos but ScummVM has been compiled without Theora support");
 #endif
+	} else if (_vm->isAltDemo()) {
+		_decoder = new Video::AVIDecoder();
 	} else {
 		_decoder = new Video::SmackerDecoder();
 	}
@@ -73,14 +77,16 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 		break;
 
 	case EVENT_ASYLUM_INIT:
-		_previousFont = getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));
+		if (!_vm->checkGameVersion("Demo"))
+			_previousFont = getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));
 		_subtitleCounter = 0;
 		_subtitleIndex = -1;
 		break;
 
 	case EVENT_ASYLUM_DEINIT:
 		getScreen()->clear();
-		getText()->loadFont(_previousFont);
+		if (!_vm->checkGameVersion("Demo"))
+			getText()->loadFont(_previousFont);
 		break;
 
 	case EVENT_ASYLUM_SUBTITLE: {
@@ -105,8 +111,8 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 				getText()->draw(0, 99, kTextCenter, Common::Point(10, y), 20, 620, text);
 
 				if (_vm->checkGameVersion("Steam")) {
-					Graphics::Surface *st = getScreen()->getSurface()->convertTo(_vm->_system->getOverlayFormat(), _subtitlePalette);
-					_vm->_system->copyRectToOverlay((const byte *)st->getBasePtr(0, 400), st->pitch, 0, 400, 640, 80);
+					Graphics::Surface *st = getScreen()->getSurface().convertTo(g_system->getScreenFormat(), _subtitlePalette);
+					g_system->copyRectToScreen((const byte *)st->getBasePtr(0, 400), st->pitch, 0, 400, 640, 80);
 					st->free();
 					delete st;
 				}
@@ -121,7 +127,8 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_KEYDOWN:
 		_done = true;
-		getScreen()->clear();
+		if (!_vm->checkGameVersion("Steam") && !_vm->isAltDemo())
+			getScreen()->clear();
 
 		// Original set a value that does not seems to be used anywhere
 		return true;
@@ -149,6 +156,8 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	Common::String filename;
 	if (_vm->checkGameVersion("Steam"))
 		filename = videoNumber == 0 ? "mov000_2_smk.ogv" : Common::String::format("mov%03d_smk.ogv", videoNumber);
+	else if (_vm->isAltDemo())
+		filename = Common::String::format("mov%03d.avi", videoNumber);
 	else
 		filename = Common::String::format("mov%03d.smk", videoNumber);
 	play(filename, Config.showMovieSubtitles);
@@ -159,7 +168,7 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	_vm->switchEventHandler(handler);
 }
 
-void VideoPlayer::play(Common::String filename, bool showSubtitles) {
+void VideoPlayer::play(const Common::String &filename, bool showSubtitles) {
 	if (!_decoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
@@ -171,7 +180,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	// TODO check flags and setup volume panning
 
 	// Load subtitles
-	if (showSubtitles)
+	if (showSubtitles && !_vm->checkGameVersion("Demo"))
 		loadSubtitles();
 
 	// Setup playing
@@ -182,9 +191,10 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	int32 currentSubtitle = 0;
 
 	_decoder->start();
-	if (_vm->checkGameVersion("Steam")) {
-		_vm->_system->showOverlay();
-		_vm->_system->clearOverlay();
+
+	if (_vm->checkGameVersion("Steam") || _vm->isAltDemo()) {
+		Graphics::PixelFormat decoderFormat = _decoder->getPixelFormat();
+		initGraphics(640, 480, &decoderFormat);
 	}
 
 	while (!_done && !Engine::shouldQuit() && !_decoder->endOfVideo()) {
@@ -196,8 +206,8 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 			if (!frame)
 				continue;
 
-			if (_vm->checkGameVersion("Steam")) {
-				_vm->_system->copyRectToOverlay((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			if (_vm->checkGameVersion("Steam") || _vm->isAltDemo()) {
+				g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 			} else {
 				if (_decoder->hasDirtyPalette())
 					setupPalette();
@@ -223,15 +233,18 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 					_vm->notify(EVENT_ASYLUM_SUBTITLE, currentSubtitle, 1);
 			}
 
-			getScreen()->copyBackBufferToScreen();
+			if (!_vm->checkGameVersion("Steam") && !_vm->isAltDemo())
+				getScreen()->copyBackBufferToScreen();
 
 			g_system->updateScreen();
 		}
-		g_system->delayMillis(10);
+
+		if (!_vm->checkGameVersion("Steam") && !_vm->isAltDemo())
+			g_system->delayMillis(10);
 	}
 
-	if (_vm->checkGameVersion("Steam"))
-		_vm->_system->hideOverlay();
+	if (_vm->checkGameVersion("Steam") || _vm->isAltDemo())
+		initGraphics(640, 480);
 
 	_decoder->close();
 	_subtitles.clear();

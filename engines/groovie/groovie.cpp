@@ -27,10 +27,10 @@
 #include "groovie/script.h"
 #include "groovie/music.h"
 #include "groovie/resource.h"
-#include "groovie/vdx.h"
+#include "groovie/video/vdx.h"
 
 #ifdef ENABLE_GROOVIE2
-#include "groovie/roq.h"
+#include "groovie/video/roq.h"
 #endif
 
 #include "common/config-manager.h"
@@ -78,7 +78,7 @@ GroovieEngine::~GroovieEngine() {
 }
 
 Common::Error GroovieEngine::run() {
-	if (_gameDescription->version == kGroovieV2 && getPlatform() == Common::kPlatformMacintosh) {
+	if (_gameDescription->version == kGroovieT11H && getPlatform() == Common::kPlatformMacintosh) {
 		// Load the Mac installer with the lowest priority (in case the user has installed
 		// the game and has the MIDI folder present; faster to just load them)
 		Common::Archive *archive = Common::createStuffItArchive("The 11th Hour Installer");
@@ -91,7 +91,10 @@ Common::Error GroovieEngine::run() {
 
 	// Initialize the graphics
 	switch (_gameDescription->version) {
-	case kGroovieV2: {
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+	case kGroovieTLC: {
 		// Request the mode with the highest precision available
 		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		initGraphics(640, 480, &format);
@@ -107,8 +110,9 @@ Common::Error GroovieEngine::run() {
 		initGraphics(640, 480);
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		break;
+
 	default:
-		break;
+		error("GROOVIE: Unknown Game version. groovie.cpp:run()");
 	}
 
 	// Create debugger. It requires GFX to be initialized
@@ -146,22 +150,35 @@ Common::Error GroovieEngine::run() {
 		_grvCursorMan = new GrvCursorMan_t7g(_system, _macResFork);
 		_videoPlayer = new VDXPlayer(this);
 		break;
-	case kGroovieV2:
+
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+	case kGroovieTLC:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		_resMan = new ResMan_v2();
 		_grvCursorMan = new GrvCursorMan_v2(_system);
 #ifdef ENABLE_GROOVIE2
 		_videoPlayer = new ROQPlayer(this);
+		_soundQueue.setVM(this);
 #endif
 		break;
+
 	default:
-		break;
+		error("GROOVIE: Unknown Game version. groovie.cpp:run()");
 	}
 
-	// Detect ScummVM Music Enhancement Project presence (T7G only)
-	if (Common::File::exists("gu16.ogg") && _gameDescription->version == kGroovieT7G) {
-		// Load player for external files
-		_musicPlayer = new MusicPlayerIOS(this);
-	} else {
+
+	switch (_gameDescription->version) {
+	case kGroovieT7G:
+		// Detect ScummVM Music Enhancement Project presence (T7G only)
+		if (Common::File::exists("gu16.ogg")) {
+			// Load player for external files
+			_musicPlayer = new MusicPlayerIOS(this);
+			break;
+		}
+		// else, fall through
+	case kGroovieT11H:
 		// Create the music player
 		switch (getPlatform()) {
 		case Common::kPlatformMacintosh:
@@ -177,52 +194,34 @@ Common::Error GroovieEngine::run() {
 			_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
 			break;
 		}
+		break;
+
+	case kGroovieCDY:
+	case kGroovieUHP:
+		_musicPlayer = new MusicPlayerClan(this);
+		break;
+
+	case kGroovieTLC:
+		_musicPlayer = new MusicPlayerTlc(this);
+		break;
 	}
 
 	// Load volume levels
 	syncSoundSettings();
 
 	// Get the name of the main script
-	Common::String filename = _gameDescription->desc.filesDescriptions[0].fileName;
+	Common::String filename;
 	if (_gameDescription->version == kGroovieT7G) {
+		filename = "script.grv";
 		// Run The 7th Guest's demo if requested
 		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode"))
 			filename = "demo.grv";
-		else if (getPlatform() == Common::kPlatformMacintosh)
-			filename = "script.grv"; // Stored inside the executable's resource fork
-	} else if (_gameDescription->version == kGroovieV2) {
-		// Open the disk index
-		Common::File disk;
-		if (!disk.open(filename)) {
-			error("Couldn't open %s", filename.c_str());
-			return Common::kNoGameDataFoundError;
-		}
-
-		// Search the entry
-		bool found = false;
-		int index = 0;
-		while (!found && !disk.eos()) {
-			Common::String line = disk.readLine();
-			if (line.hasPrefix("title: ")) {
-				// A new entry
-				index++;
-			} else if (line.hasPrefix("boot: ") && index == _gameDescription->indexEntry) {
-				// It's the boot of the entry we're looking for,
-				// get the script filename
-				filename = line.c_str() + 6;
-				found = true;
-			}
-		}
-
-		// Couldn't find the entry
-		if (!found) {
-			error("Couldn't find entry %d in %s", _gameDescription->indexEntry, filename.c_str());
-			return Common::kUnknownError;
-		}
+	} else {
+		filename = _gameDescription->desc.filesDescriptions[0].fileName;
 	}
 
 	// Check the script file extension
-	if (!filename.hasSuffix(".grv")) {
+	if (!filename.hasSuffixIgnoreCase(".grv")) {
 		error("%s isn't a valid script filename", filename.c_str());
 		return Common::kUnknownError;
 	}
@@ -241,11 +240,11 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Game timer counter
-	uint16 tmr = 0;
+	int tmr = 0;
 
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
-	if (getPlatform() != Common::kPlatformIOS) {
+	if (getPlatform() != Common::kPlatformIOS && _gameDescription->version == kGroovieT7G) {
 		if (!existExtractedCDAudioFiles()
 		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
@@ -303,30 +302,39 @@ Common::Error GroovieEngine::run() {
 			continue;
 		}
 
-		if (_waitingForInput) {
-			// Still waiting for input, just update the mouse, game timer and then wait a bit more
-			_grvCursorMan->animate();
-			_system->updateScreen();
-			tmr++;
-			// Wait a little bit between increments.  While mouse is moving, this triggers
-			// only negligably slower.
-			if (tmr > 4) {
-				_script->timerTick();
-				tmr = 0;
-			}
-
-			_system->delayMillis(50);
-		} else if (_graphicsMan->isFading()) {
+		if (_graphicsMan->isFading()) {
 			// We're waiting for a fading to end, let the CPU rest
 			// for a while and continue
-			_system->delayMillis(30);
+			_system->delayMillis(10);
 		} else {
+			if (_waitingForInput) {
+				// Still waiting for input, just update the mouse, game timer and then wait a bit more
+				_grvCursorMan->animate();
+				_system->updateScreen();
+
+				// Wait a little bit between increments.  While mouse is moving, this triggers
+				// only negligably slower.
+				if (tmr >= 1000) {
+					_script->timerTick();
+					tmr = 0;
+				}
+
+				_system->delayMillis(10);
+				tmr += 10;
+
+				// the script doesn't unset _waitingForInput
+				// so we unset it here in order to let the script run as many steps as it needs to
+				// this makes the game more responsive
+				_waitingForInput = false;
+			}
+
 			// Everything's fine, execute another script step
 			_script->step();
 		}
 
 		// Update the screen if required
 		_graphicsMan->update();
+		_soundQueue.tick();
 	}
 
 	return Common::kNoError;
@@ -340,6 +348,10 @@ void GroovieEngine::pauseEngineIntern(bool pause) {
 
 Common::Platform GroovieEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
+}
+
+EngineVersion GroovieEngine::getEngineVersion() const {
+	return _gameDescription->version;
 }
 
 bool GroovieEngine::hasFeature(EngineFeature f) const {
@@ -398,6 +410,76 @@ Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc,
 
 void GroovieEngine::waitForInput() {
 	_waitingForInput = true;
+}
+
+SoundEffectQueue::SoundEffectQueue() {
+	_vm = NULL;
+	_player = NULL;
+	_file = NULL;
+}
+
+void SoundEffectQueue::setVM(GroovieEngine *vm) {
+	_vm = vm;
+#ifdef ENABLE_GROOVIE2
+	_player = new ROQSoundPlayer(vm);
+#endif
+}
+
+void SoundEffectQueue::queue(Common::SeekableReadStream *soundfile, uint32 loops) {
+	if (_queue.size() > 20) {
+		stopAll();
+	}
+	_queue.push({soundfile, loops});
+	for (uint32 i = 1; i < loops; i++) {
+		_queue.push({soundfile, loops});
+	}
+	tick();
+}
+
+void SoundEffectQueue::tick() {
+#ifdef ENABLE_GROOVIE2
+	if (_file && !_player->playFrame()) {
+		_vm->_script->setBitFlag(0, true);
+		return;
+	}
+	if (_queue.size() == 0) {
+		deleteFile();
+		return;
+	}
+
+	SoundQueueEntry entry = _queue.front();
+	if (entry._loops != 0 || _queue.size() > 1) {
+		_queue.pop();
+	}
+	if (_file != entry._file) {
+		deleteFile();
+	}
+	_file = entry._file;
+
+	_vm->_script->setBitFlag(0, true);
+	_file->seek(0);
+	_player->load(_file, 0);
+	_player->playFrame();
+	if (_player->isFastForwarding()) {
+		stopAll();
+	}
+#endif
+}
+
+void SoundEffectQueue::deleteFile() {
+	if (_file) {
+		delete _file;
+		_file = NULL;
+		_vm->_script->setBitFlag(0, false);
+	}
+}
+
+void SoundEffectQueue::stopAll() {
+	if (_file && _player) {
+		_player->stopAudioStream();
+	}
+	_queue.clear();
+	deleteFile();
 }
 
 } // End of namespace Groovie

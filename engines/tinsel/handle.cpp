@@ -24,6 +24,7 @@
 #define BODGE
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 
 #include "tinsel/drives.h"
@@ -83,7 +84,7 @@ void Handle::SetupHandleTable() {
 	int len;
 	uint i;
 	MEMHANDLE *pH;
-	TinselFile f;
+	TinselFile f(TinselV1Mac || TinselV1Saturn);
 
 	const char *indexFileName = TinselV1PSX ? PSX_INDEX_FILENAME : INDEX_FILENAME;
 
@@ -295,6 +296,47 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 
 	// cannot find file
 	error(CANNOT_FIND_FILE, szFilename);
+}
+
+/**
+ * Return a font specified by a SCHNHANDLE
+ * Handles endianess internally
+ * @param offset			Handle and offset to data
+ * @return FONT structure
+*/
+FONT *Handle::GetFont(SCNHANDLE offset) {
+	byte *fontData = LockMem(offset);
+	const bool isBE = TinselV1Mac || TinselV1Saturn;
+	const uint32 size = (TinselV3 ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
+	Common::MemoryReadStreamEndian *fontStream = new Common::MemoryReadStreamEndian(fontData, size, isBE);
+
+	FONT *font = new FONT();
+	font->xSpacing = fontStream->readSint32();
+	font->ySpacing = fontStream->readSint32();
+	font->xShadow = fontStream->readSint32();
+	font->yShadow = fontStream->readSint32();
+	font->spaceSize = fontStream->readSint32();
+	font->baseColor = TinselV3 ? fontStream->readSint32() : 0;
+	font->fontInit.hObjImg = fontStream->readUint32();
+	font->fontInit.objFlags = fontStream->readSint32();
+	font->fontInit.objID = fontStream->readSint32();
+	font->fontInit.objX = fontStream->readSint32();
+	font->fontInit.objY = fontStream->readSint32();
+	font->fontInit.objZ = fontStream->readSint32();
+	for (int i = 0; i < 300; i++)
+		font->fontDef[i] = fontStream->readUint32();
+
+	delete fontStream;
+
+	return font;
+}
+
+SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {
+	FONT *font = GetFont(offset);
+	SCNHANDLE handle = font->fontInit.hObjImg;
+	delete font;
+
+	return handle;
 }
 
 /**

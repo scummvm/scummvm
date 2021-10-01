@@ -119,7 +119,7 @@ void PatrolRouteIterator::write(Common::MemoryWriteStreamDynamic *out) const {
 
 //-----------------------------------------------------------------------
 //	Increment the waypoint index
-void PatrolRouteIterator::increment(void) {
+void PatrolRouteIterator::increment() {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	_vertexNo++;
@@ -138,7 +138,7 @@ void PatrolRouteIterator::increment(void) {
 
 //-----------------------------------------------------------------------
 //	Decrement the waypoint index
-void PatrolRouteIterator::decrement(void) {
+void PatrolRouteIterator::decrement() {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	_vertexNo--;
@@ -157,7 +157,7 @@ void PatrolRouteIterator::decrement(void) {
 
 //-----------------------------------------------------------------------
 //	Increment the waypoint index in the alternate direction
-void PatrolRouteIterator::altIncrement(void) {
+void PatrolRouteIterator::altIncrement() {
 	const PatrolRoute   &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	_vertexNo++;
@@ -172,7 +172,7 @@ void PatrolRouteIterator::altIncrement(void) {
 
 //-----------------------------------------------------------------------
 //	Decrement the waypoint index in the alternate direction
-void PatrolRouteIterator::altDecrement(void) {
+void PatrolRouteIterator::altDecrement() {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	_vertexNo--;
@@ -187,13 +187,13 @@ void PatrolRouteIterator::altDecrement(void) {
 
 //-----------------------------------------------------------------------
 //	Return the coordinates of the current waypoint
-const TilePoint PatrolRouteIterator::operator*(void) const {
+const TilePoint PatrolRouteIterator::operator*() const {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	return _vertexNo >= 0 && _vertexNo < route.vertices() ? route[_vertexNo] : Nowhere;
 }
 
-const PatrolRouteIterator &PatrolRouteIterator::operator++(void) {
+const PatrolRouteIterator &PatrolRouteIterator::operator++() {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	if (_vertexNo >= 0 && _vertexNo < route.vertices()) {
@@ -219,7 +219,7 @@ const PatrolRouteIterator &PatrolRouteIterator::operator++(void) {
 
 //-----------------------------------------------------------------------
 //	Load the patrol routes from the resource file
-void initPatrolRoutes(void) {
+void initPatrolRoutes() {
 	// Get patrol route resource context
 	hResContext *patrolRouteRes = auxResFile->newContext(MKTAG('P', 'T', 'R', 'L'), "patrol route resource");
 	if (patrolRouteRes == nullptr || !patrolRouteRes->_valid)
@@ -254,7 +254,7 @@ void initPatrolRoutes(void) {
 	auxResFile->disposeContext(patrolRouteRes);
 }
 
-void cleanupPatrolRoutes(void) {
+void cleanupPatrolRoutes() {
 	if (!patrolRouteList)
 		return;
 

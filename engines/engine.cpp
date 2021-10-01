@@ -55,6 +55,7 @@
 #include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
+#include "gui/EventRecorder.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 
@@ -245,30 +246,47 @@ void splashScreen() {
 	}
 
 	g_system->showOverlay();
+	float scaleFactor = g_system->getHiDPIScreenFactor();
+	int16 overlayWidth = g_system->getOverlayWidth();
+	int16 overlayHeight = g_system->getOverlayHeight();
+	int16 scaledW = (int16)(overlayWidth / scaleFactor);
+	int16 scaledH = (int16)(overlayHeight / scaleFactor);
 
 	// Fill with orange
 	Graphics::Surface screen;
-	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
+	screen.create(scaledW, scaledH, g_system->getOverlayFormat());
 	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xcc, 0x66, 0x00));
-
-	// Load logo
-	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
-	int lx = MAX((g_system->getOverlayWidth() - logo->w) / 2, 0);
-	int ly = MAX((g_system->getOverlayHeight() - logo->h) / 2, 0);
 
 	// Print version information
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	int w = font->getStringWidth(gScummVMVersionDate);
-	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
-	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
+	int x = screen.w - w - 5;
+	int y = screen.h - font->getFontHeight() - 5;
 	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
 
-	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	// Scale if needed and copy to overlay
+	if (screen.w != overlayWidth) {
+		Graphics::Surface *scaledScreen = screen.scale(overlayWidth, overlayHeight, false);
+		g_system->copyRectToOverlay(scaledScreen->getPixels(), scaledScreen->pitch, 0, 0, scaledScreen->w, scaledScreen->h);
+		scaledScreen->free();
+		delete scaledScreen;
+	} else
+		g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 	screen.free();
 
 	// Draw logo
-	int lw = MIN<uint16>(logo->w, g_system->getOverlayWidth() - lx);
-	int lh = MIN<uint16>(logo->h, g_system->getOverlayHeight() - ly);
+	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	if (scaleFactor != 1.0f) {
+		Graphics::Surface *tmp = logo->scale(int16(logo->w * scaleFactor), int16(logo->h * scaleFactor), true);
+		logo->free();
+		delete logo;
+		logo = tmp;
+	}
+
+	int lx = MAX((overlayWidth - logo->w) / 2, 0);
+	int ly = MAX((overlayHeight - logo->h) / 2, 0);
+	int lw = MIN<uint16>(logo->w, overlayWidth - lx);
+	int lh = MIN<uint16>(logo->h, overlayHeight - ly);
 
 	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, lw, lh);
 	logo->free();
@@ -534,6 +552,10 @@ void Engine::warnMissingExtractedCDAudio() {
 }
 
 void Engine::handleAutoSave() {
+#ifdef ENABLE_EVENTRECORDER
+	if (!g_eventRec.processAutosave())
+		return;
+#endif
 	const int diff = _system->getMillis() - _lastAutosaveTime;
 
 	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
@@ -553,7 +575,7 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	altButtons.push_back(_("Overwrite"));
 	altButtons.push_back(_("Cancel autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot has a saved game named %s. "
+				_("WARNING: The autosave slot has a saved game named %S. "
 				  "You can either move the existing save to a new slot, "
 				  "Overwrite the existing save, "
 				  "or cancel autosave (will not prompt again until restart)"), desc.getDescription().c_str());
@@ -581,6 +603,9 @@ void Engine::saveAutosaveIfEnabled() {
 	// (as is the case with the AGS engine for example, or when showing a prompt).
 	if (_autoSaving || _autosaveInterval == 0)
 		return;
+	const int autoSaveSlot = getAutosaveSlot();
+	if (autoSaveSlot < 0)
+		return;
 	_autoSaving = true;
 
 	bool saveFlag = canSaveAutosaveCurrently();
@@ -590,7 +615,7 @@ void Engine::saveAutosaveIfEnabled() {
 	if (saveFlag)
 		saveFlag = warnBeforeOverwritingAutosave();
 
-	if (saveFlag && saveGameState(getAutosaveSlot(), autoSaveName, true).getCode() != Common::kNoError) {
+	if (saveFlag && saveGameState(autoSaveSlot, autoSaveName, true).getCode() != Common::kNoError) {
 		// Couldn't autosave at the designated time
 		g_system->displayMessageOnOSD(_("Error occurred making autosave"));
 		saveFlag = false;

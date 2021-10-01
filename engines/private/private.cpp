@@ -44,13 +44,13 @@
 namespace Private {
 
 PrivateEngine *g_private = NULL;
-
 extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr),
-	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
+	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr), 
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
 	// Global object for external reference
@@ -62,6 +62,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_pausedSetting = "";
 	_modified = false;
 	_mode = -1;
+	_paletteIndex = 0;
+	_colorToIndex.clear();
 	_toTake = false;
 
 	// Movies
@@ -118,7 +120,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 PrivateEngine::~PrivateEngine() {
 	// Dispose your resources here
-	delete _frame;
+	delete _frameImage;
 	delete _rnd;
 
 	delete Gen::g_vm;
@@ -144,7 +146,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 		file = test;
 	} else {
 		delete test;
-		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
+		if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
+			error("Failed to open SUPPORT/ASSETS.Z");
 		// if the full game is used
 		if (!isDemo()) {
 			if (_installerArchive.hasFile("GAME.DAT"))
@@ -168,7 +171,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 			}
 		}
 	}
-	assert(file != NULL);
+	if (file == NULL)
+		error("Unknown version");
 	return file;
 }
 
@@ -197,15 +201,24 @@ Common::Error PrivateEngine::run() {
 	initFuncs();
 	parse(scripts.c_str());
 	delete file;
-	assert(maps.constants.size() > 0);
+	if (maps.constants.size() == 0)
+		error("Failed to parse game script");
 
 	// Initialize graphics
+
+#ifdef PLAYSTATION3
+	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(_screenW, _screenH, &_pixelFormat);
+	_transparentColor = 250;
+#else
+
 	initGraphics(_screenW, _screenH, nullptr);
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
-
 	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
+#endif
+
 	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	changeCursor("default");
@@ -216,7 +229,10 @@ Common::Error PrivateEngine::run() {
 	_compositeSurface->setTransparentColor(_transparentColor);
 
 	// Load the game frame once
-	_frame = decodeImage(_framePath);
+	_frameImage = decodeImage(_framePath);
+	const byte *palette = decodePalette(_framePath);
+	_framePalette = (byte *) malloc(3*256);
+	memcpy(_framePalette, palette, 3*256);
 
 	// Main event loop
 	Common::Event event;
@@ -237,9 +253,12 @@ Common::Error PrivateEngine::run() {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
+					_paletteIndex = 0;
+					_colorToIndex.clear();
+					_indexToColor.clear();
 					skipVideo();
-
+				}
 				break;
 
 			case Common::EVENT_QUIT:
@@ -304,6 +323,12 @@ Common::Error PrivateEngine::run() {
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
+			_colorToIndex.clear();
+			_indexToColor.clear();
+			_paletteIndex = 0;
+			_colorToIndex[0x0000FF00] = _transparentColor;
+			_indexToColor[_transparentColor] = 0x0000FF00;
+
 			if (_videoDecoder->getCurFrame() == 0)
 				stopSound(true);
 			if (_videoDecoder->endOfVideo()) {
@@ -314,13 +339,17 @@ Common::Error PrivateEngine::run() {
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
-
 			g_system->delayMillis(5); // Yield to the system
 			continue;
 		}
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
+			_paletteIndex = 0;
+			_colorToIndex.clear();
+			_indexToColor.clear();
+			_colorToIndex[0x0000FF00] = _transparentColor;
+			_indexToColor[_transparentColor] = 0x0000FF00;
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
@@ -746,7 +775,7 @@ void PrivateEngine::loadDossier() {
 	} else if (_dossierPage == 1) {
 		loadImage(m.page2, x, y);
 	} else {
-		assert(0);
+		error("Invalid page");
 	}
 }
 
@@ -1216,13 +1245,78 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
 	return _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 }
 
+const byte *PrivateEngine::decodePalette(const Common::String &name) {
+	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
+	Common::File file;
+	Common::String path = convertPath(name);
+	if (!file.open(path))
+		error("unable to load image %s", path.c_str());
+
+	_image->loadStream(file);
+	return _image->getPalette();
+}
+
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
 	Graphics::Surface *surf = decodeImage(name);
+#ifdef PLAYSTATION3
+	const byte *palette = decodePalette(name);
+	composeImagePalette(surf, palette);
+	_compositeSurface->setTransparentColor(_transparentColor);
+#endif
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
 	_image->destroy();
+}
+
+void PrivateEngine::composeImagePalette(const Graphics::Surface *surf, const byte *palette) {
+	int i,j,v;
+	uint32 c;
+	if (_colorToIndex.size() != 1)
+		error("colorToIndex had some elements");
+
+	for (i = 0; i < surf->w; i++)
+		for (j = 0; j < surf->h; j++) {
+			c = surf->getPixel(i, j);
+			v = *((const uint32*) (palette + 3*c)) & 0x00FFFFFF;
+
+			if (_colorToIndex.contains(v))
+				continue;
+
+			_colorToIndex[v] = c;
+			_indexToColor[c] = v;
+		}
+
+	_compositeSurface->setPalette(palette, 0, 256);
+}
+
+void PrivateEngine::composeImagePalette(Graphics::Surface *surf, const byte *palette) {
+	int i,j,p,v;
+	uint32 c;
+	_paletteIndex = 0;
+	for (i = 0; i < surf->w; i++)
+		for (j = 0; j < surf->h; j++) {
+			c = surf->getPixel(i, j);
+			v = *((const uint32*) (palette + 3*c)) & 0x00FFFFFF;
+
+			if (_colorToIndex.contains(v))
+				p = _colorToIndex[v];
+			else {
+				while (_indexToColor.contains(_paletteIndex)) {
+					_paletteIndex++;
+				}
+				p = _paletteIndex;
+				if(p >= 256) {
+					debug("skipping remapping %.8x", v);
+					continue;
+				}
+			}
+			surf->setPixel(i, j, p);
+			_colorToIndex[v] = p;
+			_indexToColor[p] = v;
+			_compositeSurface->setPalette(palette + 3*c, p, 1);
+		}
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1232,7 +1326,16 @@ void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
 }
 
 void PrivateEngine::drawScreenFrame() {
-	g_system->copyRectToScreen(_frame->getPixels(), _frame->pitch, 0, 0, _screenW, _screenH);
+#ifdef PLAYSTATION3
+	Graphics::Surface frame; 
+	frame.create(_frameImage->w, _frameImage->h, _frameImage->format);
+	frame.copyFrom(*_frameImage);
+	composeImagePalette(&frame, _framePalette);
+	g_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, _screenW, _screenH);
+	frame.free();
+#else
+	g_system->copyRectToScreen(_frameImage->getPixels(), _frameImage->pitch, 0, 0, _screenW, _screenH);
+#endif 
 }
 
 Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
@@ -1257,6 +1360,11 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	_image->destroy();
 
 	if (drawn) {
+#ifdef PLAYSTATION3
+		const byte *palette = decodePalette(name);
+		composeImagePalette(surf, palette);
+		_compositeSurface->setTransparentColor(_transparentColor);
+#endif
 		drawMask(surf);
 	}
 
@@ -1269,25 +1377,40 @@ void PrivateEngine::drawMask(Graphics::Surface *surf) {
 
 void PrivateEngine::drawScreen() {
 	Graphics::ManagedSurface *surface = _compositeSurface;
-
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
+
+#ifdef PLAYSTATION3
+		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
+		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
+
+		if (_videoDecoder->getPalette())
+			composeImagePalette(frame, _videoDecoder->getPalette());
+
+		surface->blitFrom(*frame, center);
+
+#else
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
 		surface->blitFrom(*cframe, center);
 		cframe->free();
 		delete cframe;
-	}
+#endif
+	} 
 
 	if (_mode == 1) {
 		drawScreenFrame();
 	}
 
+#ifdef PLAYSTATION3
+	for (int c = 0; c < 256; c++)
+		g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
+#endif
+
+
 	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
 	Graphics::Surface sa = surface->getSubArea(w);
 	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
-	//if (_image->getPalette() != nullptr)
-	//	g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
 	g_system->updateScreen();
 }
 

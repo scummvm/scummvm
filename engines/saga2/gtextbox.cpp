@@ -68,7 +68,7 @@ extern gFont        *mainFont;
 *
 *   /h2/NOTIFICATIONS
 *       This class sends a gEventNewValue whenever the text box becomes
-*       deactivated. If the deactivation occured because of the user
+*       deactivated. If the deactivation occurred because of the user
 *       hitting return, then the value of the event will be 1; In all
 *       other cases it is zero.
 *
@@ -367,7 +367,7 @@ bool gTextBox::activate(gEventType why) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::deactivate(void) {
+void gTextBox::deactivate() {
 	selected = 0;
 	isActiveCtl = false;
 	draw();
@@ -386,7 +386,7 @@ void gTextBox::prepareEdit(int which) {
 
 //-----------------------------------------------------------------------
 
-bool gTextBox::changed(void) {
+bool gTextBox::changed() {
 	if (undoBuffer && editing) {
 		return memcmp(undoBuffer, fieldStrings[index], currentLen[index] + 1);
 	}
@@ -395,7 +395,7 @@ bool gTextBox::changed(void) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::commitEdit(void) {
+void gTextBox::commitEdit() {
 	if (undoBuffer && changed()) {
 		memcpy(undoBuffer, fieldStrings[index], currentLen[index] + 1);
 		undoLen = currentLen[index];
@@ -407,7 +407,7 @@ void gTextBox::commitEdit(void) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::revertEdit(void) {
+void gTextBox::revertEdit() {
 	if (undoBuffer && changed()) {
 		cursorPos = anchorPos = currentLen[index] = undoLen;
 		memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
@@ -548,13 +548,13 @@ void gTextBox::selectionMove(int howMany) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::scrollUp(void) {
+void gTextBox::scrollUp() {
 	selectionUp(linesPerPage - 2);
 }
 
 //-----------------------------------------------------------------------
 
-void gTextBox::scrollDown(void) {
+void gTextBox::scrollDown() {
 	selectionDown(linesPerPage - 2);
 }
 
@@ -818,7 +818,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 //-----------------------------------------------------------------------
 
-bool gTextBox::tabSelect(void) {
+bool gTextBox::tabSelect() {
 	return true;
 }
 
@@ -881,7 +881,7 @@ void gTextBox::editRectFill(gPort &fillPort, gPen *pen) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::drawContents(void) {
+void gTextBox::drawContents() {
 	int16 cPos, aPos;
 	assert(textFont);
 	assert(fontColorBack != -1);
@@ -987,7 +987,7 @@ void gTextBox::drawContents(void) {
 
 //-----------------------------------------------------------------------
 
-void gTextBox::drawClipped(void) {
+void gTextBox::drawClipped() {
 	gPort           &port = window.windowPort;
 	Rect16          rect = window.getExtent();
 

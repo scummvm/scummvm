@@ -45,6 +45,7 @@ ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
 	Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),
 	_mouseOver(false), _origW(w), _origH(h), _frameNumUp(0), _frameNumDown(0) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
+	// FIXME: Do we ever free this widget?
 	_textWidget = widget->getObjId();
 	_mouseOverBlendCol = mouseOverBlendCol;
 	_mouseOver = (_mouseOverBlendCol != 0);

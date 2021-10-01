@@ -33,7 +33,7 @@
 
 namespace Asylum {
 
-#define PALETTE_SIZE 256 * 3
+#define PALETTE_SIZE (256 * 3)
 
 class AsylumEngine;
 class GraphicResource;
@@ -95,6 +95,7 @@ public:
 
 	// Palette
 	void setPalette(ResourceId id);
+	const byte *getPalette() { return _mainPalette; }
 	void setMainPalette(const byte *data);
 	void loadGrayPalette();
 	void updatePalette();
@@ -135,7 +136,7 @@ public:
 	void copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y);
 
 	// Used by Writings puzzle
-	const Graphics::Surface *getSurface() const { return &_backBuffer; };
+	const Graphics::Surface &getSurface() const { return _backBuffer; };
 
 protected:
 	// Palette fading Timer

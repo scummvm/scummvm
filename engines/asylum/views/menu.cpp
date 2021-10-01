@@ -717,6 +717,45 @@ void Menu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
+bool Menu::hasThumbnail(int index) {
+	if (getSaveLoad()->hasSavegame(index + _startIndex))
+		return _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex).getThumbnail();
+
+	return false;
+}
+
+void Menu::showThumbnail(int index) {
+	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex);
+	const Graphics::Surface *thumbnail = desc.getThumbnail();
+
+	int x, y;
+	int overlayWidth  = g_system->getOverlayWidth(),
+		overlayHeight = g_system->getOverlayHeight();
+	Graphics::Surface *screen, *screen1, *thumbnail1;
+
+	x = (index < 6 ? 150 : 470)  * overlayWidth  / 640;
+	y = (179 + (index % 6) * 29) * overlayHeight / 480;
+
+	screen = getScreen()->getSurface().convertTo(g_system->getOverlayFormat(), getScreen()->getPalette());
+	if (overlayWidth != 640 || overlayHeight != 480)
+		screen1 = screen->scale(overlayWidth, overlayHeight);
+	else
+		screen1 = screen;
+	thumbnail1 = thumbnail->convertTo(g_system->getOverlayFormat());
+	screen1->copyRectToSurface(thumbnail1->getPixels(), thumbnail1->pitch, x, y, thumbnail1->w, thumbnail1->h);
+
+	g_system->copyRectToOverlay(screen1->getPixels(), screen1->pitch, 0, 0, screen1->w, screen1->h);
+	g_system->showOverlay();
+
+	screen->free();
+	screen1->free();
+	thumbnail1->free();
+	if (screen != screen1)
+		delete screen1;
+	delete screen;
+	delete thumbnail1;
+}
+
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
@@ -752,6 +791,7 @@ void Menu::updateLoadGame() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1325));
 
+	int current = -1;
 	if (_dword_455C78) {
 		getText()->drawCentered(Common::Point(10,      190), 620, MAKE_RESOURCE(kResourcePackText, 1332));
 		getText()->drawCentered(Common::Point(10, 190 + 29), 620, MAKE_RESOURCE(kResourcePackText, 1333));
@@ -777,10 +817,13 @@ void Menu::updateLoadGame() {
 			snprintf((char *)&text, sizeof(text), "%d. %s", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
-			 || cursor.y < y  || cursor.y > (y + 24))
+			 || cursor.y < y  || cursor.y > (y + 24)) {
 				getText()->loadFont(kFontYellow);
-			else
+			} else {
 				getText()->loadFont(kFontBlue);
+				if (hasThumbnail(index))
+					current = index;
+			}
 
 			getText()->setPosition(Common::Point(30, y));
 			getText()->draw((char *)&text);
@@ -797,10 +840,13 @@ void Menu::updateLoadGame() {
 			snprintf((char *)&text, sizeof(text), "%d. %s", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
-				|| cursor.y < y   || cursor.y > (y + 24))
+				|| cursor.y < y   || cursor.y > (y + 24)) {
 				getText()->loadFont(kFontYellow);
-			else
+			} else {
 				getText()->loadFont(kFontBlue);
+				if (hasThumbnail(index))
+					current = index;
+			}
 
 			getText()->setPosition(Common::Point(350, y));
 			getText()->draw((char *)&text);
@@ -841,6 +887,11 @@ void Menu::updateLoadGame() {
 
 	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
+
+	if (current == -1)
+		g_system->hideOverlay();
+	else
+		showThumbnail(current);
 }
 
 void Menu::updateSaveGame() {
@@ -1228,7 +1279,7 @@ void Menu::updateViewMovies() {
 	snprintf((char *)&text2, sizeof(text2), getText()->get(MAKE_RESOURCE(kResourcePackText, 1357)), getSharedData()->cdNumber);
 	getText()->drawCentered(Common::Point(10, 100), 620, text2);
 
-	strcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieIndex)));
+	Common::strlcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieIndex)), sizeof(text));
 	snprintf((char *)&text2, sizeof(text2), getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieIndex]);
 	strcat((char *)&text, (char *)&text2);
 	getText()->drawCentered(Common::Point(10, 134), 620, text);
@@ -1562,6 +1613,8 @@ void Menu::clickNewGame() {
 
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
+
+	g_system->hideOverlay();
 
 	if (_dword_455C80) {
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))

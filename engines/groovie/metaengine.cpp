@@ -48,7 +48,7 @@ public:
 
 Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 #ifndef ENABLE_GROOVIE2
-	if (((const GroovieGameDescription *)gd)->version == kGroovieV2)
+	if (((const GroovieGameDescription *)gd)->version != kGroovieT7G)
 		return Common::Error(Common::kUnsupportedGameidError, _s("GroovieV2 support is not compiled in"));
 #endif
 

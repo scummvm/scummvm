@@ -554,13 +554,13 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 			newSceneStaticData.location.environment != oldLocation.environment ||
 			newSceneStaticData.location.node != oldLocation.node) {
 		((GameUIWindow *)_parent)->_bioChipRightWindow->disableEvidenceCapture();
-		((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
+		((GameUIWindow *)_parent)->_liveTextWindow->updateLiveText();
 	}
 
 	// Disable the arrow window
 	((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
 
-	// Get thr esults from the pre-exit room function
+	// Get the results from the pre-exit room function
 	int retVal = _currentScene->preExitRoom(this, destinationData.destinationScene);
 
 	// If we died, return here
@@ -580,7 +580,7 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	if (newSceneStaticData.location.environment != oldLocation.environment && newSceneStaticData.location.environment != -2)
 		initializeTimeZoneAndEnvironment(this, newSceneStaticData.location.timeZone, newSceneStaticData.location.environment);
 
-	// If we are movinto a different node or time zone, reset the evidence flag
+	// If we are moving to a different node or time zone, reset the evidence flag
 	if (newSceneStaticData.location.timeZone != oldLocation.timeZone ||
 			newSceneStaticData.location.environment != oldLocation.environment ||
 			newSceneStaticData.location.node != oldLocation.node) {
@@ -859,7 +859,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	invalidateWindow(false);
 	_vm->_sound->timerCallback();
 
-	// Time to show and play the right-hand small movie to the mid point, with proper sound
+	// Time to show and play the right-hand small movie to the midpoint, with proper sound
 	jumpMovie.reset(new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow));
 
 	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
@@ -889,7 +889,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	if (_vm->shouldQuit())
 		return true;
 
-	// Forceably stop the interface sound
+	// Forcibly stop the interface sound
 	_vm->_sound->stopInterfaceSound();
 
 	// Destroy the movie

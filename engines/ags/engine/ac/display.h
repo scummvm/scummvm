@@ -50,18 +50,22 @@ bool ShouldAntiAliasText();
 int GetTextDisplayLength(const char *text);
 // Calculates number of game loops for displaying a text on screen
 int GetTextDisplayTime(const char *text, int canberel = 0);
+// Draw an outline if requested, then draw the text on top
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 void wouttext_aligned(Shared::Bitmap *ds, int usexp, int yy, int oriwid, int usingfont, color_t text_color, const char *text, HorAlignment align);
 // TODO: GUI classes located in Common library do not make use of outlining,
 // need to find a way to make all code use same functions.
-// Get the maximal height of the given font, with possible outlining in mind
+// Get the maximal height of the given font, with corresponding outlining
 int getfontheight_outlined(int font);
+// Get outline's thickness addition to the font's width or height
+int get_font_outline_padding(int font);
 // Get line spacing for the given font, with possible outlining in mind
 int getfontspacing_outlined(int font);
 // Get the distance between bottom one one line and top of the next line (may be negative!)
 int getfontlinegap(int font);
 // Gets the total maximal height of the given number of lines printed with the given font
 int getheightoflines(int font, int numlines);
+// Get the maximal width of the given font, with corresponding outlining
 int wgettextwidth_compensate(const char *tex, int font);
 void do_corner(Shared::Bitmap *ds, int sprn, int xx1, int yy1, int typx, int typy);
 // Returns the image of a button control on the GUI under given child index

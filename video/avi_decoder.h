@@ -225,6 +225,7 @@ protected:
 		void useInitialPalette();
 		bool canDither() const;
 		void setDither(const byte *palette);
+		bool isValid() const { return _videoCodec != nullptr; }
 
 		bool isTruemotion1() const;
 		void forceDimensions(uint16 width, uint16 height);

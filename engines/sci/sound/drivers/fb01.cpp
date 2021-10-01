@@ -783,7 +783,6 @@ void MidiPlayer_Fb01::sysEx(const byte *msg, uint16 length) {
 	delay += 10;
 
 	g_system->delayMillis(delay);
-	g_system->updateScreen();
 }
 
 byte MidiPlayer_Fb01::getPlayId() const {

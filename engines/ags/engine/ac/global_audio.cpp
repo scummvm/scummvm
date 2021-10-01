@@ -543,8 +543,6 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 		return false;
 	}
 
-	set_clip_to_channel(SCHAN_SPEECH, speechmp3);
-
 	if (!speechmp3->play()) {
 		// Could not play, so clean up manually.
 		speechmp3->destroy();
@@ -552,6 +550,7 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 		speechmp3 = nullptr;
 	}
 
+	set_clip_to_channel(SCHAN_SPEECH, speechmp3);
 	return true;
 }
 

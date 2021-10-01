@@ -28,6 +28,7 @@
 #include "supernova/supernova.h"
 
 #define GAMEOPTION_IMPROVED GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS		GUIO_GAMEOPTIONS2
 
 static const DebugChannelDef debugFlagList[] = {
 	{Supernova::kDebugGeneral, "general", "Supernova general debug channel"},
@@ -42,6 +43,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Removes some repetitive actions, adds possibility to change verbs by keyboard"),
 			"improved",
 			true
+		}
+	},
+
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false
 		}
 	},
 
@@ -64,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn1",
@@ -73,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn1",
@@ -82,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	// Mission Supernova 2
 	{
@@ -92,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn2",
@@ -101,7 +112,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };

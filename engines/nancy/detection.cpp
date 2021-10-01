@@ -246,22 +246,6 @@ public:
 	virtual const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	virtual void registerDefaultSettings(const Common::String &target) const override;
-	//virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
-
-void NancyMetaEngineDetection::registerDefaultSettings(const Common::String &target) const {
-	ConfMan.setInt("music_volume", 54 * 255 / 100, target);
-	ConfMan.setInt("speech_volume", 54 * 255 / 100, target);
-	ConfMan.setInt("sfx_volume", 51 * 255 / 100, target);
-	ConfMan.setBool("subtitles", true, target);
-}
-
-/*
-GUI::OptionsContainerWidget *NancyMetaEngineDetection::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-	return new Nancy::NancyOptionsWidget(boss, name, target);
-}
-*/
 
 REGISTER_PLUGIN_STATIC(NANCY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NancyMetaEngineDetection);

@@ -1172,6 +1172,16 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 						error("kSavegame: no more savegame slots available");
 				}
 			}
+
+			// WORKAROUND: Mothergoose256 has a unique scheme for calculating the current save id
+			// and storing it in a global. The SCI1.1 floppy version uses this to auto-save and
+			// auto-delete at the end of the game. This is incompatible with our virtual id system
+			// so we work around this by setting the game's save global to the virtual id here and
+			// also when restoring so that it's always correct. See gamestate_afterRestoreFixUp().
+			// Fixes bug #5294
+			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+				s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+			}
 		} else {
 			error("kSaveGame: invalid savegameId used");
 		}

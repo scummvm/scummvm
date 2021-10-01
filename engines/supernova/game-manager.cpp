@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "gui/message.h"
@@ -360,6 +362,8 @@ void GameManager::processInput() {
 		onInventoryArrowDown
 	} mouseLocation;
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	if (_mouseField >= 0 && _mouseField < 256)
 		mouseLocation = onObject;
 	else if (_mouseField >= 256 && _mouseField < 512)
@@ -529,12 +533,18 @@ void GameManager::processInput() {
 			case onInventory:
 				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !isNullObject(_currentInputObject))
+					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onCmdButton:
 				_guiCommandButton[_mouseField - 256].setHighlight(true);
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+					ttsMan->say(_guiCommandButton[_mouseField - 256].getText(), Common::kDos850);
 				break;
 			case onObject:
 				_currentInputObject = _currentRoom->getObject(_mouseField);
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !isNullObject(_currentInputObject))
+					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onNone:
 			default:
@@ -555,13 +565,23 @@ bool GameManager::isNullObject(Object *obj) {
 void GameManager::sentence(int number, bool brightness) {
 	if (number < 0)
 		return;
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	Common::String string;
+
 	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, brightness ? kColorWhite44 : kColorWhite25);
-	if (_texts[_rowsStart[number]] == kStringDialogSeparator)
+	if (_texts[_rowsStart[number]] == kStringDialogSeparator) {
 		_vm->renderText(kStringConversationEnd, 1, 142 + _rowsStart[number] * 10, brightness ? kColorRed : kColorDarkRed);
-	else {
-		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r)
+		string = _vm->getGameString(kStringConversationEnd);
+	} else {
+		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r) {
 			_vm->renderText(_texts[r], 1, 142 + r * 10, brightness ? kColorGreen : kColorDarkGreen);
+			if (!string.empty())
+				string += " ";
+			string += _vm->getGameString(_texts[r]);
+		}
 	}
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && brightness)
+		ttsMan->say(string, Common::TextToSpeechManager::INTERRUPT_NO_REPEAT, Common::kDos850);
 }
 
 void GameManager::say(int textId) {
@@ -586,11 +606,26 @@ void GameManager::say(const char *text) {
 		}
 	}
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		// Wait for the end of the current speech
+		if (ttsMan->isSpeaking())
+			wait(0, true, true);
+		// New sentence
+		Common::String ttsText;
+		for (uint i = 0; i < numRows; ++i) {
+			if (!ttsText.empty())
+				ttsText += ' ';
+			ttsText += row[i];
+		}
+		ttsMan->say(ttsText,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
+	}
+
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
 	for (uint r = 0; r < numRows; ++r)
 		_vm->renderText(row[r], 1, 142 + r * 10, kColorDarkGreen);
-	wait((t.size() + 20) * _vm->_textSpeed / 10, true);
+	wait((t.size() + 20) * _vm->_textSpeed / 10, true, true);
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 }
 
@@ -601,21 +636,36 @@ void GameManager::reply(int textId, int aus1, int aus2) {
 }
 
 void GameManager::reply(const char *text, int aus1, int aus2) {
-	if (*text != '|')
+	Common::TextToSpeechManager *ttsMan = nullptr;
+	if (*text != '|') {
+		if (ConfMan.getBool("tts_enabled"))
+			ttsMan = g_system->getTextToSpeechManager();
+		// Wait for the end of the current speech
+		if (ttsMan && ttsMan->isSpeaking())
+			wait(0, true, ttsMan);
 		_vm->renderMessage(text, kMessageTop);
+	}
 
-	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
+	int z = (strlen(text) + 20) * _vm->_textSpeed / 40;
+	bool inputEvent = false;
+	while ((z > 0 || (ttsMan != nullptr && ttsMan->isSpeaking())) && !_vm->shouldQuit() && !inputEvent) {
 		if (aus1)
 			_vm->renderImage(aus1);
 		wait(2, true);
 		if (_keyPressed || _mouseClicked)
-			z = 1;
+			inputEvent = true;
 		if (aus2)
 			_vm->renderImage(aus2);
 		wait(2, true);
 		if (_keyPressed || _mouseClicked)
-			z = 1;
+			inputEvent = true;
+		--z;
 	}
+
+	// If we had an input event, interrupt the speech
+	if (inputEvent && ttsMan)
+			ttsMan->stop();
+
 	if (*text != '|')
 		_vm->removeMessage();
 }
@@ -744,7 +794,11 @@ void GameManager::changeRoom(RoomId id) {
 	}
 }
 
-void GameManager::wait(int ticks, bool checkInput) {
+void GameManager::wait(int ticks, bool checkInput, bool waitForSpeech) {
+	Common::TextToSpeechManager *ttsMan = nullptr;
+	if (waitForSpeech && ConfMan.getBool("tts_enabled"))
+		ttsMan = g_system->getTextToSpeechManager();
+
 	int32 end = _time + ticksToMsec(ticks);
 	bool inputEvent = false;
 	do {
@@ -753,10 +807,17 @@ void GameManager::wait(int ticks, bool checkInput) {
 		g_system->updateScreen();
 		if (checkInput)
 			inputEvent = _keyPressed || _mouseClicked;
-	} while (_time < end && !_vm->shouldQuit() && !inputEvent);
+	} while ((_time < end || (ttsMan && ttsMan->isSpeaking())) && !_vm->shouldQuit() && !inputEvent);
+	// If we had an input event, interrupt the speech
+	if (inputEvent && ttsMan)
+			ttsMan->stop();
 }
 
-bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
+bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode, bool waitForSpeech) {
+	Common::TextToSpeechManager *ttsMan = nullptr;
+	if (waitForSpeech && ConfMan.getBool("tts_enabled"))
+		ttsMan = g_system->getTextToSpeechManager();
+
 	keycode = Common::KEYCODE_INVALID;
 	int32 end = _time + ticksToMsec(ticks);
 	do {
@@ -766,10 +827,15 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 		if (_keyPressed) {
 			keycode = _key.keycode;
 			_key.reset();
+			if (ttsMan)
+				ttsMan->stop();
 			return true;
-		} else if (_mouseClicked)
+		} else if (_mouseClicked) {
+			if (ttsMan)
+				ttsMan->stop();
 			return true;
-	} while (_time < end  && !_vm->shouldQuit());
+		}
+	} while ((_time < end || (ttsMan && ttsMan->isSpeaking()))  && !_vm->shouldQuit());
 	return false;
 }
 
@@ -947,6 +1013,7 @@ void GameManager::dead(int messageId) {
 	_vm->paletteFadeOut();
 	_vm->removeMessage();
 
+	_inventory.clear();
 	destroyRooms();
 	initRooms();
 	initState();
@@ -955,7 +1022,6 @@ void GameManager::dead(int messageId) {
 	else if (_vm->_MSPart == 2)
 		changeRoom(AIRPORT);
 	initGui();
-	_inventory.clear();
 	g_system->fillScreen(kColorBlack);
 	_vm->paletteFadeIn();
 

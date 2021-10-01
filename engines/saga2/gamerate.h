@@ -51,7 +51,7 @@ public:
 
 	virtual ~frameCounter() {}
 
-	virtual void updateFrameCount(void) {
+	virtual void updateFrameCount() {
 		int32 frameTime = gameTime - lastTime;
 		lastTime = gameTime;
 		frames++;
@@ -104,7 +104,7 @@ class frameSmoother: public frameCounter {
 		return 1000.0 * frameHistory[i];
 	}
 
-	void calculateAverages(void) {
+	void calculateAverages() {
 		// clear averages
 		for (int i = 0; i < 5; i++)
 			avg1Sec[i] = 0;
@@ -126,7 +126,7 @@ class frameSmoother: public frameCounter {
 		avg5Sec /= (5 * desiredFPS);
 	}
 
-	void calculateVariance(void) {
+	void calculateVariance() {
 		// clear variances
 		for (int i = 0; i < 5; i++)
 			dif1Sec[i] = 0;
@@ -161,7 +161,7 @@ public:
 		frameHistory = nullptr;
 	}
 
-	virtual void updateFrameCount(void) {
+	virtual void updateFrameCount() {
 		frameCounter::updateFrameCount();
 		frameHistory[frames % historySize] = instantFrameCount;
 		if (0 == (frames % int(desiredFPS))) {

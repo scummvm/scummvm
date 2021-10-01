@@ -24,9 +24,11 @@
 #define AGS_SHARED_FONT_FONTS_H
 
 #include "ags/lib/std/vector.h"
-#include "ags/shared/core/types.h"
+#include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/font/ags_font_renderer.h"
+#include "ags/shared/gfx/allegro_bitmap.h"
 
 namespace AGS3 {
 
@@ -37,12 +39,17 @@ struct FontRenderParams;
 
 namespace AGS {
 namespace Shared {
-class Bitmap;
 
 struct Font {
 	IAGSFontRenderer *Renderer = nullptr;
 	IAGSFontRenderer2 *Renderer2 = nullptr;
 	FontInfo            Info;
+	// Values received from the renderer and saved for the reference
+	FontMetrics       Metrics;
+
+	// Outline buffers
+	Bitmap TextStencil, TextStencilSub;
+	Bitmap OutlineStencil, OutlineStencilSub;
 
 	Font();
 };
@@ -72,6 +79,7 @@ bool font_supports_extended_characters(size_t fontNumber);
 // at random times (usually - drawing routines).
 // Need to check whether it is safe to completely remove it.
 void ensure_text_valid_for_font(char *text, size_t fontnum);
+// Get font's scaling multiplier
 int get_font_scaling_mul(size_t fontNumber);
 // Calculate actual width of a line of text
 int wgettextwidth(const char *texx, size_t fontNumber);
@@ -81,20 +89,33 @@ int wgettextheight(const char *text, size_t fontNumber);
 int getfontheight(size_t fontNumber);
 // Get font's line spacing
 int getfontlinespacing(size_t fontNumber);
+// Set font's line spacing
+void set_font_linespacing(size_t fontNumber, int spacing);
 // Get is font is meant to use default line spacing
 bool use_default_linespacing(size_t fontNumber);
+// Get font's outline type
 int  get_font_outline(size_t font_number);
-int  get_outline_font(size_t font_number);
-void set_font_outline(size_t font_number, int outline_type);
+// Get font's automatic outline thickness (if set)
+int  get_font_outline_thickness(size_t font_number);
+// get the source font associated with an outline font
+int get_font_outline_font(size_t font_number);
+// Set font's outline type
+void set_font_outline(size_t font_number, int outline_type,
+	enum FontInfo::AutoOutlineStyle style = FontInfo::kSquared, int thickness = 1);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
-int getfontlinespacing(size_t fontNumber);
-// Print text on a surface using a given font
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
+// Gets full information about the font
+FontInfo get_fontinfo(size_t font_number);
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info);
 void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
+// Allocates two outline stencil buffers, or returns previously creates ones;
+// these buffers are owned by the font, they should not be deleted by the caller.
+void alloc_font_outline_buffers(size_t font_number,
+	Shared::Bitmap **text_stencil, Shared::Bitmap **outline_stencil,
+	int text_width, int text_height, int color_depth);
 // Free particular font's data
 void wfreefont(size_t fontNumber);
 // Free all fonts data

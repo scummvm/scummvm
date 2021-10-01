@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/mutex.h"
+#include "common/file.h"
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
 #include "audio/mixer.h"
@@ -35,6 +36,7 @@ class MidiParser;
 namespace Groovie {
 
 class GroovieEngine;
+class TlcGame;
 
 class MusicPlayer {
 public:
@@ -202,6 +204,30 @@ protected:
 
 private:
 	Audio::SoundHandle _handle;
+};
+
+class MusicPlayerTlc : public MusicPlayer {
+public:
+	MusicPlayerTlc(GroovieEngine *vm);
+	~MusicPlayerTlc();
+
+protected:
+	virtual Common::String getFilename(uint32 fileref);
+	void updateVolume();
+	bool load(uint32 fileref, bool loop);
+	void unload();
+
+private:
+	Audio::SoundHandle _handle;
+	Common::File *_file;
+};
+
+class MusicPlayerClan : public MusicPlayerTlc {
+public:
+	MusicPlayerClan(GroovieEngine *vm) : MusicPlayerTlc(vm) {}
+
+protected:
+	Common::String getFilename(uint32 fileref) override;
 };
 
 } // End of Groovie namespace

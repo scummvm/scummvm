@@ -46,8 +46,8 @@ struct MoveList {
 	int   fromx, fromy;
 	int   onstage, onpart;
 	int   lastx, lasty;
-	char  doneflag;
-	char  direct;  // MoveCharDirect was used or not
+	int8  doneflag;
+	int8  direct;  // MoveCharDirect was used or not
 
 	void ReadFromFile_Legacy(Shared::Stream *in);
 	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);

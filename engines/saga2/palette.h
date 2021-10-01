@@ -36,7 +36,7 @@ namespace Saga2 {
  * ===================================================================== */
 
 //  Initialize the state of the current palette and fade up/down.
-void initPaletteState(void);
+void initPaletteState();
 //  Save the current state of the current palette and fade up/down in
 //  a save file.
 void savePaletteState(Common::OutSaveFile *outS);
@@ -44,7 +44,7 @@ void savePaletteState(Common::OutSaveFile *outS);
 //  up/down from a save file.
 void loadPaletteState(Common::InSaveFile *in);
 //  Cleanup the palette
-inline void cleanupPaletteState(void) { /* do nothing */ }
+inline void cleanupPaletteState() { /* do nothing */ }
 
 } // end of namespace Saga2
 

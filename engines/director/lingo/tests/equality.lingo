@@ -9,3 +9,6 @@ scummvmAssert(field 1 = string)
 scummvmAssert(0 <> "")
 scummvmAssert(1 <> cast 1)
 scummvmAssert("test" <> #test)
+
+-- Invalid comparisons should return FALSE
+scummvmAssert(not ("ST_INTRO" <= 0))

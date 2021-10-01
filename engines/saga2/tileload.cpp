@@ -50,7 +50,7 @@ static byte *tileResLoad(hResID i, bool asynch = false) {
 		return nullptr;
 }
 
-void freeAllTileBanks(void) {
+void freeAllTileBanks() {
 	g_vm->_tileImageBanks->flush();
 }
 
@@ -58,7 +58,7 @@ void updateHandleRefs(const TilePoint &) { //, StandingTileInfo *stiResult )
 	g_vm->_tileImageBanks->flush();
 }
 
-void initTileBanks(void) {
+void initTileBanks() {
 	g_vm->_tileImageBanks = new HandleArray(tileBankCount, tileResLoad, tileImageID);
 }
 

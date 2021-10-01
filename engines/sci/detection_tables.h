@@ -172,7 +172,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "063bb8ce4157c778cf30d1c912c006f1", 335631},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
-		
+
 	// Castle of Dr. Brain - German DOS Floppy 1.000 (also includes English language)
 	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
@@ -935,7 +935,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data3", 0, "f25068b408b09275d8b698866462f578", 3677599},
 		{"Data4", 0, "1cceebbe411b26c860a74f91c337fdf3", 3230086},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_TESTING, GUIO_GK1_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_GK1_MAC },
 
 #undef GUIO_GK1_FLOPPY
 #undef GUIO_GK1_CD_DOS
@@ -2496,6 +2496,150 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
+#define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
+								   GUIO_NOMUSIC, \
+								   GUIO_NOASPECT, \
+								   GUIO_NOMIDI, \
+								   GUIO_NOLAUNCHLOAD, \
+								   GAMEOPTION_HQ_VIDEO)
+#define GUIO_LIGHTHOUSE      GUIO8(GUIO_NOASPECT, \
+								   GUIO_NOMIDI, \
+								   GUIO_NOSUBTITLES, \
+								   GUIO_LINKMUSICTOSFX, \
+								   GUIO_LINKSPEECHTOSFX, \
+								   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+								   GAMEOPTION_ORIGINAL_SAVELOAD, \
+								   GAMEOPTION_HQ_VIDEO)
+#define GUIO_LIGHTHOUSE_MAC  GUIO7(GUIO_NOASPECT, \
+								   GUIO_NOMIDI, \
+								   GUIO_NOSUBTITLES, \
+								   GUIO_LINKMUSICTOSFX, \
+								   GUIO_LINKSPEECHTOSFX, \
+								   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+								   GAMEOPTION_HQ_VIDEO)
+
+	// Lighthouse - English Windows Demo (from jvprat)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.00", plays 2.VMD
+	{"lighthouse", "Non-interactive Demo", {
+		{"resource.map", 0, "543124606352bfa5e07696ddf2a669be", 64},
+		{"resource.000", 0, "5d7714416b612463d750fb9c5690c859", 28952},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
+
+	// Lighthouse - English Windows Demo (from trembyle)
+	// Found on CD-Action (Poland) #8a - Jan 1997
+	// Executable scanning reports "2.100.002", VERSION file reports "1.00", plays 3.VMD
+	{"lighthouse", "Non-interactive Demo", {
+		{"resource.map", 0, "999c2db3ca39c83c18ba6f16095b4c64", 64},
+		{"resource.000", 0, "bed2bafe872ffa1e7bfe6d706fac1c81", 28951},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
+
+	// Lighthouse - English Windows Demo
+	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
+	{"lighthouse", "Demo", {
+		{"resmap.000", 0, "3bdee7a16926975a4729f75cf6b80a92", 1525},
+		{"ressci.000", 0, "3c585827fa4a82f4c04a56a0bc52ccee", 11494351},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
+
+	// Lighthouse - English Windows Glider Demo
+	// Executable scanning reports "3.000.000"
+	{"lighthouse", "Glider Demo", {
+		{"resmap.000", 0, "fca5bec5f778fc3f86d3176dc4ae6e54", 346},
+		{"ressci.000", 0, "896e81b6d70940c3b0696ef51cee51bc", 3300500},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
+
+	// Lighthouse - English DOS (from jvprat)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "47abc502c0b541b582db28f38dbc6a56", 7801},
+		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99591924},
+		{"resmap.002", 0, "c68db5333f152fea6ca2dfc75cad8b34", 7573},
+		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94628315},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - Japanese DOS (from m_kiewitz)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.0C"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "18e0ac1597fe1cf6dc663118fe983e3b", 7885},
+		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99573473},
+		{"resmap.002", 0, "723fc742c623d8933e5753a264324cb0", 7657},
+		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94627469},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - Spanish DOS (from jvprat)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "c5d49b2a8a4eafc92fd041a3a0f2da68", 7846},
+		{"ressci.001", 0, "18553177dbf83fb2cb6c8edcbb174183", 99543093},
+		{"resmap.002", 0, "e7dc85884a2417e2eff9de0c63dd65fa", 7630},
+		{"ressci.002", 0, "3c8d627c555b0e3e4f1d9955bc0f0df4", 94631127},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - French DOS (from bgK)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "911c9cc5f49d4a96ff836154d3a86a8f", 7876},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122516760},
+		{"resmap.002", 0, "703e7ab04bd358e76bc098995d71f36a", 7642},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115212682},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - German DOS (from bug #10359)
+	{"lighthouse", "", {
+		{"resmap.001", 0, "d2dc13bb936d6528a19feac92fc7df1c", 7852},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122330257},
+		{"resmap.002", 0, "8fdb8544d801057d3123539d8e6d039a", 7618},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115026179},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - French DOS
+	// VERSION file reports "1.0c"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "7f768cb4ee53026ea8fc662e44e7c0de", 7870},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122184234},
+		{"resmap.002", 0, "3fa427abab4c1d7bbea3033c064fc182", 7636},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 114880156},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - Italian DOS
+	// VERSION file reports "1.0"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "4e07734dcfdb593f755a05dc43ca4532", 7846},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 121894854},
+		{"resmap.002", 0, "012a93dc0612f62142afabb673b157aa", 7612},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 114590776},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
+	// Lighthouse - English Macintosh CD
+	// NOTE: This only contains disc 1 files
+	{ "lighthouse", "", {
+		 {"Data1", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 7498955},
+		 {"Data2", 0, "97a5c80a12eee099349748a72b9f561a", 11278999},
+		 {"Data3", 0, "51085a80ec0f448938d279dc3464e1b1", 8295799},
+		 {"Data4", 0, "8c01d5243c62868207c144125de46c5a", 9132628},
+		 {"Data5", 0, "6830ea75c4459533ba6c11a09a886a8a", 9096667},
+		 {"Data6", 0, "b7b207a5d9faa1192aa566d484ffdde6", 9294588},
+		 {"Data7", 0, "87156321c318e6b61c84d7600f5cd28a", 1690205},
+		 {"Data8", 0, "c486982e4169eb42096029ee1635b2ae", 7515248},
+		 {"Data9", 0, "e5f5ad0cab47eb4b2240e3843ed5fe3c", 9833960},
+		 {"Data10", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 5298538},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_MAC },
+
+#undef GUIO_LIGHTHOUSE_DEMO
+#undef GUIO_LIGHTHOUSE
+#undef GUIO_LIGHTHOUSE_MAC
+
 	// Larry 1 EGA Remake - English DOS (from spookypeanut)
 	// SCI interpreter version 0.000.510 (or 0.000.577?)
 	{"lsl1sci", "SCI/EGA", {
@@ -3299,141 +3443,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
-#define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
-								   GUIO_NOMUSIC, \
-								   GUIO_NOASPECT, \
-								   GUIO_NOMIDI, \
-								   GUIO_NOLAUNCHLOAD, \
-								   GAMEOPTION_HQ_VIDEO)
-#define GUIO_LIGHTHOUSE      GUIO8(GUIO_NOASPECT, \
-								   GUIO_NOMIDI, \
-								   GUIO_NOSUBTITLES, \
-								   GUIO_LINKMUSICTOSFX, \
-								   GUIO_LINKSPEECHTOSFX, \
-								   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-								   GAMEOPTION_ORIGINAL_SAVELOAD, \
-								   GAMEOPTION_HQ_VIDEO)
-#define GUIO_LIGHTHOUSE_MAC  GUIO7(GUIO_NOASPECT, \
-								   GUIO_NOMIDI, \
-								   GUIO_NOSUBTITLES, \
-								   GUIO_LINKMUSICTOSFX, \
-								   GUIO_LINKSPEECHTOSFX, \
-								   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-								   GAMEOPTION_HQ_VIDEO)
-
-	// Lighthouse - English Windows Demo (from jvprat)
-	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
-	{"lighthouse", "Non-interactive Demo", {
-		{"resource.map", 0, "543124606352bfa5e07696ddf2a669be", 64},
-		{"resource.000", 0, "5d7714416b612463d750fb9c5690c859", 28952},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
-
-	// Lighthouse - English Windows Demo
-	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
-	{"lighthouse", "Demo", {
-		{"resmap.000", 0, "3bdee7a16926975a4729f75cf6b80a92", 1525},
-		{"ressci.000", 0, "3c585827fa4a82f4c04a56a0bc52ccee", 11494351},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
-
-	// Lighthouse - English Windows Glider Demo
-	// Executable scanning reports "3.000.000"
-	{"lighthouse", "Glider Demo", {
-		{"resmap.000", 0, "fca5bec5f778fc3f86d3176dc4ae6e54", 346},
-		{"ressci.000", 0, "896e81b6d70940c3b0696ef51cee51bc", 3300500},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_LIGHTHOUSE_DEMO },
-
-	// Lighthouse - English DOS (from jvprat)
-	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "47abc502c0b541b582db28f38dbc6a56", 7801},
-		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99591924},
-		{"resmap.002", 0, "c68db5333f152fea6ca2dfc75cad8b34", 7573},
-		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94628315},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - Japanese DOS (from m_kiewitz)
-	// Executable scanning reports "3.000.000", VERSION file reports "1.0C"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "18e0ac1597fe1cf6dc663118fe983e3b", 7885},
-		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99573473},
-		{"resmap.002", 0, "723fc742c623d8933e5753a264324cb0", 7657},
-		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94627469},
-		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - Spanish DOS (from jvprat)
-	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "c5d49b2a8a4eafc92fd041a3a0f2da68", 7846},
-		{"ressci.001", 0, "18553177dbf83fb2cb6c8edcbb174183", 99543093},
-		{"resmap.002", 0, "e7dc85884a2417e2eff9de0c63dd65fa", 7630},
-		{"ressci.002", 0, "3c8d627c555b0e3e4f1d9955bc0f0df4", 94631127},
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - French DOS (from bgK)
-	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "911c9cc5f49d4a96ff836154d3a86a8f", 7876},
-		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122516760},
-		{"resmap.002", 0, "703e7ab04bd358e76bc098995d71f36a", 7642},
-		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115212682},
-		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - German DOS (from bug #10359)
-	{"lighthouse", "", {
-		{"resmap.001", 0, "d2dc13bb936d6528a19feac92fc7df1c", 7852},
-		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122330257},
-		{"resmap.002", 0, "8fdb8544d801057d3123539d8e6d039a", 7618},
-		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115026179},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - French DOS
-	// VERSION file reports "1.0c"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "7f768cb4ee53026ea8fc662e44e7c0de", 7870},
-		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122184234},
-		{"resmap.002", 0, "3fa427abab4c1d7bbea3033c064fc182", 7636},
-		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 114880156},
-		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - Italian DOS
-	// VERSION file reports "1.0"
-	{"lighthouse", "", {
-		{"resmap.001", 0, "4e07734dcfdb593f755a05dc43ca4532", 7846},
-		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 121894854},
-		{"resmap.002", 0, "012a93dc0612f62142afabb673b157aa", 7612},
-		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 114590776},
-		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
-
-	// Lighthouse - English Macintosh CD
-	// NOTE: This only contains disc 1 files
-	{ "lighthouse", "", {
-		 {"Data1", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 7498955},
-		 {"Data2", 0, "97a5c80a12eee099349748a72b9f561a", 11278999},
-		 {"Data3", 0, "51085a80ec0f448938d279dc3464e1b1", 8295799},
-		 {"Data4", 0, "8c01d5243c62868207c144125de46c5a", 9132628},
-		 {"Data5", 0, "6830ea75c4459533ba6c11a09a886a8a", 9096667},
-		 {"Data6", 0, "b7b207a5d9faa1192aa566d484ffdde6", 9294588},
-		 {"Data7", 0, "87156321c318e6b61c84d7600f5cd28a", 1690205},
-		 {"Data8", 0, "c486982e4169eb42096029ee1635b2ae", 7515248},
-		 {"Data9", 0, "e5f5ad0cab47eb4b2240e3843ed5fe3c", 9833960},
-		 {"Data10", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 5298538},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_MAC },
-
-#undef GUIO_LIGHTHOUSE_DEMO
-#undef GUIO_LIGHTHOUSE
-#undef GUIO_LIGHTHOUSE_MAC
-
 	// Mixed-Up Fairy Tales v1.000 - English DOS Non-Interactive Demo
 	{"fairytales", "Demo", {
 		{"resource.map", 0, "c2cf672c3f4251e7472d4542af3bf764", 933},
@@ -3722,8 +3731,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - English DOS Demo (from trembyle)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.000.000"
+	{"phantasmagoria", "Demo", {
+		{"resmap.001", 0, "43c395f312a190e67b90b2c1e93a79e2", 11518},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_PHANTASMAGORIA_DEMO },
+
 	// Phantasmagoria - English DOS Demo
-	// Executable scanning reports "2.100.002"
+	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000"
 	{"phantasmagoria", "Demo", {
 		{"resmap.001", 0, "416138651ea828219ca454cae18341a3", 11518},
 		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
@@ -4864,6 +4881,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
+	// Shivers - English Windows CD Demo (from Metro Games Sierra CD Sampler)
+	// Executable scanning reports "2.100.002"
+	{"shivers", "CD Demo", {
+		{"resmap.000", 0, "0b0e89db3ca62e537922d2f38cce78c7", 30907},
+		{"ressci.000", 0, "4606f32e83c301a4e90ca5e5d2d85a70", 78611217},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_DROPPLATFORM, GUIO_SHIVERS },
+
 	// Shivers - English Macintosh CD
 	{"shivers", "", {
 		{"Data1", 0, "7154f2fc5466f0cd6923deb1a6f6729a", 4635483},
@@ -5612,21 +5637,30 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
-	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG)
-	// SCI interpreter version 2.100.002 (just a guess)
+	// Space Quest 6 - English Win3.11 Demo (from Sneak Peeks 2)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.000.000"
+	{"sq6", "Demo", {
+		{"resource.map", 0, "5cf3f0db76080a4ac327190bd027e355", 2164},
+		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2159708},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_SQ6_DEMO },
+
+	// Space Quest 6 - English Win3.1 Demo (from trembyle)
+	// Found on Interactive Entertainment Episode 10 - Feb 1995
+	// Executable scanning reports "2.100.002"
+	{"sq6", "Demo", {
+		{"resource.map", 0, "fe5759d4d87785210806431338815f76", 1852},
+		{"resource.000", 0, "a199ee68c0a1d1ea878137084e76301d", 8200543},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_SQ6_DEMO },
+
+	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG, from Phantasmagoria US)
+	// SCI interpreter version 2.100.002
 	{"sq6", "Demo", {
 		{"resource.map", 0, "368f07b07433db3f819fa3fa0e5efee5", 2572},
 		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2272050},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_SQ6_DEMO },
-
-	// Space Quest 6 - English Win3.11 Demo (from Sneak Peeks 2 CD)
-	// Executable scanning reports "2.100.002", VERSION file reports "1.000.000"
-	{"sq6", "", {
-		{"resource.map", 0, "5cf3f0db76080a4ac327190bd027e355", 2164},
-		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2159708},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_SQ6_DEMO },
 
 	// Space Quest 6 - English Macintosh CD
 	// VERSION file reports "1.000"

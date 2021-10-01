@@ -45,6 +45,11 @@ struct GraphicFrame {
 	uint16 getWidth() { return surface.w; }
 	uint16 getHeight() { return surface.h; }
 
+	GraphicFrame() {
+		size = offset = 0;
+		x = y = 0;
+	}
+
 	Common::Rect getRect() {
 		return Common::Rect(x, y, x + getWidth(), y + getHeight());
 	}

@@ -35,12 +35,14 @@ GraphicsMan::GraphicsMan(GroovieEngine *vm) :
 	// Create the game surfaces
 	_foreground.create(640, 320, _vm->_pixelFormat);
 	_background.create(640, 320, _vm->_pixelFormat);
+	_savedground.create(640, 480, _vm->_pixelFormat);
 }
 
 GraphicsMan::~GraphicsMan() {
 	// Free the game surfaces
 	_foreground.free();
 	_background.free();
+	_savedground.free();
 }
 
 void GraphicsMan::update() {
@@ -49,7 +51,7 @@ void GraphicsMan::update() {
 		uint32 time = _vm->_system->getMillis() - _fadeStartTime;
 
 		// Scale the time
-		int step = (time * 15 << 3) / 1000;
+		int step = (time * 20 << 3) / 1000;
 		if (step > 256) {
 			step = 256;
 		}
@@ -82,7 +84,7 @@ void GraphicsMan::switchToFullScreen(bool fullScreen) {
 		_foreground.create(640, 480, _vm->_pixelFormat);
 		_background.create(640, 480, _vm->_pixelFormat);
 	} else {
-		_vm->_system->fillScreen(0);
+		// _vm->_system->fillScreen(0);
 		_foreground.create(640, 320, _vm->_pixelFormat);
 		_background.create(640, 320, _vm->_pixelFormat);
 	}
@@ -114,6 +116,17 @@ void GraphicsMan::updateScreen(Graphics::Surface *source) {
 		_vm->_system->copyRectToScreen(source->getPixels(), source->pitch, 0, 80, 640, 320);
 	else
 		_vm->_system->copyRectToScreen(source->getPixels(), source->pitch, 0, 0, 640, 480);
+	change();
+}
+
+void GraphicsMan::saveScreen() {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_vm->_graphicsMan->_savedground.copyFrom(screen->getSubArea(Common::Rect(0, 0, 640, 480)));
+	_vm->_system->unlockScreen();
+}
+
+void GraphicsMan::restoreScreen() {
+	_vm->_system->copyRectToScreen(_savedground.getPixels(), _savedground.pitch, 0, 0, 640, 480);
 	change();
 }
 

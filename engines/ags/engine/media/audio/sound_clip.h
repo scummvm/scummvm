@@ -163,16 +163,21 @@ protected:
 };
 
 struct SoundClipWaveBase : public SOUNDCLIP {
+private:
+	Audio::Mixer::SoundType _soundType = Audio::Mixer::kPlainSoundType;
+public:
 	Audio::Mixer *_mixer;
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
 	SoundClipState _state;
-	Audio::Mixer::SoundType _soundType = Audio::Mixer::kPlainSoundType;
+	bool _waitingToPlay = false;
 
 	SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat = false);
 	~SoundClipWaveBase() override {
 		destroy();
 	}
+
+	void setType(Audio::Mixer::SoundType type);
 
 	void destroy() override;
 	void poll() override;

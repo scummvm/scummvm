@@ -20,14 +20,22 @@
  *
  */
 
-#include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
 #include "common/achievements.h"
+#include "common/savefile.h"
 #include "common/translation.h"
+
+#include "engines/advancedDetector.h"
+
+#include "graphics/scaler.h"
+
+#include "asylum/system/savegame.h"
+
+#include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
 #include "asylum/shared.h"
@@ -42,14 +50,51 @@ public:
 		return "Sanitarium (c) ASC Games";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override { return 25; }
+	int getAutosaveSlot() const override { return getMaximumSaveSlot() - 1; }
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
 };
 
-bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+void AsylumMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Asylum::AsylumEngine *engine = (Asylum::AsylumEngine *)g_engine;
+
+	if (engine->isMenuVisible()) {
+		const Graphics::Surface &savedScreen = engine->scene()->getSavedScreen();
+		::createThumbnail(&thumb, (const byte *)savedScreen.getPixels(), savedScreen.w, savedScreen.h, engine->scene()->getSavedPalette());
+	} else {
+		::createThumbnailFromScreen(&thumb);
+	}
+}
+
+SaveStateDescriptor AsylumMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc = MetaEngine::querySaveMetaInfos(target, slot);
+
+	if (desc.getSaveSlot() == -1) {
+		Common::InSaveFile *in(g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target)));
+
+		if (in) {
+			if (in->size() > 60) {
+				(void)(uint32)Asylum::Savegame::read(in, "Chapter");
+				desc.setSaveSlot(slot);
+				desc.setDescription(Asylum::Savegame::read(in, 45, "Game Name"));
+			}
+
+			delete in;
+		}
+	}
+
+	return desc;
 }
 
 Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

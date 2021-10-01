@@ -3,7 +3,7 @@
     <GameDefinition gameID="{F2475C5C-EA7C-41F0-A56D-1ABF7CFEA389}">
         <Name>ScummVM</Name>
         <Description>ScummVM is a program which allows you to run certain classic graphical point-and-click adventure games, provided you already have their data files. The clever part about this: ScummVM just replaces the executables shipped with the games, allowing you to play them on systems for which they were never designed!</Description>
-        <ReleaseDate>2020-09-27</ReleaseDate>
+        <ReleaseDate>2021-10-09</ReleaseDate>
         <Genres>
             <Genre>Adventure</Genre>
         </Genres>

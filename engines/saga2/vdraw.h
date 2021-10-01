@@ -42,7 +42,7 @@ public:
 
 	void fillRect(const Rect16 r);
 
-	void clear(void) {
+	void clear() {
 		protoPage.fillRect(clip, fgPen);
 	}
 

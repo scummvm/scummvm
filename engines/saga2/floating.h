@@ -65,7 +65,7 @@ struct WindowDecoration {
 	int16           imageNumber;            // image resource number
 
 	// default constructor
-	WindowDecoration(void) {
+	WindowDecoration() {
 		extent = Rect16(0, 0, 0, 0), image = NULL;
 		imageNumber = 0;
 	}
@@ -108,7 +108,7 @@ public:
 
 private:
 	bool activate(gEventType);
-	void deactivate(void);
+	void deactivate();
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
 	void pointerRelease(gPanelMessage &msg);
@@ -126,11 +126,11 @@ public:
 	gButton(gPanelList &list, const Rect16 &box, gPixelMap &img, uint16 ident, AppFunc *cmd = NULL) :
 		gControl(list, box, img, ident, cmd) {}
 
-	void draw(void);                         // redraw the panel.
+	void draw();                         // redraw the panel.
 
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
 	void pointerRelease(gPanelMessage &msg);
@@ -142,7 +142,7 @@ public:
 	gPhantomButton(gPanelList &list,
 	               const Rect16 &box, uint16 ident, AppFunc *cmd = NULL) :
 		gButton(list, box, NULL, ident, cmd) {};
-	virtual void draw(void) {};     // Overrides draw() member of parent, since
+	virtual void draw() {};     // Overrides draw() member of parent, since
 	// in this case there's nothing to draw.
 
 };
@@ -218,8 +218,8 @@ public:
 //	Rect16                   animatedArea;
 
 	DecoratedWindow(const Rect16 &, uint16, const char saveAs[], AppFunc *cmd = NULL);
-	~DecoratedWindow(void);
-	void draw(void);                         // redraw the window
+	~DecoratedWindow();
+	void draw();                         // redraw the window
 
 	//  Redraw the window, but only a small clipped section,
 	//  and perhaps drawn onto an off-screen map.
@@ -239,9 +239,9 @@ public:
 
 
 	//  Free up memory used by decorative panels
-	void removeDecorations(void);
+	void removeDecorations();
 
-	virtual bool isBackdrop(void);
+	virtual bool isBackdrop();
 
 	//  Update a region of a window, and all floaters which
 	//  might be above that window.
@@ -256,14 +256,14 @@ public:
 class BackWindow : public DecoratedWindow {
 
 	//  Disable the window-to-front
-	void toFront(void);
+	void toFront();
 
 public:
 	BackWindow(const Rect16 &, uint16, AppFunc *cmd = NULL);
 	void invalidate(Rect16 *area);
 	void invalidate(const StaticRect *area);
 
-	virtual bool isBackdrop(void);
+	virtual bool isBackdrop();
 };
 
 /* ===================================================================== *
@@ -274,7 +274,7 @@ class FloatingWindow : public DecoratedWindow {
 
 	DragBar     *db;                    // save address of drag bar
 
-	void toFront(void);
+	void toFront();
 
 	// original extent before movement
 	Point16 origPos;
@@ -300,8 +300,8 @@ public:
 		return decOffset;
 	}
 
-	bool open(void);
-	void close(void);
+	bool open();
+	void close();
 };
 
 /* ===================================================================== *

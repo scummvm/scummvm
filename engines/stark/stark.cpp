@@ -54,6 +54,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "gui/message.h"
 
 namespace Stark {
@@ -114,7 +115,7 @@ Common::Error StarkEngine::run() {
 	services.dialogPlayer = new DialogPlayer();
 	services.diary = new Diary();
 	services.gameInterface = new GameInterface();
-	services.userInterface = new UserInterface(services.gfx);
+	services.userInterface = new UserInterface(this, services.gfx);
 	services.settings = new Settings(_mixer, _gameDescription);
 	services.gameChapter = new GameChapter();
 	services.gameMessage = new GameMessage();
@@ -152,10 +153,8 @@ void StarkEngine::mainLoop() {
 
 		processEvents();
 
-		if (StarkUserInterface->shouldExit()) {
-			quitGame();
+		if (StarkUserInterface->shouldExit())
 			break;
-		}
 
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
 			StarkGlobal->setNormalSpeed();
@@ -385,7 +384,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	}
 
 	if (stream.err()) {
-		warning("An error occured when reading '%s'", filename.c_str());
+		warning("An error occurred when reading '%s'", filename.c_str());
 		return Common::kReadingFailed;
 	}
 
@@ -454,7 +453,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 	}
 
 	if (save->err()) {
-		warning("An error occured when writing '%s'", filename.c_str());
+		warning("An error occurred when writing '%s'", filename.c_str());
 		delete save;
 		return Common::kWritingFailed;
 	}
@@ -522,5 +521,7 @@ void StarkEngine::onScreenChanged() const {
 		StarkUserInterface->onScreenChanged();
 	}
 }
+
+uint32 StarkEngine::getGameFlags() const { return _gameDescription->flags; }
 
 } // End of namespace Stark

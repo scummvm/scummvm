@@ -1234,12 +1234,12 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x4F:
 			// 4F xx xx yy
 			// pop value into global xxxx size yy bits
-			ui16a = cs->readUint16LE();
-			ui16b = cs->readByte();
-			ui32a = p->_stack.pop2();
+			ui16a = cs->readUint16LE();	// pos
+			ui16b = cs->readByte();		// len
+			ui32a = p->_stack.pop2();	// val
 			_globals->setEntries(ui16a, ui16b, ui32a);
 
-			if ((GAME_IS_U8 && (ui32a & ~(((1 << ui16b) - 1)))) || ui16b > 2) {
+			if ((GAME_IS_U8 && (ui32a & ~(((1 << ui16b) - 1)))) || (GAME_IS_CRUSADER && (ui16b > 2))) {
 				perr << "Warning: value popped into a flag it doesn't fit in (" << ConsoleStream::hex
 					 << ui16a << " " << ui16b << " " << ui32a << ")" << Std::endl;
 			}

@@ -50,7 +50,7 @@ bool    interruptableMotionsPaused;
  * ===================================================================== */
 
 bool unstickObject(GameObject *obj);
-int32 currentGamePerformance(void);
+int32 currentGamePerformance();
 
 /* ===================================================================== *
    Functions
@@ -347,7 +347,7 @@ uint8 computeTurnFrames(Direction fromDir, Direction toDir) {
 //-----------------------------------------------------------------------
 //	Initialize the MotionTaskList
 
-MotionTaskList::MotionTaskList(void) {
+MotionTaskList::MotionTaskList() {
 	_nextMT = _list.end();
 }
 
@@ -376,7 +376,7 @@ void MotionTaskList::read(Common::InSaveFile *in) {
 //	Return the number of bytes needed to archive the motion tasks
 //	in a buffer
 
-int32 MotionTaskList::archiveSize(void) {
+int32 MotionTaskList::archiveSize() {
 	//  Initilialize with sizeof motion task count
 	int32       size = sizeof(int16);
 
@@ -400,7 +400,7 @@ void MotionTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 //-----------------------------------------------------------------------
 //	Cleanup the motion tasks
 
-void MotionTaskList::cleanup(void) {
+void MotionTaskList::cleanup() {
 	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
 		abortPathFind(*it);
 		(*it)->pathFindTask = NULL;
@@ -714,7 +714,7 @@ void MotionTask::read(Common::InSaveFile *in) {
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this MotionTask
 
-int32 MotionTask::archiveSize(void) {
+int32 MotionTask::archiveSize() {
 	int32       size = 0;
 
 	size =      sizeof(motionType)
@@ -1101,7 +1101,7 @@ void MotionTask::remove(int16 returnVal) {
 //-----------------------------------------------------------------------
 //	Determine the immediate target _data.location
 
-TilePoint MotionTask::getImmediateTarget(void) {
+TilePoint MotionTask::getImmediateTarget() {
 	if (immediateLocation != Nowhere)
 		return immediateLocation;
 
@@ -1629,7 +1629,7 @@ void MotionTask::dropObjectOnTAI(
 //	Determine if this MotionTask is a reflex ( motion over which an actor
 //	has no control )
 
-bool MotionTask::isReflex(void) {
+bool MotionTask::isReflex() {
 	return      motionType == motionTypeThrown
 	            ||  motionType == motionTypeFall
 	            ||  motionType == motionTypeLand
@@ -1896,7 +1896,7 @@ void MotionTask::die(Actor &a) {
 //-----------------------------------------------------------------------
 //	Determine if this MotionTask is a defensive motion
 
-bool MotionTask::isDefense(void) {
+bool MotionTask::isDefense() {
 	return      motionType == motionTypeOneHandedParry
 	            ||  motionType == motionTypeTwoHandedParry
 	            ||  motionType == motionTypeShieldParry
@@ -1906,7 +1906,7 @@ bool MotionTask::isDefense(void) {
 //-----------------------------------------------------------------------
 //	Determine if this MotionTask is an offensive motion
 
-bool MotionTask::isAttack(void) {
+bool MotionTask::isAttack() {
 	return      isMeleeAttack()
 	            ||  motionType == motionTypeFireBow
 	            ||  motionType == motionTypeCastSpell
@@ -1916,7 +1916,7 @@ bool MotionTask::isAttack(void) {
 //-----------------------------------------------------------------------
 //	Determine if this MotionTask is an offensive melee motion
 
-bool MotionTask::isMeleeAttack(void) {
+bool MotionTask::isMeleeAttack() {
 	return      motionType == motionTypeOneHandedSwing
 	            ||  motionType == motionTypeTwoHandedSwing;
 }
@@ -1924,14 +1924,14 @@ bool MotionTask::isMeleeAttack(void) {
 //-----------------------------------------------------------------------
 //	Determine if this MotionTask is a walk motion
 
-bool MotionTask::isWalk(void) {
+bool MotionTask::isWalk() {
 	return prevMotionType == motionTypeWalk;
 }
 
 //-----------------------------------------------------------------------
 //	Return the wandering tether region
 
-TileRegion MotionTask::getTether(void) {
+TileRegion MotionTask::getTether() {
 	TileRegion  reg;
 
 	if (flags & tethered) {
@@ -2001,7 +2001,7 @@ void MotionTask::changeDirectTarget(const TilePoint &newPos, bool run) {
 }
 
 //  Cancel actor movement if walking...
-void MotionTask::finishWalk(void) {
+void MotionTask::finishWalk() {
 	//  If the actor is in a running state
 	if (motionType == motionTypeWalk) {
 		remove();
@@ -2018,7 +2018,7 @@ void MotionTask::finishWalk(void) {
 }
 
 //  Cancel actor movement if talking...
-void MotionTask::finishTalking(void) {
+void MotionTask::finishTalking() {
 	if (motionType == motionTypeTalk) {
 		if (isActor(object)) {
 			Actor   *a = (Actor *)object;
@@ -2032,7 +2032,7 @@ void MotionTask::finishTalking(void) {
 //-----------------------------------------------------------------------
 //	Handle actions for characters and objects in free-fall
 
-void MotionTask::ballisticAction(void) {
+void MotionTask::ballisticAction() {
 	TilePoint       totalVelocity,          // total velocity vector
 	                stepVelocity,           // sub-velocity vector
 	                location,
@@ -2298,7 +2298,7 @@ void MotionTask::ballisticAction(void) {
 //-----------------------------------------------------------------------
 //	Get the coordinates of the next waypoint.
 
-bool MotionTask::nextWayPoint(void) {
+bool MotionTask::nextWayPoint() {
 	//  If the pathfinder hasn't managed to determine waypoints
 	//  yet, then return failure.
 //	if ( ( flags & pathFind ) && pathCount < 0 ) return false;
@@ -2374,7 +2374,7 @@ bool MotionTask::checkWalk(
 //-----------------------------------------------------------------------
 //	Handle actions for characters walking and running
 
-void MotionTask::walkAction(void) {
+void MotionTask::walkAction() {
 	enum WalkType {
 		walkNormal  = 0,
 		walkSlow,
@@ -2843,7 +2843,7 @@ void MotionTask::walkAction(void) {
 //-----------------------------------------------------------------------
 //	Climb up a ladder
 
-void MotionTask::upLadderAction(void) {
+void MotionTask::upLadderAction() {
 	Actor               *a = (Actor *)object;
 
 	if (flags & reset) {
@@ -2970,7 +2970,7 @@ void MotionTask::upLadderAction(void) {
 //-----------------------------------------------------------------------
 //	Climb down a ladder
 
-void MotionTask::downLadderAction(void) {
+void MotionTask::downLadderAction() {
 	Actor               *a = (Actor *)object;
 
 	if (flags & reset) {
@@ -3089,7 +3089,7 @@ void MotionTask::downLadderAction(void) {
 }
 
 //  Go through the giving motions
-void MotionTask::giveAction(void) {
+void MotionTask::giveAction() {
 	Actor       *a = (Actor *)object;
 	Direction   targetDir = (targetObj->getLocation()
 	                         -   a->getLocation()).quickDir();
@@ -3124,7 +3124,7 @@ struct CombatMotionSet {
 	uint16      listSize;       //  Size of array
 
 	//  Select randome element from the array
-	uint8 selectRandom(void) const {
+	uint8 selectRandom() const {
 		return list[g_vm->_rnd->getRandomNumber(listSize - 1)];
 	}
 };
@@ -3173,7 +3173,7 @@ const CombatMotionSet twoHandedLowSwingSet = {
 //-----------------------------------------------------------------------
 //  Handle all two handed swing motions
 
-void MotionTask::twoHandedSwingAction(void) {
+void MotionTask::twoHandedSwingAction() {
 	//  If the reset flag is set, initialize the motion
 	if (flags & reset) {
 		//  Let the game engine know about this aggressive act
@@ -3288,7 +3288,7 @@ const CombatMotionSet oneHandedLowSwingSet = {
 //-----------------------------------------------------------------------
 //  Handle all one handed swing motions
 
-void MotionTask::oneHandedSwingAction(void) {
+void MotionTask::oneHandedSwingAction() {
 	if (flags & reset) {
 		//  Let the game engine know about this aggressive act
 		logAggressiveAct(object->thisID(), targetObj->thisID());
@@ -3376,7 +3376,7 @@ void MotionTask::oneHandedSwingAction(void) {
 //	Compute the number of frames before the actual strike in an
 //	offensive melee motion
 
-uint16 MotionTask::framesUntilStrike(void) {
+uint16 MotionTask::framesUntilStrike() {
 	//  If the melee action has not been initialized, return a safe value
 	if (flags & reset) return maxuint16;
 
@@ -3403,7 +3403,7 @@ GameObject *MotionTask::blockingObject(Actor *thisAttacker) {
 //-----------------------------------------------------------------------
 //  Handle bow firing motions
 
-void MotionTask::fireBowAction(void) {
+void MotionTask::fireBowAction() {
 	Actor       *a = (Actor *)object;
 
 	assert(a->_leftHandObject != Nothing);
@@ -3503,7 +3503,7 @@ void MotionTask::fireBowAction(void) {
 //-----------------------------------------------------------------------
 //  Handle spell casting motions
 
-void MotionTask::castSpellAction(void) {
+void MotionTask::castSpellAction() {
 	Actor       *a = (Actor *)object;
 
 	//  Turn until facing the target
@@ -3568,7 +3568,7 @@ void MotionTask::castSpellAction(void) {
 //-----------------------------------------------------------------------
 //  Handle wand using motions
 
-void MotionTask::useWandAction(void) {
+void MotionTask::useWandAction() {
 	//  Initialize the wand using motion
 	if (flags & reset) {
 		//  Let the game engine know about this aggressive act
@@ -3606,7 +3606,7 @@ void MotionTask::useWandAction(void) {
 //-----------------------------------------------------------------------
 //	Handle two handed parrying motions
 
-void MotionTask::twoHandedParryAction(void) {
+void MotionTask::twoHandedParryAction() {
 	if (flags & reset) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
@@ -3641,7 +3641,7 @@ void MotionTask::twoHandedParryAction(void) {
 //-----------------------------------------------------------------------
 //	Handle one handed parrying motions
 
-void MotionTask::oneHandedParryAction(void) {
+void MotionTask::oneHandedParryAction() {
 	if (flags & reset) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
@@ -3677,7 +3677,7 @@ void MotionTask::oneHandedParryAction(void) {
 //-----------------------------------------------------------------------
 //	Handle shield parrying motions
 
-void MotionTask::shieldParryAction(void) {
+void MotionTask::shieldParryAction() {
 	if (flags & reset) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
@@ -3712,7 +3712,7 @@ void MotionTask::shieldParryAction(void) {
 //-----------------------------------------------------------------------
 //	Handle dodging motions
 
-void MotionTask::dodgeAction(void) {
+void MotionTask::dodgeAction() {
 	Actor           *a = (Actor *)object;
 	MotionTask      *attackerMotion = d.attacker->_moveTask;
 
@@ -3774,7 +3774,7 @@ void MotionTask::dodgeAction(void) {
 //-----------------------------------------------------------------------
 //	Handle accept hit motions
 
-void MotionTask::acceptHitAction(void) {
+void MotionTask::acceptHitAction() {
 	Actor           *a = (Actor *)object;
 
 	if (flags & reset) {
@@ -3832,7 +3832,7 @@ void MotionTask::acceptHitAction(void) {
 //-----------------------------------------------------------------------
 //	Handle fall down motions
 
-void MotionTask::fallDownAction(void) {
+void MotionTask::fallDownAction() {
 	Actor           *a = (Actor *)object;
 
 	if (flags & reset) {
@@ -3893,7 +3893,7 @@ void MotionTask::fallDownAction(void) {
 //  Generic offensive melee code.  Called by twoHandedSwingAction()
 //	and oneHandedSwingAction()
 
-void MotionTask::offensiveMeleeAction(void) {
+void MotionTask::offensiveMeleeAction() {
 	Actor       *a = (Actor *)object;
 
 	//  Turn until facing the target
@@ -3932,7 +3932,7 @@ void MotionTask::offensiveMeleeAction(void) {
 //-----------------------------------------------------------------------
 //  Generic magic weapon code.  Called by useWandAction().
 
-void MotionTask::useMagicWeaponAction(void) {
+void MotionTask::useMagicWeaponAction() {
 	Actor       *a = (Actor *)object;
 
 	//  Turn until facing the target
@@ -3987,7 +3987,7 @@ void MotionTask::useMagicWeaponAction(void) {
 //	Generic defensive melee code.  Called by twoHandedParryAction(),
 //	oneHandedParryAction() and shieldParryAction().
 
-void MotionTask::defensiveMeleeAction(void) {
+void MotionTask::defensiveMeleeAction() {
 	Actor           *a = (Actor *)object;
 	MotionTask      *attackerMotion = d.attacker->_moveTask;
 
@@ -4029,7 +4029,7 @@ void MotionTask::defensiveMeleeAction(void) {
 //-----------------------------------------------------------------------
 //	Routine to update positions of all moving objects using MotionTasks
 
-void MotionTask::updatePositions(void) {
+void MotionTask::updatePositions() {
 	TilePoint       targetVector;
 	TilePoint       fallVelocity, terminalVelocity(15, 15, 0);
 	TilePoint       curLoc;
@@ -4799,11 +4799,11 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 }
 
 
-void pauseInterruptableMotions(void) {
+void pauseInterruptableMotions() {
 	interruptableMotionsPaused = true;
 }
 
-void resumeInterruptableMotions(void) {
+void resumeInterruptableMotions() {
 	interruptableMotionsPaused = false;
 }
 
@@ -4814,7 +4814,7 @@ void resumeInterruptableMotions(void) {
 //-----------------------------------------------------------------------
 //	Initialize the motion task list
 
-void initMotionTasks(void) {
+void initMotionTasks() {
 	//  Simply call the default MotionTaskList constructor
 	//new (g_vm->_mTaskList) MotionTaskList;
 }
@@ -4844,7 +4844,7 @@ void loadMotionTasks(Common::InSaveFile *in, int32 chunkSize) {
 //-----------------------------------------------------------------------
 //	Cleanup the motion task list
 
-void cleanupMotionTasks(void) {
+void cleanupMotionTasks() {
 	//  Simply call stackList's cleanup
 	g_vm->_mTaskList->cleanup();
 }

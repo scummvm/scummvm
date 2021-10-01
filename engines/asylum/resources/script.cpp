@@ -251,11 +251,22 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 #endif
 		}
 
-		script.field_1BAC = stream->readSint32LE();
-		script.field_1BB0 = stream->readSint32LE();
-		script.counter    = stream->readSint32LE();
+		if (_vm->checkGameVersion("Demo")) {
+			stream->seek(2 * 4, SEEK_CUR);
+		} else {
+			script.field_1BAC = stream->readSint32LE();
+			script.field_1BB0 = stream->readSint32LE();
+			script.counter    = stream->readSint32LE();
+		}
 
 		_scripts.push_back(script);
+	}
+
+	// Patch for Chapter 2 Lockout bug
+	if (_vm->checkGameVersion("Unpatched") && getWorld()->chapter == kChapter2) {
+		_scripts[ 3].commands[ 2].param1 = 1506;
+		_scripts[34].commands[13].param1 =  453;
+		_scripts[43].commands[ 9].param1 =  455;
 	}
 }
 
@@ -618,6 +629,11 @@ END_OPCODE
 IMPLEMENT_OPCODE(SetActorPosition)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
+	if (_vm->checkGameVersion("Demo") && cmd->param2 == 150 && cmd->param3 == 337) {
+		actor->setPosition(151, 332, (ActorDirection)cmd->param4, (uint32)cmd->param5);
+		return;
+	}
+
 	actor->setPosition((int16)cmd->param2, (int16)cmd->param3, (ActorDirection)cmd->param4, (uint32)cmd->param5);
 END_OPCODE
 
@@ -934,6 +950,12 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene)
+	if (_vm->isAltDemo()) {
+		Engine::quitGame();
+		_done = true;
+		return;
+	}
+
 	uint32 tick = _vm->getTick();
 	getScene()->getActor(0)->changeStatus(kActorStatusDisabled);
 	resetQueue();
@@ -1025,6 +1047,12 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie)
+	if (_vm->checkGameVersion("Demo") && cmd->param1 == 4) {
+		Engine::quitGame();
+		_done = true;
+		return;
+	}
+
 	if (getSharedData()->getMatteBarHeight() < 170) {
 		_processNextEntry = true;
 
@@ -2048,6 +2076,9 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
 void ScriptManager::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
+		if (!getWorld()->getObjectById((ObjectId)cmd->param1))
+			return;
+
 		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType |= flag;
 		break;
 
@@ -2064,6 +2095,9 @@ void ScriptManager::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 void ScriptManager::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
+		if (!getWorld()->getObjectById((ObjectId)cmd->param1))
+			return;
+
 		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType &= ~flag;
 		break;
 

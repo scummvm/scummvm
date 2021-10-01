@@ -88,6 +88,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Demo
+	// English Windows 3.11, v1.0
+	// From PC Format (UK) July, 1994
+	{
+		{
+			"myst",
+			"Demo",
+			AD_ENTRY1("DEMO.DAT", "8ff8ae264f759ea4a79cc915757f17c4"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_DEMO
+		},
+		GType_MYST,
+		GF_DEMO,
+		0,
+	},
+
+	// Myst Demo
 	// English Windows 3.11
 	// From CD-ROM Today July, 1994
 	{

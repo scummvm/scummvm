@@ -72,10 +72,10 @@ public:
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	void update(void);
+	void update();
 	int lightLevel(int maxLevel);
 
-	uint16 frameInDay(void) {
+	uint16 frameInDay() {
 		return _hour * kFramesPerHour + _frameInHour;
 	}
 };
@@ -89,8 +89,8 @@ class FrameAlarm {
 	            _duration;
 public:
 	void set(uint16 dur);
-	bool check(void);
-	uint16 elapsed(void);
+	bool check();
+	uint16 elapsed();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
@@ -100,18 +100,18 @@ public:
    Calender management functions
  * ===================================================================== */
 
-void updateCalender(void);
-void pauseCalender(void);
-void resumeCalender(void);
+void updateCalender();
+void pauseCalender();
+void resumeCalender();
 
 uint32 operator - (const CalenderTime &time1, const CalenderTime &time2);
 
-void initCalender(void);
+void initCalender();
 
 void saveCalender(Common::OutSaveFile *outS);
 void loadCalender(Common::InSaveFile *in);
 
-bool isDayTime(void);
+bool isDayTime();
 
 const int MAX_LIGHT = 12;       // maximum light level
 

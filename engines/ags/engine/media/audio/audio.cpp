@@ -70,13 +70,13 @@ SOUNDCLIP *AudioChannelsLock::SetChannel(int index, SOUNDCLIP *ch) {
 	if (wavClip) {
 		switch (index) {
 		case SCHAN_SPEECH:
-			wavClip->_soundType = Audio::Mixer::kSpeechSoundType;
+			wavClip->setType(Audio::Mixer::kSpeechSoundType);
 			break;
 		case SCHAN_MUSIC:
-			wavClip->_soundType = Audio::Mixer::kMusicSoundType;
+			wavClip->setType(Audio::Mixer::kMusicSoundType);
 			break;
 		default:
-			wavClip->_soundType = Audio::Mixer::kSFXSoundType;
+			wavClip->setType(Audio::Mixer::kSFXSoundType);
 			break;
 		}
 	}

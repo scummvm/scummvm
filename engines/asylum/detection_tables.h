@@ -29,6 +29,9 @@ namespace Asylum {
 
 static const char *directoryGlobs[] = {
 	"Data",
+	"DE",
+	"EN",
+	"FR",
 	"Vids",
 	0
 };
@@ -40,6 +43,17 @@ static const ADGameDescription gameDescriptions[] = {
 		"Demo",
 		AD_ENTRY2s("SNTRM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
 				   "RES.000",   "57446ce089c6f9decb7f3faf41d09edf", 9022),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		// Sanitarium - English Alt Demo
+		"asylum",
+		"Demo",
+		AD_ENTRY2s("ASYLUM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
+				   "RES.000",    "a527449397576a019cdd4884a96403e2", 9012),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
@@ -90,6 +104,21 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"asylum",
+		"GOG.com",
+		{
+			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
+			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000.SMK", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		"asylum",
 		"Steam",
 		{
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
@@ -99,6 +128,36 @@ static const ADGameDescription gameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		"asylum",
+		"Steam",
+		{
+			{"SNTRM.DAT", 0, "f427fda37a0e29afd4acf982c4cb9fb0", 8930},
+			{"RES.000",   0, "0578f326b40d22f661ac93cf49dc2c19", 285658},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		"asylum",
+		"Steam",
+		{
+			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
+			{"RES.000",   0, "94f3c795599ea79492cbf81127944f37", 277935},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO0()

@@ -28,6 +28,7 @@
 #include "common/serializer.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "saga2/console.h"
@@ -83,6 +84,7 @@ class PaletteManager;
 class ActorManager;
 class CalenderTime;
 class TileModeManager;
+struct SAGA2GameDescription;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -105,11 +107,13 @@ enum {
 
 class Saga2Engine : public Engine {
 public:
-	Saga2Engine(OSystem *syst);
+	Saga2Engine(OSystem *syst, const SAGA2GameDescription *desc);
 	~Saga2Engine();
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+	const ADGameFileDescription *getFilesDescriptions() const;
+	int getGameId() const;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
@@ -125,11 +129,10 @@ public:
 	void loadExeResources();
 	void freeExeResources();
 
-	// itevideo.cpp
 	void startVideo(const char *fileName, int x, int y);
-	bool checkVideo(void);
-	void endVideo(void);
-	void abortVideo(void);
+	bool checkVideo();
+	void endVideo();
+	void abortVideo();
 
 	void readConfig();
 	void saveConfig();
@@ -196,6 +199,7 @@ public:
 	bool _teleportOnMap;
 	bool _showPosition;
 	bool _showStats;
+	bool _showStatusMsg;
 
 	bool _indivControlsFlag;
 	bool _userControlsSetup;
@@ -204,6 +208,7 @@ public:
 
 
 private:
+	const SAGA2GameDescription *_gameDescription;
 	Video::SmackerDecoder *_smkDecoder;
 	int _videoX, _videoY;
 };

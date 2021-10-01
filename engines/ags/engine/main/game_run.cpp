@@ -192,13 +192,11 @@ static void check_mouse_controls() {
 		remove_popup_interface(_G(ifacepopped));
 
 	// check mouse clicks on GUIs
-	static int wasbutdown = 0, wasongui = 0;
-
-	if ((wasbutdown > 0) && (ags_misbuttondown(wasbutdown - 1))) {
-		gui_on_mouse_hold(wasongui, wasbutdown);
-	} else if ((wasbutdown > 0) && (!ags_misbuttondown(wasbutdown - 1))) {
-		gui_on_mouse_up(wasongui, wasbutdown);
-		wasbutdown = 0;
+	if ((_G(wasbutdown) > 0) && (ags_misbuttondown(_G(wasbutdown) - 1))) {
+		gui_on_mouse_hold(_G(wasongui), _G(wasbutdown));
+	} else if ((_G(wasbutdown) > 0) && (!ags_misbuttondown(_G(wasbutdown) - 1))) {
+		gui_on_mouse_up(_G(wasongui), _G(wasbutdown));
+		_G(wasbutdown) = 0;
 	}
 
 	int mbut = MouseNone;
@@ -220,11 +218,11 @@ static void check_mouse_controls() {
 			// plugin took the click
 			debug_script_log("Plugin handled mouse button %d", mbut + 1);
 		} else if (mongu >= 0) {
-			if (wasbutdown == 0) {
+			if (_G(wasbutdown) == 0) {
 				gui_on_mouse_down(mongu, mbut + 1);
 			}
-			wasongui = mongu;
-			wasbutdown = mbut + 1;
+			_G(wasongui) = mongu;
+			_G(wasbutdown) = mbut + 1;
 		} else setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut + 1);
 		//    else RunTextScriptIParam(_G(gameinst),"on_mouse_click",aa+1);
 	}
@@ -945,7 +943,7 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	_G(user_disabled_for) = cached_user_disabled_for;
 }
 
-void GameLoopUntilValueIsZero(const char *value) {
+void GameLoopUntilValueIsZero(const int8 *value) {
 	GameLoopUntilEvent(UNTIL_CHARIS0, value);
 }
 

@@ -51,13 +51,20 @@ struct FontRenderParams {
 	int SizeMultiplier = 1;
 };
 
+// Describes loaded font's properties
+struct FontMetrics {
+	int Height = 0; // formal font height value
+	int RealHeight = 0; // real graphical height of a font
+};
+
 // NOTE: this extending interface is not yet exposed to plugins
 class IAGSFontRenderer2 {
 public:
 	virtual bool IsBitmapFont() = 0;
 	// Load font, applying extended font rendering parameters
-	virtual bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params) = 0;
-	protected:
+	virtual bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
+		FontMetrics *metrics) = 0;
+protected:
 	IAGSFontRenderer2() {}
 	~IAGSFontRenderer2() {}
 };

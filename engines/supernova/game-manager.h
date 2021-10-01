@@ -101,6 +101,7 @@ private:
 
 class GameManager {
 public:
+
 	GameManager(SupernovaEngine *vm, Sound *sound);
 	virtual ~GameManager();
 
@@ -165,8 +166,8 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual bool genericInteract(Action verb, Object &obj1, Object &obj2);
 	void getInput(bool onlyKeys = false);
-	void wait(int ticks, bool checkInput = false);
-	bool waitOnInput(int ticks, Common::KeyCode &keycode);
+	void wait(int ticks, bool checkInput = false, bool waitForSpeech = false);
+	bool waitOnInput(int ticks, Common::KeyCode &keycode, bool waitForSpeech = false);
 	void screenShake();
 	virtual void roomBrightness();
 	void showMenu();

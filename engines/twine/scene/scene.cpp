@@ -392,7 +392,8 @@ bool Scene::loadSceneLBA1() {
 		point->z = (int16)stream.readUint16LE();
 	}
 
-	if (_engine->_debugScene->_useScenePatches) {
+	if (_useScenePatches) {
+#if 0
 		// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
@@ -400,7 +401,6 @@ bool Scene::loadSceneLBA1() {
 			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 0x1b00;
 			_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 0x300;
 			break;
-#if 0
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
 			assert(sceneNumActors >= 30);
 			_sceneActors[29].pos.z = _sceneActors[29].collisionPos.z = 0x703;
@@ -426,8 +426,8 @@ bool Scene::loadSceneLBA1() {
 		case LBA1SceneId::Principal_Island_inside_the_fortress:
 			//(ushort*)puVar4[140] = 0x32;
 			break;
-#endif
 		}
+#endif
 	}
 
 	return true;
@@ -468,9 +468,24 @@ void Scene::reloadCurrentScene() {
 }
 
 void Scene::changeScene() {
-	// change twinsen house destroyed hard-coded
-	if (_needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
-		_needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
+	if (_engine->isLBA1()) {
+		if (_useScenePatches) {
+			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor && _sceneNumZones > 14) {
+				const ZoneStruct *zone = &_sceneZones[15];
+				const IVec3 &track = _sceneTracks[8];
+				IVec3 &pos = _zoneHeroPos;
+				pos.x = zone->infoData.ChangeScene.x - zone->mins.x + track.x;
+				pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
+				pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
+				_engine->_scene->_heroPositionType = ScenePositionType::kZone;
+				debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+			}
+		}
+
+		// change twinsen house destroyed hard-coded
+		if (_needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
+			_needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
+		}
 	}
 
 	// local backup previous scene
@@ -484,14 +499,16 @@ void Scene::changeScene() {
 	}
 	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _previousSceneIdx);
 
-	if (_needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
-		_engine->unlockAchievement("LBA_ACH_001");
-		// if you finish the game in less than 4 hours
-		if (_engine->getTotalPlayTime() <= 1000 * 60 * 60 * 4) {
-			_engine->unlockAchievement("LBA_ACH_005");
+	if (_engine->isLBA1()) {
+		if (_needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
+			_engine->unlockAchievement("LBA_ACH_001");
+			// if you finish the game in less than 4 hours
+			if (_engine->getTotalPlayTime() <= 1000 * 60 * 60 * 4) {
+				_engine->unlockAchievement("LBA_ACH_005");
+			}
+		} else if (_needChangeScene == LBA1SceneId::Brundle_Island_Secret_room) {
+			_engine->unlockAchievement("LBA_ACH_006");
 		}
-	} else if (_needChangeScene == LBA1SceneId::Brundle_Island_Secret_room) {
-		_engine->unlockAchievement("LBA_ACH_006");
 	}
 
 	_engine->_sound->stopSamples();
@@ -521,9 +538,7 @@ void Scene::changeScene() {
 
 	if (_heroPositionType == ScenePositionType::kZone) {
 		_newHeroPos = _zoneHeroPos;
-	}
-
-	if (_heroPositionType == ScenePositionType::kScene || _heroPositionType == ScenePositionType::kNoPosition) {
+	} else if (_heroPositionType == ScenePositionType::kScene || _heroPositionType == ScenePositionType::kNoPosition) {
 		_newHeroPos = _sceneHeroPos;
 	}
 

@@ -23,6 +23,8 @@
 #ifndef ASYLUM_ASYLUM_H
 #define ASYLUM_ASYLUM_H
 
+#include "common/file.h"
+#include "common/language.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
@@ -41,19 +43,10 @@
 /**
  * This is the namespace of the Asylum engine.
  *
- * Status of this engine:
- *  - Script interpreters for main game and encounters are implemented
- *  - Object handling, player reaction and special chapter logic is implemented
- *  - Scene parsing and drawing, movie playing, mouse cursor and menu handling are almost complete
- *  - Sound code is almost complete (music is still WIP)
- *  - Almost all puzzles are implemented
- *  - Walking is partialy implemented but the primitive pathfinding is missing
+ * Status of this engine: Complete
  *
- * Maintainers:
- *  alexbevi, alexandrefontoura, bluegr, littleboy, midstream, deledrius
- *
- * Supported games:
- *  - Sanitarium
+ * Games using this engine:
+ * - Sanitarium
  */
 
 struct ADGameDescription;
@@ -163,7 +156,7 @@ public:
 	bool isGameFlagSet(GameFlag flag) const;
 	bool isGameFlagNotSet(GameFlag flag) const;
 	bool areGameFlagsSet(uint from, uint to) const;
-	void resetFlags();
+	void resetFlags() { memset(_gameFlags, 0, sizeof(_gameFlags)); }
 
 	// Misc
 	uint getRandom(uint max) { return max ? _rnd->getRandomNumber(max - 1) : 0; }
@@ -198,6 +191,20 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &s);
 
 	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
+	bool isAltDemo() { return Common::File::exists("asylum.dat"); }
+	Common::Language getLanguage() { return _gameDescription->language; }
+	Common::String getTargetName() { return _targetName; }
+	Common::String getMoviesFileName() { return Common::String::format("%s.movies", _targetName.c_str()); }
+	bool isMenuVisible() { return _handler == (EventHandler *)_menu; }
+	EventHandler *getEventHandler() { return _handler; }
+
+	// Save/Load
+	int getAutosaveSlot() const { return getMetaEngine()->getAutosaveSlot(); }
+	bool canLoadGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	bool canSaveGameStateCurrently();
+	bool canSaveAutosaveCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 private:
 	const ADGameDescription *_gameDescription;

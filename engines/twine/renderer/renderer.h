@@ -173,15 +173,13 @@ private:
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr;
-	int16 *_polyTab2 = nullptr;
+	int16 *_colorProgressionBuffer = nullptr;
 	int16* _holomap_polytab_1_1 = nullptr;
 	int16* _holomap_polytab_1_2 = nullptr;
 	int16* _holomap_polytab_1_3 = nullptr;
 	int16* _holomap_polytab_2_3 = nullptr;
 	int16* _holomap_polytab_2_2 = nullptr;
 	int16* _holomap_polytab_2_1 = nullptr;
-	int16* _holomap_polytab_1_2_ptr = nullptr;
-	int16* _holomap_polytab_1_3_ptr = nullptr;
 
 	bool _isUsingOrthoProjection = false;
 
@@ -204,7 +202,7 @@ private:
 
 	void baseMatrixTranspose();
 
-	void renderHolomapPolygons(int32 top, int32 bottom);
+	void renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize);
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
 	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, int32 &top, int32 &bottom);
 
@@ -263,7 +261,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param);
 
-	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]);
+	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3], uint8 *holomapImage, uint32 holomapImageSize);
 };
 
 inline void Renderer::setBaseRotationPos(int32 x, int32 y, int32 z) {

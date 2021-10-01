@@ -44,8 +44,8 @@ class ContainerNode;
 class PlayerActor {
 	friend class Actor;
 
-	friend void initPlayerActors(void);
-	friend void cleanupPlayerActors(void);
+	friend void initPlayerActors();
+	friend void cleanupPlayerActors();
 
 	ObjectID        actorID;            // ID of player's actor
 
@@ -115,7 +115,7 @@ public:
 	uint8 getStatIndex(SkillProto *);
 
 	// get the effective stats of this player actor
-	ActorAttributes *getEffStats(void);
+	ActorAttributes *getEffStats();
 
 	// these update a players baseStat skills
 	void skillAdvance(uint8 stat,
@@ -134,74 +134,74 @@ public:
 	void vitalityAdvance(uint8 points);
 
 	//  Return Actor structure pointer
-	Actor *getActor(void) {
+	Actor *getActor() {
 		return (Actor *)GameObject::objectAddress(actorID);
 	}
 
 	//  Return Actor's object ID
-	ObjectID getActorID(void) {
+	ObjectID getActorID() {
 		return actorID;
 	}
 
 	//  Set player to be aggressive
-	void setAggression(void) {
+	void setAggression() {
 		flags |= playerAggressive;
 	}
 
 	//  Set player to not aggressive
-	void clearAggression(void) {
+	void clearAggression() {
 		flags &= ~playerAggressive;
 	}
 
 	//  Determine if actor is in aggressive state
-	bool isAggressive(void) {
+	bool isAggressive() {
 		return (flags & playerAggressive) != 0;
 	}
 
 	//  Set the player to be banded
-	void setBanded(void) {
+	void setBanded() {
 		flags |= playerBanded;
 	}
 
 	//  Set the player to not be banded
-	void clearBanded(void) {
+	void clearBanded() {
 		flags &= ~playerBanded;
 	}
 
 	//  Determine if this player actor is banded
-	bool isBanded(void) {
+	bool isBanded() {
 		return (flags & playerBanded) != 0;
 	}
 
 	//  Resolve the banding state of this actor
-	void resolveBanding(void);
+	void resolveBanding();
 
 	//  Re-evaluate the portrait type for this player actor
-	void recalcPortraitType(void);
+	void recalcPortraitType();
 
 	//  Return the integer representing the portrait type for this
 	//  player actor
-	int16 getPortraitType(void) {
+	int16 getPortraitType() {
 		return portraitType;
 	}
 
 	// figures out what what ( if any ) changes are required to
 	// the charaters vitality
-	void recoveryUpdate(void);
-	void manaUpdate(void);
-	void AttribUpdate(void);
+	void recoveryUpdate();
+	void manaUpdate();
+	void AttribUpdate();
 	void stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index);
 
 	// get this player actor's base stats
-	ActorAttributes &getBaseStats(void) {
+	ActorAttributes &getBaseStats() {
 		return baseStats;
 	}
 
 	//  Notify the user of attack if necessary
-	void handleAttacked(void);
+	void handleAttacked();
 
 	//  Simply reset the attack notification flag
-	void resetAttackNotification(void) {
+	void resetAttackNotification() {
 		notifiedOfAttack = false;
 	}
 };
@@ -213,11 +213,11 @@ PlayerActor *getPlayerActorAddress(PlayerActorID id);
 PlayerActorID getPlayerActorID(PlayerActor *p);
 
 //  Return a pointer to the center actor
-Actor *getCenterActor(void);
+Actor *getCenterActor();
 //  Return the center actor's object ID
-ObjectID getCenterActorID(void);
+ObjectID getCenterActorID();
 //  Return the center actor's player actor ID
-PlayerActorID getCenterActorPlayerID(void);
+PlayerActorID getCenterActorPlayerID();
 
 //  Set a new center actor based upon the PlayerActor ID
 void setCenterActor(PlayerActorID newCenter);
@@ -230,7 +230,7 @@ void setCenterActor(Actor *newCenter);
 void setCenterActor(PlayerActor *newCenter);
 
 //  Get the coordinates of the center actor
-TilePoint centerActorCoords(void);
+TilePoint centerActorCoords();
 
 //  Set a player actor's aggression
 void setAggression(PlayerActorID player, bool aggression);
@@ -244,7 +244,7 @@ inline void setCenterActorAggression(bool aggression) {
 bool isAggressive(PlayerActorID player);
 
 //  Determine if center actor is aggressive
-inline bool isCenterActorAggressive(void) {
+inline bool isCenterActorAggressive() {
 	return isAggressive(getCenterActorPlayerID());
 }
 
@@ -259,7 +259,7 @@ void setBrotherBanding(bool enabled);
 
 //  Adjust the player actors aggression setting based upon their
 //  proximity to enemies
-void autoAdjustAggression(void);
+void autoAdjustAggression();
 
 //  Calculate the portrait for this brother's current state.
 void recalcPortraitType(PlayerActorID id);
@@ -279,7 +279,7 @@ void transportCenterBand(const Location &loc);
 
 void handlePlayerActorAttacked(PlayerActorID id);
 
-void handleEndOfCombat(void);
+void handleEndOfCombat();
 
 /* ======================================================================= *
    PlayerActor list management function prototypes
@@ -287,26 +287,26 @@ void handleEndOfCombat(void);
 
 
 //  Initialize the player actor list
-void initPlayerActors(void);
+void initPlayerActors();
 
 void savePlayerActors(Common::OutSaveFile *out);
 void loadPlayerActors(Common::InSaveFile *in);
 
 //  Cleanup the player actor list
-void cleanupPlayerActors(void);
+void cleanupPlayerActors();
 
 /* ======================================================================= *
    CenterActor management function prototypes
  * ======================================================================= */
 
 //  Initialize the center actor ID and view object ID
-void initCenterActor(void);
+void initCenterActor();
 
 void saveCenterActor(Common::OutSaveFile *outS);
 void loadCenterActor(Common::InSaveFile *in);
 
 //  Do nothing
-inline void cleanupCenterActor(void) {}
+inline void cleanupCenterActor() {}
 
 /* ======================================================================= *
    PlayerActor iteration class
@@ -317,12 +317,12 @@ protected:
 	int16               index;
 
 public:
-	PlayerActorIterator(void) {
+	PlayerActorIterator() {
 		index = 0;
 	}
 
-	PlayerActor *first(void);
-	PlayerActor *next(void);
+	PlayerActor *first();
+	PlayerActor *next();
 };
 
 //  Iterates through all player actors that are not dead.
@@ -330,10 +330,10 @@ public:
 class LivingPlayerActorIterator : public PlayerActorIterator {
 
 public:
-	LivingPlayerActorIterator(void) {}
+	LivingPlayerActorIterator() {}
 
-	PlayerActor *first(void);
-	PlayerActor *next(void);
+	PlayerActor *first();
+	PlayerActor *next();
 };
 
 } // end of namespace Saga2

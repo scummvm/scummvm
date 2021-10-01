@@ -48,7 +48,7 @@ class AsylumMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AsylumMetaEngineDetection() : AdvancedMetaEngineDetection(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
 		_md5Bytes = 0;
-		_maxScanDepth = 3;
+		_maxScanDepth = 4;
 		_directoryGlobs = Asylum::directoryGlobs;
 	}
 

@@ -626,33 +626,51 @@ static const MenuFile mainMenuFiles[] = {
 
 #define OPTIONMENU_ENTRYCOUNT 27
 static const MenuFile optionMenuFiles[] = {
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_PLAY,        "PLAYBUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_QUIT,        "QUITBUTN.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VIDEO_MODE,        "VIDMODE.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXTSPEED,        "TXTSPEED.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXT,        "TEXTDIAL.CAF", 0}, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFX,        "SFXBUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFXSLIDER,        "SFXSLDR.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICE,        "VOICEBTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER,        "VOICESLD.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSIC,        "MUSICBTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER,        "MUSICSLD.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERBUTTON,        "XTRABUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERLEVER,        "XTRALEVR.CAF", 0}, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTEL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTER.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "LSPEAKR.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "RSPEAKR.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE1.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE2.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE3.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE4.CAF", 6 } // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_PLAY,					"PLAYBUTN.CAF",	0 },	// "Play" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_QUIT,					"QUITBUTN.CAF",	0 },	// "Quit" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VIDEO_MODE,			"VIDMODE.CAF",	0 },	// "Video mode" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_TEXTSPEED,			"TXTSPEED.CAF",	0 },	// "Text speed" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_TEXT,					"TEXTDIAL.CAF",	0},		// "Text" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMESFX,			"SFXBUTN.CAF",	0 },	// "SFX" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMESFXSLIDER,		"SFXSLDR.CAF",	0 },	// "SFX volume" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEVOICE,			"VOICEBTN.CAF",	0 },	// "Voice" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER,	"VOICESLD.CAF",	0 },	// "Voice volume" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEMUSIC,			"MUSICBTN.CAF",	0 },	// "Music" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER,	"MUSICSLD.CAF",	0 },	// "Music volume" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_SPEAKERBUTTON,		"XTRABUTN.CAF",	0 },	// Right speaker button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_SPEAKERLEVER,			"XTRALEVR.CAF",	0},		// Left speaker switch
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"ANTENNAL.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"ANTENNAR.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"BIGREDL.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"BIGREDR.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"GRIDLTEL.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"GRIDLTER.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"LSPEAKR.CAF",	0 },	// Left speaker animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"RSPEAKR.CAF",	0 },	// Right speaker animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"STARLITL.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"STARLITR.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"CHASE1.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"CHASE2.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"CHASE3.CAF",	6 },	// Decorative animation
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"CHASE4.CAF",	6 }		// Decorative animation
+};
+
+// English demo does not have most of the animations, but it has a random
+// sparkle effect instead.
+#define OPTIONMENU_ENTRYCOUNT_ENGLISH_DEMO 12
+static const MenuFile optionMenuFilesEnglishDemo[] = {
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_PLAY,					"PLAYBUTN.CAF",	0 },	// "Play" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_QUIT,					"QUITBUTN.CAF",	0 },	// "Quit" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VIDEO_MODE,			"VIDMODE.CAF",	0 },	// "Video mode" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_TEXTSPEED,			"TXTSPEED.CAF",	0 },	// "Text speed" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_TEXT,					"TEXTDIAL.CAF",	0},		// "Text" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMESFX,			"SFXBUTN.CAF",	0 },	// "SFX" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMESFXSLIDER,		"SFXSLDR.CAF",	0 },	// "SFX volume" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEVOICE,			"VOICEBTN.CAF",	0 },	// "Voice" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER,	"VOICESLD.CAF",	0 },	// "Voice volume" slider
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEMUSIC,			"MUSICBTN.CAF",	0 },	// "Music" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER,	"MUSICSLD.CAF",	0 },	// "Music volume" button
+	{ OPTIONMENUMASK_EVERYWHERE,	OPTIONMENUHOTSPOT_NONE,					"SPRKL.CAF",	6 }		// Sparkle animation
 };
 
 struct MenuEntry {
@@ -681,16 +699,19 @@ bool ToonEngine::showOptions() {
 	bool oldMouseHidden = _gameState->_mouseHidden;
 	_gameState->_mouseHidden = false;
 
-	MenuEntry entries[OPTIONMENU_ENTRYCOUNT];
+	// English demo options menu has less animations and no SFX
+	int optionMenuEntryCount = _isEnglishDemo ? OPTIONMENU_ENTRYCOUNT_ENGLISH_DEMO : OPTIONMENU_ENTRYCOUNT;
+	const MenuFile *optionMenuFilesPtr = _isEnglishDemo ? optionMenuFilesEnglishDemo : optionMenuFiles;
+	MenuEntry *entries = new MenuEntry[optionMenuEntryCount];
 
-	for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
-		entries[entryNr].menuMask = optionMenuFiles[entryNr].menuMask;
-		entries[entryNr].id = optionMenuFiles[entryNr].id;
+	for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
+		entries[entryNr].menuMask = optionMenuFilesPtr[entryNr].menuMask;
+		entries[entryNr].id = optionMenuFilesPtr[entryNr].id;
 		entries[entryNr].animation = new Animation(this);
-		entries[entryNr].animation->loadAnimation(optionMenuFiles[entryNr].animationFile);
+		entries[entryNr].animation->loadAnimation(optionMenuFilesPtr[entryNr].animationFile);
 		if (entries[entryNr].id != OPTIONMENUHOTSPOT_NONE)
 			entries[entryNr].rect = entries[entryNr].animation->getRect();
-		entries[entryNr].animateOnFrame = optionMenuFiles[entryNr].animateOnFrame;
+		entries[entryNr].animateOnFrame = optionMenuFilesPtr[entryNr].animateOnFrame;
 		entries[entryNr].animateCurFrame = 0;
 		entries[entryNr].activeFrame = 0;
 		entries[entryNr].playOnce = false;
@@ -713,6 +734,11 @@ bool ToonEngine::showOptions() {
 	} else {
 		entries[4].activeFrame = 0;
 	}
+
+	// Variables for the English demo sparkle animation.
+	int sparkleDelay = 100;
+	int sparklePosX = 0;
+	int sparklePosY = 0;
 
 	setCursor(0);
 
@@ -740,8 +766,26 @@ bool ToonEngine::showOptions() {
 			}
 			clearDirtyRects();
 
-			for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+			for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
 				if (entries[entryNr].menuMask & menuMask) {
+					int animPosX = 0;
+					int animPosY = 0;
+					if (_isEnglishDemo && entryNr == 11) {
+						// Special handling for the sparkles in the English demo.
+						if (sparkleDelay > 0) {
+							// Don't show the next sparkle until the delay has
+							// counted down.
+							sparkleDelay--;
+							continue;
+						} else if (entries[entryNr].animateCurFrame == 0 && entries[entryNr].activeFrame == 0) {
+							// Start of a new sparkle animation. Generate a
+							// random position on the screen.
+							sparklePosX = randRange(0, 639 - entries[entryNr].animation->getWidth());
+							sparklePosY = randRange(0, 399 - entries[entryNr].animation->getHeight());
+						}
+						animPosX = sparklePosX;
+						animPosY = sparklePosY;
+					}
 					if (entries[entryNr].animateOnFrame) {
 						entries[entryNr].animateCurFrame++;
 						if (entries[entryNr].animateOnFrame <= entries[entryNr].animateCurFrame) {
@@ -755,12 +799,16 @@ bool ToonEngine::showOptions() {
 								if (entryNr == 20 && entries[entryNr].animateOnFrame > 0) {
 									playSFX(-3, 128);
 								}
+								if (_isEnglishDemo && entryNr == 11)
+									// Sparkle animation has finished. Generate
+									// a random delay until the next sparkle.
+									sparkleDelay = randRange(0, 100);
 							}
 							entries[entryNr].animateCurFrame = 0;
 						}
 					}
 					int32 frameNr = entries[entryNr].activeFrame;
-					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, 0, 0);
+					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, animPosX, animPosY);
 				}
 			}
 
@@ -776,7 +824,7 @@ bool ToonEngine::showOptions() {
 			if (_mouseButton & 1) {
 				// left mouse button pushed down
 				clickingOn = OPTIONMENUHOTSPOT_NONE;
-				for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+				for (int entryNr = 0; entryNr < optionMenuEntryCount; entryNr++) {
 					if (entries[entryNr].menuMask & menuMask) {
 						if (entries[entryNr].id != OPTIONMENUHOTSPOT_NONE) {
 							if (entries[entryNr].rect.contains(_mouseX, _mouseY)) {
@@ -843,7 +891,8 @@ bool ToonEngine::showOptions() {
 				entries[9].activeFrame = 0;
 				_audioManager->muteMusic(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE) {
@@ -854,7 +903,8 @@ bool ToonEngine::showOptions() {
 				entries[7].activeFrame = 0;
 				_audioManager->muteVoice(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMESFX) {
@@ -865,7 +915,8 @@ bool ToonEngine::showOptions() {
 				entries[5].activeFrame = 0;
 				_audioManager->muteSfx(true);
 			}
-			playSFX(-7, 128);
+			if (!_isEnglishDemo)
+				playSFX(-7, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERBUTTON) {
@@ -876,7 +927,8 @@ bool ToonEngine::showOptions() {
 			entries[19].playOnce = true;
 
 			playSFX(-10, 128);
-			_audioManager->playVoice(316, true);
+			if (!_isEnglishDemo)
+				_audioManager->playVoice(316, true);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERLEVER) {
@@ -889,7 +941,8 @@ bool ToonEngine::showOptions() {
 			} else {
 				entries[20].playOnce = true;
 			}
-			playSFX(-9, 128);
+			if (!_isEnglishDemo)
+				playSFX(-9, 128);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_TEXT) {
@@ -907,7 +960,8 @@ bool ToonEngine::showOptions() {
 				entries[4].activeFrame = 0;
 			}
 
-			playSFX(-9, 128);
+			if (!_isEnglishDemo)
+				playSFX(-9, 128);
 		}
 
 		// don't allow change to video mode
@@ -918,14 +972,16 @@ bool ToonEngine::showOptions() {
 		if (clickingOn == OPTIONMENUHOTSPOT_PLAY) {
 			doExit = true;
 			exitGame = false;
-			_audioManager->playSFX(10, 128, true);
+			if (!_isEnglishDemo)
+				_audioManager->playSFX(10, 128, true);
 		}
 
 		if (clickingOn == OPTIONMENUHOTSPOT_QUIT) {
 			doExit = true;
 			exitGame = true;
 			_shouldQuit = true;
-			_audioManager->playSFX(10, 128, true);
+			if (!_isEnglishDemo)
+				_audioManager->playSFX(10, 128, true);
 		}
 	}
 
@@ -938,6 +994,7 @@ bool ToonEngine::showOptions() {
 	restorePalette();
 	dirtyAllScreen();
 
+	delete[] entries;
 	delete optionPicture;
 
 	return exitGame;
@@ -1132,10 +1189,12 @@ Common::Error ToonEngine::run() {
 	if (!loadedGame) {
 
 		// play producer intro
-		getMoviePlayer()->play("VIELOGOM.SMK", 0x10);
+		// not all demo versions include the logo video
+		getMoviePlayer()->play("VIELOGOM.SMK", _isDemo ? 0x12 : 0x10);
 
 		// show mainmenu
-		if (!showMainmenu(loadedGame)) {
+		// the demo does not have a menu and starts a new game right away
+		if (!_isDemo && !showMainmenu(loadedGame)) {
 			return Common::kNoError;
 		}
 	}
@@ -1161,6 +1220,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_showConversationText = true;
 	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
+	_isEnglishDemo = _isDemo && _gameDescription->language == Common::EN_ANY;
 
 	_resources = NULL;
 	_animationManager = NULL;
@@ -2180,11 +2240,17 @@ void ToonEngine::fadeOut(int32 numFrames) {
 
 void ToonEngine::initFonts() {
 	_fontRenderer = new FontRenderer(this);
-	_fontToon = new Animation(this);
-	_fontToon->loadAnimation("TOONFONT.CAF");
+	if (_isEnglishDemo) {
+		// The English demo uses a different font format. There is only one
+		// font, so the alternative font setting is ignored.
+		_fontRenderer->loadDemoFont("8FAT.FNT");
+	} else {
+		_fontToon = new Animation(this);
+		_fontToon->loadAnimation("TOONFONT.CAF");
 
-	_fontEZ = new Animation(this);
-	_fontEZ->loadAnimation("EZFONT.CAF");
+		_fontEZ = new Animation(this);
+		_fontEZ->loadAnimation("EZFONT.CAF");
+	}
 
 	setFont(false);
 }
@@ -3185,8 +3251,10 @@ void ToonEngine::newGame() {
 	if (_isDemo) {
 		addItemToInventory(59);
 		addItemToInventory(67);
-		addItemToInventory(11);
-		addItemToInventory(19);
+		if (!_isEnglishDemo) {
+			addItemToInventory(11);
+			addItemToInventory(19);
+		}
 		loadScene(22);
 		//loadScene(_gameState->_currentScene);
 	} else {

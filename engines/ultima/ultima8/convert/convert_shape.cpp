@@ -64,7 +64,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 		char ident[4];
 		source.read(ident, csf->_bytes_ident);
 
-		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp(ident, csf->_ident, csf->_bytes_ident)) {
 			perr << "Warning: Corrupt shape!" << Std::endl;
 			return;
 		}
@@ -103,7 +103,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 
 	// Create _frames array
 	_frames = new ConvertShapeFrame[_num_frames];
-	memset (_frames, 0, _num_frames * sizeof(ConvertShapeFrame));
+	memset(_frames, 0, _num_frames * sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for(uint32 f = 0; f < _num_frames; ++f) {
@@ -316,7 +316,7 @@ void ConvertShapeFrame::ReadCmpFrame(Common::SeekableReadStream &source, const C
 
 	_bytes_rle = rlebuf.pos();
 	_rle_data = new uint8[_bytes_rle];
-	memcpy (_rle_data, rlebuf.getData(), _bytes_rle);
+	memcpy(_rle_data, rlebuf.getData(), _bytes_rle);
 }
 
 void ConvertShapeFrame::GetPixels(uint8 *buf, int32 count, int32 x, int32 y) {
@@ -427,7 +427,7 @@ bool ConvertShape::Check(Common::SeekableReadStream &source, const ConvertShapeF
 		ident[csf->_bytes_ident] = 0;
 		source.read(ident, csf->_bytes_ident);
 
-		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp(ident, csf->_ident, csf->_bytes_ident)) {
 			// Return to start position
 			source.seek(start_pos);
 			return false;
@@ -447,7 +447,7 @@ bool ConvertShape::Check(Common::SeekableReadStream &source, const ConvertShapeF
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
-	memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	memset(&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for (int f = 0; f < numFrames; f++) {
@@ -606,7 +606,7 @@ bool ConvertShape::CheckUnsafe(Common::SeekableReadStream &source, const Convert
 		ident[csf->_bytes_ident] = 0;
 		source.read(ident, csf->_bytes_ident);
 
-		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp(ident, csf->_ident, csf->_bytes_ident)) {
 			// Return to start position
 			source.seek(start_pos);
 			return false;
@@ -626,7 +626,7 @@ bool ConvertShape::CheckUnsafe(Common::SeekableReadStream &source, const Convert
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
-	memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	memset(&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for (int f = 0; f < numFrames; f++) {

@@ -45,16 +45,16 @@ class PriorityQueue {
 	}
 
 public:
-	PriorityQueue(void) {                    // constructor
+	PriorityQueue() {                    // constructor
 		tail = 1;
 	}
 
 	bool insert(ITEM &newItem);              // insert an item
 	bool remove(ITEM &result);           // remove an item
-	void clear(void) {
+	void clear() {
 		tail = 1;    // clear the queue
 	}
-	int16 getCount(void) {
+	int16 getCount() {
 		return tail - 1;
 	}
 };

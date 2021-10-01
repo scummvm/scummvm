@@ -57,19 +57,19 @@ static bool paletteSuspendFlag = false;
    Prototypes
  * ===================================================================== */
 
-void reDrawScreen(void);
-void localCursorOn(void);
-void localCursorOff(void);
-void loadingScreen(void);
-void resetInputDevices(void);
+void reDrawScreen();
+void localCursorOn();
+void localCursorOff();
+void loadingScreen();
+void resetInputDevices();
 APPFUNC(cmdWindowFunc);                      // main window event handler
-static void switchOn(void);
-static void switchOff(void);
+static void switchOn();
+static void switchOff();
 
 // ------------------------------------------------------------------------
 // end game (normally)
 
-void endGame(void) {
+void endGame() {
 	blackOut();
 	displayDisable(GameEnded);
 	g_vm->_gameRunning = false;
@@ -79,12 +79,12 @@ void endGame(void) {
 /* ===================================================================== *
    Display initialization
  * ===================================================================== */
-void dayNightUpdate(void);
-void fadeUp(void);
-void displayUpdate(void);
-void drawMainDisplay(void);
+void dayNightUpdate();
+void fadeUp();
+void displayUpdate();
+void drawMainDisplay();
 
-void niceScreenStartup(void) {
+void niceScreenStartup() {
 	if (ConfMan.hasKey("save_slot")) {
 		cleanupGameState();
 		loadSavedGameState(ConfMan.getInt("save_slot"));
@@ -119,7 +119,7 @@ void niceScreenStartup(void) {
 // ------------------------------------------------------------------------
 // backbuffer startup
 
-void initBackPanel(void) {
+void initBackPanel() {
 	if (mainWindow)
 		return;
 
@@ -159,7 +159,7 @@ bool displayEnabled(uint32 mask) {
 	return true;
 }
 
-bool displayOkay(void) {
+bool displayOkay() {
 	return displayEnabled();
 }
 
@@ -167,25 +167,25 @@ bool displayOkay(void) {
 // ------------------------------------------------------------------------
 // Main on/off swiotch for display
 
-void mainEnable(void) {
+void mainEnable() {
 	displayEnable(GameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
 // This is a check to see if blitting is enabled
 
-void mainDisable(void) {
+void mainDisable() {
 	displayDisable(GameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
 // On/Off hooks
 
-static void switchOn(void) {
+static void switchOn() {
 	enableUserControls();
 }
 
-static void switchOff(void) {
+static void switchOff() {
 	disableUserControls();
 }
 
@@ -193,16 +193,16 @@ static void switchOff(void) {
    Palette disable hooks
  * ===================================================================== */
 
-void enablePaletteChanges(void) {
+void enablePaletteChanges() {
 	paletteSuspendFlag = false;
 	paletteMayHaveChanged = true;
 }
 
-void disablePaletteChanges(void) {
+void disablePaletteChanges() {
 	paletteSuspendFlag = true;
 }
 
-bool paletteChangesEnabled(void) {
+bool paletteChangesEnabled() {
 	return !paletteSuspendFlag;
 }
 
@@ -214,21 +214,21 @@ bool paletteChangesEnabled(void) {
 // ------------------------------------------------------------------------
 // notice that screen may be dirty
 
-void delayedDisplayEnable(void) {
+void delayedDisplayEnable() {
 	delayReDraw = false;
 }
 
 // ------------------------------------------------------------------------
 // notice that palette may be dirty
 
-void externalPaletteIntrusion(void) {
+void externalPaletteIntrusion() {
 	paletteMayHaveChanged = true;
 }
 
 // ------------------------------------------------------------------------
 // force a full screen redraw
 
-void reDrawScreen(void) {
+void reDrawScreen() {
 	//dispMM("refresh");
 	Rect16 r = Rect16(0, 0, 640, 480);
 	if (mainWindow && displayEnabled()) {
@@ -251,7 +251,7 @@ void reDrawScreen(void) {
    Clear screen
  * ===================================================================== */
 
-void blackOut(void) {
+void blackOut() {
 	g_vm->_mainPort.drawMode = drawModeReplace;
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
 	g_vm->_mainPort.fillRect(Rect16(0, 0, 640, 480));
@@ -266,7 +266,7 @@ void blackOut(void) {
 // ------------------------------------------------------------------------
 // enable / disable blitting
 
-void showLoadMessage(void) {
+void showLoadMessage() {
 	uint32 saved = displayStatus;
 	displayStatus = 0;
 	loadingScreen();
@@ -278,10 +278,10 @@ void showLoadMessage(void) {
    Video mode save and restore for videos
  * ===================================================================== */
 
-void pushVidState(void) {
+void pushVidState() {
 }
 
-void popVidState(void) {
+void popVidState() {
 }
 
 } // end of namespace Saga2

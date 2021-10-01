@@ -33,6 +33,7 @@ class HnmPlayer;
 class EdenGraphics {
 public:
 	EdenGraphics(EdenGame *game);
+	~EdenGraphics();
 
 	// Original name: noclipax
 	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false, bool onSubtitle = false);
@@ -201,6 +202,8 @@ private:
 
 	bool _needToFade;
 
+	int _eff2pat;
+
 	color3_t _newColor;
 	color_t  _oldPalette[256];    // TODO palette_t ?
 	color_t  _newPalette[256];
@@ -225,7 +228,7 @@ private:
 	// Original name: effet4
 	void displayEffect4();
 
-	void colimacon(int16 pattern[]);
+	void colimacon(const int16 pattern[]);
 
 	// Original name: rectanglenoir32
 	void blackRect32();

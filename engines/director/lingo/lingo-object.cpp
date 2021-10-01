@@ -381,10 +381,12 @@ void LM::m_put(int nargs) {
 void LM::m_perform(int nargs) {
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	Datum d(g_lingo->_currentMe);
+	AbstractObject *me = d.u.obj;
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
-	nargs -= 1;
 	Symbol funcSym = me->getMethod(*methodName.u.s);
+	// Object methods expect the first argument to be the object
+	g_lingo->_stack.insert_at(g_lingo->_stack.size() - nargs + 1, d);
 	LC::call(funcSym, nargs, true);
 }
 
@@ -715,7 +717,7 @@ bool CastMember::setField(int field, const Datum &d) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
 			return false;
 		}
-		_cast->_lingoArchive->addCode(*d.u.s, kCastScript, _castId);
+		_cast->_lingoArchive->replaceCode(*d.u.s, kCastScript, _castId);
 		castInfo->script = d.asString();
 		return true;
 	case kTheWidth:

@@ -33,7 +33,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","31bcd9e5cc32df00b09ce626e6d9106e", 2420480),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","31bcd9e5cc32df00b09ce626e6d9106e", 2420480),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -89,7 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","f5ccde0efccb95afe902627a35262568", 2418816),
 		Common::JA_JPN,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -103,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","4d55802259d9648b9aa396461bfd53a3", 6576896),
 		Common::JA_JPN,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -117,7 +117,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DL_","8a345993f60f6bed7c17fa9e7f2bc37d", 900844),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_COMPRESSED | ADGF_TESTING,
+		GF_COMPRESSED,
 		GUIO0()
 	},
 
@@ -131,7 +131,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DL_","00e6eedbcef824988fbb01a87ca8f7fd", 2272515),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_COMPRESSED | GF_TRUECOLOR | ADGF_TESTING,
+		GF_COMPRESSED | GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -145,7 +145,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DL_","8a345993f60f6bed7c17fa9e7f2bc37d", 908854),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_COMPRESSED | ADGF_TESTING,
+		GF_COMPRESSED,
 		GUIO0()
 	},
 
@@ -159,7 +159,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DL_","00e6eedbcef824988fbb01a87ca8f7fd", 2269314),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_COMPRESSED | GF_TRUECOLOR | ADGF_TESTING,
+		GF_COMPRESSED | GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -173,7 +173,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","31bcd9e5cc32df00b09ce626e6d9106e", 2420480),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -187,7 +187,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -201,7 +201,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","6b22f0b47efb29e45e9b2a336185d924", 2420608),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -215,7 +215,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","30e56210d3150b5fa41c9bd2c90754fe", 6581376),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -229,7 +229,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","6b22f0b47efb29e45e9b2a336185d924", 2420608),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -243,7 +243,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","30e56210d3150b5fa41c9bd2c90754fe", 6581376),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -257,7 +257,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","6b22f0b47efb29e45e9b2a336185d924", 2420608),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -271,7 +271,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","30e56210d3150b5fa41c9bd2c90754fe", 6581376),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -285,7 +285,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","a80afdc20264e764e831ef5099cde623", 2420992),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -299,7 +299,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","c864bcd69d05532e0066b8db173a939b", 6582784),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | ADGF_TESTING,
+		GF_TRUECOLOR,
 		GUIO0()
 	},
 
@@ -312,7 +312,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8L32.DLL","addfef0420e1f41a7766ecc6baa58553", 2424832),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_WIN95 | ADGF_TESTING,
+		GF_WIN95,
 		GUIO0()
 	},
 
@@ -325,7 +325,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24L32.DLL","198bfd476d5228c4a7a63c029cffadfc", 5216256),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_TRUECOLOR | GF_WIN95 | ADGF_TESTING,
+		GF_TRUECOLOR | GF_WIN95,
 		GUIO0()
 	},
 
@@ -336,7 +336,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1("BIT816.EXE", "a5bca831dac0903a304c29c320f881c5"),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 
@@ -347,26 +347,48 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1("BIT2416.EXE", "9857e2d2b7a63b1304058dabc5098249"),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | GF_TRUECOLOR | ADGF_TESTING,
+		ADGF_DEMO | GF_TRUECOLOR,
 		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 
-	// English Windows Demo 8BPP
+	// English Windows Demo 8BPP - US Gold (UK)
 	{
 		"buried",
 		"Demo 8BPP",
 		AD_ENTRY1s("BIT816.EXE", "5535fd50e504537ab08066a89df1b6de", 1259040),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 
-	// English Windows Demo 24BPP
+	// English Windows Demo 24BPP - US Gold (UK)
 	{
 		"buried",
 		"Demo 24BPP",
 		AD_ENTRY1s("BIT2416.EXE", "53c520eb7c977fb1c2bb235e2a517b85", 2816256),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | GF_TRUECOLOR,
+		GUIO1(GUIO_NOLAUNCHLOAD)
+	},
+
+	// English Windows Demo 8BPP - North America
+	{
+		"buried",
+		"Demo 8BPP",
+		AD_ENTRY1s("BIT816.EXE", "30bbd89d7df8cb319e654a441efce877", 1259072),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | GF_TRUECOLOR | ADGF_TESTING,
+		GUIO1(GUIO_NOLAUNCHLOAD)
+	},
+
+	// English Windows Demo 24BPP - North America
+	{
+		"buried",
+		"Demo 24BPP",
+		AD_ENTRY1s("BIT2416.EXE", "69ba6611561c3eb5f7d8853ef913aa09", 2816256),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_TRUECOLOR | ADGF_TESTING,
@@ -382,7 +404,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT8LIB.DLL","6b22f0b47efb29e45e9b2a336185d924", 2420608),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | GF_TRIAL | ADGF_TESTING,
+		ADGF_DEMO | GF_TRIAL,
 		GUIO0()
 	},
 
@@ -395,7 +417,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | GF_TRUECOLOR | GF_TRIAL | ADGF_TESTING,
+		ADGF_DEMO | GF_TRUECOLOR | GF_TRIAL,
 		GUIO0()
 	},
 

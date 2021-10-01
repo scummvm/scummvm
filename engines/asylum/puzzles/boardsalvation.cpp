@@ -32,25 +32,82 @@
 
 namespace Asylum {
 
-static const PuzzleBoard::PuzzleData puzzleSalvationData = {
-	31,
-	kGameFlag281,
-	431,
-	3,
-	{{0, false}, {1, false}, {2, false}},
-	9,
-	{{'I',  61,  53},
-	{'S',  322,  53},
-	{'A',  529,  86},
-	{'L',  256, 117},
-	{'V',  251, 151},
-	{'A',   66, 199},
-	{'T',  436, 229},
-	{'O',  172, 262},
-	{'N',  393, 296},
-	{'\0',   0,   0}},
-	false,
-	"S A L V A T I O N "
+static const PuzzleBoard::PuzzleData puzzleSalvationData[] = {
+	// English
+	{
+		31,
+		kGameFlag281,
+		431,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		9,
+		{
+			{'I',   61,  53},
+			{'S',  322,  53},
+			{'A',  529,  86},
+			{'L',  256, 117},
+			{'V',  251, 151},
+			{'A',   66, 199},
+			{'T',  436, 229},
+			{'O',  172, 262},
+			{'N',  393, 296},
+			{'\0',   0,   0},
+			{'\0',   0,   0}
+		},
+		false,
+		0, 0,
+		"S A L V A T I O N "
+	},
+	// German
+	{
+		31,
+		kGameFlag281,
+		431,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		8,
+		{
+			{'L',  46,  50},
+			{'O', 133,  82},
+			{'R', 356,  98},
+			{'E',  99, 130},
+			{'N', 120, 146},
+			{'G', 161, 178},
+			{'S', 289, 210},
+			{'U', 371, 226},
+			{'\0',  0,   0},
+			{'\0',  0,   0},
+			{'\0',  0,   0}
+		},
+		false,
+		0, 0,
+		"E R L O S U N G "
+	},
+	// French
+	{
+		31,
+		kGameFlag281,
+		431,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		7,
+		{
+			{'D',  54,  50},
+			{'U', 266,  66},
+			{'S', 540,  82},
+			{'A',  49, 130},
+			{'L', 199, 162},
+			{'U', 442, 178},
+			{'T', 369, 210},
+			{'\0',  0,   0},
+			{'\0',  0,   0},
+			{'\0',  0,   0},
+			{'\0',  0,   0}
+		},
+		true,
+		4, 0,
+		"D U   S A L U T "
+	}
 };
 
 static const uint32 puzzleSalvationSoundResourceIndex[11] = {5, 6, 7, 10, 11, 28, 29, 30, 31, 32, 36};
@@ -76,12 +133,17 @@ bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &) {
 	if (mousePos.y <= 350) {
 		int32 index = findRect();
 
-		if (index != -1 && _position < 18) {
+		if (index != -1 && _position < strlen(_data.solvedText)) {
 			_charUsed[index] = true;
 			_selectedSlot = -1;
 
-			_solvedText[_position++] = puzzleSalvationData.charMap[index].character;
+			_solvedText[_position++] = _data.charMap[index].character;
 			_solvedText[_position++] = ' ';
+
+			if (_position == _data.space1Pos) {
+				_solvedText[_position++] = ' ';
+				_solvedText[_position++] = ' ';
+			}
 
 			updateScreen();
 		}

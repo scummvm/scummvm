@@ -73,7 +73,7 @@ void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "... _frameInHour = %d", _frameInHour);
 }
 
-void CalenderTime::update(void) {
+void CalenderTime::update() {
 	const char *text = NULL;
 
 	if (++_frameInHour >= kFramesPerHour) {
@@ -173,7 +173,7 @@ void FrameAlarm::set(uint16 dur) {
 	_duration = dur;
 }
 
-bool FrameAlarm::check(void) {
+bool FrameAlarm::check() {
 	uint16      frameInDay = g_vm->_calender->frameInDay();
 
 	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
@@ -186,7 +186,7 @@ bool FrameAlarm::check(void) {
 
 // time elapsed since alarm set
 
-uint16 FrameAlarm::elapsed(void) {
+uint16 FrameAlarm::elapsed() {
 	uint16      frameInDay = g_vm->_calender->frameInDay();
 
 	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
@@ -203,21 +203,21 @@ uint16 FrameAlarm::elapsed(void) {
 //-----------------------------------------------------------------------
 //	Pause the global calender
 
-void pauseCalender(void) {
+void pauseCalender() {
 	g_vm->_calender->_calenderPaused = true;
 }
 
 //-----------------------------------------------------------------------
 //	Restart the paused global calender
 
-void resumeCalender(void) {
+void resumeCalender() {
 	g_vm->_calender->_calenderPaused = false;
 }
 
 //-----------------------------------------------------------------------
 //	Update the global calender
 
-void updateCalender(void) {
+void updateCalender() {
 	if (!g_vm->_calender->_calenderPaused) g_vm->_calender->update();
 }
 
@@ -241,7 +241,7 @@ uint32 operator - (const CalenderTime &time1, const CalenderTime &time2) {
 //-----------------------------------------------------------------------
 //	Initialize the game calender
 
-void initCalender(void) {
+void initCalender() {
 	g_vm->_calender->_calenderPaused          = false;
 	g_vm->_calender->_years          = 0;
 	g_vm->_calender->_weeks          = 0;
@@ -273,7 +273,7 @@ void loadCalender(Common::InSaveFile *in) {
 	g_vm->_calender->read(in);
 }
 
-bool isDayTime(void) {
+bool isDayTime() {
 	return g_vm->_calender->lightLevel(MAX_LIGHT) >= (MAX_LIGHT / 2);
 }
 

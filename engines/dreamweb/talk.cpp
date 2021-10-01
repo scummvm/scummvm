@@ -22,6 +22,8 @@
 
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 namespace DreamWeb {
 
@@ -92,6 +94,12 @@ void DreamWebEngine::startTalk() {
 
 	_charShift = 91+91;
 
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
+		const char *text = (const char *)str;
+		const char *goodText = strchr(text, ':') + 1;
+		_ttsMan->say(goodText, _textEncoding);
+	}
+
 	if (getLanguage() == Common::RU_RUS)
 		useCharsetIcons1();
 
@@ -115,7 +123,10 @@ void DreamWebEngine::startTalk() {
 }
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
-	return (const uint8 *)_personText.getString(index*64 + talkPos);
+	const uint8 *text = (const uint8 *)_personText.getString(index*64 + talkPos);
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
+		_ttsMan->say((const char *)text, Common::TextToSpeechManager::INTERRUPT, _textEncoding);
+	return text;
 }
 
 void DreamWebEngine::moreTalk() {

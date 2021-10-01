@@ -401,9 +401,13 @@ void SdlGraphicsManager::toggleFullScreen() {
 		return;
 	}
 
-	beginGFXTransaction();
+	bool is3D = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+
+	if (!is3D)
+		beginGFXTransaction();
 	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
-	endGFXTransaction();
+	if (!is3D)
+		endGFXTransaction();
 #ifdef USE_OSD
 	if (getFeatureState(OSystem::kFeatureFullscreenMode))
 		displayMessageOnOSD(_("Fullscreen mode"));

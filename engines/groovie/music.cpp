@@ -26,6 +26,8 @@
 #include "groovie/music.h"
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
+#include "groovie/logic/tlcgame.h"
+#include "groovie/logic/clangame.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
@@ -37,6 +39,8 @@
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/quicktime.h"
 
 namespace Groovie {
 
@@ -187,6 +191,7 @@ bool MusicPlayer::play(uint32 fileref, bool loop) {
 
 void MusicPlayer::stop() {
 	_backgroundFileRef = 0;
+	setBackgroundDelay(0);
 	unload();
 }
 
@@ -724,6 +729,12 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 		info.filename.deleteLastChar();
 	}
 
+	if (info.filename == "ini_sc") {
+		// This is an initialization MIDI file, which is not
+		// needed for digital tracks
+		return false;
+	}
+
 	// Create the audio stream
 	Audio::SeekableAudioStream *seekStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
 
@@ -744,6 +755,94 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	// Play!
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
 	return true;
+}
+
+
+MusicPlayerTlc::MusicPlayerTlc(GroovieEngine *vm) : MusicPlayer(vm) {
+	_file = NULL;
+	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
+}
+
+MusicPlayerTlc::~MusicPlayerTlc() {
+	_vm->getTimerManager()->removeTimerProc(&onTimer);
+}
+
+void MusicPlayerTlc::updateVolume() {
+	// Just set the mixer volume for the music sound type
+	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
+}
+
+void MusicPlayerTlc::unload() {
+	MusicPlayer::unload();
+
+	_vm->_system->getMixer()->stopHandle(_handle);
+	if (_file) {
+		delete _file;
+	}
+	_file = NULL;
+}
+
+Common::String MusicPlayerTlc::getFilename(uint32 fileref) {
+#ifdef ENABLE_GROOVIE2
+	return TlcGame::getTlcMusicFilename(fileref);
+#else
+	return "";
+#endif
+}
+
+bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
+	unload();
+	_file = new Common::File();
+
+	Common::String filename = getFilename(fileref);
+
+	// Apple platforms use m4a files instead of mpg
+	if (_vm->getPlatform() == Common::kPlatformUnknown)
+		filename += ".m4a";
+	else
+		filename += ".mpg";
+
+	// Create the audio stream from fileref
+	_file->open(filename);
+	Audio::SeekableAudioStream *seekStream = NULL;
+	if (_file->isOpen()) {
+		if (filename.hasSuffix(".m4a"))
+			seekStream = Audio::makeQuickTimeStream(_file, DisposeAfterUse::NO);
+		else
+			seekStream = Audio::makeMP3Stream(_file, DisposeAfterUse::NO);
+	} else {
+		delete _file;
+		_file = NULL;
+	}
+
+	if (!seekStream) {
+		warning("Could not play audio file '%s'", filename.c_str());
+		return false;
+	}
+
+	Audio::AudioStream *audStream = seekStream;
+
+	// TODO: Loop if requested
+	if (!loop)
+		warning("TODO: MusicPlayerTlc::load with loop == false");
+
+	if (loop || 1)
+		audStream = Audio::makeLoopingAudioStream(seekStream, 0);
+
+	// MIDI player handles volume reset on load, IOS player doesn't - force update here
+	updateVolume();
+
+	// Play!
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
+	return true;
+}
+
+Common::String MusicPlayerClan::getFilename(uint32 fileref) {
+#ifdef ENABLE_GROOVIE2
+	return ClanGame::getClanMusicFilename(fileref);
+#else
+	return "";
+#endif
 }
 
 } // End of Groovie namespace

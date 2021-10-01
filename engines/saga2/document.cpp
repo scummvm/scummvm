@@ -198,7 +198,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 
 }
 
-CDocument::~CDocument(void) {
+CDocument::~CDocument() {
 	int16   i;
 
 	for (i = 0; i < maxPages; i++) {
@@ -223,7 +223,7 @@ CDocument::~CDocument(void) {
 		resFile->disposeContext(illustrationCon);
 }
 
-void CDocument::deactivate(void) {
+void CDocument::deactivate() {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -463,7 +463,7 @@ bool CDocument::checkForImage(char      *string,
 }
 
 
-void CDocument::makePages(void) {
+void CDocument::makePages() {
 	// copy the original text back to the working buffer
 	Common::strlcpy(text, origText, textSize + 1);
 
@@ -547,7 +547,7 @@ void CDocument::makePages(void) {
 }
 
 // This function will draw the text onto the book.
-void CDocument::renderText(void) {
+void CDocument::renderText() {
 	gPort           tPort;
 	gPort           &port = window.windowPort;
 	uint16          pageIndex;
@@ -654,7 +654,7 @@ void CDocument::drawClipped(
 	g_vm->_pointer->show();
 }
 
-void CDocument::draw(void) {         // redraw the window
+void CDocument::draw() {         // redraw the window
 	// draw the book image
 	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 

@@ -171,10 +171,12 @@ static const char HELP_STRING[] =
 	"                           atari, macintosh, macintoshbw)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
-	"                           passthrough [default])\n"
+	"                           info, update, passthrough [default])\n"
 	"  --record-file-name=FILE  Specify record file name\n"
 	"  --disable-display        Disable any gfx output. Used for headless events\n"
 	"                           playback by Event Recorder\n"
+	"  --screenshot-period=NUM  When recording, trigger a screenshot every NUM milliseconds\n"
+	"                           (default: 60000)\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -351,6 +353,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("fluidsynth_reverb_level", 90);
 
 	ConfMan.registerDefault("fluidsynth_misc_interpolation", "4th");
+#endif
+#ifdef USE_DISCORD
+	ConfMan.registerDefault("discord_rpc", true);
 #endif
 }
 
@@ -654,6 +659,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("record-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION_INT("screenshot-period")
 			END_OPTION
 #endif
 

@@ -28,25 +28,82 @@
 
 namespace Asylum {
 
-static const PuzzleBoard::PuzzleData puzzleKeyHidesToData = {
-	56,
-	kGameFlag283,
-	503,
-	3,
-	{{5, false}, {6, false}, {7, false}},
-	10,
-	{{'I',  30,  53},
-	{'E',  212,  71},
-	{'D',   31, 103},
-	{'H',  447, 134},
-	{'S',  240, 151},
-	{'E',   95, 167},
-	{'O',  372, 182},
-	{'K',  210, 215},
-	{'Y',  440, 247},
-	{'T',  479, 262}},
-	true,
-	"K E Y   H I D E S   T O "
+static const PuzzleBoard::PuzzleData puzzleKeyHidesToData[] = {
+	// English
+	{
+		56,
+		kGameFlag283,
+		503,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		10,
+		{
+			{'I',   30,  53},
+			{'E',  212,  71},
+			{'D',   31, 103},
+			{'H',  447, 134},
+			{'S',  240, 151},
+			{'E',   95, 167},
+			{'O',  372, 182},
+			{'K',  210, 215},
+			{'Y',  440, 247},
+			{'T',  479, 262},
+			{'\0',   0,   0},
+		},
+		true,
+		6, 18,
+		"K E Y   H I D E S   T O "
+	},
+	// German
+	{
+		56,
+		kGameFlag283,
+		503,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		9,
+		{
+			{'U',  52,  50},
+			{'R',  28,  66},
+			{'Z', 254,  66},
+			{'E',  40,  82},
+			{'W', 209, 130},
+			{'G',  61, 146},
+			{'T',  33, 162},
+			{'I', 527, 162},
+			{'S', 233, 210},
+			{'\0',  0,   0},
+			{'\0',  0,   0}
+		},
+		true,
+		6, 14,
+		"W E G   I S T   Z U R "
+	},
+	// French
+	{
+		56,
+		kGameFlag283,
+		431,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		6,
+		{
+			{'L',  357,   66},
+			{'A',  128,   98},
+			{'C',  367,  114},
+			{'L',  237,  130},
+			{'E',   25,  162},
+			{'F',   47,  194},
+			{'\0',   0,    0},
+			{'\0',   0,    0},
+			{'\0',   0,    0},
+			{'\0',   0,    0},
+			{'\0',   0,    0}
+		},
+		true,
+		4, 0,
+		"L A   C L E F "
+	}
 };
 
 PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, puzzleKeyHidesToData) {
@@ -70,14 +127,14 @@ bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &) {
 	if (mousePos.y <= 350) {
 		int32 index = findRect();
 
-		if (index != -1 && _position < 24) {
+		if (index != -1 && _position < strlen(_data.solvedText)) {
 			_charUsed[index] = true;
 			_selectedSlot = -1;
 
-			_solvedText[_position++] = puzzleKeyHidesToData.charMap[index].character;
+			_solvedText[_position++] = _data.charMap[index].character;
 			_solvedText[_position++] = ' ';
 
-			if (_position == 6 || _position == 18) {
+			if (_position == _data.space1Pos || _position == _data.space2Pos) {
 				_solvedText[_position++] = ' ';
 				_solvedText[_position++] = ' ';
 			}

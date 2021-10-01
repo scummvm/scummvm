@@ -289,8 +289,8 @@ void InventoryItems::capitalizeItem(Common::String &name) {
 }
 
 const char *InventoryItems::getMaeName(int material) {
-	if (Common::RU_RUS == g_vm->getLanguage()) {
-		return Res.MAE_NAMES[material];
+	if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
+		return Res.CLOUDS_MAE_NAMES[material];
 	} else {
 		Resources &res = *getVm()->_resources;
 		return res._maeNames[material].c_str();

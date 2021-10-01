@@ -126,8 +126,8 @@ bool IllusionsEngine::loadgame(const char *filename) {
 
 Common::Error IllusionsEngine::loadGameState(int slot) {
 	_resumeFromSavegameRequested = false;
-	const char *fileName = getSavegameFilename(slot);
-	if (!loadgame(fileName))
+	Common::String fileName = getSavegameFilename(_targetName, slot);
+	if (!loadgame(fileName.c_str()))
 		return Common::kReadingFailed;
 	_resumeFromSavegameRequested = true;
 	_savegameSlotNum = slot;
@@ -135,23 +135,17 @@ Common::Error IllusionsEngine::loadGameState(int slot) {
 }
 
 Common::Error IllusionsEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	const char *fileName = getSavegameFilename(slot);
-	if (!savegame(fileName, description.c_str()))
+	Common::String fileName = getSavegameFilename(_targetName, slot);
+	if (!savegame(fileName.c_str(), description.c_str()))
 		return Common::kWritingFailed;
 	return Common::kNoError;
 }
 
 Common::Error IllusionsEngine::removeGameState(int slot) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String filename = Illusions::IllusionsEngine::getSavegameFilename(_targetName, slot);
+	Common::String filename = getSavegameFilename(_targetName, slot);
 	saveFileMan->removeSavefile(filename.c_str());
 	return Common::kNoError;
-}
-
-const char *IllusionsEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
 }
 
 Common::String IllusionsEngine::getSavegameFilename(const Common::String &target, int num) {

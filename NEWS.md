@@ -1,7 +1,15 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.3.0 (XXXX-XX-XX)
+#### 2.6.0 (XXXX-XX-XX)
+
+ Dreamweb:
+   - Added text to speech for dialogs and object descriptions.
+
+ Supernova:
+   - Added text to speech for dialogs and object descriptions.
+
+#### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
  New games:
    - Added support for Grim Fandango.
@@ -15,7 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos.
    - Added support for Glulx interactive fiction games.
    - Added support for Lure of the Temptress Konami release.
-   - Added support for Private Eye (US release).
+   - Added support for Private Eye.
    - Added support for Spanish Blue Force.
    - Added support for Spanish Ringworld.
    - Added support for Spanish Amazon: Guardians of Eden.
@@ -42,6 +50,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
    - ScummVM GUI has been fully translated into Korean and Japanese.
+   - Added GUI option for enabling and disabling the Discord RPC integration.
 
  ADL:
    - Added support for Mystery House French translation.
@@ -58,6 +67,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  CGE2:
    - Added option to use Text To Speech for Sfinx.
+
+ Cine:
+   - Added detection for Future Wars CD version with French translation patch.
+   - Added detection for Italian Amiga Operation Stealth.
+   - Fixed crash before entering secret base.
+   - Fixed space missing in verb line.
+   - Fixed vertically overflowing message boxes.
 
  Dreamweb:
    - Rendering fixes for Russian fan translation.
@@ -168,7 +184,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      of one of the three destroyable turrets in the fort.
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
      version of Monkey Island 1. It was present in earlier versions.
-   - Restored some missing Lemonhead lines in the English, Italian and German CD
+   - Restored some missing Lemonhead lines in the English, Italian, German and Spanish CD
      versions as well as the English Macintosh, FM-Towns and Sega CD versions
      of Monkey Island 1.
    - Made the clock tower in Monkey Island 1 behave the same in the CD version
@@ -177,6 +193,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Enabled the Return to Launcher feature.
+
+ Titanic:
+   - Fixed crashes when asking bots what I should do.
 
  TsAGE:
    - Added support for uninstalled floppy version.
@@ -201,18 +220,23 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
    - Fixes for character selection, deselection, and dismissing to better match original.
-   - Add support for Russian version.
+   - Added support for Russian version.
 
  AmigaOS port:
-   - Add native system file browser feature.
-   - Re-activate nuked OPL Adlib driver.
+   - Added native system file browser feature.
+   - Re-activated nuked OPL Adlib driver.
 
  Big-endian ports:
    - Fixed crashes or rendering issues with the Blazing Dragons, Duckman and
      Full Pipe games.
 
+ iOS port:
+   - Fixed using arrow keys on physical keyboard in iOS 15.
+   - Fixed rotating the device while ScummVM is inactive.
+   - Added support for upside down portrait orientation.
+
  macOS port:
-   - Add support for Dark Mode.
+   - Added support for Dark Mode.
    - Use OpenGL renderer by default, providing better support for HiDPI displays.
 
  MorphOS port:

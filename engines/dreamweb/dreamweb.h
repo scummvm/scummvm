@@ -430,6 +430,10 @@ public:
 	uint8 _lineDirection;
 	uint8 _lineLength;
 
+	Common::String _lastText;
+	Common::TextToSpeechManager *_ttsMan;
+	Common::CodePage _textEncoding;
+
 	// from backdrop.cpp
 	void doBlocks();
 	uint8 getXAd(const uint8 *setData, uint8 *result);
@@ -876,6 +880,7 @@ public:
 	void lookAtCard();
 	void obsThatDoThings();
 	void describeOb();
+	void speakObject(const char *text);
 	void putBackObStuff();
 	void showDiaryPage();
 	void showDiaryKeys();

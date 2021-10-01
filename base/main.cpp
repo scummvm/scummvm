@@ -196,8 +196,26 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// before we instantiate the engine, we register debug channels for it
 	DebugMan.addAllDebugChannels(metaEngineDetection.getDebugChannels());
 
+	// On creation the engine should have set up all debug levels so we can use
+	// the command line arguments here
+	Common::StringTokenizer tokenizer(debugLevels, " ,");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+		if (token.equalsIgnoreCase("all"))
+			DebugMan.enableAllDebugChannels();
+		else if (!DebugMan.enableDebugChannel(token))
+			warning("Engine does not support debug level '%s'", token.c_str());
+	}
+
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
+	if (err.getCode() == Common::kNoError) {
+		// Set default values for all of the custom engine options
+		// Apparently some engines query them in their constructor, thus we
+		// need to set this up before instance creation.
+		metaEngine.registerDefaultSettings(target);
+	}
+
 	err = metaEngine.createInstance(&system, &engine);
 
 	// Check for errors
@@ -265,17 +283,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 			dir = Common::FSNode(extraPath);
 			SearchMan.addDirectory(dir.getPath(), dir);
 		}
-	}
-
-	// On creation the engine should have set up all debug levels so we can use
-	// the command line arguments here
-	Common::StringTokenizer tokenizer(debugLevels, " ,");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-		if (token.equalsIgnoreCase("all"))
-			DebugMan.enableAllDebugChannels();
-		else if (!DebugMan.enableDebugChannel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 
 #ifdef USE_TRANSLATION
@@ -351,12 +358,10 @@ static void setupGraphics(OSystem &system) {
 
 		system.initSize(320, 200);
 
-		if (ConfMan.hasKey("aspect_ratio"))
-			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
-			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-		if (ConfMan.hasKey("filtering"))
-			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+		// Parse graphics configuration, implicit fallback to defaults set with RegisterDefaults()
+		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+		system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 	system.endGFXTransaction();
 
 	system.applyBackendSettings();
@@ -600,7 +605,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			Common::String recordFileName = ConfMan.get("record_file_name");
 
 			if (recordMode == "record") {
-				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), GUI::EventRecorder::kRecorderRecord);
+				Common::String targetFileName = ConfMan.hasKey("record_file_name") ? recordFileName : g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName());
+				g_eventRec.init(targetFileName, GUI::EventRecorder::kRecorderRecord);
+			} else if (recordMode == "update") {
+				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderUpdate);
 			} else if (recordMode == "playback") {
 				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
 			} else if ((recordMode == "info") && (!recordFileName.empty())) {

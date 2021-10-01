@@ -68,11 +68,11 @@ public:
 
 	DisplayNode();
 
-	void drawObject(void);
-	void drawEffect(void);
+	void drawObject();
+	void drawEffect();
 	void updateObject(const int32 deltaTime);
 	void updateEffect(const int32 deltaTime);
-	TilePoint SpellPos(void);
+	TilePoint SpellPos();
 };
 
 /* ============================================================================ *
@@ -106,7 +106,7 @@ public:
 		free(displayList);
 	}
 
-	void reset(void) {
+	void reset() {
 		count = 0;
 		head = NULL;
 	}
@@ -114,10 +114,10 @@ public:
 	void  init(uint16 s);
 	void  buildObjects(bool fromScratch);
 	void  buildEffects(bool fromScratch);
-	void  draw(void);
+	void  draw();
 	void  updateOStates(const int32 deltaTime);
 	void  updateEStates(const int32 deltaTime);
-	bool  dissipated(void);
+	bool  dissipated();
 };
 
 /* ============================================================================ *

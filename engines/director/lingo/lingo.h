@@ -174,7 +174,13 @@ struct Datum {	/* interpreter stack type */
 	const char *type2str(bool isk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
-	int compareTo(Datum &d) const;
+	CompareResult compareTo(Datum &d) const;
+
+	bool operator==(Datum &d) const;
+	bool operator>(Datum &d) const;
+	bool operator<(Datum &d) const;
+	bool operator>=(Datum &d) const;
+	bool operator<=(Datum &d) const;
 };
 
 struct ChunkReference {
@@ -264,6 +270,8 @@ struct LingoArchive {
 	Common::String getName(uint16 id);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
+	void removeCode(ScriptType type, uint16 id);
+	void replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version);
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };

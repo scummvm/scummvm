@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/cru_game.h"
@@ -42,6 +43,8 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/npc_dat.h"
 #include "common/memstream.h"
+
+#include "gui/message.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -159,7 +162,12 @@ ProcId CruGame::playIntroMovie(bool fade) {
 	if (_skipIntroMovie)
 		return 0;
 	const char *name = (GAME_IS_REMORSE ? "T01" : "origin");
-	return playMovie(name, fade, true);
+	ProcId pid = playMovie(name, fade, true);
+	if (!pid) {
+		GUI::MessageDialogWithURL dialog(_("Crusader intro movie file missing - check that the FLICS and SOUND directories have been copied from the CD.  More instructions are on the wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."), "https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse");
+		dialog.runModal();
+	}
+	return pid;
 }
 
 ProcId CruGame::playIntroMovie2(bool fade) {

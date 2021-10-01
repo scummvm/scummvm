@@ -37,14 +37,16 @@ struct BodyVertex {
 };
 
 struct BodyLine {
-	uint8 color;
+	// TODO: intensity??
 	uint8 unk1;
+	uint8 color;
 	uint16 unk2;
 	uint16 vertex1;
 	uint16 vertex2;
 };
 
 struct BodySphere {
+	// TODO: intensity??
 	uint8 unk1;
 	uint8 color;
 	uint16 unk2;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common.h" // set_our_eip
@@ -37,8 +38,7 @@ namespace AGS3 {
 
 // Project-dependent implementation
 extern int wgettextwidth_compensate(const char *tex, int font);
-
-#define STD_BUFFER_SIZE 3000
+extern int get_fixed_pixel_size(int pixels);
 
 using namespace AGS::Shared;
 
@@ -59,7 +59,9 @@ FontInfo::FontInfo()
 	, SizeMultiplier(1)
 	, Outline(FONT_OUTLINE_NONE)
 	, YOffset(0)
-	, LineSpacing(0) {
+	, LineSpacing(0)
+	, AutoOutlineStyle(kSquared)
+	, AutoOutlineThickness(0) {
 }
 
 
@@ -87,12 +89,28 @@ bool is_font_loaded(size_t fontNumber) {
 	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;;
 }
 
+// Finish font's initialization
+static void post_init_font(size_t fontNumber) {
+	Font &font = _GP(fonts)[fontNumber];
+	if (font.Metrics.Height == 0) {
+		// There is no explicit method for getting maximal possible height of any
+		// random font renderer at the moment; the implementations of GetTextHeight
+		// are allowed to return varied results depending on the text parameter.
+		// We use special line of text to get more or less reliable font height.
+		const char *height_test_string = "ZHwypgfjqhkilIK";
+		int height = font.Renderer->GetTextHeight(height_test_string, fontNumber);
+		font.Metrics.Height = height;
+		font.Metrics.RealHeight = height;
+	}
+}
+
 IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
 	if (fontNumber >= _GP(fonts).size())
 		return nullptr;
 	IAGSFontRenderer *oldRender = _GP(fonts)[fontNumber].Renderer;
 	_GP(fonts)[fontNumber].Renderer = renderer;
 	_GP(fonts)[fontNumber].Renderer2 = nullptr;
+	post_init_font(fontNumber);
 	return oldRender;
 }
 
@@ -138,30 +156,35 @@ int get_font_outline(size_t font_number) {
 	return _GP(fonts)[font_number].Info.Outline;
 }
 
-int get_outline_font(size_t font_number) {
+int get_font_outline_thickness(size_t font_number) {
+	if (font_number >= _GP(fonts).size())
+		return 0;
+	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
+}
+
+int get_font_outline_font(size_t font_number) {
 	for (size_t fontNum = 0; fontNum < _GP(fonts).size(); ++fontNum) {
 		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number)
 			return fontNum;
 	}
 
 	return FONT_OUTLINE_NONE;
+	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
-void set_font_outline(size_t font_number, int outline_type) {
+void set_font_outline(size_t font_number, int outline_type,
+	enum FontInfo::AutoOutlineStyle style, int thickness) {
 	if (font_number >= _GP(fonts).size())
 		return;
 	_GP(fonts)[font_number].Info.Outline = outline_type;
+	_GP(fonts)[font_number].Info.AutoOutlineStyle = style;
+	_GP(fonts)[font_number].Info.AutoOutlineThickness = thickness;
 }
 
 int getfontheight(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	// There is no explicit method for getting maximal possible height of any
-	// random font renderer at the moment; the implementations of GetTextHeight
-	// are allowed to return varied results depending on the text parameter.
-	// We use special line of text to get more or less reliable font height.
-	const char *height_test_string = "ZHwypgfjqhkilIK";
-	return _GP(fonts)[fontNumber].Renderer->GetTextHeight(height_test_string, fontNumber);
+	return _GP(fonts)[fontNumber].Metrics.RealHeight;
 }
 
 int getfontlinespacing(size_t fontNumber) {
@@ -171,6 +194,11 @@ int getfontlinespacing(size_t fontNumber) {
 	// If the spacing parameter is not provided, then return default
 	// spacing, that is font's height.
 	return spacing > 0 ? spacing : getfontheight(fontNumber);
+}
+
+void set_font_linespacing(size_t fontNumber, int spacing) {
+	if (fontNumber < _GP(fonts).size())
+		_GP(fonts)[fontNumber].Info.LineSpacing = spacing;
 }
 
 bool use_default_linespacing(size_t fontNumber) {
@@ -331,20 +359,23 @@ bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 		wfreefont(fontNumber);
 	FontRenderParams params;
 	params.SizeMultiplier = font_info.SizeMultiplier;
+	FontMetrics metrics;
 
-	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
+	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
-	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
+	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
 	}
 
-	if (_GP(fonts)[fontNumber].Renderer) {
-		_GP(fonts)[fontNumber].Info = font_info;
-		return true;
-	}
-	return false;
+	if (!_GP(fonts)[fontNumber].Renderer)
+		return false;
+
+	_GP(fonts)[fontNumber].Info = font_info;
+	_GP(fonts)[fontNumber].Metrics = metrics;
+	post_init_font(fontNumber);
+	return true;
 }
 
 void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...) {

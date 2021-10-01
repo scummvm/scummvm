@@ -130,7 +130,7 @@ class Grid;
 class Movements;
 class Interface;
 class Menu;
-class FlaMovies;
+class Movies;
 class MenuOptions;
 class Music;
 class Redraw;
@@ -260,7 +260,7 @@ public:
 	Movements *_movements;
 	Interface *_interface;
 	Menu *_menu;
-	FlaMovies *_flaMovies;
+	Movies *_flaMovies;
 	MenuOptions *_menuOptions;
 	Music *_music;
 	Redraw *_redraw;

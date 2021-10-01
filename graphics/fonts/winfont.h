@@ -54,6 +54,7 @@ public:
 	 * If dirEntry is not given, the first font in the FONTDIR will be loaded
 	 */
 	bool loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry = WinFontDirEntry());
+	bool loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry = WinFontDirEntry());
 
 	/** Open a font from an FNT file */
 	bool loadFromFNT(const Common::String &fileName);

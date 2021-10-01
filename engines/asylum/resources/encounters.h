@@ -193,8 +193,7 @@ private:
 	int16 _data_455BF0;
 	uint32 _data_455BF4;
 	uint32 _keywordStartIndex;
-
-	EventHandler *_previousEventHandler;
+	uint32 _keywordsOffset;
 
 	// Internal flags
 	bool _shouldEnablePlayer;

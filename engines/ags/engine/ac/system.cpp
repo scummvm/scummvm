@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
@@ -45,6 +46,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 #include "ags/events.h"
 
@@ -180,10 +182,14 @@ void System_SetVolume(int newvol) {
 		quit("!System.Volume: invalid volume - must be from 0-100");
 
 	_GP(play).digital_master_volume = newvol;
-#if !AGS_PLATFORM_SCUMMVM
-	auto newvol_f = static_cast<float>(newvol) / 100.0;
-	audio_core_set_master_volume(newvol_f);
-#endif
+
+	Audio::Mixer *mixer = ::AGS::g_vm->_mixer;
+	double percent = (double)newvol / 100.0;
+	int musicVol = static_cast<int>((double)ConfMan.getInt("music_volume") * percent);
+	int sfxVol = static_cast<int>((double)ConfMan.getInt("sfx_volume") * percent);
+
+	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVol);
+	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxVol);
 }
 
 const char *System_GetRuntimeInfo() {

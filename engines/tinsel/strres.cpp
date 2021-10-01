@@ -88,7 +88,7 @@ void ResetVarsStrRes() {
  * @param newLang			The new language
  */
 void ChangeLanguage(LANGUAGE newLang) {
-	TinselFile f;
+	TinselFile f(TinselV1Mac || TinselV1Saturn);
 	uint32 textLen = 0;	// length of buffer
 
 	g_textLanguage = newLang;

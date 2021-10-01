@@ -584,6 +584,18 @@ Common::Error GobEngine::initGameParts() {
 		_saveLoad = new SaveLoad(this);
 		break;
 
+	case kGameTypeDynastyWood:
+		_init     = new Init_v3(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v5(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v4(this);
+		_scenery  = new Scenery_v2(this);
+		_saveLoad = new SaveLoad(this);
+		break;
+
 	case kGameTypeUrban:
 		_init     = new Init_v6(this);
 		_video    = new Video_v6(this);

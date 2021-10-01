@@ -1302,7 +1302,7 @@ Datum LC::gtData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::gtData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) > 0) ? 1 : 0;
+	d1.u.i = d1 > d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1318,7 +1318,7 @@ Datum LC::ltData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::ltData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) < 0) ? 1 : 0;
+	d1.u.i = d1 < d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1334,7 +1334,7 @@ Datum LC::geData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::geData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) >= 0) ? 1 : 0;
+	d1.u.i = d1 >= d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1350,7 +1350,7 @@ Datum LC::leData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::leData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2) <= 0) ? 1 : 0;
+	d1.u.i = d1 <= d2 ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1456,7 +1456,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 			objName.type = VARREF;
 			Datum obj = g_lingo->varFetch(objName, true);
 			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
+				debugC(3, kDebugLingoExec, "Factory/XObject method called on object: <%s>", obj.asString(true).c_str());
 				AbstractObject *target = obj.u.obj;
 				if (firstArg.u.s->equalsIgnoreCase("mNew")) {
 					target = target->clone();
@@ -1475,7 +1475,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 
 		// Script/Xtra method call
 		if (firstArg.type == OBJECT && !(firstArg.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", firstArg.asString(true).c_str());
+			debugC(3, kDebugLingoExec, "Script/Xtra method called on object: <%s>", firstArg.asString(true).c_str());
 			AbstractObject *target = firstArg.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
 				target = target->clone();

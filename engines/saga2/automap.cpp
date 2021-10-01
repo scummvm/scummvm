@@ -192,7 +192,7 @@ AutoMap::~AutoMap() {
 // ------------------------------------------------------------------------
 // read map data
 
-void AutoMap::locateRegion(void) {
+void AutoMap::locateRegion() {
 	Common::SeekableReadStream *stream;
 	hResContext *areaRes;       // tile resource handle
 	int16 regionCount;
@@ -238,7 +238,7 @@ void AutoMap::locateRegion(void) {
 // ------------------------------------------------------------------------
 // deactivation
 
-void AutoMap::deactivate(void) {
+void AutoMap::deactivate() {
 	selected = 0;
 	gPanel::deactivate();
 }
@@ -435,7 +435,7 @@ void AutoMap::drawClipped(
 // ------------------------------------------------------------------------
 // draw
 
-void AutoMap::draw(void) {          // redraw the window
+void AutoMap::draw() {          // redraw the window
 	// draw the entire panel
 	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 }
@@ -444,7 +444,7 @@ void AutoMap::draw(void) {          // redraw the window
 // build summary
 
 // create a summary map on the tPort gPixelMap buffer
-void AutoMap::createSmallMap(void) {
+void AutoMap::createSmallMap() {
 	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
 
 	uint16          *mapData = wMap->map->mapData;

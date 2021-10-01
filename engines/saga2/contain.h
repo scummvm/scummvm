@@ -100,41 +100,6 @@ public:
 	//  Number of visible objects currently in the container
 	int16           numObjects;
 
-	// These indicators are static
-	// becuase there is only one mouse cursor,
-	// and therefore only one set of information
-	// about the last place it's been anywhere on the game screen.
-	//  ID of the last object the mouse was on
-	enum {
-		bufSize     = 60,
-		accelSpeed  = 8     // this tells the multi-item getting gadget how many items to grab per time unit
-	};
-
-	static ObjectID lastPickedObjectID;
-
-	// this will be used to hold a value of uint16 plus a -1 as a flag
-	static int32    lastPickedObjectQuantity;
-
-	// this will be used to determine if the cursor has been
-	// held over an object long enough to qualify for the hint to be displayed
-	static bool objTextAlarm;
-
-	// buffer for the mouse text
-	static char mouseText[bufSize];
-
-	// determines if the cursor is in *A* container view
-	static bool mouseInView;
-
-	// number of items to move for merged objects
-	static uint16 numPicked;
-
-	// merged object currently being gotten
-	static GameObject *objToGet;
-
-	static int32 amountAccumulator;
-
-	static int16 amountIndY;
-
 	//  Constructor
 	ContainerView(
 	    gPanelList &,
@@ -160,7 +125,7 @@ public:
 	virtual bool isVisible(GameObject *obj);
 
 	//  total the mass, bulk, and number of all objects in container.
-	void totalObjects(void);
+	void totalObjects();
 
 	//  Get the Nth visible object from this container.
 	ObjectID getObject(int16 slotNum);
@@ -206,7 +171,7 @@ protected: // actions within a container
 	//  Event-handling functions
 
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	virtual void pointerMove(gPanelMessage &msg);
 	virtual bool pointerHit(gPanelMessage &msg);
@@ -281,14 +246,14 @@ public:
 	                const ContainerAppearanceDef &app,
 	                const char saveas[]);
 
-	virtual ~ContainerWindow(void);
+	virtual ~ContainerWindow();
 
-	ContainerView &getView(void);
-	GameObject *containerObject(void) {
+	ContainerView &getView();
+	GameObject *containerObject() {
 		return getView().containerObject;
 	}
 
-	virtual void massBulkUpdate(void) {}
+	virtual void massBulkUpdate() {}
 };
 
 //  Base class for all container windows with scroll control
@@ -301,11 +266,11 @@ public:
 	                          const ContainerAppearanceDef &app,
 	                          const char saveas[]);
 
-	void scrollUp(void) {
+	void scrollUp() {
 		if (view->scrollPosition > 0) view->scrollPosition--;
 	}
 
-	void scrollDown(void) {
+	void scrollDown() {
 		if (view->scrollPosition + view->visibleRows < view->totalRows)
 			view->scrollPosition++;
 	}
@@ -321,18 +286,18 @@ private:
 	bool            deathFlag;
 
 private:
-	void setContainerSprite(void);
+	void setContainerSprite();
 
 public:
 
 	TangibleContainerWindow(ContainerNode &nd,
 	                        const ContainerAppearanceDef &app);
-	~TangibleContainerWindow(void);
+	~TangibleContainerWindow();
 
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
 
 	// this sets the mass and bulk gauges for physical containers
-	void massBulkUpdate(void);
+	void massBulkUpdate();
 };
 
 class IntangibleContainerWindow : public ScrollableContainerWindow {
@@ -435,7 +400,7 @@ private:
 	};
 
 public:
-	ContainerNode(void) {
+	ContainerNode() {
 		object = 0;
 		type = 0;
 		owner = 0;
@@ -446,7 +411,7 @@ public:
 	ContainerNode(ContainerManager &cl, ObjectID id, int type);
 	~ContainerNode();
 
-	static int32 archiveSize(void) {
+	static int32 archiveSize() {
 		return sizeof(Archive);
 	}
 
@@ -454,41 +419,41 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Hide or show this container window.
-	void hide(void);
-	void show(void);
-	void update(void);                   //  Update container associated with this node
+	void hide();
+	void show();
+	void update();                   //  Update container associated with this node
 
 	//  Set for lazy deletion
-	void markForDelete(void)   {
+	void markForDelete()   {
 		action |= actionDelete;
 	}
-	void markForShow(void) {
+	void markForShow() {
 		action |= actionShow;
 		action &= ~actionHide;
 	}
-	void markForHide(void) {
+	void markForHide() {
 		action |= actionHide;
 		action &= ~actionShow;
 	}
-	void markForUpdate(void)   {
+	void markForUpdate()   {
 		action |= actionUpdate;
 	}
 
 	//  Find the address of the window and/or view
-	ContainerWindow *getWindow(void);
-	ContainerView   *getView(void);
+	ContainerWindow *getWindow();
+	ContainerView   *getView();
 
 	//  Access functions
-	uint8 getType(void) {
+	uint8 getType() {
 		return type;
 	}
-	uint8 getOwnerIndex(void) {
+	uint8 getOwnerIndex() {
 		return owner;
 	}
-	ObjectID getObject(void) {
+	ObjectID getObject() {
 		return object;
 	}
-	Rect16 &getPosition(void) {
+	Rect16 &getPosition() {
 		return position;
 	}
 	void setObject(ObjectID id) {
@@ -508,6 +473,53 @@ class ContainerManager {
 public:
 	Common::List<ContainerNode *> _list;
 
+	enum {
+		kBufSize     = 60,
+	};
+
+	// used to ignore doubleClick when doubleClick == singleClick
+	bool _alreadyDone;
+
+	// this will be used to determine if the cursor has been
+	// held over an object long enough to qualify for the hint to be displayed
+	bool _objTextAlarm;
+
+	// determines if the cursor is in *A* container view
+	bool _mouseInView;
+
+	ObjectID _lastPickedObjectID;
+
+	// number of items to move for merged objects
+	uint16 _numPicked;
+
+	int16 _amountIndY;
+
+	// this will be used to hold a value of uint16 plus a -1 as a flag
+	int32 _lastPickedObjectQuantity;
+
+	int32 _amountAccumulator;
+
+	// merged object currently being gotten
+	GameObject *_objToGet;
+
+	// selector image pointer
+	void *_selImage;
+
+	// buffer for the mouse text
+	char _mouseText[kBufSize];
+
+	ContainerManager() {
+		_alreadyDone = _objTextAlarm = _mouseInView = false;
+		_lastPickedObjectID = Nothing;
+		_numPicked = 1;
+		_amountIndY = -1;
+		_lastPickedObjectQuantity = - 1;
+		_amountAccumulator = 0;
+		_objToGet = nullptr;
+		_selImage = nullptr;
+		memset(_mouseText, 0, sizeof(_mouseText));
+	}
+
 	void add(ContainerNode *cn) {
 		_list.push_front(cn);
 	}
@@ -526,7 +538,7 @@ public:
 
 	//  Set which player is viewing the container windows.
 	void setPlayerNum(PlayerActorID playerNum);
-	void doDeferredActions(void);
+	void doDeferredActions();
 	void setUpdate(ObjectID id);
 };
 
@@ -538,15 +550,15 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type);
    Exports
  * ===================================================================== */
 
-void initContainers(void);
-void cleanupContainers(void);
+void initContainers();
+void cleanupContainers();
 
-void initContainerNodes(void);
+void initContainerNodes();
 void saveContainerNodes(Common::OutSaveFile *outS);
 void loadContainerNodes(Common::InSaveFile *in);
-void cleanupContainerNodes(void);
+void cleanupContainerNodes();
 
-extern void updateContainerWindows(void);
+extern void updateContainerWindows();
 
 extern APPFUNC(cmdCloseButtonFunc);
 extern APPFUNC(cmdMindContainerFunc);

@@ -43,8 +43,8 @@ class WeaponEffect {
 public:
 	WeaponEffect *_next;                      // pointer to additional effects
 
-	WeaponEffect(void) : _next(NULL) {}
-	virtual ~WeaponEffect(void) {}
+	WeaponEffect() : _next(NULL) {}
+	virtual ~WeaponEffect() {}
 	virtual void implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8  strength) = 0;
 };
 
@@ -56,7 +56,7 @@ class WeaponProtoEffect : public WeaponEffect {
 public:
 	WeaponProtoEffect(Common::SeekableReadStream *stream) : _effect(createNewProtoEffect(stream)) {
 	}
-	~WeaponProtoEffect(void);
+	~WeaponProtoEffect();
 
 	void implement(Actor *enactor, GameObject*target, GameObject *strikingObj, uint8 strength);
 };
@@ -93,15 +93,15 @@ public:
 	}
 	void addEffect(WeaponEffect *we);
 	void addEffect(Common::SeekableReadStream *stream);
-	void killEffects(void);
+	void killEffects();
 	void implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8 strength);
 };
 
 //-----------------------------------------------------------------------
 
 
-void initWeapons(void);
-void cleanupWeapons(void);
+void initWeapons();
+void cleanupWeapons();
 
 WeaponStuff &getWeapon(weaponID i);
 

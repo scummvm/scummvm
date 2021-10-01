@@ -54,7 +54,7 @@ void writeTask(Task *t, Common::MemoryWriteStreamDynamic *out);
 #if DEBUG
 //  Debugging function used to check the integrity of the global task
 //  list
-void checkTaskListIntegrity(void);
+void checkTaskListIntegrity();
 #endif
 
 /* ===================================================================== *
@@ -105,16 +105,16 @@ class TaskStackList {
 
 public:
 	//  Constructor -- initial construction
-	TaskStackList(void);
+	TaskStackList();
 
 	//  Destructor
-	~TaskStackList(void);
+	~TaskStackList();
 
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to make an archive of the
 	//  TaskStackList
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
@@ -146,14 +146,14 @@ public:
 
 	//  Run through the TaskStacks in the active list and update
 	//  each.
-	void updateTaskStacks(void);
+	void updateTaskStacks();
 };
 
 //----------------------------------------------------------------------
 //	TaskStackList constructor -- simply place each element the array in
 //	the inactive list
 
-TaskStackList::TaskStackList(void) {
+TaskStackList::TaskStackList() {
 	for (int i = 0; i < numTaskStacks; i++)
 		_list[i] = nullptr;
 }
@@ -161,7 +161,7 @@ TaskStackList::TaskStackList(void) {
 //----------------------------------------------------------------------
 //	TaskStackList destructor
 
-TaskStackList::~TaskStackList(void) {
+TaskStackList::~TaskStackList() {
 	for (int i = 0; i < numTaskStacks; i++) {
 		if (_list[i] == nullptr)
 			continue;
@@ -200,7 +200,7 @@ void TaskStackList::read(Common::InSaveFile *in) {
 //----------------------------------------------------------------------
 //	Return the number of bytes necessary to archive this TaskStackList
 
-int32 TaskStackList::archiveSize(void) {
+int32 TaskStackList::archiveSize() {
 	int32 size = sizeof(int16);
 
 	for (int i = 0; i < numTaskStacks; i++) {
@@ -295,7 +295,7 @@ void TaskStackList::deleteTaskStack(TaskStack *p) {
 //	Iterate through all of the TaskStacks in the active list and call
 //	their update function
 
-void TaskStackList::updateTaskStacks(void) {
+void TaskStackList::updateTaskStacks() {
 	for (int i = 0; i < numTaskStacks; i++) {
 		if (_list[i]) {
 			TaskStack *ts = _list[i];
@@ -320,15 +320,15 @@ void TaskStackList::updateTaskStacks(void) {
 //	Simply pass this call to the stackList member function,
 //	updateTaskStacks().
 
-void updateActorTasks(void) {
+void updateActorTasks() {
 	if (!actorTasksPaused)
 		g_vm->_stackList->updateTaskStacks();
 }
 
-void pauseActorTasks(void) {
+void pauseActorTasks() {
 	actorTasksPaused = true;
 }
-void resumeActorTasks(void) {
+void resumeActorTasks() {
 	actorTasksPaused = false;
 }
 
@@ -369,7 +369,7 @@ TaskStack *getTaskStackAddress(TaskStackID id) {
 //----------------------------------------------------------------------
 //	Initialize the stackList
 
-void initTaskStacks(void) {
+void initTaskStacks() {
 	g_vm->_stackList = new TaskStackList;
 }
 
@@ -399,7 +399,7 @@ void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
 //----------------------------------------------------------------------
 //	Cleanup the stackList
 
-void cleanupTaskStacks(void) {
+void cleanupTaskStacks() {
 	//  Simply call stackList's destructor
 	delete g_vm->_stackList;
 }
@@ -419,16 +419,16 @@ class TaskList {
 
 public:
 	//  Constructor -- initial construction
-	TaskList(void);
+	TaskList();
 
 	//  Destructor
-	~TaskList(void);
+	~TaskList();
 
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes necessary to archive this task list
 	//  in a buffer
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
@@ -460,7 +460,7 @@ public:
 //	TaskList constructor -- simply place each element of the array in
 //	the inactive list
 
-TaskList::TaskList(void) {
+TaskList::TaskList() {
 	_size = 0;
 	for (int i = 0; i < numTasks; i++)
 		_list[i] = nullptr;
@@ -469,7 +469,7 @@ TaskList::TaskList(void) {
 //----------------------------------------------------------------------
 //	TaskList destructor
 
-TaskList::~TaskList(void) {
+TaskList::~TaskList() {
 	for (int i = 0; i < numTasks; i++) {
 		if (_list[i] == nullptr)
 			continue;
@@ -509,7 +509,7 @@ void TaskList::read(Common::InSaveFile *in) {
 //----------------------------------------------------------------------
 //	Return the number of bytes necessary to archive this TaskList
 
-int32 TaskList::archiveSize(void) {
+int32 TaskList::archiveSize() {
 	int32 size = sizeof(int16);
 
 	for (int i = 0; i < numTasks; i++) {
@@ -614,7 +614,7 @@ Task *getTaskAddress(TaskID id) {
 //----------------------------------------------------------------------
 //	Initialize the taskList
 
-void initTasks(void) {
+void initTasks() {
 	//  Simply call the default constructor for the task list
 	g_vm->_taskList = new TaskList;
 }
@@ -645,7 +645,7 @@ void loadTasks(Common::InSaveFile *in, int32 chunkSize) {
 //----------------------------------------------------------------------
 //	Cleanup the taskList
 
-void cleanupTasks(void) {
+void cleanupTasks() {
 	//  Simply call the taskList's destructor
 	delete g_vm->_taskList;
 }
@@ -763,7 +763,7 @@ Task::Task(Common::InSaveFile *in, TaskID id) {
 //----------------------------------------------------------------------
 //	Fixup the Task pointers
 
-void Task::fixup(void) {
+void Task::fixup() {
 	//	Convert the stack ID to a stack pointer
 	stack = getTaskStackAddress(_stackID);
 }
@@ -772,7 +772,7 @@ void Task::fixup(void) {
 //	Return the number of bytes necessary to create an archive of this
 //	object's data
 
-inline int32 Task::archiveSize(void) const {
+inline int32 Task::archiveSize() const {
 	return sizeof(TaskStackID);      //  stack's ID
 }
 
@@ -796,7 +796,7 @@ WanderTask::WanderTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-int32 WanderTask::archiveSize(void) const {
+int32 WanderTask::archiveSize() const {
 	return      Task::archiveSize()
 	            +   sizeof(paused)
 	            +   sizeof(counter);
@@ -816,13 +816,13 @@ void WanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 WanderTask::getType(void) const {
+int16 WanderTask::getType() const {
 	return wanderTask;
 }
 
 //----------------------------------------------------------------------
 
-void WanderTask::abortTask(void) {
+void WanderTask::abortTask() {
 	//  if the actor has a wander motion, abort it
 	MotionTask *actorMotion = stack->getActor()->_moveTask;
 
@@ -831,14 +831,14 @@ void WanderTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult WanderTask::evaluate(void) {
+TaskResult WanderTask::evaluate() {
 	//  Wandering is never done.  It must be stopped manually.
 	return taskNotDone;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult WanderTask::update(void) {
+TaskResult WanderTask::update() {
 	if (counter == 0) {
 		if (!paused)
 			pause();
@@ -860,7 +860,7 @@ bool WanderTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Update function used when task is not paused
 
-TaskResult WanderTask::handleWander(void) {
+TaskResult WanderTask::handleWander() {
 	MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 	//  If the actor is not already wandering, start a wander motion
@@ -875,7 +875,7 @@ TaskResult WanderTask::handleWander(void) {
 //----------------------------------------------------------------------
 //	Set this task into the paused state
 
-void WanderTask::pause(void) {
+void WanderTask::pause() {
 	//  Call abort to stop the wandering motion
 	abortTask();
 
@@ -886,7 +886,7 @@ void WanderTask::pause(void) {
 //----------------------------------------------------------------------
 //	Set this task into the wander state
 
-void WanderTask::wander(void) {
+void WanderTask::wander() {
 	paused = false;
 	counter = (g_vm->_rnd->getRandomNumber(255) + g_vm->_rnd->getRandomNumber(255)) / 2;
 }
@@ -912,7 +912,7 @@ TetheredWanderTask::TetheredWanderTask(Common::InSaveFile *in, TaskID id) : Wand
 //----------------------------------------------------------------------
 //	Fixup the subtask pointers
 
-void TetheredWanderTask::fixup(void) {
+void TetheredWanderTask::fixup() {
 	//	Let the base class fixup it's pointers
 	WanderTask::fixup();
 
@@ -925,7 +925,7 @@ void TetheredWanderTask::fixup(void) {
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in a buffer
 
-inline int32 TetheredWanderTask::archiveSize(void) const {
+inline int32 TetheredWanderTask::archiveSize() const {
 	return      WanderTask::archiveSize()
 	            +   sizeof(minU)
 	            +   sizeof(minU)
@@ -958,7 +958,7 @@ void TetheredWanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void TetheredWanderTask::mark(void) {
+void TetheredWanderTask::mark() {
 	WanderTask::mark();
 	if (gotoTether != NULL)
 		gotoTether->mark();
@@ -968,13 +968,13 @@ void TetheredWanderTask::mark(void) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 TetheredWanderTask::getType(void) const {
+int16 TetheredWanderTask::getType() const {
 	return tetheredWanderTask;
 }
 
 //----------------------------------------------------------------------
 
-void TetheredWanderTask::abortTask(void) {
+void TetheredWanderTask::abortTask() {
 	if (gotoTether != NULL) {
 		gotoTether->abortTask();
 		delete gotoTether;
@@ -1003,7 +1003,7 @@ bool TetheredWanderTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Update function used when task is not paused
 
-TaskResult TetheredWanderTask::handleWander(void) {
+TaskResult TetheredWanderTask::handleWander() {
 	Actor       *a = stack->getActor();
 	TilePoint   actorLoc = a->getLocation();
 
@@ -1078,7 +1078,7 @@ GotoTask::GotoTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 //----------------------------------------------------------------------
 //	Fixup the subtask pointers
 
-void GotoTask::fixup(void) {
+void GotoTask::fixup() {
 	//	Let the base class fixup its pointers
 	Task::fixup();
 
@@ -1092,7 +1092,7 @@ void GotoTask::fixup(void) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoTask::archiveSize(void) const {
+inline int32 GotoTask::archiveSize() const {
 	return      Task::archiveSize()
 	            +   sizeof(TaskID)       //  wander ID
 	            +   sizeof(prevRunState);
@@ -1118,7 +1118,7 @@ void GotoTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void GotoTask::mark(void) {
+void GotoTask::mark() {
 	Task::mark();
 	if (wander != NULL)
 		wander->mark();
@@ -1127,7 +1127,7 @@ void GotoTask::mark(void) {
 
 //----------------------------------------------------------------------
 
-void GotoTask::abortTask(void) {
+void GotoTask::abortTask() {
 	//  If there is a wander subtask, delete it.
 	if (wander) {
 		wander->abortTask();
@@ -1142,7 +1142,7 @@ void GotoTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult GotoTask::evaluate(void) {
+TaskResult GotoTask::evaluate() {
 	//  Determine if we have reach the target.
 	if (stack->getActor()->getLocation() == destination()) {
 		abortTask();
@@ -1154,7 +1154,7 @@ TaskResult GotoTask::evaluate(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult GotoTask::update(void) {
+TaskResult GotoTask::update() {
 	//  Check to see if we have reached the target
 	{
 		TaskResult  result = evaluate();
@@ -1251,7 +1251,7 @@ GotoLocationTask::GotoLocationTask(Common::InSaveFile *in, TaskID id) : GotoTask
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoLocationTask::archiveSize(void) const {
+inline int32 GotoLocationTask::archiveSize() const {
 	return      GotoTask::archiveSize()
 	            +   sizeof(targetLoc)
 	            +   sizeof(runThreshold);
@@ -1273,7 +1273,7 @@ void GotoLocationTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GotoLocationTask::getType(void) const {
+int16 GotoLocationTask::getType() const {
 	return gotoLocationTask;
 }
 
@@ -1291,21 +1291,21 @@ bool GotoLocationTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-TilePoint GotoLocationTask::destination(void) {
+TilePoint GotoLocationTask::destination() {
 	//  Simply return the target location
 	return targetLoc;
 }
 
 //----------------------------------------------------------------------
 
-TilePoint GotoLocationTask::intermediateDest(void) {
+TilePoint GotoLocationTask::intermediateDest() {
 	//  GotoLocationTask's never have an intermediate destination
 	return targetLoc;
 }
 
 //----------------------------------------------------------------------
 
-bool GotoLocationTask::lineOfSight(void) {
+bool GotoLocationTask::lineOfSight() {
 	//  Let's pretend that there is always a line of sight to the
 	//  target location
 	return true;
@@ -1313,7 +1313,7 @@ bool GotoLocationTask::lineOfSight(void) {
 
 //----------------------------------------------------------------------
 
-bool GotoLocationTask::run(void) {
+bool GotoLocationTask::run() {
 	TilePoint       actorLoc = stack->getActor()->getLocation();
 
 	return  runThreshold != maxuint8
@@ -1340,7 +1340,7 @@ GotoRegionTask::GotoRegionTask(Common::InSaveFile *in, TaskID id) : GotoTask(in,
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoRegionTask::archiveSize(void) const {
+inline int32 GotoRegionTask::archiveSize() const {
 	return      GotoTask::archiveSize()
 	            +   sizeof(regionMinU)
 	            +   sizeof(regionMinV)
@@ -1363,7 +1363,7 @@ void GotoRegionTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GotoRegionTask::getType(void) const {
+int16 GotoRegionTask::getType() const {
 	return gotoRegionTask;
 }
 
@@ -1381,7 +1381,7 @@ bool GotoRegionTask::operator == (const Task &t) const {
 	            &&  regionMaxV == taskPtr->regionMaxV;
 }
 
-TilePoint GotoRegionTask::destination(void) {
+TilePoint GotoRegionTask::destination() {
 	TilePoint   actorLoc = stack->getActor()->getLocation();
 
 	return  TilePoint(
@@ -1392,19 +1392,19 @@ TilePoint GotoRegionTask::destination(void) {
 
 //----------------------------------------------------------------------
 
-TilePoint GotoRegionTask::intermediateDest(void) {
+TilePoint GotoRegionTask::intermediateDest() {
 	return destination();
 }
 
 //----------------------------------------------------------------------
 
-bool GotoRegionTask::lineOfSight(void) {
+bool GotoRegionTask::lineOfSight() {
 	return true;
 }
 
 //----------------------------------------------------------------------
 
-bool GotoRegionTask::run(void) {
+bool GotoRegionTask::run() {
 	return false;
 }
 
@@ -1430,7 +1430,7 @@ GotoObjectTargetTask::GotoObjectTargetTask(Common::InSaveFile *in, TaskID id) : 
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoObjectTargetTask::archiveSize(void) const {
+inline int32 GotoObjectTargetTask::archiveSize() const {
 	return      GotoTask::archiveSize()
 	            +   sizeof(lastTestedLoc)
 	            +   sizeof(sightCtr)
@@ -1457,21 +1457,21 @@ void GotoObjectTargetTask::write(Common::MemoryWriteStreamDynamic *out) const {
 
 //----------------------------------------------------------------------
 
-TilePoint GotoObjectTargetTask::destination(void) {
+TilePoint GotoObjectTargetTask::destination() {
 	//  Return the object's true location
 	return getObject()->getLocation();
 }
 
 //----------------------------------------------------------------------
 
-TilePoint GotoObjectTargetTask::intermediateDest(void) {
+TilePoint GotoObjectTargetTask::intermediateDest() {
 	//  Return the last known location
 	return lastKnownLoc;
 }
 
 //----------------------------------------------------------------------
 
-bool GotoObjectTargetTask::lineOfSight(void) {
+bool GotoObjectTargetTask::lineOfSight() {
 	if (flags & track) {
 		flags |= inSight;
 		lastKnownLoc = getObject()->getLocation();
@@ -1560,7 +1560,7 @@ GotoObjectTask::GotoObjectTask(Common::InSaveFile *in, TaskID id) :
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoObjectTask::archiveSize(void) const {
+inline int32 GotoObjectTask::archiveSize() const {
 	return GotoObjectTargetTask::archiveSize() + sizeof(ObjectID);
 }
 
@@ -1579,7 +1579,7 @@ void GotoObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GotoObjectTask::getType(void) const {
+int16 GotoObjectTask::getType() const {
 	return gotoObjectTask;
 }
 
@@ -1597,14 +1597,14 @@ bool GotoObjectTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-GameObject *GotoObjectTask::getObject(void) {
+GameObject *GotoObjectTask::getObject() {
 	//  Simply return the pointer to the target object
 	return targetObj;
 }
 
 //----------------------------------------------------------------------
 
-bool GotoObjectTask::run(void) {
+bool GotoObjectTask::run() {
 	//  Running after objects has not been implemented yet
 	return false;
 }
@@ -1627,7 +1627,7 @@ GotoActorTask::GotoActorTask(Common::InSaveFile *in, TaskID id) :
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GotoActorTask::archiveSize(void) const {
+inline int32 GotoActorTask::archiveSize() const {
 	return GotoObjectTargetTask::archiveSize() + sizeof(ObjectID);
 }
 
@@ -1646,7 +1646,7 @@ void GotoActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GotoActorTask::getType(void) const {
+int16 GotoActorTask::getType() const {
 	return gotoActorTask;
 }
 
@@ -1664,14 +1664,14 @@ bool GotoActorTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-GameObject *GotoActorTask::getObject(void) {
+GameObject *GotoActorTask::getObject() {
 	//  Simply return the pointer to the target actor
 	return (GameObject *)targetActor;
 }
 
 //----------------------------------------------------------------------
 
-bool GotoActorTask::run(void) {
+bool GotoActorTask::run() {
 	if (isInSight()) {
 		TilePoint       actorLoc = stack->getActor()->getLocation(),
 		                targetLoc = getTarget()->getLocation();
@@ -1693,7 +1693,7 @@ GoAwayFromTask::GoAwayFromTask(Common::InSaveFile *in, TaskID id) : Task(in, id)
 //----------------------------------------------------------------------
 //	Fixup the subtask pointer
 
-void GoAwayFromTask::fixup(void) {
+void GoAwayFromTask::fixup() {
 		//	Let the base class fixup its pointers
 	Task::fixup();
 
@@ -1706,7 +1706,7 @@ void GoAwayFromTask::fixup(void) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 GoAwayFromTask::archiveSize(void) const {
+inline int32 GoAwayFromTask::archiveSize() const {
 	return Task::archiveSize() + sizeof(TaskID) + sizeof(flags);
 }
 
@@ -1729,7 +1729,7 @@ void GoAwayFromTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void GoAwayFromTask::mark(void) {
+void GoAwayFromTask::mark() {
 	Task::mark();
 	if (goTask != NULL)
 		goTask->mark();
@@ -1739,7 +1739,7 @@ void GoAwayFromTask::mark(void) {
 //----------------------------------------------------------------------
 //	Abort this task
 
-void GoAwayFromTask::abortTask(void) {
+void GoAwayFromTask::abortTask() {
 	if (goTask != NULL) {
 		goTask->abortTask();
 		delete goTask;
@@ -1750,7 +1750,7 @@ void GoAwayFromTask::abortTask(void) {
 //----------------------------------------------------------------------
 //	Evaluate this task
 
-TaskResult GoAwayFromTask::evaluate(void) {
+TaskResult GoAwayFromTask::evaluate() {
 	//  Going away is never done, it must be stopped manually
 	return taskNotDone;
 }
@@ -1758,7 +1758,7 @@ TaskResult GoAwayFromTask::evaluate(void) {
 //----------------------------------------------------------------------
 //	Update this task
 
-TaskResult GoAwayFromTask::update(void) {
+TaskResult GoAwayFromTask::update() {
 	static const TilePoint dirTable_[] = {
 		TilePoint(64,  64, 0),
 		TilePoint(0,  64, 0),
@@ -1821,7 +1821,7 @@ GoAwayFromObjectTask::GoAwayFromObjectTask(Common::InSaveFile *in, TaskID id) :
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-int32 GoAwayFromObjectTask::archiveSize(void) const {
+int32 GoAwayFromObjectTask::archiveSize() const {
 	return GoAwayFromTask::archiveSize() + sizeof(ObjectID);
 }
 
@@ -1841,7 +1841,7 @@ void GoAwayFromObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GoAwayFromObjectTask::getType(void) const {
+int16 GoAwayFromObjectTask::getType() const {
 	return goAwayFromObjectTask;
 }
 
@@ -1859,7 +1859,7 @@ bool GoAwayFromObjectTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Simply return the object's location
 
-TilePoint GoAwayFromObjectTask::getRepulsionVector(void) {
+TilePoint GoAwayFromObjectTask::getRepulsionVector() {
 	return stack->getActor()->getLocation() - obj->getLocation();
 }
 
@@ -1902,7 +1902,7 @@ GoAwayFromActorTask::GoAwayFromActorTask(Common::InSaveFile *in, TaskID id) : Go
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-int32 GoAwayFromActorTask::archiveSize(void) const {
+int32 GoAwayFromActorTask::archiveSize() const {
 	return GoAwayFromTask::archiveSize() + targetArchiveSize(getTarget());
 }
 
@@ -1919,7 +1919,7 @@ void GoAwayFromActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 GoAwayFromActorTask::getType(void) const {
+int16 GoAwayFromActorTask::getType() const {
 	return goAwayFromActorTask;
 }
 
@@ -1936,7 +1936,7 @@ bool GoAwayFromActorTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
+TilePoint GoAwayFromActorTask::getRepulsionVector() {
 	Actor               *a = stack->getActor();
 	TilePoint           actorLoc = a->getLocation(),
 	                    repulsionVector;
@@ -1997,7 +1997,7 @@ void HuntTask::fixup( void ) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntTask::archiveSize(void) const {
+inline int32 HuntTask::archiveSize() const {
 	int32       size = 0;
 
 	size += Task::archiveSize() + sizeof(huntFlags);
@@ -2023,7 +2023,7 @@ void HuntTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void HuntTask::mark(void) {
+void HuntTask::mark() {
 	Task::mark();
 	if (huntFlags & (huntGoto | huntWander))
 		subTask->mark();
@@ -2032,7 +2032,7 @@ void HuntTask::mark(void) {
 
 //----------------------------------------------------------------------
 
-void HuntTask::abortTask(void) {
+void HuntTask::abortTask() {
 	if (huntFlags & (huntWander | huntGoto)) {
 		subTask->abortTask();
 		delete subTask;
@@ -2044,7 +2044,7 @@ void HuntTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntTask::evaluate(void) {
+TaskResult HuntTask::evaluate() {
 	if (atTarget()) {
 		//  If we've reached the target abort any sub tasks
 		if (huntFlags & huntWander)
@@ -2060,7 +2060,7 @@ TaskResult HuntTask::evaluate(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntTask::update(void) {
+TaskResult HuntTask::update() {
 	Actor       *a = stack->getActor();
 
 	if (a->_moveTask && a->_moveTask->isPrivledged()) return taskNotDone;
@@ -2115,7 +2115,7 @@ TaskResult HuntTask::update(void) {
 
 //----------------------------------------------------------------------
 
-void HuntTask::removeWanderTask(void) {
+void HuntTask::removeWanderTask() {
 	subTask->abortTask();
 	delete subTask;
 	huntFlags &= ~huntWander;
@@ -2123,7 +2123,7 @@ void HuntTask::removeWanderTask(void) {
 
 //----------------------------------------------------------------------
 
-void HuntTask::removeGotoTask(void) {
+void HuntTask::removeGotoTask() {
 	subTask->abortTask();
 	delete subTask;
 	subTask = nullptr;
@@ -2158,7 +2158,7 @@ HuntLocationTask::HuntLocationTask(Common::InSaveFile *in, TaskID id) : HuntTask
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntLocationTask::archiveSize(void) const {
+inline int32 HuntLocationTask::archiveSize() const {
 	return      HuntTask::archiveSize()
 	            +   sizeof(currentTarget)
 	            +   targetArchiveSize(getTarget());
@@ -2186,7 +2186,7 @@ bool HuntLocationTask::targetHasChanged(GotoTask *gotoTarget) {
 
 //----------------------------------------------------------------------
 
-GotoTask *HuntLocationTask::setupGoto(void) {
+GotoTask *HuntLocationTask::setupGoto() {
 	//  If there is somewhere to go, setup a goto task, else return NULL
 	return  currentTarget != Nowhere
 	        ?   new GotoLocationTask(stack, currentTarget)
@@ -2195,7 +2195,7 @@ GotoTask *HuntLocationTask::setupGoto(void) {
 
 //----------------------------------------------------------------------
 
-TilePoint HuntLocationTask::currentTargetLoc(void) {
+TilePoint HuntLocationTask::currentTargetLoc() {
 	return currentTarget;
 }
 
@@ -2218,7 +2218,7 @@ HuntToBeNearLocationTask::HuntToBeNearLocationTask(Common::InSaveFile *in, TaskI
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToBeNearLocationTask::archiveSize(void) const {
+inline int32 HuntToBeNearLocationTask::archiveSize() const {
 	return      HuntLocationTask::archiveSize()
 	            +   sizeof(range)
 	            +   sizeof(targetEvaluateCtr);
@@ -2240,7 +2240,7 @@ void HuntToBeNearLocationTask::write(Common::MemoryWriteStreamDynamic *out) cons
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToBeNearLocationTask::getType(void) const {
+int16 HuntToBeNearLocationTask::getType() const {
 	return huntToBeNearLocationTask;
 }
 
@@ -2258,7 +2258,7 @@ bool HuntToBeNearLocationTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearLocationTask::evaluateTarget(void) {
+void HuntToBeNearLocationTask::evaluateTarget() {
 	//  If its time to reevaluate the target, simply get the nearest
 	//  target location from the LocationTarget
 	if (targetEvaluateCtr == 0) {
@@ -2274,7 +2274,7 @@ void HuntToBeNearLocationTask::evaluateTarget(void) {
 
 //----------------------------------------------------------------------
 
-bool HuntToBeNearLocationTask::atTarget(void) {
+bool HuntToBeNearLocationTask::atTarget() {
 	TilePoint   targetLoc = currentTargetLoc();
 
 	//  Determine if we are within the specified range of the target
@@ -2284,18 +2284,18 @@ bool HuntToBeNearLocationTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearLocationTask::atTargetabortTask(void) {}
+void HuntToBeNearLocationTask::atTargetabortTask() {}
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearLocationTask::atTargetEvaluate(void) {
+TaskResult HuntToBeNearLocationTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
 	return taskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearLocationTask::atTargetUpdate(void) {
+TaskResult HuntToBeNearLocationTask::atTargetUpdate() {
 	//  If we're at the target, we're done
 	return taskSucceeded;
 }
@@ -2333,7 +2333,7 @@ HuntObjectTask::HuntObjectTask(Common::InSaveFile *in, TaskID id) : HuntTask(in,
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntObjectTask::archiveSize(void) const {
+inline int32 HuntObjectTask::archiveSize() const {
 	return      HuntTask::archiveSize()
 	            +   sizeof(ObjectID)
 	            +   targetArchiveSize(getTarget());
@@ -2364,7 +2364,7 @@ bool HuntObjectTask::targetHasChanged(GotoTask *gotoTarget) {
 
 //----------------------------------------------------------------------
 
-GotoTask *HuntObjectTask::setupGoto(void) {
+GotoTask *HuntObjectTask::setupGoto() {
 	//  If there is an object to goto, setup a GotoObjectTask, else
 	//  return NULL
 	return  currentTarget
@@ -2374,7 +2374,7 @@ GotoTask *HuntObjectTask::setupGoto(void) {
 
 //----------------------------------------------------------------------
 
-TilePoint HuntObjectTask::currentTargetLoc(void) {
+TilePoint HuntObjectTask::currentTargetLoc() {
 	//  If there is a current target object, return its locatio, else
 	//  return Nowhere
 	return currentTarget ? currentTarget->getLocation() : Nowhere;
@@ -2399,7 +2399,7 @@ HuntToBeNearObjectTask::HuntToBeNearObjectTask(Common::InSaveFile *in, TaskID id
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToBeNearObjectTask::archiveSize(void) const {
+inline int32 HuntToBeNearObjectTask::archiveSize() const {
 	return      HuntObjectTask::archiveSize()
 	            +   sizeof(range)
 	            +   sizeof(targetEvaluateCtr);
@@ -2421,7 +2421,7 @@ void HuntToBeNearObjectTask::write(Common::MemoryWriteStreamDynamic *out) const 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToBeNearObjectTask::getType(void) const {
+int16 HuntToBeNearObjectTask::getType() const {
 	return huntToBeNearObjectTask;
 }
 
@@ -2439,7 +2439,7 @@ bool HuntToBeNearObjectTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearObjectTask::evaluateTarget(void) {
+void HuntToBeNearObjectTask::evaluateTarget() {
 	//  Determine if it is time to reevaluate the target object
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
@@ -2482,7 +2482,7 @@ void HuntToBeNearObjectTask::evaluateTarget(void) {
 
 //----------------------------------------------------------------------
 
-bool HuntToBeNearObjectTask::atTarget(void) {
+bool HuntToBeNearObjectTask::atTarget() {
 	TilePoint   targetLoc = currentTargetLoc();
 
 	//  Determine if we are within the specified range of the current
@@ -2493,18 +2493,18 @@ bool HuntToBeNearObjectTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearObjectTask::atTargetabortTask(void) {}
+void HuntToBeNearObjectTask::atTargetabortTask() {}
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearObjectTask::atTargetEvaluate(void) {
+TaskResult HuntToBeNearObjectTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
 	return taskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearObjectTask::atTargetUpdate(void) {
+TaskResult HuntToBeNearObjectTask::atTargetUpdate() {
 	//  If we're at the target, we're done
 	return taskSucceeded;
 }
@@ -2529,7 +2529,7 @@ HuntToPossessTask::HuntToPossessTask(Common::InSaveFile *in, TaskID id) : HuntOb
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToPossessTask::archiveSize(void) const {
+inline int32 HuntToPossessTask::archiveSize() const {
 	return      HuntObjectTask::archiveSize()
 	            +   sizeof(targetEvaluateCtr)
 	            +   sizeof(grabFlag);
@@ -2551,7 +2551,7 @@ void HuntToPossessTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToPossessTask::getType(void) const {
+int16 HuntToPossessTask::getType() const {
 	return huntToPossessTask;
 }
 
@@ -2568,7 +2568,7 @@ bool HuntToPossessTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToPossessTask::evaluateTarget(void) {
+void HuntToPossessTask::evaluateTarget() {
 	//  Determine if it is time to reevaluate the target object
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
@@ -2611,7 +2611,7 @@ void HuntToPossessTask::evaluateTarget(void) {
 
 //----------------------------------------------------------------------
 
-bool HuntToPossessTask::atTarget(void) {
+bool HuntToPossessTask::atTarget() {
 	Actor   *a = stack->getActor();
 
 	return  currentTarget
@@ -2622,11 +2622,11 @@ bool HuntToPossessTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToPossessTask::atTargetabortTask(void) {}
+void HuntToPossessTask::atTargetabortTask() {}
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToPossessTask::atTargetEvaluate(void) {
+TaskResult HuntToPossessTask::atTargetEvaluate() {
 	if (currentTarget && stack->getActor()->isContaining(currentTarget))
 		return taskSucceeded;
 
@@ -2635,7 +2635,7 @@ TaskResult HuntToPossessTask::atTargetEvaluate(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToPossessTask::atTargetUpdate(void) {
+TaskResult HuntToPossessTask::atTargetUpdate() {
 	//  Hunt to possess in not implemented yet
 	return taskNotDone;
 }
@@ -2680,7 +2680,7 @@ HuntActorTask::HuntActorTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, i
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntActorTask::archiveSize(void) const {
+inline int32 HuntActorTask::archiveSize() const {
 	return      HuntTask::archiveSize()
 	            +   sizeof(flags)
 	            +   sizeof(ObjectID)
@@ -2715,7 +2715,7 @@ bool HuntActorTask::targetHasChanged(GotoTask *gotoTarget) {
 
 //----------------------------------------------------------------------
 
-GotoTask *HuntActorTask::setupGoto(void) {
+GotoTask *HuntActorTask::setupGoto() {
 	//  If there is an actor to goto, setup a GotoActorTask, else
 	//  return NULL
 	/*  return  currentTarget
@@ -2734,7 +2734,7 @@ GotoTask *HuntActorTask::setupGoto(void) {
 
 //----------------------------------------------------------------------
 
-TilePoint HuntActorTask::currentTargetLoc(void) {
+TilePoint HuntActorTask::currentTargetLoc() {
 	//  If there is a current target actor, return its location, else
 	//  return Nowhere
 	return currentTarget ? currentTarget->getLocation() : Nowhere;
@@ -2762,7 +2762,7 @@ HuntToBeNearActorTask::HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id) 
 //----------------------------------------------------------------------
 //	Fixup the subtask pointers
 
-void HuntToBeNearActorTask::fixup(void) {
+void HuntToBeNearActorTask::fixup() {
 		//	Let the base class fixup its pointers
 	HuntActorTask::fixup();
 
@@ -2776,7 +2776,7 @@ void HuntToBeNearActorTask::fixup(void) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToBeNearActorTask::archiveSize(void) const {
+inline int32 HuntToBeNearActorTask::archiveSize() const {
 	return      HuntActorTask::archiveSize()
 	            +   sizeof(TaskID)               //  goAway ID
 	            +   sizeof(range)
@@ -2807,7 +2807,7 @@ void HuntToBeNearActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void HuntToBeNearActorTask::mark(void) {
+void HuntToBeNearActorTask::mark() {
 	HuntActorTask::mark();
 	if (goAway != NULL)
 		goAway->mark();
@@ -2817,7 +2817,7 @@ void HuntToBeNearActorTask::mark(void) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToBeNearActorTask::getType(void) const {
+int16 HuntToBeNearActorTask::getType() const {
 	return huntToBeNearActorTask;
 }
 
@@ -2836,7 +2836,7 @@ bool HuntToBeNearActorTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearActorTask::evaluateTarget(void) {
+void HuntToBeNearActorTask::evaluateTarget() {
 	//  Determine if its time to reevaluate the current target actor
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
@@ -2882,7 +2882,7 @@ void HuntToBeNearActorTask::evaluateTarget(void) {
 
 //----------------------------------------------------------------------
 
-bool HuntToBeNearActorTask::atTarget(void) {
+bool HuntToBeNearActorTask::atTarget() {
 	TilePoint   targetLoc = currentTargetLoc();
 
 	//  Determine if we're within the specified range of the current
@@ -2903,7 +2903,7 @@ bool HuntToBeNearActorTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearActorTask::atTargetabortTask(void) {
+void HuntToBeNearActorTask::atTargetabortTask() {
 	if (goAway != NULL) {
 		goAway->abortTask();
 		delete goAway;
@@ -2913,7 +2913,7 @@ void HuntToBeNearActorTask::atTargetabortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearActorTask::atTargetEvaluate(void) {
+TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 	TilePoint   targetLoc = currentTargetLoc();
 
 	//  If we're not TOO close, we're done
@@ -2931,7 +2931,7 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToBeNearActorTask::atTargetUpdate(void) {
+TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 	Actor       *a = stack->getActor();
 	TilePoint   targetLoc = currentTargetLoc();
 
@@ -2994,7 +2994,7 @@ HuntToKillTask::HuntToKillTask(Common::InSaveFile *in, TaskID id) : HuntActorTas
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToKillTask::archiveSize(void) const {
+inline int32 HuntToKillTask::archiveSize() const {
 	return      HuntActorTask::archiveSize()
 	            +   sizeof(targetEvaluateCtr)
 	            +   sizeof(specialAttackCtr)
@@ -3016,7 +3016,7 @@ void HuntToKillTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToKillTask::getType(void) const {
+int16 HuntToKillTask::getType() const {
 	return huntToKillTask;
 }
 
@@ -3034,7 +3034,7 @@ bool HuntToKillTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::abortTask(void) {
+void HuntToKillTask::abortTask() {
 	HuntActorTask::abortTask();
 
 	Actor       *a = stack->getActor();
@@ -3046,7 +3046,7 @@ void HuntToKillTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToKillTask::update(void) {
+TaskResult HuntToKillTask::update() {
 	if (specialAttackCtr == 0) {
 		stack->getActor()->_flags |= Actor::specialAttack;
 		//  A little hack to make monsters with 99 spellcraft cast spells more often
@@ -3061,7 +3061,7 @@ TaskResult HuntToKillTask::update(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::evaluateTarget(void) {
+void HuntToKillTask::evaluateTarget() {
 	Actor               *a = stack->getActor();
 
 	if (flags & evalWeapon && a->isInterruptable()) {
@@ -3218,7 +3218,7 @@ void HuntToKillTask::evaluateTarget(void) {
 
 //----------------------------------------------------------------------
 
-bool HuntToKillTask::atTarget(void) {
+bool HuntToKillTask::atTarget() {
 	//  Determine if we're in attack range of the current target
 	return      currentTarget != NULL
 	            &&  stack->getActor()->inAttackRange(
@@ -3227,7 +3227,7 @@ bool HuntToKillTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::atTargetabortTask(void) {
+void HuntToKillTask::atTargetabortTask() {
 	//  If the task is aborted while at the target actor, abort any
 	//  attack currently taking place
 	stack->getActor()->stopAttack(currentTarget);
@@ -3235,14 +3235,14 @@ void HuntToKillTask::atTargetabortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToKillTask::atTargetEvaluate(void) {
+TaskResult HuntToKillTask::atTargetEvaluate() {
 	//  This task is never done and must be aborted manually
 	return taskNotDone;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToKillTask::atTargetUpdate(void) {
+TaskResult HuntToKillTask::atTargetUpdate() {
 	assert(isActor(currentTarget));
 
 	Actor   *a = stack->getActor();
@@ -3258,7 +3258,7 @@ TaskResult HuntToKillTask::atTargetUpdate(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::evaluateWeapon(void) {
+void HuntToKillTask::evaluateWeapon() {
 	Actor               *a = stack->getActor();
 	ObjectID            actorID = a->thisID();
 	GameObject          *obj,
@@ -3361,7 +3361,7 @@ HuntToGiveTask::HuntToGiveTask(Common::InSaveFile *in, TaskID id) : HuntActorTas
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 HuntToGiveTask::archiveSize(void) const {
+inline int32 HuntToGiveTask::archiveSize() const {
 	return      HuntActorTask::archiveSize()
 	            +   sizeof(ObjectID);                //  objToGive ID
 }
@@ -3382,7 +3382,7 @@ void HuntToGiveTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 HuntToGiveTask::getType(void) const {
+int16 HuntToGiveTask::getType() const {
 	return huntToGiveTask;
 }
 
@@ -3401,27 +3401,27 @@ bool HuntToGiveTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToGiveTask::evaluateTarget(void) {}
+void HuntToGiveTask::evaluateTarget() {}
 
 //----------------------------------------------------------------------
 
-bool HuntToGiveTask::atTarget(void) {
+bool HuntToGiveTask::atTarget() {
 	return false;
 }
 
 //----------------------------------------------------------------------
 
-void HuntToGiveTask::atTargetabortTask(void) {}
+void HuntToGiveTask::atTargetabortTask() {}
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToGiveTask::atTargetEvaluate(void) {
+TaskResult HuntToGiveTask::atTargetEvaluate() {
 	return taskNotDone;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult HuntToGiveTask::atTargetUpdate(void) {
+TaskResult HuntToGiveTask::atTargetUpdate() {
 	return taskNotDone;
 }
 
@@ -3497,7 +3497,7 @@ BandTask::BandTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
 //----------------------------------------------------------------------
 //	Fixup the subtask pointers
 
-void BandTask::fixup(void) {
+void BandTask::fixup() {
 	//	Let the base class fixup its pointers
 	HuntTask::fixup();
 
@@ -3511,7 +3511,7 @@ void BandTask::fixup(void) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 BandTask::archiveSize(void) const {
+inline int32 BandTask::archiveSize() const {
 	return      HuntTask::archiveSize()
 	            +   sizeof(TaskID)           //  attend ID
 	            +   sizeof(currentTarget)
@@ -3542,7 +3542,7 @@ void BandTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void BandTask::mark(void) {
+void BandTask::mark() {
 	HuntTask::mark();
 	if (attend != NULL)
 		attend->mark();
@@ -3552,7 +3552,7 @@ void BandTask::mark(void) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 BandTask::getType(void) const {
+int16 BandTask::getType() const {
 	return bandTask;
 }
 
@@ -3565,7 +3565,7 @@ bool BandTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void BandTask::evaluateTarget(void) {
+void BandTask::evaluateTarget() {
 	if (targetEvaluateCtr == 0) {
 		Actor           *leader = stack->getActor()->_leader;
 		TilePoint       actorLoc = stack->getActor()->getLocation(),
@@ -3666,19 +3666,19 @@ bool BandTask::targetHasChanged(GotoTask *gotoTarget) {
 
 //----------------------------------------------------------------------
 
-GotoTask *BandTask::setupGoto(void) {
+GotoTask *BandTask::setupGoto() {
 	return new GotoLocationTask(stack, currentTarget, getRunThreshold());
 }
 
 //----------------------------------------------------------------------
 
-TilePoint BandTask::currentTargetLoc(void) {
+TilePoint BandTask::currentTargetLoc() {
 	return currentTarget;
 }
 
 //----------------------------------------------------------------------
 
-bool BandTask::atTarget(void) {
+bool BandTask::atTarget() {
 	TilePoint       actorLoc = stack->getActor()->getLocation();
 
 	if ((actorLoc - currentTarget).quickHDistance() > 6
@@ -3697,7 +3697,7 @@ bool BandTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void BandTask::atTargetabortTask(void) {
+void BandTask::atTargetabortTask() {
 	if (attend != NULL) {
 		attend->abortTask();
 		delete attend;
@@ -3707,13 +3707,13 @@ void BandTask::atTargetabortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult BandTask::atTargetEvaluate(void) {
+TaskResult BandTask::atTargetEvaluate() {
 	return taskNotDone;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult BandTask::atTargetUpdate(void) {
+TaskResult BandTask::atTargetUpdate() {
 	Actor       *a = stack->getActor();
 
 	if (attend != NULL)
@@ -3729,13 +3729,13 @@ TaskResult BandTask::atTargetUpdate(void) {
 
 //----------------------------------------------------------------------
 
-int16 BandTask::getRunThreshold(void) {
+int16 BandTask::getRunThreshold() {
 	return kTileUVSize * 3;
 }
 
 //----------------------------------------------------------------------
 
-BandTask::RepulsorIterator *BandTask::getNewRepulsorIterator(void) {
+BandTask::RepulsorIterator *BandTask::getNewRepulsorIterator() {
 	return new BandingRepulsorIterator(stack->getActor());
 }
 
@@ -3828,7 +3828,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::next(
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 BandAndAvoidEnemiesTask::getType(void) const {
+int16 BandAndAvoidEnemiesTask::getType() const {
 	return bandAndAvoidEnemiesTask;
 }
 
@@ -3841,13 +3841,13 @@ bool BandAndAvoidEnemiesTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-int16 BandAndAvoidEnemiesTask::getRunThreshold(void) {
+int16 BandAndAvoidEnemiesTask::getRunThreshold() {
 	return 0;
 }
 
 //----------------------------------------------------------------------
 
-BandTask::RepulsorIterator *BandAndAvoidEnemiesTask::getNewRepulsorIterator(void) {
+BandTask::RepulsorIterator *BandAndAvoidEnemiesTask::getNewRepulsorIterator() {
 	return new BandAndAvoidEnemiesRepulsorIterator(stack->getActor());
 }
 
@@ -3878,7 +3878,7 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) 
 //----------------------------------------------------------------------
 //	Fixup the subtask pointers
 
-void FollowPatrolRouteTask::fixup(void) {
+void FollowPatrolRouteTask::fixup() {
 	//	Let the base class fixup its pointers
 	Task::fixup();
 
@@ -3892,7 +3892,7 @@ void FollowPatrolRouteTask::fixup(void) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 FollowPatrolRouteTask::archiveSize(void) const {
+inline int32 FollowPatrolRouteTask::archiveSize() const {
 	return      Task::archiveSize()
 	            +   sizeof(TaskID)   //  gotoWayPoint ID
 	            +   sizeof(patrolIter)
@@ -3931,7 +3931,7 @@ void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void FollowPatrolRouteTask::mark(void) {
+void FollowPatrolRouteTask::mark() {
 	Task::mark();
 	if (gotoWayPoint != NULL)
 		gotoWayPoint->mark();
@@ -3941,13 +3941,13 @@ void FollowPatrolRouteTask::mark(void) {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 FollowPatrolRouteTask::getType(void) const {
+int16 FollowPatrolRouteTask::getType() const {
 	return followPatrolRouteTask;
 }
 
 //----------------------------------------------------------------------
 
-void FollowPatrolRouteTask::abortTask(void) {
+void FollowPatrolRouteTask::abortTask() {
 	//  If there is a subtask, get rid of it
 	if (gotoWayPoint) {
 		gotoWayPoint->abortTask();
@@ -3958,7 +3958,7 @@ void FollowPatrolRouteTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult FollowPatrolRouteTask::evaluate(void) {
+TaskResult FollowPatrolRouteTask::evaluate() {
 	//  Simply check the patrol iterator to determine if there are
 	//  any more waypoints
 	return *patrolIter == Nowhere ? taskSucceeded : taskNotDone;
@@ -3966,7 +3966,7 @@ TaskResult FollowPatrolRouteTask::evaluate(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult FollowPatrolRouteTask::update(void) {
+TaskResult FollowPatrolRouteTask::update() {
 	return !paused ? handleFollowPatrolRoute() : handlePaused();
 }
 
@@ -3985,7 +3985,7 @@ bool FollowPatrolRouteTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Update function used if this task is not paused
 
-TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
+TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 	TilePoint   currentWayPoint = *patrolIter,
 	            actorLoc = stack->getActor()->getLocation();
 
@@ -4038,7 +4038,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 //----------------------------------------------------------------------
 //	Update function used if this task is paused
 
-TaskResult FollowPatrolRouteTask::handlePaused(void) {
+TaskResult FollowPatrolRouteTask::handlePaused() {
 	TaskResult      result;
 
 	if ((result = evaluate()) == taskNotDone) {
@@ -4054,7 +4054,7 @@ TaskResult FollowPatrolRouteTask::handlePaused(void) {
 //----------------------------------------------------------------------
 //	Set this task into the paused state
 
-void FollowPatrolRouteTask::pause(void) {
+void FollowPatrolRouteTask::pause() {
 	paused = true;
 	counter = (g_vm->_rnd->getRandomNumber(63) + g_vm->_rnd->getRandomNumber(63)) / 2;
 }
@@ -4079,7 +4079,7 @@ AttendTask::AttendTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 //	Return the number of bytes needed to archive this object in
 //	a buffer
 
-inline int32 AttendTask::archiveSize(void) const {
+inline int32 AttendTask::archiveSize() const {
 	return Task::archiveSize() + sizeof(ObjectID);
 }
 
@@ -4100,13 +4100,13 @@ void AttendTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
-int16 AttendTask::getType(void) const {
+int16 AttendTask::getType() const {
 	return attendTask;
 }
 
 //----------------------------------------------------------------------
 
-void AttendTask::abortTask(void) {
+void AttendTask::abortTask() {
 	MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 	//  Determine if we need to abort the actor motion
@@ -4116,14 +4116,14 @@ void AttendTask::abortTask(void) {
 
 //----------------------------------------------------------------------
 
-TaskResult AttendTask::evaluate(void) {
+TaskResult AttendTask::evaluate() {
 	//  Attending must be stopped manually
 	return taskNotDone;
 }
 
 //----------------------------------------------------------------------
 
-TaskResult AttendTask::update(void) {
+TaskResult AttendTask::update() {
 	Actor       *a = stack->getActor();
 	TilePoint   attendLoc = obj->getWorldLocation();
 
@@ -4197,7 +4197,7 @@ void TaskStack::read(Common::InSaveFile *in) {
 //	Debugging function used to mark this task and any sub tasks as being
 //	used.  This is used to find task leaks.
 
-void TaskStack::mark(void) {
+void TaskStack::mark() {
 	if (stackBottomID != NoTask) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
@@ -4222,7 +4222,7 @@ void TaskStack::setTask(Task *t) {
 //----------------------------------------------------------------------
 //  Abort all tasks in stack
 
-void TaskStack::abortTask(void) {
+void TaskStack::abortTask() {
 	if (stackBottomID != NoTask) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
@@ -4234,7 +4234,7 @@ void TaskStack::abortTask(void) {
 //----------------------------------------------------------------------
 //  Re-evaluate tasks in stack
 
-TaskResult TaskStack::evaluate(void) {
+TaskResult TaskStack::evaluate() {
 	if (stackBottomID != -1) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
@@ -4246,7 +4246,7 @@ TaskResult TaskStack::evaluate(void) {
 //----------------------------------------------------------------------
 //  Update the state of the tasks in stack
 
-TaskResult TaskStack::update(void) {
+TaskResult TaskStack::update() {
 	TaskResult  result;
 
 	//  If the actor is currently uniterruptable then this task is paused

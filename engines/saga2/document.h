@@ -122,7 +122,7 @@ private:
 
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 
 	void pointerMove(gPanelMessage &msg);
 	bool pointerHit(gPanelMessage &msg);
@@ -136,10 +136,10 @@ protected:
 	    const Point16 &offset,
 	    const Rect16  &clipRect);
 
-	void draw(void);                             // redraw the window
+	void draw();                             // redraw the window
 
-	void    renderText(void);
-	void    makePages(void);
+	void    renderText();
+	void    makePages();
 	bool    checkForPageBreak(char *string,
 	                          uint16 index,
 	                          int32 &offset);
@@ -159,7 +159,7 @@ public:
 	          gFont           *font,          // font of the text
 	          uint16          ident,          // control ID
 	          AppFunc         *cmd = NULL);   // application command func
-	~CDocument(void);
+	~CDocument();
 
 	void gotoPage(int8 page);
 

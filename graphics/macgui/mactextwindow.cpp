@@ -47,7 +47,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = font;
-	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+	_mactext = new MacText(this, 0, 0, 0, 0, _wm, Common::U32String(""), font, fgcolor, bgcolor, maxWidth, textAlignment);
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
@@ -109,7 +109,7 @@ void MacTextWindow::resize(int w, int h, bool inner) {
 	MacWindow::resize(w, h);
 
 	_maxWidth = getInnerDimensions().width();
-	_mactext->setMaxWidth(_maxWidth);
+	_mactext->resize(_maxWidth, h);
 }
 
 void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
@@ -215,13 +215,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	// Compose
-	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w, _scrollPos + _composeSurface->h, 1, 1);
-
-	if (_cursorState && _selectedText.endY == -1)
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + 1, _cursorY + 1));
-
-	if (_selectedText.endY != -1)
-		drawSelection();
+	_mactext->draw(_composeSurface, true);
 
 	return true;
 }

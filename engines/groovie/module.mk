@@ -1,7 +1,9 @@
 MODULE := engines/groovie
 
 MODULE_OBJS := \
-	cell.o \
+	logic/cell.o \
+	video/player.o \
+	video/vdx.o \
 	cursor.o \
 	debug.o \
 	font.o \
@@ -10,15 +12,16 @@ MODULE_OBJS := \
 	lzss.o \
 	metaengine.o \
 	music.o \
-	player.o \
 	resource.o \
 	saveload.o \
-	script.o \
-	vdx.o
+	script.o
 
 ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
-	roq.o
+	logic/clangame.o \
+	logic/t11hgame.o \
+	logic/tlcgame.o \
+	video/roq.o
 endif
 
 # This module can be built as a plugin

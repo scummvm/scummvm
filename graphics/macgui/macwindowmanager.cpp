@@ -691,6 +691,32 @@ void MacWindowManager::setActiveWindow(int id) {
 	_fullRefresh = true;
 }
 
+MacWindow *MacWindowManager::findWindowAtPoint(int16 x, int16 y) {
+	Common::List<Graphics::BaseMacWindow *>::iterator it;
+	Graphics::MacWindow *win = nullptr;
+
+	for (it = _windowStack.begin(); it != _windowStack.end(); it++) {
+		if ((*it)->getDimensions().contains(x, y)) {
+			win = reinterpret_cast<Graphics::MacWindow *>(*it);
+		}
+	}
+
+	return win;
+}
+
+MacWindow *MacWindowManager::findWindowAtPoint(Common::Point point) {
+	Common::List<Graphics::BaseMacWindow *>::iterator it;
+	Graphics::MacWindow *win = nullptr;
+
+	for (it = _windowStack.begin(); it != _windowStack.end(); it++) {
+		if ((*it)->getDimensions().contains(point)) {
+			win = reinterpret_cast<Graphics::MacWindow *>(*it);
+		}
+	}
+
+	return win;
+}
+
 void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;

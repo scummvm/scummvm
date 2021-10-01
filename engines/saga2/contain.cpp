@@ -45,9 +45,6 @@ enum {
 	kMaxOpenDistance = 32
 };
 
-// selector image pointer
-static void *selImage;
-
 /* ===================================================================== *
    Imports
  * ===================================================================== */
@@ -65,7 +62,7 @@ extern APPFUNC(cmdWindowFunc);
 
 //  Temporary...
 void grabObject(ObjectID pickedObject);      // turn object into mouse ptr
-void releaseObject(void);                    // restore mouse pointer
+void releaseObject();                    // restore mouse pointer
 
 /* Reference Types
 ProtoObj::isTangible
@@ -82,25 +79,6 @@ ProtoObj::isPsych
 ProtoObj::isSpell
 ProtoObj::isEnchantment
 */
-
-// used to ignore doubleClick when doubleClick == singleClick
-static bool alreadyDone;
-//  ID of the last object that the mouse moved over
-
-/* ===================================================================== *
-   ContainerView member functions
- * ===================================================================== */
-
-// static mouse info variables
-ObjectID    ContainerView::lastPickedObjectID = Nothing;
-int32       ContainerView::lastPickedObjectQuantity = - 1;
-bool        ContainerView::objTextAlarm = false;
-char        ContainerView::mouseText[ContainerView::bufSize] = { "" };
-bool        ContainerView::mouseInView = false;
-uint16      ContainerView::numPicked = 1;
-GameObject  *ContainerView::objToGet;
-int32       ContainerView::amountAccumulator = 0;
-int16       ContainerView::amountIndY = -1;
 
 //-----------------------------------------------------------------------
 //	Physical container appearance
@@ -227,19 +205,6 @@ static const ContainerAppearanceDef enchantmentContainerAppearance = {
 //-----------------------------------------------------------------------
 //	ContainerView class
 
-//  Constructor
-/* ContainerView::ContainerView(
-    gPanelList      &list,
-    const Rect16    &box,
-    ContainerNode   &nd,
-    Point16         org,
-    Point16         space,
-    int16           numRows,
-    int16           numCols,
-    int16           totRows,
-    uint16          ident,
-    AppFunc         *cmd ) */
-
 ContainerView::ContainerView(
     gPanelList      &list,
     const Rect16    &rect,
@@ -265,31 +230,6 @@ ContainerView::ContainerView(
 ContainerView::~ContainerView() {
 }
 
-/****** contain.cpp/ContainerView::findPane ***********************
-*
-*   NAME
-*             findPane - find a ContainerView control that is
-*                        viewing the contents of the target object
-*
-*   SYNOPSIS
-*             If pane is NULL, start search at first ContainerView
-*             else, start search at pane->next.
-*
-*             Iterate through ContainerView list until a
-*             ContainerView is found that is viewing the
-*             target object (obj).
-*
-*   INPUTS
-*             obj   Target Game Object
-*             pane  Previously found pane, or NULL if search start
-*
-*   RESULT
-*             Returns a pointer to a ContainterPanel if one is found
-*             or NULL if no more found.
-*
-********************************************************************
-*/
-
 //  returns true if the object is visible for this type of
 //  container.
 bool ContainerView::isVisible(GameObject *item) {
@@ -306,7 +246,7 @@ bool ContainerView::isVisible(GameObject *item) {
 }
 
 //  total the mass, bulk, and number of all objects in container.
-void ContainerView::totalObjects(void) {
+void ContainerView::totalObjects() {
 	ObjectID objID;
 	GameObject *item = nullptr;
 
@@ -340,10 +280,6 @@ void ContainerView::totalObjects(void) {
 			totalBulk += proto->bulk * numItems;
 		}
 	}
-
-//	ContainerView *viewToUpdate = ContainerView::findPane( containerObject );
-
-//	viewToUpdate->getWindow()->update( viewToUpdate->getExtent() );
 }
 
 //  Return the Nth visible object from this container.
@@ -438,7 +374,7 @@ void ContainerView::drawClipped(
 			    objColors);
 
 			// check to see if selecting amount for this objec
-			if (objToGet == item) {
+			if (g_vm->_cnm->_objToGet == item) {
 				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
 				                              y + ((iconHeight - selectorY) >> 1));
 
@@ -446,7 +382,7 @@ void ContainerView::drawClipped(
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				amountIndY = y - (selectorY >> 1) - 12;
+				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) - 12;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -460,10 +396,10 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	SAVE_GPORT_STATE(port);
 
 	// draw the arrow images
-	drawCompressedImage(port, pos, selImage);
+	drawCompressedImage(port, pos, g_vm->_cnm->_selImage);
 
 	// draw the number of items selected thus far
-	num = sprintf(buf, " %d ", numPicked);
+	num = sprintf(buf, " %d ", g_vm->_cnm->_numPicked);
 
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
@@ -587,26 +523,26 @@ bool ContainerView::activate(gEventType why) {
 	return true;
 }
 
-void ContainerView::deactivate(void) {
+void ContainerView::deactivate() {
 }
 
 void ContainerView::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
-		lastPickedObjectID = Nothing;
-		lastPickedObjectQuantity = -1;
+		g_vm->_cnm->_lastPickedObjectID = Nothing;
+		g_vm->_cnm->_lastPickedObjectQuantity = -1;
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
-		mouseInView = false;
+		g_vm->_cnm->_mouseInView = false;
 		g_vm->_mouseInfo->setDoable(true);
 	} else {
 //		if( msg.pointerEnter )
 		{
 			// static bool that tells if the mouse cursor
 			// is in a panel
-			mouseInView = true;
+			g_vm->_cnm->_mouseInView = true;
 
 			GameObject *mouseObject;
 			mouseObject = g_vm->_mouseInfo->getObject();
@@ -636,11 +572,11 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	if (!g_vm->_mouseInfo->getDoable()) return false;
 
-	if (msg.doubleClick && !alreadyDone) {
+	if (msg.doubleClick && !g_vm->_cnm->_alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
 		if (mouseObject != NULL) {
-			alreadyDone = true;    // if object then no doubleClick
+			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
 			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
 				if (mouseSet & ProtoObj::isTangible) {
@@ -672,7 +608,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 			}
 		} else {
 			// default to doubleClick active
-			alreadyDone = false;
+			g_vm->_cnm->_alreadyDone = false;
 			clickOn(msg, mouseObject, slotObject);
 		}
 	}
@@ -686,13 +622,13 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 void ContainerView::pointerRelease(gPanelMessage &) {
 	// see if in multi-item get mode
-	if (objToGet) {
-		objToGet->take(getCenterActorID(), numPicked);
+	if (g_vm->_cnm->_objToGet) {
+		g_vm->_cnm->_objToGet->take(getCenterActorID(), g_vm->_cnm->_numPicked);
 
 		// reset the flags and pointer dealing with merged object movement
-		objToGet            = NULL;
-		numPicked           = 1;
-		amountIndY          = -1;
+		g_vm->_cnm->_objToGet = NULL;
+		g_vm->_cnm->_numPicked = 1;
+		g_vm->_cnm->_amountIndY = -1;
 	}
 
 	gPanel::deactivate();
@@ -701,28 +637,28 @@ void ContainerView::pointerRelease(gPanelMessage &) {
 void ContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
-	if (objToGet && amountIndY != -1) {
-		int32   rate = (amountIndY - msg.pickAbsPos.y);
+	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
+		int32   rate = (g_vm->_cnm->_amountIndY - msg.pickAbsPos.y);
 
 		rate = rate * ((rate > 0) ? rate : -rate);
 
 		//  Add to the amount accumulator based on the mouse position
-		amountAccumulator += rate / 4 /* * accelSpeed */;
+		g_vm->_cnm->_amountAccumulator += rate / 4;
 
 		//  Take the top bits of the amount accumulator and add to
 		//  the mergeable amount.
-		numPicked = clamp(1,
-		                  numPicked + (amountAccumulator >> 8),
-		                  objToGet->getExtra());
+		g_vm->_cnm->_numPicked = clamp(1,
+		                  g_vm->_cnm->_numPicked + (g_vm->_cnm->_amountAccumulator >> 8),
+		                  g_vm->_cnm->_objToGet->getExtra());
 
 		//  Now remove the bits that we added to the grab amount
 		//  keep the remaining bits to accumulate for next time
-		amountAccumulator &= 0x00ff;
+		g_vm->_cnm->_amountAccumulator &= 0x00ff;
 	}
 }
 
 void ContainerView::dblClick(GameObject *mouseObject, GameObject *slotObject, gPanelMessage &msg) {
-	alreadyDone = true;
+	g_vm->_cnm->_alreadyDone = true;
 
 	// double click stuff
 	dblClickOn(msg, mouseObject, slotObject);
@@ -742,21 +678,21 @@ void ContainerView::clickOn(
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
 				g_vm->_mouseInfo->setText(NULL);
-				mouseText[0] = 0;
+				g_vm->_cnm->_mouseText[0] = 0;
 			}
 		} else {
 			//  just get the object into the cursor
-			cObj->take(getCenterActorID(), numPicked);
+			cObj->take(getCenterActorID(), g_vm->_cnm->_numPicked);
 		}
 	}
 }
 
 void ContainerView::getMerged(GameObject *obj) {
 	// reset the number picked.
-	numPicked = 1;
+	g_vm->_cnm->_numPicked = 1;
 
 	// set the object to be gotten
-	objToGet = obj;
+	g_vm->_cnm->_objToGet = obj;
 }
 
 // Activate the double click function
@@ -809,7 +745,7 @@ void ContainerView::dropPhysical(
 			MotionTask::dropObjectOnObject(*centerActor, *mObj, *cObj, num);
 		}
 
-		alreadyDone = true;
+		g_vm->_cnm->_alreadyDone = true;
 	}
 }
 
@@ -856,7 +792,7 @@ void ContainerView::useConcept(
 			//  If there is an object here drop the mouse object onto it
 			mObj->dropOn(centerActorID, cObj->thisID());
 
-		alreadyDone = true;
+		g_vm->_cnm->_alreadyDone = true;
 	}
 }
 
@@ -877,14 +813,14 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	if (slotID == Nothing) {
 		// clear out the mouse text
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the last picked thingy
-		lastPickedObjectID          = Nothing;
-		lastPickedObjectQuantity    = -1;
+		g_vm->_cnm->_lastPickedObjectID          = Nothing;
+		g_vm->_cnm->_lastPickedObjectQuantity    = -1;
 
 		// set the display alarm to false
-		objTextAlarm = false;
+		g_vm->_cnm->_objTextAlarm = false;
 
 		return;
 	}
@@ -892,58 +828,27 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	// get handles to the object in question
 	GameObject  *slotObject = GameObject::objectAddress(slotID);
 
-	if (slotID == lastPickedObjectID && slotObject->getExtra() == lastPickedObjectQuantity) {
+	if (slotID == g_vm->_cnm->_lastPickedObjectID && slotObject->getExtra() == g_vm->_cnm->_lastPickedObjectQuantity) {
 		return; // same object, bug out
 	} else {
 		// was not same, but is now.
-		lastPickedObjectID          = slotID;
-		lastPickedObjectQuantity    = slotObject->getExtra();
+		g_vm->_cnm->_lastPickedObjectID          = slotID;
+		g_vm->_cnm->_lastPickedObjectQuantity    = slotObject->getExtra();
 
 		// clear out the mouse text
 		g_vm->_mouseInfo->setText(NULL);
-		mouseText[0] = 0;
+		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the alarm flag
-		objTextAlarm = false;
+		g_vm->_cnm->_objTextAlarm = false;
 
 		// set the hint alarm
 		containerObjTextAlarm.set(ticksPerSecond / 2);
 
 		// put the normalized text into mouseText
-		slotObject->objCursorText(mouseText, bufSize);
+		slotObject->objCursorText(g_vm->_cnm->_mouseText, ContainerManager::kBufSize);
 	}
 }
-
-#if 0
-//  Functions do not appear to be called
-
-void ContainerView::setCursorText(GameObject *obj) {
-	assert(obj);
-
-	const   bufSize = 40;
-	char cursorText[bufSize];
-
-	// put the normalized text into cursorText
-	obj->objCursorText(cursorText, bufSize);
-
-	g_vm->_mouseInfo->setText(cursorText);
-}
-
-void ContainerView::setDelayedCursorText(GameObject *obj) {
-	// clear out the mouse text
-	g_vm->_mouseInfo->setText(NULL);
-	mouseText[0] = 0;
-
-	// reset the alarm flag
-	objTextAlarm = false;
-
-	// set the hint alarm
-	containerObjTextAlarm.set(ticksPerSecond / 2);
-
-	// put the normalized text into mouseText
-	obj->objCursorText(mouseText, bufSize);
-}
-#endif
 
 /* ===================================================================== *
     EnchantmentContainerView member functions
@@ -1002,7 +907,7 @@ void ReadyContainerView::setScrollOffset(int8 num) {
 void ReadyContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
-	if (objToGet && amountIndY != -1) {
+	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
 		ContainerView::timerTick(msg);
 
 		// redraw the container to draw the amount indicator
@@ -1134,7 +1039,7 @@ void ReadyContainerView::drawClipped(
 			    objColors);
 
 			// check to see if selecting amount for this objec
-			if (objToGet == item) {
+			if (g_vm->_cnm->_objToGet == item) {
 				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
 				                              y + ((iconHeight - selectorY) >> 1));
 
@@ -1142,7 +1047,7 @@ void ReadyContainerView::drawClipped(
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
+				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -1173,9 +1078,9 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 }
 
 //  Virtual destructor (base does nothing)
-ContainerWindow::~ContainerWindow(void) {}
+ContainerWindow::~ContainerWindow() {}
 
-ContainerView &ContainerWindow::getView(void) {
+ContainerView &ContainerWindow::getView() {
 	return *view;
 }
 
@@ -1209,10 +1114,6 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 TangibleContainerWindow::TangibleContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
-#if DEBUG
-	assert(view->containerObject);
-	assert(view->containerObject->proto());
-#endif
 
 	const int weightIndicatorType = 2;
 	objRect = app.iconRect;
@@ -1256,12 +1157,12 @@ TangibleContainerWindow::TangibleContainerWindow(
 	}
 }
 
-TangibleContainerWindow::~TangibleContainerWindow(void) {
+TangibleContainerWindow::~TangibleContainerWindow() {
 	if (massWeightIndicator)    delete massWeightIndicator;
 	if (containerSpriteImg)     delete containerSpriteImg;
 }
 
-void TangibleContainerWindow::setContainerSprite(void) {
+void TangibleContainerWindow::setContainerSprite() {
 	// pointer to sprite data that will be drawn
 	Sprite              *spr;
 	ProtoObj            *proto = view->containerObject->proto();
@@ -1411,12 +1312,12 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 }
 
 //  Return the container window for a container node, if it is visible
-ContainerWindow *ContainerNode::getWindow(void) {
+ContainerWindow *ContainerNode::getWindow() {
 	return window;
 }
 
 //  Return the container view for a container node, if it is visible
-ContainerView   *ContainerNode::getView(void) {
+ContainerView   *ContainerNode::getView() {
 	return window ? &window->getView() : NULL;
 }
 
@@ -1471,7 +1372,7 @@ void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 //  Close the container window, but leave the node.
-void ContainerNode::hide(void) {
+void ContainerNode::hide() {
 	//  close the window, but don't close the object.
 	if (type != readyType && window != NULL) {
 		position = window->getExtent();     //  Save old window position
@@ -1482,7 +1383,7 @@ void ContainerNode::hide(void) {
 }
 
 //  Open the cotainer window, given the node info.
-void ContainerNode::show(void) {
+void ContainerNode::show() {
 	ProtoObj        *proto = GameObject::protoAddress(object);
 
 	assert(proto);
@@ -1521,7 +1422,7 @@ void ContainerNode::show(void) {
 	window->open();
 }
 
-void ContainerNode::update(void) {
+void ContainerNode::update() {
 	if (type == readyType) {
 		//  Update ready containers if they are enabled
 		if (TrioCviews[owner]->getEnabled())  TrioCviews[owner]->invalidate();
@@ -1611,7 +1512,7 @@ void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	}
 }
 
-void ContainerManager::doDeferredActions(void) {
+void ContainerManager::doDeferredActions() {
 	Common::List<ContainerNode *>::iterator nextIt;
 	Actor           *a = getCenterActor();
 	TilePoint       tp = a->getLocation();
@@ -1688,10 +1589,9 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
 		} else if (owner != ContainerNode::nobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
+		} else {
+			error("Attempt to open non-dead actor as a container");
 		}
-#if DEBUG
-		else fatal("Attempt to open non-dead actor as a container.\n");
-#endif
 	} else {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
 			owner = ContainerNode::nobody;
@@ -1746,39 +1646,33 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
     Misc. functions
  * ===================================================================== */
 
-void initContainers(void) {
+void initContainers() {
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
-	selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
+	g_vm->_cnm->_selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
 }
 
-void cleanupContainers(void) {
-	if (selImage)
-		g_vm->_imageCache->releaseImage(selImage);
+void cleanupContainers() {
+	if (g_vm->_cnm->_selImage)
+		g_vm->_imageCache->releaseImage(g_vm->_cnm->_selImage);
 	if (containerRes)
 		resFile->disposeContext(containerRes);
 
-	selImage = NULL;
+	g_vm->_cnm->_selImage = NULL;
 	containerRes = NULL;
 }
 
-void initContainerNodes(void) {
-#if DEBUG
+void initContainerNodes() {
 	//  Verify the globalContainerList only has ready ContainerNodes
 
-	ContainerNode   *node;
-	bool            onlyReady = true;
+	Common::List<ContainerNode *>::iterator it;
 
-	for (node = g_vm->_cnm->first(); node != NULL; node = node->next()) {
-		if (node->getType() != ContainerNode::readyType) {
-			onlyReady = false;
-			break;
+	for (it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
+		if ((*it)->getType() != ContainerNode::readyType) {
+			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::readyType);
 		}
 	}
-
-	assert(onlyReady);
-#endif
 }
 
 void saveContainerNodes(Common::OutSaveFile *outS) {
@@ -1843,7 +1737,7 @@ void loadContainerNodes(Common::InSaveFile *in) {
 	assert(tempList.empty());
 }
 
-void cleanupContainerNodes(void) {
+void cleanupContainerNodes() {
 	if (g_vm->_cnm == nullptr)
 		return;
 
@@ -1860,7 +1754,7 @@ void cleanupContainerNodes(void) {
 		delete deletionArray[i];
 }
 
-void updateContainerWindows(void) {
+void updateContainerWindows() {
 	g_vm->_cnm->doDeferredActions();
 }
 

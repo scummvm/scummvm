@@ -441,7 +441,7 @@
 	{
 		"lit",
 		"Non-interactive Demo",
-		AD_ENTRY1("demo.stk", "2eba8abd9e3878c57307576012dd2fec"),
+		AD_ENTRY1s("demo.stk", "2eba8abd9e3878c57307576012dd2fec", 3031494),
 		UNK_LANG,
 		kPlatformDOS,
 		ADGF_DEMO,

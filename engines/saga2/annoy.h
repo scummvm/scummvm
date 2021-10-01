@@ -77,14 +77,14 @@ void PlayLongSound(char IDstr[]);
 //-----------------------------------------------------------------------
 //	general maintainence
 
-bool initAudio(void);
-void startAudio(void);
-void suspendAudio(void);
-void resumeAudio(void);
-void cleanupAudio(void);
-void writeConfig(void);
+bool initAudio();
+void startAudio();
+void suspendAudio();
+void resumeAudio();
+void cleanupAudio();
+void writeConfig();
 
-void audioEventLoop(void);
+void audioEventLoop();
 bool stillDoingVoice(uint32 sampno);
 bool stillDoingVoice(uint32 s[]);
 
@@ -92,7 +92,7 @@ bool stillDoingVoice(uint32 s[]);
 //	environmental sounds
 
 void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos);
-void audioEnvironmentCheck(void);
+void audioEnvironmentCheck();
 
 void audioEnvironmentSetAggression(bool onOff);
 void audioEnvironmentSetDaytime(bool onOff);
@@ -102,8 +102,8 @@ void audioEnvironmentSetWorld(int mapNum);
 //-----------------------------------------------------------------------
 //	environmental music
 
-void clearActiveFactions(void);
-void useActiveFactions(void);
+void clearActiveFactions();
+void useActiveFactions();
 
 
 //-----------------------------------------------------------------------

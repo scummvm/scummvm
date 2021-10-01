@@ -311,6 +311,10 @@ public:
 		return _pathFinding;
 	}
 
+	bool isEnglishDemo() {
+		return _isEnglishDemo;
+	}
+
 	Common::WriteStream *getSaveBufferStream();
 
 	bool shouldQuitGame() const {
@@ -424,6 +428,7 @@ protected:
 	Animation *_fontToon;
 	Animation *_fontEZ;
 	Animation *_currentFont;
+	Common::String *_currentDemoFont;
 
 	AudioManager *_audioManager;
 
@@ -433,6 +438,7 @@ protected:
 
 	bool _firstFrame;
 	bool _isDemo;
+	bool _isEnglishDemo;
 	bool _showConversationText;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;

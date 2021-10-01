@@ -33,9 +33,9 @@ namespace Saga2 {
 
 struct textPallete;
 
-void ModalModeSetup(void);
-void ModalModeCleanup(void);
-void ModalModeHandleTask(void);
+void ModalModeSetup();
+void ModalModeCleanup();
+void ModalModeHandleTask();
 void ModalModeHandleKey(short, short);
 
 //Modal Mode GameMode Object
@@ -59,9 +59,9 @@ public:
 	             AppFunc *cmd);
 	~SimpleWindow();
 
-	bool isModal(void);
+	bool isModal();
 	void update(const Rect16 &);
-	void draw(void);                         // redraw the panel.
+	void draw();                         // redraw the panel.
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16  &r);
 	static void DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColor);
 	static void writeWrappedPlaqText(gPort          &port,
@@ -79,12 +79,12 @@ class SimpleButton : public gControl {
 public:
 	SimpleButton(gWindow &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 
-	void draw(void);                         // redraw the panel.
+	void draw();                         // redraw the panel.
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16  &r);
 
 private:
 	bool activate(gEventType why);       // activate the control
-	void deactivate(void);
+	void deactivate();
 	bool pointerHit(gPanelMessage &msg);
 	void pointerDrag(gPanelMessage &msg);
 	void pointerRelease(gPanelMessage &msg);
@@ -99,11 +99,11 @@ public:
 	static requestInfo      rInfo;
 	ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2);
 	~ErrorWindow();
-	int16 getResult(void);
+	int16 getResult();
 	static APPFUNC(cmdMessageWindow);
-	static void ErrorModeSetup(void) {}
-	static void ErrorModeCleanup(void) {}
-	static void ErrorModeHandleTask(void) {}
+	static void ErrorModeSetup() {}
+	static void ErrorModeCleanup() {}
+	static void ErrorModeHandleTask() {}
 	static void ErrorModeHandleKey(short key, short);
 
 };

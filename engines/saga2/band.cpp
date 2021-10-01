@@ -34,7 +34,7 @@ namespace Saga2 {
 //	BandList constructor -- simply place each element of the array in
 //	the inactive list
 
-BandList::BandList(void) {
+BandList::BandList() {
 	for (int i = 0; i < kNumBands; i++)
 		_list[i] = nullptr;
 }
@@ -42,7 +42,7 @@ BandList::BandList(void) {
 //----------------------------------------------------------------------
 //	BandList destructor
 
-BandList::~BandList(void) {
+BandList::~BandList() {
 	for (int i = 0; i < kNumBands; i++)
 		delete _list[i];
 }
@@ -67,7 +67,7 @@ void BandList::read(Common::InSaveFile *in) {
 //----------------------------------------------------------------------
 //	Return the number of bytes necessary to archive this TaskList
 
-int32 BandList::archiveSize(void) {
+int32 BandList::archiveSize() {
 	int32               size = sizeof(int16);
 
 	for (int i = 0; i < kNumBands; i++)
@@ -104,7 +104,7 @@ void BandList::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Place a Band into the active list and return its address
 
-Band *BandList::newBand(void) {
+Band *BandList::newBand() {
 	for (int i = 0; i < kNumBands; i++) {
 		if (!_list[i]) {
 			_list[i] = new Band();
@@ -168,7 +168,7 @@ void BandList::deleteBand(Band *p) {
 //	Call the bandList member function newBand() to get a pointer to a
 //	new Band
 
-Band *newBand(void) {
+Band *newBand() {
 	return g_vm->_bandList->newBand();
 }
 
@@ -204,7 +204,7 @@ Band *getBandAddress(BandID id) {
 //----------------------------------------------------------------------
 //	Initialize the bandList
 
-void initBands(void) {
+void initBands() {
 }
 
 void saveBands(Common::OutSaveFile *outS) {
@@ -242,7 +242,7 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 //----------------------------------------------------------------------
 //	Cleanup the bandList
 
-void cleanupBands(void) {
+void cleanupBands() {
 	for (int i = 0; i < BandList::kNumBands; i++) {
 		if (g_vm->_bandList->_list[i]) {
 			delete g_vm->_bandList->_list[i];
@@ -300,7 +300,7 @@ Band::Band(Common::InSaveFile *in) {
 //	Return the number of bytes needed to archive this object in a
 //	buffer
 
-int32 Band::archiveSize(void) {
+int32 Band::archiveSize() {
 	return      sizeof(ObjectID)                     //  leader ID
 	            +   sizeof(_memberCount)
 	            +   sizeof(ObjectID) * _memberCount;      //  members' ID's

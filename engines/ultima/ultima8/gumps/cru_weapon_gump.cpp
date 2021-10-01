@@ -93,7 +93,7 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		if (!item) {
 			weaponGump->SetShape(0, 0);
 		} else {
-			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
+			const WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
 			uint16 frameno = 0;
 			if (weaponinfo) {
 				// this should be a weapon, otherwise why are we here?

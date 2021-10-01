@@ -131,8 +131,9 @@ void CharacterFlux::update(int32 timeIncrement) {
 
 int32 CharacterFlux::getRandomIdleAnim() {
 	debugC(3, kDebugCharacter, "getRandomIdleAnim()");
-	static const int32 idle[] = { 0xe, 0xf, 0x21, 0x22, 0x24, 0x25, 0x27 };
-	return idle[_vm->randRange(0, 6)];
+	// English demo only has part of the idle animations (the first 3 entries).
+	static const int32 idle[] = { 0xf, 0x21, 0x22, 0xe, 0x24, 0x25, 0x27 };
+	return idle[_vm->randRange(0, _vm->isEnglishDemo() ? 2 : 6)];
 }
 
 } // End of namespace Toon

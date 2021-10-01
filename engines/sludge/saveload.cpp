@@ -192,7 +192,7 @@ bool loadGame(const Common::String &fname) {
 		headerBad = true;
 	if (headerBad) {
 		fatal(ERROR_GAME_LOAD_NO, fname);
-		return NULL;
+		return false;
 	}
 	char c;
 	c = fp->readByte();

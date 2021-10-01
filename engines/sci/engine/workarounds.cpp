@@ -257,6 +257,21 @@ static const uint16 sig_uninitread_qfg1vga_1[] = {
 	SIG_END
 };
 
+//                Game: Quest for Glory 1 VGA
+//      Calling method: Encounter::init (although class names are blank in Mac)
+//   Subroutine offset: 0x0f22 (script 210)
+// Applies to at least: Mac floppy
+static const uint16 sig_uninitread_qfg1vga_2[] = {
+	0x3f, 0x02,                      // link 02
+	0x87, 0x00,                      // lap param[0]
+	0x30, SIG_UINT16(0x000c),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0x30, SIG_UINT16(0x0007),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0xa5, 0x01,                      // sat temp[1]
+	SIG_END
+};
+
 //                Game: Quest for Glory 2
 //      Calling method: abdulS::changeState, jabbarS::changeState
 //   Subroutine offset: English 0x2d22 (script 260)
@@ -479,8 +494,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL7,           -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when looking at the swordfish in the kitchen
 	{ GID_MOTHERGOOSE256, -1,     0,  0,                 "MG", "doit",                            NULL,     5,     5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game - bug #5224
 	{ GID_MOTHERGOOSE256, -1,   992,  0,             "AIPath", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #5269
-	{ GID_MOTHERGOOSE256, 90,    90,  0,        "introScript", "changeState",                     NULL,    65,    65, { WORKAROUND_FAKE,   0 } }, // SCI1(CD): At the very end, after the game is completed and restarted - bug #5626
-	{ GID_MOTHERGOOSE256, 94,    94,  0,            "sunrise", "changeState",                     NULL,   367,   367, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed - bug #5294
+	{ GID_MOTHERGOOSE256, 90,    90,  0,        "introScript", "changeState",                     NULL,    64,    65, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed and restarted (floppy: temp 64, CD: temp 65) - bug #5626
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,               "View", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
@@ -500,8 +514,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PQSWAT,         -1,    73,  0,   "theLashInterface", "transmit",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // Clicking the transmit button in LASH
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",           sig_uninitread_qfg1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
-	{ GID_QFG1VGA,        16,    16,  0,        "lassoFailed", "changeState",                     NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // qfg1vga: casting the "fetch" spell in the screen with the flowers, temps 0 and 1 - bug #5309
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
+	{ GID_QFG1VGA,        -1,   210,  0,                 NULL, "init",        sig_uninitread_qfg1vga_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: going to the brigands hideout - bug #5515. object is "Encounter" but Mac version has blank names
 	{ GID_QFG1VGA,        58,    58,  0,                 NULL, "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,  18 } }, // qfg1vga: casting "detect magic" at giant's cave, temp 0 used instead of spell number. object is "rm58" but Mac version has blank names
 	{ GID_QFG1VGA,        96,    96,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: when yorick throws an object
 	{ GID_QFG1VGA,       320,   320,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: first time entering room 320 when centaur offers fruits and vegetables
@@ -860,6 +874,7 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
+	{ GID_MOTHERGOOSE256, -1,    90,  0,        "introScript", "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE,    0 } }, // happens when restoring after completing a game in SCI1.1 floppy, 2nd parameter is an object from previous game
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

@@ -57,6 +57,7 @@ public:
 	~CryoEngine() override;
 
 	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
@@ -82,6 +83,9 @@ public:
 	void getMousePosition(int16 *x, int16 *y);
 	void setMousePosition(int16 x, int16 y);
 	bool isMouseButtonDown();
+
+private:
+	int _mouseButton;
 };
 
 extern CryoEngine *g_ed;

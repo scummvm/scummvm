@@ -98,7 +98,7 @@ struct CharacterInfo {
 	short actx, acty;
 	char  name[40];
 	char  scrname[MAX_SCRIPT_NAME_LEN];
-	char  on;
+	int8  on;
 
 	int get_effective_y();   // return Y - Z
 	int get_baseline();      // return baseline, or Y if not set
@@ -154,7 +154,7 @@ struct OldCharacterInfo {
 	short actx, acty;
 	char  name[30];
 	char  scrname[16];
-	char  on;
+	int8  on;
 };
 
 #define COPY_CHAR_VAR(name) ci->name = oci->name

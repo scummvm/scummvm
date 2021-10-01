@@ -263,7 +263,7 @@ public:
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
 	 */
-	bool isActive();
+	bool isActive() const;
 
 	/**
 	 * Mutator to change the title of the window.
@@ -274,7 +274,7 @@ public:
 	 * Accessor to get the title of the window.
 	 * @return Title.
 	 */
-	Common::String getTitle() { return _title; };
+	const Common::String &getTitle() const { return _title; };
 
 	/**
 	 * Highlight the target part of the window.
@@ -331,14 +331,14 @@ public:
 	 * Accessor to get the border type.
 	 * @return Border type.
 	 */
-	int getBorderType() { return _borderType; };
+	int getBorderType() const { return _borderType; };
 
 	/**
 	 * We should call this method whenever we need border flags
 	 * don't calc border flags yourself
 	 * @return Border flags
 	 */
-	uint32 getBorderFlags();
+	uint32 getBorderFlags() const;
 
 	void addDirtyRect(const Common::Rect &r);
 	void markAllDirty();
@@ -360,14 +360,14 @@ private:
 	void updateInnerDims();
 	void updateOuterDims();
 
-	bool isInCloseButton(int x, int y);
-	bool isInResizeButton(int x, int y);
-	WindowClick isInScroll(int x, int y);
+	bool isInCloseButton(int x, int y) const;
+	bool isInResizeButton(int x, int y) const;
+	WindowClick isInScroll(int x, int y) const;
 
 protected:
 	void drawBorder();
-	WindowClick isInBorder(int x, int y);
-	BorderOffsets getBorderOffsets() { return _macBorder.getOffset(); }
+	WindowClick isInBorder(int x, int y) const;
+	BorderOffsets getBorderOffsets() const { return _macBorder.getOffset(); }
 
 protected:
 	ManagedSurface _borderSurface;

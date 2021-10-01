@@ -176,6 +176,8 @@ bool Music::PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		// The Macintosh version of DW1 uses raw PCM for music
 		dwSeqLen = midiStream.readUint32BE();
 		_vm->_sound->playDW1MacMusic(midiStream, dwSeqLen);
+	} else if (TinselV1Saturn) {
+		// TODO: Music format for the Saturn version
 	} else {
 		dwSeqLen = midiStream.readUint32LE();
 
@@ -298,6 +300,10 @@ void Music::OpenMidiFiles() {
 		}
 
 		midiStream.close();
+	} else if (TinselV1Saturn) {
+		// The Saturn version has digital music with a different track structure
+		// TODO
+		warning("Music support for Discworld 1 Saturn");
 	} else {
 		if (_midiBuffer.pDat)
 			// already allocated

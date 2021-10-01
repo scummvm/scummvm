@@ -172,6 +172,11 @@ void CruCreditsGump::run() {
 	for (Common::Array<CredLine>::const_iterator iter = lines.begin();
 		 iter != lines.end(); iter++) {
 		Font *linefont = (iter->_lineType == kCredTitle) ? titlefont : namefont;
+		if (!linefont) {
+			// shouldn't happen.. just to be sure?
+			warning("can't render credits line type %d, font is null", iter->_lineType);
+			break;
+		}
 
 		unsigned int remaining;
 		RenderedText *rendered = linefont->renderText(iter->_text, remaining, 640, 0, Font::TEXT_CENTER);

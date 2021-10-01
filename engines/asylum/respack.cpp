@@ -29,26 +29,22 @@ const struct {
 	uint resourceId;
 	uint size;
 } patchedSizes[] = {
-	{3, 0x800403EB, 18177962},
-	{2, 0x8004071D, 40501676},
-	{2, 0x80040733, 40367314},
-	{2, 0x8004073C, 40347616},
-	{3, 0x8004074A, 17247084},
-	{3, 0x80040756, 15741212},
-	{2, 0x8004075E, 39099030},
-	{3, 0x80040782, 15468752},
-	{2, 0x80040783, 36119940},
-	{3, 0x8004093A,  6679208},
-	{3, 0x80040942,  4502532},
-	{3, 0x80040970,   654212},
-	{2, 0x8004097D,   524576},
+	{1, 0x800402B0, 40146626}, {3, 0x800403EB, 18177962}, {2, 0x8004071D, 40501676},
+	{1, 0x8004072D,  7349518}, {2, 0x80040733, 40367314}, {1, 0x8004073B,  5534658},
+	{2, 0x8004073C, 40347616}, {1, 0x80040745,  4333670}, {2, 0x80040746, 40214368},
+	{3, 0x8004074A, 17247084}, {2, 0x8004074C, 40072902}, {3, 0x80040756, 15741212},
+	{2, 0x8004075E, 39099030}, {1, 0x8004076E,  1122128}, {2, 0x80040781, 36131104},
+	{3, 0x80040782, 15468752}, {2, 0x80040783, 36119940}, {1, 0x80040786,   755152},
+	{2, 0x800408B9, 18430980}, {3, 0x8004093A,  6679208}, {1, 0x8004093D,   383318},
+	{3, 0x80040942,  4502532}, {2, 0x80040968,  3920338}, {3, 0x80040970,   654212},
+	{2, 0x8004097D,   524576}, {1, 0x8004097F,    52574}, {2, 0x80040983,   289832},
 };
 
 //////////////////////////////////////////////////////////////////////////
 // ResourceManager
 //////////////////////////////////////////////////////////////////////////
 
-ResourceManager::ResourceManager() : _cdNumber(-1), _musicPackId(kResourcePackInvalid) {
+ResourceManager::ResourceManager(AsylumEngine *vm) : _cdNumber(-1), _musicPackId(kResourcePackInvalid), _vm(vm) {
 }
 
 ResourceManager::~ResourceManager() {
@@ -76,9 +72,18 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 		ResourcePack *pack;
 
 		if (isMusicPack) {
-			pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
+			if (_vm->checkGameVersion("Demo"))
+				pack = new ResourcePack("res.002");
+			else
+				pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
 		} else {
 			if (packId == kResourcePackSharedSound) {
+				if (_vm->checkGameVersion("Demo")) {
+					pack = new ResourcePack("res.004");
+					cache->setVal(packId, pack);
+					return cache->getVal(packId)->get(index);
+				}
+
 				if (_cdNumber == -1)
 					error("[ResourceManager::get] Cd number has not been set!");
 
@@ -115,7 +120,7 @@ void ResourceManager::unload(ResourcePackId id) {
 //////////////////////////////////////////////////////////////////////////
 // ResourcePack
 //////////////////////////////////////////////////////////////////////////
-ResourcePack::ResourcePack(Common::String filename) {
+ResourcePack::ResourcePack(const Common::String &filename) {
 	init(filename);
 }
 
@@ -127,7 +132,7 @@ ResourcePack::~ResourcePack() {
 	_packFile.close();
 }
 
-void ResourcePack::init(Common::String filename) {
+void ResourcePack::init(const Common::String &filename) {
 	if (!_packFile.open(filename))
 		error("[ResourcePack::init] Could not open resource file: %s", filename.c_str());
 

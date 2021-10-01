@@ -173,7 +173,7 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 	ARG_NULL16(); // unknown
 	ARG_SINT16(x);
 	ARG_SINT16(y);
-	ARG_UINT16(z);
+	ARG_UINT8(z);
 
 	Item *ball = ItemFactory::createItem(260, 4, 0, Item::FLG_FAST_ONLY,
 	                                     0, 0, 0, true);

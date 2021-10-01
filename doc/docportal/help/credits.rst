@@ -370,7 +370,7 @@ Director
      - GSoC Student
    * - Dmitry Iskrich
      -
-   * - Dylan Servilla
+   * - Deborah Servilla
      - GSoC Student
    * - Nathanael Gentry
      - GSoC Student
@@ -1457,6 +1457,8 @@ Nintendo DS
 
    * - Bertrand Augereau
      - HQ software scaler
+   * - Cameron Cawley
+     -
    * - Neil Millstone
      -
 

@@ -268,6 +268,59 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// English floppy demo
+	{
+		{
+			"dreamweb",
+			"Demo",
+			{
+				{"dreamweb.r57", 0, "dba78ab266054ad98151db0a9aa845f6", 102904},
+				{"dreamweb.r59", 0, "b1635ce312c7273b343eb0c2946361af", 199262},
+				{"dreamweb.exe", 0, "2362f28683ffe4ae4986c21226e132c9", 63656},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+	// English CD demo
+	{
+		{
+			"dreamweb",
+			"CD Demo",
+			{
+				{"dreamweb.r60", 0, "45fb1438d165da9f098852cc8e14ad92", 108933},
+				{"dreamweb.r22", 0, "35537525b55837b91b56f2468500ea43", 190222},
+				{"dreamweb.exe", 0, "34218e66ffd0e0d65d71282e57ac4fcc", 64445},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD|ADGF_DEMO,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+	// English Amiga demo
+	{
+		{
+			"dreamweb",
+			"Demo",
+			{
+				{"dreamweb.r57", 0, "f52b88b8417c7bddc8c63b684c6ad1dd", 117720},
+				{"dreamweb.r59", 0, "996dfe6d963c27a302952c77a297b0fa", 223764},
+				{"dreamweb",	 0,	"093103deb9712340ee34c4bed94aab12", 51496},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_DEMO,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
 
 	{ AD_TABLE_END_MARKER }
 };

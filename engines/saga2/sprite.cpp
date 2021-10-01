@@ -99,7 +99,7 @@ void initQuickMem(int32 size) {
 	quickMemPtr = quickMemBase;
 }
 
-void cleanupQuickMem(void) {
+void cleanupQuickMem() {
 	if (quickMemBase)
 		delete[] quickMemBase;
 	quickMemBase = nullptr;
@@ -806,7 +806,7 @@ SpriteSet::~SpriteSet() {
 	free(_sprites);
 }
 
-void initSprites(void) {
+void initSprites() {
 	int     i;
 	Common::SeekableReadStream *stream = nullptr;
 
@@ -865,7 +865,7 @@ void initSprites(void) {
 	}
 }
 
-void cleanupSprites(void) {
+void cleanupSprites() {
 	int         i;
 
 	cleanupQuickMem();

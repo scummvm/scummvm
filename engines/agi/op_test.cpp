@@ -280,7 +280,7 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 }
 
 uint8 AgiEngine::testController(uint8 cont) {
-	return (_game.controllerOccured[cont] ? true : false);
+	return (_game.controllerOccurred[cont] ? true : false);
 }
 
 uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {

@@ -64,27 +64,27 @@ public:
 		offset = 0;
 	}
 
-	void                use(void) {
+	void                use() {
 		size += 0x01000000L;
 	}
-	void                abandon(void) {
+	void                abandon() {
 		size -= 0x01000000L;
 	}
-	uint8               useCount(void) {
+	uint8               useCount() {
 		return size >> 24;
 	}
-	bool                isUsed(void) {
+	bool                isUsed() {
 		return ((size & 0xFF000000L) != 0L);
 	}
 
-	bool                isExternal(void) {
+	bool                isExternal() {
 		return ((offset & (1L << 31)) != 0L);
 	}
 
-	uint32              resOffset(void) {
+	uint32              resOffset() {
 		return (offset & 0x0FFFFFFFL);
 	}
-	uint32              resSize(void) {
+	uint32              resSize() {
 		return (size & 0x00FFFFFF);
 	}
 };
@@ -119,18 +119,18 @@ public:
 	hResContext(hResContext *sire, hResID id, const char []);
 	virtual ~hResContext();
 
-	uint32      getResID(void) {
+	uint32      getResID() {
 		return _base->id;
 	}
 
 	uint32      size(hResID id);
-	uint32      count(void);
+	uint32      count();
 	uint32      count(hResID id);
 	bool        seek(hResID id);
-	void        rest(void);
+	void        rest();
 	uint32          readbytes(void *buffer, uint32 size);
-	bool        eor(void);
-	inline size_t   bytesleft(void) {
+	bool        eor();
+	inline size_t   bytesleft() {
 		return _bytecount;
 	}
 
@@ -141,7 +141,7 @@ public:
 	byte       *loadResource(hResID id, const char desc[], Common::String filename = "");
 	byte       *loadIndexResource(int16 index, const char desc[], Common::String filename = "");
 	void        releaseIndexData();
-	Common::File     *resFileHandle(void) {
+	Common::File     *resFileHandle() {
 		return _handle;
 	}
 };
@@ -158,7 +158,7 @@ class hResource : public hResContext {
 	hResEntry      *_table;
 
 public:
-	hResource(const char *resname, const char []);
+	hResource(const char *resname);
 	virtual ~hResource();
 
 	hResContext *newContext(hResID id, const char []);

@@ -447,7 +447,7 @@ bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
 	return true;
 }
 
-void MacVentureEngine::setTextInput(Common::String content) {
+void MacVentureEngine::setTextInput(const Common::String &content) {
 	_prepared = true;
 	_userInput = content;
 	_clickToContinue = false;
@@ -1015,12 +1015,6 @@ ObjID MacVentureEngine::getParent(ObjID objID) {
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 	Common::Point pos = getObjPosition(objID);
 
-	WindowReference win = findParentWindow(objID);
-	if (win != kNoWindow) { // If it's not in a window YET, we don't really care about the border
-		BorderBounds bounds = borderBounds(_gui->getWindowData(win).type); // HACK
-		pos.x += bounds.leftOffset;
-		pos.y += bounds.topOffset;
-	}
 	Common::Point measures = _gui->getObjMeasures(objID);
 	uint w = measures.x;
 	uint h = measures.y;
@@ -1147,8 +1141,8 @@ void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {
 	dataStream->readUint16BE(); // unknown
 	_invTop = dataStream->readUint16BE();
 	_invLeft = dataStream->readUint16BE();
-	_invWidth = dataStream->readUint16BE();
 	_invHeight = dataStream->readUint16BE();
+	_invWidth = dataStream->readUint16BE();
 	_invOffsetY = dataStream->readUint16BE();
 	_invOffsetX = dataStream->readSint16BE();
 	_defaultFont = dataStream->readUint16BE();

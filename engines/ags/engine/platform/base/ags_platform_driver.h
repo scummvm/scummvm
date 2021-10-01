@@ -69,6 +69,8 @@ enum SetupReturnValue {
 struct AGSPlatformDriver
 // be used as a output target for logging system
 	: public AGS::Shared::IOutputHandler {
+	virtual ~AGSPlatformDriver() { instance = nullptr; }
+
 	virtual void AboutToQuitGame();
 	virtual void Delay(int millis);
 	virtual void DisplayAlert(const char *, ...) = 0;

@@ -55,33 +55,13 @@ protected:
 	void reset() override;
 
 public:
-	union BodyFlags {
-		struct BitMask {
-			uint32 unk1 : 1;            // 1 << 0
-			uint32 animated : 1;        // 1 << 1
-			uint32 unk3 : 1;            // 1 << 2
-			uint32 unk4 : 1;            // 1 << 3
-			uint32 unk5 : 1;            // 1 << 4
-			uint32 unk6 : 1;            // 1 << 5
-			uint32 unk7 : 1;            // 1 << 6
-			uint32 alreadyPrepared : 1; // 1 << 7
-			uint32 unk9 : 1;            // 1 << 8
-			uint32 unk10 : 1;           // 1 << 9
-			uint32 unk11 : 1;           // 1 << 10
-			uint32 unk12 : 1;           // 1 << 11
-			uint32 unk13 : 1;           // 1 << 12
-			uint32 unk14 : 1;           // 1 << 13
-			uint32 unk15 : 1;           // 1 << 14
-			uint32 unk16 : 1;           // 1 << 15
-		} mask;
-		uint32 value;
-	} bodyFlag;
+	bool animated = false;
 
 	BoundingBox bbox;
 	int16 offsetToData = 0;
 
 	inline bool isAnimated() const {
-		return (bodyFlag.value & 2) != 0;
+		return animated;
 	}
 
 	inline uint getNumBones() const {

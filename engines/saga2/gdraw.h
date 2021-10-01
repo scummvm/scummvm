@@ -64,7 +64,7 @@ public:
 	gPixelMap(StaticPixelMap m) : size(m.size), data(m.data) {}
 
 	//  Compute the number of bytes in the pixel map
-	int32 bytes(void) {
+	int32 bytes() {
 		return size.x * size.y;
 	}
 };
@@ -75,7 +75,7 @@ class gStaticImage : public gPixelMap {
 public:
 	//  constructors:
 
-	gStaticImage(void) {
+	gStaticImage() {
 		size.x = size.y = 0;
 		data = NULL;
 	}
@@ -200,7 +200,7 @@ public:
 	uint16          textStyles;             // text style bits
 
 	//  Constructor
-	gPort(void) {
+	gPort() {
 		map = nullptr;
 		baseRow = nullptr;
 
@@ -278,7 +278,7 @@ public:
 	void setOrigin(Point16 pt)         {
 		origin = pt;
 	}
-	Point16 getOrigin(void)                {
+	Point16 getOrigin()                {
 		return origin;
 	}
 
@@ -302,7 +302,7 @@ public:
 	//  Simple drawing functions
 	//  REM: This should clip!
 
-	virtual void clear(void) {
+	virtual void clear() {
 		memset(map->data, (int)fgPen, (int)map->bytes());
 	}
 

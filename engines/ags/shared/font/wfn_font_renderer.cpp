@@ -122,14 +122,15 @@ int RenderChar(Bitmap *ds, const int at_x, const int at_y, const WFNChar &wfn_ch
 }
 
 bool WFNFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
-	return LoadFromDiskEx(fontNumber, fontSize, nullptr);
+	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
 }
 
 bool WFNFontRenderer::IsBitmapFont() {
 	return true;
 }
 
-bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params) {
+bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
+		const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name;
 	Stream *ffi = nullptr;
 	soff_t asset_size = 0;

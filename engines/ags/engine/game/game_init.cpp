@@ -23,6 +23,7 @@
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/dialog.h"
+#include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/file.h"
 #include "ags/engine/ac/game.h"
@@ -258,8 +259,28 @@ HError InitAndRegisterGameEntities() {
 
 void LoadFonts(GameDataVersion data_ver) {
 	for (int i = 0; i < _GP(game).numfonts; ++i) {
-		if (!wloadfont_size(i, _GP(game).fonts[i]))
+		FontInfo &finfo = _GP(game).fonts[i];
+		if (!wloadfont_size(i, finfo))
 			quitprintf("Unable to load font %d, no renderer could load a matching file", i);
+
+		const bool is_wfn = is_bitmap_font(i);
+		// Outline thickness corresponds to 1 game pixel by default;
+		// but if it's a scaled up bitmap font in a legacy hires game, then it equals to scale
+		if ((data_ver < kGameVersion_360) && _GP(game).IsLegacyHiRes()) {
+			if (is_wfn && (finfo.Outline == FONT_OUTLINE_AUTO)) {
+				set_font_outline(i, FONT_OUTLINE_AUTO, FontInfo::kSquared, get_font_scaling_mul(i));
+			}
+		}
+
+		// Backward compatibility: if the real font's height != formal height
+		// and there's no custom linespacing, then set linespacing = formal height.
+		if (!is_bitmap_font(i)) {
+			int req_height = _GP(game).fonts[i].SizePt * _GP(game).fonts[i].SizeMultiplier;
+			int height = getfontheight(i);
+			if ((height != req_height) && (_GP(game).fonts[i].LineSpacing == 0)) {
+				set_font_linespacing(i, req_height + get_font_outline_padding(i));
+			}
+		}
 	}
 }
 

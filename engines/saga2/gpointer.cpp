@@ -52,7 +52,7 @@ gMousePointer::gMousePointer(gDisplayPort &port) {
 	pointerImage = NULL;
 }
 
-gMousePointer::~gMousePointer(void) {
+gMousePointer::~gMousePointer() {
 	if (saveMap.data)
 		free(saveMap.data);
 }
@@ -63,7 +63,7 @@ bool gMousePointer::init(Point16 pointerLimits) {
 }
 
 //  Private routine to draw the mouse pointer image
-void gMousePointer::draw(void) {
+void gMousePointer::draw() {
 	if (hideCount < 1) {
 		CursorMan.showMouse(true);
 		shown = 1;
@@ -72,7 +72,7 @@ void gMousePointer::draw(void) {
 }
 
 //  Private routine to restore the mouse pointer image
-void gMousePointer::restore(void) {
+void gMousePointer::restore() {
 	if (shown) {
 		//  blit from the saved map to the current position.
 
@@ -85,7 +85,7 @@ void gMousePointer::restore(void) {
 }
 
 //  Makes the mouse pointer visible
-void gMousePointer::show(void) {
+void gMousePointer::show() {
 	assert(hideCount > 0);
 
 	if (--hideCount == 0) {
@@ -94,7 +94,7 @@ void gMousePointer::show(void) {
 }
 
 //  Makes the mouse pointer invisible
-void gMousePointer::hide(void) {
+void gMousePointer::hide() {
 	if (hideCount++ == 0) {
 		restore();
 	}
@@ -116,7 +116,7 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 }
 
 //  Makes the mouse pointer visible
-int gMousePointer::manditoryShow(void) {
+int gMousePointer::manditoryShow() {
 	int rv = 0;
 	while (hideCount > 0) {
 		show();

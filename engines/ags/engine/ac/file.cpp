@@ -351,15 +351,16 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 #if AGS_PLATFORM_SCUMMVM
 	// For files on savepath, always ensure it starts with the game target prefix to avoid
 	// conflicts (as we usually have the same save dir for all games).
+	// Also flatten the path if needed as we do not support subdirectories in the save folder.
 	if (parent_dir.BaseDir == SAVE_FOLDER_PREFIX) {
-		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix");
+		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix and flatten path");
+		child_path.Replace('/', '-');
 		String gameTarget = ConfMan.getActiveDomainName();
-		if (child_path.CompareLeft(gameTarget) != 0)
+		if (child_path.CompareLeftNoCase(gameTarget) != 0)
 			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
 	}
 #endif
 
-	String full_path = String::FromFormat("%s%s", parent_dir.BaseDir.GetCStr(), child_path.GetCStr());
 	// don't allow write operations for relative paths outside game dir
 	ResolvedPath test_rp = ResolvedPath(parent_dir, child_path, alt_path);
 	if (!read_only) {
@@ -370,6 +371,9 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	}
 
 	rp = test_rp;
+	debugC(::AGS::kDebugFilePath, "Final path: %s", rp.FullPath.GetCStr());
+	if (!rp.AltPath.IsEmpty())
+		debugC(::AGS::kDebugFilePath, "Alt path: %s", rp.AltPath.GetCStr());
 	return true;
 }
 

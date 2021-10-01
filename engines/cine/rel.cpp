@@ -63,7 +63,7 @@ void loadRel(char *pRelName) {
 		size = g_cine->_relTable[i]->_size;
 		// TODO: delete the test?
 		if (size) {
-			g_cine->_relTable[i]->setData(*scriptInfo, ptr);
+			g_cine->_relTable[i]->setData(*g_cine->_scriptInfo, ptr);
 			ptr += size;
 		}
 	}

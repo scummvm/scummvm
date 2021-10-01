@@ -89,6 +89,20 @@
 {
 	{
 		"inca2",
+		"v1.07",
+		AD_ENTRY1s("intro.stk", "b56e4147acc5852c6fc2de5985ab94b0", 804796),
+		EN_USA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeInca2,
+	kFeaturesCD,
+	0, 0, 0
+},
+{
+	{
+		"inca2",
 		"",
 		AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
 		DE_DEU,
@@ -238,7 +252,7 @@
 		},
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeInca2,

@@ -56,12 +56,12 @@ extern hResource *voiceResFile;          // script resources
 
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
 
-bool haveKillerSoundCard(void);
-void writeConfig(void);
+bool haveKillerSoundCard();
+void writeConfig();
 void disableBGLoop(bool s = true);
-void enableBGLoop(void);
-void audioStressTest(void);
-extern GameObject *getViewCenterObject(void);
+void enableBGLoop();
+void audioStressTest();
+extern GameObject *getViewCenterObject();
 void playSoundAt(uint32 s, Location playAt);
 void playSoundAt(uint32 s, Point32 playAt);
 bool sayVoiceAt(uint32 s[], Location l);
@@ -98,7 +98,7 @@ static byte volumeFromDist(Point32 loc, byte maxVol) {
 //-----------------------------------------------------------------------
 //	after system initialization - startup code
 
-void startAudio(void) {
+void startAudio() {
 	uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
 
 	musicRes = soundResFile->newContext(musicID, "music resource");
@@ -158,7 +158,7 @@ void cleanupAudio() {
 // audio event loop
 
 
-void audioEventLoop(void) {
+void audioEventLoop() {
 	if (g_vm->_audio->playFlag())
 		g_vm->_audio->playMe();
 
@@ -181,7 +181,7 @@ void makeGruntSound(uint8 cs, Location l) {
 //-----------------------------------------------------------------------
 //	check for higher quality MIDI card
 
-bool haveKillerSoundCard(void) {
+bool haveKillerSoundCard() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType driverType = MidiDriver::getMusicType(dev);
 
@@ -198,7 +198,7 @@ bool haveKillerSoundCard(void) {
 //-----------------------------------------------------------------------
 // unwritten music toggler
 
-void toggleMusic(void) {
+void toggleMusic() {
 }
 
 /* ===================================================================== *
@@ -209,25 +209,25 @@ void toggleMusic(void) {
 //  suspend & resume calls
 
 
-void suspendLoops(void) {
+void suspendLoops() {
 	disableBGLoop(false);
 }
 
-void resumeLoops(void) {
+void resumeLoops() {
 	if (loopRes)
 		enableBGLoop();
 }
 
-void suspendMusic(void) {
+void suspendMusic() {
 	audioEnvironmentSuspend(true);
 }
 
-void resumeMusic(void) {
+void resumeMusic() {
 	if (musicRes)
 		audioEnvironmentSuspend(false);
 }
 
-void suspendAudio(void) {
+void suspendAudio() {
 	if (g_vm->_audio) {
 		suspendMusic();
 		suspendLoops();
@@ -235,7 +235,7 @@ void suspendAudio(void) {
 	}
 }
 
-void resumeAudio(void) {
+void resumeAudio() {
 	if (g_vm->_audio) {
 		if (soundRes != NULL || voiceRes != NULL) {
 			g_vm->_audio->resume();
@@ -248,7 +248,7 @@ void resumeAudio(void) {
 //-----------------------------------------------------------------------
 //  UI volume change hook
 
-void volumeChanged(void) {
+void volumeChanged() {
 	if (g_vm->_audio->getVolume(kVolSfx))
 		resumeLoops();
 	else
@@ -437,7 +437,7 @@ void playLoopAt(uint32 s, Point32 loc) {
 
 void addAuxTheme(Location loc, uint32 lid);
 void killAuxTheme(uint32 lid);
-void killAllAuxThemes(void);
+void killAllAuxThemes();
 
 void playLoopAt(uint32 s, Location playAt) {
 	debugC(1, kDebugSound, "playLoopAt(%s, %d,%d,%d)", tag2strP(s), playAt.u, playAt.v, playAt.z);
@@ -580,7 +580,7 @@ void AudioInterface::initAudioInterface(hResContext *musicContext) {
 	_music = new Music(musicContext);
 }
 
-bool AudioInterface::playFlag(void) {
+bool AudioInterface::playFlag() {
 	debugC(5, kDebugSound, "AudioInterface::playFlag()");
 	if (_speechQueue.size() == 0 && !_mixer->isSoundHandleActive(_speechSoundHandle))
 		_currentSpeech.seg = 0;
@@ -588,7 +588,7 @@ bool AudioInterface::playFlag(void) {
 	return _speechQueue.size() > 0 || _sfxQueue.size() > 0;
 }
 
-void AudioInterface::playMe(void) {
+void AudioInterface::playMe() {
 	if (_speechQueue.size() > 0 && !_mixer->isSoundHandleActive(_speechSoundHandle)) {
 		SoundInstance si = _speechQueue.front();
 		_speechQueue.pop_front();
@@ -623,7 +623,7 @@ void AudioInterface::playMusic(uint32 s, int16 loopFactor, Point32 where) {
 	_currentMusic.loc = where;
 }
 
-void AudioInterface::stopMusic(void) {
+void AudioInterface::stopMusic() {
 	_music->stop();
 }
 
@@ -650,7 +650,7 @@ void AudioInterface::playLoop(uint32 s, int16 loopFactor, Point32 where) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_vm->_audio->_loopSoundHandle, laud, -1, vol);
 }
 
-void AudioInterface::stopLoop(void) {
+void AudioInterface::stopLoop() {
 	_mixer->stopHandle(_loopSoundHandle);
 }
 
@@ -688,11 +688,11 @@ void AudioInterface::queueVoice(uint32 s[], Point32 where) {
 	}
 }
 
-void AudioInterface::stopVoice(void) {
+void AudioInterface::stopVoice() {
 	_mixer->stopHandle(_speechSoundHandle);
 }
 
-bool AudioInterface::talking(void) {
+bool AudioInterface::talking() {
 	return _mixer->isSoundHandleActive(_speechSoundHandle);
 }
 
@@ -722,11 +722,11 @@ byte AudioInterface::getVolume(VolumeTarget src) {
 	return 0;
 }
 
-void AudioInterface::suspend(void) {
+void AudioInterface::suspend() {
 	_mixer->pauseAll(true);
 }
 
-void AudioInterface::resume(void) {
+void AudioInterface::resume() {
 	_mixer->pauseAll(false);
 }
 

@@ -31,9 +31,9 @@
 
 namespace Saga2 {
 
-void ModalModeSetup(void);
-void ModalModeCleanup(void);
-void ModalModeHandleTask(void);
+void ModalModeSetup();
+void ModalModeCleanup();
+void ModalModeHandleTask();
 void ModalModeHandleKey(short, short);
 
 //Modal Mode GameMode Object
@@ -55,9 +55,9 @@ public:
 	            AppFunc *cmd);
 	~ModalWindow();
 
-	bool open(void);
-	void close(void);
-	bool isModal(void);
+	bool open();
+	void close();
+	bool isModal();
 
 	static ModalWindow *current;
 	void handleKey(short, short);

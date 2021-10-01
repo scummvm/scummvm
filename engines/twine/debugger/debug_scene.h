@@ -75,7 +75,7 @@ public:
 	bool _showingActors = false;
 	bool _showingTracks = false;
 	bool _showingClips = false;
-	bool _useScenePatches = false;
+	bool _godMode = false;
 	int32 _typeZones = 127; // all zones on as default
 	int16 _onlyLoadActor = -1;
 

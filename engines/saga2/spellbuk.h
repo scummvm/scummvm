@@ -131,7 +131,7 @@ public:
 	void setProto(SkillProto *p)           {
 		prototype = p;
 	}
-	SkillProto *getProto(void)             {
+	SkillProto *getProto()             {
 		return prototype;
 	}
 
@@ -139,7 +139,7 @@ public:
 
 	void addEffect(ProtoEffect *pe);
 	void addEffect(ResourceSpellEffect *rse);
-	void killEffects(void);
+	void killEffects();
 
 	bool canTarget(SpellTargetingTypes t)  {
 		return targetableTypes & t;
@@ -148,10 +148,10 @@ public:
 		return targetTypes & t;
 	}
 
-	bool untargetable(void)    {
+	bool untargetable()    {
 		return (targetableTypes == spellTargNone);
 	}
-	bool untargeted(void)      {
+	bool untargeted()      {
 		return false;    //(targetableTypes == spellTargWorld ) ||
 	}
 	//(targetableTypes == spellTargCaster ) ||
@@ -163,19 +163,19 @@ public:
 	void implement(GameObject *enactor, ActiveItem *target);
 	void implement(GameObject *enactor, Location   target);
 
-	SpellID getDisplayID(void)            {
+	SpellID getDisplayID()            {
 		return display;
 	}
-	SpellManaID getManaType(void)           {
+	SpellManaID getManaType()           {
 		return manaType;
 	}
 	void setManaType(SpellManaID smid)    {
 		manaType = smid;
 	}
-	int8 getManaAmt(void)                   {
+	int8 getManaAmt()                   {
 		return manaUse;
 	}
-	int32 getRange(void)                   {
+	int32 getRange()                   {
 		return range;
 	}
 
@@ -188,8 +188,8 @@ public:
 
 	void playSound(GameObject *go);
 	void show(GameObject *, SpellTarget &);
-	bool safe(void);
-	bool isOffensive(void);
+	bool safe();
+	bool isOffensive();
 };
 
 /* ===================================================================== *

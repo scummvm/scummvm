@@ -369,7 +369,7 @@ void PluginManagerUncached::init() {
 #ifndef DETECTION_STATIC
 			if (!foundDetectPlugin && (*pp)->isFilePluginProvider()) {
 				Common::String pName = (*p)->getFileName();
-				if (pName.hasSuffix(detectPluginName)) {
+				if (pName.hasSuffixIgnoreCase(detectPluginName)) {
 					_detectionPlugin = (*p);
 					foundDetectPlugin = true;
 					debug(9, "Detection plugin found!");
@@ -404,6 +404,20 @@ bool PluginManagerUncached::loadPluginFromEngineId(const Common::String &engineI
 		if (domain->contains(engineId)) {
 			Common::String filename = (*domain)[engineId];
 
+			if (loadPluginByFileName(filename)) {
+				return true;
+			}
+		}
+	}
+	// Check for a plugin with the same name as the engine before starting
+	// to scan all plugins
+	Common::String tentativeEnginePluginFilename = engineId;
+#ifdef PLUGIN_SUFFIX
+	tentativeEnginePluginFilename += PLUGIN_SUFFIX;
+#endif
+	for (PluginList::iterator p = _allEnginePlugins.begin(); p != _allEnginePlugins.end(); ++p) {
+		Common::String filename = (*p)->getFileName();
+		if (filename.hasSuffixIgnoreCase(tentativeEnginePluginFilename)) {
 			if (loadPluginByFileName(filename)) {
 				return true;
 			}

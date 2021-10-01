@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_MOUSE_CURSOR_H
 #define AGS_SHARED_AC_MOUSE_CURSOR_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 namespace AGS {
@@ -44,7 +46,7 @@ struct MouseCursor {
 	short hotx, hoty;
 	short view;
 	char  name[10];
-	char  flags;
+	int8  flags;
 
 	MouseCursor();
 

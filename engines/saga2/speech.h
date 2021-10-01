@@ -39,13 +39,13 @@ namespace Saga2 {
 void    TileToScreenCoords(const TilePoint &tp, Point16 &p);
 void    TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p);
 void    updateSpeech();
-extern  TilePoint centerActorCoords(void);
+extern  TilePoint centerActorCoords();
 bool    isVisible(GameObject *obj);
 
 #ifdef FRANKC
 void    sentenceGenerator(char *);
-void    abortSpeech(void);
-void    abortAllSpeeches(void);
+void    abortSpeech();
+void    abortAllSpeeches();
 void    queueActorSpeech(
     GameObject          *obj,
     char                *text,
@@ -109,19 +109,19 @@ private:
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive this SpeechTask
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	//  Archive this SpeechTask in a buffer
 	void *archive(void *buf);
 
 	void write(Common::MemoryWriteStreamDynamic *out);
 
-	bool setupActive(void);                  // render speech into temp image
-	bool displayText(void);
+	bool setupActive();                  // render speech into temp image
+	bool displayText();
 	int16 fits(int16 space);
-	void setWidth(void);
+	void setWidth();
 	bool calcPosition(StaticPoint16 &p);       // calculate position
-	void remove(void);                   //  Remove from active list
+	void remove();                   //  Remove from active list
 
 public:
 
@@ -134,13 +134,13 @@ public:
 	};
 
 	// remove speech, dealloc resources
-	void dispose(void);
+	void dispose();
 
 	//  Append text and samples to speech
 	bool append(char *text, int32 sampID);
 
 	//  Move speech to active list
-	bool activate(void);
+	bool activate();
 
 	//  Set speech to wake up thread when done
 	void setWakeUp(ThreadID th) {
@@ -148,10 +148,10 @@ public:
 	}
 
 	//  See if its time to kill it
-	bool longEnough(void);
+	bool longEnough();
 
 	//  Abort the current speech.
-	void abortSpeech(void);
+	void abortSpeech();
 };
 
 class SpeechTaskList {
@@ -177,7 +177,7 @@ class SpeechTaskList {
 public:
 
 	//  Constructor
-	SpeechTaskList(void);
+	SpeechTaskList();
 
 	//  Constructor -- reconstruct from archive buffer
 	SpeechTaskList(void **buf);
@@ -185,7 +185,7 @@ public:
 	SpeechTaskList(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive the speech tasks
-	int32 archiveSize(void);
+	int32 archiveSize();
 
 	//  Create an archive of the speech tasks in an archive buffer
 	void *archive(void *buf);
@@ -193,7 +193,7 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the speech tasks
-	void cleanup(void);
+	void cleanup();
 
 	//  Allocate a new speech task
 	Speech *newTask(ObjectID id, uint16 flags);
@@ -201,17 +201,17 @@ public:
 	//  Find a non-active speech for a given actor
 	Speech *findSpeech(ObjectID id);
 
-	Speech *currentActive(void) {
+	Speech *currentActive() {
 		if (_list.size() > 0)
 			return _list.front();
 		return nullptr;
 	}
 
-	int32 activeCount(void) {
+	int32 activeCount() {
 		return _list.size();
 	}
 
-	int speechCount(void) {
+	int speechCount() {
 		return _list.size() + _inactiveList.size();
 	}
 
@@ -222,14 +222,14 @@ extern SpeechTaskList &speechList;
 
 
 //  Initialize the speech task list
-void initSpeechTasks(void);
+void initSpeechTasks();
 
 //  Save the speech tasks in a save file
 void saveSpeechTasks(Common::OutSaveFile *outS);
 void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the speech task list
-void cleanupSpeechTasks(void);
+void cleanupSpeechTasks();
 
 } // end of namespace Saga2
 

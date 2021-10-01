@@ -71,6 +71,24 @@ static const ADGameDescription mutationofjbDescriptions[] = {
 		ADGF_CD,
 		GUIO1(GUIO_NOMIDI)
 	},
+	{	// Demo from Riki Multimedia Magazine (Slovakia) #23 - Nov 1996
+		"mutationofjb",
+		"Demo",
+		{
+			{"jbdemo.exe", 0, "97943a569bacc4131447577436389276", 121696},
+			{"strt.dat", 0, nullptr, -1},
+			{"startupb.dat", 0, nullptr, -1},
+			{"global.atn", 0, nullptr, -1},
+			{"piggy.apk", 0, nullptr, -1},
+			{"font1.aft", 0, nullptr, -1},
+			{"sysfnt.aft", 0, nullptr, -1},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::SK_SVK,
+		Common::kPlatformDOS,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
 	AD_TABLE_END_MARKER
 };
 

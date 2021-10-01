@@ -95,14 +95,18 @@ void View::centerIn(View *parent) {
 }
 
 ///// CLPalette
-uint16 gIntervalLast, gIntervalFirst, gIntervalSet;
-int16 gMacintize = 0;
-color_t black_palette[256];
-color_t last_palette[256];
+static uint16 gIntervalLast, gIntervalFirst, gIntervalSet;
+static int16 gMacintize;
+static color_t last_palette[256];
 
 void CLPalette_Init() {
+	gIntervalLast = 0;
+	gIntervalFirst = 0;
+	gIntervalSet = 0;
+	gMacintize = 0;
+
 	for (int16 i = 0; i < 256; i++)
-		black_palette[i].r = black_palette[i].g = black_palette[i].b = 0;
+		last_palette[i].r = last_palette[i].g = last_palette[i].b = 0;
 }
 
 void CLPalette_SetLastPalette(color_t *palette, int16 first, int16 count) {
@@ -168,6 +172,13 @@ void CLPalette_BeSystem() {
 static uint16 newPaletteCount, newPaletteFirst;
 static color_t *pNewPalette;
 static bool useNewPalette;
+
+void CLBlitter_Init() {
+	newPaletteCount = 0;
+	newPaletteFirst = 0;
+	pNewPalette = nullptr;
+	useNewPalette = false;
+}
 
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2) {
 	int dy = rect2->top;
@@ -252,8 +263,6 @@ void CLBlitter_FillScreenView(unsigned int fill) {
 }
 
 ///// events wrapper
-int _mouseButton;
-byte _keyState[256];
 
 void CryoEngine::pollEvents() {
 	g_system->delayMillis(10);
@@ -269,7 +278,6 @@ void CryoEngine::pollEvents() {
 		case Common::EVENT_KEYDOWN:
 			return;
 		case Common::EVENT_KEYUP:
-			//          _keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
@@ -316,6 +324,8 @@ void CLTimer_Action(void *arg) {
 
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
+	CLPalette_Init();
+	CLBlitter_Init();
 	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
 	g_ed->_screenView->initDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }

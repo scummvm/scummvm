@@ -1239,10 +1239,11 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	byte chr;
 	byte lastChr = 0;
 	const byte *src;
-	byte *end;
+	byte *start, *end;
 	byte transBuf[2048];
 
 	assert(dst);
+	start = dst;
 	end = dst + dstSize;
 
 	if (msg == NULL) {
@@ -1360,7 +1361,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	// it does not work as is with our rendering code, thus fixing it
 	// with a workaround.
 	if (_game.id == GID_DIG) {
-		while (*(dst - 1) == 0x03)
+		while (dst > start && *(dst - 1) == 0x03)
 			dst--;
 	}
 	*dst = 0;

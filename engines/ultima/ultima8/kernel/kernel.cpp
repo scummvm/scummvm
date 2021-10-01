@@ -173,7 +173,13 @@ void Kernel::runProcesses() {
 			// we can work out what it is avoid the game totally hanging at this
 			// point.
 			//
-			if (num_run > 8096 && !p->is_terminated()) {
+			// If this threshold is set too low, it can cause issues with U8 map
+			// transitions (eg, bug #12913).  If it's too high, Crusader locks up
+			// for a really long time at this point.  Set it high enough that
+			// a process going through all map items should still terminate.
+			//
+			if (((num_run > 8192 && GAME_IS_CRUSADER) || num_run > 65534)
+					&& !p->is_terminated()) {
 				warning("Seem to be stuck in process loop - killing current process");
 				p->fail();
 			}

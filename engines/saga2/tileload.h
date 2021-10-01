@@ -148,13 +148,13 @@ private:
 
 	uint32  _b[lWords];
 
-	void clear(void) {
+	void clear() {
 		memset(&_b, 0, sizeof _b);
 	}
 
 public:
 
-	FixedBitArray(void) {
+	FixedBitArray() {
 		clear();
 	}
 
@@ -173,7 +173,7 @@ public:
 		}
 	}
 
-	void clearAll(void) {
+	void clearAll() {
 		clear();
 	}
 

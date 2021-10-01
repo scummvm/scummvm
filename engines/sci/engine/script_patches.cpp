@@ -114,6 +114,7 @@ static const char *const selectorNameTable[] = {
 	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
+	"isEmpty",      // Quest For Glory 3
 	"solvePuzzle",  // Quest For Glory 3
 	"curIcon",      // Quest For Glory 3, QFG4
 	"curInvIcon",   // Quest For Glory 3, QFG4
@@ -241,6 +242,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_hide,
 	SELECTOR_say,
 	SELECTOR_script,
+	SELECTOR_isEmpty,
 	SELECTOR_solvePuzzle,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
@@ -9838,33 +9840,11 @@ static const uint16 mothergooseHiresLogoPatch[] = {
 	PATCH_END
 };
 
-// After finishing the rhyme at the fountain, a horse will appear and walk
-// across the screen. The priority of the horse is set too high, so it is
-// rendered in front of the fountain instead of behind the fountain. This patch
-// corrects the priority so the horse draws behind the fountain.
-//
-// Applies to at least: English CD from King's Quest Collection
-// Responsible method: rhymeScript::changeState
-static const uint16 mothergooseHiresHorseSignature[] = {
-	SIG_MAGICDWORD,
-	0x39, SIG_SELECTOR8(setPri), // pushi setPri ($4a)
-	0x78,                        // push1
-	0x38, SIG_UINT16(0x00b7),    // pushi $b7
-	SIG_END
-};
-
-static const uint16 mothergooseHiresHorsePatch[] = {
-	PATCH_ADDTOOFFSET(+3),    // pushi setPri, push1
-	0x38, PATCH_UINT16(0x59), // pushi $59
-	PATCH_END
-};
-
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 	{  true,     0, "disable volume reset on startup (1/2)",       2, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,    90, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,   108, "fix bad logo rendering",                      1, mothergooseHiresLogoSignature,    mothergooseHiresLogoPatch },
-	{  true,   318, "fix bad horse z-index",                       1, mothergooseHiresHorseSignature,   mothergooseHiresHorsePatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -11708,7 +11688,7 @@ static const uint16 pq4LastActionHeroTimerPatch[] = {
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true,     6, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
-	{  true,     9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
+	{  false,    9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
 	{  true,    42, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
 	{  true,    42, "speech+subtitles talker compatibility (2/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature2,            pq4CdSpeechAndSubtitlesTalkerPatch2 },
 	{  true,    43, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
@@ -12515,6 +12495,45 @@ static const uint16 qfg1vgaPatchThievesGuildCashier[] = {
 	PATCH_END
 };
 
+// When casting the fetch spell at the spitting plants and failing to fetch the
+//  seed, the script lassoFailed stores the target coordinates in temp variables
+//  during state 0 and expects them to still be there in state 1. This worked by
+//  accident in Sierra's interpreter.
+//
+// We fix this by using local variables instead. Locals 7 and 8 are only used to
+//  save and restore ego's speeds during other sequences in this room.
+//
+// Applies to: All versions
+// Responsible method: lassoFailed:changeState
+// Fixes bug: #5309
+static const uint16 qfg1vgaSignatureCastFetchAtPlants[] = {
+	SIG_MAGICDWORD,
+	0xa5, 0x00,                             // sat 00 [ temp0 = flower:x ]
+	0x76,                                   // push0  [ y ]
+	0x76,                                   // push0
+	0x83, 0x05,                             // lal 05
+	0x93, 0x0c,                             // lali 0c
+	0x4a, 0x04,                             // send 04 [ flower y? ]
+	0x36,                                   // push
+	0x35, 0x1e,                             // ldi 1e
+	0x04,                                   // sub
+	0xa5, 0x01,                             // sat 01 [ temp0 = flower:y - 30 ]
+	SIG_ADDTOOFFSET(+31),
+	0x8d, 0x00,                             // lst 00
+	0x8d, 0x01,                             // lst 01
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchCastFetchAtPlants[] = {
+	0xa3, 0x07,                             // sal 07
+	PATCH_ADDTOOFFSET(+12),
+	0xa3, 0x08,                             // sal 08
+	PATCH_ADDTOOFFSET(+31),
+	0x8b, 0x07,                             // lsl 07
+	0x8b, 0x08,                             // lsl 08
+	PATCH_END
+};
+
 // When entering the great hall (room 141), the Mac version stores ego's speed
 //  in a temp variable in egoEnters:changeState(0) and expects that value to be
 //  there in state 6 when restoring ego's speed. We patch the script to use its
@@ -12702,6 +12721,7 @@ static const uint16 qfg1vgaPatchDrinkWaterMessage[] = {
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
+	{  true,    16, "cast fetch at plants",                        1, qfg1vgaSignatureCastFetchAtPlants,   qfg1vgaPatchCastFetchAtPlants },
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
 	{  true,    58, "mac: giant fight",                            6, qfg1vgaSignatureMacGiantFight,       qfg1vgaPatchMacGiantFight },
@@ -13458,6 +13478,44 @@ static const uint16 qfg3PatchJohariManuMapBugs[] = {
 	PATCH_END
 };
 
+// Returning to room 770 after taking a gem and then angering the guardian can
+//  cause an error by sending a message to a non-object. This is due to a script
+//  bug in the Actor:ignoreBlocks method. It deletes the Actor:blocks property
+//  and sets it to zero, but it fails to check if Actor:blocks is already zero
+//  from a previous call. This is the only room that calls Actor:ignoreBlocks.
+//
+// We fix this as Sierra did in later games by adding a test to verify that
+//  Actor:blocks has been set before deleting it.
+//
+// Applies to: All versions
+// Responsible method: Actor:ignoreBlocks
+// Fixes bug: #12968
+static const uint16 qfg3SignatureActorIgnoreBlocks[] = {
+	0x39, SIG_SELECTOR8(delete),        // pushi delete
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x63, 0x74,                         // pToa blocks
+	0x4a, 0x04,                         // send 04 [ blocks delete: &rest ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(isEmpty),       // pushi isEmpty
+	0x76,                               // push0
+	0x63, 0x74,                         // pToa blocks
+	0x4a, 0x04,                         // send 04 [ blocks isEmpty: ]
+	0x30,                               // bnt [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchActorIgnoreBlocks[] = {
+	0x63, 0x74,                         // pToa blocks
+	0x31, 0x0c,                         // bnt 0c [ end of method ]
+	0x39, PATCH_SELECTOR8(delete),      // pushi delete
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	PATCH_ADDTOOFFSET(+5),
+	0x4a, 0x08,                         // send 08 [ blocks delete: &rest, isEmpty: ]
+	PATCH_END
+};
+
 // The NRS fan-patch, which is included with the GOG release, has a script bug
 //  which errors when angering the Guardian in room 770. This can be triggered
 //  by taking a second gem. The patch changes ego's moveSpeed from 0 to 2 in the
@@ -13536,6 +13594,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   170, "johari/manu map crash and message bugs",             2, qfg3SignatureJohariManuMapBugs,      qfg3PatchJohariManuMapBugs },
 	{  true,   770, "NRS: anger guardian crash",                          1, qfg3SignatureNrsAngerGuardian,       qfg3PatchNrsAngerGuardian },
 	{  true,   928, "Narrator lockup fix",                                1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
+	{  true,   998, "actor ignoreBlocks crash at guardian",               1, qfg3SignatureActorIgnoreBlocks,      qfg3PatchActorIgnoreBlocks },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -22183,6 +22242,15 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
+				}
+				break;
+			case GID_PQ4:
+				if (g_sci->getLanguage() == Common::EN_ANY) {
+					// The in-game UI option for speech+subtitles makes sense only for the
+					// English version.
+					// French and German versions feature localized text with English voices.
+					// Also, our injected speech+subtitles view is currently only in English.
+					enablePatch(signatureTable, "add speech+subtitles to in-game UI");
 				}
 				break;
 			case GID_SQ1:

@@ -67,6 +67,8 @@ public:
 
 private:
 	void Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode);
+	String getSaveName(const String &filename);
+	Common::OutSaveFile *openForWriting(const String &saveName, FileOpenMode open_mode, FileWorkMode work_mode);
 
 	Common::Stream *_file;
 	const FileWorkMode  _workMode;

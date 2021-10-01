@@ -46,7 +46,8 @@ bool Saga2MetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 Common::Error Saga2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Saga2::Saga2Engine(syst);
+	const Saga2::SAGA2GameDescription *gd = (const Saga2::SAGA2GameDescription *)desc;
+	*engine = new Saga2::Saga2Engine(syst, gd);
 	return Common::kNoError;
 }
 

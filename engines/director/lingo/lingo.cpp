@@ -255,10 +255,11 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), code.encode().c_str());
 
 	if (getScriptContext(type, id)) {
-		// We can't undefine context data because it could be used in e.g. symbols.
-		// Although it has a legit case when kTheScriptText re sets code.
-		// Warn on double definitions.
+		// Replace the pre-existing context but warn about it.
+		// For cases where replacing the script context is expected (e.g. 'when' event handlers)
+		// use replaceCode instead of addCode.
 		warning("Script already defined for type %d, id %d", type, id);
+		removeCode(type, id);
 	}
 
 	Common::String contextName;
@@ -272,6 +273,23 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 		scriptContexts[type][id] = sc;
 		*sc->_refCount += 1;
 	}
+}
+
+void LingoArchive::removeCode(ScriptType type, uint16 id) {
+	ScriptContext *ctx = getScriptContext(type, id);
+	if (!ctx)
+		return;
+
+	*ctx->_refCount -= 1;
+	if (*ctx->_refCount <= 0) {
+		delete ctx;
+	}
+	scriptContexts[type].erase(id);
+}
+
+void LingoArchive::replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
+	removeCode(type, id);
+	addCode(code, type, id, scriptName);
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -869,7 +887,7 @@ Common::String Datum::asString(bool printonly) const {
 			if (i > 0)
 				s += ", ";
 			Datum d = u.farr->arr[i];
-			s += d.asString(printonly);
+			s += d.asString(true);
 		}
 
 		s += "]";
@@ -883,7 +901,7 @@ Common::String Datum::asString(bool printonly) const {
 				s += ", ";
 			Datum p = u.parr->arr[i].p;
 			Datum v = u.parr->arr[i].v;
-			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
+			s += Common::String::format("%s: %s", p.asString(true).c_str(), v.asString(true).c_str());
 		}
 
 		s += "]";
@@ -1006,34 +1024,63 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	return 0;
 }
 
-int Datum::compareTo(Datum &d) const {
+bool Datum::operator==(Datum &d) const {
+	return equalTo(d);
+}
+
+bool Datum::operator>(Datum &d) const {
+	return compareTo(d) == kCompareGreater;
+}
+
+bool Datum::operator<(Datum &d) const {
+	return compareTo(d) == kCompareLess;
+}
+
+bool Datum::operator>=(Datum &d) const {
+	CompareResult res = compareTo(d);
+	return res == kCompareGreater || res == kCompareEqual;
+}
+
+bool Datum::operator<=(Datum &d) const {
+	CompareResult res = compareTo(d);
+	return res == kCompareLess || res == kCompareEqual;
+}
+
+CompareResult Datum::compareTo(Datum &d) const {
 	int alignType = g_lingo->getAlignedType(*this, d, false);
 
 	if (alignType == FLOAT) {
 		double f1 = asFloat();
 		double f2 = d.asFloat();
 		if (f1 < f2) {
-			return -1;
+			return kCompareLess;
 		} else if (f1 == f2) {
-			return 0;
+			return kCompareEqual;
 		} else {
-			return 1;
+			return kCompareGreater;
 		}
 	} else if (alignType == INT) {
 		double i1 = asInt();
 		double i2 = d.asInt();
 		if (i1 < i2) {
-			return -1;
+			return kCompareLess;
 		} else if (i1 == i2) {
-			return 0;
+			return kCompareEqual;
 		} else {
-			return 1;
+			return kCompareGreater;
 		}
 	} else if (alignType == STRING) {
-		return compareStrings(asString(), d.asString());
+		int res = compareStrings(asString(), d.asString());
+		if (res < 0) {
+			return kCompareLess;
+		} else if (res == 0) {
+			return kCompareEqual;
+		} else {
+			return kCompareGreater;
+		}
 	} else {
 		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
-		return 0;
+		return kCompareError;
 	}
 }
 

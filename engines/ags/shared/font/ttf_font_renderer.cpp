@@ -61,18 +61,20 @@ int TTFFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 }
 
 int TTFFontRenderer::GetTextHeight(const char *text, int fontNumber) {
-	return alfont_text_height(_fontData[fontNumber].AlFont);
+	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
 }
 
 void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	if (y > destination->cb)  // optimisation
 		return;
 
-	int srcFontNum = get_outline_font(fontNumber);
+	int srcFontNum = get_font_outline_font(fontNumber);
 	ALFONT_FONT *srcFont = nullptr;
 	if (srcFontNum != FONT_OUTLINE_NONE) {
+		// Get the font without outline (if it's loaded) for use in
+		// character widths, so it will match when non-outlined font
+		// is drawn on top of it.
 		srcFont = _fontData[srcFontNum].AlFont;
-		assert(srcFont);
 	}
 
 	// Y - 1 because it seems to get drawn down a bit
@@ -81,14 +83,15 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
-	return LoadFromDiskEx(fontNumber, fontSize, nullptr);
+	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
 }
 
 bool TTFFontRenderer::IsBitmapFont() {
 	return false;
 }
 
-bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params) {
+bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
+		const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
 	soff_t lenof = 0;
 	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name, &lenof);
@@ -132,6 +135,12 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRen
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
+
+	if (metrics) {
+		metrics->Height = alfont_get_font_height(alfptr);
+		metrics->RealHeight = alfont_get_font_real_height(alfptr);
+	}
+
 	return true;
 }
 

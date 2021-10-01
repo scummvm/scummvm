@@ -42,8 +42,8 @@ class gMousePointer {
 	                    offsetPosition;     // center of mouse image
 	bool                shown;              // mouse currently shown
 
-	void draw(void);
-	void restore(void);
+	void draw();
+	void restore();
 public:
 	gMousePointer(gDisplayPort &);       // constructor
 	~gMousePointer();                       // destructor
@@ -52,17 +52,17 @@ public:
 	bool init(uint16 xLimit, uint16 yLimit) {
 		return init(Point16(xLimit, yLimit));
 	}
-	void show(void);                         // show the pointer
-	void hide(void);                         // hide the pointer
+	void show();                         // show the pointer
+	void hide();                         // hide the pointer
 	void show(gPort &port, Rect16 r);        // show the pointer
 	void hide(gPort &port, Rect16 r);        // hide the pointer
-	int manditoryShow(void);
+	int manditoryShow();
 	void move(Point16 pos);                  // move the pointer
 	void setImage(gPixelMap &img, int x, int y);     // set the pointer imagery
-	bool isShown(void) {
+	bool isShown() {
 		return shown;
 	}
-	int16 hideDepth(void) {
+	int16 hideDepth() {
 		return hideCount;
 	}
 	gPixelMap *getImage(Point16 &offset) {

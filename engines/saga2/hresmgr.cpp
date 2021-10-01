@@ -116,7 +116,7 @@ uint32 hResContext::size(hResID id) {
 	return entry->size;
 }
 
-uint32 hResContext::count(void) {
+uint32 hResContext::count() {
 	return _numEntries;
 }
 
@@ -163,7 +163,7 @@ bool hResContext::seek(hResID id) {
 	return true;
 }
 
-void hResContext::rest(void) {
+void hResContext::rest() {
 	_bytecount = 0;
 	_bytepos = 0;
 	if (_valid && _handle && _handle != _res->_handle) {
@@ -180,7 +180,7 @@ bool hResContext::read(void *buffer, uint32 size) {
 	return (_handle->read(buffer, size) != 0);
 }
 
-bool hResContext::eor(void) {
+bool hResContext::eor() {
 	return (_bytecount < 1);
 }
 
@@ -330,7 +330,7 @@ void hResource::readResource(hResEntry &element) {
 	debugC(3, kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
 }
 
-hResource::hResource(const char *resname, const char desc[]) {
+hResource::hResource(const char *resname) {
 	hResEntry   origin;
 	int32      tableSize;
 	const int32 resourceSize = 4 + 4 + 4; // id, offset, size

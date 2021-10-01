@@ -46,7 +46,7 @@ int   FileIsEOF(int32_t handle);
 int   FileIsError(int32_t handle);
 void  FileWriteInt(int32_t handle, int into);
 int   FileReadInt(int32_t handle);
-char  FileReadRawChar(int32_t handle);
+int8  FileReadRawChar(int32_t handle);
 int   FileReadRawInt(int32_t handle);
 void  FileWriteRawChar(int32_t handle, int chartoWrite);
 

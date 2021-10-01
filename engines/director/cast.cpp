@@ -925,7 +925,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		_loadedCast->setVal(id, new DigitalVideoCastMember(this, id, castStream, _version));
 		break;
 	case kCastFilmLoop:
-		warning("STUB: Cast::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastFilmLoop (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
 		castInfoSize = 0;
 		break;
 	case kCastPalette:
@@ -933,15 +933,15 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		_loadedCast->setVal(id, new PaletteCastMember(this, id, castStream, _version));
 		break;
 	case kCastPicture:
-		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());
+		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastPicture (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
 		castInfoSize = 0;
 		break;
 	case kCastMovie:
-		warning("STUB: Cast::loadCastData(): kCastMovie (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastMovie (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
 		castInfoSize = 0;
 		break;
 	default:
-		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (%d children)", castType, tag2str(castType), res->children.size());
+		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
 		castInfoSize = 0;
 		break;

@@ -362,11 +362,11 @@ public:
 	}
 
 	// functions
-	void normalize(void);                        // make rect right-side out
+	void normalize();                        // make rect right-side out
 	void expand(int16 dx, int16 dy);             // grow or shrink the rect
 	void expand(int16 left, int16 top, int16 right, int16 bottom);
 
-	int empty(void) const {
+	int empty() const {
 		return width <= 0 || height <= 0;
 	}
 
@@ -490,12 +490,12 @@ public:
 		y -= a.y;
 	}
 	// functions
-	void normalize(void);                        // make rect right-side out
+	void normalize();                        // make rect right-side out
 
 	void expand(int32 dx, int32 dy);             // grow or shrink the rect
 	void expand(int32 left, int32 top, int32 right, int32 bottom);
 
-	int empty(void) const {
+	int empty() const {
 		return width <= 0 || height <= 0;
 	}
 

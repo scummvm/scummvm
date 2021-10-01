@@ -54,10 +54,10 @@ struct ScriptAudioClip {
 	int id = 0;
 	Shared::String scriptName;
 	Shared::String fileName;
-	char bundlingType = AUCL_BUNDLE_EXE;
+	int8 bundlingType = AUCL_BUNDLE_EXE;
 	int8 type = 0;
-	char fileType = eAudioFileOGG;
-	char defaultRepeat = 0;
+	int8 fileType = eAudioFileOGG;
+	int8 defaultRepeat = 0;
 	short defaultPriority = 50;
 	short defaultVolume = 100;
 

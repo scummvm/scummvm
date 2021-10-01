@@ -29,7 +29,7 @@
 #include "savestate.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/scene/gamestate.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
@@ -53,7 +53,7 @@ void MenuOptions::newGame() {
 	_engine->_cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
-	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
+	_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 
 	_engine->_text->_drawTextBoxBackground = false;
 	_engine->_text->_renderTextTriangle = true;
@@ -66,11 +66,11 @@ void MenuOptions::newGame() {
 
 	// intro screen 2
 	if (!aborted) {
-		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG, RESSHQR_INTROSCREEN2PAL);
+		_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 17, 18));
 		aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText2);
 
 		if (!aborted) {
-			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG, RESSHQR_INTROSCREEN3PAL);
+			_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 19, 20));
 			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
 		}
 	}
@@ -234,7 +234,6 @@ public:
 };
 
 bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize) {
-	textTargetBuf[0] = '\0';
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
@@ -337,6 +336,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 
 bool MenuOptions::newGameMenu() {
 	_engine->restoreFrontBuffer();
+	_saveGameName[0] = '\0';
 	if (!enterText(TextId::kEnterYourName, _saveGameName, sizeof(_saveGameName))) {
 		return false;
 	}
@@ -357,17 +357,21 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 	saveFiles.addButton(TextId::kReturnMenu);
 
 	const int maxButtons = _engine->getMetaEngine()->getMaximumSaveSlot() + 1;
-	for (const SaveStateDescriptor &savegame : savegames) {
-		saveFiles.addButton(savegame.getDescription().encode().c_str(), savegame.getSaveSlot());
-		if (saveFiles.getButtonCount() >= maxButtons) {
-			break;
-		}
-	}
-
-	if (showEmptySlots) {
-		while (saveFiles.getButtonCount() < maxButtons) {
-			// the first button is the back button - to subtract that one again to get the real slot index
-			saveFiles.addButton("EMPTY", saveFiles.getButtonCount() - 1);
+	uint savesIndex = 0;
+	for (int i = 1; i < maxButtons; ++i) {
+		if (savesIndex < savegames.size()) {
+			const SaveStateDescriptor &savegame = savegames[savesIndex];
+			if (savegame.getSaveSlot() == i - 1) {
+				// manually creating a savegame should not overwrite the autosave slot
+				if (textIdx != TextId::kCreateSaveGame || i > 1) {
+					saveFiles.addButton(savegame.getDescription().encode().c_str(), i);
+				}
+				++savesIndex;
+			} else if (showEmptySlots) {
+				saveFiles.addButton("EMPTY", i);
+			}
+		} else if (showEmptySlots) {
+			saveFiles.addButton("EMPTY", i);
 		}
 	}
 
@@ -378,8 +382,8 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 		case (int32)TextId::kReturnMenu:
 			return -1;
 		default:
-			const int16 slot = saveFiles.getButtonState(id);
-			debug("Selected slot %d for saving", slot);
+			const int16 slot = saveFiles.getButtonState(id) - 1;
+			debug("Selected savegame slot %d", slot);
 			return slot;
 		}
 	}
@@ -420,7 +424,16 @@ bool MenuOptions::saveGameMenu() {
 	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
-		Common::Error state = _engine->saveGameState(slot, _engine->_gameState->_sceneName, false);
+		char buf[30];
+		strncpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
+		buf[sizeof(buf) - 1] = '\0';
+		_engine->restoreFrontBuffer();
+		enterText(TextId::kEnterYourNewName, buf, sizeof(buf));
+		// may not be empty
+		if (buf[0] == '\0') {
+			strncpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
+		}
+		Common::Error state = _engine->saveGameState(slot, buf, false);
 		if (state.getCode() != Common::kNoError) {
 			error("Failed to save slot %i", slot);
 			return false;

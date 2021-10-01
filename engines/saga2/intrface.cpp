@@ -435,7 +435,7 @@ void CPlaqText::invalidate(Rect16 *) {
 	window.update(_extent);
 }
 
-void CPlaqText::draw(void) {
+void CPlaqText::draw() {
 	gPort           &port = window.windowPort;
 	Rect16          rect = window.getExtent();
 
@@ -625,7 +625,7 @@ CStatusLine::CStatusLine(gPanelList         &list,
 	minWaitAlarm.basetime = minWaitAlarm.duration = 0;
 }
 
-CStatusLine::~CStatusLine(void) {
+CStatusLine::~CStatusLine() {
 	while (queueTail != queueHead) {
 		assert(lineQueue[queueTail].text != nullptr);
 
@@ -648,7 +648,7 @@ void CStatusLine::setLine(char *msg, uint32 frameTime) { // frametime def
 	}
 }
 
-void CStatusLine::experationCheck(void) {
+void CStatusLine::experationCheck() {
 	if (lineDisplayed
 	        && (waitAlarm.check()
 	            || (queueTail != queueHead && minWaitAlarm.check()))) {
@@ -684,7 +684,7 @@ void CStatusLine::experationCheck(void) {
 	}
 }
 
-void CStatusLine::clear(void) {
+void CStatusLine::clear() {
 	enable(false);
 	window.update(_extent);
 	lineDisplayed = false;
@@ -771,7 +771,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	g_vm->_indList.push_back(this);
 }
 
-CMassWeightIndicator::~CMassWeightIndicator(void) {
+CMassWeightIndicator::~CMassWeightIndicator() {
 	g_vm->_indList.remove(this);
 
 	unloadImageRes(pieIndImag, numPieIndImages);
@@ -783,7 +783,7 @@ CMassWeightIndicator::~CMassWeightIndicator(void) {
 ** Description: This will recalculate the values to be displayed for the
 **              mass and bulk of the current ( single mode ) player
 **/
-void CMassWeightIndicator::recalculate(void) {
+void CMassWeightIndicator::recalculate() {
 	assert(pieMass);
 	assert(pieBulk);
 
@@ -806,7 +806,7 @@ void CMassWeightIndicator::recalculate(void) {
 ** Description: This will call recalculate and then invalidate the entire
 **              weight/bulk control ( so it refreshes )
 **/
-void CMassWeightIndicator::update(void) {
+void CMassWeightIndicator::update() {
 	if (bRedraw == true) {
 		for (Common::List<CMassWeightIndicator *>::iterator it = g_vm->_indList.begin(); it != g_vm->_indList.end(); ++it) {
 			(*it)->recalculate();
@@ -898,7 +898,7 @@ CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
 	savedMap.data = new uint8[savedMap.bytes()];
 }
 
-CManaIndicator::~CManaIndicator(void) {
+CManaIndicator::~CManaIndicator() {
 	// release images
 	unloadImageRes(starImages, numStars);
 	unloadImageRes(ringImages, numRings);
@@ -937,7 +937,7 @@ Rect16 CManaIndicator::getManaRegionRect(int8 nRegion) {
 	return manaRegionRects[nRegion];
 }
 
-void CManaIndicator::draw(void) {
+void CManaIndicator::draw() {
 
 	gPort           &port = window.windowPort;
 
@@ -1298,7 +1298,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 }
 
 
-CHealthIndicator::~CHealthIndicator(void) {
+CHealthIndicator::~CHealthIndicator() {
 	// release star imagery
 	unloadImageRes(starImag, starNum);
 
@@ -1329,7 +1329,7 @@ void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVi
 	}
 }
 
-void CHealthIndicator::update(void) {
+void CHealthIndicator::update() {
 	if (g_vm->_indivControlsFlag) {
 		// get the stats for the selected brother
 		int16 baseVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getBaseStats().vitality;
@@ -1526,7 +1526,7 @@ void unloadImageRes(void **images, int16 numRes) {
 }
 
 // defined for setup off all button based user controls
-void SetupUserControls(void) {
+void SetupUserControls() {
 	// index variables
 	uint16  n;
 	uint8   index = 0;
@@ -1689,22 +1689,22 @@ void SetupUserControls(void) {
 	updateAllUserControls();
 }
 
-void enableUserControls(void) {
+void enableUserControls() {
 	g_vm->_userControlsSetup = true;
 }
 
-void disableUserControls(void) {
+void disableUserControls() {
 	g_vm->_userControlsSetup = false;
 }
 
 // defines the cleanup for ALL user interface controls
-void CleanupUserControls(void) {
+void CleanupUserControls() {
 	g_vm->_userControlsSetup = false;
 	CleanupButtonImages();
 }
 
 // defines the cleaup for the global button image array
-void CleanupButtonImages(void) {
+void CleanupButtonImages() {
 	int16 i;
 
 	// deallocates the images in the array and the arrays themselves
@@ -1742,7 +1742,7 @@ void CleanupButtonImages(void) {
 	}
 }
 
-void updateIndicators(void) {
+void updateIndicators() {
 	HealthIndicator->update();
 	MassWeightIndicator->update();
 
@@ -1828,7 +1828,7 @@ uint16 getBulkRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = tr
    Application functions
  * ===================================================================== */
 
-void updateReadyContainers(void) {
+void updateReadyContainers() {
 	// if in individual mode
 	if (g_vm->_indivControlsFlag) {
 		indivCviewTop->invalidate();
@@ -1838,7 +1838,7 @@ void updateReadyContainers(void) {
 	}
 }
 
-void setEnchantmentDisplay(void) {
+void setEnchantmentDisplay() {
 	if (enchDisp) enchDisp->setValue(getCenterActorPlayerID());
 }
 
@@ -1883,7 +1883,7 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 }
 
 // sets the trio brothers control state buttons
-void setTrioBtns(void) {
+void setTrioBtns() {
 	g_vm->_indivControlsFlag = false;
 
 	// reset any value that might have changed in idividual mode
@@ -1906,14 +1906,14 @@ void setControlPanelsToIndividualMode(uint16 brotherID) {
 	trioControls->show(false, true);
 }
 
-void setControlPanelsToTrioMode(void) {
+void setControlPanelsToTrioMode() {
 	setTrioBtns();
 	indivControls->show(false, false);
 	trioControls->show(true, true);
 	indivControls->show(false, true);
 }
 
-void toggleIndivMode(void) {
+void toggleIndivMode() {
 	if (g_vm->_indivControlsFlag) setControlPanelsToTrioMode();
 	else setControlPanelsToIndividualMode(getCenterActorPlayerID());
 }
@@ -2017,7 +2017,7 @@ void updateBrotherArmor(uint16 brotherID) {
 	}
 }
 
-void updateAllUserControls(void) {
+void updateAllUserControls() {
 	if (displayEnabled()) {
 		if (g_vm->_userControlsSetup) {
 			uint16      centerBrotherID = getCenterActorPlayerID(),
@@ -2546,11 +2546,11 @@ APPFUNC(cmdManaInd) {
 	}
 }
 
-bool isIndivMode(void) {
+bool isIndivMode() {
 	return g_vm->_indivControlsFlag;
 }
 
-void initUIState(void) {
+void initUIState() {
 	g_vm->_indivControlsFlag = false;
 	indivBrother = 0;
 
@@ -2583,7 +2583,7 @@ void loadUIState(Common::InSaveFile *in) {
 	updateAllUserControls();
 }
 
-void cleanupUIState(void) {
+void cleanupUIState() {
 	if (StatusLine != nullptr)
 		StatusLine->clear();
 }

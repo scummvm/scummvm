@@ -70,7 +70,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	if (active) {
 		Item *item = getItem(active);
 		if (item) {
-			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
+			const WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
 			//uint16 frameno = 0;
 			if (weaponinfo && weaponinfo->_ammoType) {
 				//frameno = weaponinfo->_ammoType;

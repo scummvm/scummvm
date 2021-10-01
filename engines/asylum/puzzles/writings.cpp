@@ -72,21 +72,31 @@ bool PuzzleWritings::init(const AsylumEvent &)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[5], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	// Draw all lines of text
-	getText()->loadFont(getWorld()->graphicResourceIds[42]);
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70,  45), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1825)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130,  75), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1826)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 105), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1827)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 135), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1828)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 165), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1829)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 195), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1830)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 225), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1831)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 255), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1832)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 285), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1833)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 315), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1834)));
-	getText()->draw(0, 99, kTextCenter, Common::Point( 20, 375), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1835)));
-	getText()->draw(0, 99, kTextCenter, Common::Point( 20, 405), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1836)));
+	int textId;
+	switch (_vm->getLanguage()) {
+	default:
+	case Common::EN_ANY:
+		textId = 1825;
+		break;
 
-	_textSurface.copyFrom(*getScreen()->getSurface());
+	case Common::DE_DEU:
+		textId = 1748;
+		break;
+
+	case Common::FR_FRA:
+		textId = 1729;
+		break;
+	}
+
+	getText()->loadFont(getWorld()->graphicResourceIds[42]);
+	for (int i = 0; i < 10; i++, textId++)
+		getText()->draw(0, 99, kTextNormal, Common::Point(70 + 60 * (i & 1), 45 + 30 * i), 16, 590,
+						getText()->get(MAKE_RESOURCE(kResourcePackText, textId)));
+
+	getText()->drawCentered(Common::Point(10, 375), 590, getText()->get(MAKE_RESOURCE(kResourcePackText, textId++)));
+	getText()->drawCentered(Common::Point(10, 405), 590, getText()->get(MAKE_RESOURCE(kResourcePackText, textId)));
+
+	_textSurface.copyFrom(getScreen()->getSurface());
 
 	return false;
 }

@@ -51,6 +51,8 @@ class File;
 namespace Trecision {
 
 TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
+	_gameId = !strcmp(_gameDescription->gameId, "nl") ? GID_NightLong : GID_ArkOfTime;
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "AUTORUN");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
@@ -291,8 +293,8 @@ void TrecisionEngine::initMain() {
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
-
-	changeRoom(_curRoom);
+	else
+		changeRoom(_curRoom);
 }
 
 void TrecisionEngine::checkSystem() {

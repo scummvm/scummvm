@@ -61,7 +61,7 @@ int16 ScreenDepth(TilePoint);
 
 #ifdef FTA
 
-void cleanupButtonImages(void);
+void cleanupButtonImages();
 
 #endif
 
@@ -71,23 +71,23 @@ void cleanupButtonImages(void);
  * ===================================================================== */
 
 //void drawInventory( gPort &port, GameObject &container, Rect16 displayRect );
-void motionTest(void);
-void drawBorders(void);
+void motionTest();
+void drawBorders();
 
-void windowTest(void);
-void closeAllFloatingWindows(void);
+void windowTest();
+void closeAllFloatingWindows();
 
-void objectTest(void);
+void objectTest();
 
 #ifdef hasReadyContainers
-void readyContainerSetup(void);
+void readyContainerSetup();
 #endif
 
 /* ===================================================================== *
    PlayMode definition
  * ===================================================================== */
-void PlayModeSetup(void);
-void PlayModeCleanup(void);
+void PlayModeSetup();
+void PlayModeCleanup();
 
 //  The Mode object for the main "play" mode.
 
@@ -133,7 +133,7 @@ hResContext         *imageRes;              // image resource handle
 //-----------------------------------------------------------------------
 //	Initialize the Play mode
 
-bool checkTileAreaPort(void) {
+bool checkTileAreaPort() {
 	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data == nullptr) {
 		//  Allocate back buffer for tile rendering
 		g_vm->_tileDrawMap.size.x = (kTileRectWidth + kTileWidth - 1) & ~kTileDXMask;
@@ -144,7 +144,7 @@ bool checkTileAreaPort(void) {
 	return g_vm->_tileDrawMap.data != nullptr;
 }
 
-void clearTileAreaPort(void) {
+void clearTileAreaPort() {
 	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data != nullptr) {
 		_FillRect(g_vm->_tileDrawMap.data, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.y, 0);
 	}
@@ -154,7 +154,7 @@ void clearTileAreaPort(void) {
 }
 
 
-void PlayModeSetup(void) {
+void PlayModeSetup() {
 	//  Init resources for images
 	if (imageRes == nullptr)
 		imageRes = resFile->newContext(imageGroupID, "image resources");
@@ -243,7 +243,7 @@ void PlayModeSetup(void) {
 //-----------------------------------------------------------------------
 //	Cleanup function for Play mode
 
-void PlayModeCleanup(void) {
+void PlayModeCleanup() {
 	closeAllFloatingWindows();
 	if (playControls) {
 		if (StatusLine)

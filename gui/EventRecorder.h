@@ -74,7 +74,8 @@ public:
 		kPassthrough = 0,		/**< kPassthrough, do nothing */
 		kRecorderRecord = 1,		/**< kRecorderRecord, do the recording */
 		kRecorderPlayback = 2,		/**< kRecorderPlayback, playback existing recording */
-		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, internal state when user pauses the playback */
+		kRecorderPlaybackPause = 3,	/**< kRecorderPlaybackPause, internal state when user pauses the playback */
+		kRecorderUpdate = 4			/**< kRecorderUpdate, playback existing recording and update all hashes */
 	};
 
 	void init(const Common::String &recordFileName, RecordMode mode);
@@ -83,7 +84,9 @@ public:
 	uint32 getRandomSeed(const Common::String &name);
 	void processTimeAndDate(TimeDate &td, bool skipRecord);
 	void processMillis(uint32 &millis, bool skipRecord);
+	void processScreenUpdate();
 	void processGameDescription(const ADGameDescription *desc);
+	bool processAutosave();
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 
 	/** Hooks for intercepting into GUI processing, so required events could be shoot
@@ -151,13 +154,24 @@ public:
 	void deleteRecord(const Common::String& fileName);
 	bool checkForContinueGame();
 
-	void suspendRecording() {
-		_savedState = _initialized;
-		_initialized = false;
+	void acquireRecording() {
+		assert(_acquireCount >= 0);
+		if (_acquireCount == 0) {
+			_savedState = _initialized;
+			_initialized = false;
+		}
+		_acquireCount += 1;
 	}
 
-	void resumeRecording() {
-		_initialized = _savedState;
+	void releaseRecording() {
+		assert(_acquireCount > 0);
+		_acquireCount -= 1;
+		if (_acquireCount == 0)
+			_initialized = _savedState;
+	}
+
+	RecordMode getRecordMode() const {
+		return _recordMode;
 	}
 
 	Common::StringArray listSaveFiles(const Common::String &pattern);
@@ -181,6 +195,7 @@ private:
 	volatile uint32 _fakeTimer;
 	TimeDate _lastTimeDate;
 	bool _savedState;
+	int _acquireCount;
 	bool _needcontinueGame;
 	int _temporarySlot;
 	Common::String _author;
@@ -224,10 +239,12 @@ private:
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
 	Common::PlaybackFile *_playbackFile;
+	Common::PlaybackFile *_recordFile;
 
 	void saveScreenShot();
 	void checkRecordedMD5();
 	void deleteTemporarySave();
+	void updateFakeTimer(uint32 millis);
 	volatile RecordMode _recordMode;
 	Common::String _recordFileName;
 	bool _fastPlayback;

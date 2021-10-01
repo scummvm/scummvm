@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -37,6 +38,7 @@ class TwinEEngine;
  */
 namespace HQR {
 
+
 /**
  * Get a HQR entry pointer
  * @param ptr pointer to save the entry
@@ -45,6 +47,9 @@ namespace HQR {
  * @return entry real size
  */
 int32 getEntry(uint8 *ptr, const char *filename, int32 index);
+inline int32 getEntry(uint8 *ptr, const TwineResource &resource) {
+	return getEntry(ptr, resource.hqr, resource.index);
+}
 
 /**
  * Get a HQR entry pointer
@@ -53,6 +58,9 @@ int32 getEntry(uint8 *ptr, const char *filename, int32 index);
  * @return entry real size
  */
 int32 entrySize(const char *filename, int32 index);
+inline int32 entrySize(const TwineResource &resource) {
+	return entrySize(resource.hqr, resource.index);
+}
 
 /**
  * Get a HQR total number of entries
@@ -70,11 +78,17 @@ int32 numEntries(const char *filename);
  * @return entry real size
  */
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index);
+inline int32 getAllocEntry(uint8 **ptr, const TwineResource &resource) {
+	return getAllocEntry(ptr, resource.hqr, resource.index);
+}
 
 /**
  * @brief Helper method to dump the content of the given hqr index to a file
  */
 bool dumpEntry(const char *filename, int32 index, const char *targetFileName);
+inline bool dumpEntry(const TwineResource &resource, const char *targetFileName) {
+	return dumpEntry(resource.hqr, resource.index, targetFileName);
+}
 
 /**
  * Get a HQR entry pointer
@@ -95,7 +109,9 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 int32 getAllocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex);
 
 Common::SeekableReadStream *makeReadStream(const char *filename, int index);
-
+inline Common::SeekableReadStream *makeReadStream(const TwineResource &resource) {
+	return makeReadStream(resource.hqr, resource.index);
+}
 } // namespace HQR
 
 } // namespace TwinE

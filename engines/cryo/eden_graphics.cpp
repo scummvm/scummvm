@@ -47,6 +47,7 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_subtitlesView = nullptr;
 	_underBarsView = nullptr;
 	_needToFade = false;
+	_eff2pat = 0;
 	
 	_savedUnderSubtitles = false;
 	_underSubtitlesViewBuf = nullptr;
@@ -61,6 +62,14 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	}
 
 	_newColor.r = _newColor.g = _newColor.b = 0;
+}
+
+EdenGraphics::~EdenGraphics() {
+	delete _underBarsView;
+	delete _view2;
+	delete _subtitlesView;
+	delete _underSubtitlesView;
+	delete _mainView;
 }
 
 void EdenGraphics::SendPalette2Screen(int16 value) {
@@ -806,7 +815,7 @@ View *EdenGraphics::getUnderBarsView() {
 }
 
 void EdenGraphics::openWindow() {
-	_underBarsView = new View(320, 40); //TODO: Who deletes these?
+	_underBarsView = new View(320, 40);
 	_underBarsView->_normal._width = 320;
 
 	_view2 = new View(32, 32);
@@ -880,17 +889,16 @@ void EdenGraphics::displayEffect1() {
 
 // Original name: effet2
 void EdenGraphics::displayEffect2() {
-	static int16 pattern1[] = { 0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9 };
-	static int16 pattern2[] = { 0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9 };
-	static int16 pattern3[] = { 0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14 };
-	static int16 pattern4[] = { 0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9 };
+	static const int16 pattern1[] = { 0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9 };
+	static const int16 pattern2[] = { 0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9 };
+	static const int16 pattern3[] = { 0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14 };
+	static const int16 pattern4[] = { 0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9 };
 
-	static int eff2pat = 0;
 	if (_game->_globals->_var103 == 69) {
 		displayEffect4();
 		return;
 	}
-	switch (++eff2pat) {
+	switch (++_eff2pat) {
 	case 1:
 		colimacon(pattern1);
 		break;
@@ -903,7 +911,7 @@ void EdenGraphics::displayEffect2() {
 	case 4:
 	default:
 		colimacon(pattern4);
-		eff2pat = 0;
+		_eff2pat = 0;
 		break;
 	}
 }
@@ -1021,7 +1029,7 @@ void EdenGraphics::clearScreen() {
 	CLBlitter_UpdateScreen();
 }
 
-void EdenGraphics::colimacon(int16 pattern[16]) {
+void EdenGraphics::colimacon(const int16 pattern[16]) {
 	int16 p, r27, r25;
 
 	int16 ww = _game->_vm->_screenView->_pitch;
@@ -1389,7 +1397,7 @@ void EdenGraphics::handleHNMSubtitles() {
 #define SUB_LINE(start, end) \
 	(start), (end) | 0x8000
 
-	static uint16 kFramesVid170[] = {
+	static const uint16 kFramesVid170[] = {
 		SUB_LINE(68, 120),
 		SUB_LINE(123, 196),
 		SUB_LINE(199, 274),
@@ -1409,13 +1417,13 @@ void EdenGraphics::handleHNMSubtitles() {
 		0xFFFF
 	};
 
-	static uint16 kFramesVid83[] = {
+	static const uint16 kFramesVid83[] = {
 		SUB_LINE(99, 155),
 		SUB_LINE(157, 256),
 		0xFFFF
 	};
 
-	static uint16 kFramesVid88[] = {
+	static const uint16 kFramesVid88[] = {
 		SUB_LINE(106, 173),
 		SUB_LINE(175, 244),
 		SUB_LINE(246, 350),
@@ -1423,7 +1431,7 @@ void EdenGraphics::handleHNMSubtitles() {
 		0xFFFF
 	};
 
-	static uint16 kFramesVid89[] = {
+	static const uint16 kFramesVid89[] = {
 		SUB_LINE(126, 176),
 		SUB_LINE(178, 267),
 		SUB_LINE(269, 342),
@@ -1433,7 +1441,7 @@ void EdenGraphics::handleHNMSubtitles() {
 		0xFFFF
 	};
 
-	static uint16 kFramesVid94[] = {
+	static const uint16 kFramesVid94[] = {
 		SUB_LINE(101, 213),
 		SUB_LINE(215, 353),
 		SUB_LINE(355, 455),
@@ -1445,7 +1453,7 @@ void EdenGraphics::handleHNMSubtitles() {
 
 #undef SUB_LINE
 
-	uint16 *frames = nullptr;
+	const uint16 *frames = nullptr;
 	perso_t *perso = nullptr;
 
 	switch (_game->_globals->_curVideoNum) {
@@ -1473,7 +1481,7 @@ void EdenGraphics::handleHNMSubtitles() {
 	assert(perso  != nullptr);
 	assert(frames != nullptr);
 
-	uint16 *frames_start = frames;
+	const uint16 *frames_start = frames;
 	uint16 frame;
 	while ((frame = *frames++) != 0xFFFF) {
 		if ((frame & ~0x8000) == _hnmFrameNum)

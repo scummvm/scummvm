@@ -167,7 +167,7 @@ int FileReadInt(int32_t handle) {
 	return in->ReadInt32();
 }
 
-char FileReadRawChar(int32_t handle) {
+int8 FileReadRawChar(int32_t handle) {
 	Stream *in = get_valid_file_stream_from_handle(handle, "FileReadRawChar");
 	if (in->EOS())
 		return -1;

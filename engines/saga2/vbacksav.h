@@ -49,7 +49,7 @@ public:
 		savedRegion.x = pos.x;
 		savedRegion.y = pos.y;
 	}
-	bool valid(void) {
+	bool valid() {
 		return savedPixels.data != NULL;
 	}
 };

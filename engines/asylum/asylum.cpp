@@ -25,8 +25,11 @@
 #include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/rect.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
+
+#include "gui/message.h"
 
 #include "asylum/asylum.h"
 
@@ -58,7 +61,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_video(NULL), _handler(NULL), _puzzles(NULL) {
 
 	// Init data
-	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	resetFlags();
 	_introPlayed = false;
 	_tickOffset = 0;
 
@@ -70,11 +73,18 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_delayedVideoIndex = -1;
 	_previousScene = NULL;
 
+	// Game data
+	Common::String dataDir("data/");
+	if (checkGameVersion("Steam")) {
+		dataDir += getLanguageCode(getLanguage());
+		dataDir += '/';
+	}
+
 	// Add default search directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data/vids");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data/music");
+	const Common::FSNode gamePath(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gamePath, dataDir);
+	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "vids");
+	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "music");
 
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
@@ -106,10 +116,6 @@ AsylumEngine::~AsylumEngine() {
 	_gameDescription = NULL;
 }
 
-bool AsylumEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher);
-}
-
 Common::Error AsylumEngine::run() {
 	// Initialize the graphics
 	initGraphics(640, 480);
@@ -119,7 +125,7 @@ Common::Error AsylumEngine::run() {
 	setDebugger(_console);
 
 	// Create resource manager
-	_resource  = new ResourceManager();
+	_resource  = new ResourceManager(this);
 	_resource->setCdNumber(1);
 
 	// Create all game classes
@@ -137,10 +143,27 @@ Common::Error AsylumEngine::run() {
 
 	// Create main menu
 	_menu  = new Menu(this);
-	_handler = _menu;
+	if (checkGameVersion("Demo")) {
+		if (!isAltDemo())
+			_video->play(0, NULL);
+		restart();
+	} else {
+		int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+		bool noError = false;
 
-	// Load config
-	Config.read();
+		if (saveSlot >= 0 && saveSlot < SAVEGAME_COUNT) {
+			if (loadGameState(saveSlot).getCode() != Common::kNoError)
+				warning("[AsylumEngine::run] Could not load savegame in slot %d", saveSlot);
+			else
+				noError = true;
+		}
+
+		if (!noError)
+			_handler = _menu;
+
+		// Load config
+		Config.read();
+	}
 
 	// Setup mixer
 	syncSoundSettings();
@@ -166,6 +189,10 @@ Common::Error AsylumEngine::run() {
 			checkAchievements();
 	}
 
+	// Stop all sounds & music
+	_sound->stopMusic();
+	_sound->stopAll();
+
 	return Common::kNoError;
 }
 
@@ -173,8 +200,19 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	if (!_cursor || !_screen || !_savegame)
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
+	if (type == kStartGameLoad && !_savegame->isCompatible()) {
+		Common::U32String message = _("Attempt to load saved game from a previous version: Version %s / Build %d");
+		GUI::MessageDialog dialog(Common::U32String::format(message, _savegame->getVersion(), _savegame->getBuild()), _("Load anyway"), _("Cancel"));
+
+		if (dialog.runModal() != GUI::kMessageOK) {
+			_menu->setDword455C80(false);
+			return;
+		}
+	}
+
 	// Load the default mouse cursor
-	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
+	if (!checkGameVersion("Demo"))
+		_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
 	_cursor->hide();
 
 	// Clear the graphic list
@@ -231,11 +269,12 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		break;
 
 	case kStartGameLoad:
-		if (_savegame->load()) {
-			_scene->enterLoad();
-			updateReverseStereo();
-			switchEventHandler(_scene);
-		}
+		// Stop all sounds & music
+		_sound->stopMusic();
+		_sound->stopAll();
+		_savegame->load();
+		_scene->enterLoad();
+		updateReverseStereo();
 		break;
 
 	case kStartGameScene:
@@ -253,7 +292,7 @@ void AsylumEngine::restart() {
 	_cursor->hide();
 
 	// Cleanup
-	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	resetFlags();
 	delete _scene;
 	_scene = NULL;
 	delete _encounter;
@@ -298,13 +337,13 @@ void AsylumEngine::playIntro() {
 	if (!_introPlayed) {
 		_cursor->hide();
 		_cursor->setForceHide(true);
-		if (!Config.showIntro) {
+		if (!Config.showIntro && !checkGameVersion("Demo")) {
 			if (_scene->worldstats()->chapter == kChapter1)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
 		} else {
 			_sound->playMusic(kResourceNone, 0);
 
-			_video->play(1, _menu);
+			_video->play(1, checkGameVersion("Demo") ? NULL : _menu);
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -316,10 +355,10 @@ void AsylumEngine::playIntro() {
 
 			// Play the intro speech: it is played after the intro video over a black background,
 			// and the game is "locked" until the speech is completed.
-			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
+			ResourceId introSpeech = MAKE_RESOURCE(checkGameVersion("Demo") ? kResourcePackShared : kResourcePackSound, 7);
 			_sound->playSound(introSpeech);
 
-			int8 skip = 0;
+			bool skip = false;
 			do {
 				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
@@ -468,7 +507,7 @@ void AsylumEngine::processDelayedEvents() {
 // Message handlers
 //////////////////////////////////////////////////////////////////////////
 void AsylumEngine::switchEventHandler(EventHandler *handler) {
-	if (handler == NULL)
+	if (handler == NULL && !checkGameVersion("Demo"))
 		warning("[AsylumEngine::switchMessageHandler] NULL handler parameter (shouldn't happen outside of debug commands)!");
 
 	// De-init previous handler
@@ -625,6 +664,46 @@ void AsylumEngine::checkAchievements() {
 		}
 		break;
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Save/Load
+//////////////////////////////////////////////////////////////////////////
+bool AsylumEngine::canLoadGameStateCurrently() {
+	return (!checkGameVersion("Demo")
+		&& (_handler == _scene || _handler == _menu)
+		&& !speech()->getSoundResourceId());
+}
+
+bool AsylumEngine::canSaveGameStateCurrently() {
+	return (!checkGameVersion("Demo")
+		&& (_handler == _scene)
+		&& !speech()->getSoundResourceId());
+}
+
+bool AsylumEngine::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently()
+		&& (scene()->getActor()->getStatus() == kActorStatusEnabled);
+}
+
+Common::Error AsylumEngine::loadGameState(int slot) {
+	savegame()->loadList();
+	savegame()->setIndex(slot);
+	if (savegame()->hasSavegame(slot))
+		startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad);
+	else
+		return Common::kReadingFailed;
+
+	return Common::kNoError;
+}
+
+Common::Error AsylumEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	savegame()->loadList();
+	savegame()->setIndex(slot);
+	savegame()->setName(slot, desc);
+	savegame()->save();
+
+	return Common::kNoError;
 }
 
 //////////////////////////////////////////////////////////////////////////

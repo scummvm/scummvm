@@ -37,6 +37,8 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
+#include "common/text-to-speech.h"
+
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
@@ -51,6 +53,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
+
+	_ttsMan = g_system->getTextToSpeechManager();
 
 	_datafilePrefix = "DREAMWEB.";
 	_speechDirName = "SPEECH";
@@ -391,6 +395,22 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 }
 
 Common::Error DreamWebEngine::run() {
+	if (_ttsMan != nullptr) {
+		Common::String languageString = Common::getLanguageCode(getLanguage());
+		_ttsMan->setLanguage(languageString);
+		switch (getLanguage()) {
+		case Common::RU_RUS:
+			_textEncoding = Common::kDos866;
+			break;
+		case Common::CZ_CZE:
+			_textEncoding = Common::kWindows1250;
+			break;
+		default:
+			_textEncoding = Common::kDos850;
+			break;
+		}
+	}
+
 	syncSoundSettings();
 	setDebugger(new DreamWebConsole(this));
 	_sound = new DreamWebSound(this);

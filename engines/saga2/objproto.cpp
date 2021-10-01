@@ -62,7 +62,7 @@ extern bool     massAndBulkCount;
    Functions
  * ===================================================================== */
 
-ObjectID ProtoObj::placeObject(void) {
+ObjectID ProtoObj::placeObject() {
 	return 2;
 }
 
@@ -86,7 +86,7 @@ bool ProtoObj::isTwoHanded(ObjectID) {
 }
 
 //  Determine if this type of object is a missile
-bool ProtoObj::isMissile(void) {
+bool ProtoObj::isMissile() {
 	return false;
 }
 
@@ -785,7 +785,7 @@ void ProtoObj::getColorTranslation(ColorTable map) {
 	buildColorTable(map, colorMap, ARRAYSIZE(colorMap));
 }
 
-uint16  ProtoObj::containmentSet(void) {
+uint16  ProtoObj::containmentSet() {
 	return 0; // the prototye object is not contained in anything
 }
 
@@ -904,13 +904,13 @@ GameObject *ProtoObj::getSpell(ObjectID) {
 }
 
 //  Determine if this type of object can block an attack
-bool ProtoObj::canBlock(void) {
+bool ProtoObj::canBlock() {
 	return false;
 }
 
 //  Return a mask of bits indicating the directions relative to the
 //  wielders facing in which this object can defend
-uint8 ProtoObj::defenseDirMask(void) {
+uint8 ProtoObj::defenseDirMask() {
 	return 0;
 }
 
@@ -1004,7 +1004,7 @@ uint16 ProtoObj::bulkCapacity(GameObject *) {
    InventoryProto class
  * ==================================================================== */
 
-uint16 InventoryProto::containmentSet(void) {
+uint16 InventoryProto::containmentSet() {
 	return isTangible;
 }
 
@@ -1201,7 +1201,7 @@ bool InventoryProto::acceptStrikeAction(
 //
 //	};
 
-uint16 PhysicalContainerProto::containmentSet(void) {
+uint16 PhysicalContainerProto::containmentSet() {
 	return InventoryProto::containmentSet() | isContainer;
 }
 
@@ -1465,7 +1465,7 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *withTAI)
    BottleProto class
  * ==================================================================== */
 
-uint16 BottleProto::containmentSet(void) {
+uint16 BottleProto::containmentSet() {
 	return InventoryProto::containmentSet() | isBottle;
 }
 
@@ -1479,7 +1479,7 @@ bool BottleProto::useAction(ObjectID dObj, ObjectID enactor) {
    FoodProto class
  * ==================================================================== */
 
-uint16 FoodProto::containmentSet(void) {
+uint16 FoodProto::containmentSet() {
 	return InventoryProto::containmentSet() | isFood;
 }
 
@@ -1491,7 +1491,7 @@ bool FoodProto::useAction(ObjectID dObj, ObjectID enactor) {
    WearableProto class
  * ==================================================================== */
 
-uint16 WearableProto::containmentSet(void) {
+uint16 WearableProto::containmentSet() {
 	return InventoryProto::containmentSet() | isWearable;
 }
 
@@ -1499,11 +1499,11 @@ uint16 WearableProto::containmentSet(void) {
    WeaponProto class
  * ==================================================================== */
 
-weaponID WeaponProto::getWeaponID(void) {
+weaponID WeaponProto::getWeaponID() {
 	return weaponDamage;
 }
 
-uint16 WeaponProto::containmentSet(void) {
+uint16 WeaponProto::containmentSet() {
 	return InventoryProto::containmentSet() | isWeapon;
 }
 
@@ -1686,13 +1686,13 @@ void MeleeWeaponProto::initiateDefense(
 }
 
 //  Melee weapons can block an attack
-bool MeleeWeaponProto::canBlock(void) {
+bool MeleeWeaponProto::canBlock() {
 	return true;
 }
 
 //  Return a mask of bits indicating the directions relative to the
 //  wielders facing in which this object can defend
-uint8 MeleeWeaponProto::defenseDirMask(void) {
+uint8 MeleeWeaponProto::defenseDirMask() {
 	return 1 << dirUp;
 }
 
@@ -2087,7 +2087,7 @@ uint8 ProjectileProto::weaponRating(
 }
 
 //  Projectiles are missiles
-bool ProjectileProto::isMissile(void) {
+bool ProjectileProto::isMissile() {
 	return true;
 }
 
@@ -2170,7 +2170,7 @@ void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
    ArmorProto class
  * ==================================================================== */
 
-uint16 ArmorProto::containmentSet(void) {
+uint16 ArmorProto::containmentSet() {
 	return InventoryProto::containmentSet() | isWearable | isArmor;
 }
 
@@ -2246,7 +2246,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
    ShieldProto class
  * ==================================================================== */
 
-uint16 ShieldProto::containmentSet(void) {
+uint16 ShieldProto::containmentSet() {
 	return InventoryProto::containmentSet() | isWearable | isArmor;
 }
 
@@ -2307,13 +2307,13 @@ void ShieldProto::initiateDefense(
 
 
 //  Shields can block an attack
-bool ShieldProto::canBlock(void) {
+bool ShieldProto::canBlock() {
 	return true;
 }
 
 //  Return a mask of bits indicating the directions relative to the
 //  wielders facing in which this object can defend
-uint8 ShieldProto::defenseDirMask(void) {
+uint8 ShieldProto::defenseDirMask() {
 	return (1 << dirUp) | (1 << dirUpLeft);
 }
 
@@ -2417,7 +2417,7 @@ bool ToolProto::useOnAction(ObjectID, ObjectID, ObjectID) {
    DocumentProto class
  * ==================================================================== */
 
-uint16 DocumentProto::containmentSet(void) {
+uint16 DocumentProto::containmentSet() {
 	return InventoryProto::containmentSet() | isDocument;
 }
 
@@ -2468,7 +2468,7 @@ bool AutoMapProto::openAction(ObjectID, ObjectID) {
    IntangibleObjProto class
  * ==================================================================== */
 
-uint16 IntangibleObjProto::containmentSet(void) {
+uint16 IntangibleObjProto::containmentSet() {
 	return isIntangible;
 }
 
@@ -2552,7 +2552,7 @@ bool IntangibleObjProto::acceptDropAction(
 	return false;
 }
 
-ObjectID IntangibleObjProto::placeObject(void) {
+ObjectID IntangibleObjProto::placeObject() {
 	//return Container That It Inserted Itself Into
 	return 2;
 }
@@ -2593,7 +2593,7 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
    IdeaProto class
  * ==================================================================== */
 
-uint16 IdeaProto::containmentSet(void) {
+uint16 IdeaProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
 	return isConcept | isIntangible;
 }
@@ -2602,7 +2602,7 @@ uint16 IdeaProto::containmentSet(void) {
    MemoryProto class
  * ==================================================================== */
 
-uint16 MemoryProto::containmentSet(void) {
+uint16 MemoryProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
 	return isConcept | isIntangible;
 }
@@ -2611,7 +2611,7 @@ uint16 MemoryProto::containmentSet(void) {
    PsychProto class
  * ==================================================================== */
 
-uint16 PsychProto::containmentSet(void) {
+uint16 PsychProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
 	return isPsych | isIntangible;
 }
@@ -2621,7 +2621,7 @@ uint16 PsychProto::containmentSet(void) {
  * ==================================================================== */
 
 
-uint16 SkillProto::containmentSet(void) {
+uint16 SkillProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
 	return isSkill | isIntangible;
 }
@@ -2737,7 +2737,7 @@ bool SkillProto::implementAction(SpellID dObj, ObjectID enactor, Location &loc) 
    EnchantmentProto class
  * ==================================================================== */
 
-uint16 EnchantmentProto::containmentSet(void) {
+uint16 EnchantmentProto::containmentSet() {
 	return isEnchantment;
 }
 
@@ -2788,7 +2788,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
    GeneratorProto
  * ======================================================================== */
 
-uint16 GeneratorProto::containmentSet(void) {
+uint16 GeneratorProto::containmentSet() {
 	return isIntangible;
 }
 
@@ -2937,7 +2937,7 @@ bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	return true;
 }
 
-uint16 IntangibleContainerProto::containmentSet(void) {
+uint16 IntangibleContainerProto::containmentSet() {
 	return isContainer | isIntangible;
 }
 /* ==================================================================== *

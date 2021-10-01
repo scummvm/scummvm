@@ -59,6 +59,7 @@ class BigHuffmanTree;
  *  - sword2
  *  - toon
  *  - trecision
+ *  - twine
  */
 class SmackerDecoder : public VideoDecoder {
 public:

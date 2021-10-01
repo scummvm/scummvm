@@ -61,7 +61,7 @@ void Saga2Engine::startVideo(const char *fileName, int x, int y) {
 	_smkDecoder->start();
 }
 
-bool Saga2Engine::checkVideo(void) {
+bool Saga2Engine::checkVideo() {
 	if (!_smkDecoder)
 		return false;
 
@@ -84,7 +84,7 @@ bool Saga2Engine::checkVideo(void) {
 	return true;
 }
 
-void Saga2Engine::abortVideo(void) {
+void Saga2Engine::abortVideo() {
 	endVideo();
 }
 

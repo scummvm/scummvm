@@ -40,6 +40,9 @@ namespace Groovie {
 
 class CellGame;
 class Debugger;
+class GroovieEngine;
+class TlcGame;
+class T11hGame;
 
 class Script {
 	friend class Debugger;
@@ -61,6 +64,9 @@ public:
 
 	void setMouseClick(uint8 button);
 	void setKbdChar(uint8 c);
+
+	void setBitFlag(int bitnum, bool value);
+	bool getBitFlag(int bitnum);
 
 	Common::String &getContext();
 
@@ -125,7 +131,10 @@ private:
 	Common::String _debugString;
 	uint16 _oldInstruction;
 
-	CellGame *_staufsMove;
+	// Special classes depending on played game
+	CellGame *_cellGame;
+	TlcGame *_tlcGame;
+	T11hGame *_t11hGame;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);
@@ -134,14 +143,17 @@ private:
 	uint32 readScript32bits();
 	uint16 readScript8or16bits();
 	uint8 readScriptChar(bool allow7C, bool limitVal, bool limitVar);
+	void readScriptString(Common::String &str);
 	uint8 readScriptVar();
-	uint32 getVideoRefString();
+	uint32 getVideoRefString(Common::String &resName);
 
 	bool hotspot(Common::Rect rect, uint16 addr, uint8 cursor);
 
 	void loadgame(uint slot);
+	bool preview_loadgame(uint slot);
 	void savegame(uint slot);
 	bool playvideofromref(uint32 fileref, bool loopUntilAudioDone = false);
+	bool playBackgroundSound(uint32 fileref, uint32 loops);
 	void printString(Graphics::Surface *surface, const char *str);
 
 	// Opcodes
@@ -218,7 +230,6 @@ private:
 	void o_loadscript();
 	void o_setvideoorigin();
 	void o_sub();
-	void o_cellmove();
 	void o_returnscript();
 	void o_sethotspotright();
 	void o_sethotspotleft();
@@ -229,16 +240,23 @@ private:
 	void o_stub56();
 	void o_stub59();
 
+	void o2_bf0on();
+	void o2_copybgtofg();
+	void o2_printstring();
 	void o2_playsong();
+	void o2_midicontrol();
 	void o2_setbackgroundsong();
 	void o2_videofromref();
 	void o2_vdxtransition();
 	void o2_setvideoskip();
-	void o2_copyscreentobg();
-	void o2_copybgtoscreen();
-	void o2_stub42();
-	void o2_stub52();
+	void o2_savescreen();
+	void o2_restorescreen();
+	void o_gamelogic();
+	void o2_copyfgtobg();
 	void o2_setscriptend();
+	void o2_playsound();
+	void o2_check_sounds_overlays();
+	void o2_preview_loadgame();
 };
 
 } // End of Groovie namespace

@@ -25,6 +25,7 @@
 #include "engines/util.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/text-to-speech.h"
 
 namespace DreamWeb {
 
@@ -963,6 +964,14 @@ void DreamWebEngine::useTimedText() {
 
 	const uint8 *string = (const uint8 *)_timedTemp._string;
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
+	const char *theText = (const char *)string;
+	if (_lastText != theText) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
+			_ttsMan->say(theText, _textEncoding);
+		}
+		_lastText = theText;
+	}
+
 	_needToDumpTimed = 1;
 }
 
@@ -1174,7 +1183,12 @@ void DreamWebEngine::commandOnlyCond(uint8 command, uint8 commandType) {
 void DreamWebEngine::commandOnly(uint8 command) {
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
+
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects") && *string != 0)
+		_ttsMan->say((const char *)string, _textEncoding);
+
 	_newTextLine = 1;
 }
 
@@ -1261,6 +1275,8 @@ void DreamWebEngine::copyName(uint8 type, uint8 index, uint8 *dst) {
 }
 
 void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
+	Common::String theText;
+
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
 	uint8 textLen = _textLen;
@@ -1273,6 +1289,9 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 
 	if (getLanguage() != Common::RU_RUS) {
 		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+			theText += (const char *)string;
+		}
 
 		copyName(type, index, commandLine);
 
@@ -1280,6 +1299,11 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 		if (command != 0)
 			x += 5;
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+			theText += (const char *)commandLine;
+			_ttsMan->say(theText, _textEncoding);
+		}
+
 	} else {
 		copyName(type, index, commandLine);
 		printDirect(commandLine, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
@@ -1941,6 +1965,13 @@ void DreamWebEngine::doLook() {
 	dumpTextLine();
 	uint8 index = _roomNum & 31;
 	const uint8 *string = (const uint8 *)_roomDesc.getString(index);
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		const char *placeName = (const char *)string;
+		const char *desRoom = strchr(placeName, ':') + 1;
+		_ttsMan->say(desRoom, _textEncoding);
+	}
+
 	findNextColon(&string);
 	uint16 x;
 	if (_realLocation < 50)
@@ -2337,6 +2368,14 @@ void DreamWebEngine::obsThatDoThings() {
 	}
 }
 
+void DreamWebEngine::speakObject(const char *text) {
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		const char *colon_pos = strchr(text, ':');
+		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
+		_ttsMan->say(result, _textEncoding);
+	}
+}
+
 void DreamWebEngine::describeOb() {
 	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
@@ -2348,6 +2387,7 @@ void DreamWebEngine::describeOb() {
 		useCharsetIcons1();
 
 	printDirect(&obText, 33, &y, 241, 241 & 1);
+	speakObject((const char *)obText);
 
 	if (getLanguage() == Common::RU_RUS)
 		resetCharset();

@@ -186,9 +186,14 @@ ResourceId Speech::playPlayer(int32 index) {
 			textResourceIndex -= 9;
 		}
 
-		ResourceId soundResourceId = MAKE_RESOURCE(kResourcePackSpeech, soundResourceIndex);
-
-		return play(soundResourceId, MAKE_RESOURCE(kResourcePackText, textResourceIndex + 83));
+		ResourceId soundResourceId;
+		if (_vm->checkGameVersion("Demo")) {
+			soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, soundResourceIndex + 21 + 7 * _vm->isAltDemo());
+			return play(soundResourceId, MAKE_RESOURCE(kResourcePackText, textResourceIndex + 20));
+		} else {
+			soundResourceId = MAKE_RESOURCE(kResourcePackSpeech, soundResourceIndex);
+			return play(soundResourceId, MAKE_RESOURCE(kResourcePackText, textResourceIndex + 83));
+		}
 		}
 
 	case kActorSarah:

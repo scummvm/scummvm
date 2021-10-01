@@ -28,25 +28,82 @@
 
 namespace Asylum {
 
-static const PuzzleBoard::PuzzleData puzzleYouthData = {
-	55,
-	kGameFlag282,
-	431,
-	2,
-	{{3, false}, {4, false}, {0, false}},
-	8,
-	{{'E',  64,  55},
-	{'U',   26,  69},
-	{'T',  135, 102},
-	{'O',   57, 134},
-	{'H',  417, 152},
-	{'T',  223, 181},
-	{'H',  497, 198},
-	{'Y',  435, 231},
-	{'\0',   0,   0},
-	{'\0',   0,   0}},
-	true,
-	"T H E   Y O U T H "
+static const PuzzleBoard::PuzzleData puzzleYouthData[] = {
+	// English
+	{
+		55,
+		kGameFlag282,
+		431,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		8,
+		{
+			{'E',   64,  55},
+			{'U',   26,  69},
+			{'T',  135, 102},
+			{'O',   57, 134},
+			{'H',  417, 152},
+			{'T',  223, 181},
+			{'H',  497, 198},
+			{'Y',  435, 231},
+			{'\0',   0,   0},
+			{'\0',   0,   0},
+			{'\0',   0,   0}
+		},
+		true,
+		6, 0,
+		"T H E   Y O U T H "
+	},
+	// German
+	{
+		55,
+		kGameFlag282,
+		503,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		9,
+		{
+			{'G',  25,  50},
+			{'E',  60,  66},
+			{'D', 471,  82},
+			{'N', 340, 114},
+			{'J', 102, 146},
+			{'U', 311, 162},
+			{'R', 261, 194},
+			{'E', 390, 210},
+			{'D', 470, 226},
+			{'\0',  0,   0},
+			{'\0',  0,   0}
+		},
+		true,
+		12, 0,
+		"J U G E N D   D E R "
+	},
+	// French
+	{
+		55,
+		kGameFlag282,
+		503,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		11,
+		{
+			{'E',  64,  50},
+			{'S', 514,  50},
+			{'T', 192,  98},
+			{'J', 297, 114},
+			{'E', 595, 130},
+			{'S',  62, 146},
+			{'U', 376, 146},
+			{'N', 281, 162},
+			{'E', 482, 178},
+			{'E',  66, 194},
+			{'S', 133, 210},
+		},
+		true,
+		6, 0,
+		"E S T   J E U N E S S E "
+	}
 };
 
 PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, puzzleYouthData) {
@@ -70,14 +127,14 @@ bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &) {
 	if (mousePos.y <= 350) {
 		int32 index = findRect();
 
-		if (index != -1 && _position < 18) {
+		if (index != -1 && _position < strlen(_data.solvedText)) {
 			_charUsed[index] = true;
 			_selectedSlot = -1;
 
-			_solvedText[_position++] = puzzleYouthData.charMap[index].character;
+			_solvedText[_position++] = _data.charMap[index].character;
 			_solvedText[_position++] = ' ';
 
-			if (_position == 6) {
+			if (_position == _data.space1Pos) {
 				_solvedText[_position++] = ' ';
 				_solvedText[_position++] = ' ';
 			}

@@ -33,7 +33,9 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
@@ -99,6 +101,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 		_MSPart = 0;
 
 	_improved = ConfMan.getBool("improved");
+
 }
 
 SupernovaEngine::~SupernovaEngine() {
@@ -110,6 +113,10 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->setLanguage(ConfMan.get("language"));
+
 	init();
 
 	while (!shouldQuit()) {
@@ -194,6 +201,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 		_gameStrings.push_back(s);
 		size -= s.size() + 1;
 	}
+
 	return Common::kNoError;
 }
 
@@ -829,6 +837,5 @@ void SupernovaEngine::errorTempSave(bool saving) {
 void SupernovaEngine::stopSound() {
 	_sound->stop();
 }
-
 
 }

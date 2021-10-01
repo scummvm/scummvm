@@ -1525,7 +1525,7 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 	}
 
 	if (saveFile->err()) {
-		warning("An error occured when reading '%s'", fileName.c_str());
+		warning("An error occrured when reading '%s'", fileName.c_str());
 		return Common::kReadingFailed;
 	}
 
@@ -1601,7 +1601,7 @@ Common::Error Myst3Engine::saveGameState(const Common::String &desc, const Graph
 	}
 
 	if (save->err()) {
-		warning("An error occured when writing '%s'", fileName.c_str());
+		warning("An error occurred when writing '%s'", fileName.c_str());
 		return Common::kWritingFailed;
 	}
 

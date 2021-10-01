@@ -50,7 +50,6 @@ int32 Interface::checkClipping(int32 x, int32 y) const {
 	return code;
 }
 
-// TODO: check if Graphics::drawLine() works here
 bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
 	// draw line from left to right
 	if (startWidth > endWidth) {

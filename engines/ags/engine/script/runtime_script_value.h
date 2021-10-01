@@ -303,6 +303,11 @@ public:
 	}
 
 	inline bool operator ==(const RuntimeScriptValue &rval) {
+		if (rval.Type == kScValPluginFunction) {
+			assert(!rval.methodName.empty());
+			return (Type == kScValPluginFunction) && (rval.methodName == methodName);
+		}
+
 		return ((intptr_t)Ptr + (intptr_t)IValue) == ((intptr_t)rval.Ptr + (intptr_t)rval.IValue);
 	}
 	inline bool operator !=(const RuntimeScriptValue &rval) {

@@ -1,6 +1,6 @@
 # Special target to create an MorphOS snapshot installation.
 # AmigaOS shell doesn't like indented comments.
-morphosdist: $(EXECUTABLE) $(PLUGINS) $(DIST_FILES_DOCS)
+morphosdist: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p $(MORPHOSPATH)extras
 	cp ${srcdir}/dists/amiga/scummvm.info $(MORPHOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS

@@ -549,7 +549,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	// Those are not serialized
 	for (i = 0; i < MAX_CONTROLLERS; i++) {
-		_game.controllerOccured[i] = false;
+		_game.controllerOccurred[i] = false;
 	}
 
 	if (saveVersion >= 7) {

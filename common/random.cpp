@@ -37,26 +37,31 @@ RandomSource::RandomSource(const String &name) {
 #ifdef ENABLE_EVENTRECORDER
 	setSeed(g_eventRec.getRandomSeed(name));
 #else
-	setSeed(g_system->getMillis());
+	TimeDate time;
+	g_system->getTimeAndDate(time);
+	uint32 newSeed = time.tm_sec + time.tm_min * 60 + time.tm_hour * 3600;
+	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
+	newSeed += time.tm_year * 86400 * 366;
+	newSeed = newSeed * 1000 + g_system->getMillis();
+	setSeed(newSeed);
 #endif
 }
 
 void RandomSource::setSeed(uint32 seed) {
+	if (seed == 0)
+		seed++;
 	_randSeed = seed;
 }
 
 uint RandomSource::getRandomNumber(uint max) {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-
+	scrambleSeed();
 	if (max == UINT_MAX)
-		return _randSeed;
-	return _randSeed % (max + 1);
+		return (_randSeed * 0xDEADBF03);
+	return (_randSeed * 0xDEADBF03) % (max + 1);
 }
 
 uint RandomSource::getRandomBit() {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+	scrambleSeed();
 	return _randSeed & 1;
 }
 
@@ -66,6 +71,14 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 int RandomSource::getRandomNumberRngSigned(int min, int max) {
 	return getRandomNumber(max - min) + min;
+}
+		
+inline void RandomSource::scrambleSeed() {
+	//marsaglia's paper says that any of 81 triplets are feasible
+	//(11,21,13) was chosen, with (cba) and (>>,<<,>>)
+	_randSeed ^= _randSeed >> 13;
+	_randSeed ^= _randSeed << 21;
+	_randSeed ^= _randSeed >> 11;
 }
 
 } // End of namespace Common

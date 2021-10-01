@@ -143,7 +143,7 @@ CompoundMetaTileProperty::CompoundMetaTileProperty(
 	arraySize = size;
 }
 
-CompoundMetaTileProperty::~CompoundMetaTileProperty(void) {
+CompoundMetaTileProperty::~CompoundMetaTileProperty() {
 	//  Free the memory for the copy of the array
 	free(propertyArray);
 }

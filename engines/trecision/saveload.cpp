@@ -259,7 +259,8 @@ bool TrecisionEngine::dataLoad() {
 		eventLoop();
 		_mouseLeftBtn = _mouseRightBtn = false;
 
-		performLoad(saveSlot - 1, skipLoad);
+		if (!skipLoad)
+			loadGameState(saveSlot);
 
 		return !skipLoad;
 	}
@@ -292,8 +293,8 @@ bool TrecisionEngine::dataLoad() {
 	loadSaveSlots(saveNames);
 
 	bool skipLoad = false;
-	int8 CurPos = -1;
-	int8 OldPos = -1;
+	int8 curPos = -1;
+	int8 oldPos = -1;
 
 	for (;;) {
 		checkSystem();
@@ -303,14 +304,14 @@ bool TrecisionEngine::dataLoad() {
 			_mousePos.y < (FIRSTLINE + ICONDY) &&
 			_mousePos.x >= ICONMARGSX &&
 			(_mousePos.x < (MAXX - ICONMARGDX))) {
-			OldPos = CurPos;
-			CurPos = (_mousePos.x - ICONMARGSX) / ICONDX;
+			oldPos = curPos;
+			curPos = (_mousePos.x - ICONMARGSX) / ICONDX;
 
-			if (OldPos != CurPos) {
+			if (oldPos != curPos) {
 				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 
-				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = textLength(saveNames[CurPos]);
+				uint16 posX = ICONMARGSX + ((curPos) * (ICONDX)) + ICONDX / 2;
+				uint16 lenText = textLength(saveNames[curPos]);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else
@@ -322,24 +323,24 @@ bool TrecisionEngine::dataLoad() {
 					Common::Rect(posX, FIRSTLINE + ICONDY + 10, lenText + posX, CARHEI + (FIRSTLINE + ICONDY + 10)),
 					Common::Rect(0, 0, lenText, CARHEI),
 					MOUSECOL,
-					saveNames[CurPos].c_str());
+					saveNames[curPos].c_str());
 				drawText.draw(this);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (_mouseLeftBtn && (_inventory[CurPos] != EMPTYSLOT)) {
+			if (_mouseLeftBtn && (_inventory[curPos] != EMPTYSLOT)) {
 				_mouseLeftBtn = false;
 				break;
 			}
 		} else {
-			if (OldPos != -1) {
+			if (oldPos != -1) {
 				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			OldPos = -1;
-			CurPos = -1;
+			oldPos = -1;
+			curPos = -1;
 
 			if (_mouseLeftBtn || _mouseRightBtn) {
 				_mouseLeftBtn = _mouseRightBtn = false;
@@ -350,9 +351,23 @@ bool TrecisionEngine::dataLoad() {
 		}
 	}
 
-	performLoad(CurPos, skipLoad);
+	if (!skipLoad) {
+		loadGameState(curPos + 1);
+	} else {
+		_actor->actorStop();
+		_pathFind->nextStep();
+		checkSystem();
 
-	if (skipLoad) {
+		_graphicsMgr->clearScreenBufferInventory();
+		_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
+
+		_graphicsMgr->clearScreenBufferTop();
+		_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+		if (_flagScriptActive) {
+			_graphicsMgr->hideCursor();
+		}
+
 		// Restore the inventory
 		_inventory = savedInventory;
 		_curInventory = 0;
@@ -367,6 +382,30 @@ Common::Error TrecisionEngine::loadGameStream(Common::SeekableReadStream *stream
 	Common::Serializer ser(stream, nullptr);
 	ser.setVersion(version);
 	syncGameStream(ser);
+
+	_graphicsMgr->clearScreenBufferInventory();
+
+	_flagNoPaintScreen = true;
+	_curStack = 0;
+	_flagScriptActive = false;
+
+	_oldRoom = _curRoom;
+	changeRoom(_curRoom);
+
+	_actor->actorStop();
+	_pathFind->nextStep();
+	checkSystem();
+
+	_graphicsMgr->clearScreenBufferInventory();
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
+
+	_graphicsMgr->clearScreenBufferTop();
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	if (_flagScriptActive) {
+		_graphicsMgr->hideCursor();
+	}
+
 	return Common::kNoError;
 }
 
@@ -423,35 +462,6 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	_logicMgr->syncGameStream(ser);
 
 	return true;
-}
-
-void TrecisionEngine::performLoad(int slot, bool skipLoad) {
-	if (!skipLoad) {
-		_graphicsMgr->clearScreenBufferInventory();
-
-		loadGameState(slot + 1);
-
-		_flagNoPaintScreen = true;
-		_curStack = 0;
-		_flagScriptActive = false;
-
-		_oldRoom = _curRoom;
-		changeRoom(_curRoom);
-	}
-
-	_actor->actorStop();
-	_pathFind->nextStep();
-	checkSystem();
-
-	_graphicsMgr->clearScreenBufferInventory();
-	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
-
-	_graphicsMgr->clearScreenBufferTop();
-	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	if (_flagScriptActive) {
-		_graphicsMgr->hideCursor();
-	}
 }
 
 } // End of namespace Trecision

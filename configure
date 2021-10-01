@@ -227,7 +227,7 @@ _windows_unicode=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
-_ar="ar cru"
+_ar="ar cr"
 _as="as"
 _dwp=dwp
 _windres=windres
@@ -1757,7 +1757,7 @@ else
 	# if _host_alias was set, default to the standard GNU tools
 	_ranlib=$_host_alias-ranlib
 	_strip=$_host_alias-strip
-	_ar="$_host_alias-ar cru"
+	_ar="$_host_alias-ar cr"
 	_as="$_host_alias-as"
 	_dwp=$_host_alias-dwp
 	_windres=$_host_alias-windres
@@ -1882,11 +1882,6 @@ riscos)
 		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
-	fi
-	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
-		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
-	elif `which bindhelp >/dev/null 2>&1`; then
-		add_line_to_config_mk "BINDHELP := bindhelp"
 	fi
 	;;
 *)
@@ -2033,7 +2028,7 @@ if test -n "$STRIP"; then
 fi
 
 if test -n "$AR"; then
-	_ar="$AR cru"
+	_ar="$AR cr"
 fi
 
 if test -n "$AS"; then
@@ -2472,10 +2467,12 @@ EOF
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-	type_ptr=uint32
+	signed_type_ptr=int32
+	unsigned_type_ptr=uint32
 	echo "no"
 else
-	type_ptr=uint64
+	signed_type_ptr=int64
+	unsigned_type_ptr=uint64
 	echo "yes"
 fi
 
@@ -2883,6 +2880,10 @@ EOF
 	dreamcast)
 		append_var DEFINES "-D__DC__"
 		append_var DEFINES "-DNONSTANDARD_PORT"
+		_detection_features_full=no
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+		fi
 		;;
 	ds)
 		_optimization_level=-Os
@@ -3207,6 +3208,9 @@ if test -n "$_host"; then
 			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
+			if test -z "$PKG_CONFIG_LIBDIR"; then
+				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/vfp/lib/pkgconfig"
+			fi
 			_sdlpath=$GCCSDK_INSTALL_ENV/vfp/bin
 			_freetypepath=$GCCSDK_INSTALL_ENV/vfp/bin
 			_libcurlpath=$GCCSDK_INSTALL_ENV/vfp/bin
@@ -3219,7 +3223,9 @@ if test -n "$_host"; then
 		arm-*riscos)
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
-			_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
+			if test -z "$PKG_CONFIG_LIBDIR"; then
+				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/lib/pkgconfig"
+			fi
 			_sdlpath=$GCCSDK_INSTALL_ENV/bin
 			_freetypepath=$GCCSDK_INSTALL_ENV/bin
 			_libcurlpath=$GCCSDK_INSTALL_ENV/bin
@@ -3277,7 +3283,7 @@ if test -n "$_host"; then
 			_backend="sdl"
 			HOSTEXEPRE=
 			HOSTEXEEXT=.html
-			_ar="emar cru"
+			_ar="emar cr"
 			_ranlib="emranlib"
 			_opengl_mode=gles2
 			_opengl_game_es2=yes
@@ -3326,6 +3332,7 @@ if test -n "$_host"; then
 			_backend="dc"
 			_build_scalers=no
 			_build_aspect=no
+			_tinygl=no
 			# These two are needed due to shortcomings of the
 			# detection systems.  Do not remove until auto-
 			# detection works correctly.
@@ -3559,7 +3566,7 @@ if test -n "$_host"; then
 			_timidity=no
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			#the -gcc- variants allow link time optimization
-			_ar="$_host_alias-gcc-ar cru"
+			_ar="$_host_alias-gcc-ar cr"
 			_ranlib=$_host_alias-gcc-ranlib
 			;;
 		psp)
@@ -4115,6 +4122,7 @@ POST_OBJS_FLAGS :=
 	dreamcast)
 		_plugin_prefix=""
 		_plugin_suffix=".plg"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
 PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
@@ -6095,6 +6103,12 @@ case $_host_os in
 		fi
 		;;
 	android)
+		# Force treating unqualified char variables as signed by default.
+		# NDK compiler for ARM will treat them as unsigned otherwise, which creates bugs in the code.
+		# We apply this to all Android architectures (arm, arm64, and x86, x86-64)
+		# albeit only the ARM architectures really required it (the others are not affected by this addition).
+		echo "(Android) Treating char as signed char by default"
+		append_var CXXFLAGS "-fsigned-char"
 		# ssp at this point so the cxxtests link
 		if test "$_debug_build" = yes; then
 			append_var CXXFLAGS "-fstack-protector"
@@ -6188,7 +6202,8 @@ typedef signed $type_4_byte int32;
 typedef signed $type_8_byte int64;
 #endif
 
-typedef $type_ptr  uintptr;
+typedef $signed_type_ptr intptr;
+typedef $unsigned_type_ptr uintptr;
 
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64

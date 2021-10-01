@@ -36,6 +36,7 @@
 #include "director/movie.h"
 #include "director/castmember.h"
 #include "director/sound.h"
+#include "director/util.h"
 #include "director/window.h"
 
 namespace Director {
@@ -772,7 +773,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		return nullptr;
 
 	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(_path, g_director->_dirSeparator))) {
+	if (!file->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator))) {
 		warning("Failed to open %s", _path.c_str());
 		return nullptr;
 	}
@@ -786,7 +787,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		magic2 == MKTAG('W', 'A', 'V', 'E')) {
 		stream = Audio::makeWAVStream(file, disposeAfterUse);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
-				magic2 == MKTAG('A', 'I', 'F', 'F')) {
+				(magic2 == MKTAG('A', 'I', 'F', 'F') || magic2 == MKTAG('A', 'I', 'F', 'C'))) {
 		stream = Audio::makeAIFFStream(file, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());

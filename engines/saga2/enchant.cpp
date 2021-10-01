@@ -37,7 +37,7 @@ extern int16        objectProtoCount;       // object prototype count
 
 int enchantmentProto = -1;
 
-void setEnchantmentDisplay(void);
+void setEnchantmentDisplay();
 
 //-------------------------------------------------------------------
 //	Enchantment Creation Function

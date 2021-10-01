@@ -241,7 +241,7 @@ struct TileInfo {
 	uint32          offset;                 // offset in tile list
 	TileAttrs       attrs;                  // tile attributes
 
-	int32 combinedTerrainMask(void) {
+	int32 combinedTerrainMask() {
 		return (1 << attrs.fgdTerrain) | (1 << attrs.bgdTerrain);
 	}
 
@@ -296,7 +296,7 @@ enum tileRefFlags {
 
 typedef TileRef *TileRefPtr, **TileRefHandle;
 
-void drawMainDisplay(void);
+void drawMainDisplay();
 
 /* ===================================================================== *
    TileCycleData: This structure is used to define continously cycling
@@ -403,19 +403,19 @@ public:
 	ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream);
 
 	//  Return the map number of this active item
-	int16 getMapNum(void);
+	int16 getMapNum();
 
 	//  Return the address of an active item, given its ID
 	static ActiveItem *activeItemAddress(ActiveItemID id);
 
 	//  Return this active items ID
-	ActiveItemID thisID(void);
+	ActiveItemID thisID();
 
 	//  Return this active items ID
 	ActiveItemID thisID(int16 mapNum);
 
 	//  Return a pointer to this TAI's group
-	ActiveItem *getGroup(void) {
+	ActiveItem *getGroup() {
 		assert(_data.itemType == activeTypeInstance);
 		return  activeItemAddress(ActiveItemID(getMapNum(), _data.instance.groupID));
 	}
@@ -437,12 +437,12 @@ public:
 		stateArray[mapNum][_data.instance.stateIndex] = state;
 	}
 
-	uint8 builtInBehavior(void) {
+	uint8 builtInBehavior() {
 		return (uint8)(_data.instance.scriptFlags >> 13);
 	}
 
 	//  Access to the locked bit
-	bool isLocked(void) {
+	bool isLocked() {
 		return (bool)(_data.instance.scriptFlags & activeItemLocked);
 	}
 	void setLocked(bool val) {
@@ -453,7 +453,7 @@ public:
 	}
 
 	//  Access to the exclusion semaphore
-	bool isExclusive(void) {
+	bool isExclusive() {
 		return (bool)(_data.instance.scriptFlags & activeItemExclusive);
 	}
 	void setExclusive(bool val) {
@@ -463,7 +463,7 @@ public:
 			_data.instance.scriptFlags &= ~activeItemExclusive;
 	}
 
-	uint8 lockType(void) {
+	uint8 lockType() {
 		return (uint8)_data.instance.scriptFlags;
 	}
 
@@ -488,8 +488,8 @@ public:
 		            &&  loc.v <  ins->_data.instance.v + _data.group.vSize + range;
 	}
 
-	ObjectID getInstanceContext(void);
-	Location getInstanceLocation(void);
+	ObjectID getInstanceContext();
+	Location getInstanceLocation();
 
 	static void playTAGNoise(ActiveItem *ai, int16 tagNoiseID);
 
@@ -526,7 +526,7 @@ public:
 	int16           numVertices;
 	XArray<Point16> vertexList;
 
-	int16 type(void) {
+	int16 type() {
 		return activeTypeHitZone;
 	}
 };
@@ -535,7 +535,7 @@ class ObjectClass : public ActiveItem {
 public:
 	// A general type of object
 
-	int16 type(void) {
+	int16 type() {
 		return activeTypeObjectType;
 	}
 };
@@ -549,7 +549,7 @@ public:
 	uint16          u, v, h;                // where the instance lies
 	uint8           facing;                 // which direction it's facing
 
-	int16 type(void) {
+	int16 type() {
 		return activeTypeObject;
 	}
 };
@@ -584,7 +584,7 @@ class TileActivityTask {
 		activityTypeScript                  // scriptable activity
 	};
 
-	void remove(void);                   // tile activity task is finished.
+	void remove();                   // tile activity task is finished.
 
 public:
 
@@ -593,9 +593,9 @@ public:
 	static void closeDoor(ActiveItem &activeInstance);
 	static void doScript(ActiveItem &activeInstance, uint8 finalState, ThreadID id);
 
-	static void updateActiveItems(void);
+	static void updateActiveItems();
 
-	static void initTileActivityTasks(void);
+	static void initTileActivityTasks();
 
 	static TileActivityTask *find(ActiveItem *tai);
 	static bool setWait(ActiveItem *tai, ThreadID script);
@@ -612,7 +612,7 @@ public:
 	Common::List<TileActivityTask *> _list;
 
 	//  Constructor -- initial construction
-	TileActivityTaskList(void);
+	TileActivityTaskList();
 
 	//  Reconstruct the TileActivityTaskList from an archive buffer
 	TileActivityTaskList(Common::SeekableReadStream *stream);
@@ -621,7 +621,7 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup this list
-	void cleanup(void);
+	void cleanup();
 
 	// get new tile activity task
 	TileActivityTask    *newTask(ActiveItem *activeInstance);
@@ -704,7 +704,7 @@ struct Platform {
 	    uint8           **imageData,
 	    StandingTileInfo &sti);
 
-	uint16   roofRipID(void) {
+	uint16   roofRipID() {
 		return (uint16)(flags & 0x0FFF);
 	}
 };
@@ -776,7 +776,7 @@ struct RipTable {
 	};
 
 	//  Constructor
-	RipTable(void) : metaID(NoMetaTile), ripID(0), _index(-1) {
+	RipTable() : metaID(NoMetaTile), ripID(0), _index(-1) {
 		for (int i = 0; i < kPlatformWidth; i++)
 			for (int j = 0; j < kPlatformWidth; j++)
 				zTable[i][j] = 0;
@@ -786,7 +786,7 @@ struct RipTable {
 	static RipTable *ripTableAddress(RipTableID id);
 
 	//  Return the rip table's ID
-	RipTableID thisID(void);
+	RipTableID thisID();
 };
 
 typedef RipTable    *RipTablePtr;
@@ -830,7 +830,7 @@ public:
 	//  Return a reference to this meta tile's rip table ID
 	RipTableID &ripTableID(int16 mapNum);
 
-	metaTileNoise HeavyMetaMusic(void);
+	metaTileNoise HeavyMetaMusic();
 
 	bool hasProperty(
 	    const MetaTileProperty &metaTileProp,
@@ -904,7 +904,7 @@ struct WorldMapData {
 	MetaTilePtr lookupMeta(TilePoint coords);
 
 	//  Build active item instance hash table
-	void buildInstanceHash(void);
+	void buildInstanceHash();
 
 	//  Return a pointer to an active item instance based upon the
 	//  group ID and the MetaTile's coordinates
@@ -921,7 +921,7 @@ class MetaTileIterator {
 
 	int16       mapNum;
 
-	bool iterate(void);
+	bool iterate();
 
 public:
 	MetaTileIterator(int16 map, const TileRegion &reg) : mapNum(map) {
@@ -935,7 +935,7 @@ public:
 	MetaTile *first(TilePoint *loc = NULL);
 	MetaTile *next(TilePoint *loc = NULL);
 
-	int16 getMapNum(void) {
+	int16 getMapNum() {
 		return mapNum;
 	}
 };
@@ -954,7 +954,7 @@ class TileIterator {
 	TileRegion          region,
 	                    tCoordsReg;
 
-	bool iterate(void);
+	bool iterate();
 
 public:
 	TileIterator(int16 mapNum, const TileRegion &reg) :
@@ -984,41 +984,41 @@ extern uint16       rippedRoofID;
  * ===================================================================== */
 
 //  Initialize map data
-void initMaps(void);
+void initMaps();
 
 //  Cleanup map data
-void cleanupMaps(void);
+void cleanupMaps();
 
 void setCurrentMap(int mapNum);              // set which map is current
 
 //  Initialize the platform cache
-void initPlatformCache(void);
+void initPlatformCache();
 
 //  Initialize the tile activity task list
-void initTileTasks(void);
+void initTileTasks();
 
 void saveTileTasks(Common::OutSaveFile *outS);
 void loadTileTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the tile activity task list
-void cleanupTileTasks(void);
+void cleanupTileTasks();
 
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj);
 
-void initActiveItemStates(void);
+void initActiveItemStates();
 void saveActiveItemStates(Common::OutSaveFile *outS);
 void loadActiveItemStates(Common::InSaveFile *in);
-void cleanupActiveItemStates(void);
+void cleanupActiveItemStates();
 
-void initTileCyclingStates(void);
+void initTileCyclingStates();
 void saveTileCyclingStates(Common::OutSaveFile *outS);
 void loadTileCyclingStates(Common::InSaveFile *in);
-void cleanupTileCyclingStates(void);
+void cleanupTileCyclingStates();
 
-void initAutoMap(void);
+void initAutoMap();
 void saveAutoMap(Common::OutSaveFile *outS);
 void loadAutoMap(Common::InSaveFile *in, int32 chunkSize);
-inline void cleanupAutoMap(void) { /* nothing to do */ }
+inline void cleanupAutoMap() { /* nothing to do */ }
 
 //  Determine if a platform is ripped
 inline bool platformRipped(Platform *pl) {

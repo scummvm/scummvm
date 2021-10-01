@@ -155,7 +155,7 @@ struct AGSCharacter {
 	short actx = 0, acty = 0;
 	char  name[40];
 	char  scrname[20];
-	char  on = 0;
+	int8  on = 0;
 };
 
 // AGSObject.flags
@@ -170,10 +170,10 @@ struct AGSObject {
 	short baseline = 0;       // <=0 to use Y co-ordinate; >0 for specific baseline
 	short view = 0, loop = 0, frame = 0; // only used to track animation - 'num' holds the current sprite
 	short wait = 0, moving = 0;
-	char  cycling = 0;        // is it currently animating?
-	char  overall_speed = 0;
-	char  on = 0;
-	char  flags = 0;
+	int8  cycling = 0;        // is it currently animating?
+	int8  overall_speed = 0;
+	int8  on = 0;
+	int8  flags = 0;
 };
 
 // AGSViewFrame.flags
@@ -199,7 +199,7 @@ struct AGSMouseCursor {
 	short hotx = 0, hoty = 0; // x,y hotspot co-ordinates
 	short view = 0;           // view (for animating cursors) or -1
 	char  name[10];           // name of cursor mode
-	char  flags = 0;          // MCF_flags above
+	int8  flags = 0;          // MCF_flags above
 };
 
 // The editor-to-plugin interface
@@ -378,6 +378,8 @@ public:
 	AGSIFUNC(int)  FWrite(void *, int32, int32);
 	// similar to fread - buffer, size, filehandle
 	AGSIFUNC(int)  FRead(void *, int32, int32);
+	// similar to fseek
+	AGSIFUNC(bool)FSeek(soff_t offset, int origin, int32 handle);
 	// print text, wrapping as usual
 	AGSIFUNC(void) DrawTextWrapped(int32 x, int32 y, int32 width, int32 font, int32 color, const char *text);
 	// set the current active 'screen'

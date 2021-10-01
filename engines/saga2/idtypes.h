@@ -76,7 +76,7 @@ struct MetaTileID {
 	int16           index;          //  index into metatile array
 
 	//  Default constructor
-	MetaTileID(void) : map(0), index(0) {}
+	MetaTileID() : map(0), index(0) {}
 
 	//  Copy constructor
 	MetaTileID(const MetaTileID &id) : map(id.map), index(id.index) {}
@@ -128,7 +128,7 @@ struct ActiveItemID {
 	//      next 13 bits index
 
 	//  Default constructor
-	ActiveItemID(void) : val(0) {}
+	ActiveItemID() : val(0) {}
 
 	//  Copy constructor
 	ActiveItemID(const ActiveItemID &id) : val(id.val) {
@@ -164,7 +164,7 @@ struct ActiveItemID {
 		return val != id.val;
 	}
 
-	operator int16(void) {
+	operator int16() {
 		return val;
 	}
 
@@ -173,7 +173,7 @@ struct ActiveItemID {
 		val |= (m << activeItemMapShift);
 	}
 
-	int16 getMapNum(void) {
+	int16 getMapNum() {
 		return (uint16)val >> activeItemMapShift;
 	}
 
@@ -182,7 +182,7 @@ struct ActiveItemID {
 		val |= i & activeItemIndexMask;
 	}
 
-	int16 getIndexNum(void) {
+	int16 getIndexNum() {
 		return val & activeItemIndexMask;
 	}
 } PACKED_STRUCT;

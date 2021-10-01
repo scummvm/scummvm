@@ -224,7 +224,7 @@ public:
 		next = nullptr;
 	};
 
-	TilePoint getPoint(void) {
+	TilePoint getPoint() {
 		switch (type) {
 		case spellTargetPoint       :
 		case spellTargetObjectPoint :
@@ -239,16 +239,16 @@ public:
 		}
 	}
 
-	spellTargetType getType(void) {
+	spellTargetType getType() {
 		return type;
 	}
 
-	GameObject *getObject(void) {
+	GameObject *getObject() {
 		assert(type == spellTargetObject);
 		return obj;
 	}
 
-	ActiveItem *getTAG(void) {
+	ActiveItem *getTAG() {
 		assert(type == spellTargetTAG);
 		return tag;
 	}
@@ -310,48 +310,48 @@ public:
 	Effectron(uint16 newPos, uint16 newDir);
 	Effectron(StorageEffectron &se, SpellInstance *si);
 
-	void drawEffect(void);
+	void drawEffect();
 	void updateEffect(int32 deltaTime);
 
-	inline TilePoint SpellPos(void) {
+	inline TilePoint SpellPos() {
 		return current;
 	}
-	inline int32 spriteID(void)     {
+	inline int32 spriteID()     {
 		return spr;
 	}
 
-	inline void hide(void)     {
+	inline void hide()     {
 		flags |= effectronHidden;
 	}
-	inline void unhide(void)   {
+	inline void unhide()   {
 		flags &= (~effectronHidden);
 	}
-	inline bool isHidden(void) const {
+	inline bool isHidden() const {
 		return flags & effectronHidden;
 	}
-	inline void kill(void)     {
+	inline void kill()     {
 		flags |= effectronDead;
 	}
-	inline int isDead(void) const      {
+	inline int isDead() const      {
 		return flags & effectronDead;
 	}
-	inline void bump(void);
-	inline int isBumped(void) const        {
+	inline void bump();
+	inline int isBumped() const        {
 		return flags & effectronBumped;
 	}
 
-	inline GameWorld *world(void) const;
-	inline int16 getMapNum(void) const;
+	inline GameWorld *world() const;
+	inline int16 getMapNum() const;
 
-	inline EffectID                 spellID(void);
-	inline SpellDisplayPrototype    *spell(void);
-	inline EffectID                 effectID(void);
-	inline EffectDisplayPrototype   *effect(void);
-	inline EffectronFlags       staCall(void);
-	inline TilePoint            posCall(void);
-	inline SpellSpritationSeed  sprCall(void);
-	inline spellHeight          hgtCall(void);
-	inline spellBreadth         brdCall(void);
+	inline EffectID                 spellID();
+	inline SpellDisplayPrototype    *spell();
+	inline EffectID                 effectID();
+	inline EffectDisplayPrototype   *effect();
+	inline EffectronFlags       staCall();
+	inline TilePoint            posCall();
+	inline SpellSpritationSeed  sprCall();
+	inline spellHeight          hgtCall();
+	inline spellBreadth         brdCall();
 	inline void                 initCall(int16);
 };
 

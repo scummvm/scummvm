@@ -325,6 +325,10 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					*(int32 *)_vars[i].variable = atoi(param[1]);
 					debugPrintf("(int)%s = %d\n", param[0], *(int32 *)_vars[i].variable);
 					break;
+				case DVAR_FLOAT:
+					*(float *)_vars[i].variable = (float)atof(param[1]);
+					debugPrintf("(float)%s = %f\n", param[0], *(float *)_vars[i].variable);
+					break;
 				case DVAR_BOOL:
 					if (Common::parseBool(param[1], *(bool *)_vars[i].variable))
 						debugPrintf("(bool)%s = %s\n", param[0], *(bool *)_vars[i].variable ? "true" : "false");
@@ -361,6 +365,9 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					break;
 				case DVAR_INT:
 					debugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_vars[i].variable);
+					break;
+				case DVAR_FLOAT:
+					debugPrintf("(float)%s = %f\n", param[0], *(const float *)_vars[i].variable);
 					break;
 				case DVAR_BOOL:
 					debugPrintf("(bool)%s = %s\n", param[0], *(const bool *)_vars[i].variable ? "true" : "false");

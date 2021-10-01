@@ -48,12 +48,12 @@ CursorRef Cursor::getRef() {
 
 bool Cursor::operator==(const Cursor &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId.equalTo(_cursorResId);
+		c._cursorResId == _cursorResId;
 }
 
 bool Cursor::operator==(const CursorRef &c) {
 	return _cursorType == c._cursorType &&
-			c._cursorResId.equalTo(_cursorResId);
+			c._cursorResId == _cursorResId;
 }
 
 void Cursor::readFromCast(Datum cursorCasts) {
@@ -61,7 +61,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 		warning("Cursor::readFromCast: Needs array of 2");
 		return;
 	}
-	if (_cursorResId.equalTo(cursorCasts))
+	if (_cursorResId == cursorCasts)
 		return;
 
 	CastMemberID cursorId = cursorCasts.u.farr->arr[0].asMemberID();
@@ -156,7 +156,7 @@ void Cursor::readBuiltinType(Datum resourceId) {
 }
 
 void Cursor::readFromResource(Datum resourceId) {
-	if (resourceId.equalTo(_cursorResId))
+	if (resourceId == _cursorResId)
 		return;
 
 	if (resourceId.type != INT) {
@@ -241,12 +241,12 @@ CursorRef::CursorRef() {
 
 bool CursorRef::operator==(const Cursor &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId.equalTo(_cursorResId);
+		c._cursorResId == _cursorResId;
 }
 
 bool CursorRef::operator==(const CursorRef &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId.equalTo(_cursorResId);
+		c._cursorResId == _cursorResId;
 }
 
 } // End of namespace Director

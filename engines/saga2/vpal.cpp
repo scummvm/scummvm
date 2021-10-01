@@ -66,7 +66,7 @@ PaletteManager::PaletteManager() {
 	_startTime = _totalTime = 0;
 }
 
-void PaletteManager::assertCurrentPalette(void) {
+void PaletteManager::assertCurrentPalette() {
 	if (paletteChangesEnabled()) {
 		byte palette[256 * 3];
 		for (int i = 0; i < 256; i++) {
@@ -102,7 +102,7 @@ static inline int16 bscale(int16 s) {
 	else return (63 + s) / 2;
 }
 
-void PaletteManager::loadPalettes(void) {
+void PaletteManager::loadPalettes() {
 	int     i;
 
 	//  Create a black palette for fades
@@ -153,7 +153,7 @@ void PaletteManager::loadPalettes(void) {
 //----------------------------------------------------------------------
 //	Dump global palette resources
 
-void PaletteManager::cleanupPalettes(void) {
+void PaletteManager::cleanupPalettes() {
 	if (g_vm->_pal->_noonPalette) {
 		free(g_vm->_pal->_noonPalette);
 		g_vm->_pal->_noonPalette = nullptr;
@@ -269,7 +269,7 @@ void PaletteManager::getCurrentPalette(gPalettePtr pal) {
 //----------------------------------------------------------------------
 //	Initialize the state of the current palette and fade up/down.
 
-void PaletteManager::initPaletteState(void) {
+void PaletteManager::initPaletteState() {
 	//setCurrentPalette( *noonPalette );
 	_totalTime = _startTime = 0;
 }
@@ -277,7 +277,7 @@ void PaletteManager::initPaletteState(void) {
 //----------------------------------------------------------------------
 // routines to suspend & restore a palette state (during videos)
 
-void PaletteManager::lightsOut(void) {
+void PaletteManager::lightsOut() {
 	memset(&_currentPalette, 0, sizeof(_currentPalette));
 	assertCurrentPalette();
 }
@@ -285,11 +285,11 @@ void PaletteManager::lightsOut(void) {
 //----------------------------------------------------------------------
 // routines to suspend & restore a palette state (during videos)
 
-void PaletteManager::quickSavePalette(void) {
+void PaletteManager::quickSavePalette() {
 	memcpy(&_quickPalette, &_currentPalette, sizeof(gPalette));
 }
 
-void PaletteManager::quickRestorePalette(void) {
+void PaletteManager::quickRestorePalette() {
 	memcpy(&_currentPalette, &_quickPalette, sizeof(gPalette));
 	assertCurrentPalette();
 }
@@ -328,7 +328,7 @@ void PaletteManager::loadPaletteState(Common::InSaveFile *in) {
 	setCurrentPalette(&tempPalette);
 }
 
-void initPaletteState(void) {
+void initPaletteState() {
 	g_vm->_pal->initPaletteState();
 }
 

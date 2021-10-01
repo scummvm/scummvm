@@ -72,7 +72,7 @@ void GrvCursorMan::setStyle(uint8 newStyle) {
 void GrvCursorMan::animate() {
 	if (_lastTime) {
 		int newTime = _syst->getMillis();
-		if (_lastTime - newTime >= 75) {
+		if (newTime - _lastTime >= 66) {
 			_lastFrame++;
 			_lastFrame %= _cursor->getFrames();
 			_cursor->showFrame(_lastFrame);
@@ -259,15 +259,14 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	_numFrames = file.readUint16LE();
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
+	_hotspotX = file.readUint16LE();
+	_hotspotY = file.readUint16LE();
 
 	_img = new byte[_width * _height * _numFrames * 4];
 
-	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
+	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d, hotspot: %d, %d", _width, _height, _numFrames, _hotspotX, _hotspotY);
 
-	uint16 tmp16 = file.readUint16LE();
-	debugC(5, kDebugCursor, "hotspot x?: %d\n", tmp16);
-	tmp16 = file.readUint16LE();
-	debugC(5, kDebugCursor, "hotspot y?: %d\n", tmp16);
+	uint16 tmp16;
 	int loop2count = file.readUint16LE();
 	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
 	for (int l = 0; l < loop2count; l++) {
@@ -309,6 +308,8 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 	byte r, g, b;
 
+	const byte alphaDecoded[8] = {0, 36, 73, 109, 146, 182, 219, 255};	// Calculated by: alpha = ((int)(*data & 0xE0) * 255) / 224;
+
 	// Start frame decoding
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
@@ -318,7 +319,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 					ctrA = (*data++ & 0x7F) + 1;
 				} else {
 					ctrB = *data++ + 1;
-					alpha = *data & 0xE0;
+					alpha = alphaDecoded[(*data & 0xE0) >> 5];
 					palIdx = *data++ & 0x1F;
 				}
 			}
@@ -326,7 +327,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 			if (ctrA) {
 				// Block type A - chunk of non-continuous pixels
 				palIdx = *data & 0x1F;
-				alpha = *data++ & 0xE0;
+				alpha = alphaDecoded[(*data++ & 0xE0) >> 5];
 
 				r = *(pal + palIdx);
 				g = *(pal + palIdx + 0x20);
@@ -344,20 +345,10 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 			// Decode pixel
 			if (alpha) {
-				if (alpha != 0xE0) {
-					alpha = ((alpha << 8) / 224);
-
-					// TODO: The * 0 to be replaced by the component value of each pixel
-					//       below, respectively - does blending
-					r = (byte)((alpha * r + (256 - alpha) * 0) >> 8);
-					g = (byte)((alpha * g + (256 - alpha) * 0) >> 8);
-					b = (byte)((alpha * b + (256 - alpha) * 0) >> 8);
-				}
-
-				*ptr = 1;
-				*(ptr + 1) = r;
-				*(ptr + 2) = g;
-				*(ptr + 3) = b;
+				ptr[0] = alpha;
+				ptr[1] = r;
+				ptr[2] = g;
+				ptr[3] = b;
 			}
 			ptr += 4;
 		}
@@ -368,11 +359,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	ptr = tmp;
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			if (*ptr == 1) {
-				*(uint32 *)dest = _format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
-			} else {
-				*(uint32 *)dest = 0;
-			}
+			*(uint32 *)dest = _format.ARGBToColor(ptr[0], ptr[1], ptr[2], ptr[3]);
 			dest += 4;
 			ptr += 4;
 		}
@@ -386,7 +373,7 @@ void Cursor_v2::enable() {
 
 void Cursor_v2::showFrame(uint16 frame) {
 	int offset = _width * _height * frame * 4;
-	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, false, &_format);
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, 0, false, &_format);
 }
 
 
@@ -397,14 +384,14 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 
 	// Open the icons file
 	Common::File iconsFile;
-	if (!iconsFile.open("icons.ph"))
-		error("Groovie::Cursor: Couldn't open icons.ph");
+	if (!iconsFile.open("icons.ph") && !iconsFile.open("icons.bin"))
+		error("Groovie::Cursor: Couldn't open icons.ph or icons.bin");
 
 	// Verify the signature
 	uint32 tmp32 = iconsFile.readUint32BE();
 	uint16 tmp16 = iconsFile.readUint16LE();
 	if (tmp32 != MKTAG('i','c','o','n') || tmp16 != 1)
-		error("Groovie::Cursor: icons.ph signature failed: %s %d", tag2str(tmp32), tmp16);
+		error("Groovie::Cursor: %s signature failed: %s %d", iconsFile.getName(), tag2str(tmp32), tmp16);
 
 
 	// Read the number of icons

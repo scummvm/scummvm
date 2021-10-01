@@ -38,6 +38,7 @@
 #include "asylum/system/screen.h"
 #include "asylum/system/text.h"
 
+#include "asylum/views/insertdisc.h"
 #include "asylum/views/scene.h"
 #include "asylum/views/video.h"
 
@@ -73,88 +74,168 @@ const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackHive                  // Hive Control
 };
 
+#define ED_LISTEND {-1, kObjectNone, kObjectNone, 0, 0}
 static const struct EncounterData {
 	int32 index;
 	uint32 objectId1;
 	uint32 objectId2;
 	ActorIndex actorIndex;
-} encounterData[13][20] = {
+	uint32 subIndex;
+} encounterData[13][31] = {
 	// TowerCells
 	{
-		{ 0, kObjectPreAlphaNut,  kObjectPreAlphaNut,  kActorMax},
-		{ 1, kObjectPreAlphaNut2, kObjectPreAlphaNut2, kActorMax},
-		{ 2, kObjectRocker,       kObjectRocker,       kActorMax},
-		{73, kObjectNone,         kObjectNone,         kActorMax},
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{ 0, kObjectPreAlphaNut,            kObjectPreAlphaNut,            0, 0},
+		{ 1, kObjectPreAlphaNut2,           kObjectPreAlphaNut2,           0, 0},
+		{ 2, kObjectRocker,                 kObjectRocker,                 0, 0},
+		{73, kObjectNone,                   kObjectNone,                   0, 0},
+		ED_LISTEND
 	},
 	// InnocentAbandoned
 	{
-		{ 3, 1072, 1091, kActorMax},
-		{ 4, 1061, 1072, kActorMax},
-		{ 5, 1200, 1199, kActorMax},
-		{ 7, 1105,  991, kActorMax},
-		{ 9, 1012, 1011, kActorMax},
-		{10,  993,  993, kActorMax},
-		{11, 1013, 1013, kActorMax},
-		{12, 1082, 1084, kActorMax},
-		{13, 1001, 1001, kActorMax},
-		{14, 1587, 2280, kActorMax},
-		{74, 2992, 2992, kActorMax},
-		{76, 2990, 2990, kActorMax},
-		{77, 2990, 2990, kActorMax},
-		{78, 2990, 2990, kActorMax},
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{ 3, kObjectJessieTalks,            kObjectJessieStatusWhileUp,    0, 0},
+		{ 4, kObjectBillyTalks,             kObjectBillyStatusUp,          0, 0},
+		{ 5, kObjectMariaPointsLeft,        kObjectMarisStatusQuo,         0, 0},
+		{ 6, kObjectNone,                   kObjectNone,                   1, 0},
+		{ 7, kObjectTalkToBallBoy,          kObjectMarty02,                0, 0},
+		{ 8, kObjectNone,                   kObjectNone,                   2, 0},
+		{ 9, kObjectDennisTalk,             kObjectDennisStatusQuo,        0, 0},
+		{ 9, kObjectDennisTalkHide,         kObjectDennisFoundSt,          0, 1},
+		{10, kObjectEleenOnGround,          kObjectIleanStatusFrame,       0, 0},
+		{10, kObjectEileenTalkingWithShove, kObjectStqEileenTalkWithShov,  0, 1},
+		{10, kObjectEileenOnBench,          kObjectEileenOnBench,          0, 2},
+		{11, kObjectSailorBoy,              kObjectSailorBoy,              0, 0},
+		{12, kObjectNone,                   kObjectNone,                   2, 0},
+		{12, kObjectSuckerTalks,            kObjectSuckerSittingStatusQuo, 0, 1},
+		{13, kObjectFishingBoy,             kObjectFishingBoy,             0, 0},
+		{14, kObjectMotherTalking,          kObjectMotherTalkingSq,        0, 0},
+		{74, kObjectCarolsDiary,            kObjectCarolsDiary,            0, 0},
+		{75, kObjectObituary,               kObjectObituary,               0, 0},
+		{76, kObjectObituary,               kObjectObituary,               0, 0},
+		{77, kObjectObituary,               kObjectObituary,               0, 0},
+		{78, kObjectObituary,               kObjectObituary,               0, 0},
+		ED_LISTEND
 	},
 	// CourtyardAndChapel
 	{
-		{36, 820, 820, kActorMax},
-		{37, 863, 863, kActorMax},
-		{38, 862, 1038, kActorMax},
-		{39, 844, 844, kActorMax},
-		{40, 845, 845, kActorMax},
-		{41, 846, 846, kActorMax},
-		{43, 873, 801, kActorMax},
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{32, kObjectNone,                   kObjectNone,                   1, 0},
+		{33, kObjectNone,                   kObjectNone,                   2, 0},
+		{34, kObjectNone,                   kObjectNone,                   3, 0},
+		{35, kObjectNone,                   kObjectNone,                   4, 0},
+		{36, kObjectNpc024TalkChurch,       kObjectNPC024Church,           0, 0},
+		{36, kObjectNpc024DanceAway,        kObjectNpc024DanceAway,        0, 1},
+		{36, kObjectNpc024TalkFount,        kObjectNPC024Fountain,         0, 2},
+		{37, kObjectNpc025Talking,          kObjectNpc025Talking,          0, 0},
+		{38, kObjectNPC026Talking,          kObjectNPC026TalkStatusQuo,    0, 0},
+		{39, kObjectNPC027Dancing,          kObjectNPC027Dancing,          0, 0},
+		{39, kObjectNpc027Talk,             kObjectNPC027Sit,              0, 1},
+		{40, kObjectNPC028Dancing,          kObjectNPC028Dancing,          0, 0},
+		{40, kObjectNpc028Talk,             kObjectNPC028Sit,              0, 1},
+		{41, kObjectNpc029Dancing,          kObjectNpc029Dancing,          0, 0},
+		{41, kObjectNpc029Talk,             kObjectNPC029Sit,              0, 1},
+		{42, kObjectNone,                   kObjectNone,                   5, 0},
+		{43, kObjectNpc000Talking,          kObjectDrMorgan,               0, 0},
+		ED_LISTEND
 	},
 	// CircusOfFools
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{44, kObjectNpc032TalkOutside,      kObjectNPC032StatusQuoOutside, 0, 0},
+		{44, kObjectRingmasterTalkTent,     kObjectNPC032StatusQuoBigTop,  0, 1},
+		{45, kObjectNpc033Talking,          kObjectNpc033SqNoBook,         0, 0},
+		{46, kObjectTattooingStrongMan,     kObjectTattooingStrongMan,     0, 0},
+		{46, kObjectTattooGuy034Talk,       kObjectTattooManStatusQuo,     0, 1},
+		{47, kObjectStrongman035Talk,       kObjectStrongmanStatusQuo,     0, 0},
+		{47, kObjectStrongmanStatusQuo2,    kObjectStrongmanStatusQuo2,    0, 1},
+		{48, kObjectInfernoTalk036,         kObjectInfernoStatusQuo,       0, 0},
+		{49, kObjectJugglerWithPin,         kObjectJugglerWithPin,         0, 0},
+		{49, kObjectJuggler,                kObjectJuggler,                0, 1},
+		{50, kObjectClown038Talk,           kObjectClownStatusQuo,         0, 0},
+		{51, kObjectTrixie039Talk,          kObjectTrixieSq2,              0, 0},
+		{52, kObjectSSimon040Talk,          kObjectSimonSq2,               0, 0},
+		{53, kObjectNone,                   kObjectNone,                   1, 0},
+		{54, kObjectNone,                   kObjectNone,                   2, 0},
+		{55, kObjectNone,                   kObjectNone,                   3, 0},
+		{56, kObjectFunTixStatusQuo,        kObjectFunTixStatusQuo,        0, 0},
+		{57, kObjectFreakTixStatusQuoUp,    kObjectFreakTixStatusQuoUp,    0, 0},
+		{57, kObjectFreakTixStatusQuoDown,  kObjectFreakTixStatusQuoDown,  0, 1},
+		{58, kObjectFortTellerStatusQuo,    kObjectFortTellerStatusQuo,    0, 0},
+		{59, kObjectRingTossStatusQuo,      kObjectRingTossStatusQuo,      0, 0},
+		{59, kObjectKnockDownStatusQuo,     kObjectKnockDownStatusQuo,     0, 1},
+		{59, kObjectPigShootStatusQuo,      kObjectPigShootStatusQuo,      0, 2},
+		{60, kObjectPretzool048Talk,        kObjectPretZoolStatusQuo,      0, 0},
+		{61, kObjectTimber049Talk,          kObjectTimberStatusQuo,        0, 0},
+		{61, kObjectTimber049Talk,          kObjectNpc049Sq2,              0, 1},
+		{62, kObjectTwins050Talk,           kObjectTwinsStatusQuo,         0, 0},
+		{63, kObjectSean051Talk,            kObjectSeanStatusQuo,          0, 0},
+		{64, kObjectMom052Talk,             kObjectMomAndPopStatusQuo,     0, 0},
+		{65, kObjectPop053Talk,             kObjectMomAndPopStatusQuo,     0, 0},
+		ED_LISTEND
 	},
 	// Laboratory
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{79, kObjectNone,                   kObjectNone,                   0, 0},
+		ED_LISTEND
 	},
 	// Hive
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{67, kObjectGravinTalkCyber,        kObjectGravinTalkCyber,        0, 0},
+		{67, kObjectGravinTalkGravins,      kObjectGravinSqGravins,        0, 1},
+		{67, kObjectGravinTalkDoor,         kObjectGravinSqDoor,           0, 2},
+		{67, kObjectGravinTalkGromnas,      kObjectGravinSqGromnas,        0, 3},
+		{67, kObjectGravinWorkMachine,      kObjectGravinWorkMachine,      0, 4},
+		{68, kObjectNpc062GritzaTalk,       kObjectNPC062GritzaStatusQuo,  0, 0},
+		{69, kObjectNpc063GrundleTalk,      kObjectNPC063GrundleStatusQuo, 0, 0},
+		{70, kObjectNpc064GrellaTalk,       kObjectNPC064GrellaStatusQuo,  0, 0},
+		{71, kObjectNpc065Talk,             kObjectNPC065StatusQuo,        0, 0},
+		{72, kObjectNPC066StatusQuo,        kObjectNPC066StatusQuo,        0, 0},
+		ED_LISTEND
 	},
 	// MorgueAndCemetery
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{15, kObjectBodyTalks,              kObjectBodyStat,               0, 0},
+		{16, kObjectFreezerHallInterior,    kObjectFreezerHallInterior,    0, 0},
+		{17, kObjectTreeTalks,              kObjectBlinks,                 0, 0},
+		ED_LISTEND
 	},
 	// LostVillage
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		{ 6, kObjectNone,                   kObjectNone,                   1, 0},
+		{18, kObjectOracleTalks,            kObjectOracleTalkStatus,       0, 0},
+		{19, kObjectPixelForQueztza,        kObjectPixelForQueztza,        0, 0},
+		{20, kObjectWitchTalks,             kObjectWitchDoctor,            0, 0},
+		{20, kObjectDeadShamanStill,        kObjectDeadShamanStill,        0, 1},
+		{21, kObjectStoneMaisonTalk,        kObjectStoneMaison,            0, 0},
+		{22, kObjectStoneWifeTalks,         kObjectStoneWifeStatuQuo,      0, 0},
+		{23, kObjectLittleGirlTalk,         kObjectGirlStatusQuo,          0, 0},
+		{24, kObjectFishermansWTalks,       kObjectFishermanWidowStatusQuo,0, 0},
+		{25, kObjectWitchWifeTalking,       kObjectWitchWifeTalking,       0, 0},
+		{26, kObjectGhost2,                 kObjectGhost2,                 0, 0},
+		{26, kObjectJumpDown,               kObjectJumpDown,               0, 1},
+		{27, kObjectGhost6,                 kObjectGhost6,                 0, 0},
+		{28, kObjectGhost3,                 kObjectGhost3,                 0, 0},
+		{29, kObjectGhost1,                 kObjectGhost1,                 0, 0},
+		{30, kObjectGhost4,                 kObjectGhost4,                 0, 0},
+		{31, kObjectGhost5,                 kObjectGhost5,                 0, 0},
+		ED_LISTEND
 	},
 	// Gauntlet
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		ED_LISTEND
 	},
 	// Mansion
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		ED_LISTEND
 	},
 	// Cave
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		ED_LISTEND
 	},
 	// Maze
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		ED_LISTEND
 	},
 	// MorgansLastGame
 	{
-		{-1, kObjectNone, kObjectNone, kActorMax}
+		ED_LISTEND
 	}
 };
 
@@ -172,7 +253,7 @@ static const int32 itemIndices[][16] = {
 	{69, 70, 78}
 };
 
-Console::Console(AsylumEngine *engine) : _vm(engine) {
+Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine), _resViewer(engine) {
 	// Commands
 	registerCmd("help",           WRAP_METHOD(Console, cmdHelp));
 
@@ -191,6 +272,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
 	registerCmd("kill_script",    WRAP_METHOD(Console, cmdKillScript));
 
+	registerCmd("insertdisc",     WRAP_METHOD(Console, cmdInsertDisc));
 	registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
 	registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
@@ -205,7 +287,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
 
 	registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
-	registerCmd("draw",           WRAP_METHOD(Console, cmdDrawResource));
+	registerCmd("view",           WRAP_METHOD(Console, cmdViewResource));
 
 	registerCmd("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
@@ -255,6 +337,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf(" show_script - show script commands\n");
 	debugPrintf(" kill_script - terminate a script\n");
 	debugPrintf(" puzzle      - run an puzzle\n");
+	debugPrintf(" insertdisc  - show Insert Disc screen\n");
 	debugPrintf("\n");
 	debugPrintf(" get_status  - get actor's status\n");
 	debugPrintf(" set_status  - set actor's status\n");
@@ -267,7 +350,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf(" throw       - remove an item from inventory\n");
 	debugPrintf("\n");
 	debugPrintf(" palette     - set the screen palette\n");
-	debugPrintf(" draw        - draw a resource\n");
+	debugPrintf(" view        - view game resources\n");
 	debugPrintf("\n");
 	debugPrintf(" toggle_flag - toggle a flag\n");
 	debugPrintf("\n");
@@ -524,7 +607,16 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 
 	// Check if the video exists
 	char filename[20];
-	snprintf(filename, 20, "mov%03d.smk", index);
+	const char *extension;
+
+	if (_vm->checkGameVersion("Steam"))
+		extension = "_smk.ogv";
+	else if (_vm->isAltDemo())
+		extension = ".avi";
+	else
+		extension = ".smk";
+
+	snprintf(filename, 20, "mov%03d%s", index, extension);
 	if (!SearchMan.hasFile(filename)) {
 		debugPrintf("[Error] Movie %d does not exists\n", index);
 		return true;
@@ -663,6 +755,8 @@ bool Console::cmdKillScript(int argc, const char **argv) {
 bool Console::cmdChangeScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <scene number>\n", argv[0]);
+		for (int i = 0; i < 13; i++)
+			debugPrintf("        %-2d  %s\n", i + 5, getText()->get(MAKE_RESOURCE(kResourcePackText, i + 1812)));
 		return true;
 	}
 
@@ -678,15 +772,28 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 
 	_vm->_delayedSceneIndex = index;
 	_vm->_puzzles->reset();
+	_vm->resetFlags();
+
+	return false;
+}
+
+bool Console::cmdInsertDisc(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Syntax: %s (1|2|3)\n", argv[0]);
+		return true;
+	}
+
+	int cdNumber = CLIP<int>(atoi(argv[1]), 1, 3);
+	_insertDisc.setCdNumber(cdNumber);
+	_insertDisc.setEventHandler(_vm->getEventHandler());
+	_vm->switchEventHandler(&_insertDisc);
 
 	return false;
 }
 
 bool Console::cmdRunEncounter(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Syntax: %s <encounter index>\n", argv[0]);
-		return true;
-	}
+	int i, j, subIndex = 0;
+	const EncounterData *data;
 
 	// Check that we are inside a scene
 	if (!getScene()) {
@@ -694,22 +801,52 @@ bool Console::cmdRunEncounter(int argc, const char **argv) {
 		return true;
 	}
 
-	// Check index is valid
-	int32 index = atoi(argv[1]);
-	if (index < 0 || index >= (int32)_vm->encounter()->_items.size()) {
-		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
+	if (argc < 2) {
+		debugPrintf("Syntax: %s <encounter index> (<encounter subindex>)\n", argv[0]);
+
+		j = 0;
+		while (true) {
+			data = &encounterData[getWorld()->chapter - 1][j];
+			if (data->index == -1)
+				break;
+
+			debugPrintf("        %-2d", data->index);
+			if (data->subIndex)
+				debugPrintf(" %d ", data->subIndex);
+			else
+				debugPrintf("   ");
+
+			Object *object1 = getWorld()->getObjectById((ObjectId)data->objectId1),
+				   *object2 = getWorld()->getObjectById((ObjectId)data->objectId2);
+			debugPrintf("%-23s | %-23s", object1 ? object1->getName() : "NONE", object2 ? object2->getName() : "NONE");
+			debugPrintf("\n");
+
+			j++;
+		}
 		return true;
 	}
 
-	// Get the encounter data
-	const EncounterData *data;
-	for (data = (const EncounterData *)&encounterData[getScene()->getPackId() - 5]; data->index != -1; data++) {
-		if (data->index == index)
+	// Check if index is valid
+	int index = atoi(argv[1]);
+	if (argc > 2)
+		subIndex = atoi(argv[2]);
+
+	j = 0;
+	while (true) {
+		data = &encounterData[getWorld()->chapter - 1][j];
+		i = data->index;
+
+		if (i == -1)
 			break;
+
+		if (i == index && subIndex == (int)data->subIndex)
+			break;
+
+		j++;
 	}
 
-	if (data->index == -1) {
-		debugPrintf("[Error] No encounter data for this index (index: %d)\n", index);
+	if (i == -1) {
+		debugPrintf("[Error] No encounter with index %d in this chapter\n", index);
 		return true;
 	}
 
@@ -909,22 +1046,26 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdDrawResource(int argc, const char **argv) {
-	if (argc != 3 && argc != 4) {
-		debugPrintf("Syntax: %s <pack> <index> (<frame>)\n", argv[0]);
+bool Console::cmdViewResource(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Syntax: %s <pack> (<index>)\n", argv[0]);
+		debugPrintf("\nControls:\n");
+		debugPrintf("        Space/Backspace - next/previous resource\n");
+		debugPrintf("        Enter           - toggle animation\n");
+		debugPrintf("        PageDown/PageUp - next/previous palette\n");
+		debugPrintf("        Arrow keys      - scroll the image\n");
+		debugPrintf("        Escape          - quit\n");
 		return true;
 	}
 
 	int32 pack = atoi(argv[1]);
-	int32 index = atoi(argv[2]);
-
-	int32 frame = 0;
-	if (argc == 4)
-		frame = atoi(argv[3]);
+	int32 index = pack < 18 ? 0 : 8;
+	if (argc > 2)
+		index = atoi(argv[2]);
 
 	// Check resource pack
-	if (pack < 0 || pack > 18) {
-		debugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
+	if (pack < 1 || (pack > 1 && pack < 5)|| pack > 18) {
+		debugPrintf("[Error] Invalid resource pack (was: %d - valid: [1,5-18])\n", pack);
 		return true;
 	}
 
@@ -936,34 +1077,14 @@ bool Console::cmdDrawResource(int argc, const char **argv) {
 
 	ResourceId resourceId = MAKE_RESOURCE((uint32)pack, index);
 
-	// Try loading resource
-	GraphicResource *resource = new GraphicResource(_vm);
-	if (!resource->load(resourceId)) {
-		debugPrintf("[Error] Invalid resource index (was: %d)\n", index);
-		delete resource;
+	if (_resViewer.setResourceId(resourceId)) {
+		_resViewer.setEventHandler(_vm->getEventHandler());
+		_vm->switchEventHandler(&_resViewer);
+		return false;
+	} else {
+		debugPrintf("[Error] Could not load resource 0x%X\n", resourceId);
 		return true;
 	}
-
-	if (frame < 0 || frame >= (int32)resource->count()) {
-		debugPrintf("[Error] Invalid resource frame index (was: %d , max: %d)\n", frame, resource->count() - 1);
-		delete resource;
-		return true;
-	}
-
-	delete resource;
-
-	// Stop current event handler (to prevent screen refresh)
-	_vm->switchEventHandler(NULL);
-	getCursor()->hide();
-
-	// Draw resource
-	getScreen()->clear();
-	getScreen()->draw(resourceId, (uint32)frame, Common::Point(0, 0));
-	getScreen()->copyBackBufferToScreen();
-
-	g_system->updateScreen();
-
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

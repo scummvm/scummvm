@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-28 12:49+0000\n"
+"POT-Creation-Date: 2021-08-28 19:15+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -61,8 +61,8 @@ msgstr "Joan gora"
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:63 gui/saveload-dialog.cpp:419
-#: gui/saveload-dialog.cpp:490 gui/saveload-dialog.cpp:792
-#: gui/saveload-dialog.cpp:1185 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:490 gui/saveload-dialog.cpp:794
+#: gui/saveload-dialog.cpp:1187 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:692
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -163,7 +163,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:388
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
-#: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1186
+#: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1188
 #: engines/engine.cpp:508 engines/engine.cpp:532
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
@@ -688,7 +688,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr "~I~rten"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:215
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
 msgstr "Irten ScummVM-tik"
 
@@ -696,7 +696,7 @@ msgstr "Irten ScummVM-tik"
 msgid "A~b~out..."
 msgstr "Ho~n~i buruz..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "About ScummVM"
 msgstr "ScummVM-i buruz"
 
@@ -1954,44 +1954,44 @@ msgstr "Ez dago denborarik gordeta"
 msgid "Do you really want to delete this saved game?"
 msgstr "Ezabatu partida gorde hau?"
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:1136
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:1138
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:623 gui/saveload-dialog.cpp:1142
+#: gui/saveload-dialog.cpp:625 gui/saveload-dialog.cpp:1144
 msgid "Time: "
 msgstr "Ordua: "
 
-#: gui/saveload-dialog.cpp:629 gui/saveload-dialog.cpp:1150
+#: gui/saveload-dialog.cpp:631 gui/saveload-dialog.cpp:1152
 msgid "Playtime: "
 msgstr "Denbora: "
 
-#: gui/saveload-dialog.cpp:642 gui/saveload-dialog.cpp:730
+#: gui/saveload-dialog.cpp:644 gui/saveload-dialog.cpp:732
 #, fuzzy
 msgid "Untitled saved game"
 msgstr "Titulurik gabeko joko gordea"
 
-#: gui/saveload-dialog.cpp:793
+#: gui/saveload-dialog.cpp:795
 msgid "Next"
 msgstr "Aurr."
 
-#: gui/saveload-dialog.cpp:796
+#: gui/saveload-dialog.cpp:798
 msgid "Prev"
 msgstr "Hurr."
 
-#: gui/saveload-dialog.cpp:997
+#: gui/saveload-dialog.cpp:999
 msgid "New Save"
 msgstr "Gorde"
 
-#: gui/saveload-dialog.cpp:997
+#: gui/saveload-dialog.cpp:999
 msgid "Create a new saved game"
 msgstr "Sortu joko gorde berria"
 
-#: gui/saveload-dialog.cpp:1129
+#: gui/saveload-dialog.cpp:1131
 msgid "Name: "
 msgstr "Izena: "
 
-#: gui/saveload-dialog.cpp:1205
+#: gui/saveload-dialog.cpp:1207
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Sartu deskribapena %d zirrikiturako:"
@@ -2437,7 +2437,7 @@ msgstr "Titulurik gabeko joko gordea"
 #: engines/engine.cpp:556
 #, c-format
 msgid ""
-"WARNING: The autosave slot has a saved game named %s. You can either move "
+"WARNING: The autosave slot has a saved game named %S. You can either move "
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
@@ -3613,65 +3613,65 @@ msgstr "Touchpad modua desgaituta."
 msgid "Click Mode"
 msgstr "Klikatzeko modua"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:211
+#: backends/platform/sdl/macosx/appmenu_osx.mm:226
 msgid "Hide ScummVM"
 msgstr "ScummVM ezkutatu"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:227
 msgid "Hide Others"
 msgstr "Besteak ezkutatu"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "Show All"
 msgstr "Denak erakutsi"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Window"
 msgstr "Leihoa"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:220
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "Minimize"
 msgstr "Minimizatu"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:228
+#: backends/platform/sdl/macosx/appmenu_osx.mm:243
 #, fuzzy
 msgid "User Manual"
 msgstr "Erabiltzaileak utzia"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:230
+#: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "General Information"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "What's New in ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:233
+#: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Credits"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "GPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "LGPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "Freefont License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "OFL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "BSD License"
 msgstr ""
 

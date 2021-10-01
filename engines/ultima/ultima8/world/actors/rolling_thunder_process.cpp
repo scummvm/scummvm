@@ -89,6 +89,10 @@ void RollingThunderProcess::run() {
 		return;
 	}
 
+	// Should end up with some target here??
+	if (!target)
+		return;
+
 	Animation::Sequence anim = (getRandom() % 2) ? Animation::combatRollLeft : Animation::combatRollRight;
 
 	Direction actordir = actor->getDir();
