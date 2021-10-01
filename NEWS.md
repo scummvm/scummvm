@@ -1,6 +1,11 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.5.1 (XXXX-XX-XX)
+
+ Grim:
+   - Fixed default "Talk Speed" option value.
+
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
  New games:
