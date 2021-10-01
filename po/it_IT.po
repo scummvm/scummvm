@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-01 18:13+0100\n"
-"PO-Revision-Date: 2021-09-30 10:25+0000\n"
+"PO-Revision-Date: 2021-10-01 19:05+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4380,6 +4380,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
+"Abilita Sintesi Vocale per gli oggetti, le opzioni e i passaggi della Bibbia"
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
@@ -4388,14 +4389,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
 
 #: engines/dreamweb/detection.cpp:86
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "Abilita sintesi vocale"
+msgstr "Abilita Sintesi Vocale per i sottotitoli"
 
 #: engines/dreamweb/detection.cpp:87
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
+msgstr "Utilizza la Sintesi Vocale per leggere i sottotitoli (se disponibile)"
 
 #: engines/glk/detection.cpp:240
 msgid "Use TTS to read the text"
@@ -5069,6 +5068,8 @@ msgstr ""
 #: engines/kyra/detection_tables.h:86
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
+"La versione dimostrativa riproduce le animazioni senza utilizzare il motore "
+"della Westwood."
 
 #: engines/kyra/detection_tables.h:1417
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -6024,15 +6025,13 @@ msgstr "La versione dimostrativa per Windows non è supportata"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:663
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "La versione dimostrativa per Windows non è supportata"
+msgstr "La versione dimostrativa per macOS non è supportata"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:688
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "La versione dimostrativa per Windows non è supportata"
+msgstr "La versione dimostrativa per Pocket PC non è supportata"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
