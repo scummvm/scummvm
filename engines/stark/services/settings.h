@@ -129,6 +129,11 @@ public:
 	 */
 	bool shouldIgnoreFontSettings() const;
 
+	/**
+	 * Return the game language (which is currently initialized with the Advanced Detector description language field value)
+	 */
+	Common::Language getLanguage() const;
+
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;

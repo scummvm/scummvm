@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/stateprovider.h"
@@ -151,6 +152,18 @@ void Speech::readData(Formats::XRCReadStream *stream) {
 
 	_phrase = stream->readString();
 	_character = stream->readSint32LE();
+
+	// bug fix for #12967 (STARK: Cortez says "no", but subtitles say "si")
+	if (StarkSettings->getLanguage() == Common::EN_ANY
+	    && _character == 1 // Cortez
+	    && getIndex() == 1
+	    && getSubType() == 0
+	    && getName().equals("Cortez_Laying low #1")) {
+		_phrase = "Nyo! So it was a good thing I didn't stick my head out the door to look for you, then, no?";
+	}
+
+	// For debug purposes
+	//printData();
 }
 
 void Speech::onGameLoop() {
