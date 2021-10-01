@@ -9,7 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
-#### 2.5.0 "20 years ago today" (2021-10-09)
+#### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
  New games:
    - Added support for Grim Fandango.
