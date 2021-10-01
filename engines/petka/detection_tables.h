@@ -35,7 +35,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "SCRIPT.DAT", "8712157c39daf8dd1f441a11d19b9e48", 1851),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | ADGF_DEMO,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 
 	},
@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("MAIN.STR", "2523bf402ac8b7b2bf54e6e29a79831d", 27414919),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
 		GUIO1(GUIO_NOMIDI)
 
 	},
@@ -59,7 +59,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("main.str", "4e515669c343609518277cab6e7d8c8f", 18992879),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
 		GUIO1(GUIO_NOMIDI)
 	},
 
