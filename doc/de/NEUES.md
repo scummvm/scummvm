@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.5.0 "20 years ago today" (09.10.2021)
+#### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
  Neue Spiele:
    - Unterstützung für Grim Fandango hinzugefügt.
