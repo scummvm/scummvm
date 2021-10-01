@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.3.0 (XXXX-XX-XX)
+#### 2.5.0 "20 years ago today" (2021-10-09)
 
  New games:
    - Added support for Grim Fandango.
