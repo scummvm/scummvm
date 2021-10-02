@@ -538,7 +538,7 @@ void GfxOpenGLS::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *
 	Math::Vector3d obj;
 	float *pVertices = nullptr;
 
-	for (uint i = 0; i < model->_numFaces; i++) {
+	for (int i = 0; i < model->_numFaces; i++) {
 		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
 			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
 
