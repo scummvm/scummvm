@@ -349,14 +349,14 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *window = _window->getSDLWindow();
-	bool _isMaximized = window ? (SDL_GetWindowFlags(window) & SDL_WINDOW_MAXIMIZED) : false;
-	if (_isMaximized && !_wantsFullScreen && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
+	bool isMaximized = window ? (SDL_GetWindowFlags(window) & SDL_WINDOW_MAXIMIZED) : false;
+	if (isMaximized && !_wantsFullScreen && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
 		// Set the window size to the values stored when the window was maximized
 		// for the last time.
 		requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
 
-	} else if (!_isMaximized && !_wantsFullScreen && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+	} else if (!isMaximized && !_wantsFullScreen && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
 		// Load previously stored window dimensions.
 		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
