@@ -349,27 +349,29 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool isMaximized = ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain);
-	if (isMaximized && !_wantsFullScreen && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
-		// Set the window size to the values stored when the window was maximized
-		// for the last time.
-		requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
-		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
+	if (!_wantsFullScreen) {
+		if (isMaximized && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
+			// Set the window size to the values stored when the window was maximized
+			// for the last time.
+			requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
+			requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
 
-	} else if (!isMaximized && !_wantsFullScreen && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
-		// Load previously stored window dimensions.
-		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
-		requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
+		} else if (!isMaximized && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+			// Load previously stored window dimensions.
+			requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
+			requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
 
-	} else {
-		// Set the basic window size based on the desktop resolution
-		// since we have no values stored, e.g. on first launch.
-		requestedWidth  = MAX<uint>(desktopRes.width() / 2, 640);
-		requestedHeight = requestedWidth * 3 / 4;
+		} else {
+			// Set the basic window size based on the desktop resolution
+			// since we have no values stored, e.g. on first launch.
+			requestedWidth  = MAX<uint>(desktopRes.width() / 2, 640);
+			requestedHeight = requestedWidth * 3 / 4;
 
-		// Save current window dimensions
-		ConfMan.setInt("last_window_width", requestedWidth, Common::ConfigManager::kApplicationDomain);
-		ConfMan.setInt("last_window_height", requestedHeight, Common::ConfigManager::kApplicationDomain);
-		ConfMan.flushToDisk();
+			// Save current window dimensions
+			ConfMan.setInt("last_window_width", requestedWidth, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setInt("last_window_height", requestedHeight, Common::ConfigManager::kApplicationDomain);
+			ConfMan.flushToDisk();
+		}
 	}
 
 #else
