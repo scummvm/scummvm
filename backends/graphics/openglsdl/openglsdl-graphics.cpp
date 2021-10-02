@@ -232,7 +232,7 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	case OSystem::kFeatureFullscreenMode:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window && _window->getSDLWindow()) {
-			return (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN) != 0;
+			return (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
 		} else {
 			return _wantsFullScreen;
 		}
