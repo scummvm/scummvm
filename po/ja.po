@@ -153,7 +153,9 @@ msgstr "指定されたディレクトリーが開けませんでした!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr "ダウンロード用のフォルダーを作成できません。指定されたディレクトリーに同名のファイルが存在します。"
+msgstr ""
+"ダウンロード用のフォルダーを作成できません。指定されたディレクトリーに同名の"
+"ファイルが存在します。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:390
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
@@ -463,7 +465,9 @@ msgstr "選択されたディレクトリーに保存できません。別の場
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr "セーブデータの同期機能は、デフォルトのディレクトリーでのみ動作します。適切なパスを指定してください。"
+msgstr ""
+"セーブデータの同期機能は、デフォルトのディレクトリーでのみ動作します。適切な"
+"パスを指定してください。"
 
 #: gui/editgamedialog.cpp:658
 msgid "This game ID is already taken. Please choose another one."
@@ -1126,7 +1130,9 @@ msgstr "SoundFont："
 
 #: gui/options.cpp:1564 gui/options.cpp:1566 gui/options.cpp:1567
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFontはいくつかのオーディオカード、FluidSynth、Timidityでサポートされています"
+msgstr ""
+"SoundFontはいくつかのオーディオカード、FluidSynth、Timidityでサポートされてい"
+"ます"
 
 #: gui/options.cpp:1566
 msgctxt "lowres"
@@ -1886,7 +1892,8 @@ msgstr "バックグラウンドで実行する"
 msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
-msgstr "警告：よりプレイ時間の長いセーブデータが存在します。上書きしてよろしいですか?"
+msgstr ""
+"警告：よりプレイ時間の長いセーブデータが存在します。上書きしてよろしいですか?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -3260,7 +3267,8 @@ msgid ""
 "Check whether selected port is not used by another application and try again."
 msgstr ""
 "ローカルサーバーの起動に失敗しました。\n"
-"選択したポートが他のアプリケーションで使用されていないか確認して、やり直してください。"
+"選択したポートが他のアプリケーションで使用されていないか確認して、やり直して"
+"ください。"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
