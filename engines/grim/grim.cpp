@@ -283,6 +283,13 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	}
 #endif
 
+	// For Grim Fandango, OpenGL renderer without shaders is preferred
+	if (desiredRendererType == Graphics::kRendererTypeDefault &&
+	    matchingRendererType == Graphics::kRendererTypeOpenGLShaders &&
+	    getGameType() == GType_GRIM) {
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	}
+
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
