@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.4.0 (DD.MM.YYYY)
+#### 2.6.0 (DD.MM.YYYY)
 
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
@@ -11,7 +11,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
 
-#### 2.3.0 (DD.MM.YYYY)
+#### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
  Neue Spiele:
    - Unterstützung für Grim Fandango hinzugefügt.
