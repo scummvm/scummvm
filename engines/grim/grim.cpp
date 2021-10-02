@@ -281,6 +281,13 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
 	}
+
+	// For Grim Fandango, OpenGL renderer without shaders is preferred
+	if (desiredRendererType == Graphics::kRendererTypeDefault &&
+	    matchingRendererType == Graphics::kRendererTypeOpenGLShaders &&
+	    getGameType() == GType_GRIM) {
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	}
 #endif
 
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
