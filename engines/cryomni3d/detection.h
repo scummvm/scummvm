@@ -28,7 +28,8 @@
 namespace CryOmni3D {
 
 enum CryOmni3DGameType {
-	GType_VERSAILLES
+	GType_VERSAILLES,
+	GType_HNM_PLAYER
 };
 
 enum CryOmni3DGameFeatures {

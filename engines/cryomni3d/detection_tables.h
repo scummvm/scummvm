@@ -23,6 +23,7 @@
 namespace CryOmni3D {
 
 #define GUI_OPTIONS_VERSAILLES                   GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
+#define GUI_OPTIONS_HNM_PLAYER                   GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOASPECT)
 
 // To correctly detect root we need files from various places: CD1, CD2, HDD, on-CD install files
 // We use files common to all installations except the documentation links and the binary
@@ -541,17 +542,14 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"Demo",
-			{
-				{ "DEMO_US.HNS", 0, "3a65a984353fec354dd26a62ca2cd3fb", 68462303 },
-				{ "PLAYHNS.EXE", 0, "1c992f034f43418a5da2e8ebd0b92620", 472371 }
-			},
+			AD_ENTRY1s("DEMO_US.HNS", "3a65a984353fec354dd26a62ca2cd3fb", 68462303),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO | ADGF_UNSUPPORTED,
-			GUI_OPTIONS_VERSAILLES
+			ADGF_DEMO,
+			GUI_OPTIONS_HNM_PLAYER
 		},
-		GType_VERSAILLES,
-		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_NO,
+		GType_HNM_PLAYER,
+		0,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }

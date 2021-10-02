@@ -183,6 +183,22 @@ private:
 	bool _hnmHasClip;
 };
 
+class CryOmni3DEngine_HNMPlayer : public CryOmni3DEngine {
+protected:
+	Common::Error run() override;
+
+public:
+	CryOmni3DEngine_HNMPlayer(OSystem *syst, const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc) {}
+	~CryOmni3DEngine_HNMPlayer() override {}
+
+	virtual bool displayToolbar(const Graphics::Surface *original) override { return false; }
+	virtual bool hasPlaceDocumentation() override { return false; }
+	virtual bool displayPlaceDocumentation() override { return false; }
+	virtual uint displayOptions() override { return 0; }
+	virtual void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override {}
+	virtual void setupPalette(const byte *colors, uint start, uint num) override {}
+};
+
 } // End of namespace CryOmni3D
 
 #endif

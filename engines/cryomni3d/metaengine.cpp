@@ -141,6 +141,9 @@ Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine
 #else
 		return Common::Error(Common::kUnsupportedGameidError, _s("Versailles 1685 support is not compiled in"));
 #endif
+	case GType_HNM_PLAYER:
+		*engine = new CryOmni3DEngine_HNMPlayer(syst, gd);
+		return Common::kNoError;
 	default:
 		return Common::kUnsupportedGameidError;
 	}
