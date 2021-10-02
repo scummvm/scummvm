@@ -348,8 +348,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	Common::Rect desktopRes = _window->getDesktopResolution();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Window *window = _window->getSDLWindow();
-	bool isMaximized = window ? (SDL_GetWindowFlags(window) & SDL_WINDOW_MAXIMIZED) : false;
+	bool isMaximized = ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain);
 	if (isMaximized && !_wantsFullScreen && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
 		// Set the window size to the values stored when the window was maximized
 		// for the last time.
