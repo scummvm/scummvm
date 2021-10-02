@@ -73,7 +73,7 @@ public:
 	// Graphics related
 	const GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(int mode);
+	bool setGraphicsMode(int mode, uint flags);
 	int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
