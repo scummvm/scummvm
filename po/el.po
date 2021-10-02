@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-02 09:24+0000\n"
+"POT-Creation-Date: 2021-10-02 22:50+0000\n"
 "PO-Revision-Date: 2021-10-01 17:56+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -126,7 +126,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
-#: gui/options.cpp:2994 gui/options.cpp:3032 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:2996 gui/options.cpp:3034 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -138,7 +138,7 @@ msgstr "Ναι"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
-#: gui/options.cpp:2994 gui/options.cpp:3032 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:2996 gui/options.cpp:3034 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -250,7 +250,7 @@ msgstr ""
 #: gui/options.cpp:1391 gui/options.cpp:1404 gui/options.cpp:1418
 #: gui/options.cpp:1430 gui/options.cpp:1450 gui/options.cpp:1462
 #: gui/options.cpp:1832 gui/options.cpp:2235 gui/options.cpp:2308
-#: gui/options.cpp:2480 gui/options.cpp:2882 audio/null.cpp:41
+#: gui/options.cpp:2480 gui/options.cpp:2884 audio/null.cpp:41
 msgid "<default>"
 msgstr "<προκαθορισμένη>"
 
@@ -438,19 +438,19 @@ msgstr "Στατιστικά"
 #: gui/options.cpp:2125 gui/options.cpp:2133 gui/options.cpp:2164
 #: gui/options.cpp:2207 gui/options.cpp:2215 gui/options.cpp:2224
 #: gui/options.cpp:2591 gui/options.cpp:2597 gui/options.cpp:2604
-#: gui/options.cpp:2613 gui/options.cpp:2866 gui/options.cpp:2869
-#: gui/options.cpp:2876 gui/options.cpp:2888 gui/options.cpp:2899
+#: gui/options.cpp:2613 gui/options.cpp:2868 gui/options.cpp:2871
+#: gui/options.cpp:2878 gui/options.cpp:2890 gui/options.cpp:2901
 msgctxt "path"
 msgid "None"
 msgstr "Κανένα"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
 #: gui/editgamedialog.cpp:646 gui/options.cpp:2113 gui/options.cpp:2585
-#: gui/options.cpp:2872 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2874 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Προκαθορισμένο"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2893
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2895
 msgid "Select SoundFont"
 msgstr "Επιλέξτε SoundFont"
 
@@ -458,11 +458,11 @@ msgstr "Επιλέξτε SoundFont"
 msgid "Select additional game directory"
 msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2801
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2803
 msgid "Select directory for saved games"
 msgstr "Επιλέξτε φάκελο για αποθηκευμένα παιχνίδια"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2808
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2810
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Δεν ήταν δυνατή η εγγραφή στον επιλεγμένο φάκελο. Παρακαλώ επιλέξτε κάποιον "
@@ -1386,7 +1386,7 @@ msgid "ScummVM config path: "
 msgstr "Διαδρομή Ρυθμίσεων: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2240 gui/options.cpp:2882
+#: gui/options.cpp:2240 gui/options.cpp:2884
 msgid "Last browser path: "
 msgstr "Πρόσφατη διαδρομή πλοηγητή: "
 
@@ -1555,7 +1555,7 @@ msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Πότε πραγματοποιήθηκε ο πιο πρόσφατος συγχρονισμός αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:2391 gui/options.cpp:3232
+#: gui/options.cpp:2391 gui/options.cpp:3234
 msgid "<never>"
 msgstr "<ποτέ>"
 
@@ -1668,7 +1668,7 @@ msgstr "Εκτέλεση διακομιστή"
 msgid "Run local webserver"
 msgstr "Εκτέλεση τοπικού διακομιστή web"
 
-#: gui/options.cpp:2432 gui/options.cpp:3347
+#: gui/options.cpp:2432 gui/options.cpp:3349
 msgid "Not running"
 msgstr "Δεν εκτελείται"
 
@@ -1779,15 +1779,15 @@ msgstr "Αδυναμία αλλαγής αποθήκης Νέφους!"
 msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκη Νέφους είναι ήδη ενεργή."
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2742
 msgid "Theme does not support selected language!"
 msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2745
 msgid "Theme cannot be loaded!"
 msgstr "Το θέμα δεν φορτώθηκε!"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2748
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1795,23 +1795,23 @@ msgstr ""
 "\n"
 "Οι λοιπές ρυθμίσεις θα επαναφερθούν στις αρχικές τους τιμές."
 
-#: gui/options.cpp:2817
+#: gui/options.cpp:2819
 msgid "Select directory for GUI themes"
 msgstr "Επιλέξτε φάκελο για θέματα GUI"
 
-#: gui/options.cpp:2827
+#: gui/options.cpp:2829
 msgid "Select directory for extra files"
 msgstr "Επιλέξτε φάκελο για πρόσθετα αρχεία"
 
-#: gui/options.cpp:2838
+#: gui/options.cpp:2840
 msgid "Select directory for plugins"
 msgstr "Επιλέξτε φάκελο για πρόσθετα"
 
-#: gui/options.cpp:2851
+#: gui/options.cpp:2853
 msgid "Select directory for Files Manager /root/"
 msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
 
-#: gui/options.cpp:2969
+#: gui/options.cpp:2971
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1819,51 +1819,51 @@ msgstr ""
 "Αποτυχία ανοίγματος του URL!\n"
 "Παρακαλούμε, μεταφερθείτε σε αυτή τη σελίδα χειροκίνητα."
 
-#: gui/options.cpp:2994
+#: gui/options.cpp:2996
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Κάποια άλλη Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
 
-#: gui/options.cpp:3003 gui/options.cpp:3041
+#: gui/options.cpp:3005 gui/options.cpp:3043
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
-#: gui/options.cpp:3016
+#: gui/options.cpp:3018
 msgid "Connecting..."
 msgstr "Γίνεται σύνδεση..."
 
-#: gui/options.cpp:3032
+#: gui/options.cpp:3034
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Αυτή η Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
 
-#: gui/options.cpp:3230 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3232 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<άμεσα>"
 
-#: gui/options.cpp:3339
+#: gui/options.cpp:3341
 msgid "Stop server"
 msgstr "Διακοπή εξυπηρετητή"
 
-#: gui/options.cpp:3340
+#: gui/options.cpp:3342
 msgid "Stop local webserver"
 msgstr "Διακοπή τοπικού εξυπηρετητή ιστού"
 
-#: gui/options.cpp:3392
+#: gui/options.cpp:3394
 msgid "Storage connected."
 msgstr "Η αποθήκη συνδέθηκε."
 
-#: gui/options.cpp:3394
+#: gui/options.cpp:3396
 msgid "Failed to connect storage."
 msgstr "Αποτυχία σύνδεσης αποθήκης."
 
-#: gui/options.cpp:3396
+#: gui/options.cpp:3398
 msgid "Failed to connect storage: "
 msgstr "Αποτυχία σύνδεσης αποθήκης: "
 
-#: gui/options.cpp:3416
+#: gui/options.cpp:3418
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

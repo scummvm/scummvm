@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-02 09:24+0000\n"
+"POT-Creation-Date: 2021-10-02 22:50+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -129,7 +129,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
-#: gui/options.cpp:2994 gui/options.cpp:3032 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:2996 gui/options.cpp:3034 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -141,7 +141,7 @@ msgstr "Ano"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
-#: gui/options.cpp:2994 gui/options.cpp:3032 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:2996 gui/options.cpp:3034 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -250,7 +250,7 @@ msgstr "Jazyk hry. Toto z vaší Španělské verze neudělá Anglickou"
 #: gui/options.cpp:1391 gui/options.cpp:1404 gui/options.cpp:1418
 #: gui/options.cpp:1430 gui/options.cpp:1450 gui/options.cpp:1462
 #: gui/options.cpp:1832 gui/options.cpp:2235 gui/options.cpp:2308
-#: gui/options.cpp:2480 gui/options.cpp:2882 audio/null.cpp:41
+#: gui/options.cpp:2480 gui/options.cpp:2884 audio/null.cpp:41
 msgid "<default>"
 msgstr "<výchozí>"
 
@@ -439,19 +439,19 @@ msgstr ""
 #: gui/options.cpp:2125 gui/options.cpp:2133 gui/options.cpp:2164
 #: gui/options.cpp:2207 gui/options.cpp:2215 gui/options.cpp:2224
 #: gui/options.cpp:2591 gui/options.cpp:2597 gui/options.cpp:2604
-#: gui/options.cpp:2613 gui/options.cpp:2866 gui/options.cpp:2869
-#: gui/options.cpp:2876 gui/options.cpp:2888 gui/options.cpp:2899
+#: gui/options.cpp:2613 gui/options.cpp:2868 gui/options.cpp:2871
+#: gui/options.cpp:2878 gui/options.cpp:2890 gui/options.cpp:2901
 msgctxt "path"
 msgid "None"
 msgstr "Žádné"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
 #: gui/editgamedialog.cpp:646 gui/options.cpp:2113 gui/options.cpp:2585
-#: gui/options.cpp:2872 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2874 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Výchozí"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2893
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2895
 msgid "Select SoundFont"
 msgstr "Vybrat SoundFont"
 
@@ -459,11 +459,11 @@ msgstr "Vybrat SoundFont"
 msgid "Select additional game directory"
 msgstr "Vyberte dodatečný adresář hry"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2801
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2803
 msgid "Select directory for saved games"
 msgstr "Vyberte adresář pro uložené hry"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2808
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2810
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Do zvoleného adresáře nelze zapisovat. Vyberte, prosím, jiný."
 
@@ -1366,7 +1366,7 @@ msgid "ScummVM config path: "
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2240 gui/options.cpp:2882
+#: gui/options.cpp:2240 gui/options.cpp:2884
 msgid "Last browser path: "
 msgstr ""
 
@@ -1525,7 +1525,7 @@ msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Kdy byla provedena poslední synchronizace uložených her s tímto uložištěm"
 
-#: gui/options.cpp:2391 gui/options.cpp:3232
+#: gui/options.cpp:2391 gui/options.cpp:3234
 msgid "<never>"
 msgstr "<nikdy>"
 
@@ -1630,7 +1630,7 @@ msgstr "Spustit server"
 msgid "Run local webserver"
 msgstr "Spustit místní internetový server"
 
-#: gui/options.cpp:2432 gui/options.cpp:3347
+#: gui/options.cpp:2432 gui/options.cpp:3349
 msgid "Not running"
 msgstr "Nespuštěno"
 
@@ -1727,15 +1727,15 @@ msgstr "Nelze změnit cloudové úložiště!"
 msgid "Another cloud storage is already active."
 msgstr "Jiné cloudové úložiště již je aktivní."
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2742
 msgid "Theme does not support selected language!"
 msgstr "Vzhled nepodporuje zvolený jazyk!"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2745
 msgid "Theme cannot be loaded!"
 msgstr "Vzhled nelze načíst!"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2748
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1743,23 +1743,23 @@ msgstr ""
 "\n"
 "Nastavení v Různé budou obnovena."
 
-#: gui/options.cpp:2817
+#: gui/options.cpp:2819
 msgid "Select directory for GUI themes"
 msgstr "Vyberte adresář pro vhledy GUI"
 
-#: gui/options.cpp:2827
+#: gui/options.cpp:2829
 msgid "Select directory for extra files"
 msgstr "Vyberte adresář pro dodatečné soubory"
 
-#: gui/options.cpp:2838
+#: gui/options.cpp:2840
 msgid "Select directory for plugins"
 msgstr "Vyberte adresář pro zásuvné moduly"
 
-#: gui/options.cpp:2851
+#: gui/options.cpp:2853
 msgid "Select directory for Files Manager /root/"
 msgstr "Vyberte adresář pro kořen Správce souborů"
 
-#: gui/options.cpp:2969
+#: gui/options.cpp:2971
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1767,49 +1767,49 @@ msgstr ""
 "Nelze otevřít URL!\n"
 "Prosím přejděte na tuto stránku sami."
 
-#: gui/options.cpp:2994
+#: gui/options.cpp:2996
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Jiné úložiště právě pracuje. Chcete ho přerušit?"
 
-#: gui/options.cpp:3003 gui/options.cpp:3041
+#: gui/options.cpp:3005 gui/options.cpp:3043
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Vyčkejte, než operace se současným úložištěm jsou dokončeny, a pak to zkuste "
 "znova."
 
-#: gui/options.cpp:3016
+#: gui/options.cpp:3018
 msgid "Connecting..."
 msgstr "Připojování..."
 
-#: gui/options.cpp:3032
+#: gui/options.cpp:3034
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Toto úložiště právě pracuje. Chcete ho přerušit?"
 
-#: gui/options.cpp:3230 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3232 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<právě nyní>"
 
-#: gui/options.cpp:3339
+#: gui/options.cpp:3341
 msgid "Stop server"
 msgstr "Zastavit server"
 
-#: gui/options.cpp:3340
+#: gui/options.cpp:3342
 msgid "Stop local webserver"
 msgstr "Zastavit místní internetový server"
 
-#: gui/options.cpp:3392
+#: gui/options.cpp:3394
 msgid "Storage connected."
 msgstr "Úložiště připojeno."
 
-#: gui/options.cpp:3394
+#: gui/options.cpp:3396
 msgid "Failed to connect storage."
 msgstr "Připojení úložiště selhalo."
 
-#: gui/options.cpp:3396
+#: gui/options.cpp:3398
 msgid "Failed to connect storage: "
 msgstr "Připojení k úložišti selhalo: "
 
-#: gui/options.cpp:3416
+#: gui/options.cpp:3418
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
