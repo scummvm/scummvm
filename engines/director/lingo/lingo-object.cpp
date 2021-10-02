@@ -40,6 +40,7 @@
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
@@ -129,6 +130,7 @@ static struct XLibProto {
 	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
 	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ MoveMouseXObj::fileNames,		MoveMouseXObj::open,	MoveMouseXObj::close,		kXObj,					400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 
 };
