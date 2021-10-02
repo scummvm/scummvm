@@ -118,4 +118,8 @@ bool Settings::shouldIgnoreFontSettings() const {
 	return ConfMan.getBool("ignore_font_settings") && _language == Common::EN_ANY;
 }
 
+Common::Language Settings::getLanguage() const {
+	return _language;
+}
+
 } // End of namespace Stark

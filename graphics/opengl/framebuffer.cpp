@@ -195,9 +195,6 @@ void FrameBuffer::init() {
 void FrameBuffer::attach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glViewport(0,0, _width, _height);
-
-	glClearColor(0, 0, 0, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void FrameBuffer::detach() {
@@ -255,9 +252,6 @@ void MultiSampleFrameBuffer::attach() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, getFrameBufferName());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _msFrameBufferId);
 	glViewport(0,0, getWidth(), getHeight());
-
-	glClearColor(0, 0, 0, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void MultiSampleFrameBuffer::detach() {

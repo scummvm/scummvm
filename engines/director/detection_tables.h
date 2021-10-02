@@ -696,6 +696,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "incarnatia",   		"Incarnatia" },
 	{ "inugumi",   			"犬組" },
 	{ "ios",   				"iós" },
+	{ "junglepark",			"Jungle Park" },
 	{ "jyajya",				"Jya jya" },										// HyperCard with D3 movie
 	{ "karuta",				"かるたでおじゃる" },								// Karuta de ojaru
 	{ "katsumadojo",		"信光の勝馬道場" },
@@ -2734,6 +2735,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Bilingual English & Spanish
 	MACGAME1("journey2life", "", "The Journey to Life", "bcd3c718db258701496b3c5bcb827ef2", 483774, 404),
 	WINGAME1("journey2life", "", "LIFE.EXE", "b23041f4f5cce3d15ef985bbd513030a", 756297, 404),
+
+	WINGAME1_l("junglepark", "", "JU_PARK.EXE", "d551c88c600c522aa32e1e209cfcc2da", 697087, Common::JA_JPN, 404),
+	MACGAME1_l("junglepark", "", "JunglePark ppc", "502a9c49d0a13756a3e488021aba5541", 673536, Common::JA_JPN, 404),
+	WINGAME1_l("junglepark", "", "JUNGLE.EXE", "b76787a3e0d9f4f96565d3ab9a34e59e", 742377, Common::FR_FRA, 404),
 
 	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
 	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
