@@ -4971,7 +4971,8 @@ msgstr "このファンの翻訳に言語固有のゲームコードやリソー
 
 #: engines/kyra/detection_tables.h:86
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr "デモではWestwood's Engineを使わず、シンプルなアニメーションを再生します。"
+msgstr ""
+"デモではWestwood's Engineを使わず、シンプルなアニメーションを再生します。"
 
 #: engines/kyra/detection_tables.h:1417
 msgid "You added the game incorrectly. Please add the root folder of the game."
