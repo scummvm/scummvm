@@ -2750,6 +2750,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 7014402),
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "0b19953a0a879b5027c98b0cdd8142f1", 6825340),
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 6952250),
+	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827), // v1.2.7
 	GAME_ENTRY("hesgonehistorical", "His.exe", "465f972675db2da6040518221af5b0ba", 5768754),
 	GAME_ENTRY("hhgtgtowelday", "TowelDay.exe", "18456f28d9bf843b087e80072c85beca", 5431338),
 	GAME_ENTRY("hiddenplains", "eureka02.exe", "6afafd26476d17a5e2a8e41f690d3720", 384360829),
