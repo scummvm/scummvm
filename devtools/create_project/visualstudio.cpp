@@ -175,17 +175,12 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 	}
 }
 
-void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringMap &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings += *i + ';';
 
-	std::string definesList;
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i) {
-		if (i != defines.begin())
-			definesList += ';';
-		definesList += *i;
-	}
+	std::string definesList = getDefinesList(defines);
 
 	// Add define to include revision header
 	if (runBuildEvents)

@@ -67,6 +67,15 @@ protected:
 	 */
 	void createGlobalProp(const BuildSetup &setup);
 
+	
+	/**
+	 * Builds a string version of a map of defines.
+	 * 
+	 * @param defines The defines to work from
+	 * @return The string corresponding to the map
+	*/
+	static std::string getDefinesList(const StringMap defines);
+
 	/**
 	 * Outputs a property file based on the input parameters.
 	 *
@@ -81,7 +90,7 @@ protected:
 	 * @param prefix File prefix, used to add additional include paths.
 	 * @param runBuildEvents true if generating a revision number, false otherwise
 	 */
-	virtual void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) = 0;
+	virtual void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringMap &defines, const std::string &prefix, bool runBuildEvents) = 0;
 
 	/**
 	 * Generates the project properties for debug and release settings.

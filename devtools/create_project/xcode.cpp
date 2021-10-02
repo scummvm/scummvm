@@ -453,77 +453,77 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
-	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+	if (setup.hasDefine("USE_FAAD")) {
 		DEF_LOCALLIB_STATIC("libfaad");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+	if (setup.hasDefine("USE_FLAC")) {
 		DEF_LOCALLIB_STATIC("libFLAC");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+	if (setup.hasDefine("USE_FLUIDLITE")) {
 		DEF_LOCALLIB_STATIC("libfluidlite");
-	} else if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+	} else if (setup.hasDefine("USE_FLUIDSYNTH")) {
 		DEF_LOCALLIB_STATIC("libfluidsynth");
 		DEF_LOCALLIB_STATIC("libffi");
 		DEF_LOCALLIB_STATIC("libglib-2.0");
 		DEF_SYSTBD("libffi");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+	if (setup.hasDefine("USE_FREETYPE2")) {
 		DEF_LOCALLIB_STATIC("libfreetype");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+	if (setup.hasDefine("USE_JPEG")) {
 		DEF_LOCALLIB_STATIC("libjpeg");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+	if (setup.hasDefine("USE_LIBCURL")) {
 		DEF_LOCALLIB_STATIC("libcurl");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+	if (setup.hasDefine("USE_MAD")) {
 		DEF_LOCALLIB_STATIC("libmad");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+	if (setup.hasDefine("USE_MPEG2")) {
 		DEF_LOCALLIB_STATIC("libmpeg2");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+	if (setup.hasDefine("USE_FRIBIDI")) {
 		DEF_LOCALLIB_STATIC("libfribidi");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+	if (setup.hasDefine("USE_PNG")) {
 		DEF_LOCALLIB_STATIC("libpng");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+	if (setup.hasDefine("USE_GIF")) {
 		DEF_LOCALLIB_STATIC("libgif");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
+	if (setup.hasDefine("USE_OGG")) {
 		DEF_LOCALLIB_STATIC("libogg");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+	if (setup.hasDefine("USE_VORBIS")) {
 		DEF_LOCALLIB_STATIC("libvorbis");
 		DEF_LOCALLIB_STATIC("libvorbisfile");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+	if (setup.hasDefine("USE_TREMOR")) {
 		DEF_LOCALLIB_STATIC("libvorbisidec");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (setup.hasDefine("USE_THEORADEC")) {
 		DEF_LOCALLIB_STATIC("libtheoradec");
-	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) {
+		if (setup.hasDefine("USE_GLEW")) {
 		DEF_LOCALLIB_STATIC("libGLEW");
 	}
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+	if (setup.hasDefine("USE_ZLIB")) {
 		DEF_SYSTBD("libz");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
+	if (setup.hasDefine("USE_DISCORD")) {
 		DEF_LOCALLIB_STATIC("libdiscord-rpc");
 	}
 
 	if (setup.useSDL2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
 		DEF_LOCALLIB_STATIC("libSDL2");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.hasDefine("USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL2_net");
 		}
 	} else {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.hasDefine("USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL_net");
 		}
 	}
@@ -560,62 +560,62 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
 
-	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+	if (setup.hasDefine("USE_FAAD")) {
 		frameworks_iOS.push_back("libfaad.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+	if (setup.hasDefine("USE_FLAC")) {
 		frameworks_iOS.push_back("libFLAC.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+	if (setup.hasDefine("USE_FREETYPE2")) {
 		frameworks_iOS.push_back("libfreetype.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+	if (setup.hasDefine("USE_JPEG")) {
 		frameworks_iOS.push_back("libjpeg.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+	if (setup.hasDefine("USE_PNG")) {
 		frameworks_iOS.push_back("libpng.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+	if (setup.hasDefine("USE_GIF")) {
 		frameworks_iOS.push_back("libgif.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
+	if (setup.hasDefine("USE_OGG")) {
 		frameworks_iOS.push_back("libogg.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+	if (setup.hasDefine("USE_VORBIS")) {
 		frameworks_iOS.push_back("libvorbis.a");
 		frameworks_iOS.push_back("libvorbisfile.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+	if (setup.hasDefine("USE_TREMOR")) {
 		frameworks_iOS.push_back("libvorbisidec.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (setup.hasDefine("USE_THEORADEC")) {
 		frameworks_iOS.push_back("libtheoradec.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+	if (setup.hasDefine("USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+	if (setup.hasDefine("USE_MPEG2")) {
 		frameworks_iOS.push_back("libmpeg2.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+	if (setup.hasDefine("USE_FRIBIDI")) {
 		frameworks_iOS.push_back("libfribidi.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
-		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+	if (setup.hasDefine("USE_FLUIDSYNTH") &&
+		!setup.hasDefine("USE_FLUIDLITE")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
 		frameworks_iOS.push_back("libglib-2.0.a");
 		frameworks_iOS.push_back("libffi.a");
 		frameworks_iOS.push_back("CoreMIDI.framework");
 		frameworks_iOS.push_back("libiconv.tbd");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+	if (setup.hasDefine("USE_ZLIB")) {
 		frameworks_iOS.push_back("libz.tbd");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+	if (setup.hasDefine("USE_LIBCURL")) {
 		frameworks_iOS.push_back("libcurl.a");
 		frameworks_iOS.push_back("Security.framework");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+	if (setup.hasDefine("USE_SDL_NET")) {
 		if (setup.useSDL2)
 			frameworks_iOS.push_back("libSDL2_net.a");
 		else
@@ -661,74 +661,74 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("OpenGL.framework");
 	frameworks_osx.push_back("AudioUnit.framework");
 
-	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+	if (setup.hasDefine("USE_FAAD")) {
 		frameworks_osx.push_back("libfaad.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+	if (setup.hasDefine("USE_FLAC")) {
 		frameworks_osx.push_back("libFLAC.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
-		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+	if (setup.hasDefine("USE_FLUIDSYNTH") &&
+		!setup.hasDefine("USE_FLUIDLITE")) {
 		frameworks_osx.push_back("libfluidsynth.a");
 		frameworks_osx.push_back("libglib-2.0.a");
 		frameworks_osx.push_back("libffi.tbd");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+	if (setup.hasDefine("USE_FREETYPE2")) {
 		frameworks_osx.push_back("libfreetype.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+	if (setup.hasDefine("USE_JPEG")) {
 		frameworks_osx.push_back("libjpeg.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+	if (setup.hasDefine("USE_LIBCURL")) {
 		frameworks_osx.push_back("libcurl.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+	if (setup.hasDefine("USE_MAD")) {
 		frameworks_osx.push_back("libmad.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+	if (setup.hasDefine("USE_MPEG2")) {
 		frameworks_osx.push_back("libmpeg2.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+	if (setup.hasDefine("USE_FRIBIDI")) {
 		frameworks_osx.push_back("libfribidi.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+	if (setup.hasDefine("USE_PNG")) {
 		frameworks_osx.push_back("libpng.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+	if (setup.hasDefine("USE_GIF")) {
 		frameworks_osx.push_back("libgif.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
+	if (setup.hasDefine("USE_OGG")) {
 		frameworks_osx.push_back("libogg.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+	if (setup.hasDefine("USE_VORBIS")) {
 		frameworks_osx.push_back("libvorbis.a");
 		frameworks_osx.push_back("libvorbisfile.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+	if (setup.hasDefine("USE_TREMOR")) {
 		frameworks_osx.push_back("libvorbisidec.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (setup.hasDefine("USE_THEORADEC")) {
 		frameworks_osx.push_back("libtheoradec.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) {
+	if (setup.hasDefine("USE_GLEW")) {
 		frameworks_osx.push_back("libGLEW.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+	if (setup.hasDefine("USE_ZLIB")) {
 		frameworks_osx.push_back("libz.tbd");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
+	if (setup.hasDefine("USE_DISCORD")) {
 		frameworks_osx.push_back("libdiscord-rpc.a");
 	}
 
 	if (setup.useSDL2) {
 		frameworks_osx.push_back("libSDL2main.a");
 		frameworks_osx.push_back("libSDL2.a");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (setup.hasDefine("USE_SDL_NET"))
 			frameworks_osx.push_back("libSDL2_net.a");
 	} else {
 		frameworks_osx.push_back("libSDLmain.a");
 		frameworks_osx.push_back("libSDL.a");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (setup.hasDefine("USE_SDL_NET"))
 			frameworks_osx.push_back("libSDL_net.a");
 	}
 
@@ -970,7 +970,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "USER_HEADER_SEARCH_PATHS", "$(SRCROOT) $(SRCROOT)/engines");
 	ADD_SETTING(scummvm_Debug, "CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED", "YES");
-	if (CONTAINS_DEFINE(setup.defines, "USE_CXX11")) {
+	if (setup.hasDefine("USE_CXX11")) {
 		ADD_SETTING(scummvm_Debug, "CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
 	}
 	ADD_SETTING(scummvm_Debug, "CLANG_WARN_BOOL_CONVERSION", "YES");
@@ -1070,7 +1070,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
-	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+	if (setup.hasDefine("USE_SDL_NET")) {
 		if (setup.useSDL2)
 			iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/SDL2\"");
 		else
@@ -1094,7 +1094,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_IOS7");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_SANDBOXED");
-	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+	if (setup.hasDefine("USE_SDL_NET"))
 		ADD_DEFINE(scummvmIOS_defines, "WITHOUT_SDL");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
@@ -1131,7 +1131,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
-	if (CONTAINS_DEFINE(setup.defines, "USE_CXX11")) {
+	if (setup.hasDefine("USE_CXX11")) {
 		ADD_SETTING(scummvmOSX_Debug, "CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
 	}
 	ADD_SETTING(scummvmOSX_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
@@ -1235,12 +1235,12 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 
 // Setup global defines
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
-
-	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "USE_NASM")  // Not supported on Mac
+	
+	for (StringMap::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
+		if (i->first == "USE_NASM")  // Not supported on Mac
 			continue;
 
-		ADD_DEFINE(_defines, *i);
+		ADD_DEFINE(_defines, i->first);
 	}
 	// Add special defines for Mac support
 	REMOVE_DEFINE(_defines, "MACOSX");

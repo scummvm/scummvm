@@ -321,4 +321,17 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 	return cmdLine;
 }
 
+std::string MSVCProvider::getDefinesList(const StringMap defines) {
+	std::string definesList;
+	for (StringMap::const_iterator i = defines.begin(); i != defines.end(); ++i) {
+		if (i->second == "") {
+			definesList += i->first + ';';
+		} else {
+			definesList += i->first + "=" + i->second + ';';
+		}
+	}
+
+	return definesList;
+}
+
 } // namespace CreateProjectTool

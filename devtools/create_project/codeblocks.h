@@ -51,7 +51,7 @@ protected:
 
 private:
 	void writeWarnings(const std::string &name, std::ofstream &output) const;
-	void writeDefines(const StringList &defines, std::ofstream &output) const;
+	void writeDefines(const StringMap &defines, std::ofstream &output) const;
 };
 
 } // End of CreateProjectTool namespace

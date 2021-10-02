@@ -40,6 +40,7 @@
 #include <cassert>
 
 typedef std::list<std::string> StringList;
+typedef std::map<std::string, std::string> StringMap;
 
 typedef StringList TokenList;
 
@@ -190,7 +191,7 @@ FeatureList getAllFeatures();
  *
  * @param features List of features for the build (this may contain features, which are *not* enabled!)
  */
-StringList getFeatureDefines(const FeatureList &features);
+StringMap getFeatureDefines(const FeatureList &features);
 
 /**
  * Sets the state of a given feature. This can be used to
@@ -230,7 +231,7 @@ struct BuildSetup {
 	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
 
-	StringList defines;   ///< List of all defines for the build.
+	StringMap defines;   ///< List of all defines for the build.
 	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;             ///< Generate project files for the tools
@@ -256,10 +257,12 @@ struct BuildSetup {
 	bool featureEnabled(std::string feature) const;
 	Feature getFeature(std::string feature) const;
 
+	bool hasDefine(std::string name) const { return defines.find(name) != defines.end(); }
+
 	/**
 	* Returns a list of defines for enabled engines.
 	*/
-	StringList getEngineDefines() const;
+	StringMap getEngineDefines() const;
 };
 
 /**
@@ -581,7 +584,7 @@ protected:
 	 * @param includeList Reference to a list, where included files should be added.
 	 * @param excludeList Reference to a list, where excluded files should be added.
 	 */
-	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection = false) const;
+	void createModuleList(const std::string &moduleDir, const StringMap &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection = false) const;
 
 	/**
 	 * Creates an UUID for every enabled engine of the

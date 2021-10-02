@@ -317,15 +317,15 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 
 	// Definitions
-	StringList defines;
-	defines.push_back("SCUMMVM_PROJECTNAME=" + name);
+	StringMap defines;
+	defines["SCUMMVM_PROJECTNAME"]=name;
 	if (dynamicLib) {
 		if (name == setup.projectName)
-			defines.push_back("SCUMMVM_EXPORT=__declspec( dllexport )");
+			defines["SCUMMVM_EXPORT"]= "__declspec( dllexport )";
 		else
-			defines.push_back("SCUMMVM_EXPORT=__declspec( dllimport )");
+			defines["SCUMMVM_EXPORT"]= "__declspec( dllimport )";
 	} else
-		defines.push_back("SCUMMVM_EXPORT=");
+		defines["SCUMMVM_EXPORT"]= "";
 
 	project << "\t\t\t<PreprocessorDefinitions>" << getDefinesList(defines) << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
 
@@ -369,14 +369,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-std::string MSBuildProvider::getDefinesList(const StringList defines) {
-	std::string definesList;
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
-		definesList += *i + ';';
-	return definesList;
-}
-
-void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringMap &defines, const std::string &prefix, bool runBuildEvents) {
 
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)

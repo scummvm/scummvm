@@ -236,9 +236,14 @@ void CodeBlocksProvider::writeWarnings(const std::string &name, std::ofstream &o
 
 }
 
-void CodeBlocksProvider::writeDefines(const StringList &defines, std::ofstream &output) const {
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
-		output << "\t\t\t\t\t<Add option=\"-D" << *i << "\" />\n";
+void CodeBlocksProvider::writeDefines(const StringMap &defines, std::ofstream &output) const {
+	for (StringMap::const_iterator i = defines.begin(); i != defines.end(); ++i) {
+		if (i->second == "") {
+			output << "\t\t\t\t\t<Add option=\"-D" << i->first << "\" />\n";
+		} else {
+			output << "\t\t\t\t\t<Add option=\"-D" << i->first << "=" << i->second << "\" />\n";
+		}
+	}
 }
 
 void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
