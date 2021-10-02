@@ -552,6 +552,22 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Atlantis: The Lost Tales
+	// English DOS Non-interactive Demo
+	{
+		{
+			"atlantis",
+			"Demo",
+			AD_ENTRY1s("ATLANTIS.UBB", "f5b41b857678a61d7f9bd6eb41916ce5", 106611456),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUI_OPTIONS_HNM_PLAYER
+		},
+		GType_HNM_PLAYER,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

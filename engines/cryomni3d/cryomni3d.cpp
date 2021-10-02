@@ -132,7 +132,7 @@ Common::String CryOmni3DEngine::prepareFileName(const Common::String &baseName,
 
 void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::SoundType soundType,
 							  HNMCallback beforeDraw, HNMCallback afterDraw) {
-	const char *const extensions[] = { "hns", "hnm", nullptr };
+	const char *const extensions[] = { "hns", "hnm", "ubb", nullptr };
 	Common::String fname(prepareFileName(filename, extensions));
 
 	byte *currentPalette = new byte[256 * 3];
