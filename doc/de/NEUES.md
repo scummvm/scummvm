@@ -1,6 +1,16 @@
-Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
-Programmcodes finden Sie auf Englisch unter:
+Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
+
+#### 2.5.1 (DD.MM.YYYY)
+
+ Allgemein:
+   - Das ResidualVM GUI-Theme wurde remastered.
+
+ Grim:
+   - Fehlerhafter Standard-Wert für die "Sprechgeschwindigkeit" korrigiert.
+   - Schwarzen Bildschirm bei der Eingabe eines Spielstand-Namens korrigiert.
+   - OpenGL ohne Shader wird nun als Standard-Einstellung für Grim Fandango bevorzugt.
+
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
