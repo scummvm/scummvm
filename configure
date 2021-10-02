@@ -6155,7 +6155,9 @@ case $_host_os in
 		fi
 		;;
 	riscos)
-		append_var CXXFLAGS "-mno-poke-function-name"
+		if test "$_debug_build" = no; then
+			append_var CXXFLAGS "-mno-poke-function-name"
+		fi
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
