@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-02 09:24+0000\n"
-"PO-Revision-Date: 2021-10-02 04:26+0000\n"
+"PO-Revision-Date: 2021-10-02 21:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -39,7 +39,7 @@ msgstr "隠しファイルを表示する"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "隠し属性のあるファイルも表示する"
+msgstr "隠し属性のファイルも表示する"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -89,11 +89,11 @@ msgstr "選択"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "ゲームデータをダウンロードするディレクトリを選択します"
+msgstr "ゲームデータのダウンロード先を選択"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:588 gui/launcher.cpp:206
 msgid "Select directory with game data"
-msgstr "ゲームデータのフォルダーを選択する"
+msgstr "ゲームデータのディレクトリーを選択"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
@@ -153,9 +153,7 @@ msgstr "指定されたディレクトリーが開けませんでした!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
-"ダウンロード用のフォルダーを作成できませんでした。指定されたフォルダーに同じ"
-"名前のファイルがあります。"
+msgstr "ダウンロード用のフォルダーを作成できません。指定されたディレクトリーに同名のファイルが存在します。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:390
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
@@ -257,7 +255,7 @@ msgstr "プラットフォーム："
 #: gui/editgamedialog.cpp:175 gui/editgamedialog.cpp:177
 #: gui/editgamedialog.cpp:178
 msgid "Platform the game was originally designed for"
-msgstr "ゲームの元々のプラットフォーム"
+msgstr "オリジナル版のプラットフォーム"
 
 #: gui/editgamedialog.cpp:177
 msgctxt "lowres"
@@ -279,12 +277,12 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:218
 msgid "Override global graphic settings"
-msgstr "グローバルグラフィック設定を上書きする"
+msgstr "グローバルグラフィック設定を上書き"
 
 #: gui/editgamedialog.cpp:220
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "グローバルグラフィック設定を上書きする"
+msgstr "グローバルグラフィック設定を上書き"
 
 #: gui/editgamedialog.cpp:230 gui/options.cpp:1953
 msgid "Shader"
@@ -292,12 +290,12 @@ msgstr "シェーダー"
 
 #: gui/editgamedialog.cpp:233
 msgid "Override global shader settings"
-msgstr "グローバルシェーダー設定をオーバーライドする"
+msgstr "グローバルシェーダー設定を上書き"
 
 #: gui/editgamedialog.cpp:235
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "全般のシェーダー設定を上書きする"
+msgstr "グローバルシェーダー設定を上書き"
 
 #: gui/editgamedialog.cpp:249 gui/options.cpp:1987 engines/dialogs.cpp:319
 msgid "Keymaps"
@@ -327,7 +325,7 @@ msgstr "グローバルオーディオ設定を上書きする"
 #: gui/editgamedialog.cpp:280
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "全般のオーディオ設定を上書きする"
+msgstr "グローバルオーディオ設定を上書き"
 
 #: gui/editgamedialog.cpp:289 gui/options.cpp:2013
 msgid "Volume"
@@ -398,7 +396,7 @@ msgstr "追加フォルダー："
 #: gui/editgamedialog.cpp:352 gui/editgamedialog.cpp:354
 #: gui/editgamedialog.cpp:355
 msgid "Specifies path to additional data used by the game"
-msgstr "指定されたフォルダーからゲームの追加データが使えます"
+msgstr "使用する追加データのパスを指定"
 
 #: gui/editgamedialog.cpp:354 gui/options.cpp:2214
 msgctxt "lowres"
@@ -459,21 +457,17 @@ msgstr "セーブデータのフォルダーを選択してください"
 
 #: gui/editgamedialog.cpp:627 gui/options.cpp:2808
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
-"選択されたフォルダーに保存できませんでした。保存ができるフォルダーを選択して"
-"ください。"
+msgstr "選択されたディレクトリーに保存できません。別の場所を選択してください。"
 
 #: gui/editgamedialog.cpp:632
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr ""
-"セーブデータの同期機能はデフォルトのフォルダー以外使えません。使用するにはデ"
-"フォルトのフォルダーを選択してください。"
+msgstr "セーブデータの同期機能は、デフォルトのディレクトリーでのみ動作します。適切なパスを指定してください。"
 
 #: gui/editgamedialog.cpp:658
 msgid "This game ID is already taken. Please choose another one."
-msgstr "入力されたIDが使用済み。別のIDを使ってください。"
+msgstr "このゲームIDはすでに取得済みです。他の値を選んでください。"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -498,15 +492,15 @@ msgstr "セーブデータの名前を入力してください"
 
 #: gui/filebrowser-dialog.cpp:137
 msgid "Do you really want to overwrite the file?"
-msgstr "このファイルを上書きしてもよろしいですか？"
+msgstr "本当に上書きしてもよろしいですか?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr "残響"
+msgstr "リバーブ"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr "自発的"
+msgstr "アクティブ"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
@@ -526,7 +520,7 @@ msgstr "レベル："
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr "コーラス："
+msgstr "コーラス"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
@@ -584,12 +578,12 @@ msgstr "リセット"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "FluidSynthの設定をデフォルトにリセットする。"
+msgstr "FluidSynthの設定をデフォルトにリセットします。"
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "FluidSynthの設定を全てリセットしてもよろしいですか？"
+msgstr "FluidSynthの設定を全てリセットしてもよろしいですか?"
 
 #: gui/gui-manager.cpp:145
 msgid "GUI"
@@ -681,7 +675,7 @@ msgstr "終了(~Q~)"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
-msgstr "ScummVMを終了(~Q~)"
+msgstr "ScummVMを終了"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
@@ -1132,9 +1126,7 @@ msgstr "SoundFont："
 
 #: gui/options.cpp:1564 gui/options.cpp:1566 gui/options.cpp:1567
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr ""
-"SoundFontファイルはある音楽デバイスとFluidSynthとTimidityが利用することができ"
-"ます"
+msgstr "SoundFontはいくつかのオーディオカード、FluidSynth、Timidityでサポートされています"
 
 #: gui/options.cpp:1566
 msgctxt "lowres"
@@ -1880,7 +1872,7 @@ msgstr "不明な製作者"
 
 #: gui/remotebrowser.cpp:129
 msgid "ScummVM could not access the directory!"
-msgstr "選択されたフォルダーを開ませんでした！"
+msgstr "ディレクトリーにアクセスできません!"
 
 #: gui/saveload-dialog.cpp:55
 msgid "Downloading saves..."
@@ -1894,9 +1886,7 @@ msgstr "バックグラウンドで実行する"
 msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
-msgstr ""
-"警告：現在の状態よりプレイ時間が長いセーブデータです。上書きしてよろしいです"
-"か?"
+msgstr "警告：よりプレイ時間の長いセーブデータが存在します。上書きしてよろしいですか?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -3120,7 +3110,7 @@ msgstr "ウインドーズMIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
 msgid "Can't create directory here!"
-msgstr "指定された場所にはディレクトリーを生成できません!"
+msgstr "ここにはディレクトリーを生成できません!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -3270,8 +3260,7 @@ msgid ""
 "Check whether selected port is not used by another application and try again."
 msgstr ""
 "ローカルサーバーの起動に失敗しました。\n"
-"選択されたポートが他のアプリケーションで使用されていない事を確認して、起動を"
-"やり直してください。"
+"選択したポートが他のアプリケーションで使用されていないか確認して、やり直してください。"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
@@ -3575,17 +3564,17 @@ msgstr "BSDライセンス"
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
-msgstr "バツ"
+msgstr "×"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:196
 msgid "Circle"
-msgstr "マル"
+msgstr "○"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/dragons/metaengine.cpp:184
 msgid "Square"
-msgstr "四角"
+msgstr "□"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
@@ -6722,7 +6711,7 @@ msgstr "不意打ち"
 
 #: engines/scumm/help.cpp:319
 msgid "These are for Indy on left."
-msgstr "これらはIndyからみて左側にあります。"
+msgstr "これらはIndyから見て左側にあります。"
 
 #: engines/scumm/help.cpp:320
 msgid "When Indy is on the right,"
