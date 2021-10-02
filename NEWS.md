@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Grim:
    - Fixed default "Talk Speed" option value.
    - Fixed black screen while entering save game name.
+   - OpenGL without shaders is preferred as default for Grim Fandango.
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
