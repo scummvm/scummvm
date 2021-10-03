@@ -49,12 +49,12 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_TESTING | ADGF_DEMO,
 	 GUIO1(GUIO_NOMIDI)},
 	{"sinister-six", // US release
-	 "Not yet implemented",
+	 _s("Missing game code"),
 	 AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
 				"SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
-	 ADGF_UNSUPPORTED | ADGF_TESTING,
+	 ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NOMIDI)},
 	{"wetlands", // Wetlands Demo Disc (November 1995)
 	 "Demo",
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
-	 ADGF_TESTING,
+	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"wetlands", // Wetlands (FR)
 	 "",
@@ -96,7 +96,7 @@ static const ADGameDescription gameDescriptions[] = {
 			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 	 Common::FR_FRA,
 	 Common::kPlatformDOS,
-	 ADGF_TESTING,
+	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"wetlands", // Wetlands (ES)
 	 "",
@@ -104,15 +104,15 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 	 Common::ES_ESP,
 	 Common::kPlatformDOS,
-	 ADGF_TESTING,
+	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"soldier-boyz", // Solidier Boyz (US)
-	 "",
+	 _s("Missing game code"),
 	 AD_ENTRY2s("boyz.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 263347,
 				"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 	 Common::EN_USA,
 	 Common::kPlatformWindows,
-	 ADGF_TESTING,
+	 ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NOMIDI)},
 	AD_TABLE_END_MARKER};
 } // End of namespace Hypno
