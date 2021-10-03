@@ -37,6 +37,9 @@ void BodyData::reset() {
 
 void BodyData::loadVertices(Common::SeekableReadStream &stream) {
 	const uint16 numVertices = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_vertices.reserve(numVertices);
 	for (uint16 i = 0U; i < numVertices; ++i) {
 		const int16 x = stream.readSint16LE();
@@ -49,6 +52,9 @@ void BodyData::loadVertices(Common::SeekableReadStream &stream) {
 
 void BodyData::loadBones(Common::SeekableReadStream &stream) {
 	const uint16 numBones = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_bones.reserve(numBones);
 	for (uint16 i = 0; i < numBones; ++i) {
 		const int16 firstPoint = stream.readSint16LE() / 6;
@@ -88,6 +94,9 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 
 void BodyData::loadShades(Common::SeekableReadStream &stream) {
 	const uint16 numShades = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_shades.reserve(numShades);
 	for (uint16 i = 0; i < numShades; ++i) {
 		BodyShade shape;
@@ -101,6 +110,9 @@ void BodyData::loadShades(Common::SeekableReadStream &stream) {
 
 void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 	const uint16 numPolygons = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_polygons.reserve(numPolygons);
 	for (uint16 i = 0; i < numPolygons; ++i) {
 		BodyPolygon poly;
@@ -130,6 +142,9 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 
 void BodyData::loadLines(Common::SeekableReadStream &stream) {
 	const uint16 numLines = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_lines.reserve(numLines);
 	for (uint16 i = 0; i < numLines; ++i) {
 		BodyLine line;
@@ -144,6 +159,9 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 
 void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	const uint16 numSpheres = stream.readUint16LE();
+	if (stream.eos())
+		return;
+
 	_spheres.reserve(numSpheres);
 	for (uint16 i = 0; i < numSpheres; ++i) {
 		BodySphere sphere;
