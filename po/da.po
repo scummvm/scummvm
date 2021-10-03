@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-02 22:50+0000\n"
-"PO-Revision-Date: 2021-08-22 12:25+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2021-10-03 07:20+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
 "Language: da\n"
@@ -305,9 +305,8 @@ msgid "Override global shader settings"
 msgstr "Tilsidesæt globale lydindstillinger"
 
 #: gui/editgamedialog.cpp:249 gui/options.cpp:1987 engines/dialogs.cpp:319
-#, fuzzy
 msgid "Keymaps"
-msgstr "Tasteoversigt:"
+msgstr "Tasteoversigt"
 
 #: gui/editgamedialog.cpp:256 gui/options.cpp:1994 engines/dialogs.cpp:326
 msgid "Backend"
@@ -1695,12 +1694,11 @@ msgstr "Ingen"
 
 #: gui/options.cpp:2537
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorere"
 
 #: gui/options.cpp:2538
-#, fuzzy
 msgid "Disable autosave"
-msgstr "Kunne ikke gemme spil"
+msgstr "Slå autogem fra"
 
 #: gui/options.cpp:2539
 msgid ""
@@ -1710,22 +1708,27 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"OBS: Autogem var aktiveret. Nogle af dine spil bruger autogem pladsen til "
+"deres gem filer. Du kan enten flytte eksisterende gemte filer til en ny "
+"plads, slå autogem fra, eller ignoere (du vil få en besked når autogem er "
+"ved at overskrive dit gemte spil).\n"
+"Liste med spil:\n"
 
 #: gui/options.cpp:2548
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "Tilføj spil..."
+msgstr ""
+"\n"
+"Og mere..."
 
 #: gui/options.cpp:2549 engines/engine.cpp:582
-#, fuzzy
 msgid "Move"
-msgstr "Flyt bagud"
+msgstr "Flyt"
 
 #: gui/options.cpp:2562
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "FEJL: Kunne ikke flytte følgende gemte spil:\n"
 
 #: gui/options.cpp:2649
 msgid "Failed to change cloud storage!"
