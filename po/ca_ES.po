@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-02 22:50+0000\n"
-"PO-Revision-Date: 2021-03-21 08:24+0000\n"
+"PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -680,7 +680,7 @@ msgstr "Dreta"
 #: engines/wintermute/keymapper_tables.h:1868
 #: engines/wintermute/keymapper_tables.h:1926
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -1035,7 +1035,7 @@ msgstr "Modes de tramat especials suportats per alguns jocs"
 
 #: gui/options.cpp:1415
 msgid "Stretch mode:"
-msgstr "Mode estirament"
+msgstr "Mode estirat:"
 
 #: gui/options.cpp:1427
 msgid "Scaler:"
