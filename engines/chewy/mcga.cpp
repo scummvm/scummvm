@@ -80,8 +80,20 @@ byte *get_dispoff() {
 	return screenP;
 }
 
-void setpalette(byte *palette) {
-	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+
+void setScummVMPalette(const byte *palette, uint start, uint count) {
+	byte pal[PALETTE_SIZE];
+	byte *dest = &pal[0];
+
+	for (uint i = 0; i < count * 3; ++i, ++palette, ++dest)
+		*dest = VGA_COLOR_TRANS(*palette);
+
+	g_system->getPaletteManager()->setPalette(pal, start, count);
+}
+
+void setpalette(const byte *palette) {
+	setScummVMPalette(palette, 0, PALETTE_COUNT);
 }
 
 void save_palette(byte *palette) {
@@ -101,11 +113,11 @@ void rastercol(int16 color, int16 r, int16 g, int16 b) {
 	rgb[1] = g;
 	rgb[2] = b;
 
-	g_system->getPaletteManager()->setPalette(&rgb[0], color, 1);
+	setScummVMPalette(&rgb[0], color, 1);
 }
 
 void set_palpart(byte *palette, int16 startcol, int16 anz) {
-	g_system->getPaletteManager()->setPalette(palette, startcol, anz);
+	setScummVMPalette(palette, startcol, anz);
 }
 
 void clear_mcga() {

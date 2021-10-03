@@ -38,7 +38,8 @@ void hflyback_end();
 void set_pointer(byte *ptr);
 byte *get_dispoff();
 
-void setpalette(byte *palette);
+void setScummVMPalette(const byte *palette, uint start, uint count);
+void setpalette(const byte *palette);
 void save_palette(byte *pal);
 void restore_palette();
 void rastercol(int16 color, int16 r, int16 g, int16 b);
