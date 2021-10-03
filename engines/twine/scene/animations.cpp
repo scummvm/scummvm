@@ -318,9 +318,14 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		case ActionType::ACTION_LEFT_STEP:
-		case ActionType::ACTION_RIGHT_STEP:
 			if (action.animFrame == actor->_animPosition && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorBegin;
+				_engine->_sound->playSample(sampleIdx, 1, actor->pos(), actorIdx);
+			}
+			break;
+		case ActionType::ACTION_RIGHT_STEP:
+			if (action.animFrame == actor->_animPosition && (actor->_brickSound & 0xF0U) != 0xF0U) {
+				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorRightBegin;
 				_engine->_sound->playSample(sampleIdx, 1, actor->pos(), actorIdx);
 			}
 			break;

@@ -44,7 +44,8 @@ enum _Samples {
 	TaskCompleted = 41,
 	Hit = 86,
 	ItemFound = 97,
-	WalkFloorBegin = 126
+	WalkFloorBegin = 126,
+	WalkFloorRightBegin = 141
 };
 }
 

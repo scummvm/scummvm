@@ -301,10 +301,6 @@ public:
 	inline ShapeType getBrickShapeFull(const IVec3 &pos, int32 y2) {
 		return getBrickShapeFull(pos.x, pos.y, pos.z, y2);
 	}
-
-	inline uint8 getBrickSoundType(const IVec3 &pos) {
-		return getBrickSoundType(pos.x, pos.y, pos.z);
-	}
 };
 
 } // namespace TwinE
