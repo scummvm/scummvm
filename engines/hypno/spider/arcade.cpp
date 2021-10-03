@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
 
