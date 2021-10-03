@@ -88,7 +88,7 @@ void FreescapeEngine::loadAssets() {
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-	if (_targetName.hasSuffix("3dkit")) {
+	if (_targetName.hasPrefix("3dkit")) {
 		Common::ArchiveMemberList files;
         gameDir.listMatchingMembers(files, "*.RUN");
 
@@ -138,16 +138,15 @@ Common::Error FreescapeEngine::run() {
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
-
+	Area *area = nullptr;
 	if (_areasByAreaID) {
 		_startArea = 1; //binary.startArea;
 
 		assert(_areasByAreaID->contains(_startArea));
-		Area *area = (*_areasByAreaID)[_startArea];
+		area = (*_areasByAreaID)[_startArea];
 		assert(area);
 		//_gfx->renderPalette(area->raw_palette, binary.ncolors);
 		drawBorder();
-		area->draw(_gfx);
 	}	
 	debug("FreescapeEngine::init");
 	// Simple main event loop
@@ -156,6 +155,7 @@ Common::Error FreescapeEngine::run() {
 	float lastFrame = 0.f;
 
 	while (!shouldQuit()) {
+		area->draw(_gfx);
         float currentFrame = g_system->getMillis();
         float deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -174,7 +174,7 @@ Common::Error FreescapeEngine::run() {
 				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
 					move(RIGHT, deltaTime);
 				
-				debug("player position: %f %f %f", _position.x(), _position.y(), _position.z());
+				//debug("player position: %f %f %f", _position.x(), _position.y(), _position.z());
 				break;
 
 			case Common::EVENT_QUIT:
@@ -185,7 +185,7 @@ Common::Error FreescapeEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				rotate(lastMousePos, mousePos);
 				lastMousePos = mousePos;
-				debug("player rotation (front): %f %f %f", _front.x(), _front.y(), _front.z());
+				//debug("player rotation (front): %f %f %f", _front.x(), _front.y(), _front.z());
 				break;
 			default:
 				break;

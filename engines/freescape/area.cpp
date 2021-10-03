@@ -117,11 +117,9 @@ void Area::draw(Freescape::Renderer *gfx) {
 	gfx->drawRect2D(ground, 255, r, g, b);
 
 	//gfx->drawTriange(); // I have no idea why?
-
-	gfx->flipBuffer();
-	g_system->updateScreen();
-
 	for (Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++) {
 		(*iterator)->draw(gfx);
 	}
+	gfx->flipBuffer();
+	g_system->updateScreen();
 }
