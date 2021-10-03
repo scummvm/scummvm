@@ -63,8 +63,8 @@ public:
 	bool scaled;
 	bool transparent;
 	bool loop;
-	Video::SmackerDecoder *decoder = nullptr;
-	const Graphics::Surface *currentFrame = nullptr;
+	Video::SmackerDecoder *decoder;
+	const Graphics::Surface *currentFrame;
 };
 
 typedef Common::Array<MVideo> Videos;
@@ -172,15 +172,19 @@ public:
 
 class Shoot {
 public:
+	Shoot() {
+		destroyed = false;
+		video = nullptr;
+	}
 	Common::String name;
 	Filename animation;
 	Filename startSound;
 	Filename endSound;
 	Common::Point position;
 	int damage;
-	MVideo *video = nullptr;
+	MVideo *video;
 	uint32 explosionFrame;
-	bool destroyed = false;
+	bool destroyed;
 };
 
 typedef Common::Array<Shoot> Shoots;
