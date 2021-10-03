@@ -317,6 +317,9 @@ int32 BYOnline::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_ACCEPT_CHALLENGE:
 		acceptChallenge(args[0]);
 		break;
+	case OP_NET_STOP_CALLING:
+		challengeTimeout(args[0]);
+		break;
 	case OP_NET_LEAVE_AREA:
 		leaveArea();
 		break;
@@ -742,6 +745,18 @@ void BYOnline::handleReceiveChallenge(int playerId, int stadium, Common::String 
 
 	// Run the script
 	runRemoteStartScript(args);
+}
+
+void BYOnline::challengeTimeout(int playerId) {
+	if (!connected()) {
+		warning("BYOnline: Tried to timeout challenge without connecting to server first!");
+		return;
+	}
+
+	Common::JSONObject challengeTimeoutRequuest;
+	challengeTimeoutRequuest.setVal("cmd", new Common::JSONValue("challenge_timeout"));
+	challengeTimeoutRequuest.setVal("user", new Common::JSONValue((long long int)playerId));
+	send(challengeTimeoutRequuest);
 }
 
 void BYOnline::sendBusy(int playerId) {

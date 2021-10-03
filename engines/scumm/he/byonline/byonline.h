@@ -50,6 +50,7 @@ typedef struct _TCPsocket *TCPsocket;
 #define OP_NET_GET_PROFILE									2214
 #define OP_NET_DECLINE_CHALLENGE						2215
 #define OP_NET_ACCEPT_CHALLENGE							2216
+#define OP_NET_STOP_CALLING									2217
 #define OP_NET_CHANGE_ICON									2218
 #define OP_NET_SET_PHONE_STATUS							2220
 #define OP_NET_ANSWER_PHONE									2221
@@ -145,6 +146,8 @@ private:
 
 	void challengePlayer(int32 playerId, int32 stadium);
 	void handleReceiveChallenge(int playerId, int stadium, Common::String name);
+
+	void challengeTimeout(int playerId);
 
 	int32 answerPhone(int playerId);
 	void handleConsideringChallenge();
