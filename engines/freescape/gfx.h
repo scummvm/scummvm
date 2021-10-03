@@ -146,6 +146,8 @@ public:
 
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
+	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
+	virtual void drawFace(const Math::Vector3d &position, float xs, float ys, float zs, uint8 color) = 0;
 
 	/** Render a Drawable in the specified window */
 	void renderDrawable(Drawable *drawable, Window *window);

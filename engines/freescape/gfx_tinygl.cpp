@@ -137,7 +137,7 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {	
 	tglDisable(TGL_TEXTURE_2D);
-	tglColor4f(r / 255.0, g / 255.0, b / 255.0, a);
+	tglColor3ub(r, g, b);
 
 	if (a != 255) {
 		tglEnable(TGL_BLEND);
@@ -223,6 +223,35 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDisable(TGL_TEXTURE_2D);
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
+}
+
+void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+	debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
+	debug("with size %f, %f, %f", size.x(), size.y(), size.z());
+	drawFace(origin, size.x(), size.y(), 0, (*colours)[0]);
+}
+
+void TinyGLRenderer::drawFace(const Math::Vector3d &origin, float xs, float ys, float zs, uint8 color) {
+	debug("Face at %f, %f, %f", origin.x(), origin.y(), origin.z());
+	debug("with size %f, %f, %f", xs, ys, zs);
+	assert(_palette);
+	uint8 r, g, b;
+	_palette->getRGBAt(color, r, g, b);
+	debug("with colour %d (%d, %d, %d)", color, r, g, b);
+	tglBegin(TGL_TRIANGLES);
+	tglColor3ub(r, g, b);
+
+	// First triangle
+	tglVertex3f(origin.x(), origin.y(), origin.z());
+	tglVertex3f(origin.x() + xs, origin.y(), origin.z());
+	tglVertex3f(origin.x() + xs, origin.y() - ys, origin.z());
+
+	// Second triangle
+	tglVertex3f(origin.x(), origin.y(), origin.z());
+	tglVertex3f(origin.x(), origin.y() - ys, origin.z());
+	tglVertex3f(origin.x() + xs, origin.y() - ys, origin.z());
+
+	tglEnd();
 }
 
 void TinyGLRenderer::flipBuffer() {

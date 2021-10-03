@@ -48,11 +48,12 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
+	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 
 	virtual void flipBuffer() override;
-private:
-	void drawFace(uint face, Texture *texture);
+	virtual void drawFace(const Math::Vector3d &position, float xs, float ys, float zs, uint8 color) override;
 
+private:
 	TinyGL::FrameBuffer *_fb;
 };
 

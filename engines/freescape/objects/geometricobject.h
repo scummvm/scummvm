@@ -35,8 +35,8 @@ public:
 		FCLInstructionVector condition);
 	virtual ~GeometricObject();
 
-	/*void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-		void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *areaBatchDrawer, bool allowPolygonOffset);*/
+	/*void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);*/
+	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable();
 	bool isPlanar();
 
