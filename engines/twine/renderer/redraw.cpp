@@ -493,7 +493,7 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 		// Drawing unknown
 		else if (flags < DrawListType::DrawActorSprites) {
 			// TODO reverse this part of the code
-			warning("Not yet reversed part of the rendering code");
+			warning("Not yet reversed part of the rendering code: %u", flags);
 		}
 		// Drawing sprite actors, doors and entities
 		else if (flags == DrawListType::DrawActorSprites) {
