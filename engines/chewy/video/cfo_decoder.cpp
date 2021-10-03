@@ -25,7 +25,7 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "video/flic_decoder.h"
-
+#include "chewy/mcga.h"
 #include "chewy/sound.h"
 #include "chewy/video/cfo_decoder.h"
 
@@ -310,7 +310,7 @@ void CfoDecoder::CfoVideoTrack::fadeOut() {
 				--_palette[i * 3 + 2];
 		}
 
-		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+		setScummVMPalette(_palette, 0, 256);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
