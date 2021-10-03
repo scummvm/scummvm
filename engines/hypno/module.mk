@@ -1,23 +1,23 @@
 MODULE := engines/hypno
 
 MODULE_OBJS := \
-	libfile.o \
-	cursors.o \
-	metaengine.o \
 	actions.o \
-	scene.o \
 	arcade.o \
-	lexer_mis.o \
+	boyz/boyz.o \
+	cursors.o \
 	grammar_mis.o \
-	lexer_arc.o \
 	grammar_arc.o \
+	hypno.o \
+	lexer_mis.o \
+	lexer_arc.o \
+	libfile.o \
+	metaengine.o \
+	scene.o \
+	spider/arcade.o \
 	spider/spider.o \
 	spider/talk.o \
-	spider/arcade.o \
-	wet/wet.o \
 	wet/arcade.o \
-	boyz/boyz.o \
-	hypno.o
+	wet/wet.o
 
 MODULE_DIRS += \
 	engines/hypno
