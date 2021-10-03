@@ -47,6 +47,8 @@ ArcadeShooting g_parsedArc;
 HypnoEngine *g_hypno;
 
 MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled, bool _loop) {
+	decoder = nullptr;
+	currentFrame = nullptr;
 	path = _path;
 	position = _position;
 	scaled = _scaled;
