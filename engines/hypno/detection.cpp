@@ -130,7 +130,7 @@ static const char *const directoryGlobs[] = {
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
-		_maxScanDepth = 2;
+		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 

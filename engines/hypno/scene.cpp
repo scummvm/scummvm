@@ -115,34 +115,35 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			}
 		}
 	}
-	if (found) {
-		if (selected.smenu) {
-			if (selected.smenu->empty())
-				error("Invalid menu selected");
-			_nextHotsToAdd = selected.smenu;
-		}
+	if (!found)
+		return;
 
-		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
-			Action *action = *itt;
-			if (typeid(*action) == typeid(ChangeLevel))
-				runChangeLevel((ChangeLevel *)action);
-			if (typeid(*action) == typeid(Escape))
-				runEscape((Escape *)action);
-			else if (typeid(*action) == typeid(Cutscene))
-				runCutscene((Cutscene *)action);
-			else if (typeid(*action) == typeid(Play))
-				runPlay((Play *)action);
-			else if (typeid(*action) == typeid(WalN))
-				runWalN((WalN *)action);
-			else if (typeid(*action) == typeid(Global))
-				runGlobal((Global *)action);
-			else if (typeid(*action) == typeid(Talk))
-				runTalk((Talk *)action);
-			else if (typeid(*action) == typeid(Quit))
-				runQuit((Quit *)action);
-			else if (typeid(*action) == typeid(Palette))
-				debugC(1, kHypnoDebugScene, "runPalette unimplemented");
-		}
+	if (selected.smenu) {
+		if (selected.smenu->empty())
+			error("Invalid menu selected");
+		_nextHotsToAdd = selected.smenu;
+	}
+
+	for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
+		Action *action = *itt;
+		if (typeid(*action) == typeid(ChangeLevel))
+			runChangeLevel((ChangeLevel *)action);
+		if (typeid(*action) == typeid(Escape))
+			runEscape((Escape *)action);
+		else if (typeid(*action) == typeid(Cutscene))
+			runCutscene((Cutscene *)action);
+		else if (typeid(*action) == typeid(Play))
+			runPlay((Play *)action);
+		else if (typeid(*action) == typeid(WalN))
+			runWalN((WalN *)action);
+		else if (typeid(*action) == typeid(Global))
+			runGlobal((Global *)action);
+		else if (typeid(*action) == typeid(Talk))
+			runTalk((Talk *)action);
+		else if (typeid(*action) == typeid(Quit))
+			runQuit((Quit *)action);
+		else if (typeid(*action) == typeid(Palette))
+			debugC(1, kHypnoDebugScene, "runPalette unimplemented");
 	}
 }
 
@@ -151,13 +152,12 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	Hotspot selected;
 	bool found = false;
 	int rs = 100000000;
-	int cs = 0;
 	for (Hotspots::const_iterator it = hots->begin(); it != hots->end(); ++it) {
 		const Hotspot h = *it;
 		if (h.type != MakeHotspot)
 			continue;
 
-		cs = h.rect.width() * h.rect.height();
+		int cs = h.rect.width() * h.rect.height();
 		if (h.rect.contains(mousePos)) {
 			if (cs < rs) {
 				selected = h;

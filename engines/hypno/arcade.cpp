@@ -101,12 +101,11 @@ void HypnoEngine::hitPlayer() {
 
 void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 	ShootSequence shootSequence = arc.shootSequence;
 
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	_levelId = arc.id;
 	_shootSound = arc.shootSound;
 	_score = 0;
@@ -140,6 +139,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
 
+	Common::Event event;
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
