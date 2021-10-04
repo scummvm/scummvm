@@ -149,7 +149,7 @@ bool debugChannelSet(int level, uint32 debugChannels);
  * debug output shall be generated. The higher the value, the more verbose the
  * information (although the exact semantics are up to the engines).
  */
-extern int gDebugLevel;
+SCUMMVM_EXPORT extern int gDebugLevel;
 
 /**
  * Specify whether to show only the debug channels and suppress
@@ -158,7 +158,7 @@ extern int gDebugLevel;
  * This option is useful when you want to have higher levels of channels
  * visible without the noise from other subsystems or OSystem.
  */
-extern bool gDebugChannelsOnly;
+SCUMMVM_EXPORT extern bool gDebugChannelsOnly;
 
 /** Global constant for EventRecorder debug channel. */
 enum GlobalDebugLevels {
@@ -166,7 +166,7 @@ enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
 };
 
-extern const DebugChannelDef gDebugChannels[];
+SCUMMVM_EXPORT extern const DebugChannelDef gDebugChannels[];
 
 /** @} */
 
