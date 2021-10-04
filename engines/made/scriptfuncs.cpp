@@ -258,6 +258,11 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		_vm->_soundEnergyIndex = 0;
 		_soundStarted = true;
 		_soundResource = soundRes;
+		// The sound length in milliseconds for purpose of checking if the
+		// sound is still playing. This is 100 ms shorter than the actual
+		// length (see sfSoundPlaying).
+		uint32 soundLength = (_soundResource->getSoundSize() * 1000 / _vm->_soundRate);
+		_soundCheckLength = soundLength > 100 ? soundLength - 100 : 0;
 	}
 	return 0;
 }
@@ -614,10 +619,28 @@ int16 ScriptFunctions::sfSetSpriteMask(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
-	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
-		return 1;
-	else
-		return 0;
+	if (_vm->getGameID() == GID_RTZ) {
+		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+			return 0;
+
+		// For looping sounds the game script regularly checks if the sound has
+		// finished playing, then plays it again. This works in the original
+		// interpreter (possibly because it checks the first buffer of double-
+		// buffered sound output); it does not work in ScummVM because the
+		// mixer will return if the sound has actually stopped playing. This
+		// causes an audible gap when the sound loops.
+		// For this reason this function checks against the sound check length,
+		// which is 100ms less than the actual sound length. Not sure if this
+		// is necessary or desirable for games other than Return to Zork.
+		int playedMsec = _vm->_mixer->getElapsedTime(_audioStreamHandle).msecs();
+		return playedMsec > _soundCheckLength ? 0 : 1;
+	} else {
+		if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+			return 1;
+		else
+			return 0;
+	}
+
 }
 
 void ScriptFunctions::stopSound() {

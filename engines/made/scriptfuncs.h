@@ -63,6 +63,9 @@ protected:
 	Audio::SoundHandle _voiceStreamHandle;
 	SoundResource* _soundResource;
 	bool _soundStarted;
+	// The sound length in milliseconds for purpose of checking if the sound is
+	// still playing.
+	int _soundCheckLength;
 	// The audio volume set by the game scripts.
 	uint8 _gameAudioVolume;
 

@@ -123,6 +123,7 @@ public:
 	virtual void load(byte *source, int size);
 	Audio::AudioStream *getAudioStream(int soundRate, bool loop = false);
 	SoundEnergyArray *getSoundEnergyArray() const { return _soundEnergyArray; }
+	int getSoundSize() const { return _soundSize; }
 protected:
 	byte *_soundData;
 	int _soundSize;
