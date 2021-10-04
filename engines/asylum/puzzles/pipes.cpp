@@ -63,7 +63,8 @@ const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 
 									15, 32, 32, 15, 15, 15, 15, 15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
 
 static BinNum calcStateFromPosition(ConnectorType type, uint32 position) {
-	assert(position--);
+	assert(position);
+	position--;
 	uint32 shift = !!position + !!(position >> 1) + !!(position >> 2);
 
 	return BinNum((type >> shift | type << (4 - shift)) & 0xF);
