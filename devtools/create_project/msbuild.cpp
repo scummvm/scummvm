@@ -345,6 +345,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		project << "\t\t<Link>\n"
 		        << "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
 		        << "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
+				<< "\t\t\t<ModuleDefinitionFile>scummvm.def</ModuleDefinitionFile>\n"
 		        << "\t\t</Link>\n";
 
 		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
