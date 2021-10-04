@@ -53,8 +53,8 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	uint32 tag = stream->readUint32BE();
 
-	/* For now, only HNM4, HNM6 in the future */
-	if (tag != MKTAG('H', 'N', 'M', '4')) {
+	/* For now, only HNM4 and UBB2, HNM6 in the future */
+	if (tag != MKTAG('H', 'N', 'M', '4') && tag != MKTAG('U', 'B', 'B', '2')) {
 		close();
 		return false;
 	}
@@ -85,9 +85,13 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay,
 	                                 _initialPalette);
 	addTrack(_videoTrack);
-	if (soundFormat == 2 && soundBits != 0) {
-		// HNM4 is 22050Hz
-		_audioTrack = new DPCMAudioTrack(soundFormat, soundBits, 22050, getSoundType());
+	if (tag == MKTAG('H', 'N', 'M', '4') && soundFormat == 2 && soundBits != 0) {
+		// HNM4 is Mono 22050Hz
+		_audioTrack = new DPCMAudioTrack(soundFormat, soundBits, 22050, false, getSoundType());
+		addTrack(_audioTrack);
+	} else if (tag == MKTAG('U', 'B', 'B', '2') && soundFormat == 2 && soundBits == 0) {
+		// UBB2 is Stereo 22050Hz
+		_audioTrack = new DPCMAudioTrack(soundFormat, 16, 22050, true, getSoundType());
 		addTrack(_audioTrack);
 	} else {
 		_audioTrack = nullptr;
@@ -142,12 +146,16 @@ void HNMDecoder::readNextPacket() {
 				_videoTrack->decodeInterframe(_stream, chunkSize - 8);
 			}
 			_videoTrack->presentFrame(flags);
+		} else if (chunkType == MKTAG16('I', 'V')) {
+			_videoTrack->decodeInterframeIV(_stream, chunkSize - 8);
+			_videoTrack->presentFrame(flags);
 		} else if (chunkType == MKTAG16('S', 'D')) {
 			if (_audioTrack) {
 				Audio::Timestamp duration = _audioTrack->decodeSound(_stream, chunkSize - 8);
 				_videoTrack->setFrameDelay(duration.msecs());
 			} else {
 				warning("Got audio data without an audio track");
+				_stream->skip(chunkSize - 8);
 			}
 		} else {
 			error("Got %d chunk: size %d", chunkType, chunkSize);
@@ -461,6 +469,16 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(Common::SeekableReadStream *s
 	}
 }
 
+void HNMDecoder::HNM4VideoTrack::decodeInterframeIV(Common::SeekableReadStream *stream, uint32 size) {
+	SWAP(_frameBufferC, _frameBufferP);
+
+	// TODO: Implement this
+
+	if (size > 0) {
+		stream->skip(size);
+	}
+}
+
 void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size) {
 	Image::HLZDecoder::decodeFrameInPlace(*stream, size, _frameBufferC);
 	memcpy(_frameBufferP, _frameBufferC, (uint)_surface.w * (uint)_surface.h);
@@ -508,17 +526,17 @@ void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
 	_nextNextFrameDelay = uint32(-1);
 }
 
-HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate,
+HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
         Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
-	_gotLUT(false), _lastSample(0) {
+	_gotLUT(false), _lastSample(0), _sampleRate(sampleRate), _stereo(stereo) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
 	}
 	if (format != 2) {
 		warning("Unsupported %d audio format", format);
 	}
-	// Format 2 is Mono 16-bits DPCM
-	_audioStream = Audio::makeQueuingAudioStream(sampleRate, false);
+	// Format 2 is 16-bits DPCM
+	_audioStream = Audio::makeQueuingAudioStream(_sampleRate, _stereo);
 }
 
 HNMDecoder::DPCMAudioTrack::~DPCMAudioTrack() {
@@ -553,12 +571,17 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(Common::SeekableReadStr
 		_lastSample = sample;
 
 		byte flags = Audio::FLAG_16BITS;
+
+		if (_audioStream->isStereo())
+			flags |= Audio::FLAG_STEREO;
+
 #ifdef SCUMM_LITTLE_ENDIAN
 		flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
+
 		_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
 	}
-	return Audio::Timestamp(0, size, 22050);
+	return Audio::Timestamp(0, _audioStream->isStereo() ? size / 2 : size, _sampleRate);
 }
 
 } // End of namespace Video
