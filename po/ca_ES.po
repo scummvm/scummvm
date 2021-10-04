@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-02 22:50+0000\n"
+"POT-Creation-Date: 2021-10-03 19:06+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4204,8 +4204,8 @@ msgstr ""
 #: engines/lure/detection.cpp:233 engines/mohawk/detection_tables.h:989
 #: engines/mohawk/detection_tables.h:1080
 #: engines/mohawk/detection_tables.h:1095 engines/neverhood/detection.cpp:121
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:1065
-#: engines/saga/detection_tables.h:1124 engines/sci/detection_tables.h:4924
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:1220
+#: engines/saga/detection_tables.h:1279 engines/sci/detection_tables.h:4924
 #: engines/sci/detection_tables.h:4932 engines/sherlock/detection_tables.h:214
 #: engines/stark/detection.cpp:320 engines/teenagent/detection.cpp:118
 #: engines/trecision/detection.cpp:200 engines/zvision/detection_tables.h:191
@@ -5979,19 +5979,19 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:637
+#: engines/saga/detection_tables.h:792
 #, fuzzy
 msgid "Windows Trial version is not supported"
 msgstr "Identificador de joc no suportat"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:663
+#: engines/saga/detection_tables.h:818
 #, fuzzy
 msgid "macOS Trial version is not supported"
 msgstr "Identificador de joc no suportat"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:688
+#: engines/saga/detection_tables.h:843
 #, fuzzy
 msgid "Pocket PC Trial version is not supported"
 msgstr "Identificador de joc no suportat"
