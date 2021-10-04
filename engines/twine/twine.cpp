@@ -918,28 +918,26 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
-			if ((brickSound & 0xF0U) == 0xF0U) {
-				if ((brickSound & 0x0FU) == 1) {
-					if (IS_HERO(a)) {
-						// we are dying if we aren't using the protopack to fly over water
-						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
-							if (!_actor->_cropBottomScreen) {
-								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
-							}
-							const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
-							actor->_controlMode = ControlMode::kNoMove;
-							actor->setLife(-1);
-							_actor->_cropBottomScreen = projPos.y;
-							actor->_staticFlags.bDoesntCastShadow = 1;
+			if (brickSound == 0xF1U) {
+				if (IS_HERO(a)) {
+					// we are dying if we aren't using the protopack to fly over water
+					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+						if (!_actor->_cropBottomScreen) {
+							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
 						}
-					} else {
-						_sound->playSample(Samples::Explode, 1, actor->pos(), a);
-						if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
-							if (!actor->_bonusParameter.unk1) {
-								_actor->processActorExtraBonus(a);
-							}
-							actor->setLife(0);
+						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
+						actor->_controlMode = ControlMode::kNoMove;
+						actor->setLife(-1);
+						_actor->_cropBottomScreen = projPos.y;
+						actor->_staticFlags.bDoesntCastShadow = 1;
+					}
+				} else {
+					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
+					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
+						if (!actor->_bonusParameter.unk1) {
+							_actor->processActorExtraBonus(a);
 						}
+						actor->setLife(0);
 					}
 				}
 			}
