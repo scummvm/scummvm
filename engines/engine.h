@@ -676,6 +676,6 @@ public:
 #define ChainedGamesMan ChainedGamesManager::instance()
 /** @} */
 /** Current workaround for MidiEmu & error(). */ //FIXME
-extern Engine *g_engine;
+extern SCUMMVM_EXPORT Engine *g_engine;
 /** @} */
 #endif
