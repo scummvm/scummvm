@@ -177,9 +177,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	// Output references for the main project
-	if (name == setup.projectName) {
-		writeReferences(setup, project);
-	}
+	writeReferences(setup, name, project);
 
 	// Output auto-generated test runner
 	if (setup.tests) {
@@ -271,17 +269,24 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 	}
 }
 
-void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
+void MSBuildProvider::writeReferences(const BuildSetup &setup, const std::string &name, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	if (!setup.featureEnabled("dynamic-modules")) {
-		for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-			writeProjectReference(output, i->first, i->second);
+	
+	if (name == setup.projectName) {
+		if (!setup.featureEnabled("dynamic-modules")) {
+			for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
+				writeProjectReference(output, i->first, i->second);
+			}
+		}
+
+		if (setup.useStaticDetection)
+			writeProjectReference(output, setup.projectName + "-detection", _allProjUuidMap[setup.projectName + "-detection"]);
+	} else if(name !=setup.projectName + "-detection") {
+		if (setup.featureEnabled("dynamic-modules")) {
+			writeProjectReference(output, setup.projectName, _allProjUuidMap[setup.projectName]);
 		}
 	}
-
-	if (setup.useStaticDetection)
-		writeProjectReference(output, setup.projectName + "-detection", _allProjUuidMap[setup.projectName + "-detection"]);
 
 	output << "\t</ItemGroup>\n";
 }

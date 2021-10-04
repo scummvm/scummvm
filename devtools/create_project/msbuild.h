@@ -40,7 +40,7 @@ protected:
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const std::string &objPrefix, const std::string &filePrefix) override;
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output);
+	void writeReferences(const BuildSetup &setup, const std::string &name, std::ofstream &output);
 
 	void writeProjectReference(std::ofstream &output, const std::string name, const std::string uuid);
 
