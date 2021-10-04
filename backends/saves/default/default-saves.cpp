@@ -205,21 +205,23 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 		_saveFileCache.erase(file);
 		file = _saveFileCache.end();
 
-		// FIXME: remove does not exist on all systems. If your port fails to
-		// compile because of this, please let us know (scummvm-devel).
-		// There is a nicely portable workaround, too: Make this method overloadable.
-		if (remove(fileNode.getPath().c_str()) != 0) {
-			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+fileNode.getName());
-
-			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+fileNode.getName()+"' does not exist or path is invalid");
-
-			return false;
-		} else {
+		Common::ErrorCode result = removeFile(fileNode.getPath());
+		if (result == Common::kNoError)
 			return true;
-		}
+		Common::Error error(result);
+		setError(error, "Failed to remove savefile '" + fileNode.getName() + "': " + error.getDesc());
+		return false;
 	}
+}
+
+Common::ErrorCode DefaultSaveFileManager::removeFile(const Common::String &filepath) {
+	if (remove(filepath.c_str()) == 0)
+		return Common::kNoError;
+	if (errno == EACCES)
+		return Common::kWritePermissionDenied;
+	if (errno == ENOENT)
+		return Common::kPathDoesNotExist;
+	return Common::kUnknownError;
 }
 
 bool DefaultSaveFileManager::exists(const Common::String &filename) {
