@@ -75,6 +75,7 @@ private:
 		void decodePalette(Common::SeekableReadStream *stream, uint32 size);
 		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
 		void decodeInterframeA(Common::SeekableReadStream *stream, uint32 size);
+		void decodeInterframeIV(Common::SeekableReadStream *stream, uint32 size);
 		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
 		void presentFrame(uint16 flags);
 
@@ -102,7 +103,7 @@ private:
 
 	class DPCMAudioTrack : public AudioTrack {
 	public:
-		DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate,
+		DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
 		               Audio::Mixer::SoundType soundType);
 		~DPCMAudioTrack() override;
 
@@ -114,6 +115,8 @@ private:
 		bool _gotLUT;
 		uint16 _lut[256];
 		uint16 _lastSample;
+		uint _sampleRate;
+		bool _stereo;
 	};
 
 	bool _loop;
