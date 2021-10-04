@@ -72,6 +72,12 @@ protected:
 	virtual void checkPath(const Common::FSNode &dir);
 
 	/**
+	 * Removes the given file.
+	 * This is called from removeSavefile() with the full file path.
+	 */
+	virtual Common::ErrorCode removeFile(const Common::String &filepath);
+
+	/**
 	 * Assure that the given save path is cached.
 	 *
 	 * @param savePathName  String representation of save path to cache.
