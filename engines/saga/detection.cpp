@@ -38,6 +38,9 @@ static const PlainGameDescriptor sagaGames[] = {
 class SagaMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	SagaMetaEngineDetection() : AdvancedMetaEngineDetection(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
+		static const char *const DIRECTORY_GLOBS[2] = { "music", 0 };
+		_maxScanDepth = 2;
+		_directoryGlobs = DIRECTORY_GLOBS;
 	}
 
 	const char *getEngineId() const override {
