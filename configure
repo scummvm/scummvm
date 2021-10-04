@@ -5022,7 +5022,7 @@ case $_host_os in
 	;;
 
 	darwin*)
-		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -framework CoreAudio -lglib-2.0 -lintl -liconv -lreadline"
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreServices -framework CoreMIDI -framework CoreAudio -framework AudioToolbox -lglib-2.0 -lintl -liconv -lreadline"
 	;;
 
 	iphone)
