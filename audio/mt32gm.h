@@ -111,12 +111,12 @@
  */
 class MidiDriver_MT32GM : public MidiDriver_Multisource {
 public:
-	static const byte MT32_DEFAULT_INSTRUMENTS[8];
-	static const byte MT32_DEFAULT_PANNING[8];
+	SCUMMVM_EXPORT static const byte MT32_DEFAULT_INSTRUMENTS[8];
+	SCUMMVM_EXPORT static const byte MT32_DEFAULT_PANNING[8];
 	static const uint8 MT32_DEFAULT_CHANNEL_VOLUME = 98;
 	static const uint8 GM_DEFAULT_CHANNEL_VOLUME = 100;
 	// Map for correcting Roland GS drumkit numbers.
-	static const uint8 GS_DRUMKIT_FALLBACK_MAP[128];
+	SCUMMVM_EXPORT static const uint8 GS_DRUMKIT_FALLBACK_MAP[128];
 
 	static const uint8 MT32_DISPLAY_NUM_CHARS = 20;
 	static const uint32 MT32_DISPLAY_MEMORY_ADDRESS = 0x20 << 14;
