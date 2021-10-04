@@ -364,6 +364,10 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			        << "\t\t\t<Command>" << getTestPreBuildEvent(setup) << "</Command>\n"
 			        << "\t\t</PreBuildEvent>\n";
 		}
+	} else if(dynamicLib) {
+		project << "\t\t<Link>\n"
+				<< "\t\t\t<AdditionalDependencies>scummvm.lib;%(AdditionalDependencies)</AdditionalDependencies>\n"
+				<< "\t\t</Link>\n";
 	}
 
 	project << "\t</ItemDefinitionGroup>\n";
