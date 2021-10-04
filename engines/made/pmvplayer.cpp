@@ -108,7 +108,7 @@ bool PmvPlayer::play(const char *filename) {
 	byte *frameData = 0, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
 
-	uint32 soundStartTime = 0, skipFrames = 0;
+	uint32 skipFrames = 0;
 
 	uint32 bytesRead;
 	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
@@ -122,7 +122,7 @@ bool PmvPlayer::play(const char *filename) {
 
 	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
 
-		int32 frameTime = _vm->_system->getMillis();
+		int32 frameTime = _vm->getTotalPlayTime();
 
 		readChunk(chunkType, chunkSize);
 		if (chunkType != MKTAG('M','F','R','M')) {
@@ -190,7 +190,6 @@ bool PmvPlayer::play(const char *filename) {
 
 		if (firstTime) {
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle, _audioStream);
-			soundStartTime = g_system->getMillis();
 			skipFrames = 0;
 			firstTime = false;
 		}
@@ -199,8 +198,9 @@ bool PmvPlayer::play(const char *filename) {
 		updateScreen();
 
 		if (skipFrames == 0) {
+			uint32 soundElapsedTime = _vm->_mixer->getElapsedTime(_audioStreamHandle).msecs();
 			int32 waitTime = (frameNumber * frameDelay) -
-				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
+				soundElapsedTime - (_vm->getTotalPlayTime() - frameTime);
 
 			if (waitTime < 0) {
 				skipFrames = -waitTime / frameDelay;
