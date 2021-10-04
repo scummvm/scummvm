@@ -276,6 +276,18 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	}
 }
 
+std::string MSVCProvider::getLibrariesForEngine(const EngineDesc &engDesc, const BuildSetup &setup, bool isRelease) {
+	std::string libraries;
+	for (StringList::const_iterator fi = engDesc.requiredFeatures.begin(); fi != engDesc.requiredFeatures.end(); ++fi) {
+		std::string feature = *fi;
+		std::string library = getLibraryFromFeature(feature.c_str(), setup, isRelease);
+		if (library == "")
+			continue;
+		libraries += library + " ";
+	}
+	return libraries;
+}
+
 std::string MSVCProvider::getPreBuildEvent() const {
 	std::string cmdLine = "";
 

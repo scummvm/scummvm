@@ -259,6 +259,9 @@ struct BuildSetup {
 
 	bool hasDefine(std::string name) const { return defines.find(name) != defines.end(); }
 
+	EngineDesc *getEngineDesc(std::string name);
+	const EngineDesc *getEngineDesc(std::string name) const;
+
 	/**
 	* Returns a list of defines for enabled engines.
 	*/

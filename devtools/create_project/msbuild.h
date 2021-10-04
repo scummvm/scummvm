@@ -54,6 +54,8 @@ protected:
 	const char *getProjectExtension() override;
 	const char *getPropertiesExtension() override;
 
+	static void convertLibraryList(std::string &libraries);
+
 private:
 	struct FileEntry {
 		std::string name;

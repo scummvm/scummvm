@@ -2163,3 +2163,21 @@ Feature BuildSetup::getFeature(std::string feature) const {
 	}
 	error("invalid feature request: " + feature);
 }
+
+EngineDesc *BuildSetup::getEngineDesc(std::string name) {
+	for (EngineDescList::iterator ei = engines.begin(); ei != engines.end(); ++ei) {
+		if (ei->name == name) {
+			return &(*ei);
+		}
+	}
+	return NULL;
+}
+
+const EngineDesc *BuildSetup::getEngineDesc(std::string name) const {
+	for (EngineDescList::const_iterator ei = engines.begin(); ei != engines.end(); ++ei) {
+		if (ei->name == name) {
+			return &(*ei);
+		}
+	}
+	return NULL;
+}

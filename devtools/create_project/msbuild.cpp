@@ -48,6 +48,14 @@ const char *MSBuildProvider::getPropertiesExtension() {
 	return ".props";
 }
 
+void MSBuildProvider::convertLibraryList(std::string &libraries) {
+	for (std::string::iterator i = libraries.begin(); i != libraries.end(); ++i) {
+		if (*i == ' ') {
+			*i = ';';
+		}
+	}
+}
+
 void MSBuildProvider::outputConfiguration(std::ostream &project, const std::string &config, MSVC_Architecture arch) {
 	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << getMSVCConfigName(arch) << "\">\n"
 	        << "\t\t\t<Configuration>" << config << "</Configuration>\n"
@@ -348,11 +356,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		std::string libraries = outputLibraryDependencies(setup, isRelease);
 
 		// MSBuild uses ; for separators instead of spaces
-		for (std::string::iterator i = libraries.begin(); i != libraries.end(); ++i) {
-			if (*i == ' ') {
-				*i = ';';
-			}
-		}
+		convertLibraryList(libraries);
 
 		project << "\t\t<Link>\n"
 		        << "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
@@ -378,8 +382,17 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			        << "\t\t</PreBuildEvent>\n";
 		}
 	} else if(dynamicLib) {
+		std::string libraries = "scummvm.lib ";
+
+		const EngineDesc *engine = setup.getEngineDesc(name);
+		if (engine) {
+			libraries += getLibrariesForEngine(*engine, setup, isRelease);
+		}
+
+		convertLibraryList(libraries);
+
 		project << "\t\t<Link>\n"
-				<< "\t\t\t<AdditionalDependencies>scummvm.lib;%(AdditionalDependencies)</AdditionalDependencies>\n"
+				<< "\t\t\t<AdditionalDependencies>" <<libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
 				<< "\t\t</Link>\n";
 	}
 

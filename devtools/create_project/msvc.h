@@ -109,6 +109,8 @@ protected:
 	 */
 	virtual const char *getPropertiesExtension() = 0;
 
+	std::string getLibrariesForEngine(const EngineDesc &engDesc, const BuildSetup &setup, bool isRelease);
+
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
 	 */
