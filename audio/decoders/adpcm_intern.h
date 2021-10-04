@@ -78,7 +78,7 @@ public:
 	 * could half the table in size. But since the lookup index is always a
 	 * 4-bit nibble, it is more efficient to just keep it as it is.
 	 */
-	static const int16 _stepAdjustTable[16];
+	SCUMMVM_EXPORT static const int16 _stepAdjustTable[16];
 };
 
 class Oki_ADPCMStream : public ADPCMStream {
@@ -127,7 +127,7 @@ public:
 	/**
 	 * This table is used by decodeIMA.
 	 */
-	static const int16 _imaTable[89];
+	SCUMMVM_EXPORT static const int16 _imaTable[89];
 };
 
 class DVI_ADPCMStream : public Ima_ADPCMStream {
