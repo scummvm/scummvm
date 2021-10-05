@@ -248,7 +248,7 @@ void MadeEngine::handleEvents() {
 }
 
 Common::Error MadeEngine::run() {
-	_music = new MusicPlayer(getGameID() == GID_RTZ);
+	_music = new MusicPlayer(this, getGameID() == GID_RTZ);
 	syncSoundSettings();
 
 	// Initialize backend
@@ -306,6 +306,8 @@ Common::Error MadeEngine::run() {
 	_screen->setDefaultMouseCursor();
 	_script->runScript(_dat->getMainCodeObjectIndex());
 #endif
+
+	_music->close();
 
 	return Common::kNoError;
 }

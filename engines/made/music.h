@@ -25,9 +25,12 @@
 #ifndef MADE_MUSIC_H
 #define MADE_MUSIC_H
 
+#include "made.h"
+
 #include "audio/adlib_ms.h"
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
+#include "audio/mt32gm.h"
 #include "audio/midiparser.h"
 
 namespace Made {
@@ -35,9 +38,14 @@ namespace Made {
 class GenericResource;
 
 class MusicPlayer {
+private:
+	static const uint8 MT32_GOODBYE_MSG[MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS];
+
 public:
-	MusicPlayer(bool milesAudio);
+	MusicPlayer(MadeEngine *vm, bool milesAudio);
 	~MusicPlayer();
+
+	void close();
 
 	void playXMIDI(GenericResource *midiResource);
 	void playSMF(GenericResource *midiResource);
@@ -49,6 +57,7 @@ public:
 	void syncSoundSettings();
 
 private:
+	MadeEngine *_vm;
 	MidiParser *_parser;
 	MidiDriver_Multisource *_driver;
 

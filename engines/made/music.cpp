@@ -36,7 +36,9 @@
 
 namespace Made {
 
-MusicPlayer::MusicPlayer(bool milesAudio) : _parser(0) {
+const uint8 MusicPlayer::MT32_GOODBYE_MSG[] = { 0x52, 0x65, 0x74, 0x75, 0x72, 0x6E, 0x20, 0x54, 0x6F, 0x20, 0x5A, 0x6F, 0x72, 0x6B, 0x20, 0x53, 0x6F, 0x6F, 0x6E, 0x21 };
+
+MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(0) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_driverType = MidiDriver::getMusicType(dev);
 	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
@@ -91,6 +93,18 @@ MusicPlayer::~MusicPlayer() {
 		_driver->setTimerCallback(0, 0);
 		_driver->close();
 		delete _driver;
+	}
+}
+
+void MusicPlayer::close() {
+	if (_parser)
+		_parser->stopPlaying();
+
+	if (_vm->getGameID() == GID_RTZ && _vm->getPlatform() == Common::kPlatformDOS && _driver) {
+		MidiDriver_MT32GM *mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
+		if (mt32Driver)
+			mt32Driver->sysExMT32(MT32_GOODBYE_MSG, MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS,
+				MidiDriver_MT32GM::MT32_DISPLAY_MEMORY_ADDRESS, false, false);
 	}
 }
 
