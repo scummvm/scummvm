@@ -169,7 +169,8 @@ bool Resource::createContexts() {
 
 	for (const ADGameFileDescription *gameFileDescription = _vm->getFilesDescriptions();
 		gameFileDescription->fileName; gameFileDescription++) {
-		addContext(gameFileDescription->fileName, gameFileDescription->fileType);
+		if (gameFileDescription->fileType > 0)
+			addContext(gameFileDescription->fileName, gameFileDescription->fileType);
 		if (gameFileDescription->fileType == GAME_SOUNDFILE) {
 			soundFileInArray = true;
 		}

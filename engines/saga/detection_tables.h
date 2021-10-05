@@ -487,7 +487,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8928678},
 				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
-				{"cave.mid",	GAME_RESOURCEFILE,	"f7619359323058b61ec44fa8ce7888e5", 4441},
+				{"cave.mid",	0,					"f7619359323058b61ec44fa8ce7888e5", 4441},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
