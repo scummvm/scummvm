@@ -151,9 +151,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
 	if (dynamicLib && setup.projectName != name) {
-		project << "<PropertyGroup>\n"
-				<< "\t<LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>\n"
-				<< "</PropertyGroup>";
+		project << "\t<PropertyGroup>\n"
+				<< "\t\t<LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>\n"
+				<< "\t\t<OutDir>$(Configuration)x86\\Plugins\\</OutDir>\n"
+				<< "\t</PropertyGroup>\n";
 	}
 
 	// Project-specific settings (analysis uses debug properties)
@@ -392,7 +393,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		convertLibraryList(libraries);
 
 		project << "\t\t<Link>\n"
-				<< "\t\t\t<AdditionalDependencies>" <<libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
+				<< "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
 				<< "\t\t</Link>\n";
 	}
 
