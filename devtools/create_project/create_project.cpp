@@ -399,6 +399,10 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 
+	if (backendWin32) {
+		setup.defines["PLUGIN_SUFFIX"] = "\".dll\"";
+	}
+
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
 			if (!strcmp(i->name, "updates"))
