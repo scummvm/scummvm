@@ -32,8 +32,8 @@ class TextCastMember;
 
 enum SpritePosition {
 	kSpritePositionUnk1 = 0,
-	kSpritePositionEnabled,
-	kSpritePositionUnk2,
+	kSpritePositionEnabled = 1,
+	kSpritePositionUnk2 = 2,
 	kSpritePositionFlags = 4,
 	kSpritePositionCastId = 6,
 	kSpritePositionY = 8,
@@ -59,7 +59,8 @@ enum MainChannelsPosition {
 
 class Sprite {
 public:
-	Sprite(Frame *frame);
+	Sprite(Frame *frame = nullptr);
+	Sprite(const Sprite &sprite);
 	~Sprite();
 
 	Frame *getFrame() const { return _frame; }

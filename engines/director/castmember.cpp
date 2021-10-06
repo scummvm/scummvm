@@ -30,6 +30,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/movie.h"
+#include "director/sprite.h"
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/stxt.h"
@@ -603,63 +604,93 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			int channel = (order / channelSize) - 1;
 			int channelOffset = order % channelSize;
 
-			uint16 spriteCastId = 0;
-			int16 x = 0;
-			int16 y = 0;
-			uint16 width = 0;
-			uint16 height = 0;
+			Sprite sprite(nullptr);
 			if (newFrame.sprites.contains(channel)) {
-				FilmLoopSprite s = newFrame.sprites.getVal(channel);
-				spriteCastId = s.castId;
-				x = s.bbox.left;
-				y = s.bbox.top;
-				width = s.bbox.width();
-				height = s.bbox.height();
+				sprite = newFrame.sprites.getVal(channel);
 			}
 			debugC(8, kDebugLoading, "Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
 
-			for (int i = channelOffset; i < channelOffset + msgWidth; i += 2) {
-				switch (i) {
-				case 6:
-					spriteCastId = stream.readUint16BE();
+			int fieldPosition = channelOffset;
+			int finishPosition = channelOffset + msgWidth;
+			while (fieldPosition < finishPosition) {
+				switch (fieldPosition) {
+				case kSpritePositionUnk1:
+					stream.readByte();
+					fieldPosition++;
 					break;
-				case 8:
-					y = stream.readSint16BE();
+				case kSpritePositionEnabled:
+					sprite._enabled = stream.readByte() != 0;
+					fieldPosition++;
 					break;
-				case 10:
-					x = stream.readSint16BE();
+				case kSpritePositionUnk2:
+					stream.readUint16BE();
+					fieldPosition += 2;
 					break;
-				case 12:
-					height = stream.readUint16BE();
+				case kSpritePositionFlags:
+					sprite._thickness = stream.readByte();
+					sprite._inkData = stream.readByte();
+					sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+
+					if (sprite._inkData & 0x40)
+						sprite._trails = 1;
+					else
+						sprite._trails = 0;
+
+					fieldPosition += 2;
 					break;
-				case 14:
-					width = stream.readUint16BE();
+				case kSpritePositionCastId:
+					sprite._castId = CastMemberID(stream.readUint16(), 0);
+					fieldPosition += 2;
+					break;
+				case kSpritePositionY:
+					sprite._startPoint.y = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionX:
+					sprite._startPoint.x = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionWidth:
+					sprite._width = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionHeight:
+					sprite._height = stream.readUint16();
+					fieldPosition += 2;
 					break;
 				default:
 					stream.readUint16BE();
+					fieldPosition += 2;
 					break;
 				}
 			}
 
 			frameSize -= msgWidth;
 
-			Common::Rect spriteBbox(x, y, x + width, y + height);
-			newFrame.sprites.setVal(channel, FilmLoopSprite(spriteCastId, spriteBbox));
-			if (!_bbox.isValidRect()) {
-				_bbox = spriteBbox;
-			} else {
-				_bbox.extend(spriteBbox);
+			Common::Rect spriteBbox(
+				sprite._startPoint.x,
+				sprite._startPoint.y,
+				sprite._startPoint.x + sprite._width,
+				sprite._startPoint.y + sprite._height
+			);
+			newFrame.sprites.setVal(channel, sprite);
+			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
+				if ((_bbox.width() == 0) && (_bbox.height() == 0)) {
+					_bbox = spriteBbox;
+				} else {
+					_bbox.extend(spriteBbox);
+				}
 			}
 		}
 
 		if (debugChannelSet(5, kDebugLoading)) {
-			for (Common::HashMap<int, FilmLoopSprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-				debugC(5, kDebugLoading, "FilmLoopSprite: channel %d, castId %d, bbox %d %d %d %d", s->_key,
-						s->_value.castId, s->_value.bbox.left, s->_value.bbox.top,
-						s->_value.bbox.width(), s->_value.bbox.height());
+			for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
+				debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
+						s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
+						s->_value._width, s->_value._height);
 
 			}
 		}
@@ -667,6 +698,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 		_frames.push_back(newFrame);
 
 	}
+	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
 }
 

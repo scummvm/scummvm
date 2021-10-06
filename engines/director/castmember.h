@@ -26,6 +26,7 @@
 #include "graphics/font.h"
 
 #include "director/archive.h"
+#include "director/sprite.h"
 #include "director/stxt.h"
 
 #include "director/lingo/lingo-object.h"
@@ -58,6 +59,7 @@ class AudioDecoder;
 struct CastMemberInfo;
 class Channel;
 struct Resource;
+class Sprite;
 class Stxt;
 
 class CastMember : public Object<CastMember> {
@@ -190,16 +192,8 @@ public:
 };
 
 
-
-struct FilmLoopSprite {
-	uint16 castId;
-	Common::Rect bbox;
-	FilmLoopSprite() { castId = 0; }
-	FilmLoopSprite(uint16 castId1, Common::Rect &bbox1) { castId = castId1; bbox = bbox1; }
-};
-
 struct FilmLoopFrame {
-	Common::HashMap<int, FilmLoopSprite> sprites;
+	Common::HashMap<int, Sprite> sprites;
 };
 
 class FilmLoopCastMember : public CastMember {
