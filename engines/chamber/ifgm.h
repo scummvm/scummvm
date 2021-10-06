@@ -20,30 +20,28 @@
  *
  */
 
-#ifndef CHAMBER_PRINT_H
-#define CHAMBER_PRINT_H
+#ifndef CHAMBER_IFGM_H
+#define CHAMBER_IFGM_H
 
 namespace Chamber {
 
-extern byte *cur_str_end;
+extern byte ifgm_loaded;
 
-extern byte draw_x;
-extern byte draw_y;
+extern uint16 ifgm_flag1;
+extern byte ifgm_flag2;
 
-extern byte chars_color_bonw[];
-extern byte chars_color_bonc[];
-extern byte chars_color_wonb[];
-extern byte chars_color_wonc[];
+void IFGM_Init(void);
 
-void PrintStringCentered(byte *str, byte *target);
-byte *PrintStringPadded(byte *str, byte *target);
+void IFGM_Shutdown(void);
 
-void DrawMessage(byte *msg, byte *target);
+void IFGM_Poll(void);
 
-void CGA_DrawTextBox(byte *msg, byte *target);
+void IFGM_PlaySample(byte index);
+void IFGM_StopSample(void);
 
-void CalcStringSize(byte *str, uint16 *w, uint16 *n);
+int16 IFGM_PlaySound(byte index);
+void IFGM_PlaySfx(byte index);
 
-} // End of namespace Chamber
+} // end of namespace Chamber
 
 #endif

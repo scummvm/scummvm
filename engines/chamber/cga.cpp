@@ -1332,7 +1332,11 @@ void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target,
 	zoom.oh = h;
 	zoom.ew = (w * 4) - 1;
 	zoom.eh = h - 1;
+#ifdef VERSION_USA
+	zoom.xbase = 0;
+#else
 	zoom.xbase = ((w * 4 / 2) - 1) % 4;
+#endif
 
 	/*TODO: why this nw/nh order? maybe bug*/
 #if 0

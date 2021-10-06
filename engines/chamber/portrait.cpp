@@ -30,6 +30,7 @@
 #include "chamber/dialog.h"
 #include "chamber/input.h"
 #include "chamber/sound.h"
+#include "chamber/ifgm.h"
 
 namespace Chamber {
 
@@ -292,9 +293,16 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	return 1;
 }
 
+void PlayHurtSound() {
+	if (!ifgm_loaded)
+		PlaySound(144);
+	else
+		PlaySound(144 + (Rand() / 4) % 4);
+}
+
 void BlinkWithSound(byte color) {
 	CGA_ColorSelect(color);
-	PlaySound(144);
+	PlayHurtSound();
 	SelectPalette();
 }
 
@@ -303,7 +311,21 @@ void BlinkToRed(void) {
 }
 
 void BlinkToWhite(void) {
+#ifdef VERSION_USA
+	PlayHurtSound();	/*TODO: play here and later? looks like a bug, original code will trash palette selection if pcspeaker is used*/
+#endif
 	BlinkWithSound(0x3F);
+}
+
+volatile byte vblank_ticks;
+
+void WaitVBlankTimer(void) {
+#ifdef VERSION_USA
+	/*A crude attempt to fix the animation speed...*/
+	while (vblank_ticks < 3) ;
+	vblank_ticks = 0;
+#endif
+	WaitVBlank();
 }
 
 void AnimPortrait(byte layer, byte index, byte delay) {
@@ -316,6 +338,8 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 		index = cur_image_anim1;
 	if (index == 0xFE)
 		index = cur_image_anim2;
+
+	IFGM_PlaySfx(index);
 
 	ani = SeekToEntry(anico_data, index - 1, &ani_end);
 	cur_image_pixels = sprit_load_buffer + 2 + 2;
@@ -335,6 +359,7 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 		GetDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		WaitVBlank();
 		CGA_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
+		WaitVBlankTimer();
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/
 				if (script_byte_vars.extreme_violence)

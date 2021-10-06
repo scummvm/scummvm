@@ -35,6 +35,7 @@
 #include "chamber/dialog.h"
 #include "chamber/portrait.h"
 #include "chamber/sound.h"
+#include "chamber/ifgm.h"
 
 namespace Chamber {
 
@@ -493,6 +494,8 @@ void AnimRoomDoorOpen(byte index) {
 
 	InitRoomDoorInfo(index);
 
+	IFGM_PlaySample(29);
+
 	oldheight = info->layer[1].height;
 
 	for (i = 0; i < oldheight / 2; i++) {
@@ -517,6 +520,8 @@ void AnimRoomDoorClose(byte index) {
 
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	InitRoomDoorInfo(index);
+
+	IFGM_PlaySample(29);
 
 	oldheight = info->layer[1].height;
 	oldpixels = info->layer[1].pixels;
@@ -922,7 +927,12 @@ void RefreshZone(void) {
 
 	CGA_BackBufferToRealFull();
 
-	in_de_profundis = script_byte_vars.zone_area == 22 ? 1 : 0;
+	in_de_profundis = 0;
+	IFGM_StopSample();
+	if (script_byte_vars.zone_area == 22) {
+		IFGM_PlaySample(131);
+		in_de_profundis = 1;
+	}
 
 	DrawTheWallDoors();
 	SelectPalette();
@@ -1440,6 +1450,8 @@ void TheWallPhase3_DoorOpen1(void) {
 	TheWallOpenRightDoor(144 / 4, 32, 80 / 4, 59, 40 / 4);
 	TheWallOpenLeftDoor(64 / 4, 32, 80 / 4, 59, 40 / 4);
 
+	IFGM_StopSample();
+
 	/*TODO: fill in the_wall_door_* structures, as they are used by the original code and appear in savefile*/
 }
 
@@ -1453,6 +1465,8 @@ void TheWallPhase0_DoorOpen2(void) {
 
 	TheWallOpenRightDoor((144 + 40) / 4, 32, (80 - 40) / 4, 59, 0);
 	TheWallOpenLeftDoor(64 / 4, 32, (80 - 40) / 4, 59, 0);
+
+	IFGM_StopSample();
 
 	/*TODO: fill in the_wall_door_* structures, as they are used by the original code and appear in savefile*/
 }
@@ -1476,6 +1490,8 @@ void TheWallPhase1_DoorClose1(void) {
 	cur_image_coords_x = 220 / 4;
 	CGA_AnimLiftToLeft(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, CGA_CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
+	IFGM_StopSample();
+
 	/*TODO: fill in the_wall_door_* structures, as they are used by the original code and appear in savefile*/
 }
 
@@ -1498,6 +1514,8 @@ void TheWallPhase2_DoorClose2(void) {
 	cur_image_coords_x = 220 / 4;
 	CGA_AnimLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CGA_CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
 
+	IFGM_PlaySample(30);
+
 	/*TODO: fill in the_wall_door_* structures, as they are used by the original code and appear in savefile*/
 }
 
@@ -1509,7 +1527,12 @@ void DrawTheWallDoors(void) {
 	case 9:
 	case 102:
 		CGA_Blit(LoadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
+#ifdef VERSION_USA
+		/*This fixes odd black patch on the right gate door*/
+		CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(184 / CGA_PIXELS_PER_BYTE, 32));
+#else
 		CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
+#endif
 		break;
 	case 95:
 	case 103:

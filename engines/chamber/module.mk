@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	cursor.o \
 	decompr.o \
 	dialog.o \
+	ifgm.o \
 	input.o \
 	invent.o \
 	kult.o \

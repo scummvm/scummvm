@@ -44,6 +44,7 @@
 #include "chamber/print.h"
 #include "chamber/dialog.h"
 #include "chamber/menu.h"
+#include "chamber/ifgm.h"
 
 namespace Chamber {
 
@@ -191,6 +192,7 @@ process:
 
 void ExitGame(void) {
 	SwitchToTextMode();
+	UninitTimer();
 }
 
 jmp_buf restart_jmp;
@@ -200,18 +202,34 @@ extern TheEnd(void);
 #endif
 
 Common::Error ChamberEngine::run() {
+	byte c;
+
 	// Initialize graphics using following:
 	initGraphics(320, 200);
+	initSound();
+
+	/*TODO: DetectCPU*/
+
+	IFGM_Init();
 
 	SwitchToGraphicsMode();
 
-	initSound();
+	/* Install timer callback */
+	InitTimer();
 
-	byte c;
+#ifdef VERSION_USA
+	/* Load title screen */
+	if (!LoadSplash("PRESCGA.BIN"))
+		ExitGame();
 
+	if (ifgm_loaded) {
+		/*TODO*/
+	}
+#else
 	/* Load title screen */
 	if (!LoadSplash("PRES.BIN"))
 		ExitGame();
+#endif
 
 	/* Select intense cyan-mageta palette */
 	CGA_ColorSelect(0x30);
@@ -219,11 +237,14 @@ Common::Error ChamberEngine::run() {
 	/* Show the title screen */
 	CGA_BackBufferToRealFull();
 
-#ifdef COPYPROT
-	/* Check if a valid floppy disk is present in any drive */
-	if (!CheckCopyProtection()) for (;;) ;
-#endif
+#ifdef VERSION_USA
+	if (ifgm_loaded) {
+		/*TODO*/
+	}
 
+	/* Force English language */
+	c = 'E';
+#else
 	/* Load language selection screen */
 	if (!LoadSplash("DRAP.BIN"))
 		ExitGame();
@@ -244,6 +265,7 @@ Common::Error ChamberEngine::run() {
 		if (c > 'F')
 			c -= ' ';
 	} while (c < 'D' || c > 'F');
+#endif
 
 	if (_shouldQuit)
 		return Common::kNoError;
@@ -254,7 +276,9 @@ Common::Error ChamberEngine::run() {
 	res_desci[0].name[4] = c;
 	res_diali[0].name[4] = c;
 
+#ifndef VERSION_USA
 	CGA_BackBufferToRealFull();
+#endif
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
@@ -265,12 +289,12 @@ Common::Error ChamberEngine::run() {
 	if (!LoadVepciData() || !LoadDesciData() || !LoadDialiData())
 		ExitGame();
 
+	/* Detect/Initialize input device */
+	InitInput();
+
 	/* Load graphics resources */
 	while (!LoadFond() || !LoadSpritesData() || !LoadPersData())
 		AskDisk2();
-
-	/* Detect/Initialize input device */
-	InitInput();
 
 	/*TODO: is this neccessary?*/
 	CGA_BackBufferToRealFull();
@@ -278,11 +302,14 @@ Common::Error ChamberEngine::run() {
 	/* Create clean game state snapshot */
 	SaveRestartGame();
 
-	/* Install timer callback */
-	InitTimer();
-
 	/* Detect CPU speed for delay routines */
 	cpu_speed_delay = BenchmarkCpu() / 8;
+
+#ifdef VERSION_USA
+	if (ifgm_loaded) {
+		/*TODO*/
+	}
+#endif
 
 	/*restart game from here*/
 restart:;
@@ -304,6 +331,9 @@ restart:;
 	/*bypass characters introduction*/
 	script_byte_vars.load_flag = DEBUG_SKIP_INTRO;
 #endif
+
+	/* Discard all pending input */
+	//ResetInput();
 
 	/* Play introduction sequence and initialize game */
 	the_command = 0xC001;
@@ -331,7 +361,6 @@ restart:;
 
 	/* Release hardware */
 	UninitInput();
-	UninitTimer();
 
 	ExitGame();
 

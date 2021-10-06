@@ -162,10 +162,12 @@ byte *PrintStringLine(byte *str, uint16 *left, byte *target) {
 }
 
 byte *PrintStringPadded(byte *str, byte *target) {
-	uint16 w, n;
+	uint16 w;
+#ifndef VERSION_USA
 	CalcStringSize(str, &w, &n);
 	if (w + 2 >= char_draw_max_width)
 		char_draw_max_width = w + 2;
+#endif
 	str = PrintStringLine(str, &w, target);
 	if (w != 0)
 		PrintStringPad(w, target);
@@ -192,8 +194,15 @@ void PrintStringCentered(byte *str, byte *target) {
 
 void CGA_DrawTextBox(byte *msg, byte *target) {
 	uint16 x, y, w, i;
+	uint16 ww, nw;
 
 	char_xlat_table = chars_color_bonc;
+
+#ifdef VERSION_USA
+	CalcStringSize(msg, &ww, &nw);
+	if (ww >= char_draw_max_width)
+		char_draw_max_width = ww;
+#endif
 
 	x = draw_x * 4;
 	y = draw_y;

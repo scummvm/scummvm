@@ -55,7 +55,8 @@ struct {
 
 /*Handle keyboard keys in actions menu (to cycle through choices with directional keys)*/
 byte PollKeyboardInActionsMenu(void) {
-	if (!key_direction) {
+	PollInput();
+	if (!(key_direction & 0xF)) {
 		key_held = 0;
 		return key_code;
 	}
@@ -78,12 +79,7 @@ byte PollKeyboardInActionsMenu(void) {
 
 /*Handle player input in actions menu*/
 void PollInputInActionsMenu(void) {
-	byte keys;
-	if (have_mouse)
-		keys = PollMouse();
-	else
-		keys = PollKeyboardInActionsMenu();
-	SetInputButtons(keys);
+	PollInput();
 }
 
 /*Draw actions menu and process its choices*/

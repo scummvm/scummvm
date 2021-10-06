@@ -112,9 +112,16 @@ void DesciTextBox(uint16 x, uint16 y, uint16 width, byte *msg) {
 void DrawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	uint16 ofs;
 	byte w, h;
+	uint16 ww, nw;
 
 	char_draw_max_width = flags & 0x1F;
 	char_xlat_table = chars_color_bonw;
+
+#ifdef VERSION_USA
+	CalcStringSize(msg, &ww, &nw);
+	if (ww >= char_draw_max_width)
+		char_draw_max_width = ww;
+#endif
 
 	/*upper border*/
 	ofs = CGA_CalcXY_p(x, y);
@@ -189,7 +196,7 @@ void PromptWait(void) {
 			cursor_anim_ticks = ticks;
 			ShowPromptAnim();
 		}
-		PollInput();
+		PollInputButtonsOnly();
 
 		if (g_vm->_shouldQuit)
 			break;

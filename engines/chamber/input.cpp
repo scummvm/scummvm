@@ -25,18 +25,28 @@
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
+#include "chamber/dialog.h"
 #include "chamber/input.h"
 #include "chamber/cursor.h"
+#include "chamber/print.h"
+#include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/timer.h"
+#include "chamber/ifgm.h"
 
 namespace Chamber {
 
-
-byte have_mouse;
+byte have_mouse = 0;
+byte have_joystick = 0;
 byte key_held;
 volatile byte key_direction;
 volatile byte key_code;
-volatile byte esc_pressed;
+
+volatile byte keyboard_scan;
+volatile byte keyboard_specials;
+volatile byte keyboard_arrows;
+volatile byte keyboard_buttons;
+
 byte buttons_repeat = 0;
 byte buttons;
 byte right_button;
@@ -44,6 +54,8 @@ byte key_direction_old;
 byte accell_countdown;
 uint16 accelleration = 1;
 byte mouseButtons = 0;
+
+void PollDiscrete(void);
 
 byte ChamberEngine::readKeyboardChar() {
 	Common::Event event;
@@ -71,6 +83,10 @@ byte ChamberEngine::readKeyboardChar() {
 
 void ClearKeyboard(void) {
 }
+
+#ifdef VERSION_USA
+extern int16 AskQuitGame(void);
+#endif
 
 void SetInputButtons(byte keys) {
 	if (keys & 2)
@@ -127,6 +143,49 @@ byte PollKeyboard(void) {
 	return key_code;
 }
 
+/*
+Show game exit confirmation dialog and get user's input
+*/
+int16 AskQuitGame(void) {
+	int16 quit = -1;
+#ifdef VERSION_USA
+	byte *msg = SeekToString(desci_data, 411);	/*DO YOU WANT TO QUIT ? (Y OR N).*/
+	char_draw_max_width = 32;
+	draw_x = 1;
+	draw_y = 188;
+	CGA_DrawTextBox(msg, frontbuffer);
+
+	Common::Event event;
+
+	while (quit == -1) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_y)
+					quit = 1;
+				else if (event.kbd.keycode == Common::KEYCODE_n)
+					quit = 0;
+				break;
+
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+			case Common::EVENT_QUIT:
+				quit = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	CGA_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CGA_CalcXY_p(draw_x, draw_y));
+#endif
+	/*EU version comes without requited text string*/
+	return quit == 1;
+}
+
+void PollInputButtonsOnly() {
+	PollInput();
+}
+
 void PollInput(void) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -134,6 +193,12 @@ void PollInput(void) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_SPACE)
 				mouseButtons |= 1;
+			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+#ifdef VERSION_USA
+				if (AskQuitGame() != 0)
+					g_vm->_shouldQuit = true;
+#endif
+			}
 			break;
 
 		case Common::EVENT_KEYUP:

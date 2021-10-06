@@ -25,6 +25,8 @@
 
 namespace Chamber {
 
+#define VERSION_USA
+
 #define BE(x) ((((x) >> 8) | ((x) << 8)) & 0xffff)
 #define LE16(x) (x)
 
@@ -45,10 +47,14 @@ typedef struct rect_t {
 #include "common/pack-end.h"
 
 #if 0
+#define DEBUG_ENDING
+#endif
+
+#if 0
 #define DEBUG
 #endif
 
-#if 1
+#if 0
 /*0 - play intro*/
 /*0xFF - skip intro, quest item and teleport*/
 /*other - skip intro, play quest item seq, teleport to room*/
@@ -69,7 +75,7 @@ typedef struct rect_t {
 #define DEBUG_QUEST 0x40
 #endif
 
-#if 1
+#if 0
 /*Goblet -> The Twins*/
 #define DEBUG_QUEST 0x80
 #endif
@@ -79,12 +85,12 @@ typedef struct rect_t {
 #define DEBUG_QUEST 0xC0
 #endif
 
-#if 1
+#if 0
 /*win in fights*/
 #define CHEAT
 #endif
 
-#if 1
+#if 0
 /*never lose to the Skull Trader*/
 #define CHEAT_TRADER
 #endif
