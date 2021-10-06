@@ -164,6 +164,7 @@ byte *PrintStringLine(byte *str, uint16 *left, byte *target) {
 byte *PrintStringPadded(byte *str, byte *target) {
 	uint16 w;
 #ifndef VERSION_USA
+	uint16 n;
 	CalcStringSize(str, &w, &n);
 	if (w + 2 >= char_draw_max_width)
 		char_draw_max_width = w + 2;
