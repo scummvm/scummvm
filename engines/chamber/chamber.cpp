@@ -38,9 +38,10 @@ namespace Chamber {
 
 ChamberEngine *g_vm;
 
-ChamberEngine::ChamberEngine(OSystem *syst)
+ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst) {
 	g_vm = this;
+	_gameDescription = desc;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
