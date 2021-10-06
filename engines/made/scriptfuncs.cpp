@@ -1063,7 +1063,7 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 	// There are 2 versions of each video: one with sound, and one without
 	// An example is FINTRO00.PMV (with sound) and FINTRO01.PMV (without sound)
 	// One could maybe think about returning 1 here on actually slower systems.
-	return 0;
+	return _vm->_introMusicDigital ? 0 : 1;
 }
 
 } // End of namespace Made

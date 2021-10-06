@@ -50,6 +50,9 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_soundEnergyArray = 0;
 	_musicBeatStart = 0;
 	_cdTimeStart = 0;
+	_introMusicDigital = true;
+	if (ConfMan.hasKey("intro_music_digital"))
+		_introMusicDigital = ConfMan.getBool("intro_music_digital");
 
 	_rnd = new Common::RandomSource("made");
 
