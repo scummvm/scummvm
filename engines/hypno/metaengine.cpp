@@ -36,9 +36,9 @@ public:
 Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (Common::String(desc->gameId) == "wetlands") {
 		*engine = (Engine *)new Hypno::WetEngine(syst, desc);
-	} else if (Common::String(desc->gameId) == "sinister-six") {
+	} else if (Common::String(desc->gameId) == "sinistersix") {
 		*engine = (Engine *)new Hypno::SpiderEngine(syst, desc);
-	} else if (Common::String(desc->gameId) == "soldier-boyz") {
+	} else if (Common::String(desc->gameId) == "soldierboyz") {
 		*engine = (Engine *)new Hypno::BoyzEngine(syst, desc);
 	} else
 		return Common::kUnsupportedGameidError;

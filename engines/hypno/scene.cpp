@@ -57,7 +57,8 @@ const static char *sceneVariables[] = {
 	"GS_COMBATJSON",
 	"GS_COMBATLEVEL",
 	"GS_PUZZLELEVEL",
-	NULL};
+	NULL
+};
 
 void HypnoEngine::parseScene(const Common::String &prefix, const Common::String &filename) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
