@@ -32,11 +32,12 @@ byte ifgm_loaded = 0;
 byte ifgm_flag2;
 
 void IFGM_Init(void) {
-#ifdef VERSION_USA
-	/*TODO*/
-#else
-	ifgm_loaded = 0;
-#endif
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		/*TODO*/
+	} else {
+		ifgm_loaded = 0;
+	}
+
 }
 
 void IFGM_Shutdown(void) {

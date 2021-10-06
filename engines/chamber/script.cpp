@@ -2885,26 +2885,25 @@ void TheEnd(void) {
 
 	AnimSaucer();
 
-#ifdef VERSION_USA
-	DrawPortraitZoomed(&pimage2);
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		DrawPortraitZoomed(&pimage2);
 
-	script_byte_vars.zone_index = 135;
+		script_byte_vars.zone_index = 135;
 
-	do
-	{
-		PollInputButtonsOnly();
+		do {
+			PollInputButtonsOnly();
+		}
+		while(buttons == 0);
+
+		while (!LoadFond())
+			AskDisk2();
+		JaggedZoom(backbuffer, frontbuffer);
+		CGA_BackBufferToRealFull();
+	} else {
+		while (!LoadSplash("PRES.BIN"))
+			AskDisk2();
+		CGA_BackBufferToRealFull();
 	}
-	while(buttons == 0);
-
-	while (!LoadFond())
-		AskDisk2();
-	JaggedZoom(backbuffer, frontbuffer);
-	CGA_BackBufferToRealFull();
-#else
-	while (!LoadSplash("PRES.BIN"))
-		AskDisk2();
-	CGA_BackBufferToRealFull();
-#endif
 }
 
 uint16 SCR_5B_TheEnd(void) {
@@ -2913,11 +2912,11 @@ uint16 SCR_5B_TheEnd(void) {
 
 	TheEnd();
 
-#ifdef VERSION_USA
-	RestartGame();
-#else
-	for (;;) ;  /*HANG*/
-#endif
+	if (g_vm->getLanguage() == Common::EN_USA)
+		RestartGame();
+	else
+		for (;;) ;  /*HANG*/
+
 	return 0;
 }
 

@@ -138,7 +138,10 @@ NB! Static data includes the font file, don't use any text print routines before
 int16 LoadStaticData() {
 	Common::File pxi;
 
-	pxi.open("ere.pxi");
+	if (g_vm->getLanguage() == Common::EN_USA)
+		pxi.open("kult1.pxi");
+	else
+		pxi.open("ere.pxi");
 
 	uint numMods = pxi.readUint16BE();
 	uint modBase = 2 + numMods * 4;
