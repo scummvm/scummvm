@@ -34,13 +34,13 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace Hypno {
 static const PlainGameDescriptor hypnoGames[] = {
-	{"sinister-six", "Marvel Comics Spider-Man: The Sinister Six"},
+	{"sinistersix", "Marvel Comics Spider-Man: The Sinister Six"},
 	{"wetlands", "Wetlands"},
-	{"soldier-boyz", "Soldier Boyz"},
+	{"soldierboyz", "Soldier Boyz"},
 	{0, 0}};
 
 static const ADGameDescription gameDescriptions[] = {
-	{"sinister-six", // Demo from the US release
+	{"sinistersix", // Demo from the US release
 	 "Demo",
 	 AD_ENTRY2s("DATA.Z",  "2a9c7cf8920ec794482f0a5873102da5", 1285960,
 				"DCINE1.SMK", "1ff3db09d148e8dd8b56d2e87e7296b8", 493752),
@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_TESTING | ADGF_DEMO,
 	 GUIO1(GUIO_NOMIDI)},
-	{"sinister-six", // US release
+	{"sinistersix", // US release
 	 _s("Missing game code"),
 	 AD_ENTRY2s("DATA.Z", "a1f71005a45e6ee454bb0bf3868dff54", 8766307,
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
@@ -56,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE | ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NOMIDI)},
-	{"sinister-six", // ES release
+	{"sinistersix", // ES release
 	 _s("Missing game code"),
 	 AD_ENTRY2s("SPIDER.EXE", "dbd912d6f6724c6d44775fc19cfa8ca0", 483871,
 	 			"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
@@ -114,7 +114,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
-	{"soldier-boyz", // Solidier Boyz (US)
+	{"soldierboyz", // Solidier Boyz (US)
 	 _s("Missing game code"),
 	 AD_ENTRY2s("boyz.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 263347,
 				"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),

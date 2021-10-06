@@ -46,14 +46,14 @@ Hotspots *g_parsedHots;
 ArcadeShooting g_parsedArc;
 HypnoEngine *g_hypno;
 
-MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled, bool _loop) {
+MVideo::MVideo(Common::String path_, Common::Point position_, bool transparent_, bool scaled_, bool loop_) {
 	decoder = nullptr;
 	currentFrame = nullptr;
-	path = _path;
-	position = _position;
-	scaled = _scaled;
-	transparent = _transparent;
-	loop = _loop;
+	path = path_;
+	position = position_;
+	scaled = scaled_;
+	transparent = transparent_;
+	loop = loop_;
 }
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
