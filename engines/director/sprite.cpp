@@ -35,8 +35,8 @@ namespace Director {
 
 Sprite::Sprite(Frame *frame) {
 	_frame = frame;
-	_score = _frame->getScore();
-	_movie = _score->getMovie();
+	_score = _frame ? _frame->getScore() : nullptr;
+	_movie = _score ? _score->getMovie() : nullptr;
 
 	_scriptId = CastMemberID(0, 0);
 	_colorcode = 0;
@@ -69,6 +69,45 @@ Sprite::Sprite(Frame *frame) {
 
 	_volume = 0;
 	_stretch = 0;
+}
+
+Sprite::Sprite(const Sprite &sprite) {
+	_frame = sprite._frame;
+	_score = sprite._score;
+	_movie = sprite._movie;
+
+	_scriptId = sprite._scriptId;
+	_colorcode = sprite._colorcode;
+	_blendAmount = sprite._blendAmount;
+	_unk3 = sprite._unk3;
+
+	_enabled = sprite._enabled;
+	_castId = sprite._castId;
+	_pattern = sprite._pattern;
+
+	_spriteType = sprite._spriteType;
+	_inkData = sprite._inkData;
+	_ink = sprite._ink;
+	_trails = sprite._trails;
+
+	_matte = sprite._matte;
+	_cast = sprite._cast;
+
+	_thickness = sprite._thickness;
+	_startPoint = sprite._startPoint;
+	_width = sprite._width;
+	_height = sprite._height;
+	_moveable = sprite._moveable;
+	_editable = sprite._editable;
+	_puppet = sprite._puppet;
+	_immediate = sprite._immediate;
+	_backColor = sprite._backColor;
+	_foreColor = sprite._foreColor;
+
+	_blend = sprite._blend;
+
+	_volume = sprite._volume;
+	_stretch = sprite._stretch;
 }
 
 Sprite::~Sprite() {
