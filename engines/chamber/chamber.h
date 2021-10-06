@@ -35,6 +35,8 @@ class SoundHandle;
 class PCSpeaker;
 }
 
+struct ADGameDescription;
+
 namespace Chamber {
 
 class ChamberEngine : public Engine {
@@ -43,8 +45,10 @@ private:
 	Common::RandomSource *_rnd;
 
 public:
-	ChamberEngine(OSystem *syst);
+	ChamberEngine(OSystem *syst, const ADGameDescription *desc);
 	~ChamberEngine();
+
+	Common::Language getLanguage() const;
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
@@ -66,6 +70,9 @@ public:
 
 	Audio::PCSpeaker *_speakerStream;
 	Audio::SoundHandle *_speakerHandle;
+
+private:
+	const ADGameDescription *_gameDescription;
 };
 
 void init(void);

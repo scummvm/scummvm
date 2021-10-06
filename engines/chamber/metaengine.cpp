@@ -23,6 +23,14 @@
 #include "chamber/chamber.h"
 #include "engines/advancedDetector.h"
 
+namespace Chamber {
+
+Common::Language ChamberEngine::getLanguage() const {
+	return _gameDescription->language;
+}
+
+} // end of namespace Chamber
+
 class ChamberMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
@@ -33,7 +41,7 @@ public:
 };
 
 Common::Error ChamberMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Chamber::ChamberEngine(syst);
+	*engine = new Chamber::ChamberEngine(syst, desc);
 	return Common::kNoError;
 }
 
