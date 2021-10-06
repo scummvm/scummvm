@@ -217,19 +217,19 @@ Common::Error ChamberEngine::run() {
 	/* Install timer callback */
 	InitTimer();
 
-#ifdef VERSION_USA
-	/* Load title screen */
-	if (!LoadSplash("PRESCGA.BIN"))
-		ExitGame();
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		/* Load title screen */
+		if (!LoadSplash("PRESCGA.BIN"))
+			ExitGame();
 
-	if (ifgm_loaded) {
-		/*TODO*/
+		if (ifgm_loaded) {
+			/*TODO*/
+		}
+	} else {
+		/* Load title screen */
+		if (!LoadSplash("PRES.BIN"))
+			ExitGame();
 	}
-#else
-	/* Load title screen */
-	if (!LoadSplash("PRES.BIN"))
-		ExitGame();
-#endif
 
 	/* Select intense cyan-mageta palette */
 	CGA_ColorSelect(0x30);
@@ -237,35 +237,35 @@ Common::Error ChamberEngine::run() {
 	/* Show the title screen */
 	CGA_BackBufferToRealFull();
 
-#ifdef VERSION_USA
-	if (ifgm_loaded) {
-		/*TODO*/
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		if (ifgm_loaded) {
+			/*TODO*/
+		}
+
+		/* Force English language */
+		c = 'E';
+	} else {
+		/* Load language selection screen */
+		if (!LoadSplash("DRAP.BIN"))
+			ExitGame();
+
+		/* Wait for a keypress and show the language selection screen */
+		ClearKeyboard();
+		readKeyboardChar();
+
+		if (_shouldQuit)
+			return Common::kNoError;
+
+		CGA_BackBufferToRealFull();
+		ClearKeyboard();
+
+		/* Wait for a valid language choice */
+		do {
+			c = readKeyboardChar();
+			if (c > 'F')
+				c -= ' ';
+		} while (c < 'D' || c > 'F');
 	}
-
-	/* Force English language */
-	c = 'E';
-#else
-	/* Load language selection screen */
-	if (!LoadSplash("DRAP.BIN"))
-		ExitGame();
-
-	/* Wait for a keypress and show the language selection screen */
-	ClearKeyboard();
-	readKeyboardChar();
-
-	if (_shouldQuit)
-		return Common::kNoError;
-
-	CGA_BackBufferToRealFull();
-	ClearKeyboard();
-
-	/* Wait for a valid language choice */
-	do {
-		c = readKeyboardChar();
-		if (c > 'F')
-			c -= ' ';
-	} while (c < 'D' || c > 'F');
-#endif
 
 	if (_shouldQuit)
 		return Common::kNoError;
@@ -276,9 +276,8 @@ Common::Error ChamberEngine::run() {
 	res_desci[0].name[4] = c;
 	res_diali[0].name[4] = c;
 
-#ifndef VERSION_USA
-	CGA_BackBufferToRealFull();
-#endif
+	if (g_vm->getLanguage() != Common::EN_USA)
+		CGA_BackBufferToRealFull();
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
@@ -305,11 +304,11 @@ Common::Error ChamberEngine::run() {
 	/* Detect CPU speed for delay routines */
 	cpu_speed_delay = BenchmarkCpu() / 8;
 
-#ifdef VERSION_USA
-	if (ifgm_loaded) {
-		/*TODO*/
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		if (ifgm_loaded) {
+			/*TODO*/
+		}
 	}
-#endif
 
 	/*restart game from here*/
 restart:;

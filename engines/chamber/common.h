@@ -25,8 +25,6 @@
 
 namespace Chamber {
 
-#define VERSION_USA
-
 #define BE(x) ((((x) >> 8) | ((x) << 8)) & 0xffff)
 #define LE16(x) (x)
 

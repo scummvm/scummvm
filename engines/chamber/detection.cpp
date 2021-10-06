@@ -34,7 +34,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
+		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
+		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
 		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,

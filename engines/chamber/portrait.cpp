@@ -311,20 +311,20 @@ void BlinkToRed(void) {
 }
 
 void BlinkToWhite(void) {
-#ifdef VERSION_USA
-	PlayHurtSound();	/*TODO: play here and later? looks like a bug, original code will trash palette selection if pcspeaker is used*/
-#endif
+	if (g_vm->getLanguage() == Common::EN_USA)
+		PlayHurtSound();	/*TODO: play here and later? looks like a bug, original code will trash palette selection if pcspeaker is used*/
+
 	BlinkWithSound(0x3F);
 }
 
 volatile byte vblank_ticks;
 
 void WaitVBlankTimer(void) {
-#ifdef VERSION_USA
-	/*A crude attempt to fix the animation speed...*/
-	while (vblank_ticks < 3) ;
-	vblank_ticks = 0;
-#endif
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		/*A crude attempt to fix the animation speed...*/
+		while (vblank_ticks < 3) ;
+		vblank_ticks = 0;
+	}
 	WaitVBlank();
 }
 

@@ -84,10 +84,6 @@ byte ChamberEngine::readKeyboardChar() {
 void ClearKeyboard(void) {
 }
 
-#ifdef VERSION_USA
-extern int16 AskQuitGame(void);
-#endif
-
 void SetInputButtons(byte keys) {
 	if (keys & 2)
 		right_button = ~0;
@@ -147,8 +143,12 @@ byte PollKeyboard(void) {
 Show game exit confirmation dialog and get user's input
 */
 int16 AskQuitGame(void) {
+	/*EU version comes without requited text string*/
+	if (g_vm->getLanguage() != Common::EN_USA)
+		return 0;
+
 	int16 quit = -1;
-#ifdef VERSION_USA
+
 	byte *msg = SeekToString(desci_data, 411);	/*DO YOU WANT TO QUIT ? (Y OR N).*/
 	char_draw_max_width = 32;
 	draw_x = 1;
@@ -177,9 +177,8 @@ int16 AskQuitGame(void) {
 		}
 	}
 	CGA_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CGA_CalcXY_p(draw_x, draw_y));
-#endif
-	/*EU version comes without requited text string*/
-	return quit == 1;
+
+	return quit;
 }
 
 void PollInputButtonsOnly() {
@@ -194,10 +193,10 @@ void PollInput(void) {
 			if (event.kbd.keycode == Common::KEYCODE_SPACE)
 				mouseButtons |= 1;
 			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-#ifdef VERSION_USA
-				if (AskQuitGame() != 0)
-					g_vm->_shouldQuit = true;
-#endif
+				if (g_vm->getLanguage() == Common::EN_USA) {
+					if (AskQuitGame() != 0)
+						g_vm->_shouldQuit = true;
+				}
 			}
 			break;
 

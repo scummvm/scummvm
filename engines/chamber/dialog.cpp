@@ -117,11 +117,11 @@ void DrawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	char_draw_max_width = flags & 0x1F;
 	char_xlat_table = chars_color_bonw;
 
-#ifdef VERSION_USA
-	CalcStringSize(msg, &ww, &nw);
-	if (ww >= char_draw_max_width)
-		char_draw_max_width = ww;
-#endif
+	if (g_vm->getLanguage() == Common::EN_USA) {
+		CalcStringSize(msg, &ww, &nw);
+		if (ww >= char_draw_max_width)
+			char_draw_max_width = ww;
+	}
 
 	/*upper border*/
 	ofs = CGA_CalcXY_p(x, y);

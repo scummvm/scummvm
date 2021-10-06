@@ -1527,12 +1527,12 @@ void DrawTheWallDoors(void) {
 	case 9:
 	case 102:
 		CGA_Blit(LoadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
-#ifdef VERSION_USA
-		/*This fixes odd black patch on the right gate door*/
-		CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(184 / CGA_PIXELS_PER_BYTE, 32));
-#else
-		CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
-#endif
+		if (g_vm->getLanguage() == Common::EN_USA) {
+			/*This fixes odd black patch on the right gate door*/
+			CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(184 / CGA_PIXELS_PER_BYTE, 32));
+		} else {
+			CGA_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CGA_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
+		}
 		break;
 	case 95:
 	case 103:

@@ -36,7 +36,6 @@ typedef struct ResEntry_tp {
 } ResEntry_tp;
 
 /* Max resource file size among all languages */
-#ifdef VERSION_USA
 #define RES_ALEAT_MAX 256
 #define RES_ANICO_MAX 667
 #define RES_ANIMA_MAX 2046
@@ -58,29 +57,6 @@ typedef struct ResEntry_tp {
 #define RES_DIALI_MAX 9636
 #define RES_MOTSI_MAX 1082
 #define RES_VEPCI_MAX 1345
-#else
-#define RES_ALEAT_MAX 256
-#define RES_ANICO_MAX 667
-#define RES_ANIMA_MAX 2046
-#define RES_ARPLA_MAX 7910
-#define RES_CARPC_MAX 384
-#define RES_GAUSS_MAX 1449
-#define RES_ICONE_MAX 2756
-#define RES_LUTIN_MAX 2800
-#define RES_MURSM_MAX 76
-#define RES_SOUCO_MAX 424
-#define RES_SOURI_MAX 1152
-#define RES_TEMPL_MAX 27337
-#define RES_ZONES_MAX 9014
-#define RES_PUZZL_MAX 45671
-#define RES_SPRIT_MAX 23811
-#define RES_PERS1_MAX 14294
-#define RES_PERS2_MAX 10587
-#define RES_DESCI_MAX 10515
-#define RES_DIALI_MAX 9636
-#define RES_MOTSI_MAX 1082
-#define RES_VEPCI_MAX 1345
-#endif
 
 extern byte vepci_data[];
 extern byte motsi_data[];
