@@ -34,8 +34,18 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("desce.bin", "d6b2b07bbb6b6d5a292c17536ad7dd44", 10419),
-		Common::EN_ANY,
+		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
+		Common::UNK_LANG, // EN/FR/DE
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
+	{
+		"chamber",
+		"",
+		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
+		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO0()
