@@ -43,6 +43,7 @@
 #include "chamber/invent.h"
 #include "chamber/sound.h"
 #include "chamber/savegame.h"
+#include "chamber/ifgm.h"
 
 #if 1
 #define DEBUG_SCRIPT
@@ -578,6 +579,7 @@ uint16 SCR_3B_MathExpr(void) {
 	op2 = MathExpr(&script_ptr);
 
 	/*store result*/
+	/*TODO: original bug? MathExpr may overwrite global var_size, so mixed-size expressions will produce errorneous results*/
 	if (var_size == VARSIZE_BYTE)
 		*opptr = op2 & 255;
 	else {
@@ -912,27 +914,31 @@ uint16 SCR_E_DrawPortraitZoomIn(void) {
 }
 
 
-/*
-Draw image with specified w/h zoom
-*/
-uint16 SCR_10_DrawPortraitZoomed(void) {
+uint16 DrawPortraitZoomed(byte **params) {
 	byte x, y, width, height;
 	byte zwidth, zheight;
 
-	script_ptr++;
-
 	right_button = 0;   /*prevent cancel or zoom parameters won't be consumed*/
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!DrawPortrait(params, &x, &y, &width, &height))
 		return 0;   /*TODO: maybe just remove the if/return instead?*/
 
-	zwidth = *script_ptr++;
-	zheight = *script_ptr++;
+	zwidth = *((*params)++);
+	zheight = *((*params)++);
 
 	/*adjust the rect for new size*/
 	last_dirty_rect->width = zwidth + 2;
 	last_dirty_rect->height = zheight;
 
 	CGA_ZoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, zwidth, zheight, frontbuffer, cur_image_offs);
+	return 0;
+}
+
+/*
+Draw image with specified w/h zoom
+*/
+uint16 SCR_10_DrawPortraitZoomed(void) {
+	script_ptr++;
+	DrawPortraitZoomed(&script_ptr);
 
 #if 0
 	/*TODO: debug wait*/
@@ -1391,6 +1397,7 @@ void AnimStarfield(star_t *stars, byte *target) {
 Play Game Over sequence and restart the game
 */
 uint16 SCR_26_GameOver(void) {
+	IFGM_PlaySample(160);
 	in_de_profundis = 0;
 	script_byte_vars.game_paused = 1;
 	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
@@ -1677,6 +1684,7 @@ The Wall room puzzle
 uint16 SCR_3E_TheWallAdvance(void) {
 	script_ptr++;
 
+	IFGM_PlaySample(29);
 	script_byte_vars.the_wall_phase = (script_byte_vars.the_wall_phase + 1) % 4;
 	switch (script_byte_vars.the_wall_phase) {
 	default:
@@ -2122,8 +2130,10 @@ uint16 SCR_31_Fight2(void) {
 
 				for (i = 0; i < fightlistsize; i++) {
 					if (fightlist[i].room == script_byte_vars.zone_room) {
-						if (animidx != 0)
+						if (animidx != 0) {
 							fightlist[i].anim.index = animidx;
+							IFGM_PlaySample(150);
+						}
 						if (fightlist[i].anim.index == 55)
 							PlaySound(151);
 						PlayAnim(fightlist[i].anim.index, fightlist[i].anim.params.coords.x, fightlist[i].anim.params.coords.y);
@@ -2687,6 +2697,8 @@ uint16 SCR_56_MorphRoom98(void) {
 	uint16 ofs;
 	script_ptr++;
 
+	IFGM_PlaySample(242);
+
 	RedrawRoomStatics(98, 0);
 
 	ofs = CGA_CalcXY(0, 136);
@@ -2699,6 +2711,8 @@ uint16 SCR_56_MorphRoom98(void) {
 	}
 
 	BackupSpotImage(&zone_spots[3], &sprites_list[3], sprites_list[3]);
+
+	IFGM_StopSample();
 
 	return 0;
 }
@@ -2846,6 +2860,8 @@ static void AnimSaucer(void) {
 			memset(backbuffer + ofs2, 0, 54 / 2 * CGA_BYTES_PER_LINE);
 
 			for (i = 0xFFFF; i--;) ; /*TODO: weak delay*/
+
+			IFGM_PlaySample(240);
 		}
 
 		/*draw the full saucer on screen*/
@@ -2864,11 +2880,31 @@ extern int16 LoadSplash(const char *filename);
 TODO: check me
 */
 void TheEnd(void) {
+	static byte image2[] = {168, 28, 85, 22, 15};
+	byte *pimage2 = image2;
+
 	AnimSaucer();
 
+#ifdef VERSION_USA
+	DrawPortraitZoomed(&pimage2);
+
+	script_byte_vars.zone_index = 135;
+
+	do
+	{
+		PollInputButtonsOnly();
+	}
+	while(buttons == 0);
+
+	while (!LoadFond())
+		AskDisk2();
+	JaggedZoom(backbuffer, frontbuffer);
+	CGA_BackBufferToRealFull();
+#else
 	while (!LoadSplash("PRES.BIN"))
 		AskDisk2();
 	CGA_BackBufferToRealFull();
+#endif
 }
 
 uint16 SCR_5B_TheEnd(void) {
@@ -2877,7 +2913,11 @@ uint16 SCR_5B_TheEnd(void) {
 
 	TheEnd();
 
+#ifdef VERSION_USA
+	RestartGame();
+#else
 	for (;;) ;  /*HANG*/
+#endif
 	return 0;
 }
 
@@ -3132,11 +3172,15 @@ uint16 SCR_67_Unused(void) {
 }
 
 /*
-Do nothing in PC/CGA version
+Play Sfx
+NB! Do nothing in EU PC/CGA version
 */
-uint16 SCR_68_Unused(void) {
+uint16 SCR_68_PlaySfx(void) {
+	byte index;
 	script_ptr++;
+	index = *script_ptr++;
 	script_ptr++;
+	IFGM_PlaySfx(index);
 	return 0;
 }
 
@@ -3215,6 +3259,9 @@ uint16 CMD_4_EnergyLevel(void) {
 	PopDirtyRects(DirtyRectSprite);
 	PopDirtyRects(DirtyRectBubble);
 
+	cur_dlg_index = 0;
+	ifgm_flag2 = ~0;
+
 	if (script_byte_vars.psy_energy != 0)
 		anim = 41 + (script_byte_vars.psy_energy / 16);
 
@@ -3223,12 +3270,16 @@ uint16 CMD_4_EnergyLevel(void) {
 	}
 
 	do {
+		IFGM_PlaySample(28);
 		AnimPortrait(1, anim, 10);
 		AnimPortrait(1, anim + 14, 10);
-		PollInput();
+		PollInputButtonsOnly();
 	} while (buttons == 0);
 
 	PopDirtyRects(DirtyRectSprite);
+
+	ifgm_flag2 = 0;
+	IFGM_StopSample();
 
 	return 0;
 }
@@ -3305,7 +3356,7 @@ uint16 CMD_8_Timer(void) {
 		CGA_PrintChar((minutes & 1) ? 26 : 0, CGA_SCREENBUFFER);    /*colon*/
 		CGA_PrintChar(minutes / (60 * 10) + 16, CGA_SCREENBUFFER);
 		CGA_PrintChar(minutes / 60 + 16, CGA_SCREENBUFFER);
-		PollInput();
+		PollInputButtonsOnly();
 	} while (buttons == 0);
 
 	PopDirtyRects(DirtyRectSprite);
@@ -3479,6 +3530,8 @@ uint16 CMD_E_PsiZoneScan(void) {
 
 	BackupScreenOfSpecialRoom();
 
+	IFGM_PlaySample(26);
+
 	offs = CGA_CalcXY_p(room_bounds_rect.sx, room_bounds_rect.sy);
 	w = room_bounds_rect.ex - room_bounds_rect.sx;
 	h = room_bounds_rect.ey - room_bounds_rect.sy;
@@ -3506,6 +3559,8 @@ uint16 CMD_E_PsiZoneScan(void) {
 	}
 
 	RestoreScreenOfSpecialRoom();
+
+	IFGM_StopSample();
 
 	the_command = Swap16(script_word_vars.psi_cmds[2]);
 
@@ -3756,6 +3811,7 @@ uint16 CMD_14_VortAppear(void) {
 	pers_list[kPersVort].area = script_byte_vars.zone_area;
 	SelectPerson(0);
 	AnimateSpot(&vortanims_ptr->field_1);
+	IFGM_StopSample();
 	next_vorts_cmd = 0xA015;
 	BlitSpritesToBackBuffer();
 	DrawPersons();
@@ -3834,6 +3890,7 @@ uint16 CMD_15_VortLeave(void) {
 
 	SelectPerson(0);
 	AnimateSpot(anim);
+	IFGM_StopSample();
 	script_byte_vars.bvar_36 &= 0x80;
 	return 0;
 }
@@ -3928,6 +3985,8 @@ uint16 CMD_1B_Holo(void) {
 	uint16 num;
 	byte *msg;
 
+	IFGM_PlaySample(225);
+
 	x = found_spot->sx;
 	y = found_spot->sy;
 
@@ -3942,10 +4001,14 @@ uint16 CMD_1B_Holo(void) {
 	else
 		DrawPersonBubble(x - 92 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
+	IFGM_PlaySfx(0);
+
 	PlayAnim(43, x, y);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
+
+	IFGM_PlaySample(225);
 
 	PlayAnim(45, x, y);
 
@@ -4031,6 +4094,8 @@ uint16 CMD_21_VortTalk(void) {
 	else
 		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
+	IFGM_PlaySfx(0);
+
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
 
@@ -4056,6 +4121,7 @@ uint16 CMD_24_(void) {
 Load save file
 */
 uint16 CMD_25_LoadGame(void) {
+	IFGM_StopSample();
 	if (LoadScena())
 		the_command = 0x918F;   /*error loading*/
 	else
@@ -4226,7 +4292,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_65_DeProfundisMovePlatform,
 	SCR_66_DeProfundisRideToExit,
 	SCR_67_Unused,
-	SCR_68_Unused,
+	SCR_68_PlaySfx,
 	SCR_69_PlaySound,
 	SCR_6A_Unused,
 };

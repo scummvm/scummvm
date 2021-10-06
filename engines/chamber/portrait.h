@@ -37,6 +37,8 @@ extern byte cur_image_anim1;
 extern byte cur_image_anim2;
 extern uint16 cur_frame_width;
 
+extern volatile byte vblank_ticks;
+
 int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height);
 void AnimPortrait(byte layer, byte index, byte delay);
 

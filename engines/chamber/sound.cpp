@@ -26,6 +26,7 @@
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/sound.h"
+#include "chamber/ifgm.h"
 
 namespace Chamber {
 
@@ -92,7 +93,7 @@ static void SpeakerPlay(pcsample_t *sample) {
 
 #define kMaxSounds 12
 
-unsigned char sounds_table[kMaxSounds][3] = {
+byte sounds_table[kMaxSounds][3] = {
 	{20, 0, 0},
 	{19, 0, 0},
 	{176, 0, 0},
@@ -107,8 +108,11 @@ unsigned char sounds_table[kMaxSounds][3] = {
 	{31, 0, 0}
 };
 
-void PlaySound(unsigned char index) {
-	int i;
+void PlaySound(byte index) {
+	int16 i;
+	if (IFGM_PlaySound(index))
+		return;
+
 	for (i = 0; i < kMaxSounds; i++) {
 		if (sounds_table[i][0] == index
 		        || sounds_table[i][1] == index
