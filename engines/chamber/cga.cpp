@@ -31,6 +31,57 @@
 
 namespace Chamber {
 
+#if 0
+#define HGA_WIDTH 720
+#define HGA_HEIGHT 348
+#define HGA_BASE_SEG 0xB000
+#define HGA_PAGE2_SEG 0xB800
+#define HGA_NEXT_LINES_OFS 0x2000
+#define HGA_BITS_PER_PIXEL 1
+#define HGA_PIXELS_PER_BYTE (8 / HGA_BITS_PER_PIXEL)
+#define HGA_BYTES_PER_LINE (HGA_WIDTH / HGA_PIXELS_PER_BYTE)
+#define HGA_CALCXY_RAW(x, y) ( ((y) % 4) * HGA_NEXT_LINES_OFS + ((y) / 4) * HGA_BYTES_PER_LINE + (x) / HGA_PIXELS_PER_BYTE )
+#define HGA_CENTERED_BASE_OFS HGA_CALCXY_RAW(32, 76)
+#ifdef __386__
+#define HGA_SCREENBUFFER ((byte*)(HGA_BASE_SEG * 16))
+#define HGA_BACKBUFFER ((byte*)(HGA_PAGE2_SEG * 16))
+#else
+#define HGA_SCREENBUFFER ((byte*)MK_FP(HGA_BASE_SEG, 0))
+#define HGA_BACKBUFFER ((byte*)MK_FP(HGA_PAGE2_SEG, 0))
+#endif
+#define HGA_FONT_HEIGHT 6
+#define frontbuffer HGA_SCREENBUFFER
+#define backbuffer HGA_BACKBUFFER
+/* Calc screen offset from normal pixel coordinates
+Out:
+  screen offset
+*/
+uint16 HGA_CalcXY(uint16 x, uint16 y) {
+	return HGA_CalcXY_p(x / 4, y);
+}
+
+/* Calc screen offset from packed pixel coordinates
+Out:
+  screen offset
+*/
+uint16 HGA_CalcXY_p(uint16 x, uint16 y) {
+	 uint16 ofs = HGA_CENTERED_BASE_OFS; /*initial offset for centering*/
+#if 0
+	 ofs += HGA_CALCXY_RAW(x * 4 * 2, y);
+#else
+	/*optimized version of the above*/
+	if (y & 1)
+		ofs |= HGA_NEXT_LINES_OFS;
+	if (y & 2)
+		ofs |= HGA_NEXT_LINES_OFS * 2;
+	y /= 4;
+	ofs += y * HGA_BYTES_PER_LINE;
+	ofs += x; /*one unit of x represent 4 pixels, but one unit of ofs is 8 pixels, so x is implicitly multiplied by 2 here*/
+#endif
+	 return ofs;
+}
+#endif
+
 extern byte backbuffer[0x4000];
 byte CGA_SCREENBUFFER[0x4000];
 byte scrbuffer[320*200];
