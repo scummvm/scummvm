@@ -64,6 +64,7 @@ void HypnoEngine::parseScene(const Common::String &prefix, const Common::String 
 	Common::String name = convertPath(filename);
 	if (!prefix.empty())
 		name = prefix + "/" + name;
+
 	Common::File test;
 	if (!test.open(name.c_str()))
 		error("Failed to open %s", name.c_str());
@@ -73,6 +74,7 @@ void HypnoEngine::parseScene(const Common::String &prefix, const Common::String 
 	test.read(buf, fileSize);
 	test.close();
 	buf[fileSize] = '\0';
+	debug("%s", buf);
 	parse_mis(buf);
 	Level level;
 	level.scene.prefix = prefix;
@@ -254,8 +256,10 @@ void HypnoEngine::runScene(Scene &scene) {
 					leftClickedConversation(mousePos);
 					break;
 				}
-				if (!_nextHotsToAdd && !_nextHotsToRemove /*&& _videosPlaying.empty()*/)
+				if (!_nextHotsToAdd && !_nextHotsToRemove /*&& _videosPlaying.empty()*/) {
 					clickedHotspot(mousePos);
+					drawScreen();
+				}
 				break;
 
 			case Common::EVENT_MOUSEMOVE:

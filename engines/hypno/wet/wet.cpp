@@ -196,7 +196,7 @@ void WetEngine::loadAssetsPCG() {
 		error("Failed to load any files from missions.lib");
 
 	Level intro;
-	intro.trans.level = "c31.mi_";
+	intro.trans.level = "c31.mi_";	
 	intro.trans.intros.push_back("nw_logo.smk");
 	intro.trans.intros.push_back("h.s");
 	intro.trans.intros.push_back("wet.smk");
@@ -232,6 +232,7 @@ void WetEngine::loadAssetsFullGame() {
 
 	Level intro;
 	intro.trans.level = "c111.mi_";
+	intro.trans.intros.push_back("c_misc/logo.smk");
 	intro.trans.intros.push_back("c_misc/nw_logo.smk");
 	intro.trans.intros.push_back("c_misc/hypnotix.smk");
 	intro.trans.intros.push_back("c_misc/wetlogo.smk");

@@ -133,6 +133,7 @@ Common::Error HypnoEngine::run() {
 	loadAssets();
 	_nextLevel = "<start>";
 	while (!shouldQuit()) {
+		debug("nextLevel: %s", _nextLevel.c_str());
 		_defaultCursor = "";
 		_prefixDir = "";
 		_videosPlaying.clear();

@@ -40,7 +40,8 @@
 %}
 
 %%
-\;[A-Za-z_0-9 \t\*]*		/* return COMMENT; */
+\;.+						/* return COMMENT; */
+\/\/.+						/* return COMMENT; */
 MENU						return MENUTOK;
 AMBI						return AMBITOK;
 BACK						return BACKTOK;
@@ -60,6 +61,11 @@ TALK						return TALKTOK;
 INACTIVE					return INACTOK;
 4DBOX						return FDTOK;
 BOXX						return BOXXTOK;
+ESCAPE						return ESCAPETOK;
+SECOND						return SECONDTOK;
+INTRO						return INTROTOK;
+DEFAULT						return DEFAULTTOK;
+\|S[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;
 \|G[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;
 \|P[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PP;
 \|I[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PI;
@@ -68,16 +74,16 @@ BOXX						return BOXXTOK;
 \|D[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
 \|F[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
 \|E							return PE;
-NO_RETURN					return NRTOK;
+\|L							return PL;
 GS_[A-Z_0-9]+				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
 \/BBOX\=					return BBOXTOK;
 \/[A-Za-z_0-9]*				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
 [A-Za-z_][A-Za-z_0-9]*		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
 [A-Za-z][A-Za-z_0-9\\\.]*	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
 [\-]?[0-9]+					HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
-\r\n						return RETTOK;
+[\n|\r\n]					return RETTOK;
 [ \t]+						/* ignore whitespace */;
-.							debug("<no match>"); return *yytext;
+.							debug("<no match: %c>", *yytext); return *yytext;
 %%
 
 namespace Hypno {

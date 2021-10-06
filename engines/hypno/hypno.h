@@ -245,6 +245,9 @@ class SpiderEngine : public HypnoEngine {
 public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
 	void loadAssets() override;
+	void loadAssetsDemo();
+	void loadAssetsFullGame();
+
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;

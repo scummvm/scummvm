@@ -174,14 +174,20 @@ extern int HYPNO_MIS_debug;
     INACTOK = 286,
     FDTOK = 287,
     BOXXTOK = 288,
-    PG = 289,
-    PA = 290,
-    PD = 291,
-    PH = 292,
-    PF = 293,
-    PE = 294,
-    PP = 295,
-    PI = 296
+    ESCAPETOK = 289,
+    SECONDTOK = 290,
+    INTROTOK = 291,
+    DEFAULTTOK = 292,
+    PG = 293,
+    PA = 294,
+    PD = 295,
+    PH = 296,
+    PF = 297,
+    PE = 298,
+    PP = 299,
+    PI = 300,
+    PL = 301,
+    PS = 302
   };
 #endif
 
@@ -195,7 +201,7 @@ union HYPNO_MIS_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 199 "engines/hypno/grammar_mis.cpp" /* yacc.c:355  */
+#line 205 "engines/hypno/grammar_mis.cpp" /* yacc.c:355  */
 };
 
 typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;
@@ -212,7 +218,7 @@ int HYPNO_MIS_parse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 216 "engines/hypno/grammar_mis.cpp" /* yacc.c:358  */
+#line 222 "engines/hypno/grammar_mis.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -454,21 +460,21 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   91
+#define YYLAST   107
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  42
+#define YYNTOKENS  48
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  11
+#define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  43
+#define YYNRULES  48
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  102
+#define YYNSTATES  117
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   296
+#define YYMAXUTOK   302
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -506,18 +512,19 @@ static const yytype_uint8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36,    37,    38,    39,    40,    41
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47
 };
 
 #if HYPNO_MIS_DEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    74,    74,    77,    82,    83,    84,    87,    90,   105,
-     114,   129,   135,   136,   146,   155,   164,   174,   182,   190,
-     198,   208,   216,   222,   230,   236,   239,   240,   244,   245,
-     251,   252,   258,   264,   270,   277,   284,   285,   288,   289,
-     292,   293,   296,   297
+       0,    74,    74,    77,    82,    83,    87,   102,   111,   126,
+     132,   133,   143,   152,   161,   171,   179,   187,   195,   205,
+     213,   219,   225,   228,   234,   237,   238,   242,   243,   244,
+     245,   246,   247,   253,   254,   260,   266,   272,   279,   286,
+     292,   293,   294,   297,   298,   301,   302,   305,   306
 };
 #endif
 
@@ -531,9 +538,9 @@ static const char *const yytname[] =
   "TIMETOK", "PALETOK", "BBOXTOK", "OVERTOK", "WALNTOK", "MICETOK",
   "PLAYTOK", "ENDTOK", "MENUTOK", "SMENTOK", "ESCPTOK", "NRTOK", "AMBITOK",
   "GLOBTOK", "TONTOK", "TOFFTOK", "TALKTOK", "INACTOK", "FDTOK", "BOXXTOK",
-  "PG", "PA", "PD", "PH", "PF", "PE", "PP", "PI", "$accept", "start",
-  "init", "lines", "end", "line", "alloctalk", "talk", "mflag", "flag",
-  "gsswitch", YY_NULLPTR
+  "ESCAPETOK", "SECONDTOK", "INTROTOK", "DEFAULTTOK", "PG", "PA", "PD",
+  "PH", "PF", "PE", "PP", "PI", "PL", "PS", "$accept", "start", "init",
+  "lines", "line", "alloctalk", "talk", "mflag", "flag", "gsswitch", YY_NULLPTR
 };
 #endif
 
@@ -546,14 +553,14 @@ static const yytype_uint16 yytoknum[] =
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
-     295,   296
+     295,   296,   297,   298,   299,   300,   301,   302
 };
 # endif
 
-#define YYPACT_NINF -68
+#define YYPACT_NINF -71
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-68)))
+  (!!((Yystate) == (-71)))
 
 #define YYTABLE_NINF -1
 
@@ -564,17 +571,18 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -68,    12,    43,   -68,    -5,     9,    10,   -68,     6,    13,
-      14,    17,    18,    20,    15,    22,   -68,   -68,    25,    19,
-     -68,   -68,    43,    21,    23,   -68,    26,   -68,   -68,    27,
-      28,    30,    50,   -68,     5,    59,    68,    11,   -68,    43,
-      63,    65,    66,    67,   -68,    69,   -68,   -68,    70,   -68,
-      73,    11,    11,    71,    11,    11,    11,    11,    11,   -68,
-      72,    74,   -68,   -68,    75,    24,    77,    24,    24,    77,
-      76,   -68,   -68,    78,   -68,   -68,   -68,   -68,   -68,    79,
-      80,    81,   -68,    77,   -68,   -68,    77,    77,   -68,    82,
-     -68,    11,    11,   -68,   -68,   -68,   -68,    24,   -68,   -68,
-      77,   -68
+     -71,     5,    62,   -71,   -10,     8,     9,   -71,    10,    13,
+      14,    16,    18,    19,     1,    23,   -71,   -71,    25,    20,
+     -71,   -71,    62,    21,   -71,    22,   -71,   -71,    28,    29,
+      30,    31,   -71,   -71,    23,    33,    40,    24,   -71,    35,
+      37,    38,    39,   -71,    41,   -71,    42,   -71,    45,    24,
+      24,    43,   -71,    74,    83,    86,    24,    24,    24,    24,
+      24,   -71,    82,    84,    24,    24,   -71,    85,    26,    27,
+      26,    26,    27,    87,   -71,   -71,    88,    89,    90,    91,
+     -71,   -71,   -71,   -71,   -71,    92,    93,   -71,   -71,    94,
+     -71,    27,   -71,   -71,    27,    27,   -71,    95,   -71,    96,
+      97,    98,    24,    24,   -71,    27,   -71,   -71,    26,   -71,
+     -71,   -71,   -71,   -71,   -71,    27,   -71
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -582,31 +590,30 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       3,     0,     0,     1,     0,     0,     0,     7,     0,     0,
-       0,     0,     0,     0,     0,     0,    10,    11,     0,     0,
-      24,     2,     0,     5,     0,    19,     0,    12,    18,     0,
-       0,     0,     0,    23,    39,     0,     0,    37,     6,     0,
-       0,     0,     0,     0,    21,     0,    38,     8,     0,    14,
-       0,    37,    37,     0,    37,    37,    37,    37,    37,    36,
-       0,     0,    22,     4,     0,    43,    41,    43,    43,    41,
-       0,    25,    26,     0,    29,    32,    33,    30,    31,     0,
-       0,     0,    42,    41,    40,    17,    41,    41,    15,     0,
-      28,    37,    37,     9,    13,    20,    16,    43,    34,    35,
-      41,    27
+       3,     0,     5,     1,     0,     0,     0,    22,     0,     0,
+       0,     0,     0,     0,     0,    44,     8,     9,     0,     0,
+      23,     2,     5,     0,    17,     0,    10,    16,     0,     0,
+       0,     0,    21,    43,    44,     0,     0,    42,     4,     0,
+       0,     0,     0,    19,     0,     6,     0,    12,     0,    42,
+      42,     0,    28,     0,     0,     0,    42,    42,    42,    42,
+      42,    41,     0,     0,    42,    42,    20,     0,    48,    46,
+      48,    48,    46,     0,    24,    25,     0,     0,     0,     0,
+      32,    35,    36,    33,    34,     0,     0,    40,    39,     0,
+      47,    46,    45,    15,    46,    46,    13,     0,    27,     0,
+       0,     0,    42,    42,     7,    46,    18,    14,    48,    29,
+      30,    31,    37,    38,    11,    46,    26
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -68,   -68,   -68,   -12,   -68,   -68,   -68,   -51,   -68,   -67,
-     -59
+     -71,   -71,   -71,     6,   -71,   -71,   -49,     0,   -70,   -67
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     2,    21,    22,    23,    37,    62,    47,    85,
-      83
+      -1,     1,     2,    21,    22,    37,    66,    34,    93,    91
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -614,67 +621,70 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      71,    72,    88,    74,    75,    76,    77,    78,    86,    87,
-      38,    24,     3,    25,    26,    27,    94,    28,    29,    95,
-      96,    30,    31,    50,    32,    34,    36,    63,    33,    35,
-      46,    82,    40,   101,    39,    41,    42,    43,   100,    44,
-      98,    99,    51,    52,    53,    54,    55,    56,    57,    58,
-      59,    60,    61,     4,     5,     6,     7,     8,     9,    45,
-      10,    11,    12,    13,    14,    15,    16,    17,    48,    18,
-      19,    49,    64,    20,    65,    66,    67,    70,    68,    69,
-      73,    79,    84,    80,    81,    89,     0,    90,    91,    92,
-      93,    97
+      74,    75,    96,    94,    95,     3,    23,    80,    81,    82,
+      83,    84,    24,    25,    32,    87,    88,    27,    28,    26,
+      29,   105,    30,    31,   106,   107,    33,    36,    38,    35,
+      39,    40,    92,    90,    45,   114,    48,    41,    42,    43,
+      44,   115,    46,    47,    67,   116,    68,    69,    70,    73,
+      71,    72,    76,   112,   113,    49,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    62,    63,
+      64,    65,     4,     5,     6,     7,     8,     9,    77,    10,
+      11,    12,    13,    14,    15,    16,    17,    78,    18,    19,
+      79,    85,    20,    86,    89,     0,    97,    98,    99,   100,
+     101,   102,   103,   104,   108,   109,   110,   111
 };
 
 static const yytype_int8 yycheck[] =
 {
-      51,    52,    69,    54,    55,    56,    57,    58,    67,    68,
-      22,    16,     0,     4,     4,     9,    83,     4,     4,    86,
-      87,     4,     4,    12,     4,     3,     7,    39,    13,     4,
-      25,     7,     9,   100,    13,     9,     9,     9,    97,     9,
-      91,    92,    31,    32,    33,    34,    35,    36,    37,    38,
-      39,    40,    41,    10,    11,    12,    13,    14,    15,     9,
-      17,    18,    19,    20,    21,    22,    23,    24,     9,    26,
-      27,     3,     9,    30,     9,     9,     9,     4,     9,     9,
-       9,     9,     5,     9,     9,     9,    -1,     9,     9,     9,
-       9,     9
+      49,    50,    72,    70,    71,     0,    16,    56,    57,    58,
+      59,    60,     4,     4,    13,    64,    65,     4,     4,     9,
+       4,    91,     4,     4,    94,    95,     3,     7,    22,     4,
+       9,     9,     5,     7,    34,   105,    12,     9,     9,     9,
+       9,   108,     9,     3,     9,   115,     9,     9,     9,     4,
+       9,     9,     9,   102,   103,    31,    32,    33,    34,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
+      46,    47,    10,    11,    12,    13,    14,    15,     4,    17,
+      18,    19,    20,    21,    22,    23,    24,     4,    26,    27,
+       4,     9,    30,     9,     9,    -1,     9,     9,     9,     9,
+       9,     9,     9,     9,     9,     9,     9,     9
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    43,    44,     0,    10,    11,    12,    13,    14,    15,
+       0,    49,    50,     0,    10,    11,    12,    13,    14,    15,
       17,    18,    19,    20,    21,    22,    23,    24,    26,    27,
-      30,    45,    46,    47,    16,     4,     4,     9,     4,     4,
-       4,     4,     4,    13,     3,     4,     7,    48,    45,    13,
-       9,     9,     9,     9,     9,     9,    25,    50,     9,     3,
-      12,    31,    32,    33,    34,    35,    36,    37,    38,    39,
-      40,    41,    49,    45,     9,     9,     9,     9,     9,     9,
-       4,    49,    49,     9,    49,    49,    49,    49,    49,     9,
-       9,     9,     7,    52,     5,    51,    52,    52,    51,     9,
-       9,     9,     9,     9,    51,    51,    51,     9,    49,    49,
-      52,    51
+      30,    51,    52,    16,     4,     4,     9,     4,     4,     4,
+       4,     4,    13,     3,    55,     4,     7,    53,    51,     9,
+       9,     9,     9,     9,     9,    55,     9,     3,    12,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    44,    45,    46,    47,    54,     9,     9,     9,
+       9,     9,     9,     4,    54,    54,     9,     4,     4,     4,
+      54,    54,    54,    54,    54,     9,     9,    54,    54,     9,
+       7,    57,     5,    56,    57,    57,    56,     9,     9,     9,
+       9,     9,     9,     9,     9,    56,    56,    56,     9,     9,
+       9,     9,    54,    54,    56,    57,    56
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    42,    43,    44,    45,    45,    45,    46,    47,    47,
-      47,    47,    47,    47,    47,    47,    47,    47,    47,    47,
-      47,    47,    47,    47,    48,    49,    49,    49,    49,    49,
-      49,    49,    49,    49,    49,    49,    49,    49,    50,    50,
-      51,    51,    52,    52
+       0,    48,    49,    50,    51,    51,    52,    52,    52,    52,
+      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
+      52,    52,    52,    53,    54,    54,    54,    54,    54,    54,
+      54,    54,    54,    54,    54,    54,    54,    54,    54,    54,
+      54,    54,    54,    55,    55,    56,    56,    57,    57
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     0,     3,     1,     2,     1,     3,     6,
-       1,     1,     2,     6,     3,     5,     6,     5,     2,     2,
-       6,     3,     3,     2,     0,     2,     2,     6,     3,     2,
-       2,     2,     2,     2,     4,     4,     1,     0,     1,     0,
-       1,     0,     1,     0
+       0,     2,     2,     0,     2,     0,     3,     6,     1,     1,
+       2,     7,     3,     5,     6,     5,     2,     2,     6,     3,
+       3,     2,     1,     0,     2,     2,     6,     3,     1,     4,
+       4,     4,     2,     2,     2,     2,     2,     4,     4,     2,
+       2,     1,     0,     1,     0,     1,     0,     1,     0
 };
 
 
@@ -1356,17 +1366,11 @@ yyreduce:
 	smenu_idx.push_back(-1);
 	stack.push_back(new Hotspots());
 }
-#line 1360 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1370 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 7:
+  case 6:
 #line 87 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "implicit END"); }
-#line 1366 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 90 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		Hotspot *hot = new Hotspot(); 
 		hot->type = MakeMenu;
@@ -1382,11 +1386,11 @@ yyreduce:
 		smenu_idx.pop_back();
 		smenu_idx.push_back(idx);
 	}
-#line 1386 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1390 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 9:
-#line 105 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 7:
+#line 102 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {  
 		Hotspot *hot = new Hotspot(); 
 		hot->type = MakeHotspot;
@@ -1396,11 +1400,11 @@ yyreduce:
 		Hotspots *cur = stack.back();
 		cur->push_back(*hot); 
 	}
-#line 1400 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1404 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 114 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 8:
+#line 111 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		// This should always point to a hotspot
 		int idx = smenu_idx.back();
@@ -1416,43 +1420,43 @@ yyreduce:
 		stack.push_back(hot->smenu);
 		debugC(1, kHypnoDebugParser, "SUBMENU"); 
 	}
-#line 1420 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1424 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 129 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 9:
+#line 126 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		Escape *a = new Escape();
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
-#line 1431 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1435 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 12:
-#line 135 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 10:
+#line 132 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { debugC(1, kHypnoDebugParser, "TIME %d", (yyvsp[0].i)); }
-#line 1437 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1441 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 13:
-#line 136 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 11:
+#line 133 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		Background *a = new Background();
-		a->path = (yyvsp[-4].s);
-		a->origin = Common::Point((yyvsp[-3].i), (yyvsp[-2].i));
-		a->condition = (yyvsp[-1].s);
+		a->path = (yyvsp[-5].s);
+		a->origin = Common::Point((yyvsp[-4].i), (yyvsp[-3].i));
+		a->condition = (yyvsp[-2].s);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "BACK");
 	}
-#line 1452 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1456 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 14:
-#line 146 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 12:
+#line 143 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Global *a = new Global();
 		a->variable = (yyvsp[-1].s);
@@ -1462,11 +1466,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "GLOB"); 
 	}
-#line 1466 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1470 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 15:
-#line 155 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 13:
+#line 152 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Ambient *a = new Ambient();
 		a->path = (yyvsp[-3].s);
@@ -1476,11 +1480,11 @@ yyreduce:
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);			
 		debugC(1, kHypnoDebugParser, "AMBI %d %d", (yyvsp[-2].i), (yyvsp[-1].i)); }
-#line 1480 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1484 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 164 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 14:
+#line 161 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Play *a = new Play();
 		a->path = (yyvsp[-4].s);
@@ -1491,11 +1495,11 @@ yyreduce:
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "PLAY %s.", (yyvsp[-4].s)); }
-#line 1495 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1499 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 174 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 15:
+#line 171 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Overlay *a = new Overlay();
 		a->path = (yyvsp[-3].s);
@@ -1504,11 +1508,11 @@ yyreduce:
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
-#line 1508 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1512 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 18:
-#line 182 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 16:
+#line 179 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		Palette *a = new Palette();
 		a->path = (yyvsp[0].s); 
@@ -1517,11 +1521,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
 	}
-#line 1521 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1525 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 19:
-#line 190 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 17:
+#line 187 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Cutscene *a = new Cutscene();
 		a->path = (yyvsp[0].s);
@@ -1530,11 +1534,11 @@ yyreduce:
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "CUTS %s", (yyvsp[0].s)); 
 	}
-#line 1534 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1538 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 198 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 18:
+#line 195 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		WalN *a = new WalN();
 		a->path = (yyvsp[-4].s);
@@ -1545,11 +1549,11 @@ yyreduce:
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "WALN %s %d %d", (yyvsp[-4].s), (yyvsp[-3].i), (yyvsp[-2].i)); }
-#line 1549 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1553 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 21:
-#line 208 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 19:
+#line 205 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		Mice *a = new Mice();
 		a->path = (yyvsp[-1].s); 
@@ -1558,122 +1562,152 @@ yyreduce:
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
-#line 1562 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1566 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 22:
-#line 216 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 20:
+#line 213 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(talk_action);
 		talk_action = nullptr;
 		debugC(1, kHypnoDebugParser, "TALK"); }
-#line 1573 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1577 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 23:
-#line 222 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 21:
+#line 219 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		debugC(1, kHypnoDebugParser, "explicit END");
 		g_parsedHots = stack.back(); 
 		stack.pop_back();
 		smenu_idx.pop_back();
 	}
-#line 1584 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1588 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 230 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 22:
+#line 225 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debug("implicit END"); }
+#line 1594 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 228 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 	assert(talk_action == nullptr);
 	talk_action = new Talk();
 	talk_action->active = true; 
 }
-#line 1594 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1604 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 25:
-#line 236 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 24:
+#line 234 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     {
 		talk_action->active = false; 
 		debugC(1, kHypnoDebugParser, "inactive"); }
-#line 1602 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1612 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 25:
+#line 237 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "inactive"); }
+#line 1618 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 239 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "inactive"); }
-#line 1608 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
-    break;
-
-  case 27:
-#line 240 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+#line 238 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		talk_action->background = (yyvsp[-4].s);
 		talk_action->position = Common::Point((yyvsp[-3].i), (yyvsp[-2].i));
 		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
-#line 1617 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1627 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 27:
+#line 242 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "BOXX %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1633 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 244 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "BOXX %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1623 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 243 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "ESCAPE"); }
+#line 1639 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
+#line 244 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "SECOND %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1645 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 30:
 #line 245 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "INTRO %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1651 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 246 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1657 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 247 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "G";
 		talk_cmd.path = (yyvsp[-1].s)+2;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1634 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1668 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 30:
-#line 251 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 33:
+#line 253 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1640 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1674 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 31:
-#line 252 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 34:
+#line 254 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "F";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1651 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1685 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 32:
-#line 258 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 35:
+#line 260 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "A";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "|A%d", talk_cmd.num); }
-#line 1662 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1696 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 33:
-#line 264 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 36:
+#line 266 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "D";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1673 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1707 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 34:
-#line 270 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 37:
+#line 272 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "P";
@@ -1681,11 +1715,11 @@ yyreduce:
 		talk_cmd.position = Common::Point((yyvsp[-2].i), (yyvsp[-1].i));
 		talk_action->commands.push_back(talk_cmd);
 		debugC(1, kHypnoDebugParser, "%s %d %d", (yyvsp[-3].s), (yyvsp[-2].i), (yyvsp[-1].i)); }
-#line 1685 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1719 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 35:
-#line 277 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+  case 38:
+#line 279 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "I";
@@ -1693,41 +1727,70 @@ yyreduce:
 		talk_cmd.position = Common::Point((yyvsp[-2].i), (yyvsp[-1].i));
 		talk_action->commands.push_back(talk_cmd);		  
 		debugC(1, kHypnoDebugParser, "%s %d %d", (yyvsp[-3].s), (yyvsp[-2].i), (yyvsp[-1].i)); }
-#line 1697 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1731 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
-  case 36:
-#line 284 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "|E"); }
-#line 1703 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+  case 39:
+#line 286 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "S";
+		talk_cmd.variable = (yyvsp[-1].s)+2;
+		talk_action->commands.push_back(talk_cmd);
+		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
+#line 1742 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 292 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "flag: %s", (yyvsp[0].s)); }
-#line 1709 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "|L"); }
+#line 1748 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 293 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { (yyval.s) = scumm_strdup(""); }
-#line 1715 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
-    break;
-
-  case 42:
-#line 296 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "switch %s", (yyvsp[0].s)); }
-#line 1721 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    { debugC(1, kHypnoDebugParser, "|E"); }
+#line 1754 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 297 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "name: %s", (yyvsp[0].s)); }
+#line 1760 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 298 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { (yyval.s) = scumm_strdup(""); }
-#line 1727 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1766 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 301 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "flag: %s", (yyvsp[0].s)); }
+#line 1772 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 302 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { (yyval.s) = scumm_strdup(""); }
+#line 1778 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 305 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "switch %s", (yyvsp[0].s)); }
+#line 1784 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 306 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
+    { (yyval.s) = scumm_strdup(""); }
+#line 1790 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1731 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
+#line 1794 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

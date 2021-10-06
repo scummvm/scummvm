@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
@@ -31,6 +32,68 @@ namespace Hypno {
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void SpiderEngine::loadAssets() {
+	if (!isDemo())
+		loadAssetsFullGame();
+	else
+		loadAssetsDemo();
+}
+
+void SpiderEngine::loadAssetsFullGame() {
+
+	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
+	if (language == Common::EN_USA) {
+		if (!_installerArchive.open("DATA.Z"))
+			error("Failed to open DATA.Z");
+
+		SearchMan.add("DATA.Z", (Common::Archive *) &_installerArchive, 0, false);
+	}
+
+	Common::ArchiveMemberList files;
+	LibFile *missions = loadLib("", "spider/c_misc/missions.lib", true);
+	if (missions == nullptr || missions->listMembers(files) == 0)
+		error("Failed to load any file from missions.lib");
+
+	parseScene("", "mainmenu.mi_");
+	_levels["mainmenu.mi_"].scene.prefix = "spider";
+
+	parseScene("", "options.mi_");
+	_levels["options.mi_"].scene.prefix = "spider";
+
+	parseScene("", "levels.mi_");
+	_levels["levels.mi_"].scene.prefix = "spider";
+	_levels["levels.mi_"].scene.levelIfWin = "mv0t.mi_";
+
+	parseScene("", "combmenu.mi_");
+	_levels["combmenu.mi_"].scene.prefix = "spider";
+
+	parseScene("", "mv0t.mi_");
+	_levels["mv0t.mi_"].scene.prefix = "spider";
+
+	// start level
+	Level start;
+	start.trans.level = "mainmenu.mi_";
+	start.trans.intros.push_back("spider/cine/dcine1.smk");
+	start.trans.intros.push_back("spider/cine/dcine2.smk");
+	_levels["<start>"] = start;
+
+	ChangeLevel *cl = new ChangeLevel();
+	cl->level = "levels.mi_";
+	_levels["mainmenu.mi_"].scene.hots[1].actions.push_back(cl);
+	
+	cl = new ChangeLevel();
+	cl->level = "options.mi_";
+	_levels["mainmenu.mi_"].scene.hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel();
+	cl->level = "<quit>";
+	_levels["mainmenu.mi_"].scene.hots[5].actions.push_back(cl);
+
+	cl = new ChangeLevel();
+	cl->level = "combmenu.mi_";
+	_levels["options.mi_"].scene.hots[1].actions.push_back(cl);
+}
+
+void SpiderEngine::loadAssetsDemo() {
 
 	if (!_installerArchive.open("DATA.Z"))
 		error("Failed to open DATA.Z");
