@@ -50,11 +50,19 @@ static const ADGameDescription gameDescriptions[] = {
 	 GUIO1(GUIO_NOMIDI)},
 	{"sinister-six", // US release
 	 _s("Missing game code"),
-	 AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
-				"SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
+	 AD_ENTRY2s("DATA.Z", "a1f71005a45e6ee454bb0bf3868dff54", 8766307,
+				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 	 Common::EN_USA,
 	 Common::kPlatformDOS,
-	 ADGF_UNSUPPORTED,
+	 ADGF_UNSTABLE | ADGF_UNSUPPORTED,
+	 GUIO1(GUIO_NOMIDI)},
+	{"sinister-six", // ES release
+	 _s("Missing game code"),
+	 AD_ENTRY2s("SPIDER.EXE", "dbd912d6f6724c6d44775fc19cfa8ca0", 483871,
+	 			"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
+	 Common::ES_ESP,
+	 Common::kPlatformDOS,
+	 ADGF_UNSTABLE | ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NOMIDI)},
 	{"wetlands", // Wetlands Demo Disc (November 1995)
 	 "Demo",
@@ -119,13 +127,15 @@ static const ADGameDescription gameDescriptions[] = {
 
 static const char *const directoryGlobs[] = {
 	"boyz",
+	"spider",
+	"wetlands",
 	"sixdemo",
 	"demo",
 	"factory",
-	"wetlands",
 	"movie",
 	"c_misc",
-	0};
+	NULL
+};
 
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:

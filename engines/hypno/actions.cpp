@@ -85,6 +85,8 @@ void HypnoEngine::runGlobal(Global *a) {
 		_sceneState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
 		_sceneState[a->variable] = 0;
+	else if (a->command == "TOGGLE")
+		_sceneState[a->variable] = !_sceneState[a->variable];
 	else
 		error("Invalid command %s", a->command.c_str());
 }

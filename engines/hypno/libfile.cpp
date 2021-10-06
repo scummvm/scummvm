@@ -38,40 +38,50 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 		warning("Failed to open %s", filename.c_str());
 		return false;
 	}
-	byte b;
-	uint32 size;
-	FileEntry f;
-	f.data.push_back(0);
-	do {
-		f.name = "";
-		f.data.clear();
-		for (uint32 i = 0; i < 12; i++) {
-			b = libfile.readByte();
-			if (b != 0x96 && b != 0x0)
-				f.name += tolower(char(b));
-		}
-		debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
-		uint32 start = libfile.readUint32LE();
-		size = libfile.readUint32LE();
-		libfile.readUint32LE(); // some field?
+	uint32 offset = 0;
+	while (offset < libfile.size()) {
+		byte b;
+		uint32 size = 0;
+		uint32 start = 0;
+		FileEntry f;
+		libfile.seek(offset);
+		while (true) {
+			f.name = "";
+			f.data.clear();
+			for (uint32 i = 0; i < 12; i++) {
+				b = libfile.readByte();
+				if (b != 0x96 && b != 0x0)
+					f.name += tolower(char(b));
+			}
 
-		uint32 pos = libfile.pos();
-		libfile.seek(start);
+			if (!Common::isAlpha(*f.name.c_str()))
+				break;
 
-		for (uint32 i = 0; i < size; i++) {
-			b = libfile.readByte();
-			if (encrypted && b != '\n')
-				b = b ^ 0xfe;
-			f.data.push_back(b);
-		}
-		f.data.push_back(0x0);
-		//debug("f.data: %s", f.data.data());
-		debugC(1, kHypnoDebugParser, "size: %d", f.data.size());
-		libfile.seek(pos);
-		if (size > 0)
+			debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
+			start = libfile.readUint32LE();
+			size = libfile.readUint32LE();
+			if (size == 0)
+				error("Trying to load an empty file");
+			libfile.readUint32LE(); // some field?
+
+			uint32 pos = libfile.pos();
+			libfile.seek(start);
+
+			for (uint32 i = 0; i < size; i++) {
+				b = libfile.readByte();
+				if (encrypted && b != '\n')
+					b = b ^ 0xfe;
+				f.data.push_back(b);
+				//debugN("%c", b);
+			}
+			f.data.push_back(0x0);
+			debugC(1, kHypnoDebugParser, "start: %d, size: %d", start, f.data.size());
+			libfile.seek(pos);
 			_fileEntries.push_back(f);
 
-	} while (size > 0);
+		};
+		offset = start + size;
+	}
 	return true;
 }
 

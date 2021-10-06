@@ -45,7 +45,7 @@ enum HotspotType {
 
 class Action {
 public:
-	virtual ~Action(){}; // needed to make Action polymorphic
+	virtual ~Action() {} // needed to make Action polymorphic
 };
 
 typedef Common::Array<Action *> Actions;
@@ -149,6 +149,7 @@ public:
 class TalkCommand {
 public:
 	Common::String command;
+	Common::String variable;
 	Filename path;
 	uint32 num;
 	Common::Point position;

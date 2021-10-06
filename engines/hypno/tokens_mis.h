@@ -84,14 +84,20 @@ extern int HYPNO_MIS_debug;
     INACTOK = 286,
     FDTOK = 287,
     BOXXTOK = 288,
-    PG = 289,
-    PA = 290,
-    PD = 291,
-    PH = 292,
-    PF = 293,
-    PE = 294,
-    PP = 295,
-    PI = 296
+    ESCAPETOK = 289,
+    SECONDTOK = 290,
+    INTROTOK = 291,
+    DEFAULTTOK = 292,
+    PG = 293,
+    PA = 294,
+    PD = 295,
+    PH = 296,
+    PF = 297,
+    PE = 298,
+    PP = 299,
+    PI = 300,
+    PL = 301,
+    PS = 302
   };
 #endif
 
@@ -105,7 +111,7 @@ union HYPNO_MIS_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 109 "engines/hypno/tokens_mis.h" /* yacc.c:1909  */
+#line 115 "engines/hypno/tokens_mis.h" /* yacc.c:1909  */
 };
 
 typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;
