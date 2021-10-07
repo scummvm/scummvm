@@ -694,7 +694,6 @@ begin_credits("Credits");
 				add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
 				add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
 				add_person("John Willis", "DJWillis", "");
-				add_person("Matan Bareket", "mataniko", "Site maintainer");
 			end_persons();
 		end_section();
 
@@ -722,6 +721,7 @@ begin_credits("Credits");
 				add_person("Jeremy Newman", "laxdragon", "Former webmaster");
 				add_person("Lionel Ulmer", "bbrox", "Port: X11");
 				add_person("Won Star", "wonst719", "Former GP32 porter");
+        add_person("Matan Bareket", "mataniko", "Website, Infrastructure, UI/UX");
 			end_persons();
 		end_section();
 	end_section();

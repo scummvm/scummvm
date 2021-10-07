@@ -1673,8 +1673,6 @@ Website (maintenance)
      - Forum, IRC channel, Screen Shots and Mailing list maintainer
    * - John Willis
      -
-   * - Matan Bareket
-     - Site maintainer
 
 Website (content)
 *****************
@@ -1720,6 +1718,8 @@ Retired Team Members
      - Port: X11
    * - Won Star
      - Former GP32 porter
+   * - Matan Bareket
+     - Website, Infrastructure, UI/UX
 
 Other contributions
 ===================
