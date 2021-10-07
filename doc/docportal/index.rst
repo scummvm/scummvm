@@ -170,6 +170,8 @@ We also have guides on how to get ScummVM running on a wide range of other platf
 
       :doc:`other_platforms/atari`
 
+      :doc:`other_platforms/morphos`
+
       :doc:`other_platforms/risc_os`
 
 
