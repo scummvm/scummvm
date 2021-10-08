@@ -1702,8 +1702,6 @@ void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Ve
 }
 
 void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize) {
-	const void *pixelBegin = _engine->_frontVideoBuffer.getBasePtr(0, 0);
-	const void *pixelEnd = _engine->_frontVideoBuffer.getBasePtr(_engine->_frontVideoBuffer.w - 1, _engine->_frontVideoBuffer.h - 1);
 	if (top < 0 || top >= _engine->_frontVideoBuffer.h) {
 		return;
 	}
@@ -1718,29 +1716,29 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImag
 
 	int32 yHeight = bottom - top;
 	while (yHeight > -1) {
+		int32 u;
+		int32 v;
 		const int16 left = *lholomap_polytab_1_1++;
 		const int16 right = *lholomap_polytab_2_1++;
-		const uint16 x_1_2 = *lholomap_polytab_1_2++;
-		const uint16 x_1_3 = *lholomap_polytab_1_3++;
-		const uint16 x_2_2 = *lholomap_polytab_2_2++;
-		const uint16 x_2_3 = *lholomap_polytab_2_3++;
+		const uint32 u0 = u = *lholomap_polytab_1_2++;
+		const uint32 v0 = v = *lholomap_polytab_1_3++;
+		const uint32 u1 = *lholomap_polytab_2_2++;
+		const uint32 v1 = *lholomap_polytab_2_3++;
 		const int16 width = right - left;
 		if (width > 0) {
 			uint8 *pixelBufPtr = screenBufPtr + left;
-			const int32 iWidth = (int32)width;
-			uint32 uVar1 = (uint32)x_1_3;
-			uint32 uVar3 = (uint32)x_1_2;
+
+			int32 ustep = ((int32)u1 - (int32)u0 + 1) / width;
+			int32 vstep = ((int32)v1 - (int32)v0 + 1) / width;
+
 			for (int16 i = 0; i < width; ++i) {
-				const uint32 holomapImageOffset = (uint32)((int32)uVar3 >> 8 & 0xffU) | (uVar1 & 0xff00);
-				assert(holomapImageOffset < holomapImageSize);
-				if (pixelBufPtr < pixelBegin || pixelBufPtr > pixelEnd) {
-					++pixelBufPtr;
-				} else {
-					//debug("holomapImageOffset: %i", holomapImageOffset);
-					*pixelBufPtr++ = holomapImage[holomapImageOffset];
-				}
-				uVar1 += (int32)(((uint32)x_2_3 - (uint32)x_1_3) + 1) / iWidth;
-				uVar3 += (int32)(((uint32)x_2_2 - (uint32)x_1_2) + 1) / iWidth;
+				// u0 & 0xFF00 is the x position on the image * 256
+				// v0 & 0xFF00 is the y position on the image * 256
+				const uint32 idx = ((u >> 8) & 0xff) | (v & 0xff00);
+				assert(idx < holomapImageSize);
+				*pixelBufPtr++ = holomapImage[idx];
+				u += ustep;
+				v += vstep;
 			}
 		}
 		screenBufPtr += _engine->_frontVideoBuffer.pitch;
