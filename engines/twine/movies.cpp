@@ -48,10 +48,10 @@ enum FlaFrameOpcode {
 	kSampleBalance = 4,
 	kStopSample = 5,
 	kDeltaFrame = 6,
-	kFlaUnknown7 = 7,
+	kBlackFrame = 7,
 	kKeyFrame = 8,
-	kFlaUnknown9 = 9,
-	kFlaUnknown16SameAs9 = 16
+	kCopy = 9,
+	kCopy2 = 16
 };
 
 /** FLA movie sample structure */
@@ -193,7 +193,7 @@ void Movies::processFrame() {
 		case kFade: {
 			int16 innerOpcpde = stream.readSint16LE();
 			switch (innerOpcpde) {
-			case 1:
+			case 1: // fla flute
 				_engine->_music->playMidiMusic(26);
 				break;
 			case 2:
@@ -225,8 +225,12 @@ void Movies::processFrame() {
 			break;
 		}
 		case kStopSample: {
-			const uint16 sampleNum = stream.readUint16LE();
-			_engine->_sound->stopSample(sampleNum);
+			const int16 sampleNum = stream.readSint16LE();
+			if (sampleNum == -1) {
+				_engine->_sound->stopSamples();
+			} else {
+				_engine->_sound->stopSample(sampleNum);
+			}
 			break;
 		}
 		case kDeltaFrame: {
@@ -240,13 +244,13 @@ void Movies::processFrame() {
 			drawKeyFrame(stream, FLASCREEN_WIDTH, FLASCREEN_HEIGHT);
 			break;
 		}
-		case kFlaUnknown7: {
+		case kBlackFrame: {
 			const Common::Rect rect(0, 0, 79, 199);
 			_engine->_interface->drawFilledRect(rect, 0);
 			break;
 		}
-		case kFlaUnknown9:
-		case kFlaUnknown16SameAs9: {
+		case kCopy:
+		case kCopy2: {
 			const Common::Rect rect(0, 0, 80, 200);
 			byte *ptr = (byte *)_engine->_frontVideoBuffer.getPixels();
 			for (int y = rect.top; y < rect.bottom; ++y) {
@@ -264,6 +268,7 @@ void Movies::processFrame() {
 			/* int16 balance = */ stream.readSint16LE();
 			/* uint8 volumeLeft = */ stream.readByte();
 			/* uint8 volumeRight = */ stream.readByte();
+			// TODO: change balance
 			break;
 		}
 		default: {
