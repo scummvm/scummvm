@@ -146,23 +146,28 @@ static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
 	return (int)*(const int16 *)a1 - (int)*(const int16 *)a2;
 }
 
-// verified with disassembly
 void Holomap::prepareHolomapSurface() {
 	Common::MemoryReadStream stream(_engine->_resources->_holomapSurfacePtr, _engine->_resources->_holomapSurfaceSize);
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
-	for (int angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
-		int rotation = 0;
-		for (int i = 0; i <= ANGLE_11_25; ++i, rotation += ANGLE_11_25) {
+	for (int alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
+		const int64 pos = stream.pos();
+		for (int beta = 0; beta < ANGLE_360; beta += ANGLE_11_25) {
 			const int32 rotX = stream.readByte();
-			const IVec3& rotVec = _engine->_renderer->getHolomapRotation(rotX, angle, rotation);
+			const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, alpha, beta);
 			_holomapSurface[holomapSurfaceArrayIdx].x = rotVec.x;
 			_holomapSurface[holomapSurfaceArrayIdx].y = rotVec.y;
 			_holomapSurface[holomapSurfaceArrayIdx].z = rotVec.z;
 			++holomapSurfaceArrayIdx;
 		}
+		stream.seek(pos);
+		const int32 rotX = stream.readByte();
+		const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, alpha, 0);
+		_holomapSurface[holomapSurfaceArrayIdx].x = rotVec.x;
+		_holomapSurface[holomapSurfaceArrayIdx].y = rotVec.y;
+		_holomapSurface[holomapSurfaceArrayIdx].z = rotVec.z;
+		++holomapSurfaceArrayIdx;
 	}
-	assert(stream.eos());
 }
 
 // verified with disassembly
