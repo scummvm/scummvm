@@ -256,6 +256,9 @@ void BYOnline::processLine(Common::String line) {
 		} else if (command == "game_session") {
 			long long int session = root["session"]->asIntegerNumber();
 			handleGameSession((int)session);
+		} else if (command == "game_relay") {
+			int relay = root["relay"]->asIntegerNumber();
+			handleGameRelay(relay);
 		}
 	}
 }
@@ -447,7 +450,6 @@ void BYOnline::login(int32 *args) {
 }
 
 void BYOnline::loginCallback(Common::JSONValue *response) {
-	printf("loginCallback\n");
 	Common::JSONObject info = response->asObject();
 
 	if (info.contains("token")) {
@@ -473,8 +475,6 @@ void BYOnline::loginCallback(Common::JSONValue *response) {
 }
 
 void BYOnline::loginErrorCallback(Networking::ErrorResponse error) {
-	printf("loginErrorCallback\n");
-
 	writeStringArray(109, "An internal error has occured when trying to log in.  Please try again later.");
 	_vm->writeVar(108, -99);
 }
@@ -917,6 +917,24 @@ void BYOnline::sendSession(int sessionId) {
 void BYOnline::handleGameSession(int sessionId) {
 	_inGame = true;
 	_vm->_directPlay->joinSession(_userId, sessionId);
+}
+
+void BYOnline::sendRelay(int relayId) {
+	if (!connected()) {
+		warning("BYOnline: Tried to send relay without connecting to server first!");
+		return;
+	}
+
+	Common::JSONObject sendRelayRequest;
+	sendRelayRequest.setVal("cmd", new Common::JSONValue("send_relay"));
+	sendRelayRequest.setVal("user", new Common::JSONValue((long long int)_playerId));
+	sendRelayRequest.setVal("relay", new Common::JSONValue((long long int)relayId));
+	send(sendRelayRequest);
+}
+
+void BYOnline::handleGameRelay(int relayId) {
+	_inGame = true;
+	_vm->_directPlay->joinRelay(relayId);
 }
 
 void BYOnline::handleHostGameResp(int resp) {

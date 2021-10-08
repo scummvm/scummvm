@@ -91,6 +91,7 @@ public:
 
 	// Used by DirectPlay
 	void sendSession(int sessionId);
+	void sendRelay(int relayId);
 
 	void connectedToSession();
 
@@ -165,6 +166,7 @@ private:
 	void handleHostGameResp(int resp);
 
 	void handleGameSession(int sessionId);
+	void handleGameRelay(int relayId);
 
 	void gameStarted(int hoster, int player, int playerNameArray);
 	void gameFinished();

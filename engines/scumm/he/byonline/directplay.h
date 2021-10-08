@@ -56,6 +56,8 @@ public:
 	void hostSession(int userId);
 	void joinSession(int userId, int sessionId);
 
+	void joinRelay(int tunnelId);
+
 private:
 	ScummEngine_v90he *_vm;
 
@@ -74,6 +76,11 @@ private:
 
 	void handlePeerJoin(Common::String host, int port);
 	void handleJoinResp(Common::String host, int port, int hostPort);
+
+	void startRelay();
+	void handleRelayResp(int tunnelId);
+
+	void handleRelayJoin();
 
 	void sendRemoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
 	void handleRemoteStartScript(int fromId, Common::JSONArray params);
@@ -105,6 +112,8 @@ protected:
 
 	// HACK
 	char _roomCounter;
+
+	char _connectTimeout;
 
 };
 

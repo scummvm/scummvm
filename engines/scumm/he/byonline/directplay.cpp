@@ -45,6 +45,7 @@ DirectPlay::DirectPlay(ScummEngine_v90he *s) {
 	_playerPeer = nullptr;
 
 	_roomCounter = -1;
+	_connectTimeout = -1;
 }
 
 DirectPlay::~DirectPlay() {
@@ -64,10 +65,18 @@ void DirectPlay::startOfFrame() {
 		return;
 	}
 
+	if (_connectTimeout > -1) {
+		if (_hosting && ++_connectTimeout == 50) {
+			_connectTimeout = -1;
+			// Disconnect and connect to session server again and relay traffic.
+			printf("DirectPlay: Couldn't connect to peer.  Starting tunnel relay\n");
+			startRelay();
+		};
+	}
+
 	// HACK: See comment in handleRemoteStartScript
 	if (_roomCounter > -1) {
-		_roomCounter += 1;
-		if (_roomCounter == 5) {
+		if (++_roomCounter == 5) {
 			_vm->startScene(6, 0, 0);
 			_roomCounter = -1;
 		}
@@ -83,6 +92,7 @@ void DirectPlay::startOfFrame() {
 				if (event.peer->address.port == _peerPort) {
 					printf("DirectPlay: Connected to peer!\n");
 					_playerPeer = event.peer;
+					_connectTimeout = -1;
 					// Let the game know that we've successfully connected.
 					if (_hosting) {
 						_vm->writeVar(111, 99);
@@ -223,6 +233,12 @@ void DirectPlay::handleSessionPacket(Common::String data) {
 			int hostPort = root["host_port"]->asIntegerNumber();
 
 			handleJoinResp(host, port, hostPort);
+		} else if (command == "relay_resp") {
+			int tunnelId = root["tunnel"]->asIntegerNumber();
+
+			handleRelayResp(tunnelId);
+		} else if (command == "relay_join") {
+			handleRelayJoin();
 		}
 	}
 }
@@ -388,13 +404,19 @@ bool DirectPlay::disconnectSessionServer() {
 
 void DirectPlay::hostSession(int userId) {
 	_userId = userId;
+	_hosting = true;
 
 	if (connectToSessionServer()) {
 		Common::JSONObject hostSessionRequest;
 		hostSessionRequest.setVal("cmd", new Common::JSONValue("host_session"));
 		send(_sessionPeer, hostSessionRequest);
+
+		// Start connection countdown
+		_connectTimeout = 0;
+
 	} else {
 		// Failed
+		_hosting = false;
 		_vm->writeVar(111, 1);
 	}
 }
@@ -423,8 +445,6 @@ void DirectPlay::handlePeerJoin(Common::String host, int port) {
 	_peerPort = port;
 
 	disconnectSessionServer();
-
-	_hosting = true;
 
 	ENetAddress address;
 	// TODO: We shouldn't accept connections from any IP, figure out how to get
@@ -467,6 +487,7 @@ void DirectPlay::handlePeerJoin(Common::String host, int port) {
 	if (enet_host_service(_host, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
 		printf("DirectPlay: Peer connected!\n");
 
+		_connectTimeout = -1;
 		_playerPeer = event.peer;
 		_vm->writeVar(111, 99);
 	}
@@ -506,6 +527,56 @@ void DirectPlay::handleJoinResp(Common::String host, int port, int hostPort) {
 		return;
 	}
 	// The connection procedure continues at startOfFrame
+}
+
+void DirectPlay::startRelay() {
+	if (_playerPeer) {
+		disconnect();
+	}
+
+	if (connectToSessionServer()) {
+		Common::JSONObject hostRelayRequest;
+		hostRelayRequest.setVal("cmd", new Common::JSONValue("host_relay"));
+		send(_sessionPeer, hostRelayRequest);
+	} else {
+		// Failed
+	}
+}
+
+void DirectPlay::handleRelayResp(int tunnelId) {
+	debugC(DEBUG_DIRECTPLAY, "DirectPlay: Sending relay %d...", tunnelId);
+	_vm->_byonline->sendRelay(tunnelId);
+}
+
+void DirectPlay::joinRelay(int tunnelId) {
+	debugC(DEBUG_DIRECTPLAY, "DirectPlay: Sending relay %d sent by host...", tunnelId);
+
+	if (_playerPeer) {
+		disconnect();
+	}
+
+	if (connectToSessionServer()) {
+		Common::JSONObject joinRelayRequest;
+		joinRelayRequest.setVal("cmd", new Common::JSONValue("join_relay"));
+		joinRelayRequest.setVal("tunnel", new Common::JSONValue((long long int)tunnelId));
+		send(_sessionPeer, joinRelayRequest);
+	} else {
+		// Failed
+	}
+}
+
+void DirectPlay::handleRelayJoin() {
+	printf("DirectPlay: Connected to relay!\n");
+	// Our session server is now acting like a peer connection, change objects
+	_playerPeer = _sessionPeer;
+	_sessionPeer = nullptr;
+
+	// Let the game know that we've successfully connected.
+	if (_hosting) {
+		_vm->writeVar(111, 99);
+	} else {
+		_vm->_byonline->connectedToSession();
+	}
 }
 
 void DirectPlay::sendRemoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args) {

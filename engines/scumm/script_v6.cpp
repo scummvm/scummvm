@@ -546,13 +546,12 @@ void ScummEngine_v6::o6_eq() {
 	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == 10002 || vm.slot[_currentScript].number == 2050) &&
 		a == 2 && b == 2) {
 		push(0);
-	}
 
 	// BYOnline WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
 	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
 	// "no special rules" and "3 innings".  This is a script bug which assumed to be fixed in later post-retail updates, but
 	// since we don't have access to any of those, this workaround will have to do.
-	else if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 419 && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
+	} else if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 419 && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
 		switch (a) {
 		case 9:
 			// Mountain Aire (No special rules)
