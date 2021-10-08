@@ -80,6 +80,9 @@ public:
 	bool isQDShape();
 	Graphics::Surface *getQDMatte();
 	void createQDMatte();
+	MacShape *getShape();
+	uint32 getForeColor();
+	uint32 getBackColor();
 
 	Frame *_frame;
 	Score *_score;
