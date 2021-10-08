@@ -201,6 +201,9 @@ public:
 	FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~FilmLoopCastMember();
 
+	virtual bool isModified() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+
 	void loadFilmLoopData(Common::SeekableReadStreamEndian &stream);
 
 	bool _enableSound;

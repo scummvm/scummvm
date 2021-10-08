@@ -566,6 +566,50 @@ FilmLoopCastMember::~FilmLoopCastMember() {
 
 }
 
+bool FilmLoopCastMember::isModified() {
+	if (_frames.size())
+		return true;
+
+	if (_bbox.width() && _bbox.height())
+		return true;
+
+	return false;
+}
+
+Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+
+	if (channel->_filmLoopFrame >= _frames.size()) {
+		warning("Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
+		return widget;
+	}
+
+	// get the list of sprite IDs for this frame
+	Common::Array<int> spriteIds;
+	for (Common::HashMap<int, Director::Sprite>::iterator iter = _frames[channel->_filmLoopFrame].sprites.begin(); iter != _frames[channel->_filmLoopFrame].sprites.end(); ++iter) {
+		spriteIds.push_back(iter->_key);
+	}
+	Common::sort(spriteIds.begin(), spriteIds.end());
+
+	// render the sprites in order onto the widget surface
+	for (Common::Array<int>::iterator iter = spriteIds.begin(); iter != spriteIds.end(); ++iter) {
+		Sprite src = _frames[channel->_filmLoopFrame].sprites[*iter];
+		if (src._castId.member == 0)
+			continue;
+		// translate sprite relative to the global bounding box
+		int16 x = (src._startPoint.x - _bbox.left) * bbox.width() / _bbox.width() + bbox.left;
+		int16 y = (src._startPoint.y - _bbox.top) * bbox.height() / _bbox.height() + bbox.top;
+		int16 width = src._width * bbox.width() / _bbox.width();
+		int16 height = src._height * bbox.height() / _bbox.height();
+		Common::Rect srcBbox(x, y, x + width, y + height);
+		//Graphics::MacWidget *srcWidget = src._cast->createWidget(srcBbox, channel, spriteType);
+		//widget->getSurface()->blitFrom(*srcWidget->getSurface(), Common::Point(x, y));
+		//delete srcWidget;
+	}
+
+	return widget;
+}
+
 void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stream) {
 	_bbox = Common::Rect();
 	_frames.clear();
@@ -605,6 +649,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			int channelOffset = order % channelSize;
 
 			Sprite sprite(nullptr);
+			sprite._movie = g_director->getCurrentMovie();
 			if (newFrame.sprites.contains(channel)) {
 				sprite = newFrame.sprites.getVal(channel);
 			}
@@ -642,7 +687,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 					fieldPosition += 2;
 					break;
 				case kSpritePositionCastId:
-					sprite._castId = CastMemberID(stream.readUint16(), 0);
+					sprite.setCast(CastMemberID(stream.readUint16(), 0));
 					fieldPosition += 2;
 					break;
 				case kSpritePositionY:
