@@ -1660,7 +1660,7 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 	}
 }
 
-void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &angles1, const Vertex &angles2, int32 &top, int32 &bottom) {
+void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom) {
 	const int32 yBottom = vertex1.y;
 	const int32 yTop = vertex2.y;
 	if (yBottom == yTop) {
@@ -1676,7 +1676,7 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 			bottom = yTop;
 		}
 		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_1_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)angles2.x, yBottom, (uint32)(uint16)angles1.x, _holomap_polytab_1_2);
+		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_1_2);
 		polygonTabPtr = _holomap_polytab_1_3;
 	} else {
 		if (bottom < yBottom) {
@@ -1686,18 +1686,18 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 			top = yTop;
 		}
 		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_2_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)angles2.x, yBottom, (uint32)(uint16)angles1.x, _holomap_polytab_2_2);
+		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_2_2);
 		polygonTabPtr = _holomap_polytab_2_3;
 	}
-	computeHolomapPolygon(yTop, (uint32)(uint16)angles2.y, yBottom, (uint32)(uint16)angles1.y, polygonTabPtr);
+	computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.y, yBottom, (uint32)(uint16)texCoord1.y, polygonTabPtr);
 }
 
-void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3], uint8 *holomapImage, uint32 holomapImageSize) {
+void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
 	int32 top = SCENE_SIZE_MAX;
 	int32 bottom = SCENE_SIZE_MIN;
-	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], top, bottom);
 	renderHolomapPolygons(top, bottom, holomapImage, holomapImageSize);
 }
 
