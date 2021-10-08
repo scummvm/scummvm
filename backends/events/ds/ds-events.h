@@ -30,17 +30,20 @@
  */
 class DSEventSource : public Common::EventSource {
 public:
-	DSEventSource() : _firstPoll(true) {}
+	DSEventSource() : _firstPoll(true), _handleTouch(true) {}
 
 	/**
 	 * Gets and processes events.
 	 */
 	virtual bool pollEvent(Common::Event &event);
 
+	virtual void handleTouch(bool enabled) { _handleTouch = enabled; }
+
 protected:
 	Common::Queue<Common::Event> _eventQueue;
 	Common::Point _lastTouch;
 	bool _firstPoll;
+	bool _handleTouch;
 
 	void addEventsToQueue();
 	void addJoyButtonEvent(u32 keysPressed, u32 keysReleased, u32 ndsKey, uint8 svmButton);

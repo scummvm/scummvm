@@ -39,36 +39,6 @@ namespace Sci {
  *
  ******************************************************************************************************************/
 
-
-// solves the issue described at #9646:
-// "
-// When in room 58, and type "run", the hero will fall and his HP will decrease by 1 point. This can be repeated, but will never cause the hero to die.
-// When typing "run" the ego will be assigned with the script egoRuns.
-// egoRuns::changeState calls proc0_36 in script 0 which is deducing damage from the hero's HP.
-// This procedure returns TRUE if the hero is still alive, but the return value is never observed in egoRuns.
-// "
-// we solve that by calling the hook before executing the opcode following proc0_36 call
-// and check the return value. if the hero should die, we kill him
-
-static const byte qfg1_die_after_running_on_ice[] = {
-	// if shouldn't die, jump to end
-	0x2f, 22,					   // bt +22
-
-	// should die - done according to the code at main.sc, proc0_29:
-	// 			(proc0_1 0 59 80 {Death from Overwork} 82 800 1 4)
-	0x39, 0x08,                    // pushi 8		-- num of parameters
-	0x39, 0x00,                    // pushi 0
-	0x39, 59,					   // pushi 59
-	0x39, 0,                       // pushi 0		-- modified, not using {Death from Overwork}
-	0x36,                          // push
-	0x39, 82,					   // pushi 82
-	0x38, 32,  3,				   // push 800
-	0x39, 1,                       // pushi 1
-	0x39, 4,                       // pushi 4
-	0x47, 0x00, 0x01, 0x10         // calle proc0_1
-};
-
-
 // SCI0 Hebrew translations need to modify and relocate the "Enter input:" prompt
 // currently SQ3 is the only Hebrew SCI0 game, but this patch (or similar) should work for the future games as well
 
@@ -133,7 +103,6 @@ static const byte sci0_hebrew_input_prompt[] = {
 
 static const GeneralHookEntry allGamesHooks[] = {
 	// GID, script, lang,        PC.offset, objName,  selector,  externID, opcode,  hook array
-	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState", -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}},
 	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",            -1 , "pushi", HOOKARRAY(sci0_hebrew_input_prompt)}}
 };
 

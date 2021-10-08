@@ -26,11 +26,11 @@
 @implementation iOS7ScummVMViewController
 
 - (BOOL)prefersStatusBarHidden {
-    return YES;
+	return YES;
 }
 
 - (BOOL)prefersHomeIndicatorAutoHidden {
-    return YES;
+	return YES;
 }
 
 @end

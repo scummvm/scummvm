@@ -34,11 +34,14 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
 #include "backends/fs/devoptab/devoptab-fs-factory.h"
-#include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/maxmod/maxmod-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
+#include "backends/keymapper/keymap.h"
 
 #include <time.h>
 
@@ -50,7 +53,7 @@ OSystem_DS::OSystem_DS()
 	_paletteDirty(false), _cursorDirty(false),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)),
-	_callbackTimer(10), _currentTimeMillis(0)
+	_callbackTimer(10), _currentTimeMillis(0), _subScreenActive(true)
 {
 	_instance = this;
 
@@ -71,8 +74,6 @@ void timerTickHandler() {
 }
 
 void OSystem_DS::initBackend() {
-	initGraphics();
-
 	defaultExceptionHandler();
 
 	ConfMan.setInt("autosave_period", 0);
@@ -87,6 +88,8 @@ void OSystem_DS::initBackend() {
 
 	_mixerManager = new MaxModMixerManager(11025, 32768);
 	_mixerManager->init();
+
+	initGraphics();
 
 	BaseBackend::initBackend();
 }
@@ -172,6 +175,21 @@ Common::HardwareInputSet *OSystem_DS::getHardwareInputSet() {
 	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(ndsJoystickButtons, ndsJoystickAxes));
 
 	return inputSet;
+}
+
+Common::KeymapArray OSystem_DS::getGlobalKeymaps() {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "ds", "DS");
+
+	Action *act;
+
+	act = new Action("VIRT", _("Display keyboard"));
+	act->setCustomBackendActionEvent(kDSEventVirtualKeyboard);
+	act->addDefaultInputMapping("JOY_BACK");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
 }
 
 Common::String OSystem_DS::getSystemLanguage() const {

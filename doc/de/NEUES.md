@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.3.0 (DD.MM.YYYY)
+#### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
  Neue Spiele:
    - Unterstützung für Grim Fandango hinzugefügt.
@@ -231,6 +231,11 @@ Programmcodes finden Sie auf Englisch unter:
 
  Big-Endian-Portierung:
    - Abstürze oder Darstellungsfehler in Blazing Dragons, Duckman und Full Pipe behoben.
+
+ iOS-Portierung:
+   - Die Pfeiltasten auf einer externen Tastatur funktionieren nun auch unter iOS 15 korrekt.
+   - Der Bildschirm wird nun korrekt gedreht, wenn ScumMVM inaktiv ist.
+   - Unterstützung für den umgekehrten Portrait-Modus hinzugefügt.
 
  macOS-Portierung:
    - Unterstützung für den Dunkelmodus hinzugefügt.

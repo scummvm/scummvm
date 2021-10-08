@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-18 09:29+0000\n"
+"POT-Creation-Date: 2021-10-01 10:38+0000\n"
 "PO-Revision-Date: 2021-09-18 10:02+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -273,7 +273,7 @@ msgid "Engine"
 msgstr "Движок"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1782 gui/options.cpp:1942
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:422
 msgid "Graphics"
 msgstr "Графика"
 
@@ -1036,7 +1036,7 @@ msgstr "Режим растягивания:"
 msgid "Scaler:"
 msgstr "Увеличение:"
 
-#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:409
+#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -2798,6 +2798,7 @@ msgid "Global Main Menu"
 msgstr "Глобальное меню"
 
 #: backends/events/default/default-events.cpp:334
+#: backends/platform/ds/osystem_ds.cpp:187
 msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
@@ -2932,20 +2933,20 @@ msgstr "Сохранён скриншот '%s'"
 msgid "Could not save screenshot"
 msgstr "Не удалось сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:415
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:426 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Переключение на весь экран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:433 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Переключение перехвата мыши"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:438
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2958,31 +2959,31 @@ msgstr "Переключение перехвата мыши"
 msgid "Save screenshot"
 msgstr "Сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:440
+#: backends/graphics/sdl/sdl-graphics.cpp:444
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:451
 msgid "Toggle linear filtered scaling"
 msgstr "Использовать линейное сглаживание при масштабировании"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Cycle through stretch modes"
 msgstr "Переключение режима растягивания"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:460
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Increase the scale factor"
 msgstr "Увеличить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:466
+#: backends/graphics/sdl/sdl-graphics.cpp:470
 msgid "Decrease the scale factor"
 msgstr "Уменьшить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:472
+#: backends/graphics/sdl/sdl-graphics.cpp:476
 msgid "Switch to the next scaler"
 msgstr "Переключить на предыдущий фильтр масштабирования"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:477
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Switch to the previous scaler"
 msgstr "Переключить на следующий фильтр масштабирования"
 
@@ -3060,7 +3061,7 @@ msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:52
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Up"
@@ -3068,7 +3069,7 @@ msgstr "Стрелка вверх"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/ds/osystem_ds.cpp:151 backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/ds/osystem_ds.cpp:154 backends/platform/sdl/ps3/ps3.cpp:53
 #: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Down"
@@ -3076,7 +3077,7 @@ msgstr "Стрелка вниз"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/ds/osystem_ds.cpp:152 backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/ds/osystem_ds.cpp:155 backends/platform/sdl/ps3/ps3.cpp:54
 #: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Left"
@@ -3084,7 +3085,7 @@ msgstr "Стрелка влево"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
-#: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/ds/osystem_ds.cpp:156 backends/platform/sdl/ps3/ps3.cpp:55
 #: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:52
 msgid "D-pad Right"
@@ -3363,37 +3364,37 @@ msgid "Both"
 msgstr "Оба"
 
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/ds/osystem_ds.cpp:142
+#: backends/platform/ds/osystem_ds.cpp:145
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
 msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/ds/osystem_ds.cpp:143
+#: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
 msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/ds/osystem_ds.cpp:144
+#: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
 msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/ds/osystem_ds.cpp:145
+#: backends/platform/ds/osystem_ds.cpp:148
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
 msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/ds/osystem_ds.cpp:146 backends/platform/sdl/ps3/ps3.cpp:45
+#: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:45
 #: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Select"
 msgstr "Выбор"
 
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/ds/osystem_ds.cpp:147 backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/psp2/psp2.cpp:49
 msgid "Start"
 msgstr "Пуск"
@@ -3409,14 +3410,14 @@ msgid "ZR"
 msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:148
+#: backends/platform/ds/osystem_ds.cpp:151
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
 msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:149
+#: backends/platform/ds/osystem_ds.cpp:152
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
@@ -3431,7 +3432,7 @@ msgid "C-Pad Y"
 msgstr "C-пад Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
-#: backends/platform/ds/osystem_ds.cpp:162
+#: backends/platform/ds/osystem_ds.cpp:165
 msgid "Touch"
 msgstr "Касание"
 
@@ -3510,38 +3511,38 @@ msgstr "Режим увеличения выключен"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Показать кнопку SAF для управления доступом к памяти"
 
-#: backends/platform/ds/ds-graphics.cpp:219
+#: backends/platform/ds/ds-graphics.cpp:257
 msgid "Unscaled"
 msgstr "Без масштабирования"
 
-#: backends/platform/ds/ds-graphics.cpp:220
+#: backends/platform/ds/ds-graphics.cpp:258
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Аппаратное масштабирование (быстро, но качество ниже)"
 
-#: backends/platform/ds/ds-graphics.cpp:221
+#: backends/platform/ds/ds-graphics.cpp:259
 msgid "Software scale (good quality, but slower)"
 msgstr "Программное масштабирование (высокое качество, но медленнее)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
-#: backends/platform/ios7/ios7_osys_events.cpp:455
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Режим мыши \"нажать-и-тянуть\" включён."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:329
-#: backends/platform/ios7/ios7_osys_events.cpp:457
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Режим мыши \"нажать-и-тянуть\" выключен."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:340
-#: backends/platform/ios7/ios7_osys_events.cpp:476
+#: backends/platform/ios7/ios7_osys_events.cpp:479
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпада включён."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:342
-#: backends/platform/ios7/ios7_osys_events.cpp:478
+#: backends/platform/ios7/ios7_osys_events.cpp:481
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."

@@ -1170,13 +1170,13 @@ void LogicManager::useInventoryWithScreen() {
 
 	case kItemRatOnSkate:
 		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mousePos.x <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mousePos.y <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
+			_vm->_animMgr->_animTab[aBKG1D].toggleAnimArea(1, false);
 			_vm->_dialogMgr->playDialog(dF1D1);
 			updateInventory = false;
 			_vm->removeIcon(kItemRatOnSkate);
 			_vm->read3D("1d2.3d"); // after skate
 			_vm->setObjectVisible(oDONNA1D, false);
 			_vm->_room[_vm->_curRoom].setExtra(true);
-			_vm->_animMgr->_animTab[aBKG1D].toggleAnimArea(1, false);
 			printSentence = false;
 		}
 		break;
@@ -1351,10 +1351,10 @@ void LogicManager::useInventoryWithScreen() {
 
 	case kItemMicrowaveGun:
 		if (_vm->_useWith[WITH] == oDINOSAURO2E) {
+			_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(2, false);
 			_vm->_dialogMgr->playDialog(dF2E2);
 			_vm->setObjectVisible(oDINOSAURO2E, false);
 			_vm->setObjectAnim(oCATWALKA2E, a2E2PRIMAPALLONTANANDO);
-			_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(2, false);
 			printSentence = false;
 		}
 		break;
@@ -1904,9 +1904,9 @@ bool LogicManager::useScreenWithScreen() {
 	switch (_vm->_useWith[USED]) {
 	case oRAMPINO21:
 		if (_vm->_useWith[WITH] == oTUBO21) {
+			_vm->_animMgr->_animTab[aBKG21].toggleAnimArea(1, true);
 			_vm->_dialogMgr->playDialog(dF211);
 			_vm->_logicMgr->setupAltRoom(kRoom21, true);
-			_vm->_animMgr->_animTab[aBKG21].toggleAnimArea(1, true);
 			_vm->setObjectVisible(oRAMPINO21, false);
 			_vm->setObjectVisible(oTUBO21, false);
 			_vm->setObjectVisible(oCHAIN21, true);
@@ -2609,6 +2609,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oPANELM2G:
 		if (!_vm->_obj[oPANELM2G].isFlagExtra()) {
+			_vm->_animMgr->_animTab[aBKG2G].toggleAnimArea(1, false);
 			_vm->_dialogMgr->playDialog(dF2G1);
 			_vm->setObjectVisible(oCOPERCHIO2G, false);
 			_vm->setObjectVisible(oSERBATOIOC2G, false);
@@ -2617,7 +2618,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->setObjectVisible(oSERBATOIOA2G, true);
 			_vm->setObjectVisible(oPANNELLOE2G, true);
 			_vm->_obj[oPANELM2G].setFlagExtra(true);
-			_vm->_animMgr->_animTab[aBKG2G].toggleAnimArea(1, false);
 			retVal = false;
 		} else
 			retVal = true;
@@ -2653,10 +2653,10 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oCATWALKA2E:
 		if (!_vm->_obj[oCATWALKA2E].isFlagExtra()) {
+			_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(2, true);
 			_vm->_dialogMgr->playDialog(dF2E1);
 			_vm->setObjectVisible(oDINOSAURO2E, true);
 			_vm->_obj[oCATWALKA2E].setFlagExtra(true);
-			_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(2, true);
 			retVal = false;
 		} else if (_vm->_obj[curObj]._anim) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);

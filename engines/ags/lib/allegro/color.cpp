@@ -187,12 +187,12 @@ void get_color(int idx, RGB *p) {
 	*p = _G(current_palette)[idx];
 }
 
-void get_palette(PALETTE p) {
-	*p = *_G(current_palette);
-}
-
 void get_palette_range(PALETTE p, int from, int to) {
 	Common::copy(&_G(current_palette)[from], &_G(current_palette)[to + 1], &p[from]);
+}
+
+void get_palette(PALETTE p) {
+	get_palette_range(p, 0, PAL_SIZE - 1);
 }
 
 void fade_interpolate(AL_CONST PALETTE source, AL_CONST PALETTE dest, PALETTE output, int pos, int from, int to) {

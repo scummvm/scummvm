@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	blitters_arm.o \
 	ds-graphics.o \
 	dsmain.o \
+	keyboard.o \
 	osystem_ds.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.

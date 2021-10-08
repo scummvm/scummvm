@@ -146,11 +146,23 @@
 //	[self reloadInputViews];
 }
 
+- (void) setWantsPriority: (UIKeyCommand*) keyCommand {
+	// In iOS 15 the UIKeyCommand has a new property wantsPriorityOverSystemBehavior that is needed to
+	// receive some keys (such as the arrow keys).
+	if ([keyCommand respondsToSelector:@selector(setWantsPriorityOverSystemBehavior:)]) {
+		[keyCommand setValue:[NSNumber numberWithBool:YES] forKey:@"wantsPriorityOverSystemBehavior"];
+	}
+}
+
 - (NSArray *)keyCommands {
 	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
+	[self setWantsPriority: upArrow];
 	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
+	[self setWantsPriority: downArrow];
 	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
+	[self setWantsPriority: leftArrow];
 	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
+	[self setWantsPriority: rightArrow];
 	UIKeyCommand *escapeKey = [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags: 0 action: @selector(escapeKey:)];
 	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, escapeKey, nil];
 }

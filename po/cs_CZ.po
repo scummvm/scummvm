@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-09-18 09:29+0000\n"
+"POT-Creation-Date: 2021-10-01 10:38+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -274,7 +274,7 @@ msgid "Engine"
 msgstr "Jádro"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1782 gui/options.cpp:1942
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:422
 msgid "Graphics"
 msgstr "Obraz"
 
@@ -1038,7 +1038,7 @@ msgstr "Režim protažení:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:409
+#: gui/options.cpp:1440 backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Fullscreen mode"
 msgstr "Režim celé obrazovky"
 
@@ -2782,6 +2782,7 @@ msgid "Global Main Menu"
 msgstr "Globální menu"
 
 #: backends/events/default/default-events.cpp:334
+#: backends/platform/ds/osystem_ds.cpp:187
 msgid "Display keyboard"
 msgstr "Zobrazit klávesnici"
 
@@ -2923,20 +2924,20 @@ msgstr "Uložit snímek obrazovky"
 msgid "Could not save screenshot"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:415
 msgid "Windowed mode"
 msgstr "Režim do okna"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:426 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Přepnout celou obrazovku"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:433 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Povolit zachycování myši"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:438
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2949,32 +2950,32 @@ msgstr "Povolit zachycování myši"
 msgid "Save screenshot"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:440
+#: backends/graphics/sdl/sdl-graphics.cpp:444
 msgid "Toggle aspect ratio correction"
 msgstr "Přepnout korekci poměru stran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:451
 msgid "Toggle linear filtered scaling"
 msgstr "Použít lineární škálování"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Cycle through stretch modes"
 msgstr "Přepínat mezi režimy roztažení"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:460
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Increase the scale factor"
 msgstr "Zvětšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:466
+#: backends/graphics/sdl/sdl-graphics.cpp:470
 msgid "Decrease the scale factor"
 msgstr "Zmenšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:472
+#: backends/graphics/sdl/sdl-graphics.cpp:476
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Přepnout na škálování 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:477
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 #, fuzzy
 #| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
@@ -3067,7 +3068,7 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:52
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 #, fuzzy
@@ -3076,7 +3077,7 @@ msgstr "Přesunout se Doleva"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/ds/osystem_ds.cpp:151 backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/ds/osystem_ds.cpp:154 backends/platform/sdl/ps3/ps3.cpp:53
 #: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 #, fuzzy
@@ -3085,7 +3086,7 @@ msgstr "Dolů"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/ds/osystem_ds.cpp:152 backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/ds/osystem_ds.cpp:155 backends/platform/sdl/ps3/ps3.cpp:54
 #: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 #, fuzzy
@@ -3094,7 +3095,7 @@ msgstr "Přesunout se Doleva"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
-#: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/ds/osystem_ds.cpp:156 backends/platform/sdl/ps3/ps3.cpp:55
 #: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:52
 #, fuzzy
@@ -3405,38 +3406,38 @@ msgid "Both"
 msgstr "Oba"
 
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/ds/osystem_ds.cpp:142
+#: backends/platform/ds/osystem_ds.cpp:145
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/ds/osystem_ds.cpp:143
+#: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/ds/osystem_ds.cpp:144
+#: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/ds/osystem_ds.cpp:145
+#: backends/platform/ds/osystem_ds.cpp:148
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/ds/osystem_ds.cpp:146 backends/platform/sdl/ps3/ps3.cpp:45
+#: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:45
 #: backends/platform/sdl/psp2/psp2.cpp:48
 #, fuzzy
 msgid "Select"
 msgstr "Činnost/Vybrat"
 
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/ds/osystem_ds.cpp:147 backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #, fuzzy
 msgid "Start"
@@ -3453,14 +3454,14 @@ msgid "ZR"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:148
+#: backends/platform/ds/osystem_ds.cpp:151
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:149
+#: backends/platform/ds/osystem_ds.cpp:152
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
@@ -3475,7 +3476,7 @@ msgid "C-Pad Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:72
-#: backends/platform/ds/osystem_ds.cpp:162
+#: backends/platform/ds/osystem_ds.cpp:165
 msgid "Touch"
 msgstr ""
 
@@ -3552,38 +3553,38 @@ msgstr ""
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:219
+#: backends/platform/ds/ds-graphics.cpp:257
 msgid "Unscaled"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:220
+#: backends/platform/ds/ds-graphics.cpp:258
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardwarová změna velikosti (rychlé, ale nízká kvalita)"
 
-#: backends/platform/ds/ds-graphics.cpp:221
+#: backends/platform/ds/ds-graphics.cpp:259
 msgid "Software scale (good quality, but slower)"
 msgstr "Softwarová změna velikosti (dobrá kvalita, ale pomalejší)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
-#: backends/platform/ios7/ios7_osys_events.cpp:455
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Režim přetáhnutí myši zapnut."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:329
-#: backends/platform/ios7/ios7_osys_events.cpp:457
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Režim přetáhnutí myši vypnut."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:340
-#: backends/platform/ios7/ios7_osys_events.cpp:476
+#: backends/platform/ios7/ios7_osys_events.cpp:479
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Touchpad režim zapnut."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:342
-#: backends/platform/ios7/ios7_osys_events.cpp:478
+#: backends/platform/ios7/ios7_osys_events.cpp:481
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Touchpad režim vypnut."

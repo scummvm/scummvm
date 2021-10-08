@@ -363,6 +363,9 @@ void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 	case 1:
 		newOrientation = kScreenOrientationPortrait;
 		break;
+	case 2:
+		newOrientation = kScreenOrientationFlippedPortrait;
+		break;
 	case 3:
 		newOrientation = kScreenOrientationLandscape;
 		break;
