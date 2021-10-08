@@ -60,7 +60,7 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[channelIdx], targetVolume);
 }
 
-void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
+void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volumeLeft, int32 volumeRight) {
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
@@ -158,7 +158,11 @@ bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize
 	if (loop == -1) {
 		loop = 0;
 	}
-	_engine->_system->getMixer()->playStream(soundType, &samplesPlaying[channelIdx], Audio::makeLoopingAudioStream(audioStream, loop), index);
+	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(audioStream, loop);
+	Audio::SoundHandle *handle = &samplesPlaying[channelIdx];
+	const byte volume = Audio::Mixer::kMaxChannelVolume;
+	// TODO: implement balance
+	_engine->_system->getMixer()->playStream(soundType, handle, loopStream, index, volume);
 	return true;
 }
 

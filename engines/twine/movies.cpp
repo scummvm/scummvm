@@ -221,7 +221,7 @@ void Movies::processFrame() {
 			sample.balance = stream.readByte();
 			sample.volumeLeft = stream.readByte();
 			sample.volumeRight = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.volumeLeft, sample.volumeRight);
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.balance, sample.volumeLeft, sample.volumeRight);
 			break;
 		}
 		case kStopSample: {
