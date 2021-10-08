@@ -187,6 +187,88 @@ Graphics::Surface *Sprite::getQDMatte() {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
+MacShape *Sprite::getShape() {
+	if (!isQDShape() && (_cast && _cast->_type != kCastShape))
+		return nullptr;
+
+	MacShape *shape = new MacShape();
+
+	shape->ink = _ink;
+	shape->spriteType = _spriteType;
+	shape->foreColor = _foreColor;
+	shape->backColor = _backColor;
+	shape->lineSize = _thickness & 0x3;
+	shape->pattern = getPattern();
+
+	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
+		if (!_cast) {
+			warning("Sprite::getShape(): kCastMemberSprite has no cast defined");
+			delete shape;
+			return nullptr;
+		}
+
+		ShapeCastMember *sc = (ShapeCastMember *)_cast;
+		switch (sc->_shapeType) {
+		case kShapeRectangle:
+			shape->spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
+			break;
+		case kShapeRoundRect:
+			shape->spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
+			break;
+		case kShapeOval:
+			shape->spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
+			break;
+		case kShapeLine:
+			shape->spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
+			break;
+		default:
+			break;
+		}
+
+		if (g_director->getVersion() >= 400) {
+			shape->foreColor = sc->getForeColor();
+			shape->backColor = sc->getBackColor();
+			shape->lineSize = sc->_lineThickness;
+			shape->ink = sc->_ink;
+		}
+	}
+
+	// for outlined shapes, line thickness of 1 means invisible.
+	shape->lineSize -= 1;
+
+	return shape;
+}
+
+uint32 Sprite::getBackColor() {
+	if (!_cast)
+		return _backColor;
+
+	switch (_cast->_type) {
+	case kCastText:
+	case kCastButton:
+	case kCastShape: {
+		return _cast->getBackColor();
+	}
+	default:
+		return _backColor;
+	}
+}
+
+uint32 Sprite::getForeColor() {
+	if (!_cast)
+		return _foreColor;
+
+	switch (_cast->_type) {
+	case kCastText:
+	case kCastButton:
+	case kCastShape: {
+		return _cast->getForeColor();
+	}
+	default:
+		return _foreColor;
+	}
+}
+
 void Sprite::updateEditable() {
 	if (!_cast)
 		return;

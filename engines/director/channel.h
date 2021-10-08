@@ -97,18 +97,18 @@ public:
 	int _width;
 	int _height;
 
-	// Using in digital movie sprites
+	// Used in digital movie sprites
 	double _movieRate;
 	int _movieTime;
 	int _startTime;
 	int _stopTime;
 
+	// Used in film loops
+	uint _filmLoopFrame;
+
 private:
 	Graphics::ManagedSurface *getSurface();
-	MacShape *getShape();
 	Common::Point getPosition();
-	uint32 getForeColor();
-	uint32 getBackColor();
 
 	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
 };
