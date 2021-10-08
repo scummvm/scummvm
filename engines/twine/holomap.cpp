@@ -558,21 +558,21 @@ void Holomap::processHolomap() {
 			}
 		}
 
-		if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
+		if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 			xRot += ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
-		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
+		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 			xRot -= ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
 		}
 
-		if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
+		if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 			yRot += ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
-		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
+		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 			yRot -= ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
