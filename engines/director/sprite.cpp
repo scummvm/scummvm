@@ -90,8 +90,8 @@ Sprite::Sprite(const Sprite &sprite) {
 	_ink = sprite._ink;
 	_trails = sprite._trails;
 
-	_matte = sprite._matte;
 	_cast = sprite._cast;
+	_matte = nullptr;
 
 	_thickness = sprite._thickness;
 	_startPoint = sprite._startPoint;
@@ -111,7 +111,8 @@ Sprite::Sprite(const Sprite &sprite) {
 }
 
 Sprite::~Sprite() {
-	delete _matte;
+	if (_matte)
+		delete _matte;
 }
 
 bool Sprite::isQDShape() {
