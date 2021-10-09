@@ -62,18 +62,18 @@ static const float zDistanceTrajectory = 5300.0f;
 
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
 
-int32 Holomap::distance(int32 distance) const {
+int32 Holomap::distance(float distance) const {
 	const float w = (float)_engine->width() / (float)ORIGINAL_WIDTH;
 	const float h = (float)_engine->height() / (float)ORIGINAL_HEIGHT;
 	const float f = MIN<float>(w, h);
-	return (int32)((float)distance / f);
+	return (int32)(distance / f);
 }
 
-int32 Holomap::scale(int32 val) const {
+int32 Holomap::scale(float val) const {
 	const float w = (float)_engine->width() / (float)ORIGINAL_WIDTH;
 	const float h = (float)_engine->height() / (float)ORIGINAL_HEIGHT;
 	const float f = MIN<float>(w, h);
-	return (int32)((float)val * f);
+	return (int32)(val * f);
 }
 
 bool Holomap::loadLocations() {

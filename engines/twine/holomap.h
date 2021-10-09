@@ -102,8 +102,8 @@ private:
 	/**
 	 * Controls the size/zoom of the holomap planet
 	 */
-	int32 distance(int32 distance) const;
-	int32 scale(int32 val) const;
+	int32 distance(float distance) const;
+	int32 scale(float val) const;
 
 public:
 	Holomap(TwinEEngine *engine);
