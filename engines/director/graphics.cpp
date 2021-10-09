@@ -435,7 +435,7 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
 				if (!mask || (msk && !(*msk++))) {
 					(g_director->getInkDrawPixel())(destRect.left + j, destRect.top + i,
-											preprocessColor(*((int *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+											preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				}
 			}
 		}
