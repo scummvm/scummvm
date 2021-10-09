@@ -30,11 +30,11 @@
 #include "twine/twine.h"
 
 #define POLYGONTYPE_FLAT 0
+#define POLYGONTYPE_TELE 1
 // horizontal color adjustment with changing pattern over the polygon
-#define POLYGONTYPE_COPPER 1
-#define POLYGONTYPE_BOPPER 2
-#define POLYGONTYPE_MARBLE 3
-#define POLYGONTYPE_TELE 4
+#define POLYGONTYPE_COPPER 2
+#define POLYGONTYPE_BOPPER 3
+#define POLYGONTYPE_MARBLE 4
 #define POLYGONTYPE_TRAS 5
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
