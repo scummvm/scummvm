@@ -151,7 +151,8 @@ void Holomap::prepareHolomapSurface() {
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
-		const int64 pos = stream.pos();
+		const int32 rot = stream.readByte();
+		stream.seek(-1, SEEK_CUR);
 		for (int beta = 0; beta < ANGLE_360; beta += ANGLE_11_25) {
 			const int32 rotX = stream.readByte();
 			const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, alpha, beta);
@@ -160,9 +161,7 @@ void Holomap::prepareHolomapSurface() {
 			_holomapSurface[holomapSurfaceArrayIdx].z = rotVec.z;
 			++holomapSurfaceArrayIdx;
 		}
-		stream.seek(pos);
-		const int32 rotX = stream.readByte();
-		const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, alpha, 0);
+		const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rot, alpha, 0);
 		_holomapSurface[holomapSurfaceArrayIdx].x = rotVec.x;
 		_holomapSurface[holomapSurfaceArrayIdx].y = rotVec.y;
 		_holomapSurface[holomapSurfaceArrayIdx].z = rotVec.z;
