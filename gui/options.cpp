@@ -351,6 +351,7 @@ void OptionsDialog::build() {
 		} else {
 			_stretchPopUpDesc->setVisible(false);
 			_stretchPopUp->setVisible(false);
+			_stretchPopUp->setEnabled(false);
 		}
 
 		_scalerPopUp->setSelected(0);
@@ -381,7 +382,9 @@ void OptionsDialog::build() {
 		} else {
 			_scalerPopUpDesc->setVisible(false);
 			_scalerPopUp->setVisible(false);
+			_scalerPopUp->setEnabled(false);
 			_scaleFactorPopUp->setVisible(false);
+			_scaleFactorPopUp->setEnabled(false);
 		}
 
 		// Fullscreen setting
@@ -393,10 +396,12 @@ void OptionsDialog::build() {
 		}
 
 		// Filtering setting
-		if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+		if (g_system->hasFeature(OSystem::kFeatureFilteringMode)) {
 			_filteringCheckbox->setState(ConfMan.getBool("filtering", _domain));
-		else
-			_filteringCheckbox->setVisible(false);
+		} else {
+			_filteringCheckbox->setState(false);
+			_filteringCheckbox->setEnabled(false);
+		}
 
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
@@ -1071,17 +1076,34 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-	_stretchPopUpDesc->setEnabled(enabled);
-	_stretchPopUp->setEnabled(enabled);
-	_scalerPopUpDesc->setEnabled(enabled);
-	_scalerPopUp->setEnabled(enabled);
-	_scaleFactorPopUp->setEnabled(enabled);
 	_vsyncCheckbox->setEnabled(enabled);
-	_filteringCheckbox->setEnabled(enabled);
 	_rendererTypePopUpDesc->setEnabled(enabled);
 	_rendererTypePopUp->setEnabled(enabled);
 	_antiAliasPopUpDesc->setEnabled(enabled);
 	_antiAliasPopUp->setEnabled(enabled);
+
+	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+		_stretchPopUpDesc->setEnabled(enabled);
+		_stretchPopUp->setEnabled(enabled);
+	} else {
+		_stretchPopUpDesc->setEnabled(false);
+		_stretchPopUp->setEnabled(false);
+	}
+
+	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+		_scalerPopUpDesc->setEnabled(enabled);
+		_scalerPopUp->setEnabled(enabled);
+		_scaleFactorPopUp->setEnabled(enabled);
+	} else {
+		_scalerPopUpDesc->setEnabled(false);
+		_scalerPopUp->setEnabled(false);
+		_scaleFactorPopUp->setEnabled(false);
+	}
+
+	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+		_filteringCheckbox->setEnabled(enabled);
+	else
+		_filteringCheckbox->setEnabled(false);
 
 	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode))
 		_fullscreenCheckbox->setEnabled(enabled);
@@ -1786,6 +1808,7 @@ void OptionsDialog::reflowLayout() {
 }
 
 void OptionsDialog::setupGraphicsTab() {
+	setGraphicSettingsState(_enableGraphicSettings);
 	if (!_fullscreenCheckbox)
 		return;
 	_gfxPopUpDesc->setVisible(true);
