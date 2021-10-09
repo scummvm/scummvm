@@ -1093,9 +1093,18 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 
 	const int32 vsize = vbottom - vtop + 1;
 
+	// TODO: POLYGONTYPE_GOURAUD and POLYGONTYPE_DITHER are replaced with a simpler polygon fill function that
+	// is not yet reversed.
 	switch (polygon.renderType) {
 	case POLYGONTYPE_FLAT:
 		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_TELE:
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
+		} else {
+			renderPolygonsTele(vtop, vsize, polygon.colorIndex);
+		}
 		break;
 	case POLYGONTYPE_COPPER:
 		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
@@ -1105,9 +1114,6 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
 		// TODO: fix this render method:
 		// renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
-		break;
-	case POLYGONTYPE_TELE:
-		renderPolygonsTele(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TRAS:
 		renderPolygonsTras(vtop, vsize, polygon.colorIndex);
@@ -1119,7 +1125,11 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		renderPolygonsGouraud(vtop, vsize);
 		break;
 	case POLYGONTYPE_DITHER:
-		renderPolygonsDither(vtop, vsize);
+		if (_engine->_cfgfile.PolygonDetails < 2) {
+			renderPolygonsGouraud(vtop, vsize);
+		} else {
+			renderPolygonsDither(vtop, vsize);
+		}
 		break;
 	case POLYGONTYPE_MARBLE:
 		renderPolygonsMarble(vtop, vsize, polygon.colorIndex);
