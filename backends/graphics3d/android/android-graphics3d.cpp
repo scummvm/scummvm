@@ -76,6 +76,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_texture = _mouse_texture_palette;
 
 	initSurface();
+	JNI::setTouch3DMode(true);
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -94,6 +95,7 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	delete _mouse_texture_palette;
 	delete _mouse_texture_rgb;
 
+	JNI::setTouch3DMode(false);
 }
 
 static void logExtensions() {
@@ -150,7 +152,7 @@ void AndroidGraphics3dManager::initSurface() {
 	clearScreen(kClearUpdate, 2);
 	updateEventScale();
 
-	_touchControls.init(JNI::egl_surface_width, JNI::egl_surface_height);
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
 void AndroidGraphics3dManager::deinitSurface() {
@@ -212,7 +214,7 @@ void AndroidGraphics3dManager::updateScreen() {
 	_game_texture->drawTextureRect();
 	if (!_show_overlay) {
 		glEnable(GL_BLEND);
-		_touchControls.draw();
+		dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 	}
 
 	int cs = _mouse_targetscale;
@@ -316,6 +318,8 @@ bool AndroidGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 void AndroidGraphics3dManager::showOverlay() {
 	ENTER();
 
+	JNI::setTouch3DMode(false);
+
 	_show_overlay = true;
 	_force_redraw = true;
 
@@ -330,6 +334,8 @@ void AndroidGraphics3dManager::hideOverlay() {
 	ENTER();
 
 	_show_overlay = false;
+
+	JNI::setTouch3DMode(true);
 
 	updateEventScale();
 

@@ -54,6 +54,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);
+	// Update the 3D touch controls
+	final public native void updateTouch(int action, int ptr, int x, int y);
 
 	final public native String getNativeVersionInfo();
 
@@ -68,6 +70,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
+	abstract protected void setTouch3DMode(boolean touch3DMode);
 	abstract protected void showSAFRevokePermsControl(boolean enable);
 	abstract protected String[] getSysArchives();
 	abstract protected String[] getAllStorageLocations();

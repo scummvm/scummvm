@@ -235,7 +235,6 @@ MODULE_OBJS += \
 	graphics/android/android-graphics.o \
 	graphics3d/android/android-graphics3d.o \
 	graphics3d/android/texture.o \
-	graphics3d/android/touchcontrols.o \
 	mutex/pthread/pthread-mutex.o
 endif
 

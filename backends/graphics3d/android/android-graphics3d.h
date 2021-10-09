@@ -29,7 +29,6 @@
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/android/android-graphics.h"
 #include "backends/graphics3d/android/texture.h"
-#include "backends/graphics3d/android/touchcontrols.h"
 
 class AndroidGraphics3dManager : public GraphicsManager, public AndroidCommonGraphics {
 public:
@@ -175,8 +174,6 @@ private:
 	int _mouse_targetscale;
 	bool _show_mouse;
 	bool _use_mouse_palette;
-
-	TouchControls _touchControls;
 };
 
 #endif

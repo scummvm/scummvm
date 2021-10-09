@@ -700,6 +700,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected void setTouch3DMode(final boolean touch3DMode) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					_events.setTouch3DMode(touch3DMode);
+				}
+			});
+		}
+
+		@Override
 		protected void showSAFRevokePermsControl(final boolean enable) {
 			runOnUiThread(new Runnable() {
 				public void run() {
