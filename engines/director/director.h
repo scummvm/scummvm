@@ -126,6 +126,8 @@ struct MacShape {
 	Graphics::MacPlotData *pd;
 };
 
+const int SCALE_THRESHOLD = 0x100;
+
 // An extension of MacPlotData for interfacing with inks and patterns without
 // needing extra surfaces.
 struct DirectorPlotData {
@@ -148,7 +150,12 @@ struct DirectorPlotData {
 	uint32 foreColor;
 	bool applyColor;
 
-	void setApplyColor(); // graphics.cpp
+	// graphics.cpp
+	void setApplyColor();
+	uint32 preprocessColor(uint32 src);
+	void inkBlitShape(Common::Rect &srcRect);
+	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
+	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s, InkType i, int a, uint32 b, uint32 f) : _wm(w), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		srf = nullptr;

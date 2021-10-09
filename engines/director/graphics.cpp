@@ -300,4 +300,184 @@ void DirectorPlotData::setApplyColor() {
 	}
 }
 
+uint32 DirectorPlotData::preprocessColor(uint32 src) {
+	// HACK: Right now this method is just used for adjusting the colourization on text
+	// sprites, as it would be costly to colourize the chunks on the fly each
+	// time a section needs drawing. It's ugly but mostly works.
+	if (sprite == kTextSprite) {
+		switch(ink) {
+		case kInkTypeMask:
+			src = (src == backColor ? foreColor : 0xff);
+			break;
+		case kInkTypeReverse:
+			src = (src == foreColor ? 0 : colorWhite);
+			break;
+		case kInkTypeNotReverse:
+			src = (src == backColor ? colorWhite : 0);
+			break;
+			// looks like this part is wrong, maybe it's very same as reverse?
+			// check warlock/DATA/WARLOCKSHIP/ENG/ABOUT to see more detail.
+//		case kInkTypeGhost:
+//			src = (src == foreColor ? backColor : colorWhite);
+//			break;
+		case kInkTypeNotGhost:
+			src = (src == backColor ? colorWhite : backColor);
+			break;
+		case kInkTypeNotCopy:
+			src = (src == foreColor ? backColor : foreColor);
+			break;
+		case kInkTypeNotTrans:
+			src = (src == foreColor ? backColor : colorWhite);
+			break;
+		default:
+			break;
+		}
+	}
+
+	return src;
+}
+
+void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
+	if (!ms)
+		return;
+
+	// Preprocess shape colours
+	switch (ink) {
+	case kInkTypeNotTrans:
+	case kInkTypeNotReverse:
+	case kInkTypeNotGhost:
+		return;
+	case kInkTypeReverse:
+		ms->foreColor = 0;
+		ms->backColor = 0;
+		break;
+	default:
+		break;
+	}
+
+	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
+	fillAreaRect.moveTo(srcRect.left, srcRect.top);
+	Graphics::MacPlotData plotFill(dst, nullptr, &g_director->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
+
+	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
+	strokeRect.moveTo(srcRect.left, srcRect.top);
+	Graphics::MacPlotData plotStroke(dst, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
+
+	switch (ms->spriteType) {
+	case kRectangleSprite:
+		ms->pd = &plotFill;
+		Graphics::drawFilledRect(fillAreaRect, ms->foreColor, g_director->getInkDrawPixel(), this);
+		// fall through
+	case kOutlinedRectangleSprite:
+		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
+		if (ms->lineSize <= 0)
+			break;
+		ms->pd = &plotStroke;
+		Graphics::drawRect(strokeRect, ms->foreColor, g_director->getInkDrawPixel(), this);
+		break;
+	case kRoundedRectangleSprite:
+		ms->pd = &plotFill;
+		Graphics::drawRoundRect(fillAreaRect, 12, ms->foreColor, true, g_director->getInkDrawPixel(), this);
+		// fall through
+	case kOutlinedRoundedRectangleSprite:
+		if (ms->lineSize <= 0)
+			break;
+		ms->pd = &plotStroke;
+		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, g_director->getInkDrawPixel(), this);
+		break;
+	case kOvalSprite:
+		ms->pd = &plotFill;
+		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, ms->foreColor, true, g_director->getInkDrawPixel(), this);
+		// fall through
+	case kOutlinedOvalSprite:
+		if (ms->lineSize <= 0)
+			break;
+		ms->pd = &plotStroke;
+		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, g_director->getInkDrawPixel(), this);
+		break;
+	case kLineTopBottomSprite:
+		ms->pd = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, g_director->getInkDrawPixel(), this);
+		break;
+	case kLineBottomTopSprite:
+		ms->pd = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, ms->foreColor, g_director->getInkDrawPixel(), this);
+		break;
+	default:
+		warning("DirectorPlotData::inkBlitShape: Expected shape type but got type %d", ms->spriteType);
+	}
+}
+
+void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {
+	if (!srf)
+		return;
+
+	// TODO: Determine why colourization causes problems in Warlock
+	if (sprite == kTextSprite)
+		applyColor = false;
+
+	srcPoint.y = abs(srcRect.top - destRect.top);
+	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
+		if (_wm->_pixelformat.bytesPerPixel == 1) {
+			srcPoint.x = abs(srcRect.left - destRect.left);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+
+			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
+				if (!mask || (msk && !(*msk++))) {
+					(g_director->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+											preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				}
+			}
+		} else {
+			srcPoint.x = abs(srcRect.left - destRect.left);
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+
+			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
+				if (!mask || (msk && !(*msk++))) {
+					(g_director->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+											preprocessColor(*((int *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				}
+			}
+		}
+	}
+}
+
+void DirectorPlotData::inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {
+	if (!srf)
+		return;
+
+	// TODO: Determine why colourization causes problems in Warlock
+	if (sprite == kTextSprite)
+		applyColor = false;
+
+	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
+	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+
+	srcPoint.y = abs(srcRect.top - destRect.top);
+
+	for (int i = 0, scaleYCtr = 0; i < destRect.height(); i++, scaleYCtr += scaleY, srcPoint.y++) {
+		if (_wm->_pixelformat.bytesPerPixel == 1) {
+			srcPoint.x = abs(srcRect.left - destRect.left);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+
+			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
+				if (!mask || !(*msk++)) {
+				(g_director->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
+										preprocessColor(*((byte *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
+				}
+			}
+		} else {
+			srcPoint.x = abs(srcRect.left - destRect.left);
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+
+			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
+				if (!mask || !(*msk++)) {
+				(g_director->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
+										preprocessColor(*((int *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Director
