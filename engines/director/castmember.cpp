@@ -577,7 +577,10 @@ bool FilmLoopCastMember::isModified() {
 }
 
 Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
-	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	Common::Rect widgetRect(bbox.width() ? bbox.width() : _bbox.width(), bbox.height() ? bbox.height() : _bbox.height());
+	channel->_width = widgetRect.width();
+	channel->_height = widgetRect.height();
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, widgetRect.width(), widgetRect.height(), g_director->_wm, false);
 
 	if (channel->_filmLoopFrame >= _frames.size()) {
 		warning("Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
@@ -594,17 +597,38 @@ Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channe
 	// render the sprites in order onto the widget surface
 	for (Common::Array<int>::iterator iter = spriteIds.begin(); iter != spriteIds.end(); ++iter) {
 		Sprite src = _frames[channel->_filmLoopFrame].sprites[*iter];
-		if (src._castId.member == 0)
+		if (!src._cast)
 			continue;
 		// translate sprite relative to the global bounding box
-		int16 x = (src._startPoint.x - _bbox.left) * bbox.width() / _bbox.width() + bbox.left;
-		int16 y = (src._startPoint.y - _bbox.top) * bbox.height() / _bbox.height() + bbox.top;
-		int16 width = src._width * bbox.width() / _bbox.width();
-		int16 height = src._height * bbox.height() / _bbox.height();
-		Common::Rect srcBbox(x, y, x + width, y + height);
-		//Graphics::MacWidget *srcWidget = src._cast->createWidget(srcBbox, channel, spriteType);
-		//widget->getSurface()->blitFrom(*srcWidget->getSurface(), Common::Point(x, y));
-		//delete srcWidget;
+		int16 relX = (src._startPoint.x - _bbox.left) * widgetRect.width() / _bbox.width();
+		int16 absX = relX + bbox.left;
+		int16 relY = (src._startPoint.y - _bbox.top) * widgetRect.height() / _bbox.height();
+		int16 absY = relY + bbox.top;
+		int16 width = src._width * widgetRect.width() / _bbox.width();
+		int16 height = src._height * widgetRect.height() / _bbox.height();
+		Common::Rect absBbox(absX, absY, absX + width, absY + height);
+		Common::Rect relBbox(relX, relY, relX + width, relY + height);
+
+		Graphics::MacWidget *srcWidget = src._cast->createWidget(absBbox, channel, spriteType);
+		DirectorPlotData pd(g_director->_wm, src._spriteType, src._ink, src._blend, src.getBackColor(), src.getForeColor());
+		pd.colorWhite = pd._wm->_colorWhite;
+		pd.colorBlack = pd._wm->_colorBlack;
+		pd.dst = widget->getSurface();
+		pd.destRect = widgetRect;
+
+		pd.srf = srcWidget ? srcWidget->getSurface() : nullptr;
+		if (!pd.srf && src._spriteType != kBitmapSprite) {
+			// Shapes come colourized from macDrawPixel
+			pd.ms = src.getShape();
+			pd.applyColor = false;
+			pd.inkBlitShape(relBbox);
+		} else {
+			pd.setApplyColor();
+			// TODO: Support masks
+			pd.inkBlitSurface(relBbox, nullptr);
+		}
+		if (srcWidget)
+			delete srcWidget;
 	}
 
 	return widget;
