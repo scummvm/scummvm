@@ -87,19 +87,19 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		posZ = 0x7FFF;
 	}
 
-	_projPos.x = (cX * _cameraScaleY) / posZ + _orthoProjPos.x;
-	_projPos.y = (-cY * _cameraScaleZ) / posZ + _orthoProjPos.y;
+	_projPos.x = (cX * _cameraScaleX) / posZ + _orthoProjPos.x;
+	_projPos.y = (-cY * _cameraScaleY) / posZ + _orthoProjPos.y;
 	_projPos.z = posZ;
 	return _projPos;
 }
 
-void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ) {
+void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY) {
 	_orthoProjPos.x = x;
 	_orthoProjPos.y = y;
 
 	_cameraDepthOffset = depthOffset;
+	_cameraScaleX = scaleX;
 	_cameraScaleY = scaleY;
-	_cameraScaleZ = scaleZ;
 
 	_isUsingOrthoProjection = false;
 }
@@ -1333,13 +1333,14 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			int32 radius = sphere->radius;
 
 			if (_isUsingOrthoProjection) {
+				// * sqrt(sx+sy) / 512 (IsoScale)
 				radius = (radius * 34) / 512;
 			} else {
 				int32 delta = _cameraDepthOffset + sphere->z;
-				if (delta <= 0) {
+				if (delta == 0) {
 					radius = 0;
 				} else {
-					radius = ((sphere->radius * _cameraScaleY) / delta) & 0xFFFF;
+					radius = (sphere->radius * _cameraScaleX) / delta;
 				}
 			}
 
@@ -1455,7 +1456,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// X projection
 			{
-				coX = _orthoProjPos.x + ((coX * _cameraScaleY) / coZ);
+				coX = _orthoProjPos.x + ((coX * _cameraScaleX) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1474,7 +1475,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// Y projection
 			{
-				coY = _orthoProjPos.y + ((-coY * _cameraScaleZ) / coZ);
+				coY = _orthoProjPos.y + ((-coY * _cameraScaleY) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
