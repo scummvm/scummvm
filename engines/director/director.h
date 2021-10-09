@@ -153,7 +153,7 @@ struct DirectorPlotData {
 	// graphics.cpp
 	void setApplyColor();
 	uint32 preprocessColor(uint32 src);
-	void inkBlitShape(Common::Rect &srcRect);
+	void inkBlitShape();
 	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 

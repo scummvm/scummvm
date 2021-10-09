@@ -337,7 +337,7 @@ uint32 DirectorPlotData::preprocessColor(uint32 src) {
 	return src;
 }
 
-void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
+void DirectorPlotData::inkBlitShape() {
 	if (!ms)
 		return;
 
@@ -355,12 +355,12 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		break;
 	}
 
-	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
-	fillAreaRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotFill(dst, nullptr, &g_director->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
+	Common::Rect fillAreaRect((int)destRect.width(), (int)destRect.height());
+	fillAreaRect.moveTo(destRect.left, destRect.top);
+	Graphics::MacPlotData plotFill(dst, nullptr, &g_director->getPatterns(), ms->pattern, destRect.left, destRect.top, 1, ms->backColor);
 
-	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
-	strokeRect.moveTo(srcRect.left, srcRect.top);
+	Common::Rect strokeRect(MAX((int)destRect.width() - ms->lineSize, 0), MAX((int)destRect.height() - ms->lineSize, 0));
+	strokeRect.moveTo(destRect.left, destRect.top);
 	Graphics::MacPlotData plotStroke(dst, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
 
 	switch (ms->spriteType) {
