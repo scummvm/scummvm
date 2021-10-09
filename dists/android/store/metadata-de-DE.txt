@@ -21,15 +21,14 @@ Ebenfalls auf unserer Website findest du unter der URL https://wiki.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release:
-2.2.1
+2.5.0
 
 *** Release notes:
-- Getestet auf aktuellen Geräten mit Android 10 und höher
-- Unterstützung für weitere Engines und Spiele hinzugefügt, inkl. Blade Runner und Quest for Glory IV
-- Fehlerkorrekturen für die Verzeichnis-Navigation
-- Unterstützung für Fluidsynth, Cloud-Synchronisation und Dateiaustausch via LAN
+- Unterstützung für 12 weitere Engines - AGS, Little Big Adventure, Red Comrades, Director. Bisher KEINE 3D-Spiele
+- Unterstützung für HiDPI-Displays
+- Unicode-Benutzeroberfläche
 
-Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.2.0/ReleaseNotes.html
+Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
 
 *** Beta release name:
 

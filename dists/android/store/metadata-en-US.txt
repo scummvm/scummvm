@@ -21,15 +21,14 @@ You can find a quick-start guide on our website at http://wiki.scummvm.org/index
 http://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
-2.2.1
+2.5.0
 
 *** Release notes:
-- Tested on modern devices up to Android 10+
-- Support more engines & games incl. Blade Runner, Quest for Glory IV
-- Fixed folder navigation
-- Fluidsynth, Cloud Saves & LAN File Server
+- Support for 12 more engines, AGS, Little Big Adventure, Red Comrades, Director. NO 3d games yet
+- Support for HiDPI screens
+- Unicode GUI
 
-For full release notes see https://scummvm.org/frs/scummvm/2.2.0/ReleaseNotes.html
+For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
 
 *** Beta release name:
 
