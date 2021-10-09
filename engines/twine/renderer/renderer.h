@@ -35,7 +35,7 @@
 #define POLYGONTYPE_COPPER 2
 #define POLYGONTYPE_BOPPER 3
 #define POLYGONTYPE_MARBLE 4
-#define POLYGONTYPE_TRAS 5
+#define POLYGONTYPE_TRANS 5
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
@@ -187,7 +187,7 @@ private:
 	void renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsTele(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsTras(int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsTrans(int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsGouraud(int vtop, int32 vsize) const;
 	void renderPolygonsDither(int vtop, int32 vsize) const;

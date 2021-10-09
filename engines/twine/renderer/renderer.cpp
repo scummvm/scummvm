@@ -597,11 +597,9 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
 		ptr1++;
 		const int32 hsize = stop - start;
 
-		if (hsize >= 0) {
-			for (int32 j = start; j <= hsize + start; j++) {
-				if (j >= 0 && j < screenWidth) {
-					out[j] = color;
-				}
+		for (int32 j = start; j <= hsize + start; j++) {
+			if (j >= 0 && j < screenWidth) {
+				out[j] = color;
 			}
 		}
 		out += screenWidth;
@@ -685,16 +683,13 @@ void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
 	} while (renderLoop);
 }
 
-// FIXME: buggy
-void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint8 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
 	do {
-		unsigned short int bx;
-
 		int16 start = ptr1[0];
 		int16 stop = ptr1[screenHeight];
 
@@ -704,30 +699,17 @@ void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
 		if (hsize >= 0) {
 			hsize++;
 			uint8 *out2 = start + out;
-
-			if (hsize / 2 < 0) {
-				bx = color;
-				bx = bx * 256;
-				bx += color;
-				for (int32 j = 0; j < hsize; j++) {
-					*(out2) = (*(out2)&0x0F0F) | bx;
-					// TODO: check for potential out2++ here
-				}
-			} else {
-				*out2 = (*(out2)&0x0F) | color;
-				out2++;
-			}
+			*out2 = (*(out2)&0x0F) | color;
+			out2++;
 		}
 		out += screenWidth;
 	} while (--vsize);
 }
 
-// FIXME: buggy
 // Used e.g for the legs of the horse or the ears of most characters
 void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -739,32 +721,25 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 	if (renderLoop > screenHeight) {
 		renderLoop = screenHeight;
 	}
+	int32 pair = 0;
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
 		int16 start = ptr1[0];
 		int16 stop = ptr1[screenHeight];
 		ptr1++;
-		int32 hsize = stop - start;
+		uint8 *out2 = start + out;
+		stop = ((stop - start) + 1) / 2;
+		if (stop > 0) {
+			pair ^= 1; // paire/impair
+			if ((start & 1) ^ pair) {
+				out2++;
+			}
 
-		if (hsize >= 0) {
-			hsize++;
-			uint8 *out2 = start + out;
-
-			hsize /= 2;
-			if (hsize > 1) {
-				uint16 ax;
-				bh ^= 1;
-				ax = (uint16)(*out2);
-				ax &= 1;
-				if (ax ^ bh) {
-					out2++;
-				}
-
-				for (int32 j = 0; j < hsize; j++) {
-					*out2 = color;
-					out2 += 2;
-				}
+			for (; stop > 0; stop--) {
+				*out2 = color;
+				out2 += 2;
 			}
 		}
+
 		out += screenWidth;
 	}
 }
@@ -1142,8 +1117,8 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		// TODO: fix this render method:
 		// renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
 		break;
-	case POLYGONTYPE_TRAS:
-		renderPolygonsTras(vtop, vsize, polygon.colorIndex);
+	case POLYGONTYPE_TRANS:
+		renderPolygonsTrans(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TRAME:
 		renderPolygonsTrame(vtop, vsize, polygon.colorIndex);
