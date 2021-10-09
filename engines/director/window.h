@@ -38,8 +38,6 @@ class MacWindowManager;
 
 namespace Director {
 
-const int SCALE_THRESHOLD = 0x100;
-
 class Channel;
 class MacArchive;
 struct MacShape;
@@ -201,13 +199,9 @@ private:
 	bool _titleVisible;
 
 private:
-	int preprocessColor(DirectorPlotData *p, uint32 src);
 
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
-	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);
 
-	void inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
-	void inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
 };
 
 } // End of namespace Director
