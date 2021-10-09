@@ -198,7 +198,7 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	pd.dst = blitTo;
 
 	if (pd.ms) {
-		pd.inkBlitShape(srcRect);
+		pd.inkBlitShape();
 	} else if (pd.srf) {
 		if (channel->isStretched()) {
 			srcRect = channel->getBbox(true);

@@ -601,31 +601,29 @@ Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channe
 			continue;
 		// translate sprite relative to the global bounding box
 		int16 relX = (src._startPoint.x - _bbox.left) * widgetRect.width() / _bbox.width();
-		int16 absX = relX + bbox.left;
 		int16 relY = (src._startPoint.y - _bbox.top) * widgetRect.height() / _bbox.height();
-		int16 absY = relY + bbox.top;
 		int16 width = src._width * widgetRect.width() / _bbox.width();
 		int16 height = src._height * widgetRect.height() / _bbox.height();
-		Common::Rect absBbox(absX, absY, absX + width, absY + height);
 		Common::Rect relBbox(relX, relY, relX + width, relY + height);
 
-		Graphics::MacWidget *srcWidget = src._cast->createWidget(absBbox, channel, spriteType);
+		Graphics::MacWidget *srcWidget = src._cast->createWidget(relBbox, channel, spriteType);
 		DirectorPlotData pd(g_director->_wm, src._spriteType, src._ink, src._blend, src.getBackColor(), src.getForeColor());
 		pd.colorWhite = pd._wm->_colorWhite;
 		pd.colorBlack = pd._wm->_colorBlack;
 		pd.dst = widget->getSurface();
-		pd.destRect = widgetRect;
+		pd.destRect = relBbox;
 
 		pd.srf = srcWidget ? srcWidget->getSurface() : nullptr;
+		Common::Rect srcWidgetBbox(width, height);
 		if (!pd.srf && src._spriteType != kBitmapSprite) {
 			// Shapes come colourized from macDrawPixel
 			pd.ms = src.getShape();
 			pd.applyColor = false;
-			pd.inkBlitShape(relBbox);
+			pd.inkBlitShape();
 		} else {
 			pd.setApplyColor();
 			// TODO: Support masks
-			pd.inkBlitSurface(relBbox, nullptr);
+			pd.inkBlitStretchSurface(srcWidgetBbox, nullptr);
 		}
 		if (srcWidget)
 			delete srcWidget;
