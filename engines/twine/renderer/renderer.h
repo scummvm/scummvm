@@ -192,7 +192,7 @@ private:
 	void renderPolygonsGouraud(int vtop, int32 vsize) const;
 	void renderPolygonsDither(int vtop, int32 vsize) const;
 	void renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const;
-
+	void renderPolygonsTriche(int vtop, int32 vsize, uint8 color) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);

@@ -1088,13 +1088,40 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 	}
 }
 
+void Renderer::renderPolygonsTriche(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		uint16 xMin = ptr1[0];
+		const uint16 xMax = ptr1[screenHeight];
+		uint8 *pDest = out + xMin;
+
+		color = (*ptr2++) >> 8;
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = color;
+		}
+
+		out += screenWidth;
+	}
+}
+
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	const int32 vsize = vbottom - vtop + 1;
 
-	// TODO: POLYGONTYPE_GOURAUD and POLYGONTYPE_DITHER are replaced with a simpler polygon fill function that
-	// is not yet reversed.
 	switch (polygon.renderType) {
 	case POLYGONTYPE_FLAT:
 		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
@@ -1122,10 +1149,16 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		renderPolygonsTrame(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_GOURAUD:
-		renderPolygonsGouraud(vtop, vsize);
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsTriche(vtop, vsize, polygon.colorIndex);
+		} else {
+			renderPolygonsGouraud(vtop, vsize);
+		}
 		break;
 	case POLYGONTYPE_DITHER:
-		if (_engine->_cfgfile.PolygonDetails < 2) {
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsTriche(vtop, vsize, polygon.colorIndex);
+		} else if (_engine->_cfgfile.PolygonDetails == 1) {
 			renderPolygonsGouraud(vtop, vsize);
 		} else {
 			renderPolygonsDither(vtop, vsize);
