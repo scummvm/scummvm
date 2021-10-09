@@ -35,6 +35,8 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include "backends/platform/android/touchcontrols.h"
+
 #include <pthread.h>
 
 #include <android/log.h>
@@ -132,6 +134,8 @@ public:
 	void pushEvent(const Common::Event &event);
 	void pushKeyPressEvent(Common::Event &event);
 
+	TouchControls &getTouchControls() { return _touchControls; }
+
 private:
 	Common::Queue<Common::Event> _event_queue;
 	Common::Event _queuedEvent;
@@ -150,6 +154,8 @@ private:
 	int _firstPointerId;
 	int _secondPointerId;
 	int _thirdPointerId;
+
+	TouchControls _touchControls;
 
 public:
 	bool pollEvent(Common::Event &event) override;

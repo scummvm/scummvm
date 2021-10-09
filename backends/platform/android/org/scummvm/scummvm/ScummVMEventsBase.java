@@ -50,12 +50,19 @@ public class ScummVMEventsBase implements
 	public static final int JE_QUIT = 0x1000;
 	public static final int JE_MENU = 0x1001;
 
+	public static final int JACTION_DOWN = 0;
+	public static final int JACTION_MOVE = 1;
+	public static final int JACTION_UP = 2;
+	public static final int JACTION_CANCEL = 3;
+
 	final protected Context _context;
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;
 	final protected int _longPressTimeout;
 	final protected MouseHelper _mouseHelper;
 	final protected MultitouchHelper _multitouchHelper;
+
+	protected boolean _touch3DMode;
 
 	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
 	// https://stackoverflow.com/a/27826094
@@ -133,6 +140,13 @@ public class ScummVMEventsBase implements
 			                   0,
 			                   0);
 		}
+	}
+
+	final public void setTouch3DMode(boolean touch3DMode) {
+		if (_touch3DMode != touch3DMode && !touch3DMode) {
+			_scummvm.updateTouch(JACTION_CANCEL, 0, 0, 0);
+		}
+		_touch3DMode = touch3DMode;
 	}
 
 	public void clearEventHandler() {
@@ -459,30 +473,60 @@ public class ScummVMEventsBase implements
 			}
 		}
 
-		// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
-		switch (action) {
-			case MotionEvent.ACTION_UP:
-				v.performClick();
-				break;
-			case MotionEvent.ACTION_DOWN:
-				// fall through
-			default:
-				break;
-		}
+		if (_touch3DMode) {
+			switch (event.getActionMasked()) {
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_POINTER_DOWN: {
+					int idx = event.getActionIndex();
+					_scummvm.updateTouch(JACTION_DOWN, event.getPointerId(idx), (int)event.getX(idx), (int)event.getY(idx));
+					// fall through
+				}
+				case MotionEvent.ACTION_MOVE:
+					for(int idx = 0; idx < event.getPointerCount(); idx++) {
+						_scummvm.updateTouch(JACTION_MOVE, event.getPointerId(idx), (int)event.getX(idx), (int)event.getY(idx));
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_POINTER_UP: {
+					int idx = event.getActionIndex();
+					_scummvm.updateTouch(JACTION_UP, event.getPointerId(idx), (int)event.getX(idx), (int)event.getY(idx));
+					break;
+				}
+				case MotionEvent.ACTION_CANCEL:
+					_scummvm.updateTouch(JACTION_CANCEL, 0, 0, 0);
+					break;
+			}
 
-		// check if the event can be handled as a multitouch event
-		if (_multitouchHelper.handleMotionEvent(event)) {
+			//return _gd.onTouchEvent(event);
 			return true;
-		}
+		} else {
+			// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
+			switch (action) {
+				case MotionEvent.ACTION_UP:
+					v.performClick();
+					break;
+				case MotionEvent.ACTION_DOWN:
+					// fall through
+				default:
+					break;
+			}
 
-		return _gd.onTouchEvent(event);
+			// check if the event can be handled as a multitouch event
+			if (_multitouchHelper.handleMotionEvent(event)) {
+				return true;
+			}
+
+			return _gd.onTouchEvent(event);
+		}
 	}
 
 	// OnGestureListener
 	@Override
 	final public boolean onDown(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
-		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
+		if (!_touch3DMode) {
+			_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
+		}
 		return true;
 	}
 
@@ -505,9 +549,10 @@ public class ScummVMEventsBase implements
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
-		_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
+		if (!_touch3DMode) {
+			_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
 							(int)e2.getX(), (int)e2.getY(), 0, 0);
-
+		}
 		return true;
 	}
 
@@ -518,9 +563,10 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onSingleTapUp(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapUp");
-		_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
+		if (!_touch3DMode) {
+			_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
 							(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
-
+		}
 		return true;
 	}
 
@@ -545,7 +591,9 @@ public class ScummVMEventsBase implements
 //		} else {
 //			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent UNKNOWN!!!!");
 //		}
-		_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(), e.getAction(), 0, 0, 0);
+		if (!_touch3DMode) {
+			_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(), e.getAction(), 0, 0, 0);
+		}
 		return true;
 	}
 

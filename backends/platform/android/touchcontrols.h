@@ -31,41 +31,80 @@
 
 class TouchControls {
 public:
+	// action type
+	enum Action {
+		JACTION_DOWN = 0,
+		JACTION_MOVE = 1,
+		JACTION_UP = 2,
+		JACTION_CANCEL = 3
+	};
+
 	TouchControls();
 	~TouchControls();
 
 	void init(int width, int height);
 	void draw();
-	void update(int ptr, int action, int x, int y);
+	void update(Action action, int ptr, int x, int y);
 
 private:
 	int _screen_width, _screen_height;
 
-	enum TouchArea{
-		kTouchAreaJoystick = 0xffff,
-		kTouchAreaCenter = 0xfffe,
-		kTouchAreaRight = 0xfffd,
-		kTouchAreaNone = 0xfffc,
+	enum Function {
+		kFunctionNone = -1,
+		kFunctionJoystick = 0,
+		kFunctionCenter = 1,
+		kFunctionRight = 2,
+		kFunctionMax = 2
 	};
-
-	uint16 getTouchArea(int x, int y);
+	Function getFunction(int x, int y);
 
 	struct Pointer {
+		Pointer() : id(-1), startX(-1), startY(-1), currentX(-1), currentY(-1), function(kFunctionNone), active(false) {}
+		void reset() { id = -1; startX = startY = currentX = currentY = -1; function = kFunctionNone; active = false; }
+
+		int id;
 		uint16 startX, startY;
 		uint16 currentX, currentY;
-		TouchArea function;
+		Function function;
 		bool active;
 	};
 
 	enum { kNumPointers = 5 };
 	Pointer _pointers[kNumPointers];
-	int _activePointers[4];
-	Common::KeyCode _joystickPressing, _centerPressing, _rightPressing;
-	int &pointerFor(TouchArea ta);
+
+	Pointer *getPointerFromId(int ptr, bool createNotFound);
+	Pointer *findPointerFromFunction(Function function);
+
+	struct FunctionState {
+		FunctionState() : main(Common::KEYCODE_INVALID), modifier(Common::KEYCODE_INVALID) { }
+		void reset() { main = Common::KEYCODE_INVALID; modifier = Common::KEYCODE_INVALID; clip = Common::Rect(); }
+
+		Common::KeyCode main;
+		Common::KeyCode modifier;
+		Common::Rect clip;
+	};
+
+	FunctionState _functionStates[kFunctionMax + 1];
+
 	GLESTexture *_arrows_texture;
 	void keyDown(Common::KeyCode kc);
 	void keyUp(Common::KeyCode kc);
 	void keyPress(Common::KeyCode kc);
+
+	/* Functions implementations */
+	struct FunctionBehavior {
+		void (*touchToState)(int, int, TouchControls::FunctionState &);
+		bool keyPressOnRelease;
+		float xRatio;
+		float yRatio;
+	};
+	static FunctionBehavior functionBehaviors[TouchControls::kFunctionMax+1];
+
+	static void touchToJoystickState(int dX, int dY, FunctionState &state);
+	static void touchToCenterState(int dX, int dY, FunctionState &state);
+	static void touchToRightState(int dX, int dY, FunctionState &state);
+
+
 };
 
 #endif

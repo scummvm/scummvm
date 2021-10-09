@@ -84,6 +84,7 @@ jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
+jmethodID JNI::_MID_setTouch3DMode = 0;
 jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
@@ -118,6 +119,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::main },
 	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
+	{ "updateTouch", "(IIII)V",
+		(void *)JNI::updateTouch },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
@@ -386,6 +389,19 @@ void JNI::showKeyboardControl(bool enable) {
 	}
 }
 
+void JNI::setTouch3DMode(bool touch3DMode) {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_setTouch3DMode, touch3DMode);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error trying to show virtual keyboard control");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
 void JNI::showSAFRevokePermsControl(bool enable) {
 #ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
@@ -571,6 +587,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
+	FIND_METHOD(, setTouch3DMode, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
@@ -711,6 +728,18 @@ void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
 	assert(_system);
 
 	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+void JNI::updateTouch(JNIEnv *env, jobject self, int action, int ptr, int x, int y) {
+	// drop events until we're ready and after we quit
+	if (!_ready_for_events) {
+		LOGW("dropping event");
+		return;
+	}
+
+	assert(_system);
+
+	_system->getTouchControls().update((TouchControls::Action) action, ptr, x, y);
 }
 
 void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
