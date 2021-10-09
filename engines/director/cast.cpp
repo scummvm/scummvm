@@ -223,12 +223,9 @@ bool Cast::loadConfig() {
 
 	_castArrayStart = stream->readUint16();
 	_castArrayEnd = stream->readUint16();
+
+	// v3 and below use this, override for v4 and over
 	byte currentFrameRate = stream->readByte();
-	if (!_isShared) {
-		_movie->getScore()->_currentFrameRate = currentFrameRate;
-		if (_movie->getScore()->_currentFrameRate == 0)
-			_movie->getScore()->_currentFrameRate = 20;
-	}
 
 	byte lightswitch = stream->readByte();
 	uint16 unk1 = stream->readUint16();
@@ -246,8 +243,8 @@ bool Cast::loadConfig() {
 	// uint16 stageColorG = stream.readUint16();
 	// uint16 stageColorB = stream.readUint16();
 
-	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", len, fileVersion, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
+	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d, light: %d, unk: %d, font: %d, size: %d"
+			", style: %d", len, fileVersion, lightswitch, unk1, commentFont, commentSize, commentStyle);
 	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d",
 			_stageColor, bitdepth);
 	if (debugChannelSet(1, kDebugLoading))
@@ -269,9 +266,10 @@ bool Cast::loadConfig() {
 	}
 
 	if (_version >= kFileVer400) {
-		for (int i = 0; i < 0x08; i++) {
+		for (int i = 0; i < 0x07; i++) {
 			stream->readByte();
 		}
+		currentFrameRate = stream->readByte();
 		_platform = platformFromID(stream->readUint16());
 		for (int i = 0; i < 0x0c; i++) {
 			stream->readByte();
@@ -281,6 +279,13 @@ bool Cast::loadConfig() {
 			stream->readByte();
 		}
 		debugC(1, kDebugLoading, "Cast::loadConfig(): platform: %s, defaultPalette: %d", getPlatformAbbrev(_platform), _defaultPalette);
+	}
+
+	if (!_isShared) {
+		debugC(1, kDebugLoading, "Cast::loadConfig(): currentFrameRate: %d", currentFrameRate);
+		_movie->getScore()->_currentFrameRate = currentFrameRate;
+		if (_movie->getScore()->_currentFrameRate == 0)
+			_movie->getScore()->_currentFrameRate = 20;
 	}
 
 	uint16 humanVer = humanVersion(_version);
