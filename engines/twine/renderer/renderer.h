@@ -124,6 +124,7 @@ private:
 	struct CmdRenderSphere {
 		uint8 colorIndexStart = 0;
 		uint8 colorIndexEnd = 0;
+		uint8 polyRenderType = 0;
 		int16 radius = 0;
 		int16 x = 0;
 		int16 y = 0;
@@ -192,7 +193,7 @@ private:
 	void renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsGouraud(int vtop, int32 vsize) const;
 	void renderPolygonsDither(int vtop, int32 vsize) const;
-	void renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uint8 colorEnd) const;
 	void renderPolygonsTriche(int vtop, int32 vsize, uint8 color) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
@@ -225,7 +226,7 @@ public:
 		return getBaseRotationPosition(vec.x, vec.y, vec.z);
 	}
 
-	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
+	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 colorStart, uint8 colorEnd);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {

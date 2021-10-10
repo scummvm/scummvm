@@ -961,105 +961,45 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uint8 colorEnd) const {
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	int height = vsize;
+	int16 *ptr1 = &_polyTab[vtop];
 
-	uint16 color2 = color;
-	uint16 v29 = 2;
-	while (2) {
-		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		const uint16 start = *(const uint16 *)ptr1;
-		++ptr1;
-		if (stop < start) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		const uint16 hsize = stop - start;
-		uint16 width = hsize + 1;
-		uint8 *out2 = start + out;
-		if ((uintptr)out2 & 1) {
-			*out2++ = color2;
-			--width;
-		}
-		for (uint16 k = width / 2; k; --k) {
-			*out2++ = color2;
-			*out2++ = color2;
-		}
-		const uint16 v34 = width & 1;
-		for (uint16 l = v34; l; --l) {
-			*out2++ = color2;
-		}
-		--v29;
-		if (v29 || (v29 = 2, ++color2, color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		v29 = 2;
-		--color2;
-		if (!(color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		break;
-	}
-	while (1) {
-		out += screenWidth;
-		--height;
-		if (!height) {
-			return;
-		}
-		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		const uint16 start = *(const uint16 *)ptr1;
-		++ptr1;
-		if (stop >= start) {
-			const uint16 hsize = stop - start;
-			uint16 width = hsize + 1;
-			uint8 *out2 = start + out;
-			if ((uintptr)out2 & 1) {
-				*out2++ = color2;
-				--width;
-			}
-			for (uint16 m = width / 2; m; --m) {
-				*out2++ = color2;
-				*out2++ = color2;
-			}
-			const uint16 v41 = width & 1;
-			for (uint16 n = v41; n; --n) {
-				*out2++ = color2;
-			}
-			--v29;
-			if (v29) {
-				continue;
+	int16 xMin, xMax;
+	int16 y = vtop;
+	uint8 *pDestLine = out;
+	uint8 *pDest;
+	int16 *pVerticG = ptr1;
+	int16 *pVerticD = &ptr1[screenHeight];
+
+	uint16 start = colorStart;
+	uint16 end = colorEnd;
+	uint16 delta = end - start + 1; // delta intensity
+	int32 step, dc;
+
+	for (; y <= vsize; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
+
+		dc = xMax - xMin;
+		if (dc == 0) {
+			// just one
+			*pDest++ = (uint8)(end >> 8);
+		} else if (dc > 0) {
+			step = delta / (dc + 1);
+			uint16 color = start;
+
+			for (; xMin <= xMax; xMin++) {
+				*pDest++ = (uint8)(color >> 8);
+				color += step;
 			}
 		}
-		v29 = 2;
-		--color2;
-		if (!(color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		break;
+
+		pDestLine += screenWidth;
 	}
 }
 
@@ -1096,46 +1036,46 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	const int32 vsize = vbottom - vtop + 1;
-	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex, polygon.colorIndex);
 }
 
-void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
+void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 colorStart, uint8 colorEnd) {
 	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(vtop, vsize, color);
+		renderPolygonsFlat(vtop, vsize, colorStart);
 		break;
 	case POLYGONTYPE_TELE:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsFlat(vtop, vsize, color);
+			renderPolygonsFlat(vtop, vsize, colorStart);
 		} else {
-			renderPolygonsTele(vtop, vsize, color);
+			renderPolygonsTele(vtop, vsize, colorStart);
 		}
 		break;
 	case POLYGONTYPE_COPPER:
 		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
-		//renderPolygonsCopper(vtop, vsize, color);
+		//renderPolygonsCopper(vtop, vsize, colorStart);
 		//break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsCopper(vtop, vsize, color);
+		renderPolygonsCopper(vtop, vsize, colorStart);
 		// TODO: fix this render method:
-		// renderPolygonsBopper(vtop, vsize, color);
+		// renderPolygonsBopper(vtop, vsize, colorStart);
 		break;
 	case POLYGONTYPE_TRANS:
-		renderPolygonsTrans(vtop, vsize, color);
+		renderPolygonsTrans(vtop, vsize, colorStart);
 		break;
-	case POLYGONTYPE_TRAME:
-		renderPolygonsTrame(vtop, vsize, color);
+	case POLYGONTYPE_TRAME: // raster
+		renderPolygonsTrame(vtop, vsize, colorStart);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, color);
+			renderPolygonsTriche(vtop, vsize, colorStart);
 		} else {
 			renderPolygonsGouraud(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, color);
+			renderPolygonsTriche(vtop, vsize, colorStart);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
 			renderPolygonsGouraud(vtop, vsize);
 		} else {
@@ -1143,7 +1083,7 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 colo
 		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(vtop, vsize, color);
+		renderPolygonsMarble(vtop, vsize, colorStart, colorEnd);
 		break;
 	default:
 		warning("RENDER WARNING: Unsupported render type %d", renderType);
@@ -1175,6 +1115,7 @@ uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 
 		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
 		cmd->colorIndexStart = sphere.colorStart;
 		cmd->colorIndexEnd = sphere.colorEnd;
+		cmd->polyRenderType = sphere.fillType;
 		cmd->radius = sphere.radius;
 		const int16 centerIndex = sphere.vertex;
 		cmd->x = modelData->flattenPoints[centerIndex].x;
@@ -1348,6 +1289,8 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 				}
 			}
 
+			radius += 3;
+
 			if (sphere->x + radius > modelRect.right) {
 				modelRect.right = sphere->x + radius;
 			}
@@ -1363,6 +1306,8 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			if (sphere->y - radius < modelRect.top) {
 				modelRect.top = sphere->y - radius;
 			}
+
+			radius -= 3;
 
 			circleFill(sphere->x, sphere->y, radius, sphere->colorIndexStart, sphere->colorIndexEnd);
 			break;
