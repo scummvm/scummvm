@@ -122,7 +122,8 @@ private:
 	 * @sa RenderCommand
 	 */
 	struct CmdRenderSphere {
-		int8 colorIndex = 0;
+		uint8 colorIndexStart = 0;
+		uint8 colorIndexEnd = 0;
 		int16 radius = 0;
 		int16 x = 0;
 		int16 y = 0;
@@ -138,7 +139,7 @@ private:
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
+	void circleFill(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 getCameraAnglePositions(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
@@ -224,6 +225,7 @@ public:
 		return getBaseRotationPosition(vec.x, vec.y, vec.z);
 	}
 
+	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {

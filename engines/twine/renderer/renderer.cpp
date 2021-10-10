@@ -1096,43 +1096,46 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	const int32 vsize = vbottom - vtop + 1;
+	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+}
 
-	switch (polygon.renderType) {
+void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
+	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
+		renderPolygonsFlat(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TELE:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
+			renderPolygonsFlat(vtop, vsize, color);
 		} else {
-			renderPolygonsTele(vtop, vsize, polygon.colorIndex);
+			renderPolygonsTele(vtop, vsize, color);
 		}
 		break;
 	case POLYGONTYPE_COPPER:
 		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
-		//renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
+		//renderPolygonsCopper(vtop, vsize, color);
 		//break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
+		renderPolygonsCopper(vtop, vsize, color);
 		// TODO: fix this render method:
-		// renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
+		// renderPolygonsBopper(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRANS:
-		renderPolygonsTrans(vtop, vsize, polygon.colorIndex);
+		renderPolygonsTrans(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRAME:
-		renderPolygonsTrame(vtop, vsize, polygon.colorIndex);
+		renderPolygonsTrame(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, polygon.colorIndex);
+			renderPolygonsTriche(vtop, vsize, color);
 		} else {
 			renderPolygonsGouraud(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, polygon.colorIndex);
+			renderPolygonsTriche(vtop, vsize, color);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
 			renderPolygonsGouraud(vtop, vsize);
 		} else {
@@ -1140,15 +1143,15 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(vtop, vsize, polygon.colorIndex);
+		renderPolygonsMarble(vtop, vsize, color);
 		break;
 	default:
-		warning("RENDER WARNING: Unsupported render type %d", polygon.renderType);
+		warning("RENDER WARNING: Unsupported render type %d", renderType);
 		break;
 	}
 }
 
-void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
+void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd) {
 	if (radius <= 0) {
 		return;
 	}
@@ -1163,14 +1166,15 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 			width = 0.0;
 		}
 
-		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, color);
+		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, colorStart);
 	}
 }
 
 uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
 	for (const BodySphere &sphere : spheres) {
 		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
-		cmd->colorIndex = sphere.color;
+		cmd->colorIndexStart = sphere.colorStart;
+		cmd->colorIndexEnd = sphere.colorEnd;
 		cmd->radius = sphere.radius;
 		const int16 centerIndex = sphere.vertex;
 		cmd->x = modelData->flattenPoints[centerIndex].x;
@@ -1344,8 +1348,6 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 				}
 			}
 
-			radius += 3;
-
 			if (sphere->x + radius > modelRect.right) {
 				modelRect.right = sphere->x + radius;
 			}
@@ -1362,9 +1364,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 				modelRect.top = sphere->y - radius;
 			}
 
-			radius -= 3;
-
-			circleFill(sphere->x, sphere->y, radius, sphere->colorIndex);
+			circleFill(sphere->x, sphere->y, radius, sphere->colorIndexStart, sphere->colorIndexEnd);
 			break;
 		}
 		default:
