@@ -1091,23 +1091,100 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 color
 	}
 }
 
-void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd) {
+bool Renderer::prepareCircle(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd) {
 	if (radius <= 0) {
-		return;
+		return false;
 	}
-	radius += 1;
+	int16 left = (int16)(x - radius);
+	int16 right = (int16)(y - radius);
+	int16 bottom = (int16)(x + radius);
+	int16 top = (int16)(y + radius);
+	const Common::Rect &clip = _engine->_interface->_clip;
+	int16 cleft = clip.left;
+	int16 cright = clip.right;
+	int16 ctop = clip.top;
+	int16 cbottom = clip.bottom;
 
-	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
-		double width;
-
-		if (ABS(currentLine) != radius) {
-			width = ABS(sin(acos((float)currentLine / (float)radius)) * radius);
-		} else {
-			width = 0.0;
+	if (left <= cright && bottom >= cleft && right <= cbottom && top >= ctop) {
+		if (left < cleft) {
+			left = cleft;
+		}
+		if (bottom > cright) {
+			bottom = cright;
+		}
+		if (right < ctop) {
+			right = ctop;
+		}
+		if (top > cbottom) {
+			top = cbottom;
 		}
 
-		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, colorStart);
+		int32 r = 0;
+		int32 acc = -radius;
+
+		int16 *start = _polyTab;
+		int16 *end = &_polyTab[_engine->height()];
+
+		while (r <= radius) {
+			int32 x1 = x - radius;
+			if (x1 < cleft) {
+				x1 = cleft;
+			}
+
+			int32 x2 = x + radius;
+			if (x2 > cright) {
+				x2 = cright;
+			}
+
+			int32 ny = y - r;
+			if ((ny >= ctop) && (ny <= cbottom)) {
+				start[ny] = (int16)x1;
+				end[ny] = (int16)x2;
+			}
+
+			ny = y + r;
+			if ((ny >= ctop) && (ny <= cbottom)) {
+				start[ny] = (int16)x1;
+				end[ny] = (int16)x2;
+			}
+
+			if (acc < 0) {
+				acc += r;
+				if (acc >= 0) {
+					x1 = x - r;
+					if (x1 < cleft) {
+						x1 = cleft;
+					}
+
+					x2 = x + r;
+					if (x2 > cright) {
+						x2 = cright;
+					}
+
+					ny = y - radius;
+					if ((ny >= ctop) && (ny <= cbottom)) {
+						start[ny] = (int16)x1;
+						end[ny] = (int16)x2;
+					}
+
+					ny = y + radius;
+					if ((ny >= ctop) && (ny <= cbottom)) {
+						start[ny] = (int16)x1;
+						end[ny] = (int16)x2;
+					}
+
+					--radius;
+					acc -= radius;
+				}
+			}
+
+			++r;
+		}
+
+		return true;
 	}
+
+	return false;
 }
 
 uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
@@ -1278,15 +1355,14 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			int32 radius = sphere->radius;
 
 			if (_isUsingOrthoProjection) {
-				// * sqrt(sx+sy) / 512 (IsoScale)
+				// * sqrt(sx+sy) / 512 (isometric scale)
 				radius = (radius * 34) / 512;
 			} else {
 				int32 delta = _cameraDepthOffset + sphere->z;
 				if (delta == 0) {
-					radius = 0;
-				} else {
-					radius = (sphere->radius * _cameraScaleX) / delta;
+					break;
 				}
+				radius = (sphere->radius * _cameraScaleX) / delta;
 			}
 
 			radius += 3;
@@ -1309,7 +1385,10 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius -= 3;
 
-			circleFill(sphere->x, sphere->y, radius, sphere->colorIndexStart, sphere->colorIndexEnd);
+			if (prepareCircle(sphere->x, sphere->y, radius, sphere->colorIndexStart, sphere->colorIndexEnd)) {
+				const int32 vsize = 2 * radius;
+				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->colorIndexStart, sphere->colorIndexEnd);
+			}
 			break;
 		}
 		default:

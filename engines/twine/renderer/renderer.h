@@ -140,7 +140,7 @@ private:
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	void circleFill(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd);
+	bool prepareCircle(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 getCameraAnglePositions(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
