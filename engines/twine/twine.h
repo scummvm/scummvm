@@ -92,7 +92,7 @@ struct ConfigFile {
 	bool Debug = false;
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
-	/** *Game version */
+	/** Game version */
 	int32 Version = EUROPE_VERSION;
 	/** If you want to use the LBA CD or not */
 	int32 UseCD = 0;
@@ -115,7 +115,6 @@ struct ConfigFile {
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
 	int32 ShadowMode = 0;
-	// TODO: currently unused
 	int32 PolygonDetails = 2;
 	/** Scenery Zoom */
 	bool SceZoom = false;
