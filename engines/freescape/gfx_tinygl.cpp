@@ -74,65 +74,13 @@ void TinyGLRenderer::init() {
 	tglLoadIdentity();
 
 	tglDisable(TGL_LIGHTING);
-	tglEnable(TGL_TEXTURE_2D);
+	tglDisable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 }
 
 void TinyGLRenderer::clear() {
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 	tglColor3f(1.0f, 1.0f, 1.0f);
-}
-
-void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
-	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-
-	if (!window) {
-		// No window found ...
-		if (scaled) {
-			// ... in scaled mode draw in the original game screen area
-			Common::Rect vp = viewport();
-			tglViewport(vp.left, vp.top, vp.width(), vp.height());
-			//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-		} else {
-			// ... otherwise, draw on the whole screen
-			tglViewport(0, 0, _system->getWidth(), _system->getHeight());
-		}
-	} else {
-		// Found a window, draw inside it
-		Common::Rect vp = window->getPosition();
-		tglViewport(vp.left, vp.top, vp.width(), vp.height());
-		//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-	}
-
-	if (is3D) {
-		tglMatrixMode(TGL_PROJECTION);
-		tglLoadMatrixf(_projectionMatrix.getData());
-
-		tglMatrixMode(TGL_MODELVIEW);
-		tglLoadMatrixf(_modelViewMatrix.getData());
-	} else {
-		tglMatrixMode(TGL_PROJECTION);
-		tglLoadIdentity();
-
-		if (!window) {
-			if (scaled) {
-				tglOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
-			} else {
-				tglOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
-			}
-		} else {
-			if (scaled) {
-				Common::Rect originalRect = window->getOriginalPosition();
-				tglOrtho(0.0, originalRect.width(), originalRect.height(), 0.0, -1.0, 1.0);
-			} else {
-				Common::Rect vp = window->getPosition();
-				tglOrtho(0.0, vp.width(), vp.height(), 0.0, -1.0, 1.0);
-			}
-		}
-
-		tglMatrixMode(TGL_MODELVIEW);
-		tglLoadIdentity();
-	}
 }
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {	
@@ -225,33 +173,119 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDepthMask(TGL_TRUE);
 }
 
-void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
-	debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
-	debug("with size %f, %f, %f", size.x(), size.y(), size.z());
-	drawFace(origin, size.x(), size.y(), 0, (*colours)[0]);
+void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+
+	float aspectRatio = kOriginalWidth / (float) kFrameHeight;
+
+	float xmaxValue = nearClipPlane * tan(fov * M_PI / 360.0);
+	float ymaxValue = xmaxValue / aspectRatio;
+	//debug("max values: %f %f", xmaxValue, ymaxValue);
+
+	tglFrustum(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
 }
 
-void TinyGLRenderer::drawFace(const Math::Vector3d &origin, float xs, float ys, float zs, uint8 color) {
-	debug("Face at %f, %f, %f", origin.x(), origin.y(), origin.z());
-	debug("with size %f, %f, %f", xs, ys, zs);
-	assert(_palette);
+void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
+	Math::Vector3d up_vec(0, 1, 0);
+	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+
+	tglMultMatrixf(lookMatrix.getData());
+	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
+}
+
+void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+	//debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
+	//debug("with size %f, %f, %f", size.x(), size.y(), size.z());
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b);
-	debug("with colour %d (%d, %d, %d)", color, r, g, b);
+
+	_palette->getRGBAt((*colours)[0], r, g, b);
+	tglDisable(TGL_TEXTURE_2D);
+	tglColor3ub(r, g, b);
+	// Face 0
 	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+
+	tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x(),		        origin.y() + size.y(),	origin.z() + size.z());
+	tglEnd();
+
+	// Face 1
+	_palette->getRGBAt((*colours)[1], r, g, b);
 	tglColor3ub(r, g, b);
 
-	// First triangle
-	tglVertex3f(origin.x(), origin.y(), origin.z());
-	tglVertex3f(origin.x() + xs, origin.y(), origin.z());
-	tglVertex3f(origin.x() + xs, origin.y() - ys, origin.z());
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
 
-	// Second triangle
-	tglVertex3f(origin.x(), origin.y(), origin.z());
-	tglVertex3f(origin.x(), origin.y() - ys, origin.z());
-	tglVertex3f(origin.x() + xs, origin.y() - ys, origin.z());
-
+	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+	tglVertex3f(origin.x(),				origin.y(),				origin.z());
 	tglEnd();
+
+	// Face 2
+	_palette->getRGBAt((*colours)[2], r, g, b);
+	tglColor3ub(r, g, b);
+
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+	tglEnd();
+
+	// Face 3
+	_palette->getRGBAt((*colours)[3], r, g, b);
+	tglColor3ub(r, g, b);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x(),	origin.y(),				origin.z());
+	tglVertex3f(origin.x(),	origin.y(),				origin.z() + size.z());
+	tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z() + size.z());
+
+	tglVertex3f(origin.x(),	origin.y(),				origin.z());
+	tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z());
+	tglEnd();
+
+	_palette->getRGBAt((*colours)[4], r, g, b);
+	tglColor3ub(r, g, b);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x(),			origin.y(),		origin.z() + size.z());
+
+	tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
+	tglVertex3f(origin.x(),			origin.y(),		origin.z() + size.z());
+	tglVertex3f(origin.x(),			origin.y(),		origin.z());
+	tglEnd();
+
+	_palette->getRGBAt((*colours)[5], r, g, b);
+	tglColor3ub(r, g, b);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+
+	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+	tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+	tglEnd();
+}
+
+void TinyGLRenderer::drawSky(uint8 color) {
+	uint8 r, g, b;
+	_palette->getRGBAt(color, r, g, b);
+	tglClearColor(r / 255., g / 255., b / 255., 1.0);
+	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
 void TinyGLRenderer::flipBuffer() {

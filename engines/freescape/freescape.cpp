@@ -36,10 +36,10 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_hasReceivedTime = false;
 
 	_rotation = Vector3d(0.f, 0.f, 0.f);
-	_position = Vector3d(1000.0f, 0.0f, 1000.0f);
+	_position = Vector3d(4000.f, 30.f, 4000.f);
 	_velocity = Vector3d(0.0f, 0.0f, 0.0f);
-	_front = Vector3d(0.0f, 0.0f, 0.0f);
-	_right = Vector3d(0.0f, 0.0f, 0.0f);
+	_cameraFront = Vector3d(0.0f, 0.0f, 0.0f);
+	_cameraRight = Vector3d(0.0f, 0.0f, 0.0f);
 
 	_yaw = 90.0f;
 	_pitch = 0.0f;
@@ -146,15 +146,32 @@ Common::Error FreescapeEngine::run() {
 		area = (*_areasByAreaID)[_startArea];
 		assert(area);
 		//_gfx->renderPalette(area->raw_palette, binary.ncolors);
-		drawBorder();
+		//drawBorder();
 	}	
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
 	Common::Point lastMousePos(0, 0);
 	float lastFrame = 0.f;
+	float nearClipPlane = 1.f;
+	float farClipPlane;
+
+	if (_binaryBits == 16) {
+		// create a projection matrix; the 16-bit kit permits the range 0-8192 to
+		// be used along all three axes and from that comes the far plane distance
+		// of 14189.
+		farClipPlane = 14189.0f;
+	} else {
+		error("Unknown farClipPlane");
+	}
+
+	g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
+		_gfx->updateProjectionMatrix(40.0, nearClipPlane, farClipPlane);
+		_gfx->positionCamera(_position, _position + _cameraFront);
+		//_gfx->selectTargetWindow(nullptr, true, false);
+		//_gfx->updateMatrices();
 		area->draw(_gfx);
         float currentFrame = g_system->getMillis();
         float deltaTime = currentFrame - lastFrame;
@@ -193,6 +210,8 @@ Common::Error FreescapeEngine::run() {
 			}
 		}
 
+		_gfx->flipBuffer();
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -211,10 +230,10 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_pitch += yoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 89.0f)
-		_pitch = 89.0f;
-	if (_pitch < -89.0f)
-		_pitch = -89.0f;
+	if (_pitch > 180.0f)
+		_pitch = 180.0f;
+	if (_pitch < -180.0f)
+		_pitch = -180.0f;
 
 	Vector3d v;
 	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
@@ -222,34 +241,34 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	float z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
 	v.set(x, y, z);
 	v.normalize();
-	_front = v;
+	_cameraFront = v;
 
-	// _right = _front x _up;
+	// // _right = _front x _up;
 	Vector3d up(0, 1, 0); // this should be const
-	v = Math::Vector3d::crossProduct(_front, up);
+	v = Math::Vector3d::crossProduct(_cameraFront, up);
 	v.normalize();
-	_right = v;
+	_cameraRight = v;
 }
 
 void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
 	float velocity = _movementSpeed * deltaTime;
 	switch (direction) {
 	case FORWARD:
-		_position = _position + _front * velocity;
+		_position = _position + _cameraFront * velocity;
 		break;
 	case BACKWARD:
-		_position = _position - _front * velocity;
+		_position = _position - _cameraFront * velocity;
 		break;
 	case RIGHT:
-		_position = _position + _right * velocity;
+		_position = _position + _cameraRight * velocity;
 		break;
 	case LEFT:
-		_position = _position - _right * velocity;
+		_position = _position - _cameraRight * velocity;
 		break;
 	}
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
-	_position.set(_position.x(), 0, _position.z());
+	_position.set(_position.x(), 60., _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
