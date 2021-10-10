@@ -352,6 +352,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
 		if (_engine->_actor->_cropBottomScreen) {
+			_engine->_interface->resetClip();
 			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen;
 		}
 	}
