@@ -1003,7 +1003,7 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uin
 	}
 }
 
-void Renderer::renderPolygonsTriche(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint8 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
@@ -1068,14 +1068,14 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 color
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, colorStart);
+			renderPolygonsSimplified(vtop, vsize, colorStart);
 		} else {
 			renderPolygonsGouraud(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsTriche(vtop, vsize, colorStart);
+			renderPolygonsSimplified(vtop, vsize, colorStart);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
 			renderPolygonsGouraud(vtop, vsize);
 		} else {
