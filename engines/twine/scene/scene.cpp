@@ -733,7 +733,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kObject:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
-					_engine->_animations->initAnim(AnimationTypes::kAction, AnimType::kAnimationType_1, AnimationTypes::kStanding, 0);
+					_engine->_animations->initAnim(AnimationTypes::kAction, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 					processZoneExtraBonus(zone);
 				}
 				break;
@@ -757,7 +757,7 @@ void Scene::processActorZones(int32 actorIdx) {
 						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + ANGLE_90, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
-								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
+								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
 								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
 							}

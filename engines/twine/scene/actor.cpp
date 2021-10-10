@@ -129,7 +129,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	sceneHero->_anim = AnimationTypes::kAnimNone;
 	sceneHero->_animType = AnimType::kAnimationTypeLoop;
 
-	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, 0);
+	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
 
 void Actor::initSpriteActor(int32 actorIdx) {
@@ -329,9 +329,9 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 
 			if (_engine->getRandomNumber() & 1) {
-				_engine->_animations->initAnim(AnimationTypes::kHit2, AnimType::kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kHit2, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			} else {
-				_engine->_animations->initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kBigHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			}
 		}
 
@@ -346,7 +346,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			actor->_life = 0;
 		}
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 	}
 }
 

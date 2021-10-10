@@ -633,7 +633,7 @@ void TwinEEngine::processInventoryAction() {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
 			_actor->initModelActor(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
-			_animations->initAnim(AnimationTypes::kSabreUnknown, AnimType::kAnimationType_1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
+			_animations->initAnim(AnimationTypes::kSabreUnknown, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 			_gameState->_usingSabre = true;
 		}
@@ -875,7 +875,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		if (actor->_life == 0) {
 			if (IS_HERO(a)) {
-				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
+				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 				actor->_controlMode = ControlMode::kNoMove;
 			} else {
 				_sound->playSample(Samples::Explode, 1, actor->pos(), a);
@@ -918,12 +918,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
-			if (brickSound == 0xF1U) {
+			if (brickSound == WATER_BRICK) {
 				if (IS_HERO(a)) {
 					// we are dying if we aren't using the protopack to fly over water
 					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
 						if (!_actor->_cropBottomScreen) {
-							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
+							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
 						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
 						actor->_controlMode = ControlMode::kNoMove;
