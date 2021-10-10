@@ -111,7 +111,6 @@ void MenuOptions::showCredits() {
 	_engine->_screens->clearScreen();
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
-	// TODO: quitting the credits scene doesn't restore the menu texts
 }
 
 void MenuOptions::showEndSequence() {

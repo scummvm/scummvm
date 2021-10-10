@@ -591,6 +591,8 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 		if (showCredits && loopMillis - startMillis > 11650) {
 			_engine->_menuOptions->showCredits();
+			_engine->_text->initTextBank(TextBankId::Options_and_menus);
+
 			// TODO the original game also performs these actions:
 			// play FLA_DRAGON3 fla
 			// display RESSHQR_INTROSCREEN1IMG
