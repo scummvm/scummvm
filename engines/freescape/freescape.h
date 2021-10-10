@@ -10,6 +10,7 @@
 #include "gui/debugger.h"
 
 #include "freescape/area.h"
+#include "freescape/objects/entrance.h"
 #include "freescape/gfx.h"
 
 namespace Freescape {
@@ -69,13 +70,17 @@ public:
 	void loadAssets();
 	void load16bitBinary(Common::SeekableReadStream *file);
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
-
 	uint8 _binaryBits;
+
+	// Player
+	uint16 _playerHeight;
 
 	// Areas
 	uint16 _startArea;
 	AreaMap *_areasByAreaID;
-
+	Math::Vector3d _scale;
+	// Entrance
+	uint16 _startEntrance;
 
 	// Movement
 	void move(CameraMovement direction, float deltaTime);

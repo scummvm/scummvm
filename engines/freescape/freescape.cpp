@@ -36,15 +36,15 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_hasReceivedTime = false;
 
 	_rotation = Vector3d(0.f, 0.f, 0.f);
-	_position = Vector3d(4000.f, 30.f, 4000.f);
-	_velocity = Vector3d(0.0f, 0.0f, 0.0f);
-	_cameraFront = Vector3d(0.0f, 0.0f, 0.0f);
-	_cameraRight = Vector3d(0.0f, 0.0f, 0.0f);
+	_position = Vector3d(0.f, 0.f, 0.f);
+	_velocity = Vector3d(0.f, 0.f, 0.f);
+	_cameraFront = Vector3d(0.f, 0.f, 0.f);
+	_cameraRight = Vector3d(0.f, 0.f, 0.f);
 
-	_yaw = 90.0f;
+	_yaw = -90.0f;
 	_pitch = 0.0f;
 	_movementSpeed = 4.5f;
-	_mouseSensitivity = 0.05f;
+	_mouseSensitivity = 0.1f;
 
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
@@ -139,15 +139,19 @@ Common::Error FreescapeEngine::run() {
 	_gfx->clear();
 	loadAssets();
 	Area *area = nullptr;
+	Entrance *entrance = nullptr;
 	if (_areasByAreaID) {
-		_startArea = 1; //binary.startArea;
-
+		if (_startArea == 14)
+			_startArea = 1;
 		assert(_areasByAreaID->contains(_startArea));
 		area = (*_areasByAreaID)[_startArea];
 		assert(area);
+		entrance = (Entrance*) area->entranceWithID(_startEntrance);
+		assert(entrance);
+		_position = entrance->getOrigin();
 		//_gfx->renderPalette(area->raw_palette, binary.ncolors);
 		//drawBorder();
-	}	
+	}
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
@@ -170,6 +174,7 @@ Common::Error FreescapeEngine::run() {
 	while (!shouldQuit()) {
 		_gfx->updateProjectionMatrix(40.0, nearClipPlane, farClipPlane);
 		_gfx->positionCamera(_position, _position + _cameraFront);
+		_gfx->scale(_scale);
 		//_gfx->selectTargetWindow(nullptr, true, false);
 		//_gfx->updateMatrices();
 		area->draw(_gfx);
@@ -213,6 +218,7 @@ Common::Error FreescapeEngine::run() {
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		//g_system->warpMouse(_screenH/2, _screenW/2);
 	}
 
 	return Common::kNoError;
@@ -220,6 +226,7 @@ Common::Error FreescapeEngine::run() {
 
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
+	//debug("x: %d, y: %d", mousePos.x, mousePos.y);
 	float xoffset = mousePos.x - lastMousePos.x;
 	float yoffset = mousePos.y - lastMousePos.y;
 
@@ -230,10 +237,10 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_pitch += yoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 180.0f)
-		_pitch = 180.0f;
-	if (_pitch < -180.0f)
-		_pitch = -180.0f;
+	if (_pitch > 89.0f)
+		_pitch = 89.0f;
+	if (_pitch < -89.0f)
+		_pitch = -89.0f;
 
 	Vector3d v;
 	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
@@ -268,7 +275,7 @@ void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
 	}
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
-	_position.set(_position.x(), 60., _position.z());
+	_position.set(_position.x(), _playerHeight, _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {

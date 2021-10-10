@@ -73,12 +73,14 @@ int GeometricObject::numberOfOrdinatesForType(Type type) {
 GeometricObject::GeometricObject(
 	Type _type,
 	uint16 _objectID,
+	uint16 _flags,
 	const Vector3d &_origin,
 	const Vector3d &_size,
 	Common::Array<uint8> *_colours,
 	Common::Array<uint16> *_ordinates,
 	FCLInstructionVector _condition) {
 	type = _type;
+	flags = _flags;
 	objectID = _objectID;
 	origin = _origin;
 	size = _size;

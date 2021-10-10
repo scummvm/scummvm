@@ -84,6 +84,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		return new GeometricObject(
 			objectType,
 			objectID,
+			0, // flags
 			position,
 			v, // size
 			colours,

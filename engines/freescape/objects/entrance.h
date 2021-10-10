@@ -22,6 +22,8 @@ public:
 
 	bool isDrawable();
 	bool isPlanar();
+	Type getType() override { return Type::Entrance; };
+	void draw(Freescape::Renderer *gfx) override { error("cannot render Entrance"); };
 };
 
 

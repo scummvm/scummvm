@@ -140,7 +140,7 @@ public:
 									float transparency = -1.0, bool additiveBlending = false) = 0;
 
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
-
+	virtual void scale(const Math::Vector3d &scale) = 0;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void drawSky(uint8 color) = 0;
 

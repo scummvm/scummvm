@@ -173,6 +173,11 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDepthMask(TGL_TRUE);
 }
 
+void TinyGLRenderer::scale(const Math::Vector3d &scale) {
+	//tglScalef(-scale.x() / 256.f, scale.y() / 256.f, scale.z() / 256.f);
+}
+
+
 void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -201,7 +206,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	//debug("with size %f, %f, %f", size.x(), size.y(), size.z());
 	uint8 r, g, b;
 
-	_palette->getRGBAt((*colours)[0], r, g, b);
+	_palette->getRGBAt((*colours)[5], r, g, b);
 	tglDisable(TGL_TEXTURE_2D);
 	tglColor3ub(r, g, b);
 	// Face 0
@@ -216,7 +221,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	tglEnd();
 
 	// Face 1
-	_palette->getRGBAt((*colours)[1], r, g, b);
+	_palette->getRGBAt((*colours)[4], r, g, b);
 	tglColor3ub(r, g, b);
 
 	tglBegin(TGL_TRIANGLES);
@@ -230,7 +235,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	tglEnd();
 
 	// Face 2
-	_palette->getRGBAt((*colours)[2], r, g, b);
+	_palette->getRGBAt((*colours)[0], r, g, b);
 	tglColor3ub(r, g, b);
 
 	tglBegin(TGL_TRIANGLES);
@@ -244,7 +249,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	tglEnd();
 
 	// Face 3
-	_palette->getRGBAt((*colours)[3], r, g, b);
+	_palette->getRGBAt((*colours)[1], r, g, b);
 	tglColor3ub(r, g, b);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(origin.x(),	origin.y(),				origin.z());
@@ -256,7 +261,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z());
 	tglEnd();
 
-	_palette->getRGBAt((*colours)[4], r, g, b);
+	_palette->getRGBAt((*colours)[2], r, g, b);
 	tglColor3ub(r, g, b);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
@@ -268,7 +273,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	tglVertex3f(origin.x(),			origin.y(),		origin.z());
 	tglEnd();
 
-	_palette->getRGBAt((*colours)[5], r, g, b);
+	_palette->getRGBAt((*colours)[3], r, g, b);
 	tglColor3ub(r, g, b);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());

@@ -28,6 +28,7 @@ public:
 	GeometricObject(
 		Type type,
 		uint16 objectID,
+		uint16 flags,
 		const Vector3d &origin,
 		const Vector3d &size,
 		Common::Array<uint8> *colours,
