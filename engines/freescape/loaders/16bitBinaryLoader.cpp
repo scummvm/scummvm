@@ -28,7 +28,7 @@ typedef enum {
 		Border = 0x4524,
 } ChunkType;
 
-static Object *load16bitObject(StreamLoader &stream) {
+static Object *load16bitObject(StreamLoader &stream, uint8 groundColor) {
 	// get object flags and type
 	uint8 objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
@@ -75,6 +75,8 @@ static Object *load16bitObject(StreamLoader &stream) {
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours; colour++) {
 			uint8 c = stream.get8();
+			if (objectID == 1)
+				c = groundColor;
 			debug("face %d color: %d", colour, c);
 			colours->push_back(c);
 			byteSizeOfObject--;
@@ -109,6 +111,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 		return new GeometricObject(
 			objectType,
 			objectID,
+			objectFlags,
 			position,
 			size,
 			colours,
@@ -117,6 +120,8 @@ static Object *load16bitObject(StreamLoader &stream) {
 	} break;
 
 	case Object::Entrance:
+		return new Entrance(objectID, position, size); // size will be always 0,0,0?
+		break;
 	case Object::Sensor:
 	case Object::Group:
 		break;
@@ -206,7 +211,7 @@ Area *load16bitArea(StreamLoader &stream) {
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
 	for (uint16 object = 0; object < numberOfObjects; object++) {
-		Object *newObject = load16bitObject(stream);
+		Object *newObject = load16bitObject(stream, groundColor);
 
 		if (newObject) {
 			if (newObject->getType() == Object::Entrance) {
@@ -325,7 +330,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	uint16 playerStep = streamLoader.get16();
 	uint16 playerAngle = streamLoader.get16();
 
-	debug("Height %d, step %d, angle %d)", playerHeight, playerStep, playerAngle);
+	debug("Height %d, step %d, angle %d", playerHeight, playerStep, playerAngle);
 
 	uint16 startVehicle = streamLoader.get16();
 	uint16 executeGlobalCondition = streamLoader.get16();
@@ -406,6 +411,8 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
+		//if (newArea->getAreaID() == startArea)
+		//	assert(0);
 	}
 	//load16bitInstrument(streamLoader);
 
@@ -476,9 +483,12 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	}
 
 	delete[] fileOffsetForArea;
+	_playerHeight = playerHeight;
 	_startArea = startArea;
+	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
 	_areasByAreaID = areaMap;
+	_scale = Math::Vector3d(scaleX, scaleY, scaleZ);
 	_binaryBits = 16;
 	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }

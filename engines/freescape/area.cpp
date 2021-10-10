@@ -92,30 +92,8 @@ Area::~Area() {
 }*/
 
 void Area::draw(Freescape::Renderer *gfx) {
-	// Graphics::PixelBuffer *palette;
-	// if (gfx->_palette)
-	// 	palette = gfx->_palette;
-	// else if (raw_palette) {
-	// 	palette = new Graphics::PixelBuffer(gfx->_palettePixelFormat, 16, DisposeAfterUse::NO); 
-	// 	*palette = raw_palette->data();
-	// }
-
-	//gfx->selectTargetWindow(nullptr, false, true);
-	// debug("w: %d, h: %d", gfx->kOriginalWidth, gfx->kOriginalHeight);
-	// //Common::Rect view(20, 30, 305, 110);
-	// Common::Rect view = gfx->rviewport();
-	// Common::Rect sky(view.left, view.top, view.right, view.bottom-view.height()/2);
-	//debug("color: %d %x%x%x", skyColor, g, b);
 	gfx->drawSky(skyColor);
-
-
-	// Common::Rect ground(view.left, view.top+view.height()/2, view.right, view.bottom);
-	// palette->getRGBAt(groundColor, r, g, b);
-	// debug("color: %d %x%x%x", groundColor, g, b);
-	// gfx->drawRect2D(ground, 255, r, g, b);
-
-
-	for (Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++) {
-		(*iterator)->draw(gfx);
+	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
+		(*it)->draw(gfx);
 	}
 }

@@ -12,13 +12,13 @@
 
 Object::Type Object::getType() { return type; }
 uint16 Object::getObjectID() { return objectID; }
-//Vector3d Object::getOrigin()	{	return origin;		}
-//Vector3d Object::getSize()		{	return size;		}
+uint16 Object::getObjectFlags() { return flags; }
+Vector3d Object::getOrigin() { return origin; }
+Vector3d Object::getSize() { return size; }
 
-//void Object::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)					{}
-void Object::draw(Freescape::Renderer *gfx /*VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset*/) {
-	gfx;
-}
+//void Object::draw(Freescape::Renderer *gfx) {
+//	gfx;
+//}
 bool Object::isDrawable() { return false; }
 bool Object::isPlanar() { return false; }
 

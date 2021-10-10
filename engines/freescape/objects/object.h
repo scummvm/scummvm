@@ -44,13 +44,13 @@ public:
 		Group = 15
 	} Type;
 
-	Type getType();
+	virtual Type getType();
 	uint16 getObjectID();
+	uint16 getObjectFlags();
 	Vector3d getOrigin();
 	Vector3d getSize();
 
-	//virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-	virtual void draw(Freescape::Renderer *gfx);
+	virtual void draw(Freescape::Renderer *gfx) = 0;
 
 	virtual bool isDrawable();
 	virtual bool isPlanar();
@@ -58,16 +58,10 @@ public:
 	virtual ~Object();
 
 protected:
+	uint16 flags;
 	Type type;
 	uint16 objectID;
 	Vector3d origin, size, rotation;
 };
-
-/*
-#include "Entrance.h"
-#include "GeometricObject.h"
-#include "Group.h"
-#include "Sensor.h"
-*/
 
 #endif /* defined(__Phantasma__Object__) */
