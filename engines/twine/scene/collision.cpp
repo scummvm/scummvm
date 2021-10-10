@@ -383,16 +383,16 @@ void Collision::stopFalling() { // ReceptionObj()
 			} else {
 				_engine->_actor->_processActorPtr->addLife(-1);
 			}
-			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		} else if (fall > 10) {
-			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		} else {
 			_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		}
 
 		_engine->_scene->_heroYBeforeFall = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationType_2, _engine->_actor->_processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
 	}
 
 	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;
