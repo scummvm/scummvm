@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-03 19:06+0000\n"
+"POT-Creation-Date: 2021-10-10 14:03+0000\n"
 "PO-Revision-Date: 2021-10-03 07:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4173,8 +4173,8 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/mohawk/detection_tables.h:1080
 #: engines/mohawk/detection_tables.h:1095 engines/neverhood/detection.cpp:121
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:1220
-#: engines/saga/detection_tables.h:1279 engines/sci/detection_tables.h:4924
-#: engines/sci/detection_tables.h:4932 engines/sherlock/detection_tables.h:214
+#: engines/saga/detection_tables.h:1279 engines/sci/detection_tables.h:4936
+#: engines/sci/detection_tables.h:4944 engines/sherlock/detection_tables.h:214
 #: engines/stark/detection.cpp:320 engines/teenagent/detection.cpp:118
 #: engines/trecision/detection.cpp:200 engines/zvision/detection_tables.h:191
 #: engines/zvision/detection_tables.h:211
@@ -5985,7 +5985,7 @@ msgstr "Підтримку для I Have no Mouth не скомпільован�
 msgid "Error loading game resources."
 msgstr "Помилка читання файлу ресурсів гри."
 
-#: engines/sci/detection_tables.h:4272
+#: engines/sci/detection_tables.h:4284
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
