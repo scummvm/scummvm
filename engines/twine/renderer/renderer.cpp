@@ -393,6 +393,36 @@ bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	const int16 *colProgressBufEnd = &_colorProgressionBuffer[_polyTabSize - 1];
 	const int screenHeight = _engine->height();
 
+	const Common::Rect &clip = _engine->_interface->_clip;
+	if (!clip.isEmpty()) {
+		int32 vleft;
+		int32 vright;
+		int32 vtop;
+		int32 vbottom;
+
+		vleft = vtop = SCENE_SIZE_MAX;
+		vright = vbottom = SCENE_SIZE_MIN;
+
+		for (int32 i = 0; i < numVertices; i++) {
+			if (vertices[i].x < vleft)
+				vleft = vertices[i].x;
+			if (vertices[i].x > vright)
+				vright = vertices[i].x;
+			if (vertices[i].y < vtop)
+				vtop = vertices[i].y;
+			if (vertices[i].y > vbottom)
+				vbottom = vertices[i].y;
+		}
+		// no vertices
+		if (vtop > vbottom) {
+			return false;
+		}
+		if (vright < clip.left - 1 || vleft > clip.right + 1 || vbottom < clip.top - 1 || vtop > clip.bottom + 1) {
+			debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", vleft, vtop, vright, vbottom, clip.left, clip.top, clip.right, clip.bottom);
+			return false;
+		}
+	}
+
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
 		const int16 oldVertexY = currentVertexY;
 		const int16 oldVertexX = currentVertexX;
