@@ -1155,6 +1155,7 @@ void Menu::drawInventoryItems(int32 left, int32 top) {
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(left, top, item);
 	}
+	_engine->_interface->resetClip();
 }
 
 void Menu::processInventoryMenu() {

@@ -352,12 +352,12 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
 		if (_engine->_actor->_cropBottomScreen) {
-			_engine->_interface->resetClip();
 			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen;
 		}
 	}
 
 	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, ANGLE_0, actor->_angle, ANGLE_0, _engine->_resources->_bodyData[actor->_entity], renderRect)) {
+		_engine->_interface->resetClip();
 		return;
 	}
 
@@ -380,8 +380,8 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		}
 
 		_engine->_debugScene->drawClip(_engine->_interface->_clip);
-		_engine->_interface->resetClip();
 	}
+	_engine->_interface->resetClip();
 }
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
