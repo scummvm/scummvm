@@ -733,7 +733,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const HeroBehaviourType behavior = (HeroBehaviourType)ctx.stream.readByte();
 
-	engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, 0);
+	engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 	engine->_actor->setBehaviour(behavior);
 
 	return 0;

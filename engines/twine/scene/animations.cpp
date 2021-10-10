@@ -402,7 +402,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 		return true;
 	}
 
-	if (animExtra == AnimationTypes::kAnimInvalid && actor->_animType != AnimType::kAnimationType_2) {
+	if (animExtra == AnimationTypes::kAnimInvalid && actor->_animType != AnimType::kAnimationAllThen) {
 		animExtra = actor->_anim;
 	}
 
@@ -412,13 +412,13 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 		animIndex = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
 	}
 
-	if (animType != AnimType::kAnimationType_4 && actor->_animType == AnimType::kAnimationType_2) {
+	if (animType != AnimType::kAnimationSet && actor->_animType == AnimType::kAnimationAllThen) {
 		actor->_animExtra = newAnim;
 		return false;
 	}
 
-	if (animType == AnimType::kAnimationType_3) {
-		animType = AnimType::kAnimationType_2;
+	if (animType == AnimType::kAnimationInsert) {
+		animType = AnimType::kAnimationAllThen;
 
 		animExtra = actor->_anim;
 
@@ -427,8 +427,8 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 		}
 	}
 
-	if (animType == AnimType::kAnimationType_4) {
-		animType = AnimType::kAnimationType_2;
+	if (animType == AnimType::kAnimationSet) {
+		animType = AnimType::kAnimationAllThen;
 	}
 
 	if (actor->_previousAnimIdx == -1) {
@@ -695,7 +695,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) { // SCENE_SIZE_MAX
 				if (_engine->_grid->getBrickShape(destPos.x, processActor.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
-					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
+					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 
 					if (IS_HERO(_currentlyProcessedActorIdx)) {
 						_engine->_movements->_heroMoved = true;
@@ -717,7 +717,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
-						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
+						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 						_engine->_movements->_heroMoved = true;
 						actor->addLife(-1);
 					}
