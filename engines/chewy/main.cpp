@@ -24,8 +24,10 @@
 
 #include "chewy/main.h"
 #include "chewy/chewy.h"
+#include "chewy/events.h"
 #include "chewy/menus.h"
 #include "chewy/ngshext.h"
+#include "chewy/main_menu.h"
 
 namespace Chewy {
 
@@ -83,7 +85,7 @@ void game_main() {
 	cursor_wahl(CUR_WALK);
 	workptr = workpage + 4l;
 
-	test_menu();
+	MainMenu::execute();
 	remove(ADSH_TMP);
 	tidy();
 	out->rest_palette();
@@ -714,6 +716,7 @@ void set_up_screen(int16 mode) {
 		            &spieler.scrollx, &spieler.scrolly);
 
 	g_engine->_screen->update();
+	g_events->update();
 }
 
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
@@ -1253,6 +1256,7 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 			gpkt.Ebenen = room->GedInfo[room_blk.AkAblage].Ebenen;
 			gpkt.AkMovEbene = ged_mov_ebene;
 			mov->goto_xy(&gpkt);
+
 			spieler_mi[p_nr].XyzStart[0] = spieler_vector[p_nr].Xypos[0];
 			spieler_mi[p_nr].XyzStart[1] = spieler_vector[p_nr].Xypos[1];
 			spieler_mi[p_nr].XyzEnd[0] = gpkt.Dx - spieler_mi[p_nr].HotX;
