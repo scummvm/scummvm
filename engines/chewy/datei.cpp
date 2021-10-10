@@ -42,28 +42,11 @@ uint8 tmp[10000]; // FIXME
 
 extern int16 modul;
 extern int16 fcode;
-int16 *ft ;
+int16 *ft;
+
 datei::datei() {
-#if 0
-	int16 i;
-	char *enstr;
-	char a[] = {129, 122, 134, 96, 133, 120, 137, 120, 116, 127, 0}; //"NGS-REVEAL"
-	char
-	b[] = {121, 124, 127, 120, 146, 128, 116, 129, 116, 122, 120, 133, 146, 91, 118, 92, 146,
-		129, 120, 138, 146, 122, 120, 129, 120, 133, 116, 135, 124, 130, 129, 146, 134, 130,
-		121, 135, 138, 116, 133, 120, 0 }; // "FILE_MANAGER_(C)_NEW_GENERATION_SOFTWARE"
-	for (i = 0; a[i] != 0; i++)
-		a[i] -= 51;
-	for (i = 0; b[i] != 0; i++)
-		b[i] -= 51;
-	enstr = (char *)getenv(a);
-	if (enstr) {
-		printf(b);
-		printf("\n");
-		delay(800);
-	}
-#endif
 }
+
 datei::~datei() {
 }
 
@@ -855,34 +838,25 @@ uint32 datei::load_item(Stream *handle, byte *speicher) {
 }
 
 uint32 datei::load_tmf(const char *fname, tmf_header *th) {
-	Stream *handle;
+	Common::File f;
 	uint32 size = 0;
-	byte *speicher;
+	byte *speicher = nullptr;
 	int16 ok, i;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
-	i = 0;
-	while ((filename[i] != '.') && (filename[i] != 0) && (i < (MAXPATH - 5)))
-		i++;
-	filename[i] = '.';
-	filename[i + 1] = 'T';
-	filename[i + 2] = 'M';
-	filename[i + 3] = 'F';
-	filename[i + 4] = 0;
-	speicher = (byte *)th;
 
-	handle = chewy_fopen(filename, "rb");
-	if (handle) {
-		chewy_fseek(handle, 0l, SEEK_END);
-		size = chewy_ftell(handle);
-		chewy_fseek(handle, 0l, SEEK_SET);
-		if (!(chewy_fread(th, sizeof(tmf_header), 1, handle))) {
+	strncpy(filename, fname, MAXPATH - 5);
+	filename[MAXPATH - 5] = '\0';
+	if (!strchr(filename, '.'))
+		strcat(filename, ".tmf");
+
+	if (f.open(filename)) {
+		size = f.size();
+
+		if (!th->load(&f)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
-			size -= sizeof(tmf_header);
-			speicher += sizeof(tmf_header);
+			size -= tmf_header::SIZE();
+			speicher = (byte *)th + sizeof(tmf_header);
 			ok = 0;
 			if (!strncmp(th->id, "TMF", 3))
 				ok = 1;
@@ -892,17 +866,18 @@ uint32 datei::load_tmf(const char *fname, tmf_header *th) {
 			}
 		}
 		if (!modul) {
-			if (!(chewy_fread(speicher, size, 1, handle))) {
+			if (f.read(speicher, size) != size) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			}
 		}
-		chewy_fclose(handle);
-	}
-	else {
+
+		f.close();
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
+
 	if (!modul) {
 		speicher = (byte *)th;
 		speicher += sizeof(tmf_header);
@@ -914,46 +889,48 @@ uint32 datei::load_tmf(const char *fname, tmf_header *th) {
 			}
 		}
 	}
-	return (size + sizeof(tmf_header));
+
+	return size + sizeof(tmf_header);
 }
 
 uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
-	ChunkHead *ch;
-	byte *speicher;
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
+	ChunkHead *ch = (ChunkHead *)tmp;
+	byte *speicher = nullptr;
+	uint32 size = 0;
 	int16 i;
-	ch = (ChunkHead *) tmp;
-	speicher = (byte *)song;
-	if (handle) {
-		chewy_fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
-		if (!(chewy_fread(ch, sizeof(ChunkHead), 1, handle))) {
+
+	if (rs) {
+		rs->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+		if (!ch->load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
-		}
-		else {
+		} else {
 			if (ch->type == TMFDATEI) {
-				if (!(chewy_fread(speicher, ch->size, 1, handle))) {
+				assert(ch->size > tmf_header::SIZE());
+
+				if (!song->load(rs)) {
 					modul = DATEI;
 					fcode = READFEHLER;
-				}
-				else {
-					speicher = (byte *)song;
-					speicher += sizeof(tmf_header);
+				} else {
+					size = ch->size + sizeof(tmf_header);
+					speicher = (byte *)song + sizeof(tmf_header);
 					speicher += ((uint32)song->pattern_anz) * 1024l;
-					for (i = 0; i < 31; i++) {
+					for (i = 0; i < 31; ++i) {
 						if (song->instrument[i].laenge) {
 							song->ipos[i] = speicher;
 							speicher += song->instrument[i].laenge;
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				modul = DATEI;
 				fcode = NOTTBF;
 			}
 		}
 	}
-	return (ch->size);
+
+	return size;
 }
 
 void datei::save_pcx(const char *fname, byte *speicher, byte *palette) {

@@ -22,10 +22,11 @@ MODULE_OBJS = \
 	flic.o \
 	gedclass.o \
 	global.o \
-	main.o \
-	m_event.o \
 	inits.o \
 	io_game.o \
+	m_event.o \
+	main.o \
+	main_menu.o \
 	maus.o \
 	mcga.o \
 	mcga_grafik.o \
