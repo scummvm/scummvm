@@ -473,79 +473,31 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 	if (renderLoop > screenHeight) {
 		renderLoop = screenHeight;
 	}
+	int32 sens = 1;
+
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
 
 		ptr1++;
-		int32 hsize = stop - start;
+		uint8 *pDest = out + xMin;
 
-		if (hsize >= 0) {
-			uint16 mask = 0x43DB;
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = (uint8)color;
+		}
 
-			hsize++;
-			const int32 startCopy = start;
-
-			for (int32 j = startCopy; j < hsize + startCopy; j++) {
-				start += mask;
-				start = (start & 0xFF00) | ((start & 0xFF) & 3U);
-				start = (start & 0xFF00) | ((start & 0xFF) + color);
-				if (j >= 0 && j < screenWidth) {
-					out[j] = start & 0xFF;
-				}
-				mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
-				mask++;
+		color += sens;
+		if (!(color & 0xF)) {
+			sens = -sens;
+			if (sens < 0) {
+				color += sens;
 			}
 		}
-		out += screenWidth;
+		pDest += screenWidth;
 	}
 }
 
 void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
-#if 0
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-
-	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	int32 j = 0;
-
-	do {
-		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		uint16 start = *(const uint16 *)ptr1;
-		++ptr1;
-		if (stop >= start) {
-			++j;
-			uint8 *out2 = out + start;
-			memset(out2, color, j);
-			++color;
-			if (!(color & 0xF)) {
-				while (1) {
-					--color;
-					if (!(color & 0xF)) {
-						break;
-					}
-					out += screenWidth;
-					--vsize;
-					if (!vsize) {
-						return;
-					}
-					stop = *(const uint16 *)(ptr1 + screenHeight);
-					start = *(const uint16 *)ptr1;
-					++ptr1;
-					if (stop >= start) {
-						++j;
-						out2 = out + start;
-						memset(out2, color, j);
-					}
-				}
-			}
-		}
-		out += screenWidth;
-		--vsize;
-	} while (vsize);
-#else
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -558,24 +510,32 @@ void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
 	if (renderLoop > screenHeight) {
 		renderLoop = screenHeight;
 	}
+	int32 sens = 1;
+	int32 line = 2;
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
 		ptr1++;
-		const int32 hsize = stop - start;
 
-		if (start & 1) {
-			if (hsize >= 0) {
-				for (int32 j = start; j <= hsize + start; j++) {
-					if (j >= 0 && j < screenWidth) {
-						out[j] = color;
-					}
+		uint8 *pDest = out + xMin;
+
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = (uint8)color;
+		}
+
+		line--;
+		if (!line) {
+			line = 2;
+			color += sens;
+			if (!(color & 0xF)) {
+				sens = -sens;
+				if (sens < 0) {
+					color += sens;
 				}
 			}
 		}
 		out += screenWidth;
 	}
-#endif
 }
 
 void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
@@ -1053,13 +1013,10 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 color
 		}
 		break;
 	case POLYGONTYPE_COPPER:
-		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
-		//renderPolygonsCopper(vtop, vsize, colorStart);
-		//break;
-	case POLYGONTYPE_BOPPER:
 		renderPolygonsCopper(vtop, vsize, colorStart);
-		// TODO: fix this render method:
-		// renderPolygonsBopper(vtop, vsize, colorStart);
+		break;
+	case POLYGONTYPE_BOPPER:
+		renderPolygonsBopper(vtop, vsize, colorStart);
 		break;
 	case POLYGONTYPE_TRANS:
 		renderPolygonsTrans(vtop, vsize, colorStart);
