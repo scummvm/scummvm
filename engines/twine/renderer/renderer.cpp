@@ -459,7 +459,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	}
 }
 
-void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -497,7 +497,7 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 	}
 }
 
-void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -538,7 +538,7 @@ void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
 	}
 }
 
-void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -566,7 +566,7 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
 	}
 }
 
-void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
@@ -643,7 +643,7 @@ void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
 	} while (renderLoop);
 }
 
-void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -667,7 +667,7 @@ void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint8 color) const {
 }
 
 // Used e.g for the legs of the horse or the ears of most characters
-void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -963,7 +963,7 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uin
 	}
 }
 
-void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
