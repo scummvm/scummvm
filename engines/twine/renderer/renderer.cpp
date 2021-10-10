@@ -921,7 +921,7 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uint8 colorEnd) const {
+void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const {
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -935,8 +935,8 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uin
 	int16 *pVerticG = ptr1;
 	int16 *pVerticD = &ptr1[screenHeight];
 
-	uint16 start = colorStart;
-	uint16 end = colorEnd;
+	uint16 start = (color & 0xFF) << 8;
+	uint16 end = color & 0xFF00;
 	uint16 delta = end - start + 1; // delta intensity
 	int32 step, dc;
 
@@ -951,7 +951,7 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uin
 			*pDest++ = (uint8)(end >> 8);
 		} else if (dc > 0) {
 			step = delta / (dc + 1);
-			uint16 color = start;
+			color = start;
 
 			for (; xMin <= xMax; xMin++) {
 				*pDest++ = (uint8)(color >> 8);
@@ -997,43 +997,43 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	const int32 vsize = vbottom - vtop + 1;
-	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex, polygon.colorIndex);
+	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
 }
 
-void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 colorStart, uint8 colorEnd) {
+void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
 	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(vtop, vsize, colorStart);
+		renderPolygonsFlat(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TELE:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsFlat(vtop, vsize, colorStart);
+			renderPolygonsFlat(vtop, vsize, color);
 		} else {
-			renderPolygonsTele(vtop, vsize, colorStart);
+			renderPolygonsTele(vtop, vsize, color);
 		}
 		break;
 	case POLYGONTYPE_COPPER:
-		renderPolygonsCopper(vtop, vsize, colorStart);
+		renderPolygonsCopper(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsBopper(vtop, vsize, colorStart);
+		renderPolygonsBopper(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRANS:
-		renderPolygonsTrans(vtop, vsize, colorStart);
+		renderPolygonsTrans(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRAME: // raster
-		renderPolygonsTrame(vtop, vsize, colorStart);
+		renderPolygonsTrame(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsSimplified(vtop, vsize, colorStart);
+			renderPolygonsSimplified(vtop, vsize, color);
 		} else {
 			renderPolygonsGouraud(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsSimplified(vtop, vsize, colorStart);
+			renderPolygonsSimplified(vtop, vsize, color);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
 			renderPolygonsGouraud(vtop, vsize);
 		} else {
@@ -1041,7 +1041,7 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 color
 		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(vtop, vsize, colorStart, colorEnd);
+		renderPolygonsMarble(vtop, vsize, color);
 		break;
 	default:
 		warning("RENDER WARNING: Unsupported render type %d", renderType);
@@ -1049,7 +1049,7 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 color
 	}
 }
 
-bool Renderer::prepareCircle(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd) {
+bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 	if (radius <= 0) {
 		return false;
 	}
@@ -1148,8 +1148,7 @@ bool Renderer::prepareCircle(int32 x, int32 y, int32 radius, uint8 colorStart, u
 uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
 	for (const BodySphere &sphere : spheres) {
 		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
-		cmd->colorIndexStart = sphere.colorStart;
-		cmd->colorIndexEnd = sphere.colorEnd;
+		cmd->color = sphere.color;
 		cmd->polyRenderType = sphere.fillType;
 		cmd->radius = sphere.radius;
 		const int16 centerIndex = sphere.vertex;
@@ -1343,9 +1342,9 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius -= 3;
 
-			if (prepareCircle(sphere->x, sphere->y, radius, sphere->colorIndexStart, sphere->colorIndexEnd)) {
+			if (prepareCircle(sphere->x, sphere->y, radius)) {
 				const int32 vsize = 2 * radius;
-				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->colorIndexStart, sphere->colorIndexEnd);
+				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->color);
 			}
 			break;
 		}

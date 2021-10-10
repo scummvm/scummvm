@@ -122,8 +122,7 @@ private:
 	 * @sa RenderCommand
 	 */
 	struct CmdRenderSphere {
-		uint8 colorIndexStart = 0;
-		uint8 colorIndexEnd = 0;
+		uint16 color = 0; // color start and end values
 		uint8 polyRenderType = 0;
 		int16 radius = 0;
 		int16 x = 0;
@@ -140,7 +139,7 @@ private:
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	bool prepareCircle(int32 x, int32 y, int32 radius, uint8 colorStart, uint8 colorEnd);
+	bool prepareCircle(int32 x, int32 y, int32 radius);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 getCameraAnglePositions(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
@@ -193,7 +192,7 @@ private:
 	void renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsGouraud(int vtop, int32 vsize) const;
 	void renderPolygonsDither(int vtop, int32 vsize) const;
-	void renderPolygonsMarble(int vtop, int32 vsize, uint8 colorStart, uint8 colorEnd) const;
+	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
@@ -226,7 +225,7 @@ public:
 		return getBaseRotationPosition(vec.x, vec.y, vec.z);
 	}
 
-	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint8 colorStart, uint8 colorEnd);
+	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {

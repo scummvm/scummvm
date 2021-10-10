@@ -47,8 +47,7 @@ struct BodyLine {
 
 struct BodySphere {
 	uint8 fillType;
-	uint8 colorStart;
-	uint8 colorEnd;
+	uint16 color; // start and end color index
 	// fill byte here
 	int16 radius;
 	uint16 vertex;
