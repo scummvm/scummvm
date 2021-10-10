@@ -1019,14 +1019,15 @@ void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint8 color) cons
 		renderLoop = screenHeight;
 	}
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		uint16 xMin = ptr1[0];
-		const uint16 xMax = ptr1[screenHeight];
+		int16 xMin = MAX<int16>(0, ptr1[0]);
+		const int16 xMax = MIN<int16>((int16)(screenWidth - 1), ptr1[screenHeight]);
 		uint8 *pDest = out + xMin;
 
 		color = (*ptr2++) >> 8;
 		for (; xMin <= xMax; xMin++) {
 			*pDest++ = color;
 		}
+		++ptr1;
 
 		out += screenWidth;
 	}
