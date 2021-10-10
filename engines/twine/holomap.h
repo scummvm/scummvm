@@ -26,6 +26,13 @@
 #include "twine/shared.h"
 #include "common/scummsys.h"
 
+#define NUM_HOLOMAPCOLORS 32
+#define HOLOMAP_PALETTE_INDEX 192
+
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace TwinE {
 
 class TwinEEngine;
@@ -86,17 +93,17 @@ private:
 	 * Renders a holomap path with single path points appearing slowly one after another
 	 */
 	void renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y);
-	void prepareHolomapSurface();
+	void prepareHolomapSurface(Common::SeekableReadStream *holomapSurfaceStream);
 	void prepareHolomapProjectedPositions();
 	void prepareHolomapPolygons();
-	void renderHolomapSurfacePolygons();
+	void renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapImageSize);
 	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
 
 	/**
 	 * Controls the size/zoom of the holomap planet
 	 */
-	int32 distance(int32 distance) const;
-	int32 scale(int32 val) const;
+	int32 distance(float distance) const;
+	int32 scale(float val) const;
 
 public:
 	Holomap(TwinEEngine *engine);

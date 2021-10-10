@@ -29,7 +29,7 @@
 #include "savestate.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/scene/gamestate.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
@@ -53,7 +53,7 @@ void MenuOptions::newGame() {
 	_engine->_cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
-	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
+	_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 
 	_engine->_text->_drawTextBoxBackground = false;
 	_engine->_text->_renderTextTriangle = true;
@@ -66,11 +66,11 @@ void MenuOptions::newGame() {
 
 	// intro screen 2
 	if (!aborted) {
-		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG, RESSHQR_INTROSCREEN2PAL);
+		_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 17, 18));
 		aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText2);
 
 		if (!aborted) {
-			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG, RESSHQR_INTROSCREEN3PAL);
+			_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 19, 20));
 			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
 		}
 	}
@@ -80,7 +80,7 @@ void MenuOptions::newGame() {
 	_engine->_screens->clearScreen();
 
 	if (!aborted) {
-		// _engine->_music->playMidiMusic(1);
+		_engine->_music->playMidiMusic(1);
 		_engine->_flaMovies->playFlaMovie(FLA_INTROD);
 	}
 

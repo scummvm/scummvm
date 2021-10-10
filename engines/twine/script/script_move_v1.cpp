@@ -26,7 +26,7 @@
 #include "common/util.h"
 #include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/scene/movements.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"

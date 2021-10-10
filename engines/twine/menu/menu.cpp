@@ -256,22 +256,22 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->lerp(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case MenuButtonTypes::kSoundVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->lerp(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case MenuButtonTypes::kCDVolume: {
 				const AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, status.volume);
+				newWidth = _engine->_screens->lerp(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, status.volume);
 				break;
 			}
 			case MenuButtonTypes::kSpeechVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->lerp(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			}
@@ -591,6 +591,8 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 		if (showCredits && loopMillis - startMillis > 11650) {
 			_engine->_menuOptions->showCredits();
+			_engine->_text->initTextBank(TextBankId::Options_and_menus);
+
 			// TODO the original game also performs these actions:
 			// play FLA_DRAGON3 fla
 			// display RESSHQR_INTROSCREEN1IMG
@@ -832,7 +834,7 @@ int32 Menu::giveupMenu() {
 void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
 	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->_spriteData[SPRITEHQR_LIFEPOINTS]);
 	const int32 barLeft = left + barLeftPadding;
-	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
+	const int32 healthBarRight = _engine->_screens->lerp(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
 	drawRectBorders(Common::Rect(barLeft, top, right, barBottom));
@@ -841,13 +843,13 @@ void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPaddin
 void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
 	// Clover leaf boxes
 	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafsBox; i++) {
-		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
+		const int32 leftSpritePos = _engine->_screens->lerp(newBoxLeft, boxRight, 10, i);
 		_engine->_grid->drawSprite(leftSpritePos, top + 58, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
 	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafs; i++) {
-		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
+		const int32 leftSpritePos = _engine->_screens->lerp(newBoxLeft, boxRight, 10, i);
 		_engine->_grid->drawSprite(leftSpritePos + 2, top + 60, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAF]);
 	}
 }
@@ -865,7 +867,7 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 	}
 	const int32 barLeft = left + barLeftPadding;
 	const int32 barBottom = top + barHeight;
-	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
+	const int32 barRight = _engine->_screens->lerp(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
 	drawRectBorders(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);

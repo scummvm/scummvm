@@ -115,7 +115,6 @@ struct ConfigFile {
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
 	int32 ShadowMode = 0;
-	// TODO: currently unused
 	int32 PolygonDetails = 2;
 	/** Scenery Zoom */
 	bool SceZoom = false;
@@ -130,7 +129,7 @@ class Grid;
 class Movements;
 class Interface;
 class Menu;
-class FlaMovies;
+class Movies;
 class MenuOptions;
 class Music;
 class Redraw;
@@ -260,7 +259,7 @@ public:
 	Movements *_movements;
 	Interface *_interface;
 	Menu *_menu;
-	FlaMovies *_flaMovies;
+	Movies *_flaMovies;
 	MenuOptions *_menuOptions;
 	Music *_music;
 	Redraw *_redraw;

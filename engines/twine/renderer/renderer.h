@@ -30,12 +30,12 @@
 #include "twine/twine.h"
 
 #define POLYGONTYPE_FLAT 0
+#define POLYGONTYPE_TELE 1
 // horizontal color adjustment with changing pattern over the polygon
-#define POLYGONTYPE_COPPER 1
-#define POLYGONTYPE_BOPPER 2
-#define POLYGONTYPE_MARBLE 3
-#define POLYGONTYPE_TELE 4
-#define POLYGONTYPE_TRAS 5
+#define POLYGONTYPE_COPPER 2
+#define POLYGONTYPE_BOPPER 3
+#define POLYGONTYPE_MARBLE 4
+#define POLYGONTYPE_TRANS 5
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
@@ -122,7 +122,8 @@ private:
 	 * @sa RenderCommand
 	 */
 	struct CmdRenderSphere {
-		int8 colorIndex = 0;
+		uint16 color = 0; // color start and end values
+		uint8 polyRenderType = 0;
 		int16 radius = 0;
 		int16 x = 0;
 		int16 y = 0;
@@ -138,7 +139,7 @@ private:
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
+	bool prepareCircle(int32 x, int32 y, int32 radius);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 getCameraAnglePositions(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
@@ -155,8 +156,8 @@ private:
 	IVec3 _orthoProjPos;
 
 	int32 _cameraDepthOffset = 0;
+	int32 _cameraScaleX = 0;
 	int32 _cameraScaleY = 0;
-	int32 _cameraScaleZ = 0;
 
 	IMatrix3x3 _baseMatrix;
 	IMatrix3x3 _matricesTable[30 + 1];
@@ -183,16 +184,16 @@ private:
 
 	bool _isUsingOrthoProjection = false;
 
-	void renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsTele(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsTras(int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsTele(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsGouraud(int vtop, int32 vsize) const;
 	void renderPolygonsDither(int vtop, int32 vsize) const;
-	void renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const;
-
+	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
+	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
@@ -202,9 +203,9 @@ private:
 
 	void baseMatrixTranspose();
 
-	void renderHolomapPolygons(int32 top, int32 bottom);
+	void renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize);
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
-	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, int32 &top, int32 &bottom);
+	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom);
 
 public:
 	Renderer(TwinEEngine *engine);
@@ -224,6 +225,7 @@ public:
 		return getBaseRotationPosition(vec.x, vec.y, vec.z);
 	}
 
+	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {
@@ -232,7 +234,7 @@ public:
 
 	IVec3 &projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 
-	void setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ);
+	void setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY);
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
 	IVec3 updateCameraAnglePositions(int zShift = 0);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
@@ -261,7 +263,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param);
 
-	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]);
+	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize);
 };
 
 inline void Renderer::setBaseRotationPos(int32 x, int32 y, int32 z) {

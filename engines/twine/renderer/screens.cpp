@@ -34,19 +34,24 @@ namespace TwinE {
 bool Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);
 
-	return loadImageDelay(RESSHQR_ADELINEIMG, RESSHQR_ADELINEPAL, 7);
+	return loadImageDelay(_engine->_resources->adelineLogo(), 7);
 }
 
 void Screens::loadMenuImage(bool fadeIn) {
-	loadImage(RESSHQR_MENUIMG, -1, fadeIn);
+	loadImage(_engine->_resources->menuBackground(), fadeIn);
 	_engine->_workVideoBuffer.blitFrom(_engine->_frontVideoBuffer);
 }
 
-void Screens::loadCustomPalette(int32 index) {
-	if (HQR::getEntry(_palette, Resources::HQR_RESS_FILE, index) == 0) {
-		warning("Failed to load custom palette %i", index);
+void Screens::loadCustomPalette(const TwineResource &resource) {
+	const int32 size = HQR::getEntry(_palette, resource.hqr, resource.index);
+	if (size == 0) {
+		warning("Failed to load custom palette %s:%i", resource.hqr, resource.index);
 		return;
 	}
+	if (size != (int32)sizeof(_palette)) {
+		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
+	}
+	debug(3, "palette %s:%i with size %i", resource.hqr, resource.index, size);
 	convertPalToRGBA(_palette, _paletteRGBACustom);
 }
 
@@ -62,18 +67,18 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 	}
 }
 
-void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
+void Screens::loadImage(TwineImage image, bool fadeIn) {
 	Graphics::ManagedSurface& src = _engine->_imageBuffer;
-	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
-		warning("Failed to load image with index %i", index);
+	if (HQR::getEntry((uint8 *)src.getPixels(), image.image) == 0) {
+		warning("Failed to load image with index %i", image.image.index);
 		return;
 	}
-	debug(0, "Load image: %i", index);
+	debug(0, "Load image: %i", image.image.index);
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	const uint32 *pal = _paletteRGBA;
-	if (paletteIndex != -1) {
-		loadCustomPalette(paletteIndex);
+	if (image.palette.index != -1) {
+		loadCustomPalette(image.palette);
 		pal = _paletteRGBACustom;
 	}
 	if (fadeIn) {
@@ -83,8 +88,8 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	}
 }
 
-bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
-	loadImage(index, paletteIndex);
+bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
+	loadImage(image);
 	if (_engine->delaySkip(1000 * seconds)) {
 		adjustPalette(0, 0, 0, _paletteRGBACustom, 100);
 		return true;
@@ -117,11 +122,11 @@ void Screens::fadeOut(const uint32 *pal) {
 #endif
 }
 
-int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
-	if (!param) {
-		return color;
+int32 Screens::lerp(int32 value, int32 start, int32 end, int32 t) {
+	if (!end) {
+		return start;
 	}
-	return (((color - modifier) * intensity) / param) + modifier;
+	return (((start - value) * t) / end) + value;
 }
 
 void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
@@ -137,9 +142,9 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	uint8 *newA = &paletteOut[3];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		*newR = crossDot(r, paletteIn[counter], 100, intensity);
-		*newG = crossDot(g, paletteIn[counter + 1], 100, intensity);
-		*newB = crossDot(b, paletteIn[counter + 2], 100, intensity);
+		*newR = lerp(r, paletteIn[counter], 100, intensity);
+		*newG = lerp(g, paletteIn[counter + 1], 100, intensity);
+		*newB = lerp(b, paletteIn[counter + 2], 100, intensity);
 		*newA = 0xFF;
 
 		newR += 4;
@@ -173,9 +178,9 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 		uint8 *newA = &paletteOut[counter + 3];
 
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
-			*newR = crossDot(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
-			*newG = crossDot(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
-			*newB = crossDot(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
+			*newR = lerp(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
+			*newG = lerp(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
+			*newB = lerp(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
 			*newA = 0xFF;
 
 			newR += 4;

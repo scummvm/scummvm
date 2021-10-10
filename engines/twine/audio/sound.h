@@ -44,7 +44,8 @@ enum _Samples {
 	TaskCompleted = 41,
 	Hit = 86,
 	ItemFound = 97,
-	WalkFloorBegin = 126
+	WalkFloorBegin = 126,
+	WalkFloorRightBegin = 141
 };
 }
 
@@ -80,10 +81,8 @@ public:
 	 * Play FLA movie samples
 	 * @param index sample index under flasamp.hqr file
 	 * @param repeat number of times to repeat the sample
-	 * @param x unknown x variable
-	 * @param y unknown y variable
 	 */
-	void playFlaSample(int32 index, int32 repeat, int32 x, int32 y);
+	void playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volumeLeft, int32 volumeRight);
 
 	/** Update sample position in channel */
 	void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);

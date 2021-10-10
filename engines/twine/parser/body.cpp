@@ -148,9 +148,9 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 	_lines.reserve(numLines);
 	for (uint16 i = 0; i < numLines; ++i) {
 		BodyLine line;
-		line.unk1 = stream.readByte();
+		stream.skip(1);
 		line.color = stream.readByte();
-		line.unk2 = stream.readUint16LE();
+		stream.skip(2);
 		line.vertex1 = stream.readUint16LE() / 6;
 		line.vertex2 = stream.readUint16LE() / 6;
 		_lines.push_back(line);
@@ -165,9 +165,9 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	_spheres.reserve(numSpheres);
 	for (uint16 i = 0; i < numSpheres; ++i) {
 		BodySphere sphere;
-		sphere.unk1 = stream.readByte();
-		sphere.color = stream.readByte();
-		sphere.unk2 = stream.readUint16LE();
+		sphere.fillType = stream.readByte();
+		sphere.color = stream.readUint16LE();
+		stream.readByte();
 		sphere.radius = stream.readUint16LE();
 		sphere.vertex = stream.readUint16LE() / 6;
 		_spheres.push_back(sphere);
