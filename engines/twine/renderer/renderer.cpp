@@ -389,8 +389,8 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	int16 currentVertexY = vertices[numVertices - 1].y;
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
-	const int16 *polyTab2Begin = _colorProgressionBuffer;
-	const int16 *polyTab2End = &_colorProgressionBuffer[_polyTabSize - 1];
+	const int16 *colProgressBufStart = _colorProgressionBuffer;
+	const int16 *colProgressBufEnd = &_colorProgressionBuffer[_polyTabSize - 1];
 	const int screenHeight = _engine->height();
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
@@ -449,7 +449,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 			int16 *outPtr2 = &_colorProgressionBuffer[polyTabIndex];
 
 			for (int16 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 >= polyTab2Begin && outPtr2 <= polyTab2End) {
+				if (outPtr2 >= colProgressBufStart && outPtr2 <= colProgressBufEnd) {
 					*outPtr2 = cvalue;
 				}
 				outPtr2 += direction;
