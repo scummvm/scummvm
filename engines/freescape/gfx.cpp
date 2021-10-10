@@ -69,39 +69,6 @@ Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) 
 	return surf;
 }
 
-
-void Renderer::renderPalette(Common::Array<uint8> *raw_palette, uint16 ncolors) {
-	Graphics::PixelBuffer *palette;
-	if (_palette)
-		palette = _palette;
-	else if (raw_palette) {
-		palette = new Graphics::PixelBuffer(_palettePixelFormat, 16, DisposeAfterUse::NO); 
-		*palette = raw_palette->data();
-	} else 
-		error("No palette to show");
-
-	selectTargetWindow(nullptr, false, true);
-	Common::Rect view = viewport();
-	uint8 r, g, b;
-	uint16 c;
-	uint16 top = view.top;
-	uint16 size = kOriginalHeight/ncolors; 
-	uint16 bottom = size;
-
-	for (c = 0; c < ncolors; c++) {
-		view = Common::Rect(view.left, top, view.right, bottom);
-		palette->getRGBAt(c, r, g, b);
-		debug("color: %d %x %x %x", c, r, g, b);
-		drawRect2D(view, 255, r, g, b);
-		bottom = bottom + size;
-		top = top + size;
-	}
-
-	flipBuffer();
-	g_system->updateScreen();
-
-}
-
 Common::Rect Renderer::getFontCharacterRect(uint8 character) {
 	uint index = 0;
 
@@ -151,34 +118,6 @@ void Renderer::computeScreenViewport() {
 		_screenViewport.translate((screenWidth - viewportWidth) / 2,
 			(screenHeight - viewportHeight) / 2);
 	//}
-}
-
-Math::Matrix4 Renderer::makeProjectionMatrix(float fov) const {
-	static const float nearClipPlane = 1.0;
-	static const float farClipPlane = 10000.0;
-
-	float aspectRatio = kOriginalWidth / (float) kFrameHeight;
-
-	float xmaxValue = nearClipPlane * tan(fov * M_PI / 360.0);
-	float ymaxValue = xmaxValue / aspectRatio;
-
-	return Math::makeFrustumMatrix(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
-}
-
-void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	_projectionMatrix = makeProjectionMatrix(fov);
-	_modelViewMatrix = Math::Matrix4(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);
-
-	Math::Matrix4 proj = _projectionMatrix;
-	Math::Matrix4 model = _modelViewMatrix;
-	proj.transpose();
-	model.transpose();
-
-	_mvpMatrix = proj * model;
-
-	_frustum.setup(_mvpMatrix);
-
-	_mvpMatrix.transpose();
 }
 
 Renderer *createRenderer(OSystem *system) {
@@ -232,22 +171,22 @@ Renderer *createRenderer(OSystem *system) {
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {
-	if (drawable->isConstrainedToWindow()) {
-		selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
-	} else {
-		selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
-	}
-	drawable->draw();
+	// if (drawable->isConstrainedToWindow()) {
+	// 	selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
+	// } else {
+	// 	selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
+	// }
+	// drawable->draw();
 }
 
 void Renderer::renderDrawableOverlay(Drawable *drawable, Window *window) {
-	// Overlays are always 2D
-	if (drawable->isConstrainedToWindow()) {
-		selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
-	} else {
-		selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
-	}
-	drawable->drawOverlay();
+	// // Overlays are always 2D
+	// if (drawable->isConstrainedToWindow()) {
+	// 	selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
+	// } else {
+	// 	selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
+	// }
+	// drawable->drawOverlay();
 }
 
 void Renderer::renderWindow(Window *window) {

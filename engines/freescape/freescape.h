@@ -86,7 +86,8 @@ public:
 	// Camera options
 	float _mouseSensitivity;
 	float _movementSpeed;
-	Vector3d _front, _right;
+	Vector3d _cameraFront, _cameraUp, _cameraRight;
+	// Spacial attributes
 	Vector3d _position, _rotation, _velocity;
 
 

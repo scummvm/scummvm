@@ -25,7 +25,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
 
-	{"3Dkit",
+	{"3dkit",
 	 "One cube in scene",
 	 AD_ENTRY1s("CUBE.RUN", "3b7930be0f646b98885cfb70c26c89a2", 66138),
 	 Common::EN_ANY,

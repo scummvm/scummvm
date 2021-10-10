@@ -39,7 +39,8 @@ public:
 
 	virtual void init() override;
 	virtual void clear() override;
-	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) override;
+	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;
@@ -51,7 +52,7 @@ public:
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 
 	virtual void flipBuffer() override;
-	virtual void drawFace(const Math::Vector3d &position, float xs, float ys, float zs, uint8 color) override;
+	virtual void drawSky(uint8 color) override;
 
 private:
 	TinyGL::FrameBuffer *_fb;

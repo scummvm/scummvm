@@ -121,11 +121,6 @@ public:
 	Graphics::Surface *convertFromPalette(Graphics::PixelBuffer *rawsurf);
 
 
-    /**
-	 *   Show palette on screen
-     */
-	void renderPalette(Common::Array<uint8> *raw_palette, uint16 ncolors);
-
 	virtual void init() = 0;
 	virtual void clear() = 0;
 
@@ -147,7 +142,7 @@ public:
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
-	virtual void drawFace(const Math::Vector3d &position, float xs, float ys, float zs, uint8 color) = 0;
+	virtual void drawSky(uint8 color) = 0;
 
 	/** Render a Drawable in the specified window */
 	void renderDrawable(Drawable *drawable, Window *window);
@@ -170,11 +165,9 @@ public:
 	 *
 	 * This also sets the viewport
 	 */
-	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) = 0;
 
-	void setupCameraPerspective(float pitch, float heading, float fov);
-
-	bool isCubeFaceVisible(uint face);
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) = 0;
+	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) = 0;
 
 	Math::Matrix4 getMvpMatrix() const { return _mvpMatrix; }
 
@@ -204,8 +197,7 @@ protected:
 	Math::AABB _cubeFacesAABB[6];
 
 	Common::Rect getFontCharacterRect(uint8 character);
-
-	Math::Matrix4 makeProjectionMatrix(float fov) const;
+	Math::Matrix4 makeProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) const;
 };
 
 /**
