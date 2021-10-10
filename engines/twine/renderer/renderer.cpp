@@ -566,81 +566,41 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
+#define ROL16(x, b) (((x) << (b)) | ((x) >> (16 - (b))))
+
 void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	int bx = (uint16)color << 16;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
 	int32 renderLoop = vsize;
-	do {
-		int16 start;
-		int16 stop;
-		int32 hsize;
-		while (1) {
-			start = ptr1[0];
-			stop = ptr1[screenHeight];
-			ptr1++;
-			hsize = stop - start;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
 
-			if (hsize) {
-				break;
-			}
+	uint16 acc = 17371;
+	color &= 0xFF;
+	uint16 col;
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
+		++ptr1;
+		uint8 *pDest = out + xMin;
+		col = xMin;
 
-			uint8 *out2 = start + out;
-			*out2 = ((uint16)(bx / 24)) & 0x0F;
+		for (; xMin <= xMax; xMin++) {
+			col = ((col + acc) & 0xFF03) + (uint16)color;
+			acc = ROL16(acc, 2) + 1;
 
-			color = *(out2 + 1);
-
-			out += screenWidth;
-
-			--renderLoop;
-			if (!renderLoop) {
-				return;
-			}
+			*pDest++ = (uint8)col;
 		}
-
-		if (stop >= start) {
-			hsize++;
-			bx = (uint16)(color / 16);
-			uint8 *out2 = start + out;
-
-			int ax = (bx & 0xF0) * 256;
-			bx = bx * 256;
-			ax += (bx & 0x0F);
-			ax -= bx;
-			ax++;
-			ax = ax >> 16;
-
-			ax = ax / hsize;
-			uint16 temp = (ax & 0xF0);
-			temp = temp / 256;
-			temp += (ax & 0x0F);
-			ax = temp;
-
-			uint16 dx = ax;
-
-			ax = (ax & 0x0F) + (bx & 0xF0);
-			hsize++;
-
-			if (hsize & 1) {
-				ax = 0; // not sure about this
-			}
-
-			for (int32 j = hsize >> 1; j > 0; --j) {
-				*(out2++) = ax & 0x0F;
-				ax += dx;
-
-				*(out2++) = ax & 0x0F;
-				ax += dx;
-			}
-		}
-
 		out += screenWidth;
-		--renderLoop;
-
-	} while (renderLoop);
+	}
 }
 
 void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const {
