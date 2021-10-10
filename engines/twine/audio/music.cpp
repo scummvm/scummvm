@@ -137,6 +137,10 @@ void Music::stopTrackMusicCd() {
 }
 
 bool Music::playTrackMusic(int32 track) {
+	if (track == -1) {
+		stopMusic();
+		return true;
+	}
 	if (!_engine->_cfgfile.Sound) {
 		return false;
 	}
