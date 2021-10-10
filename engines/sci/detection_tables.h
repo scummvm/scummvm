@@ -3965,7 +3965,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
-	// Police Quest 2 - English DOS (provided by richiefs in bug report #4214)
+	// Police Quest 2 - English DOS 1.001.000 (5.25") (provided by richiefs in bug report #4214)
 	// SCI interpreter version 0.000.395
 	{"pq2", "", {
 		{"resource.map", 0, "9cff78c4be9e6a4848b6e9377569e3d9", 5700},
@@ -4018,7 +4018,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
-	// Police Quest 2 English DOS 1.002.011 (supplied by misterhands in bug report #9716)
+	// Police Quest 2 English DOS 1.001.006 (5.25")
+	// SCI interpreter version 0.000.409
+	{"pq2", "", {
+		{"resource.map", 0, "dad222469004108d2a38b8288078eaac", 5670},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 159511},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 330094},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 303955},
+		{"resource.004", 0, "77f02def3094af804fd2371db25b7100", 342639},
+		{"resource.005", 0, "77f02def3094af804fd2371db25b7100", 350673},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Police Quest 2 English DOS 1.002.011 (5.25") (supplied by misterhands in bug report #9716)
 	{"pq2", "", {
 		{"resource.map", 0, "f42a265e26168d0463d12e0913e8dd1c", 5808},
 		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 161673},
