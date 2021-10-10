@@ -348,6 +348,13 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 	const IVec3 &delta = actor->pos() - _engine->_grid->_camera;
 	Common::Rect renderRect;
+
+	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
+		if (_engine->_actor->_cropBottomScreen) {
+			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen;
+		}
+	}
+
 	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, ANGLE_0, actor->_angle, ANGLE_0, _engine->_resources->_bodyData[actor->_entity], renderRect)) {
 		return;
 	}
@@ -363,10 +370,6 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		}
 
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
-
-		if (_engine->_actor->_cropBottomScreen) {
-			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen + 10;
-		}
 
 		addRedrawArea(_engine->_interface->_clip);
 
@@ -480,27 +483,13 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
 		const DrawListStruct &drawCmd = drawList[pos];
 		const uint32 flags = drawCmd.type;
-		// Drawing actors
-		if (flags < DrawListType::DrawShadows) {
-			if (flags == 0) {
-				processDrawListActors(drawCmd, bgRedraw);
-			}
-		}
-		// Drawing shadows
-		else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
+		if (flags == DrawListType::DrawObject3D) {
+			processDrawListActors(drawCmd, bgRedraw);
+		} else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
 			processDrawListShadows(drawCmd);
-		}
-		// Drawing unknown
-		else if (flags < DrawListType::DrawActorSprites) {
-			// TODO reverse this part of the code
-			warning("Not yet reversed part of the rendering code: %u", flags);
-		}
-		// Drawing sprite actors, doors and entities
-		else if (flags == DrawListType::DrawActorSprites) {
+		} else if (flags == DrawListType::DrawActorSprites) {
 			processDrawListActorSprites(drawCmd, bgRedraw);
-		}
-		// Drawing extras
-		else if (flags == DrawListType::DrawExtras) {
+		} else if (flags == DrawListType::DrawExtras) {
 			processDrawListExtras(drawCmd);
 		}
 
