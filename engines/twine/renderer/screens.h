@@ -96,6 +96,7 @@ public:
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param seconds number of seconds to delay
+	 * @return @c true if aborted
 	 */
 	bool loadImageDelay(TwineImage image, int32 seconds);
 
