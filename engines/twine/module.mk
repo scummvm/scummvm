@@ -42,7 +42,7 @@ MODULE_OBJS := \
 	resources/lzss.o \
 	resources/resources.o \
 	\
-	flamovies.o \
+	movies.o \
 	holomap.o \
 	input.o \
 	metaengine.o \

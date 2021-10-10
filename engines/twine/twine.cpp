@@ -49,7 +49,7 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/detection.h"
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "twine/holomap.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
@@ -129,6 +129,9 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vox");
+	if (isLBA2()) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+	}
 	if (flags & TF_DOTEMU_ENHANCED) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/fla");
@@ -160,7 +163,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_movements = new Movements(this);
 	_interface = new Interface(this);
 	_menu = new Menu(this);
-	_flaMovies = new FlaMovies(this);
+	_flaMovies = new Movies(this);
 	_menuOptions = new MenuOptions(this);
 	_music = new Music(this);
 	_redraw = new Redraw(this);
@@ -483,30 +486,42 @@ void TwinEEngine::initEngine() {
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	bool abort = false;
+
+	if (isLBA2()) {
+		//abort |= _screens->loadImageDelay(_resources->activisionLogo(), 7);
+		abort |= _screens->loadImageDelay(_resources->eaLogo(), 7);
+	}
+
 	abort |= _screens->adelineLogo();
 
-	// verify game version screens
-	if (!abort && _cfgfile.Version == EUROPE_VERSION) {
-		// Little Big Adventure screen
-		abort |= _screens->loadImageDelay(RESSHQR_LBAIMG, RESSHQR_LBAPAL, 3);
-		if (!abort) {
-			// Electronic Arts Logo
-			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, RESSHQR_EAPAL, 2);
+	if (isLBA1()) {
+		// verify game version screens
+		if (!abort && _cfgfile.Version == EUROPE_VERSION) {
+			// Little Big Adventure screen
+			abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
+			if (!abort) {
+				// Electronic Arts Logo
+				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+			}
+		} else if (!abort && _cfgfile.Version == USA_VERSION) {
+			// Relentless screen
+			abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
+			if (!abort) {
+				// Electronic Arts Logo
+				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+			}
+		} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
+			// Modification screen
+			abort |= _screens->loadImageDelay(_resources->relentLogo(), 2);
 		}
-	} else if (!abort && _cfgfile.Version == USA_VERSION) {
-		// Relentless screen
-		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, RESSHQR_RELLENTPAL, 3);
-		if (!abort) {
-			// Electronic Arts Logo
-			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, RESSHQR_EAPAL, 2);
-		}
-	} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
-		// Modification screen
-		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, RESSHQR_RELLENTPAL, 2);
 	}
 
 	if (!abort) {
-		_flaMovies->playFlaMovie(FLA_DRAGON3);
+		if (isLBA1()) {
+			_flaMovies->playFlaMovie(FLA_DRAGON3);
+		} else {
+			_flaMovies->playSmkMovie(16);
+		}
 	}
 	_input->enableKeyMap(uiKeyMapId);
 
@@ -566,7 +581,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 
 void TwinEEngine::processBookOfBu() {
 	_screens->fadeToBlack(_screens->_paletteRGBA);
-	_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
+	_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_text->_drawTextBoxBackground = false;
 	_text->textClipFull();
@@ -903,28 +918,26 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
-			if ((brickSound & 0xF0U) == 0xF0U) {
-				if ((brickSound & 0x0FU) == 1) {
-					if (IS_HERO(a)) {
-						// we are dying if we aren't using the protopack to fly over water
-						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
-							if (!_actor->_cropBottomScreen) {
-								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
-							}
-							const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
-							actor->_controlMode = ControlMode::kNoMove;
-							actor->setLife(-1);
-							_actor->_cropBottomScreen = projPos.y;
-							actor->_staticFlags.bDoesntCastShadow = 1;
+			if (brickSound == 0xF1U) {
+				if (IS_HERO(a)) {
+					// we are dying if we aren't using the protopack to fly over water
+					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+						if (!_actor->_cropBottomScreen) {
+							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
 						}
-					} else {
-						_sound->playSample(Samples::Explode, 1, actor->pos(), a);
-						if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
-							if (!actor->_bonusParameter.unk1) {
-								_actor->processActorExtraBonus(a);
-							}
-							actor->setLife(0);
+						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
+						actor->_controlMode = ControlMode::kNoMove;
+						actor->setLife(-1);
+						_actor->_cropBottomScreen = projPos.y;
+						actor->_staticFlags.bDoesntCastShadow = 1;
+					}
+				} else {
+					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
+					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
+						if (!actor->_bonusParameter.unk1) {
+							_actor->processActorExtraBonus(a);
 						}
+						actor->setLife(0);
 					}
 				}
 			}

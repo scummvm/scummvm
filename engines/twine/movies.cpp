@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/flamovies.h"
+#include "twine/movies.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -34,7 +34,9 @@
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/grid.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
+#include "video/smk_decoder.h"
 
 namespace TwinE {
 
@@ -43,13 +45,13 @@ enum FlaFrameOpcode {
 	kLoadPalette = 1,
 	kFade = 2,
 	kPlaySample = 3,
-	kFlaUnknown4 = 4,
+	kSampleBalance = 4,
 	kStopSample = 5,
 	kDeltaFrame = 6,
-	kFlaUnknown7 = 7,
+	kBlackFrame = 7,
 	kKeyFrame = 8,
-	kFlaUnknown9 = 9,
-	kFlaUnknown16SameAs9 = 16
+	kCopy = 9,
+	kCopy2 = 16
 };
 
 /** FLA movie sample structure */
@@ -60,18 +62,15 @@ struct FLASampleStruct {
 	int16 freq = 0;
 	/** Numbers of time to repeat */
 	int16 repeat = 0;
-	/** Dummy variable */
-	int8 dummy = 0;
-	/** Unknown x */
-	uint8 x = 0;
-	/** Unknown y */
-	uint8 y = 0;
+	uint8 balance = 0;
+	uint8 volumeLeft = 0;
+	uint8 volumeRight = 0;
 };
 
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 
-void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
+void Movies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
 	uint8 *destPtr = (uint8 *)_flaBuffer;
 	uint8 *startOfLine = destPtr;
 
@@ -97,7 +96,7 @@ void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int3
 	}
 }
 
-void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
+void Movies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	const uint16 skip = stream.readUint16LE() * width;
 	const int32 height = stream.readSint16LE();
 
@@ -126,7 +125,7 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	}
 }
 
-void FlaMovies::scaleFla2x() {
+void Movies::scaleFla2x() {
 	uint8 *source = (uint8 *)_flaBuffer;
 	uint8 *dest = (uint8 *)_engine->_imageBuffer.getPixels();
 
@@ -160,7 +159,7 @@ void FlaMovies::scaleFla2x() {
 	}
 }
 
-void FlaMovies::processFrame() {
+void Movies::processFrame() {
 	FLASampleStruct sample;
 
 	_frameData.videoSize = _file.readSint16LE();
@@ -194,7 +193,7 @@ void FlaMovies::processFrame() {
 		case kFade: {
 			int16 innerOpcpde = stream.readSint16LE();
 			switch (innerOpcpde) {
-			case 1:
+			case 1: // fla flute
 				_engine->_music->playMidiMusic(26);
 				break;
 			case 2:
@@ -219,14 +218,19 @@ void FlaMovies::processFrame() {
 			sample.sampleNum = stream.readSint16LE();
 			sample.freq = stream.readSint16LE();
 			sample.repeat = stream.readSint16LE();
-			sample.dummy = stream.readSByte();
-			sample.x = stream.readByte();
-			sample.y = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.x, sample.y);
+			sample.balance = stream.readByte();
+			sample.volumeLeft = stream.readByte();
+			sample.volumeRight = stream.readByte();
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.balance, sample.volumeLeft, sample.volumeRight);
 			break;
 		}
 		case kStopSample: {
-			_engine->_sound->stopSample(sample.sampleNum);
+			const int16 sampleNum = stream.readSint16LE();
+			if (sampleNum == -1) {
+				_engine->_sound->stopSamples();
+			} else {
+				_engine->_sound->stopSample(sampleNum);
+			}
 			break;
 		}
 		case kDeltaFrame: {
@@ -240,13 +244,13 @@ void FlaMovies::processFrame() {
 			drawKeyFrame(stream, FLASCREEN_WIDTH, FLASCREEN_HEIGHT);
 			break;
 		}
-		case kFlaUnknown7: {
+		case kBlackFrame: {
 			const Common::Rect rect(0, 0, 79, 199);
 			_engine->_interface->drawFilledRect(rect, 0);
 			break;
 		}
-		case kFlaUnknown9:
-		case kFlaUnknown16SameAs9: {
+		case kCopy:
+		case kCopy2: {
 			const Common::Rect rect(0, 0, 80, 200);
 			byte *ptr = (byte *)_engine->_frontVideoBuffer.getPixels();
 			for (int y = rect.top; y < rect.bottom; ++y) {
@@ -258,7 +262,15 @@ void FlaMovies::processFrame() {
 			_engine->_frontVideoBuffer.addDirtyRect(rect);
 			break;
 		}
-		case kFlaUnknown4:
+		case kSampleBalance: {
+			/* int16 num = */ stream.readSint16LE();
+			/* uint8 offset = */ stream.readByte();
+			/* int16 balance = */ stream.readSint16LE();
+			/* uint8 volumeLeft = */ stream.readByte();
+			/* uint8 volumeRight = */ stream.readByte();
+			// TODO: change balance
+			break;
+		}
 		default: {
 			break;
 		}
@@ -268,9 +280,9 @@ void FlaMovies::processFrame() {
 	}
 }
 
-FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
+Movies::Movies(TwinEEngine *engine) : _engine(engine) {}
 
-void FlaMovies::prepareGIF(int index) {
+void Movies::prepareGIF(int index) {
 	Image::GIFDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(Resources::HQR_FLAGIF_FILE, index);
 	if (stream == nullptr) {
@@ -293,7 +305,7 @@ void FlaMovies::prepareGIF(int index) {
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
-void FlaMovies::playGIFMovie(const char *flaName) {
+void Movies::playGIFMovie(const char *flaName) {
 	if (!Common::File::exists(Resources::HQR_FLAGIF_FILE)) {
 		warning("%s file doesn't exist", Resources::HQR_FLAGIF_FILE);
 		return;
@@ -341,7 +353,8 @@ void FlaMovies::playGIFMovie(const char *flaName) {
 	}
 }
 
-void FlaMovies::playFlaMovie(const char *flaName) {
+void Movies::playFlaMovie(const char *flaName) {
+	assert(_engine->isLBA1());
 	_engine->_sound->stopSamples();
 
 	Common::String fileNamePath = Common::String::format("%s", flaName);
@@ -433,6 +446,48 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	}
 
 	_engine->_sound->stopSamples();
+}
+
+void Movies::playSmkMovie(int index) {
+	assert(_engine->isLBA2());
+	Video::SmackerDecoder decoder;
+	Common::SeekableReadStream *stream = HQR::makeReadStream(TwineResource(Resources::HQR_VIDEO_FILE, index));
+	if (stream == nullptr) {
+		warning("Failed to find smacker video %i", index);
+		return;
+	}
+	if (!decoder.loadStream(stream)) {
+		warning("Failed to load smacker video %i", index);
+		return;
+	}
+	decoder.start();
+
+	for (;;) {
+		if (decoder.endOfVideo()) {
+			break;
+		}
+		FrameMarker frame(_engine);
+		_engine->_input->readKeys();
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			break;
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frameSurf = decoder.decodeNextFrame();
+			if (!frameSurf) {
+				continue;
+			}
+			if (decoder.hasDirtyPalette()) {
+				_engine->setPalette(0, 256, decoder.getPalette());
+			}
+
+			Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
+			const Common::Rect frameBounds(0, 0, frameSurf->w, frameSurf->h);
+			target.transBlitFrom(*frameSurf, frameBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+		}
+	}
+
+	decoder.close();
 }
 
 } // namespace TwinE

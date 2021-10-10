@@ -87,19 +87,19 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		posZ = 0x7FFF;
 	}
 
-	_projPos.x = (cX * _cameraScaleY) / posZ + _orthoProjPos.x;
-	_projPos.y = (-cY * _cameraScaleZ) / posZ + _orthoProjPos.y;
+	_projPos.x = (cX * _cameraScaleX) / posZ + _orthoProjPos.x;
+	_projPos.y = (-cY * _cameraScaleY) / posZ + _orthoProjPos.y;
 	_projPos.z = posZ;
 	return _projPos;
 }
 
-void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ) {
+void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY) {
 	_orthoProjPos.x = x;
 	_orthoProjPos.y = y;
 
 	_cameraDepthOffset = depthOffset;
+	_cameraScaleX = scaleX;
 	_cameraScaleY = scaleY;
-	_cameraScaleZ = scaleZ;
 
 	_isUsingOrthoProjection = false;
 }
@@ -459,7 +459,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	}
 }
 
-void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -473,112 +473,72 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 	if (renderLoop > screenHeight) {
 		renderLoop = screenHeight;
 	}
+	int32 sens = 1;
+
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
 
 		ptr1++;
-		int32 hsize = stop - start;
+		uint8 *pDest = out + xMin;
 
-		if (hsize >= 0) {
-			uint16 mask = 0x43DB;
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = (uint8)color;
+		}
 
-			hsize++;
-			const int32 startCopy = start;
-
-			for (int32 j = startCopy; j < hsize + startCopy; j++) {
-				start += mask;
-				start = (start & 0xFF00) | ((start & 0xFF) & 3U);
-				start = (start & 0xFF00) | ((start & 0xFF) + color);
-				if (j >= 0 && j < screenWidth) {
-					out[j] = start & 0xFF;
-				}
-				mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
-				mask++;
+		color += sens;
+		if (!(color & 0xF)) {
+			sens = -sens;
+			if (sens < 0) {
+				color += sens;
 			}
 		}
-		out += screenWidth;
+		pDest += screenWidth;
 	}
 }
 
-void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
-#if 0
+void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	int32 sens = 1;
+	int32 line = 2;
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
+		ptr1++;
 
-	int32 j = 0;
+		uint8 *pDest = out + xMin;
 
-	do {
-		uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		uint16 start = *(const uint16 *)ptr1;
-		++ptr1;
-		if (stop >= start) {
-			++j;
-			uint8 *out2 = out + start;
-			memset(out2, color, j);
-			++color;
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = (uint8)color;
+		}
+
+		line--;
+		if (!line) {
+			line = 2;
+			color += sens;
 			if (!(color & 0xF)) {
-				while (1) {
-					--color;
-					if (!(color & 0xF)) {
-						break;
-					}
-					out += screenWidth;
-					--vsize;
-					if (!vsize) {
-						return;
-					}
-					stop = *(const uint16 *)(ptr1 + screenHeight);
-					start = *(const uint16 *)ptr1;
-					++ptr1;
-					if (stop >= start) {
-						++j;
-						out2 = out + start;
-						memset(out2, color, j);
-					}
-				}
-			}
-		}
-		out += screenWidth;
-		--vsize;
-	} while (vsize);
-#else
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
-		ptr1++;
-		const int32 hsize = stop - start;
-
-		if (start & 1) {
-			if (hsize >= 0) {
-				for (int32 j = start; j <= hsize + start; j++) {
-					if (j >= 0 && j < screenWidth) {
-						out[j] = color;
-					}
+				sens = -sens;
+				if (sens < 0) {
+					color += sens;
 				}
 			}
 		}
 		out += screenWidth;
 	}
-#endif
 }
 
-void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -597,137 +557,20 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
 		ptr1++;
 		const int32 hsize = stop - start;
 
-		if (hsize >= 0) {
-			for (int32 j = start; j <= hsize + start; j++) {
-				if (j >= 0 && j < screenWidth) {
-					out[j] = color;
-				}
+		for (int32 j = start; j <= hsize + start; j++) {
+			if (j >= 0 && j < screenWidth) {
+				out[j] = color;
 			}
 		}
 		out += screenWidth;
 	}
 }
 
-void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
+#define ROL16(x, b) (((x) << (b)) | ((x) >> (16 - (b))))
+
+void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
-	int bx = (uint16)color << 16;
-	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	int32 renderLoop = vsize;
-	do {
-		int16 start;
-		int16 stop;
-		int32 hsize;
-		while (1) {
-			start = ptr1[0];
-			stop = ptr1[screenHeight];
-			ptr1++;
-			hsize = stop - start;
-
-			if (hsize) {
-				break;
-			}
-
-			uint8 *out2 = start + out;
-			*out2 = ((uint16)(bx / 24)) & 0x0F;
-
-			color = *(out2 + 1);
-
-			out += screenWidth;
-
-			--renderLoop;
-			if (!renderLoop) {
-				return;
-			}
-		}
-
-		if (stop >= start) {
-			hsize++;
-			bx = (uint16)(color / 16);
-			uint8 *out2 = start + out;
-
-			int ax = (bx & 0xF0) * 256;
-			bx = bx * 256;
-			ax += (bx & 0x0F);
-			ax -= bx;
-			ax++;
-			ax = ax >> 16;
-
-			ax = ax / hsize;
-			uint16 temp = (ax & 0xF0);
-			temp = temp / 256;
-			temp += (ax & 0x0F);
-			ax = temp;
-
-			uint16 dx = ax;
-
-			ax = (ax & 0x0F) + (bx & 0xF0);
-			hsize++;
-
-			if (hsize & 1) {
-				ax = 0; // not sure about this
-			}
-
-			for (int32 j = hsize >> 1; j > 0; --j) {
-				*(out2++) = ax & 0x0F;
-				ax += dx;
-
-				*(out2++) = ax & 0x0F;
-				ax += dx;
-			}
-		}
-
-		out += screenWidth;
-		--renderLoop;
-
-	} while (renderLoop);
-}
-
-// FIXME: buggy
-void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	do {
-		unsigned short int bx;
-
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
-
-		ptr1++;
-		int32 hsize = stop - start;
-
-		if (hsize >= 0) {
-			hsize++;
-			uint8 *out2 = start + out;
-
-			if (hsize / 2 < 0) {
-				bx = color;
-				bx = bx * 256;
-				bx += color;
-				for (int32 j = 0; j < hsize; j++) {
-					*(out2) = (*(out2)&0x0F0F) | bx;
-					// TODO: check for potential out2++ here
-				}
-			} else {
-				*out2 = (*(out2)&0x0F) | color;
-				out2++;
-			}
-		}
-		out += screenWidth;
-	} while (--vsize);
-}
-
-// FIXME: buggy
-// Used e.g for the legs of the horse or the ears of most characters
-void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -739,32 +582,84 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 	if (renderLoop > screenHeight) {
 		renderLoop = screenHeight;
 	}
+
+	uint16 acc = 17371;
+	color &= 0xFF;
+	uint16 col;
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 xMin = ptr1[0];
+		int16 xMax = ptr1[screenHeight];
+		++ptr1;
+		uint8 *pDest = out + xMin;
+		col = xMin;
+
+		for (; xMin <= xMax; xMin++) {
+			col = ((col + acc) & 0xFF03) + (uint16)color;
+			acc = ROL16(acc, 2) + 1;
+
+			*pDest++ = (uint8)col;
+		}
+		out += screenWidth;
+	}
+}
+
+void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const {
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
+	do {
 		int16 start = ptr1[0];
 		int16 stop = ptr1[screenHeight];
+
 		ptr1++;
 		int32 hsize = stop - start;
 
 		if (hsize >= 0) {
 			hsize++;
 			uint8 *out2 = start + out;
+			*out2 = (*(out2)&0x0F) | color;
+			out2++;
+		}
+		out += screenWidth;
+	} while (--vsize);
+}
 
-			hsize /= 2;
-			if (hsize > 1) {
-				uint16 ax;
-				bh ^= 1;
-				ax = (uint16)(*out2);
-				ax &= 1;
-				if (ax ^ bh) {
-					out2++;
-				}
+// Used e.g for the legs of the horse or the ears of most characters
+void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const {
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
 
-				for (int32 j = 0; j < hsize; j++) {
-					*out2 = color;
-					out2 += 2;
-				}
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	int32 pair = 0;
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 start = ptr1[0];
+		int16 stop = ptr1[screenHeight];
+		ptr1++;
+		uint8 *out2 = start + out;
+		stop = ((stop - start) + 1) / 2;
+		if (stop > 0) {
+			pair ^= 1; // paire/impair
+			if ((start & 1) ^ pair) {
+				out2++;
+			}
+
+			for (; stop > 0; stop--) {
+				*out2 = color;
+				out2 += 2;
 			}
 		}
+
 		out += screenWidth;
 	}
 }
@@ -986,105 +881,75 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const {
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	int height = vsize;
+	int16 *ptr1 = &_polyTab[vtop];
 
-	uint16 color2 = color;
-	uint16 v29 = 2;
-	while (2) {
-		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		const uint16 start = *(const uint16 *)ptr1;
-		++ptr1;
-		if (stop < start) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
+	int16 xMin, xMax;
+	int16 y = vtop;
+	uint8 *pDestLine = out;
+	uint8 *pDest;
+	int16 *pVerticG = ptr1;
+	int16 *pVerticD = &ptr1[screenHeight];
+
+	uint16 start = (color & 0xFF) << 8;
+	uint16 end = color & 0xFF00;
+	uint16 delta = end - start + 1; // delta intensity
+	int32 step, dc;
+
+	for (; y <= vsize; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
+
+		dc = xMax - xMin;
+		if (dc == 0) {
+			// just one
+			*pDest++ = (uint8)(end >> 8);
+		} else if (dc > 0) {
+			step = delta / (dc + 1);
+			color = start;
+
+			for (; xMin <= xMax; xMin++) {
+				*pDest++ = (uint8)(color >> 8);
+				color += step;
 			}
-			continue;
 		}
-		const uint16 hsize = stop - start;
-		uint16 width = hsize + 1;
-		uint8 *out2 = start + out;
-		if ((uintptr)out2 & 1) {
-			*out2++ = color2;
-			--width;
-		}
-		for (uint16 k = width / 2; k; --k) {
-			*out2++ = color2;
-			*out2++ = color2;
-		}
-		const uint16 v34 = width & 1;
-		for (uint16 l = v34; l; --l) {
-			*out2++ = color2;
-		}
-		--v29;
-		if (v29 || (v29 = 2, ++color2, color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		v29 = 2;
-		--color2;
-		if (!(color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		break;
+
+		pDestLine += screenWidth;
 	}
-	while (1) {
-		out += screenWidth;
-		--height;
-		if (!height) {
-			return;
+}
+
+void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const {
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 xMin = MAX<int16>(0, ptr1[0]);
+		const int16 xMax = MIN<int16>((int16)(screenWidth - 1), ptr1[screenHeight]);
+		uint8 *pDest = out + xMin;
+
+		color = (*ptr2++) >> 8;
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = color;
 		}
-		const uint16 stop = *(const uint16 *)(ptr1 + screenHeight);
-		const uint16 start = *(const uint16 *)ptr1;
 		++ptr1;
-		if (stop >= start) {
-			const uint16 hsize = stop - start;
-			uint16 width = hsize + 1;
-			uint8 *out2 = start + out;
-			if ((uintptr)out2 & 1) {
-				*out2++ = color2;
-				--width;
-			}
-			for (uint16 m = width / 2; m; --m) {
-				*out2++ = color2;
-				*out2++ = color2;
-			}
-			const uint16 v41 = width & 1;
-			for (uint16 n = v41; n; --n) {
-				*out2++ = color2;
-			}
-			--v29;
-			if (v29) {
-				continue;
-			}
-		}
-		v29 = 2;
-		--color2;
-		if (!(color2 & 0xF)) {
-			out += screenWidth;
-			--height;
-			if (!height) {
-				return;
-			}
-			continue;
-		}
-		break;
+
+		out += screenWidth;
 	}
 }
 
@@ -1092,67 +957,159 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	const int32 vsize = vbottom - vtop + 1;
+	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+}
 
-	switch (polygon.renderType) {
+void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
+	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
-		break;
-	case POLYGONTYPE_COPPER:
-		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
-		//renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
-		//break;
-	case POLYGONTYPE_BOPPER:
-		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
-		// TODO: fix this render method:
-		// renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
+		renderPolygonsFlat(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TELE:
-		renderPolygonsTele(vtop, vsize, polygon.colorIndex);
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsFlat(vtop, vsize, color);
+		} else {
+			renderPolygonsTele(vtop, vsize, color);
+		}
 		break;
-	case POLYGONTYPE_TRAS:
-		renderPolygonsTras(vtop, vsize, polygon.colorIndex);
+	case POLYGONTYPE_COPPER:
+		renderPolygonsCopper(vtop, vsize, color);
 		break;
-	case POLYGONTYPE_TRAME:
-		renderPolygonsTrame(vtop, vsize, polygon.colorIndex);
+	case POLYGONTYPE_BOPPER:
+		renderPolygonsBopper(vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRANS:
+		renderPolygonsTrans(vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRAME: // raster
+		renderPolygonsTrame(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_GOURAUD:
-		renderPolygonsGouraud(vtop, vsize);
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsSimplified(vtop, vsize, color);
+		} else {
+			renderPolygonsGouraud(vtop, vsize);
+		}
 		break;
 	case POLYGONTYPE_DITHER:
-		renderPolygonsDither(vtop, vsize);
+		if (_engine->_cfgfile.PolygonDetails == 0) {
+			renderPolygonsSimplified(vtop, vsize, color);
+		} else if (_engine->_cfgfile.PolygonDetails == 1) {
+			renderPolygonsGouraud(vtop, vsize);
+		} else {
+			renderPolygonsDither(vtop, vsize);
+		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(vtop, vsize, polygon.colorIndex);
+		renderPolygonsMarble(vtop, vsize, color);
 		break;
 	default:
-		warning("RENDER WARNING: Unsupported render type %d", polygon.renderType);
+		warning("RENDER WARNING: Unsupported render type %d", renderType);
 		break;
 	}
 }
 
-void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
+bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 	if (radius <= 0) {
-		return;
+		return false;
 	}
-	radius += 1;
+	int16 left = (int16)(x - radius);
+	int16 right = (int16)(y - radius);
+	int16 bottom = (int16)(x + radius);
+	int16 top = (int16)(y + radius);
+	const Common::Rect &clip = _engine->_interface->_clip;
+	int16 cleft = clip.left;
+	int16 cright = clip.right;
+	int16 ctop = clip.top;
+	int16 cbottom = clip.bottom;
 
-	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
-		double width;
-
-		if (ABS(currentLine) != radius) {
-			width = ABS(sin(acos((float)currentLine / (float)radius)) * radius);
-		} else {
-			width = 0.0;
+	if (left <= cright && bottom >= cleft && right <= cbottom && top >= ctop) {
+		if (left < cleft) {
+			left = cleft;
+		}
+		if (bottom > cright) {
+			bottom = cright;
+		}
+		if (right < ctop) {
+			right = ctop;
+		}
+		if (top > cbottom) {
+			top = cbottom;
 		}
 
-		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, color);
+		int32 r = 0;
+		int32 acc = -radius;
+
+		int16 *start = _polyTab;
+		int16 *end = &_polyTab[_engine->height()];
+
+		while (r <= radius) {
+			int32 x1 = x - radius;
+			if (x1 < cleft) {
+				x1 = cleft;
+			}
+
+			int32 x2 = x + radius;
+			if (x2 > cright) {
+				x2 = cright;
+			}
+
+			int32 ny = y - r;
+			if ((ny >= ctop) && (ny <= cbottom)) {
+				start[ny] = (int16)x1;
+				end[ny] = (int16)x2;
+			}
+
+			ny = y + r;
+			if ((ny >= ctop) && (ny <= cbottom)) {
+				start[ny] = (int16)x1;
+				end[ny] = (int16)x2;
+			}
+
+			if (acc < 0) {
+				acc += r;
+				if (acc >= 0) {
+					x1 = x - r;
+					if (x1 < cleft) {
+						x1 = cleft;
+					}
+
+					x2 = x + r;
+					if (x2 > cright) {
+						x2 = cright;
+					}
+
+					ny = y - radius;
+					if ((ny >= ctop) && (ny <= cbottom)) {
+						start[ny] = (int16)x1;
+						end[ny] = (int16)x2;
+					}
+
+					ny = y + radius;
+					if ((ny >= ctop) && (ny <= cbottom)) {
+						start[ny] = (int16)x1;
+						end[ny] = (int16)x2;
+					}
+
+					--radius;
+					acc -= radius;
+				}
+			}
+
+			++r;
+		}
+
+		return true;
 	}
+
+	return false;
 }
 
 uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
 	for (const BodySphere &sphere : spheres) {
 		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
-		cmd->colorIndex = sphere.color;
+		cmd->color = sphere.color;
+		cmd->polyRenderType = sphere.fillType;
 		cmd->radius = sphere.radius;
 		const int16 centerIndex = sphere.vertex;
 		cmd->x = modelData->flattenPoints[centerIndex].x;
@@ -1315,14 +1272,14 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			int32 radius = sphere->radius;
 
 			if (_isUsingOrthoProjection) {
+				// * sqrt(sx+sy) / 512 (isometric scale)
 				radius = (radius * 34) / 512;
 			} else {
 				int32 delta = _cameraDepthOffset + sphere->z;
-				if (delta <= 0) {
-					radius = 0;
-				} else {
-					radius = ((sphere->radius * _cameraScaleY) / delta) & 0xFFFF;
+				if (delta == 0) {
+					break;
 				}
+				radius = (sphere->radius * _cameraScaleX) / delta;
 			}
 
 			radius += 3;
@@ -1345,7 +1302,10 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius -= 3;
 
-			circleFill(sphere->x, sphere->y, radius, sphere->colorIndex);
+			if (prepareCircle(sphere->x, sphere->y, radius)) {
+				const int32 vsize = 2 * radius;
+				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->color);
+			}
 			break;
 		}
 		default:
@@ -1437,7 +1397,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// X projection
 			{
-				coX = _orthoProjPos.x + ((coX * _cameraScaleY) / coZ);
+				coX = _orthoProjPos.x + ((coX * _cameraScaleX) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1456,7 +1416,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// Y projection
 			{
-				coY = _orthoProjPos.y + ((-coY * _cameraScaleZ) / coZ);
+				coY = _orthoProjPos.y + ((-coY * _cameraScaleY) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
@@ -1660,7 +1620,7 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 	}
 }
 
-void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &angles1, const Vertex &angles2, int32 &top, int32 &bottom) {
+void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom) {
 	const int32 yBottom = vertex1.y;
 	const int32 yTop = vertex2.y;
 	if (yBottom == yTop) {
@@ -1676,7 +1636,7 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 			bottom = yTop;
 		}
 		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_1_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)angles2.x, yBottom, (uint32)(uint16)angles1.x, _holomap_polytab_1_2);
+		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_1_2);
 		polygonTabPtr = _holomap_polytab_1_3;
 	} else {
 		if (bottom < yBottom) {
@@ -1686,24 +1646,22 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 			top = yTop;
 		}
 		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_2_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)angles2.x, yBottom, (uint32)(uint16)angles1.x, _holomap_polytab_2_2);
+		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_2_2);
 		polygonTabPtr = _holomap_polytab_2_3;
 	}
-	computeHolomapPolygon(yTop, (uint32)(uint16)angles2.y, yBottom, (uint32)(uint16)angles1.y, polygonTabPtr);
+	computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.y, yBottom, (uint32)(uint16)texCoord1.y, polygonTabPtr);
 }
 
-void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]) {
+void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
 	int32 top = SCENE_SIZE_MAX;
 	int32 bottom = SCENE_SIZE_MIN;
-	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
-	renderHolomapPolygons(top, bottom);
+	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], top, bottom);
+	renderHolomapPolygons(top, bottom, holomapImage, holomapImageSize);
 }
 
-void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
-	const void *pixelBegin = _engine->_frontVideoBuffer.getBasePtr(0, 0);
-	const void *pixelEnd = _engine->_frontVideoBuffer.getBasePtr(_engine->_frontVideoBuffer.w - 1, _engine->_frontVideoBuffer.h - 1);
+void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize) {
 	if (top < 0 || top >= _engine->_frontVideoBuffer.h) {
 		return;
 	}
@@ -1718,29 +1676,29 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 
 	int32 yHeight = bottom - top;
 	while (yHeight > -1) {
+		int32 u;
+		int32 v;
 		const int16 left = *lholomap_polytab_1_1++;
 		const int16 right = *lholomap_polytab_2_1++;
-		const uint16 x_1_2 = *lholomap_polytab_1_2++;
-		const uint16 x_1_3 = *lholomap_polytab_1_3++;
-		const uint16 x_2_2 = *lholomap_polytab_2_2++;
-		const uint16 x_2_3 = *lholomap_polytab_2_3++;
+		const uint32 u0 = u = *lholomap_polytab_1_2++;
+		const uint32 v0 = v = *lholomap_polytab_1_3++;
+		const uint32 u1 = *lholomap_polytab_2_2++;
+		const uint32 v1 = *lholomap_polytab_2_3++;
 		const int16 width = right - left;
 		if (width > 0) {
 			uint8 *pixelBufPtr = screenBufPtr + left;
-			const int32 iWidth = (int32)width;
-			uint32 uVar1 = (uint32)x_1_3;
-			uint32 uVar3 = (uint32)x_1_2;
+
+			int32 ustep = ((int32)u1 - (int32)u0 + 1) / width;
+			int32 vstep = ((int32)v1 - (int32)v0 + 1) / width;
+
 			for (int16 i = 0; i < width; ++i) {
-				const uint32 holomapImageOffset = (uint32)((int32)uVar3 >> 8 & 0xffU) | (uVar1 & 0xff00);
-				assert(holomapImageOffset < _engine->_resources->_holomapImageSize);
-				if (pixelBufPtr < pixelBegin || pixelBufPtr > pixelEnd) {
-					++pixelBufPtr;
-				} else {
-					//debug("holomapImageOffset: %i", holomapImageOffset);
-					*pixelBufPtr++ = _engine->_resources->_holomapImagePtr[holomapImageOffset];
-				}
-				uVar1 += (int32)(((uint32)x_2_3 - (uint32)x_1_3) + 1) / iWidth;
-				uVar3 += (int32)(((uint32)x_2_2 - (uint32)x_1_2) + 1) / iWidth;
+				// u0 & 0xFF00 is the x position on the image * 256
+				// v0 & 0xFF00 is the y position on the image * 256
+				const uint32 idx = ((u >> 8) & 0xff) | (v & 0xff00);
+				assert(idx < holomapImageSize);
+				*pixelBufPtr++ = holomapImage[idx];
+				u += ustep;
+				v += vstep;
 			}
 		}
 		screenBufPtr += _engine->_frontVideoBuffer.pitch;

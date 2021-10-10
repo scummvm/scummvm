@@ -41,8 +41,6 @@ Resources::~Resources() {
 		free(_samplesTable[i]);
 	}
 	free(_fontPtr);
-	free(_holomapSurfacePtr);
-	free(_holomapImagePtr);
 }
 
 void Resources::initPalettes() {
@@ -147,46 +145,36 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	if (!_spriteShadowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW, _engine->isLBA1())) {
-		error("Failed to load shadow sprites");
-	}
-
 	if (_engine->isLBA1()) {
-		if (!_spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA, _engine->isLBA1())) {
+		if (!_spriteShadowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW), _engine->isLBA1())) {
+			error("Failed to load shadow sprites");
+		}
+
+		if (!_spriteBoundingBox.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA), _engine->isLBA1())) {
 			error("Failed to load sprite bounding box data");
 		}
-	}
 
-	_holomapSurfaceSize = HQR::getAllocEntry(&_holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
-	if (_holomapSurfaceSize == 0) {
-		error("Failed to load holomap surface");
-	}
+		if (!_holomapTwinsenModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL), _engine->isLBA1())) {
+			error("Failed to load holomap twinsen model");
+		}
 
-	_holomapImageSize = HQR::getAllocEntry(&_holomapImagePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
-	if (_holomapImageSize == 0) {
-		error("Failed to load holomap image");
-	}
+		if (!_holomapPointModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL), _engine->isLBA1())) {
+			error("Failed to load holomap point model");
+		}
 
-	if (!_holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL, _engine->isLBA1())) {
-		error("Failed to load holomap twinsen model");
-	}
+		if (!_holomapArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL), _engine->isLBA1())) {
+			error("Failed to load holomap arrow model");
+		}
 
-	if (!_holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL, _engine->isLBA1())) {
-		error("Failed to load holomap point model");
-	}
+		if (!_holomapTwinsenArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL), _engine->isLBA1())) {
+			error("Failed to load holomap twinsen arrow model");
+		}
 
-	if (!_holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL, _engine->isLBA1())) {
-		error("Failed to load holomap arrow model");
+		if (!_trajectories.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM), _engine->isLBA1())) {
+			error("Failed to parse trajectory data");
+		}
+		debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
 	}
-
-	if (!_holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL, _engine->isLBA1())) {
-		error("Failed to load holomap twinsen arrow model");
-	}
-
-	if (!_trajectories.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM, _engine->isLBA1())) {
-		error("Failed to parse trajectory data");
-	}
-	debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
 
 	preloadSprites();
 	preloadAnimations();
@@ -194,13 +182,17 @@ void Resources::initResources() {
 	preloadInventoryItems();
 
 	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
+	const int32 maxBodies = _engine->isLBA1() ? 200 : NUM_BODIES;
+	if (bodyCount > maxBodies) {
+		error("Max body count exceeded: %i", bodyCount);
+	}
 	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!_bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i, _engine->isLBA1())) {
+		if (!_bodyData[i].loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, i), _engine->isLBA1())) {
 			error("HQR ERROR: Parsing body entity for model %i failed", i);
 		}
 	}
 
-	loadFlaInfo();
+	loadMovieInfo();
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
 	for (int32 i = 0; i < textEntryCount / 2; ++i) {
@@ -219,35 +211,46 @@ const Trajectory *Resources::getTrajectory(int index) const {
 	return _trajectories.getTrajectory(index);
 }
 
-void Resources::loadFlaInfo() {
+void Resources::loadMovieInfo() {
 	uint8 *content = nullptr;
-	const int32 size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	int32 size;
+	if (_engine->isLBA1()) {
+		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	} else {
+		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, 48);
+	}
 	if (size == 0) {
 		return;
 	}
 	const Common::String str((const char *)content, size);
 	free(content);
-
+	debug(3, "movie info:\n%s", str.c_str());
 	Common::StringTokenizer tok(str, "\r\n");
+	int videoIndex = 0;
 	while (!tok.empty()) {
 		const Common::String &line = tok.nextToken();
-		Common::StringTokenizer lineTok(line);
-		if (lineTok.empty()) {
-			continue;
+		if (_engine->isLBA1()) {
+			Common::StringTokenizer lineTok(line);
+			if (lineTok.empty()) {
+				continue;
+			}
+			const Common::String &name = lineTok.nextToken();
+			Common::Array<int32> frames;
+			while (!lineTok.empty()) {
+				const Common::String &frame = lineTok.nextToken();
+				const int32 frameIdx = atoi(frame.c_str());
+				frames.push_back(frameIdx);
+			}
+			_movieInfo.setVal(name, frames);
+		} else {
+			Common::Array<int32> info(videoIndex);
+			_movieInfo.setVal(line, info);
 		}
-		const Common::String &name = lineTok.nextToken();
-		Common::Array<int32> frames;
-		while (!lineTok.empty()) {
-			const Common::String &frame = lineTok.nextToken();
-			const int32 frameIdx = atoi(frame.c_str());
-			frames.push_back(frameIdx);
-		}
-		_flaMovieFrames.setVal(name, frames);
 	}
 }
 
-const Common::Array<int32> &Resources::getFlaMovieInfo(const Common::String &name) const {
-	return _flaMovieFrames.getVal(name);
+const Common::Array<int32> &Resources::getMovieInfo(const Common::String &name) const {
+	return _movieInfo.getVal(name);
 }
 
 } // namespace TwinE

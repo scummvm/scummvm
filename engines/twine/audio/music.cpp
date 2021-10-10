@@ -171,10 +171,12 @@ void Music::stopTrackMusic() {
 
 bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	if (!_engine->_cfgfile.Sound || _engine->_cfgfile.MidiType == MIDIFILE_NONE) {
+		debug("midi disabled - skip playing %i", midiIdx);
 		return false;
 	}
 
 	if (midiIdx == currentMusic) {
+		debug("already playing %i", midiIdx);
 		return true;
 	}
 
@@ -206,8 +208,10 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 
 	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
 	if (midiSize == 0) {
+		debug("Could not find midi file for index %i", midiIdx);
 		return false;
 	}
+	debug("Play midi file for index %i", midiIdx);
 	_midiPlayer.play(midiPtr, midiSize);
 	return true;
 }
