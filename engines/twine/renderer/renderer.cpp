@@ -383,7 +383,7 @@ static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
+bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
@@ -457,6 +457,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 			}
 		}
 	}
+	return true;
 }
 
 void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
@@ -954,10 +955,10 @@ void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) con
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
-	computePolygons(polygon.renderType, vertices, polygon.numVertices);
-
-	const int32 vsize = vbottom - vtop + 1;
-	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+	if (computePolygons(polygon.renderType, vertices, polygon.numVertices)) {
+		const int32 vsize = vbottom - vtop + 1;
+		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+	}
 }
 
 void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
