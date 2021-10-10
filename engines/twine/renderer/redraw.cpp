@@ -336,6 +336,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	addRedrawArea(_engine->_interface->_clip);
 
 	_engine->_debugScene->drawClip(renderRect);
+	_engine->_interface->resetClip();
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -378,6 +379,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		}
 
 		_engine->_debugScene->drawClip(_engine->_interface->_clip);
+		_engine->_interface->resetClip();
 	}
 }
 
@@ -402,14 +404,15 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	renderRect.right = renderRect.left + spriteWidth;
 	renderRect.bottom = renderRect.top + spriteHeight;
 
+	bool validClip;
 	if (actor->_staticFlags.bUsesClipping) {
 		const Common::Rect rect(_projPosScreen.x + actor->_cropLeft, _projPosScreen.y + actor->_cropTop, _projPosScreen.x + actor->_cropRight, _projPosScreen.y + actor->_cropBottom);
-		_engine->_interface->setClip(rect);
+		validClip = _engine->_interface->setClip(rect);
 	} else {
-		_engine->_interface->setClip(renderRect);
+		validClip = _engine->_interface->setClip(renderRect);
 	}
 
-	if (_engine->_interface->_clip.isValidRect()) {
+	if (validClip) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->_dynamicFlags.bIsVisible = 1;
@@ -437,6 +440,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
+		_engine->_interface->resetClip();
 	}
 }
 
@@ -464,9 +468,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	}
 
-	_engine->_interface->setClip(renderRect);
-
-	if (_engine->_interface->_clip.isValidRect()) {
+	if (_engine->_interface->setClip(renderRect)) {
 		const int32 tmpX = (extra->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
 		const int32 tmpY = extra->pos.y / BRICK_HEIGHT;
 		const int32 tmpZ = (extra->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
@@ -476,6 +478,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 		// show clipping area
 		//drawRectBorders(renderRect);
+		_engine->_interface->resetClip();
 	}
 }
 
@@ -564,6 +567,8 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -588,6 +593,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -603,6 +609,7 @@ void Redraw::renderOverlays() {
 				_engine->_menu->drawRectBorders(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koText: {
@@ -627,6 +634,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+				_engine->_interface->resetClip();
 				break;
 			}
 			}
@@ -732,9 +740,10 @@ void Redraw::drawBubble(int32 actorIdx) {
 	renderRect.right = spriteWidth + renderRect.left - 1;
 	renderRect.bottom = spriteHeight + renderRect.top - 1;
 
-	_engine->_interface->setClip(renderRect);
-	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
-	_engine->_interface->resetClip();
+	if (_engine->_interface->setClip(renderRect)) {
+		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+		_engine->_interface->resetClip();
+	}
 }
 
 void Redraw::zoomScreenScale() {

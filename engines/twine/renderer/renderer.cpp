@@ -1563,6 +1563,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	} else {
 		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
 	}
+	_engine->_interface->resetClip();
 }
 
 void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param) {
