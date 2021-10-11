@@ -195,6 +195,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 
 void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
 	Math::Vector3d up_vec(0, 1, 0);
+
 	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
 
 	tglMultMatrixf(lookMatrix.getData());
@@ -202,6 +203,10 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 }
 
 void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+	assert(size.x() > 0);
+	assert(size.y() > 0);
+	assert(size.z() > 0);
+
 	//debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
 	//debug("with size %f, %f, %f", size.x(), size.y(), size.z());
 	uint8 r, g, b;
@@ -291,6 +296,18 @@ void TinyGLRenderer::drawSky(uint8 color) {
 	_palette->getRGBAt(color, r, g, b);
 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+}
+
+void TinyGLRenderer::drawFloor(uint8 color) {
+	uint8 r, g, b;
+	_palette->getRGBAt(color, r, g, b);
+	tglColor3ub(r, g, b);
+	tglBegin(TGL_QUADS);
+	tglVertex3f(-100000.f, 0.f, -100000.f);
+	tglVertex3f(100000.f, 0.f, -100000.f);
+	tglVertex3f(100000.f, 0.f, 100000.f);
+	tglVertex3f(-100000.f, 0.f, 100000.f);
+	tglEnd();
 }
 
 void TinyGLRenderer::flipBuffer() {

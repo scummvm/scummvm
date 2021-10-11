@@ -28,7 +28,7 @@ typedef enum {
 		Border = 0x4524,
 } ChunkType;
 
-static Object *load16bitObject(StreamLoader &stream, uint8 groundColor) {
+static Object *load16bitObject(StreamLoader &stream) {
 	// get object flags and type
 	uint8 objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
@@ -75,8 +75,6 @@ static Object *load16bitObject(StreamLoader &stream, uint8 groundColor) {
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours; colour++) {
 			uint8 c = stream.get8();
-			if (objectID == 1)
-				c = groundColor;
 			debug("face %d color: %d", colour, c);
 			colours->push_back(c);
 			byteSizeOfObject--;
@@ -211,7 +209,7 @@ Area *load16bitArea(StreamLoader &stream) {
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
 	for (uint16 object = 0; object < numberOfObjects; object++) {
-		Object *newObject = load16bitObject(stream, groundColor);
+		Object *newObject = load16bitObject(stream);
 
 		if (newObject) {
 			if (newObject->getType() == Object::Entrance) {
@@ -222,10 +220,8 @@ Area *load16bitArea(StreamLoader &stream) {
 		}
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID, skyColor, groundColor));
+	return (new Area(areaNumber, objectsByID, entrancesByID, 1, skyColor, groundColor));
 }
-
-
 
 void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	const uint32 fileSize = file->size();
@@ -411,8 +407,6 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
-		//if (newArea->getAreaID() == startArea)
-		//	assert(0);
 	}
 	//load16bitInstrument(streamLoader);
 
@@ -443,9 +437,9 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 			if (chunkSize == 320*200 / 4)
 				colorNumber = 4; // CGA
 			else if (chunkSize == 320*200 / 2)
-				colorNumber = 16;
+				colorNumber = 16; // EGA
 			else if (chunkSize == 320*200)
-				colorNumber = 256;
+				colorNumber = 256; // VGA
 			else
 				error("Unexpected size of image %d", chunkSize);
 

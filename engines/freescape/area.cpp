@@ -30,21 +30,25 @@ uint16 Area::getAreaID() {
 	return areaID;
 }
 
+uint8 Area::getScale() {
+	return scale;
+}
+
 Area::Area(
 	uint16 _areaID,
 	ObjectMap *_objectsByID,
 	ObjectMap *_entrancesByID,
+	uint8 _scale,
 	uint8 _skyColor,
 	uint8 _groundColor,
-	Common::Array<uint8> *_palette) {
-	raw_palette = _palette;
+	Graphics::PixelBuffer *_palette) {
+	scale = _scale;
+	palette = _palette;
 	skyColor = _skyColor;
 	groundColor = _groundColor;
 	areaID = _areaID;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
-	vertexBuffer = nullptr;
-	drawElementsBuffer = nullptr;
 
 	// create a list of drawable objects only
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
@@ -79,21 +83,17 @@ Area::~Area() {
 	delete objectsByID;
 }
 
-/*void Area::setupOpenGL()
-{
-	delete vertexBuffer;
-	vertexBuffer = GeometricObject::newVertexBuffer();
-
-	delete drawElementsBuffer;
-	drawElementsBuffer = GeometricObject::newDrawElementsBuffer();
-
-	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
-		(*iterator)->setupOpenGL(vertexBuffer, drawElementsBuffer);
-}*/
 
 void Area::draw(Freescape::Renderer *gfx) {
-	gfx->drawSky(skyColor);
-	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		(*it)->draw(gfx);
+	if (palette) {
+		gfx->_palette = palette;
 	}
+	gfx->clear();
+	gfx->drawSky(skyColor);
+	assert(drawableObjects.size() > 0);
+	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
+		if ((*it)->getSize() != Math::Vector3d(8192.f, 20.f, 8192.f))
+			(*it)->draw(gfx);
+	}
+	gfx->drawFloor(groundColor);
 }

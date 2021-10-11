@@ -115,7 +115,7 @@ void FreescapeEngine::loadAssets() {
 			if (file == nullptr)
 				error("Failed to open DRILLE.EXE");
 
-			load8bitBinary(file, 0x9b40, 8);
+			load8bitBinary(file, 0x9b40, 16);
 		} else if (renderMode == "cga") {
 			file = gameDir.createReadStreamForMember("DRILLC.EXE");
 
@@ -140,43 +140,40 @@ Common::Error FreescapeEngine::run() {
 	loadAssets();
 	Area *area = nullptr;
 	Entrance *entrance = nullptr;
-	if (_areasByAreaID) {
-		if (_startArea == 14)
-			_startArea = 1;
-		assert(_areasByAreaID->contains(_startArea));
-		area = (*_areasByAreaID)[_startArea];
-		assert(area);
-		entrance = (Entrance*) area->entranceWithID(_startEntrance);
-		assert(entrance);
-		_position = entrance->getOrigin();
-		//_gfx->renderPalette(area->raw_palette, binary.ncolors);
-		//drawBorder();
-	}
+	assert(_areasByAreaID);
+	if (_startArea == 14)
+		_startArea = 1;
+	assert(_areasByAreaID->contains(_startArea));
+	area = (*_areasByAreaID)[_startArea];
+	assert(area);
+	entrance = (Entrance*) area->entranceWithID(_startEntrance);
+	assert(entrance);
+	_position = entrance->getOrigin();
+	uint8 scale = area->getScale();
+	_position.setValue(1, _position.y() + scale * _playerHeight);
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
 	Common::Point lastMousePos(0, 0);
 	float lastFrame = 0.f;
+	// used to create a projection matrix;
 	float nearClipPlane = 1.f;
 	float farClipPlane;
 
 	if (_binaryBits == 16) {
-		// create a projection matrix; the 16-bit kit permits the range 0-8192 to
-		// be used along all three axes and from that comes the far plane distance
-		// of 14189.
-		farClipPlane = 14189.0f;
+		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
+		farClipPlane = 14189.f;
 	} else {
-		error("Unknown farClipPlane");
+		farClipPlane = 1024.f; // wild guess
 	}
 
-	g_system->lockMouse(true);
+	//_gfx->computeScreenViewport();
+	//error("%d %d", _gfx->viewport().width(), _gfx->viewport().height());
+	//g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
 		_gfx->updateProjectionMatrix(40.0, nearClipPlane, farClipPlane);
 		_gfx->positionCamera(_position, _position + _cameraFront);
-		_gfx->scale(_scale);
-		//_gfx->selectTargetWindow(nullptr, true, false);
-		//_gfx->updateMatrices();
 		area->draw(_gfx);
         float currentFrame = g_system->getMillis();
         float deltaTime = currentFrame - lastFrame;
@@ -188,15 +185,13 @@ Common::Error FreescapeEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
-					move(FORWARD, deltaTime);
+					move(FORWARD, scale, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
-					move(BACKWARD, deltaTime);
+					move(BACKWARD, scale, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
-					move(LEFT, deltaTime);
+					move(LEFT, scale, deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
-					move(RIGHT, deltaTime);
-				
-				//debug("player position: %f %f %f", _position.x(), _position.y(), _position.z());
+					move(RIGHT, scale, deltaTime);
 				break;
 
 			case Common::EVENT_QUIT:
@@ -207,7 +202,11 @@ Common::Error FreescapeEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				rotate(lastMousePos, mousePos);
 				lastMousePos = mousePos;
-				//debug("player rotation (front): %f %f %f", _front.x(), _front.y(), _front.z());
+				if (mousePos.x <= 5 || mousePos.x >= 315) {
+					g_system->warpMouse(_screenW/2, mousePos.y);
+					lastMousePos.x = _screenW/2;
+					lastMousePos.y = mousePos.y;
+				} 
 				break;
 			default:
 				break;
@@ -218,7 +217,6 @@ Common::Error FreescapeEngine::run() {
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
-		//g_system->warpMouse(_screenH/2, _screenW/2);
 	}
 
 	return Common::kNoError;
@@ -257,8 +255,9 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_cameraRight = v;
 }
 
-void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
+void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	float velocity = _movementSpeed * deltaTime;
+	float positionY = _position.y(); 
 	switch (direction) {
 	case FORWARD:
 		_position = _position + _cameraFront * velocity;
@@ -275,7 +274,7 @@ void FreescapeEngine::move(CameraMovement direction, float deltaTime) {
 	}
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
-	_position.set(_position.x(), _playerHeight, _position.z());
+	_position.set(_position.x(), positionY, _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
