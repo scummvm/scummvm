@@ -291,7 +291,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "agunshotinroom37", "A Gunshot in Room 37" },
 	{ "ahmetsagsfightgameremix", "Ahmet's AGS Fight Game Remix" },
 	{ "aidaschristmas", "Aida's Strange Christmas" },
-	{ "ainthegoffantabulousw", "A in the G of Fantabulous W" },
+	{ "ainthegoffantabulousw", "Adventures in the Galaxy of Fantabulous Wonderment" },
 	{ "airbreak", "Airbreak" },
 	{ "airwaveifoughtthelawandthelawone", "~airwave~ - I Fought the Law, And the Law One" },
 	{ "akumayosagschess275", "AGS Chess" },
