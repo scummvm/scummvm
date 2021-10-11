@@ -33,6 +33,10 @@
 #define MAC_OS_X_VERSION_10_6    1060
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_7
+#define MAC_OS_X_VERSION_10_7    1070
+#endif
+
 #ifndef MAC_OS_X_VERSION_10_10
 #define MAC_OS_X_VERSION_10_10 101000
 #endif
