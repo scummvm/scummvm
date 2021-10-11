@@ -36,6 +36,29 @@ int16 file_icons[8 * 4] = { 14, 73, 32, 94,
                             232, 143, 310, 193
                           };
 
+Common::File *File::open(const char *name) {
+	Common::File *f = new Common::File();
+	if (f->open(name)) {
+		return f;
+	} else {
+		delete f;
+		return nullptr;
+	}
+}
+
+bool File::readArray(Common::SeekableReadStream *src, uint16 *arr, size_t size) {
+	Common::SeekableReadStream *rs = src->readStream(size * 2);
+
+	bool result = (uint32)rs->size() == (size * 2);
+	if (result) {
+		for (; size > 0; --size, ++arr)
+			*arr = src->readUint16LE();
+	}
+
+	delete rs;
+	return result;
+}
+
 int16 call_fileio(int16 palette, int16 mode) {
 	short ret;
 	ret = 0;

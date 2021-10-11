@@ -382,11 +382,10 @@ void flic::custom_play(CustomInfo *ci) {
 							++CurrentFrame;
 						}
 						else if (custom_frame.type == CUSTOM) {
-							decode_custom_frame(ci->Handle);
+							decode_custom_frame(
+								dynamic_cast<Common::SeekableReadStream *>(ci->Handle));
 
-						} else
-
-						{
+						} else {
 							out->raster_col(255, 63, 63, 63);
 							out->printxy(0, 0, 255, 0, 0, "Unknown Frame Type");
 							taste;
@@ -405,8 +404,7 @@ void flic::custom_play(CustomInfo *ci) {
 	}
 }
 
-void flic::decode_custom_frame(void *h) {
-	Stream *handle = (Stream *)h;
+void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
 	ChunkHead chead;
 	uint16 i, j;
@@ -424,7 +422,7 @@ void flic::decode_custom_frame(void *h) {
 		switch (chead.type) {
 
 		case FADE_IN:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -435,7 +433,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case FADE_OUT:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -496,7 +494,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case PLAY_SEQ:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -515,7 +513,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case PLAY_PATTERN:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -552,7 +550,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_MVOL :
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -565,7 +563,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_LOOPMODE :
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -582,7 +580,7 @@ void flic::decode_custom_frame(void *h) {
 
 		case PLAY_VOC :
 
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -599,7 +597,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_SVOL :
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -611,7 +609,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_CVOL :
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -623,7 +621,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case FREE_EFFECT:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -631,7 +629,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case MFADE_IN:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -643,7 +641,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case MFADE_OUT:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
@@ -655,7 +653,7 @@ void flic::decode_custom_frame(void *h) {
 			break;
 
 		case SET_STEREO:
-			if (!chewy_fread(&para[0], chead.size, 1, handle)) {
+			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else
