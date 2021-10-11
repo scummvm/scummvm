@@ -68,6 +68,7 @@ public:
 };
 
 extern ChewyEngine *g_engine;
+extern Graphics::Screen *g_screen;
 
 } // End of namespace Chewy
 
