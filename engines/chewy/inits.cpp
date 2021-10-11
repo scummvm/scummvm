@@ -55,7 +55,7 @@ void standard_init() {
 	out->set_clip(0, 0, 320, 200);
 	out->set_writemode(0);
 	scr_width = 0;
-	screen0 = (byte *)g_engine->_screen->getPixels();
+	screen0 = (byte *)g_screen->getPixels();
 	in->neuer_kb_handler(&kbinfo);
 
 	in->rectangle(0, 0, 320, 210);

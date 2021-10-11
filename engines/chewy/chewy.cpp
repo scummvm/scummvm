@@ -32,6 +32,7 @@
 namespace Chewy {
 
 ChewyEngine *g_engine;
+Graphics::Screen *g_screen;
 
 ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 		: Engine(syst),
@@ -42,6 +43,7 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 		_sound(nullptr) {
 
 	g_engine = this;
+	g_screen = nullptr;
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "back");
@@ -58,10 +60,11 @@ ChewyEngine::~ChewyEngine() {
 	delete _screen;
 	delete _sound;
 	g_engine = nullptr;
+	g_screen = nullptr;
 }
 
 void ChewyEngine::initialize() {
-	_screen = new Graphics::Screen();
+	g_screen = _screen = new Graphics::Screen();
 	_events = new EventsManager(_screen);
 	_sound = new Sound(_mixer);
 }

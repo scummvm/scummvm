@@ -22,6 +22,8 @@
 
 #include "common/system.h"
 #include "common/memstream.h"
+#include "chewy/chewy.h"
+#include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/flic.h"
 
@@ -368,7 +370,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 void flic::custom_play(CustomInfo *ci) {
 	uint16 i;
 	char key;
-	float start, ende;
+	uint32 start, ende;
 	bool trace_mode;
 
 	Cinfo = ci;
@@ -399,10 +401,7 @@ void flic::custom_play(CustomInfo *ci) {
 						fcode = READFEHLER;
 					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
-
-							start = (float) g_system->getMillis(); // clock()
-							start /= 0.05f;
-							start += (float)custom_header.speed;
+							start = g_system->getMillis() + custom_header.speed;
 							if (custom_frame.size) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									modul = DATEI;
@@ -410,13 +409,18 @@ void flic::custom_play(CustomInfo *ci) {
 								} else
 									decode_cframe();
 							}
+
+							// Show the next frame
+							g_screen->update();
+
+							// Loop until the frame time expires
 							do {
-								ende = (float)g_system->getMillis(); // clock()
-								ende /= 0.05f;
+								ende = g_system->getMillis();
+								g_events->update();
 							} while (ende <= start);
 							++CurrentFrame;
-						}
-						else if (custom_frame.type == CUSTOM) {
+
+						} else if (custom_frame.type == CUSTOM) {
 							decode_custom_frame(
 								dynamic_cast<Common::SeekableReadStream *>(ci->Handle));
 
@@ -426,7 +430,6 @@ void flic::custom_play(CustomInfo *ci) {
 							taste;
 						}
 					}
-
 				}
 			}
 		}

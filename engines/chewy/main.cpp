@@ -715,7 +715,7 @@ void set_up_screen(int16 mode) {
 		            ScrXy[0], ScrXy[1],
 		            &spieler.scrollx, &spieler.scrolly);
 
-	g_engine->_screen->update();
+	g_screen->update();
 	g_events->update();
 }
 

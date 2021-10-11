@@ -39,7 +39,7 @@ static int fontFirst, fontLast;
 static int fontX, fontY;
 
 void init_mcga() {
-	screenP = (byte *)g_engine->_screen->getPixels();
+	screenP = (byte *)g_screen->getPixels();
 	screenHasDefault = false;
 	screenDefaultP = nullptr;
 	spriteWidth = 0;
@@ -72,7 +72,7 @@ void set_pointer(byte *ptr) {
 	} else if (screenHasDefault) {
 		screenP = screenDefaultP;
 	} else {
-		screenP = (byte *)g_engine->_screen->getPixels();
+		screenP = (byte *)g_screen->getPixels();
 	}
 }
 
@@ -121,8 +121,8 @@ void set_palpart(byte *palette, int16 startcol, int16 anz) {
 }
 
 void clear_mcga() {
-	if (screenP == (byte *)g_engine->_screen->getPixels())
-		g_engine->_screen->clear();
+	if (screenP == (byte *)g_screen->getPixels())
+		g_screen->clear();
 	else
 		Common::fill(screenP, screenP + SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
@@ -132,17 +132,18 @@ void setpixel_mcga(int16 x, int16 y, int16 farbe) {
 }
 
 uint8 getpix(int16 x, int16 y) {
-	byte *pixel = (byte *)g_engine->_screen->getBasePtr(x, y);
+	byte *pixel = (byte *)g_screen->getBasePtr(x, y);
 	return *pixel;
 }
 
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	g_engine->_screen->drawLine(x1, y1, x2, y2, farbe);
+	g_screen->drawLine(x1, y1, x2, y2, farbe);
 }
 
 void mem2mcga(const byte *ptr) {
-	byte *destP = (byte *)g_engine->_screen->getPixels();
+	byte *destP = (byte *)g_screen->getPixels();
 	Common::copy(ptr + 4, ptr + 4 + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
+	g_screen->markAllDirty();
 }
 
 void mem2mcga_masked(const byte *ptr, int16 maske) {
@@ -316,8 +317,8 @@ void setfont(byte *addr, int16 width, int16 height, int16 first, int16 last) {
 }
 
 void upd_scr() {
-	g_engine->_screen->markAllDirty();
-	g_engine->_screen->update();
+	g_screen->markAllDirty();
+	g_screen->update();
 }
 
 void vors() {
