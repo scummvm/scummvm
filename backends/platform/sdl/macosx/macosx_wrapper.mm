@@ -60,7 +60,7 @@ Common::U32String getTextFromClipboardMacOSX() {
 
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	NSString *str = [pb  stringForType:NSPasteboardTypeString];
-	if (str == nil)
+	if (![str respondsToSelector:@selector(getBytes:maxLength:usedLength:encoding:options:range:remainingRange:)])
 		return Common::U32String();
 
 	// If translations are supported, use the current TranslationManager charset and otherwise
