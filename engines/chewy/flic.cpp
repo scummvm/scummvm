@@ -27,12 +27,41 @@
 
 namespace Chewy {
 
-void decode_flc(byte *vscr, byte *dbuf) {
+void decode_flc(byte *vscr, const byte *dbuf) {
 	warning("STUB: decode_flc()");
 }
 
-void decode_rle(byte *vscr, byte *dbuf, int br, int h) {
-	warning("STUB: decode_rle()");
+void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
+	int x;
+
+	for (; h > 0; --h, vscr += SCREEN_WIDTH) {
+		byte *dest = vscr;
+		++dbuf;		// Skip number of entries in line
+
+		for (x = 0; x < br; ) {
+			int8 len = (int8)*dbuf++;
+			if (len < 0) {
+				// Copy a number of bytes specified in lower 7 bits
+				len = -len;
+				if (len) {
+					Common::copy(dbuf, dbuf + len, dest);
+					dbuf += len;
+					dest += len;
+					x += len;
+				}
+			} else {
+				// Run length in the lower 7 bits of the next byte
+				byte v = *dbuf++;
+				if (len) {
+					Common::fill(dest, dest + len, v);
+					x += len;
+					dest += len;
+				}
+			}
+		}
+
+		assert(x == br);
+	}
 }
 
 
