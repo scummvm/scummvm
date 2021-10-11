@@ -485,6 +485,8 @@ struct FlicHead {
 	uint32 oframe1 = 0;
 	uint32 oframe2 = 0;
 	uint8 reserved3[40] = { 0 };
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct FrameHead {
@@ -492,6 +494,9 @@ struct FrameHead {
 	uint16 type = 0;
 	uint16 chunks = 0;
 	uint8 reserved[8] = { 0 };
+
+	bool load(Common::SeekableReadStream *src);
+	static size_t SIZE() { return 16; }
 };
 
 struct ChunkHead {
@@ -510,12 +515,16 @@ struct CustomFlicHead {
 	uint16 height = 0;
 	uint32 speed = 0;
 	uint32 oframe1 = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct CustomFrameHead {
 	uint32 size = 0;
 	uint16 type = 0;
 	uint16 chunks = 0;
+
+	bool load(Common::SeekableReadStream *src);
 };
 
 struct CustomInfo {

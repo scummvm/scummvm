@@ -36,9 +36,7 @@ void decode_rle(byte *vscr, byte *dbuf, int br, int h) {
 
 
 flic::flic() {
-	int16 i;
-	for (i = 0; i < 50; i++)
-		sounds[i] = 0;
+	Common::fill(&sounds[0], &sounds[50], (byte *)nullptr);
 }
 
 flic::~flic() {
@@ -47,19 +45,18 @@ flic::~flic() {
 void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 	Stream *lhandle;
 
-	lhandle = chewy_fopen(fname, "rb");
+	lhandle = File::open(fname);
 	if (lhandle) {
 		play(lhandle, vscreen, load_p);
-		chewy_fclose(lhandle);
-	}
-	else {
+		delete lhandle;
+	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
 }
 
-void flic::play(void *h, byte *vscreen, byte *load_p) {
-	Stream *handle = (Stream *)h;
+void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	uint16 i;
 	size_t tmp_size;
 	char key;
@@ -68,7 +65,7 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 
 	load_puffer = load_p;
 	virt_screen = vscreen + 4;
-	if (chewy_fread(&flic_header, sizeof(FlicHead), 1, handle)) {
+	if (flic_header.load(rs)) {
 		if (flic_header.type == FLC) {
 
 			key = 0;
@@ -78,33 +75,32 @@ void flic::play(void *h, byte *vscreen, byte *load_p) {
 			cls_flag = false;
 			CurrentFrame = 0;
 			for (i = 0; (i < flic_header.frames) && (!modul) && (key != 27); i++) {
-				if (!chewy_fread(&frame_header, sizeof(FrameHead), 1, handle)) {
+				if (!frame_header.load(rs)) {
 					modul = DATEI;
 					fcode = READFEHLER;
-				}
-				else {
+				} else {
 					if (frame_header.type != PREFIX) {
 						tmp_size = ((size_t)frame_header.size) - sizeof(FrameHead);
 						start = (float) g_system->getMillis(); // clock()
 						start /= 0.05f;
 						start += flic_header.speed;
 						if (tmp_size) {
-							if (!chewy_fread(load_puffer, tmp_size, 1, handle)) {
+							if (rs->read(load_puffer, tmp_size) != tmp_size) {
 								modul = DATEI;
 								fcode = READFEHLER;
-							}
-							else
+							} else {
 								decode_frame();
+							}
 						}
+
 						do {
 							ende = (float)g_system->getMillis(); // clock()
 							ende /= 0.05f;
 						} while (ende <= start);
 						++CurrentFrame;
+					} else {
+						rs->seek(frame_header.size - (int)FrameHead::SIZE(), SEEK_CUR);
 					}
-					else
-						chewy_fseek(handle, frame_header.size - (long)sizeof(FrameHead),
-						      SEEK_CUR);
 				}
 			}
 		}
@@ -261,7 +257,6 @@ void flic::col64_chunk(byte *tmp) {
 }
 
 void flic::delta_chunk_byte(byte *tmp) {
-
 	short int *ipo;
 	byte *abl;
 	byte *tabl;
@@ -342,11 +337,12 @@ void flic::custom_play(CustomInfo *ci) {
 	Sound = ci->SoundSlot;
 
 	if (ci->Fname != 0) {
-		ci->Handle = chewy_fopen(ci->Fname, "rb");
-		chewy_fseek((Stream *)ci->Handle, 0, SEEK_SET);
+		ci->Handle = File::open(ci->Fname);
 	}
-	if (ci->Handle) {
-		if (chewy_fread(&custom_header, sizeof(CustomFlicHead), 1, (Stream *)ci->Handle)) {
+
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(ci->Handle);
+	if (rs) {
+		if (custom_header.load(rs)) {
 			if (!scumm_strnicmp(custom_header.id, "CFO\0", 4)) {
 				key = 0;
 				trace_mode = false;
@@ -357,22 +353,20 @@ void flic::custom_play(CustomInfo *ci) {
 				CurrentFrame = 0;
 				for (i = 0; (i < custom_header.frames) && (!modul) && (key != 27); i++) {
 
-					if (!chewy_fread(&custom_frame, sizeof(CustomFrameHead), 1, (Stream *)ci->Handle)) {
+					if (!custom_frame.load(rs)) {
 						modul = DATEI;
 						fcode = READFEHLER;
-					}
-					else {
+					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
 
 							start = (float) g_system->getMillis(); // clock()
 							start /= 0.05f;
 							start += (float)custom_header.speed;
 							if (custom_frame.size) {
-								if (!chewy_fread(load_puffer, custom_frame.size, 1, (Stream *)ci->Handle)) {
+								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									modul = DATEI;
 									fcode = READFEHLER;
-								}
-								else
+								} else
 									decode_cframe();
 							}
 							do {
@@ -397,8 +391,7 @@ void flic::custom_play(CustomInfo *ci) {
 		}
 		if (ci->Fname != 0)
 			chewy_fclose(ci->Handle);
-	}
-	else {
+	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
@@ -411,16 +404,15 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	tmf_header *th;
 	byte *tmp;
 	musik_info mi;
-	long long_para;
 	th = (tmf_header *)Music;
 
 	for (i = 0; (i < custom_frame.chunks) && (!modul); i++) {
-		if (!chewy_fread(&chead, sizeof(ChunkHead), 1, handle)) {
+		if (!chead.load(handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		}
-		switch (chead.type) {
 
+		switch (chead.type) {
 		case FADE_IN:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
@@ -441,7 +433,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case LOAD_MUSIC:
-			if (!chewy_fread(Music, chead.size, 1, handle)) {
+			if (handle->read(Music, chead.size) != chead.size) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -459,8 +451,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case LOAD_RAW:
-			if ((!chewy_fread(&para[0], 2, 1, handle)) ||
-			        (!chewy_fread(Sound, chead.size - 2, 1, handle))) {
+			if (!File::readArray(handle, &para[0], 1) ||
+			        handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -471,8 +463,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case LOAD_VOC:
-			if ((!chewy_fread(&para[0], 2, 1, handle)) ||
-			        (!chewy_fread(Sound, chead.size - 2, 1, handle))) {
+			if (!File::readArray(handle, &para[0], 1) ||
+				handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
@@ -663,11 +655,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case SET_SPEED :
-			if (!chewy_fread(&long_para, chead.size, 1, handle)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else
-				custom_header.speed = long_para;
+			custom_header.speed = handle->readUint32LE();
 			break;
 
 		case CLEAR_SCREEN:
