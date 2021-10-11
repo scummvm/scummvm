@@ -130,7 +130,7 @@ float specColors[16][3] = {
 	{1, 1, 1}
 };
 
-Common::Array <uint8>*getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
+Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
 	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
 	uint16 y0, y1, y2;
 	for(int c = 0; c < ncolors; c++)
@@ -145,7 +145,12 @@ Common::Array <uint8>*getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
 		raw_palette->push_back(y1);
 		raw_palette->push_back(y2);
 	}
-	return raw_palette;
+	assert(ncolors == 16);
+	assert(raw_palette->size() == ncolors * 3);
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
+	*palette = raw_palette->data();
+	return palette;
 }
 
 
@@ -156,7 +161,9 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	uint8 areaNumber = stream.get8();
 
 	uint16 cPtr = stream.rget16();
-	uint8 scale = stream.get8(); 
+	uint8 scale = stream.get8();
+	debug("Scale: %d", scale);
+
 	uint8 ci1 = stream.get8()&15;
 	uint8 ci2 = stream.get8()&15; 
 	uint8 ci3 = stream.get8()&15; 
@@ -168,7 +175,7 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	f1 = specColors[ci3];
 	f2 = specColors[ci4];
 
-	Common::Array <uint8> *raw_palette = getPaletteGradient(f1, f2, ncolors);
+	Graphics::PixelBuffer *palette = getPaletteGradient(f1, f2, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Objects: %d", numberOfObjects);
@@ -202,7 +209,7 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID, 0, 1, raw_palette));
+	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 0, 1, palette));
 }
 
 // struct BinaryTable {
@@ -212,10 +219,10 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 // };
 
 // static const BinaryTable binaryTable[] = {
-// 	{ "DRILLE.EXE",  8,  0x9b40},
+// 	{ "DRILLE.EXE",  16,  0x9b40},
 // 	{ "DRILLC.EXE",  4,  0x7bb0},
-// 	{ "TOTE.EXE",    8,  0xcdb7},
-//     //{ "TOTC.EXE",  8,  ??????},
+// 	{ "TOTE.EXE",    16,  0xcdb7},
+//  { "TOTC.EXE",    16,  ??????},
 // 	{ nullptr,       0,  0  }
 // };
 
@@ -246,8 +253,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debug("Number of areas: %d", numberOfAreas);
 	uint8 startArea = streamLoader.get8();
 	debug("Start area: %d", startArea);
-	uint8 entranceArea = streamLoader.get8();
-	debug("Entrace area: %d", entranceArea);
+	uint8 startEntrance = streamLoader.get8();
+	debug("Entrace area: %d", startEntrance);
 
 	streamLoader.skipBytes(66);
 
@@ -293,6 +300,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	}
 	_areasByAreaID = areaMap;
 	_startArea = startArea;
+	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;
 }

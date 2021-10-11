@@ -83,7 +83,7 @@ public:
 	uint16 _startEntrance;
 
 	// Movement
-	void move(CameraMovement direction, float deltaTime);
+	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void rotate(Common::Point lastMousePos, Common::Point mousePos);
 	// Eular Angles
 	float _yaw;

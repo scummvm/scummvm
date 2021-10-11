@@ -103,7 +103,9 @@ bool GeometricObject::isPlanar() {
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
 	if (this->getType() == Cube) {
+		//debug("Drawing cube!");
 		gfx->renderCube(origin, size, colours);
-	}
+	} //else
+		//debug("Drawing something of type %d", this->getType());
 		
 };

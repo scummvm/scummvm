@@ -54,6 +54,7 @@ public:
 
 	virtual void flipBuffer() override;
 	virtual void drawSky(uint8 color) override;
+	virtual void drawFloor(uint8 color) override;
 
 private:
 	TinyGL::FrameBuffer *_fb;

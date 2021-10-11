@@ -18,13 +18,6 @@ public:
 	static int numberOfColoursForObjectOfType(Type type);
 	static int numberOfOrdinatesForType(Type type);
 
-	/*static void setupOpenGL();
-		static void setProjectionMatrix(const GLfloat *projectionMatrix);
-		static void setViewMatrix(const GLfloat *projectionMatrix);
-
-		static VertexBuffer *newVertexBuffer();
-		static DrawElementsBuffer *newDrawElementsBuffer();*/
-
 	GeometricObject(
 		Type type,
 		uint16 objectID,
@@ -35,24 +28,17 @@ public:
 		Common::Array<uint16> *ordinates,
 		FCLInstructionVector condition);
 	virtual ~GeometricObject();
-
-	/*void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);*/
 	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable();
 	bool isPlanar();
 
 private:
-	/*static GLuint openGLProgram;
-		static GLuint compileShader(const GLchar *source, GLenum shaderType);
-		static GLint viewMatrixUniform, projectionMatrixUniform;*/
 
 	FCLInstructionVector condition;
 	Common::Array<uint8> *colours;
 	Common::Array<uint16> *ordinates;
 
 	size_t drawElementsStartIndex;
-	//GLsizei drawElementsCount;
-	//GLenum drawElementsMode;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */
