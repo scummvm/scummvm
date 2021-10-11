@@ -111,9 +111,9 @@ protected:
 	unsigned short _peerPort;
 
 	// HACK
-	char _roomCounter;
+	signed char _roomCounter;
 
-	char _connectTimeout;
+	signed char _connectTimeout;
 
 };
 
