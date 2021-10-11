@@ -274,7 +274,13 @@ bool Cast::loadConfig() {
 		for (int i = 0; i < 0x0c; i++) {
 			stream->readByte();
 		}
-		_defaultPalette = (int16)stream->readUint16();
+		_defaultPalette = stream->readSint16();
+		// In this header value, the first builtin palette starts at 0 and
+		// continues down into negative numbers.
+		// For frames, 0 is used to represent an absence of a palette change,
+		// with the builtin palettes starting from -1.
+		if (_defaultPalette <= 0)
+			_defaultPalette -= 1;
 		for (int i = 0; i < 0x08; i++) {
 			stream->readByte();
 		}
