@@ -99,7 +99,8 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 
 	auto surface = resMgr->getSurface(room->_resourceId);
 	if (surface) {
-		sys->_sceneWidth = surface->w;
+		assert(surface->w >= 640);
+		sys->_sceneWidth = MAX<int>(surface->w, 640);
 		sys->_xOffset = 0;
 	}
 
@@ -292,7 +293,7 @@ void InterfaceMain::update(uint time) {
 			xOff -= 8;
 			xOff = MAX<int>(xOff, reqOffset);
 		}
-		sys->_xOffset = CLIP(xOff, sys->_sceneWidth - 640, 0);
+		sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
 		g_vm->videoSystem()->makeAllDirty();
 	}
 	Interface::update(time);

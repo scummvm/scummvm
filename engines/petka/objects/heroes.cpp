@@ -412,7 +412,7 @@ void QObjectPetka::recalcOffset() {
 	if (_x_ < xOff + 160 || _x_ > xOff + 480) {
 		sys->_reqOffset = _x_ - 320;
 	}
-	sys->_reqOffset = CLIP<int>(sys->_reqOffset, sys->_sceneWidth - 640, 0);
+	sys->_reqOffset = CLIP<int>(sys->_reqOffset, 0, sys->_sceneWidth - 640);
 }
 
 QObjectChapayev::QObjectChapayev() {
