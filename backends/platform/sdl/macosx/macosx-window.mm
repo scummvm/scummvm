@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/platform/sdl/macosx/macosx-window.h"
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <AppKit/NSWindow.h>
 
 float SdlWindow_MacOSX::getDpiScalingFactor() const {
@@ -31,7 +32,7 @@ float SdlWindow_MacOSX::getDpiScalingFactor() const {
 	SDL_SysWMinfo wmInfo;
 	if (getSDLWMInformation(&wmInfo)) {
 		NSWindow *nswindow = wmInfo.info.cocoa.window;
-		if (nswindow)
+		if ([nswindow respondsToSelector:@selector(backingScaleFactor)])
 			return [nswindow backingScaleFactor];
 	}
 #endif
