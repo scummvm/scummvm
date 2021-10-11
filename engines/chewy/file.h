@@ -30,15 +30,24 @@ namespace Chewy {
 
 using Common::Stream;
 
+class File {
+public:
+	/**
+	 * Opens up a file, returning it if successful,
+	 * or nullptr if not
+	 */
+	static Common::File *open(const char *name);
+
+	/**
+	 * Reads an array of uint16 values
+	 */
+	static bool readArray(Common::SeekableReadStream *src,
+		uint16 *arr, size_t size);
+};
+
 inline Stream *chewy_fopen(const char *fname, const char *mode) {
 	assert(!strcmp(mode, "rb"));
-	Common::File *f = new Common::File();
-	if (f->open(fname)) {
-		return f;
-	} else {
-		delete f;
-		return nullptr;
-	}
+	return File::open(fname);
 }
 
 inline void chewy_fclose(Stream *&stream) {

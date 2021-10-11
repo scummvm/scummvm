@@ -99,7 +99,7 @@ private:
 	void col64_chunk(byte *tmp);
 	void delta_chunk_byte(byte *tmp);
 
-	void decode_custom_frame(void *handle);
+	void decode_custom_frame(Common::SeekableReadStream *handle);
 	void free_sound(int16 nr);
 
 	byte *load_puffer;
