@@ -23,6 +23,7 @@
 #ifndef CHEWY_FILE_H
 #define CHEWY_FILE_H
 
+#include "common/algorithm.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 
@@ -44,6 +45,7 @@ public:
 	static bool readArray(Common::SeekableReadStream *src,
 		uint16 *arr, size_t size);
 };
+
 
 inline Stream *chewy_fopen(const char *fname, const char *mode) {
 	assert(!strcmp(mode, "rb"));

@@ -1087,8 +1087,9 @@ void flic_cut(int16 nr, int16 mode) {
 	det->disable_room_sound();
 	ailsnd->end_sound();
 	g_system->delayMillis(1000); // delay(50);
-	Ci.Handle = chewy_fopen("CUT\\CUT.TAP\0", "rb");
+	Ci.Handle = File::open("cut/cut.tap");
 	Ci.Fname = 0;
+
 	if (Ci.Handle) {
 		switch (nr) {
 		case FCUT_001:

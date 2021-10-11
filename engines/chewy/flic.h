@@ -111,7 +111,6 @@ private:
 	CustomFlicHead custom_header;
 	CustomFrameHead custom_frame;
 	FrameHead frame_header;
-	ChunkHead *chunk_header;
 	bool fade_flag;
 	bool cls_flag;
 	byte fade_pal[768];

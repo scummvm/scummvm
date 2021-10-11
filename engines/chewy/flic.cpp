@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/memstream.h"
 #include "chewy/file.h"
 #include "chewy/flic.h"
 
@@ -111,58 +112,69 @@ void flic::decode_frame() {
 	uint16 i;
 	byte *tmp_buf;
 	bool update_flag;
+	ChunkHead chunk_header;
+
 	tmp_buf = load_puffer;
 	update_flag = false;
 	if (frame_header.chunks != 0) {
 		fade_flag = false;
 		for (i = 0; i < frame_header.chunks; i++) {
-			chunk_header = (ChunkHead *)tmp_buf;
-			tmp_buf += sizeof(ChunkHead);
-			chunk_header->size -= sizeof(ChunkHead);
-			switch (chunk_header->type) {
+			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
+			chunk_header.load(&rs);
+
+			tmp_buf += ChunkHead::SIZE();
+			chunk_header.size -= ChunkHead::SIZE();
+
+			switch (chunk_header.type) {
 			case COLOR_256:
 				col256_chunk(tmp_buf);
-
 				break;
-			case COLOR_64 :
+
+			case COLOR_64:
 				col64_chunk(tmp_buf);
-
 				break;
-			case BYTE_RUN :
+
+			case BYTE_RUN:
 				decode_rle(virt_screen, tmp_buf,
 				           (int)flic_header.width,
 				           (int)flic_header.height);
 				update_flag = true;
 				break;
+
 			case DELTA_FLC:
 				decode_flc(virt_screen, tmp_buf);
 				update_flag = true;
 				break;
-			case DELTA_FLI:
 
+			case DELTA_FLI:
 				delta_chunk_byte(tmp_buf);
 
 				update_flag = true;
 				break;
-			case CLS :
+
+			case CLS:
 				out->setze_zeiger(virt_screen);
 				out->cls();
 				out->setze_zeiger(0);
 
 				update_flag = true;
 				break;
+
 			case UNPRESSED:
 				out->back2back(load_puffer, virt_screen);
 
 				update_flag = true;
 				break;
-			case PSTAMP :
-				break;
-			default:
 
+			case PSTAMP:
+				break;
+
+			default:
 				update_flag = true;
+				break;
 			}
-			tmp_buf += chunk_header->size;
+
+			tmp_buf += chunk_header.size;
 		}
 		if (update_flag != false) {
 			if (flic_user) {
@@ -351,8 +363,8 @@ void flic::custom_play(CustomInfo *ci) {
 				fade_flag = false;
 				fade_delay = 0;
 				CurrentFrame = 0;
-				for (i = 0; (i < custom_header.frames) && (!modul) && (key != 27); i++) {
 
+				for (i = 0; (i < custom_header.frames) && (!modul) && (key != 27); i++) {
 					if (!custom_frame.load(rs)) {
 						modul = DATEI;
 						fcode = READFEHLER;
@@ -475,7 +487,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 			break;
 
-		case PLAY_MUSIC :
+		case PLAY_MUSIC:
 			if (!strncmp(th->id, "TMF\0", 4))
 #ifndef AIL
 				snd->play_mod(th);
@@ -531,7 +543,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 			break;
 
-		case WAIT_MSTOP :
+		case WAIT_MSTOP:
 			do {
 #ifndef AIL
 				snd->get_musik_info(&mi);
@@ -541,7 +553,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			} while (mi.musik_playing != 0);
 			break;
 
-		case SET_MVOL :
+		case SET_MVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -554,7 +566,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 			break;
 
-		case SET_LOOPMODE :
+		case SET_LOOPMODE:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -566,11 +578,11 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 			break;
 
-		case PLAY_RAW :
+		case PLAY_RAW:
 
 			break;
 
-		case PLAY_VOC :
+		case PLAY_VOC:
 
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
@@ -588,7 +600,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 			break;
 
-		case SET_SVOL :
+		case SET_SVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -600,7 +612,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 			break;
 
-		case SET_CVOL :
+		case SET_CVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -654,7 +666,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 			break;
 
-		case SET_SPEED :
+		case SET_SPEED:
 			custom_header.speed = handle->readUint32LE();
 			break;
 
@@ -667,70 +679,77 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		default:
 			out->printxy(0, 10, 255, 0, 0, "Unknown Chunk %d ", chead.type);
-
 			break;
 		}
 	}
 }
 
 void flic::decode_cframe() {
+	ChunkHead chunk_header;
 	uint16 i;
 	byte *tmp_buf;
 	int16 update_flag;
 	tmp_buf = load_puffer;
 	update_flag = false;
-	if (custom_frame.chunks != 0) {
 
+	if (custom_frame.chunks != 0) {
 		for (i = 0; i < custom_frame.chunks; i++) {
-			chunk_header = (ChunkHead *)tmp_buf;
-			tmp_buf += sizeof(ChunkHead);
-			chunk_header->size -= sizeof(ChunkHead);
-			switch (chunk_header->type) {
+			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
+			chunk_header.load(&rs);
+
+			tmp_buf += ChunkHead::SIZE();
+			chunk_header.size -= ChunkHead::SIZE();
+
+			switch (chunk_header.type) {
 			case COLOR_256:
 				col256_chunk(tmp_buf);
-
 				break;
-			case COLOR_64 :
 
+			case COLOR_64:
 				break;
-			case BYTE_RUN :
+
+			case BYTE_RUN:
 				decode_rle(virt_screen, tmp_buf,
-				           custom_header.width,
-				           custom_header.height);
+				    custom_header.width, custom_header.height);
 				update_flag = true;
-
 				break;
+
 			case DELTA_FLC:
 				decode_flc(virt_screen, tmp_buf);
 				update_flag = true;
 
 				break;
 			case DELTA_FLI:
-
 				break;
-			case CLS :
+
+			case CLS:
 				out->setze_zeiger(virt_screen);
 				out->cls();
 				out->setze_zeiger(0);
 
 				update_flag = true;
 				break;
+
 			case UNPRESSED:
 				out->back2back(load_puffer, virt_screen);
 
 				update_flag = true;
 				break;
-			case PSTAMP :
-				break;
-			default:
 
+			case PSTAMP:
+				break;
+
+			default:
 				out->raster_col(255, 63, 63, 63);
 				out->printxy(0, 0, 255, 0, 0, "Unknown CHUNK");
 
 				update_flag = true;
+				break;
 			}
-			tmp_buf += chunk_header->size;
+
+			tmp_buf += chunk_header.size;
 		}
+
 		if (update_flag != false) {
 			if (custom_user) {
 				out->back2back(virt_screen, load_puffer);

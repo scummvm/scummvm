@@ -33,6 +33,9 @@ void MainMenu::execute() {
 	if (!modul)
 		ailsnd->play_mod((tmf_header *)Ci.MusicSlot);
 
+	flic_cut(200, 0);
+	ailsnd->stop_mod();
+
 	// TODO
 }
 
