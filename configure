@@ -784,8 +784,8 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
-                          gph, iphone, ios7, ios7-arm64, maemo, n64, null, openpandora,
-                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
+                          gph, iphone, ios7, ios7-arm64, maemo, n64, null, opendingux,
+                          openpandora, psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -831,6 +831,7 @@ Special configuration feature:
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            maemo for Nokia Maemo
                                            n64 for Nintendo 64
+                                           opendingux for Opendingux Beta
                                            openpandora for OpenPandora
                                            ouya for OUYA
                                            ps3 for PlayStation 3
@@ -1584,7 +1585,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux | gcw0)
+dingux | gcw0 | opendingux)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -3520,6 +3521,30 @@ if test -n "$_host"; then
 			_build_hq_scalers=no
 			_mt32emu=no
 			;;
+		opendingux)
+			_sysroot=`$CXX --print-sysroot`
+			_sdlpath=$_sysroot/usr/bin
+			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE"
+			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
+			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
+			append_var LDFLAGS  "-O3 -Wl,--as-needed,--gc-sections"
+			_vkeybd=yes
+			_alsa=no
+			_vorbis=no
+			_mt32emu=no
+			_timidity=no
+			_fluidsynth=no
+			_theoradec=no
+			_seq_midi=no
+			_nuked_opl=no
+			_curl=no
+			_cloud=no
+			_sdlnet=no
+			_optimization_level=-O3
+			_backend="opendingux"
+			_port_mk="backends/platform/sdl/opendingux/opendingux.mk"
+			add_line_to_config_mk 'OPENDINGUX = 1'
+			;;
 		openpandora)
 			# Use -O3 on the OpenPandora for optimized builds.
 			if test "$_optimizations" = yes; then
@@ -3716,6 +3741,11 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		_text_console=yes
 		;;
+	opendingux)
+		_sdlconfig=sdl-config
+		_sdl=auto
+		append_var MODULES "backends/platform/sdl"
+		;;
 	openpandora)
 		append_var DEFINES "-DOPENPANDORA"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
@@ -3905,7 +3935,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | android3d | androidsdl | dingux | dc | ds | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | android3d | androidsdl | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else

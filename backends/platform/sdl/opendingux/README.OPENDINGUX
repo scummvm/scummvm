@@ -1,0 +1,45 @@
+[ScummVM-Opendingux README]
+
+Controls
+========
+Left Stick - Mouse
+Left Stick+R - Slow Mouse
+A - Left mouse click
+B - Right mouse click
+X - Escape
+X+R - Return
+Y - Period
+Y+R - Space
+L - Game Menu (F5)
+R - Shift
+Start - Global Menu
+Select - Virtual Keyboard
+Select+R - AGI predictive input dialog
+D-pad - Keypad cursor keys
+D-Pad+R - Diagonal cursor keys
+
+On devices that have no stick, d-pad is mouse, cursor keys are not binded
+
+Game Auto-Detection (dualopk only)
+==================================
+1) add a blank text file 'detect.svm' alongside your individual game folders, for example:
+     ---------------
+    | - roms/scummvm/
+    |	 - detect.svm
+    |	 - Game Folder/
+    |	     - game files
+     ------------------
+2) load ScummVM, navigate to and select 'detect.svm'
+    - the loading screen will show while the script runs
+    - this may take longer if you have many games
+    - .svm files will be generated for each of your games
+3) load one of the .svm files to start your game directly
+
+Troubleshooting
+===============
+In case you need to submit a bugreport, you may find the log file at the
+following path:
+
+     ~/.scummvm/scummvm.log
+
+The log file is being overwritten at every ScummVM run.
