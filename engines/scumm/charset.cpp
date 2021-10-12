@@ -1933,6 +1933,14 @@ void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
 	if (_vm->_renderMode == Common::kRenderMacintoshBW)
 		color = 15;
 
+	// Since we're working with unscaled coordinates most of the time, the
+	// lines of the text box weren't spaced quite as much as in the
+	// original. I thought no one would notice, but I was wrong. This is
+	// the best way I can think of to fix that.
+
+	if (y > 0)
+		y++;
+
 	_macFonts[_curId].drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
 }
 
