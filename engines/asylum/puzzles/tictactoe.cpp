@@ -561,7 +561,7 @@ bool PuzzleTicTacToe::arbitraryPlacement() {
 
 	for (uint32 i = 0; i < ARRAYSIZE(_board); i++) {
 		if (_board[i] == ' ') {
-			_moveList[i] = i;
+			_moveList[_numberOfPossibleMoves] = i;
 			++_numberOfPossibleMoves;
 		}
 	}
