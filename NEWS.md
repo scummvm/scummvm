@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
+ Xeen:
+   - Fix crash on startup loading constants from xeen.ccs
+
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
  New games:

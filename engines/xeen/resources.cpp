@@ -60,8 +60,11 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	Common::Language lang = g_vm->getLanguage();
-	ResFile file("CONSTANTS_", _buffer, lang);
+	int langId = 7; // English
+	if (g_vm->getLanguage() == Common::RU_RUS)
+		langId = 26;
+
+	ResFile file("CONSTANTS_", _buffer, langId);
 	file.syncString(CLOUDS_CREDITS);
 	file.syncString(DARK_SIDE_CREDITS);
 	file.syncString(SWORDS_CREDITS1);
@@ -425,7 +428,7 @@ void Resources::loadData() {
 	file.syncStrings(CLOUDS_MONSTERS, 91);
 	file.syncStrings(CLOUDS_SPELLS, 77);
 
-	ResFile keys("CONSTKEYS_", _buffer, lang);
+	ResFile keys("CONSTKEYS_", _buffer, langId);
 	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_ITEM);
 	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_QUICK);
 	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_EXCHANGE);
