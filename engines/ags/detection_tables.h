@@ -1460,6 +1460,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tfg-mi", "The Fan Game - Ghostbusters and The Secret of Monkey Island" },
 	{ "tfg-goonies", "The Fan Game - The Goonies" },
 	{ "tfg-pixel", "The Fan Game - The Pixel Has You - Disk 1" },
+	{ "tfg-somi", "The Fan Game - The Secret of Monkey Island Recoded" },
 	{ "tfg-ssgw", "The Fan Game - Saint Seiya - Galaxian Wars" },
 	{ "tfg-zak2", "The Fan Game - Zak McKracken: A Mansion, A Meteor, and the Alien Mindbenders" },
 	{ "tftoz1", "Tales From The Outer Zone: Cyborg Seppuku" },
@@ -3513,6 +3514,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("tfg-mi", "tfg-g&mi.exe", "7971a7c02d414dc8cb33b6ec36080b91", 251715672),
 	GAME_ENTRY("tfg-pixel", "THE PIXEL HAS YOU DISK 1.exe", "7971a7c02d414dc8cb33b6ec36080b91", 289291855),
 	GAME_ENTRY("tfg-pixel", "THE PIXEL HAS YOU DISK 1.exe", "0691254142a4dbeaf47a6efd7a4cb6f0", 376910335), // 1.1
+	GAME_ENTRY("tfg-somi", "TFG-TSOMI-R.exe", "7971a7c02d414dc8cb33b6ec36080b91", 473724788),
 	GAME_ENTRY("tfg-ssgw", "TFG-SSGW.exe", "7971a7c02d414dc8cb33b6ec36080b91", 274251831),
 	GAME_ENTRY("tfg-zak2", "TFG - ZAK2.exe", "7971a7c02d414dc8cb33b6ec36080b91", 155632013),
 	GAME_ENTRY("tftoz1", "Cyborg Seppuku.exe", "78dd4ca028ee0156b6a093d6d780aa65", 16776249),
