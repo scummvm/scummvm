@@ -46,6 +46,12 @@ MODULE_OBJS += \
 	morphos/morphos.o
 endif
 
+ifdef OPENDINGUX
+MODULE_OBJS += \
+	opendingux/opendingux-main.o \
+	opendingux/opendingux.o
+endif
+
 ifdef PLAYSTATION3
 MODULE_OBJS += \
 	ps3/ps3-main.o \
