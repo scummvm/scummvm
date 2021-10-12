@@ -49,7 +49,7 @@ private:
 	void opGallery();
 	void opTriangle();
 
-	byte opGallerySub(int one, byte *field);
+	byte opGallerySub(byte *field, int start);
 	int8 opBeehiveGetHexDifference();
 	int8 opBeehiveGetTotal(int8 *hexagons);
 	void inline setScriptVar(uint16 var, byte value);

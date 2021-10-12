@@ -430,7 +430,7 @@ void T11hGame::opGallery() {
 	const int kPieceCount = 21;
 	byte pieceStatus[kPieceCount];
 	byte var_18[kPieceCount];
-	int var_1c, linkedPiece;
+	int selectedPieces;
 	byte curLink = 0;
 
 	enum kGalleryPieceStatus {
@@ -440,29 +440,30 @@ void T11hGame::opGallery() {
 
 	memcpy(pieceStatus, _scriptVariables + 26, kPieceCount);
 
-	var_1c = 0;
-	for (int curPiece = 0; curPiece < kPieceCount; curPiece++) {
-		var_18[curPiece] = 0;
-		if (pieceStatus[curPiece] == kPieceSelected) {
-			curLink = kGalleryLinks[curPiece][0];
-			linkedPiece = 1;
-			pieceStatus[curPiece] = kPieceUnselected;
+	selectedPieces = 0;
+	for (int i = 0; i < kPieceCount; i++) {
+		var_18[i] = 0;
+		if (pieceStatus[i] == kPieceSelected) {
+			curLink = kGalleryLinks[i][0];
+			pieceStatus[i] = kPieceUnselected;
+
+			int linkedPiece = 1;
 			while (curLink != 0) {
 				linkedPiece++;
 				pieceStatus[curLink - 1] = kPieceUnselected;
-				curLink = kGalleryLinks[linkedPiece - 1][curPiece];
+				curLink = kGalleryLinks[linkedPiece - 1][i];
 			}
-			var_18[curPiece] = opGallerySub(1, pieceStatus);
-			if (var_18[curPiece] == 1) {
-				var_1c++;
+			var_18[i] = opGallerySub(pieceStatus, 1);
+			if (var_18[i] == kPieceSelected) {
+				selectedPieces++;
 			}
 		}
 	}
 
-	if (var_1c == 0) {
+	if (selectedPieces == 0) {
 		int esi = 0;
 		for (int i = 0; i < kPieceCount; i++) {
-			if (var_18[i] > esi) {
+			if (esi < var_18[i]) {
 				esi = var_18[i];
 			}
 		}
@@ -470,33 +471,33 @@ void T11hGame::opGallery() {
 		if (esi == 2) {
 			esi = 1;
 		} else {
-			if (esi <= 20) {
+			if (esi < kPieceCount) {
 				esi = 2;
 			} else {
 				esi -= 12;
 			}
 		}
 
-		for (linkedPiece = 0; linkedPiece < kPieceCount; linkedPiece++) {
-			if (var_18[linkedPiece] <= esi) {
-				var_18[linkedPiece] = 1;
-				var_1c++;
+		for (int i = 0; i < kPieceCount; i++) {
+			if (esi < var_18[i]) {
+				var_18[i] = kPieceSelected;
+				selectedPieces++;
 			}
 		}
 	}
 
-	int selectedPart;
+	int selectedPiece;
 
 	// TODO: copy the AI from the game
 	do {
-		selectedPart = _random.getRandomNumber(20) + 1;
-	} while (_scriptVariables[0x19 + selectedPart] != 1);
+		selectedPiece = _random.getRandomNumber(20) + 1;
+	} while (_scriptVariables[selectedPiece + 25] != 1);
 
-	setScriptVar(0x2F, selectedPart / 10);
-	setScriptVar(0x30, selectedPart % 10);
+	setScriptVar(47, selectedPiece / 10);
+	setScriptVar(48, selectedPiece % 10);
 }
 
-byte T11hGame::opGallerySub(int one, byte* field) {
+byte T11hGame::opGallerySub(byte *field, int start) {
 	// TODO
 	warning("STUB: T11hGame::opGallerySub()");
 	return 0;
