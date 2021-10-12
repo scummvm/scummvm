@@ -57,8 +57,8 @@ static const struct {
 	uint32 field1;
 	uint32 field2;
 	uint32 field3;
-	uint32 strikeOutPositionX;
-	uint32 strikeOutPositionO;
+	uint32 winLineX;
+	uint32 winLineO;
 	uint32 frameCount;
 } puzzleTicTacToeFieldsToCheck[8] = {
 	{0, 1, 2, 1,  9, 14},
@@ -75,17 +75,17 @@ PuzzleTicTacToe::PuzzleTicTacToe(AsylumEngine *engine) : Puzzle(engine) {
 	_ticker = 0;
 	_frameIndex = 0;
 	_frameCount = 0;
-	_lastMarkedField = 0;
-	_needToInitialize = false;
-	_strikeOutPosition = 0;
+	_currentPos = 0;
+	_gameOver = false;
+	_winLine = 0;
 
 	// Field
-	memset(&_gameField, 0, sizeof(_gameField));
-	memset(&_field, 0, sizeof(_field));
-	_emptyCount = 0;
+	memset(&_board, 0, sizeof(_board));
+	memset(&_moveList, 0, sizeof(_moveList));
+	_numberOfPossibleMoves = 0;
 
-	_counter = 0;
-	_counter2 = 0;
+	_solveDelay = 0;
+	_brokenLines = 0;
 }
 
 PuzzleTicTacToe::~PuzzleTicTacToe() {
@@ -99,9 +99,9 @@ bool PuzzleTicTacToe::init(const AsylumEvent &)  {
 	_vm->clearGameFlag(kGameFlag114);
 	_vm->clearGameFlag(kGameFlag215);
 	_frameIndex = 0;
-	_lastMarkedField = -1;
-	_needToInitialize = false;
-	_strikeOutPosition = -1;
+	_currentPos = -1;
+	_gameOver = false;
+	_winLine = -1;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[3]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[3]);
@@ -109,7 +109,7 @@ bool PuzzleTicTacToe::init(const AsylumEvent &)  {
 	getCursor()->show();
 	getCursor()->set(getWorld()->graphicResourceIds[12], 4, kCursorAnimationLinear, 4);
 
-	initField();
+	clearBoard();
 
 	return true;
 }
@@ -120,8 +120,8 @@ bool PuzzleTicTacToe::update(const AsylumEvent &)  {
 
 		if (_ticker <= 25) {
 			if (_ticker > 20) {
-				if (check())
-					placeOpponentMark();
+				if (computerThinks())
+					computerMoves();
 
 				_ticker = 0;
 			}
@@ -150,22 +150,22 @@ bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {
 		return true;
 	}
 
-	if (_needToInitialize) {
-		_needToInitialize = false;
+	if (_gameOver) {
+		_gameOver = false;
 		_frameIndex = 0;
-		_lastMarkedField = -1;
-		_strikeOutPosition = -1;
-		initField();
+		_currentPos = -1;
+		_winLine = -1;
+		clearBoard();
 
 		return true;
 	}
 
-	for (uint32 i = 0; i < ARRAYSIZE(_gameField); i++) {
+	for (uint32 i = 0; i < ARRAYSIZE(_board); i++) {
 		if (hitTest(&puzzleTicTacToePolygons[i * 4], evt.mouse, 0)) {
-			if (_gameField[i] == ' ') {
+			if (_board[i] == ' ') {
 				getSound()->playSound(getWorld()->soundResourceIds[11], false, Config.sfxVolume - 100);
-				_gameField[i] = 'X';
-				_lastMarkedField = i;
+				_board[i] = 'X';
+				_currentPos = i;
 				_frameIndex = 0;
 
 				getCursor()->hide();
@@ -185,19 +185,19 @@ bool PuzzleTicTacToe::mouseRightDown(const AsylumEvent &) {
 //////////////////////////////////////////////////////////////////////////
 // Init & update
 //////////////////////////////////////////////////////////////////////////
-void PuzzleTicTacToe::initField() {
-	_counter2 = 0;
-	memset(&_gameField, 32, sizeof(_gameField)); // ' ' == 32
+void PuzzleTicTacToe::clearBoard() {
+	_brokenLines = 0;
+	memset(&_board, ' ', sizeof(_board));
 }
 
 void PuzzleTicTacToe::drawField() {
-	if (_counter > 0) {
-		--_counter;
+	if (_solveDelay > 0) {
+		--_solveDelay;
 
-		if (_counter < 2) {
+		if (_solveDelay < 2) {
 			getCursor()->show();
 			exitPuzzle();
-			_counter = 0;
+			_solveDelay = 0;
 			return;
 		}
 	}
@@ -213,10 +213,10 @@ void PuzzleTicTacToe::drawField() {
 
 	// Draw X & O
 	for (int32 i = 0; i < ARRAYSIZE(puzzleTicTacToePositions); i++) {
-		char mark = _gameField[i];
+		char mark = _board[i];
 		Common::Point point = Common::Point(puzzleTicTacToePositions[i][0], puzzleTicTacToePositions[i][1]);
 
-		if (_lastMarkedField == i) {
+		if (_currentPos == i) {
 			if (mark == 'O')
 				getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndex, point);
 			else if (mark == 'X')
@@ -225,19 +225,19 @@ void PuzzleTicTacToe::drawField() {
 			// Update _frameIndex
 			++_frameIndex;
 			if (_frameIndex > 14 && mark == 'X') {
-				_lastMarkedField = -1;
+				_currentPos = -1;
 				_frameIndex = 0;
 				_ticker = 1;
 
-				if (checkWinner())
-					_needToInitialize = true;
+				if (checkWin())
+					_gameOver = true;
 			}
 
 			if (_frameIndex > 12 && mark == 'O') {
-				_lastMarkedField = -1;
+				_currentPos = -1;
 				_frameIndex = 0;
 
-				if (!checkWinner() || !checkWinnerHelper())
+				if (!checkWin() || !lookForAWinner())
 					getCursor()->show();
 			}
 		} else {
@@ -248,12 +248,12 @@ void PuzzleTicTacToe::drawField() {
 		}
 	}
 
-	if (_lastMarkedField == -1 && checkWinner())
-		_needToInitialize = true;
+	if (_currentPos == -1 && checkWin())
+		_gameOver = true;
 
-	// Draw strikeOut
-	if (_strikeOutPosition > 0 && !_ticker) {
-		switch (_strikeOutPosition) {
+	// Draw win line
+	if (_winLine > 0 && !_ticker) {
+		switch (_winLine) {
 		default:
 			break;
 
@@ -282,9 +282,9 @@ void PuzzleTicTacToe::drawField() {
 			break;
 
 		case 7:
-			if (_counter2 == 0)
+			if (_brokenLines == 0)
 				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, Common::Point(30, 149));
-			else if (_counter2 == 1)
+			else if (_brokenLines == 1)
 				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, Common::Point(180, 249));
 			else {
 				getScreen()->draw(getWorld()->graphicResourceIds[8], 6,  Common::Point(30, 149));
@@ -294,9 +294,9 @@ void PuzzleTicTacToe::drawField() {
 			break;
 
 		case 8:
-			if (_counter2 == 0)
+			if (_brokenLines == 0)
 				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, Common::Point(69, 66));
-			else if (_counter2 == 1)
+			else if (_brokenLines == 1)
 				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, Common::Point(-22, 220));
 			else {
 				getScreen()->draw(getWorld()->graphicResourceIds[10], 6, Common::Point( 69, 66));
@@ -330,9 +330,9 @@ void PuzzleTicTacToe::drawField() {
 			break;
 
 		case 15:
-			if (_counter2 == 0)
+			if (_brokenLines == 0)
 				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, Common::Point(30, 149));
-			else if (_counter2 == 1)
+			else if (_brokenLines == 1)
 				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, Common::Point(180, 249));
 			else {
 				getScreen()->draw(getWorld()->graphicResourceIds[7], 6, Common::Point(30, 149));
@@ -342,9 +342,9 @@ void PuzzleTicTacToe::drawField() {
 			break;
 
 		case 16:
-			if (_counter2 == 0)
+			if (_brokenLines == 0)
 				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, Common::Point(69, 66));
-			else if (_counter2 == 1)
+			else if (_brokenLines == 1)
 				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, Common::Point(-22, 220));
 			else {
 				getScreen()->draw(getWorld()->graphicResourceIds[9], 6, Common::Point(69, 66));
@@ -355,62 +355,62 @@ void PuzzleTicTacToe::drawField() {
 		}
 
 		if (_frameIndex >= _frameCount) {
-			if (_strikeOutPosition == 7 || _strikeOutPosition == 8 || _strikeOutPosition == 15 || _strikeOutPosition == 16) {
-				if (_counter2 < 2) {
+			if (_winLine == 7 || _winLine == 8 || _winLine == 15 || _winLine == 16) {
+				if (_brokenLines < 2) {
 					_frameIndex = 0;
-					++_counter2;
+					++_brokenLines;
 				}
 			}
 		} else {
 			++_frameIndex;
 		}
 
-		if (!_counter)
-			_counter = 30;
+		if (!_solveDelay)
+			_solveDelay = 30;
 	}
 
 	getScreen()->draw(getWorld()->graphicResourceIds[17], 0, Common::Point(0, 0));
 }
 
-void PuzzleTicTacToe::updatePositions(uint32 field1, uint32 field2, uint32 field3) {
-	if (_gameField[field1] != ' ') {
-		_field[_emptyCount] = field3;
-		_field[_emptyCount + 1] = field2;
+void PuzzleTicTacToe::getTwoEmpty(uint32 field1, uint32 field2, uint32 field3) {
+	if (_board[field1] != ' ') {
+		_moveList[_numberOfPossibleMoves] = field3;
+		_moveList[_numberOfPossibleMoves + 1] = field2;
 
-		_emptyCount += 2;
+		_numberOfPossibleMoves += 2;
 	}
 
-	if (_gameField[field3] != ' ') {
-		_field[_emptyCount] = field1;
-		_field[_emptyCount + 1] = field2;
+	if (_board[field3] != ' ') {
+		_moveList[_numberOfPossibleMoves] = field1;
+		_moveList[_numberOfPossibleMoves + 1] = field2;
 
-		_emptyCount += 2;
+		_numberOfPossibleMoves += 2;
 	}
 
-	if (_gameField[field2] != ' ') {
-		_field[_emptyCount] = field3;
-		_field[_emptyCount + 1] = field1;
+	if (_board[field2] != ' ') {
+		_moveList[_numberOfPossibleMoves] = field3;
+		_moveList[_numberOfPossibleMoves + 1] = field1;
 
-		_emptyCount += 2;
+		_numberOfPossibleMoves += 2;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Game
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTicTacToe::check() {
-	if (_needToInitialize)
+bool PuzzleTicTacToe::computerThinks() {
+	if (_gameOver)
 		return false;
 
-	if (!checkWinning('X')
-	 && !checkWinning('O')
-	 && !checkFieldsUpdatePositions()
-	 && !checkFields()
-	 && !countEmptyFields()) {
-		if (!_counter)
+	if (!tryToWin()
+	 && !tryNotToLose()
+	 && !expandLine()
+	 && !tryNewLine()
+	 && !arbitraryPlacement()) {
+		if (!_solveDelay)
 			getCursor()->show();
 
-		_needToInitialize = true;
+		_gameOver = true;
 
 		return false;
 	}
@@ -418,23 +418,23 @@ bool PuzzleTicTacToe::check() {
 	return true;
 }
 
-PuzzleTicTacToe::GameStatus PuzzleTicTacToe::checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const {
+PuzzleTicTacToe::GameStatus PuzzleTicTacToe::returnLineData(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const {
 	*counterX = 0;
 	*counterO = 0;
 	GameStatus status = kStatus0;
 
-	if (_gameField[field1] == 'X')
+	if (_board[field1] == 'X')
 		++*counterX;
-	if (_gameField[field2] == 'X')
+	if (_board[field2] == 'X')
 		++*counterX;
-	if (_gameField[field3] == 'X')
+	if (_board[field3] == 'X')
 		++*counterX;
 
-	if (_gameField[field1] == 'O')
+	if (_board[field1] == 'O')
 		++*counterO;
-	if (_gameField[field2] == 'O')
+	if (_board[field2] == 'O')
 		++*counterO;
-	if (_gameField[field3] == 'O')
+	if (_board[field3] == 'O')
 		++*counterO;
 
 	if (mark == 'O') {
@@ -456,58 +456,58 @@ PuzzleTicTacToe::GameStatus PuzzleTicTacToe::checkField(uint32 field1, uint32 fi
 	return status;
 }
 
-bool PuzzleTicTacToe::checkFieldsUpdatePositions() {
+bool PuzzleTicTacToe::expandLine() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++)
-		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusFree)
-			updatePositions(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
+		if (returnLineData(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusFree)
+			getTwoEmpty(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
 
-	return (_emptyCount != 0);
+	return (_numberOfPossibleMoves != 0);
 }
 
-bool PuzzleTicTacToe::checkFields() {
+bool PuzzleTicTacToe::tryNewLine() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
-		checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
+		returnLineData(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
 
 		if (counterX || counterO)
 			continue;
 
-		_field[_emptyCount]     = puzzleTicTacToeFieldsToCheck[i].field1;
-		_field[_emptyCount + 1] = puzzleTicTacToeFieldsToCheck[i].field2;
-		_field[_emptyCount + 2] = puzzleTicTacToeFieldsToCheck[i].field3;
+		_moveList[_numberOfPossibleMoves]     = puzzleTicTacToeFieldsToCheck[i].field1;
+		_moveList[_numberOfPossibleMoves + 1] = puzzleTicTacToeFieldsToCheck[i].field2;
+		_moveList[_numberOfPossibleMoves + 2] = puzzleTicTacToeFieldsToCheck[i].field3;
 
-		_emptyCount += 3;
+		_numberOfPossibleMoves += 3;
 	}
 
-	return (_emptyCount != 0);
+	return (_numberOfPossibleMoves != 0);
 }
 
-uint32 PuzzleTicTacToe::checkPosition(uint32 position1, uint32 position2, uint position3) const {
-	if (_gameField[position1] == ' ')
+uint32 PuzzleTicTacToe::returnEmptySlot(uint32 position1, uint32 position2, uint position3) const {
+	if (_board[position1] == ' ')
 		return position1;
 
-	if (_gameField[position2] == ' ')
+	if (_board[position2] == ' ')
 		return position2;
 
 	return position3;
 }
 
-bool PuzzleTicTacToe::checkWinner() {
-	if (_needToInitialize)
+bool PuzzleTicTacToe::checkWin() {
+	if (_gameOver)
 		return true;
 
-	if (checkWinnerHelper() == 1) {
+	if (lookForAWinner() == 1) {
 		_vm->setGameFlag(kGameFlag114);
 		_ticker = 30;
 		return true;
 	}
 
-	if (checkWinnerHelper() == -1) {
+	if (lookForAWinner() == -1) {
 		_vm->setGameFlag(kGameFlag215);
 		_ticker = 30;
 		return true;
@@ -516,22 +516,22 @@ bool PuzzleTicTacToe::checkWinner() {
 	return false;
 }
 
-int32 PuzzleTicTacToe::checkWinnerHelper() {
+int32 PuzzleTicTacToe::lookForAWinner() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
-		checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
+		returnLineData(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
 
 		if (counterX == 3) {
-			_strikeOutPosition = puzzleTicTacToeFieldsToCheck[i].strikeOutPositionX;
+			_winLine = puzzleTicTacToeFieldsToCheck[i].winLineX;
 			_frameCount = puzzleTicTacToeFieldsToCheck[i].frameCount;
 			_frameIndex = 0;
 			return 1;
 		}
 
 		if (counterO == 3) {
-			_strikeOutPosition = puzzleTicTacToeFieldsToCheck[i].strikeOutPositionO;
+			_winLine = puzzleTicTacToeFieldsToCheck[i].winLineO;
 			_frameCount = puzzleTicTacToeFieldsToCheck[i].frameCount;
 			_frameIndex = 0;
 			return -1;
@@ -541,42 +541,42 @@ int32 PuzzleTicTacToe::checkWinnerHelper() {
 	return 0;
 }
 
-bool PuzzleTicTacToe::checkWinning(char mark) {
+bool PuzzleTicTacToe::strategy(char mark) {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
-	_emptyCount = 0;
+	_numberOfPossibleMoves = 0;
 
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
-		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, mark, &counterX, &counterO) == kStatusNeedBlocking) {
-			_field[_emptyCount] = checkPosition(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
-			++_emptyCount;
+		if (returnLineData(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, mark, &counterX, &counterO) == kStatusNeedBlocking) {
+			_moveList[_numberOfPossibleMoves] = returnEmptySlot(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
+			++_numberOfPossibleMoves;
 		}
 	}
 
-	return (_emptyCount != 0);
+	return (_numberOfPossibleMoves != 0);
 }
 
-bool PuzzleTicTacToe::countEmptyFields() {
-	_emptyCount = 0;
+bool PuzzleTicTacToe::arbitraryPlacement() {
+	_numberOfPossibleMoves = 0;
 
-	for (uint32 i = 0; i < ARRAYSIZE(_gameField); i++) {
-		if (_gameField[i] == ' ') {
-			_field[i] = i;
-			++_emptyCount;
+	for (uint32 i = 0; i < ARRAYSIZE(_board); i++) {
+		if (_board[i] == ' ') {
+			_moveList[i] = i;
+			++_numberOfPossibleMoves;
 		}
 	}
 
-	return (_emptyCount != 0);
+	return (_numberOfPossibleMoves != 0);
 }
 
-void PuzzleTicTacToe::placeOpponentMark() {
+void PuzzleTicTacToe::computerMoves() {
 	_frameIndex = 0;
-	_lastMarkedField = _field[rnd(_emptyCount)];
+	_currentPos = _moveList[rnd(_numberOfPossibleMoves)];
 
-	if (_gameField[_lastMarkedField] != ' ')
-		error("[PuzzleTicTacToe::placeOpponentMark] Field is already occupied (%d)!", _lastMarkedField);
+	if (_board[_currentPos] != ' ')
+		error("[PuzzleTicTacToe::computerMoves] Field is already occupied (%d)!", _currentPos);
 
-	_gameField[_lastMarkedField] = 'O';
+	_board[_currentPos] = 'O';
 
 	getSound()->playSound(getWorld()->soundResourceIds[12], false, Config.sfxVolume - 100);
 }

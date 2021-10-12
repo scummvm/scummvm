@@ -44,16 +44,16 @@ private:
 	uint32 _ticker;
 	uint32 _frameIndex;
 	uint32 _frameCount;
-	int32 _lastMarkedField;
-	bool _needToInitialize;
-	int32 _strikeOutPosition;
+	int32  _currentPos;
+	bool   _gameOver;
+	int32  _winLine;
 
-	uint32 _counter;
-	uint32 _counter2;
+	uint32 _solveDelay;
+	uint32 _brokenLines;
 
-	char _gameField[9];
-	uint32 _field[40];
-	uint32 _emptyCount;
+	char   _board[9];
+	uint32 _moveList[40];
+	uint32 _numberOfPossibleMoves;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -67,23 +67,25 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Init & update
 	//////////////////////////////////////////////////////////////////////////
-	void initField();
+	void clearBoard();
 	void drawField();
-	void updatePositions(uint32 field1, uint32 field2, uint32 field3);
+	void getTwoEmpty(uint32 field1, uint32 field2, uint32 field3);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Game
 	//////////////////////////////////////////////////////////////////////////
-	bool check();
-	GameStatus checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const;
-	bool checkFieldsUpdatePositions();
-	bool checkFields();
-	uint32 checkPosition(uint32 position1, uint32 position2, uint position3) const;
-	bool checkWinner();
-	int32 checkWinnerHelper();
-	bool checkWinning(char mark);
-	bool countEmptyFields();
-	void placeOpponentMark();
+	bool computerThinks();
+	GameStatus returnLineData(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const;
+	bool expandLine();
+	bool tryNewLine();
+	uint32 returnEmptySlot(uint32 position1, uint32 position2, uint position3) const;
+	bool checkWin();
+	int32 lookForAWinner();
+	bool strategy(char mark);
+	bool tryToWin()     { return strategy('X'); }
+	bool tryNotToLose() { return strategy('O'); }
+	bool arbitraryPlacement();
+	void computerMoves();
 };
 
 } // End of namespace Asylum
