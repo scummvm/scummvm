@@ -1808,7 +1808,9 @@ void OptionsDialog::reflowLayout() {
 }
 
 void OptionsDialog::setupGraphicsTab() {
-	setGraphicSettingsState(_enableGraphicSettings);
+	if (_graphicsTabId != -1) {
+		setGraphicSettingsState(_enableGraphicSettings);
+	}
 	if (!_fullscreenCheckbox)
 		return;
 	_gfxPopUpDesc->setVisible(true);
