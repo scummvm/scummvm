@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-12 12:43+0000\n"
+"POT-Creation-Date: 2021-10-12 18:47+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5099,26 +5099,26 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Ezaugarri erantsiak:"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:466
 #: engines/ultima/ultima4/meta_engine.cpp:225
 #: engines/ultima/ultima8/meta_engine.cpp:138
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Ezker-klika"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:467
 #: engines/ultima/ultima4/meta_engine.cpp:231
 #: engines/ultima/ultima8/meta_engine.cpp:144
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "Eskuin-klika"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:474
 #: engines/twine/metaengine.cpp:247
 msgid "Move Forward"
 msgstr "Aurrera mugitu"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:475
 msgid "Move Back"
 msgstr "Atzera mugitu"
 
@@ -5132,13 +5132,13 @@ msgstr "Ezkerrera irristatu"
 msgid "Move Right"
 msgstr "Eskuinera irristatu"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:485
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:478
 #: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Ezkerrera biratu"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:486
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:479
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
@@ -5186,40 +5186,40 @@ msgstr ""
 msgid "Spell Level 6"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:470
 msgid "Attack 1"
 msgstr "1 erasoa"
 
-#: engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/lol.cpp:471
 msgid "Attack 2"
 msgstr "2 erasoa"
 
-#: engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/lol.cpp:472
 msgid "Attack 3"
 msgstr "3 erasoa"
 
-#: engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/lol.cpp:473
 #, fuzzy
 msgid "Show Map"
 msgstr "~M~apa erakutsi"
 
-#: engines/kyra/engine/lol.cpp:483
+#: engines/kyra/engine/lol.cpp:476
 msgid "Slide Left"
 msgstr "Ezkerrera irristatu"
 
-#: engines/kyra/engine/lol.cpp:484
+#: engines/kyra/engine/lol.cpp:477
 msgid "Slide Right"
 msgstr "Eskuinera irristatu"
 
-#: engines/kyra/engine/lol.cpp:487
+#: engines/kyra/engine/lol.cpp:480
 msgid "Rest"
 msgstr "Atsedena"
 
-#: engines/kyra/engine/lol.cpp:488
+#: engines/kyra/engine/lol.cpp:481
 msgid "Options"
 msgstr "Aukerak"
 
-#: engines/kyra/engine/lol.cpp:489
+#: engines/kyra/engine/lol.cpp:482
 msgid "Choose Spell"
 msgstr "Sorginkeria aukeratu"
 
