@@ -30,7 +30,35 @@
 namespace Chewy {
 
 void decode_flc(byte *vscr, const byte *dbuf) {
-	warning("STUB: decode_flc()");
+	Common::MemoryReadStream src(dbuf, 0xffffffff);
+	int h = src.readUint16LE();
+	int val, pair;
+	int8 b;
+
+	for (; h > 0; --h, vscr += SCREEN_WIDTH) {
+		// Get value, and handle any line skips if needed
+		for (val = src.readUint16LE(); val & 0x4000; val = src.readUint16LE()) {
+			vscr += (-val * SCREEN_WIDTH) & 0xffff;
+		}
+
+		// Iteration for pixels within the line
+		byte *dest = vscr;
+		for (; val > 0; --val) {
+			dest += src.readByte();
+			b = src.readSByte();
+
+			if (b < 0) {
+				b = -b;
+				pair = src.readUint16LE();
+				for (; b > 0; --b, dest += 2)
+					WRITE_LE_UINT16(dest, pair);
+
+			} else {
+				for (; b > 0; --b, dest += 2)
+					WRITE_LE_UINT16(dest, src.readUint16LE());
+			}
+		}
+	}
 }
 
 void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
