@@ -182,13 +182,13 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 
 	bool hasVocFile = false;
 	if (vocIndex != -1) {
-		if (scumm_stricmp(_ingameSoundList[vocIndex], "EMPTY"))
+		if (!_ingameSoundList[vocIndex].equalsIgnoreCase("EMPTY"))
 			hasVocFile = true;
 	}
 
 	if (hasVocFile) {
-		if (_sound->isVoicePresent(_ingameSoundList[vocIndex]))
-			_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume, priority, true);
+		if (_sound->isVoicePresent(_ingameSoundList[vocIndex].c_str()))
+			_sound->voicePlay(_ingameSoundList[vocIndex].c_str(), 0, volume, priority, true);
 	} else if (_flags.platform == Common::kPlatformDOS) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = (track < _ingameMT32SoundIndexSize) ? (_ingameMT32SoundIndex[track] - 1) : -1;

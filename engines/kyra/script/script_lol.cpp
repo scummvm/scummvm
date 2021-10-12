@@ -1843,7 +1843,7 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	if (t == 0xFFFF)
 		return 0;
 
-	strcpy(_ingameSoundList[t], c);
+	_ingameSoundList[t] = c;
 
 	return 0;
 }

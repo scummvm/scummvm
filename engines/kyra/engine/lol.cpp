@@ -163,7 +163,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_dscDoorMonsterX = _dscDoorMonsterY = 0;
 	_dscDoor4 = 0;
 
-	_ingameSoundList = 0;
 	_ingameSoundIndex = 0;
 	_ingameSoundListSize = 0;
 	_musicTrackMap = 0;
@@ -329,12 +328,6 @@ LoLEngine::~LoLEngine() {
 	delete[] _lightningProps;
 
 	delete _lvlShpFileHandle;
-
-	if (_ingameSoundList) {
-		for (int i = 0; i < _ingameSoundListSize; i++)
-			delete[] _ingameSoundList[i];
-		delete[] _ingameSoundList;
-	}
 
 	for (int i = 0; i < 3; i++) {
 		for (int ii = 0; ii < 40; ii++)
