@@ -2817,7 +2817,7 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 				vocIndex = (int16)READ_LE_UINT16(&_vm->_ingameSoundIndex[_sliderSfx * 2]);
 				if (vocIndex == -1)
 					continue;
-				if (!scumm_stricmp(_vm->_ingameSoundList[vocIndex], "EMPTY"))
+				if (_vm->_ingameSoundList[vocIndex].equalsIgnoreCase("EMPTY"))
 					continue;
 				break;
 			} while (1);

@@ -464,7 +464,7 @@ private:
 
 	int _curTlkFile;
 
-	char **_ingameSoundList;
+	Common::StringArray _ingameSoundList;
 	int _ingameSoundListSize;
 
 	const uint8 *_musicTrackMap;
