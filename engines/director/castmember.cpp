@@ -614,16 +614,15 @@ Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channe
 		pd.destRect = relBbox;
 
 		pd.srf = srcWidget ? srcWidget->getSurface() : nullptr;
-		Common::Rect srcWidgetBbox(width, height);
 		if (!pd.srf && src._spriteType != kBitmapSprite) {
 			// Shapes come colourized from macDrawPixel
 			pd.ms = src.getShape();
 			pd.applyColor = false;
-			pd.inkBlitShape();
+			pd.inkBlitShape(relBbox);
 		} else {
 			pd.setApplyColor();
 			// TODO: Support masks
-			pd.inkBlitStretchSurface(srcWidgetBbox, nullptr);
+			pd.inkBlitStretchSurface(relBbox, nullptr);
 		}
 		if (srcWidget)
 			delete srcWidget;
