@@ -294,6 +294,7 @@ public:
 	~CharsetRendererMac() override;
 
 	void setCurID(int32 id) override;
+
 	int getStringWidth(int arg, const byte *text, uint strLenMax = 100000);
 	int getFontHeight() override;
 	int getCharWidth(uint16 chr) override;
@@ -316,6 +317,7 @@ public:
 
 	void setCurID(int32 id) override;
 
+	int getStringWidth(int arg, const byte *text, uint strLenMax = 1000000);
 	int getFontHeight() override;
 	int getCharHeight(byte chr) override;
 	int getCharWidth(uint16 chr) override;
