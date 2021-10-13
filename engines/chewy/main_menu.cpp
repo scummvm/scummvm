@@ -22,16 +22,18 @@
 
 #include "common/textconsole.h"
 #include "chewy/main_menu.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/main.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {
 
-int MainMenu::_val1;
+int MainMenu::_selection;
 
 void MainMenu::execute() {
 #ifdef TODO_REENABLE
+	// TODO: Currently disabled so it doesn't keep playing on startup
 	mem->file->select_pool_item(music_handle, EndOfPool - 17);
 	mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
 	if (!modul)
@@ -54,7 +56,7 @@ void MainMenu::execute() {
 		SetUpScreenFunc = screenFunc;
 
 		cursor_wahl(20);
-		_val1 = -1;
+		_selection = -1;
 		spieler.scrollx = spieler.scrolly = 0;
 		spieler.PersonRoomNr[0] = 98;
 		room->load_room(&room_blk, 98, &spieler);
@@ -70,7 +72,7 @@ void MainMenu::execute() {
 
 		do {
 			animate();
-		} while (_val1 == -1);
+		} while (_selection == -1);
 
 	} while (1);
 	 
@@ -81,7 +83,7 @@ void MainMenu::screenFunc() {
 	int vec = det->maus_vector(minfo.x + spieler.scrollx, minfo.y + spieler.scrolly);
 
 	if (in->get_switch_code() == 28 || minfo.button == 1) {
-		_val1 = vec;
+		_selection = vec;
 	}
 }
 
@@ -112,6 +114,9 @@ void MainMenu::animate() {
 	menu_flag = 0;
 	out->setze_zeiger(nullptr);
 	out->back2screen(workpage);
+
+	g_screen->update();
+	g_events->update();
 }
 
 } // namespace Chewy

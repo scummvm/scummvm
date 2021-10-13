@@ -29,11 +29,22 @@ namespace Chewy {
 
 class MainMenu {
 private:
-	static int _val1;
+	static int _selection;
 
+	/**
+	 * Screen rendering function for the main menu
+	 */
 	static void screenFunc();
+
+	/**
+	 * Animates the contents of the main menu,
+	 * and checks for any option selection
+	 */
 	static void animate();
 public:
+	/**
+	 * Displays the menu
+	 */
 	static void execute();
 };
 

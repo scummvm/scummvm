@@ -1215,18 +1215,21 @@ void detail::set_taf_ani_mem(byte *load_area) {
 }
 
 void detail::load_taf_ani_sprite(int16 nr) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(CurrentTaf);
 	int32 size;
 	taf_imageheader iheader;
-	if (CurrentTaf) {
-		chewy_fseek(CurrentTaf, SpritePos[nr], SEEK_SET);
 
-		if (chewy_fread(&iheader, sizeof(taf_imageheader), 1, CurrentTaf)) {
+	if (rs) {
+		rs->seek(SpritePos[nr]);
+
+		if (iheader.load(rs)) {
 			size = (int32)iheader.width * (int32)iheader.height;
 			((int16 *)taf_load_buffer)[0] = iheader.width;
 			((int16 *)taf_load_buffer)[1] = iheader.height;
-			chewy_fseek(CurrentTaf, iheader.image, SEEK_SET);
+
+			rs->seek(iheader.image);
 			if (taf_load_buffer)
-				mem->file->load_tafmcga(CurrentTaf, iheader.komp, size, taf_load_buffer + 4l);
+				mem->file->load_tafmcga(rs, iheader.komp, size, taf_load_buffer + 4l);
 			else {
 				modul = SPEICHER;
 				fcode = NOSPEICHER;
