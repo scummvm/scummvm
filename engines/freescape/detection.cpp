@@ -32,6 +32,13 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
+	{"3dkit",
+	 "Another cube scene",
+	 AD_ENTRY1s("CUBE2.RUN", "c070cdd82148390dd14a0444a7ab4cce", 83210),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
 
 	{"Driller",
 	 "",

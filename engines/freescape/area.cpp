@@ -85,14 +85,14 @@ Area::~Area() {
 
 
 void Area::draw(Freescape::Renderer *gfx) {
-	if (palette) {
+	if (palette) 
 		gfx->_palette = palette;
-	}
+
 	gfx->clear();
 	gfx->drawSky(skyColor);
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if ((*it)->getSize() != Math::Vector3d(8192.f, 20.f, 8192.f))
+		if (!(*it)->isInvisible()) 
 			(*it)->draw(gfx);
 	}
 	gfx->drawFloor(groundColor);

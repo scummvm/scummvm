@@ -85,8 +85,8 @@ static Object *load8bitObject(StreamLoader &stream) {
 			objectType,
 			objectID,
 			0, // flags
-			position,
-			v, // size
+			64 * position,
+			64 * v, // size
 			colours,
 			ordinates,
 			instructions);
