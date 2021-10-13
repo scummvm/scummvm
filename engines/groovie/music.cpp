@@ -808,8 +808,10 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 	if (_file->isOpen()) {
 		if (filename.hasSuffix(".m4a"))
 			seekStream = Audio::makeQuickTimeStream(_file, DisposeAfterUse::NO);
+#ifdef USE_MAD
 		else
 			seekStream = Audio::makeMP3Stream(_file, DisposeAfterUse::NO);
+#endif
 	} else {
 		delete _file;
 		_file = NULL;
