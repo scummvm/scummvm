@@ -97,7 +97,7 @@ public:
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
 
-	int getStringWidth(int a, const byte *str, uint strLenMax = 100000);
+	virtual int getStringWidth(int arg, const byte *text, uint strLenMax = 100000);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
@@ -294,6 +294,7 @@ public:
 	~CharsetRendererMac() override;
 
 	void setCurID(int32 id) override;
+	int getStringWidth(int arg, const byte *text, uint strLenMax = 100000);
 	int getFontHeight() override;
 	int getCharWidth(uint16 chr) override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
