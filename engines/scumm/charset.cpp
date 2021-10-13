@@ -538,7 +538,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 					if (arg == 1)
 						break;
 					while (text[pos++] == ' ')
-					;
+						;
 					continue;
 				}
 				if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
@@ -1664,6 +1664,25 @@ void CharsetRendererMac::setCurID(int32 id) {
 	}
 
 	_curId = id;
+}
+
+int CharsetRendererMac::getStringWidth(int arg, const byte *text, uint strLenMax) {
+	int pos = 0;
+	int width = 0;
+	int chr;
+
+	while ((chr = text[pos++]) != 0) {
+		// The only control codes I've seen in use are line breaks in
+		// Loom. In Indy 3, I haven't seen anything at all like it.
+		if (chr == 255) {
+			chr = text[pos++];
+			if (chr == 1) // 'Newline'
+				break;
+		}
+		width += _macFonts[_curId].getCharWidth(chr);
+	}
+
+	return width / 2;
 }
 
 // HACK: Usually, we want the approximate width and height in the unscaled
