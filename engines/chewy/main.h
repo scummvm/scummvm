@@ -30,6 +30,9 @@
 
 namespace Chewy {
 
+extern int16 menu_flag;
+
+
 void game_main();
 void free_buffers();
 void plot_main_menu();

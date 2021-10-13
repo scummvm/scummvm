@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "chewy/main_menu.h"
 #include "chewy/global.h"
+#include "chewy/main.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {
@@ -68,7 +69,7 @@ void MainMenu::execute() {
 		show_cur();
 
 		do {
-			proc5();
+			animate();
 		} while (_val1 == -1);
 
 	} while (1);
@@ -77,11 +78,40 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
+	int vec = det->maus_vector(minfo.x + spieler.scrollx, minfo.y + spieler.scrolly);
 
+	if (in->get_switch_code() == 28 || minfo.button == 1) {
+		_val1 = vec;
+	}
 }
 
-void MainMenu::proc5() {
+void MainMenu::animate() {
+	if (ani_timer->TimeFlag) {
+		uhr->reset_timer(0, 0);
+		spieler.DelaySpeed = FrameSpeed / spieler.FramesPerSecond;
+		spieler_vector->Delay = spieler.DelaySpeed + spz_delay[0];
+		FrameSpeed = 0;
+		det->set_global_delay(spieler.DelaySpeed);
+	}
 
+	++FrameSpeed;
+	out->setze_zeiger(workptr);
+	out->map_spr2screen(ablage[room_blk.AkAblage],
+		spieler.scrollx, spieler.scrolly);
+
+	if (SetUpScreenFunc && !menu_display && !flags.InventMenu) {
+		SetUpScreenFunc();
+		out->setze_zeiger(workptr);
+	}
+
+	sprite_engine();
+	kb_mov(1);
+	calc_maus_txt(minfo.x, minfo.y, 1);
+	cur->plot_cur();
+	maus_links_click = 0;
+	menu_flag = 0;
+	out->setze_zeiger(nullptr);
+	out->back2screen(workpage);
 }
 
 } // namespace Chewy

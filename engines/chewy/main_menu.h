@@ -32,7 +32,7 @@ private:
 	static int _val1;
 
 	static void screenFunc();
-	static void proc5();
+	static void animate();
 public:
 	static void execute();
 };
