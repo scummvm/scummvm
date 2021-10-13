@@ -144,7 +144,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	for (uint32 i = 0; i < 6; i++) {
 		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], evt.mouse)) {
 			if (!_state[i]) {
-				getSound()->playSound(getWorld()->graphicResourceIds[9], false, Config.sfxVolume - 10);
+				getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
 				_state[i] = true;
 				setFlags(i);
 			}
@@ -155,7 +155,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	 && puzzleFishermanPolygons[6][1] < evt.mouse.y
 	 && puzzleFishermanPolygons[6][0] + 70 > evt.mouse.x
 	 && puzzleFishermanPolygons[6][1] + 30 > evt.mouse.y) {
-		 getSound()->playSound(getWorld()->graphicResourceIds[10], false, Config.sfxVolume - 10);
+		 getSound()->playSound(getWorld()->soundResourceIds[10], false, Config.sfxVolume - 10);
 
 		 for (uint32 i = 0; i < 6; i++)
 			 _vm->clearGameFlag((GameFlag)(kGameFlag801 + i));
