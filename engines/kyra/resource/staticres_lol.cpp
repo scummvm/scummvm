@@ -307,6 +307,7 @@ void LoLEngine::initStaticResource() {
 
 	const char *const *tmpSndList = _staticres->loadStrings(kLoLIngameSfxFiles, _ingameSoundListSize);
 	if (tmpSndList) {
+		_ingameSoundList.reserve(_ingameSoundListSize);
 		for (int i = 0; i < _ingameSoundListSize; i++)
 			_ingameSoundList.push_back(Common::String(tmpSndList[i]));
 		_staticres->unloadId(kLoLIngameSfxFiles);
