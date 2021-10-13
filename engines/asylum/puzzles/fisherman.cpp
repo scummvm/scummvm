@@ -116,8 +116,12 @@ bool PuzzleFisherman::update(const AsylumEvent &)  {
 			for (uint32 i = 0; i < 6; i++)
 				_vm->clearGameFlag((GameFlag)(kGameFlag801 + i));
 
+			_resetPressed = false;
 			_allowClick = true;
 			_pauseTimer = 0;
+			// Original bug: if the Sun button was pressed last,
+			// the correct order of buttons wouldn't work until another reset
+			_counter = 0;
 		}
 	}
 
