@@ -41,6 +41,8 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/translation.h"
+#include "gui/message.h"
 
 namespace Saga {
 
@@ -78,13 +80,30 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 				}
 				if (Common::File::exists(opl2InstDefFilename) && Common::File::exists(opl3InstDefFilename)) {
 					_driver = (MidiDriver_Multisource *)Audio::MidiDriver_Miles_AdLib_create(opl2InstDefFilename, opl3InstDefFilename);
+					_driver->property(MidiDriver::PROP_MILES_VERSION, _vm->getGameId() == GID_ITE ?
+						Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
 				} else {
-					error("Could not find AdLib instrument definition files %s and %s", opl2InstDefFilename, opl3InstDefFilename);
+					// WORKAROUND The GOG version of IHNM is missing the AdLib
+					// instrument definition files. In this case we fall back
+					// to the regular AdLib driver, which has a built-in set of
+					// instrument definitions.
+					// We cannot distinguish between this GOG version and the
+					// case where the user has a physical version of the game,
+					// but has forgotten to copy the instrument definition
+					// files. So we show a warning that these files are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition files\n"
+							  "%s and %s. Without these files,\n"
+							  "the music will not sound the same as the original game."),
+							opl2InstDefFilename, opl3InstDefFilename),
+						_("OK"));
+					dialog.runModal();
+
+					_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
 				}
 			} else {
 				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
-				_driver->property(MidiDriver::PROP_MILES_VERSION, _vm->getGameId() == GID_ITE ?
-					Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
 			}
 			break;
 		case MT_MT32:
