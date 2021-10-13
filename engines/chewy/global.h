@@ -226,6 +226,7 @@ extern int16 EndOfPool;
 extern Stream *speech_handle;
 extern byte *SpeechBuf[2];
 extern int16 CurrentSong;
+extern bool savegameFlag;
 
 void cursor_wahl(int16 nr);
 

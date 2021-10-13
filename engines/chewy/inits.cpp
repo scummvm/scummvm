@@ -175,6 +175,7 @@ void var_init() {
 	pfeil_delay = 0;
 	pfeil_ani = 0;
 	flags.CursorStatus = true;
+	savegameFlag = false;
 }
 
 void init_room() {

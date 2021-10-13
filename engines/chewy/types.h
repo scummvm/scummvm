@@ -526,6 +526,7 @@ struct Flags {
 	uint16 ChAutoMov : 1;
 	uint16 ChAutoMovXy : 1;
 	uint16 BreakAMov : 1;
+
 	uint16 AtsAction : 1;
 	uint16 AdsAction : 1;
 	uint16 AtsText : 1;
@@ -534,6 +535,7 @@ struct Flags {
 	uint16 MainInput : 1;
 	uint16 InventMenu : 1;
 	uint16 NoScroll : 1;
+
 	bool InitSound : true;
 	uint16 ExitMov : 1;
 	uint16 MausTxt : 1;
@@ -542,6 +544,7 @@ struct Flags {
 	uint16 ZoomMov : 1;
 	uint16 IcmEntry : 1;
 	uint16 SaveMenu : 1;
+
 	uint16 SpzAni : 1;
 	uint16 MausLinks : 1;
 	uint16 ChewyDontGo : 1;
@@ -550,6 +553,7 @@ struct Flags {
 	uint16 NoEndPosMovObj: 1;
 	uint16 NoShad : 1;
 	uint16 SavePersonRnr : 1;
+
 	uint16 CursorStatus : 1;
 };
 
