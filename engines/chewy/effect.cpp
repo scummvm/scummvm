@@ -158,6 +158,26 @@ void effect::blende1(byte *sram_speicher, byte *screen,
 	}
 }
 
+void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
+	if (mode) {
+		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
+			out->setze_zeiger(workpage_ + 4);
+			out->box_fill(152 - x, 0, 152 - x + 8, 200, farbe);
+			out->box_fill(x + 160, 0, x + 168, 200, farbe);
+			out->back2screen(workpage_);
+			out->skip_line(lines);
+		}
+	} else {
+		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
+			out->setze_zeiger(workpage_ + 4);
+			out->box_fill(x, 0, x + 8, 200, farbe);
+			out->box_fill(312 - x, 0, 31 - x + 8, 200, farbe);
+			out->back2screen(workpage_);
+			out->skip_line(lines);
+		}
+	}
+}
+
 void effect::spr_blende(byte *workpage_, byte *ablage_,
                         byte *palette, int16 frames, int16 col) {
 	int16 i;
