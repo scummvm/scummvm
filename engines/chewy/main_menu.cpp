@@ -27,7 +27,10 @@
 
 namespace Chewy {
 
+int MainMenu::_val1;
+
 void MainMenu::execute() {
+#ifdef TODO_REENABLE
 	mem->file->select_pool_item(music_handle, EndOfPool - 17);
 	mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
 	if (!modul)
@@ -35,8 +38,50 @@ void MainMenu::execute() {
 
 	flic_cut(200, 0);
 	ailsnd->stop_mod();
+#endif
 
+	cur->move(152, 92);
+	minfo.x = 152;
+	minfo.y = 92;
+	spieler.inv_cur = 0;
+	menu_display = 0;
+	spieler.SVal5 = 1;
+
+	do {
+		ailsnd->stop_mod();
+		ailsnd->end_sound();
+		SetUpScreenFunc = screenFunc;
+
+		cursor_wahl(20);
+		_val1 = -1;
+		spieler.scrollx = spieler.scrolly = 0;
+		spieler.PersonRoomNr[0] = 98;
+		room->load_room(&room_blk, 98, &spieler);
+		ERROR
+
+		CurrentSong = -1;
+		load_room_music(98);
+		fx->border(workpage, 100, 0, 0);
+
+		out->set_palette(pal);
+		spieler.PersonHide[0] = 1;
+		show_cur();
+
+		do {
+			proc5();
+		} while (_val1 == -1);
+
+	} while (1);
+	 
 	// TODO
+}
+
+void MainMenu::screenFunc() {
+
+}
+
+void MainMenu::proc5() {
+
 }
 
 } // namespace Chewy
