@@ -537,8 +537,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 				if (chr == 8) { // 'Verb on next line'
 					if (arg == 1)
 						break;
-					while (text[pos++] == ' ')
-						;
+					while (text[pos++] == ' ') {}
 					continue;
 				}
 				if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
