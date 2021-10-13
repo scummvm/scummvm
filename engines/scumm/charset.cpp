@@ -456,52 +456,6 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 }
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
-	if (_vm->_game.id == GID_CMI) {
-		// SCUMM7 games actually use the same implemention (minus the strLenMax parameter). If
-		// any text placement bugs in one of these games come up it might be worth to look at
-		// that. Or simply for the fact that we could get rid of SmushFont::getStringWidth()...
-		if (!strLenMax)
-			return 0;
-
-		int maxWidth = 0;
-		int width = 0;
-
-		while (*text && strLenMax) {
-			while (text[0] == '^') {
-				switch (text[1]) {
-				case 'f':
-					// We should change the font on the fly at this point
-					// which would result in a different width result.
-					// This has never been observed in the game though, and
-					// as such, we don't handle it.
-					text += 4;
-					break;
-				case 'c':
-					text += 5;
-					break;
-				default:
-					error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
-				}
-			}
-
-			if (is2ByteCharacter(_vm->_language, *text)) {
-				width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
-				++text;
-				--strLenMax;
-			} else if (*text == '\n') {
-				maxWidth = MAX<int>(width, maxWidth);
-				width = 0;
-			} else if (*text != '\r' && *text != _vm->_newLineCharacter) {
-				width += getCharWidth(*text);
-			}
-
-			++text;
-			--strLenMax;
-		}
-
-		return MAX<int>(width, maxWidth);
-	}
-
 	int pos = 0;
 	int width = 1;
 	int chr;
@@ -2031,6 +1985,52 @@ int CharsetRendererNut::getFontHeight() {
 	// FIXME / TODO: how to implement this properly???
 	assert(_current);
 	return _current->getCharHeight('|');
+}
+
+int CharsetRendererNut::getStringWidth(int arg, const byte *text, uint strLenMax) {
+	// SCUMM7 games actually use the same implemention (minus the strLenMax parameter). If
+	// any text placement bugs in one of these games come up it might be worth to look at
+	// that. Or simply for the fact that we could get rid of SmushFont::getStringWidth()...
+	if (!strLenMax)
+		return 0;
+
+	int maxWidth = 0;
+	int width = 0;
+
+	while (*text && strLenMax) {
+		while (text[0] == '^') {
+			switch (text[1]) {
+			case 'f':
+				// We should change the font on the fly at this point
+				// which would result in a different width result.
+				// This has never been observed in the game though, and
+				// as such, we don't handle it.
+				text += 4;
+				break;
+			case 'c':
+				text += 5;
+				break;
+			default:
+				error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+			}
+		}
+
+		if (is2ByteCharacter(_vm->_language, *text)) {
+			width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
+			++text;
+			--strLenMax;
+		} else if (*text == '\n') {
+			maxWidth = MAX<int>(width, maxWidth);
+			width = 0;
+		} else if (*text != '\r' && *text != _vm->_newLineCharacter) {
+			width += getCharWidth(*text);
+		}
+
+		++text;
+		--strLenMax;
+	}
+
+	return MAX<int>(width, maxWidth);
 }
 
 void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
