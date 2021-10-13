@@ -73,10 +73,17 @@ static Object *load16bitObject(StreamLoader &stream) {
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
-		for (uint8 colour = 0; colour < numberOfColours; colour++) {
-			uint8 c = stream.get8();
-			debug("face %d color: %d", colour, c);
-			colours->push_back(c);
+		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
+			uint8 c1 = stream.get8();
+			uint8 c2 = stream.get8();
+			debug("data: %x %x", c1, c2);
+			colours->push_back( (c1 & 0x0f) | ((c2 & 0x0f) << 4));
+			debug("color[%d] = %d", 2*colour, (c1 & 0x0f) | ((c2 & 0x0f) << 4));
+
+			colours->push_back(c1 >> 4 | c2 & 0xf0);
+			debug("color[%d] = %d", 2*colour+1, c1 >> 4 | c2 & 0xf0);
+
+			byteSizeOfObject--;
 			byteSizeOfObject--;
 		}
 
@@ -86,6 +93,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 		Common::Array<uint16> *ordinates = nullptr;
 
 		if (numberOfOrdinates) {
+			assert(byteSizeOfObject > 0);
 			ordinates = new Common::Array<uint16>;
 
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
@@ -96,13 +104,13 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
-		if (byteSizeOfObject) {
+		if (byteSizeOfObject > 0) {
 			Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
 
 			Common::String *conditionSource = detokenise16bitCondition(*conditionData);
 			//instructions = getInstructions(conditionSource);
 		}
-		byteSizeOfObject = 0;
+		//assert(byteSizeOfObject == 0);
 		debug("End of object at %x", stream.getFileOffset());
 
 		// create an object
@@ -482,7 +490,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
 	_areasByAreaID = areaMap;
-	_scale = Math::Vector3d(scaleX, scaleY, scaleZ);
+	_scale = Math::Vector3d(1, 1, 1);
 	_binaryBits = 16;
 	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }

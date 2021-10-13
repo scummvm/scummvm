@@ -54,6 +54,7 @@ public:
 
 	virtual bool isDrawable();
 	virtual bool isPlanar();
+	bool isInvisible() { return flags & 0x4; }
 
 	virtual ~Object();
 

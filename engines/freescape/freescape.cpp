@@ -45,6 +45,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_pitch = 0.0f;
 	_movementSpeed = 4.5f;
 	_mouseSensitivity = 0.1f;
+	_scale = Math::Vector3d(0, 0, 0);
 
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
@@ -149,8 +150,14 @@ Common::Error FreescapeEngine::run() {
 	entrance = (Entrance*) area->entranceWithID(_startEntrance);
 	assert(entrance);
 	_position = entrance->getOrigin();
-	uint8 scale = area->getScale();
-	_position.setValue(1, _position.y() + scale * _playerHeight);
+	Math::Vector3d scaleVector;
+	if (_scale == Math::Vector3d(0, 0, 0)) {
+		uint8 scale = area->getScale();
+		scaleVector = Math::Vector3d(scale, scale, scale);
+	} else
+		scaleVector = _scale;
+	debug("scale: %f, %f, %f", scaleVector.x(), scaleVector.y(), scaleVector.z());
+	_position.setValue(1, _position.y() + _playerHeight);
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
@@ -167,13 +174,12 @@ Common::Error FreescapeEngine::run() {
 		farClipPlane = 1024.f; // wild guess
 	}
 
-	//_gfx->computeScreenViewport();
-	//error("%d %d", _gfx->viewport().width(), _gfx->viewport().height());
 	//g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
 		_gfx->updateProjectionMatrix(40.0, nearClipPlane, farClipPlane);
 		_gfx->positionCamera(_position, _position + _cameraFront);
+		_gfx->scale(scaleVector);
 		area->draw(_gfx);
         float currentFrame = g_system->getMillis();
         float deltaTime = currentFrame - lastFrame;
@@ -185,13 +191,13 @@ Common::Error FreescapeEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
-					move(FORWARD, scale, deltaTime);
+					move(FORWARD, scaleVector.x(), deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
-					move(BACKWARD, scale, deltaTime);
+					move(BACKWARD, scaleVector.x(), deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
-					move(LEFT, scale, deltaTime);
+					move(LEFT, scaleVector.y(), deltaTime);
 				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
-					move(RIGHT, scale, deltaTime);
+					move(RIGHT, scaleVector.y(), deltaTime);
 				break;
 
 			case Common::EVENT_QUIT:
