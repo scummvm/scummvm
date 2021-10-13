@@ -41,9 +41,9 @@ private:
 	bool _state[6];
 	int32 _counter;
 
-	int32 _dword_45A12C;
-	bool _dword_45A130;
-	bool _dword_45AAD4;
+	int32 _pauseTimer;
+	bool  _allowClick;
+	bool  _resetPressed;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
