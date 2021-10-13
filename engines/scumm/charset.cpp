@@ -1672,12 +1672,6 @@ void CharsetRendererMac::setCurID(int32 id) {
 
 int CharsetRendererMac::getFontHeight() {
 	int height = _macFonts[_curId].getFontHeight();
-	if (_curId == 0 && _vm->_game.id == GID_INDY3) {
-		// For font 0, round up the height. It's still not quite as
-		// widely spaced as in the original, but I think it looks fine.
-		if (height & 1)
-			height++;
-	}
 
         // If we ever need the height for font 1 in Last Crusade (we don't at
 	// the moment), we need the actual height.
@@ -1864,6 +1858,11 @@ byte CharsetRendererMac::getTextShadowColor() {
 }
 
 void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
+	if (_vm->_game.id == GID_LOOM) {
+		x++;
+		y++;
+	}
+
 	if (shadow) {
 		byte shadowColor = getTextShadowColor();
 
@@ -1874,25 +1873,25 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			// particularly good anyway). This seems to match the
 			// original look for normal text.
 
-			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
-			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
-			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y - 1, 0);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x - 1, y + 1, 0);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, shadowColor);
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, shadowColor);
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
-			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
 		}
 	}
 
-	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y, 0);
 
 	if (color != -1) {
 		color = getTextColor();
@@ -1902,7 +1901,7 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			_macFonts[_curId].drawChar(_glyphSurface, chr, 0, 0, 15);
 
 			byte *src = (byte *)_glyphSurface->getBasePtr(0, 0);
-			byte *dst = (byte *)_vm->_macScreen->getBasePtr(x + 1, y + 1);
+			byte *dst = (byte *)_vm->_macScreen->getBasePtr(x, y);
 
 			for (int h = 0; h < _glyphSurface->h; h++) {
 				bool pixel = ((y + h + 1) & 1) == 0;
@@ -1920,7 +1919,7 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 				dst += _vm->_macScreen->pitch;
 			}
 		} else {
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y, color);
 		}
 	}
 }
@@ -1939,7 +1938,7 @@ void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
 	// the best way I can think of to fix that.
 
 	if (y > 0)
-		y++;
+		y = 17;
 
 	_macFonts[_curId].drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
 }
