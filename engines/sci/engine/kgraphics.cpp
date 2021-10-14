@@ -1119,7 +1119,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		error("SetPort was called with %d parameters", argc);
 		break;
 	}
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
