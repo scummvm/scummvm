@@ -377,6 +377,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vvharp",				"Victor Vector & Yondo: The Hypnotic Harp" },
 	{ "vp2",				"Virtual Physics: The Eggs of Time" },
 	{ "vvvampire",			"Victor Vector & Yondo: The Vampire's Coffin" },
+	{ "wallobee", 			"Wallobee Jack: The Bingi Burra Stone" },
+	{ "wallobee2", 			"Wallobee Jack: The Thai Sun Adventure" },
 	{ "warlock", 			"Spaceship Warlock" },
 	{ "wiggles1", 			"A Day with the Wiggles" },
 	{ "winnie", 			"Winnie the Witch" },
@@ -788,6 +790,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "moderntimes",		"Charles Chaplin in Modern Times" },
 	{ "mominoki",			"もみの木の下で ～ The Day of St.Claus" },			// Under the Fir Tree
 	{ "moritaka",			"森高千里 CD-ROM 渡良瀬橋" },
+	{ "msseifuku",			"ミッションスクール制服図鑑" },			// Mission School Seifuku Zukan
 	{ "oceansbelow",		"Oceans Below" },
 	{ "pbdisplay",	        "PerfectBLUE DISPLAY" },
 	{ "pbflash",	        "PerfectBLUE FLASH" },
@@ -822,6 +825,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Japanese product demos
 	{ "backgrounds",		"Backgrounds for Multimedia Series" },
 	{ "bakkunooni",			"VOLT-AGE バックの鬼 -侘-" },						// Back Demon (texture packs)
+	{ "bandaipreviews3",	"1995 Bandai Visual CD-ROM Previews かわら盤 Vol. 3" },
 	{ "bebox",				"BeBox" },
 	{ "businessmanager",	"琢磨 BusinessManager" },							// from Takuma Co.
 	{ "calling",			"Calling" },
@@ -2729,6 +2733,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("jman2", "Final Demo", "Buried in Time Demo", "cc3321069072b90f091f220bba16e4d4", 292731, 400),
 	MACDEMO1("jman2", "Gallery", "BIT Gallery", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 	MACDEMO1("jman2", "Overview", "BIT Overview", "01be45e7241194dad07938e7059b88e3", 484284, 400),
+	// Original filename 'Buried in Timeｪ Demo'
+	MACDEMO1_l("jman2", "Demo", "xn--Buried in Time Demo-yp97h", "cdb27c916044ae4dceb4b7326063fa03", 329851, Common::JA_JPN, 400),
 
 	MACGAME1("jmmd", "", "Just Me & My Dad", "ea646eccc9a53f44ce082459d4809a06", 486966, 400),
 
@@ -2805,6 +2811,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("makers", "", "MAKERS.EXE", "d879d7b40dd9f2eb59a2fbae5bc62306", 690883, 404),
 
 	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301861, Common::JA_JPN, 400),
+	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301925, Common::JA_JPN, 400),
 
 	MACGAME1("mastermansion", "", "Masterpiece Mansion", "bdd793ba61c4333dfeaf976d6adc38fe", 285533, 404),
 	WINGAME1("mastermansion", "", "MANSION.EXE", "b397657fec77654afc589000612de963", 84700821, 404),
@@ -2876,6 +2883,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Both versions require installation to extract executables
 	MACGAME1("mrsquack", "", "Reading with Peter Cottontail", "97474208c44c78f26bef8b2011d341aa", 483708, 404),
 	WINGAME1("mrsquack", "", "QUACK.EXE", "5f80de56cd9c653721b451b752189264", 763381, 404),
+
+	// Original filename 'ＭＳ制服図鑑でも'
+	MACDEMO1_l("msseifuku", "Demo", "xn--n9juc805lw7d3myt85ddl2inba", "8ea9e9a699c61edddffd79ddd0c994d7", 289746, Common::JA_JPN, 402),
 
 	// Demos from Microsoft Exposition CD
 	WINDEMO1("ms500nations",   "Demo",			  "500NAT.EXE",	  "d74e6aa33e11561a38eb82dd52b91613", 2284149, 404),
@@ -3329,6 +3339,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("vusic", "Demo", "VUSIC The Screen Raver", "5bbb193a8785c70abe2a4d86b99e1536", 283291, 403),
 	WINDEMO1("vusic", "Demo", "VUSIC.EXE", "ff2c0a776d5f0c9aa5bc115d3b36676b", 693375, 400),
 
+	// Original filename 'ワロビージャックの大冒険<デモ>'
+	MACDEMO2_l("wallobee", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036,
+		"001b.mov", "2b49fe4e49f9e846fb6e78f92e9a296d", 6931,
+		Common::JA_JPN, 402),
+	MACDEMO2_l("wallobee2", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036, 
+		"000.MOV", "92db07a408eca6bc0ebc230e31e6caa4", 461940,
+		Common::JA_JPN, 402),
+
 	WINGAME2_l("warlock", "", "START.EXE",	  "04e0887e76ee58b86ace1d89bf816d9f", 694159,
 							  "SSWARLCK.DIR", "aa3d2d8d69746d2b0f312427649cd98f", 608862, Common::JA_JPN, 400),
 
@@ -3436,6 +3454,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Installer is also Director
 	WINGAME1_l("backpacker2", "", "bp2new.exe", "842014a812b454620f64b860fd7211f0", 940821, Common::NB_NOR, 501),
 	WINGAME1_l("backpacker2", "", "bp2new.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1418983, Common::SE_SWE, 501),
+
+	// Original filename is 'かわら盤Vol.03'
+	MACGAME1_l("bandaipreviews3", "", "xn--Vol.03-953eurwbv611j", "33f733b2809b94c3301096902f642b6e", 293102, Common::JA_JPN, 402),
 
 	// Based on the Australian TV children's TV series
 	// Swedish released in association with Lattjo Lajban (1998)
