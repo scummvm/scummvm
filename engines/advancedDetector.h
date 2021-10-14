@@ -90,6 +90,7 @@ struct ADGameFileDescription {
  */
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,        ///< No flags.
+	ADGF_TAILMD5		 = (1 << 16), ///< Calculate the MD5 for this entry from the end of the file.
 	ADGF_REMASTERED      = (1 << 17), ///< Add "-remastered' to gameid.
 	ADGF_AUTOGENTARGET   = (1 << 18), ///< Automatically generate gameid from @ref ADGameDescription::extra.
 	ADGF_UNSTABLE        = (1 << 19), ///< Flag to designate not yet officially supported games that are not fit for public testing.

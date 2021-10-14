@@ -489,6 +489,8 @@ namespace Common {
 static char flagsToMD5Prefix(uint32 flags) {
 	if (flags & ADGF_MACRESFORK)
 		return 'm';
+	if (flags & ADGF_TAILMD5)
+		return 't';
 
 	return 'f';
 }
@@ -562,6 +564,9 @@ bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &a
 
 	if (!testFile.open(allFiles[fname]))
 		return false;
+
+	if (game.flags & ADGF_TAILMD5)
+		testFile.seek(md5Bytes, SEEK_END);
 
 	fileProps.size = testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
