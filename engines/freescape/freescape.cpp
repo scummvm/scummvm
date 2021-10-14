@@ -40,9 +40,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_velocity = Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Vector3d(0.f, 0.f, 0.f);
-
-	_yaw = -90.0f;
-	_pitch = 0.0f;
 	_movementSpeed = 4.5f;
 	_mouseSensitivity = 0.1f;
 	_scale = Math::Vector3d(0, 0, 0);
@@ -158,6 +155,11 @@ Common::Error FreescapeEngine::run() {
 		scaleVector = _scale;
 	debug("scale: %f, %f, %f", scaleVector.x(), scaleVector.y(), scaleVector.z());
 	_position.setValue(1, _position.y() + _playerHeight);
+
+	Math::Vector3d rotation = entrance->getRotation(); 
+	_pitch = rotation.x() - 180.f;
+	_yaw = rotation.y() - 180.f;
+
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event event;
@@ -177,7 +179,7 @@ Common::Error FreescapeEngine::run() {
 	//g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
-		_gfx->updateProjectionMatrix(40.0, nearClipPlane, farClipPlane);
+		_gfx->updateProjectionMatrix(60.0, nearClipPlane, farClipPlane);
 		_gfx->positionCamera(_position, _position + _cameraFront);
 		_gfx->scale(scaleVector);
 		area->draw(_gfx);
@@ -241,10 +243,10 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_pitch += yoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 89.0f)
-		_pitch = 89.0f;
-	if (_pitch < -89.0f)
-		_pitch = -89.0f;
+	if (_pitch > 180.0f)
+		_pitch = 180.0f;
+	if (_pitch < -180.0f)
+		_pitch = -180.0f;
 
 	Vector3d v;
 	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);

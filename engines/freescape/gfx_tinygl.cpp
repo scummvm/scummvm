@@ -174,9 +174,8 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 }
 
 void TinyGLRenderer::scale(const Math::Vector3d &scale) {
-	tglScalef(-scale.x(), scale.y(), scale.z());
+	tglScalef(-1, 1, 1);
 }
-
 
 void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
@@ -211,55 +210,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	uint8 r, g, b;
 
 	// Face 0
-	if ((*colours)[5] > 0) {
-		_palette->getRGBAt((*colours)[5], r, g, b);
-		tglDisable(TGL_TEXTURE_2D);
-		tglColor3ub(r, g, b);
-		// Face 0
-		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-
-		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x(),		        origin.y() + size.y(),	origin.z() + size.z());
-		tglEnd();
-	}
-
-	// Face 1
-	if ((*colours)[4] > 0) {
-		_palette->getRGBAt((*colours)[4], r, g, b);
-		tglColor3ub(r, g, b);
-
-		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
-
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
-		tglVertex3f(origin.x(),				origin.y(),				origin.z());
-		tglEnd();
-	}
-
-	// Face 2
-	if ((*colours)[1] > 0) {
-		_palette->getRGBAt((*colours)[1], r, g, b);
-		tglColor3ub(r, g, b);
-
-		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
-
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
-		tglEnd();
-	}
-
-	// Face 3
 	if ((*colours)[0] > 0) {
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
@@ -274,6 +224,22 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
+	// Face 1
+	if ((*colours)[1] > 0) {
+		_palette->getRGBAt((*colours)[1], r, g, b);
+		tglColor3ub(r, g, b);
+		tglBegin(TGL_TRIANGLES);
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+		tglEnd();
+	}
+
+	// Face 2
 	if ((*colours)[2] > 0) {
 		_palette->getRGBAt((*colours)[2], r, g, b);
 		tglColor3ub(r, g, b);
@@ -288,6 +254,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
+	// Face 3
 	if ((*colours)[3] > 0) {
 		_palette->getRGBAt((*colours)[3], r, g, b);
 		tglColor3ub(r, g, b);
@@ -299,6 +266,36 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
 		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
 		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+		tglEnd();
+	}
+
+	// Face 1
+	if ((*colours)[4] > 0) {
+		_palette->getRGBAt((*colours)[4], r, g, b);
+		tglColor3ub(r, g, b);
+		tglBegin(TGL_TRIANGLES);
+		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+
+		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+		tglVertex3f(origin.x(),				origin.y(),				origin.z());
+		tglEnd();
+	}
+
+	// Face 0
+	if ((*colours)[5] > 0) {
+		_palette->getRGBAt((*colours)[5], r, g, b);	
+		tglColor3ub(r, g, b);
+		tglBegin(TGL_TRIANGLES);
+		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+
+		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x(),		        origin.y() + size.y(),	origin.z() + size.z());
 		tglEnd();
 	}
 }
