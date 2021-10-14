@@ -28,10 +28,10 @@
 namespace Lure {
 
 enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_EGA		= 1 <<  1,
-	GF_KONAMI	= 1 <<  2,
-	GF_LNGUNK	= 1 << 15
+	GF_FLOPPY	= 1 << 0,
+	GF_EGA		= 1 << 1,
+	GF_KONAMI	= 1 << 2,
+	GF_LNGUNK	= 1 << 3
 };
 
 struct LureGameDescription {
