@@ -1839,10 +1839,11 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	if (!c || i > 250)
 		return 0;
 
-	uint16 t = READ_LE_UINT16(&_ingameSoundIndex[i << 1]);
+	uint16 t = _ingameSoundIndex[i << 1];
 	if (t == 0xFFFF)
 		return 0;
 
+	assert(t < _ingameSoundListSize);
 	_ingameSoundList[t] = c;
 
 	return 0;
