@@ -75,16 +75,13 @@ static Object *load16bitObject(StreamLoader &stream) {
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 c1 = stream.get8();
+			byteSizeOfObject--;
 			uint8 c2 = stream.get8();
-			debug("data: %x %x", c1, c2);
+			byteSizeOfObject--;
 			colours->push_back( (c1 & 0x0f) | ((c2 & 0x0f) << 4));
 			debug("color[%d] = %d", 2*colour, (c1 & 0x0f) | ((c2 & 0x0f) << 4));
-
 			colours->push_back(c1 >> 4 | c2 & 0xf0);
 			debug("color[%d] = %d", 2*colour+1, c1 >> 4 | c2 & 0xf0);
-
-			byteSizeOfObject--;
-			byteSizeOfObject--;
 		}
 
 		// read extra vertices if required...
@@ -104,13 +101,18 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
-		if (byteSizeOfObject > 0) {
-			Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
+		// if (byteSizeOfObject > 0) {
+		// 	uint32 offset = stream.getFileOffset();
+		// 	Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
+		// 	byteSizeOfObject = byteSizeOfObject - (offset - stream.getFileOffset());
 
-			Common::String *conditionSource = detokenise16bitCondition(*conditionData);
-			//instructions = getInstructions(conditionSource);
-		}
-		//assert(byteSizeOfObject == 0);
+		// 	Common::String *conditionSource = detokenise16bitCondition(*conditionData);
+		// 	debug("Condition: %s", conditionSource->c_str());
+		// 	//instructions = getInstructions(conditionSource);
+		// }
+
+		debug("Skipping %d bytes", byteSizeOfObject);
+		stream.skipBytes(byteSizeOfObject);
 		debug("End of object at %x", stream.getFileOffset());
 
 		// create an object
@@ -126,6 +128,9 @@ static Object *load16bitObject(StreamLoader &stream) {
 	} break;
 
 	case Object::Entrance:
+		debug("Skipping %d bytes", byteSizeOfObject);
+		stream.skipBytes(byteSizeOfObject);
+		debug("End of object at %x", stream.getFileOffset());
 		return new Entrance(objectID, position, size); // size will be always 0,0,0?
 		break;
 	case Object::Sensor:
@@ -490,7 +495,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
 	_areasByAreaID = areaMap;
-	_scale = Math::Vector3d(1, 1, 1);
+	_scale = Math::Vector3d(scaleX, scaleY, scaleZ);
 	_binaryBits = 16;
 	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }

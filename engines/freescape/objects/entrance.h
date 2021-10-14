@@ -23,6 +23,8 @@ public:
 	bool isDrawable();
 	bool isPlanar();
 	Type getType() override { return Type::Entrance; };
+	Vector3d getRotation() { return rotation; }
+	
 	void draw(Freescape::Renderer *gfx) override { error("cannot render Entrance"); };
 };
 
