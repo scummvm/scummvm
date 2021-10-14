@@ -351,7 +351,9 @@ void Game::loadQuotes() {
 	while (true) {
 		uint8 b = f.readByte();
 
-		msg += b;
+		if (b != '\0')
+			msg += b;
+
 		if (f.eos() || b == '\0') {
 			// end of string, add it to the strings list
 			_quotes.push_back(msg);
