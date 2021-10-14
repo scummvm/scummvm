@@ -231,6 +231,7 @@ void OptionsDialog::init() {
 	_speechVolumeLabel = nullptr;
 	_muteCheckbox = nullptr;
 	_enableSubtitleSettings = false;
+	_enableSubtitleToggle = false;
 	_subToggleDesc = nullptr;
 	_subToggleGroup = nullptr;
 	_subToggleSubOnly = nullptr;
@@ -909,11 +910,9 @@ void OptionsDialog::apply() {
 	// Subtitle options
 	if (_subToggleGroup) {
 		if (_enableSubtitleSettings) {
-			bool subtitles, speech_mute;
-			int talkspeed;
-			int sliderMaxValue = _subSpeedSlider->getMaxValue();
-
-			switch (_subToggleGroup->getValue()) {
+			if (_enableSubtitleToggle) {
+				bool subtitles, speech_mute;
+				switch (_subToggleGroup->getValue()) {
 				case kSubtitlesSpeech:
 					subtitles = speech_mute = false;
 					break;
@@ -925,14 +924,19 @@ void OptionsDialog::apply() {
 				default:
 					subtitles = speech_mute = true;
 					break;
-			}
+				}
 
-			ConfMan.setBool("subtitles", subtitles, _domain);
-			ConfMan.setBool("speech_mute", speech_mute, _domain);
+				ConfMan.setBool("subtitles", subtitles, _domain);
+				ConfMan.setBool("speech_mute", speech_mute, _domain);
+			} else {
+				ConfMan.removeKey("subtitles", _domain);
+				ConfMan.removeKey("speech_mute", _domain);
+			}
 
 			// Engines that reuse the subtitle speed widget set their own max value.
 			// Scale the config value accordingly (see addSubtitleControls)
-			talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
+			int sliderMaxValue = _subSpeedSlider->getMaxValue();
+			int talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
 			ConfMan.setInt("talkspeed", talkspeed, _domain);
 
 		} else {
@@ -1218,6 +1222,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	if ((_guioptions.contains(GUIO_NOSUBTITLES)) || (_guioptions.contains(GUIO_NOSPEECH)))
 		ena = false;
 
+	_enableSubtitleToggle = ena;
 	_subToggleGroup->setEnabled(ena);
 	_subToggleDesc->setEnabled(ena);
 
@@ -1678,6 +1683,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableSubtitleSettings = true;
+	_enableSubtitleToggle = true;
 }
 
 void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
