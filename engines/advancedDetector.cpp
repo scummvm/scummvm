@@ -486,10 +486,15 @@ namespace Common {
 	DECLARE_SINGLETON(MD5CacheManager);
 }
 
+static char flagsToMD5Prefix(uint32 flags) {
+	if (flags & ADGF_MACRESFORK)
+		return 'm';
+
+	return 'f';
+}
+
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
-	// FIXME/TODO: We don't handle the case that a file is listed as a regular
-	// file and as one with resource fork.
-	Common::String hashname = Common::String::format("%s:%d", fname.c_str(), _md5Bytes);
+	Common::String hashname = Common::String::format("%c:%s:%d", flagsToMD5Prefix(game.flags), fname.c_str(), _md5Bytes);
 
 	if (MD5Man.contains(hashname)) {
 		fileProps.md5 = MD5Man.getMD5(hashname);
