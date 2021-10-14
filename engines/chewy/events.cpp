@@ -56,4 +56,35 @@ void EventsManager::timer_handler() {
 	}
 }
 
+void EventsManager::handleEvent(const Common::Event &event) {
+	if (event.type >= Common::EVENT_MOUSEMOVE &&
+		event.type <= Common::EVENT_MBUTTONUP)
+		_mousePos = event.mouse;
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		_mouseButtons |= 1;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_mouseButtons &= ~1;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_mouseButtons |= 2;
+		break;
+	case Common::EVENT_RBUTTONUP:
+		_mouseButtons &= ~2;
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+		_mouseButtons |= 4;
+		break;
+	case Common::EVENT_MBUTTONUP:
+		_mouseButtons &= ~4;
+		break;
+	default:
+		break;
+	}
+
+	EventsBase::handleEvent(event);
+}
+
 } // namespace Chewy

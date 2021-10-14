@@ -20,8 +20,9 @@
  *
  */
 
-#include "chewy/cursor.h"
 #include "common/textconsole.h"
+#include "chewy/cursor.h"
+#include "chewy/events.h"
 
 namespace Chewy {
 
@@ -82,33 +83,17 @@ void cursor::plot_cur() {
 }
 
 void cursor::show_cur() {
-	warning("STUB - show_cur");
-#if 0
-	int16 x, y;
 	if ((maus_da) && (!sichtbar)) {
-		sichtbar = TRUE;
+		sichtbar = true;
 		mouse_aktiv = 1;
-		x = minfo->x;
-		y = minfo->y;
-#pragma aux asm_pos = \
-"push eax"\
-"push edx"\
-"push ecx"\
-"mov ax,3"\
-"int 033h"\
-"mov x,cx"\
-"mov y,dx"\
-"pop ecx"\
-"pop edx"\
-"pop eax"
-		asm_pos();
-		minfo->x = x;
-		minfo->y = y;
-		if (curblk->no_back != TRUE) {
 
+		minfo->x = g_events->_mousePos.x;
+		minfo->y = g_events->_mousePos.y;
+
+		if (!curblk->no_back) {
 			out->sprite_save(curblk->cur_back, (minfo->x + curblk->page_off_x),
-			                  (minfo->y + curblk->page_off_y), curblk->xsize,
-			                  curblk->ysize, scr_width);
+			    (minfo->y + curblk->page_off_y), curblk->xsize,
+			    curblk->ysize, scr_width);
 		}
 
 		cur_x_old = (minfo->x + curblk->page_off_x);
@@ -116,7 +101,6 @@ void cursor::show_cur() {
 		cur_move = 1;
 		plot_cur();
 	}
-#endif
 }
 
 void cursor::hide_cur() {
@@ -152,53 +136,31 @@ void cursor::move(int16 x, int16 y) {
 }
 
 void cursor::wait_taste_los(int16 maus_plot) {
-	warning("STUB - wait_taste_los");
-#if 0
 	int16 is_mouse, stay;
 	int16 switch_code;
 	is_mouse = 0;
 	if (maus_da) {
-
-#pragma aux check_mknopf = \
-"push ax"\
-"push bx"\
-"push cx"\
-"push dx"\
-"mov ax,3"\
-"int 033h"\
-"mov is_mouse,bx"\
-"pop dx"\
-"pop cx"\
-"pop bx"\
-"pop ax"
-		check_mknopf();
+		g_events->update();
+		is_mouse = g_events->_mouseButtons;
 	}
+
 	if (!is_mouse)
 		in->hot_key = 0;
 	stay = 1;
 	switch_code = 1;
+
 	while ((switch_code != 0) && (stay)) {
 		switch_code = in->get_switch_code();
 		if (is_mouse) {
 			switch_code = 2;
-#pragma aux check_mknopf2 = \
-"push ax"\
-"push bx"\
-"push cx"\
-"push dx"\
-"mov ax,3"\
-"int 033h"\
-"mov stay,bx"\
-"pop dx"\
-"pop cx"\
-"pop bx"\
-"pop ax"\
-check_mknopf2();
+
+			g_events->update();
+			stay = g_events->_mouseButtons;
 		}
-		if (maus_plot != FALSE)
+
+		if (maus_plot)
 			plot_cur();
 	}
-#endif
 }
 
 void cursor::wait_taste(int16 maus_plot) {

@@ -153,7 +153,7 @@ detail::detail() {
 	}
 
 #endif
-	global_delay = false;
+	global_delay = 0;
 	ani_freezeflag = false;
 	fulltaf = false;
 	rdi.dptr = 0;

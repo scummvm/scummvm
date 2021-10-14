@@ -50,7 +50,7 @@ void MainMenu::execute() {
 	menu_display = 0;
 	spieler.SVal5 = 1;
 
-	do {
+	while (!SHOULD_QUIT) {
 		ailsnd->stop_mod();
 		ailsnd->end_sound();
 		SetUpScreenFunc = screenFunc;
@@ -72,9 +72,9 @@ void MainMenu::execute() {
 
 		do {
 			animate();
-		} while (_selection == -1);
+		} while (_selection == -1 && !SHOULD_QUIT);
 
-	} while (1);
+	}
 	 
 	// TODO
 }
