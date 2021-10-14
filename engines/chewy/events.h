@@ -31,11 +31,15 @@ class EventsManager : public EventsBase {
 private:
 	void init_timer_handler();
 	static void timer_handler();
+
+	void handleMouseEvent(const Common::Event &event);
+	void handleKbdEvent(const Common::Event &event);
 protected:
 	void handleEvent(const Common::Event &event) override;
 public:
 	Common::Point _mousePos;
-	byte _mouseButtons = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
 
 	EventsManager(Graphics::Screen *screen);
 	virtual ~EventsManager();

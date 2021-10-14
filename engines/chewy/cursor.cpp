@@ -141,7 +141,7 @@ void cursor::wait_taste_los(int16 maus_plot) {
 	is_mouse = 0;
 	if (maus_da) {
 		g_events->update();
-		is_mouse = g_events->_mouseButtons;
+		is_mouse = minfo->button;
 	}
 
 	if (!is_mouse)
@@ -155,7 +155,7 @@ void cursor::wait_taste_los(int16 maus_plot) {
 			switch_code = 2;
 
 			g_events->update();
-			stay = g_events->_mouseButtons;
+			stay = minfo->button;
 		}
 
 		if (maus_plot)

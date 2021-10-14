@@ -70,10 +70,14 @@ void MainMenu::execute() {
 		spieler.PersonHide[0] = 1;
 		show_cur();
 
+		// Wait for a selection to be made on the main menu
 		do {
 			animate();
-		} while (_selection == -1 && !SHOULD_QUIT);
+			if (SHOULD_QUIT)
+				return;
+		} while (_selection == -1);
 
+		warning("TODO: Main menu option selected");
 	}
 	 
 	// TODO
