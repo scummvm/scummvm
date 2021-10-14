@@ -54,10 +54,13 @@ const char *ResourceHandler::determineMimeType(Common::String &filename) {
 
 void ResourceHandler::handle(Client &client) {
 	Common::String filename = client.path();
-	filename.deleteChar(0);
+    
+	// remove leading slash
+	if (filename.size() > 0 && filename[0] == '/')
+		filename.deleteChar(0);
 
 	// if archive hidden file is requested, ignore
-	if (filename.size() && filename[0] == '.')
+	if (filename.size() > 0 && filename[0] == '.')
 		return;
 
 	// if file not found, don't set handler either
