@@ -59,32 +59,37 @@ void EventsManager::timer_handler() {
 void EventsManager::handleEvent(const Common::Event &event) {
 	if (event.type >= Common::EVENT_MOUSEMOVE &&
 		event.type <= Common::EVENT_MBUTTONUP)
-		_mousePos = event.mouse;
+		handleMouseEvent(event);
+	else if (event.type == Common::EVENT_KEYDOWN)
+		handleKbdEvent(event);
+}
 
+void EventsManager::handleMouseEvent(const Common::Event &event) {
+	_mousePos = event.mouse;
+
+	// Set mouse buttons
+	minfo.button = 0;
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-		_mouseButtons |= 1;
-		break;
-	case Common::EVENT_LBUTTONUP:
-		_mouseButtons &= ~1;
+		minfo.button = 1;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		_mouseButtons |= 2;
-		break;
-	case Common::EVENT_RBUTTONUP:
-		_mouseButtons &= ~2;
-		break;
-	case Common::EVENT_MBUTTONDOWN:
-		_mouseButtons |= 4;
-		break;
-	case Common::EVENT_MBUTTONUP:
-		_mouseButtons &= ~4;
+		minfo.button = 2;
 		break;
 	default:
 		break;
 	}
 
-	EventsBase::handleEvent(event);
+	// Set mouse position
+	if (cur_move != 1) {
+		cur_move = 1;
+		minfo.x = event.mouse.x;
+		minfo.y = event.mouse.y;
+	}
+}
+
+void EventsManager::handleKbdEvent(const Common::Event &event) {
+	// TODO
 }
 
 } // namespace Chewy

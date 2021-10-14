@@ -1480,7 +1480,7 @@ void mcga_grafik::init_mausmode(maus_info *minfo) {
 
 void mcga_grafik::exit_mausmode() {
 	MausMode = false;
-	m_info = 0;
+	m_info = nullptr;
 }
 
 int16 mcga_grafik::devices() {

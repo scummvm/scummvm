@@ -58,7 +58,7 @@ void del_kb_puffer() {
 }
 
 void set_mouse_handler(maus_info *mpos) {
-	warning("STUB: set_mouse_handler()");
+	// No implementation in ScummVM
 }
 
 maus::maus() {
@@ -70,47 +70,12 @@ maus::~maus() {
 }
 
 int maus::init() {
-	warning("maus::init - STUB");
-#if 0
-	int16 tasten;
-	int16 err;
-#pragma aux asm_init = "push ax"\
-"mov ax,0"\
-"int 033h"\
-"mov err,ax"\
-"mov tasten,bx"\
-"pop ax"
-	asm_init();
-	if (err != -1) {
-		tasten = 0;
-		modul = MAUS;
-		fcode = 0;
-	}
-	maus_info_blk = false;
-	return (tasten);
-#endif
-	return 0;
+	// ScummVM supports three buttons
+	return 3;
 }
 
 void maus::speed(int16 x, int16 y) {
-	warning("STUB - maus::speed");
-#if 0
-	if (x <= 0)
-		x = 1;
-	if (y <= 0)
-		y = 1;
-#pragma aux asm_speed = "push ax"\
-"push cx"\
-"push dx"\
-"mov ax,0x0f"\
-"mov cx,x"\
-"mov dx,y"\
-"int 0x33"\
-"pop dx"\
-"pop cx"\
-"pop ax"
-	asm_speed();
-#endif
+	// Changing mouse speed isn't supported in ScummVM
 }
 
 void maus::move_mouse(int16 x, int16 y) {
@@ -118,26 +83,7 @@ void maus::move_mouse(int16 x, int16 y) {
 }
 
 void maus::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
-	int16 txmin, tymin, txmax, tymax;
-	txmin = xmin;
-	tymin = ymin;
-	txmax = xmax;
-	tymax = ymax;
-#pragma aux asm_rectangle = "push ax"\
-"push cx"\
-"push dx"\
-"mov ax,7"\
-"mov cx,txmin"\
-"mov dx,txmax"\
-"int 033h"\
-"mov ax,8"\
-"mov cx,tymin"\
-"mov dx,tymax"\
-"int 033h"\
-"pop dx"\
-"pop cx"\
-"pop ax"\
-asm_rectangle();
+	// Mouse clip rectangle isn't supported in ScummVM
 }
 
 int16 maus::maus_vector(int16 x, int16 y, int16 *tbl,
