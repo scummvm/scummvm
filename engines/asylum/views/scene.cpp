@@ -2379,21 +2379,18 @@ void Scene::preload() {
 		return;
 
 	SceneTitle *title = new SceneTitle(_vm);
-	title->load();
 	getCursor()->hide();
+	title->load();
 
 	do {
 		title->update(_vm->getTick());
 
-		getScreen()->copyBackBufferToScreen();
 		g_system->updateScreen();
-
 		g_system->delayMillis(10);
 
 		// Poll events (this ensure we don't freeze the screen)
 		Common::Event ev;
 		_vm->getEventManager()->pollEvent(ev);
-
 	} while (!title->loadingComplete());
 
 	delete title;
