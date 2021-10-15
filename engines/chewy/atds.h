@@ -253,19 +253,16 @@ public:
 	SplitStringRet *split_string(SplitStringInit *ssi);
 	void calc_txt_win(SplitStringInit *ssi);
 	void str_null2leer(char *str_start, char *str_end);
-	void get_atds_id_ptr(int16 mode);
 	char *atds_adr(const char *fname, int16 chunk_start, int16 chunk_anz);
 	void load_atds(int16 chunk_nr, int16 mode);
 	void save_ads_header(int16 dia_nr);
 
-	// FIXME: was using FILE*
 	Stream *pool_handle(const char *fname, const char *fmode);
 	void set_speech_handle(Stream *speech_handle);
 	void set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz);
 	void open_handle(const char *fname, const char *fmode, int16 mode);
 	void open_handle(Common::SeekableReadStream *stream, int16 mode);
 	void close_handle(int16 mode);
-	int16 atds_get_zeilen(char *str, int16 end_txt);
 	void crypt(char *txt, uint32 size);
 	void init_ats_mode(int16 mode, uint8 *atsheader);
 	bool start_ats(int16 txt_nr, int16 txt_mode, int16 color,
