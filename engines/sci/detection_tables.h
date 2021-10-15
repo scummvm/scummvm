@@ -31,6 +31,7 @@ namespace Sci {
 #define GUIO_STD16_MAC GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
 #define GUIO_STD16_MAC_UNDITHER GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
 #define GUIO_STD16_MAC_PALETTEMODS GUIO6(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING, GAMEOPTION_PALETTE_MODS)
+#define GUIO_STD16_MAC_SPEECH GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
 
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, resVol, lang) \
 	{"sci-fanmade", name, { \
@@ -1292,19 +1293,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Hoyle 4 (Hoyle Classic Card Games) - English DOS/Win
 	// Supplied by abevi in bug report #5131
+	// Although this is a floppy game, it does have speech. (bug #13007)
 	{"hoyle4", "", {
 		{"resource.map", 0, "2b577c975cc8d8d43f61b6a756129fe3", 4352},
 		{"resource.000", 0, "43e2c15ce436aab611a462ad0603e12d", 2000132},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
 	// Hoyle 4 (Hoyle Classic Card Games) - English Macintosh Floppy
 	// VERSION file reports "2.0"
+	// Although this is a floppy game, it does have speech. (bug #13007)
 	{"hoyle4", "", {
 		{"Data1", 0, "99575fae4579540a314bbedd72d51e8c", 7682887},
 		{"Data2", 0, "7d4bf5bdf3c02edbf35cb8471c84ec13", 1539134},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC_SPEECH },
 
 #define GUIO_HOYLE5 GUIO5(GUIO_NOMIDI, \
 						  GUIO_NOLAUNCHLOAD, \
