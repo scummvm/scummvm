@@ -249,6 +249,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mcmillennium",		"Mission Code: Millennium" },
 	{ "mediaband",			"Meet MediaBand" },
 	{ "melements",			"Masters of the Elements" },
+	{ "meetchuck",			"Meet Chuck" },
 	{ "mentalmaths",		"Mental Maths Booster" },
 	{ "miareading1",		"Mia's Reading Adventure: The Search for Grandma's Remedy" },
 	{ "miamath",			"Mia's Math Adventure: Just in Time!" },
@@ -381,6 +382,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vvvampire",			"Victor Vector & Yondo: The Vampire's Coffin" },
 	{ "wallobee", 			"Wallobee Jack: The Bingi Burra Stone" },
 	{ "wallobee2", 			"Wallobee Jack: The Thai Sun Adventure" },
+	{ "wallobee3", 			"Wallobee Jack: The Lost Lionardo" },
 	{ "warlock", 			"Spaceship Warlock" },
 	{ "wiggles1", 			"A Day with the Wiggles" },
 	{ "winnie", 			"Winnie the Witch" },
@@ -680,9 +682,11 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cellofania",			"セロファニア" },
 	{ "chinacrisis",		"China Crisis" },
 	{ "chisanaensoka",		"小さな演奏家" },									// Little Musician (Crickets)
+	{ "christmassmallhouse","Christmastime at Small House" },
 	{ "chuckletime",   		"チャックルタイム" },
 	{ "chuteng",   			"中天" },
 	{ "cutie10",   			"キューティ１０" },
+	{ "cookie", 			"Cookie's Bustle: Mysterious Bombo World"},
 	{ "dan",				"ダン" },									   		// Dan
 	{ "djrom",				"The DJ-ROM: Da CD-Extra of Hip-Hop Music" },
 	{ "earthtia",			"アースティアサーガ ラーサーレジェンド" },		  	// Earthtia Saga: Larthur's Legend
@@ -694,6 +698,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gate3",				"the GATE III 王国「MU」への扉" },					// Gateway to the Kingdom of MU
 	{ "granmarmalade",		"グラン・マーマレード・マジカル・ビレッジ" },
 	{ "henachoco",			"へなちょこダービー" },						    	// HenaChoco Derby
+	{ "henachoco08",		"おませなおませな屋台大作戦" },						    	// Omasena Omasena Stall Strategy
+	{ "henachoco09",		"ニセミジンコのうそひみつ" },						    	// The Secret Lie of Nisemijinko
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
 	{ "horrortour3",		"ラビラーント" },							   		// Labyrinthe
@@ -724,10 +730,13 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "orgotto",			"Orgotto" },
 	{ "osaka1",				"必修大阪弁集中講座I 2010年、標準語は大阪弁になる" }, // Hisshu Osaka-ben shuchu koza (Mandatory Osaka Dialect)
 	{ "osaka2",				"必修大阪弁集中講座II 2015年、東京人の逆襲" },		// Tokyoites Strike Back
+	{ "pantosstory", 		"Pantos Story"},
 	{ "peaceland",			"PeaceLand" },
 	{ "phantplanet",		"アミューズメント プラネット ファンタスマゴリア" },	// Amusement Planet Phantasmagoria
+	{ "picklesbook",		"Pickle's Book" },
 	{ "popup",				"Pop Up Computer" },
 	{ "prescue",			"パラダイス レスキュ" },						  	// Paradise Rescue
+	{ "putlestory", 		"Putlestory"},
 	{ "pyramidint",			"Pyramid Interactive" },
 	{ "racingdays",			"Racing Days" },
 	{ "refixion1",			"Refixion" },
@@ -741,6 +750,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sakin2",				"砂金II" }, 				   				    	// Sakin II
 	{ "sakuratoasobo",		"さくらとあそぼ" }, 				   				// Let's Play with "SAKURA"!
 	{ "schoolworld",     	"A-L: Artificial Life: School World" },
+	{ "smallhouse", 		"Small House" },
 	{ "tantei",				"完全探偵マニュアル" },							 	// Perfect Detective Manual
 	{ "tetsuman",			"ハイ! 鉄マン です" }, 	   					    	// Hai! Tetsuman Desu
 	{ "tetsumangaiden",		"鉄マン外伝 ゲーム大王の野望" }, 				 	// Tetsuman Gaiden: Game Daiou no Yabou
@@ -788,6 +798,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "heidislide",			"Heidi スライドショー" },                           // Slideshow
 	{ "ioshow",				"iós How To Game" },
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
+	{ "llla",				"Live Love Life AIDS" },
 	{ "mazebox",			"The Latest Works of MazeBox" },
 	{ "mmedia11",			"Masters of Media: The Making of サクラ大戦" },
 	{ "moderntimes",		"Charles Chaplin in Modern Times" },
@@ -857,6 +868,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "provektor3",			"Provektor III: Design & Image Library" },
 	{ "provektormed",		"Provektor Media" },
 	{ "scripting",			"Macromedia Director Lingo Scripting Technology" },
+	{ "secretsafari", 		"Secret Safari" },
 	{ "shadeviewer",		"Shade Viewer" },
 	{ "sozaijiten",			"素材辞典" },									// Datacraft Materials Dictionary (texture packs)
 	{ "strata",				"Strata Studio Pro" },
@@ -1802,6 +1814,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
 	MACDEMO1_l("muzukashiihon", "Demo", "Muzukashiihon", "f5277c53bacd27936158dd3867e587e2", 1058777, Common::JA_JPN, 311),
 	MACDEMO1_l("muzukashiihon", "Trial Version", "ITA Choco", "f5277c53bacd27936158dd3867e587e2", 1123785, Common::JA_JPN, 311),
+	// Original filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
+	MACGAME1_l("muzukashiihon", "", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1579812, Common::JA_JPN, 311),
 
 	MACGAME1("mylk", "", "Mylk DoubleClickMe!", "8a33471513b6896d3d13b8a9c8790d86", 356280, 300),
 
@@ -1852,6 +1866,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("pagemaker", "5.0 Demo", "PageMaker 5.0 Demo", "cdb60bbb5f203e860de63df641bf5995", 1425719, 310),
 
 	MACDEMO1_l("peaceland", "Demo", "PeaceLand", "276bee761e48a6fd709df77d5c2f60dd", 394133, Common::JA_JPN, 313),
+
+	// Original Mac-only release
+	MACGAME1_l("picklesbook", "", "Pickle", "c9ec74eea228500976ba680a362308bb", 456728, Common::JA_JPN, 300),
 
 	MACDEMO1_l("picturecard", "Demo", "Surmount", "f5277c53bacd27936158dd3867e587e2", 4407360, Common::JA_JPN, 311),
 
@@ -2010,6 +2027,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("vvs", "", "VVS Theater-ExtraLarge", "f5277c53bacd27936158dd3867e587e2", 912907, Common::JA_JPN, 311),
 	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639768, Common::JA_JPN, 311),
+
+	// American release, English version - both are on the same disc
+	MACGAME1("wallobee", "American rerelease", "Bingi Burra", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384683, 313),
+	// American release, French version
+	MACGAME1_l("wallobee", "American rerelease", "Bingi Burra", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384688, Common::FR_FRA, 313),
+
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_NO_FLAGS
@@ -2630,6 +2653,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "5bbb193a8785c70abe2a4d86b99e1536", 304126, 404),
 	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",  "b083372f35bfaa97f68cfa7f9bb5222e", 2132572,
 									"DemoMain.dxr", "d16606eadccdb21f654f4b4264fc996a", 2711628, 404),
+
+	MACGAME1_l("henachoco08", "", "yataideomase", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+
+	MACGAME1_l("henachoco09", "", "nisemizi", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
 	WINGAME1("hhouse", "",			"HHOUSE.EXE",  "e798a08ba6057705af028673f7a9a2ef", 3181345, 400),
 	WINDEMO1("hhouse", "1995 Demo", "HAUNTED.EXE", "5b7e970d8b8dec473e31cc6815c03bf6", 1166813, 404),
@@ -3379,6 +3406,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 		"000.MOV", "92db07a408eca6bc0ebc230e31e6caa4", 461940,
 		Common::JA_JPN, 402),
 
+	MACGAME1("wallobee3", "", "Lost Lionardo", "cdb27c916044ae4dceb4b7326063fa03", 303961, 400),
+	WINGAME1("wallobee3", "", "LIONARDO.EXE", "51de9e2a40f06d96ca59fcf37c6f297a", 775449, 400),
+
 	WINGAME2_l("warlock", "", "START.EXE",	  "04e0887e76ee58b86ace1d89bf816d9f", 694159,
 							  "SSWARLCK.DIR", "aa3d2d8d69746d2b0f312427649cd98f", 608862, Common::JA_JPN, 400),
 
@@ -3541,6 +3571,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("cezanne", "", "CEZANNE", "8e171256e4811dc976720da230634d87", 705689, 500),
 	WINGAME1("cezanne", "", "CEZWIN95.EXE", "3460ad87d2ba57104e2810a77b53c220", 2763107, 500),
+
+	MACGAME1_l("christmassmallhouse", "", "Demo Xmas",    "c148f66ae3511fb88733102aa27efe7e", 719636, Common::JA_JPN, 501),
+	WINGAME1_l("christmassmallhouse", "", "X_demo.exe",    "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1411520, Common::JA_JPN, 501),
 
 	// Series includes Schubert, Tchaikovsky, Mozart, Vivaldi and probably more
 	WINGAME1_l("clasplusbee2", "", "BEE2_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1694421, Common::ES_ESP, 501),
@@ -3730,6 +3763,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("jslearn", "1997 D5 Demo", "JumpStart Previews", "231d3041df162be4a0ddd36a74eb03b6", 718745, 501),
 	WINGAME1("jslearn", "1997 D5 Demo", "PREV32A.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411155, 501),
 
+	// Bilingual English/Japanese
+	MACGAME1("llla", "",	  "LLLA",	 "f808a9f231b77617fa559cf9d2da66c1", 304804, 501),
+	WINGAME1("llla", "",	  "LLLA_PC.EXE",	 "3646e2d759d305f25dc7b65970e1024e", 603678, 501),
+
 	MACGAME1("maccubed7", "", "Let's Go! Internet & Utilities", "5b3a7fa45ec7655c5f9b7fe39ae37a11", 705613, 500),
 
 	// Original Mac Pre-K filename contains non-printable character
@@ -3862,6 +3899,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("princetonsat98", "", "sat98_32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1446775, 501),
 
+	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
+	WINGAME1_l("putlestory", "", "PUTLE32.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1403206, Common::JA_JPN, 501),
+
 	// "Making of Pyst" parody video is from X-Fools
 	MACGAME1("pyst", "", "PYST", "8a99f02ecc7f918d85be99a0cd718107", 7015, 501),
 	WINGAME1("pyst", "", "PYST32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411439, 501),
@@ -3916,6 +3956,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("secretpaths1", "", "Secret Paths in the Forest", "4f0fb528e9c495fd2822ad400178e7a8", 717027, 501),
 	WINGAME1("secretpaths1", "", "Secret Paths in the Forest.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1425465, 501),
 
+	MACGAME1_l("secretsafari", "", "Demo Safari",    "5eb167ccbe590c1d5eb727821277b67f", 719636, Common::JA_JPN, 501),
+	WINGAME1_l("secretsafari", "", "Sf_demo.exe",    "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1411258, Common::JA_JPN, 501),
+
 	// From SHR Math Essentials Disc 2
 	MACDEMO1("shr1st2nd", "Demo", "Grades 1 & 2 Essentials Demo", "9f75f1febafbb9224db5e45f39bf21a6", 719289, 501),
 	MACDEMO1("shr3rd4th", "Demo", "SHR 3_4 Demo", "231d3041df162be4a0ddd36a74eb03b6", 716997, 501),
@@ -3942,6 +3985,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("slamdunktyping", "Demo", "SDTDEMO.EXE",      "842014a812b454620f64b860fd7211f0", 932727, 501),
 	WINDEMO1("slamdunktyping", "Demo", "SLAMDUNK.EXE",     "1a7acbba10a7246ba58c1d53fc7203f5", 3143069, 501),
 	MACDEMO1("slamdunktyping", "Demo", "Mac Slam Dunk",    "231d3041df162be4a0ddd36a74eb03b6", 719261, 501),
+
+	MACGAME1_l("smallhouse", "", "Small House",    "552992fb31c736ca67ffd403096596d6", 719617, Common::JA_JPN, 501),
+	WINGAME2_l("smallhouse", "", "SMALL.EXE",    "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1411970,
+								 "SMALL.BIN", "30ca1e177f721ca74ee0b02c4d397df6", 766, Common::JA_JPN, 501),
 
 	// Polish version is from the covermount of CyberMycha 07/2002
 	WINGAME1_l("snow7han", "", "Snw7han.exe", "65ef7246e9ab04aff59fb734e9551727", 941245, Common::PL_POL, 501),
@@ -4343,6 +4390,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("melements", "", "CHECK.DXR",			  "d1cd0ed95b0e30597e0089bf3e5caf0f", 575414,
 								"MVM.EXE",				  "518a98696fe1122e08410b0f157f21bf", 1512503, Common::DE_DEU, 602),
 
+	WINGAME1("meetchuck", "", "HORSE.EXE", "b0f3841f6e8005e519445b22de37749b", 1130649, 600),
+
 	MACGAME1("mulanpresskit", "", "Disney's Mulan", "d16e0af2a86b6b04a8f9c86205c0d3d2", 1031738, 601),
 	WINGAME1("mulanpresskit", "", "MULAN.EXE", "ece1c7a090010965890840102978e693", 1828679, 601),
 
@@ -4397,6 +4446,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("okaytruehero", "",	"Start",	   	"136e1ab1d4d13168964afb699bda13aa", 1034240,
 									"Titel.dxr",   	"e8b13e9e34dcfbdd4481f7f0b8209903", 1134260, Common::DE_DEU, 650),
 	WINGAME1_l("okaytruehero", "",	"ok39932.exe", 	"1b8d78ddca650041b8997cac7af3184b", 1883584, Common::DE_DEU, 650),
+
+	MACGAME2_l("pantosstory", "", "START", "7d0c7ae431938c53e64d443b05bf19fd", 1035232,
+								  "A00.Dxr", "a36c3a6044d0dbcfa30b147cbdfc4f5f", 1367720, Common::JA_JPN, 602),
+	WINGAME2_l("pantosstory", "", "START.EXE", "45871c12eb944f09f50ee742113a1e2d", 1861862,
+								  "A00.DXR", "a36c3a6044d0dbcfa30b147cbdfc4f5f", 1367720, Common::JA_JPN, 602),
 
 	WINGAME2_l("pettson2", "", "START32.EXE", "518a98696fe1122e08410b0f157f21bf", 1723219,
 							   "START.DXR",	  "18d333b1b9b02d76b35a07252046d295", 37384, Common::SE_SWE, 602),
@@ -4596,6 +4650,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("braingames", "", "invent.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2648430, Common::DE_DEU, 702),
 
 	WINGAME1("buzz1", "", "DBLY1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2201114, 702),
+
+	WINGAME1_l("cookie", "", "CB1W.EXE",	 "91823501d9b3f9b9ced814101312fd11", 1977478, Common::JA_JPN, 700),
+	// Original filename was 'RODIK クッキーズ・バッスル'
+	MACGAME1_l("cookie", "", "xn--RODIK -1q4epa5gj1hc2o4o0hoa",	 "8932d51c63e4aa8509a33accffb5eb63", 116990, Common::JA_JPN, 700),
 
 	// Bilingual English and French
 	MACGAME1("cpnre", "", "ASI-SEI",	 "0944b962ebb00f4b5d5149d220f8449b", 111450, 702),

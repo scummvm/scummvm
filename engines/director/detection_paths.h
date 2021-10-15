@@ -184,6 +184,7 @@ const char *directoryGlobs[] = {
 	"bin",
 	"adam resources",				// ADAM Software Products
 	"material",						// NY Yankees Yearbook
+	"PANTOS",						// Pantos Story
 	0
 };
 
