@@ -65,7 +65,7 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 	const uint8 *file = _vm->resource()->fileData(fileName, &fileSize);
 
 	if (!file)
-		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", file);
+		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", fileName);
 
 	uint32 inSize = READ_BE_UINT32(file);
 	const uint8 *pos = file;
