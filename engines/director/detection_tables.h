@@ -743,6 +743,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tantei",				"完全探偵マニュアル" },							 	// Perfect Detective Manual
 	{ "tetsuman",			"ハイ! 鉄マン です" }, 	   					    	// Hai! Tetsuman Desu
 	{ "tetsumangaiden",		"鉄マン外伝 ゲーム大王の野望" }, 				 	// Tetsuman Gaiden: Game Daiou no Yabou
+	{ "timegal",			"Time Gal" },
 	{ "tokimemotype1",		"ときめきメモリアルタイピング" },					// Tokimeki Memorial Typing
 	{ "tokimemotypegs",		"ときメモGSタイピング" },							// Tokimemo GS Typing (Girl's Side)
 	{ "ttw",				"Through the Window: In Search for the Lost Bag" },
@@ -1945,6 +1946,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// English translation by Skye Sonomura (HomeStarRunnerTron)
 	MACGAME1_l("the7colors", "", "LEGEND OF PSYS CITY", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384001, Common::JA_JPN, 300),
 	MACGAME1("the7colors", "", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398981, 300),
+
+	MACGAME1_l("timegal", "", "TimeGal", "f5277c53bacd27936158dd3867e587e2", 392486, Common::JA_JPN, 311),
 
 	// First animation fails to run on Mac emulators
 	MACGAME1("timeline", "24bit 1", "TimeLine 24bit 1", "1ae45c23586b41997ba52e2e7c771c4c", 252464, 310),
@@ -3238,6 +3241,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version is not Director
 	WINGAME1("thinkinthingsdp", "", "PARENTS.EXE", "4e82061a925caa16320c52b38aeb68c5", 1160899, 400),
+
+	// Korean Windows version is named 'Time Girl'
+	WINGAME1_l("timegal", "", "TIMEGIRL.EXE", "0e5a7734bdc74198a62171ea4d51a364", 687457, Common::KO_KOR, 400),
 
 	WINDEMO1("timelapse", "Demo", "TLOVIEW.EXE", "6cd9f5644c8aa66ce60a23ee02762eab", 75131959, 404),
 
