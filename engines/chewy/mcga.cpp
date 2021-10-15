@@ -326,20 +326,46 @@ void vors() {
 	fontY = fvory;
 }
 
-void zoom_img(byte *source, byte *dest, int16 xdiff_, int16 ydiff_) {
-	warning("STUB - zoom_img");
-}
-
 void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
 	warning("STUB - zoom_set");
 }
 
-void putcxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol, int16 scrWidth) {
-	warning("STUB - putcxy");
+void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
+	size_t charSize = (fontWidth / 8) * fontHeight;
+	byte *charSrcP = fontAddr + (c - fontFirst) * charSize;
+
+	byte *destP;
+	int width;
+	if (scrWidth != 0) {
+		destP = screenP + (y * scrWidth) + x;
+	} else {
+		destP = screenP + (y * scrWidth) + x;
+		scrWidth = SCREEN_WIDTH;
+	}
+
+	for (int y = 0; y < fontHeight; ++y, destP += scrWidth) {
+		byte *destLineP = destP;
+
+		for (int byteCtr = 0, bits = *charSrcP++;
+			byteCtr < (fontWidth / 8);
+			bits = *charSrcP++) {
+			// Iterate through the 8 bits
+			for (int x = 0; x < 8; ++x, ++destLineP, bits <<= 1) {
+				if (bits & 0x80)
+					*destLineP = fgCol;
+				else
+					*destLineP = bgCol;
+			}
+		}
+	}
+
+	if (screenP == (byte *)g_screen->getPixels())
+		g_screen->addDirtyRect(Common::Rect(
+			x, y, x + fontWidth, y + fontHeight));
 }
 
 void putz(char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
-	warning("STUB - putz");
+	putcxy(gcurx, gcury, c, fgCol, bgCol, scrWidth);
 }
 
 void init_svga(VesaInfo *vi_, byte *virt_screen) {

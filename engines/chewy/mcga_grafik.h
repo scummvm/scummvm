@@ -124,8 +124,6 @@ public:
 	                 int16 hoehe, int16 scrwidth);
 	void blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth);
 	void sprite_set(byte *sptr, int16 x, int16 y, int16 scrwidth);
-	void scale_image(byte *source, byte *dest, int16 xdiff,
-	                 int16 ydiff);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
 	void map_spr2screen(byte *sptr, int16 x, int16 y);
