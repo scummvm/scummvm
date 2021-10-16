@@ -22,6 +22,7 @@
 
 #include "common/memstream.h"
 #include "chewy/chewy.h"
+#include "chewy/events.h"
 #include "chewy/mcga_grafik.h"
 #include "chewy/mcga.h"
 
@@ -86,7 +87,7 @@ mcga_grafik::mcga_grafik() {
 	if (enstr) {
 		printf(b);
 		printf("\n");
-		delay(800);
+		g_events->delay(800);
 	}
 #endif
 
@@ -826,7 +827,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 						}
 
 						if (izahl == 82) {
-							//delay(200);
+							g_events->delay(200);
 							if (!einfuegen) {
 								einfuegen = 1;
 								einfuege_cur = 125;
@@ -1524,7 +1525,7 @@ void mcga_grafik::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 yd
 void mcga_grafik::init(uint16 mode, byte *info_blk, byte *vscreen) {
 	if (!get_vesa_info(mode, info_blk)) {
 		init_svga(&vi, vscreen);
-		//delay(250);
+		//g_events->delay(250);
 	}
 }
 

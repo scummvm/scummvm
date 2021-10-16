@@ -50,6 +50,8 @@ private:
 	 * and checks for any option selection
 	 */
 	static void animate();
+
+	static int16 creditsFn(int16 key);
 public:
 	/**
 	 * Displays the menu

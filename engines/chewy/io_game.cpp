@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/io_game.h"
 
@@ -399,7 +400,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				}
 			} else
 				in->hot_key = auswahl + 58;
-			//delay(200);
+			g_events->delay(200);
 			kbinfo->key_code = 0;
 			break;
 

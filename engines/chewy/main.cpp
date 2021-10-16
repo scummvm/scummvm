@@ -90,7 +90,7 @@ void game_main() {
 	tidy();
 	out->rest_palette();
 	out->restore_mode();
-	}
+}
 
 void alloc_buffers() {
 	workpage = (byte *)calloc(64004l, 1);

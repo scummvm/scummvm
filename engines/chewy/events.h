@@ -43,6 +43,8 @@ public:
 
 	EventsManager(Graphics::Screen *screen);
 	virtual ~EventsManager();
+
+	void delay(size_t time);
 };
 
 extern EventsManager *g_events;

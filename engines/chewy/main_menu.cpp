@@ -50,7 +50,8 @@ void MainMenu::execute() {
 	menu_display = 0;
 	spieler.SVal5 = 1;
 
-	while (!SHOULD_QUIT) {
+	bool done = false;
+	while (!done && !SHOULD_QUIT) {
 		ailsnd->stop_mod();
 		ailsnd->end_sound();
 		SetUpScreenFunc = screenFunc;
@@ -83,6 +84,21 @@ void MainMenu::execute() {
 			out->setze_zeiger(workptr);
 			flags.NoPalAfterFlc = true;
 			flic_cut(135, 0);
+			break;
+
+		case MM_QUIT:
+			out->setze_zeiger(nullptr);
+			out->cls();
+			done = true;
+			break;
+
+		case MM_CREDITS:
+			fx->border(workpage, 100, 0, 0);
+			flags.NoPalAfterFlc = true;
+			flc->set_custom_user_function(creditsFn);
+			flic_cut(159, 0);
+			flc->remove_custom_user_function();
+			fx->border(workpage, 100, 0, 0);
 			break;
 
 		default:
@@ -131,6 +147,22 @@ void MainMenu::animate() {
 
 	g_screen->update();
 	g_events->update();
+}
+
+int16 MainMenu::creditsFn(int16 key) {
+	if (key == 32 || key == 72 || key == 92 ||
+			key == 128 || key == 165 || key == 185 ||
+			key == 211 || key == 248 || key == 266) {
+		for (int idx = 0; idx < 2000; ++idx) {
+			if (in->get_switch_code() == 1)
+				return -1;
+			g_events->update();
+		}
+		return 0;
+
+	} else {
+		return in->get_switch_code() == 1 ? -1 : 0;
+	}
 }
 
 } // namespace Chewy

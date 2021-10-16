@@ -21,6 +21,7 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/episode1.h"
@@ -775,7 +776,7 @@ int16 r4_sonde_comp() {
 		}
 		set_up_screen(DO_SETUP);
 	}
-	warning("FIXME: delay(500)");
+	g_events->delay(500);
 
 	clear_prog_ani();
 	spieler.PersonHide[P_CHEWY] = false;

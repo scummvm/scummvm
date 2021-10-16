@@ -180,7 +180,7 @@ ailclass::ailclass() {
 	if (enstr) {
 		printf(b);
 		printf("\n");
-		delay(800);
+		g_events->delay(800);
 	}
 #endif
 	SoundEnable = false;
