@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/timer.h"
@@ -90,6 +91,16 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 
 void EventsManager::handleKbdEvent(const Common::Event &event) {
 	// TODO
+}
+
+void EventsManager::delay(size_t time) {
+	uint32 expiryTime = g_system->getMillis() + time;
+	uint32 currTime;
+
+	do {
+		update();
+		currTime = g_system->getMillis();
+	} while (currTime >= expiryTime);
 }
 
 } // namespace Chewy

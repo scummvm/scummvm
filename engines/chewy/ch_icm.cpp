@@ -253,7 +253,7 @@ void go_auto_mov() {
 			} else {
 				out->printxy(0, 0, 255, 0, scr_width, "Nr zu hoch !!\0");
 				BELL
-				delay(300);
+				g_events->delay(300);
 			}
 		}
 	}

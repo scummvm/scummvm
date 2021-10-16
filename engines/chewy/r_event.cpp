@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/episode1.h"
@@ -1086,7 +1087,7 @@ void flic_cut(int16 nr, int16 mode) {
 	out->setze_zeiger(0);
 	det->disable_room_sound();
 	ailsnd->end_sound();
-	g_system->delayMillis(1000); // delay(50);
+	g_events->delay(50);
 	Ci.Handle = File::open("cut/cut.tap");
 	Ci.Fname = 0;
 
@@ -1235,7 +1236,7 @@ void flic_cut(int16 nr, int16 mode) {
 	}
 	ERROR;
 	ailsnd->end_sound();
-	g_system->delayMillis(1000); // delay(50);
+	g_events->delay(50);
 	ailsnd->set_sound_mastervol(spieler.SoundVol);
 	ailsnd->set_music_mastervol(spieler.MusicVol);
 	load_room_music(spieler.PersonRoomNr[P_CHEWY]);
