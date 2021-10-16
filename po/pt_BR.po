@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-02 04:26+0000\n"
+"PO-Revision-Date: 2021-10-17 12:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5320,13 +5320,15 @@ msgstr "Narrador TTS"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Reproduzir trilha sonora digital durante o vídeo de abertura"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Se marcado, o jogo usará uma trilha sonora digital durante a introdução. "
+"Caso contrário, ele reproduzirá música MIDI."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -6019,6 +6021,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Não foi possível encontrar arquivos de definição de instrumentos AdLib\n"
+"%s e %s. Sem esses arquivos,\n"
+"a música não soará igual ao jogo original."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
