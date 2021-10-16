@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "chewy/chewy.h"
 #include "chewy/mcga_grafik.h"
 #include "chewy/mcga.h"
@@ -504,11 +505,13 @@ void mcga_grafik::map_spr2screen(byte *sptr, int16 x, int16 y) {
 }
 
 void mcga_grafik::set_fontadr(byte *adr) {
-	tff_header *tff;
-	tff = (tff_header *) adr;
-	setfont(adr + sizeof(tff_header), (int16)tff->width, (int16)tff->height,
-	        (int16)tff->first, (int16)tff->last);
-	fvorx = (int16)tff->width;
+	Common::MemoryReadStream rs(adr, tff_header::SIZE());
+	tff_header tff;
+	tff.load(&rs);
+
+	setfont(adr + tff_header::SIZE(), tff.width, tff.height,
+	        tff.first, tff.last);
+	fvorx = tff.width;
 	fvory = 0;
 }
 
