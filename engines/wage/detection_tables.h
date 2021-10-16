@@ -181,6 +181,45 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Zoony", "3f7418ea8672ea558521c178188cfce5", 154990), // original filename "Zoony™"
 	FANGAME("Zoony", "55d3d42b5dca9630eb28ad464f343c67", 154990), // original filename "Zoony™", alt version
 
+#if 0
+	// These are TODO
+	{"grailquest", "GrailQuest: Adventure in the Age of King Arthur"},
+
+	FANGAME("Dash Hansen and the Search for the Black Orchid");
+	FANGAME("Deep Angst II: The Nightmare Ends");
+	FANGAME("Escape From Saecvrom");
+	FANGAME("Maze of the Questing Beast");
+	FANGAME("Pirate Attack!");
+	FANGAME("Robot Planet");
+	FANGAME("Starport");
+	FANGAME("MythWorld");
+	FANGAME("Brownie Saves the Day");
+	FANGAME("Brownie's Dream");
+	FANGAME("Can James Be Found?");
+	FANGAME("SparGate");
+	FANGAME("The Time Squisher");
+	FANGAME("Who Shot Brownie Dog?");
+	FANGAME("Brownie's Time Travels");
+	FANGAME("The Adventures of Steve Reeve");
+	FANGAME("Palace of Sand (Sultan's Palace)");
+	FANGAME("Sword of Siegfried");
+	FANGAME("Introduction to Gothic");
+
+	// modified
+	FANGAME("The Ashland revolution");
+	FANGAME("Jamie the Demon Slayer");
+	FANGAMEN("Lost In Kookyville", "Lost In Kookyville 1.2.4", "89ecb4cef5cc4036e54f8bc45ce7520e", 721569),
+	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366542),
+	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308764),
+	BIGGAME("scepters", "", "Scepters", "2c824f1bd7b22c575c7be86ac88ebd23", 347540), // alt version
+	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408913),
+	BIGGAME("twisted", "", "Twisted! 1.6", "6e0be4c7d83231e56a431dc4ef7bf978", 960954),
+	FANGAME("P-W Adventure", "a8e9f97ee02f01de588a4dbabe55ca3f", 219216),
+	FANGAME("Quest for T-Rex", "51aa29d24ca702c8980e959706ef0b76", 592584),
+	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "4730d0c47d13401d73353e980f91a304", 645318),
+	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53320),
+#endif
+
 	AD_TABLE_END_MARKER
 };
 
