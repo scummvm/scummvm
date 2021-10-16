@@ -1186,9 +1186,11 @@ namespace Director {
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
 #define GENGAME1_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME1t_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 #define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 
 #define MACGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
+#define MACGAME1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
@@ -3359,7 +3361,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO2_l("wallobee", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036,
 		"001b.mov", "2b49fe4e49f9e846fb6e78f92e9a296d", 6931,
 		Common::JA_JPN, 402),
-	MACDEMO2_l("wallobee2", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036, 
+	MACDEMO2_l("wallobee2", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036,
 		"000.MOV", "92db07a408eca6bc0ebc230e31e6caa4", 461940,
 		Common::JA_JPN, 402),
 
