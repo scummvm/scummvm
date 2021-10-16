@@ -98,7 +98,7 @@ uint32 MacResManager::getResForkDataSize() const {
 	if (!hasResFork())
 		return 0;
 
-	_stream->seek(_resForkOffset + 4);
+	_stream->seek(_resForkOffset + 8);
 	return _stream->readUint32BE();
 }
 
