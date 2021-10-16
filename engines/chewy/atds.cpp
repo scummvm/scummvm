@@ -33,13 +33,13 @@ extern char *err_str;
 int16 mouse_push;
 
 void AtsTxtHeader::load(Common::SeekableReadStream *src) {
-	TxtNr = src->readSint16LE();
-	AMov = src->readSint16LE();
-	CurNr = src->readSint16LE();
+	TxtNr = src->readUint16LE();
+	AMov = src->readUint16LE();
+	CurNr = src->readUint16LE();
 }
 
 void AtsStrHeader::load(Common::SeekableReadStream *src) {
-	VocNr = src->readSint16LE();
+	VocNr = src->readUint16LE();
 }
 
 
@@ -662,8 +662,8 @@ char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 	set_ats_mem(mode);
 
 	atsv.TxtMode = txt_mode;
-	if (!get_steuer_bit(txt_nr, ATS_AKTIV_BIT, mode)) {
 
+	if (!get_steuer_bit(txt_nr, ATS_AKTIV_BIT, mode)) {
 		status = ats_sheader[(txt_nr * MAX_ATS_STATUS) + (atsv.TxtMode + 1) / 2];
 		ak_nybble = (atsv.TxtMode + 1) % 2;
 
@@ -686,7 +686,8 @@ char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 			}
 		}
 	}
-	return (str_);
+
+	return str_;
 }
 
 void atdsys::set_ats_str(int16 txt_nr, int16 txt_mode, int16 str_nr, int16 mode) {
@@ -767,49 +768,49 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 
 void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	char *start_str;
-	int16 ende;
 	int16 ende1;
 	start_str = *str_;
-	ende = 0;
 
-	while (!ende) {
-		if (READ_LE_UINT16(start_str) == txt_nr) {
-			ende = 1;
+	bool done1 = false;
+	while (!done1) {
+		Common::MemoryReadStream rs1((const byte *)start_str,
+			AtsTxtHeader::SIZE());
+		atsv.TxtHeader.load(&rs1);
 
-			Common::MemoryReadStream rs1((const byte *)start_str,
-				AtsTxtHeader::SIZE());
-			atsv.TxtHeader.load(&rs1);
+		if (atsv.TxtHeader.TxtNr == 0xFEF0 &&
+				atsv.TxtHeader.AMov == txt_nr) {
+			// Found match
 			*str_ = start_str + AtsTxtHeader::SIZE();
 
-			if (atsv.TxtMode != TXT_MARK_NAME) {
-				Common::MemoryReadStream rs2((const byte *)str,
+			if (atsv.TxtMode) {
+				Common::MemoryReadStream rs2((const byte *)*str_,
 					AtsStrHeader::SIZE());
 				atsv.StrHeader.load(&rs2);
 			}
 
 			*str_ += AtsStrHeader::SIZE();
+			break;
+		}
 
-		} else {
-			start_str += AtsTxtHeader::SIZE();
-			start_str += AtsStrHeader::SIZE();
-			ende1 = 0;
+		start_str += AtsTxtHeader::SIZE() + AtsStrHeader::SIZE();
 
-			while (!ende1) {
-				if (start_str[0] == (char)ATDS_END) {
-					if ((start_str[1] == (char)BLOCKENDE &&
-					        start_str[2] == (char)BLOCKENDE &&
-					        start_str[3] == (char)BLOCKENDE) ||
-					        start_str[1] == (char)STEUERBYTE) {
-						ende = 1;
-						ende1 = 1;
-						*str_ = 0;
+		// Need to iterate over the following string to next entry
+		bool done2 = false;
+		for (; !done2; start_str++) {
+			if (*start_str == 13) {
+				// Reached end of line
+				if (READ_LE_UINT16(start_str + 1) == 0xFEF1)
+					start_str += 4;
+				else if (start_str[1] == 0xe) {
+					++start_str;
+					if (start_str[1] == 0xf && start_str[2] == 0xf &&
+							start_str[3] == 0xf) {
+						done1 = done2 = true;
+						*str_ = nullptr;
 					} else {
-						ende1 = 1;
-
+						done2 = true;
 					}
 				}
-
-				++start_str;
 			}
 		}
 	}
