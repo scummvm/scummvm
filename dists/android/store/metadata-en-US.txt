@@ -16,7 +16,7 @@ ScummVM provides a way to play many classic graphical point-and-click adventure 
 
 You can find more information, and some free-to-download adventure games, on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-You can find a quick-start guide on our website at http://wiki.scummvm.org/index.php/Android/Guide which provides some more information, explains how to configure some Android-specific options, and where you can find other help.
+You can find a quick-start guide on our website at https://docs.scummvm.org/en/v2.5.0/other_platforms/android.html which provides some more information, explains how to configure some Android-specific options, and where you can find other help.
 
 http://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
