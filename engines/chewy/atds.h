@@ -197,19 +197,25 @@ struct AdsNextBlk {
 };
 
 struct AtsTxtHeader {
-	int16 TxtNr;
-	int16 AMov;
-	int16 CurNr;
+	int16 TxtNr = 0;
+	int16 AMov = 0;
+	int16 CurNr = 0;
+
+	void load(Common::SeekableReadStream *src);
+	static size_t SIZE() { return 6; }
 };
 
 struct AtsStrHeader {
-	int16 VocNr;
+	int16 VocNr = 0;
+
+	void load(Common::SeekableReadStream *src);
+	static size_t SIZE() { return 2; }
 };
 
 struct AtsVar {
 	bool Display;
-	AtsTxtHeader *TxtHeader;
-	AtsStrHeader *StrHeader;
+	AtsTxtHeader TxtHeader;
+	AtsStrHeader StrHeader;
 	char *Ptr;
 	int16 DelayCount;
 	int16 SilentCount;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "chewy/ngshext.h"
 #include "chewy/atds.h"
 #include "chewy/defines.h"
@@ -30,6 +31,17 @@ namespace Chewy {
 
 extern char *err_str;
 int16 mouse_push;
+
+void AtsTxtHeader::load(Common::SeekableReadStream *src) {
+	TxtNr = src->readSint16LE();
+	AMov = src->readSint16LE();
+	CurNr = src->readSint16LE();
+}
+
+void AtsStrHeader::load(Common::SeekableReadStream *src) {
+	VocNr = src->readSint16LE();
+}
+
 
 atdsys::atdsys() {
 	int16 i;
@@ -544,7 +556,7 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 				atsv.Color = color;
 				mouse_push = true;
 			}
-			*voc_nr = atsv.StrHeader->VocNr - ATDS_VOC_OFFSET;
+			*voc_nr = atsv.StrHeader.VocNr - ATDS_VOC_OFFSET;
 			if ((atdsv.Display == DISPLAY_VOC) && (*voc_nr != -1)) {
 				atsv.Display = false;
 			}
@@ -661,9 +673,9 @@ char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 		if (str_ != 0) {
 			ats_search_nr(txt_nr, &str_);
 			if (str_ != 0) {
-
 				ats_search_str(txt_anz, &lo_hi[ak_nybble],
 				               (uint8)ats_sheader[txt_nr * MAX_ATS_STATUS], &str_);
+
 				if (str_ != 0) {
 					status = 0;
 					lo_hi[1] <<= 4;
@@ -741,14 +753,13 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 		        str_[1] == (char)BLOCKENDE &&
 		        str_[2] == (char)BLOCKENDE) {
 			ende = 2;
-		} else if (*str_ == (char)STEUERBYTE) {
-			if (str_[1] == (char)txt_mode) {
+		} else if (str_[0] == (char)0xf2 && str_[1] == (char)0xfe) {
+			if (str_[2] == (char)txt_mode)
 				ende = 1;
-				++str_;
-			}
+			str_ += 3;
 		}
-		++str_;
 	}
+
 	if (ende == 2)
 		str_ = 0;
 	return (str_);
@@ -756,31 +767,39 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 
 void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	char *start_str;
-	int16 *pos;
 	int16 ende;
 	int16 ende1;
 	start_str = *str_;
 	ende = 0;
+
 	while (!ende) {
-		pos = (int16 *)start_str;
-		if (*pos == txt_nr) {
+		if (READ_LE_UINT16(start_str) == txt_nr) {
 			ende = 1;
-			atsv.TxtHeader = (AtsTxtHeader *)pos;
-			*str_ = (char *)pos;
-			*str_ += sizeof(AtsTxtHeader);
-			if (atsv.TxtMode != TXT_MARK_NAME)
-				atsv.StrHeader = (AtsStrHeader *)str_;
-			*str_ += sizeof(AtsStrHeader);
+
+			Common::MemoryReadStream rs1((const byte *)start_str,
+				AtsTxtHeader::SIZE());
+			atsv.TxtHeader.load(&rs1);
+			*str_ = start_str + AtsTxtHeader::SIZE();
+
+			if (atsv.TxtMode != TXT_MARK_NAME) {
+				Common::MemoryReadStream rs2((const byte *)str,
+					AtsStrHeader::SIZE());
+				atsv.StrHeader.load(&rs2);
+			}
+
+			*str_ += AtsStrHeader::SIZE();
+
 		} else {
-			start_str += sizeof(AtsTxtHeader);
-			start_str += sizeof(AtsStrHeader);
+			start_str += AtsTxtHeader::SIZE();
+			start_str += AtsStrHeader::SIZE();
 			ende1 = 0;
+
 			while (!ende1) {
-				if (start_str[0] == ATDS_END) {
+				if (start_str[0] == (char)ATDS_END) {
 					if ((start_str[1] == (char)BLOCKENDE &&
 					        start_str[2] == (char)BLOCKENDE &&
 					        start_str[3] == (char)BLOCKENDE) ||
-					        start_str[1] == STEUERBYTE) {
+					        start_str[1] == (char)STEUERBYTE) {
 						ende = 1;
 						ende1 = 1;
 						*str_ = 0;
@@ -789,6 +808,7 @@ void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 
 					}
 				}
+
 				++start_str;
 			}
 		}
@@ -802,10 +822,11 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 	int16 count;
 	tmp_str = *str_;
 	start_str = *str_;
-	tmp_str += sizeof(AtsStrHeader);
+	tmp_str += AtsStrHeader::SIZE();
 	*anz = 0;
 	ende = 0;
 	count = 0;
+
 	while (!ende) {
 		if (count == *status) {
 			if (!*tmp_str) {
@@ -813,11 +834,15 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 			} else if (*tmp_str == ATDS_END_TEXT) {
 				ende = 1;
 				*str_ = start_str;
-				start_str -= sizeof(AtsStrHeader);
-				if (atsv.TxtMode != TXT_MARK_NAME)
-					atsv.StrHeader = (AtsStrHeader *)start_str;
-				if (tmp_str[1] != ATDS_END) {
+				start_str -= AtsStrHeader::SIZE();
 
+				if (atsv.TxtMode != TXT_MARK_NAME) {
+					Common::MemoryReadStream rs((const byte *)start_str,
+						AtsStrHeader::SIZE());
+					atsv.StrHeader.load(&rs);
+				}
+
+				if (tmp_str[1] != ATDS_END) {
 					if (!bit->is_bit(steuer, ATS_COUNT_BIT))
 						++*status;
 				} else {
@@ -833,13 +858,16 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 					*anz = 0;
 					*status = count;
 					*str_ = start_str;
-					start_str -= sizeof(AtsStrHeader);
-					if (atsv.TxtMode != TXT_MARK_NAME)
-						atsv.StrHeader = (AtsStrHeader *)start_str;
+					start_str -= AtsStrHeader::SIZE();
+					if (atsv.TxtMode != TXT_MARK_NAME) {
+						Common::MemoryReadStream rs((const byte *)start_str,
+							AtsStrHeader::SIZE());
+						atsv.StrHeader.load(&rs);
+					}
 				} else {
 					++count;
 
-					tmp_str += sizeof(AtsStrHeader);
+					tmp_str += AtsStrHeader::SIZE();
 					start_str = tmp_str + 1;
 				}
 			} else if (*tmp_str == ATDS_END ||
@@ -851,6 +879,7 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 				*str_ = 0;
 			}
 		}
+
 		++tmp_str;
 	}
 }

@@ -335,7 +335,6 @@ void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) 
 	byte *charSrcP = fontAddr + (c - fontFirst) * charSize;
 
 	byte *destP;
-	int width;
 	if (scrWidth != 0) {
 		destP = screenP + (y * scrWidth) + x;
 	} else {
@@ -343,14 +342,14 @@ void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) 
 		scrWidth = SCREEN_WIDTH;
 	}
 
-	for (int y = 0; y < fontHeight; ++y, destP += scrWidth) {
+	for (size_t yp = 0; yp < fontHeight; ++yp, destP += scrWidth) {
 		byte *destLineP = destP;
 
-		for (int byteCtr = 0, bits = *charSrcP++;
-			byteCtr < (fontWidth / 8);
-			bits = *charSrcP++) {
+		for (size_t byteCtr = 0; byteCtr < (fontWidth / 8); ++byteCtr) {
+			byte bits = *charSrcP++;
+
 			// Iterate through the 8 bits
-			for (int x = 0; x < 8; ++x, ++destLineP, bits <<= 1) {
+			for (size_t xp = 0; xp < 8; ++xp, ++destLineP, bits <<= 1) {
 				if (bits & 0x80)
 					*destLineP = fgCol;
 				else
