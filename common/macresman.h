@@ -170,9 +170,10 @@ public:
 	/**
 	 * Calculate the MD5 checksum of the resource fork
 	 * @param length The maximum length to compute for
+	 * @param tail Caluclate length from the tail
 	 * @return The MD5 checksum of the resource fork
 	 */
-	String computeResForkMD5AsString(uint32 length = 0) const;
+	String computeResForkMD5AsString(uint32 length = 0, bool tail = false) const;
 
 	/**
 	 * Get the base file name of the data/resource fork pair
