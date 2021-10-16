@@ -159,14 +159,20 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
 		palOffset = 260;
-		palColorStart = 0; palColorCount = 256;
-		//memcpy(&paletteOut->mapping, data, 256);
+		palColorStart = 0;
+		palColorCount = 256;
 	} else {
 		// SCI1.1 palette
 		palFormat = data[32];
 		palOffset = 37;
 		palColorStart = data[25];
-		palColorCount = data.getUint16SEAt(29);
+		if (g_sci->getGameId() != GID_HOYLE4) {
+			palColorCount = data.getUint16SEAt(29);
+		} else {
+			// HOYLE4's SCI1.1 palettes are little endian even in
+			// the Mac version, unlike every other SCI1.1 Mac game.
+			palColorCount = data.getUint16LEAt(29);
+		}
 	}
 
 	switch (palFormat) {
