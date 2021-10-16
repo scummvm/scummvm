@@ -28,6 +28,8 @@
 
 namespace Chewy {
 
+extern int fontFirst, fontLast;
+
 void init_mcga();
 void old_mode();
 
@@ -72,8 +74,8 @@ void zoom_img(byte *source, byte *dest, int16 xdiff, int16 ydiff);
 void zoom_set(byte *source, int16 x, int16 y, int16 xdiff,
     int16 ydiff, int16 scrWidth);
 
-void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth);
-void putz(char c, int16 fgCol, int16 bgCol, int16 scrWidth);
+void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
+void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
 void setfont(byte *addr, int16 width, int16 height, int16 first,
              int16 last);
 void vors();

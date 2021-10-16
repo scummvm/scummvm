@@ -48,7 +48,6 @@ int16 clipx1, clipx2, clipy1, clipy2;
 int16 gcurx, gcury, fvorx, fvory;
 int16 fontbr, fonth;
 int16 scr_w, scr_h;
-int16 fontfirst, fontlast;
 char writemode;
 
 char MausMode;
@@ -547,7 +546,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 		zeichen = string[i];
 		++i;
 
-		if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 127)) {
+		if ((zeichen >= fontFirst) && (zeichen <= fontLast) && (zeichen != 127)) {
 			if (zeichen == '%') {
 
 				zeichen = string[i];
@@ -947,7 +946,8 @@ void mcga_grafik::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 
 void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
                           const char *string, ...) {
 	int16 i = 0, k = 0, l;
-	char zeichen, zstring[35];
+	char zstring[35];
+	unsigned char nextChar;
 	int16 izahl;
 	int16 count, diff;
 	uint16 uzahl;
@@ -961,11 +961,12 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 	gcurx = x;
 	gcury = y;
 	i = 0;
+
 	do {
-		zeichen = string[i];
+		nextChar = (unsigned char)string[i];
 		++i;
-		if ((zeichen < 32) || (zeichen == 127)) {
-			switch (zeichen) {
+		if ((nextChar < 32) || (nextChar == 127)) {
+			switch (nextChar) {
 			case 8:
 				gcurx -= fvorx;
 				gcury -= fvory;
@@ -988,35 +989,33 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 				break;
 
 			default :
-				if (zeichen >= fontfirst)
-					putz(zeichen, fgCol, bgCol, scrwidth);
+				if (nextChar >= fontFirst)
+					putz(nextChar, fgCol, bgCol, scrwidth);
 				break;
 			}
-		}
-		else if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
-			if (zeichen != '%') {
-				putz(zeichen, fgCol, bgCol, scrwidth);
+		} else if ((nextChar >= fontFirst) && (nextChar <= fontLast)) {
+			if (nextChar != '%') {
+				putz(nextChar, fgCol, bgCol, scrwidth);
 				vors();
-			}
-			else {
-				zeichen = string[i];
+			} else {
+				nextChar = string[i];
 				count = 0;
-				if ((zeichen >= 0x30) && (zeichen <= 0x39))
+				if ((nextChar >= 0x30) && (nextChar <= 0x39))
 					count = atoi(string + i);
-				while ((zeichen >= 0x30) && (zeichen <= 0x39)) {
+				while ((nextChar >= 0x30) && (nextChar <= 0x39)) {
 					++i;
-					zeichen = string[i];
+					nextChar = string[i];
 				}
 				++i;
-				switch (zeichen) {
+				switch (nextChar) {
 				case '%':
-					putz(zeichen, fgCol, bgCol, scrwidth);
+					putz(nextChar, fgCol, bgCol, scrwidth);
 					vors();
 					break;
 
 				case 'd':
 				case 'u':
-					if (zeichen == 'd') {
+					if (nextChar == 'd') {
 						izahl = va_arg(parptr, int);
 						itoa(izahl, zstring, 10);
 					} else {
@@ -1070,8 +1069,7 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 							++tempptr;
 							vors();
 						}
-					}
-					else {
+					} else {
 						for (l = 0; l < count; l++) {
 							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
@@ -1083,7 +1081,7 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 				}
 			}
 		}
-	} while ((i < MAXSTRING) && (zeichen != 0));
+	} while ((i < MAXSTRING) && (nextChar != 0));
 }
 
 void mcga_grafik::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
@@ -1096,7 +1094,7 @@ void mcga_grafik::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
 	do {
 		zeichen = string[i];
 		++i;
-		if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
+		if ((zeichen >= fontFirst) && (zeichen <= fontLast)) {
 			putz(zeichen, fgCol, bgCol, scrwidth);
 			vors();
 		}
@@ -1144,13 +1142,13 @@ void mcga_grafik::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 				break;
 
 			default :
-				if (zeichen >= fontfirst) {
+				if (zeichen >= fontFirst) {
 					putz(zeichen, fgCol, bgCol, scrwidth);
 					vors();
 				}
 				break;
 			}
-		} else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 0)) {
+		} else if ((zeichen >= fontFirst) && (zeichen <= fontLast) && (zeichen != 0)) {
 			if (zeichen != '%') {
 				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
@@ -1284,12 +1282,12 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 men
 				break;
 
 			default :
-				if (zeichen >= fontfirst)
+				if (zeichen >= fontFirst)
 					putz(zeichen, fgCol, bgCol, scrwidth);
 				break;
 			}
 		}
-		else if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
+		else if ((zeichen >= fontFirst) && (zeichen <= fontLast)) {
 			if (zeichen != '%') {
 				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
@@ -1411,8 +1409,7 @@ void mcga_grafik::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16
 			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
 			break;
 		}
-	}
-	else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 127)) {
+	} else if ((zeichen >= fontFirst) && (zeichen <= fontLast) && (zeichen != 127)) {
 		putcxy(x, y, zeichen, fgCol, bgCol, scrwidth);
 		vors();
 	}
@@ -1445,8 +1442,7 @@ void mcga_grafik::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwid
 			putz(32, fgCol, bgCol, scrwidth);
 			break;
 		}
-	}
-	else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 127)) {
+	} else if ((zeichen >= fontFirst) && (zeichen <= fontLast) && (zeichen != 127)) {
 		putz(zeichen, fgCol, bgCol, scrwidth);
 		vors();
 	}

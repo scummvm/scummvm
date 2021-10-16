@@ -35,15 +35,13 @@ static byte *screenDefaultP;
 static int spriteWidth;
 static byte *fontAddr;
 static size_t fontWidth, fontHeight;
-static int fontFirst, fontLast;
-static int fontX, fontY;
+int fontFirst, fontLast;
 
 void init_mcga() {
 	screenP = (byte *)g_screen->getPixels();
 	screenHasDefault = false;
 	screenDefaultP = nullptr;
 	spriteWidth = 0;
-	fontX = fontY = 0;
 }
 
 void old_mode() {
@@ -322,25 +320,21 @@ void upd_scr() {
 }
 
 void vors() {
-	fontX = fvorx;
-	fontY = fvory;
+	gcurx += fvorx;
+	gcury += fvory;
 }
 
 void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
 	warning("STUB - zoom_set");
 }
 
-void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
+void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
 	size_t charSize = (fontWidth / 8) * fontHeight;
 	byte *charSrcP = fontAddr + (c - fontFirst) * charSize;
 
-	byte *destP;
-	if (scrWidth != 0) {
-		destP = screenP + (y * scrWidth) + x;
-	} else {
-		destP = screenP + (y * scrWidth) + x;
+	if (scrWidth == 0)
 		scrWidth = SCREEN_WIDTH;
-	}
+	byte *destP = screenP + (y * scrWidth) + x;
 
 	for (size_t yp = 0; yp < fontHeight; ++yp, destP += scrWidth) {
 		byte *destLineP = destP;
@@ -352,7 +346,7 @@ void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) 
 			for (size_t xp = 0; xp < 8; ++xp, ++destLineP, bits <<= 1) {
 				if (bits & 0x80)
 					*destLineP = fgCol;
-				else
+				else if (bgCol <= 0xff)
 					*destLineP = bgCol;
 			}
 		}
@@ -363,7 +357,7 @@ void putcxy(int16 x, int16 y, char c, int16 fgCol, int16 bgCol, int16 scrWidth) 
 			x, y, x + fontWidth, y + fontHeight));
 }
 
-void putz(char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
+void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
 	putcxy(gcurx, gcury, c, fgCol, bgCol, scrWidth);
 }
 
