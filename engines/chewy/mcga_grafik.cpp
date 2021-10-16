@@ -943,7 +943,7 @@ void mcga_grafik::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 
 	putz(cursor_z, fcol, bcol, scrwidth);
 }
 
-void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 scrwidth,
+void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
                           const char *string, ...) {
 	int16 i = 0, k = 0, l;
 	char zeichen, zstring[35];
@@ -968,7 +968,7 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 			case 8:
 				gcurx -= fvorx;
 				gcury -= fvory;
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
@@ -983,18 +983,18 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 				break;
 
 			case 127 :
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			default :
 				if (zeichen >= fontfirst)
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 				break;
 			}
 		}
 		else if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
 			if (zeichen != '%') {
-				putz(zeichen, forcol, backcol, scrwidth);
+				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
 			}
 			else {
@@ -1009,7 +1009,7 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 				++i;
 				switch (zeichen) {
 				case '%':
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 					vors();
 					break;
 
@@ -1026,12 +1026,12 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1050,12 +1050,12 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1065,14 +1065,14 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 					tempptr = va_arg(parptr, char *);
 					if (!count) {
 						while (*tempptr != 0) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
 					}
 					else {
 						for (l = 0; l < count; l++) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
@@ -1085,8 +1085,8 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 s
 	} while ((i < MAXSTRING) && (zeichen != 0));
 }
 
-void mcga_grafik::speed_printxy(int16 x, int16 y, int16 forcol, int16 backcol,
-                                int16 scrwidth, char *string) {
+void mcga_grafik::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
+                                int16 scrwidth, const char *string) {
 	int16 i = 0;
 	char zeichen;
 	gcurx = x;
@@ -1096,13 +1096,14 @@ void mcga_grafik::speed_printxy(int16 x, int16 y, int16 forcol, int16 backcol,
 		zeichen = string[i];
 		++i;
 		if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
-			putz(zeichen, forcol, backcol, scrwidth);
+			putz(zeichen, fgCol, bgCol, scrwidth);
 			vors();
 		}
 	} while ((i < MAXSTRING) && (zeichen != 0));
 }
 
-void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *string, ...) {
+void mcga_grafik::print(int16 fgCol, int16 bgCol, int16 scrwidth,
+		const char *string, ...) {
 	int16 i = 0, k = 0, l;
 	char zeichen, zstring[35];
 	char *tempptr;
@@ -1123,7 +1124,7 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 			case 8:
 				gcurx -= fvorx;
 				gcury -= fvory;
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
@@ -1138,19 +1139,19 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 				break;
 
 			case 127 :
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			default :
 				if (zeichen >= fontfirst) {
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 					vors();
 				}
 				break;
 			}
 		} else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 0)) {
 			if (zeichen != '%') {
-				putz(zeichen, forcol, backcol, scrwidth);
+				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
 			} else {
 				zeichen = string[i];
@@ -1164,7 +1165,7 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 				++i;
 				switch (zeichen) {
 				case '%':
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 					vors();
 					break;
 
@@ -1181,12 +1182,12 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1205,12 +1206,12 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1220,13 +1221,13 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 					tempptr = va_arg(parptr, char *);
 					if (!count) {
 						while (*tempptr != 0) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
 					} else {
 						for (l = 0; l < count; l++) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
@@ -1240,8 +1241,8 @@ void mcga_grafik::print(int16 forcol, int16 backcol, int16 scrwidth, char *strin
 	} while ((i < MAXSTRING) && (zeichen != 0));
 }
 
-void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 menge,
-                           int16 scrwidth, char *string, ...) {
+void mcga_grafik::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 menge,
+                           int16 scrwidth, const char *string, ...) {
 	int16 i = 0, k = 0, l;
 	char zeichen, zstring[35];
 	char *tempptr;
@@ -1263,7 +1264,7 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 			case 8:
 				gcurx -= fvorx;
 				gcury -= fvory;
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
@@ -1278,18 +1279,18 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 				break;
 
 			case 127 :
-				putz(32, forcol, backcol, scrwidth);
+				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			default :
 				if (zeichen >= fontfirst)
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 				break;
 			}
 		}
 		else if ((zeichen >= fontfirst) && (zeichen <= fontlast)) {
 			if (zeichen != '%') {
-				putz(zeichen, forcol, backcol, scrwidth);
+				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
 			}
 			else {
@@ -1304,7 +1305,7 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 				++i;
 				switch (zeichen) {
 				case '%':
-					putz(zeichen, forcol, backcol, scrwidth);
+					putz(zeichen, fgCol, bgCol, scrwidth);
 					vors();
 					break;
 
@@ -1321,12 +1322,12 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1345,12 +1346,12 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 					if (count) {
 						diff = check_stellen_anz(zstring, &k, count);
 						for (l = 0; l < diff; l++) {
-							putz(0x30, forcol, backcol, scrwidth);
+							putz(0x30, fgCol, bgCol, scrwidth);
 							vors();
 						}
 					}
 					while (zstring[k] != 0) {
-						putz(zstring[k], forcol, backcol, scrwidth);
+						putz(zstring[k], fgCol, bgCol, scrwidth);
 						vors();
 						++k;
 					}
@@ -1360,14 +1361,14 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 					tempptr = va_arg(parptr, char *);
 					if (!count) {
 						while (*tempptr != 0) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
 					}
 					else {
 						for (l = 0; l < count; l++) {
-							putz(*tempptr, forcol, backcol, scrwidth);
+							putz(*tempptr, fgCol, bgCol, scrwidth);
 							++tempptr;
 							vors();
 						}
@@ -1381,7 +1382,7 @@ void mcga_grafik::printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 
 	}
 }
 
-void mcga_grafik::printcharxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol,
+void mcga_grafik::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol,
                               int16 scrwidth) {
 	crlfx = x;
 	crlfy = y + fonth + 2;
@@ -1390,7 +1391,7 @@ void mcga_grafik::printcharxy(int16 x, int16 y, char zeichen, int16 forcol, int1
 		case 8:
 			x -= fvorx;
 			y -= fvory;
-			putcxy(x, y, 32, forcol, backcol, scrwidth);
+			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
 			break;
 
 		case 10:
@@ -1406,17 +1407,17 @@ void mcga_grafik::printcharxy(int16 x, int16 y, char zeichen, int16 forcol, int1
 			break;
 
 		case 127:
-			putcxy(x, y, 32, forcol, backcol, scrwidth);
+			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
 			break;
 		}
 	}
 	else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 127)) {
-		putcxy(x, y, zeichen, forcol, backcol, scrwidth);
+		putcxy(x, y, zeichen, fgCol, bgCol, scrwidth);
 		vors();
 	}
 }
 
-void mcga_grafik::printchar(char zeichen, int16 forcol, int16 backcol, int16 scrwidth) {
+void mcga_grafik::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
 	crlfx = gcurx;
 	crlfy = gcury + fonth + 2;
 	if ((zeichen < 32) || (zeichen == 127)) {
@@ -1424,7 +1425,7 @@ void mcga_grafik::printchar(char zeichen, int16 forcol, int16 backcol, int16 scr
 		case 8:
 			gcurx -= fvorx;
 			gcury -= fvory;
-			putz(32, forcol, backcol, scrwidth);
+			putz(32, fgCol, bgCol, scrwidth);
 			break;
 
 		case 10:
@@ -1440,12 +1441,12 @@ void mcga_grafik::printchar(char zeichen, int16 forcol, int16 backcol, int16 scr
 			break;
 
 		case 127:
-			putz(32, forcol, backcol, scrwidth);
+			putz(32, fgCol, bgCol, scrwidth);
 			break;
 		}
 	}
 	else if ((zeichen >= fontfirst) && (zeichen <= fontlast) && (zeichen != 127)) {
-		putz(zeichen, forcol, backcol, scrwidth);
+		putz(zeichen, fgCol, bgCol, scrwidth);
 		vors();
 	}
 }

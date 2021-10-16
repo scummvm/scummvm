@@ -27,6 +27,15 @@
 
 namespace Chewy {
 
+enum MainMenuSelection {
+	MM_START_GAME = 0,
+	MM_NOTHING = 1,
+	MM_LOAD_GAME = 2,
+	MM_CINEMA = 3,
+	MM_QUIT = 4,
+	MM_CREDITS = 5
+};
+
 class MainMenu {
 private:
 	static int _selection;

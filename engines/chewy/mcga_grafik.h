@@ -132,16 +132,16 @@ public:
 	void plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 scrwidth,
 	                   char cursor);
 	int16 scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth, const char *string, ...);
-	void printxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 scrwidth,
-	             const char *format, ...);
-	void speed_printxy(int16 x, int16 y, int16 forcol, int16 backcol,
-	                   int16 scrwidth, char *string);
-	void print(int16 forcol, int16 backcol, int16 scrwidth, char *format, ...);
-	void printnxy(int16 x, int16 y, int16 forcol, int16 backcol, int16 menge,
-	              int16 scrwidth, char *format, ...);
-	void printcharxy(int16 x, int16 y, char zeichen, int16 forcol, int16 backcol,
-	                 int16 scrwidth);
-	void printchar(char zeichen, int16 forcol, int16 backcol, int16 scrwidth);
+	void printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
+	    const char *format, ...);
+	void speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
+	    int16 scrwidth, const char *string);
+	void print(int16 fgCol, int16 bgCol, int16 scrwidth, const char *format, ...);
+	void printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 menge,
+	    int16 scrwidth, const char *format, ...);
+	void printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol,
+	    int16 scrwidth);
+	void printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth);
 	void vorschub();
 	void set_vorschub(int16 x, int16 y);
 	void move(int16 x, int16 y);
