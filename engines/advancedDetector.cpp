@@ -495,6 +495,8 @@ static char flagsToMD5Prefix(uint32 flags) {
 	return 'f';
 }
 
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps);
+
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	Common::String hashname = Common::String::format("%c:%s:%d", flagsToMD5Prefix(game.flags), fname.c_str(), _md5Bytes);
 
@@ -504,44 +506,21 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 		return true;
 	}
 
-	if (game.flags & ADGF_MACRESFORK) {
-		FileMapArchive fileMapArchive(allFiles);
+	bool res = getFilePropertiesIntern(_md5Bytes, allFiles, game, fname, fileProps);
 
-		Common::MacResManager macResMan;
-
-		if (!macResMan.open(fname, fileMapArchive))
-			return false;
-
-		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
-		fileProps.size = macResMan.getResForkDataSize();
-
-		if (fileProps.size != 0) {
-			MD5Man.setMD5(hashname, fileProps.md5);
-			MD5Man.setSize(hashname, fileProps.size);
-			return true;
-		}
+	if (res) {
+		MD5Man.setMD5(hashname, fileProps.md5);
+		MD5Man.setSize(hashname, fileProps.size);
 	}
 
-	if (!allFiles.contains(fname))
-		return false;
-
-	Common::File testFile;
-
-	if (!testFile.open(allFiles[fname]))
-		return false;
-
-	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
-	fileProps.size = testFile.size();
-	MD5Man.setMD5(hashname, fileProps.md5);
-	MD5Man.setSize(hashname, fileProps.size);
-
-	return true;
+	return res;
 }
 
 bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
-	// FIXME/TODO: We don't handle the case that a file is listed as a regular
-	// file and as one with resource fork.
+	return getFilePropertiesIntern(md5Bytes, allFiles, game, fname, fileProps);
+}
 
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) {
 	if (game.flags & ADGF_MACRESFORK) {
 		FileMapArchive fileMapArchive(allFiles);
 
