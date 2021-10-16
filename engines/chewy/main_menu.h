@@ -29,7 +29,7 @@ namespace Chewy {
 
 enum MainMenuSelection {
 	MM_START_GAME = 0,
-	MM_NOTHING = 1,
+	MM_VIEW_INTRO = 1,
 	MM_LOAD_GAME = 2,
 	MM_CINEMA = 3,
 	MM_QUIT = 4,
