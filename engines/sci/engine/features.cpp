@@ -838,4 +838,16 @@ bool GameFeatures::useEarlyGetLongestTextCalculations() const {
 	}
 }
 
+bool GameFeatures::hasScriptObjectNames() const {
+	switch (g_sci->getGameId()) {
+	case GID_HOYLE4:
+	case GID_LSL6:
+	case GID_QFG1VGA:
+		return (g_sci->getPlatform() != Common::kPlatformMacintosh);
+	
+	default:
+		return true;
+	}
+}
+
 } // End of namespace Sci

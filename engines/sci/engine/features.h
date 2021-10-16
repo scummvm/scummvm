@@ -268,6 +268,14 @@ public:
 
 	bool useEarlyGetLongestTextCalculations() const;
 
+	/**
+	 * Several SCI1.1 Macintosh games have empty strings for almost all of the
+	 * object names in the script resources.
+	 *
+	 * @return true if the game's object names aren't empty strings.
+	 */
+	bool hasScriptObjectNames() const;
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 

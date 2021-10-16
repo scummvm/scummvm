@@ -20,6 +20,7 @@
  *
  */
 
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
 #include "sci/engine/state.h"
@@ -86,7 +87,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #5101
 	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
 	{ GID_PHANTASMAGORIA, 902,    0,  0,                   "", "export 7",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_shr: when starting a chapter in Phantasmagoria
-	{ GID_QFG1VGA,        301,  928,  0,                 NULL, "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, Blink:init called with 1 parameter, but 2nd parameter is used for div which happens to be an object. NULL object name as Mac version has none.
+	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, Blink:init called with 1 parameter, but 2nd parameter is used for div which happens to be an object.
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
 	{ GID_QFG3,           780,  999,  0,                   "", "export 6",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
 	{ GID_TORIN,        51400,64928,  0,              "Blink", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_div: when Lycentia knocks Torin out after he removes her collar
@@ -515,8 +516,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",           sig_uninitread_qfg1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
-	{ GID_QFG1VGA,        -1,   210,  0,                 NULL, "init",        sig_uninitread_qfg1vga_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: going to the brigands hideout - bug #5515. object is "Encounter" but Mac version has blank names
-	{ GID_QFG1VGA,        58,    58,  0,                 NULL, "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,  18 } }, // qfg1vga: casting "detect magic" at giant's cave, temp 0 used instead of spell number. object is "rm58" but Mac version has blank names
+	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: going to the brigands hideout - bug #5515
+	{ GID_QFG1VGA,        58,    58,  0,               "rm58", "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,  18 } }, // qfg1vga: casting "detect magic" at giant's cave, temp 0 used instead of spell number
 	{ GID_QFG1VGA,        96,    96,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: when yorick throws an object
 	{ GID_QFG1VGA,       320,   320,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: first time entering room 320 when centaur offers fruits and vegetables
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
@@ -1187,7 +1188,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
-						&& objectNameMatches
+						&& (objectNameMatches || !g_sci->_features->hasScriptObjectNames())
 						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName, K_LANG_ENGLISH)
 						&& ((workaround->fromIndex == -1) || ((workaround->fromIndex <= index) && (workaround->toIndex >= index)))) {
 					// Workaround found
