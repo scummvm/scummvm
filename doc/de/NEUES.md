@@ -11,6 +11,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Schwarzen Bildschirm bei der Eingabe eines Spielstand-Namens korrigiert.
    - OpenGL ohne Shader wird nun als Standard-Einstellung für Grim Fandango bevorzugt.
 
+ Xeen:
+   - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
+
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
