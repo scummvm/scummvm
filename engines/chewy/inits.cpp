@@ -29,6 +29,7 @@
 namespace Chewy {
 
 extern int16 room_start_nr;
+static void font_load();
 
 void standard_init() {
 	mem = new memory;
@@ -90,6 +91,7 @@ void standard_init() {
 	pal [767] = 63;
 	out->einblenden(pal, 0);
 	room->set_timer_start(1);
+	font_load();
 
 	out->cls();
 	in->neuer_kb_handler(&kbinfo);
@@ -317,6 +319,32 @@ void new_game() {
 	obj->sort();
 	for (i = 0; i < obj->spieler_invnr[0]; i++)
 		spieler.InventSlot[i] = obj->spieler_invnr[i + 1];
+}
+
+static void font_load() {
+	int16 vorx;
+	int16 vory;
+	int16 fntbr;
+	int16 fnth;
+
+	// Load the 8x8 font
+	mem->tff_adr(FONT8x8, &font8x8);
+	ERROR
+	out->set_fontadr(font8x8);
+
+	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
+	fvorx8x8 = vorx;
+	fvory8x8 = vory;
+
+	// Load the 6x8 font
+	mem->tff_adr(FONT6x8, &font6x8);
+	ERROR
+	out->set_fontadr(font6x8);
+	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
+	fvorx6x8 = vorx - 2;
+	fvory6x8 = vory;
+	out->set_vorschub(fvorx6x8, vory);
+	atds->set_font(font8x8, fvorx8x8, 10);
 }
 
 void init_load() {

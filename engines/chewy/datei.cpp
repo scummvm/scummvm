@@ -479,36 +479,35 @@ void datei::load_korrektur(const char *fname, byte *sp) {
 }
 
 void datei::load_tff(const char *fname, byte *speicher) {
-	Stream *handle;
+	Common::File f;
 	tff_header *tff;
 	uint32 size;
-	int16 i;
-	for (i = 0; (i < MAXPATH) && (fname[i] != 0); i++)
-		filename[i] = fname[i];
-	filename[i] = 0;
+
+	strncpy(filename, fname, MAXPATH - 5);
+	filename[MAXPATH - 5] = '\0';
+
 	if (speicher) {
-		tff = (tff_header *)speicher;
-		if ((*filename) == 0)
+		if (*filename == 0)
 			get_filename(filename, MAXPATH);
-		if (!strchr(filename, '.'))strcat(filename, ".TFF\0");
-		handle = chewy_fopen(filename, "rb");
-		if (handle) {
-			if (chewy_fread(speicher, sizeof(tff_header), 1, handle)) {
+		if (!strchr(filename, '.'))
+			strcat(filename, ".tff");
+
+		if (f.open(filename)) {
+			tff = (tff_header *)speicher;
+			if (tff->load(&f)) {
 				size = tff->size;
-				if (!(chewy_fread((speicher + sizeof(tff_header)),
-				            (uint16)size, 1, handle))) {
+				if (f.read(speicher + sizeof(tff_header), size) != size) {
 					fcode = READFEHLER;
 					modul = DATEI;
 				}
 			}
-			chewy_fclose(handle);
-		}
-		else {
+
+			f.close();
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
-	}
-	else {
+	} else {
 		fcode = ZEIGERFEHLER;
 		modul = GRAFIK;
 	}
@@ -1387,6 +1386,8 @@ uint32 datei::size(const char *fname, int16 typ) {
 		}
 	}
 
+	// SCUMMVM: Note to self, use sizeof(structures) for
+	// allocating size, not custom ::SIZE() functions
 	if (f.open(filename)) {
 		switch (typ) {
 		case TBFDATEI:
@@ -1425,11 +1426,11 @@ uint32 datei::size(const char *fname, int16 typ) {
 			break;
 
 		case TFFDATEI:
-			if (chewy_fread(&tff, sizeof(tff_header), 1, &f)) {
+			if (tff.load(&f)) {
 				id = get_id(tff.id);
-				if (id == TFFDATEI)
+				if (id == TFFDATEI) {
 					size = tff.size + sizeof(tff_header);
-				else {
+				} else {
 					modul = DATEI;
 					fcode = NOTTBF;
 				}

@@ -505,13 +505,11 @@ void mcga_grafik::map_spr2screen(byte *sptr, int16 x, int16 y) {
 }
 
 void mcga_grafik::set_fontadr(byte *adr) {
-	Common::MemoryReadStream rs(adr, tff_header::SIZE());
-	tff_header tff;
-	tff.load(&rs);
+	tff_header *tff = (tff_header *)adr;
 
-	setfont(adr + tff_header::SIZE(), tff.width, tff.height,
-	        tff.first, tff.last);
-	fvorx = tff.width;
+	setfont(adr + sizeof(tff_header), tff->width, tff->height,
+	        tff->first, tff->last);
+	fvorx = tff->width;
 	fvory = 0;
 }
 
