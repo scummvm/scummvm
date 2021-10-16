@@ -487,8 +487,11 @@ namespace Common {
 }
 
 static char flagsToMD5Prefix(uint32 flags) {
-	if (flags & ADGF_MACRESFORK)
+	if (flags & ADGF_MACRESFORK) {
+		if (flags & ADGF_TAILMD5)
+			return 'e';
 		return 'm';
+	}
 	if (flags & ADGF_TAILMD5)
 		return 't';
 
@@ -529,7 +532,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 		if (!macResMan.open(fname, fileMapArchive))
 			return false;
 
-		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes);
+		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes, ((game.flags & ADGF_TAILMD5) != 0));
 		fileProps.size = macResMan.getResForkDataSize();
 
 		if (fileProps.size != 0)
