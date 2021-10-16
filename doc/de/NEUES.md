@@ -10,6 +10,9 @@ Programmcodes finden Sie auf Englisch unter:
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
+ Xeen:
+   - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
+
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
