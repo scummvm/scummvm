@@ -1,3 +1,4 @@
 engines/saga/detection_tables.h
 engines/saga/metaengine.cpp
+engines/saga/music.cpp
 engines/saga/saga.cpp
