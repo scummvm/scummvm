@@ -544,8 +544,10 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	if (!testFile.open(allFiles[fname]))
 		return false;
 
-	if (game.flags & ADGF_TAILMD5)
-		testFile.seek(md5Bytes, SEEK_END);
+	if (game.flags & ADGF_TAILMD5) {
+		if (testFile.size() > md5Bytes)
+			testFile.seek(md5Bytes, SEEK_END);
+	}
 
 	fileProps.size = testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
