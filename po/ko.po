@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-15 18:25+0000\n"
+"POT-Creation-Date: 2021-10-16 09:24+0000\n"
 "PO-Revision-Date: 2021-08-29 19:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -163,16 +163,17 @@ msgstr ""
 #: engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:537
-#: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1351 engines/scumm/scumm.cpp:1377
-#: engines/scumm/scumm.cpp:1399 engines/scumm/scumm.cpp:2102
-#: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
-#: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
-#: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
-#: engines/sword1/logic.cpp:1635 engines/sword2/animation.cpp:429
-#: engines/sword2/animation.cpp:449 engines/sword2/animation.cpp:465
-#: engines/sword2/animation.cpp:475 engines/zvision/file/save_manager.cpp:226
+#: engines/parallaction/saveload.cpp:271 engines/saga/music.cpp:100
+#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
+#: engines/scumm/dialogs.cpp:182 engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:1377 engines/scumm/scumm.cpp:1399
+#: engines/scumm/scumm.cpp:2102 engines/sky/compact.cpp:142
+#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
+#: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
+#: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
+#: engines/sword2/animation.cpp:429 engines/sword2/animation.cpp:449
+#: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
+#: engines/zvision/file/save_manager.cpp:226
 msgid "OK"
 msgstr "확인"
 
@@ -5916,6 +5917,14 @@ msgstr "윈도우즈 평가판 버전은 아직 지원되지 않습니다"
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth 지원이 컴파일되지 않음"
+
+#: engines/saga/music.cpp:96
+#, c-format
+msgid ""
+"Could not find AdLib instrument definition files\n"
+"%s and %s. Without these files,\n"
+"the music will not sound the same as the original game."
+msgstr ""
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
