@@ -120,6 +120,7 @@ struct tff_header {
 	int16 height = 0;
 
 	bool load(Common::SeekableReadStream *src);
+	static size_t SIZE() { return 18; }
 };
 
 #define D_GR 16
