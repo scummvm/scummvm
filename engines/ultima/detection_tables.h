@@ -347,6 +347,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// French version (provided by habib256 bug #13003)
+	{
+		{
+			"ultima8",
+			"",
+			AD_ENTRY1s("fusecode.flx", "6f7643af10bffa11debea4533ba47061", 1300957),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA8
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
 	{
 		{
 			"ultima8",
