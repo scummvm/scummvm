@@ -374,8 +374,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 						++j;
 						--count;
 					}
-				}
-				else {
+				} else {
 					count = -count;
 					data = *(short int *)tmp;
 					tmp += 2;
@@ -544,7 +543,6 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				Ssize[para[0]] = chead.size - 2;
 				Sound += chead.size;
 			}
-
 			break;
 
 		case PLAY_MUSIC:
@@ -639,11 +637,9 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case PLAY_RAW:
-
 			break;
 
 		case PLAY_VOC:
-
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;

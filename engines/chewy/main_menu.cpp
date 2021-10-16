@@ -77,7 +77,17 @@ void MainMenu::execute() {
 				return;
 		} while (_selection == -1);
 
-		warning("TODO: Main menu option selected");
+		switch (_selection) {
+		case MM_VIEW_INTRO:
+			fx->border(workpage, 100, 0, 0);
+			out->setze_zeiger(workptr);
+			flags.NoPalAfterFlc = true;
+			flic_cut(135, 0);
+			break;
+
+		default:
+			break;
+		}
 	}
 	 
 	// TODO

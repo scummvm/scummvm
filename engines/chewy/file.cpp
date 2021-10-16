@@ -52,7 +52,7 @@ bool File::readArray(Common::SeekableReadStream *src, uint16 *arr, size_t size) 
 	bool result = (uint32)rs->size() == (size * 2);
 	if (result) {
 		for (; size > 0; --size, ++arr)
-			*arr = src->readUint16LE();
+			*arr = rs->readUint16LE();
 	}
 
 	delete rs;
