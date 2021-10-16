@@ -359,11 +359,12 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		// MSBuild uses ; for separators instead of spaces
 		convertLibraryList(libraries);
 
-		project << "\t\t<Link>\n"
-		        << "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
-		        << "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
-				<< "\t\t\t<ModuleDefinitionFile>scummvm.def</ModuleDefinitionFile>\n"
-		        << "\t\t</Link>\n";
+		project << "\t\t<Link>\n";
+		project << "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n";
+		project << "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n";
+		if (setup.featureEnabled("dynamic-modules"))
+			project << "\t\t\t<ModuleDefinitionFile>scummvm.def</ModuleDefinitionFile>\n";
+		project << "\t\t</Link>\n";
 
 		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
