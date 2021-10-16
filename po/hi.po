@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-16 09:24+0000\n"
+"POT-Creation-Date: 2021-10-16 18:30+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5074,6 +5074,16 @@ msgstr ""
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
 #: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:648
 msgid "TTS Narrator"
+msgstr ""
+
+#: engines/made/detection.cpp:63
+msgid "Play a digital soundtrack during the opening movie"
+msgstr ""
+
+#: engines/made/detection.cpp:64
+msgid ""
+"If selected, the game will use a digital soundtrack during the introduction. "
+"Otherwise, it will play MIDI music."
 msgstr ""
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
