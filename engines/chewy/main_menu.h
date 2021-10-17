@@ -39,6 +39,7 @@ enum MainMenuSelection {
 class MainMenu {
 private:
 	static int _selection;
+	static int _personAni[3];
 
 	/**
 	 * Screen rendering function for the main menu
@@ -51,7 +52,40 @@ private:
 	 */
 	static void animate();
 
+	/**
+	 * Support function for controlling the credits flic playback
+	 */
 	static int16 creditsFn(int16 key);
+
+	/**
+	 * Starts a new game
+	 */
+	static void startGame();
+
+	/**
+	 * Starts a new game
+	 */
+	static bool loadGame();
+
+	/**
+	 * Plays the game
+	 */
+	static void playGame();
+
+	/**
+	 * Cinema dialog
+	 */
+	static void cinema();
+
+	/**
+	 * Saves the personAni array
+	 */
+	static void savePersonAni();
+
+	/**
+	 * Restores the personAni array
+	 */
+	static void restorePersonAni();
 public:
 	/**
 	 * Displays the menu
