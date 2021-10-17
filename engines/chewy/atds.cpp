@@ -379,28 +379,6 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 	}
 }
 
-void atdsys::open_handle(Common::SeekableReadStream *stream, int16 mode) {
-	assert(stream);
-	char *tmp_adr = (char *)malloc(stream->size());
-
-	close_handle(mode);
-	atdshandle[mode] = stream;
-	atdsmem[mode] = tmp_adr;
-
-	switch (mode) {
-	case ADH_DATEI:
-		ads_block = (AdsBlock *)atdsmem[ADH_HANDLE];
-		break;
-
-	case INV_IDX_DATEI:
-		atdsmem[INV_IDX_HANDLE] = (char *)calloc(INV_STRC_ANZ * sizeof(InvUse), 1);
-		break;
-
-	default:
-		break;
-	}
-}
-
 void atdsys::close_handle(int16 mode) {
 	if (atdshandle[mode])
 		chewy_fclose(atdshandle[mode]);
@@ -768,7 +746,6 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 
 void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	char *start_str;
-	int16 ende1;
 	start_str = *str_;
 
 	bool done1 = false;

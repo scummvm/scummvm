@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	sound.o \
 	sprite.o \
 	t_event.o \
+	temp_file.o \
 	text.o \
 	timer.o \
 	video/cfo_decoder.o

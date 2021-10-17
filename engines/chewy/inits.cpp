@@ -199,21 +199,6 @@ void init_room() {
 	ERROR
 }
 
-void initAdshTmp() {
-	// Open the source
-	Common::File f;
-	if (!f.open(ADS_TXT_STEUER))
-		::error("File not found - %s", ADS_TXT_STEUER);
-
-	// Create a memory stream for read/write access
-	Common::MemoryReadWriteStream *stream =
-		new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-	stream->writeStream(&f);
-
-	// Add it to the stream manager
-	atds->open_handle(stream, ADH_DATEI);
-}
-
 void init_atds() {
 	int16 i;
 
@@ -231,9 +216,6 @@ void init_atds() {
 	ERROR
 
 	atds->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
-	ERROR
-
-	initAdshTmp();
 	ERROR
 
 	atds->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
