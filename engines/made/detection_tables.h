@@ -367,7 +367,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		{
 			"rtz",
 			"V1.2, 5/4/94, Demo CD",
-			AD_ENTRY1s("Return To Zork", "0c1377afd4b6fc4ee900e1882ac13895", 1714320),
+			AD_ENTRY1s("Return To Zork", "0c1377afd4b6fc4ee900e1882ac13895", 1714064),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO | ADGF_CD | ADGF_MACRESFORK,
