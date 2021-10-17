@@ -41,7 +41,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943),
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -53,7 +53,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"DVD",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337),
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK|GF_DVD,
@@ -64,7 +64,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 	{
 		{	"pegasus",
 			"DVD",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337),
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_MACRESFORK|GF_DVD,
@@ -92,7 +92,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"v1.0 Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 365585),
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 365585), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
@@ -107,7 +107,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
@@ -119,7 +119,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495), // FIXMEMD5
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
