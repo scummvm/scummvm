@@ -33,10 +33,10 @@ namespace MacVenture {
 #define BASEDEMO(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT|ADGF_DEMO, GUIO1(GUIO_NOMIDI)}
 
 static const ADGameDescription gameDescriptions[] = {
-	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974), // Zojoi Rerelease
-	BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu.bin", "5e9f5a8e3c8eb29ed02b34ae5937354f", 69034), // Zojoi Rerelease
-	BASEGAME("deja_vu2", "Zojoi Rerelease", "Lost in Las Vegas.bin", "8f8e1d8d41f577ee0fbc03847969af0d", 66520), // Zojoi Rerelease
-	BASEDEMO("uninvited", "Demo", "Uninvited Demo", "e53adca77d773dca926f61faac68df86", 53375),
+	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate", "ebbfbcbf93938bd2900cb0c0213b19ad", 68718), // Zojoi Rerelease
+	BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu", "5e9f5a8e3c8eb29ed02b34ae5937354f", 68778), // Zojoi Rerelease
+	BASEGAME("deja_vu2", "Zojoi Rerelease", "Lost in Las Vegas", "8f8e1d8d41f577ee0fbc03847969af0d", 66264), // Zojoi Rerelease
+	BASEDEMO("uninvited", "Demo", "Uninvited Demo", "e53adca77d773dca926f61faac68df86", 53119),
 	AD_TABLE_END_MARKER
 };
 
