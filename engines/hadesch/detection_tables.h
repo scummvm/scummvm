@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"hadesch",
 		0,
 		{
-			{"Hades Challenge PPC", 0, "c7213a365a3cab7e9f2b423fa4a204f5", 1724646},
+			{"Hades Challenge PPC", 0, "c7213a365a3cab7e9f2b423fa4a204f5", 1724646}, // FIXMEMD5
 			{"WD.POD", 0, "be7030fc4229e69e719ee2c756eb6ba1", 7479768},
 			{"ol.pod", 0, "7cabba8d1d4f1239e312e045ef4e9735", 5621074},
 			AD_LISTEND
