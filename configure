@@ -2622,14 +2622,14 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# With dynamic builds use everything possible as plugins
+		# With dynamic builds use everything available as plugins
 		if test "$_dynamic_modules" = yes ; then
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
 		# Leave out resources by default, save binary size
 		_builtin_resources=no
-		# OGLES2 needs explicitely named gl4es libs
+		# OGLES2 needs explicitly named gl4es libs
 		if test "$_opengl_mode" = gles2; then
 			append_var LIBS "-lSDL2_gl4es -lglu_gl4es -lgl4es"
 			_opengl_game_es2=yes
