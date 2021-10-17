@@ -2622,16 +2622,23 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# On building dynamic, everything (possible) should be built as plugin.
+		# With dynamic builds use everything possible as plugins
 		if test "$_dynamic_modules" = yes ; then
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
+		# Leave out resources by default, save binary size
+		_builtin_resources=no
+		# OGLES2 needs explicitely named gl4es libs
+		if test "$_opengl_mode" = gles2; then
+			append_var LIBS "-lSDL2_gl4es -lglu_gl4es -lgl4es"
+			_opengl_game_es2=yes
+		fi
 		# We have to use 'long' for our 4 byte typedef, because AmigaOS
-		# already typedefs (u)int32 as (unsigned) long  and consequently we'd
-		# get a compiler error otherwise.
+		# already typedefs (u)int32 as (unsigned) long and consequently
+		# we'd get a compiler error otherwise
 		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
+		# Supress format warnings as the long 4 byte causes noisy warnings
 		append_var CXXFLAGS "-Wno-format"
 		# Enable optimizations for non-debug builds
 		if test "$_debug_build" = no; then
@@ -2641,8 +2648,6 @@ case $_host_os in
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		# Leave out resources by default, save binary size.
-		_builtin_resources=no
 		;;
 	android)
 		case $_host in
