@@ -1331,7 +1331,11 @@ void LB::b_preLoadCast(int nargs) {
 	// We always pretend we preloaded all cast
 	// Returning the number of the last cast successfully "loaded"
 
-	g_lingo->_theResult = g_lingo->pop();
+	if (nargs > 1) {
+		g_lingo->_theResult = g_lingo->pop();
+	} else {
+		g_lingo->_theResult = 1;
+	}
 
 	if (nargs == 2)
 		g_lingo->pop();
