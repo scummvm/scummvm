@@ -601,7 +601,7 @@ bool TonyEngine::openVoiceDatabase() {
 	}
 
 	// Read in the index
-	_vdbFP.seek(-8 - (numfiles * VOICE_HEADER_SIZE), SEEK_END);
+	_vdbFP.seek(-8 - (int64)(numfiles * VOICE_HEADER_SIZE), SEEK_END);
 
 	for (uint32 i = 0; i < numfiles; ++i) {
 		VoiceHeader vh;
