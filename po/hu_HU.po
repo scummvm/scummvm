@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-05 11:26+0000\n"
+"PO-Revision-Date: 2021-10-17 12:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5286,13 +5286,15 @@ msgstr "TTS Narrátor"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Játsszon digitális hangsávot a nyitófilm alatt"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Ha ez a lehetőség van kiválasztva, a játék digitális filmzenét használ a "
+"bevezetésnél. Ellenkező esetben MIDI zenét játszik le."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -5978,6 +5980,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Nem található AdLib hangszerdefiníciós fájl\n"
+"%s és %s. Ezen fájlok nélkül,\n"
+"a zene nem ugyanaz, mint az eredeti játékban."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
