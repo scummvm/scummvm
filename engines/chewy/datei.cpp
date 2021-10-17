@@ -24,6 +24,8 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "chewy/datei.h"
+#include "chewy/chewy.h"
+#include "chewy/defines.h"
 #include "chewy/file.h"
 
 namespace Chewy {
@@ -1902,6 +1904,18 @@ int16 datei::get_id(char *id_code) {
 }
 
 void datei::fcopy(const char *d_fname, const char *s_fname) {
+	assert(!strcmp(d_fname, ADSH_TMP));
+
+	Common::File f;
+	if (f.open(s_fname)) {
+		Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
+		ws->writeStream(&f);
+		delete ws;
+	} else {
+		error("Could not find - %s", s_fname);
+	}
+
+#if 0
 	Common::File src;
 	Common::OutSaveFile *dest;
 
@@ -1920,6 +1934,7 @@ void datei::fcopy(const char *d_fname, const char *s_fname) {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
+#endif
 }
 
 } // namespace Chewy

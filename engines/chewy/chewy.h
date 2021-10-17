@@ -28,9 +28,11 @@
 
 #include "common/scummsys.h"
 #include "common/error.h"
+#include "common/memstream.h"
 #include "common/random.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
+#include "chewy/temp_file.h"
 
 namespace Chewy {
 
@@ -53,6 +55,7 @@ protected:
 	void shutdown();
 
 public:
+	TempFileArchive _tempFiles;
 	EventsManager *_events;
 	Sound *_sound;
 	Graphics::Screen *_screen;

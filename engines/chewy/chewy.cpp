@@ -67,6 +67,9 @@ void ChewyEngine::initialize() {
 	g_screen = _screen = new Graphics::Screen();
 	_events = new EventsManager(_screen);
 	_sound = new Sound(_mixer);
+
+	_tempFiles.add(ADSH_TMP);
+	SearchMan.add("temp", &_tempFiles, 99, false);
 }
 
 Common::Error ChewyEngine::run() {
