@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-16 18:43+0000\n"
+"PO-Revision-Date: 2021-10-17 12:52+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5404,13 +5404,15 @@ msgstr "Αφηγητής Κειμένου"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Αναπαραγωγή ψηφιακής μουσικής κατά την εναρκτήρια ταινία"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Με την επιλογή αυτή, το παιχνίδι θα χρησιμοποιήσει ψηφιακή μουσική (digital "
+"soundtrack) κατά την εισαγωγή. Αλλιώς, θα παίξει μουσική MIDI."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
