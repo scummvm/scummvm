@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/fta.h"
 #include "saga2/player.h"
 #include "saga2/display.h"
@@ -39,6 +40,8 @@ namespace Saga2 {
 
 #define INTRO_VID1  "TRIMARK" VIDEO_EXTENSION
 #define INTRO_VID2  "INTRO" VIDEO_EXTENSION
+
+#define INTRO_VID_DINO "TESTVID" VIDEO_EXTENSION
 
 #define WIN_VID_1   "END_1" VIDEO_EXTENSION
 #define WIN_VID_2   "END_2" VIDEO_EXTENSION
@@ -223,9 +226,13 @@ static void playAVideo(const char *fileName, int x, int y) { //, int16 from, int
 // intro video(s)
 
 static void doIntro() {
-	playAVideo(INTRO_VID1, 0, 0);
-	abortFlag = false;
-	playAVideo(INTRO_VID2, 0, 0);
+	if (g_vm->getGameId() == GID_FTA2) {
+		playAVideo(INTRO_VID1, 0, 0);
+		abortFlag = false;
+		playAVideo(INTRO_VID2, 0, 0);
+	} else {
+		playAVideo(INTRO_VID_DINO, 0, 0);
+	}
 }
 
 // ------------------------------------------------------------------------

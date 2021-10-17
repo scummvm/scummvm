@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/fta.h"
 #include "saga2/blitters.h"
 #include "saga2/sprite.h"
@@ -829,30 +830,32 @@ void initSprites() {
 	delete stream;
 	assert(objectSprites);
 
-	// intagible object sprites
-	stream = loadResourceToStream(spriteRes, mentalSpriteID, "mental sprites");
-	mentalSprites = new SpriteSet(stream);
-	delete stream;
-	assert(mentalSprites);
+	if (g_vm->getGameId() == GID_FTA2) {
+		// intagible object sprites
+		stream = loadResourceToStream(spriteRes, mentalSpriteID, "mental sprites");
+		mentalSprites = new SpriteSet(stream);
+		delete stream;
+		assert(mentalSprites);
 
-	for (i = 0; i < maxWeaponSpriteSets; i++) {
-		hResID      weaponSpriteID;
+		for (i = 0; i < maxWeaponSpriteSets; i++) {
+			hResID weaponSpriteID;
 
-		weaponSpriteID = weaponSpriteBaseID + MKTAG(0, 0, 0, i);
+			weaponSpriteID = weaponSpriteBaseID + MKTAG(0, 0, 0, i);
 
-		if (spriteRes->size(weaponSpriteID) == 0) {
-			weaponSprites[i] = nullptr;
-			continue;
+			if (spriteRes->size(weaponSpriteID) == 0) {
+				weaponSprites[i] = nullptr;
+				continue;
+			}
+
+			stream = loadResourceToStream(spriteRes, weaponSpriteID, "weapon sprite set");
+			weaponSprites[i] = new SpriteSet(stream);
+			delete stream;
 		}
 
-		stream = loadResourceToStream(spriteRes, weaponSpriteID, "weapon sprite set");
-		weaponSprites[i] = new SpriteSet(stream);
+		stream = loadResourceToStream(spriteRes, missileSpriteID, "missle sprites");
+		missileSprites = new SpriteSet(stream);
 		delete stream;
 	}
-
-	stream = loadResourceToStream(spriteRes, missileSpriteID, "missle sprites");
-	missileSprites = new SpriteSet(stream);
-	delete stream;
 
 	initQuickMem(0x10000);
 

@@ -30,6 +30,7 @@
 #include "audio/decoders/raw.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/audio.h"
 #include "saga2/fta.h"
 #include "saga2/shorten.h"
@@ -123,13 +124,15 @@ void startAudio() {
 
 	g_vm->_audio->initAudioInterface(musicRes);
 
-	// kludgy in memory click sounds
-	g_vm->_audio->_clickSizes[0] = 0;
-	g_vm->_audio->_clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
-	g_vm->_audio->_clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
-	g_vm->_audio->_clickData[0] = NULL;
-	g_vm->_audio->_clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
-	g_vm->_audio->_clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
+	if (g_vm->getGameId() == GID_FTA2) {
+		// kludgy in memory click sounds
+		g_vm->_audio->_clickSizes[0] = 0;
+		g_vm->_audio->_clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
+		g_vm->_audio->_clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
+		g_vm->_audio->_clickData[0] = NULL;
+		g_vm->_audio->_clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
+		g_vm->_audio->_clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
+	}
 }
 
 void cleanupAudio() {

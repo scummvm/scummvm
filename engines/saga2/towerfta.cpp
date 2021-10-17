@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/towerwin.h"
 #include "saga2/towerfta.h"
 #include "saga2/fta.h"
@@ -213,9 +214,12 @@ INITIALIZER(initResourceHandles) {
 	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
 	if (!listRes->_valid)
 		return false;
-	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
-	if (!resImports)
-		return false;
+	if (g_vm->getGameId() == GID_FTA2) {
+		// Only FTA2 has resource imports
+		resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
+		if (!resImports)
+			return false;
+	}
 	return true;
 }
 
@@ -383,7 +387,8 @@ TERMINATOR(termActorSprites) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initWeaponData) {
-	initWeapons();
+	if (g_vm->getGameId() == GID_FTA2)
+		initWeapons();
 	return true;
 }
 
@@ -395,7 +400,8 @@ TERMINATOR(termWeaponData) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initSpellData) {
-	initMagic();
+	if (g_vm->getGameId() == GID_FTA2)
+		initMagic();
 	return true;
 }
 
@@ -407,7 +413,8 @@ TERMINATOR(termSpellData) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initObjectSoundFX) {
-	initObjectSoundFXTable();
+	if (g_vm->getGameId() == GID_FTA2)
+		initObjectSoundFXTable();
 	return true;
 }
 
@@ -418,7 +425,8 @@ TERMINATOR(termObjectSoundFX) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initObjectPrototypes) {
-	initPrototypes();
+	if (g_vm->getGameId() == GID_FTA2)
+		initPrototypes();
 	return true;
 }
 

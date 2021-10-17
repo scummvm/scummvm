@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/objects.h"
 #include "saga2/tile.h"
 #include "saga2/motion.h"
@@ -2963,6 +2964,11 @@ void initObjects() {
 
 	delete stream;
 
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initObjects() for Dino");
+		return;
+	}
+
 	for (i = 0; i < resourceObjectCount; i++) {
 		GameObject  *obj = &objectList[i];
 
@@ -3298,9 +3304,11 @@ void ActiveRegion::update() {
 //	Iterate through the active regions, updating each
 
 void updateActiveRegions() {
-	int16   i;
+	// TODO: updateActiveRegions() for Dino
+	if (g_vm->getGameId() == GID_DINO)
+		return;
 
-	for (i = 0; i < kPlayerActors; i++)
+	for (int16 i = 0; i < kPlayerActors; i++)
 		g_vm->_activeRegionList[i].update();
 }
 
@@ -3315,6 +3323,11 @@ ActiveRegion *getActiveRegion(PlayerActorID id) {
 //	Initialize the state of the active regions
 
 void initActiveRegions() {
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initActiveRegions() for Dino");
+		return;
+	}
+
 	static PlayerActorID    playerIDArray[kPlayerActors] =
 	{ FTA_JULIAN, FTA_PHILIP, FTA_KEVIN };
 
@@ -4531,6 +4544,10 @@ bool                backgroundSimulationPaused;
 //	This function does background processing on a few actors, objects
 
 void doBackgroundSimulation() {
+	// TODO: doBackgroundSimulation() for Dino
+	if (g_vm->getGameId() == GID_DINO)
+		return;
+
 	if (backgroundSimulationPaused) return;
 
 	//  Debug code to verify the validity of the limbo counts

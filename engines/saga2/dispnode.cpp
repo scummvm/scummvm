@@ -26,6 +26,7 @@
 
 #include "saga2/saga2.h"
 #include "saga2/blitters.h"
+#include "saga2/detection.h"
 #include "saga2/spelshow.h"
 #include "saga2/player.h"
 #include "saga2/sensor.h"
@@ -164,9 +165,12 @@ void DisplayNodeList::draw() {
 	objectSet = objectSprites;
 	if (objectSet == NULL)
 		error("Object sprites have been dumped!\n");
-	spellSet = spellSprites;
-	if (spellSet == NULL)
-		error("Spell sprites have been dumped!\n");
+
+	if (g_vm->getGameId() == GID_FTA2) {
+		spellSet = spellSprites;
+		if (spellSet == NULL)
+			error("Spell sprites have been dumped!\n");
+	}
 
 	for (dn = DisplayNodeList::head; dn; dn = dn->nextDisplayed) {
 		if (dn->type == nodeTypeEffect)
@@ -338,18 +342,11 @@ void DisplayNode::updateObject(const int32 deltaTime) {
 
 //-----------------------------------------------------------------------
 //	Draw sprites for normal objects
-
-#if DINO
-const int       maxSpriteWidth = 320,
-                maxSpriteHeight = 320,
-                maxSpriteBaseLine = 50;
-#else
-const int       maxSpriteWidth = 32,
-                maxSpriteHeight = 120,
-                maxSpriteBaseLine = 16;
-#endif
-
 void DisplayNode::drawObject() {
+	const int maxSpriteWidth = (g_vm->getGameId() == GID_FTA2) ? 32 : 320;
+	const int maxSpriteHeight = (g_vm->getGameId() == GID_FTA2) ? 120 : 320;
+	const int maxSpriteBaseLine = (g_vm->getGameId() == GID_FTA2) ? 16 : 50;
+
 	ColorTable      mainColors,             // colors for object
 	                leftColors,             // colors for left-hand object
 	                rightColors;            // colors for right-hand object

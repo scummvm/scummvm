@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/intrface.h"
 #include "saga2/contain.h"
 #include "saga2/task.h"
@@ -897,6 +898,11 @@ struct PlayerActorArchive {
 //	Initialize the player list
 
 void initPlayerActors() {
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initPlayerActors() for Dino");
+		return;
+	}
+
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 0)); // Julian
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 1)); // Philip
 	g_vm->_playerList.push_back(new PlayerActor(ActorBaseID + 2)); // Kevin
@@ -1043,6 +1049,11 @@ struct CenterActorArchive {
 //	Initialize the center actor ID and view object ID
 
 void initCenterActor() {
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initCenterActor() for Dino");
+		return;
+	}
+
 	centerActor = FTA_JULIAN;
 	viewCenterObject = g_vm->_playerList[centerActor]->getActorID();
 

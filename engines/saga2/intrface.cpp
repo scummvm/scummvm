@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/blitters.h"
 #include "saga2/objects.h"
 #include "saga2/contain.h"
@@ -1527,6 +1528,11 @@ void unloadImageRes(void **images, int16 numRes) {
 
 // defined for setup off all button based user controls
 void SetupUserControls() {
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: SetupUserControls() for Dino");
+		return;
+	}
+
 	// index variables
 	uint16  n;
 	uint8   index = 0;
@@ -2019,7 +2025,7 @@ void updateBrotherArmor(uint16 brotherID) {
 
 void updateAllUserControls() {
 	if (displayEnabled()) {
-		if (g_vm->_userControlsSetup) {
+		if (g_vm->_userControlsSetup && g_vm->getGameId() == GID_FTA2) {
 			uint16      centerBrotherID = getCenterActorPlayerID(),
 			            brotherID;
 

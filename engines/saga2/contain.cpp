@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/objects.h"
 #include "saga2/contain.h"
 #include "saga2/grabinfo.h"
@@ -1647,6 +1648,11 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
  * ===================================================================== */
 
 void initContainers() {
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initContainers() for Dino");
+		return;
+	}
+
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
@@ -1755,6 +1761,10 @@ void cleanupContainerNodes() {
 }
 
 void updateContainerWindows() {
+	// TODO: updateContainerWindows() for Dino
+	if (g_vm->getGameId() == GID_DINO)
+		return;
+
 	g_vm->_cnm->doDeferredActions();
 }
 

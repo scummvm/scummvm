@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/blitters.h"
 #include "saga2/objects.h"
 #include "saga2/tile.h"
@@ -214,15 +215,15 @@ void PlayModeSetup() {
 	// placement configurations
 	Point16 massWeightIndicator = Point16(531, 265);
 
-	// activate the indiv mode character mass and weight indicator
-	MassWeightIndicator = new CMassWeightIndicator(indivControls, massWeightIndicator);
+	if (g_vm->getGameId() == GID_FTA2) {
+		// activate the indiv mode character mass and weight indicator
+		MassWeightIndicator = new CMassWeightIndicator(indivControls, massWeightIndicator);
 
-	// activate the plyaer health indicator
-	HealthIndicator = new CHealthIndicator(cmdHealthStar);
-
+		// activate the player health indicator
+		HealthIndicator = new CHealthIndicator(cmdHealthStar);
+	}
 
 	SetupUserControls();
-
 
 	//  Set up mouse cursor
 	g_vm->_mouseInfo = new GrabInfo;

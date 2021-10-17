@@ -100,7 +100,7 @@ public:
    Calender management functions
  * ===================================================================== */
 
-void updateCalender();
+void updateCalendar();
 void pauseCalender();
 void resumeCalender();
 

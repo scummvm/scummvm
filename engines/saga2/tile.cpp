@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/blitters.h"
 #include "saga2/hresmgr.h"
 #include "saga2/objects.h"
@@ -4298,6 +4299,10 @@ bool underSameRoof(GameObject *obj1, GameObject *obj2) {
 extern void testSprites();
 
 void updateMainDisplay() {
+	// TODO: updateMainDisplay() for Dino
+	if (g_vm->getGameId() == GID_DINO)
+		return;
+
 	static TilePoint lastViewLoc = TilePoint(0, 0, 0);
 
 	int32           deltaTime = gameTime - lastUpdateTime;

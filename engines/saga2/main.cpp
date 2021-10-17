@@ -332,9 +332,10 @@ void displayUpdate() {
 		elapsed += (gameTime - lastGameTime);
 		lastGameTime = gameTime;
 
-
-		debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
-		updateIndicators();
+		if (g_vm->getGameId() == GID_FTA2) {
+			debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
+			updateIndicators();
+		}
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -597,6 +598,9 @@ bool openResources() {
 			break;
 		case GAME_SOUNDFILE:
 			res = openResource(soundResFile, desc->fileName);
+			// Dinotopia contains both sound and voices in the same file
+			if (g_vm->getGameId() == GID_DINO)
+				res = openResource(voiceResFile, desc->fileName);
 			break;
 		case GAME_IMAGEFILE:
 			res = openResource(resFile, desc->fileName);

@@ -104,6 +104,8 @@ Saga2Engine::Saga2Engine(OSystem *syst, const SAGA2GameDescription *desc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "dos/drivers"); // For Miles Sound files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");	// FTA2 movies
+	SearchMan.addSubDirectoryMatching(gameDataDir, "smack"); // Dino movies
 
 	_loadedWeapons = 0;
 
@@ -174,6 +176,7 @@ Common::Error Saga2Engine::run() {
 
 	if (getGameId() == GID_FTA2)
 		loadExeResources();
+	// TODO: Load EXE resources for Dino
 
 	main_saga2();
 

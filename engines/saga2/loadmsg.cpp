@@ -25,6 +25,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 
 #include "graphics/palette.h"
 
@@ -42,6 +43,9 @@ void initLoadMode() {
 }
 
 void updateLoadMode() {
+	if (g_vm->getGameId() == GID_DINO)
+		return;	// TODO: Load EXE resources for Dino
+
 	if (inLoadMode) {
 		byte normalPalette[768];
 

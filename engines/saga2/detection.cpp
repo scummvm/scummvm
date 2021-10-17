@@ -62,7 +62,7 @@ static const SAGA2GameDescription gameDescriptions[] = {
 				{"dinodata.hrs", GAME_RESOURCEFILE,				    "45aa7026d441dd69957385c25d2fd33e", 2698},
 				{"dino.hrs",     GAME_OBJRESOURCEFILE,				"7cf3665887a4a18e2fff6938a954c050", 66018},
 				{"scripts.hrs",	 GAME_SCRIPTFILE,					"d405841a249a365cf92fc65dd52fb953", 164181},
-				{"dinosnd.hrs",  GAME_SOUNDFILE | GAME_VOICEFILE,	"dcf4ade416614b8a64f99dacfd3bd071", 199163997},
+				{"dinosnd.hrs",  GAME_SOUNDFILE,					"dcf4ade416614b8a64f99dacfd3bd071", 199163997},
 				{"dinoimag.hrs", GAME_IMAGEFILE,					"d24d80676f7afcfaca0b61c95056044f", 42342931},
 				AD_LISTEND
 			},
@@ -82,7 +82,7 @@ static const SAGA2GameDescription gameDescriptions[] = {
 				{"dinodata.hrs", GAME_RESOURCEFILE,				    "45aa7026d441dd69957385c25d2fd33e", 2698},
 				{"dino.hrs",     GAME_OBJRESOURCEFILE,				"7cf3665887a4a18e2fff6938a954c050", 66018},
 				{"scripts.hrs",	 GAME_SCRIPTFILE,					"d405841a249a365cf92fc65dd52fb953", 164181},
-				{"dinosnd.hrs",  GAME_SOUNDFILE | GAME_VOICEFILE,	"27a57517be881ad9e0f671901486356e", 228642994},
+				{"dinosnd.hrs",  GAME_SOUNDFILE,					"27a57517be881ad9e0f671901486356e", 228642994},
 				{"dinoimag.hrs", GAME_IMAGEFILE,					"d24d80676f7afcfaca0b61c95056044f", 42448562},
 				AD_LISTEND
 			},

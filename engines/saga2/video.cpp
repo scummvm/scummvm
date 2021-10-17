@@ -41,16 +41,13 @@ static bool nameCheck(char name[], const char ext[], int len) {
 }
 
 void Saga2Engine::startVideo(const char *fileName, int x, int y) {
-	char file[260];
-	strcpy(file, "video/");
-	Common::strlcat(file, fileName, 260);
-	nameCheck(file, VIDEO_EXT, 260);
+	nameCheck((char *)fileName, VIDEO_EXT, 260);
 
 	if (!_smkDecoder)
 		_smkDecoder = new Video::SmackerDecoder();
 
-	if (!_smkDecoder->loadFile(file)) {
-		warning("startVideo: Cannot open file %s", file);
+	if (!_smkDecoder->loadFile(fileName)) {
+		warning("startVideo: Cannot open file %s", fileName);
 
 		return;
 	}

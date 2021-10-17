@@ -27,6 +27,7 @@
 #include "common/events.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/tilemode.h"
 #include "saga2/tile.h"
 #include "saga2/setup.h"
@@ -700,11 +701,51 @@ static int postDisplayFrame = 3;
 //  We need to test if UI is locked, so as to not pause combat
 extern int          lockUINest;
 
+void CheckCombat() {
+	static int flipper = 0;
+
+	//  Get the actor we're controlling.
+	Actor *a = getCenterActor();
+
+	audioEnvironmentSetAggression(isCenterActorAggressive());
+
+	//  Check combat mood once every 8 frames or so.
+	//  Otherwise, check for combat start/stop
+	//  (Kludge to balance CPU usage).
+
+	if ((++flipper & 0xF) == 0)
+		CheckCombatMood();
+	else if (timeSinceLastAggressiveAct() < 60 && areThereActiveEnemies()) {
+		if (!inCombat) {
+			inCombat = true;
+			startCombat();
+		}
+	} else {
+		if (inCombat) {
+			inCombat = false;
+			endCombat();
+		}
+	}
+
+	if (inCombat) {
+		if (!a->isMoving() && a->isInterruptable() && lockUINest == 0) {
+			if (!combatPaused) {
+				combatPaused = true;
+				pauseCombat();
+			}
+		} else {
+			if (combatPaused) {
+				combatPaused = false;
+				resumeCombat();
+			}
+		}
+	}
+}
+
 void TileModeHandleTask() {
 	bool taskChek = false;
 	//  Run any SAGA scripts which are waiting to run.
 	dispatchScripts();
-
 
 	// update day and night
 	//mm("daytime transition update loop");
@@ -713,52 +754,17 @@ void TileModeHandleTask() {
 	//  If it's time to do a new frame.
 	if (frameAlarm.check()
 	        &&  tileLockFlag == 0) {
-		static int flipper = 0;
 
-		//  Get the actor we're controlling.
-		Actor       *a = getCenterActor();
+		if (g_vm->getGameId() == GID_FTA2)
+			CheckCombat();
 
-		audioEnvironmentSetAggression(isCenterActorAggressive());
-
-		//  Check combat mood once every 8 frames or so.
-		//  Otherwise, check for combat start/stop
-		//  (Kludge to balance CPU usage).
-
-		if ((++flipper & 0xF) == 0)
-			CheckCombatMood();
-		else if (timeSinceLastAggressiveAct() < 60
-		         &&  areThereActiveEnemies()) {
-			if (!inCombat) {
-				inCombat = true;
-				startCombat();
-			}
-		} else {
-			if (inCombat) {
-				inCombat = false;
-				endCombat();
-			}
-		}
-
-		if (inCombat) {
-			if (!a->isMoving() && a->isInterruptable() && lockUINest == 0) {
-				if (!combatPaused) {
-					combatPaused = true;
-					pauseCombat();
-				}
-			} else {
-				if (combatPaused) {
-					combatPaused = false;
-					resumeCombat();
-				}
-			}
-		}
-
-		updateCalender();
+		updateCalendar();
 
 		// update the text status line
 		StatusLine->experationCheck();
 
-		doBackgroundSimulation();
+		if (g_vm->getGameId() == GID_FTA2)
+			doBackgroundSimulation();
 
 		// do an alarm check for container views
 		if (containerObjTextAlarm.check()) {
@@ -772,8 +778,10 @@ void TileModeHandleTask() {
 			}
 		}
 
-
 		if (g_vm->_toolBase->isMousePanel(tileMapControl)) {
+			//  Get the actor we're controlling.
+			Actor *a = getCenterActor();
+
 			//  If mouse is near edge of screen, then run.
 			runFlag =       lastMousePos.x < runThreshhold
 			                ||  lastMousePos.x >= kTileRectWidth - runThreshhold

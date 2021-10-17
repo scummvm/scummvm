@@ -217,7 +217,7 @@ void resumeCalender() {
 //-----------------------------------------------------------------------
 //	Update the global calender
 
-void updateCalender() {
+void updateCalendar() {
 	if (!g_vm->_calender->_calenderPaused) g_vm->_calender->update();
 }
 

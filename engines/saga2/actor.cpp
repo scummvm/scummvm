@@ -27,6 +27,7 @@
 #include "common/debug.h"
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "saga2/dispnode.h"
 #include "saga2/tile.h"
 #include "saga2/motion.h"
@@ -3370,11 +3371,13 @@ int16 GetRandomBetween(int start, int end) {
 }
 
 void updateActorStates() {
+	// TODO: updateActorStates() for Dino
+	if (g_vm->getGameId() == GID_DINO)
+		return;
+
 	if (g_vm->_act->_actorStatesPaused) return;
 
-	int32 actorIndex;
-
-	actorIndex = g_vm->_act->_baseActorIndex = (g_vm->_act->_baseActorIndex + 1) & ActorManager::kEvalRateMask;
+	int32 actorIndex = g_vm->_act->_baseActorIndex = (g_vm->_act->_baseActorIndex + 1) & ActorManager::kEvalRateMask;
 	while (actorIndex < kActorCount) {
 		Actor   *a = g_vm->_act->_actorList[actorIndex];
 
@@ -3465,6 +3468,11 @@ void initActors() {
 	}
 
 	delete stream;
+
+	if (g_vm->getGameId() == GID_DINO) {
+		warning("TODO: initActors() for Dino");
+		return;
+	}
 
 	for (i = 0; i < resourceActorCount; i++) {
 		//  Initialize the actors with the resource data
