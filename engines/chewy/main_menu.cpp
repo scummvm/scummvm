@@ -30,6 +30,7 @@
 namespace Chewy {
 
 int MainMenu::_selection;
+int MainMenu::_personAni[3];
 
 void MainMenu::execute() {
 #ifdef TODO_REENABLE
@@ -48,7 +49,7 @@ void MainMenu::execute() {
 	minfo.y = 92;
 	spieler.inv_cur = 0;
 	menu_display = 0;
-	spieler.SVal5 = 1;
+	spieler.soundLoopMode = 1;
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
@@ -79,11 +80,29 @@ void MainMenu::execute() {
 		} while (_selection == -1);
 
 		switch (_selection) {
+		case MM_START_GAME:
+			startGame();
+			playGame();
+			break;
+
 		case MM_VIEW_INTRO:
 			fx->border(workpage, 100, 0, 0);
 			out->setze_zeiger(workptr);
 			flags.NoPalAfterFlc = true;
 			flic_cut(135, 0);
+			break;
+
+		case MM_LOAD_GAME:
+			if (loadGame())
+				playGame();
+			break;
+
+		case MM_CINEMA:
+			cursor_wahl(4);
+			cur->move(152, 92);
+			minfo.x = 152;
+			minfo.y = 92;
+			cinema();
 			break;
 
 		case MM_QUIT:
@@ -105,8 +124,6 @@ void MainMenu::execute() {
 			break;
 		}
 	}
-	 
-	// TODO
 }
 
 void MainMenu::screenFunc() {
@@ -163,6 +180,119 @@ int16 MainMenu::creditsFn(int16 key) {
 	} else {
 		return in->get_switch_code() == 1 ? -1 : 0;
 	}
+}
+
+void MainMenu::startGame() {
+	mem->file->fcopy(ADSH_TMP, "txt/diah.adh");
+	atds->open_handle(ADSH_TMP, "rb+", 3);
+	ERROR
+
+	hide_cur();
+	animate();
+	exit_room(-1);
+
+	bool soundSwitch = spieler.SoundSwitch;
+	uint8 soundVol = spieler.SoundVol;
+	bool musicSwitch = spieler.MusicSwitch;
+	uint8 musicVol = spieler.MusicVol;
+	bool speechSwitch = spieler.SpeechSwitch;
+	uint8 framesPerSecond = spieler.FramesPerSecond;
+	bool displayText = spieler.DisplayText;
+	int sndLoopMode = spieler.soundLoopMode;
+
+	var_init();
+
+	spieler.SoundSwitch = soundSwitch;
+	spieler.SoundVol = soundVol;
+	spieler.MusicSwitch = musicSwitch;
+	spieler.MusicVol = musicVol;
+	spieler.SpeechSwitch = speechSwitch;
+	spieler.FramesPerSecond = framesPerSecond;
+	spieler.DisplayText = displayText;
+	spieler.soundLoopMode = sndLoopMode;
+
+	spieler.PersonRoomNr[0] = 0;
+	room->load_room(&room_blk, 0, &spieler);
+	ERROR
+
+	spieler_vector[P_CHEWY].Phase = 6;
+	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];
+	set_person_pos(160, 80, 0, 1);
+	fx_blende = 3;
+	spieler.PersonHide[P_CHEWY] = 0;
+	menu_item = 0;
+	cursor_wahl(0);
+	enter_room(-1);
+	auto_obj = 0;
+}
+
+bool MainMenu::loadGame() {
+	flags.SaveMenu = true;
+	savePersonAni();
+	out->setze_zeiger(screen0);
+	out->set_fontadr(font6x8);
+	out->set_vorschub(fvorx6x8, fvory6x8);
+	cursor_wahl(4);
+	cur->move(152, 92);
+	minfo.x = 152;
+	minfo.y = 92;
+	savegameFlag = true;
+	int result = file_menue();
+
+	cursor_wahl((spieler.inv_cur && spieler.AkInvent != -1 &&
+		menu_item == 1) ? 8 : 0);
+	cur_display = true;
+	restorePersonAni();
+	flags.SaveMenu = false;
+
+	if (result == 0) {
+		fx_blende = 1;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void MainMenu::playGame() {
+	// unused1 = 0;
+	inv_disp_ok = false;
+	cur_display = true;
+	tmp_menu_item = 0;
+	maus_links_click = 0;
+	kbinfo.scan_code = 0;
+
+	flags.main_maus_flag = false;
+	flags.MainInput = true;
+	flags.ShowAtsInvTxt = true;
+	cur->show_cur();
+	spieler_vector->Count = 0;
+	uhr->reset_timer(0, 0);
+	ailsnd->set_loopmode(spieler.soundLoopMode);
+
+	while (!SHOULD_QUIT && !main_loop(1)) {
+	}
+
+	auto_obj = 0;
+}
+
+void MainMenu::savePersonAni() {
+	for (int i = 0; i < MAX_PERSON; ++i) {
+		_personAni[i] = PersonAni[i];
+		PersonAni[i] = -1;
+
+		delete PersonTaf[i];
+		PersonTaf[i] = nullptr;
+	}
+}
+
+void MainMenu::restorePersonAni() {
+	for (int i = 0; i < MAX_PERSON; ++i) {
+		load_person_ani(_personAni[i], i);
+	}
+}
+
+void MainMenu::cinema() {
+	warning("TODO: cinema dialog");
 }
 
 } // namespace Chewy

@@ -31,7 +31,8 @@
 namespace Chewy {
 
 extern int16 menu_flag;
-
+extern bool inv_disp_ok;
+extern int16 tmp_menu_item;
 
 void game_main();
 void free_buffers();

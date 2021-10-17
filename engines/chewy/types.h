@@ -475,7 +475,7 @@ struct Spieler {
 	int16 SVal2;
 	int16 SVal3;
 	int16 SVal4;
-	int16 SVal5;
+	int16 soundLoopMode;
 	bool SoundSwitch;
 	uint8 SoundVol;
 	bool MusicSwitch;
