@@ -2631,7 +2631,7 @@ case $_host_os in
 		_builtin_resources=no
 		# OGLES2 needs explicitly named gl4es libs
 		if test "$_opengl_mode" = gles2; then
-			append_var LIBS "-lSDL2_gl4es -lglu_gl4es -lgl4es"
+			append_var LIBS "-lSDL2_gl4es -lgl4es"
 			_opengl_game_es2=yes
 		fi
 		# We have to use 'long' for our 4 byte typedef, because AmigaOS
