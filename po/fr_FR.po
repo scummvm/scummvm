@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-04 09:35+0000\n"
+"PO-Revision-Date: 2021-10-17 12:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1165,7 +1165,7 @@ msgstr "Mode mixte AdLib/MIDI"
 
 #: gui/options.cpp:1599
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Utiliser à la fois MIDI et AdLib"
+msgstr "Utilise à la fois MIDI et AdLib pour générer les sons"
 
 #: gui/options.cpp:1602
 msgid "MIDI gain:"
@@ -5356,13 +5356,15 @@ msgstr "Synthèse vocale"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Jouer une bande son numérique pendant le film d'ouverture"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Si cette option est sélectionnée, le jeu utilisera une bande son numérique "
+"pendant l'introduction. Sinon, il jouera de la musique MIDI."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -6059,6 +6061,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Fichiers de définition des instruments AdLib\n"
+"%s et %s introuvables. Sans ces\n"
+"fichiers, la musique ne sonnera pas comme dans le jeu original."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
@@ -7021,8 +7026,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
-"mais %s manque. Utilise AdLib à la place."
+"Le support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
+"mais %s est manquant. AdLib sera utilisé."
 
 #: engines/scumm/scumm.cpp:3027
 msgid ""
