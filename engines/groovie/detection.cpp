@@ -60,7 +60,7 @@ static const PlainGameDescriptor groovieGames[] = {
 
 static const GroovieGameDescription gameDescriptions[] = {
 	// groovie.cpp requires the first file to be the main .grv file for v2 games, might as well stick to that convention for v1 games from now on too
-	
+
 	// The 7th Guest DOS English
 	{
 		{
@@ -76,7 +76,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"t7g", "",
-			AD_ENTRY2s("script.grv", NULL, -1,
+			AD_ENTRY2s("script.grv", NULL, -1,				// FIXMEMD5
 						"T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD)
