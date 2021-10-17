@@ -36,7 +36,7 @@ build = 'full'
 # build = 'release'
 
 #sis package version
-sis_major_version, sis_minor_version, sis_build_number = 2, '03', 0
+sis_major_version, sis_minor_version, sis_build_number = 2, '05', 1
 
 
 uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80", "0x2006FE81")#, "0x2006FE82")
