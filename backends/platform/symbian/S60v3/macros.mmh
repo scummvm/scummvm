@@ -35,7 +35,7 @@ MACRO   ENABLE_GNAP  //  LIB:scummvm_gnap.lib
 MACRO   ENABLE_GOB  //  LIB:scummvm_gob.lib
 MACRO   ENABLE_GRIFFON  //  LIB:scummvm_griffon.lib
 MACRO   ENABLE_GROOVIE  //  LIB:scummvm_groovie.lib
-	MACRO   ENABLE_GROOVIE2  //  Subengine
+	// MACRO   ENABLE_GROOVIE2  //  Subengine
 MACRO   ENABLE_HDB  //  LIB:scummvm_hdb.lib
 #endif // SCUMMVM_PT_2
 
@@ -52,13 +52,13 @@ MACRO   ENABLE_LAB  //  LIB:scummvm_lab.lib
 MACRO   ENABLE_LURE  //  LIB:scummvm_lure.lib
 MACRO   ENABLE_MADE  //  LIB:scummvm_made.lib
 MACRO   ENABLE_MADS  //  LIB:scummvm_mads.lib
-	MACRO   ENABLE_MADSV2  //  Subengine
+	// MACRO   ENABLE_MADSV2  //  Subengine
 MACRO   ENABLE_MORTEVIELLE  //  LIB:scummvm_mortevielle.lib
 #endif // SCUMMVM_PT_3
 
 #ifdef SCUMMVM_PT_4
 MACRO   ENABLE_MOHAWK  //  LIB:scummvm_mohawk.lib
-	MACRO   ENABLE_CSTIME  //  Subengine
+	// MACRO   ENABLE_CSTIME  //  Subengine
 	MACRO   ENABLE_RIVEN  //  Subengine
 	MACRO   ENABLE_MYST  //  Subengine
 	MACRO   ENABLE_MYSTME  //  Subengine
@@ -108,32 +108,32 @@ MACRO   ENABLE_WINTERMUTE  //  LIB:scummvm_wintermute.lib
 	MACRO   ENABLE_HEROCRAFT  //  Subengine
 MACRO   ENABLE_ZVISION  //  LIB:scummvm_zvision.lib
 MACRO   ENABLE_XEEN  //  LIB:scummvm_xeen.lib
-MACRO   ENABLE_ASYLUM  //  LIB:scummvm_asylum.lib
-MACRO   ENABLE_AVALANCHE  //  LIB:scummvm_avalanche.lib
+// MACRO   ENABLE_ASYLUM  //  LIB:scummvm_asylum.lib
+// MACRO   ENABLE_AVALANCHE  //  LIB:scummvm_avalanche.lib
 #endif // SCUMMVM_PT_7
 
 #ifdef SCUMMVM_PT_8
 MACRO   ENABLE_ULTIMA  //  LIB:scummvm_ultima.lib
-MACRO   ENABLE_CHEWY  //  LIB:scummvm_chewy.lib
-MACRO   ENABLE_CRYO  //  LIB:scummvm_cryo.lib
+// MACRO   ENABLE_CHEWY  //  LIB:scummvm_chewy.lib
+// MACRO   ENABLE_CRYO  //  LIB:scummvm_cryo.lib
 MACRO   ENABLE_DIRECTOR  //  LIB:scummvm_director.lib
-MACRO   ENABLE_DM  //  LIB:scummvm_dm.lib
-MACRO   ENABLE_HADESCH  //  LIB:scummvm_hadesch.lib
-MACRO   ENABLE_ICB  //  LIB:scummvm_icb.lib
-MACRO   ENABLE_KINGDOM  //  LIB:scummvm_kingdom.lib
-MACRO   ENABLE_LILLIPUT  //  LIB:scummvm_lilliput.lib
-MACRO   ENABLE_MACVENTURE  //  LIB:scummvm_macventure.lib
-#endif // SCUMMVM_PT_8
+// MACRO   ENABLE_DM  //  LIB:scummvm_dm.lib
+// MACRO   ENABLE_HADESCH  //  LIB:scummvm_hadesch.lib
+// MACRO   ENABLE_ICB  //  LIB:scummvm_icb.lib
+// MACRO   ENABLE_KINGDOM  //  LIB:scummvm_kingdom.lib
+// MACRO   ENABLE_LILLIPUT  //  LIB:scummvm_lilliput.lib
+// MACRO   ENABLE_MACVENTURE  //  LIB:scummvm_macventure.lib
+// #endif // SCUMMVM_PT_8
 
-#ifdef SCUMMVM_PT_9
-MACRO   ENABLE_LASTEXPRESS  //  LIB:scummvm_lastexpress.lib
-MACRO   ENABLE_MUTATIONOFJB  //  LIB:scummvm_mutationofjb.lib
-MACRO   ENABLE_NANCY  //  LIB:scummvm_nancy.lib
-MACRO   ENABLE_PINK  //  LIB:scummvm_pink.lib
-MACRO   ENABLE_SAGA2  //  LIB:scummvm_saga2.lib
-MACRO   ENABLE_SLUDGE  //  LIB:scummvm_sludge.lib
-MACRO   ENABLE_STARTREK  //  LIB:scummvm_startrek.lib
+// #ifdef SCUMMVM_PT_9
+// MACRO   ENABLE_LASTEXPRESS  //  LIB:scummvm_lastexpress.lib
+// MACRO   ENABLE_MUTATIONOFJB  //  LIB:scummvm_mutationofjb.lib
+// MACRO   ENABLE_NANCY  //  LIB:scummvm_nancy.lib
+// MACRO   ENABLE_PINK  //  LIB:scummvm_pink.lib
+// MACRO   ENABLE_SAGA2  //  LIB:scummvm_saga2.lib
+// MACRO   ENABLE_SLUDGE  //  LIB:scummvm_sludge.lib
+// MACRO   ENABLE_STARTREK  //  LIB:scummvm_startrek.lib
 MACRO   ENABLE_TWINE  //  LIB:scummvm_twine.lib
 MACRO   ENABLE_TRECISION  //  LIB:scummvm_trecision.lib
-MACRO   ENABLE_WAGE  //  LIB:scummvm_wage.lib
+// MACRO   ENABLE_WAGE  //  LIB:scummvm_wage.lib
 #endif // SCUMMVM_PT_9
