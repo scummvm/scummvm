@@ -1248,8 +1248,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	},
 
 	// Original filename is "•Main Menu" for all
-	MACGAME1("theapartment", "D2", "xn--Main Menu-zd0e", "fc56c179cb8c6d4938e61ee61fd0032c", 48325, 200),
-	MACGAME1("theapartment", "D3", "xn--Main Menu-zd0e", "9e838fe1a6af7992d656ca325e38dee5", 47911, 300),
+	MACGAME1("theapartment", "D2", "xn--Main Menu-zd0e", "fc56c179cb8c6d4938e61ee61fd0032c", 48069, 200),
+	MACGAME1("theapartment", "D3", "xn--Main Menu-zd0e", "9e838fe1a6af7992d656ca325e38dee5", 47655, 300),
 	MACGAME1("theapartment", "D4", "xn--Main Menu-zd0e", "ff86181f03fe6eb060f65a985ca0580d", 160612, 400),
 
 //////////////////////////////////////////////////
