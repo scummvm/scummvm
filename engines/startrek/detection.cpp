@@ -165,7 +165,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		{
 			"st25",
 			"Floppy",
-			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
+			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 38776),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_UNSTABLE,
