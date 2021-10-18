@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-02 21:26+0000\n"
+"PO-Revision-Date: 2021-10-18 21:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5293,13 +5293,15 @@ msgstr "TTS-kertoja"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Käytä digitaalista musiikkia avausvideossa"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Jos valittu, peli käyttää digitaalista musiikkia intron aikana. Muutoin se "
+"käyttää MIDI-musiikkia."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -5984,6 +5986,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"AdLib instrumenttitiedostoja %s ja %s ei löydetty.\n"
+"Musiikki ei tule kuulostamaan samalta kuin\n"
+"alkuperäisessä pelissä ilman niitä."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
