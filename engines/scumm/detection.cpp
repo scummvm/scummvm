@@ -200,6 +200,13 @@ static const ExtraGuiOption macV3LowQualityMusic = {
 	false
 };
 
+static const ExtraGuiOption macV3CorrectFontSpacing = {
+	_s("Use correct font spacing"),
+	_s("Draw text with correct font spacing. This arguably looks better, but doesn't match the original behavior."),
+	"mac_v3_correct_font_spacing",
+	false
+};
+
 static const ExtraGuiOption smoothScrolling = {
 	_s("Enable smooth scrolling"),
 	_s("(instead of the normal 8-pixels steps scrolling)"),
@@ -227,11 +234,28 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
 	}
-	// The Steam Mac version of Loom is more akin to the VGA DOS version,
-	// and that's how ScummVM usually sees it. But that rebranding does not
-	// happen until later.
+
+	// The Steam Mac versions of Loom and Indy 3 are more akin to the VGA
+	// DOS versions, and that's how ScummVM usually sees them. But that
+	// rebranding does not happen until later.
+
+	// The low quality music in Loom was probably intended for low-end
+	// Macs. It plays only one channel, instead of three.
+
 	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
+	}
+
+	// The original Macintosh interpreter didn't use the correct spacing
+	// between characters for some of the text, e.g. the Grail Diary. This
+	// appears to have been because of rounding errors, and was apparently
+	// fixed in Loom. Enabling this setting allows ScummVM to draw the
+	// text more correctly, at the cost of not matching the original quite
+	// as well. (At the time of writing, there are still cases, at least in
+	// Loom, where text isn't correctly positioned.)
+
+	if (target.empty() || (gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+		options.push_back(macV3CorrectFontSpacing);
 	}
 
 	return options;
