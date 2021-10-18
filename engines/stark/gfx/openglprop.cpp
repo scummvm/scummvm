@@ -60,9 +60,13 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 
 	Math::Matrix4 modelViewMatrix = view * model;
 	modelViewMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(modelViewMatrix.getData());
 
 	Math::Matrix4 projectionMatrix = projection;
 	projectionMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(projectionMatrix.getData());
 
 	const Common::Array<Face> &faces = _model->getFaces();
 	const Common::Array<Material> &materials = _model->getMaterials();
@@ -74,9 +78,9 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		// For each face draw its vertices from the VBO, indexed by the EBO
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
 		if (material.doubleSided)
-			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 		else
-			glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+			glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		if (tex) {
 			tex->bind();
 			glColor3f(1.0f, 1.0f, 1.0f);
@@ -104,7 +108,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 
 	}
 	glDisable(GL_COLOR_MATERIAL);
-
 }
 
 void OpenGLPropRenderer::clearVertices() {
