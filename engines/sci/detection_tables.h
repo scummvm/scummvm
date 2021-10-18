@@ -931,10 +931,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// (which is meant for enforcing hi-res graphics), but instead hi-res mode should be enabled all the time.
 	// Confirmed by [md5] and originally by clone2727.
 	{"gk1", "", {
-		{"Data1", 0, "044d3bcd7e5b5bb0393d954ade8053fe", 5814918}, // FIXMEMD5
-		{"Data2", 0, "99a0c63febf9e44e12a00f99c00eae0f", 6685352},
-		{"Data3", 0, "f25068b408b09275d8b698866462f578", 3677599},
-		{"Data4", 0, "1cceebbe411b26c860a74f91c337fdf3", 3230086},
+		{"Data1", 0, "044d3bcd7e5b5bb0393d954ade8053fe", 5814662},
+		{"Data2", 0, "99a0c63febf9e44e12a00f99c00eae0f", 6685096},
+		{"Data3", 0, "f25068b408b09275d8b698866462f578", 3677343},
+		{"Data4", 0, "1cceebbe411b26c860a74f91c337fdf3", 3229830},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_GK1_MAC },
 
@@ -1069,11 +1069,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// NOTE: This only contains disc 1 files (as well as the persistent file:
 	// Data1. Other discs have conflicting names :(
 	{"gk2", "", {
-		{"Data1", 0, "81cb3b4461af845efc59450a74b49fe6", 693041}, // FIXMEMD5
-		{"Data2", 0, "69a05445a7c8c2da06d8f5a70200974d", 16774575},
-		{"Data3", 0, "256309284f6447aaa5028103753e7e78", 15451830},
-		{"Data4", 0, "8b843c62eb53136a855d6e0087e3cb0d", 5889553},
-		{"Data5", 0, "f9fcf9ab2eb13b2125c33a1cda03a093", 14349984},
+		{"Data1", 0, "81cb3b4461af845efc59450a74b49fe6", 692785},
+		{"Data2", 0, "69a05445a7c8c2da06d8f5a70200974d", 16774319},
+		{"Data3", 0, "256309284f6447aaa5028103753e7e78", 15451574},
+		{"Data4", 0, "8b843c62eb53136a855d6e0087e3cb0d", 5889297},
+		{"Data5", 0, "f9fcf9ab2eb13b2125c33a1cda03a093", 14349728},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_GK2_MAC },
 
@@ -1304,8 +1304,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// VERSION file reports "2.0"
 	// Although this is a floppy game, it does have speech. (bug #13007)
 	{"hoyle4", "", {
-		{"Data1", 0, "99575fae4579540a314bbedd72d51e8c", 7682887}, // FIXMEMD5
-		{"Data2", 0, "7d4bf5bdf3c02edbf35cb8471c84ec13", 1539134},
+		{"Data1", 0, "99575fae4579540a314bbedd72d51e8c", 7682631},
+		{"Data2", 0, "7d4bf5bdf3c02edbf35cb8471c84ec13", 1538878},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC_SPEECH },
 
@@ -2153,8 +2153,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
 	{"kq6", "", {
-		{"Data1", 0, "a183fc0c22fcbd9be4c8800d974b5599", 3892124}, // FIXMEMD5
-		{"Data2", 0, "b3722460dfd3097a1fbaf99a21ad8ea5", 15031272},
+		{"Data1", 0, "a183fc0c22fcbd9be4c8800d974b5599", 3891868},
+		{"Data2", 0, "b3722460dfd3097a1fbaf99a21ad8ea5", 15031016},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
@@ -2329,22 +2329,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 7 - English Macintosh
 	{"kq7", "", {
-		{"Data1", 0, "e0d120473fee7a548b1418b18bffbd7d", 4964646}, // FIXMEMD5
-		{"Data2", 0, "a260b97fb2396a9cd6ac3df6a56a2499", 14645782},
-		{"Data3", 0, "a5a660a469c9ba7b179ba9757181d2af", 6664388},
-		{"Data4", 0, "556721a5e3f158c0a7a39e428402dd1f", 6438951},
-		{"Data5", 0, "c38c2f51c9c2bafd5fefdffca83bd372", 6661526},
-		{"Data6", 0, "2054e1ec891cad31b5c647b57eccff9c", 4489712},
-		{"Data7", 0, "c6e634ea56f6f82954baeab9c468c47b", 7552537},
-		{"Data8", 0, "5b4d7cc7b1b7fdd262c1f65bb9c8af5f", 7478357},
-		{"Data9", 0, "7aba74ca9a52fba1199ab06f602bd268", 7304634},
-		{"Data10", 0, "2ee17c2a1037067ecc218a7b65582062", 7066946},
-		{"Data11", 0, "5df02ec2b6289bd84cd97a9bc677773e", 7555953},
-		{"Data12", 0, "4a8cebdff7f8d431dbcd36d39c5af29e", 6925934},
-		{"Data13", 0, "3dd2903e170518011d3bc0eadada399a", 7071386},
-		//{"Data14", 0, "60d8435ae44c7e0e1d553269bf8a58e0", 7872208},
-		//{"Data15", 0, "4c4c33e93a2352473c1adf9e3981e6ca", 6924278},
-		//{"Data16", 0, "753d9bddf035bbb5391119e8dc0f464a", 3971083},
+		{"Data1", 0, "e0d120473fee7a548b1418b18bffbd7d", 4964390},
+		{"Data2", 0, "a260b97fb2396a9cd6ac3df6a56a2499", 14645526},
+		{"Data3", 0, "a5a660a469c9ba7b179ba9757181d2af", 6664132},
+		{"Data4", 0, "556721a5e3f158c0a7a39e428402dd1f", 6438695},
+		{"Data5", 0, "c38c2f51c9c2bafd5fefdffca83bd372", 6661270},
+		{"Data6", 0, "2054e1ec891cad31b5c647b57eccff9c", 4489456},
+		{"Data7", 0, "c6e634ea56f6f82954baeab9c468c47b", 7552281},
+		{"Data8", 0, "5b4d7cc7b1b7fdd262c1f65bb9c8af5f", 7478101},
+		{"Data9", 0, "7aba74ca9a52fba1199ab06f602bd268", 7304378},
+		{"Data10", 0, "2ee17c2a1037067ecc218a7b65582062", 7066690},
+		{"Data11", 0, "5df02ec2b6289bd84cd97a9bc677773e", 7555697},
+		{"Data12", 0, "4a8cebdff7f8d431dbcd36d39c5af29e", 6925678},
+		{"Data13", 0, "3dd2903e170518011d3bc0eadada399a", 7071130},
+		//{"Data14", 0, "60d8435ae44c7e0e1d553269bf8a58e0", 7871952},
+		//{"Data15", 0, "4c4c33e93a2352473c1adf9e3981e6ca", 6924022},
+		//{"Data16", 0, "753d9bddf035bbb5391119e8dc0f464a", 3970827},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_KQ7 },
 
@@ -2626,16 +2626,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Lighthouse - English Macintosh CD
 	// NOTE: This only contains disc 1 files
 	{ "lighthouse", "", {
-		 {"Data1", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 7498955}, // FIXMEMD5
-		 {"Data2", 0, "97a5c80a12eee099349748a72b9f561a", 11278999},
-		 {"Data3", 0, "51085a80ec0f448938d279dc3464e1b1", 8295799},
-		 {"Data4", 0, "8c01d5243c62868207c144125de46c5a", 9132628},
-		 {"Data5", 0, "6830ea75c4459533ba6c11a09a886a8a", 9096667},
-		 {"Data6", 0, "b7b207a5d9faa1192aa566d484ffdde6", 9294588},
-		 {"Data7", 0, "87156321c318e6b61c84d7600f5cd28a", 1690205},
-		 {"Data8", 0, "c486982e4169eb42096029ee1635b2ae", 7515248},
-		 {"Data9", 0, "e5f5ad0cab47eb4b2240e3843ed5fe3c", 9833960},
-		 {"Data10", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 5298538},
+		{"Data1", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 7498699},
+		{"Data2", 0, "97a5c80a12eee099349748a72b9f561a", 11278743},
+		{"Data3", 0, "51085a80ec0f448938d279dc3464e1b1", 8295543},
+		{"Data4", 0, "8c01d5243c62868207c144125de46c5a", 9132372},
+		{"Data5", 0, "6830ea75c4459533ba6c11a09a886a8a", 9096411},
+		{"Data6", 0, "b7b207a5d9faa1192aa566d484ffdde6", 9294332},
+		{"Data7", 0, "87156321c318e6b61c84d7600f5cd28a", 1689949},
+		{"Data8", 0, "c486982e4169eb42096029ee1635b2ae", 7514992},
+		{"Data9", 0, "e5f5ad0cab47eb4b2240e3843ed5fe3c", 9833704},
+		{"Data10", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 5298282},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_MAC },
 
@@ -3253,8 +3253,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Larry 6 - English Macintosh Floppy (provided by sluicebox)
 	// VERSION file reports "1.0"
 	{"lsl6", "", {
-		{"Data1", 0, "482e6bcdda3a89390d5c4bcbfb5896b4", 2754907}, // FIXMEMD5
-		{"Data2", 0, "ba0799a45076780dfbceb8fce4c549c9", 5846345},
+		{"Data1", 0, "482e6bcdda3a89390d5c4bcbfb5896b4", 2754651},
+		{"Data2", 0, "ba0799a45076780dfbceb8fce4c549c9", 5846089},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_STD16_MAC },
 
@@ -3334,11 +3334,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - English Macintosh CD - HIRES (provided by michaelklaube in bug report #11218)
 	{"lsl6hires", "Hi-res", {
-		{"Data1", 0, "2c4e00a6910490831d4d84e9e6a49ec4", 3456494}, // FIXMEMD5
-		{"Data2", 0, "a7522b925dd5422c2db2b0a2337c76c3", 5856678},
-		{"Data3", 0, "9ebb490ec63721e5261111b918b5520e", 5577998},
-		{"Data4", 0, "d70687689ff3cf19a5e3c79dfced1c94", 3472320},
-		{"Data5", 0, "e91c3b681095a263fcb2f2c8d8fc74b6", 3274099},
+		{"Data1", 0, "2c4e00a6910490831d4d84e9e6a49ec4", 3456238},
+		{"Data2", 0, "a7522b925dd5422c2db2b0a2337c76c3", 5856422},
+		{"Data3", 0, "9ebb490ec63721e5261111b918b5520e", 5577742},
+		{"Data4", 0, "d70687689ff3cf19a5e3c79dfced1c94", 3472064},
+		{"Data5", 0, "e91c3b681095a263fcb2f2c8d8fc74b6", 3273843},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL6HIRES_MAC },
 
@@ -3430,16 +3430,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 7 - English Macintosh CD
 	{"lsl7", "", {
-		{"Data1", 0, "824a48b794c334b4bcf37e80fcc5f82e", 913286}, // FIXMEMD5
-		{"Data2", 0, "be36c59a3a694e14ed6d86e6ccc180a4", 7549943},
-		{"Data3", 0, "8325c7d702ffa8dd2854135e0f42b0d0", 6815697},
-		{"Data4", 0, "4584f786e0b5a502938d3cd90e6fab56", 8169195},
-		{"Data5", 0, "94bd026d27ba526d1f8d86d8e783acdd", 7452479},
-		{"Data6", 0, "c6a60210244a8591ecf10a50975ab9db", 8119360},
-		{"Data7", 0, "0d52c9764e047169f3d50f76d0cb5ae5", 8164785},
-		{"Data8", 0, "6f4838585ceb8a9ac277d13291c81235", 7754883},
-		{"Data9", 0, "68c0b7bd4aebf57e215f0517247a11d1", 8079211},
-		{"Data10", 0, "3dbacbcf4bd6d1b25aa8baeb3e2c4dab", 6446948},
+		{"Data1", 0, "824a48b794c334b4bcf37e80fcc5f82e", 913030},
+		{"Data2", 0, "be36c59a3a694e14ed6d86e6ccc180a4", 7549687},
+		{"Data3", 0, "8325c7d702ffa8dd2854135e0f42b0d0", 6815441},
+		{"Data4", 0, "4584f786e0b5a502938d3cd90e6fab56", 8168939},
+		{"Data5", 0, "94bd026d27ba526d1f8d86d8e783acdd", 7452223},
+		{"Data6", 0, "c6a60210244a8591ecf10a50975ab9db", 8119104},
+		{"Data7", 0, "0d52c9764e047169f3d50f76d0cb5ae5", 8164529},
+		{"Data8", 0, "6f4838585ceb8a9ac277d13291c81235", 7754627},
+		{"Data9", 0, "68c0b7bd4aebf57e215f0517247a11d1", 8078955},
+		{"Data10", 0, "3dbacbcf4bd6d1b25aa8baeb3e2c4dab", 6446692},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL7 },
 
@@ -3773,15 +3773,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Data1 and Data13. Other discs have conflicting names :(
 	// Game script sets version to "1.000.000"
 	{"phantasmagoria", "", {
-		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705669}, // FIXMEMD5
-		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516712},
-		{"Data3", 0, "d6880c00d2c700c213ab76a3c39e60fc", 15612610},
-		{"Data4", 0, "9037f5d3a37d0ee23146d9830726b058", 9794705},
-		{"Data5", 0, "4b944fc79d180966c1088f7ecf7ae4d1", 13638812},
-		{"Data6", 0, "647b1a826dbbb64884e0ae1bc59c8abb", 13846162},
-		{"Data7", 0, "932a3aaf1eb650735a9e3a290ce249fb", 3626460},
+		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705413},
+		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516456},
+		{"Data3", 0, "d6880c00d2c700c213ab76a3c39e60fc", 15612354},
+		{"Data4", 0, "9037f5d3a37d0ee23146d9830726b058", 9794449},
+		{"Data5", 0, "4b944fc79d180966c1088f7ecf7ae4d1", 13638556},
+		{"Data6", 0, "647b1a826dbbb64884e0ae1bc59c8abb", 13845906},
+		{"Data7", 0, "932a3aaf1eb650735a9e3a290ce249fb", 3626204},
 		// Data8-12 are empty
-		{"Data13", 0, "6d2c450fca19a69b5af74ed5b03c0a17", 14923328},
+		{"Data13", 0, "6d2c450fca19a69b5af74ed5b03c0a17", 14923072},
 		AD_LISTEND},
 	 Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PHANTASMAGORIA_MAC },
 
@@ -4213,12 +4213,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 4 - English Macintosh CD
 	{"pq4", "", {
-		{"Data1", 0, "9f0a775c66481cef43b0743275a745b7", 4946164}, // FIXMEMD5
-		{"Data2", 0, "e64840cdc341ac567579aae1526e6d92", 5572355},
-		{"Data3", 0, "abdd183f3d6a0c326c949ba9dda32579", 5691679},
-		{"Data4", 0, "f1d80305b254f40ecff4a0f56b1d21a7", 5431778},
-		{"Data5", 0, "e766923060f7b85f1cd8909240412796", 5194686},
-		{"Data6", 0, "ca95355f5f89dcf45e78c073ef83471b", 6599265},
+		{"Data1", 0, "9f0a775c66481cef43b0743275a745b7", 4945908},
+		{"Data2", 0, "e64840cdc341ac567579aae1526e6d92", 5572099},
+		{"Data3", 0, "abdd183f3d6a0c326c949ba9dda32579", 5691423},
+		{"Data4", 0, "f1d80305b254f40ecff4a0f56b1d21a7", 5431522},
+		{"Data5", 0, "e766923060f7b85f1cd8909240412796", 5194430},
+		{"Data6", 0, "ca95355f5f89dcf45e78c073ef83471b", 6599009},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQ4_MAC },
 
@@ -4307,11 +4307,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Police Quest: SWAT - English Macintosh CD
 	// NOTE: This only contains disc 1 files
 	{"pqswat", "", {
-		{"Data1", 0, "03f10959f32a894a65385dfee19022fa", 842362}, // FIXMEMD5
-		{"Data2", 0, "9f6975e06881ccf594d1d2011c8fac69", 8572333},
-		{"Data3", 0, "80ac4ba29e1c6a6abeef06566c389028", 9785485},
-		{"Data4", 0, "450e87b388e3b759b68c6ceb6bb4ca89", 10271339},
-		{"Data5", 0, "223eed8e3a64e2fb76f25bd49afbbb79", 1713188},
+		{"Data1", 0, "03f10959f32a894a65385dfee19022fa", 842106},
+		{"Data2", 0, "9f6975e06881ccf594d1d2011c8fac69", 8572077},
+		{"Data3", 0, "80ac4ba29e1c6a6abeef06566c389028", 9785229},
+		{"Data4", 0, "450e87b388e3b759b68c6ceb6bb4ca89", 10271083},
+		{"Data5", 0, "223eed8e3a64e2fb76f25bd49afbbb79", 1712932},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQSWAT },
 
@@ -4515,8 +4515,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
 	// VERSION file reports "2.0"
 	{"qfg1vga", "VGA", {
-		{"Data1", 0, "106527ff8756e4e1a795d63d23e8b833", 1752358}, // FIXMEMD5
-		{"Data2", 0, "5cdd92033231159c6e9c71d43e9f194d", 6574746},
+		{"Data1", 0, "106527ff8756e4e1a795d63d23e8b833", 1752102},
+		{"Data2", 0, "5cdd92033231159c6e9c71d43e9f194d", 6574490},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
@@ -4828,18 +4828,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// RAMA - English Macintosh CD
 	// NOTE: This only contains disc 1 files
 	{"rama", "", {
-		{ "Data1", 0, "6013a1ea890f831c3ff05cdda4b4bcc0", 805865 }, // FIXMEMD5
-		{ "Data2", 0, "242362ae1ecfbda37b31a952b25303e9", 8570826 },
-		{ "Data3", 0, "1ee46ff2d7f02bf46ec0c4aa8f84cbb4", 10692344 },
-		{ "Data4", 0, "15519ad5d8d7f12db08e1a91a762c237", 6780250 },
-		{ "Data5", 0, "ac555290c183ba784bb9af07d6cfcd91", 6905035 },
-		{ "Data6", 0, "e98507e9d1b77dff1f5d3c0733cf246d", 7761076 },
-		{ "Data7", 0, "f43cd59c73db073d0fe4caf41d1575bb", 9179082 },
-		{ "Data8", 0, "0a8ab5005aa762dd8b0291fce6e7e838", 6928976 },
-		{ "Data9", 0, "a96190a98be651813128170e17e75c57", 6205088 },
-		{ "Data10", 0, "085542cc4ced8dda9eca454b1334dfa4", 5578134 },
-		{ "Data11", 0, "a812ef1adfccdd571797250abf6b9db2", 4948885 },
-		{ "Data12", 0, "17e2254bdfb100d1981524f93b6ed06a", 1440467 },
+		{"Data1", 0, "6013a1ea890f831c3ff05cdda4b4bcc0", 805609},
+		{"Data2", 0, "242362ae1ecfbda37b31a952b25303e9", 8570570},
+		{"Data3", 0, "1ee46ff2d7f02bf46ec0c4aa8f84cbb4", 10692088},
+		{"Data4", 0, "15519ad5d8d7f12db08e1a91a762c237", 6779994},
+		{"Data5", 0, "ac555290c183ba784bb9af07d6cfcd91", 6904779},
+		{"Data6", 0, "e98507e9d1b77dff1f5d3c0733cf246d", 7760820},
+		{"Data7", 0, "f43cd59c73db073d0fe4caf41d1575bb", 9178826},
+		{"Data8", 0, "0a8ab5005aa762dd8b0291fce6e7e838", 6928720},
+		{"Data9", 0, "a96190a98be651813128170e17e75c57", 6204832},
+		{"Data10", 0, "085542cc4ced8dda9eca454b1334dfa4", 5577878},
+		{"Data11", 0, "a812ef1adfccdd571797250abf6b9db2", 4948629},
+		{"Data12", 0, "17e2254bdfb100d1981524f93b6ed06a", 1440211},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_RAMA },
 
@@ -4906,19 +4906,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Shivers - English Macintosh CD
 	{"shivers", "", {
-		{"Data1", 0, "7154f2fc5466f0cd6923deb1a6f6729a", 4635483}, // FIXMEMD5
-		{"Data2", 0, "499e46f2b9d1c1485eca53cb90d60a18", 518575},
-		{"Data3", 0, "8f874e8207f3bf0f1d089fb3af01c1ad", 10159733},
-		{"Data4", 0, "af5e6582a7157eb2a8784fa7098cf1b1", 15479074},
-		{"Data5", 0, "1db5025dce818f35bab9acd6e67b5e31", 15635028},
-		{"Data6", 0, "d64c3acef05ffe1ae09173fdc7fad1fa", 15536868},
-		{"Data7", 0, "e0ff5994850499fe80024af11291e9db", 14592851},
-		{"Data8", 0, "2add76cb84e374c1cd56469b9fc85f3d", 15777002},
-		{"Data9", 0, "5415a1b9634fcdd8ce5ce736ee97ff92", 14644368},
-		{"Data10", 0, "4f2c24bcc71a35654b39ad8faa537f96", 16371379},
-		{"Data11", 0, "821e464fd28e5a2e9ca084cde9daeac6", 15270009},
-		{"Data12", 0, "85e6c8edf7899fc52864b83ede54a38a", 14970109},
-		{"Data13", 0, "cfb0bbb2bedb00be4849e3796abad3f8", 15182978},
+		{"Data1", 0, "7154f2fc5466f0cd6923deb1a6f6729a", 4635227},
+		{"Data2", 0, "499e46f2b9d1c1485eca53cb90d60a18", 518319},
+		{"Data3", 0, "8f874e8207f3bf0f1d089fb3af01c1ad", 10159477},
+		{"Data4", 0, "af5e6582a7157eb2a8784fa7098cf1b1", 15478818},
+		{"Data5", 0, "1db5025dce818f35bab9acd6e67b5e31", 15634772},
+		{"Data6", 0, "d64c3acef05ffe1ae09173fdc7fad1fa", 15536612},
+		{"Data7", 0, "e0ff5994850499fe80024af11291e9db", 14592595},
+		{"Data8", 0, "2add76cb84e374c1cd56469b9fc85f3d", 15776746},
+		{"Data9", 0, "5415a1b9634fcdd8ce5ce736ee97ff92", 14644112},
+		{"Data10", 0, "4f2c24bcc71a35654b39ad8faa537f96", 16371123},
+		{"Data11", 0, "821e464fd28e5a2e9ca084cde9daeac6", 15269753},
+		{"Data12", 0, "85e6c8edf7899fc52864b83ede54a38a", 14969853},
+		{"Data13", 0, "cfb0bbb2bedb00be4849e3796abad3f8", 15182722},
 		// goes up to Data20
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_SHIVERS },
@@ -5680,18 +5680,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Space Quest 6 - English Macintosh CD
 	// VERSION file reports "1.000"
 	{"sq6", "", {
-		{"Data1", 0, "37d452ef82e3c054a2531d3028acbd9a", 11488588}, // FIXMEMD5
-		{"Data2", 0, "c4d2da963e1ae9f52bac4bece8ecef19", 6912519},
-		{"Data3", 0, "d1ee854dc7ac5e439aaaed683404dd53", 5527552},
-		{"Data4", 0, "4126aa73958a00203e97f843e888d82b", 5872808},
-		{"Data5", 0, "9b3558495d861ebb97ceaaec6f1686c1", 5916650},
-		{"Data6", 0, "7ce6c5172ee8cd23476d5c9fcf41a545", 5340247},
-		{"Data7", 0, "7103d65a3b94ca0cdb88d83e0faa6589", 6017850},
-		{"Data8", 0, "0f30545c9789f4b31613a671d47b5b67", 2266349},
-		{"Data9", 0, "d667feaefef37089577b3fb925c676ed", 2941306},
-		{"Data10", 0, "92d878ff44fc4ef6b0d9e8cda2f11d2c", 4037677},
-		{"Data11", 0, "08ca4f202e115df26cf80aa2a722a959", 925888},
-		{"Data12", 0, "5c715987024fbc666c1c3fea2bcdce42", 1869183},
+		{"Data1", 0, "37d452ef82e3c054a2531d3028acbd9a", 11488332},
+		{"Data2", 0, "c4d2da963e1ae9f52bac4bece8ecef19", 6912263},
+		{"Data3", 0, "d1ee854dc7ac5e439aaaed683404dd53", 5527296},
+		{"Data4", 0, "4126aa73958a00203e97f843e888d82b", 5872552},
+		{"Data5", 0, "9b3558495d861ebb97ceaaec6f1686c1", 5916394},
+		{"Data6", 0, "7ce6c5172ee8cd23476d5c9fcf41a545", 5339991},
+		{"Data7", 0, "7103d65a3b94ca0cdb88d83e0faa6589", 6017594},
+		{"Data8", 0, "0f30545c9789f4b31613a671d47b5b67", 2266093},
+		{"Data9", 0, "d667feaefef37089577b3fb925c676ed", 2941050},
+		{"Data10", 0, "92d878ff44fc4ef6b0d9e8cda2f11d2c", 4037421},
+		{"Data11", 0, "08ca4f202e115df26cf80aa2a722a959", 925632},
+		{"Data12", 0, "5c715987024fbc666c1c3fea2bcdce42", 1868927},
 	AD_LISTEND },
 	Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_SQ6_MAC },
 
@@ -5867,13 +5867,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
-		{"Data1", 0, "63887e33cc282c92dc1f916f54aea8eb", 700786}, // FIXMEMD5
-		{"Data2", 0, "da2f13be2819a7333fee372d38b8d1a2", 122485},
-		{"Data3", 0, "e9fda4f1714ddb443545ba8a2d58ef18", 7299126},
-		{"Data4", 0, "59b432ec35b24a216432a556e25087ef", 7209309},
-		{"Data5", 0, "189e809f24aee83c707dea03a543c7c4", 6615563},
-		{"Data6", 0, "b639487c83d1dae0e001e700f3631566", 7594881},
-		{"Data7", 0, "2afd9b5434102b89610916b904c3f73a", 7627374},
+		{"Data1", 0, "63887e33cc282c92dc1f916f54aea8eb", 700530},
+		{"Data2", 0, "da2f13be2819a7333fee372d38b8d1a2", 122229},
+		{"Data3", 0, "e9fda4f1714ddb443545ba8a2d58ef18", 7298870},
+		{"Data4", 0, "59b432ec35b24a216432a556e25087ef", 7209053},
+		{"Data5", 0, "189e809f24aee83c707dea03a543c7c4", 6615307},
+		{"Data6", 0, "b639487c83d1dae0e001e700f3631566", 7594625},
+		{"Data7", 0, "2afd9b5434102b89610916b904c3f73a", 7627118},
+		{"Data8", 0, "4601cf0a4a5de40132cab2121bbc0962", 6731266},
+		{"Data9", 0, "c7dcd55bc538d6a6808f7e899b164fe3", 7760723},
+		{"Data10", 0, "b2d73cf4bbe6003c012a121405f8b4de", 6857922},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_TORIN_MAC },
 
