@@ -95,12 +95,21 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		}
 		for (uint32 i = 0; i < numVertexIndices; i++) {
+			uint32 index = vertexIndices[i];
+			auto vertex = _faceVBO[index];
 			if (tex) {
 				tex->bind();
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);
+				if (material.doubleSided) {
+					vertex.texS = vertex.texS;
+					vertex.texT = 1.0f - vertex.texT;
+				} else {
+					vertex.texS = 1.0f - vertex.texS;
+					vertex.texT = 1.0f - vertex.texT;
+				}
 			} else {
 				glBindTexture(GL_TEXTURE_2D, 0);
 				if (_gfx->computeLightsEnabled())
@@ -110,8 +119,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			}
 
 			if (_gfx->computeLightsEnabled()) {
-				uint32 index = vertexIndices[i];
-				auto vertex = _faceVBO[index];
 				Math::Vector4d modelEyePosition = modelViewMatrix * Math::Vector4d(vertex.x, vertex.y, vertex.z, 1.0);
 				Math::Vector3d modelEyeNormal = normalMatrix.getRotation() *  Math::Vector3d(vertex.nx, vertex.ny, vertex.nz);
 				modelEyeNormal.normalize();
@@ -184,9 +191,8 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				vertex.r = color.x();
 				vertex.g = color.y();
 				vertex.b = color.z();
-
-				_faceVBO[index] = vertex;
 			}
+			_faceVBO[index] = vertex;
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
