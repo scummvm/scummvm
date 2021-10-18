@@ -5250,7 +5250,9 @@ msgstr "OPムービー中にデジタルサウンドトラックを再生"
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr "選択した場合、イントロ中はデジタルサウンドトラックを使用します。それ以外はMIDIで再生します。"
+msgstr ""
+"選択した場合、イントロ中はデジタルサウンドトラックを使用します。それ以外は"
+"MIDIで再生します。"
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
