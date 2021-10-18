@@ -191,6 +191,10 @@ void OpenGLSDriver::set3DMode() {
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 }
 
+bool OpenGLSDriver::computeLightsEnabled() {
+	return false;
+}
+
 Common::Rect OpenGLSDriver::getViewport() const {
 	return _viewport;
 }

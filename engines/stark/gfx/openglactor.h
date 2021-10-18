@@ -42,12 +42,18 @@ class OpenGLDriver;
 #include "common/pack-start.h"
 
 struct _ActorVertex {
-	Math::Vector3d pos1;
-	Math::Vector3d pos2;
+	float pos1x;
+	float pos1y;
+	float pos1z;
+	float pos2x;
+	float pos2y;
+	float pos2z;
 	uint32 bone1;
 	uint32 bone2;
 	float boneWeight;
-	Math::Vector3d normal;
+	float normalx;
+	float normaly;
+	float normalz;
 	float texS;
 	float texT;
 	float x;
@@ -59,6 +65,9 @@ struct _ActorVertex {
 	float sx;
 	float sy;
 	float sz;
+	float r;
+	float g;
+	float b;
 } PACKED_STRUCT;
 typedef _ActorVertex ActorVertex;
 

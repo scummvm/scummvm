@@ -66,7 +66,8 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	Math::Vector3d lightDirection;
 
 	_gfx->set3DMode();
-	_gfx->setupLights(lights);
+	if (!_gfx->computeLightsEnabled())
+		_gfx->setupLights(lights);
 
 	Math::Matrix4 model = getModelMatrix(position, direction);
 	Math::Matrix4 view = StarkScene->getViewMatrix();
@@ -81,6 +82,15 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	projectionMatrix.transpose(); // OpenGL expects matrices transposed
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(projectionMatrix.getData());
+
+	Math::Matrix4 normalMatrix;
+	if (_gfx->computeLightsEnabled()) {
+		projectionMatrix.transpose();
+		modelViewMatrix.transpose();
+
+		normalMatrix = modelViewMatrix;
+		normalMatrix.invertAffineOrthonormal();
+	}
 
 	Math::Matrix4 mvp;
 	if (drawShadow) {
@@ -97,28 +107,37 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	Common::Array<Material *> mats = _model->getMaterials();
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+	if (!_gfx->computeLightsEnabled()) {
+		glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+		glEnable(GL_COLOR_MATERIAL);
+	}
+
 	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material *material = mats[(*face)->materialId];
+		Math::Vector3d color;
 		const Gfx::Texture *tex = resolveTexture(material);
-		if (tex) {
-			tex->bind();
-			glColor3f(1.0f, 1.0f, 1.0f);
-		} else {
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glColor3f(material->r, material->g, material->b);
-		}
-
 		auto vertexIndices = _faceEBO[*face];
 		auto numVertexIndices = (*face)->vertexIndices.size();
 		for (uint32 i = 0; i < numVertexIndices; i++) {
+			if (tex) {
+				tex->bind();
+				if (_gfx->computeLightsEnabled())
+					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
+				else
+					glColor3f(1.0f, 1.0f, 1.0f);
+			} else {
+				glBindTexture(GL_TEXTURE_2D, 0);
+				if (_gfx->computeLightsEnabled())
+					color = Math::Vector3d(material->r, material->g, material->b);
+				else
+					glColor3f(material->r, material->g, material->b);
+			}
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];
 			uint32 bone1 = vertex.bone1;
 			uint32 bone2 = vertex.bone2;
-			Math::Vector3d position1 = vertex.pos1;
-			Math::Vector3d position2 = vertex.pos2;
+			Math::Vector3d position1 = Math::Vector3d(vertex.pos1x, vertex.pos1y, vertex.pos1z);
+			Math::Vector3d position2 = Math::Vector3d(vertex.pos2x, vertex.pos2y, vertex.pos2z);
 			Math::Vector3d bone1Position = Math::Vector3d(bones[bone1]->_animPos.x(),
 														  bones[bone1]->_animPos.y(),
 														  bones[bone1]->_animPos.z());
@@ -134,7 +153,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 														  bones[bone2]->_animRot.z(),
 														  bones[bone2]->_animRot.w());
 			float boneWeight = vertex.boneWeight;
-			Math::Vector3d normal = vertex.normal;
+			Math::Vector3d normal = Math::Vector3d(vertex.normalx, vertex.normaly, vertex.normalz);
 
 			// Compute the vertex position in eye-space
 			bone1Rotation.transform(position1);
@@ -145,7 +164,13 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			vertex.x = modelPosition.x();
 			vertex.y = modelPosition.y();
 			vertex.z = modelPosition.z();
-
+			Math::Vector4d modelEyePosition;
+			if (_gfx->computeLightsEnabled()) {
+				modelEyePosition = modelViewMatrix * Math::Vector4d(modelPosition.x(),
+																		       modelPosition.y(),
+																		       modelPosition.z(),
+																		       1.0);
+			}
 			// Compute the vertex normal in eye-space
 			Math::Vector3d n1 = normal;
 			bone1Rotation.transform(n1);
@@ -155,6 +180,11 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			vertex.nx = modelNormal.x();
 			vertex.ny = modelNormal.y();
 			vertex.nz = modelNormal.z();
+			Math::Vector3d modelEyeNormal;
+			if (_gfx->computeLightsEnabled()) {
+				modelEyeNormal = normalMatrix.getRotation() * modelNormal;
+				modelEyeNormal.normalize();
+			}
 
 			if (drawShadow) {
 				Math::Vector3d shadowPosition = modelPosition + lightDirection * (-modelPosition.y() / lightDirection.y());
@@ -163,10 +193,83 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 				vertex.sz = shadowPosition.z();
 			}
 
+			if (_gfx->computeLightsEnabled()) {
+				static const uint maxLights = 10;
+
+				assert(lights.size() >= 1);
+				assert(lights.size() <= maxLights);
+
+				const LightEntry *ambient = lights[0];
+				assert(ambient->type == LightEntry::kAmbient); // The first light must be the ambient light
+
+				Math::Vector3d lightColor = ambient->color;
+
+				for (uint li = 0; li < lights.size() - 1; li++) {
+					const LightEntry *l = lights[li + 1];
+
+					Math::Vector4d worldPosition;
+					worldPosition.x() = l->position.x();
+					worldPosition.y() = l->position.y();
+					worldPosition.z() = l->position.z();
+					worldPosition.w() = 1.0;
+
+					Math::Vector4d lightEyePosition = view * worldPosition;
+
+					Math::Vector3d worldDirection = l->direction;
+					Math::Vector3d lightEyeDirection = view.getRotation() * worldDirection;
+					lightEyeDirection.normalize();
+
+					switch (l->type) {
+						case LightEntry::kPoint: {
+							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+
+							float dist = vertexToLight.length();
+							vertexToLight.normalize();
+							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f,  l->falloffFar - l->falloffNear), 0.0f, 1.0f);
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, vertexToLight));
+							lightColor += l->color * attn * incidence;
+							break;
+						}
+						case LightEntry::kDirectional: {
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -lightEyeDirection));
+							lightColor += (l->color * incidence);
+							break;
+						}
+						case LightEntry::kSpot: {
+							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+
+							float dist = vertexToLight.length();
+							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f, l->falloffFar - l->falloffNear), 0.0f, 1.0f);
+
+							vertexToLight.normalize();
+							float incidence = MAX(0.0f, modelEyeNormal.dotProduct(vertexToLight));
+
+							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-lightEyeDirection));
+							float cone = CLIP((cosAngle - l->innerConeAngle.getCosine()) / MAX(0.001f, l->outerConeAngle.getCosine() - l->innerConeAngle.getCosine()), 0.0f, 1.0f);
+
+							lightColor += l->color * attn * incidence * cone;
+							break;
+						}
+						default:
+							break;
+					}
+				}
+
+				lightColor.x() = CLIP(lightColor.x(), 0.0f, 1.0f);
+				lightColor.y() = CLIP(lightColor.y(), 0.0f, 1.0f);
+				lightColor.z() = CLIP(lightColor.z(), 0.0f, 1.0f);
+				color = color * lightColor;
+				vertex.r = color.x();
+				vertex.g = color.y();
+				vertex.b = color.z();
+			}
+
 			_faceVBO[index] = vertex;
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
+		if (_gfx->computeLightsEnabled())
+			glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 
@@ -174,22 +277,28 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		if (tex)
 			glTexCoordPointer(2, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].texS);
 		glNormalPointer(GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].nx);
+		if (_gfx->computeLightsEnabled())
+			glColorPointer(3, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].r);
 
 		glDrawElements(GL_TRIANGLES, numVertexIndices, GL_UNSIGNED_INT, vertexIndices);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
+		if (_gfx->computeLightsEnabled())
+			glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	}
-	glDisable(GL_COLOR_MATERIAL);
+	if (!_gfx->computeLightsEnabled())
+		glDisable(GL_COLOR_MATERIAL);
 
 
 	if (drawShadow) {
 		glEnable(GL_BLEND);
 		glEnable(GL_STENCIL_TEST);
 		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_LIGHTING);
+		if (!_gfx->computeLightsEnabled())
+			glDisable(GL_LIGHTING);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(projectionMatrix.getData());
@@ -211,7 +320,8 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			glDisableClientState(GL_VERTEX_ARRAY);
 		}
 
-		glEnable(GL_LIGHTING);
+		if (!_gfx->computeLightsEnabled())
+			glEnable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 		glDisable(GL_STENCIL_TEST);

@@ -43,6 +43,7 @@ namespace Stark {
 namespace Gfx {
 
 OpenGLDriver::OpenGLDriver() {
+	_computeLights = true;
 }
 
 OpenGLDriver::~OpenGLDriver() {
@@ -60,6 +61,7 @@ void OpenGLDriver::init() {
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	glDisable(GL_LIGHTING);
 }
 
 void OpenGLDriver::setScreenViewport(bool noScaling) {
@@ -231,7 +233,8 @@ void OpenGLDriver::start2DMode() {
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
-	glDisable(GL_LIGHTING);
+	if (!_computeLights)
+		glDisable(GL_LIGHTING);
 }
 
 void OpenGLDriver::end2DMode() {
@@ -240,7 +243,6 @@ void OpenGLDriver::end2DMode() {
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	glEnable(GL_LIGHTING);
 }
 
 void OpenGLDriver::set3DMode() {
@@ -252,6 +254,13 @@ void OpenGLDriver::set3DMode() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glStencilFunc(GL_EQUAL, 0, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+
+	if (!_computeLights)
+		glEnable(GL_LIGHTING);
+}
+
+bool OpenGLDriver::computeLightsEnabled() {
+	return _computeLights;
 }
 
 Common::Rect OpenGLDriver::getViewport() const {

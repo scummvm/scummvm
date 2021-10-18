@@ -131,6 +131,7 @@ public:
 	virtual Graphics::Surface *getViewportScreenshot() const = 0;
 
 	virtual void set3DMode() = 0;
+	virtual bool computeLightsEnabled() = 0;
 
 	static const int32 kOriginalWidth = 640;
 	static const int32 kOriginalHeight = 480;
@@ -145,6 +146,7 @@ protected:
 	static void flipVertical(Graphics::Surface *s);
 
 	Common::Rect _screenViewport;
+	bool         _computeLights;
 };
 
 } // End of namespace Gfx

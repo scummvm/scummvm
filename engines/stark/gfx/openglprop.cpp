@@ -45,14 +45,14 @@ OpenGLPropRenderer::~OpenGLPropRenderer() {
 
 void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
 	if (_modelIsDirty) {
-		// Update the OpenGL Buffer Objects if required
 		clearVertices();
 		uploadVertices();
 		_modelIsDirty = false;
 	}
 
 	_gfx->set3DMode();
-	_gfx->setupLights(lights);
+	if (!_gfx->computeLightsEnabled())
+		_gfx->setupLights(lights);
 
 	Math::Matrix4 model = getModelMatrix(position, direction);
 	Math::Matrix4 view = StarkScene->getViewMatrix();
@@ -68,30 +68,130 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(projectionMatrix.getData());
 
+	Math::Matrix4 normalMatrix;
+	if (_gfx->computeLightsEnabled()) {
+		projectionMatrix.transpose();
+		modelViewMatrix.transpose();
+
+		normalMatrix = modelViewMatrix;
+		normalMatrix.invertAffineOrthonormal();
+	}
+
 	const Common::Array<Face> &faces = _model->getFaces();
 	const Common::Array<Material> &materials = _model->getMaterials();
 
-	glEnable(GL_COLOR_MATERIAL);
+	if (!_gfx->computeLightsEnabled())
+		glEnable(GL_COLOR_MATERIAL);
 	for (Common::Array<Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material &material = materials[face->materialId];
-
-		// For each face draw its vertices from the VBO, indexed by the EBO
+		Math::Vector3d color;
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
-		if (material.doubleSided)
-			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-		else
-			glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		if (tex) {
-			tex->bind();
-			glColor3f(1.0f, 1.0f, 1.0f);
-		} else {
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glColor3f(material.r, material.g, material.b);
+		auto vertexIndices = _faceEBO[face];
+		auto numVertexIndices = (face)->vertexIndices.size();
+		if (!_gfx->computeLightsEnabled()) {
+			if (material.doubleSided)
+				glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+			else
+				glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		}
+		for (uint32 i = 0; i < numVertexIndices; i++) {
+			if (tex) {
+				tex->bind();
+				if (_gfx->computeLightsEnabled())
+					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
+				else
+					glColor3f(1.0f, 1.0f, 1.0f);
+			} else {
+				glBindTexture(GL_TEXTURE_2D, 0);
+				if (_gfx->computeLightsEnabled())
+					color = Math::Vector3d(material.r, material.g, material.b);
+				else
+					glColor3f(material.r, material.g, material.b);
+			}
+
+			if (_gfx->computeLightsEnabled()) {
+				uint32 index = vertexIndices[i];
+				auto vertex = _faceVBO[index];
+				Math::Vector4d modelEyePosition = modelViewMatrix * Math::Vector4d(vertex.x, vertex.y, vertex.z, 1.0);
+				Math::Vector3d modelEyeNormal = normalMatrix.getRotation() *  Math::Vector3d(vertex.nx, vertex.ny, vertex.nz);
+				modelEyeNormal.normalize();
+
+				static const uint maxLights = 10;
+
+				assert(lights.size() >= 1);
+				assert(lights.size() <= maxLights);
+
+				const LightEntry *ambient = lights[0];
+				assert(ambient->type == LightEntry::kAmbient); // The first light must be the ambient light
+
+				Math::Vector3d lightColor = ambient->color;
+
+				for (uint li = 0; li < lights.size() - 1; li++) {
+					const LightEntry *l = lights[li + 1];
+
+					Math::Vector4d worldPosition;
+					worldPosition.x() = l->position.x();
+					worldPosition.y() = l->position.y();
+					worldPosition.z() = l->position.z();
+					worldPosition.w() = 1.0;
+
+					Math::Vector4d lightEyePosition = view * worldPosition;
+
+					Math::Vector3d worldDirection = l->direction;
+					Math::Vector3d lightEyeDirection = view.getRotation() * worldDirection;
+					lightEyeDirection.normalize();
+
+					switch (l->type) {
+						case LightEntry::kPoint: {
+							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+
+							float dist = vertexToLight.length();
+							vertexToLight.normalize();
+							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f,  l->falloffFar - l->falloffNear), 0.0f, 1.0f);
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, vertexToLight));
+							lightColor += l->color * attn * incidence;
+							break;
+						}
+						case LightEntry::kDirectional: {
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -lightEyeDirection));
+							lightColor += (l->color * incidence);
+							break;
+						}
+						case LightEntry::kSpot: {
+							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+
+							float dist = vertexToLight.length();
+							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f, l->falloffFar - l->falloffNear), 0.0f, 1.0f);
+
+							vertexToLight.normalize();
+							float incidence = MAX(0.0f, modelEyeNormal.dotProduct(vertexToLight));
+
+							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-lightEyeDirection));
+							float cone = CLIP((cosAngle - l->innerConeAngle.getCosine()) / MAX(0.001f, l->outerConeAngle.getCosine() - l->innerConeAngle.getCosine()), 0.0f, 1.0f);
+
+							lightColor += l->color * attn * incidence * cone;
+							break;
+						}
+						default:
+							break;
+					}
+				}
+
+				lightColor.x() = CLIP(lightColor.x(), 0.0f, 1.0f);
+				lightColor.y() = CLIP(lightColor.y(), 0.0f, 1.0f);
+				lightColor.z() = CLIP(lightColor.z(), 0.0f, 1.0f);
+				color = color * lightColor;
+				vertex.r = color.x();
+				vertex.g = color.y();
+				vertex.b = color.z();
+
+				_faceVBO[index] = vertex;
+			}
 		}
 
-		auto vertexIndices = _faceEBO[face];
-
 		glEnableClientState(GL_VERTEX_ARRAY);
+		if (_gfx->computeLightsEnabled())
+			glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 
@@ -99,15 +199,20 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		if (tex)
 			glTexCoordPointer(2, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].texS);
 		glNormalPointer(GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].nx);
+		if (_gfx->computeLightsEnabled())
+			glColorPointer(3, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].r);
 
 		glDrawElements(GL_TRIANGLES, face->vertexIndices.size(), GL_UNSIGNED_INT, vertexIndices);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
+		if (_gfx->computeLightsEnabled())
+			glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	}
-	glDisable(GL_COLOR_MATERIAL);
+	if (!_gfx->computeLightsEnabled())
+		glDisable(GL_COLOR_MATERIAL);
 }
 
 void OpenGLPropRenderer::clearVertices() {
