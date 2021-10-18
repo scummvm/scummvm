@@ -150,9 +150,9 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 				lightColor[0] = (GLfloat)l->color.x();
 				lightColor[1] = (GLfloat)l->color.y();
 				lightColor[2] = (GLfloat)l->color.z();
-				lightPos[0] = -(GLfloat)eyeDirection.x();
-				lightPos[1] = -(GLfloat)eyeDirection.y();
-				lightPos[2] = -(GLfloat)eyeDirection.z();
+				lightPos[0] = (GLfloat)eyeDirection.x();
+				lightPos[1] = (GLfloat)eyeDirection.y();
+				lightPos[2] = (GLfloat)eyeDirection.z();
 				lightPos[3] = 0;
 				break;
 			case LightEntry::kSpot:
@@ -162,9 +162,9 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 				lightPos[0] = (GLfloat)eyePosition.x();
 				lightPos[1] = (GLfloat)eyePosition.y();
 				lightPos[2] = (GLfloat)eyePosition.z();
-				lightDir[0] = -(GLfloat)eyeDirection.x();
-				lightDir[1] = -(GLfloat)eyeDirection.y();
-				lightDir[2] = -(GLfloat)eyeDirection.z();
+				lightDir[0] = (GLfloat)eyeDirection.x();
+				lightDir[1] = (GLfloat)eyeDirection.y();
+				lightDir[2] = (GLfloat)eyeDirection.z();
 				// FIXME
 				l_attenuation = 0.0000001f;
 				q_attenuation = 0.0000001f;
