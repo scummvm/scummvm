@@ -141,7 +141,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			position1 += bone1Position;
 			bone2Rotation.transform(position2);
 			position2 += bone2Position;
-			Math::Vector3d modelPosition = position2 * (1.0 - boneWeight) + position1 * boneWeight;
+			Math::Vector3d modelPosition = Math::Vector3d::interpolate(position2, position1, boneWeight);
 			vertex.x = modelPosition.x();
 			vertex.y = modelPosition.y();
 			vertex.z = modelPosition.z();
@@ -151,7 +151,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			bone1Rotation.transform(n1);
 			Math::Vector3d n2 = normal;
 			bone2Rotation.transform(n2);
-			Math::Vector3d modelNormal = Math::Vector3d(n2 * (1.0 - boneWeight) + n1 * boneWeight).getNormalized();
+			Math::Vector3d modelNormal = Math::Vector3d(Math::Vector3d::interpolate(n2, n1, boneWeight)).getNormalized();
 			vertex.nx = modelNormal.x();
 			vertex.ny = modelNormal.y();
 			vertex.nz = modelNormal.z();
