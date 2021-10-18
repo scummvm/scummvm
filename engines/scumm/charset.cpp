@@ -1502,9 +1502,10 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 }
 #endif
 
-CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile)
+CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile, bool correctFontSpacing)
 	 : CharsetRendererCommon(vm) {
 
+	_correctFontSpacing = correctFontSpacing;
 	_pad = false;
 	_glyphSurface = NULL;
 
@@ -1773,7 +1774,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// the width of a string (e.g. to center text on screen). It is,
 	// however, used for things like the Grail Diary.
 
-	if (_vm->_game.id == GID_INDY3 && !drawToTextBox && (width & 1))
+	if (!_correctFontSpacing && !drawToTextBox && (width & 1))
 		width++;
 
 	if (enableShadow) {
