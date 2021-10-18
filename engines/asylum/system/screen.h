@@ -125,6 +125,7 @@ public:
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
 	void deleteGraphicFromQueue(ResourceId resourceId);
+	bool isGraphicQueueEmpty() { return _queueItems.empty(); }
 
 	// Used by Video
 	void copyToBackBuffer(const byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);

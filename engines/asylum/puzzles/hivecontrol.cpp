@@ -129,25 +129,6 @@ bool PuzzleHiveControl::init(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleHiveControl::update(const AsylumEvent &evt) {
-	updateCursor();
-	updateScreen();
-
-	if (!_data_457260 && !_data_457264)
-		playSound();
-
-	if (_counter) {
-		if (_counter < 30 || getSound()->isPlaying(getWorld()->graphicResourceIds[83])) {
-			++_counter;
-		} else {
-			mouseRightDown(evt);
-			getCursor()->show();
-		}
-	}
-
-	return true;
-}
-
 bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 	if (_currentControl != kControlNone)
 		return true;
@@ -334,7 +315,6 @@ Control PuzzleHiveControl::findControl() {
 }
 
 void PuzzleHiveControl::updateScreen() {
-	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[28], 0, Common::Point(0, 0), kDrawFlagNone, 0, 3);
 
@@ -461,8 +441,18 @@ void PuzzleHiveControl::updateScreen() {
 
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[kElementSwirlRim], _frameIndexes[kElementSwirlRim], Common::Point(458, 278), kDrawFlagNone, 0, 2);
 
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
+	if (!_data_457260 && !_data_457264)
+		playSound();
+
+	if (_counter) {
+		if (_counter < 30 || getSound()->isPlaying(getWorld()->graphicResourceIds[83])) {
+			++_counter;
+		} else {
+			AsylumEvent evt;
+			mouseRightDown(evt);
+			getCursor()->show();
+		}
+	}
 }
 
 void PuzzleHiveControl::playSound() {

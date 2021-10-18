@@ -56,7 +56,9 @@ protected:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	virtual bool init(const AsylumEvent &evt) = 0;
-	virtual bool update(const AsylumEvent &evt) = 0;
+	virtual bool update(const AsylumEvent &evt);
+	virtual void updateScreen() {};
+	virtual void updateCursor() {};
 	virtual bool activate(const AsylumEvent &evt) { return true; }
 	virtual bool key(const AsylumEvent &evt) { return true; }
 	virtual bool mouseLeftUp(const AsylumEvent &evt) { return true; }

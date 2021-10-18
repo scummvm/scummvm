@@ -86,29 +86,6 @@ bool PuzzleVCR::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleVCR::update(const AsylumEvent &evt)  {
-	uint32 ticks = _vm->getTick();
-
-	if (!getSharedData()->getFlag(kFlagRedraw)) {
-		updateScreen(evt);
-
-		getSharedData()->setFlag(kFlagRedraw, true);
-	}
-
-	if (ticks > getSharedData()->getNextScreenUpdate()) {
-		if (getSharedData()->getFlag(kFlagRedraw)) {
-			getScreen()->copyBackBufferToScreen();
-
-			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
-
-			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->setNextScreenUpdate(ticks + 55);
-		}
-	}
-
-	return true;
-}
-
 bool PuzzleVCR::key(const AsylumEvent &evt) {
 	getSound()->stop(getWorld()->graphicResourceIds[47]);
 	getScreen()->clearGraphicsInQueue();
@@ -297,9 +274,7 @@ bool PuzzleVCR::mouseRightDown(const AsylumEvent &) {
 //////////////////////////////////////////////////////////////////////////
 // Drawing
 //////////////////////////////////////////////////////////////////////////
-void PuzzleVCR::updateScreen(const AsylumEvent &) {
-	updateCursor();
-
+void PuzzleVCR::updateScreen() {
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->fillRect(0, 0, 640, 480, 252);
@@ -324,7 +299,6 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 	if (_isAccomplished) {
 		getCursor()->show();
 		getScreen()->draw(getWorld()->graphicResourceIds[0]);
-		getScreen()->drawGraphicsInQueue();
 
 		getScreen()->clearDefaultColor();
 		for (int16 barSize = 0; barSize < 84; barSize += 4) {
@@ -356,8 +330,6 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 		int paletteId = _vm->checkGameVersion("Demo") ? 20 : 28;
 		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackTowerCells, paletteId));
 		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackTowerCells, paletteId));
-	} else {
-		getScreen()->drawGraphicsInQueue();
 	}
 }
 

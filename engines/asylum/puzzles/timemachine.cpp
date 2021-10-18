@@ -124,9 +124,7 @@ bool PuzzleTimeMachine::init(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleTimeMachine::update(const AsylumEvent &)  {
-	updateCursor();
-
+void PuzzleTimeMachine::updateScreen()  {
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->fillRect(0, 0, 640, 480, 115);
@@ -172,10 +170,6 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 
 	_leftButtonClicked = true;
 
-	// Draw to screen
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
-
 	// Check for puzzle completion
 	if (_counter > 30 && _vm->isGameFlagSet(kGameFlag925)) {
 		getCursor()->hide();
@@ -201,8 +195,6 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 
 		_frameIndexes[5] = (_frameIndexes[5] + 1) % _frameCounts[5];
 	}
-
-	return true;
 }
 
 bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {

@@ -114,7 +114,7 @@ bool PuzzleTicTacToe::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleTicTacToe::update(const AsylumEvent &)  {
+void PuzzleTicTacToe::updateScreen()  {
 	if (_ticker) {
 		++_ticker;
 
@@ -137,10 +137,6 @@ bool PuzzleTicTacToe::update(const AsylumEvent &)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 	drawField();
 	getScene()->updateAmbientSounds();
-
-	getScreen()->copyBackBufferToScreen();
-
-	return true;
 }
 
 bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {

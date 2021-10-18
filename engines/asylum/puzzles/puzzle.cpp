@@ -78,6 +78,33 @@ bool Puzzle::handleEvent(const AsylumEvent &evt) {
 	return false;
 }
 
+bool Puzzle::update(const AsylumEvent &evt) {
+	uint32 ticks = _vm->getTick();
+
+	updateCursor();
+
+	if (!getSharedData()->getFlag(kFlagRedraw)) {
+		updateScreen();
+
+		getSharedData()->setFlag(kFlagRedraw, true);
+	}
+
+	if (ticks > getSharedData()->getNextScreenUpdate()) {
+		if (getSharedData()->getFlag(kFlagRedraw)) {
+			if (!getScreen()->isGraphicQueueEmpty())
+				getScreen()->drawGraphicsInQueue();
+			getScreen()->copyBackBufferToScreen();
+
+			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
+
+			getSharedData()->setFlag(kFlagRedraw, false);
+			getSharedData()->setNextScreenUpdate(ticks + 55);
+		}
+	}
+
+	return true;
+}
+
 bool Puzzle::keyExit(const AsylumEvent &evt) {
 	_vm->switchEventHandler(getScene());
 

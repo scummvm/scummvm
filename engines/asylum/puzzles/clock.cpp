@@ -85,7 +85,7 @@ bool PuzzleClock::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleClock::update(const AsylumEvent &evt) {
+void PuzzleClock::updateScreen() {
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[5]);
@@ -108,18 +108,15 @@ bool PuzzleClock::update(const AsylumEvent &evt) {
 		_frameIndexes[2] %= GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[3]);
 	}
 
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
-
 	if (_rightButtonClicked) {
 		getScreen()->clear();
 		_vm->switchEventHandler(getScene());
 	} else {
-		if (_vm->isGameFlagSet(kGameFlag511))
+		if (_vm->isGameFlagSet(kGameFlag511)) {
+			AsylumEvent evt;
 			mouseRightDown(evt);
+		}
 	}
-
-	return true;
 }
 
 bool PuzzleClock::mouseLeftDown(const AsylumEvent &) {

@@ -68,13 +68,6 @@ bool PuzzleHiveMachine::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleHiveMachine::update(const AsylumEvent &)  {
-	updateScreen();
-	updateCursor();
-
-	return true;
-}
-
 bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &) {
 	if (_rectIndex != -1 && _counterRed == 0) {
 		_soundingNote = MusicalNote(_rectIndex);
@@ -149,7 +142,6 @@ int32 PuzzleHiveMachine::findRect() {
 }
 
 void PuzzleHiveMachine::updateScreen() {
-	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[8], 0, Common::Point(0, 0), kDrawFlagNone, 0, 2);
 
@@ -195,9 +187,6 @@ void PuzzleHiveMachine::updateScreen() {
 	_frameIndex = (_frameIndex + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[13]);
 	if (_counterKey)
 		_frameIndex1 = (_frameIndex1 + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[18]);
-
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
 }
 
 void PuzzleHiveMachine::playSound() {

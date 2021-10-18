@@ -128,9 +128,7 @@ bool PuzzleWheel::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleWheel::update(const AsylumEvent &)  {
-	updateCursor();
-
+void PuzzleWheel::updateScreen()  {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 
@@ -251,13 +249,9 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 	//////////////////////////////////////////////////////////////////////////
 	// Show elements on screen
 	getScene()->drawRain();
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
 
 	// Check for completion
 	checkFlags();
-
-	return true;
 }
 
 bool PuzzleWheel::mouseLeftDown(const AsylumEvent &) {

@@ -58,7 +58,6 @@ private:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
 	bool mouseRightDown(const AsylumEvent &evt);
 

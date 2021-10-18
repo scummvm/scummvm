@@ -338,8 +338,7 @@ bool PuzzlePipes::init(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzlePipes::update(const AsylumEvent &) {
-	getScreen()->clear();
+void PuzzlePipes::updateScreen() {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[1], 0, Common::Point(0, 0), kDrawFlagNone, 0, 4);
 
@@ -420,10 +419,6 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 		}
 	}
 
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
-	updateCursor();
-
 	if (_isLeverReady) {
 		if (!_levelFlags[4])
 			_vm->setGameFlag((GameFlag)(96 + checkFlags()));
@@ -433,8 +428,6 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 
 		_vm->switchEventHandler(getScene());
 	}
-
-	return true;
 }
 
 bool PuzzlePipes::mouseLeftDown(const AsylumEvent &) {

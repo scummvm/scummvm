@@ -106,19 +106,12 @@ void PuzzleBoard::updateScreen()  {
 	getScreen()->draw(getWorld()->graphicResourceIds[_data.backgroundIndex]);
 	drawText();
 
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
-}
-
-bool PuzzleBoard::update(const AsylumEvent &) {
-	updateCursor();
-
 	if (!_solved)
 		playSound();
 
 	if (_vm->isGameFlagNotSet(_data.gameFlag)) {
 		if (strcmp(_solvedText, _data.solvedText))
-			return true;
+			return;
 
 		if (_solved) {
 			if (!getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSpeech, 1))) {
@@ -134,8 +127,6 @@ bool PuzzleBoard::update(const AsylumEvent &) {
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSpeech, 1), false, Config.voiceVolume);
 		}
 	}
-
-	return true;
 }
 
 bool PuzzleBoard::mouseRightDown(const AsylumEvent &) {

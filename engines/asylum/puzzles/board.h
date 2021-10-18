@@ -85,7 +85,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
 	bool activate(const AsylumEvent &evt) { return updateScreen(), true; }
-	bool update(const AsylumEvent &evt);
 	virtual bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////

@@ -103,7 +103,7 @@ private:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool update(const AsylumEvent &evt);
+	void updateScreen();
 	bool mouseLeftDown(const AsylumEvent &evt);
 	bool mouseRightDown(const AsylumEvent &evt);
 
@@ -112,7 +112,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	void updateCursor();
 	Control findControl();
-	void updateScreen();
 	void playSound();
 	void reset();
 	bool hitTest1(Control control, const Common::Point &point, const Common::Point &location);

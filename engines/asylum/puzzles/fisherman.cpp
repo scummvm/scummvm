@@ -87,9 +87,7 @@ bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 	return mouseLeftDown(evt);
 }
 
-bool PuzzleFisherman::update(const AsylumEvent &)  {
-	updateCursor();
-
+void PuzzleFisherman::updateScreen()  {
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->fillRect(0, 0, 640, 480, 251);
@@ -101,10 +99,7 @@ bool PuzzleFisherman::update(const AsylumEvent &)  {
 			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, &puzzleFishermanPolygons[i], kDrawFlagNone, 0, 1);
 	}
 
-	getScreen()->drawGraphicsInQueue();
-
 	_allowClick = true;
-	getScreen()->copyBackBufferToScreen();
 
 	if (_resetPressed) {
 		++_pauseTimer;
@@ -137,8 +132,6 @@ bool PuzzleFisherman::update(const AsylumEvent &)  {
 			_vm->switchEventHandler(getScene());
 		}
 	}
-
-	return true;
 }
 
 bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {

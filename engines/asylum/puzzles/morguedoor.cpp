@@ -102,9 +102,7 @@ bool PuzzleMorgueDoor::init(const AsylumEvent &evt)  {
 	return mouseLeftDown(evt);
 }
 
-bool PuzzleMorgueDoor::update(const AsylumEvent &)  {
-	updateCursor();
-
+void PuzzleMorgueDoor::updateScreen()  {
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->fillRect(0, 0, 640, 480, 252);
@@ -128,12 +126,7 @@ bool PuzzleMorgueDoor::update(const AsylumEvent &)  {
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[31], (uint32)_frameIndexes[kTopGear], Common::Point(276, 67), kDrawFlagNone, 0, 1);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[32], (uint32)_frameIndexes[kBottomGear], Common::Point(278, 378), kDrawFlagNone, 0, 1);
 
-	getScreen()->drawGraphicsInQueue();
-	getScreen()->copyBackBufferToScreen();
-
 	updateState();
-
-	return true;
 }
 
 bool PuzzleMorgueDoor::mouseLeftDown(const AsylumEvent &evt) {
