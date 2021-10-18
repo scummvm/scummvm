@@ -355,12 +355,18 @@ ActorVertex *OpenGLActorRenderer::createModelVBO(const Model *model) {
 	// Build a vertex array
 	int i = 0;
 	for (Common::Array<VertNode *>::const_iterator tri = modelVertices.begin(); tri != modelVertices.end(); ++tri, i++) {
-		vertices[i].pos1 = Math::Vector3d((*tri)->_pos1.x(), (*tri)->_pos1.y(), (*tri)->_pos1.z());
-		vertices[i].pos2 = Math::Vector3d((*tri)->_pos2.x(), (*tri)->_pos2.y(), (*tri)->_pos2.z());
+		vertices[i].pos1x = (*tri)->_pos1.x();
+		vertices[i].pos1y = (*tri)->_pos1.y();
+		vertices[i].pos1z = (*tri)->_pos1.z();
+		vertices[i].pos2x = (*tri)->_pos2.x();
+		vertices[i].pos2y = (*tri)->_pos2.y();
+		vertices[i].pos2z = (*tri)->_pos2.z();
 		vertices[i].bone1 = (*tri)->_bone1;
 		vertices[i].bone2 = (*tri)->_bone2;
 		vertices[i].boneWeight = (*tri)->_boneWeight;
-		vertices[i].normal = Math::Vector3d((*tri)->_normal.x(), (*tri)->_normal.y(), (*tri)->_normal.z());
+		vertices[i].normalx = (*tri)->_normal.x();
+		vertices[i].normaly = (*tri)->_normal.y();
+		vertices[i].normalz = (*tri)->_normal.z();
 		vertices[i].texS = -(*tri)->_texS;
 		vertices[i].texT = (*tri)->_texT;
 	}
