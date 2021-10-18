@@ -149,9 +149,9 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 				lightColor[0] = (GLfloat)l->color.x();
 				lightColor[1] = (GLfloat)l->color.y();
 				lightColor[2] = (GLfloat)l->color.z();
-				lightPos[0] = (GLfloat)eyeDirection.x();
-				lightPos[1] = (GLfloat)eyeDirection.y();
-				lightPos[2] = (GLfloat)eyeDirection.z();
+				lightPos[0] = (GLfloat)-eyeDirection.x();
+				lightPos[1] = (GLfloat)-eyeDirection.y();
+				lightPos[2] = (GLfloat)-eyeDirection.z();
 				lightPos[3] = 0;
 				break;
 			case LightEntry::kSpot:
