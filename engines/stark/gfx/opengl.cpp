@@ -120,6 +120,7 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 		GLfloat cutoff = 180.0f;
 		GLfloat spotExp = 0.0f;
+		GLfloat c_attenuation = 1.0f;
 		GLfloat l_attenuation = 0.0f;
 		GLfloat q_attenuation = 0.0f;
 
@@ -135,7 +136,6 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		Math::Vector3d eyeDirection = viewMatrix.getRotation() * worldDirection;
 		eyeDirection.normalize();
 
-		glDisable(GL_LIGHT0 + i);
 		switch (l->type) {
 			case LightEntry::kPoint:
 				lightColor[0] = (GLfloat)l->color.x();
@@ -164,16 +164,12 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 				lightDir[0] = (GLfloat)eyeDirection.x();
 				lightDir[1] = (GLfloat)eyeDirection.y();
 				lightDir[2] = (GLfloat)eyeDirection.z();
-				// FIXME
-				l_attenuation = 0.0000001f;
-				q_attenuation = 0.0000001f;
-				//spotExp = 0.0f;
-				//cutoff = (l->outerConeAngle.getDegrees() + l->innerConeAngle.getDegrees()) / 2.0f;
+				cutoff = (l->outerConeAngle.getDegrees() + l->innerConeAngle.getDegrees()) / 2.26f;
 				break;
 			case LightEntry::kAmbient:
-				ambientColor[0] = (GLfloat)l->color.x();
-				ambientColor[1] = (GLfloat)l->color.y();
-				ambientColor[2] = (GLfloat)l->color.z();
+				lightColor[0] = (GLfloat)l->color.x();
+				lightColor[1] = (GLfloat)l->color.y();
+				lightColor[2] = (GLfloat)l->color.z();
 				break;
 			default:
 				break;
@@ -185,6 +181,7 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
 		glLightf(GL_LIGHT0 + i, GL_SPOT_EXPONENT, spotExp);
 		glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, cutoff);
+		glLightf(GL_LIGHT0 + i, GL_CONSTANT_ATTENUATION, c_attenuation);
 		glLightf(GL_LIGHT0 + i, GL_LINEAR_ATTENUATION, l_attenuation);
 		glLightf(GL_LIGHT0 + i, GL_QUADRATIC_ATTENUATION, q_attenuation);
 		glEnable(GL_LIGHT0 + i);

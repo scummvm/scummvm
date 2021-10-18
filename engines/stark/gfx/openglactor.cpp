@@ -97,7 +97,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	Common::Array<Material *> mats = _model->getMaterials();
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material *material = mats[(*face)->materialId];
