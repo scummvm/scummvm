@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-16 18:30+0000\n"
-"PO-Revision-Date: 2021-10-02 21:26+0000\n"
+"PO-Revision-Date: 2021-10-18 21:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5244,13 +5244,13 @@ msgstr "音声合成によるナレーション"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "OPムービー中にデジタルサウンドトラックを再生"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr ""
+msgstr "選択した場合、イントロ中はデジタルサウンドトラックを使用します。それ以外はMIDIで再生します。"
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -5927,6 +5927,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"AdLibの機器定義ファイル%sおよび%sが\n"
+"見つかりません。これらが存在しない場合\n"
+"オリジナルと同様の音にならないかもしれません。"
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
