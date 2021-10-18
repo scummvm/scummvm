@@ -278,8 +278,10 @@ public:
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
 	Graphics::MacFONTFont _macFonts[2];
+	bool _correctFontSpacing;
 	bool _pad;
 	int _lastTop;
+
 
 	int getDrawWidthIntern(uint16 chr);
 
@@ -292,7 +294,7 @@ protected:
 	Graphics::Surface *_glyphSurface;
 
 public:
-	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
+	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile, bool correctFontSpacing);
 	~CharsetRendererMac() override;
 
 	void setCurID(int32 id) override;
