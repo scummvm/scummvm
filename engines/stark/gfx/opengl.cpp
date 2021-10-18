@@ -108,7 +108,6 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 	assert(ambient->type == LightEntry::kAmbient); // The first light must be the ambient light
 
 	Math::Matrix4 viewMatrix = StarkScene->getViewMatrix();
-	Math::Matrix3 viewMatrixRot = viewMatrix.getRotation();
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -133,7 +132,7 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		Math::Vector4d eyePosition = viewMatrix * worldPosition;
 
 		Math::Vector3d worldDirection = l->direction;
-		Math::Vector3d eyeDirection = viewMatrixRot * worldDirection;
+		Math::Vector3d eyeDirection = viewMatrix.getRotation() * worldDirection;
 		eyeDirection.normalize();
 
 		glDisable(GL_LIGHT0 + i);
