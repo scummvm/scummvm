@@ -1632,10 +1632,14 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text, uint strLenMax
 			if (chr == 1) // 'Newline'
 				break;
 		}
-		width += _macFonts[_curId].getCharWidth(chr);
+		width += getDrawWidthIntern(chr);
 	}
 
 	return width / 2;
+}
+
+int CharsetRendererMac::getDrawWidthIntern(uint16 chr) {
+	return _macFonts[_curId].getCharWidth(chr);
 }
 
 // HACK: Usually, we want the approximate width and height in the unscaled
@@ -1654,7 +1658,7 @@ int CharsetRendererMac::getFontHeight() {
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) {
-	int width = _macFonts[_curId].getCharWidth(chr);
+	int width = getDrawWidthIntern(chr);
 
 	// For font 1 in Last Crusade, we want the real width. It is used for
 	// text box titles, which are drawn outside the normal font rendering.
@@ -1759,16 +1763,27 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	// Mark the virtual screen as dirty, using downscaled coordinates.
 
-	int left, right, top, bottom;
+	int left, right, top, bottom, width;
+
+	width = getDrawWidthIntern(chr);
+
+	// HACK: Indiana Jones and the Last Crusade uses incorrect spacing
+	// betweeen letters. Note that this incorrect spacing does not extend
+	// to the text boxes, nor does it seem to be used when figuring out
+	// the width of a string (e.g. to center text on screen). It is,
+	// however, used for things like the Grail Diary.
+
+	if (_vm->_game.id == GID_INDY3 && !drawToTextBox && (width & 1))
+		width++;
 
 	if (enableShadow) {
 		left = macLeft / 2;
-		right = (macLeft + _macFonts[_curId].getCharWidth(chr) + 3) / 2;
+		right = (macLeft + width + 3) / 2;
 		top = macTop / 2;
 		bottom = (macTop + _macFonts[_curId].getFontHeight() + 3) / 2;
 	} else {
 		left = (macLeft + 1) / 2;
-		right = (macLeft + _macFonts[_curId].getCharWidth(chr) + 1) / 2;
+		right = (macLeft + width + 1) / 2;
 		top = (macTop + 1) / 2;
 		bottom = (macTop + _macFonts[_curId].getFontHeight() + 1) / 2;
 	}
@@ -1799,7 +1814,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// The next character may have to be adjusted to compensate for
 	// rounding errors.
 
-	macLeft += _macFonts[_curId].getCharWidth(chr);
+	macLeft += width;
 	if (macLeft & 1)
 		_pad = true;
 
