@@ -632,7 +632,14 @@ void ScummEngine::writeVar(uint var, int value) {
 			if (_game.heversion >= 60 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
-			ConfMan.setBool("subtitles", !value);
+			if (_game.id == GID_LOOM && _game.version == 4 && _currentRoom == 2 && vm.slot[_currentScript].number == 44 && value == 1) {
+				// Fix for bug: During the intro of LOOM CD Talkie, subtitles would be explicitly disabled
+				// after the LOOM logo is displayed and the swans have flown by between the logo letters.
+				// This would cause the game to not display subtitles for the messenger nymph or Bobbin's intro speech
+				// and moveover the gameplay would then start with subtitles disabled.
+			} else {
+				ConfMan.setBool("subtitles", !value);
+			}
 		}
 
 		if (var == VAR_CHARINC) {
