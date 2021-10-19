@@ -79,6 +79,14 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
 	void removeSaveState(const char *target, int slot) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("%s.####", target);
+		else
+			return Common::String::format("%s.%04d", target, saveGameIdx + 1);
+	}
 };
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -98,8 +106,7 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 
 	char saveName[kSaveDescriptionLen + 1];
 	saveName[kSaveDescriptionLen] = '\0';
-	Common::String pattern = Common::String::format("%s.????", target);
-	Common::StringArray filenames = saveMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveMan->listSavefiles(getSavegameFilePattern(target));
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum;
@@ -124,9 +131,7 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 }
 
 void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%04d", target, slot + 1);
-
-	g_system->getSavefileManager()->removeSavefile(filename);
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
