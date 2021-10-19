@@ -59,8 +59,13 @@ public:
 		return Common::kNoError;
 	}
 
-	static Common::String generateGameStateFileName(const char *target, int slot) {
-		return Common::String::format("%s.%02d", target, slot);
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("%s.##", target);
+		else
+			return Common::String::format("%s.%02d", target, saveGameIdx);
 	}
 
 	SaveStateList listSaves(const char *target) const override {
@@ -94,12 +99,11 @@ public:
 	}
 
 	void removeSaveState(const char *target, int slot) const override {
-		Common::String filename = generateGameStateFileName(target, slot);
-		g_system->getSavefileManager()->removeSavefile(filename);
+		g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 	}
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		Common::String filename = generateGameStateFileName(target, slot);
+		Common::String filename = getSavegameFile(slot, target);
 		Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
 		if (!in)
 			return SaveStateDescriptor();
