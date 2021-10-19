@@ -114,7 +114,7 @@ String MacResManager::computeResForkMD5AsString(uint32 length, bool tail) const 
 
 	SeekableSubReadStream resForkStream(_stream, dataOffset, dataOffset + dataLength);
 	if (tail && dataLength > length)
-		resForkStream.seek(-length, SEEK_END);
+		resForkStream.seek(-(int64)length, SEEK_END);
 
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
