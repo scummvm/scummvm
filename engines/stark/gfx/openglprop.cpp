@@ -104,11 +104,11 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);
 				if (material.doubleSided) {
-					vertex.texS = vertex.texS;
-					vertex.texT = 1.0f - vertex.texT;
+					vertex.texS = vertex.stexS;
+					vertex.texT = 1.0f - vertex.stexT;
 				} else {
-					vertex.texS = 1.0f - vertex.texS;
-					vertex.texT = 1.0f - vertex.texT;
+					vertex.texS = 1.0f - vertex.stexS;
+					vertex.texT = 1.0f - vertex.stexT;
 				}
 			} else {
 				glBindTexture(GL_TEXTURE_2D, 0);
@@ -241,8 +241,8 @@ PropVertex *OpenGLPropRenderer::createFaceVBO() {
 		vertices[i].nx = modelVertices[i].normal.x();
 		vertices[i].ny = modelVertices[i].normal.y();
 		vertices[i].nz = modelVertices[i].normal.z();
-		vertices[i].texS = modelVertices[i].texturePosition.x();
-		vertices[i].texT = modelVertices[i].texturePosition.y();
+		vertices[i].stexS = modelVertices[i].texturePosition.x();
+		vertices[i].stexT = modelVertices[i].texturePosition.y();
 	}
 
 	return vertices;
