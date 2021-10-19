@@ -6596,7 +6596,7 @@ static const uint16 kq7PragmaFailSpinPatch[] = {
 	0x78,                                     // push1
 	0x39, 0x12,                               // pushi 18 (~300ms)
 	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
-	0x33, 0x16,                               // jmp [to setCursor]
+	0x35, 0x00,                               // ldi 0 [ exit loop ]
 	PATCH_END
 };
 
