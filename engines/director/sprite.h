@@ -61,7 +61,7 @@ class Sprite {
 public:
 	Sprite(Frame *frame = nullptr);
 	Sprite(const Sprite &sprite);
-	Sprite& operator=(const Sprite &sprite) = default;
+	Sprite& operator=(const Sprite &sprite);
 	~Sprite();
 
 	Frame *getFrame() const { return _frame; }

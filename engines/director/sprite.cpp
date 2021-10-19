@@ -71,7 +71,13 @@ Sprite::Sprite(Frame *frame) {
 	_stretch = 0;
 }
 
-Sprite::Sprite(const Sprite &sprite) {
+Sprite& Sprite::operator=(const Sprite &sprite) {
+	if (this == &sprite) {
+		return *this;
+	}
+
+	this->~Sprite();
+
 	_frame = sprite._frame;
 	_score = sprite._score;
 	_movie = sprite._movie;
@@ -108,6 +114,13 @@ Sprite::Sprite(const Sprite &sprite) {
 
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
+
+	return *this;
+}
+
+Sprite::Sprite(const Sprite &sprite) {
+	_matte = nullptr;
+	*this = sprite;
 }
 
 Sprite::~Sprite() {
