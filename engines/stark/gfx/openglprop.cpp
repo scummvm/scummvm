@@ -122,6 +122,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				Math::Vector4d modelEyePosition = modelViewMatrix * Math::Vector4d(vertex.x, vertex.y, vertex.z, 1.0);
 				Math::Vector3d modelEyeNormal = normalMatrix.getRotation() *  Math::Vector3d(vertex.nx, vertex.ny, vertex.nz);
 				modelEyeNormal.normalize();
+				Math::Vector4d worldPosition = Math::Vector4d(0.0, 0.0, 0.0, 1.0);
 
 				static const uint maxLights = 10;
 
@@ -136,16 +137,12 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				for (uint li = 0; li < lights.size() - 1; li++) {
 					const LightEntry *l = lights[li + 1];
 
-					Math::Vector4d worldPosition;
 					worldPosition.x() = l->position.x();
 					worldPosition.y() = l->position.y();
 					worldPosition.z() = l->position.z();
-					worldPosition.w() = 1.0;
 
 					Math::Vector4d lightEyePosition = view * worldPosition;
-
-					Math::Vector3d worldDirection = l->direction;
-					Math::Vector3d lightEyeDirection = view.getRotation() * worldDirection;
+					Math::Vector3d lightEyeDirection = view.getRotation() * l->direction;
 					lightEyeDirection.normalize();
 
 					switch (l->type) {
