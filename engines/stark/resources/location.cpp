@@ -214,6 +214,14 @@ Gfx::LightEntryArray Location::listLightEntries() {
 				if (light->type == Gfx::LightEntry::kAmbient) {
 					ambient = light;
 				} else {
+					Math::Matrix4 view = StarkScene->getViewMatrix();
+					light->worldPosition.x() = light->position.x();
+					light->worldPosition.y() = light->position.y();
+					light->worldPosition.z() = light->position.z();
+					light->worldPosition.w() = 1.0f;
+					light->eyePosition = view * light->worldPosition;
+					light->eyeDirection = view.getRotation() * light->direction;
+					light->eyeDirection.normalize();
 					others.push_back(light);
 				}
 			}

@@ -44,8 +44,6 @@ OpenGLPropRenderer::~OpenGLPropRenderer() {
 }
 
 void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
-	static const uint maxLights = 10;
-
 	if (_modelIsDirty) {
 		clearVertices();
 		uploadVertices();
@@ -77,24 +75,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 
 		normalMatrix = modelViewMatrix;
 		normalMatrix.invertAffineOrthonormal();
-	}
-
-	Math::Vector4d worldPosition[maxLights];
-	Math::Vector4d lightEyePosition[maxLights];
-	Math::Vector3d lightEyeDirection[maxLights];
-	if (_gfx->computeLightsEnabled()) {
-		for (uint li = 0; li < lights.size() - 1; li++) {
-			const LightEntry *l = lights[li + 1];
-
-			worldPosition[li].x() = l->position.x();
-			worldPosition[li].y() = l->position.y();
-			worldPosition[li].z() = l->position.z();
-			worldPosition[li].w() = 1.0f;
-
-			lightEyePosition[li] = view * worldPosition[li];
-			lightEyeDirection[li] = view.getRotation() * l->direction;
-			lightEyeDirection[li].normalize();
-		}
 	}
 
 	const Common::Array<Face> &faces = _model->getFaces();
@@ -143,6 +123,8 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				Math::Vector3d modelEyeNormal = normalMatrix.getRotation() *  Math::Vector3d(vertex.nx, vertex.ny, vertex.nz);
 				modelEyeNormal.normalize();
 
+				static const uint maxLights = 10;
+
 				assert(lights.size() >= 1);
 				assert(lights.size() <= maxLights);
 
@@ -156,7 +138,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 
 					switch (l->type) {
 						case LightEntry::kPoint: {
-							Math::Vector3d vertexToLight = lightEyePosition[li].getXYZ() - modelEyePosition.getXYZ();
+							Math::Vector3d vertexToLight = l->eyePosition.getXYZ() - modelEyePosition.getXYZ();
 
 							float dist = vertexToLight.length();
 							vertexToLight.normalize();
@@ -166,12 +148,12 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 							break;
 						}
 						case LightEntry::kDirectional: {
-							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -lightEyeDirection[li]));
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -l->eyeDirection));
 							lightColor += (l->color * incidence);
 							break;
 						}
 						case LightEntry::kSpot: {
-							Math::Vector3d vertexToLight = lightEyePosition[li].getXYZ() - modelEyePosition.getXYZ();
+							Math::Vector3d vertexToLight = l->eyePosition.getXYZ() - modelEyePosition.getXYZ();
 
 							float dist = vertexToLight.length();
 							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f, l->falloffFar - l->falloffNear), 0.0f, 1.0f);
@@ -179,7 +161,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 							vertexToLight.normalize();
 							float incidence = MAX(0.0f, modelEyeNormal.dotProduct(vertexToLight));
 
-							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-lightEyeDirection[li]));
+							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-l->eyeDirection));
 							float cone = CLIP((cosAngle - l->innerConeAngle.getCosine()) / MAX(0.001f, l->outerConeAngle.getCosine() - l->innerConeAngle.getCosine()), 0.0f, 1.0f);
 
 							lightColor += l->color * attn * incidence * cone;

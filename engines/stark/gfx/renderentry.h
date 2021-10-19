@@ -58,6 +58,9 @@ struct LightEntry {
 	Math::Angle outerConeAngle;
 	float falloffNear;
 	float falloffFar;
+	Math::Vector4d worldPosition;
+	Math::Vector4d eyePosition;
+	Math::Vector3d eyeDirection;
 };
 
 typedef Common::Array<LightEntry *> LightEntryArray;
