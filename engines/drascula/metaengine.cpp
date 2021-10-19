@@ -124,7 +124,7 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
-	SaveStateDescriptor desc(slot, Common::U32String());
+	SaveStateDescriptor desc(this, slot, Common::U32String());
 	if (in) {
 		desc = Drascula::loadMetaData(in, slot, false);
 		if (desc.getSaveSlot() != slot) {

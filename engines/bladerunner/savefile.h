@@ -73,8 +73,8 @@ public:
 	static const uint32 kNameLength    = 41;
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
 
-	static SaveStateList list(const Common::String &target);
-	static SaveStateDescriptor queryMetaInfos(const Common::String &target, int slot);
+	static SaveStateList list(const MetaEngine *metaEngine, const Common::String &target);
+	static SaveStateDescriptor queryMetaInfos(const MetaEngine *metaEngine, const Common::String &target, int slot);
 
 	static Common::InSaveFile *openForLoading(const Common::String &target, int slot);
 	static Common::OutSaveFile *openForSaving(const Common::String &target, int slot);

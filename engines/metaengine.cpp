@@ -361,7 +361,7 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 
 	// No autosave yet. We want to add a dummy one in so that it can be marked as
 	// write protected, and thus be prevented from being saved in
-	SaveStateDescriptor desc(autosaveSlot, _("Autosave"));
+	SaveStateDescriptor desc(this, autosaveSlot, _("Autosave"));
 	saveList.push_back(desc);
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 
@@ -409,7 +409,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot, Common::U32String());
 		parseSavegameHeader(&header, &desc);
 		desc.setThumbnail(header.thumbnail);
 		return desc;

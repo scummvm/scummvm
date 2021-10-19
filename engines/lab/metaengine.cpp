@@ -99,7 +99,7 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Lab::readSaveGameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header._descr.getDescription()));
 				delete in;
 			}
 		}
@@ -130,7 +130,7 @@ SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int sl
 		delete in;
 
 		if (successfulRead) {
-			SaveStateDescriptor desc(slot, header._descr.getDescription());
+			SaveStateDescriptor desc(this, slot, header._descr.getDescription());
 			return header._descr;
 		}
 	}

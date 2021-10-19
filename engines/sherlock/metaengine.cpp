@@ -123,7 +123,7 @@ bool Sherlock::SherlockEngine::isDemo() const {
 }
 
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
-	return Sherlock::SaveManager::getSavegameList(target);
+	return Sherlock::SaveManager::getSavegameList(this, target);
 }
 
 int SherlockMetaEngine::getMaximumSaveSlot() const {
@@ -148,7 +148,7 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header._saveName);
+		SaveStateDescriptor desc(this, slot, header._saveName);
 		desc.setThumbnail(header._thumbnail);
 		desc.setSaveDate(header._year, header._month, header._day);
 		desc.setSaveTime(header._hour, header._minute);

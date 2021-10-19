@@ -127,7 +127,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 				strncpy(saveDesc, saveNames[slotNum], SAVEGAME_NAME_LEN);
 				saveDesc[sizeof(CommandeType) - 1] = 0;
 
-				SaveStateDescriptor saveStateDesc(slotNum, saveDesc);
+				SaveStateDescriptor saveStateDesc(this, slotNum, saveDesc);
 
 				if (saveStateDesc.getDescription().empty()) {
 					if (saveStateDesc.isAutosave()) {
@@ -150,7 +150,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	// No saving on empty autosave slot
 	if (!foundAutosave) {
-		SaveStateDescriptor desc(getAutosaveSlot(), _("Empty autosave"));
+		SaveStateDescriptor desc(this, getAutosaveSlot(), _("Empty autosave"));
 		saveList.push_back(desc);
 	}
 
@@ -179,7 +179,7 @@ SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot, Common::U32String());
 
 		ExtendedSavegameHeader header;
 		if (readSavegameHeader(f.get(), &header, false)) {
@@ -213,7 +213,7 @@ SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	// No saving on empty autosave slot
 	if (slot == getAutosaveSlot()) {
-		return SaveStateDescriptor(slot, _("Empty autosave"));
+		return SaveStateDescriptor(this, slot, _("Empty autosave"));
 	}
 
 	return SaveStateDescriptor();

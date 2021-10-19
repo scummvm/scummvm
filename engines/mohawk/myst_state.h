@@ -105,7 +105,7 @@ public:
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
 	~MystGameState();
 
-	static SaveStateDescriptor querySaveMetaInfos(int slot);
+	static SaveStateDescriptor querySaveMetaInfos(const MetaEngine *metaEngine, int slot);
 	static Common::String querySaveDescription(int slot);
 
 	void reset();

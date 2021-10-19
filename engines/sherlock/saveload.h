@@ -89,7 +89,7 @@ public:
 	/**
 	 * Load a list of savegames
 	 */
-	static SaveStateList getSavegameList(const Common::String &target);
+	static SaveStateList getSavegameList(const MetaEngine *metaEngine, const Common::String &target);
 
 	/**
 	 * Support method that generates a savegame name
