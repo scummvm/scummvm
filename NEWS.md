@@ -9,6 +9,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
+ SCUMM:
+   - Improved support for the high-resolution text in the 16-color Macintosh
+     versions of Loom and Indiana Jones and the Last Crusade.
+
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs
 
