@@ -2766,6 +2766,7 @@ int ScummEngine_v5::getWordVararg(int *ptr) {
 
 void ScummEngine_v5::decodeParseString() {
 	int textSlot;
+	int color;
 
 	switch (_actorToPrintStrFor) {
 	case 252:
@@ -2791,7 +2792,16 @@ void ScummEngine_v5::decodeParseString() {
 			_string[textSlot].overhead = false;
 			break;
 		case 1:		// SO_COLOR
-			_string[textSlot].color = getVarOrDirectByte(PARAM_1);
+			color = getVarOrDirectByte(PARAM_1);
+
+			// HACK: The Indy 3 credits script asks for white text
+			// with a shadow, but in a Mac emulator the text is
+			// drawn in light gray with a shadow instead. Very
+			// strange.
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && vm.slot[_currentScript].number == 134 && color == 0x8F)
+				color = 0x87;
+
+			_string[textSlot].color = color;
 			break;
 		case 2:		// SO_CLIPPED
 			_string[textSlot].right = getVarOrDirectWord(PARAM_1);
