@@ -301,6 +301,9 @@ void new_game() {
 	obj->sort();
 	for (i = 0; i < obj->spieler_invnr[0]; i++)
 		spieler.InventSlot[i] = obj->spieler_invnr[i + 1];
+
+	AkChewyTaf = 0;
+	load_chewy_taf(1);
 }
 
 static void font_load() {

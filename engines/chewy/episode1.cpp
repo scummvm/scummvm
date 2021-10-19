@@ -56,8 +56,10 @@ void load_chewy_taf(int16 taf_nr) {
 	taf_dateiheader *tafheader;
 	const char *fname_;
 	if (AkChewyTaf != taf_nr) {
-		if (chewy)
+		if (chewy) {
 			free((char *)chewy);
+			chewy = nullptr;
+		}
 		spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
 		switch (taf_nr) {
 		case CHEWY_NORMAL:
