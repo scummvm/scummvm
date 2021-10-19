@@ -1632,8 +1632,10 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text, uint strLenMax
 			chr = text[pos++];
 			if (chr == 1) // 'Newline'
 				break;
+			warning("getStringWidth: Unexpected escape sequence %d", chr);
+		} else {
+			width += getDrawWidthIntern(chr);
 		}
-		width += getDrawWidthIntern(chr);
 	}
 
 	return width / 2;
