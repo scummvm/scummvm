@@ -731,33 +731,41 @@ void Menu::showThumbnail(int index) {
 	int x, y;
 	int overlayWidth  = g_system->getOverlayWidth(),
 		overlayHeight = g_system->getOverlayHeight();
-	Graphics::Surface *screen, *screen1, *thumbnail1;
+	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+	Graphics::Surface overlay, *thumbnail1;
 
 	x = (index < 6 ? 150 : 470)  * overlayWidth  / 640;
 	y = (179 + (index % 6) * 29) * overlayHeight / 480;
 
-	screen = getScreen()->getSurface().convertTo(g_system->getOverlayFormat(), getScreen()->getPalette());
-	if (overlayWidth != 640 || overlayHeight != 480)
-		screen1 = screen->scale(overlayWidth, overlayHeight);
-	else
-		screen1 = screen;
-	thumbnail1 = thumbnail->convertTo(g_system->getOverlayFormat());
-	screen1->copyRectToSurface(thumbnail1->getPixels(), thumbnail1->pitch, x, y, thumbnail1->w, thumbnail1->h);
+	overlay.create(overlayWidth, overlayHeight, overlayFormat);
+	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
+		Graphics::Surface *screen = getScreen()->getSurface().convertTo(overlayFormat, getScreen()->getPalette());
+		overlay.copyRectToSurface(screen->getPixels(), screen->pitch, 0, 0, 640, 480);
+		screen->free();
+		delete screen;
+	}
 
-	g_system->copyRectToOverlay(screen1->getPixels(), screen1->pitch, 0, 0, screen1->w, screen1->h);
+	thumbnail1 = thumbnail->convertTo(overlayFormat);
+	overlay.copyRectToSurface(thumbnail1->getPixels(), thumbnail1->pitch, x, y, thumbnail1->w, thumbnail1->h);
+
+	g_system->copyRectToOverlay(overlay.getPixels(), overlay.pitch, 0, 0, overlay.w, overlay.h);
 	g_system->showOverlay();
 
-	screen->free();
-	screen1->free();
+	overlay.free();
 	thumbnail1->free();
-	if (screen != screen1)
-		delete screen1;
-	delete screen;
 	delete thumbnail1;
 }
 
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
+
+	if (g_system->isOverlayVisible()
+	 && g_system->getFeatureState(OSystem::kFeatureFullscreenMode)
+	 && ConfMan.get("gfx_mode") == "opengl") {
+
+		cursor.x *= 640.0 / g_system->getOverlayWidth();
+		cursor.y *= 480.0 / g_system->getOverlayHeight();
+	}
 
 	char text[100];
 
