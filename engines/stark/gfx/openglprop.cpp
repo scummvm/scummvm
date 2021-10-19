@@ -143,8 +143,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				Math::Vector3d modelEyeNormal = normalMatrix.getRotation() *  Math::Vector3d(vertex.nx, vertex.ny, vertex.nz);
 				modelEyeNormal.normalize();
 
-				static const uint maxLights = 10;
-
 				assert(lights.size() >= 1);
 				assert(lights.size() <= maxLights);
 
