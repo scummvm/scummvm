@@ -11,6 +11,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed black screen while entering save game name.
    - OpenGL without shaders is preferred as default for Grim Fandango.
 
+ SCUMM:
+   - Improved support for the high-resolution text in the 16-color Macintosh
+     versions of Loom and Indiana Jones and the Last Crusade.
+
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs
 
