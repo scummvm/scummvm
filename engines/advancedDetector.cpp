@@ -574,7 +574,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = Common::punycode_decodefilename(fileDesc->fileName);
-			Common::String key = flagsToMD5Prefix(g->flags) + ':' + fname;
+			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), fname.c_str());
 
 			if (filesProps.contains(key))
 				continue;
@@ -616,7 +616,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = Common::punycode_decodefilename(fileDesc->fileName);
-			Common::String key = flagsToMD5Prefix(g->flags) + ':' + tstr;
+			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), tstr.c_str());
 
 			if (!filesProps.contains(key) || filesProps[key].size == -1) {
 				allFilesPresent = false;
@@ -628,13 +628,13 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 			if (game.hasUnknownFiles)
 				continue;
 
-			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[tstr].md5) {
+			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[key].md5) {
 				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[key].md5.c_str());
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[key].size) {
 				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", fileDesc->fileSize, filesProps[key].size);
 				game.hasUnknownFiles = true;
 				continue;
