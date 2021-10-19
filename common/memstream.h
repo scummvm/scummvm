@@ -342,9 +342,31 @@ public:
 		return dataSize;
 	}
 
+	bool seek(int64 offset, int whence) override {
+		switch (whence) {
+		case SEEK_END:
+			// SEEK_END works just like SEEK_SET, only 'reversed',
+			// i.e. from the end.
+			offset = size() + offset;
+			// Fall through
+		case SEEK_SET:
+			// Fall through
+		default:
+			_writePos = offset;
+			_readPos = offset;
+			break;
+		case SEEK_CUR:
+			// Not supported
+			return false;
+		}
+
+		// Post-Condition
+		_eos = (int64)_readPos >= size();
+		return true;
+	}
+
 	int64 pos() const override { return _pos - _length; }
 	int64 size() const override { return _size; }
-	bool seek(int64, int) override { return false; }
 	bool eos() const override { return _eos; }
 	void clearErr() override { _eos = false; }
 
