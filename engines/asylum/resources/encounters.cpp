@@ -1193,6 +1193,10 @@ void Encounter::drawSubtitle(char *text, ResourceId font, int16 y) {
 		_data_455B3C = _data_455B70 / 8 + 1;
 		_data_455BF0 = 0;
 		_tick = _vm->getTick() + 1000 * (getResource()->get(_soundResourceId/*getSpeech()->getSoundResourceId()*/)->size / 11025) / (uint16)_data_455B3C; // TODO replace with speech
+
+		// WORKAROUND: Handle multipage dialogs
+		if (_data_455B70 - 1 > 8)
+			_tick -= 1000 * ((_data_455B70 - 1) % 8);
 	}
 
 	getText()->draw(_data_455BF0, 7, kTextCenter, Common::Point(x, y), 16, width, text);
