@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-19 17:24+0000\n"
-"PO-Revision-Date: 2021-10-18 21:26+0000\n"
+"PO-Revision-Date: 2021-10-20 09:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6226,13 +6226,15 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Käytä oikeaa kirjasinväliä"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Piirrä teksti oikealla kirjasinvälillä. Tämä saattaa näyttää paremmalta, "
+"mutta ei vastaa alkuperäistä toiminnallisuutta."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
