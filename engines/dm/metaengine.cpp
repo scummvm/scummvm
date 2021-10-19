@@ -77,7 +77,7 @@ public:
 				Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 				if (in) {
 					if (DM::readSaveGameHeader(in, &header))
-						saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
+						saveList.push_back(SaveStateDescriptor(this, slotNum, header._descr.getDescription()));
 					delete in;
 				}
 			}
@@ -99,7 +99,7 @@ public:
 			delete in;
 
 			if (successfulRead) {
-				SaveStateDescriptor desc(slot, header._descr.getDescription());
+				SaveStateDescriptor desc(this, slot, header._descr.getDescription());
 
 				return header._descr;
 			}

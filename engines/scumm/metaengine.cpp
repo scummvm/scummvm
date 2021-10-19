@@ -476,7 +476,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
 				delete in;
 			}
 		}
@@ -504,7 +504,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 		return SaveStateDescriptor();
 	}
 
-	SaveStateDescriptor desc(slot, saveDesc);
+	SaveStateDescriptor desc(this, slot, saveDesc);
 	desc.setThumbnail(thumbnail);
 
 	if (infoPtr) {

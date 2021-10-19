@@ -82,7 +82,7 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 				char description[64];
 				Touche::readGameStateDescription(in, description, sizeof(description) - 1);
 				if (description[0]) {
-					saveList.push_back(SaveStateDescriptor(slot, description));
+					saveList.push_back(SaveStateDescriptor(this, slot, description));
 				}
 				delete in;
 			}

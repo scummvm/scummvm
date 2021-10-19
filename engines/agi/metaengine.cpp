@@ -214,7 +214,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 
 				delete in;
 
-				saveList.push_back(SaveStateDescriptor(slotNr, description));
+				saveList.push_back(SaveStateDescriptor(this, slotNr, description));
 			}
 		}
 	}
@@ -257,11 +257,11 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 			// broken description, ignore it
 			delete in;
 
-			SaveStateDescriptor descriptor(slotNr, "[broken saved game]");
+			SaveStateDescriptor descriptor(this, slotNr, "[broken saved game]");
 			return descriptor;
 		}
 
-		SaveStateDescriptor descriptor(slotNr, description);
+		SaveStateDescriptor descriptor(this, slotNr, description);
 
 		char saveVersion = in->readByte();
 		if (saveVersion >= 4) {

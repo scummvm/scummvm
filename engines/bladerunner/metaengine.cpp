@@ -66,7 +66,7 @@ bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 SaveStateList BladeRunnerMetaEngine::listSaves(const char *target) const {
-	return BladeRunner::SaveFileManager::list(target);
+	return BladeRunner::SaveFileManager::list(this, target);
 }
 
 int BladeRunnerMetaEngine::getMaximumSaveSlot() const {
@@ -78,7 +78,7 @@ void BladeRunnerMetaEngine::removeSaveState(const char *target, int slot) const 
 }
 
 SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return BladeRunner::SaveFileManager::queryMetaInfos(target, slot);
+	return BladeRunner::SaveFileManager::queryMetaInfos(this, target, slot);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BLADERUNNER)

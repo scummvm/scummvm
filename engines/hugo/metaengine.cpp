@@ -111,7 +111,7 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 				file->read(name, nameSize);
 				name[nameSize] = 0;
 
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				saveList.push_back(SaveStateDescriptor(this, slotNum, name));
 				delete file;
 			}
 		}
@@ -140,7 +140,7 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 		file->read(saveName, saveNameLength);
 		saveName[saveNameLength] = 0;
 
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(this, slot, saveName);
 
 		Graphics::Surface *thumbnail;
 		if (!Graphics::loadThumbnail(*file, thumbnail)) {
