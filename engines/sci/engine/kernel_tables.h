@@ -833,6 +833,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 #endif
 	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(ScummVMSleep),      SIG_SCI32, SIGFOR_ALL,    "i",                     NULL,            NULL },
+#endif
 	{ MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
 	{ MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            kStrAt_workarounds },
@@ -855,7 +858,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ir!]",                NULL,            kUnLoad_workarounds },
 	// ^ We allow invalid references here (e.g. bug #6600), since they will be invalidated anyway by the call itself
 	{ MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+	{ MAP_CALL(Wait),              SIG_SCI16, SIGFOR_ALL,    "i",                     NULL,            NULL },
 
 	// Unimplemented SCI0-SCI1.1 unused functions, always mapped to kDummy
 	{ MAP_DUMMY(InspectObj),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -1445,7 +1448,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
-	/*0x4f*/ "Dummy",           // Replaced with kWait for Hoyle5 in ScummVM
+	/*0x4f*/ "Dummy",
 	/*0x50*/ "GetEvent",
 	/*0x51*/ "GlobalToLocal",
 	/*0x52*/ "LocalToGlobal",

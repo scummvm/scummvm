@@ -2181,10 +2181,9 @@ static const SciScriptPatcherEntry hoyle4Signatures[] = {
 
 // Several scripts in Hoyle5 contain a subroutine which spins on kGetTime until
 // a certain number of ticks elapse. Since this wastes CPU and makes ScummVM
-// unresponsive, the kWait kernel function (which was removed in SCI2) is
-// reintroduced for Hoyle5, and the spin subroutines are patched here to call
-// that function instead.
-// Applies to at least: English Demo
+// unresponsive, we replace this with a call to kScummVMSleep for the requested
+// number of ticks.
+// Applies to at least: English Demo, English PC, English Mac
 static const uint16 hoyle5SignatureSpinLoop[] = {
 	SIG_MAGICDWORD,
 	0x76,                         // push0
@@ -2199,7 +2198,7 @@ static const uint16 hoyle5SignatureSpinLoop[] = {
 static const uint16 hoyle5PatchSpinLoop[] = {
 	0x78,                                     // push1
 	0x8f, 0x01,                               // lsp param[1]
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, $2
 	0x48,                                     // ret
 	PATCH_END
 };
@@ -6579,7 +6578,7 @@ static const uint16 kq7BenchmarkPatch[] = {
 // maxes out the CPU for no reason, and keeps the engine from polling for
 // events (which may make the window appear nonresponsive to the OS).
 //
-// We replace the loop with a call to kWait().
+// We replace the loop with a call to kScummVMSleep.
 //
 // Applies to at least: KQ7 English 2.00b
 // Responsible method: KQ7CD::pragmaFail in script 0
@@ -6596,7 +6595,7 @@ static const uint16 kq7PragmaFailSpinSignature[] = {
 static const uint16 kq7PragmaFailSpinPatch[] = {
 	0x78,                                     // push1
 	0x39, 0x12,                               // pushi 18 (~300ms)
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
 	0x33, 0x16,                               // jmp [to setCursor]
 	PATCH_END
 };
@@ -10287,7 +10286,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 
 // The game uses a spin loop when navigating to and from Curtis's computer in
 // the office, and when entering passwords, which causes the mouse to appear
-// unresponsive. Replace the spin loop with a call to ScummVM kWait.
+// unresponsive. Replace the spin loop with a call to kScummVMSleep.
 // Applies to at least: US English
 // Responsible method: Script 3000 localproc 2ee4, script 63019 localproc 4f04
 static const uint16 phant2WaitParam1Signature[] = {
@@ -10302,7 +10301,7 @@ static const uint16 phant2WaitParam1Signature[] = {
 static const uint16 phant2WaitParam1Patch[] = {
 	0x78,                                     // push1
 	0x8f, 0x01,                               // lsp param[1]
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
 	0x48,                                     // ret
 	PATCH_END
 };
@@ -10330,7 +10329,7 @@ static const uint16 phant2SlowIFadePatch[] = {
 
 // The game uses a spin loop during music transitions which causes the mouse to
 // appear unresponsive during scene changes. Replace the spin loop with a call
-// to ScummVM kWait.
+// to kScummVMSleep.
 // Applies to at least: US English
 // Responsible method: P2SongPlyr::wait4Fade
 static const uint16 phant2Wait4FadeSignature[] = {
@@ -10345,7 +10344,7 @@ static const uint16 phant2Wait4FadeSignature[] = {
 static const uint16 phant2Wait4FadePatch[] = {
 	0x78,                                     // push1
 	0x8d, 0x00,                               // lst temp[0]
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
 	0x48,                                     // ret
 	PATCH_END
 };
@@ -10417,13 +10416,13 @@ static const uint16 phant2RatboyPatch[] = {
 	0x78,                                     // push1
 	0x35, 0x1e,                               // ldi $1e
 	0x36,                                     // push
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, $2
 	0x33, 0x14,                               // jmp [to next outer loop]
 	PATCH_END
 };
 
 // The game uses a spin loop during the floating head easter egg, which causes
-//  the mouse to appear unresponsive. Replace the inner loop with kWait.
+//  the mouse to appear unresponsive. Replace the inner loop with kScummVMSleep.
 //
 // Applies to at least: US English
 // Responsible method: bigScript:changeState
@@ -10441,7 +10440,7 @@ static const uint16 phant2FloatingHeadSignature[] = {
 static const uint16 phant2FloatingHeadPatch[] = {
 	0x78,                                     // push1
 	0x39, 0x3c,                               // pushi 3c [ 1 second ]
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
 	0x33, 0x04,                               // jmp 04
 	PATCH_END
 };
@@ -10557,7 +10556,7 @@ static const uint16 phant2SlowScrollSignature[] = {
 static const uint16 phant2SlowScrollPatch[] = {
 	0x78,                                     // push1
 	0x39, 0x03,                               // pushi 3
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x43, kScummVMSleepId, PATCH_UINT16(0x02),// callk ScummVMSleep, 2
 	0x33, 0x13,                               // jmp [end of loop]
 	PATCH_END
 };
