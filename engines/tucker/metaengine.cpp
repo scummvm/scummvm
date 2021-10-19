@@ -145,6 +145,12 @@ public:
 		delete file;
 		return desc;
 	}
+
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		return Tucker::generateGameStateFileName(target, saveGameIdx, saveGameIdx == kSavegameFilePattern);
+	}
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TUCKER)

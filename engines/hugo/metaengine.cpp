@@ -53,7 +53,14 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
-
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("%s-##.SAV", target);
+		else
+			return Common::String::format("%s-%02d.SAV", target, saveGameIdx);
+	}
 };
 
 Common::Error HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -123,8 +130,7 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 }
 
 SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target));
 
 	if (file) {
 		int saveVersion = file->readByte();
@@ -171,8 +177,7 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 }
 
 void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 } // End of namespace Hugo
