@@ -105,10 +105,13 @@ struct SciWorkaroundEntry;	// from workarounds.h
 
 // ---- Kernel signatures -----------------------------------------------------
 
+#ifdef ENABLE_SCI32
+// Kernel functions that have been added for ScummVM script patches to call
 enum {
-	kScummVMWaitId     = 0xe0,
-	kScummVMSaveLoadId = 0xe1
+	kScummVMSleepId    = 0xe0, // sleeps for a delay while remaining responsive
+	kScummVMSaveLoadId = 0xe1  // launches ScummVM's save/load dialog
 };
+#endif
 
 // internal kernel signature data
 enum {
@@ -496,7 +499,6 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv);
 reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
-reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
@@ -668,6 +670,10 @@ reg_t kPlayDuckClose(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayDuckSetVolume(EngineState *s, int argc, reg_t *argv);
 reg_t kWebConnect(EngineState *s, int argc, reg_t *argv);
 reg_t kWinExec(EngineState *s, int argc, reg_t *argv);
+
+// SCI32 custom ScummVM kernel functions
+reg_t kScummVMSleep(EngineState *s, int argc, reg_t *argv);
+reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

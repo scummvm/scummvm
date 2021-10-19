@@ -865,9 +865,8 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 			_kernelNames[id] = "Dummy";
 		}
 
-		// Used by Hoyle5 script patches to remove CPU spinning on kGetTime
-		// (this repurposes the existing SCI16 kWait call that was removed in SCI32)
-		_kernelNames[kScummVMWaitId] = "Wait";
+		// Used by SCI32 script patches to remove CPU spinning on kGetTime
+		_kernelNames[kScummVMSleepId] = "ScummVMSleep";
 
 		// Used by GuestAdditions to support integrated save/load dialogue
 		_kernelNames[kScummVMSaveLoadId] = "ScummVMSaveLoad";

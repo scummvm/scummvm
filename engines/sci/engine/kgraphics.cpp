@@ -394,6 +394,9 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// kWait is a throttling function that sleeps up to the requested
+// number of ticks, or possibly not at all. The sleep duration
+// is based on the time since kWait was last called.
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	uint16 ticks = argv[0].toUint16();
 
@@ -406,6 +409,19 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	s->_paletteSetIntensityCounter = 0;
 	return make_reg(0, delta);
 }
+
+#ifdef ENABLE_SCI32
+// kScummVMSleep is our own custom kernel function that sleeps for
+// the number of ticks requested. We use this in SCI32 script patches
+// to replace spin loops so that the application remains responsive
+// and doesn't just block the thread without updating the screen or
+// processing input events.
+reg_t kScummVMSleep(EngineState *s, int argc, reg_t *argv) {
+	uint16 ticks = argv[0].toUint16();
+	s->sleep(ticks);
+	return s->r_acc;
+}
+#endif
 
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int16 y = argv[0].toSint16();

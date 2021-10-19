@@ -292,15 +292,6 @@ bool GuestAdditions::kWaitHook() const {
 		return false;
 	}
 
-	// kWait cannot be used in Phant2 for delayed restore because it is
-	// called during the fade-in of music in the intro room, before graphics
-	// are fully initialized, which causes "Click to continue" text to be
-	// brokenly drawn over the game and then crashes the engine on the next
-	// room transition
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
-		return false;
-	}
-
 	return g_sci->_guestAdditions->restoreFromLauncher();
 }
 
