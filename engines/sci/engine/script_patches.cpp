@@ -3975,6 +3975,33 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 #pragma mark -
 #pragma mark Gabriel Knight 2
 
+// GK2 uses a kGetTime spin loop to delay for half a second while displaying
+//  the "bad" cursor when clicking an item on something it can't be used on.
+//  This leaves ScummVM unresponsive without displaying the cursor.
+//
+// We fix this by replacing the spin loop with a call to kScummVMSleep.
+//
+// Applies to: All versions
+// Responsible method: GKHotCursor:flashBad
+static const uint16 gk2FlashBadCursorSignature[] = {
+	0x8d, SIG_MAGICDWORD, 0x00,     // lst 00
+	0x76,                           // push0
+	0x43, 0x79, SIG_UINT16(0x0000), // callk GetTime 00
+	0x1e,                           // gt?
+	0x31, 0x02,                     // bnt 02 [ exit loop ]
+	0x33, 0xf4,                     // jmp f4 [ continue loop ]
+	SIG_END
+};
+
+static const uint16 gk2FlashBadCursorPatch[] = {
+	0x78,                           // push1
+	0x39, 0x1e,                     // pushi 1e [ half a second ]
+	0x43, kScummVMSleepId,          // callk ScummVMSleep 02
+	      PATCH_UINT16(0x0002),
+	0x32, PATCH_UINT16(0x0002),     // jmp 0002 [ exit loop ]
+	PATCH_END
+};
+
 // GK2's inventory scrolls smoothly when the mouse is held down in the original
 //  due to an inner loop in ScrollButton:track, but this causes slow scrolling
 //  in our interpreter since we throttle kFrameOut. The script's inner loop is
@@ -4422,6 +4449,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64928, "Narrator lockup fix",                                 1, sciNarratorLockupSignature,        sciNarratorLockupPatch },
 	{  true, 64928, "Narrator lockup fix",                                 1, sciNarratorLockupLineSignature,    sciNarratorLockupLinePatch },
+	{  true, 64962, "flash bad cursor spin loop",                          1, gk2FlashBadCursorSignature,        gk2FlashBadCursorPatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,            sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,            sci2ChangeDirPatch },
