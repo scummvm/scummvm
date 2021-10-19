@@ -1193,10 +1193,13 @@ namespace Director {
 #define MACGAME1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define WINGAME1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define SHKGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformShockwave,ADGF_NO_FLAGS,v)
 #define MACDEMO1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
+#define WINDEMO1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define MACGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
@@ -1755,7 +1758,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391613, Common::JA_JPN, 311),
 
 	// Demos from The Computer Buyer Collection Volume 1 - Sep 1995
-	WINDEMO1("msarcade",	   "Demo",		"ARCADE.EXE",   "2b3543a9131a49f665982d26513a84f8", 1843614, 310),
+	WINDEMO1t("msarcade",	   "Demo",		"ARCADE.EXE",   "a7f83e35541a2952cd4848becee98c1d", 1843614, 310),
 	WINDEMO1("msartgallery",   "Demo",		"ARTGDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370002, 310),
 	WINDEMO1("msbaseball",	   "1994 Demo",	"BASEBALL.EXE", "2b3543a9131a49f665982d26513a84f8", 370013, 310),
 	WINDEMO1("msbasketball",   "1994 Demo",	"BASKET.EXE",   "2b3543a9131a49f665982d26513a84f8", 370014, 310),
