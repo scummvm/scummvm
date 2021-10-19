@@ -574,18 +574,19 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = Common::punycode_decodefilename(fileDesc->fileName);
+			Common::String key = flagsToMD5Prefix(g->flags) + ':' + fname;
 
-			if (filesProps.contains(fname))
+			if (filesProps.contains(key))
 				continue;
 
 			FileProperties tmp;
 			if (getFileProperties(allFiles, *g, fname, tmp)) {
-				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", fname.c_str(), tmp.md5.c_str(), tmp.size);
+				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), tmp.size);
 			}
 
 			// Both positive and negative results are cached to avoid
 			// repeatedly checking for files.
-			filesProps[fname] = tmp;
+			filesProps[key] = tmp;
 		}
 	}
 
@@ -615,25 +616,26 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = Common::punycode_decodefilename(fileDesc->fileName);
+			Common::String key = flagsToMD5Prefix(g->flags) + ':' + tstr;
 
-			if (!filesProps.contains(tstr) || filesProps[tstr].size == -1) {
+			if (!filesProps.contains(key) || filesProps[key].size == -1) {
 				allFilesPresent = false;
 				break;
 			}
 
-			game.matchedFiles[tstr] = filesProps[tstr];
+			game.matchedFiles[tstr] = filesProps[key];
 
 			if (game.hasUnknownFiles)
 				continue;
 
 			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[tstr].md5) {
-				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
+				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[key].md5.c_str());
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
-				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", fileDesc->fileSize, filesProps[tstr].size);
+				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", fileDesc->fileSize, filesProps[key].size);
 				game.hasUnknownFiles = true;
 				continue;
 			}
