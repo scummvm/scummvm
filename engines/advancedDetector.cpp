@@ -549,7 +549,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 
 	if (game.flags & ADGF_TAILMD5) {
 		if (testFile.size() > md5Bytes)
-			testFile.seek(md5Bytes, SEEK_END);
+			testFile.seek(-md5Bytes, SEEK_END);
 	}
 
 	fileProps.size = testFile.size();
