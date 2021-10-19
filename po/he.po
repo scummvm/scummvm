@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-19 13:46+0000\n"
+"POT-Creation-Date: 2021-10-19 17:24+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -166,7 +166,7 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:182 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1377 engines/scumm/scumm.cpp:1399
-#: engines/scumm/scumm.cpp:2102 engines/sky/compact.cpp:142
+#: engines/scumm/scumm.cpp:2103 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
@@ -3931,7 +3931,7 @@ msgstr "לשחזר"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:162 engines/scumm/scumm.cpp:2712
+#: engines/agos/saveload.cpp:162 engines/scumm/scumm.cpp:2713
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3942,7 +3942,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:197 engines/scumm/scumm.cpp:2702
+#: engines/agos/saveload.cpp:197 engines/scumm/scumm.cpp:2703
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3953,7 +3953,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:205 engines/scumm/scumm.cpp:2725
+#: engines/agos/saveload.cpp:205 engines/scumm/scumm.cpp:2726
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6157,11 +6157,21 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:204
+msgid "Use correct font spacing"
+msgstr ""
+
+#: engines/scumm/detection.cpp:205
+msgid ""
+"Draw text with correct font spacing. This arguably looks better, but doesn't "
+"match the original behavior."
+msgstr ""
+
+#: engines/scumm/detection.cpp:211
 #, fuzzy
 msgid "Enable smooth scrolling"
 msgstr "אפשר גלילה חלקה בזמן ההליכה"
 
-#: engines/scumm/detection.cpp:205
+#: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
@@ -6864,7 +6874,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'אי הקופים' כדי לקרוא את\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:2100
+#: engines/scumm/scumm.cpp:2101
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6873,7 +6883,7 @@ msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
 "אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
-#: engines/scumm/scumm.cpp:3027
+#: engines/scumm/scumm.cpp:3028
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
