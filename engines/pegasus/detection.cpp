@@ -92,7 +92,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"v1.0 Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 365585), // FIXMEMD5
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 365329),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
@@ -107,7 +107,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 		{
 			"pegasus",
 			"Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129), // FIXMEMD5
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 359873),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
