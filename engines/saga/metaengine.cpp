@@ -143,7 +143,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 				for (int i = 0; i < 3; i++)
 					in->readUint32BE();
 				in->read(saveDesc, SAVE_TITLE_SIZE);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
 				delete in;
 			}
 		}
@@ -177,7 +177,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		char name[SAVE_TITLE_SIZE];
 		in->read(name, sizeof(name));
 
-		SaveStateDescriptor desc(slot, name);
+		SaveStateDescriptor desc(this, slot, name);
 
 		// Some older saves were not written in an endian safe fashion.
 		// We try to detect this here by checking for extremely high version values.

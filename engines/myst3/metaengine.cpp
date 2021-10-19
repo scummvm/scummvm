@@ -56,7 +56,7 @@ public:
 
 		SaveStateList saveList;
 		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
+			saveList.push_back(SaveStateDescriptor(this, i, filenames[i]));
 
 		return saveList;
 	}

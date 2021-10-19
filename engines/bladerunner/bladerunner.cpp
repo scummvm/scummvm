@@ -350,7 +350,7 @@ Common::Error BladeRunnerEngine::run() {
 
 	_system->showMouse(true);
 
-	bool hasSavegames = !SaveFileManager::list(_targetName).empty();
+	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
 
 	if (!startup(hasSavegames)) {
 		// shutting down
@@ -2401,7 +2401,7 @@ void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
 	}
 	_gameIsAutoSaving = true;
 
-	SaveStateList saveList = BladeRunner::SaveFileManager::list(getTargetName());
+	SaveStateList saveList = BladeRunner::SaveFileManager::list(getMetaEngine(), getTargetName());
 
 	// Find first available save slot
 	int slot = -1;

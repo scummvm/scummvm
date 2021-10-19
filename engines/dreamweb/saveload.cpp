@@ -728,7 +728,7 @@ uint DreamWebEngine::scanForNames() {
 		delete stream;
 
 		int slotNum = atoi(file.c_str() + file.size() - 2);
-		SaveStateDescriptor sd(slotNum, name);
+		SaveStateDescriptor sd(getMetaEngine(), slotNum, name);
 		saveList.push_back(sd);
 		if (slotNum < 21)
 			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused

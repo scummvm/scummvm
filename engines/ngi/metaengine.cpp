@@ -110,11 +110,9 @@ SaveStateList NGIMetaEngine::listSaves(const char *target) const {
 					continue;
 				}
 
-				SaveStateDescriptor desc;
+				SaveStateDescriptor desc(this, slotNum, header.description);
 
 				NGI::parseSavegameHeader(header, desc);
-
-				desc.setSaveSlot(slotNum);
 
 				saveList.push_back(desc);
 			}
@@ -141,11 +139,10 @@ SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int sl
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc;
+		SaveStateDescriptor desc(this, slot, header.description);
 
 		NGI::parseSavegameHeader(header, desc);
 
-		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;

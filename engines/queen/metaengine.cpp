@@ -69,7 +69,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 				for (int i = 0; i < 4; i++)
 					in->readUint32BE();
 				in->read(saveDesc, 32);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
 				delete in;
 			}
 		}

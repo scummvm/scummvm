@@ -235,7 +235,7 @@ WARN_UNUSED_RESULT bool SavegameManager::readSavegameHeader(Common::InSaveFile *
 	return true;
 }
 
-SaveStateList SavegameManager::listSaves(const Common::String &target) {
+SaveStateList SavegameManager::listSaves(const MetaEngine *metaEngine, const Common::String &target) {
 	Common::String pattern = target;
 	pattern += ".###";
 
@@ -274,7 +274,7 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 
 			if (validFlag)
 				// Got a valid savegame
-				saveList.push_back(SaveStateDescriptor(slotNumber, saveDescription));
+				saveList.push_back(SaveStateDescriptor(metaEngine, slotNumber, saveDescription));
 
 			delete in;
 		}
@@ -284,7 +284,7 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 	return saveList;
 }
 
-SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fileName) {
+SaveStateDescriptor SavegameManager::querySaveMetaInfos(const MetaEngine *metaEngine, const Common::String &fileName) {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (f) {
@@ -303,7 +303,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fi
 			// Original savegame perhaps?
 			delete f;
 
-			return SaveStateDescriptor(slot, Common::String::format("Savegame - %03d", slot));
+			return SaveStateDescriptor(metaEngine, slot, Common::String::format("Savegame - %03d", slot));
 		} else {
 			// Get the savegame header information
 			SavegameHeader header;
@@ -314,7 +314,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fi
 			delete f;
 
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
+			SaveStateDescriptor desc(metaEngine, slot, header.saveName);
 			desc.setDeletableFlag(true);
 			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);

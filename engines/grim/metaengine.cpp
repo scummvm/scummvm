@@ -121,7 +121,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 				strSize = savedState->readLESint32();
 				savedState->read(str, strSize);
 				savedState->endSection();
-				saveList.push_back(SaveStateDescriptor(slotNum, str));
+				saveList.push_back(SaveStateDescriptor(this, slotNum, str));
 			}
 			delete savedState;
 		}

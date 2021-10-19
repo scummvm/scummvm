@@ -66,7 +66,7 @@ public:
 				description = stream.readString();
 			}
 
-			saveList.push_back(SaveStateDescriptor(slot, description));
+			saveList.push_back(SaveStateDescriptor(this, slot, description));
 		}
 
 		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());

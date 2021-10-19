@@ -135,7 +135,7 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 
 			if (in) {
 				if (Access::AccessEngine::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
 
 				delete in;
 			}
@@ -170,7 +170,7 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header._saveName);
+		SaveStateDescriptor desc(this, slot, header._saveName);
 		desc.setThumbnail(header._thumbnail);
 		desc.setSaveDate(header._year, header._month, header._day);
 		desc.setSaveTime(header._hour, header._minute);

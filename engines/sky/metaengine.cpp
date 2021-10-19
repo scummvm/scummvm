@@ -176,7 +176,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(slotNum,
+			saveList.push_back(SaveStateDescriptor(this, slotNum,
 				(slotNum == 0) ? _("Autosave") : Common::U32String(savenames[slotNum - 1])));
 			delete in;
 		}
@@ -274,7 +274,7 @@ SaveStateDescriptor SkyMetaEngine::querySaveMetaInfos(const char *target, int sl
 		Common::InSaveFile *in = saveFileMan->openForLoading(fName);
 		if (in) {
 			delete in;
-			SaveStateDescriptor descriptor(slot, tmpSavename);
+			SaveStateDescriptor descriptor(this, slot, tmpSavename);
 			return descriptor;
 		}
 	}

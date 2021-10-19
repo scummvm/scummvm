@@ -113,7 +113,7 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveMan->openForLoading(*file);
 			if (in) {
 				if (in->read(saveName, kSaveDescriptionLen) == kSaveDescriptionLen) {
-					saveList.push_back(SaveStateDescriptor(slotNum - 1, saveName));
+					saveList.push_back(SaveStateDescriptor(this, slotNum - 1, saveName));
 				}
 				delete in;
 			}

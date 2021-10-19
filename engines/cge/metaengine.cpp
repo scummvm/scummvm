@@ -94,11 +94,11 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 				if (!strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1)) {
 					// Valid savegame
 					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+						saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
 					}
 				} else {
 					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, "Unknown"));
 				}
 
 				delete file;
@@ -128,11 +128,11 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		if (!hasHeader) {
 			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
+			SaveStateDescriptor desc(this, slot, "Unknown");
 			return desc;
 		} else {
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
+			SaveStateDescriptor desc(this, slot, header.saveName);
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);
