@@ -47,6 +47,8 @@ OpenGLActorRenderer::~OpenGLActorRenderer() {
 }
 
 void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
+	static const uint maxLights = 10;
+
 	if (_modelIsDirty) {
 		clearVertices();
 		uploadVertices();
@@ -99,6 +101,24 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		Math::Matrix4 modelInverse = model;
 		modelInverse.inverse();
 		lightDirection = getShadowLightDirection(lights, position, modelInverse.getRotation());
+	}
+
+	Math::Vector4d worldPosition[maxLights];
+	Math::Vector4d lightEyePosition[maxLights];
+	Math::Vector3d lightEyeDirection[maxLights];
+	if (_gfx->computeLightsEnabled()) {
+		for (uint li = 0; li < lights.size() - 1; li++) {
+			const LightEntry *l = lights[li + 1];
+
+			worldPosition[li].x() = l->position.x();
+			worldPosition[li].y() = l->position.y();
+			worldPosition[li].z() = l->position.z();
+			worldPosition[li].w() = 1.0f;
+
+			lightEyePosition[li] = view * worldPosition[li];
+			lightEyeDirection[li] = view.getRotation() * l->direction;
+			lightEyeDirection[li].normalize();
+		}
 	}
 
 	glEnable(GL_TEXTURE_2D);
@@ -194,9 +214,6 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			}
 
 			if (_gfx->computeLightsEnabled()) {
-				Math::Vector4d worldPosition = Math::Vector4d(0.0, 0.0, 0.0, 1.0);
-				static const uint maxLights = 10;
-
 				assert(lights.size() >= 1);
 				assert(lights.size() <= maxLights);
 
@@ -208,17 +225,9 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 				for (uint li = 0; li < lights.size() - 1; li++) {
 					const LightEntry *l = lights[li + 1];
 
-					worldPosition.x() = l->position.x();
-					worldPosition.y() = l->position.y();
-					worldPosition.z() = l->position.z();
-
-					Math::Vector4d lightEyePosition = view * worldPosition;
-					Math::Vector3d lightEyeDirection = view.getRotation() * l->direction;
-					lightEyeDirection.normalize();
-
 					switch (l->type) {
 						case LightEntry::kPoint: {
-							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+							Math::Vector3d vertexToLight = lightEyePosition[li].getXYZ() - modelEyePosition.getXYZ();
 
 							float dist = vertexToLight.length();
 							vertexToLight.normalize();
@@ -228,12 +237,12 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 							break;
 						}
 						case LightEntry::kDirectional: {
-							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -lightEyeDirection));
+							float incidence = MAX(0.0f, Math::Vector3d::dotProduct(modelEyeNormal, -lightEyeDirection[li]));
 							lightColor += (l->color * incidence);
 							break;
 						}
 						case LightEntry::kSpot: {
-							Math::Vector3d vertexToLight = lightEyePosition.getXYZ() - modelEyePosition.getXYZ();
+							Math::Vector3d vertexToLight = lightEyePosition[li].getXYZ() - modelEyePosition.getXYZ();
 
 							float dist = vertexToLight.length();
 							float attn = CLIP((l->falloffFar - dist) / MAX(0.001f, l->falloffFar - l->falloffNear), 0.0f, 1.0f);
@@ -241,7 +250,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 							vertexToLight.normalize();
 							float incidence = MAX(0.0f, modelEyeNormal.dotProduct(vertexToLight));
 
-							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-lightEyeDirection));
+							float cosAngle = MAX(0.0f, vertexToLight.dotProduct(-lightEyeDirection[li]));
 							float cone = CLIP((cosAngle - l->innerConeAngle.getCosine()) / MAX(0.001f, l->outerConeAngle.getCosine() - l->innerConeAngle.getCosine()), 0.0f, 1.0f);
 
 							lightColor += l->color * attn * incidence * cone;
