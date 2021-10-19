@@ -145,7 +145,7 @@ public:
 	/**
 	 * Load a list of savegames
 	 */
-	static SaveStateList getSavegameList(const Common::String &target);
+	static SaveStateList getSavegameList(const MetaEngine *metaEngine, const Common::String &target);
 
 	/**
 	 * Write out the header information for a savegame

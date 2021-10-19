@@ -94,7 +94,7 @@ void KIASectionSave::open() {
 
 	_scrollBox->show();
 
-	_saveList = SaveFileManager::list(_vm->getTargetName());
+	_saveList = SaveFileManager::list(_vm->getMetaEngine(), _vm->getTargetName());
 
 	bool ableToSaveGame = true;
 
@@ -186,7 +186,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	if (selectedLineId != _hoveredLineId) {
 		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 			if (_timeLeft == 0u) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getMetaEngine(), _vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
@@ -206,7 +206,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 		if (_timeLeft) {
 			uint32 timeDiff = now - _timeLast; // unsigned difference is intentional
 			if (timeDiff >= _timeLeft) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getMetaEngine(), _vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);

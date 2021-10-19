@@ -81,7 +81,7 @@ public:
 				in->seek(0);
 				in->read(buf, 24);
 				buf[24] = 0;
-				saveList.push_back(SaveStateDescriptor(slot, buf));
+				saveList.push_back(SaveStateDescriptor(this, slot, buf));
 			}
 		}
 		// Sort saves based on slot number.
@@ -113,9 +113,9 @@ public:
 
 		in->seek(TeenAgent::saveStateSize);
 		if (!Graphics::checkThumbnailHeader(*in))
-			return SaveStateDescriptor(slot, desc);
+			return SaveStateDescriptor(this, slot, desc);
 
-		SaveStateDescriptor ssd(slot, desc);
+		SaveStateDescriptor ssd(this, slot, desc);
 
 		//checking for the thumbnail
 		Graphics::Surface *thumbnail;

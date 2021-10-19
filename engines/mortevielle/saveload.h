@@ -67,8 +67,8 @@ public:
 
 	void writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
-	static SaveStateList listSaves(const Common::String &target);
-	static SaveStateDescriptor querySaveMetaInfos(const Common::String &fileName);
+	static SaveStateList listSaves(const MetaEngine *metaEngine, const Common::String &target);
+	static SaveStateDescriptor querySaveMetaInfos(const MetaEngine *metaEngine, const Common::String &fileName);
 };
 
 } // End of namespace Mortevielle

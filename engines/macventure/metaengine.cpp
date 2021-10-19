@@ -85,7 +85,7 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
-		SaveStateDescriptor desc(slotNum, Common::U32String());
+		SaveStateDescriptor desc(this, slotNum, Common::U32String());
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {

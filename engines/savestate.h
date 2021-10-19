@@ -28,6 +28,8 @@
 #include "common/ustr.h"
 #include "common/ptr.h"
 
+class MetaEngine;
+
 namespace Graphics {
 struct Surface;
 }
@@ -60,11 +62,11 @@ private:
 		kSaveTypeAutosave
 	};
 
-	void initSaveType();
+	void initSaveType(const MetaEngine *metaEngine);
 public:
 	SaveStateDescriptor();
-	SaveStateDescriptor(int slot, const Common::U32String &d);
-	SaveStateDescriptor(int slot, const Common::String &d);
+	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d);
+	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.

@@ -321,7 +321,7 @@ void SaveLoadChooserDialog::listSaves() {
 				slotNum = slotNum * 10 + (c - '0');
 			}
 
-			SaveStateDescriptor slot(slotNum, files[i]);
+			SaveStateDescriptor slot(_metaEngine, slotNum, files[i]);
 			slot.setLocked(true);
 			_saveList.push_back(slot);
 		}
@@ -710,7 +710,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 		saveSlot = x->getSaveSlot();
 		if (curSlot < saveSlot) {
 			while (curSlot < saveSlot) {
-				SaveStateDescriptor dummySave(curSlot, "");
+				SaveStateDescriptor dummySave(_metaEngine, curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
 				saveNames.push_back(dummySave.getDescription());
 				colors.push_back(ThemeEngine::kFontColorNormal);
@@ -754,7 +754,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	Common::String emptyDesc;
 	for (int i = curSlot; i <= maximumSaveSlots; i++) {
 		saveNames.push_back(emptyDesc);
-		SaveStateDescriptor dummySave(i, "");
+		SaveStateDescriptor dummySave(_metaEngine, i, "");
 		_saveList.push_back(dummySave);
 		colors.push_back(ThemeEngine::kFontColorNormal);
 	}

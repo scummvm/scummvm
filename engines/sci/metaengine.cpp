@@ -351,7 +351,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 					delete in;
 					continue;
 				}
-				SaveStateDescriptor descriptor(slotNr, meta.name);
+				SaveStateDescriptor descriptor(this, slotNr, meta.name);
 
 				if (descriptor.isAutosave()) {
 					hasAutosave = true;
@@ -364,7 +364,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	}
 
 	if (!hasAutosave) {
-		SaveStateDescriptor descriptor(0, _("(Autosave)"));
+		SaveStateDescriptor descriptor(this, 0, _("(Autosave)"));
 		descriptor.setLocked(true);
 		saveList.push_back(descriptor);
 	}
@@ -377,7 +377,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	const Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
-	SaveStateDescriptor descriptor(slotNr, "");
+	SaveStateDescriptor descriptor(this, slotNr, "");
 
 	if (in) {
 		SavegameMetadata meta;

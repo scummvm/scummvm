@@ -67,7 +67,7 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 	for (uint i = 0; i < ps.getSlotCount(); ++i) {
 		if (ps.isSlotOccupied(i)) {
 			Common::String desc = ps.getSavegameDescription(i);
-			saveList.push_back(SaveStateDescriptor(i, desc));
+			saveList.push_back(SaveStateDescriptor(this, i, desc));
 		}
 	}
 

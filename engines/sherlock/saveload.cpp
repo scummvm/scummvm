@@ -65,7 +65,7 @@ void SaveManager::createSavegameList() {
 	for (int idx = 0; idx < MAX_SAVEGAME_SLOTS; ++idx)
 		_savegames.push_back(EMPTY_SAVEGAME_SLOT);
 
-	SaveStateList saveList = getSavegameList(_target);
+	SaveStateList saveList = getSavegameList(_vm->getMetaEngine(), _target);
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		int slot = saveList[idx].getSaveSlot();
 		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS)
@@ -85,7 +85,7 @@ void SaveManager::createSavegameList() {
 	}
 }
 
-SaveStateList SaveManager::getSavegameList(const Common::String &target) {
+SaveStateList SaveManager::getSavegameList(const MetaEngine *metaEngine, const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -104,7 +104,7 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 
 			if (in) {
 				if (readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(metaEngine, slot, header._saveName));
 
 				delete in;
 			}

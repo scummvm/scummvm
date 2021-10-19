@@ -65,7 +65,7 @@ void KIASectionLoad::open() {
 	_scrollBox->show();
 	_scrollBox->clearLines();
 
-	_saveList = SaveFileManager::list(_vm->getTargetName());
+	_saveList = SaveFileManager::list(_vm->getMetaEngine(), _vm->getTargetName());
 
 	if (!_saveList.empty()) {
 		_scrollBox->addLine(_vm->_textOptions->getText(36), -1, 4); // Load game:
@@ -106,7 +106,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface) {
 	if (_hoveredLineId != selectedLineId) {
 		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 			if (_timeLeft == 0u) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getMetaEngine(), _vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
@@ -126,7 +126,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface) {
 		if (_timeLeft) {
 			uint32 timeDiff = now - _timeLast; // unsigned difference is intentional
 			if (timeDiff >= _timeLeft) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getMetaEngine(), _vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);

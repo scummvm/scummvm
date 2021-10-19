@@ -118,7 +118,7 @@ SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 					strcpy(meta.description, "[broken saved game]");
 				}
 
-				saveList.push_back(SaveStateDescriptor(slotNr, meta.description));
+				saveList.push_back(SaveStateDescriptor(this, slotNr, meta.description));
 			}
 		}
 	}
@@ -157,11 +157,11 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		}
 		if (descriptionPos >= sizeof(meta.description)) {
 			// broken meta.description, ignore it
-			SaveStateDescriptor descriptor(slotNr, "[broken saved game]");
+			SaveStateDescriptor descriptor(this, slotNr, "[broken saved game]");
 			return descriptor;
 		}
 
-		SaveStateDescriptor descriptor(slotNr, meta.description);
+		SaveStateDescriptor descriptor(this, slotNr, meta.description);
 
 		if (meta.thumbnail == nullptr) {
 			return SaveStateDescriptor();
@@ -175,7 +175,7 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		return descriptor;
 
 	} else {
-		SaveStateDescriptor emptySave(slotNr, Common::U32String());
+		SaveStateDescriptor emptySave(this, slotNr, Common::U32String());
 		return emptySave;
 	}
 }

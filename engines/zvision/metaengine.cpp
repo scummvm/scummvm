@@ -258,7 +258,7 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (zvisionSaveMan->readSaveGameHeader(in, header)) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
 				}
 				delete in;
 			}
@@ -295,7 +295,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 		delete in;
 
 		if (successfulRead) {
-			SaveStateDescriptor desc(slot, header.saveName);
+			SaveStateDescriptor desc(this, slot, header.saveName);
 
 			desc.setThumbnail(header.thumbnail);
 

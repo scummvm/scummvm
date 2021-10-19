@@ -464,7 +464,7 @@ CViewItem *CProjectItem::findView(int roomNumber, int nodeNumber, int viewNumber
 	return nullptr;
 }
 
-SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
+SaveStateList CProjectItem::getSavegameList(const MetaEngine *metaEngine, const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -486,7 +486,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 				SimpleFile f;
 				f.open(in);
 				if (readSavegameHeader(&f, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(metaEngine, slot, header._saveName));
 
 				delete in;
 			}

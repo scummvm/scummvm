@@ -72,7 +72,7 @@ public:
 
 				MutationOfJB::SaveHeader saveHdr;
 				if (saveHdr.sync(sz)) {
-					saveList.push_back(SaveStateDescriptor(slotNo, saveHdr._description));
+					saveList.push_back(SaveStateDescriptor(this, slotNo, saveHdr._description));
 				}
 			}
 		}

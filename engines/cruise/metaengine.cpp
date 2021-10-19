@@ -85,7 +85,7 @@ SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				Cruise::CruiseSavegameHeader header;
 				if (Cruise::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
 				delete in;
 			}
 		}
@@ -114,7 +114,7 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
+		SaveStateDescriptor desc(this, slot, header.saveName);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;

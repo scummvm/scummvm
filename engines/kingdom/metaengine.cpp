@@ -92,7 +92,7 @@ SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
 
 			if (in) {
 				if (Kingdom::KingdomGame::readSavegameHeader(in, header)) {
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
 
 					header._thumbnail->free();
 					delete header._thumbnail;
@@ -123,7 +123,7 @@ SaveStateDescriptor KingdomMetaEngine::querySaveMetaInfos(const char *target, in
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header._saveName);
+		SaveStateDescriptor desc(this, slot, header._saveName);
 		desc.setThumbnail(header._thumbnail);
 		desc.setSaveDate(header._year, header._month, header._day);
 		desc.setSaveTime(header._hour, header._minute);

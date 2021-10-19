@@ -100,7 +100,7 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Toltecs::ToltecsEngine::readSaveHeader(in, header) == Toltecs::ToltecsEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
 				}
 				delete in;
 			}
@@ -152,7 +152,7 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 		delete in;
 
 		if (error == Toltecs::ToltecsEngine::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(this, slot, header.description);
 
 			desc.setThumbnail(header.thumbnail);
 

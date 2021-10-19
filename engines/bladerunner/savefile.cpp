@@ -34,7 +34,7 @@
 
 namespace BladeRunner {
 
-SaveStateList SaveFileManager::list(const Common::String &target) {
+SaveStateList SaveFileManager::list(const MetaEngine *metaEngine, const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray files = saveFileMan->listSavefiles(target + ".###");
 
@@ -50,7 +50,7 @@ SaveStateList SaveFileManager::list(const Common::String &target) {
 		readHeader(*saveFile, header);
 
 		int slotNum = atoi(fileName->c_str() + fileName->size() - 3);
-		saveList.push_back(SaveStateDescriptor(slotNum, header._name));
+		saveList.push_back(SaveStateDescriptor(metaEngine, slotNum, header._name));
 
 		delete saveFile;
 	}
@@ -60,7 +60,7 @@ SaveStateList SaveFileManager::list(const Common::String &target) {
 	return saveList;
 }
 
-SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target, int slot) {
+SaveStateDescriptor SaveFileManager::queryMetaInfos(const MetaEngine *metaEngine, const Common::String &target, int slot) {
 	Common::String filename = Common::String::format("%s.%03d", target.c_str(), slot);
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -75,7 +75,7 @@ SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target
 	}
 	delete saveFile;
 
-	SaveStateDescriptor desc(slot, header._name);
+	SaveStateDescriptor desc(metaEngine, slot, header._name);
 	desc.setThumbnail(header._thumbnail);
 	desc.setSaveDate(header._year, header._month, header._day);
 	desc.setSaveTime(header._hour, header._minute);

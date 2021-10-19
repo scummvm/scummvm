@@ -107,7 +107,7 @@ public:
 
 				if (in) {
 					if (TsAGE::Saver::readSavegameHeader(in, header)) {
-						saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+						saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
 					}
 
 					delete in;
@@ -143,7 +143,7 @@ public:
 			delete f;
 
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header._saveName);
+			SaveStateDescriptor desc(this, slot, header._saveName);
 			desc.setThumbnail(header._thumbnail);
 			desc.setSaveDate(header._saveYear, header._saveMonth, header._saveDay);
 			desc.setSaveTime(header._saveHour, header._saveMinutes);

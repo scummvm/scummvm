@@ -112,7 +112,7 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Neverhood::NeverhoodEngine::readSaveHeader(in, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
 				}
 				delete in;
 			}
@@ -146,7 +146,7 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 		delete in;
 
 		if (error == Neverhood::NeverhoodEngine::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(this, slot, header.description);
 
 			desc.setThumbnail(header.thumbnail);
 			int day = (header.saveDate >> 24) & 0xFF;

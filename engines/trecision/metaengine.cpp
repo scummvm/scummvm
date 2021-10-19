@@ -61,7 +61,7 @@ SaveStateDescriptor TrecisionMetaEngine::querySaveMetaInfos(const char *target, 
 			// Original saved game, convert
 			Common::String saveName = saveFile->readString(0, 40);
 
-			SaveStateDescriptor desc(slot, saveName);
+			SaveStateDescriptor desc(this, slot, saveName);
 
 			// This is freed inside SaveStateDescriptor
 			const Graphics::PixelFormat kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);

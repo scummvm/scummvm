@@ -162,7 +162,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
 						header.description = "New Game";
 
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
 				}
 				delete in;
 			}
@@ -202,7 +202,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		delete in;
 
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(this, slot, header.description);
 
 			// Slot 0 is used for the 'restart game' save in all three Kyrandia games, thus
 			// we prevent it from being deleted.
@@ -220,7 +220,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		}
 	}
 
-	SaveStateDescriptor desc(slot, Common::String());
+	SaveStateDescriptor desc(this, slot, Common::String());
 
 	// We don't allow quick saves (slot 990 till 998) to be overwritten.
 	// The same goes for the 'Autosave', which is slot 999. Slot 0 will also

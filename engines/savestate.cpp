@@ -22,6 +22,7 @@
 
 #include "engines/savestate.h"
 #include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
@@ -34,20 +35,22 @@ SaveStateDescriptor::SaveStateDescriptor()
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int slot, const Common::U32String &d)
+SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d)
 	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0) {
-	initSaveType();
+	initSaveType(metaEngine);
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int slot, const Common::String &d)
+SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d)
 	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0) {
-	initSaveType();
+	initSaveType(metaEngine);
 }
 
-void SaveStateDescriptor::initSaveType() {
+void SaveStateDescriptor::initSaveType(const MetaEngine *metaEngine) {
 	// Do not allow auto-save slot to be deleted or overwritten.
+	if (!metaEngine && g_engine)
+		metaEngine = g_engine->getMetaEngine();
 	const bool autosave =
-			g_engine && ConfMan.getInt("autosave_period") && _slot == g_engine->getAutosaveSlot();
+			metaEngine && ConfMan.getInt("autosave_period") && _slot == metaEngine->getAutosaveSlot();
 	_isWriteProtected = autosave;
 	_saveType = autosave ? kSaveTypeAutosave : kSaveTypeRegular;
 	_isDeletable = !autosave;

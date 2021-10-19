@@ -167,7 +167,7 @@ SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const cha
 
 		int slotNum = atoi(slot);
 
-		saveList.push_back(SaveStateDescriptor(slotNum, ""));
+		saveList.push_back(SaveStateDescriptor(this, slotNum, ""));
 	}
 
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
@@ -229,7 +229,7 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 
 #ifdef ENABLE_MYST
 	if (gameId == "myst") {
-		return Mohawk::MystGameState::querySaveMetaInfos(slot);
+		return Mohawk::MystGameState::querySaveMetaInfos(this, slot);
 	}
 #endif
 #ifdef ENABLE_RIVEN
