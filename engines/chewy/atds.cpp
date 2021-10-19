@@ -81,7 +81,7 @@ atdsys::~atdsys() {
 	int16 i;
 	for (i = 0; i < MAX_HANDLE; i++) {
 		if (atdshandle[i])
-			warning("FIXME : close handler");
+			chewy_fclose(atdshandle[i]);
 
 		free(atdsmem[i]);
 	}
@@ -290,7 +290,6 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	Stream *handle;
 	handle = chewy_fopen(fname_, fmode);
 	if (handle) {
-		close_handle(ATDS_HANDLE);
 		atdshandle[ATDS_HANDLE] = handle;
 	} else {
 		modul = DATEI;
@@ -311,7 +310,6 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 	tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
 	if (!modul) {
 		if (rs) {
-			close_handle(mode);
 			atdshandle[mode] = rs;
 			atdsmem[mode] = tmp_adr;
 			atdspooloff[mode] = chunk_start;
