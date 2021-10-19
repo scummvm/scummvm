@@ -56,6 +56,28 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - Preview Version (EN, FR)
+	// LBA.EXE
+	// 15 August 1994 at 18:28
+	{
+		"lba",
+		"Preview Version",
+		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 298697),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Preview Version",
+		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 298697),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - Demo Version (EN, FR, DE, IT, ES)
 	// RELENT.EXE
 	// 14 October 1994 at 10:18
