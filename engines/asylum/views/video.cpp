@@ -192,7 +192,8 @@ void VideoPlayer::play(const Common::String &filename, bool showSubtitles) {
 	_decoder->start();
 
 	if (_vm->checkGameVersion("Steam") || _vm->isAltDemo()) {
-		Graphics::PixelFormat decoderFormat = _decoder->getPixelFormat();
+		Graphics::PixelFormat decoderFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_decoder->setDefaultHighColorFormat(decoderFormat);
 		initGraphics(640, 480, &decoderFormat);
 	}
 
