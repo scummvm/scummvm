@@ -186,7 +186,8 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		glEnableClientState(GL_VERTEX_ARRAY);
 		if (_gfx->computeLightsEnabled())
 			glEnableClientState(GL_COLOR_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		if (tex)
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 
 		glVertexPointer(3, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].x);
@@ -201,8 +202,8 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		glDisableClientState(GL_VERTEX_ARRAY);
 		if (_gfx->computeLightsEnabled())
 			glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
 
 	}
 	if (!_gfx->computeLightsEnabled())
