@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-20 20:26+0000\n"
-"PO-Revision-Date: 2021-10-17 12:48+0000\n"
+"PO-Revision-Date: 2021-10-20 20:54+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6310,13 +6310,16 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Verwende korrekte Zeichenabstände"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Zeichne Text mit korrekten Zeichenabständen. Die korrigierten "
+"Zeichenabstände sehen besser aus, entsprechen jedoch nicht dem "
+"ursprünglichen Verhalten."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
