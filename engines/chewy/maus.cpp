@@ -133,7 +133,7 @@ int16 maus::get_switch_code() {
 	int16 switch_code;
 	switch_code = 0;
 
-	if (maus_info_blk != false) {
+	if (maus_info_blk) {
 		if (maus_info_blk->button == 2) {
 			switch_code = 1;
 		} else if (maus_info_blk->button == 1)
@@ -142,7 +142,7 @@ int16 maus::get_switch_code() {
 			switch_code = 254;
 	}
 
-	if (kb_info_blk != false)
+	if (kb_info_blk)
 		if (kb_info_blk->key_code != 0)
 			switch_code = (int16)kb_info_blk->key_code;
 
