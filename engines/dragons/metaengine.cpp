@@ -53,6 +53,7 @@ bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
 			(f == kSupportsLoadingDuringStartup) ||
 			(f == kSavesSupportMetaInfo) ||
 			(f == kSavesSupportThumbnail) ||
+			(f == kSimpleSavesNames) ||
 			(f == kSavesSupportCreationDate);
 }
 
@@ -69,7 +70,7 @@ SaveStateList DragonsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Dragons::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	SaveStateList saveList;

@@ -182,7 +182,8 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).
 	// An exception makes Lands of Lore here, it does not have any way to restart the
 	// game except via its main menu.
-	if (slot == 0 && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol") && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob") && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob2"))
+	const Common::String gameId = ConfMan.getDomain(target)->getVal("gameid");
+	if (slot == 0 && !gameId.equalsIgnoreCase("lol") && !gameId.equalsIgnoreCase("eob") && !gameId.equalsIgnoreCase("eob2"))
 		return;
 
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);

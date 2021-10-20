@@ -52,6 +52,12 @@ class SkyMetaEngine : public MetaEngine {
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("SKY-VM.###");
+		else
+			return Common::String::format("SKY-VM.%03d", saveGameIdx);
+	}
 };
 
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {

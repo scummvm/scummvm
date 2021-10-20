@@ -102,7 +102,6 @@ bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
 	case kSavesSupportThumbnail:
 	case kSavesSupportCreationDate:
 	case kSavesSupportPlayTime:
-	case kSimpleSavesNames:
 		return true;
 	default:
 		return false;

@@ -38,6 +38,7 @@ public:
 			(f == kSavesSupportThumbnail) ||
 			(f == kSavesSupportCreationDate) ||
 			(f == kSavesSupportPlayTime) ||
+			(f == kSimpleSavesNames) ||
 			(f == kSavesUseExtendedFormat);
 	}
 

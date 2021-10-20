@@ -64,6 +64,7 @@ bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportPlayTime);
 }
 

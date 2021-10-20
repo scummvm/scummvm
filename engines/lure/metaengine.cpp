@@ -69,6 +69,7 @@ bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSupportsDeleteSave);
 }
 

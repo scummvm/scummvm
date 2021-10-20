@@ -67,6 +67,7 @@ bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportCreationDate);
 }
 

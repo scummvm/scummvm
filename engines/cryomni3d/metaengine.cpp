@@ -93,8 +93,7 @@ bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave)
-		|| (f == kSimpleSavesNames);
+		|| (f == kSupportsDeleteSave);
 }
 
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {

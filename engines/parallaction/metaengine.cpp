@@ -57,11 +57,21 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		const Common::String prefix = ConfMan.getDomain(target)->getVal("gameid");
+		if (saveGameIdx == kSavegameFilePattern)
+			return prefix + ".###";
+		else
+			return prefix + Common::String::format(".%03d", saveGameIdx);
+	}
 };
 
 bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSupportsDeleteSave);
 }
 
@@ -152,8 +162,7 @@ Common::KeymapArray ParallactionMetaEngine::initKeymaps(const char *target) cons
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
-	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
-	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveFileMan->listSavefiles(getSavegameFilePattern(target));
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -178,10 +187,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");
-	filename += Common::String::format(".0%02d", slot);
-
-	g_system->getSavefileManager()->removeSavefile(filename);
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)

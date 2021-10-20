@@ -51,7 +51,8 @@ Common::Error Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, 
 
 bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves);
+		(f == kSupportsListSaves) ||
+		(f == kSimpleSavesNames);
 }
 
 SaveStateList Sword25MetaEngine::listSaves(const char *target) const {

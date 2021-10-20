@@ -76,6 +76,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
+
+	// TODO: Add getSavegameFile(). See comments in loadGameState and removeSaveState
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
