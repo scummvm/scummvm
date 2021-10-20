@@ -23,6 +23,7 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengl.h"
 #include "engines/stark/gfx/opengls.h"
+#include "engines/stark/gfx/tinygl.h"
 
 #include "common/config-manager.h"
 
@@ -73,7 +74,7 @@ Driver *Driver::create() {
 	}
 #endif
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		//driver = CreateTinyGLDriver();
+		//driver = new TinyGLDriver();
 		error("This game does not currently support software rendering");
 	}
 

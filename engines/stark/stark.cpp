@@ -55,6 +55,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "graphics/renderer.h"
 #include "gui/message.h"
 
 namespace Stark {
@@ -326,10 +327,16 @@ void StarkEngine::checkRecommendedDatafiles() {
 }
 
 bool StarkEngine::hasFeature(EngineFeature f) const {
+	// The TinyGL renderer does not support arbitrary resolutions for now
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
+
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsArbitraryResolutions) ||
+		(f == kSupportsArbitraryResolutions && !softRenderer) ||
 		(f == kSupportsReturnToLauncher);
 }
 

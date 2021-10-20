@@ -17,6 +17,13 @@ MODULE_OBJS := \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
 	gfx/surfacerenderer.o \
+	gfx/tinygl.o \
+	gfx/tinyglactor.o \
+	gfx/tinyglbitmap.o \
+	gfx/tinyglfade.o \
+	gfx/tinyglprop.o \
+	gfx/tinyglsurface.o \
+	gfx/tinygltexture.o \
 	gfx/texture.o \
 	formats/biff.o \
 	formats/biffmesh.o \
