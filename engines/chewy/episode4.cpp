@@ -394,8 +394,7 @@ void r68_calc_diva() {
 				det->start_detail(r68HohesC, 1, ANI_RUECK);
 				det->start_detail(18, 255, ANI_VOR);
 			}
-		}
-		else {
+		} else {
 			if (!spieler.R68Gutschein) {
 
 				if (!is_chewy_busy()) {

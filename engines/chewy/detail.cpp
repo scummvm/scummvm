@@ -260,7 +260,6 @@ void detail::load_taf_tbl(taf_info *fti) {
 					        rdi.Ainfo[i].end_ani != -1 && !rdi.Ainfo[i].load_flag)
 						load_taf_seq(CurrentTaf, rdi.Ainfo[i].start_ani, (rdi.Ainfo[i].end_ani - rdi.Ainfo[i].start_ani) + 1, fti);
 				}
-
 			} else {
 				modul = DATEI;
 				fcode = OPENFEHLER;

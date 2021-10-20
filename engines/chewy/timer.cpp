@@ -132,8 +132,7 @@ void timer::set_all_status(int16 status) {
 			if (timer_blk[i].TimeStatus != TIMER_STOP)
 				timer_blk[i].TimeStatus = TIMER_START;
 		}
-	}
-	else {
+	} else {
 		for (i = 0; i < timer_max; i++)
 			timer_blk[i].TimeStatus = status;
 	}
