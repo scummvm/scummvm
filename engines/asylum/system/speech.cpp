@@ -56,10 +56,20 @@ ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
 ResourceId Speech::playIndexed(int32 index) {
 	int processedIndex;
 
-	if (getWorld()->actorType || index != -1) {
+	if (_vm->checkGameVersion("Demo")) {
+		switch (index) {
+		default:
+		case 1:
+			processedIndex = 43 + _vm->getRandom(5);
+			break;
+		case 3:
+			processedIndex = 58 + _vm->getRandom(5);
+			break;
+		}
+	} else if (getWorld()->actorType || index != -1) {
 		processedIndex = (int)speechIndex[index + 5 * getWorld()->actorType] + (int)rnd(speechIndexRandom[index + 5 * getWorld()->actorType]);
 	} else {
-		switch(_vm->getRandom(3)) {
+		switch (_vm->getRandom(3)) {
 		default:
 		case 0:
 			processedIndex = 23;
@@ -87,7 +97,10 @@ ResourceId Speech::playIndexed(int32 index) {
 		break;
 
 	case kActorMax:
-		return play(MAKE_RESOURCE(kResourcePackSpeech, processedIndex), MAKE_RESOURCE(kResourcePackText, processedIndex + 83));
+		if (_vm->checkGameVersion("Demo"))
+			return play(MAKE_RESOURCE(kResourcePackSharedSound, processedIndex), MAKE_RESOURCE(kResourcePackText, processedIndex - 1));
+		else
+			return play(MAKE_RESOURCE(kResourcePackSpeech, processedIndex), MAKE_RESOURCE(kResourcePackText, processedIndex + 83));
 
 	case kActorSarah:
 		return play(MAKE_RESOURCE(kResourcePackSharedSound, processedIndex + 1927), MAKE_RESOURCE(kResourcePackText, processedIndex + 586));
