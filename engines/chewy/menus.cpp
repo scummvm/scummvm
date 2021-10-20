@@ -241,7 +241,7 @@ void invent_menu() {
 	}
 	menu_flag1 = MENU_EINBLENDEN;
 	taste_flag = 28;
-	kbinfo.key_code = 0;
+	kbinfo.key_code = '\0';
 	maus_flag = 1;
 	for (i = 0; i < 3; i++) {
 		ani_invent_delay[i][0] = 30000;
@@ -257,7 +257,7 @@ void invent_menu() {
 		if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 			if (!maus_flag) {
 				maus_flag = 1;
-				kbinfo.key_code = 0;
+				kbinfo.key_code = '\0';
 				k = in->maus_vector(minfo.x, minfo.y, (int16 *)hot_inventar, HOT_INVENT_ANZ);
 				if (in->hot_key == F1_KEY)
 					k = 0;
@@ -423,13 +423,13 @@ void invent_menu() {
 			case PAGE_UP:
 				if (spieler.InventY > 0)
 					--spieler.InventY;
-				kbinfo.key_code = 0;
+				kbinfo.key_code = '\0';
 				break;
 
 			case PAGE_DOWN:
 				if (spieler.InventY < (MAX_MOV_OBJ / 5) - 3)
 					++spieler.InventY;
-				kbinfo.key_code = 0;
+				kbinfo.key_code = '\0';
 				break;
 
 			}
@@ -582,7 +582,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 
 		}
-		kbinfo.scan_code = 0;
+		kbinfo.scan_code = Common::KEYCODE_INVALID;
 		set_up_screen(NO_SETUP);
 		plot_inventar_menu();
 		out->set_fontadr(font8x8);

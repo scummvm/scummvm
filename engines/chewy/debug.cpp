@@ -174,7 +174,7 @@ void test_load(void *handle, taf_info *Tt, int16 anz) {
 
 					}
 					if (action) {
-						kbinfo.scan_code = 0;
+						kbinfo.scan_code = Common::KEYCODE_INVALID;
 						action = 0;
 						out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 						if (Tt->image[spr] != 0) {

@@ -209,7 +209,7 @@ struct maus_info {
 
 struct kb_info {
 	char key_code = '\0';
-	byte scan_code = 0;
+	int scan_code = Common::KEYCODE_INVALID;
 };
 
 struct in_zeiger {

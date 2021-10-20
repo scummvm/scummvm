@@ -113,8 +113,8 @@ int16 io_game::io_menu(iog_init *iostruc) {
 	cur->show_cur();
 	switch_code = 1;
 	cur->wait_taste_los(true);
-	kbinfo->key_code = 0;
-	kbinfo->scan_code = 0;
+	kbinfo->key_code = '\0';
+	kbinfo->scan_code = Common::KEYCODE_INVALID;
 	switch ((int16)io->key_nr) {
 	case 0:
 		cur->hide_cur();
@@ -151,7 +151,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 	while (ende == 0) {
 		if (mouse_f != 0) {
 			mouse_f = 0;
-			kbinfo->key_code = 0;
+			kbinfo->key_code = '\0';
 		}
 		cur->plot_cur();
 
@@ -341,8 +341,8 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				out->printxy(io->popx + 167, io->popy + 85, io->m_col[1], 300, scr_width, FSTRING6);
 				cur->show_cur();
 				ende = 0;
-				kbinfo->key_code = 0;
-				kbinfo->scan_code = 0;
+				kbinfo->key_code = '\0';
+				kbinfo->scan_code = Common::KEYCODE_INVALID;
 				while (!ende) {
 					cur->plot_cur();
 					switch_code = in->get_switch_code();
@@ -400,7 +400,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 			} else
 				in->hot_key = auswahl + 58;
 			g_events->delay(200);
-			kbinfo->key_code = 0;
+			kbinfo->key_code = '\0';
 			break;
 
 		case 1:
@@ -411,7 +411,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				unmark_eintrag(cur_y, i);
 				cur->show_cur();
 				cur->wait_taste_los(true);
-				kbinfo->key_code = 0;
+				kbinfo->key_code = '\0';
 			} else {
 				ende = 1;
 				ret = IOG_BACK;

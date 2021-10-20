@@ -417,7 +417,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	maus_links_click = tmp_maus_links;
 	if (minfo.button)
 		flags.main_maus_flag = 1;
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	stop_spz();
 }
 
@@ -461,7 +461,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	}
 	if (minfo.button)
 		flags.main_maus_flag = 1;
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	maus_links_click = tmp_maus_links;
 	return (ret);
 }
@@ -481,7 +481,7 @@ void aad_wait(int16 str_nr) {
 	maus_links_click = tmp_maus_links;
 	if (minfo.button)
 		flags.main_maus_flag = 1;
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 
 void start_aad(int16 dia_nr, int16 ssi_nr) {

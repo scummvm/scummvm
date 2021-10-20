@@ -94,8 +94,10 @@ void EventsManager::handleKbdEvent(const Common::Event &event) {
 		if (event.type == Common::EVENT_KEYDOWN) {
 			_kbInfo->key_code = event.kbd.ascii;
 			_kbInfo->scan_code = event.kbd.keycode;
+			if (event.kbd.flags & Common::KBD_ALT)
+				_kbInfo->scan_code |= ALT;
 		} else {
-			_kbInfo->key_code = 0;
+			_kbInfo->key_code = '\0';
 		}
 	}
 }
@@ -112,8 +114,8 @@ void EventsManager::delay(size_t time) {
 
 void EventsManager::clearEvents() {
 	if (_kbInfo) {
-		_kbInfo->scan_code = 0;
-		_kbInfo->key_code = 0;
+		_kbInfo->scan_code = Common::KEYCODE_INVALID;
+		_kbInfo->key_code = '\0';
 	}
 
 	minfo.button = 0;

@@ -106,7 +106,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 
 void timer_action(int16 t_nr) {
@@ -249,7 +249,7 @@ void timer_action(int16 t_nr) {
 		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, 0);
 		uhr->reset_timer(t_nr, 0);
 	}
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 
 void check_ged_action(int16 index) {
@@ -428,7 +428,7 @@ void check_ged_action(int16 index) {
 		}
 		flags.GedAction = false;
 	}
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 
 int16 ged_user_func(int16 idx_nr) {

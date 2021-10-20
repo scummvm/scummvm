@@ -563,8 +563,8 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 				if (atsv.SilentCount <= 0) {
 					mouse_push = true;
 					atsv.DelayCount = 0;
-					inzeig->kbinfo->scan_code = 0;
-					inzeig->kbinfo->key_code = 0;
+					inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
+					inzeig->kbinfo->key_code = '\0';
 				}
 			}
 			break;
@@ -911,8 +911,8 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 				if (aadv.SilentCount <= 0) {
 					mouse_push = true;
 					aadv.DelayCount = 0;
-					inzeig->kbinfo->scan_code = 0;
-					inzeig->kbinfo->key_code = 0;
+					inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
+					inzeig->kbinfo->key_code = '\0';
 				}
 			}
 			break;

@@ -302,7 +302,7 @@ void test_menu() {
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	spieler_vector[P_CHEWY].Count = 0;
 	ende = false;
-	kbinfo.scan_code = false;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	flags.main_maus_flag = false;
 	tmp_menu_item = false;
 	maus_links_click = false;
@@ -393,7 +393,7 @@ int16 main_loop(int16 mode) {
 				get_display_xy(&spieler.DispZx, &spieler.DispZy, spieler.AkInvent);
 			}
 
-			kbinfo.key_code = 0;
+			kbinfo.key_code = '\0';
 			break;
 
 		case F6_KEY:
@@ -538,7 +538,7 @@ int16 main_loop(int16 mode) {
 			minfo.y = maus_old_y;
 		}
 	}
-	kbinfo.scan_code = 0;
+	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
 		set_up_screen(DO_SETUP);
 #ifdef DEMO
@@ -910,7 +910,7 @@ void maus_action() {
 							} else {
 								menu_item = CUR_USE;
 								cursor_wahl(CUR_AK_INVENT);
-								kbinfo.scan_code = 0;
+								kbinfo.scan_code = Common::KEYCODE_INVALID;
 							}
 						} else if (!flags.MausLinks)
 							maus_links_click = true;
@@ -1709,7 +1709,7 @@ void get_user_key(int16 mode) {
 				get_display_xy(&spieler.DispZx, &spieler.DispZy, spieler.AkInvent);
 			}
 
-			kbinfo.key_code = 0;
+			kbinfo.key_code = '\0';
 			break;
 
 		}
