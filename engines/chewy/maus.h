@@ -36,7 +36,6 @@ void set_mouse_handler(maus_info *mpos);
 extern uint8 new_kb;
 
 extern uint8 mouse_on;
-extern uint8 mouse_show;
 extern int16 mouse_button;
 extern uint8 mouse_links;
 extern uint8 mouse_links_los;
