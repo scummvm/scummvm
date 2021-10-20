@@ -59,12 +59,12 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 	Math::Matrix4 projection = StarkScene->getProjectionMatrix();
 
 	Math::Matrix4 modelViewMatrix = view * model;
-	modelViewMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	modelViewMatrix.transpose(); // OpenGL expects matrices transposed
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(modelViewMatrix.getData());
 
 	Math::Matrix4 projectionMatrix = projection;
-	projectionMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	projectionMatrix.transpose(); // OpenGL expects matrices transposed
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(projectionMatrix.getData());
 
