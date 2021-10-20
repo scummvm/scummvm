@@ -100,7 +100,7 @@ int16 maus::maus_vector(int16 x, int16 y, int16 *tbl,
 void maus::neuer_kb_handler(kb_info *key) {
 	set_new_kb_handler(key);
 	kb_info_blk = key;
-	kb_info_blk->key_code = 0;
+	kb_info_blk->key_code = '\0';
 }
 
 void maus::alter_kb_handler() {

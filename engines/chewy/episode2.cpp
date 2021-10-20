@@ -578,7 +578,7 @@ void r29_schlitz_sitz() {
 		det->stop_detail(2);
 		atds->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		spieler.PersonHide[P_CHEWY] = false;
-		kbinfo.scan_code = 0;
+		kbinfo.scan_code = Common::KEYCODE_INVALID;
 	}
 }
 
