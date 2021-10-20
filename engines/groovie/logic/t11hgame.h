@@ -30,6 +30,10 @@ namespace Groovie {
 
 class GroovieEngine;
 
+#ifdef ENABLE_GROOVIE2
+class T11hCake;
+#endif
+
 class T11hGame {
 public:
 #ifdef ENABLE_GROOVIE2
@@ -43,7 +47,6 @@ private:
 
 	void opMouseTrap();
 	void opConnectFour();
-	byte connectFourAI();
 	void opBeehive();
 	void opPente();
 	void opGallery();
@@ -56,22 +59,10 @@ private:
 	void inline setScriptVar16(uint16 var, uint16 value);
 	uint16 inline getScriptVar16(uint16 var);
 
-	bool isCakeFull();
-	byte cakeGetWinner();
-	void clearCake();
-	void cakePlaceBonBon(int x, byte team);
-	byte cakeGetOpponent(byte team);
-	int cakeGetLineLen(int start_x, int start_y, int slope_x, int slope_y, byte team);
+	void clearAIs();
 
+	T11hCake *_cake;
 	byte *_scriptVariables;
-
-	static const int CAKE_BOARD_WIDTH = 8;
-	static const int CAKE_BOARD_HEIGHT = 7;
-	// (0, 0) is the bottom left of the board
-	byte cake_board[CAKE_BOARD_WIDTH][CAKE_BOARD_HEIGHT];
-	static const byte CAKE_TEAM_STAUF = 1;
-	static const byte CAKE_TEAM_PLAYER = 2;
-	static const int CAKE_GOAL_LEN = 4;
 
 	int8 _beehiveHexagons[61];
 

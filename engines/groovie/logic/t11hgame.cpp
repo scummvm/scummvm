@@ -33,8 +33,8 @@
 
 namespace Groovie {
 
-T11hGame::T11hGame(byte *scriptVariables) :
-	_random("GroovieT11hGame"), _scriptVariables(scriptVariables) {
+T11hGame::T11hGame(byte *scriptVariables)
+	: _random("GroovieT11hGame"), _scriptVariables(scriptVariables), _cake(NULL), _beehiveHexagons() {
 }
 
 T11hGame::~T11hGame() {
@@ -154,128 +154,357 @@ void T11hGame::opMouseTrap() {
 	}
 }
 
+class T11hCake {
 /*
 * Connect Four puzzle, the cake in the dining room
 */
+public:
+	Common::RandomSource &_random;
+
+	/*
+	* T11hCake() constructor
+	*	- Each spot on the board is part of multiple potential victory lines
+	*	- The first x and y dimensions of the loops select the origin point of the line
+	*	- The z is for the distance along that line
+	*	- Then we push_back the id number of the line into the array at _map.indecies[x][y]
+	*	- This is used in UpdateScores()
+	*	.
+	* @see UpdateScores()
+	*/
+	T11hCake(Common::RandomSource &rng) : _random(rng) {
+		Restart();
+
+		_map = {};
+		int numLines = 0;
+
+		// map all the lines with slope of (1, 0)
+		for (int y = 0; y < HEIGHT; y++) {
+			for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
+				for (int z = 0; z < GOAL_LEN; z++) {
+					SetLineNum(x + z, y, numLines);
+				}
+				numLines++;
+			}
+		}
+
+		// map all the lines with slope of (0, 1)
+		for (int x = 0; x < WIDTH; x++) {
+			for (int y = 0; y <= HEIGHT - GOAL_LEN; y++) {
+				for (int z = 0; z < GOAL_LEN; z++) {
+					SetLineNum(x, y + z, numLines);
+				}
+				numLines++;
+			}
+		}
+
+		// map all the lines with slope of (1,1)
+		for (int y = 0; y <= HEIGHT - GOAL_LEN; y++) {
+			for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
+				for (int z = 0; z < GOAL_LEN; z++) {
+					SetLineNum(x + z, y + z, numLines);
+				}
+				numLines++;
+			}
+		}
+
+		// map all the lines with slope of (1,-1)
+		for (int y = GOAL_LEN - 1; y < HEIGHT; y++) {
+			for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
+				for (int z = 0; z < GOAL_LEN; z++) {
+					SetLineNum(x + z, y - z, numLines);
+				}
+				numLines++;
+			}
+		}
+	}
+
+	byte OpConnectFour(byte &lastMove) {
+		if (lastMove == 8) {
+			Restart();
+			return 0;
+		}
+
+		if (lastMove == 9) {
+			// samantha makes a move
+			// TODO: fix graphical bug when samantha makes a move
+			lastMove = AiGetBestMove(6);
+			_hasCheated = true;
+			return 0;
+		}
+
+		if (IsColumnFull(lastMove)) {
+			warning("player tried to place a bon bon in a full column, last_move: %d", (int)lastMove);
+			lastMove = 10;
+			return 0;
+		}
+
+		PlaceBonBon(lastMove);
+		byte winner = GetWinner();
+		if (winner) {
+			return winner;
+		}
+
+		lastMove = AiGetBestMove(4 + (_hasCheated == false));
+		PlaceBonBon(lastMove);
+		if (GameEnded())
+			return STAUF;
+
+		return 0;
+	}
+
+private:
+	static const int WIDTH = 8;
+	static const int HEIGHT = 7;
+	static const int GOAL_LEN = 4;
+	static const int WIN_SCORE = 1000000;//!< the number of points added for a connect four
+	static const byte STAUF = 1;
+	static const byte PLAYER = 2;
+	static const int NUM_LINES = 107;//!< how many potential victory lines there are
+
+
+	//! ID numbers for all of the potential victory lines for each spot on the board
+	struct LinesMappings {
+		byte lengths[WIDTH][HEIGHT];
+		byte indecies[WIDTH][HEIGHT][GOAL_LEN * GOAL_LEN];
+	};
+
+	//! how many points a player has, and their progress on potential victory lines
+	struct PlayerProgress {
+		int _score;
+		int _linesCounters[NUM_LINES];//!< how many pieces are claimed in each potential victory, links to LineMappings, an entry of 4 means that's a victory
+	};
+
+	PlayerProgress _playerProgress;
+	PlayerProgress _staufProgress;
+
+	byte _boardState[WIDTH][HEIGHT];//!< (0, 0) is the bottom left of the board
+	byte _columnHeights[WIDTH];
+
+	int _moveCount;
+	bool _hasCheated;
+
+	LinesMappings _map;//!< ID numbers for all of the potential victory lines for each spot on the board
+
+	void Restart() {
+		_playerProgress = {};
+		_staufProgress = {};
+		memset(_boardState, 0, sizeof(_boardState));
+		memset(_columnHeights, 0, sizeof(_columnHeights));
+		_moveCount = 0;
+		_hasCheated = false;
+
+		_playerProgress._score = NUM_LINES;
+		_staufProgress._score = NUM_LINES;
+	}
+
+	void SetLineNum(uint x, uint y, uint index) {
+		assert(x < WIDTH);
+		assert(y < HEIGHT);
+		byte slot = _map.lengths[x][y]++;
+		assert(slot < GOAL_LEN * GOAL_LEN);
+		assert(index < NUM_LINES);
+		_map.indecies[x][y][slot] = index;
+	}
+
+	bool IsColumnFull(byte column) {
+		return _columnHeights[column] >= HEIGHT;
+	}
+
+	PlayerProgress &GetPlayerProgress(bool stauf) {
+		if (stauf)
+			return _staufProgress;
+		else
+			return _playerProgress;
+	}
+
+	/*
+	* UpdateScores()
+	*	- Each PlayerProgress has an array of ints, _linesCounters[], where each entry maps to the ID of a line
+	*	- When a bon bon is added to the board, we look up _map.lengths[x][y] and then loop through all the indecies for that point
+	*		- Increment the PlayerProgress._linesCounters[id]
+	*		- Calculate the scores proportional to the PlayerProgress._linesCounters[id]
+	*		.
+	*	.
+	*/
+	void UpdateScores(byte x, bool revert=false) {
+		bool stauf = _moveCount % 2;
+		PlayerProgress &pp = GetPlayerProgress(stauf);
+
+		byte y = _columnHeights[x] - 1;
+
+		// get the number of potential victory lines that this spot exists in
+		int num_lines = _map.lengths[x][y];
+
+		for (int line = 0; line < num_lines; line++) {
+			// get the ID for this potential victory line
+			int index = _map.indecies[x][y][line];
+			int len = pp._linesCounters[index];
+
+			// add this new bon bon to the progress of this potential victory line, or remove in the case of revert
+			int mult = 1;// mult is used for multiplying the score gains, depends on revert
+			if (!revert)
+				pp._linesCounters[index]++;
+			else {
+				len = --pp._linesCounters[index];
+				mult = -1;
+			}
+
+			if (GOAL_LEN == len + 1) {
+				// that's a bingo
+				pp._score += WIN_SCORE * mult;
+			}
+			else {
+				PlayerProgress &pp2 = GetPlayerProgress(!stauf);
+				int len2 = pp2._linesCounters[index];
+				if (len == 0) {
+					// we started a new line, take away the points the opponent had from this line since we ruined it for them
+					pp2._score -= (1 << (len2 & 31)) * mult;
+				}
+				if (len2 == 0) {
+					// the opponent doesn't have any spots in this line, so we get points for it
+					pp._score += (1 << (len & 31)) * mult;
+				}
+			}
+		}
+	}
+
+	void PlaceBonBon(byte x) {
+		byte y = _columnHeights[x]++;
+		if (_moveCount % 2)
+			_boardState[x][y] = STAUF;
+		else
+			_boardState[x][y] = PLAYER;
+
+		UpdateScores(x);
+
+		_moveCount++;
+	}
+
+	void RevertMove(byte x) {
+		// PlaceBonBon in reverse, this is used for the AI's recursion rollback
+		_moveCount--;
+
+		UpdateScores(x, true);
+
+		byte y = --_columnHeights[x];
+		_boardState[x][y] = 0;
+	}
+
+	byte GetWinner() {
+		if (_playerProgress._score >= WIN_SCORE)
+			return PLAYER;
+
+		if (_staufProgress._score >= WIN_SCORE)
+			return STAUF;
+
+		return 0;
+	}
+
+	bool GameEnded() {
+		if (GetWinner())
+			return true;
+
+		if (_moveCount >= WIDTH * HEIGHT)
+			return true;
+
+		return false;
+	}
+
+	int GetScoreDiff() {
+		if (_moveCount % 2)
+			return _staufProgress._score - _playerProgress._score;
+		else
+			return _playerProgress._score - _staufProgress._score;
+	}
+
+	int AiRecurse(int search_depth, int parent_score) {
+		int best_score = 0x7fffffff;
+
+		for (byte move = 0; move < WIDTH; move++) {
+			if (IsColumnFull(move))
+				continue;
+
+			PlaceBonBon(move);
+			int score = GetScoreDiff();
+			if (search_depth > 1 && !GameEnded())
+				score = AiRecurse(search_depth - 1, best_score);
+			RevertMove(move);
+
+			if (score < best_score)
+				best_score = score;
+
+			if (-parent_score != best_score && parent_score <= -best_score)
+				break;
+		}
+
+		// we negate the score because from the perspective of our parent caller, this is his opponent's score
+		return -best_score;
+	}
+
+	uint Rng() {
+		return _random.getRandomNumber(UINT_MAX);
+	}
+
+	byte AiGetBestMove(int search_depth) {
+		int best_move = 0xffff;
+		uint counter = 1;
+
+		for (int best_score = 0x7fffffff; best_score > 999999 && search_depth > 1; search_depth--) {
+			for (byte move = 0; move < WIDTH; move++) {
+				if (IsColumnFull(move))
+					continue;
+
+				PlaceBonBon(move);
+				if (GetWinner()) {
+					RevertMove(move);
+					return move;
+				}
+
+				int score = AiRecurse(search_depth - 1, best_score);
+				RevertMove(move);
+				if (score < best_score) {
+					counter = 1;
+					best_move = move;
+					best_score = score;
+				} else if (best_score == score) {
+					// rng is only used on moves with equal scores
+					counter++;
+					uint r = Rng() % 1000000;
+					if (r * counter < 1000000) {
+						best_move = move;
+					}
+				}
+			}
+		}
+
+		return best_move;
+	}
+};
+
 void T11hGame::opConnectFour() {
 	byte &last_move = _scriptVariables[1];
 	byte &winner = _scriptVariables[3];
+	winner = 0;
 
-	if (last_move == 8) {
-		clearCake();
-		return;
+	if (_cake == NULL) {
+		clearAIs();
+		_cake = new T11hCake(_random);
 	}
 
-	if (last_move == 9) {
-		// samantha makes a move
-		// TODO: fix graphical bug when samantha makes a move
-		last_move = connectFourAI();
-		return;
-	}
+	winner = _cake->OpConnectFour(last_move);
 
-	cakePlaceBonBon(last_move, CAKE_TEAM_PLAYER);
-	winner = cakeGetWinner();
 	if (winner) {
-		return;
-	}
-
-	last_move = connectFourAI();
-	cakePlaceBonBon(last_move, CAKE_TEAM_STAUF);
-	winner = cakeGetWinner();
-}
-
-byte T11hGame::connectFourAI() {
-	// TODO: copy the AI from the game
-	// the cakeGetLineLen function returns the length of the line which should be the scoring function
-	uint slot = 0;
-	do {
-		slot = _random.getRandomNumber(7);
-	} while (cake_board[slot][CAKE_BOARD_HEIGHT - 1]);
-	return slot;
-}
-
-bool T11hGame::isCakeFull() {
-	return NULL == memchr(cake_board, 0, sizeof(cake_board));
-}
-
-byte T11hGame::cakeGetOpponent(byte team) {
-	if (team == CAKE_TEAM_PLAYER)
-		return CAKE_TEAM_STAUF;
-	else if (team == CAKE_TEAM_STAUF)
-		return CAKE_TEAM_PLAYER;
-	return 0;
-}
-
-// also use the cakeGetLineLen function as a scoring function for the AI
-int T11hGame::cakeGetLineLen(int start_x, int start_y, int slope_x, int slope_y, byte team) {
-	byte opponent = cakeGetOpponent(team);
-
-	// return 0 for worthless lines
-	if (start_x + slope_x * CAKE_GOAL_LEN > CAKE_BOARD_WIDTH)
-		return 0;
-	if (start_x + slope_x * CAKE_GOAL_LEN < 0)
-		return 0;
-	if (start_y + slope_y * CAKE_GOAL_LEN > CAKE_BOARD_HEIGHT)
-		return 0;
-	if (start_y + slope_y * CAKE_GOAL_LEN < 0)
-		return 0;
-
-	// don't loop past CAKE_GOAL_LEN because more than 4 is useless to rules and the AI
-	int x = start_x;
-	int y = start_y;
-	int len = 0;
-	for (int i = 0; i < CAKE_GOAL_LEN; i++) {
-		if (cake_board[x][y] == opponent)
-			return 0; // return 0 for worthless lines
-		if (cake_board[x][y] == team)
-			len++;
-
-		x += slope_x;
-		y += slope_y;
-	}
-	return len;
-}
-
-byte T11hGame::cakeGetWinner() {
-	// make sure to check if all columns are maxed then Stauf wins
-	if (isCakeFull())
-		return CAKE_TEAM_STAUF;
-
-	// search for lines of 4, we search up, right, up-right, and down-right
-	for (int x = 0; x < CAKE_BOARD_WIDTH; x++) {
-		for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
-			byte team = cake_board[x][y];
-			// if this spot is team 0 then we can move on to the next column
-			if (team == 0)
-				break;
-
-			// if we find a line, then we return the team value stored in this spot
-			int line = 0;
-			line = MAX(cakeGetLineLen(x, y, 1, 0, team), line);
-			line = MAX(cakeGetLineLen(x, y, 0, 1, team), line);
-			line = MAX(cakeGetLineLen(x, y, 1, 1, team), line);
-			line = MAX(cakeGetLineLen(x, y, 1, -1, team), line);
-
-			if (line >= CAKE_GOAL_LEN)
-				return team;
-		}
-	}
-
-	return 0;
-}
-
-void T11hGame::clearCake() {
-	memset(cake_board, 0, sizeof(cake_board));
-}
-
-void T11hGame::cakePlaceBonBon(int x, byte team) {
-	for (int y = 0; y < CAKE_BOARD_HEIGHT; y++) {
-		if (cake_board[x][y] == 0) {
-			cake_board[x][y] = team;
-			return;
-		}
+		clearAIs();
 	}
 }
+
+void T11hGame::clearAIs() {
+	if (_cake != NULL) {
+		delete _cake;
+		_cake = NULL;
+	}
+}
+
 
 /*
  * Beehive puzzle
