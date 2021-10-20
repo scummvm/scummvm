@@ -20,6 +20,7 @@
 *
 */
 
+#include <limits.h>
 #include "groovie/logic/t11hgame.h"
 #include "groovie/groovie.h"
 
