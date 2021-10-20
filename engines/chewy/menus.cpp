@@ -313,8 +313,7 @@ void invent_menu() {
 									del_invent_slot(spieler.InventSlot[k]);
 								}
 							}
-						}
-						else {
+						} else {
 							if (spieler.InventSlot[k] != -1)
 								obj_auswerten(spieler.InventSlot[k], INVENTAR_NORMAL);
 							else {

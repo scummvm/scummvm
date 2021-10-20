@@ -71,8 +71,7 @@ void fehler::msg() {
 			ok = false;
 			break;
 		}
-	}
-	else {
+	} else {
 		switch (modul) {
 		case 1:
 			warning("GRAPHICS ERROR:");

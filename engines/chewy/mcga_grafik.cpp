@@ -811,8 +811,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 							if (stellemax < disp_stellemax) {
 								disp_stelle = 0;
 								disp_akt = stellemax;
-							}
-							else {
+							} else {
 								disp_akt = disp_stellemax;
 								disp_stelle = stelle - disp_stellemax;
 							}
@@ -874,8 +873,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 							} else {
 								++stelle;
 							}
-						}
-						else {
+						} else {
 							strcpy(z1string, zstring);
 							strcpy(zstring + stelle + 1, z1string + stelle);
 							zstring[stelle] = izahl;

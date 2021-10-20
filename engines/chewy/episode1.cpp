@@ -406,8 +406,7 @@ void r0_fuetter_start(int16 mode) {
 		det->disable_sound(KLAPPE_DETAIL, 1);
 		det->enable_sound(FUETTER_SCHLAUCH, 0);
 		det->disable_sound(FUETTER_SCHLAUCH, 2);
-	}
-	else {
+	} else {
 
 		det->disable_sound(KLAPPE_DETAIL, 0);
 		det->enable_sound(KLAPPE_DETAIL, 1);
@@ -1774,8 +1773,7 @@ void r12_entry() {
 		obj->calc_all_static_detail();
 		auto_move(5, P_CHEWY);
 		start_aad_wait(109, -1);
-	}
-	else {
+	} else {
 		if (spieler.R12Talisman == true && !spieler.R12BorkInRohr)
 			timer_nr[0] = room->set_timer(255, 20);
 		else if (spieler.R12BorkInRohr && !spieler.R12RaumOk)
@@ -1924,8 +1922,7 @@ int16 r12_use_terminal() {
 				atds->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
 				atds->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
 				start_aad(111, 0);
-			}
-			else {
+			} else {
 				spieler.R12TransOn = true;
 				uhr->reset_timer(timer_nr[1], 0);
 			}
@@ -2080,8 +2077,7 @@ void r13_jmp_band() {
 			start_detail_wait(8, 1, ANI_VOR);
 			spieler.PersonHide[P_CHEWY] = false;
 			set_person_pos(292, 98, P_CHEWY, P_RIGHT);
-		}
-		else {
+		} else {
 			spieler.R13Surf = true;
 			maus_links_click = false;
 			auto_move(12, P_CHEWY);
@@ -2209,8 +2205,7 @@ int16 r14_use_gleiter() {
 			spieler.PersonHide[P_CHEWY] = false;
 			det->show_static_spr(6);
 			atds->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
-		}
-		else {
+		} else {
 			spieler.R23GleiterExit = 14;
 			r23_cockpit();
 		}
@@ -2491,8 +2486,7 @@ void r17_door_kommando(int16 mode) {
 				stop_person(P_CHEWY);
 				det->show_static_spr(7);
 			}
-		}
-		else {
+		} else {
 			r17_close_door();
 		}
 		flags.AutoAniPlay = false;
@@ -3382,8 +3376,7 @@ void r24_use_hebel(int16 txt_nr) {
 	        spieler.R24Hebel[txt_nr - 161] == 2) {
 		spieler.R24Hebel[txt_nr - 161] = 1;
 		spieler.R24HebelDir[txt_nr - 161] ^= 1;
-	}
-	else {
+	} else {
 		if (spieler.R24HebelDir[txt_nr - 161])
 			spieler.R24Hebel[txt_nr - 161] = 0;
 		else

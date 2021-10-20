@@ -93,9 +93,7 @@ void datei::load_pcx(const char *fname, byte *speicher, byte *palette) {
 								speicher[index] = zeichen;
 								++index;
 							}
-
-						}
-						else {
+						} else {
 							speicher[index] = zeichen;
 							index++;
 						}
@@ -118,25 +116,21 @@ void datei::load_pcx(const char *fname, byte *speicher, byte *palette) {
 								j += 3;
 							}
 						}
-					}
-					else {
+					} else {
 						fcode = PALETTEFEHLER;
 						modul = DATEI;
 					}
 				}
-			}
-			else {
+			} else {
 				fcode = NOTPCX;
 				modul = DATEI;
 			}
-		}
-		else {
+		} else {
 			fcode = READFEHLER;
 			modul = DATEI;
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -184,24 +178,20 @@ void datei::load_image(const char *fname, byte *sp, byte *palette) {
 						               header->entpsize, speicher);
 						break;
 					}
-				}
-				else {
+				} else {
 					fcode = NOTTBF;
 					modul = DATEI;
 				}
-			}
-			else {
+			} else {
 				fcode = READFEHLER;
 				modul = DATEI;
 			}
 			chewy_fclose(handle);
-		}
-		else {
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
-	}
-	else {
+	} else {
 		fcode = ZEIGERFEHLER;
 		modul = GRAFIK;
 	}
@@ -559,8 +549,7 @@ void datei::read_tpf_image(Stream *handle, int16 komp, uint32 size,
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		for (plane = 0; plane < 4; plane++) {
 			for (pos = (uint32) plane; pos < size + plane;) {
 				zeichen = chewy_fgetc(handle);
@@ -598,21 +587,18 @@ void datei::load_dialog(const char *fname, dialogue *dial, menue *men,
 		if (!(chewy_fread(dial, sizeof(dialogue), 1, handle))) {
 			fcode = READFEHLER;
 			modul = DATEI;
-		}
-		else {
+		} else {
 			for (i = 0; (i < dial->anzmenue) && (!modul); i++) {
 				if (!(chewy_fread(lmen, sizeof(menue), 1, handle))) {
 					fcode = READFEHLER;
 					modul = DATEI;
-				}
-				else {
+				} else {
 					dial->menueliste[i] = lmen;
 					for (j = 0; (j < lmen->anzknoepfe) && (!modul); j++) {
 						if (!(chewy_fread(lknpf, sizeof(knopf), 1, handle))) {
 							fcode = READFEHLER;
 							modul = DATEI;
-						}
-						else {
+						} else {
 							lmen->knopfliste[j] = lknpf;
 							lknpf++;
 						}
@@ -622,8 +608,7 @@ void datei::load_dialog(const char *fname, dialogue *dial, menue *men,
 			}
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -653,8 +638,7 @@ void datei::load_sbi(const char *fname, sbi_inst *speicher) {
 			fcode = READFEHLER;
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -698,8 +682,7 @@ uint32 datei::load_voc(const char *fname, byte *speicher) {
 				if (strncmp(header->id, "Creative Voice File", 19)) {
 					modul = DATEI;
 					fcode = NOTVOC;
-				}
-				else {
+				} else {
 					chewy_fseek(handle, header->offset, SEEK_SET);
 					if (!(chewy_fread(sp, s, 1, handle))) {
 						modul = DATEI;
@@ -708,8 +691,7 @@ uint32 datei::load_voc(const char *fname, byte *speicher) {
 				}
 			}
 			chewy_fclose(handle);
-		}
-		else {
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
@@ -731,8 +713,7 @@ uint32 datei::load_voc(Stream *handle, byte *speicher) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
-			}
-			else {
+			} else {
 				modul = DATEI;
 				fcode = NOTVOC;
 			}
@@ -765,8 +746,7 @@ void datei::load_vocinfo(const char *fname, voc_header *speicher) {
 			fcode = READFEHLER;
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -827,8 +807,7 @@ uint32 datei::load_item(Stream *handle, byte *speicher) {
 		if (!(chewy_fread(ch, sizeof(ChunkHead), 1, handle))) {
 			modul = DATEI;
 			fcode = READFEHLER;
-		}
-		else {
+		} else {
 			if (!(chewy_fread(speicher, ch->size, 1, handle))) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -1002,8 +981,7 @@ void datei::save_pcx(const char *fname, byte *speicher, byte *palette) {
 							chewy_fputc(prev_data, handle);
 							data_count = 0;
 						}
-					}
-					else {
+					} else {
 						if (data_count > 0) {
 							if (((prev_data & 0xc0) == 0xc0) || data_count > 1)
 								chewy_fputc(0xc0 | data_count, handle);
@@ -1022,14 +1000,12 @@ void datei::save_pcx(const char *fname, byte *speicher, byte *palette) {
 			chewy_fputc(12, handle);
 			for (i = 0; i < 768; i++)
 				chewy_fputc(palette[i] << 2, handle);
-		}
-		else {
+		} else {
 			fcode = WRITEFEHLER;
 			modul = DATEI;
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -1113,8 +1089,7 @@ void datei::save_tafmcga(const char *fname, byte **spvekt, byte *palette,
 			modul = DATEI;
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
@@ -1152,13 +1127,11 @@ void datei::save_tff(const char *fname, byte *speicher) {
 				modul = DATEI;
 			}
 			chewy_fclose(handle);
-		}
-		else {
+		} else {
 			fcode = OPENFEHLER;
 			modul = DATEI;
 		}
-	}
-	else {
+	} else {
 		fcode = ZEIGERFEHLER;
 		modul = GRAFIK;
 	}
@@ -1218,15 +1191,13 @@ void datei::save_dialog(const char *fname, dialogue *dial) {
 		if (!(chewy_fwrite(dial, sizeof(dialogue), 1, handle))) {
 			fcode = WRITEFEHLER;
 			modul = DATEI;
-		}
-		else {
+		} else {
 			for (i = 0; (i < dial->anzmenue) && (!modul); i++) {
 				men = dial->menueliste[i];
 				if (!(chewy_fwrite(men, sizeof(menue), 1, handle))) {
 					fcode = WRITEFEHLER;
 					modul = DATEI;
-				}
-				else {
+				} else {
 					for (j = 0; (j < men->anzknoepfe) && (!modul); j++) {
 						knpf = men->knopfliste[j];
 						if (knpf != 0) {
@@ -1321,16 +1292,14 @@ void datei::get_tdfanz(const char *fname, int16 *menueanz, int16 *knopfanz) {
 		if (!(chewy_fread(&dial, sizeof(dialogue), 1, handle))) {
 			fcode = READFEHLER;
 			modul = DATEI;
-		}
-		else {
+		} else {
 			if ((!(strncmp(dial.id, "TDF", 3)))) {
 				*menueanz = dial.anzmenue;
 				for (i = 0; (i < dial.anzmenue) && (!modul); i++) {
 					if (!(chewy_fread(&men, sizeof(menue), 1, handle))) {
 						fcode = READFEHLER;
 						modul = DATEI;
-					}
-					else {
+					} else {
 						*knopfanz += men.anzknoepfe;
 						chewy_fseek(handle, (long)(men.anzknoepfe * sizeof(knopf)), SEEK_CUR);
 					}
@@ -1338,8 +1307,7 @@ void datei::get_tdfanz(const char *fname, int16 *menueanz, int16 *knopfanz) {
 			}
 		}
 		chewy_fclose(handle);
-	}
-	else {
+	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
