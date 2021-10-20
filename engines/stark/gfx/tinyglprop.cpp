@@ -47,7 +47,7 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		uploadVertices();
 		_modelIsDirty = false;
 	}
-	return;
+
 	_gfx->set3DMode();
 
 	Math::Matrix4 model = getModelMatrix(position, direction);
