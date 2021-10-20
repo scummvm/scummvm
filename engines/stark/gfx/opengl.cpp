@@ -205,6 +205,10 @@ Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byt
 	return texture;
 }
 
+Texture *OpenGLDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
+	return createTexture(surface, palette);
+}
+
 VisualActor *OpenGLDriver::createActorRenderer() {
 	return new OpenGLActorRenderer(this);
 }

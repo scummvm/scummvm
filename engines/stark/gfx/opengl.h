@@ -50,6 +50,7 @@ public:
 	void flipBuffer() override;
 
 	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
+	Texture *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 	VisualActor *createActorRenderer() override;
 	VisualProp *createPropRenderer() override;
 	SurfaceRenderer *createSurfaceRenderer() override;

@@ -63,12 +63,20 @@ public:
 	virtual void flipBuffer() = 0;
 
 	/**
-	 * Create a new texture
+	 * Create a new texture for 3D
 	 *
 	 * The caller is responsible for freeing it.
 	 *
 	 */
 	virtual Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
+
+	/**
+	 * Create a new texture for 2D
+	 *
+	 * The caller is responsible for freeing it.
+	 *
+	 */
+	virtual Texture *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
 
 	/**
 	 * Create a new actor renderer

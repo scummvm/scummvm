@@ -62,7 +62,7 @@ void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface, uin
 	_originalWidth  = originalWidth;
 	_originalHeight = originalHeight;
 
-	_texture = _gfx->createTexture(_surface);
+	_texture = _gfx->createBitmap(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	// Create an explosion unit for each pixel in the surface

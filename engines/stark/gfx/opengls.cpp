@@ -142,6 +142,10 @@ Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const by
 	return texture;
 }
 
+Texture *OpenGLSDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
+	return createTexture(surface, palette);
+}
+
 VisualActor *OpenGLSDriver::createActorRenderer() {
 	return new OpenGLSActorRenderer(this);
 }

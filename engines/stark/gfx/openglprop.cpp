@@ -204,7 +204,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-
 	}
 	if (!_gfx->computeLightsEnabled())
 		glDisable(GL_COLOR_MATERIAL);
