@@ -1248,6 +1248,9 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
+	if (_vm->checkGameVersion("Demo"))
+		return;
+
 	if (actorIndex == kActorInvalid) {
 		switch(object->getId()) {
 		default:
