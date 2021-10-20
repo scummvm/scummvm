@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-19 17:24+0000\n"
-"PO-Revision-Date: 2021-10-17 12:26+0000\n"
+"PO-Revision-Date: 2021-10-20 09:33+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6221,13 +6221,15 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Használj helyes betűtávolságot"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Rajzolj szöveget helyes betűtávolsággal. Ez vitathatatlanul jobban néz ki, "
+"de nem felel meg az eredeti viselkedésnek."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
