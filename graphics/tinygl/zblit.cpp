@@ -761,7 +761,7 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 	Common::Point nw, ne, sw, se;
 	nw = transformPoint(x - originX, y - originY, rotation);
 	ne = transformPoint(x + width - originX, y - originY, rotation);
-	sw = transformPoint(x + width - originX, y + height -	 originY, rotation);
+	sw = transformPoint(x + width - originX, y + height - originY, rotation);
 	se = transformPoint(x - originX, y + height - originY, rotation);
 
 	float top = MIN(nw.y, MIN(ne.y, MIN(sw.y, se.y)));

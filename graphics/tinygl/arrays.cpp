@@ -80,10 +80,40 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 void glopDrawArrays(GLContext *c, GLParam *p) {
 	GLParam array_element[2];
 	GLParam begin[2];
+
 	begin[1].i = p[1].i;
 	glopBegin(c, begin);
-	for (int i=0; i < p[3].i; i++) {
+	for (int i = 0; i < p[3].i; i++) {
 		array_element[1].i = p[2].i + i;
+		glopArrayElement(c, array_element);
+	}
+	glopEnd(c, NULL);
+}
+
+void glopDrawElements(GLContext *c, GLParam *p) {
+	GLParam array_element[2];
+	char *indices;
+	GLParam begin[2];
+
+	indices = (char *)p[4].p;
+	begin[1].i = p[1].i;
+
+	glopBegin(c, begin);
+	for (int i = 0; i < p[2].i; i++) {
+		switch (p[3].i) {
+		case TGL_UNSIGNED_BYTE:
+			array_element[1].i = *(TGLbyte *)(indices + i * sizeof(TGLbyte));
+			break;
+		case TGL_UNSIGNED_SHORT:
+			array_element[1].i = *(TGLshort *)(indices + i * sizeof(TGLshort));
+			break;
+		case TGL_UNSIGNED_INT:
+			array_element[1].i = *(TGLint *)(indices + i * sizeof(TGLint));
+			break;
+		default:
+			assert(0);
+			break;
+		}
 		glopArrayElement(c, array_element);
 	}
 	glopEnd(c, NULL);
@@ -135,6 +165,16 @@ void tglDrawArrays(TGLenum mode, TGLint first, TGLsizei count) {
 	p[1].i = mode;
 	p[2].i = first;
 	p[3].i = count;
+	gl_add_op(p);
+}
+
+void tglDrawElements(TGLenum mode, TGLsizei count, TGLenum type, const TGLvoid *indices) {
+	TinyGL::GLParam p[5];
+	p[0].op = TinyGL::OP_DrawElements;
+	p[1].i = mode;
+	p[2].i = count;
+	p[3].i = type;
+	p[4].p = const_cast<void *>(indices);
 	gl_add_op(p);
 }
 

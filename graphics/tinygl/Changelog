@@ -1,8 +1,8 @@
-This is a modified version of TinyGL 0.4 intended for use with ResidualVM.
+This is a modified version of TinyGL 0.4 intended for use with ScummVM.
 The changes made from the original version of TinyGL 0.4 are:
 
 * Changed file extensions from *.c to *.cpp to compile as C++.
-* Included only files needed by ResidualVM.
+* Included only files needed by ScummVM.
 * Changed include paths in source files.
 * Added needed type casts and fixes for proper compile.
 * Added 't/T' prefix to prevent OpenGL name clashes.
@@ -31,5 +31,6 @@ The changes made from the original version of TinyGL 0.4 are:
 * Added an API that enables the user to perform color and z buffer blitting.
 * Implemented a system that enables to defer draw calls.
 * Implemented dirty rectangle system that prevents redrawing of unchanged region of the screen.
+* Added implementation of tglDrawElements
 
-For more information refer to log changes in github: https://github.com/residualvm/residualvm
+For more information refer to log changes in github: https://github.com/scummvm/scummvm

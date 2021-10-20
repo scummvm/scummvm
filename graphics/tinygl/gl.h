@@ -833,24 +833,24 @@ void tglBlendFunc(TGLenum sfactor, TGLenum dfactor);
 void tglAlphaFunc(TGLenum func, float ref);
 void tglDepthFunc(TGLenum func);
 
-void tglSetShadowMaskBuf(unsigned char *buf);
-void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
-
-// opengl 1.2 arrays
+// arrays
 void tglEnableClientState(TGLenum array);
 void tglDisableClientState(TGLenum array);
 void tglArrayElement(TGLint i);
 void tglDrawArrays(TGLenum mode, TGLint first, TGLsizei count);
+void tglDrawElements(TGLenum mode, TGLsizei count, TGLenum type, const TGLvoid *indices);
 void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 
-// opengl 1.2 polygon offset
+// polygon offset
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
+// custom extension
+void tglSetShadowMaskBuf(unsigned char *buf);
+void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
 void tglEnableDirtyRects(bool enable);
-
 void tglDebug(int mode);
 
 namespace TinyGL {
