@@ -228,8 +228,7 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+		(f == kSavesSupportPlayTime);
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {

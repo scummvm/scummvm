@@ -38,14 +38,16 @@
 #include "graphics/thumbnail.h"
 
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (!target)
+		target = getEngineId();
 	if (saveGameIdx == kSavegameFilePattern) {
 		// Pattern requested
-		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.###" : "%s.s##";
-		return Common::String::format(pattern, target == nullptr ? getEngineId() : target);
+		const char *pattern = hasFeature(kSimpleSavesNames) ? "%s.###" : "%s.s##";
+		return Common::String::format(pattern, target);
 	} else {
 		// Specific filename requested
-		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.%03d" : "%s.s%02d";
-		return Common::String::format(pattern, target == nullptr ? getEngineId() : target, saveGameIdx);
+		const char *pattern = hasFeature(kSimpleSavesNames) ? "%s.%03d" : "%s.s%02d";
+		return Common::String::format(pattern, target, saveGameIdx);
 	}
 }
 
@@ -165,6 +167,7 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
 		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesUseExtendedFormat);
 }
 
