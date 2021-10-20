@@ -27,7 +27,6 @@
 namespace Chewy {
 
 // FIXME. Externals
-uint8 mouse_show;
 uint8 mouse_links_los;
 uint8 mouse_aktiv;
 
@@ -46,15 +45,15 @@ uint8 mouse_hot_y;
 
 
 void set_new_kb_handler(kb_info *key) {
-	warning("STUB: set_new_kb_handler()");
+	g_events->setKbdInfo(key);
 }
 
 void set_old_kb_handler() {
-	warning("STUB: set_old_kb_handler()");
+	g_events->setKbdInfo(nullptr);
 }
 
 void del_kb_puffer() {
-	warning("STUB: del_kb_puffer()");
+	g_events->clearEvents();
 }
 
 void set_mouse_handler(maus_info *mpos) {
@@ -106,7 +105,7 @@ void maus::neuer_kb_handler(kb_info *key) {
 
 void maus::alter_kb_handler() {
 	set_old_kb_handler();
-	kb_info_blk = false;
+	kb_info_blk = nullptr;
 	warning("STUB - maus::alter_kb_handler");
 #if 0
 	while (kbhit())

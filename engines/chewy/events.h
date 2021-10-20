@@ -27,8 +27,12 @@
 
 namespace Chewy {
 
+struct kb_info;
+
 class EventsManager : public EventsBase {
 private:
+	kb_info *_kbInfo = nullptr;
+
 	void init_timer_handler();
 	static void timer_handler();
 
@@ -45,6 +49,12 @@ public:
 	virtual ~EventsManager();
 
 	void delay(size_t time);
+
+	void clearEvents();
+
+	void setKbdInfo(kb_info *kb_info) {
+		_kbInfo = kb_info;
+	}
 };
 
 extern EventsManager *g_events;
