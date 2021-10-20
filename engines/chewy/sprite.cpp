@@ -411,7 +411,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	talk_hide_static = -1;
 	set_ssi_xy();
 	atds->start_aad(dia_nr);
-	while (atds->aad_get_status() != -1) {
+	while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	maus_links_click = tmp_maus_links;

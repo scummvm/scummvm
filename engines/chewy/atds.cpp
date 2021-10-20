@@ -79,12 +79,9 @@ atdsys::atdsys() {
 
 atdsys::~atdsys() {
 	int16 i;
-	for (i = 0; i < MAX_HANDLE; i++) {
-		if (atdshandle[i])
-			chewy_fclose(atdshandle[i]);
+	for (i = 0; i < MAX_HANDLE; i++)
+		close_handle(i);
 
-		free(atdsmem[i]);
-	}
 	if (inv_use_mem)
 		free(inv_use_mem);
 }
@@ -378,12 +375,19 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 }
 
 void atdsys::close_handle(int16 mode) {
-	if (atdshandle[mode])
+	Stream *stream = atdshandle[mode];
+	if (stream) {
 		chewy_fclose(atdshandle[mode]);
-	atdshandle[mode] = 0;
+
+		for (int i = 0; i < MAX_HANDLE; ++i) {
+			if (atdshandle[i] == stream)
+				atdshandle[i] = nullptr;
+		}
+	}
+
 	if (atdsmem[mode])
 		free(atdsmem[mode]);
-	atdsmem[mode] = 0;
+	atdsmem[mode] = nullptr;
 }
 
 char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {

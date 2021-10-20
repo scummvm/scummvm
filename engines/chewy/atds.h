@@ -247,7 +247,6 @@ struct SplitStringInit {
 };
 
 class atdsys {
-
 public:
 	atdsys();
 	~atdsys();
@@ -312,7 +311,6 @@ public:
 	int16 get_stereo_pos(int16 x);
 
 private:
-
 	int16 get_delay(int16 txt_len);
 
 	Stream *atdshandle[MAX_HANDLE];

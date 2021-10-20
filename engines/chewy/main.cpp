@@ -1267,6 +1267,8 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 			spieler_vector[p_nr].DelayCount = 0;
 			if (mov->auto_go_status()) {
 				while (mov->auto_go_status()) {
+					if (SHOULD_QUIT)
+						return 0;
 					if (in->get_switch_code() == ESC) {
 						if (flags.ExitMov || flags.BreakAMov) {
 							key = ESC;
