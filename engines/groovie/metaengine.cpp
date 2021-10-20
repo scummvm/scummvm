@@ -61,6 +61,7 @@ bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportMetaInfo);
 }
 

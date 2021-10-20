@@ -75,15 +75,23 @@ Common::Language BuriedEngine::getLanguage() const {
 
 class BuriedMetaEngine : public AdvancedMetaEngine {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "buried";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const { return 999; }
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override { return 999; }
+	virtual void removeSaveState(const char *target, int slot) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("buried-*.sav");
+		else
+			return Common::String::format("buried-%s.sav", target);
+	}
 };
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -45,6 +45,17 @@ public:
 		return 99;
 	}
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		const char *prefix = target;
+		if (!strncmp(target, "msn1", 4))
+			prefix = "msn_save";
+		if (!strncmp(target, "msn2", 4))
+			prefix = "ms2_save";
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("%s.###", prefix);
+		else
+			return Common::String::format("%s.%03d", prefix, saveGameIdx);
+	}
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -69,11 +80,7 @@ Common::Error SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine
 
 SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
-	Common::String pattern;
-	if (!strncmp(target, "msn1", 4))
-		pattern = Common::String::format("msn_save.###");
-	if (!strncmp(target, "msn2", 4))
-		pattern = Common::String::format("ms2_save.###");
+	const Common::String pattern = getSavegameFilePattern(target);
 
 	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 
@@ -106,21 +113,11 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 }
 
 void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename;
-	if (!strncmp(target, "msn1", 4))
-		filename = Common::String::format("msn_save.%03d", slot);
-	if (!strncmp(target, "msn2", 4))
-		filename = Common::String::format("ms2_save.%03d", slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName;
-	if (!strncmp(target, "msn1", 4))
-		fileName = Common::String::format("msn_save.%03d", slot);
-	if (!strncmp(target, "msn2", 4))
-		fileName = Common::String::format("ms2_save.%03d", slot);
-	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(fileName);
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target));
 
 	if (savefile) {
 		uint saveHeader = savefile->readUint32LE();

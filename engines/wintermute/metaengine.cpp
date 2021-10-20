@@ -84,17 +84,13 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
-		case MetaEngine::kSupportsListSaves:
-			return true;
-		case MetaEngine::kSupportsLoadingDuringStartup:
-			return true;
-		case MetaEngine::kSupportsDeleteSave:
-			return true;
-		case MetaEngine::kSavesSupportCreationDate:
-			return true;
-		case MetaEngine::kSavesSupportMetaInfo:
-			return true;
-		case MetaEngine::kSavesSupportThumbnail:
+		case kSupportsListSaves:
+		case kSupportsLoadingDuringStartup:
+		case kSupportsDeleteSave:
+		case kSavesSupportCreationDate:
+		case kSavesSupportMetaInfo:
+		case kSavesSupportThumbnail:
+		case kSimpleSavesNames:
 			return true;
 		default:
 			return false;

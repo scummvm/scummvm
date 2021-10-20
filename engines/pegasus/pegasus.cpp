@@ -702,8 +702,15 @@ void PegasusEngine::writeContinueStream(Common::WriteStream *stream) {
 }
 
 Common::StringArray PegasusEngine::listSaveFiles() {
+	const Common::String autoSaveName("pegasus-AutoSave.sav");
 	Common::StringArray fileNames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+	// Autosave must be at slot 0, so remove it, then prepend (even if it doesn't exist,
+	// it will be prepended)
+	Common::StringArray::iterator it = Common::find(fileNames.begin(), fileNames.end(), autoSaveName);
+	if (it != fileNames.end())
+		fileNames.erase(it);
 	Common::sort(fileNames.begin(), fileNames.end());
+	fileNames.insert_at(0, autoSaveName);
 	return fileNames;
 }
 
@@ -733,10 +740,11 @@ static bool isValidSaveFileName(const Common::String &desc) {
 }
 
 Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	if (!isValidSaveFileName(desc))
+	Common::String saveName = isAutosave ? Common::String("AutoSave") : desc;
+	if (!isValidSaveFileName(saveName))
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
 
-	Common::String output = Common::String::format("pegasus-%s.sav", desc.c_str());
+	Common::String output = Common::String::format("pegasus-%s.sav", saveName.c_str());
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output, false);
 	if (!saveFile)
 		return Common::kUnknownError;

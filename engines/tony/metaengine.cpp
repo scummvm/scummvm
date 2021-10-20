@@ -72,6 +72,7 @@ bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportThumbnail);
 }
 

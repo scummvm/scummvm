@@ -53,6 +53,7 @@ public:
 			(f == kSupportsLoadingDuringStartup) ||
 			(f == kSavesSupportThumbnail) ||
 			(f == kSavesSupportMetaInfo) ||
+			(f == kSimpleSavesNames) ||
 			(f == kSavesSupportCreationDate);
 	}
 

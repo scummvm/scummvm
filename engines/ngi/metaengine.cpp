@@ -69,6 +69,13 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		const Common::String prefix("fullpipe");
+		if (saveGameIdx == kSavegameFilePattern)
+			return prefix + ".s##";
+		else
+			return prefix + Common::String::format(".s%02d", saveGameIdx);
+	}
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -79,8 +86,7 @@ bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+		(f == kSupportsLoadingDuringStartup);
 }
 
 bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
@@ -93,9 +99,8 @@ bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
 SaveStateList NGIMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern("fullpipe.s##");
 
-	filenames = saveFileMan->listSavefiles(pattern);
+	filenames = saveFileMan->listSavefiles(getSavegameFilePattern(target));
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {

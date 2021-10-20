@@ -43,6 +43,12 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("DREAMWEB.D##");
+		else
+			return Common::String::format("DREAMWEB.D%02d", saveGameIdx);
+	}
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {

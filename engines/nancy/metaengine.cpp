@@ -58,6 +58,7 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSavesUseExtendedFormat);
 }
 
