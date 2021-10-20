@@ -94,8 +94,7 @@ bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+		(f == kSavesSupportPlayTime);
 }
 
 bool Saga::SagaEngine::hasFeature(EngineFeature f) const {

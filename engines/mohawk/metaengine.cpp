@@ -138,6 +138,24 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (!target)
+			target = getEngineId();
+		Common::String gameId = ConfMan.get("gameid", target);
+		const char *suffix;
+		// Saved games are only supported in Myst/Riven currently.
+		if (gameId == "myst")
+			suffix = "mys";
+		else if (gameId == "riven")
+			suffix = "rvn";
+		else
+			return MetaEngine::getSavegameFile(saveGameIdx, target);
+
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("%s-###.%s", gameId.c_str(), suffix);
+		else
+			return Common::String::format("%s-%03d.%s", gameId.c_str(), saveGameIdx, suffix);
+	}
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -60,6 +60,7 @@ bool KingdomMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
+	    (f == kSimpleSavesNames) ||
 	    (f == kSavesSupportCreationDate);
 }
 

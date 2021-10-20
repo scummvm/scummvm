@@ -45,6 +45,12 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		if (saveGameIdx == kSavegameFilePattern)
+			return Common::String::format("sword1.###");
+		else
+			return Common::String::format("sword1.%03d", saveGameIdx);
+	}
 };
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {

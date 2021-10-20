@@ -58,8 +58,7 @@ bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+		(f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList PinkMetaEngine::listSaves(const char *target) const {

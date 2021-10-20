@@ -477,6 +477,9 @@ public:
 		* of detecting saves and slot numbers, this should be
 		* unavailable. In that case Save/Load dialog for the engine's
 		* games is locked during cloud saves sync.
+		*
+		* NOTE: This flag is used by cloud code, but also in
+		* MetaEngine::getSavegameFile(), for common save names.
 		*/
 		kSimpleSavesNames,
 
