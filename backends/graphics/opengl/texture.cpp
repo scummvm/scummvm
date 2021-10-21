@@ -314,127 +314,20 @@ void Texture::updateGLTexture() {
 	clearDirty();
 }
 
-TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-	: Texture(glIntFormat, glFormat, glType, format), _clut8Data(), _palette(new byte[256 * format.bytesPerPixel]) {
-	memset(_palette, 0, sizeof(byte) * format.bytesPerPixel);
-}
-
-TextureCLUT8::~TextureCLUT8() {
-	delete[] _palette;
-	_palette = nullptr;
-	_clut8Data.free();
-}
-
-void TextureCLUT8::allocate(uint width, uint height) {
-	Texture::allocate(width, height);
-
-	// We only need to reinitialize our CLUT8 surface when the output size
-	// changed.
-	if (width == (uint)_clut8Data.w && height == (uint)_clut8Data.h) {
-		return;
-	}
-
-	_clut8Data.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-}
-
-Graphics::PixelFormat TextureCLUT8::getFormat() const {
-	return Graphics::PixelFormat::createFormatCLUT8();
-}
-
-void TextureCLUT8::setColorKey(uint colorKey) {
-	// The key color is set to black so the color value is pre-multiplied with the alpha value
-	// to avoid color fringes due to filtering.
-	// Erasing the color data is not a problem as the palette is always fully re-initialized
-	// before setting the key color.
-	if (_format.bytesPerPixel == 2) {
-		uint16 *palette = (uint16 *)_palette + colorKey;
-		*palette = 0;
-	} else if (_format.bytesPerPixel == 4) {
-		uint32 *palette = (uint32 *)_palette + colorKey;
-		*palette = 0;
-	} else {
-		warning("TextureCLUT8::setColorKey: Unsupported pixel depth %d", _format.bytesPerPixel);
-	}
-
-	// A palette changes means we need to refresh the whole surface.
-	flagDirty();
-}
-
-namespace {
-template<typename ColorType>
-inline void convertPalette(ColorType *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
-	while (colors-- > 0) {
-		*dst++ = format.RGBToColor(src[0], src[1], src[2]);
-		src += 3;
-	}
-}
-} // End of anonymous namespace
-
-void TextureCLUT8::setPalette(uint start, uint colors, const byte *palData) {
-	if (_format.bytesPerPixel == 2) {
-		convertPalette<uint16>((uint16 *)_palette + start, palData, colors, _format);
-	} else if (_format.bytesPerPixel == 4) {
-		convertPalette<uint32>((uint32 *)_palette + start, palData, colors, _format);
-	} else {
-		warning("TextureCLUT8::setPalette: Unsupported pixel depth: %d", _format.bytesPerPixel);
-	}
-
-	// A palette changes means we need to refresh the whole surface.
-	flagDirty();
-}
-
-namespace {
-template<typename PixelType>
-inline void doPaletteLookUp(PixelType *dst, const byte *src, uint width, uint height, uint dstPitch, uint srcPitch, const PixelType *palette) {
-	uint srcAdd = srcPitch - width;
-	uint dstAdd = dstPitch - width * sizeof(PixelType);
-
-	while (height-- > 0) {
-		for (uint x = width; x > 0; --x) {
-			*dst++ = palette[*src++];
-		}
-
-		dst = (PixelType *)((byte *)dst + dstAdd);
-		src += srcAdd;
-	}
-}
-} // End of anonymous namespace
-
-void TextureCLUT8::updateGLTexture() {
-	if (!isDirty()) {
-		return;
-	}
-
-	// Do the palette look up
-	Graphics::Surface *outSurf = Texture::getSurface();
-
-	Common::Rect dirtyArea = getDirtyArea();
-
-	if (outSurf->format.bytesPerPixel == 2) {
-		doPaletteLookUp<uint16>((uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top),
-		                        (const byte *)_clut8Data.getBasePtr(dirtyArea.left, dirtyArea.top),
-		                        dirtyArea.width(), dirtyArea.height(),
-		                        outSurf->pitch, _clut8Data.pitch, (const uint16 *)_palette);
-	} else if (outSurf->format.bytesPerPixel == 4) {
-		doPaletteLookUp<uint32>((uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top),
-		                        (const byte *)_clut8Data.getBasePtr(dirtyArea.left, dirtyArea.top),
-		                        dirtyArea.width(), dirtyArea.height(),
-		                        outSurf->pitch, _clut8Data.pitch, (const uint32 *)_palette);
-	} else {
-		warning("TextureCLUT8::updateGLTexture: Unsupported pixel depth: %d", outSurf->format.bytesPerPixel);
-	}
-
-	// Do generic handling of updating the texture.
-	Texture::updateGLTexture();
-}
-
 FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
 	: Texture(glIntFormat, glFormat, glType, format),
 	  _fakeFormat(fakeFormat),
-	  _rgbData() {
+	  _rgbData(),
+	  _palette(nullptr) {
+	if (_fakeFormat == Graphics::PixelFormat::createFormatCLUT8()) {
+		_palette = new uint32[256];
+		memset(_palette, 0, sizeof(uint32));
+	}
 }
 
 FakeTexture::~FakeTexture() {
+	delete[] _palette;
+	_palette = nullptr;
 	_rgbData.free();
 }
 
@@ -447,8 +340,32 @@ void FakeTexture::allocate(uint width, uint height) {
 		return;
 	}
 
-	warning("%s pixel format not supported by OpenGL ES, using %s instead", getFormat().toString().c_str(), _format.toString().c_str());
 	_rgbData.create(width, height, getFormat());
+}
+
+void FakeTexture::setColorKey(uint colorKey) {
+	if (!_palette)
+		return;
+
+	// The key color is set to black so the color value is pre-multiplied with the alpha value
+	// to avoid color fringes due to filtering.
+	// Erasing the color data is not a problem as the palette is always fully re-initialized
+	// before setting the key color.
+	uint32 *palette = _palette + colorKey;
+	*palette = 0;
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
+}
+
+void FakeTexture::setPalette(uint start, uint colors, const byte *palData) {
+	if (!_palette)
+		return;
+
+	Graphics::convertPaletteToMap(_palette + start, palData, colors, _format);
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
 }
 
 void FakeTexture::updateGLTexture() {
@@ -463,7 +380,12 @@ void FakeTexture::updateGLTexture() {
 
 	byte *dst = (byte *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
 	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
-	Graphics::crossBlit(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format, _rgbData.format);
+
+	if (_palette) {
+		Graphics::crossBlitMap(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format.bytesPerPixel, _palette);
+	} else {
+		Graphics::crossBlit(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format, _rgbData.format);
+	}
 
 	// Do generic handling of updating the texture.
 	Texture::updateGLTexture();

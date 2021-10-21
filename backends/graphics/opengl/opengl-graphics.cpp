@@ -1105,7 +1105,7 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		if (!supported) {
 			return nullptr;
 		} else {
-			return new TextureCLUT8(glIntFormat, glFormat, glType, virtFormat);
+			return new FakeTexture(glIntFormat, glFormat, glType, virtFormat, format);
 		}
 	} else if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
 		return new Texture(glIntFormat, glFormat, glType, format);
