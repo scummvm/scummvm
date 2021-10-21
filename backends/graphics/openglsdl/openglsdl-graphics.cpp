@@ -201,6 +201,7 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureIconifyWindow:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFullscreenToggleKeepsContext:
+	case OSystem::kFeatureVSync:
 #endif
 		return true;
 
