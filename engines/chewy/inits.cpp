@@ -587,7 +587,7 @@ void show_intro() {
 	}
 }
 
-void test_intro() {
+void test_intro(int testVal) {
 	// No implementation
 }
 
