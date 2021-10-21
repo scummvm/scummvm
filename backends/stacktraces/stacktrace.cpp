@@ -66,8 +66,6 @@
 #define BACKWARD_HAS_BFD 1
 #elif defined(USE_STACKTRACES_UNWIND)
 #define BACKWARD_HAS_LIBUNWIND 1
-#elif defined(USE_STACKTRACES)
-#error "One of the above given defines must be set when using stacktraces"
 #endif
 
 #include "backward.h"
@@ -75,13 +73,57 @@
 // backward::SignalHandling sh;
 
 #ifdef USE_STACKTRACES
-void createStacktrace() {
+
+class logger_streambuf : public std::streambuf {
+public:
+	logger_streambuf(void (*_logger)(const char *)) : logger(_logger) {}
+
+	int_type underflow() override { return traits_type::eof(); }
+
+	int_type overflow(int_type ch) override {
+		char buff[2];
+		buff[0] = ch;
+		buff[1] = 0;
+		logger(buff);
+		return ch;
+	}
+
+	std::streamsize xsputn(const char_type *s, std::streamsize count) override {
+		const int maxLen = 1024;
+		char buff[maxLen];
+
+		int len = std::min((int)count, maxLen-1);
+		memcpy(buff, s, len);
+		buff[len] = 0;
+
+		logger(buff);
+		return count;
+	}
+
+#ifdef BACKWARD_ATLEAST_CXX11
+public:
+	logger_streambuf(const logger_streambuf &) = delete;
+	logger_streambuf &operator=(const logger_streambuf &) = delete;
+#else
+private:
+	logger_streambuf(const logger_streambuf &);
+	logger_streambuf &operator=(const logger_streambuf &);
+#endif
+
+private:
+	void (*logger)(const char *);
+};
+
+void createStacktrace(void (*logger)(const char *)) {
 	backward::StackTrace st;
 	st.load_here(32);
 	backward::Printer p;
 	p.object = true;
 	p.color_mode = backward::ColorMode::always;
 	p.address = true;
-	p.print(st);
+
+	logger_streambuf stream_buff(logger);
+	std::ostream os(&stream_buff);
+	p.print(st, os);
 }
 #endif

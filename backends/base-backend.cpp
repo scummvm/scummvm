@@ -86,6 +86,11 @@ void EventsBaseBackend::initBackend() {
 	BaseBackend::initBackend();
 }
 
+void stacktracePrinter(const char *message) {
+	if (g_system)
+		g_system->logMessage(LogMessageType::kWarning, message);
+}
+
 void BaseBackend::printStacktrace() {
-	createStacktrace();
+	createStacktrace(&stacktracePrinter);
 }

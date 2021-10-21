@@ -28,9 +28,9 @@
 #endif
 
 #ifdef USE_STACKTRACES
-void createStacktrace();
+void createStacktrace(void (*logger)(const char *));
 #else
-inline void createStacktrace() {}
+inline void createStacktrace(void (*logger)(const char *)) {}
 #endif
 
 #endif
