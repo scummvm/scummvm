@@ -1,3 +1,6 @@
 /po/*.po encoding=utf-8
 *.lingo	encoding=MacRoman
 /engines.awk eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
