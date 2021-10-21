@@ -88,7 +88,7 @@ public:
 	void opRegions();
 
 	/**
-	 * Get the coordiantes of the region for the next answer. There are 
+	 * Get the coordiantes of the region for the next answer. There are
 	 * up to 8 answers possible for each question. In the script the
 	 * coordinates are (0,0,0,0) which will be replace by the new ones.
 	 * @param left        Left value of the rectangle
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Handles some flags which are used during a TAT. The game seems to
 	 * use this flags to skip some questions during a TAT.
-	 * OpCode_0x42(2) 
+	 * OpCode_0x42(2)
 	 */
 	void opFlags();
 

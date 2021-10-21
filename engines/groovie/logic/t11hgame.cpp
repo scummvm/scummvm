@@ -92,7 +92,7 @@ void T11hGame::handleOp(uint8 op) {
  * South east from Stauf's goal is the next line starting with
  * space 6, counting up as you go north east where the moveable
  * space to the right of the north corner is space 10
- * 
+ *
  * Next line is 11 (unmovable) to 15 (unmoveable), this line
  * contains the center space which is space 13
  * Next line is 16 (moveable) to 20 (moveable)
@@ -591,7 +591,7 @@ void T11hGame::opPente() {
  * The aim is to select the last piece of the image.
  * There are 18 pieces in total.
  * When selecting a piece, all surrounding pieces are also selected
- * 
+ *
  * +--------------------+--------------------------------+--------+
  * |         1/1A       |       2/1B                     |        |
  * |  +--------------+--+--------------------------+-----+        |
