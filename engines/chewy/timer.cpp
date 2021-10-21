@@ -27,7 +27,6 @@
 
 namespace Chewy {
 
-bool timer_flag;
 bool timer_int;
 int timer_count;
 bool timer_suspend;
@@ -85,7 +84,7 @@ int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mod
 		ret = true;
 		timer_blk[timer_nr].TimeCount = 0;
 		timer_blk[timer_nr].TimeEnd = timer_end_wert;
-		timer_blk[timer_nr].TimeFlag = false;
+		timer_blk[timer_nr].TimeFlag = 0;
 		timer_blk[timer_nr].TimeLast = timer_count;
 		timer_blk[timer_nr].TimeMode = timer_mode;
 		timer_blk[timer_nr].TimeStatus = true;
@@ -97,7 +96,7 @@ int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mod
 void timer::reset_timer(int16 timer_nr, int16 timer_wert) {
 	if (timer_nr < timer_max) {
 		timer_blk[timer_nr].TimeCount = 0;
-		timer_blk[timer_nr].TimeFlag = false;
+		timer_blk[timer_nr].TimeFlag = 0;
 		timer_blk[timer_nr].TimeLast = timer_count;
 		if (timer_wert)
 			timer_blk[timer_nr].TimeEnd = timer_wert;
@@ -108,7 +107,7 @@ void timer::reset_all_timer() {
 	int16 i;
 	for (i = 0; i < timer_max; i++) {
 		timer_blk[i].TimeCount = 0;
-		timer_blk[i].TimeFlag = false;
+		timer_blk[i].TimeFlag = 0;
 		timer_blk[i].TimeLast = timer_count;
 	}
 }
