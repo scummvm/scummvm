@@ -1059,6 +1059,11 @@ void LB::b_closeResFile(int nargs) {
 }
 
 void LB::b_closeXlib(int nargs) {
+	if (nargs ==0) { // Close all Xlibs
+		g_lingo->closeOpenXLibs();
+		return;
+	}
+
 	Datum d = g_lingo->pop();
 	Common::String xlibName = d.asString();
 	g_lingo->closeXLib(xlibName);

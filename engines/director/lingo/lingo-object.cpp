@@ -203,6 +203,12 @@ void Lingo::closeXLib(Common::String name) {
 	}
 }
 
+void Lingo::closeOpenXLibs() {
+	for (OpenXLibsHash::iterator it = _openXLibs.begin(); it != _openXLibs.end(); ++it) {
+		closeXLib(it->_key);
+	}
+}
+
 void Lingo::reloadOpenXLibs() {
 	OpenXLibsHash openXLibsCopy = _openXLibs;
 	for (OpenXLibsHash::iterator it = openXLibsCopy.begin(); it != openXLibsCopy.end(); ++it) {

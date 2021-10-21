@@ -12,3 +12,12 @@ fixpal(mPatchIt)
 openXLib("winXOBJ")
 set winxobj = RearWindow(mNew, "M")
 scummVMAssert(winxobj(mGetMemoryNeeded) = 0)
+
+-- test closing XObject
+scummVMAssert(objectp(FlushXObj) = 1)
+closeXlib "FlushXObj"
+scummVMAssert(objectp(FlushXObj) = 0)
+
+scummVMAssert(objectp(RearWindow) = 1)
+closeXlib()
+scummVMAssert(objectp(RearWindow) = 0)
