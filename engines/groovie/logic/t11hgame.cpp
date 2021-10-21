@@ -656,35 +656,38 @@ const byte T11hGame::kGalleryLinks[21][10] = {
 	{12, 14, 15, 18, 20,  0,  0,  0,  0,  0 }	// 21
 };
 
+const int kPieceCount = 21;
+enum kGalleryPieceStatus {
+	kPieceUnselected = 0,
+	kPieceSelected = 1
+};
+
 void T11hGame::opGallery() {
-	const int kPieceCount = 21;
 	byte pieceStatus[kPieceCount];
-	byte var_18[kPieceCount];
-	int selectedPieces;
-	byte curLink = 0;
+	byte status1[kPieceCount];
+	byte status2[kPieceCount];
 
-	enum kGalleryPieceStatus {
-		kPieceUnselected = 0,
-		kPieceSelected = 1
-	};
+	memcpy(pieceStatus, _scriptVariables + 25, kPieceCount);
 
-	memcpy(pieceStatus, _scriptVariables + 26, kPieceCount);
-
-	selectedPieces = 0;
+	int selectedPieces = 0;
 	for (int i = 0; i < kPieceCount; i++) {
-		var_18[i] = 0;
-		if (pieceStatus[i] == kPieceSelected) {
-			curLink = kGalleryLinks[i][0];
+		status1[i] = 0;
+		if (pieceStatus[i + 1] == kPieceSelected) {
+			for (int j = 0; j < kPieceCount; j++)
+				status2[j] = pieceStatus[j];
+
+			byte curLink = kGalleryLinks[i][0];
 			pieceStatus[i] = kPieceUnselected;
+			status2[i] = 0;
 
 			int linkedPiece = 1;
 			while (curLink != 0) {
 				linkedPiece++;
-				pieceStatus[curLink - 1] = kPieceUnselected;
+				status2[curLink - 1] = kPieceUnselected;
 				curLink = kGalleryLinks[linkedPiece - 1][i];
 			}
-			var_18[i] = opGallerySub(pieceStatus, 1);
-			if (var_18[i] == kPieceSelected) {
+			status1[i] = opGalleryAI(status2, 1);
+			if (status1[i] == kPieceSelected) {
 				selectedPieces++;
 			}
 		}
@@ -693,8 +696,8 @@ void T11hGame::opGallery() {
 	if (selectedPieces == 0) {
 		int esi = 0;
 		for (int i = 0; i < kPieceCount; i++) {
-			if (esi < var_18[i]) {
-				esi = var_18[i];
+			if (esi < status1[i]) {
+				esi = status1[i];
 			}
 		}
 
@@ -709,28 +712,78 @@ void T11hGame::opGallery() {
 		}
 
 		for (int i = 0; i < kPieceCount; i++) {
-			if (esi < var_18[i]) {
-				var_18[i] = kPieceSelected;
+			if (esi < status1[i]) {
+				status1[i] = kPieceSelected;
 				selectedPieces++;
 			}
 		}
 	}
 
-	int selectedPiece;
+	int selectedPiece = 0;
 
-	// TODO: copy the AI from the game
-	do {
-		selectedPiece = _random.getRandomNumber(20) + 1;
-	} while (_scriptVariables[selectedPiece + 25] != 1);
+	byte v12 = _scriptVariables[49] % selectedPieces;
+	for (int i = 0; i < kPieceCount; i++) {
+		if (status1[selectedPiece] == 1 && !v12--)
+			break;
 
-	setScriptVar(47, selectedPiece / 10);
-	setScriptVar(48, selectedPiece % 10);
+		selectedPiece++;
+	}
+
+	setScriptVar(47, (selectedPiece + 1) / 10);
+	setScriptVar(48, (selectedPiece + 1) % 10);
 }
 
-byte T11hGame::opGallerySub(byte *field, int start) {
-	// TODO
-	warning("STUB: T11hGame::opGallerySub()");
-	return 0;
+byte T11hGame::opGalleryAI(byte *pieceStatus, int depth) {
+	byte status1[kPieceCount];
+	byte status2[kPieceCount];
+
+	int selectedPieces = 0;
+
+	for (int i = 0; i < kPieceCount; i++) {
+		status1[i] = 0;
+		if (pieceStatus[i] == kPieceSelected) {
+			for (int j = 0; j < kPieceCount; j++)
+				status2[j] = pieceStatus[j];
+
+			byte curLink = kGalleryLinks[i][0];
+			pieceStatus[i] = kPieceUnselected;
+			status2[i] = 0;
+			selectedPieces = 1;
+
+			int linkedPiece = 1;
+			while (curLink != 0) {
+				linkedPiece++;
+				status2[curLink - 1] = kPieceUnselected;
+				curLink = kGalleryLinks[linkedPiece - 1][i];
+			}
+			status1[i] = opGalleryAI(status2, depth == 0 ? 1 : 0);
+			if (!depth && status1[i] == kPieceSelected) {
+				return 1;
+			}
+		}
+	}
+
+	if (selectedPieces) {
+		byte v8 = 0;
+		byte v9 = 0;
+		byte v10 = 0;
+		for (int j = 0; j < 21; ++j) {
+			byte v12 = status2[j];
+			if (v12) {
+				++v10;
+				if (v12 == 1)
+					++v9;
+				else
+					v8 += v12;
+			}
+		}
+		if (v9 == v10)
+			return 1;
+		else
+			return (v8 + 102 * v9) / v10;
+	}
+
+	return depth == 0 ? 2 : 1;
 }
 
 void T11hGame::opTriangle() {
