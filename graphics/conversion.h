@@ -25,6 +25,8 @@
 
 #include "common/util.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Common {
 struct Point;
 }
@@ -40,7 +42,6 @@ namespace Graphics {
  * @{
  */
 
-struct PixelFormat;
 struct TransformStruct;
 
 /** Converting a color from YUV to RGB colorspace. */
@@ -55,6 +56,14 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 	y = CLIP<int>( ((r * 306) >> 10) + ((g * 601) >> 10) + ((b * 117) >> 10)      , 0, 255);
 	u = CLIP<int>(-((r * 172) >> 10) - ((g * 340) >> 10) + ((b * 512) >> 10) + 128, 0, 255);
 	v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
+}
+
+/** Converting a palette for use with crossBlitMap(). */
+inline static void convertPaletteToMap(uint32 *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
+	while (colors-- > 0) {
+		*dst++ = format.RGBToColor(src[0], src[1], src[2]);
+		src += 3;
+	}
 }
 
 // TODO: generic YUV to RGB blit
@@ -117,6 +126,11 @@ bool crossBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint w, const uint h,
 			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+
+bool crossBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 *map);
 
 bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
