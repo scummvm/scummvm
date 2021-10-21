@@ -581,7 +581,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 			FileProperties tmp;
 			if (getFileProperties(allFiles, *g, fname, tmp)) {
-				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), tmp.size);
+				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), long(tmp.size));
 			}
 
 			// Both positive and negative results are cached to avoid
@@ -635,7 +635,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[key].size) {
-				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", fileDesc->fileSize, filesProps[key].size);
+				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", long(fileDesc->fileSize), long(filesProps[key].size));
 				game.hasUnknownFiles = true;
 				continue;
 			}
