@@ -42,9 +42,10 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 	while (offset < libfile.size()) {
 		byte b;
 		uint32 size = 0;
-		uint32 start = 0;
+		uint32 start = libfile.size();
 		FileEntry f;
 		libfile.seek(offset);
+		debugC(1, kHypnoDebugParser, "parsing at offset %d", offset);
 		while (true) {
 			f.name = "";
 			f.data.clear();
