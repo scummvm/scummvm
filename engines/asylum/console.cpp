@@ -39,6 +39,7 @@
 #include "asylum/system/text.h"
 
 #include "asylum/views/insertdisc.h"
+#include "asylum/views/menu.h"
 #include "asylum/views/scene.h"
 #include "asylum/views/video.h"
 
@@ -773,6 +774,8 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 	_vm->_delayedSceneIndex = index;
 	_vm->_puzzles->reset();
 	_vm->resetFlags();
+
+	getMenu()->setGameStarted();
 
 	return false;
 }
