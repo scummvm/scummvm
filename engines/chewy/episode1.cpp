@@ -120,19 +120,53 @@ void load_chewy_taf(int16 taf_nr) {
 }
 
 void r0_entry() {
-	set_person_pos(150, 100, P_CHEWY, P_RIGHT);
-	cur_hide_flag = false;
+	if (is_cur_inventar(0) || spieler.R0KissenWurf ||
+		obj->check_inventar(0))
+		det->hide_static_spr(6);
+
+	set_person_pos(150, 100, 0, 1);
+	cur_hide_flag = 0;
 	hide_cur();
-	spieler_vector[P_CHEWY].Delay = 5;
-	spieler.DelaySpeed = 5;
-	auto_move(1, P_CHEWY);
-	auto_move(7, P_CHEWY);
-	auto_move(1, P_CHEWY);
-	auto_move(7, P_CHEWY);
-	auto_move(9, P_CHEWY);
-	start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+	timer_nr[0] = room->set_timer(255, 3);
+
+	while (!ani_timer[timer_nr[0]].TimeFlag && !SHOULD_QUIT) {
+		set_up_screen(DO_SETUP);
+	}
+
+	start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(2, -1);
 	show_cur();
+}
+
+void r0_action1() {
+	if (!spieler.inv_cur) {
+		hide_cur();
+		flags.AutoAniPlay = true;
+		auto_move(1, 0);
+		start_spz_wait(13, 1, 0, 0);
+		invent_2_slot(0);
+		menu_item = 0;
+		cursor_wahl(0);
+		atds->set_steuer_bit(174, 1, 1);
+		det->hide_static_spr(6);
+
+		flags.AutoAniPlay = false;
+	}
+}
+
+void r0_action2() {
+	if (!spieler.inv_cur) {
+		hide_cur();
+		auto_move(2, 0);
+		spieler.PersonHide[0] = 1;
+		start_detail_wait(3, 1, 0);
+		set_person_pos(222, 106, 0, 0);
+		spieler.PersonHide[0] = 0;
+		invent_2_slot(1);
+		menu_item = 0;
+		cursor_wahl(0);
+		atds->set_steuer_bit(175, 1, 1);
+	}
 }
 
 void r0_auge_start(int16 mode) {
@@ -627,10 +661,10 @@ void r0_ch_kissen() {
 void r0_ani_klappe_delay() {
 	int16 i;
 	det->start_detail(KLAPPE_DETAIL, 1, VOR);
-	while (det->get_ani_status(KLAPPE_DETAIL)) {
+	while (det->get_ani_status(KLAPPE_DETAIL) && !SHOULD_QUIT) {
 		set_ani_screen();
-
 	}
+
 	flags.AniUserAction = true;
 	for (i = 0; i < 25; i++) {
 		clear_prog_ani();
@@ -675,6 +709,9 @@ void r0_fuett_ani() {
 			out->cls();
 			flic_cut(FCUT_001, CFO_MODE);
 
+			test_intro(1);
+			ERROR
+
 			spieler.PersonRoomNr[P_CHEWY] = 1;
 			room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 			ERROR
@@ -685,10 +722,13 @@ void r0_fuett_ani() {
 			check_shad(4, 0);
 			fx_blende = 1;
 			set_up_screen(DO_SETUP);
-		} else
+		} else {
 			action = true;
-	} else
+		}
+	} else {
 		action = true;
+	}
+
 	if (action) {
 		r0_ch_fuetter();
 		start_spz(CH_EKEL, 3, ANI_VOR, P_CHEWY);
@@ -701,6 +741,7 @@ void r0_fuett_ani() {
 #define HAND_CLICK 69
 #define RAHMEN_ROT 70
 #define RAHMEN_GELB 71
+
 int16 r4_sonde_comp() {
 	int16 ende;
 
