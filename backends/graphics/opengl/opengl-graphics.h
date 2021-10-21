@@ -79,6 +79,13 @@ public:
 	bool setStretchMode(int mode) override;
 	int getStretchMode() const override;
 
+#ifdef USE_SCALERS
+	uint getDefaultScaler() const override;
+	uint getDefaultScaleFactor() const override;
+	bool setScaler(uint mode, int factor) override;
+	uint getScaler() const override;
+#endif
+
 	void beginGFXTransaction() override;
 	OSystem::TransactionError endGFXTransaction() override;
 
@@ -157,13 +164,14 @@ protected:
 	/**
 	 * Create a surface with the specified pixel format.
 	 *
-	 * @param format    The pixel format the Surface object should accept as
-	 *                  input.
-	 * @param wantAlpha For CLUT8 surfaces this marks whether an alpha
-	 *                  channel should be used.
+	 * @param format     The pixel format the Surface object should accept as
+	 *                   input.
+	 * @param wantAlpha  For CLUT8 surfaces this marks whether an alpha
+	 *                   channel should be used.
+	 * @param wantScaler Whether or not a software scaler should be used.
 	 * @return A pointer to the surface or nullptr on failure.
 	 */
-	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false);
+	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false, bool wantScaler = false);
 
 	//
 	// Transaction support
@@ -173,7 +181,8 @@ protected:
 #ifdef USE_RGB_COLOR
 		    gameFormat(),
 #endif
-		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true) {
+		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
+		    scalerIndex(0), scaleFactor(1) {
 		}
 
 		bool valid;
@@ -185,6 +194,9 @@ protected:
 		bool aspectRatioCorrection;
 		int graphicsMode;
 		bool filtering;
+
+		uint scalerIndex;
+		int scaleFactor;
 
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
@@ -315,6 +327,7 @@ protected:
 	bool getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const;
 
 	bool gameNeedsAspectRatioCorrection() const override;
+	int getGameRenderScale() const override;
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
 
@@ -418,6 +431,13 @@ protected:
 	 * The special cursor palette in case enabled.
 	 */
 	byte _cursorPalette[3 * 256];
+
+#ifdef USE_SCALERS
+	/**
+	 * The list of scaler plugins
+	 */
+	const PluginList &_scalerPlugins;
+#endif
 
 #ifdef USE_OSD
 	//

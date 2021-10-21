@@ -33,6 +33,10 @@
 
 #include "graphics/conversion.h"
 
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
+
 namespace OpenGL {
 
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
@@ -279,6 +283,10 @@ void Texture::updateGLTexture() {
 
 	Common::Rect dirtyArea = getDirtyArea();
 
+	updateGLTexture(dirtyArea);
+}
+
+void Texture::updateGLTexture(Common::Rect &dirtyArea) {
 	// In case we use linear filtering we might need to duplicate the last
 	// pixel row/column to avoid glitches with filtering.
 	if (_glTexture.isLinearFilteringEnabled()) {
@@ -467,6 +475,109 @@ void TextureRGBA8888Swap::updateGLTexture() {
 	// Do generic handling of updating the texture.
 	Texture::updateGLTexture();
 }
+
+#ifdef USE_SCALERS
+
+ScaledTexture::ScaledTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: FakeTexture(glIntFormat, glFormat, glType, format, fakeFormat), _convData(nullptr), _scalerPlugin(nullptr), _scaleFactor(1), _extraPixels(0) {
+}
+
+ScaledTexture::~ScaledTexture() {
+	if (_convData) {
+		_convData->free();
+		delete _convData;
+	}
+}
+
+void ScaledTexture::allocate(uint width, uint height) {
+	Texture::allocate(width * _scaleFactor, height * _scaleFactor);
+
+	// We only need to reinitialize our surface when the output size
+	// changed.
+	if (width != (uint)_rgbData.w || height != (uint)_rgbData.h) {
+		_rgbData.create(width, height, _fakeFormat);
+	}
+
+	if (_format != _fakeFormat || _extraPixels != 0) {
+		if (!_convData)
+			_convData = new Graphics::Surface();
+
+		_convData->create(width + (_extraPixels * 2), height + (_extraPixels * 2), _format);
+	} else if (_convData) {
+		_convData->free();
+		delete _convData;
+		_convData = nullptr;
+	}
+}
+
+void ScaledTexture::updateGLTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	Common::Rect dirtyArea = getDirtyArea();
+
+	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	uint srcPitch = _rgbData.pitch;
+	byte *dst;
+	uint dstPitch;
+
+	if (_convData) {
+		dst = (byte *)_convData->getBasePtr(dirtyArea.left + _extraPixels, dirtyArea.top + _extraPixels);
+		dstPitch = _convData->pitch;
+
+		if (_palette) {
+			Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), _convData->format.bytesPerPixel, _palette);
+		} else {
+			Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), _convData->format, _rgbData.format);
+		}
+
+		src = dst;
+		srcPitch = dstPitch;
+	}
+
+	dst = (byte *)outSurf->getBasePtr(dirtyArea.left * _scaleFactor, dirtyArea.top * _scaleFactor);
+	dstPitch = outSurf->pitch;
+
+	assert(_scalerPlugin);
+	_scalerPlugin->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+
+	dirtyArea.left   *= _scaleFactor;
+	dirtyArea.right  *= _scaleFactor;
+	dirtyArea.top    *= _scaleFactor;
+	dirtyArea.bottom *= _scaleFactor;
+
+	// Do generic handling of updating the texture.
+	Texture::updateGLTexture(dirtyArea);
+}
+
+void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
+	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+
+	// If the scalerIndex has changed, change scaler plugins
+	if (&scalerPlugins[scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin) {
+		if (_scalerPlugin)
+			_scalerPlugin->deinitialize();
+
+		_scalerPlugin = &scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
+		_scalerPlugin->initialize(_format);
+	}
+	_scalerPlugin->setFactor(scaleFactor);
+
+	_scaleFactor = _scalerPlugin->getFactor();
+	_extraPixels = _scalerPlugin->extraPixels();
+}
+
+void ScaledTexture::unloadScaler() {
+	if (_scalerPlugin) {
+		_scalerPlugin->deinitialize();
+		_scalerPlugin = nullptr;
+	}
+}
+#endif
 
 #if !USE_FORCED_GLES
 
