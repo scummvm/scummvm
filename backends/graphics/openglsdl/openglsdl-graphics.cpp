@@ -244,6 +244,10 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 			return _wantsFullScreen;
 		}
 #endif
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case OSystem::kFeatureVSync:
+		return SDL_GL_GetSwapInterval() != 0;
+#endif
 
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
