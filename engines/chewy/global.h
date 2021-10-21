@@ -321,6 +321,8 @@ void set_speed();
 void new_game();
 void sound_init();
 void sound_exit();
+void show_intro();
+void test_intro();
 
 void init_atds();
 
