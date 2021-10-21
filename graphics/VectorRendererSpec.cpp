@@ -4071,30 +4071,30 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 			if (sw != strokeWidth || fill_m != Base::kFillDisabled)
 				a2 = 255;
 
-				// inner arc
-				WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a2) >> 16));
+			// inner arc
+			WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a2) >> 16));
 
-				WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a2) >> 16));
-				WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a2) >> 16));
+			WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a2) >> 16));
 
-				// outer arc
-				if (sw == 1) {
-					WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a1) >> 16));
+			// outer arc
+			if (sw == 1) {
+				WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a1) >> 16));
 
-					WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a1) >> 16));
-					WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a1) >> 16));
-				}
+				WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a1) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a1) >> 16));
 			}
+		}
 
 		ptr_fill += pitch * r;
 
