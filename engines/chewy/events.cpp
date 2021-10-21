@@ -109,7 +109,7 @@ void EventsManager::delay(size_t time) {
 	do {
 		update();
 		currTime = g_system->getMillis();
-	} while (currTime >= expiryTime);
+	} while (currTime < expiryTime);
 }
 
 void EventsManager::clearEvents() {

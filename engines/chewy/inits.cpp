@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
@@ -575,5 +576,20 @@ void sound_exit() {
 	}
 #endif
 }
+
+#define CSP_INT "csp.int"
+
+void show_intro() {
+	if (!ConfMan.getBool("shown_intro")) {
+		ConfMan.setBool("shown_intro", true);
+		flags.NoPalAfterFlc = true;
+		flic_cut(135, 0);
+	}
+}
+
+void test_intro() {
+	// No implementation
+}
+
 
 } // namespace Chewy

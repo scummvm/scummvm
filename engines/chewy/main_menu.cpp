@@ -44,6 +44,8 @@ void MainMenu::execute() {
 	ailsnd->stop_mod();
 #endif
 
+	show_intro();
+
 	cur->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
