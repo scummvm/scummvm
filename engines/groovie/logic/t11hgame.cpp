@@ -50,6 +50,7 @@ void T11hGame::handleOp(uint8 op) {
 
 	case 2:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv)", op);
+		// NOTE: Reused in UHP
 		opBeehive();
 		break;
 
@@ -65,6 +66,7 @@ void T11hGame::handleOp(uint8 op) {
 
 	case 5:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", op);
+		// NOTE: Reused in UHP
 		opMouseTrap();
 		break;
 

@@ -51,14 +51,23 @@ ClanGame::~ClanGame() {
 
 void ClanGame::handleOp(uint8 op) {
 	switch (op) {
+	case 7:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Clandestiny unknown -> NOP", op);
+		break;
+
 	case 8:
-		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): Clandestiny Othello", op);
-		// TODO: Clandestiny Othello/Reversi puzzle (opOthello)
+		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): Clandestiny Othello / Reversi", op);
+		// NOTE: Reused in UHP
+		opOthello();
 		break;
 
 	default:
 		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Clandestiny Invalid -> NOP", op);
 	}
+}
+
+void ClanGame::opOthello() {
+	// TODO
 }
 
 } // namespace Groovie

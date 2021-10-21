@@ -38,6 +38,8 @@ public:
 
 private:
 	byte *_scriptVariables;
+
+	void opOthello();
 };
 
 } // namespace Groovie
