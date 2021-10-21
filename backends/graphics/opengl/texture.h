@@ -30,6 +30,8 @@
 
 #include "common/rect.h"
 
+class ScalerPluginObject;
+
 namespace OpenGL {
 
 class Shader;
@@ -229,6 +231,9 @@ public:
 	virtual void setColorKey(uint colorKey) {}
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
 
+	virtual void setScaler(uint scalerIndex, int scaleFactor) {}
+	virtual void unloadScaler() {}
+
 	/**
 	 * Update underlying OpenGL texture to reflect current state.
 	 */
@@ -288,6 +293,8 @@ public:
 protected:
 	const Graphics::PixelFormat _format;
 
+	void updateGLTexture(Common::Rect &dirtyArea);
+
 private:
 	GLTexture _glTexture;
 
@@ -334,6 +341,35 @@ public:
 
 	virtual void updateGLTexture();
 };
+
+#ifdef USE_SCALERS
+class ScaledTexture : public FakeTexture {
+public:
+	ScaledTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat);
+	virtual ~ScaledTexture();
+
+	virtual void allocate(uint width, uint height);
+
+	virtual uint getWidth() const { return _rgbData.w; }
+	virtual uint getHeight() const { return _rgbData.h; }
+	virtual Graphics::PixelFormat getFormat() const { return _fakeFormat; }
+
+	virtual bool hasPalette() const { return (_palette != nullptr); }
+
+	virtual Graphics::Surface *getSurface() { return &_rgbData; }
+	virtual const Graphics::Surface *getSurface() const { return &_rgbData; }
+
+	virtual void updateGLTexture();
+
+	virtual void setScaler(uint scalerIndex, int scaleFactor);
+	virtual void unloadScaler();
+protected:
+	Graphics::Surface *_convData;
+	ScalerPluginObject *_scalerPlugin;
+	uint _extraPixels;
+	uint _scaleFactor;
+};
+#endif
 
 #if !USE_FORCED_GLES
 class TextureTarget;

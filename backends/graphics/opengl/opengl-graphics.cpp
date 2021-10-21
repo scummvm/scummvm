@@ -45,6 +45,9 @@
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #endif
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
 
 #ifdef USE_PNG
 #include "image/png.h"
@@ -68,6 +71,9 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #ifdef USE_OSD
 	  , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
 	  _osdIconSurface(nullptr)
+#endif
+#ifdef USE_SCALERS
+	  , _scalerPlugins(ScalerMan.getPlugins())
 #endif
 	{
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -93,6 +99,9 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
+#ifdef USE_SCALERS
+	case OSystem::kFeatureScalers:
+#endif
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -287,6 +296,39 @@ int OpenGLGraphicsManager::getStretchMode() const {
 	return _stretchMode;
 }
 
+#ifdef USE_SCALERS
+uint OpenGLGraphicsManager::getDefaultScaler() const {
+	return ScalerMan.findScalerPluginIndex("normal");
+}
+
+uint OpenGLGraphicsManager::getDefaultScaleFactor() const {
+	return 1;
+}
+
+bool OpenGLGraphicsManager::setScaler(uint mode, int factor) {
+	assert(_transactionMode != kTransactionNone);
+
+	int newFactor;
+	if (factor == -1)
+		newFactor = getDefaultScaleFactor();
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(factor))
+		newFactor = factor;
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldState.scaleFactor))
+		newFactor = _oldState.scaleFactor;
+	else
+		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getFactor();
+
+	_currentState.scalerIndex = mode;
+	_currentState.scaleFactor = newFactor;
+
+	return true;
+}
+
+uint OpenGLGraphicsManager::getScaler() const {
+	return _currentState.scalerIndex;
+}
+#endif
+
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 
@@ -317,6 +359,13 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	if (Common::find(supportedFormats.begin(), supportedFormats.end(), _currentState.gameFormat) == supportedFormats.end()) {
 		_currentState.gameFormat = Graphics::PixelFormat::createFormatCLUT8();
 		transactionError |= OSystem::kTransactionFormatNotSupported;
+	}
+#endif
+
+#ifdef USE_SCALERS
+	if (_oldState.scaleFactor != _currentState.scaleFactor ||
+	    _oldState.scalerIndex != _currentState.scalerIndex) {
+		setupNewGameScreen = true;
 	}
 #endif
 
@@ -365,6 +414,11 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 					if (_oldState.filtering != _currentState.filtering) {
 						transactionError |= OSystem::kTransactionFilteringFailed;
 					}
+#ifdef USE_SCALERS
+					if (_oldState.scalerIndex != _currentState.scalerIndex) {
+						transactionError |= OSystem::kTransactionModeSwitchFailed;
+					}
+#endif
 
 					// Roll back to the old state.
 					_currentState = _oldState;
@@ -388,18 +442,28 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	} while (_transactionMode == kTransactionRollback);
 
 	if (setupNewGameScreen) {
+		if (_gameScreen)
+			_gameScreen->unloadScaler();
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
+		bool wantScaler = _currentState.scaleFactor > 1;
+
 #ifdef USE_RGB_COLOR
-		_gameScreen = createSurface(_currentState.gameFormat);
+		_gameScreen = createSurface(_currentState.gameFormat, false, wantScaler);
 #else
-		_gameScreen = createSurface(Graphics::PixelFormat::createFormatCLUT8());
+		_gameScreen = createSurface(Graphics::PixelFormat::createFormatCLUT8(), false, wantScaler);
 #endif
 		assert(_gameScreen);
 		if (_gameScreen->hasPalette()) {
 			_gameScreen->setPalette(0, 256, _gamePalette);
 		}
+
+#ifdef USE_SCALERS
+		if (wantScaler) {
+			_gameScreen->setScaler(_currentState.scalerIndex, _currentState.scaleFactor);
+		}
+#endif
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
 		_gameScreen->enableLinearFiltering(_currentState.filtering);
@@ -727,6 +791,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
+		// TODO: Enable SW scaling for cursors
 		_cursor = createSurface(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.filtering);
@@ -1091,8 +1156,24 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	g_context.reset();
 }
 
-Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha) {
+Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha, bool wantScaler) {
 	GLenum glIntFormat, glFormat, glType;
+
+#ifdef USE_SCALERS
+	if (wantScaler) {
+		// TODO: Ensure that the requested pixel format is supported by the scaler
+		if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
+			return new ScaledTexture(glIntFormat, glFormat, glType, format, format);
+		} else {
+#ifdef SCUMM_LITTLE_ENDIAN
+			return new ScaledTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
+#else
+			return new ScaledTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
+#endif
+		}
+	}
+#endif
+
 	if (format.bytesPerPixel == 1) {
 #if !USE_FORCED_GLES
 		if (TextureCLUT8GPU::isSupportedByContext()) {
@@ -1229,6 +1310,10 @@ bool OpenGLGraphicsManager::gameNeedsAspectRatioCorrection() const {
 	}
 
 	return false;
+}
+
+int OpenGLGraphicsManager::getGameRenderScale() const {
+	return _currentState.scaleFactor;
 }
 
 void OpenGLGraphicsManager::recalculateDisplayAreas() {
