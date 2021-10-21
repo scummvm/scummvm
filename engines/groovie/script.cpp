@@ -32,8 +32,9 @@
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
 #include "groovie/logic/cell.h"
-#include "groovie/logic/tlcgame.h"
+#include "groovie/logic/clangame.h"
 #include "groovie/logic/t11hgame.h"
+#include "groovie/logic/tlcgame.h"
 
 #include "gui/saveload.h"
 
@@ -2086,15 +2087,34 @@ void Script::o_gamelogic() {
 		break;
 
 	case kGroovieT11H:
-	case kGroovieUHP:
 		if (!_t11hGame)
 			_t11hGame = new T11hGame(_variables);
 
-		// TODO: Separate UHP game logic in 11th Hour / Clandestiny
 		_t11hGame->handleOp(param);
 		break;
 
+	case kGroovieCDY:
+		if (!_clanGame)
+			_clanGame = new ClanGame(_variables);
+
+		_clanGame->handleOp(param);
+		break;
+
+	case kGroovieUHP:
+		if (param != 8) {
+			if (!_t11hGame)
+				_t11hGame = new T11hGame(_variables);
+			
+			_t11hGame->handleOp(param);
+		} else {
+			if (!_clanGame)
+				_clanGame = new ClanGame(_variables);
+
+			_clanGame->handleOp(param);
+		}
+		break;
 #endif
+
 	default:
 		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", param);
 		warning("Groovie::Script: OpCode 0x42 for (GameSpecial) current game not implemented yet.");

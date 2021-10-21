@@ -23,11 +23,21 @@
 #ifndef GROOVIE_LOGIC_CLANGAME_H
 #define GROOVIE_LOGIC_CLANGAME_H
 
+#include "common/scummsys.h"
+
 namespace Groovie {
 
 class ClanGame {
 public:
+	ClanGame(byte *scriptVariables);
+	~ClanGame();
+
+	void handleOp(uint8 op);
+
 	static const char *getClanMusicFilename(int musicId);
+
+private:
+	byte *_scriptVariables;
 };
 
 } // namespace Groovie

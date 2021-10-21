@@ -43,6 +43,7 @@ class Debugger;
 class GroovieEngine;
 class TlcGame;
 class T11hGame;
+class ClanGame;
 
 class Script {
 	friend class Debugger;
@@ -135,6 +136,7 @@ private:
 	CellGame *_cellGame;
 	TlcGame *_tlcGame;
 	T11hGame *_t11hGame;
+	ClanGame *_clanGame;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);

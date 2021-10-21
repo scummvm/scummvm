@@ -44,7 +44,7 @@ T11hGame::~T11hGame() {
 void T11hGame::handleOp(uint8 op) {
 	switch (op) {
 	case 1:
-		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv) TODO", op);
+		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv)", op);
 		opConnectFour();
 		break;
 
@@ -71,11 +71,6 @@ void T11hGame::handleOp(uint8 op) {
 	case 6:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente (pt.grv)", op);
 		opPente();
-		break;
-
-	case 8:	// used in UHP
-		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): UHP Othello", op);
-		// TODO: Same as the Clandestiny Othello/Reversi puzzle (opOthello)
 		break;
 
 	default:

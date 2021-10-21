@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/debug.h"
+#include "groovie/groovie.h"
 #include "groovie/logic/clangame.h"
 
 namespace Groovie {
@@ -38,6 +40,25 @@ const char *kClanMusicFiles[] = {"mbf_arb1", "mbf_arm1", "mbf_bal1", "mbf_c2p2",
 // Gets the filename of the background music file.
 const char *ClanGame::getClanMusicFilename(int musicId) {
 	return kClanMusicFiles[musicId];
+}
+
+ClanGame::ClanGame(byte *scriptVariables)
+	: _scriptVariables(scriptVariables) {
+}
+
+ClanGame::~ClanGame() {
+}
+
+void ClanGame::handleOp(uint8 op) {
+	switch (op) {
+	case 8:
+		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): Clandestiny Othello", op);
+		// TODO: Clandestiny Othello/Reversi puzzle (opOthello)
+		break;
+
+	default:
+		debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Clandestiny Invalid -> NOP", op);
+	}
 }
 
 } // namespace Groovie
