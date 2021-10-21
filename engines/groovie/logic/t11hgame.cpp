@@ -672,7 +672,7 @@ void T11hGame::opGallery() {
 	int selectedPieces = 0;
 	for (int i = 0; i < kPieceCount; i++) {
 		status1[i] = 0;
-		if (pieceStatus[i + 1] == kPieceSelected) {
+		if (pieceStatus[i] == kPieceSelected) {
 			for (int j = 0; j < kPieceCount; j++)
 				status2[j] = pieceStatus[j];
 
@@ -684,7 +684,7 @@ void T11hGame::opGallery() {
 			while (curLink != 0) {
 				linkedPiece++;
 				status2[curLink - 1] = kPieceUnselected;
-				curLink = kGalleryLinks[linkedPiece - 1][i];
+				curLink = kGalleryLinks[i][linkedPiece - 1];
 			}
 			status1[i] = opGalleryAI(status2, 1);
 			if (status1[i] == kPieceSelected) {
@@ -754,7 +754,7 @@ byte T11hGame::opGalleryAI(byte *pieceStatus, int depth) {
 			while (curLink != 0) {
 				linkedPiece++;
 				status2[curLink - 1] = kPieceUnselected;
-				curLink = kGalleryLinks[linkedPiece - 1][i];
+				curLink = kGalleryLinks[i][linkedPiece - 1];
 			}
 			status1[i] = opGalleryAI(status2, depth == 0 ? 1 : 0);
 			if (!depth && status1[i] == kPieceSelected) {
