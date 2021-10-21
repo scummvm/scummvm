@@ -295,29 +295,6 @@ private:
 	Graphics::Surface _userPixelData;
 };
 
-class TextureCLUT8 : public Texture {
-public:
-	TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format);
-	virtual ~TextureCLUT8();
-
-	virtual void allocate(uint width, uint height);
-
-	virtual Graphics::PixelFormat getFormat() const;
-
-	virtual bool hasPalette() const { return true; }
-
-	virtual void setColorKey(uint colorKey);
-	virtual void setPalette(uint start, uint colors, const byte *palData);
-
-	virtual Graphics::Surface *getSurface() { return &_clut8Data; }
-	virtual const Graphics::Surface *getSurface() const { return &_clut8Data; }
-
-	virtual void updateGLTexture();
-private:
-	Graphics::Surface _clut8Data;
-	byte *_palette;
-};
-
 class FakeTexture : public Texture {
 public:
 	FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat);
@@ -327,6 +304,11 @@ public:
 
 	virtual Graphics::PixelFormat getFormat() const { return _fakeFormat; }
 
+	virtual bool hasPalette() const { return (_palette != nullptr); }
+
+	virtual void setColorKey(uint colorKey);
+	virtual void setPalette(uint start, uint colors, const byte *palData);
+
 	virtual Graphics::Surface *getSurface() { return &_rgbData; }
 	virtual const Graphics::Surface *getSurface() const { return &_rgbData; }
 
@@ -334,6 +316,7 @@ public:
 protected:
 	Graphics::Surface _rgbData;
 	Graphics::PixelFormat _fakeFormat;
+	uint32 *_palette;
 };
 
 class TextureRGB555 : public FakeTexture {
