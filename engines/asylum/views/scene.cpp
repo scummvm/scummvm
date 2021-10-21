@@ -840,6 +840,10 @@ void Scene::updateAmbientSounds() {
 
 		for (int32 f = 0; f < 6; f++) {
 			int32 gameFlag = snd->flagNum[f];
+
+			if (!gameFlag)
+				break;
+
 			if (gameFlag == 99999)
 				continue;
 
@@ -855,6 +859,7 @@ void Scene::updateAmbientSounds() {
 				}
 			}
 		}
+
 		if (processSound) {
 			if (_vm->sound()->isPlaying(snd->resourceId)) {
 
@@ -894,9 +899,6 @@ void Scene::updateAmbientSounds() {
 						} else {
 							int32 tmpVol = volume + (int32)_vm->getRandom(500) * ((_vm->getRandom(100) >= 50) ? -1 : 1);
 
-							if (tmpVol <= -10000)
-								tmpVol = -10000;
-
 							if (tmpVol >= 0)
 								tmpVol = 0;
 							else if (tmpVol <= -10000)
@@ -906,7 +908,7 @@ void Scene::updateAmbientSounds() {
 						}
 					}
 				} else if (LOBYTE(snd->flags) & 4) {
-					if (ambientTick > _vm->getTick()) {
+					if (ambientTick < _vm->getTick()) {
 						if (snd->nextTick >= 0)
 							getSharedData()->setAmbientTick(i, (uint32)((int32)_vm->getTick() + snd->nextTick * 60000));
 						else
