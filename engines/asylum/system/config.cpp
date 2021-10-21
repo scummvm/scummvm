@@ -41,7 +41,11 @@ ConfigurationManager::ConfigurationManager() {
 	ConfMan.registerDefault("show_encounter_subtitles", true);
 	ConfMan.registerDefault("gamma_level", 0);
 	ConfMan.registerDefault("ambient_volume", -2000);
-	ConfMan.registerDefault("movie_volume", -1500);
+	ConfMan.registerDefault("movie_volume",    -500);
+	ConfMan.registerDefault("music_volume",   -1500);
+	ConfMan.registerDefault("sfx_volume",     -1000);
+	ConfMan.registerDefault("speech_volume",   -750);
+
 	ConfMan.registerDefault("music_status", true);
 	ConfMan.registerDefault("reverse_stereo", false);
 	ConfMan.registerDefault("performance", 4);
