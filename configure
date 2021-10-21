@@ -3186,7 +3186,6 @@ if test -n "$_host"; then
 				_backend="android"
 			fi
 			_port_mk="backends/platform/$_backend/android.mk"
-			_build_scalers=no
 			_build_aspect=no
 			_seq_midi=no
 			_timidity=no
