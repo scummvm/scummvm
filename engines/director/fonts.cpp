@@ -66,6 +66,9 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 }
 
 void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
+	if (stream.size() == 0)
+		return;
+
 	debugC(2, kDebugLoading, "****** Loading FontMap Fmap");
 
 	uint32 mapLength = stream.readUint32();
