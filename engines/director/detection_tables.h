@@ -295,6 +295,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "oztma",				"Oz: The Magical Adventure" },
 	{ "paws",				"P.A.W.S.: Personal Automated Wagging System" },
 	{ "pbbear",				"P. B. Bear's Birthday Party" },
+	{ "pecosbill",			"Pecos Bill" },
 	{ "perdido",			"Lost in the Amazon" },
 	{ "peterrabbit",		"The Adventures of Peter Rabbit and Benjamin Bunny" },
 	{ "physicus",			"Physicus: Save the World with Science!" },
@@ -2810,6 +2811,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Win/Mac versions are D3
 	PIPGAME1_l("lzone", "", "L-ZONE", "07c3095bd36e5aed00ba12f17f761070", 60352, Common::JA_JPN, 400),
 
+	// Pre-rendered CG animated adventure based on the popular comedy manga
+	// Developed by Future Pirates, published by Toshiba EMI
+	MACGAME1_l("macaroni", "", "Macaroni.PowerMac", "be7faef1b5c713e2d13a693eb6e1f5c9", 180281, Common::JA_JPN, 404),
+
 	MACDEMO1("macos8", "Tour", "Mac OS 8 Tour", "2332900b20b0d33e0617e5e7505923e8", 776072, 404),
 
 	// Mac filenames contain n° instead of no
@@ -3059,6 +3064,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("paws", "Making of", "MAKEPAWS.EXE", "559f4c728a348c18b96cddaf102e3413", 874293, 404),
 
 	WINDEMO1("pbbear", "Sampler", "PBBEAR.EXE", "dc58e6e06807f4a4a4cc278f8748659f", 696807, 404),
+
+	MACGAME1("pecosbill", "", "Pecos Bill", "67f572196550aedb1f9523d782022be0", 483500, 404),
+	WINGAME1("pecosbill", "", "PECOS.EXE", "948eb8995faf757e4ad899ea45b3fae7", 700035, 404),
 
 	MACGAME1_l("petepilotti1", "",	   "Seikkailu Lapponiassa", "a8e65a2268226bd59f12ebdc58a221f3", 483746, Common::FI_FIN, 404),
 	MACDEMO1_l("petepilotti1", "Demo", "Pete Pilotin esittely", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483746, Common::FI_FIN, 404),
@@ -4317,10 +4325,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("learninternet", "", "VIDPROF.EXE", "b0f3841f6e8005e519445b22de37749b", 2674733, 600),
 	WINGAME1("learnworks2", "v4.0", "Vidprof.exe", "b0f3841f6e8005e519445b22de37749b", 2854401, 600),
-
-	// Pre-rendered CG animated adventure based on the popular comedy manga
-	// Developed by Future Pirates, published by Toshiba EMI
-	MACGAME1_l("macaroni", "", "Macaroni.PowerMac", "be7faef1b5c713e2d13a693eb6e1f5c9", 180281, Common::JA_JPN, 404),
 
 	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "b0f3841f6e8005e519445b22de37749b", 1317661, 600),
 
