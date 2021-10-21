@@ -193,6 +193,7 @@ protected:
 	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
 	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
 	int SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key);
+	bool _vsync;
 #endif
 
 	/** Unseen game screen */

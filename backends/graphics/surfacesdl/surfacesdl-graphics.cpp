@@ -2560,6 +2560,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	deinitializeRenderer();
 
 	uint32 createWindowFlags = SDL_WINDOW_RESIZABLE;
+	uint32 rendererFlags = 0;
 	if ((flags & SDL_FULLSCREEN) != 0) {
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
@@ -2576,7 +2577,14 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
 
-	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, 0);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_vsync = ConfMan.getBool("vsync");
+	if (_vsync) {
+		rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+	}
+#endif
+
+	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
 	if (!_renderer) {
 		deinitializeRenderer();
 		return nullptr;
