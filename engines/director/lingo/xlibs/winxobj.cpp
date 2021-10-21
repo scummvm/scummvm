@@ -40,14 +40,16 @@ namespace Director {
 
 const char *RearWindowXObj::xlibName = "RearWindow";
 const char *RearWindowXObj::fileNames[] = {
+	"RearWindow.Xobj",
 	"winXObj",
 	0
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",				RearWindowXObj::m_new,				1,	1,	400 },	// D4
-	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,	0,	0,	400 },	// D4
-	{ "PatToWindow",		RearWindowXObj::m_patToWindow,		1,	1,	400 },	// D4
+	{ "new",				RearWindowXObj::m_new,					1,	1,	400 },	// D4
+	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4
+	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
+	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -82,6 +84,10 @@ void RearWindowXObj::m_getMemoryNeeded(int nargs) {
 }
 
 void RearWindowXObj::m_patToWindow(int nargs) {
+	g_lingo->pop();
+}
+
+void RearWindowXObj::m_indexColorToWindow(int nargs) {
 	g_lingo->pop();
 }
 

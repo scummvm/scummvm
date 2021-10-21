@@ -42,6 +42,7 @@ void close(int type);
 void m_new(int nargs);
 void m_getMemoryNeeded(int nargs);
 void m_patToWindow(int nargs);
+void m_indexColorToWindow(int nargs);
 
 } // End of namespace RearWindowXObj
 
