@@ -42,9 +42,10 @@ MODULE_OBJS = \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/movemousexobj.o \
-	lingo/xlibs/palxobj.o \
 	lingo/xlibs/orthoplayxobj.o \
+	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
