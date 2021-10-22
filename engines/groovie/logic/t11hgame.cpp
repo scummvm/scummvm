@@ -325,8 +325,8 @@ void T11hGame::opGallery() {
 		selectedPiece++;
 	}
 
-	setScriptVar(47, (selectedPiece + 1) / 10);
-	setScriptVar(48, (selectedPiece + 1) % 10);
+	_scriptVariables[47] = (selectedPiece + 1) / 10;
+	_scriptVariables[48] = (selectedPiece + 1) % 10;
 }
 
 byte T11hGame::opGalleryAI(byte *pieceStatus, int depth) {
@@ -384,12 +384,6 @@ byte T11hGame::opGalleryAI(byte *pieceStatus, int depth) {
 
 void T11hGame::opTriangle() {
 	// TODO
-}
-
-// This function is mainly for debugging purposes
-void inline T11hGame::setScriptVar(uint16 var, byte value) {
-	_scriptVariables[var] = value;
-	debugC(5, kDebugTlcGame, "script variable[0x%03X] = %d (0x%04X)", var, value, value);
 }
 
 } // End of Namespace Groovie

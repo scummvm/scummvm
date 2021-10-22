@@ -53,7 +53,6 @@ private:
 	void opTriangle();
 
 	byte opGalleryAI(byte *pieceStatus, int depth);
-	void inline setScriptVar(uint16 var, byte value);
 
 	void clearAIs();
 
