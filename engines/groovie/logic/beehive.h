@@ -23,12 +23,25 @@
 #ifndef GROOVIE_LOGIC_BEEHIVE_H
 #define GROOVIE_LOGIC_BEEHIVE_H
 
+#include "common/system.h"
+
 namespace Groovie {
 
 class BeehiveGame {
 public:
 	BeehiveGame();
 	~BeehiveGame();
+
+	void run(byte *scriptVariables);
+
+private:
+	void sub02(int8 *a1, int8 *a2);
+	void sub18(int8 a1, int8 *a2, int8 *a3);
+	int8 getHexDifference();
+	int8 getTotal(int8 *hexagons);
+
+	int8 _beehiveState[61];
+
 };
 
 } // End of Groovie namespace

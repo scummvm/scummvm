@@ -25,6 +25,7 @@
 
 #include "common/textconsole.h"
 #include "common/random.h"
+#include "groovie/logic/beehive.h"
 
 namespace Groovie {
 
@@ -47,14 +48,11 @@ private:
 
 	void opMouseTrap();
 	void opConnectFour();
-	void opBeehive();
 	void opPente();
 	void opGallery();
 	void opTriangle();
 
 	byte opGalleryAI(byte *pieceStatus, int depth);
-	int8 opBeehiveGetHexDifference();
-	int8 opBeehiveGetTotal(int8 *hexagons);
 	void inline setScriptVar(uint16 var, byte value);
 	void inline setScriptVar16(uint16 var, uint16 value);
 	uint16 inline getScriptVar16(uint16 var);
@@ -64,7 +62,7 @@ private:
 	T11hCake *_cake;
 	byte *_scriptVariables;
 
-	int8 _beehiveHexagons[61];
+	BeehiveGame _beehive;
 
 	static const byte kGalleryLinks[21][10];
 #endif

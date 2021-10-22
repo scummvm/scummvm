@@ -35,7 +35,7 @@
 namespace Groovie {
 
 T11hGame::T11hGame(byte *scriptVariables)
-	: _random("GroovieT11hGame"), _scriptVariables(scriptVariables), _cake(NULL), _beehiveHexagons() {
+	: _random("GroovieT11hGame"), _scriptVariables(scriptVariables), _cake(NULL) {
 }
 
 T11hGame::~T11hGame() {
@@ -51,7 +51,7 @@ void T11hGame::handleOp(uint8 op) {
 	case 2:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv)", op);
 		// NOTE: Reused in UHP
-		opBeehive();
+		_beehive.run(_scriptVariables);
 		break;
 
 	case 3:
@@ -501,80 +501,6 @@ void T11hGame::clearAIs() {
 		delete _cake;
 		_cake = NULL;
 	}
-}
-
-
-/*
- * Beehive puzzle
- *
- * An infection-style game in which the player must cover more
- * territory than the computer. It's similar to the microscope puzzle
- * in the 7th Guest. The playfield is a honeycomb made of 61
- * hexagons. The hexagons are numbered starting from the top-left
- * corner, with a direction from bottom left to top right.
- */
-void T11hGame::opBeehive() {
-	// TODO: Finish the logic
-	int8 *hexagons = (int8 *)_scriptVariables + 25;
-	int8 *hexDifference = (int8 *)_scriptVariables + 13;
-	byte op = _scriptVariables[14] - 1;
-
-	enum kBeehiveColor {
-		kBeehiveColorYellow = -1,
-		kBeehiveColorRed = 1
-	};
-
-	warning("Beehive subop %d", op);
-
-	//*hexDifference = 4;
-	*hexDifference = 5; // DEBUG: set the difference to 5 to skip the game
-
-	switch (op) {
-	case 0:	// init board's hexagons
-		memset(_beehiveHexagons, 0, 60);
-		_beehiveHexagons[0] = kBeehiveColorYellow;
-		_beehiveHexagons[4] = kBeehiveColorRed;
-		_beehiveHexagons[34] = kBeehiveColorYellow;
-		_beehiveHexagons[60] = kBeehiveColorRed;
-		_beehiveHexagons[56] = kBeehiveColorYellow;
-		_beehiveHexagons[26] = kBeehiveColorRed;
-		break;
-	case 1:
-		memset(hexagons, 0, 60);
-		_scriptVariables[85] = 0;
-		//opBeehiveSub2();	// TODO
-		// TODO: Check opBeehiveSub2()'s result
-		//*hexDifference = opBeehiveGetHexDifference();
-		break;
-	case 2:
-		memset(hexagons, 0, 60);
-		_scriptVariables[85] = 0;
-		//opBeehiveSub4();	// TODO
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	case 6:
-		break;
-	default:
-		break;
-	}
-}
-
-int8 T11hGame::opBeehiveGetHexDifference() {
-	return (opBeehiveGetTotal(_beehiveHexagons) >= 0) + 5;
-}
-
-int8 T11hGame::opBeehiveGetTotal(int8 *hexagons) {
-	int8 result = 0;
-
-	for (int i = 0; i < 61; i++)
-		result += hexagons[i];
-
-	return result;
 }
 
 void T11hGame::opPente() {
