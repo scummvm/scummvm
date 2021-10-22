@@ -32,9 +32,6 @@
 
 namespace Groovie {
 
-class GroovieEngine;
-class Script;
-
 class CellGame {
 public:
 	CellGame();

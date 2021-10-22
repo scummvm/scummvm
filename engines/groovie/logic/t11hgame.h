@@ -54,8 +54,6 @@ private:
 
 	byte opGalleryAI(byte *pieceStatus, int depth);
 	void inline setScriptVar(uint16 var, byte value);
-	void inline setScriptVar16(uint16 var, uint16 value);
-	uint16 inline getScriptVar16(uint16 var);
 
 	void clearAIs();
 
