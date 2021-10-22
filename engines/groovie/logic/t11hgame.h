@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/random.h"
 #include "groovie/logic/beehive.h"
+#include "groovie/logic/gallery.h"
 
 namespace Groovie {
 
@@ -60,8 +61,7 @@ private:
 	byte *_scriptVariables;
 
 	BeehiveGame _beehive;
-
-	static const byte kGalleryLinks[21][10];
+	GalleryGame _gallery;
 #endif
 };
 
