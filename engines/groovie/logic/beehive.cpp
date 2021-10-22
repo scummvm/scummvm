@@ -325,17 +325,125 @@ void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 	}
 }
 
+int8 BeehiveGame::sub11(int8 *beehiveState, int8 *a2, int8 *a3, int8 *a4, int8 a5, int8 a6, int8 *a7) {
+	return 0;
+}
+
+void BeehiveGame::sub15(int8 *beehiveState, int8 a2, int8 *a3) {
+	beehiveState[a3[2]] = a2;
+
+	if (*a3 == 2)
+		beehiveState[a3[1]] = 0;
+
+	for (int i = 0; i < 6; ++i) {
+		int8 v4 = beehiveLogicTable1[6 * a3[2] + i];
+		if (v4 != -1) {
+			if (!(a2 + beehiveState[v4]))
+				beehiveState[v4] = a2;
+		}
+	}
+}
+
 void BeehiveGame::sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5) {
+	int8 params[4];
+
+	params[0] = sub19(a1, a2);
+	params[1] = a1;
+	params[2] = a2;
+	*a3 = params[0];
+	sub17(_beehiveState, -1, params, a4, a5);
 }
 
 void BeehiveGame::sub17(int8 *beehiveState, int8 a2, int8 *a3, int8 *a4, int8 *a5) {
+	beehiveState[a3[2]] = a2;
+
+	if (*a3 == 2)
+		beehiveState[a3[1]] = 0;
+
+	*a4 = 0;
+
+	for (int i = 0; i < 6; i++) {
+		int8 v6 = beehiveLogicTable1[6 * a3[2] + i];
+		if (v6 != -1) {
+			if (!(a2 + beehiveState[v6])) {
+				beehiveState[v6] = a2;
+				a5[(*a4)++] = beehiveLogicTable1[6 * a3[2] + i];
+			}
+		}
+	}
 }
 
 void BeehiveGame::sub18(int8 a1, int8 *a2, int8 *a3) {
+	*a2 = 0;
+
+	for (int i = 0; i < 6; i++) {
+		int8 val = beehiveLogicTable1[6 * a1 + i];
+		if (val != -1 && !_beehiveState[val])
+			a3[(*a2)++] = val;
+	}
+
+	for (int i = 0; i < 12; i++) {
+		int val = beehiveLogicTable2[12 * a1 + i];
+		if (val != -1 && !_beehiveState[val])
+			a3[(*a2)++] = val;
+	}
 }
 
-int8 BeehiveGame::calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int a5, int8 *a6) {
-	return 0;
+int8 BeehiveGame::sub19(int8 a1, int8 a2) {
+	for (int i = 0; i < 6; i++)
+		if (beehiveLogicTable1[6 * a1 + i] == a2)
+			return 1;
+
+	return 2;
+}
+
+int8 BeehiveGame::calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int a5, int8 *params) {
+	int8 paramsloc[4];
+	int8 params2[3];
+	int8 state[64];
+
+	if (!depth)
+		return getTotal(beehiveState);
+
+	int8 v7 = -125 * a3;
+	int8 v14 = 0;
+	int8 v13 = 0;
+	int8 v15 = -1;
+
+	if (sub11(beehiveState, &v15, &v14, &v13, a3, a5, params2)) {
+		do {
+			for (int i = 0; i < 61; i++)
+				state[i] = beehiveState[i];
+
+			sub15(state, a3, params2);
+			int8 v8 = calcMove(state, v7, -a3, depth - 1, a5, paramsloc);
+
+			if (a3 <= 0) {
+				if (v8 < v7) {
+					params[0] = params2[0];
+					params[1] = params2[1];
+					params[2] = params2[2];
+					v7 = v8;
+				}
+				if (a2 >= v7)
+					return v7;
+			} else {
+				if (v8 > v7) {
+					params[0] = params2[0];
+					params[1] = params2[1];
+					params[2] = params2[2];
+					v7 = v8;
+				}
+				if (a2 <= v7)
+					return v7;
+			}
+		} while (sub11(beehiveState, &v15, &v14, &v13, a3, a5, params2));
+	}
+
+	if (depth < 4 && -125 * a3 == v7)
+		return getTotal(beehiveState);
+	else
+		return v7;
 }
 
 int8 BeehiveGame::getHexDifference() {
@@ -352,6 +460,13 @@ int8 BeehiveGame::getTotal(int8 *hexagons) {
 }
 
 int8 BeehiveGame::findCell(int8 *beehiveState, int8 *pos, int8 key) {
+	for (int i = *pos + 1; i < 61; i++)  {
+		if (beehiveState[i] == key) {
+			*pos = i;
+			return 1;
+		}
+	}
+
 	return 0;
 }
 
