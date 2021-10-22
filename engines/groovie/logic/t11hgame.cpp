@@ -664,7 +664,7 @@ void T11hGame::opGallery() {
 	byte status1[kPieceCount];
 	byte status2[kPieceCount];
 
-	memcpy(pieceStatus, _scriptVariables + 25, kPieceCount);
+	memcpy(pieceStatus, _scriptVariables + 26, kPieceCount);
 
 	int selectedPieces = 0;
 	for (int i = 0; i < kPieceCount; i++) {
