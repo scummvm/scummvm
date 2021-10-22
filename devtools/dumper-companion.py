@@ -481,7 +481,10 @@ def generate_parser() -> argparse.ArgumentParser:
 if __name__ == "__main__":
     parser = generate_parser()
     args = parser.parse_args()
-    exit(args.func(args))
+    try:
+        exit(args.func(args))
+    except AttributeError:
+        parser.error("too few arguments")
 
 ### Test functions
 
