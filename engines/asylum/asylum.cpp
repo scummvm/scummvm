@@ -160,6 +160,8 @@ Common::Error AsylumEngine::run() {
 
 		if (!noError)
 			_handler = _menu;
+		else
+			menu()->setLoadingDuringStartup();
 
 		// Load config
 		Config.read();

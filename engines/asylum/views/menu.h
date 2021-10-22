@@ -62,6 +62,7 @@ public:
 	// Savegames
 	void setDword455C78(bool state) { _dword_455C78 = state; }
 	void setDword455C80(bool state) { _dword_455C80 = state; }
+	void setLoadingDuringStartup()  { _loadingDuringStartup = true; }
 
 	bool isEditingSavegameName() { return _activeScreen == kMenuSaveGame && _isEditingSavegameName; };
 
@@ -127,6 +128,7 @@ private:
 	// Savegames
 	Common::String _previousName;
 	int32 _prefixWidth;
+	bool _loadingDuringStartup;
 
 	/**
 	 * Setups menu screen

@@ -78,6 +78,7 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 
 	// Savegames
 	_prefixWidth = 0;
+	_loadingDuringStartup = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -355,7 +356,8 @@ bool Menu::init() {
 			_showMovie = true;
 
 			// Play start video
-			getVideo()->play(0, this);
+			if (!_loadingDuringStartup)
+				getVideo()->play(0, this);
 
 			// If no savegame is present, start the game directly
 			if (!getSaveLoad()->hasSavegames()) {
