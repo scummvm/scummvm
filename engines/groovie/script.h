@@ -24,6 +24,10 @@
 #define GROOVIE_SCRIPT_H
 
 #include "groovie/groovie.h"
+#include "groovie/logic/beehive.h"
+#include "groovie/logic/cake.h"
+#include "groovie/logic/gallery.h"
+#include "groovie/logic/mousetrap.h"
 
 #include "common/random.h"
 #include "common/rect.h"
@@ -42,8 +46,6 @@ class CellGame;
 class Debugger;
 class GroovieEngine;
 class TlcGame;
-class T11hGame;
-class ClanGame;
 
 class Script {
 	friend class Debugger;
@@ -135,8 +137,6 @@ private:
 	// Special classes depending on played game
 	CellGame *_cellGame;
 	TlcGame *_tlcGame;
-	T11hGame *_t11hGame;
-	ClanGame *_clanGame;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);
@@ -259,6 +259,11 @@ private:
 	void o2_playsound();
 	void o2_check_sounds_overlays();
 	void o2_preview_loadgame();
+
+	CakeGame _cake;
+	BeehiveGame _beehive;
+	GalleryGame _gallery;
+	MouseTrapGame _mouseTrap;
 };
 
 } // End of Groovie namespace

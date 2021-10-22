@@ -20,9 +20,8 @@ ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
 	logic/beehive.o \
 	logic/cake.o \
-	logic/clangame.o \
 	logic/gallery.o \
-	logic/t11hgame.o \
+	logic/mousetrap.o \
 	logic/tlcgame.o \
 	video/roq.o
 endif

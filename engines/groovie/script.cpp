@@ -32,8 +32,7 @@
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
 #include "groovie/logic/cell.h"
-#include "groovie/logic/clangame.h"
-#include "groovie/logic/t11hgame.h"
+#include "groovie/logic/logic.h"
 #include "groovie/logic/tlcgame.h"
 
 #include "gui/saveload.h"
@@ -75,7 +74,7 @@ const byte t7gMidiInitScript[] = {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(UINT_MAX), _cellGame(NULL), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts"), _tlcGame(0), _t11hGame(0) {
+	_version(version), _random("GroovieScripts"), _tlcGame(0) {
 
 	// Initialize the opcode set depending on the engine version
 	if (version == kGroovieT7G) {
@@ -119,7 +118,6 @@ Script::~Script() {
 	delete _videoFile;
 	delete _cellGame;
 	delete _tlcGame;
-	delete _t11hGame;
 }
 
 void Script::setVariable(uint16 variablenum, byte value) {
@@ -2056,8 +2054,10 @@ void Script::o2_setvideoskip() {
 	debugC(1, kDebugScript, "Groovie::Script: SetVideoSkip (0x%04X)", _videoSkipAddress);
 }
 
-// This function depends on the actual game played. So it is different for 
-// T7G, 11H, TLC, ...
+// This function depends on the actual game played. There was an initial version
+// for T7G, and then it kept being expanded in newer games (11H, Clan, UHP). This
+// means that newer games contained logic used in older ones (e.g. Clandestiny
+// and UHP include the hardcoded puzzle logic of 11H).
 void Script::o_gamelogic() {
 	uint8 param = readScript8bits();
 
@@ -2079,39 +2079,54 @@ void Script::o_gamelogic() {
 		break;
 
 #ifdef ENABLE_GROOVIE2
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+		switch (param) {
+		case 1:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv)", param);
+			_cake.run(_variables);
+			break;
+		case 2:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H/UHP Beehive Puzzle in the top room (hs.grv)", param);
+			_beehive.run(_variables);
+			break;
+		case 3:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv)", param);
+			_gallery.run(_variables);
+			break;
+		case 4:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Triangle in the Chapel (tx.grv)", param);
+			// TODO
+			break;
+		case 5:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H/UHP Mouse Trap in the lab (al.grv)", param);
+			_mouseTrap.run(_variables);
+			break;
+		case 6:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente - final puzzle (pt.grv)", param);
+			// TODO
+			// For now, just auto-solve the puzzle, so the player can continue
+			_variables[5] = 4;
+			break;
+		case 7:
+			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Clandestiny unknown -> NOP", param);
+			// TODO
+			break;
+		case 8:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): Clandestiny/UHP Othello / Reversi", param);
+			// TODO
+			break;
+		default:
+			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Invalid -> NOP", param);
+		}
+		break;
+
 	case kGroovieTLC:
 		if (!_tlcGame)
 			_tlcGame = new TlcGame(_variables);
 
 		_tlcGame->handleOp(param);
-		break;
-
-	case kGroovieT11H:
-		if (!_t11hGame)
-			_t11hGame = new T11hGame(_variables);
-
-		_t11hGame->handleOp(param);
-		break;
-
-	case kGroovieCDY:
-		if (!_clanGame)
-			_clanGame = new ClanGame(_variables);
-
-		_clanGame->handleOp(param);
-		break;
-
-	case kGroovieUHP:
-		if (param != 8) {
-			if (!_t11hGame)
-				_t11hGame = new T11hGame(_variables);
-			
-			_t11hGame->handleOp(param);
-		} else {
-			if (!_clanGame)
-				_clanGame = new ClanGame(_variables);
-
-			_clanGame->handleOp(param);
-		}
 		break;
 #endif
 
