@@ -1662,7 +1662,7 @@ bool Console::cmdListSaves(int argc, const char **argv) {
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
-	debugPrintf("Available classes (parse a parameter to filter the table by a specific class):\n");
+	debugPrintf("Available classes (pass a parameter to filter the table by a specific class):\n");
 
 	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
 		Class temp = _engine->_gamestate->_segMan->_classTable[i];
