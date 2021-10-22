@@ -98,7 +98,7 @@ bool Puzzle::update(const AsylumEvent &evt) {
 			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->setNextScreenUpdate(ticks + 55);
+			getSharedData()->setNextScreenUpdate(ticks + 40);
 		}
 	}
 
