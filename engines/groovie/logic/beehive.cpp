@@ -20,6 +20,7 @@
  *
  */
 
+#include "groovie/groovie.h"
 #include "groovie/logic/beehive.h"
 
 /*
@@ -55,7 +56,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		kBeehiveColorRed = 1
 	};
 
-	warning("Beehive subop %d", op);
+	debugC(1, kDebugScript, "Beehive subop %d", op);
 
 	int8 v21, v22, v24;
 	int8 tempState[64];
