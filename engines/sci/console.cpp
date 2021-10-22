@@ -1673,7 +1673,9 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 						className,
 						PRINT_REG(temp.reg),
 						temp.script);
-			} else debugPrintf(" Class 0x%x (not loaded; can't get name) (script %d)\n", i, temp.script);
+			}
+		} else if (argc == 1) {
+			debugPrintf(" Class 0x%x (not loaded; can't get name) (script %d)\n", i, temp.script);
 		}
 	}
 
