@@ -985,18 +985,6 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 	ConfMan.flushToDisk();
 }
 
-// Music plugins
-
-#include "audio/musicplugin.h"
-
-namespace Common {
-DECLARE_SINGLETON(MusicManager);
-}
-
-const PluginList &MusicManager::getPlugins() const {
-	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
-}
-
 // Scaler plugins
 
 #include "graphics/scalerplugin.h"
