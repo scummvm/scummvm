@@ -18,6 +18,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
+	logic/beehive.o \
 	logic/clangame.o \
 	logic/t11hgame.o \
 	logic/tlcgame.o \
