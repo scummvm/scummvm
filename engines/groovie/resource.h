@@ -47,6 +47,8 @@ public:
 	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 protected:
+	void dumpResource(Common::String name, Common::SeekableReadStream *file);
+
 	Common::Array<Common::String> _gjds;
 
 	uint16 _lastGjd;

@@ -26,6 +26,7 @@
 #include "common/macresman.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 
 #include "groovie/resource.h"
 #include "groovie/groovie.h"
@@ -69,7 +70,37 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	}
 
 	// Returning the resource substream
-	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
+	Common::SeekableSubReadStream *file = new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
+	if (ConfMan.getBool("dump_resources")) {
+		dumpResource(resInfo.filename, file);
+	}
+	return file;
+}
+
+void ResMan::dumpResource(Common::String name, Common::SeekableReadStream *file) {
+	if (file == NULL)
+		return;
+
+	Common::Path path = Common::Path("dumped_resources");
+	Common::FSNode directory(path);
+	if (!directory.exists())
+		Common::FSNode(path).createDirectory();
+
+	path.joinInPlace(name);
+	Common::FSNode fileNode(path);
+	if (fileNode.exists())
+		return;
+
+	Common::SeekableWriteStream *w = fileNode.createWriteStream();
+	if (w == NULL) {
+		warning("failed to dump file %s", path.toString().c_str());
+		return;
+	}
+
+	uint32 written = w->writeStream(file);
+	warning("dumping file %s, wrote %u bytes", path.toString().c_str(), written);
+	file->clearErr();
+	file->seek(0);
 }
 
 
