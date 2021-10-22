@@ -32,7 +32,6 @@
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
 #include "groovie/logic/cell.h"
-#include "groovie/logic/logic.h"
 #include "groovie/logic/tlcgame.h"
 
 #include "gui/saveload.h"
