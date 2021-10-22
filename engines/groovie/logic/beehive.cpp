@@ -326,7 +326,105 @@ void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 }
 
 int8 BeehiveGame::sub11(int8 *beehiveState, int8 *a2, int8 *a3, int8 *a4, int8 a5, int8 a6, int8 *a7) {
-	return 0;
+	if (*a2 == -1) {
+		if (!findCell(beehiveState, a2, a5))
+			return 0;
+	}
+
+	int8 v16 = 0;
+
+	while (1) {
+		while (1) {
+			if (v16)
+				return 1;
+
+			for (; *a3 < 6; (*a3)++) {
+				if (v16)
+					break;
+
+				int8 v9 = beehiveLogicTable1[6 * *a2 + *a3];
+
+				if (v9 != -1 && !beehiveState[v9] && *a2 < sub12(beehiveState, a5, v9, *a2)) {
+					v16 = 1;
+					*a7 = 1;
+					a7[1] = *a2;
+					a7[2] = beehiveLogicTable1[6 * *a2 + *a3];
+				}
+			}
+
+			if (*a4 >= 12)
+				break;
+
+			while (!v16) {
+				int8 v11 = beehiveLogicTable2[12 * *a2 + *a4];
+
+				if (v11 != -1
+						&& !beehiveState[v11]
+						&& !sub13(beehiveState, v11, a5)
+						&& sub13(beehiveState, beehiveLogicTable2[12 * *a2 + *a4], -a5)) {
+					int8 v12 = sub13(beehiveState, *a2, -a5);
+					int8 v13 = *a4 >> 1;
+					int8 v14 = ~(1 << v13) & v12;
+
+					if ((*a4 & 1) != 0) {
+						if (v13 == 5)
+							v14 &= ~1u;
+						else
+							v14 &= ~(1 << (v13 + 1));
+					}
+
+					if (!v14 || !sub13(beehiveState, *a2, a5) || a6) {
+						v16 = 1;
+						*a7 = 2;
+						a7[1] = *a2;
+						a7[2] = beehiveLogicTable2[12 * *a2 + *a4];
+					}
+				}
+
+				(*a4)++;
+				if (*a4 >= 12)
+					break;
+			}
+
+			if (*a4 >= 12)
+				break;
+		}
+
+		if (v16)
+			return 1;
+
+		if (!findCell(beehiveState, a2, a5))
+			return 0;
+
+		*a3 = 0;
+		*a4 = 0;
+	}
+}
+
+int8 BeehiveGame::sub12(int8 *beehiveState, int8 a2, int8 a3, int8 a4) {
+	int8 result = 125;
+
+	for (int i = 0; i < 6; i++) {
+		int8 v7 = beehiveLogicTable1[i + 6 * a3];
+
+		if (v7 != -1 && beehiveState[v7] == a2 && a4 != v7 && result > v7)
+			result = beehiveLogicTable1[i + 6 * a3];
+	}
+
+	return result;
+}
+
+int8 BeehiveGame::sub13(int8 *beehiveState, int8 a2, int8 a3) {
+	int result = 0;
+
+	for (int i = 0; i < 6; i++) {
+		int8 v5 = beehiveLogicTable1[6 * a2 + i];
+
+		if (v5 != -1 && beehiveState[v5] == a3)
+			result |= 1 << i;
+	}
+
+	return result;
 }
 
 void BeehiveGame::sub15(int8 *beehiveState, int8 a2, int8 *a3) {

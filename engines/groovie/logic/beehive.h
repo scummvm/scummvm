@@ -40,6 +40,8 @@ private:
 	void sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
 	void sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
 	int8 sub11(int8 *beehiveState, int8 *a2, int8 *a3, int8 *a4, int8 a5, int8 a6, int8 *a7);
+	int8 sub12(int8 *beehiveState, int8 a2, int8 a3, int8 a4);
+	int8 sub13(int8 *beehiveState, int8 a2, int8 a3);
 	void sub15(int8 *beehiveState, int8 a2, int8 *a3);
 	void sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5);
 	void sub17(int8 *beehiveState, int8 a2, int8 *a3, int8 *a4, int8 *a5);
