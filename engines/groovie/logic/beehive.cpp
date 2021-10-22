@@ -34,6 +34,11 @@
 
 namespace Groovie {
 
+namespace {
+extern const int8 beehiveLogicTable1[368];
+extern const int8 beehiveLogicTable2[800];
+}
+
 BeehiveGame::BeehiveGame() {
 }
 
@@ -149,21 +154,188 @@ void BeehiveGame::run(byte *scriptVariables) {
 }
 
 void BeehiveGame::sub02(int8 *a1, int8 *a2) {
+	int8 v9 = -1;
+
+	*a1 = 0;
+
+	while (findCell(_beehiveState, &v9, -1)) {
+		bool v3 = false;
+
+		for (int i = 0; i < 6; i++) {
+			if (v3)
+				break;
+
+			int8 move = beehiveLogicTable1[6 * v9 + i];
+			if (move != -1 && !_beehiveState[move]) {
+				a2[*a1] = v9;
+				v3 = true;
+				++*a1;
+			}
+		}
+
+		for (int i = 0; i < 12; ++i) {
+			if (v3)
+				break;
+
+			int8 move = beehiveLogicTable2[12 * v9 + i];
+			if (move != -1 && !_beehiveState[move]) {
+				a2[*a1] = v9;
+				v3 = true;
+				++*a1;
+			}
+		}
+	}
+
+	if (!*a1) {
+		for (int i = 0; i < 61; ++i)
+			if (!_beehiveState[i])
+				_beehiveState[i] = 1;
+	}
 }
 
 void BeehiveGame::sub04(int8 a1, int8 a2, int8 *scriptVariables) {
+	int v3 = 0;
+	if (scriptVariables[13] == 1) {
+		if (beehiveLogicTable1[6 * a1] != a2) {
+			for (; v3 < 5; v3++) {
+				if (beehiveLogicTable1[6 * a1 + v3] == a2)
+					break;
+			}
+		}
+
+		int v7 = v3 + 12;
+		scriptVariables[5] = v7 / 10;
+		scriptVariables[6] = v7 % 10;
+
+		return;
+	}
+
+	scriptVariables[10] = 0;
+	scriptVariables[7] = 0;
+	if (beehiveLogicTable2[12 * a1] != a2) {
+		for (; v3 < 11; v3++) {
+			if (beehiveLogicTable2[12 * a1 + v3] == a2)
+				break;
+		}
+	}
+
+	scriptVariables[5] = v3 / 10;
+	int8 v5 = -1;
+	int8 v6 = -1;
+	scriptVariables[6] = v3 % 10;
+
+	switch (v3) {
+	case 0:
+		v6 = beehiveLogicTable1[6 * a1];
+		break;
+	case 1:
+		v5 = beehiveLogicTable1[6 * a1];
+		// fall through
+	case 2:
+		v6 = beehiveLogicTable1[6 * a1 + 1];
+		break;
+	case 3:
+		v5 = beehiveLogicTable1[6 * a1 + 1];
+		// fall through
+	case 4:
+		v6 = beehiveLogicTable1[6 * a1 + 2];
+		break;
+	case 5:
+		v5 = beehiveLogicTable1[6 * a1 + 2];
+		// fall through
+	case 6:
+		v6 = beehiveLogicTable1[6 * a1 + 3];
+		break;
+	case 7:
+		v5 = beehiveLogicTable1[6 * a1 + 3];
+		// fall through
+	case 8:
+		v6 = beehiveLogicTable1[6 * a1 + 4];
+		break;
+	case 9:
+		v5 = beehiveLogicTable1[6 * a1 + 4];
+		// fall through
+	case 10:
+		v6 = beehiveLogicTable1[6 * a1 + 5];
+		break;
+	case 11:
+		v6 = beehiveLogicTable1[6 * a1 + 5];
+		v5 = beehiveLogicTable1[6 * a1];
+		break;
+	default:
+		v6 = 0;
+		break;
+	}
+
+	int8 v4 = 0;
+
+	if (v5 != -1)
+		v4 = _beehiveState[v5];
+
+	if (_beehiveState[v6]) {
+		scriptVariables[8] = v6 / 10;
+		scriptVariables[9] = v6 % 10;
+		scriptVariables[7] = 2 - (_beehiveState[v6] == 1 ? 1 : 0);
+	}
+
+	if (v4) {
+		scriptVariables[11] = v5 / 10;
+		scriptVariables[12] = v5 % 10;
+		scriptVariables[10] = 2 - (v4 == 1 ? 1 : 0);
+	}
 }
 
 void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+	int8 params[4];
+
+	*a4 = 0;
+	if (calcMove(_beehiveState, -125, -1, 4, 0, params) == 125
+			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, 4, 1, params) == 125)) {
+		*a1 = -1;
+		*a2 = -1;
+		for (int i = 0; i < 61; ++i) {
+			if (!_beehiveState[i])
+				_beehiveState[i] = 1;
+		}
+	} else {
+		*a1 = params[1];
+		*a2 = params[2];
+		*a3 = params[0];
+		sub17(_beehiveState, -1, params, a5, a6);
+	}
 }
 
 void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+	int8 params[4];
+
+	*a4 = 0;
+	if (calcMove(_beehiveState, 125, 1, 4, 0, params) == -125
+			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, 4, 1, params) == -125)) {
+		*a1 = -1;
+		*a2 = -1;
+		for (int i = 0; i < 61; ++i) {
+			if (!_beehiveState[i])
+				_beehiveState[i] = -1;
+		}
+	} else {
+		*a1 = params[1];
+		*a2 = params[2];
+		*a3 = params[0];
+		sub17(_beehiveState, 1, params, a5, a6);
+	}
 }
 
 void BeehiveGame::sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5) {
 }
 
+void BeehiveGame::sub17(int8 *beehiveState, int8 a2, int8 *a3, int8 *a4, int8 *a5) {
+}
+
 void BeehiveGame::sub18(int8 a1, int8 *a2, int8 *a3) {
+}
+
+int8 BeehiveGame::calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int a5, int8 *a6) {
+	return 0;
 }
 
 int8 BeehiveGame::getHexDifference() {
@@ -179,7 +351,13 @@ int8 BeehiveGame::getTotal(int8 *hexagons) {
 	return result;
 }
 
-static const int8 beehiveLogicTable1[368] = {
+int8 BeehiveGame::findCell(int8 *beehiveState, int8 *pos, int8 key) {
+	return 0;
+}
+
+namespace {
+
+const int8 beehiveLogicTable1[368] = {
 	-1,  5,  6,  1, -1, -1,
 	 0,  6,  7,  2, -1, -1,
 	 1,  7,  8,  3, -1, -1,
@@ -244,7 +422,7 @@ static const int8 beehiveLogicTable1[368] = {
 	 0,  0
 };
 
-static const int8 beehiveLogicTable2[800] = {
+const int8 beehiveLogicTable2[800] = {
 	-1, -1, 11, 12, 13,  7,  2, -1, -1, -1, -1, -1,
 	-1,  5, 12, 13, 14,  8,  3, -1, -1, -1, -1, -1,
 	 0,  6, 13, 14, 15,  9,  4, -1, -1, -1, -1, -1,
@@ -313,5 +491,7 @@ static const int8 beehiveLogicTable2[800] = {
 	40, 54,  4, 16, 32, 48, 60, 10, 24, 41, 55, 17,
 	33, 49, 25, 42, 34,  0,  0,  0
 };
+
+} // End of anonymous namespace
 
 } // End of Groovie namespace
