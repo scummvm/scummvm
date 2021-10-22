@@ -24,10 +24,12 @@
 #define GROOVIE_SCRIPT_H
 
 #include "groovie/groovie.h"
+#ifdef ENABLE_GROOVIE2
 #include "groovie/logic/beehive.h"
 #include "groovie/logic/cake.h"
 #include "groovie/logic/gallery.h"
 #include "groovie/logic/mousetrap.h"
+#endif
 
 #include "common/random.h"
 #include "common/rect.h"
@@ -260,10 +262,12 @@ private:
 	void o2_check_sounds_overlays();
 	void o2_preview_loadgame();
 
-	CakeGame _cake;
+#ifdef ENABLE_GROOVIE2
 	BeehiveGame _beehive;
+	CakeGame _cake;
 	GalleryGame _gallery;
 	MouseTrapGame _mouseTrap;
+#endif
 };
 
 } // End of Groovie namespace
