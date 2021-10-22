@@ -61,6 +61,8 @@ enum MusicType {
 	MT_GS				// Roland GS
 };
 
+Common::String musicType2GUIO(uint32 musicType);
+
 /**
  * A set of flags to be passed to detectDevice() which can be used to
  * specify what kind of music driver is preferred / accepted.
@@ -288,55 +290,12 @@ protected:
  */
 class MidiDriver : public MidiDriver_BASE {
 public:
-	/**
-	 * The device handle.
-	 *
-	 * The value 0 is reserved for an invalid device for now.
-	 * TODO: Maybe we should use -1 (i.e. 0xFFFFFFFF) as
-	 * invalid device?
-	 */
-	typedef uint32 DeviceHandle;
-
-	enum DeviceStringType {
-		kDriverName,
-		kDriverId,
-		kDeviceName,
-		kDeviceId
-	};
-
-	static Common::String musicType2GUIO(uint32 musicType);
-
-	/** Create music driver matching the given device handle, or NULL if there is no match. */
-	static MidiDriver *createMidi(DeviceHandle handle);
-
-	/** Returns device handle based on the present devices and the flags parameter. */
-	static DeviceHandle detectDevice(int flags);
-
-	/** Find the music driver matching the given driver name/description. */
-	static DeviceHandle getDeviceHandle(const Common::String &identifier);
-
-	/** Check whether the device with the given handle is available. */
-	static bool checkDevice(DeviceHandle handle);
-
-	/** Get the music type matching the given device handle, or MT_AUTO if there is no match. */
-	static MusicType getMusicType(DeviceHandle handle);
-
-	/** Get the device description string matching the given device handle and the given type. */
-	static Common::String getDeviceString(DeviceHandle handle, DeviceStringType type);
 
 	/** Common operations to be done by all drivers on start of send */
 	void midiDriverCommonSend(uint32 b);
 
 	/** Common operations to be done by all drivers on start of sysEx */
 	void midiDriverCommonSysEx(const byte *msg, uint16 length);
-
-private:
-	// If detectDevice() detects MT32 and we have a preferred MT32 device
-	// we use this to force getMusicType() to return MT_MT32 so that we don't
-	// have to rely on the 'True Roland MT-32' config manager setting (since nobody
-	// would possibly think about activating 'True Roland MT-32' when he has set
-	// 'Music Driver' to '<default>')
-	static bool _forceTypeMT32;
 
 public:
 	virtual ~MidiDriver() { }

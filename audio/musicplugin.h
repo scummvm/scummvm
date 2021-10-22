@@ -50,10 +50,19 @@ class MusicDevice {
 public:
 	MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt);
 
-	const Common::String &getName() const { return _name; }
-	const Common::String &getMusicDriverName() const { return _musicDriverName; }
-	const Common::String &getMusicDriverId() const { return _musicDriverId; }
-	MusicType getMusicType() const { return _type; }
+	enum DeviceStringType {
+		kDriverName,
+		kDriverId,
+		kDeviceName,
+		kDeviceId
+	};
+
+	const Common::String &getName() const;
+	const Common::String &getMusicDriverName();
+	const Common::String &getMusicDriverId();
+	MusicType getMusicType() const;
+
+	Common::String MusicDevice::getDeviceString(DeviceStringType type);
 
 	/**
 	 * Returns a user readable string that contains the name of the current
@@ -67,7 +76,12 @@ public:
 	 */
 	Common::String getCompleteId();
 
-	MidiDriver::DeviceHandle getHandle();
+	/**
+	 * Checks whether a device can actually be used. Currently this is only
+	 * implemented for the MT-32 emulator to check whether the required rom
+	 * files are present.
+	 */
+	virtual bool checkDevice() const { return true; }
 
 private:
 	Common::String _name;
@@ -99,25 +113,15 @@ public:
 	virtual MusicDevices getDevices() const = 0;
 
 	/**
-	 * Checks whether a device can actually be used. Currently this is only
-	 * implemented for the MT-32 emulator to check whether the required rom
-	 * files are present.
-	 */
-	virtual bool checkDevice(MidiDriver::DeviceHandle) const { return true; }
-
-	/**
 	 * Tries to instantiate a MIDI Driver instance based on the device
 	 * previously detected via MidiDriver::detectDevice()
 	 *
 	 * @param mididriver	Pointer to a pointer which the MusicPluginObject sets
 	 *				to the newly create MidiDriver, or 0 in case of an error
 	 *
-	* @param dev	Pointer to a device to be used then creating the driver instance.
-	 *				Default value of zero for driver types without devices.
-	 *
 	 * @return		a Common::Error describing the error which occurred, or kNoError
 	 */
-	virtual Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const = 0;
+	virtual Common::Error createInstance(MidiDriver **mididriver, const MusicDevice *) const = 0;
 };
 
 /**
@@ -127,8 +131,16 @@ class MusicManager : public Common::Singleton<MusicManager> {
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 
-public:
 	const PluginList &getPlugins() const;
+	const MusicDevices getDevices() const;
+
+public:
+
+	/** Returns driver based on the present devices and the flags parameter. */
+	MusicDevice *detectDevice(int flags);
+
+	/** Find the music driver matching the given driver name/description. */
+	MusicDevice *getDevice(const Common::String &identifier);
 };
 
 /** Convenience shortcut for accessing the Music manager. */
