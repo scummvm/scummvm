@@ -36,6 +36,10 @@ public:
 
 private:
 	void sub02(int8 *a1, int8 *a2);
+	void sub04(int8 a1, int8 a2, int8 *scriptVariables);
+	void sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
+	void sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
+	void sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5);
 	void sub18(int8 a1, int8 *a2, int8 *a3);
 	int8 getHexDifference();
 	int8 getTotal(int8 *hexagons);

@@ -52,7 +52,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 
 	warning("Beehive subop %d", op);
 
-	int8 v22, v24;
+	int8 v21, v22, v24;
 	int8 tempState[64];
 
 	switch (op) {
@@ -64,7 +64,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		_beehiveState[60] = kBeehiveColorRed;
 		_beehiveState[56] = kBeehiveColorYellow;
 		_beehiveState[26] = kBeehiveColorRed;
-		break;
+		return;
 
 	case 1:
 		memset(hexagons, 0, 60);
@@ -76,7 +76,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		} else {
 			*hexDifference = getHexDifference();
 		}
-		break;
+		return;
 
 	case 2:
 		memset(hexagons, 0, 60);
@@ -86,22 +86,81 @@ void BeehiveGame::run(byte *scriptVariables) {
 		for (int j = 0; j < v22; j++)
 			scriptVariables[tempState[j] + 25] = 1;
 		scriptVariables[v24 + 25] = 1;
-		break;
+		return;
 
 	case 3:
-		break;
+		scriptVariables[24] = 1;
+		scriptVariables[4] = 2;
+		v24 = 10 * scriptVariables[0] + scriptVariables[1];
+		v22 = 10 * scriptVariables[2] + scriptVariables[3];
+		sub16(v24, v22, hexDifference, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
+		scriptVariables[15] = scriptVariables[16];
+		sub04(v24, v22, (int8 *)scriptVariables);
+		return;
+
 	case 4:
+		scriptVariables[24] = 1;
+		scriptVariables[4] = 1;
+		sub08(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
+		// Execute method tail
 		break;
+
 	case 5:
-		break;
+		if (scriptVariables[24] == 1) {
+			scriptVariables[0] = scriptVariables[2];
+			scriptVariables[1] = scriptVariables[3];
+			scriptVariables[24] = 0;
+		}
+
+		if (scriptVariables[16]) {
+			int8 v16 = scriptVariables[16] - 1;
+			*hexDifference = 1;
+			scriptVariables[16] = v16;
+			v24 = 10 * scriptVariables[0] + scriptVariables[1];
+			int8 v23 = scriptVariables[v16 + 17];
+			scriptVariables[2] = v23 / 10;
+			scriptVariables[3] = v23 % 10;
+			sub04(v24, v23, (int8 *)scriptVariables);
+		} else {
+			*hexDifference = 4 - (scriptVariables[4] == 2 ? 1 : 0);
+		}
+		return;
+
 	case 6:
+		scriptVariables[24] = 1;
+		scriptVariables[4] = 2;
+		sub07(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
+		// Execute method tail
 		break;
+
 	default:
-		break;
+		return;
+	}
+
+	if (v24 == -1) {
+		*hexDifference = getHexDifference();
+	} else {
+		scriptVariables[0] = v24 / 10;
+		scriptVariables[1] = v24 % 10;
+		scriptVariables[2] = v22 / 10;
+		scriptVariables[3] = v22 % 10;
+		sub04(v24, v22, (int8 *)scriptVariables);
 	}
 }
 
 void BeehiveGame::sub02(int8 *a1, int8 *a2) {
+}
+
+void BeehiveGame::sub04(int8 a1, int8 a2, int8 *scriptVariables) {
+}
+
+void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+}
+
+void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+}
+
+void BeehiveGame::sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5) {
 }
 
 void BeehiveGame::sub18(int8 a1, int8 *a2, int8 *a3) {
