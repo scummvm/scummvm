@@ -35,7 +35,7 @@
 namespace Groovie {
 
 T11hGame::T11hGame(byte *scriptVariables)
-	: _random("GroovieT11hGame"), _scriptVariables(scriptVariables), _cake(NULL) {
+	: _random("GroovieT11hGame"), _scriptVariables(scriptVariables) {
 }
 
 T11hGame::~T11hGame() {
@@ -45,7 +45,7 @@ void T11hGame::handleOp(uint8 op) {
 	switch (op) {
 	case 1:
 		debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv)", op);
-		opConnectFour();
+		_cake.run(_scriptVariables);
 		break;
 
 	case 2:
@@ -149,30 +149,6 @@ void T11hGame::opMouseTrap() {
 	default:
 		warning("Unknown mousetrap op %d", op);
 		break;
-	}
-}
-
-void T11hGame::opConnectFour() {
-	byte &last_move = _scriptVariables[1];
-	byte &winner = _scriptVariables[3];
-	winner = 0;
-
-	if (_cake == NULL) {
-		clearAIs();
-		_cake = new T11hCake(_random);
-	}
-
-	winner = _cake->OpConnectFour(last_move);
-
-	if (winner) {
-		clearAIs();
-	}
-}
-
-void T11hGame::clearAIs() {
-	if (_cake != NULL) {
-		delete _cake;
-		_cake = NULL;
 	}
 }
 

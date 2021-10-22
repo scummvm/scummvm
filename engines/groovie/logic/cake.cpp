@@ -36,8 +36,8 @@ namespace Groovie {
 *	.
 * @see UpdateScores()
 */
-T11hCake::T11hCake(Common::RandomSource &rng) : _random(rng) {
-	Restart();
+CakeGame::CakeGame() : _random("CakeGame") {
+	restart();
 
 	_map = {};
 	int numLines = 0;
@@ -46,7 +46,7 @@ T11hCake::T11hCake(Common::RandomSource &rng) : _random(rng) {
 	for (int y = 0; y < HEIGHT; y++) {
 		for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
 			for (int z = 0; z < GOAL_LEN; z++) {
-				SetLineNum(x + z, y, numLines);
+				setLineNum(x + z, y, numLines);
 			}
 			numLines++;
 		}
@@ -56,7 +56,7 @@ T11hCake::T11hCake(Common::RandomSource &rng) : _random(rng) {
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y <= HEIGHT - GOAL_LEN; y++) {
 			for (int z = 0; z < GOAL_LEN; z++) {
-				SetLineNum(x, y + z, numLines);
+				setLineNum(x, y + z, numLines);
 			}
 			numLines++;
 		}
@@ -66,7 +66,7 @@ T11hCake::T11hCake(Common::RandomSource &rng) : _random(rng) {
 	for (int y = 0; y <= HEIGHT - GOAL_LEN; y++) {
 		for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
 			for (int z = 0; z < GOAL_LEN; z++) {
-				SetLineNum(x + z, y + z, numLines);
+				setLineNum(x + z, y + z, numLines);
 			}
 			numLines++;
 		}
@@ -76,48 +76,51 @@ T11hCake::T11hCake(Common::RandomSource &rng) : _random(rng) {
 	for (int y = GOAL_LEN - 1; y < HEIGHT; y++) {
 		for (int x = 0; x <= WIDTH - GOAL_LEN; x++) {
 			for (int z = 0; z < GOAL_LEN; z++) {
-				SetLineNum(x + z, y - z, numLines);
+				setLineNum(x + z, y - z, numLines);
 			}
 			numLines++;
 		}
 	}
 }
 
-byte T11hCake::OpConnectFour(byte &lastMove) {
+void CakeGame::run(byte *scriptVariables) {
+	byte &lastMove = scriptVariables[1];
+	byte &winner = scriptVariables[3];
+	winner = 0;
+
 	if (lastMove == 8) {
-		Restart();
-		return 0;
+		restart();
+		return;
 	}
 
 	if (lastMove == 9) {
 		// samantha makes a move
 		// TODO: fix graphical bug when samantha makes a move
-		lastMove = AiGetBestMove(6);
+		lastMove = aiGetBestMove(6);
 		_hasCheated = true;
-		return 0;
+		return;
 	}
 
-	if (IsColumnFull(lastMove)) {
+	if (isColumnFull(lastMove)) {
 		warning("player tried to place a bon bon in a full column, last_move: %d", (int)lastMove);
 		lastMove = 10;
-		return 0;
+		return;
 	}
 
-	PlaceBonBon(lastMove);
-	byte winner = GetWinner();
+	placeBonBon(lastMove);
+	winner = getWinner();
 	if (winner) {
-		return winner;
+		return;
 	}
 
-	lastMove = AiGetBestMove(4 + (_hasCheated == false));
-	PlaceBonBon(lastMove);
-	if (GameEnded())
-		return STAUF;
-
-	return 0;
+	lastMove = aiGetBestMove(4 + (_hasCheated == false));
+	placeBonBon(lastMove);
+	if (gameEnded()) {
+		winner = STAUF;
+	}
 }
 
-void T11hCake::Restart() {
+void CakeGame::restart() {
 	_playerProgress = {};
 	_staufProgress = {};
 	memset(_boardState, 0, sizeof(_boardState));
@@ -129,7 +132,7 @@ void T11hCake::Restart() {
 	_staufProgress._score = NUM_LINES;
 }
 
-void T11hCake::SetLineNum(uint x, uint y, uint index) {
+void CakeGame::setLineNum(uint x, uint y, uint index) {
 	assert(x < WIDTH);
 	assert(y < HEIGHT);
 	byte slot = _map.lengths[x][y]++;
@@ -138,11 +141,11 @@ void T11hCake::SetLineNum(uint x, uint y, uint index) {
 	_map.indecies[x][y][slot] = index;
 }
 
-bool T11hCake::IsColumnFull(byte column) {
+bool CakeGame::isColumnFull(byte column) {
 	return _columnHeights[column] >= HEIGHT;
 }
 
-T11hCake::PlayerProgress &T11hCake::GetPlayerProgress(bool stauf) {
+CakeGame::PlayerProgress &CakeGame::getPlayerProgress(bool stauf) {
 	if (stauf)
 		return _staufProgress;
 	else
@@ -158,9 +161,9 @@ T11hCake::PlayerProgress &T11hCake::GetPlayerProgress(bool stauf) {
 *		.
 *	.
 */
-void T11hCake::UpdateScores(byte x, bool revert) {
+void CakeGame::updateScores(byte x, bool revert) {
 	bool stauf = _moveCount % 2;
-	PlayerProgress &pp = GetPlayerProgress(stauf);
+	PlayerProgress &pp = getPlayerProgress(stauf);
 
 	byte y = _columnHeights[x] - 1;
 
@@ -186,7 +189,7 @@ void T11hCake::UpdateScores(byte x, bool revert) {
 			pp._score += WIN_SCORE * mult;
 		}
 		else {
-			PlayerProgress &pp2 = GetPlayerProgress(!stauf);
+			PlayerProgress &pp2 = getPlayerProgress(!stauf);
 			int len2 = pp2._linesCounters[index];
 			if (len == 0) {
 				// we started a new line, take away the points the opponent had from this line since we ruined it for them
@@ -200,29 +203,29 @@ void T11hCake::UpdateScores(byte x, bool revert) {
 	}
 }
 
-void T11hCake::PlaceBonBon(byte x) {
+void CakeGame::placeBonBon(byte x) {
 	byte y = _columnHeights[x]++;
 	if (_moveCount % 2)
 		_boardState[x][y] = STAUF;
 	else
 		_boardState[x][y] = PLAYER;
 
-	UpdateScores(x);
+	updateScores(x);
 
 	_moveCount++;
 }
 
-void T11hCake::RevertMove(byte x) {
+void CakeGame::revertMove(byte x) {
 	// PlaceBonBon in reverse, this is used for the AI's recursion rollback
 	_moveCount--;
 
-	UpdateScores(x, true);
+	updateScores(x, true);
 
 	byte y = --_columnHeights[x];
 	_boardState[x][y] = 0;
 }
 
-byte T11hCake::GetWinner() {
+byte CakeGame::getWinner() {
 	if (_playerProgress._score >= WIN_SCORE)
 		return PLAYER;
 
@@ -232,8 +235,8 @@ byte T11hCake::GetWinner() {
 	return 0;
 }
 
-bool T11hCake::GameEnded() {
-	if (GetWinner())
+bool CakeGame::gameEnded() {
+	if (getWinner())
 		return true;
 
 	if (_moveCount >= WIDTH * HEIGHT)
@@ -242,25 +245,25 @@ bool T11hCake::GameEnded() {
 	return false;
 }
 
-int T11hCake::GetScoreDiff() {
+int CakeGame::getScoreDiff() {
 	if (_moveCount % 2)
 		return _staufProgress._score - _playerProgress._score;
 	else
 		return _playerProgress._score - _staufProgress._score;
 }
 
-int T11hCake::AiRecurse(int search_depth, int parent_score) {
+int CakeGame::aiRecurse(int search_depth, int parent_score) {
 	int best_score = 0x7fffffff;
 
 	for (byte move = 0; move < WIDTH; move++) {
-		if (IsColumnFull(move))
+		if (isColumnFull(move))
 			continue;
 
-		PlaceBonBon(move);
-		int score = GetScoreDiff();
-		if (search_depth > 1 && !GameEnded())
-			score = AiRecurse(search_depth - 1, best_score);
-		RevertMove(move);
+		placeBonBon(move);
+		int score = getScoreDiff();
+		if (search_depth > 1 && !gameEnded())
+			score = aiRecurse(search_depth - 1, best_score);
+		revertMove(move);
 
 		if (score < best_score)
 			best_score = score;
@@ -273,27 +276,27 @@ int T11hCake::AiRecurse(int search_depth, int parent_score) {
 	return -best_score;
 }
 
-uint T11hCake::Rng() {
+uint CakeGame::rng() {
 	return _random.getRandomNumber(UINT_MAX);
 }
 
-byte T11hCake::AiGetBestMove(int search_depth) {
+byte CakeGame::aiGetBestMove(int search_depth) {
 	int best_move = 0xffff;
 	uint counter = 1;
 
 	for (int best_score = 0x7fffffff; best_score > 999999 && search_depth > 1; search_depth--) {
 		for (byte move = 0; move < WIDTH; move++) {
-			if (IsColumnFull(move))
+			if (isColumnFull(move))
 				continue;
 
-			PlaceBonBon(move);
-			if (GetWinner()) {
-				RevertMove(move);
+			placeBonBon(move);
+			if (getWinner()) {
+				revertMove(move);
 				return move;
 			}
 
-			int score = AiRecurse(search_depth - 1, best_score);
-			RevertMove(move);
+			int score = aiRecurse(search_depth - 1, best_score);
+			revertMove(move);
 			if (score < best_score) {
 				counter = 1;
 				best_move = move;
@@ -301,7 +304,7 @@ byte T11hCake::AiGetBestMove(int search_depth) {
 			} else if (best_score == score) {
 				// rng is only used on moves with equal scores
 				counter++;
-				uint r = Rng() % 1000000;
+				uint r = rng() % 1000000;
 				if (r * counter < 1000000) {
 					best_move = move;
 				}

@@ -31,11 +31,10 @@ namespace Groovie {
 /*
 * Connect Four puzzle, the cake in the dining room
 */
-class T11hCake {
+class CakeGame {
 public:
-	T11hCake(Common::RandomSource &rng);
-
-	byte OpConnectFour(byte &lastMove);
+	CakeGame();
+	void run(byte *scriptVariables);
 
 private:
 	static const int WIDTH = 8;
@@ -46,7 +45,7 @@ private:
 	static const byte PLAYER = 2;
 	static const int NUM_LINES = 107;//!< how many potential victory lines there are
 
-	Common::RandomSource &_random;
+	Common::RandomSource _random;
 
 	//! ID numbers for all of the potential victory lines for each spot on the board
 	struct LinesMappings {
@@ -71,19 +70,19 @@ private:
 
 	LinesMappings _map;//!< ID numbers for all of the potential victory lines for each spot on the board
 
-	void Restart();
-	void SetLineNum(uint x, uint y, uint index);
-	bool IsColumnFull(byte column);
-	PlayerProgress &GetPlayerProgress(bool stauf);
-	void UpdateScores(byte x, bool revert = false);
-	void PlaceBonBon(byte x);
-	void RevertMove(byte x);
-	byte GetWinner();
-	bool GameEnded();
-	int GetScoreDiff();
-	int AiRecurse(int search_depth, int parent_score);
-	uint Rng();
-	byte AiGetBestMove(int search_depth);
+	void restart();
+	void setLineNum(uint x, uint y, uint index);
+	bool isColumnFull(byte column);
+	PlayerProgress &getPlayerProgress(bool stauf);
+	void updateScores(byte x, bool revert = false);
+	void placeBonBon(byte x);
+	void revertMove(byte x);
+	byte getWinner();
+	bool gameEnded();
+	int getScoreDiff();
+	int aiRecurse(int search_depth, int parent_score);
+	uint rng();
+	byte aiGetBestMove(int search_depth);
 };
 
 } // End of Groovie namespace

@@ -26,15 +26,12 @@
 #include "common/textconsole.h"
 #include "common/random.h"
 #include "groovie/logic/beehive.h"
+#include "groovie/logic/cake.h"
 #include "groovie/logic/gallery.h"
 
 namespace Groovie {
 
 class GroovieEngine;
-
-#ifdef ENABLE_GROOVIE2
-class T11hCake;
-#endif
 
 class T11hGame {
 public:
@@ -48,18 +45,12 @@ private:
 	Common::RandomSource _random;
 
 	void opMouseTrap();
-	void opConnectFour();
 	void opPente();
-	void opGallery();
 	void opTriangle();
 
-	byte opGalleryAI(byte *pieceStatus, int depth);
-
-	void clearAIs();
-
-	T11hCake *_cake;
 	byte *_scriptVariables;
 
+	CakeGame _cake;
 	BeehiveGame _beehive;
 	GalleryGame _gallery;
 #endif
