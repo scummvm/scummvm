@@ -380,7 +380,7 @@ def collect_forks(args: argparse.Namespace) -> int:
                 file = machfs.File()
 
                 # Set the file times and convert them to Mac epoch
-                info = os.stat(filename)
+                info = os.stat(filepath)
                 file.crdate = 2082844800 + int(info.st_birthtime)
                 file.mddate = 2082844800 + int(info.st_mtime)
 
