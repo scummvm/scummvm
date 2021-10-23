@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-23 19:53+0000\n"
-"PO-Revision-Date: 2021-10-20 20:54+0000\n"
+"PO-Revision-Date: 2021-10-23 20:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1050,15 +1050,13 @@ msgstr "Vollbildmodus"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "Warte auf die vertikale Synchronisation im 3D-Renderer"
+msgstr "Warte auf vertikale Synchronisation, um Tearing-Artefakte zu vermeiden"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
