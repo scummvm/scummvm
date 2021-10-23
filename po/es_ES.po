@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-23 19:53+0000\n"
-"PO-Revision-Date: 2021-10-20 09:33+0000\n"
+"PO-Revision-Date: 2021-10-23 20:19+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1045,17 +1045,15 @@ msgstr "Pantalla completa"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "Sincronía vertical"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"Espera a la sincronización vertical para actualizar la imagen del "
-"renderizador 3D"
+"Espera a la sincronización vertical para actualizar la imagen y evitar "
+"cortes en la misma"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
