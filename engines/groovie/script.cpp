@@ -1124,7 +1124,14 @@ void Script::o_sleep() {
 
 	debugC(1, kDebugScript, "Groovie::Script: SLEEP 0x%04X (%d ms)", time, time*3);
 
-	_vm->_system->delayMillis(time * 3);
+	uint32 endTime = _vm->_system->getMillis() + time * 3;
+
+	Common::Event ev;
+	while (_vm->_system->getMillis() < endTime) {
+		_vm->_system->getEventManager()->pollEvent(ev);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
+	}
 }
 
 void Script::o_strcmpnejmp() {			// 0x1A
