@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 namespace Agi {
 
@@ -1329,7 +1330,7 @@ WinnieEngine::~WinnieEngine() {
 void WinnieEngine::init() {
 	// Initialize sound
 
-	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_PCJR))) {
+	switch (MusicMan.detectDevice(MDT_PCSPK | MDT_PCJR)->getMusicType()) {
 	case MT_PCSPK:
 		_soundemu = SOUND_EMU_PC;
 		break;

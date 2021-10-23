@@ -37,6 +37,7 @@
 #include "graphics/cursorman.h"
 
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 #include "agi/agi.h"
 #include "agi/font.h"
@@ -419,7 +420,7 @@ void AgiEngine::initialize() {
 		// Default sound is the proper PCJr emulation
 		_soundemu = SOUND_EMU_PCJR;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_AMIGA | MDT_ADLIB | MDT_PCJR | MDT_MIDI))) {
+		switch (MusicMan.detectDevice(MDT_PCSPK | MDT_AMIGA | MDT_ADLIB | MDT_PCJR | MDT_MIDI)->getMusicType()) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
