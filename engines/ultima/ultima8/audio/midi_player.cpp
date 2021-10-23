@@ -28,6 +28,7 @@
 
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+#include "audio/musicplugin.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,8 +36,8 @@ namespace Ultima8 {
 byte MidiPlayer::_callbackData[2];
 
 MidiPlayer::MidiPlayer() : _parser(nullptr), _transitionParser(nullptr), _playingTransition(false) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MusicType musicType = dev->getMusicType();
 
 	switch (musicType) {
 	case MT_ADLIB:
