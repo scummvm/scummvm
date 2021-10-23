@@ -20,6 +20,8 @@ Project Leaders
      -
    * - Einar Johan T. Sømåen
      -
+   * - Lothar Serra Mari
+     -
 
 PR Office
 *********
@@ -1643,6 +1645,8 @@ Miscellaneous
      - Sound improvements
    * - Robin Watts
      - ARM assembly routines for nice speedups on several ports; improvements to the sound mixer
+   * - Trembyle
+     - Archivist
 
 Website (code)
 **************
