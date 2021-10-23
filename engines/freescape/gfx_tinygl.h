@@ -50,7 +50,13 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
+
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
+	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
+	virtual void renderPolygon(const Math::Vector3d &origin, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) override;
+    virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
+
+
 
 	virtual void flipBuffer() override;
 	virtual void drawSky(uint8 color) override;

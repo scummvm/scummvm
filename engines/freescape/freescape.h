@@ -62,8 +62,11 @@ public:
 
 	Renderer *_gfx;
 	Common::Error run() override;
+
+	// Border
 	void convertBorder();
 	void drawBorder();
+	Texture *_borderTexture;
 
 
 	// Parsing
@@ -94,7 +97,6 @@ public:
 	Vector3d _cameraFront, _cameraUp, _cameraRight;
 	// Spacial attributes
 	Vector3d _position, _rotation, _velocity;
-
 
 	// Rendering
 	uint8 _colorNumber;

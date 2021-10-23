@@ -76,6 +76,10 @@ void TinyGLRenderer::init() {
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
+
+	//tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
+	//tglDisable(TGL_POLYGON_OFFSET_FILL);
+
 }
 
 void TinyGLRenderer::clear() {
@@ -199,6 +203,141 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglMultMatrixf(lookMatrix.getData());
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
+
+
+void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
+	assert(vertices.size() >= 2);
+	const Math::Vector3d &v0 = vertices[0];
+
+	if (vertices.size() == 2) {
+		const Math::Vector3d &v1 = vertices[1];
+		if (v0 == v1)
+			return;
+		tglBegin(TGL_LINES);
+		tglVertex3f(v0.x(), v0.y(),	v0.z());
+		tglVertex3f(v1.x(), v1.y(),	v1.z());		
+		tglEnd();
+		return;
+	}
+
+	tglBegin(TGL_TRIANGLES);
+	for (int i = 1; i < vertices.size() - 1; i++) {
+		const Math::Vector3d &v1 = vertices[i];
+		const Math::Vector3d &v2 = vertices[i+1];
+		tglVertex3f(v0.x(), v0.y(),	v0.z());
+		tglVertex3f(v1.x(), v1.y(),	v1.z());
+		tglVertex3f(v2.x(), v2.y(),	v2.z()); 
+	}
+	tglEnd();
+}
+
+void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
+	//assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
+	uint8 r, g, b;
+	Common::Array<Math::Vector3d> vertices;
+	// tglEnable(TGL_POLYGON_OFFSET_FILL);
+	// tglEnable(TGL_POLYGON_OFFSET_LINE);
+	// tglEnable(TGL_POLYGON_OFFSET_POINT);
+	tglPolygonOffset(50.f, 50.f);
+	if ((*colours)[0] > 0) {
+		_palette->getRGBAt((*colours)[0], r, g, b);
+		tglColor3ub(r, g, b);
+		for (int i = 0; i < ordinates->size(); i = i + 3) {
+			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i], origin.y() + (*ordinates)[i + 1],	origin.z() + (*ordinates)[i + 2]));
+		}
+		renderFace(vertices);
+	}
+	vertices.clear();
+	if ((*colours)[1] > 0) {
+		_palette->getRGBAt((*colours)[1], r, g, b);
+		tglColor3ub(r, g, b);
+		for (int i = ordinates->size(); i > 0; i = i - 3) {
+			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3], origin.y() + (*ordinates)[i-2],	origin.z() + (*ordinates)[i-1]));
+		}
+		renderFace(vertices);
+	}
+	tglPolygonOffset(0, 0);
+	tglDisable(TGL_POLYGON_OFFSET_FILL);
+}
+
+void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+
+	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
+
+	tglPolygonOffset(50, 50);
+	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
+	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
+	
+	float dx, dy, dz;
+	float offset = 0;
+	uint8 r, g, b;
+	Common::Array<Math::Vector3d> vertices;
+	for (int i = 0; i < 2; i++) { 
+		
+		//debug("rec color: %d", (*colours)[i]);
+		if ((*colours)[i] > 0) {
+			_palette->getRGBAt((*colours)[i], r, g, b);
+			tglColor3ub(r, g, b);
+			vertices.clear();
+			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
+
+			dx = dy = dz = 0;
+			if (size.x() == 0) {
+				dy = size.y();
+			} else if (size.y() == 0) {
+				dx = size.x();
+			} else if (size.z() == 0) {
+				dx = size.x();
+			}
+
+			vertices.push_back(Math::Vector3d(origin.x() + dx,	origin.y() + dy, origin.z() + dz));
+			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+			renderFace(vertices);
+
+			vertices.clear();
+			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
+
+			dx = dy = dz = 0;
+			if (size.x() == 0) {
+				dz = size.z();
+			} else if (size.y() == 0) {
+				dz = size.z();
+			} else if (size.z() == 0) {
+				dy = size.y();
+			}
+
+			vertices.push_back(Math::Vector3d(origin.x() + dx,	origin.y() + dy, origin.z() + dz));
+			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+			renderFace(vertices);
+
+			// tglBegin(TGL_TRIANGLES);
+			// tglVertex3f(origin.x(),	origin.y(),	origin.z());
+			// if (size.x() == 0)
+			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
+			// else if (size.y() == 0)
+			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
+			// else 
+			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
+			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
+
+			// tglVertex3f(origin.x(),	origin.y(),	origin.z());
+			// if (size.x() == 0)
+			// 	tglVertex3f(origin.x(),	origin.y(), origin.z()  + size.z());
+			// else if (size.y() == 0)
+			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z() + size.y());
+			// else 
+			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
+			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
+			// tglEnd();
+		}
+	}
+
+	tglPolygonOffset(0, 0);
+	//tglDepthMask(TGL_TRUE);
+	//tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
+	//tglDisable(TGL_POLYGON_OFFSET_FILL);
+}
+
 
 void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
 	assert(size.x() > 0);

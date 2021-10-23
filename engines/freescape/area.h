@@ -35,6 +35,7 @@ public:
 	uint16 getAreaID();
 	uint8 getScale();
 	void draw(Freescape::Renderer *gfx);
+	void show();
 
 private:
 	uint16 areaID;

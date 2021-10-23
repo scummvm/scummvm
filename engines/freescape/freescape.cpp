@@ -43,6 +43,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_movementSpeed = 4.5f;
 	_mouseSensitivity = 0.1f;
 	_scale = Math::Vector3d(0, 0, 0);
+	_borderTexture = nullptr;
 
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
@@ -71,13 +72,14 @@ void FreescapeEngine::drawBorder() {
 	if (_border == nullptr)
 		return;
 
-	Texture *t = _gfx->createTexture(_border);
+	if (!_borderTexture)
+		_borderTexture = _gfx->createTexture(_border);
 	const Common::Rect rect(0, 0, _screenW, _screenH);
 
-	_gfx->drawTexturedRect2D(rect, rect, t, 1.0, false);
-	_gfx->flipBuffer();
-	_system->updateScreen();
-	_gfx->freeTexture(t);
+	_gfx->drawTexturedRect2D(rect, rect, _borderTexture, 1.0, false);
+	// _gfx->flipBuffer();
+	// _system->updateScreen();
+	// _gfx->freeTexture(t);
 }
 
 void FreescapeEngine::loadAssets() {
@@ -86,7 +88,7 @@ void FreescapeEngine::loadAssets() {
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-	if (_targetName.hasPrefix("3dkit")) {
+	if (_targetName.hasPrefix("3dkit") || _targetName == "menace") {
 		Common::ArchiveMemberList files;
         gameDir.listMatchingMembers(files, "*.RUN");
 
@@ -145,6 +147,7 @@ Common::Error FreescapeEngine::run() {
 	area = (*_areasByAreaID)[_startArea];
 	assert(area);
 	entrance = (Entrance*) area->entranceWithID(_startEntrance);
+	area->show();
 	assert(entrance);
 	_position = entrance->getOrigin();
 	Math::Vector3d scaleVector;
@@ -222,6 +225,7 @@ Common::Error FreescapeEngine::run() {
 			}
 		}
 
+		//drawBorder();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
