@@ -698,6 +698,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gate3",				"the GATE III 王国「MU」への扉" },					// Gateway to the Kingdom of MU
 	{ "granmarmalade",		"グラン・マーマレード・マジカル・ビレッジ" },
 	{ "henachoco",			"へなちょこダービー" },						    	// HenaChoco Derby
+	{ "henachoco02",		"サイテイバード" },						    	// Saitei Birds
+	{ "henachoco03",		"難しい本を読むと眠くなる" },						// "Reading a Difficult Book Makes Me Sleepy"
+	{ "henachoco04",		"あの素晴らしい弁当を2度3度" },						    	// That Wonderful Bento 2 or 3 Times
+	{ "henachoco05",		"野犬ロデム" },						    	// Rodem the Wild
 	{ "henachoco08",		"おませなおませな屋台大作戦" },						    	// Omasena Omasena Stall Strategy
 	{ "henachoco09",		"ニセミジンコのうそひみつ" },						    	// The Secret Lie of Nisemijinko
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
@@ -722,7 +726,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "missihb",			"MISS Interactive Hard Boiled" },
 	{ "momotaro",			"日本語探検シリーズ『方言ももたろう』" },			// Nihongo Tanken Shirīzu: Hōgen Momotarō
 	{ "mukashibanashi",     "日本昔話" },										// Nihon Mukashi Banashi (Japanese Folk Tales)
-	{ "muzukashiihon",		"難しい本を読むと眠くなる" },						// "Reading a Difficult Book Makes Me Sleepy"
 	{ "nihonchiri",       	"Visual日本地理" },									// Japan Geography
 	{ "niningashi",			"ににんがし" },
 	{ "nonta",				"のんたくんとゆかいななかまたち" },				   	// Nonta-kun and his Wonderful Friends
@@ -1603,6 +1606,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794267, Common::JA_JPN, 311),
 
+	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
+	MACDEMO1_l("henachoco03", "Demo", "Muzukashiihon", "f5277c53bacd27936158dd3867e587e2", 1058777, Common::JA_JPN, 311),
+	MACDEMO1_l("henachoco03", "Trial Version", "ITA Choco", "f5277c53bacd27936158dd3867e587e2", 1123785, Common::JA_JPN, 311),
+	// Original filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
+	MACGAME1_l("henachoco03", "", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1579812, Common::JA_JPN, 311),
+
 	MACGAME1("hhouse", "", "The Ultimate Haunted House", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384475, 313),
 	WINDEMO1("hhouse", "1994 Demo", "HAUNTED.EXE", "2b3543a9131a49f665982d26513a84f8", 914491, 310),
 
@@ -1817,12 +1826,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("murdertaylor", "", "Taylor French", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 300),
 	WINGAME1("murdertaylor", "", "TAYLORF.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
-
-	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
-	MACDEMO1_l("muzukashiihon", "Demo", "Muzukashiihon", "f5277c53bacd27936158dd3867e587e2", 1058777, Common::JA_JPN, 311),
-	MACDEMO1_l("muzukashiihon", "Trial Version", "ITA Choco", "f5277c53bacd27936158dd3867e587e2", 1123785, Common::JA_JPN, 311),
-	// Original filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
-	MACGAME1_l("muzukashiihon", "", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1579812, Common::JA_JPN, 311),
 
 	MACGAME1("mylk", "", "Mylk DoubleClickMe!", "8a33471513b6896d3d13b8a9c8790d86", 356280, 300),
 
@@ -2660,6 +2663,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "5bbb193a8785c70abe2a4d86b99e1536", 304126, 404),
 	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",  "b083372f35bfaa97f68cfa7f9bb5222e", 2132572,
 									"DemoMain.dxr", "d16606eadccdb21f654f4b4264fc996a", 2711628, 404),
+
+	WINGAME1_l("henachoco", "", "HENADB.EXE", "b1f5f97ce93cafe828621843ff05df76", 2366787, Common::JA_JPN, 400),
+
+	WINGAME1_l("henachoco02", "", "SAITEI.EXE", "4a5244b62e268a2ce38d9876bff91016", 2293467, Common::JA_JPN, 400),
+
+	WINGAME1_l("henachoco03", "", "BOOK.EXE", "8bb2b769cc851916004aac0c887b0db9", 1795813, Common::JA_JPN, 400),
+
+	WINGAME1_l("henachoco04", "", "BENTO.EXE", "3a42f519df56d4cecac5e0915cf90f33", 2330381, Common::JA_JPN, 400),
+
+	WINGAME1_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400),
 
 	MACGAME1_l("henachoco08", "", "yataideomase", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
