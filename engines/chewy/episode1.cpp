@@ -138,7 +138,7 @@ void Room0::entry() {
 	show_cur();
 }
 
-void Room0::action1() {
+bool Room0::action1() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		flags.AutoAniPlay = true;
@@ -151,10 +151,13 @@ void Room0::action1() {
 		det->hide_static_spr(6);
 
 		flags.AutoAniPlay = false;
+		return true;
 	}
+
+	return false;
 }
 
-void Room0::action2() {
+bool Room0::action2() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		auto_move(2, 0);
@@ -166,7 +169,11 @@ void Room0::action2() {
 		menu_item = 0;
 		cursor_wahl(0);
 		atds->set_steuer_bit(175, 1, 1);
+
+		return true;
 	}
+
+	return false;
 }
 
 void Room0::auge_start(int16 mode) {
@@ -1515,35 +1522,41 @@ void r8_start_verbrennen() {
 	show_cur();
 }
 
-void r8_gips_wurf() {
-	hide_cur();
-	det->load_taf_seq(116, 30, 0);
-	auto_move(2, P_CHEWY);
-	maus_links_click = 0;
-	spieler.PersonHide[P_CHEWY] = true;
-	del_inventar(GIPS_EIMER_INV);
-	start_detail_wait(4, 1, ANI_VOR);
-	spieler.PersonHide[P_CHEWY] = false;
-	start_detail_frame(5, 1, ANI_VOR, 16);
-	start_detail_wait(6, 1, ANI_VOR);
-	obj->show_sib(33);
-	det->show_static_spr(14);
-	wait_detail(5);
-	spieler.R8GipsWurf = true;
-	spieler.room_m_obj[MASKE_INV].ZEbene = 0;
-	obj->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
-	det->del_taf_tbl(116, 30, 0);
-	auto_move(8, P_CHEWY);
-	flags.AtsAction = false;
-	menu_item = CUR_USE;
-	look_invent_screen(INVENTAR_NORMAL, 178);
-	flags.AtsAction = true;
-	spieler.PersonHide[P_CHEWY] = true;
-	start_detail_wait(20, 1, ANI_VOR);
-	spieler.PersonHide[P_CHEWY] = false;
-	invent_2_slot(MASKE_INV);
-	cursor_wahl(menu_item);
-	show_cur();
+bool r8_gips_wurf() {
+	if (!is_cur_inventar(11)) {
+		hide_cur();
+		det->load_taf_seq(116, 30, 0);
+		auto_move(2, P_CHEWY);
+		maus_links_click = 0;
+		spieler.PersonHide[P_CHEWY] = true;
+		del_inventar(GIPS_EIMER_INV);
+		start_detail_wait(4, 1, ANI_VOR);
+		spieler.PersonHide[P_CHEWY] = false;
+		start_detail_frame(5, 1, ANI_VOR, 16);
+		start_detail_wait(6, 1, ANI_VOR);
+		obj->show_sib(33);
+		det->show_static_spr(14);
+		wait_detail(5);
+		spieler.R8GipsWurf = true;
+		spieler.room_m_obj[MASKE_INV].ZEbene = 0;
+		obj->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
+		det->del_taf_tbl(116, 30, 0);
+		auto_move(8, P_CHEWY);
+		flags.AtsAction = false;
+		menu_item = CUR_USE;
+		look_invent_screen(INVENTAR_NORMAL, 178);
+		flags.AtsAction = true;
+		spieler.PersonHide[P_CHEWY] = true;
+		start_detail_wait(20, 1, ANI_VOR);
+		spieler.PersonHide[P_CHEWY] = false;
+		invent_2_slot(MASKE_INV);
+		cursor_wahl(menu_item);
+		show_cur();
+
+		return true;
+	}
+
+	return false;
 }
 
 void r8_open_gdoor() {

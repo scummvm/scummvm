@@ -902,6 +902,7 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 	char *start_ptr;
 	int16 vocx;
 	SplitStringInit tmp_ssi;
+
 	if (aadv.Dialog) {
 		switch (in->get_switch_code()) {
 		case ESC:
