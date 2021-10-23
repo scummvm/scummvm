@@ -46,6 +46,7 @@
 
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "audio/musicplugin.h"
 
 #include "engines/util.h"
 
@@ -282,16 +283,16 @@ Common::Error SkyEngine::init() {
 
 	_systemVars->gameVersion = _skyDisk->determineGameVersion();
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
-	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
+	MusicDevice * dev = MusicMan.detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
+	if (dev->getMusicType() == MT_ADLIB) {
 		_systemVars->systemFlags |= SF_SBLASTER;
 		_skyMusic = new AdLibMusic(_mixer, _skyDisk);
 	} else {
 		_systemVars->systemFlags |= SF_ROLAND;
-		if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"))
-			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _mixer, _skyDisk);
+		if ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32"))
+			_skyMusic = new MT32Music(MusicMan.createMidi(dev), _mixer, _skyDisk);
 		else
-			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _mixer, _skyDisk);
+			_skyMusic = new GmMusic(MusicMan.createMidi(dev), _mixer, _skyDisk);
 	}
 
 	if (isCDVersion()) {
