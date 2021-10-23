@@ -23,6 +23,7 @@
 #include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "audio/musicplugin.h"
 #include "engines/engine.h"
 #include "common/func.h"
 
@@ -136,7 +137,7 @@ private:
 
 class PC98MidiDriver : public PC98CommonDriver {
 public:
-	PC98MidiDriver(DeviceHandle dev);
+	PC98MidiDriver(MusicDevice * dev);
 	~PC98MidiDriver() override;
 
 	int open() override;
@@ -154,7 +155,7 @@ private:
 	void sendSysexWithCheckSum(uint8 *data);
 
 	MidiDriver *_drv;
-	DeviceHandle _dev;
+	MusicDevice * _dev;
 
 	uint8 _volSysex[9];
 	uint8 _partAssignSysexGS[9];
@@ -530,8 +531,8 @@ const uint16 PC98FMDriver::_frequency[12] = {
 
 #define MIDIMSG32(s, p1, p2) (p2 << 16 | p1 << 8 | s)
 
-PC98MidiDriver::PC98MidiDriver(MidiDriver::DeviceHandle dev) : _dev(dev), _drv(0) {
-	_instrumentsRemap = (getMusicType(dev) == MT_MT32) ? _instrumentsRemapMT32 : (getMusicType(dev) == MT_GM ? _instrumentsRemapGM : 0);
+PC98MidiDriver::PC98MidiDriver(MusicDevice * dev) : _dev(dev), _drv(0) {
+	_instrumentsRemap = (dev->getMusicType() == MT_MT32) ? _instrumentsRemapMT32 : (dev->getMusicType() == MT_GM ? _instrumentsRemapGM : 0);
 	int8 *tbl2 = new int8[128];
 	memset(tbl2, 0, 128);
 	_instrumentLevelAdjust = tbl2;
@@ -552,7 +553,7 @@ int PC98MidiDriver::open() {
 
 	delete _drv;
 
-	_drv = MidiDriver::createMidi(_dev);
+	_drv = MusicMan.createMidi(_dev);
 	if (!_drv || !_instrumentsRemap)
 		return MERR_DEVICE_NOT_AVAILABLE;
 
@@ -567,7 +568,7 @@ int PC98MidiDriver::open() {
 
 		property(kPropMusicVolume, Audio::Mixer::kMaxChannelVolume);
 
-		if (getMusicType(_dev) == MT_MT32) {
+		if (_dev->getMusicType() == MT_MT32) {
 			_partAssignSysexGS[7] = 0x10;
 			for (uint8 i = 0x10; i < 0x20; ++i) {
 				_partAssignSysexGS[5] = i;
@@ -580,7 +581,7 @@ int PC98MidiDriver::open() {
 				sendSysexWithCheckSum(_partAssignSysexMT32);
 			}
 
-		} else if (getMusicType(_dev) == MT_GM) {
+		} else if (_dev->getMusicType() == MT_GM) {
 			_partAssignSysexGS[5] = 0x10;
 			_partAssignSysexGS[7] = 9;
 			sendSysexWithCheckSum(_partAssignSysexGS);
@@ -649,7 +650,7 @@ void PC98MidiDriver::setVolume(int musicVolume, int sfxVolume) {
 	if (!_isOpen)
 		return;
 
-	if (getMusicType(_dev) == MT_MT32) {
+	if (_dev->getMusicType() == MT_MT32) {
 		_volSysex[7] = musicVolume * 100 / Audio::Mixer::kMaxChannelVolume;
 		sendSysexWithCheckSum(_volSysex);
 	} else {
@@ -708,8 +709,8 @@ const uint8 PC98MidiDriver::_sysexMsg[3][9] = {
 	{ 0x41, 0x10, 0x16, 0x12, 0x10, 0x00, 0x00, 0x00, 0x00 }
 };
 
-MidiDriver *MidiDriverPC98_create(MidiDriver::DeviceHandle dev) {
-	MusicType type = MidiDriver::getMusicType(dev);
+MidiDriver *MidiDriverPC98_create(MusicDevice * dev) {
+	MusicType type = dev->getMusicType();
 	if (type == MT_PC98)
 		return new PC98FMDriver();
 	else if (type == MT_GM || type == MT_MT32)

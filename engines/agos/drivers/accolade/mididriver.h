@@ -25,6 +25,7 @@
 
 #include "agos/agos.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "common/error.h"
 
 namespace AGOS {
@@ -38,7 +39,7 @@ extern void MidiDriver_Accolade_readDriver(Common::String filename, MusicType re
 
 extern MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename);
 extern MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename);
-extern MidiDriver *MidiDriverPC98_create(MidiDriver::DeviceHandle dev);
+extern MidiDriver *MidiDriverPC98_create(MusicDevice * dev);
 
 } // End of namespace AGOS
 

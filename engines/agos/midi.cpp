@@ -133,19 +133,19 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 		break;
 	}
 
-	MidiDriver::DeviceHandle dev;
+	MusicDevice *dev;
 	int ret = 0;
 
 	if (_musicMode == kMusicModePC98) {
-		dev = MidiDriver::detectDevice(devFlags);
+		dev = MusicMan.detectDevice(devFlags);
 		_driver = MidiDriverPC98_create(dev);
 		if (_driver && !_driver->open()) {
 			_driver->setTimerCallback(this, &onTimer);
 			return 0;
 		}
 	} else if (_musicMode != kMusicModeDisabled) {
-		dev = MidiDriver::detectDevice(devFlags);
-		musicType = MidiDriver::getMusicType(dev);
+		dev = MusicMan.detectDevice(devFlags);
+		musicType = dev->getMusicType();
 
 		switch (musicType) {
 		case MT_ADLIB:
@@ -275,11 +275,11 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 		break;
 	}
 
-	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-	_adLibMusic = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	dev = MusicMan.detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	_adLibMusic = (dev->getMusicType() == MT_ADLIB);
+	_nativeMT32 = ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-	_driver = MidiDriver::createMidi(dev);
+	_driver = MusicMan.createMidi(dev);
 	if (!_driver)
 		return 255;
 
