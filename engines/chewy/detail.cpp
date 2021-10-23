@@ -937,13 +937,14 @@ void detail::load_room_sounds(Stream *tvp_handle) {
 	byte *workbuf;
 	uint32 size;
 	uint32 allsize;
+
 	if (tvp_handle) {
 		workbuf = SoundBuffer;
 		allsize = 0;
 		size = 0;
 		break_flag = false;
-		if (workbuf) {
 
+		if (workbuf) {
 			for (i = 0; i < MAXDETAILS * MAX_SOUNDS; i++)
 				rdi.sample[i] = NULL;
 
@@ -952,13 +953,15 @@ void detail::load_room_sounds(Stream *tvp_handle) {
 				if ((index != -1) && (rdi.sample[i] == NULL)) {
 					mem->file->select_pool_item(tvp_handle, index);
 					size = mem->file->load_voc(tvp_handle, workbuf);
-					if (!modul) {
 
+					if (!modul) {
 						rdi.sample[i] = workbuf;
 						workbuf += size;
 						allsize += size;
-					} else
+					} else {
 						break_flag = true;
+					}
+
 					if (allsize > SoundBufferSize) {
 						modul = SPEICHER;
 						fcode = NOSPEICHER;

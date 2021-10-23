@@ -158,7 +158,7 @@ char *Patterns[128];
 char *CurrentLine;
 int16 StereoPos [8] = {63};
 
-char *Dbuffer [8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
+byte *Dbuffer [8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
 uint32 DbufferLen [8] = {0};
 uint32 DbSampleLen [8] = {0};
 Stream *DbufferHandles [8] = {0};
@@ -579,15 +579,15 @@ void ailclass::end_sample(int16 kanal) {
 #endif
 }
 
-void ailclass::init_double_buffer(char *b1, char *b2, uint32 len, int16 kanal) {
+void ailclass::init_double_buffer(byte *b1, byte *b2, uint32 len, int16 kanal) {
 	kanal &= 3;
 	kanal += 4;
-	Dbuffer [kanal][0] = b1;
-	Dbuffer [kanal][1] = b2;
-	DbufferLen [kanal] = len;
+	Dbuffer[kanal][0] = b1;
+	Dbuffer[kanal][1] = b2;
+	DbufferLen[kanal] = len;
 }
 
-void ailclass::start_db_voc(void *v, int16 kanal, int16 vol) {
+void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
 	warning("STUB: ailclass::start_db_voc()");
 
 #if 0
@@ -899,6 +899,16 @@ void DecodeChannel(int16 ch) {
 		}
 	}
 #endif
+}
+
+void ailclass::switch_music(bool onOff) {
+	if (SoundEnable)
+		MusicSwitch = onOff;
+}
+
+void ailclass::switch_sound(bool onOff) {
+	if (SoundEnable)
+		SoundSwitch = onOff;
 }
 
 } // namespace Chewy

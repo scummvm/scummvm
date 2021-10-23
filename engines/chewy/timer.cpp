@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "chewy/chewy.h"
 #include "chewy/timer.h"
@@ -51,7 +52,15 @@ float timer_freq[6] = {
 	65520.0f
 };
 
+static uint32 priorTime = 0;
+
 void timer::calc_timer() {
+	uint32 currTime = g_system->getMillis();
+	if ((currTime / 1000) != (priorTime / 1000)) {
+		priorTime = currTime;
+		warning("%d", timer_count);
+	}
+
 	int16 i;
 	int16 count;
 	int ak_time;
