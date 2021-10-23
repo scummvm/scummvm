@@ -33,6 +33,7 @@
 #include "common/endian.h"
 #include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 
 namespace Common {
 DECLARE_SINGLETON(Lure::SoundManager);
@@ -50,9 +51,9 @@ SoundManager::SoundManager() {
 	_soundData = NULL;
 	_paused = false;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-	_isRoland = MidiDriver::getMusicType(dev) != MT_ADLIB;
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	_isRoland = dev->getMusicType() != MT_ADLIB;
+	_nativeMT32 = ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	Common::fill(_sourcesInUse, _sourcesInUse + LURE_MAX_SOURCES, false);
 
