@@ -5,6 +5,7 @@ ScummVM Team
      Pawel Kolodziejski
      Eugene Sandulenko
      Einar Johan T. Somaaen
+     Lothar Serra Mari
 
   PR Office
   ---------
@@ -657,6 +658,7 @@ ScummVM Team
        Robin Watts                    - ARM assembly routines for nice
                                         speedups on several ports;
                                         improvements to the sound mixer
+       Trembyle                       - Archivist
 
   Website (code)
   --------------

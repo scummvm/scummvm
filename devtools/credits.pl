@@ -507,6 +507,7 @@ begin_credits("Credits");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+				add_person("Lothar Serra Mari", "lotharsm", "");
 			end_persons();
 		end_section();
 
@@ -676,6 +677,7 @@ begin_credits("Credits");
 				add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
 				add_person("Coen Rampen", "NMIError", "Sound improvements");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
+				add_person("", "Trembyle", "Archivist");
 			end_section();
 		end_section();
 
