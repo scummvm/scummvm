@@ -362,7 +362,7 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 			// If we haven't tried to find a MIDI device yet we do this now.
 			skipMidi = false;
 			continue;
-		} else if (flags) {
+		} else {
 			// Invalid flags. Leave the detection loop.
 			break;
 		}
