@@ -36,11 +36,12 @@ class CellGame {
 public:
 	CellGame();
 	~CellGame();
+	void run(uint16 depth, byte *scriptBoard);
+
 	byte getStartX();
 	byte getStartY();
 	byte getEndX();
 	byte getEndY();
-	int playStauf(byte color, uint16 depth, byte *scriptBoard);
 
 private:
 	void copyToTempBoard();
@@ -63,8 +64,8 @@ private:
 	int getBoardWeight(int8 color1, int8 color2);
 	void chooseBestMove(int8 color);
 	int8 calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWeight);
-	int16 doGame(int8 color, int depth);
-	int16 calcMove(int8 color, uint16 depth);
+	void doGame(int8 color, int depth);
+	void calcMove(int8 color, uint16 depth);
 
 	byte _startX;
 	byte _startY;

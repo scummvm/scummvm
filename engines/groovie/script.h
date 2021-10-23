@@ -29,6 +29,8 @@
 #include "groovie/logic/cake.h"
 #include "groovie/logic/gallery.h"
 #include "groovie/logic/mousetrap.h"
+#include "groovie/logic/othello.h"
+#include "groovie/logic/pente.h"
 #include "groovie/logic/triangle.h"
 #endif
 
@@ -268,6 +270,8 @@ private:
 	CakeGame _cake;
 	GalleryGame _gallery;
 	MouseTrapGame _mouseTrap;
+	OthelloGame _othello;
+	PenteGame _pente;
 	TriangleGame _triangle;
 #endif
 };

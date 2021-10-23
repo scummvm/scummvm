@@ -22,6 +22,8 @@ MODULE_OBJS += \
 	logic/cake.o \
 	logic/gallery.o \
 	logic/mousetrap.o \
+	logic/othello.o \
+	logic/pente.o \
 	logic/tlcgame.o \
 	logic/triangle.o \
 	video/roq.o

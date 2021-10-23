@@ -664,7 +664,7 @@ int8 CellGame::calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWe
 	return res;
 }
 
-int16 CellGame::doGame(int8 color, int depth) {
+void CellGame::doGame(int8 color, int depth) {
 	bool canMove;
 	int type;
 
@@ -740,23 +740,18 @@ int16 CellGame::doGame(int8 color, int depth) {
 			}
 		}
 		chooseBestMove(color);
-		return 1;
 	}
-
-	return 0;
 }
 
 const int8 depths[] = { 1, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 2, 3, 2, 2, 3, 3, 2, 3, 3, 3 };
 
-int16 CellGame::calcMove(int8 color, uint16 depth) {
-	int result = 0;
-
+void CellGame::calcMove(int8 color, uint16 depth) {
 	_flag1 = false;
 	++_moveCount;
 	if (depth) {
 		if (depth == 1) {
 			_flag2 = true;
-			result = doGame(color, 0);
+			doGame(color, 0);
 		} else {
 			int newDepth;
 
@@ -765,17 +760,17 @@ int16 CellGame::calcMove(int8 color, uint16 depth) {
 			if (newDepth >= 20) {
 				assert(0); // This branch is not implemented
 			} else {
-				result = doGame(color, newDepth);
+				doGame(color, newDepth);
 			}
 		}
 	} else {
 		_flag2 = false;
-		result = doGame(color, depth);
+		doGame(color, depth);
 	}
-	return result;
 }
 
-int CellGame::playStauf(byte color, uint16 depth, byte *scriptBoard) {
+void CellGame::run(uint16 depth, byte *scriptBoard) {
+	const byte color = 2;
 	int i;
 
 	for (i = 0; i < 49; i++, scriptBoard++) {
@@ -788,7 +783,7 @@ int CellGame::playStauf(byte color, uint16 depth, byte *scriptBoard) {
 	for (i = 49; i < 57; i++)
 		_board[i] = 0;
 
-	return calcMove(color, depth);
+	calcMove(color, depth);
 }
 
 

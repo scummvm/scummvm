@@ -2073,7 +2073,7 @@ void Script::o_gamelogic() {
 		if (!_cellGame)
 			_cellGame = new CellGame;
 
-		_cellGame->playStauf(2, param, &_variables[0x19]);
+		_cellGame->run(param, &_variables[0x19]);
 
 		// Set the movement origin
 		setVariable(0, _cellGame->getStartY()); // y
@@ -2104,14 +2104,13 @@ void Script::o_gamelogic() {
 			_mouseTrap.run(_variables);
 			break;
 		case 6: // 11H Pente puzzle at the end of the game (pt.grv)
-			// TODO
-			_variables[5] = 4;	// Auto-solve the puzzle, so the player can continue
+			_pente.run(_variables);
 			break;
 		case 7:	// Clan Unknown puzzle
 			// TODO
 			break;
 		case 8:	// Clan/UHP Othello/Reversi puzzle
-			// TODO
+			_othello.run(_variables);
 			break;
 		default:
 			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Invalid -> NOP", param);
@@ -2127,8 +2126,8 @@ void Script::o_gamelogic() {
 #endif
 
 	default:
-		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", param);
-		warning("Groovie::Script: OpCode 0x42 for (GameSpecial) current game not implemented yet.");
+		warning("Groovie::Script: OpCode 0x42 (param %d) for current game is not implemented yet.", param);
+		break;
 	}
 }
 
