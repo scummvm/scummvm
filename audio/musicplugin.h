@@ -58,23 +58,23 @@ public:
 	};
 
 	const Common::String &getName() const;
-	const Common::String &getMusicDriverName();
-	const Common::String &getMusicDriverId();
+	const Common::String &getMusicDriverName() const;
+	const Common::String &getMusicDriverId() const;
 	MusicType getMusicType() const;
 
-	Common::String MusicDevice::getDeviceString(DeviceStringType type);
+	Common::String getDeviceString(DeviceStringType type) const;
 
 	/**
 	 * Returns a user readable string that contains the name of the current
 	 * device name (if it isn't the default one) and the name of the driver.
 	 */
-	Common::String getCompleteName();
+	Common::String getCompleteName() const;
 
 	/**
 	 * Returns a user readable string that contains the name of the current
 	 * device name (if it isn't the default one) and the id of the driver.
 	 */
-	Common::String getCompleteId();
+	Common::String getCompleteId() const;
 
 	/**
 	 * Checks whether a device can actually be used. Currently this is only
@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * Tries to instantiate a MIDI Driver instance based on the device
-	 * previously detected via MidiDriver::detectDevice()
+	 * previously detected via MusicMan.detectDevice()
 	 *
 	 * @param mididriver	Pointer to a pointer which the MusicPluginObject sets
 	 *				to the newly create MidiDriver, or 0 in case of an error
@@ -132,18 +132,20 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 	const PluginList &getPlugins() const;
-	const MusicDevices getDevices() const;
 
 public:
+	const MusicDevices getDevices() const;
 
 	/** Returns driver based on the present devices and the flags parameter. */
 	MusicDevice *detectDevice(int flags);
 
 	/** Find the music driver matching the given driver name/description. */
 	MusicDevice *getDevice(const Common::String &identifier);
+
+	MidiDriver *createMidi(MusicDevice *) const;
 };
 
 /** Convenience shortcut for accessing the Music manager. */
-#define MusicMan MusicManager::instance()
+#define MusicMan ::MusicManager::instance()
 /** @} */
 #endif

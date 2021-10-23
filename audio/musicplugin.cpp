@@ -43,11 +43,11 @@ const Common::String &MusicDevice::getName() const {
 	return _name;
 }
 
-const Common::String &MusicDevice::getMusicDriverName() {
+const Common::String &MusicDevice::getMusicDriverName() const {
 	return _musicDriverName;
 }
 
-const Common::String &MusicDevice::getMusicDriverId() {
+const Common::String &MusicDevice::getMusicDriverId() const {
 	return _musicDriverId;
 }
 
@@ -57,7 +57,7 @@ MusicType MusicDevice::getMusicType() const {
 	return _type;
 }
 
-Common::String MusicDevice::getCompleteName() {
+Common::String MusicDevice::getCompleteName() const {
 	Common::String name;
 
 	if (_name.empty()) {
@@ -74,7 +74,7 @@ Common::String MusicDevice::getCompleteName() {
 	return name;
 }
 
-Common::String MusicDevice::getCompleteId() {
+Common::String MusicDevice::getCompleteId() const {
 	Common::String id = _musicDriverId;
 	if (!_name.empty()) {
 		id += "_";
@@ -97,7 +97,7 @@ const MusicDevices MusicManager::getDevices() const {
 	MusicDevices devices;
 
 	for (PluginList::const_iterator m = plugins.begin(); m != plugins.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
+		MusicDevices i = MusicMan.getDevices();
 		devices.insert(devices.end(), i.begin(), i.end());
 	}
 
@@ -108,7 +108,7 @@ MusicDevice *MusicManager::getDevice(const Common::String &identifier) {
 	const PluginList p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
-		error("MidiDriver::getDeviceHandle: Music plugins must be loaded prior to calling this method");
+		error("MusicMan.getDevice: Music plugins must be loaded prior to calling this method");
 
 	MusicDevices i = getDevices();
 	for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
@@ -123,7 +123,7 @@ MusicDevice *MusicManager::getDevice(const Common::String &identifier) {
 	return 0;
 }
 
-Common::String MusicDevice::getDeviceString(DeviceStringType type) {
+Common::String MusicDevice::getDeviceString(DeviceStringType type) const {
 	if (type == kDriverName)
 		return getMusicDriverName();
 	else if (type == kDriverId)
