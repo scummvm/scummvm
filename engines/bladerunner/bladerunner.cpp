@@ -93,6 +93,7 @@
 
 #include "graphics/thumbnail.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 namespace BladeRunner {
 
@@ -597,7 +598,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// Query the selected music device (defaults to MT_AUTO device).
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
+	MusicDevice * dev = MusicMan.getDevice(selDevStr.empty() ? Common::String("auto") : selDevStr);
 	//
 	// We just respect the "No Music" choice (or an invalid choice)
 	//
@@ -606,7 +607,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	//      should not appear in games like Blade Runner, since they are largely irrelevant
 	//      and may cause confusion when combined/ conflicting with the global settings
 	//      which are by default applied, if the user does not explicitly override them.
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	_noMusicDriver = (dev->getMusicType() == MT_NULL || dev->getMusicType() == MT_INVALID);
 
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 	//
