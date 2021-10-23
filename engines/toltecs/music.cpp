@@ -22,6 +22,7 @@
 
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+#include "audio/musicplugin.h"
 #include "common/textconsole.h"
 
 #include "toltecs/toltecs.h"
@@ -31,8 +32,8 @@
 namespace Toltecs {
 
 MusicPlayer::MusicPlayer(bool isGM) : _isGM(isGM), _buffer(NULL) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MusicType musicType = dev->getMusicType();
 
 	switch (musicType) {
 	case MT_ADLIB:
