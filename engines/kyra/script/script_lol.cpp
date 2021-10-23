@@ -1464,10 +1464,43 @@ int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
 }
 
 int LoLEngine::olol_printMessage(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
-	int snd = stackPos(2);
-	_txt->printMessage(stackPos(0), getLangString(stackPos(1)), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	int max_args = (sizeof (script->stack) / sizeof (script->stack[0])) - script->sp;
+	int fmt_args[7] = {-1, -1, -1, -1, -1, -1, -1};
+	int snd;
 
+	if (max_args > 10)
+		max_args = 10;
+	assert(max_args >= 3);
+
+	switch (max_args)
+        {
+	case 10:
+		fmt_args[6] = stackPos(9);
+		/* fallthrough */
+	case 9:
+		fmt_args[5] = stackPos(8);
+		/* fallthrough */
+	case 8:
+		fmt_args[4] = stackPos(7);
+		/* fallthrough */
+	case 7:
+		fmt_args[3] = stackPos(6);
+		/* fallthrough */
+	case 6:
+		fmt_args[2] = stackPos(5);
+		/* fallthrough */
+	case 5:
+		fmt_args[1] = stackPos(4);
+		/* fallthrough */
+	case 4:
+		fmt_args[0] = stackPos(3);
+	}
+
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), fmt_args[0], fmt_args[1], fmt_args[2], fmt_args[3], fmt_args[4], fmt_args[5], fmt_args[6]);
+
+	_txt->printMessage(stackPos(0), getLangString(stackPos(1)), fmt_args[0], fmt_args[1], fmt_args[2], fmt_args[3], fmt_args[4], fmt_args[5], fmt_args[6]);
+
+	snd = stackPos(2);
 	if (snd >= 0)
 		snd_playSoundEffect(snd, -1);
 
