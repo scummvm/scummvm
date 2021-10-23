@@ -1357,6 +1357,17 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			error("convertMessageToString: buffer overflow");
 	}
 
+	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German CD version of SAMNMAX
+	// Adding the missing animation escape sequence while copying the text fixes it.
+	if (_game.id == GID_SAMNMAX && _roomResource == 56 && vm.slot[_currentScript].number == 200) {
+		if (_language == Common::DE_DEU && vm.slot[_currentScript].offs == 0x0000e5e6) {
+			*dst++ = 0xFF;
+			*dst++ = 0x09;
+			*dst++ = 0x0E;
+			*dst++ = 0x00;
+		}
+	}
+
 	// WORKAROUND: Russian The Dig pads messages with 03. No idea why
 	// it does not work as is with our rendering code, thus fixing it
 	// with a workaround.
