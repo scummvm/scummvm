@@ -21,6 +21,7 @@
  */
 
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "audio/mixer.h"
 
 #include "groovie/music.h"
@@ -426,8 +427,8 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 		MusicPlayerMidi(vm), _multisourceDriver(0), _milesXmidiTimbres(0) {
 
 	// Create the driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MusicType musicType = dev->getMusicType();
 	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
 		musicType = MT_MT32;
 	_driver = NULL;
@@ -532,8 +533,8 @@ MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm) : MusicPlayerMidi(vm) 
 	_midiParser = MidiParser::createParser_SMF();
 
 	// Create the driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MusicMan.createMidi(dev);
 	assert(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
@@ -622,8 +623,8 @@ MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	_midiParser = MidiParser::createParser_QT();
 
 	// Create the driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MusicMan.createMidi(dev);
 	assert(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)

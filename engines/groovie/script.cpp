@@ -23,6 +23,7 @@
 #include <limits.h>
 
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 #include "groovie/script.h"
 #include "groovie/cursor.h"
@@ -91,11 +92,11 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	}
 
 	// Initialize the music type variable
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	if (dev->getMusicType() == MT_ADLIB) {
 		// MIDI through AdLib
 		setVariable(0x100, 0);
-	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
+	} else if ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
 		setVariable(0x100, 2);
 	} else {
