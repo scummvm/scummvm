@@ -23,6 +23,8 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
 
+#include "audio/musicplugin.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -116,8 +118,8 @@ int MidiDriver_MT32::open() {
 	debugC(kDebugLevelMT32Driver, "MT32: starting driver");
 
 	// Setup midi driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_MT32);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_PREFER_MT32);
+	MusicType musicType = dev->getMusicType();
 
 	switch (musicType) {
 	case MT_MT32:
@@ -132,7 +134,7 @@ int MidiDriver_MT32::open() {
 		break;
 	}
 
-	_driver = MidiDriver::createMidi(dev);
+	_driver = MusicMan.createMidi(dev);
 	if (!_driver)
 		return 255;
 

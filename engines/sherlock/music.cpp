@@ -27,6 +27,7 @@
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
 #include "audio/audiostream.h"
+#include "audio/musicplugin.h"
 // for Miles Audio (Sherlock Holmes 2)
 #include "audio/miles.h"
 // for 3DO digital music
@@ -237,13 +238,13 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
-	MidiDriver::DeviceHandle dev;
+	MusicDevice * dev;
 
 	if (IS_SERRATED_SCALPEL) {
 		// Serrated Scalpel: used an internal Electronic Arts .MUS music engine
 		_midiParser = new MidiParser_SH();
-		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		_musicType = MidiDriver::getMusicType(dev);
+		dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		_musicType = dev->getMusicType();
 
 		switch (_musicType) {
 		case MT_ADLIB:
@@ -261,14 +262,14 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		default:
 			// Create default one
 			// I guess we shouldn't do this anymore
-			//_midiDriver = MidiDriver::createMidi(dev);
+			//_midiDriver = MusicMan.createMidi(dev);
 			break;
 		}
 	} else {
 		// Rose Tattooo: seems to use Miles Audio 3
 		_midiParser = MidiParser::createParser_XMIDI();
-		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		_musicType = MidiDriver::getMusicType(dev);
+		dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		_musicType = dev->getMusicType();
 
 		switch (_musicType) {
 		case MT_ADLIB:
@@ -286,7 +287,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 				_midiDriver = Audio::MidiDriver_Miles_MT32_create("");
 				_musicType = MT_MT32;
 			} else {
-				_midiDriver = MidiDriver::createMidi(dev);
+				_midiDriver = MusicMan.createMidi(dev);
 				_musicType = MT_GM;
 			}
 			break;
