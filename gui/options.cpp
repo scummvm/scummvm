@@ -151,6 +151,10 @@ static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
+static uint32 hashMusicDevice(const MusicDevice *d) {
+	return d->getCompleteId().hash();
+}
+
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
@@ -1132,7 +1136,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	const Common::String allFlags = musicType2GUIO((uint32)-1);
 	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
@@ -1517,26 +1521,23 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
-	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	const Common::String allFlags = musicType2GUIO((uint32)-1);
 	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
-	const PluginList p = MusicMan.getPlugins();
-	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			Common::String deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
+	const MusicDevices &i = MusicMan.getDevices();
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		Common::String deviceGuiOption = musicType2GUIO(d->getMusicType());
 
-			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS and SegaCD options there
-				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98 && d->getMusicType() != MT_SEGACD)
-				|| (_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
-				|| (_guioptions.contains(deviceGuiOption)) // flag is present
-				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
-				// else we would not show for example external devices connected via ALSA, since they are always
-				// marked as General MIDI device.
-				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
-				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
-				_midiPopUp->appendEntry(_(d->getCompleteName()), d->getHandle());
-		}
+		if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS and SegaCD options there
+				&& d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98 && d->getMusicType() != MT_SEGACD)
+			|| (_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
+			|| (_guioptions.contains(deviceGuiOption)) // flag is present
+			// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
+			// else we would not show for example external devices connected via ALSA, since they are always
+			// marked as General MIDI device.
+			|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
+			|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
+			_midiPopUp->appendEntry(_(d->getCompleteName()), hashMusicDevice(&*d));
 	}
 
 	// The OPL emulator popup & a label
@@ -1558,26 +1559,20 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
 
 	// Populate
-	const PluginList p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
 	// auto detection for users who don't have a saved setting yet.
-	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicDriverId() == "null")
-				_gmDevicePopUp->appendEntry(_("Don't use General MIDI music"), d->getHandle());
-		}
+	const MusicDevices &i = MusicMan.getDevices();
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		if (d->getMusicDriverId() == "null")
+			_gmDevicePopUp->appendEntry(_("Don't use General MIDI music"), hashMusicDevice(&*d));
 	}
 	// Now we add the other devices.
-	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM) {
-				if (d->getMusicType() != MT_MT32)
-					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			} else if (d->getMusicDriverId() == "auto") {
-				_gmDevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
-			}
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		if (d->getMusicType() >= MT_GM) {
+			if (d->getMusicType() != MT_MT32)
+				_gmDevicePopUp->appendEntry(d->getCompleteName(), hashMusicDevice(&*d));
+		} else if (d->getMusicDriverId() == "auto") {
+			_gmDevicePopUp->appendEntry(_("Use first available device"), hashMusicDevice(&*d));
 		}
 	}
 
@@ -1621,25 +1616,19 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Roland GS device (enable MT-32 mappings)"), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
 
-	const PluginList p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
 	// auto detection for users who don't have a saved setting yet.
-	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicDriverId() == "null")
-				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());
-		}
+	const MusicDevices &i = MusicMan.getDevices();
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		if (d->getMusicDriverId() == "null")
+			_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), hashMusicDevice(&*d));
 	}
 	// Now we add the other devices.
-	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM)
-				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			else if (d->getMusicDriverId() == "auto")
-				_mt32DevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
-		}
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		if (d->getMusicType() >= MT_GM)
+			_mt32DevicePopUp->appendEntry(d->getCompleteName(), hashMusicDevice(&*d));
+		else if (d->getMusicDriverId() == "auto")
+			_mt32DevicePopUp->appendEntry(_("Use first available device"), hashMusicDevice(&*d));
 	}
 
 	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
@@ -1730,15 +1719,12 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
 		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
-		const PluginList p = MusicMan.getPlugins();
 
-		for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
-			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
-					popup->setSelectedTag(d->getHandle());
-					return popup->getSelected() != -1;
-				}
+		const MusicDevices &i = MusicMan.getDevices();
+		for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+			if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
+				popup->setSelectedTag(hashMusicDevice(&*d));
+				return popup->getSelected() != -1;
 			}
 		}
 	}
@@ -1750,16 +1736,13 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 	if (!popup || !_enableAudioSettings)
 		return;
 
-	const PluginList p = MusicMan.getPlugins();
 	bool found = false;
-	for (PluginList::const_iterator m = p.begin(); m != p.end() && !found; ++m) {
-		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
-		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getHandle() == popup->getSelectedTag()) {
-				ConfMan.set(setting, d->getCompleteId(), _domain);
-				found = true;
-				break;
-			}
+	const MusicDevices &i = MusicMan.getDevices();
+	for (MusicDevices::const_iterator d = i.begin(); d != i.end(); ++d) {
+		if (hashMusicDevice(&*d) == popup->getSelectedTag()) {
+			ConfMan.set(setting, d->getCompleteId(), _domain);
+			found = true;
+			break;
 		}
 	}
 
