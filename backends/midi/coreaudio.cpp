@@ -318,7 +318,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices CoreAudioMusicPlugin::getDevices() const {
@@ -327,7 +327,7 @@ MusicDevices CoreAudioMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error CoreAudioMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error CoreAudioMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = new MidiDriver_CORE();
 
 	return Common::kNoError;

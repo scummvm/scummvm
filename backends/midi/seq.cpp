@@ -194,7 +194,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices SeqMusicPlugin::getDevices() const {
@@ -205,7 +205,7 @@ MusicDevices SeqMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = new MidiDriver_SEQ();
 
 	return Common::kNoError;
