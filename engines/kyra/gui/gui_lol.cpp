@@ -2403,9 +2403,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			// Disable keyboard keymap during text input (save menu)
 			lolKeyboardKeymap->setEnabled(false);
-		} else if (_lastMenu == &_savenameMenu) {
-			// Restore keyboard keymap after text input (save menu)
-			lolKeyboardKeymap->setEnabled(true);
 		}
 
 		while (!_newMenu && _displayMenu) {
@@ -2450,8 +2447,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 				_displayMenu = false;
 		}
 
-		if (_newMenu != _currentMenu || !_displayMenu)
+		if (_newMenu != _currentMenu || !_displayMenu) {
+			if (_currentMenu == &_savenameMenu) {
+				// Restore keyboard keymap after text input (save menu)
+				lolKeyboardKeymap->setEnabled(true);
+			}
 			restorePage0();
+		}
 
 		_currentMenu->highlightedItem = hasSpecialButtons;
 
