@@ -37,6 +37,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 #include "audio/softsynth/pcspk.h"
 
 #include "hugo/hugo.h"
@@ -48,8 +49,8 @@
 namespace Hugo {
 
 MidiPlayer::MidiPlayer() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MusicMan.createMidi(dev);
 	assert(_driver);
 	_paused = false;
 
