@@ -23,6 +23,7 @@ MODULE_OBJS += \
 	logic/gallery.o \
 	logic/mousetrap.o \
 	logic/tlcgame.o \
+	logic/triangle.o \
 	video/roq.o
 endif
 

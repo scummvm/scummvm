@@ -29,6 +29,7 @@
 #include "groovie/logic/cake.h"
 #include "groovie/logic/gallery.h"
 #include "groovie/logic/mousetrap.h"
+#include "groovie/logic/triangle.h"
 #endif
 
 #include "common/random.h"
@@ -267,6 +268,7 @@ private:
 	CakeGame _cake;
 	GalleryGame _gallery;
 	MouseTrapGame _mouseTrap;
+	TriangleGame _triangle;
 #endif
 };
 

@@ -2098,7 +2098,7 @@ void Script::o_gamelogic() {
 			_gallery.run(_variables);
 			break;
 		case 4:	// 11H Triangle puzzle in the chapel (tx.grv)
-			// TODO
+			_triangle.run(_variables);
 			break;
 		case 5: // 11H/UHP Mouse trap puzzle in the lab (al.grv)
 			_mouseTrap.run(_variables);
