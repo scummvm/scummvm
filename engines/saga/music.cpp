@@ -31,6 +31,7 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 #include "audio/midiparser_qt.h"
 #include "audio/miles.h"
 #include "audio/decoders/flac.h"
@@ -60,8 +61,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 	} else {
 		_musicType = (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::kPlatformDOS ? MT_MT32 : MT_GM);
 
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | (_musicType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-		_driverType = MidiDriver::getMusicType(dev);
+		MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | (_musicType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+		_driverType = dev->getMusicType();
 		if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
 			_driverType = MT_MT32;
 
