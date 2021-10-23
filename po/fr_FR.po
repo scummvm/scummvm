@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-23 19:53+0000\n"
-"PO-Revision-Date: 2021-10-20 09:33+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2021-10-23 20:48+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1049,17 +1049,15 @@ msgstr "Plein écran"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"Attend la synchronisation verticale pour rafraîchir l'écran dans le moteur "
-"de rendu 3D"
+"Attend la synchronisation verticale pour rafraîchir l'écran afin d'éliminer "
+"les déchirures"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
@@ -2900,7 +2898,7 @@ msgstr "Mise à l'échelle Pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 msgid "Even pixels scaling"
-msgstr "Mise à l'échelle des pixels pairs"
+msgstr "Mise à l'échelle avec pixels réguliers"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:69
