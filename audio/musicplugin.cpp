@@ -230,8 +230,7 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 		dialog.runModal();
 	}
 
-	MusicType tp = reslt->getMusicType();
-	if (tp != MT_INVALID && tp != MT_AUTO) {
+	if (reslt && reslt->getMusicType() != MT_AUTO) {
 		if (reslt->checkDevice()) {
 			return reslt;
 		} else {
@@ -328,6 +327,7 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 			}
 		}
 
+		MusicType tp;
 		// The order in this list is important, since this is the order of preference
 		// (e.g. MT_ADLIB is checked before MT_PCJR and MT_PCSPK for a good reason).
 		// Detection flags get removed after detection attempt to avoid further attempts.
@@ -363,12 +363,19 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 			skipMidi = false;
 			continue;
 		} else if (flags) {
-			// Invalid flags. Set them to MDT_NONE to leave detection loop.
-			flags = MDT_NONE;
-			tp = MT_AUTO;
+			// Invalid flags. Leave the detection loop.
+			break;
 		}
 
-		return device;
+		for (MusicDevices::iterator d = _devices.begin(); d != _devices.end(); ++d) {
+
+			if (!d->checkDevice())
+				continue;
+			if (d->getMusicType() == tp) {
+					return &*d;
+			}
+		}
+
 	}
 
 	return 0;
