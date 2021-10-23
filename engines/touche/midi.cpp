@@ -24,6 +24,7 @@
 #include "common/stream.h"
 
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 
 #include "touche/midi.h"
 
@@ -46,9 +47,9 @@ MidiPlayer::MidiPlayer() {
 	// FIXME: Necessary?
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_nativeMT32 = ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32"));
+	_driver = MusicMan.createMidi(dev);
 	int ret = _driver->open();
 	if (ret == 0) {
 		_driver->setTimerCallback(this, &timerCallback);
