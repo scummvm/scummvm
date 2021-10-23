@@ -74,11 +74,13 @@ public:
 	void stop_sample(int16 kanal);
 	void continue_sample(int16 kanal);
 	void end_sample(int16 kanal);
-	void init_double_buffer(char *b1, char *b2,
+	void init_double_buffer(byte *b1, byte *b2,
 	                        uint32 len, int16 kanal);
-	// FIXME : was FILE*
-	void start_db_voc(void *voc, int16 kanal, int16 vol);
+
+	void start_db_voc(Stream *voc, int16 kanal, int16 vol);
 	void serve_db_samples();
+	void switch_music(bool onOff);
+	void switch_sound(bool onOff);
 private:
 };
 

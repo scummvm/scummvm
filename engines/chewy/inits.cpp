@@ -443,84 +443,15 @@ void set_speed() {
 
 #define GRAVIS 8
 #define RAP10 9
+
 void sound_init() {
 	flags.InitSound = false;
 	spieler.SoundSwitch = false;
 	spieler.MusicSwitch = false;
 	frequenz = 22050;
 
-	ERROR
-	warning("STUB - Installing sound files");
-#if 0
-	system("cd sound");
-	Stream *test_handle = chewy_fopen("SET.INT", "rb");
-	if (!test_handle) {
-		test_handle = chewy_fopen("SET.INT", "wb");
-		if (test_handle) {
-			chewy_fputc('N', test_handle);
-			chewy_fputc('G', test_handle);
-			chewy_fputc('S', test_handle);
-			chewy_fclose(test_handle);
-		} else {
-			modul = DATEI;
-			fcode = OPENFEHLER;
-			err->set_user_msg("Set.Int schreiben.");
-		}
-		switch_2_cd();
-		ERROR
-		out->printxy(0, 0, 255, 0, scr_width, "Copying Sound-Files...");
-		char tmp_path[MAXPFAD] = {0};
-		strcpy(tmp_path, "copy sound\\*.dig \0");
-		strcat(tmp_path, HD_Lw);
-		system(tmp_path);
-		strcpy(tmp_path, "copy sound\\aildrvr.lst \0");
-		strcat(tmp_path, HD_Lw);
-		system(tmp_path);
-		strcpy(tmp_path, "copy sound\\setsound.exe \0");
-		strcat(tmp_path, HD_Lw);
-		system(tmp_path);
-		strcpy(tmp_path, "copy sound\\dos4gw.exe \0");
-		strcat(tmp_path, HD_Lw);
-		system(tmp_path);
-		switch_2_hd();
-		in->init();
-		in->alter_kb_handler();
-		out->restore_mode();
-		system("setsound.exe");
-		out->vsync_start();
-		out->init();
-		out->cls();
-		out->palette_save();
-		out->set_clip(0, 0, 320, 200);
-		out->set_writemode(0);
-		detect.Nager = in->init();
-		in->neuer_kb_handler(&kbinfo);
-		if (detect.Nager) {
-			in->rectangle(0, 0, 320, 210);
-			in->neuer_maushandler(&minfo);
-			out->init_mausmode(&minfo);
-			curblk.page_off_x = 0;
-			curblk.page_off_y = 0;
-			curblk.xsize = 16;
-			curblk.ysize = 16;
-
-			curblk.sprite = curtaf->image;
-			curblk.cur_back = cur_back;
-			curblk.no_back = TRUE;
-			curani.ani_anf = 0;
-			curani.ani_end = 0;
-			curani.delay = 0;
-			mouse_hot_x = 0;
-			mouse_hot_y = 0;
-		}
-	} else
-		chewy_fclose(test_handle);
 	detect.SoundSource = ailsnd->init(frequenz);
-	ERROR
-	system("cd ..");
 
-	switch_2_cd();
-	ERROR
 	if (detect.SoundSource) {
 		ailsnd->init_mix_mode();
 		spieler.MusicVol = 63;
@@ -529,52 +460,52 @@ void sound_init() {
 		ailsnd->set_sound_mastervol(spieler.SoundVol);
 		ailsnd->switch_music(1);
 		ailsnd->switch_sound(1);
-		flags.InitSound = TRUE;
+		flags.InitSound = true;
+
 		room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 		ERROR
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
 		music_handle = room->get_sound_handle();
-		chewy_fseek(music_handle, 0, SEEK_SET);
+		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
+		assert(rs);
+
+		rs->seek(0);
 		EndOfPool = 0;
 		NewPhead Nph;
-		if (!chewy_fread(&Nph, sizeof(NewPhead), 1, music_handle)) {
+		if (!Nph.load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
-		} else
+		} else {
 			EndOfPool = Nph.PoolAnz - 1;
+		}
 		ERROR
+		
 		speech_handle = chewy_fopen(SPEECH_TVP, "rb");
 		if (!speech_handle) {
 			modul = DATEI;
 			fcode = OPENFEHLER;
-			err->set_user_msg("SPEECH.TVP\0");
+			err->set_user_msg("speech.tvp");
 		} else {
 			ailsnd->init_double_buffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
 			atds->set_speech_handle(speech_handle);
-
 		}
-#endif
+
 		if (!modul) {
 			spieler.SoundSwitch = true;
 			spieler.MusicSwitch = true;
 			spieler.SpeechSwitch = true;
 		}
-#if 0
 	}
-#endif
 }
 
 void sound_exit() {
-	warning("STUB - sound_exit");
-#if 0
 	if (detect.SoundSource && flags.InitSound) {
 		ailsnd->exit_mix_mode();
 		ailsnd->exit1();
 		if (speech_handle)
 			chewy_fclose(speech_handle);
 	}
-#endif
 }
 
 #define CSP_INT "csp.int"

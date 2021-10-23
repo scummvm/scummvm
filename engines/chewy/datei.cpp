@@ -700,16 +700,18 @@ uint32 datei::load_voc(const char *fname, byte *speicher) {
 }
 
 uint32 datei::load_voc(Stream *handle, byte *speicher) {
-	ChunkHead *ch;
-	ch = (ChunkHead *) tmp;
-	if (handle) {
-		chewy_fseek(handle, -(int)sizeof(ChunkHead), SEEK_CUR);
-		if (!(chewy_fread(ch, sizeof(ChunkHead), 1, handle))) {
+	ChunkHead *ch = (ChunkHead *)tmp;
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
+
+	if (rs) {
+		rs->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+
+		if (!ch->load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
 			if (ch->type == VOCDATEI) {
-				if (!(chewy_fread(speicher, ch->size, 1, handle))) {
+				if (rs->read(speicher, ch->size) != ch->size) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				}
@@ -719,7 +721,8 @@ uint32 datei::load_voc(Stream *handle, byte *speicher) {
 			}
 		}
 	}
-	return (ch->size);
+
+	return ch->size;
 }
 
 void datei::load_vocinfo(const char *fname, voc_header *speicher) {

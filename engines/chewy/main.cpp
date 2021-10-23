@@ -580,9 +580,9 @@ void set_up_screen(int16 mode) {
 		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
 
 	sprite_engine();
-	if (menu_display == MENU_EINBLENDEN) {
-
-		plot_main_menu();
+	if (menu_display == MENU_EINBLENDEN || flags.InventMenu) {
+		if (!flags.InventMenu)
+			plot_main_menu();
 	} else {
 		kb_mov(1);
 		det->unfreeze_ani();

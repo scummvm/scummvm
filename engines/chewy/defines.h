@@ -176,8 +176,8 @@ namespace Chewy {
 #define ADS_TXT_STEUER "txt/diah.adh"
 #define INV_USE_IDX "txt/inv_use.idx"
 
-#define DETAIL_TVP "SOUND\\DETAILS.TAP\0"
-#define SPEECH_TVP "SOUND\\SPEECH.TVP\0"
+#define DETAIL_TVP "sound/details.tap"
+#define SPEECH_TVP "sound/speech.tvp"
 
 #define ADSH_TMP "adsh.tmp"
 

@@ -82,8 +82,8 @@ public:
 
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode);
 	void load_sound();
-	// FIXME: was FILE*
-	void *get_sound_handle();
+
+	Stream *get_sound_handle();
 
 	byte *get_ablage(int16 nr);
 

@@ -458,13 +458,9 @@ void Room::load_sound() {
 	}
 }
 
-void *Room::get_sound_handle() {
-	void *ret;
-	if ((!modul) && (flags.InitSound))
-		ret = roomhandle[R_VOCDATEI];
-	else
-		ret = 0;
-	return (ret);
+Stream *Room::get_sound_handle() {
+	return (modul || !flags.InitSound) ? nullptr :
+		roomhandle[R_VOCDATEI];
 }
 
 } // namespace Chewy
