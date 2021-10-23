@@ -142,7 +142,6 @@ byte GalleryGame::galleryAI(byte *pieceStatus, int depth) {
 				status2[j] = pieceStatus[j];
 
 			byte curLink = kGalleryLinks[i][0];
-			pieceStatus[i] = kPieceUnselected;
 			status2[i] = 0;
 			selectedPieces = 1;
 
