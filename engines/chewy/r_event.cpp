@@ -132,7 +132,7 @@ void timer_action(int16 t_nr) {
 						start_aad_wait(43, -1);
 						++spieler.R0FueterLab;
 					}
-					r0_auge_ani();
+					Room0::auge_ani();
 					ok = true;
 				} else {
 					if (!spieler.R0KissenWurf) {
@@ -147,9 +147,11 @@ void timer_action(int16 t_nr) {
 						               145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 					}
 				}
+
 				if (!spieler.R0KissenWurf) {
-					r0_fuett_ani();
+					Room0::fuett_ani();
 				}
+
 				uhr->reset_timer(t_nr, 0);
 				flags.AutoAniPlay = false;
 			}
@@ -545,7 +547,7 @@ void enter_room(int16 eib_nr) {
 	switch (spieler.PersonRoomNr[P_CHEWY]) {
 
 	case 0:
-		r0_entry();
+		Room0::entry();
 		break;
 
 	case 3:

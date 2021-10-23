@@ -119,7 +119,7 @@ void load_chewy_taf(int16 taf_nr) {
 	}
 }
 
-void r0_entry() {
+void Room0::entry() {
 	if (is_cur_inventar(0) || spieler.R0KissenWurf ||
 		obj->check_inventar(0))
 		det->hide_static_spr(6);
@@ -138,7 +138,7 @@ void r0_entry() {
 	show_cur();
 }
 
-void r0_action1() {
+void Room0::action1() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		flags.AutoAniPlay = true;
@@ -154,7 +154,7 @@ void r0_action1() {
 	}
 }
 
-void r0_action2() {
+void Room0::action2() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		auto_move(2, 0);
@@ -169,7 +169,7 @@ void r0_action2() {
 	}
 }
 
-void r0_auge_start(int16 mode) {
+void Room0::auge_start(int16 mode) {
 	ani_detail_info *adi;
 	int16 ende;
 
@@ -180,24 +180,24 @@ void r0_auge_start(int16 mode) {
 		adi->ani_count = 38;
 
 	if (!mode) {
-
-		r0_ani_klappe_delay();
+		ani_klappe_delay();
 	}
+
 	ende = 0;
 	flags.AniUserAction = true;
-	if (!mode) {
 
+	if (!mode) {
 		det->enable_sound(KLAPPE_DETAIL, 0);
 		det->disable_sound(KLAPPE_DETAIL, 1);
 		det->enable_sound(SCHLAUCH_DETAIL, 0);
 		det->disable_sound(SCHLAUCH_DETAIL, 2);
 	} else {
-
 		det->disable_sound(KLAPPE_DETAIL, 0);
 		det->enable_sound(KLAPPE_DETAIL, 1);
 		det->disable_sound(SCHLAUCH_DETAIL, 0);
 		det->enable_sound(SCHLAUCH_DETAIL, 2);
 	}
+
 	while (!ende) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
@@ -210,13 +210,15 @@ void r0_auge_start(int16 mode) {
 			spr_info[2] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF1, ANI_HIDE);
 			spr_info[2].ZEbene = 192;
 		}
+
 		spr_info[3] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		r0_calc_auge_click(3);
+		calc_auge_click(3);
 		out->back2screen(workpage);
+
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -232,8 +234,10 @@ void r0_auge_start(int16 mode) {
 			}
 		}
 	}
+
 	clear_prog_ani();
 	flags.AniUserAction = false;
+
 	if (mode) {
 		det->start_detail(KLAPPE_DETAIL, 1, RUECK);
 		while (det->get_ani_status(KLAPPE_DETAIL))
@@ -241,14 +245,14 @@ void r0_auge_start(int16 mode) {
 	}
 }
 
-void r0_auge_wait() {
+void Room0::auge_wait() {
 	ani_detail_info *adi;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 39;
 	adi->delay_count = 15;
-
 	flags.AniUserAction = true;
+
 	while (adi->ani_count < 46) {
 		clear_prog_ani();
 
@@ -261,20 +265,22 @@ void r0_auge_wait() {
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		r0_calc_auge_click(2);
+		calc_auge_click(2);
 		out->back2screen(workpage);
-		if (adi->delay_count > 0)
+
+		if (adi->delay_count > 0) {
 			--adi->delay_count;
-		else {
+		} else {
 			adi->delay_count = adi->delay + spieler.DelaySpeed;
 			++adi->ani_count;
 		}
 	}
+
 	flags.AniUserAction = false;
 	clear_prog_ani();
 }
 
-void r0_calc_auge_click(int16 ani_nr) {
+void Room0::calc_auge_click(int16 ani_nr) {
 	int16 anz;
 	int16 x, y;
 	int16 i;
@@ -303,7 +309,7 @@ void r0_calc_auge_click(int16 ani_nr) {
 	}
 }
 
-void r0_auge_shoot() {
+void Room0::auge_shoot() {
 	ani_detail_info *adi;
 	int16 ende;
 
@@ -312,6 +318,7 @@ void r0_auge_shoot() {
 
 	ende = 0;
 	det->start_detail(CH_BLITZ, 1, VOR);
+
 	while (!ende) {
 		clear_prog_ani();
 		spieler.PersonHide[P_CHEWY] = true;
@@ -319,6 +326,7 @@ void r0_auge_shoot() {
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
+
 		if (adi->ani_count < 53) {
 			spr_info[2] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 			spr_info[2].ZEbene = 192;
@@ -328,6 +336,7 @@ void r0_auge_shoot() {
 			if (!det->get_ani_status(CH_BLITZ))
 				ende = 1;
 		}
+
 		set_up_screen(DO_SETUP);
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -336,22 +345,23 @@ void r0_auge_shoot() {
 			++adi->ani_count;
 		}
 	}
+
 	det->start_detail(STERNE_STEHEN, 255, VOR);
 	clear_prog_ani();
 	spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
 	spr_info[0].ZEbene = 190;
-	spr_info[1] =
-	    det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+	spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 	spr_info[1].ZEbene = 191;
 	spr_info[2] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
 	spr_info[2].ZEbene = 192;
+
 	wait_show_screen(30);
 	clear_prog_ani();
 	set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 	spieler.PersonHide[P_CHEWY] = false;
 }
 
-void r0_auge_schleim_back() {
+void Room0::auge_schleim_back() {
 	ani_detail_info *adi;
 	int16 ende;
 
@@ -360,10 +370,12 @@ void r0_auge_schleim_back() {
 
 	ende = 0;
 	flags.AniUserAction = true;
+
 	while (!ende) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
+
 		if ((adi->ani_count > 52) && (adi->ani_count < 59)) {
 			spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 			spr_info[1].ZEbene = 191;
@@ -372,6 +384,7 @@ void r0_auge_schleim_back() {
 			spr_info[2] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH3, ANI_HIDE);
 			spr_info[2].ZEbene = 192;
 		}
+
 		spr_info[3] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		set_ani_screen();
@@ -384,11 +397,12 @@ void r0_auge_schleim_back() {
 				ende = 1;
 		}
 	}
+
 	flags.AniUserAction = false;
 	clear_prog_ani();
 }
 
-void r0_ch_schleim_auge() {
+void Room0::ch_schleim_auge() {
 	ani_detail_info *adi;
 
 	adi = det->get_ani_detail(CH_WIRFT_SCHLEIM);
@@ -409,6 +423,7 @@ void r0_ch_schleim_auge() {
 		spr_info[3] = det->plot_detail_sprite(0, 0, CH_WIRFT_SCHLEIM, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		set_up_screen(DO_SETUP);
+
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -416,14 +431,16 @@ void r0_ch_schleim_auge() {
 			++adi->ani_count;
 		}
 	}
+
 	if (adi->load_flag) {
 		det->del_taf_tbl(adi->start_ani, (adi->end_ani - adi->start_ani) + 1, 0);
 	}
+
 	clear_prog_ani();
 	spieler.PersonHide[P_CHEWY] = false;
 }
 
-void r0_fuetter_start(int16 mode) {
+void Room0::fuetter_start(int16 mode) {
 	ani_detail_info *adi;
 	int16 ende;
 
@@ -434,8 +451,7 @@ void r0_fuetter_start(int16 mode) {
 		adi->ani_count = 135;
 
 	if (!mode) {
-
-		r0_ani_klappe_delay();
+		ani_klappe_delay();
 		det->enable_sound(KLAPPE_DETAIL, 0);
 		det->disable_sound(KLAPPE_DETAIL, 1);
 		det->enable_sound(FUETTER_SCHLAUCH, 0);
@@ -447,9 +463,11 @@ void r0_fuetter_start(int16 mode) {
 		det->disable_sound(FUETTER_SCHLAUCH, 0);
 		det->enable_sound(FUETTER_SCHLAUCH, 2);
 	}
+
 	ende = 0;
 	if (spieler.R0SchleimWurf)
 		flags.AniUserAction = true;
+
 	while (!ende) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
@@ -461,7 +479,8 @@ void r0_fuetter_start(int16 mode) {
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
 		if (!mode)
-			r0_calc_kissen_click(1);
+			calc_kissen_click(1);
+
 		out->back2screen(workpage);
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -478,8 +497,10 @@ void r0_fuetter_start(int16 mode) {
 			}
 		}
 	}
+
 	clear_prog_ani();
 	flags.AniUserAction = false;
+
 	if (mode) {
 		det->start_detail(KLAPPE_DETAIL, 1, RUECK);
 		while (det->get_ani_status(KLAPPE_DETAIL))
@@ -488,10 +509,8 @@ void r0_fuetter_start(int16 mode) {
 	}
 }
 
-void r0_kissen_wurf() {
-	int16 i;
-
-	for (i = 0; i < 30 && !spieler.R0KissenWurf; i++) {
+void Room0::kissen_wurf() {
+	for (int16 i = 0; i < 30 && !spieler.R0KissenWurf; i++) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
@@ -500,13 +519,14 @@ void r0_kissen_wurf() {
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		r0_calc_kissen_click(1);
+		calc_kissen_click(1);
 		out->back2screen(workpage);
 	}
+
 	clear_prog_ani();
 }
 
-void r0_calc_kissen_click(int16 ani_nr) {
+void Room0::calc_kissen_click(int16 ani_nr) {
 	int16 anz;
 	int16 x, y;
 	int16 i;
@@ -534,7 +554,7 @@ void r0_calc_kissen_click(int16 ani_nr) {
 	}
 }
 
-void r0_ch_fuetter() {
+void Room0::ch_fuetter() {
 	ani_detail_info *adi;
 	int16 i;
 	int16 ende;
@@ -568,9 +588,11 @@ void r0_ch_fuetter() {
 			spr_info[3] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
 			spr_info[3].ZEbene = 193;
 		}
+
 		spr_info[4] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[4].ZEbene = 194;
 		set_ani_screen();
+
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -591,6 +613,7 @@ void r0_ch_fuetter() {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
+
 		if (adi->ani_count > 138) {
 			spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
 			spr_info[1].ZEbene = 191;
@@ -599,9 +622,11 @@ void r0_ch_fuetter() {
 			spr_info[2] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
 			spr_info[2].ZEbene = 192;
 		}
+
 		spr_info[3] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		set_ani_screen();
+
 		if (!det->get_ani_status(CH_NACH_FUETTERN))
 			ende = 1;
 		if (adi->delay_count > 0)
@@ -612,12 +637,13 @@ void r0_ch_fuetter() {
 				--adi->ani_count;
 		}
 	}
+
 	spieler.PersonHide[P_CHEWY] = false;
 	flags.AniUserAction = false;
 	clear_prog_ani();
 }
 
-void r0_ch_kissen() {
+void Room0::ch_kissen() {
 	ani_detail_info *adi;
 	int16 ende, mode;
 
@@ -628,6 +654,7 @@ void r0_ch_kissen() {
 	spieler.PersonHide[P_CHEWY] = true;
 	det->start_detail(CH_WIRFT_KISSEN, 1, VOR);
 	mode = 0;
+
 	while (!ende) {
 		clear_prog_ani();
 		if (!det->get_ani_status(CH_WIRFT_KISSEN)) {
@@ -635,6 +662,7 @@ void r0_ch_kissen() {
 			spieler.PersonHide[P_CHEWY] = false;
 			set_person_pos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		}
+
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
@@ -644,6 +672,7 @@ void r0_ch_kissen() {
 			spr_info[2].ZEbene = 192;
 		}
 		set_up_screen(DO_SETUP);
+
 		if (mode) {
 			if (adi->delay_count > 0)
 				--adi->delay_count;
@@ -655,10 +684,11 @@ void r0_ch_kissen() {
 			}
 		}
 	}
+
 	clear_prog_ani();
 }
 
-void r0_ani_klappe_delay() {
+void Room0::ani_klappe_delay() {
 	int16 i;
 	det->start_detail(KLAPPE_DETAIL, 1, VOR);
 	while (det->get_ani_status(KLAPPE_DETAIL) && !SHOULD_QUIT) {
@@ -672,38 +702,40 @@ void r0_ani_klappe_delay() {
 		spr_info[0].ZEbene = 190;
 		set_ani_screen();
 	}
+
 	flags.AniUserAction = false;
 	clear_prog_ani();
 }
 
-void r0_auge_ani() {
+void Room0::auge_ani() {
 	if (!spieler.R0SchleimWurf) {
-		r0_auge_start(0);
+		auge_start(0);
 		if (!spieler.R0SchleimWurf)
-			r0_auge_wait();
+			auge_wait();
 		if (spieler.R0SchleimWurf) {
 			start_aad(124);
-			r0_ch_schleim_auge();
-			r0_auge_schleim_back();
+			ch_schleim_auge();
+			auge_schleim_back();
 			auto_move(FUETTER_POS, P_CHEWY);
 			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		} else {
-			r0_auge_shoot();
+			auge_shoot();
 			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-			r0_auge_start(1);
+			auge_start(1);
 		}
 	}
 }
 
-void r0_fuett_ani() {
+void Room0::fuett_ani() {
 	int16 action;
 	action = false;
-	r0_fuetter_start(0);
+	fuetter_start(0);
+
 	if (spieler.R0SchleimWurf) {
-		r0_kissen_wurf();
+		kissen_wurf();
 		if (spieler.R0KissenWurf) {
-			r0_ch_kissen();
-			r0_fuetter_start(1);
+			ch_kissen();
+			fuetter_start(1);
 			auto_move(VERSTECK_POS, P_CHEWY);
 			set_up_screen(DO_SETUP);
 			out->cls();
@@ -730,10 +762,10 @@ void r0_fuett_ani() {
 	}
 
 	if (action) {
-		r0_ch_fuetter();
+		ch_fuetter();
 		start_spz(CH_EKEL, 3, ANI_VOR, P_CHEWY);
 		start_aad(55);
-		r0_fuetter_start(1);
+		fuetter_start(1);
 	}
 }
 
