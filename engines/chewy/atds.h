@@ -111,20 +111,20 @@ struct AdsBlock {
 };
 
 struct AtdsVar {
-	byte *Font;
-	int16 Fvorx;
-	int16 Fhoehe;
-	int16 Silent;
-	int16 *Delay;
-	int16 DiaNr;
+	byte *Font = nullptr;
+	int16 Fvorx = 0;
+	int16 Fhoehe = 0;
+	int16 Silent = 0;
+	int16 *Delay = 0;
+	int16 DiaNr = 0;
 
-	uint8 Display;
+	uint8 Display = 0;
+	int16 _field12 = 0;
+	int16 VocNr = 0;
 
-	int16 VocNr;
+	Stream *SpeechHandle = nullptr;
 
-	Stream *SpeechHandle;
-
-	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode);
+	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) = nullptr;
 };
 
 #define IUID_IIB 0
@@ -309,6 +309,9 @@ public:
 	int16 check_item(int16 block_nr, int16 item_nr);
 	int16 calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode);
 	int16 get_stereo_pos(int16 x);
+	void set_unknown(int16 nr) {
+		atdsv._field12 = nr;
+	}
 
 private:
 	int16 get_delay(int16 txt_len);

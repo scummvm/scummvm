@@ -31,6 +31,8 @@ namespace Chewy {
 
 extern char *err_str;
 int16 mouse_push;
+int print_delay_count1;
+int print_delay_count2;		// TODO: seems to be unused
 
 void AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	TxtNr = src->readUint16LE();
@@ -61,7 +63,7 @@ atdsys::atdsys() {
 	atdsv.Display = DISPLAY_TXT;
 	atdsv.DiaNr = -1;
 	atdsv.aad_str = 0;
-	atdsv.SpeechHandle = 0;
+	atdsv.SpeechHandle = nullptr;
 	atdsv.VocNr = -1;
 	ssret.Next = false;
 	ssr = &ssret;
@@ -290,8 +292,8 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	return (handle);
 }
 
-void atdsys::set_speech_handle(Stream *speech_handle_) {
-	atdsv.SpeechHandle = speech_handle_;
+void atdsys::set_speech_handle(Stream *stream) {
+	atdsv.SpeechHandle = stream;
 }
 
 void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
@@ -527,6 +529,8 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 				atsv.Display = false;
 			} else {
 				atsv.DelayCount = get_delay(atsv.TxtLen);
+				print_delay_count1 = atsv.DelayCount / 10;
+				print_delay_count2 = atsv.DelayCount;
 				atsv.Color = color;
 				mouse_push = true;
 			}
@@ -555,25 +559,29 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	char *start_ptr;
 	SplitStringInit tmp_ssi;
 	if (atsv.Display) {
-		switch (in->get_switch_code()) {
-		case ESC:
-		case ENTER:
-		case MAUS_LINKS:
-			if (mouse_push == false) {
-				if (atsv.SilentCount <= 0) {
-					mouse_push = true;
-					atsv.DelayCount = 0;
-					inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-					inzeig->kbinfo->key_code = '\0';
+		if (atdsv._field12) {
+			switch (in->get_switch_code()) {
+			case ESC:
+			case ENTER:
+			case MAUS_LINKS:
+				if (mouse_push == false) {
+					if (atsv.SilentCount <= 0 && atsv.DelayCount > print_delay_count1) {
+						mouse_push = true;
+						atsv.DelayCount = 0;
+						inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
+						inzeig->kbinfo->key_code = '\0';
+					}
 				}
+				break;
+
+			default:
+				mouse_push = false;
+				break;
 			}
-			break;
-
-		default:
+		} else {
 			mouse_push = false;
-			break;
-
 		}
+
 		if (atsv.SilentCount <= 0) {
 			tmp_ptr = atsv.Ptr;
 			out->set_fontadr(atdsv.Font);
@@ -588,8 +596,8 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			str_null2leer(start_ptr, start_ptr + atsv.TxtLen - 1);
 			tmp_ssi = ats_ssi;
 			ssr = split_string(&tmp_ssi);
-			for (i = 0; i < ssr->Anz; i++) {
 
+			for (i = 0; i < ssr->Anz; i++) {
 				out->printxy(ssr->X[i],
 				              ssr->Y + (i * ats_ssi.FHoehe) + 1,
 				              0, 300, 0, ssr->StrPtr[i]);
@@ -608,6 +616,7 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 				              300, 0, ssr->StrPtr[i]);
 				tmp_ptr += strlen(ssr->StrPtr[i]) + 1;
 			}
+
 			str_null2leer(start_ptr, start_ptr + atsv.TxtLen - 1);
 			if (atsv.DelayCount <= 0) {
 				if (ssr->Next == false) {
@@ -618,6 +627,8 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 					while (*tmp_ptr++ != ATDS_END_TEXT)
 						++atsv.TxtLen;
 					atsv.DelayCount = get_delay(atsv.TxtLen);
+					print_delay_count1 = atsv.DelayCount / 10;
+					print_delay_count2 = atsv.DelayCount;
 					atsv.SilentCount = atdsv.Silent;
 				}
 			} else
@@ -862,7 +873,9 @@ int16 atdsys::start_aad(int16 dia_nr) {
 	int16 *pos;
 	int16 txt_len;
 
-	aadv.Dialog = false;
+	if (aadv.Dialog)
+		stop_aad();
+
 	if (atdsmem[AAD_HANDLE]) {
 		aadv.Ptr = atdsmem[AAD_HANDLE];
 		aad_search_dia(dia_nr, &aadv.Ptr);
@@ -876,6 +889,9 @@ int16 atdsys::start_aad(int16 dia_nr) {
 			aadv.Ptr += sizeof(AadStrHeader);
 			aad_get_zeilen(aadv.Ptr, &txt_len);
 			aadv.DelayCount = get_delay(txt_len);
+			print_delay_count1 = aadv.DelayCount / 10;
+			print_delay_count2 = aadv.DelayCount;
+
 			atdsv.DiaNr = dia_nr;
 			if (atdsv.aad_str != 0)
 				atdsv.aad_str(atdsv.DiaNr, 0, aadv.StrHeader->AkPerson, AAD_STR_START);
@@ -884,7 +900,8 @@ int16 atdsys::start_aad(int16 dia_nr) {
 			atdsv.VocNr = -1;
 		}
 	}
-	return (aadv.Dialog);
+
+	return aadv.Dialog;
 }
 
 void atdsys::stop_aad() {
@@ -904,25 +921,29 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 	SplitStringInit tmp_ssi;
 
 	if (aadv.Dialog) {
-		switch (in->get_switch_code()) {
-		case ESC:
-		case ENTER:
-		case MAUS_LINKS:
-			if (mouse_push == false) {
-				if (aadv.SilentCount <= 0) {
-					mouse_push = true;
-					aadv.DelayCount = 0;
-					inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-					inzeig->kbinfo->key_code = '\0';
+		if (atdsv._field12) {
+			switch (in->get_switch_code()) {
+			case ESC:
+			case ENTER:
+			case MAUS_LINKS:
+				if (mouse_push == false) {
+					if (aadv.SilentCount <= 0 && aadv.DelayCount > print_delay_count1) {
+						mouse_push = true;
+						aadv.DelayCount = 0;
+						inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
+						inzeig->kbinfo->key_code = '\0';
+					}
 				}
+				break;
+
+			default:
+				mouse_push = false;
+				break;
 			}
-			break;
-
-		default:
+		} else {
 			mouse_push = false;
-			break;
-
 		}
+
 		if (aadv.SilentCount <= 0) {
 			tmp_ptr = aadv.Ptr;
 			out->set_fontadr(atdsv.Font);
@@ -1025,6 +1046,8 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 					}
 					aad_get_zeilen(aadv.Ptr, &txt_len);
 					aadv.DelayCount = get_delay(txt_len);
+					print_delay_count1 = aadv.DelayCount / 10;
+					print_delay_count2 = aadv.DelayCount;
 					aadv.SilentCount = atdsv.Silent;
 				}
 			} else {
