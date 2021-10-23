@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-23 19:53+0000\n"
-"PO-Revision-Date: 2021-10-03 07:13+0000\n"
+"PO-Revision-Date: 2021-10-23 21:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1043,17 +1043,15 @@ msgstr "Повноекранний режим"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "В-Синхр"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"Чекати на вертикальну синхронізацію під час перемальовування екрану у 3D "
-"рендерері"
+"Чекати на вертикальну синхронізацію під час перемальовування екрану щоби "
+"запобігти смикання картинки"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
@@ -5310,13 +5308,15 @@ msgstr "Ведучий TTS"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Програвати цифровий саундтрек під час початкового ролика"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Якщо вибрано, то гра буде використовувати цифрову музику під час вступу. "
+"Інакше буде програватись музика MIDI."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -6003,6 +6003,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Не можу знайти файли з інструментами Adlib\n"
+"%s та %s. Без цих файлів музика\n"
+"не звучатиме так, як задумано в оригіналі."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
@@ -6240,13 +6243,15 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Використовувати точніше розташування тексту"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Малювати текст з вірними проміжками. Це виглядає нібито краще, але не "
+"відповідає оригіналу."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
