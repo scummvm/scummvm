@@ -29,7 +29,7 @@ namespace {
 extern const int8 triangleLookup1[12];
 extern const int8 triangleLookup2[12];
 extern const int8 triangleLookup3[12];
-extern const int8 beehiveLogicTable2[800];
+extern const int8 triangleLogicTable[924];
 }
 
 TriangleGame::TriangleGame() {
@@ -76,11 +76,40 @@ void TriangleGame::init() {
 }
 
 int8 TriangleGame::sub02() {
+	int8 v6[132];
+	int8 v7[68];
+
+	sub05(_triangleCells, v6, v7);
+
+	for (int i = 0; v6[i] != 66; i++) {
+		bool v1 = false;
+		bool v2 = false;
+		bool pl = false;
+
+		// There could be several sections, each one
+		// ends with 66. And the overall list ends with 66 too
+		// Hence, two loops
+		for (; v6[i] != 66; i++) {
+			if (!triangleLogicTable[14 * v6[i] + 6])
+				pl = true;
+			if (!triangleLogicTable[14 * v6[i] + 7])
+				v2 = true;
+			if (!triangleLogicTable[14 * v6[i] + 8])
+				v1 = true;
+		}
+
+		if (pl && v2 && v1)
+			return _triangleCells[v6[i - 1]];
+	}
+
 	return 0;
 }
 
 int8 TriangleGame::sub03(int8 player) {
 	return 0;
+}
+
+void TriangleGame::sub05(int8 *triangleCells, int8 *a2, int8 *a3) {
 }
 
 void TriangleGame::setCell(int8 cellnum, int8 val) {

@@ -37,6 +37,7 @@ private:
 	void init();
 	int8 sub02();
 	int8 sub03(int8 player);
+	void sub05(int8 *triangleCells, int8 *a2, int8 *a3);
 	void setCell(int8 cellnum, int8 val);
 
 private:
