@@ -37,6 +37,7 @@
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "audio/decoders/raw.h"
 #include "audio/mods/soundfx.h"
 
@@ -1189,12 +1190,12 @@ PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	_currentBgSlot = 0;
 	_musicType = MT_INVALID;
 
-	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
-	const MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB);
+	const MusicType musicType = dev->getMusicType();
 	if (musicType == MT_MT32 || musicType == MT_GM) {
 		const bool isMT32 = (musicType == MT_MT32 || ConfMan.getBool("native_mt32"));
 		if (isMT32) {
-			MidiDriver *driver = MidiDriver::createMidi(dev);
+			MidiDriver *driver = MusicMan.createMidi(dev);
 			if (driver && driver->open() == 0) {
 				driver->sendMT32Reset();
 				_soundDriver = new MidiSoundDriverH32(driver);
