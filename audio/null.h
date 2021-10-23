@@ -49,7 +49,7 @@ public:
 	}
 
 	virtual MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice* = 0) const;
 };
 
 #endif

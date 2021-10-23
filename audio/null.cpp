@@ -23,7 +23,7 @@
 #include "common/error.h"
 #include "audio/null.h"
 
-Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = new MidiDriver_NULL();
 
 	return Common::kNoError;

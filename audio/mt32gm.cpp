@@ -24,6 +24,7 @@
 #define AUDIO_MIDI_H
 
 #include "audio/mt32gm.h"
+#include "audio/musicplugin.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -150,12 +151,12 @@ int MidiDriver_MT32GM::open() {
 	assert(!_driver);
 
 	// Setup midi driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | (_midiType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-	MusicType deviceMusicType = MidiDriver::getMusicType(dev);
+	MusicDevice *dev = MusicMan.detectDevice(MDT_MIDI | (_midiType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	MusicType deviceMusicType = dev->getMusicType();
 	if (!(deviceMusicType == MT_MT32 || deviceMusicType == MT_GM || deviceMusicType == MT_GS))
 		error("MidiDriver_MT32GM: detected music device uses unsupported music type %i", deviceMusicType);
 
-	MidiDriver *driver = MidiDriver::createMidi(dev);
+	MidiDriver *driver = MusicMan.createMidi(dev);
 	bool nativeMT32 = deviceMusicType == MT_MT32 || ConfMan.getBool("native_mt32");
 
 	return open(driver, nativeMT32);

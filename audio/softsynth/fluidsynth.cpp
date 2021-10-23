@@ -468,7 +468,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices FluidSynthMusicPlugin::getDevices() const {
@@ -477,7 +477,7 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = new MidiDriver_FluidSynth(g_system->getMixer());
 
 	return Common::kNoError;

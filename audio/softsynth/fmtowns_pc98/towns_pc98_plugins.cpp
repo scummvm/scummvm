@@ -37,7 +37,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices TownsEmuMusicPlugin::getDevices() const {
@@ -46,7 +46,7 @@ MusicDevices TownsEmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = 0;
 	return Common::kUnknownError;
 }
@@ -62,7 +62,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices PC98EmuMusicPlugin::getDevices() const {
@@ -71,7 +71,7 @@ MusicDevices PC98EmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error PC98EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error PC98EmuMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = 0;
 	return Common::kUnknownError;
 }
@@ -87,7 +87,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices SegaCDSoundPlugin::getDevices() const {
@@ -96,7 +96,7 @@ MusicDevices SegaCDSoundPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error SegaCDSoundPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error SegaCDSoundPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = 0;
 	return Common::kUnknownError;
 }
