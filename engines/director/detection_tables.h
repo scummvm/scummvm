@@ -2749,7 +2749,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("jman2", "", "Buried in Time PowerPC", "71287376e445ab9c98f0d150bb0ed175", 86324, Common::DE_DEU, 400),
 	MACDEMO1("jman2", "Demo", "Buried in Time Demo", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 400),
 	MACDEMO1("jman2", "06/22/94 Demo", "Buried in Time Demo", "cdb27c916044ae4dceb4b7326063fa03", 328895, 400),
-	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-yp97h", "cdb27c916044ae4dceb4b7326063fa03", 329851, 400),
+	//MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-yp97h", "cdb27c916044ae4dceb4b7326063fa03", 329851, 400),
 	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-eo0l", "cdb27c916044ae4dceb4b7326063fa03", 329851, 400),
 	MACDEMO1("jman2", "Final Demo", "Buried in Time Demo", "cc3321069072b90f091f220bba16e4d4", 292731, 400),
 	MACDEMO1("jman2", "Gallery", "BIT Gallery", "01be45e7241194dad07938e7059b88e3", 484284, 400),
