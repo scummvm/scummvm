@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 			if (sscanf(line.c_str(), "CHARS %d", &charsAvailable) != 1)
 				error("Invalid CHARS");
 
-			font.numCharacters = 256;
+			font.numCharacters = 384;
 			font.bitmaps = new unsigned char *[font.numCharacters];
 			memset(font.bitmaps, 0, sizeof(unsigned char *) * font.numCharacters);
 			font.advances = new unsigned char[font.numCharacters];
@@ -289,10 +289,10 @@ int main(int argc, char *argv[]) {
 						}
 					}
 				} else if (line == "ENDCHAR") {
-					if (encoding == -1 || !hasWidth || !hasBitmap)
+					if (!hasWidth || !hasBitmap)
 						error("Character not completly defined");
 
-					if (encoding < font.numCharacters) {
+					if (encoding >= 0 && encoding < font.numCharacters) {
 						font.advances[encoding] = xAdvance;
 						font.boxes[encoding] = bbox;
 						font.bitmaps[encoding] = bitmap;
