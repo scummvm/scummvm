@@ -197,7 +197,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 
 private:
 	bool getDeviceName(ItemCount deviceIndex, Common::String &outName) const;
@@ -217,13 +217,12 @@ MusicDevices CoreMIDIMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error CoreMIDIMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle device) const {
+Common::Error CoreMIDIMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *device) const {
 	ItemCount deviceCount = MIDIGetNumberOfDestinations();
 	for (ItemCount i = 0 ; i < deviceCount ; ++i) {
 		Common::String name;
 		if (getDeviceName(i, name)) {
-			MusicDevice md(this, name, MT_GM);
-			if (md.getHandle() == device) {
+			if (name == device->getName()) {
 				*mididriver = new MidiDriver_CoreMIDI(i);
 				return Common::kNoError;
 			}
