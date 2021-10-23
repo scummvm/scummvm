@@ -76,9 +76,24 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 			flags.AtsAction = true;
 			if (mode == ATS_ACTION_NACH) {
 				switch (txt_mode) {
-
 				case TXT_MARK_LOOK:
 					switch (txt_nr) {
+					case 62:
+						action_ret = r39_use_howard();
+						break;
+
+					case 67:
+						action_ret = r8_gips_wurf();
+						break;
+
+					case 174:
+						action_ret = Room0::action1();
+						break;
+
+					case 175:
+						action_ret = Room0::action2();
+						break;
+
 					case 229:
 						auto_move(2, P_CHEWY);
 						r39_look_tv(1);
@@ -608,7 +623,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				case TXT_MARK_TALK:
 					switch (txt_nr) {
-
 					case 11:
 						auto_move(3, P_CHEWY);
 						det->stop_detail(5);
@@ -733,11 +747,9 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				default:
 					break;
-
 				}
 			} else if (mode == ATS_ACTION_VOR) {
 				switch (txt_mode) {
-
 				case TXT_MARK_LOOK:
 					switch (txt_nr) {
 					case 210:
@@ -761,7 +773,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				case TXT_MARK_USE:
 					switch (txt_nr) {
-
 					case 90:
 						atds->set_ats_str(90, TXT_MARK_USE, spieler.R13Band);
 						break;
@@ -883,9 +894,9 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				default:
 					break;
-
 				}
 			}
+
 			flags.AtsAction = false;
 		}
 	} else

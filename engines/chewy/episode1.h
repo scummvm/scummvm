@@ -51,14 +51,13 @@ private:
 	static void calc_auge_click(int16 ani_nr);
 
 	static void calc_kissen_click(int16 ani_nr);
-
-	static void action1();
-	static void action2();
 public:
 	static void entry();
 
 	static void auge_ani();
 	static void fuett_ani();
+	static bool action1();
+	static bool action2();
 };
 
 void r2_jump_out_r1(int16 nr);
@@ -100,7 +99,7 @@ void r8_hole_kohle();
 
 void r8_start_verbrennen();
 
-void r8_gips_wurf();
+bool r8_gips_wurf();
 
 void r8_open_gdoor();
 
