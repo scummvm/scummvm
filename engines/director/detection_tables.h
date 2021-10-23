@@ -4604,7 +4604,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version calls installers as D7 apps to copy demos to HDD
 	// Win version calls D7 apps to open links to Disney web pages
 	MACGAME1("disneylearning", "", "SAMPLER.MAC", "0944b962ebb00f4b5d5149d220f8449b", 111450, 702),
-	WINGAME1("disneylearning", "", "SAMPLER.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 1816154, 702),
+	WINGAME2("disneylearning", "", "SAMPLER.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 1816154,
+			"projectorstub.dir", "99a203b9af88e6d3aaf125d906d17249", 123498, 702),
 
 	// Covermount for Revista Divertire (Brazil)
 	// Launches installer for non-Director game (Nanico)
