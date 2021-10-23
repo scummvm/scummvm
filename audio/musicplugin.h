@@ -47,6 +47,8 @@ class MusicPluginObject;
  * A device with an empty name means the default device.
  */
 class MusicDevice {
+	friend class MusicManager;
+
 public:
 	MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt);
 
@@ -85,8 +87,7 @@ public:
 
 private:
 	Common::String _name;
-	Common::String _musicDriverName;
-	Common::String _musicDriverId;
+	const MusicPluginObject *_plugin;
 	MusicType _type;
 };
 

@@ -35,7 +35,7 @@
 static bool forceTypeMT32 = false;
 
 MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
-	_musicDriverName(musicPlugin->getName()), _musicDriverId(musicPlugin->getId()),
+	_plugin(musicPlugin),
 	_name(name), _type(mt) {
 }
 
@@ -43,12 +43,12 @@ const Common::String &MusicDevice::getName() const {
 	return _name;
 }
 
-const Common::String &MusicDevice::getMusicDriverName() const {
-	return _musicDriverName;
+const Common::String MusicDevice::getMusicDriverName() const {
+	return _plugin->getName();
 }
 
-const Common::String &MusicDevice::getMusicDriverId() const {
-	return _musicDriverId;
+const Common::String MusicDevice::getMusicDriverId() const {
+	return _plugin->getId();
 }
 
 MusicType MusicDevice::getMusicType() const {
@@ -62,12 +62,12 @@ Common::String MusicDevice::getCompleteName() const {
 
 	if (_name.empty()) {
 		// Default device, just show the driver name
-		name = _musicDriverName;
+		name = getMusicDriverName();
 	} else {
 		// Show both device and driver names
 		name = _name;
 		name += " [";
-		name += _musicDriverName;
+		name += getMusicDriverName();
 		name += "]";
 	}
 
@@ -75,7 +75,7 @@ Common::String MusicDevice::getCompleteName() const {
 }
 
 Common::String MusicDevice::getCompleteId() const {
-	Common::String id = _musicDriverId;
+	Common::String id = getMusicDriverId();
 	if (!_name.empty()) {
 		id += "_";
 		id += _name;
@@ -121,6 +121,14 @@ MusicDevice *MusicManager::getDevice(const Common::String &identifier) {
 	}
 
 	return 0;
+}
+
+MidiDriver *MusicManager::createMidi(MusicDevice *d) const {
+	MidiDriver *driver;
+	Common::Error err=d->_plugin->createInstance(&driver, d);
+	if (err.getCode() == Common::kNoError)
+		return driver;
+	return nullptr;
 }
 
 Common::String MusicDevice::getDeviceString(DeviceStringType type) const {
