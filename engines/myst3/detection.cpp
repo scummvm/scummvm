@@ -104,7 +104,10 @@ static const char *directoryGlobs[] = {
 
 
 static const Myst3GameDescription gameDescriptions[] = {
-	// Initial US release (English only)
+	// Initial US release (English only) v1.0
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "19dcba1074f235ec2119313242d891de", 0, kLocMonolingual)
+
+	// Initial US release (English only) v1.22
 	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", 0, kLocMonolingual)
 
 	// European releases (Country language + English) (1.2)
@@ -119,7 +122,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kLocMonolingual)
 
 	// Hebrew release (Hebrew only) (1.2 - Patched using the patch CD)
-	MYST3ENTRY(Common::HE_ISR, "HEBREW.m3u",  "16fbbe420fed366249a8d44a759f966c", 0, kLocMonolingual) // #1348, BLooperZ
+	MYST3ENTRY(Common::HE_ISR, "HEBREW.m3u",   "16fbbe420fed366249a8d44a759f966c", 0, kLocMonolingual) // #1348, BLooperZ
 
 	// Japanese release (1.2)
 	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kLocMulti2)
@@ -132,6 +135,25 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", 0, kLocMulti6)
 	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", 0, kLocMulti6)
 	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kLocMulti6)
+
+	{
+		// Chinese (Simplified) CD release (1.22LC)
+		{
+			"myst3",
+			0,
+			{
+				{ "RSRC.m3r",      0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },
+				{ "localized.m3t", 0, "3a9f299f8d061ce3d2862d985edb84e3", 2341588 },
+				{ "ENGLISHjp.m3t", 0, "19dcba1074f235ec2119313242d891de", 5658925 },
+			},
+			Common::ZH_CNA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO_NONE
+		},
+		0 //kLocMulti2
+	},
+
 
 	// DVD releases (1.27)
 	MYST3ENTRY_DVD(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kLocMulti6)
