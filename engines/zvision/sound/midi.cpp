@@ -23,14 +23,15 @@
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 #include "zvision/sound/midi.h"
 
 namespace ZVision {
 
 MidiManager::MidiManager() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB);
+	_driver = MusicMan.createMidi(dev);
 	if (_driver->open())
 		warning("Can't open MIDI, no MIDI output!");
 }
