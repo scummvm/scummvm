@@ -27,6 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 // Miles Audio for Discworld 1
 #include "audio/miles.h"
 // Discworld Noir
@@ -462,8 +463,8 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 		//
 		// Neither have timbre data for MT32
 
-		::MidiDriver::DeviceHandle dev = ::MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		::MusicType musicType = ::MidiDriver::getMusicType(dev);
+		::MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		::MusicType musicType = dev->getMusicType();
 		Common::File fileClass;
 
 		switch (musicType) {
