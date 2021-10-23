@@ -40,10 +40,6 @@
 #include "engines/icb/jpeg.h"
 #include "engines/icb/global_objects_pc.h"
 
-#ifndef _WIN32
-#define _flushall() fflush(NULL)
-#endif
-
 namespace ICB {
 
 // A.3.6 Figure A.6
@@ -152,11 +148,9 @@ void JpegDecoder::ReadMarker() {
 			// We call ReadByte to make sure the problem
 			// is not a premature EOF.
 			(void)ReadByte();
-			_flushall();
 			// throw ("Unknown, unsupported, or reserved marker encountered");
 		}
 	}
-	_flushall();
 }
 
 void JpegDecoder::ReadHuffmanTable() {
