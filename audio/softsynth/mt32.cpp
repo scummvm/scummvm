@@ -442,8 +442,8 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	bool checkDevice(MidiDriver::DeviceHandle) const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	bool checkDevice(MusicDevice *) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 };
 
 MusicDevices MT32EmuMusicPlugin::getDevices() const {
@@ -452,7 +452,7 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
+bool MT32EmuMusicPlugin::checkDevice(MusicDevice *) const {
 	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
 		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
 			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
@@ -462,7 +462,7 @@ bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 	return true;
 }
 
-Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
+Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice *) const {
 	*mididriver = new MidiDriver_MT32(g_system->getMixer());
 
 	return Common::kNoError;
