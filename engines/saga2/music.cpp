@@ -30,6 +30,7 @@
 
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
+#include "audio/musicplugin.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 #include "common/config-manager.h"
@@ -45,8 +46,8 @@ Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
 	// TODO Confirm this
 	_musicType = MT_GM;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driverType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driverType = dev->getMusicType();
 	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
 		_driverType = MT_MT32;
 

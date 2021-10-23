@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "audio/decoders/raw.h"
 
 #include "saga2/saga2.h"
@@ -185,8 +186,8 @@ void makeGruntSound(uint8 cs, Location l) {
 //	check for higher quality MIDI card
 
 bool haveKillerSoundCard() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	MusicType driverType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MusicType driverType = dev->getMusicType();
 
 	switch (driverType) {
 	case MT_ADLIB:
