@@ -1212,17 +1212,13 @@ static void listThemes() {
 
 /** Lists all output devices */
 static void listAudioDevices() {
-	PluginList pluginList = MusicMan.getPlugins();
 
 	printf("ID                             Description\n");
 	printf("------------------------------ ------------------------------------------------\n");
 
-	for (PluginList::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
-		const MusicPluginObject &musicObject = (*i)->get<MusicPluginObject>();
-		MusicDevices deviceList = musicObject.getDevices();
-		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
-			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
-		}
+	const MusicDevices &deviceList = MusicMan.getDevices();
+	for (MusicDevices::const_iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
+		printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
 	}
 }
 
