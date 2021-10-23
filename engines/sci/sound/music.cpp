@@ -22,6 +22,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/musicplugin.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "gui/error.h"
@@ -97,8 +98,8 @@ void SciMusic::init() {
 	if (platform == Common::kPlatformPC98)
 		deviceFlags |= MDT_PC98;
 
-	uint32 dev = MidiDriver::detectDevice(deviceFlags);
-	_musicType = MidiDriver::getMusicType(dev);
+	MusicDevice *dev = MusicMan.detectDevice(deviceFlags);
+	_musicType = dev->getMusicType();
 
 	if (g_sci->_features->useAltWinGMSound() && _musicType != MT_GM) {
 		warning("A Windows CD version with an alternate MIDI soundtrack has been chosen, "

@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "audio/mt32gm.h"
 
 #include "sci/resource/resource.h"
@@ -232,14 +233,14 @@ private:
 };
 
 MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _mt32LCDSize(20), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true), _missingFiles(nullptr) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI);
+	_driver = MusicMan.createMidi(dev);
 
 	if (ConfMan.getInt("midi_mode") == kMidiModeD110) {
 		_mt32Type = kMt32TypeD110;
 		_mt32LCDSize = 32;
-	} else if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) {
-		if (MidiDriver::getDeviceString(dev, MidiDriver::kDriverId) == "mt32") {
+	} else if (dev->getMusicType() == MT_MT32 || ConfMan.getBool("native_mt32")) {
+		if (dev->getDeviceString(MusicDevice::kDriverId) == "mt32") {
 			_mt32Type = kMt32TypeEmulated;
 		} else {
 			_mt32Type = kMt32TypeReal;

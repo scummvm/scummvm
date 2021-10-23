@@ -26,6 +26,8 @@
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/util.h"
 
+#include "audio/musicplugin.h"
+
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -148,8 +150,8 @@ private:
 
 MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL),
 	_numParts(version > SCI_VERSION_0_LATE ? kVoices : 0), _isOpen(false), _missingFiles(0) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI);
+	_driver = MusicMan.createMidi(dev);
 
 	_sysExBuf[0] = 0x43;
 	_sysExBuf[1] = 0x75;
