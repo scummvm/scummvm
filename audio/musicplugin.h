@@ -134,8 +134,14 @@ private:
 
 	const PluginList &getPlugins() const;
 
+	MusicManager();
+
+	MusicDevices _devices;
+
 public:
-	const MusicDevices getDevices() const;
+	const MusicDevices &getDevices() const {
+		return _devices;
+	};
 
 	/** Returns driver based on the present devices and the flags parameter. */
 	MusicDevice *detectDevice(int flags);

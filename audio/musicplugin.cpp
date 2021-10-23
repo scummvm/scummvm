@@ -92,26 +92,20 @@ const PluginList &MusicManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }
 
-const MusicDevices MusicManager::getDevices() const {
+MusicManager::MusicManager() {
 	const PluginList &plugins=getPlugins();
-	MusicDevices devices;
+
+	if (plugins.begin() == plugins.end())
+		error("MusicMan.getDevices: Music plugins must be loaded prior to calling this method");
 
 	for (PluginList::const_iterator m = plugins.begin(); m != plugins.end(); ++m) {
-		MusicDevices i = MusicMan.getDevices();
-		devices.insert(devices.end(), i.begin(), i.end());
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
+		_devices.insert(_devices.end(), i.begin(), i.end());
 	}
-
-	return devices;
 }
 
 MusicDevice *MusicManager::getDevice(const Common::String &identifier) {
-	const PluginList p = MusicMan.getPlugins();
-
-	if (p.begin() == p.end())
-		error("MusicMan.getDevice: Music plugins must be loaded prior to calling this method");
-
-	MusicDevices i = getDevices();
-	for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+	for (MusicDevices::iterator d = _devices.begin(); d != _devices.end(); ++d) {
 		// The music driver id isn't unique, but it will match
 		// driver's first device. This is useful when selecting
 		// the driver from the command line.
@@ -311,8 +305,7 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 				// and there is no preferred MT32 or GM device selected either or if the detected device is unavailable we arrive here.
 				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator).
 				if (flags & MDT_PREFER_MT32) {
-					MusicDevices i = getDevices();
-					for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+					for (MusicDevices::iterator d = _devices.begin(); d != _devices.end(); ++d) {
 						if (d->getMusicType() != MT_MT32)
 							continue;
 						return &*d;
@@ -322,8 +315,7 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 				// Now we default to the first available device with music type 'MT_GM' if not
 				// MT-32 is preferred or if MT-32 is preferred but all other devices have failed.
 				if (!(flags & MDT_PREFER_MT32) || flags == (MDT_PREFER_MT32 | MDT_MIDI)) {
-					MusicDevices i = getDevices();
-					for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+					for (MusicDevices::iterator d = _devices.begin(); d != _devices.end(); ++d) {
 						if (!d->checkDevice())
 							continue;
 						if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS) {
