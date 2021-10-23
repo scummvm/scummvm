@@ -28,6 +28,7 @@
 
 #include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 #include "audio/miles.h"
 
 #include "common/config-manager.h"
@@ -39,8 +40,8 @@ namespace Made {
 const uint8 MusicPlayer::MT32_GOODBYE_MSG[] = { 0x52, 0x65, 0x74, 0x75, 0x72, 0x6E, 0x20, 0x54, 0x6F, 0x20, 0x5A, 0x6F, 0x72, 0x6B, 0x20, 0x53, 0x6F, 0x6F, 0x6E, 0x21 };
 
 MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(0) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-	_driverType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	_driverType = dev->getMusicType();
 	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
 		_driverType = MT_MT32;
 
