@@ -341,7 +341,7 @@ public:
 
 	AlsaDevices getAlsaDevices() const;
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	Common::Error createInstance(MidiDriver **mididriver, const MusicDevice * = 0) const;
 
 private:
 	static int parse_addr(const char *arg, int *client, int *port);
@@ -422,7 +422,7 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle dev) const {
+Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, const MusicDevice * dev) const {
 	bool found = false;
 	int seq_client, seq_port;
 
@@ -456,7 +456,7 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 		for (AlsaDevices::iterator d = alsaDevices.begin(); d != alsaDevices.end(); ++d) {
 			MusicDevice device(this, d->getName(), d->getType());
 
-			if (device.getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
+			if (device.getCompleteId().equals(dev->getDeviceString(MusicDevice::kDeviceId))) {
 				found = true;
 				seq_client = d->getClient();
 				seq_port = -1;
