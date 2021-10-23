@@ -28,6 +28,7 @@
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 
 #include "testbed/midi.h"
 #include "testbed/testbed.h"
@@ -86,9 +87,9 @@ TestExitStatus MidiTests::playMidiMusic() {
 		return kTestSkipped;
 	}
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB);
 	// Create a driver instance
-	MidiDriver *driver = MidiDriver::createMidi(dev);
+	MidiDriver *driver = MusicMan.createMidi(dev);
 	// Create a SMF parser
 	MidiParser *smfParser = MidiParser::createParser_SMF();
 	// Open the driver
