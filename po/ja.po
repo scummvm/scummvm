@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-22 23:47+0000\n"
+"POT-Creation-Date: 2021-10-23 09:26+0000\n"
 "PO-Revision-Date: 2021-10-21 05:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4295,7 +4295,7 @@ msgstr "オブジェクト、オプション、聖書の引用の読み上げを
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:649
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:671
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
@@ -5238,7 +5238,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "このパズルを体験版でプレイする事はできません"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:648
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:670
 msgid "TTS Narrator"
 msgstr "音声合成によるナレーション"
 
@@ -7222,105 +7222,105 @@ msgstr "スロット#%dからクイックロードできませんでした"
 msgid "Unable to locate the '%s' data file."
 msgstr "データファイル'%s'の場所が特定できません。"
 
-#: engines/twine/detection.cpp:218
+#: engines/twine/detection.cpp:240
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 "このバージョンではGiflibが必要ですが、これはScummVMに組み込まれていません"
 
-#: engines/twine/detection.cpp:562
+#: engines/twine/detection.cpp:584
 msgid "Enable wall collisions"
 msgstr "壁の衝突判定を有効にする"
 
-#: engines/twine/detection.cpp:563
+#: engines/twine/detection.cpp:585
 msgid "Enable the original wall collision damage"
 msgstr "壁衝突時のダメージを有効にする"
 
-#: engines/twine/detection.cpp:569
+#: engines/twine/detection.cpp:591
 msgid "Enable cross fade"
 msgstr "クロスフェードを有効にする"
 
-#: engines/twine/detection.cpp:570
+#: engines/twine/detection.cpp:592
 msgid "Enable cross fading of images and scenes"
 msgstr "画像と映像のクロスフェードを有効にする"
 
-#: engines/twine/detection.cpp:577
+#: engines/twine/detection.cpp:599
 msgid "Disable save menu"
 msgstr "セーブメニューを無効にする"
 
-#: engines/twine/detection.cpp:578
+#: engines/twine/detection.cpp:600
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr "オリジナル版はオートセーブのみでしたが、これでいつでもセーブできます。"
 
-#: engines/twine/detection.cpp:584
+#: engines/twine/detection.cpp:606
 msgid "Enable debug mode"
 msgstr "デバッグモードを有効にする"
 
-#: engines/twine/detection.cpp:585
+#: engines/twine/detection.cpp:607
 msgid "Enable the debug mode"
 msgstr "デバッグモードを有効にする"
 
-#: engines/twine/detection.cpp:591
+#: engines/twine/detection.cpp:613
 msgid "Enable audio CD"
 msgstr "オーディオCDを有効にする"
 
-#: engines/twine/detection.cpp:592
+#: engines/twine/detection.cpp:614
 msgid "Enable the original audio cd track"
 msgstr "オリジナルオーディオCDトラックを有効にする"
 
-#: engines/twine/detection.cpp:598
+#: engines/twine/detection.cpp:620
 msgid "Enable sound"
 msgstr "音声を有効にする"
 
-#: engines/twine/detection.cpp:599
+#: engines/twine/detection.cpp:621
 msgid "Enable the sound for the game"
 msgstr "ゲームの音声を有効にする"
 
-#: engines/twine/detection.cpp:605
+#: engines/twine/detection.cpp:627
 msgid "Enable voices"
 msgstr "音声を有効にする"
 
-#: engines/twine/detection.cpp:606
+#: engines/twine/detection.cpp:628
 msgid "Enable the voices for the game"
 msgstr "ゲーム音声を有効にする"
 
-#: engines/twine/detection.cpp:612
+#: engines/twine/detection.cpp:634
 msgid "Enable text"
 msgstr "テキスト表示を有効にする"
 
-#: engines/twine/detection.cpp:613
+#: engines/twine/detection.cpp:635
 msgid "Enable the text for the game"
 msgstr "ゲームテキストの表示を有効にする"
 
-#: engines/twine/detection.cpp:619
+#: engines/twine/detection.cpp:641
 msgid "Enable movies"
 msgstr "ムービーを有効にする"
 
-#: engines/twine/detection.cpp:620
+#: engines/twine/detection.cpp:642
 msgid "Enable the cutscenes for the game"
 msgstr "ゲーム内ムービーを有効にする"
 
-#: engines/twine/detection.cpp:626
+#: engines/twine/detection.cpp:648
 msgid "Enable mouse"
 msgstr "マウス操作を有効にする"
 
-#: engines/twine/detection.cpp:627
+#: engines/twine/detection.cpp:649
 msgid "Enable the mouse for the UI"
 msgstr "マウスでのUI操作を有効にする"
 
-#: engines/twine/detection.cpp:633
+#: engines/twine/detection.cpp:655
 msgid "Use the USA version"
 msgstr "北米版を使用する"
 
-#: engines/twine/detection.cpp:634
+#: engines/twine/detection.cpp:656
 msgid "Enable the USA specific version flags"
 msgstr "北米版のバージョンフラグを有効にする"
 
-#: engines/twine/detection.cpp:640 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:662 engines/ultima/detection.cpp:85
 msgid "Enable high resolution"
 msgstr "ハイレゾを有効化"
 
-#: engines/twine/detection.cpp:641 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:663 engines/ultima/detection.cpp:86
 msgid "Enable a higher resolution for the game"
 msgstr "ゲームのハイレゾを有効化"
 
