@@ -28,6 +28,7 @@
 
 #include "audio/midiparser.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "audio/mixer.h"
 
 namespace Common {
@@ -89,7 +90,7 @@ private:
 	Common::List<MidiPlaybackSlot *> _midiSlotList; // Sorts midi slots by most recently used
 
 	byte *loadedSoundData;
-	uint32 _midiDevice;
+	MusicDevice *_midiDevice;
 
 	// VOC-related variables
 	Audio::SoundHandle _sfxHandles[MAX_SFX_PLAYING];

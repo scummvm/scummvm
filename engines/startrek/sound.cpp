@@ -30,19 +30,20 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/mods/protracker.h"
+#include "audio/musicplugin.h"
 
 namespace StarTrek {
 
 // Main Sound Functions
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
-	_midiDevice = MT_AUTO;
+	_midiDevice = nullptr;
 	_midiDriver = nullptr;
 	_loopingMidiTrack = false;
 
 	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
-		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
-		_midiDriver = MidiDriver::createMidi(_midiDevice);
+		_midiDevice = MusicMan.detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
+		_midiDriver = MusicMan.createMidi(_midiDevice);
 		_midiDriver->open();
 
 		for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
@@ -395,7 +396,10 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 
 	soundName += '.';
 
-	switch (MidiDriver::getMusicType(_midiDevice)) {
+	if (!_midiDevice)
+		return;
+
+	switch (_midiDevice->getMusicType()) {
 	case MT_MT32:
 		if (_vm->getFeatures() & GF_DEMO)
 			soundName += "ROL";
