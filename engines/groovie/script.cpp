@@ -2059,13 +2059,12 @@ void Script::o2_setvideoskip() {
 // and UHP include the hardcoded puzzle logic of 11H).
 void Script::o_gamelogic() {
 	uint8 param = readScript8bits();
+	debugC(1, kDebugScript, "Groovie::Script: Mini game logic, param %d", param);
 
 	switch (_version) {
 	case kGroovieT7G:
 		if (!_cellGame)
 			_cellGame = new CellGame;
-
-		debugC(1, kDebugScript, "Groovie::Script: CELL MOVE var[0x%02X]", param);
 
 		_cellGame->playStauf(2, param, &_variables[0x19]);
 
@@ -2082,38 +2081,29 @@ void Script::o_gamelogic() {
 	case kGroovieCDY:
 	case kGroovieUHP:
 		switch (param) {
-		case 1:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv)", param);
+		case 1:	// 11H Cake puzzle in the dining room (tb.grv)
 			_cake.run(_variables);
 			break;
-		case 2:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H/UHP Beehive Puzzle in the top room (hs.grv)", param);
+		case 2:	// 11H/UHP Beehive puzzle in the top room (hs.grv)
 			_beehive.run(_variables);
 			break;
-		case 3:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv)", param);
+		case 3:	// 11H Gallery puzzle in the modern art painting (bs.grv)
 			_gallery.run(_variables);
 			break;
-		case 4:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Triangle in the Chapel (tx.grv)", param);
+		case 4:	// 11H Triangle puzzle in the chapel (tx.grv)
 			// TODO
 			break;
-		case 5:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H/UHP Mouse Trap in the lab (al.grv)", param);
+		case 5: // 11H/UHP Mouse trap puzzle in the lab (al.grv)
 			_mouseTrap.run(_variables);
 			break;
-		case 6:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente - final puzzle (pt.grv)", param);
+		case 6: // 11H Pente puzzle at the end of the game (pt.grv)
 			// TODO
-			// For now, just auto-solve the puzzle, so the player can continue
-			_variables[5] = 4;
+			_variables[5] = 4;	// Auto-solve the puzzle, so the player can continue
 			break;
-		case 7:
-			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): Clandestiny unknown -> NOP", param);
+		case 7:	// Clan Unknown puzzle
 			// TODO
 			break;
-		case 8:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): Clandestiny/UHP Othello / Reversi", param);
+		case 8:	// Clan/UHP Othello/Reversi puzzle
 			// TODO
 			break;
 		default:

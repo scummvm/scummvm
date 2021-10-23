@@ -27,6 +27,15 @@
 
 namespace Groovie {
 
+/*
+ * Beehive (Blood and Honey) puzzle (hs.grv)
+ *
+ * An infection-style game in which the player must cover more
+ * territory than the computer. It's similar to the microscope puzzle
+ * in the 7th Guest. The playfield is a honeycomb made of 61
+ * hexagons. The hexagons are numbered starting from the top-left
+ * corner, with a direction from bottom left to top right.
+ */
 class BeehiveGame {
 public:
 	BeehiveGame();

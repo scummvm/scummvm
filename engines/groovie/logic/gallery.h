@@ -29,7 +29,7 @@
 namespace Groovie {
 
 /*
- * Puzzle in the Gallery.
+ * Puzzle in the Gallery (bs.grv).
  * The aim is to select the last piece of the image.
  * There are 18 pieces in total.
  * When selecting a piece, all surrounding pieces are also selected

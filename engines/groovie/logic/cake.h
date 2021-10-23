@@ -29,8 +29,8 @@
 namespace Groovie {
 
 /*
-* Connect Four puzzle, the cake in the dining room
-*/
+ * Cake (Connect Four) puzzle in the dining room (tb.grv)
+ */
 class CakeGame {
 public:
 	CakeGame();
