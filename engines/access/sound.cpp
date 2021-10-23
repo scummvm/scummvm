@@ -24,7 +24,9 @@
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
+#include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/musicplugin.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 // Miles Audio
@@ -219,8 +221,8 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_driver = nullptr;
 	_byte1F781 = false;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice *dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	MusicType musicType = dev->getMusicType();
 
 	// Amazon Guardians of Eden uses MIDPAK inside MIDIDRV.AP
 	// AdLib patches are inside MIDIDRV.AP too, 2nd resource file
@@ -260,7 +262,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 
 #if 0
 	MidiPlayer::createDriver();
-	MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 #endif
 
 	if (_driver) {
