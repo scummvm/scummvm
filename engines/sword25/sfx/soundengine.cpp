@@ -39,6 +39,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -68,8 +69,8 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 	_maxHandleId = 1;
 
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
-	_noMusic = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	MusicDevice * dev = MusicMan.getDevice(selDevStr.empty() ? Common::String("auto") : selDevStr);
+	_noMusic = (dev->getMusicType() == MT_NULL || dev->getMusicType() == MT_INVALID);
 
 	if (_noMusic) {
 		warning("AUDIO: MUSIC IS FORCED TO OFF");
