@@ -138,7 +138,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 		// Based on generateComplexID() in advancedDetector.cpp.
 		game.preferredTarget = generatePreferredTarget(*x);
 
-		game.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
+		game.setGUIOptions(x->game.guioptions + musicType2GUIO(x->game.midi));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(game);

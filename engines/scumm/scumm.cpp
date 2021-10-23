@@ -87,6 +87,7 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/mixer.h"
+#include "audio/musicplugin.h"
 
 using Common::File;
 
@@ -2035,10 +2036,10 @@ void ScummEngine_v100he::resetScumm() {
 #endif
 
 void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(midi);
-	_native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	MusicDevice * dev = MusicMan.detectDevice(midi);
+	_native_mt32 = ((dev->getMusicType() == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-	switch (MidiDriver::getMusicType(dev)) {
+	switch (dev->getMusicType()) {
 	case MT_NULL:
 		_sound->_musicType = MDT_NONE;
 		break;
@@ -2185,11 +2186,11 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		_musicEngine = new Player_V5M(this, _mixer);
 		((Player_V5M *)_musicEngine)->init(macInstrumentFile);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
-		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
+		_musicEngine = new Player_V1(this, _mixer, dev->getMusicType() != MT_PCSPK);
 	} else if (_game.version <= 2) {
-		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, dev->getMusicType() != MT_PCSPK);
 	} else if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
-		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, dev->getMusicType() != MT_PCSPK);
 	} else if (_sound->_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
@@ -2230,7 +2231,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			_native_mt32 = _enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
-			nativeMidiDriver = MidiDriver::createMidi(dev);
+			nativeMidiDriver = MusicMan.createMidi(dev);
 		}
 
 		if (nativeMidiDriver != NULL && _native_mt32)
@@ -2240,7 +2241,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			if (_sound->_musicType == MDT_TOWNS) {
 				adlibMidiDriver = new MidiDriver_TOWNS(_mixer);
 			} else if (_sound->_musicType == MDT_ADLIB || multi_midi) {
-				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+				adlibMidiDriver = MusicMan.createMidi(MusicMan.detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 				// Try to use OPL3 mode for Sam&Max when possible.
 				adlibMidiDriver->property(MidiDriver::PROP_SCUMM_OPL3, (_game.id == GID_SAMNMAX) ? 1 : 0);
@@ -2268,7 +2269,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			if (midi != MDT_NONE) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
+				if (dev->getMusicType() != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
 			}
 			if (_game.heversion >= 60) {
