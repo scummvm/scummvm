@@ -30,6 +30,8 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 
+#include "audio/musicplugin.h"
+
 namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
@@ -103,8 +105,8 @@ Common::Error KyraEngine_v1::init() {
 			// most users rather have a GM device than a MT-32 device).
 			// Users who want PC speaker sound always have to select this individually for all
 			// Kyra games.
-			MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
-			const MusicType musicType = MidiDriver::getMusicType(dev);
+			MusicDevice * dev = MusicMan.detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
+			const MusicType musicType = dev->getMusicType();
 			if (musicType == MT_ADLIB) {
 				_sound = new SoundPC_v1(this, _mixer, Sound::kAdLib);
 			} else {
@@ -122,7 +124,7 @@ Common::Error KyraEngine_v1::init() {
 				if (musicType == MT_PCSPK) {
 					driver = new MidiDriver_PCSpeaker(_mixer);
 				} else {
-					driver = MidiDriver::createMidi(dev);
+					driver = MusicMan.createMidi(dev);
 					if (type == Sound::kMidiMT32)
 						driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 				}

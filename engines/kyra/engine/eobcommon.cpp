@@ -34,6 +34,8 @@
 #include "common/debug-channels.h"
 #include "common/translation.h"
 
+#include "audio/musicplugin.h"
+
 #include "gui/error.h"
 
 #include "backends/keymapper/action.h"
@@ -411,33 +413,33 @@ Common::Error EoBCoreEngine::init() {
 
 	// We start the respective sound driver even if "No Music" has been selected, because we
 	// don't have a null driver class (and don't really need one). We just disable the sound here.
-	MidiDriver::DeviceHandle dev = 0;
+	MusicDevice * dev = 0;
 	switch (_flags.platform) {
 	case Common::kPlatformDOS: {
 		int flags = MDT_ADLIB | MDT_PCSPK;
-		dev = MidiDriver::detectDevice(_flags.gameID == GI_EOB1 ? flags | MDT_PCJR : flags);
-		MusicType type = MidiDriver::getMusicType(dev);
+		dev = MusicMan.detectDevice(_flags.gameID == GI_EOB1 ? flags | MDT_PCJR : flags);
+		MusicType type = dev->getMusicType();
 		_sound = new SoundPC_v1(this, _mixer, type == MT_ADLIB ? Sound::kAdLib : type == MT_PCSPK ? Sound::kPCSpkr : Sound::kPCjr);
 		} break;
 	case Common::kPlatformFMTowns:
-		dev = MidiDriver::detectDevice(MDT_TOWNS);
+		dev = MusicMan.detectDevice(MDT_TOWNS);
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
 		break;
 	case Common::kPlatformPC98:
 		if (_flags.gameID == GI_EOB1) {
-			dev = MidiDriver::detectDevice(MDT_PC98);
+			dev = MusicMan.detectDevice(MDT_PC98);
 			_sound = new SoundPC98_EoB(this, _mixer);
 		} else {
-			dev = MidiDriver::detectDevice(MDT_PC98 | MDT_MIDI);
+			dev = MusicMan.detectDevice(MDT_PC98 | MDT_MIDI);
 			/**/
 		}
 		break;
 	case Common::kPlatformAmiga:
-		dev = MidiDriver::detectDevice(MDT_AMIGA);
+		dev = MusicMan.detectDevice(MDT_AMIGA);
 		_sound = new SoundAmiga_EoB(this, _mixer);
 		break;
 	case Common::kPlatformSegaCD:
-		dev = MidiDriver::detectDevice(MDT_SEGACD);
+		dev = MusicMan.detectDevice(MDT_SEGACD);
 		_sound = new SoundSegaCD_EoB(this, _mixer);
 		break;
 	default:
@@ -452,7 +454,7 @@ Common::Error EoBCoreEngine::init() {
 		_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
-	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
+	_configNullSound = (dev->getMusicType() == MT_NULL);
 	syncSoundSettings();
 
 	if (!_screen->init())
