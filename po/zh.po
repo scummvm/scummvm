@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-23 09:26+0000\n"
+"POT-Creation-Date: 2021-10-23 19:53+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -1037,11 +1037,15 @@ msgid "Fullscreen mode"
 msgstr "全屏模式"
 
 #: gui/options.cpp:1469
-msgid "V-Sync in 3D Games"
-msgstr "3D游戏中的垂直同步"
+msgid "V-Sync"
+msgstr ""
 
 #: gui/options.cpp:1469
-msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+#, fuzzy
+#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+msgid ""
+"Wait for the vertical sync to refresh the screen in order to prevent tearing "
+"artifacts"
 msgstr "等待垂直同步来刷新3D渲染器中的屏幕"
 
 #: gui/options.cpp:1472
@@ -2765,33 +2769,33 @@ msgstr ""
 msgid "Fit to window (4:3)"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:706
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2428
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:764
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
 msgid "Filtering enabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:754
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2452
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:766
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Filtering disabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2480
 msgid "Stretch mode"
 msgstr ""
 
@@ -2799,7 +2803,7 @@ msgstr ""
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2395
 msgid "Active graphics filter:"
 msgstr ""
 
@@ -7945,6 +7949,9 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#~ msgid "V-Sync in 3D Games"
+#~ msgstr "3D游戏中的垂直同步"
 
 #~ msgid "Auto"
 #~ msgstr "自动"

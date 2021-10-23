@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-23 09:26+0000\n"
+"POT-Creation-Date: 2021-10-23 19:53+0000\n"
 "PO-Revision-Date: 2021-10-20 09:33+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1048,11 +1048,15 @@ msgid "Fullscreen mode"
 msgstr "Plein écran"
 
 #: gui/options.cpp:1469
-msgid "V-Sync in 3D Games"
-msgstr "V-Sync dans les jeux 3D"
+msgid "V-Sync"
+msgstr ""
 
 #: gui/options.cpp:1469
-msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+#, fuzzy
+#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+msgid ""
+"Wait for the vertical sync to refresh the screen in order to prevent tearing "
+"artifacts"
 msgstr ""
 "Attend la synchronisation verticale pour rafraîchir l'écran dans le moteur "
 "de rendu 3D"
@@ -2913,33 +2917,33 @@ msgstr "Étirer pour remplir la fenêtre"
 msgid "Fit to window (4:3)"
 msgstr "Adapter à la fenêtre (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:706
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Résolution : %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2428
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
 msgid "Enabled aspect ratio correction"
 msgstr "Correction du rapport d'aspect activée"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
 msgid "Disabled aspect ratio correction"
 msgstr "Correction du rapport d'aspect désactivée"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:764
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
 msgid "Filtering enabled"
 msgstr "Filtrage activé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:754
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2452
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:766
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Filtering disabled"
 msgstr "Filtrage désactivé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2480
 msgid "Stretch mode"
 msgstr "Mode d'étirement"
 
@@ -2947,7 +2951,7 @@ msgstr "Mode d'étirement"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2395
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
@@ -8527,6 +8531,9 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "V-Sync in 3D Games"
+#~ msgstr "V-Sync dans les jeux 3D"
 
 #~ msgid "Game language:"
 #~ msgstr "Langue du jeu :"

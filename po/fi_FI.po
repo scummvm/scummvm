@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-23 09:26+0000\n"
+"POT-Creation-Date: 2021-10-23 19:53+0000\n"
 "PO-Revision-Date: 2021-10-20 09:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1040,11 +1040,15 @@ msgid "Fullscreen mode"
 msgstr "Kokoruututila"
 
 #: gui/options.cpp:1469
-msgid "V-Sync in 3D Games"
-msgstr "V-Sync 3D-peleissä"
+msgid "V-Sync"
+msgstr ""
 
 #: gui/options.cpp:1469
-msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+#, fuzzy
+#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+msgid ""
+"Wait for the vertical sync to refresh the screen in order to prevent tearing "
+"artifacts"
 msgstr "Odota pystytahdistusta 3D-renderöijän ruudunpäivityksessä"
 
 #: gui/options.cpp:1472
@@ -2874,33 +2878,33 @@ msgstr "Venytä ikkunaan"
 msgid "Fit to window (4:3)"
 msgstr "Sovita ikkunaan (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:706
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resoluutio: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2428
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
 msgid "Enabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus päällä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
 msgid "Disabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus pois päältä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:764
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
 msgid "Filtering enabled"
 msgstr "Suodatus päällä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:754
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2452
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:766
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Filtering disabled"
 msgstr "Suodatus pois päältä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2480
 msgid "Stretch mode"
 msgstr "Venytystila"
 
@@ -2908,7 +2912,7 @@ msgstr "Venytystila"
 msgid "SDL Surface"
 msgstr "SDL-pinta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2395
 msgid "Active graphics filter:"
 msgstr "Valittu grafiikkasuodatin:"
 
@@ -8409,6 +8413,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "V-Sync in 3D Games"
+#~ msgstr "V-Sync 3D-peleissä"
 
 #~ msgid "Game language:"
 #~ msgstr "Pelin kieli:"
