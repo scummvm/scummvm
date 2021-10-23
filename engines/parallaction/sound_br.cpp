@@ -27,6 +27,7 @@
 #include "audio/mixer.h"
 #include "audio/midiparser.h"
 #include "audio/midiplayer.h"
+#include "audio/musicplugin.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/raw.h"
 
@@ -225,12 +226,12 @@ private:
 MidiPlayer_MSC::MidiPlayer_MSC()
 	: _paused(false) {
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	const MusicType musicType = MidiDriver::getMusicType(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	const MusicType musicType = dev->getMusicType();
 	if (musicType == MT_ADLIB) {
 		_driver = createAdLibDriver();
 	} else {
-		_driver = MidiDriver::createMidi(dev);
+		_driver = MusicMan.createMidi(dev);
 	}
 	assert(_driver);
 

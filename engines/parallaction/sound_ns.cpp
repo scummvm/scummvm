@@ -27,6 +27,7 @@
 #include "audio/mixer.h"
 #include "audio/midiparser.h"
 #include "audio/midiplayer.h"
+#include "audio/musicplugin.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/raw.h"
 
@@ -53,8 +54,8 @@ private:
 MidiPlayer::MidiPlayer()
 	: _paused(false) {
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	MusicDevice * dev = MusicMan.detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MusicMan.createMidi(dev);
 	assert(_driver);
 
 	int ret = _driver->open();
