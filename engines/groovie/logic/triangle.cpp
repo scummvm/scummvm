@@ -33,9 +33,61 @@ extern const int8 beehiveLogicTable2[800];
 }
 
 TriangleGame::TriangleGame() {
+	init();
 }
 
 void TriangleGame::run(byte *scriptVariables) {
+	byte op = scriptVariables[3];
+	int8 move;
+
+	switch (op) {
+	case 3:
+		init();
+		scriptVariables[3] = 0;
+		return;
+
+	case 4:
+		move = sub03(2);
+		break;
+
+	case 5:
+		move = sub03(1);
+		break;
+
+	default:
+		setCell(scriptVariables[1] + 10 * scriptVariables[0], 2);
+		scriptVariables[3] = sub02();
+
+		if (scriptVariables[3] == 0) {
+			move = sub03(1);
+		} else {
+			return;
+		}
+	}
+
+	scriptVariables[0] = move / 10;
+	scriptVariables[1] = move % 10;
+	scriptVariables[3] = sub02();
+}
+
+void TriangleGame::init() {
+	_triangleCellCount = 0;
+	memset(_triangleCells, 0, 66);
+}
+
+int8 TriangleGame::sub02() {
+	return 0;
+}
+
+int8 TriangleGame::sub03(int8 player) {
+	return 0;
+}
+
+void TriangleGame::setCell(int8 cellnum, int8 val) {
+	if (cellnum >= 0 && cellnum < 66) {
+		++_triangleCellCount;
+		_triangleCells[cellnum] = val;
+	}
 }
 
 namespace {

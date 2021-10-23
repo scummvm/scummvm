@@ -32,6 +32,16 @@ class TriangleGame {
 public:
 	TriangleGame();
 	void run(byte *scriptVariables);
+
+private:
+	void init();
+	int8 sub02();
+	int8 sub03(int8 player);
+	void setCell(int8 cellnum, int8 val);
+
+private:
+	int _triangleCellCount;
+	int8 _triangleCells[66];
 };
 
 } // End of Groovie namespace
