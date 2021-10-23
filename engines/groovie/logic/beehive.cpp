@@ -68,7 +68,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		sub02(&v22, tempState);
 		if (v22) {
 			for (int i = 0; i < v22; i++)
-				scriptVariables[tempState[i] + 25] = 1;
+				scriptVariables[tempState[i] + 25] = kBeehiveColorRed;
 		} else {
 			*hexDifference = getHexDifference();
 		}
@@ -80,8 +80,8 @@ void BeehiveGame::run(byte *scriptVariables) {
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
 		sub18(v24, &v22, tempState);
 		for (int j = 0; j < v22; j++)
-			scriptVariables[tempState[j] + 25] = 1;
-		scriptVariables[v24 + 25] = 1;
+			scriptVariables[tempState[j] + 25] = kBeehiveColorRed;
+		scriptVariables[v24 + 25] = kBeehiveColorRed;
 		return;
 
 	case 3:
@@ -164,7 +164,7 @@ void BeehiveGame::sub02(int8 *a1, int8 *a2) {
 			}
 		}
 
-		for (int i = 0; i < 12; ++i) {
+		for (int i = 0; i < 12; i++) {
 			if (v3)
 				break;
 
