@@ -60,8 +60,8 @@ public:
 	};
 
 	const Common::String &getName() const;
-	const Common::String &getMusicDriverName() const;
-	const Common::String &getMusicDriverId() const;
+	const Common::String getMusicDriverName() const;
+	const Common::String getMusicDriverId() const;
 	MusicType getMusicType() const;
 
 	Common::String getDeviceString(DeviceStringType type) const;
