@@ -129,7 +129,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 	desc->desc.gameId = "director";
 	desc->desc.extra = "";
 	desc->desc.language = Common::UNK_LANG;
-	desc->desc.flags = ADGF_NO_FLAGS;
+	desc->desc.flags = ADGF_TAILMD5;
 	desc->desc.platform = Common::kPlatformWindows;
 	desc->desc.guiOptions = GUIO0();
 	desc->desc.filesDescriptions[0].fileName = 0;
