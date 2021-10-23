@@ -73,13 +73,21 @@ namespace Groovie {
  
 class GalleryGame {
 public:
-	GalleryGame() {}
+	GalleryGame() {
+#if 0
+		test();
+#endif
+	}
 	void run(byte *scriptVariables);
 	
 private:
 	byte galleryAI(byte *pieceStatus, int depth);
 	
 	static const byte kGalleryLinks[21][10];
+
+	void test();
+	void ensureSamanthaWins(int seed);
+	void testsWriteMove(int move, byte pieceStatus[]);
 };
 
 } // End of Groovie namespace

@@ -61,21 +61,21 @@ enum kGalleryPieceStatus {
 void GalleryGame::run(byte *scriptVariables) {
 	byte pieceStatus[kPieceCount];
 	byte status1[kPieceCount];
-	byte status2[kPieceCount];
 
 	memcpy(pieceStatus, scriptVariables + 26, kPieceCount);
 
 	int selectedPieces = 0;
 	for (int i = 0; i < kPieceCount; i++) {
 		status1[i] = 0;
+		// in this context it seems like kPieceSelected means it's available for selection
 		if (pieceStatus[i] == kPieceSelected) {
+			byte status2[kPieceCount];
 			for (int j = 0; j < kPieceCount; j++)
 				status2[j] = pieceStatus[j];
 
-			byte curLink = kGalleryLinks[i][0];
-			pieceStatus[i] = kPieceUnselected;
 			status2[i] = 0;
 
+			byte curLink = kGalleryLinks[i][0];
 			int linkedPiece = 1;
 			while (curLink != 0) {
 				linkedPiece++;
@@ -83,6 +83,7 @@ void GalleryGame::run(byte *scriptVariables) {
 				curLink = kGalleryLinks[i][linkedPiece - 1];
 			}
 			status1[i] = galleryAI(status2, 1);
+			// in this context, kPieceSelected means we think it's an optimal move
 			if (status1[i] == kPieceSelected) {
 				selectedPieces++;
 			}
@@ -90,25 +91,26 @@ void GalleryGame::run(byte *scriptVariables) {
 	}
 
 	if (selectedPieces == 0) {
-		int esi = 0;
+		// optimal move not found, choose a move with a high score?
+		int highestScore = 0;
 		for (int i = 0; i < kPieceCount; i++) {
-			if (esi < status1[i]) {
-				esi = status1[i];
+			if (highestScore < status1[i]) {
+				highestScore = status1[i];
 			}
 		}
 
-		if (esi == 2) {
-			esi = 1;
+		if (highestScore == 2) {
+			highestScore = 1;
 		} else {
-			if (esi < kPieceCount) {
-				esi = 2;
+			if (highestScore < kPieceCount) {
+				highestScore = 2;
 			} else {
-				esi -= 12;
+				highestScore -= 12;
 			}
 		}
 
 		for (int i = 0; i < kPieceCount; i++) {
-			if (esi < status1[i]) {
+			if (highestScore < status1[i]) {
 				status1[i] = kPieceSelected;
 				selectedPieces++;
 			}
@@ -117,6 +119,8 @@ void GalleryGame::run(byte *scriptVariables) {
 
 	int selectedPiece = 0;
 
+	// var 49 is set by the script calling o_random
+	// choose one of our good moves
 	byte v12 = scriptVariables[49] % selectedPieces;
 	for (int i = 0; i < kPieceCount; i++) {
 		if (status1[selectedPiece] == 1 && !v12--)
@@ -141,10 +145,10 @@ byte GalleryGame::galleryAI(byte *pieceStatus, int depth) {
 			for (int j = 0; j < kPieceCount; j++)
 				status2[j] = pieceStatus[j];
 
-			byte curLink = kGalleryLinks[i][0];
 			status2[i] = 0;
 			selectedPieces = 1;
 
+			byte curLink = kGalleryLinks[i][0];
 			int linkedPiece = 1;
 			while (curLink != 0) {
 				linkedPiece++;
@@ -163,7 +167,7 @@ byte GalleryGame::galleryAI(byte *pieceStatus, int depth) {
 		byte v9 = 0;
 		byte v10 = 0;
 		for (int j = 0; j < 21; ++j) {
-			byte v12 = status2[j];
+			byte v12 = status1[j];
 			if (v12) {
 				++v10;
 				if (v12 == 1)
@@ -173,12 +177,68 @@ byte GalleryGame::galleryAI(byte *pieceStatus, int depth) {
 			}
 		}
 		if (v9 == v10)
-			return 1;
+			return 1;// I believe 1 means this is an optimal move
 		else
-			return (v8 + 102 * v9) / v10;
+			return (v8 + 102 * v9) / v10;// otherwise, higher numbers are better
 	}
 
 	return depth == 0 ? 2 : 1;
+}
+
+
+void GalleryGame::testsWriteMove(int move, byte pieceStatus[kPieceCount]) {
+	if (pieceStatus[move] != kPieceSelected)
+		error("illegal move to %d", move + 1);
+
+	pieceStatus[move] = kPieceUnselected;
+	for (int i = 0; i < 10; i++) {
+		byte curLink = kGalleryLinks[move][i];
+		if (!curLink)
+			break;
+		pieceStatus[curLink - 1] = kPieceUnselected;
+	}
+}
+
+void GalleryGame::ensureSamanthaWins(int seed) {
+	byte scriptVariables[1024];
+	byte goalPieceStatus[kPieceCount];
+	memset(goalPieceStatus, 0, sizeof(goalPieceStatus));
+	Common::RandomSource rng("ensureSamanthaWins");
+
+	rng.setSeed(seed);
+	warning("starting ensureSamanthaWins with seed %u", seed);
+
+	memset(scriptVariables, 1, sizeof(scriptVariables));
+
+	for (int i = 0; i < 100; i++) {
+		bool isStauf = i % 2;
+		scriptVariables[49] = rng.getRandomNumber(14);
+
+		run(scriptVariables);
+
+		int selectedMove = scriptVariables[47] * 10 + scriptVariables[48] - 1;
+		warning("Move %d: %s moved to %d", i, (isStauf ? "Stauf" : "Samantha"), selectedMove + 1);
+
+		testsWriteMove(selectedMove, scriptVariables + 26);
+
+		if (memcmp(scriptVariables + 26, goalPieceStatus, sizeof(goalPieceStatus)) == 0) {
+			if (isStauf)
+				error("Stauf won");
+			else
+				warning("Samantha won");
+
+			return;
+		}
+	}
+	error("game took too long");
+}
+
+void GalleryGame::test() {
+	warning("running gallery tests");
+	for (int i = 0; i < 20; i++) {
+		ensureSamanthaWins(i);
+	}
+	warning("finished running gallery tests");
 }
 
 } // End of Groovie namespace
