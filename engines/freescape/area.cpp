@@ -83,6 +83,10 @@ Area::~Area() {
 	delete objectsByID;
 }
 
+void Area::show() {
+	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); it++)
+		debug("objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
+}
 
 void Area::draw(Freescape::Renderer *gfx) {
 	if (palette) 
@@ -93,6 +97,10 @@ void Area::draw(Freescape::Renderer *gfx) {
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
 		if (!(*it)->isInvisible()) 
+			(*it)->draw(gfx);
+	}
+	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
+		if (!(*it)->isInvisible() && (*it)->isPlanar()) 
 			(*it)->draw(gfx);
 	}
 	gfx->drawFloor(groundColor);

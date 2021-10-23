@@ -102,10 +102,13 @@ bool GeometricObject::isPlanar() {
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
+	//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 	if (this->getType() == Cube) {
 		//debug("Drawing cube!");
 		gfx->renderCube(origin, size, colours);
-	} //else
-		//debug("Drawing something of type %d", this->getType());
-		
-};
+	} else if (this->getType() == Rectangle) {
+		gfx->renderRectangle(origin, size, colours);
+	} else if (this->isPlanar()) {
+		gfx->renderPolygon(origin, ordinates, colours);
+	}
+}

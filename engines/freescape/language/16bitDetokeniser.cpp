@@ -208,6 +208,7 @@ Common::String *detokenise16bitCondition(Common::Array<uint8> &tokenisedConditio
 
 		default:
 			detokenisedStream += "<UNKNOWN 16 bit: ";
+			detokenisedStream += Common::String::format("%x, ", (int)numberOfArguments);
 			detokenisedStream += Common::String::format("%x", (int)opcode);
 			detokenisedStream += " > ";
 			break;

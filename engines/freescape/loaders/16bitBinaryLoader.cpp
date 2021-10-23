@@ -101,15 +101,18 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
-		// if (byteSizeOfObject > 0) {
+		if (byteSizeOfObject > 0) {
 		// 	uint32 offset = stream.getFileOffset();
-		// 	Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
+		    Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
 		// 	byteSizeOfObject = byteSizeOfObject - (offset - stream.getFileOffset());
 
-		// 	Common::String *conditionSource = detokenise16bitCondition(*conditionData);
-		// 	debug("Condition: %s", conditionSource->c_str());
+			Common::String *conditionSource = detokenise16bitCondition(*conditionData);
+		 	debug("Condition: %s", conditionSource->c_str());
+			byteSizeOfObject = 0;
 		// 	//instructions = getInstructions(conditionSource);
-		// }
+		}
+		// if (objectType == 11)
+		// 	error("triangle!");
 
 		debug("Skipping %d bytes", byteSizeOfObject);
 		stream.skipBytes(byteSizeOfObject);
@@ -231,6 +234,28 @@ Area *load16bitArea(StreamLoader &stream) {
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}
+	}
+
+	uint16 numberOfLocalConditions = stream.get16();
+	debug("Number of conditions: %d", numberOfLocalConditions);
+	for (uint16 localCondition = 0; localCondition < numberOfLocalConditions; localCondition++) {
+		// 12 bytes for the name of the condition;
+		// we don't care
+		stream.skipBytes(12);
+
+		// get the length and the data itself, converting from
+		// shorts to bytes
+		uint32 lengthOfCondition = (uint32)stream.get16() << 1;
+		debug("Length of condition: %d", lengthOfCondition);
+		if (lengthOfCondition == 0) {
+			break;
+		}
+
+		// get the condition
+		Common::Array<uint8> *conditionData = stream.nextBytes(lengthOfCondition);
+
+		debug("Local condition %d at %x", localCondition + 1, stream.getFileOffset());
+		debug("%s", detokenise16bitCondition(*conditionData)->c_str());
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, 1, skyColor, groundColor));
