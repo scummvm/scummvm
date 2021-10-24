@@ -121,6 +121,7 @@ project.xcworkspace
 
 /dists/engine-data/testbed-audiocd-files/testbed.config
 /dists/engine-data/testbed-audiocd-files/testbed.out
+/dists/engine-data/playground3d
 
 
 /doc/*.aux
