@@ -66,8 +66,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	g_hypno = this;
 	_defaultCursor = "";
 	// Add quit level
-	Hotspot q;
-	q.type = MakeMenu;
+	Hotspot q(MakeMenu, "");
 	Action *a = new Quit();
 	q.actions.push_back(a);
 	Level quit;
@@ -133,7 +132,7 @@ Common::Error HypnoEngine::run() {
 	loadAssets();
 	_nextLevel = "<start>";
 	while (!shouldQuit()) {
-		debug("nextLevel: %s", _nextLevel.c_str());
+		//debug("nextLevel: %s", _nextLevel.c_str());
 		_defaultCursor = "";
 		_prefixDir = "";
 		_videosPlaying.clear();

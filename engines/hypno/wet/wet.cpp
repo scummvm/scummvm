@@ -50,10 +50,8 @@ void WetEngine::loadAssetsDemoDisc() {
 		error("Failed to load any files from missions.lib");
 
 	Level start;
-	Hotspot h;
+	Hotspot h(MakeMenu, "");
 	Hotspots hs;
-
-	h.type = MakeMenu;
 	Ambient *a = new Ambient("movie/selector.smk", Common::Point(0, 0), "/LOOP");
 	a->fullscreen = true;
 	h.actions.push_back(a);
