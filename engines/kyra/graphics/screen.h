@@ -273,6 +273,7 @@ public:
 private:
 	const uint8 *_oneByteData;
 	const uint8 *_twoByteData;
+	uint32 _twoByteNumChar;
 	uint32 _twoByteDataSize;
 	const uint8 *_colorMap;
 	uint16 _textColor[2];
