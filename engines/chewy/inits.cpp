@@ -33,22 +33,22 @@ extern int16 room_start_nr;
 static void font_load();
 
 void standard_init() {
-	mem = new memory;
-	out = new mcga_grafik;
-	err = new fehler;
-	in = new maus;
-	fx = new effect;
-	txt = new text;
-	bit = new bitclass;
+	mem = new memory();
+	out = new mcga_grafik();
+	err = new fehler();
+	in = new maus();
+	fx = new effect();
+	txt = new text();
+	bit = new bitclass();
 	ged = new gedclass(&ged_user_func);
-	room = new Room;
+	room = new Room();
 	obj = new objekt(&spieler);
 	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
-	det = new detail;
-	atds = new atdsys;
-	ailsnd = new ailclass;
-	flc = new flic;
-	mov = new movclass;
+	det = new detail();
+	atds = new atdsys();
+	ailsnd = new ailclass();
+	flc = new flic();
+	mov = new movclass();
 
 	out->vsync_start();
 	out->init();
@@ -479,7 +479,7 @@ void sound_init() {
 			EndOfPool = Nph.PoolAnz - 1;
 		}
 		ERROR
-		
+
 		speech_handle = chewy_fopen(SPEECH_TVP, "rb");
 		if (!speech_handle) {
 			modul = DATEI;
@@ -488,6 +488,9 @@ void sound_init() {
 		} else {
 			ailsnd->init_double_buffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
 			atds->set_speech_handle(speech_handle);
+
+			atds->set_display(DISPLAY_VOC);
+			spieler.DisplayText = false;
 		}
 
 		if (!modul) {
