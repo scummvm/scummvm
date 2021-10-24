@@ -1464,9 +1464,9 @@ int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
 }
 
 int LoLEngine::olol_printMessage(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
-	int snd = stackPos(2);
-	_txt->printMessage(stackPos(0), getLangString(stackPos(1)), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, safeStackPos(0), safeStackPos(1), safeStackPos(2), safeStackPos(3), safeStackPos(4), safeStackPos(5), safeStackPos(6), safeStackPos(7), safeStackPos(8), safeStackPos(9));
+	int snd = safeStackPos(2);
+	_txt->printMessage(safeStackPos(0), getLangString(safeStackPos(1)), safeStackPos(3), safeStackPos(4), safeStackPos(5), safeStackPos(6), safeStackPos(7), safeStackPos(8), safeStackPos(9));
 
 	if (snd >= 0)
 		snd_playSoundEffect(snd, -1);
