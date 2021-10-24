@@ -231,9 +231,23 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	tglEnd();
 }
 
-void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
+void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
 	//assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 	uint8 r, g, b;
+	float dx, dy, dz;
+	dx = dy = dz = 0;
+
+	if (size.x() == 0)
+		dx = 2;
+	else if (size.y() == 0)
+		dy = 2;
+	else if (size.z() == 0)
+		dz = 2;
+	else { 
+		if (ordinates->size() != 6)
+			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
+	}
+	
 	Common::Array<Math::Vector3d> vertices;
 	// tglEnable(TGL_POLYGON_OFFSET_FILL);
 	// tglEnable(TGL_POLYGON_OFFSET_LINE);
@@ -243,7 +257,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Common::A
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
 		for (int i = 0; i < ordinates->size(); i = i + 3) {
-			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i], origin.y() + (*ordinates)[i + 1],	origin.z() + (*ordinates)[i + 2]));
+			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i] + dx, origin.y() + (*ordinates)[i + 1] + dy,	origin.z() + (*ordinates)[i + 2] + dz));
 		}
 		renderFace(vertices);
 	}
@@ -252,7 +266,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Common::A
 		_palette->getRGBAt((*colours)[1], r, g, b);
 		tglColor3ub(r, g, b);
 		for (int i = ordinates->size(); i > 0; i = i - 3) {
-			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3], origin.y() + (*ordinates)[i-2],	origin.z() + (*ordinates)[i-1]));
+			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3] - dx, origin.y() + (*ordinates)[i-2] - dy,	origin.z() + (*ordinates)[i-1] - dz));
 		}
 		renderFace(vertices);
 	}
@@ -264,7 +278,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 
 	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 
-	tglPolygonOffset(50, 50);
+	tglPolygonOffset(250, 250);
 	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
 	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
 	

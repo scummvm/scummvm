@@ -143,7 +143,7 @@ public:
 	virtual void scale(const Math::Vector3d &scale) = 0;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
-	virtual void renderPolygon(const Math::Vector3d &origin, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;
+	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	virtual void drawSky(uint8 color) = 0;

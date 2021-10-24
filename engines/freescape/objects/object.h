@@ -6,20 +6,14 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__Object__
-#define __Phantasma__Object__
+#ifndef FREESCAPE_OBJECT_H
+#define FREESCAPE_OBJECT_H
 
 #include "common/system.h"
 #include "math/vector3d.h"
 
 #include "freescape/gfx.h"
 
-
-typedef Math::Vector3d Vector3d;
-
-class VertexBuffer;
-class DrawElementsBuffer;
-class BatchDrawer;
 class Object {
 public:
 	typedef enum {
@@ -47,22 +41,21 @@ public:
 	virtual Type getType();
 	uint16 getObjectID();
 	uint16 getObjectFlags();
-	Vector3d getOrigin();
-	Vector3d getSize();
+	Math::Vector3d getOrigin();
+	Math::Vector3d getSize();
 
 	virtual void draw(Freescape::Renderer *gfx) = 0;
 
 	virtual bool isDrawable();
 	virtual bool isPlanar();
-	bool isInvisible() { return flags & 0x4; }
+	bool isInvisible() { return _flags & 0x4; }
 
 	virtual ~Object();
 
-protected:
-	uint16 flags;
-	Type type;
-	uint16 objectID;
-	Vector3d origin, size, rotation;
+	uint16 _flags;
+	Type _type;
+	uint16 _objectID;
+	Math::Vector3d _origin, _size, _rotation;
 };
 
-#endif /* defined(__Phantasma__Object__) */
+#endif

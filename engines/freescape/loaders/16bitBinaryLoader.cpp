@@ -48,7 +48,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 	debug("skippedShort: %d", skippedShort);
 
 	// grab location, size
-	Vector3d position, size;
+	Math::Vector3d position, size;
 	position.x() = stream.get16();
 	position.y() = stream.get16();
 	position.z() = stream.get16();
