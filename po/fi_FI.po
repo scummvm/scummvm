@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-24 13:13+0000\n"
+"POT-Creation-Date: 2021-10-24 13:15+0000\n"
 "PO-Revision-Date: 2021-10-20 09:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4163,12 +4163,13 @@ msgstr ""
 #: engines/kyra/detection_tables.h:304 engines/kyra/detection_tables.h:998
 #: engines/lure/detection.cpp:233 engines/mohawk/detection_tables.h:989
 #: engines/mohawk/detection_tables.h:1095
-#: engines/mohawk/detection_tables.h:1110 engines/neverhood/detection.cpp:121
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:1220
-#: engines/saga/detection_tables.h:1279 engines/sci/detection_tables.h:4939
-#: engines/sci/detection_tables.h:4947 engines/sherlock/detection_tables.h:214
-#: engines/stark/detection.cpp:320 engines/teenagent/detection.cpp:118
-#: engines/trecision/detection.cpp:200 engines/zvision/detection_tables.h:191
+#: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
+#: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187
+#: engines/saga/detection_tables.h:1220 engines/saga/detection_tables.h:1279
+#: engines/sci/detection_tables.h:4939 engines/sci/detection_tables.h:4947
+#: engines/sherlock/detection_tables.h:214 engines/stark/detection.cpp:320
+#: engines/teenagent/detection.cpp:118 engines/trecision/detection.cpp:200
+#: engines/zvision/detection_tables.h:191
 #: engines/zvision/detection_tables.h:211
 msgid "Missing game code"
 msgstr "Pelimoottori puuttuu"
@@ -5613,15 +5614,15 @@ msgstr ""
 msgid "Unable to locate the '%s' engine data file"
 msgstr "Pelimoottorin datatiedostoa \"%s\" ei löydetty"
 
-#: engines/myst3/detection.cpp:158 engines/myst3/detection.cpp:172
+#: engines/myst3/detection.cpp:180 engines/myst3/detection.cpp:194
 msgid "PS2 version is not yet supported"
 msgstr "PS2-versio ei ole vielä tuettu"
 
-#: engines/myst3/detection.cpp:191
+#: engines/myst3/detection.cpp:213
 msgid "Widescreen mod"
 msgstr "Laajakuvamodi"
 
-#: engines/myst3/detection.cpp:192
+#: engines/myst3/detection.cpp:214
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Mahdollista laajakuva kokoruututilassa."
 
