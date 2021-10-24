@@ -102,19 +102,16 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 
-	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d);
-
-	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
-	void updateScreenRect();
-	const GLESBaseTexture *getActiveTexture() const;
-	void clipMouse(Common::Point &p) const;
-
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
 protected:
+	void updateScreenRect();
+	const GLESBaseTexture *getActiveTexture() const;
+	void clipMouse(Common::Point &p) const;
+
 	void setSystemMousePosition(int x, int y) {}
 
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
@@ -146,14 +143,12 @@ private:
 private:
 	int _screenChangeID;
 	int _graphicsMode;
-	bool _opengl;
 	bool _fullscreen;
 	bool _ar_correction;
 	bool _force_redraw;
 
 	// Game layer
 	GLESBaseTexture *_game_texture;
-	Graphics::PixelBuffer _game_pbuf;
 	OpenGL::FrameBuffer *_frame_buffer;
 
 	/**
