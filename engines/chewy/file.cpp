@@ -110,40 +110,6 @@ int16 call_fileio(int16 palette, int16 mode) {
 	return (ret);
 }
 
-void append_adsh(void *sh) {
-	Stream *shandle = (Stream *)sh;
-	atds->close_handle(ADH_DATEI);
-	int16 ch;
-	Stream *handle = chewy_fopen(ADSH_TMP, "rb");
-	if (handle) {
-		while ((ch = chewy_fgetc(handle)) != EOF)
-			chewy_fputc(ch, shandle);
-		chewy_fclose(handle);
-		atds->open_handle(ADSH_TMP, "rb+", ADH_DATEI);
-		ERROR
-	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
-	}
-}
-
-void split_adsh(void *sh) {
-	Stream *shandle = (Stream *)sh;
-	atds->close_handle(ADH_DATEI);
-	int16 ch;
-	Stream *handle = chewy_fopen(ADSH_TMP, "wb+");
-	if (handle) {
-		while ((ch = chewy_fgetc(shandle)) != EOF)
-			chewy_fputc(ch, handle);
-		chewy_fclose(handle);
-		atds->open_handle(ADSH_TMP, "rb+", ADH_DATEI);
-		ERROR
-	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
-	}
-}
-
 int16 file_menue() {
 	int16 u_index;
 	int16 key = 0;

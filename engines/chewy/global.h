@@ -330,12 +330,6 @@ void init_atds();
 void init_room();
 
 int16 call_fileio(int16 palette, int16 mode);
-
-// FIXME: was FILE*
-void append_adsh(void *shandle);
-
-// FIXME: was FILE*
-void split_adsh(void *shandle);
 int16 file_menue();
 void option_menue(taf_info *ti);
 
