@@ -10,6 +10,10 @@ Programmcodes finden Sie auf Englisch unter:
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
+ SCUMM:
+   - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
+     Versionen von Loom und Indiana Jones and the Last Crusade.
+
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
 
