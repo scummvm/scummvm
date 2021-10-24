@@ -2344,7 +2344,7 @@ void Hugo::SeparateWords() {
 
 	for (i=1; i<=(int)strlen(a); i++)
 	{
-		if (inquote!=1 && isascii(a[i-1]))
+		if (inquote!=1 && Common::isAscii(a[i-1]))
 			b[0] = (char)tolower(a[i-1]);
 		else b[0] = a[i-1];
 		b[1] = '\0';
