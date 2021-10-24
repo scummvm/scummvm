@@ -49,6 +49,10 @@ private:
 	int copyLookup(const int8 *lookup, int8 *start, int8 *dest);
 	void collapseLoops(int8 *route, int8 *singleRow);
 
+	void testGame(uint32 seed, Common::Array<uint8> moves, bool player_win);
+	void ensureSamanthaWin(uint32 seed);
+	void test();
+
 private:
 	int _triangleCellCount;
 	int8 _triangleCells[66];

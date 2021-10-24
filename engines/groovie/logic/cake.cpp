@@ -81,6 +81,8 @@ CakeGame::CakeGame() : _random("CakeGame") {
 			numLines++;
 		}
 	}
+
+	testCake();
 }
 
 void CakeGame::run(byte *scriptVariables) {
@@ -313,6 +315,101 @@ byte CakeGame::aiGetBestMove(int search_depth) {
 	}
 
 	return best_move;
+}
+
+void CakeGame::testCake() {
+	warning("starting CakeGame::testCake()");
+	// test the draw condition, grouped by column
+	runCakeTestNoAi(/*move 1*/ "7777777" /*8*/ "6666666" /*15*/ "5555555" /*22*/ "34444444" /*30*/ "333333" /*36*/ "2222222" /*43*/ "01111111" /*51*/ "000000", false, true);
+
+	runCakeTest(9, "24223233041", true);
+	runCakeTest(1, "232232432445", false);
+	runCakeTest(123, "4453766355133466", false);
+
+	warning("finished CakeGame::testCake()");
+}
+
+void CakeGame::runCakeTestNoAi(const char *moves, bool playerWin, bool draw = false) {
+	warning("starting runCakeTestNoAi(%s, %d)", moves, (int)playerWin);
+
+	restart();
+
+	for (int i = 0; moves[i]; i++) {
+		byte win = getWinner();
+		if (win) {
+			error("early win at %d, winner: %d", i, (int)win);
+		}
+		if (gameEnded()) {
+			error("early draw at %d", i);
+		}
+		byte move = moves[i] - '0';
+		placeBonBon(move);
+	}
+
+	byte winner = getWinner();
+	if (draw) {
+		if (winner != 0 || !gameEnded())
+			error("wasn't a draw! winner: %d, gameover: %d", (int)winner, (int)gameEnded());
+	} else if (playerWin && winner != PLAYER) {
+		error("player didn't win! winner: %d", (int)winner);
+	} else if (playerWin == false && winner != STAUF) {
+		error("Stauf didn't win! winner: %d", (int)winner);
+	}
+
+	warning("finished runCakeTestNoAi(%s, %d), winner: %d", moves, (int)playerWin, (int)winner);
+}
+
+void CakeGame::runCakeTest(uint seed, const char *moves, bool playerWin) {
+	warning("starting runCakeTest(%u, %s, %d)", seed, moves, (int)playerWin);
+
+	// first fill the board with the expected moves and test the win-detection function by itself without AI
+	runCakeTestNoAi(moves, playerWin);
+
+	restart();
+
+	byte vars[1024];
+	memset(vars, 0, sizeof(vars));
+	byte &lastMove = vars[1];
+	byte &winner = vars[3];
+	winner = 0;
+	lastMove = 8;
+	run(vars);
+
+	uint old_seed = _random.getSeed();
+	_random.setSeed(seed);
+
+	for (int i = 0; moves[i]; i += 2) {
+		if (winner != 0) {
+			error("early win at %d, winner: %d", i, (int)winner);
+		}
+		lastMove = moves[i] - '0';
+		byte stauf_move = moves[i + 1] - '0';
+
+		run(vars);
+
+		if (stauf_move < 8) {
+			if (winner == 2) {
+				error("early player win at %d", i);
+			}
+
+			if (stauf_move != lastMove) {
+				error("incorrect Stauf move, expected: %d, got: %d", (int)stauf_move, (int)lastMove);
+			}
+		} else if (winner != 2) {
+			error("missing Stauf move, last_move: %d", (int)lastMove);
+		} else
+			break;
+	}
+
+	if (playerWin && winner != 2) {
+		error("player didn't win! winner: %d", (int)winner);
+	} else if (playerWin == false && winner != 1) {
+		error("Stauf didn't win! winner: %d", (int)winner);
+	}
+
+	_random.setSeed(old_seed);
+
+	warning("finished runCakeTest(%u, %s, %d)", seed, moves, (int)playerWin);
 }
 
 } // End of Groovie namespace

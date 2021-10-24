@@ -34,11 +34,14 @@ extern const int8 triangleLogicTable[924];
 
 TriangleGame::TriangleGame() : _random("TriangleGame") {
 	init();
+#if 0
+	test();
+#endif
 }
 
 void TriangleGame::run(byte *scriptVariables) {
 	byte op = scriptVariables[3];
-	int8 move;
+	uint8 move;
 
 	switch (op) {
 	case 3:
@@ -47,20 +50,25 @@ void TriangleGame::run(byte *scriptVariables) {
 		return;
 
 	case 4:
+		// Samantha AI
 		move = sub03(2);
 		break;
 
 	case 5:
+		// Stauf AI (only called after Samantha)
 		move = sub03(1);
 		break;
 
 	default:
+		// Player and then Stauf
+		debugC(kDebugLogic, "player chose spot %d", (int)(scriptVariables[1]) + (10 * (int)scriptVariables[0]));
 		setCell(scriptVariables[1] + 10 * scriptVariables[0], 2);
 		scriptVariables[3] = sub02();
 
 		if (scriptVariables[3] == 0) {
 			move = sub03(1);
 		} else {
+			debugC(kDebugLogic, "winner: %d", (int)scriptVariables[3]);
 			return;
 		}
 	}
@@ -68,9 +76,11 @@ void TriangleGame::run(byte *scriptVariables) {
 	scriptVariables[0] = move / 10;
 	scriptVariables[1] = move % 10;
 	scriptVariables[3] = sub02();
+	debugC(kDebugLogic, "stauf chose spot %d, winner: %d", (int)move, (int)scriptVariables[3]);
 }
 
 void TriangleGame::init() {
+	debugC(kDebugLogic, "TriangleGame::init(), seed: %u", _random.getSeed());
 	_triangleCellCount = 0;
 	memset(_triangleCells, 0, 66);
 }
@@ -736,6 +746,98 @@ void TriangleGame::collapseLoops(int8 *route, int8 *singleRow) {
 
 	if (len != origlen)
 		route[len] = 66;
+}
+
+void TriangleGame::testGame(uint32 seed, Common::Array<uint8> moves, bool playerWin) {
+	byte vars[1024];
+	byte &op = vars[3];
+	byte &move10s = vars[0];
+	byte &move1s = vars[1];
+	byte &winner = vars[3];
+
+	memset(vars, 0, sizeof(vars));
+
+	op = 3;
+	run(vars);
+
+	warning("starting TriangleGame::testGame(%u, %u, %d)", seed, moves.size(), (int)playerWin);
+	_random.setSeed(seed);
+
+	for (uint i = 0; i < moves.size(); i++) {
+		if (i % 2) {
+			// check Stauf's move
+			uint8 move = ((uint)move10s * 10) + (uint)move1s;
+			if (move != moves[i])
+				error("%u: bad Stauf move: %d", (int)i, (int)move);
+			continue;
+		}
+
+		// else, input player's move
+		if (winner != 0)
+			error("%u: early winner: %d", (int)i, (int)winner);
+
+		uint8 move = moves[i];
+		move10s = move / 10;
+		move1s = move % 10;
+		op = 0;
+		run(vars);
+	}
+
+	if (playerWin && winner != 2)
+		error("player didn't win, winner: %d", (int)winner);
+	if (playerWin == false && winner != 1)
+		error("Stauf didn't win, winner: %d", (int)winner);
+
+	warning("finished TriangleGame::testGame(%u, %u, %d)", seed, moves.size(), (int)playerWin);
+}
+
+void TriangleGame::ensureSamanthaWin(uint32 seed) {
+	byte vars[1024];
+	byte &op = vars[3];
+	byte &winner = vars[3];
+
+	op = 3;
+	run(vars);
+
+	warning("starting TriangleGame::ensureSamanthaWin(%u)", seed);
+	_random.setSeed(seed);
+
+	for (int i = 0; i < 100; i++) {
+		// Samantha
+		op = 4;
+		run(vars);
+		if (winner)
+			break;
+
+		// Stauf
+		op = 5;
+		run(vars);
+		if (winner)
+			break;
+	}
+
+	if (winner != 2)
+		error("Samantha didn't win, winner: %d", (int)winner);
+
+	warning("finished TriangleGame::ensureSamanthaWin(%u)", seed);
+}
+
+void TriangleGame::test() {
+	warning("starting TriangleGame::test");
+
+	// Samantha appears to not always win, but she usually does, and she wins these seeds
+	// haven't verified if she always wins in the original game
+	for (int i = 100; i < 105; i++)
+		ensureSamanthaWin(i);
+
+	testGame(1, {24, 32, 30, 42, 37, 53, 45, 39, 19, 47, 20, 56, 55, 59, 36, 49, 29, 46, 23, 38, 18}, true);
+	testGame(1, {24, 32, 30, 42, 37, 53, 19, 39, 45, 47, 46, 59, 56, 49, 38, 48, 31, 40, 25, 50, 20}, true);
+	testGame(2, {24, 31, 33, 38, 43, 46, 16, 41, 54, 52, 64, 61, 53, 37, 42, 51, 32, 40, 23, 60, 15}, true);
+	testGame(2, {24, 31, 33, 38, 43, 46, 16, 41, 53, 52, 64, 61, 54, 37, 34, 50, 25, 36, 17, 0, 10}, true);
+	testGame(3, {24, 32, 17, 42, 23, 53, 16, 39, 11, 29, 10, 44, 6, 33, 7, 63, 12, 28, 18, 31, 13, 204, 8, 204, 4, 38, 3, 43}, false);
+	testGame(3, {6, 32, 10, 42, 11, 53, 7, 23, 3, 15, 12, 22, 18, 43, 13, 33, 8, 35, 4, 31, 1, 204, 17, 204, 16, 204, 19, 63 }, false);
+
+	warning("finished TriangleGame::test");
 }
 
 namespace {

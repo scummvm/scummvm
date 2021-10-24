@@ -98,13 +98,13 @@ void TlcGame::handleOp(uint8 op) {
 // This function is mainly for debugging purpose
 void inline TlcGame::setScriptVar(uint16 var, byte value) {
 	_scriptVariables[var] = value;
-	debugC(5, kDebugTlcGame, "script variable[0x%03X] = %d (0x%04X)", var, value, value);
+	debugC(5, kDebugLogic, "script variable[0x%03X] = %d (0x%04X)", var, value, value);
 }
 
 void inline TlcGame::setScriptVar16(uint16 var, uint16 value) {
 	_scriptVariables[var] = value & 0xFF;
 	_scriptVariables[var + 1] = (value >> 8) & 0xFF;
-	debugC(5, kDebugTlcGame, "script variable[0x%03X, 0x%03X] = %d (0x%02X, 0x%02X)", var, var+1, value, _scriptVariables[var], _scriptVariables[var+1]);
+	debugC(5, kDebugLogic, "script variable[0x%03X, 0x%03X] = %d (0x%02X, 0x%02X)", var, var+1, value, _scriptVariables[var], _scriptVariables[var+1]);
 }
 
 uint16 inline TlcGame::getScriptVar16(uint16 var) {
@@ -141,7 +141,7 @@ void TlcGame::regionsInit() {
 
 	// Check if header was already loaded.
 	if (_regionHeader != NULL) {
-		debugC(1, kDebugTlcGame, "TLC:RegionsInit: Regions already loaded.");
+		debugC(1, kDebugLogic, "TLC:RegionsInit: Regions already loaded.");
 		return;
 	}
 
@@ -171,7 +171,7 @@ void TlcGame::regionsInit() {
 
 	delete regionsfile;
 
-	debugC(1, kDebugTlcGame, "TLC:RegionsInit: Loaded %d region headers", _numRegionHeaders);
+	debugC(1, kDebugLogic, "TLC:RegionsInit: Loaded %d region headers", _numRegionHeaders);
 }
 
 
@@ -220,7 +220,7 @@ void TlcGame::regionsLoad() {
 
 			delete regionsfile;
 
-			debugC(1, kDebugTlcGame, "TLC:RegionsLoad: Loaded %d regions for question %s", _curQuestNumAnswers, questName);
+			debugC(1, kDebugLogic, "TLC:RegionsLoad: Loaded %d regions for question %s", _curQuestNumAnswers, questName);
 			return;
 		}
 	}
@@ -279,7 +279,7 @@ void TlcGame::opExitPoll() {
 		_epScoreBin[4] = _scriptVariables[1];
 		_epScoreBin[5] = _scriptVariables[2];
 		setScriptVar(0, 0x09);
-		debugC(1, kDebugTlcGame, "TLC:EpInitBins: Init bins: bin[4]=%d, bin[5]=%d", _epScoreBin[4], _epScoreBin[5]);
+		debugC(1, kDebugLogic, "TLC:EpInitBins: Init bins: bin[4]=%d, bin[5]=%d", _epScoreBin[4], _epScoreBin[5]);
 
 		break;
 	default:
@@ -358,7 +358,7 @@ void TlcGame::epInit() {
 	// Return code
 	setScriptVar(0, 0x09);
 
-	debugC(1, kDebugTlcGame, "TLC:EpInit: For episode %d loaded %d question scores. Will play %d questions", _epEpisodeIdx+1, _epQuestionsInEpisode, kTlcEpQuestToPlay[_epEpisodeIdx]);
+	debugC(1, kDebugLogic, "TLC:EpInit: For episode %d loaded %d question scores. Will play %d questions", _epEpisodeIdx+1, _epQuestionsInEpisode, kTlcEpQuestToPlay[_epEpisodeIdx]);
 }
 
 
@@ -472,10 +472,10 @@ void TlcGame::epSelectNextQuestion() {
 			_epQuestionNumOfPool = _random.getRandomNumber(32767) / 2000;
 		} while (_epQuestionNumOfPool < 1 || _epQuestionNumOfPool > _epQuestionsInEpisode);
 
-		debugC(1, kDebugTlcGame, "TLC:EpSelNextQuest: Question %d: Selected question %d/%d by random.", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
+		debugC(1, kDebugLogic, "TLC:EpSelNextQuest: Question %d: Selected question %d/%d by random.", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
 
 	} else {
-		debugC(1, kDebugTlcGame, "TLC:EpSelNextQuest: Question %d: Selected question %d/%d by predefined data.", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
+		debugC(1, kDebugLogic, "TLC:EpSelNextQuest: Question %d: Selected question %d/%d by predefined data.", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
 	}
 
 	// Choose next question, if question was already played
@@ -486,7 +486,7 @@ void TlcGame::epSelectNextQuestion() {
 		}
 	}
 	_epQuestionsData[_epQuestionNumOfPool - 1].questionUsed = true;
-	debugC(1, kDebugTlcGame, "TLC:EpSelNextQuest: Question %d: Forward to question %d/%d. (used-flag)", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
+	debugC(1, kDebugLogic, "TLC:EpSelNextQuest: Question %d: Forward to question %d/%d. (used-flag)", _epQuestionIdx, _epQuestionNumOfPool, _epQuestionsInEpisode);
 
 	// write selected episode and question to script variables
 	setScriptVar(4, (_epEpisodeIdx + 1) / 10);
@@ -500,7 +500,7 @@ void TlcGame::epSelectNextQuestion() {
 	// Debug output
 	{
 		uint32 dbgQScore = _epQuestionsData[_epQuestionNumOfPool - 1].questionScore;
-		debugC(1, kDebugTlcGame, "TLC:EpSelNextQuest: Bins for Answers: %d %d %d %d %d %d %d %d",
+		debugC(1, kDebugLogic, "TLC:EpSelNextQuest: Bins for Answers: %d %d %d %d %d %d %d %d",
 			(dbgQScore >> 28) & 0xf, (dbgQScore >> 24) & 0xf, (dbgQScore >> 20) & 0xf, (dbgQScore >> 16) & 0xf,
 			(dbgQScore >> 12) & 0xf, (dbgQScore >> 8) & 0xf, (dbgQScore >> 4) & 0xf, (dbgQScore) & 0xf);
 	}
@@ -617,7 +617,7 @@ void TlcGame::epResultQuestion() {
 	// Add value of register 3 (answer register) to spezial register
 	if (specialReg >= 0) {
 		setScriptVar(specialReg, _scriptVariables[specialReg] + _scriptVariables[3]);
-		debugC(1, kDebugTlcGame, "TLC:EpResultQuest: Question: %d vars[0x%02x] += %d. New Value: %d", _epQuestionIdx, specialReg, _scriptVariables[3], _scriptVariables[specialReg]);
+		debugC(1, kDebugLogic, "TLC:EpResultQuest: Question: %d vars[0x%02x] += %d. New Value: %d", _epQuestionIdx, specialReg, _scriptVariables[3], _scriptVariables[specialReg]);
 	}
 
 
@@ -632,7 +632,7 @@ void TlcGame::epResultQuestion() {
 
 	_epScoreBin[scoreBinId] = _epScoreBin[scoreBinId] + 1;
 
-	debugC(1, kDebugTlcGame, "TLC:EpResultQuest: Answer: %d -> Inc bin[%d] -> bin[0..5] = %d, %d, %d, %d, %d, %d", 
+	debugC(1, kDebugLogic, "TLC:EpResultQuest: Answer: %d -> Inc bin[%d] -> bin[0..5] = %d, %d, %d, %d, %d, %d", 
 		answerIdx+1, scoreBinId, _epScoreBin[0], _epScoreBin[1], _epScoreBin[2], _epScoreBin[3], _epScoreBin[4], _epScoreBin[5]);
 }
 /*
@@ -647,7 +647,7 @@ void TlcGame::epResultEpisode() {
 	int    i;
 
 	/* keep only the maxium scores of bin[1], bin[2], bin[3]. -> Set all other to 0 */
-	debugCN(1, kDebugTlcGame, "TLC:EpResultEpisode: bins[1..3] = %d, %d, %d ", _epScoreBin[1], _epScoreBin[2], _epScoreBin[3]);
+	debugCN(1, kDebugLogic, "TLC:EpResultEpisode: bins[1..3] = %d, %d, %d ", _epScoreBin[1], _epScoreBin[2], _epScoreBin[3]);
 	maxBinValue = _epScoreBin[1];
 	for (i = 2; i < 4; i++) {
 		if (maxBinValue < _epScoreBin[i]) {
@@ -659,7 +659,7 @@ void TlcGame::epResultEpisode() {
 			_epScoreBin[i] = 0;
 		}
 	}
-	debugC(1, kDebugTlcGame, "-> bins[1..3] = %d, %d, %d ", _epScoreBin[1], _epScoreBin[2], _epScoreBin[3]);
+	debugC(1, kDebugLogic, "-> bins[1..3] = %d, %d, %d ", _epScoreBin[1], _epScoreBin[2], _epScoreBin[3]);
 
 	/* Select next stream according to which bin(s) are still >0. */
 	if (_epScoreBin[1] != 0 && _epScoreBin[2] == 0 && _epScoreBin[3] == 0) {
@@ -680,7 +680,7 @@ void TlcGame::epResultEpisode() {
 		error("Tlc:EpResultEpisode: Stream selection failed. bins[0..5] = %d, %d, %d, %d, %d, %d",
 			  _epScoreBin[0], _epScoreBin[1], _epScoreBin[2], _epScoreBin[3], _epScoreBin[4], _epScoreBin[5]);
 	}
-	debugC(1, kDebugTlcGame, "Selected stream [1..3] = %d ", _scriptVariables[3]);
+	debugC(1, kDebugLogic, "Selected stream [1..3] = %d ", _scriptVariables[3]);
 
 	/* save bin values of bin[4..5] to script variables */
 	setScriptVar(1, _epScoreBin[4]);
@@ -704,7 +704,7 @@ void TlcGame::opFlags() {
 				_tatFlags[x][y] = 0;
 			}
 		}
-		debugC(1, kDebugTlcGame, "Tlc:TatFlags: Initialized fields (%d, %d)", x, y);
+		debugC(1, kDebugLogic, "Tlc:TatFlags: Initialized fields (%d, %d)", x, y);
 		break;
 
 	// Get and set flags
@@ -727,7 +727,7 @@ void TlcGame::opFlags() {
 			setScriptVar(0x01, 0);
 			_tatFlags[x][y] = 1;
 
-			debugC(1, kDebugTlcGame, "Tlc:TatFlags: Set x=%d, y=%d to 1", x, y);
+			debugC(1, kDebugLogic, "Tlc:TatFlags: Set x=%d, y=%d to 1", x, y);
 
 			debugTatFlags(0, 1);
 			debugTatFlags(2, 3);
@@ -749,7 +749,7 @@ void TlcGame::debugTatFlags(int y1, int y2) {
 		s2 += int(_tatFlags[x][y2]);
 	}
 
-	debugC(5, kDebugTlcGame, "Tlc:TatFlags: %s  %s", s1.c_str(), s2.c_str());
+	debugC(5, kDebugLogic, "Tlc:TatFlags: %s  %s", s1.c_str(), s2.c_str());
 }
 
 

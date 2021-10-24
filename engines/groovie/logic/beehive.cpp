@@ -46,7 +46,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		kBeehiveColorRed = 1
 	};
 
-	debugC(1, kDebugScript, "Beehive subop %d", op);
+	debugC(1, kDebugLogic, "Beehive subop %d", op);
 
 	int8 v21, v22, v24;
 	int8 tempState[64];

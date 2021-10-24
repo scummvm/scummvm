@@ -41,9 +41,8 @@ static const DebugChannelDef debugFlagList[] = {
 	{Groovie::kDebugCursor, "Cursor", "Debug cursor decompression / switching"},
 	{Groovie::kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files"},
 	{Groovie::kDebugScriptvars, "Scriptvars", "Print out any change to script variables"},
-	{Groovie::kDebugCell, "Cell", "Debug the cell game (in the microscope)"},
+	{Groovie::kDebugLogic, "Logic", "Debug the AI puzzles in the logic folder and TLC questionnaires"},
 	{Groovie::kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)"},
-	{Groovie::kDebugTlcGame, "TLCGame", "Debug the questionnaires in TLC"},
 	DEBUG_CHANNEL_END
 };
 
