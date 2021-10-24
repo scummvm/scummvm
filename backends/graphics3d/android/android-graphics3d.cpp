@@ -522,6 +522,12 @@ void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
 								const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
 
+	bool engineSupportsArbitraryResolutions = !g_engine || g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
+	if (engineSupportsArbitraryResolutions) {
+		width = JNI::egl_surface_width;
+		height = JNI::egl_surface_height;
+	}
+
 	GLTHREADCHECK;
 
 #ifdef USE_RGB_COLOR
