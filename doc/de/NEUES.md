@@ -11,6 +11,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Schwarzen Bildschirm bei der Eingabe eines Spielstand-Namens korrigiert.
    - OpenGL ohne Shader wird nun als Standard-Einstellung für Grim Fandango bevorzugt.
 
+ SCUMM:
+   - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
+     Versionen von Loom und Indiana Jones and the Last Crusade.
+
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
 
