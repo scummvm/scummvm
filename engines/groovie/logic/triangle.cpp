@@ -163,7 +163,7 @@ int8 TriangleGame::sub03(int8 player) {
 }
 
 void TriangleGame::sub05(int8 *triangleCells, int8 *tempMoves, int8 *tempTriangle) {
-	int8 dest[4];
+	int8 dest[8];
 
 	for (int i = 0; i < 66; i++)
 		tempTriangle[i] = triangleCells[i];
