@@ -23,63 +23,14 @@
 #ifndef CHEWY_TYPES_H
 #define CHEWY_TYPES_H
 
+#include "common/serializer.h"
 #include "chewy/defines.h"
 #include "chewy/objekt.h"
 #include "chewy/detail.h"
 
 namespace Chewy {
 
-struct Spieler {
-	uint8 Ats[ROOM_ATS_MAX * 3];
-	uint8 InvAts[MAX_MOV_OBJ * 3];
-	uint8 InvUse[INV_USE_ATS_MAX * 3];
-	uint8 InvUseDef[40 * 3];
-
-	int16 MainMenuY;
-	int16 InvDisp;
-	int16 DispZx;
-	int16 DispZy;
-	int16 DispFlag;
-	int16 InventY;
-	int16 InventSlot[MAX_MOV_OBJ];
-
-	int16 AkInvent;
-	bool inv_cur;
-	int16 CurBreite;
-	int16 CurHoehe;
-
-	RoomMovObjekt room_m_obj[MAX_MOV_OBJ];
-	RoomStaticInventar room_s_obj[MAX_FEST_OBJ];
-	RoomExit room_e_obj[MAX_EXIT];
-
-	int16 X[MAX_PERSON];
-	int16 Y[MAX_PERSON];
-	int16 Phase[MAX_PERSON];
-	int16 PersonHide[MAX_PERSON];
-	int16 PersonRoomNr[MAX_PERSON];
-	int16 ZoomXy[MAX_PERSON][2];
-
-	int16 ChewyAni;
-
-	int16 PersonGlobalDia[MAX_PERSON];
-	int16 PersonDia[MAX_PERSON];
-
-	int16 PersonDiaRoom[MAX_PERSON];
-
-	int16 PersonDiaTmpRoom[MAX_PERSON];
-
-	int16 DiaAMov;
-
-	int16 scrollx;
-	int16 scrolly;
-	int16 ScrollxStep;
-	int16 ScrollyStep;
-
-	int16 MausSpeed;
-	int16 DelaySpeed;
-	int16 AadDelay;
-	int16 AadSilent;
-
+struct SpielerFlags {
 	byte R0SchleimWurf : 1;
 	byte R0KissenWurf : 1;
 	byte R0Monokel : 1;
@@ -180,11 +131,11 @@ struct Spieler {
 	byte R25GleiteLoesch : 1;
 
 	byte R25SurimyLauf : 1;
-	byte R25GleiterExit: 1;
+	byte R25GleiterExit : 1;
 	byte R27SurimyOk : 1;
 	byte R28SurimyCar : 1;
 	byte R28ChewyPump : 1;
-	byte R28Briefkasten: 1;
+	byte R28Briefkasten : 1;
 	byte R28EntryHaus : 1;
 	byte R28Manuskript : 1;
 
@@ -220,7 +171,7 @@ struct Spieler {
 	byte R37HundScham : 1;
 	byte R37Kloppe : 1;
 	byte R37Mes : 1;
-	byte R39TransMensch: 1;
+	byte R39TransMensch : 1;
 	byte R39TvOn : 1;
 	byte R39ScriptOk : 1;
 
@@ -230,7 +181,7 @@ struct Spieler {
 	byte R40TrainMove : 1;
 	byte R40TrainOk : 1;
 	byte R40Geld : 1;
-	byte R40PoliceStart: 1;
+	byte R40PoliceStart : 1;
 	byte R40PoliceWeg : 1;
 
 	byte R40PoliceAb : 1;
@@ -238,22 +189,22 @@ struct Spieler {
 	byte R40HoUse : 1;
 	byte R40HaendlerOk : 1;
 	byte R40DuengerMit : 1;
-	byte R40DuengerTele: 1;
+	byte R40DuengerTele : 1;
 	byte R41FirstTalk : 1;
 	byte R41LolaOk : 1;
 
 	byte R41Einbruch : 1;
 	byte R41BruchInfo : 1;
-	byte R41KuerbisInfo: 1;
+	byte R41KuerbisInfo : 1;
 	byte R41RepairInfo : 1;
-	byte R41HowardDiaOK: 1;
+	byte R41HowardDiaOK : 1;
 	byte R42FirstEntry : 1;
 	byte R42BriefOk : 1;
-	byte R42HoToBeamter: 1;
+	byte R42HoToBeamter : 1;
 
 	byte R42MarkeOk : 1;
 	byte R42BriefMarke : 1;
-	byte R42BeamterWach: 1;
+	byte R42BeamterWach : 1;
 	byte R43GetPgLady : 1;
 	byte R45TaxiOk : 1;
 	byte R45MagOk : 1;
@@ -288,7 +239,7 @@ struct Spieler {
 	byte R55Job : 1;
 
 	byte R55ScriptWeg : 1;
-	byte R55EscScriptOk: 1;
+	byte R55EscScriptOk : 1;
 	byte R55RaumOk : 1;
 	byte R55R54First : 1;
 	byte R56GetTabak : 1;
@@ -301,7 +252,7 @@ struct Spieler {
 	byte R62Flucht : 1;
 	byte R62FirstEntry : 1;
 	byte R62TShow : 1;
-	byte R62LauraVerwandlung: 1;
+	byte R62LauraVerwandlung : 1;
 	byte R63Feuer : 1;
 	byte R63FxMannWeg : 1;
 
@@ -355,6 +306,125 @@ struct Spieler {
 	byte flags31_4 : 1;
 	byte flags31_8 : 1;
 	byte flags31_10 : 1;
+
+	// Further flags
+	uint8 flags32_1 : 1;
+	uint8 flags32_2 : 2;
+	uint8 flags32_4 : 3;
+	uint8 flags32_8 : 4;
+	uint8 flags32_10 : 5;
+	uint8 flags32_20 : 6;
+	uint8 flags32_40 : 7;
+	uint8 flags32_80 : 8;
+
+	uint8 flags33_1 : 1;
+	uint8 flags33_2 : 2;
+	uint8 flags33_4 : 3;
+	uint8 flags33_8 : 4;
+	uint8 flags33_10 : 5;
+	uint8 flags33_20 : 6;
+	uint8 flags33_40 : 7;
+	uint8 flags33_80 : 8;
+
+	uint8 flags34_1 : 1;
+	uint8 flags34_2 : 2;
+	uint8 flags34_4 : 3;
+	uint8 flags34_8 : 4;
+	uint8 flags34_10 : 5;
+	uint8 flags34_20 : 6;
+	uint8 flags34_40 : 7;
+	uint8 flags34_80 : 8;
+
+	uint8 flags35_1 : 1;
+	uint8 flags35_2 : 2;
+	uint8 flags35_4 : 3;
+	uint8 flags35_8 : 4;
+	uint8 flags35_10 : 5;
+	uint8 flags35_20 : 6;
+	uint8 flags35_40 : 7;
+	uint8 flags35_80 : 8;
+
+	uint8 flags36_1 : 1;
+	uint8 flags36_2 : 2;
+	uint8 flags36_4 : 3;
+	uint8 flags36_8 : 4;
+	uint8 flags36_10 : 5;
+	uint8 flags36_20 : 6;
+	uint8 flags36_40 : 7;
+	uint8 flags36_80 : 8;
+
+	uint8 flags37_1 : 1;
+	uint8 flags37_2 : 2;
+	uint8 flags37_4 : 3;
+	uint8 flags37_8 : 4;
+	uint8 flags37_10 : 5;
+	uint8 flags37_20 : 6;
+	uint8 flags37_40 : 7;
+	uint8 flags37_80 : 8;
+
+	uint8 flags38_1 : 1;
+	uint8 flags38_2 : 2;
+};
+
+struct Spieler : public SpielerFlags {
+	Spieler() : SpielerFlags(), _flags(this) {
+	}
+
+	/**
+	 * For loading or savign the structure data
+	 */
+	bool synchronize(Common::Serializer &s);
+
+	SpielerFlags *_flags;
+	uint8 Ats[ROOM_ATS_MAX * 3];
+	uint8 InvAts[MAX_MOV_OBJ * 3];
+	uint8 InvUse[INV_USE_ATS_MAX * 3];
+	uint8 InvUseDef[40 * 3];
+
+	int16 MainMenuY;
+	int16 InvDisp;
+	int16 DispZx;
+	int16 DispZy;
+	int16 DispFlag;
+	int16 InventY;
+	int16 InventSlot[MAX_MOV_OBJ];
+
+	int16 AkInvent;
+	bool inv_cur;
+	int16 CurBreite;
+	int16 CurHoehe;
+
+	RoomMovObjekt room_m_obj[MAX_MOV_OBJ];
+	RoomStaticInventar room_s_obj[MAX_FEST_OBJ];
+	RoomExit room_e_obj[MAX_EXIT];
+
+	int16 X[MAX_PERSON];
+	int16 Y[MAX_PERSON];
+	int16 Phase[MAX_PERSON];
+	int16 PersonHide[MAX_PERSON];
+	int16 PersonRoomNr[MAX_PERSON];
+	int16 ZoomXy[MAX_PERSON][2];
+
+	int16 ChewyAni;
+
+	int16 PersonGlobalDia[MAX_PERSON];
+	int16 PersonDia[MAX_PERSON];
+
+	int16 PersonDiaRoom[MAX_PERSON];
+
+	int16 PersonDiaTmpRoom[MAX_PERSON];
+
+	int16 DiaAMov;
+
+	int16 scrollx;
+	int16 scrolly;
+	int16 ScrollxStep;
+	int16 ScrollyStep;
+
+	int16 MausSpeed;
+	int16 DelaySpeed;
+	int16 AadDelay;
+	int16 AadSilent;
 
 	uint8 R0FueterLab;
 	uint8 R6RaumBetreten;
@@ -411,64 +481,6 @@ struct Spieler {
 	int16 R64Moni1Ani;
 
 	int16 R64Moni2Ani;
-
-	// Further flags
-	uint8 flags32_1 : 1;
-	uint8 flags32_2 : 2;
-	uint8 flags32_3 : 3;
-	uint8 flags32_4 : 4;
-	uint8 flags32_5 : 5;
-	uint8 flags32_6 : 6;
-	uint8 flags32_7 : 7;
-	uint8 flags32_8 : 8;
-
-	uint8 flags33_1 : 1;
-	uint8 flags33_2 : 2;
-	uint8 flags33_3 : 3;
-	uint8 flags33_4 : 4;
-	uint8 flags33_5 : 5;
-	uint8 flags33_6 : 6;
-	uint8 flags33_7 : 7;
-	uint8 flags33_8 : 8;
-
-	uint8 flags34_1 : 1;
-	uint8 flags34_2 : 2;
-	uint8 flags34_3 : 3;
-	uint8 flags34_4 : 4;
-	uint8 flags34_5 : 5;
-	uint8 flags34_6 : 6;
-	uint8 flags34_7 : 7;
-	uint8 flags34_8 : 8;
-
-	uint8 flags35_1 : 1;
-	uint8 flags35_2 : 2;
-	uint8 flags35_3 : 3;
-	uint8 flags35_4 : 4;
-	uint8 flags35_5 : 5;
-	uint8 flags35_6 : 6;
-	uint8 flags35_7 : 7;
-	uint8 flags35_8 : 8;
-
-	uint8 flags36_1 : 1;
-	uint8 flags36_2 : 2;
-	uint8 flags36_3 : 3;
-	uint8 flags36_4 : 4;
-	uint8 flags36_5 : 5;
-	uint8 flags36_6 : 6;
-	uint8 flags36_7 : 7;
-	uint8 flags36_8 : 8;
-
-	uint8 flags37_1 : 1;
-	uint8 flags37_2 : 2;
-	uint8 flags37_3 : 3;
-	uint8 flags37_4 : 4;
-	uint8 flags37_5 : 5;
-	uint8 flags37_6 : 6;
-	uint8 flags37_7 : 7;
-	uint8 flags37_8 : 8;
-
-	uint8 flags38_1 : 1;
-	uint8 flags38_2 : 2;
 
 	uint8 mi[8];
 	int16 SVal1;

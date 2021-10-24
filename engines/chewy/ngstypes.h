@@ -390,8 +390,8 @@ struct iog_init {
 	uint8 f3 = 0;
 	uint8 f4 = 0;
 	uint8 key_nr = 0;
-	void (*save_funktion)(void *handle) = nullptr; // FIXME - (Stream *handle);
-	void (*load_funktion)(void *handle) = nullptr; // FIXME - (Stream *handle);
+	void (*save_funktion)(Common::WriteStream *handle) = nullptr;
+	void (*load_funktion)(Common::SeekableReadStream *handle) = nullptr;
 	int16 delay = 0;
 };
 

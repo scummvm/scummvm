@@ -110,8 +110,8 @@ int16 call_fileio(int16 palette, int16 mode) {
 	return (ret);
 }
 
-void save(void *h) {
-	Stream *handle = (Stream *)h;
+void save(Common::WriteStream *ws) {
+	Common::Serializer s(nullptr, ws);
 	int16 spr_nr;
 	int16 i;
 	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
@@ -120,30 +120,29 @@ void save(void *h) {
 		spieler.Y[i] = spieler_vector[i].Xypos[1];
 		spieler.Phase[i] = person_end_phase[i];
 	}
-	if (!(chewy_fwrite(&spieler, sizeof(Spieler), 1, handle))) {
+
+	if (!spieler.synchronize(s)) {
 		fcode = WRITEFEHLER;
 		modul = DATEI;
 	} else {
-		append_adsh(handle);
+		append_adsh(ws);
 		ERROR
 	}
 }
 
-void load(void *h) {
-	Stream *handle = (Stream *)h;
+void load(Common::SeekableReadStream *rs) {
 	exit_room(-1);
 
-	int16 i;
-	if (!(chewy_fread(&spieler, sizeof(Spieler), 1, handle))) {
+	Common::Serializer s(rs, nullptr);
+	if (!spieler.synchronize(s)) {
 		fcode = READFEHLER;
 		modul = DATEI;
 	} else {
 		flags.LoadGame = true;
-		split_adsh(handle);
+		split_adsh(rs);
 		ERROR
 
 		if (spieler.inv_cur == true && spieler.AkInvent != -1) {
-
 			menu_item = CUR_USE;
 		}
 
@@ -162,7 +161,7 @@ void load(void *h) {
 
 		set_speed();
 
-		for (i = 0; i < MAX_PERSON; i++) {
+		for (int i = 0; i < MAX_PERSON; i++) {
 			set_person_pos(spieler.X[i], spieler.Y[i], i, spieler.Phase[i]);
 		}
 

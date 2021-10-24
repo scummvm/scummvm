@@ -112,7 +112,6 @@ void play_scene_ani(int16 nr, int16 mode) {
 void timer_action(int16 t_nr) {
 	int16 default_flag;
 	int16 ani_nr;
-	int16 ok;
 	default_flag = false;
 	ani_nr = t_nr - room->room_timer.TimerStart;
 
@@ -256,7 +255,7 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 51:
-		if (spieler.flags32_5)
+		if (spieler.flags32_10)
 			r51_timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
 		else
 			default_flag = true;
