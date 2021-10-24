@@ -83,8 +83,6 @@ void standard_init() {
 	iog = new io_game(out, in, cur);
 	strcpy(ioptr.id, "CHE\0");
 	strcpy(ioptr.save_path, SAVEDIR);
-	ioptr.save_funktion = &save;
-	ioptr.load_funktion = &load;
 	ioptr.delay = 8;
 	alloc_buffers();
 	pal [765] = 63;

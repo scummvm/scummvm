@@ -110,68 +110,6 @@ int16 call_fileio(int16 palette, int16 mode) {
 	return (ret);
 }
 
-void save(Common::WriteStream *ws) {
-	Common::Serializer s(nullptr, ws);
-	int16 spr_nr;
-	int16 i;
-	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
-	for (i = 0; i < MAX_PERSON; i++) {
-		spieler.X[i] = spieler_vector[i].Xypos[0];
-		spieler.Y[i] = spieler_vector[i].Xypos[1];
-		spieler.Phase[i] = person_end_phase[i];
-	}
-
-	if (!spieler.synchronize(s)) {
-		fcode = WRITEFEHLER;
-		modul = DATEI;
-	} else {
-		append_adsh(ws);
-		ERROR
-	}
-}
-
-void load(Common::SeekableReadStream *rs) {
-	exit_room(-1);
-
-	Common::Serializer s(rs, nullptr);
-	if (!spieler.synchronize(s)) {
-		fcode = READFEHLER;
-		modul = DATEI;
-	} else {
-		flags.LoadGame = true;
-		split_adsh(rs);
-		ERROR
-
-		if (spieler.inv_cur == true && spieler.AkInvent != -1) {
-			menu_item = CUR_USE;
-		}
-
-		if (spieler.AkInvent != -1)
-			spieler.room_m_obj[spieler.AkInvent].RoomNr = -1;
-		room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
-		ERROR
-		load_chewy_taf(spieler.ChewyAni);
-
-		fx_blende = 1;
-		room->calc_invent(&room_blk, &spieler);
-
-		if (spieler.AkInvent != -1)
-			spieler.room_m_obj[spieler.AkInvent].RoomNr = 255;
-		obj->sort();
-
-		set_speed();
-
-		for (int i = 0; i < MAX_PERSON; i++) {
-			set_person_pos(spieler.X[i], spieler.Y[i], i, spieler.Phase[i]);
-		}
-
-		auto_obj = 0;
-
-		enter_room(-1);
-		flags.LoadGame = false;
-	}
-}
-
 void append_adsh(void *sh) {
 	Stream *shandle = (Stream *)sh;
 	atds->close_handle(ADH_DATEI);

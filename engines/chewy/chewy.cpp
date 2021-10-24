@@ -84,4 +84,70 @@ Common::Error ChewyEngine::run() {
 	return Common::kNoError;
 }
 
+Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	exit_room(-1);
+
+	Common::Serializer s(stream, nullptr);
+	if (!spieler.synchronize(s)) {
+		fcode = READFEHLER;
+		modul = DATEI;
+	} else {
+		flags.LoadGame = true;
+		split_adsh(stream);
+		ERROR
+
+			if (spieler.inv_cur == true && spieler.AkInvent != -1) {
+				menu_item = CUR_USE;
+			}
+
+		if (spieler.AkInvent != -1)
+			spieler.room_m_obj[spieler.AkInvent].RoomNr = -1;
+		room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
+		ERROR
+			load_chewy_taf(spieler.ChewyAni);
+
+		fx_blende = 1;
+		room->calc_invent(&room_blk, &spieler);
+
+		if (spieler.AkInvent != -1)
+			spieler.room_m_obj[spieler.AkInvent].RoomNr = 255;
+		obj->sort();
+
+		set_speed();
+
+		for (int i = 0; i < MAX_PERSON; i++) {
+			set_person_pos(spieler.X[i], spieler.Y[i], i, spieler.Phase[i]);
+		}
+
+		auto_obj = 0;
+
+		enter_room(-1);
+		flags.LoadGame = false;
+	}
+
+	return Common::kNoError;
+}
+
+Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer s(nullptr, stream);
+	int16 spr_nr;
+	int16 i;
+	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
+	for (i = 0; i < MAX_PERSON; i++) {
+		spieler.X[i] = spieler_vector[i].Xypos[0];
+		spieler.Y[i] = spieler_vector[i].Xypos[1];
+		spieler.Phase[i] = person_end_phase[i];
+	}
+
+	if (!spieler.synchronize(s)) {
+		fcode = WRITEFEHLER;
+		modul = DATEI;
+	} else {
+		append_adsh(stream);
+		ERROR
+	}
+
+	return Common::kNoError;
+}
+
 } // End of namespace Chewy

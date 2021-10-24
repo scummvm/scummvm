@@ -52,9 +52,11 @@ protected:
 	bool hasFeature(EngineFeature f) const override;
 
 	void initialize();
-	void shutdown();
+	void shutdown() {}
 
 public:
+	const ChewyGameDescription *_gameDescription;
+	Common::RandomSource _rnd;
 	TempFileArchive _tempFiles;
 	EventsManager *_events;
 	Sound *_sound;
@@ -63,13 +65,18 @@ public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
 	~ChewyEngine() override;
 
-	int getGameType() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
 
-	const ChewyGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
+	/**
+	 * Load savegame data
+	 */
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	/**
+	 * Save savegame data
+	 */
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 };
 
 extern ChewyEngine *g_engine;
