@@ -157,6 +157,18 @@ bool parseBool(const String &val, bool &valAsBool);
 
 
 /**
+ * Test whether the given character is in ASCII range (between 0 and 127 included).
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		The character to test.
+ *
+ * @return True if the character is ASCII, false otherwise.
+ */
+bool isAscii(int c);
+
+/**
  * Test whether the given character is alphanumeric (a-z, A-Z, 0-9).
  *
  * If the parameter is outside the range of a signed or unsigned char, then
