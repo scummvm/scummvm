@@ -80,14 +80,23 @@ struct DrawListStruct {
 	}
 };
 
+#define TYPE_OBJ_SHIFT (10)
+#define TYPE_OBJ_FIRST (1 << TYPE_OBJ_SHIFT) // 1024
+#define NUM_OBJ_MASK (TYPE_OBJ_FIRST - 1)
+
 class TwinEEngine;
 class Redraw {
 private:
 	TwinEEngine *_engine;
 	enum DrawListType {
-		DrawActorSprites = 0x1000,
-		DrawExtras = 0x1800,
-		DrawShadows = 0xC00
+		DrawObject3D = (0 << TYPE_OBJ_SHIFT),
+		DrawFlagRed = (1 << TYPE_OBJ_SHIFT),
+		DrawFlagYellow = (2 << TYPE_OBJ_SHIFT),
+		DrawShadows = (3 << TYPE_OBJ_SHIFT),
+		DrawActorSprites = (4 << TYPE_OBJ_SHIFT),
+		DrawZoneDec = (5 << TYPE_OBJ_SHIFT),
+		DrawExtras = (6 << TYPE_OBJ_SHIFT),
+		DrawPrimitive = (7 << TYPE_OBJ_SHIFT)
 	};
 
 	Common::Rect _currentRedrawList[300];

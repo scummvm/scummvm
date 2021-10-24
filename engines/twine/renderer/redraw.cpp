@@ -336,6 +336,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	addRedrawArea(_engine->_interface->_clip);
 
 	_engine->_debugScene->drawClip(renderRect);
+	_engine->_interface->resetClip();
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -348,7 +349,15 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 	const IVec3 &delta = actor->pos() - _engine->_grid->_camera;
 	Common::Rect renderRect;
+
+	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
+		if (_engine->_actor->_cropBottomScreen) {
+			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen;
+		}
+	}
+
 	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, ANGLE_0, actor->_angle, ANGLE_0, _engine->_resources->_bodyData[actor->_entity], renderRect)) {
+		_engine->_interface->resetClip();
 		return;
 	}
 
@@ -364,10 +373,6 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
-		if (_engine->_actor->_cropBottomScreen) {
-			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen + 10;
-		}
-
 		addRedrawArea(_engine->_interface->_clip);
 
 		if (actor->_staticFlags.bIsBackgrounded && bgRedraw) {
@@ -376,6 +381,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 		_engine->_debugScene->drawClip(_engine->_interface->_clip);
 	}
+	_engine->_interface->resetClip();
 }
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -399,14 +405,15 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	renderRect.right = renderRect.left + spriteWidth;
 	renderRect.bottom = renderRect.top + spriteHeight;
 
+	bool validClip;
 	if (actor->_staticFlags.bUsesClipping) {
 		const Common::Rect rect(_projPosScreen.x + actor->_cropLeft, _projPosScreen.y + actor->_cropTop, _projPosScreen.x + actor->_cropRight, _projPosScreen.y + actor->_cropBottom);
-		_engine->_interface->setClip(rect);
+		validClip = _engine->_interface->setClip(rect);
 	} else {
-		_engine->_interface->setClip(renderRect);
+		validClip = _engine->_interface->setClip(renderRect);
 	}
 
-	if (_engine->_interface->_clip.isValidRect()) {
+	if (validClip) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->_dynamicFlags.bIsVisible = 1;
@@ -434,6 +441,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
+		_engine->_interface->resetClip();
 	}
 }
 
@@ -461,9 +469,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	}
 
-	_engine->_interface->setClip(renderRect);
-
-	if (_engine->_interface->_clip.isValidRect()) {
+	if (_engine->_interface->setClip(renderRect)) {
 		const int32 tmpX = (extra->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
 		const int32 tmpY = extra->pos.y / BRICK_HEIGHT;
 		const int32 tmpZ = (extra->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
@@ -473,6 +479,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 		// show clipping area
 		//drawRectBorders(renderRect);
+		_engine->_interface->resetClip();
 	}
 }
 
@@ -480,27 +487,13 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
 		const DrawListStruct &drawCmd = drawList[pos];
 		const uint32 flags = drawCmd.type;
-		// Drawing actors
-		if (flags < DrawListType::DrawShadows) {
-			if (flags == 0) {
-				processDrawListActors(drawCmd, bgRedraw);
-			}
-		}
-		// Drawing shadows
-		else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
+		if (flags == DrawListType::DrawObject3D) {
+			processDrawListActors(drawCmd, bgRedraw);
+		} else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
 			processDrawListShadows(drawCmd);
-		}
-		// Drawing unknown
-		else if (flags < DrawListType::DrawActorSprites) {
-			// TODO reverse this part of the code
-			warning("Not yet reversed part of the rendering code: %u", flags);
-		}
-		// Drawing sprite actors, doors and entities
-		else if (flags == DrawListType::DrawActorSprites) {
+		} else if (flags == DrawListType::DrawActorSprites) {
 			processDrawListActorSprites(drawCmd, bgRedraw);
-		}
-		// Drawing extras
-		else if (flags == DrawListType::DrawExtras) {
+		} else if (flags == DrawListType::DrawExtras) {
 			processDrawListExtras(drawCmd);
 		}
 
@@ -575,6 +568,8 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -599,6 +594,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -614,6 +610,7 @@ void Redraw::renderOverlays() {
 				_engine->_menu->drawRectBorders(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
+				_engine->_interface->resetClip();
 				break;
 			}
 			case OverlayType::koText: {
@@ -638,6 +635,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
+				_engine->_interface->resetClip();
 				break;
 			}
 			}
@@ -743,9 +741,10 @@ void Redraw::drawBubble(int32 actorIdx) {
 	renderRect.right = spriteWidth + renderRect.left - 1;
 	renderRect.bottom = spriteHeight + renderRect.top - 1;
 
-	_engine->_interface->setClip(renderRect);
-	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
-	_engine->_interface->resetClip();
+	if (_engine->_interface->setClip(renderRect)) {
+		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+		_engine->_interface->resetClip();
+	}
 }
 
 void Redraw::zoomScreenScale() {

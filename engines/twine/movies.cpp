@@ -353,7 +353,7 @@ void Movies::playGIFMovie(const char *flaName) {
 	}
 }
 
-void Movies::playFlaMovie(const char *flaName) {
+bool Movies::playFlaMovie(const char *flaName) {
 	assert(_engine->isLBA1());
 	_engine->_sound->stopSamples();
 
@@ -365,7 +365,7 @@ void Movies::playFlaMovie(const char *flaName) {
 
 	if (_engine->_cfgfile.Movie == CONF_MOVIE_FLAGIF) {
 		playGIFMovie(fileNamePath.c_str());
-		return;
+		return true;
 	}
 
 	_engine->_music->stopMusic();
@@ -377,7 +377,7 @@ void Movies::playFlaMovie(const char *flaName) {
 	if (!_file.open(fileNamePath + FLA_EXT)) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		playGIFMovie(fileNamePath.c_str());
-		return;
+		return true;
 	}
 
 	const uint32 version = _file.readUint32LE();
@@ -395,6 +395,7 @@ void Movies::playFlaMovie(const char *flaName) {
 
 	_file.skip(4 * _samplesInFla);
 
+	bool finished = false;
 	if (version != MKTAG('V', '1', '.', '3')) {
 		int32 currentFrame = 0;
 
@@ -410,6 +411,7 @@ void Movies::playFlaMovie(const char *flaName) {
 				break;
 			}
 			if (currentFrame == _flaHeaderData.numOfFrames) {
+				finished = true;
 				break;
 			}
 			processFrame();
@@ -446,6 +448,7 @@ void Movies::playFlaMovie(const char *flaName) {
 	}
 
 	_engine->_sound->stopSamples();
+	return finished;
 }
 
 void Movies::playSmkMovie(int index) {

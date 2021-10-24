@@ -194,7 +194,7 @@ private:
 	void renderPolygonsDither(int vtop, int32 vsize) const;
 	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
-	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
+	bool computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(const Common::Array<BodyPolygon>& polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);

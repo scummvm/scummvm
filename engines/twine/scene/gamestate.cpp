@@ -445,6 +445,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
 	_engine->_scene->_sceneHero->_animTimerData = tmpAnimTimer;
+	_engine->_interface->resetClip();
 }
 
 void GameState::processGameChoices(TextId choiceIdx) {

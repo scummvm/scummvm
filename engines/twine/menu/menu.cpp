@@ -35,6 +35,7 @@
 #include "twine/scene/animations.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
+#include "twine/movies.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/grid.h"
 #include "twine/resources/hqr.h"
@@ -591,17 +592,23 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 		if (showCredits && loopMillis - startMillis > 11650) {
 			_engine->_menuOptions->showCredits();
+			if (_engine->_flaMovies->playFlaMovie(FLA_DRAGON3)) {
+				if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 15, 16), 3)) {
+					if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 17, 18), 3)) {
+						if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 19, 20), 3)) {
+							if (_engine->_flaMovies->playFlaMovie(FLA_BATEAU)) {
+								if (_engine->_cfgfile.Version == USA_VERSION) {
+									_engine->_screens->loadImageDelay(_engine->_resources->relentLogo(), 3);
+								} else {
+									_engine->_screens->loadImageDelay(_engine->_resources->lbaLogo(), 3);
+								}
+								_engine->_screens->adelineLogo();
+							}
+						}
+					}
+				}
+			}
 			_engine->_text->initTextBank(TextBankId::Options_and_menus);
-
-			// TODO the original game also performs these actions:
-			// play FLA_DRAGON3 fla
-			// display RESSHQR_INTROSCREEN1IMG
-			// display RESSHQR_INTROSCREEN2IMG
-			// display RESSHQR_INTROSCREEN3IMG
-			// play FLA_BATEAU fla
-			// if version == EUROPE_VERSION display RESSHQR_LBAIMG else display RESSHQR_RELLENTIMG
-			// display adeline logo
-			// pressing any key during these actions will abort everything and return to the menu
 			startMillis = _engine->_system->getMillis();
 			_engine->_screens->loadMenuImage(false);
 		}
@@ -1148,6 +1155,7 @@ void Menu::drawInventoryItems(int32 left, int32 top) {
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(left, top, item);
 	}
+	_engine->_interface->resetClip();
 }
 
 void Menu::processInventoryMenu() {
