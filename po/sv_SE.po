@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-24 14:46+0000\n"
+"POT-Creation-Date: 2021-10-24 22:19+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3881,7 +3881,7 @@ msgstr "Emulera inte NTSC artifakter för text"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:386 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:385 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -3890,7 +3890,7 @@ msgstr "Använd originalskärmar för spara/ladda"
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:56
-#: engines/groovie/detection.cpp:387 engines/neverhood/detection.cpp:136
+#: engines/groovie/detection.cpp:386 engines/neverhood/detection.cpp:136
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/trecision/detection.cpp:221 engines/ultima/detection.cpp:57
 #: engines/ultima/detection.cpp:108 engines/zvision/detection_tables.h:52
@@ -4866,11 +4866,11 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
-#: engines/groovie/detection.cpp:376
+#: engines/groovie/detection.cpp:375
 msgid "Fast movie speed"
 msgstr "Snabb filmhastighet"
 
-#: engines/groovie/detection.cpp:377
+#: engines/groovie/detection.cpp:376
 msgid "Play movies at an increased speed"
 msgstr "Spela filmer i högre hastighet"
 
