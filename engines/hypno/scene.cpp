@@ -20,7 +20,6 @@
  *
  */
 
-#include <typeinfo>
 #include "common/events.h"
 
 #include "hypno/grammar.h"
@@ -129,24 +128,45 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 
 	for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 		Action *action = *itt;
-		if (typeid(*action) == typeid(ChangeLevel))
-			runChangeLevel((ChangeLevel *)action);
-		if (typeid(*action) == typeid(Escape))
-			runEscape((Escape *)action);
-		else if (typeid(*action) == typeid(Cutscene))
-			runCutscene((Cutscene *)action);
-		else if (typeid(*action) == typeid(Play))
-			runPlay((Play *)action);
-		else if (typeid(*action) == typeid(WalN))
-			runWalN((WalN *)action);
-		else if (typeid(*action) == typeid(Global))
-			runGlobal((Global *)action);
-		else if (typeid(*action) == typeid(Talk))
-			runTalk((Talk *)action);
-		else if (typeid(*action) == typeid(Quit))
-			runQuit((Quit *)action);
-		else if (typeid(*action) == typeid(Palette))
-			debugC(1, kHypnoDebugScene, "runPalette unimplemented");
+		switch (action->type) {
+			case ChangeLevelAction:
+				runChangeLevel((ChangeLevel *)action);
+			break;
+
+			case EscapeAction:
+				runEscape((Escape *)action);
+			break;
+
+			case CutsceneAction:
+				runCutscene((Cutscene *)action);
+			break;
+
+			case PlayAction:
+				runPlay((Play *)action);
+			break;
+
+			case WalNAction:
+				runWalN((WalN *)action);
+			break;
+		
+			case GlobalAction:
+				runGlobal((Global *)action);
+			break;
+
+			case TalkAction:
+				runTalk((Talk *)action);
+			break;
+
+			case QuitAction:
+				runQuit((Quit *)action);
+			break;
+			case PaletteAction:
+				debugC(1, kHypnoDebugScene, "runPalette unimplemented");
+			break;
+
+			default:
+			break;
+		}
 	}
 }
 
@@ -172,8 +192,13 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	if (found) {
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
-			if (typeid(*action) == typeid(Mice))
-				runMice((Mice *)action);
+			switch (action->type) {
+				case MiceAction:
+					runMice((Mice *)action);
+				break;
+				default:
+				break;
+			}
 		}
 		return true;
 	}

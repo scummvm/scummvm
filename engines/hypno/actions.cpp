@@ -20,7 +20,6 @@
  *
  */
 
-#include <typeinfo>
 #include "common/events.h"
 
 #include "hypno/grammar.h"
@@ -36,14 +35,23 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h.actions.size());
 	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
 		Action *action = *itt;
-		if (typeid(*action) == typeid(Quit))
-			runQuit((Quit *)action);
-		else if (typeid(*action) == typeid(Background))
-			runBackground((Background *)action);
-		else if (typeid(*action) == typeid(Overlay))
-			runOverlay((Overlay *)action);
-		else if (typeid(*action) == typeid(Ambient))
-			runAmbient((Ambient *)action);
+		switch (action->type) {
+			case QuitAction:
+				runQuit((Quit *)action);
+			break;
+			case BackgroundAction:
+				runBackground((Background *)action);
+			break;
+			case OverlayAction:
+				runOverlay((Overlay *)action);
+			break;
+			case AmbientAction: 
+				runAmbient((Ambient *)action);
+			break;
+
+			default:
+			break;
+		}
 
 		//else if (typeid(*action) == typeid(Mice))
 		//	runMice(h, (Mice*) action);
