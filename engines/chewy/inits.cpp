@@ -177,6 +177,7 @@ void var_init() {
 	SetUpScreenFunc = nullptr;
 	pfeil_delay = 0;
 	pfeil_ani = 0;
+	timer_action_ctr = 0;
 	flags.CursorStatus = true;
 	savegameFlag = false;
 }

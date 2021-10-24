@@ -81,6 +81,8 @@ public:
 	void serve_db_samples();
 	void switch_music(bool onOff);
 	void switch_sound(bool onOff);
+	bool isSpeechActive() const;
+	void waitForSpeechToFinish();
 private:
 };
 

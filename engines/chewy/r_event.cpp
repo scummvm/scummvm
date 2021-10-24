@@ -115,47 +115,60 @@ void timer_action(int16 t_nr) {
 	int16 ok;
 	default_flag = false;
 	ani_nr = t_nr - room->room_timer.TimerStart;
-	switch (spieler.PersonRoomNr[P_CHEWY]) {
 
+	if (ailsnd->isSpeechActive())
+		return;
+
+	switch (spieler.PersonRoomNr[P_CHEWY]) {
 	case 0:
 		switch (ani_nr) {
 		case 1:
-			if (!flags.AutoAniPlay && !flags.AdsDialog) {
-				ok = false;
+			if (timer_action_ctr > 0) {
+				uhr->reset_timer(t_nr, 0);
+				--timer_action_ctr;
+			} else if (!is_chewy_busy()) {
+				if (!spieler.R0FueterLab)
+					timer_action_ctr = 2;
+
 				flags.AutoAniPlay = true;
 				if (!spieler.R0SchleimWurf) {
 					start_aad_wait(42, -1);
-					auto_move(BLITZ_POS, P_CHEWY);
-					set_person_spr(P_LEFT, P_CHEWY);
+					auto_move(5, 0);
+					set_person_spr(0, 0);
+
 					if (spieler.R0FueterLab < 3) {
-						start_spz(CH_TALK3, 255, 0, P_CHEWY);
+						start_spz(2, 255, false, 0);
+						if (spieler.R0FueterLab)
+							start_aad_wait(618, -1);
+						else
+							start_aad_wait(43, -1);
+					}
+
+					Room0::auge_ani();
+				} else if (!spieler.R0KissenWurf) {
+					start_aad_wait(42, -1);
+					start_spz(2, 255, false, 0);
+
+					if (spieler.R0FueterLab < 3) {
 						start_aad_wait(43, -1);
 						++spieler.R0FueterLab;
 					}
-					Room0::auge_ani();
-					ok = true;
-				} else {
-					if (!spieler.R0KissenWurf) {
-						start_aad_wait(42, -1);
-						start_spz(CH_TALK3, 255, 0, P_CHEWY);
-						if (spieler.R0FueterLab < 3) {
-							start_aad_wait(43, -1);
-							++spieler.R0FueterLab;
-						}
-						auto_move(FUETTER_POS, P_CHEWY);
-						set_person_pos(199 - CH_HOT_MOV_X,
-						               145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-					}
+
+					auto_move(3, 0);
+					set_person_pos(191, 120, P_CHEWY, P_LEFT);
 				}
 
-				if (!spieler.R0KissenWurf) {
+				if (!spieler.R0KissenWurf)
 					Room0::fuett_ani();
-				}
 
 				uhr->reset_timer(t_nr, 0);
 				flags.AutoAniPlay = false;
 			}
 			break;
+
+		case 3:
+			break;
+
 		default:
 			default_flag = true;
 			break;
@@ -169,9 +182,10 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 12:
-		if (t_nr == timer_nr[0])
-			r12_init_bork();
-		else if (t_nr == timer_nr[1]) {
+		if (t_nr == timer_nr[0]) {
+			if (!is_chewy_busy())
+				r12_init_bork();
+		} else if (t_nr == timer_nr[1]) {
 			if (spieler.R12TransOn) {
 				spieler.R12TransOn = false;
 				start_aad_wait(30, -1);
@@ -184,6 +198,18 @@ void timer_action(int16 t_nr) {
 		case 0:
 			r14_eremit_feuer(t_nr, ani_nr);
 			break;
+		default:
+			break;
+		}
+		break;
+
+	case 17:
+		if (room->room_timer.ObjNr[ani_nr] == 2 ||
+				room->room_timer.ObjNr[ani_nr] == 3) {
+			if (spieler.R17EnergieOut)
+				uhr->reset_timer(t_nr, 0);
+			else
+				default_flag = true;
 		}
 		break;
 
@@ -207,7 +233,8 @@ void timer_action(int16 t_nr) {
 	case 40:
 		if (t_nr == timer_nr[0])
 			spieler.R40PoliceStart = true;
-		default_flag = true;
+		else
+			default_flag = true;
 		break;
 
 	case 48:
@@ -223,10 +250,16 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 50:
-		if (t_nr == timer_nr[0]) {
+		if (t_nr == timer_nr[0])
 			r50_calc_wasser();
-		}
 		default_flag = true;
+		break;
+
+	case 51:
+		if (spieler.flags32_5)
+			r51_timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
+		else
+			default_flag = true;
 		break;
 
 	case 56:
@@ -237,20 +270,23 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 68:
-		if (t_nr == timer_nr[0]) {
+		if (t_nr == timer_nr[0])
 			r68_calc_diva();
-		}
-		default_flag = true;
+		else
+			default_flag = true;
 		break;
+
 	default:
 		default_flag = true;
 		break;
 
 	}
+
 	if (default_flag && flags.AutoAniPlay == false) {
 		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, 0);
 		uhr->reset_timer(t_nr, 0);
 	}
+
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 

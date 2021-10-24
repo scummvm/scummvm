@@ -227,6 +227,7 @@ extern Stream *speech_handle;
 extern byte *SpeechBuf[2];
 extern int16 CurrentSong;
 extern bool savegameFlag;
+extern int timer_action_ctr;
 
 void cursor_wahl(int16 nr);
 

@@ -117,6 +117,7 @@ void r51_exit(int16 eib_nr);
 int16 r51_use_door(int16 txt_nr);
 void r51setup_func();
 int16 r51_cut_serv(int16 frame);
+void r51_timer_action(int16 t_nr, int16 obj_nr);
 
 void r52_entry();
 

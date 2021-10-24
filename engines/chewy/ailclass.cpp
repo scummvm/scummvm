@@ -23,6 +23,7 @@
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
 #include "chewy/file.h"
+#include "chewy/global.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {
@@ -909,6 +910,19 @@ void ailclass::switch_music(bool onOff) {
 void ailclass::switch_sound(bool onOff) {
 	if (SoundEnable)
 		SoundSwitch = onOff;
+}
+
+bool ailclass::isSpeechActive() const {
+	// TODO: Implement properly
+	return true;
+}
+
+void ailclass::waitForSpeechToFinish() {
+	if (flags.InitSound && spieler.SpeechSwitch) {
+		while (isSpeechActive() && !SHOULD_QUIT) {
+			set_up_screen(DO_SETUP);
+		}
+	}
 }
 
 } // namespace Chewy
