@@ -43,6 +43,7 @@ private:
 	int8 sub10(int8 key, int8 *a2, int8 *triangleCells);
 	int8 sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4);
 	void setCell(int8 cellnum, int8 val);
+	void copyLogicRow(int row, int8 key, int8 *dest);
 
 private:
 	int _triangleCellCount;

@@ -166,24 +166,69 @@ void TriangleGame::sub05(int8 *triangleCells, int8 *a2, int8 *a3) {
 void TriangleGame::sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
 }
 
-int8 TriangleGame::sub09(int8 key, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells) {
+int8 TriangleGame::sub09(int8 player, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells) {
 	return 0;
 }
 
-int8 TriangleGame::sub10(int8 key, int8 *a2, int8 *triangleCells) {
-	return 0;
+int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
+	int8 *destPtr; // ecx
+	byte mask; // [esp+Fh] [ebp-51h]
+	int counter; // [esp+10h] [ebp-50h]
+	int8 dest[76]; // [esp+14h] [ebp-4Ch] BYREF
+
+	mask = 0;
+	counter = 0;
+
+	if (player == 1)
+		mask = 16;
+	else if (player == 2)
+		mask = 32;
+
+	for (int i = 0; i < 66; ++i) {
+		if (!triangleCells[i] && (mask & (byte)a2[i]) != 0) {
+			copyLogicRow(i, player, dest);
+
+			destPtr = dest;
+
+			while (*destPtr != 66) {
+				if ((a2[*destPtr] & 0xE) == 0xE) {
+					counter++;
+					dest[counter + 8] = i;
+					break;
+				}
+
+				destPtr++;
+			}
+		}
+	}
+
+	if (counter)
+		return dest[_random.getRandomNumber(counter - 1) + 8];
+
+	return 66;
 }
 
-int8 TriangleGame::sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4) {
+int8 TriangleGame::sub12(int8 player, int8 *a2, int8 *triangleCells, int8 *a4) {
 	return 0;
 }
-
 
 void TriangleGame::setCell(int8 cellnum, int8 val) {
 	if (cellnum >= 0 && cellnum < 66) {
 		++_triangleCellCount;
 		_triangleCells[cellnum] = val;
 	}
+}
+
+void TriangleGame::copyLogicRow(int row, int8 key, int8 *dest) {
+	int pos = 0;
+
+	for (int i = 0; i < 6; i++) {
+		int8 val = triangleLogicTable[14 * row + i];
+		if (val != -1 && _triangleCells[val] == key)
+			dest[pos++] = val;
+	}
+
+	dest[pos] = 66;
 }
 
 namespace {
