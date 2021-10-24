@@ -66,6 +66,79 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 
 	// Don't start at zero so that the value is never the same as the surface graphics manager
 	_screenChangeCount = 1 << (sizeof(int) * 5 - 2);
+
+	// Set up proper SDL OpenGL context creation.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	enum {
+#ifdef USE_OPENGL_SHADERS
+		DEFAULT_GL_MAJOR = 2,
+		DEFAULT_GL_MINOR = 1,
+#else
+		DEFAULT_GL_MAJOR = 1,
+		DEFAULT_GL_MINOR = 3,
+#endif
+
+		DEFAULT_GLES2_MAJOR = 2,
+		DEFAULT_GLES2_MINOR = 0
+	};
+
+#ifdef USE_GLES2
+	_glContextType = OpenGL::kOGLContextGLES2;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES2_MAJOR;
+	_glContextMinor = DEFAULT_GLES2_MINOR;
+#else
+	bool noDefaults = false;
+
+	// Obtain the default GL(ES) context SDL2 tries to setup.
+	//
+	// Please note this might not actually be SDL2's defaults when multiple
+	// instances of this object have been created. But that is no issue
+	// because then we already set up what we want to use.
+	//
+	// In case no defaults are given we prefer OpenGL over OpenGL ES.
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+		_glContextProfileMask = 0;
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+		noDefaults = true;
+	}
+
+	if (noDefaults) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			_glContextMajor = DEFAULT_GLES2_MAJOR;
+			_glContextMinor = DEFAULT_GLES2_MINOR;
+		} else {
+			_glContextProfileMask = 0;
+			_glContextMajor = DEFAULT_GL_MAJOR;
+			_glContextMinor = DEFAULT_GL_MINOR;
+		}
+	}
+
+	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		// TODO: Support GLES1 for games
+		_glContextType = OpenGL::kOGLContextGLES2;
+	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
+		_glContextType = OpenGL::kOGLContextGL;
+
+		// Core profile does not allow legacy functionality, which we use.
+		// Thus we request a standard OpenGL context.
+		_glContextProfileMask = 0;
+		_glContextMajor = DEFAULT_GL_MAJOR;
+		_glContextMinor = DEFAULT_GL_MINOR;
+	} else {
+		_glContextType = OpenGL::kOGLContextGL;
+	}
+#endif
+#else
+	_glContextType = OpenGL::kOGLContextGL;
+#endif
 }
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
@@ -346,15 +419,7 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 }
 
 void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
-	OpenGL::ContextOGLType type;
-
-#ifdef USE_GLES2
-	type = OpenGL::kOGLContextGLES2;
-#else
-	type = OpenGL::kOGLContextGL;
-#endif
-
-	OpenGLContext.initialize(type);
+	OpenGLContext.initialize(_glContextType);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
@@ -408,23 +473,9 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, _vsync ? 1 : 0);
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#ifdef USE_GLES2
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#else
-		// The OpenGL implementation on AmigaOS4 is close to 1.3. Until that changes we need
-		// to use 1.3 as version or ScummVM will cease working at all on that platform.
-		// Profile Mask has to be 0 as well.
-		// This will be revised and removed once AmigaOS4 supports OpenGL 2.x or OpenGLES2.
-		#ifdef __amigaos4__
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		#else
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-		#endif
-#endif
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
