@@ -54,11 +54,8 @@ void WetEngine::loadAssetsDemoDisc() {
 	Hotspots hs;
 
 	h.type = MakeMenu;
-	Ambient *a = new Ambient();
-	a->path = "movie/selector.smk";
+	Ambient *a = new Ambient("movie/selector.smk", Common::Point(0, 0), "/LOOP");
 	a->fullscreen = true;
-	a->flag = "/LOOP";
-	a->origin = Common::Point(0, 0);
 	h.actions.push_back(a);
 
 	hs.push_back(h);
@@ -67,15 +64,13 @@ void WetEngine::loadAssetsDemoDisc() {
 	h.rect = Common::Rect(0, 424, 233, 462);
 	h.actions.clear();
 	h.smenu = nullptr;
-	ChangeLevel *cl = new ChangeLevel();
-	cl->level = "<intro>";
+	ChangeLevel *cl = new ChangeLevel("<intro>");
 	h.actions.push_back(cl);
 
 	hs.push_back(h);
 
 	h.rect = Common::Rect(242, 424, 500, 480);
-	cl = new ChangeLevel();
-	cl->level = "<movies>";
+	cl = new ChangeLevel("<movies>");
 	h.actions.clear();
 	h.actions.push_back(cl);
 

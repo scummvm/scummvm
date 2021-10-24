@@ -131,81 +131,59 @@ line: MENUTOK mflag mflag  {
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
 	|  TIMETOK NUM  { debugC(1, kHypnoDebugParser, "TIME %d", $2); } 
 	|  BACKTOK FILENAME NUM NUM gsswitch flag flag {
-		Background *a = new Background();
-		a->path = $2;
-		a->origin = Common::Point($3, $4);
-		a->condition = $5;
+		Background *a = new Background($2, Common::Point($3, $4), $5);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "BACK");
 	}
 	|  GLOBTOK GSSWITCH NAME  { 
-		Global *a = new Global();
-		a->variable = $2;
-		a->command = $3;
+		Global *a = new Global($2, $3);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "GLOB"); 
 	}
 	|  AMBITOK FILENAME NUM NUM flag { 
-		Ambient *a = new Ambient();
-		a->path = $2;
-		a->origin = Common::Point($3, $4);
-		a->flag = $5;
+		Ambient *a = new Ambient($2, Common::Point($3, $4), $5);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);			
 		debugC(1, kHypnoDebugParser, "AMBI %d %d", $3, $4); }
 	|  PLAYTOK FILENAME NUM NUM gsswitch flag { 
-		Play *a = new Play();
-		a->path = $2;
-		a->origin = Common::Point($3, $4);
-		a->condition = $5;
-		a->flag = $6;
+		Play *a = new Play($2, Common::Point($3, $4), $5, $6);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "PLAY %s.", $2); }
 	|  OVERTOK FILENAME NUM NUM flag { 
-		Overlay *a = new Overlay();
-		a->path = $2;
-		a->origin = Common::Point($3, $4);
+		Overlay *a = new Overlay($2, Common::Point($3, $4), $5);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
 	|  PALETOK FILENAME {
-		Palette *a = new Palette();
-		a->path = $2; 
+		Palette *a = new Palette($2);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
 	}
 	|  CUTSTOK FILENAME { 
-		Cutscene *a = new Cutscene();
-		a->path = $2;
+		Cutscene *a = new Cutscene($2);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "CUTS %s", $2); 
 	}
 	|  WALNTOK FILENAME NUM NUM gsswitch flag  { 
-		WalN *a = new WalN();
-		a->path = $2;
-		a->origin = Common::Point($3, $4);
-		a->condition = $5;
-		a->flag = $6;
+		WalN *a = new WalN($2, Common::Point($3, $4), $5, $6);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "WALN %s %d %d", $2, $3, $4); } 
 	|  MICETOK FILENAME NUM {
-		Mice *a = new Mice();
-		a->path = $2; 
-		a->index = $3-1;
+		Mice *a = new Mice($2, $3-1);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);

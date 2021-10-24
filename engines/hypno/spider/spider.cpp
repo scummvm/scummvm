@@ -76,20 +76,16 @@ void SpiderEngine::loadAssetsFullGame() {
 	start.trans.intros.push_back("spider/cine/dcine2.smk");
 	_levels["<start>"] = start;
 
-	ChangeLevel *cl = new ChangeLevel();
-	cl->level = "levels.mi_";
+	ChangeLevel *cl = new ChangeLevel("levels.mi_");
 	_levels["mainmenu.mi_"].scene.hots[1].actions.push_back(cl);
 	
-	cl = new ChangeLevel();
-	cl->level = "options.mi_";
+	cl = new ChangeLevel("options.mi_");
 	_levels["mainmenu.mi_"].scene.hots[4].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "<quit>";
+	cl = new ChangeLevel("<quit>");
 	_levels["mainmenu.mi_"].scene.hots[5].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "combmenu.mi_";
+	cl = new ChangeLevel("combmenu.mi_");
 	_levels["options.mi_"].scene.hots[1].actions.push_back(cl);
 }
 
@@ -144,30 +140,24 @@ void SpiderEngine::loadAssetsDemo() {
 
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");
-	ChangeLevel *cl = new ChangeLevel();
-	cl->level = "sixdemo/c_misc/missions.lib/c1.mi_";
+	ChangeLevel *cl = new ChangeLevel("sixdemo/c_misc/missions.lib/c1.mi_");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "sixdemo/mis/alley.mis";
+	cl = new ChangeLevel("sixdemo/mis/alley.mis");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[2].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "sixdemo/puz_matr";
+	cl = new ChangeLevel("sixdemo/puz_matr");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[3].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "sixdemo/mis/shoctalk.mis";
+	cl = new ChangeLevel("sixdemo/mis/shoctalk.mis");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[4].actions.push_back(cl);
 
-	cl = new ChangeLevel();
-	cl->level = "sixdemo/mis/order.mis";
+	cl = new ChangeLevel("sixdemo/mis/order.mis");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
 	_levels["sixdemo/mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
 
 	parseScene("sixdemo", "mis/order.mis");
-	cl = new ChangeLevel();
-	cl->level = "<quit>";
+	cl = new ChangeLevel("<quit>");
 	_levels["sixdemo/mis/order.mis"].scene.hots[1].actions.push_back(cl);
 
 	parseScene("sixdemo", "mis/alley.mis");

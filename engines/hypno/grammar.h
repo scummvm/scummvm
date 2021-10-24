@@ -43,9 +43,26 @@ enum HotspotType {
 	MakeHotspot
 };
 
+enum ActionType {
+	MiceAction,
+	PaletteAction,
+	BackgroundAction,
+	OverlayAction,
+	EscapeAction,
+	QuitAction,
+	CutsceneAction,
+	PlayAction,
+	AmbientAction,
+	WalNAction,
+	GlobalAction,
+	TalkAction,
+	ChangeLevelAction
+};
+
 class Action {
 public:
 	virtual ~Action() {} // needed to make Action polymorphic
+	ActionType type;
 };
 
 typedef Common::Array<Action *> Actions;
@@ -82,17 +99,32 @@ public:
 
 class Mice : public Action {
 public:
+	Mice(Filename path_, uint32 index_) {
+		type = MiceAction;
+		path = path_;
+		index = index_;
+	}
 	Filename path;
 	uint32 index;
 };
 
 class Palette : public Action {
 public:
+	Palette(Filename path_) {
+		type = PaletteAction;
+		path = path_;
+	}
 	Filename path;
 };
 
 class Background : public Action {
 public:
+	Background(Filename path_, Common::Point origin_, Common::String condition_) {
+		type = BackgroundAction;
+		path = path_;
+		origin = origin_;
+		condition = condition_;
+	}
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -100,24 +132,49 @@ public:
 
 class Overlay : public Action {
 public:
+	Overlay(Filename path_, Common::Point origin_, Common::String flag_) {
+		type = OverlayAction;
+		path = path_;
+		origin = origin_;
+		flag = flag_;
+	}
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
 };
 
 class Escape : public Action {
+public:
+	Escape() {
+		type = EscapeAction;
+	}
 };
 
 class Quit : public Action {
+public:
+	Quit() {
+		type = QuitAction;
+	}
 };
 
 class Cutscene : public Action {
 public:
+	Cutscene(Filename path_) {
+		type = CutsceneAction;
+		path = path_;
+	}
 	Filename path;
 };
 
 class Play : public Action {
 public:
+	Play(Filename path_, Common::Point origin_, Common::String condition_, Common::String flag_) {
+		type = PlayAction;
+		path = path_;
+		origin = origin_;
+		condition = condition_;
+		flag = flag_;
+	}
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -126,6 +183,13 @@ public:
 
 class Ambient : public Action {
 public:
+	Ambient(Filename path_, Common::Point origin_, Common::String flag_) {
+		type = AmbientAction;
+		path = path_;
+		origin = origin_;
+		flag = flag_;
+		// TODO fullscreen should be enable or not by default?
+	}
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
@@ -134,6 +198,13 @@ public:
 
 class WalN : public Action {
 public:
+	WalN(Filename path_, Common::Point origin_, Common::String condition_, Common::String flag_) {
+		type = WalNAction;
+		path = path_;
+		origin = origin_;
+		condition = condition_;
+		flag = flag_;
+	}
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -142,6 +213,11 @@ public:
 
 class Global : public Action {
 public:
+	Global(Common::String variable_, Common::String command_) {
+		type = GlobalAction;
+		variable = variable_;
+		command = command_;
+	}
 	Common::String variable;
 	Common::String command;
 };
@@ -159,6 +235,9 @@ typedef Common::Array<TalkCommand> TalkCommands;
 
 class Talk : public Action {
 public:
+	Talk()  {
+		type = TalkAction;
+	}
 	TalkCommands commands;
 	bool active;
 	Filename background;
@@ -168,6 +247,10 @@ public:
 
 class ChangeLevel : public Action {
 public:
+	ChangeLevel(Filename level_) {
+		type = ChangeLevelAction;
+		level = level_;
+	}
 	Filename level;
 };
 
