@@ -51,12 +51,10 @@
 AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_screenChangeID(0),
 	_graphicsMode(0),
-	_opengl(false),
 	_fullscreen(true),
 	_ar_correction(true),
 	_force_redraw(false),
 	_game_texture(0),
-	_game_pbuf(),
 	_frame_buffer(0),
 	_cursorX(0),
 	_cursorY(0),
@@ -196,12 +194,6 @@ void AndroidGraphics3dManager::updateScreen() {
 
 	if (!JNI::haveSurface())
 		return;
-
-	if (_game_pbuf) {
-		int pitch = _game_texture->width() * _game_texture->getPixelFormat().bytesPerPixel;
-		_game_texture->updateBuffer(0, 0, _game_texture->width(), _game_texture->height(),
-				_game_pbuf.getRawBuffer(), pitch);
-	}
 
 	if (!_force_redraw &&
 			!_game_texture->dirty() &&
@@ -517,8 +509,13 @@ void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
 }
 
 void AndroidGraphics3dManager::initSize(uint width, uint height,
-								const Graphics::PixelFormat *format) {
-	setupScreen(width, height, true, true);
+					const Graphics::PixelFormat *format) {
+	initViewport();
+
+	// resize game texture
+	initSizeIntern(width, height, 0);
+
+	_game_texture->setGameTexture();
 }
 
 void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
@@ -737,32 +734,6 @@ bool AndroidGraphics3dManager::lockMouse(bool lock) {
 	return true;
 }
 
-void AndroidGraphics3dManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-	setupScreen(screenW, screenH, fullscreen, accel3d, true);
-}
-
-void AndroidGraphics3dManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame) {
-	_opengl = accel3d;
-	initViewport();
-
-	if (_opengl) {
-		// resize game texture
-		initSizeIntern(screenW, screenH, 0);
-		if (isGame)
-			_game_texture->setGameTexture();
-		// format is not used by the gfx_opengl driver, use fake format
-		_game_pbuf.set(Graphics::PixelFormat(), 0);
-
-	} else {
-		Graphics::PixelFormat format = GLES565Texture::pixelFormat();
-		initSizeIntern(screenW, screenH, &format);
-		// as there is no support for the texture surface's lock/unlock mechanism in gfx_tinygl/...
-		// do not use _game_texture->surface()->pixels directly
-		_game_pbuf.create(_game_texture->getPixelFormat(),
-				_game_texture->width() * _game_texture->height(), DisposeAfterUse::YES);
-	}
-}
-
 void AndroidGraphics3dManager::clipMouse(Common::Point &p) const {
 	const GLESBaseTexture *tex = getActiveTexture();
 
@@ -892,11 +863,7 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
 		GLCALL(glClearColor(0, 0, 0, 1 << 16));
-		if (_opengl) {
-			GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-		} else {
-			GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-		}
+		GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 		switch (type) {
 		case kClear:
