@@ -61,7 +61,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 	char saveName[kSaveDescriptionLen + 1];
 	// Terminate saveName here forever (we don't overrun kSaveDescriptionLen)
 	saveName[kSaveDescriptionLen] = '\0';
-	Common::String pattern = Common::String::format("%s%s.????", _targetName.c_str(),
+	Common::String pattern = Common::String::format("%s%s.####", _targetName.c_str(),
 	                         visit ? "_visit" : "");
 	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
