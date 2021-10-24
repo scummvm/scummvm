@@ -232,7 +232,7 @@ void MixedSoundDriver::haltTrack() {
 }
 
 bool MixedSoundDriver::isPlaying() const {
-	return _music->isPlaying() | _sfx->isPlaying();
+	return _music->isPlaying() || _sfx->isPlaying();
 }
 
 void MixedSoundDriver::playSoundEffect(uint16 track, uint8 volume) {

@@ -184,7 +184,7 @@ void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		glyphData = &_oneByteData[128];
 	} else if (c & 0x80) {
 		c = ((c & 0x7F00) >> 2) | (c & 0x3F);
-		assert(c * 28 < _twoByteDataSize);
+		assert(c * 28u < _twoByteDataSize);
 		glyphData = &_twoByteData[c * 28];
 		w = 15;
 	}
