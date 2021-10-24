@@ -383,15 +383,45 @@ static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
+bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
-	const int16 *polyTab2Begin = _colorProgressionBuffer;
-	const int16 *polyTab2End = &_colorProgressionBuffer[_polyTabSize - 1];
+	const int16 *colProgressBufStart = _colorProgressionBuffer;
+	const int16 *colProgressBufEnd = &_colorProgressionBuffer[_polyTabSize - 1];
 	const int screenHeight = _engine->height();
+
+	const Common::Rect &clip = _engine->_interface->_clip;
+	if (!clip.isEmpty()) {
+		int32 vleft;
+		int32 vright;
+		int32 vtop;
+		int32 vbottom;
+
+		vleft = vtop = SCENE_SIZE_MAX;
+		vright = vbottom = SCENE_SIZE_MIN;
+
+		for (int32 i = 0; i < numVertices; i++) {
+			if (vertices[i].x < vleft)
+				vleft = vertices[i].x;
+			if (vertices[i].x > vright)
+				vright = vertices[i].x;
+			if (vertices[i].y < vtop)
+				vtop = vertices[i].y;
+			if (vertices[i].y > vbottom)
+				vbottom = vertices[i].y;
+		}
+		// no vertices
+		if (vtop > vbottom) {
+			return false;
+		}
+		if (vright < clip.left - 1 || vleft > clip.right + 1 || vbottom < clip.top - 1 || vtop > clip.bottom + 1) {
+			debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", vleft, vtop, vright, vbottom, clip.left, clip.top, clip.right, clip.bottom);
+			return false;
+		}
+	}
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
 		const int16 oldVertexY = currentVertexY;
@@ -449,7 +479,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 			int16 *outPtr2 = &_colorProgressionBuffer[polyTabIndex];
 
 			for (int16 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 >= polyTab2Begin && outPtr2 <= polyTab2End) {
+				if (outPtr2 >= colProgressBufStart && outPtr2 <= colProgressBufEnd) {
 					*outPtr2 = cvalue;
 				}
 				outPtr2 += direction;
@@ -457,6 +487,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 			}
 		}
 	}
+	return true;
 }
 
 void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
@@ -954,10 +985,10 @@ void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) con
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
-	computePolygons(polygon.renderType, vertices, polygon.numVertices);
-
-	const int32 vsize = vbottom - vtop + 1;
-	fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+	if (computePolygons(polygon.renderType, vertices, polygon.numVertices)) {
+		const int32 vsize = vbottom - vtop + 1;
+		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+	}
 }
 
 void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
@@ -1562,6 +1593,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	} else {
 		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
 	}
+	_engine->_interface->resetClip();
 }
 
 void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param) {

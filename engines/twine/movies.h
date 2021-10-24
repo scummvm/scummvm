@@ -101,8 +101,9 @@ public:
 	/**
 	 * Play FLA movies
 	 * @param flaName FLA movie name
+	 * @return @c true if finished. @c false if aborted.
 	 */
-	void playFlaMovie(const char *flaName);
+	bool playFlaMovie(const char *flaName);
 
 	void playSmkMovie(int index);
 };
