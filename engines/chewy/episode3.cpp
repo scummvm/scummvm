@@ -1178,6 +1178,10 @@ int16 r51_cut_serv(int16 frame) {
 	return (0);
 }
 
+void r51_timer_action(int16 t_nr, int16 obj_nr) {
+	// TODO
+}
+
 void r52_entry() {
 	SetUpScreenFunc = r52setup_func;
 	spieler_mi[P_HOWARD].Mode = true;

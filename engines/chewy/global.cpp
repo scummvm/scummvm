@@ -344,5 +344,6 @@ Stream *music_handle;
 int16 EndOfPool;
 Stream *speech_handle;
 byte *SpeechBuf[2];
+int timer_action_ctr;
 
 } // namespace Chewy
