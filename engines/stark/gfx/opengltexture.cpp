@@ -27,6 +27,8 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
+#include "graphics/opengl/context.h"
+
 namespace Stark {
 namespace Gfx {
 
@@ -104,10 +106,12 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 		// GLES2 does not allow setting the max provided mipmap level.
 		// It expects all the levels to be provided, which is not the case in TLJ.
 		// FIXME: Enable mipmapping on GLES2
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
+		if (OpenGLContext.type != OpenGL::kOGLContextGLES2) {
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 #endif
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -118,10 +122,7 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
 	assert(level < _levelCount);
 
-#if defined(USE_GLES2)
-	if (level == 0)
-#endif
-	{
+	if (level == 0 || OpenGLContext.type != OpenGL::kOGLContextGLES2) {
 		updateLevel(level, surface, palette);
 	}
 }

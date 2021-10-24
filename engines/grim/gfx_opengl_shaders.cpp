@@ -44,6 +44,7 @@
 #if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/surface.h"
+#include "graphics/opengl/context.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/bitmap.h"
@@ -2167,27 +2168,29 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 	Bitmap *bmp;
 
 	if (useStored) {
-#ifdef USE_GLES2
-		GLuint frameBuffer;
-		glGenFramebuffers(1, &frameBuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _storedDisplay, 0);
+		if (OpenGLContext.type == OpenGL::kOGLContextGLES2) {
+			GLuint frameBuffer;
+			glGenFramebuffers(1, &frameBuffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _storedDisplay, 0);
 
-		readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
+			readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDeleteFramebuffers(1, &frameBuffer);
-#else
-		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
-		char *buffer = new char[_screenWidth * _screenHeight * 4];
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glDeleteFramebuffers(1, &frameBuffer);
+#ifndef USE_GLES2
+		} else {
+			glBindTexture(GL_TEXTURE_2D, _storedDisplay);
+			char *buffer = new char[_screenWidth * _screenHeight * 4];
 
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		byte *rawBuf = (byte *)src.getPixels();
-		for (int i = 0; i < _screenHeight; i++) {
-			memcpy(&(rawBuf[(_screenHeight - i - 1) * _screenWidth * 4]), &buffer[4 * _screenWidth * i], _screenWidth * 4);
-		}
-		delete[] buffer;
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+			byte *rawBuf = (byte *)src.getPixels();
+			for (int i = 0; i < _screenHeight; i++) {
+				memcpy(&(rawBuf[(_screenHeight - i - 1) * _screenWidth * 4]), &buffer[4 * _screenWidth * i], _screenWidth * 4);
+			}
+			delete[] buffer;
 #endif
+		}
 	} else {
 		readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
 	}
