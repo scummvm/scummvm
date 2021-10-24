@@ -40,7 +40,7 @@ class ROQPlayer : public VideoPlayer {
 public:
 	ROQPlayer(GroovieEngine *vm);
 	~ROQPlayer();
-	void setOrigin(int16 x, int16 y);
+	void setOrigin(int16 x, int16 y) override;
 
 	Audio::SoundHandle getSoundHandle() {
 		return _soundHandle;

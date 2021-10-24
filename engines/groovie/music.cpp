@@ -771,8 +771,8 @@ void MusicPlayerTlc::updateVolume() {
 	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
 }
 
-void MusicPlayerTlc::unload() {
-	MusicPlayer::unload();
+void MusicPlayerTlc::unload(bool updateState) {
+	MusicPlayer::unload(updateState);
 
 	_vm->_system->getMixer()->stopHandle(_handle);
 	if (_file) {
