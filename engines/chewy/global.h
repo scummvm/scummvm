@@ -240,7 +240,7 @@ void free_buffers();
 
 int16 main_loop(int16 mode);
 
-void set_up_screen(int16 mode);
+void set_up_screen(SetupScreenMode mode);
 
 void kb_mov(int16 mode);
 

@@ -49,6 +49,10 @@ class ChewyEngine : public Engine {
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
+	/**
+	 * Returns engine features
+	 */
 	bool hasFeature(EngineFeature f) const override;
 
 	void initialize();
@@ -58,15 +62,23 @@ public:
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
 	TempFileArchive _tempFiles;
-	EventsManager *_events;
-	Sound *_sound;
-	Graphics::Screen *_screen;
+	EventsManager *_events = nullptr;
+	Sound *_sound = nullptr;
+	Graphics::Screen *_screen = nullptr;
+	bool _canLoadSave = false;
 public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
 	~ChewyEngine() override;
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+
+	bool canLoadGameStateCurrently() override {
+		return _canLoadSave;
+	}
+	bool canSaveGameStateCurrently() override {
+		return _canLoadSave;
+	}
 
 	/**
 	 * Load savegame data

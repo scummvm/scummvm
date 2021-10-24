@@ -37,10 +37,7 @@ Graphics::Screen *g_screen;
 ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 		: Engine(syst),
 		_gameDescription(gameDesc),
-		_rnd("chewy"),
-		_events(nullptr),
-		_screen(nullptr),
-		_sound(nullptr) {
+		_rnd("chewy") {
 
 	g_engine = this;
 	g_screen = nullptr;
