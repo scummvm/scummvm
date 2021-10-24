@@ -378,5 +378,5 @@ MusicDevice *MusicManager::detectDevice(int flags) {
 
 	}
 
-	return 0;
+	return getDevice("null");
 }
