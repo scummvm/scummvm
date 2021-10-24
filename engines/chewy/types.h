@@ -30,6 +30,8 @@
 
 namespace Chewy {
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct SpielerFlags {
 	byte R0SchleimWurf : 1;
 	byte R0KissenWurf : 1;
@@ -306,65 +308,68 @@ struct SpielerFlags {
 	byte flags31_4 : 1;
 	byte flags31_8 : 1;
 	byte flags31_10 : 1;
+	byte flags31_unused : 3;
 
 	// Further flags
 	uint8 flags32_1 : 1;
-	uint8 flags32_2 : 2;
-	uint8 flags32_4 : 3;
-	uint8 flags32_8 : 4;
-	uint8 flags32_10 : 5;
-	uint8 flags32_20 : 6;
-	uint8 flags32_40 : 7;
-	uint8 flags32_80 : 8;
+	uint8 flags32_2 : 1;
+	uint8 flags32_4 : 1;
+	uint8 flags32_8 : 1;
+	uint8 flags32_10 : 1;
+	uint8 flags32_20 : 1;
+	uint8 flags32_40 : 1;
+	uint8 flags32_80 : 1;
 
 	uint8 flags33_1 : 1;
-	uint8 flags33_2 : 2;
-	uint8 flags33_4 : 3;
-	uint8 flags33_8 : 4;
-	uint8 flags33_10 : 5;
-	uint8 flags33_20 : 6;
-	uint8 flags33_40 : 7;
-	uint8 flags33_80 : 8;
+	uint8 flags33_2 : 1;
+	uint8 flags33_4 : 1;
+	uint8 flags33_8 : 1;
+	uint8 flags33_10 : 1;
+	uint8 flags33_20 : 1;
+	uint8 flags33_40 : 1;
+	uint8 flags33_80 : 1;
 
 	uint8 flags34_1 : 1;
-	uint8 flags34_2 : 2;
-	uint8 flags34_4 : 3;
-	uint8 flags34_8 : 4;
-	uint8 flags34_10 : 5;
-	uint8 flags34_20 : 6;
-	uint8 flags34_40 : 7;
-	uint8 flags34_80 : 8;
+	uint8 flags34_2 : 1;
+	uint8 flags34_4 : 1;
+	uint8 flags34_8 : 1;
+	uint8 flags34_10 : 1;
+	uint8 flags34_20 : 1;
+	uint8 flags34_40 : 1;
+	uint8 flags34_80 : 1;
 
 	uint8 flags35_1 : 1;
-	uint8 flags35_2 : 2;
-	uint8 flags35_4 : 3;
-	uint8 flags35_8 : 4;
-	uint8 flags35_10 : 5;
-	uint8 flags35_20 : 6;
-	uint8 flags35_40 : 7;
-	uint8 flags35_80 : 8;
+	uint8 flags35_2 : 1;
+	uint8 flags35_4 : 1;
+	uint8 flags35_8 : 1;
+	uint8 flags35_10 : 1;
+	uint8 flags35_20 : 1;
+	uint8 flags35_40 : 1;
+	uint8 flags35_80 : 1;
 
 	uint8 flags36_1 : 1;
-	uint8 flags36_2 : 2;
-	uint8 flags36_4 : 3;
-	uint8 flags36_8 : 4;
-	uint8 flags36_10 : 5;
-	uint8 flags36_20 : 6;
-	uint8 flags36_40 : 7;
-	uint8 flags36_80 : 8;
+	uint8 flags36_2 : 1;
+	uint8 flags36_4 : 1;
+	uint8 flags36_8 : 1;
+	uint8 flags36_10 : 1;
+	uint8 flags36_20 : 1;
+	uint8 flags36_40 : 1;
+	uint8 flags36_80 : 1;
 
 	uint8 flags37_1 : 1;
-	uint8 flags37_2 : 2;
-	uint8 flags37_4 : 3;
-	uint8 flags37_8 : 4;
-	uint8 flags37_10 : 5;
-	uint8 flags37_20 : 6;
-	uint8 flags37_40 : 7;
-	uint8 flags37_80 : 8;
+	uint8 flags37_2 : 1;
+	uint8 flags37_4 : 1;
+	uint8 flags37_8 : 1;
+	uint8 flags37_10 : 1;
+	uint8 flags37_20 : 1;
+	uint8 flags37_40 : 1;
+	uint8 flags37_80 : 1;
 
 	uint8 flags38_1 : 1;
-	uint8 flags38_2 : 2;
-};
+	uint8 flags38_2 : 1;
+	uint8 flags38_unused : 6;
+} PACKED_STRUCT;
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 struct Spieler : public SpielerFlags {
 	Spieler() : SpielerFlags(), _flags(this) {
