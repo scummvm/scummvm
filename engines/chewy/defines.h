@@ -43,9 +43,11 @@ namespace Chewy {
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
-#define NO_SETUP 0
-
-#define DO_SETUP 1
+enum SetupScreenMode {
+	NO_SETUP = 0,
+	DO_SETUP = 1,
+	DO_MAIN_LOOP = 2
+};
 
 #define MIN_FAR_MEM 3000000
 #define MIN_LOW_MEM 100000

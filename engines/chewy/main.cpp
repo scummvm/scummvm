@@ -540,20 +540,24 @@ int16 main_loop(int16 mode) {
 	}
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
-		set_up_screen(DO_SETUP);
+		set_up_screen(DO_MAIN_LOOP);
 #ifdef DEMO
 	if (spieler.PersonRoomNr[P_CHEWY] > 24)
 		ende = 1;
 #endif
-	return (ende);
+	return ende;
 }
 
-void set_up_screen(int16 mode) {
+void set_up_screen(SetupScreenMode mode) {
 	int16 nr;
 	int16 tmp;
 	int16 i;
 	int16 *ScrXy;
 	int16 txt_nr;
+
+	bool isMainLoop = mode == DO_MAIN_LOOP;
+	if (isMainLoop)
+		mode = DO_SETUP;
 
 	if (flags.InitSound && spieler.SpeechSwitch)
 		ailsnd->serve_db_samples();
@@ -716,7 +720,10 @@ void set_up_screen(int16 mode) {
 		            &spieler.scrollx, &spieler.scrolly);
 
 	g_screen->update();
+
+	g_engine->_canLoadSave = isMainLoop;
 	g_events->update();
+	g_engine->_canLoadSave = false;
 }
 
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
