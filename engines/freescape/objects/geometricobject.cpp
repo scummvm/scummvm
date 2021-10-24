@@ -71,19 +71,19 @@ int GeometricObject::numberOfOrdinatesForType(Type type) {
 #pragma mark Construction/Destruction
 
 GeometricObject::GeometricObject(
-	Type _type,
-	uint16 _objectID,
-	uint16 _flags,
-	const Vector3d &_origin,
-	const Vector3d &_size,
+	Type type,
+	uint16 objectID,
+	uint16 flags,
+	const Math::Vector3d &origin,
+	const Math::Vector3d &size,
 	Common::Array<uint8> *_colours,
 	Common::Array<uint16> *_ordinates,
 	FCLInstructionVector _condition) {
-	type = _type;
-	flags = _flags;
-	objectID = _objectID;
-	origin = _origin;
-	size = _size;
+	_type = type;
+	_flags = flags;
+	_objectID = objectID;
+	_origin = origin;
+	_size = size;
 
 	if (_colours)
 		colours = new Common::Array<uint8>(*_colours);
@@ -98,17 +98,18 @@ GeometricObject::~GeometricObject() {
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
 	Type type = this->getType();
-	return (type >= Object::Line) || !size.x() || !size.y() || !size.z();
+	return (type >= Object::Line) || !_size.x() || !_size.y() || !_size.z();
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
 	//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 	if (this->getType() == Cube) {
 		//debug("Drawing cube!");
-		gfx->renderCube(origin, size, colours);
+		gfx->renderCube(_origin, _size, colours);
 	} else if (this->getType() == Rectangle) {
-		gfx->renderRectangle(origin, size, colours);
+		gfx->renderRectangle(_origin, _size, colours);
 	} else if (this->isPlanar()) {
-		gfx->renderPolygon(origin, ordinates, colours);
+		//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
+		gfx->renderPolygon(_origin, _size, ordinates, colours);
 	}
 }

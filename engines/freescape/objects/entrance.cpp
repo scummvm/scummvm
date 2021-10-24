@@ -12,12 +12,12 @@
 #pragma mark Construction/Destruction
 
 Entrance::Entrance(
-	uint16 _objectID,
-	const Vector3d &_origin,
-	const Vector3d &_rotation) {
-	objectID = _objectID;
-	origin = _origin;
-	rotation = _rotation;
+	uint16 objectID,
+	const Math::Vector3d &origin,
+	const Math::Vector3d &rotation) {
+	_objectID = objectID;
+	_origin = origin;
+	_rotation = rotation;
 }
 
 Entrance::~Entrance() {}

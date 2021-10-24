@@ -35,11 +35,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	// Do not initialize audio devices here
 	_hasReceivedTime = false;
 
-	_rotation = Vector3d(0.f, 0.f, 0.f);
-	_position = Vector3d(0.f, 0.f, 0.f);
-	_velocity = Vector3d(0.f, 0.f, 0.f);
-	_cameraFront = Vector3d(0.f, 0.f, 0.f);
-	_cameraRight = Vector3d(0.f, 0.f, 0.f);
+	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
+	_position = Math::Vector3d(0.f, 0.f, 0.f);
+	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
+	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
+	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
 	_movementSpeed = 4.5f;
 	_mouseSensitivity = 0.1f;
 	_scale = Math::Vector3d(0, 0, 0);
@@ -252,7 +252,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	if (_pitch < -180.0f)
 		_pitch = -180.0f;
 
-	Vector3d v;
+	Math::Vector3d v;
 	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
 	float y = sin(_pitch * M_PI / 180.0);
 	float z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
@@ -261,7 +261,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_cameraFront = v;
 
 	// // _right = _front x _up;
-	Vector3d up(0, 1, 0); // this should be const
+	Math::Vector3d up(0, 1, 0); // this should be const
 	v = Math::Vector3d::crossProduct(_cameraFront, up);
 	v.normalize();
 	_cameraRight = v;

@@ -17,7 +17,7 @@ namespace Freescape {
 static Object *load8bitObject(StreamLoader &stream) {
 	
 	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
-	Vector3d position, v;
+	Math::Vector3d position, v;
 
 	position.x() = stream.get8() * 32;
 	position.y() = stream.get8() * 32;

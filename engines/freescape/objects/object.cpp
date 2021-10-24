@@ -10,11 +10,11 @@
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
 
-Object::Type Object::getType() { return type; }
-uint16 Object::getObjectID() { return objectID; }
-uint16 Object::getObjectFlags() { return flags; }
-Vector3d Object::getOrigin() { return origin; }
-Vector3d Object::getSize() { return size; }
+Object::Type Object::getType() { return _type; }
+uint16 Object::getObjectID() { return _objectID; }
+uint16 Object::getObjectFlags() { return _flags; }
+Math::Vector3d Object::getOrigin() { return _origin; }
+Math::Vector3d Object::getSize() { return _size; }
 
 //void Object::draw(Freescape::Renderer *gfx) {
 //	gfx;
