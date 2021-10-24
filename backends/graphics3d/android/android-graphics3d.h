@@ -162,6 +162,7 @@ private:
 	int _cursorX, _cursorY;
 
 	// Overlay layer
+	GLES5551Texture *_overlay_background;
 	GLES5551Texture *_overlay_texture;
 	bool _show_overlay;
 
