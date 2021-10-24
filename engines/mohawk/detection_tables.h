@@ -1063,6 +1063,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"seussabc",
 			"Demo",
+			AD_ENTRY1("ABC.LB", "aef2c88f4dcc2c3a47ed8093f6e27bc9"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"seussabc",
+			"Demo",
 			AD_ENTRY1("BookOutline", "17d72660680ae32cd7c560d0cf04d2ef"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
