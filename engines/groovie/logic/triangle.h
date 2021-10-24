@@ -38,11 +38,17 @@ private:
 	int8 sub02();
 	int8 sub03(int8 player);
 	void sub05(int8 *triangleCells, int8 *a2, int8 *a3);
+	void sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
+	int8 sub09(int8 key, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells);
+	int8 sub10(int8 key, int8 *a2, int8 *triangleCells);
+	int8 sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4);
 	void setCell(int8 cellnum, int8 val);
 
 private:
 	int _triangleCellCount;
 	int8 _triangleCells[66];
+
+	Common::RandomSource _random;
 };
 
 } // End of Groovie namespace

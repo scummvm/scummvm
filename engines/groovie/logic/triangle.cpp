@@ -32,7 +32,7 @@ extern const int8 triangleLookup3[12];
 extern const int8 triangleLogicTable[924];
 }
 
-TriangleGame::TriangleGame() {
+TriangleGame::TriangleGame() : _random("TriangleGame") {
 	init();
 }
 
@@ -106,11 +106,78 @@ int8 TriangleGame::sub02() {
 }
 
 int8 TriangleGame::sub03(int8 player) {
-	return 0;
+	int8 pickedMoves[4];
+	int8 tempTriangle1[68];
+	int8 tempTriangle2[68];
+	int8 a6a[132];
+	int8 tempTriangle3[68];
+	int8 tempMoves[132];
+	int8 pos;
+
+	if (_triangleCellCount >= 2) {
+		sub05(_triangleCells, tempMoves, tempTriangle3);
+		sub07(tempMoves, _triangleCells, tempTriangle3, tempTriangle2, tempTriangle1, a6a);
+
+		// Find move until valid one
+		(pos = sub09(player, tempTriangle2, tempTriangle1, a6a, _triangleCells)) != 66 ||
+		(pos = sub10(player, tempTriangle1, _triangleCells)) != 66 ||
+		(pos = sub12(player, a6a, _triangleCells, tempTriangle1)) != 66 ||
+		(pos = sub09(3 - player, tempTriangle2, tempTriangle1, a6a, _triangleCells));
+
+		if (pos == 66) {
+			pos = _random.getRandomNumber(65);
+
+			int8 oldPos = pos;
+			while (_triangleCells[pos]) {
+				if (++pos > 65)
+					pos = 0;
+				if (oldPos == pos) {
+					pos = 66;
+					break;
+				}
+			}
+		}
+	} else {
+		int8 max = 0;
+		if (!_triangleCells[24]) {
+			pickedMoves[0] = 24;
+			max = 1;
+		}
+
+		if (!_triangleCells[31])
+			pickedMoves[max++] = 31;
+		if (!_triangleCells[32])
+			pickedMoves[max++] = 32;
+		if (max)
+			pos = pickedMoves[_random.getRandomNumber(max - 1)];
+		else
+			pos = tempMoves[0]; // This is uninitalized in this branch
+	}
+
+	if (pos != 66)
+		setCell(pos, player);
+
+	return pos;
 }
 
 void TriangleGame::sub05(int8 *triangleCells, int8 *a2, int8 *a3) {
 }
+
+void TriangleGame::sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+}
+
+int8 TriangleGame::sub09(int8 key, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells) {
+	return 0;
+}
+
+int8 TriangleGame::sub10(int8 key, int8 *a2, int8 *triangleCells) {
+	return 0;
+}
+
+int8 TriangleGame::sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4) {
+	return 0;
+}
+
 
 void TriangleGame::setCell(int8 cellnum, int8 val) {
 	if (cellnum >= 0 && cellnum < 66) {
