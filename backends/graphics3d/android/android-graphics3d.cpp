@@ -61,6 +61,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_cursorX(0),
 	_cursorY(0),
 	_overlay_texture(0),
+	_overlay_background(nullptr),
 	_show_overlay(false),
 	_mouse_texture(0),
 	_mouse_texture_palette(0),
@@ -72,6 +73,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 {
 	_game_texture = new GLESFakePalette565Texture();
 	_overlay_texture = new GLES5551Texture();
+	_overlay_background = new GLES5551Texture();
 	_mouse_texture_palette = new GLESFakePalette5551Texture();
 	_mouse_texture = _mouse_texture_palette;
 
@@ -92,6 +94,7 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	delete _frame_buffer;
 	delete _game_texture;
 	delete _overlay_texture;
+	delete _overlay_background;
 	delete _mouse_texture_palette;
 	delete _mouse_texture_rgb;
 
@@ -138,6 +141,11 @@ void AndroidGraphics3dManager::initSurface() {
 	if (_game_texture)
 		_game_texture->reinit();
 
+	// We don't have any content to display: just make sure surface is clean
+	if (_overlay_background) {
+		_overlay_background->release();
+	}
+
 	if (_overlay_texture) {
 		_overlay_texture->reinit();
 		initOverlay();
@@ -169,6 +177,9 @@ void AndroidGraphics3dManager::deinitSurface() {
 
 	if (_overlay_texture)
 		_overlay_texture->release();
+
+	if (_overlay_background)
+		_overlay_background->release();
 
 	if (_mouse_texture)
 		_mouse_texture->release();
@@ -223,6 +234,9 @@ void AndroidGraphics3dManager::updateScreen() {
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
 
+		if (_overlay_background && _overlay_background->getTextureName() != 0) {
+			GLCALL(_overlay_background->drawTextureRect());
+		}
 		GLCALL(_overlay_texture->drawTextureRect());
 	}
 
@@ -318,10 +332,33 @@ bool AndroidGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 void AndroidGraphics3dManager::showOverlay() {
 	ENTER();
 
+	if (_show_overlay) {
+		return;
+	}
+
 	JNI::setTouch3DMode(false);
 
 	_show_overlay = true;
 	_force_redraw = true;
+
+	// If there is a game running capture the screen, so that it can be shown "below" the overlay.
+	if (_overlay_background) {
+		_overlay_background->release();
+
+		if (g_engine) {
+			if (_frame_buffer) {
+				_frame_buffer->detach();
+				glViewport(0,0, JNI::egl_surface_width, JNI::egl_surface_height);
+			}
+			_overlay_background->allocBuffer(_overlay_texture->width(), _overlay_texture->height());
+			_overlay_background->setDrawRect(0, 0,
+				JNI::egl_surface_width, JNI::egl_surface_height);
+			Graphics::Surface *background = _overlay_background->surface();
+			glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, background->getPixels());
+			if (_frame_buffer)
+				_frame_buffer->attach();
+		}
+	}
 
 	updateEventScale();
 
@@ -333,7 +370,13 @@ void AndroidGraphics3dManager::showOverlay() {
 void AndroidGraphics3dManager::hideOverlay() {
 	ENTER();
 
+	if (!_show_overlay) {
+		return;
+	}
+
 	_show_overlay = false;
+
+	_overlay_background->release();
 
 	JNI::setTouch3DMode(true);
 
@@ -749,6 +792,9 @@ void AndroidGraphics3dManager::updateScreenRect() {
 	glScissor(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	_overlay_texture->setDrawRect(rect);
+
+	// Clear the overlay background so it is not displayed distorted while resizing
+	_overlay_background->release();
 
 	uint16 w = _game_texture->width();
 	uint16 h = _game_texture->height();
