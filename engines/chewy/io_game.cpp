@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "chewy/chewy.h"
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/io_game.h"
@@ -606,79 +607,39 @@ int16 io_game::get_files(char *fname) {
 	return 0;
 }
 
-void io_game::save(int16 y, int16 nr, char *fname) {
-	char str[4];
-	char path[80];
-	int16 abfrage = 0;
-	int16 j;
-	Stream *handle;
-	if (nr + 1 < 10)
-		j = 2;
-	else
-		j = 1;
-	strcpy(str, "000");
-	itoa(nr + 1, str + j, 10);
-	strcpy(path, fname);
-	strcat(path, str);
+void io_game::save(int16 y, int16 slotNum, char *fname) {
 	cur->wait_taste_los(true);
 	in->alter_kb_handler();
 	cur->hide_cur();
 	out->pop_box
 	(io->popx + 8, y, io->popx + 131, y + 10, io->m_col[1], io->m_col[0], io->m_col[4]);
-	// Eintrag lÃ¶schen
-	out->printxy(io->popx + 10, y + 2, io->m_col[0], 300, scr_width, "%d.\0", nr + 1);
-	if (file_find_g[nr][0] == 0) {
-		abfrage = out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[nr][1]);
+
+	out->printxy(io->popx + 10, y + 2, io->m_col[0], 300, scr_width, "%d.\0", slotNum + 1);
+	if (file_find_g[slotNum][0] == 0) {
+		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
 	} else {
-		handle = chewy_fopen(path, "rb");
+		//handle = chewy_fopen(path, "rb");
 		out->printxy(io->popx + 167, io->popy + 85, io->m_col[1], 300, scr_width, FSTRING7);
-		chewy_fclose(handle);
-		abfrage = out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[nr][1]);
+		//chewy_fclose(handle);
+		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
 
 	}
 	in->neuer_kb_handler(kbinfo);
-	mark_eintrag(y, nr);
+	mark_eintrag(y, slotNum);
 	out->box_fill(io->popx + 167, io->popy + 70, io->popx + 244, io->popy + 100, io->m_col[5]);
 
 	cur->show_cur();
-	abfrage = 13;
-	if (abfrage == 13) {
 
-		handle = chewy_fopen(path, "wb+");
-		if (handle) {
-			chewy_fwrite(io->id, sizeof(io->id), 1, handle);
-			chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
-
-			(*io->save_funktion)(dynamic_cast<Common::WriteStream *>(handle));
-			chewy_fclose(handle);
-		}
-	}
+	Common::String desc(&file_find_g[slotNum][1]);
+	(void)g_engine->saveGameState(slotNum, desc);
 }
 
-void io_game::load(int16 nr, char *fname) {
-	Stream *handle;
-	char str[4];
-	char path[80];
-	int16 j;
+void io_game::load(int16 slotNum, char *fname) {
 	get_files(io->save_path);
 
 	cur->hide_cur();
-	if (file_find_g[nr][0] == 1) {
-		if (nr + 1 < 10)
-			j = 2;
-		else
-			j = 1;
-		strcpy(str, "000\0");
-		itoa(nr + 1, str + j, 10);
-		strcpy(path, fname);
-		strcat(path, str);
-		handle = chewy_fopen(path, "rb");
-		if (handle) {
-			chewy_fseek(handle, sizeof(io->id) + USER_NAME + 2, 0);
-
-			(*io->load_funktion)(dynamic_cast<Common::SeekableReadStream *>(handle));
-			chewy_fclose(handle);
-		}
+	if (file_find_g[slotNum][0] == 1) {
+		(void)g_engine->loadGameState(slotNum);
 	}
 }
 
@@ -699,27 +660,9 @@ char *io_game::io_init(iog_init *iostruc) {
 	return (&file_find_g[0][0]);
 }
 
-void io_game::save_entry(int16 nr, char *fname) {
-	char str[4];
-	char path[80];
-	int16 j;
-	Stream *handle;
-	if (nr + 1 < 10)
-		j = 2;
-	else
-		j = 1;
-	strcpy(str, "000");
-	itoa(nr + 1, str + j, 10);
-	strcpy(path, fname);
-	strcat(path, str);
-	handle = chewy_fopen(path, "wb+");
-	if (handle) {
-		chewy_fwrite(io->id, sizeof(io->id), 1, handle);
-		chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
-
-		(*io->save_funktion)(dynamic_cast<Common::WriteStream *>(handle));
-		chewy_fclose(handle);
-	}
+void io_game::save_entry(int16 slotNum, char *fname) {
+	Common::String desc(&file_find_g[slotNum][1]);
+	g_engine->saveGameState(slotNum, desc);
 }
 
 } // namespace Chewy

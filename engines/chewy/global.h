@@ -331,9 +331,6 @@ void init_room();
 
 int16 call_fileio(int16 palette, int16 mode);
 
-void save(Common::WriteStream *ws);
-void load(Common::SeekableReadStream *in);
-
 // FIXME: was FILE*
 void append_adsh(void *shandle);
 
