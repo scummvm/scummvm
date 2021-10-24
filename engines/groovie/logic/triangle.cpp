@@ -211,8 +211,83 @@ void TriangleGame::sub05(int8 *triangleCells, int8 *tempMoves, int8 *tempTriangl
 void TriangleGame::sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
 }
 
-int8 TriangleGame::sub09(int8 player, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells) {
-	return 0;
+int8 TriangleGame::sub09(int8 player, int8 *tempTriangle2, int8 *tempTriangle1, int8 *a4, int8 *triangleCells) {
+	int8 movesTable[280];
+
+	int numDir1 = 0;
+	int numDir2 = 0;
+	int numDir3 = 0;
+	int numDir4 = 0;
+	int row = 0;
+
+	for (const int8 *tPtr = &triangleLogicTable[6]; tPtr < &triangleLogicTable[924]; tPtr += 14, row++) {
+		if (!triangleCells[row] && (tempTriangle1[row] & (player == 1 ? 1 : 64)) != 0) {
+			int c1 = 0, c2 = 0, c3 = 0;
+			int mask = 0;
+
+			copyLogicRow(row, player, movesTable);
+
+			for (int8 *movPtr = movesTable; *movPtr != 66; ++movPtr) {
+				int row2 = 0;
+
+				mask |= tempTriangle1[*movPtr];
+
+				for (const int8 *tPtr2 = &triangleLogicTable[6]; tPtr2 < &triangleLogicTable[924]; tPtr2 += 14, row2++) {
+					if (tempTriangle2[row2] == tempTriangle2[*movPtr]) {
+						c1 += (tPtr2[0] == 0) ? 1 : 0;
+						c2 += (tPtr2[1] == 0) ? 1 : 0;
+						c3 += (tPtr2[2] == 0) ? 1 : 0;
+					}
+				}
+			}
+
+			if (c1)
+				mask &= ~4u;
+			if (c2)
+				mask &= ~8u;
+			if (c3)
+				mask &= ~2u;
+
+			if (tPtr[0] || c1) {
+				if (tPtr[1] || c2) {
+					if (tPtr[2] || c3) {
+						if (mask) {
+							if (mask == 0xe) {
+								movesTable[numDir2 + 76] = row;
+								numDir2++;
+							} else if (mask == 2 || mask == 8 || mask == 4) {
+								movesTable[numDir4 + 212] = row;
+								numDir4++;
+							} else {
+								movesTable[numDir3 + 144] = row;
+								numDir3++;
+							}
+						}
+					} else {
+						movesTable[numDir1 + 8] = row;
+						numDir1++;
+					}
+				} else {
+					movesTable[numDir1 + 8] = row;
+					numDir1++;
+				}
+			} else {
+				movesTable[numDir1 + 8] = row;
+				numDir1++;
+			}
+		}
+	}
+
+	if (numDir1)
+		return movesTable[_random.getRandomNumber(numDir1 - 1) + 8];
+	if (numDir2)
+		return movesTable[_random.getRandomNumber(numDir2 - 1) + 76];
+	if (numDir3)
+		return movesTable[_random.getRandomNumber(numDir3 - 1) + 144];
+	if (numDir4)
+		return movesTable[_random.getRandomNumber(numDir4 - 1) + 212];
+
+	return 66;
 }
 
 int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
@@ -257,6 +332,30 @@ int8 TriangleGame::sub12(int8 player, int8 *a2, int8 *triangleCells, int8 *a4) {
 	return 0;
 }
 
+int TriangleGame::sub13(int8 row, int8 *triangleCells, int8 *moves) {
+	int pos = 0;
+
+	for (int i = 0; i < 6; i++) {
+		int8 v6 = triangleLogicTable[14 * row + i];
+
+		if (v6 != -1 && !triangleCells[v6]) {
+			int v7 = (i + 1) % 6;
+			int8 v8 = triangleLogicTable[14 * row + v7];
+
+			if (v8 != -1 && !triangleCells[v8]) {
+				int8 v9 = triangleLogicTable[14 * v6 + v7];
+
+				if (v9 != -1 && !triangleCells[v9])
+					moves[pos++] = v9;
+			}
+		}
+	}
+
+	moves[pos] = 66;
+
+	return pos;
+}
+
 void TriangleGame::setCell(int8 cellnum, int8 val) {
 	if (cellnum >= 0 && cellnum < 66) {
 		++_triangleCellCount;
@@ -281,6 +380,26 @@ void TriangleGame::replaceCells(int8 *tempTriangle, int limit, int8 from, int8 t
 		if (tempTriangle[i] == from)
 			tempTriangle[i] = to;
 	}
+}
+
+int copyLookup(int8 *lookup, int8 *from, int8 *dest){
+	int counter = 0;
+
+	if (*lookup == 66) {
+		*dest = 66;
+		return counter;
+	}
+
+	for (; *lookup != 66; lookup++) {
+		for (int8 *ptr = from; *ptr != 66; ptr++) {
+			if (*ptr == *lookup )
+				dest[counter++] = *lookup;
+		}
+	}
+
+	dest[counter] = 66;
+
+	return counter;
 }
 
 namespace {

@@ -42,9 +42,11 @@ private:
 	int8 sub09(int8 key, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells);
 	int8 sub10(int8 key, int8 *a2, int8 *triangleCells);
 	int8 sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4);
+	int sub13(int8 row, int8 *triangleCells, int8 *moves);
 	void setCell(int8 cellnum, int8 val);
 	void copyLogicRow(int row, int8 key, int8 *dest);
 	void replaceCells(int8 *tempTriangle, int limit, int8 from, int8 to);
+	int copyLookup(int8 *lookup, int8 *from, int8 *dest);
 
 private:
 	int _triangleCellCount;
