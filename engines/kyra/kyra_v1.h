@@ -300,6 +300,18 @@ protected:
 	int o1_blockOutWalkableRegion(EMCState *script);
 	int o1_playSoundEffect(EMCState *script);
 
+	// script debug
+#ifndef RELEASE_BUILD
+	int16 emcSafeReadStack(EMCState *s, int x, int line, const char *file) {
+		if (s->sp+x > EMCState::kStackLastEntry) {
+			//assert(sp+x < kStackSize);
+			warning("Invalid EMC stack read attempt from: '%s', line %d", file, line);
+			return 0;
+		}
+		return s->stack[s->sp+x];
+	}
+#endif
+
 	// items
 	int _mouseState;
 
