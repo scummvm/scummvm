@@ -88,6 +88,12 @@ typedef Common::Array<MVideo> Videos;
 
 class Hotspot {
 public:
+	Hotspot(HotspotType type_, Common::String stype_, Common::Rect rect_ = Common::Rect(0, 0, 0, 0)) {
+		type = type_;
+		stype = stype_;
+		rect = rect_;
+		smenu = nullptr;
+	}
 	HotspotType type;
 	Common::String stype;
 	Common::String stypeFlag;
