@@ -4241,7 +4241,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Lataa silti"
 
-#: engines/cryomni3d/metaengine.cpp:142
+#: engines/cryomni3d/metaengine.cpp:147
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685-tukea ei ole käännetty mukaan"
 

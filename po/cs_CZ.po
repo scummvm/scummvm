@@ -4271,7 +4271,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Přesto přidat"
 
-#: engines/cryomni3d/metaengine.cpp:142
+#: engines/cryomni3d/metaengine.cpp:147
 #, fuzzy
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Zakompilované funkce:"

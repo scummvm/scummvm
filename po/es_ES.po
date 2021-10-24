@@ -4272,7 +4272,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Cargar de todas maneras"
 
-#: engines/cryomni3d/metaengine.cpp:142
+#: engines/cryomni3d/metaengine.cpp:147
 msgid "Versailles 1685 support is not compiled in"
 msgstr "No se ha incluido el soporte para Versailles 1685."
 

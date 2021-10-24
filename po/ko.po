@@ -4207,7 +4207,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "확인"
 
-#: engines/cryomni3d/metaengine.cpp:142
+#: engines/cryomni3d/metaengine.cpp:147
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 지원이 컴파일 되지 않음"
 

@@ -4306,7 +4306,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Jolastu berdin-berdin"
 
-#: engines/cryomni3d/metaengine.cpp:142
+#: engines/cryomni3d/metaengine.cpp:147
 #, fuzzy
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Ezaugarri erantsiak:"
