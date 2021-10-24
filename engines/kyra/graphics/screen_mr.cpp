@@ -131,7 +131,7 @@ void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2
 	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
 }
 
-Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _pitch(pitch), _border(false) {
+Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _twoByteNumChar(0), _pitch(pitch), _border(false) {
 	assert(_oneByteData);
 	_textColor[0] = _textColor[1] = 0;
 }
@@ -143,6 +143,7 @@ Big5Font::~Big5Font() {
 bool Big5Font::load(Common::SeekableReadStream &data) {
 	delete[] _twoByteData;
 	_twoByteData = 0;
+	_twoByteNumChar = _twoByteDataSize = 0;
 
 	if (!data.size())
 		return false;
@@ -154,6 +155,7 @@ bool Big5Font::load(Common::SeekableReadStream &data) {
 
 	data.read(dst, _twoByteDataSize);
 	_twoByteData = dst;
+	_twoByteNumChar = _twoByteDataSize / 28;
 
 	return true;
 }
@@ -184,7 +186,7 @@ void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		glyphData = &_oneByteData[128];
 	} else if (c & 0x80) {
 		c = ((c & 0x7F00) >> 2) | (c & 0x3F);
-		assert(c * 28 < _twoByteDataSize);
+		assert(c < _twoByteNumChar);
 		glyphData = &_twoByteData[c * 28];
 		w = 15;
 	}

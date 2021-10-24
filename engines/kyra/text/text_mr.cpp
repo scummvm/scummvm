@@ -48,19 +48,18 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 	if (_vm->_lang == 3) {
 		Screen::FontId curFont = _screen->setFont(Screen::FID_CHINESE_FNT);
 		int textLen = Common::strnlen(p, sizeof(_talkBuffer));
-		int maxTextWidth;
 
 		if (textLen > 68) {
-			maxTextWidth = ((textLen + 3) / 3) & ~1;
+			int maxTextWidth = ((textLen + 3) / 3) & ~1;
 			for (int i = textLen + 1; i >= maxTextWidth; --i)
 				p[i + 1] = p[i];
 			p[maxTextWidth] = '\r';
-			++p;
+			p += (maxTextWidth + 1);
 			textLen -= maxTextWidth;
 		}
 
 		if (textLen > 34) {
-			maxTextWidth = ((textLen + 2) / 2) & ~1;
+			int maxTextWidth = ((textLen + 2) / 2) & ~1;
 			for (int i = textLen + 1; i >= maxTextWidth; --i)
 				p[i + 1] = p[i];
 			p[maxTextWidth] = '\r';
