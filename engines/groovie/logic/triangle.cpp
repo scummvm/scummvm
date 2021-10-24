@@ -160,7 +160,52 @@ int8 TriangleGame::sub03(int8 player) {
 	return pos;
 }
 
-void TriangleGame::sub05(int8 *triangleCells, int8 *a2, int8 *a3) {
+void TriangleGame::sub05(int8 *triangleCells, int8 *tempMoves, int8 *tempTriangle) {
+	int8 dest[4];
+
+	for (int i = 0; i < 66; i++)
+		tempTriangle[i] = triangleCells[i];
+
+	int v16 = 3;
+
+	for (int j = 0; j < 66; ++j) {
+		if (triangleCells[j]) {
+			bool flag = false;
+
+			copyLogicRow(j, triangleCells[j], dest);
+			for (int8 *k = dest; *k != 66; k++) {
+				if (j > *k) {
+					if (flag) {
+						if (tempTriangle[j] != tempTriangle[*k])
+							replaceCells(tempTriangle, j, tempTriangle[j], tempTriangle[*k]);
+					} else {
+						flag = true;
+						tempTriangle[j] = tempTriangle[*k];
+					}
+				}
+			}
+			if (!flag)
+				tempTriangle[j] = v16++;
+		}
+	}
+
+	int v11 = 0;
+
+	if (v16 > 3) {
+		for (int v12 = 3; v12 < v16; v12++) {
+			int v14 = v11;
+
+			for (int m = 0; m < 66; m++) {
+				if (tempTriangle[m] == v12)
+					tempMoves[v11++] = m;
+			}
+
+			if (v11 != v14)
+				tempMoves[v11++] = 66;
+		}
+	}
+
+	tempMoves[v11] = 66;
 }
 
 void TriangleGame::sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
@@ -171,10 +216,10 @@ int8 TriangleGame::sub09(int8 player, int8 *a2, int8 *a3, int8 *a4, int8 *triang
 }
 
 int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
-	int8 *destPtr; // ecx
-	byte mask; // [esp+Fh] [ebp-51h]
-	int counter; // [esp+10h] [ebp-50h]
-	int8 dest[76]; // [esp+14h] [ebp-4Ch] BYREF
+	int8 *destPtr;
+	byte mask;
+	int counter;
+	int8 dest[76];
 
 	mask = 0;
 	counter = 0;
@@ -229,6 +274,13 @@ void TriangleGame::copyLogicRow(int row, int8 key, int8 *dest) {
 	}
 
 	dest[pos] = 66;
+}
+
+void TriangleGame::replaceCells(int8 *tempTriangle, int limit, int8 from, int8 to) {
+	for (int i = 0; i <= limit; ++i) {
+		if (tempTriangle[i] == from)
+			tempTriangle[i] = to;
+	}
 }
 
 namespace {
