@@ -42,7 +42,7 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/context.h"
 #endif
 
@@ -272,7 +272,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		initGraphics(screenW, screenH, nullptr);
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 #endif
 
@@ -296,12 +296,12 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	}
 
 	GfxBase *renderer = nullptr;
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}

@@ -25,7 +25,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
@@ -303,4 +303,4 @@ void BaseSurfaceOpenGL3D::setTexture() {
 
 } // End of namespace Wintermute
 
-#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)

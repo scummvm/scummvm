@@ -162,7 +162,7 @@ _fluidlite=auto
 _glew=auto
 _opengl_mode=auto
 _opengl_game=auto
-_opengl_game_classic=no
+_opengl_game_classic=auto
 _opengl_game_shaders=auto
 _opengl_game_es2=no
 _tinygl=yes
@@ -1170,6 +1170,7 @@ for ac_option in $@; do
 	--enable-glew)                _glew=yes              ;;
 	--disable-glew)               _glew=no               ;;
 	--disable-opengl-game)        _opengl_game=no        ;;
+	--disable-opengl-game-classic) _opengl_game_classic=no ;;
 	--disable-opengl-game-shaders) _opengl_game_shaders=no ;;
 	--force-opengl-game-es2)      _opengl_game_es2=yes   ;;
 	--enable-tinygl)              _tinygl=yes            ;;
@@ -5529,8 +5530,7 @@ EOF
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
 				then
 				_opengl_game_es2=yes
-				append_var LIBS "$lib"
-				append_var LIBS_3D "$lib"
+				append_var OPENGL_LIBS "$lib"
 				break
 			fi
 		done
@@ -5556,7 +5556,9 @@ EOF
 		append_var INCLUDES "$OPENGL_CFLAGS"
 		append_var LIBS "$OPENGL_LIBS"
 		append_var LIBS_3D "$OPENGL_LIBS"
-		_opengl_game_classic=yes
+		if test "$_opengl_game_classic" = auto ; then
+			_opengl_game_classic=yes
+		fi
 		if test "$_opengl_game_shaders" = auto; then
 			_opengl_game_shaders=$_glew
 		fi
@@ -5564,7 +5566,16 @@ EOF
 			echo "WARNING: OpenGL Shader support requires GLEW!"
 			_opengl_game_shaders=no
 		fi
+	elif test "$_opengl_game_es2" = "yes" ; then
+		append_var INCLUDES "$OPENGL_CFLAGS"
+		append_var LIBS "$OPENGL_LIBS"
+		append_var LIBS_3D "$OPENGL_LIBS"
+		_opengl_game_classic=no
+		if test "$_opengl_game_shaders" = auto ; then
+			_opengl_game_shaders=yes
+		fi
 	else
+		_opengl_game_classic=no
 		_opengl_game_shaders=no
 	fi
 	cc_check_clean

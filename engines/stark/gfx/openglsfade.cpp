@@ -24,7 +24,7 @@
 
 #include "engines/stark/gfx/opengls.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/shader.h"
 
@@ -55,4 +55,4 @@ void OpenGLSFadeRenderer::render(float fadeLevel) {
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)

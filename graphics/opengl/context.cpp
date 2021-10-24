@@ -29,7 +29,7 @@
 
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 namespace Common {
 DECLARE_SINGLETON(OpenGL::ContextGL);

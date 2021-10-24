@@ -30,7 +30,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
 
-#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
@@ -185,5 +185,5 @@ bool ShadowVolumeOpenGL::initMask() {
 
 } // namespace Wintermute
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME)
 

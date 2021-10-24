@@ -30,7 +30,7 @@
 
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/context.h"
 #endif
 
@@ -46,14 +46,14 @@ Driver *Driver::create() {
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!softRenderer) {
 		initGraphics3d(kOriginalWidth, kOriginalHeight);
 	} else {
 #endif
 		initGraphics(kOriginalWidth, kOriginalHeight, nullptr);
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	}
 #endif
 
@@ -64,13 +64,13 @@ Driver *Driver::create() {
 
 	Driver *driver = nullptr;
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	bool backendCapableOpenGLShaders = g_system->hasFeature(OSystem::kFeatureOpenGLForGame) && OpenGLContext.shadersSupported;
 	if (backendCapableOpenGLShaders && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		driver = new OpenGLSDriver();
 	}
 #endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		driver = new OpenGLDriver();

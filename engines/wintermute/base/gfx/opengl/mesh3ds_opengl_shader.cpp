@@ -23,7 +23,7 @@
 #include "engines/wintermute/wintypes.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl_shader.h"
 
@@ -70,4 +70,4 @@ void Mesh3DSOpenGLShader::render() {
 
 } // namespace Wintermute
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
