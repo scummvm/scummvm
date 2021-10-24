@@ -33,9 +33,14 @@ static void syncArray(Common::Serializer &s, int16 *arr, size_t count) {
 		s.syncAsSint16LE(arr[i]);
 }
 
+#define SPIELER_FLAGS_SIZE 38
+
 bool Spieler::synchronize(Common::Serializer &s) {
+	if (sizeof(SpielerFlags) != SPIELER_FLAGS_SIZE)
+		error("Invalid flags structure size");
+
 	// Sync the structure's bitflags
-	s.syncBytes((byte *)_flags, sizeof(SpielerFlags));
+	s.syncBytes((byte *)_flags, SPIELER_FLAGS_SIZE);
 
 	syncArray(s, Ats, ROOM_ATS_MAX * 3);
 	syncArray(s, InvAts, MAX_MOV_OBJ * 3);

@@ -88,19 +88,21 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (!spieler.synchronize(s)) {
 		fcode = READFEHLER;
 		modul = DATEI;
+		return Common::kReadingFailed;
+
 	} else {
 		flags.LoadGame = true;
 		ERROR
 
-			if (spieler.inv_cur == true && spieler.AkInvent != -1) {
-				menu_item = CUR_USE;
-			}
+		if (spieler.inv_cur == true && spieler.AkInvent != -1) {
+			menu_item = CUR_USE;
+		}
 
 		if (spieler.AkInvent != -1)
 			spieler.room_m_obj[spieler.AkInvent].RoomNr = -1;
 		room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 		ERROR
-			load_chewy_taf(spieler.ChewyAni);
+		load_chewy_taf(spieler.ChewyAni);
 
 		fx_blende = 1;
 		room->calc_invent(&room_blk, &spieler);
@@ -119,9 +121,9 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		enter_room(-1);
 		flags.LoadGame = false;
-	}
 
-	return Common::kNoError;
+		return Common::kNoError;
+	}
 }
 
 Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
@@ -135,14 +137,8 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 		spieler.Phase[i] = person_end_phase[i];
 	}
 
-	if (!spieler.synchronize(s)) {
-		fcode = WRITEFEHLER;
-		modul = DATEI;
-	} else {
-		ERROR
-	}
-
-	return Common::kNoError;
+	return spieler.synchronize(s) ? Common::kNoError :
+		Common::kWritingFailed;
 }
 
 } // End of namespace Chewy
