@@ -218,13 +218,14 @@ void AndroidGraphics3dManager::updateScreen() {
 
 	// We don't use depth stencil to draw on screen
 	glDisable(GL_DEPTH_TEST);
+	// We do blend though
+	glEnable(GL_BLEND);
 
 	// clear pointer leftovers in dead areas
 	clearScreen(kClear);
 
 	_game_texture->drawTextureRect();
 	if (!_show_overlay) {
-		glEnable(GL_BLEND);
 		dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 	}
 
