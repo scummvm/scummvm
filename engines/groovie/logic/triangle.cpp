@@ -208,7 +208,173 @@ void TriangleGame::sub05(int8 *triangleCells, int8 *tempMoves, int8 *tempTriangl
 	tempMoves[v11] = 66;
 }
 
-void TriangleGame::sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+void TriangleGame::sub07(int8 *tempMoves, int8 *triangleCells, int8 *tempTriangle3, int8 *tempTriangle2, int8 *tempTriangle1, int8 *tempMoves2) {
+	int8 singleRow[8];
+	int8 tempTriangle[68];
+	int8 routes[4356];
+
+	for (int i = 0; i < 66; i++) {
+		tempTriangle2[i] = tempTriangle3[i];
+		tempTriangle1[i] = 0;
+	}
+
+	if (*tempMoves != 66) {
+		for (int8 *ptr1 = tempMoves; *ptr1 != 66; ptr1++) {
+			int8 *v45 = &routes[66 * tempTriangle3[*ptr1]];
+			*v45 = 66;
+
+			while (*ptr1 != 66) {
+				copyLogicRow(*ptr1++, 0, singleRow);
+				collapseLoops(v45, singleRow);
+			}
+		}
+
+		for (int8 *ptr2 = tempMoves; *ptr2 != 66; ptr2++) {
+			int8 *j;
+
+			for (j = ptr2; *j != 66; j++)
+				;
+			for (int8 *k = j + 1; *k != 66; k++) {
+				if (triangleCells[*k] == triangleCells[*ptr2]) {
+					int8 val1 = tempTriangle2[*k];
+					int8 val2 = tempTriangle2[*ptr2];
+
+					if (val1 != val2) {
+						int8 lookupLen = copyLookup(&routes[66 * val2], &routes[66 * val1], tempTriangle);
+						if (lookupLen == 1) {
+							if (triangleCells[*ptr2] == 1) {
+								tempTriangle1[tempTriangle[0]] |= 1u;
+							} else if (triangleCells[*ptr2] == 2) {
+								tempTriangle1[tempTriangle[0]] |= 0x40u;
+							}
+						} else if (lookupLen > 1) {
+							int8 v16 = lookupLen - 1;
+							do {
+								if (triangleCells[*ptr2] == 1) {
+									tempTriangle1[tempTriangle[v16]] |= 0x10u;
+								} else if (triangleCells[*ptr2] == 2) {
+									tempTriangle1[tempTriangle[v16]] |= 0x20u;
+								}
+							} while (v16--);
+
+							collapseLoops(&routes[66 * tempTriangle2[*k]], &routes[66 * tempTriangle2[*ptr2]]);
+							int8 from = tempTriangle2[*ptr2];
+							int8 to = tempTriangle2[*k];
+							for (int m = 0; m < 66; m++) {
+								if (tempTriangle2[m] == from)
+									tempTriangle2[m] = to;
+							}
+						}
+					}
+				}
+				for (; *k != 66; k++)
+					;
+			}
+			for (; *ptr2 != 66; ptr2++)
+				;
+		}
+	}
+
+	int8 maxVal = 0;
+	for (int i = 0; i < 66; i++)  {
+		if (tempTriangle2[i] > maxVal)
+			maxVal = tempTriangle2[i];
+	}
+
+	int8 len2 = 0;
+
+	for (int i = 3; i <= maxVal; i++) {
+		int8 prevLen2 = len2;
+		for (int j = 0; j < 66; j++) {
+			if (tempTriangle2[j] == i)
+				tempMoves2[len2++] = j;
+		}
+
+		if (prevLen2 != len2)
+			tempMoves2[len2++] = 66;
+	}
+
+	tempMoves2[len2] = 66;
+
+	for (int8 *ptr3 = tempMoves2; *ptr3 != 66; ptr3++) {
+		bool flag1 = false, flag2 = false, flag3 = false;
+		int8 row = tempTriangle2[*ptr3];
+		byte mask1 = 0, mask2 = 0;
+
+		for (int i = 0; i < 66; i++) {
+			if (tempTriangle2[i] == row && triangleCells[i]) {
+				if (triangleCells[i] == 1) {
+					mask1 = 1;
+					mask2 = 16;
+				} else {
+					mask1 = 64;
+					mask2 = 32;
+				}
+				break;
+			}
+		}
+
+		while (*ptr3 != 66) {
+			if (!triangleLogicTable[14 * *ptr3 + 6])
+				flag1 = 1;
+			if (!triangleLogicTable[14 * *ptr3 + 7])
+				flag2 = 1;
+			if (!triangleLogicTable[14 * *ptr3 + 8])
+				flag3 = 1;
+			++ptr3;
+		}
+
+		if (!flag1) {
+			int8 lookup1 = copyLookup(triangleLookup1, &routes[66 * row], tempTriangle);
+			if (lookup1 == 1) {
+				tempTriangle1[tempTriangle[0]] |= mask1;
+			} else if (lookup1 > 1) {
+				int k = lookup1 - 1;
+				do
+					tempTriangle1[tempTriangle[k]] |= mask2;
+				while (k--);
+				flag1 = 1;
+			}
+		}
+		if (!flag2) {
+			int8 lookup2 = copyLookup(triangleLookup2, &routes[66 * row], tempTriangle);
+			if (lookup2 == 1) {
+				tempTriangle1[tempTriangle[0]] |= mask1;
+			} else if (lookup2 > 1) {
+				int k = lookup2 - 1;
+				do
+					tempTriangle1[tempTriangle[k]] |= mask2;
+				while (k--);
+				flag2 = 1;
+			}
+		}
+		if (!flag3) {
+			int8 lookup3 = copyLookup(triangleLookup3, &routes[66 * row], tempTriangle);
+			if (lookup3 == 1) {
+				tempTriangle1[tempTriangle[0]] |= mask1;
+			} else if (lookup3 > 1) {
+				int k = lookup3 - 1;
+				do
+					tempTriangle1[tempTriangle[k]] |= mask2;
+				while (k--);
+				flag3 = 1;
+			}
+		}
+
+		byte mask3 = 0;
+
+		if (flag1)
+			mask3 = 4;
+		if (flag2)
+			mask3 |= 8u;
+		if (flag3)
+			mask3 |= 2u;
+
+		for (int i = 0; i < 66; i++) {
+			if (tempTriangle2[i] == row)
+			tempTriangle1[i] |= mask3;
+		}
+	}
 }
 
 int8 TriangleGame::sub09(int8 player, int8 *tempTriangle2, int8 *tempTriangle1, int8 *a4, int8 *triangleCells) {
@@ -528,7 +694,7 @@ void TriangleGame::replaceCells(int8 *tempTriangle, int limit, int8 from, int8 t
 	}
 }
 
-int TriangleGame::copyLookup(int8 *lookup, int8 *start, int8 *dest){
+int TriangleGame::copyLookup(const int8 *lookup, int8 *start, int8 *dest){
 	int counter = 0;
 
 	if (*lookup == 66) {

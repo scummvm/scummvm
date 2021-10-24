@@ -38,7 +38,7 @@ private:
 	int8 sub02();
 	int8 sub03(int8 player);
 	void sub05(int8 *triangleCells, int8 *a2, int8 *a3);
-	void sub07(int8 *a1, int8 *triangleCells, int8 *a3, int8 *a4, int8 *a5, int8 *a6);
+	void sub07(int8 *tempMoves, int8 *triangleCells, int8 *tempTriangle3, int8 *tempTriangle2, int8 *tempTriangle1, int8 *tempMoves2);
 	int8 sub09(int8 key, int8 *a2, int8 *a3, int8 *a4, int8 *triangleCells);
 	int8 sub10(int8 key, int8 *a2, int8 *triangleCells);
 	int8 sub12(int8 a1, int8 *a2, int8 *triangleCells, int8 *a4);
@@ -46,7 +46,7 @@ private:
 	void setCell(int8 cellnum, int8 val);
 	void copyLogicRow(int row, int8 key, int8 *dest);
 	void replaceCells(int8 *tempTriangle, int limit, int8 from, int8 to);
-	int copyLookup(int8 *lookup, int8 *start, int8 *dest);
+	int copyLookup(const int8 *lookup, int8 *start, int8 *dest);
 	void collapseLoops(int8 *route, int8 *singleRow);
 
 private:
