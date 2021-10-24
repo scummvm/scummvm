@@ -90,7 +90,6 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		modul = DATEI;
 	} else {
 		flags.LoadGame = true;
-		split_adsh(stream);
 		ERROR
 
 			if (spieler.inv_cur == true && spieler.AkInvent != -1) {
@@ -140,7 +139,6 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 		fcode = WRITEFEHLER;
 		modul = DATEI;
 	} else {
-		append_adsh(stream);
 		ERROR
 	}
 
