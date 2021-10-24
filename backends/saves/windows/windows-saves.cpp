@@ -37,6 +37,13 @@
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
+	// if savepath was set on the command line then use it as the default
+	Common::String savepath = ConfMan.get("savepath", Common::ConfigManager::kTransientDomain);
+	if (!savepath.empty()) {
+		ConfMan.registerDefault("savepath", savepath);
+		return;
+	}
+
 	TCHAR defaultSavepath[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
