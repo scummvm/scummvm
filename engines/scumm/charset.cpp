@@ -1618,7 +1618,7 @@ void CharsetRendererMac::setCurID(int32 id) {
 	_curId = id;
 }
 
-int CharsetRendererMac::getStringWidth(int arg, const byte *text, uint strLenMax) {
+int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	int width = 0;
 	int chr;
@@ -1639,7 +1639,7 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text, uint strLenMax
 	return width / 2;
 }
 
-int CharsetRendererMac::getDrawWidthIntern(uint16 chr) {
+int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
 	return _macFonts[_curId].getCharWidth(chr);
 }
 
