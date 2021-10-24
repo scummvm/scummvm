@@ -109,6 +109,11 @@ bool parseBool(const String &val, bool &valAsBool) {
 		if (c < 0 || c > 127) \
 			return false
 
+bool isAscii(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return true;
+}
+
 bool isAlnum(int c) {
 	ENSURE_ASCII_CHAR(c);
 	return isalnum((byte)c);
