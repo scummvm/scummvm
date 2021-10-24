@@ -328,8 +328,154 @@ int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
 	return 66;
 }
 
-int8 TriangleGame::sub12(int8 player, int8 *a2, int8 *triangleCells, int8 *a4) {
-	return 0;
+int8 TriangleGame::sub12(int8 player, int8 *tempMoves, int8 *triangleCells, int8 *tempTriangle) {
+	int8 moves[8];
+	int8 tempTriangle1[68];
+	int8 tempTriangle2[68];
+	int8 tempTriangle3[68];
+	int8 tempTriangle4[68];
+
+	int8 result = 66;
+	int maxlen = -1;
+	int8 *startPtr = triangleCells;
+
+	for (int8 *ptr = tempMoves; *ptr != 66; ptr++) {
+		int len = 0;
+		int8 *beg = ptr;
+		int8 p0 = *ptr;
+
+		for (; *ptr != 66; ++ptr)
+			++len;
+
+		if (len > maxlen && triangleCells[p0] == player) {
+			maxlen = len;
+			startPtr = beg;
+		}
+	}
+
+	tempTriangle4[0] = 66;
+
+	for (int8 *ptr = startPtr; *ptr != 66; ++ptr) {
+		if (sub13(*ptr, triangleCells, moves))
+			collapseLoops(tempTriangle4, moves);
+	}
+
+	int len1 = 0, len2 = 0, len3 = 0;
+
+	tempTriangle1[0] = 66;
+	tempTriangle2[0] = 66;
+	tempTriangle3[0] = 66;
+
+	for (int8 *ptr = tempTriangle4; *ptr != 66; ++ptr) {
+		int8 v13 = 100;
+
+		int8 v15 = triangleLogicTable[14 * *ptr + 11];
+		if (v15 < 100)
+			v13 = triangleLogicTable[14 * *ptr + 11];
+
+		int8 v16 = triangleLogicTable[14 * *ptr + 13];
+		if (v13 > v16)
+			v13 = triangleLogicTable[14 * *ptr + 13];
+
+		int8 v17 = triangleLogicTable[14 * *ptr + 12];
+		if (v13 > v17)
+			v13 = triangleLogicTable[14 * *ptr + 12];
+
+		if (v13 == v15) {
+			tempTriangle1[len1++] = *ptr;
+		} else if (v13 == v17) {
+			tempTriangle2[len2++] = *ptr;
+		} else if (v13 == v16) {
+			tempTriangle3[len3++] = *ptr;
+		}
+	}
+
+	bool flag1 = false, flag2 = false, flag3 = false;
+	tempTriangle3[len3] = 66;
+	tempTriangle2[len2] = 66;
+	tempTriangle1[len1] = 66;
+
+	int8 startVal = tempTriangle[*startPtr];
+
+	switch (startVal) {
+	case 8:
+		flag3 = true;
+		break;
+	case 4:
+		flag2 = true;
+		break;
+	case 2:
+		flag1 = true;
+		break;
+	case 12:
+		flag2 = true;
+		flag3 = flag2;
+		break;
+	case 6:
+		flag1 = true;
+		flag2 = true;
+		break;
+	case 10:
+		flag1 = true;
+		flag3 = true;
+		break;
+	case 14:
+		flag2 = false;
+		flag1 = false;
+		flag3 = flag2;
+		break;
+	default:
+		flag2 = true;
+		flag1 = true;
+		flag3 = flag2;
+		break;
+	}
+
+	int minLen = 101;
+	if (flag1) {
+		for (int8 *ptr = tempTriangle1; *ptr != 66; ++ptr) {
+			int8 part1 = 0;
+			if ((startVal & 8) == 0)
+				part1 = triangleLogicTable[14 * *ptr + 7];
+			int8 part2 = 0;
+			if ((startVal & 4) == 0)
+				part2 = triangleLogicTable[14 * *ptr + 6];
+			if (minLen > part1 + part2) {
+				minLen = part1 + part2;
+				result = *ptr;
+			}
+		}
+	}
+	if (flag2) {
+		for (int8 *ptr = tempTriangle2; *ptr != 66; ++ptr) {
+			int8 part1 = 0;
+			if ((startVal & 8) == 0)
+				part1 = triangleLogicTable[14 * *ptr + 7];
+			int8 part2 = 0;
+			if ((startVal & 2) == 0)
+				part2 = triangleLogicTable[14 * *ptr + 8];
+			if (minLen > part1 + part2) {
+				minLen = part1 + part2;
+				result = *ptr;
+			}
+		}
+	}
+	if (flag3) {
+		for (int8 *ptr = tempTriangle3; *ptr != 66; ++ptr) {
+			int8 part1 = 0;
+			if ((startVal & 2) == 0)
+				part1 = triangleLogicTable[14 * *ptr + 8];
+			int8 part2 = 0;
+			if ((startVal & 4) == 0)
+				part2 = triangleLogicTable[14 * *ptr + 6];
+			if (minLen > part1 + part2) {
+				minLen = part1 + part2;
+				result = *ptr;
+			}
+		}
+	}
+
+	return result;
 }
 
 int TriangleGame::sub13(int8 row, int8 *triangleCells, int8 *moves) {
@@ -382,7 +528,7 @@ void TriangleGame::replaceCells(int8 *tempTriangle, int limit, int8 from, int8 t
 	}
 }
 
-int copyLookup(int8 *lookup, int8 *from, int8 *dest){
+int TriangleGame::copyLookup(int8 *lookup, int8 *start, int8 *dest){
 	int counter = 0;
 
 	if (*lookup == 66) {
@@ -391,8 +537,8 @@ int copyLookup(int8 *lookup, int8 *from, int8 *dest){
 	}
 
 	for (; *lookup != 66; lookup++) {
-		for (int8 *ptr = from; *ptr != 66; ptr++) {
-			if (*ptr == *lookup )
+		for (int8 *ptr = start; *ptr != 66; ptr++) {
+			if (*ptr == *lookup)
 				dest[counter++] = *lookup;
 		}
 	}
@@ -400,6 +546,28 @@ int copyLookup(int8 *lookup, int8 *from, int8 *dest){
 	dest[counter] = 66;
 
 	return counter;
+}
+
+void TriangleGame::collapseLoops(int8 *route, int8 *singleRow) {
+	int len = 0;
+	for (int8 *i = route; *i != 66; i++)
+		len++;
+
+	int origlen = len;
+
+
+	for (int8 *i = singleRow; *i != 66; i++) {
+		int j;
+		for (j = 0; j < len; j++) {
+			if (route[j] == *i)
+				break;
+		}
+		if (j == len)
+			route[len++] = *i;
+	}
+
+	if (len != origlen)
+		route[len] = 66;
 }
 
 namespace {

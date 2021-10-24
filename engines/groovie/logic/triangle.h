@@ -46,7 +46,8 @@ private:
 	void setCell(int8 cellnum, int8 val);
 	void copyLogicRow(int row, int8 key, int8 *dest);
 	void replaceCells(int8 *tempTriangle, int limit, int8 from, int8 to);
-	int copyLookup(int8 *lookup, int8 *from, int8 *dest);
+	int copyLookup(int8 *lookup, int8 *start, int8 *dest);
+	void collapseLoops(int8 *route, int8 *singleRow);
 
 private:
 	int _triangleCellCount;
