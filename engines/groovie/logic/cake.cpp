@@ -82,7 +82,9 @@ CakeGame::CakeGame() : _random("CakeGame") {
 		}
 	}
 
+#if 0
 	testCake();
+#endif
 }
 
 void CakeGame::run(byte *scriptVariables) {
