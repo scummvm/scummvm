@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-23 19:53+0000\n"
-"PO-Revision-Date: 2021-10-20 09:33+0000\n"
+"PO-Revision-Date: 2021-10-24 09:56+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1038,15 +1038,15 @@ msgstr "Teljesképernyõs mód"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "Várj amíg a függőleges szinkron frissíti a képernyőt 3D renderben"
+msgstr ""
+"Várj amíg a függőleges szinkron frissíti a képernyőt a megszakadás "
+"megelőzéséért"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
