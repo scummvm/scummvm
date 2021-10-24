@@ -607,7 +607,6 @@ int16 io_game::get_files(char *fname) {
 }
 
 void io_game::save(int16 y, int16 nr, char *fname) {
-
 	char str[4];
 	char path[80];
 	int16 abfrage = 0;
@@ -650,7 +649,7 @@ void io_game::save(int16 y, int16 nr, char *fname) {
 			chewy_fwrite(io->id, sizeof(io->id), 1, handle);
 			chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
 
-			(*io->save_funktion)(handle);
+			(*io->save_funktion)(dynamic_cast<Common::WriteStream *>(handle));
 			chewy_fclose(handle);
 		}
 	}
@@ -677,7 +676,7 @@ void io_game::load(int16 nr, char *fname) {
 		if (handle) {
 			chewy_fseek(handle, sizeof(io->id) + USER_NAME + 2, 0);
 
-			(*io->load_funktion)(handle);
+			(*io->load_funktion)(dynamic_cast<Common::SeekableReadStream *>(handle));
 			chewy_fclose(handle);
 		}
 	}
@@ -701,7 +700,6 @@ char *io_game::io_init(iog_init *iostruc) {
 }
 
 void io_game::save_entry(int16 nr, char *fname) {
-
 	char str[4];
 	char path[80];
 	int16 j;
@@ -719,7 +717,7 @@ void io_game::save_entry(int16 nr, char *fname) {
 		chewy_fwrite(io->id, sizeof(io->id), 1, handle);
 		chewy_fwrite(&file_find_g[nr][1], USER_NAME + 2, 1, handle);
 
-		(*io->save_funktion)(handle);
+		(*io->save_funktion)(dynamic_cast<Common::WriteStream *>(handle));
 		chewy_fclose(handle);
 	}
 }

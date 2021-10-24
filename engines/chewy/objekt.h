@@ -23,6 +23,7 @@
 #ifndef CHEWY_OBJEKT_H
 #define CHEWY_OBJEKT_H
 
+#include "common/serializer.h"
 #include "common/stream.h"
 
 namespace Chewy {
@@ -47,6 +48,7 @@ struct RoomMovObjekt {
 	uint8 HeldHide;
 	int16 ZEbene;
 
+	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
 	static constexpr size_t SIZE() { return 24; }
 };
@@ -78,6 +80,7 @@ struct RoomStaticInventar {
 	int16 StaticAk;
 	int16 StaticOff;
 
+	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
 };
 
@@ -100,6 +103,7 @@ struct RoomExit {
 	uint8 Attribut;
 	uint8 dummy;
 
+	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
 };
 

@@ -46,6 +46,7 @@ MODULE_OBJS = \
 	temp_file.o \
 	text.o \
 	timer.o \
+	types.o \
 	video/cfo_decoder.o
 
 # This module can be built as a plugin

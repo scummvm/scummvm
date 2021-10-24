@@ -25,26 +25,30 @@
 namespace Chewy {
 
 bool RoomMovObjekt::load(Common::SeekableReadStream *src) {
-	RoomNr = src->readSint16LE();
-
-	X = src->readSint16LE();
-	Y = src->readSint16LE();
-	XOff = src->readByte();
-	YOff = src->readByte();
-	TxtNr = src->readSint16LE();
-	NeuObj = src->readSint16LE();
-	ActionObj = src->readSint16LE();
-	ZustandAk = src->readByte();
-	ZustandOff = src->readByte();
-	ZustandFlipFlop = src->readByte();
-	AutoMov = src->readByte();
-	AniFlag = src->readByte();
-	Del = src->readByte();
-	Attribut = src->readByte();
-	HeldHide = src->readByte();
-	ZEbene = src->readSint16LE();
-
+	Common::Serializer s(src, nullptr);
+	synchronize(s);
 	return true;
+}
+
+void RoomMovObjekt::synchronize(Common::Serializer &s) {	
+	s.syncAsSint16LE(RoomNr);
+
+	s.syncAsSint16LE(X);
+	s.syncAsSint16LE(Y);
+	s.syncAsByte(XOff);
+	s.syncAsByte(YOff);
+	s.syncAsSint16LE(TxtNr);
+	s.syncAsSint16LE(NeuObj);
+	s.syncAsSint16LE(ActionObj);
+	s.syncAsByte(ZustandAk);
+	s.syncAsByte(ZustandOff);
+	s.syncAsByte(ZustandFlipFlop);
+	s.syncAsByte(AutoMov);
+	s.syncAsByte(AniFlag);
+	s.syncAsByte(Del);
+	s.syncAsByte(Attribut);
+	s.syncAsByte(HeldHide);
+	s.syncAsSint16LE(ZEbene);
 }
 
 bool IibDateiHeader::load(Common::SeekableReadStream *src) {
@@ -56,25 +60,29 @@ bool IibDateiHeader::load(Common::SeekableReadStream *src) {
 }
 
 bool RoomStaticInventar::load(Common::SeekableReadStream *src) {
-	RoomNr = src->readSint16LE();
-	X = src->readSint16LE();
-	Y = src->readSint16LE();
-	XOff = src->readByte();
-	YOff = src->readByte();
-	InvNr = src->readSint16LE();
-	TxtNr = src->readSint16LE();
-	HideSib = src->readByte();
-	Dummy = src->readByte();
-	ZustandAk = src->readByte();
-	ZustandOff = src->readByte();
-	ZustandFlipFlop = src->readByte();
-	AutoMov = src->readByte();
-	AniFlag = src->readByte();
-	HeldHide = src->readByte();
-	StaticAk = src->readSint16LE();
-	StaticOff = src->readSint16LE();
-
+	Common::Serializer s(src, nullptr);
+	synchronize(s);
 	return true;
+}
+
+void RoomStaticInventar::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(RoomNr);
+	s.syncAsSint16LE(X);
+	s.syncAsSint16LE(Y);
+	s.syncAsByte(XOff);
+	s.syncAsByte(YOff);
+	s.syncAsSint16LE(InvNr);
+	s.syncAsSint16LE(TxtNr);
+	s.syncAsByte(HideSib);
+	s.syncAsByte(Dummy);
+	s.syncAsByte(ZustandAk);
+	s.syncAsByte(ZustandOff);
+	s.syncAsByte(ZustandFlipFlop);
+	s.syncAsByte(AutoMov);
+	s.syncAsByte(AniFlag);
+	s.syncAsByte(HeldHide);
+	s.syncAsSint16LE(StaticAk);
+	s.syncAsSint16LE(StaticOff);
 }
 
 bool SibDateiHeader::load(Common::SeekableReadStream *src) {
@@ -85,18 +93,22 @@ bool SibDateiHeader::load(Common::SeekableReadStream *src) {
 }
 
 bool RoomExit::load(Common::SeekableReadStream *src) {
-	RoomNr = src->readSint16LE();
-	X = src->readSint16LE();
-	Y = src->readSint16LE();
-	XOff = src->readByte();
-	YOff = src->readByte();
-	Exit = src->readSint16LE();
-	ExitMov = src->readByte();
-	AutoMov = src->readByte();
-	Attribut = src->readByte();
-	dummy = src->readByte();
-
+	Common::Serializer s(src, nullptr);
+	synchronize(s);
 	return true;
+}
+
+void RoomExit::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(RoomNr);
+	s.syncAsSint16LE(X);
+	s.syncAsSint16LE(Y);
+	s.syncAsByte(XOff);
+	s.syncAsByte(YOff);
+	s.syncAsSint16LE(Exit);
+	s.syncAsByte(ExitMov);
+	s.syncAsByte(AutoMov);
+	s.syncAsByte(Attribut);
+	s.syncAsByte(dummy);
 }
 
 bool EibDateiHeader::load(Common::SeekableReadStream *src) {
