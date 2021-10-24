@@ -1357,10 +1357,11 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			error("convertMessageToString: buffer overflow");
 	}
 
-	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German CD version of SAMNMAX
+	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German version of SAMNMAX
 	// Adding the missing animation escape sequence while copying the text fixes it.
-	if (_game.id == GID_SAMNMAX && _roomResource == 56 && vm.slot[_currentScript].number == 200) {
-		if (_language == Common::DE_DEU && vm.slot[_currentScript].offs == 0x0000e5e6) {
+	if (_game.id == GID_SAMNMAX && _roomResource == 56 && vm.slot[_currentScript].number == 200 && _language == Common::DE_DEU) {
+		// 0xE5E6 is the CD version, 0xE373 is for the floppy version
+		if (vm.slot[_currentScript].offs == 0xE5E6 || vm.slot[_currentScript].offs == 0xE373) {
 			*dst++ = 0xFF;
 			*dst++ = 0x09;
 			*dst++ = 0x0E;
