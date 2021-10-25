@@ -649,7 +649,16 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
 	{ "girlspack",			"Girl's Pack!" },
 	{ "globiabc",			"Globi's ABC" },
+	{ "janoschpanama",		"JANOSCH: Oh, wie schön ist Panama" },
+	{ "janoschverkehr",		"JANOSCH: Tiger und Bär im Straßenverkehr" },
+	{ "loewe1",				"Löwenzahn 1" },
+	{ "loewe2",				"Löwenzahn 2" },
+	{ "loewe3",				"Löwenzahn 3" },
+	{ "loewe4",				"Löwenzahn 4" },
+	{ "loewe5",				"Löwenzahn 5" },
+	{ "loewe6",				"Löwenzahn 6" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
+	{ "maus2",				"Die CD-ROM mit der Maus 2" },
 	{ "max1",				"Max and the Secret Formula" },
 	{ "max2",				"Max and Marie Go Shopping" },
 	{ "max3",				"Max and the Haunted Castle" },
@@ -5001,10 +5010,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Plays school instructional videos, loads PDF documents, installs D10 game
 	WINGAME1_l("limit0inici", "", "limit0_inici.exe", "0c81c84ca4966313ad27d47daba44537", 723194, Common::CA_ESP, 851),
 
+	// Original Win executable name is Löwenzahn5.exe
+	WINGAME1t_l("loewe5", "", "xn--lwenzahn5.exe-imb", "9c59833b332f0b9f8ecc97f0aa47ec99", 2386566, Common::DE_DEU, 800),
+
 	WINGAME1_l("lunes", "", "Lunes.exe", "9482a4a5f6ae02470ce1863808120f6e", 2258509, Common::IT_ITA, 851),
 
 	// Advertainment film from Ferrero (chocolates)
 	WINGAME1_l("magicanti", "", "Magicanti.exe", "0c81c84ca4966313ad27d47daba44537", 2158202, Common::IT_ITA, 851),
+
+	WINGAME1t_l("maus2", "", "Maus2.exe", "7b470c720b74aba9d7ac5d0706141a33", 1779882, Common::DE_DEU, 800),
 
 	MACDEMO1("mickeyk", "D8 Demo",	 "MickeyK",		 "4ea5fc09f79eee6dded94dc40f303779", 197114, 800),
 	WINDEMO1("mickeyk", "D8 Demo",	 "MickeyK.exe",	 "e24d4bab978b1a5c2326d2c56cf4d781", 2532440, 800),
@@ -5030,6 +5044,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("okay2000", "", "Ok0032.exe", "70a7b053c1a60617d3baace061fcba54", 3565692, Common::DE_DEU, 800),
 
 	MACGAME1_l("operafatal", "Classic OS", "Opera Classic", "78e78f91a6e42ece5a585c3a3dc81de3", 172200, Common::DE_DEU, 800),
+
+	WINGAME1t_l("janoschpanama", "", "panama.exe", "25d1a9fb6c8067953888719e07dc29bd", 2384444, Common::DE_DEU, 800),
+	WINGAME1t_l("janoschverkehr", "", "verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
 
 	WINGAME1("pcformat", "PCF132 CD 02/02", "PCF132.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4722596, 800),
 
@@ -5203,6 +5220,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("heuther", "OS X", "HuetherOSX", "d483e955df901222145267d2ad729ea2", 228355, 900),
 	WINGAME1("heuther", "", "Huether.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 3353374, 900),
 
+	WINGAME1t_l("loewe2", "", "Loewenzahn 2.exe", "861c0ac98a672fc3e537a26b8cc543be", 95970, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe3", "", "Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe4", "", "Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe6", "", "Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
+
 	// Original Mac filename is Mats und das rätselhafte Tier
 	// Mac version must be installed. Additional OS X installer runs the game Classic environment.
 	MACGAME1_l("mats3", "", "Mats und das ratselhafte Tier", "9ba96b315646d5f62be9ab5597d2e0d7", 176978, Common::DE_DEU, 901),
@@ -5326,6 +5348,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Requires installation from D8 app limit0inici
 	// Selection of Spanish, Catalan, English at start
 	WINGAME1("limit0", "", "Limit 0.exe", "827e5af88f4c096652a1523dc28c9bf4", 4664824, 1000),
+
+	WINGAME1t_l("loewe1", "", "Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
 
 	// Found on Bonjour تعليم الفرنسية
 	// Software catalogue for Middle East Software Company of Giza, Egypt
