@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
+ Kyra:
+   - Added support for the Traditional Chinese version of Legend of Kyrandia 3.
+
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
