@@ -65,12 +65,24 @@ private:
 	void sub07(byte *scriptVariables);
 	void sub08(byte *scriptVariables);
 	void sub09(byte *scriptVariables);
+	void sub11(int8 x, int8 y);
 	int8 xyToPos(int8 x, int8 y);
 	void posToXY(int8 pos, int8 *x, int8 *y);
 	void copyStateToVars(byte *scriptVariables);
 	int8 findState(int8 val);
 	void flipField(int8 x, int8 y);
 	bool calcSolution();
+	bool havePosInRoute(int8 y, int8 x);
+	void addToRoute(int8 y, int8 x, int8 num);
+	void updateRoute();
+	void popLastStep(int8 *x, int8 *y);
+	void goFarthest(int8 *x, int8 *y);
+	void findMinPointInRoute(int8 *y, int8 *x);
+	int8 calcDistanceToExit();
+	int8 getBestDirection(int8 *x, int8 *y);
+	int8 findMaxPointInRoute(int8 *y, int8 *x);
+	int8 findMaxInRoute();
+
 
 private:
 	Common::RandomSource _random;

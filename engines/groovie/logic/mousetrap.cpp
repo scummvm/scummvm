@@ -117,6 +117,9 @@ void MouseTrapGame::sub08(byte *scriptVariables) {
 void MouseTrapGame::sub09(byte *scriptVariables) {
 }
 
+void MouseTrapGame::sub11(int8 x, int8 y) {
+}
+
 int8 MouseTrapGame::xyToPos(int8 x, int8 y) {
 	return 5 * y + x + 1;
 }
@@ -156,6 +159,42 @@ bool MouseTrapGame::calcSolution() {
 		|| ((val & 8) != 0 && _mouseTrapPos.x < 4 && (_mouseTrapCells[pos + 6] & 2) != 0)
 		|| ((val & 2) != 0 && _mouseTrapPos.x && (_mouseTrapCells[pos + 4] & 8) != 0);
 }
+
+bool MouseTrapGame::havePosInRoute(int8 y, int8 x) {
+	return false;
+}
+
+void MouseTrapGame::addToRoute(int8 y, int8 x, int8 num) {
+}
+
+void MouseTrapGame::updateRoute() {
+}
+
+void MouseTrapGame::popLastStep(int8 *x, int8 *y) {
+}
+
+void MouseTrapGame::goFarthest(int8 *x, int8 *y) {
+}
+
+void MouseTrapGame::findMinPointInRoute(int8 *y, int8 *x) {
+}
+
+int8 MouseTrapGame::calcDistanceToExit() {
+	return 0;
+}
+
+int8 MouseTrapGame::getBestDirection(int8 *x, int8 *y) {
+	return 0;
+}
+
+int8 MouseTrapGame::findMaxPointInRoute(int8 *y, int8 *x) {
+	return 0;
+}
+
+int8 MouseTrapGame::findMaxInRoute() {
+	return 0;
+}
+
 
 
 } // End of Groovie namespace
