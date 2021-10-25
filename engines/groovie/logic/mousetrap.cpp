@@ -29,10 +29,7 @@ MouseTrapGame::MouseTrapGame() : _random("MouseTrapGame") {
 }
 
 void MouseTrapGame::run(byte *scriptVariables) {
-	// TODO: Finish the logic
 	byte op = scriptVariables[2];
-
-	warning("Mousetrap subop %d", op);
 
 	// variable 24 is the mouse?
 	//scriptVariables[24] = 2;
@@ -43,21 +40,21 @@ void MouseTrapGame::run(byte *scriptVariables) {
 
 	switch (op) {
 	case 0:
+		sub01(scriptVariables);
 		break;
 	case 1: // init board
 		// value of 0 is V, 1 is <, 2 is ^, 3 is >
 		// variable 23 is the outside piece
-		scriptVariables[23] = _random.getRandomNumber(3);
+		//scriptVariables[23] = _random.getRandomNumber(3);
 		// variable slot is the space number + 25, the left corner
 		// (Stauf's goal) is space 1, above that is space 2, the
 		// center is 13, and the right corner (goal) is space 25
-		for (int i = 27; i <= 49; i++) {
-			scriptVariables[i] = _random.getRandomNumber(3);
-		}
+		init();
+		sub03(scriptVariables);
 		break;
 	case 2: // before player chooses the floor to move, set the banned move
 	{
-		int clicked = int(scriptVariables[0]) * 5 + int(scriptVariables[1]) + 1;
+		int clicked = xyToPos(_mouseTrapX, _mouseTrapY);
 		scriptVariables[clicked + 50] = 0;
 		break;
 	}
@@ -66,14 +63,19 @@ void MouseTrapGame::run(byte *scriptVariables) {
 		// set the banned move
 		// this probably also sets a variable to allow the player to
 		// move the mouse, and checks for win/lose
+		sub05(scriptVariables);
 		break;
 	case 5: // maybe player moving mouse
+		sub06(scriptVariables);
 		break;
 	case 6: // Stauf moving floor?
+		sub07(scriptVariables);
 		break;
 	case 7: // maybe Stauf moving mouse
+		sub08(scriptVariables);
 		break;
 	case 8: // Samantha making a move
+		sub09(scriptVariables);
 		break;
 
 	default:
@@ -81,5 +83,35 @@ void MouseTrapGame::run(byte *scriptVariables) {
 		break;
 	}
 }
+
+void MouseTrapGame::init() {
+}
+
+void MouseTrapGame::sub01(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub03(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub05(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub06(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub07(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub08(byte *scriptVariables) {
+}
+
+void MouseTrapGame::sub09(byte *scriptVariables) {
+}
+
+int8 MouseTrapGame::xyToPos(int8 x, int8 y) {
+	return 5 * y + x + 1;
+}
+
+
 
 } // End of Groovie namespace

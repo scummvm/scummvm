@@ -50,9 +50,20 @@ class MouseTrapGame {
 public:
 	MouseTrapGame();
 	void run(byte *scriptVariables);
-	
+
 private:
+	void init();
+	void sub01(byte *scriptVariables);
+	void sub03(byte *scriptVariables);
+	void sub05(byte *scriptVariables);
+	void sub06(byte *scriptVariables);
+	void sub07(byte *scriptVariables);
+	void sub08(byte *scriptVariables);
+	void sub09(byte *scriptVariables);
+	int8 xyToPos(int8 x, int8 y);
+
 	Common::RandomSource _random;
+	int8 _mouseTrapX, _mouseTrapY;
 };
 
 } // End of Groovie namespace
