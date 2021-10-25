@@ -20,6 +20,9 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
 #include "chewy/file.h"
@@ -163,6 +166,30 @@ byte *Dbuffer [8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
 uint32 DbufferLen [8] = {0};
 uint32 DbSampleLen [8] = {0};
 Stream *DbufferHandles [8] = {0};
+
+ailScummVM::ailScummVM() {
+	_mixer = g_engine->_mixer;
+}
+
+void ailScummVM::playSpeech(Common::SeekableReadStream *src) {
+	Audio::AudioStream *audioStream =
+		Audio::makeVOCStream(src, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
+		&_speechHandle, audioStream);
+}
+
+bool ailScummVM::isSpeechActive() const {
+	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
+void ailScummVM::waitForSpeechToFinish() {
+	if (flags.InitSound && spieler.SpeechSwitch) {
+		while (isSpeechActive() && !SHOULD_QUIT) {
+			set_up_screen(DO_SETUP);
+		}
+	}
+}
+
 
 ailclass::ailclass() {
 #if 0
@@ -589,63 +616,16 @@ void ailclass::init_double_buffer(byte *b1, byte *b2, uint32 len, int16 kanal) {
 }
 
 void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
-	warning("STUB: ailclass::start_db_voc()");
+	Common::SeekableReadStream *src = dynamic_cast<Common::SeekableReadStream *>(v);
+	assert(src);
 
-#if 0
-	byte *vptr = 0;
-	byte blockt;
-	byte freq = 0;
-	dword blocklen;
-	uint16 RealFrq;
-	kanal &= 3;
-	kanal += 4;
-	vol = (vol << 1) & 127;
-	if ((SoundEnable) && (DbufferLen[kanal] != 0) && (voc != 0) &&
-	        (Dbuffer[kanal][0] != 0) && (Dbuffer[kanal][1] != 0)) {
-		memset(Dbuffer[kanal][0], 0, DbufferLen[kanal]);
-		memset(Dbuffer[kanal][1], 0, DbufferLen[kanal]);
-		do {
-			blockt = chewy_fgetc(voc);
-			if (blockt > 7)
-				blockt = 8;
-			blocklen = (uint32) chewy_fgetc(voc);
-			blocklen += ((uint32)chewy_fgetc(voc)) << 8;
-			blocklen += ((uint32)chewy_fgetc(voc)) << 16;
-			if (blockt != 1)
-				chewy_fseek(voc, blocklen, SEEK_CUR);
-		} while ((blockt != 1) && (blockt != 0));
-		if ((blockt == 1) && (!modul)) {
-			freq = chewy_fgetc(voc);
-			RealFrq = 1000000 / (256 - freq);
-			if (blocklen > DbufferLen[kanal]) {
-				DbufferHandles[kanal] = voc;
-				DbSampleLen[kanal] = blocklen;
-				AIL_init_sample(smp[kanal]);
-				AIL_set_sample_type(smp[kanal], DIG_F_MONO_8, 0);
-				AIL_set_sample_playback_rate(smp[kanal], RealFrq);
-				AIL_set_sample_volume(smp[kanal], vol);
-				AIL_set_sample_pan(smp[kanal], (byte)StereoPos[kanal]);
-				AIL_load_sample_buffer(smp[kanal], 0, Dbuffer[kanal][0],
-				                       DbufferLen[kanal]);
-			} else {
-				DbSampleLen[kanal] = 0;
-				if (!chewy_fread(Dbuffer[kanal][0], blocklen, 1, voc)) {
-					modul = DATEI;
-					fcode = READFEHLER;
-				}
-				if (!modul) {
-					AIL_init_sample(smp[kanal]);
-					AIL_set_sample_type(smp[kanal], DIG_F_MONO_8, 0);
-					AIL_set_sample_address(smp[kanal], Dbuffer[kanal][0], blocklen);
-					AIL_set_sample_playback_rate(smp[kanal], RealFrq);
-					AIL_set_sample_volume(smp[kanal], vol);
-					AIL_set_sample_pan(smp[kanal], (byte)StereoPos[kanal]);
-					AIL_start_sample(smp[kanal]);
-				}
-			}
-		}
-	}
-#endif
+	src->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+	ChunkHead ch;
+	if (!ch.load(src))
+		::error("Error loading speech");
+
+	Common::SeekableReadStream *rs = src->readStream(ch.size);
+	playSpeech(rs);
 }
 
 void ailclass::serve_db_samples() {
@@ -910,19 +890,6 @@ void ailclass::switch_music(bool onOff) {
 void ailclass::switch_sound(bool onOff) {
 	if (SoundEnable)
 		SoundSwitch = onOff;
-}
-
-bool ailclass::isSpeechActive() const {
-	// TODO: Implement properly
-	return true;
-}
-
-void ailclass::waitForSpeechToFinish() {
-	if (flags.InitSound && spieler.SpeechSwitch) {
-		while (isSpeechActive() && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
-		}
-	}
 }
 
 } // namespace Chewy
