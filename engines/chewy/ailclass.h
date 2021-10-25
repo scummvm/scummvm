@@ -23,6 +23,7 @@
 #ifndef CHEWY_AILCLASS_H
 #define CHEWY_AILCLASS_H
 
+#include "audio/mixer.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -32,7 +33,24 @@ void check_sample_end();
 void DecodePatternLine();
 void DecodeChannel(int16 ch);
 
-class ailclass {
+class ailScummVM {
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _speechHandle;
+public:
+	ailScummVM();
+
+	/**
+	 * Plays the speech from the passed stream, and frees
+	 * it afterwards
+	 */
+	void playSpeech(Common::SeekableReadStream *src);
+
+	bool isSpeechActive() const;
+	void waitForSpeechToFinish();
+};
+
+class ailclass : public ailScummVM {
 public:
 	ailclass();
 	~ailclass();
@@ -81,8 +99,6 @@ public:
 	void serve_db_samples();
 	void switch_music(bool onOff);
 	void switch_sound(bool onOff);
-	bool isSpeechActive() const;
-	void waitForSpeechToFinish();
 private:
 };
 
