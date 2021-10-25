@@ -353,7 +353,7 @@ bool Menu::init() {
 			//  - initialize game structures (this is done in classes constructors)
 			getSaveLoad()->loadMoviesViewed();
 
-			_showMovie = true;
+			_showMovie = !_loadingDuringStartup;
 
 			// Play start video
 			if (!_loadingDuringStartup)
