@@ -92,7 +92,7 @@ void MouseTrapGame::run(byte *scriptVariables) {
 }
 
 static const int8 mouseTrapStates[] = {
-	6, 12,  9,  3
+	6, 12, 9, 3
 };
 
 static const int8 mouseTrapLookup[] = {
@@ -103,9 +103,32 @@ void MouseTrapGame::init() {
 }
 
 void MouseTrapGame::sub01(byte *scriptVariables) {
+	int8 x, y;
+
+	findMaxPointInRoute(&x, &y);
+	scriptVariables[5] = (_mouseTrapPosX == x && _mouseTrapPosY == y) ? 1 : 0;
+	if (havePosInRoute(4, 4)) {
+		copyRoute(4, 4);
+		scriptVariables[22] = 1;
+	} else if (havePosInRoute(0, 0)) {
+		copyRoute(0, 0);
+		scriptVariables[22] = 2;
+	} else {
+		scriptVariables[22] = 0;
+		if (!scriptVariables[5])
+			copyRoute(x, y);
+	}
 }
 
 void MouseTrapGame::sub03(byte *scriptVariables) {
+	int cnt = 1;
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			scriptVariables[cnt + 25] = findState(_mouseTrapCells[5 * j + 5 + i]);
+			cnt++;
+		}
+	}
+	scriptVariables[23] = findState(_mouseTrapCells[30]);
 }
 
 void MouseTrapGame::sub05(byte *scriptVariables) {
@@ -118,16 +141,77 @@ void MouseTrapGame::sub07(byte *scriptVariables) {
 }
 
 void MouseTrapGame::sub08(byte *scriptVariables) {
+	int8 x1, y1, x, y;
+
+	popLastStep(&x1, &y1);
+	int8 pos = xyToPos(x1, y1);
+
+	_mouseTrapPosX = x1;
+	_mouseTrapPosY = y1;
+
+	scriptVariables[0] = scriptVariables[11];
+	scriptVariables[1] = scriptVariables[12];
+	scriptVariables[11] = pos / 10;
+	scriptVariables[12] = pos % 10;
+	posToXY(scriptVariables[1] + 10 * scriptVariables[0], &x, &y);
+
+	if (y <= y1) {
+		if (y >= y1) {
+			if (x <= x1) {
+				if (x < x1)
+					scriptVariables[15] = 1;
+			} else {
+				scriptVariables[15] = 3;
+			}
+		} else {
+			scriptVariables[15] = 2;
+		}
+	} else {
+		scriptVariables[15] = 0;
+	}
+
+	if (!_mouseTrapCounter1)
+		scriptVariables[2] = 0;
 }
 
 void MouseTrapGame::sub09(byte *scriptVariables) {
+	int8 x1, y1, x2, y2;
+
+	getBestDirection(&x1, &y1);
+	flipField(x1, y1);
+
+	if (!calcSolution()) {
+		scriptVariables[5] = 1;
+		scriptVariables[22] = 0;
+	} else {
+		scriptVariables[5] = 0;
+		updateRoute();
+
+		if (!havePosInRoute(4, 4)) {
+			if (havePosInRoute(0, 0)) {
+				copyRoute(0, 0);
+				scriptVariables[22] = 2;
+			} else {
+				findMaxPointInRoute(&x2, &y2);
+				copyRoute(x2, y2);
+				scriptVariables[22] = 0;
+			}
+		} else {
+			copyRoute(4, 4);
+			scriptVariables[22] = 1;
+		}
+	}
+
+	int8 pos = xyToPos(x1, y1);
+	scriptVariables[0] = pos / 10;
+	scriptVariables[1] = pos % 10;
 }
 
 void MouseTrapGame::copyRoute(int8 x, int8 y) {
 	int i;
 
 	for (i = 0; i < _mouseTrapCounter > i; i++) {
-		if (_mouseTrapRoute[3 * i] == x && _mouseTrapRoute[3 * i + 1] == y )
+		if (_mouseTrapRoute[3 * i] == x && _mouseTrapRoute[3 * i + 1] == y)
 			break;
 	}
 
@@ -162,16 +246,107 @@ void MouseTrapGame::copyStateToVars(byte *scriptVariables) {
 }
 
 int8 MouseTrapGame::findState(int8 val) {
-  int8 result = 0;
+	int8 result = 0;
 
-  while (mouseTrapStates[result] != val) {
-    if (++result >= 4)
-      return -1;
-  }
-  return result;
+	while (mouseTrapStates[result] != val) {
+		if (++result >= 4)
+			return -1;
+	}
+	return result;
 }
 
 void MouseTrapGame::flipField(int8 x, int8 y) {
+	int8 tmp;
+
+	if (y) {
+		if (y == 4) {
+			if (x == 1) {
+				tmp = _mouseTrapCells[10];
+				_mouseTrapCells[10] = _mouseTrapCells[11];
+				_mouseTrapCells[11] = _mouseTrapCells[12];
+				_mouseTrapCells[12] = _mouseTrapCells[13];
+				_mouseTrapCells[13] = _mouseTrapCells[14];
+				_mouseTrapCells[14] = _mouseTrapCells[30];
+				_mouseTrapCells[30] = tmp;
+				_mouseTrapX = 1;
+				_mouseTrapY = 0;
+			} else if (x == 3) {
+				tmp = _mouseTrapCells[20];
+				_mouseTrapCells[20] = _mouseTrapCells[21];
+				_mouseTrapCells[21] = _mouseTrapCells[22];
+				_mouseTrapCells[22] = _mouseTrapCells[23];
+				_mouseTrapCells[23] = _mouseTrapCells[24];
+				_mouseTrapCells[24] = _mouseTrapCells[30];
+				_mouseTrapCells[30] = tmp;
+				_mouseTrapX = 3;
+				_mouseTrapY = 0;
+			}
+		} else if (x) {
+			if (x == 4) {
+				if (y == 1) {
+					tmp = _mouseTrapCells[6];
+					_mouseTrapCells[6] = _mouseTrapCells[11];
+					_mouseTrapCells[11] = _mouseTrapCells[16];
+					_mouseTrapCells[16] = _mouseTrapCells[21];
+					_mouseTrapCells[21] = _mouseTrapCells[26];
+					_mouseTrapCells[26] = _mouseTrapCells[30];
+					_mouseTrapCells[30] = tmp;
+					_mouseTrapX = 0;
+					_mouseTrapY = 1;
+				} else if (y == 3) {
+					tmp = _mouseTrapCells[8];
+					_mouseTrapCells[8] = _mouseTrapCells[13];
+					_mouseTrapCells[13] = _mouseTrapCells[18];
+					_mouseTrapCells[18] = _mouseTrapCells[23];
+					_mouseTrapCells[23] = _mouseTrapCells[28];
+					_mouseTrapCells[28] = _mouseTrapCells[30];
+					_mouseTrapCells[30] = tmp;
+					_mouseTrapX = 0;
+					_mouseTrapY = 3;
+				}
+			}
+		} else if (y == 1) {
+			tmp = _mouseTrapCells[26];
+			_mouseTrapCells[26] = _mouseTrapCells[21];
+			_mouseTrapCells[21] = _mouseTrapCells[16];
+			_mouseTrapCells[16] = _mouseTrapCells[11];
+			_mouseTrapCells[11] = _mouseTrapCells[6];
+			_mouseTrapCells[6] = _mouseTrapCells[30];
+			_mouseTrapCells[30] = tmp;
+			_mouseTrapX = 4;
+			_mouseTrapY = 1;
+		} else if (y == 3) {
+			tmp = _mouseTrapCells[28];
+			_mouseTrapCells[28] = _mouseTrapCells[23];
+			_mouseTrapCells[23] = _mouseTrapCells[18];
+			_mouseTrapCells[18] = _mouseTrapCells[13];
+			_mouseTrapCells[13] = _mouseTrapCells[8];
+			_mouseTrapCells[8] = _mouseTrapCells[30];
+			_mouseTrapCells[30] = tmp;
+			_mouseTrapX = 4;
+			_mouseTrapY = 3;
+		}
+	} else if (x == 1) {
+		tmp = _mouseTrapCells[14];
+		_mouseTrapCells[14] = _mouseTrapCells[13];
+		_mouseTrapCells[13] = _mouseTrapCells[12];
+		_mouseTrapCells[12] = _mouseTrapCells[11];
+		_mouseTrapCells[11] = _mouseTrapCells[10];
+		_mouseTrapCells[10] = _mouseTrapCells[30];
+		_mouseTrapCells[30] = tmp;
+		_mouseTrapX = 1;
+		_mouseTrapY = 4;
+	} else if (x == 3) {
+		tmp = _mouseTrapCells[24];
+		_mouseTrapCells[24] = _mouseTrapCells[23];
+		_mouseTrapCells[23] = _mouseTrapCells[22];
+		_mouseTrapCells[22] = _mouseTrapCells[21];
+		_mouseTrapCells[21] = _mouseTrapCells[20];
+		_mouseTrapCells[20] = _mouseTrapCells[30];
+		_mouseTrapCells[30] = tmp;
+		_mouseTrapX = 3;
+		_mouseTrapY = 4;
+	}
 }
 
 bool MouseTrapGame::calcSolution() {
@@ -255,7 +430,7 @@ void MouseTrapGame::goFarthest(int8 *x, int8 *y) {
 
 			int8 dist = calcDistanceToExit();
 
-			if (_mouseTrapNumSteps && _random.getRandomNumber(1) != 0 )
+			if (_mouseTrapNumSteps && _random.getRandomNumber(1) != 0)
 				dist += 3;
 
 			if (dist >= maxVal) {
@@ -359,7 +534,7 @@ int8 MouseTrapGame::findMaxInRoute() {
 	int8 maxCoords = 0;
 
 	for (int i = 0; i < _mouseTrapCounter; i++) {
-		if (_mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1] > maxCoords )
+		if (_mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1] > maxCoords)
 			maxCoords = _mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1];
 		}
 
