@@ -139,7 +139,7 @@ void GUI_v1::initMenu(Menu &menu) {
 			} else {
 				Screen::FontId of = _screen->_currentFont;
 				if (menu.item[i].saveSlot > 0)
-					_screen->setFont(_vm->gameFlags().lang == Common::ZH_CNA ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+					_screen->setFont((_vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 
 				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
@@ -259,7 +259,7 @@ void GUI_v1::redrawText(const Menu &menu) {
 	} else {
 		Screen::FontId of = _screen->_currentFont;
 		if (menu.item[i].saveSlot > 0)
-			_screen->setFont(_vm->gameFlags().lang == Common::ZH_CNA ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
@@ -289,7 +289,7 @@ void GUI_v1::redrawHighlight(const Menu &menu) {
 	} else {
 		Screen::FontId of = _screen->_currentFont;
 		if (menu.item[i].saveSlot > 0)
-			_screen->setFont(_vm->gameFlags().lang == Common::ZH_CNA ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
@@ -511,7 +511,7 @@ int MainMenu::handle(int dim) {
 	int fh = _screen->getFontHeight();
 	if (_vm->gameFlags().lang == Common::JA_JPN)
 		fh++;
-	else if (_vm->gameFlags().lang == Common::ZH_CNA)
+	else if (_vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN)
 		fh--;
 
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
@@ -565,7 +565,7 @@ void MainMenu::draw(int select) {
 	int fh = _screen->getFontHeight();
 	if (_vm->gameFlags().lang == Common::JA_JPN)
 		fh++;
-	else if (_vm->gameFlags().lang == Common::ZH_CNA)
+	else if (_vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN)
 		fh--;
 
 	for (int i = 0; i < _static.menuTable[3]; ++i) {

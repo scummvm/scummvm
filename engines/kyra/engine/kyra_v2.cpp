@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc), _numLang(flags.hasExtraLanguage ? 4 : 3) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc), _langIntern(0), _numLang(flags.hasExtraLanguage ? 4 : 3) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 
@@ -97,6 +97,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 		_lang = 2;
 		break;
 
+	case Common::ZH_TWN:
+		_langIntern = 1;
+		// fall through
 	case Common::JA_JPN:
 	case Common::ZH_CNA:
 		_lang = 3;

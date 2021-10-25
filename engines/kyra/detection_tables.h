@@ -992,20 +992,6 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FLAGS
 	},
 
-	{ // Provided by AquariumTroop. Bugreport #11935
-		{
-			"kyra3",
-			_s("Missing game code"), // Reason for being unsupported
-			AD_ENTRY2s("ONETIME.PAK", "4fe8ff05002f3a4d645f11cd326fcef2", 485328,
-					   "WESTWOOD.001", "99d4b13576ced18a072a7590eac3cc37", 10419012),
-			Common::ZH_TWN,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE | ADGF_UNSUPPORTED,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_FLAGS
-	},
-
 	// installed version
 	{
 		{
@@ -1210,6 +1196,20 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_4LANG_FLAGS
 	},
 
+	{ // non installed version
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "4fe8ff05002f3a4d645f11cd326fcef2", -1,
+					   "WESTWOOD.001", "99d4b13576ced18a072a7590eac3cc37", -1),
+			Common::ZH_TWN,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_4LANG_FLAGS
+	},
+
 	{
 		{
 			"kyra3",
@@ -1263,6 +1263,24 @@ const KYRAGameDescription adGameDescs[] = {
 				AD_LISTEND
 			},
 			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_4LANG_FLAGS
+	},
+
+	{ // installed version
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "4fe8ff05002f3a4d645f11cd326fcef2", -1 },
+				{ "MALCOLM.PAK", 0, "c01eaf3b5568b207b22ea1c0637fe193", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
+			},
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)

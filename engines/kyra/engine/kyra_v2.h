@@ -94,6 +94,7 @@ protected:
 	// detection
 	int _lang;
 	const int _numLang;
+	int _langIntern;
 
 	// Input
 	virtual int inputSceneChange(int x, int y, int unk1, int unk2) = 0;

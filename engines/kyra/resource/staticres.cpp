@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 110
+#define RESFILE_VERSION 111
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -87,15 +87,16 @@ byte getGameID(const GameFlags &flags) {
 }
 
 const IndexTable iLanguageTable[] = {
-	{ Common::EN_ANY, 1 },
-	{ Common::FR_FRA, 2 },
-	{ Common::DE_DEU, 3 },
-	{ Common::ES_ESP, 4 },
-	{ Common::IT_ITA, 5 },
-	{ Common::JA_JPN, 6 },
-	{ Common::RU_RUS, 7 },
-	{ Common::HE_ISR, 8 },
-	{ Common::ZH_CNA, 9 },
+	{ Common::EN_ANY,  1 },
+	{ Common::FR_FRA,  2 },
+	{ Common::DE_DEU,  3 },
+	{ Common::ES_ESP,  4 },
+	{ Common::IT_ITA,  5 },
+	{ Common::JA_JPN,  6 },
+	{ Common::RU_RUS,  7 },
+	{ Common::HE_ISR,  8 },
+	{ Common::ZH_CNA,  9 },
+	{ Common::ZH_TWN, 10 },
 	{ -1, -1 }
 };
 

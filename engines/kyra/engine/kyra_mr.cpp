@@ -486,7 +486,7 @@ void KyraEngine_MR::playStudioSFX(const char *str) {
 		return;
 
 	const int strSize = strlen(str) - 1;
-	if (_flags.lang == Common::ZH_CNA) {
+	if (_flags.lang == Common::ZH_CNA || _flags.lang == Common::ZH_TWN) {
 		// WORKAROUND: The studio sfx is broken in the original, since it still has the
 		// check for '!' and '?' even if the language is set to Chinese. I have fixed this here...
 		if (str[strSize] != '\x80' || !(str[strSize - 1] == '\x81' || str[strSize - 1] == '\x91'))
@@ -1416,10 +1416,9 @@ void KyraEngine_MR::writeSettings() {
 		break;
 
 	case 3:
-		_flags.lang = Common::ZH_CNA;
+		_flags.lang = _langIntern ? Common::ZH_TWN : Common::ZH_CNA;
 		break;
 
-	case 0:
 	default:
 		_flags.lang = Common::EN_ANY;
 	}

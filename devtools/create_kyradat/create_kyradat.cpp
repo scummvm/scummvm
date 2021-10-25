@@ -39,7 +39,7 @@
 
 
 enum {
-	kKyraDatVersion = 110
+	kKyraDatVersion = 111
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -1191,15 +1191,16 @@ byte getGameID(int game) {
 
 const TypeTable languageTable[] = {
 	{ UNK_LANG, 0 },
-	{ EN_ANY, 1 },
-	{ FR_FRA, 2 },
-	{ DE_DEU, 3 },
-	{ ES_ESP, 4 },
-	{ IT_ITA, 5 },
-	{ JA_JPN, 6 },
-	{ RU_RUS, 7 },
-	{ HE_ISR, 8 },
-	{ ZH_CNA, 9 },
+	{ EN_ANY,  1 },
+	{ FR_FRA,  2 },
+	{ DE_DEU,  3 },
+	{ ES_ESP,  4 },
+	{ IT_ITA,  5 },
+	{ JA_JPN,  6 },
+	{ RU_RUS,  7 },
+	{ HE_ISR,  8 },
+	{ ZH_CNA,  9 },
+	{ ZH_TWN, 10 },
 	{ -1, -1 }
 };
 
