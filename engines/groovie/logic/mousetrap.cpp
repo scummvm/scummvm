@@ -100,6 +100,68 @@ static const int8 mouseTrapLookup[] = {
 };
 
 void MouseTrapGame::init() {
+	int8 initState[8], initX[8], initY[8];
+
+	initState[0] = 0;
+	initState[1] = 1;
+	initState[3] = 3;
+	initState[2] = 2;
+	initState[4] = 4;
+	initState[5] = 5;
+	initState[6] = 6;
+	initState[7] = 7;
+	initY[0] = 1;
+	initY[1] = 3;
+	initY[2] = 0;
+	initY[3] = 4;
+	initY[4] = 0;
+	initY[5] = 4;
+	initY[6] = 1;
+	initY[7] = 3;
+	initX[0] = 0;
+	initX[1] = 0;
+	initX[2] = 1;
+	initX[3] = 1;
+	initX[4] = 3;
+	initX[5] = 3;
+	initX[6] = 4;
+	initX[7] = 4;
+
+	for (int i = 7; i >= 0; i--) {
+		int8 j = _random.getRandomNumber(i);
+
+		_mouseTrapCells[5 * initY[i] + 5 + initX[i]] = mouseTrapStates[initState[j] >> 1];
+
+		for (; j < i; j++) {
+			initState[j] = initState[j + 1];
+		}
+	}
+
+	_mouseTrapCells[11] = mouseTrapStates[3];
+	_mouseTrapCells[16] = mouseTrapStates[0];
+	_mouseTrapCells[5] = 12;
+	_mouseTrapCells[21] = mouseTrapStates[0];
+	_mouseTrapCells[12] = mouseTrapStates[3];
+	_mouseTrapCells[15] = 13;
+	_mouseTrapCells[25] = 9;
+	_mouseTrapCells[22] = mouseTrapStates[1];
+	_mouseTrapCells[13] = mouseTrapStates[2];
+	_mouseTrapCells[18] = mouseTrapStates[2];
+	_mouseTrapCells[23] = mouseTrapStates[1];
+	_mouseTrapCells[7] = 14;
+	_mouseTrapCells[17] = 15;
+	_mouseTrapCells[27] = 11;
+	_mouseTrapCells[9] = 6;
+	_mouseTrapCells[19] = 7;
+	_mouseTrapCells[29] = 3;
+	_mouseTrapCells[30] = mouseTrapStates[_random.getRandomNumber(3)];
+
+	_mouseTrapPosY = 2;
+	_mouseTrapPosX = 2;
+	_mouseTrapY = 0;
+	_mouseTrapX = 0;
+	_mouseTrapNumSteps = 0;
+	_mouseTrapCounter = 0;
 }
 
 void MouseTrapGame::sub01(byte *scriptVariables) {
@@ -132,12 +194,75 @@ void MouseTrapGame::sub03(byte *scriptVariables) {
 }
 
 void MouseTrapGame::sub05(byte *scriptVariables) {
+	int8 x, y;
+
+	posToXY(scriptVariables[1] + 10 * scriptVariables[0], &x, &y);
+	flipField(x, y);
+
+	if (calcSolution()) {
+		scriptVariables[5] = 0;
+		updateRoute();
+
+		if (havePosInRoute(4, 4)) {
+			copyRoute(4, 4);
+			scriptVariables[22] = 1;
+		} else if (havePosInRoute(0, 0)) {
+			copyRoute(0, 0);
+			scriptVariables[22] = 2;
+		} else {
+			copyStateToVars(scriptVariables);
+			scriptVariables[22] = 0;
+		}
+	} else {
+		scriptVariables[5] = 1;
+		scriptVariables[22] = 0;
+	}
 }
 
 void MouseTrapGame::sub06(byte *scriptVariables) {
+	int8 x, y;
+
+	posToXY(10 * scriptVariables[0] + scriptVariables[1], &x, &y);
+	copyRoute(x, y);
 }
 
 void MouseTrapGame::sub07(byte *scriptVariables) {
+	int8 x1, y1, x2, y2;
+
+	goFarthest(&x1, &y1);
+	flipField(x1, y1);
+
+	if (!calcSolution()) {
+		scriptVariables[5] = 1;
+		scriptVariables[22] = 0;
+	} else {
+		scriptVariables[5] = 0;
+		updateRoute();
+
+		if (!havePosInRoute(0, 0)) {
+			if (havePosInRoute(4, 4)) {
+				copyRoute(4, 4);
+				scriptVariables[22] = 1;
+			} else {
+				findMinPointInRoute(&x2, &y2);
+
+				if (_mouseTrapPosX != x2 || _mouseTrapPosY != y2) {
+					copyRoute(x2, y2);
+					scriptVariables[22] = 0;
+				} else {
+					scriptVariables[5] = 1;
+					scriptVariables[22] = 0;
+				}
+			}
+		} else {
+			copyRoute(0, 0);
+			scriptVariables[22] = 2;
+		}
+	}
+
+	int8 pos = xyToPos(x1, y1);
+	scriptVariables[0] = pos / 10;
+	scriptVariables[1] = pos % 10;
 }
 
 void MouseTrapGame::sub08(byte *scriptVariables) {
