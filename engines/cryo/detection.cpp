@@ -39,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"losteden",
 		0,
-		AD_ENTRY1s("EDEN6.HSQ", 0, 17093),
+		AD_ENTRY1s("EDEN6.HSQ", "00b43c44cf2ac50b1a45dfad5fa5360d", 17093),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
