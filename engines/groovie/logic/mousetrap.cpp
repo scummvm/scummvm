@@ -26,11 +26,13 @@
 namespace Groovie {
 
 MouseTrapGame::MouseTrapGame() : _random("MouseTrapGame") {
-	_mouseTrapCounter = 0;
+	_mouseTrapCounter = _mouseTrapCounter1 = 0;
 	_mouseTrapX = _mouseTrapY = 0;
 	memset(_mouseTrapRoute, 0, 75);
+	memset(_mouseTrapRouteCopy, 0, 76);
 	_mouseTrapPos.x = _mouseTrapPos.y = 0;
 	memset(_mouseTrapCells, 0, 31);
+	_mouseTrapNumSteps = 0;
 }
 
 void MouseTrapGame::run(byte *scriptVariables) {
@@ -93,6 +95,10 @@ static const int8 mouseTrapStates[] = {
 	6, 12,  9,  3
 };
 
+static const int8 mouseTrapLookup[] = {
+	1, 0, 3, 0, 0, 1, 0, 3, 1, 4, 3, 4, 4, 1, 4, 3
+};
+
 void MouseTrapGame::init() {
 }
 
@@ -117,7 +123,25 @@ void MouseTrapGame::sub08(byte *scriptVariables) {
 void MouseTrapGame::sub09(byte *scriptVariables) {
 }
 
-void MouseTrapGame::sub11(int8 x, int8 y) {
+void MouseTrapGame::copyRoute(int8 x, int8 y) {
+	int i;
+
+	for (i = 0; i < _mouseTrapCounter > i; i++) {
+		if (_mouseTrapRoute[3 * i] == x && _mouseTrapRoute[3 * i + 1] == y )
+			break;
+	}
+
+	_mouseTrapCounter1 = 0;
+
+	do {
+		_mouseTrapRouteCopy[3 * _mouseTrapCounter1 + 0] = _mouseTrapRoute[3 * i + 0];
+		_mouseTrapRouteCopy[3 * _mouseTrapCounter1 + 1] = _mouseTrapRoute[3 * i + 1];
+		_mouseTrapRouteCopy[3 * _mouseTrapCounter1 + 2] = _mouseTrapRoute[3 * i + 2];
+
+		_mouseTrapCounter1++;
+
+		i = _mouseTrapRoute[3 * i + 2];
+	} while (i);
 }
 
 int8 MouseTrapGame::xyToPos(int8 x, int8 y) {
@@ -171,30 +195,138 @@ void MouseTrapGame::updateRoute() {
 }
 
 void MouseTrapGame::popLastStep(int8 *x, int8 *y) {
+	_mouseTrapCounter1--;
+
+	*x = _mouseTrapRouteCopy[3 * _mouseTrapCounter1];
+	*y = _mouseTrapRouteCopy[3 * _mouseTrapCounter1 + 1];
 }
 
 void MouseTrapGame::goFarthest(int8 *x, int8 *y) {
+	int8 origX = _mouseTrapX;
+	int8 origY = _mouseTrapY;
+	int8 maxVal = 0;
+	int8 maxX = 0, maxY = 0;
+
+	if (_mouseTrapNumSteps)
+		--_mouseTrapNumSteps;
+
+	for (int8 i = 0; i < 8; i++) {
+		int8 x1 = mouseTrapLookup[2 * i];
+		int8 y1 = mouseTrapLookup[2 * i + 1];
+		if (x1 != origX || y1 != origY) {
+			flipField(x1, y1);
+
+			int8 dist = calcDistanceToExit();
+
+			if (_mouseTrapNumSteps && _random.getRandomNumber(1) != 0 )
+				dist += 3;
+
+			if (dist >= maxVal) {
+				maxVal = dist;
+				maxX = x1;
+				maxY = y1;
+			}
+
+			flipField(mouseTrapLookup[2 * ((i + 4) & 7)], mouseTrapLookup[2 * ((i + 4) & 7) + 1]);
+		}
+	}
+
+	*x = maxX;
+	*y = maxY;
 }
 
 void MouseTrapGame::findMinPointInRoute(int8 *y, int8 *x) {
+	int8 maxVal = 0;
+	int8 x1 = _mouseTrapPos.x;
+	int8 y1 = _mouseTrapPos.y;
+	for (int i = 0; i < _mouseTrapCounter > i; i++) {
+		if (8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i] > maxVal) {
+			maxVal = 8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i];
+			y1 = _mouseTrapRoute[3 * i];
+			x1 = _mouseTrapRoute[3 * i + 1];
+		}
+	}
+	*y = y1;
+	*x = x1;
 }
 
 int8 MouseTrapGame::calcDistanceToExit() {
-	return 0;
+	int8 maxDist = 0;
+
+	updateRoute();
+	if (havePosInRoute(4, 4))
+		return 0;
+
+	for (int i = 0; i < _mouseTrapCounter > i; i++) {
+		if (8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i] > maxDist)
+			maxDist = 8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i];
+	}
+
+	return maxDist;
 }
 
-int8 MouseTrapGame::getBestDirection(int8 *x, int8 *y) {
-	return 0;
+void MouseTrapGame::getBestDirection(int8 *x, int8 *y) {
+	int8 maxVal = 0;
+	int8 origX = _mouseTrapX;
+	int8 origY = _mouseTrapY;
+	_mouseTrapNumSteps = 8;
+	int8 maxX = 0, maxY = 0;
+
+	for (int i = 0; i < 8; i++) {
+		int x1 = mouseTrapLookup[2 * i];
+		int y1 = mouseTrapLookup[2 * i + 1];
+
+		if (origX != x1 || origY != y1) {
+			flipField(x1, y1);
+
+			int8 maxInRoute = findMaxInRoute();
+			if (maxInRoute >= maxVal) {
+				maxVal = maxInRoute;
+				maxX = x1;
+				maxY = y1;
+			}
+
+			flipField(mouseTrapLookup[2 * ((i + 4) & 7)], mouseTrapLookup[2 * ((i + 4) & 7) + 1]);
+		}
+	}
+
+	*x = maxX;
+	*y = maxY;
 }
 
-int8 MouseTrapGame::findMaxPointInRoute(int8 *y, int8 *x) {
-	return 0;
+void MouseTrapGame::findMaxPointInRoute(int8 *y, int8 *x) {
+	int8 maxVal = 0;
+	int8 y1 = _mouseTrapPos.y;
+	int8 x1 = _mouseTrapPos.x;
+
+	updateRoute();
+
+	for (int i = 0; i < _mouseTrapCounter; i++) {
+		if (_mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1] > maxVal) {
+			maxVal = _mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1];
+			y1 = _mouseTrapRoute[3 * i];
+			x1 = _mouseTrapRoute[3 * i + 1];
+		}
+	}
+
+	*y = y1;
+	*x = x1;
 }
 
 int8 MouseTrapGame::findMaxInRoute() {
-	return 0;
+	updateRoute();
+
+	if (havePosInRoute(0, 0))
+		return 0;
+
+	int8 maxCoords = 0;
+
+	for (int i = 0; i < _mouseTrapCounter; i++) {
+		if (_mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1] > maxCoords )
+			maxCoords = _mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1];
+		}
+
+	return maxCoords;
 }
-
-
 
 } // End of Groovie namespace

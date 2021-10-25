@@ -65,7 +65,7 @@ private:
 	void sub07(byte *scriptVariables);
 	void sub08(byte *scriptVariables);
 	void sub09(byte *scriptVariables);
-	void sub11(int8 x, int8 y);
+	void copyRoute(int8 x, int8 y);
 	int8 xyToPos(int8 x, int8 y);
 	void posToXY(int8 pos, int8 *x, int8 *y);
 	void copyStateToVars(byte *scriptVariables);
@@ -79,18 +79,20 @@ private:
 	void goFarthest(int8 *x, int8 *y);
 	void findMinPointInRoute(int8 *y, int8 *x);
 	int8 calcDistanceToExit();
-	int8 getBestDirection(int8 *x, int8 *y);
-	int8 findMaxPointInRoute(int8 *y, int8 *x);
+	void getBestDirection(int8 *x, int8 *y);
+	void findMaxPointInRoute(int8 *y, int8 *x);
 	int8 findMaxInRoute();
 
 
 private:
 	Common::RandomSource _random;
 	int8 _mouseTrapX, _mouseTrapY;
-	int8 _mouseTrapCounter;
+	int8 _mouseTrapCounter, _mouseTrapCounter1;
 	int8 _mouseTrapRoute[75];
+	int8 _mouseTrapRouteCopy[76];
 	int8 _mouseTrapCells[31];
 	Point8 _mouseTrapPos;
+	int8 _mouseTrapNumSteps;
 };
 
 } // End of Groovie namespace
