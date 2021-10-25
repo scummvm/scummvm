@@ -505,12 +505,22 @@ bool Scene::key(const AsylumEvent &evt) {
 			getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
 		}
 		break;
+
+	case Common::KEYCODE_m:
+		g_debugScrolling = !g_debugScrolling;
+		break;
 	}
 
 	return true;
 }
 
 bool Scene::clickDown(const AsylumEvent &evt) {
+	if (g_debugScrolling) {
+		g_debugScrolling = 0;
+		getActor()->setPosition(_ws->xLeft + evt.mouse.x, _ws->yTop + evt.mouse.y, getActor()->getDirection(), getActor()->getFrameIndex());
+		return true;
+	}
+
 	_vm->lastScreenUpdate = 0;
 
 	if (getSharedData()->getFlag(kFlag2)) {
