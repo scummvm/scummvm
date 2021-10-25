@@ -1189,6 +1189,7 @@ namespace Director {
 #define GENGAME1_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 #define GENGAME1t_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 #define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 
 #define MACGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define MACGAME1t(t,e,f,m,s,v) 	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
@@ -1211,9 +1212,11 @@ namespace Director {
 
 #define MACGAME2(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define WINGAME2(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define WINGAME2t(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME2(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
+#define WINDEMO2t(t,e,f1,m1,s1,f2,m2,s2,v) 	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define WINGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
