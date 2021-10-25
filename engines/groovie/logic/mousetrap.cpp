@@ -30,7 +30,7 @@ MouseTrapGame::MouseTrapGame() : _random("MouseTrapGame") {
 	_mouseTrapX = _mouseTrapY = 0;
 	memset(_mouseTrapRoute, 0, 75);
 	memset(_mouseTrapRouteCopy, 0, 76);
-	_mouseTrapPos.x = _mouseTrapPos.y = 0;
+	_mouseTrapPosX = _mouseTrapPosY = 0;
 	memset(_mouseTrapCells, 0, 31);
 	_mouseTrapNumSteps = 0;
 }
@@ -175,23 +175,60 @@ void MouseTrapGame::flipField(int8 x, int8 y) {
 }
 
 bool MouseTrapGame::calcSolution() {
-	int8 pos = _mouseTrapPos.x + 5 * _mouseTrapPos.y;
+	int8 pos = _mouseTrapPosY + 5 * _mouseTrapPosX;	// coordinates swapped?
 	int8 val = _mouseTrapCells[pos + 5];
 
-	return ((val & 1) != 0 && _mouseTrapPos.y && (_mouseTrapCells[pos] & 4) != 0)
-		|| ((val & 4) != 0 && _mouseTrapPos.y < 4 && (_mouseTrapCells[pos + 10] & 1) != 0)
-		|| ((val & 8) != 0 && _mouseTrapPos.x < 4 && (_mouseTrapCells[pos + 6] & 2) != 0)
-		|| ((val & 2) != 0 && _mouseTrapPos.x && (_mouseTrapCells[pos + 4] & 8) != 0);
+	return ((val & 1) != 0 && _mouseTrapPosX && (_mouseTrapCells[pos] & 4) != 0)
+		|| ((val & 4) != 0 && _mouseTrapPosX < 4 && (_mouseTrapCells[pos + 10] & 1) != 0)
+		|| ((val & 8) != 0 && _mouseTrapPosY < 4 && (_mouseTrapCells[pos + 6] & 2) != 0)
+		|| ((val & 2) != 0 && _mouseTrapPosY && (_mouseTrapCells[pos + 4] & 8) != 0);
 }
 
-bool MouseTrapGame::havePosInRoute(int8 y, int8 x) {
+bool MouseTrapGame::havePosInRoute(int8 x, int8 y) {
+	for (int i = 0; i < _mouseTrapCounter; i++) {
+		if (_mouseTrapRoute[3 * i] == x && _mouseTrapRoute[3 * i + 1] == y)
+			return true;
+	}
+
 	return false;
 }
 
-void MouseTrapGame::addToRoute(int8 y, int8 x, int8 num) {
+void MouseTrapGame::addToRoute(int8 x, int8 y, int8 num) {
+	if (!havePosInRoute(x, y)) {
+		_mouseTrapRoute[3 * _mouseTrapCounter] = x;
+		_mouseTrapRoute[3 * _mouseTrapCounter + 1] = y;
+		_mouseTrapRoute[3 * _mouseTrapCounter + 2] = num;
+
+		_mouseTrapCounter++;
+	}
 }
 
 void MouseTrapGame::updateRoute() {
+	_mouseTrapCounter = 0;
+
+	addToRoute(_mouseTrapPosX, _mouseTrapPosY, 0);
+
+	int prevCounter = 0;
+
+	do {
+		prevCounter = _mouseTrapCounter;
+
+		for (int i = prevCounter; i < _mouseTrapCounter; i++) {
+			int8 y1 = _mouseTrapRoute[3 * i + 1];
+			int8 x1 = _mouseTrapRoute[3 * i];
+			int8 pos = 5 * x1 + y1;
+			int8 mask = _mouseTrapCells[pos + 5];
+
+			if ((mask & 1) != 0 && x1 && (_mouseTrapCells[pos] & 4) != 0)
+				addToRoute(x1 - 1, y1, i);
+			if ((mask & 4) != 0 && x1 < 4 && (_mouseTrapCells[pos + 10] & 1) != 0)
+				addToRoute(x1 + 1, y1, i);
+			if ((mask & 8) != 0 && y1 < 4 && (_mouseTrapCells[pos + 6] & 2) != 0)
+				addToRoute(x1, y1 + 1, i);
+			if ((mask & 2) != 0 && y1 && (_mouseTrapCells[pos + 4] & 8) != 0)
+				addToRoute(x1, y1 - 1, i);
+		}
+	} while (_mouseTrapCounter != prevCounter);
 }
 
 void MouseTrapGame::popLastStep(int8 *x, int8 *y) {
@@ -235,19 +272,19 @@ void MouseTrapGame::goFarthest(int8 *x, int8 *y) {
 	*y = maxY;
 }
 
-void MouseTrapGame::findMinPointInRoute(int8 *y, int8 *x) {
+void MouseTrapGame::findMinPointInRoute(int8 *x, int8 *y) {
 	int8 maxVal = 0;
-	int8 x1 = _mouseTrapPos.x;
-	int8 y1 = _mouseTrapPos.y;
+	int8 x1 = _mouseTrapPosX;
+	int8 y1 = _mouseTrapPosY;
 	for (int i = 0; i < _mouseTrapCounter > i; i++) {
 		if (8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i] > maxVal) {
 			maxVal = 8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i];
-			y1 = _mouseTrapRoute[3 * i];
-			x1 = _mouseTrapRoute[3 * i + 1];
+			x1 = _mouseTrapRoute[3 * i];
+			y1 = _mouseTrapRoute[3 * i + 1];
 		}
 	}
-	*y = y1;
 	*x = x1;
+	*y = y1;
 }
 
 int8 MouseTrapGame::calcDistanceToExit() {
@@ -294,23 +331,23 @@ void MouseTrapGame::getBestDirection(int8 *x, int8 *y) {
 	*y = maxY;
 }
 
-void MouseTrapGame::findMaxPointInRoute(int8 *y, int8 *x) {
+void MouseTrapGame::findMaxPointInRoute(int8 *x, int8 *y) {
 	int8 maxVal = 0;
-	int8 y1 = _mouseTrapPos.y;
-	int8 x1 = _mouseTrapPos.x;
+	int8 x1 = _mouseTrapPosX;
+	int8 y1 = _mouseTrapPosY;
 
 	updateRoute();
 
 	for (int i = 0; i < _mouseTrapCounter; i++) {
 		if (_mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1] > maxVal) {
 			maxVal = _mouseTrapRoute[3 * i] + _mouseTrapRoute[3 * i + 1];
-			y1 = _mouseTrapRoute[3 * i];
-			x1 = _mouseTrapRoute[3 * i + 1];
+			x1 = _mouseTrapRoute[3 * i];
+			y1 = _mouseTrapRoute[3 * i + 1];
 		}
 	}
 
-	*y = y1;
 	*x = x1;
+	*y = y1;
 }
 
 int8 MouseTrapGame::findMaxInRoute() {

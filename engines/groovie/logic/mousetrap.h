@@ -28,11 +28,6 @@
 
 namespace Groovie {
 
-struct Point8 {
-	int8 x;
-	int8 y;
-};
-
 /*
  * Mouse Trap puzzle in the Lab.
  *
@@ -80,7 +75,7 @@ private:
 	void findMinPointInRoute(int8 *y, int8 *x);
 	int8 calcDistanceToExit();
 	void getBestDirection(int8 *x, int8 *y);
-	void findMaxPointInRoute(int8 *y, int8 *x);
+	void findMaxPointInRoute(int8 *x, int8 *y);
 	int8 findMaxInRoute();
 
 
@@ -91,7 +86,7 @@ private:
 	int8 _mouseTrapRoute[75];
 	int8 _mouseTrapRouteCopy[76];
 	int8 _mouseTrapCells[31];
-	Point8 _mouseTrapPos;
+	int8 _mouseTrapPosX, _mouseTrapPosY;
 	int8 _mouseTrapNumSteps;
 };
 
