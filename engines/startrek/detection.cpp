@@ -189,11 +189,25 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_DEMO,
 	},
 
-	{ // ST25 MAC demo (EN)
+	{ // ST25 MAC CD demo (EN)
 		{
 			"st25",
 			"Demo",
-			AD_ENTRY1("Star Trek Data", "871fa51c7680c0a43df9622128f1569f"),
+			AD_ENTRY1s("Star Trek Data", "871fa51c7680c0a43df9622128f1569f", 42617),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_ST25,
+		GF_DEMO,
+	},
+
+	{ // ST25 MAC demo (EN, 1993)
+		{
+			"st25",
+			"Demo",
+			AD_ENTRY1s("Star Trek Data", "88f88b81d389a3217fc7efd6ee631c42", 4021),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
