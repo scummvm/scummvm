@@ -171,15 +171,16 @@ ailScummVM::ailScummVM() {
 	_mixer = g_engine->_mixer;
 }
 
-void ailScummVM::playSpeech(Common::SeekableReadStream *src) {
+void ailScummVM::playSpeech(int channel, Common::SeekableReadStream *src) {
 	Audio::AudioStream *audioStream =
 		Audio::makeVOCStream(src, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
-		&_speechHandle, audioStream);
+		&_soundHandles[channel & 1], audioStream);
 }
 
-bool ailScummVM::isSpeechActive() const {
-	return _mixer->isSoundHandleActive(_speechHandle);
+bool ailScummVM::isSpeechActive(int channel) const {
+	return _mixer->isSoundHandleActive(
+		_soundHandles[channel & 1]);
 }
 
 void ailScummVM::waitForSpeechToFinish() {
@@ -625,7 +626,7 @@ void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
 		::error("Error loading speech");
 
 	Common::SeekableReadStream *rs = src->readStream(ch.size);
-	playSpeech(rs);
+	playSpeech(kanal, rs);
 }
 
 void ailclass::serve_db_samples() {

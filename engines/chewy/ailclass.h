@@ -36,17 +36,25 @@ void DecodeChannel(int16 ch);
 class ailScummVM {
 private:
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _speechHandle;
+	Audio::SoundHandle _soundHandles[2];
 public:
 	ailScummVM();
 
 	/**
-	 * Plays the speech from the passed stream, and frees
-	 * it afterwards
+	 * Plays a VOC file from the passed stream, and takes
+	 * responsibility for freeing it when done
 	 */
-	void playSpeech(Common::SeekableReadStream *src);
+	void playSpeech(int channel, Common::SeekableReadStream *src);
 
-	bool isSpeechActive() const;
+	/**
+	 * Returns true if one of the two speech channels are
+	 * currently playing
+	 */
+	bool isSpeechActive(int channel = 0) const;
+
+	/**
+	 * Helper method to wait until any playing speech is finished
+	 */
 	void waitForSpeechToFinish();
 };
 
