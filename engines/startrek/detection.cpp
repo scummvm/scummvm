@@ -192,7 +192,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 	{ // ST25 MAC CD demo (EN)
 		{
 			"st25",
-			"Demo",
+			"CD Demo",
 			AD_ENTRY1s("Star Trek Data", "871fa51c7680c0a43df9622128f1569f", 42617),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
