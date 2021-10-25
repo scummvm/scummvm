@@ -28,6 +28,11 @@
 
 namespace Groovie {
 
+struct Point8 {
+	int8 x;
+	int8 y;
+};
+
 /*
  * Mouse Trap puzzle in the Lab.
  *
@@ -61,9 +66,19 @@ private:
 	void sub08(byte *scriptVariables);
 	void sub09(byte *scriptVariables);
 	int8 xyToPos(int8 x, int8 y);
+	void posToXY(int8 pos, int8 *x, int8 *y);
+	void copyStateToVars(byte *scriptVariables);
+	int8 findState(int8 val);
+	void flipField(int8 x, int8 y);
+	bool calcSolution();
 
+private:
 	Common::RandomSource _random;
 	int8 _mouseTrapX, _mouseTrapY;
+	int8 _mouseTrapCounter;
+	int8 _mouseTrapRoute[75];
+	int8 _mouseTrapCells[31];
+	Point8 _mouseTrapPos;
 };
 
 } // End of Groovie namespace

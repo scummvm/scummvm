@@ -26,6 +26,11 @@
 namespace Groovie {
 
 MouseTrapGame::MouseTrapGame() : _random("MouseTrapGame") {
+	_mouseTrapCounter = 0;
+	_mouseTrapX = _mouseTrapY = 0;
+	memset(_mouseTrapRoute, 0, 75);
+	_mouseTrapPos.x = _mouseTrapPos.y = 0;
+	memset(_mouseTrapCells, 0, 31);
 }
 
 void MouseTrapGame::run(byte *scriptVariables) {
@@ -84,6 +89,10 @@ void MouseTrapGame::run(byte *scriptVariables) {
 	}
 }
 
+static const int8 mouseTrapStates[] = {
+	6, 12,  9,  3
+};
+
 void MouseTrapGame::init() {
 }
 
@@ -112,6 +121,41 @@ int8 MouseTrapGame::xyToPos(int8 x, int8 y) {
 	return 5 * y + x + 1;
 }
 
+void MouseTrapGame::posToXY(int8 pos, int8 *x, int8 *y) {
+	*y = (pos - 1) / 5;
+	*x = (pos - 1) % 5;
+}
+
+void MouseTrapGame::copyStateToVars(byte *scriptVariables) {
+	memset(scriptVariables + 51, 0, 24);
+	scriptVariables[75] = 0;
+
+	for (int i = 0; i < _mouseTrapCounter; i++)
+		scriptVariables[xyToPos(_mouseTrapRoute[3 * i], _mouseTrapRoute[3 * i + 1]) + 50] = 1;
+}
+
+int8 MouseTrapGame::findState(int8 val) {
+  int8 result = 0;
+
+  while (mouseTrapStates[result] != val) {
+    if (++result >= 4)
+      return -1;
+  }
+  return result;
+}
+
+void MouseTrapGame::flipField(int8 x, int8 y) {
+}
+
+bool MouseTrapGame::calcSolution() {
+	int8 pos = _mouseTrapPos.x + 5 * _mouseTrapPos.y;
+	int8 val = _mouseTrapCells[pos + 5];
+
+	return ((val & 1) != 0 && _mouseTrapPos.y && (_mouseTrapCells[pos] & 4) != 0)
+		|| ((val & 4) != 0 && _mouseTrapPos.y < 4 && (_mouseTrapCells[pos + 10] & 1) != 0)
+		|| ((val & 8) != 0 && _mouseTrapPos.x < 4 && (_mouseTrapCells[pos + 6] & 2) != 0)
+		|| ((val & 2) != 0 && _mouseTrapPos.x && (_mouseTrapCells[pos + 4] & 8) != 0);
+}
 
 
 } // End of Groovie namespace
