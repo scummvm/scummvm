@@ -50,13 +50,13 @@ public:
 	 *
 	 * @return The message handler.
 	 */
-	EventHandler* getPuzzle(uint32 index) const;
+	EventHandler *getPuzzle(uint32 index) const;
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
-	AsylumEngine* _vm;
+	AsylumEngine *_vm;
 	Puzzle *_puzzles[17];
 
 	/**

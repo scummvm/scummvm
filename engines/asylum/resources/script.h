@@ -315,7 +315,7 @@ private:
 		const char    *name;
 		OpcodeFunctor *func;
 
-		Opcode(const char* opcodeName, OpcodeFunctor *functor) {
+		Opcode(const char *opcodeName, OpcodeFunctor *functor) {
 			name = opcodeName;
 			func = functor;
 		}

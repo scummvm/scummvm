@@ -39,12 +39,12 @@ public:
 	Special(AsylumEngine *engine);
 	~Special() {};
 
-	void run(Object* object, ActorIndex index);
+	void run(Object *object, ActorIndex index);
 
 	void reset(bool resetPaletteTick2);
 
 private:
-	AsylumEngine* _vm;
+	AsylumEngine *_vm;
 
 	// Counters
 	int32 _chapter5Counter;
@@ -90,7 +90,7 @@ private:
 	void playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIndex actorIndex);
 
 	void updateObjectFlag(ObjectId id);
-	void checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, uint32 *val1, uint32*val2, GameFlag flag5, uint32 *val3);
+	void checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, uint32 *val1, uint32 *val2, GameFlag flag5, uint32 *val3);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

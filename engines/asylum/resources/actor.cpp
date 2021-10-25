@@ -1568,7 +1568,7 @@ void Actor::setupReflectionData(ActorIndex nextActor, int32 actionAreaId, ActorD
 	updateReflectionData();
 }
 
-bool Actor::aNicePlaceToTalk(Common::Point *point, int32* param) {
+bool Actor::aNicePlaceToTalk(Common::Point *point, int32 *param) {
 	Actor *player = getScene()->getActor();
 
 	int16 offset = 65;
@@ -2735,7 +2735,7 @@ void Actor::MaxAttacks() {
 			if (otherActor->getStatus() == kActorStatusEnabled2) {
 				// FIXME: this is a bit strange, but it looks like the original does exactly that
 				// this might be dead code (the actor 38 never exists and thus setting values has no effect)
-				Actor* actor38 = getScene()->getActor(38);
+				Actor *actor38 = getScene()->getActor(38);
 				actor38->setFrameIndex(0);
 				*actor38->getPoint1() = *otherActor->getPoint1();
 

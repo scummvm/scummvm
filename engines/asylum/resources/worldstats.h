@@ -119,8 +119,8 @@ public:
 	int32 musicFlag;
 	int32 musicResourceIndex;
 	int32 musicStatusExt;
-	Common::Array<Object*>     objects;   // maxsize 400
-	Common::Array<Actor*>      actors;   // maxsize 50
+	Common::Array<Object *> objects;   // maxsize 400
+	Common::Array<Actor *>  actors;    // maxsize  50
 	// ActorData is stored in each actor instance
 	uint32 numScripts;
 	uint32 numPolygons;
@@ -128,7 +128,7 @@ public:
 	ResourceId inventoryIconsNormal[16];
 	ResourceId inventoryCursorsNormal[16];
 	ResourceId inventoryCursorsBlinking[16];
-	Common::Array<ActionArea*> actions;  // maxsize 400
+	Common::Array<ActionArea *> actions;  // maxsize 400
 	int32 field_E848C;
 	int32 field_E8490;
 	int32 field_E8494;
@@ -150,9 +150,9 @@ public:
 
 	int32 getActionAreaIndexById(int32 id);
 	int32 getRandomActionAreaIndexById(int32 id);
-	ActionArea* getActionAreaById(int32 id);
+	ActionArea *getActionAreaById(int32 id);
 
-	Object* getObjectById(ObjectId id);
+	Object *getObjectById(ObjectId id);
 
 	Common::String toString();
 

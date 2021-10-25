@@ -288,7 +288,7 @@ public:
 	bool canReach(const Common::Point &point);
 	void forceTo(int16 actorX, int16 actorY, bool doSpeech);
 	void setupReflectionData(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset);
-	bool aNicePlaceToTalk(Common::Point *point, int32* param);
+	bool aNicePlaceToTalk(Common::Point *point, int32 *param);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
 	bool testActorCollision(Common::Point *point, ActorDirection direction);

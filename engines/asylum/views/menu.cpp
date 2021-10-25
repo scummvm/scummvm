@@ -1370,7 +1370,7 @@ void Menu::updateAudioOptions() {
 		getText()->setPosition(Common::Point(sizeMinus + 360, (int16)(29 * volumeIndex + 150)));
 		getText()->draw("+");
 
-		switch(volumeIndex) {
+		switch (volumeIndex) {
 		default:
 			break;
 

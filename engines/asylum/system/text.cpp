@@ -116,9 +116,9 @@ int16 Text::getWidth(ResourceId resourceId) {
 	return getWidth(get(resourceId));
 }
 
-char* Text::get(ResourceId resourceId) {
+char *Text::get(ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	return (char*)textRes->data;
+	return (char *)textRes->data;
 }
 
 void Text::drawChar(char character) {
@@ -158,7 +158,7 @@ void Text::draw(const char *text, int16 length) {
 
 void Text::draw(ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	draw((char*)textRes->data);
+	draw((char *)textRes->data);
 }
 
 void Text::draw(const Common::Point &point, const char *text) {

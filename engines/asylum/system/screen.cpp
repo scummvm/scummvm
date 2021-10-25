@@ -648,7 +648,7 @@ void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, c
 
 void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, int32 objectResourceId, const Common::Point &destination, uint32 transTableNum) {
 	// Save current transparency index
-	byte *transparencyIndex= _transTable;
+	byte *transparencyIndex = _transTable;
 	selectTransTable(transTableNum);
 
 	// Get graphic frames
@@ -1133,7 +1133,7 @@ void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 wi
 	}
 }
 
-void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags) {
+void Screen::blt(Common::Rect *dest, GraphicFrame *frame, Common::Rect *source, int32 flags) {
 	if (_useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.getPixels() + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
@@ -1153,7 +1153,7 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 	}
 }
 
-void Screen::bltFast(int16 dX, int16 dY, GraphicFrame* frame, Common::Rect *source) {
+void Screen::bltFast(int16 dX, int16 dY, GraphicFrame *frame, Common::Rect *source) {
 	if (_useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.getPixels() + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
@@ -1236,7 +1236,7 @@ void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 
 			startY = getWorld()->yTop;
 
 		_vm->screen()->copyToBackBufferWithTransparency(
-			((byte*)surface->getPixels()) +
+			((byte *)surface->getPixels()) +
 			startY * surface->pitch +
 			startX * surface->format.bytesPerPixel,
 			surface->pitch,

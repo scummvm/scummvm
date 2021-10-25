@@ -79,7 +79,7 @@ public:
 	void draw(ResourceId resourceId);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
 	void draw(ResourceId resourceId, uint32 frameIndex, const int16 (*srcPtr)[2], DrawFlags flags = kDrawFlagNone, bool colorKey = true);
-	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags= kDrawFlagNone, bool colorKey = true);
+	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
 	void drawTransparent(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
 	void drawTransparent(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceId2, const Common::Point &destination, bool colorKey = true);
@@ -197,8 +197,8 @@ private:
 	void bltMasked             (byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch) const;
 
 	// DirectDraw-equivalent functions
-	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags);
-	void bltFast(int16 dX, int16 dY, GraphicFrame* frame, Common::Rect *source);
+	void blt(Common::Rect *dest, GraphicFrame *frame, Common::Rect *source, int32 flags);
+	void bltFast(int16 dX, int16 dY, GraphicFrame *frame, Common::Rect *source);
 
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
 

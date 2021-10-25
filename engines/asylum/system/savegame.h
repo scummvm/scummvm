@@ -188,7 +188,7 @@ public:
 	uint32 getBuild() { return _build; }
 
 private:
-	AsylumEngine* _vm;
+	AsylumEngine *_vm;
 
 	uint32 _index;
 	byte _moviesViewed[196];

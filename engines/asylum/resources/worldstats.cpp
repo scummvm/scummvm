@@ -531,7 +531,7 @@ int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
 	return indexes[_vm->getRandom(count)];
 }
 
-ActionArea* WorldStats::getActionAreaById(int32 id) {
+ActionArea *WorldStats::getActionAreaById(int32 id) {
 	int index = getActionAreaIndexById(id);
 	if (index == -1)
 		error("[WorldStats::getActionAreaById] action id is invalid");
@@ -539,7 +539,7 @@ ActionArea* WorldStats::getActionAreaById(int32 id) {
 	return actions[index];
 }
 
-Object* WorldStats::getObjectById(ObjectId id) {
+Object *WorldStats::getObjectById(ObjectId id) {
 	for (uint32 i = 0; i < objects.size(); i++)
 		if (objects[i]->getId() == id)
 			return objects[i];

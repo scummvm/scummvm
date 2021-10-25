@@ -121,7 +121,7 @@ public:
 	 * WorldStats actor list. Default parameter just
 	 * gets the instance associated with _playerActorIdx
 	 */
-	Actor* getActor(ActorIndex index = kActorInvalid);
+	Actor *getActor(ActorIndex index = kActorInvalid);
 
 	/**
 	 * Change player actor

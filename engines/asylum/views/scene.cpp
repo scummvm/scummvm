@@ -257,7 +257,7 @@ void Scene::load(ResourcePackId packId) {
 	snprintf(filename, 10, SCENE_FILE_MASK, _packId);
 
 	char sceneTag[6];
-	Common::File* fd = new Common::File;
+	Common::File *fd = new Common::File;
 
 	if (!Common::File::exists(filename))
 		error("Scene file doesn't exist %s", filename);
@@ -2085,7 +2085,7 @@ void Scene::adjustCoordinates(Common::Point *point) {
 	point->y = _ws->yTop  + getCursor()->position().y;
 }
 
-Actor* Scene::getActor(ActorIndex index) {
+Actor *Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
 

@@ -108,7 +108,7 @@ private:
 		uint operator()(const ResourcePackId &x) const { return x; }
 	};
 
-	typedef Common::HashMap<ResourcePackId, ResourcePack*, ResourcePackId_Hash, ResourcePackId_EqualTo> ResourceCache;
+	typedef Common::HashMap<ResourcePackId, ResourcePack *, ResourcePackId_Hash, ResourcePackId_EqualTo> ResourceCache;
 
 	ResourceCache _resources;
 	ResourceCache _music;

@@ -71,7 +71,7 @@ Special::Special(AsylumEngine *engine) : _vm(engine) {
 	_chapter5Counter = 0;
 }
 
-void Special::run(Object* object, ActorIndex index) {
+void Special::run(Object *object, ActorIndex index) {
 	switch (getWorld()->chapter) {
 	default:
 	case kChapterNone:
@@ -667,7 +667,7 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 	if (actorIndex != kActorInvalid)
 		return;
 
-	switch(object->getId()) {
+	switch (object->getId()) {
 	default:
 		break;
 
@@ -1252,7 +1252,7 @@ void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
 		return;
 
 	if (actorIndex == kActorInvalid) {
-		switch(object->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 
@@ -1286,7 +1286,7 @@ void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == kActorInvalid) {
-		switch(object->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 
@@ -1361,7 +1361,7 @@ void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == kActorInvalid) {
-		switch(object->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 
@@ -1440,7 +1440,7 @@ void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == kActorInvalid) {
-		switch(object->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 
@@ -1586,7 +1586,7 @@ void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
 	if (actorIndex != kActorInvalid)
 		return;
 
-	switch(object->getId()) {
+	switch (object->getId()) {
 	default:
 		break;
 
@@ -1631,7 +1631,7 @@ void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
 	if (actorIndex != kActorInvalid)
 		return;
 
-	switch(object->getId()) {
+	switch (object->getId()) {
 	default:
 		break;
 
@@ -1650,7 +1650,7 @@ void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == kActorInvalid) {
-		switch(object->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 

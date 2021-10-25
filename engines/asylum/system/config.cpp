@@ -104,7 +104,7 @@ void ConfigurationManager::read() {
 	// Engine options
 	showEncounterSubtitles = ConfMan.getBool("show_encounter_subtitles");
 	gammaLevel    = ConfMan.getInt("gamma_level");
-	ambientVolume = ConfMan.getInt("ambient_volume");;
+	ambientVolume = ConfMan.getInt("ambient_volume");
 	movieVolume   = ConfMan.getInt("movie_volume");
 	musicStatus   = ConfMan.getBool("music_status");
 	reverseStereo = ConfMan.getBool("reverse_stereo");
