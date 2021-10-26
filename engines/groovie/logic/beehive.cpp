@@ -30,12 +30,6 @@ extern const int8 beehiveLogicTable1[368];
 extern const int8 beehiveLogicTable2[800];
 }
 
-BeehiveGame::BeehiveGame() {
-}
-
-BeehiveGame::~BeehiveGame() {
-}
-
 void BeehiveGame::run(byte *scriptVariables) {
 	int8 *hexagons = (int8 *)scriptVariables + 25;
 	int8 *hexDifference = (int8 *)scriptVariables + 13;
@@ -52,8 +46,8 @@ void BeehiveGame::run(byte *scriptVariables) {
 	int8 tempState[64];
 
 	switch (op) {
-	case 0:	// init board's hexagons
-		memset(_beehiveState, 0, 60);
+	case 0:	// Init board's hexagons
+		memset(_beehiveState, 0, HEXCOUNT);
 		_beehiveState[0] = kBeehiveColorYellow;
 		_beehiveState[4] = kBeehiveColorRed;
 		_beehiveState[34] = kBeehiveColorYellow;
@@ -63,7 +57,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		return;
 
 	case 1:
-		memset(hexagons, 0, 60);
+		memset(hexagons, 0, HEXCOUNT);
 		scriptVariables[85] = 0;
 		sub02(&v22, tempState);
 		if (v22) {
@@ -74,17 +68,17 @@ void BeehiveGame::run(byte *scriptVariables) {
 		}
 		return;
 
-	case 2:
-		memset(hexagons, 0, 60);
+	case 2:	// Player clicks on a honey-filled (source) hexagon
+		memset(hexagons, 0, HEXCOUNT);
 		scriptVariables[85] = 0;
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
-		sub18(v24, &v22, tempState);
+		selectSourceHexagon(v24, &v22, tempState);
 		for (int j = 0; j < v22; j++)
 			scriptVariables[tempState[j] + 25] = kBeehiveColorRed;
 		scriptVariables[v24 + 25] = kBeehiveColorRed;
 		return;
 
-	case 3:
+	case 3:	// Player moves into an empty (destination) hexagon
 		scriptVariables[24] = 1;
 		scriptVariables[4] = 2;
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
@@ -94,14 +88,14 @@ void BeehiveGame::run(byte *scriptVariables) {
 		sub04(v24, v22, (int8 *)scriptVariables);
 		return;
 
-	case 4:
+	case 4:	// Stauf plays
 		scriptVariables[24] = 1;
 		scriptVariables[4] = 1;
 		sub08(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
 		// Execute method tail
 		break;
 
-	case 5:
+	case 5:	// Calculate board state after every move
 		if (scriptVariables[24] == 1) {
 			scriptVariables[0] = scriptVariables[2];
 			scriptVariables[1] = scriptVariables[3];
@@ -178,7 +172,7 @@ void BeehiveGame::sub02(int8 *a1, int8 *a2) {
 	}
 
 	if (!*a1) {
-		for (int i = 0; i < 61; ++i)
+		for (int i = 0; i < HEXCOUNT; ++i)
 			if (!_beehiveState[i])
 				_beehiveState[i] = 1;
 	}
@@ -284,7 +278,7 @@ void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, 4, 1, params) == 125)) {
 		*a1 = -1;
 		*a2 = -1;
-		for (int i = 0; i < 61; ++i) {
+		for (int i = 0; i < HEXCOUNT; ++i) {
 			if (!_beehiveState[i])
 				_beehiveState[i] = 1;
 		}
@@ -304,7 +298,7 @@ void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, 4, 1, params) == -125)) {
 		*a1 = -1;
 		*a2 = -1;
-		for (int i = 0; i < 61; ++i) {
+		for (int i = 0; i < HEXCOUNT; ++i) {
 			if (!_beehiveState[i])
 				_beehiveState[i] = -1;
 		}
@@ -462,7 +456,7 @@ void BeehiveGame::sub17(int8 *beehiveState, int8 a2, int8 *a3, int8 *a4, int8 *a
 	}
 }
 
-void BeehiveGame::sub18(int8 a1, int8 *a2, int8 *a3) {
+void BeehiveGame::selectSourceHexagon(int8 a1, int8 *a2, int8 *a3) {
 	*a2 = 0;
 
 	for (int i = 0; i < 6; i++) {
@@ -501,7 +495,7 @@ int8 BeehiveGame::calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int
 
 	if (sub11(beehiveState, &v15, &v14, &v13, a3, a5, params2)) {
 		do {
-			for (int i = 0; i < 61; i++)
+			for (int i = 0; i < HEXCOUNT; i++)
 				state[i] = beehiveState[i];
 
 			sub15(state, a3, params2);
@@ -542,14 +536,14 @@ int8 BeehiveGame::getHexDifference() {
 int8 BeehiveGame::getTotal(int8 *hexagons) {
 	int8 result = 0;
 
-	for (int i = 0; i < 61; i++)
+	for (int i = 0; i < HEXCOUNT; i++)
 		result += hexagons[i];
 
 	return result;
 }
 
 int8 BeehiveGame::findCell(int8 *beehiveState, int8 *pos, int8 key) {
-	for (int i = *pos + 1; i < 61; i++)  {
+	for (int i = *pos + 1; i < HEXCOUNT; i++) {
 		if (beehiveState[i] == key) {
 			*pos = i;
 			return 1;

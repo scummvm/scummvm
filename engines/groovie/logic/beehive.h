@@ -38,8 +38,8 @@ namespace Groovie {
  */
 class BeehiveGame {
 public:
-	BeehiveGame();
-	~BeehiveGame();
+	BeehiveGame() {}
+	~BeehiveGame() {}
 
 	void run(byte *scriptVariables);
 
@@ -54,14 +54,15 @@ private:
 	void sub15(int8 *beehiveState, int8 a2, int8 *a3);
 	void sub16(int8 a1, int8 a2, int8 *a3, int8 *a4, int8 *a5);
 	void sub17(int8 *beehiveState, int8 a2, int8 *a3, int8 *a4, int8 *a5);
-	void sub18(int8 a1, int8 *a2, int8 *a3);
+	void selectSourceHexagon(int8 a1, int8 *a2, int8 *a3);
 	int8 sub19(int8 a1, int8 a2);
 	int8 getHexDifference();
 	int8 getTotal(int8 *hexagons);
 	int8 calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int a5, int8 *a6);
 	int8 findCell(int8 *beehiveState, int8 *pos, int8 key);
 
-	int8 _beehiveState[61];
+	#define HEXCOUNT 61
+	int8 _beehiveState[HEXCOUNT];
 
 };
 
