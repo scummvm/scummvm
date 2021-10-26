@@ -238,11 +238,10 @@ void Script::directGameLoad(int slot) {
 			midiInitScript = t7gMidiInitScript;
 			midiInitScriptSize = sizeof(t7gMidiInitScript);
 		}
-	} else {
-		// 11th Hour
+	} else if (_version == kGroovieT11H) {
 		setVariable(0xF, slot);
-		// FIXME: This bypasses a lot of the game's initialization procedure
-		targetInstruction = 0xE78E;
+		_currentInstruction = 0xE78D;
+		return;
 	}
 
 	if (midiInitScript && !_vm->_musicPlayer->isMidiInit()) {
