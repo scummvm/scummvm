@@ -72,7 +72,7 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	// Returning the resource substream
 	Common::SeekableSubReadStream *file = new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
 	if (ConfMan.getBool("dump_resources")) {
-		dumpResource(file, resInfo.filename);
+		dumpResource(file, resInfo.filename, false);
 	}
 	return file;
 }
@@ -87,7 +87,7 @@ void ResMan::dumpResource(uint32 fileRef, Common::String &fileName) {
 	dumpResource(inFile, fileName);
 }
 
-void ResMan::dumpResource(Common::SeekableReadStream *inFile, Common::String &fileName) {
+void ResMan::dumpResource(Common::SeekableReadStream *inFile, Common::String &fileName, bool dispose) {
 	Common::DumpFile outFile;
 	outFile.open(fileName);
 
@@ -99,7 +99,12 @@ void ResMan::dumpResource(Common::SeekableReadStream *inFile, Common::String &fi
 	outFile.flush();
 
 	delete[] data;
-	delete inFile;
+
+	if (dispose)
+		delete inFile;
+	else
+		inFile->seek(0);
+
 	outFile.close();
 }
 
