@@ -92,7 +92,7 @@ ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFo
 	}
 }
 
-uint32 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
+uint32 ResMan_t7g::getRef(Common::String name) {
 	// Get the name of the RL file
 	Common::String rlFileName(t7g_gjds[_lastGjd]);
 	rlFileName += ".rl";
@@ -219,12 +219,12 @@ ResMan_v2::ResMan_v2() {
 	indexfile.close();
 }
 
-uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
+uint32 ResMan_v2::getRef(Common::String name) {
 	// Open the RL file
 	Common::File rlFile;
 	if (!rlFile.open("dir.rl")) {
 		error("Groovie::Resource: Couldn't open dir.rl");
-		return false;
+		return (uint32)-1;
 	}
 
 	// resources are always in lowercase

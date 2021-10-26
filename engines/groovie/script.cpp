@@ -429,11 +429,8 @@ uint32 Script::getVideoRefString(Common::String &resName) {
 
 	debugCN(0, kDebugScript, "%s", resName.c_str());
 
-	// Extract the script name.
-	Common::String scriptname(_scriptFile.c_str(), _scriptFile.size() - 4);
-
 	// Get the fileref of the resource
-	return _vm->_resMan->getRef(resName, scriptname);
+	return _vm->_resMan->getRef(resName);
 }
 
 bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
