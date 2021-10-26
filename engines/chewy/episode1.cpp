@@ -124,18 +124,20 @@ void Room0::entry() {
 			obj->check_inventar(0))
 		det->hide_static_spr(6);
 
-	set_person_pos(150, 100, 0, 1);
-	cur_hide_flag = 0;
-	hide_cur();
-	timer_nr[0] = room->set_timer(255, 3);
+	if (!flags.LoadGame) {
+		set_person_pos(150, 100, 0, 1);
+		cur_hide_flag = 0;
+		hide_cur();
+		timer_nr[0] = room->set_timer(255, 3);
 
-	while (!ani_timer[timer_nr[0]].TimeFlag && !SHOULD_QUIT) {
-		set_up_screen(DO_SETUP);
+		while (!ani_timer[timer_nr[0]].TimeFlag && !SHOULD_QUIT) {
+			set_up_screen(DO_SETUP);
+		}
+
+		start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
+		start_aad_wait(2, -1);
+		show_cur();
 	}
-
-	start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
-	start_aad_wait(2, -1);
-	show_cur();
 }
 
 bool Room0::action1() {
