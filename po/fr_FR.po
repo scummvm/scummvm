@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-26 15:59+0000\n"
+"POT-Creation-Date: 2021-10-26 18:30+0000\n"
 "PO-Revision-Date: 2021-10-23 20:48+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6021,7 +6021,7 @@ msgstr "Charger"
 msgid "This menu item is not yet implemented"
 msgstr "Cette fonction du menu n'est pas encore implémentée"
 
-#: engines/private/detection.cpp:174 engines/private/detection.cpp:193
+#: engines/private/detection.cpp:184 engines/private/detection.cpp:203
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
