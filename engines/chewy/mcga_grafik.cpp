@@ -352,7 +352,8 @@ void mcga_grafik::punkt(int16 xpos, int16 ypos, int16 farbn) {
 uint8 mcga_grafik::get_pixel(int16 xpos, int16 ypos) {
 	uint8 pix;
 	pix = getpix(xpos, ypos);
-	return (pix);
+
+	return pix;
 }
 
 void mcga_grafik::linie(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
@@ -933,7 +934,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 	}
 	if (svga == ON)
 		upd_scr();
-	return (ret);
+	return ret;
 }
 
 void mcga_grafik::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 scrwidth,
@@ -1491,7 +1492,8 @@ int16 mcga_grafik::devices() {
 		else
 			i = 0;
 	}
-	return (i);
+
+	return i;
 }
 
 int16 mcga_grafik::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
@@ -1510,7 +1512,8 @@ int16 mcga_grafik::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
 		k = 0;
 	}
 	*pos = k;
-	return (diff);
+
+	return diff;
 }
 
 void mcga_grafik::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
@@ -1687,7 +1690,7 @@ int16 mcga_grafik::get_vesa_info(uint16 mode, byte *iblk) {
 		}
 	}
 #endif
-	return (error);
+	return error;
 }
 
 void mcga_grafik::ltoa(long N, char *str, int base) {

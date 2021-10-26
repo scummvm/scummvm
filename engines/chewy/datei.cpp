@@ -696,7 +696,8 @@ uint32 datei::load_voc(const char *fname, byte *speicher) {
 			modul = DATEI;
 		}
 	}
-	return (s);
+
+	return s;
 }
 
 uint32 datei::load_voc(Stream *handle, byte *speicher) {
@@ -817,7 +818,8 @@ uint32 datei::load_item(Stream *handle, byte *speicher) {
 			}
 		}
 	}
-	return (ch->size);
+
+	return ch->size;
 }
 
 uint32 datei::load_tmf(const char *fname, tmf_header *th) {
@@ -1779,7 +1781,7 @@ int16 datei::get_filename(const char *fname, int16 maxlen) {
 	if (z == 27)
 		ret = 0;
 #endif
-	return (ret);
+	return ret;
 }
 
 void datei::respfad(char *respath, char *resdir) {
@@ -1871,7 +1873,8 @@ int16 datei::get_id(char *id_code) {
 		id = TAFDATEI;
 	if (!(scumm_strnicmp(id_code, "TFF", 3)))
 		id = TFFDATEI;
-	return (id);
+
+	return id;
 }
 
 void datei::fcopy(const char *d_fname, const char *s_fname) {

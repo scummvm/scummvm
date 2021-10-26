@@ -240,7 +240,7 @@ int16 objekt::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 				ret = i;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 int16 objekt::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
@@ -255,15 +255,15 @@ int16 objekt::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
 		        mouse_y <= (Rmo[mov_obj_room[i]].Y + Rmo[mov_obj_room[i]].YOff))
 			ret = mov_obj_room[i];
 	}
-	return (ret);
+	return ret;
 }
 
 int16 objekt::iib_txt_nr(int16 inv_nr) {
-	return (Rmo[inv_nr].TxtNr);
+	return Rmo[inv_nr].TxtNr;
 }
 
 int16 objekt::sib_txt_nr(int16 sib_nr) {
-	return (Rsi[sib_nr].TxtNr);
+	return Rsi[sib_nr].TxtNr;
 }
 
 int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
@@ -318,7 +318,7 @@ int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 				ret = OBJEKT_1;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 int16 objekt::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
@@ -361,7 +361,7 @@ int16 objekt::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 		if (!calc_rsi_flip_flop(test_obj_nr))
 			action_flag = NO_ACTION;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void objekt::hide_sib(int16 nr) {
@@ -472,7 +472,7 @@ int16 objekt::calc_static_use(int16 nr) {
 		break;
 
 	}
-	return (ret);
+	return ret;
 }
 
 int16 objekt::calc_rsi_flip_flop(int16 nr) {
@@ -493,7 +493,7 @@ int16 objekt::calc_rsi_flip_flop(int16 nr) {
 		}
 	} else
 		ret = false;
-	return (ret);
+	return ret;
 }
 
 void objekt::set_rsi_flip_flop(int16 nr, int16 anz) {
@@ -513,7 +513,7 @@ int16 objekt::calc_rmo_flip_flop(int16 nr) {
 		}
 	} else
 		ret = false;
-	return (ret);
+	return ret;
 }
 
 int16 objekt::del_obj_use(int16 nr) {
@@ -528,7 +528,7 @@ int16 objekt::del_obj_use(int16 nr) {
 			--Rmo[nr].Del;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void objekt::add_inventar(int16 nr, RaumBlk *Rb) {
@@ -573,7 +573,7 @@ int16 objekt::check_inventar(int16 nr) {
 		if (spieler_invnr[i + 1] == nr)
 			ret = true;
 	}
-	return (ret);
+	return ret;
 }
 
 int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
@@ -590,7 +590,7 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 } // namespace Chewy

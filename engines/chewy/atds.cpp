@@ -118,7 +118,7 @@ int16 atdsys::get_delay(int16 txt_len) {
 		txt_len = max_len;
 
 	ret = *atdsv.Delay * (txt_len + z_len);
-	return (ret);
+	return ret;
 }
 
 SplitStringRet *atdsys::split_string(SplitStringInit *ssi_) {
@@ -246,7 +246,8 @@ SplitStringRet *atdsys::split_string(SplitStringInit *ssi_) {
 		ssret.Y = ssi_->Y + (ssi_->Zeilen - ssret.Anz) * ssi_->FHoehe;
 	else
 		ssret.Y = ssi_->Y;
-	return (&ssret);
+
+	return &ssret;
 }
 
 void atdsys::str_null2leer(char *str_start, char *str_end) {
@@ -289,7 +290,8 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 		fcode = OPENFEHLER;
 		err->set_user_msg(fname_);
 	}
-	return (handle);
+
+	return handle;
 }
 
 void atdsys::set_speech_handle(Stream *stream) {
@@ -394,7 +396,8 @@ char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 	if (size) {
 		tmp_adr = (char *)calloc(size + 3l, 1);
 	}
-	return (tmp_adr);
+
+	return tmp_adr;
 }
 
 void atdsys::load_atds(int16 chunk_nr, int16 mode) {
@@ -542,7 +545,8 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 			atsv.Display = false;
 	} else
 		atsv.Display = false;
-	return (atsv.Display);
+
+	return atsv.Display;
 }
 
 void atdsys::stop_ats() {
@@ -550,7 +554,7 @@ void atdsys::stop_ats() {
 }
 
 int16 atdsys::ats_get_status() {
-	return (atsv.Display);
+	return atsv.Display;
 }
 
 void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
@@ -709,14 +713,15 @@ int16 atdsys::get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 	lo_hi[1] = status >> 4;
 	lo_hi[0] = status &= 15;
-	return ((int16)lo_hi[ak_nybble]);
+
+	return (int16)lo_hi[ak_nybble];
 }
 
 int16 atdsys::get_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	int16 ret;
 	set_ats_mem(mode);
 	ret = bit->is_bit(ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
-	return (ret);
+	return ret;
 }
 
 void atdsys::set_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
@@ -748,7 +753,8 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 
 	if (ende == 2)
 		str_ = 0;
-	return (str_);
+
+	return str_;
 }
 
 void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
@@ -1068,7 +1074,7 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 }
 
 int16 atdsys::aad_get_status() {
-	return (aadv.StrNr);
+	return aadv.StrNr;
 }
 
 int16 atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
@@ -1082,7 +1088,8 @@ int16 atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
 			++zeilen;
 	}
 	*txt_len = (str_ - ptr) - 1;
-	return (zeilen);
+
+	return zeilen;
 }
 
 void atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
@@ -1149,7 +1156,7 @@ bool  atdsys::ads_start(int16 dia_nr) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void atdsys::stop_ads() {
@@ -1159,7 +1166,7 @@ void atdsys::stop_ads() {
 }
 
 int16 atdsys::ads_get_status() {
-	return (adsv.Dialog);
+	return adsv.Dialog;
 }
 
 int16 atdsys::check_item(int16 block_nr, int16 item_nr) {
@@ -1174,7 +1181,7 @@ int16 atdsys::check_item(int16 block_nr, int16 item_nr) {
 			ret = true;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 char **atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
@@ -1202,7 +1209,8 @@ char **atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 			}
 		}
 	}
-	return (e_ptr);
+
+	return e_ptr;
 }
 
 AdsNextBlk *atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
@@ -1221,7 +1229,8 @@ AdsNextBlk *atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 			}
 		}
 	}
-	return (&adsnb);
+
+	return &adsnb;
 }
 
 AdsNextBlk *atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
@@ -1253,7 +1262,8 @@ AdsNextBlk *atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
 	}
 	ads_stack[ads_stack_ptr] = adsnb.BlkNr;
 	++ads_stack_ptr;
-	return (&adsnb);
+
+	return &adsnb;
 }
 
 int16 atdsys::return_block(AdsBlock *ab) {
@@ -1274,7 +1284,7 @@ int16 atdsys::return_block(AdsBlock *ab) {
 			--ads_stack_ptr;
 	}
 	++ads_stack_ptr;
-	return (ret);
+	return ret;
 }
 
 void atdsys::ads_search_block(int16 blk_nr, char **ptr) {
@@ -1339,7 +1349,8 @@ int16 atdsys::start_ads_auto_dia(char *item_adr) {
 	} else {
 		aadv.Dialog = false;
 	}
-	return (aadv.Dialog);
+
+	return aadv.Dialog;
 }
 
 void atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
@@ -1400,7 +1411,8 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 			}
 		}
 	}
-	return (txt_nr);
+
+	return txt_nr;
 }
 
 int16 atdsys::get_stereo_pos(int16 x) {
@@ -1410,7 +1422,7 @@ int16 atdsys::get_stereo_pos(int16 x) {
 	if ((fx_ - ((float)((int16)fx_))) > 0.5)
 		fx_ += 1.0;
 
-	return ((int16)fx_);
+	return (int16)fx_;
 }
 
 } // namespace Chewy

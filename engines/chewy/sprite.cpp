@@ -250,7 +250,8 @@ int16 mouse_on_prog_ani() {
 			ani_nr = i;
 		}
 	}
-	return (ani_nr);
+
+	return ani_nr;
 }
 
 void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
@@ -463,7 +464,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	maus_links_click = tmp_maus_links;
-	return (ret);
+	return ret;
 }
 
 void aad_wait(int16 str_nr) {
@@ -628,7 +629,7 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 		        minfo.y <= auto_mov_vector[nr].Xypos[1] + yoff + Cxy[1] - spieler.scrolly)
 			ret = true;
 	}
-	return (ret);
+	return ret;
 }
 
 int16 auto_obj_status(int16 nr) {
@@ -638,7 +639,8 @@ int16 auto_obj_status(int16 nr) {
 		if (mov_phasen[nr].Repeat != -1)
 			status = true;
 	}
-	return (status);
+
+	return status;
 }
 
 void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y, ObjMov *om) {
@@ -1034,7 +1036,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		flags.MausLinks = true;
 		ret = true;
 	}
-	return (ret);
+	return ret;
 }
 
 void calc_person_spz_ani(ObjMov *om) {

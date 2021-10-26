@@ -549,7 +549,8 @@ int16 ged_user_func(int16 idx_nr) {
 		break;
 
 	}
-	return (idx_nr);
+
+	return idx_nr;
 }
 
 void enter_room(int16 eib_nr) {
@@ -1314,7 +1315,8 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 	}
 	if (sib_nr != -1)
 		obj->calc_rsi_flip_flop(sib_nr);
-	return ((uint16)flag);
+
+	return (uint16)flag;
 }
 
 int16 sib_event_no_inv(int16 sib_nr) {
@@ -1603,7 +1605,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	}
-	return (ret);
+	return ret;
 }
 
 void sib_event_inv(int16 sib_nr) {

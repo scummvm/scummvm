@@ -1090,7 +1090,7 @@ int16 ja_nein() {
 
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void save_iib(char *fname) {

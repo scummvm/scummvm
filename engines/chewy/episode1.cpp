@@ -875,7 +875,8 @@ int16 r4_sonde_comp() {
 	ERROR
 	fx_blende = 1;
 	atds->stop_aad();
-	return (cur_x);
+
+	return cur_x;
 }
 
 void switch_room(int16 nr) {
@@ -1812,7 +1813,8 @@ int16 r11_scanner() {
 			}
 		}
 	}
-	return (action_flag);
+
+	return action_flag;
 }
 
 void r11_get_card() {
@@ -2018,7 +2020,8 @@ int16 r12_use_terminal() {
 		else
 			start_aad(114, 0);
 	}
-	return (action_flag);
+
+	return action_flag;
 }
 
 int16 r12_use_linke_rohr() {
@@ -2034,7 +2037,7 @@ int16 r12_use_linke_rohr() {
 			atds->set_ats_str(117, TXT_MARK_LOOK, 0, ATS_DATEI);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r12_chewy_trans() {
@@ -2052,7 +2055,7 @@ int16 r12_chewy_trans() {
 			flags.AutoAniPlay = false;
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r13_entry() {
@@ -2232,7 +2235,7 @@ int16 r13_monitor_knopf() {
 			det->show_static_spr(11 - spieler.R13MonitorStatus);
 		atds->set_ats_str(96, TXT_MARK_LOOK, spieler.R13MonitorStatus, ATS_DATEI);
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r14_entry() {
@@ -2278,7 +2281,7 @@ int16 r14_use_schrott() {
 			invent_2_slot(BWAFFE_INV);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r14_use_gleiter() {
@@ -2298,7 +2301,7 @@ int16 r14_use_gleiter() {
 			r23_cockpit();
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r14_talk_eremit() {
@@ -2330,7 +2333,7 @@ int16 r14_use_schleim() {
 
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r14_feuer() {
@@ -2397,7 +2400,7 @@ int16 r16_use_gleiter() {
 		spieler.R23GleiterExit = 16;
 		r23_cockpit();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r17_entry() {
@@ -2465,7 +2468,7 @@ int16 r17_use_seil() {
 			}
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r17_plot_seil() {
@@ -2617,7 +2620,7 @@ int16 r17_energie_hebel() {
 			det->play_sound(15, 0);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r17_get_oel() {
@@ -2639,7 +2642,7 @@ int16 r17_get_oel() {
 		inventory_2_cur(BECHER_VOLL_INV);
 	}
 
-	return (action_flag);
+	return action_flag;
 }
 
 int16 bork_spr [5] = {15, 16, 17, 24, 25};
@@ -2758,7 +2761,7 @@ int16 r18_sonden_moni() {
 			det->hide_static_spr(i + 10);
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r18_surimy_phasen[4][2] = {
@@ -2884,7 +2887,7 @@ int16 r18_calc_surimy() {
 
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r18_calc_schalter() {
@@ -2895,7 +2898,7 @@ int16 r18_calc_schalter() {
 
 		r18_monitor();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 short r18_use_cart_moni() {
@@ -2924,7 +2927,7 @@ short r18_use_cart_moni() {
 			}
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r18_go_cyberspace() {
@@ -2935,7 +2938,7 @@ int16 r18_go_cyberspace() {
 		cur_2_inventory();
 		switch_room(24);
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r19_entry() {
@@ -3179,7 +3182,7 @@ int16 r21_use_fenster() {
 			flags.AutoAniPlay = false;
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r22_entry() {
@@ -3206,7 +3209,7 @@ int16 r22_chewy_amboss() {
 		atds->set_ats_str(79, 1, ATS_DATEI);
 		flags.AutoAniPlay = false;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 #define R22_BORK_OBJ 0
@@ -3322,7 +3325,7 @@ int16 r22_malen() {
 		obj->calc_all_static_detail();
 		flags.AutoAniPlay = false;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r23_cockpit() {
@@ -3396,7 +3399,7 @@ int16 r23_start_gleiter() {
 			}
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r23_use_cartridge() {
@@ -3561,21 +3564,24 @@ int16 r6_cut_serv1(int16 frame) {
 	atds->print_aad(spieler.scrollx, spieler.scrolly);
 	if (frame == 44)
 		start_aad(108, 0);
-	return (0);
+
+	return 0;
 }
 
 int16 r6_cut_serv2(int16 frame) {
 	atds->print_aad(spieler.scrollx, spieler.scrolly);
 	if (frame == 31)
 		start_aad(107, 0);
-	return (0);
+
+	return 0;
 }
 
 int16 r12_cut_serv(int16 frame) {
 	atds->print_aad(spieler.scrollx, spieler.scrolly);
 	if (frame == 43)
 		start_aad(106, 0);
-	return (0);
+
+	return 0;
 }
 
 } // namespace Chewy

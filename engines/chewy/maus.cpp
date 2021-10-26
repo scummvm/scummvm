@@ -94,7 +94,8 @@ int16 maus::maus_vector(int16 x, int16 y, int16 *tbl,
 		        (y >= tbl[j + 1]) && (y <= tbl[j + 3]))
 			i = j / 4;
 	}
-	return (i);
+
+	return i;
 }
 
 void maus::neuer_kb_handler(kb_info *key) {
@@ -125,7 +126,8 @@ void maus::neuer_maushandler(maus_info *mpos) {
 in_zeiger *maus::get_in_zeiger() {
 	inzeig.minfo = maus_info_blk;
 	inzeig.kbinfo = kb_info_blk;
-	return (&inzeig);
+
+	return &inzeig;
 }
 
 int16 maus::get_switch_code() {
@@ -149,7 +151,8 @@ int16 maus::get_switch_code() {
 		switch_code = (int16)hot_key;
 		hot_key = 0;
 	}
-	return (switch_code);
+
+	return switch_code;
 }
 
 } // namespace Chewy

@@ -626,7 +626,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		cur->plot_cur();
 		out->back2screen(workpage);
 	}
-	return (ret);
+	return ret;
 }
 
 void look_invent_screen(int16 txt_mode, int16 txt_nr) {
@@ -724,7 +724,8 @@ int16 calc_use_invent(int16 inv_nr) {
 
 		}
 	}
-	return (benutzt);
+
+	return benutzt;
 }
 
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
@@ -1029,7 +1030,8 @@ int16 del_invent_slot(int16 nr) {
 				ok = i;
 		}
 	}
-	return (ok);
+
+	return ok;
 }
 
 } // namespace Chewy

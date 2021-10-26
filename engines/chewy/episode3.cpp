@@ -213,7 +213,7 @@ int16 r45_use_taxi() {
 	}
 
 	show_cur();
-	return (action_ret);
+	return action_ret;
 }
 
 void r45_talk_taxi(int16 aad_nr) {
@@ -268,7 +268,7 @@ int16 r45_use_boy() {
 	} else
 		start_aad_wait(259, -1);
 	show_cur();
-	return (action_ret);
+	return action_ret;
 }
 
 void r45_talk_boy() {
@@ -400,7 +400,7 @@ int16 r46_use_schloss() {
 		} else
 			start_aad_wait(252, -1);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r47_entry() {
@@ -445,7 +445,7 @@ int16 r47_use_knopf(int16 txt_nr) {
 		else
 			spieler.R47SchlossOk = false;
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r47_set_detail() {
@@ -715,7 +715,7 @@ int16 r49_use_boy() {
 		spieler.R49BoyWeg = true;
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r49_talk_boy() {
@@ -774,7 +774,7 @@ int16 r49_use_taxi() {
 		start_detail_wait(5, 1, ANI_VOR);
 		switch_room(48);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r49setup_func() {
@@ -899,7 +899,7 @@ int16 r50_use_gutschein() {
 		} else
 			start_aad_wait(276, -1);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r50_use_gum() {
@@ -944,7 +944,7 @@ int16 r50_use_gum() {
 		spieler.room_e_obj[84].Attribut = AUSGANG_OBEN;
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r50_talk_page() {
@@ -1170,12 +1170,12 @@ int16 r51_use_door(int16 txt_nr) {
 		}
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r51_cut_serv(int16 frame) {
 	det->plot_static_details(0, 0, 16, 16);
-	return (0);
+	return 0;
 }
 
 void r51_timer_action(int16 t_nr, int16 obj_nr) {
@@ -1245,7 +1245,7 @@ int16 r52_use_hot_dog() {
 		spieler.R52KakerWeg = true;
 	}
 	show_cur();
-	return (action_ret);
+	return action_ret;
 }
 
 void r52_plot_armee(int16 frame) {
@@ -1333,7 +1333,7 @@ int16 r53_use_man() {
 		atds->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r54_entry(int16 eib_nr) {
@@ -1477,7 +1477,7 @@ int16 r54_use_schalter() {
 			start_aad_wait(297, -1);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r54_talk_verkauf() {
@@ -1551,12 +1551,12 @@ int16 r54_use_zelle() {
 		start_aad_wait(319, -1);
 	}
 	show_cur();
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r54_cut_serv(int16 frame) {
 	det->plot_static_details(176, 0, 9, 9);
-	return (0);
+	return 0;
 }
 
 int16 r54_use_azug() {
@@ -1597,7 +1597,7 @@ int16 r54_use_azug() {
 			start_aad_wait(314, -1);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r54_aufzug_ab() {
@@ -1650,7 +1650,7 @@ short r54_use_taxi() {
 		spieler.PersonHide[P_CHEWY] = true;
 		switch_room(48);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r55_entry() {
@@ -1757,7 +1757,7 @@ int16 r55_use_stapel1() {
 		} else
 			start_aad_wait(326, -1);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r55_use_stapel2() {
@@ -1766,7 +1766,7 @@ int16 r55_use_stapel2() {
 		action_ret = true;
 		start_aad_wait(327, -1);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r55_use_telefon() {
@@ -1843,7 +1843,7 @@ int16 r55_use_telefon() {
 			start_aad_wait(328, -1);
 		}
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r55_get_job() {
@@ -1955,13 +1955,13 @@ int16 r55_use_kammeraus() {
 			}
 		}
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r55_cut_serv(int16 frame) {
 	if (frame < 10)
 		det->plot_static_details(136, 0, 10, 10);
-	return (0);
+	return 0;
 }
 
 void r55_setup_func() {
@@ -2121,7 +2121,7 @@ int16 r56_use_taxi() {
 		show_cur();
 		switch_room(48);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r56_talk_man() {
@@ -2164,7 +2164,7 @@ int16 r56_use_man() {
 		det->set_static_ani(0, -1);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r56_use_kneipe() {
@@ -2210,7 +2210,7 @@ int16 r56_use_kneipe() {
 			show_cur();
 		}
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r56_start_flug() {
@@ -2351,7 +2351,7 @@ int16 r57_use_taxi() {
 		start_detail_wait(5, 1, ANI_VOR);
 		switch_room(48);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r57_use_pfoertner() {
@@ -2390,7 +2390,7 @@ int16 r57_use_pfoertner() {
 	show_cur();
 	room->set_timer_status(1, TIMER_START);
 	det->set_static_ani(1, -1);
-	return (action_ret);
+	return action_ret;
 }
 
 void r57_talk_pfoertner() {
@@ -2558,7 +2558,7 @@ int16 r62_use_laura() {
 		spieler.R62LauraVerwandlung = true;
 		switch_room(63);
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r63_entry() {
@@ -2736,7 +2736,7 @@ int16 r63_use_fx_man() {
 		atds->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r63_use_schalter() {
@@ -2770,7 +2770,7 @@ int16 r63_use_schalter() {
 			show_cur();
 		}
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r63_talk_girl() {
@@ -2810,7 +2810,7 @@ int16 r63_use_girl() {
 		start_aad_wait(367, -1);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 int16 r63_use_aschenbecher() {
@@ -2849,7 +2849,7 @@ int16 r63_use_aschenbecher() {
 			start_aad_wait(366, -1);
 		show_cur();
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void r64_entry() {
@@ -2888,7 +2888,7 @@ int16 r64_cut_sev(int16 frame) {
 	                spieler_vector[P_CHEWY].Xzoom,
 	                spieler_vector[P_CHEWY].Yzoom,
 	                scr_width);
-	return (0);
+	return 0;
 }
 
 void r64_chewy_entry() {
@@ -2994,7 +2994,7 @@ int16 r64_use_tasche() {
 		}
 	}
 	show_cur();
-	return (action_ret);
+	return action_ret;
 }
 
 void r65_entry() {

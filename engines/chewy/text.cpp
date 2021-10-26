@@ -49,7 +49,8 @@ char *text::str_pos(char *txt_adr, int16 pos) {
 			++i;
 		++ptr;
 	}
-	return (ptr);
+
+	return ptr;
 }
 
 } // namespace Chewy
