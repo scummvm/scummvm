@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-26 01:51+0000\n"
+"POT-Creation-Date: 2021-10-26 07:58+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4361,7 +4361,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:671
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:684
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5280,7 +5280,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Přístup k následující částí hry je dostupný pouze v její plné verzi."
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:670
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:683
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7263,120 +7263,120 @@ msgstr "Uloženou pozici #%d nelze rychle načíst"
 msgid "Unable to locate the '%s' data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
-#: engines/twine/detection.cpp:240
+#: engines/twine/detection.cpp:253
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:584
+#: engines/twine/detection.cpp:597
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:585
+#: engines/twine/detection.cpp:598
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:591
+#: engines/twine/detection.cpp:604
 #, fuzzy
 msgid "Enable cross fade"
 msgstr "Zapnout héliový režim"
 
-#: engines/twine/detection.cpp:592
+#: engines/twine/detection.cpp:605
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
-#: engines/twine/detection.cpp:599
+#: engines/twine/detection.cpp:612
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Nelze uložit hru"
 
-#: engines/twine/detection.cpp:600
+#: engines/twine/detection.cpp:613
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:606
+#: engines/twine/detection.cpp:619
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Zapnout héliový režim"
 
-#: engines/twine/detection.cpp:607
+#: engines/twine/detection.cpp:620
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Zapnout héliový režim"
 
-#: engines/twine/detection.cpp:613
+#: engines/twine/detection.cpp:626
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Povolit publikum ve studiu"
 
-#: engines/twine/detection.cpp:614
+#: engines/twine/detection.cpp:627
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:620
+#: engines/twine/detection.cpp:633
 #, fuzzy
 msgid "Enable sound"
 msgstr "Povolit úložiště"
 
-#: engines/twine/detection.cpp:621
+#: engines/twine/detection.cpp:634
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Úplný název hry"
 
-#: engines/twine/detection.cpp:627
+#: engines/twine/detection.cpp:640
 #, fuzzy
 msgid "Enable voices"
 msgstr "Povolit Venus"
 
-#: engines/twine/detection.cpp:628
+#: engines/twine/detection.cpp:641
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Povolit systém nápovědy Venus"
 
-#: engines/twine/detection.cpp:634
+#: engines/twine/detection.cpp:647
 #, fuzzy
 msgid "Enable text"
 msgstr "Povolit úložiště"
 
-#: engines/twine/detection.cpp:635
+#: engines/twine/detection.cpp:648
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Úplný název hry"
 
-#: engines/twine/detection.cpp:641
+#: engines/twine/detection.cpp:654
 #, fuzzy
 msgid "Enable movies"
 msgstr "Povolit Venus"
 
-#: engines/twine/detection.cpp:642
+#: engines/twine/detection.cpp:655
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Povolit systém nápovědy Venus"
 
-#: engines/twine/detection.cpp:648
+#: engines/twine/detection.cpp:661
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Povolit Venus"
 
-#: engines/twine/detection.cpp:649
+#: engines/twine/detection.cpp:662
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Úplný název hry"
 
-#: engines/twine/detection.cpp:655
+#: engines/twine/detection.cpp:668
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:656
+#: engines/twine/detection.cpp:669
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:662 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:675 engines/ultima/detection.cpp:85
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Povolit grafiku ve vysokém rozlišení"
 
-#: engines/twine/detection.cpp:663 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:676 engines/ultima/detection.cpp:86
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Úplný název hry"
