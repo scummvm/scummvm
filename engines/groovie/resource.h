@@ -42,6 +42,9 @@ public:
 	virtual ~ResMan() {}
 
 	Common::SeekableReadStream *open(uint32 fileRef);
+	void dumpResource(Common::String &fileName);
+	void dumpResource(uint32 fileRef, Common::String &fileName);
+	void dumpResource(Common::SeekableReadStream *inFile, Common::String &fileName);
 
 	virtual uint32 getRef(Common::String name) = 0;
 	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;

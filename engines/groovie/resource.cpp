@@ -26,6 +26,7 @@
 #include "common/macresman.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 
 #include "groovie/resource.h"
 #include "groovie/groovie.h"
@@ -69,9 +70,38 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	}
 
 	// Returning the resource substream
-	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
+	Common::SeekableSubReadStream *file = new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
+	if (ConfMan.getBool("dump_resources")) {
+		dumpResource(file, resInfo.filename);
+	}
+	return file;
 }
 
+void ResMan::dumpResource(Common::String &fileName) {
+	uint32 fileRef = getRef(fileName);
+	dumpResource(fileRef, fileName);
+}
+
+void ResMan::dumpResource(uint32 fileRef, Common::String &fileName) {
+	Common::SeekableReadStream *inFile = open(fileRef);
+	dumpResource(inFile, fileName);
+}
+
+void ResMan::dumpResource(Common::SeekableReadStream *inFile, Common::String &fileName) {
+	Common::DumpFile outFile;
+	outFile.open(fileName);
+
+	int64 totalSize = inFile->size();
+	byte *data = new byte[totalSize];
+	inFile->read(data, totalSize);
+
+	outFile.write(data, totalSize);
+	outFile.flush();
+
+	delete[] data;
+	delete inFile;
+	outFile.close();
+}
 
 // ResMan_t7g
 

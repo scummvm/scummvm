@@ -23,6 +23,7 @@
 #include "groovie/debug.h"
 #include "groovie/graphics.h"
 #include "groovie/groovie.h"
+#include "groovie/resource.h"
 #include "groovie/script.h"
 
 #include "common/debug-channels.h"
@@ -46,6 +47,7 @@ Debugger::Debugger(GroovieEngine *vm) :
 	registerCmd("save", WRAP_METHOD(Debugger, cmd_savegame));
 	registerCmd("playref", WRAP_METHOD(Debugger, cmd_playref));
 	registerCmd("dumppal", WRAP_METHOD(Debugger, cmd_dumppal));
+	registerCmd("dumpfile", WRAP_METHOD(Debugger, cmd_dumpfile));
 }
 
 Debugger::~Debugger() {
@@ -140,6 +142,17 @@ bool Debugger::cmd_dumppal(int argc, const char **argv) {
 
 	for (i = 0; i < 256; i++) {
 		debugPrintf("%3d: %3d,%3d,%3d\n", i, palettedump[(i * 3)], palettedump[(i * 3) + 1], palettedump[(i * 3) + 2]);
+	}
+	return true;
+}
+
+bool Debugger::cmd_dumpfile(int argc, const char **argv) {
+	if (argc == 2) {
+		Common::String fileName = argv[1];
+		debugPrintf("Dumping %s...\n", argv[1]);
+		_vm->_resMan->dumpResource(fileName);
+	} else {
+		debugPrintf("Syntax: %s <filename>\n", argv[0]);
 	}
 	return true;
 }

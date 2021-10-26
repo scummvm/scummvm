@@ -51,6 +51,7 @@ private:
 	bool cmd_savegame(int argc, const char **argv);
 	bool cmd_playref(int argc, const char **argv);
 	bool cmd_dumppal(int argc, const char **argv);
+	bool cmd_dumpfile(int argc, const char **argv);
 };
 
 } // End of Groovie namespace
