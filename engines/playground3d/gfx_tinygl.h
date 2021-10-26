@@ -44,6 +44,7 @@ public:
 	virtual void clear() override;
 
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 
 	virtual void flipBuffer() override;
 

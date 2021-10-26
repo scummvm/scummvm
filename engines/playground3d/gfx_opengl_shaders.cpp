@@ -96,6 +96,10 @@ void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
 }
 
+void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
+	error("Polygon offset test not implemented yet");
+}
+
 } // End of namespace Playground3d
 
 #endif

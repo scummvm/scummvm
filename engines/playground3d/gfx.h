@@ -55,6 +55,7 @@ public:
 	void computeScreenViewport();
 
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
+	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 
 protected:
 	OSystem *_system;

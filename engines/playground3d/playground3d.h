@@ -43,7 +43,7 @@ public:
 
 	void processInput();
 
-	void drawFrame();
+	void drawFrame(int testId);
 
 private:
 	OSystem *_system;
@@ -53,6 +53,7 @@ private:
 	float _rotateAngleX, _rotateAngleY, _rotateAngleZ;
 
 	void drawAndRotateCube();
+	void drawPolyOffsetTest();
 };
 
 } // End of namespace Playground3d

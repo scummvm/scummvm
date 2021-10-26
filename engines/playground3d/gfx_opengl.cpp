@@ -99,6 +99,37 @@ void OpenGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	}
 }
 
+void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
+	Common::Rect vp = viewport();
+	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(_projectionMatrix.getData());
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(_modelViewMatrix.getData());
+
+	glTranslatef(pos.x(), pos.y(), pos.z());
+	glRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
+
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex3f(-1.0f,  1.0, 0.0f);
+	glVertex3f( 1.0f,  1.0, 0.0f);
+	glVertex3f( 0.0f, -1.0, 0.0f);
+	glEnd();
+
+	glPolygonOffset(-1.0f, 0.0f);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex3f(-0.5f,  0.5, 0.0f);
+	glVertex3f( 0.5f,  0.5, 0.0f);
+	glVertex3f( 0.0f, -0.5, 0.0f);
+	glEnd();
+	glDisable(GL_POLYGON_OFFSET_FILL);
+}
+
 } // End of namespace Playground3d
 
 #endif

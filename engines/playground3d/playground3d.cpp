@@ -46,7 +46,7 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 
 Playground3dEngine::Playground3dEngine(OSystem *syst)
 		: Engine(syst), _system(syst), _frameLimiter(0),
-		_rotateAngleX(45), _rotateAngleY(45), _rotateAngleZ(10) {
+		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0) {
 }
 
 Playground3dEngine::~Playground3dEngine() {
@@ -63,9 +63,23 @@ Common::Error Playground3dEngine::run() {
 
 	_system->showMouse(true);
 
+	// 1 - rotated colorfull cube
+	// 2 - rotated two traingles with depth offset
+	int testId = 1;
+
+	switch (testId) {
+		case 1:
+			_rotateAngleX = 45, _rotateAngleY = 45, _rotateAngleZ = 10;
+			break;
+		case 2:
+			break;
+		default:
+			assert(false);
+	}
+
 	while (!shouldQuit()) {
 		processInput();
-		drawFrame();
+		drawFrame(testId);
 	}
 
 	_system->showMouse(false);
@@ -97,7 +111,15 @@ void Playground3dEngine::drawAndRotateCube() {
 		_rotateAngleZ = 0;
 }
 
-void Playground3dEngine::drawFrame() {
+void Playground3dEngine::drawPolyOffsetTest() {
+	Math::Vector3d pos = Math::Vector3d(0.0f, 0.0f, 6.0f);
+	_gfx->drawPolyOffsetTest(pos, Math::Vector3d(0, _rotateAngleY, 0));
+	_rotateAngleY += 0.10;
+	if (_rotateAngleY >= 360)
+		_rotateAngleY = 0;
+}
+
+void Playground3dEngine::drawFrame(int testId) {
 	_gfx->clear();
 
 	float pitch = 0.0f;
@@ -105,7 +127,16 @@ void Playground3dEngine::drawFrame() {
 	float fov = 45.0f;
 	_gfx->setupCameraPerspective(pitch, heading, fov);
 
-	drawAndRotateCube();
+	switch (testId) {
+		case 1:
+			drawAndRotateCube();
+			break;
+		case 2:
+			drawPolyOffsetTest();
+			break;
+		default:
+			assert(false);
+	}
 
 	_gfx->flipBuffer();
 

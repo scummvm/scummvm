@@ -101,6 +101,37 @@ void TinyGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	}
 }
 
+void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
+	Common::Rect vp = viewport();
+	tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadMatrixf(_projectionMatrix.getData());
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadMatrixf(_modelViewMatrix.getData());
+
+	tglTranslatef(pos.x(), pos.y(), pos.z());
+	tglRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
+
+	tglColor3f(0.0f, 1.0f, 0.0f);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(-1.0f,  1.0, 0.0f);
+	tglVertex3f( 1.0f,  1.0, 0.0f);
+	tglVertex3f( 0.0f, -1.0, 0.0f);
+	tglEnd();
+
+	tglPolygonOffset(-1.0f, 0.0f);
+	tglEnable(TGL_POLYGON_OFFSET_FILL);
+	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(-0.5f,  0.5, 0.0f);
+	tglVertex3f( 0.5f,  0.5, 0.0f);
+	tglVertex3f( 0.0f, -0.5, 0.0f);
+	tglEnd();
+	tglDisable(TGL_POLYGON_OFFSET_FILL);
+}
+
 void TinyGLRenderer::flipBuffer() {
 	TinyGL::tglPresentBuffer();
 	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize, 0, 0, _fb->xsize, _fb->ysize);
