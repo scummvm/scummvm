@@ -391,6 +391,18 @@ struct FrameBuffer {
 		_depthTestEnabled = enable;
 	}
 
+	void setOffsetStates(int offsetStates) {
+		_offsetStates = offsetStates;
+	}
+
+	void setOffsetFactor(float offsetFactor) {
+		_offsetFactor = offsetFactor;
+	}
+
+	void setOffsetUnits(float offsetUnits) {
+		_offsetUnits = offsetUnits;
+	}
+
 	void setBlendingFactors(int sFactor, int dFactor) {
 		_sourceBlendingFactor = sFactor;
 		_destinationBlendingFactor = dFactor;
@@ -497,6 +509,9 @@ struct FrameBuffer {
 	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
 	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
 	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
+	FORCEINLINE int getOffsetStates() const { return _offsetStates; }
+	FORCEINLINE float getOffsetFactor() const { return _offsetFactor; }
+	FORCEINLINE float getOffsetUnits() const { return _offsetUnits; }
 
 private:
 
@@ -526,6 +541,9 @@ private:
 	int _alphaTestFunc;
 	int _alphaTestRefVal;
 	int _depthFunc;
+	int _offsetStates;
+	float _offsetFactor;
+	float _offsetUnits;
 };
 
 // memory.c

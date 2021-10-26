@@ -127,6 +127,9 @@ private:
 		int sfactor, dfactor;
 		int textureVersion;
 		int depthTestEnabled;
+		int offsetStates;
+		float offsetFactor;
+		float offsetUnits;
 		float viewportTranslation[3];
 		float viewportScaling[3];
 		bool alphaTest;

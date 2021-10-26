@@ -104,6 +104,9 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	_alphaTestEnabled = false;
 	_depthTestEnabled = false;
 	_depthFunc = TGL_LESS;
+	_offsetStates = 0;
+	_offsetFactor = 0.0f;
+	_offsetUnits = 0.0f;
 }
 
 FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format) : _depthWrite(true), _enableScissor(false) {
@@ -131,6 +134,9 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 	_alphaTestEnabled = false;
 	_depthTestEnabled = false;
 	_depthFunc = TGL_LESS;
+	_offsetStates = 0;
+	_offsetFactor = 0.0f;
+	_offsetUnits = 0.0f;
 }
 
 FrameBuffer::~FrameBuffer() {

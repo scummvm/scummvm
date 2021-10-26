@@ -231,6 +231,12 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		dtzdy = (fdx1 * d2 - fdx2 * d1);
 	}
 
+	int polyOffset = 0;
+	if (kInterpZ && (_offsetStates & TGL_OFFSET_FILL) && (kDrawLogic == DRAW_FLAT || kDrawLogic == DRAW_SMOOTH)) {
+		int m = MAX(ABS(dzdx), ABS(dzdy));
+		polyOffset = -m * _offsetFactor + -_offsetUnits * (1 << 6);
+	}
+
 	// screen coordinates
 
 	int pp1 = xsize * p0->y;
@@ -312,7 +318,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			dxdy_max = dxdy_min + 1;
 
 			if (kInterpZ) {
-				z1 = l1->z;
+				z1 = l1->z + polyOffset;
 				dzdl_min = (dzdy + dzdx * dxdy_min);
 				dzdl_max = dzdl_min + dzdx;
 			}

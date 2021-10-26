@@ -448,6 +448,9 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.currentFrontFace = c->current_front_face;
 	state.currentShadeModel = c->current_shade_model;
 	state.depthTest = c->depth_test;
+	state.offsetStates = c->offset_states;
+	state.offsetFactor = c->offset_factor;
+	state.offsetUnits = c->offset_units;
 	state.polygonModeBack = c->polygon_mode_back;
 	state.polygonModeFront = c->polygon_mode_front;
 	state.shadowMode = c->shadow_mode;
@@ -478,6 +481,9 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setDepthFunc(state.depthFunction);
 	c->fb->enableDepthWrite(state.depthWrite);
 	c->fb->enableDepthTest(state.depthTestEnabled);
+	c->fb->setOffsetStates(state.offsetStates);
+	c->fb->setOffsetFactor(state.offsetFactor);
+	c->fb->setOffsetUnits(state.offsetUnits);
 
 	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
@@ -662,6 +668,9 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 			cullFaceEnabled == other.cullFaceEnabled &&
 			colorMask == other.colorMask &&
 			depthTest == other.depthTest &&
+			offsetStates == other.offsetStates &&
+			offsetFactor == other.offsetFactor &&
+			offsetUnits == other.offsetUnits &&
 			depthFunction == other.depthFunction &&
 			depthWrite == other.depthWrite &&
 			shadowMode == other.shadowMode &&

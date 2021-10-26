@@ -211,6 +211,8 @@ void glInit(void *zbuffer1, int textureSize) {
 
 	// opengl 1.1 polygon offset
 	c->offset_states = 0;
+	c->offset_factor = 0.0f;
+	c->offset_units = 0.0f;
 
 	// shadow mode
 	c->shadow_mode = 0;
