@@ -121,7 +121,7 @@ void load_chewy_taf(int16 taf_nr) {
 
 void Room0::entry() {
 	if (is_cur_inventar(0) || spieler.R0KissenWurf ||
-		obj->check_inventar(0))
+			obj->check_inventar(0))
 		det->hide_static_spr(6);
 
 	set_person_pos(150, 100, 0, 1);

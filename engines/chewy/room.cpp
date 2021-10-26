@@ -137,28 +137,25 @@ void Room::set_timer_start(int16 timer_start) {
 
 void Room::add_timer_new_room() {
 	ani_detail_info *adi;
-	int16 i;
 	room_timer.TimerAnz = 0;
 
-	for (i = 0; i < MAXDETAILS && room_timer.TimerAnz < MAX_ROOM_TIMER; i++) {
+	for (int i = 0; i < MAXDETAILS && room_timer.TimerAnz < MAX_ROOM_TIMER; i++) {
 		adi = det->get_ani_detail(i);
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
-		}
-		else if (adi->start_flag) {
+		} else if (adi->start_flag || adi->repeat) {
 			det->start_detail(i, 0, ANI_VOR);
 		}
 	}
 }
 
 void Room::del_timer_old_room() {
-	int16 i;
-	for (i = 0; i < room_timer.TimerAnz; i++) {
+	for (int i = 0; i < room_timer.TimerAnz; i++) {
 		uhr->set_status(room_timer.TimerNr[i], TIMER_STOP);
 
 	}
-	room_timer.TimerAnz = 0;
 
+	room_timer.TimerAnz = 0;
 }
 
 int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
@@ -172,12 +169,12 @@ int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 		room_timer.TimerNr[room_timer.TimerAnz] = timer_nr_;
 		++room_timer.TimerAnz;
 	}
-	return (timer_nr_);
+
+	return timer_nr_;
 }
 
 void Room::set_timer_status(int16 ani_nr, int16 status) {
-	int16 i;
-	for (i = 0; i < room_timer.TimerAnz; i++) {
+	for (int i = 0; i < room_timer.TimerAnz; i++) {
 		if (room_timer.ObjNr[i] == ani_nr) {
 			uhr->set_status(room_timer.TimerNr[i], status);
 		}
