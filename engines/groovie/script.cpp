@@ -242,6 +242,14 @@ void Script::directGameLoad(int slot) {
 		setVariable(0xF, slot);
 		_currentInstruction = 0xE78D;
 		return;
+	} else if (_version == kGroovieCDY) {
+		setVariable(0x1, slot);
+		_currentInstruction = 0x9EBF;
+		return;
+	} else if (_version == kGroovieUHP) {
+		setVariable(0x19, slot);
+		_currentInstruction = 0x23B4;
+		return;
 	}
 
 	if (midiInitScript && !_vm->_musicPlayer->isMidiInit()) {
