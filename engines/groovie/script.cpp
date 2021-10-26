@@ -1989,6 +1989,12 @@ void Script::o2_setbackgroundsong() {
 void Script::o2_videofromref() {
 	uint32 fileref = readScript32bits();
 
+	// Skip the 11th Hour intro videos on right mouse click, instead of
+	// fast-forwarding them. This has the same effect as pressing 'p' twice in
+	// the skulls screen after the Groovie logo
+	if (_version == kGroovieT11H && fileref == 4926 && fileref != _videoRef)
+		_videoSkipAddress = 1417;
+
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
