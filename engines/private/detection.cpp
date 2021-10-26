@@ -150,6 +150,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"private-eye", // Demo from the EU release (FR)
+		"Demo",
+		AD_ENTRY2s("pvtdemo.ex_", "ad2156a762b3e376fda1b791a9491ea8", 599040,
+		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"private-eye",  // RU release
 		0,
 		AD_ENTRY2s("pvteye.z", "b682118cda6a42fa89833cae2b8824bd", 271895,
