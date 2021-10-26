@@ -583,7 +583,7 @@ byte *detail::get_static_image(int16 det_nr) {
 		ret = 0;
 	else
 		ret = rdi.dptr->image[index];
-	return(ret);
+	return ret;
 }
 
 void detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag) {
@@ -621,19 +621,19 @@ void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
 byte *detail::get_image(int16 spr_nr) {
 	byte *ret;
 	ret = rdi.dptr->image[spr_nr];
-	return(ret);
+	return ret;
 }
 
 ani_detail_info *detail::get_ani_detail(int16 ani_nr) {
 	ani_detail_info *ret;
 	ret = &rdi.Ainfo[ani_nr];
-	return(ret);
+	return ret;
 }
 
 int16 *detail::get_korrektur_tbl() {
 	int16 *ret;
 	ret = rdi.dptr->korrektur;
-	return(ret);
+	return ret;
 }
 
 void detail::init_taf(taf_info *dptr) {
@@ -643,11 +643,11 @@ void detail::init_taf(taf_info *dptr) {
 taf_info *detail::get_taf_info() {
 	taf_info *ret;
 	ret = rdi.dptr;
-	return(ret);
+	return ret;
 }
 
 room_detail_info *detail::get_room_detail_info() {
-	return(&rdi);
+	return &rdi;
 }
 
 void detail::freeze_ani() {
@@ -844,7 +844,8 @@ int16 detail::maus_vector(int16 x, int16 y) {
 				i = j / 4;
 		}
 	}
-	return (i);
+
+	return i;
 }
 
 int16 detail::get_ani_status(int16 det_nr) {
@@ -853,7 +854,7 @@ int16 detail::get_ani_status(int16 det_nr) {
 		ret = 1;
 	else
 		ret = 0;
-	return(ret);
+	return ret;
 }
 
 SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr,
@@ -900,7 +901,7 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr,
 		}
 	}
 
-	return (spr_info);
+	return spr_info;
 }
 
 void detail::set_global_delay(int16 delay) {
@@ -1208,7 +1209,8 @@ int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y,
 			}
 		}
 	}
-	return (detail_nr);
+
+	return detail_nr;
 }
 
 void detail::set_taf_ani_mem(byte *load_area) {

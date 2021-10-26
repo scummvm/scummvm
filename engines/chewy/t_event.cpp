@@ -53,7 +53,7 @@ int16 load_ads_dia(int16 dia_nr) {
 			talk_hide_static = -1;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void set_ssi_xy() {
@@ -901,7 +901,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 		}
 	} else
 		action_ret = false;
-	return (action_ret);
+	return action_ret;
 }
 
 void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
@@ -1963,7 +1963,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 int16 calc_person_txt(int16 p_nr) {
@@ -2022,8 +2022,11 @@ int16 calc_person_txt(int16 p_nr) {
 		}
 		break;
 
+	default:
+		break;
 	}
-	return (txt_nr);
+
+	return txt_nr;
 }
 
 int16 calc_person_click(int16 p_nr) {
@@ -2083,7 +2086,7 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	}
-	return (action_ret);
+	return action_ret;
 }
 
 void calc_person_dia(int16 p_nr) {

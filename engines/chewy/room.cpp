@@ -334,7 +334,7 @@ byte *Room::get_ablage(int16 nr) {
 	if (nr < MAX_ABLAGE && AkAblage != -1) {
 		ret = Ablage[nr];
 	}
-	return (ret);
+	return ret;
 }
 
 byte **Room::get_ablage() {
@@ -343,7 +343,7 @@ byte **Room::get_ablage() {
 	if (AkAblage != -1) {
 		ret = &Ablage[0];
 	}
-	return (ret);
+	return ret;
 }
 
 byte **Room::get_ged_mem() {
@@ -352,7 +352,7 @@ byte **Room::get_ged_mem() {
 	if (AkAblage != -1) {
 		ret = &GedMem[0];
 	}
-	return (ret);
+	return ret;
 }
 
 int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
@@ -401,7 +401,7 @@ int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
@@ -430,7 +430,7 @@ int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
 			ende = 1;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {

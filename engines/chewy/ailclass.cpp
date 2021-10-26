@@ -253,13 +253,14 @@ int16 ailclass::init(uint16 freq) {
 		RealVoices = i;
 		SoundCard = SOUNDBLASTER;
 	}
-	return (SoundCard);
+
+	return SoundCard;
 #endif
 	return SOUNDBLASTER;
 }
 
 int16 ailclass::init(char *midi_drv_name) {
-	return (SoundCard);
+	return SoundCard;
 }
 
 void ailclass::exit1() {
@@ -463,7 +464,7 @@ void ailclass::get_channel_info(channel_info *ch, int16 kanal) {
 }
 
 int16 ailclass::music_playing() {
-	return (MusicStatus);
+	return MusicStatus;
 }
 
 int16 ailclass::get_sample_status(int16 kanal) {
@@ -474,7 +475,7 @@ int16 ailclass::get_sample_status(int16 kanal) {
 	kanal &= 3;
 	kanal += 4;
 	ret = AIL_sample_status(smp[kanal]);
-	return (ret);
+	return ret;
 #endif
 	return 0;
 }

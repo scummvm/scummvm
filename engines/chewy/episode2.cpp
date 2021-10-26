@@ -101,7 +101,7 @@ int16 r25_gleiter_loesch() {
 			start_aad_wait(253, -1);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r25_use_gleiter() {
@@ -112,7 +112,7 @@ int16 r25_use_gleiter() {
 		spieler.R23GleiterExit = 25;
 		r23_cockpit();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 #define SURIMY_OBJ 0
@@ -476,7 +476,7 @@ int16 r28_use_breifkasten() {
 		invent_2_slot(MANUSKRIPT_INV);
 		spieler.R28Manuskript = true;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r28_cut_serv(int16 frame) {
@@ -485,7 +485,7 @@ int16 r28_cut_serv(int16 frame) {
 	} else {
 		det->plot_static_details(0, 0, 7, 7);
 	}
-	return (0);
+	return 0;
 }
 
 int16 r28_cut_serv2(int16 frame) {
@@ -496,7 +496,7 @@ int16 r28_cut_serv2(int16 frame) {
 			det->plot_static_details(0, 0, 7, 7);
 		}
 	}
-	return (0);
+	return 0;
 }
 
 void r29_entry() {
@@ -531,7 +531,7 @@ int16 r29_use_pumpe() {
 		} else if (!spieler.inv_cur)
 			start_aad_wait(62, -1);
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r29_get_schlauch() {
@@ -542,7 +542,7 @@ int16 r29_get_schlauch() {
 		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
 		new_invent_2_cur(PUMPE_INV);
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r29_use_schlauch() {
@@ -595,7 +595,7 @@ int16 r29_zaun_sprung() {
 		switch_room(37);
 		spieler.PersonHide[P_CHEWY] = false;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 #define SURIMY_OBJ 0
@@ -746,7 +746,7 @@ int16 r31_use_topf() {
 		action_flag = true;
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r32_entry() {
@@ -805,7 +805,7 @@ int16 r32_use_howard() {
 		action_flag = true;
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r32_use_schreibmaschine() {
@@ -879,7 +879,7 @@ int16 r32_get_script() {
 			start_aad_wait(91, -1);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r33_entry() {
@@ -941,7 +941,7 @@ int16 r33_use_schublade() {
 			invent_2_slot(MESSER_INV);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r33_use_maschine() {
@@ -1033,7 +1033,7 @@ int16 r33_calc_muntermacher() {
 		if (spieler.R33Munter[i] == false)
 			ret = false;
 	}
-	return (ret);
+	return ret;
 }
 
 int16 r33_get_munter() {
@@ -1051,7 +1051,7 @@ int16 r33_get_munter() {
 			start_aad_wait(72, -1);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r34_use_kuehlschrank() {
@@ -1106,7 +1106,7 @@ int16 r35_schublade() {
 		}
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r35_use_cat() {
@@ -1145,7 +1145,7 @@ int16 r35_use_cat() {
 		start_aad_wait(95, -1);
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r35_talk_cat() {
@@ -1232,7 +1232,7 @@ short r37_use_wippe() {
 			start_aad_wait(160, -1);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r37_cut_serv1(int16 frame) {
@@ -1253,7 +1253,7 @@ int16 r37_cut_serv1(int16 frame) {
 
 	det->plot_static_details(spieler.scrollx, spieler.scrolly, 7, 7);
 	det->plot_static_details(spieler.scrollx, spieler.scrolly, 14, 14);
-	return (0);
+	return 0;
 }
 
 int16 r37_cut_serv2(int16 frame) {
@@ -1263,7 +1263,7 @@ int16 r37_cut_serv2(int16 frame) {
 	det->show_static_spr(10);
 	for (i = 0; i < 4; i++)
 		det->plot_static_details(spieler.scrollx, spieler.scrolly, static_nr[i], static_nr[i]);
-	return (0);
+	return 0;
 }
 
 int16 r37_use_glas() {
@@ -1298,7 +1298,7 @@ int16 r37_use_glas() {
 			auto_move(4, P_CHEWY);
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r37_dog_bell() {
@@ -1515,7 +1515,7 @@ short r39_use_howard() {
 		}
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r39_talk_howard() {
@@ -1650,7 +1650,7 @@ int16 r39_use_tv() {
 		action_flag = true;
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r39_look_tv(int16 cls_mode) {
@@ -1966,7 +1966,8 @@ int16 r40_use_mr_pumpkin() {
 		}
 	}
 	show_cur();
-	return (action_ret);
+
+	return action_ret;
 }
 
 int16 r40_use_schalter(int16 aad_nr) {
@@ -2004,7 +2005,7 @@ int16 r40_use_schalter(int16 aad_nr) {
 			show_cur();
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r40_talk_police() {
@@ -2086,7 +2087,7 @@ int16 r40_use_haendler() {
 		spieler.R40HoUse = false;
 		flags.MausLinks = false;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r40_use_bmeister() {
@@ -2115,7 +2116,7 @@ int16 r40_use_bmeister() {
 
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r40_bmeister_dia(int16 aad_nr) {
@@ -2222,7 +2223,7 @@ int16 r40_use_tele() {
 				show_cur();
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r41_entry() {
@@ -2346,7 +2347,7 @@ int16 r41_use_kasse() {
 		start_aad_wait(133, -1);
 		r41_start_hoggy();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r41_use_lola() {
@@ -2366,7 +2367,7 @@ int16 r41_use_lola() {
 			show_cur();
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r41_use_brief() {
@@ -2390,7 +2391,7 @@ int16 r41_use_brief() {
 		spieler.R28PostCar = true;
 		spieler.R42BriefOk = true;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r41_sub_dia() {
@@ -2504,7 +2505,7 @@ int16 r42_use_psack() {
 		action_flag = true;
 		start_aad_wait(182, -1);
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r42_use_beamter() {
@@ -2522,7 +2523,7 @@ int16 r42_use_beamter() {
 		start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
 		flags.MausLinks = false;
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r42_talk_beamter() {

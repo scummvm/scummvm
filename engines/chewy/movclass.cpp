@@ -189,7 +189,7 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 void movclass::stop_auto_go() {
@@ -202,7 +202,7 @@ void movclass::continue_auto_go() {
 }
 
 bool movclass::auto_go_status() {
-	return (agv.AutoGo);
+	return agv.AutoGo;
 }
 
 void movclass::calc_xy() {
@@ -422,7 +422,8 @@ short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
 	}
 	if (abbruch == UNBEGEHBAR)
 		*dst_feld = get_feld_nr(om.Xypos[0], om.Xypos[1]);
-	return (steps);
+
+	return steps;
 }
 
 void movclass::get_mov_line() {
@@ -689,7 +690,8 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 int16 movclass::get_feld_nr(int16 x, int16 y) {
 	x >>= 3;
 	y >>= 3;
-	return (x + (y * gpkt->Breite));
+
+	return x + (y * gpkt->Breite);
 }
 
 void movclass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {

@@ -1320,7 +1320,8 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 			flags.ChAutoMov = false;
 		}
 	}
-	return (move_status);
+
+	return move_status;
 }
 
 void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
@@ -1374,7 +1375,7 @@ int16 get_ani_richtung(int16 zustand) {
 		break;
 
 	}
-	return (ret);
+	return ret;
 }
 
 int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
@@ -1505,7 +1506,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 				ret = -1;
 		}
 	}
-	return (ret);
+	return ret;
 }
 
 int16 is_mouse_person(int16 x, int16 y) {
@@ -1550,7 +1551,8 @@ int16 is_mouse_person(int16 x, int16 y) {
 			}
 		}
 	}
-	return(is_person);
+
+	return is_person;
 }
 
 void calc_mouse_person(int16 x, int16 y) {
@@ -1675,7 +1677,8 @@ int16 calc_mouse_mov_obj(int16 *auto_nr) {
 			*auto_nr = i;
 		}
 	}
-	return(txt_nr);
+
+	return txt_nr;
 }
 
 void calc_ani_timer() {
@@ -1754,7 +1757,7 @@ bool is_cur_inventar(int16 nr) {
 	if (spieler.AkInvent == nr && spieler.inv_cur)
 		ret = true;
 
-	return(ret);
+	return ret;
 }
 
 void check_mouse_ausgang(int16 x, int16 y) {
@@ -2028,7 +2031,8 @@ int16 random(int16 start, int16 end) {
 		r_val += end;
 	else
 		r_val += start;
-	return (r_val);
+
+	return r_val;
 }
 #endif
 
@@ -2050,7 +2054,7 @@ int16 is_chewy_busy() {
 			}
 		}
 	}
-	return(ret);
+	return ret;
 }
 
 

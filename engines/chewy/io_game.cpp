@@ -434,7 +434,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 	}
 	cur->wait_taste_los(true);
 	cur->hide_cur();
-	return (ret);
+	return ret;
 }
 
 void io_game::mark_eintrag(int16 y, int16 nr) {
@@ -602,7 +602,7 @@ int16 io_game::get_files(char *fname) {
 			}
 		}
 	}
-	return (ret);
+	return ret;
 #endif
 	return 0;
 }
@@ -657,7 +657,8 @@ char *io_game::io_init(iog_init *iostruc) {
 	for (i = 0; i < 20; i++)
 		file_find_g[i][0] = 0;
 	get_files(io->save_path);
-	return (&file_find_g[0][0]);
+
+	return &file_find_g[0][0];
 }
 
 void io_game::save_entry(int16 slotNum, char *fname) {

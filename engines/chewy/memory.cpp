@@ -168,7 +168,8 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 		modul = DATEI;
 		fcode = READFEHLER;
 	}
-	return (ts_info);
+
+	return ts_info;
 }
 
 void memory::tff_adr(const char *filename, byte **speicher) {

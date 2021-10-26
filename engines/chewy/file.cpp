@@ -107,7 +107,7 @@ int16 call_fileio(int16 palette, int16 mode) {
 	ret = iog->io_menu(&ioptr);
 	cur->show_cur();
 	curblk.no_back = true;
-	return (ret);
+	return ret;
 }
 
 int16 file_menue() {
@@ -372,7 +372,7 @@ int16 file_menue() {
 	                        ged_mem[room_blk.AkAblage]);
 	check_shad(u_index, 1);
 
-	return (ret);
+	return ret;
 }
 
 int16 option_icons[9 * 4] = { 18, 61, 40, 76,

@@ -91,7 +91,7 @@ int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mod
 		timer_blk[timer_nr].TimeStatus = true;
 	} else
 		ret = -1;
-	return (ret);
+	return ret;
 }
 
 void timer::reset_timer(int16 timer_nr, int16 timer_wert) {

@@ -111,7 +111,7 @@ int16 r67_use_grammo() {
 		det->stop_detail(0);
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r67_look_brief() {
@@ -142,7 +142,7 @@ int16 r67_use_kommode() {
 		}
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r67_kostuem_aad(int16 aad_nr) {
@@ -197,7 +197,7 @@ int16 r67_talk_papagei() {
 			show_cur();
 		}
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r68_entry() {
@@ -343,7 +343,7 @@ int16 r68_use_indigo() {
 		start_aad_wait(393, -1);
 	}
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r68_talk_keeper() {
@@ -382,7 +382,7 @@ int16 r68_use_papagei() {
 		atds->set_ats_str(407, 1, ATS_DATEI);
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 void r68_calc_diva() {
@@ -428,7 +428,7 @@ int16 r68_use_keeper() {
 		new_invent_2_cur(B_MARY_INV);
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 int16 r68_use_diva() {
@@ -458,7 +458,7 @@ int16 r68_use_diva() {
 	} else
 		action_flag = r68_use_papagei();
 	show_cur();
-	return (action_flag);
+	return action_flag;
 }
 
 void r68_kostuem_aad(int16 aad_nr) {
@@ -591,7 +591,7 @@ int16 r69_use_bruecke() {
 		}
 		show_cur();
 	}
-	return (action_flag);
+	return action_flag;
 }
 
 } // namespace Chewy
