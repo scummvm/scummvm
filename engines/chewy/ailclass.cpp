@@ -22,7 +22,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/voc.h"
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
 #include "chewy/file.h"
@@ -173,9 +172,11 @@ ailScummVM::ailScummVM() {
 
 void ailScummVM::playSpeech(int channel, Common::SeekableReadStream *src) {
 	Audio::AudioStream *audioStream =
-		Audio::makeVOCStream(src, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		Audio::makeRawStream(src, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
 		&_soundHandles[channel & 1], audioStream);
+
+	waitForSpeechToFinish();
 }
 
 bool ailScummVM::isSpeechActive(int channel) const {
