@@ -349,15 +349,27 @@ struct GLContext {
 	GLVertex *vertex;
 
 	// opengl 1.1 arrays
-	float *vertex_array;
+	TGLshort *vertex_array_short;
+	TGLint *vertex_array_int;
+	TGLfloat *vertex_array_float;
+	TGLdouble *vertex_array_double;
 	int vertex_array_size;
 	int vertex_array_stride;
-	float *normal_array;
+	TGLshort *normal_array_short;
+	TGLint *normal_array_int;
+	TGLfloat *normal_array_float;
+	TGLdouble *normal_array_double;
 	int normal_array_stride;
-	float *color_array;
+	TGLshort *color_array_short;
+	TGLint *color_array_int;
+	TGLfloat *color_array_float;
+	TGLdouble *color_array_double;
 	int color_array_size;
 	int color_array_stride;
-	float *texcoord_array;
+	TGLshort *texcoord_array_short;
+	TGLint *texcoord_array_int;
+	TGLfloat *texcoord_array_float;
+	TGLdouble *texcoord_array_double;
 	int texcoord_array_size;
 	int texcoord_array_stride;
 	int client_states;
