@@ -25,8 +25,15 @@
 
 namespace Chewy {
 
-class effect {
+enum BlendMode {
+	BLEND_NONE = 0,
+	BLEND1 = 1,
+	BLEND2 = 2,
+	BLEND3 = 3,
+	BLEND4 = 4
+};
 
+class effect {
 public:
 	effect();
 	~effect();

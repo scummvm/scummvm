@@ -364,7 +364,7 @@ int16 file_menue() {
 	ERROR
 	room->load_tgp(spieler.PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
 	ERROR;
-	fx_blende = 1;
+	fx_blend = BLEND1;
 	room->set_ak_pal(&room_blk);
 	u_index = ged->ged_idx(spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
 	                        spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,

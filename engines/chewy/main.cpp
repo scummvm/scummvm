@@ -32,12 +32,6 @@
 namespace Chewy {
 
 #define AUSGANG_CHECK_PIX 8
-enum {
-	BLENDE1 = 1,
-	BLENDE2 = 2,
-	BLENDE3 = 3,
-	BLENDE4 = 4
-};
 
 int16 menu_flag;
 char cur_no_flag;
@@ -312,7 +306,7 @@ void test_menu() {
 	maus_links_click = false;
 	spieler.PersonHide[P_CHEWY] = false;
 	txt_aus_click = false;
-	fx_blende = BLENDE3;
+	fx_blend = BLEND3;
 	auto_obj = 0;
 	flags.MainInput = true;
 	flags.ShowAtsInvTxt = true;
@@ -409,7 +403,7 @@ int16 main_loop(int16 mode) {
 			cursor_wahl(CUR_SAVE);
 			if (file_menue() == 1) {
 				ende = 1;
-				fx_blende = BLENDE4;
+				fx_blend = BLEND4;
 			}
 			if (spieler.inv_cur && spieler.AkInvent != -1 && menu_item == CUR_USE) {
 				cursor_wahl(CUR_AK_INVENT);
@@ -478,7 +472,7 @@ int16 main_loop(int16 mode) {
 				ret = file_menue();
 				if (ret == IOG_END) {
 					ende = 1;
-					fx_blende = BLENDE4;
+					fx_blend = BLEND4;
 				}
 				out->setze_zeiger(workptr);
 
@@ -649,7 +643,7 @@ void set_up_screen(SetupScreenMode mode) {
 
 		calc_auto_go();
 
-		if (fx_blende) {
+		if (fx_blend) {
 			int16 idx = ged->ged_idx(
 				spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
 				spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
@@ -707,20 +701,20 @@ void set_up_screen(SetupScreenMode mode) {
 	menu_flag = false;
 	if (mode == DO_SETUP) {
 		out->setze_zeiger(0);
-		switch (fx_blende) {
-		case BLENDE1:
+		switch (fx_blend) {
+		case BLEND1:
 			fx->blende1(workptr, screen0, pal, 150, 0, 0);
 			break;
 
-		case BLENDE2:
+		case BLEND2:
 			fx->blende1(workptr, screen0, pal, 150, 1, 0);
 			break;
 
-		case BLENDE3:
+		case BLEND3:
 			fx->rnd_blende(spblende, workptr, screen0, pal, 0, 10);
 			break;
 
-		case BLENDE4:
+		case BLEND4:
 			out->setze_zeiger(workptr);
 			out->cls();
 			out->setze_zeiger(nullptr);
@@ -730,9 +724,9 @@ void set_up_screen(SetupScreenMode mode) {
 		default:
 			out->back2screen(workpage);
 			break;
-
 		}
-		fx_blende = 0;
+
+		fx_blend = BLEND_NONE;
 	}
 
 	cur_hide_flag = false;
@@ -1860,7 +1854,7 @@ void calc_ausgang(int16 x, int16 y) {
 				check_shad(u_idx, 0);
 				set_person_spr(Rdi->AutoMov[spieler.room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
 				spieler_vector[P_CHEWY].DelayCount = 0;
-				fx_blende = BLENDE1;
+				fx_blend = BLEND1;
 				auto_obj = 0;
 				spieler_vector[P_CHEWY].Xzoom = 0;
 				spieler_vector[P_CHEWY].Yzoom = 0;

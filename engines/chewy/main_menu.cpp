@@ -220,7 +220,7 @@ void MainMenu::startGame() {
 	spieler_vector[P_CHEWY].Phase = 6;
 	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];
 	set_person_pos(160, 80, 0, 1);
-	fx_blende = 3;
+	fx_blend = BLEND3;
 	spieler.PersonHide[P_CHEWY] = 0;
 	menu_item = 0;
 	cursor_wahl(0);
@@ -248,7 +248,7 @@ bool MainMenu::loadGame() {
 	flags.SaveMenu = false;
 
 	if (result == 0) {
-		fx_blende = 1;
+		fx_blend = BLEND1;
 		return true;
 	} else {
 		return false;
