@@ -35,6 +35,18 @@
 
 namespace Playground3d {
 
+static const TGLfloat dimRegionVertices[] = {
+	//  X      Y
+	-0.5f,  0.5f,
+	 0.5f,  0.5f,
+	-0.5f, -0.5f,
+	 0.5f, -0.5f,
+};
+
+static const TGLuint dimRegionIndices[] = {
+	0, 1, 2, 3
+};
+
 Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
@@ -66,8 +78,8 @@ void TinyGLRenderer::init() {
 	tglEnable(TGL_DEPTH_TEST);
 }
 
-void TinyGLRenderer::clear() {
-	tglClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+void TinyGLRenderer::clear(const Math::Vector4d &clearColor) {
+	tglClearColor(clearColor.x(), clearColor.y(), clearColor.z(), clearColor.w());
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
@@ -135,6 +147,38 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 void TinyGLRenderer::flipBuffer() {
 	TinyGL::tglPresentBuffer();
 	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize, 0, 0, _fb->xsize, _fb->ysize);
+}
+
+void TinyGLRenderer::dimRegionInOut(float fade) {
+	Common::Rect vp = viewport();
+	tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ONE_MINUS_SRC_ALPHA);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor4f(0.0f, 0.0f, 0.0f, 1.0f - fade);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 0, dimRegionVertices);
+	tglDrawElements(TGL_TRIANGLE_STRIP, 4, TGL_UNSIGNED_INT, dimRegionIndices);
+	//tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
 }
 
 } // End of namespace Playground3d

@@ -38,7 +38,7 @@ public:
 	virtual ~Renderer();
 
 	virtual void init() = 0;
-	virtual void clear() = 0;
+	virtual void clear(const Math::Vector4d &clearColor) = 0;
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
@@ -56,6 +56,7 @@ public:
 
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
+	virtual void dimRegionInOut(float fade) = 0;
 
 protected:
 	OSystem *_system;

@@ -13,8 +13,7 @@ uniform vec3 modelPos;
 out vec2 Texcoord;
 out vec3 Color;
 
-void main()
-{
+void main() {
 	Texcoord = texcoord;
 
 	vec4 pos = rotateMatrix * vec4(position, 1.0);

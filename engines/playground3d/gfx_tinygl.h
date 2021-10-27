@@ -41,10 +41,11 @@ public:
 
 	virtual void init() override;
 
-	virtual void clear() override;
+	virtual void clear(const Math::Vector4d &clearColor) override;
 
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	virtual void dimRegionInOut(float fade) override;
 
 	virtual void flipBuffer() override;
 

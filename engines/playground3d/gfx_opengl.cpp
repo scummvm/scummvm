@@ -33,6 +33,14 @@
 
 namespace Playground3d {
 
+static const GLfloat dimRegionVertices[] = {
+	//  X      Y
+	-0.5f,  0.5f,
+	 0.5f,  0.5f,
+	-0.5f, -0.5f,
+	 0.5f, -0.5f,
+};
+
 Renderer *CreateGfxOpenGL(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
@@ -60,12 +68,13 @@ void OpenGLRenderer::init() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void OpenGLRenderer::clear() {
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+void OpenGLRenderer::clear(const Math::Vector4d &clearColor) {
+	glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), clearColor.w());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -128,6 +137,36 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	glVertex3f( 0.0f, -0.5, 0.0f);
 	glEnd();
 	glDisable(GL_POLYGON_OFFSET_FILL);
+}
+
+void OpenGLRenderer::dimRegionInOut(float fade) {
+	Common::Rect vp = viewport();
+	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f - fade);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), &dimRegionVertices[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 }
 
 } // End of namespace Playground3d

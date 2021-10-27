@@ -39,6 +39,14 @@
 
 namespace Playground3d {
 
+static const GLfloat dimRegionVertices[] = {
+	//  X      Y
+	-0.5f,  0.5f,
+	 0.5f,  0.5f,
+	-0.5f, -0.5f,
+	 0.5f, -0.5f,
+};
+
 Renderer *CreateGfxOpenGLShader(OSystem *system) {
 	return new ShaderRenderer(system);
 }
@@ -47,13 +55,17 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		Renderer(system),
 		_currentViewport(kOriginalWidth, kOriginalHeight),
 		_cubeShader(nullptr),
-		_cubeVBO(0) {
+		_fadeShader(nullptr),
+		_cubeVBO(0),
+		_fadeVBO(0) {
 }
 
 ShaderRenderer::~ShaderRenderer() {
 	OpenGL::ShaderGL::freeBuffer(_cubeVBO);
+	OpenGL::ShaderGL::freeBuffer(_fadeVBO);
 
 	delete _cubeShader;
+	delete _fadeShader;
 }
 
 void ShaderRenderer::init() {
@@ -63,17 +75,22 @@ void ShaderRenderer::init() {
 
 	glEnable(GL_DEPTH_TEST);
 
-	static const char* attributes[] = { "position", "normal", "color", "texcoord",  NULL };
-	_cubeShader = OpenGL::ShaderGL::fromFiles("playground3d_cube", attributes);
+	static const char *cubeAttributes[] = { "position", "normal", "color", "texcoord", NULL };
+	_cubeShader = OpenGL::ShaderGL::fromFiles("playground3d_cube", cubeAttributes);
 	_cubeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
 	_cubeShader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
 	_cubeShader->enableVertexAttribute("position", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 8);
 	_cubeShader->enableVertexAttribute("normal", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 20);
 	_cubeShader->enableVertexAttribute("color", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 32);
+
+	static const char* fadeAttributes[] = { "position", nullptr };
+	_fadeShader = OpenGL::ShaderGL::fromFiles("playground3d_fade", fadeAttributes);
+	_fadeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(dimRegionVertices), dimRegionVertices);
+	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
-void ShaderRenderer::clear() {
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+void ShaderRenderer::clear(const Math::Vector4d &clearColor) {
+	glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), clearColor.w());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -98,6 +115,21 @@ void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 
 void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
 	error("Polygon offset test not implemented yet");
+}
+
+void ShaderRenderer::dimRegionInOut(float fade) {
+	Common::Rect vp = viewport();
+	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	_fadeShader->use();
+	_fadeShader->setUniform1f("alphaLevel", 1.0 - fade);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	_fadeShader->unbind();
 }
 
 } // End of namespace Playground3d

@@ -49,11 +49,15 @@ private:
 	OSystem *_system;
 	Renderer *_gfx;
 	Gfx::FrameLimiter *_frameLimiter;
+	Math::Vector4d _clearColor;
+	float _fade;
+	bool _fadeIn;
 
 	float _rotateAngleX, _rotateAngleY, _rotateAngleZ;
 
 	void drawAndRotateCube();
 	void drawPolyOffsetTest();
+	void dimRegionInOut();
 };
 
 } // End of namespace Playground3d

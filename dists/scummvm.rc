@@ -167,10 +167,10 @@ shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
 shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
 shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
-shaders/wme_flat_shadow_mask.fragment   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
-shaders/wme_flat_shadow_mask.vertex     FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
-shaders/wme_flat_shadow_modelx.fragment FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
-shaders/wme_flat_shadow_modelx.vertex   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
+shaders/wme_flat_shadow_mask.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
+shaders/wme_flat_shadow_mask.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
+shaders/wme_flat_shadow_modelx.fragment FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
+shaders/wme_flat_shadow_modelx.vertex   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
 shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
 shaders/wme_geometry.vertex             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
 shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
@@ -187,6 +187,8 @@ shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/ope
 #if PLUGIN_ENABLED_STATIC(PLAYGROUND3D)
 shaders/playground3d_cube.fragment      FILE    "engines/playground3d/shaders/playground3d_cube.fragment"
 shaders/playground3d_cube.vertex        FILE    "engines/playground3d/shaders/playground3d_cube.vertex"
+shaders/playground3d_fade.fragment      FILE    "engines/playground3d/shaders/playground3d_fade.fragment"
+shaders/playground3d_fade.vertex        FILE    "engines/playground3d/shaders/playground3d_fade.vertex"
 #endif
 #endif
 #endif

@@ -46,7 +46,8 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 
 Playground3dEngine::Playground3dEngine(OSystem *syst)
 		: Engine(syst), _system(syst), _frameLimiter(0),
-		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0) {
+		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0),
+		_clearColor(0.0f, 0.0f, 0.0f, 1.0f), _fade(1.0f), _fadeIn(false) {
 }
 
 Playground3dEngine::~Playground3dEngine() {
@@ -57,21 +58,25 @@ Playground3dEngine::~Playground3dEngine() {
 Common::Error Playground3dEngine::run() {
 	_gfx = createRenderer(_system);
 	_gfx->init();
-	_gfx->clear();
 
 	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 
 	_system->showMouse(true);
 
 	// 1 - rotated colorfull cube
-	// 2 - rotated two traingles with depth offset
+	// 2 - rotated two triangles with depth offset
+	// 3 - fade in/out
 	int testId = 1;
 
 	switch (testId) {
 		case 1:
+			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
 			_rotateAngleX = 45, _rotateAngleY = 45, _rotateAngleZ = 10;
 			break;
 		case 2:
+			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+		case 3:
+			_clearColor = Math::Vector4d(1.0f, 0.0f, 0.0f, 1.0f);
 			break;
 		default:
 			assert(false);
@@ -119,8 +124,23 @@ void Playground3dEngine::drawPolyOffsetTest() {
 		_rotateAngleY = 0;
 }
 
+void Playground3dEngine::dimRegionInOut() {
+	_gfx->dimRegionInOut(_fade);
+	if (_fadeIn)
+		_fade += 0.01f;
+	else
+		_fade -= 0.01f;
+	if (_fade > 1.0f) {
+		_fade = 1;
+		_fadeIn = false;
+	} else if (_fade < 0.0f) {
+		_fade = 0;
+		_fadeIn = true;
+	}
+}
+
 void Playground3dEngine::drawFrame(int testId) {
-	_gfx->clear();
+	_gfx->clear(_clearColor);
 
 	float pitch = 0.0f;
 	float heading = 0.0f;
@@ -133,6 +153,9 @@ void Playground3dEngine::drawFrame(int testId) {
 			break;
 		case 2:
 			drawPolyOffsetTest();
+			break;
+		case 3:
+			dimRegionInOut();
 			break;
 		default:
 			assert(false);
