@@ -102,8 +102,13 @@ void AIScriptPhotographer::ClickedByPlayer() {
 		AI_Movement_Track_Pause(kActorPhotographer);
 		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
 		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
-		Actor_Says(kActorMcCoy, 5310, 11);
-		Actor_Says(kActorPhotographer, 40, kAnimationModeTalk);
+		if (_vm->_cutContent && Random_Query(1, 10) < 3) {
+			Actor_Says(kActorMcCoy, 8516, 14); // Any idea if they were real dogs? (gets no answer)
+			Actor_Says(kActorPhotographer, 60, kAnimationModeTalk);
+		} else {
+			Actor_Says(kActorMcCoy, 5310, 11);
+			Actor_Says(kActorPhotographer, 40, kAnimationModeTalk);
+		}
 		AI_Movement_Track_Unpause(kActorPhotographer);
 	}
 }
