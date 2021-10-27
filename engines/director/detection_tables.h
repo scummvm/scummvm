@@ -2542,7 +2542,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ・ふたりの料理物語
 	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301937, Common::JA_JPN, 400),
 
-	WINGAME1_l("fuzzyfloppybee", "", "APEDORO.EXE", "317dfcb883a6dd59129606adcd3ffdcb", 696827, Common::IT_ITA, 404),
+	// Developed by De Agostini Multimedia, Novara, Piedmont, Italy (1995)
+	// Original Italian title is Fuzzy e Floppy: Il mistero dell'ape d'oro
+	// English version by Macmillan Interactive Publishing (MIP), London
+	MACGAME1("fuzzyfloppy1", "",	 "Fuzzy & Floppy (PPC)", "25e6bf9372fb9350b0873a2c1c66e312", 60068, 404),
+	WINGAME1t("fuzzyfloppy1", "",	 "BEE.EXE",		"f60a44f4c3fe602685f972e16746040d", 696827, 404),
+	WINGAME1_l("fuzzyfloppy1", "",	 "APEDORO.EXE", "317dfcb883a6dd59129606adcd3ffdcb", 696827, Common::IT_ITA, 404),
+	WINDEMO1("fuzzyfloppy1", "Demo", "APE.EXE",		"317dfcb883a6dd59129606adcd3ffdcb", 696827, 404),
 
 	MACGAME2_l("gate1", "", "THE_GATE",		"8ea9e9a699c61edddffd79ddd0c994d7", 290654,
 							"start.Dxr",	"f4f0efc5c519b3ebd63c6d3f8e343967", 5622, Common::JA_JPN, 402),
