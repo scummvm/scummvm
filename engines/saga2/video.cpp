@@ -33,21 +33,17 @@ namespace Saga2 {
 
 #define VIDEO_EXT ".SMK"
 
-static bool nameCheck(char name[], const char ext[], int len) {
-	size_t l = strlen(name);
-	if (l < 5 || 0 != scumm_stricmp(name + (l - strlen(ext)), ext))
-		Common::strlcat(name, ext, len);
-	return true;
-}
-
 void Saga2Engine::startVideo(const char *fileName, int x, int y) {
-	nameCheck((char *)fileName, VIDEO_EXT, 260);
+	Common::String fname = fileName;
+
+	if (!fname.hasSuffix(VIDEO_EXT))
+		fname += VIDEO_EXT;
 
 	if (!_smkDecoder)
 		_smkDecoder = new Video::SmackerDecoder();
 
-	if (!_smkDecoder->loadFile(fileName)) {
-		warning("startVideo: Cannot open file %s", fileName);
+	if (!_smkDecoder->loadFile(fname)) {
+		warning("startVideo: Cannot open file %s", fname.c_str());
 
 		return;
 	}
