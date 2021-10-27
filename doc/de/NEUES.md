@@ -7,6 +7,9 @@ Programmcodes finden Sie auf Englisch unter:
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
+ Kyra:
+   - Unterstützung für die chinesische Version von Legend of Kyrandia 3 hinzugefügt.
+
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
