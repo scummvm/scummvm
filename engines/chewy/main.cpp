@@ -32,9 +32,13 @@
 namespace Chewy {
 
 #define AUSGANG_CHECK_PIX 8
-#define BLENDE1 1
-#define BLENDE2 2
-#define BLENDE3 3
+enum {
+	BLENDE1 = 1,
+	BLENDE2 = 2,
+	BLENDE3 = 3,
+	BLENDE4 = 4
+};
+
 int16 menu_flag;
 char cur_no_flag;
 bool inv_disp_ok;
@@ -642,7 +646,12 @@ void set_up_screen(SetupScreenMode mode) {
 		calc_auto_go();
 
 		if (fx_blende) {
-
+			int16 idx = ged->ged_idx(
+				spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
+				spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
+				room->GedXAnz[room_blk.AkAblage],
+				ged_mem[room_blk.AkAblage]);
+			check_shad(idx, 0);
 		} else {
 			for (i = 0; i < MAX_PERSON; i++) {
 				mov_objekt(&spieler_vector[i], &spieler_mi[i]);
@@ -707,6 +716,13 @@ void set_up_screen(SetupScreenMode mode) {
 			fx->rnd_blende(spblende, workptr, screen0, pal, 0, 10);
 			break;
 
+		case BLENDE4:
+			out->setze_zeiger(workptr);
+			out->cls();
+			out->setze_zeiger(nullptr);
+			fx->blende1(workptr, screen0, pal, 150, 0, 0);
+			break;
+
 		default:
 			out->back2screen(workpage);
 			break;
@@ -714,6 +730,7 @@ void set_up_screen(SetupScreenMode mode) {
 		}
 		fx_blende = 0;
 	}
+
 	cur_hide_flag = false;
 	ScrXy = (int16 *)ablage[room_blk.AkAblage];
 	if (!menu_display)
