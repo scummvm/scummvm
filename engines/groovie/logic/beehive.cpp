@@ -740,7 +740,7 @@ void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
 		op = 6;
 		run(vars);
 
-		if (i + 2 == moves.size() && (hexDifference > 2) || (hexDifference<-2) )
+		if ((i + 2 == moves.size()) && (hexDifference > 2) || (hexDifference < -2) )
 			error("%u: early end", i);
 		else if (hexDifference > 2)
 			break;
