@@ -574,14 +574,13 @@ void set_up_screen(SetupScreenMode mode) {
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
 
-	if (SetUpScreenFunc) {
-		if (menu_display == 0) {
-			SetUpScreenFunc();
-			out->setze_zeiger(workptr);
-		}
-	}
 	for (i = 0; i < MAX_PERSON; i++)
 		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
+
+	if (SetUpScreenFunc && menu_display == 0 && !flags.InventMenu) {
+		SetUpScreenFunc();
+		out->setze_zeiger(workptr);
+	}
 
 	sprite_engine();
 	if (menu_display == MENU_EINBLENDEN || flags.InventMenu) {
@@ -642,10 +641,14 @@ void set_up_screen(SetupScreenMode mode) {
 
 		calc_auto_go();
 
-		for (i = 0; i < MAX_PERSON; i++) {
-			mov_objekt(&spieler_vector[i], &spieler_mi[i]);
-			spieler_mi[i].XyzStart[0] = spieler_vector[i].Xypos[0];
-			spieler_mi[i].XyzStart[1] = spieler_vector[i].Xypos[1];
+		if (fx_blende) {
+
+		} else {
+			for (i = 0; i < MAX_PERSON; i++) {
+				mov_objekt(&spieler_vector[i], &spieler_mi[i]);
+				spieler_mi[i].XyzStart[0] = spieler_vector[i].Xypos[0];
+				spieler_mi[i].XyzStart[1] = spieler_vector[i].Xypos[1];
+			}
 		}
 
 		for (i = 0; i < auto_obj && !flags.StopAutoObj; i++)
@@ -1930,7 +1933,7 @@ void auto_scroll(int16 scrx, int16 scry) {
 	spieler.scrolly >>= 1;
 	spieler.scrolly <<= 1;
 	ende = false;
-	while (!ende) {
+	while (!ende && !SHOULD_QUIT) {
 		if (scrx < spieler.scrollx)
 			spieler.scrollx -= spieler.ScrollxStep;
 		else if (scrx > spieler.scrollx)

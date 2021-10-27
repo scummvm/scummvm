@@ -1612,7 +1612,7 @@ void r54_aufzug_ab() {
 	ay = -108;
 	delay = 0;
 	det->show_static_spr(12);
-	while (ch_y < 68) {
+	while (ch_y < 68 && !SHOULD_QUIT) {
 		det->set_static_pos(12, 125, ch_y, false, false);
 		det->set_static_pos(9, 122, ay, false, false);
 		if (!delay) {

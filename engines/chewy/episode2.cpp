@@ -572,7 +572,7 @@ void r29_schlitz_sitz() {
 		start_aad(63);
 		start_ani_block(4, ablock26);
 		det->show_static_spr(9);
-		while (flags.AdsDialog) {
+		while (flags.AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 		det->stop_detail(2);
@@ -1136,7 +1136,7 @@ int16 r35_use_cat() {
 		obj->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 		det->show_static_spr(7);
 		atds->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATEI);
-		while (det->get_ani_status(2)) {
+		while (det->get_ani_status(2) && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 		det->set_static_ani(0, -1);
@@ -1396,7 +1396,7 @@ void r37_use_hahn() {
 			del_inventar(GEBISS_INV);
 			flags.NoScroll = true;
 			auto_scroll(177, 0);
-			while (det->get_ani_status(9)) {
+			while (det->get_ani_status(9) && !SHOULD_QUIT) {
 				set_up_screen(DO_SETUP);
 			}
 			det->start_detail(4, 1, ANI_VOR);
@@ -1980,7 +1980,7 @@ int16 r40_use_schalter(int16 aad_nr) {
 			if (spieler.R40PoliceAniStatus != 255) {
 				start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(204, -1);
-				while (spieler.R40PoliceAniStatus != 255)
+				while (spieler.R40PoliceAniStatus != 255 && !SHOULD_QUIT)
 					set_up_screen(DO_SETUP);
 			}
 			room->set_timer_status(255, TIMER_STOP);
@@ -2542,7 +2542,7 @@ void r42_talk_beamter() {
 void r42_dia_beamter(int16 str_end_nr) {
 	hide_cur();
 	if (str_end_nr != 4) {
-		while (atds->aad_get_status() != -1)
+		while (atds->aad_get_status() != -1 && !SHOULD_QUIT)
 			set_up_screen(DO_SETUP);
 		spieler.PersonHide[P_CHEWY] = true;
 		flags.NoDiaBox = true;
@@ -2561,13 +2561,13 @@ void r42_dia_beamter(int16 str_end_nr) {
 
 		}
 	} else {
-		while (atds->aad_get_status() < 2) {
+		while (atds->aad_get_status() < 2 && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 		det->stop_detail(0);
 		start_detail_wait(1, 1, ANI_VOR);
 		det->start_detail(2, 255, ANI_VOR);
-		while (atds->aad_get_status() != -1) {
+		while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 		det->stop_detail(2);

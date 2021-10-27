@@ -351,7 +351,7 @@ void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
 	tmp_maus_links = maus_links_click;
 	maus_links_click = false;
 	det->start_detail(ani_nr, rep, mode);
-	while (det->get_ani_status(ani_nr)) {
+	while (det->get_ani_status(ani_nr) && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	maus_links_click = tmp_maus_links;
@@ -367,14 +367,14 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 		frame = adi->ani_count + frame;
 	else
 		frame = adi->ani_count - frame;
-	while (det->get_ani_status(ani_nr) && adi->ani_count != frame) {
+	while (det->get_ani_status(ani_nr) && adi->ani_count != frame && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	maus_links_click = tmp_maus_links;
 }
 
 void wait_detail(int16 det_nr) {
-	while (det->get_ani_status(det_nr))
+	while (det->get_ani_status(det_nr) && !SHOULD_QUIT)
 		set_up_screen(DO_SETUP);
 }
 
@@ -383,7 +383,7 @@ void wait_show_screen(int16 frames) {
 	maus_links_click = false;
 	if (spieler.DelaySpeed > 0)
 		frames *= spieler.DelaySpeed;
-	while (--frames > 0) {
+	while (--frames > 0 && !SHOULD_QUIT) {
 		if (flags.AniUserAction)
 			get_user_key(NO_SETUP);
 		set_up_screen(DO_SETUP);
@@ -441,7 +441,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 				atds_string_start(30000, 0, 0, AAD_STR_START);
 			ret = atds->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 			if (ret) {
-				while (atds->ats_get_status() != false)
+				while (atds->ats_get_status() != false && !SHOULD_QUIT)
 					set_up_screen(DO_SETUP);
 			} else if (VocNr != -1) {
 				ret = true;
@@ -471,11 +471,11 @@ void aad_wait(int16 str_nr) {
 	tmp_maus_links = maus_links_click;
 	maus_links_click = false;
 	if (str_nr == -1) {
-		while (atds->aad_get_status() != -1) {
+		while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	} else {
-		while (atds->aad_get_status() < str_nr) {
+		while (atds->aad_get_status() < str_nr && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	}
@@ -502,7 +502,7 @@ void start_ads_wait(int16 dia_nr) {
 		menu_item = CUR_TALK;
 		cursor_wahl(menu_item);
 		load_ads_dia(dia_nr);
-		while (flags.AdsDialog) {
+		while (flags.AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	}
@@ -511,7 +511,7 @@ void start_ads_wait(int16 dia_nr) {
 void wait_auto_obj(int16 nr) {
 	tmp_maus_links = maus_links_click;
 	maus_links_click = false;
-	while (mov_phasen[nr].Repeat != -1) {
+	while (mov_phasen[nr].Repeat != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	maus_links_click = tmp_maus_links;
@@ -990,7 +990,7 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 
 void start_spz_wait(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 	if (start_spz(ani_id, count, reverse, p_nr)) {
-		while (spz_count)
+		while (spz_count && !SHOULD_QUIT)
 			set_up_screen(DO_SETUP);
 	}
 }
