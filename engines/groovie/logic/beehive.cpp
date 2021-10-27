@@ -72,6 +72,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		memset(hexagons, 0, HEXCOUNT);
 		scriptVariables[85] = 0;
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
+		debugC(2, kDebugLogic, "Beehive player clicked %d", (int)v24);
 		selectSourceHexagon(v24, &v22, tempState);
 		for (int j = 0; j < v22; j++)
 			scriptVariables[tempState[j] + 25] = kBeehiveColorRed;
@@ -83,6 +84,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 		scriptVariables[4] = 2;
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
 		v22 = 10 * scriptVariables[2] + scriptVariables[3];
+		debugC(1, kDebugLogic, "Beehive player moved from %d, to %d", (int)v24, (int)v22);
 		sub16(v24, v22, hexDifference, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
 		scriptVariables[15] = scriptVariables[16];
 		sub04(v24, v22, (int8 *)scriptVariables);
@@ -691,5 +693,90 @@ const int8 beehiveLogicTable2[800] = {
 };
 
 } // End of anonymous namespace
+
+void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
+	byte vars[1024];
+	memset(vars, 0, sizeof(vars));
+
+	int8 &hexDifference = ((int8 *)vars)[13];
+	byte &op = vars[14];// can't do the -1 with a reference
+
+	op = 1;
+	run(vars);
+	op = 2;
+	run(vars);
+	// TODO: idk how many times to loop this or if I need to set any scriptVariables
+	op = 6;
+	run(vars);
+	op = 6;
+	run(vars);
+	op = 6;
+	run(vars);
+	op = 6;
+	run(vars);
+
+	for (uint i = 0; i < moves.size(); i+=2) {
+		/*if (hexDifference > 2 || hexDifference < -2)
+			error("%u: early end", i);*/
+
+		int from = moves[i];
+		int to = moves[i + 1];
+
+		op = 2;
+		run(vars);
+
+		op = 3;
+		vars[0] = from / 10;
+		vars[1] = from % 10;
+		run(vars);
+
+		op = 4;
+		vars[0] = from / 10;
+		vars[1] = from % 10;
+		vars[2] = to / 10;
+		vars[3] = to % 10;
+		run(vars);
+
+		op = 6;
+		run(vars);
+
+		if (i + 2 == moves.size() && (hexDifference > 2) || (hexDifference<-2) )
+			error("%u: early end", i);
+		else if (hexDifference > 2)
+			break;
+
+		op = 5;
+		run(vars);
+
+		op = 6;
+		run(vars);
+	}
+
+	if (playerWin && hexDifference < 3)
+		error("player didn't win");
+	if (playerWin == false && hexDifference > -3)
+		error("Stauf didn't win");
+}
+
+void BeehiveGame::tests() {
+
+	// 8 moves per line, in from and to pairs
+	// this winning test should work on every seed, it always works in the speedrun
+	testGame({
+		/**/ 34, 42, /**/ 56, 50, /**/ 50, 35, /**/ 42, 55, /**/ 34, 42, /**/ 42, 49, /**/ 35, 43, /**/ 43, 50,
+		/**/ 50, 51, /**/ 51, 52, /**/ 52, 53, /**/ 53, 54, /**/ 52, 57, /**/ 52, 46, /**/ 34, 25, /**/ 34, 24,
+		/**/ 25, 23, /**/ 46, 31, /**/ 31, 30, /**/ 52, 38, /**/ 29, 12, /**/ 31, 39, /**/ 35, 28, /**/ 49, 32,
+		/**/ 31, 40, /**/ 39, 47, /**/ 20, 19, /**/ 29, 37, /**/ 57, 58, /**/ 53, 46, /**/ 53, 52
+	}, true);
+
+	// this losing test might need to specify a seed
+	// luckily it's really easy to come up with a losing set of moves :)
+	testGame({
+		/**/ 34, 25, /**/ 25, 10, /**/ 34, 17, /**/ 0, 2, /**/ 56, 57, /**/ 57, 51, /**/ 51, 50, /**/ 51, 52,
+		/**/ 51, 44, /**/ 50, 43, /**/ 50, 35, /**/ 36, 38, /**/ 35, 37, /**/ 38, 39, /**/ 38, 29, /**/ 45, 58,
+		/**/ 58, 59, /**/ 57, 45, /**/ 44, 35, /**/ 35, 26, /**/ 46, 54, /**/ 59, 60, /**/ 59, 55, /**/ 55, 40,
+		/**/ 39, 23
+	}, false);
+}
 
 } // End of Groovie namespace
