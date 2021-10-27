@@ -74,6 +74,14 @@ const char *opcodeNames[] = {
 	"SetCounterFromGameFlag"
 };
 
+static const struct {
+	int textResourceId;
+	int millis;
+} tickDecrements[] = {
+	{0x0A8C, 1000},
+	{0x0CFC, 5000}
+};
+
 Common::String Encounter::ScriptEntry::toString() {
 	return Common::String::format("0x%02X: %s (%d, %d)", opcode, OPCODE_NAME(opcode), param1, param2);
 }
@@ -1195,8 +1203,11 @@ void Encounter::drawSubtitle(char *text, ResourceId font, int16 y) {
 		_tick = _vm->getTick() + 1000 * (getResource()->get(_soundResourceId/*getSpeech()->getSoundResourceId()*/)->size / 11025) / (uint16)_data_455B3C; // TODO replace with speech
 
 		// WORKAROUND: Handle multipage dialogs
-		if (_data_455B70 - 1 > 8)
-			_tick -= 1000 * ((_data_455B70 - 1) % 8);
+		for (int i = 0; i < ARRAYSIZE(tickDecrements); i++)
+			if (getSpeech()->getTextResourceId() == tickDecrements[i].textResourceId) {
+				_tick -= tickDecrements[i].millis;
+				break;
+			}
 	}
 
 	getText()->draw(_data_455BF0, 7, kTextCenter, Common::Point(x, y), 16, width, text);
