@@ -420,7 +420,7 @@ void Room0::ch_schleim_auge() {
 		det->load_taf_seq(adi->start_ani, (adi->end_ani - adi->start_ani) + 1, 0);
 	}
 
-	while (adi->ani_count < adi->end_ani) {
+	while (adi->ani_count < adi->end_ani && !SHOULD_QUIT) {
 		clear_prog_ani();
 		spieler.PersonHide[P_CHEWY] = true;
 		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
@@ -1330,7 +1330,7 @@ void r6_bola_knopf() {
 		} else {
 			spieler.PersonHide[P_CHEWY] = true;
 			start_ani_block(3, ablock6);
-			while (det->get_ani_status(3)) {
+			while (det->get_ani_status(3) && !SHOULD_QUIT) {
 				if (!det->get_ani_status(14)) {
 					set_person_pos(220, 89, P_CHEWY, P_LEFT);
 					spieler.PersonHide[P_CHEWY] = false;
@@ -1507,7 +1507,7 @@ void r8_start_verbrennen() {
 		spieler.PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ablock12);
 		ende = 0;
-		while (!ende && det->get_ani_status(9)) {
+		while (!ende && det->get_ani_status(9) && !SHOULD_QUIT) {
 
 			set_up_screen(DO_SETUP);
 			if (minfo.button == 1 || kbinfo.key_code == ENTER) {
@@ -3379,7 +3379,7 @@ int16 r23_start_gleiter() {
 					set_person_pos(126, 110, P_CHEWY, P_RIGHT);
 					switch_room(spieler.R23GleiterExit);
 					start_spz(CH_WONDER1, 1, ANI_VOR, P_CHEWY);
-					while (flags.SpzAni)
+					while (flags.SpzAni && !SHOULD_QUIT)
 						set_up_screen(DO_SETUP);
 					start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
 					spieler.DelaySpeed = 10;
