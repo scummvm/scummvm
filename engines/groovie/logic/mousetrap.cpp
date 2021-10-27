@@ -335,7 +335,7 @@ void MouseTrapGame::sub09(byte *scriptVariables) {
 void MouseTrapGame::copyRoute(int8 x, int8 y) {
 	int i;
 
-	for (i = 0; i < _mouseTrapCounter > i; i++) {
+	for (i = 0; i < _mouseTrapCounter; i++) {
 		if (_mouseTrapRoute[3 * i] == x && _mouseTrapRoute[3 * i + 1] == y)
 			break;
 	}
