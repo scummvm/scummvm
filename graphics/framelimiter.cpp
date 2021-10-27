@@ -1,7 +1,7 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,12 +20,11 @@
  *
  */
 
-#include "engines/stark/gfx/framelimiter.h"
+#include "graphics/framelimiter.h"
 
 #include "common/util.h"
 
-namespace Stark {
-namespace Gfx {
+namespace Graphics {
 
 FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
 		_system(system),
@@ -70,5 +69,4 @@ uint FrameLimiter::getLastFrameDuration() const {
 	return _lastFrameDurationMs;
 }
 
-} // End of namespace Gfx
-} // End of namespace Stark
+} // End of namespace Graphics

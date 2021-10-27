@@ -305,31 +305,6 @@ Common::Point Window::scalePoint(const Common::Point &screen) const {
 	return scaledPosition;
 }
 
-FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
-	_system(system),
-	_speedLimitMs(0),
-	_startFrameTime(0) {
-	// The frame limiter is disabled when vsync is enabled.
-	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync) && framerate != 0;
-
-	if (_enabled) {
-		_speedLimitMs = 1000 / CLIP<uint>(framerate, 0, 100);
-	}
-}
-
-void FrameLimiter::startFrame() {
-	_startFrameTime = _system->getMillis();
-}
-
-void FrameLimiter::delayBeforeSwap() {
-	uint endFrameTime = _system->getMillis();
-	uint frameDuration = endFrameTime - _startFrameTime;
-
-	if (_enabled && frameDuration < _speedLimitMs) {
-		_system->delayMillis(_speedLimitMs - frameDuration);
-	}
-}
-
 const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
 #ifdef SCUMM_BIG_ENDIAN
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);

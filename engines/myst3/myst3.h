@@ -34,6 +34,7 @@
 
 namespace Graphics {
 struct Surface;
+class FrameLimiter;
 }
 
 namespace Common {
@@ -79,7 +80,6 @@ class ScriptedMovie;
 class ShakeEffect;
 class RotationEffect;
 class Transition;
-class FrameLimiter;
 struct NodeData;
 struct Myst3GameDescription;
 
@@ -212,7 +212,7 @@ private:
 	// Used by Voltaic's spinning gears
 	RotationEffect *_rotationEffect;
 
-	FrameLimiter *_frameLimiter;
+	Graphics::FrameLimiter *_frameLimiter;
 	Transition *_transition;
 
 	bool _inputSpacePressed;

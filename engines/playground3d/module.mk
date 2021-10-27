@@ -2,7 +2,6 @@ MODULE := engines/playground3d
 
 MODULE_OBJS := \
 	metaengine.o \
-	framelimiter.o \
 	gfx.o \
 	gfx_opengl.o \
 	gfx_opengl_shaders.o \

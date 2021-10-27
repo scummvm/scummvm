@@ -1,7 +1,7 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,14 +20,12 @@
  *
  */
 
-#ifndef STARK_GFX_FRAMELIMITER_H
-#define STARK_GFX_FRAMELIMITER_H
+#ifndef GFX_FRAMELIMITER_H
+#define GFX_FRAMELIMITER_H
 
 #include "common/system.h"
 
-namespace Stark {
-
-namespace Gfx {
+namespace Graphics {
 
 /**
  * A framerate limiter
@@ -56,7 +54,6 @@ private:
 	uint _lastFrameDurationMs;
 };
 
-} // End of namespace Gfx
-} // End of namespace Stark
+} // End of namespace Graphics
 
-#endif // STARK_GFX_FRAMELIMITER_H
+#endif // GFX_FRAMELIMITER_H

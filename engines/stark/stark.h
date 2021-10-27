@@ -34,11 +34,14 @@ namespace Common {
 class RandomSource;
 }
 
+namespace Graphics {
+class FrameLimiter;
+}
+
 namespace Stark {
 
 namespace Gfx {
 class Driver;
-class FrameLimiter;
 }
 
 class ArchiveLoader;
@@ -91,7 +94,7 @@ private:
 	void addModsToSearchPath() const;
 	static void checkRecommendedDatafiles();
 
-	Gfx::FrameLimiter *_frameLimiter;
+	Graphics::FrameLimiter *_frameLimiter;
 	PauseToken _gamePauseToken;
 
 	const ADGameDescription *_gameDescription;

@@ -25,10 +25,11 @@
 
 #include "common/array.h"
 
+#include "graphics/framelimiter.h"
+
 #include "engines/engine.h"
 
 #include "engines/playground3d/gfx.h"
-#include "engines/playground3d/framelimiter.h"
 
 namespace Playground3d {
 
@@ -48,7 +49,7 @@ public:
 private:
 	OSystem *_system;
 	Renderer *_gfx;
-	Gfx::FrameLimiter *_frameLimiter;
+	Graphics::FrameLimiter *_frameLimiter;
 	Math::Vector4d _clearColor;
 	float _fade;
 	bool _fadeIn;

@@ -59,7 +59,7 @@ Common::Error Playground3dEngine::run() {
 	_gfx = createRenderer(_system);
 	_gfx->init();
 
-	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
+	_frameLimiter = new Graphics::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 
 	_system->showMouse(true);
 

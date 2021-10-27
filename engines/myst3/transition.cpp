@@ -28,6 +28,7 @@
 #include "engines/myst3/state.h"
 
 #include "graphics/surface.h"
+#include "graphics/framelimiter.h"
 
 namespace Myst3 {
 
@@ -35,7 +36,7 @@ Transition::Transition(Myst3Engine *vm) :
 		_vm(vm),
 		_type(kTransitionNone),
 		_sourceScreenshot(nullptr),
-		_frameLimiter(new FrameLimiter(g_system, ConfMan.getInt("engine_speed"))) {
+		_frameLimiter(new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"))) {
 
 	// Capture a screenshot of the source node
 	int durationTicks = computeDuration();

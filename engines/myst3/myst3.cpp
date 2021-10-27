@@ -57,6 +57,7 @@
 #include "graphics/conversion.h"
 #include "graphics/renderer.h"
 #include "graphics/yuv_to_rgb.h"
+#include "graphics/framelimiter.h"
 
 #include "math/vector2d.h"
 
@@ -148,7 +149,7 @@ Common::Error Myst3Engine::run() {
 	_gfx->init();
 	_gfx->clear();
 
-	_frameLimiter = new FrameLimiter(_system, ConfMan.getInt("engine_speed"));
+	_frameLimiter = new Graphics::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");

@@ -3,7 +3,6 @@ MODULE := engines/stark
 MODULE_OBJS := \
 	console.o \
 	gfx/driver.o \
-	gfx/framelimiter.o \
 	gfx/opengls.o \
 	gfx/openglsactor.o \
 	gfx/openglsfade.o \

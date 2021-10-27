@@ -27,9 +27,11 @@
 
 #include "engines/myst3/gfx.h"
 
-namespace Myst3 {
-
+namespace Graphics {
 class FrameLimiter;
+}
+
+namespace Myst3 {
 
 class Transition {
 public:
@@ -44,7 +46,7 @@ private:
 	void playSound();
 
 	Myst3Engine *_vm;
-	FrameLimiter *_frameLimiter;
+	Graphics::FrameLimiter *_frameLimiter;
 	TransitionType _type;
 
 	Texture *_sourceScreenshot;

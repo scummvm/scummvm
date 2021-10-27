@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	fonts/newfont.o \
 	fonts/ttf.o \
 	fonts/winfont.o \
+	framelimiter.o \
 	korfont.o \
 	larryScale.o \
 	maccursor.o \
