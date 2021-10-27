@@ -576,7 +576,7 @@ void MouseTrapGame::findMinPointInRoute(int8 *x, int8 *y) {
 	int8 maxVal = 0;
 	int8 x1 = _mouseTrapPosX;
 	int8 y1 = _mouseTrapPosY;
-	for (int i = 0; i < _mouseTrapCounter > i; i++) {
+	for (int i = 0; i < _mouseTrapCounter; i++) {
 		if (8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i] > maxVal) {
 			maxVal = 8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i];
 			x1 = _mouseTrapRoute[3 * i];
@@ -594,7 +594,7 @@ int8 MouseTrapGame::calcDistanceToExit() {
 	if (havePosInRoute(4, 4))
 		return 0;
 
-	for (int i = 0; i < _mouseTrapCounter > i; i++) {
+	for (int i = 0; i < _mouseTrapCounter; i++) {
 		if (8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i] > maxDist)
 			maxDist = 8 - _mouseTrapRoute[3 * i + 1] - _mouseTrapRoute[3 * i];
 	}
