@@ -80,7 +80,7 @@ byte *spblende;
 
 byte *screen0;
 int16 scr_width;
-int16 fx_blende;
+BlendMode fx_blend;
 
 byte *font6x8;
 byte *font8x8;

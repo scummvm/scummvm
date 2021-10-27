@@ -1108,7 +1108,7 @@ int16 r51_use_door(int16 txt_nr) {
 					obj->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
 					det->hide_static_spr(1);
 
-					fx_blende = 3;
+					fx_blend = BLEND3;
 					set_up_screen(DO_SETUP);
 					start_aad_wait(291, -1);
 				}
@@ -2195,7 +2195,7 @@ int16 r56_use_kneipe() {
 				set_person_pos(23, 70, P_HOWARD, P_RIGHT);
 				set_person_pos(50, 81, P_CHEWY, P_LEFT);
 
-				fx_blende = 3;
+				fx_blend = BLEND3;
 				start_aad_wait(308, -1);
 				SetUpScreenFunc = r56_setup_func;
 				flags.NoScroll = false;
@@ -2672,7 +2672,7 @@ void r63_bork_platt() {
 	out->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(FCUT_079, FLC_MODE);
-	fx_blende = 3;
+	fx_blend = BLEND3;
 	show_cur();
 	flags.MainInput = true;
 	spieler.R62Flucht = true;

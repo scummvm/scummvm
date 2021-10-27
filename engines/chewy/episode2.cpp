@@ -61,7 +61,7 @@ void r25_entry() {
 		spieler.R25FirstEntry = true;
 		spieler.PersonHide[P_CHEWY] = true;
 		flic_cut(FCUT_029, FLC_MODE);
-		fx_blende = 0;
+		fx_blend = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		spieler.PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_VOR, P_CHEWY);
@@ -142,11 +142,11 @@ void r25_xit_gleiter() {
 		auto_mov_obj[SURIMY_OBJ].Mode = 1;
 		init_auto_obj(SURIMY_OBJ, &r25_surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
 		              *)r25_surimy_mpkt);
-		fx_blende = 1;
+		fx_blend = BLEND1;
 		set_up_screen(DO_SETUP);
 		start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(65, -1);
-		fx_blende = 0;
+		fx_blend = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
 		auto_obj = 0;
 	}
@@ -276,7 +276,7 @@ void r28_entry(int16 eib_nr) {
 
 					set_person_pos(480, 118, P_HOWARD, P_LEFT);
 					set_person_pos(440, 146, P_CHEWY, P_RIGHT);
-					fx_blende = 0;
+					fx_blend = BLEND_NONE;
 					flags.ExitMov = false;
 					spieler_mi[P_HOWARD].Mode = true;
 					go_auto_xy(420, 113, P_HOWARD, ANI_WAIT);
@@ -2133,7 +2133,7 @@ void r40_bmeister_dia(int16 aad_nr) {
 		start_aad_wait(aad_nr, -1);
 		flags.NoPalAfterFlc = true;
 		flic_cut(FCUT_062, FLC_MODE);
-		fx_blende = 3;
+		fx_blend = BLEND3;
 		start_aad_wait(375, -1);
 	} else
 		start_aad_wait(aad_nr, -1);
@@ -2649,7 +2649,7 @@ void r44_look_news() {
 	spieler.scrollx = 0;
 	spieler.scrolly = 0;
 	hide_person();
-	fx_blende = 1;
+	fx_blend = BLEND1;
 	spieler.PersonRoomNr[P_CHEWY] = 44;
 	room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 	ERROR

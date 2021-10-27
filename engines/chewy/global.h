@@ -80,7 +80,7 @@ extern byte *spblende;
 
 extern byte *screen0;
 extern int16 scr_width;
-extern int16 fx_blende;
+extern BlendMode fx_blend;
 
 extern byte *font6x8;
 extern byte *font8x8;

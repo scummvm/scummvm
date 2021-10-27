@@ -104,7 +104,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		ERROR
 		load_chewy_taf(spieler.ChewyAni);
 
-		fx_blende = 1;
+		fx_blend = BLEND1;
 		room->calc_invent(&room_blk, &spieler);
 
 		if (spieler.AkInvent != -1)

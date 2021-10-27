@@ -761,7 +761,7 @@ void Room0::fuett_ani() {
 			spieler_vector[P_CHEWY].DelayCount = 0;
 
 			check_shad(4, 0);
-			fx_blende = 1;
+			fx_blend = BLEND1;
 			set_up_screen(DO_SETUP);
 		} else {
 			action = true;
@@ -873,14 +873,14 @@ int16 r4_sonde_comp() {
 	spieler.PersonRoomNr[P_CHEWY] = 3;
 	room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 	ERROR
-	fx_blende = 1;
+	fx_blend = BLEND1;
 	atds->stop_aad();
 
 	return cur_x;
 }
 
 void switch_room(int16 nr) {
-	fx_blende = 1;
+	fx_blend = BLEND1;
 	exit_room(-1);
 	spieler.PersonRoomNr[P_CHEWY] = nr;
 	room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
@@ -930,7 +930,7 @@ void r3_terminal() {
 			auto_obj = 0;
 			room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 			ERROR
-			fx_blende = 1;
+			fx_blend = BLEND1;
 			start_ani_block(3, ablock5);
 			set_person_pos(91, 107, P_CHEWY, P_LEFT);
 			spieler.PersonHide[P_CHEWY] = false;
@@ -1689,7 +1689,7 @@ void r10_entry() {
 		spieler.R10Surimy = true;
 		flic_cut(FCUT_004, CFO_MODE);
 		start_aad(101, 0);
-		fx_blende = 0;
+		fx_blend = BLEND_NONE;
 		set_person_pos(1, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 	} else if (spieler.R10SurimyOk)
