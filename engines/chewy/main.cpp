@@ -407,8 +407,10 @@ int16 main_loop(int16 mode) {
 			out->set_fontadr(font6x8);
 			out->set_vorschub(fvorx6x8, fvory6x8);
 			cursor_wahl(CUR_SAVE);
-			if (file_menue() == 1)
+			if (file_menue() == 1) {
 				ende = 1;
+				fx_blende = BLENDE4;
+			}
 			if (spieler.inv_cur && spieler.AkInvent != -1 && menu_item == CUR_USE) {
 				cursor_wahl(CUR_AK_INVENT);
 			} else
@@ -474,8 +476,10 @@ int16 main_loop(int16 mode) {
 				out->setze_zeiger(screen0);
 				cursor_wahl(CUR_SAVE);
 				ret = file_menue();
-				if (ret == IOG_END)
+				if (ret == IOG_END) {
 					ende = 1;
+					fx_blende = BLENDE4;
+				}
 				out->setze_zeiger(workptr);
 
 				menu_item = tmp_menu_item;
