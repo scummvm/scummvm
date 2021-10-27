@@ -169,9 +169,7 @@ void timer_action(int16 t_nr) {
 			break;
 
 		default:
-			default_flag = true;
 			break;
-
 		}
 		break;
 
