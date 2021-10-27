@@ -792,7 +792,13 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 		}
 
 		// Try to open the new file
-		_videoFile = _vm->_resMan->open(fileref);
+		ResInfo resInfo;
+		if (!_vm->_resMan->getResInfo(fileref, resInfo)) {
+			error("Groovie::Script: Couldn't find resource info for fileref %d", fileref);
+			return true;
+		}
+
+		_videoFile = _vm->_resMan->open(resInfo);
 
 		if (_videoFile) {
 			_videoRef = fileref;
@@ -800,6 +806,10 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// Filename check as sometimes teeth used for puzzle movements (bishops)
 			if (_version == kGroovieT7G && (_lastCursor == 7 || _lastCursor == 4) && _scriptFile == "script.grv")
 				_bitflags |= (1 << 15);
+			// act, door and trailer use a variation of motion blocks in the ROQ decoder.
+			// Original clan engine specifically references these files by name to set the flag
+			else if (_version == kGroovieCDY && (resInfo.filename.hasPrefix("act") || resInfo.filename.hasPrefix("door")))
+				_bitflags |= (1 << 14);
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
 		} else {
 			error("Groovie::Script: Couldn't open file");

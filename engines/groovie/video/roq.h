@@ -63,8 +63,8 @@ private:
 	bool processBlockInfo(ROQBlockHeader &blockHeader);
 	bool processBlockQuadCodebook(ROQBlockHeader &blockHeader);
 	bool processBlockQuadVector(ROQBlockHeader &blockHeader);
-	void processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 My);
-	void processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My);
+	void processBlockQuadVectorBlock(int baseX, int baseY);
+	void processBlockQuadVectorBlockSub(int baseX, int baseY);
 	bool processBlockStill(ROQBlockHeader &blockHeader);
 	bool processBlockSoundMono(ROQBlockHeader &blockHeader);
 	bool processBlockSoundStereo(ROQBlockHeader &blockHeader);
@@ -74,7 +74,7 @@ private:
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);
 	void paint8(byte i, int destx, int desty);
-	void copy(byte size, int destx, int desty, int offx, int offy);
+	void copy(byte size, int destx, int desty, int dx, int dy);
 
 	// Origin
 	int16 _origX, _origY;
@@ -95,11 +95,13 @@ private:
 	// Flags
 	bool _flagOne;	// Play only first frame and do not print the image to the screen
 	bool _flagTwo;	// If _flagOne is set. Copy frame to the foreground otherwise to the background
+	bool _altMotionDecoder; // Some ROQ vids use a variation on the copy codeblock
 
 	// Buffers
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;
+	int8 _motionOffX, _motionOffY;
 	bool _interlacedVideo;
 	bool _dirty;
 	byte _alpha;
