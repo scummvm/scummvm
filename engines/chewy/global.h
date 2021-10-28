@@ -215,7 +215,7 @@ extern int16 spz_start;
 extern int16 spz_akt_id;
 
 extern int16 spz_count;
-extern int16 spz_ani_ph[][2];
+extern int16 SPZ_ANI_PH[][2];
 extern int16 spz_delay[MAX_PERSON];
 extern int16 spz_p_nr;
 extern int16 spz_ani[MAX_PERSON];
