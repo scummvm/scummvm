@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-26 23:14+0000\n"
+"POT-Creation-Date: 2021-10-27 21:11+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5388,7 +5388,7 @@ msgstr ""
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/myst3/myst3.cpp:355
+#: engines/myst3/myst3.cpp:356
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -5397,7 +5397,7 @@ msgid ""
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
 
-#: engines/myst3/myst3.cpp:1569 engines/pegasus/pegasus.cpp:737
+#: engines/myst3/myst3.cpp:1570 engines/pegasus/pegasus.cpp:737
 msgid "Invalid file name for saving"
 msgstr ""
 
