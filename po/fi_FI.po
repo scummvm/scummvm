@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-10-27 21:11+0000\n"
-"PO-Revision-Date: 2021-10-20 09:33+0000\n"
+"PO-Revision-Date: 2021-10-28 20:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1041,15 +1041,13 @@ msgstr "Kokoruututila"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "Odota pystytahdistusta 3D-renderöijän ruudunpäivityksessä"
+msgstr "Odota pystytahdistusta ruudunpäivityksessä kuvanrepeämien välttämiseksi"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
