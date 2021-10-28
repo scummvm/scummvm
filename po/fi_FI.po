@@ -1047,7 +1047,8 @@ msgstr "V-Sync"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "Odota pystytahdistusta ruudunpäivityksessä kuvanrepeämien välttämiseksi"
+msgstr ""
+"Odota pystytahdistusta ruudunpäivityksessä kuvanrepeämien välttämiseksi"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
