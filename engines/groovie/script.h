@@ -32,6 +32,7 @@
 #include "groovie/logic/othello.h"
 #include "groovie/logic/pente.h"
 #include "groovie/logic/triangle.h"
+#include "groovie/logic/winerack.h"
 #endif
 
 #include "common/random.h"
@@ -274,6 +275,7 @@ private:
 	OthelloGame _othello;
 	PenteGame _pente;
 	TriangleGame _triangle;
+	WineRackGame _wineRack;
 #endif
 };
 

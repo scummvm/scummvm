@@ -2126,8 +2126,8 @@ void Script::o_gamelogic() {
 		case 6: // 11H Pente puzzle at the end of the game (pt.grv)
 			_pente.run(_variables);
 			break;
-		case 7:	// Clan Unknown puzzle
-			// TODO
+		case 7:	// Clan Wine rack puzzle
+			_wineRack.run(_variables);
 			break;
 		case 8:	// Clan/UHP Othello/Reversi puzzle
 			_othello.run(_variables);

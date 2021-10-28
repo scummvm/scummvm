@@ -26,6 +26,7 @@ MODULE_OBJS += \
 	logic/pente.o \
 	logic/tlcgame.o \
 	logic/triangle.o \
+	logic/winerack.o \
 	video/roq.o
 endif
 
