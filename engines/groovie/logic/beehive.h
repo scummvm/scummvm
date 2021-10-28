@@ -66,6 +66,8 @@ private:
 	int8 findCell(int8 *beehiveState, int8 *pos, int8 key);
 	void testGame(Common::Array<int> moves, bool playerWin);
 	void tests();
+	void overrideClick(byte *vars);
+	void overrideMove(byte *vars);
 
 	#define HEXCOUNT 61
 	int8 _beehiveState[HEXCOUNT];

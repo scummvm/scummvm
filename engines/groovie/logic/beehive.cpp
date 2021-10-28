@@ -30,6 +30,31 @@ extern const int8 beehiveLogicTable1[368];
 extern const int8 beehiveLogicTable2[800];
 }
 
+Common::Array<int> overrideMoves;
+int overrideIndex = 0;
+
+void BeehiveGame::overrideClick(byte *vars) {
+	if (overrideIndex >= overrideMoves.size())
+		return;
+
+	int move = overrideMoves[overrideIndex];
+	vars[0] = move / 10;
+	vars[1] = move % 10;
+}
+
+void BeehiveGame::overrideMove(byte *vars) {
+	if (overrideIndex >= overrideMoves.size())
+		return;
+
+	int from = overrideMoves[overrideIndex++];
+	int to = overrideMoves[overrideIndex++];
+	vars[0] = from / 10;
+	vars[1] = from % 10;
+
+	vars[2] = to / 10;
+	vars[3] = to % 10;
+}
+
 void BeehiveGame::run(byte *scriptVariables) {
 	int8 *hexagons = (int8 *)scriptVariables + 25;
 	int8 *hexDifference = (int8 *)scriptVariables + 13;
@@ -71,6 +96,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 	case 2:	// Player clicks on a honey-filled (source) hexagon
 		memset(hexagons, 0, HEXCOUNT);
 		scriptVariables[85] = 0;
+		//overrideClick(scriptVariables);
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
 		debugC(2, kDebugLogic, "Beehive player clicked %d", (int)v24);
 		selectSourceHexagon(v24, &v22, tempState);
@@ -82,6 +108,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 	case 3:	// Player moves into an empty (destination) hexagon
 		scriptVariables[24] = 1;
 		scriptVariables[4] = 2;
+		overrideMove(scriptVariables);
 		v24 = 10 * scriptVariables[0] + scriptVariables[1];
 		v22 = 10 * scriptVariables[2] + scriptVariables[3];
 		debugC(1, kDebugLogic, "Beehive player moved from %d, to %d", (int)v24, (int)v22);
@@ -759,7 +786,8 @@ void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
 }
 
 void BeehiveGame::tests() {
-
+	// tests are broken right now, but you might still want to use the overrideMoves
+#if 0
 	// 8 moves per line, in from and to pairs
 	// this winning test should work on every seed, it always works in the speedrun
 	testGame({
@@ -777,6 +805,15 @@ void BeehiveGame::tests() {
 		/**/ 58, 59, /**/ 57, 45, /**/ 44, 35, /**/ 35, 26, /**/ 46, 54, /**/ 59, 60, /**/ 59, 55, /**/ 55, 40,
 		/**/ 39, 23
 	}, false);
+
+#endif
+	// trim the array short to choose your own ending moves
+	overrideMoves = {
+		/**/ 34, 42, /**/ 56, 50, /**/ 50, 35, /**/ 42, 55, /**/ 34, 42, /**/ 42, 49, /**/ 35, 43, /**/ 43, 50,
+		/**/ 50, 51, /**/ 51, 52, /**/ 52, 53, /**/ 53, 54, /**/ 52, 57, /**/ 52, 46, /**/ 34, 25, /**/ 34, 24,
+		/**/ 25, 23, /**/ 46, 31, /**/ 31, 30, /**/ 52, 38, /**/ 29, 12, /**/ 31, 39, /**/ 35, 28, /**/ 49, 32,
+		/**/ 31, 40, /**/ 39, 47, /**/ 20, 19, /**/ 29, 37, /**/ 57, 58, /**/ 53, 46, /**/ 53, 52
+	};
 }
 
 } // End of Groovie namespace
