@@ -36,22 +36,25 @@ WineRackGame::WineRackGame() : _random("WineRackGame"), _totalBottles(0) {
 
 void WineRackGame::run(byte *scriptVariables) {
 	char op = scriptVariables[3];
+	byte pos = 0;
 
 	switch (op) {
 	case 3:
 		initGrid(scriptVariables[4]);
 		break;
 	case 4:
-		placeBottle(calculateNextMove(2), 2);
-		scriptVariables[0] = op / 10;
-		scriptVariables[1] = op % 10;
+		pos = calculateNextMove(2);
+		placeBottle(pos, 2);
+		scriptVariables[0] = pos / 10;
+		scriptVariables[1] = pos % 10;
 		//scriptVariables[3] = (char)FUN_00412c90();
 		break;
 	case 5:
 		scriptVariables[3] = 0;
-		placeBottle(calculateNextMove(1), 1);
-		scriptVariables[0] = op / 10;
-		scriptVariables[1] = op % 10;
+		pos = calculateNextMove(1);
+		placeBottle(pos, 1);
+		scriptVariables[0] = pos / 10;
+		scriptVariables[1] = pos % 10;
 		//if ((char)FUN_00412cf0() != 0) {
 		//	scriptVariables[3] = 1;
 		//}
@@ -64,9 +67,10 @@ void WineRackGame::run(byte *scriptVariables) {
 		//	return;
 		//}
 
-		placeBottle(calculateNextMove(1), 1);
-		scriptVariables[0] = op / 10;
-		scriptVariables[1] = op % 10;
+		pos = calculateNextMove(1);
+		placeBottle(pos, 1);
+		scriptVariables[0] = pos / 10;
+		scriptVariables[1] = pos % 10;
 
 		//if ((char)FUN_00412cf0() != 0) {
 		//	scriptVariables[3] = 1;
