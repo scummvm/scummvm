@@ -37,16 +37,18 @@ class WineRackGame {
 public:
 	WineRackGame();
 	void run(byte *scriptVariables);
-	
+
 private:
 	void initGrid(byte difficulty);
 	void placeBottle(byte pos, byte val);
 	byte calculateNextMove(byte op);
-	uint32 FUN_00412c90();
-	uint32 FUN_00412cf0();
+	uint32 sub09();
+	void sub10(int8 a1, int8 a2, int a3, int a4, int *a5);
+	uint32 sub12();
 
 	int _totalBottles;
 	byte _wineRackGrid[100];
+	byte _wineRackGrid2[100];
 	Common::RandomSource _random;
 };
 
