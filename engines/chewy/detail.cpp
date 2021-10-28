@@ -407,7 +407,7 @@ void detail::save_detail(char *fname, int16 room_nr) {
 			if (chewy_fwrite(&rdi_datei_header, sizeof(RdiDateiHeader), 1, new_handle)) {
 
 				chewy_fseek(old_handle, sizeof(RdiDateiHeader), SEEK_SET);
-				for (i = 0; i < room_nr && !modul ; i++) {
+				for (i = 0; i < room_nr && !modul; i++) {
 					if (chewy_fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
 #ifdef KONVERT
 						konvert_format(&tmp_rdi, &tmp_rdi_new);
@@ -435,7 +435,7 @@ void detail::save_detail(char *fname, int16 room_nr) {
 
 					chewy_fseek(old_handle, sizeof(room_detail_info), SEEK_CUR);
 
-					for (i = 0; i < MAX_RDI_ROOM - (room_nr + 1) && !modul ; i++) {
+					for (i = 0; i < MAX_RDI_ROOM - (room_nr + 1) && !modul; i++) {
 						if (chewy_fread(&tmp_rdi, sizeof(room_detail_info), 1, old_handle)) {
 #ifdef KONVERT
 							konvert_format(&tmp_rdi, &tmp_rdi_new);

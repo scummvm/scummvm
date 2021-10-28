@@ -1012,7 +1012,7 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 					} else {
 						modul = DATEI;
 						fcode = OPENFEHLER;
-						err->set_user_msg("SPRACHAUSGABE.TVP\0");
+						err->set_user_msg("sprachausgabe.tvp");
 					}
 				}
 				for (i = 0; i < ssr->Anz; i++) {
