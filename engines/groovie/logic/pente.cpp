@@ -659,7 +659,7 @@ uint PenteGame::penteSub09Ai(uint y_1, int param_2, int param_3, penteTable *tab
 						}
 						penteSub07RevertScore(table_4, _y, _x);
 						if (bVar1) {
-							return y_1 & 0xffff0000 | (uint)(uint16)((uint16)_y + (uint16)_x * 100);
+							return (y_1 & 0xffff0000) | (uint)(uint16)((uint16)_y + (uint16)_x * 100);
 						}
 					}
 					_y += 1;
@@ -712,7 +712,7 @@ uint PenteGame::penteSub09Ai(uint y_1, int param_2, int param_3, penteTable *tab
 			} while (_x <= table_4->width && table_4->width != _x);
 		}
 	} while ((99999999 < best_score) && (depth -= 1, 1 < depth));
-	return y_1 & 0xffff0000 | (uint)uVar5;
+	return (y_1 & 0xffff0000) | (uint)uVar5;
 }
 
 int varsMoveToXY(byte var0, byte var1, byte var2, byte &x, byte &y) {
