@@ -76,7 +76,7 @@ void PenteGame::penteSub05BuildLookupTable(penteTable *table) {
 	lines_counter = 0;
 	line_length = table->lineLength;
 	_width = (uint)width;
-	
+
 	auto &lines_table = table->linesTable;
 	local_14 = 0;
 	if (height != 0) {
@@ -191,15 +191,15 @@ penteTable *PenteGame::penteSub01Init(byte width, byte height, byte length) {
 	bVar5 = 0;
 	table->lineLength = length;
 	memset(table->boardState, 0, sizeof(table->boardState));
-	
+
 	penteSub05BuildLookupTable(table);
 	assert(table->linesCounter == 812);
-	
+
 	bVar5 = 0;
 	table->staufScore = (uint)table->linesCounter;
 	table->playerScore = (uint)table->linesCounter;
 	memset(table->numAdjacentPieces, 0, sizeof(table->numAdjacentPieces));
-	
+
 	table->calcTouchingPieces = 1;
 	return table;
 }
@@ -393,9 +393,7 @@ uint PenteGame::penteSub04ScoreCapture(penteTable *table, byte y, byte x) {
 	return bitMask;
 }
 
-void PenteGame::penteSub08MaybeAnimateCapture(short move, byte *bitMaskG, short *param_3, short *param_4)
-
-{
+void PenteGame::penteSub08MaybeAnimateCapture(short move, byte *bitMaskG, short *param_3, short *param_4) {
 	byte x;
 	byte y;
 
@@ -888,14 +886,14 @@ void PenteGame::test() {
 		{
 			/*x=*/10, /*y=*/6, /*x=*/9, /*y=*/6, /*x=*/10, /*y=*/7, /*x=*/10, /*y=*/5, /*x=*/10, /*y=*/8, /*x=*/9, /*y=*/9,
 			/*x=*/10, /*y=*/9, /*x=*/10, /*y=*/10, /*x=*/9, /*y=*/8, /*x=*/8, /*y=*/7, /*x=*/8, /*y=*/8, /*x=*/7, /*y=*/8,
-			/*x=*/6, /*y=*/9, /*x=*/11, /*y=*/4, 
+			/*x=*/6, /*y=*/9, /*x=*/11, /*y=*/4,
 		}, false);
 
 	testGame(10,
 		{
 			/*x=*/10, /*y=*/6, /*x=*/11, /*y=*/7, /*x=*/10, /*y=*/5, /*x=*/10, /*y=*/7, /*x=*/9, /*y=*/7, /*x=*/12, /*y=*/7,
 			/*x=*/10, /*y=*/4, /*x=*/8, /*y=*/8, /*x=*/10, /*y=*/3, /*x=*/11, /*y=*/5, /*x=*/10, /*y=*/2, /*x=*/9, /*y=*/7,
-			/*x=*/10, /*y=*/6, 
+			/*x=*/10, /*y=*/6,
 		}, true);
 
 	// test bottom left corner
@@ -913,7 +911,7 @@ void PenteGame::test() {
 		{
 			/*x=*/19, /*y=*/0, /*x=*/18, /*y=*/1, /*x=*/19, /*y=*/1, /*x=*/18, /*y=*/2, /*x=*/18, /*y=*/0, /*x=*/18, /*y=*/3,
 			/*x=*/18, /*y=*/4, /*x=*/17, /*y=*/5, /*x=*/17, /*y=*/0, /*x=*/16, /*y=*/5, /*x=*/17, /*y=*/4, /*x=*/16, /*y=*/4,
-			/*x=*/18, /*y=*/5, /*x=*/18, /*y=*/6, /*x=*/18, /*y=*/5, /*x=*/15, /*y=*/3, /*x=*/18, /*y=*/4, /*x=*/14, /*y=*/2, 
+			/*x=*/18, /*y=*/5, /*x=*/18, /*y=*/6, /*x=*/18, /*y=*/5, /*x=*/15, /*y=*/3, /*x=*/18, /*y=*/4, /*x=*/14, /*y=*/2,
 		}, false);
 
 	// test top left corner
