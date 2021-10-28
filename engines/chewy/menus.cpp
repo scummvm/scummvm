@@ -126,7 +126,6 @@ void maus_mov_menu() {
 }
 
 void plot_inventar_menu() {
-
 	int16 i, j, k;
 	int16 *xy;
 	int16 x, y;
@@ -185,8 +184,8 @@ void plot_inventar_menu() {
 	}
 
 	y = WIN_INF_Y + 6 + 30;
-	for (j = 0; j < 3 ; j++) {
-		for (i = 0; i < 5 ; i++) {
+	for (j = 0; j < 3; j++) {
+		for (i = 0; i < 5; i++) {
 			if (spieler.InventSlot[(spieler.InventY + j) * 5 + i] != -1) {
 				xy = (int16 *)inv_spr[spieler.InventSlot[(spieler.InventY + j) * 5 + i]];
 				x1 = 40 - xy[0];
@@ -611,9 +610,9 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 			}
 		}
 		k = 0;
-		for (i = txt_start; i < txt_anz && i < txt_start + txt_zeilen ; i++) {
+		for (i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
 			out->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
-			              scr_width, "%s\0", txt->str_pos(txt_adr, i));
+			              scr_width, "%s", txt->str_pos(txt_adr, i));
 			++k;
 		}
 		cur->plot_cur();
@@ -919,7 +918,7 @@ void ads_menu() {
 				cur_y_start = 190;
 			else
 				cur_y_start = 190 - (4 - ads_item_anz) * 10;
-			for (i = 0; i < ads_item_anz && i < 4 ; i++) {
+			for (i = 0; i < ads_item_anz && i < 4; i++) {
 				if (cur_y == i)
 					col = 255;
 				else

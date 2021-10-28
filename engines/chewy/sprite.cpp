@@ -60,7 +60,7 @@ void sprite_engine() {
 	taf_seq_info *ts_info;
 	calc_z_ebene();
 	calc_person_ani();
-	for (i = 0; i < z_count ; i++) {
+	for (i = 0; i < z_count; i++) {
 		zmin = 3000;
 		for (j = 0; j < z_count; j++) {
 			if (z_obj_sort[j].ObjZ != 3000 && z_obj_sort[j].ObjZ < zmin) {
@@ -174,6 +174,8 @@ void sprite_engine() {
 			                auto_mov_vector[nr].Yzoom, scr_width);
 			break;
 
+		default:
+			break;
 		}
 		z_obj_sort[min_zeiger].ObjZ = 3000;
 	}
@@ -338,6 +340,8 @@ void set_person_spr(int16 nr, int16 p_nr) {
 		}
 		break;
 
+	default:
+		break;
 	}
 }
 
@@ -493,6 +497,8 @@ void start_aad(int16 dia_nr, int16 ssi_nr) {
 		atds->set_split_win(0, &ssi[0]);
 		break;
 
+	default:
+		break;
 	}
 	atds->start_aad(dia_nr);
 }
@@ -872,7 +878,6 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 			default:
 				new_auto_line(mi->Id);
 				break;
-
 			}
 		}
 	}
@@ -1117,31 +1122,28 @@ void calc_person_ani() {
 					} else {
 						switch (spieler_vector[p_nr].Phase) {
 						case CH_LEFT_NO:
-
 							ani_nr = (int16)p_ani[p_nr - 1][0];
 							break;
 
 						case CH_RIGHT_NO:
-
 							ani_nr = (int16)p_ani[p_nr - 1][1];
 							break;
 
 						case CH_UP:
-
 							ani_nr = (int16)p_ani[p_nr - 1][2];
 							break;
 
 						case CH_DOWN:
-
 							ani_nr = (int16)p_ani[p_nr - 1][3];
 							break;
-
 						}
 					}
 					load_person_ani(ani_nr, p_nr);
 				}
 				break;
 
+			default:
+				break;
 			}
 		}
 	}
