@@ -41,7 +41,7 @@ VisualEffect::VisualEffect(VisualType type, const Common::Point &size, Gfx::Driv
 	_surface = new Graphics::Surface();
 	_surface->create(size.x, size.y, Gfx::Driver::getRGBAPixelFormat());
 
-	_texture = _gfx->createTexture(_surface);
+	_texture = _gfx->createBitmap(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_surfaceRenderer = _gfx->createSurfaceRenderer();

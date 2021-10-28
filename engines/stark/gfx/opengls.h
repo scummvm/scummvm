@@ -52,6 +52,7 @@ public:
 	void flipBuffer() override;
 
 	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
+	Texture *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 	VisualActor *createActorRenderer() override;
 	VisualProp *createPropRenderer() override;
 	SurfaceRenderer *createSurfaceRenderer() override;
@@ -65,6 +66,7 @@ public:
 	void start2DMode();
 	void end2DMode();
 	void set3DMode() override;
+	bool computeLightsEnabled() override;
 
 	Common::Rect getViewport() const;
 	Common::Rect getUnscaledViewport() const;

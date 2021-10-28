@@ -63,12 +63,20 @@ public:
 	virtual void flipBuffer() = 0;
 
 	/**
-	 * Create a new texture
+	 * Create a new texture for 3D
 	 *
 	 * The caller is responsible for freeing it.
 	 *
 	 */
 	virtual Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
+
+	/**
+	 * Create a new texture for 2D
+	 *
+	 * The caller is responsible for freeing it.
+	 *
+	 */
+	virtual Texture *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
 
 	/**
 	 * Create a new actor renderer
@@ -131,6 +139,7 @@ public:
 	virtual Graphics::Surface *getViewportScreenshot() const = 0;
 
 	virtual void set3DMode() = 0;
+	virtual bool computeLightsEnabled() = 0;
 
 	static const int32 kOriginalWidth = 640;
 	static const int32 kOriginalHeight = 480;
@@ -145,6 +154,7 @@ protected:
 	static void flipVertical(Graphics::Surface *s);
 
 	Common::Rect _screenViewport;
+	bool         _computeLights;
 };
 
 } // End of namespace Gfx

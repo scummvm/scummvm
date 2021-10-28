@@ -85,7 +85,7 @@ void VisualSmacker::init() {
 
 	rewind();
 
-	_texture = _gfx->createTexture();
+	_texture = _gfx->createBitmap();
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	update();

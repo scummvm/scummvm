@@ -142,6 +142,10 @@ Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const by
 	return texture;
 }
 
+Texture *OpenGLSDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
+	return createTexture(surface, palette);
+}
+
 VisualActor *OpenGLSDriver::createActorRenderer() {
 	return new OpenGLSActorRenderer(this);
 }
@@ -189,6 +193,10 @@ void OpenGLSDriver::set3DMode() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glStencilFunc(GL_EQUAL, 0, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+}
+
+bool OpenGLSDriver::computeLightsEnabled() {
+	return false;
 }
 
 Common::Rect OpenGLSDriver::getViewport() const {

@@ -84,6 +84,33 @@ public:
 	inline static Angle angle(const Vector3d& v1, const Vector3d& v2) {
 		return Angle::arcCosine(fminf(fmaxf(dotProduct(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()), -1.0f), 1.0f));
 	}
+
+	/**
+	 * Calculate vector length
+	 * @return      The computed length
+	 */
+	inline static float length(const Vector3d& v) {
+		return sqrtf(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
+	}
+
+	/**
+	 * Calculate vector length
+	 * @return      The computed length
+	 */
+	float length() {
+		return sqrtf(x() * x() + y() * y() + z() * z());
+	}
+
+	/**
+	 * Linearly interpolate between two vectors
+	 * @param v1    The first vector
+	 * @param v2    The second vector
+	 * @param a     The value to use to interpolate between v1 and v2
+	 * @return      The resulting calculation
+	 */
+	inline static Vector3d interpolate(const Vector3d& v1, const Vector3d& v2, const float a) {
+		return Vector3d(v1 * (1.0f - a) + v2 * a);
+	}
 };
 
 } // end of namespace Math

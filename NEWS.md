@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
 
+ Stark:
+   - Added OpenGL renderer (without shaders).
+
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs
 

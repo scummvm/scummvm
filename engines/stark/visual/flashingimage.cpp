@@ -60,7 +60,7 @@ void VisualFlashingImage::initFromSurface(const Graphics::Surface *surface, uint
 	_originalWidth  = originalWidth;
 	_originalHeight = originalHeight;
 
-	_texture = _gfx->createTexture(surface);
+	_texture = _gfx->createBitmap(surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 }
 

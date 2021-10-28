@@ -62,7 +62,7 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 
 	// Decode the XMG
 	_surface = Formats::XMGDecoder::decode(stream);
-	_texture = _gfx->createTexture(_surface);
+	_texture = _gfx->createBitmap(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_originalWidth  = _surface->w;
@@ -95,7 +95,7 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 		_surface = pngDecoder.getSurface()->convertTo(Gfx::Driver::getRGBAPixelFormat());
 	}
 
-	_texture = _gfx->createTexture(_surface);
+	_texture = _gfx->createBitmap(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	return true;

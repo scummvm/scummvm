@@ -49,8 +49,13 @@ struct _PropVertex {
 	float nx;
 	float ny;
 	float nz;
+	float stexS;
+	float stexT;
 	float texS;
 	float texT;
+	float r;
+	float g;
+	float b;
 } PACKED_STRUCT;
 typedef _PropVertex PropVertex;
 

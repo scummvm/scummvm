@@ -62,7 +62,7 @@ DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		uint32 blue = background->format.RGBToColor(26, 28, 57);
 		background->fillRect(Common::Rect(256, 256), blue);
 	}
-	_backgroundTexture = gfx->createTexture(background);
+	_backgroundTexture = gfx->createBitmap(background);
 	_backgroundTexture->setSamplingFilter(Gfx::Texture::kLinear);
 
 	background->free();
@@ -168,7 +168,7 @@ void DialogBox::recomputeLayout() {
 	drawBevel(&foreground, _confirmButtonRect);
 	drawBevel(&foreground, _cancelButtonRect);
 
-	_foregroundTexture = _gfx->createTexture(&foreground);
+	_foregroundTexture = _gfx->createBitmap(&foreground);
 	_foregroundTexture->setSamplingFilter(Gfx::Texture::kLinear);
 
 	foreground.free();

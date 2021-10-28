@@ -71,15 +71,13 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	Math::Matrix4 projection = StarkScene->getProjectionMatrix();
 
 	Math::Matrix4 modelViewMatrix = view * model;
-	modelViewMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	modelViewMatrix.transpose(); // OpenGL expects matrices transposed
 
 	Math::Matrix4 projectionMatrix = projection;
-	projectionMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
+	projectionMatrix.transpose(); // OpenGL expects matrices transposed
 
 	Math::Matrix4 normalMatrix = modelViewMatrix;
 	normalMatrix.invertAffineOrthonormal();
-	//normalMatrix.transpose(); // OpenGL expects matrices transposed when compared to ScummVM's
-	//normalMatrix.transpose(); // No need to transpose twice in a row
 
 	_shader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
 	_shader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);

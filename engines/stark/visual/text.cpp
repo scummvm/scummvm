@@ -294,7 +294,7 @@ void VisualText::createTexture() {
 	multiplyColorWithAlpha(&surface);
 
 	// Create a texture from the surface
-	_texture = _gfx->createTexture(&surface);
+	_texture = _gfx->createBitmap(&surface);
 	_texture->setSamplingFilter(Gfx::Texture::kNearest);
 
 	surface.free();
@@ -310,7 +310,7 @@ void VisualText::createTexture() {
 		surface.fillRect(Common::Rect(surface.w, surface.h), bgColor);
 		multiplyColorWithAlpha(&surface);
 
-		_bgTexture = _gfx->createTexture(&surface);
+		_bgTexture = _gfx->createBitmap(&surface);
 
 		surface.free();
 	}
