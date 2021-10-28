@@ -280,19 +280,14 @@ void MouseTrapGame::sub08(byte *scriptVariables) {
 	scriptVariables[12] = pos % 10;
 	posToXY(scriptVariables[1] + 10 * scriptVariables[0], &x, &y);
 
-	if (y <= y1) {
-		if (y >= y1) {
-			if (x <= x1) {
-				if (x < x1)
-					scriptVariables[15] = 1;
-			} else {
-				scriptVariables[15] = 3;
-			}
-		} else {
-			scriptVariables[15] = 2;
-		}
-	} else {
+	if (y > y1) {
 		scriptVariables[15] = 0;
+	} else if (y < y1) {
+		scriptVariables[15] = 2;
+	} else if (x > x1) {
+		scriptVariables[15] = 3;
+	} else if (x < x1) {
+		scriptVariables[15] = 1;
 	}
 
 	if (!_mouseTrapCounter1)
