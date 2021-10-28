@@ -31,13 +31,40 @@ namespace Groovie {
 /*
  * Pente puzzle at the end of the game.
  */
+
+struct pentePlayerTable;
+struct penteTable;
+
 class PenteGame {
 public:
 	PenteGame();
 	void run(byte *scriptVariables);
-	
+
 private:
+	int *allocs(int param_1, int param_2);
+	void penteSub02Frees(penteTable *param_1);
+	void penteSub05BuildLookupTable(penteTable *table);
+	penteTable *penteSub01Init(byte width, byte height, byte length);
+	void penteSub03Scoring(penteTable *table, byte move_y, byte move_x, bool whose_turn);
+	void penteSub07RevertScore(penteTable *table_1, byte y, byte x);
+	byte penteScoreCaptureSingle(penteTable *table, byte x, byte y, int slopeX, int slopeY);
+	uint penteSub04ScoreCapture(penteTable *table, byte y, byte x);
+	void penteSub08MaybeAnimateCapture(short param_1, byte *param_2, short *param_3, short *param_4);
+	void penteSub11RevertCapture(penteTable *table, byte y, byte x, byte y2);
+	int penteSub10AiRecurse(penteTable *table_1, char depth, int parent_score);
+	uint penteSub09Ai(uint y_1, int param_2, int param_3, penteTable *table_4, byte depth);
+	void penteOp(byte *vars);
+	void test();
+	void testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
+
 	Common::RandomSource _random;
+
+	byte globalY;
+	byte globalX;
+	char global2;
+	short globalPlayerMove;
+	short global1;
+	penteTable *game_state_table;
 };
 
 } // End of Groovie namespace

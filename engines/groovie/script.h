@@ -245,6 +245,7 @@ private:
 	void o_musicdelay();
 	void o_hotspot_outrect();
 	void o_stub56();
+	void o_wipemaskfromstring58();
 	void o_stub59();
 
 	void o2_bf0on();

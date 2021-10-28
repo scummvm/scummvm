@@ -65,9 +65,16 @@ static inline void copyPixel(byte *dst, const byte *src) {
 	*(uint32 *)dst = *(const uint32 *)src;
 }
 
-// Overwrites one pixel of destination regardless of the alpha value
+// Overwrites one pixel of destination if the src pixel is visible
 static inline void copyPixelIfAlpha(byte *dst, const byte *src) {
 	if (src[kAIndex] > 0) {
+		copyPixel(dst, src);
+	}
+}
+
+// Overwrites one pixel if it's part of the mask
+static inline void copyPixelIfMask(byte *dst, const byte *mask, const byte *src) {
+	if (mask[kAIndex] > 0) {
 		copyPixel(dst, src);
 	}
 }
@@ -142,6 +149,7 @@ uint16 ROQPlayer::loadInternal() {
 	_flagOne = ((_flags & (1 << 1)) != 0);
 	_flagTwo = ((_flags & (1 << 2)) != 0);
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
+	_flagMasked = ((_flags & (1 << 10)) != 0);
 
 	// Read the file header
 	ROQBlockHeader blockHeader;
@@ -249,7 +257,13 @@ void ROQPlayer::buildShowBuf() {
 
 	// Select the destination buffer according to the given flags
 	int destOffset = 0;
-	Graphics::Surface *destBuf;
+	Graphics::Surface *maskBuf = NULL;
+	Graphics::Surface *srcBuf = _currBuf;
+	Graphics::Surface *destBuf = NULL;
+	if (_flagMasked) {
+		srcBuf = _bg;
+		maskBuf = _currBuf;
+	}
 	if (_flagOne) {
 		if (_flagTwo) {
 			destBuf = _overBuf;
@@ -266,17 +280,24 @@ void ROQPlayer::buildShowBuf() {
 	int startX, startY, stopX, stopY;
 	calcStartStop(startX, stopX, _origX, _screen->w);
 	calcStartStop(startY, stopY, _origY, _screen->h);
-	assert(destBuf->format == _currBuf->format);
+	assert(destBuf->format == srcBuf->format);
 	assert(destBuf->format == _overBuf->format);
 	assert(destBuf->format.bytesPerPixel == 4);
 
 	for (int line = startY; line < stopY; line++) {
-		byte *in = (byte *)_currBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
+		byte *in = (byte *)srcBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
 		byte *inOvr = (byte *)_overBuf->getBasePtr(startX, line);
 		byte *out = (byte *)destBuf->getBasePtr(startX, line + destOffset);
+		byte *mask = NULL;
+		if (_flagMasked) {
+			mask = (byte *)maskBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
+		}
+
 
 		for (int x = startX; x < stopX; x++) {
-			if (destBuf == _overBuf) {
+			if (_flagMasked) {
+				copyPixelIfMask(out, mask, in);
+			} else if (destBuf == _overBuf) {
 				copyPixelIfAlpha(out, in);
 			} else {
 				copyPixelWithA(out, in);
@@ -296,6 +317,8 @@ void ROQPlayer::buildShowBuf() {
 			inOvr += _screen->format.bytesPerPixel;
 			if (!(x % _scaleX))
 				in += _screen->format.bytesPerPixel;
+			if (mask)
+				mask += _screen->format.bytesPerPixel;
 		}
 	}
 

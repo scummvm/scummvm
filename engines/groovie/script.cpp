@@ -2181,6 +2181,26 @@ void Script::o2_playsound() {
 	playBackgroundSound(fileref, loops);
 }
 
+void Script::o_wipemaskfromstring58() {
+	// used in pente when pieces are captured
+	Common::String vidName;
+	uint16 instStart = _currentInstruction;
+	uint32 fileref = getVideoRefString(vidName);
+	setBitFlag(10, true);
+
+	// Show the debug information just when starting the playback
+	if (fileref != _videoRef) {
+		debugC(0, kDebugScript, "Groovie::Script: WIPEMASKFROMSTRING58 %d ('%s')", fileref, vidName.c_str());
+		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing mask video %d ('%s') via 0x58 (o_wipemaskfromstring58)", instStart - 1, fileref, vidName.c_str());
+	}
+
+	// Play the video
+	if (!playvideofromref(fileref)) {
+		// Move _currentInstruction back
+		_currentInstruction = instStart - 1;
+	}
+}
+
 void Script::o2_check_sounds_overlays() {
 	uint16 val1 = readScript8or16bits();
 	uint8 val2 = readScript8bits();
@@ -2394,7 +2414,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o2_setscriptend,
 	&Script::o2_playsound,
 	&Script::o_invalid,
-	&Script::o_invalid, // 0x58
+	&Script::o_wipemaskfromstring58, // 0x58
 	&Script::o2_check_sounds_overlays,
 	&Script::o2_preview_loadgame
 };

@@ -321,6 +321,7 @@ byte CakeGame::aiGetBestMove(int search_depth) {
 
 void CakeGame::testCake() {
 	warning("starting CakeGame::testCake()");
+	uint32 oldSeed = _random.getSeed();
 	// test the draw condition, grouped by column
 	runCakeTestNoAi(/*move 1*/ "7777777" /*8*/ "6666666" /*15*/ "5555555" /*22*/ "34444444" /*30*/ "333333" /*36*/ "2222222" /*43*/ "01111111" /*51*/ "000000", false, true);
 
@@ -328,6 +329,7 @@ void CakeGame::testCake() {
 	runCakeTest(1, "232232432445", false);
 	runCakeTest(123, "4453766355133466", false);
 
+	_random.setSeed(oldSeed);
 	warning("finished CakeGame::testCake()");
 }
 

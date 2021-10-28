@@ -824,6 +824,7 @@ void TriangleGame::ensureSamanthaWin(uint32 seed) {
 
 void TriangleGame::test() {
 	warning("starting TriangleGame::test");
+	uint32 oldSeed = _random.getSeed();
 
 	// Samantha appears to not always win, but she usually does, and she wins these seeds
 	// haven't verified if she always wins in the original game
@@ -837,6 +838,7 @@ void TriangleGame::test() {
 	testGame(3, {24, 32, 17, 42, 23, 53, 16, 39, 11, 29, 10, 44, 6, 33, 7, 63, 12, 28, 18, 31, 13, 204, 8, 204, 4, 38, 3, 43}, false);
 	testGame(3, {6, 32, 10, 42, 11, 53, 7, 23, 3, 15, 12, 22, 18, 43, 13, 33, 8, 35, 4, 31, 1, 204, 17, 204, 16, 204, 19, 63 }, false);
 
+	_random.setSeed(oldSeed);
 	warning("finished TriangleGame::test");
 }
 
