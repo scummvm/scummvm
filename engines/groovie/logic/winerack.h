@@ -39,6 +39,12 @@ public:
 	void run(byte *scriptVariables);
 	
 private:
+	void initGrid(byte difficulty);
+	void placeBottle(byte pos, byte val);
+	byte calculateNextMove(byte op);
+
+	int _totalBottles;
+	byte _wineRackGrid[100];
 	Common::RandomSource _random;
 };
 
