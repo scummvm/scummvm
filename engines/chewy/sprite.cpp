@@ -60,6 +60,7 @@ void sprite_engine() {
 	taf_seq_info *ts_info;
 	calc_z_ebene();
 	calc_person_ani();
+
 	for (i = 0; i < z_count; i++) {
 		zmin = 3000;
 		for (j = 0; j < z_count; j++) {
@@ -69,6 +70,7 @@ void sprite_engine() {
 			}
 		}
 		nr = (int16)z_obj_sort[min_zeiger].ObjNr;
+
 		switch (z_obj_sort[min_zeiger].ObjArt) {
 		case ZOBJ_ANI_DETAIL:
 			if (Adi[nr].zoom) {
@@ -1010,26 +1012,28 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		flags.SpzAni = true;
 		spz_ani[p_nr] = true;
 		spz_p_nr = p_nr;
-		spr_start = spz_ani_ph[ani_id][0];
-		spr_anz = spz_ani_ph[ani_id][1];
+		spr_start = SPZ_ANI_PH[ani_id][0];
+		spr_anz = SPZ_ANI_PH[ani_id][1];
 		if (person_end_phase[p_nr] == P_RIGHT) {
 			ani_id += 100;
 			spr_start += CH_SPZ_OFFSET;
 		}
-		if (ani_id != spz_akt_id) {
 
+		if (ani_id != spz_akt_id) {
 			if (spz_tinfo)
 				free((char *)spz_tinfo);
 			spz_akt_id = ani_id;
 			spz_tinfo = mem->taf_seq_adr(spz_taf_handle, spr_start, spr_anz);
 			ERROR
 		}
+
 		for (i = 0; i < spr_anz; i++) {
 			if (!reverse)
 				spz_spr_nr[i] = i;
 			else
 				spz_spr_nr[i] = spr_anz - i - 1;
 		}
+
 		spz_start = spr_start;
 		spz_delay[p_nr] = SpzDelay;
 		spieler_vector[p_nr].Count = 0;
@@ -1079,8 +1083,8 @@ void load_person_ani(int16 ani_id, int16 p_nr) {
 	int16 ani_start;
 	short ani_anz;
 	if (PersonAni[p_nr] != ani_id) {
-		ani_start = spz_ani_ph[ani_id][0];
-		ani_anz = spz_ani_ph[ani_id][1];
+		ani_start = SPZ_ANI_PH[ani_id][0];
+		ani_anz = SPZ_ANI_PH[ani_id][1];
 		PersonAni[p_nr] = ani_id;
 		if (PersonTaf[p_nr])
 			free((char *)PersonTaf[p_nr]);

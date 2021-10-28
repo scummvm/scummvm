@@ -233,7 +233,7 @@ enum SetupScreenMode {
 #define NI_HOT_Y 68
 #define NI_X_PIX 8
 
-#define CH_SPZ_OFFSET 222
+#define CH_SPZ_OFFSET 345
 #define MAX_SPZ_PHASEN 30
 
 #define CH_TALK1 0
