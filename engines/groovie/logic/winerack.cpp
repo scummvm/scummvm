@@ -42,45 +42,37 @@ void WineRackGame::run(byte *scriptVariables) {
 	case 3:
 		initGrid(scriptVariables[4]);
 		break;
-	case 4:
-		pos = calculateNextMove(2);
-		placeBottle(pos, 2);
+	case 4:	// Player's move
+		pos = calculateNextMove(kWineBottlePlayer);
+		placeBottle(pos, kWineBottlePlayer);
 		scriptVariables[0] = pos / 10;
 		scriptVariables[1] = pos % 10;
-		//scriptVariables[3] = (char)FUN_00412c90();
+		scriptVariables[3] = FUN_00412c90();
 		break;
-	case 5:
+	case 5:	// Opponent's move
 		scriptVariables[3] = 0;
-		pos = calculateNextMove(1);
-		placeBottle(pos, 1);
+		pos = calculateNextMove(kWineBottleOpponent);
+		placeBottle(pos, kWineBottleOpponent);
 		scriptVariables[0] = pos / 10;
 		scriptVariables[1] = pos % 10;
-		//if ((char)FUN_00412cf0() != 0) {
-		//	scriptVariables[3] = 1;
-		//}
+		scriptVariables[3] = FUN_00412cf0() != 0 ? 1 : 0;
 		break;
 	default:
 		scriptVariables[3] = 0;
 		placeBottle(scriptVariables[0] * 10 + scriptVariables[1], 2);
-		//if ((char)FUN_00412c90() != 0) {
-		//	scriptVariables[3] = 2;
-		//	return;
-		//}
+		scriptVariables[3] = FUN_00412c90() != 0 ? 2 : 0;
 
-		pos = calculateNextMove(1);
-		placeBottle(pos, 1);
+		pos = calculateNextMove(kWineBottleOpponent);
+		placeBottle(pos, kWineBottleOpponent);
 		scriptVariables[0] = pos / 10;
 		scriptVariables[1] = pos % 10;
-
-		//if ((char)FUN_00412cf0() != 0) {
-		//	scriptVariables[3] = 1;
-		//}
+		scriptVariables[3] = FUN_00412cf0() != 0 ? 1 : 0;
 		break;
 	}
 }
 
 void WineRackGame::initGrid(byte difficulty) {
-	memset(_wineRackGrid + 1, 0, 25);
+	memset(_wineRackGrid, 0, 25);
 
 	switch (difficulty) {
 	case 0:
@@ -138,6 +130,40 @@ void WineRackGame::placeBottle(byte pos, byte val) {
 byte WineRackGame::calculateNextMove(byte op) {
 	// TODO
 	return 0;
+}
+
+uint32 WineRackGame::FUN_00412c90() {
+	int i = 0;
+	uint32 res = 0;
+	int unk = 0;
+
+	//memset(_wineRackGrid2, 0, 25);	// TODO: wineRackGrid2
+
+	while ((_wineRackGrid[i] != kWineBottlePlayer /* ||
+			(res = FUN_00412c10(100, i, 2, 3, &unk), unk != 1)*/)) {	// TODO
+		if (i++ > 9) {
+			return res & 0xffffff00;
+		}
+	}
+	return res >> 8;
+}
+
+uint32 WineRackGame::FUN_00412cf0() {
+	int i = 0;
+	uint32 res = 0;
+	int unk = 0;
+
+	//memset(_wineRackGrid2, 0, 25);	// TODO: wineRackGrid2
+
+	do {
+		if (_wineRackGrid[i] == kWineBottleOpponent) {
+			//res = FUN_00412c10(100, i, 1, 2, &unk), unk != 1;	// TODO
+			if (unk == 1)
+				return res >> 8;
+		}
+	} while (i < 100);
+
+	return res & 0xffffff00;
 }
 
 } // End of Groovie namespace

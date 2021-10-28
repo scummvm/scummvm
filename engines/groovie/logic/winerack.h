@@ -42,6 +42,8 @@ private:
 	void initGrid(byte difficulty);
 	void placeBottle(byte pos, byte val);
 	byte calculateNextMove(byte op);
+	uint32 FUN_00412c90();
+	uint32 FUN_00412cf0();
 
 	int _totalBottles;
 	byte _wineRackGrid[100];
