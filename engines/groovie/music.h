@@ -213,7 +213,7 @@ public:
 
 protected:
 	virtual Common::String getFilename(uint32 fileref);
-	void updateVolume();
+	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
 	void unload(bool updateState = true) override;
 
