@@ -506,8 +506,6 @@ void MouseTrapGame::updateRoute() {
 	int prevCounter = 0;
 
 	do {
-		prevCounter = _mouseTrapCounter;
-
 		for (int i = prevCounter; i < _mouseTrapCounter; i++) {
 			int8 y1 = _mouseTrapRoute[3 * i + 1];
 			int8 x1 = _mouseTrapRoute[3 * i];
@@ -523,6 +521,8 @@ void MouseTrapGame::updateRoute() {
 			if ((mask & 2) != 0 && y1 && (_mouseTrapCells[pos + 4] & 8) != 0)
 				addToRoute(x1, y1 - 1, i);
 		}
+
+		prevCounter = _mouseTrapCounter;
 	} while (_mouseTrapCounter != prevCounter);
 }
 
