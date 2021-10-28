@@ -232,9 +232,9 @@ void KyraEngine_MR::showInventory() {
 
 	while (y > _interfaceCommandLineY2) {
 		_screen->copyRegion(0, 0, 0, y, 320, height, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->updateScreen();
-
-		++times;
+		if (times++ == 0)
+			_screen->updateScreen();
+	
 		if (_inventoryScrollSpeed == 1 && times == 3) {
 			while (waitTill > _system->getMillis())
 				_system->delayMillis(10);
@@ -299,9 +299,9 @@ void KyraEngine_MR::hideInventory() {
 	while (y2 < _interfaceCommandLineY1) {
 		_screen->copyRegion(0, 0, 0, y2, 320, _interfaceH, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, y, 0, y, 320, _inventoryScrollSpeed, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->updateScreen();
+		if (times++ == 0)
+			_screen->updateScreen();
 
-		++times;
 		if (_inventoryScrollSpeed == 1 && times == 3) {
 			while (waitTill > _system->getMillis())
 				_system->delayMillis(10);
