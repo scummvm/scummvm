@@ -31,7 +31,7 @@ extern const int8 beehiveLogicTable2[800];
 }
 
 Common::Array<int> overrideMoves;
-int overrideIndex = 0;
+uint overrideIndex = 0;
 
 void BeehiveGame::overrideClick(byte *vars) {
 	if (overrideIndex >= overrideMoves.size())
@@ -69,6 +69,9 @@ void BeehiveGame::run(byte *scriptVariables) {
 
 	int8 v21, v22, v24;
 	int8 tempState[64];
+
+	// init hexDifference on every iteration
+	*hexDifference = 4;
 
 	switch (op) {
 	case 0:	// Init board's hexagons
