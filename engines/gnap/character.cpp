@@ -1373,10 +1373,7 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 				} else if (_walkNodes[0]._deltaX > 0) {
 					_sequenceId = 0x7C2;
 					_idleFacing = kDirIdleLeft;
-				} else if (_walkNodes[0]._deltaX < 0) {
-					_sequenceId = 0x7D2;
-					_idleFacing = kDirIdleRight;
-				} else {
+				} else { // _walkNodes[0]._deltaX < 0
 					_sequenceId = 0x7D2;
 					_idleFacing = kDirIdleRight;
 				}
