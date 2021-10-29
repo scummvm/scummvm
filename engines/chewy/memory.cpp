@@ -60,7 +60,7 @@ taf_info *memory::taf_adr(const char *filename) {
 				tempptr = tmp1 + (((uint32)sizeof(taf_info)) + kgroesse);
 				file ->load_full_taf(filename, tempptr, tinfo);
 				tinfo->korrektur = (int16 *)(tmp1 + (size + 768l));
-				file ->load_korrektur(filename, (byte *)tinfo->korrektur);
+				file ->load_korrektur(filename, tinfo->korrektur);
 			}
 			if (modul)
 				free(tmp1);

@@ -426,11 +426,10 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 	}
 }
 
-void datei::load_korrektur(const char *fname, byte *sp) {
+void datei::load_korrektur(const char *fname, int16 *sp) {
 	Common::File f;
 	taf_dateiheader *header = (taf_dateiheader *)tmp;
 	int16 id;
-	byte *speicher;
 
 	strncpy(filename, fname, MAXPATH - 5);
 	filename[MAXPATH - 5] = '\0';
@@ -439,16 +438,18 @@ void datei::load_korrektur(const char *fname, byte *sp) {
 	if (!strchr(filename, '.'))
 		strcat(filename, ".taf");
 
-	speicher = sp;
-	if (speicher) {
+	if (sp) {
 		if (f.open(filename)) {
 			if (header->load(&f)) {
 				id = get_id(header->id);
 				if ((id == TAFDATEI) && (header->korrekt > 0)) {
-					f.seek(-((int)(header->count * sizeof(uint32)) * header->korrekt), SEEK_END);
-					if (!f.read(speicher, header->count * sizeof(uint32))) {
+					f.seek(-((int)(header->count * sizeof(int16) * 2) * header->korrekt), SEEK_END);
+					if ((f.size() - f.pos() / 2) < (header->count * sizeof(int16) * 2)) {
 						fcode = READFEHLER;
 						modul = DATEI;
+					} else {
+						for (int i = 0; i < header->count; ++i)
+							*sp++ = f.readSint16LE();
 					}
 				} else {
 					fcode = NOTTBF;

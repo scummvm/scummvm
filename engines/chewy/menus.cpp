@@ -21,6 +21,7 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/menus.h"
 
@@ -58,29 +59,47 @@ void plot_main_menu() {
 	int16 i;
 	int16 zoomx, zoomy;
 	int16 *kor;
+
 	if (menu_item != tmp_menu) {
 		m_flip = 0;
 		tmp_menu = menu_item;
 	}
+
 	maus_mov_menu();
-	kor = (int16 *) menutaf->korrektur;
+	kor = (int16 *)menutaf->korrektur;
+
 	for (i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
-		if (i > 8) {
-			zoomx = -3;
-			zoomy = -3;
-		} else {
+		int deltaX = 0;
+
+		if (i <= 8) {
 			zoomx = 0;
 			zoomy = 0;
+		} else {
+			zoomx = -3;
+			zoomy = -3;
+
+			if (i == 11)
+				deltaX = 40;
+			else if (i == 12)
+				deltaX = -40;
 		}
-		out->scale_set(menutaf->image[i], MENU_X + kor[i * 2],
-		                spieler.MainMenuY + kor[i * 2 + 1], zoomx, zoomy, 0);
+
+		out->scale_set(menutaf->image[i], MENU_X + deltaX + kor[i * 2],
+		    spieler.MainMenuY + kor[i * 2 + 1], zoomx, zoomy, 0);
 	}
+
 	zoomx = 16;
 	zoomy = 16;
 	++m_flip;
 	if (m_flip < 12 * (spieler.DelaySpeed + 1)) {
+		int deltaX = 0;
+		if (menu_item == 4)
+			deltaX = -40;
+		else if (menu_item == 5)
+			deltaX = 40;
+
 		out->scale_set(menutaf->image[menu_item + 7],
-		                MENU_X + kor[(menu_item + 7) * 2] - 5,
+		                MENU_X + deltaX + kor[(menu_item + 7) * 2] - 5,
 		                spieler.MainMenuY + kor[(menu_item + 7) * 2 + 1] - 10, zoomx, zoomy, 0);
 	} else {
 		if (m_flip > 15 * (spieler.DelaySpeed + 1))
@@ -89,39 +108,12 @@ void plot_main_menu() {
 }
 
 void maus_mov_menu() {
-	warning("FIXME: maus_mov_menu - Get mouse coordinates");
-#if 0
-#pragma aux asm_get_mpos = \
-"push ax"\
-"push bx"\
-"push cx"\
-"push dx"\
-"mov ax,3"\
-"int 033h"\
-"mov maus_menu_x,cx"\
-"pop dx"\
-"pop cx"\
-"pop bx"\
-"pop ax"
-	asm_get_mpos();
-	if (maus_menu_x >= 200) {
-#pragma aux asm_set_pos =\
-"push ax"\
-"push bx"\
-"push cx"\
-"push dx"\
-"mov ax,4"\
-"mov cx,200 "\
-"mov maus_menu_x,cx"\
-"mov dx,0"\
-"int 033h"\
-"pop dx"\
-"pop cx"\
-"pop bx"\
-"pop ax"
-		asm_set_pos();
+	maus_menu_x = g_events->_mousePos.x;
+	if (maus_menu_x > 200) {
+		g_events->warpMouse(Common::Point(200, g_events->_mousePos.y));
+		maus_menu_x = 200;
 	}
-#endif
+
 	menu_item = (maus_menu_x / (MAUS_MENU_MAX_X / 5));
 }
 
