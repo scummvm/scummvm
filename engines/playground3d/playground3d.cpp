@@ -75,6 +75,7 @@ Common::Error Playground3dEngine::run() {
 			break;
 		case 2:
 			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+			break;
 		case 3:
 			_clearColor = Math::Vector4d(1.0f, 0.0f, 0.0f, 1.0f);
 			break;
