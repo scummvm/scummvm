@@ -41,10 +41,16 @@ public:
 private:
 	void initGrid(byte difficulty);
 	void placeBottle(byte pos, byte val);
-	byte calculateNextMove(byte op);
+	int8 calculateNextMove(byte op);
+	int8 findEmptySpot();
+	void sub05(int8 player, int8 *moves);
+	int8 sub06(int8 *moves1, int8 *moves2);
 	uint32 sub09();
-	void sub10(int8 a1, int8 a2, int a3, int a4, int *a5);
+	void sub10(int8 endPos, int8 pos, int unused, int player, int *val);
+	void sub11(int8 pos, int8 *candidates);
 	uint32 sub12();
+	int8 randomMoveStart();
+	int8 randomMoveStart2();
 
 	int _totalBottles;
 	byte _wineRackGrid[100];

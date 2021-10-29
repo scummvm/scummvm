@@ -139,7 +139,44 @@ void WineRackGame::placeBottle(byte pos, byte val) {
 	_wineRackGrid[pos] = val;
 }
 
-byte WineRackGame::calculateNextMove(byte op) {
+int8 WineRackGame::calculateNextMove(byte player) {
+	int8 moves1[24];
+	int8 moves2[24];
+	byte playerIndex = (player == 1) + 1;
+
+	if (!_totalBottles)
+		return randomMoveStart();
+	if (_totalBottles == 1)
+		return randomMoveStart2();
+
+	sub05(player, moves1);
+	sub05(playerIndex, moves2);
+
+	int8 result = sub06(moves1, moves2);
+
+	if (result == -1)
+		return findEmptySpot();
+
+	return result;
+}
+
+int8 WineRackGame::findEmptySpot() {
+	int8 result = 0;
+
+	while (_wineRackGrid[result]) {
+		if (result == 99)
+			return 100;
+		else
+			++result;
+	}
+
+	return result;
+}
+
+void WineRackGame::sub05(int8 player, int8 *moves) {
+}
+
+int8 WineRackGame::sub06(int8 *moves1, int8 *moves2) {
 	return 0;
 }
 
@@ -158,7 +195,41 @@ uint32 WineRackGame::sub09() {
 	return 0;
 }
 
-void WineRackGame::sub10(int8 a1, int8 a2, int a3, int a4, int *a5) {
+void WineRackGame::sub10(int8 endPos, int8 pos, int unused, int player, int *val) {
+	int8 candidates[8];
+
+	if (*val)
+		return;
+
+	if (wineRackLogicTable[12 * pos + player] == -1) {
+		*val = 1;
+
+		return;
+	}
+
+	sub11(pos, candidates);
+
+	for (int i = 0; candidates[i] != 100; i++) {
+		int8 nextPos = candidates[i];
+
+		if (endPos != nextPos)
+			sub10(pos, nextPos, unused, player, val);
+	}
+}
+
+void WineRackGame::sub11(int8 pos, int8 *candidates) {
+	int cnt = 0;
+
+	_wineRackGrid2[pos] = 1;
+
+	for (int i = 0; i < 6; i++) {
+		int8 val = wineRackLogicTable[12 * pos + i];
+
+		if (!_wineRackGrid2[val] && _wineRackGrid[pos] == _wineRackGrid[val])
+			candidates[cnt++] = val;
+	}
+
+	candidates[cnt] = 100;
 }
 
 uint32 WineRackGame::sub12() {
@@ -174,6 +245,18 @@ uint32 WineRackGame::sub12() {
 	}
 
 	return 0;
+}
+
+int8 WineRackGame::randomMoveStart() {
+	const int8 moves[] = { 44, 45, 54, 55 };
+
+	return moves[_random.getRandomNumber(3)];
+}
+
+int8 WineRackGame::randomMoveStart2() {
+	const int8 moves[] = { 25, 26, 63, 64 };
+
+	return moves[_random.getRandomNumber(3)];
 }
 
 namespace {
