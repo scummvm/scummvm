@@ -146,8 +146,11 @@ bool compareR3Objects(R3 *obj1, R3 *obj2) {
 	int32 diff = obj1->field54 - obj2->field54;
 	if (diff < 0)
 		return true;
+// FIXME: Original had distinct value for diff == 0, rather than bool
+#if 0
 	else if (diff == 0)
-		return false; // original would have a distinct value for this
+		return false;
+#endif
 	else
 		return false;
 }
