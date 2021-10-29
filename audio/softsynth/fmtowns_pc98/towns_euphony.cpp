@@ -246,13 +246,16 @@ void EuphonyPlayer::reset() {
 
 	resetTempo();
 
+	// FIXME: Implement correct code for _tempoControlMode == 1
+#if 0
 	if (_tempoControlMode == 1) {
-		//if (///)
-		//  return;
+		if (/*???*/)
+			return;
 		sendTempo(_defaultTempo);
 	} else {
+#endif
 		sendTempo(_defaultTempo);
-	}
+	//}
 
 	resetAllControls();
 }
