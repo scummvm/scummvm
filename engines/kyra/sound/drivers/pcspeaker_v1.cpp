@@ -100,7 +100,7 @@ private:
 
 PCSpeakerDriver::PCSpeakerDriver(Audio::Mixer *mixer, bool pcJRMode) : PCSoundDriver(), _mixer(mixer), _samplesUpdateIntv(0), _samplesUpdateIntvRem(0),
 	_outputRate(0), _samplesUpdateTmr(0), _samplesUpdateTmrRem(0), _newTrackData(0), _trackData(0), _pcJR(pcJRMode), _numChannels(pcJRMode ? 3 : 1), _channels(0),
-		_clock(pcJRMode ? 111860 : 1193180), _updateRate(292), _masterVolume(63), _periodsTable(pcJRMode ? _periodsPCjr : _periodsPCSpk), _periodDiv(pcJRMode ? 2 : 2),
+		_clock(pcJRMode ? 111860 : 1193180), _updateRate(292), _masterVolume(63), _periodsTable(pcJRMode ? _periodsPCjr : _periodsPCSpk), _periodDiv(2),
 	_levelAdjust(pcJRMode ? 1 : 0), _ready(false) {
 	_outputRate = _mixer->getOutputRate();
 	_samplesUpdateIntv = _outputRate / _updateRate;
