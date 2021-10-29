@@ -2170,9 +2170,54 @@ static const uint16 hoyle4PatchCrazyEightsSound[] = {
 	PATCH_END
 };
 
+// In Gin Rummy, sound 404 plays when undercutting the computer but it gets
+//  interrupted. layEmOut:changeState sets a half-second delay, which is long
+//  long enough for the undercut sound when the computer wins, but not this one.
+//
+// We fix this by increasing the delay to a full second when playing sound 404.
+//
+// Applies to: All versions
+// Responsible method: layEmOut:changeState(11)
+static const uint16 hoyle4SignatureGinUndercutSound[] = {
+	0x30, SIG_UINT16(0x0027),          // bnt 0027
+	SIG_ADDTOOFFSET(+11),
+	0x30, SIG_UINT16(0x000e),          // bnt 000e
+	SIG_ADDTOOFFSET(+11),
+	0x32, SIG_UINT16(0x000b),          // jmp 000b
+	0x39, SIG_SELECTOR8(play),         // pushi play
+	0x78,                              // push1
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0194),          // pushi 0194
+	0x80, SIG_UINT16(0x012a),          // lag 012a
+	0x4a, 0x06,                        // send 06 [ sound play: 404 ]
+	0x35, 0x1e,                        // ldi 1e
+	0x65, 0x20,                        // aTop ticks [ ticks = 30 ]
+	0x32, SIG_UINT16(0x000c),          // jmp 000c [ toss, ret ]
+	SIG_END
+};
+
+static const uint16 hoyle4PatchGinUndercutSound[] = {
+	0x30, PATCH_UINT16(0x002a),        // bnt 002a
+	PATCH_ADDTOOFFSET(+11),
+	0x30, PATCH_UINT16(0x000d),        // bnt 000d
+	PATCH_ADDTOOFFSET(+11),
+	0x33, 0x0f,                        // jmp 0f
+	0x39, PATCH_SELECTOR8(play),       // pushi play
+	0x78,                              // push1
+	0x38, PATCH_UINT16(0x0194),        // pushi 0194
+	0x80, PATCH_UINT16(0x012a),        // lag 012a
+	0x4a, 0x06,                        // send 06 [ sound play: 404 ]
+	0x35, 0x3c,                        // ldi 3c
+	0x33, 0x02,                        // jmp 02 [ ticks = 60 ]
+	0x35, 0x1e,                        // ldi 1e
+	0x65, 0x20,                        // aTop ticks [ ticks = 30 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle4Signatures[] = {
 	{  true,   100, "crazy eights sound",                          1, hoyle4SignatureCrazyEightsSound,  hoyle4PatchCrazyEightsSound },
+	{  true,   400, "gin undercut sound",                          1, hoyle4SignatureGinUndercutSound,  hoyle4PatchGinUndercutSound },
 	{  true,   733, "bridge arithmetic against object",            1, hoyle4SignatureBridgeArithmetic,  hoyle4PatchBridgeArithmetic },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
