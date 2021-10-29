@@ -1624,6 +1624,14 @@ void Menu::clickNewGame() {
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
+	if (g_system->isOverlayVisible()
+	 && g_system->getFeatureState(OSystem::kFeatureFullscreenMode)
+	 && ConfMan.get("gfx_mode") == "opengl") {
+
+		cursor.x *= 640.0 / g_system->getOverlayWidth();
+		cursor.y *= 480.0 / g_system->getOverlayHeight();
+	}
+
 	g_system->hideOverlay();
 
 	if (_dword_455C80) {
