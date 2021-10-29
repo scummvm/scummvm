@@ -205,7 +205,9 @@ void OSystem_Win32::logMessage(LogMessageType::Type type, const char *message) {
 	OSystem_SDL::logMessage(type, message);
 
 #if defined( USE_WINDBG )
-	OutputDebugString(message);
+	TCHAR *tMessage = Win32::stringToTchar(message);
+	OutputDebugString(tMessage);
+	free(tMessage);
 #endif
 }
 
