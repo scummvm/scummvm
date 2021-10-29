@@ -372,7 +372,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
-		case ActionType::ACTION_UNKNOWN_21:
+		case ActionType::ACTION_THROW_3D_MAGIC:
 			if (_engine->_gameState->_magicBallIdx == -1 && action.animFrame == actor->_animPosition) {
 				const IVec3 &destPos = _engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->_angle);
 				const int32 x = actor->_pos.x + destPos.x;
