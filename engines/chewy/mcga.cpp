@@ -471,10 +471,15 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 	}
 }
 
-void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
+void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth) {
 	spriteWidth = ((int16 *)source)[0];
 	spriteHeight = ((int16 *)source)[1];
 	source += 4;
+
+	spriteDeltaX1 = xDiff;
+	spriteDeltaX2 = spriteWidth + xDiff;
+	spriteDeltaY1 = yDiff;
+	spriteDeltaY2 = spriteHeight + yDiff;
 
 	setXVals();
 	setYVals();
@@ -490,6 +495,7 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 
 
 	if (source) {
 		for (int yc = spriteDeltaY2, countY = spriteYVal2; yc > 0; --yc) {
+			byte *scrLine = scrP;
 			for (int xc = spriteDeltaX2, countX = spriteXVal2; xc > 0; --xc) {
 				if (*source)
 					*scrP++ = *source;
@@ -505,7 +511,7 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 
 				source += spriteWidth;
 			}
 
-			scrP += SCREEN_WIDTH;
+			scrP = scrLine + SCREEN_WIDTH;
 			while (countY > 1000) {
 				countY -= 1000;
 				source += spriteWidth;
