@@ -193,6 +193,7 @@ static const char *const selectorNameTable[] = {
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
 	"cue",          // QFG4
+	"drop",         // QFG4
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
@@ -322,6 +323,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
 	SELECTOR_cue,
+	SELECTOR_drop,
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
@@ -17799,6 +17801,158 @@ static const uint16 qfg4BoneCageTellerPatch[] = {
 	PATCH_END
 };
 
+// When finding the battle axe in the wraith mound in room 575, the inventory
+//  view isn't updated from the old sword. theSword:show contains the logic to
+//  set the loop and cel based on the state property but this code doesn't run.
+//  hero:get also contains this logic but it also doesn't run since a fighter
+//  already has the sword at this point.
+//
+// We fix this by replacing a redundant inventory check with a call to hero:drop
+//  so that the sword is removed from and re-added to inventory. This causes
+//  hero:get to update theSword's cel and loop based on the new state property.
+//  This patch avoids touching the final bnt instruction as that instruction's
+//  size is different in the NRS fan patch.
+//
+// Applies to: All versions
+// Responsible method: sSearch:changeState(4)
+static const uint16 qfg4BattleAxeViewSignature[] = {
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+13),
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(has),          // pushi has
+	0x78,                               // push1
+	0x39, 0x13,                         // pushi 13 [ theSword ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero has: 19 ]
+	0x18,                               // not
+	SIG_END                             // bnt [ skips hero get: 19 1 ]
+};
+
+static const uint16 qfg4BattleAxeViewPatch[] = {
+	PATCH_ADDTOOFFSET(+14),
+	0x38, PATCH_SELECTOR16(drop),       // pushi drop [ drop theSword, forcing cel refresh ]
+	PATCH_ADDTOOFFSET(+8),
+	0x00,                               // bnot [ set acc to true, don't skip hero get: 19 1 ]
+	PATCH_END
+};
+
+// When a magic user searches the wraith mound in room 590 they find metal armor
+//  but the inventory view isn't updated from the leather armor. As with the
+//  battle axe patch above, theArmor:show and hero:get contain the logic to
+//  update this view but neither method runs.
+//
+// We fix this like the battle axe by calling hero:drop and hero:get to update
+//  the armor's view based on its new state property.
+//
+// Applies to: All versions
+// Responsible method: sSearch:changeState(4)
+static const uint16 qfg4MetalArmorViewSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(has),          // pushi has
+	0x78,                               // push1
+	0x39, 0x11,                         // pushi 11 [ theArmor ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero has: 17 ]
+	0x18,                               // not
+	SIG_END                             // bnt [ skips hero get: 17 1 ]
+};
+
+static const uint16 qfg4MetalArmorViewPatch[] = {
+	0x38, PATCH_SELECTOR16(drop),       // pushi drop [ drop theArmor, forcing cel refresh ]
+	PATCH_ADDTOOFFSET(+8),
+	0x00,                               // bnot [ set acc to true, don't skip hero get: 17 1 ]
+	PATCH_END
+};
+
+
+// When finding the magic sword in the wraith mound in room 575, the inventory
+//  view isn't updated from the old sword. theSword:show contains the logic to
+//  set the loop and cel based on the state property but this code doesn't run.
+//
+// We fix this by setting the cel when updating the sword's state. The loop is
+//  zero for all sword states and doesn't need to be updated.
+//
+// Applies to: All versions
+// Responsible method: sSearch:changeState(4)
+static const uint16 qfg4MagicSwordViewSignature[] = {
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ end of switch ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(state),         // pushi state
+	0x78,                               // push1
+	0x39, 0x03,                         // pushi 03
+	SIG_ADDTOOFFSET(+10),
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ theSword state: 3 (magic sword) ]
+	SIG_END
+};
+
+static const uint16 qfg4MagicSwordViewPatch[] = {
+	0x38, PATCH_SELECTOR16(cel),        // pushi cel
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x000e),         // pushi 000e
+	PATCH_ADDTOOFFSET(+15),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ theSword cel: 14 state: 3 (magic sword) ]
+	PATCH_END
+};
+
+// When the Burgomeister gives the magic shield, the inventory view isn't
+//  updated from the old shield. theShield:show contains the logic to set the
+//  loop and cel based on the state property but this code doesn't run.
+//
+// We fix this by setting the loop and cel when updating the shield's state.
+//
+// Applies to: All versions
+// Responsible method: sGetShield:changeState(3)
+static const uint16 qfg4MagicShieldViewSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(state),         // pushi state
+	0x78,                               // push1
+	0x78,                               // push1
+	SIG_ADDTOOFFSET(+10),
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ theShield state: 1 (magic shield) ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi actions
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa burgoMeister
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ burgoMeter actions? (burgoTeller) ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ burgoTeller dispose: ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi actions
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ hero actions? (heroTeller) ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ heroTeller dispose: ]
+	SIG_ADDTOOFFSET(+32),
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa  heroTeller
+	SIG_ADDTOOFFSET(+23),
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa  burgoTeller
+	SIG_END
+};
+
+static const uint16 qfg4MagicShieldViewPatch[] = {
+	PATCH_ADDTOOFFSET(+14),
+	0x38, PATCH_SELECTOR16(loop),       // pushi loop
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0008),         // pushi 0008
+	0x38, PATCH_SELECTOR16(cel),        // pushi cel
+	0x78,                               // push1
+	0x39, 0x0d,                         // pushi 0d
+	0x4a, PATCH_UINT16(0x0012),         // send 12 [ theShield state: 1 (magic shield) loop: 8 cel: 13 ]
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(+109),// lofsa burgoTeller
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ burgoTeller dispose: ]
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(+83), // lofsa heroTeller
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ heroTeller dispose: ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -17819,6 +17973,9 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    51, "fix necrotaur blackout",                      1, qfg4NecrotaurBlackoutSignature,qfg4NecrotaurBlackoutPatch },
 	{  true,    51, "CD: fix necrotaur capture",                   3, qfg4NecrotaurCaptureSignature, qfg4NecrotaurCapturePatch },
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
+	{  true,    53, "fix battle axe view",                         1, qfg4BattleAxeViewSignature,    qfg4BattleAxeViewPatch },
+	{  true,    53, "fix metal armor view",                        1, qfg4MetalArmorViewSignature,   qfg4MetalArmorViewPatch },
+	{  true,    53, "fix magic sword view",                        1, qfg4MagicSwordViewSignature,   qfg4MagicSwordViewPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   140, "fix character selection",                     1, qfg4CharacterSelectSignature,  qfg4CharacterSelectPatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
@@ -17828,6 +17985,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   290, "fix chase repeating",                         1, qfg4ChaseRepeatsSignature,     qfg4ChaseRepeatsPatch },
 	{  true,   290, "fix bridge secret exit",                      1, qfg4BridgeSecretExitSignature, qfg4BridgeSecretExitPatch },
 	{  true,   300, "fix empty burgomeister room teller",          1, qfg4EmptyBurgoRoomSignature,   qfg4EmptyBurgoRoomPatch },
+	{  true,   300, "fix magic shield view",                       1, qfg4MagicShieldViewSignature,  qfg4MagicShieldViewPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   320, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
