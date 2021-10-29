@@ -288,7 +288,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 			Tt->anzahl = anz;
 			Tt->korrektur = (int16 *)calloc((int32)Tt->anzahl * 4l, 1);
 			if (!modul) {
-				mem->file->load_korrektur(fname_, (byte *)Tt->korrektur);
+				mem->file->load_korrektur(fname_, Tt->korrektur);
 				Tt->palette = 0;
 				CurrentTaf = chewy_fopen(fname_, "rb");
 				if (CurrentTaf) {

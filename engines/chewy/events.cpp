@@ -116,4 +116,9 @@ void EventsManager::clearEvents() {
 	minfo.button = 0;
 }
 
+void EventsManager::setMousePos(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+	_mousePos = pt;
+}
+
 } // namespace Chewy

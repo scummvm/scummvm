@@ -55,6 +55,11 @@ public:
 	void setKbdInfo(kb_info *kb_info) {
 		_kbInfo = kb_info;
 	}
+
+	/**
+	 * Set the mouse position
+	 */
+	void setMousePos(const Common::Point &pt);
 };
 
 extern EventsManager *g_events;

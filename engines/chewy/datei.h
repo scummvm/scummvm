@@ -50,7 +50,7 @@ public:
 	void load_palette(Stream *stream, byte *palette);
 
 	void load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo);
-	void load_korrektur(const char *fname, byte *sp);
+	void load_korrektur(const char *fname, int16 *sp);
 	void load_tff(const char *fname, byte *speicher);
 	void load_dialog(const char *fname, dialogue *dial, menue *men, knopf *knpf);
 	void load_sbi(const char *fname, sbi_inst *speicher);
