@@ -356,9 +356,9 @@ void AmazonEngine::updateSummary(int chap) {
 
 	for (int i = celSubFile; i < 16; ++i) {
 		if (i > 7)
-			warning("TODO: DRAWOBJECT");
+			warning("TODO: DRAWOBJECT (i > 7)");
 		else
-			warning("TODO: DRAWOBJECT");
+			warning("TODO: DRAWOBJECT (i <= 7)");
 	}
 
 	delete _objectsTable[93];
@@ -368,9 +368,9 @@ void AmazonEngine::updateSummary(int chap) {
 		celSubFile = i;
 		loadCells(summaryCells);
 		if (i > 8)
-			warning("TODO: DRAWOBJECT");
+			warning("TODO: DRAWOBJECT (i > 8)");
 		else
-			warning("TODO: DRAWOBJECT");
+			warning("TODO: DRAWOBJECT (i <= 8)");
 
 		delete _objectsTable[93];
 		_objectsTable[93] = nullptr;
