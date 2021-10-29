@@ -174,6 +174,34 @@ int8 WineRackGame::findEmptySpot() {
 }
 
 void WineRackGame::sub05(int8 player, int8 *moves) {
+	int8 moves1[23];
+	int8 moves2[23];
+	int8 to, delta, playerIndex;
+
+	if (player == 1) {
+		to = 90;
+		delta = 10;
+		playerIndex = 2;
+	} else {
+		to = 9;
+		delta = 1;
+		playerIndex = 3;
+	}
+
+	memset(moves, 0, 23);
+
+	for (int i = 0; i < to; i += delta) {
+		if (!_wineRackGrid[i] || _wineRackGrid[i] == player) {
+			memset(moves1, 0, sizeof(moves1));
+			memset(moves2, 0, sizeof(moves2));
+
+			sub13(i, playerIndex, moves1, moves2);
+
+			if (moves[0] < moves1[0]) {
+				memcpy(moves, moves1, 23);
+			}
+		}
+	}
 }
 
 int8 WineRackGame::sub06(int8 *moves1, int8 *moves2) {
@@ -261,6 +289,143 @@ uint32 WineRackGame::sub12() {
 	}
 
 	return 0;
+}
+
+void WineRackGame::sub13(int8 cell, int8 player, int8 *moves1, int8 *moves2) {
+	int8 candidates[4];
+
+	if (cell == -1)
+		return;
+
+	moves2[moves2[2] + 3] = cell;
+
+	if (wineRackLogicTable[12 * cell + player] < 0) {
+		++moves2[2];
+
+		moves2[0] = countEmtpy(moves2);
+
+		if (moves2[0] > moves1[0])
+			memcpy(moves1, moves2, 23);
+
+		--moves2[2];
+	} else {
+		++moves2[2];
+
+		if (player == 2)
+			sub15(cell, candidates);
+		else
+			sub16(cell, candidates);
+
+		for (int i = 0; candidates[i] != -1; i++)
+			sub13(candidates[i], player, moves1, moves2);
+
+		--moves2[2];
+	}
+}
+
+void WineRackGame::sub15(int8 cell, int8 *candidates) {
+	int8 depth = 0;
+	int8 pos2 = wineRackLogicTable[12 * cell + 2];
+	int8 pos1 = wineRackLogicTable[12 * cell + 1];
+
+	if (_wineRackGrid[pos2] == 2) {
+		if (pos1 < 0 || _wineRackGrid[pos1] == 2) {
+			if (cell >= 20) {
+				int8 val1 = _wineRackGrid[cell - 10];
+
+				if (val1 != 2) {
+					int8 val2 = _wineRackGrid[cell - 10];
+
+					if (val2 != 2 && (val1 == 1 || val2 == 1)) {
+						depth = 1;
+						candidates[0] = cell - 10;
+					}
+				}
+			}
+			if (cell < 80) {
+				int8 val1 = _wineRackGrid[cell + 10];
+
+				if (val1 != 2) {
+					int8 val2 = _wineRackGrid[cell + 11];
+
+					if (val2 != 2 && (val1 == 1 || val2 == 1)) {
+						candidates[depth] = cell + 10;
+						depth++;
+					}
+				}
+			}
+		} else if (_wineRackGrid[cell] == 1 || _wineRackGrid[pos1] == 1) {
+			depth = 1;
+			candidates[0] = pos1;
+		}
+	} else if (pos1 < 0 || _wineRackGrid[pos1] == 2) {
+		if (_wineRackGrid[cell] == 1 || _wineRackGrid[pos2] == 1) {
+			depth = 1;
+			candidates[0] = pos2;
+		}
+	} else {
+		depth = 2;
+		candidates[0] = pos2;
+		candidates[1] = pos1;
+	}
+
+	candidates[depth] = -1;
+}
+
+void WineRackGame::sub16(int8 cell, int8 *candidates) {
+	int8 depth = 0;
+	int8 pos3 = wineRackLogicTable[12 * cell + 3];
+	int8 pos4 = wineRackLogicTable[12 * cell + 4];
+
+	if (_wineRackGrid[pos3] == 1) {
+		if (pos4 < 0 || _wineRackGrid[pos4] == 1) {
+			if (cell % 10 >= 2) {
+				int8 val1 = _wineRackGrid[cell - 1];
+
+				if (val1 != 1) {
+					int8 val2 = _wineRackGrid[cell + 8];
+
+					if (val2 != 1 && (val1 == 2 || val2 == 2)) {
+						depth = 1;
+						candidates[0] = cell - 1;
+					}
+				}
+			}
+			if (cell < 80 && _wineRackGrid[cell + 1] != 1) {
+				int8 val1 = _wineRackGrid[cell + 11];
+
+				if (val1 != 1 && (_wineRackGrid[cell + 1] == 2 || val1 == 2)) {
+					candidates[depth] = cell + 1;
+					depth++;
+				}
+			}
+		} else if (_wineRackGrid[cell] == 2 || _wineRackGrid[pos4] == 2) {
+			depth = 1;
+			candidates[0] = pos4;
+		}
+	} else if (pos4 < 0 || _wineRackGrid[pos4] == 1) {
+		if (_wineRackGrid[cell] == 2 || _wineRackGrid[pos3] == 2) {
+			depth = 1;
+			candidates[0] = pos3;
+		}
+	} else {
+		depth = 2;
+		candidates[0] = pos3;
+		candidates[1] = pos4;
+	}
+
+	candidates[depth] = -1;
+}
+
+int8 WineRackGame::countEmtpy(int8 *moves) {
+	int8 cnt = 0;
+
+	for (int i = 0; i < moves[2]; i++) {
+		if (!_wineRackGrid[moves[i + 3]])
+			++cnt;
+	}
+
+	return 20 - cnt;
 }
 
 int8 WineRackGame::randomMoveStart() {
