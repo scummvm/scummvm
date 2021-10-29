@@ -324,10 +324,6 @@ void vors() {
 	gcury += fvory;
 }
 
-void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
-	warning("STUB - zoom_set");
-}
-
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
 	size_t charSize = (fontWidth / 8) * fontHeight;
 	byte *charSrcP = fontAddr + (c - fontFirst) * charSize;
@@ -379,6 +375,149 @@ char getch() {
 
 void putch(char c) {
 	warning("STUB: putch()");
+}
+
+
+namespace Zoom {
+
+static int spriteHeight;
+static int spriteDeltaX1, spriteDeltaX2;
+static int spriteDeltaY1, spriteDeltaY2;
+static int spriteXVal1, spriteXVal2;
+static int spriteYVal1, spriteYVal2;
+
+static void setXVals() {
+	if (spriteDeltaX2 == 0) {
+		spriteXVal1 = 0;
+		spriteXVal2 = 1;
+	} else {
+		spriteXVal1 = spriteWidth / spriteDeltaX2;
+		spriteXVal2 = 1000 * (spriteWidth % spriteDeltaX2);
+		if (spriteDeltaX2)
+			spriteXVal2 /= spriteDeltaX2;
+	}
+}
+
+static void setYVals() {
+	if (spriteDeltaY2 == 0) {
+		spriteYVal1 = 0;
+		spriteYVal2 = 1;
+	} else {
+		spriteYVal1 = spriteHeight / spriteDeltaY2;
+		spriteYVal2 = 1000 * (spriteHeight % spriteDeltaY2);
+		if (spriteDeltaY2)
+			spriteYVal2 /= spriteDeltaY2;
+	}
+}
+
+void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
+	if (y < clipy1) {
+		int yCount = clipy1 - y;
+		spriteDeltaY2 -= yCount;
+
+		--yCount;
+		if (yCount >= 1) {
+			for (int yc = 0, countY = spriteYVal2; yc < yCount; ++yc) {
+				source += spriteWidth * spriteYVal1;
+				dest += SCREEN_WIDTH;
+
+				while (countY > 1000) {
+					countY -= 1000;
+					source += spriteWidth;
+				}
+			}
+		}
+	}
+
+	if (spriteDeltaY2 <= 0) {
+		source = nullptr;
+		return;
+	}
+
+	if (x < clipx1) {
+		int xCount = clipx1 - x;
+		spriteDeltaX2 -= xCount;
+
+		--xCount;
+		if (xCount >= 1) {
+			for (int xc = 0, countX = spriteXVal2; xc < xCount; ++xc) {
+				source += spriteXVal1;
+				while (countX >= 1000) {
+					countX -= 1000;
+					++source;
+				}
+			}
+		}
+	}
+
+	if (spriteDeltaX2 > 0) {
+		int x2 = x + spriteDeltaX2;
+		if (x2 >= clipx2) {
+			spriteDeltaX2 -= x2 - clipx2;
+		}
+
+		if (spriteDeltaY2 > 0) {
+			int y2 = y + spriteDeltaY2;
+			if (y2 >= clipy2) {
+				spriteDeltaY2 -= y2 - clipy2;
+			}
+			if (spriteDeltaY2 <= 0)
+				source = nullptr;
+		} else {
+			source = nullptr;
+		}
+	} else {
+		source = nullptr;
+	}
+}
+
+void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
+	spriteWidth = ((int16 *)source)[0];
+	spriteHeight = ((int16 *)source)[1];
+	source += 4;
+
+	setXVals();
+	setYVals();
+
+	byte *scrP;
+	if (scrWidth == 0) {
+		scrP = screenP + y * SCREEN_WIDTH + x;
+	} else {
+		scrP = screenP + y * scrWidth + x;
+	}
+
+	clip(source, scrP, x, y);
+
+	if (source) {
+		for (int yc = spriteDeltaY2, countY = spriteYVal2; yc > 0; --yc) {
+			for (int xc = spriteDeltaX2, countX = spriteXVal2; xc > 0; --xc) {
+				if (*source)
+					*scrP++ = *source;
+				source += spriteXVal1;
+				countX += spriteXVal2;
+				while (countX > 1000) {
+					countX -= 1000;
+					++source;
+				}
+			}
+
+			for (int ySkip = 0; ySkip < spriteYVal1; ++ySkip) {
+				source += spriteWidth;
+			}
+
+			scrP += SCREEN_WIDTH;
+			while (countY > 1000) {
+				countY -= 1000;
+				source += spriteWidth;
+			}
+		}
+	}
+}
+
+} // namespace Zoom
+
+void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
+	Zoom::zoom_set(source, x, y, xdiff_, ydiff_, scrWidth);
 }
 
 } // namespace Chewy
