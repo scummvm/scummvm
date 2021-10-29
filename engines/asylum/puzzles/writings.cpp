@@ -102,8 +102,6 @@ bool PuzzleWritings::init(const AsylumEvent &)  {
 }
 
 bool PuzzleWritings::update(const AsylumEvent &)  {
-	int16 x1, y1, x2, y2;
-
 	// Adjust palette
 	if (rnd(10) < 7) {
 		getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
@@ -124,26 +122,28 @@ bool PuzzleWritings::update(const AsylumEvent &)  {
 			--_frameIndex;
 	}
 
-	mousePos.x -= 50;
-	mousePos.y -= 50;
-	x1 = mousePos.x + 20;
-	y1 = mousePos.y + 20;
-	x2 = mousePos.x + 95;
-	y2 = mousePos.y + 90;
-	if (y1 < 0)
-		y1 = 0;
-	if (y2 > 480)
-		y2 = 480;
-
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->fillRect(0, 0, 640, 480, 253);
 	getScreen()->draw(getWorld()->graphicResourceIds[4], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	if (_hasGlassMagnifier) {
-		getScreen()->copyToBackBuffer(
-				((byte *)_textSurface.getPixels()) + y1 * _textSurface.pitch + x1 * _textSurface.format.bytesPerPixel,
-				_textSurface.pitch, x1, y1, (uint16)(x2 - x1), (uint16)(y2 - y1));
+		mousePos -= Common::Point(50, 50);
+		Common::Rect eyeBall = Common::Rect(0, 0, 640, 480).findIntersectingRect(Common::Rect(mousePos.x +  20, mousePos.y +  20,
+																							  mousePos.x + 100, mousePos.y + 100));
+		Graphics::Surface subArea, *subArea1;
+		subArea  = _textSurface.getSubArea(eyeBall);
+		subArea1 = subArea.scale(3 * eyeBall.width() / 4, 3 * eyeBall.height() / 4);
+		eyeBall.left += 9;
+		eyeBall.top  += 9;
+
+		int16 dw, dh;
+		dw = MAX(0, eyeBall.left + subArea1->w - 640);
+		dh = MAX(0, eyeBall.top  + subArea1->h - 480);
+		getScreen()->copyToBackBuffer((byte *)subArea1->getPixels(), subArea1->pitch, eyeBall.left, eyeBall.top, subArea1->w - dw, subArea1->h - dh);
+
+		subArea1->free();
+		delete subArea1;
 
 		getScreen()->addGraphicToQueueMasked(getWorld()->graphicResourceIds[9], 0, mousePos, getWorld()->graphicResourceIds[8], mousePos, kDrawFlagNone, 2);
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], (uint32)_frameIndex, mousePos, kDrawFlagNone, 0, 1);
