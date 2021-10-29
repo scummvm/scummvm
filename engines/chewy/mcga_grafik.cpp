@@ -1517,7 +1517,7 @@ int16 mcga_grafik::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
 }
 
 void mcga_grafik::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
-	if ((xdiff_) || (ydiff_))
+	if (xdiff_ || ydiff_)
 		zoom_set(sptr, x, y, xdiff_, ydiff_, scrwidth);
 	else
 		mspr_set_mcga(sptr, x, y, scrwidth);
