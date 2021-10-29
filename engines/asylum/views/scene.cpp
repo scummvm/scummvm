@@ -616,16 +616,14 @@ bool Scene::updateScreen() {
 	if (updateScene())
 		return true;
 
+#if 0
 	if (Config.performance <= 4) {
-		// TODO when Config.performance <= 4, we need to skip drawing frames to screen
-
-		if (drawScene())
-			return true;
-
+		// TODO: implement skip drawing frames to screen
 	} else {
+#endif
 		if (drawScene())
 			return true;
-	}
+	//}
 
 	getActor()->drawNumber();
 
