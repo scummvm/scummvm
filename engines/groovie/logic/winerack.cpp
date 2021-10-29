@@ -177,7 +177,23 @@ void WineRackGame::sub05(int8 player, int8 *moves) {
 }
 
 int8 WineRackGame::sub06(int8 *moves1, int8 *moves2) {
-	return 0;
+	for (int i = 0; i < moves1[2]; i++) {
+
+		int8 result = moves1[i + 3];
+
+		if (!_wineRackGrid[result]) {
+			for (int j = 0; j < moves2[2]; j++)
+				if (moves2[j + 3] == result)
+					return result;
+		}
+	}
+
+	for (int i = 0; i < moves1[2]; i++) {
+		if (_wineRackGrid[moves1[i + 3]])
+			return moves1[i + 3];
+	}
+
+	return -1;
 }
 
 uint32 WineRackGame::sub09() {
