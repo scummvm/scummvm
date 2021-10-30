@@ -56,9 +56,10 @@ int16 inv_rand_y;
 int16 show_invent_menu;
 
 void plot_main_menu() {
+	static const int IMAGES[] = { 7, 8, 9, 10, 12, 11 };
 	int16 i;
 	int16 zoomx, zoomy;
-	int16 *kor;
+	int16 *korrektur;
 
 	if (menu_item != tmp_menu) {
 		m_flip = 0;
@@ -66,7 +67,7 @@ void plot_main_menu() {
 	}
 
 	maus_mov_menu();
-	kor = (int16 *)menutaf->korrektur;
+	korrektur = (int16 *)menutaf->korrektur;
 
 	for (i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
@@ -84,8 +85,10 @@ void plot_main_menu() {
 				deltaX = -40;
 		}
 
-		out->scale_set(menutaf->image[i], MENU_X + deltaX + kor[i * 2],
-		    spieler.MainMenuY + kor[i * 2 + 1], zoomx, zoomy, 0);
+		out->scale_set(menutaf->image[i],
+			MENU_X + deltaX + korrektur[i * 2],
+		    spieler.MainMenuY + korrektur[i * 2 + 1],
+			zoomx, zoomy, 0);
 	}
 
 	zoomx = 16;
@@ -93,14 +96,16 @@ void plot_main_menu() {
 	++m_flip;
 	if (m_flip < 12 * (spieler.DelaySpeed + 1)) {
 		int deltaX = 0;
-		if (menu_item == 4)
+		if (menu_item == CUR_INVENT)
 			deltaX = -40;
-		else if (menu_item == 5)
+		else if (menu_item == CUR_SAVE)
 			deltaX = 40;
 
-		out->scale_set(menutaf->image[menu_item + 7],
-		                MENU_X + deltaX + kor[(menu_item + 7) * 2] - 5,
-		                spieler.MainMenuY + kor[(menu_item + 7) * 2 + 1] - 10, zoomx, zoomy, 0);
+		int img = IMAGES[menu_item];
+		out->scale_set(menutaf->image[img],
+		    MENU_X + deltaX + korrektur[img * 2] - 5,
+		    spieler.MainMenuY + korrektur[img * 2 + 1] - 10,
+			zoomx, zoomy, 0);
 	} else {
 		if (m_flip > 15 * (spieler.DelaySpeed + 1))
 			m_flip = 0;
