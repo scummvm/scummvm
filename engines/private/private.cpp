@@ -62,8 +62,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_pausedSetting = "";
 	_modified = false;
 	_mode = -1;
-	_paletteIndex = 0;
-	_colorToIndex.clear();
 	_toTake = false;
 
 	// Movies
@@ -246,9 +244,6 @@ Common::Error PrivateEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
-					_paletteIndex = 0;
-					_colorToIndex.clear();
-					_indexToColor.clear();
 					skipVideo();
 				}
 				break;
@@ -309,18 +304,13 @@ Common::Error PrivateEngine::run() {
 			continue;
 		}
 
-		if (!_nextVS.empty() && (_currentSetting == getMainDesktopSetting())) {
+		if (!_nextVS.empty() && _currentVS.empty() && (_currentSetting == getMainDesktopSetting())) {
 			loadImage(_nextVS, 160, 120);
 			drawScreen();
+			_currentVS = _nextVS;
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			_colorToIndex.clear();
-			_indexToColor.clear();
-			_paletteIndex = 0;
-			_colorToIndex[0x0000FF00] = _transparentColor;
-			_indexToColor[_transparentColor] = 0x0000FF00;
-
 			if (_videoDecoder->getCurFrame() == 0)
 				stopSound(true);
 			if (_videoDecoder->endOfVideo()) {
@@ -337,16 +327,12 @@ Common::Error PrivateEngine::run() {
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
-			_paletteIndex = 0;
-			_colorToIndex.clear();
-			_indexToColor.clear();
-			_colorToIndex[0x0000FF00] = _transparentColor;
-			_indexToColor[_transparentColor] = 0x0000FF00;
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
 			Settings::g_setts->load(_nextSetting);
 			_nextSetting = "";
+			_currentVS = "";
 			Gen::g_vm->run();
 			changeCursor("default");
 			drawScreen();
