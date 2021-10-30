@@ -1093,6 +1093,7 @@ const Feature s_features[] = {
 	{     "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
 	{              "tts",                       "USE_TTS", false, true,  "Text to speech support"},
 	{"builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
+	{   "detection-full",                "DETECTION_FULL", false, true,  "Include detection objects for all engines" },
 	{ "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines."},
 };
 
@@ -1570,10 +1571,15 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		ex.clear();
 		std::vector<std::string> detectionModuleDirs;
 		detectionModuleDirs.reserve(setup.engines.size());
+		bool detectAllEngines = getFeatureBuildState("detection-full", setup.features);
 
 		for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
 			// We ignore all sub engines here because they require no special handling.
 			if (isSubEngine(i->name, setup.engines)) {
+				continue;
+			}
+			// If we're not detecting all engines then ignore the disabled ones
+			if (!(detectAllEngines || i->enable)) {
 				continue;
 			}
 			detectionModuleDirs.push_back(setup.srcDir + "/engines/" + i->name);
@@ -2132,7 +2138,9 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 		                   << "LINK_PLUGIN(" << engineName << ")\n"
 		                   << "#endif\n";
 
-		detectionTable << "LINK_PLUGIN(" << engineName << "_DETECTION)\n";
+		detectionTable << "#if defined(ENABLE_" << engineName << ") || defined(DETECTION_FULL)\n"
+					   << "LINK_PLUGIN(" << engineName << "_DETECTION)\n"
+					   << "#endif\n";
 	}
 }
 } // namespace CreateProjectTool
