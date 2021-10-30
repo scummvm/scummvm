@@ -57,7 +57,7 @@ public:
 	static void auge_ani();
 	static void fuett_ani();
 	static bool getPillow();
-	static bool action2();
+	static bool pullSlime();
 };
 
 void r2_jump_out_r1(int16 nr);

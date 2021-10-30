@@ -161,7 +161,7 @@ bool Room0::getPillow() {
 	return false;
 }
 
-bool Room0::action2() {
+bool Room0::pullSlime() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		auto_move(2, 0);
