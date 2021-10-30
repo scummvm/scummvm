@@ -208,7 +208,7 @@ public:
 	int _paletteIndex;
 	Common::HashMap <uint32, int> _colorToIndex;
 	Common::HashMap <int, uint32> _indexToColor;
-	void drawScreenFrame();
+	void drawScreenFrame(const byte *videoPalette);
 
 	// Cursors
 	void changeCursor(const Common::String &);
@@ -225,6 +225,7 @@ public:
 	Common::Rect screenRect;
 	Common::String _framePath;
 	Graphics::Surface *_frameImage;
+	Graphics::Surface *_mframeImage;
 	byte *_framePalette;
 	Common::String _nextVS;
 	Common::Point _origin;
