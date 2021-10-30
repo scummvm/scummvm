@@ -38,33 +38,38 @@ struct penteTable;
 class PenteGame {
 public:
 	PenteGame();
-	void run(byte *scriptVariables);
+	void run(byte *vars);
 
 private:
-	int *allocs(int param_1, int param_2);
-	void penteSub02Frees(penteTable *param_1);
-	void penteSub05BuildLookupTable(penteTable *table);
-	penteTable *penteSub01Init(byte width, byte height, byte length);
-	void penteSub03Scoring(penteTable *table, byte move_y, byte move_x, bool whose_turn);
-	void penteSub07RevertScore(penteTable *table_1, byte y, byte x);
-	byte penteScoreCaptureSingle(penteTable *table, byte x, byte y, int slopeX, int slopeY);
-	uint penteSub04ScoreCapture(penteTable *table, byte y, byte x);
-	void penteSub08MaybeAnimateCapture(short param_1, byte *param_2, short *param_3, short *param_4);
-	void penteSub11RevertCapture(penteTable *table, byte y, byte x, byte y2);
-	int penteSub10AiRecurse(penteTable *table_1, char depth, int parent_score);
-	uint penteSub09Ai(uint y_1, int param_2, int param_3, penteTable *table_4, byte depth);
-	void penteOp(byte *vars);
+	void addLine(int x, int y, int linesCounter);
+	void buildLookupTable();
+	void penteDeInit();
+	void penteInit(uint width, uint height, uint length);
+	uint &getPlayerTable(bool staufTurn, pentePlayerTable *&pt);
+	void scoreLine(uint16 lineIndex, bool stauf_turn, bool revert);
+	void calcTouchingPieces(byte moveX, byte moveY, bool revert);
+	void updateScore(byte move_y, byte move_x, bool whose_turn);
+	void revertScore(byte y, byte x);
+	byte scoreCaptureSingle(byte x, byte y, int slopeX, int slopeY);
+	uint scoreCapture(byte y, byte x);
+	void animateCapture(short param_1, byte *param_2, short *param_3, short *param_4);
+	void revertCapture(byte y, byte x, byte y2);
+	int scoreMoveAndRevert(byte x, byte y, char depth, int parentScore, bool &gameOver);
+	int scoreMoveAndRevert(byte x, byte y, char depth, int parent_score);
+	int aiRecurseTail(int parent_score);
+	int aiRecurse(char depth, int parent_score);
+	uint16 aiGetBestMove(uint y_1, int param_2, int param_3, byte depth);
 	void test();
 	void testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
 
 	Common::RandomSource _random;
 
-	byte globalY;
-	byte globalX;
-	char global2;
-	short globalPlayerMove;
-	short global1;
-	penteTable *game_state_table;
+	byte _globalY;
+	byte _globalX;
+	char _global2;
+	short _globalPlayerMove;
+	short _global1;
+	penteTable *_table;
 };
 
 } // End of Groovie namespace
