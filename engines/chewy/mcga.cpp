@@ -495,7 +495,9 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 
 	if (source) {
 		for (int yc = spriteDeltaY2, countY = spriteYVal2; yc > 0; --yc) {
+			byte *srcLine = source;
 			byte *scrLine = scrP;
+
 			for (int xc = spriteDeltaX2, countX = spriteXVal2; xc > 0; --xc) {
 				if (*source)
 					*scrP++ = *source;
@@ -507,11 +509,14 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 				}
 			}
 
+			source = srcLine;
+			scrP = scrLine + SCREEN_WIDTH;
+
 			for (int ySkip = 0; ySkip < spriteYVal1; ++ySkip) {
 				source += spriteWidth;
 			}
 
-			scrP = scrLine + SCREEN_WIDTH;
+			countY += spriteYVal2;
 			while (countY > 1000) {
 				countY -= 1000;
 				source += spriteWidth;
