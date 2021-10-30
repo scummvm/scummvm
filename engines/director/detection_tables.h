@@ -1364,7 +1364,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	MACGAME1_l("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274274, Common::JA_JPN, 200),
+	MACGAME1_l("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 271740, Common::JA_JPN, 200),
+	MACGAME1_l("alice", "Rerelease", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274274, Common::JA_JPN, 200),
 
 	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2708196, 200),
 
@@ -1551,6 +1552,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("exoticjapan", "Sampler", "Exotic Japan Sampler", "e59139ac60997f52af77d7f03275ab30", 1790832, 311),
 
 	WINDEMO1("explorapedia", "1994 Demo", "XPLDMO6.EXE", "d61e2e1e9f9d9907005adc992a451d02", 4724919, 311),
+
+	// Original filename 'FANTAZION™'
+	MACGAME1_l("fantazion", "", "xn--FANTAZION-oz64c", "276bee761e48a6fd709df77d5c2f60dd", 420924, Common::JA_JPN, 310),
+	WINGAME1_l("fantazion", "", "FTZ.EXE", "7c8230a804abf9353b05627a675b5ffb", 406250, Common::JA_JPN, 310),
 
 	// All four languages on one disc. Original Mac file name is Parents’ Guide FFF
 	MACGAME1("fff",   "", "Friends",      "7f443f2e63fd497a9ad85b10dc880a91", 413963, 313),
@@ -1875,10 +1880,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("pagemaker", "5.0 Demo", "PageMaker 5.0 Demo", "cdb60bbb5f203e860de63df641bf5995", 1425719, 310),
 
+	MACGAME1_l("peaceland", "", "PeaceLand 8m", "f5277c53bacd27936158dd3867e587e2", 392232, Common::JA_JPN, 311),
 	MACDEMO1_l("peaceland", "Demo", "PeaceLand", "276bee761e48a6fd709df77d5c2f60dd", 394133, Common::JA_JPN, 313),
 
 	// Original Mac-only release
 	MACGAME1_l("picklesbook", "", "Pickle", "c9ec74eea228500976ba680a362308bb", 456728, Common::JA_JPN, 300),
+	// On the same CD as the Windows version, but built with a different version?
+	MACGAME1("picklesbook", "", "Pickle", "276bee761e48a6fd709df77d5c2f60dd", 528017, 310),
 
 	MACDEMO1_l("picturecard", "Demo", "Surmount", "f5277c53bacd27936158dd3867e587e2", 4407360, Common::JA_JPN, 311),
 
@@ -1898,6 +1906,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("provektor3", "Demo", "PV3_Demo", "7c80091b84d4d5d48f7c773b30b10598", 1437373, 311),
 	MACDEMO1("provektormed", "Demo", "PVM_Demo", "7c80091b84d4d5d48f7c773b30b10598", 2025339, 311),
 
+	MACGAME1_l("pyramidint", "", "Pyramid Interactive", "f5277c53bacd27936158dd3867e587e2", 396919, Common::JA_JPN, 311),
 	MACDEMO1_l("pyramidint", "Demo", "PyramidInteractive", "f5277c53bacd27936158dd3867e587e2", 1591182, Common::JA_JPN, 311),
 
 	// Original Japanese filename is レイドリームデモVer.1
@@ -2817,6 +2826,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("junglepark", "", "JU_PARK.EXE", "d551c88c600c522aa32e1e209cfcc2da", 697087, Common::JA_JPN, 404),
 	MACGAME1_l("junglepark", "", "JunglePark ppc", "502a9c49d0a13756a3e488021aba5541", 673536, Common::JA_JPN, 404),
 	WINGAME1_l("junglepark", "", "JUNGLE.EXE", "b76787a3e0d9f4f96565d3ab9a34e59e", 742377, Common::FR_FRA, 404),
+	MACGAME1_l("junglepark", "", "Jungle Park PPC", "4730ce8bdd2ab17bf714da3ff7f3e510", 60884, Common::FR_FRA, 404),
 
 	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
 	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
@@ -3141,6 +3151,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("phantplanet", "", "PHANTAS.EXE", "c2dd62dd0f9488ae8102970553eff170", 690449, Common::JA_JPN, 400),
 
 	MACDEMO1("photos4us", "Demo", "Photos4us", "2c27791a84756be6201d281bad54f7bb", 351560, 404),
+
+	WINGAME1("picklesbook", "", "PICKLE.EXE", "fb00695cb48e574f4acd75587b280756", 805141, 404),
 
 	// Full game is not Director
 	WINDEMO1("pitfall", "Demo", "PITDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
