@@ -77,7 +77,7 @@ public:
 	void neuer_maushandler(maus_info *mpos);
 	maus_info *maus_info_adr();
 
-	int16 maus_vector(int16 x, int16 y, int16 *tbl, int16 anz);
+	int16 maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
 	in_zeiger *get_in_zeiger();
 	int16 get_switch_code();
