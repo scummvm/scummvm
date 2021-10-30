@@ -87,7 +87,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 174:
-						action_ret = Room0::action1();
+						action_ret = Room0::getPillow();
 						break;
 
 					case 175:

@@ -56,7 +56,7 @@ public:
 
 	static void auge_ani();
 	static void fuett_ani();
-	static bool action1();
+	static bool getPillow();
 	static bool action2();
 };
 
