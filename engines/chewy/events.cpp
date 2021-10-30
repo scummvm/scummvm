@@ -66,8 +66,10 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 		g_engine->canSaveAutosaveCurrently() &&
 		menu_item >= CUR_WALK && menu_item <= CUR_TALK;
 
-	// Set mouse buttons
-	minfo.button = 0;
+	// Different event types handling
+	if (event.type != Common::EVENT_MOUSEMOVE)
+		minfo.button = 0;
+
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		minfo.button = 1;
