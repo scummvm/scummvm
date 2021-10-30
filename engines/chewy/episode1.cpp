@@ -141,7 +141,7 @@ void Room0::entry() {
 	}
 }
 
-bool Room0::action1() {
+bool Room0::getPillow() {
 	if (!spieler.inv_cur) {
 		hide_cur();
 		flags.AutoAniPlay = true;
@@ -154,6 +154,7 @@ bool Room0::action1() {
 		det->hide_static_spr(6);
 
 		flags.AutoAniPlay = false;
+		show_cur();
 		return true;
 	}
 
