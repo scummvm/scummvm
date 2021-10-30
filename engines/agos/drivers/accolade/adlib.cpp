@@ -286,19 +286,16 @@ void MidiDriver_Accolade_AdLib::setTimerCallback(void *timerParam, Common::Timer
 
 void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velocity) {
 	byte adjustedNote     = note;
-	byte adjustedVelocity = velocity;
 	byte regValueA0h      = 0;
 	byte regValueB0h      = 0;
 
 	// adjust velocity
-	int16 channelVolumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
-	channelVolumeAdjust += adjustedVelocity;
+	int16 channelVolumeAdjust = velocity + _channels[FMvoiceChannel].volumeAdjust;
+	// adjust velocity with the master volume
+	channelVolumeAdjust = (channelVolumeAdjust * (128 + _masterVolume)) / 128;
 	channelVolumeAdjust = CLIP<int16>(channelVolumeAdjust, 0, 0x7F);
 
-	// adjust velocity with the master volume
-	byte volumeAdjust = adjustedVelocity * ((float) (128 + _masterVolume) / 128);
-
-	adjustedVelocity = volumeAdjust;
+	byte adjustedVelocity = channelVolumeAdjust;
 
 	if (!_musicDrvMode) {
 		// INSTR.DAT
