@@ -1799,8 +1799,9 @@ static const uint16 freddypharkasPatchIntroScaling[] = {
 	0x35, 0x0a,                      // ldi 0a
 	0xa3, 0x02,                      // sal local[2]
 	// start of new inner loop
-	0x39, 0x00,                      // pushi 00
-	0x43, 0x2c, 0x00,                // callk GameIsRestarting (add this to trigger our speed throttler)
+	0x78,                            // push1
+	0x76,                            // push0
+	0x43, 0x2c, 0x02,                // callk GameIsRestarting 02 (add this to trigger our speed throttler)
 	PATCH_ADDTOOFFSET(+47),          // skip almost all of inner loop
 	0x33, 0xca,                      // jmp [inner loop start]
 	PATCH_END
@@ -2172,7 +2173,7 @@ static const uint16 hoyle4PatchCrazyEightsSound[] = {
 
 // In Gin Rummy, sound 404 plays when undercutting the computer but it gets
 //  interrupted. layEmOut:changeState sets a half-second delay, which is long
-//  long enough for the undercut sound when the computer wins, but not this one.
+//  enough for the undercut sound when the computer wins, but not this one.
 //
 // We fix this by increasing the delay to a full second when playing sound 404.
 //
@@ -5749,8 +5750,9 @@ static const uint16 kq6SignatureTalkingInventory[] = {
 
 static const uint16 kq6PatchTalkingInventory[] = {
 	PATCH_ADDTOOFFSET(+2),
-	0x39, 0x00,                         // pushi 00
-	0x43, 0x2c, 0x00,                   // callk GameIsRestarting [ custom throttling ]
+	0x78,                               // push1
+	0x76,                               // push0
+	0x43, 0x2c, 0x02,                   // callk GameIsRestarting 02 [ custom throttling ]
 	0x34, PATCH_UINT16(0x0000),         // ldi 0000 [ exit loop ]
 	PATCH_END
 };
@@ -13336,23 +13338,23 @@ static const uint16 qfg3SignatureCombatSpeedThrottling1[] = {
 
 static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
 	0x76,                               // push0  (no link, freed +2 bytes)
-	0x43, 0x42, 0x00,                   // callk GetTime, 0d
+	0x43, 0x42, 0x00,                   // callk GetTime, 00
 	0xa1, 0x58,                         // sag global[88] (no push, leave time in acc)
 	0x8b, 0x01,                         // lsl local[1] (stack up the local instead, freed +1 byte)
+	0xa3, 0x01,                         // sal local[1] (update with new time)
 	0x1c,                               // ne?
-	0x31, 0x0c,                         // bnt 12d [after sal]
+	0x31, 0x08,                         // bnt 08 [ GameIsRestarting  0 ]
 										//
 	0x81, 0xd2,                         // lag global[210] (load into acc instead of stack)
 	0x76,                               // push0 (push0 instead of ldi 0, freed +1 byte)
 	0x22,                               // lt? (flip the comparison)
-	0x31, 0x06,                         // bnt 6d [after sal]
+	0x31, 0x02,                         // bnt 02 [ GameIsRestarting  0 ]
 										//
 	0xe1, 0xd2,                         // -ag global[210]
-	0x81, 0x58,                         // lag global[88]
-	0xa3, 0x01,                         // sal local[1]
-
-	0x76,                               // push0 (0 call args)
-	0x43, 0x2c, 0x00,                   // callk GameIsRestarting, 0d (add this to trigger our speed throttler)
+										//
+	0x39, 0x01,                         // push 01
+	0x76,                               // push0
+	0x43, 0x2c, 0x02,                   // callk GameIsRestarting, 02 (add this to trigger our speed throttler)
 	PATCH_END
 };
 
