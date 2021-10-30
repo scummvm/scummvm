@@ -124,7 +124,7 @@ int16 file_menue() {
 	int16 rect, line;
 	taf_info *ti;
 	ret = 0;
-	room->open_handle("BACK/GBOOK.TGP", "rb", R_TGPDATEI);
+	room->open_handle("back/gbook.tgp", "rb", R_TGPDATEI);
 	ERROR
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
 	ERROR;
@@ -375,16 +375,18 @@ int16 file_menue() {
 	return ret;
 }
 
-int16 option_icons[9 * 4] = { 18, 61, 40, 76,
-                              112, 61, 130, 76,
-                              82, 104, 144, 139,
-                              164, 93, 194, 115,
-                              198, 80, 206, 115,
-                              210, 55, 302, 138,
-                              126, 146, 210, 198,
-                              32, 104, 42, 136,
-                              52, 104, 62, 136
-                            };
+const int16 OPTION_ICONS[9 * 4] = {
+	 18,   61,   40,   76,
+	112,   61,  130,   76,
+	 82,  104,  144,  139,
+	164,   93,  194,  115,
+	198,   80,  206,  115,
+	210,   55,  302,  138,
+	126,  146,  210,  198,
+	 22,   92,   44,  136,
+	 50,   92,   72,  136
+};
+
 #define SURIMY_START 0
 #define SURIMY_END 7
 #define SCHNULLER 8
@@ -507,7 +509,7 @@ void option_menue(taf_info *ti) {
 		key = in->get_switch_code();
 		if ((minfo.button == 1) || (key == ENTER)) {
 			WAIT_TASTE_LOS
-			rect = in->maus_vector(minfo.x, minfo.y, option_icons, 9);
+			rect = in->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (spieler.FramesPerSecond > 6)

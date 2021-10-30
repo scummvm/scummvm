@@ -85,7 +85,7 @@ void maus::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
 	// Mouse clip rectangle isn't supported in ScummVM
 }
 
-int16 maus::maus_vector(int16 x, int16 y, int16 *tbl,
+int16 maus::maus_vector(int16 x, int16 y, const int16 *tbl,
                             int16 anz) {
 	int16 i, j;
 	i = -1;
