@@ -217,7 +217,7 @@ public:
 	void fillRect(uint32, Common::Rect);
 	bool inMask(Graphics::Surface *, Common::Point);
 	uint32 _transparentColor;
-	Common::Rect screenRect;
+	Common::Rect _screenRect;
 	Common::String _framePath;
 	Graphics::Surface *_frameImage;
 	Graphics::Surface *_mframeImage;

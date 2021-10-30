@@ -208,7 +208,7 @@ Common::Error PrivateEngine::run() {
 	_transparentColor = 250;
 
 	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
-	screenRect = Common::Rect(0, 0, _screenW, _screenH);
+	_screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	changeCursor("default");
 	_origin = Common::Point(0, 0);
 	_image = new Image::BitmapDecoder();
@@ -617,6 +617,11 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 				if (_videoDecoder) {
 					_videoDecoder->pauseVideo(true);
 				}
+				_compositeSurface->fillRect(_screenRect, 0);
+				_compositeSurface->setPalette(_framePalette, 0, 256);
+				_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
+				drawMask(_frameImage);
+				_origin = Common::Point(kOriginOne[0], kOriginOne[1]);
 			}
 		}
 	}
@@ -1314,7 +1319,7 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
 	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(_screenW, _screenH, _pixelFormat);
-	surf->fillRect(screenRect, _transparentColor);
+	surf->fillRect(_screenRect, _transparentColor);
 	Graphics::Surface *csurf = decodeImage(name);
 
 	uint32 hdiff = 0;
@@ -1360,12 +1365,12 @@ void PrivateEngine::drawScreen() {
 			}
 		}
 		
-		// No use of _compositeScreen, we write the frame directly to the screen in the expected position
+		// No use of _compositeSurface, we write the frame directly to the screen in the expected position
 		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);	
 	} else {
+		const byte *cPalette = (const byte *) _compositeSurface->getPalette();
 		for (int c = 0; c < 256; c++)
-			g_system->getPaletteManager()->setPalette(((const byte *) _compositeSurface->getPalette()) + 4*c, c, 1);
-
+			g_system->getPaletteManager()->setPalette(cPalette + 4*c, c, 1);
 		byte newPalette[3 * 256];
 		g_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
 		
