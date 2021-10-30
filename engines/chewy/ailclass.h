@@ -56,6 +56,16 @@ public:
 	 * Helper method to wait until any playing speech is finished
 	 */
 	void waitForSpeechToFinish();
+
+	/**
+	 * Returns true if subtitles are enabled
+	 */
+	bool hasSubtitles();
+
+	/**
+	 * Returns true if speech is muted
+	 */
+	bool isSpeechMuted();
 };
 
 class ailclass : public ailScummVM {

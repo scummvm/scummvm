@@ -104,8 +104,19 @@ void atdsys::set_string_end_func
 	atdsv.aad_str = str_func;
 }
 
-void atdsys::set_display(int16 mode) {
-	atdsv.Display = mode;
+void atdsys::setHasSpeech(bool hasSpeech) {
+	_hasSpeech = hasSpeech;
+	updateSoundSettings();
+}
+
+void atdsys::updateSoundSettings() {
+	atdsv.Display = DISPLAY_TXT;
+
+	if (_hasSpeech) {
+		// TODO: In the future, properly implement DISPLAY_ALL
+		if (!ailsnd->isSpeechMuted())
+			atdsv.Display = DISPLAY_VOC;
+	}
 }
 
 int16 atdsys::get_delay(int16 txt_len) {
@@ -735,26 +746,25 @@ void atdsys::del_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 }
 
 char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
-	char *str_;
-	int16 ende;
-	str_ = txt_adr;
-	ende = 0;
-	while (!ende) {
-		if (str_[0] == (char)BLOCKENDE &&
-		        str_[1] == (char)BLOCKENDE &&
-		        str_[2] == (char)BLOCKENDE) {
+	char *strP = txt_adr;
+	int ende = 0;
+
+	for (; !ende; ++strP) {
+		if (strP[0] == (char)BLOCKENDE &&
+		        strP[1] == (char)BLOCKENDE &&
+		        strP[2] == (char)BLOCKENDE) {
 			ende = 2;
-		} else if (str_[0] == (char)0xf2 && str_[1] == (char)0xfe) {
-			if (str_[2] == (char)txt_mode)
+		} else if (strP[0] == (char)0xf2 && strP[1] == (char)0xfe) {
+			if (strP[2] == (char)txt_mode)
 				ende = 1;
-			str_ += 3;
+			strP += 2;
 		}
 	}
 
 	if (ende == 2)
-		str_ = 0;
+		strP = nullptr;
 
-	return str_;
+	return strP;
 }
 
 void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
