@@ -174,6 +174,8 @@ bool Room0::action2() {
 		cursor_wahl(0);
 		atds->set_steuer_bit(175, 1, 1);
 
+		flags.AutoAniPlay = false;
+		show_cur();
 		return true;
 	}
 
