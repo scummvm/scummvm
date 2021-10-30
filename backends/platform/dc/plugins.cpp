@@ -30,14 +30,11 @@
 #include "common/fs.h"
 
 #include "dcloader.h"
-
-extern void draw_solid_quad(float x1, float y1, float x2, float y2,
-			    int c0, int c1, int c2, int c3);
+#include "dcutils.h"
 
 static void drawPluginProgress(const Common::String &filename)
 {
-  ta_sync();
-  void *mark = ta_txmark();
+  TextureStack txstack;
   const char *fn = filename.c_str();
   Label lab1, lab2, lab3;
   char buf[32];
@@ -62,36 +59,7 @@ static void drawPluginProgress(const Common::String &filename)
   lab2.draw(100.0, 190.0, 0xffaaffaa);
   lab3.draw(100.0, 230.0, 0xffffffff);
   ta_commit_frame();
-  ta_sync();
-  ta_txrelease(mark);
 }
-
-extern int getCdState();
-extern "C" {
-  int dummy_cdfs_get_volume_id(char *, unsigned int) {
-    return -1;
-  }
-  int cdfs_get_volume_id(char *, unsigned int) __attribute__ ((weak, alias ("dummy_cdfs_get_volume_id")));
-}
-
-class DiscLabel {
-private:
-	char buf[32];
-public:
-	DiscLabel() {
-		if (cdfs_get_volume_id(buf, 32) < 0)
-			memset(buf, '*', 32);
-	}
-
-	bool operator==(const DiscLabel &other) const {
-		return !memcmp(buf, other.buf, 32);
-	}
-
-	void get(char *p) const {
-		memcpy(p, buf, 32);
-		p[32] = 0;
-	}
-};
 
 class OSystem_Dreamcast::DCPlugin : public DynamicPlugin {
 protected:
@@ -158,33 +126,11 @@ void OSystem_Dreamcast::DCPlugin::checkDisc(const DiscLabel &target)
     if (current == target)
 	return;
 
-    Label lab;
-    int wasopen = 0;
-    ta_sync();
-    void *mark = ta_txmark();
     char buf[32+24];
     strcpy(buf, "Please insert disc '");
     target.get(buf+strlen(buf));
     strcat(buf, "'");
-    lab.create_texture(buf);
-    for (;;) {
-      int s = getCdState();
-      if (s >= 6)
-	wasopen = 1;
-      if (s > 0 && s < 6 && wasopen) {
-	cdfs_reinit();
-	chdir("/");
-	chdir("/");
-	ta_sync();
-	ta_txrelease(mark);
-	break;
-      }
-
-      ta_begin_frame();
-      ta_commit_end();
-      lab.draw(100.0, 200.0, 0xffffffff);
-      ta_commit_frame();
-    }
+    DiscSwap(buf, 0xffffffff).run();
   }
 }
 
