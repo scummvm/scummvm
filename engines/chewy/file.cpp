@@ -533,12 +533,12 @@ void option_menue(taf_info *ti) {
 				if (spieler.DisplayText) {
 					if (flags.InitSound) {
 						spieler.DisplayText = false;
-						atds->set_display(DISPLAY_VOC);
+						atds->setHasSpeech(true);
 						spieler.SpeechSwitch = true;
 					}
 				} else {
 					spieler.DisplayText = true;
-					atds->set_display(DISPLAY_TXT);
+					atds->setHasSpeech(false);
 					spieler.SpeechSwitch = false;
 				}
 				break;

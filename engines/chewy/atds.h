@@ -253,7 +253,8 @@ public:
 
 	void set_font(byte *font_adr, int16 fvorx, int16 fhoehe);
 	void set_delay(int16 *delay, int16 silent);
-	void set_display(int16 mode);
+	void setHasSpeech(bool hasSpeech);
+	void updateSoundSettings();
 	void set_split_win(int16 nr, SplitStringInit *ssinit);
 	SplitStringRet *split_string(SplitStringInit *ssi);
 	void calc_txt_win(SplitStringInit *ssi);
@@ -344,6 +345,7 @@ private:
 	char *inv_use_mem;
 	int16 tmp_delay;
 	in_zeiger *inzeig;
+	bool _hasSpeech = false;
 };
 
 } // namespace Chewy

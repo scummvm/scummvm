@@ -22,6 +22,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/config-manager.h"
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
 #include "chewy/file.h"
@@ -190,6 +191,14 @@ void ailScummVM::waitForSpeechToFinish() {
 			set_up_screen(DO_SETUP);
 		}
 	}
+}
+
+bool ailScummVM::hasSubtitles() {
+	return ConfMan.getBool("subtitles");
+}
+
+bool ailScummVM::isSpeechMuted() {
+	return ConfMan.getBool("speech_mute");
 }
 
 

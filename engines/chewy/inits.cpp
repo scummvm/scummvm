@@ -489,7 +489,7 @@ void sound_init() {
 			ailsnd->init_double_buffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
 			atds->set_speech_handle(speech_handle);
 
-			atds->set_display(DISPLAY_VOC);
+			atds->setHasSpeech(true);
 			spieler.DisplayText = false;
 		}
 
