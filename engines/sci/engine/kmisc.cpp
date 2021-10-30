@@ -60,11 +60,16 @@ reg_t kRestartGame16(EngineState *s, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, s->gameIsRestarting);
+	// Always return the previous flag value
+	const int16 previousRestartingFlag = s->gameIsRestarting;
 
-	if (argc) { // Only happens during replay
-		if (!argv[0].toUint16()) // Set restarting flag
-			s->gameIsRestarting = GAMEISRESTARTING_NONE;
+	// Games pass zero to clear the restarting flag from their Game:doit method on
+	// each cycle. Other scripts query the restarting flag by passing no parameters.
+	if (argc > 0 && argv[0].toUint16() == 0) {
+		s->gameIsRestarting = GAMEISRESTARTING_NONE;
+	} else {
+		// Only speed throttle calls from game loops or our script patches.
+		return make_reg(0, previousRestartingFlag);
 	}
 
 	uint32 neededSleep = 30;
@@ -133,7 +138,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	s->speedThrottler(neededSleep);
 
 	s->_paletteSetIntensityCounter = 0;
-	return s->r_acc;
+	return make_reg(0, previousRestartingFlag);
 }
 
 reg_t kHaveMouse(EngineState *s, int argc, reg_t *argv) {
