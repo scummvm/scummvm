@@ -1365,7 +1365,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //////////////////////////////////////////////////
 
 	MACGAME1_l("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 271740, Common::JA_JPN, 200),
-	MACGAME1_l("alice", "Rerelease", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274274, Common::JA_JPN, 200),
+	MACGAME1_l("alice", "Digipak", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274018, Common::JA_JPN, 200),
 
 	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2708196, 200),
 
@@ -2172,7 +2172,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("adamtis", "v2.01",	  "ADAMPLAY.EXE",	   "803570c5edef30938a1efb0900f113e0", 695855, 404),
 	WINDEMO1("adamtis", "Skull Demo", "PUZZLE.EXE",		   "d2dcc8b55382fc1807e357af5108f7ba", 1057997, 404),
 
-	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 400),
+	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304458, 400),
 	WINGAME1("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 400),
 
 	// Developed by Collabo Software and NOVUM, distributed by XING Inc.
