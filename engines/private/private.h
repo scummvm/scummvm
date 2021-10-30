@@ -168,11 +168,12 @@ public:
 	void initFuncs();
 
 	// User input
-	void selectPauseMovie(Common::Point);
+	void selectPauseGame(Common::Point);
 	void selectMask(Common::Point);
 	void selectExit(Common::Point);
 	void selectLoadGame(Common::Point);
 	void selectSaveGame(Common::Point);
+	void resumeGame();
 
 	// Cursors
 	bool cursorPauseMovie(Common::Point);

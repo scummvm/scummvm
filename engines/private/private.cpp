@@ -264,7 +264,7 @@ Common::Error PrivateEngine::run() {
 				else if (selectSafeDigit(mousePos))
 					break;
 
-				selectPauseMovie(mousePos);
+				selectPauseGame(mousePos);
 				selectPhoneArea(mousePos);
 				selectPoliceRadioArea(mousePos);
 				selectAMRadioArea(mousePos);
@@ -601,11 +601,12 @@ Common::String PrivateEngine::getInventoryCursor() {
 	return "k7";
 }
 
-void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
+void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 	if (_mode == 1 && !_policeBustEnabled) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
+			// Pause game and return to desktop
 			if (_pausedSetting.empty()) {
 				if (!_nextSetting.empty())
 					_pausedSetting = _nextSetting;
@@ -620,6 +621,20 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 		}
 	}
 }
+
+void PrivateEngine::resumeGame() {
+	_nextSetting = _pausedSetting;
+	_pausedSetting = "";
+	_mode = 1;
+	_origin = Common::Point(kOriginOne[0], kOriginOne[1]);
+	if (_videoDecoder) {
+		_videoDecoder->pauseVideo(false);
+		const byte *videoPalette = g_private->_videoDecoder->getPalette();
+		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+		drawScreenFrame(videoPalette);
+	}
+}
+
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
 	mousePos = mousePos - _origin;

@@ -513,12 +513,7 @@ static void fTransition(ArgArray args) {
 static void fResume(ArgArray args) {
 	assert(args[0].type == NUM);
 	debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
-	g_private->_nextSetting = g_private->_pausedSetting;
-	g_private->_pausedSetting = "";
-	g_private->_mode = 1;
-	g_private->_origin = Common::Point(kOriginOne[0], kOriginOne[1]);
-	if (g_private->_videoDecoder)
-		g_private->_videoDecoder->pauseVideo(false);
+	g_private->resumeGame();
 }
 
 static void fMovie(ArgArray args) {
