@@ -1095,7 +1095,7 @@ void AdLibPart::pitchBend(int16 bend) {
 								  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 #ifdef ENABLE_OPL3
 		} else {
-			_owner->adlibNoteOn(voice->_channel, voice->_note, _pitchBend >> 1);
+			_owner->adlibNoteOn(voice->_channel, voice->_note, (_pitchBend * _pitchBendFactor) >> 5);
 		}
 #endif
 	}
@@ -1196,19 +1196,20 @@ void AdLibPart::panPosition(byte value) {
 }
 
 void AdLibPart::pitchBendFactor(byte value) {
-#ifdef ENABLE_OPL3
-	// Not supported in OPL3 mode.
-	if (_owner->_opl3Mode) {
-		return;
-	}
-#endif
-
 	AdLibVoice *voice;
 
 	_pitchBendFactor = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
+#ifdef ENABLE_OPL3
+		if (!_owner->_opl3Mode) {
+#endif
+			_owner->adlibNoteOn(voice->_channel, voice->_note /* + _transposeEff*/,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+#ifdef ENABLE_OPL3
+		} else {
+			_owner->adlibNoteOn(voice->_channel, voice->_note, (_pitchBend * _pitchBendFactor) >> 5);
+		}
+#endif
 	}
 }
 
@@ -1558,20 +1559,21 @@ uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 }
 
 void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
-#ifdef ENABLE_OPL3
-	// Not supported in OPL3 mode.
-	if (_opl3Mode) {
-		return;
-	}
-#endif
-
 	AdLibVoice *voice;
 	AdLibPart *part = &_parts[channel];
 
 	part->_pitchBendFactor = range;
 	for (voice = part->_voice; voice; voice = voice->_next) {
-		adlibNoteOn(voice->_channel, voice->_note/* + part->_transposeEff*/,
-					  (part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
+#ifdef ENABLE_OPL3
+		if (!_opl3Mode) {
+#endif
+			adlibNoteOn(voice->_channel, voice->_note/* + part->_transposeEff*/,
+						(part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
+#ifdef ENABLE_OPL3
+		} else {
+			adlibNoteOn(voice->_channel, voice->_note, (part->_pitchBend * part->_pitchBendFactor) >> 5);
+		}
+#endif
 	}
 }
 
@@ -2091,7 +2093,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 #ifdef ENABLE_OPL3
 	} else {
 		adlibSetupChannelSecondary(voice->_channel, second, secVol1, secVol2, pan);
-		adlibNoteOnEx(voice->_channel, note, part->_pitchBend >> 1);
+		adlibNoteOnEx(voice->_channel, note, (part->_pitchBend * part->_pitchBendFactor) >> 5);
 	}
 #endif
 }
