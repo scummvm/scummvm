@@ -2036,6 +2036,23 @@ fi
 LD=$CXX
 
 #
+# Check whether the compiler supports C++11
+#
+echo_n "Checking if compiler supports C++11... "
+have_cxx11=no
+cat > $TMPC << EOF
+int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
+EOF
+cc_check -std=c++11 && have_cxx11=yes
+echo $have_cxx11
+
+if test "$have_cxx11" = "no" ; then
+	echo
+	echo "ScummVM requires C++11 compiler support. Please ensure your compiler supports it"
+	exit 1
+fi
+
+#
 # Determine the compiler version
 #
 echocheck "compiler version"
@@ -2146,23 +2163,6 @@ if test "$cxx_verc_fail" = yes ; then
 	echo
 	echo "The version of your compiler is not supported at this time"
 	echo "Please ensure you are using GCC >= 2.95"
-	exit 1
-fi
-
-#
-# Check whether the compiler supports C++11
-#
-echo_n "Checking if compiler supports C++11... "
-have_cxx11=no
-cat > $TMPC << EOF
-int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
-EOF
-cc_check -std=c++11 && have_cxx11=yes
-echo $have_cxx11
-
-if test "$have_cxx11" = "no" ; then
-	echo
-	echo "ScummVM requires C++11 compiler support. Please ensure your compiler supports it"
 	exit 1
 fi
 
