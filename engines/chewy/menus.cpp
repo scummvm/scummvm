@@ -96,9 +96,9 @@ void plot_main_menu() {
 	++m_flip;
 	if (m_flip < 12 * (spieler.DelaySpeed + 1)) {
 		int deltaX = 0;
-		if (menu_item == CUR_INVENT)
+		if (menu_item == CUR_SAVE)
 			deltaX = -40;
-		else if (menu_item == CUR_SAVE)
+		else if (menu_item == CUR_INVENT)
 			deltaX = 40;
 
 		int img = IMAGES[menu_item];
@@ -246,8 +246,8 @@ void invent_menu() {
 	ret_look = -1;
 	menu_first = false;
 	show_invent_menu = 1;
-	while (show_invent_menu == 1) {
 
+	while (show_invent_menu == 1 && !SHOULD_QUIT) {
 		if (!minfo.button)
 			maus_flag = 0;
 		if (minfo.button == 1 || kbinfo.key_code == ENTER) {
