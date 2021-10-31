@@ -535,6 +535,10 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 		case POSITION_AT_CENTER_OF_TOP:
 			x -= (frame_head.width / 2);
 			break;
+		case POSITION_AT_CENTER_OF_CENTER:
+			x -= (frame_head.width / 2);
+			y -= (frame_head.height) / 2;
+			break;
 		case POSITION_AT_LEFT_OF_TOP:
 			// The given coords are already correct for this!
 			break;

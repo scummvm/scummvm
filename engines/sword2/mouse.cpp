@@ -1296,8 +1296,8 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 			// Center right
 			justification = POSITION_AT_LEFT_OF_CENTER;
 		} else {
-			// Center center - shouldn't happen anyway!
-			justification = POSITION_AT_LEFT_OF_CENTER;
+			// Center center (shouldn't happen)
+			justification = POSITION_AT_CENTER_OF_CENTER;
 		}
 	}
 
