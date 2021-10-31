@@ -10,7 +10,7 @@ you'll need the following:
 
 * newlib for sh-elf : <URL:http://mc.pp.se/dc/files/newlib-1.19.0.tar.gz>
 
-* libronin-0.6 : <URL:http://peter.bortas.org/scumm/libronin-0.6.tar.gz>
+* libronin-0.7 : <URL:http://peter.bortas.org/scumm/libronin-0.7.tar.gz>
 
 * libmad : <URL:http://mc.pp.se/dc/files/libmad-0.15.1b.tar.gz>
 
