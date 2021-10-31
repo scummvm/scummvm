@@ -33,6 +33,8 @@ namespace Groovie {
 const uint UINT_MAX = (uint)-1;
 const uint WIN_SCORE = 100000000;
 const uint CAPTURE_SCORE = 1000000;
+const uint PLAYER = 79;
+const uint STAUF = 88;
 
 struct pentePlayerTable {
 	Common::FixedStack<int, 813> lines;
@@ -222,13 +224,13 @@ void PenteGame::calcTouchingPieces(byte moveX, byte moveY, bool revert) {
 	}
 }
 
-void PenteGame::updateScore(byte x, byte y, bool stauf_turn) {
-	_table->boardState[x][y] = stauf_turn ? 88 : 79;
+void PenteGame::updateScore(byte x, byte y, bool isStauf) {
+	_table->boardState[x][y] = isStauf ? STAUF : PLAYER;
 	uint16 lines = _table->linesTable[x][y][0];
 
 	for (int i = 1; i <= lines; i++) {
 		uint16 lineIndex = _table->linesTable[x][y][i];
-		scoreLine(lineIndex, stauf_turn, false);
+		scoreLine(lineIndex, isStauf, false);
 	}
 
 	if (_table->calcTouchingPieces != 0) {
@@ -239,7 +241,7 @@ void PenteGame::updateScore(byte x, byte y, bool stauf_turn) {
 }
 
 void PenteGame::revertScore(byte x, byte y) {
-	bool stauf_turn = _table->boardState[x][y] == 88;
+	bool stauf_turn = _table->boardState[x][y] == STAUF;
 	_table->boardState[x][y] = 0;
 	_table->moveCounter--;
 	uint lines = _table->linesTable[x][y][0];
@@ -270,7 +272,7 @@ byte PenteGame::scoreCaptureSingle(byte x, byte y, int slopeX, int slopeY) {
 
 	auto &boardState = _table->boardState;
 	byte captor = boardState[x][y];
-	byte captive = captor == 88 ? 79 : 88;
+	byte captive = captor == STAUF ? PLAYER : STAUF;
 
 	// make sure the captor is at the start and end of the line
 	if (boardState[endX][endY] != captor)
@@ -300,7 +302,7 @@ Slope slopes[] = {{1, 0},
 
 uint PenteGame::scoreCapture(byte x, byte y) {
 	byte bitMask = 0;
-	bool isStauf = _table->boardState[x][y] == 88;
+	bool isStauf = _table->boardState[x][y] == STAUF;
 
 	for (const Slope &slope : slopes) {
 		bitMask <<= 1;
@@ -323,67 +325,64 @@ uint PenteGame::scoreCapture(byte x, byte y) {
 	return bitMask;
 }
 
-void PenteGame::animateCapture(short move, byte *bitMaskG, short *outCapture1, short *outCapture2) {
-	byte x;
-	byte y;
-
-	x = (byte)((int)move / 0xf);
-	y = 0xe - (char)((int)move % 0xf);
+void PenteGame::animateCapture(int16 move, byte *bitMaskG, int16 *outCapture1, int16 *outCapture2) {
+	int x = move / 15;
+	int y = 0xe - (move % 15);
 
 	byte &bitMask = *bitMaskG;
-	byte bVar3 = 0;
-	for (bVar3 = 0; bVar3 < 8; bVar3++) {
-		if (bitMask >> bVar3 & 1) {
-			bitMask = '\x01' << (bVar3 & 0x1f) ^ bitMask;
+	byte bit = 0;
+	for (bit = 0; bit < 8; bit++) {
+		if (bitMask >> bit & 1) {
+			bitMask = 1 << bit ^ bitMask;
 			break;
 		}
 	}
 
-	short sVar4;
-	switch (bVar3) {
+	int16 baseSpot;
+	switch (bit) {
 	case 0:
-		*outCapture1 = (x + 2) * 0xf - (uint16)y;
-		*outCapture2 = ((uint16)x * 0xf - (uint16)y) + 0x2e;
+		*outCapture1 = (x + 2) * 15 - y;
+		*outCapture2 = x * 15 - y + 46;
 		return;
 	case 1:
-		*outCapture1 = (x + 1) * 0xf - (uint16)y;
-		*outCapture2 = ((uint16)x * 0xf - (uint16)y) + 0x10;
+		*outCapture1 = (x + 1) * 15 - y;
+		*outCapture2 = x * 15 - y + 16;
 		return;
 	case 2:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4;
-		*outCapture2 = sVar4 + -0xe;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot;
+		*outCapture2 = baseSpot - 14;
 		return;
 	case 3:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4 + -1;
-		*outCapture2 = sVar4 + -0x10;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot - 1;
+		*outCapture2 = baseSpot - 16;
 		return;
 	case 4:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4 + -2;
-		*outCapture2 = sVar4 + -0x12;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot - 2;
+		*outCapture2 = baseSpot - 18;
 		return;
 	case 5:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4 + 0xd;
-		*outCapture2 = sVar4 + 0xc;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot + 13;
+		*outCapture2 = baseSpot + 12;
 		return;
 	case 6:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4 + 0x1c;
-		*outCapture2 = sVar4 + 0x2a;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot + 28;
+		*outCapture2 = baseSpot + 42;
 		return;
 	case 7:
-		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*outCapture1 = sVar4 + 0x1d;
-		*outCapture2 = sVar4 + 0x2c;
+		baseSpot = x * 15 - y;
+		*outCapture1 = baseSpot + 29;
+		*outCapture2 = baseSpot + 44;
 	}
 	return;
 }
 
 void PenteGame::revertCapture(byte x, byte y, byte bitMask) {
-	bool isPlayer = _table->boardState[x][y] == 79;
+	bool isPlayer = _table->boardState[x][y] == PLAYER;
 	for (int i = bitMask; i; i >>= 1) {
 		if ((i & 1) == 0)
 			continue;
@@ -396,7 +395,7 @@ void PenteGame::revertCapture(byte x, byte y, byte bitMask) {
 		if (_table->lineLength - linesCounter == 1) {
 			score -= WIN_SCORE;
 		} else {
-			score -= (1 << ((char)linesCounter & 0x1f));
+			score -= 1 << linesCounter;
 		}
 	}
 
@@ -443,7 +442,7 @@ int PenteGame::scoreMoveAndRevert(byte x, byte y, char depth, int parentScore) {
 }
 
 int PenteGame::aiRecurseTail(int parentScore) {
-	int best_score = 0x7fffffff;
+	int bestScore = 0x7fffffff;
 
 	_table->calcTouchingPieces = 0;
 	for (byte x = 0; x < _table->width; x++) {
@@ -454,18 +453,18 @@ int PenteGame::aiRecurseTail(int parentScore) {
 			}
 
 			int scoreDiff = scoreMoveAndRevert(x, y, 0, 0);
-			if (scoreDiff < best_score) {
-				best_score = scoreDiff;
+			if (scoreDiff < bestScore) {
+				bestScore = scoreDiff;
 			}
-			if (-parentScore != best_score && parentScore <= -best_score) {
+			if (-parentScore != bestScore && parentScore <= -bestScore) {
 				_table->calcTouchingPieces = 1;
-				return -best_score;
+				return -bestScore;
 			}
 		}
 	}
 	_table->calcTouchingPieces = 1;
 
-	return -best_score;
+	return -bestScore;
 }
 
 int PenteGame::aiRecurse(char depth, int parentScore) {
@@ -484,7 +483,7 @@ int PenteGame::aiRecurse(char depth, int parentScore) {
 		}
 	};
 	Common::FixedStack<GoodMove, 300> goodMoves; // 300 slots because the board is 20x15, but we rarely need many since the search excludes spots with no adjacenet pieces
-	int best_score = 0x7fffffff;
+	int bestScore = 0x7fffffff;
 
 	for (byte x = 0; x < _table->width; x++) {
 		for (byte y = 0; y < _table->height; y++) {
@@ -505,14 +504,14 @@ int PenteGame::aiRecurse(char depth, int parentScore) {
 		byte x = goodMoves[i].x;
 		byte y = goodMoves[i].y;
 
-		int scoreDiff = scoreMoveAndRevert(x, y, depth - 1, best_score);
-		if (scoreDiff < best_score) {
-			best_score = scoreDiff;
+		int scoreDiff = scoreMoveAndRevert(x, y, depth - 1, bestScore);
+		if (scoreDiff < bestScore) {
+			bestScore = scoreDiff;
 		}
-		if (-parentScore != best_score && parentScore <= -best_score)
+		if (-parentScore != bestScore && parentScore <= -bestScore)
 			break;
 	}
-	return -best_score;
+	return -bestScore;
 }
 
 uint16 PenteGame::aiGetBestMove(byte depth) {
@@ -560,10 +559,10 @@ uint16 PenteGame::aiGetBestMove(byte depth) {
 	return bestMove;
 }
 
-int varsMoveToXY(byte var0, byte var1, byte var2, byte &x, byte &y) {
-	int move = ((char)var0 * 10 + (short)(char)var1) * 10 + (short)(char)var2;
-	x = (byte)(move / 15);
-	y = 0xe - (char)((int)move % 15);
+int varsMoveToXY(byte hundreds, byte tens, byte ones, byte &x, byte &y) {
+	int move = hundreds * 100 + tens * 10 + ones;
+	x = move / 15;
+	y = 14 - move % 15;
 	return move;
 }
 
@@ -572,29 +571,31 @@ void aiMoveToXY(int move, byte &x, byte &y) {
 	y = move % 100;
 }
 
-void moveToVars(int move, byte &var0, byte &var1, byte &var2) {
-	var0 = (byte)(move / 100);
-	var1 = (byte)((move % 100) / 10);
-	var2 = (byte)(move % 10);
+void moveToVars(int move, byte &hundreds, byte &tens, byte &ones) {
+	hundreds = move / 100;
+	tens = move % 100 / 10;
+	ones = move % 10;
 }
 
-void moveXYToVars(uint x, uint y, byte &var0, byte &var1, byte &var2) {
-	int move = (x * 0xf - y) + 0xe;
-	moveToVars(move, var0, var1, var2);
+int xyToMove(uint x, uint y) {
+	return x * 15 - y + 14;
+}
+
+void moveXYToVars(uint x, uint y, byte &hundreds, byte &tens, byte &ones) {
+	int move = xyToMove(x, y);
+	moveToVars(move, hundreds, tens, ones);
 }
 
 void PenteGame::animateCapturesCheckWinner(byte *vars) {
 	if (_animateCapturesBitMask != 0 && _nextCapturedSpot < 0) {
-		short capturedSpot;
+		int16 capturedSpot;
 		animateCapture(_previousMove, &_animateCapturesBitMask, &capturedSpot, &_nextCapturedSpot);
 		vars[5] = 1;
 		moveToVars(capturedSpot, vars[0], vars[1], vars[2]);
 		return;
 	}
 	if (_animateCapturesBitMask != 0 || _nextCapturedSpot > -1) {
-		vars[0] = (byte)((int)_nextCapturedSpot / 100);
-		vars[1] = (byte)((int)(_nextCapturedSpot % 100) / 10);
-		vars[2] = (byte)(_nextCapturedSpot % 10);
+		moveToVars(_nextCapturedSpot, vars[0], vars[1], vars[2]);
 		_nextCapturedSpot = -1;
 		vars[5] = 1;
 		return;
@@ -682,7 +683,7 @@ void PenteGame::run(byte *vars) {
 	debugC(kDebugLogic, "Stauf moved to %d, %d", (int)x, (int)y);
 	updateScore(x, y, _table->moveCounter % 2);
 	_animateCapturesBitMask = scoreCapture(x, y);
-	_previousMove = ((uint16)x * 0xf - (uint16)y) + 0xe;
+	_previousMove = xyToMove(x, y);
 	moveXYToVars(x, y, vars[0], vars[1], vars[2]);
 }
 
