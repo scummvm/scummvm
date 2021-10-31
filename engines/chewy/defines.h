@@ -69,8 +69,8 @@ enum SetupScreenMode {
 #define CUR_USE 1
 #define CUR_LOOK 2
 #define CUR_TALK 3
-#define CUR_INVENT 4
-#define CUR_SAVE 5
+#define CUR_SAVE 4
+#define CUR_INVENT 5
 #define CUR_NO_WALK 6
 #define CUR_NOPE 7
 #define CUR_AK_INVENT 8
