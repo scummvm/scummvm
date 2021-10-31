@@ -323,7 +323,7 @@ uint PenteGame::scoreCapture(byte y, byte x) {
 	return bitMask;
 }
 
-void PenteGame::animateCapture(short move, byte *bitMaskG, short *param_3, short *param_4) {
+void PenteGame::animateCapture(short move, byte *bitMaskG, short *outCapture1, short *outCapture2) {
 	byte x;
 	byte y;
 
@@ -342,42 +342,42 @@ void PenteGame::animateCapture(short move, byte *bitMaskG, short *param_3, short
 	short sVar4;
 	switch (bVar3) {
 	case 0:
-		*param_3 = (x + 2) * 0xf - (uint16)y;
-		*param_4 = ((uint16)x * 0xf - (uint16)y) + 0x2e;
+		*outCapture1 = (x + 2) * 0xf - (uint16)y;
+		*outCapture2 = ((uint16)x * 0xf - (uint16)y) + 0x2e;
 		return;
 	case 1:
-		*param_3 = (x + 1) * 0xf - (uint16)y;
-		*param_4 = ((uint16)x * 0xf - (uint16)y) + 0x10;
+		*outCapture1 = (x + 1) * 0xf - (uint16)y;
+		*outCapture2 = ((uint16)x * 0xf - (uint16)y) + 0x10;
 		return;
 	case 2:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4;
-		*param_4 = sVar4 + -0xe;
+		*outCapture1 = sVar4;
+		*outCapture2 = sVar4 + -0xe;
 		return;
 	case 3:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4 + -1;
-		*param_4 = sVar4 + -0x10;
+		*outCapture1 = sVar4 + -1;
+		*outCapture2 = sVar4 + -0x10;
 		return;
 	case 4:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4 + -2;
-		*param_4 = sVar4 + -0x12;
+		*outCapture1 = sVar4 + -2;
+		*outCapture2 = sVar4 + -0x12;
 		return;
 	case 5:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4 + 0xd;
-		*param_4 = sVar4 + 0xc;
+		*outCapture1 = sVar4 + 0xd;
+		*outCapture2 = sVar4 + 0xc;
 		return;
 	case 6:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4 + 0x1c;
-		*param_4 = sVar4 + 0x2a;
+		*outCapture1 = sVar4 + 0x1c;
+		*outCapture2 = sVar4 + 0x2a;
 		return;
 	case 7:
 		sVar4 = (uint16)x * 0xf - (uint16)y;
-		*param_3 = sVar4 + 0x1d;
-		*param_4 = sVar4 + 0x2c;
+		*outCapture1 = sVar4 + 0x1d;
+		*outCapture2 = sVar4 + 0x2c;
 	}
 	return;
 }
@@ -583,12 +583,57 @@ void moveXYToVars(uint x, uint y, byte &var0, byte &var1, byte &var2) {
 	moveToVars(move, var0, var1, var2);
 }
 
-void PenteGame::run(byte *vars) {
-	uint16 uVar1;
-	int iVar2;
-	byte ai_depth;
-	short local_2;
+void PenteGame::animateCapturesCheckWinner(byte *vars) {
+	if (_animateCapturesBitMask != 0 && _nextCapturedSpot < 0) {
+		short capturedSpot;
+		animateCapture(_previousMove, &_animateCapturesBitMask, &capturedSpot, &_nextCapturedSpot);
+		vars[5] = 1;
+		moveToVars(capturedSpot, vars[0], vars[1], vars[2]);
+		return;
+	}
+	if (_animateCapturesBitMask != 0 || _nextCapturedSpot > -1) {
+		vars[0] = (byte)((int)_nextCapturedSpot / 100);
+		vars[1] = (byte)((int)(_nextCapturedSpot % 100) / 10);
+		vars[2] = (byte)(_nextCapturedSpot % 10);
+		_nextCapturedSpot = -1;
+		vars[5] = 1;
+		return;
+	}
 
+	if (_table->playerScore >= WIN_SCORE || _table->moveCounter >= _table->boardSize)
+		vars[5] = 3; // player wins
+	else if (_table->staufScore >= WIN_SCORE)
+		vars[5] = 2; // Stauf wins
+	else {
+		// the match continues
+		vars[5] = 0;
+		return;
+	}
+
+	penteDeInit();
+}
+
+void PenteGame::opQueryPiece(byte *vars) {
+	// this runs multiple times to check if pieces belong to stauf or the player?
+	// this happens when you close the gamebook
+	byte x, y;
+	varsMoveToXY(vars[0], vars[1], vars[2], x, y);
+	byte piece = _table->boardState[x][y];
+	if (piece == 0) {
+		vars[3] = 0;
+		return;
+	}
+	if (piece == 0x4f) {
+		vars[3] = 2;
+		return;
+	}
+	if (piece != 0x58) {
+		return;
+	}
+	vars[3] = 1;
+}
+
+void PenteGame::run(byte *vars) {
 	byte op = vars[4];
 	if (_table == NULL && op != 0) {
 		penteInit(20, 15, 5);
@@ -600,100 +645,52 @@ void PenteGame::run(byte *vars) {
 		penteDeInit();
 		return;
 	case 1:
-		_globalPlayerMove = varsMoveToXY(vars[0], vars[1], vars[2], _globalX, _globalY);
-		debugC(kDebugLogic, "player moved to %d, %d", (int)_globalX, (int)_globalY);
-		updateScore(_globalY, _globalX, _table->moveCounter % 2);
-		_global2 = scoreCapture(_globalY, _globalX);
+		byte x, y;
+		_previousMove = varsMoveToXY(vars[0], vars[1], vars[2], x, y);
+		debugC(kDebugLogic, "player moved to %d, %d", (int)x, (int)y);
+		updateScore(y, x, _table->moveCounter % 2);
+		_animateCapturesBitMask = scoreCapture(y, x);
 		return;
 	case 2:
 	case 4:
-		if (_global2 != '\0') {
-			if (_global1 < 0) {
-				animateCapture(_globalPlayerMove, (byte *)&_global2, &local_2, &_global1);
-				vars[5] = 1;
-				moveToVars(local_2, vars[0], vars[1], vars[2]);
-				return;
-			}
-		LAB_00412da4:
-			vars[0] = (byte)((int)_global1 / 100);
-			vars[1] = (byte)((int)(_global1 % 100) / 10);
-			iVar2 = (int)_global1;
-			vars[2] = (byte)(iVar2 % 10);
-			_global1 = -1;
-			vars[5] = 1;
-			return;
-		}
-		if (-1 < _global1)
-			goto LAB_00412da4;
-		if (_table->playerScore < WIN_SCORE) {
-			if ((_table->staufScore < WIN_SCORE) &&
-				(uVar1 = _table->moveCounter)) {
-				vars[5] = 0;
-				return;
-			}
-			if (_table->playerScore < WIN_SCORE) {
-				vars[5] = 2; // Stauf wins
-				if (_table->staufScore < WIN_SCORE) {
-					vars[5] = 4; // player wins because the board is full?
-				}
-				goto DEALLOC;
-			}
-		}
-		vars[5] = 3; // player wins
-	DEALLOC:
-		penteDeInit();
+		animateCapturesCheckWinner(vars);
 		return;
 	case 3:
 		break;
 	case 5:
-		// asking Samantha to make a move? this does a bunch of queries to check if pieces belong to stauf or the player?
-		byte x, y;
-		varsMoveToXY(vars[0], vars[1], vars[2], x, y);
-		ai_depth = _table->boardState[x][y];
-		if (ai_depth == 0) {
-			vars[3] = 0;
-			return;
-		}
-		if (ai_depth == 0x4f) {
-			vars[3] = 2;
-			return;
-		}
-		if (ai_depth != 0x58) {
-			return;
-		}
-		vars[3] = 1;
+		opQueryPiece(vars);
 	default:
 		return;
 	}
-	ai_depth = vars[6];
+
+	byte ai_depth = vars[6];
 	if (ai_depth == 0) {
 		ai_depth = 3;
+	} else if (ai_depth == 1) {
+		ai_depth = 4;
 	} else {
-		if (ai_depth == 1) {
-			ai_depth = 4;
-		} else {
-			if (ai_depth != 2)
-				goto LAB_00412e85;
-			ai_depth = 5;
-		}
+		ai_depth = 5;
 	}
-	_globalPlayerMove = aiGetBestMove(0, 0, 0, ai_depth);
-LAB_00412e85:
-	aiMoveToXY(_globalPlayerMove, _globalX, _globalY);
-	debugC(kDebugLogic, "Stauf moved to %d, %d", (int)_globalX, (int)_globalY);
-	updateScore(_globalY, _globalX, _table->moveCounter % 2);
-	_global2 = scoreCapture(_globalY, _globalX);
-	_globalPlayerMove = ((uint16)_globalX * 0xf - (uint16)_globalY) + 0xe;
-	moveXYToVars(_globalX, _globalY, vars[0], vars[1], vars[2]);
+
+	if (ai_depth != 2)
+		_previousMove = aiGetBestMove(0, 0, 0, ai_depth);
+	else
+		warning("pente unknown else");
+
+	byte x, y;
+	aiMoveToXY(_previousMove, x, y);
+	debugC(kDebugLogic, "Stauf moved to %d, %d", (int)x, (int)y);
+	updateScore(y, x, _table->moveCounter % 2);
+	_animateCapturesBitMask = scoreCapture(y, x);
+	_previousMove = ((uint16)x * 0xf - (uint16)y) + 0xe;
+	moveXYToVars(x, y, vars[0], vars[1], vars[2]);
 }
 
 PenteGame::PenteGame() : _random("PenteGame") {
 	_table = NULL;
-	_global1 = -1;
-	_globalY = 0;
-	_globalX = 0;
-	_global2 = 0;
-	_globalPlayerMove = 0;
+	_nextCapturedSpot = -1;
+	_animateCapturesBitMask = 0;
+	_previousMove = 0;
 #if 0
 	test();
 #endif

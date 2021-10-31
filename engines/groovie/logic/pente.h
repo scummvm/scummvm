@@ -41,6 +41,9 @@ public:
 	void run(byte *vars);
 
 private:
+	void animateCapturesCheckWinner(byte *vars);
+	void opQueryPiece(byte *vars);
+
 	void addLine(int x, int y, int linesCounter);
 	void buildLookupTable();
 	void penteDeInit();
@@ -52,7 +55,7 @@ private:
 	void revertScore(byte y, byte x);
 	byte scoreCaptureSingle(byte x, byte y, int slopeX, int slopeY);
 	uint scoreCapture(byte y, byte x);
-	void animateCapture(short param_1, byte *param_2, short *param_3, short *param_4);
+	void animateCapture(short param_1, byte *param_2, short * outMove, short *param_4);
 	void revertCapture(byte y, byte x, byte y2);
 	int scoreMoveAndRevert(byte x, byte y, char depth, int parentScore, bool &gameOver);
 	int scoreMoveAndRevert(byte x, byte y, char depth, int parent_score);
@@ -64,11 +67,9 @@ private:
 
 	Common::RandomSource _random;
 
-	byte _globalY;
-	byte _globalX;
-	char _global2;
-	short _globalPlayerMove;
-	short _global1;
+	byte _animateCapturesBitMask;
+	short _previousMove;
+	short _nextCapturedSpot;
 	penteTable *_table;
 };
 
