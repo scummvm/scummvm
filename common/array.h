@@ -347,7 +347,7 @@ public:
 
 		if (oldStorage) {
 			// Copy old data
-			uninitialized_copy(oldStorage, oldStorage + _size, _storage);
+			uninitialized_move(oldStorage, oldStorage + _size, _storage);
 			freeStorage(oldStorage, _size);
 		}
 	}

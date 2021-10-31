@@ -48,6 +48,18 @@ Type *uninitialized_copy(In first, In last, Type *dst) {
 }
 
 /**
+ * Moves data from the range [first, last) to [dst, dst + (last - first)).
+ * It requires the range [dst, dst + (last - first)) to be valid and
+ * uninitialized.
+ */
+template<class In, class Type>
+Type *uninitialized_move(In first, In last, Type *dst) {
+	while (first != last)
+		new ((void *)dst++) Type(std::move(*first++));
+	return dst;
+}
+
+/**
  * Initializes the memory [first, first + (last - first)) with the value x.
  * It requires the range [first, first + (last - first)) to be valid and
  * uninitialized.
