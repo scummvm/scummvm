@@ -233,19 +233,23 @@ void WetEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Level intro;
-	intro.trans.level = "wetlands/main_menu.mis"; //"c11" + _difficulty + ".mi_";
-	intro.trans.intros.push_back("c_misc/logo.smk");
-	intro.trans.intros.push_back("c_misc/nw_logo.smk");
-	intro.trans.intros.push_back("c_misc/hypnotix.smk");
-	intro.trans.intros.push_back("c_misc/wetlogo.smk");
-	_levels["<start>"] = intro;
-
+	Level logos;
+	logos.trans.level = "wetlands/main_menu.mis"; //"c11" + _difficulty + ".mi_";
+	logos.trans.intros.push_back("c_misc/logo.smk");
+	logos.trans.intros.push_back("c_misc/nw_logo.smk");
+	logos.trans.intros.push_back("c_misc/hypnotix.smk");
+	logos.trans.intros.push_back("c_misc/wetlogo.smk");
+	_levels["<start>"] = logos;
 
 	Level menu;
 	menu.code.name = "wetlands/main_menu.mis";
 	_levels["wetlands/main_menu.mis"] = menu;
-	_levels["wetlands/main_menu.mis"].code.levelIfWin = "c11" + _difficulty + ".mi_";
+	_levels["wetlands/main_menu.mis"].code.levelIfWin = "<intro>";
+
+	Level intro;
+	intro.trans.level = "c11" + _difficulty + ".mi_";
+	intro.trans.intros.push_back("c_misc/intros.smk");
+	_levels["<intro>"] = intro;
 
 	//loadLevel("c10", "c11", "");
 	loadLevel("c11", "c20", "");
@@ -274,8 +278,8 @@ void WetEngine::runMainMenu(Code code) {
 	uint32 c = _pixelFormat.RGBToColor(0, 252, 0);
 	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, true);
 	Common::String _name = "";
-	//Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
 	drawImage(*frame, 0, 0, false);
+	_font->drawString(_compositeSurface, "ENTER NAME :", 48, 50, 100, c);
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
