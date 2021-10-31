@@ -116,9 +116,7 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 	bool contains(uint32 x) const;
-#ifdef USE_CXX11
 	bool contains(char32_t x) const;
-#endif
 
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).

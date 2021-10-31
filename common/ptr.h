@@ -27,10 +27,9 @@
 #include "common/noncopyable.h"
 #include "common/safe-bool.h"
 #include "common/types.h"
-#ifdef USE_CXX11
+
 /* For nullptr_t */
 #include <cstddef>
-#endif
 
 namespace Common {
 
@@ -89,10 +88,8 @@ public:
 	BasePtr() : _refCount(nullptr), _deletion(nullptr), _pointer(nullptr) {
 	}
 
-#ifdef USE_CXX11
 	explicit BasePtr(std::nullptr_t) : _refCount(nullptr), _deletion(nullptr), _pointer(nullptr) {
 	}
-#endif
 
 	template<class T2>
 	explicit BasePtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new BasePtrDeletionImpl<T2>(p)), _pointer(p) {
@@ -286,10 +283,8 @@ public:
 	SharedPtr() : BasePtr<T>() {
 	}
 
-#ifdef USE_CXX11
 	SharedPtr(std::nullptr_t) : BasePtr<T>() {
 	}
-#endif
 
 	template<class T2>
 	explicit SharedPtr(T2 *p) : BasePtr<T>(p) {
@@ -352,10 +347,8 @@ public:
 	WeakPtr() : BasePtr<T>() {
 	}
 
-#ifdef USE_CXX11
 	WeakPtr(std::nullptr_t) : BasePtr<T>() {
 	}
-#endif
 
 	template<class T2>
 	explicit WeakPtr(T2 *p) : BasePtr<T>(p) {

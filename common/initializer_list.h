@@ -2,8 +2,6 @@
 #define COMMON_INITIALIZER_LIST_H
 
 // Some compiler only have partial support for C++11 and we provide replacements for reatures not available.
-#ifdef USE_CXX11
-
 #ifdef NO_CXX11_INITIALIZER_LIST
 namespace std {
 	template<class T> class initializer_list {
@@ -43,7 +41,5 @@ namespace std {
 #include <initializer_list>
 
 #endif // NO_CXX11_INITIALIZER_LIST
-
-#endif // USE_CXX11
 
 #endif // COMMON_INITIALIZER_LIST_H

@@ -52,11 +52,7 @@ class String;
  * The presence of \0 characters in the string will cause undefined
  * behavior in some operations.
  */
-#ifdef USE_CXX11
 typedef char32_t u32char_type_t;
-#else
-typedef uint32 u32char_type_t;
-#endif
 
 class U32String : public BaseString<u32char_type_t> {
 public:
@@ -71,11 +67,9 @@ public:
 	/** Construct a new string containing exactly @p len characters read from address @p str. */
 	U32String(const value_type *str, uint32 len) : BaseString<u32char_type_t>(str, len) {}
 
-#ifdef USE_CXX11
 	explicit U32String(const uint32 *str) : BaseString<u32char_type_t>((const value_type *) str) {}
 	U32String(const uint32 *str, uint32 len) : BaseString<u32char_type_t>((const value_type *) str, len) {}
 	U32String(const uint32 *beginP, const uint32 *endP) : BaseString<u32char_type_t>((const value_type *) beginP, (const value_type *) endP) {}
-#endif
 
 	/** Construct a new string containing the characters between @p beginP (including) and @p endP (excluding). */
 	U32String(const value_type *beginP, const value_type *endP) : BaseString<u32char_type_t>(beginP, endP) {}

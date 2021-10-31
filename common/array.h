@@ -27,10 +27,7 @@
 #include "common/algorithm.h"
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
-
-#ifdef USE_CXX11
 #include "common/initializer_list.h"
-#endif
 
 namespace Common {
 
@@ -99,7 +96,6 @@ public:
 		}
 	}
 
-#ifdef USE_CXX11
 	/**
 	 * Construct an array as a copy of the given array using the C++11 move semantic.
 	 */
@@ -124,7 +120,6 @@ public:
 		if (_storage)
 			Common::uninitialized_copy(list.begin(), list.end(), _storage);
 	}
-#endif
 
 	/**
 	 * Construct an array by copying data from a regular array.
@@ -258,7 +253,6 @@ public:
 		return *this;
 	}
 
-#ifdef USE_CXX11
 	/** Assign the given array to this array using the C++11 move semantic. */
 	Array &operator=(Array<T> &&old) {
 		if (this == &old)
@@ -275,7 +269,6 @@ public:
 
 		return *this;
 	}
-#endif
 
 	/** Return the size of the array. */
 	size_type size() const {
