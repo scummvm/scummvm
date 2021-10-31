@@ -111,9 +111,16 @@ void HypnoEngine::runPlay(Play *a) {
 }
 
 void HypnoEngine::runAmbient(Ambient *a) {
-	if (a->flag == "/BITMAP")
-		loadImage(a->path, a->origin.x, a->origin.y, false);
-	else {
+	if (a->flag == "/BITMAP") {
+		Graphics::Surface *frame = decodeFrame(a->path, a->frameNumber, true);
+		Graphics::Surface *sframe;
+		if (a->fullscreen)
+			sframe = frame->scale(_screenW, _screenH);
+		else
+			sframe = frame;
+		drawImage(*sframe, a->origin.x, a->origin.y, true);
+		//loadImage(a->path, a->origin.x, a->origin.y, false, a->frameNumber);
+	} else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, a->flag == "/LOOP"));
 	}
 }

@@ -56,12 +56,12 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	debugC(1, kHypnoDebugParser, "Parsing %s/%s", prefix.c_str(), filename.c_str());
 	parse_arc(data.c_str());
 	Level level;
-	level.arcade = g_parsedArc;
+	level.arcade = *g_parsedArc;
 	level.arcade.prefix = prefix;
 	_levels[filename] = level;
-	g_parsedArc.background.clear();
-	g_parsedArc.player.clear();
-	g_parsedArc.shoots.clear();
+	g_parsedArc->background.clear();
+	g_parsedArc->player.clear();
+	g_parsedArc->shoots.clear();
 }
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {

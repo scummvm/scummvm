@@ -43,7 +43,7 @@
 namespace Hypno {
 
 Hotspots *g_parsedHots;
-ArcadeShooting g_parsedArc;
+ArcadeShooting *g_parsedArc;
 HypnoEngine *g_hypno;
 
 MVideo::MVideo(Common::String path_, Common::Point position_, bool transparent_, bool scaled_, bool loop_) {
@@ -64,6 +64,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	_rnd = new Common::RandomSource("hypno");
 
 	g_hypno = this;
+	g_parsedArc = new ArcadeShooting();
 	_defaultCursor = "";
 	// Add quit level
 	Hotspot q(MakeMenu, "");
@@ -90,6 +91,8 @@ HypnoEngine::~HypnoEngine() {
 	delete _rnd;
 	_compositeSurface->free();
 	delete _compositeSurface;
+
+	delete g_parsedArc;
 }
 
 void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
@@ -166,13 +169,14 @@ void HypnoEngine::runLevel(Common::String &name) {
 		}
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
-	} else if (!_levels[name].puzzle.name.empty()) {
-		debugC(1, kHypnoDebugScene, "Executing puzzle level %s", name.c_str());
+	} else if (!_levels[name].code.name.empty()) {
+		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());
+		//resetSceneState(); // TODO: is this required?
 		if (!_levels[name].arcade.intro.empty()) {
 			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
-		runPuzzle(_levels[name].puzzle);
+		runCode(_levels[name].code);
 	} else {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s", name.c_str());
 		resetSceneState();
@@ -221,12 +225,12 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
-void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::runCode(Code code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
-void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
+void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, int frameNumber) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d, %d)", __FUNCTION__, name.c_str(), x, y, transparent);
-	Graphics::Surface *surf = decodeFrame(name, 0);
+	Graphics::Surface *surf = decodeFrame(name, frameNumber);
 	drawImage(*surf, x, y, transparent);
 }
 
@@ -273,7 +277,7 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 
 	file = fixSmackerHeader(file);
 
-	Video::SmackerDecoder vd;
+	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
 
@@ -305,7 +309,7 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 
 	file = fixSmackerHeader(file);
 
-	Video::SmackerDecoder vd;
+	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
 
@@ -405,10 +409,12 @@ void HypnoEngine::playVideo(MVideo &video) {
 	if (video.decoder != nullptr)
 		error("Video %s was not previously closed and deallocated", video.path.c_str());
 
-	video.decoder = new Video::SmackerDecoder();
+	video.decoder = new HypnoSmackerDecoder();
 
 	if (!video.decoder->loadStream(file))
 		error("unable to load video %s", path.c_str());
+	
+	debugC(1, kHypnoDebugMedia, "audio track count: %d", video.decoder->getAudioTrackCount()); 
 	video.decoder->start();
 }
 

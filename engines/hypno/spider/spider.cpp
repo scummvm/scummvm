@@ -169,22 +169,22 @@ void SpiderEngine::loadAssetsDemo() {
 	parseScene("sixdemo", "mis/shoctalk.mis");
 
 	Level matrix;
-	matrix.puzzle.name = "sixdemo/puz_matr";
-	matrix.puzzle.intros.push_back("spiderman/demo/aleyc01s.smk");
-	matrix.puzzle.levelIfWin = "sixdemo/mis/demo.mis";
-	matrix.puzzle.levelIfLose = "sixdemo/mis/demo.mis";
+	matrix.code.name = "sixdemo/puz_matr";
+	matrix.code.intros.push_back("spiderman/demo/aleyc01s.smk");
+	matrix.code.levelIfWin = "sixdemo/mis/demo.mis";
+	matrix.code.levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["sixdemo/puz_matr"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
 }
 
-void SpiderEngine::runPuzzle(Puzzle puzzle) {
-	if (puzzle.name == "sixdemo/puz_matr")
-		runMatrix(puzzle);
+void SpiderEngine::runCode(Code code) {
+	if (code.name == "sixdemo/puz_matr")
+		runMatrix(code);
 	else
 		error("invalid puzzle");
 }
 
-void SpiderEngine::runMatrix(Puzzle puzzle) {
+void SpiderEngine::runMatrix(Code code) {
 	Common::Point mousePos;
 	Common::Event event;
 
@@ -251,7 +251,7 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 
 		if (found) {
 			playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
-			_nextLevel = puzzle.levelIfWin;
+			_nextLevel = code.levelIfWin;
 			return;
 		}
 

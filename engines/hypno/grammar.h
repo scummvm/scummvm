@@ -35,6 +35,11 @@
 
 namespace Hypno {
 
+class HypnoSmackerDecoder : public Video::SmackerDecoder {
+public:
+	bool loadStream(Common::SeekableReadStream *stream) override;
+};
+
 typedef Common::String Filename;
 typedef Common::List<Filename> Filenames;
 
@@ -80,7 +85,7 @@ public:
 	bool scaled;
 	bool transparent;
 	bool loop;
-	Video::SmackerDecoder *decoder;
+	HypnoSmackerDecoder *decoder;
 	const Graphics::Surface *currentFrame;
 };
 
@@ -194,11 +199,13 @@ public:
 		path = path_;
 		origin = origin_;
 		flag = flag_;
-		// TODO fullscreen should be enable or not by default?
+		fullscreen = false;
+		frameNumber = 0;
 	}
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
+	uint32 frameNumber;
 	bool fullscreen;
 };
 
@@ -296,7 +303,7 @@ public:
 	Filenames intros;
 };
 
-class Puzzle {
+class Code {
 public:
 	Common::String name;
 	Filenames intros;
@@ -341,12 +348,12 @@ public:
 	Transition trans;
 	Scene scene;
 	ArcadeShooting arcade;
-	Puzzle puzzle;
+	Code code;
 };
 
 typedef Common::HashMap<Filename, Level> Levels;
 extern Hotspots *g_parsedHots;
-extern ArcadeShooting g_parsedArc;
+extern ArcadeShooting *g_parsedArc;
 
 } // End of namespace Hypno
 
