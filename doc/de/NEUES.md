@@ -4,6 +4,9 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.6.0 (DD.MM.YYYY)
 
+ Allgemein:
+   - ScummVM benötigt nun C++11, um gebaut werden zu können.
+
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
