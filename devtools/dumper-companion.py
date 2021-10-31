@@ -542,6 +542,7 @@ def test_decode_name():
         ["Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"],
         ["G3フォルダ", "xn--G3-3g4axdtexf"],
         ["Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|\"(everything)/\":*|\\?%<>,;=", "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa"],
+        ["Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h"],
     ]
     for input, output in checks:
         assert punyencode(input) == output

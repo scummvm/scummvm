@@ -22,6 +22,7 @@ static const char *strings[] = {
 	"G3フォルダ", "xn--G3-3g4axdtexf", "1",
 	"Big[test]", "Big[test]", "0",
 	"Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|\"(everything)/\":*|\\?%<>,;=", "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa", "1",
+	"Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h", "1",
 	0
 };
 class PunycodeTestSuite : public CxxTest::TestSuite {
