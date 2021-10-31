@@ -169,12 +169,11 @@ void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
 	// Set the master volume in range from -128 to 127
 	_masterVolume = CLIP<int>(-128 + volume, -128, 127);
 	for (int i = 0; i < AGOS_ADLIB_VOICES_COUNT; i++) {
-		// Adjust channel volume with the master volume and re-set registers
-		byte adjustedVelocity = _channels[i].velocity * ((float) (128 + _masterVolume) / 128);
-		noteOnSetVolume(i, 1, adjustedVelocity);
+		// Re-set registers
+		noteOnSetVolume(i, 1, _channels[i].velocity);
 		if (i <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
 			// Set second operator for FM voices + first percussion
-			noteOnSetVolume(i, 2, adjustedVelocity);
+			noteOnSetVolume(i, 2, _channels[i].velocity);
 		}
 	}
 }
@@ -290,12 +289,11 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 	byte regValueB0h      = 0;
 
 	// adjust velocity
-	int16 channelVolumeAdjust = velocity + _channels[FMvoiceChannel].volumeAdjust;
-	// adjust velocity with the master volume
-	channelVolumeAdjust = (channelVolumeAdjust * (128 + _masterVolume)) / 128;
-	channelVolumeAdjust = CLIP<int16>(channelVolumeAdjust, 0, 0x7F);
+	int16 volumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
+	volumeAdjust += velocity;
+	volumeAdjust = CLIP<int16>(volumeAdjust, 0, 0x7F);
 
-	byte adjustedVelocity = channelVolumeAdjust;
+	byte adjustedVelocity = volumeAdjust;
 
 	if (!_musicDrvMode) {
 		// INSTR.DAT
@@ -432,10 +430,13 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 
 // 100% the same for INSTR.DAT and MUSIC.DRV variants
 // except for a bug, that was introduced for MUSIC.DRV
-void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operatorNr, byte adjustedVelocity) {
+void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operatorNr, byte velocity) {
 	byte operatorReg = 0;
 	byte regValue40h = 0;
 	const InstrumentEntry *curInstrument = NULL;
+
+	// Adjust velocity with the master volume
+	uint16 adjustedVelocity = (velocity * (128 + _masterVolume)) / 256;
 
 	regValue40h = (63 - adjustedVelocity) & 0x3F;
 
