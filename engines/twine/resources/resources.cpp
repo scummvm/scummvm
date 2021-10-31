@@ -211,6 +211,13 @@ const Trajectory *Resources::getTrajectory(int index) const {
 	return _trajectories.getTrajectory(index);
 }
 
+int Resources::findSmkMovieIndex(const char *name) const {
+	Common::String smkName = name;
+	smkName.toLowercase();
+	const Common::Array<int32> &info = getMovieInfo(smkName);
+	return info[0];
+}
+
 void Resources::loadMovieInfo() {
 	uint8 *content = nullptr;
 	int32 size;
@@ -228,7 +235,7 @@ void Resources::loadMovieInfo() {
 	Common::StringTokenizer tok(str, "\r\n");
 	int videoIndex = 0;
 	while (!tok.empty()) {
-		const Common::String &line = tok.nextToken();
+		Common::String line = tok.nextToken();
 		if (_engine->isLBA1()) {
 			Common::StringTokenizer lineTok(line);
 			if (lineTok.empty()) {
@@ -243,8 +250,15 @@ void Resources::loadMovieInfo() {
 			}
 			_movieInfo.setVal(name, frames);
 		} else {
-			Common::Array<int32> info(videoIndex);
+			Common::Array<int32> info(1);
+			info[0] = videoIndex;
+			line.toLowercase();
+			if (line.hasSuffix(".smk")) {
+				line = line.substr(0, line.size() - 4);
+			}
 			_movieInfo.setVal(line, info);
+			debug(4, "movie name %s mapped to hqr index %i", line.c_str(), videoIndex);
+			++videoIndex;
 		}
 	}
 }

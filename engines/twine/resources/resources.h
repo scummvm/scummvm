@@ -189,6 +189,8 @@ public:
 
 	const TextEntry *getText(TextBankId textBankId, TextId index) const;
 
+	int findSmkMovieIndex(const char *name) const;
+
 	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";
 	// dialoges

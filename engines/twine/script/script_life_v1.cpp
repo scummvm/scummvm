@@ -1199,7 +1199,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 		}
 	} while (true);
 
-	engine->_flaMovies->playFlaMovie(movie);
+	engine->_movie->playMovie(movie);
 	engine->setPalette(engine->_screens->_paletteRGBA);
 	engine->_screens->clearScreen();
 

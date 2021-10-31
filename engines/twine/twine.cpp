@@ -131,6 +131,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vox");
 	if (isLBA2()) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	}
 	if (isDotEmuEnhanced()) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
@@ -162,7 +163,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_movements = new Movements(this);
 	_interface = new Interface(this);
 	_menu = new Menu(this);
-	_flaMovies = new Movies(this);
+	_movie = new Movies(this);
 	_menuOptions = new MenuOptions(this);
 	_music = new Music(this);
 	_redraw = new Redraw(this);
@@ -193,7 +194,7 @@ TwinEEngine::~TwinEEngine() {
 	delete _movements;
 	delete _interface;
 	delete _menu;
-	delete _flaMovies;
+	delete _movie;
 	delete _menuOptions;
 	delete _music;
 	delete _redraw;
@@ -244,8 +245,8 @@ Common::Error TwinEEngine::run() {
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
 
 	syncSoundSettings();
-	int32 w = ORIGINAL_WIDTH;
-	int32 h = ORIGINAL_HEIGHT;
+	int32 w = originalWidth();
+	int32 h = originalHeight();
 	const bool highRes = ConfMan.getBool("usehighres");
 	if (highRes) {
 		w = 1024;
@@ -374,7 +375,8 @@ void TwinEEngine::autoSave() {
 void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-	_imageBuffer.create(ORIGINAL_WIDTH, ORIGINAL_HEIGHT, format); // original lba1 resolution for a lot of images.
+	// original resolution of the game
+	_imageBuffer.create(originalWidth(), originalHeight(), format);
 
 	_workVideoBuffer.create(w, h, format);
 	_frontVideoBuffer.create(w, h, format);
@@ -517,9 +519,9 @@ void TwinEEngine::initEngine() {
 
 	if (!abort) {
 		if (isLBA1()) {
-			_flaMovies->playFlaMovie(FLA_DRAGON3);
+			_movie->playMovie(FLA_DRAGON3);
 		} else {
-			_flaMovies->playSmkMovie(16);
+			_movie->playMovie("INTRO");
 		}
 	}
 	_input->enableKeyMap(uiKeyMapId);
@@ -714,7 +716,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	readKeys();
 
 	if (!_queuedFlaMovie.empty()) {
-		_flaMovies->playFlaMovie(_queuedFlaMovie.c_str());
+		_movie->playMovie(_queuedFlaMovie.c_str());
 		_queuedFlaMovie.clear();
 	}
 
@@ -1153,6 +1155,10 @@ void TwinEEngine::drawText(int32 x, int32 y, const Common::String &text, bool ce
 	                 x, y, width,
 	                 _frontVideoBuffer.format.RGBToColor(255, 255, 255),
 	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, true);
+}
+
+Common::Language TwinEEngine::getGameLang() const {
+	return _gameLang;
 }
 
 const char *TwinEEngine::getGameId() const {

@@ -81,7 +81,7 @@ void MenuOptions::newGame() {
 
 	if (!aborted) {
 		_engine->_music->playMidiMusic(1);
-		_engine->_flaMovies->playFlaMovie(FLA_INTROD);
+		_engine->_movie->playMovie(FLA_INTROD);
 	}
 
 	_engine->_text->textClipSmall();
@@ -114,7 +114,7 @@ void MenuOptions::showCredits() {
 }
 
 void MenuOptions::showEndSequence() {
-	_engine->_flaMovies->playFlaMovie(FLA_THEEND);
+	_engine->_movie->playMovie(FLA_THEEND);
 
 	_engine->_screens->clearScreen();
 	_engine->setPalette(_engine->_screens->_paletteRGBA);

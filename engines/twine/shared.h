@@ -533,7 +533,16 @@ enum class TextId : int16 {
 	kCustomHighResOptionOn = -2,
 	kCustomHighResOptionOff = -3,
 	kCustomWallCollisionOn = -4,
-	kCustomWallCollisionOff = -5
+	kCustomWallCollisionOff = -5,
+
+	// ------ lba2
+
+	toContinueGame = 70,
+	toNewGame = 71,
+	toLoadGame = 72,
+	toSauver = 73,
+	toOptions = 74,
+	toQuit = 75
 };
 
 enum InventoryItems {

@@ -23,6 +23,8 @@
 #include "twine/movies.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/language.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 #include "image/gif.h"
@@ -353,11 +355,14 @@ void Movies::playGIFMovie(const char *flaName) {
 	}
 }
 
-bool Movies::playFlaMovie(const char *flaName) {
-	assert(_engine->isLBA1());
+bool Movies::playMovie(const char *name) {
+	if (_engine->isLBA2()) {
+		const int index = _engine->_resources->findSmkMovieIndex(name);
+		return playSmkMovie(name, index);
+	}
 	_engine->_sound->stopSamples();
 
-	Common::String fileNamePath = Common::String::format("%s", flaName);
+	Common::String fileNamePath = name;
 	const size_t n = fileNamePath.findLastOf(".");
 	if (n != Common::String::npos) {
 		fileNamePath.erase(n);
@@ -399,7 +404,7 @@ bool Movies::playFlaMovie(const char *flaName) {
 	if (version != MKTAG('V', '1', '.', '3')) {
 		int32 currentFrame = 0;
 
-		debug("Play fla: %s", flaName);
+		debug("Play fla: %s", name);
 
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
@@ -451,19 +456,59 @@ bool Movies::playFlaMovie(const char *flaName) {
 	return finished;
 }
 
-void Movies::playSmkMovie(int index) {
+class TwineSmackerDecoder : public Video::SmackerDecoder {
+public:
+	void enableLanguage(int track, int volume) {
+		AudioTrack* audio = getAudioTrack(track);
+		if (audio == nullptr) {
+			return;
+		}
+		audio->setMute(false);
+		audio->setVolume(CLIP<int>(volume, 0, Audio::Mixer::kMaxMixerVolume));
+	}
+};
+
+bool Movies::playSmkMovie(const char *name, int index) {
 	assert(_engine->isLBA2());
-	Video::SmackerDecoder decoder;
+	TwineSmackerDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(TwineResource(Resources::HQR_VIDEO_FILE, index));
 	if (stream == nullptr) {
 		warning("Failed to find smacker video %i", index);
-		return;
+		return false;
 	}
 	if (!decoder.loadStream(stream)) {
 		warning("Failed to load smacker video %i", index);
-		return;
+		return false;
 	}
+	const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	decoder.setVolume(CLIP<int>(volume, 0, Audio::Mixer::kMaxMixerVolume));
 	decoder.start();
+
+	decoder.setAudioTrack(0); // music
+	if (_engine->_cfgfile.Voice) {
+		int additionalAudioTrack = -1;
+		if (!scumm_strnicmp(name, "INTRO", 5)) {
+			switch (_engine->getGameLang()) {
+			default:
+			case Common::Language::EN_ANY:
+			case Common::Language::EN_GRB:
+			case Common::Language::EN_USA:
+				additionalAudioTrack = 3;
+				break;
+			case Common::Language::DE_DEU:
+				additionalAudioTrack = 2;
+				break;
+			case Common::Language::FR_FRA:
+				additionalAudioTrack = 1;
+				break;
+			}
+		}
+		const int speechVolume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+		debug(3, "Play additional speech track: %i (of %i tracks)", additionalAudioTrack, decoder.getAudioTrackCount());
+		decoder.enableLanguage(additionalAudioTrack, speechVolume);
+	} else {
+		debug(3, "Disabled smacker speech");
+	}
 
 	for (;;) {
 		if (decoder.endOfVideo()) {
@@ -491,6 +536,7 @@ void Movies::playSmkMovie(int index) {
 	}
 
 	decoder.close();
+	return true;
 }
 
 } // namespace TwinE

@@ -79,13 +79,22 @@ enum MenuButtonTypesEnum {
 
 namespace _priv {
 
-static MenuSettings createMainMenu() {
+static MenuSettings createMainMenu(bool lba1) {
 	MenuSettings settings;
 	settings.setButtonsBoxHeight(200);
-	settings.addButton(TextId::kNewGame);
-	settings.addButton(TextId::kContinueGame);
-	settings.addButton(TextId::kOptions);
-	settings.addButton(TextId::kQuit);
+	if (lba1) {
+		settings.addButton(TextId::kNewGame);
+		settings.addButton(TextId::kContinueGame);
+		settings.addButton(TextId::kOptions);
+		settings.addButton(TextId::kQuit);
+	} else {
+		settings.addButton(TextId::toContinueGame);
+		settings.addButton(TextId::toNewGame);
+		settings.addButton(TextId::toLoadGame);
+		settings.addButton(TextId::toSauver);
+		settings.addButton(TextId::toOptions);
+		settings.addButton(TextId::toQuit);
+	}
 	return settings;
 }
 
@@ -106,7 +115,7 @@ static MenuSettings createGiveUpSaveMenu() {
 	return settings;
 }
 
-static MenuSettings createOptionsMenu() {
+static MenuSettings createOptionsMenu(bool lba1) {
 	MenuSettings settings;
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kVolumeSettings);
@@ -160,12 +169,12 @@ const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	_optionsMenuState = _priv::createOptionsMenu();
+	_optionsMenuState = _priv::createOptionsMenu(engine->isLBA1());
 	_giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
 	_volumeMenuState = _priv::createVolumeMenu();
 	_saveManageMenuState = _priv::createSaveManageMenu();
 	_giveUpMenuState = _priv::createGiveUpMenu();
-	_mainMenuState = _priv::createMainMenu();
+	_mainMenuState = _priv::createMainMenu(engine->isLBA1());
 	_advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
 	Common::fill(&_behaviourAnimState[0], &_behaviourAnimState[4], 0);
@@ -591,12 +600,14 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			startMillis = loopMillis;
 		}
 		if (showCredits && loopMillis - startMillis > 11650) {
+			// TODO: lba2 only show the credits only in the main menu and you could force it by pressing shift+c
+			// TODO: lba2 has a cd audio track (2) for the credits
 			_engine->_menuOptions->showCredits();
-			if (_engine->_flaMovies->playFlaMovie(FLA_DRAGON3)) {
+			if (_engine->_movie->playMovie(FLA_DRAGON3)) {
 				if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 15, 16), 3)) {
 					if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 17, 18), 3)) {
 						if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 19, 20), 3)) {
-							if (_engine->_flaMovies->playFlaMovie(FLA_BATEAU)) {
+							if (_engine->_movie->playMovie(FLA_BATEAU)) {
 								if (_engine->_cfgfile.Version == USA_VERSION) {
 									_engine->_screens->loadImageDelay(_engine->_resources->relentLogo(), 3);
 								} else {
@@ -766,23 +777,30 @@ EngineState Menu::run() {
 	FrameMarker frame(_engine);
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
-	_engine->_music->playTrackMusic(9); // LBA's Theme
+	if (_engine->isLBA1()) {
+		_engine->_music->playTrackMusic(9); // LBA's Theme
+	} else {
+		_engine->_music->playTrackMusic(6); // LBA2's Theme
+	}
 	_engine->_sound->stopSamples();
 
 	ScopedCursor scoped(_engine);
 	switch (processMenu(&_mainMenuState)) {
+	case (int32)TextId::toNewGame:
 	case (int32)TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
 		}
 		break;
 	}
+	case (int32)TextId::toContinueGame:
 	case (int32)TextId::kContinueGame: {
 		if (_engine->_menuOptions->continueGameMenu()) {
 			return EngineState::LoadedGame;
 		}
 		break;
 	}
+	case (int32)TextId::toOptions:
 	case (int32)TextId::kOptions: {
 		optionsMenu();
 		break;
@@ -792,6 +810,7 @@ EngineState Menu::run() {
 		break;
 	}
 	case (int32)TextId::kQuit:
+	case (int32)TextId::toQuit:
 	case kQuitEngine:
 		debug("quit the game");
 		return EngineState::QuitGame;

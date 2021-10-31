@@ -95,17 +95,17 @@ private:
 	void prepareGIF(int index);
 	void playGIFMovie(const char *flaName);
 
+	bool playSmkMovie(const char *name, int index);
+
 public:
 	Movies(TwinEEngine *engine);
 
 	/**
 	 * Play FLA movies
-	 * @param flaName FLA movie name
+	 * @param name FLA movie name
 	 * @return @c true if finished. @c false if aborted.
 	 */
-	bool playFlaMovie(const char *flaName);
-
-	void playSmkMovie(int index);
+	bool playMovie(const char *name);
 };
 
 } // namespace TwinE

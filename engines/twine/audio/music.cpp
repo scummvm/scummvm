@@ -35,8 +35,6 @@
 
 namespace TwinE {
 
-/** MP3 music folder */
-#define MUSIC_FOLDER "music"
 /**
  * LBA1 default number of tracks
  * <pre>
@@ -62,7 +60,6 @@ namespace TwinE {
  *    INDEX 01 32:04:62
  * </pre>
  */
-#define NUM_CD_TRACKS 10
 
 TwinEMidiPlayer::TwinEMidiPlayer(TwinEEngine* engine) : _engine(engine) {
 	MidiPlayer::createDriver();
@@ -123,10 +120,58 @@ void Music::musicFadeOut() {
 	musicVolume(volume);
 }
 
+static const char *musicTracksLba2[] = {
+	""
+	"",
+	"TADPCM1",
+	"TADPCM2",
+	"TADPCM3",
+	"TADPCM4",
+	"TADPCM5",
+	"JADPCM01",
+	"",	// Track6.wav
+	"JADPCM02",
+	"JADPCM03",
+	"JADPCM04",
+	"JADPCM05",
+	"JADPCM06",
+	"JADPCM07",
+	"JADPCM08",
+	"JADPCM09",
+	"JADPCM10",
+	"JADPCM11",
+	"JADPCM12",
+	"JADPCM13",
+	"JADPCM14",
+	"JADPCM15",
+	"JADPCM16",
+	"JADPCM17",
+	"JADPCM18",
+	"LOGADPCM"
+};
+
 bool Music::playTrackMusicCd(int32 track) {
 	if (!_engine->_cfgfile.UseCD) {
 		return false;
 	}
+
+	if (_engine->isLBA2()) {
+		const char *basename = musicTracksLba2[track];
+		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(basename);
+		if (stream != nullptr) {
+			const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+			_engine->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_midiHandle,
+						Audio::makeLoopingAudioStream(stream, 1), volume);
+			debug(3, "Play audio track %s for track id %i", basename, track);
+			return true;
+		}
+		debug(3, "Failed to find a supported format for audio track: %s", basename);
+		// TODO: are there versions with real audio cd?
+		// us release starting at track 0
+		// other releases at track 6
+		return false;
+	}
+
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
 	return cdrom->play(track, 1, 0, 0);
 }
@@ -199,7 +244,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		stopMidiMusic();
 	}
 
-	if (_engine->_gameFlags & TF_DOTEMU_ENHANCED) {
+	if (_engine->isDotEmuEnhanced()) {
 		const Common::String &trackName = Common::String::format("lba1-%02i", midiIdx);
 		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
 		if (stream != nullptr) {

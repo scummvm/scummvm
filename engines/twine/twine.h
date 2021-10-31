@@ -248,6 +248,7 @@ public:
 	bool isDotEmuEnhanced() const { return (_gameFlags & TwinE::TF_DOTEMU_ENHANCED) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
 	const char *getGameId() const;
+	Common::Language getGameLang() const;
 
 	bool unlockAchievement(const Common::String &id);
 
@@ -260,7 +261,7 @@ public:
 	Movements *_movements;
 	Interface *_interface;
 	Menu *_menu;
-	Movies *_flaMovies;
+	Movies *_movie;
 	MenuOptions *_menuOptions;
 	Music *_music;
 	Redraw *_redraw;
@@ -299,6 +300,11 @@ public:
 
 	int width() const;
 	int height() const;
+
+	// the resolution the game was meant to be played with
+	int originalWidth() const;
+	int originalHeight() const;
+
 	Common::Rect rect() const;
 	Common::Rect centerOnScreen(int32 w, int32 h) const;
 	Common::Rect centerOnScreenX(int32 w, int32 y, int32 h) const;
@@ -386,6 +392,15 @@ inline int TwinEEngine::height() const {
 inline Common::Rect TwinEEngine::rect() const {
 	return Common::Rect(0, 0, _frontVideoBuffer.w - 1, _frontVideoBuffer.h - 1);
 }
+
+inline int TwinEEngine::originalWidth() const {
+	return 640;
+}
+
+inline int TwinEEngine::originalHeight() const {
+	return 480;
+}
+
 
 } // namespace TwinE
 
