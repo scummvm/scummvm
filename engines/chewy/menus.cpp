@@ -30,7 +30,7 @@ namespace Chewy {
 void r44_look_news();
 void r58_look_cut_mag(int16 r_nr);
 
-int16 hot_inventar[HOT_INVENT_ANZ][4] = {
+static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
 
 	{WIN_INF_X + 6, WIN_INF_Y + 10, WIN_INF_X + 6 + 30, WIN_INF_Y + 10 + 14},
 
@@ -54,6 +54,7 @@ int16 tmp_menu;
 int16 inv_rand_x;
 int16 inv_rand_y;
 int16 show_invent_menu;
+static int keyVal;
 
 void plot_main_menu() {
 	static const int IMAGES[] = { 7, 8, 9, 10, 12, 11 };
@@ -130,15 +131,17 @@ void plot_inventar_menu() {
 	out->setze_zeiger(workptr);
 	build_menu(WIN_INVENTAR);
 
-	for (j = 0; j < 3; j++)
+	for (j = 0; j < 3; j++) {
 		for (i = 0; i < 5; i++)
 			out->box_fill(WIN_INF_X + 14 + i * 54, WIN_INF_Y + 6 + 30 + j * 32,
-			               WIN_INF_X + 14 + i * 54 + 40, WIN_INF_Y + 6 + 30 + j * 32 + 24, 12);
-	k = in->maus_vector(minfo.x, minfo.y, (int16 *)hot_inventar, HOT_INVENT_ANZ);
+			    WIN_INF_X + 14 + i * 54 + 40, WIN_INF_Y + 6 + 30 + j * 32 + 24, 12);
+	}
+
+	k = in->maus_vector(minfo.x, minfo.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 	if (k != -1) {
 		if (k < 5)
-			out->box_fill(hot_inventar[k][0], hot_inventar[k][1],
-			               hot_inventar[k][2] + 1, hot_inventar[k][3] + 5, 41);
+			out->box_fill(INVENTORY_HOTSPOTS[k][0], INVENTORY_HOTSPOTS[k][1],
+			               INVENTORY_HOTSPOTS[k][2] + 1, INVENTORY_HOTSPOTS[k][3] + 5, 41);
 		else {
 			x = (minfo.x - (WIN_INF_X)) / 54;
 			y = (minfo.y - (WIN_INF_Y + 4 + 30)) / 30;
@@ -201,15 +204,15 @@ void invent_menu() {
 	int16 menu_flag1;
 	int16 maus_flag;
 	int16 taste_flag;
-
 	int16 i, k;
-
 	int16 abfrage;
 	int16 tmp, tmp1;
 	int16 disp_tmp;
 	int16 ret_look;
 	int16 ani_tmp;
 	int16 menu_first;
+
+	keyVal = 0;
 	flags.InventMenu = true;
 	disp_tmp = spieler.DispFlag;
 	spieler.DispFlag = false;
@@ -235,14 +238,17 @@ void invent_menu() {
 		invent_cur_mode = CUR_USE;
 		cursor_wahl(CUR_USE);
 	}
+
 	menu_flag1 = MENU_EINBLENDEN;
 	taste_flag = 28;
 	kbinfo.key_code = '\0';
 	maus_flag = 1;
+
 	for (i = 0; i < 3; i++) {
 		ani_invent_delay[i][0] = 30000;
 		ani_count[i] = ani_invent_anf[i];
 	}
+
 	ret_look = -1;
 	menu_first = false;
 	show_invent_menu = 1;
@@ -250,21 +256,27 @@ void invent_menu() {
 	while (show_invent_menu == 1 && !SHOULD_QUIT) {
 		if (!minfo.button)
 			maus_flag = 0;
-		if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+		if (minfo.button == 1 || kbinfo.key_code == ENTER || keyVal) {
 			if (!maus_flag) {
 				maus_flag = 1;
 				kbinfo.key_code = '\0';
-				k = in->maus_vector(minfo.x, minfo.y, (int16 *)hot_inventar, HOT_INVENT_ANZ);
-				if (in->hot_key == F1_KEY)
+
+				k = in->maus_vector(minfo.x, minfo.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+				if (keyVal == F1_KEY)
 					k = 0;
-				else if (in->hot_key == F2_KEY)
+				else if (keyVal == F2_KEY)
 					k = 1;
+				else if (keyVal == ENTER)
+					k = 5;
+
+				keyVal = 0;
+
 				switch (k) {
 				case 0:
 					invent_cur_mode = CUR_USE;
 					menu_item = CUR_USE;
 					if (spieler.AkInvent == -1) {
-						cursor_wahl(invent_cur_mode);
+						cursor_wahl(CUR_USE);
 					} else {
 						cursor_wahl(CUR_AK_INVENT);
 					}
@@ -280,7 +292,7 @@ void invent_menu() {
 					} else {
 						invent_cur_mode = CUR_LOOK;
 						menu_item = CUR_LOOK;
-						cursor_wahl(invent_cur_mode);
+						cursor_wahl(CUR_LOOK);
 					}
 					break;
 
@@ -299,9 +311,7 @@ void invent_menu() {
 					k += spieler.InventY * 5;
 					if (invent_cur_mode == CUR_USE) {
 						if (spieler.AkInvent == -1) {
-
 							if (spieler.InventSlot[k] != -1) {
-
 								if (calc_use_invent(spieler.InventSlot[k]) == false) {
 									menu_item = CUR_USE;
 									spieler.AkInvent = spieler.InventSlot[k];
@@ -320,10 +330,7 @@ void invent_menu() {
 								cursor_wahl(invent_cur_mode);
 							}
 						}
-					}
-
-					else if (invent_cur_mode == CUR_LOOK) {
-
+					} else if (invent_cur_mode == CUR_LOOK) {
 						if (spieler.InventSlot[k] != -1) {
 							if (calc_use_invent(spieler.InventSlot[k]) == false) {
 								spieler.AkInvent = spieler.InventSlot[k];
@@ -336,6 +343,8 @@ void invent_menu() {
 					}
 					break;
 
+				default:
+					break;
 				}
 			}
 		} else if (minfo.button == 2 || kbinfo.key_code == ESC) {
@@ -346,33 +355,34 @@ void invent_menu() {
 		}
 
 		if (ret_look == 0) {
-
 			invent_cur_mode = CUR_USE;
 			menu_item = CUR_USE;
 			if (spieler.AkInvent == -1)
-				cursor_wahl(invent_cur_mode);
+				cursor_wahl(CUR_USE);
 			else
 				cursor_wahl(CUR_AK_INVENT);
-		}
-		else if (ret_look == 5) {
+		} else if (ret_look == 5) {
 			taste_flag = false;
 			maus_flag = 0;
 			minfo.button = 1;
+			keyVal = ENTER;
 		}
+
 		ret_look = -1;
 		abfrage = in->get_switch_code();
 		cur->hide_cur();
+
 		if (taste_flag) {
 			if (abfrage != taste_flag)
 				taste_flag = 0;
 		} else {
 			switch (abfrage) {
 			case F1_KEY:
-				in->hot_key = F1_KEY;
+				keyVal = F1_KEY;
 				break;
 
 			case F2_KEY:
-				in->hot_key = F2_KEY;
+				keyVal = F2_KEY;
 				break;
 
 			case ESC:
@@ -428,9 +438,12 @@ void invent_menu() {
 				kbinfo.key_code = '\0';
 				break;
 
+			default:
+				break;
 			}
 			menu_first = true;
 		}
+
 		if (show_invent_menu != 2) {
 			set_up_screen(NO_SETUP);
 			cur->move(minfo.x, minfo.y);
@@ -450,17 +463,20 @@ void invent_menu() {
 			menu_flag1 = false;
 			out->set_clip(0, 0, 320, 200);
 			out->back2screen(workpage);
-		} else
+		} else {
 			show_cur();
+		}
 	}
+
 	cur->move(maus_old_x, maus_old_y);
 	minfo.x = maus_old_x;
 	minfo.y = maus_old_y;
-	while (in->get_switch_code() == ESC) {
+	while (in->get_switch_code() == ESC && !SHOULD_QUIT) {
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
 		out->back2screen(workpage);
 	}
+
 	in->speed(tmp, tmp * 2);
 	flags.InventMenu = false;
 	flags.AutoAniPlay = ani_tmp;
@@ -516,7 +532,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		ende = 1;
 	while (!ende) {
 
-		rect = in->maus_vector(minfo.x, minfo.y, (int16 *)hot_inventar, HOT_INVENT_ANZ);
+		rect = in->maus_vector(minfo.x, minfo.y, (int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 		if (minfo.button) {
 			if (minfo.button == 2) {
 				if (!maus_flag)

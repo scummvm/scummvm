@@ -105,7 +105,7 @@ enum SetupScreenMode {
 #define WIN_LOOK_X 30
 #define WIN_LOOK_Y 150
 #define PFEIL_UP 26
-#define HOT_INVENT_ANZ 8
+#define INVENTORY_HOTSPOTS_COUNT 8
 #define HOT_LOOK_ANZ 2
 #define MES_RAHMEN 1
 #define MES_NO_RAHMEN 2
