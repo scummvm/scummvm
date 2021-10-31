@@ -4742,8 +4742,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan
 	MACGAME1_l("jonssonligan1", "", "Starta Jonssonligan", "0944b962ebb00f4b5d5149d220f8449b", 113750, Common::SE_SWE, 702),
-	WINGAME1_l("jonssonligan1", "", "xn--Jnssonligan.exe-zya4t",					"7c18c9a6af2694156bf09ed195c1ab09", 2432602, Common::SE_SWE, 702),
-	WINGAME1_l("jonssonligan2", "", "xn--Jnssonligan gr p djupet.exe-83ad70c4mnae", "6213518ca81bb9e7397b408a8f38703d", 3374107, Common::SE_SWE, 702),
+	WINGAME1_l("jonssonligan1", "", "xn--Jnssonligan.exe-8sb", "7c18c9a6af2694156bf09ed195c1ab09", 2432602, Common::SE_SWE, 702),
+	WINGAME1_l("jonssonligan2", "", "xn--Jnssonligan gr p djupet.exe-glcd70c", "6213518ca81bb9e7397b408a8f38703d", 3374107, Common::SE_SWE, 702),
 
 	// Plays QuickTime movie then opens webpage (still works in 2021)
 	WINGAME2("jsa", "Demo", "Projector.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2289485,
