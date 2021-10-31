@@ -532,6 +532,17 @@ def test_decode_name():
         ["ends with space ", "xn--ends with space -"],
         ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
         ["Hello*", "xn--Hello-la10a"],
+        ["File I/O", "xn--File IO-oa82b"],
+        ["HDにｺﾋﾟｰして下さい。G3", "xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k"],
+        ["Buried in Time™ Demo", "xn--Buried in Time Demo-eo0l"],
+        ["•Main Menu", "xn--Main Menu-zd0e"],
+        ["Spaceship Warlock™", "xn--Spaceship Warlock-306j"],
+        ["ワロビージャックの大冒険<デモ>", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u"],
+        ["Jönssonligan går på djupet.exe", "xn--Jnssonligan gr p djupet.exe-glcd70c"],
+        ["Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"],
+        ["G3フォルダ", "xn--G3-3g4axdtexf"],
+#        ["Big[test]", "Big[test]"],
+        ["Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|\"(everything)/\":*|\\?%<>,;=", "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa"],
     ]
     for input, output in checks:
         assert punyencode(input) == output
