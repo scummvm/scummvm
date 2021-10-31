@@ -720,8 +720,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	if (_scene->_needChangeScene > -1) {
 		if (!isMod() && isDemo() && isLBA1()) {
-			// the demo only has these two scenes
-			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel) {
+			// the demo only has these scenes
+			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison
+			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel
+			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
+				// TODO: PlayMidiFile(6);
+				// TODO: Credits();
 				return 1;
 			}
 		}
