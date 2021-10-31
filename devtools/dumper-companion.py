@@ -541,7 +541,6 @@ def test_decode_name():
         ["Jönssonligan går på djupet.exe", "xn--Jnssonligan gr p djupet.exe-glcd70c"],
         ["Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"],
         ["G3フォルダ", "xn--G3-3g4axdtexf"],
-#        ["Big[test]", "Big[test]"],
         ["Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|\"(everything)/\":*|\\?%<>,;=", "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa"],
     ]
     for input, output in checks:
@@ -556,6 +555,7 @@ def test_needs_punyencoding():
         ["バッドデイ(Power PC)", False],
         ["ends_with_dot .", True],
         ["ends_with_space ", True],
+        ["Big[test]", False]
     ]
     for input, expected in checks:
         assert needs_punyencoding(input) == expected
