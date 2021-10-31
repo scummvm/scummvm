@@ -272,7 +272,6 @@ void WetEngine::runMainMenu(Code code) {
 	Common::Event event;
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	uint32 c = _pixelFormat.RGBToColor(0, 252, 0);
-	uint32 position = 140;
 	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, true);
 	Common::String _name = "";
 	//Graphics::Surface *sframe = frame->scale(_screenW, _screenH);

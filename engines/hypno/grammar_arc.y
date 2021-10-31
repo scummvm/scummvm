@@ -74,15 +74,15 @@ using namespace Hypno;
 %%
 
 start: YXTOK header ZTOK RETTOK body XTOK
-    | RETTOK start
+	| RETTOK start
 	;
 
 header: hline header
-    | RETTOK header
+	| RETTOK header
 	| /* nothing */
 	; 
 
-hline:  CTOK NUM {
+hline: 	CTOK NUM {
 		g_parsedArc->id = $2; 
 		debugC(1, kHypnoDebugParser, "C %d", $2); }
 	| FTOK NUM { debugC(1, kHypnoDebugParser, "F %d", $2); }
