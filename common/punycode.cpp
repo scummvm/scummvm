@@ -57,7 +57,7 @@ namespace Common {
 #define DAMP 700
 #define INITIAL_N 128
 #define INITIAL_BIAS 72
-#define SMAX 0x10ffff // maximum Unicode code point
+#define SMAX 2147483647 // maximum Unicode code point
 
 #define SPECIAL_SYMBOLS "/\":*|\\?%<>"
 
