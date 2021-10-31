@@ -160,6 +160,9 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			case QuitAction:
 				runQuit((Quit *)action);
 			break;
+			case AmbientAction: 
+				runAmbient((Ambient *)action);
+			break;
 			case PaletteAction:
 				debugC(1, kHypnoDebugScene, "runPalette unimplemented");
 			break;
@@ -222,7 +225,7 @@ void HypnoEngine::runTransition(Transition trans) {
 		sframe->free();
 		delete sframe;
 		Common::String *ptr = new Common::String(trans.level);
-		if (!installTimer(2 * 1000000, ptr))
+		if (!installTimer(2 * 1000000, ptr)) // 2 seconds
 			error("Failed to install timer");
 	} else
 		_nextLevel = trans.level;

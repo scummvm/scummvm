@@ -75,21 +75,17 @@ void WetEngine::drawPlayer() {
 	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + 1, true);
 }
 
-static const int uiPos[2][3][2] = {
-	{{70, 160}, {180, 160}, {220, 185}}, // c31
-	{{60, 167}, {190, 167}, {135, 187}}, // c52
-};
-
 void WetEngine::drawHealth() {
 	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;
 	if (_playerFrameIdx < _playerFrameSep) {
+		const chapterEntry *entry = _chapterTable[_levelId];
 		uint32 id = _levelId;
-		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), uiPos[id][0][0], uiPos[id][0][1], 65, c);
-		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", s), uiPos[id][1][0], uiPos[id][1][1], 72, c);
+		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
+		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
 		// Objectives are always in the zero in the demo
-		_font->drawString(_compositeSurface, Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
+		//_font->drawString(_compositeSurface, Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
 	}
 }
 

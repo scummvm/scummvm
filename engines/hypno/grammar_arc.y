@@ -82,7 +82,9 @@ header: hline header
 	| /* nothing */
 	; 
 
-hline:  CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); }
+hline:  CTOK NUM {
+		g_parsedArc->id = $2; 
+		debugC(1, kHypnoDebugParser, "C %d", $2); }
 	| FTOK NUM { debugC(1, kHypnoDebugParser, "F %d", $2); }
 	| DTOK NUM  { debugC(1, kHypnoDebugParser, "D %d", $2); }
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
@@ -91,49 +93,49 @@ hline:  CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); }
 	| OTOK NUM NUM { debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); }
 	| O1TOK NUM NUM { debugC(1, kHypnoDebugParser, "O1 %d %d", $2, $3); }
 	| TPTOK FILENAME NUM FILENAME {
-		g_parsedArc.transitionVideo = $2;
-		g_parsedArc.transitionTime = $3;
+		g_parsedArc->transitionVideo = $2;
+		g_parsedArc->transitionTime = $3;
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4); 
 	}
 	| TTOK FILENAME NUM { 
-		g_parsedArc.transitionVideo = $2;
-		g_parsedArc.transitionTime = $3;
+		g_parsedArc->transitionVideo = $2;
+		g_parsedArc->transitionTime = $3;
 		debugC(1, kHypnoDebugParser, "T %s %d", $2, $3); 
 	}
 	| TTOK NONETOK NUM { debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
 	| NTOK FILENAME  { 
-		g_parsedArc.background = $2; 
+		g_parsedArc->background = $2; 
 		debugC(1, kHypnoDebugParser, "N %s", $2); 
 	}
 	| RTOK FILENAME  { debugC(1, kHypnoDebugParser, "R %s", $2); }
 	| ITOK FILENAME { 
-		g_parsedArc.player = $2; 
+		g_parsedArc->player = $2; 
 		debugC(1, kHypnoDebugParser, "I %s", $2); 
 		}
 	| QTOK NUM NUM { debugC(1, kHypnoDebugParser, "Q %d %d", $2, $3); }
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
-			g_parsedArc.intro = $2;
+			g_parsedArc->intro = $2;
 		else if(Common::String("B1") == $1 || Common::String("B2") == $1)
-			g_parsedArc.winVideos.push_back($2);
+			g_parsedArc->winVideos.push_back($2);
 		else if(Common::String("B3") == $1 || Common::String("B4") == $1)
-			g_parsedArc.defeatVideos.push_back($2);
+			g_parsedArc->defeatVideos.push_back($2);
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}
 	| SNTOK FILENAME enc {
 		if (Common::String("S0") == $1)
-			g_parsedArc.music = $2;
+			g_parsedArc->music = $2;
 		else if (Common::String("S1") == $1)
-			g_parsedArc.shootSound = $2;
+			g_parsedArc->shootSound = $2;
 		else if (Common::String("S4") == $1)
-			g_parsedArc.enemySound = $2; 
+			g_parsedArc->enemySound = $2; 
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
 	| HETOK C02TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
 	| HTOK CB3TOK NUM NUM { 
-		g_parsedArc.health = $3;
+		g_parsedArc->health = $3;
 		debugC(1, kHypnoDebugParser, "H %d %d", $3, $4); 
 	}
 	;
@@ -200,7 +202,7 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
 	| NTOK { debugC(1, kHypnoDebugParser, "N"); }
 	| ZTOK {
-		g_parsedArc.shoots.push_back(*shoot); 
+		g_parsedArc->shoots.push_back(*shoot); 
 		//delete shoot; 
 		//shoot = nullptr;
 		debugC(1, kHypnoDebugParser, "Z"); 
