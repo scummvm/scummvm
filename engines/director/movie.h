@@ -49,10 +49,9 @@ struct InfoEntry {
 
 	InfoEntry() { len = 0; data = nullptr; }
 
-	InfoEntry(const InfoEntry &old) {
-		len = old.len;
-		data = (byte *)malloc(len);
-		memcpy(data, old.data, len);
+	InfoEntry(InfoEntry &&old) : len(old.len), data(old.data) {
+		old.len = 0;
+		old.data = nullptr;
 	}
 
 	~InfoEntry() {
@@ -60,11 +59,13 @@ struct InfoEntry {
 		data = nullptr;
 	}
 
-	InfoEntry &operator=(const InfoEntry &old) {
-		free(data);
+	InfoEntry &operator=(InfoEntry &&old) {
+		if (&old == this)
+			return *this;
 		len = old.len;
-		data = (byte *)malloc(len);
-		memcpy(data, old.data, len);
+		data = old.data;
+		old.len = 0;
+		old.data = nullptr;
 		return *this;
 	}
 
