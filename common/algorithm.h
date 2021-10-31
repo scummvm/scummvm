@@ -57,6 +57,19 @@ Out copy(In first, In last, Out dst) {
 }
 
 /**
+ * Move data from the range [first, last) to [dst, dst + (last - first)).
+ *
+ * The function requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ */
+template<class In, class Out>
+Out move(In first, In last, Out dst) {
+	while (first != last)
+		*dst++ = std::move(*first++);
+	return dst;
+}
+
+/**
  * Copy data from the range [first, last) to [dst - (last - first), dst).
  *
  * The function requires the range [dst - (last - first), dst) to be valid.
@@ -68,6 +81,21 @@ template<class In, class Out>
 Out copy_backward(In first, In last, Out dst) {
 	while (first != last)
 		*--dst = *--last;
+	return dst;
+}
+
+/**
+ * Move data from the range [first, last) to [dst - (last - first), dst).
+ *
+ * The function requires the range [dst - (last - first), dst) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike move, move_backward copies the data from the end to the beginning.
+ */
+template<class In, class Out>
+Out move_backward(In first, In last, Out dst) {
+	while (first != last)
+		*--dst = std::move(*--last);
 	return dst;
 }
 
@@ -86,6 +114,26 @@ Out copy_if(In first, In last, Out dst, Op op) {
 	while (first != last) {
 		if (op(*first))
 			*dst++ = *first;
+		++first;
+	}
+	return dst;
+}
+
+/**
+ * Move data from the range [first, last) to [dst, dst + (last - first)).
+ *
+ * The function requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike move or move_backward, it does not move all data. It only moves
+ * a data element when operator() of the op parameter returns true for the
+ * passed data element.
+ */
+template<class In, class Out, class Op>
+Out move_if(In first, In last, Out dst, Op op) {
+	while (first != last) {
+		if (op(*first))
+			*dst++ = std::move(*first);
 		++first;
 	}
 	return dst;
