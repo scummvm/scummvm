@@ -79,7 +79,6 @@ AR      = psp-ar cru
 RANLIB  = psp-ranlib
 AS      = psp-gcc
 LD      = psp-gcc
-HAVE_GCC3 = true
 CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 
 # Variables for dynamic plugin building
