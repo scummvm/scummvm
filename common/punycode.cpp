@@ -59,7 +59,7 @@ namespace Common {
 #define INITIAL_BIAS 72
 #define SMAX 0x10ffff // maximum Unicode code point
 
-#define SPECIAL_SYMBOLS "/\":*|\\?%<>,;="
+#define SPECIAL_SYMBOLS "/\":*|\\?%<>"
 
 static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	uint32 k;
