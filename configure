@@ -2162,12 +2162,25 @@ fi
 # Foremost, this means enabling various warnings.
 # In addition, we set CXX_UPDATE_DEP_FLAG for GCC and ICC.
 #
+# By default compile with strict C++
+std_variant=c++
+pedantic=no
 if test "$have_gcc" = yes ; then
+	# By default, we add -pedantic to the CXXFLAGS to catch some potentially
+	# non-portable constructs, like use of GNU extensions.
+	# However, some platforms use GNU extensions in system header files, so
+	# for these we must not use -pedantic.
+	pedantic=yes
+
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function
 	# declarations under __STRICT_ANSI__, undefine it
-	3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mint* | n64 | psp | ps3 | psp2 | switch | wii )
-		append_var CXXFLAGS "-U__STRICT_ANSI__"
+	3ds | android | androidsdl | gamecube | psp | switch | wii)
+		std_variant=gnu++
+		pedantic=no
+		;;
+	amigaos* | dreamcast | ds | mint* | n64 | ps3 | psp2)
+		std_variant=gnu++
 		;;
 	*)
 		;;
@@ -2178,13 +2191,19 @@ if test "$have_gcc" = yes ; then
 	append_var CXXFLAGS "-Wno-empty-body"
 	append_var CXXFLAGS "-fno-operator-names"
 elif test "$have_icc" = yes ; then
+	# ICC does not support pedantic, while GCC and clang do.
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
 
 #
 # Set status about C++11 mode
 #
-append_var CXXFLAGS "-std=c++11"
+append_var CXXFLAGS "-std=${std_variant}11"
+
+if test "$pedantic" = yes ; then
+	# We *do* want the 'long long' extension.
+	append_var CXXFLAGS "-pedantic -Wno-long-long"
+fi
 
 #
 # Additional tests for C++11 features that may not be present
@@ -2278,22 +2297,6 @@ if test "$_release_build" = yes; then
 	# an build for a release version.
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
-
-# By default, we add -pedantic to the CXXFLAGS to catch some potentially
-# non-portable constructs, like use of GNU extensions.
-# However, some platforms use GNU extensions in system header files, so
-# for these we must not use -pedantic.
-case $_host_os in
-3ds | android | androidsdl | gamecube | psp | switch | wii)
-	;;
-*)
-	# ICC does not support pedantic, while GCC and clang do.
-	if test "$have_icc" = no ; then
-		# We *do* want the 'long long' extension.
-		append_var CXXFLAGS "-pedantic -Wno-long-long"
-	fi
-	;;
-esac
 
 # If possible, we want to use -Wglobal-constructors
 # However, not all compilers support that, so check whether the active one does.
