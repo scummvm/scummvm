@@ -3656,7 +3656,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	Common::sort(resources.begin(), resources.end());
 
 	if (showFoundScripts)
-		debugPrintf("%d scripts found, dissassembling...\n", resources.size());
+		debugPrintf("%d scripts found, disassembling...\n", resources.size());
 
 	int scriptSegment;
 	Script *script;

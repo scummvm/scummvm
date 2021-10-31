@@ -88,7 +88,7 @@ void _game_session::Reset_route_manager() {
 
 	// remove used routes - just keeps the memory limit down
 
-	Zdebug("--new sesssion: reseting route manager service--");
+	Zdebug("--new sesssion: resetting route manager service--");
 }
 
 bool8 _game_session::Is_route_required(PXreal startx, PXreal startz, PXreal destx, PXreal destz) {

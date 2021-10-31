@@ -539,7 +539,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		if (ConfMan.getBool("aspect_ratio") && !ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 			GUI::MessageDialog dialog(
 				_("You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural resolution is 320x240, which doesn't allow aspect ratio correction.\n"
-				  "Aspect ratio correction can be acheived by trimming the resolution to 320x200, under 'engine' tab."));
+				  "Aspect ratio correction can be achieved by trimming the resolution to 320x200, under 'engine' tab."));
 			dialog.runModal();
 		}
 

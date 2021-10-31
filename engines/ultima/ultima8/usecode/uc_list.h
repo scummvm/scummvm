@@ -37,7 +37,7 @@ namespace Ultima8 {
 // Question: how are unionList/subtractList supposed to know what to do?
 // their behaviour differs if this is a stringlist
 
-// Question: does subtractList remove _all_ occurences of elements or only 1?
+// Question: does subtractList remove _all_ occurrences of elements or only 1?
 
 class UCList {
 	Std::vector<uint8> _elements;
@@ -86,7 +86,7 @@ public:
 	}
 
 	void remove(const uint8 *e) {
-		// do we need to erase all occurences of e or just the first one?
+		// do we need to erase all occurrences of e or just the first one?
 		// (deleting all, currently)
 		for (unsigned int i = 0; i < _size; i++) {
 			bool equal = true;

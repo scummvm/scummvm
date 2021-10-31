@@ -406,7 +406,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, 0));
 
-	// Unfortunatly, SDL does not provide a list of valid pixel formats
+	// Unfortunately, SDL does not provide a list of valid pixel formats
 	// for the current OpenGL implementation and hardware.
 	// SDL may not be able to create a screen with the preferred pixel format.
 	// Try all the pixel formats in the list until SDL returns a valid screen.

@@ -668,7 +668,7 @@ HSaveError RestoreGameState(Stream *in, SavegameVersion svg_version) {
 
 
 void WriteSaveImage(Stream *out, const Bitmap *screenshot) {
-	// store the screenshot at the start to make it easily accesible
+	// store the screenshot at the start to make it easily accessible
 	out->WriteInt32((screenshot == nullptr) ? 0 : 1);
 
 	if (screenshot)

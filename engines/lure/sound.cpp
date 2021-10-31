@@ -663,7 +663,7 @@ void SoundManager::musicInterface_ContinuePlaying() {
  * off again because of a bug. Also, TrashReverb being triggered by doors opening
  * offscreen would be a bug. There is a third problem: the door opening sound lasts
  * much longer than 40 ms, so turning reverb back on 40 ms after starting the door
- * opening sound still results in a noticable reverb. All in all this explanation
+ * opening sound still results in a noticeable reverb. All in all this explanation
  * is not entirely convicing.
  * Another explanation would be that reverb was only meant to be on for the first
  * part of the game and should be turned off from the town onwards (this is what

@@ -1407,7 +1407,7 @@ void Puzzles::railRoadSwitchs() {
 		endFrame = 12;
 		break;
 	default:
-		error("Bad railroad switchs start value %d", startFrame);
+		error("Bad railroad switches start value %d", startFrame);
 		return;
 	}
 

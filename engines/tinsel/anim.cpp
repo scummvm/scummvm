@@ -162,7 +162,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			// pFunc is a function pointer that's part of a union and is assumed to be 32-bits.
 			// There is no known place where a function pointer is stored inside the animation
 			// scripts, something which wouldn't have worked anyway. Having played through the
-			// entire game, there hasn't been any occurence of this case, so just error out here
+			// entire game, there hasn't been any occurrence of this case, so just error out here
 			// in case we missed something (highly unlikely though)
 			error("ANI_CALL opcode encountered! Please report this error to the ScummVM team");
 			//(*pAni[pAnim->scriptIndex].pFunc)(pAnim);

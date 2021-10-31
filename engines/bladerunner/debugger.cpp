@@ -1238,7 +1238,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 
 				_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, origVqaName);
 				if (!_vm->_scene->_vqaPlayer->open()) {
-					debugPrintf("Error: Could not open player while reseting\nto scene VQA named: %s!\n", (origVqaName + ".VQA").c_str());
+					debugPrintf("Error: Could not open player while resetting\nto scene VQA named: %s!\n", (origVqaName + ".VQA").c_str());
 					return true;
 				}
 				_vm->_scene->startDefaultLoop();
@@ -1323,7 +1323,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 				// even if it's not already loaded for the scene (in _vm->_overlays->_videos)
 				int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
 				if ( overlayVideoIdx == -1 ) {
-					debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
+					debugPrintf("Could not load the overlay animation: %s in this scene. Try resetting overlays first to free up slots!\n", overlayName.c_str());
 				} else {
 					debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
 

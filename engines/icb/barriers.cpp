@@ -630,7 +630,7 @@ void _barrier_handler::Form_route_barrier_list(PXreal x, PXreal y, PXreal z, PXr
 	_rect rb; // rb meaning 'Route-Box'
 	uint32 j;
 	_child_group *clist[MAX_child_groups_per_parent * 2];
-	uint32 total_childs = 0; // seperate total for safety
+	uint32 total_childs = 0; // separate total for safety
 	int32 expanded_this_go;
 	_route_barrier *bar;
 	uint32 k;

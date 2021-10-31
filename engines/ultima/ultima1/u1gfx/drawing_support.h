@@ -56,7 +56,7 @@ public:
 	void drawFrame();
 
 	/**
-	 * Draw a frame around the viewport area of the screen, and a vertical seperator line
+	 * Draw a frame around the viewport area of the screen, and a vertical separator line
 	 * to the bottom of the screen to separate the status and info areas
 	 */
 	void drawGameFrame();

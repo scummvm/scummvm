@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Load token and user id from configs and return DropboxStorage for those.
-	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
+	 * @return pointer to the newly created DropboxStorage or 0 if some problem occurred.
 	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
 

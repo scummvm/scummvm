@@ -68,7 +68,7 @@ public:
 	static Common::String getUserdataDirectory();
 
 	/**
-	 * @return              Returns the path seperator
+	 * @return              Returns the path separator
 	 */
 	static Common::String  getPathSeparator();
 

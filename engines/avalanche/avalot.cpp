@@ -1290,7 +1290,7 @@ void AvalancheEngine::gameOver() {
 void AvalancheEngine::minorRedraw() {
 	fadeOut();
 
-	enterRoom(_room, 0); // Ped unknown or non-existant.
+	enterRoom(_room, 0); // Ped unknown or non-existent.
 
 	for (int i = 0; i < 3; i++)
 		_scoreToDisplay[i] = -1; // impossible digits

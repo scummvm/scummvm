@@ -332,9 +332,9 @@ public:
 	}
 	// Prepends a single character
 	void    PrependChar(char c);
-	// Replaces all occurences of one character with another character
+	// Replaces all occurrences of one character with another character
 	void    Replace(char what, char with);
-	// Replaces all occurences of one substring with another substring
+	// Replaces all occurrences of one substring with another substring
 	void    Replace(const String &what, const String &with);
 	void    Replace(const char *what, const char *with) {
 		String whats = String::Wrapper(what), withs = String::Wrapper(with); Replace(whats, withs);

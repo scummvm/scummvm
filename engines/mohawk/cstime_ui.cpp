@@ -285,7 +285,7 @@ void CSTimeInterface::mouseDown(Common::Point pos) {
 		return;
 	}
 
-	// TODO: case 20 ui craziness is handled seperately..
+	// TODO: case 20 ui craziness is handled separately..
 
 	CSTimeConversation *conv = _vm->getCase()->getCurrConversation();
 	if (_bookRect.contains(pos) || (_noteRect.contains(pos) && _note->havePiece(0xffff))) {
@@ -337,7 +337,7 @@ void CSTimeInterface::mouseMove(Common::Point pos) {
 	if (_note->getState() == 2)
 		return;
 
-	// TODO: case 20 ui craziness is handled seperately..
+	// TODO: case 20 ui craziness is handled separately..
 
 	if (_sceneRect.contains(pos) && !_vm->getCase()->getCurrScene()->eventIsActive()) {
 		_vm->getCase()->getCurrScene()->mouseMove(pos);
@@ -467,7 +467,7 @@ void CSTimeInterface::mouseUp(Common::Point pos) {
 
 	// TODO: if in sailing puzzle, sailing puzzle mouse up, return
 
-	// TODO: case 20 ui craziness is handled seperately..
+	// TODO: case 20 ui craziness is handled separately..
 
 	if (_sceneRect.contains(pos)) {
 		_vm->getCase()->getCurrScene()->mouseUp(pos);

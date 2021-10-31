@@ -43,7 +43,7 @@ namespace ICB {
 #define EVENT_MANAGER_MAX_TIMERS 4
 
 // Keeps track of which object is interested in hearing about events from which other objects and stores
-// events which have occured until they can be handled.
+// events which have occurred until they can be handled.
 class _event_manager {
 public:
 	// Default constructor and destructor.

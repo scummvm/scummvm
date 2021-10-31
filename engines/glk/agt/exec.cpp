@@ -784,7 +784,7 @@ static char *match_string(char *ans, char *corr_ans, int n)
 static rbool check_answer(char *ans, long start, long size)
 /* qnum has already been fixed to start from 0 */
 /*   Master's edition answer checker. Master's edition answers can */
-/* be seperate by AND and OR characters. If there is one OR in the */
+/* be separate by AND and OR characters. If there is one OR in the */
 /* answer, all ANDs will also be treated as ORs */
 /*   Furthermore, AND-delimited strings must appear in the correct order */
 /* unless PURE_ANSWER is false */

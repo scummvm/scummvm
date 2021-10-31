@@ -191,9 +191,9 @@ void GameModule::initMemoryPuzzle() {
 			setSubVar(VA_DICE_MEMORY_SYMBOLS, diceIndices.getNumber(), tileSymbols.getNumber());
 		// Insert special symbols tiles
 		for (uint32 i = 0; i < 3; ++i) {
-			int tileSymbolOccurence = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
-			setSubVar(VA_GOOD_DICE_NUMBERS, i, tileSymbolOccurence);
-			while (tileSymbolOccurence--)
+			int tileSymbolOccurrence = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
+			setSubVar(VA_GOOD_DICE_NUMBERS, i, tileSymbolOccurrence);
+			while (tileSymbolOccurrence--)
 				setSubVar(VA_TILE_SYMBOLS, availableTiles.getNumber(), getSubVar(VA_DICE_MEMORY_SYMBOLS, i));
 		}
 		// Fill the remaining tiles

@@ -872,7 +872,7 @@ void _remora::ClearAllText() {
 	m_nFirstLineToDraw = 0;
 
 	m_bScrollingRequired = FALSE8;
-	m_bScrolling = FALSE8; // these three need reseting so when we go to a new page we don't try scrolling off screen
+	m_bScrolling = FALSE8; // these three need resetting so when we go to a new page we don't try scrolling off screen
 	m_nStartYPixelOffset = 0;
 	m_eTextScroll = SCROLL_NONE;
 

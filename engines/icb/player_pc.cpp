@@ -96,7 +96,7 @@ void _player::Update_input_state() {
 
 	// note - analogue controllers return a direction which is different from forward-and-rotate schemes
 
-	// this routine requires seperate pc/psx coding
+	// this routine requires separate pc/psx coding
 
 	//				pc devices
 	//				----------

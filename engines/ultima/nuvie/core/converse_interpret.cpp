@@ -554,7 +554,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		// FIXME: probably need to do more real actor/object set-up here
 		cnpc = converse->actors->get_actor(npc_num(pop_arg(i)));
 		cnpc_obj = cnpc->make_obj();
-		cnpc_obj->frame_n = 0; // FIX for actors orginal direction.
+		cnpc_obj->frame_n = 0; // FIX for actors original direction.
 		cnpc_obj->obj_n = OBJ_U6_HORSE_WITH_RIDER; // mount up.
 		cnpc->init_from_obj(cnpc_obj);
 		delete_obj(cnpc_obj);

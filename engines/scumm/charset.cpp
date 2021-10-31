@@ -1328,7 +1328,7 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 	}
 
 	if (y + height > dest.h)
-		error("Trying to draw below screen boundries");
+		error("Trying to draw below screen boundaries");
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 #ifdef USE_RGB_COLOR

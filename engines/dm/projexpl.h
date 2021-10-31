@@ -56,7 +56,7 @@ public:
 	void createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir,
 							   byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
 	bool hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo,
-										  int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccured
+										  int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccurred
 	uint16 getProjectileImpactAttack(Projectile *projectile, Thing thing); // @ F0216_PROJECTILE_GetImpactAttack
 	void createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 							  uint16 mapYCombo, uint16 cell); // @ F0213_EXPLOSION_Create

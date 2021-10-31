@@ -1394,7 +1394,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 
 
 
-// This is only called from draw_screen_background, but it's seperated
+// This is only called from draw_screen_background, but it's separated
 // to help with profiling the program
 void prepare_objects_for_drawing() {
 	_G(our_eip) = 32;
@@ -1472,7 +1472,7 @@ void tint_image(Bitmap *ds, Bitmap *srcimg, int red, int grn, int blu, int light
 		return;
 	}
 
-	// For performance reasons, we have a seperate blender for
+	// For performance reasons, we have a separate blender for
 	// when light is being adjusted and when it is not.
 	// If luminance >= 250, then normal brightness, otherwise darken
 	if (luminance >= 250)

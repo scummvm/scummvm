@@ -77,7 +77,7 @@ struct ResourceGameObject {
 //  Base class of all objects
 //
 //  Unlike the object prototypes, the only subclass of GameObject is
-//  the actor subclass, which is kept in an entirely seperate table.
+//  the actor subclass, which is kept in an entirely separate table.
 //  This allows all objects to be kept in an array (indexed by ID number)
 
 #include "common/pack-start.h"

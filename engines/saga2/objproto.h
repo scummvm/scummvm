@@ -236,7 +236,7 @@ struct ResourceObjectPrototype {
 		objPropCharges      = (1 << 6),     // it's a missile weapon
 		objPropEdible       = (1 << 7),     // can be eaten
 		objPropFlipped      = (1 << 8),     // flipped left/right on ground
-		objPropVisOpen      = (1 << 9),     // Object has seperate "visible" sprite
+		objPropVisOpen      = (1 << 9),     // Object has separate "visible" sprite
 		objPropHidden       = (1 << 10),    // "How not to be seen".
 		objPropGhosted      = (1 << 11),    // Object permanently ghosted
 		objPropHardSurface  = (1 << 12),    // Object makes hard sound when struck

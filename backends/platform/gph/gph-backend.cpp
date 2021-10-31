@@ -121,7 +121,7 @@ void OSystem_GPH::initBackend() {
 	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */
 	WIZ_HW::mixerMoveVolume(0);
 
-	/* Up default volume values as we use a seperate system level volume anyway. */
+	/* Up default volume values as we use a separate system level volume anyway. */
 	ConfMan.registerDefault("music_volume", 192);
 	ConfMan.registerDefault("sfx_volume", 192);
 	ConfMan.registerDefault("speech_volume", 192);

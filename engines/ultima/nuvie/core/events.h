@@ -421,7 +421,7 @@ public:
 	}
 // These cursor methods are use to make sure Events knows where the cursor is
 // when objects are selected with ENTER. (since MapWindow and InventoryView
-// may each independantly show/hide their own cursors)
+// may each independently show/hide their own cursors)
 	void moveCursorToMapWindow(bool ToggleCursor = false);
 	void moveCursorToInventory();
 

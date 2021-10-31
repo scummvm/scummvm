@@ -8,7 +8,7 @@ It is not meant to be "human readable".
 Write some mocks
 
 *** Distribution
-Seperate packages (w/ binaries)?  How would that be used?
+Separate packages (w/ binaries)?  How would that be used?
 For Windows: .lib for "Real" and "Mock" parts.
 For Linux: Maybe. Different compilers etc.
 So probably only source release with Makefiles and .ds[pw]?  Or just Win32 binary.

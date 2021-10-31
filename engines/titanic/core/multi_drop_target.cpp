@@ -49,17 +49,17 @@ void CMultiDropTarget::load(SimpleFile *file) {
 bool CMultiDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 	CStringParser parser1(_dropFrames);
 	CStringParser parser2(_dropNames);
-	CString seperatorChars = ",";
+	CString separatorChars = ",";
 
 	// WORKAROUND: The original didn't break out of loop if a drop target
 	// succeeded, nor did it return the item to the inventory if incorrect
-	while (parser2.parse(_itemMatchName, seperatorChars)) {
+	while (parser2.parse(_itemMatchName, separatorChars)) {
 		_dropFrame = parser1.readInt();
 		if (CDropTarget::DropObjectMsg(msg))
 			return true;
 
-		parser1.skipSeperators(seperatorChars);
-		parser2.skipSeperators(seperatorChars);
+		parser1.skipSeparators(separatorChars);
+		parser2.skipSeparators(separatorChars);
 	}
 
 	msg->_item->petAddToInventory();

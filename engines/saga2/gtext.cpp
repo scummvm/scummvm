@@ -118,7 +118,7 @@ void DrawChar(gFont *font, int drawchar, int xpos, uint8 *baseline, uint8 color,
     This function renders a single bitmapped character into an offscreen
     buffer. The character will be "ballooned", i.e. expanded, by 1 pixel
     in each direction. It does not render the center part of the outlined
-    character in a different color -- that must be done as a seperate
+    character in a different color -- that must be done as a separate
     step.
 
     'drawchar' is the ascii code of the character to be drawn.

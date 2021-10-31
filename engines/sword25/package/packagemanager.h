@@ -37,7 +37,7 @@
  * In the package manager, note the following:
  * 1. It creates a completely new (virtual) directory tree in the packages and directories
  *    can be mounted.
- * 2. To seperate elements of a directory path '/' must be used rather than '\'
+ * 2. To separate elements of a directory path '/' must be used rather than '\'
  * 3. LoadDirectoryAsPackage should only be used for testing. The final release will be
  *    have all files in packages.
  *
@@ -65,7 +65,7 @@ namespace Sword25 {
  *
  * 1. It creates a completely new (virtual) directory tree in the packages and directories
  *    can be mounted.
- * 2. To seperate elements of a directory path '/' must be used rather than '\'
+ * 2. To separate elements of a directory path '/' must be used rather than '\'
  * 3. LoadDirectoryAsPackage should only be used for testing. The final release will be
  *    have all files in packages.
  */

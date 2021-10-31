@@ -3347,7 +3347,7 @@ void Myst::o_forechamberDoor_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::o_shipAccess_init(uint16 var, const ArgumentsArray &args) {
-	// Enable acces to the ship
+	// Enable access to the ship
 	if (_state.shipFloating) {
 		getInvokingResource<MystArea>()->setEnabled(true);
 	}

@@ -1717,7 +1717,7 @@ void Item::setupLerp(int32 gametick) {
 	// We use (tick % speed == 0) here. To be completely faithful to the original
 	// game it should be (tick % speed == tick % _objId).  That is how the game
 	// does it, but it also causes animation frame mismatches on multi-shape
-	// objects.  This is easily noticable on the waterfall West of Tenebrae,
+	// objects.  This is easily noticeable on the waterfall West of Tenebrae,
 	// which appears to tear slightly even on the original.
 	//
 	// In the original it was likely done to spread CPU time over different frames,

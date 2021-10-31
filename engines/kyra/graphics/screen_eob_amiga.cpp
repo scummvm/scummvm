@@ -278,7 +278,7 @@ void AmigaDOSFont::errorDialog(int index) {
 	if (index == 0) {
 		::GUI::displayErrorDialog(_(
 			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+			"If you used the original installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
 			"Please copy them into the EOB game data directory.\n"
 		));
 

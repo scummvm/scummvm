@@ -843,7 +843,7 @@ uint32 res_man::FindMemBlock(uint32 adj_len, RMParams *params) {
 			} while (search != -1);
 
 			if (!total_age)
-				Fatal_error("failed to build an age table - not really posible");
+				Fatal_error("failed to build an age table - not really possible");
 
 			//			now sort the ages
 			for (j = 0; j < total_age; j++)

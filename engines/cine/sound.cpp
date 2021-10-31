@@ -1534,7 +1534,7 @@ void PaulaSound::sfxTimerCallback() {
 	} else {
 		_sfxTimer = 0;
 		// Possible TODO: The original only ever started sounds here. This
-		// should not be noticable though. So we do not do it for now.
+		// should not be noticeable though. So we do not do it for now.
 	}
 }
 

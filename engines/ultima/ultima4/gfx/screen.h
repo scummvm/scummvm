@@ -285,7 +285,7 @@ public:
 	 * Scale an image up.  The resulting image will be scale * the
 	 * original dimensions.  The original image is no longer deleted.
 	 * n is the number of tiles in the image; each tile is filtered
-	 * seperately. filter determines whether or not to filter the
+	 * separately. filter determines whether or not to filter the
 	 * resulting image.
 	 */
 	Image *screenScale(Image *src, int scale, int n, int filter);

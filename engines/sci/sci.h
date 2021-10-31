@@ -215,7 +215,7 @@ public:
 	 * Processes a multilanguage string based on the current language settings and
 	 * returns a string that is ready to be displayed.
 	 * @param str		the multilanguage string
-	 * @param sep		optional seperator between main language and subtitle language,
+	 * @param sep		optional separator between main language and subtitle language,
 	 *					if NULL is passed no subtitle will be added to the returned string
 	 * @return processed string
 	 */

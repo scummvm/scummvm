@@ -38,7 +38,7 @@ typedef int16   ThreadID;
 
 enum scriptResult {
 
-	//  Code returned when attempt to run a non-existant script
+	//  Code returned when attempt to run a non-existent script
 	scriptResultNoScript = 0,
 
 	//  Code returned when script was aborted before completion

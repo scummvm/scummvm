@@ -286,7 +286,7 @@ int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescript
 
 	// Walk through saved game slots
 	// check, if description matches and return the slot
-	// if no match can be found, return the first non-existant slot
+	// if no match can be found, return the first non-existent slot
 	// if all slots exist, return -1
 	figureOutAutomaticSavedGameSlot(automaticSaveDescription, matchedGameSlotId, freshGameSlotId);
 
@@ -294,7 +294,7 @@ int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescript
 		return matchedGameSlotId; // return matched slot
 
 	if (freshGameSlotId >= 0)
-		return freshGameSlotId; // return first non-existant slot
+		return freshGameSlotId; // return first non-existent slot
 
 	return -1; // no slots exist, not match found
 }
@@ -304,7 +304,7 @@ int16 SystemUI::figureOutAutomaticRestoreGameSlot(const char *automaticSaveDescr
 	int16 freshGameSlotId   = -1;
 
 	// Fill saved game slot cache
-	readSavedGameSlots(true, false); // filter non-existant/invalid saves, also don't include auto-save slot
+	readSavedGameSlots(true, false); // filter non-existent/invalid saves, also don't include auto-save slot
 
 	// Walk through saved game slots
 	// check, if description matches and return the slot. Otherwise return -1

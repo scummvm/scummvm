@@ -825,7 +825,7 @@ builtIn(anim) {
 	// First store the frame numbers and take 'em off the stack
 	PersonaAnimation *ba = new PersonaAnimation(numParams - 1, fun->stack);
 
-	// Only remaining paramter is the file number
+	// Only remaining parameter is the file number
 	int fileNumber;
 	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;

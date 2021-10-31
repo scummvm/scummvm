@@ -198,7 +198,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
-		// Note: Orginal game allowed a move animation on a single right click.
+		// Note: Original game allowed a move animation on a single right click.
 		// This implementation needs right mouse to be held.
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 
@@ -368,7 +368,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
-		// Note: Orginal game allowed a move animation on a single right click.
+		// Note: Original game allowed a move animation on a single right click.
 		// This implementation needs right mouse to be held.
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 	}

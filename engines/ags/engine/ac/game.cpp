@@ -786,7 +786,7 @@ void serialize_bitmap(const Shared::Bitmap *thispic, Stream *out) {
 	}
 }
 
-// On Windows we could just use IIDFromString but this is _G(platform)-independant
+// On Windows we could just use IIDFromString but this is _G(platform)-independent
 void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffer) {
 	guidText++; // skip {
 	for (int bytesDone = 0; bytesDone < 16; bytesDone++) {

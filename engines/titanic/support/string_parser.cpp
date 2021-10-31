@@ -25,15 +25,15 @@
 
 namespace Titanic {
 
-void CStringParser::skipSeperators(const CString &seperatorChars) {
+void CStringParser::skipSeparators(const CString &separatorChars) {
 	for (; _index < size(); ++_index) {
 		char c = (*this)[_index];
-		if (seperatorChars.indexOf(c) == -1)
+		if (separatorChars.indexOf(c) == -1)
 			break;
 	}
 }
 
-bool CStringParser::parse(CString &resultStr, const CString &seperatorChars, bool allowQuotes) {
+bool CStringParser::parse(CString &resultStr, const CString &separatorChars, bool allowQuotes) {
 	if (_index >= size())
 		return false;
 
@@ -41,7 +41,7 @@ bool CStringParser::parse(CString &resultStr, const CString &seperatorChars, boo
 	bool quoteFlag = false;
 	while (_index < size()) {
 		char c = (*this)[_index];
-		if (!quoteFlag && seperatorChars.indexOf(c) >= 0)
+		if (!quoteFlag && separatorChars.indexOf(c) >= 0)
 			break;
 
 		if (allowQuotes) {
