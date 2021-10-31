@@ -59,7 +59,7 @@ namespace Common {
 #define INITIAL_BIAS 72
 #define SMAX 0x10ffff // maximum Unicode code point
 
-#define SPECIAL_SYMBOLS "/\":*[]+|\\?%<>,;="
+#define SPECIAL_SYMBOLS "/\":*|\\?%<>,;="
 
 static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	uint32 k;
@@ -78,7 +78,7 @@ static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 static char encode_digit(int c) {
 	assert(c >= 0 && c <= BASE - TMIN);
 	if (c > 25) {
-		return c + 0x30 - 26; /* '0'..'9' */
+		return c + 22; /* '0'..'9' */
 	} else {
 		return c + 0x61; /* 'a'..'z' */
 	}
@@ -144,8 +144,15 @@ String punycode_encode(const U32String &src) {
 	size_t b = h;
 
 	// If every character is ASCII, return the original string.
-	if (h == srclen)
+	if (h == srclen) {
+		// If string ends with space or dot, still punycode it
+		// because certain FSes do not support files with those
+		// endings
+		if (src[h - 1] == ' ' || src[h - 1] == '.')
+			return dst + '-';
+
 		return src;
+	}
 
 	// If we have any ASCII characters, add '-' to separate them from
 	// the non-ASCII character insertions.
@@ -204,6 +211,10 @@ bool punycode_needEncode(const String &src) {
 			return true;
 		}
 	}
+
+	// If name ends with space or dot, we have to encode it
+	if (src[src.size() - 1] == ' ' || src[src.size() - 1] == '.')
+		return true;
 
 	return false;
 }
