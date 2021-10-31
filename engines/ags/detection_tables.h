@@ -1143,6 +1143,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "orowgame", "ORow Game" },
 	{ "osdarayofhope", "OSD: A Ray of Hope" },
 	{ "osdocd", "OSD:OCD" },
+	{ "osdsearch", "The Search for Oceanspirit Dennis" },
 	{ "osdthelostworldep2", "OSD.The lost world ep 2" },
 	{ "osher", "Boundless Osher - Osher Bli Gvulot" }, // Hebrew title: אושר בלי גבולות
 	{ "otakurivals", "Otaku Rivals" },
@@ -3193,6 +3194,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("orowgame", "orowgame.exe", "0710e2ec71042617f565c01824f0cf3c", 15632750),
 	GAME_ENTRY("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
 	GAME_ENTRY("osdocd", "OSD-OCD.exe", "9dbf699a0e41550bb080813a233e73a8", 47758168),
+	GAME_ENTRY("osdsearch", "OSDSearch.exe", "c2e87de9507f0443368b300e8c882f30", 37505243),
 	GAME_ENTRY("osdthelostworldep2", "OSD.TLW2.exe", "a80ae4d0aea21508f1df9d18f2839bcb", 22076715),
 	GAME_ENTRY_LANG("osher", "Osher.exe", "18b284c22010850f79bc5c20054a70c4", 389177994, Common::HE_ISR),
 	GAME_ENTRY("otakurivals", "Kintaro.exe", "465f972675db2da6040518221af5b0ba", 4045893),
