@@ -114,7 +114,7 @@ private:
 	void programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
 	void setRegister(int reg, int value);
 	void noteOn(byte FMvoiceChannel, byte note, byte velocity);
-	void noteOnSetVolume(byte FMvoiceChannel, byte operatorReg, byte adjustedVelocity);
+	void noteOnSetVolume(byte FMvoiceChannel, byte operatorReg, byte velocity);
 	void noteOff(byte FMvoiceChannel, byte note, bool dontCheckNote);
 };
 
