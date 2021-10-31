@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.6.0 (XXXX-XX-XX)
 
+ General:
+   - Now ScummVM requires C++11 for building.
+
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
