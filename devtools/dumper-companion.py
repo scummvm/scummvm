@@ -531,6 +531,7 @@ def test_decode_name():
         ["ends with dot .", "xn--ends with dot .-"],
         ["ends with space ", "xn--ends with space -"],
         ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
+        ["Hello*", "xn--Hello-la10a"],
     ]
     for input, output in checks:
         assert punyencode(input) == output
