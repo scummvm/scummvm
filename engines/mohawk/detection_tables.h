@@ -34,42 +34,6 @@ namespace Mohawk {
 
 static const MohawkGameDescription gameDescriptions[] = {
 	// Myst
-	// English Windows 3.11
-	// From clone2727
-	{
-		{
-			"myst",
-			"",
-			AD_ENTRY1("myst.dat", "ae3258c9c90128d274aa6a790b3ad181"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST
-		},
-		GType_MYST,
-		0,
-		0,
-	},
-
-	// Myst
-	// English Windows 3.11, v1.0.1
-	// From lotharsm
-	{
-		{
-			"myst",
-			"",
-			AD_ENTRY1("myst.dat", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST
-		},
-		GType_MYST,
-		0,
-		0,
-	},
-
-	// Myst
 	// English Windows 3.11, v1.0
 	// From vonLeheCreative, #9645
 	{
@@ -87,6 +51,42 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst
+	// English Windows 3.11, v1.0.1
+	// From lotharsm
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1s("myst.dat", "4beb3366ed3f3b9bfb6e81a14a43bdcc", 66143659),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
+	// Myst
+	// English MPC/Windows 3.11, v1.1
+	// From clone2727
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1s("myst.dat", "ae3258c9c90128d274aa6a790b3ad181", 66236882),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
 	// Myst Demo
 	// English Windows 3.11, v1.0
 	// From PC Format (UK) July, 1994
@@ -94,7 +94,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1("DEMO.DAT", "8ff8ae264f759ea4a79cc915757f17c4"),
+			AD_ENTRY1s("DEMO.DAT", "8ff8ae264f759ea4a79cc915757f17c4", 488921),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
@@ -106,13 +106,13 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Demo
-	// English Windows 3.11
+	// English Windows 3.11, v1.0.1
 	// From CD-ROM Today July, 1994
 	{
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1("DEMO.DAT", "c39303dd53fb5c4e7f3c23231c606cd0"),
+			AD_ENTRY1s("DEMO.DAT", "c39303dd53fb5c4e7f3c23231c606cd0", 488415),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
@@ -142,13 +142,13 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst
-	// German Windows 3.11
+	// German Windows 3.11, v1.0.3GE
 	// From LordHoto
 	{
 		{
 			"myst",
 			"",
-			AD_ENTRY1("myst.dat", "e0937cca1ab125e48e30dc3cd5046ddf"),
+			AD_ENTRY1s("myst.dat", "e0937cca1ab125e48e30dc3cd5046ddf", 65610606),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -178,13 +178,13 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst
-	// Italian Windows ?
+	// Italian Windows 3.11, v1.1 IT
 	// From goodoldgeorg in bug #6895
 	{
 		{
 			"myst",
 			"",
-			AD_ENTRY1("myst.dat", "a5795ce1751fc42525e4f9a1859181d5"),
+			AD_ENTRY1s("myst.dat", "a5795ce1751fc42525e4f9a1859181d5", 66795223),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -255,7 +255,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"makingofmyst",
 			"",
-			AD_ENTRY1("making.dat", "f6387e8f0f7b8a3e42c95294315d6a0e"),
+			AD_ENTRY1s("making.dat", "f6387e8f0f7b8a3e42c95294315d6a0e", 8377),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -267,14 +267,14 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Making of Myst
-	// Japanese Windows 3.11
+	// Japanese Windows 3.11, Italian Windows 3.11
 	// From clone2727
 	{
 		{
 			"makingofmyst",
 			"",
-			AD_ENTRY1("making.dat", "03ff62607e64419ab2b6ebf7b7bcdf63"),
-			Common::JA_JPN,
+			AD_ENTRY1s("making.dat", "03ff62607e64419ab2b6ebf7b7bcdf63", 4602),
+			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_MYST_MAKING_OF
@@ -291,7 +291,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Masterpiece Edition",
-			AD_ENTRY1("myst.dat", "c4cae9f143b5947262e6cb2397e1617e"),
+			AD_ENTRY1s("myst.dat", "c4cae9f143b5947262e6cb2397e1617e", 74070233),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -676,13 +676,13 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
-	// Version ? (Demo, From "Prince of Persia Collector's Edition")
+	// Version 1.03 (Demo, From "Prince of Persia Collector's Edition")
 	// From Clone2727
 	{
 		{
 			"riven",
 			"Demo",
-			AD_ENTRY1("a_Data.MHK", "bae6b03bd8d6eb350d35fd13f0e3139f"),
+			AD_ENTRY1s("a_Data.MHK", "bae6b03bd8d6eb350d35fd13f0e3139f", 86703958),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			(ADGF_DEMO | ADGF_DROPPLATFORM),
