@@ -126,7 +126,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		_playerFrameSep++;
 	}
 
-	if(_playerFrameSep == _playerFrames.size())
+	if (_playerFrameSep == _playerFrames.size())
 		error("No player separator frame found!");
 	debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
