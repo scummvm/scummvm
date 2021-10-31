@@ -166,21 +166,17 @@ struct DirectorPlotData {
 		applyColor = false;
 	}
 
-	DirectorPlotData(const DirectorPlotData &old) : _wm(old._wm), sprite(old.sprite),
-	                                                ink(old.ink), alpha(old.alpha),
-	                                                backColor(old.backColor), foreColor(old.foreColor),
-	                                                srf(old.srf), dst(old.dst),
-	                                                destRect(old.destRect), srcPoint(old.srcPoint),
-	                                                colorWhite(old.colorWhite), colorBlack(old.colorBlack),
-	                                                applyColor(old.applyColor) {
-		if (old.ms) {
-			ms = new MacShape(*old.ms);
-		} else {
-			ms = nullptr;
-		}
+	DirectorPlotData(DirectorPlotData &&old) : _wm(old._wm), sprite(old.sprite),
+													ink(old.ink), alpha(old.alpha),
+													backColor(old.backColor), foreColor(old.foreColor),
+													srf(old.srf), ms(old.ms), dst(old.dst),
+													destRect(old.destRect), srcPoint(old.srcPoint),
+													colorWhite(old.colorWhite), colorBlack(old.colorBlack),
+													applyColor(old.applyColor) {
+		old.ms = nullptr;
 	}
 
-	DirectorPlotData &operator=(const DirectorPlotData &);
+	DirectorPlotData &operator=(DirectorPlotData &&);
 
 	~DirectorPlotData() {
 		delete ms;
