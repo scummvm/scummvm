@@ -869,7 +869,7 @@ HAGSError SpriteFile::OpenFile(const String &filename, const String &sprindex_fi
 	buff[13] = 0;
 	if (strcmp(buff, spriteFileSig)) {
 		_stream.reset();
-		return new Error("Uknown spriteset format.");
+		return new Error("Unknown spriteset format.");
 	}
 
 	if (vers == kSprfVersion_Uncompressed) {

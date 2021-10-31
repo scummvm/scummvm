@@ -1212,20 +1212,20 @@ bool GameManager1::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
 			edit(input, 91, 100, 5);
 
-			int seperator = -1;
+			int separator = -1;
 			for (uint i = 0; i < input.size(); ++i) {
 				if (input[i] == ':') {
-					seperator = i;
+					separator = i;
 					break;
 				}
 			}
-			if ((seperator == -1) || (seperator > 2)) {
+			if ((separator == -1) || (separator > 2)) {
 				validInput = false;
 				continue;
 			}
 
 			int decimalPlace = 1;
-			for (int i = 0; i < seperator; ++i) {
+			for (int i = 0; i < separator; ++i) {
 				if (Common::isDigit(input[i])) {
 					hours = hours * decimalPlace + (input[i] - '0');
 					decimalPlace *= 10;
@@ -1235,7 +1235,7 @@ bool GameManager1::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			decimalPlace = 1;
-			for (uint i = seperator + 1; i < input.size(); ++i) {
+			for (uint i = separator + 1; i < input.size(); ++i) {
 				if (Common::isDigit(input[i])) {
 					minutes = minutes * decimalPlace + (input[i] - '0');
 					decimalPlace *= 10;

@@ -115,7 +115,7 @@ Common::String xu4_to_string(int val);
 
 /**
  * Splits a Common::String into substrings, divided by the charactars in
- * separators.  Multiple adjacent seperators are treated as one.
+ * separators.  Multiple adjacent separators are treated as one.
  */
 Std::vector<Common::String> split(const Common::String &s, const Common::String &separators);
 

@@ -52,7 +52,7 @@ void EffectManager::delete_effect(Effect *eff) {
 	}
 }
 
-/* Add an (already existant) effect to the list.
+/* Add an (already existent) effect to the list.
  */
 void EffectManager::add_effect(Effect *eff) {
 	effects.push_back(eff);

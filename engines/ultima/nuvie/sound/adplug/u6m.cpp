@@ -308,7 +308,7 @@ void Cu6mPlayer::command_5(int channel) {
 
 
 // --------------------------------------------
-// Set vibrato paramters
+// Set vibrato parameters
 // Format: 6c mn
 // c = channel
 // m = vibrato double amplitude

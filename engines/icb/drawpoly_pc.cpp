@@ -1394,7 +1394,7 @@ void drawGUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *
 				setLineG4(line);
 				int32 cval;
 				if (_drawGouraud) {
-					// Give each vertex a seperate colour
+					// Give each vertex a separate colour
 					// Compute the colour scaling and clip it
 					if (rgbIn.r != 0) {
 						cval = ((wfrmRed * rgb0.r) / rgbIn.r);
@@ -2191,7 +2191,7 @@ void drawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *
 				setLineG4(line);
 				int32 cval;
 				if (_drawGouraud) {
-					// Give each vertex a seperate colour
+					// Give each vertex a separate colour
 					// Compute the colour scaling and clip it
 					if (rgbIn.r != 0) {
 						cval = ((wfrmRed * rgb0.r) / rgbIn.r);

@@ -1244,7 +1244,7 @@ void sort_cmd(void) {
 	}
 
 	for (i = 0; i < TOTAL_VERB; i++)
-		if (verbptr[i] == last_cmd) /* No occurences of this verb */
+		if (verbptr[i] == last_cmd) /* No occurrences of this verb */
 			verbend[i] = last_cmd;
 		else verbend[i]++; /* Point *after* last occurance */
 

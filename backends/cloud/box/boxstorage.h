@@ -100,7 +100,7 @@ public:
 
 	/**
 	 * Load token and user id from configs and return BoxStorage for those.
-	 * @return pointer to the newly created BoxStorage or 0 if some problem occured.
+	 * @return pointer to the newly created BoxStorage or 0 if some problem occurred.
 	 */
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);
 

@@ -1039,7 +1039,7 @@ static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 			                                 filedata[2], filedata[3]);
 			break;
 		default:
-			fatal("Unreconized field type");
+			fatal("Unrecognized field type");
 		}
 		filedata += ft_leng[rec_desc->ftype];
 	}
@@ -1159,7 +1159,7 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
 			break;
 		}
 		default:
-			fatal("Unreconized field type");
+			fatal("Unrecognized field type");
 		}
 		filedata += ft_leng[rec_desc->ftype];
 	}

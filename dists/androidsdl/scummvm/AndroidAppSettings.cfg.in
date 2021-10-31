@@ -116,7 +116,7 @@ AppRecordsAudio=n
 
 # Application implements Android-specific routines to put to background, and will not draw anything to screen
 # between SDL_ACTIVEEVENT lost / gained notifications - you should check for them
-# rigth after SDL_Flip(), if (n) then SDL_Flip() will block till app in background (y) or (n)
+# right after SDL_Flip(), if (n) then SDL_Flip() will block till app in background (y) or (n)
 # This option is reported to be buggy, sometimes failing to restore video state
 NonBlockingSwapBuffers=n
 

@@ -976,7 +976,7 @@ bool AgiEngine::loadGameDialog() {
 // If we fail, return false, so that the regular saved game dialog is called
 // Original AGI was limited to 12 saves, we are effectively limited to 100 saves at the moment.
 //
-// btw. this also means that entering an existant name in Mixed Up Mother Goose will effectively overwrite
+// btw. this also means that entering an existent name in Mixed Up Mother Goose will effectively overwrite
 // that saved game. This is also what original AGI did.
 bool AgiEngine::saveGameAutomatic() {
 	int16 automaticSaveGameSlotId = 0;

@@ -163,7 +163,7 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 			_ffBBoxes[i]._right  = stream.readSint16BE();
 			_ffBBoxes[i]._top    = stream.readSint16BE();
 
-			debug(10, "style: %d left: %g bottom: %g rigth: %g top: %g", _ffBBoxes[i]._style,
+			debug(10, "style: %d left: %g bottom: %g right: %g top: %g", _ffBBoxes[i]._style,
 					_ffBBoxes[i]._left / (double)(1<<12), _ffBBoxes[i]._bottom / (double)(1<<12),
 					_ffBBoxes[i]._right / (double)(1<<12), _ffBBoxes[i]._top / (double)(1<<12));
 		}

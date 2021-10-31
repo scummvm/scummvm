@@ -129,7 +129,7 @@ void MADSEngine::loadOptions() {
 
 	// Note: MADS is weird in that sfx and music are handled by the same driver,
 	// and the game scripts themselves check for music being enabled before playing
-	// a "music" sound. Which means we can independantly mute music in ScummVM, but
+	// a "music" sound. Which means we can independently mute music in ScummVM, but
 	// otherwise all sound, music and sfx, is controlled by the SFX volume slider.
 	int soundVolume = MIN(255, ConfMan.getInt("sfx_volume"));
 	_sound->setVolume(soundVolume);

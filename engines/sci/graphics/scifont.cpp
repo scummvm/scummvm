@@ -297,7 +297,7 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 				if (0 <= screenX && screenX < screenWidth && 0 <= screenY && screenY < screenHeight) {
 					_screen->putFontPixel(top, screenX, y, color);
 				} else {
-					warning("%s glpyh %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, screenX, screenY);
+					warning("%s glyph %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, screenX, screenY);
 				}
 			}
 			b = b << 1;
@@ -334,7 +334,7 @@ void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte c
 					int offset = bufY * bufWidth + bufX;
 					buffer[offset] = color;
 				} else {
-					warning("%s glpyh %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, bufX, bufY);
+					warning("%s glyph %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, bufX, bufY);
 				}
 			}
 			b = b << 1;

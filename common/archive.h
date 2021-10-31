@@ -192,7 +192,7 @@ public:
 	 * Create and add a subdirectory by name (caseless).
 	 *
 	 * It is also possible to add subdirectories of subdirectories (of any depth) with this function.
-	 * The path seperator for this case is SLASH for all systems.
+	 * The path separator for this case is SLASH for all systems.
 	 *
 	 * Example:
 	 *
@@ -216,7 +216,7 @@ public:
 	 * Create and add subdirectories by pattern.
 	 *
 	 * It is also possible to add subdirectories of subdirectories (of any depth) with this function.
-	 * The path seperator for this case is SLASH for all systems.
+	 * The path separator for this case is SLASH for all systems.
 	 *
 	 * Example:
 	 *

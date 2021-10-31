@@ -6143,7 +6143,7 @@ void OptionsManager::DrawSlideShow() {
 		uint32 art2DClusterHash = NULL_HASH;
 
 		if (!IsAValidSlide(m_currentSlide, slideFile))
-			Fatal_error("Trying to display a non-existant slide image!");
+			Fatal_error("Trying to display a non-existent slide image!");
 
 		// Set this up for resman and open the thb file
 		sprintf(art2DCluster, ICON_CLUSTER_PATH);

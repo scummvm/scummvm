@@ -282,7 +282,7 @@ static void v_eat(int vc, parse_rec *nounrec) {
 
 	if (noun[dobj_ - first_noun].movable) it_destroy(dobj_);
 	if (noun[dobj_ - first_noun].poisonous) {
-		sysmsgd(129, "Unfortunatly, $n_pro$ $n_was$ poisonous.", nounrec);
+		sysmsgd(129, "Unfortunately, $n_pro$ $n_was$ poisonous.", nounrec);
 		deadflag = 1;
 	}
 }
@@ -768,7 +768,7 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 			if (noun[wep - first_noun].drinkable) { /* i.e. a liquid */
 				alt_sysmsg(msgnum + 1, "$You$ splash $the_o$$object$ with "
 				           "$the_n$$noun$, but the liquid quickly evaporates "
-				           "without noticable effect.", weprec, targrec);
+				           "without noticeable effect.", weprec, targrec);
 				it_destroy(wep);
 			} else {
 				alt_sysmsg(msgnum,

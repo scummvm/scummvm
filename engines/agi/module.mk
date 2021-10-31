@@ -55,5 +55,5 @@ DETECT_OBJS += $(MODULE)/detection.o
 
 # External dependencies of detection.
 # This is unneeded by the engine module itself,
-# so seperate it completely.
+# so separate it completely.
 DETECT_OBJS += $(MODULE)/wagparser.o

@@ -146,7 +146,7 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 
 	// Update the actual texture.
 	// Although we have the area of the texture buffer we want to update we
-	// cannot take advantage of the left/right boundries here because it is
+	// cannot take advantage of the left/right boundaries here because it is
 	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
 	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
 	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left

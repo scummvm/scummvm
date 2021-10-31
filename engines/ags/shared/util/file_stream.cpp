@@ -217,7 +217,7 @@ Common::OutSaveFile *FileStream::openForWriting(const String &saveName, FileOpen
 	if (work_mode == kFile_Read || work_mode == kFile_ReadWrite)
 		// In the original these modes result in [aw]+b, which seems to result
 		// in a file with arbitrary reading, but writing always appending
-		warning("FileOpen: independant read/write positions not supported");
+		warning("FileOpen: independent read/write positions not supported");
 
 	Common::InSaveFile *existing = nullptr;
 	if (open_mode == kFile_Create &&

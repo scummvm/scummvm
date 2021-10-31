@@ -881,7 +881,7 @@ void Database::patchLanguageMenu() {
 	// The scripts for the other languages only differ by the value set for AudioLanguage variable
 	// when the language selection is not English.
 	// This function patches the language selection script to set the appropriate value based
-	// on the detected game langage.
+	// on the detected game language.
 
 	// Script disassembly:
 	//	hotspot 5 > c[v1 != 0] (true)

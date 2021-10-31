@@ -95,7 +95,7 @@ void SceneScriptDR02::SceneLoaded() {
 	Clickable_Object("V2CANPIPE02");
 	// there are two objects named "TRASH CAN WITH FIRE" in the scene (but not visible)
 	// and none of them have to be set clickable
-	// and also reseting them here would only reset one of them - and one remains as clickable
+	// and also resetting them here would only reset one of them - and one remains as clickable
 	Unclickable_Object("TRASH CAN WITH FIRE");
 	Unclickable_Object("U2 CHEWDOOR");
 	Unclickable_Object("MMTRASHCAN");

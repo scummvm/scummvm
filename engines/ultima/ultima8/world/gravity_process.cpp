@@ -174,7 +174,7 @@ void GravityProcess::run() {
 				int approx_v = ABS(_xSpeed) + ABS(_ySpeed) + _zSpeed;
 
 				// Apply an impulse on the x/y plane in a random direction
-				// in a 180 degree pie around the orginal vector in x/y
+				// in a 180 degree pie around the original vector in x/y
 				double heading_r = atan2((double)_ySpeed, (double)_xSpeed);
 				double deltah_r = static_cast<double>(getRandom())
 				                  * M_PI / U8_RAND_MAX - M_PI / 2;

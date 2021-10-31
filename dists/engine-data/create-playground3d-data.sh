@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Create the directory structure
-# Avoided bash shortcuts / file-seperators in interest of portability
+# Avoided bash shortcuts / file-separators in interest of portability
 
 if [ -e playground3d ]; then
 	echo "Game-data already present as playground3d/"

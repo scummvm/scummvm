@@ -1911,7 +1911,7 @@ uint LBCode::parseCode(const Common::String &source) {
 				code.push_back(kTokenCloseBracket);
 			counterPositions.pop_back();
 			break;
-		// comma (seperating function params)
+		// comma (separating function params)
 		case ',':
 			{
 			if (counterPositions.empty())

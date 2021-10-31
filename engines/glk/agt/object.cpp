@@ -972,7 +972,7 @@ void setprop(int obj, int prop, long val) {
 	integer *paddr;
 
 	if (prop >= NUM_WPROP) {
-		writeln("GAME ERROR: Read-only or non-existant property.");
+		writeln("GAME ERROR: Read-only or non-existent property.");
 		return;
 	}
 
@@ -997,7 +997,7 @@ void setattr(int obj, int prop, rbool val) {
 	rbool *paddr;
 
 	if (prop >= NUM_WATTR && prop != 24) {
-		writeln("GAME ERROR: Read-only or non-existant attribute.");
+		writeln("GAME ERROR: Read-only or non-existent attribute.");
 		return;
 	}
 

@@ -47,7 +47,7 @@ const ObjectID      Nothing = 0,            // a reference to no object
                     ActorLimbo = 2,         // where dead actors go
                     ImportantLimbo = 3,     // where dead important objects go
                     ActorBaseID = 0x8000,   // high bit set for actors
-                    WorldBaseID = 0xF000;   // 4K posible worlds
+                    WorldBaseID = 0xF000;   // 4K possible worlds
 
 /* ===================================================================== *
    TileID

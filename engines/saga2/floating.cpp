@@ -726,7 +726,7 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 			oldExtent = bound(newExtent, oldExtent);
 			updateWindowSection(oldExtent);
 		} else {
-			//  Otherwise, update new and old positions seperately
+			//  Otherwise, update new and old positions separately
 
 			updateWindowSection(newExtent);
 			updateWindowSection(oldExtent);

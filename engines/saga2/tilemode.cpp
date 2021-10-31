@@ -798,7 +798,7 @@ void TileModeHandleTask() {
 			} else {
 				//  Calculate the mouse's position on the tilemap,
 				//  including the shape of the terrain. Actually
-				//  this returns two seperate coords: The exact point
+				//  this returns two separate coords: The exact point
 				//  clicked on, and the projection on the floor
 				//  beneath the clicked point.
 				tilePickExactPos = pickTile(lastMousePos,

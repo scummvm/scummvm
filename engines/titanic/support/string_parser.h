@@ -50,19 +50,19 @@ public:
 	CStringParser(const CString &str) : CString(str), _index(0) {}
 
 	/**
-	 * Skips over any specified seperator characters in our string
+	 * Skips over any specified separator characters in our string
 	 * at the current index
 	 */
-	void skipSeperators(const CString &seperatorChars);
+	void skipSeparators(const CString &separatorChars);
 
 	/**
 	 * Parses out a string from a source string at the current index
 	 * @param resultStr			String to hold the resulting sring
-	 * @param seperatorChras	List of characters that seperate string values
+	 * @param separatorChras	List of characters that separate string values
 	 * @param allowQuotes		If true, handles double-quoted substrings
 	 * @returns		True if a string entry was extracted
 	 */
-	bool parse(CString &resultStr, const CString &seperatorChars, bool allowQuotes = false);
+	bool parse(CString &resultStr, const CString &separatorChars, bool allowQuotes = false);
 
 	/**
 	 * Reads an integer from the string

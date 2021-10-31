@@ -1092,7 +1092,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 			}
 		}
 	} else {
-		error("Cast::loadLingoContext: unsuported Director version (%d)", _version);
+		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
 	}
 }
 

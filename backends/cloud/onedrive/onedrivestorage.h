@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * Load token and user id from configs and return OneDriveStorage for those.
-	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
+	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occurred.
 	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
 

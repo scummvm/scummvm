@@ -765,7 +765,7 @@ static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 				t3getRGB(dstColor, dstR, dstG, dstB);
 
 				if ((pObj->colorFlags & 4) != 0) { // additive blending
-					// orginal algo:
+					// original algo:
 					// color &= 0b1111011111011111;
 					// color += dstColor & 0b1111011111011111;
 					// if (color > 0xFFFF) {

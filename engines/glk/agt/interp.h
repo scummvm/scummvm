@@ -300,7 +300,7 @@ global short last_he, last_she, last_it, last_they;
 #define ALL_MARK (-ext_code[wall])
 
 #define D_END  50    /* Marks end of disambiguation list */
-#define D_AND  51    /* Used to seperate multiple objects during disambig */
+#define D_AND  51    /* Used to separate multiple objects during disambig */
 #define D_NOUN 0   /* Noun match */
 #define D_SYN 1    /* Adjective/synonym only match */
 #define D_ADJ 2    /* Adj only match */

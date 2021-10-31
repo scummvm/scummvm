@@ -1381,7 +1381,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 		break;
 	case INIT_STORY_MODE:                             // act39: Init story_mode flag
 		// This is similar to the QUIET path mode, except that it is
-		// independant of it and it additionally disables the ">" prompt
+		// independent of it and it additionally disables the ">" prompt
 		gameStatus._storyModeFl = action->_a39._storyModeFl;
 		break;
 	case WARN:                                        // act40: Text box (CF TEXT)

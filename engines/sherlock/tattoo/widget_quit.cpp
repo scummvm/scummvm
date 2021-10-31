@@ -56,7 +56,7 @@ void WidgetQuit::show() {
 	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - _surface.stringWidth(FIXED(WishToQuit))) / 2,
 		_surface.fontHeight() + 9), INFO_TOP);
 
-	// Draw the horizontal bars seperating the commands and the message
+	// Draw the horizontal bars separating the commands and the message
 	int yp = (_surface.fontHeight() + 4) * 2 + 3;
 	for (int idx = 0; idx < 2; ++idx) {
 		_surface.SHtransBlitFrom(images[4], Common::Point(0, yp - 1));

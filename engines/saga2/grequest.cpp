@@ -41,7 +41,7 @@ const int           maxLines = 16,
                     buttonWidth = 60;
 
 //  This function takes a string which is composed of several
-//  substrings, each seperated by a delimiter character, and
+//  substrings, each separated by a delimiter character, and
 //  breaks it up into the individual sub-strings.
 
 int16 SplitString(

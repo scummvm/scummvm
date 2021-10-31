@@ -305,7 +305,7 @@ void Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int 
 	if ((blocking == BLOCKING) || (blocking == 1))
 		GameLoopUntilNotMoving(&_G(objs)[objj->id].moving);
 	else if ((blocking != IN_BACKGROUND) && (blocking != 0))
-		quit("Object.Move: invalid BLOCKING paramter");
+		quit("Object.Move: invalid BLOCKING parameter");
 }
 
 void Object_SetClickable(ScriptObject *objj, int clik) {

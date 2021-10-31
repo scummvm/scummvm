@@ -751,7 +751,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	glyph.slot = slot;
 
 	// We use the light target and render mode to improve the looks of the
-	// glyphs. It is most noticable in FreeSansBold.ttf, where otherwise the
+	// glyphs. It is most noticeable in FreeSansBold.ttf, where otherwise the
 	// 't' glyph looks like it is cut off on the right side.
 	if (FT_Load_Glyph(_face, slot, _loadFlags))
 		return false;

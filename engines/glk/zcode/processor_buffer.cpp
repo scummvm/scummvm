@@ -188,7 +188,7 @@ void Processor::runtimeError(ErrorCode errNum) {
 		if (_err_report_mode == ERR_REPORT_ONCE) {
 			print_string(" (will ignore further occurrences)");
 		} else {
-			print_string(" (occurence ");
+			print_string(" (occurrence ");
 			print_long(_errorCount[errNum - 1], 10);
 			print_char(')');
 		}

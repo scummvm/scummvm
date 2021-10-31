@@ -937,7 +937,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
-   - Fixed visual glitches in DOTT that occured after loading a savegame with the stereo
+   - Fixed visual glitches in DOTT that occurred after loading a savegame with the stereo
      in Green Tentacle's room turned on.
    - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions).
    - Added support for the Dutch demo of Let's Explore the Airport with Buzzy.
@@ -968,7 +968,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Removed TESTING flag from several supported games.
    - Added Chinese Pinyin translation.
-   - Fixed cursor stuttering in the launcher that occured on some systems.
+   - Fixed cursor stuttering in the launcher that occurred on some systems.
 
  BBVS:
    - Fixed game restart.

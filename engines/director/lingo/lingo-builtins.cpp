@@ -1085,7 +1085,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (d.exists()) {
 		Common::FSList f;
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
-			warning("Cannot acces directory %s", path.c_str());
+			warning("Cannot access directory %s", path.c_str());
 		} else {
 			if ((uint)fileNum < f.size()) {
 				// here, we sort all the fileNames

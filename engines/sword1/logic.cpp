@@ -1552,19 +1552,19 @@ int Logic::fnGetPos(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, int
 	}
 	_scriptVars[RETURN_VALUE_3] = target->o_dir;
 
-	int32 megaSeperation;
+	int32 megaSeparation;
 	if (targetId == DUANE)
-		megaSeperation = 70; // George & Duane stand with feet 70 pixels apart when at full scale
+		megaSeparation = 70; // George & Duane stand with feet 70 pixels apart when at full scale
 	else if (targetId == BENOIR)
-		megaSeperation = 61; // George & Benoir
+		megaSeparation = 61; // George & Benoir
 	else
-		megaSeperation = 42; // George & Nico/Goinfre stand with feet 42 pixels apart when at full scale
+		megaSeparation = 42; // George & Nico/Goinfre stand with feet 42 pixels apart when at full scale
 
 	if (target->o_status & STAT_SHRINK) {
 		int32 scale = (target->o_scale_a * target->o_ycoord + target->o_scale_b) / 256;
-		_scriptVars[RETURN_VALUE_4] = (megaSeperation * scale) / 256;
+		_scriptVars[RETURN_VALUE_4] = (megaSeparation * scale) / 256;
 	} else
-		_scriptVars[RETURN_VALUE_4] = megaSeperation;
+		_scriptVars[RETURN_VALUE_4] = megaSeparation;
 	return SCRIPT_CONT;
 }
 

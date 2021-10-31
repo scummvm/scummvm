@@ -528,7 +528,7 @@ bool Party::has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual) {
 	return false;
 }
 
-// Removes the first occurence of an object in the party.
+// Removes the first occurrence of an object in the party.
 bool Party::remove_obj(uint16 obj_n, uint8 quality) {
 	uint16 i;
 	Obj *obj;

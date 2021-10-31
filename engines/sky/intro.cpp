@@ -704,7 +704,7 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case FADEUP:
 		_skyScreen->paletteFadeUp(*data++);
-		_relDelay += 32 * 20; // hack: the screen uses a seperate delay function for the
+		_relDelay += 32 * 20; // hack: the screen uses a separate delay function for the
 							  // blocking fadeups. So add 32*20 msecs to out delay counter.
 		return true;
 	case FADEDOWN:

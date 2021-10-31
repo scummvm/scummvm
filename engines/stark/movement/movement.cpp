@@ -44,7 +44,7 @@ Movement *Movement::construct(uint32 type, Resources::ItemVisual *item) {
 		case kTypeTurn:
 			return new Turn(Resources::Object::cast<Resources::FloorPositionedItem>(item));
 		default:
-			error("Unexepected movement type '%d'", type);
+			error("Unexpected movement type '%d'", type);
 	}
 }
 

@@ -96,7 +96,7 @@ void UCList::assignString(uint32 index, uint16 str) {
 }
 
 void UCList::removeString(uint16 s, bool nodel) {
-	// do we need to erase all occurences of str or just the first one?
+	// do we need to erase all occurrences of str or just the first one?
 	// (deleting all, currently)
 	const Std::string &str = UCMachine::get_instance()->getString(s);
 	for (unsigned int i = 0; i < _size; i++) {

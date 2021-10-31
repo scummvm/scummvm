@@ -75,7 +75,7 @@ void EventLoop(bool &running, bool modal = false);
  * ===================================================================== */
 
 enum gEventType {
-	gEventNone = 0,                         // no event occured
+	gEventNone = 0,                         // no event occurred
 	gEventMouseDown,                        // left button pressed
 	gEventMouseUp,                          // left button released
 	gEventRMouseDown,                       // right button pressed
@@ -98,7 +98,7 @@ enum gEventType {
 
 struct gEvent {
 	gPanel          *panel;                 // where event came from
-	enum gEventType eventType;              // type of event that occured
+	enum gEventType eventType;              // type of event that occurred
 	Point16         mouse;                  // mouse position
 	int32           value;                  // new value of control
 	gWindow         *window;                // active window

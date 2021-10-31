@@ -481,7 +481,7 @@ void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
 	}
 
 	if (loopNr >= screenObj->loopCount) {
-		// requested loop not existant
+		// requested loop not existent
 		// instead of error()ing out, we instead clip it
 		// At least required for possibly Manhunter 1 according to previous comment when leaving the arcade machine
 		// TODO: Check MH1
@@ -493,7 +493,7 @@ void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
 
 		loopNr = screenObj->loopCount - 1;
 
-		warning("Non-existant loop requested for screen object %d", screenObj->objectNr);
+		warning("Non-existent loop requested for screen object %d", screenObj->objectNr);
 		warning("view %d, requested loop %d -> clipped to loop %d", screenObj->currentViewNr, requestedLoopNr, loopNr);
 	}
 
@@ -537,7 +537,7 @@ void AgiEngine::setCel(ScreenObjEntry *screenObj, int16 celNr) {
 	}
 
 	if (celNr >= screenObj->celCount) {
-		// requested cel not existant
+		// requested cel not existent
 		// instead of error()ing out, we instead clip it
 		// At least required for King's Quest 3 on Apple IIgs - walking the planks death cutscene
 		// see bug #5832, which is a game bug!
@@ -545,7 +545,7 @@ void AgiEngine::setCel(ScreenObjEntry *screenObj, int16 celNr) {
 
 		celNr = screenObj->celCount - 1;
 
-		warning("Non-existant cel requested for screen object %d", screenObj->objectNr);
+		warning("Non-existent cel requested for screen object %d", screenObj->objectNr);
 		warning("view %d, loop %d, requested cel %d -> clipped to cel %d", screenObj->currentViewNr, screenObj->currentLoopNr, requestedCelNr, celNr);
 	}
 

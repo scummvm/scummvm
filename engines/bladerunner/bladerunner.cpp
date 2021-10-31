@@ -272,7 +272,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 
 	setTotalPlayTime(header._playTime);
 	// this essentially does something similar with setTotalPlayTime
-	// reseting and updating Blade Runner's _pauseStart and offset before starting a loaded game
+	// resetting and updating Blade Runner's _pauseStart and offset before starting a loaded game
 	_time->resetPauseStart();
 
 	loadGame(*saveFile, header._version);

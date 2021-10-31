@@ -269,7 +269,7 @@ void Gdi::init() {
 		// virtual screen strips don't match the display screen strips anymore. To
 		// overcome that problem, we simply use a screen pitch that is 8 pixel wider
 		// than the actual screen width, and always draw one strip more than needed to
-		// the backbuf (thus we have to treat the right border seperately).
+		// the backbuf (thus we have to treat the right border separately).
 		_numStrips += 1;
 	}
 }

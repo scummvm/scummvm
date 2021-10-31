@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Create the directory structure
-# Avoided bash shortcuts / file-seperators in interest of portability
+# Avoided bash shortcuts / file-separators in interest of portability
 
 if [ -e testbed ]; then
 	echo "Game-data already present as testbed/"

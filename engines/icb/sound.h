@@ -174,7 +174,7 @@ public:
 
 	CSfx *GetSfx(); // should be reasonably fast now...
 
-	// volume and pan together (faster than seperate)
+	// volume and pan together (faster than separate)
 	void GetVolumeAndPan(int32 &vol, int32 &pan);
 
 private:

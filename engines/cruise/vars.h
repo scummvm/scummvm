@@ -266,7 +266,7 @@ extern int16 ctp_routes[20][10];	// path-finding line information
 /* ctp_routes:
 
    correct size would be: ctp_routes[routeCoordCount * 20 * 2]
-   array is seperate in 20 * 2 bytes slices.
+   array is separate in 20 * 2 bytes slices.
    first 2 bytes of the slice indicate how many coordinates/lines are following (lineCount)
    after that there are lineCount * 2 bytes following with indexes pointing on the routeCoords table
    the root x,y for the lines is the coordinate in the routeCoords array, which fits to the current slice

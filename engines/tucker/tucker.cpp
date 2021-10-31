@@ -3485,7 +3485,7 @@ int TuckerEngine::executeTableInstruction() {
 		//   Fixed: 61dw buw,148,125,wsm,buw,148,132,wsm,mof,pan,01,wat,050[...]
 		//                                               ^^^^^^^^^^
 		// To work around the issue in the problematic versions we inject these two
-		// instructions after the first occurence of the 'wsm' instruction (which
+		// instructions after the first occurrence of the 'wsm' instruction (which
 		// proves good enough).
 		if (_location == kLocationStoreRoom && _nextAction == 61) {
 			setCursorState(kCursorStateDisabledHidden);

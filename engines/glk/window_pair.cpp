@@ -53,7 +53,7 @@ void PairWindow::rearrange(const Rect &box) {
 	_bbox = box;
 
 	if (_dir == winmethod_Arbitrary) {
-		// When a pair window is in "arbitrary" mode, each child window has it's own independant positioning,
+		// When a pair window is in "arbitrary" mode, each child window has it's own independent positioning,
 		// so thre's no need to be readjusting it
 		return;
 	}

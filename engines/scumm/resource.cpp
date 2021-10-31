@@ -1655,7 +1655,7 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 	// if we trim to 200 pixels, we can show only 6 items
 	// therefore we patch the inventory script (20)
-	// replacing the 5 occurences of 10 as limit to 6
+	// replacing the 5 occurrences of 10 as limit to 6
 	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 		if (type == rtScript && idx == 20) {
 			byte *ptr = getResourceAddress(rtScript, idx);
