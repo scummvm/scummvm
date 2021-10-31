@@ -1,3 +1,3 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine nancy "Nancy Drew" no "" "" "16bit highres cxx11 vorbis"
+add_engine nancy "Nancy Drew" no "" "" "16bit highres vorbis"
