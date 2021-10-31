@@ -181,7 +181,6 @@ _test_cxx11=no
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
-_use_cxx11=yes
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -284,7 +283,6 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
-add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Directories for installing ScummVM.
@@ -1335,12 +1333,6 @@ for ac_option in $@; do
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--enable-c++11)
-		_use_cxx11=yes
-		;;
-	--disable-c++11)
-		_use_cxx11=no
-		;;
 	--enable-debug)
 		_debug_build=yes
 		;;
@@ -1726,8 +1718,6 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
-	# Switch SDK has C++11 constructs so we must enable it
-	_use_cxx11=yes
 	;;
 wasm32-*)
 	_endian=little # the endian check below fails, but emscripten is always little endian anyway
@@ -2162,13 +2152,18 @@ fi
 #
 # Check whether the compiler supports C++11
 #
+echo_n "Checking if compiler supports C++11... "
 have_cxx11=no
 cat > $TMPC << EOF
 int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
 EOF
 cc_check -std=c++11 && have_cxx11=yes
-if test "$_use_cxx11" = "yes" ; then
-	_use_cxx11=$have_cxx11
+echo $have_cxx11
+
+if test "$have_cxx11" = "no" ; then
+	echo
+	echo "ScummVM requires C++11 compiler support. Please ensure your compiler supports it"
+	exit 1
 fi
 
 #
@@ -2178,10 +2173,6 @@ fi
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
-		# Try to use ANSI mode when C++11 is disabled.
-		if test "$_use_cxx11" = "no" ; then
-			append_var CXXFLAGS "-ansi"
-		fi
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
@@ -2208,22 +2199,17 @@ elif test "$have_icc" = yes ; then
 fi;
 
 #
-# Update status about C++11 mode
+# Set status about C++11 mode
 #
-echo_n "Building as C++11... "
-if test "$_use_cxx11" = "yes" ; then
-	append_var CXXFLAGS "-std=c++11"
-fi
-echo $_use_cxx11
-define_in_config_if_yes "$_use_cxx11" 'USE_CXX11'
+append_var CXXFLAGS "-std=c++11"
 
 #
 # Additional tests for C++11 features that may not be present
 #
-if test "$_use_cxx11" = "yes" ; then
-	# Check if initializer list is available
-	echo_n "Checking if C++11 initializer list is available... "
-	cat > $TMPC << EOF
+
+# Check if initializer list is available
+echo_n "Checking if C++11 initializer list is available... "
+cat > $TMPC << EOF
 #include <initializer_list>
 #include <cstddef>
 class FOO {
@@ -2233,30 +2219,29 @@ public:
 };
 int main(int argc, char *argv[]) { return 0; }
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		echo yes
-	else
-		echo no
-		define_in_config_if_yes yes 'NO_CXX11_INITIALIZER_LIST'
-	fi
+cc_check
+if test "$TMPR" -eq 0; then
+	echo yes
+else
+	echo no
+	define_in_config_if_yes yes 'NO_CXX11_INITIALIZER_LIST'
+fi
 
-	# Check if std::nullptr_t is available
-	echo_n "Checking if C++11 std::nullptr_t is available..."
-	cat > $TMPC << EOF
+# Check if std::nullptr_t is available
+echo_n "Checking if C++11 std::nullptr_t is available..."
+cat > $TMPC << EOF
 #include <cstddef>
 int main(int argc, char *argv[]) {
 	std::nullptr_t i = nullptr;
 	return 0;
 }
 EOF
-	cc_check
-        if test "$TMPR" -eq 0; then
-                echo yes
-        else
-                echo no
-                define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
-        fi
+cc_check
+if test "$TMPR" -eq 0; then
+		echo yes
+else
+		echo no
+		define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
 fi
 
 #
