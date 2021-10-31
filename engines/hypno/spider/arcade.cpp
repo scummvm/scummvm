@@ -51,7 +51,7 @@ void SpiderEngine::drawPlayer() {
 		_playerFrameIdx = orientationIndex[idx];
 	} else {
 		_playerFrameIdx++;
-		if (_playerFrameIdx >= _playerFrames.size())
+		if (_playerFrameIdx >= (int)_playerFrames.size())
 			_playerFrameIdx = 0;
 	}
 	drawImage(*_playerFrames[_playerFrameIdx], 60, 129, true);

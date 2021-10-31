@@ -68,7 +68,7 @@ void WetEngine::drawPlayer() {
 		_playerFrameIdx = _playerFrameIdx % _playerFrameSep;
 	} else {
 		_playerFrameIdx++;
-		if (_playerFrameIdx >= _playerFrames.size())
+		if (_playerFrameIdx >= (int)_playerFrames.size())
 			_playerFrameIdx = 0;
 	}
 
@@ -81,7 +81,7 @@ void WetEngine::drawHealth() {
 	int s = _score;
 	if (_playerFrameIdx < _playerFrameSep) {
 		const chapterEntry *entry = _chapterTable[_levelId];
-		uint32 id = _levelId;
+		//uint32 id = _levelId;
 		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
 		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
 		// Objectives are always in the zero in the demo

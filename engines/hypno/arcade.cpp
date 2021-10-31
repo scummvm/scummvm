@@ -126,7 +126,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		_playerFrameSep++;
 	}
 
-	if (_playerFrameSep == _playerFrames.size())
+	if (_playerFrameSep == (int)_playerFrames.size())
 		error("No player separator frame found!");
 	debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
@@ -206,7 +206,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 			break;
 		}
 
-		if (!arc.transitionVideo.empty() && background.decoder->getCurFrame() >= arc.transitionTime) {
+		if (!arc.transitionVideo.empty() && background.decoder->getCurFrame() >= (int)arc.transitionTime) {
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc.transitionVideo.c_str());
 			arc.transitionTime = background.decoder->getFrameCount() + 1;
 			MVideo video(arc.transitionVideo, Common::Point(0, 0), false, false, false);
@@ -227,7 +227,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 		if (shootSequence.size() > 0) {
 			ShootInfo si = shootSequence.front();
-			if (si.timestamp <= background.decoder->getCurFrame()) {
+			if ((int)si.timestamp <= background.decoder->getCurFrame()) {
 				shootSequence.pop_front();
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
 					if (it->name == si.name && it->animation != "NONE") {
@@ -247,14 +247,14 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 			if (it->video->decoder) {
 				int frame = it->video->decoder->getCurFrame();
-				if (frame > 0 && frame >= it->explosionFrame - 15 && !it->destroyed) {
+				if (frame > 0 && frame >= (int)(it->explosionFrame - 15) && !it->destroyed) {
 					hitPlayer();
 				}
 
-				if (frame > 0 && frame >= it->explosionFrame - 3 && !it->destroyed) {
+				if (frame > 0 && frame >= (int)(it->explosionFrame - 3) && !it->destroyed) {
 					skipVideo(*it->video);
 					_health = _health - it->damage;
-				} else if (frame > 0 && frame >= it->video->decoder->getFrameCount()-2) {
+				} else if (frame > 0 && frame >= (int)(it->video->decoder->getFrameCount() - 2)) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
 				} else if (it->video->decoder->needsUpdate()) {
