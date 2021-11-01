@@ -142,6 +142,9 @@ struct knopf {
 	int16 textptr = 0;
 
 	bool load(Common::SeekableReadStream *src);
+	static constexpr int SIZE() {
+		return 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 2 + 2 + 2;
+	}
 };
 
 struct menue {
@@ -159,6 +162,10 @@ struct menue {
 	char *spritesave = nullptr;
 
 	bool load(Common::SeekableReadStream *src);
+	static constexpr int SIZE() {
+		return 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 +
+			4 * MAXKNOPF + 2 + 4 + 4;
+	}
 };
 
 struct dialogue {
@@ -170,6 +177,9 @@ struct dialogue {
 
 	bool load(Common::SeekableReadStream *src);
 	bool save(Common::WriteStream *dest);
+	static constexpr int SIZE() {
+		return 4 + 2 + 4 * MAXMENUE + D_GR + D_GR;
+	}
 };
 
 struct sbi_inst {
