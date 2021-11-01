@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-01 15:54+0000\n"
+"POT-Creation-Date: 2021-11-01 16:19+0000\n"
 "PO-Revision-Date: 2021-09-20 12:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3526,15 +3526,15 @@ msgstr "Vergroot Modus Uit"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Toon SAF intrekken toestemming overlay knop"
 
-#: backends/platform/ds/ds-graphics.cpp:219
+#: backends/platform/ds/ds-graphics.cpp:257
 msgid "Unscaled"
 msgstr "Niet geschaald"
 
-#: backends/platform/ds/ds-graphics.cpp:220
+#: backends/platform/ds/ds-graphics.cpp:258
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardware schalen (snel, maar slechte kwaliteit)"
 
-#: backends/platform/ds/ds-graphics.cpp:221
+#: backends/platform/ds/ds-graphics.cpp:259
 msgid "Software scale (good quality, but slower)"
 msgstr "Software schalen (langzamer, maar goede kwaliteit)"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-01 15:54+0000\n"
+"POT-Creation-Date: 2021-11-01 16:19+0000\n"
 "PO-Revision-Date: 2021-10-28 20:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3500,15 +3500,15 @@ msgstr "Suurennustila poissa"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Näytä SAF-käyttöoikeuden perumisnappi overlay:ssä"
 
-#: backends/platform/ds/ds-graphics.cpp:219
+#: backends/platform/ds/ds-graphics.cpp:257
 msgid "Unscaled"
 msgstr "Skaalaamaton"
 
-#: backends/platform/ds/ds-graphics.cpp:220
+#: backends/platform/ds/ds-graphics.cpp:258
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Laitteistoskaalaus (nopea, mutta huono laatu)"
 
-#: backends/platform/ds/ds-graphics.cpp:221
+#: backends/platform/ds/ds-graphics.cpp:259
 msgid "Software scale (good quality, but slower)"
 msgstr "Ohjelmistoskaalaus (hyvä laatu, mutta hitaampi)"
 
