@@ -706,7 +706,7 @@ uint32 datei::load_voc(Stream *handle, byte *speicher) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 
 	if (rs) {
-		rs->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 		if (!ch->load(rs)) {
 			modul = DATEI;
@@ -887,7 +887,7 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 	int16 i;
 
 	if (rs) {
-		rs->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!ch->load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -1472,7 +1472,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 		} else {
 			if (!strncmp(Nph->id, "NGS", 3)) {
 				select_pool_item(&f, chunk_start);
-				f.seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+				f.seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 				for (i = chunk_start; (i < Nph->PoolAnz) && (!modul)
 				        && i < (chunk_start + chunk_anz); i++) {

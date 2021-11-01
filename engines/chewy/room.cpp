@@ -258,7 +258,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 		}
 
 		if (!modul) {
-			rs->seek(-(int)tbf_dateiheader::SIZE(), SEEK_CUR);
+			rs->seek(-tbf_dateiheader::SIZE(), SEEK_CUR);
 			Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), tb.entpsize + 4);
 
 			if (Rb->AkAblage == -1) {

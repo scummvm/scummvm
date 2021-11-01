@@ -322,7 +322,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 			switch (mode) {
 			case INV_USE_DATEI:
 				mem->file->select_pool_item(rs, atdspooloff[mode]);
-				chewy_fseek(rs, -(int)(sizeof(ChunkHead)), SEEK_CUR);
+				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 				if (!Ch.load(rs)) {
 					modul = DATEI;
@@ -419,7 +419,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 
 	if (stream && txt_adr) {
 		mem->file->select_pool_item(stream, chunk_nr + atdspooloff[mode]);
-		stream->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!Ch.load(stream)) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -446,7 +446,7 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	if (atdshandle[ADH_HANDLE]) {
 		mem->file->select_pool_item(atdshandle[ADH_HANDLE], dia_nr);
 
-		chewy_fseek(atdshandle[ADH_HANDLE], -(int)sizeof(ChunkHead), SEEK_CUR);
+		chewy_fseek(atdshandle[ADH_HANDLE], -sizeof(ChunkHead), SEEK_CUR);
 		if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, atdshandle[ADH_HANDLE])) {
 			modul = DATEI;
 			fcode = READFEHLER;
