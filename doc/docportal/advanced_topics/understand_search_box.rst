@@ -10,22 +10,22 @@ Main functionality
 
 The filter is applied as you type, there is no need to press Enter or click anything to perform the search.
 
-All searchs are case insensitive, there is no way to force the case sensitive search.
+All searches are case insensitive.
 
-To reset the filter and get the full list of games, you could click on a cross icon on the right.
+To reset the filter and get the full list of games, you could click on a cross icon next to the text input field.
 
 
 Search patterns
 ===========================================
 
-Whitespace breaks the search input into separate tokens, search patterns. 
+Whitespace breaks the search input into separate tokens, search patterns.
 
 Simple patterns
 ___________________________________________
 
 If search pattern does not contain ``:``/``=``/``~`` characters and it does not start with ``!`` character, then it's used for a case insensitive substring search.
 
-For example, if you type ``m`` you would get all the games containing letter 'M' in description.
+For example, if you type ``m`` you would get all the games containing an 'M' or 'm' in description.
 
 If you type ``monkey``, you would get games like "The Curse of Monkey Island (Demo/Windows)", "Infinite Monkeys", "Three Monkeys, One Cage", etc.
 
@@ -101,7 +101,7 @@ Some common used configuration keys can be abbrivated, just type any prefix inst
 
 	- ``p~D:*``
 	- ``path~D:*``"
-		``path``, Filesystem path for the game,"
+		``platform``, internal ID of the platform,"
 
 	- ``pl~windows``
 	- ``platform~windows``"
@@ -127,11 +127,10 @@ How do the search patterns work together?
 
 If you have provided several search patterns, only games that match all of them are displayed.
 
-The matches are independent and not ordered, which means that when you are looking for ``Monkey Island``, you would get all the games with words "Monkey" and "Island" in description. Note that imaginary titles like "My Island with some Monkeys" would also be displayed.
+The matches are independent and not ordered, which means that when you are looking for ``Open Quest``, you would get all the games with words "Open" and "Quest" in description. The results would contain games like "Open Quest (Windows/English)" and "Police Quest IV: Open Season (DOS/Demo)".
 
 Here are some more examples of complex requests:
 
 - ``engine=ags path:steamapps !extra:Steam`` - AGS games at your /SteamApps/ folder, but not marked as Steam game at "extra"
 - ``e=wintermute l=`` - Wintermute games with empty "language" property
 - ``pl:dos lang=he desc~a*`` - Hebrew games for DOS with description starting with letter "A"
-
