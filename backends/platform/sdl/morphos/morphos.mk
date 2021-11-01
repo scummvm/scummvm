@@ -6,7 +6,7 @@ morphosdist: $(EXECUTABLE) $(PLUGINS)
 ifdef DIST_FILES_DOCS
 	mkdir -p $(MORPHOSPATH)/doc
 	cp $(DIST_FILES_DOCS) $(MORPHOSPATH)doc/
-	$(foreach lang, $(DIST_FILES_DOCS_languages), makedir all $(AMIGAOSPATH)/doc/$(lang); cp $(DIST_FILES_DOCS_$(lang)) $(AMIGAOSPATH)/doc/$(lang);)
+	$(foreach lang, $(DIST_FILES_DOCS_languages), makedir all $(MORPHOSPATH)/doc/$(lang); cp $(DIST_FILES_DOCS_$(lang)) $(MORPHOSPATH)/doc/$(lang);)
 endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(MORPHOSPATH)extras/
