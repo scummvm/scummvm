@@ -30,6 +30,8 @@
 namespace Chewy {
 
 class datei {
+private:
+	void assign_filename(const char *fname, const char *ext);
 public:
 	datei();
 	~datei();
