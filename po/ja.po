@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-01 14:29+0000\n"
+"POT-Creation-Date: 2021-11-01 15:54+0000\n"
 "PO-Revision-Date: 2021-11-01 06:30+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -65,8 +65,8 @@ msgstr "上へ"
 #: gui/saveload-dialog.cpp:1187 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:717
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
-#: backends/events/default/default-events.cpp:185
-#: backends/events/default/default-events.cpp:209
+#: backends/events/default/default-events.cpp:195
+#: backends/events/default/default-events.cpp:219
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
 #: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -126,7 +126,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:441 gui/launcher.cpp:470 gui/launcher.cpp:513
 #: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
-#: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
+#: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:136
@@ -2725,7 +2725,7 @@ msgstr "ダウンロード完了。"
 msgid "Download failed."
 msgstr "ダウンロード失敗した。"
 
-#: backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:195
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
@@ -2733,7 +2733,7 @@ msgstr ""
 "メインメニューに戻ってもよろしいですか?\n"
 "セーブしていない進行は失われます。"
 
-#: backends/events/default/default-events.cpp:209
+#: backends/events/default/default-events.cpp:219
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
@@ -2741,8 +2741,8 @@ msgstr ""
 "終了してもよろしいですか?\n"
 "セーブしていない進行は失われます。"
 
-#: backends/events/default/default-events.cpp:209
-#: backends/events/default/default-events.cpp:347
+#: backends/events/default/default-events.cpp:219
+#: backends/events/default/default-events.cpp:360
 #: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
@@ -2751,58 +2751,58 @@ msgstr ""
 msgid "Quit"
 msgstr "終了"
 
-#: backends/events/default/default-events.cpp:324
+#: backends/events/default/default-events.cpp:334
 msgid "Global"
 msgstr "全般"
 
-#: backends/events/default/default-events.cpp:327
+#: backends/events/default/default-events.cpp:337
 #: engines/twine/metaengine.cpp:217
 msgid "Global Main Menu"
 msgstr "メインメニュー"
 
-#: backends/events/default/default-events.cpp:334
+#: backends/events/default/default-events.cpp:347
 msgid "Display keyboard"
 msgstr "キーボードの表示"
 
-#: backends/events/default/default-events.cpp:341
+#: backends/events/default/default-events.cpp:354
 msgid "Toggle mute"
 msgstr "消音の切替"
 
-#: backends/events/default/default-events.cpp:369
+#: backends/events/default/default-events.cpp:382
 msgid "Open Debugger"
 msgstr "デバッガーを開く"
 
-#: backends/events/gph/gph-events.cpp:417
-#: backends/events/gph/gph-events.cpp:460
+#: backends/events/gph/gph-events.cpp:412
+#: backends/events/gph/gph-events.cpp:455
 #: backends/events/openpandora/op-events.cpp:157
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "タッチパネル(タップモード) - 左クリック"
 
-#: backends/events/gph/gph-events.cpp:419
-#: backends/events/gph/gph-events.cpp:462
+#: backends/events/gph/gph-events.cpp:414
+#: backends/events/gph/gph-events.cpp:457
 #: backends/events/openpandora/op-events.cpp:159
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "タッチパネル(タップモード) - 右クリック"
 
-#: backends/events/gph/gph-events.cpp:421
-#: backends/events/gph/gph-events.cpp:464
+#: backends/events/gph/gph-events.cpp:416
+#: backends/events/gph/gph-events.cpp:459
 #: backends/events/openpandora/op-events.cpp:161
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "タッチパネル(タップモード) - マウスオーバー"
 
-#: backends/events/gph/gph-events.cpp:441
+#: backends/events/gph/gph-events.cpp:436
 msgid "Maximum Volume"
 msgstr "最大の音量"
 
-#: backends/events/gph/gph-events.cpp:443
+#: backends/events/gph/gph-events.cpp:438
 msgid "Increasing Volume"
 msgstr "音量を大く"
 
-#: backends/events/gph/gph-events.cpp:449
+#: backends/events/gph/gph-events.cpp:444
 msgid "Minimal Volume"
 msgstr "最小の音量"
 
-#: backends/events/gph/gph-events.cpp:451
+#: backends/events/gph/gph-events.cpp:446
 msgid "Decreasing Volume"
 msgstr "音量を小さく"
 
