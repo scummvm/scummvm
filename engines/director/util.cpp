@@ -510,28 +510,28 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		// Let's try to translate file path into 8.3 format
 		Common::String addedexts;
 
-		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 500) {
-			convPath.clear();
-			const char *ptr = initialPath.c_str();
-			Common::String component;
+		convPath.clear();
+		const char *ptr = initialPath.c_str();
+		Common::String component;
 
-			while (*ptr) {
-				if (*ptr == g_director->_dirSeparator) {
-					if (component.equals(".")) {
-						convPath += component;
-					} else {
-						convPath += convertMacFilename(component.c_str());
-					}
-
-					component.clear();
-					convPath += g_director->_dirSeparator;
+		while (*ptr) {
+			if (*ptr == g_director->_dirSeparator) {
+				if (component.equals(".")) {
+					convPath += component;
 				} else {
-					component += *ptr;
+					convPath += convertMacFilename(component.c_str());
 				}
 
-				ptr++;
+				component.clear();
+				convPath += g_director->_dirSeparator;
+			} else {
+				component += *ptr;
 			}
 
+			ptr++;
+		}
+
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
 			if (hasExtension(component)) {
 				Common::String nameWithoutExt = component.substr(0, component.size() - 4);
 				Common::String ext = component.substr(component.size() - 4);
@@ -543,13 +543,10 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				if (testPath(res))
 					return res;
 			}
-
-			if (addexts)
-				addedexts = testExtensions(component, initialPath, convPath);
-		} else {
-			if (addexts)
-				addedexts = testExtensions(initialPath, initialPath, convPath);
 		}
+
+		if (addexts)
+			addedexts = testExtensions(component, initialPath, convPath);
 
 		if (!addedexts.empty()) {
 			return addedexts;
