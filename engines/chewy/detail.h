@@ -45,7 +45,7 @@ struct RaumInfo {
 	uint8 Dummy;
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 4 * 1 + 14 + 1 + 1;
 	}
 };
@@ -57,7 +57,7 @@ struct RaumAutoMov {
 	uint8 dummy;
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 2 + 2 + 1 + 1;
 	}
 };
@@ -86,7 +86,7 @@ struct sound_def_blk {
 	int16 stereo[MAX_SOUNDS];
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 7 * 2 * MAX_SOUNDS;
 	}
 };
@@ -111,7 +111,7 @@ struct ani_detail_info {
 	int16 phase_nr;
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 2 + 2 + 1 + 1 + 2 * 8 + 1 + 1 +
 			sound_def_blk::SIZE() + 2 + 2;
 	}
@@ -126,7 +126,7 @@ struct static_detail_info {
 	uint8 Dummy;
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 2 + 2 + 2 + 2 + 1 + 1;
 	}
 };
@@ -145,7 +145,7 @@ struct room_detail_info {
 	byte *sample[MAXDETAILS * MAX_SOUNDS] = { 0 };
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 2 + 2 + 4 +
 			(ani_detail_info::SIZE() * MAXDETAILS) +
 			(static_detail_info::SIZE() * MAXDETAILS) +

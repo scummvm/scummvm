@@ -893,7 +893,7 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 			fcode = READFEHLER;
 		} else {
 			if (ch->type == TMFDATEI) {
-				assert(ch->size > tmf_header::SIZE());
+				assert(ch->size > (uint32)tmf_header::SIZE());
 
 				if (!song->load(rs)) {
 					modul = DATEI;
