@@ -95,7 +95,7 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 // I have currently not implemented dynamic channel allocation.
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
-		: _masterVolume(15), _opl(0),
+		: _masterVolume(143), _opl(0),
 		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 	memset(_channelMapping, 0, sizeof(_channelMapping));
 	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
@@ -166,8 +166,7 @@ void MidiDriver_Accolade_AdLib::close() {
 }
 
 void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
-	// Set the master volume in range from -128 to 127
-	_masterVolume = CLIP<int>(-128 + volume, -128, 127);
+	_masterVolume = volume;
 	for (int i = 0; i < AGOS_ADLIB_VOICES_COUNT; i++) {
 		// Re-set registers
 		noteOnSetVolume(i, 1, _channels[i].velocity);
@@ -289,11 +288,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 	byte regValueB0h      = 0;
 
 	// adjust velocity
-	int16 volumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
-	volumeAdjust += velocity;
-	volumeAdjust = CLIP<int16>(volumeAdjust, 0, 0x7F);
-
-	byte adjustedVelocity = volumeAdjust;
+	byte adjustedVelocity = velocity + _channels[FMvoiceChannel].volumeAdjust;
 
 	if (!_musicDrvMode) {
 		// INSTR.DAT
@@ -436,7 +431,7 @@ void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operat
 	const InstrumentEntry *curInstrument = NULL;
 
 	// Adjust velocity with the master volume
-	uint16 adjustedVelocity = (velocity * (128 + _masterVolume)) / 256;
+	uint16 adjustedVelocity = CLIP<uint16>((velocity * _masterVolume) / 255, 0, 0x3F);
 
 	regValue40h = (63 - adjustedVelocity) & 0x3F;
 
