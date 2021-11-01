@@ -631,7 +631,7 @@ void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
 	Common::SeekableReadStream *src = dynamic_cast<Common::SeekableReadStream *>(v);
 	assert(src);
 
-	src->seek(-(int)ChunkHead::SIZE(), SEEK_CUR);
+	src->seek(-ChunkHead::SIZE(), SEEK_CUR);
 	ChunkHead ch;
 	if (!ch.load(src))
 		::error("Error loading speech");

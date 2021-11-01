@@ -159,7 +159,7 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 						} while (ende <= start);
 						++CurrentFrame;
 					} else {
-						rs->seek(frame_header.size - (int)FrameHead::SIZE(), SEEK_CUR);
+						rs->seek((int)frame_header.size - FrameHead::SIZE(), SEEK_CUR);
 					}
 				}
 			}

@@ -180,7 +180,7 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 	if (fname_ && f.open(fname_)) {
 		if (rdi_datei_header.load(&f)) {
 			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
-				f.seek(room_nr * (int64)room_detail_info::SIZE(), SEEK_CUR);
+				f.seek(room_nr * room_detail_info::SIZE(), SEEK_CUR);
 
 				if (!rdi.load(&f)) {
 					modul = DATEI;

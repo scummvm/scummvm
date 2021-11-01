@@ -50,7 +50,7 @@ struct RoomMovObjekt {
 
 	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
-	static constexpr size_t SIZE() { return 24; }
+	static constexpr int SIZE() { return 24; }
 };
 
 struct IibDateiHeader {
