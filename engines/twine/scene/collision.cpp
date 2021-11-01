@@ -384,10 +384,15 @@ void Collision::stopFalling() { // ReceptionObj()
 				_engine->_actor->_processActorPtr->addLife(-1);
 			}
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
-		} else if (fall > 10) {
+		} else if (fall > 2 * BRICK_HEIGHT) {
 			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		} else {
-			_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			if (_engine->_actor->_processActorPtr->_dynamicFlags.bWasWalkingBeforeFalling) {
+				// try to not interrupt walk animation if Twinsen falls down from small height
+				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			} else {
+				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			}
 		}
 
 		_engine->_scene->_heroYBeforeFall = 0;
@@ -396,6 +401,7 @@ void Collision::stopFalling() { // ReceptionObj()
 	}
 
 	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;
+	_engine->_actor->_processActorPtr->_dynamicFlags.bWasWalkingBeforeFalling = 0;
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {

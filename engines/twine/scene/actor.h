@@ -91,22 +91,22 @@ struct StaticFlagsStruct {
 
 /** Actors dynamic flags structure */
 struct DynamicFlagsStruct {
-	uint16 bWaitHitFrame : 1;     // 0x0001 wait for hit frame
-	uint16 bIsHitting : 1;        // 0x0002 hit frame anim
-	uint16 bAnimEnded : 1;        // 0x0004 anim ended in the current loop (will be looped in the next engine loop)
-	uint16 bAnimFrameReached : 1; // 0x0008 new frame anim reached
-	uint16 bIsVisible : 1;        // 0x0010 actor has been drawn in this loop
-	uint16 bIsDead : 1;           // 0x0020 is dead
-	uint16 bIsSpriteMoving : 1;   // 0x0040 door is opening or closing (wait to reach the destination position)
-	uint16 bIsRotationByAnim : 1; // 0x0080 actor rotation is managed by its animaation not by the engine
-	uint16 bIsFalling : 1;        // 0x0100 is falling on scene
-	uint16 bUnk0200 : 1;          // 0x0200 unused
-	uint16 bUnk0400 : 1;          // 0x0400 unused
-	uint16 bUnk0800 : 1;          // 0x0800 unused
-	uint16 bUnk1000 : 1;          // 0x1000 unused
-	uint16 bUnk2000 : 1;          // 0x2000 unused
-	uint16 bUnk4000 : 1;          // 0x4000 unused
-	uint16 bUnk8000 : 1;          // 0x8000 unused
+	uint16 bWaitHitFrame : 1;            // 0x0001 wait for hit frame
+	uint16 bIsHitting : 1;               // 0x0002 hit frame anim
+	uint16 bAnimEnded : 1;               // 0x0004 anim ended in the current loop (will be looped in the next engine loop)
+	uint16 bAnimFrameReached : 1;        // 0x0008 new frame anim reached
+	uint16 bIsVisible : 1;               // 0x0010 actor has been drawn in this loop
+	uint16 bIsDead : 1;                  // 0x0020 is dead
+	uint16 bIsSpriteMoving : 1;          // 0x0040 door is opening or closing (wait to reach the destination position)
+	uint16 bIsRotationByAnim : 1;        // 0x0080 actor rotation is managed by its animaation not by the engine
+	uint16 bIsFalling : 1;               // 0x0100 is falling on scene
+	uint16 bIsTargetable : 1;            // 0x0200
+	uint16 bIsBlinking : 1;              // 0x0400
+	uint16 bWasWalkingBeforeFalling : 1; // 0x0800
+	uint16 bUnk1000 : 1;                 // 0x1000
+	uint16 bUnk2000 : 1;                 // 0x2000
+	uint16 bUnk4000 : 1;                 // 0x4000
+	uint16 bUnk8000 : 1;                 // 0x8000
 };
 
 /**

@@ -763,9 +763,23 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 						if (IS_HERO(actorIdx) && _engine->_scene->_heroYBeforeFall == 0) {
 							_engine->_scene->_heroYBeforeFall = processActor.y;
-						}
 
-						initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+							int32 y = processActor.y - 1 - BRICK_HEIGHT;
+							while (y > 0 && ShapeType::kNone == _engine->_grid->getBrickShape(processActor.x, y, processActor.z)) {
+								y -= BRICK_HEIGHT;
+							}
+
+							y = (y + BRICK_HEIGHT) & ~(BRICK_HEIGHT - 1);
+							int32 fallHeight = processActor.y - y;
+
+							if (fallHeight <= (2 * BRICK_HEIGHT) && actor->_anim == AnimationTypes::kForward) {
+								actor->_dynamicFlags.bWasWalkingBeforeFalling = 1;
+							} else {
+								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+							}
+						} else {
+							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+						}
 					}
 				}
 			}
