@@ -133,7 +133,7 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 		} else if (token8[pos] == '=') {
 			result = data == filter;
 		} else if (token8[pos] == '~') {
-			result = data.matchString(filter, false, false);
+			result = data.matchString(filter);
 		}
 	} else {
 		result = item.contains(token);
