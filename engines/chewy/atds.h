@@ -140,6 +140,9 @@ struct InvUse {
 	int16 ObjId;
 	int16 ObjNr;
 	int16 TxtNr;
+
+	bool load(Common::SeekableReadStream *src);
+	static constexpr int SIZE() { return 6; }
 };
 
 struct AadInfo {
@@ -199,8 +202,8 @@ struct AdsNextBlk {
 struct AtsStrHeader {
 	uint16 VocNr = 0;
 
-	void load(Common::SeekableReadStream *src);
-	static size_t SIZE() { return 4; }
+	bool load(Common::SeekableReadStream *src);
+	static constexpr int SIZE() { return 4; }
 };
 
 struct AtsTxtHeader {
@@ -208,8 +211,8 @@ struct AtsTxtHeader {
 	uint16 AMov = 0;
 	uint16 CurNr = 0;
 
-	void load(Common::SeekableReadStream *src);
-	static size_t SIZE() { return 8; }
+	bool load(Common::SeekableReadStream *src);
+	static constexpr int SIZE() { return 8; }
 };
 
 struct AtsVar {

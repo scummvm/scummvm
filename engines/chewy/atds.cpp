@@ -34,14 +34,23 @@ int16 mouse_push;
 int print_delay_count1;
 int print_delay_count2;		// TODO: seems to be unused
 
-void AtsTxtHeader::load(Common::SeekableReadStream *src) {
+bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	TxtNr = src->readUint16LE();
 	AMov = src->readUint16LE();
 	CurNr = src->readUint16LE();
+	return true;
 }
 
-void AtsStrHeader::load(Common::SeekableReadStream *src) {
+bool InvUse::load(Common::SeekableReadStream *src) {
+	ObjId = src->readSint16LE();
+	ObjNr = src->readSint16LE();
+	TxtNr = src->readSint16LE();
+	return true;
+}
+
+bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 	VocNr = src->readUint16LE();
+	return true;
 }
 
 
@@ -446,12 +455,15 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	if (atdshandle[ADH_HANDLE]) {
 		mem->file->select_pool_item(atdshandle[ADH_HANDLE], dia_nr);
 
-		chewy_fseek(atdshandle[ADH_HANDLE], -sizeof(ChunkHead), SEEK_CUR);
-		if (!chewy_fread(&Ch, sizeof(ChunkHead), 1, atdshandle[ADH_HANDLE])) {
+		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
+			atdshandle[ADH_HANDLE]);
+		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
+
+		if (!Ch.load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
-			chewy_fseek(atdshandle[ADH_HANDLE], 0, SEEK_CUR);
+			//chewy_fseek(atdshandle[ADH_HANDLE], 0, SEEK_CUR);
 			if (Ch.size) {
 				if (!chewy_fwrite(atdsmem[ADH_HANDLE], Ch.size, 1, atdshandle[ADH_HANDLE])) {
 					fcode = WRITEFEHLER;
@@ -1397,20 +1409,27 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 		if (inv_block_nr != cur_inv) {
 			inv_block_nr = cur_inv + 1;
 			load_atds(inv_block_nr + atdspooloff[mode], INV_USE_DATEI);
-			if (atdshandle[INV_IDX_HANDLE]) {
-				chewy_fseek(atdshandle[INV_IDX_HANDLE], sizeof(InvUse)*inv_block_nr
-				      *INV_STRC_ANZ, SEEK_SET);
-				if
-				(!chewy_fread(atdsmem[INV_IDX_HANDLE], sizeof(InvUse)*INV_STRC_ANZ, 1, atdshandle[INV_IDX_HANDLE])) {
-					modul = DATEI;
-					fcode = READFEHLER;
+
+			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
+				atdshandle[INV_IDX_HANDLE]);
+			if (rs) {
+				rs->seek(InvUse::SIZE() * inv_block_nr
+				      * INV_STRC_ANZ, SEEK_SET);
+
+				iu = (InvUse *)atdsmem[INV_IDX_HANDLE];
+				for (i = 0; i < INV_STRC_ANZ; ++i, ++iu) {
+					if (!iu->load(rs)) {
+						modul = DATEI;
+						fcode = READFEHLER;
+						break;
+					}
 				}
 			} else {
 				modul = DATEI;
 				fcode = OPENFEHLER;
 			}
 		}
-		iu = (InvUse *) atdsmem[INV_IDX_HANDLE];
+		iu = (InvUse *)atdsmem[INV_IDX_HANDLE];
 		ok = false;
 		for (i = 0; i < INV_STRC_ANZ && !ok; i++) {
 			if (iu[i].ObjId == mode) {

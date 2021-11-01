@@ -62,7 +62,7 @@ struct tbf_dateiheader {
 	char palette[768];
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() {
+	static constexpr int SIZE() {
 		return 4 + 2 + 2 + 4 + 2 + 2 + 768;
 	}
 };
@@ -120,7 +120,7 @@ struct tff_header {
 	int16 height = 0;
 
 	bool load(Common::SeekableReadStream *src);
-	static size_t SIZE() { return 18; }
+	static constexpr int SIZE() { return 18; }
 };
 
 #define D_GR 16
@@ -270,7 +270,7 @@ struct tmf_header {
 	byte *ipos[31] = { nullptr };
 
 	bool load(Common::SeekableReadStream *src);
-	static const size_t SIZE() { return 0x284; }
+	static const int SIZE() { return 0x284; }
 };
 
 struct musik_info {
@@ -495,7 +495,7 @@ struct FrameHead {
 	uint8 reserved[8] = { 0 };
 
 	bool load(Common::SeekableReadStream *src);
-	static size_t SIZE() { return 16; }
+	static constexpr int SIZE() { return 16; }
 };
 
 struct ChunkHead {
