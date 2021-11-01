@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-10-31 19:46+0000\n"
+"POT-Creation-Date: 2021-11-01 14:29+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -91,7 +91,7 @@ msgstr "选择"
 msgid "Select directory where to download game data"
 msgstr "选择下载保存游戏数据的目录"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:588 gui/launcher.cpp:206
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:588 gui/launcher.cpp:255
 msgid "Select directory with game data"
 msgstr "选择包含游戏数据的目录"
 
@@ -124,7 +124,7 @@ msgstr "你的连接似乎受到限制。你确定想用它下载文件吗？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
+#: gui/launcher.cpp:441 gui/launcher.cpp:470 gui/launcher.cpp:513
 #: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
@@ -136,7 +136,7 @@ msgstr "是"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:392 gui/launcher.cpp:414 gui/launcher.cpp:457
+#: gui/launcher.cpp:441 gui/launcher.cpp:470 gui/launcher.cpp:513
 #: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
@@ -145,7 +145,7 @@ msgstr "是"
 msgid "No"
 msgstr "否"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:563
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:619
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM 无法打开你指定的目录！"
 
@@ -156,7 +156,7 @@ msgid ""
 msgstr "无法创建下载目录 —— 指定的目录中有相同文件名的文件。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:390
-#: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
+#: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:569 gui/launcher.cpp:573
 #: gui/massadd.cpp:89 gui/options.cpp:2129 gui/saveload-dialog.cpp:1188
 #: engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
@@ -678,116 +678,116 @@ msgstr "向右"
 msgid "???"
 msgstr "？？？"
 
-#: gui/launcher.cpp:141 engines/dialogs.cpp:95
+#: gui/launcher.cpp:189 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "退出(Q)"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
+#: gui/launcher.cpp:189 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
 msgstr "退出 ScummVM"
 
-#: gui/launcher.cpp:142
+#: gui/launcher.cpp:190
 msgid "A~b~out..."
 msgstr "关于(B)..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:224
+#: gui/launcher.cpp:190 backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "About ScummVM"
 msgstr "关于 ScummVM"
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:191
 msgid "~O~ptions..."
 msgstr "选项(O)..."
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:191
 msgid "Change global ScummVM options"
 msgstr "修改全局 ScummVM 设置"
 
-#: gui/launcher.cpp:145
+#: gui/launcher.cpp:193
 msgid "~S~tart"
 msgstr "开始游戏(S)"
 
-#: gui/launcher.cpp:145
+#: gui/launcher.cpp:193
 msgid "Start selected game"
 msgstr "开始选定的游戏"
 
-#: gui/launcher.cpp:148
+#: gui/launcher.cpp:196
 msgid "~L~oad..."
 msgstr "载入游戏(L)..."
 
-#: gui/launcher.cpp:148
+#: gui/launcher.cpp:196
 msgid "Load saved game for selected game"
 msgstr "为选定的游戏载入存档"
 
-#: gui/launcher.cpp:150
+#: gui/launcher.cpp:198
 msgid "Record..."
 msgstr "记录..."
 
-#: gui/launcher.cpp:157
+#: gui/launcher.cpp:205
 msgid "~A~dd Game..."
 msgstr "添加游戏(A)..."
 
-#: gui/launcher.cpp:157 gui/launcher.cpp:166
+#: gui/launcher.cpp:205 gui/launcher.cpp:214
 msgid "Add games to the list"
 msgstr "添加一个游戏到列表"
 
-#: gui/launcher.cpp:158
+#: gui/launcher.cpp:206
 msgid "Mass Add..."
 msgstr "批量添加..."
 
-#: gui/launcher.cpp:161
+#: gui/launcher.cpp:209
 msgid "~E~dit Game..."
 msgstr "编辑游戏(E)..."
 
-#: gui/launcher.cpp:161 gui/launcher.cpp:170
+#: gui/launcher.cpp:209 gui/launcher.cpp:218
 msgid "Change game options"
 msgstr "改变游戏设置"
 
-#: gui/launcher.cpp:163
+#: gui/launcher.cpp:211
 msgid "~R~emove Game"
 msgstr "删除游戏(R)"
 
-#: gui/launcher.cpp:163 gui/launcher.cpp:172
+#: gui/launcher.cpp:211 gui/launcher.cpp:220
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "从列表中移除游戏，但游戏数据文件会保留"
 
-#: gui/launcher.cpp:166
+#: gui/launcher.cpp:214
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "添加游戏(A)..."
 
-#: gui/launcher.cpp:167
+#: gui/launcher.cpp:215
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "批量添加..."
 
-#: gui/launcher.cpp:170
+#: gui/launcher.cpp:218
 #, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "編輯遊戲(E)..."
 
-#: gui/launcher.cpp:172
+#: gui/launcher.cpp:220
 #, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "刪除遊戲(R)"
 
-#: gui/launcher.cpp:180
+#: gui/launcher.cpp:228
 msgid "Search in game list"
 msgstr "在游戏列表中搜索"
 
-#: gui/launcher.cpp:184 gui/launcher.cpp:782
+#: gui/launcher.cpp:232 gui/launcher.cpp:838
 msgid "Search:"
 msgstr "搜索："
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:867
+#: gui/launcher.cpp:258 engines/dialogs.cpp:98 engines/engine.cpp:867
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "载入游戏："
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:867
+#: gui/launcher.cpp:258 engines/dialogs.cpp:98 engines/engine.cpp:867
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
@@ -796,41 +796,41 @@ msgstr "载入游戏："
 msgid "Load"
 msgstr "载入"
 
-#: gui/launcher.cpp:380
+#: gui/launcher.cpp:429
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "这个目录还不能使用，文件正在下载中！"
 
-#: gui/launcher.cpp:391
+#: gui/launcher.cpp:440
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr "你确定要进行全盘扫描吗？这可能会添加大量的游戏。"
 
-#: gui/launcher.cpp:414
+#: gui/launcher.cpp:470
 msgid "Do you really want to remove this game configuration?"
 msgstr "你确定要删除这个游戏设定吗？"
 
-#: gui/launcher.cpp:456
+#: gui/launcher.cpp:512
 msgid "Do you want to load saved game?"
 msgstr "你要载入存档吗？"
 
-#: gui/launcher.cpp:513
+#: gui/launcher.cpp:569
 msgid "This game does not support loading games from the launcher."
 msgstr "这个游戏不支持直接从启动器载入存档。"
 
-#: gui/launcher.cpp:517
+#: gui/launcher.cpp:573
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM 找不到任何能运行这个游戏的引擎！"
 
-#: gui/launcher.cpp:582
+#: gui/launcher.cpp:638
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM 在指定目录找不到任何游戏！"
 
-#: gui/launcher.cpp:597
+#: gui/launcher.cpp:653
 msgid "Unknown variant"
 msgstr "未知变量"
 
-#: gui/launcher.cpp:603
+#: gui/launcher.cpp:659
 msgid "Pick the game:"
 msgstr "选择游戏："
 
