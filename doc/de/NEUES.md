@@ -6,6 +6,8 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - ScummVM benötigt nun C++11, um gebaut werden zu können.
+   - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
+     Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
 
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
