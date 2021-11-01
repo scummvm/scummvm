@@ -493,7 +493,7 @@ void MidiPlayer::pause(bool b) {
 	Common::StackLock lock(_mutex);
 	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
 	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
-		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : 128);
+		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : ConfMan.getInt("music_volume"));
 	} else if (_musicMode == kMusicModePC98) {
 		_driver->property(0x30, _paused ? 1 : 0);
 	}
@@ -519,6 +519,8 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 	if (_musicMode == kMusicModePC98) {
 		_driver->property(0x10, _musicVolume);
 		_driver->property(0x20, _sfxVolume);
+	} else if (_musicMode == kMusicModeAccolade && musicType == MT_ADLIB) {
+		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_musicVolume);
 	}
 
 	// Now tell all the channels this.
