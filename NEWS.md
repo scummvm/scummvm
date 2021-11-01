@@ -5,6 +5,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Now ScummVM requires C++11 for building.
+   - Implemented enhanced filtering in the Search box. See "Understanding
+     the search box in the documentation for details.
 
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
