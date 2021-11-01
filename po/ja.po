@@ -6853,8 +6853,10 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
-"「アスペクト比補正」を有効にしました。ただし、FM-TOWNSの自然な解像度は320x240であるため、アスペクト比を補正することはできません。\n"
-"アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実現できます。"
+"「アスペクト比補正」を有効にしました。ただし、FM-TOWNSの自然な解像度は320x240"
+"であるため、アスペクト比を補正することはできません。\n"
+"アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実"
+"現できます。"
 
 #: engines/scumm/scumm.cpp:1350
 msgid ""
