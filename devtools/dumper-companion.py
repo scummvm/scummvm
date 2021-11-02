@@ -127,7 +127,7 @@ def decode_macjapanese(text: ByteString) -> str:
         elif hi == 0xFF:  # halfwidth horizontal ellipsis
             res += "\u2026\uF87F"
         else:
-            raise Exception(f"No mapping for Mac Japanese sequece {hex(hi)}")
+            raise Exception(f"No mapping for Mac Japanese sequence {hex(hi)}")
         hi = next(i_text, None)
     return res
 
