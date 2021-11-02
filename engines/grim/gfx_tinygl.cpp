@@ -1028,8 +1028,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		int width = font->getBitmapStringLength(currentLine) + 1;
 		int height = font->getStringHeight(currentLine) + 1;
 
-		uint8 *_textBitmap = new uint8[height * width];
-		memset(_textBitmap, 0, height * width);
+		uint8 *_textBitmap = new uint8[height * width]();
 
 		int startColumn = 0;
 		for (unsigned int d = 0; d < currentLine.size(); d++) {

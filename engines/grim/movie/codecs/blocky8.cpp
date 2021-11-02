@@ -548,10 +548,8 @@ static void bompDecodeLine(byte *dst, const byte *src, int len) {
 }
 
 Blocky8::Blocky8() {
-	_tableBig = new byte[99328];
-	_tableSmall = new byte[32768];
-	memset(_tableBig, 0, 99328);
-	memset(_tableSmall, 0, 32768);
+	_tableBig = new byte[99328]();
+	_tableSmall = new byte[32768]();
 	_deltaBuf = nullptr;
 	_width = -1;
 	_height = -1;
@@ -579,8 +577,7 @@ void Blocky8::init(int width, int height) {
 
 	_frameSize = _width * _height;
 	uint32 deltaSize = _frameSize * 3;
-	_deltaBuf = new byte[deltaSize];
-	memset(_deltaBuf, 0, deltaSize);
+	_deltaBuf = new byte[deltaSize]();
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
