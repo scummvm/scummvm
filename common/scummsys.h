@@ -383,6 +383,10 @@
 	#endif
 #endif
 
+#ifndef SCUMMVM_EXPORT
+#define SCUMMVM_EXPORT
+#endif
+
 #ifndef NORETURN_PRE
 	#if defined(_MSC_VER)
 		#define NORETURN_PRE __declspec(noreturn)
