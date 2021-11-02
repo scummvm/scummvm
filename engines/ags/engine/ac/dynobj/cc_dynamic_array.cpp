@@ -72,8 +72,7 @@ void CCDynamicArray::Unserialize(int index, const char *serializedData, int data
 }
 
 DynObjectRef CCDynamicArray::Create(int numElements, int elementSize, bool isManagedType) {
-	char *newArray = new char[numElements * elementSize + 8];
-	memset(newArray, 0, numElements * elementSize + 8);
+	char *newArray = new char[numElements * elementSize + 8]();
 	int *sizePtr = (int *)newArray;
 	sizePtr[0] = numElements;
 	sizePtr[1] = numElements * elementSize;

@@ -55,8 +55,7 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	if (val->isInt()) {
 		_capacity = MAX(0, val->getInt());
 		if (_capacity > 0) {
-			_string = new char[_capacity];
-			memset(_string, 0, _capacity);
+			_string = new char[_capacity]();
 		}
 	} else {
 		setStringVal(val->getString());
@@ -83,8 +82,7 @@ void SXString::setStringVal(const char *val) {
 		_capacity = len + 1;
 		delete[] _string;
 		_string = nullptr;
-		_string = new char[_capacity];
-		memset(_string, 0, _capacity);
+		_string = new char[_capacity]();
 	}
 	strcpy(_string, val);
 }
@@ -397,9 +395,8 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 		if (newCap < (int32)(strlen(_string) + 1)) {
 			_gameRef->LOG(0, "Warning: cannot lower string capacity");
 		} else if (newCap != _capacity) {
-			char *newStr = new char[newCap];
+			char *newStr = new char[newCap]();
 			if (newStr) {
-				memset(newStr, 0, newCap);
 				strcpy(newStr, _string);
 				delete[] _string;
 				_string = newStr;

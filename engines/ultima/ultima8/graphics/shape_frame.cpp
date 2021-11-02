@@ -33,9 +33,7 @@ ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
 		_width(rawframe->_width), _height(rawframe->_height) {
 
 	_pixels = new uint8[_width * _height];
-	_mask = new uint8[_width * _height];
-
-	memset(_mask, 0, _width * _height);
+	_mask = new uint8[_width * _height]();
 
 	for (int y = 0; y < _height; y++) {
 		int32 xpos = 0;

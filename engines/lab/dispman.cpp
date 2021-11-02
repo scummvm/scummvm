@@ -429,8 +429,7 @@ void DisplayMan::createScreen(bool hiRes) {
 
 	if (_displayBuffer)
 		delete[] _displayBuffer;
-	_displayBuffer = new byte[_screenBytesPerPage];
-	memset(_displayBuffer, 0, _screenBytesPerPage);
+	_displayBuffer = new byte[_screenBytesPerPage]();
 }
 
 void DisplayMan::setAmigaPal(uint16 *pal) {

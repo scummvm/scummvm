@@ -26,8 +26,7 @@
 namespace TwinE {
 
 LzssReadStream::LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 realsize) {
-	_outLzssBufData = new uint8[realsize];
-	memset(_outLzssBufData, 0, realsize);
+	_outLzssBufData = new uint8[realsize]();
 	decodeLZSS(indata, mode, realsize);
 	_size = realsize;
 	_pos = 0;

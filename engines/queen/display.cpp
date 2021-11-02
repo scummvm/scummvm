@@ -47,25 +47,18 @@ Display::Display(QueenEngine *vm, OSystem *system)
 
 	initFont();
 
-	_screenBuf   = new uint8[ SCREEN_W * SCREEN_H ];
-	_panelBuf    = new uint8[ PANEL_W * PANEL_H ];
-	_backdropBuf = new uint8[ BACKDROP_W * BACKDROP_H ];
-	memset(_screenBuf,   0, SCREEN_W * SCREEN_H);
-	memset(_panelBuf,    0, PANEL_W * PANEL_H);
-	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
+	_screenBuf   = new uint8[ SCREEN_W * SCREEN_H ]();
+	_panelBuf    = new uint8[ PANEL_W * PANEL_H ]();
+	_backdropBuf = new uint8[ BACKDROP_W * BACKDROP_H ]();
 
 	_fullRefresh = 1;
 	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
 	_dirtyBlocksHeight = SCREEN_H / D_BLOCK_H;
-	_dirtyBlocks = new uint8[_dirtyBlocksWidth * _dirtyBlocksHeight];
-	memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
+	_dirtyBlocks = new uint8[_dirtyBlocksWidth * _dirtyBlocksHeight]();
 
-	_pal.room   = new uint8[ 256 * 3 ];
-	_pal.screen = new uint8[ 256 * 3 ];
-	_pal.panel  = new uint8[ 112 * 3 ];
-	memset(_pal.room,   0, 256 * 3);
-	memset(_pal.screen, 0, 256 * 3);
-	memset(_pal.panel,  0, 112 * 3);
+	_pal.room   = new uint8[ 256 * 3 ]();
+	_pal.screen = new uint8[ 256 * 3 ]();
+	_pal.panel  = new uint8[ 112 * 3 ]();
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 255;
 	_pal.scrollable = true;

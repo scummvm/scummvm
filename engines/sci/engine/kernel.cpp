@@ -660,9 +660,8 @@ void Kernel::mapFunctions(GameFeatures *features) {
 					error("k%s[%x]: no subfunctions found for requested version %s", kernelName.c_str(), id, getSciVersionDesc(mySubVersion));
 				// Now allocate required memory and go through it again
 				_kernelFuncs[id].subFunctionCount = subFunctionCount;
-				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
+				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount]();
 				_kernelFuncs[id].subFunctions = subFunctions;
-				memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
 				// And fill this info out
 				kernelSubMap = kernelMap->subFunctions;
 				uint kernelSubNr = 0;

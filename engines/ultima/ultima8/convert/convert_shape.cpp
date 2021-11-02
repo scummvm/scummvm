@@ -102,8 +102,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 //	}
 
 	// Create _frames array
-	_frames = new ConvertShapeFrame[_num_frames];
-	memset(_frames, 0, _num_frames * sizeof(ConvertShapeFrame));
+	_frames = new ConvertShapeFrame[_num_frames]();
 
 	// Now read the _frames
 	for(uint32 f = 0; f < _num_frames; ++f) {

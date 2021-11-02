@@ -312,8 +312,7 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, const 
 	if (strLength > count)
 		error("[Savegame::read] Count too large (asked: %d, present: %d)", strLength, count);
 
-	char *str = new char[strLength + 1];
-	memset(str, 0, strLength + 1);
+	char *str = new char[strLength + 1]();
 	file->read(str, strLength);
 
 	Common::String ret(str);

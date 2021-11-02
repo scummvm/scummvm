@@ -57,24 +57,15 @@ void ToonEngine::init() {
 	_mainSurface = new Graphics::Surface();
 	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
-	_finalPalette = new uint8[768];
-	_backupPalette = new uint8[768];
-	_additionalPalette1 = new uint8[69];
-	_additionalPalette2 = new uint8[69];
-	_cutawayPalette = new uint8[768];
-	_universalPalette = new uint8[96];
-	_fluxPalette = new uint8[24];
+	_finalPalette = new uint8[768]();
+	_backupPalette = new uint8[768]();
+	_additionalPalette1 = new uint8[69]();
+	_additionalPalette2 = new uint8[69]();
+	_cutawayPalette = new uint8[768]();
+	_universalPalette = new uint8[96]();
+	_fluxPalette = new uint8[24]();
 
-	memset(_finalPalette, 0, 768);
-	memset(_backupPalette, 0, 768);
-	memset(_additionalPalette1, 0, 69);
-	memset(_additionalPalette2, 0, 69);
-	memset(_cutawayPalette, 0, 768);
-	memset(_universalPalette, 0, 96);
-	memset(_fluxPalette, 0, 24);
-
-	_conversationData = new int16[4096];
-	memset(_conversationData, 0, 4096 * sizeof(int16));
+	_conversationData = new int16[4096]();
 
 	_shouldQuit = false;
 	_scriptStep = 0;

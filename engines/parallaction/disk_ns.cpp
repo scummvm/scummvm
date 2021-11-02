@@ -303,9 +303,8 @@ Cnv *Disk_ns::makeCnv(Common::SeekableReadStream *stream) {
 	assert((width & 7) == 0);
 	uint16 height = stream->readByte();
 	uint32 decsize = numFrames * width * height;
-	byte *data = new byte[decsize];
+	byte *data = new byte[decsize]();
 	assert(data);
-	memset(data, 0, decsize);
 
 	decodeCnv(data, numFrames, width, height, stream);
 

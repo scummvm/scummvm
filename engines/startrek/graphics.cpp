@@ -55,11 +55,8 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_numSprites = 0;
 	_pushedNumSprites = -1;
 
-	_palData = new byte[256 * 3];
-	_lutData = new byte[256 * 3];
-
-	memset(_palData, 0, 256 * 3);
-	memset(_lutData, 0, 256 * 3);
+	_palData = new byte[256 * 3]();
+	_lutData = new byte[256 * 3]();
 
 	_paletteFadeLevel = 0;
 	_lockedMousePos = Common::Point(-1, -1);

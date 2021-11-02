@@ -38,9 +38,7 @@ Child *AGOSEngine::allocateChildBlock(Item *i, uint type, uint size) {
 }
 
 void *AGOSEngine::allocateItem(uint size) {
-	byte *item = new byte[size];
-
-	memset(item, 0, size);
+	byte *item = new byte[size]();
 	_itemHeap.push_back(item);
 	return item;
 }
