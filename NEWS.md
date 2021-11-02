@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.5.1 (XXXX-XX-XX)
+#### 2.5.1 (2021-XX-XX)
 
  General:
    - Ported ResidualVM GUI theme to remastered version.
@@ -14,15 +14,24 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed black screen while entering save game name.
    - OpenGL without shaders is preferred as default for Grim Fandango.
 
+ Kyra:
+   - Fixed graphical glitch in Legend of Kyrandia 3.
+
  SCUMM:
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
+   - Improved OPL3 sound emulation for Sam&Max.
+
+TwinE:
+   - Numerous bugfixes and stability improvements.
 
  Stark:
    - Added OpenGL renderer (without shaders).
+   - Fixed autosave handling.
 
  Xeen:
-   - Fix crash on startup loading constants from xeen.ccs
+   - Fix crash on startup loading constants from xeen.ccs.
+
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
