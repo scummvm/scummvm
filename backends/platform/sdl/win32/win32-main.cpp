@@ -22,8 +22,6 @@
 
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-// HACK: Mingw32 doesn't define _argc _argv in strict ANSI mode
-#undef __STRICT_ANSI__
 
 #include "common/scummsys.h"
 
