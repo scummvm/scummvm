@@ -102,12 +102,16 @@ def decode_macjapanese(text: ByteString) -> str:
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
-                raise Exception("Mac Japanese sequence missing second byte")
-            hi_key = hex(hi)[2:]
+                # raise Exception(f"Mac Japanese sequence missing second byte 0x{hi:02x}")
+                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}, decoding as Mac-Roman")
+                res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
+                hi = next(i_text, None)
+                continue
+            hi_key = f'{hi:02x}'
             lo_key = lo - 0x40
             if decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
                 raise Exception(
-                    f"No mapping for Mac Japanese sequence 0x{hi_key}{hex(lo)[2:]}"
+                    f"No mapping for Mac Japanese sequence 0x{hi_key}{lo:02x}"
                 )
             assert_tmp = decode_map[hi_key][lo_key]
             assert assert_tmp  # mypy assert
@@ -116,7 +120,7 @@ def decode_macjapanese(text: ByteString) -> str:
             res += "\u00A0"
         elif 0xA1 <= hi <= 0xDF:  # Katakana
             res += chr(hi - 0xA1 + 0xFF61)
-        elif hi == 0xFD:  # copyrig  ht sign
+        elif hi == 0xFD:  # copyright sign
             res += "\u00A9"
         elif hi == 0xFE:  # trade mark sign
             res += "\u2122"
