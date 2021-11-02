@@ -2202,8 +2202,7 @@ fi;
 append_var CXXFLAGS "-std=${std_variant}11"
 
 if test "$pedantic" = yes ; then
-	# We *do* want the 'long long' extension.
-	append_var CXXFLAGS "-pedantic -Wno-long-long"
+	append_var CXXFLAGS "-pedantic"
 fi
 
 #
