@@ -25,7 +25,7 @@
 namespace Math {
 
 // function based on gluUnProject from Mesa 5.0 glu GPLv2+ licensed sources
-bool gluMathUnProject(Vector3d win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj) {
+bool gluMathUnProject(const Vector3d &win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj) {
 	Matrix4 A;
 	Vector4d in, out;
 
