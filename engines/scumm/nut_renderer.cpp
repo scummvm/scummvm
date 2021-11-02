@@ -118,10 +118,7 @@ void NutRenderer::loadFont(const char *filename) {
 	uint32 decodedLength = 0;
 	int l;
 
-	_paletteMap = new byte[256];
-	for (l = 0; l < 256; l++) {
-		_paletteMap[l] = 0;
-	}
+	_paletteMap = new byte[256]();
 
 	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
@@ -220,8 +217,7 @@ void NutRenderer::loadFont(const char *filename) {
 
 		debug(1, "NutRenderer::loadFont('%s') - compressedLength = %d (%d bpp)", filename, compressedLength, _bpp);
 
-		byte *compressedData = new byte[compressedLength];
-		memset(compressedData, 0, compressedLength);
+		byte *compressedData = new byte[compressedLength]();
 
 		offset = 0;
 

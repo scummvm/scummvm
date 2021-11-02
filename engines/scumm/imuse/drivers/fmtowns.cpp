@@ -208,11 +208,9 @@ uint8 TownsMidiChanState::get(uint8 type) {
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
 	_in(0), _prev(0), _next(0), _adjustModTl(0), _operator2Tl(0), _note(0), _operator1Tl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
-	_effectEnvelopes = new EffectEnvelope[2];
-	_effectDefs = new EffectDef[2];
+	_effectEnvelopes = new EffectEnvelope[2]();
+	_effectDefs = new EffectDef[2]();
 
-	memset(_effectEnvelopes, 0, 2 * sizeof(EffectEnvelope));
-	memset(_effectDefs, 0, 2 * sizeof(EffectDef));
 	_effectDefs[0].s = &_effectEnvelopes[1];
 	_effectDefs[1].s = &_effectEnvelopes[0];
 }
@@ -654,8 +652,7 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 
 TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _chanIndex(chanIndex),
 	_priority(0), _tl(0), _transpose(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0), _detune(0), _modWheel(0), _allocated(false) {
-	_instrument = new uint8[30];
-	memset(_instrument, 0, 30);
+	_instrument = new uint8[30]();
 }
 
 TownsMidiInputChannel::~TownsMidiInputChannel() {

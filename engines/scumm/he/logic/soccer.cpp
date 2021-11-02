@@ -569,10 +569,8 @@ int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
 	// Initializes _collisionTree, a tree used for collision detection.
 	// It is used by op_1014 to work out which objects to check.
 
-	_collisionTree = new uint32[585 * 11];
+	_collisionTree = new uint32[585 * 11]();
 	_collisionTreeAllocated = true;
-	for (int i = 0; i < 585 * 11; i++)
-		_collisionTree[i] = 0;
 
 	for (int i = 0; i < 8; i++)
 		_collisionTree[i + 2] = addCollisionTreeChild(1, i + 1, 0);
