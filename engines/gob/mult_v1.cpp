@@ -290,15 +290,11 @@ void Mult_v1::playMultInit() {
 		delete _animArrayY;
 		delete[] _animArrayData;
 
-		_objects = new Mult_Object[_objCount];
-		_renderData = new int16[9 * _objCount];
+		_objects = new Mult_Object[_objCount]();
+		_renderData = new int16[9 * _objCount]();
 		_animArrayX = new VariablesLE(_objCount * 4);
 		_animArrayY = new VariablesLE(_objCount * 4);
-		_animArrayData = new Mult_AnimData[_objCount];
-
-		memset(_objects, 0, _objCount * sizeof(Mult_Object));
-		memset(_renderData, 0, _objCount * 9 * sizeof(int16));
-		memset(_animArrayData, 0, _objCount * sizeof(Mult_AnimData));
+		_animArrayData = new Mult_AnimData[_objCount]();
 
 		for (_counter = 0; _counter < _objCount; _counter++) {
 			Mult_Object &multObj = _objects[_counter];

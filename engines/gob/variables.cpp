@@ -306,9 +306,7 @@ VariableReference &VariableReference::operator*=(uint32 value) {
 
 
 VariableStack::VariableStack(uint32 size) : _size(size), _position(0) {
-	_stack = new byte[_size];
-
-	memset(_stack, 0, _size);
+	_stack = new byte[_size]();
 }
 
 VariableStack::~VariableStack() {

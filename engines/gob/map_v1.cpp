@@ -45,18 +45,15 @@ void Map_v1::init() {
 	_mapWidth  = 26;
 	_mapHeight = 28;
 
-	_passMap = new int8[_mapHeight * _mapWidth];
-	memset(_passMap, 0, _mapHeight * _mapWidth * sizeof(int8));
+	_passMap = new int8[_mapHeight * _mapWidth]();
 
 	_itemsMap = new int16*[_mapHeight];
 	 for (int i = 0; i < _mapHeight; i++) {
-		_itemsMap[i] = new int16[_mapWidth];
-		memset(_itemsMap[i], 0, _mapWidth * sizeof(int16));
+		_itemsMap[i] = new int16[_mapWidth]();
 	}
 
 	_wayPointCount = 40;
-	_wayPoints = new WayPoint[40];
-	memset(_wayPoints, 0, sizeof(WayPoint));
+	_wayPoints = new WayPoint[40]();
 }
 
 void Map_v1::loadMapObjects(const char *avjFile) {

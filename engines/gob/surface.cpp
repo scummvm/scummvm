@@ -182,10 +182,8 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 
 	if (!_vidMem) {
-		_vidMem    = new byte[_bpp * _width * _height];
+		_vidMem    = new byte[_bpp * _width * _height]();
 		_ownVidMem = true;
-
-		memset(_vidMem, 0, _bpp * _width * _height);
 	} else
 		_ownVidMem = false;
 }
@@ -228,10 +226,8 @@ void Surface::resize(uint16 width, uint16 height) {
 	_width  = width;
 	_height = height;
 
-	_vidMem    = new byte[_bpp * _width * _height];
+	_vidMem    = new byte[_bpp * _width * _height]();
 	_ownVidMem = true;
-
-	memset(_vidMem, 0, _bpp * _width * _height);
 }
 
 void Surface::setBPP(uint8 bpp) {
