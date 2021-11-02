@@ -81,7 +81,7 @@ ResourceLoader::ResourceLoader() {
 
 	//Load the update from the executable, if needed
 	const char *updateFilename = nullptr;
-	if (g_grim->getGameType() == GType_GRIM && !(g_grim->getGameFlags() & ADGF_REMASTERED)) {
+	if (g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered()) {
 		updateFilename = g_grim->getUpdateFilename();
 	}
 	if (updateFilename) {
@@ -137,7 +137,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
 
-			if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+			if (g_grim->isRemastered()) {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
 				SearchMan.listMatchingMembers(files, "images.lab");
 			}
@@ -367,7 +367,7 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Actor *owne
 Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
-	if (g_grim->getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
+	if (g_grim->getGameType() == GType_GRIM && g_grim->isRemastered()) {
 		Common::String name = "FontsHD/" + filename + ".txt";
 		stream = openNewStreamFile(name, true);
 		if (stream) {

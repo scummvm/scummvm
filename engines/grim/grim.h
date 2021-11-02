@@ -87,6 +87,7 @@ public:
 	virtual const char *getUpdateFilename();
 	bool canLoadGameStateCurrently() override { return true; }
 	Common::Error loadGameState(int slot) override;
+	bool isRemastered() const { return !!(_gameFlags & ADGF_REMASTERED); }
 
 	void setMode(EngineMode mode);
 	EngineMode getMode() { return _mode; }

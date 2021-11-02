@@ -1173,7 +1173,7 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	Common::String soundName = id;
 
 	if (g_grim->getGameType() == GType_GRIM) {
-		if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+		if (g_grim->isRemastered()) {
 			soundName = g_grim->getLanguagePrefix() + "_" + soundName;
 		}
 		soundName += ".wav";
