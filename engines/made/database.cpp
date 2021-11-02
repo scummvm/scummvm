@@ -438,8 +438,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 
 	debug(0, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
 
-	_gameState = new byte[_gameStateSize + 2];
-	memset(_gameState, 0, _gameStateSize + 2);
+	_gameState = new byte[_gameStateSize + 2]();
 	setVar(1, objectCount);
 
 	sourceS.seek(textOffs);

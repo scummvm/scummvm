@@ -122,8 +122,7 @@ void InitRevRenderDevice() {
 	SetRenderDevice(&revRen);
 
 	if (pUsedTiles == NULL)
-		pUsedTiles = new uint32[TILE_COUNT];
-	memset(pUsedTiles, 0, TILE_COUNT << 2);
+		pUsedTiles = new uint32[TILE_COUNT]();
 }
 
 void DestoryRevRenderDevice() {

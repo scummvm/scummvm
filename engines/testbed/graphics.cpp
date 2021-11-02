@@ -379,11 +379,9 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 	// Take a buffer of screen size
 	int width = g_system->getWidth();
 	int height = Testsuite::getDisplayRegionCoordinates().y;
-	byte *buffer = new byte[height * width];
+	byte *buffer = new byte[height * width]();
 	double theta;
 	int x, y, x1, y1;
-
-	memset(buffer, 0, sizeof(byte) * width * height);
 	// Illuminate the center
 	buffer[cx * width + cy] = 1;
 

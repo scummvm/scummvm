@@ -40,8 +40,7 @@ namespace Lab {
 LargeSet::LargeSet(uint16 last, LabEngine *vm) : _vm(vm) {
 	last = (((last + 15) >> 4) << 4);
 
-	_array = new uint16[last >> 3];
-	memset(_array, 0, last >> 3);
+	_array = new uint16[last >> 3]();
 	_lastElement = last;
 }
 

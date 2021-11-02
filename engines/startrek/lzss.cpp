@@ -33,8 +33,7 @@ namespace StarTrek {
 
 Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint32 uncompressedSize) {
 	uint32 N = 0x1000; /* History buffer size */
-	byte *histbuff = new byte[N]; /* History buffer */
-	memset(histbuff, 0, N);
+	byte *histbuff = new byte[N](); /* History buffer */
 	uint32 outstreampos = 0;
 	uint32 bufpos = 0;
 	byte *outLzssBufData = (byte *)malloc(uncompressedSize);

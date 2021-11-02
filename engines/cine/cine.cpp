@@ -196,8 +196,7 @@ void CineEngine::initialize() {
 	lastSafeControlObjIdx = -1;
 	currentDisk = 1;
 
-	collisionPage = new byte[320 * 200];
-	memset(collisionPage, 0, 320 * 200);
+	collisionPage = new byte[320 * 200]();
 
 	// Clear part buffer as there's nothing loaded into it yet.
 	// Its size will change when loading data into it with the loadPart function.

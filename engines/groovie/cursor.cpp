@@ -298,9 +298,8 @@ Cursor_v2::~Cursor_v2() {
 
 void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	// Scratch memory
-	byte *tmp = new byte[_width * _height * 4];
+	byte *tmp = new byte[_width * _height * 4]();
 	byte *ptr = tmp;
-	memset(tmp, 0, _width * _height * 4);
 
 	byte ctrA = 0, ctrB = 0;
 

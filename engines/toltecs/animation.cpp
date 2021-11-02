@@ -28,8 +28,7 @@
 namespace Toltecs {
 
 AnimationPlayer::AnimationPlayer(ToltecsEngine *vm) : _vm(vm) {
-	_animBuffer = new byte[262144];
-	memset(_animBuffer, 0, 262144);
+	_animBuffer = new byte[262144]();
 
 	_resIndex = 0;
 	_width = _height = 0;

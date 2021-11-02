@@ -102,12 +102,11 @@ Common::Rect Background::draw(Graphics::Surface *surface) {
 
 byte *Background::decodeComponent(Common::SeekableReadStream *in, uint32 inSize, uint32 outSize) const {
 	// Create the destination array
-	byte *out = new byte[outSize];
+	byte *out = new byte[outSize]();
 	if (!out)
 		return NULL;
 
 	// Initialize the decoding
-	memset(out, 0, outSize * sizeof(byte));
 	uint32 inPos = 0;
 	uint32 outPos = 0;
 

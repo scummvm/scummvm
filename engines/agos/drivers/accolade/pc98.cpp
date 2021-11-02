@@ -532,8 +532,7 @@ const uint16 PC98FMDriver::_frequency[12] = {
 
 PC98MidiDriver::PC98MidiDriver(MidiDriver::DeviceHandle dev) : _dev(dev), _drv(0) {
 	_instrumentsRemap = (getMusicType(dev) == MT_MT32) ? _instrumentsRemapMT32 : (getMusicType(dev) == MT_GM ? _instrumentsRemapGM : 0);
-	int8 *tbl2 = new int8[128];
-	memset(tbl2, 0, 128);
+	int8 *tbl2 = new int8[128]();
 	_instrumentLevelAdjust = tbl2;
 	_partsRemap = _partsRemapMidi;
 	memcpy(_volSysex, _sysexMsg[0], 9);

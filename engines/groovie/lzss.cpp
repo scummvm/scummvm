@@ -44,8 +44,7 @@ LzssReadStream::~LzssReadStream() {
 
 uint32 LzssReadStream::decodeLZSS(Common::ReadStream *in, uint8 lengthmask, uint8 lengthbits) {
 	uint32 N = 1 << (16 - lengthbits); /* History buffer size */
-	byte *histbuff = new byte[N]; /* History buffer */
-	memset(histbuff, 0, N);
+	byte *histbuff = new byte[N](); /* History buffer */
 	uint32 outstreampos = 0;
 	uint32 bufpos = 0;
 

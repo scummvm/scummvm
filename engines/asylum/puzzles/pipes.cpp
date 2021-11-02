@@ -539,8 +539,7 @@ void PuzzlePipes::setup() {
 		_spiders.push_back(new Spider(_vm, Common::Rect(544, 225, 650, 490)));
 
 	if (i) {
-		_frameIndexSpider = new uint32[_spiders.size()];
-		memset(_frameIndexSpider, 0, _spiders.size() * sizeof(uint32));
+		_frameIndexSpider = new uint32[_spiders.size()]();
 	}
 }
 

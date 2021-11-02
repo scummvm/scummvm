@@ -22155,8 +22155,7 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable) {
 	while (curEntry->signatureData) {
 		patchEntryCount++; curEntry++;
 	}
-	_runtimeTable = new SciScriptPatcherRuntimeEntry[patchEntryCount];
-	memset(_runtimeTable, 0, sizeof(SciScriptPatcherRuntimeEntry) * patchEntryCount);
+	_runtimeTable = new SciScriptPatcherRuntimeEntry[patchEntryCount]();
 
 	curEntry = patchTable;
 	curRuntimeEntry = _runtimeTable;

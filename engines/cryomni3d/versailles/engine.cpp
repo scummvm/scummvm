@@ -432,9 +432,7 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 	}
 
 	_cursorPalette = new byte[3 * (bmpDecoder.getPaletteColorCount() +
-	                               bmpDecoder.getPaletteStartIndex())];
-	memset(_cursorPalette, 0, 3 * (bmpDecoder.getPaletteColorCount() +
-	                               bmpDecoder.getPaletteStartIndex()));
+	                               bmpDecoder.getPaletteStartIndex())]();
 	memcpy(_cursorPalette + 3 * bmpDecoder.getPaletteStartIndex(), bmpDecoder.getPalette(),
 	       3 * bmpDecoder.getPaletteColorCount());
 }

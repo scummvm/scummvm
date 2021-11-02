@@ -89,8 +89,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 
 
 	_prj.noClu = file.readUint32LE();
-	_prj.clu = new Clu[_prj.noClu];
-	memset(_prj.clu, 0, _prj.noClu * sizeof(Clu));
+	_prj.clu = new Clu[_prj.noClu]();
 
 	uint32 *cluIndex = (uint32 *)malloc(_prj.noClu * 4);
 	file.read(cluIndex, _prj.noClu * 4);

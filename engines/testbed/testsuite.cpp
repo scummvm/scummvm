@@ -163,8 +163,7 @@ void Testsuite::clearScreen() {
 
 	// Don't clear test info display region
 	int size =  height * numBytesPerLine;
-	byte *buffer = new byte[size];
-	memset(buffer, 0, size);
+	byte *buffer = new byte[size]();
 	g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), height);
 	g_system->updateScreen();
 	delete[] buffer;
@@ -243,8 +242,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	int wRect = 200;
 	int lRect = 7;
 	pt.x = g_system->getWidth() / 2 - 100;
-	byte *buffer = new byte[lRect * wRect];
-	memset(buffer, 0, sizeof(byte) * lRect * wRect);
+	byte *buffer = new byte[lRect * wRect]();
 
 	int wShaded = (int)(wRect * (((float)testNum) / numTests));
 

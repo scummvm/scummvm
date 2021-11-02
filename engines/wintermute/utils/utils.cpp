@@ -118,8 +118,7 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 		if (str[i] == delim || str[i] == '\0') {
 			numEntries++;
 			if (start) {
-				char *ret = new char[len + 1];
-				memset(ret, 0, len + 1);
+				char *ret = new char[len + 1]();
 				Common::strlcpy(ret, start, len + 1);
 				return ret;
 			}

@@ -1607,8 +1607,7 @@ ScriptVariable *ccInstance::FindGlobalVar(int32_t var_addr) {
 }
 
 bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
-	code_fixups = new char[scri->codesize];
-	memset(code_fixups, 0, scri->codesize);
+	code_fixups = new char[scri->codesize]();
 	for (int i = 0; i < scri->numfixups; ++i) {
 		if (scri->fixuptypes[i] == FIXUP_DATADATA) {
 			continue;
