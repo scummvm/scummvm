@@ -378,9 +378,8 @@ void TownsScreen::setupLayer(int layer, int width, int height, int scaleW, int s
 		warning("TownsScreen::setupLayer(): Layer palette usage requires 16 bit graphics setting.\nLayer palette will be ignored.");
 
 	delete[] l->pixels;
-	l->pixels = new uint8[l->pitch * l->height];
+	l->pixels = new uint8[l->pitch * l->height]();
 	assert(l->pixels);
-	memset(l->pixels, 0, l->pitch * l->height);
 
 	delete[] l->bltTmpPal;
 	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : 0;

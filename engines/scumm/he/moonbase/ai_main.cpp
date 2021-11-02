@@ -2384,11 +2384,8 @@ int *AI::defendTarget(int &targetX, int &targetY, int index) {
 	}
 
 	if (defStatus == -3) {
-		retVal = new int[4];
-		retVal[0] = 0;
+		retVal = new int[4]();
 		retVal[1] = SKIP_TURN;
-		retVal[2] = 0;
-		retVal[3] = 0;
 	}
 
 	assert(targetX >= 0 && targetY >= 0);

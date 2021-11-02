@@ -197,8 +197,7 @@ Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_
 	_eupLooping = false;
 
 	if (_vm->_game.version == 3) {
-		_soundOverride = new SoundOvrParameters[_numSoundMax];
-		memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
+		_soundOverride = new SoundOvrParameters[_numSoundMax]();
 	}
 
 	_player = new EuphonyPlayer(mixer);
@@ -584,8 +583,7 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 }
 
 Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse), _sblData(0) {
-	_soundOverride = new SoundOvrParameters[_numSoundMax];
-	memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
+	_soundOverride = new SoundOvrParameters[_numSoundMax]();
 	_intf = new TownsAudioInterface(mixer, 0, true);
 }
 

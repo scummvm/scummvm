@@ -599,8 +599,7 @@ IMuseDriver_Amiga::IMuseDriver_Amiga(Audio::Mixer *mixer) : Paula(true, mixer->g
 	_numParts(24), _baseTempo(5500), _internalTempo(5500), _timerProc(0), _timerProcPara(0), _parts(0), _chan(0), _instruments(0), _missingFiles(0), _ticker(0) {
 	setAudioFilter(true);
 
-	_instruments = new Instrument_Amiga[129];
-	memset(_instruments, 0, sizeof(Instrument_Amiga) * 129);
+	_instruments = new Instrument_Amiga[129]();
 	loadInstrument(128);
 
 	_parts = new IMusePart_Amiga*[_numParts];
