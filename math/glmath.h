@@ -32,7 +32,7 @@ namespace Math {
 
 // function based on gluProject from Mesa 5.0 glu GPLv2+ licensed sources
 template<typename T, typename S>
-bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const S viewport[4], Vector3d &win) {
+bool gluMathProject(const Vector3d &obj, const T model[16], const T proj[16], const S viewport[4], Vector3d &win) {
 	Vector4d in, out;
 	Matrix4 modelMatrix, projMatrix;
 
@@ -65,7 +65,7 @@ bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const S v
 	return true;
 }
 
-bool gluMathUnProject(Vector3d win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj);
+bool gluMathUnProject(const Vector3d &win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj);
 
 Matrix4 makePerspectiveMatrix(double fovy, double aspect, double zNear, double zFar);
 Matrix4 makeFrustumMatrix(double left, double right, double bottom, double top, double zNear, double zFar);
