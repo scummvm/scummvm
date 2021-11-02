@@ -117,24 +117,19 @@ bool Screen_EoB::init() {
 				_egaDitheringTable[i] = i & 0x0F;
 		} else if (_renderMode == Common::kRenderCGA) {
 			_cgaMappingDefault = _vm->staticres()->loadRawData(kEoB1CgaMappingDefault, temp);
-			_cgaDitheringTables[0] = new uint16[256];
-			memset(_cgaDitheringTables[0], 0, 256 * sizeof(uint16));
-			_cgaDitheringTables[1] = new uint16[256];
-			memset(_cgaDitheringTables[1], 0, 256 * sizeof(uint16));
+			_cgaDitheringTables[0] = new uint16[256]();
+			_cgaDitheringTables[1] = new uint16[256]();
 
-			_cgaScaleTable = new uint8[256];
-			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
+			_cgaScaleTable = new uint8[256]();
 			for (int i = 0; i < 256; i++)
 				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
 		} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 			sega_initGraphics();
-			_segaCustomPalettes = new uint16[128];
+			_segaCustomPalettes = new uint16[128]();
 			_palFaders = new PaletteFader[4];
 			_defaultRenderBufferSize = SCREEN_W * _screenHeight;
-			_defaultRenderBuffer = new uint8[_defaultRenderBufferSize];
-			memset(_defaultRenderBuffer, 0, _defaultRenderBufferSize);
+			_defaultRenderBuffer = new uint8[_defaultRenderBufferSize]();
 			sega_setTextBuffer(0, 0);
-			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 
 		_useShapeShading = (_bytesPerPixel != 2 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
@@ -143,8 +138,7 @@ bool Screen_EoB::init() {
 		int ci = 0;
 		if (_vm->game() == GI_EOB1) {
 			if (_vm->gameFlags().platform == Common::kPlatformPC98) {
-				_cyclePalette = new uint8[48];
-				memset(_cyclePalette, 0, 48);
+				_cyclePalette = new uint8[48]();
 				ci = 3;
 			} else if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA) {
 				ci = 1;
@@ -481,8 +475,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 
 	if (_bytesPerPixel == 2 && encode8bit) {
 		shapesize = h * (w << 3) + 4;
-		shp = new uint8[shapesize];
-		memset(shp, 0, shapesize);
+		shp = new uint8[shapesize]();
 		uint8 *dst = shp;
 
 		*dst++ = 0;
@@ -502,8 +495,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		if (cgaMapping)
 			generateCGADitheringTables(cgaMapping);
 		shapesize = h * (w << 2) + 4;
-		shp = new uint8[shapesize];
-		memset(shp, 0, shapesize);
+		shp = new uint8[shapesize]();
 		uint8 *dst = shp;
 
 		*dst++ = 4;
@@ -561,8 +553,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 
 		shapesize += 4;
 
-		shp = new uint8[shapesize];
-		memset(shp, 0, shapesize);
+		shp = new uint8[shapesize]();
 		uint8 *dst = shp;
 
 		*dst++ = 1;
@@ -610,8 +601,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		}
 
 		shapesize = h * (w << 2) + 20;
-		shp = new uint8[shapesize];
-		memset(shp, 0, shapesize);
+		shp = new uint8[shapesize]();
 		uint8 *dst = shp;
 
 		*dst++ = 2;
@@ -1811,8 +1801,7 @@ OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode
 
 	_numRef++;
 	if (!_cgaDitheringTable && _numRef == 1) {
-		_cgaDitheringTable = new uint16[256];
-		memset(_cgaDitheringTable, 0, 256 * sizeof(uint16));
+		_cgaDitheringTable = new uint16[256]();
 		static const uint bits[] = { 0, 3, 12, 15 };
 		for (int i = 0; i < 256; i++)
 			_cgaDitheringTable[i] = (bits[i & 3] << 8) | (bits[(i >> 2) & 3] << 12) | (bits[(i >> 4) & 3] << 0) | (bits[(i >> 6) & 3] << 4);

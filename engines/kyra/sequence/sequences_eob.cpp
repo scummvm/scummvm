@@ -196,8 +196,7 @@ EoBSeqPlayerCommon::EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen) : _vm(
 	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)),
 	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157), _tickLength(16),
 	_textFont(vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT) {
-	_shapes = new uint8*[64];
-	memset(_shapes, 0, 64 * sizeof(uint8*));
+	_shapes = new uint8*[64]();
 }
 
 EoBSeqPlayerCommon::~EoBSeqPlayerCommon() {
@@ -2456,8 +2455,7 @@ void EoBEngine::seq_xdeath() {
 		((int16*)scrollTable)[iii << 1] = ((int16*)scrollTable)[(iii << 1) + 1] = (iii & 1) ? -step : step;
 
 void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
-	uint16 *scrollTable = new uint16[0x200];
-	memset(scrollTable, 0, 0x200 * sizeof(uint16));
+	uint16 *scrollTable = new uint16[0x200]();
 	SegaRenderer *r = _screen->sega_getRenderer();
 
 	r->setPitch(128);

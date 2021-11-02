@@ -894,8 +894,7 @@ uint16 MusicChannelFM::_frequency2 = 0;
 
 MusicChannelFM::MusicChannelFM(PC98AudioCore *pc98a, int part, int regOffset) : SoundChannelNonSSG(pc98a, part, regOffset, 0) {
 	if (!_registers) {
-		_registers = new uint8[512];
-		memset(_registers, 0, 512);
+		_registers = new uint8[512]();
 	}
 }
 

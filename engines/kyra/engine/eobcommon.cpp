@@ -516,45 +516,35 @@ Common::Error EoBCoreEngine::init() {
 	_blackFadingTable = new uint8[256 * bpp];
 	_greyFadingTable = new uint8[256 * bpp];
 
-	_monsters = new EoBMonsterInPlay[30];
-	memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
+	_monsters = new EoBMonsterInPlay[30]();
 
-	_characters = new EoBCharacter[6];
-	memset(_characters, 0, sizeof(EoBCharacter) * 6);
+	_characters = new EoBCharacter[6]();
 
-	_items = new EoBItem[600];
-	memset(_items, 0, sizeof(EoBItem) * 600);
+	_items = new EoBItem[600]();
 
 	_itemNames = new char*[130];
 	for (int i = 0; i < 130; i++) {
-		_itemNames[i] = new char[35];
-		memset(_itemNames[i], 0, 35);
+		_itemNames[i] = new char[35]();
 	}
 
-	_flyingObjects = new EoBFlyingObject[_numFlyingObjects];
+	_flyingObjects = new EoBFlyingObject[_numFlyingObjects]();
 	_flyingObjectsPtr = _flyingObjects;
-	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(EoBFlyingObject));
 
 	int bufferSize = _flags.useHiColorMode ? 8192 : 4096;
-	_spellAnimBuffer = new uint8[bufferSize];
-	memset(_spellAnimBuffer, 0, bufferSize);
+	_spellAnimBuffer = new uint8[bufferSize]();
 
-	_wallsOfForce = new WallOfForce[5];
-	memset(_wallsOfForce, 0, 5 * sizeof(WallOfForce));
+	_wallsOfForce = new WallOfForce[5]();
 
 	memset(_doorType, 0, sizeof(_doorType));
 	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
 
-	_monsterShapes = new uint8*[36];
-	memset(_monsterShapes, 0, 36 * sizeof(uint8 *));
-	_monsterDecorations = new SpriteDecoration[36];
-	memset(_monsterDecorations, 0, 36 * sizeof(SpriteDecoration));
+	_monsterShapes = new uint8*[36]();
+	_monsterDecorations = new SpriteDecoration[36]();
 	_monsterPalettes = new uint8*[24];
 	for (int i = 0; i < 24; i++)
 		_monsterPalettes[i] = new uint8[16];
 
-	_doorSwitches = new SpriteDecoration[6];
-	memset(_doorSwitches, 0, 6 * sizeof(SpriteDecoration));
+	_doorSwitches = new SpriteDecoration[6]();
 
 	_monsterFlashOverlay = new uint8[16];
 	_monsterStoneOverlay = new uint8[16];

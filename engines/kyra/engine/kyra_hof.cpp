@@ -326,10 +326,8 @@ void KyraEngine_HoF::startup() {
 
 	_screen->_curPage = 0;
 
-	_talkObjectList = new TalkObject[72];
-	memset(_talkObjectList, 0, sizeof(TalkObject)*72);
-	_shapeDescTable = new ShapeDesc[55];
-	memset(_shapeDescTable, 0, sizeof(ShapeDesc)*55);
+	_talkObjectList = new TalkObject[72]();
+	_shapeDescTable = new ShapeDesc[55]();
 
 	for (int i = 9; i <= 32; ++i) {
 		_shapeDescTable[i-9].width = 30;
@@ -367,8 +365,7 @@ void KyraEngine_HoF::startup() {
 	for (int i = 0; i < 23; ++i)
 		resetCauldronStateTable(i);
 
-	_sceneList = new SceneDesc[86];
-	memset(_sceneList, 0, sizeof(SceneDesc)*86);
+	_sceneList = new SceneDesc[86]();
 	_sceneListSize = 86;
 	runStartScript(1, 0);
 	loadNPCScript();

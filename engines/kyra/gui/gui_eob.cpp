@@ -1502,13 +1502,11 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 }
 
 GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _numSlotsVisible(vm->gameFlags().platform == Common::kPlatformSegaCD ? 5 : 6) {
-	_menuStringsPrefsTemp = new char*[4];
-	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char *));
+	_menuStringsPrefsTemp = new char*[4]();
 
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
-		_saveSlotStringsTemp[i] = new char[26];
-		memset(_saveSlotStringsTemp[i], 0, 26);
+		_saveSlotStringsTemp[i] = new char[26]();
 	}
 	_saveSlotIdTemp = new int16[7];
 	memset(_saveSlotIdTemp, 0xFF, sizeof(int16) * 7);
@@ -1532,8 +1530,7 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 	_numVisPages = (_vm->game() == GI_EOB2) ? 6 : 5;
 	_clericSpellAvltyFlags = (_vm->game() == GI_EOB2) ? 0xF7FFFFFF : 0x7BFFFF;
 	_paladinSpellAvltyFlags = (_vm->game() == GI_EOB2) ? 0xA9BBD1D : 0x800FF2;
-	_numAssignedSpellsOfType = new int8[72];
-	memset(_numAssignedSpellsOfType, 0, 72);
+	_numAssignedSpellsOfType = new int8[72]();
 
 	_charSelectRedraw = false;
 	_clickableCharactersPage = 0;
@@ -2709,8 +2706,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	uint8 cursorState = 1;
 	char sufx[3] = " \0";
 
-	uint8 *segaCharBuf = new uint8[destMaxLen << 5];
-	memset(segaCharBuf, 0, destMaxLen << 5);
+	uint8 *segaCharBuf = new uint8[destMaxLen << 5]();
 
 	int len = strlen(dest);
 	if (len > destMaxLen) {
@@ -3036,8 +3032,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 	}
 
 	_savegameListSize = targets.size();
-	_savegameList = new char*[_savegameListSize];
-	memset(_savegameList, 0, _savegameListSize * sizeof(char *));
+	_savegameList = new char*[_savegameListSize]();
 
 	Common::StringArray::iterator ii = targets.begin();
 	for (int i = 0; i < _savegameListSize; ++i) {
@@ -3397,13 +3392,10 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		}
 	}
 
-	int8 *menuSpellMap = new int8[88];
-	memset(menuSpellMap, 0, 88);
-	int8 *numAssignedSpellsPerBookPage = new int8[8];
-	memset(numAssignedSpellsPerBookPage, 0, 8);
+	int8 *menuSpellMap = new int8[88]();
+	int8 *numAssignedSpellsPerBookPage = new int8[8]();
 	memset(_numAssignedSpellsOfType, 0, 72);
-	int8 *lh = new int8[40];
-	memset(lh, 0, 40);
+	int8 *lh = new int8[40]();
 
 	memcpy(lh, spellType ? _vm->_spellLevelsCleric : _vm->_spellLevelsMage, spellType ? _vm->_spellLevelsClericSize : _vm->_spellLevelsMageSize);
 	int8 *charSpellList = spellType ? c->clericSpells : c->mageSpells;

@@ -43,11 +43,9 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
 	};
 
-	_dialogueBuffer = new char[kEoBTextBufferSize];
-	memset(_dialogueBuffer, 0, kEoBTextBufferSize);
+	_dialogueBuffer = new char[kEoBTextBufferSize]();
 
-	_currentLine = new char[85];
-	memset(_currentLine, 0, 85);
+	_currentLine = new char[85]();
 
 	if (_pc98TextMode)
 		_waitButtonFont = Screen::FID_SJIS_TEXTMODE_FNT;
@@ -74,10 +72,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 		_textDimData[i].column = d->unkE;
 	}
 
-	_table1 = new char[128];
-	memset(_table1, 0, 128);
-	_table2 = new char[16];
-	memset(_table2, 0, 16);
+	_table1 = new char[128]();
+	_table2 = new char[16]();
 
 	_waitButtonSpace = 0;
 }

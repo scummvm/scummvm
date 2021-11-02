@@ -84,8 +84,7 @@ bool StaticResource::loadEoB2ShapeData(Common::SeekableReadStream &stream, void 
 bool StaticResource::loadEoBNpcData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.readUint16BE();
 
-	EoBCharacter *e = new EoBCharacter[size];
-	memset(e, 0, size * sizeof(EoBCharacter));
+	EoBCharacter *e = new EoBCharacter[size]();
 	EoBCharacter *s = e;
 
 	for (int i = 0; i < size; i++, s++) {
@@ -1264,8 +1263,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(monster_causeCriticalWounds);
 	ec2(monster_fleshToStone);
 
-	_spells = new EoBSpell[_numSpells];
-	memset(_spells, 0, _numSpells * sizeof(EoBSpell));
+	_spells = new EoBSpell[_numSpells]();
 
 	for (int i = 0, n = 0; i < _numSpells; i++, n++) {
 		EoBSpell *s = &_spells[i];
@@ -1353,8 +1351,7 @@ void EoBEngine::initStaticResource() {
 
 	const uint8 *ps = _staticres->loadRawData(kEoB1MonsterProperties, temp);
 	temp /= 27;
-	_monsterProps = new EoBMonsterProperty[temp];
-	memset(_monsterProps, 0, temp * sizeof(EoBMonsterProperty));
+	_monsterProps = new EoBMonsterProperty[temp]();
 	// Convert EOB1 (hard coded) monster properties to EOB2 type monster properties.
 	for (int i = 0; i < temp; i++) {
 		EoBMonsterProperty *p = &_monsterProps[i];

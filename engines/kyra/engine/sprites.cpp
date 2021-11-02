@@ -110,9 +110,8 @@ void Sprites::setupSceneAnims() {
 			if (_anims[i].height2 > 0)
 				bkgdHeight += _anims[i].height2;
 
-			_anims[i].background = new uint8[_screen->getRectSize(bkgdWidth + 1, bkgdHeight)];
+			_anims[i].background = new uint8[_screen->getRectSize(bkgdWidth + 1, bkgdHeight)]();
 			assert(_anims[i].background);
-			memset(_anims[i].background, 0, _screen->getRectSize(bkgdWidth + 1, bkgdHeight));
 		}
 	}
 }

@@ -1685,9 +1685,8 @@ int KyraEngine_LoK::handleBeadState() {
 				_beadState1.width = ((_beadState1.width2 + 7) >> 3) + 1;
 				_beadState1.height = _animator->fetchAnimHeight(_panPagesTable[19], 256);
 				if (!_endSequenceBackUpRect) {
-					_endSequenceBackUpRect = new uint8[(_beadState1.width * _beadState1.height) << 3];
+					_endSequenceBackUpRect = new uint8[(_beadState1.width * _beadState1.height) << 3]();
 					assert(_endSequenceBackUpRect);
-					memset(_endSequenceBackUpRect, 0, ((_beadState1.width * _beadState1.height) << 3) * sizeof(uint8));
 				}
 				x = _beadState1.x = 60;
 				y = _beadState1.y = 40;

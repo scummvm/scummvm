@@ -1309,9 +1309,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	bool needNewShape = false;
 	bool doorRedraw = true;
 
-	uint8 *animBlock = new uint8[40960];
+	uint8 *animBlock = new uint8[40960]();
 	assert(animBlock);
-	memset(animBlock, 0, 40960);
 	int inputFlag = 0;
 
 	do {

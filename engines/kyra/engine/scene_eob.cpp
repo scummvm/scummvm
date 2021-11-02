@@ -425,8 +425,7 @@ void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 
 	_levelDecorationDataSize = s->readUint16();
 	delete[] _levelDecorationData;
-	_levelDecorationData = new LevelDecorationProperty[_levelDecorationDataSize];
-	memset(_levelDecorationData, 0, _levelDecorationDataSize * sizeof(LevelDecorationProperty));
+	_levelDecorationData = new LevelDecorationProperty[_levelDecorationDataSize]();
 
 	for (int i = 0; i < _levelDecorationDataSize; i++) {
 		LevelDecorationProperty *l = &_levelDecorationData[i];

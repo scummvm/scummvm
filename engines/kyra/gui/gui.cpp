@@ -109,8 +109,7 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
 
-		_savegameList = new char*[_savegameListSize];
-		memset(_savegameList, 0, _savegameListSize * sizeof(char *));
+		_savegameList = new char*[_savegameListSize]();
 
 		for (int i = 0; i < numSaves; i++) {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(targetName, _saveSlots[i]).c_str(), header, targetName == _vm->_targetName);

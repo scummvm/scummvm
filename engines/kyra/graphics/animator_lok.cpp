@@ -35,10 +35,8 @@ Animator_LoK::Animator_LoK(KyraEngine_LoK *vm, OSystem *system) {
 	_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
 	_noDrawShapesFlag = 0;
 
-	_actorBkgBackUp[0] = new uint8[_screen->getRectSize(8, 69)];
-	memset(_actorBkgBackUp[0], 0, _screen->getRectSize(8, 69));
-	_actorBkgBackUp[1] = new uint8[_screen->getRectSize(8, 69)];
-	memset(_actorBkgBackUp[1], 0, _screen->getRectSize(8, 69));
+	_actorBkgBackUp[0] = new uint8[_screen->getRectSize(8, 69)]();
+	_actorBkgBackUp[1] = new uint8[_screen->getRectSize(8, 69)]();
 }
 
 Animator_LoK::~Animator_LoK() {
@@ -48,9 +46,8 @@ Animator_LoK::~Animator_LoK() {
 }
 
 void Animator_LoK::init(int actors_, int items_, int sprites_) {
-	_screenObjects = new AnimObject[actors_ + items_ + sprites_];
+	_screenObjects = new AnimObject[actors_ + items_ + sprites_]();
 	assert(_screenObjects);
-	memset(_screenObjects, 0, sizeof(AnimObject) * (actors_ + items_ + sprites_));
 	_actors = _screenObjects;
 	_sprites = &_screenObjects[actors_];
 	_items = &_screenObjects[actors_ + items_];

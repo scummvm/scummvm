@@ -856,14 +856,11 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		l->wallsXorData = new uint8[4096];
 		l->flags = new uint16[1024];
 		memset(l->flags, 0, 1024 * sizeof(uint16));
-		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30];
-		memset(lm, 0, 30 * sizeof(EoBMonsterInPlay));
+		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30]();
 		l->monsters = lm;
-		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects];
-		memset(lf, 0, _numFlyingObjects * sizeof(EoBFlyingObject));
+		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects]();
 		l->flyingObjects = lf;
-		WallOfForce *lw = new WallOfForce[5];
-		memset(lw, 0, 5 * sizeof(WallOfForce));
+		WallOfForce *lw = new WallOfForce[5]();
 		l->wallsOfForce = lw;
 
 		if (sourcePlatform == Common::kPlatformFMTowns) {

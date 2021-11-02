@@ -414,16 +414,12 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(const VQAHeader *header) {
 
 	_codeBookSize = 0xF00 * header->blockW * header->blockH;
 	_compressedCodeBook = false;
-	_codeBook = new byte[_codeBookSize];
+	_codeBook = new byte[_codeBookSize]();
 	_partialCodeBookSize = 0;
 	_numPartialCodeBooks = 0;
-	_partialCodeBook = new byte[_codeBookSize];
+	_partialCodeBook = new byte[_codeBookSize]();
 	_numVectorPointers = (header->width / header->blockW) * (header->height * header->blockH);
-	_vectorPointers = new uint16[_numVectorPointers];
-
-	memset(_codeBook, 0, _codeBookSize);
-	memset(_partialCodeBook, 0, _codeBookSize);
-	memset(_vectorPointers, 0, _numVectorPointers);
+	_vectorPointers = new uint16[_numVectorPointers]();
 
 	_surface = new Graphics::Surface();
 	_surface->create(header->width, header->height, Graphics::PixelFormat::createFormatCLUT8());

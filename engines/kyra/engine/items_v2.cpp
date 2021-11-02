@@ -28,9 +28,8 @@ namespace Kyra {
 void KyraEngine_v2::initItemList(int size) {
 	delete[] _itemList;
 
-	_itemList = new ItemDefinition[size];
+	_itemList = new ItemDefinition[size]();
 	assert(_itemList);
-	memset(_itemList, 0, sizeof(ItemDefinition)*size);
 	_itemListSize = size;
 
 	resetItemList();

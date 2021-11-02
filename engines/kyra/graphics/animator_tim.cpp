@@ -39,13 +39,11 @@ TimAnimator::TimAnimator(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *syste
 #else
 TimAnimator::TimAnimator(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts) : _vm(engine), _screen(screen_v2), _system(system), _useParts(useParts) {
 #endif
-	_animations = new Animation[TIM::kWSASlots];
-	memset(_animations, 0, TIM::kWSASlots * sizeof(Animation));
+	_animations = new Animation[TIM::kWSASlots]();
 
 	if (_useParts) {
 		for (int i = 0; i < TIM::kWSASlots; i++) {
-			_animations[i].parts = new AnimPart[TIM::kAnimParts];
-			memset(_animations[i].parts, 0, TIM::kAnimParts * sizeof(AnimPart));
+			_animations[i].parts = new AnimPart[TIM::kAnimParts]();
 		}
 	}
 }
