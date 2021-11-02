@@ -372,8 +372,7 @@ bool SaveLoad_v4::GameHandler::createWriter(int slot) {
 SaveLoad_v4::CurScreenPropsHandler::CurScreenPropsHandler(GobEngine *vm) :
 	SaveHandler(vm) {
 
-	_props = new byte[256000];
-	memset(_props, 0, 256000);
+	_props = new byte[256000]();
 }
 
 SaveLoad_v4::CurScreenPropsHandler::~CurScreenPropsHandler() {

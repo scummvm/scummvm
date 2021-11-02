@@ -57,10 +57,8 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		destDesc.blit(sourceDesc, 0, 0, srcWidth - 1, srcHeight - 1, x, y, (transp == 0) ? -1 : 0);
 		return 1;
 	} else if (sprBuf[2] == 1) {
-		memBuffer = new byte[4370];
+		memBuffer = new byte[4370]();
 		assert(memBuffer);
-
-		memset(memBuffer, 0, 4370);
 
 		srcPtr = sprBuf + 3;
 

@@ -289,11 +289,8 @@ SavePartSprite::SavePartSprite(uint32 width, uint32 height, bool trueColor) {
 		//          width + height + color +    sprite   + palette
 	_header.setSize(4   +   4    +   1   + _spriteSize + 768);
 
-	_dataSprite  = new byte[_spriteSize];
-	_dataPalette = new byte[768];
-
-	memset(_dataSprite,  0, _spriteSize);
-	memset(_dataPalette, 0, 768);
+	_dataSprite  = new byte[_spriteSize]();
+	_dataPalette = new byte[768]();
 }
 
 SavePartSprite::~SavePartSprite() {
@@ -457,8 +454,7 @@ SavePartInfo::SavePartInfo(uint32 descMaxLength, uint32 gameID,
 	_endian = endian;
 	_varCount = varCount;
 
-	_desc = new char[_descMaxLength + 1];
-	memset(_desc, 0, _descMaxLength + 1);
+	_desc = new char[_descMaxLength + 1]();
 }
 
 SavePartInfo::~SavePartInfo() {

@@ -33,10 +33,8 @@
 namespace Gob {
 
 Expression::Stack::Stack(size_t size) {
-	opers  = new byte[size];
-	values = new int32[size];
-	memset(opers , 0, size * sizeof(byte ));
-	memset(values, 0, size * sizeof(int32));
+	opers  = new byte[size]();
+	values = new int32[size]();
 }
 
 Expression::Stack::~Stack() {
