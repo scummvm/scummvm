@@ -188,7 +188,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 
 
 	//Remastered:
-	if (getGameFlags() & ADGF_REMASTERED) {
+	if (isRemastered()) {
 		for (uint32 i = 0; i < kNumCutscenes; i++) {
 			_cutsceneEnabled[i] = false;
 		}
@@ -253,7 +253,7 @@ void GrimEngine::clearPools() {
 }
 
 LuaBase *GrimEngine::createLua() {
-	if (getGameFlags() == ADGF_REMASTERED) {
+	if (isRemastered()) {
 		return new Lua_Remastered();
 	} else {
 		return new Lua_V1();
@@ -345,7 +345,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
-	if (ConfMan.getBool("check_gamedata") && getGameFlags() != ADGF_REMASTERED) {
+	if (ConfMan.getBool("check_gamedata") && !isRemastered()) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::U32String confirmString = Common::U32String::format(_(
@@ -377,7 +377,7 @@ Common::Error GrimEngine::run() {
 	if (getGameType() == GType_GRIM) {
 		g_imuse = new Imuse(20, demo);
 		g_emiSound = nullptr;
-		if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+		if (g_grim->isRemastered()) {
 			// This must happen here, since we need the resource loader set up.
 			_commentary = new Commentary();
 		}
@@ -387,7 +387,7 @@ Common::Error GrimEngine::run() {
 	}
 	g_sound = new SoundPlayer();
 
-	if (getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
+	if (getGameType() == GType_GRIM && g_grim->isRemastered()) {
 		g_driver = createRenderer(1600, 900);
 	} else {
 		g_driver = createRenderer(640, 480);
@@ -1291,7 +1291,7 @@ void GrimEngine::restoreGRIM() {
 }
 
 void GrimEngine::storeSaveGameMetadata(SaveGame *state) {
-	if (!(g_grim->getGameFlags() & ADGF_REMASTERED)) {
+	if (!g_grim->isRemastered()) {
 		return;
 	}
 	state->beginSection('META');

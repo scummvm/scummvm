@@ -43,7 +43,6 @@ Localizer::Localizer() {
 	bool isSpanish = g_grim->getGameLanguage() == Common::ES_ESP;
 	bool isTranslatedGrimDemo = (isGerman || isFrench || isItalian || isSpanish) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
-	bool isRemastered = g_grim->getGameFlags() & ADGF_REMASTERED; // TODO: Add handling of this from g_grim.
 
 	if (isGrimDemo && !isTranslatedGrimDemo)
 		return;
@@ -52,7 +51,7 @@ Localizer::Localizer() {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		filename = "script.tab";
 	} else {
-		if (isRemastered) {
+		if (g_grim->isRemastered()) {
 			filename = Common::String("grim.") + g_grim->getLanguagePrefix() + Common::String(".tab"); // TODO: Detect based on language.
 		} else if (isTranslatedGrimDemo) {
 			filename = "language.tab";
@@ -75,7 +74,7 @@ Localizer::Localizer() {
 	data[filesize] = '\0';
 	delete f;
 
-	if (isRemastered) {
+	if (g_grim->isRemastered()) {
 		parseRemasteredData(Common::String(data));
 		return;
 	}

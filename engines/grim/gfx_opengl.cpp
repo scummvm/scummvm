@@ -1426,7 +1426,7 @@ struct TextObjectUserData {
 };
 
 void GfxOpenGL::createTextObject(TextObject *text) {
-	if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+	if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
 		return;
 
 #ifdef USE_FREETYPE2
@@ -1489,7 +1489,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData) {
-		if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+		if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
 			error("Could not get font userdata");
 #ifdef USE_FREETYPE2
 		const FontTTF *f = static_cast<const FontTTF *>(font);
@@ -1591,7 +1591,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
-	if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+	if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
 		return;
 
 	TextObjectUserData *ud = (TextObjectUserData *)const_cast<void *>(text->getUserData());
