@@ -375,8 +375,8 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			delta_b2 = bridge.end() - line.begin();
 			Math::Vector3d cross_b1 = Math::Vector3d::crossProduct(edge, delta_b1);
 			Math::Vector3d cross_b2 = Math::Vector3d::crossProduct(edge, delta_b2);
-			bool b1_out = cross_b1.dotProduct(_normal) < 0;
-			bool b2_out = cross_b2.dotProduct(_normal) < 0;
+			bool b1_out = cross_b1.dotProduct(_normal) < -1e-7;
+			bool b2_out = cross_b2.dotProduct(_normal) < -1e-7;
 
 			bool useXZ = (g_grim->getGameType() == GType_MONKEY4);
 
