@@ -8,6 +8,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
 
+ AGOS:
+   - Fixed old Waxworks AdLib music regression.
+
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
