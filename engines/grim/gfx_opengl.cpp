@@ -139,8 +139,7 @@ void GfxOpenGL::setupScreen(int screenW, int screenH) {
 	g_system->showMouse(false);
 
 	int screenSize = _screenWidth * _screenHeight * 4;
-	_storedDisplay = new byte[screenSize];
-	memset(_storedDisplay, 0, screenSize);
+	_storedDisplay = new byte[screenSize]();
 	_smushNumTex = 0;
 
 	_currentShadowArray = nullptr;
@@ -1366,11 +1365,9 @@ void GfxOpenGL::createFont(Font *font) {
 		size = 64;
 
 	uint arraySize = size * size * bpp * charsWide * charsHigh;
-	byte *temp = new byte[arraySize];
+	byte *temp = new byte[arraySize]();
 	if (!temp)
 		error("Could not allocate %d bytes", arraySize);
-
-	memset(temp, 0, arraySize);
 
 	FontUserData *userData = new FontUserData;
 	font->setUserData(userData);

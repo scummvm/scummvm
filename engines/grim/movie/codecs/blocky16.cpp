@@ -634,18 +634,15 @@ void Blocky16::init(int width, int height) {
 	// 200 bytes is enough for smush anims:
 	// lol, byeruba, crushed, eldepot, heltrain, hostage
 	uint32 deltaSize = size * 3 + 200;
-	_deltaBuf = new byte[deltaSize];
-	memset(_deltaBuf, 0, deltaSize);
+	_deltaBuf = new byte[deltaSize]();
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
 }
 
 Blocky16::Blocky16() {
-	_tableBig = new byte[99328];
-	_tableSmall = new byte[32768];
-	memset(_tableBig, 0, 99328);
-	memset(_tableSmall, 0, 32768);
+	_tableBig = new byte[99328]();
+	_tableSmall = new byte[32768]();
 	_deltaBuf = nullptr;
 	_deltaBufs[0] = nullptr;
 	_deltaBufs[1] = nullptr;

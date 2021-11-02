@@ -1529,9 +1529,7 @@ void GfxOpenGLS::createFont(Font *font) {
 		size = 64;
 
 	uint arraySize = size * size * bpp * charsWide * charsHigh;
-	byte *temp = new byte[arraySize];
-
-	memset(temp, 0, arraySize);
+	byte *temp = new byte[arraySize]();
 
 	FontUserData *userData = new FontUserData;
 	font->setUserData(userData);
@@ -1828,8 +1826,7 @@ void GfxOpenGLS::drawEmergString(int x, int y, const char *text, const Color &fg
 }
 
 void GfxOpenGLS::loadEmergFont() {
-	uint8 *atlas = new uint8[128 * 128];
-	memset(atlas, 0, 128 * 128);
+	uint8 *atlas = new uint8[128 * 128]();
 
 	for (int c = 32; c < 128; ++c) {
 		int blockrow = c / 16;
