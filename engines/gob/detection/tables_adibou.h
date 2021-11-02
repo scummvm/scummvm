@@ -175,7 +175,7 @@
 {
 	{
 		"adibou2",
-		"ADIB\xD9 2",
+		"ADIBù 2",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
 		kPlatformDOS,
