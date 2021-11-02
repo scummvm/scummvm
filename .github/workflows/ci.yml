@@ -122,8 +122,6 @@ jobs:
           curl -L -o libs.zip ${{ matrix.packagesUrl }}
           unzip libs.zip
           ls
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_10.3.app && /usr/bin/xcodebuild -version
       - name: Build create_project
         run: |
           cd devtools/create_project/xcode
