@@ -526,8 +526,7 @@ void Screen::resetPagePtrsAndBuffers(int pageSize) {
 	int numPages = realPages.size();
 	uint32 bufferSize = numPages * _screenPageSize;
 
-	uint8 *pagePtr = new uint8[bufferSize];
-	memset(pagePtr, 0, bufferSize);
+	uint8 *pagePtr = new uint8[bufferSize]();
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
@@ -1294,9 +1293,8 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 
 void Screen::setAnimBlockPtr(int size) {
 	delete[] _animBlockPtr;
-	_animBlockPtr = new uint8[size];
+	_animBlockPtr = new uint8[size]();
 	assert(_animBlockPtr);
-	memset(_animBlockPtr, 0, size);
 	_animBlockSize = size;
 }
 
@@ -3843,10 +3841,8 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 #pragma mark -
 
 Palette::Palette(const int numColors) : _palData(0), _numColors(numColors) {
-	_palData = new uint8[numColors * 3];
+	_palData = new uint8[numColors * 3]();
 	assert(_palData);
-
-	memset(_palData, 0, numColors * 3);
 }
 
 Palette::~Palette() {

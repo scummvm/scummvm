@@ -379,37 +379,28 @@ Common::Error LoLEngine::init() {
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
 
-	_pageBuffer1 = new uint8[0xFA00];
-	memset(_pageBuffer1, 0, 0xFA00);
-	_pageBuffer2 = new uint8[0xFA00];
-	memset(_pageBuffer2, 0, 0xFA00);
+	_pageBuffer1 = new uint8[0xFA00]();
+	_pageBuffer2 = new uint8[0xFA00]();
 
-	_itemsInPlay = new LoLItem[400];
-	memset(_itemsInPlay, 0, sizeof(LoLItem) * 400);
+	_itemsInPlay = new LoLItem[400]();
 
-	_characters = new LoLCharacter[4];
-	memset(_characters, 0, sizeof(LoLCharacter) * 4);
+	_characters = new LoLCharacter[4]();
 
 	if (!_sound->init())
 		error("Couldn't init sound");
 
 	KyraRpgEngine::init();
 
-	_wllAutomapData = new uint8[80];
-	memset(_wllAutomapData, 0, 80);
+	_wllAutomapData = new uint8[80]();
 
-	_monsters = new LoLMonster[30];
-	memset(_monsters, 0, 30 * sizeof(LoLMonster));
-	_monsterProperties = new LoLMonsterProperty[5];
-	memset(_monsterProperties, 0, 5 * sizeof(LoLMonsterProperty));
+	_monsters = new LoLMonster[30]();
+	_monsterProperties = new LoLMonsterProperty[5]();
 
-	_tempBuffer5120 = new uint8[5120];
-	memset(_tempBuffer5120, 0, 5120);
+	_tempBuffer5120 = new uint8[5120]();
 
-	_flyingObjects = new FlyingObject[_numFlyingObjects];
+	_flyingObjects = new FlyingObject[_numFlyingObjects]();
 	_flyingObjectsPtr = _flyingObjects;
 	_flyingObjectStructSize = sizeof(FlyingObject);
-	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(FlyingObject));
 
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
 
@@ -422,12 +413,9 @@ Common::Error LoLEngine::init() {
 	_clickedShapeYOffs = 8;
 	_clickedSpecialFlag = 0x40;
 
-	_monsterShapes = new uint8*[48];
-	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
-	_monsterPalettes = new uint8*[48];
-	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
-	_monsterDecorationShapes = new uint8*[576];
-	memset(_monsterDecorationShapes, 0, 576 * sizeof(uint8 *));
+	_monsterShapes = new uint8*[48]();
+	_monsterPalettes = new uint8*[48]();
+	_monsterDecorationShapes = new uint8*[576]();
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_activeMagicMenu = -1;

@@ -36,8 +36,7 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) :
 	_vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
-	_buffer = new char[600];
-	memset(_buffer, 0, 600);
+	_buffer = new char[600]();
 
 	_waitButtonSpace = 0;
 }

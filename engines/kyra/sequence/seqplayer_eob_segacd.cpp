@@ -80,27 +80,21 @@ SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCD
 
 	_scrollManager = new ScrollManager(_renderer);
 	assert(_scrollManager);
-	_tileSets = new TileSet[100];
+	_tileSets = new TileSet[100]();
 	assert(_tileSets);
-	memset(_tileSets, 0, 100 * sizeof(TileSet));
-	_drawObjects = new DrawObject[100];
+	_drawObjects = new DrawObject[100]();
 	assert(_drawObjects);
-	memset(_drawObjects, 0, 100 * sizeof(DrawObject));
 
 	memset(_speechAnimDrawOps, 0, sizeof(_speechAnimDrawOps));
 
-	_scaleSrcBuffer = new uint8[0x5800];
+	_scaleSrcBuffer = new uint8[0x5800]();
 	assert(_scaleSrcBuffer);
-	memset(_scaleSrcBuffer, 0, 0x5800 * sizeof(uint8));
-	_scaleOutBuffer = new uint8[0x5800];
+	_scaleOutBuffer = new uint8[0x5800]();
 	assert(_scaleOutBuffer);
-	memset(_scaleOutBuffer, 0, 0x5800 * sizeof(uint8));
-	_scaleStampMap = new uint16[0x100];
+	_scaleStampMap = new uint16[0x100]();
 	assert(_scaleStampMap);
-	memset(_scaleStampMap, 0, 0x100 * sizeof(uint16));
-	_scaleTraceVectors = new uint16[0x580];
+	_scaleTraceVectors = new uint16[0x580]();
 	assert(_scaleTraceVectors);
-	memset(_scaleTraceVectors, 0, 0x580 * sizeof(uint16));
 
 	int temp;
 	_wdDsX = _vm->staticres()->loadRawDataBe16(kEoB1IntroWdDsX, temp);

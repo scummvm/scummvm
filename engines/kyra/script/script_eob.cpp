@@ -137,15 +137,12 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	_lastScriptFunc = 0;
 	_lastScriptFlags = 0;
 
-	_subroutineStack = new int8*[10];
-	memset(_subroutineStack, 0, 10 * sizeof(int8 *));
+	_subroutineStack = new int8*[10]();
 	_subroutineStackPos = 0;
 
-	_flagTable = new uint32[18];
-	memset(_flagTable, 0, 18 * sizeof(uint32));
+	_flagTable = new uint32[18]();
 
-	_stack = new int16[30];
-	memset(_stack, 0, 30 * sizeof(int16));
+	_stack = new int16[30]();
 	_stackIndex = 0;
 
 	_activeCharacter = -1;

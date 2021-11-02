@@ -33,8 +33,7 @@ TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) :
 	_curDim(0), _textColor(0xFF), _curPosY(0), _curPosX(0) {
 	assert(_renderer);
 	_msgRenderBufferSize = 320 * 48;
-	_msgRenderBuffer = new uint8[_msgRenderBufferSize];
-	memset(_msgRenderBuffer, 0, _msgRenderBufferSize);
+	_msgRenderBuffer = new uint8[_msgRenderBufferSize]();
 }
 
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {

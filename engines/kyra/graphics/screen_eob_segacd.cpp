@@ -391,12 +391,10 @@ SegaRenderer::SegaRenderer(Screen_EoB *screen) : _screen(screen), _prioChainStar
 , _renderLineFragmentD(0), _renderLineFragmentM(0)
 #endif
 {
-	_vram = new uint8[0x10000];
+	_vram = new uint8[0x10000]();
 	assert(_vram);
-	memset(_vram, 0, 0x10000 * sizeof(uint8));
-	_vsram = new uint16[40];
+	_vsram = new uint16[40]();
 	assert(_vsram);
-	memset(_vsram, 0, 40 * sizeof(uint16));
 
 #if SEGA_PERFORMANCE
 	static const SegaRenderer::renderFuncD funcD[8] = {
@@ -445,9 +443,8 @@ void SegaRenderer::setResolution(int w, int h) {
 	_numSpritesMax = w >> 2;
 
 	delete[] _spriteMask;
-	_spriteMask = new uint8[w * h];
+	_spriteMask = new uint8[w * h]();
 	assert(_spriteMask);
-	memset(_spriteMask, 0, w * h * sizeof(uint8));
 }
 
 void SegaRenderer::setPlaneTableLocation(int plane, uint16 addr) {
@@ -956,12 +953,10 @@ void SegaRenderer::clearPrioChain() {
 }
 
 SegaAnimator::SegaAnimator(SegaRenderer *renderer) : _renderer(renderer), _needUpdate(false) {
-	_sprites = new Sprite[80];
+	_sprites = new Sprite[80]();
 	assert(_sprites);
-	memset(_sprites, 0, sizeof(Sprite) * 80);
-	_tempBuffer = new uint16[320];
+	_tempBuffer = new uint16[320]();
 	assert(_tempBuffer);
-	memset(_tempBuffer, 0, sizeof(uint16) * 320);
 	int linkCnt = 1;
 	for (int i = 1; i < 317; i += 4)
 		_tempBuffer[i] = linkCnt++;

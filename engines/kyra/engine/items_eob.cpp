@@ -99,8 +99,7 @@ void EoBCoreEngine::loadItemDefs() {
 	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
-	_itemTypes = new EoBItemType[65];
-	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
+	_itemTypes = new EoBItemType[65]();
 
 	for (int i = 0; i < numTypes; i++) {
 		_itemTypes[i].invFlags = s->readUint16();

@@ -67,8 +67,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 	if (offscreenDecode) {
 		_flags |= WF_OFFSCREEN_DECODE;
 		const int offscreenBufferSize = _width * _height;
-		_offscreenBuffer = new uint8[offscreenBufferSize];
-		memset(_offscreenBuffer, 0, offscreenBufferSize);
+		_offscreenBuffer = new uint8[offscreenBufferSize]();
 	}
 
 	if (_numFrames & 0x8000) {
@@ -80,8 +79,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 	}
 	_currentFrame = _numFrames;
 
-	_deltaBuffer = new uint8[_deltaBufferSize];
-	memset(_deltaBuffer, 0, _deltaBufferSize);
+	_deltaBuffer = new uint8[_deltaBufferSize]();
 
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];
@@ -406,8 +404,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	if (!(unk1 & 2)) {
 		_flags |= WF_OFFSCREEN_DECODE;
 		const int offscreenBufferSize = _width * _height;
-		_offscreenBuffer = new uint8[offscreenBufferSize];
-		memset(_offscreenBuffer, 0, offscreenBufferSize);
+		_offscreenBuffer = new uint8[offscreenBufferSize]();
 	}
 
 	if (_numFrames & 0x8000) {
@@ -417,8 +414,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	}
 	_currentFrame = _numFrames;
 
-	_deltaBuffer = new uint8[_deltaBufferSize];
-	memset(_deltaBuffer, 0, _deltaBufferSize);
+	_deltaBuffer = new uint8[_deltaBufferSize]();
 
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];

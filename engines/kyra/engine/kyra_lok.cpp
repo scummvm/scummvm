@@ -207,9 +207,8 @@ Common::Error KyraEngine_LoK::init() {
 
 	_paletteChanged = 1;
 	_currentCharacter = 0;
-	_characterList = new Character[11];
+	_characterList = new Character[11]();
 	assert(_characterList);
-	memset(_characterList, 0, sizeof(Character) * 11);
 
 	for (int i = 0; i < 11; ++i)
 		memset(_characterList[i].inventoryItems, 0xFF, sizeof(_characterList[i].inventoryItems));
@@ -367,10 +366,8 @@ void KyraEngine_LoK::startup() {
 		_shapes[361 + i] = new byte[size];
 	}
 
-	_itemBkgBackUp[0] = new uint8[_screen->getRectSize(3, 24)];
-	memset(_itemBkgBackUp[0], 0, _screen->getRectSize(3, 24));
-	_itemBkgBackUp[1] = new uint8[_screen->getRectSize(4, 32)];
-	memset(_itemBkgBackUp[1], 0, _screen->getRectSize(4, 32));
+	_itemBkgBackUp[0] = new uint8[_screen->getRectSize(3, 24)]();
+	_itemBkgBackUp[1] = new uint8[_screen->getRectSize(4, 32)]();
 
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {

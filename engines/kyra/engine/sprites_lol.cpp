@@ -73,10 +73,9 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	_screen->clearPage(3);
 	_screen->drawShape(2, palShape, 0, 0, 0, 0);
 
-	uint8 *tmpPal1 = new uint8[64];
+	uint8 *tmpPal1 = new uint8[64]();
 	uint8 *tmpPal2 = new uint8[256];
 	uint16 *tmpPal3 = new uint16[256];
-	memset(tmpPal1, 0, 64);
 
 	for (int i = 0; i < 64; i++) {
 		tmpPal1[i] = *p;

@@ -65,12 +65,10 @@ bool Screen_LoK::init() {
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
 	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
 
-	_unkPtr1 = new uint8[getRectSize(1, 144)];
+	_unkPtr1 = new uint8[getRectSize(1, 144)]();
 	assert(_unkPtr1);
-	memset(_unkPtr1, 0, getRectSize(1, 144));
-	_unkPtr2 = new uint8[getRectSize(1, 144)];
+	_unkPtr2 = new uint8[getRectSize(1, 144)]();
 	assert(_unkPtr2);
-	memset(_unkPtr2, 0, getRectSize(1, 144));
 
 	return true;
 }
