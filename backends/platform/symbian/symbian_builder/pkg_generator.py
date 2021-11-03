@@ -150,69 +150,48 @@ def ResolvePackName(ordinal, target, build):
 
 def CreateLastPkg(install_uid, build, path, ordinal, target):
    pkg         = path %(ordinal +1)
-   pkg_cmdline = path %( str(ordinal +1) +  "_cmdline")
    pack_name = ResolvePackName(ordinal, target, build)
-
    SafeWriteFile(pkg,         pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
-   SafeWriteFile(pkg_cmdline, pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
    SaveDependency(build, pkg)
-   SaveDependency(build, pkg_cmdline)
-
    AppendToFile(pkg, pkg_licenses_show)
-   AppendToFile(pkg_cmdline, pkg_licenses_show)
-
-   SaveInstallData(pkg,         build, ordinal*2 + 1, toResolve = False)
-   SaveInstallData(pkg_cmdline, build, ordinal*2 + 1)
+   SaveInstallData(pkg,         build, ordinal*2 + 1)
 
 def CreatePkg(install_uid, build, path, ordinal, target):
    pkg         = path %(ordinal +1)
-   pkg_cmdline = path %( str(ordinal +1) +  "_cmdline")
    pack_name = ResolvePackName(ordinal, target, build)
 
    SafeWriteFile(pkg,         pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
-   SafeWriteFile(pkg_cmdline, pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
    SaveDependency(build, pkg)
-   SaveDependency(build, pkg_cmdline)
 
    AppendToFile(pkg,         pkg_licenses_show)
-   AppendToFile(pkg_cmdline, pkg_licenses_show)
 
-   SaveInstallData(pkg,         build, ordinal*2 + 1, toResolve = False)
-   SaveInstallData(pkg_cmdline, build, ordinal*2 + 1)
-   SaveInstallData(pkg,         build, ordinal*2 + 2, toResolve = False)
-   SaveInstallData(pkg_cmdline, build, ordinal*2 + 2)
+   SaveInstallData(pkg,         build, ordinal*2 + 1)
+   SaveInstallData(pkg,         build, ordinal*2 + 2)
 
 def CreateFirstPkg(install_uid, build, path, target):
    ext = 1
    cmd = str(ext) + "_cmdline"
 
    pkg         = path %ext
-   pkg_cmdline = path %cmd
    pack_name = ResolvePackName(0, target, build)
 
    SafeWriteFile(pkg,         pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
-   SafeWriteFile(pkg_cmdline, pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
 
    p_license = pkg_licenses_install
    if build == 'full':
       p_license = p_license.replace("scummvm", "scummvm\\beta")
    AppendToFile(pkg,         p_license)
-   AppendToFile(pkg_cmdline, p_license)
    if build == 'release':
-      AppendToFile(pkg,                         mif_install)
-      AppendToFile(pkg_cmdline, ResolveEpocRoot(mif_install))
+      AppendToFile(pkg,         ResolveEpocRoot(mif_install))
 
-   SaveInstallData(pkg,         build, 1, toResolve = False)
-   SaveInstallData(pkg_cmdline, build, 1)
-   SaveInstallData(pkg,         build, 2, toResolve = False)
-   SaveInstallData(pkg_cmdline, build, 2)
+   SaveInstallData(pkg,         build, 1)
+   SaveInstallData(pkg,         build, 2)
    AppendToFile(pkg,         clear_uninstall)
-   AppendToFile(pkg_cmdline, clear_uninstall)
 
 def create_pkgs(build, path):
    uids = get_UIDs(build)
    pairs = len(uids)/2
-   pkg_name = "ScummVM%s.pkg"
+   pkg_name = "ScummVM%s-2.5.1.pkg"
    pkg_name = os.path.join(path, pkg_name)
    for i in range(pairs):
       if i == 0:
