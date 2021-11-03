@@ -102,8 +102,7 @@ def decode_macjapanese(text: ByteString) -> str:
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
-                # raise Exception(f"Mac Japanese sequence missing second byte 0x{hi:02x}")
-                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}, decoding as Mac-Roman")
+                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
                 res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
                 hi = next(i_text, None)
                 continue
@@ -111,7 +110,7 @@ def decode_macjapanese(text: ByteString) -> str:
             lo_key = lo - 0x40
             if decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
                 raise Exception(
-                    f"No mapping for Mac Japanese sequence 0x{hi_key}{lo:02x}"
+                    f"No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}"
                 )
             assert_tmp = decode_map[hi_key][lo_key]
             assert assert_tmp  # mypy assert
@@ -127,7 +126,7 @@ def decode_macjapanese(text: ByteString) -> str:
         elif hi == 0xFF:  # halfwidth horizontal ellipsis
             res += "\u2026\uF87F"
         else:
-            raise Exception(f"No mapping for Mac Japanese sequence {hex(hi)}")
+            raise Exception(f"No mapping for MacJapanese sequence 0x{hi:02x}")
         hi = next(i_text, None)
     return res
 
@@ -504,6 +503,9 @@ def test_decode_mac_japanese():
         [
             b"QuickTime\xfe \x89\xb9\x90F\x91\xce\x89\x9e\x95\\",
             "QuickTime™ 音色対応表",
+        ],
+        [
+            b"Asant\x8e", "Asanté"
         ]
     ]
     for input, expected in checks:
