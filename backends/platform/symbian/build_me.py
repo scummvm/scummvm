@@ -23,8 +23,8 @@
 import symbian_builder
 
 
-build = 'full'
-# build = 'release'
+# build = 'full'
+build = 'release'
 
 
 if __name__ == "__main__":

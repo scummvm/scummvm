@@ -26,6 +26,12 @@ About ScummVM.
 	Current port maintained by Fiodar Stryzhniou.
 
 Release History:
+	Release version: 2.5.1
+	* Fixed 20 years old bug - inverted portrait-landscape detection(portrait mode treats as landscape, landscape as portrait).
+	* ScummVM can find and use requred data files after installation automatically.
+	* Symbian port now split in eight parts, ScummVM 1, ScummVM and so on to keep the exe size amd memory pressure down.
+	  For engines layout see ScummVM in OS help menu.
+
 	Release version: 2.3.0
 	* Symbian port now split in nine parts, ScummVM 1, ScummVM and so on to keep the exe size amd memory pressure down.
 	  For engines layout see ScummVM in OS help menu.
