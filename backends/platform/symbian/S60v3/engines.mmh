@@ -126,9 +126,9 @@ STATICLIBRARY    scummvm_icb.lib
 STATICLIBRARY    scummvm_kingdom.lib
 STATICLIBRARY    scummvm_lilliput.lib
 STATICLIBRARY    scummvm_macventure.lib
-#endif // SCUMMVM_PT_8
+// #endif // SCUMMVM_PT_8
 
-#ifdef SCUMMVM_PT_9
+// #ifdef SCUMMVM_PT_9
 STATICLIBRARY    scummvm_lastexpress.lib
 STATICLIBRARY    scummvm_mutationofjb.lib
 STATICLIBRARY    scummvm_nancy.lib
