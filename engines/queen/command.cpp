@@ -137,7 +137,7 @@ CmdText *CmdText::makeCmdTextInstance(uint8 y, QueenEngine *vm) {
 	switch (vm->resource()->getLanguage()) {
 	case Common::HE_ISR:
 		return new CmdTextHebrew(y, vm);
-	case Common::GR_GRE:
+	case Common::EL_GRC:
 		return new CmdTextGreek(y, vm);
 	default:
 		return new CmdText(y, vm);

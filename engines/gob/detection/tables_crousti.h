@@ -32,7 +32,7 @@
 		"crousti",
 		"",
 		AD_ENTRY1s("intro.stk", "63fd795818fa72c32b903bbd99e18ea1", 851926),
-		PT_POR,
+		PT_PRT,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)

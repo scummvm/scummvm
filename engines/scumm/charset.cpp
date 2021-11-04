@@ -102,7 +102,7 @@ void ScummEngine::loadCJKFont() {
 		_2byteFontPtr[0] = 0xFF;
 	} else if (_language == Common::KO_KOR ||
 			   (_game.version >= 7 && (_language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
-			   (_game.version >= 3 && _language == Common::ZH_CNA)) {
+			   (_game.version >= 3 && _language == Common::ZH_CHN)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
 
@@ -120,7 +120,7 @@ void ScummEngine::loadCJKFont() {
 			fontFile = "chinese.fnt";
 			numChar = 13630;
 			break;
-		case Common::ZH_CNA:
+		case Common::ZH_CHN:
 			if (_game.id == GID_FT || _game.id == GID_LOOM || _game.id == GID_INDY3 ||
 				_game.id == GID_INDY4 || _game.id == GID_MONKEY || _game.id == GID_MONKEY2 ||
 				_game.id == GID_TENTACLE) {
@@ -153,7 +153,7 @@ void ScummEngine::loadCJKFont() {
 				_2byteHeight = 15;
 				_newLineCharacter = 0x21;
 				break;
-			case Common::ZH_CNA:
+			case Common::ZH_CHN:
 				_2byteWidth = 12;
 				_2byteHeight = 12;
 				_newLineCharacter = 0x21;
@@ -299,7 +299,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 
 			return _2byteFontPtr + base;
 		}
-	case Common::ZH_CNA:
+	case Common::ZH_CHN:
 		idx = ((idx % 256) - 0xa1)* 94  + ((idx / 256) - 0xa1);
 		break;
 	default:

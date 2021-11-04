@@ -104,7 +104,7 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 			return Common::kWindows1251;
 
 		//cp1252: Western Europe
-		case Common::DA_DAN:
+		case Common::DA_DNK:
 		case Common::DE_DEU:
 		case Common::EN_ANY:
 		case Common::EN_GRB:
@@ -116,13 +116,13 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		case Common::NB_NOR:
 		case Common::NL_NLD:
 		case Common::PT_BRA:
-		case Common::PT_POR:
+		case Common::PT_PRT:
 		case Common::SE_SWE:
 		case Common::UNK_LANG:
 			return Common::kWindows1252;
 
 		//cp1253: Greek
-		case Common::GR_GRE:
+		case Common::EL_GRC:
 			return Common::kWindows1253;
 
 		//cp1254: Turkish
@@ -139,12 +139,12 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 
 		//cp1257: Baltic
 		case Common::ET_EST:
-		case Common::LV_LAT:
+		case Common::LV_LVA:
 			return Common::kWindows1257;
 
 		case Common::JA_JPN:
 		case Common::KO_KOR:
-		case Common::ZH_CNA:
+		case Common::ZH_CHN:
 		case Common::ZH_TWN:
 		default:
 			warning("Unsupported charset: %d", charset);
