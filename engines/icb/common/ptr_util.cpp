@@ -41,7 +41,7 @@ const int32 PTR_ARRAY_MAX(1024);
 uint32 encodePtr(uint8 *ptr) {
 	PointerReference ptrRef;
 
-	ptrdiff_t diff = ptr - (uint8 *)0;
+	std::ptrdiff_t diff = ptr - (uint8 *)0;
 	ptrRef.ref = (uint32)(diff & 0xFFFFFFFF);
 	ptrRef.ptr = ptr;
 
