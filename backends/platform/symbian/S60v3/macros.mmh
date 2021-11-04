@@ -103,7 +103,7 @@ MACRO   ENABLE_TSAGE  //  LIB:scummvm_tsage.lib
 MACRO   ENABLE_TUCKER  //  LIB:scummvm_tucker.lib
 MACRO   ENABLE_VOYEUR  //  LIB:scummvm_voyeur.lib
 MACRO   ENABLE_WINTERMUTE  //  LIB:scummvm_wintermute.lib
-	MACRO   ENABLE_WME3D  //  Subengine
+//	MACRO   ENABLE_WME3D  //  Subengine
 	MACRO   ENABLE_FOXTAIL  //  Subengine
 	MACRO   ENABLE_HEROCRAFT  //  Subengine
 MACRO   ENABLE_ZVISION  //  LIB:scummvm_zvision.lib
