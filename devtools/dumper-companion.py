@@ -91,6 +91,8 @@ def decode_macjapanese(text: ByteString) -> str:
     https://en.wikipedia.org/wiki/Shift_JIS#MacJapanese
     https://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/JAPANESE.TXT
     """
+    quiet: bool = args.quiet
+
     res = ""
     i_text = iter(text)
     hi = next(i_text, None)
@@ -102,19 +104,34 @@ def decode_macjapanese(text: ByteString) -> str:
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
-                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
+                if not quiet:
+                    print(f"WARNING: MacJapanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
                 res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
                 hi = next(i_text, None)
                 continue
-            hi_key = f'{hi:02x}'
-            lo_key = lo - 0x40
-            if decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
-                raise Exception(
-                    f"No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}"
-                )
-            assert_tmp = decode_map[hi_key][lo_key]
-            assert assert_tmp  # mypy assert
-            res += assert_tmp
+            if (0xF0 <= hi <= 0xFC):    # Shift+JIS mapping (incomplete)
+                if not quiet:
+                    print(f"WARNING: MacJapanese sequence has high first byte 0x{hi:02x}, mapping to Shift-JIS")
+                hilo = ( hi << 8 ) | lo & 0x00FF
+                if 0x40 <= lo <= 0x7E:
+                    hilo -= 0x1040  # row 1
+                if 0x80 <= lo <= 0xFC:
+                    hilo -= 0x1041  # row 2
+
+                n = chr(hilo)
+                # print(f"WARNING: {n}")
+                res += n
+            else:
+                hi_key = f'{hi:02x}'
+                lo_key = lo - 0x40
+                hilo = None
+                if hilo is None and decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
+                    raise Exception(
+                        f"No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}"
+                    )
+                assert_tmp = decode_map[hi_key][lo_key]
+                assert assert_tmp  # mypy assert
+                res += assert_tmp
         elif hi == 0xA0:  # no-break space
             res += "\u00A0"
         elif 0xA1 <= hi <= 0xDF:  # Katakana
@@ -277,31 +294,36 @@ def extract_volume(args: argparse.Namespace) -> int:
     destination_dir: Path = args.dir
     punify: bool = args.punycode
     japanese: bool = args.japanese
+    dryrun: bool = args.dryrun
+    rawtext: bool = args.nopunycode
 
     print(f"Loading {source_volume} ...")
     vol = machfs.Volume()
     vol.read(source_volume.read_bytes())
 
-    destination_dir.mkdir(parents=True, exist_ok=True)
+    if not dryrun:
+        destination_dir.mkdir(parents=True, exist_ok=True)
     for hpath, obj in vol.iter_paths():
         upath = destination_dir
         for el in hpath:
             if japanese:
                 el = decode_macjapanese(el.encode("mac_roman"))
-            if punify or needs_punyencoding(el):
+            if punify or (not rawtext and needs_punyencoding(el)):
                 el = punyencode(el)
 
             upath /= el
 
         if isinstance(obj, machfs.Folder):
-            upath.mkdir(exist_ok=True)
+            if not dryrun:
+                upath.mkdir(exist_ok=True)
         else:
             print(upath)
-            file = obj.data
-            if obj.rsrc:
-                file = file_to_macbin(obj, hpath[-1].encode("mac_roman"))
-            upath.write_bytes(file)
-            os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
+            if not dryrun:
+                file = obj.data
+                if obj.rsrc:
+                    file = file_to_macbin(obj, hpath[-1].encode("mac_roman"))
+                upath.write_bytes(file)
+                os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
     return 0
 
 
@@ -434,7 +456,16 @@ def generate_parser() -> argparse.ArgumentParser:
         "--punycode", action="store_true", help="encode pathnames into punycode"
     )
     parser_iso.add_argument(
+        "--nopunycode", action="store_true", help="never encode pathnames into punycode"
+    )
+    parser_iso.add_argument(
         "--japanese", action="store_true", help="read mac_japanese hfs+"
+    )
+    parser_iso.add_argument(
+        "--dryrun", action="store_true", help="do not write any files"
+    )
+    parser_iso.add_argument(
+        "--quiet", action="store_true", help="do not display warnings"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
