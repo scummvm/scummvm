@@ -34,7 +34,7 @@ namespace Image {
  */
 class BitmapRawDecoder : public Codec {
 public:
-	BitmapRawDecoder(int width, int height, int bitsPerPixel, bool ignoreAlpha, bool _flip = false);
+	BitmapRawDecoder(int width, int height, int bitsPerPixel, bool ignoreAlpha, bool flip = false);
 	~BitmapRawDecoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);

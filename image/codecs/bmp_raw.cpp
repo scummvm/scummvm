@@ -28,8 +28,8 @@
 
 namespace Image {
 
-BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel, bool flip, bool ignoreAlpha) : Codec(),
-		_width(width), _height(height), _bitsPerPixel(bitsPerPixel), _flip(flip), _ignoreAlpha(ignoreAlpha) {
+BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel, bool ignoreAlpha, bool flip) : Codec(),
+		_width(width), _height(height), _bitsPerPixel(bitsPerPixel), _ignoreAlpha(ignoreAlpha), _flip(flip)  {
 	_surface.create(_width, _height, getPixelFormat());
 }
 
