@@ -347,14 +347,14 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
     return count
 
 
-def has_resource_fork(dirpath: str, filename: str) -> bool:
+def has_resource_fork(dirpath: bytes, filename: bytes) -> bool:
     """
     Check if file has a resource fork
 
     Ease of compatibility between macOS and linux
     """
     filepath = os.path.join(dirpath, filename)
-    return os.path.exists(os.path.join(filepath, "..namedfork/rsrc"))
+    return os.path.exists(os.path.join(filepath, bytes("..namedfork/rsrc", "utf8")))
 
 
 def collect_forks(args: argparse.Namespace) -> int:
@@ -364,7 +364,7 @@ def collect_forks(args: argparse.Namespace) -> int:
     - combine them with the data fork when it's available
     - punyencode the filename when requested
     """
-    directory: Path = args.dir
+    directory: bytes = bytes(args.dir)
     punify: bool = args.punycode
     count_resources = 0
     count_renames = 0
@@ -373,7 +373,7 @@ def collect_forks(args: argparse.Namespace) -> int:
             if has_resource_fork(dirpath, filename):
                 print(f"Resource in {filename}")
                 count_resources += 1
-                resource_filename = filename + "/..namedfork/rsrc"
+                resource_filename = filename + bytes("/..namedfork/rsrc", "utf8")
                 to_filename = filename
 
                 filepath = os.path.join(dirpath, filename)
@@ -400,7 +400,7 @@ def collect_forks(args: argparse.Namespace) -> int:
                 with open(filepath, "rb") as data:
                     file.data = data.read()
                 with open(filepath, "wb") as to_file:
-                    to_file.write(file_to_macbin(file, to_filename.encode("mac_roman")))
+                    to_file.write(file_to_macbin(file, to_filename))
 
                     if to_filename != filename:
                         os.remove(filepath)  # Remove the original file
