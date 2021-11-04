@@ -584,7 +584,7 @@ Common::Array<Common::Language> getLangIdentifiers(const Common::String &languag
 		{ "ja", Common::JA_JPN },
 		{ "ko", Common::KO_KOR },
 		{ "zh", Common::ZH_ANY },
-		{ "zh", Common::ZH_CNA },
+		{ "zh", Common::ZH_CHN },
 		{ "zh", Common::ZH_TWN }
 	};
 

@@ -146,7 +146,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 				{ "localized.m3t", 0, "3a9f299f8d061ce3d2862d985edb84e3", 2341588 },
 				{ "ENGLISHjp.m3t", 0, "19dcba1074f235ec2119313242d891de", 5658925 },
 			},
-			Common::ZH_CNA,
+			Common::ZH_CHN,
 			Common::kPlatformWindows,
 			ADGF_UNSUPPORTED,
 			GUIO_NONE

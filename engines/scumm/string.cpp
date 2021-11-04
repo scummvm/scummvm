@@ -2142,7 +2142,7 @@ Common::CodePage ScummEngine::getDialogCodePage() const {
 	case Common::JA_JPN:
 		return Common::kWindows932;
 	case Common::ZH_TWN:
-	case Common::ZH_CNA:
+	case Common::ZH_CHN:
 		return Common::kWindows950;
 	case Common::RU_RUS:
 		return Common::kDos866;

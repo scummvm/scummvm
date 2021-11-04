@@ -248,7 +248,6 @@ bool AdvancedMetaEngineDetection::cleanupPirated(ADDetectedGames &matched) const
 	return false;
 }
 
-
 DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 	FileMap allFiles;
 
