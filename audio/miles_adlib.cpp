@@ -308,8 +308,6 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTableP
 	circularPhysicalAssignment = true;
 	// this way the first circular physical FM-voice search will start at FM-voice 0
 	circularPhysicalAssignmentFmVoice = MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX;
-
-	resetData();
 }
 
 MidiDriver_Miles_AdLib::~MidiDriver_Miles_AdLib() {
@@ -346,6 +344,8 @@ int MidiDriver_Miles_AdLib::open() {
 	_opl->init();
 
 	_isOpen = true;
+
+	resetData();
 
 	_timerRate = getBaseTempo();
 	_opl->start(new Common::Functor0Mem<void, MidiDriver_Miles_AdLib>(this, &MidiDriver_Miles_AdLib::onTimer));
