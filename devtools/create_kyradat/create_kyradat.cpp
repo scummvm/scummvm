@@ -1199,7 +1199,7 @@ const TypeTable languageTable[] = {
 	{ JA_JPN,  6 },
 	{ RU_RUS,  7 },
 	{ HE_ISR,  8 },
-	{ ZH_CNA,  9 },
+	{ ZH_CHN,  9 },
 	{ ZH_TWN, 10 },
 	{ -1, -1 }
 };

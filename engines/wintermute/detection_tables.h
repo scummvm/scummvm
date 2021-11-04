@@ -3974,7 +3974,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Reversion: The Return (Steam, November 2020) (Serbian)
 	WME_WINENTRY("reversion3", "Steam",
 		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
-					"xlanguage_sr.dcp", "dc43cc4e382dfa8b4a336e9fcc723bf3", 10164273), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_2),
+					"xlanguage_sr.dcp", "dc43cc4e382dfa8b4a336e9fcc723bf3", 10164273), Common::SR_SRB, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Reversion: The Return (Steam, December 2020) (Spanish)
 	WME_WINENTRY("reversion3", "Steam",
@@ -4009,12 +4009,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Reversion: The Return (Steam, December 2020) (Serbian)
 	WME_WINENTRY("reversion3", "Steam",
 		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
-					"xlanguage_sr.dcp", "e16438a25527e99fb974dd2cdb5ed945", 10164285), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_2),
+					"xlanguage_sr.dcp", "e16438a25527e99fb974dd2cdb5ed945", 10164285), Common::SR_SRB, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Reversion: The Return (Steam, December 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion3", "Steam",
 		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
-					"xlanguage_zh_s.dcp", "d82a5708af24a879cbeaf7338ea89ab4", 10233899), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+					"xlanguage_zh_s.dcp", "d82a5708af24a879cbeaf7338ea89ab4", 10233899), Common::ZH_CHN, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Reversion: The Return (Steam, December 2020) (Traditional Chinese)
 	WME_WINENTRY("reversion3", "Steam",

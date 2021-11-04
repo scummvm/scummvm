@@ -87,7 +87,7 @@ void ActionText::start() {
 	delete stream;
 
 	switch(_actor->getPage()->getGame()->getLanguage()) {
-	case Common::DA_DAN:
+	case Common::DA_DNK:
 	case Common::ES_ESP:
 	case Common::FR_FRA:
 	case Common::PT_BRA:

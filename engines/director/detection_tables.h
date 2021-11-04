@@ -2632,7 +2632,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
 							  "00intro.Dir",		   "f6ca66b328f7fbcdd2e911273d74677c", 3777126, Common::IT_ITA, 404),
 	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "85e7939a0c3041660defb80e0d530230", 744381,
-							  "00INTRO.DIR",		   "3621850ac727f9cf116c41143482c16c", 4044830, Common::ZH_CNA, 404),
+							  "00INTRO.DIR",		   "3621850ac727f9cf116c41143482c16c", 4044830, Common::ZH_CHN, 404),
 	WINGAME1("dcanyoncd", "", "DINO_CD.EXE",		   "5fe054ed623541a92c04f1572ecb6c5d", 3160272, 404),
 
 	// Mac executable is Derrat Sorcerum™ v1.0.3
@@ -2643,8 +2643,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("devo", "", "Smart Patrol", "01be45e7241194dad07938e7059b88e3", 478506, 400),
 	WINGAME1("devo", "", "SMRTPTRL.EXE", "6030100dbff520b8763f6e98d15389d7", 741904, 400),
 
-	MACGAME1_l("digby", "", "Start Digby's Adventures", "a8e65a2268226bd59f12ebdc58a221f3", 481482, Common::ZH_CNA, 404),
-	WINGAME1_l("digby", "", "DIGBY.EXE", "adc126fbc4387e5d8e84dcd5abd33653", 684269, Common::ZH_CNA, 400),
+	MACGAME1_l("digby", "", "Start Digby's Adventures", "a8e65a2268226bd59f12ebdc58a221f3", 481482, Common::ZH_CHN, 404),
+	WINGAME1_l("digby", "", "DIGBY.EXE", "adc126fbc4387e5d8e84dcd5abd33653", 684269, Common::ZH_CHN, 400),
 
 	MACDEMO1_l("dirmacromedia", "v4.0.3J Demo", "Director 4.0 Demo", "e258089af01c8233db77039828cc83f8", 1488951, Common::JA_JPN, 403),
 
@@ -2895,11 +2895,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// English is always available, along with one alternate language
 	// Dutch version was localized by Pride Kids Interactive of Ede, Netherlands
 	MACGAME2_l("hamsterland1", "", "Hamsterland", "bcd3c718db258701496b3c5bcb827ef2", 483774,
-								   "AIRDK",		  "f74f18a9d454db63465dac151a6b5706", 8425728, Common::DA_DAN, 400),
+								   "AIRDK",		  "f74f18a9d454db63465dac151a6b5706", 8425728, Common::DA_DNK, 400),
 	MACGAME2_l("hamsterland1", "", "Hamsterland", "bcd3c718db258701496b3c5bcb827ef2", 483774,
 								   "AIRSW",		  "ccf7c642796c5aeb9fee4c663bdd02d9", 7588992, Common::SE_SWE, 400),
 	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "2bb6e93d9aab502f46dbf163d51eb785", 785327,
-								   "AIRDK",		  "ad98bbbd724e31a8a125e284a74d0241", 8425546, Common::DA_DAN, 400),
+								   "AIRDK",		  "ad98bbbd724e31a8a125e284a74d0241", 8425546, Common::DA_DNK, 400),
 	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "a0d2cfdf10ec14c00338329277bc8acc", 727653,
 								   "AIRSP",		  "9b5b82d488b96b2fcf5e78ec8769e29a", 8432260, Common::ES_ESP, 400),
 	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "11669580c1f85b8caa4cd02373e7c947", 785221,
@@ -4972,11 +4972,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Projectors on the installation disc for Swedish, Norwegian, Danish, Finnish
 	MACGAME1_l("polis1", "", "KRIPOS", "921df0a5f150a57b621baa2cace66e12", 1032653, Common::NB_NOR, 650),
-	MACGAME1_l("polis1", "", "STRISSER", "921df0a5f150a57b621baa2cace66e12", 1032653, Common::DA_DAN, 650),
+	MACGAME1_l("polis1", "", "STRISSER", "921df0a5f150a57b621baa2cace66e12", 1032653, Common::DA_DNK, 650),
 	MACGAME1_l("polis1", "", "POLIS", "921df0a5f150a57b621baa2cace66e12", 1032653, Common::SE_SWE, 650),
 	MACGAME1_l("polis1", "", "POLIISI", "921df0a5f150a57b621baa2cace66e12", 1032653, Common::FI_FIN, 650),
 	WINGAME1_l("polis1", "", "Kripos.exe", "d62438566e44826960fc16c5c23dbe43", 1514881, Common::NB_NOR, 650),
-	WINGAME1_l("polis1", "", "Strisser.exe", "d62438566e44826960fc16c5c23dbe43", 1514881, Common::DA_DAN, 650),
+	WINGAME1_l("polis1", "", "Strisser.exe", "d62438566e44826960fc16c5c23dbe43", 1514881, Common::DA_DNK, 650),
 	WINGAME1_l("polis1", "", "Polis.exe", "d62438566e44826960fc16c5c23dbe43", 1514881, Common::SE_SWE, 650),
 	WINGAME1_l("polis1", "", "Poliisi.exe", "d62438566e44826960fc16c5c23dbe43", 1514881, Common::FI_FIN, 650),
 
@@ -5150,9 +5150,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Later releases are D8
 	WINGAME1_l("beautyorbeast", "", "Beauty or the Beast.exe", "02b0d114c93b598c737b1c627178195c", 2190754, Common::RU_RUS, 702),
 
-	MACGAME1_l("bellini3", "", "Bellinis bikini",	   "0944b962ebb00f4b5d5149d220f8449b", 114321, Common::DA_DAN, 702),
+	MACGAME1_l("bellini3", "", "Bellinis bikini",	   "0944b962ebb00f4b5d5149d220f8449b", 114321, Common::DA_DNK, 702),
 	MACGAME1_l("bellini3", "", "Bellinin bikinit",	   "0944b962ebb00f4b5d5149d220f8449b", 114321, Common::FI_FIN, 702),
-	WINGAME1_l("bellini3", "", "Bellinis bikini.exe",  "7c18c9a6af2694156bf09ed195c1ab09", 2596204, Common::DA_DAN, 702),
+	WINGAME1_l("bellini3", "", "Bellinis bikini.exe",  "7c18c9a6af2694156bf09ed195c1ab09", 2596204, Common::DA_DNK, 702),
 	WINGAME1_l("bellini3", "", "Bellinin bikinit.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2596204, Common::FI_FIN, 702),
 
 	MACGAME1_l("bibi2", "", "Spielstart",  "0944b962ebb00f4b5d5149d220f8449b", 117347, Common::DE_DEU, 702),
@@ -5458,10 +5458,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("balto2", "Trailer", "MacBolto", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
 	WINDEMO1("balto2", "Trailer", "Balto.exe", "c163f36141579ee374f7b4b2bddee95a", 2309044, 850),
 
-	MACGAME1_l("bamse1", "", "Spillerom", "a44511b8ff0e46b4f9c85dd1cb58d458", 199093, Common::DA_DAN, 851),
-	MACGAME1_l("bamse2", "", "Bamses egen", "a44511b8ff0e46b4f9c85dd1cb58d458", 157079, Common::DA_DAN, 851),
-	WINGAME1_l("bamse1", "", "spillerom.exe", "0c81c84ca4966313ad27d47daba44537", 2158320, Common::DA_DAN, 851),
-	WINGAME1_l("bamse2", "", "Bamsesegen.exe", "0c81c84ca4966313ad27d47daba44537", 2158340, Common::DA_DAN, 851),
+	MACGAME1_l("bamse1", "", "Spillerom", "a44511b8ff0e46b4f9c85dd1cb58d458", 199093, Common::DA_DNK, 851),
+	MACGAME1_l("bamse2", "", "Bamses egen", "a44511b8ff0e46b4f9c85dd1cb58d458", 157079, Common::DA_DNK, 851),
+	WINGAME1_l("bamse1", "", "spillerom.exe", "0c81c84ca4966313ad27d47daba44537", 2158320, Common::DA_DNK, 851),
+	WINGAME1_l("bamse2", "", "Bamsesegen.exe", "0c81c84ca4966313ad27d47daba44537", 2158340, Common::DA_DNK, 851),
 
 	MACGAME1("barbrapunzel", "", "Rapunzel", "08c9ea94f6469e71ae0c71987bbf6323", 213604, 850),
 	MACDEMO1("barbrapunzel", "Trailer", "Trailer", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
@@ -5714,7 +5714,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("sethi3", "Classic OS", "Start Me OS9", "789536da81694518f494945bb161ace9", 179887, Common::DE_DEU, 851),
 	WINGAME1_l("sethi2", "", "Sethi_Incas.exe", "0c81c84ca4966313ad27d47daba44537", 2158774, Common::FR_FRA, 851),
 
-	WINGAME1_l("skeeto10", "", "mm7main.exe", "0c81c84ca4966313ad27d47daba44537", 12051446, Common::DA_DAN, 851),
+	WINGAME1_l("skeeto10", "", "mm7main.exe", "0c81c84ca4966313ad27d47daba44537", 12051446, Common::DA_DNK, 851),
 
 	// Dutch demos found on Flipper & Lopaka compilation
 	MACGAME1_l("skippy", "",     "Skippy",      "4ea5fc09f79eee6dded94dc40f303779", 197127, Common::NL_NLD, 800),

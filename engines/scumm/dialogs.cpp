@@ -376,7 +376,7 @@ static bool isCJKLanguage(Common::Language lang) {
 	case Common::KO_KOR:
 	case Common::JA_JPN:
 	case Common::ZH_TWN:
-	case Common::ZH_CNA:
+	case Common::ZH_CHN:
 		return true;
 	default:
 		return false;

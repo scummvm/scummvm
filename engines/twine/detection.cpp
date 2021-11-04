@@ -453,7 +453,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		"lba",
 		"Fan Translation by xesf",
 		AD_ENTRY1s("TEXT.HQR", "2a8df71946aa9ee4c777a9d6414b89ce", 282308),
-		Common::PT_POR,
+		Common::PT_PRT,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)

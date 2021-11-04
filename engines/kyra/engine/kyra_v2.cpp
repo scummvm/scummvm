@@ -101,7 +101,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 		_langIntern = 1;
 		// fall through
 	case Common::JA_JPN:
-	case Common::ZH_CNA:
+	case Common::ZH_CHN:
 		_lang = 3;
 		break;
 

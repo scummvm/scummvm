@@ -215,7 +215,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, Co
 
 	if (searchFSNode(fslist, "chinese_gb16x12.fnt", fontFile)) {
 		debugC(0, kDebugGlobalDetection, "Chinese detected");
-		return Common::ZH_CNA;
+		return Common::ZH_CHN;
 	}
 
 	if (id != GID_CMI && id != GID_DIG) {

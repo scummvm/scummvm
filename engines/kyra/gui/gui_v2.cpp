@@ -447,7 +447,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			Common::String s = header.description;
 			s = Util::convertUTF8ToDOS(s);
 
-			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN) {
+			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) {
 				// Strip special characters from GMM save dialog which might get misinterpreted as 2-byte characters
 				for (Common::String::iterator ii = s.begin(); ii != s.end(); ++ii) {
 					if (*ii < 32) // due to the signed char type this will also clean up everything >= 0x80
