@@ -248,7 +248,7 @@ bool BaseFileManager::registerPackages() {
 					}
 				// Simplified Chinese
 				} else if (fileName == "xlanguage_zh_s.dcp") {
-					if (_language != Common::ZH_CNA) {
+					if (_language != Common::ZH_CHN) {
 						continue;
 					}
 				// Traditional Chinese
@@ -278,7 +278,7 @@ bool BaseFileManager::registerPackages() {
 					}
 				// Latvian
 				} else if (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp" || fileName == "latvian_language_pack.dcp") {
-					if (_language != Common::LV_LAT) {
+					if (_language != Common::LV_LVA) {
 						continue;
 					}
 				// Persian
@@ -303,7 +303,7 @@ bool BaseFileManager::registerPackages() {
 					}
 				// Serbian
 				} else if (fileName == "serbian.dcp" || fileName == "xlanguage_sr.dcp" || fileName == "serbian_language_pack.dcp") {
-					if (_language != Common::SR_SER) {
+					if (_language != Common::SR_SRB) {
 						continue;
 					}
 				// Spanish

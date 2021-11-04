@@ -140,7 +140,7 @@ void WidgetInventoryTooltip::handleEvents() {
 				Object &obj = scene._bgShapes[select];
 
 				if (!obj._description.empty() && !obj._description.hasPrefix(" ")) {
-					if (_vm->getLanguage() == Common::GR_GRE) {
+					if (_vm->getLanguage() == Common::EL_GRC) {
 
 						if (!_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), obj._description.c_str(),
@@ -161,7 +161,7 @@ void WidgetInventoryTooltip::handleEvents() {
 				Person &person = people[ui._bgFound - 1000];
 
 				if (!person._description.empty() && !person._description.hasPrefix(" ")) {
-					if (_vm->getLanguage() == Common::GR_GRE) {
+					if (_vm->getLanguage() == Common::EL_GRC) {
 						if (!_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), person._description.c_str(),
 								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
@@ -267,7 +267,7 @@ void WidgetInventoryVerbs::load() {
 	_inventCommands.push_back(FIXED(Look));
 
 	// Default the Action word to "with"
-	_owner->_action = _vm->getLanguage() == Common::GR_GRE ? "" : FIXED(With);
+	_owner->_action = _vm->getLanguage() == Common::EL_GRC ? "" : FIXED(With);
 
 	// Search all the bgshapes for any matching Target Fields
 	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
