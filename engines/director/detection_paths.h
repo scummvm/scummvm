@@ -194,6 +194,9 @@ const char *directoryGlobs[] = {
 	"PINK GEAR",					// Pink Gear 2
 	"NAV",
 	"SSWARLCK",						// Spaceship Warlock (Windows)
+	"InsMilo",						// Milo and the Magical Stones
+	"dir",
+	"CHRISTMAS PRESENT",			// Christmas Present
 	0
 };
 
