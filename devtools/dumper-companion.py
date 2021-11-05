@@ -22,6 +22,7 @@ from binascii import crc_hqx
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any, ByteString, List, Tuple
+import unicodedata
 
 import machfs
 
@@ -305,11 +306,14 @@ def extract_volume(args: argparse.Namespace) -> int:
     return 0
 
 
-def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
+def punyencode_paths(paths: List[Path], verbose: bool = False, source_encoding: str = None) -> int:
     """Rename filepaths to their punyencoded names"""
     count = 0
     for path in paths:
-        new_name = punyencode(path.name)
+        if source_encoding is not None:
+            new_name = punyencode(demojibake_hfs_bytestring(bytes(path.name, "utf8"), source_encoding))
+        else:
+            new_name = punyencode(path.name)
         if path.stem != new_name:
             count += 1
             new_path = path.parent / new_name
@@ -319,13 +323,45 @@ def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
     return count
 
 
+def demojibake_hfs_bytestring(s: ByteString, encoding: str):
+    """
+    Takes misinterpreted bytestrings from macOS and transforms
+    them into the correct interpretation.
+    When not able to figure out the correct encoding for legacy
+    non-Unicode HFS filesystems, which is most of the time, macOS
+    interprets filenames as though they're MacRoman. Once mounted,
+    the files are presented via all of the macOS filesystem APIs
+    as though they're UTF-8.
+    This is great for Western European languages, but falls over for
+    other languages. For example, Japanese filenames will be rendered
+    as gibberish (mojibake). This can be fixed by normalizing the
+    filenames' UTF-8 encoding, transforming it back to "MacRoman",
+    then correctly reinterpreting via the correct encoding.
+    """
+    return decode_bytestring(
+        # macOS renders paths as NFD, but to correctly translate
+        # this back to the original MacRoman, we first have to
+        # renormalize it to NFC.
+        unicodedata.normalize('NFC', s.decode('utf8')).encode('macroman'),
+        encoding
+    )
+
+
+def decode_bytestring(s: ByteString, encoding: str):
+    """Wrapper for decode() that can dispatch to decode_macjapanese"""
+    if encoding == "mac_japanese":
+        return decode_macjapanese(s)
+    else:
+        return s.decode(encoding)
+
+
 def punyencode_arg(args: argparse.Namespace) -> int:
     """wrapper function"""
     punyencode_dir(args.directory, verbose=True)
     return 0
 
 
-def punyencode_dir(directory: Path, verbose: bool = False) -> int:
+def punyencode_dir(directory: Path, verbose: bool = False, source_encoding: str = None) -> int:
     """
     Recursively punyencode all directory and filenames
 
@@ -333,6 +369,8 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
     """
     files: List[Path] = []
     dirs: List[Path] = []
+    if source_encoding is not None:
+        directory = Path(demojibake_hfs_bytestring(directory, source_encoding))
     path_glob = directory.glob("**/*")
     for item in path_glob:
         if item.is_file():
@@ -342,8 +380,8 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
 
     dirs.reverse()  # start renaming with the one at the bottom
 
-    count = punyencode_paths(files, verbose=verbose)
-    count += punyencode_paths(dirs, verbose=verbose)
+    count = punyencode_paths(files, verbose=verbose, source_encoding=source_encoding)
+    count += punyencode_paths(dirs, verbose=verbose, source_encoding=source_encoding)
     return count
 
 
@@ -410,7 +448,7 @@ def collect_forks(args: argparse.Namespace) -> int:
                         (info.st_mtime, info.st_mtime),
                     )
     if punify:
-        count_renames = punyencode_dir(directory, verbose=True)
+        count_renames = punyencode_dir(directory, verbose=True, source_encoding=args.source_encoding)
 
     print(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
@@ -471,6 +509,12 @@ def generate_parser() -> argparse.ArgumentParser:
             "--punycode",
             action="store_true",
             help="encode pathnames into punycode",
+        )
+        parser_macbinary.add_argument(
+            "--source-encoding",
+            metavar="source_encoding",
+            type=str,
+            help="encoding used for filenames in this path",
         )
         parser_macbinary.add_argument(
             "dir", metavar="directory", type=Path, help="input directory"
