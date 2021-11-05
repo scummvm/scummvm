@@ -461,12 +461,15 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
 
+	_multisourceDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+	_multisourceDriver->property(MidiDriver::PROP_MILES_VERSION,
+		_vm->getEngineVersion() == kGroovieT7G ? Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
+
 	int result = _driver->open();
 	if (result > 0 && result != MidiDriver::MERR_ALREADY_OPEN)
 		error("Opening MidiDriver failed with error code %i", result);
 
 	_multisourceDriver->setSourceNeutralVolume(0, 100);
-	_multisourceDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
