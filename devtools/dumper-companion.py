@@ -102,16 +102,16 @@ def decode_macjapanese(text: ByteString) -> str:
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
-                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
-                res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
-                hi = next(i_text, None)
-                continue
+                print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}")
+                return text.decode('mac-roman')
             hi_key = f'{hi:02x}'
             lo_key = lo - 0x40
-            if decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
-                raise Exception(
-                    f"No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}"
-                )
+            if lo_key < 0:
+                print(f"WARNING: second byte out of range 0x{lo:02x}")
+                return text.decode('mac-roman')
+            elif decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
+                print(f"WARNING: No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}")
+                return text.decode('mac-roman')
             assert_tmp = decode_map[hi_key][lo_key]
             assert assert_tmp  # mypy assert
             res += assert_tmp
