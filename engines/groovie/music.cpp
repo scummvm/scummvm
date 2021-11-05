@@ -58,6 +58,9 @@ MusicPlayer::~MusicPlayer() {
 void MusicPlayer::playSong(uint32 fileref) {
 	Common::StackLock lock(_mutex);
 
+	if (_isPlaying)
+		unload();
+
 	// Set the volumes
 	_fadingEndVolume = 100;
 	_gameVolume = 100;
