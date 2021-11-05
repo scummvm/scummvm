@@ -272,6 +272,17 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Virgin Asia cd release - english only
+	{
+		"lba",
+		"Virgin Asia CD release",
+		AD_ENTRY1s("text.hqr", "5b8329ebd078adc92979d04987692e9b", 442921),
+		Common::EN_GRB,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - DotEmu Version (Steam)
 	// LBA.DOT
 	// 11 October 2011 at 17:30
