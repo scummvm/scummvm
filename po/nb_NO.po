@@ -5673,8 +5673,9 @@ msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
-"Bruk spillmotorens originale menyer (hovedmeny, lagre/laste og spilloppsett)"
-". ScummVMs globale hovedmeny kan fortsatt åpnes via den dedikerte snarveien."
+"Bruk spillmotorens originale menyer (hovedmeny, lagre/laste og "
+"spilloppsett). ScummVMs globale hovedmeny kan fortsatt åpnes via den "
+"dedikerte snarveien."
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
