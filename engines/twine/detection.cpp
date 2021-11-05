@@ -332,6 +332,53 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure (CD Spanish)
+	{
+		"lba",
+		"",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::IT_ITA,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::ES_ESP,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - DotEmu Enhanced Version (Steam)
 	// LBA.exe
 	// 27 February 2018 at 08:10
