@@ -105,7 +105,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<start>"] = start;
 
 	Level intro;
-	intro.trans.level = "c31.mi_";
+	intro.trans.level = "c52.mi_";
 	intro.trans.intros.push_back("movie/nw_logo.smk");
 	intro.trans.intros.push_back("movie/hypnotix.smk");
 	intro.trans.intros.push_back("movie/wetlogo.smk");
@@ -135,8 +135,8 @@ void WetEngine::loadAssetsDemoDisc() {
 	movies.trans.frameNumber = 0;
 	_levels["<movies>"] = movies;
 
-	loadLevel("c31", "c52", "wetlands");
-	loadLevel("c52", "<gameover>", "wetlands");
+	loadArcadeLevel("c31", "c52", "wetlands");
+	loadArcadeLevel("c52", "<gameover>", "wetlands");
 
 	Level over;
 	over.trans.level = "<quit>";
@@ -162,15 +162,7 @@ void WetEngine::loadAssetsPCW() {
 	intro.trans.frameImage.clear();
 	_levels["<start>"] = intro;
 
-	Common::String arclevel = "c11.mis";
-	Common::String arc;
-	Common::String list;
-	splitArcadeFile(arclevel, arc, list);
-	parseArcadeShooting("wetlands", arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.prefix = "";
-	_levels[arclevel].arcade.levelIfWin = "<gameover>";
-	_levels[arclevel].arcade.levelIfLose = "<gameover>";
+	loadArcadeLevel("c11", "<gameover>", "");
 
 	Level over;
 	over.trans.level = "<quit>";
@@ -195,16 +187,7 @@ void WetEngine::loadAssetsPCG() {
 	intro.trans.frameImage.clear();
 	_levels["<start>"] = intro;
 
-	Common::String arclevel = "c31.mi_";
-	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
-	Common::String arc;
-	Common::String list;
-	splitArcadeFile(arclevel, arc, list);
-	parseArcadeShooting("wetlands", arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.prefix = "";
-	_levels[arclevel].arcade.levelIfWin = "<gameover>";
-	_levels[arclevel].arcade.levelIfLose = "<gameover>";
+	loadArcadeLevel("c31", "<gameover>", "");
 
 	Level over;
 	over.trans.level = "<quit>";
@@ -212,19 +195,6 @@ void WetEngine::loadAssetsPCG() {
 	_levels["<gameover>"] = over;
 
 	loadLib("", "sound.lib", false);
-}
-
-void WetEngine::loadLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
-	Common::String arclevel = current + _difficulty + ".mi_";
-	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
-	Common::String arc;
-	Common::String list;
-	splitArcadeFile(arclevel, arc, list);
-	debug("%s", arc.c_str());
-	parseArcadeShooting("", arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.prefix = prefix;
-	_levels[arclevel].arcade.levelIfWin = next + _difficulty + ".mi_";;
 }
 
 void WetEngine::loadAssetsFullGame() {
@@ -252,8 +222,8 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<intro>"] = intro;
 
 	//loadLevel("c10", "c11", "");
-	loadLevel("c11", "c20", "");
-	loadLevel("c20", "", "");
+	loadArcadeLevel("c11", "c20", "");
+	loadArcadeLevel("c20", "", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadLib("sound/", "c_misc/sound.lib", true);
@@ -264,15 +234,15 @@ void WetEngine::showCredits() {
 	runIntro(video);
 }
 
-void WetEngine::runCode(Code code) {
-	changeScreenMode("arcade"); // everything runs in 320x200
+void WetEngine::runCode(Code &code) {
+	changeScreenMode("320x200");
 	if (code.name == "wetlands/main_menu.mis")
 		runMainMenu(code);
 	else
 		error("invalid hardcoded level: %s", code.name.c_str());
 }
 
-void WetEngine::runMainMenu(Code code) {
+void WetEngine::runMainMenu(Code &code) {
 	Common::Event event;
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	uint32 c = _pixelFormat.RGBToColor(0, 252, 0);

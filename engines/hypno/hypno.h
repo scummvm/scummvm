@@ -96,6 +96,7 @@ public:
 	void parseScene(const Common::String &prefix, const Common::String &filename);
 	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
 	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
+	void loadArcadeLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
 	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
 
 	// User input
@@ -143,7 +144,7 @@ public:
 	void runPlay(Play *a);
 	void runAmbient(Ambient *a);
 	void runWalN(WalN *a);
-	void runGlobal(Global *a);
+	bool runGlobal(Global *a);
 	void runTalk(Talk *a);
 	void runChangeLevel(ChangeLevel *a);
 
@@ -173,6 +174,7 @@ public:
 	// Movies
 	Videos _nextSequentialVideoToPlay;
 	Videos _nextParallelVideoToPlay;
+	Videos _nextLoopingVideoToPlay;
 	Videos _videosPlaying;
 
 	// Sounds
@@ -184,6 +186,8 @@ public:
 	bool _noStopSounds;
 
 	// Arcade
+	Common::String _arcadeMode;
+	uint32 _playerPosition;
 	int detectTarget(const Common::Point &mousePos);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
@@ -213,7 +217,7 @@ public:
 	virtual void leftClickedConversation(const Common::Point &mousePos);
 
 	// For some menus and hardcoded puzzles
-	virtual void runCode(Code code);
+	virtual void runCode(Code &code);
 
 	// Transitions
 	void runTransition(Transition trans);
@@ -247,11 +251,10 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
-	void runCode(Code code) override;
+	void runCode(Code &code) override;
 
 private:
-	void loadLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
-	void runMainMenu(Code code);
+	void runMainMenu(Code &code);
 };
 
 class SpiderEngine : public HypnoEngine {
@@ -264,14 +267,14 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
-	void runCode(Code code) override;
+	void runCode(Code &code) override;
 
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
 
 private:
-	void runMatrix(Code code);
+	void runMatrix(Code &code);
 };
 
 class BoyzEngine : public HypnoEngine {

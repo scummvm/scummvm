@@ -64,6 +64,7 @@ BOXX						return BOXXTOK;
 ESCAPE						return ESCAPETOK;
 SECOND						return SECONDTOK;
 INTRO						return INTROTOK;
+INTR						return INTRTOK;
 DEFAULT						return DEFAULTTOK;
 \|S[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;
 \|G[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;

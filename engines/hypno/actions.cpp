@@ -63,9 +63,17 @@ void HypnoEngine::runMenu(Hotspots hs) {
 		loadImage("int_main/resume.smk", 0, 0, true);
 }
 
-void HypnoEngine::runBackground(Background *a) {
-	if (a->condition.size() > 0 && !_sceneState[a->condition])
-		return;
+void HypnoEngine::runBackground(Background *a) {	
+	if (a->condition.size() > 0) {
+		bool condition = _sceneState[a->condition];
+
+		if (a->flag1 == "/NSTATE" || a->flag2 == "/NSTATE") 
+			condition = !condition;
+
+		if (!condition)
+			return;
+	}
+
 	loadImage(a->path, a->origin.x, a->origin.y, false);
 }
 
@@ -88,15 +96,20 @@ void HypnoEngine::runCutscene(Cutscene *a) {
 	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
 }
 
-void HypnoEngine::runGlobal(Global *a) {
+bool HypnoEngine::runGlobal(Global *a) {
 	if (a->command == "TURNON")
 		_sceneState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
 		_sceneState[a->variable] = 0;
 	else if (a->command == "TOGGLE")
 		_sceneState[a->variable] = !_sceneState[a->variable];
+	else if (a->command == "CHECK")
+		return _sceneState[a->variable];
+	else if (a->command == "NCHECK")
+		return !_sceneState[a->variable];
 	else
 		error("Invalid command %s", a->command.c_str());
+	return true;
 }
 
 void HypnoEngine::runPlay(Play *a) {
@@ -144,6 +157,10 @@ void HypnoEngine::runChangeLevel(ChangeLevel *a) {
 }
 
 void HypnoEngine::runTalk(Talk *a) {
+	//_videosPlaying.clear();
+	//_nextParallelVideoToPlay.clear();
+	//_nextSequentialVideoToPlay.clear();
+
 	_conversation.push_back(a);
 	_refreshConversation = true;
 }

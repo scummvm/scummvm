@@ -30,6 +30,7 @@ void SpiderEngine::showConversation() {
 	uint32 x = 18;
 	uint32 y = 20;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);
+	bool activeFound = false;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active) {
@@ -43,6 +44,7 @@ void SpiderEngine::showConversation() {
 				}
 			}
 			if (!path.empty()) {
+				activeFound = true;
 				frame = frame;
 				Graphics::Surface *surf = decodeFrame("dialog/" + path, frame);
 
@@ -56,17 +58,26 @@ void SpiderEngine::showConversation() {
 			}
 		}
 	}
+	if (!activeFound) {
+		for (Actions::const_iterator it = _conversation.begin(); it != _conversation.end(); ++it) {
+			Talk *a = (Talk *)*it;
+			if (!a->second.empty())
+				_nextParallelVideoToPlay.push_back(MVideo(a->second, a->secondPos, false, false, false));
+		}
+		debugC(1, kHypnoDebugScene, "Clearing conversation");
+		_conversation.clear();
+		runMenu(*stack.back());
+		drawScreen();
+	} 
 	speaker->free();
 	delete speaker;
 }
 
 void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 	Talk *t;
-	bool activeFound = false;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {
-			activeFound = true;
 			a->active = false;
 			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
 				if (it->command == "A") {
@@ -81,18 +92,23 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 					_refreshConversation = true;
 				} else if (it->command == "P") {
 					debugC(1, kHypnoDebugScene, "Playing %s", it->path.c_str());
-					_nextSequentialVideoToPlay.push_back(MVideo(it->path, it->position, false, false, false));
+					_nextParallelVideoToPlay.push_back(MVideo(it->path, it->position, false, false, false));
+				} else if (it->command == "S") {
+					debugC(1, kHypnoDebugScene, "Enabling variable %s", it->variable.c_str());
+					_sceneState[it->variable] = 1;
+					_refreshConversation = true;
+				} else if (it->command == "L") {
+					Common::String variable = "GS_LEVELCOMPLETE";
+					debugC(1, kHypnoDebugScene, "Enabling variable %s", variable.c_str());
+					_sceneState[variable] = 1;
+					_refreshConversation = true;
 				}
+
 			}
 		}
 		if (!a->background.empty()) {
-			loadImage(a->background, a->position.x, a->position.y, false);
+			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
-	}
-	if (!activeFound) {
-		_conversation.clear();
-		runMenu(*stack.back());
-		drawScreen();
 	}
 }
 

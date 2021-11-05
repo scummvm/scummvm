@@ -45,16 +45,30 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 
 void SpiderEngine::drawPlayer() {
 
+	if (_arcadeMode == "YC") {
+		drawImage(*_playerFrames[_playerPosition], 0, 0, true);
+		return;
+	}
+
+	// if (_playerFrameSep == -1) {
+	// 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	// 	drawImage(*_playerFrames[0], MIN(MAX(10, int(mousePos.x)), _screenH-10), 129, true);
+	// 	return;
+	// }
+
+
 	if (_playerFrameIdx < _playerFrameSep) {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		uint32 idx = MIN(2, mousePos.x / (_screenW / 3)) + 3 * MIN(2, mousePos.y / (_screenH / 3));
-		_playerFrameIdx = orientationIndex[idx];
+		//uint32 idx = MIN(2, mousePos.x / (_screenW / 3)) + 3 * MIN(2, mousePos.y / (_screenH / 3));
+		_playerFrameIdx = 4 - mousePos.x / (_screenW / 4);
+		//debug("selecting index %d", _playerFrameIdx);
+		//_playerFrameIdx = orientationIndex[idx];
 	} else {
 		_playerFrameIdx++;
 		if (_playerFrameIdx >= (int)_playerFrames.size())
 			_playerFrameIdx = 0;
 	}
-	drawImage(*_playerFrames[_playerFrameIdx], 60, 129, true);
+	drawImage(*_playerFrames[_playerFrameIdx], _screenW/2 - 15, _screenH-50, true);
 }
 
 void SpiderEngine::drawHealth() {

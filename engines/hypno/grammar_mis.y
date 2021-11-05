@@ -61,7 +61,7 @@ using namespace Hypno;
 
 %token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND
 %token<i> NUM
-%token HOTSTOK CUTSTOK BACKTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
+%token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
 %token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK
 %token GLOBTOK TONTOK TOFFTOK
 %token TALKTOK INACTOK FDTOK BOXXTOK ESCAPETOK SECONDTOK INTROTOK DEFAULTTOK
@@ -125,7 +125,7 @@ line: MENUTOK mflag mflag  {
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
 	|  TIMETOK NUM  { debugC(1, kHypnoDebugParser, "TIME %d", $2); } 
 	|  BACKTOK FILENAME NUM NUM gsswitch flag flag {
-		Background *a = new Background($2, Common::Point($3, $4), $5);
+		Background *a = new Background($2, Common::Point($3, $4), $5, $6, $7);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
@@ -162,6 +162,13 @@ line: MENUTOK mflag mflag  {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
+	}
+	|  INTRTOK FILENAME NUM NUM { 
+		Cutscene *a = new Cutscene($2);
+		Hotspots *cur = stack.back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); 
 	}
 	|  CUTSTOK FILENAME { 
 		Cutscene *a = new Cutscene($2);
@@ -209,11 +216,14 @@ talk: INACTOK talk {
 	| FDTOK talk { debugC(1, kHypnoDebugParser, "inactive"); }
 	| BACKTOK FILENAME NUM NUM gsswitch flag { 
 		talk_action->background = $2;
-		talk_action->position = Common::Point($3, $4);
+		talk_action->backgroundPos = Common::Point($3, $4);
 		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
 	| BOXXTOK NUM NUM { debugC(1, kHypnoDebugParser, "BOXX %d %d", $2, $3); }
 	| ESCAPETOK { debugC(1, kHypnoDebugParser, "ESCAPE"); }
-	| SECONDTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "SECOND %s %d %d", $2, $3, $4); }
+	| SECONDTOK FILENAME NUM NUM {
+		talk_action->second = $2;
+		talk_action->secondPos = Common::Point($3, $4); 
+		debugC(1, kHypnoDebugParser, "SECOND %s %d %d", $2, $3, $4); }
 	| INTROTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); }
 	| DEFAULTTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", $2, $3, $4); }
 	| PG talk { 
@@ -261,7 +271,11 @@ talk: INACTOK talk {
 		talk_cmd.variable = $1+2;
 		talk_action->commands.push_back(talk_cmd);
 		debugC(1, kHypnoDebugParser, "%s", $1); }
-	| PL talk { debugC(1, kHypnoDebugParser, "|L"); }
+	| PL talk { 
+		TalkCommand talk_cmd;
+		talk_cmd.command = "L";
+		talk_action->commands.push_back(talk_cmd);
+		debugC(1, kHypnoDebugParser, "|L"); }
 	| PE { debugC(1, kHypnoDebugParser, "|E"); }
 	| /*nothing*/
 	;

@@ -57,37 +57,38 @@ extern int HYPNO_ARC_debug;
     FILENAME = 259,
     BNTOK = 260,
     SNTOK = 261,
-    NUM = 262,
-    COMMENT = 263,
-    YXTOK = 264,
-    CTOK = 265,
-    DTOK = 266,
-    HTOK = 267,
-    HETOK = 268,
-    RETTOK = 269,
-    QTOK = 270,
-    ENCTOK = 271,
-    PTOK = 272,
-    FTOK = 273,
-    TTOK = 274,
-    TPTOK = 275,
-    ATOK = 276,
-    VTOK = 277,
-    OTOK = 278,
-    O1TOK = 279,
-    NTOK = 280,
-    RTOK = 281,
-    ITOK = 282,
-    ZTOK = 283,
-    FNTOK = 284,
-    NONETOK = 285,
-    A0TOK = 286,
-    K0TOK = 287,
-    P0TOK = 288,
-    WTOK = 289,
-    XTOK = 290,
-    CB3TOK = 291,
-    C02TOK = 292
+    KNTOK = 262,
+    YXTOK = 263,
+    NUM = 264,
+    COMMENT = 265,
+    CTOK = 266,
+    DTOK = 267,
+    HTOK = 268,
+    HETOK = 269,
+    RETTOK = 270,
+    QTOK = 271,
+    ENCTOK = 272,
+    PTOK = 273,
+    FTOK = 274,
+    TTOK = 275,
+    TPTOK = 276,
+    ATOK = 277,
+    VTOK = 278,
+    OTOK = 279,
+    O1TOK = 280,
+    NTOK = 281,
+    RTOK = 282,
+    ITOK = 283,
+    JTOK = 284,
+    ZTOK = 285,
+    FNTOK = 286,
+    NONETOK = 287,
+    A0TOK = 288,
+    P0TOK = 289,
+    WTOK = 290,
+    XTOK = 291,
+    CB3TOK = 292,
+    C02TOK = 293
   };
 #endif
 
@@ -101,7 +102,7 @@ union HYPNO_ARC_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 105 "engines/hypno/tokens_arc.h" /* yacc.c:1909  */
+#line 106 "engines/hypno/tokens_arc.h" /* yacc.c:1909  */
 };
 
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;

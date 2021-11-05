@@ -68,6 +68,25 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	parseScene("", "mv0t.mi_");
 	_levels["mv0t.mi_"].scene.prefix = "spider";
+	_levels["mv0t.mi_"].scene.intro = "cine/ints001s.smk";
+	_levels["mv0t.mi_"].scene.levelIfWin = "roof.mi_";
+
+	parseScene("", "roof.mi_");
+	_levels["roof.mi_"].scene.prefix = "spider";
+	_levels["roof.mi_"].scene.levelIfWin = "decide1.mi_";
+
+
+	parseScene("", "decide1.mi_");
+	_levels["decide1.mi_"].scene.prefix = "spider";
+
+	// loadArcadeLevel("c1", "", "spider");
+	// loadArcadeLevel("c2", "", "spider");
+	// loadArcadeLevel("c3", "", "spider");
+	// loadArcadeLevel("c4", "", "spider");
+	// loadArcadeLevel("c5", "", "spider");
+	// //loadArcadeLevel("c6", "", "spider");
+	// loadArcadeLevel("c8", "", "spider");
+	// loadArcadeLevel("c9", "", "spider");
 
 	// start level
 	Level start;
@@ -87,6 +106,24 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("combmenu.mi_");
 	_levels["options.mi_"].scene.hots[1].actions.push_back(cl);
+
+	cl = new ChangeLevel("options.mi_");
+	_levels["combmenu.mi_"].scene.hots[1].actions.push_back(cl);
+
+	cl = new ChangeLevel("c1.mi_");
+	_levels["combmenu.mi_"].scene.hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("c2.mi_");
+	_levels["combmenu.mi_"].scene.hots[3].actions.push_back(cl);
+
+	cl = new ChangeLevel("c5.mi_");
+	_levels["combmenu.mi_"].scene.hots[6].actions.push_back(cl);
+
+	cl = new ChangeLevel("c8.mi_");
+	_levels["combmenu.mi_"].scene.hots[7].actions.push_back(cl);
+	
+	cl = new ChangeLevel("c9.mi_");
+	_levels["combmenu.mi_"].scene.hots[8].actions.push_back(cl);
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -108,31 +145,7 @@ void SpiderEngine::loadAssetsDemo() {
 	start.trans.intros.push_back("sixdemo/demo/dcine2.smk");
 	_levels["<start>"] = start;
 
-	Common::String arc;
-	Common::String list;
-	Common::String arclevel = files.front()->getName();
-	Common::SeekableReadStream *file = files.front()->createReadStream();
-
-	while (!file->eos()) {
-		byte x = file->readByte();
-		arc += x;
-		if (x == 'X') {
-			while (!file->eos()) {
-				x = file->readByte();
-				if (x == 'Y')
-					break;
-				list += x;
-			}
-			break; // No need to keep parsing
-		}
-	}
-	delete file;
-
-	arclevel = "sixdemo/c_misc/missions.lib/" + arclevel;
-	parseArcadeShooting("sixdemo", arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.levelIfWin = "sixdemo/mis/demo.mis";
-	_levels[arclevel].arcade.levelIfLose = "sixdemo/mis/demo.mis";
+	loadArcadeLevel("c1", "sixdemo/mis/demo.mis", "sixdemo");
 
 	loadLib("", "sixdemo/c_misc/fonts.lib", true);
 	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib", true);
@@ -140,7 +153,7 @@ void SpiderEngine::loadAssetsDemo() {
 
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");
-	ChangeLevel *cl = new ChangeLevel("sixdemo/c_misc/missions.lib/c1.mi_");
+	ChangeLevel *cl = new ChangeLevel("c1.mi_");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/alley.mis");
@@ -177,14 +190,15 @@ void SpiderEngine::loadAssetsDemo() {
 	_soundPath = "c_misc/sound.lib/";
 }
 
-void SpiderEngine::runCode(Code code) {
+void SpiderEngine::runCode(Code &code) {
 	if (code.name == "sixdemo/puz_matr")
 		runMatrix(code);
 	else
 		error("invalid puzzle");
 }
 
-void SpiderEngine::runMatrix(Code code) {
+void SpiderEngine::runMatrix(Code &code) {
+	changeScreenMode("640x480");
 	Common::Point mousePos;
 	Common::Event event;
 

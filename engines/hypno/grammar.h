@@ -130,15 +130,19 @@ public:
 
 class Background : public Action {
 public:
-	Background(Filename path_, Common::Point origin_, Common::String condition_) {
+	Background(Filename path_, Common::Point origin_, Common::String condition_, Common::String flag1_, Common::String flag2_) {
 		type = BackgroundAction;
 		path = path_;
 		origin = origin_;
 		condition = condition_;
+		flag1 = flag1_;
+		flag2 = flag2_;
 	}
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
+	Common::String flag1;
+	Common::String flag2;
 };
 
 class Overlay : public Action {
@@ -254,8 +258,10 @@ public:
 	TalkCommands commands;
 	bool active;
 	Filename background;
-	Common::Point position;
+	Common::Point backgroundPos;
 	Common::Rect rect;
+	Filename second;
+	Common::Point secondPos;
 };
 
 class ChangeLevel : public Action {
@@ -324,6 +330,7 @@ public:
 class ArcadeShooting {
 public:
 	uint32 id;
+	Common::String mode;
 	Common::String levelIfWin;
 	Common::String levelIfLose;
 	Filename transitionVideo;

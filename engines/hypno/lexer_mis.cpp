@@ -633,8 +633,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 45
-#define YY_END_OF_BUFFER 46
+#define YY_NUM_RULES 46
+#define YY_END_OF_BUFFER 47
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -644,22 +644,22 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[144] =
     {   0,
-        0,    0,   46,   44,   43,   42,   42,   44,   38,   41,
-       41,   44,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   42,   43,
-       41,    0,   38,   38,    0,    1,   40,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-        0,    0,   34,    0,    0,    0,    0,   35,    0,    0,
-        2,   38,    0,   39,   39,   39,   39,   39,   12,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   31,   32,   33,   27,   30,
+        0,    0,   47,   45,   44,   43,   43,   45,   39,   42,
+       42,   45,   40,   40,   40,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40,   43,   44,
+       42,    0,   39,   39,    0,    1,   41,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
+        0,    0,   35,    0,    0,    0,    0,   36,    0,    0,
+        2,   39,    0,   40,   40,   40,   40,   40,   12,   40,
+       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   32,   33,   34,   28,   31,
 
-       29,   28,   26,   38,    0,    4,    5,   21,    6,   39,
-       39,   16,    7,   36,    9,   39,   39,    3,   11,   14,
-        8,   17,   39,   15,   18,   13,   10,   38,   20,   39,
-       39,   39,   24,   39,   37,   39,   22,   39,   23,   25,
-       39,   19,    0
+       30,   29,   27,   39,    0,    4,    5,   21,    6,   40,
+       40,   16,    7,   37,    9,   40,   25,    3,   11,   14,
+        8,   17,   40,   15,   18,   13,   10,   39,   20,   40,
+       40,   40,   24,   40,   38,   40,   22,   40,   23,   26,
+       40,   19,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -827,11 +827,11 @@ static const flex_int16_t yy_chk[340] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[46] =
+static const flex_int32_t yy_rule_can_match_eol[47] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0,     };
+    0, 0, 0, 1, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -1282,110 +1282,115 @@ return INTROTOK;
 case 25:
 YY_RULE_SETUP
 #line 67 "engines/hypno/lexer_mis.l"
-return DEFAULTTOK;
+return INTRTOK;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 68 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;
+return DEFAULTTOK;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 69 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 70 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PP;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 71 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PI;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PP;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 72 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PH;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PI;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 73 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PA;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PH;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 74 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PA;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 75 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 76 "engines/hypno/lexer_mis.l"
-return PE;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 77 "engines/hypno/lexer_mis.l"
-return PL;
+return PE;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 78 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
+return PL;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 79 "engines/hypno/lexer_mis.l"
-return BBOXTOK;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 80 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
+return BBOXTOK;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 81 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 82 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 83 "engines/hypno/lexer_mis.l"
-HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
 	YY_BREAK
 case 42:
-/* rule 42 can match eol */
 YY_RULE_SETUP
 #line 84 "engines/hypno/lexer_mis.l"
-return RETTOK;
+HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
 	YY_BREAK
 case 43:
+/* rule 43 can match eol */
 YY_RULE_SETUP
 #line 85 "engines/hypno/lexer_mis.l"
-/* ignore whitespace */;
+return RETTOK;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 86 "engines/hypno/lexer_mis.l"
-debug("<no match: %c>", *yytext); return *yytext;
+/* ignore whitespace */;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 87 "engines/hypno/lexer_mis.l"
+debug("<no match: %c>", *yytext); return *yytext;
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 88 "engines/hypno/lexer_mis.l"
 ECHO;
 	YY_BREAK
-#line 1389 "engines/hypno/lexer_mis.cpp"
+#line 1394 "engines/hypno/lexer_mis.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2362,7 +2367,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 87 "engines/hypno/lexer_mis.l"
+#line 88 "engines/hypno/lexer_mis.l"
 
 
 namespace Hypno {

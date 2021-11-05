@@ -89,6 +89,19 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 	return seq;
 }
 
+void HypnoEngine::loadArcadeLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
+	Common::String arclevel = current + _difficulty + ".mi_";
+	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
+	Common::String arc;
+	Common::String list;
+	splitArcadeFile(arclevel, arc, list);
+	debug("%s", arc.c_str());
+	parseArcadeShooting("", arclevel, arc);
+	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	_levels[arclevel].arcade.prefix = prefix;
+	_levels[arclevel].arcade.levelIfWin = next + _difficulty + ".mi_";;
+}
+
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -100,7 +113,7 @@ void HypnoEngine::hitPlayer() {
 }
 
 void HypnoEngine::runArcade(ArcadeShooting &arc) {
-
+	_arcadeMode = arc.mode;
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 	ShootSequence shootSequence = arc.shootSequence;
@@ -115,7 +128,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 	_shoots.clear();
 	_playerFrames = decodeFrames(arc.player);
 	_playerFrameSep = 0;
-
+	_playerPosition = 0;
 
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
 		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
@@ -126,9 +139,11 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		_playerFrameSep++;
 	}
 
-	if (_playerFrameSep == (int)_playerFrames.size())
-		error("No player separator frame found!");
-	debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
+	if (_playerFrameSep == (int)_playerFrames.size()) {
+		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc.player.c_str(), _playerFrames.size());
+		//_playerFrameSep = -1;
+	} else 
+		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
 	_playerFrameIdx = -1;
 
@@ -136,12 +151,14 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 	changeCursor("arcade");
 	playVideo(background);
+	background.decoder->setRate(1.5);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
+	bool needsUpdate = true;
 
 	Common::Event event;
 	while (!shouldQuit()) {
-
+		needsUpdate = background.decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
@@ -156,6 +173,14 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 					background.decoder->pauseVideo(true);
 					showCredits();
 					background.decoder->pauseVideo(false);
+				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+					_playerPosition = 0;
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
+					_playerPosition = 3;
+				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
+					_playerPosition = 7;
+				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
+					_playerPosition = 11;
 				}
 				break;
 
@@ -182,17 +207,9 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 			}
 		}
 
-		if (background.decoder->needsUpdate()) {
+		if (needsUpdate) {
 			drawScreen();
 			updateScreen(background);
-			if (shootingPrimary || shootingSecondary) {
-				shoot(mousePos);
-				drawShoot(mousePos);
-				shootingPrimary = false;
-			}
-
-			drawPlayer();
-			drawHealth();
 		}
 
 		if (_health <= 0) {
@@ -257,7 +274,7 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 				} else if (frame > 0 && frame >= (int)(it->video->decoder->getFrameCount() - 2)) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
-				} else if (it->video->decoder->needsUpdate()) {
+				} else if (it->video->decoder->needsUpdate() && needsUpdate) {
 					updateScreen(*it->video);
 				}
 			}
@@ -274,6 +291,17 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		if (_music.empty()) {
 			_music = _soundPath + arc.music;
 			playSound(_music, 1);
+		}
+
+		if (needsUpdate) {
+			if (shootingPrimary || shootingSecondary) {
+				shoot(mousePos);
+				drawShoot(mousePos);
+				shootingPrimary = false;
+			}
+
+			drawPlayer();
+			drawHealth();
 		}
 
 		g_system->delayMillis(10);

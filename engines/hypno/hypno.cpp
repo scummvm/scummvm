@@ -167,7 +167,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
-		changeScreenMode("arcade");
+		changeScreenMode("320x200");
 		runArcade(_levels[name].arcade);
 	} else if (!_levels[name].code.name.empty()) {
 		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());
@@ -176,6 +176,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
+		// Resolution depends on the game
 		runCode(_levels[name].code);
 	} else {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s", name.c_str());
@@ -185,7 +186,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 			MVideo v(_levels[name].scene.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
-		changeScreenMode("scene");
+		changeScreenMode("640x480");
 		runScene(_levels[name].scene);
 	}
 }
@@ -225,7 +226,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
-void HypnoEngine::runCode(Code code) { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::runCode(Code &code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, int frameNumber) {
@@ -326,7 +327,7 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 
 void HypnoEngine::changeScreenMode(const Common::String &mode) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, mode.c_str());
-	if (mode == "scene") {
+	if (mode == "640x480") {
 		_screenW = 640;
 		_screenH = 480;
 
@@ -341,7 +342,7 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
 		_compositeSurface->setTransparentColor(_transparentColor);
 
-	} else if (mode == "arcade") {
+	} else if (mode == "320x200") {
 		_screenW = 320;
 		_screenH = 200;
 
@@ -390,6 +391,7 @@ void HypnoEngine::updateScreen(MVideo &video) {
 void HypnoEngine::drawScreen() {
 	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 // Video handling
@@ -406,8 +408,11 @@ void HypnoEngine::playVideo(MVideo &video) {
 
 	file = fixSmackerHeader(file);
 
-	if (video.decoder != nullptr)
-		error("Video %s was not previously closed and deallocated", video.path.c_str());
+	if (video.decoder != nullptr) {
+		debugC(1, kHypnoDebugMedia, "Restarting %s!!!!", video.path.c_str());
+		delete video.decoder;
+	}
+	//error("Video %s was not previously closed and deallocated", video.path.c_str());
 
 	video.decoder = new HypnoSmackerDecoder();
 

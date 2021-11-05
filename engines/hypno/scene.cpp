@@ -126,7 +126,12 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 		_nextHotsToAdd = selected.smenu;
 	}
 
-	for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
+	_videosPlaying.clear();
+	_nextParallelVideoToPlay.clear();
+	_nextSequentialVideoToPlay.clear();
+
+	bool cont = true;
+	for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end() && cont; ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
 			case ChangeLevelAction:
@@ -150,7 +155,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			break;
 		
 			case GlobalAction:
-				runGlobal((Global *)action);
+				cont = runGlobal((Global *)action);
 			break;
 
 			case TalkAction:
@@ -233,6 +238,10 @@ void HypnoEngine::runTransition(Transition trans) {
 
 
 void HypnoEngine::runScene(Scene &scene) {
+	_nextLoopingVideoToPlay.clear();
+	_nextParallelVideoToPlay.clear();
+	_nextSequentialVideoToPlay.clear();
+
 	_refreshConversation = false;
 	_conversation.clear();
 	Common::Event event;
@@ -257,7 +266,9 @@ void HypnoEngine::runScene(Scene &scene) {
 					}
 					_videosPlaying.clear();
 
-					if (!stack.empty()) {
+					if (!_conversation.empty()) {
+						_refreshConversation = true;
+					} else if (!stack.empty()) {
 						runMenu(*stack.back());
 						drawScreen();
 					}
@@ -308,7 +319,10 @@ void HypnoEngine::runScene(Scene &scene) {
 			}
 		}
 
-		if (_refreshConversation && !_conversation.empty() && _nextSequentialVideoToPlay.empty()) {
+		if (_refreshConversation && !_conversation.empty() && 
+		    _nextSequentialVideoToPlay.empty() && 
+			_nextParallelVideoToPlay.empty() &&
+			_videosPlaying.empty()) {
 			showConversation();
 			drawScreen();
 			_refreshConversation = false;
@@ -316,6 +330,15 @@ void HypnoEngine::runScene(Scene &scene) {
 		}
 
 		// Movies
+
+		if (!_nextParallelVideoToPlay.empty()) {
+			for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
+				playVideo(*it);
+				_videosPlaying.push_back(*it);
+			}
+			_nextParallelVideoToPlay.clear();
+		}
+
 		if (!_nextSequentialVideoToPlay.empty() && _videosPlaying.empty()) {
 			playVideo(*_nextSequentialVideoToPlay.begin());
 			_videosPlaying.push_back(*_nextSequentialVideoToPlay.begin());
@@ -361,6 +384,10 @@ void HypnoEngine::runScene(Scene &scene) {
 			}
 		}
 
+		if (checkSceneCompleted() && _conversation.empty()) {
+			_nextLevel = scene.levelIfWin;
+		}
+
 		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
 			continue;
@@ -385,11 +412,8 @@ void HypnoEngine::runScene(Scene &scene) {
 			playSound(_music, 1);
 		}
 
-		if (checkSceneCompleted())
-			_nextLevel = scene.levelIfWin;
-
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		g_system->delayMillis(30);
 	}
 
 	// Deallocate videos

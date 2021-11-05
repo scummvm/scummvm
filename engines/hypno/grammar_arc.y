@@ -56,14 +56,14 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME BNTOK SNTOK
+%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK
 %token<i> NUM
 // header
-%token COMMENT YXTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK ZTOK
+%token COMMENT CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK JTOK ZTOK
 
 // body
-%token FNTOK NONETOK A0TOK K0TOK P0TOK WTOK
+%token FNTOK NONETOK A0TOK P0TOK WTOK
 
 // end
 %token XTOK
@@ -73,7 +73,7 @@ using namespace Hypno;
 
 %%
 
-start: YXTOK header ZTOK RETTOK body XTOK
+start: YXTOK { g_parsedArc->mode = $1; } header ZTOK RETTOK body XTOK
 	| RETTOK start
 	;
 
@@ -134,6 +134,7 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
 	| HETOK C02TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
+	| HETOK CB3TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
 	| HTOK CB3TOK NUM NUM { 
 		g_parsedArc->health = $3;
 		debugC(1, kHypnoDebugParser, "H %d %d", $3, $4); 
@@ -172,15 +173,75 @@ bline: FNTOK FILENAME {
 		shoot->name = $2;
 		debugC(1, kHypnoDebugParser, "I %s", $2); 
 	}
+	| ITOK ATOK  { // Workaround for NAME == A
+		shoot->name = "A";
+		debugC(1, kHypnoDebugParser, "I A"); 
+	}
+	| ITOK CTOK  { // Workaround for NAME == C
+		shoot->name = "C";
+		debugC(1, kHypnoDebugParser, "I C"); 
+	}
+	| ITOK DTOK  { // Workaround for NAME == D
+		shoot->name = "D";
+		debugC(1, kHypnoDebugParser, "I D"); 
+	}
+	| ITOK FTOK  { // Workaround for NAME == F
+		shoot->name = "F";
+		debugC(1, kHypnoDebugParser, "I F"); 
+	}
+	| ITOK HTOK  { // Workaround for NAME == H
+		shoot->name = "H";
+		debugC(1, kHypnoDebugParser, "I H"); 
+	}
+	| ITOK ITOK  { // Workaround for NAME == I
+		shoot->name = "I";
+		debugC(1, kHypnoDebugParser, "I I"); 
+	}
+	| ITOK JTOK  { // Workaround for NAME == I
+		shoot->name = "J";
+		debugC(1, kHypnoDebugParser, "I J"); 
+	}
+	| ITOK NTOK  { // Workaround for NAME == N
+		shoot->name = "N";
+		debugC(1, kHypnoDebugParser, "I N"); 
+	}
+	| ITOK OTOK  { // Workaround for NAME == O
+		shoot->name = "O";
+		debugC(1, kHypnoDebugParser, "I O"); 
+	}
+	| ITOK PTOK  { // Workaround for NAME == P
+		shoot->name = "P";
+		debugC(1, kHypnoDebugParser, "I P"); 
+	}
+	| ITOK QTOK  { // Workaround for NAME == Q
+		shoot->name = "Q";
+		debugC(1, kHypnoDebugParser, "I Q"); 
+	}
+	| ITOK RTOK  { // Workaround for NAME == R
+		shoot->name = "R";
+		debugC(1, kHypnoDebugParser, "I R"); 
+	}
+	| ITOK SNTOK  {  // Workaround for NAME == S1
+		shoot->name = $2;
+		debugC(1, kHypnoDebugParser, "I %s", $2); 
+	}
+	| ITOK TTOK  { // Workaround for NAME == T
+		shoot->name = "T";
+		debugC(1, kHypnoDebugParser, "I T"); 
+	}
+	| JTOK NUM  {
+		debugC(1, kHypnoDebugParser, "J %d", $2); 
+	}
 	| A0TOK NUM NUM { 
 		shoot->position = Common::Point($2, $3);
 		debugC(1, kHypnoDebugParser, "A0 %d %d", $2, $3); 
 	}
 	| RTOK NUM NUM  { debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); }
 	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
-	| K0TOK NUM NUM { 
+	| KNTOK NUM NUM { 
+		//if (Common::String("K0") == $1)
 		shoot->explosionFrame = $3;
-		debugC(1, kHypnoDebugParser, "K0 %d %d", $2, $3);
+		debugC(1, kHypnoDebugParser, "KN %d %d", $2, $3);
 	}
 	| P0TOK NUM NUM { debugC(1, kHypnoDebugParser, "P0 %d %d", $2, $3); }
 	| OTOK NUM NUM { 
