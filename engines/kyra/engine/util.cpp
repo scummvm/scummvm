@@ -99,7 +99,8 @@ Common::String Util::convertISOToUTF8(Common::String &str) {
 }
 
 void Util::convertISOToDOS(char &c) {
-	c = Common::U32String(Common::String::format("%c", c), Common::kISO8859_1).encode(Common::kDos850).firstChar();
+	if (c)
+		c = Common::U32String(Common::String::format("%c", c), Common::kISO8859_1).encode(Common::kDos850).firstChar();
 }
 
 Common::String Util::decodeString1(const Common::String &src) {
