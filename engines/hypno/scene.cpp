@@ -74,7 +74,7 @@ void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::St
 	test.read(buf, fileSize);
 	test.close();
 	buf[fileSize] = '\0';
-	debug("%s", buf);
+	debugC(1, kHypnoDebugParser, "%s", buf);
 	parse_mis(buf);
 	Level level;
 	level.scene.prefix = prefix;
@@ -391,7 +391,6 @@ void HypnoEngine::runScene(Scene &scene) {
 
 		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
-			debug("videosPlaying size: %d, _nextSequentialVideoToPlay size: %d", _videosPlaying.size(), _nextSequentialVideoToPlay.size());
 			continue;
 		}
 

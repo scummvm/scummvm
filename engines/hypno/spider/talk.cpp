@@ -63,8 +63,10 @@ void SpiderEngine::showConversation() {
 			Talk *a = (Talk *)*it;
 			if (!a->second.empty())
 				_nextParallelVideoToPlay.push_back(MVideo(a->second, a->secondPos, false, false, false));
-			if (a->escape)
-				runEscape();
+			if (a->escape) {
+				_nextSequentialVideoToPlay = _escapeSequentialVideoToPlay;
+				_escapeSequentialVideoToPlay.clear();
+			}
 		}
 		debugC(1, kHypnoDebugScene, "Clearing conversation");
 		_conversation.clear();
