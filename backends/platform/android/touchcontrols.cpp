@@ -48,7 +48,7 @@
 #include "backends/platform/android/touchcontrols.h"
 
 TouchControls::TouchControls() :
-	_arrows_texture(NULL),
+	_arrows_texture(nullptr),
 	_screen_width(0),
 	_screen_height(0) {
 }

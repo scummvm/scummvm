@@ -203,8 +203,8 @@ const Graphics::PixelFormat &GLESBaseTexture::getPixelFormat() const {
 GLESTexture::GLESTexture(GLenum glFormat, GLenum glType,
 							Graphics::PixelFormat pixelFormat) :
 	GLESBaseTexture(glFormat, glType, pixelFormat),
-	_pixels(0),
-	_buf(0) {
+	_pixels(nullptr),
+	_buf(nullptr) {
 }
 
 GLESTexture::~GLESTexture() {
@@ -340,10 +340,9 @@ GLES565Texture::~GLES565Texture() {
 GLESFakePaletteTexture::GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
 									Graphics::PixelFormat pixelFormat) :
 	GLESBaseTexture(glFormat, glType, pixelFormat),
-	_palette(0),
-	_pixels(0),
-	_buf(0)
-{
+	_palette(nullptr),
+	_pixels(nullptr),
+	_buf(nullptr) {
 	_palettePixelFormat = pixelFormat;
 	_fake_format = Graphics::PixelFormat::createFormatCLUT8();
 
