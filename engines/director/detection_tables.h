@@ -3394,6 +3394,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac executable name is TD MAC/PPC
 	MACGAME1("totaldistortion", "", "TD MACPPC", "17efee018a660458fae80de4364021ac", 486074, 404),
 	WINGAME1("totaldistortion", "", "TOTAL_DN.EXE", "461b407c321e80487ae4882056310f9f", 700747, 404),
+	WINGAME1("totaldistortion", "Demo", "TD_DEMO.EXE", "3ae9cfa4b020861b41f3bab9b28f3f5a", 696855, 404),
 
 	MACGAME1("toyota95", "", "Toyota 95", "01be45e7241194dad07938e7059b88e3", 486985, 404),
 
