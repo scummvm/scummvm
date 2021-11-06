@@ -1987,17 +1987,14 @@ void Script::o2_midicontrol() {
 		// Play song from index
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d: Play song %d", arg1, arg2);
 		_vm->_musicPlayer->playSong(arg2);
-		_vm->_musicPlayer->setUserVolume(100);
 		break;
 
 	case 3:
 		// TODO: Set Volume? Or is it some kind of fade in / out
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d: Set volume/time:  %d", arg1, arg2);
-		//_vm->_musicPlayer->setUserVolume(arg2);
+		//_vm->_musicPlayer->setGameVolume(arg2, 0);
 		break;
 	}
-
-	//_vm->_musicPlayer->setGameVolume(arg1, arg2);
 }
 void Script::o2_setbackgroundsong() {
 	uint32 fileref = readScript32bits();
