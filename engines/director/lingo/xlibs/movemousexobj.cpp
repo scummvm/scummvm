@@ -34,6 +34,7 @@ namespace Director {
 const char *MoveMouseXObj::xlibName = "MoveMouse";
 const char *MoveMouseXObj::fileNames[] = {
 	"MoveMouse",
+	"MoveMouse.XObj",
 	"MOVEWIN",
 	0
 };
