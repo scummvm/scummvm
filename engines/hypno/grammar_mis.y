@@ -38,8 +38,8 @@ extern int HYPNO_MIS_lex();
 extern int HYPNO_MIS_parse();
 extern int yylineno;
 
-Common::Array<uint32> smenu_idx;
-Hypno::HotspotsStack stack;
+Common::Array<uint32> *smenu_idx;
+Hypno::HotspotsStack *stack;
 Hypno::Talk *talk_action = nullptr;
 
 void HYPNO_MIS_xerror(const char *str) {
@@ -75,8 +75,10 @@ start: init lines
 	;
 
 init: { 
-	smenu_idx.push_back(-1);
-	stack.push_back(new Hotspots());
+	smenu_idx = new Common::Array<uint32>();
+	smenu_idx->push_back(-1);
+	stack = new Hypno::HotspotsStack();
+	stack->push_back(new Hotspots());
 }
 
 lines: line lines
@@ -87,119 +89,119 @@ lines: line lines
 line: MENUTOK mflag mflag  {
 		Hotspot *hot = new Hotspot(MakeMenu, $2); 
 		debugC(1, kHypnoDebugParser, "MENU %d.", hot->type);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		cur->push_back(*hot);
 
 		// We don't care about menus, only hotspots
-		int idx = smenu_idx.back();
+		int idx = smenu_idx->back();
 		idx++;
-		smenu_idx.pop_back();
-		smenu_idx.push_back(idx);
+		smenu_idx->pop_back();
+		smenu_idx->push_back(idx);
 	}
 	| HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
 		Hotspot *hot = new Hotspot(MakeHotspot, "", Common::Rect($3, $4, $5, $6)); 
 		debugC(1, kHypnoDebugParser, "HOTS %d.", hot->type);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		cur->push_back(*hot); 
 	}
 	|  SMENTOK { 
 		// This should always point to a hotspot
-		int idx = smenu_idx.back();
+		int idx = smenu_idx->back();
 		idx++;
-		smenu_idx.pop_back();
-		smenu_idx.push_back(idx);
+		smenu_idx->pop_back();
+		smenu_idx->push_back(idx);
 
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &(*cur)[idx];
 
-		smenu_idx.push_back(-1);
+		smenu_idx->push_back(-1);
 		hot->smenu = new Hotspots();
-		stack.push_back(hot->smenu);
+		stack->push_back(hot->smenu);
 		debugC(1, kHypnoDebugParser, "SUBMENU"); 
 	}
 	|  ESCPTOK  {
 		Escape *a = new Escape();
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
 	|  TIMETOK NUM  { debugC(1, kHypnoDebugParser, "TIME %d", $2); } 
 	|  BACKTOK FILENAME NUM NUM gsswitch flag flag {
 		Background *a = new Background($2, Common::Point($3, $4), $5, $6, $7);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "BACK");
 	}
 	|  GLOBTOK GSSWITCH NAME  { 
 		Global *a = new Global($2, $3);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "GLOB"); 
 	}
 	|  AMBITOK FILENAME NUM NUM flag { 
 		Ambient *a = new Ambient($2, Common::Point($3, $4), $5);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);			
 		debugC(1, kHypnoDebugParser, "AMBI %d %d", $3, $4); }
 	|  PLAYTOK FILENAME NUM NUM gsswitch flag { 
 		Play *a = new Play($2, Common::Point($3, $4), $5, $6);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "PLAY %s.", $2); }
 	|  OVERTOK FILENAME NUM NUM flag { 
 		Overlay *a = new Overlay($2, Common::Point($3, $4), $5);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
 	|  PALETOK FILENAME {
 		Palette *a = new Palette($2);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
 	}
 	|  INTRTOK FILENAME NUM NUM { 
 		Cutscene *a = new Cutscene(Common::String("cine/") + $2);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); 
 	}
 	|  CUTSTOK FILENAME { 
 		Cutscene *a = new Cutscene($2);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "CUTS %s", $2); 
 	}
 	|  WALNTOK FILENAME NUM NUM gsswitch flag  { 
 		WalN *a = new WalN($1, $2, Common::Point($3, $4), $5, $6);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "WALN %s %d %d", $2, $3, $4); } 
 	|  MICETOK FILENAME NUM {
 		Mice *a = new Mice($2, $3-1);
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
 	|  TALKTOK alloctalk talk { 
-		Hotspots *cur = stack.back();
+		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(talk_action);
 		talk_action = nullptr;
 		debugC(1, kHypnoDebugParser, "TALK"); }
 	|  ENDTOK RETTOK { 
 		debugC(1, kHypnoDebugParser, "explicit END");
-		g_parsedHots = stack.back(); 
-		stack.pop_back();
-		smenu_idx.pop_back();
+		g_parsedHots = stack->back();
+		stack->pop_back();
+		smenu_idx->pop_back();
 	}
 	|	RETTOK { debug("implicit END"); }
 	;
