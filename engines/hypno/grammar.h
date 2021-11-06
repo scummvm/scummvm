@@ -215,13 +215,15 @@ public:
 
 class WalN : public Action {
 public:
-	WalN(Filename path_, Common::Point origin_, Common::String condition_, Common::String flag_) {
+	WalN(Common::String wn_, Filename path_, Common::Point origin_, Common::String condition_, Common::String flag_) {
+		wn = wn_;
 		type = WalNAction;
 		path = path_;
 		origin = origin_;
 		condition = condition_;
 		flag = flag_;
 	}
+	Common::String wn;
 	Filename path;
 	Common::Point origin;
 	Common::String condition;
@@ -257,6 +259,7 @@ public:
 	}
 	TalkCommands commands;
 	bool active;
+	bool escape;
 	Filename background;
 	Common::Point backgroundPos;
 	Common::Rect rect;

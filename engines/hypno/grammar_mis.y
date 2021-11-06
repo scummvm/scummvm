@@ -59,9 +59,9 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND
+%token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND WALNTOK
 %token<i> NUM
-%token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
+%token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK MICETOK PLAYTOK ENDTOK 
 %token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK
 %token GLOBTOK TONTOK TOFFTOK
 %token TALKTOK INACTOK FDTOK BOXXTOK ESCAPETOK SECONDTOK INTROTOK DEFAULTTOK
@@ -178,7 +178,7 @@ line: MENUTOK mflag mflag  {
 		debugC(1, kHypnoDebugParser, "CUTS %s", $2); 
 	}
 	|  WALNTOK FILENAME NUM NUM gsswitch flag  { 
-		WalN *a = new WalN($2, Common::Point($3, $4), $5, $6);
+		WalN *a = new WalN($1, $2, Common::Point($3, $4), $5, $6);
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
@@ -207,6 +207,7 @@ line: MENUTOK mflag mflag  {
 alloctalk: { 
 	assert(talk_action == nullptr);
 	talk_action = new Talk();
+	talk_action->escape = false;
 	talk_action->active = true; 
 }
 
@@ -219,7 +220,9 @@ talk: INACTOK talk {
 		talk_action->backgroundPos = Common::Point($3, $4);
 		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
 	| BOXXTOK NUM NUM { debugC(1, kHypnoDebugParser, "BOXX %d %d", $2, $3); }
-	| ESCAPETOK { debugC(1, kHypnoDebugParser, "ESCAPE"); }
+	| ESCAPETOK {
+		talk_action->escape = true; 
+		debugC(1, kHypnoDebugParser, "ESCAPE"); }
 	| SECONDTOK FILENAME NUM NUM {
 		talk_action->second = $2;
 		talk_action->secondPos = Common::Point($3, $4); 

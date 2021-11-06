@@ -651,15 +651,15 @@ static const flex_int16_t yy_accept[144] =
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
         0,    0,   35,    0,    0,    0,    0,   36,    0,    0,
-        2,   39,    0,   40,   40,   40,   40,   40,   12,   40,
+        2,   39,    0,   40,   40,   40,   40,   40,   11,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
        40,   40,   40,   40,   40,   32,   33,   34,   28,   31,
 
-       30,   29,   27,   39,    0,    4,    5,   21,    6,   40,
-       40,   16,    7,   37,    9,   40,   25,    3,   11,   14,
-        8,   17,   40,   15,   18,   13,   10,   39,   20,   40,
-       40,   40,   24,   40,   38,   40,   22,   40,   23,   26,
-       40,   19,    0
+       30,   29,   27,   39,    0,    4,    5,   20,    6,   40,
+       40,   15,    7,   37,    9,   40,   24,    3,   10,   13,
+        8,   16,   40,   14,   17,   12,   26,   39,   19,   40,
+       40,   40,   23,   40,   38,   40,   21,   40,   22,   25,
+       40,   18,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -1207,87 +1207,87 @@ return HOTSTOK;
 case 10:
 YY_RULE_SETUP
 #line 52 "engines/hypno/lexer_mis.l"
-return WALNTOK;
+return MICETOK;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 53 "engines/hypno/lexer_mis.l"
-return MICETOK;
+return ENDTOK;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 54 "engines/hypno/lexer_mis.l"
-return ENDTOK;
+return TIMETOK;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 55 "engines/hypno/lexer_mis.l"
-return TIMETOK;
+return OVERTOK;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 56 "engines/hypno/lexer_mis.l"
-return OVERTOK;
+return SMENTOK;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 57 "engines/hypno/lexer_mis.l"
-return SMENTOK;
+return ESCPTOK;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 58 "engines/hypno/lexer_mis.l"
-return ESCPTOK;
+return PLAYTOK;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 59 "engines/hypno/lexer_mis.l"
-return PLAYTOK;
+return TALKTOK;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 60 "engines/hypno/lexer_mis.l"
-return TALKTOK;
+return INACTOK;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 61 "engines/hypno/lexer_mis.l"
-return INACTOK;
+return FDTOK;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 62 "engines/hypno/lexer_mis.l"
-return FDTOK;
+return BOXXTOK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 63 "engines/hypno/lexer_mis.l"
-return BOXXTOK;
+return ESCAPETOK;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 64 "engines/hypno/lexer_mis.l"
-return ESCAPETOK;
+return SECONDTOK;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 65 "engines/hypno/lexer_mis.l"
-return SECONDTOK;
+return INTROTOK;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 66 "engines/hypno/lexer_mis.l"
-return INTROTOK;
+return INTRTOK;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 67 "engines/hypno/lexer_mis.l"
-return INTRTOK;
+return DEFAULTTOK;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 68 "engines/hypno/lexer_mis.l"
-return DEFAULTTOK;
+HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return WALNTOK;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP

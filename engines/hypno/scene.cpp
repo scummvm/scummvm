@@ -140,7 +140,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			break;
 
 			case EscapeAction:
-				runEscape((Escape *)action);
+				runEscape();
 			break;
 
 			case CutsceneAction:
@@ -332,7 +332,6 @@ void HypnoEngine::runScene(Scene &scene) {
 		}
 
 		// Movies
-
 		if (!_nextParallelVideoToPlay.empty()) {
 			for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
 				playVideo(*it);
@@ -392,6 +391,7 @@ void HypnoEngine::runScene(Scene &scene) {
 
 		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
+			debug("videosPlaying size: %d, _nextSequentialVideoToPlay size: %d", _videosPlaying.size(), _nextSequentialVideoToPlay.size());
 			continue;
 		}
 

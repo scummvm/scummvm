@@ -138,7 +138,7 @@ public:
 	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);
-	void runEscape(Escape *a);
+	void runEscape();
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
 	void runPlay(Play *a);
@@ -175,6 +175,7 @@ public:
 	Videos _nextSequentialVideoToPlay;
 	Videos _nextParallelVideoToPlay;
 	Videos _nextLoopingVideoToPlay;
+	Videos _escapeSequentialVideoToPlay;
 	Videos _videosPlaying;
 
 	// Sounds

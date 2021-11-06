@@ -141,7 +141,7 @@ void SpiderEngine::loadAssetsDemo() {
 	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib", true);
 
 	// Read assets from mis files
-	loadSceneLevel("mis/demo.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/demo.mis", "", "sixdemo");
 	ChangeLevel *cl = new ChangeLevel("c1.mi_");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
 
@@ -158,17 +158,17 @@ void SpiderEngine::loadAssetsDemo() {
 	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
 	_levels["sixdemo/mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
 
-	loadSceneLevel("mis/order.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/order.mis", "", "sixdemo");
 	cl = new ChangeLevel("<quit>");
 	_levels["sixdemo/mis/order.mis"].scene.hots[1].actions.push_back(cl);
 
-	loadSceneLevel("mis/alley.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/alley.mis", "", "sixdemo");
 	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
 	_levels["sixdemo/mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
 	_levels["sixdemo/mis/alley.mis"].scene.levelIfWin = "sixdemo/mis/demo.mis";
 	_levels["sixdemo/mis/alley.mis"].scene.levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadSceneLevel("mis/shoctalk.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "sixdemo");
 
 	Level matrix;
 	matrix.code.name = "sixdemo/puz_matr";

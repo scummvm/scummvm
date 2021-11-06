@@ -93,8 +93,10 @@ void HypnoEngine::runMice(Mice *a) {
 	changeCursor(a->path, a->index);
 }
 
-void HypnoEngine::runEscape(Escape *a) {
+void HypnoEngine::runEscape() {
 	_nextHotsToRemove = stack.back();
+	_nextSequentialVideoToPlay = _escapeSequentialVideoToPlay;
+	_escapeSequentialVideoToPlay.clear();
 }
 
 void HypnoEngine::runCutscene(Cutscene *a) {
@@ -149,11 +151,13 @@ void HypnoEngine::runAmbient(Ambient *a) {
 void HypnoEngine::runWalN(WalN *a) {
 	if (a->condition.size() > 0 && !_sceneState[a->condition])
 		return;
-	if (a->flag == "/BITMAP")
-		loadImage(a->path, a->origin.x, a->origin.y, false);
-	else {
+
+	if (a->wn == "WAL0")
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
-	}
+	else if (a->wn == "WAL1")
+		_escapeSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
+	else
+		error("Invalid WALN command: %s", a->wn.c_str());
 }
 
 void HypnoEngine::runQuit(Quit *a) {
@@ -165,10 +169,6 @@ void HypnoEngine::runChangeLevel(ChangeLevel *a) {
 }
 
 void HypnoEngine::runTalk(Talk *a) {
-	//_videosPlaying.clear();
-	//_nextParallelVideoToPlay.clear();
-	//_nextSequentialVideoToPlay.clear();
-
 	_conversation.push_back(a);
 	_refreshConversation = true;
 }
