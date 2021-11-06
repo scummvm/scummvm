@@ -372,11 +372,20 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
 	{ "timmysafari",		"Timmy's Safari Adventure" },
+	{ "tkkg1",				"A Case for TKKG 1: Jennifer is Missing" },
 	{ "tkkg2",				"A Case for TKKG 2: Deadly Chocolate" },
 	{ "tkkg3",				"A Case for TKKG 3: The Mystery of the Mayan Treasure" },
 	{ "tkkg4",				"A Case for TKKG 4: The Secret of Dragon Claw Manor" },
+	{ "tkkg5",				"A Case for TKKG 5: TKKG Betrayed" },
 	{ "tkkg6",				"A Case for TKKG 6: The Forged Fifties" },
+	{ "tkkg7",				"A Case for TKKG 7: Fire!" },
+	{ "tkkg8",				"A Case for TKKG 8: The Captain's Legacy" },
 	{ "tkkg9",				"A Case for TKKG 9: Voodoo Magic" },
+	{ "tkkg10",				"A Case for TKKG 10: Panic in a Boarding School" },
+	{ "tkkg11",				"A Case for TKKG 11: Action!" },
+	{ "tkkg12",				"A Case for TKKG 12: Alarm at the Roller Coaster" },
+	{ "tkkg13",				"A Case for TKKG 13: Cell 13" },
+	{ "tkkg14",				"A Case for TKKG 14: Dangerous Holiday" },
 	{ "tommy",				"Pete Townshend Presents Tommy: The Interactive Adventure" },
 	{ "totaldistortion",	"Total Distortion" },
 	{ "traitorsgate",		"Traitors Gate" },
@@ -1088,6 +1097,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Promos for Non-Director titles
 	{ "3datlas97",			"3D Atlas 97" },
+	{ "3datlas98",			"3D Atlas 98" },
 	{ "adobedimensions",	"Professional Tips for Adobe Dimensions" },
 	{ "agfa",				"AgfaType" },
 	{ "aol",				"America Online" },
@@ -3818,6 +3828,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
+	// From Elmo's Art Workshop CD
+	MACDEMO1("3datlas98", "Demo", "3D98DEMO", "231d3041df162be4a0ddd36a74eb03b6", 718357, 501),
+	WINDEMO1t("3datlas98", "Demo", "3D98DEMO.EXE", "843fd6ad5664c9fcce2ee722f64b2991", 917511, 505),
+
 	WINGAME1_l("a5tours", "", "A5TOURS.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410246, Common::JA_JPN, 501),
 
 	// Run Windows installer (ASENNA.EXE) on Win9X extract 32-bit executable
@@ -4478,6 +4492,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 505),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
 
+	// ein Fall für TKKG: Katjas Geheimnis (bilingual DE/EN)
+	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
+							"SCORE.DXR",  "9ffb87ff9d3110435da99a052279fb4c", 10434, 501),
+	WINGAME1t("tkkg1", "", "TKKG1_95.EX_", "a6284109fe843164812af767fb9f41c8", 1411299, 501),
+
 	MACGAME1("troubleshoot101", "Basic", "Troubleshooting 101 IA", "62e979424add2428daa835610fb83864", 719261, 501),
 	MACGAME1("troubleshoot101", "Music", "Troubleshooting 101 IA w MUSIC", "222fbd020a3910ef748724945145771c", 719261, 501),
 
@@ -5007,16 +5026,38 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
-	//Dutch numbering is different from German originals
-	//Een zaak voor TKKG 2: dodelijke chocolade (bilingual NL/EN)
+	// ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
+	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
+							"SCORE.DXR",  "4d3d5b66729e31d35828e40aee85fe39", 10849, 602),
+	WINGAME1t("tkkg2", "", "TKKG2_95.EX_", "913a935918698c299c30b96b6b696ba2", 1705034, 602),
+	// Dutch numbering is different from German originals
+	// Een zaak voor TKKG 2: dodelijke chocolade (bilingual NL/EN)
 	WINGAME1_l("tkkg2", "", "Tkkg2_95.exe", "518a98696fe1122e08410b0f157f21bf", 1705034, Common::NL_NLD, 602),
-	//Een zaak voor TKKG 1: De schat van de Maya's (bilingual NL/EN) (Demo)
+
+	// ein Fall für TKKG: Der Schatz der Maya (bilingual DE/EN)
+	MACGAME2("tkkg3", "", "TKKG start", "017b653021b4e4896e6a50cc5fedb24c", 1032378,
+							"SCORE.DXR",  "03b65143b31d75bf149da998877029b0", 11197, 602),
+	WINGAME1t("tkkg3", "", "TKKG3_95.EX_", "c5dcc31f2d26e29c18f87e0524eac70f", 1513532, 602),
+	// Een zaak voor TKKG 1: De schat van de Maya's (bilingual NL/EN) (Demo)
 	WINDEMO2_l("tkkg3", "Demo", "start.exe", "e7bccfe54354d08a9d2d0e181f66406b", 1289732,
 								"DEMO_00.dxr", "1ea80b7d22a6db7ce669a988812f0d64", 2488656, Common::NL_NLD, 602),
-	//Een zaak voor TKKG 5: het raadsel van villa Drakenklauw (bilingual NL/EN)
+
+	// ein Fall für TKKG: Das Rätsel der Villa Drachenkralle (bilingual DE/EN)
+	MACGAME2("tkkg4", "", "TKKG start", "b21aa60a64051a4f3873b1500444aa3b", 1032378,
+							"SCORE.DXR",  "26a12f39d812059982637f153dad58a8", 1162642, 602),
+	WINGAME1t("tkkg4", "", "TKKG4_95.EX_", "8d61eba98b5da877fe293e97cf0fcadd", 1513570, 602),
+	// Een zaak voor TKKG 5: het raadsel van villa Drakenklauw (bilingual NL/EN)
 	WINGAME1_l("tkkg4", "", "tkkg4_95.exe", "518a98696fe1122e08410b0f157f21bf", 1513570, Common::NL_NLD, 602),
-	MACGAME1("tkkg6", "", "TKKG-Start", "dd58f1859ddab9bf15867a510cf7bfe4", 1034014, 650),
-	WINGAME1("tkkg6", "", "Tkkg6_32.exe", "d62438566e44826960fc16c5c23dbe43", 1594089, 650),
+
+	// ein Fall für TKKG: Verrat an TKKG (bilingual DE/EN)
+	MACGAME2("tkkg5", "", "TKKG Start", "cf534db714fe9bd4c6059755094f9bed", 1037002,
+							"Score.dxr",  "a9fc73baaaae5693650b555b173eb328", 27052, 602),
+	WINGAME1t("tkkg5", "", "TKKG5_95.ex_", "4e86d530315553774f70ad9ad61e0c52", 1597094, 602),
+
+	// ein Fall für TKKG: Der Fälscherbande auf der Spur (bilingual DE/EN)
+	MACGAME2("tkkg6", "", "TKKG-Start", "dd58f1859ddab9bf15867a510cf7bfe4", 1033758,
+						  "Score.dxr",  "3b6e459f27a81a5f33c8b2bccefe6888", 26322, 650),
+	WINGAME1t("tkkg6", "", "Tkkg6_32.exe", "52239d8b9852067433fbce14928fe650", 1594089, 602),
 
 	WINGAME1("traitorsgate", "", "TRG001.EXE", "b762d2cc3f7db2a6446135917fe92496", 2072959, 650),
 
@@ -5313,13 +5354,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("thematrix", "", "Presentation.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2212124,
 							  "intro.dir",        "ebe2cac80218c4933ecc609cd8ef27cc", 10368479, 700),
 
-	MACGAME1_l("tkkgkit", "", "Phantombild Start", "0944b962ebb00f4b5d5149d220f8449b", 115754, Common::DE_DEU, 702),
-	WINGAME1_l("tkkgkit", "", "Phantombild Start.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820554, Common::DE_DEU, 702),
+	// ein Fall für TKKG: Wer stoppt den Feuerteufel? (bilingual DE/EN)
+	MACGAME2("tkkg7", "", "TKKG-Start", "0944b962ebb00f4b5d5149d220f8449b", 113458,
+						  "Score.dxr", "c1a18f5a5a71148ef469841ccb253771", 16804, 702),
+	WINGAME1t("tkkg7", "", "TKKG 7.exe", "96593e22c401be8551764b51f6f68c62", 1892382, 702),
+
+	// Windows installer is also Director
+	MACGAME1_l("tkkgkit", "", "Phantombild Start", "0944b962ebb00f4b5d5149d220f8449b", 115498, Common::DE_DEU, 702),
+	WINGAME1t_l("tkkgkit", "", "Phantombild Start.exe", "7cc7736d429df5cbe8adaca170ab5fa0", 1820554, Common::DE_DEU, 702),
 
 	MACGAME1_l("tomlisaindiens", "", "Tom en Lisa", "19f92df0c7cb7a17b02ed5c73b1ee4c1", 33105, Common::NL_NLD, 702),
 	WINGAME1_l("tomlisaindiens", "", "TOM ET LISA.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 783498, Common::NL_NLD, 702),
 
-	// vaporware
+	// Full game was never released
 	WINDEMO2t("veniceglass", "Demo", "Start.exe", "6c1f4b9fddf094e240f759596b335479", 2615108,
 									 "Book1.dxr", "f9a656b9f31f44f195161e932ada634b", 16795693, 700),
 
@@ -5670,8 +5717,32 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("ssholidaymickey", "",	"Holiday Mickey",	 "7bcc1b0cae920a784384bfcf7de895bf", 327494, 800),
 	WINGAME1("ssholidaymickey", "",	"mickey.exe",		 "e24d4bab978b1a5c2326d2c56cf4d781", 3200102, 800),
 
-	MACGAME1("tkkg9", "", "TKKG-Start", "2c64a568bd26944452957a53af85b067", 197423, 800),
-	WINGAME1("tkkg9", "", "TKKG 9.exe", "70a7b053c1a60617d3baace061fcba54", 2329244, 800),
+	// ein Fall für TKKG: Das geheimnisvolle Testament (bilingual DE/EN)
+	MACGAME2("tkkg8", "", "TKKG-Start", "8c1b4ddb1adff89deaba119f7cf8df7b", 197195,
+						  "Score.dxr", "d7300d214a30ec129cb4939aeddc3392", 17770, 800),
+	WINGAME1t("tkkg8", "", "TKKG 8.exe", "3284e5212dee57129a32ba86367ce816", 2324424, 800),
+
+	// ein Fall für TKKG: Voodoozauber (bilingual DE/EN)
+	MACGAME2("tkkg9", "", "TKKG-Start", "2c64a568bd26944452957a53af85b067", 197167,
+						  "Score.dxr", "d7300d214a30ec129cb4939aeddc3392", 17770, 800),
+	WINGAME1t("tkkg9", "", "TKKG 9.exe", "3284e5212dee57129a32ba86367ce816", 2329244, 800),
+
+	// ein Fall für TKKG: Panik im Internat (bilingual DE/EN)
+	MACGAME1("tkkg10", "", "TKKG10", "4ea5fc09f79eee6dded94dc40f303779", 197107, 800),
+	WINGAME1t("tkkg10", "", "TKKG10.exe", "d34aacfc572a9f82867aa88be20d32c2", 70628, 800),
+
+	// Mac OS X versions of these TKKG games are D9
+	// ein Fall für TKKG: Film ab! (bilingual DE/EN)
+	MACGAME1("tkkg11", "Classic", "TKKG11", "789536da81694518f494945bb161ace9", 182599, 909),
+
+	// ein Fall für TKKG: Alarm in der Geisterbahn (bilingual DE/EN)
+	MACGAME1("tkkg12", "Classic", "TKKG12", "789536da81694518f494945bb161ace9", 182599, 909),
+
+	// ein Fall für TKKG: Zelle 13 (bilingual DE/EN)
+	MACGAME1("tkkg13", "Classic", "TKKG13", "789536da81694518f494945bb161ace9", 180795, 909),
+
+	// ein Fall für TKKG: Gefährliche Ferien (bilingual DE/EN)
+	MACGAME1("tkkg14", "Classic", "TKKG14", "789536da81694518f494945bb161ace9", 182599, 909),
 
 	// Original Mac filename is ときメモタイピング
 	MACGAME1_l("tokimemotype1", "", "Tokimemo Typing", "80b8d1697b18f6f2d8a2813a594cead2", 255114, Common::JA_JPN, 851),
@@ -5775,6 +5846,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Most likely this is ES_MEX. Find more examples to justify a new language code.
 	WINGAME1_l("timmysafari", "", "safari.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2891613, Common::ES_ESP, 900),
+
+	// Classic Mac OS versions of these TKKG games are D8
+	// ein Fall für TKKG: Film ab! (bilingual DE/EN)
+	MACGAME1("tkkg11", "", "TKKG11", "d483e955df901222145267d2ad729ea2", 232402, 909),
+	WINGAME1t("tkkg11", "", "TKKG11.exe", "96863b7ac45787b41881ab7bc7a39e06", 107935, 900),
+
+	// ein Fall für TKKG: Alarm in der Geisterbahn (bilingual DE/EN)
+	MACGAME1("tkkg12", "", "TKKG12", "d483e955df901222145267d2ad729ea2", 232402, 909),
+	WINGAME1t("tkkg12", "", "TKKG12.exe", "bc9668350bf745cfc843e9cc4ae08e13", 110780, 909),
+
+	// ein Fall für TKKG: Zelle 13 (bilingual DE/EN)
+	MACGAME1("tkkg13", "", "TKKG13", "d483e955df901222145267d2ad729ea2", 230598, 909),
+	WINGAME1t("tkkg13", "", "TKKG13.exe", "c4f4d41f3260223edbc6e0df93649189", 152784, 900),
+
+	// ein Fall für TKKG: Gefährliche Ferien (bilingual DE/EN)
+	MACGAME1("tkkg14", "", "TKKG14", "d483e955df901222145267d2ad729ea2", 298739, 909),
+	WINGAME1t("tkkg14", "", "TKKG14.exe", "cf8679b4408b4a079e498cc42961ab43", 107813, 900),
 
 //////////////////////////////////////////////////
 //
