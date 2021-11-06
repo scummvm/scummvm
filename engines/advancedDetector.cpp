@@ -496,6 +496,7 @@ namespace Common {
 	DECLARE_SINGLETON(MD5CacheManager);
 }
 
+// Sync with engines/game.cpp
 static char flagsToMD5Prefix(uint32 flags) {
 	if (flags & ADGF_MACRESFORK) {
 		if (flags & ADGF_TAILMD5)
@@ -575,7 +576,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	debugC(3, kDebugGlobalDetection, "Starting detection in dir '%s'", parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getEngineId(), parent.getPath().c_str());
 
 	// Check which files are included in some ADGameDescription *and* whether
 	// they are present. Compute MD5s and file sizes for the available files.
@@ -690,6 +691,8 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
+
+	debugC(2, "Totally found %d matches", matched.size());
 
 	return matched;
 }
