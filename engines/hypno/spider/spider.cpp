@@ -68,14 +68,14 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("decide1.mi_", "", prefix);
 	// _levels["decide1.mi_"].scene.prefix = "spider";
 
-	// loadArcadeLevel("c1", "", "spider");
-	// loadArcadeLevel("c2", "", "spider");
-	// loadArcadeLevel("c3", "", "spider");
-	// loadArcadeLevel("c4", "", "spider");
-	// loadArcadeLevel("c5", "", "spider");
-	// //loadArcadeLevel("c6", "", "spider");
-	// loadArcadeLevel("c8", "", "spider");
-	// loadArcadeLevel("c9", "", "spider");
+	loadArcadeLevel("c1", "", "spider");
+	loadArcadeLevel("c2", "", "spider");
+	loadArcadeLevel("c3", "", "spider");
+	loadArcadeLevel("c4", "", "spider");
+	loadArcadeLevel("c5", "", "spider");
+	//loadArcadeLevel("c6", "", "spider");
+	loadArcadeLevel("c8", "", "spider");
+	loadArcadeLevel("c9", "", "spider");
 
 	// start level
 	Level start;
