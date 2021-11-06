@@ -39,6 +39,8 @@ class Cursor;
 class Channel {
 public:
 	Channel(Sprite *sp, int priority = 0);
+	Channel(const Channel &channel);
+	Channel& operator=(const Channel &channel);
 	~Channel();
 
 	DirectorPlotData getPlotData();
@@ -81,6 +83,12 @@ public:
 
 	void updateVideoTime();
 
+	// used for film loops
+	bool hasSubChannels();
+	Common::Array<Channel> *getSubChannels();
+
+	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
+
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
@@ -110,7 +118,6 @@ private:
 	Graphics::ManagedSurface *getSurface();
 	Common::Point getPosition();
 
-	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
 };
 
 } // End of namespace Director

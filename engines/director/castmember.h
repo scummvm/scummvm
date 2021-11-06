@@ -202,7 +202,9 @@ public:
 	~FilmLoopCastMember();
 
 	virtual bool isModified() override;
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+	//virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+
+	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
 
 	void loadFilmLoopData(Common::SeekableReadStreamEndian &stream);
 
@@ -211,8 +213,8 @@ public:
 	bool _crop;
 	bool _center;
 
-	Common::Rect _bbox;
 	Common::Array<FilmLoopFrame> _frames;
+	Common::Array<Channel> _subchannels;
 };
 
 class SoundCastMember : public CastMember {

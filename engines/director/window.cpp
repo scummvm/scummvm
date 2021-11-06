@@ -161,9 +161,16 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 				}
 
 				if ((*j)->_visible) {
-					inkBlitFrom(*j, r, blitTo);
-					if ((*j) == hiliteChannel)
-						invertChannel(hiliteChannel, r);
+					if ((*j)->hasSubChannels()) {
+						Common::Array<Channel> *list = (*j)->getSubChannels();
+						for (Common::Array<Channel>::iterator k = list->begin(); k != list->end(); k++) {
+							inkBlitFrom(&(*k), r, blitTo);
+						}
+					} else {
+						inkBlitFrom(*j, r, blitTo);
+						if ((*j) == hiliteChannel)
+							invertChannel(hiliteChannel, r);
+					}
 				}
 			}
 		}
