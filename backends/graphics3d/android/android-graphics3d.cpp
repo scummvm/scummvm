@@ -20,8 +20,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -535,11 +533,9 @@ void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
 #else
 	_game_texture->allocBuffer(width, height);
 #endif
-#ifdef USE_GLES2
 	delete _frame_buffer;
 	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
 	_frame_buffer->attach();
-#endif
 
 	updateScreenRect();
 	updateEventScale();
@@ -969,5 +965,3 @@ bool AndroidGraphics3dManager::setState(const AndroidCommonGraphics::State &stat
 
 		return true;
 }
-
-#endif

@@ -23,8 +23,6 @@
 #ifndef BACKENDS_GRAPHICS3D_ANDROID_TEXTURE_H
 #define BACKENDS_GRAPHICS3D_ANDROID_TEXTURE_H
 
-#if defined(__ANDROID__)
-
 #define GL_GLEXT_PROTOTYPES
 #include <GLES/gl.h>
 
@@ -308,5 +306,4 @@ public:
 	virtual ~GLESFakePalette5551Texture();
 };
 
-#endif
 #endif

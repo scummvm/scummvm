@@ -23,8 +23,6 @@
 #ifndef ANDROID_TOUCHCONTROLS_H_
 #define ANDROID_TOUCHCONTROLS_H_
 
-#if defined(__ANDROID__)
-
 #include "common/events.h"
 
 #include "backends/graphics3d/android/texture.h"
@@ -106,7 +104,5 @@ private:
 
 
 };
-
-#endif
 
 #endif
