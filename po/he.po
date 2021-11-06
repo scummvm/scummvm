@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-06 16:14+0000\n"
+"POT-Creation-Date: 2021-11-06 16:26+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2448,7 +2448,7 @@ msgstr "טעינת משחק לא אפשרית כרגע"
 msgid "Saving game is currently unavailable"
 msgstr "שמירת משחק לא אפשרית כרגע"
 
-#: engines/game.cpp:184
+#: engines/game.cpp:185
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2461,7 +2461,7 @@ msgstr ""
 "אנא דווח על הנתונים הבאים לצוות ScummVM ב-%s יחד עם שם המשחק שניסית להוסיף "
 "והגרסה שלו, השפה וכו ':"
 
-#: engines/game.cpp:188
+#: engines/game.cpp:189
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "מזהי משחק תואמים למנוע %s:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-06 16:14+0000\n"
+"POT-Creation-Date: 2021-11-06 16:26+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2494,7 +2494,7 @@ msgstr "Laddning av sparfil går inte just nu"
 msgid "Saving game is currently unavailable"
 msgstr "Det går inte att spara just nu"
 
-#: engines/game.cpp:184
+#: engines/game.cpp:185
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2507,7 +2507,7 @@ msgstr ""
 "Rapportera informationen nedan till ScummVM-teamet på %s tillsammans med "
 "namnet på spelet du försökte lägga till och spelets version, språk, etc.:"
 
-#: engines/game.cpp:188
+#: engines/game.cpp:189
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchade spel-ID för motor %s:"

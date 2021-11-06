@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-06 16:14+0000\n"
+"POT-Creation-Date: 2021-11-06 16:26+0000\n"
 "PO-Revision-Date: 2021-11-06 17:09+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2502,7 +2502,7 @@ msgstr "Innlasting av lagrede spill er for øyeblikket ikke tilgjengelig"
 msgid "Saving game is currently unavailable"
 msgstr "Lagring av spill er for øyeblikket ikke tilgjengelig"
 
-#: engines/game.cpp:184
+#: engines/game.cpp:185
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2516,7 +2516,7 @@ msgstr ""
 "du prøvde å legge til, hvilken versjon av spillet det er, hvilket språk det "
 "er på, osv.:"
 
-#: engines/game.cpp:188
+#: engines/game.cpp:189
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchende spill-ID-er for spillmotoren %s:"
@@ -4162,7 +4162,8 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr "Fan-oversetteren ønsker ikke at oversettelsen skal bli brukt i ScummVM."
+msgstr ""
+"Fan-oversetteren ønsker ikke at oversettelsen skal bli brukt i ScummVM."
 
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
 #: engines/cge/detection.cpp:63 engines/cge/detection.cpp:69
@@ -4264,8 +4265,8 @@ msgid ""
 msgstr ""
 "Feil: Filen '%s' har ikke blitt pakket ut ordentlig.\n"
 "Se wikiartikkelen https://wiki.scummvm.org/index.php?title=HOWTO-"
-"PlayStation_Videos for informasjon om hvordan du henter ut DTSPEECH.XA og "
-"*.STR-filer fra spilldisken."
+"PlayStation_Videos for informasjon om hvordan du henter ut DTSPEECH.XA og *."
+"STR-filer fra spilldisken."
 
 #: engines/dragons/metaengine.cpp:121
 msgid ""
@@ -4837,8 +4838,8 @@ msgid ""
 "and put it in the game data files directory"
 msgstr ""
 "Den opprinnelige oppdateringen til Grim Fandango mangler.\n"
-"Last den ned fra https://downloads.scummvm.org/frs/extras/patches/"
-"gfupd101.exe og legg den i samme mappe som spillets datafiler."
+"Last den ned fra https://downloads.scummvm.org/frs/extras/patches/gfupd101."
+"exe og legg den i samme mappe som spillets datafiler."
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4867,8 +4868,9 @@ msgid ""
 msgstr ""
 "FEIL: Riktig antall musikksoir ikke funnet!\n"
 "Escape from Monkey Island har to versjoner av FullMonkeyMap.imt.\n"
-"Du må kopiere begge disse filene fra begge diskene over til mappen Textures/"
-", og så omdøpe dem til følgende for at du skal få musikkstøtte i spillet: \n"
+"Du må kopiere begge disse filene fra begge diskene over til mappen "
+"Textures/, og så omdøpe dem til følgende for at du skal få musikkstøtte i "
+"spillet: \n"
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
@@ -5018,7 +5020,8 @@ msgstr "Slåsseknapp L/R-bytte"
 
 #: engines/kyra/detection.cpp:148
 msgid "Left button to attack, right button to pick up items"
-msgstr "Venstreknappen for å angripe, høyreknappen for å plukke opp gjenstander"
+msgstr ""
+"Venstreknappen for å angripe, høyreknappen for å plukke opp gjenstander"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
@@ -5246,8 +5249,8 @@ msgstr ""
 "EOBF8/8\n"
 "\n"
 "Hvis du har brukt det opprinnelige installasjonsprogrammet for "
-"installasjonen av disse filene, finner du dem i AmigaDOS-systemets 'Fonts/"
-"'-mappe.\n"
+"installasjonen av disse filene, finner du dem i AmigaDOS-systemets 'Fonts/'-"
+"mappe.\n"
 "Kopier dem inn i EOB-mappen med spillets data.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:288
@@ -5558,8 +5561,8 @@ msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"Du mangler 'extras.mhk'. Det fungerer også å bruke 'arcriven."
-"z'-installasjonsfilen."
+"Du mangler 'extras.mhk'. Det fungerer også å bruke 'arcriven.z'-"
+"installasjonsfilen."
 
 #: engines/mohawk/riven.cpp:504
 msgid "You are missing the following required Riven data files:\n"
@@ -6114,14 +6117,14 @@ msgid ""
 "game will sound badly distorted."
 msgstr ""
 "Du har valgt General MIDI som lydenhet. Sierra har levert ettermarkedsstøtte "
-"for General MIDI for dette spillet med i form av deres «General MIDI Utility»"
-". Bruk denne oppdateringen for å oppleve MIDI-musikk i dette spillet. Når du "
-"har skaffet deg dette, kan du pakke ut alle de inkluderte *.PAT-filene i "
-"ScummVMs ekstra-mappe for at ScummVM automatisk skal legge til den riktige "
-"oppdateringen. Alternativt, kan du følge instruksene i READ.ME-filen som er "
-"inkludert med oppdateringen og omdøpe den relevante *.PAT-filen til 4.PAT og "
-"plassere den i spillets mappe. Uten denne oppdateringen vil General MIDI-"
-"musikk for dette spillet være forvridd."
+"for General MIDI for dette spillet med i form av deres «General MIDI "
+"Utility». Bruk denne oppdateringen for å oppleve MIDI-musikk i dette "
+"spillet. Når du har skaffet deg dette, kan du pakke ut alle de inkluderte *."
+"PAT-filene i ScummVMs ekstra-mappe for at ScummVM automatisk skal legge til "
+"den riktige oppdateringen. Alternativt, kan du følge instruksene i READ.ME-"
+"filen som er inkludert med oppdateringen og omdøpe den relevante *.PAT-filen "
+"til 4.PAT og plassere den i spillets mappe. Uten denne oppdateringen vil "
+"General MIDI-musikk for dette spillet være forvridd."
 
 #: engines/sci/sci.cpp:420
 msgid ""
@@ -6162,8 +6165,8 @@ msgstr ""
 "hos SierraHelp.\n"
 "\n"
 "Installasjon:\n"
-"- last ned http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles"
-".zip\n"
+"- last ned http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
+"GK2Subtitles.zip\n"
 
 #: engines/sci/sci.cpp:838
 msgid ""
