@@ -829,17 +829,6 @@ void AndroidGraphics3dManager::initOverlay() {
 	int overlay_width = MAX(JNI::egl_surface_width, 320);
 	int overlay_height = MAX(JNI::egl_surface_height, 200);
 
-	// the 'normal' theme layout uses a max height of 400 pixels. if the
-	// surface is too big we use only a quarter of the size so that the widgets
-	// don't get too small. if the surface height has less than 800 pixels, this
-	// enforces the 'lowres' layout, which will be scaled back up by factor 2x,
-	// but this looks way better than the 'normal' layout scaled by some
-	// calculated factors
-//	while (overlay_height > 480) {
-//		overlay_width /= 2;
-//		overlay_height /= 2;
-//	}
-
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
