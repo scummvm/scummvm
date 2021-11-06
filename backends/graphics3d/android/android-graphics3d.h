@@ -46,11 +46,18 @@ public:
 	void displayMessageOnOSD(const Common::U32String &msg);
 
 	virtual bool notifyMousePosition(Common::Point &mouse) override;
-	virtual Common::Point getMousePosition() override { return Common::Point(_cursorX, _cursorY); }
-	void setMousePosition(int x, int y) { _cursorX = x; _cursorY = y; }
+	virtual Common::Point getMousePosition() override {
+		return Common::Point(_cursorX, _cursorY);
+	}
+	void setMousePosition(int x, int y) {
+		_cursorX = x;
+		_cursorY = y;
+	}
 
 	virtual void beginGFXTransaction() {}
-	virtual OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
+	virtual OSystem::TransactionError endGFXTransaction() {
+		return OSystem::kTransactionSuccess;
+	}
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
@@ -66,11 +73,13 @@ public:
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(Graphics::Surface &surface) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
-									int x, int y, int w, int h) override;
+	                               int x, int y, int w, int h) override;
 	virtual int16 getOverlayHeight() const override;
 	virtual int16 getOverlayWidth() const override;
 	virtual Graphics::PixelFormat getOverlayFormat() const override;
-	virtual bool isOverlayVisible() const override { return _show_overlay; }
+	virtual bool isOverlayVisible() const override {
+		return _show_overlay;
+	}
 
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
@@ -79,26 +88,26 @@ public:
 	virtual void setPalette(const byte *colors, uint start, uint num) override;
 	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
-									int w, int h) override;
+	                              int w, int h) override;
 	virtual Graphics::Surface *lockScreen() override;
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col);
 
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) {};
-	virtual void setFocusRectangle(const Common::Rect& rect) {}
+	virtual void setFocusRectangle(const Common::Rect &rect) {}
 	virtual void clearFocusRectangle() {}
 
 	virtual void initSize(uint width, uint height,
-							const Graphics::PixelFormat *format) override;
+	                      const Graphics::PixelFormat *format) override;
 	virtual int getScreenChangeID() const override;
 
 	virtual bool showMouse(bool visible) override;
 	virtual void warpMouse(int x, int y) override;
 	virtual bool lockMouse(bool lock) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format) override;
+	                            int hotspotY, uint32 keycolor,
+	                            bool dontScale,
+	                            const Graphics::PixelFormat *format) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 
@@ -129,15 +138,15 @@ private:
 	void initSizeIntern(uint width, uint height, const Graphics::PixelFormat *format);
 
 	enum FixupType {
-		kClear = 0,		// glClear
-		kClearSwap,		// glClear + swapBuffers
-		kClearUpdate	// glClear + updateScreen
+		kClear = 0,     // glClear
+		kClearSwap,     // glClear + swapBuffers
+		kClearUpdate    // glClear + updateScreen
 	};
 
 	void clearScreen(FixupType type, byte count = 1);
 #ifdef USE_RGB_COLOR
 	void initTexture(GLESBaseTexture **texture, uint width, uint height,
-						const Graphics::PixelFormat *format);
+	                 const Graphics::PixelFormat *format);
 #endif
 
 private:
