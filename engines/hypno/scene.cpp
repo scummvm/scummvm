@@ -59,11 +59,11 @@ const static char *sceneVariables[] = {
 	NULL
 };
 
-void HypnoEngine::parseScene(const Common::String &prefix, const Common::String &filename) {
-	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
-	Common::String name = convertPath(filename);
-	if (!prefix.empty())
-		name = prefix + "/" + name;
+void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
+	debugC(1, kHypnoDebugParser, "Parsing %s", current.c_str());
+	Common::String name = convertPath(current);
+	// if (!prefix.empty())
+	// 	name = prefix + "/" + name;
 
 	Common::File test;
 	if (!test.open(name.c_str()))
@@ -78,6 +78,7 @@ void HypnoEngine::parseScene(const Common::String &prefix, const Common::String 
 	parse_mis(buf);
 	Level level;
 	level.scene.prefix = prefix;
+	level.scene.levelIfWin = next;
 	level.scene.hots = *g_parsedHots;
 	_levels[name] = level;
 	free(buf);
@@ -241,6 +242,7 @@ void HypnoEngine::runScene(Scene &scene) {
 	_nextLoopingVideoToPlay.clear();
 	_nextParallelVideoToPlay.clear();
 	_nextSequentialVideoToPlay.clear();
+	_intros.clear();
 
 	_refreshConversation = false;
 	_conversation.clear();

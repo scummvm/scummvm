@@ -41,6 +41,7 @@ void SpiderEngine::loadAssets() {
 void SpiderEngine::loadAssetsFullGame() {
 
 	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
+	Common::String prefix = "spider";
 	if (language == Common::EN_USA) {
 		if (!_installerArchive.open("DATA.Z"))
 			error("Failed to open DATA.Z");
@@ -53,31 +54,19 @@ void SpiderEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
-	parseScene("", "mainmenu.mi_");
-	_levels["mainmenu.mi_"].scene.prefix = "spider";
+	loadSceneLevel("mainmenu.mi_", "", prefix);
+	loadSceneLevel("tryagain.mi_", "", prefix);
+	loadSceneLevel("options.mi_", "", prefix);
+	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
+	loadSceneLevel("combmenu.mi_", "", prefix);
 
-	parseScene("", "options.mi_");
-	_levels["options.mi_"].scene.prefix = "spider";
-
-	parseScene("", "levels.mi_");
-	_levels["levels.mi_"].scene.prefix = "spider";
-	_levels["levels.mi_"].scene.levelIfWin = "mv0t.mi_";
-
-	parseScene("", "combmenu.mi_");
-	_levels["combmenu.mi_"].scene.prefix = "spider";
-
-	parseScene("", "mv0t.mi_");
-	_levels["mv0t.mi_"].scene.prefix = "spider";
+	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
 	_levels["mv0t.mi_"].scene.intro = "cine/ints001s.smk";
-	_levels["mv0t.mi_"].scene.levelIfWin = "roof.mi_";
 
-	parseScene("", "roof.mi_");
-	_levels["roof.mi_"].scene.prefix = "spider";
-	_levels["roof.mi_"].scene.levelIfWin = "decide1.mi_";
+	loadSceneLevel("roof.mi_", "decide1.mi_", prefix);
 
-
-	parseScene("", "decide1.mi_");
-	_levels["decide1.mi_"].scene.prefix = "spider";
+	loadSceneLevel("decide1.mi_", "", prefix);
+	// _levels["decide1.mi_"].scene.prefix = "spider";
 
 	// loadArcadeLevel("c1", "", "spider");
 	// loadArcadeLevel("c2", "", "spider");
@@ -152,7 +141,7 @@ void SpiderEngine::loadAssetsDemo() {
 	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib", true);
 
 	// Read assets from mis files
-	parseScene("sixdemo", "mis/demo.mis");
+	loadSceneLevel("mis/demo.mis", "", "sixdemo");
 	ChangeLevel *cl = new ChangeLevel("c1.mi_");
 	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
 
@@ -169,17 +158,17 @@ void SpiderEngine::loadAssetsDemo() {
 	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
 	_levels["sixdemo/mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
 
-	parseScene("sixdemo", "mis/order.mis");
+	loadSceneLevel("mis/order.mis", "", "sixdemo");
 	cl = new ChangeLevel("<quit>");
 	_levels["sixdemo/mis/order.mis"].scene.hots[1].actions.push_back(cl);
 
-	parseScene("sixdemo", "mis/alley.mis");
+	loadSceneLevel("mis/alley.mis", "", "sixdemo");
 	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
 	_levels["sixdemo/mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
 	_levels["sixdemo/mis/alley.mis"].scene.levelIfWin = "sixdemo/mis/demo.mis";
 	_levels["sixdemo/mis/alley.mis"].scene.levelIfLose = "sixdemo/mis/demo.mis";
 
-	parseScene("sixdemo", "mis/shoctalk.mis");
+	loadSceneLevel("mis/shoctalk.mis", "", "sixdemo");
 
 	Level matrix;
 	matrix.code.name = "sixdemo/puz_matr";

@@ -93,10 +93,10 @@ public:
 
 	// Parsing
 	void splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list);
-	void parseScene(const Common::String &prefix, const Common::String &filename);
 	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
 	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
 	void loadArcadeLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
+	void loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
 	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
 
 	// User input
@@ -159,7 +159,7 @@ public:
 	void drawScreen();
 
 	// intros
-	Common::HashMap<Common::String, Videos> _intros;
+	Common::HashMap<Filename, bool> _intros;
 
 	// levels
 	Common::String _nextLevel;

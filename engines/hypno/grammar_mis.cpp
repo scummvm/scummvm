@@ -1513,7 +1513,7 @@ yyreduce:
   case 17:
 #line 166 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
-		Cutscene *a = new Cutscene((yyvsp[-2].s));
+		Cutscene *a = new Cutscene(Common::String("cine/") + (yyvsp[-2].s));
 		Hotspots *cur = stack.back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);

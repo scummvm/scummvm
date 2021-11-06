@@ -48,6 +48,14 @@ void HypnoEngine::runMenu(Hotspots hs) {
 			case AmbientAction: 
 				runAmbient((Ambient *)action);
 			break;
+			case CutsceneAction: {
+				// Should not repeat the same
+				Cutscene *cutscene = (Cutscene *) action; 
+				if (!_intros.contains(cutscene->path))
+				 	runCutscene(cutscene);
+				_intros[cutscene->path] = true;
+			}
+			break;
 
 			default:
 			break;
