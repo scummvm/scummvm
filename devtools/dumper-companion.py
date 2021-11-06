@@ -18,6 +18,7 @@ import argparse
 import io
 import os
 import sys
+import logging
 from binascii import crc_hqx
 from pathlib import Path
 from struct import pack, unpack
@@ -29,7 +30,7 @@ if sys.platform == "darwin":
     try:
         import xattr
     except ImportError:
-        print("xattr is required for the 'mac' mode to work\n")
+        logging.error("xattr is required for the 'mac' mode to work\n")
 
 
 # fmt: off
@@ -85,13 +86,12 @@ decode_map = {
 
 def decode_macjapanese(text: ByteString) -> str:
     """
-    Decode Mac Japanse
+    Decode MacJapanese
 
     Mac OS Japanese
     https://en.wikipedia.org/wiki/Shift_JIS#MacJapanese
     https://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/JAPANESE.TXT
     """
-    quiet: bool = args.quiet
 
     res = ""
     i_text = iter(text)
@@ -104,20 +104,18 @@ def decode_macjapanese(text: ByteString) -> str:
         elif (0x81 <= hi <= 0x9F) or (0xE0 <= hi <= 0xFC):  # two-byte sequence
             lo = next(i_text, None)
             if lo is None:
-                if not quiet:
-                    print(f"WARNING: MacJapanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
+                logging.warning(f"MacJapanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman")
                 res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
                 hi = next(i_text, None)
                 continue
             if (0xF0 <= hi <= 0xFC):    # Shift+JIS mapping (incomplete)
-                if not quiet:
-                    print(f"WARNING: MacJapanese sequence has high first byte 0x{hi:02x}, mapping to Shift-JIS")
+                logging.warning(f"MacJapanese sequence has high first byte 0x{hi:02x}, mapping to Shift-JIS")
                 hilo = ( hi << 8 ) | lo & 0x00FF
                 if (0x40 <= lo <= 0x7E) or (0x80 <= lo <= 0xFC) and (lo != 0x7F):
                     hilo = (0xE000 + ((hi & 0xFF) - 0xF0) * 0xBC + ((lo & 0xFF) - ( (0x41, 0x40)[(lo & 0xFF) >= 0x80] )))
 
                 n = chr(hilo)
-                #print(f"MAPPED: {hi:02x}{lo:02x} TO {hilo:04x} AS {n}")
+                #logging.warning(f"MAPPED: {hi:02x}{lo:02x} TO {hilo:04x} AS {n}")
                 res += n
             else:
                 hi_key = f'{hi:02x}'
@@ -287,17 +285,21 @@ def generate_punyencoded_path(destination_dir: Path, hpath: Tuple[str]) -> Path:
 
 
 def extract_volume(args: argparse.Namespace) -> int:
-    """Extract an mac iso"""
+    """Extract a Macintosh ISO"""
     source_volume: Path = args.src
     destination_dir: Path = args.dir
     punify: bool = args.punycode
     japanese: bool = args.japanese
     dryrun: bool = args.dryrun
     rawtext: bool = args.nopunycode
-    quiet: bool = args.quiet
+    loglevel: string = args.log
 
-    if not quiet:
-        print(f"Loading {source_volume} ...")
+    numeric_level = getattr(logging, loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % loglevel)
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=numeric_level)
+
+    logging.info(f"Loading {source_volume} ...")
     vol = machfs.Volume()
     vol.read(source_volume.read_bytes())
 
@@ -316,8 +318,10 @@ def extract_volume(args: argparse.Namespace) -> int:
         if isinstance(obj, machfs.Folder):
             if not dryrun:
                 upath.mkdir(exist_ok=True)
+            print(f"{upath}")
         else:
-            print(upath)
+            if upath != "":
+                print(f"{upath} [{obj.type.decode('mac_roman')},{obj.creator.decode('mac_roman')}]")
             if not dryrun:
                 file = obj.data
                 if obj.rsrc:
@@ -336,7 +340,7 @@ def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
             count += 1
             new_path = path.parent / new_name
             if verbose:
-                print(f"Renamed {path} to {new_path}")
+                logging.info(f"Renamed {path} to {new_path}")
             path.rename(new_path)
     return count
 
@@ -393,7 +397,7 @@ def collect_forks(args: argparse.Namespace) -> int:
     for dirpath, _, filenames in os.walk(directory):
         for filename in filenames:
             if has_resource_fork(dirpath, filename):
-                print(f"Resource in {filename}")
+                logging.info(f"Resource in {filename}")
                 count_resources += 1
                 resource_filename = filename + "/..namedfork/rsrc"
                 to_filename = filename
@@ -412,7 +416,7 @@ def collect_forks(args: argparse.Namespace) -> int:
                 try:
                     finderInfo = xattr.xattr(filepath)["com.apple.FinderInfo"][0:8]
                 except (IOError, OSError) as e:
-                    print(f"Error getting type and creator for: {filename}")
+                    logging.error(f"Error getting type and creator for: {filename}")
                     return 1
 
                 file.type, file.creator = unpack("4s4s", finderInfo)
@@ -434,7 +438,7 @@ def collect_forks(args: argparse.Namespace) -> int:
     if punify:
         count_renames = punyencode_dir(directory, verbose=True)
 
-    print(f"Macbinary {count_resources}, Renamed {count_renames} files")
+    logging.info(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
 
 
@@ -449,7 +453,7 @@ def generate_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    parser_iso = subparsers.add_parser("iso", help="Dump hfs isos")
+    parser_iso = subparsers.add_parser("iso", help="Dump HFS ISOs")
 
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso.add_argument(
@@ -459,13 +463,13 @@ def generate_parser() -> argparse.ArgumentParser:
         "--nopunycode", action="store_true", help="never encode pathnames into punycode"
     )
     parser_iso.add_argument(
-        "--japanese", action="store_true", help="read mac_japanese hfs+"
+        "--japanese", action="store_true", help="read mac_japanese HFS"
     )
     parser_iso.add_argument(
         "--dryrun", action="store_true", help="do not write any files"
     )
     parser_iso.add_argument(
-        "--quiet", action="store_true", help="do not display warnings"
+        "--log", metavar="LOGGING", help="set logging level"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
