@@ -221,8 +221,16 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 	report += Common::U32String("\n\n");
 
-	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file)
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld},\n", file->_key.c_str(), file->_value.md5.c_str(), (long long)file->_value.size);
+	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
+		Common::String addon;
+
+		if (file->_value.md5prop & kMD5MacResFork)
+			addon += ", ADGF_MACRESFORK";
+		if (file->_value.md5prop & kMD5Tail)
+			addon += ", ADGF_TAILMD5";
+
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n", file->_key.c_str(), file->_value.md5.c_str(), (long long)file->_value.size, addon.c_str());
+	}
 
 	report += Common::U32String("\n");
 
