@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-01 16:19+0000\n"
+"POT-Creation-Date: 2021-11-06 16:14+0000\n"
 "PO-Revision-Date: 2021-09-20 12:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2260,7 +2260,7 @@ msgstr ""
 "Myst, Blade Runner en talloze andere spellen zal je enkele vage adventures "
 "vinden en echte verborgen pareltjes ontdekken."
 
-#: engines/advancedDetector.cpp:231
+#: engines/advancedDetector.cpp:241
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Illegale spelkopie gedetecteerd. Wij leveren geen support in dit soort "
@@ -2521,7 +2521,7 @@ msgstr "Spel laden is nu niet mogelijk"
 msgid "Saving game is currently unavailable"
 msgstr "Spel opslaan is nu niet mogelijk"
 
-#: engines/game.cpp:171
+#: engines/game.cpp:184
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2534,7 +2534,7 @@ msgstr ""
 "met de naam van het spel die u probeerde toe te voegen en zijn versie, taal, "
 "etc. :"
 
-#: engines/game.cpp:175
+#: engines/game.cpp:188
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchende game IDs voor de %s engine:"

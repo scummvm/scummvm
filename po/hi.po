@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-01 16:19+0000\n"
+"POT-Creation-Date: 2021-11-06 16:14+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -2200,7 +2200,7 @@ msgid ""
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
 
-#: engines/advancedDetector.cpp:231
+#: engines/advancedDetector.cpp:241
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 
@@ -2431,7 +2431,7 @@ msgstr ""
 msgid "Saving game is currently unavailable"
 msgstr ""
 
-#: engines/game.cpp:171
+#: engines/game.cpp:184
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2440,7 +2440,7 @@ msgid ""
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
 
-#: engines/game.cpp:175
+#: engines/game.cpp:188
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
