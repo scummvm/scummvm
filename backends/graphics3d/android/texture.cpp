@@ -51,10 +51,9 @@
 #include "backends/graphics3d/android/texture.h"
 
 // Supported GL extensions
-static bool npot_supported = false;
-
-OpenGL::ShaderGL * g_box_shader;
-GLuint g_verticesVBO;
+bool GLESBaseTexture::_npot_supported = false;
+OpenGL::ShaderGL *GLESBaseTexture::_box_shader = nullptr;
+GLuint GLESBaseTexture::_verticesVBO = 0;
 
 template<class T>
 static T nextHigher2(T k) {
@@ -68,7 +67,7 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
-const GLfloat vertices[] = {
+static const GLfloat vertices[] = {
 	0.0, 0.0,
 	1.0, 0.0,
 	0.0, 1.0,
@@ -76,13 +75,16 @@ const GLfloat vertices[] = {
 };
 
 void GLESBaseTexture::initGL() {
-	npot_supported = OpenGLContext.NPOTSupported;
+	_npot_supported = OpenGLContext.NPOTSupported;
 
-	const char* attributes[] = { "position", "texcoord", NULL };
-	g_box_shader = OpenGL::ShaderGL::fromStrings("control", OpenGL::BuiltinShaders::controlVertex, OpenGL::BuiltinShaders::controlFragment, attributes);
-	g_verticesVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
-	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	const char *attributes[] = { "position", "texcoord", NULL };
+	_box_shader = OpenGL::ShaderGL::fromStrings("control", OpenGL::BuiltinShaders::controlVertex,
+	              OpenGL::BuiltinShaders::controlFragment, attributes);
+	_verticesVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	_box_shader->enableVertexAttribute("position", _verticesVBO, 2, GL_FLOAT, GL_TRUE,
+	                                   2 * sizeof(float), 0);
+	_box_shader->enableVertexAttribute("texcoord", _verticesVBO, 2, GL_FLOAT, GL_TRUE,
+	                                   2 * sizeof(float), 0);
 }
 
 GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
@@ -157,7 +159,7 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 	if (w == _texture_width && h == _texture_height)
 		return;
 
-	if (npot_supported) {
+	if (_npot_supported) {
 		_texture_width = _surface.w;
 		_texture_height = _surface.h;
 	} else {
@@ -171,8 +173,8 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip) {
 //	LOGD("*** Texture %p: Drawing %dx%d rect to (%d,%d)", this, w, h, x, y);
 
-	assert(g_box_shader);
-	g_box_shader->use();
+	assert(_box_shader);
+	_box_shader->use();
 
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	const GLfloat offsetX    = float(x) / float(JNI::egl_surface_width);
@@ -184,10 +186,10 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, co
 	clipV.z() /= _texture_width; clipV.w() /= _texture_height;
 //	LOGD("*** Drawing at (%f,%f) , size %f x %f", float(x) / float(_surface.w), float(y) / float(_surface.h),  tex_width, tex_height);
 
-	g_box_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
-	g_box_shader->setUniform("sizeWH", Math::Vector2d(sizeW, sizeH));
-	g_box_shader->setUniform("clip", clipV);
-	g_box_shader->setUniform("flipY", !_is_game_texture);
+	_box_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
+	_box_shader->setUniform("sizeWH", Math::Vector2d(sizeW, sizeH));
+	_box_shader->setUniform("clip", clipV);
+	_box_shader->setUniform("flipY", !_is_game_texture);
 
 	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 

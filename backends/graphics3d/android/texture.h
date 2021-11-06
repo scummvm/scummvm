@@ -32,6 +32,10 @@
 #include "common/rect.h"
 #include "common/array.h"
 
+namespace OpenGL {
+class ShaderGL;
+}
+
 class GLESBaseTexture {
 public:
 	static void initGL();
@@ -189,6 +193,11 @@ protected:
 	Graphics::PixelFormat _palettePixelFormat;
 
 	bool _is_game_texture;
+
+	static bool _npot_supported;
+	static OpenGL::ShaderGL *_box_shader;
+	static GLuint _verticesVBO;
+
 };
 
 class GLESTexture : public GLESBaseTexture {
