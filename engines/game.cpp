@@ -165,6 +165,19 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
 }
 
+// Sync with engines/advancedDetector.cpp
+static char flagsToMD5Prefix(uint32 flags) {
+	if (flags & kMD5MacResFork) {
+		if (flags & kMD5Tail)
+			return 'e';
+		return 'm';
+	}
+	if (flags & kMD5Tail)
+		return 't';
+
+	return 'f';
+}
+
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {
 	assert(!detectedGames.empty());
 
@@ -211,7 +224,8 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			matchedFiles.setVal(it->_key, it->_value);
+			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(it->_value.md5prop), it->_key.c_str());
+			matchedFiles.setVal(key, it->_value);
 		}
 	}
 
@@ -229,7 +243,9 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		if (file->_value.md5prop & kMD5Tail)
 			addon += ", ADGF_TAILMD5";
 
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n", file->_key.c_str(), file->_value.md5.c_str(), (long long)file->_value.size, addon.c_str());
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n",
+			&file->_key.c_str()[2], // Skip the md5 prefix
+			file->_value.md5.c_str(), (long long)file->_value.size, addon.c_str());
 	}
 
 	report += Common::U32String("\n");
