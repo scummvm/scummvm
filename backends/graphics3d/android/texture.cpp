@@ -229,14 +229,12 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	delete[] _pixels;
 
 	_pixels = new byte[w * h * _surface.format.bytesPerPixel];
-	assert(_pixels);
 
 	_surface.setPixels(_pixels);
 
 	fillBuffer(0);
 
 	_buf = new byte[w * h * _surface.format.bytesPerPixel];
-	assert(_buf);
 }
 
 void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
@@ -350,7 +348,6 @@ GLESFakePaletteTexture::GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
 	_fake_format = Graphics::PixelFormat::createFormatCLUT8();
 
 	_palette = new uint16[256];
-	assert(_palette);
 
 	memset(_palette, 0, 256 * 2);
 }
@@ -379,7 +376,6 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	delete[] _pixels;
 
 	_pixels = new byte[w * h];
-	assert(_pixels);
 
 	// fixup surface, for the outside this is a CLUT8 surface
 	_surface.setPixels(_pixels);
@@ -387,7 +383,6 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	fillBuffer(0);
 
 	_buf = new uint16[w * h];
-	assert(_buf);
 }
 
 void GLESFakePaletteTexture::fillBuffer(uint32 color) {
