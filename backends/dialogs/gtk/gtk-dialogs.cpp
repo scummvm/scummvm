@@ -34,6 +34,16 @@
 
 #include <gtk/gtk.h>
 
+// TODO: Move this into the class? Probably possible, but I've been told that
+//       this might not necessarily work properly with all compilers.
+
+static gboolean _inDialog;
+
+static gboolean idleCallback(gpointer data) {
+	g_system->updateScreen();
+	return _inDialog;
+}
+
 Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 	if (!gtk_init_check(NULL, NULL))
 		return kDialogError;
@@ -65,6 +75,10 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 
 	// Show dialog
 	beginDialog();
+
+	_inDialog = TRUE;
+	g_idle_add(idleCallback, NULL);
+
 #if GTK_CHECK_VERSION(3,20,0)
 	int res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(native));
 #else
@@ -78,6 +92,8 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 		result = kDialogOk;
 		g_free(path);
 	}
+
+	_inDialog = FALSE;
 
 #if GTK_CHECK_VERSION(3,20,0)
 	g_object_unref(native);
