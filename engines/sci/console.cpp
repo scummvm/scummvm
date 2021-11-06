@@ -238,6 +238,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
 	registerCmd("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
 	registerCmd("stack",				WRAP_METHOD(Console, cmdStack));
+	registerCmd("st",					WRAP_METHOD(Console, cmdStack));					// alias
 	registerCmd("value_type",			WRAP_METHOD(Console, cmdValueType));
 	registerCmd("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	registerCmd("view_reference",		WRAP_METHOD(Console, cmdViewReference));
