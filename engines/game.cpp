@@ -22,6 +22,7 @@
 
 #include "engines/game.h"
 #include "common/gui_options.h"
+#include "common/punycode.h"
 #include "common/translation.h"
 
 
@@ -244,7 +245,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 			addon += ", ADGF_TAILMD5";
 
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n",
-			&file->_key.c_str()[2], // Skip the md5 prefix
+			Common::punycode_encodefilename(Common::U32String(&file->_key.c_str()[2])).c_str(), // Skip the md5 prefix
 			file->_value.md5.c_str(), (long long)file->_value.size, addon.c_str());
 	}
 
