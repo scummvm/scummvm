@@ -448,10 +448,13 @@ void AndroidGraphics3dManager::setPalette(const byte *colors, uint start, uint n
 		setCursorPaletteInternal(colors, start, num);
 
 	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
-	byte *p = _game_texture->palette() + start * 2;
+	// _game_texture is a GLESFakePalette565Texture so it's 16bits colors
+	assert(pf.bpp() == sizeof(uint16) * 8);
+	byte *p = _game_texture->palette() + start * sizeof(uint16);
 
-	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
+	}
 }
 
 void AndroidGraphics3dManager::grabPalette(byte *colors, uint start, uint num) const {
@@ -464,10 +467,13 @@ void AndroidGraphics3dManager::grabPalette(byte *colors, uint start, uint num) c
 	GLTHREADCHECK;
 
 	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
-	const byte *p = _game_texture->palette_const() + start * 2;
+	// _game_texture is a GLESFakePalette565Texture so it's 16bits colors
+	assert(pf.bpp() == sizeof(uint16) * 8);
+	const byte *p = _game_texture->palette_const() + start * sizeof(uint16);
 
-	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
 		pf.colorToRGB(READ_UINT16(p), colors[0], colors[1], colors[2]);
+	}
 }
 
 Graphics::Surface *AndroidGraphics3dManager::lockScreen() {
@@ -613,12 +619,15 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 	if (_mouse_texture == _mouse_texture_palette) {
 		assert(keycolor < 256);
 
-		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		const Graphics::PixelFormat &pf = _mouse_texture_palette->getPalettePixelFormat();
+		// _mouse_texture_palette is a GLESFakePalette565Texture so it's 16bits colors
+		assert(pf.bpp() == sizeof(uint16) * 8);
+		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
 		WRITE_UINT16(p, READ_UINT16(p) | 1);
 
 		_mouse_keycolor = keycolor;
 
-		p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
 		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 
@@ -677,14 +686,17 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 
 void AndroidGraphics3dManager::setCursorPaletteInternal(const byte *colors,
 												uint start, uint num) {
+	// _mouse_texture_palette is a GLESFakePalette565Texture so it's 16bits colors
 	const Graphics::PixelFormat &pf =
 		_mouse_texture_palette->getPalettePixelFormat();
-	byte *p = _mouse_texture_palette->palette() + start * 2;
+	assert(pf.bpp() == sizeof(uint16) * 8);
+	byte *p = _mouse_texture_palette->palette() + start * sizeof(uint16);
 
-	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
+	}
 
-	p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+	p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
 	WRITE_UINT16(p, READ_UINT16(p) & ~1);
 }
 
@@ -711,22 +723,25 @@ void AndroidGraphics3dManager::disableCursorPalette() {
 	// when disabling the cursor palette, and we're running a clut8 game,
 	// it expects the game palette to be used for the cursor
 	if (_game_texture->hasPalette()) {
-		const byte *src = _game_texture->palette_const();
-		byte *dst = _mouse_texture_palette->palette();
-
+		// _game_texture and _mouse_texture_palette are GLESFakePalette565Texture so it's 16bits colors
 		const Graphics::PixelFormat &pf_src =
 			_game_texture->getPalettePixelFormat();
 		const Graphics::PixelFormat &pf_dst =
 			_mouse_texture_palette->getPalettePixelFormat();
+		assert(pf_src.bpp() == sizeof(uint16) * 8);
+		assert(pf_dst.bpp() == sizeof(uint16) * 8);
+
+		const byte *src = _game_texture->palette_const();
+		byte *dst = _mouse_texture_palette->palette();
 
 		uint8 r, g, b;
 
-		for (uint i = 0; i < 256; ++i, src += 2, dst += 2) {
+		for (uint i = 0; i < 256; ++i, src += sizeof(uint16), dst += sizeof(uint16)) {
 			pf_src.colorToRGB(READ_UINT16(src), r, g, b);
 			WRITE_UINT16(dst, pf_dst.RGBToColor(r, g, b));
 		}
 
-		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
 		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 }
