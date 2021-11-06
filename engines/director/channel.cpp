@@ -43,14 +43,14 @@ Channel::Channel(Sprite *sp, int priority) {
 		_sprite = new Sprite(*sp);
 
 	_widget = nullptr;
-	_currentPoint = sp->_startPoint;
+	_currentPoint = _sprite ? _sprite->_startPoint : Common::Point(0, 0);
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
 	_mask = nullptr;
 
 	_priority = priority;
-	_width = _sprite->_width;
-	_height = _sprite->_height;
+	_width = _sprite ? _sprite->_width : 0;
+	_height = _sprite ? _sprite->_height : 0;
 
 	_movieRate = 0.0;
 	_movieTime = 0;
@@ -65,10 +65,44 @@ Channel::Channel(Sprite *sp, int priority) {
 	_sprite->updateEditable();
 }
 
+Channel::Channel(const Channel &channel) {
+	*this = channel;
+}
+
+Channel& Channel::operator=(const Channel &channel) {
+	_sprite = channel._sprite ? new Sprite(*channel._sprite) : nullptr;
+
+	_widget = nullptr;
+	_currentPoint = channel._currentPoint;
+	_delta = channel._delta;
+	_constraint = channel._constraint;
+	_mask = nullptr;
+
+	_priority = channel._priority;
+	_width = channel._width;
+	_height = channel._height;
+
+	_movieRate = channel._movieRate;
+	_movieTime = channel._movieTime;
+	_startTime = channel._startTime;
+	_stopTime = channel._stopTime;
+
+	_filmLoopFrame = channel._filmLoopFrame;
+
+	_visible = channel._visible;
+	_dirty = channel._dirty;
+
+	return *this;
+}
+
+
 Channel::~Channel() {
-	delete _widget;
-	delete _mask;
-	delete _sprite;
+	if (_widget)
+		delete _widget;
+	if (_mask)
+		delete _mask;
+	if (_sprite)
+		delete _sprite;
 }
 
 DirectorPlotData Channel::getPlotData() {
@@ -603,6 +637,7 @@ void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 			pos += point;
 	} break;
 	case kCastDigitalVideo:
+	case kCastFilmLoop:
 		pos -= Common::Point(_sprite->_cast->_initialRect.width() >> 1, _sprite->_cast->_initialRect.height() >> 1);
 		break;
 	default:
@@ -707,6 +742,22 @@ Common::Point Channel::getPosition() {
 	res.y += (_sprite->_height - _height) / 2;
 
 	return res;
+}
+
+bool Channel::hasSubChannels() {
+	if ((_sprite->_cast) && (_sprite->_cast->_type == kCastFilmLoop)) {
+		return true;
+	}
+	return false;
+}
+
+Common::Array<Channel> *Channel::getSubChannels() {
+	if ((!_sprite->_cast) || (_sprite->_cast->_type != kCastFilmLoop)) {
+		warning("Channel doesn't have any sub-channels");
+		return nullptr;
+	}
+	Common::Rect bbox = getBbox();
+	return ((FilmLoopCastMember *)_sprite->_cast)->getSubChannels(bbox, this);
 }
 
 } // End of namespace Director

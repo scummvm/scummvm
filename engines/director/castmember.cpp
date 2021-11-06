@@ -570,21 +570,20 @@ bool FilmLoopCastMember::isModified() {
 	if (_frames.size())
 		return true;
 
-	if (_bbox.width() && _bbox.height())
+	if (_initialRect.width() && _initialRect.height())
 		return true;
 
 	return false;
 }
 
-Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
-	Common::Rect widgetRect(bbox.width() ? bbox.width() : _bbox.width(), bbox.height() ? bbox.height() : _bbox.height());
-	channel->_width = widgetRect.width();
-	channel->_height = widgetRect.height();
-	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, widgetRect.width(), widgetRect.height(), g_director->_wm, false);
+Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, Channel *channel) {
+	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(), bbox.height() ? bbox.height() : _initialRect.height());
+
+	_subchannels.clear();
 
 	if (channel->_filmLoopFrame >= _frames.size()) {
 		warning("Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
-		return widget;
+		return &_subchannels;
 	}
 
 	// get the list of sprite IDs for this frame
@@ -594,45 +593,33 @@ Graphics::MacWidget *FilmLoopCastMember::createWidget(Common::Rect &bbox, Channe
 	}
 	Common::sort(spriteIds.begin(), spriteIds.end());
 
-	// render the sprites in order onto the widget surface
+	// copy the sprites in order to the list
 	for (Common::Array<int>::iterator iter = spriteIds.begin(); iter != spriteIds.end(); ++iter) {
 		Sprite src = _frames[channel->_filmLoopFrame].sprites[*iter];
 		if (!src._cast)
 			continue;
 		// translate sprite relative to the global bounding box
-		int16 relX = (src._startPoint.x - _bbox.left) * widgetRect.width() / _bbox.width();
-		int16 relY = (src._startPoint.y - _bbox.top) * widgetRect.height() / _bbox.height();
-		int16 width = src._width * widgetRect.width() / _bbox.width();
-		int16 height = src._height * widgetRect.height() / _bbox.height();
-		Common::Rect relBbox(relX, relY, relX + width, relY + height);
+		int16 relX = (src._startPoint.x - _initialRect.left) * widgetRect.width() / _initialRect.width();
+		int16 relY = (src._startPoint.y - _initialRect.top) * widgetRect.height() / _initialRect.height();
+		int16 absX = relX + bbox.left;
+		int16 absY = relY + bbox.top;
+		int16 width = src._width * widgetRect.width() / _initialRect.width();
+		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
-		Graphics::MacWidget *srcWidget = src._cast->createWidget(relBbox, channel, spriteType);
-		DirectorPlotData pd(g_director->_wm, src._spriteType, src._ink, src._blend, src.getBackColor(), src.getForeColor());
-		pd.colorWhite = pd._wm->_colorWhite;
-		pd.colorBlack = pd._wm->_colorBlack;
-		pd.dst = widget->getSurface();
-		pd.destRect = relBbox;
+		Channel chan(&src);
+		chan._currentPoint = Common::Point(absX, absY);
+		chan._width = width;
+		chan._height = height;
+		chan.addRegistrationOffset(chan._currentPoint, true);
 
-		pd.srf = srcWidget ? srcWidget->getSurface() : nullptr;
-		if (!pd.srf && src._spriteType != kBitmapSprite) {
-			// Shapes come colourized from macDrawPixel
-			pd.ms = src.getShape();
-			pd.applyColor = false;
-			pd.inkBlitShape(relBbox);
-		} else {
-			pd.setApplyColor();
-			// TODO: Support masks
-			pd.inkBlitStretchSurface(relBbox, nullptr);
-		}
-		if (srcWidget)
-			delete srcWidget;
+		_subchannels.push_back(chan);
+		_subchannels[_subchannels.size() - 1].replaceWidget();
 	}
-
-	return widget;
+	return &_subchannels;
 }
 
 void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stream) {
-	_bbox = Common::Rect();
+	_initialRect = Common::Rect();
 	_frames.clear();
 
 	uint32 size = stream.readUint32BE();
@@ -678,6 +665,8 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
+			sprite._puppet = 1;
+			sprite._stretch = 1;
 
 			int fieldPosition = channelOffset;
 			int finishPosition = channelOffset + msgWidth;
@@ -744,10 +733,10 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			);
 			newFrame.sprites.setVal(channel, sprite);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
-				if ((_bbox.width() == 0) && (_bbox.height() == 0)) {
-					_bbox = spriteBbox;
+				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
+					_initialRect = spriteBbox;
 				} else {
-					_bbox.extend(spriteBbox);
+					_initialRect.extend(spriteBbox);
 				}
 			}
 		}
@@ -764,7 +753,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 		_frames.push_back(newFrame);
 
 	}
-	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 }
 

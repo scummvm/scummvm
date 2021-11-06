@@ -367,7 +367,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 
 		if (sprite._castId.member) {
-			debugC(4, kDebugLoading, "CH: %-3d castId: %s [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x",
+			debugC(4, kDebugLoading, "CH: %-3d castId: %s [inkData:%02x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x",
 				i + 1, sprite._castId.asString().c_str(), sprite._inkData,
 				sprite._ink, sprite._trails, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
