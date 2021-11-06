@@ -20,8 +20,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -358,5 +356,3 @@ void TouchControls::keyPress(Common::KeyCode kc) {
 	ev.kbd.keycode = kc;
 	dynamic_cast<OSystem_Android *>(g_system)->pushKeyPressEvent(ev);
 }
-
-#endif

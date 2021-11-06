@@ -20,8 +20,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -465,5 +463,3 @@ GLESFakePalette5551Texture::GLESFakePalette5551Texture() :
 
 GLESFakePalette5551Texture::~GLESFakePalette5551Texture() {
 }
-
-#endif
