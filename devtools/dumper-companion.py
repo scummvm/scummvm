@@ -463,13 +463,13 @@ def generate_parser() -> argparse.ArgumentParser:
         "--nopunycode", action="store_true", help="never encode pathnames into punycode"
     )
     parser_iso.add_argument(
-        "--japanese", action="store_true", help="read mac_japanese HFS"
+        "--japanese", action="store_true", help="read MacJapanese HFS"
     )
     parser_iso.add_argument(
         "--dryrun", action="store_true", help="do not write any files"
     )
     parser_iso.add_argument(
-        "--log", metavar="LOGGING", help="set logging level"
+        "--log", metavar="LOGGING", help="set logging level", default="INFO"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
