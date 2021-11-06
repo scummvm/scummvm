@@ -31,6 +31,7 @@
 #include "tinsel/dw.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
+#include "tinsel/palette.h"
 #include "tinsel/scn.h"		// for the DW1 Mac resource handler
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
@@ -299,7 +300,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 }
 
 /**
- * Return a font specified by a SCHNHANDLE
+ * Return a font specified by a SCNHANDLE
  * Handles endianess internally
  * @param offset			Handle and offset to data
  * @return FONT structure
@@ -329,6 +330,35 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
 	delete fontStream;
 
 	return font;
+}
+
+/**
+ * Return a palette specified by a SCNHANDLE
+ * Handles endianess internally
+ * @param offset			Handle and offset to data
+ * @return PALETTE structure
+*/
+PALETTE *Handle::GetPalette(SCNHANDLE offset) {
+	byte *palData = LockMem(offset);
+	const bool isBE = TinselV1Mac || TinselV1Saturn;
+	const uint32 size = 4 + 256 * 4;	// numColors + 256 COLORREF (max)
+	Common::MemoryReadStreamEndian *palStream = new Common::MemoryReadStreamEndian(palData, size, isBE);
+
+	PALETTE *pal = new PALETTE();
+
+	pal->numColors = palStream->readSint32();
+	for (int32 i = 0; i < pal->numColors; i++) {
+		pal->palRGB[i] = palStream->readUint32();
+
+		// get the RGB color model values
+		pal->palette[i * 3] = (byte)(pal->palRGB[i] & 0xFF);
+		pal->palette[i * 3 + 1] = (byte)((pal->palRGB[i] >> 8) & 0xFF);
+		pal->palette[i * 3 + 2] = (byte)((pal->palRGB[i] >> 16) & 0xFF);
+	}
+
+	delete palStream;
+
+	return pal;
 }
 
 SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {

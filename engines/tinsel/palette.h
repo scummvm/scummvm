@@ -30,12 +30,7 @@ namespace Tinsel {
 
 typedef	uint32	COLORREF;
 
-#define TINSEL_RGB(r,g,b)	((COLORREF)TO_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
-
-#define TINSEL_GetRValue(rgb)	((uint8)(FROM_32(rgb)))
-#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_32(rgb)))>>8))
-#define TINSEL_GetBValue(rgb)	((uint8)((FROM_32(rgb))>>16))
-
+#define TINSEL_RGB(r,g,b)	((COLORREF)((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16))
 #define TINSEL_PSX_RGB(r,g,b) ((uint16)(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 
 enum {
@@ -65,24 +60,18 @@ enum {
 #define	MAGENTA	(TINSEL_RGB(MAX_INTENSITY, 0, MAX_INTENSITY))
 #define	CYAN	(TINSEL_RGB(0, MAX_INTENSITY, MAX_INTENSITY))
 
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-/** hardware palette structure */
 struct PALETTE {
-	int32 numColors;		///< number of colors in the palette
-	COLORREF palRGB[MAX_COLORS];	///< actual palette colors
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
+	int32 numColors;              ///< number of colors in the palette
+	COLORREF palRGB[MAX_COLORS];  ///< actual palette colors
+	byte palette[MAX_COLORS * 3]; ///< actual palette colors (RGB values)
+};
 
 /** palette queue structure */
 struct PALQ {
 	SCNHANDLE hPal;		///< handle to palette data struct
 	int objCount;		///< number of objects using this palette
 	int posInDAC;		///< palette position in the video DAC
-	int numColors;		///< number of colors in the palette
+	int32 numColors;		///< number of colors in the palette
 	// Discworld 2 fields
 	bool bFading;		// Whether or not fading
 	COLORREF palRGB[MAX_COLORS];	// actual palette colors

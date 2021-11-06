@@ -49,9 +49,12 @@ struct FADE {
  */
 static COLORREF ScaleColor(COLORREF color, uint32 colorMult)	{
 	// apply multiplier to RGB components
-	uint32 red   = ((TINSEL_GetRValue(color) * colorMult) << 8) >> 24;
-	uint32 green = ((TINSEL_GetGValue(color) * colorMult) << 8) >> 24;
-	uint32 blue  = ((TINSEL_GetBValue(color) * colorMult) << 8) >> 24;
+	byte r = (byte)(color & 0xFF);
+	byte g = (byte)((color >> 8) & 0xFF);
+	byte b = (byte)((color >> 16) & 0xFF);
+	uint32 red   = ((r * colorMult) << 8) >> 24;
+	uint32 green = ((g * colorMult) << 8) >> 24;
+	uint32 blue  = ((b * colorMult) << 8) >> 24;
 
 	// return new color
 	return TINSEL_RGB(red, green, blue);
@@ -106,7 +109,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		FadingPalette(pFade->pPalQ, true);
 
 	// get pointer to palette - reduce pointer indirection a bit
-	_ctx->pPalette = (PALETTE *)_vm->_handle->LockMem(pFade->pPalQ->hPal);
+	_ctx->pPalette = _vm->_handle->GetPalette(pFade->pPalQ->hPal);
 
 	for (_ctx->pColMult = pFade->pColorMultTable; *_ctx->pColMult >= 0; _ctx->pColMult++) {
 		// go through all multipliers in table - until a negative entry
@@ -117,10 +120,10 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
 		else
 			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
-				FROM_32(_ctx->pPalette->numColors), (uint32) *_ctx->pColMult);
+				_ctx->pPalette->numColors, (uint32) *_ctx->pColMult);
 
 		// send new palette to video DAC
-		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_32(_ctx->pPalette->numColors), _ctx->fadeRGB);
+		UpdateDACqueue(pFade->pPalQ->posInDAC, _ctx->pPalette->numColors, _ctx->fadeRGB);
 
 		// allow time for video DAC to be updated
 		CORO_SLEEP(1);
@@ -129,6 +132,8 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 	if (TinselV2)
 		// Note that this palette is being faded
 		FadingPalette(pFade->pPalQ, false);
+
+	delete _ctx->pPalette;
 
 	CORO_END_CODE;
 }

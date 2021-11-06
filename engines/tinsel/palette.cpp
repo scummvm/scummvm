@@ -103,7 +103,7 @@ void ResetVarsPalette() {
  * Map PSX palettes to original palette from resource file
  */
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
-	PALETTE *pal = (PALETTE *)_vm->_handle->LockMem(originalPal->hPal);
+	PALETTE *pal = _vm->_handle->GetPalette(originalPal->hPal);
 	bool colorFound = false;
 	uint16 clutEntry = 0;
 
@@ -119,9 +119,13 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 			}
 
 			// Check for correspondent color
-			for (uint i = 0; (i < FROM_32(pal->numColors)) && !colorFound; i++) {
+			for (int32 i = 0; (i < pal->numColors) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
-				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3);
+				uint16 psxEquivalent = TINSEL_PSX_RGB(
+					pal->palette[i * 3] >> 3,
+					pal->palette[i * 3 + 1] >> 3,
+					pal->palette[i * 3 + 2] >> 3
+				);
 
 				if (psxEquivalent == clutEntry) {
 					mapperTable[j] = i + 1; // Add entry in the table for the found color
@@ -130,9 +134,12 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 			}
 			colorFound = false;
 		} else { // The rest of the entries are zeroes
+			delete pal;
 			return;
 		}
 	}
+
+	delete pal;
 }
 
 /**
@@ -147,9 +154,6 @@ void PalettesToVideoDAC() {
 
 	// while Q is not empty
 	while (g_pDAChead != pDACtail) {
-		const PALETTE *pPalette;	// pointer to hardware palette
-		const COLORREF *pColors;	// pointer to list of RGB triples
-
 #ifdef	DEBUG
 		// make sure palette does not overlap
 		assert(pDACtail->destDACindex + pDACtail->numColors <= MAX_COLORS);
@@ -161,24 +165,21 @@ void PalettesToVideoDAC() {
 
 		if (pDACtail->bHandle) {
 			// we are using a palette handle
-
-			// get hardware palette pointer
-			pPalette = (const PALETTE *)_vm->_handle->LockMem(pDACtail->pal.hRGBarray);
-
-			// get RGB pointer
-			pColors = pPalette->palRGB;
+			PALETTE *newPal = _vm->_handle->GetPalette(pDACtail->pal.hRGBarray);
+			memcpy(pal, newPal->palette, pDACtail->numColors * 3);
+			delete newPal;
 		} else if (pDACtail->numColors == 1) {
 			// we are using a single color palette
-			pColors = &pDACtail->pal.singleRGB;
+			pal[0] = (byte)(pDACtail->pal.singleRGB & 0xFF);
+			pal[1] = (byte)((pDACtail->pal.singleRGB >> 8) & 0xFF);
+			pal[2] = (byte)((pDACtail->pal.singleRGB >> 16) & 0xFF);
 		} else {
 			// we are using a palette pointer
-			pColors = pDACtail->pal.pRGBarray;
-		}
-
-		for (int i = 0; i < pDACtail->numColors; ++i) {
-			pal[i * 3 + 0] = TINSEL_GetRValue(pColors[i]);
-			pal[i * 3 + 1] = TINSEL_GetGValue(pColors[i]);
-			pal[i * 3 + 2] = TINSEL_GetBValue(pColors[i]);
+			for (int i = 0; i < pDACtail->numColors; ++i) {
+				pal[i * 3 + 0] = (byte)(pDACtail->pal.pRGBarray[i] & 0xFF);
+				pal[i * 3 + 1] = (byte)((pDACtail->pal.pRGBarray[i] >> 8) & 0xFF);
+				pal[i * 3 + 2] = (byte)((pDACtail->pal.pRGBarray[i] >> 16) & 0xFF);
+			}
 		}
 
 		// Swap black/white colors in the Mac version.
@@ -316,10 +317,6 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 	PALQ *pPrev, *p;		// walks palAllocData
 	int iDAC;		// color index in video DAC
 	PALQ *pNxtPal;		// next PALQ struct in palette allocator
-	PALETTE *pNewPal;
-
-	// get pointer to new palette
-	pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
 
 	// search all structs in palette allocator - see if palette already allocated
 	for (p = g_palAllocData; p < g_palAllocData + NUM_PALETTES; p++) {
@@ -330,6 +327,8 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 		}
 	}
 
+	PALETTE *pal = _vm->_handle->GetPalette(hNewPal);
+
 	// search all structs in palette allocator - find a free slot
 	iDAC = FGND_DAC_INDEX;	// init DAC index to first available foreground color
 
@@ -339,11 +338,11 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 			p->objCount = 1;	// init number of objects using palette
 			p->posInDAC = iDAC;	// set palettes start pos in video DAC
 			p->hPal = hNewPal;	// set hardware palette data
-			p->numColors = FROM_32(pNewPal->numColors);	// set number of colors in palette
+			p->numColors = pal->numColors;	// set number of colors in palette
 
 			if (TinselV2)
 				// Copy all the colors
-				memcpy(p->palRGB, pNewPal->palRGB, p->numColors * sizeof(COLORREF));
+				memcpy(p->palRGB, pal->palRGB, p->numColors * sizeof(COLORREF));
 
 #ifdef DEBUG
 			// one more palette in use
@@ -366,23 +365,20 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 						break;
 
 					// move palette down - indicate change
-					pNxtPal->posInDAC = (pPrev->posInDAC
-						+ pPrev->numColors) | PALETTE_MOVED;
+					pNxtPal->posInDAC = (pPrev->posInDAC + pPrev->numColors) | PALETTE_MOVED;
 
 					// Q the palette change in position to the video DAC
 					if (!TinselV2)
-						UpdateDACqueueHandle(pNxtPal->posInDAC,
-							pNxtPal->numColors,
-							pNxtPal->hPal);
+						UpdateDACqueueHandle(pNxtPal->posInDAC, pNxtPal->numColors, pNxtPal->hPal);
 					else if (!pNxtPal->bFading)
-						UpdateDACqueue(pNxtPal->posInDAC,
-							pNxtPal->numColors,
-							pNxtPal->palRGB);
+						UpdateDACqueue(pNxtPal->posInDAC, pNxtPal->numColors, pNxtPal->palRGB);
 
 					// update previous palette to current palette
 					pPrev = pNxtPal;
 				}
 			}
+
+			delete pal;
 
 			// return palette pointer
 			return p;
@@ -445,30 +441,29 @@ PALQ *FindPalette(SCNHANDLE hSrchPal) {
  * @param hNewPal		New palette
  */
 void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
-	// convert handle to palette pointer
-	PALETTE *pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
+	PALETTE *pal = _vm->_handle->GetPalette(hNewPal);
 
 	// validate palette Q pointer
 	assert(pPalQ >= g_palAllocData && pPalQ <= g_palAllocData + NUM_PALETTES - 1);
 
-	if (pPalQ->numColors >= (int)FROM_32(pNewPal->numColors)) {
+	if (pPalQ->numColors >= pal->numColors) {
 		// new palette will fit the slot
 
 		// install new palette
 		pPalQ->hPal = hNewPal;
 
 		if (TinselV2) {
-			pPalQ->numColors = FROM_32(pNewPal->numColors);
+			pPalQ->numColors = pal->numColors;
 
 			// Copy all the colors
-			memcpy(pPalQ->palRGB, pNewPal->palRGB, FROM_32(pNewPal->numColors) * sizeof(COLORREF));
+			memcpy(pPalQ->palRGB, pal->palRGB, pal->numColors * sizeof(COLORREF));
 
 			if (!pPalQ->bFading)
 				// Q the change to the video DAC
-				UpdateDACqueue(pPalQ->posInDAC, FROM_32(pNewPal->numColors), pPalQ->palRGB);
+				UpdateDACqueue(pPalQ->posInDAC, pal->numColors, pPalQ->palRGB);
 		} else {
 			// Q the change to the video DAC
-			UpdateDACqueueHandle(pPalQ->posInDAC, FROM_32(pNewPal->numColors), hNewPal);
+			UpdateDACqueueHandle(pPalQ->posInDAC, pal->numColors, hNewPal);
 		}
 	} else {
 		// # colors are different - will have to update all following palette entries
@@ -482,8 +477,7 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 				break;
 
 			// move palette down
-			pNxtPalQ->posInDAC = (pPalQ->posInDAC
-				+ pPalQ->numColors) | PALETTE_MOVED;
+			pNxtPalQ->posInDAC = (pPalQ->posInDAC + pPalQ->numColors) | PALETTE_MOVED;
 
 			// Q the palette change in position to the video DAC
 			UpdateDACqueueHandle(pNxtPalQ->posInDAC,
@@ -494,6 +488,8 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 			pPalQ = pNxtPalQ;
 		}
 	}
+
+	delete pal;
 }
 
 /**
@@ -561,18 +557,15 @@ void NoFadingPalettes() {
  * @param hPalette			Handle to current background palette
  */
 void CreateTranslucentPalette(SCNHANDLE hPalette) {
-	// get a pointer to the palette
-	PALETTE *pPal = (PALETTE *)_vm->_handle->LockMem(hPalette);
+	PALETTE *pal = _vm->_handle->GetPalette(hPalette);
 
 	// leave background color alone
 	g_transPalette[0] = 0;
 
-	int32 numColors = FROM_32(pPal->numColors);
-	for (int32 i = 0; i < numColors; i++) {
-		// get the RGB color model values
-		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
-		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
-		uint8 blue  = TINSEL_GetBValue(pPal->palRGB[i]);
+	for (int32 i = 0; i < pal->numColors; i++) {
+		byte red = pal->palette[i * 3];
+		byte green = pal->palette[i * 3 + 1];
+		byte blue = pal->palette[i * 3 + 2];
 
 		// calculate the Value field of the HSV color model
 		unsigned val = (red > green) ? red : green;
@@ -584,26 +577,26 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 		g_transPalette[i + 1] = (uint8)((val == 0) ? blackColorIndex : val +
 			(TinselV2 ? TranslucentColor() : COL_HILIGHT) - 1);
 	}
+
+	delete pal;
 }
 
 /**
  * Returns an adjusted color RGB
  * @param color		Color to scale
  */
-static COLORREF DimColor(COLORREF color, int factor) {
-	uint32 red, green, blue;
-
+static COLORREF DimColor(byte r, byte g, byte b, int factor) {
 	if (factor == 10) {
 		// No change
-		return color;
+		return TINSEL_RGB(r, g, b);
 	} else if (factor == 0) {
 		// No brightness
 		return 0;
 	} else {
 		// apply multiplier to RGB components
-		red   = TINSEL_GetRValue(color) * factor / 10;
-		green = TINSEL_GetGValue(color) * factor / 10;
-		blue  = TINSEL_GetBValue(color) * factor / 10;
+		uint32 red   = r * factor / 10;
+		uint32 green = g * factor / 10;
+		uint32 blue  = b * factor / 10;
 
 		// return new color
 		return TINSEL_RGB(red, green, blue);
@@ -614,15 +607,8 @@ static COLORREF DimColor(COLORREF color, int factor) {
  * DimPartPalette
  */
 void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightness) {
-	PALQ *pPalQ;
-	PALETTE *pDimPal;
-	int iColor;
-
-	pPalQ = FindPalette(hDimPal);
+	PALQ *pPalQ = FindPalette(hDimPal);
 	assert(pPalQ);
-
-	// get pointer to dim palette
-	pDimPal = (PALETTE *)_vm->_handle->LockMem(hDimPal);
 
 	// Adjust for the fact that palettes don't contain color 0
 	startColor -= 1;
@@ -631,9 +617,20 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	if (startColor + length > pPalQ->numColors)
 		error("DimPartPalette(): color overrun");
 
-	for (iColor = startColor; iColor < startColor + length; iColor++) {
-		pPalQ->palRGB[iColor] = DimColor(pDimPal->palRGB[iColor], brightness);
+	// Check if the palette actually contains entries
+	if (length == 0)
+		return;
+
+	PALETTE *pal = _vm->_handle->GetPalette(hDimPal);
+
+	for (int iColor = startColor; iColor < startColor + length; iColor++) {
+		byte r = pal->palette[iColor * 3];
+		byte g = pal->palette[iColor * 3 + 1];
+		byte b = pal->palette[iColor * 3 + 2];
+		pPalQ->palRGB[iColor] = DimColor(r, g, b, brightness);
 	}
+
+	delete pal;
 
 	if (!pPalQ->bFading) {
 		// Q the change to the video DAC
