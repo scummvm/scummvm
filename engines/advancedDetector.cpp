@@ -186,6 +186,16 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 
+	// Now specify the computation method for each file entry.
+	// TODO: This could be potentially overridden by use of upper part of adGame.fileType
+	// so, individual files could have their own computation method
+	for (FilePropertiesMap::iterator file = game.matchedFiles.begin(); file != game.matchedFiles.end(); ++file) {
+		if (desc->flags & ADGF_MACRESFORK)
+			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5MacResFork);
+		if (desc->flags & ADGF_TAILMD5)
+			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5Tail);
+	}
+
 	if (extraInfo && !extraInfo->targetID.empty()) {
 		game.preferredTarget = generatePreferredTarget(desc, _maxAutogenLength, extraInfo->targetID);
 	} else {
