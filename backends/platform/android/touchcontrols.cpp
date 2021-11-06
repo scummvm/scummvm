@@ -135,7 +135,7 @@ void TouchControls::touchToRightState(int dX, int dY, FunctionState &state) {
 		{ 256, 128, 384, 256 }, // u
 		{ 384, 128, 512, 256 }  // l
 	};
-	static const unsigned int offset = (ARRAYSIZE(keycodes) - 1) / 2;
+	static const uint offset = (ARRAYSIZE(keycodes) - 1) / 2;
 
 	int idx = (dX / 100) + offset;
 	if (idx < 0) {
@@ -179,8 +179,8 @@ void TouchControls::init(int width, int height) {
 }
 
 TouchControls::Pointer *TouchControls::getPointerFromId(int ptrId, bool createNotFound) {
-	unsigned int freeEntry = -1;
-	for (unsigned int i = 0; i < kNumPointers; i++) {
+	uint freeEntry = -1;
+	for (uint i = 0; i < kNumPointers; i++) {
 		Pointer &ptr = _pointers[i];
 		if (ptr.active && (ptr.id == ptrId)) {
 			return &ptr;
@@ -202,7 +202,7 @@ TouchControls::Pointer *TouchControls::getPointerFromId(int ptrId, bool createNo
 }
 
 TouchControls::Pointer *TouchControls::findPointerFromFunction(Function function) {
-	for (unsigned int i = 0; i < kNumPointers; i++) {
+	for (uint i = 0; i < kNumPointers; i++) {
 		Pointer &ptr = _pointers[i];
 		if (ptr.active && (ptr.function == function)) {
 			return &ptr;
@@ -212,7 +212,7 @@ TouchControls::Pointer *TouchControls::findPointerFromFunction(Function function
 }
 
 void TouchControls::draw() {
-	for (unsigned int i = 0; i < kFunctionMax+1; i++) {
+	for (uint i = 0; i < kFunctionMax + 1; i++) {
 		FunctionState &state = _functionStates[i];
 		FunctionBehavior behavior = functionBehaviors[i];
 
@@ -305,12 +305,12 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 		functionState.reset();
 		ptr->active = false;
 	} else if (action == JACTION_CANCEL) {
-		for (unsigned int i = 0; i < kNumPointers; i++) {
+		for (uint i = 0; i < kNumPointers; i++) {
 			Pointer &ptr = _pointers[i];
 			ptr.reset();
 		}
 
-		for (unsigned int i = 0; i < kFunctionMax+1; i++) {
+		for (uint i = 0; i < kFunctionMax + 1; i++) {
 			FunctionBehavior &behavior = functionBehaviors[i];
 			FunctionState &functionState = _functionStates[i];
 
