@@ -63,12 +63,13 @@ TouchControls::~TouchControls() {
 TouchControls::Function TouchControls::getFunction(int x, int y) {
 	float xPercent = float(x) / _screen_width;
 
-	if (xPercent < 0.3)
+	if (xPercent < 0.3) {
 		return kFunctionJoystick;
-	else if (xPercent < 0.8)
+	} else if (xPercent < 0.8) {
 		return kFunctionCenter;
-	else
+	} else {
 		return kFunctionRight;
+	}
 }
 
 void TouchControls::touchToJoystickState(int dX, int dY, FunctionState &state) {
@@ -107,8 +108,9 @@ void TouchControls::touchToCenterState(int dX, int dY, FunctionState &state) {
 }
 
 void TouchControls::touchToRightState(int dX, int dY, FunctionState &state) {
-	if (dX * dX + dY * dY < 100 * 100)
+	if (dX * dX + dY * dY < 100 * 100) {
 		return;
+	}
 
 	if (dY > abs(dX)) {
 		// down
@@ -148,7 +150,8 @@ void TouchControls::touchToRightState(int dX, int dY, FunctionState &state) {
 	state.clip = Common::Rect(clips[idx][0], clips[idx][1], clips[idx][2], clips[idx][3]);
 }
 
-TouchControls::FunctionBehavior TouchControls::functionBehaviors[TouchControls::kFunctionMax+1] = {
+TouchControls::FunctionBehavior TouchControls::functionBehaviors[TouchControls::kFunctionMax + 1] =
+{
 	{ touchToJoystickState, false, .2f, .5f },
 	{ touchToCenterState,   true,  .5f, .5f },
 	{ touchToRightState,    true,  .8f, .5f }
@@ -219,7 +222,8 @@ void TouchControls::draw() {
 		if (state.clip.isEmpty()) {
 			continue;
 		}
-		_arrows_texture->drawTexture(_screen_width * behavior.xRatio, _screen_height * behavior.yRatio, 64, 64, state.clip);
+		_arrows_texture->drawTexture(_screen_width * behavior.xRatio, _screen_height * behavior.yRatio,
+		                             64, 64, state.clip);
 
 	}
 }

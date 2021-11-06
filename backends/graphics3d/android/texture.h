@@ -42,7 +42,7 @@ public:
 
 protected:
 	GLESBaseTexture(GLenum glFormat, GLenum glType,
-					Graphics::PixelFormat pixelFormat);
+	                Graphics::PixelFormat pixelFormat);
 
 public:
 	virtual ~GLESBaseTexture();
@@ -56,7 +56,7 @@ public:
 	virtual void allocBuffer(GLuint w, GLuint h);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch_buf) = 0;
+	                          const void *buf, int pitch_buf) = 0;
 	virtual void fillBuffer(uint32 color) = 0;
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
@@ -83,11 +83,11 @@ public:
 
 	inline void drawTextureRect() {
 		drawTexture(_draw_rect.left, _draw_rect.top,
-					_draw_rect.width(), _draw_rect.height());
+		            _draw_rect.width(), _draw_rect.height());
 	}
 
 	inline void drawTextureOrigin() {
-			drawTexture(0, 0, _surface.w, _surface.h);
+		drawTexture(0, 0, _surface.w, _surface.h);
 	}
 
 	inline GLuint width() const {
@@ -166,12 +166,13 @@ protected:
 		_dirty_rect.right = 0;
 	}
 
-	inline void setDirtyRect(const Common::Rect& r) {
+	inline void setDirtyRect(const Common::Rect &r) {
 		if (!_all_dirty) {
-			if (_dirty_rect.isEmpty())
+			if (_dirty_rect.isEmpty()) {
 				_dirty_rect = r;
-			else
+			} else {
 				_dirty_rect.extend(r);
+			}
 		}
 	}
 
@@ -203,7 +204,7 @@ protected:
 class GLESTexture : public GLESBaseTexture {
 protected:
 	GLESTexture(GLenum glFormat, GLenum glType,
-				Graphics::PixelFormat pixelFormat);
+	            Graphics::PixelFormat pixelFormat);
 
 public:
 	virtual ~GLESTexture();
@@ -211,7 +212,7 @@ public:
 	virtual void allocBuffer(GLuint w, GLuint h);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch_buf);
+	                          const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
@@ -270,14 +271,14 @@ public:
 class GLESFakePaletteTexture : public GLESBaseTexture {
 protected:
 	GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
-							Graphics::PixelFormat pixelFormat);
+	                       Graphics::PixelFormat pixelFormat);
 
 public:
 	virtual ~GLESFakePaletteTexture();
 
 	virtual void allocBuffer(GLuint w, GLuint h);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch_buf);
+	                          const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {

@@ -57,8 +57,15 @@ private:
 	Function getFunction(int x, int y);
 
 	struct Pointer {
-		Pointer() : id(-1), startX(-1), startY(-1), currentX(-1), currentY(-1), function(kFunctionNone), active(false) {}
-		void reset() { id = -1; startX = startY = currentX = currentY = -1; function = kFunctionNone; active = false; }
+		Pointer() : id(-1), startX(-1), startY(-1),
+			currentX(-1), currentY(-1),
+			function(kFunctionNone), active(false) {}
+		void reset() {
+			id = -1;
+			startX = startY = currentX = currentY = -1;
+			function = kFunctionNone;
+			active = false;
+		}
 
 		int id;
 		uint16 startX, startY;
@@ -74,8 +81,13 @@ private:
 	Pointer *findPointerFromFunction(Function function);
 
 	struct FunctionState {
-		FunctionState() : main(Common::KEYCODE_INVALID), modifier(Common::KEYCODE_INVALID) { }
-		void reset() { main = Common::KEYCODE_INVALID; modifier = Common::KEYCODE_INVALID; clip = Common::Rect(); }
+		FunctionState() : main(Common::KEYCODE_INVALID),
+			modifier(Common::KEYCODE_INVALID) {}
+		void reset() {
+			main = Common::KEYCODE_INVALID;
+			modifier = Common::KEYCODE_INVALID;
+			clip = Common::Rect();
+		}
 
 		Common::KeyCode main;
 		Common::KeyCode modifier;
@@ -96,7 +108,7 @@ private:
 		float xRatio;
 		float yRatio;
 	};
-	static FunctionBehavior functionBehaviors[TouchControls::kFunctionMax+1];
+	static FunctionBehavior functionBehaviors[TouchControls::kFunctionMax + 1];
 
 	static void touchToJoystickState(int dX, int dY, FunctionState &state);
 	static void touchToCenterState(int dX, int dY, FunctionState &state);
