@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-06 16:14+0000\n"
-"PO-Revision-Date: 2021-11-05 18:44+0000\n"
+"PO-Revision-Date: 2021-11-06 16:35+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1990,7 +1990,7 @@ msgstr "Navn: "
 #: gui/saveload-dialog.cpp:1207
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Skriv inn en beskrivelse for lagringsspsor %d:"
+msgstr "Skriv inn en beskrivelse for lagringsspor %d:"
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -5800,7 +5800,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Kan ikke lagre spillet i lagringsspore %i\n"
+"Kan ikke lagre spillet i lagringsspor %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -6869,6 +6869,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Kopier filen(e) til mappen for spillets data.\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:69
 msgid "Pixellated scene transitions"
@@ -6906,6 +6909,8 @@ msgstr "Hopp over linje"
 #: engines/sherlock/detection.cpp:100
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Animert visningen av nye grensesnittdialoger, som et alternativ til at de "
+"bare brått dukker opp."
 
 #: engines/sherlock/detection.cpp:109
 msgid "Transparent windows"
@@ -6917,7 +6922,7 @@ msgstr "Vis vinduer med en delvis gjennomsiktig bakgrunn"
 
 #: engines/sky/compact.cpp:142
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Spillmotordatafilen \"sky.cpt\" har en ugyldig størrelse."
 
 #: engines/sky/detection.cpp:37
 msgid "Floppy intro"
@@ -6929,7 +6934,7 @@ msgstr "Bruk diskettversjonens intro (Kun for CD-versjon)"
 
 #: engines/sky/metaengine.cpp:80
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "Gå / Se / Snakk"
 
 #: engines/sky/metaengine.cpp:98
 #, fuzzy
@@ -6938,7 +6943,7 @@ msgstr "Hopp over linje"
 
 #: engines/sky/metaengine.cpp:106
 msgid "Open control panel"
-msgstr ""
+msgstr "Åpne kontrollpanel"
 
 #: engines/sky/metaengine.cpp:122
 #, fuzzy
@@ -6953,8 +6958,8 @@ msgstr "Kjør i virkelig rask modus (*)"
 #: engines/sky/metaengine.cpp:197
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
-"ADVARSEL: Sletting av lagringssporet for automatisk lagring støttes ikke av "
-"denne motoren"
+"ADVARSEL: Sletting av lagringssporet for autolagring støttes ikke av denne "
+"spillmotoren"
 
 #: engines/stark/detection.cpp:376
 msgid "Load modded assets"
@@ -6962,7 +6967,7 @@ msgstr "Last inn modifiserte ressurser"
 
 #: engines/stark/detection.cpp:377
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Aktiver innlasting av eksterne erstatningsressurser."
 
 #: engines/stark/detection.cpp:385
 msgid "Enable linear filtering of the backgrounds images"
@@ -7528,7 +7533,8 @@ msgstr "Kunne ikke finne spillmotordata %s"
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Utdatert motordata. Forventet versjonen %d.%d, men versjon %d.%d ble funnet"
+"Utdatert spillmotordata. Forventet versjonen %d.%d, men versjon %d.%d ble "
+"funnet"
 
 #: engines/ultima/nuvie/nuvie.cpp:388
 #, c-format
