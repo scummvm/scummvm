@@ -70,23 +70,23 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	Hotspot q(MakeMenu, "");
 	Action *a = new Quit();
 	q.actions.push_back(a);
-	Level quit;
+	Scene *quit = new Scene();
 	Hotspots hs;
 	hs.push_back(q);
-	quit.scene.hots = hs;
+	quit->hots = hs;
 	_levels["<quit>"] = quit;
 }
 
 HypnoEngine::~HypnoEngine() {
 	// Deallocate actions
-	for (Levels::iterator it = _levels.begin(); it != _levels.end(); ++it) {
-		Level level = (*it)._value;
-		for (Hotspots::iterator itt = level.scene.hots.begin(); itt != level.scene.hots.end(); ++itt) {
-			Hotspot hot = *itt;
-			for (Actions::iterator ittt = hot.actions.begin(); ittt != hot.actions.end(); ++ittt)
-				delete (*ittt);
-		}
-	}
+	// for (Levels::iterator it = _levels.begin(); it != _levels.end(); ++it) {
+	// 	Level level = (*it)._value;
+	// 	for (Hotspots::iterator itt = level.scene.hots.begin(); itt != level.scene.hots.end(); ++itt) {
+	// 		Hotspot hot = *itt;
+	// 		for (Actions::iterator ittt = hot.actions.begin(); ittt != hot.actions.end(); ++ittt)
+	// 			delete (*ittt);
+	// 	}
+	// }
 
 	delete _rnd;
 	_compositeSurface->free();
@@ -151,43 +151,37 @@ Common::Error HypnoEngine::run() {
 void HypnoEngine::runLevel(Common::String &name) {
 	if (!_levels.contains(name))
 		error("Level %s cannot be found", name.c_str());
+
+	_prefixDir = _levels[name]->prefix;
 	stopSound();
 	_music.clear();
 
+	// Play intros
 	disableCursor();
+	for (Filenames::iterator it = _levels[name]->intros.begin(); it != _levels[name]->intros.end(); ++it) {
+		MVideo v(*it, Common::Point(0, 0), false, true, false);
+		runIntro(v);
+	}
 
-	if (!_levels[name].trans.level.empty()) {
+	if (_levels[name]->type == TransitionLevel) {
 		debugC(1, kHypnoDebugScene, "Executing transition level %s", name.c_str());
-		runTransition(_levels[name].trans);
-
-	} else if (!_levels[name].arcade.background.empty()) {
+		runTransition((Transition *) _levels[name]);
+	} else if (_levels[name]->type == ArcadeLevel) {
 		debugC(1, kHypnoDebugArcade, "Executing arcade level %s", name.c_str());
-		_prefixDir = _levels[name].arcade.prefix;
-		if (!_levels[name].arcade.intro.empty()) {
-			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
-			runIntro(v);
-		}
 		changeScreenMode("320x200");
-		runArcade(_levels[name].arcade);
-	} else if (!_levels[name].code.name.empty()) {
+		runArcade((ArcadeShooting *) _levels[name]);
+	} else if (_levels[name]->type == CodeLevel) {
 		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());
 		//resetSceneState(); // TODO: is this required?
-		if (!_levels[name].arcade.intro.empty()) {
-			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
-			runIntro(v);
-		}
 		// Resolution depends on the game
-		runCode(_levels[name].code);
-	} else {
+		runCode((Code *) _levels[name]);
+	} else if (_levels[name]->type == SceneLevel) {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s", name.c_str());
 		resetSceneState();
-		_prefixDir = _levels[name].scene.prefix;
-		if (!_levels[name].scene.intro.empty()) {
-			MVideo v(_levels[name].scene.intro, Common::Point(0, 0), false, true, false);
-			runIntro(v);
-		}
 		changeScreenMode("640x480");
-		runScene(_levels[name].scene);
+		runScene((Scene *) _levels[name]);
+	} else {
+		error("Invalid level %s", name.c_str());
 	}
 }
 
@@ -226,7 +220,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
-void HypnoEngine::runCode(Code &code) { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, int frameNumber) {

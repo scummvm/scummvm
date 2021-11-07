@@ -83,8 +83,12 @@ public:
 	void resetSceneState();
 	bool checkSceneCompleted();
 	void runLevel(Common::String &name);
-	void runScene(Scene &scene);
-	void runArcade(ArcadeShooting &arc);
+	void runScene(Scene *scene);
+	void runArcade(ArcadeShooting *arc);
+	// For some menus and hardcoded puzzles
+	virtual void runCode(Code *code);
+	// Level transitions
+	void runTransition(Transition *trans);
 
 	void restartGame();
 	void clearAreas();
@@ -217,12 +221,6 @@ public:
 	virtual void rightClickedConversation(const Common::Point &mousePos);
 	virtual void leftClickedConversation(const Common::Point &mousePos);
 
-	// For some menus and hardcoded puzzles
-	virtual void runCode(Code &code);
-
-	// Transitions
-	void runTransition(Transition trans);
-
 	// Credits
 	virtual void showCredits();
 
@@ -252,10 +250,10 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
-	void runCode(Code &code) override;
+	void runCode(Code *code) override;
 
 private:
-	void runMainMenu(Code &code);
+	void runMainMenu(Code *code);
 };
 
 class SpiderEngine : public HypnoEngine {
@@ -268,14 +266,14 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
-	void runCode(Code &code) override;
+	void runCode(Code *code) override;
 
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
 
 private:
-	void runMatrix(Code &code);
+	void runMatrix(Code *code);
 };
 
 class BoyzEngine : public HypnoEngine {

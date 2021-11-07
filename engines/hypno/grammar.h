@@ -304,34 +304,37 @@ public:
 typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::Array<Common::String> Sounds;
 
-class Transition {
-public:
-	Common::String level;
-	Filename frameImage;
-	uint32 frameNumber;
-	Filenames intros;
+enum LevelType {
+	TransitionLevel,
+	SceneLevel,
+	ArcadeLevel,
+	CodeLevel
 };
 
-class Code {
+class Level {
 public:
-	Common::String name;
+	virtual ~Level() {} // needed to make Level polymorphic
+	LevelType type;
 	Filenames intros;
-	Common::String levelIfWin;
-	Common::String levelIfLose;
+	Filename prefix;
+	Filename levelIfWin;
+	Filename levelIfLose;
+	Filename music;
 };
 
-class Scene {
+class Scene : public Level {
 public:
-	Filename intro;
-	Common::String prefix;
+	Scene()  {
+		type = SceneLevel;
+	}
 	Hotspots hots;
-	Filename sound;
-	Common::String levelIfWin;
-	Common::String levelIfLose;
 };
 
-class ArcadeShooting {
+class ArcadeShooting : public Level {
 public:
+	ArcadeShooting()  {
+		type = ArcadeLevel;
+	}
 	uint32 id;
 	Common::String mode;
 	Common::String levelIfWin;
@@ -340,8 +343,6 @@ public:
 	uint32 transitionTime;
 	Filenames defeatVideos;
 	Filenames winVideos;
-	Filename intro;
-	Filename prefix;
 	Filename background;
 	Filename player;
 	int health;
@@ -350,18 +351,27 @@ public:
 	Filename shootSound;
 	Filename enemySound;
 	Filename hitSound;
-	Filename music;
 };
 
-class Level {
+class Transition : public Level {
 public:
-	Transition trans;
-	Scene scene;
-	ArcadeShooting arcade;
-	Code code;
+	Transition()  {
+		type = TransitionLevel;
+	}
+	Common::String level;
+	Filename frameImage;
+	uint32 frameNumber;
 };
 
-typedef Common::HashMap<Filename, Level> Levels;
+class Code : public Level {
+public:
+	Code()  {
+		type = CodeLevel;
+	}
+	Common::String name;
+};
+
+typedef Common::HashMap<Filename, Level*> Levels;
 extern Hotspots *g_parsedHots;
 extern ArcadeShooting *g_parsedArc;
 

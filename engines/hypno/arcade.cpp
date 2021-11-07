@@ -55,10 +55,9 @@ void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String
 void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s/%s", prefix.c_str(), filename.c_str());
 	parse_arc(data.c_str());
-	Level level;
-	level.arcade = *g_parsedArc;
-	level.arcade.prefix = prefix;
-	_levels[filename] = level;
+	ArcadeShooting *arcade = new ArcadeShooting();
+	*arcade = *g_parsedArc; 
+	_levels[filename] = (Level*) arcade;
 	g_parsedArc->background.clear();
 	g_parsedArc->player.clear();
 	g_parsedArc->shoots.clear();
@@ -95,11 +94,11 @@ void HypnoEngine::loadArcadeLevel(const Common::String &current, const Common::S
 	Common::String arc;
 	Common::String list;
 	splitArcadeFile(arclevel, arc, list);
-	debug("%s", arc.c_str());
+	debugC(1, kHypnoDebugParser, "%s", arc.c_str());
 	parseArcadeShooting("", arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-	_levels[arclevel].arcade.prefix = prefix;
-	_levels[arclevel].arcade.levelIfWin = next + _difficulty + ".mi_";;
+	ArcadeShooting *arcade = (ArcadeShooting *) _levels[arclevel]; 
+	arcade->shootSequence = parseShootList(arclevel, list);
+	arcade->prefix = prefix.c_str();
 }
 
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -112,21 +111,21 @@ void HypnoEngine::hitPlayer() {
 		_playerFrameIdx = _playerFrameSep;
 }
 
-void HypnoEngine::runArcade(ArcadeShooting &arc) {
-	_arcadeMode = arc.mode;
+void HypnoEngine::runArcade(ArcadeShooting *arc) {
+	_arcadeMode = arc->mode;
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
-	ShootSequence shootSequence = arc.shootSequence;
+	ShootSequence shootSequence = arc->shootSequence;
 
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	_levelId = arc.id;
-	_shootSound = arc.shootSound;
+	_levelId = arc->id;
+	_shootSound = arc->shootSound;
 	_score = 0;
-	_health = arc.health;
+	_health = arc->health;
 	_maxHealth = _health;
 	_defaultCursor = "arcade";
 	_shoots.clear();
-	_playerFrames = decodeFrames(arc.player);
+	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
 	_playerPosition = 0;
 
@@ -140,14 +139,14 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 	}
 
 	if (_playerFrameSep == (int)_playerFrames.size()) {
-		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc.player.c_str(), _playerFrames.size());
+		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
 		//_playerFrameSep = -1;
 	} else 
 		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
 	_playerFrameIdx = -1;
 
-	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);
+	MVideo background = MVideo(arc->background, Common::Point(0, 0), false, false, false);
 
 	changeCursor("arcade");
 	playVideo(background);
@@ -214,30 +213,30 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 
 		if (_health <= 0) {
 			skipVideo(background);
-			if (!arc.defeatVideos.empty()) {
-				MVideo video(arc.defeatVideos.front(), Common::Point(0, 0), false, false, false);
+			if (!arc->defeatVideos.empty()) {
+				MVideo video(arc->defeatVideos.front(), Common::Point(0, 0), false, false, false);
 				runIntro(video);
 			}
-			_nextLevel = arc.levelIfLose;
+			_nextLevel = arc->levelIfLose;
 			debugC(1, kHypnoDebugArcade, "Losing level and jumping to %s", _nextLevel.c_str());
 			break;
 		}
 
-		if (!arc.transitionVideo.empty() && background.decoder->getCurFrame() >= (int)arc.transitionTime) {
-			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc.transitionVideo.c_str());
-			arc.transitionTime = background.decoder->getFrameCount() + 1;
-			MVideo video(arc.transitionVideo, Common::Point(0, 0), false, false, false);
+		if (!arc->transitionVideo.empty() && background.decoder->getCurFrame() >= (int)arc->transitionTime) {
+			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc->transitionVideo.c_str());
+			arc->transitionTime = background.decoder->getFrameCount() + 1;
+			MVideo video(arc->transitionVideo, Common::Point(0, 0), false, false, false);
 			runIntro(video);
 			skipVideo(background);
 		}
 
 		if (!background.decoder || background.decoder->endOfVideo()) {
 			skipVideo(background);
-			if (!arc.winVideos.empty()) {
-				MVideo video(arc.winVideos.front(), Common::Point(0, 0), false, false, false);
+			if (!arc->winVideos.empty()) {
+				MVideo video(arc->winVideos.front(), Common::Point(0, 0), false, false, false);
 				runIntro(video);
 			}
-			_nextLevel = arc.levelIfWin;
+			_nextLevel = arc->levelIfWin;
 			debugC(1, kHypnoDebugArcade, "Wining level and jumping to %s", _nextLevel.c_str());
 			break;
 		}
@@ -246,13 +245,13 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 			ShootInfo si = shootSequence.front();
 			if ((int)si.timestamp <= background.decoder->getCurFrame()) {
 				shootSequence.pop_front();
-				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
+				for (Shoots::iterator it = arc->shoots.begin(); it != arc->shoots.end(); ++it) {
 					if (it->name == si.name && it->animation != "NONE") {
 						Shoot s = *it;
 						s.video = new MVideo(it->animation, it->position, true, false, false);
 						playVideo(*s.video);
 						_shoots.push_back(s);
-						playSound(_soundPath + arc.enemySound, 1);
+						playSound(_soundPath + arc->enemySound, 1);
 					}
 				}
 			}
@@ -289,8 +288,8 @@ void HypnoEngine::runArcade(ArcadeShooting &arc) {
 		}
 
 		if (_music.empty()) {
-			_music = _soundPath + arc.music;
-			playSound(_music, 1);
+			_music = _soundPath + arc->music;
+			playSound(_music, 0); // music loop forever
 		}
 
 		if (needsUpdate) {

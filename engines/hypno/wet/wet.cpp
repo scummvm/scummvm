@@ -69,7 +69,6 @@ void WetEngine::loadAssetsDemoDisc() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Level start;
 	Hotspot h(MakeMenu, "");
 	Hotspots hs;
 	Ambient *a = new Ambient("movie/selector.smk", Common::Point(0, 0), "/LOOP");
@@ -101,46 +100,47 @@ void WetEngine::loadAssetsDemoDisc() {
 
 	hs.push_back(h);
 
-	start.scene.hots = hs;
+	Scene *start = new Scene();
+	start->hots = hs;
 	_levels["<start>"] = start;
 
-	Level intro;
-	intro.trans.level = "c52.mi_";
-	intro.trans.intros.push_back("movie/nw_logo.smk");
-	intro.trans.intros.push_back("movie/hypnotix.smk");
-	intro.trans.intros.push_back("movie/wetlogo.smk");
-	intro.trans.frameImage = "wetlands/c_misc/c.s";
-	intro.trans.frameNumber = 0;
+	Transition *intro = new Transition();
+	intro->level = "c31.mi_";
+	intro->intros.push_back("movie/nw_logo.smk");
+	intro->intros.push_back("movie/hypnotix.smk");
+	intro->intros.push_back("movie/wetlogo.smk");
+	intro->frameImage = "wetlands/c_misc/c.s";
+	intro->frameNumber = 0;
 	_levels["<intro>"] = intro;
 
-	Level movies;
-	movies.trans.level = "<quit>";
-	movies.trans.intros.push_back("movie/nw_logo.smk");
-	movies.trans.intros.push_back("movie/hypnotix.smk");
-	movies.trans.intros.push_back("movie/wetlogo.smk");
-	movies.trans.intros.push_back("movie/c42e1s.smk");
-	movies.trans.intros.push_back("movie/c23e1s.smk");
-	movies.trans.intros.push_back("movie/c20o1s.smk");
-	movies.trans.intros.push_back("movie/c23d1s.smk");
-	movies.trans.intros.push_back("movie/c40o1s.smk");
-	movies.trans.intros.push_back("movie/c31d1s.smk");
-	movies.trans.intros.push_back("movie/c42d1s.smk");
-	movies.trans.intros.push_back("movie/c44d1s.smk");
-	movies.trans.intros.push_back("movie/c44e1s.smk");
-	movies.trans.intros.push_back("movie/c32d1s.smk");
-	movies.trans.intros.push_back("movie/c22e1s.smk");
-	movies.trans.intros.push_back("movie/c31e1s.smk");
-	movies.trans.intros.push_back("movie/gameover.smk");
-	movies.trans.frameImage = "";
-	movies.trans.frameNumber = 0;
+	Transition *movies = new Transition();
+	movies->level = "<quit>";
+	movies->intros.push_back("movie/nw_logo.smk");
+	movies->intros.push_back("movie/hypnotix.smk");
+	movies->intros.push_back("movie/wetlogo.smk");
+	movies->intros.push_back("movie/c42e1s.smk");
+	movies->intros.push_back("movie/c23e1s.smk");
+	movies->intros.push_back("movie/c20o1s.smk");
+	movies->intros.push_back("movie/c23d1s.smk");
+	movies->intros.push_back("movie/c40o1s.smk");
+	movies->intros.push_back("movie/c31d1s.smk");
+	movies->intros.push_back("movie/c42d1s.smk");
+	movies->intros.push_back("movie/c44d1s.smk");
+	movies->intros.push_back("movie/c44e1s.smk");
+	movies->intros.push_back("movie/c32d1s.smk");
+	movies->intros.push_back("movie/c22e1s.smk");
+	movies->intros.push_back("movie/c31e1s.smk");
+	movies->intros.push_back("movie/gameover.smk");
+	movies->frameImage = "";
+	movies->frameNumber = 0;
 	_levels["<movies>"] = movies;
 
 	loadArcadeLevel("c31", "c52", "wetlands");
 	loadArcadeLevel("c52", "<gameover>", "wetlands");
 
-	Level over;
-	over.trans.level = "<quit>";
-	over.trans.intros.push_back("movie/gameover.smk");
+	Transition *over = new Transition();
+	over->level = "<quit>";
+	over->intros.push_back("movie/gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "wetlands/c_misc/fonts.lib", true);
@@ -154,19 +154,19 @@ void WetEngine::loadAssetsPCW() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Level intro;
-	intro.trans.level = "c11.mis";
-	intro.trans.intros.push_back("c_misc/nw_logo.smk");
-	intro.trans.intros.push_back("c_misc/h.s");
-	intro.trans.intros.push_back("c_misc/wet.smk");
-	intro.trans.frameImage.clear();
+	Transition *intro = new Transition();
+	intro->level = "c11.mis";
+	intro->intros.push_back("c_misc/nw_logo.smk");
+	intro->intros.push_back("c_misc/h.s");
+	intro->intros.push_back("c_misc/wet.smk");
+	intro->frameImage.clear();
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c11", "<gameover>", "");
 
-	Level over;
-	over.trans.level = "<quit>";
-	over.trans.intros.push_back("movie/gameover.smk");
+	Transition *over = new Transition();
+	over->level = "<quit>";
+	over->intros.push_back("movie/gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "c_misc/sound.lib", false);
@@ -179,19 +179,19 @@ void WetEngine::loadAssetsPCG() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Level intro;
-	intro.trans.level = "c31.mi_";	
-	intro.trans.intros.push_back("nw_logo.smk");
-	intro.trans.intros.push_back("h.s");
-	intro.trans.intros.push_back("wet.smk");
-	intro.trans.frameImage.clear();
+	Transition *intro = new Transition();
+	intro->level = "c31.mi_";	
+	intro->intros.push_back("nw_logo.smk");
+	intro->intros.push_back("h.s");
+	intro->intros.push_back("wet.smk");
+	intro->frameImage.clear();
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c31", "<gameover>", "");
 
-	Level over;
-	over.trans.level = "<quit>";
-	over.trans.intros.push_back("gameover.smk");
+	Transition *over = new Transition();
+	over->level = "<quit>";
+	over->intros.push_back("gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "sound.lib", false);
@@ -203,22 +203,22 @@ void WetEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Level logos;
-	logos.trans.level = "wetlands/main_menu.mis"; //"c11" + _difficulty + ".mi_";
-	logos.trans.intros.push_back("c_misc/logo.smk");
-	logos.trans.intros.push_back("c_misc/nw_logo.smk");
-	logos.trans.intros.push_back("c_misc/hypnotix.smk");
-	logos.trans.intros.push_back("c_misc/wetlogo.smk");
+	Transition *logos = new Transition();
+	logos->level = "wetlands/main_menu.mis"; //"c11" + _difficulty + ".mi_";
+	logos->intros.push_back("c_misc/logo.smk");
+	logos->intros.push_back("c_misc/nw_logo.smk");
+	logos->intros.push_back("c_misc/hypnotix.smk");
+	logos->intros.push_back("c_misc/wetlogo.smk");
 	_levels["<start>"] = logos;
 
-	Level menu;
-	menu.code.name = "wetlands/main_menu.mis";
+	Code *menu = new Code();
+	menu->name = "wetlands/main_menu.mis";
 	_levels["wetlands/main_menu.mis"] = menu;
-	_levels["wetlands/main_menu.mis"].code.levelIfWin = "<intro>";
+	_levels["wetlands/main_menu.mis"]->levelIfWin = "<intro>";
 
-	Level intro;
-	intro.trans.level = "c11" + _difficulty + ".mi_";
-	intro.trans.intros.push_back("c_misc/intros.smk");
+	Transition *intro = new Transition();
+	intro->level = "c11" + _difficulty + ".mi_";
+	intro->intros.push_back("c_misc/intros.smk");
 	_levels["<intro>"] = intro;
 
 	//loadLevel("c10", "c11", "");
@@ -234,15 +234,15 @@ void WetEngine::showCredits() {
 	runIntro(video);
 }
 
-void WetEngine::runCode(Code &code) {
+void WetEngine::runCode(Code *code) {
 	changeScreenMode("320x200");
-	if (code.name == "wetlands/main_menu.mis")
+	if (code->name == "wetlands/main_menu.mis")
 		runMainMenu(code);
 	else
-		error("invalid hardcoded level: %s", code.name.c_str());
+		error("invalid hardcoded level: %s", code->name.c_str());
 }
 
-void WetEngine::runMainMenu(Code &code) {
+void WetEngine::runMainMenu(Code *code) {
 	Common::Event event;
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	uint32 c = _pixelFormat.RGBToColor(0, 252, 0);
@@ -264,7 +264,7 @@ void WetEngine::runMainMenu(Code &code) {
 				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
-					_nextLevel = code.levelIfWin;
+					_nextLevel = code->levelIfWin;
 					return;
 				}
 				else if (Common::isAlnum(event.kbd.keycode)) {

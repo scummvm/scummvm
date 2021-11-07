@@ -61,12 +61,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("combmenu.mi_", "", prefix);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
-	_levels["mv0t.mi_"].scene.intro = "cine/ints001s.smk";
+	_levels["mv0t.mi_"]->intros.push_back("cine/ints001s.smk");
 
 	loadSceneLevel("roof.mi_", "decide1.mi_", prefix);
-
 	loadSceneLevel("decide1.mi_", "", prefix);
-	// _levels["decide1.mi_"].scene.prefix = "spider";
 
 	loadArcadeLevel("c1", "", "spider");
 	loadArcadeLevel("c2", "", "spider");
@@ -78,41 +76,46 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c9", "", "spider");
 
 	// start level
-	Level start;
-	start.trans.level = "mainmenu.mi_";
-	start.trans.intros.push_back("spider/cine/dcine1.smk");
-	start.trans.intros.push_back("spider/cine/dcine2.smk");
+	Transition *start = new Transition();
+	start->level = "mainmenu.mi_";
+	start->intros.push_back("spider/cine/dcine1.smk");
+	start->intros.push_back("spider/cine/dcine2.smk");
 	_levels["<start>"] = start;
 
+	Scene *sc = (Scene *) _levels["mainmenu.mi_"];
 	ChangeLevel *cl = new ChangeLevel("levels.mi_");
-	_levels["mainmenu.mi_"].scene.hots[1].actions.push_back(cl);
+	sc->hots[1].actions.push_back(cl);
 	
 	cl = new ChangeLevel("options.mi_");
-	_levels["mainmenu.mi_"].scene.hots[4].actions.push_back(cl);
+	sc->hots[4].actions.push_back(cl);
 
 	cl = new ChangeLevel("<quit>");
-	_levels["mainmenu.mi_"].scene.hots[5].actions.push_back(cl);
+	sc->hots[5].actions.push_back(cl);
+
+	sc = (Scene *) _levels["options.mi_"]; 
 
 	cl = new ChangeLevel("combmenu.mi_");
-	_levels["options.mi_"].scene.hots[1].actions.push_back(cl);
+	sc->hots[1].actions.push_back(cl);
+
+	sc = (Scene *) _levels["combmenu.mi_"]; 
 
 	cl = new ChangeLevel("options.mi_");
-	_levels["combmenu.mi_"].scene.hots[1].actions.push_back(cl);
+	sc->hots[1].actions.push_back(cl);
 
 	cl = new ChangeLevel("c1.mi_");
-	_levels["combmenu.mi_"].scene.hots[2].actions.push_back(cl);
+	sc->hots[2].actions.push_back(cl);
 
 	cl = new ChangeLevel("c2.mi_");
-	_levels["combmenu.mi_"].scene.hots[3].actions.push_back(cl);
+	sc->hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel("c5.mi_");
-	_levels["combmenu.mi_"].scene.hots[6].actions.push_back(cl);
+	sc->hots[6].actions.push_back(cl);
 
 	cl = new ChangeLevel("c8.mi_");
-	_levels["combmenu.mi_"].scene.hots[7].actions.push_back(cl);
+	sc->hots[7].actions.push_back(cl);
 	
 	cl = new ChangeLevel("c9.mi_");
-	_levels["combmenu.mi_"].scene.hots[8].actions.push_back(cl);
+	sc->hots[8].actions.push_back(cl);
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -128,10 +131,10 @@ void SpiderEngine::loadAssetsDemo() {
 		error("Failed to load any file from missions.lib");
 
 	// start level
-	Level start;
-	start.trans.level = "sixdemo/mis/demo.mis";
-	start.trans.intros.push_back("sixdemo/demo/dcine1.smk");
-	start.trans.intros.push_back("sixdemo/demo/dcine2.smk");
+	Transition *start = new Transition();
+	start->level = "sixdemo/mis/demo.mis";
+	start->intros.push_back("sixdemo/demo/dcine1.smk");
+	start->intros.push_back("sixdemo/demo/dcine2.smk");
 	_levels["<start>"] = start;
 
 	loadArcadeLevel("c1", "sixdemo/mis/demo.mis", "sixdemo");
@@ -143,50 +146,55 @@ void SpiderEngine::loadAssetsDemo() {
 	// Read assets from mis files
 	loadSceneLevel("sixdemo/mis/demo.mis", "", "sixdemo");
 	ChangeLevel *cl = new ChangeLevel("c1.mi_");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
+
+	Scene *sc = (Scene *) _levels["sixdemo/mis/demo.mis"];
+	sc->hots[1].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/alley.mis");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[2].actions.push_back(cl);
+	sc->hots[2].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/puz_matr");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[3].actions.push_back(cl);
+	sc->hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/shoctalk.mis");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[4].actions.push_back(cl);
+	sc->hots[4].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/order.mis");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
-	_levels["sixdemo/mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
+	sc->hots[5].actions.push_back(cl);
+	sc->music = "demo/sound.lib/menu_mus.raw";
 
 	loadSceneLevel("sixdemo/mis/order.mis", "", "sixdemo");
+	sc = (Scene *) _levels["sixdemo/mis/order.mis"];
 	cl = new ChangeLevel("<quit>");
-	_levels["sixdemo/mis/order.mis"].scene.hots[1].actions.push_back(cl);
+	sc->hots[1].actions.push_back(cl);
 
 	loadSceneLevel("sixdemo/mis/alley.mis", "", "sixdemo");
-	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
-	_levels["sixdemo/mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
-	_levels["sixdemo/mis/alley.mis"].scene.levelIfWin = "sixdemo/mis/demo.mis";
-	_levels["sixdemo/mis/alley.mis"].scene.levelIfLose = "sixdemo/mis/demo.mis";
+	sc = (Scene *) _levels["sixdemo/mis/alley.mis"];
+
+	sc->intros.push_back("demo/aleyc01s.smk");
+	sc->music = "demo/sound.lib/alleymus.raw";
+	sc->levelIfWin = "sixdemo/mis/demo.mis";
+	sc->levelIfLose = "sixdemo/mis/demo.mis";
 
 	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "sixdemo");
 
-	Level matrix;
-	matrix.code.name = "sixdemo/puz_matr";
-	matrix.code.intros.push_back("spiderman/demo/aleyc01s.smk");
-	matrix.code.levelIfWin = "sixdemo/mis/demo.mis";
-	matrix.code.levelIfLose = "sixdemo/mis/demo.mis";
+	Code *matrix = new Code();
+	matrix->name = "sixdemo/puz_matr";
+	matrix->intros.push_back("spiderman/demo/aleyc01s.smk");
+	matrix->levelIfWin = "sixdemo/mis/demo.mis";
+	matrix->levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["sixdemo/puz_matr"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
 }
 
-void SpiderEngine::runCode(Code &code) {
-	if (code.name == "sixdemo/puz_matr")
+void SpiderEngine::runCode(Code *code) {
+	if (code->name == "sixdemo/puz_matr")
 		runMatrix(code);
 	else
 		error("invalid puzzle");
 }
 
-void SpiderEngine::runMatrix(Code &code) {
+void SpiderEngine::runMatrix(Code *code) {
 	changeScreenMode("640x480");
 	Common::Point mousePos;
 	Common::Event event;
@@ -254,7 +262,7 @@ void SpiderEngine::runMatrix(Code &code) {
 
 		if (found) {
 			playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
-			_nextLevel = code.levelIfWin;
+			_nextLevel = code->levelIfWin;
 			return;
 		}
 

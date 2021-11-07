@@ -1573,7 +1573,7 @@ yyreduce:
 #line 200 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
     { 
 		debugC(1, kHypnoDebugParser, "explicit END");
-		g_parsedHots = stack->back(); 
+		g_parsedHots = stack->back();
 		stack->pop_back();
 		smenu_idx->pop_back();
 	}

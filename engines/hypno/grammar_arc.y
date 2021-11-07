@@ -115,7 +115,7 @@ hline: 	CTOK NUM {
 	| QTOK NUM NUM { debugC(1, kHypnoDebugParser, "Q %d %d", $2, $3); }
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
-			g_parsedArc->intro = $2;
+			g_parsedArc->intros.push_back($2);
 		else if(Common::String("B1") == $1 || Common::String("B2") == $1)
 			g_parsedArc->winVideos.push_back($2);
 		else if(Common::String("B3") == $1 || Common::String("B4") == $1)

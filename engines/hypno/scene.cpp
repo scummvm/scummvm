@@ -76,10 +76,10 @@ void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::St
 	buf[fileSize] = '\0';
 	debugC(1, kHypnoDebugParser, "%s", buf);
 	parse_mis(buf);
-	Level level;
-	level.scene.prefix = prefix;
-	level.scene.levelIfWin = next;
-	level.scene.hots = *g_parsedHots;
+	Scene *level = new Scene();
+	level->prefix = prefix;
+	level->levelIfWin = next;
+	level->hots = *g_parsedHots;
 	_levels[name] = level;
 	free(buf);
 }
@@ -214,15 +214,10 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	return false;
 }
 
-void HypnoEngine::runTransition(Transition trans) {
-	for (Filenames::iterator it = trans.intros.begin(); it != trans.intros.end(); ++it) {
-		MVideo v(*it, Common::Point(0, 0), false, true, false);
-		runIntro(v);
-	}
-
-	if (!trans.frameImage.empty()) {
-		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans.frameImage.c_str());
-		Graphics::Surface *frame = decodeFrame(trans.frameImage, trans.frameNumber);
+void HypnoEngine::runTransition(Transition *trans) {
+	if (!trans->frameImage.empty()) {
+		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans->frameImage.c_str());
+		Graphics::Surface *frame = decodeFrame(trans->frameImage, trans->frameNumber);
 		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
 		drawImage(*sframe, 0, 0, false);
 		drawScreen();
@@ -230,15 +225,15 @@ void HypnoEngine::runTransition(Transition trans) {
 		delete frame;
 		sframe->free();
 		delete sframe;
-		Common::String *ptr = new Common::String(trans.level);
+		Common::String *ptr = new Common::String(trans->level);
 		if (!installTimer(2 * 1000000, ptr)) // 2 seconds
 			error("Failed to install timer");
 	} else
-		_nextLevel = trans.level;
+		_nextLevel = trans->level;
 }
 
 
-void HypnoEngine::runScene(Scene &scene) {
+void HypnoEngine::runScene(Scene *scene) {
 	_nextLoopingVideoToPlay.clear();
 	_nextParallelVideoToPlay.clear();
 	_nextSequentialVideoToPlay.clear();
@@ -249,9 +244,10 @@ void HypnoEngine::runScene(Scene &scene) {
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
+	bool enableLoopingVideos = true;
 
 	stack.clear();
-	_nextHotsToAdd = &scene.hots;
+	_nextHotsToAdd = &scene->hots;
 	defaultCursor();
 
 	while (!shouldQuit() && _nextLevel.empty()) {
@@ -322,7 +318,7 @@ void HypnoEngine::runScene(Scene &scene) {
 		}
 
 		if (_refreshConversation && !_conversation.empty() && 
-		    _nextSequentialVideoToPlay.empty() && 
+			_nextSequentialVideoToPlay.empty() && 
 			_nextParallelVideoToPlay.empty() &&
 			_videosPlaying.empty()) {
 			showConversation();
@@ -351,7 +347,7 @@ void HypnoEngine::runScene(Scene &scene) {
 
 			if (it->decoder) {
 				if (it->decoder->endOfVideo()) {
-					if (it->loop) {
+					if (it->loop && enableLoopingVideos) {
 						it->decoder->rewind();
 						it->decoder->start();
 					} else {
@@ -385,8 +381,16 @@ void HypnoEngine::runScene(Scene &scene) {
 			}
 		}
 
-		if (checkSceneCompleted() && _conversation.empty()) {
-			_nextLevel = scene.levelIfWin;
+		if (checkSceneCompleted()) {
+			// Make sure all the videos are played before we finish
+			enableLoopingVideos = false;
+			if (_conversation.empty() && 
+				_videosPlaying.empty() && 
+				_nextSequentialVideoToPlay.empty() && 
+				_nextParallelVideoToPlay.empty()) {
+				debugC(1, kHypnoDebugScene, "Wining level and jumping to %s", scene->levelIfWin.c_str());
+				_nextLevel = scene->levelIfWin;
+			}
 		}
 
 		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
@@ -408,9 +412,9 @@ void HypnoEngine::runScene(Scene &scene) {
 			drawScreen();
 		}
 
-		if (_music.empty() && !scene.sound.empty()) {
-			_music = scene.sound;
-			playSound(_music, 1);
+		if (_music.empty() && !scene->music.empty()) {
+			_music = scene->music;
+			playSound(_music, 0);
 		}
 
 		g_system->updateScreen();

@@ -1476,7 +1476,7 @@ yyreduce:
 #line 116 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
     {
 		if (Common::String("B0") == (yyvsp[-1].s))
-			g_parsedArc->intro = (yyvsp[0].s);
+			g_parsedArc->intros.push_back((yyvsp[0].s));
 		else if(Common::String("B1") == (yyvsp[-1].s) || Common::String("B2") == (yyvsp[-1].s))
 			g_parsedArc->winVideos.push_back((yyvsp[0].s));
 		else if(Common::String("B3") == (yyvsp[-1].s) || Common::String("B4") == (yyvsp[-1].s))
