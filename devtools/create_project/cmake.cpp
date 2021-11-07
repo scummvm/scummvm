@@ -121,8 +121,12 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Generate options for the engines\n";
 	writeEngineOptions(workspace);
 
+	std::string includeDirsList;
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		includeDirsList += *i + ' ';
+
 	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
-			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
+			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
 
 	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
@@ -281,7 +285,10 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 
 		project << "# Libraries\n";
 		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL2);
-		project << "target_link_libraries(" << name << " ${" << sdlLibrary->librariesVar << "} ${SCUMMVM_LIBS})\n";
+		std::string libraryDirsList;
+		for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+			libraryDirsList += *i + ' ';
+		project << "target_link_libraries(" << name << " " << libraryDirsList << "${" << sdlLibrary->librariesVar << "} ${SCUMMVM_LIBS})\n";
 
 		project << "if (WIN32)\n";
 		project << "\ttarget_sources(" << name << " PUBLIC " << setup.filePrefix << "/dists/" << name << ".rc)\n";

@@ -232,6 +232,9 @@ struct BuildSetup {
 	std::string filePrefix; ///< Prefix for the relative path arguments in the project files.
 	std::string outputDir;  ///< Path where to put the MSVC project files.
 
+	StringList includeDirs; ///< List of additional include paths
+	StringList libraryDirs; ///< List of additional library paths
+
 	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
 

@@ -75,6 +75,13 @@ namespace {
 std::string unifyPath(const std::string &path);
 
 /**
+ * Removes trailing slash from path if it exists
+ *
+ * @param path Path string.
+ */
+void removeTrailingSlash(std::string& path);
+
+/**
  * Display the help text for the program.
  *
  * @param exe Name of the executable.
@@ -114,9 +121,7 @@ int main(int argc, char *argv[]) {
 
 	BuildSetup setup;
 	setup.srcDir = unifyPath(srcDir);
-
-	if (setup.srcDir.at(setup.srcDir.size() - 1) == '/')
-		setup.srcDir.erase(setup.srcDir.size() - 1);
+	removeTrailingSlash(setup.srcDir);
 
 	setup.filePrefix = setup.srcDir;
 	setup.outputDir = '.';
@@ -258,8 +263,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			setup.filePrefix = unifyPath(argv[++i]);
-			if (setup.filePrefix.at(setup.filePrefix.size() - 1) == '/')
-				setup.filePrefix.erase(setup.filePrefix.size() - 1);
+			removeTrailingSlash(setup.filePrefix);
 		} else if (!std::strcmp(argv[i], "--output-dir")) {
 			if (i + 1 >= argc) {
 				std::cerr << "ERROR: Missing \"path\" parameter for \"--output-dir\"!\n";
@@ -267,9 +271,23 @@ int main(int argc, char *argv[]) {
 			}
 
 			setup.outputDir = unifyPath(argv[++i]);
-			if (setup.outputDir.at(setup.outputDir.size() - 1) == '/')
-				setup.outputDir.erase(setup.outputDir.size() - 1);
-
+			removeTrailingSlash(setup.outputDir);
+		} else if (!std::strcmp(argv[i], "--include-dir")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--include-dir\"!\n";
+				return -1;
+			}
+			std::string includeDir = unifyPath(argv[++i]);
+			removeTrailingSlash(includeDir);
+			setup.includeDirs.push_back(includeDir);
+		} else if (!std::strcmp(argv[i], "--library-dir")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--library-dir\"!\n";
+				return -1;
+			}
+			std::string libraryDir = unifyPath(argv[++i]);
+			removeTrailingSlash(libraryDir);
+			setup.libraryDirs.push_back(libraryDir);
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
 		} else if (!std::strcmp(argv[i], "--installer")) {
@@ -678,6 +696,11 @@ std::string unifyPath(const std::string &path) {
 	return result;
 }
 
+void removeTrailingSlash(std::string& path) {
+	if (path.size() > 0 && path.at(path.size() - 1) == '/')
+		path.erase(path.size() - 1);
+}
+
 void displayHelp(const char *exe) {
 	using std::cout;
 
@@ -702,6 +725,8 @@ void displayHelp(const char *exe) {
 	        " --output-dir path          overwrite path, where the project files are placed\n"
 	        "                            By default this is \".\", i.e. the current working\n"
 	        "                            directory\n"
+			" --include-dir path         add a path to the include search path"
+			" --library-dir path         add a path to the library search path"
 	        "\n"
 	        "MSVC specific settings:\n"
 	        " --msvc-version version     set the targeted MSVC version. Possible values:\n";
