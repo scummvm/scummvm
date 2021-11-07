@@ -2585,8 +2585,16 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 
 	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
 	if (!_renderer) {
-		deinitializeRenderer();
-		return nullptr;
+		if (_vsync) {
+			// VSYNC might not be available, so retry without VSYNC
+			warning("SDL_SetVideoMode: SDL_CreateRenderer() failed with VSYNC option, retrying without it...");
+			rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
+			_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
+		}
+		if (!_renderer) {
+			deinitializeRenderer();
+			return nullptr;
+		}
 	}
 
 	getWindowSizeFromSdl(&_windowWidth, &_windowHeight);
