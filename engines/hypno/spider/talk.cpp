@@ -59,10 +59,13 @@ void SpiderEngine::showConversation() {
 		}
 	}
 	if (!activeFound) {
+		debugC(1, kHypnoDebugScene, "No active item was found in the current conversation");
 		for (Actions::const_iterator it = _conversation.begin(); it != _conversation.end(); ++it) {
 			Talk *a = (Talk *)*it;
-			if (!a->second.empty())
+			if (!a->second.empty()) {
+				debugC(1, kHypnoDebugScene, "Adding %s to play after the conversation ends", a->second.c_str());
 				_nextParallelVideoToPlay.push_back(MVideo(a->second, a->secondPos, false, false, false));
+			}
 			if (a->escape) {
 				_nextSequentialVideoToPlay = _escapeSequentialVideoToPlay;
 				_escapeSequentialVideoToPlay.clear();
@@ -70,7 +73,7 @@ void SpiderEngine::showConversation() {
 		}
 		debugC(1, kHypnoDebugScene, "Clearing conversation");
 		_conversation.clear();
-		runMenu(*stack.back());
+		//runMenu(*stack.back());
 		drawScreen();
 	} 
 	speaker->free();
@@ -97,6 +100,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 				} else if (it->command == "P") {
 					debugC(1, kHypnoDebugScene, "Playing %s", it->path.c_str());
 					_nextParallelVideoToPlay.push_back(MVideo(it->path, it->position, false, false, false));
+					_refreshConversation = true;
 				} else if (it->command == "S") {
 					debugC(1, kHypnoDebugScene, "Enabling variable %s", it->variable.c_str());
 					_sceneState[it->variable] = 1;

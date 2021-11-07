@@ -264,12 +264,8 @@ void HypnoEngine::runScene(Scene *scene) {
 					}
 					_videosPlaying.clear();
 
-					if (!_conversation.empty()) {
+					if (!_conversation.empty())
 						_refreshConversation = true;
-					} else if (!stack.empty()) {
-						runMenu(*stack.back());
-						drawScreen();
-					}
 				}
 
 				break;
@@ -355,6 +351,11 @@ void HypnoEngine::runScene(Scene *scene) {
 						delete it->decoder;
 						it->decoder = nullptr;
 						videosToRemove.push_back(i);
+						if (it->scaled) {
+							runMenu(*stack.back());
+							drawScreen();
+						}
+
 					}
 
 				} else if (it->decoder->needsUpdate()) {
@@ -369,15 +370,11 @@ void HypnoEngine::runScene(Scene *scene) {
 				debugC(1, kHypnoDebugScene, "removing %d from %d size", *it, _videosPlaying.size());
 				_videosPlaying.remove_at(*it);
 			}
-
+			debug("Something to play: %d", _videosPlaying.size());
 			// Nothing else to play
-			if (_videosPlaying.empty() && _nextSequentialVideoToPlay.empty()) {
+			if (_videosPlaying.empty() && _nextSequentialVideoToPlay.empty() && !checkSceneCompleted()) {
 				if (!_conversation.empty())
 					_refreshConversation = true;
-				else if (!stack.empty()) {
-					runMenu(*stack.back());
-					drawScreen();
-				}
 			}
 		}
 
@@ -390,6 +387,7 @@ void HypnoEngine::runScene(Scene *scene) {
 				_nextParallelVideoToPlay.empty()) {
 				debugC(1, kHypnoDebugScene, "Wining level and jumping to %s", scene->levelIfWin.c_str());
 				_nextLevel = scene->levelIfWin;
+				continue;
 			}
 		}
 

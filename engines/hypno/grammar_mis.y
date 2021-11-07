@@ -230,7 +230,11 @@ talk: INACTOK talk {
 		talk_action->secondPos = Common::Point($3, $4); 
 		debugC(1, kHypnoDebugParser, "SECOND %s %d %d", $2, $3, $4); }
 	| INTROTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); }
-	| DEFAULTTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", $2, $3, $4); }
+	| DEFAULTTOK FILENAME NUM NUM { 
+		// Unsure how this is different from second
+		talk_action->second = $2;
+		talk_action->secondPos = Common::Point($3, $4);
+		debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", $2, $3, $4); }
 	| PG talk { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "G";
