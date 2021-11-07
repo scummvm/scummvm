@@ -373,13 +373,6 @@ static const Common::KeyCode jkeymap[] = {
 	Common::KEYCODE_PASTE // AKEYCODE_PASTE
 };
 
-void OSystem_Android::updateEventScale(uint32 w, uint32 h) {
-	if ((h != 0) && (w != 0)) {
-	    _eventScaleY = 100 * 480 / h;
-	    _eventScaleX = 100 * 640 / w;
-	}
-}
-
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 								int arg4, int arg5, int arg6) {
 	Common::Event e;
