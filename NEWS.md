@@ -21,6 +21,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
    - Improved OPL3 sound emulation for Sam&Max.
+   - Fixed music not looping in The Dig.
 
 TwinE:
    - Numerous bugfixes and stability improvements.
