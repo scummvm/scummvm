@@ -1027,7 +1027,7 @@ void DetectMonsters::execute() {
 	int grid[7][7];
 
 	SpriteResource sprites(ccNum ? "detectmn.icn" : "detctmon.icn");
-	Common::fill(&grid[0][0], &grid[6][6], 0);
+	Common::fill(&grid[0][0], &grid[6][7], 0);
 
 	w.open();
 	w.writeString(Res.DETECT_MONSTERS);
