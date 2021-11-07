@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-06 16:26+0000\n"
-"PO-Revision-Date: 2021-09-20 12:26+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2021-11-07 02:48+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4363,7 +4363,7 @@ msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
 #: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "Zet spreek tekst uit voor Objecten, Opties en Bijbel quote's aan."
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
@@ -4373,15 +4373,13 @@ msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
 #: engines/dreamweb/detection.cpp:86
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "Gebruik Tekst naar Spraak"
+msgstr "Zet Spreek Tekst uit voor ondertiteling aan"
 
 #: engines/dreamweb/detection.cpp:87
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr ""
-"Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
+"Gebruik TTS voor het lezen van de ondertiteling (als TTS beschikbaar is)"
 
 #: engines/glk/detection.cpp:240
 msgid "Use TTS to read the text"
@@ -5052,7 +5050,7 @@ msgstr ""
 
 #: engines/kyra/detection_tables.h:86
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "Demo speelt simpele animaties zonder de Westwood's Engine."
 
 #: engines/kyra/detection_tables.h:1435
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -5347,13 +5345,15 @@ msgstr "TTS Verteller"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Speel een digitale soundtrack gedurende de openingsfilm"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Indien geselecteerd, zal de game de digitale soundtrack gedurende de "
+"introductie afspelen. Anders zal het de MIDI muziek afspelen."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -6027,15 +6027,13 @@ msgstr "Windows Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:818
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "Windows Probeerversie wordt niet ondersteund"
+msgstr "macOS Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:843
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "Windows Probeerversie wordt niet ondersteund"
+msgstr "Pocket PC Probeerversie wordt niet ondersteund"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6048,6 +6046,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Kon de AdLib instrument defenitie files niet vinden\n"
+"%s en %s. Zonder deze bestanden,\n"
+"zal de muziek niet hetzelfde klinken als in het originele spel."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
@@ -6292,13 +6293,15 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Gebruik de juiste lettertype spacing"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Teken tekst met de juiste lettertype spacing. Dit ziet normaal beter uit, "
+"maar lijkt minder orgineel."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
