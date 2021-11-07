@@ -32,6 +32,10 @@ namespace Audio {
 	class RewindableAudioStream;
 }
 
+namespace Common {
+	class MacResManager;
+}
+
 namespace Director {
 
 class AudioDecoder;
@@ -244,7 +248,7 @@ private:
 class AudioFileDecoder : public AudioDecoder {
 public:
 	AudioFileDecoder(Common::String &path);
-	~AudioFileDecoder() {};
+	~AudioFileDecoder();
 
 	void setPath(Common::String &path);
 
@@ -252,6 +256,7 @@ public:
 
 private:
 	Common::String _path;
+	Common::MacResManager *_macresman;
 };
 
 } // End of namespace Director
