@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-06 16:26+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -1036,15 +1036,13 @@ msgstr "전체 화면 모드"
 
 #: gui/options.cpp:1469
 msgid "V-Sync"
-msgstr ""
+msgstr "Vsync"
 
 #: gui/options.cpp:1469
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "3D 렌더러에서 화면을 갱신할 때 수직 동기화를 기다립니다"
+msgstr "수직 동기화가 화면을 새로 고칠 때까지 기다리면 아티팩트가 찢어지지 않습니다"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
@@ -1408,7 +1406,7 @@ msgstr "Discord 통합 사용"
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr ""
+msgstr "Discord 클라이언트가 실행 중인 경우 Discord에서 실행 중인 게임에 대한 정보 표시."
 
 #: gui/options.cpp:2336
 msgid "GUI language:"
@@ -4297,7 +4295,7 @@ msgstr "게임 그래픽을 밝은 팔레트로 표시"
 
 #: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
@@ -4306,14 +4304,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/dreamweb/detection.cpp:86
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "TTS 활성화"
+msgstr "자막에 TTS를 활성화"
 
 #: engines/dreamweb/detection.cpp:87
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
+msgstr "TTS를 사용하여 자막 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/glk/detection.cpp:240
 msgid "Use TTS to read the text"
@@ -4976,7 +4972,7 @@ msgstr "이 비공식 번역에 언어 고유의 게임 코드나 리소스가 �
 
 #: engines/kyra/detection_tables.h:86
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "데모는 Westwood의 엔진을 사용하지 않고 간단한 애니메이션을 재생합니다."
 
 #: engines/kyra/detection_tables.h:1435
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -5263,13 +5259,13 @@ msgstr "TTS 나레이터"
 
 #: engines/made/detection.cpp:63
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "시작 동영상 중에 디지털 사운드 트랙 재생"
 
 #: engines/made/detection.cpp:64
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr ""
+msgstr "선택하면 도입 중에 디지털 사운드트랙을 사용합니다. 그렇지 않으면 MIDI 음악이 재생됩니다."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -5930,15 +5926,13 @@ msgstr "윈도우즈 평가판 버전은 아직 지원되지 않습니다"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:818
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "윈도우즈 평가판 버전은 아직 지원되지 않습니다"
+msgstr "macOS 평가판 버전은 아직 지원되지 않습니다"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:843
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "윈도우즈 평가판 버전은 아직 지원되지 않습니다"
+msgstr "포켓 PC 평가판 버전은 아직 지원되지 않습니다"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -5951,6 +5945,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"%s 및 %s AdLib 기기 정의 파일을 찾을 수 없습니다.\n"
+"이 파일들이 없다면,\n"
+"음악은 원래의 게임과 똑같이 들리지 않을 것이다."
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
@@ -6177,13 +6174,13 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:204
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "올바른 글꼴 간격 사용"
 
 #: engines/scumm/detection.cpp:205
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
-msgstr ""
+msgstr "텍스트를 올바른 글꼴 간격으로 그립니다. 이것은 틀림없이 더 좋아 보이지만, 원래의 행동과는 일치하지 않습니다."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
