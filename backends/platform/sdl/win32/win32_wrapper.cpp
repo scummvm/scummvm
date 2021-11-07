@@ -28,8 +28,10 @@
 #define _WIN32_IE 0x400
 #endif
 #include <shlobj.h>
+#include <tchar.h>
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
@@ -71,6 +73,33 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 }
 
 namespace Win32 {
+
+bool getApplicationDataDirectory(TCHAR *applicationDataDirectory) {
+	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, applicationDataDirectory) != S_OK) {
+		warning("Unable to access application data directory");
+		return false;
+	}
+
+	_tcscat(applicationDataDirectory, TEXT("\\ScummVM"));
+	if (!CreateDirectory(applicationDataDirectory, NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS) {
+			error("Cannot create ScummVM application data folder");
+		}
+	}
+
+	return true;
+}
+
+void getProcessDirectory(TCHAR *processDirectory, DWORD size) {
+	GetModuleFileName(NULL, processDirectory, size);
+	processDirectory[size - 1] = '\0'; // termination not guaranteed
+
+	// remove executable and final path separator
+	TCHAR *lastSeparator = _tcsrchr(processDirectory, '\\');
+	if (lastSeparator != NULL) {
+		*lastSeparator = '\0';
+	}
+}
 
 bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	OSVERSIONINFOEXA versionInfo;
@@ -173,4 +202,4 @@ void freeArgvUtf8(int argc, char **argv) {
 }
 #endif
 
-}
+} // End of namespace Win32

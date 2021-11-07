@@ -59,6 +59,10 @@
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
+OSystem_Win32::OSystem_Win32() :
+	_isPortable(false) {
+}
+
 void OSystem_Win32::init() {
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
@@ -112,8 +116,8 @@ void OSystem_Win32::initBackend() {
 	}
 
 	// Create the savefile manager
-	if (_savefileManager == 0)
-		_savefileManager = new WindowsSaveFileManager();
+	if (_savefileManager == nullptr)
+		_savefileManager = new WindowsSaveFileManager(_isPortable);
 
 #if defined(USE_SPARKLE)
 	// Initialize updates manager
@@ -240,15 +244,18 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		return screenshotsPath;
 	}
 
-	// Use the My Pictures folder.
 	TCHAR picturesPath[MAX_PATH];
-
-	if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
-		warning("Unable to access My Pictures directory");
-		return Common::String();
+	if (_isPortable) {
+		Win32::getProcessDirectory(picturesPath, MAX_PATH);
+		_tcscat(picturesPath, TEXT("\\Screenshots\\"));
+	} else {
+		// Use the My Pictures folder
+		if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
+			warning("Unable to access My Pictures directory");
+			return Common::String();
+		}
+		_tcscat(picturesPath, TEXT("\\ScummVM Screenshots\\"));
 	}
-
-	_tcscat(picturesPath, TEXT("\\ScummVM Screenshots\\"));
 
 	// If the directory already exists (as it should in most cases),
 	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
@@ -263,41 +270,48 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 Common::String OSystem_Win32::getDefaultConfigFileName() {
 	TCHAR configFile[MAX_PATH];
 
-	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, configFile) == S_OK) {
-		_tcscat(configFile, TEXT("\\ScummVM"));
-		if (!CreateDirectory(configFile, NULL)) {
-			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				error("Cannot create ScummVM application data folder");
-		}
+	// if this is the first time the default config file name is requested
+	// then we need detect if we should run in portable mode. (and if it's
+	// never requested before the backend is initialized then a config file
+	// was provided on the command line and portable mode doesn't apply.)
+	if (!backendInitialized()) {
+		_isPortable = detectPortableConfigFile();
+	}
 
+	if (_isPortable) {
+		// Use the current process directory in portable mode
+		Win32::getProcessDirectory(configFile, MAX_PATH);
 		_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+	} else {
+		// Use the Application Data directory of the user profile
+		if (Win32::getApplicationDataDirectory(configFile)) {
+			_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
 
-		FILE *tmp = NULL;
-		if ((tmp = _tfopen(configFile, TEXT("r"))) == NULL) {
-			// Check windows directory
-			TCHAR oldConfigFile[MAX_PATH];
-			uint ret = GetWindowsDirectory(oldConfigFile, MAX_PATH);
-			if (ret == 0 || ret > MAX_PATH)
-				error("Cannot retrieve the path of the Windows directory");
+			FILE *tmp = NULL;
+			if ((tmp = _tfopen(configFile, TEXT("r"))) == NULL) {
+				// Check windows directory
+				TCHAR oldConfigFile[MAX_PATH];
+				uint ret = GetWindowsDirectory(oldConfigFile, MAX_PATH);
+				if (ret == 0 || ret > MAX_PATH)
+					error("Cannot retrieve the path of the Windows directory");
 
-			_tcscat(oldConfigFile, TEXT("\\" DEFAULT_CONFIG_FILE));
-			if ((tmp = _tfopen(oldConfigFile, TEXT("r")))) {
-				_tcscpy(configFile, oldConfigFile);
+				_tcscat(oldConfigFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+				if ((tmp = _tfopen(oldConfigFile, TEXT("r")))) {
+					_tcscpy(configFile, oldConfigFile);
 
+					fclose(tmp);
+				}
+			} else {
 				fclose(tmp);
 			}
 		} else {
-			fclose(tmp);
-		}
-	} else {
-		warning("Unable to access application data directory");
-		// Check windows directory
-		uint ret = GetWindowsDirectory(configFile, MAX_PATH);
-		if (ret == 0 || ret > MAX_PATH)
-			error("Cannot retrieve the path of the Windows directory");
+			// Check windows directory
+			uint ret = GetWindowsDirectory(configFile, MAX_PATH);
+			if (ret == 0 || ret > MAX_PATH)
+				error("Cannot retrieve the path of the Windows directory");
 
-		_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+			_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+		}
 	}
 
 	return Win32::tcharToString(configFile);
@@ -306,19 +320,52 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 Common::String OSystem_Win32::getDefaultLogFileName() {
 	TCHAR logFile[MAX_PATH];
 
-	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
-		warning("Unable to access application data directory");
-		return Common::String();
+	if (_isPortable) {
+		Win32::getProcessDirectory(logFile, MAX_PATH);
+	} else {
+		// Use the Application Data directory of the user profile
+		if (!Win32::getApplicationDataDirectory(logFile)) {
+			return Common::String();
+		}
+		_tcscat(logFile, TEXT("\\Logs"));
+		CreateDirectory(logFile, NULL);
 	}
 
-	_tcscat(logFile, TEXT("\\ScummVM"));
-	CreateDirectory(logFile, NULL);
-	_tcscat(logFile, TEXT("\\Logs"));
-	CreateDirectory(logFile, NULL);
 	_tcscat(logFile, TEXT("\\scummvm.log"));
 
 	return Win32::tcharToString(logFile);
+}
+
+bool OSystem_Win32::detectPortableConfigFile() {
+	// ScummVM operates in a "portable mode" if there is a config file in the
+	// same directory as the executable. In this mode, the executable's
+	// directory is used instead of the user's profile for application files.
+	// This approach is modeled off of the portable mode in Notepad++.
+
+	// Check if there is a config file in the same directory as the executable.
+	TCHAR portableConfigFile[MAX_PATH];
+	Win32::getProcessDirectory(portableConfigFile, MAX_PATH);
+	_tcscat(portableConfigFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+	FILE *file = _tfopen(portableConfigFile, TEXT("r"));
+	if (file == NULL) {
+		return false;
+	}
+	fclose(file);
+
+	// Check if we're running from Program Files on Vista+.
+	// If so then don't attempt to use local files due to UAC.
+	// (Notepad++ does this too.)
+	if (Win32::confirmWindowsVersion(6, 0)) {
+		TCHAR programFiles[MAX_PATH];
+		if (SHGetFolderPathFunc(NULL, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, programFiles) == S_OK) {
+			_tcscat(portableConfigFile, TEXT("\\"));
+			if (_tcsstr(portableConfigFile, programFiles) == portableConfigFile) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 namespace {
