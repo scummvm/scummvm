@@ -558,9 +558,8 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 						debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 						fadeTrack->curHookId = 0;
 					}
-				} else {
-					track->curRegion = region;
 				}
+				track->curRegion = region;
 			}
 
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
