@@ -94,7 +94,7 @@ static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
 Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
 	Common::fill(&_shootingRow[0], &_shootingRow[MAX_PARTY_COUNT], 0);
-	Common::fill(&_monsterMap[0][0], &_monsterMap[32][32], 0);
+	Common::fill(&_monsterMap[0][0], &_monsterMap[31][32], 0);
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], 0);
@@ -452,7 +452,7 @@ void Combat::moveMonsters() {
 	if (intf._charsShooting)
 		return;
 
-	Common::fill(&_monsterMap[0][0], &_monsterMap[32][32], 0);
+	Common::fill(&_monsterMap[0][0], &_monsterMap[31][32], 0);
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], -1);
