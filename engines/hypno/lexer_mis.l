@@ -84,7 +84,7 @@ GS_[A-Z_0-9]+				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITC
 [\-]?[0-9]+					HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
 [\n|\r\n]					return RETTOK;
 [ \t]+						/* ignore whitespace */;
-.							debug("<no match: %c>", *yytext); return *yytext;
+.							debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
 %%
 
 namespace Hypno {

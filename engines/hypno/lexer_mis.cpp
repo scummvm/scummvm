@@ -1383,7 +1383,7 @@ YY_RULE_SETUP
 case 45:
 YY_RULE_SETUP
 #line 87 "engines/hypno/lexer_mis.l"
-debug("<no match: %c>", *yytext); return *yytext;
+debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP

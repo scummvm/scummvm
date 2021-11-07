@@ -203,7 +203,7 @@ line: MENUTOK mflag mflag  {
 		stack->pop_back();
 		smenu_idx->pop_back();
 	}
-	|	RETTOK { debug("implicit END"); }
+	|	RETTOK { debugC(1, kHypnoDebugParser, "implicit END"); }
 	;
 
 alloctalk: { 

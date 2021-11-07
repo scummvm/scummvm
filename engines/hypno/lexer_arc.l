@@ -80,13 +80,12 @@ Y[A-Z0-9]					HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 \x02						return C02TOK;
 \;.+\r						/* ignore comment */
 [ \t]+						/* ignore whitespace */;
-.							debug("notparsed: 0x%d",*yytext); return *yytext;
+.							debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
 %%
 
 namespace Hypno {
 
 int parse_arc(const char *code) {
-	//debug("to parse:\n%s\n END", code);
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	bp = yy_scan_string(code);

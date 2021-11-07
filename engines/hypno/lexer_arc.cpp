@@ -1307,7 +1307,7 @@ YY_RULE_SETUP
 case 40:
 YY_RULE_SETUP
 #line 83 "engines/hypno/lexer_arc.l"
-debug("notparsed: 0x%d",*yytext); return *yytext;
+debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
@@ -2297,7 +2297,6 @@ void yyfree (void * ptr )
 namespace Hypno {
 
 int parse_arc(const char *code) {
-	//debug("to parse:\n%s\n END", code);
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	bp = yy_scan_string(code);

@@ -1582,7 +1582,7 @@ yyreduce:
 
   case 23:
 #line 206 "engines/hypno/grammar_mis.y" /* yacc.c:1646  */
-    { debug("implicit END"); }
+    { debugC(1, kHypnoDebugParser, "implicit END"); }
 #line 1587 "engines/hypno/grammar_mis.cpp" /* yacc.c:1646  */
     break;
 
