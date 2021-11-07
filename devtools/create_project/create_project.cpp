@@ -44,7 +44,6 @@
 #include "codeblocks.h"
 #include "msbuild.h"
 #include "msvc.h"
-#include "visualstudio.h"
 #include "xcode.h"
 
 #include <algorithm>
@@ -629,10 +628,7 @@ int main(int argc, char *argv[]) {
 
 		projectWarnings["sci"].push_back("4373");
 
-		if (msvcVersion == 9)
-			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
-		else
-			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
+		provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
 
 		break;
 
@@ -1139,7 +1135,6 @@ const Tool s_tools[] = {
 
 const MSVCVersion s_msvc[] = {
 //    Ver    Name                     Solution                     Project    Toolset    LLVM
-	{  9,    "Visual Studio 2008",    "10.00",          "2008",     "4.0",     "v90",    "LLVM-vs2008" },
 	{ 10,    "Visual Studio 2010",    "11.00",          "2010",     "4.0",    "v100",    "LLVM-vs2010" },
 	{ 11,    "Visual Studio 2012",    "11.00",          "2012",     "4.0",    "v110",    "LLVM-vs2012" },
 	{ 12,    "Visual Studio 2013",    "12.00",          "2013",    "12.0",    "v120",    "LLVM-vs2013" },

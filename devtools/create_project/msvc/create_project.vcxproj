@@ -98,7 +98,6 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc\"</Command>
     <ClCompile Include="..\create_project.cpp" />
     <ClCompile Include="..\msbuild.cpp" />
     <ClCompile Include="..\msvc.cpp" />
-    <ClCompile Include="..\visualstudio.cpp" />
     <ClCompile Include="..\xcode.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -108,7 +107,6 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc\"</Command>
     <ClInclude Include="..\create_project.h" />
     <ClInclude Include="..\msbuild.h" />
     <ClInclude Include="..\msvc.h" />
-    <ClInclude Include="..\visualstudio.h" />
     <ClInclude Include="..\xcode.h" />
   </ItemGroup>
   <ItemGroup>

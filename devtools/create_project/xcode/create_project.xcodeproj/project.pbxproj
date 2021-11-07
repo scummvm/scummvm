@@ -12,7 +12,6 @@
 		F9A66C6A1396D4DF00CEE494 /* create_project.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C621396D4DF00CEE494 /* create_project.cpp */; };
 		F9A66C6B1396D4DF00CEE494 /* msbuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C651396D4DF00CEE494 /* msbuild.cpp */; };
 		F9A66C6C1396D4DF00CEE494 /* msvc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C671396D4DF00CEE494 /* msvc.cpp */; };
-		F9A66C6F1396D4E800CEE494 /* visualstudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C6D1396D4E800CEE494 /* visualstudio.cpp */; };
 		F9A66C871396E2F500CEE494 /* xcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C861396E2F500CEE494 /* xcode.cpp */; };
 		F9A66C91139704A400CEE494 /* create_project in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9A66C271396D36100CEE494 /* create_project */; };
 		F9BA99141398064E00C276C2 /* create_project in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9A66C271396D36100CEE494 /* create_project */; };
@@ -59,8 +58,6 @@
 		F9A66C661396D4DF00CEE494 /* msbuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = msbuild.h; path = ../msbuild.h; sourceTree = "<group>"; };
 		F9A66C671396D4DF00CEE494 /* msvc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = msvc.cpp; path = ../msvc.cpp; sourceTree = "<group>"; };
 		F9A66C681396D4DF00CEE494 /* msvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = msvc.h; path = ../msvc.h; sourceTree = "<group>"; };
-		F9A66C6D1396D4E800CEE494 /* visualstudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = visualstudio.cpp; path = ../visualstudio.cpp; sourceTree = "<group>"; };
-		F9A66C6E1396D4E800CEE494 /* visualstudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = visualstudio.h; path = ../visualstudio.h; sourceTree = "<group>"; };
 		F9A66C841396E2D800CEE494 /* xcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xcode.h; path = ../xcode.h; sourceTree = "<group>"; };
 		F9A66C861396E2F500CEE494 /* xcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xcode.cpp; path = ../xcode.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,8 +80,6 @@
 				0765835F1D660492006CBB9B /* cmake.h */,
 				F9A66C861396E2F500CEE494 /* xcode.cpp */,
 				F9A66C841396E2D800CEE494 /* xcode.h */,
-				F9A66C6D1396D4E800CEE494 /* visualstudio.cpp */,
-				F9A66C6E1396D4E800CEE494 /* visualstudio.h */,
 				F9A66C5F1396D4DF00CEE494 /* codeblocks.cpp */,
 				F9A66C601396D4DF00CEE494 /* codeblocks.h */,
 				F9A66C611396D4DF00CEE494 /* config.h */,
@@ -175,7 +170,6 @@
 				F9A66C6B1396D4DF00CEE494 /* msbuild.cpp in Sources */,
 				F9A66C6C1396D4DF00CEE494 /* msvc.cpp in Sources */,
 				076583601D660492006CBB9B /* cmake.cpp in Sources */,
-				F9A66C6F1396D4E800CEE494 /* visualstudio.cpp in Sources */,
 				F9A66C871396E2F500CEE494 /* xcode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
