@@ -99,6 +99,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			auto vertex = _faceVBO[index];
 			if (tex) {
 				tex->bind();
+				glEnable(GL_TEXTURE_2D);
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
@@ -112,6 +113,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				}
 			} else {
 				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_TEXTURE_2D);
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material.r, material.g, material.b);
 				else

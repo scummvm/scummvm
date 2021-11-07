@@ -85,6 +85,7 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			auto vertex = _faceVBO[index];
 			if (tex) {
 				tex->bind();
+				tglEnable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				if (material.doubleSided) {
 					vertex.texS = vertex.stexS;
@@ -95,6 +96,7 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				}
 			} else {
 				tglBindTexture(TGL_TEXTURE_2D, 0);
+				tglDisable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(material.r, material.g, material.b);
 			}
 

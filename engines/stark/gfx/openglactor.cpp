@@ -101,8 +101,6 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		lightDirection = getShadowLightDirection(lights, position, modelInverse.getRotation());
 	}
 
-	glEnable(GL_TEXTURE_2D);
-
 	Common::Array<Face *> faces = _model->getFaces();
 	Common::Array<Material *> mats = _model->getMaterials();
 	const Common::Array<BoneNode *> &bones = _model->getBones();
@@ -121,12 +119,14 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			if (tex) {
 				tex->bind();
+				glEnable(GL_TEXTURE_2D);
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);
 			} else {
 				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_TEXTURE_2D);
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material->r, material->g, material->b);
 				else
@@ -310,7 +310,6 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 
 		if (!_gfx->computeLightsEnabled())
 			glEnable(GL_LIGHTING);
-		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 		glDisable(GL_STENCIL_TEST);
 	}

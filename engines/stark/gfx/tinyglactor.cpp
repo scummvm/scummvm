@@ -96,8 +96,6 @@ void TinyGLActorRenderer::render(const Math::Vector3d &position, float direction
 		lightDirection = getShadowLightDirection(lights, position, modelInverse.getRotation());
 	}
 
-	tglEnable(TGL_TEXTURE_2D);
-
 	Common::Array<Face *> faces = _model->getFaces();
 	Common::Array<Material *> mats = _model->getMaterials();
 	const Common::Array<BoneNode *> &bones = _model->getBones();
@@ -111,9 +109,11 @@ void TinyGLActorRenderer::render(const Math::Vector3d &position, float direction
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			if (tex) {
 				tex->bind();
+				tglEnable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 			} else {
 				tglBindTexture(TGL_TEXTURE_2D, 0);
+				tglDisable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(material->r, material->g, material->b);
 			}
 			uint32 index = vertexIndices[i];
