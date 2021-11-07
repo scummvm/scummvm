@@ -319,7 +319,7 @@ def extract_volume(args: argparse.Namespace) -> int:
             if not dryrun:
                 upath.mkdir(exist_ok=True)
         else:
-            print(f"{upath}")
+            print(upath)
             if not dryrun:
                 file = obj.data
                 if obj.rsrc:
