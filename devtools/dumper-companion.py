@@ -318,10 +318,8 @@ def extract_volume(args: argparse.Namespace) -> int:
         if isinstance(obj, machfs.Folder):
             if not dryrun:
                 upath.mkdir(exist_ok=True)
-            print(f"{upath}")
         else:
-            if upath != "":
-                print(f"{upath} [{obj.type.decode('mac_roman')},{obj.creator.decode('mac_roman')}]")
+            print(f"{upath}")
             if not dryrun:
                 file = obj.data
                 if obj.rsrc:
