@@ -135,6 +135,9 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		writeWarnings(name, project);
 		writeDefines(setup.defines, project);
 
+		for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+			project << "\t\t\t\t\t<Add directory=\"" << convertPathToWin(*i) << "\" />\n";
+
 		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\" />\n"
 		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\\SDL\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
@@ -153,6 +156,9 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
 			project << "\t\t\t\t\t<Add library=\"" << setup.projectName << "\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
 		}
+
+		for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+			project << "\t\t\t\t\t<Add directory=\"" << convertPathToWin(*i) << "\" />\n";
 
 		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\\mingw\" />\n"
 		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\" />\n"

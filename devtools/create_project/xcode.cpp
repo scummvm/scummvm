@@ -1066,6 +1066,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList iPhone_HeaderSearchPaths;
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		iPhone_HeaderSearchPaths.push_back("\"" + *i + "\"");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
@@ -1077,6 +1079,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, kSettingsAsList | kSettingsQuoteVariable, 5);
 	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/ios7/Info.plist");
 	ValueList iPhone_LibPaths;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		iPhone_LibPaths.push_back("\"" + *i + "\"");
 	iPhone_LibPaths.push_back("$(inherited)");
 	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
 	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, kSettingsAsList, 5);
@@ -1144,6 +1148,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
 	ValueList scummvmOSX_HeaderPaths;
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		scummvmOSX_HeaderPaths.push_back("\"" + *i + "\"");
 	if (setup.useSDL2) {
 		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL2");
 		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL2");
@@ -1161,6 +1167,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		scummvmOSX_LibPaths.push_back("\"" + *i + "\"");
 	scummvmOSX_LibPaths.push_back("/usr/local/lib");
 	scummvmOSX_LibPaths.push_back("/opt/local/lib");
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");

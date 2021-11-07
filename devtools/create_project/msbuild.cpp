@@ -358,13 +358,21 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	if (runBuildEvents)
 		definesList += REVISION_DEFINE ";";
 
+	std::string includeDirsList;
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		includeDirsList += convertPathToWin(*i) + ';';
+
+	std::string libraryDirsList;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		libraryDirsList += convertPathToWin(*i) + ';';
+
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	           << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 	           << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-	           << "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-	           << "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << ";$(IncludePath)</IncludePath>\n"
+	           << "\t\t<LibraryPath>" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
+	           << "\t\t<IncludePath>" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << ";$(IncludePath)</IncludePath>\n"
 	           << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
 	           << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
 	           << "\t</PropertyGroup>\n"

@@ -187,6 +187,10 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings += *i + ';';
 
+	std::string includeDirsList;
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		includeDirsList += convertPathToWin(*i) + ';';
+
 	std::string definesList;
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i) {
 		if (i != defines.begin())
@@ -210,7 +214,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	           << "\t\tName=\"VCCLCompilerTool\"\n"
 	           << "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	           << "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	           << "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
+	           << "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
 	           << "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	           << "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
 
@@ -241,7 +245,11 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
 
-	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\"\n"
+	std::string libraryDirsList;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		libraryDirsList += convertPathToWin(*i) + ';';
+
+	properties << "\t\tAdditionalLibraryDirectories=\"" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\"\n"
 	           << "\t/>\n"
 	           << "\t<Tool\n"
 	           << "\t\tName=\"VCResourceCompilerTool\"\n"
