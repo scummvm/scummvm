@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-06 16:26+0000\n"
-"PO-Revision-Date: 2021-10-03 07:20+0000\n"
+"PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -245,8 +245,8 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Spelets språk. Den här inställningen omvandlar inte din spanska spelversion "
-"till en svensk"
+"Spelets språk. Den här inställningen gör inte din spanska spelversion till "
+"en svensk"
 
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:179 gui/options.cpp:1398
 #: gui/options.cpp:1418 gui/options.cpp:1431 gui/options.cpp:1445
@@ -263,7 +263,7 @@ msgstr "Plattform:"
 #: gui/editgamedialog.cpp:175 gui/editgamedialog.cpp:177
 #: gui/editgamedialog.cpp:178
 msgid "Platform the game was originally designed for"
-msgstr "Plattformen spelet ursprungligen utvecklades för"
+msgstr "Plattformen som spelet ursprungligen utvecklades för"
 
 #: gui/editgamedialog.cpp:177
 msgctxt "lowres"
@@ -285,7 +285,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:218
 msgid "Override global graphic settings"
-msgstr "Överskrid globala grafikinställningar"
+msgstr "Ignorera globala grafikinställningar"
 
 #: gui/editgamedialog.cpp:220
 msgctxt "lowres"
@@ -311,7 +311,7 @@ msgstr "Tangentuppsättningar"
 
 #: gui/editgamedialog.cpp:256 gui/options.cpp:2025 engines/dialogs.cpp:326
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:259
 #, fuzzy
@@ -1039,7 +1039,7 @@ msgstr "Skalningsläge:"
 
 #: gui/options.cpp:1454
 msgid "Scaler:"
-msgstr ""
+msgstr "Skalning:"
 
 #: gui/options.cpp:1467 backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Fullscreen mode"
@@ -1371,12 +1371,12 @@ msgstr "Sökv. tillägg:"
 
 #: gui/options.cpp:2264
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVM inställningar sökväg: "
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2271 gui/options.cpp:2915
 msgid "Last browser path: "
-msgstr ""
+msgstr "Senaste webläsarens sökväg: "
 
 #: gui/options.cpp:2276
 msgid "Theme:"
@@ -1401,7 +1401,7 @@ msgstr "Autospara:"
 
 #: gui/options.cpp:2310
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Återvänd alltid till start när spel avslutas"
 
 #: gui/options.cpp:2311
 msgid ""
