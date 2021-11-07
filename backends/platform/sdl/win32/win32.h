@@ -28,6 +28,8 @@
 
 class OSystem_Win32 final : public OSystem_SDL {
 public:
+	OSystem_Win32();
+
 	virtual void init() override;
 	virtual void initBackend() override;
 
@@ -58,6 +60,10 @@ protected:
 	virtual AudioCDManager *createAudioCDManager() override;
 
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
+
+private:
+	bool _isPortable;
+	bool detectPortableConfigFile();
 };
 
 #endif

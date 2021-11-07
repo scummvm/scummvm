@@ -36,27 +36,25 @@
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
-WindowsSaveFileManager::WindowsSaveFileManager() {
+WindowsSaveFileManager::WindowsSaveFileManager(bool isPortable) {
 	TCHAR defaultSavepath[MAX_PATH];
 
-	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, defaultSavepath) == S_OK) {
-		_tcscat(defaultSavepath, TEXT("\\ScummVM"));
-		if (!CreateDirectory(defaultSavepath, NULL)) {
-			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				error("Cannot create ScummVM application data folder");
-		}
-
-		_tcscat(defaultSavepath, TEXT("\\Saved games"));
-		if (!CreateDirectory(defaultSavepath, NULL)) {
-			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				error("Cannot create ScummVM Saved games folder");
-		}
-
-		ConfMan.registerDefault("savepath", Win32::tcharToString(defaultSavepath));
+	if (isPortable) {
+		Win32::getProcessDirectory(defaultSavepath, MAX_PATH);
 	} else {
-		warning("Unable to access application data directory");
+		// Use the Application Data directory of the user profile
+		if (!Win32::getApplicationDataDirectory(defaultSavepath)) {
+			return;
+		}
 	}
+
+	_tcscat(defaultSavepath, TEXT("\\Saved games"));
+	if (!CreateDirectory(defaultSavepath, NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS)
+			error("Cannot create ScummVM Saved games folder");
+	}
+
+	ConfMan.registerDefault("savepath", Win32::tcharToString(defaultSavepath));
 }
 
 #endif

@@ -32,6 +32,29 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 namespace Win32 {
 
 /**
+ * Gets the full path to the ScummVM application data directory
+ * in the user's profile and creates it if it doesn't exist.
+ *
+ * @param profileDirectory MAX_PATH sized output array
+ *
+ * @return True if the user's profile directory was found, false if
+ * it was not.
+ *
+ * @note if the user's profile directory is found but the "ScummVM"
+ * subdirectory can't be created then this function calls error().
+ */
+bool getApplicationDataDirectory(TCHAR *profileDirectory);
+
+/**
+ * Gets the full path to the directory that the currently executing
+ * process resides in.
+ *
+ * @param processDirectory output array
+ * @param size size in characters of output array
+ */
+void getProcessDirectory(TCHAR *processDirectory, DWORD size);
+
+/**
  * Checks if the current running Windows version is greater or equal to the specified version.
  * See: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/operating-system-version
  *
@@ -115,6 +138,6 @@ char **getArgvUtf8(int *argc);
 void freeArgvUtf8(int argc, char **argv);
 #endif
 
-}
+} // End of namespace Win32
 
 #endif

@@ -26,11 +26,11 @@
 #include "backends/saves/default/default-saves.h"
 
 /**
- * Provides a default savefile manager implementation for common platforms.
+ * Provides a savefile manager implementation for Windows.
  */
 class WindowsSaveFileManager final : public DefaultSaveFileManager {
 public:
-	WindowsSaveFileManager();
+	WindowsSaveFileManager(bool isPortable);
 };
 
 #endif
