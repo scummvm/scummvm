@@ -24,9 +24,6 @@
     <ClInclude Include="..\msbuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\visualstudio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\xcode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\msbuild.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\visualstudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\xcode.cpp">

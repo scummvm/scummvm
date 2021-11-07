@@ -13,8 +13,6 @@ set(SOURCE_FILES
 	../msbuild.h
 	../msvc.cpp
 	../msvc.h
-	../visualstudio.cpp
-	../visualstudio.h
 	../xcode.cpp
 	../xcode.h
     )

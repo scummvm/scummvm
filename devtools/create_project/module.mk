@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	create_project.o \
 	codeblocks.o \
 	msvc.o \
-	visualstudio.o \
 	msbuild.o \
 	xcode.o
 

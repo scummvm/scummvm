@@ -47,8 +47,6 @@
 		<Unit filename="..\msbuild.h" />
 		<Unit filename="..\msvc.cpp" />
 		<Unit filename="..\msvc.h" />
-		<Unit filename="..\visualstudio.cpp" />
-		<Unit filename="..\visualstudio.h" />
 		<Unit filename="..\xcode.cpp" />
 		<Unit filename="..\xcode.h" />
 		<Extensions>
