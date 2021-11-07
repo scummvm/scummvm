@@ -469,7 +469,7 @@ def generate_parser() -> argparse.ArgumentParser:
         "--dryrun", action="store_true", help="do not write any files"
     )
     parser_iso.add_argument(
-        "--log", metavar="LOGGING", help="set logging level", default="INFO"
+        "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
