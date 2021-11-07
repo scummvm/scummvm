@@ -377,9 +377,7 @@ bool PartEmitter::sortParticlesByZ() {
 bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 	if (p1->_posZ < p2->_posZ) {
 		return true;
-	} else if (p1->_posZ > p2->_posZ) {
-		return false;
-	} else {
+	} else { // p1->_posZ >= p2->_posZ
 		return false;
 	}
 }

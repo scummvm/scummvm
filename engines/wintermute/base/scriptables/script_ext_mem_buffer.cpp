@@ -419,9 +419,9 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			memcpy((byte *)_buffer+Start, &Pointer, sizeof(void*));
 			stack->pushBool(true);
 			*/
-			// TODO fix
+			// TODO: fix
+			debug(3, "SXMemBuffer::ScCallMethod - SetPointer Bounds FIXME");
 			stack->pushBool(false);
-
 		}
 		return STATUS_OK;
 	}

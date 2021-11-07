@@ -106,8 +106,8 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 
 		// used in secret scene of "Art of Murder 1: FBI Confidential"
 		if (strcmp(dirName, "X:\\FBI\\data\\scenes\\17-magic\\") == 0 && strcmp(name, "GetDirectories") == 0) {
-			//TODO: return list of "scenes\17-magic" subfolders from data.dcp
-			warning("Directory.%s is not implemented! Returning empty array...", name);
+			// TODO: return list of "scenes\17-magic" subfolders from data.dcp
+			warning("FBI\\scenes\\17-magic Directory.%s is not implemented! Returning empty array...", name);
 		} else {
 			// No currently known games need this
 			warning("Directory.%s is not implemented! Returning empty array...", name);
