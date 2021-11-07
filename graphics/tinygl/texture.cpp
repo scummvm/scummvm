@@ -186,6 +186,9 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
 
+	if (c->current_texture == nullptr) {
+		return;
+	}
 	c->current_texture->versionNumber++;
 	im = &c->current_texture->images[level];
 	im->xsize = c->_textureSize;
