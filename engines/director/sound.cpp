@@ -775,6 +775,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator))) {
 		warning("Failed to open %s", _path.c_str());
+		delete file;
 		return nullptr;
 	}
 	uint32 magic1 = file->readUint32BE();
@@ -791,6 +792,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		stream = Audio::makeAIFFStream(file, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());
+		delete file;
 	}
 
 	if (stream) {
