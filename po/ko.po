@@ -1042,7 +1042,8 @@ msgstr "Vsync"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "수직 동기화가 화면을 새로 고칠 때까지 기다리면 아티팩트가 찢어지지 않습니다"
+msgstr ""
+"수직 동기화가 화면을 새로 고칠 때까지 기다리면 아티팩트가 찢어지지 않습니다"
 
 #: gui/options.cpp:1472
 msgid "Game 3D Renderer:"
@@ -1406,7 +1407,9 @@ msgstr "Discord 통합 사용"
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr "Discord 클라이언트가 실행 중인 경우 Discord에서 실행 중인 게임에 대한 정보 표시."
+msgstr ""
+"Discord 클라이언트가 실행 중인 경우 Discord에서 실행 중인 게임에 대한 정보 표"
+"시."
 
 #: gui/options.cpp:2336
 msgid "GUI language:"
@@ -5265,7 +5268,9 @@ msgstr "시작 동영상 중에 디지털 사운드 트랙 재생"
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr "선택하면 도입 중에 디지털 사운드트랙을 사용합니다. 그렇지 않으면 MIDI 음악이 재생됩니다."
+msgstr ""
+"선택하면 도입 중에 디지털 사운드트랙을 사용합니다. 그렇지 않으면 MIDI 음악이 "
+"재생됩니다."
 
 #: engines/made/detection_tables.h:442 engines/made/detection_tables.h:459
 msgid "The game is using unsupported engine"
@@ -6180,7 +6185,9 @@ msgstr "올바른 글꼴 간격 사용"
 msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
-msgstr "텍스트를 올바른 글꼴 간격으로 그립니다. 이것은 틀림없이 더 좋아 보이지만, 원래의 행동과는 일치하지 않습니다."
+msgstr ""
+"텍스트를 올바른 글꼴 간격으로 그립니다. 이것은 틀림없이 더 좋아 보이지만, 원"
+"래의 행동과는 일치하지 않습니다."
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
