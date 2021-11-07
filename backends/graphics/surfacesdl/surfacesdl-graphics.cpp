@@ -109,7 +109,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_osdIconSurface(nullptr),
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	_renderer(nullptr), _screenTexture(nullptr),
+	_renderer(nullptr), _screenTexture(nullptr), _vsync(false),
 #endif
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
@@ -237,6 +237,10 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 #ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case OSystem::kFeatureVSync:
+		return _vsync;
 #endif
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
@@ -2588,6 +2592,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		if (_vsync) {
 			// VSYNC might not be available, so retry without VSYNC
 			warning("SDL_SetVideoMode: SDL_CreateRenderer() failed with VSYNC option, retrying without it...");
+			_vsync = false;
 			rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
 			_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
 		}
