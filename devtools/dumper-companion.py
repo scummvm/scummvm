@@ -108,7 +108,7 @@ def decode_macjapanese(text: ByteString) -> str:
                 res += int.to_bytes(hi, 1, 'little').decode('mac-roman')
                 hi = next(i_text, None)
                 continue
-            if (0xF0 <= hi <= 0xFC):    # Shift+JIS mapping (incomplete)
+            if (0xF0 <= hi <= 0xFC):    # Shift+JIS mapping
                 logging.warning(f"MacJapanese sequence has high first byte 0x{hi:02x}, mapping to Shift-JIS")
                 hilo = ( hi << 8 ) | lo & 0x00FF
                 if (0x40 <= lo <= 0x7E) or (0x80 <= lo <= 0xFC) and (lo != 0x7F):
