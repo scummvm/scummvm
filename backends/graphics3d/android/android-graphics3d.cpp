@@ -156,7 +156,6 @@ void AndroidGraphics3dManager::initSurface() {
 	updateScreenRect();
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);
-	updateEventScale();
 
 	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    JNI::egl_surface_width, JNI::egl_surface_height);
@@ -367,8 +366,6 @@ void AndroidGraphics3dManager::showOverlay() {
 		}
 	}
 
-	updateEventScale();
-
 	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
 
 	GLCALL(glDisable(GL_SCISSOR_TEST));
@@ -386,8 +383,6 @@ void AndroidGraphics3dManager::hideOverlay() {
 	_overlay_background->release();
 
 	JNI::setTouch3DMode(true);
-
-	updateEventScale();
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
@@ -565,7 +560,6 @@ void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
 	_frame_buffer->attach();
 
 	updateScreenRect();
-	updateEventScale();
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -873,13 +867,6 @@ void AndroidGraphics3dManager::initViewport() {
 
 	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
 	LOGD("viewport size: %dx%d", JNI::egl_surface_width, JNI::egl_surface_height);
-}
-
-void AndroidGraphics3dManager::updateEventScale() {
-	const GLESBaseTexture *texture = getActiveTexture();
-	if (texture) {
-		dynamic_cast<OSystem_Android *>(g_system)->updateEventScale(texture->width(), texture->height());
-	}
 }
 
 void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {

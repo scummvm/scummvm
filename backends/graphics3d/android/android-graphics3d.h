@@ -134,7 +134,6 @@ private:
 	void disableCursorPalette();
 	void initOverlay();
 	void initViewport();
-	void updateEventScale();
 	void initSizeIntern(uint width, uint height, const Graphics::PixelFormat *format);
 
 	enum FixupType {
