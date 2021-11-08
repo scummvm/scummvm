@@ -83,15 +83,12 @@ void TinyGLRenderer::clear() {
 }
 
 void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
-	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-
 	if (!window) {
 		// No window found ...
 		if (scaled) {
 			// ... in scaled mode draw in the original game screen area
 			Common::Rect vp = viewport();
-			tglViewport(vp.left, vp.top, vp.width(), vp.height());
-			//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+			tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 		} else {
 			// ... otherwise, draw on the whole screen
 			tglViewport(0, 0, _system->getWidth(), _system->getHeight());
@@ -99,8 +96,7 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 	} else {
 		// Found a window, draw inside it
 		Common::Rect vp = window->getPosition();
-		tglViewport(vp.left, vp.top, vp.width(), vp.height());
-		//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+		tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 	}
 
 	if (is3D) {

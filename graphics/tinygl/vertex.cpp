@@ -74,11 +74,14 @@ void gl_eval_viewport(GLContext *c) {
 
 	v = &c->viewport;
 
+	// v->ymin needs to be upside down for transformation
+	int ymin = c->fb->ysize - v->ysize - v->ymin;
 	v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
-	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + v->ymin);
+	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + ymin);
 	v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);
 
 	v->scale.X = (float)((v->xsize - 0.5) / 2.0);
+	// v->ysize needs to be upside down for scaling
 	v->scale.Y = (float)(-(v->ysize - 0.5) / 2.0);
 	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
