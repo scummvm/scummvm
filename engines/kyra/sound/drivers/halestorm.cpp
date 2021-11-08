@@ -329,6 +329,7 @@ private:
 	};
 
 	struct InstrumentEntry {
+		InstrumentEntry() : status(0), transpose(0), flags(0), flags2(0), refinst(0), sndRes(), pmData(), _noteRangeSubsets() {}
 		enum {
 			kUnusable = -1,
 			kRequestLoad = 0,
@@ -624,8 +625,7 @@ HSAudioStream *HSLowLevelDriver::init(uint32 scummVMOutputrate, bool output16bit
 	_chan = new HSSoundChannel[16];
 	memset(_chan, 0, sizeof(HSSoundChannel) * 16);
 
-	_instruments = new InstrumentEntry[128];
-	memset(_instruments, 0, sizeof(InstrumentEntry) * 128);
+	_instruments = new InstrumentEntry[128]();
 
 	_trackState = new MidiTrackState[24];
 	memset(_trackState, 0, 24 * sizeof(MidiTrackState));
