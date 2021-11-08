@@ -42,7 +42,6 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 }
 
 void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
-	// Destination rectangle with given width and height
 	_gfx->start2DMode();
 
 	Math::Vector2d sizeWH;
@@ -54,13 +53,16 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	auto verOffsetXY = normalizeOriginalCoordinates(dest.x, dest.y);
 	auto nativeViewport = _gfx->getViewport();
 	auto viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
-
 	auto blitImage = ((TinyGlBitmap *)const_cast<Texture *>(texture))->getBlitTexture();
 	int blitTextureWidth, blitTextureHeight;
 	Graphics::tglGetBlitImageSize(blitImage, blitTextureWidth, blitTextureHeight);
-	Graphics::BlitTransform transform(viewport.getX() * verOffsetXY.getX(), viewport.getY() * verOffsetXY.getY());
+	int posX = viewport.getX() * verOffsetXY.getX() + nativeViewport.left;
+	int posY = viewport.getY() * verOffsetXY.getY() + nativeViewport.top;
+	int dstWidth = viewport.getX() * sizeWH.getX();
+	int dstHeight = viewport.getY() * sizeWH.getY();
+	Graphics::BlitTransform transform(posX, posY);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
-	transform.scale(viewport.getX() * sizeWH.getX(), viewport.getY() * sizeWH.getY());
+	transform.scale(dstWidth, dstHeight);
 	transform.tint(1.0, 1.0 - _fadeLevel, 1.0 - _fadeLevel, 1.0 - _fadeLevel);
 	tglBlit(blitImage, transform);
 
