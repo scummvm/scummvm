@@ -439,7 +439,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" script_said - Shows all said - strings inside a specified script\n");
 	debugPrintf(" vm_varlist / vmvarlist / vl - Shows the addresses of variables in the VM\n");
 	debugPrintf(" vm_vars / vmvars / vv - Displays or changes variables in the VM\n");
-	debugPrintf(" stack - Lists the specified number of stack elements\n");
+	debugPrintf(" stack / st - Lists the specified number of stack elements\n");
 	debugPrintf(" value_type - Determines the type of a value\n");
 	debugPrintf(" view_listnode - Examines the list node at the given address\n");
 	debugPrintf(" view_reference / vr - Examines an arbitrary reference\n");
