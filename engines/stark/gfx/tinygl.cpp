@@ -172,11 +172,14 @@ Common::Rect TinyGLDriver::getUnscaledViewport() const {
 }
 
 Graphics::Surface *TinyGLDriver::getViewportScreenshot() const {
+	Graphics::Surface *tmp = new Graphics::Surface();
+	tmp->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
-	Graphics::PixelBuffer buf(s->format, (byte *)s->getPixels());
+	Graphics::PixelBuffer buf(tmp->format, (byte *)tmp->getPixels());
 	_fb->copyToBuffer(buf);
-	flipVertical(s);
+	s->copyRectToSurface(tmp->getBasePtr(_viewport.left, _viewport.top), tmp->pitch, 0, 0, _viewport.width(), _viewport.height());
+	delete tmp;
 	return s;
 }
 
