@@ -21,6 +21,7 @@
  */
 
 #include "bladerunner/script/scene_script.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -68,7 +69,7 @@ bool SceneScriptDR03::ClickedOnActor(int actorId) {
 		Actor_Face_Actor(kActorChew, kActorMcCoy, true);
 
 		if (!Game_Flag_Query(kFlagDR03ChewTalk1)) {
-			if (_vm->_cutContent && Random_Query(1, 2) == 1) {
+			if (_vm->_cutContent && Random_Query(1, 5) < 4) {
 				Actor_Says(kActorMcCoy, 750, 18);
 				Actor_Says(kActorChew, 0, 14);
 			} else {
