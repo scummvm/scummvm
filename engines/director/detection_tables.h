@@ -2090,11 +2090,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 #define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	// Original AV filename is Spaceship Warlock™ AV
+	// Mac AV versions are from 1994 and 1996, the latter provided by eriktorbjorn
 	WINGAME1("warlock", "",		"SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 300),
 	WINDEMO1("warlock", "Demo", "SSWDEMO.EXE",	"65d06b5fef155a2473434571aff5bc29", 370934, 300),
-	MACGAME1("warlock", "v1.1.2 AV",  "xn--Spaceship Warlock AV-5h7l", "e043b322d17e0f2ca7f73520466a4311", 382206, 313),
-	MACDEMO1("warlock", "1994 Demo",  "Spaceship Launch",			   "7f443f2e63fd497a9ad85b10dc880a91", 385872, 313),
-	MACDEMO1("warlock", "AV Trailer", "SS Warlock Movie Trailer AV",   "e043b322d17e0f2ca7f73520466a4311", 384477, 313),
+	MACGAME1("warlock", "v1.1.2 AV",  "xn--Spaceship Warlock-306j",	 "cfa68a1bc49251497ebde18e5fc9c217", 270851, 313), // 1994
+	MACGAME1("warlock", "v1.1.2 AV",  "xn--Spaceship Warlock-306j",	 "cfa68a1bc49251497ebde18e5fc9c217", 273115, 313), // 1996
+	MACDEMO1("warlock", "1994 Demo",  "Spaceship Launch",			 "7f443f2e63fd497a9ad85b10dc880a91", 385872, 313),
+	MACDEMO1("warlock", "AV Trailer", "SS Warlock Movie Trailer AV", "e043b322d17e0f2ca7f73520466a4311", 384477, 313),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
@@ -3392,9 +3394,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("tonetrakker", "Demo", "TTSTART.EXE", "7ab8fc552f890fe827ccd60679032527", 697017, 404),
 
 	// Mac executable name is TD MAC/PPC
-	MACGAME1("totaldistortion", "", "TD MACPPC", "17efee018a660458fae80de4364021ac", 486074, 404),
+	// Earlier demos are D3; the Great Big Demo is from Spaceship Warlock AV (1996)
+	// Great Big Windows demo is also on this disc, despite it being HFS and Mac-only
+	MACGAME1("totaldistortion", "",	"TD MACPPC",	"17efee018a660458fae80de4364021ac", 486074, 404),
 	WINGAME1("totaldistortion", "", "TOTAL_DN.EXE", "461b407c321e80487ae4882056310f9f", 700747, 404),
-	WINGAME1("totaldistortion", "Demo", "TD_DEMO.EXE", "3ae9cfa4b020861b41f3bab9b28f3f5a", 696855, 404),
+	MACDEMO1("totaldistortion",	 "Great Big Demo", "TD Demo 12 Meg", "17efee018a660458fae80de4364021ac", 485818, 404),
+	WINDEMO1t("totaldistortion", "Great Big Demo", "TD_DEMO.EXE",	 "028063f8a752f5ffda7477f328500d82", 700447, 404),
+	WINDEMO1("totaldistortion",	 "Demo",		   "TD_DEMO.EXE",	 "3ae9cfa4b020861b41f3bab9b28f3f5a", 696855, 404),
 
 	MACGAME1("toyota95", "", "Toyota 95", "01be45e7241194dad07938e7059b88e3", 486985, 404),
 
