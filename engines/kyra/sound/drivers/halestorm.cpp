@@ -689,7 +689,7 @@ int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 	// Fast-forward through the whole song to check which instruments need to be loaded
 	bool loop = _songLoop;
 	_songLoop = false;
-	_midiBusy = true;	
+	_midiBusy = true;
 	for (bool lp = true; lp; lp = isMusicPlaying())
 		midiNextTick();
 
@@ -1082,30 +1082,32 @@ void HSLowLevelDriver::pcmNextTick() {
 	}
 }
 
-#define HS_CYCL_NOINI(len) ; i < len; ++i
 #define HS_CYCL_DEF(len) int i = 0; i < len; ++i
 #define HS_CYCL_NOINIEX(len, cond) ; i < len && cond; ++i
-
 #define HS_ADVSRC \
 	ih += rate; \
 	src += (ih >> 16); \
 	ih &= 0xffff
 
-#define HS_DOCYCLE(cycCond, srcOp, loopOp) \
-	for (##cycCond) { \
-		##loopOp; \
-		(*dst++) += (##srcOp); \
-		HS_ADVSRC; \
-	}
+#define HS_VOID { }
 #define HS_LOOPCHECK \
-	{ if (src >= chan.loopEnd) src = (src - chan.loopEnd) + chan.loopStart; }
+	if (src >= chan.loopEnd) src = (src - chan.loopEnd) + chan.loopStart;
 #define HS_LOOPCHECK_IP \
 if (src >= chan.loopEnd - 1) { \
 	if (src >= chan.loopEnd || (ih & 0x8000)) \
 		src = (src - chan.loopEnd) + chan.loopStart; \
 }
-#define HS_VOID \
-	{ }
+#define HS_LOOPCHECK_IP2 \
+	bool oneByteOnly = (src == chan.loopEnd - 1); \
+	if (src >= chan.loopEnd) \
+		src = (src - chan.loopEnd) + chan.loopStart;
+#define HS_DOCYCLE(cycCond, srcOp, loopOp) \
+	for (cycCond) { \
+		loopOp \
+		(*dst++) += (srcOp); \
+		HS_ADVSRC; \
+	}
+
 
 void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 	int next = 0;
@@ -1179,64 +1181,32 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 		if (next == 1 || chan.tickDataLen < (chan.dataEnd - src)) {
 			if (!(rate & 0xffff) || chan.imode == kNone) {
 				if (chan.stateCur.velocity) {
-					for (int i = 0; i < (_transCycleLenDef + 1) * 5; ++i) {
-						(*dst++) += at[*src];
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_VOID)
+					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_VOID)
 				} else {
-					for (int i = 0; i < (_transCycleLenDef + 1) * 5; ++i) {
-						(*dst++) += *src;
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), *src, HS_VOID)
+					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), *src, HS_VOID)
 				}
 			} else if (chan.imode == kSimple) {
 				if (chan.stateCur.velocity) {
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), ih & 0x8000 ? at[(src[0] + src[1]) >> 1] : at[*src], HS_VOID)
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						(*dst++) += (ih & 0x8000 ? at[(src[0] + src[1]) >> 1] : at[*src]);
-						HS_ADVSRC;
-					}
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), ih & 0x8000 ? at[(src[0] + src[1]) >> 1] : at[*src], HS_VOID)
 				} else {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						(*dst++) += (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src);
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src), HS_VOID)
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src), HS_VOID)
 				}
 			} else if (chan.imode == kTable) {
 				const uint8 *s1 = _interpolationTable;
 				const uint8 *s2 = _interpolationTable2;
 				if (chan.stateCur.velocity) {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						(*dst++) += at[(s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff];
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), at[s1[src[0]] + s2[src[1]]], HS_VOID)
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), at[s1[src[0]] + s2[src[1]]], HS_VOID)
 				} else {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						(*dst++) += ((s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff);
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (uint8)(s1[src[0]] + s2[src[1]]), HS_VOID)
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (uint8)(s1[src[0]] + s2[src[1]]), HS_VOID)
 				}
 			}
 
 		} else if (next == 0) {
 			int i = 0;
 			if (chan.stateCur.velocity) {
-				for (; i <= _transCycleLenInter && src < chan.dataEnd; ++i) {
-					(*dst++) += at[*src];
-					HS_ADVSRC;
-				}
-				//HS_DOCYCLE(HS_CYCL_NOINIEX(_transCycleLenInter + 1, src < chan.dataEnd), at[*src], HS_VOID)
+				HS_DOCYCLE(HS_CYCL_NOINIEX(_transCycleLenInter + 1, src < chan.dataEnd), at[*src], HS_VOID)
 			} else {
-				for (; i <= _transCycleLenInter && src < chan.dataEnd; ++i) {
-					(*dst++) += *src;
-					HS_ADVSRC;
-				}
-				//HS_DOCYCLE(HS_CYCL_NOINIEX(_transCycleLenInter + 1, src < chan.dataEnd), *src, HS_VOID)
+				HS_DOCYCLE(HS_CYCL_NOINIEX(_transCycleLenInter + 1, src < chan.dataEnd), *src, HS_VOID)
 			}
 			for (; i <= _transCycleLenInter; ++i)
 					(*dst++) += 0x80;
@@ -1246,64 +1216,23 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 		} else if (next == 2) {
 			if (!(rate & 0xffff) || chan.imode == kNone) {
 				if (chan.stateCur.velocity) {
-					for (int i = 0; i < (_transCycleLenDef + 1) * 5; ++i) {
-						if (src >= chan.loopEnd)
-							src = (src - chan.loopEnd) + chan.loopStart;
-						(*dst++) += at[*src];
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_LOOPCHECK)
+					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_LOOPCHECK)
 				} else {
-					for (int i = 0; i < (_transCycleLenDef + 1) * 5; ++i) {
-						if (src >= chan.loopEnd)
-							src = (src - chan.loopEnd) + chan.loopStart;
-						(*dst++) += *src;
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), *src, HS_LOOPCHECK)
+					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), *src, HS_LOOPCHECK)
 				}
 			} else if (chan.imode == kSimple) {
 				if (chan.stateCur.velocity) {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						if (src >= chan.loopEnd - 1) {
-							if (src >= chan.loopEnd || (ih & 0x8000))
-								src = (src - chan.loopEnd) + chan.loopStart;
-						}
-						(*dst++) += (ih & 0x8000 ? at[(src[ih >> 16] + src[(ih >> 16) + 1]) >> 1] : at[src[ih >> 16]]);
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? at[(src[ih >> 16] + src[(ih >> 16) + 1]) >> 1] : at[src[ih >> 16]]), HS_LOOPCHECK_IP)
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? at[(src[ih >> 16] + src[(ih >> 16) + 1]) >> 1] : at[src[ih >> 16]]), HS_LOOPCHECK_IP)
 				} else {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						if (src >= chan.loopEnd - 1) {
-							if (src >= chan.loopEnd || (ih & 0x8000))
-								src = (src - chan.loopEnd) + chan.loopStart;
-						}
-						(*dst++) += (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src);
-						HS_ADVSRC;
-					}
-					//HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src), HS_LOOPCHECK_IP)
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (ih & 0x8000 ? ((src[0] + src[1]) >> 1) : *src), HS_LOOPCHECK_IP)
 				}
 			} else if (chan.imode == kTable) {
 				const uint8 *s1 = _interpolationTable;
 				const uint8 *s2 = _interpolationTable2;
-
 				if (chan.stateCur.velocity) {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						bool oneByteOnly = (src == chan.loopEnd - 1);
-						if (src >= chan.loopEnd)
-							src = (src - chan.loopEnd) + chan.loopStart;		
-						(*dst++) += at[oneByteOnly ? *src : (s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff];
-						HS_ADVSRC;
-					}
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), at[oneByteOnly ? *src : (s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff], HS_LOOPCHECK_IP2)
 				} else {
-					for (int i = 0; i <= _transCycleLenInter; ++i) {
-						bool oneByteOnly = (src == chan.loopEnd - 1);
-						if (src >= chan.loopEnd)
-							src = (src - chan.loopEnd) + chan.loopStart;
-						(*dst++) += (oneByteOnly ? *src : (s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff);
-						HS_ADVSRC;
-					}
+					HS_DOCYCLE(HS_CYCL_DEF(_transCycleLenInter + 1), (oneByteOnly ? *src : (s1[(ih & 0xff00) | src[0]] + s2[(ih & 0xff00) | src[1]]) & 0xff), HS_LOOPCHECK_IP2)
 				}
 			}
 		}
@@ -1373,13 +1302,13 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 	++_songTicker;
 }
 
-#undef HS_CYCL_NOINI
 #undef HS_CYCL_DEF
 #undef HS_CYCL_NOINIEX
 #undef HS_ADVSRC
 #undef HS_DOCYCLE
 #undef HS_LOOPCHECK
 #undef HS_LOOPCHECK_IP
+#undef HS_LOOPCHECK_IP2
 #undef HS_VOID
 
 template<typename T> void HSLowLevelDriver::fillBuffer(T *dst) {
@@ -1946,7 +1875,7 @@ ShStBuffer HSLowLevelDriver::processWithEffect(const ShStBuffer &buf, uint16 smo
 	ShStBuffer res(dst, buf.len, true);
 	delete[] dst;
 
- 	return res;
+	return res;
 }
 
 const uint32 HSLowLevelDriver::_periods[156] = {
