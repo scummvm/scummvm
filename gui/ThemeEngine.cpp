@@ -777,7 +777,7 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		if (_widgets[i] == nullptr) {
-			warning("Missing data asset: '%s'", kDrawDataDefaults[i].name);
+			warning("Missing data asset: '%s' in theme '%s", kDrawDataDefaults[i].name, themeId.c_str());
 		} else {
 			_widgets[i]->calcBackgroundOffset();
 		}
