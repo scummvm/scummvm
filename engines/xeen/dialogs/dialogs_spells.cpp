@@ -521,7 +521,6 @@ int CastSpell::execute(Character *&c) {
 					intf.highlightChar(_buttonValue);
 					spells._lastCaster = _buttonValue;
 					redrawFlag = true;
-					break;
 				}
 			}
 
