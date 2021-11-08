@@ -226,7 +226,7 @@ void LauncherDialog::build() {
 			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
 		_addButton = addButton;
-		
+
 		_removeButton =
 		new ButtonWidget(this, _title + ".RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
@@ -1012,7 +1012,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+			attrs.push_back(metadata[i]->getValOrDefault("description").substr(0, 1));
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String("..."));
 		break;
