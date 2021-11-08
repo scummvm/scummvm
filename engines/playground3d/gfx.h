@@ -54,9 +54,11 @@ public:
 
 	void computeScreenViewport();
 
+	virtual void setupViewport(int x, int y, int width, int height) = 0;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void dimRegionInOut(float fade) = 0;
+	virtual void drawInViewport() = 0;
 
 protected:
 	OSystem *_system;

@@ -41,6 +41,14 @@ static const GLfloat dimRegionVertices[] = {
 	 0.5f, -0.5f,
 };
 
+static const GLfloat boxVertices[] = {
+	//  X      Y
+	-1.0f,  1.0f,
+	 1.0f,  1.0f,
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+};
+
 Renderer *CreateGfxOpenGL(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
@@ -78,6 +86,10 @@ void OpenGLRenderer::clear(const Math::Vector4d &clearColor) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void OpenGLRenderer::setupViewport(int x, int y, int width, int height) {
+	glViewport(x, y, width, height);
+}
+
 void OpenGLRenderer::drawFace(uint face) {
 	glBegin(GL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
@@ -89,9 +101,6 @@ void OpenGLRenderer::drawFace(uint face) {
 }
 
 void OpenGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	Common::Rect vp = viewport();
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(_projectionMatrix.getData());
 
@@ -109,9 +118,6 @@ void OpenGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 }
 
 void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	Common::Rect vp = viewport();
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(_projectionMatrix.getData());
 
@@ -140,9 +146,6 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 }
 
 void OpenGLRenderer::dimRegionInOut(float fade) {
-	Common::Rect vp = viewport();
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -158,11 +161,64 @@ void OpenGLRenderer::dimRegionInOut(float fade) {
 
 	glColor4f(0.0f, 0.0f, 0.0f, 1.0f - fade);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), &dimRegionVertices[0]);
+	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), dimRegionVertices);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+}
+
+void OpenGLRenderer::drawInViewport() {
+	static GLfloat box2Vertices[] = {
+		//  X      Y
+		-0.1f,  0.1f,
+		 0.1f,  0.1f,
+		-0.1f, -0.1f,
+		 0.1f, -0.1f,
+	};
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), &boxVertices[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glPushMatrix();
+	_pos.x() += 0.01;
+	_pos.y() += 0.01;
+	if (_pos.x() >= 1.0f) {
+		_pos.x() = -1.0;
+		_pos.y() = -1.0;
+	}
+	glTranslatef(_pos.x(), _pos.y(), 0);
+
+	glPolygonOffset(-1.0f, 0.0f);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), &box2Vertices[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 	glPopMatrix();
 
 	glMatrixMode(GL_PROJECTION);

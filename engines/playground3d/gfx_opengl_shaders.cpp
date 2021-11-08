@@ -94,10 +94,11 @@ void ShaderRenderer::clear(const Math::Vector4d &clearColor) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	Common::Rect vp = viewport();
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+void ShaderRenderer::setupViewport(int x, int y, int width, int height) {
+	glViewport(x, y, width, height);
+}
 
+void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
 	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
 	_cubeShader->use();
 	_cubeShader->setUniform("textured", false);
@@ -118,9 +119,6 @@ void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 }
 
 void ShaderRenderer::dimRegionInOut(float fade) {
-	Common::Rect vp = viewport();
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
@@ -130,6 +128,10 @@ void ShaderRenderer::dimRegionInOut(float fade) {
 	_fadeShader->setUniform1f("alphaLevel", 1.0 - fade);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	_fadeShader->unbind();
+}
+
+void ShaderRenderer::drawInViewport() {
+	// TODO
 }
 
 } // End of namespace Playground3d

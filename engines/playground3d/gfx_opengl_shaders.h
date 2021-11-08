@@ -43,9 +43,11 @@ public:
 
 	virtual void clear(const Math::Vector4d &clearColor) override;
 
+	virtual void setupViewport(int x, int y, int width, int height) override;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	virtual void dimRegionInOut(float fade) override;
+	virtual void drawInViewport() override;
 
 private:
 	OpenGL::ShaderGL *_cubeShader;

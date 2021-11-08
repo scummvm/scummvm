@@ -47,6 +47,14 @@ static const TGLuint dimRegionIndices[] = {
 	0, 1, 2, 3
 };
 
+static const TGLfloat boxVertices[] = {
+	//  X      Y
+	-1.0f,  1.0f,
+	 1.0f,  1.0f,
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+};
+
 Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
@@ -66,7 +74,7 @@ void TinyGLRenderer::init() {
 
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
 	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
+	tglEnableDirtyRects(false/*ConfMan.getBool("dirtyrects")*/);
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -83,6 +91,10 @@ void TinyGLRenderer::clear(const Math::Vector4d &clearColor) {
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
+void TinyGLRenderer::setupViewport(int x, int y, int width, int height) {
+	tglViewport(x, y, width, height);
+}
+
 void TinyGLRenderer::drawFace(uint face) {
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
@@ -94,9 +106,6 @@ void TinyGLRenderer::drawFace(uint face) {
 }
 
 void TinyGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	Common::Rect vp = viewport();
-	tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadMatrixf(_projectionMatrix.getData());
 
@@ -114,9 +123,6 @@ void TinyGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 }
 
 void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	Common::Rect vp = viewport();
-	tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadMatrixf(_projectionMatrix.getData());
 
@@ -150,9 +156,6 @@ void TinyGLRenderer::flipBuffer() {
 }
 
 void TinyGLRenderer::dimRegionInOut(float fade) {
-	Common::Rect vp = viewport();
-	tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
-
 	tglMatrixMode(TGL_PROJECTION);
 	tglPushMatrix();
 	tglLoadIdentity();
@@ -167,7 +170,6 @@ void TinyGLRenderer::dimRegionInOut(float fade) {
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4f(0.0f, 0.0f, 0.0f, 1.0f - fade);
-
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 0, dimRegionVertices);
 	tglDrawElements(TGL_TRIANGLE_STRIP, 4, TGL_UNSIGNED_INT, dimRegionIndices);
@@ -175,6 +177,59 @@ void TinyGLRenderer::dimRegionInOut(float fade) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
+}
+
+void TinyGLRenderer::drawInViewport() {
+	static TGLfloat box2Vertices[] = {
+		//  X      Y
+		-0.1f,  0.1f,
+		 0.1f,  0.1f,
+		-0.1f, -0.1f,
+		 0.1f, -0.1f,
+	};
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ONE_MINUS_SRC_ALPHA);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), &boxVertices[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglPushMatrix();
+	_pos.x() += 0.01;
+	_pos.y() += 0.01;
+	if (_pos.x() >= 1.0f) {
+		_pos.x() = -1.0;
+		_pos.y() = -1.0;
+	}
+	tglTranslatef(_pos.x(), _pos.y(), 0);
+
+	tglPolygonOffset(-1.0f, 0.0f);
+	tglEnable(TGL_POLYGON_OFFSET_FILL);
+	tglColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), &box2Vertices[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisable(TGL_POLYGON_OFFSET_FILL);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
 	tglPopMatrix();
 
 	tglMatrixMode(TGL_PROJECTION);

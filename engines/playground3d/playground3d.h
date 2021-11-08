@@ -59,6 +59,7 @@ private:
 	void drawAndRotateCube();
 	void drawPolyOffsetTest();
 	void dimRegionInOut();
+	void drawInViewport();
 };
 
 } // End of namespace Playground3d

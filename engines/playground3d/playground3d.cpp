@@ -66,6 +66,7 @@ Common::Error Playground3dEngine::run() {
 	// 1 - rotated colorfull cube
 	// 2 - rotated two triangles with depth offset
 	// 3 - fade in/out
+	// 4 - moving filled rectangle in viewport
 	int testId = 1;
 
 	switch (testId) {
@@ -78,6 +79,9 @@ Common::Error Playground3dEngine::run() {
 			break;
 		case 3:
 			_clearColor = Math::Vector4d(1.0f, 0.0f, 0.0f, 1.0f);
+			break;
+		case 4:
+			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
 			break;
 		default:
 			assert(false);
@@ -140,6 +144,10 @@ void Playground3dEngine::dimRegionInOut() {
 	}
 }
 
+void Playground3dEngine::drawInViewport() {
+	_gfx->drawInViewport();
+}
+
 void Playground3dEngine::drawFrame(int testId) {
 	_gfx->clear(_clearColor);
 
@@ -147,6 +155,9 @@ void Playground3dEngine::drawFrame(int testId) {
 	float heading = 0.0f;
 	float fov = 45.0f;
 	_gfx->setupCameraPerspective(pitch, heading, fov);
+
+	Common::Rect vp = _gfx->viewport();
+	_gfx->setupViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 
 	switch (testId) {
 		case 1:
@@ -157,6 +168,10 @@ void Playground3dEngine::drawFrame(int testId) {
 			break;
 		case 3:
 			dimRegionInOut();
+			break;
+		case 4:
+			_gfx->setupViewport(vp.left + 40, _system->getHeight() - vp.top - vp.height() + 40, vp.width() - 80, vp.height() - 80);
+			drawInViewport();
 			break;
 		default:
 			assert(false);
