@@ -155,15 +155,22 @@ struct ScriptPatch {
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
 			187, "set the trails of sprite 19 to 0", "set the locH of sprite 19 to 408"},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
-		188, "set the locH of sprite 19 to 408", "set the locV of sprite 19 to 168"},
+			188, "set the locH of sprite 19 to 408", "set the locV of sprite 19 to 168"},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
-		189, "set the locV of sprite 19 to 168", "set the text of field \"Description\" = description"},
+			189, "set the locV of sprite 19 to 168", "set the text of field \"Description\" = description"},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
-		190, "set the text of field \"Description\" = description", "set the castnum of sprite 19 to the number of cast \"Description\""},
+			190, "set the text of field \"Description\" = description", "set the castnum of sprite 19 to the number of cast \"Description\""},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
-		191, "set the castnum of sprite 19 to the number of cast \"Description\"", "updateStage"},
+			191, "set the castnum of sprite 19 to the number of cast \"Description\"", "updateStage"},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
-		192, "updateStage", "set the trails of sprite 19 to 0"},
+			192, "updateStage", "set the trails of sprite 19 to 0"},
+
+	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+			3, "changedrive", ""}, // HACK: This macro inserts \x01 after the first character in myCD/myHD
+	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+			6, "set mytest2 = FileIO(mnew, \"read\" mymovie)", "set mytest2 = FileIO(mnew, \"read\", mymovie)"},
+	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+			14, "set mytest3 = FileIO(mnew, \"read\" mymovie)", "set mytest3 = FileIO(mnew, \"read\", mymovie)"},
 
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };
