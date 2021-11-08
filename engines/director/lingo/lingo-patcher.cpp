@@ -150,7 +150,8 @@ struct ScriptPatch {
 				"  append(codeExampleList,\"6,301,302,303,304,305,306\")"},
 
 	{"jman", "", kPlatformWindows, "mmm:Mars Space Game 05", kMovieScript, 10, 0,
-			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
+			68, "set DamageParameter = (gProcessorSpeed/2) + 7)",
+				"set DamageParameter = (gProcessorSpeed/2) + 7"},
 
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
 			187, "set the trails of sprite 19 to 0", "set the locH of sprite 19 to 408"},
