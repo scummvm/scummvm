@@ -54,6 +54,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
+	Scene *sc;
+	ChangeLevel *cl;
+
 	loadSceneLevel("mainmenu.mi_", "", prefix);
 	loadSceneLevel("tryagain.mi_", "", prefix);
 	loadSceneLevel("options.mi_", "", prefix);
@@ -65,6 +68,14 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("roof.mi_", "decide1.mi_", prefix);
 	loadSceneLevel("decide1.mi_", "", prefix);
+	sc = (Scene *) _levels["decide1.mi_"];
+	cl = new ChangeLevel("bank.mi_");
+	sc->hots[1].actions.push_back(cl);
+	cl = new ChangeLevel("c1.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	loadSceneLevel("bank.mi_", "", prefix);
+	//loadSceneLevel("busintro.mi_", "", prefix);
 
 	loadArcadeLevel("c1", "", "spider");
 	loadArcadeLevel("c2", "", "spider");
@@ -72,8 +83,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c4", "", "spider");
 	loadArcadeLevel("c5", "", "spider");
 	//loadArcadeLevel("c6", "", "spider");
+	// No c7 level?
 	loadArcadeLevel("c8", "", "spider");
 	loadArcadeLevel("c9", "", "spider");
+	loadArcadeLevel("c10", "", "spider");
+	loadArcadeLevel("c11", "", "spider");
+	loadArcadeLevel("c12", "", "spider");
+	loadArcadeLevel("c13", "", "spider");
 
 	// start level
 	Transition *start = new Transition();
@@ -82,8 +98,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	start->intros.push_back("spider/cine/dcine2.smk");
 	_levels["<start>"] = start;
 
-	Scene *sc = (Scene *) _levels["mainmenu.mi_"];
-	ChangeLevel *cl = new ChangeLevel("levels.mi_");
+	sc = (Scene *) _levels["mainmenu.mi_"];
+	cl = new ChangeLevel("levels.mi_");
 	sc->hots[1].actions.push_back(cl);
 	
 	cl = new ChangeLevel("options.mi_");

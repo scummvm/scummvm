@@ -217,6 +217,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				MVideo video(arc->defeatVideos.front(), Common::Point(0, 0), false, false, false);
 				runIntro(video);
 			}
+			assert(!arc->levelIfLose.empty());
 			_nextLevel = arc->levelIfLose;
 			debugC(1, kHypnoDebugArcade, "Losing level and jumping to %s", _nextLevel.c_str());
 			break;
@@ -236,6 +237,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				MVideo video(arc->winVideos.front(), Common::Point(0, 0), false, false, false);
 				runIntro(video);
 			}
+			assert(!arc->levelIfWin.empty());
 			_nextLevel = arc->levelIfWin;
 			debugC(1, kHypnoDebugArcade, "Wining level and jumping to %s", _nextLevel.c_str());
 			break;

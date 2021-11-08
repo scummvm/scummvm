@@ -28,47 +28,61 @@
 
 namespace Hypno {
 
-static const int orientationIndex[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
+static const int oIndexYB[9] = {0, 1, 2, 7, 8, 3, 6, 5, 4};
+static const int oIndexYE[9] = {4, 3, 2, 1, 0};
 static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	uint32 idx = MIN(2, target.x / (_screenW / 3)) + 3 * MIN(2, target.y / (_screenH / 3));
-	uint32 ox = 60  + shootOriginIndex[idx][0];
-	uint32 oy = 129 + shootOriginIndex[idx][1];
+	uint32 ox;
+	uint32 oy;
+
+	if (_arcadeMode == "YC") {
+		return; // Nothing to shoot
+	} else if (_arcadeMode == "YE") { 
+		ox = _screenW/2;
+		oy = _screenH - _playerFrames[0]->h/2;
+	} else if (_arcadeMode == "YB") {
+		uint32 idx = MIN(2, target.x / (_screenW / 3)) + 3 * MIN(2, target.y / (_screenH / 3));
+		ox = 60  + shootOriginIndex[idx][0];
+		oy = 129 + shootOriginIndex[idx][1];
+	}
 	_compositeSurface->drawLine(ox, oy, target.x + 2, target.y, c);
 	_compositeSurface->drawLine(ox, oy, target.x, target.y, c);
 	_compositeSurface->drawLine(ox, oy, target.x - 2, target.y, c);
+
 	playSound(_soundPath + _shootSound, 1);
 }
 
 void SpiderEngine::drawPlayer() {
+	uint32 ox;
+	uint32 oy;
 
 	if (_arcadeMode == "YC") {
-		drawImage(*_playerFrames[_playerPosition], 0, 0, true);
-		return;
-	}
-
-	// if (_playerFrameSep == -1) {
-	// 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	// 	drawImage(*_playerFrames[0], MIN(MAX(10, int(mousePos.x)), _screenH-10), 129, true);
-	// 	return;
-	// }
-
-
-	if (_playerFrameIdx < _playerFrameSep) {
+		ox = 0;
+		oy = 0;
+		_playerFrameIdx = _playerPosition;
+	} else if (_arcadeMode == "YE") {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		//uint32 idx = MIN(2, mousePos.x / (_screenW / 3)) + 3 * MIN(2, mousePos.y / (_screenH / 3));
-		_playerFrameIdx = 4 - mousePos.x / (_screenW / 4);
-		//debug("selecting index %d", _playerFrameIdx);
-		//_playerFrameIdx = orientationIndex[idx];
-	} else {
-		_playerFrameIdx++;
-		if (_playerFrameIdx >= (int)_playerFrames.size())
-			_playerFrameIdx = 0;
+		uint32 idx = mousePos.x / (_screenW / 5);
+		_playerFrameIdx = oIndexYE[idx];
+		ox = _screenW / 2 - _playerFrames[0]->w / 2;
+		oy = _screenH - _playerFrames[0]->h;
+	} else if (_arcadeMode == "YB") {
+		ox = 60;
+		oy = 129;
+		if (_playerFrameIdx < _playerFrameSep) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			uint32 idx = MIN(2, mousePos.x / (_screenW / 3)) + 3 * MIN(2, mousePos.y / (_screenH / 3));
+			_playerFrameIdx = oIndexYB[idx];
+		} else {
+			_playerFrameIdx++;
+			if (_playerFrameIdx >= (int)_playerFrames.size())
+				_playerFrameIdx = 0;
+		}
 	}
-	drawImage(*_playerFrames[_playerFrameIdx], _screenW/2 - 15, _screenH-50, true);
+	drawImage(*_playerFrames[_playerFrameIdx], ox, oy, true);
 }
 
 void SpiderEngine::drawHealth() {

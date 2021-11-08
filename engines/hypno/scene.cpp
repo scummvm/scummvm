@@ -386,7 +386,10 @@ void HypnoEngine::runScene(Scene *scene) {
 				_nextSequentialVideoToPlay.empty() && 
 				_nextParallelVideoToPlay.empty()) {
 				debugC(1, kHypnoDebugScene, "Wining level and jumping to %s", scene->levelIfWin.c_str());
-				_nextLevel = scene->levelIfWin;
+				if (_nextLevel.empty()) {
+					assert(!scene->levelIfWin.empty());
+					_nextLevel = scene->levelIfWin;
+				}
 				continue;
 			}
 		}
