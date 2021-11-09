@@ -619,30 +619,21 @@ void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 		return;
 
 	switch (_sprite->_cast->_type) {
-	case kCastBitmap: {
-		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
-
-		Common::Point point(0, 0);
-		// stretch the offset
-		if (!_sprite->_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
-			point.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();
-			point.y = (bc->_initialRect.top - bc->_regY) * _height / bc->_initialRect.height();
-		} else {
-			point.x = bc->_initialRect.left - bc->_regX;
-			point.y = bc->_initialRect.top - bc->_regY;
+	case kCastBitmap:
+		{
+			if (subtract)
+				pos -= _sprite->getRegistrationOffset();
+			else
+				pos += _sprite->getRegistrationOffset();
 		}
-		if (subtract)
-			pos -= point;
-		else
-			pos += point;
-	} break;
+		break;
 	case kCastDigitalVideo:
 	case kCastFilmLoop:
-		pos -= Common::Point(_sprite->_cast->_initialRect.width() >> 1, _sprite->_cast->_initialRect.height() >> 1);
-		break;
+		pos -= _sprite->getRegistrationOffset();
 	default:
 		break;
 	}
+	return;
 }
 
 void Channel::addDelta(Common::Point pos) {

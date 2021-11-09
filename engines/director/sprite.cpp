@@ -283,6 +283,38 @@ uint32 Sprite::getForeColor() {
 	}
 }
 
+Common::Point Sprite::getRegistrationOffset() {
+	Common::Point result(0, 0);
+	if (!_cast)
+		return result;
+
+	switch (_cast->_type) {
+	case kCastBitmap:
+		{
+			BitmapCastMember *bc = (BitmapCastMember *)(_cast);
+
+			Common::Point point(0, 0);
+			// stretch the offset
+			if (!_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
+				result.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();
+				result.y = (bc->_initialRect.top - bc->_regY) * _height / bc->_initialRect.height();
+			} else {
+				result.x = bc->_initialRect.left - bc->_regX;
+				result.y = bc->_initialRect.top - bc->_regY;
+			}
+		}
+		break;
+	case kCastDigitalVideo:
+	case kCastFilmLoop:
+		result.x = _cast->_initialRect.width() >> 1;
+		result.y = _cast->_initialRect.height() >> 1;
+		break;
+	default:
+		break;
+	}
+	return result;
+}
+
 void Sprite::updateEditable() {
 	if (!_cast)
 		return;
@@ -442,18 +474,26 @@ void Sprite::setCast(CastMemberID memberID) {
 		// them properly.
 		Common::Rect dims = _cast->getInitialRect();
 		// strange logic here, need to be fixed
-		if (_cast->_type == kCastBitmap) {
+		switch (_cast->_type) {
+		case kCastBitmap:
 			// for the stretched sprites, we need the original size to get the correct bbox offset.
 			// there are two stretch situation here.
 			// 1. stretch happened when creating the widget, there is no lingo participated. we will use the original sprite size to create widget. check copyStretchImg
 			// 2. stretch set by lingo. this time we need to store the original dims because we will create the original sprite and stretch it when bliting. check inkBlitStretchSurface
-			if (!(_inkData & 0x80) || _stretch) {
-				_width = dims.width();
-				_height = dims.height();
+			{
+				if (!(_inkData & 0x80) || _stretch) {
+					_width = dims.width();
+					_height = dims.height();
+				}
 			}
-		} else if (_cast->_type != kCastShape && _cast->_type != kCastText) {
+			break;
+		case kCastShape:
+		case kCastText: 	// fall-through
+			break;
+		default:
 			_width = dims.width();
 			_height = dims.height();
+			break;
 		}
 
 	} else {

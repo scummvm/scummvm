@@ -610,7 +610,6 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		chan._currentPoint = Common::Point(absX, absY);
 		chan._width = width;
 		chan._height = height;
-		chan.addRegistrationOffset(chan._currentPoint, true);
 
 		_subchannels.push_back(chan);
 		_subchannels[_subchannels.size() - 1].replaceWidget();
@@ -725,13 +724,21 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 
 			frameSize -= msgWidth;
 
-			Common::Rect spriteBbox(
-				sprite._startPoint.x,
-				sprite._startPoint.y,
-				sprite._startPoint.x + sprite._width,
-				sprite._startPoint.y + sprite._height
-			);
 			newFrame.sprites.setVal(channel, sprite);
+		}
+
+		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
+			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
+					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
+					s->_value._width, s->_value._height);
+
+			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			Common::Rect spriteBbox(
+				topLeft.x,
+				topLeft.y,
+				topLeft.x + s->_value._width,
+				topLeft.y + s->_value._height
+			);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
 				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
 					_initialRect = spriteBbox;
@@ -739,15 +746,8 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 					_initialRect.extend(spriteBbox);
 				}
 			}
-		}
+			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
-		if (debugChannelSet(5, kDebugLoading)) {
-			for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-				debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-						s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-						s->_value._width, s->_value._height);
-
-			}
 		}
 
 		_frames.push_back(newFrame);
