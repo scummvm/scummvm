@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-09 08:45+0000\n"
-"PO-Revision-Date: 2021-11-06 17:09+0000\n"
+"PO-Revision-Date: 2021-11-09 18:25+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4299,7 +4299,7 @@ msgstr "Endre kommando"
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:285 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
-msgstr "Inventar"
+msgstr "Utstyrsliste"
 
 #: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
@@ -5113,11 +5113,11 @@ msgstr "Sving til Høyre"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Open/Close Inventory"
-msgstr "Åpne/Lukke inventar"
+msgstr "Åpne/Lukke utstyrsliste"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Switch Inventory/Character screen"
-msgstr "Bytt mellom inventar-/karakterskjerm"
+msgstr "Bytt mellom utstyrsliste/karakterskjerm"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
@@ -5342,7 +5342,7 @@ msgstr "Vis objektnavn når du peker på dem med musepekeren"
 
 #: engines/mads/detection.cpp:73 engines/mads/detection.cpp:74
 msgid "Animated inventory items"
-msgstr "Animerte inventargjenstander"
+msgstr "Animerte elementer i utstyrslisten"
 
 #: engines/mads/detection.cpp:83 engines/mads/detection.cpp:84
 msgid "Animated game interface"
@@ -5939,7 +5939,7 @@ msgstr "Handling/Velg"
 
 #: engines/pegasus/pegasus.cpp:2762
 msgid "Display/Hide Inventory Tray"
-msgstr "VIs/Skjul Inventoryskuff"
+msgstr "Vis/Skjul utstyrslisteskuff"
 
 #: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Biochip Tray"
@@ -6750,7 +6750,7 @@ msgstr "Andre spillkontroller:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:269
 msgid "Inventory:"
-msgstr "Inventar:"
+msgstr "Utstyrsliste:"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list up"
@@ -6798,7 +6798,7 @@ msgstr "Tredje unge"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Skru visning av Inventar/IQ-poeng av/på"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
 
 #: engines/scumm/help.cpp:294
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -7112,13 +7112,15 @@ msgstr "Aktiver innlasting av eksterne erstatningsressurser."
 
 #: engines/stark/detection.cpp:385
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Aktiver lineær filtrering av bakgrunnsbilder"
 
 #: engines/stark/detection.cpp:386
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Når lineær filtrering er aktivert, vil grafikken for bakgrunnsbildene være "
+"mer utjevnet i fullskjermsmodus. Dette går på bekostning av enkelte detaljer."
 
 #: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
 msgid "Enable font anti-aliasing"
@@ -7127,10 +7129,11 @@ msgstr "Aktiver kantutjevning for font"
 #: engines/stark/detection.cpp:395 engines/ultima/detection.cpp:120
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
+"Når kantutjevning for font er aktivert, vil tekst fremstå med jevnere kanter."
 
 #: engines/stark/stark.cpp:284
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "Du mangler anbefalte datafiler:"
 
 #: engines/stark/stark.cpp:298
 msgid ""
@@ -7138,41 +7141,48 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Du trenger 'fonts'-mappen for å oppleve den opprinnelige designen til "
+"teksten i spillet. Det er et kjent problem at Steam-utgivelsen mangler denne "
+"mappen. Hvis du trenger de, kan du finne fontene i demoversjonen av spillet."
 
 #: engines/stark/stark.cpp:305
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"'gui.ini' er anbefalt for å få riktig fontinnstillinger i lokaliseringen til "
+"spillet."
 
 #: engines/stark/stark.cpp:311
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "'language.ini' er anbefalt for å få lokaliserte bekreftelsesdialoger."
 
 #: engines/stark/stark.cpp:317
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "'game.exe' er anbefalt for å få stiliserte bekreftelsesdialoger."
 
 #: engines/supernova/supernova.cpp:191
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
+msgstr "Kan ikke finne teksten for %s språk i spillmotordatafilen."
 
 #: engines/supernova/supernova.cpp:475
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
+"Ugyldig versjon av spillmotordatafilen '%s' funnet. Forventet %d, men fikk "
+"%d."
 
 #: engines/supernova/supernova.cpp:485
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Kan ikke finne blokk for del %d"
 
 #: engines/supernova/supernova.cpp:528
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr ""
+msgstr "Kan ikke finne '%s' i spillmappen eller spillmotordatafilen."
 
 #: engines/supernova/supernova.cpp:832
 msgid ""
@@ -7299,7 +7309,7 @@ msgstr "Saturn CD-versjonen støttes ikke ennå"
 #: engines/tony/tony.cpp:249
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Fontvariant ikke tilstede i spillmotordatafilen '%s'."
 
 #: engines/toon/toon.cpp:225
 #, c-format
@@ -7328,15 +7338,15 @@ msgstr "Kunne ikke finne datafilen '%s'."
 
 #: engines/twine/detection.cpp:253
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
+msgstr "Denne versjonen krever Giflib som ikke har blitt innkompilert i ScummVM"
 
 #: engines/twine/detection.cpp:597
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Aktiver veggkollisjoner"
 
 #: engines/twine/detection.cpp:598
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Aktiver veggkollisjonsskade fra originalen"
 
 #: engines/twine/detection.cpp:604
 msgid "Enable cross fade"
@@ -7344,7 +7354,7 @@ msgstr "Aktiver lydovergang"
 
 #: engines/twine/detection.cpp:605
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Aktiver kryssovergang for bilder og scener"
 
 #: engines/twine/detection.cpp:612
 msgid "Disable save menu"
@@ -7353,7 +7363,7 @@ msgstr "Skru av lagringsmeny"
 #: engines/twine/detection.cpp:613
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr ""
+msgstr "Originalen hadde kun autolagring. Dette lar deg lagre når du vil."
 
 #: engines/twine/detection.cpp:619
 msgid "Enable debug mode"
@@ -7369,7 +7379,7 @@ msgstr "Tillat CD-lyd"
 
 #: engines/twine/detection.cpp:627
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Aktiver det opprinnelige CD-lydsporet"
 
 #: engines/twine/detection.cpp:633
 msgid "Enable sound"
@@ -7413,11 +7423,11 @@ msgstr "Aktiver mus for brukergrensesnittet"
 
 #: engines/twine/detection.cpp:668
 msgid "Use the USA version"
-msgstr ""
+msgstr "Bruk den amerikanske utgaven"
 
 #: engines/twine/detection.cpp:669
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Bruk versjonsflaggene til den amerikanske utgaven"
 
 #: engines/twine/detection.cpp:675 engines/ultima/detection.cpp:85
 msgid "Enable high resolution"
@@ -7465,7 +7475,7 @@ msgstr "Debug rutenettkamera høyre"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Plasser karakter på midten av skjermen"
 
 #: engines/twine/metaengine.cpp:154
 msgid "Debug Menu"
@@ -7477,19 +7487,19 @@ msgstr "Debug-meny kjør"
 
 #: engines/twine/metaengine.cpp:164 engines/twine/metaengine.cpp:184
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Normal adferd"
 
 #: engines/twine/metaengine.cpp:169 engines/twine/metaengine.cpp:189
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Atletisk adferd"
 
 #: engines/twine/metaengine.cpp:174 engines/twine/metaengine.cpp:194
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Aggressiv adferd"
 
 #: engines/twine/metaengine.cpp:179 engines/twine/metaengine.cpp:199
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Diskre adferd"
 
 #: engines/twine/metaengine.cpp:204
 msgid "Behaviour Action"
@@ -7497,7 +7507,7 @@ msgstr "Adferdshandling"
 
 #: engines/twine/metaengine.cpp:210
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Endre adferd"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Options Menu"
@@ -7505,11 +7515,11 @@ msgstr "Alternativer-meny"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Bruk valgt gjenstand"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Kast magisk ball"
 
 #: engines/twine/metaengine.cpp:254
 msgid "Move Backward"
@@ -7517,11 +7527,11 @@ msgstr "Gå bakover"
 
 #: engines/twine/metaengine.cpp:275
 msgid "Use Protopack"
-msgstr ""
+msgstr "Bruk Proto-Pack"
 
 #: engines/twine/metaengine.cpp:280
 msgid "Open Holomap"
-msgstr ""
+msgstr "Åpne holokart"
 
 #: engines/twine/metaengine.cpp:293
 msgid "Special Action"
@@ -7533,12 +7543,12 @@ msgstr "Escape"
 
 #: engines/twine/metaengine.cpp:312
 msgid "Accept"
-msgstr ""
+msgstr "Godta"
 
 #: engines/twine/metaengine.cpp:320 engines/twine/metaengine.cpp:372
 #: engines/twine/metaengine.cpp:388
 msgid "Abort"
-msgstr ""
+msgstr "Avbryt"
 
 #: engines/twine/metaengine.cpp:358
 msgid "Next Page"
@@ -7565,7 +7575,7 @@ msgstr "Høy oppløsning av"
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "Veggkollisjon på"
 
 #: engines/twine/parser/text.cpp:37
 msgctxt "Options menu"
@@ -7574,11 +7584,11 @@ msgstr "Veggkollisjon av"
 
 #: engines/ultima/detection.cpp:67
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Aktiver bildedropping"
 
 #: engines/ultima/detection.cpp:68
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "Lar spillet hoppe over animasjoner hvis det kjører for sakte."
 
 #: engines/ultima/detection.cpp:73
 msgid "Enable frame limiting"
@@ -7587,6 +7597,7 @@ msgstr "Aktiver begrensning av bildefrekvens"
 #: engines/ultima/detection.cpp:74
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+"Begrenser hastigheten på spillet for å forhindre at det kjører for fort."
 
 #: engines/ultima/detection.cpp:79
 msgid "Enable cheats"
@@ -7595,10 +7606,12 @@ msgstr "Aktiver juksefunksjoner"
 #: engines/ultima/detection.cpp:80
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+"Gjør det mulig å bruke juksefunksjoner via kommandoer og en meny som vises "
+"når du klikker på spilleren."
 
 #: engines/ultima/detection.cpp:95
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Spill av lyden av fottrinn"
 
 #: engines/ultima/detection.cpp:96
 msgid "Plays sound when the player moves."
@@ -7612,6 +7625,8 @@ msgstr "Aktiver hopping til plassering av musepeker"
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Hopping mens du står stille er rettet mot musepekerens plassering og ikke "
+"bare i retningen du peker."
 
 #: engines/ultima/detection.cpp:113
 msgid "Enable font replacement"
@@ -7821,7 +7836,7 @@ msgstr "Vis hint"
 #: engines/wintermute/keymapper_tables.h:1612
 #: engines/wintermute/keymapper_tables.h:1874
 msgid "Show inventory"
-msgstr "Vis inventar"
+msgstr "Vis utstyrsliste"
 
 #: engines/wintermute/keymapper_tables.h:270
 #: engines/wintermute/keymapper_tables.h:333
@@ -8100,11 +8115,11 @@ msgstr "Vis spillets liste over medvirkende"
 
 #: engines/wintermute/keymapper_tables.h:1000
 msgid "Play selected music record"
-msgstr ""
+msgstr "Spill av valgt musikkopptak"
 
 #: engines/wintermute/keymapper_tables.h:1005
 msgid "Select next music record"
-msgstr ""
+msgstr "Velg neste musikkopptak"
 
 #: engines/wintermute/keymapper_tables.h:1010
 msgid "Play note 1: A"
@@ -8136,35 +8151,35 @@ msgstr "Spill note 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1053
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Evne: Telekinese"
 
 #: engines/wintermute/keymapper_tables.h:1058
 msgid "Ability: Push"
-msgstr ""
+msgstr "Evne: Dytt"
 
 #: engines/wintermute/keymapper_tables.h:1063
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Evne: Lyn"
 
 #: engines/wintermute/keymapper_tables.h:1068
 msgid "Ability: Light"
-msgstr ""
+msgstr "Evne :Lys"
 
 #: engines/wintermute/keymapper_tables.h:1073
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Evne: Vind"
 
 #: engines/wintermute/keymapper_tables.h:1078
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Evne: Lyd"
 
 #: engines/wintermute/keymapper_tables.h:1083
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Evne: Essens"
 
 #: engines/wintermute/keymapper_tables.h:1088
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Evne: Eksorsist"
 
 #: engines/wintermute/keymapper_tables.h:1201
 msgid "Show hints / Dance move"
@@ -8197,7 +8212,7 @@ msgstr "Skru undertekster av/på"
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
 msgid "Shift key"
-msgstr ""
+msgstr "Shift-tast"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
@@ -8313,25 +8328,28 @@ msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2110
 msgid "Key i"
-msgstr ""
+msgstr "i-tast"
 
 #: engines/xeen/detection.cpp:56
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Vis gjenstandspris i den ordinære utstyrslistemodusen"
 
 #: engines/xeen/detection.cpp:57
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Viser gjenstandspris i den ordinære utstyrsmodusen, så det blir enklere å "
+"sammenligne verdien på gjenstander"
 
 #: engines/xeen/detection.cpp:66
 msgid "More durable armor"
-msgstr ""
+msgstr "Sterkere rustning"
 
 #: engines/xeen/detection.cpp:67
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"Rustning knuser ikke før en karakter er på -80 HP (fremfor knappe -10 HP)"
 
 #: engines/xeen/saves.cpp:291
 msgid "Failed to autosave"
@@ -8377,6 +8395,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Dette lagrede spillet bruker versjon %u, men denne spillmotoren støtter kun "
+"opptil versjon %d. Du trenger en oppdatert versjon av spillmotoren for å "
+"bruke dette lagrede spillet."
 
 #: engines/zvision/metaengine.cpp:129
 msgid "Look Up"
@@ -8392,15 +8413,15 @@ msgstr "Formelbok"
 
 #: engines/zvision/metaengine.cpp:176
 msgid "Score"
-msgstr ""
+msgstr "Poeng"
 
 #: engines/zvision/metaengine.cpp:182
 msgid "Put away object"
-msgstr ""
+msgstr "Legg bort gjenstand"
 
 #: engines/zvision/metaengine.cpp:188
 msgid "Extract coin"
-msgstr ""
+msgstr "Hent ut mynt"
 
 #: engines/zvision/metaengine.cpp:209
 msgid "Preferences"
@@ -8417,6 +8438,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Før du spiller dette spillet må du kopiere de nødvendige fontene inn i "
+"ScummVMs mappe for ekstrainnhold eller selve spillet. I Windows trenger du "
+"følgende fontfiler fra fontmappen til Windows: Times New Roman, Century "
+"Schoolbook, Garamond, Courier New og Arial. Alternativt, kan du laste ned "
+"Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
+"fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
+"og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
 
 #, fuzzy
 #~ msgid "Game language:"
