@@ -102,6 +102,10 @@ void TinyGlTexture::setLevelCount(uint32 count) {
 
 void TinyGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
 	assert(level < _levelCount);
+
+	if (level == 0) {
+		updateLevel(level, surface, palette);
+	}
 }
 
 } // End of namespace Gfx
