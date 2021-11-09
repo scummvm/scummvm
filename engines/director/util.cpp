@@ -983,4 +983,8 @@ Common::String castTypeToString(const CastType &type) {
 	return res;
 }
 
+Common::String decodePlatformEncoding(Common::String input) {
+	return input.decode(g_director->getPlatformEncoding());
+}
+
 } // End of namespace Director
