@@ -76,6 +76,8 @@ bool SoundMacRes::init() {
 				break;
 			_kyraMacExe.clear();
 		}
+		if (!_kyraMacExe.empty())
+			break;
 	}
 
 	if (_kyraMacExe.empty()) {
