@@ -207,11 +207,6 @@ void SoundMac::playSoundEffect(uint16 track, uint8) {
 		if (track > 21 && track < 38)
 			_driver->startSoundEffect(_resIDSfxIntro[_soundEffectDefsIntro[track - 22].number]);
 	} else {
-		if (track >= 97 && track <= 99) {
-			playTrack(track - 79);
-			return;
-		}
-
 		const SoundEffectDef *se = &_soundEffectDefsIngame[track];
 		if (se->note)
 			_driver->enqueueSoundEffect(_resIDSfxIngame[se->number], se->rate, se->note);

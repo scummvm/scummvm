@@ -33,9 +33,11 @@ void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
 			track = 58;
 		else
 			track -= 16;
-	}
-
-	if (_flags.platform == Common::kPlatformFMTowns && track == 49) {
+	} else if (_flags.platform == Common::kPlatformMacintosh && track >= 97 && track <= 99) {
+		_sound->playTrack(track - 79);
+		_lastMusicCommand = -1;
+		return;
+	} else if (_flags.platform == Common::kPlatformFMTowns && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
 	}
