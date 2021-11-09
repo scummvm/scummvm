@@ -101,28 +101,28 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 				TGLfloat *array = (TGLfloat *)((TGLbyte *)c->normal_array + offset);
 				c->current_normal.X = array[0];
 				c->current_normal.Y = array[1];
-				c->current_normal.Z = array[3];
+				c->current_normal.Z = array[2];
 				break;
 			}
 		case TGL_DOUBLE: {
 				TGLdouble *array = (TGLdouble *)((TGLbyte *)c->normal_array + offset);
 				c->current_normal.X = array[0];
 				c->current_normal.Y = array[1];
-				c->current_normal.Z = array[3];
+				c->current_normal.Z = array[2];
 				break;
 			}
 		case TGL_INT: {
 				TGLint *array = (TGLint *)((TGLbyte *)c->normal_array + offset);
 				c->current_normal.X = array[0];
 				c->current_normal.Y = array[1];
-				c->current_normal.Z = array[3];
+				c->current_normal.Z = array[2];
 				break;
 			}
 		case TGL_SHORT: {
 				TGLshort *array = (TGLshort *)((TGLbyte *)c->normal_array + offset);
 				c->current_normal.X = array[0];
 				c->current_normal.Y = array[1];
-				c->current_normal.Z = array[3];
+				c->current_normal.Z = array[2];
 			break;
 		}
 		default:
@@ -290,7 +290,7 @@ void glopColorPointer(GLContext *c, GLParam *p) {
 	c->color_array_size = p[1].i;
 	c->color_array_type = p[2].i;
 	c->color_array = p[4].p;
-	switch (p[2].i) {
+	switch (c->color_array_type) {
 	case TGL_BYTE:
 	case TGL_UNSIGNED_BYTE:
 		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLbyte);
