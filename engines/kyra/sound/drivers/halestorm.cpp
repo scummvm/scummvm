@@ -1118,7 +1118,7 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 				next = 1;
 			} else {
 				chan.status = -1;
-				if (!(_songFlags & 0x200) && (chan.tickDataLen < (chan.dataEnd - chan.stateCur.dataPos))) {
+				if (!(_songFlags & 0x200) && (chan.tickDataLen < (uint32)(chan.dataEnd - chan.stateCur.dataPos))) {
 					chan.mode = -1;
 					chan.stateSaved = chan.stateCur;
 				}
@@ -1178,7 +1178,7 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 			}
 		}
 
-		if (next == 1 || chan.tickDataLen < (chan.dataEnd - src)) {
+		if (next == 1 || chan.tickDataLen < (uint32)(chan.dataEnd - src)) {
 			if (!(rate & 0xffff) || chan.imode == kNone) {
 				if (chan.stateCur.velocity) {
 					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_VOID)
@@ -1697,7 +1697,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 
 	if (!(_songFlags & 0x200)) {
 		chan->mode = 1;
-		if (chan->status >= 0 && chan->tickDataLen && (chan->tickDataLen < (chan->dataEnd - chan->stateCur.dataPos))) {
+		if (chan->status >= 0 && chan->tickDataLen && (chan->tickDataLen < (uint32)(chan->dataEnd - chan->stateCur.dataPos))) {
 			chan->mode = -1;
 			chan->stateSaved = chan->stateCur;
 		}
@@ -2253,11 +2253,11 @@ HSSoundSystem::HSSoundEffectVoice *HSSoundSystem::findFreeVoice() const {
 	if (chan)
 		return chan;
 
-	uint32 sync = _sync;
+	uint32 temp = _sync;
 	for (int i = 0; i < _numChanSfx; ++i) {
-		if (!_voices[i] || _voices[i]->sync >= sync)
+		if (!_voices[i] || _voices[i]->sync >= temp)
 			continue;
-		sync = _voices[i]->sync;
+		temp = _voices[i]->sync;
 		chan = _voices[i];
 	}
 
