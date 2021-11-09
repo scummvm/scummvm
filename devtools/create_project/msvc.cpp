@@ -163,6 +163,10 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << _msvcVersion.solutionFormat << "\n";
 	solution << "# Visual Studio " << _msvcVersion.solutionVersion << "\n";
+	if (_version >= 12) {
+		solution << "VisualStudioVersion = " << _msvcVersion.project << ".0.0\n";
+		solution << "MinimumVisualStudioVersion = 10.0.40219.1\n";
+	}
 
 	// Write main project
 	if (!setup.devTools) {
