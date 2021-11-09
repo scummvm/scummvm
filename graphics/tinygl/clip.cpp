@@ -407,7 +407,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 	} else if (c->shadow_mode & 2) {
 		assert(c->fb->shadow_mask_buf);
 		c->fb->fillTriangleFlatShadow(&p0->zp, &p1->zp, &p2->zp);
-	} else if (c->texture_2d_enabled && c->current_texture) {
+	} else if (c->texture_2d_enabled && c->current_texture && c->current_texture->images[0].pixmap) {
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
