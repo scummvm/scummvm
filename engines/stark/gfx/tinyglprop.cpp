@@ -154,15 +154,15 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 					default:
 						break;
 				}
-
-				lightColor.x() = CLIP(lightColor.x(), 0.0f, 1.0f);
-				lightColor.y() = CLIP(lightColor.y(), 0.0f, 1.0f);
-				lightColor.z() = CLIP(lightColor.z(), 0.0f, 1.0f);
-				color = color * lightColor;
-				vertex.r = color.x();
-				vertex.g = color.y();
-				vertex.b = color.z();
 			}
+
+			lightColor.x() = CLIP(lightColor.x(), 0.0f, 1.0f);
+			lightColor.y() = CLIP(lightColor.y(), 0.0f, 1.0f);
+			lightColor.z() = CLIP(lightColor.z(), 0.0f, 1.0f);
+			color = color * lightColor;
+			vertex.r = color.x();
+			vertex.g = color.y();
+			vertex.b = color.z();
 			_faceVBO[index] = vertex;
 		}
 
