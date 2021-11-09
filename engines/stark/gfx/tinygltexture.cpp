@@ -40,9 +40,8 @@ TinyGlTexture::TinyGlTexture() :
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 
-	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP_TO_EDGE);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP_TO_EDGE);
 }
 
 TinyGlTexture::~TinyGlTexture() {
@@ -98,6 +97,11 @@ void TinyGlTexture::setSamplingFilter(Texture::SamplingFilter filter) {
 
 void TinyGlTexture::setLevelCount(uint32 count) {
 	_levelCount = count;
+
+	if (count >= 1) {
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_MIRRORED_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_MIRRORED_REPEAT);
+	}
 }
 
 void TinyGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
