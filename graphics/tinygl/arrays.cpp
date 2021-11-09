@@ -36,114 +36,177 @@
 namespace TinyGL {
 
 void glopArrayElement(GLContext *c, GLParam *param) {
-	int i;
+	int offset;
 	int states = c->client_states;
 	int idx = param[1].i;
 
 	if (states & COLOR_ARRAY) {
 		GLParam p[5];
 		int size = c->color_array_size;
-		i = idx * size;
-		if (c->color_array_short) {
-			p[1].f = c->color_array_short[i];
-			p[2].f = c->color_array_short[i + 1];
-			p[3].f = c->color_array_short[i + 2];
-			p[4].f = size > 3 ? c->color_array_short[i + 3] : 1.0f;
-		} else if (c->color_array_int) {
-			p[1].f = c->color_array_int[i];
-			p[2].f = c->color_array_int[i + 1];
-			p[3].f = c->color_array_int[i + 2];
-			p[4].f = size > 3 ? c->color_array_int[i + 3] : 1.0f;
-		} else if (c->color_array_float) {
-			p[1].f = c->color_array_float[i];
-			p[2].f = c->color_array_float[i + 1];
-			p[3].f = c->color_array_float[i + 2];
-			p[4].f = size > 3 ? c->color_array_float[i + 3] : 1.0f;
-		} else if (c->color_array_double) {
-			p[1].f = (float)c->color_array_double[i];
-			p[2].f = (float)c->color_array_double[i + 1];
-			p[3].f = (float)c->color_array_double[i + 2];
-			p[4].f = size > 3 ? (float)c->color_array_double[i + 3] : 1.0f;
-		} else {
+		offset = idx * c->color_array_stride;
+		switch (c->color_array_type) {
+		case TGL_UNSIGNED_BYTE:
+		case TGL_BYTE: {
+				TGLbyte *array = (TGLbyte *)c->color_array + offset;
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_UNSIGNED_INT:
+		case TGL_INT: {
+				TGLint *array = (TGLint *)((TGLbyte *)c->color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_UNSIGNED_SHORT:
+		case TGL_SHORT: {
+				TGLshort *array = (TGLshort *)((TGLbyte *)c->color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_FLOAT: {
+				TGLfloat *array = (TGLfloat *)((TGLbyte *)c->color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_DOUBLE: {
+				TGLdouble *array = (TGLdouble *)((TGLbyte *)c->color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		default:
 			assert(0);
 		}
 		glopColor(c, p);
 	}
 	if (states & NORMAL_ARRAY) {
-		i = idx * 3;
+		offset = idx * c->normal_array_stride;
 		c->current_normal.W = 0.0f;
-		if (c->normal_array_short) {
-			c->current_normal.X = c->normal_array_short[i];
-			c->current_normal.Y = c->normal_array_short[i + 1];
-			c->current_normal.Z = c->normal_array_short[i + 2];
-		} else if (c->normal_array_int) {
-			c->current_normal.X = c->normal_array_int[i];
-			c->current_normal.Y = c->normal_array_int[i + 1];
-			c->current_normal.Z = c->normal_array_int[i + 2];
-		} else if (c->normal_array_float) {
-			c->current_normal.X = c->normal_array_float[i];
-			c->current_normal.Y = c->normal_array_float[i + 1];
-			c->current_normal.Z = c->normal_array_float[i + 2];
-		} else if (c->normal_array_double) {
-			c->current_normal.X = c->normal_array_double[i];
-			c->current_normal.Y = c->normal_array_double[i + 1];
-			c->current_normal.Z = c->normal_array_double[i + 2];
-		} else {
+		switch (c->normal_array_type) {
+		case TGL_FLOAT: {
+				TGLfloat *array = (TGLfloat *)((TGLbyte *)c->normal_array + offset);
+				c->current_normal.X = array[0];
+				c->current_normal.Y = array[1];
+				c->current_normal.Z = array[3];
+				break;
+			}
+		case TGL_DOUBLE: {
+				TGLdouble *array = (TGLdouble *)((TGLbyte *)c->normal_array + offset);
+				c->current_normal.X = array[0];
+				c->current_normal.Y = array[1];
+				c->current_normal.Z = array[3];
+				break;
+			}
+		case TGL_INT: {
+				TGLint *array = (TGLint *)((TGLbyte *)c->normal_array + offset);
+				c->current_normal.X = array[0];
+				c->current_normal.Y = array[1];
+				c->current_normal.Z = array[3];
+				break;
+			}
+		case TGL_SHORT: {
+				TGLshort *array = (TGLshort *)((TGLbyte *)c->normal_array + offset);
+				c->current_normal.X = array[0];
+				c->current_normal.Y = array[1];
+				c->current_normal.Z = array[3];
+			break;
+		}
+		default:
 			assert(0);
 		}
 	}
 	if (states & TEXCOORD_ARRAY) {
 		int size = c->texcoord_array_size;
-		i = idx * size;
-		if (c->texcoord_array_short) {
-			c->current_tex_coord.X = c->texcoord_array_short[i];
-			c->current_tex_coord.Y = c->texcoord_array_short[i + 1];
-			c->current_tex_coord.Z = size > 2 ? c->texcoord_array_short[i + 2] : 0.0f;
-			c->current_tex_coord.W = size > 3 ? c->texcoord_array_short[i + 3] : 1.0f;
-		} else if (c->texcoord_array_int) {
-			c->current_tex_coord.X = c->texcoord_array_int[i];
-			c->current_tex_coord.Y = c->texcoord_array_int[i + 1];
-			c->current_tex_coord.Z = size > 2 ? c->texcoord_array_int[i + 2] : 0.0f;
-			c->current_tex_coord.W = size > 3 ? c->texcoord_array_int[i + 3] : 1.0f;
-		} else if (c->texcoord_array_float) {
-			c->current_tex_coord.X = c->texcoord_array_float[i];
-			c->current_tex_coord.Y = c->texcoord_array_float[i + 1];
-			c->current_tex_coord.Z = size > 2 ? c->texcoord_array_float[i + 2] : 0.0f;
-			c->current_tex_coord.W = size > 3 ? c->texcoord_array_float[i + 3] : 1.0f;
-		} else if (c->texcoord_array_double) {
-			c->current_tex_coord.X = c->texcoord_array_double[i];
-			c->current_tex_coord.Y = c->texcoord_array_double[i + 1];
-			c->current_tex_coord.Z = size > 2 ? c->texcoord_array_double[i + 2] : 0.0f;
-			c->current_tex_coord.W = size > 3 ? c->texcoord_array_double[i + 3] : 1.0f;
-		} else {
+		offset = idx * c->texcoord_array_stride;
+		switch (c->texcoord_array_type) {
+		case TGL_FLOAT: {
+				TGLfloat *array = (TGLfloat *)((TGLbyte *)c->texcoord_array + offset);
+				c->current_tex_coord.X = array[0];
+				c->current_tex_coord.Y = array[1];
+				c->current_tex_coord.Z = size > 2 ? array[2] : 0.0f;
+				c->current_tex_coord.W = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_DOUBLE: {
+				TGLdouble *array = (TGLdouble *)((TGLbyte *)c->texcoord_array + offset);
+				c->current_tex_coord.X = array[0];
+				c->current_tex_coord.Y = array[1];
+				c->current_tex_coord.Z = size > 2 ? array[2] : 0.0f;
+				c->current_tex_coord.W = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_INT: {
+				TGLint *array = (TGLint *)((TGLbyte *)c->texcoord_array + offset);
+				c->current_tex_coord.X = array[0];
+				c->current_tex_coord.Y = array[1];
+				c->current_tex_coord.Z = size > 2 ? array[2] : 0.0f;
+				c->current_tex_coord.W = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_SHORT: {
+				TGLshort *array = (TGLshort *)((TGLbyte *)c->texcoord_array + offset);
+				c->current_tex_coord.X = array[0];
+				c->current_tex_coord.Y = array[1];
+				c->current_tex_coord.Z = size > 2 ? array[2] : 0.0f;
+				c->current_tex_coord.W = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		default:
 			assert(0);
 		}
 	}
 	if (states & VERTEX_ARRAY) {
 		GLParam p[5];
 		int size = c->vertex_array_size;
-		i = idx * size;
-		if (c->vertex_array_short) {
-			p[1].f = c->vertex_array_short[i];
-			p[2].f = c->vertex_array_short[i + 1];
-			p[3].f = size > 2 ? c->vertex_array_short[i + 2] : 0.0f;
-			p[4].f = size > 3 ? c->vertex_array_short[i + 3] : 1.0f;
-		} else if (c->vertex_array_int) {
-			p[1].f = c->vertex_array_int[i];
-			p[2].f = c->vertex_array_int[i + 1];
-			p[3].f = size > 2 ? c->vertex_array_int[i + 2] : 0.0f;
-			p[4].f = size > 3 ? c->vertex_array_int[i + 3] : 1.0f;
-		} else if (c->vertex_array_float) {
-			p[1].f = c->vertex_array_float[i];
-			p[2].f = c->vertex_array_float[i + 1];
-			p[3].f = size > 2 ? c->vertex_array_float[i + 2] : 0.0f;
-			p[4].f = size > 3 ? c->vertex_array_float[i + 3] : 1.0f;
-		} else if (c->vertex_array_double) {
-			p[1].f = c->vertex_array_double[i];
-			p[2].f = c->vertex_array_double[i + 1];
-			p[3].f = size > 2 ? c->vertex_array_double[i + 2] : 0.0f;
-			p[4].f = size > 3 ? c->vertex_array_double[i + 3] : 1.0f;
-		} else {
+		offset = idx * c->vertex_array_stride;
+		switch (c->vertex_array_type) {
+		case TGL_FLOAT: {
+				TGLfloat *array = (TGLfloat *)((TGLbyte *)c->vertex_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = size > 2 ? array[2] : 0.0f;
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_DOUBLE: {
+				TGLdouble *array = (TGLdouble *)((TGLbyte *)c->vertex_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = size > 2 ? array[2] : 0.0f;
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_INT: {
+				TGLint *array = (TGLint *)((TGLbyte *)c->vertex_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = size > 2 ? array[2] : 0.0f;
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		case TGL_SHORT: {
+				TGLshort *array = (TGLshort *)((TGLbyte *)c->vertex_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = size > 2 ? array[2] : 0.0f;
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
+		default:
 			assert(0);
 		}
 		glopVertex(c, p);
@@ -165,7 +228,7 @@ void glopDrawArrays(GLContext *c, GLParam *p) {
 
 void glopDrawElements(GLContext *c, GLParam *p) {
 	GLParam array_element[2];
-	char *indices;
+	void *indices;
 	GLParam begin[2];
 
 	indices = (char *)p[4].p;
@@ -175,13 +238,13 @@ void glopDrawElements(GLContext *c, GLParam *p) {
 	for (int i = 0; i < p[2].i; i++) {
 		switch (p[3].i) {
 		case TGL_UNSIGNED_BYTE:
-			array_element[1].i = *(TGLbyte *)(indices + i * sizeof(TGLbyte));
+			array_element[1].i = ((TGLbyte *)indices)[i];
 			break;
 		case TGL_UNSIGNED_SHORT:
-			array_element[1].i = *(TGLshort *)(indices + i * sizeof(TGLshort));
+			array_element[1].i = ((TGLshort *)indices)[i];
 			break;
 		case TGL_UNSIGNED_INT:
-			array_element[1].i = *(TGLint *)(indices + i * sizeof(TGLint));
+			array_element[1].i = ((TGLint *)indices)[i];
 			break;
 		default:
 			assert(0);
@@ -202,23 +265,20 @@ void glopDisableClientState(GLContext *c, GLParam *p) {
 
 void glopVertexPointer(GLContext *c, GLParam *p) {
 	c->vertex_array_size = p[1].i;
-	c->vertex_array_stride = p[3].i;
-	c->vertex_array_int = nullptr;
-	c->vertex_array_short = nullptr;
-	c->vertex_array_float = nullptr;
-	c->vertex_array_double = nullptr;
-	switch (p[2].i) {
-	case TGL_SHORT:
-		c->vertex_array_short = (TGLshort *)p[4].p;
-		break;
-	case TGL_INT:
-		c->vertex_array_int = (TGLint *)p[4].p;
-		break;
+	c->vertex_array_type = p[2].i;
+	c->vertex_array = p[4].p;
+	switch (c->vertex_array_type) {
 	case TGL_FLOAT:
-		c->vertex_array_float = (TGLfloat *)p[4].p;
+		c->vertex_array_stride = p[3].i != 0 ? p[3].i : c->vertex_array_size * sizeof(TGLfloat);
 		break;
 	case TGL_DOUBLE:
-		c->vertex_array_double = (TGLdouble *)p[4].p;
+		c->vertex_array_stride = p[3].i != 0 ? p[3].i : c->vertex_array_size * sizeof(TGLdouble);
+		break;
+	case TGL_INT:
+		c->vertex_array_stride = p[3].i != 0 ? p[3].i : c->vertex_array_size * sizeof(TGLint);
+		break;
+	case TGL_SHORT:
+		c->vertex_array_stride = p[3].i != 0 ? p[3].i : c->vertex_array_size * sizeof(TGLshort);
 		break;
 	default:
 		assert(0);
@@ -228,23 +288,26 @@ void glopVertexPointer(GLContext *c, GLParam *p) {
 
 void glopColorPointer(GLContext *c, GLParam *p) {
 	c->color_array_size = p[1].i;
-	c->color_array_stride = p[3].i;
-	c->color_array_int = nullptr;
-	c->color_array_short = nullptr;
-	c->color_array_float = nullptr;
-	c->color_array_double = nullptr;
+	c->color_array_type = p[2].i;
+	c->color_array = p[4].p;
 	switch (p[2].i) {
+	case TGL_BYTE:
+	case TGL_UNSIGNED_BYTE:
+		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLbyte);
+		break;
 	case TGL_SHORT:
-		c->color_array_short = (TGLshort *)p[4].p;
+	case TGL_UNSIGNED_SHORT:
+		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLshort);
 		break;
 	case TGL_INT:
-		c->color_array_int = (TGLint *)p[4].p;
+	case TGL_UNSIGNED_INT:
+		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLint);
 		break;
 	case TGL_FLOAT:
-		c->color_array_float = (TGLfloat *)p[4].p;
+		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLfloat);
 		break;
 	case TGL_DOUBLE:
-		c->color_array_double = (TGLdouble *)p[4].p;
+		c->color_array_stride = p[3].i != 0 ? p[3].i : c->color_array_stride * sizeof(TGLdouble);
 		break;
 	default:
 		assert(0);
@@ -253,23 +316,20 @@ void glopColorPointer(GLContext *c, GLParam *p) {
 }
 
 void glopNormalPointer(GLContext *c, GLParam *p) {
-	c->normal_array_stride = p[2].i;
-	c->normal_array_int = nullptr;
-	c->normal_array_short = nullptr;
-	c->normal_array_float = nullptr;
-	c->normal_array_double = nullptr;
+	c->normal_array_type = p[1].i;
+	c->normal_array = p[3].p;
 	switch (p[1].i) {
-	case TGL_SHORT:
-		c->normal_array_short = (TGLshort *)p[3].p;
-		break;
-	case TGL_INT:
-		c->normal_array_int = (TGLint *)p[3].p;
-		break;
 	case TGL_FLOAT:
-		c->normal_array_float = (TGLfloat *)p[3].p;
+		c->normal_array_stride = p[2].i != 0 ? p[2].i : 3 * sizeof(TGLfloat);
 		break;
 	case TGL_DOUBLE:
-		c->normal_array_double = (TGLdouble *)p[3].p;
+		c->normal_array_stride = p[2].i != 0 ? p[2].i : 3 * sizeof(TGLdouble);
+		break;
+	case TGL_INT:
+		c->normal_array_stride = p[2].i != 0 ? p[2].i : 3 * sizeof(TGLint);
+		break;
+	case TGL_SHORT:
+		c->normal_array_stride = p[2].i != 0 ? p[2].i : 3 * sizeof(TGLshort);
 		break;
 	default:
 		assert(0);
@@ -279,23 +339,20 @@ void glopNormalPointer(GLContext *c, GLParam *p) {
 
 void glopTexCoordPointer(GLContext *c, GLParam *p) {
 	c->texcoord_array_size = p[1].i;
-	c->texcoord_array_stride = p[3].i;
-	c->texcoord_array_int = nullptr;
-	c->texcoord_array_short = nullptr;
-	c->texcoord_array_float = nullptr;
-	c->texcoord_array_double = nullptr;
-	switch (p[2].i) {
-	case TGL_SHORT:
-		c->texcoord_array_short = (TGLshort *)p[4].p;
-		break;
-	case TGL_INT:
-		c->texcoord_array_int = (TGLint *)p[4].p;
-		break;
+	c->texcoord_array_type = p[2].i;
+	c->texcoord_array = p[4].p;
+	switch (c->texcoord_array_type) {
 	case TGL_FLOAT:
-		c->texcoord_array_float = (TGLfloat *)p[4].p;
+		c->texcoord_array_stride = p[3].i != 0 ? p[3].i : c->texcoord_array_size * sizeof(TGLfloat);
 		break;
 	case TGL_DOUBLE:
-		c->texcoord_array_double = (TGLdouble *)p[4].p;
+		c->texcoord_array_stride = p[3].i != 0 ? p[3].i : c->texcoord_array_size * sizeof(TGLdouble);
+		break;
+	case TGL_INT:
+		c->texcoord_array_stride = p[3].i != 0 ? p[3].i : c->texcoord_array_size * sizeof(TGLint);
+		break;
+	case TGL_SHORT:
+		c->texcoord_array_stride = p[3].i != 0 ? p[3].i : c->texcoord_array_size * sizeof(TGLshort);
 		break;
 	default:
 		assert(0);
