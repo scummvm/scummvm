@@ -256,10 +256,12 @@ class Talk : public Action {
 public:
 	Talk()  {
 		type = TalkAction;
+		boxPos = Common::Point(0, 0);
 	}
 	TalkCommands commands;
 	bool active;
 	bool escape;
+	Common::Point boxPos;
 	Filename background;
 	Common::Point backgroundPos;
 	Common::Rect rect;

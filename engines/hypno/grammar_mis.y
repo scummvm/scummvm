@@ -221,7 +221,9 @@ talk: INACTOK talk {
 		talk_action->background = $2;
 		talk_action->backgroundPos = Common::Point($3, $4);
 		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
-	| BOXXTOK NUM NUM { debugC(1, kHypnoDebugParser, "BOXX %d %d", $2, $3); }
+	| BOXXTOK NUM NUM {
+		talk_action->boxPos = Common::Point($2, $3); 
+		debugC(1, kHypnoDebugParser, "BOXX %d %d", $2, $3); }
 	| ESCAPETOK {
 		talk_action->escape = true; 
 		debugC(1, kHypnoDebugParser, "ESCAPE"); }

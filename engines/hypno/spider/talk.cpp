@@ -27,10 +27,27 @@ namespace Hypno {
 
 void SpiderEngine::showConversation() {
 	debugC(1, kHypnoDebugScene, "Showing conversation");
-	uint32 x = 18;
-	uint32 y = 20;
+	uint32 x;
+	uint32 y;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);
 	bool activeFound = false;
+
+	// First iteration on the talk commands
+	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
+		Talk *a = (Talk *)*itt;
+		if (a->boxPos != Common::Point(0, 0)) {
+			if (!(x == 0 && x == y))
+				error("Multiple BOX positions found");
+
+			x = a->boxPos.x;
+			y = a->boxPos.y;
+		}
+	}
+
+	if (x == 0 && x == y)
+		error("BOX position not found");
+
+	// Second iteration on the talk commands
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active) {
@@ -60,6 +77,7 @@ void SpiderEngine::showConversation() {
 	}
 	if (!activeFound) {
 		debugC(1, kHypnoDebugScene, "No active item was found in the current conversation");
+		// Final iteration on the talk commands
 		for (Actions::const_iterator it = _conversation.begin(); it != _conversation.end(); ++it) {
 			Talk *a = (Talk *)*it;
 			if (!a->second.empty()) {
@@ -73,7 +91,6 @@ void SpiderEngine::showConversation() {
 		}
 		debugC(1, kHypnoDebugScene, "Clearing conversation");
 		_conversation.clear();
-		//runMenu(*stack.back());
 		drawScreen();
 	} 
 	speaker->free();
