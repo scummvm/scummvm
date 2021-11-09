@@ -1011,7 +1011,7 @@ void HSLowLevelDriver::createTables() {
 		else if (len < 0)
 			error("void HSLowLevelDriver::createTables(): Invalid parameters");
 
-		assert(dst - _sampleConvertBuffer + (len << 7) + 32 <= (_convertBufferNumUnits << 8) + 64);
+		assert(dst - _sampleConvertBuffer + (len << 7) <= (_convertBufferNumUnits << 8));
 	}
 
 	// ampitude scale buffer
@@ -1118,7 +1118,7 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 				next = 1;
 			} else {
 				chan.status = -1;
-				if (!(_songFlags & 0x200) && (chan.tickDataLen < (uint32)(chan.dataEnd - chan.stateCur.dataPos))) {
+				if (!(_songFlags & 0x200) && ((int)chan.tickDataLen < (chan.dataEnd - chan.stateCur.dataPos))) {
 					chan.mode = -1;
 					chan.stateSaved = chan.stateCur;
 				}
@@ -1178,7 +1178,7 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 			}
 		}
 
-		if (next == 1 || chan.tickDataLen < (uint32)(chan.dataEnd - src)) {
+		if (next == 1 || (int)chan.tickDataLen < (chan.dataEnd - src)) {
 			if (!(rate & 0xffff) || chan.imode == kNone) {
 				if (chan.stateCur.velocity) {
 					HS_DOCYCLE(HS_CYCL_DEF((_transCycleLenDef + 1) * 5), at[*src], HS_VOID)
@@ -1697,7 +1697,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 
 	if (!(_songFlags & 0x200)) {
 		chan->mode = 1;
-		if (chan->status >= 0 && chan->tickDataLen && (chan->tickDataLen < (uint32)(chan->dataEnd - chan->stateCur.dataPos))) {
+		if (chan->status >= 0 && chan->tickDataLen && (int)chan->tickDataLen < (chan->dataEnd - chan->stateCur.dataPos)) {
 			chan->mode = -1;
 			chan->stateSaved = chan->stateCur;
 		}
@@ -2129,10 +2129,19 @@ int HSSoundSystem::doCommand(int cmd, va_list &arg) {
 		_driver->send(19, CLIP(va_arg(arg, int), 0, 256));
 		break;
 
+	case 14:
+		tmp = va_arg(arg, int);
+		if (tmp & 4) {
+			if (tmp & 2)
+				_driver->send(24, 0x200 | ((tmp & 1) ? 22 : 11));
+			else
+				_driver->send(24, 0x100 | ((tmp & 1) ? 22 : 11));
+		} else if (tmp & 2) {
+			_driver->send(24, (tmp & 1) ? 22 : 11);
+		}
+		break;
+
 	case 15:
-		/*if (unk == 100)
-			break;
-		unk = 100;*/
 		res = _driver->send(25) ? -1 : changeSystemVoices(16, 8, 0);
 		break;
 
