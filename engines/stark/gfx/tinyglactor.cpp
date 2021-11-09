@@ -104,16 +104,19 @@ void TinyGLActorRenderer::render(const Math::Vector3d &position, float direction
 		const Material *material = mats[(*face)->materialId];
 		Math::Vector3d color;
 		const Gfx::Texture *tex = resolveTexture(material);
+		if (tex) {
+			tex->bind();
+			tglEnable(TGL_TEXTURE_2D);
+		} else {
+			tglBindTexture(TGL_TEXTURE_2D, 0);
+			tglDisable(TGL_TEXTURE_2D);
+		}
 		auto vertexIndices = _faceEBO[*face];
 		auto numVertexIndices = (*face)->vertexIndices.size();
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			if (tex) {
-				tex->bind();
-				tglEnable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 			} else {
-				tglBindTexture(TGL_TEXTURE_2D, 0);
-				tglDisable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(material->r, material->g, material->b);
 			}
 			uint32 index = vertexIndices[i];

@@ -78,14 +78,19 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		const Material &material = materials[face->materialId];
 		Math::Vector3d color;
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
+		if (tex) {
+			tex->bind();
+			tglEnable(TGL_TEXTURE_2D);
+		} else {
+			tglBindTexture(TGL_TEXTURE_2D, 0);
+			tglDisable(TGL_TEXTURE_2D);
+		}
 		auto vertexIndices = _faceEBO[face];
 		auto numVertexIndices = (face)->vertexIndices.size();
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];
 			if (tex) {
-				tex->bind();
-				tglEnable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				if (material.doubleSided) {
 					vertex.texS = vertex.stexS;
@@ -95,8 +100,6 @@ void TinyGLPropRenderer::render(const Math::Vector3d &position, float direction,
 					vertex.texT = 1.0f - vertex.stexT;
 				}
 			} else {
-				tglBindTexture(TGL_TEXTURE_2D, 0);
-				tglDisable(TGL_TEXTURE_2D);
 				color = Math::Vector3d(material.r, material.g, material.b);
 			}
 
