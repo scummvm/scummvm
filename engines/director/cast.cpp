@@ -1252,12 +1252,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	_castsInfo[id] = ci;
 }
 
-Common::CodePage Cast::getPlatformEncoding() {
+Common::CodePage Cast::getFileEncoding() {
+	// Returns the default encoding for the file this cast is contained in.
+	// This depends on which platform the file was made on.
 	return getEncoding(_platform, _vm->getLanguage());
 }
 
 Common::U32String Cast::decodeString(const Common::String &str) {
-	Common::CodePage encoding = getPlatformEncoding();
+	Common::CodePage encoding = getFileEncoding();
 
 	Common::String fixedStr;
 	if (encoding == Common::kWindows1252) {

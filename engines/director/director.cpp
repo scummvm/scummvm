@@ -243,6 +243,8 @@ Common::Error DirectorEngine::run() {
 }
 
 Common::CodePage DirectorEngine::getPlatformEncoding() {
+	// Returns the default encoding for the platform we're pretending to be.
+	// (English Mac OS, Japanese Mac OS, English Windows, etc.)
 	return getEncoding(getPlatform(), getLanguage());
 }
 
