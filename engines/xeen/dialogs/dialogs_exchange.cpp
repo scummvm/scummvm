@@ -51,7 +51,7 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 
 		if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 			_buttonValue -= Common::KEYCODE_F1;
-			if (_buttonValue < (int)party._activeParty.size()) {
+			if (_buttonValue < (int)party._activeParty.size() && _buttonValue != charIndex) {
 				SWAP(party._activeParty[charIndex], party._activeParty[_buttonValue]);
 
 				charIndex = _buttonValue;
