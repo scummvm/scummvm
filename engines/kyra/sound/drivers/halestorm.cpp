@@ -267,7 +267,7 @@ private:
 	uint16 _transCycleLenDef;
 	uint16 _smpTransLen;
 	uint16 _transCycleLenInter;
-	uint16 _pmDataTrm;
+	const uint16 _pmDataTrm;
 	bool _updateTypeHq;
 	const uint16 _pcmDstBufferSize;
 
@@ -560,7 +560,7 @@ void HSAudioStream::runVblTasl() {
 		(*_vblCbProc)();
 }
 
-HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(0), _mutex(mutex), _sampleConvertBuffer(0), _interpolationTable(0),
+HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(0), _mutex(mutex), _sampleConvertBuffer(0), _interpolationTable(0), _transCycleLenDef(0),
 _interpolationTable2(0), _amplitudeScaleBuffer(0), _songFlags(0), _amplitudeScaleFlags(0), _interpolationMode(kNone), _numChanMusic(0), _convertUnitSize(0), _numChanSfx(0),
 _midiCurCmd(0), _convertBufferNumUnits(0), _songLoop(false), _chan(0), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(0), _songData(),
 _midiData(), _trackState(0), _sndInterpolateType(0), _song_transpose(0), _song_tickLen(0), _song_tempo(0), _song_ticksPerSecond(0), _song_internalTempo(0), _midiFastForward(false),
