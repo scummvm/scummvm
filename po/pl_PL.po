@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-09 08:45+0000\n"
+"POT-Creation-Date: 2021-11-09 18:24+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -4150,7 +4150,7 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
 #: engines/cge/detection.cpp:63 engines/cge/detection.cpp:69
 #: engines/hypno/detection.cpp:135 engines/kyra/detection_tables.h:304
-#: engines/lure/detection.cpp:233 engines/mohawk/detection_tables.h:989
+#: engines/lure/detection.cpp:250 engines/mohawk/detection_tables.h:989
 #: engines/mohawk/detection_tables.h:1095
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
 #: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187

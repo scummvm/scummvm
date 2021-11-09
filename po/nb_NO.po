@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-09 08:45+0000\n"
+"POT-Creation-Date: 2021-11-09 18:24+0000\n"
 "PO-Revision-Date: 2021-11-09 18:25+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4168,7 +4168,7 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
 #: engines/cge/detection.cpp:63 engines/cge/detection.cpp:69
 #: engines/hypno/detection.cpp:135 engines/kyra/detection_tables.h:304
-#: engines/lure/detection.cpp:233 engines/mohawk/detection_tables.h:989
+#: engines/lure/detection.cpp:250 engines/mohawk/detection_tables.h:989
 #: engines/mohawk/detection_tables.h:1095
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
 #: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187
@@ -7338,7 +7338,8 @@ msgstr "Kunne ikke finne datafilen '%s'."
 
 #: engines/twine/detection.cpp:253
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "Denne versjonen krever Giflib som ikke har blitt innkompilert i ScummVM"
+msgstr ""
+"Denne versjonen krever Giflib som ikke har blitt innkompilert i ScummVM"
 
 #: engines/twine/detection.cpp:597
 msgid "Enable wall collisions"
