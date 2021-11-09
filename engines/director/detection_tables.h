@@ -1417,7 +1417,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 270967, Common::JA_JPN, 200),
 
 	// Original file name is Spaceship Warlock™
-	// Early demo created by Xplore, 
 	// v1.1.1 Classic and Trailer are from Spaceship Warlock AV
 	MACGAME1("warlock", "v1.0",			  "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270837, 200),
 	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270851, 200), // 1994
