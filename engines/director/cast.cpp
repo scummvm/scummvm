@@ -776,8 +776,10 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 				tag = MKTAG('B', 'I', 'T', 'D');
 			else if (_castArchive->hasResource(MKTAG('D', 'I', 'B', ' '), id + _castIDoffset))
 				tag = MKTAG('D', 'I', 'B', ' ');
-			else
-				error("Cast::loadCastDataVWCR(): non-existent reference to BitmapCastMember");
+			else {
+				warning("Cast::loadCastDataVWCR(): non-existent reference to BitmapCastMember");
+				break;
+			}
 
 			_loadedCast->setVal(id, new BitmapCastMember(this, id, stream, tag, _version, flags1));
 			break;
