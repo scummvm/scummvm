@@ -153,7 +153,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 			if (num == 0)
 				error("No strings in Projector file");
 
-			Common::String sname = name->readPascalString();
+			Common::String sname = decodePlatformEncoding(name->readPascalString());
 			Common::String moviePath = pathMakeRelative(sname);
 			if (testPath(moviePath)) {
 				_nextMovie.movie = moviePath;

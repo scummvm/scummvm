@@ -97,6 +97,8 @@ Common::String encodePathForDump(const Common::String &path);
 
 Common::String utf8ToPrintable(const Common::String &str);
 
+Common::String decodePlatformEncoding(Common::String input);
+
 } // End of namespace Director
 
 #endif
