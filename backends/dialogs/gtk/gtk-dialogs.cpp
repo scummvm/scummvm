@@ -30,6 +30,7 @@
 #include "backends/dialogs/gtk/gtk-dialogs.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/translation.h"
 
 #include <gtk/gtk.h>
@@ -38,9 +39,16 @@
 //       this might not necessarily work properly with all compilers.
 
 static gboolean _inDialog;
+static uint32 _lastUpdateTick = 0;
 
 static gboolean idleCallback(gpointer data) {
-	g_system->updateScreen();
+	uint32 currentTick = g_system->getMillis();
+	if (g_system->getMillis() - _lastUpdateTick > 10) {
+		Common::Event dummy;
+		while (g_system->getEventManager()->pollEvent(dummy)) {}
+		g_system->updateScreen();
+		_lastUpdateTick = currentTick;
+	}
 	return _inDialog;
 }
 
