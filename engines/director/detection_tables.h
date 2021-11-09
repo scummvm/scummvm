@@ -2096,10 +2096,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original AV filename is Spaceship Warlock™ AV
 	// Later demo is originally found on Inside Mac Games
 	// Mac AV versions are from 1994 and 1996, the latter provided by eriktorbjorn
+	// Republished in Europe by Visual Media Systems, Bièvres, France (1995)
 	WINGAME2t("warlock",   "v1.1.3 MPC", "SSWARLCK.EXE", "802c503582d855cb961227e7a619f4b0", 370867,
 										 "AREACTOR.MMM", "f9cc7b0012ee5fb4008d32f57b80fc72", 33380, 310),
+	WINGAME2t_l("warlock", "v1.1.3 MPC", "SSWARLCK.EXE", "802c503582d855cb961227e7a619f4b0", 370867,
+										 "AREACTOR.MMM", "1480a7134cbd257d5e13b0a09d39ec69", 33536, Common::FR_FRA, 310),
 	WINDEMO2t("warlock",   "Demo",		 "SSWDEMO.EXE",	 "ab56bba682d468c84a762f3589cfafe6", 370934,
 										 "ADEMO.MMM",	 "7e36622944a0a01c5757f2299dcf88d8", 388598, 310),
+	WINDEMO2t_l("warlock", "Demo",		 "SSWDEMO.EXE",	 "ab56bba682d468c84a762f3589cfafe6", 370934,
+										 "ADEMO.MMM",	 "4249a5573427e0883f36c22835a49ec9", 388660, Common::FR_FRA, 310),
 	MACGAME1("warlock",	   "v1.1.2 AV",  "xn--Spaceship Warlock AV-5h7l", "e043b322d17e0f2ca7f73520466a4311", 381950, 313), // 1994
 	MACGAME1("warlock",	   "v1.1.2 AV",	 "xn--Spaceship Warlock AV-5h7l", "e043b322d17e0f2ca7f73520466a4311", 384214, 313), // 1996
 	MACDEMO1("warlock",	   "Demo",		 "Spaceship Launch",			  "7f443f2e63fd497a9ad85b10dc880a91", 385616, 313),
