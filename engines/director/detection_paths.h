@@ -192,6 +192,8 @@ const char *directoryGlobs[] = {
 	"PEPPERON",						// Four Seasons in Pepperon Village
 	"YBR",							// Yellow Brick Road
 	"PINK GEAR",					// Pink Gear 2
+	"NAV",
+	"SSWARLCK",						// Spaceship Warlock (Windows)
 	0
 };
 

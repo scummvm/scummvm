@@ -1417,10 +1417,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 270967, Common::JA_JPN, 200),
 
 	// Original file name is Spaceship Warlock™
-	MACGAME1("warlock", "v1.0", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 271093, 200),
-	MACGAME1("warlock", "v1.1.1", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 271107, 200),
-	MACDEMO1("warlock", "v1.0 Demo", "Spaceship Warlock Demo", "cfa68a1bc49251497ebde18e5fc9c217", 271099, 200),
-	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273377, 200),
+	// Early demo created by Xplore, 
+	// v1.1.1 Classic and Trailer are from Spaceship Warlock AV
+	MACGAME1("warlock", "v1.0",			  "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270837, 200),
+	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270851, 200), // 1994
+	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 273115, 200), // 1996
+	MACDEMO1("warlock", "v1.0 Demo", "Spaceship Warlock Demo",	 "cfa68a1bc49251497ebde18e5fc9c217", 270843, 200),
+	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 270857, 200), // 1994
+	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273121, 200), // 1996
 
 //////////////////////////////////////////////////
 //
@@ -2090,13 +2094,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 #define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	// Original AV filename is Spaceship Warlock™ AV
+	// Later demo is originally found on Inside Mac Games
 	// Mac AV versions are from 1994 and 1996, the latter provided by eriktorbjorn
-	WINGAME1("warlock", "",		"SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 300),
-	WINDEMO1("warlock", "Demo", "SSWDEMO.EXE",	"65d06b5fef155a2473434571aff5bc29", 370934, 300),
-	MACGAME1("warlock", "v1.1.2 AV",  "xn--Spaceship Warlock-306j",	 "cfa68a1bc49251497ebde18e5fc9c217", 270851, 313), // 1994
-	MACGAME1("warlock", "v1.1.2 AV",  "xn--Spaceship Warlock-306j",	 "cfa68a1bc49251497ebde18e5fc9c217", 273115, 313), // 1996
-	MACDEMO1("warlock", "1994 Demo",  "Spaceship Launch",			 "7f443f2e63fd497a9ad85b10dc880a91", 385872, 313),
-	MACDEMO1("warlock", "AV Trailer", "SS Warlock Movie Trailer AV", "e043b322d17e0f2ca7f73520466a4311", 384477, 313),
+	WINGAME2t("warlock",   "v1.1.3 MPC", "SSWARLCK.EXE", "802c503582d855cb961227e7a619f4b0", 370867,
+										 "AREACTOR.MMM", "f9cc7b0012ee5fb4008d32f57b80fc72", 33380, 310),
+	WINDEMO2t("warlock",   "Demo",		 "SSWDEMO.EXE",	 "ab56bba682d468c84a762f3589cfafe6", 370934,
+										 "ADEMO.MMM",	 "7e36622944a0a01c5757f2299dcf88d8", 388598, 310),
+	MACGAME1("warlock",	   "v1.1.2 AV",  "xn--Spaceship Warlock AV-5h7l", "e043b322d17e0f2ca7f73520466a4311", 381950, 313), // 1994
+	MACGAME1("warlock",	   "v1.1.2 AV",	 "xn--Spaceship Warlock AV-5h7l", "e043b322d17e0f2ca7f73520466a4311", 384214, 313), // 1996
+	MACDEMO1("warlock",	   "Demo",		 "Spaceship Launch",			  "7f443f2e63fd497a9ad85b10dc880a91", 385616, 313),
+	MACDEMO1("warlock",	   "AV Trailer", "SS Warlock Movie Trailer AV",   "e043b322d17e0f2ca7f73520466a4311", 384221, 313),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
@@ -3514,8 +3521,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("wallobee3", "", "Lost Lionardo", "cdb27c916044ae4dceb4b7326063fa03", 303961, 400),
 	WINGAME1("wallobee3", "", "LIONARDO.EXE", "51de9e2a40f06d96ca59fcf37c6f297a", 775449, 400),
 
-	WINGAME2_l("warlock", "", "START.EXE",	  "04e0887e76ee58b86ace1d89bf816d9f", 694159,
-							  "SSWARLCK.DIR", "aa3d2d8d69746d2b0f312427649cd98f", 608862, Common::JA_JPN, 400),
+	// Published in Japan by NEC and Emotion Digital (Bandai), Taito City, Tokyo
+	WINGAME2t_l("warlock", "", "START.EXE",	   "c2ceb9ac99aaf6a5020c9e9adf42ac91", 694159,
+							   "SSWARLCK.DIR", "3713bde5de54cd74cafacbe430134022", 608862, Common::JA_JPN, 400),
 
 	// Original Mac filename is わりわりワールド_デモ
 	MACDEMO1_l("wariwari", "Demo", "Wari Wari World Demo", "f808a9f231b77617fa559cf9d2da66c1", 502975, Common::JA_JPN, 400),
