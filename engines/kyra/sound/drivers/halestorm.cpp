@@ -1570,11 +1570,14 @@ void HSLowLevelDriver::midiNoteOnOff(MidiTrackState *s, uint8 chan, uint8 note, 
 	const uint8 *pos = _songData.ptr + 16;
 	int cnt = READ_BE_UINT16(pos);
 	pos += 2;
-	while (cnt) {
-		if (READ_BE_UINT16(pos) == prg)
+	assert(18 + cnt * 4 <= _songData.len);
+
+	while (cnt--) {
+		if (READ_BE_UINT16(pos) == prg) {
+			prg = READ_BE_UINT16(pos + 2);
 			break;
-		pos += 2;
-		--cnt;
+		}
+		pos += 4;
 	}
 
 	if (note + _song_transpose > 0)
