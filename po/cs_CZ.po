@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-09 18:24+0000\n"
+"POT-Creation-Date: 2021-11-10 18:53+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2273,7 +2273,7 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:679
 #: engines/sci/engine/kfile.cpp:1080 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
@@ -2295,7 +2295,7 @@ msgstr "Uložit hru:"
 #: engines/sci/engine/kfile.cpp:1080 engines/scumm/dialogs.cpp:177
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
@@ -3828,7 +3828,7 @@ msgstr "Zkontrolovat Aktualizace..."
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:302 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:98
-#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5009
+#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5000
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
@@ -3836,7 +3836,7 @@ msgstr "Nelze najít datové soubory jádra '%s'."
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5022
+#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5013
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "Datové soubory jádra '%s' jsou poškozeny."
@@ -3844,7 +3844,7 @@ msgstr "Datové soubory jádra '%s' jsou poškozeny."
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:961
 #: engines/hugo/hugo.cpp:447 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:320 engines/tony/tony.cpp:212
-#: engines/toon/toon.cpp:5033
+#: engines/toon/toon.cpp:5024
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -3975,7 +3975,7 @@ msgstr ""
 #: engines/sci/engine/guest_additions.cpp:682 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Obnovit hru:"
@@ -3993,7 +3993,7 @@ msgstr "Obnovit hru:"
 #: engines/sci/engine/guest_additions.cpp:683 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "Obnovit"
@@ -5066,26 +5066,26 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Zakompilované funkce:"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:466
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:225
 #: engines/ultima/ultima8/meta_engine.cpp:138
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Levé Kliknutí"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:467
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:455
 #: engines/ultima/ultima4/meta_engine.cpp:231
 #: engines/ultima/ultima8/meta_engine.cpp:144
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "Pravé kliknutí"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:462
 #: engines/twine/metaengine.cpp:247
 msgid "Move Forward"
 msgstr "Vpřed"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:463
 msgid "Move Back"
 msgstr "Vzad"
 
@@ -5097,13 +5097,13 @@ msgstr "Přesunout se doleva"
 msgid "Move Right"
 msgstr "Přesunout se doprava"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
 #: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Otočit se doleva"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:467
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
@@ -5149,40 +5149,40 @@ msgstr "Kouzlo úrovně 5"
 msgid "Spell Level 6"
 msgstr "Kouzlo úrovně 6"
 
-#: engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/lol.cpp:458
 msgid "Attack 1"
 msgstr "Útok 1"
 
-#: engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/lol.cpp:459
 msgid "Attack 2"
 msgstr "Útok 2"
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:460
 msgid "Attack 3"
 msgstr "Útok 3"
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:461
 #, fuzzy
 msgid "Show Map"
 msgstr "~Z~obrazit mapu"
 
-#: engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/lol.cpp:464
 msgid "Slide Left"
 msgstr "Přesunout se Doleva"
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:465
 msgid "Slide Right"
 msgstr "Přesunout se Doprava"
 
-#: engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/lol.cpp:468
 msgid "Rest"
 msgstr "Odpočinout si"
 
-#: engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/lol.cpp:469
 msgid "Options"
 msgstr "Volby"
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:470
 msgid "Choose Spell"
 msgstr "Zvolit Kouzlo"
 
@@ -6946,13 +6946,13 @@ msgstr ""
 "musí být soubory se hrou umístěny do složky 'Maniac' uvnitř složky se hrou "
 "Tentacle a hra musí být přidána do ScummVM."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:654
+#: engines/scumm/imuse/drivers/amiga.cpp:653
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
 
-#: engines/scumm/imuse/drivers/amiga.cpp:659
+#: engines/scumm/imuse/drivers/amiga.cpp:658
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
@@ -7238,27 +7238,27 @@ msgstr "Id hry není podporováno"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Varianta písma není dostupná v datovém souboru jádra '%s'."
 
-#: engines/toon/toon.cpp:225
+#: engines/toon/toon.cpp:216
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Hra uložena do pozice #%d "
 
-#: engines/toon/toon.cpp:229
+#: engines/toon/toon.cpp:220
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Nelze rychle uložit do pozice #%d"
 
-#: engines/toon/toon.cpp:242
+#: engines/toon/toon.cpp:233
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Uložená pozice #%d byla rychle načtena"
 
-#: engines/toon/toon.cpp:246
+#: engines/toon/toon.cpp:237
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Uloženou pozici #%d nelze rychle načíst"
 
-#: engines/toon/toon.cpp:1573
+#: engines/toon/toon.cpp:1564
 #, fuzzy, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Nelze najít datové soubory jádra '%s'."

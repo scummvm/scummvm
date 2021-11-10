@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-09 18:24+0000\n"
+"POT-Creation-Date: 2021-11-10 18:53+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2269,7 +2269,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:679
 #: engines/sci/engine/kfile.cpp:1080 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
@@ -2291,7 +2291,7 @@ msgstr "게임 저장:"
 #: engines/sci/engine/kfile.cpp:1080 engines/scumm/dialogs.cpp:177
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
@@ -3765,7 +3765,7 @@ msgstr "업데이트 확인 중..."
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:302 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:98
-#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5009
+#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5000
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
@@ -3773,7 +3773,7 @@ msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5022
+#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5013
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "'%s' 엔진의 데이터 파일이 손상되었습니다."
@@ -3781,7 +3781,7 @@ msgstr "'%s' 엔진의 데이터 파일이 손상되었습니다."
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:961
 #: engines/hugo/hugo.cpp:447 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:320 engines/tony/tony.cpp:212
-#: engines/toon/toon.cpp:5033
+#: engines/toon/toon.cpp:5024
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -3912,7 +3912,7 @@ msgstr ""
 #: engines/sci/engine/guest_additions.cpp:682 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "게임 불러오기:"
@@ -3930,7 +3930,7 @@ msgstr "게임 불러오기:"
 #: engines/sci/engine/guest_additions.cpp:683 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "불러오기"
@@ -5006,24 +5006,24 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:466
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:225
 #: engines/ultima/ultima8/meta_engine.cpp:138
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:467
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:455
 #: engines/ultima/ultima4/meta_engine.cpp:231
 #: engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:462
 #: engines/twine/metaengine.cpp:247
 msgid "Move Forward"
 msgstr "앞으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:463
 msgid "Move Back"
 msgstr "뒤로 이동"
 
@@ -5035,13 +5035,13 @@ msgstr "왼쪽으로 이동"
 msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
 #: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:467
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
@@ -5087,39 +5087,39 @@ msgstr "주문 레벨 5"
 msgid "Spell Level 6"
 msgstr "주문 레벨 6"
 
-#: engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/lol.cpp:458
 msgid "Attack 1"
 msgstr "공격 1"
 
-#: engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/lol.cpp:459
 msgid "Attack 2"
 msgstr "공격 2"
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:460
 msgid "Attack 3"
 msgstr "공격 3"
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:461
 msgid "Show Map"
 msgstr "지도 보이기"
 
-#: engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/lol.cpp:464
 msgid "Slide Left"
 msgstr "왼쪽으로"
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:465
 msgid "Slide Right"
 msgstr "오른쪽으로"
 
-#: engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/lol.cpp:468
 msgid "Rest"
 msgstr "휴식"
 
-#: engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/lol.cpp:469
 msgid "Options"
 msgstr "옵션"
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:470
 msgid "Choose Spell"
 msgstr "주문 선택"
 
@@ -6920,7 +6920,7 @@ msgstr ""
 "Mansion의 게임 파일이 Tentacle 게임 디렉토리 하위의 Maniac 디렉토리에 있어야 "
 "하며, ScummVM에도 추가되어야 합니다."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:654
+#: engines/scumm/imuse/drivers/amiga.cpp:653
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -6928,7 +6928,7 @@ msgstr ""
 "이 AMIGA 버전에는 (최소한) 다음 파일들이 빠져 있습니다.\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:659
+#: engines/scumm/imuse/drivers/amiga.cpp:658
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
@@ -7216,27 +7216,27 @@ msgstr "새턴 CD 버전은 아직 지원되지 않습니다"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "'%s' 엔진 데이터 파일에 폰트 종류가 존재하지 않습니다."
 
-#: engines/toon/toon.cpp:225
+#: engines/toon/toon.cpp:216
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "#%d 슬롯에 게임 저장됨 "
 
-#: engines/toon/toon.cpp:229
+#: engines/toon/toon.cpp:220
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "#%d 슬롯에 빠른 저장하지 못함"
 
-#: engines/toon/toon.cpp:242
+#: engines/toon/toon.cpp:233
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "#%d 게임을 불러옴"
 
-#: engines/toon/toon.cpp:246
+#: engines/toon/toon.cpp:237
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "#%d 게임을 빠른 불러오기 하지 못함"
 
-#: engines/toon/toon.cpp:1573
+#: engines/toon/toon.cpp:1564
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."

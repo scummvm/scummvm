@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-09 18:24+0000\n"
+"POT-Creation-Date: 2021-11-10 18:53+0000\n"
 "PO-Revision-Date: 2021-11-01 06:30+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -2308,7 +2308,7 @@ msgstr "Volta~r~ ao Inicializador"
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:679
 #: engines/sci/engine/kfile.cpp:1080 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
@@ -2330,7 +2330,7 @@ msgstr "Salvar jogo:"
 #: engines/sci/engine/kfile.cpp:1080 engines/scumm/dialogs.cpp:177
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
-#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3415
+#: engines/toltecs/menu.cpp:303 engines/toon/toon.cpp:3406
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
@@ -3811,7 +3811,7 @@ msgstr "Procurar por Atualizações..."
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:302 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:98
-#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5009
+#: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5000
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Não foi possível localizar arquivo de dados '%s' da engine."
@@ -3819,7 +3819,7 @@ msgstr "Não foi possível localizar arquivo de dados '%s' da engine."
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:310 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5022
+#: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5013
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "O arquivo de dados '%s' da engine está corrompido."
@@ -3827,7 +3827,7 @@ msgstr "O arquivo de dados '%s' da engine está corrompido."
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:961
 #: engines/hugo/hugo.cpp:447 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:320 engines/tony/tony.cpp:212
-#: engines/toon/toon.cpp:5033
+#: engines/toon/toon.cpp:5024
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -3962,7 +3962,7 @@ msgstr ""
 #: engines/sci/engine/guest_additions.cpp:682 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Restaurar jogo:"
@@ -3980,7 +3980,7 @@ msgstr "Restaurar jogo:"
 #: engines/sci/engine/guest_additions.cpp:683 engines/sci/engine/kfile.cpp:1207
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
-#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3509
+#: engines/toltecs/menu.cpp:273 engines/toon/toon.cpp:3500
 #: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "Restaurar"
@@ -5070,24 +5070,24 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "O suporte a Eye of Beholder não está compilado"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:466
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:225
 #: engines/ultima/ultima8/meta_engine.cpp:138
 msgid "Interact via Left Click"
 msgstr "Interagir com Clique do Botão Esquerdo"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:467
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:455
 #: engines/ultima/ultima4/meta_engine.cpp:231
 #: engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Interact via Right Click"
 msgstr "Interagir com Clique do Botão Direito"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:462
 #: engines/twine/metaengine.cpp:247
 msgid "Move Forward"
 msgstr "Mover para Frente"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:463
 msgid "Move Back"
 msgstr "Mover para Trás"
 
@@ -5099,13 +5099,13 @@ msgstr "Mover para Esquerda"
 msgid "Move Right"
 msgstr "Mover para Direita"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
 #: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Virar à Esquerda"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:467
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
@@ -5151,39 +5151,39 @@ msgstr "Magia Nível 5"
 msgid "Spell Level 6"
 msgstr "Magia Nível 6"
 
-#: engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/lol.cpp:458
 msgid "Attack 1"
 msgstr "Atacar 1"
 
-#: engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/lol.cpp:459
 msgid "Attack 2"
 msgstr "Atacar 2"
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:460
 msgid "Attack 3"
 msgstr "Atacar 3"
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:461
 msgid "Show Map"
 msgstr "Exibir Mapa"
 
-#: engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/lol.cpp:464
 msgid "Slide Left"
 msgstr "Deslizar para Esquerda"
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:465
 msgid "Slide Right"
 msgstr "Deslizar para Direita"
 
-#: engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/lol.cpp:468
 msgid "Rest"
 msgstr "Descansar"
 
-#: engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/lol.cpp:469
 msgid "Options"
 msgstr "Opções"
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:470
 msgid "Choose Spell"
 msgstr "Escolher Magia"
 
@@ -7015,7 +7015,7 @@ msgstr ""
 "'Maniac' dentro do diretório do jogo Tentacle, e o jogo precisa ser "
 "adicionado ao ScummVM."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:654
+#: engines/scumm/imuse/drivers/amiga.cpp:653
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -7023,7 +7023,7 @@ msgstr ""
 "Esta versão do AMIGA está faltando (no mínimo) o seguinte arquivo(s):\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:659
+#: engines/scumm/imuse/drivers/amiga.cpp:658
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
@@ -7333,27 +7333,27 @@ msgstr "A versão em CD do Saturn ainda não é suportada"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Variante de fonte não presente no arquivo '%s' de dados da engine."
 
-#: engines/toon/toon.cpp:225
+#: engines/toon/toon.cpp:216
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Jogo salvo no slot #%d "
 
-#: engines/toon/toon.cpp:229
+#: engines/toon/toon.cpp:220
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Não foi possível utilizar salvamento rápido no slot #%d"
 
-#: engines/toon/toon.cpp:242
+#: engines/toon/toon.cpp:233
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Jogo salvo #%d rapidamente carregado"
 
-#: engines/toon/toon.cpp:246
+#: engines/toon/toon.cpp:237
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Não foi possível carregar rapidamente o jogo salvo #%d"
 
-#: engines/toon/toon.cpp:1573
+#: engines/toon/toon.cpp:1564
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Não foi possível localizar o arquivo de dados '%s'."
