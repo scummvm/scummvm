@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-10 18:53+0000\n"
+"POT-Creation-Date: 2021-11-10 19:36+0000\n"
 "PO-Revision-Date: 2021-10-31 22:02+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4189,7 +4189,7 @@ msgstr "El fantraductor desea que su traducción no sea incorporada en ScummVM."
 
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
 #: engines/cge/detection.cpp:63 engines/cge/detection.cpp:69
-#: engines/hypno/detection.cpp:135 engines/kyra/detection_tables.h:304
+#: engines/hypno/detection.cpp:145 engines/kyra/detection_tables.h:304
 #: engines/lure/detection.cpp:250 engines/mohawk/detection_tables.h:989
 #: engines/mohawk/detection_tables.h:1095
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
