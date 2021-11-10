@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed old Waxworks AdLib music regression.
 
+ AGS:
+   - Detection list updates.
+
  Grim:
    - Fixed default "Talk Speed" option value.
    - Fixed black screen while entering save game name.
