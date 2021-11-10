@@ -70,6 +70,8 @@ public:
 
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
+	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
+
 protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
