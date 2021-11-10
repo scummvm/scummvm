@@ -27,9 +27,9 @@
 
 namespace GUI {
 
-struct MetadataGame {
-	typedef Common::String String;
+using Common::String;
 
+struct MetadataGame {
 	String id;
 	String name;
 	String engine_id;
@@ -38,44 +38,38 @@ struct MetadataGame {
 	String datafiles;
 	String series_id;
 
-	MetadataGame() : id(nullptr), name(nullptr), engine_id(nullptr), company_id(nullptr), moby_id(nullptr), datafiles(nullptr), series_id(nullptr) {}
+	MetadataGame() {}
 	MetadataGame(const String i, const String n, const String eid, const String cid, const String mid, const String df, const String sid)
-	: id(i), name(n), engine_id(eid), company_id(cid), moby_id(mid), datafiles(df), series_id(sid) {}
+		: id(i), name(n), engine_id(eid), company_id(cid), moby_id(mid), datafiles(df), series_id(sid) {}
 };
 
 struct MetadataEngine {
-	typedef Common::String String;
-
 	String id;
 	String name;
 	String alt_name;
 	bool enabled;
 
-	MetadataEngine() : id(nullptr), name(nullptr), alt_name(nullptr), enabled(false) {}
+	MetadataEngine() : enabled(false) {}
 	MetadataEngine(const String i, const String n, const String altn, bool e)
-	: id(i), name(n), alt_name(altn), enabled(e) {}
+		: id(i), name(n), alt_name(altn), enabled(e) {}
 };
 
 struct MetadataSeries {
-	typedef Common::String String;
-
 	String id;
 	String name;
 
-	MetadataSeries() : id(nullptr), name(nullptr) {}
+	MetadataSeries() {}
 	MetadataSeries(const String i, const String n) : id(i), name(n) {}
 };
 
 struct MetadataCompany {
-	typedef Common::String String;
-
 	String id;
 	String name;
 	String alt_name;
 
-	MetadataCompany() : id(nullptr), name(nullptr), alt_name(nullptr) {}
+	MetadataCompany() {}
 	MetadataCompany(const String i, const String n, const String altn)
-	: id(i), name(n), alt_name(altn) {}
+		: id(i), name(n), alt_name(altn) {}
 };
 
 class MetadataParser : public Common::XMLParser {
@@ -123,7 +117,6 @@ protected:
 			XML_PROP(alt_name, true)
 
 		KEY_END() // company end
-
 	} PARSER_END()
 
 	/** Render info callbacks */
@@ -135,7 +128,6 @@ protected:
 	bool closedKeyCallback(ParserNode *node) override;
 
 	void cleanup() override;
-
 };
 
 } // End of namespace GUI
