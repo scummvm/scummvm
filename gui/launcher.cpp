@@ -59,8 +59,6 @@
 #include "backends/cloud/cloudmanager.h"
 #endif
 
-using Common::ConfigManager;
-
 namespace GUI {
 
 enum {
@@ -304,9 +302,9 @@ void LauncherDialog::close() {
 	// Save last selection
 	const int sel = getSelected();
 	if (sel >= 0)
-		ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
+		ConfMan.set("lastselectedgame", _domains[sel], Common::ConfigManager::kApplicationDomain);
 	else
-		ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
+		ConfMan.removeKey("lastselectedgame", Common::ConfigManager::kApplicationDomain);
 
 	ConfMan.flushToDisk();
 	Dialog::close();
@@ -455,8 +453,8 @@ void LauncherDialog::recordGame(int item) {
 	case RecorderDialog::kRecordDialogPlayback:
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
-		ConfMan.set("record_mode", "playback", ConfigManager::kTransientDomain);
-		ConfMan.set("record_file_name", recorderDialog.getFileName(), ConfigManager::kTransientDomain);
+		ConfMan.set("record_mode", "playback", Common::ConfigManager::kTransientDomain);
+		ConfMan.set("record_file_name", recorderDialog.getFileName(), Common::ConfigManager::kTransientDomain);
 		break;
 	case RecorderDialog::kRecordDialogRecord:
 		ConfMan.setActiveDomain(_domains[item]);
@@ -467,7 +465,7 @@ void LauncherDialog::recordGame(int item) {
 		g_eventRec.setAuthor(recorderDialog._author);
 		g_eventRec.setName(recorderDialog._name);
 		g_eventRec.setNotes(recorderDialog._notes);
-		ConfMan.set("record_mode", "record", ConfigManager::kTransientDomain);
+		ConfMan.set("record_mode", "record", Common::ConfigManager::kTransientDomain);
 		break;
 	}
 }
@@ -966,7 +964,7 @@ void LauncherSimple::build() {
 	updateListing();
 
 	// Restore last selection
-	Common::String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
+	Common::String last(ConfMan.get("lastselectedgame", Common::ConfigManager::kApplicationDomain));
 	selectTarget(last);
 
 	// En-/disable the buttons depending on the list selection
@@ -982,12 +980,12 @@ void LauncherSimple::updateListing() {
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	bool scanEntries = numEntries == -1 ? true : ((int)domains.size() <= numEntries);
 
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
-	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
 		// Do not list temporary targets added when starting a game from the command line
 		if (iter->_value.contains("id_came_from_command_line"))
 			continue;
@@ -1404,10 +1402,10 @@ void LauncherGrid::updateListing() {
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	// Turn it into a list of pointers
 	Common::Array<LauncherEntry> domainList;
-	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
 		// Do not list temporary targets added when starting a game from the command line
 		if (iter->_value.contains("id_came_from_command_line"))
 			continue;
@@ -1484,7 +1482,7 @@ void LauncherGrid::build() {
 	updateListing();
 
 	// Restore last selection
-	Common::String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
+	Common::String last(ConfMan.get("lastselectedgame", Common::ConfigManager::kApplicationDomain));
 	selectTarget(last);
 
 	// En-/disable the buttons depending on the list selection
