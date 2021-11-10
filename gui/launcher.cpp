@@ -829,6 +829,49 @@ LauncherDisplayType getRequestedLauncherType() {
 }
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
+class LauncherSimple : public LauncherDialog {
+public:
+	LauncherSimple(const Common::String &title);
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+
+	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
+
+protected:
+	void updateListing() override;
+	void groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata);
+	void updateButtons() override;
+	void selectTarget(const Common::String &target) override;
+	int getSelected() override;
+	void build() override;
+private:
+	GroupedListWidget 		*_list;
+};
+
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+class LauncherGrid : public LauncherDialog {
+public:
+	LauncherGrid(const Common::String &title);
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+
+	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
+
+protected:
+	void updateListing() override;
+	void groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata);
+	void updateButtons() override;
+	void selectTarget(const Common::String &target) override;
+	int getSelected() override;
+	void build() override;
+private:
+	GridWidget		*_grid;
+};
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
+
 void LauncherChooser::selectLauncher() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	LauncherDisplayType requestedType = getRequestedLauncherType();
