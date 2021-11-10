@@ -574,6 +574,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 
 			if (candidates[idx].hasUnknownFiles) {
 				description += Common::U32String(" - ");
+				// I18N: Unknown game variant
 				description += _("Unknown variant");
 			}
 
@@ -834,14 +835,14 @@ void LauncherChooser::selectLauncher() {
 
 		switch (requestedType) {
 		case kLauncherDisplayGrid:
-			_impl = new LauncherGrid(Common::U32String("LauncherGrid"));
+			_impl = new LauncherGrid("LauncherGrid");
 			break;
 
 		default:
 			// fallthrough intended
 		case kLauncherDisplayList:
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
-			_impl = new LauncherSimple(Common::U32String("Launcher"));
+			_impl = new LauncherSimple("Launcher");
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 			break;
 		}
@@ -865,7 +866,7 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
-LauncherSimple::LauncherSimple(const Common::U32String &title)
+LauncherSimple::LauncherSimple(const Common::String &title)
 	: LauncherDialog(title),
 	_list(nullptr) {
 	build();
@@ -1025,7 +1026,8 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 			attrs.push_back(engineid);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Unknown Engine";
+		// I18N: List grouping when no engine is specified
+		metadataNames[""] = _("Unknown Engine");
 		Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
@@ -1042,7 +1044,8 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Unknown Publisher";
+		// I18N: List grouping when no pubisher is specified
+		metadataNames[""] = _("Unknown Publisher");
 		Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
@@ -1059,7 +1062,8 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "No Series";
+		// I18N: List group when no game series is specified
+		metadataNames[""] = _("No Series");
 		Common::HashMap<Common::String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
@@ -1073,7 +1077,8 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 			attrs.push_back(language);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Language not detected";
+		// I18N: List group when no languageis specified
+		metadataNames[""] = _("Language not detected");
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
 			metadataNames[l->code] = l->description;
@@ -1087,7 +1092,8 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 			attrs.push_back(platform);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Platform not detected";
+		// I18N: List group when no platform is specified
+		metadataNames[""] = _("Platform not detected");
 		const Common::PlatformDescription *p = Common::g_platforms;
 		for (; p->code; ++p) {
 			metadataNames[p->code] = p->description;
@@ -1183,7 +1189,7 @@ void LauncherSimple::updateButtons() {
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-LauncherGrid::LauncherGrid(const Common::U32String &title)
+LauncherGrid::LauncherGrid(const Common::String &title)
 	: LauncherDialog(title),
 	_grid(nullptr) {
 	build();
@@ -1207,7 +1213,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 			attrs.push_back(engineid);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Unknown Engine";
+		// I18N: List grouping when no enginr is specified
+		metadataNames[""] = _("Unknown Engine");
 		Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
@@ -1224,7 +1231,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "No Series";
+		// I18N: List grouping when no game series is specified
+		metadataNames[""] = _("No Series");
 		Common::HashMap<Common::String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
@@ -1237,7 +1245,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Unknown Publisher";
+		// I18N: List group when no publisher is specified
+		metadataNames[""] = _("Unknown Publisher");
 		Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
@@ -1255,7 +1264,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 			attrs.push_back(language);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Language not detected";
+		// I18N: List group when no language is specified
+		metadataNames[""] = _("Language not detected");
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
 			metadataNames[l->code] = l->description;
@@ -1269,7 +1279,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 			attrs.push_back(platform);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		metadataNames[""] = "Platform not detected";
+		// I18N: List group when no platform is specified
+		metadataNames[""] = _("Platform not detected");
 		const Common::PlatformDescription *p = Common::g_platforms;
 		for (; p->code; ++p) {
 			metadataNames[p->code] = p->description;
@@ -1279,7 +1290,8 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 	case kGroupByNone:	// Fall-through intentional
 	default:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			attrs.push_back(Common::String("All"));
+			// I18N: Group for All items
+			attrs.push_back(_("All"));
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		break;
