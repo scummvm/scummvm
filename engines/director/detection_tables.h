@@ -3721,6 +3721,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// French version titled "Valmaison au fil des saisons"
 	MACGAME1_l("pepperon", "", "Valmaison", "8b138db44d4421cc7294a9dc792ccf1b", 502569, Common::FR_FRA, 404),
 	WINGAME1_l("pepperon", "", "START95.EXE", "4086df04abc18956581cee17b48e81c1", 1805439, Common::FR_FRA, 404),
+	// Dutch version titled "Op avontuur in kabouterstad"
+	WINGAME1_l("pepperon", "", "START95.EXE", "e67abd6a890060fa8c41b7b363013254", 1088309, Common::NL_NLD, 404),
 
 	// Original Mac fllenames begin with Virtual Cop™
 	MACDEMO1("vcop", "Demo", "Virtual Cop IPK", "ea646eccc9a53f44ce082459d4809a06", 482838, 404),
