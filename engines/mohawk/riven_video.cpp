@@ -65,6 +65,7 @@ void RivenVideo::load(uint16 id) {
 	_video->setSoundType(Audio::Mixer::kSFXSoundType);
 	_video->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	_video->loadStream(_vm->getResource(ID_TMOV, id));
+	_video->enableEditListBoundsCheckQuirk(true); // for Spanish olw.mov
 }
 
 void RivenVideo::close() {

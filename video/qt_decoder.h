@@ -71,6 +71,8 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 	Audio::Timestamp getDuration() const { return Audio::Timestamp(0, _duration, _timeScale); }
 
+	void enableEditListBoundsCheckQuirk(bool enable) { _enableEditListBoundsCheckQuirk = enable; }
+
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 
@@ -84,6 +86,8 @@ private:
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
 			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
+
+	bool _enableEditListBoundsCheckQuirk;
 
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
