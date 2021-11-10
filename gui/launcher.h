@@ -42,11 +42,6 @@ enum LauncherDisplayType {
 	kLauncherDisplayGrid = 2
 };
 
-enum {
-	kListSwitchCmd = 'LIST',
-	kGridSwitchCmd = 'GRID'
-};
-
 enum GroupingMethod {
 	kGroupByNone,
 	kGroupByFirstLetter,

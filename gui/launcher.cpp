@@ -79,6 +79,9 @@ enum {
 	kSearchClearCmd = 'SRCL',
 	kSetGroupMethodCmd = 'GPBY',
 
+	kListSwitchCmd = 'LIST',
+	kGridSwitchCmd = 'GRID',
+
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
