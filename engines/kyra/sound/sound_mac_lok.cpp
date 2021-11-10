@@ -227,11 +227,10 @@ void SoundMac::beginFadeOut() {
 	}
 
 	_driver->doCommand(10, 30);
-
 	while (_driver->doCommand(12) >= 16)
-		_vm->delay(4);
-
+		_vm->delay(8);
 	_driver->doCommand(2);
+	_driver->doCommand(11, 30);
 }
 
 void SoundMac::updateVolumeSettings() {

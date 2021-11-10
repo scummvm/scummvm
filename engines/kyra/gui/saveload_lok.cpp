@@ -126,6 +126,10 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 			_roomTable[sceneId].needInit[i] = in->readByte();
 		}
 	}
+
+	_sound->selectAudioResourceSet(kMusicIngame);
+	closeFinalWsa();
+
 	if (header.version >= 3) {
 		_lastMusicCommand = in->readSint16BE();
 		if (_lastMusicCommand != -1)
