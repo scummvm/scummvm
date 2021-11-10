@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Ported ResidualVM GUI theme to remastered version.
+   - Fixed edge case for Punycode.
 
  AGOS:
    - Fixed old Waxworks AdLib music regression.
