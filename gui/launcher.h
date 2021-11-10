@@ -179,7 +179,7 @@ protected:
 	 * @target	name of target to select
 	 */
 	virtual void selectTarget(const String &target) = 0;
-	virtual const int getSelected() = 0;
+	virtual int getSelected() = 0;
 private:
 	bool checkModifier(int modifier);
 };
@@ -210,7 +210,7 @@ protected:
 	void groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata);
 	void updateButtons() override;
 	void selectTarget(const String &target) override;
-	const int getSelected() override;
+	int getSelected() override;
 	void build() override;
 private:
 	GroupedListWidget 		*_list;
@@ -231,7 +231,7 @@ protected:
 	void groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata);
 	void updateButtons() override;
 	void selectTarget(const String &target) override;
-	const int getSelected() override;
+	int getSelected() override;
 	void build() override;
 private:
 	GridWidget		*_grid;

@@ -92,7 +92,7 @@ class GridItemTray: public Dialog, public CommandSender {
 public:
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
 
-	void reflowLayout();
+	void reflowLayout() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
