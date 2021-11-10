@@ -192,7 +192,7 @@ public:
 
 class LauncherSimple : public LauncherDialog {
 public:
-	LauncherSimple(const Common::U32String &title);
+	LauncherSimple(const Common::String &title);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -213,7 +213,7 @@ private:
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
 public:
-	LauncherGrid(const Common::U32String &title);
+	LauncherGrid(const Common::String &title);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;

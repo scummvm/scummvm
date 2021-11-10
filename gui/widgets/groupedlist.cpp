@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/frac.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "gui/widgets/groupedlist.h"
 #include "gui/widgets/scrollbar.h"
@@ -118,7 +119,8 @@ void GroupedListWidget::groupByAttribute() {
 
 	if (_attributeValues.empty()) {
 		_groupExpanded.push_back(true);
-		_groupHeaders.push_back(Common::String("All"));
+		// I18N: Group for All items
+		_groupHeaders.push_back(_("All"));
 		_groupValueIndex.setVal(Common::String("All"), 0);
 		for (uint i = 0; i < _dataList.size(); ++i) {
 			_itemsInGroup[0].push_back(i);

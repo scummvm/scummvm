@@ -25,6 +25,7 @@
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
@@ -215,13 +216,13 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 
 	_playButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY,
 									  2 * buttonWidth + buttonSpacingX, buttonHeight,
-									  Common::U32String("Play"), kPlayButtonCmd);
+									  _("Play"), kPlayButtonCmd);
 	_loadButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
-									  Common::U32String("Saves"), kLoadButtonCmd);
+									  _("Saves"), kLoadButtonCmd);
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
-									  Common::U32String("Edit"), kEditButtonCmd);
+									  _("Edit"), kEditButtonCmd);
 
 	_playButton->useThemeTransparency(true);
 	_loadButton->useThemeTransparency(true);
