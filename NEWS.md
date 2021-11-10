@@ -21,6 +21,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Fixed graphical glitch in Legend of Kyrandia 3.
 
+ SAGA:
+   - Fixed digitized music not looping in Inherit the Earth.
+
  SCUMM:
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
