@@ -166,11 +166,11 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	mdDir->listMatchingMembers(mdFiles, "*.xml");
 	for (Common::ArchiveMemberList::iterator md = mdFiles.begin(); md != mdFiles.end(); ++md) {
 		if (_metadataParser.loadStream((*md)->createReadStream()) == false) {
-			warning("Failed to load XML file '%s'", (*md)->getDisplayName().c_str());
+			warning("Failed to load XML file '%s'", (*md)->getDisplayName().encode().c_str());
 			_metadataParser.close();
 		}
 		if (_metadataParser.parse() == false) {
-			warning("Failed to parse XML file '%s'", (*md)->getDisplayName().c_str());
+			warning("Failed to parse XML file '%s'", (*md)->getDisplayName().encode().c_str());
 			_metadataParser.close();
 		}
 	}
@@ -884,7 +884,7 @@ void LauncherSimple::selectTarget(const String &target) {
 	}
 }
 
-const int LauncherSimple::getSelected() { return _list->getSelected(); }
+int LauncherSimple::getSelected() { return _list->getSelected(); }
 
 void LauncherSimple::build() {
 	LauncherDialog::build();
@@ -1415,7 +1415,7 @@ void LauncherGrid::updateButtons() {
 }
 
 void LauncherGrid::selectTarget(const String &target) {}
-const int LauncherGrid::getSelected() { return _grid->getSelected(); }
+int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
 	LauncherDialog::build();
