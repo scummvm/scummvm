@@ -171,6 +171,7 @@ private:
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 		uint32 getCurFrameDuration();            // media time
 		uint32 findKeyFrame(uint32 frame) const;
+		bool isEmptyEdit() const;
 		void enterNewEditListEntry(bool bufferFrames);
 		const Graphics::Surface *bufferNextFrame();
 		uint32 getRateAdjustedFrameTime() const; // media time
