@@ -28,12 +28,12 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name, const U32String &tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
@@ -69,7 +69,7 @@ void EditableWidget::reflowLayout() {
 	}
 }
 
-void EditableWidget::setEditString(const U32String &str) {
+void EditableWidget::setEditString(const Common::U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
@@ -197,7 +197,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_v:
 		if (state.flags & Common::KBD_CTRL) {
 			if (g_system->hasTextInClipboard()) {
-				U32String text = g_system->getTextFromClipboard();
+				Common::U32String text = g_system->getTextFromClipboard();
 				for (uint32 i = 0; i < text.size(); ++i) {
 					if (tryInsertChar(text[i], _caretPos))
 						++_caretPos;
@@ -314,7 +314,7 @@ void EditableWidget::drawCaret(bool erase) {
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
 	if (erase) {
-		GUI::EditableWidget::String character;
+		Common::String character;
 		int width;
 
 		if ((uint)_caretPos < _editString.size()) {

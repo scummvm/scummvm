@@ -37,7 +37,7 @@ bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, Common
 	return item.contains(token);
 }
 
-ListWidget::ListWidget(Dialog *boss, const String &name, const U32String &tooltip, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
@@ -76,7 +76,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const U32String &toolti
 	_topPadding = _bottomPadding = 0;
 }
 
-ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
 	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
@@ -175,7 +175,7 @@ ThemeEngine::FontColor ListWidget::getSelectionColor() const {
 		return _listColors[_listIndex[_selectedItem]];
 }
 
-void ListWidget::setList(const U32StringArray &list, const ColorList *colors) {
+void ListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -202,7 +202,7 @@ void ListWidget::setList(const U32StringArray &list, const ColorList *colors) {
 	scrollBarRecalc();
 }
 
-void ListWidget::append(const String &s, ThemeEngine::FontColor color) {
+void ListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
 	if (_dataList.size() == _listColors.size()) {
 		// If the color list has the size of the data list, we append the color.
 		_listColors.push_back(color);
@@ -360,7 +360,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int newSelectedItem = 0;
 			int bestMatch = 0;
 			bool stop;
-			for (U32StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+			for (Common::U32StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
 				const int match = matchingCharsIgnoringCase(i->encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
@@ -749,12 +749,12 @@ void ListWidget::reflowLayout() {
 	}
 }
 
-void ListWidget::setFilter(const U32String &filter, bool redraw) {
+void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	// FIXME: This method does not deal correctly with edit mode!
 	// Until we fix that, let's make sure it isn't called while editing takes place
 	assert(!_editMode);
 
-	U32String filt = filter;
+	Common::U32String filt = filter;
 	filt.toLowercase();
 
 	if (_filter == filt) // Filter was not changed
@@ -770,13 +770,13 @@ void ListWidget::setFilter(const U32String &filter, bool redraw) {
 		// Restrict the list to everything which matches all tokens in _filter, ignoring case.
 
 		Common::U32StringTokenizer tok(_filter);
-		U32String tmp;
+		Common::U32String tmp;
 		int n = 0;
 
 		_list.clear();
 		_listIndex.clear();
 
-		for (U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
 			bool matches = true;

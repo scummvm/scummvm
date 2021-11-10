@@ -38,19 +38,14 @@ class ListWidget;
  */
 
 class ChooserDialog : public Dialog {
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 protected:
 	ListWidget		*_list;
 	ButtonWidget	*_chooseButton;
 
 public:
-	ChooserDialog(const U32String &title, String dialogId = "Browser");
+	ChooserDialog(const Common::U32String &title, Common::String dialogId = "Browser");
 
-	void setList(const U32StringArray &list);
+	void setList(const Common::U32StringArray &list);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };

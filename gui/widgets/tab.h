@@ -35,12 +35,9 @@ enum {
 };
 
 class TabWidget : public Widget {
-	typedef Common::String String;
-	typedef Common::U32String U32String;
-
 	struct Tab {
-		U32String title;
-		String dialogName;
+		Common::U32String title;
+		Common::String dialogName;
 		Widget *firstWidget;
 		int _tabWidth;
 	};
@@ -70,7 +67,7 @@ protected:
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
-	TabWidget(GuiObject *boss, const String &name);
+	TabWidget(GuiObject *boss, const Common::String &name);
 	~TabWidget() override;
 
 	void init();
@@ -79,7 +76,7 @@ public:
 	 * Add a new tab with the given title. Returns a unique ID which can be used
 	 * to identify the tab (to remove it / activate it etc.).
 	 */
-	int addTab(const U32String &title, const String &dialogName);
+	int addTab(const Common::U32String &title, const Common::String &dialogName);
 
 	/**
 	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.
@@ -103,7 +100,7 @@ public:
 	 */
 	void setActiveTab(int tabID);
 
-	void setTabTitle(int tabID, const U32String &title) {
+	void setTabTitle(int tabID, const Common::U32String &title) {
 		assert(0 <= tabID && tabID < (int)_tabs.size());
 		_tabs[tabID].title = title;
 	}

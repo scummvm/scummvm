@@ -40,11 +40,8 @@ namespace GUI {
  * EditTextWidget.
  */
 class EditableWidget : public Widget, public CommandSender {
-public:
-	typedef Common::String String;
-	typedef Common::U32String U32String;
 protected:
-	U32String	_editString;
+	Common::U32String _editString;
 
 	uint32		_cmd;
 
@@ -65,13 +62,13 @@ protected:
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
-	EditableWidget(GuiObject *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
+	EditableWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	~EditableWidget() override;
 
 	void init();
 
-	virtual void setEditString(const U32String &str);
-	virtual const U32String &getEditString() const		{ return _editString; }
+	virtual void setEditString(const Common::U32String &str);
+	virtual const Common::U32String &getEditString() const	{ return _editString; }
 
 	void handleTickle() override;
 	bool handleKeyDown(Common::KeyState state) override;

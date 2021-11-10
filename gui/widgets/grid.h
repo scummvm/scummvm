@@ -31,12 +31,6 @@
 #include "image/png.h"
 #include "graphics/svg.h"
 
-using Common::String;
-using Common::U32String;
-using Common::Array;
-
-typedef Array<String> StringArray;
-
 namespace GUI {
 
 class ScrollBarWidget;
@@ -59,25 +53,25 @@ enum {
 struct GridItemInfo {
 	bool		isHeader;
 	int 		entryID;
-	String 		engineid;
-	String 		gameid;
-	String 		title;
-	String 		thumbPath;
+	Common::String 		engineid;
+	Common::String 		gameid;
+	Common::String 		title;
+	Common::String 		thumbPath;
 	// Generic attribute value, may be any piece of metadata
-	String		attribute;
+	Common::String		attribute;
 	Common::Language	language;
 	Common::Platform 	platform;
 
 	Common::Rect		rect;
 
-	GridItemInfo(int id, const String &eid, const String &gid
-		,const String &t, Common::Language l, Common::Platform p)
+	GridItemInfo(int id, const Common::String &eid, const Common::String &gid
+		,const Common::String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
-		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+		thumbPath = Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
-	GridItemInfo(const String &groupHeader, int groupID) : title(groupHeader), isHeader(true), entryID(groupID) {
-		thumbPath = String("");
+	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), isHeader(true), entryID(groupID) {
+		thumbPath = Common::String("");
 	}
 };
 
@@ -108,18 +102,18 @@ protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
 
 	// Images are mapped by filename -> surface.
-	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
+	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
 	Common::Array<GridItemInfo>			_dataEntryList;
 	Common::Array<GridItemInfo>			_sortedEntryList;
 	Common::Array<GridItemInfo *>		_visibleEntryList;
 
-	String									_groupingAttribute;
-	Common::HashMap<U32String, int>			_groupValueIndex;
+	Common::String							_groupingAttribute;
+	Common::HashMap<Common::U32String, int>	_groupValueIndex;
 	Common::Array<bool>						_groupExpanded;
-	U32String									_groupHeaderPrefix;
-	U32String									_groupHeaderSuffix;
-	Common::Array<U32String>					_groupHeaders;
+	Common::U32String						_groupHeaderPrefix;
+	Common::U32String						_groupHeaderSuffix;
+	Common::Array<Common::U32String>		_groupHeaders;
 	Common::StringMap							_metadataNames;
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 
@@ -147,7 +141,7 @@ protected:
 	int				_firstVisibleItem;
 	int				_lastVisibleItem;
 	GridItemTray	*_tray;
-	String			_iconDir;
+	Common::String	_iconDir;
 	bool			_isGridInvalid;
 
 	int				_scrollWindowPaddingX;
@@ -166,23 +160,23 @@ public:
 
 	GridItemInfo	*_selectedEntry;
 
-	U32String		_filter;
+	Common::U32String	_filter;
 
-	GridWidget(GuiObject *boss, const String &name);
+	GridWidget(GuiObject *boss, const Common::String &name);
 	~GridWidget();
 
-	const Graphics::ManagedSurface *filenameToSurface(const String &name);
+	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
-	void setAttributeValues(const Common::Array<U32String> &attrs);
+	void setAttributeValues(const Common::Array<Common::U32String> &attrs);
 	void setMetadataNames(const Common::StringMap &metadata);
 	void setTitlesVisible(bool vis);
 	void markGridAsInvalid() { _isGridInvalid = true; }
-	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
+	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
 
 	void groupEntries();
 	void sortGroups();
@@ -215,7 +209,7 @@ public:
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
-	void setFilter(const U32String &filter);
+	void setFilter(const Common::U32String &filter);
 };
 
 /* GridItemWidget */

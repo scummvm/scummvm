@@ -32,34 +32,34 @@ class ListWidget;
 /* GroupedListWidget */
 class GroupedListWidget : public ListWidget {
 protected:
-	String									_groupingAttribute;
-	Common::HashMap<U32String, int>			_groupValueIndex;
-	Common::Array<bool>						_groupExpanded;
-	U32String									_groupHeaderPrefix;
-	U32String									_groupHeaderSuffix;
-	U32StringArray								_groupHeaders;
-	U32StringArray								_attributeValues;
+	Common::String								_groupingAttribute;
+	Common::HashMap<Common::U32String, int>		_groupValueIndex;
+	Common::Array<bool>							_groupExpanded;
+	Common::U32String							_groupHeaderPrefix;
+	Common::U32String							_groupHeaderSuffix;
+	Common::U32StringArray						_groupHeaders;
+	Common::U32StringArray						_attributeValues;
 	Common::StringMap							_metadataNames;
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 	bool _groupsVisible;
 
 public:
-	GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
+	GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
-	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
-	void setAttributeValues(const U32StringArray &attrValues);
+	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
+	void setAttributeValues(const Common::U32StringArray &attrValues);
 	void setMetadataNames(const Common::StringMap &metadata);
-	const U32StringArray &getList() const { return _dataList; }
+	const Common::U32StringArray &getList() const { return _dataList; }
 
-	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
-	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
+	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
+	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
 	void groupByAttribute();
 
 	void setSelected(int item);
 	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	void setFilter(const U32String &filter, bool redraw = true);
+	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;

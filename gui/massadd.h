@@ -35,8 +35,6 @@ namespace GUI {
 class StaticTextWidget;
 
 class MassAddDialog : public Dialog {
-	typedef Common::Array<Common::String> StringArray;
-	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	MassAddDialog(const Common::FSNode &startDir);
 
@@ -59,7 +57,7 @@ private:
 	 * Used to detect whether a potential new target is already present in the
 	 * config manager.
 	 */
-	Common::HashMap<Common::String, StringArray>	_pathToTargets;
+	Common::HashMap<Common::String, Common::StringArray>	_pathToTargets;
 
 	int _dirsScanned;
 	int _oldGamesCount;

@@ -56,7 +56,7 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	init();
 }
 
-TabWidget::TabWidget(GuiObject *boss, const String &name)
+TabWidget::TabWidget(GuiObject *boss, const Common::String &name)
 	: Widget(boss, name), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
 }
@@ -74,8 +74,8 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 
-	String leftArrow = g_gui.useRTL() ? ">" : "<";
-	String rightArrow = g_gui.useRTL() ? "<" : ">";
+	Common::String leftArrow = g_gui.useRTL() ? ">" : "<";
+	Common::String rightArrow = g_gui.useRTL() ? "<" : ">";
 
 	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, Common::U32String(leftArrow), Common::U32String(), kCmdLeft);
 	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, Common::U32String(rightArrow), Common::U32String(), kCmdRight);
@@ -116,7 +116,7 @@ uint16 TabWidget::getHeight() const {
 	return _h + _tabHeight;
 }
 
-int TabWidget::addTab(const U32String &title, const String &dialogName) {
+int TabWidget::addTab(const Common::U32String &title, const Common::String &dialogName) {
 	// Add a new tab page
 	Tab newTab;
 	newTab.title = title;

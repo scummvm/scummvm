@@ -426,7 +426,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip, uint32 cmd)
+PopUpWidget::PopUpWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
@@ -436,7 +436,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const U32String &t
 	_leftPadding = _rightPadding = 0;
 }
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
@@ -496,15 +496,15 @@ void PopUpWidget::reflowLayout() {
 	Widget::reflowLayout();
 }
 
-void PopUpWidget::appendEntry(const U32String &entry, uint32 tag) {
+void PopUpWidget::appendEntry(const Common::U32String &entry, uint32 tag) {
 	Entry e;
 	e.name = entry;
 	e.tag = tag;
 	_entries.push_back(e);
 }
 
-void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
-	appendEntry(U32String(entry), tag);
+void PopUpWidget::appendEntry(const Common::String &entry, uint32 tag) {
+	appendEntry(Common::U32String(entry), tag);
 }
 
 void PopUpWidget::clearEntries() {

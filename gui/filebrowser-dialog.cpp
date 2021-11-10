@@ -126,7 +126,7 @@ bool FileBrowserDialog::isProceedSave() {
 	if (_mode == kFBModeLoad)
 		return true;
 
-	for (ListWidget::U32StringArray::const_iterator file = _fileList->getList().begin(); file != _fileList->getList().end(); ++file) {
+	for (Common::U32StringArray::const_iterator file = _fileList->getList().begin(); file != _fileList->getList().end(); ++file) {
 		if (*file == _fileName->getEditString()) {
 			matched = true;
 			break;
@@ -146,7 +146,7 @@ bool FileBrowserDialog::isProceedSave() {
 void FileBrowserDialog::updateListing() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
-	ListWidget::U32StringArray list;
+	Common::U32StringArray list;
 
 	Common::StringArray filenames = saveFileMan->listSavefiles(_fileMask);
 	Common::sort(filenames.begin(), filenames.end());

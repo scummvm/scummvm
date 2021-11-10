@@ -184,8 +184,8 @@ LauncherDialog::~LauncherDialog() {
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
-	_grpChooserDesc = new StaticTextWidget(this, String(_title + ".laGroupPopupDesc"), U32String("Group by: "));
-	_grpChooserPopup = new PopUpWidget(this, String(_title + ".laGroupPopup"), U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
+	_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String("Group by: "));
+	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
 	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
 	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
@@ -471,7 +471,7 @@ void LauncherDialog::recordGame(int item) {
 #endif
 
 void LauncherDialog::loadGame(int item) {
-	String target = _domains[item];
+	Common::String target = _domains[item];
 	target.toLowercase();
 
 	EngineMan.upgradeTargetIfNecessary(target);
@@ -568,7 +568,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		idx = 0;
 	} else {
 		// Display the candidates to the user and let her/him pick one
-		U32StringArray list;
+		Common::U32StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++) {
 			Common::U32String description = candidates[idx].description;
 
@@ -698,7 +698,7 @@ void LauncherDialog::reflowLayout() {
 	}
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget(Common::String(_title + ".Version").c_str());
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign(_title + ".Version"));
 			ver->setLabel(Common::U32String(gScummVMVersionDate));
@@ -709,7 +709,7 @@ void LauncherDialog::reflowLayout() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 	} else {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget(Common::String(_title + ".Version").c_str());
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign(_title + ".Version"));
 			ver->setLabel(Common::U32String(gScummVMFullVersion));
@@ -865,16 +865,16 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
-LauncherSimple::LauncherSimple(const U32String &title)
+LauncherSimple::LauncherSimple(const Common::U32String &title)
 	: LauncherDialog(title),
 	_list(nullptr) {
 	build();
 }
 
-void LauncherSimple::selectTarget(const String &target) {
+void LauncherSimple::selectTarget(const Common::String &target) {
 	if (!target.empty()) {
 		int itemToSelect = 0;
-		StringArray::const_iterator iter;
+		Common::StringArray::const_iterator iter;
 		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
 			if (target == *iter) {
 				_list->setSelected(itemToSelect);
@@ -919,7 +919,7 @@ void LauncherSimple::build() {
 	updateListing();
 
 	// Restore last selection
-	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
+	Common::String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
 	selectTarget(last);
 
 	// En-/disable the buttons depending on the list selection
@@ -927,8 +927,8 @@ void LauncherSimple::build() {
 }
 
 void LauncherSimple::updateListing() {
-	U32StringArray l;
-	Array<const Common::ConfigManager::Domain *> attrs;
+	Common::U32StringArray l;
+	Common::Array<const Common::ConfigManager::Domain *> attrs;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
@@ -945,7 +945,7 @@ void LauncherSimple::updateListing() {
 		if (iter->_value.contains("id_came_from_command_line"))
 			continue;
 
-		String description;
+		Common::String description;
 
 		if (!iter->_value.tryGetVal("description", description)) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
@@ -954,7 +954,7 @@ void LauncherSimple::updateListing() {
 		}
 
 		if (description.empty()) {
-			String gameid;
+			Common::String gameid;
 			if (!iter->_value.tryGetVal("gameid", gameid));
 				gameid = iter->_key;
 
@@ -1006,8 +1006,8 @@ void LauncherSimple::updateListing() {
 	_list->setFilter(_searchWidget->getEditString());
 }
 
-void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
-	U32StringArray attrs;
+void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata) {
+	Common::U32StringArray attrs;
 	Common::StringMap metadataNames;
 	_list->setGroupsVisibility(true);
 	switch (_groupBy) {
@@ -1015,18 +1015,18 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		for (uint i = 0; i < metadata.size(); ++i) {
 			attrs.push_back(metadata[i]->getValOrDefault("description").substr(0, 1));
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String("..."));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
 	}
 	case kGroupByEngine: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("engineid")) ?
-								metadata[i]->getVal(String("engineid")) : String("");
+			Common::U32String engineid = metadata[i]->contains(Common::String("engineid")) ?
+								metadata[i]->getVal(Common::String("engineid")) : Common::String("");
 			attrs.push_back(engineid);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Unknown Engine";
-		Common::HashMap<String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
+		Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
 				metadataNames[i->_key] = i->_value.name;
@@ -1038,12 +1038,12 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	}
 	case kGroupByCompany: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String gameid = metadata[i]->getVal(String("gameid"));
+			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Unknown Publisher";
-		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
+		Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
 				metadataNames[i->_key] = i->_value.name;
@@ -1055,12 +1055,12 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	}
 	case kGroupBySeries: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String gameid = metadata[i]->getVal(String("gameid"));
+			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "No Series";
-		Common::HashMap<String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
+		Common::HashMap<Common::String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
 		}
@@ -1068,11 +1068,11 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	}
 	case kGroupByLanguage: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String language = metadata[i]->contains(String("language")) ?
-								metadata[i]->getVal(String("language")) : String("");
+			Common::U32String language = metadata[i]->contains(Common::String("language")) ?
+								metadata[i]->getVal(Common::String("language")) : Common::String("");
 			attrs.push_back(language);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Language not detected";
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
@@ -1082,11 +1082,11 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	}
 	case kGroupByPlatform: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String platform = metadata[i]->contains(String("Platform")) ?
-								metadata[i]->getVal(String("Platform")) : String("");
+			Common::U32String platform = metadata[i]->contains(Common::String("Platform")) ?
+								metadata[i]->getVal(Common::String("Platform")) : Common::String("");
 			attrs.push_back(platform);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Platform not detected";
 		const Common::PlatformDescription *p = Common::g_platforms;
 		for (; p->code; ++p) {
@@ -1183,32 +1183,32 @@ void LauncherSimple::updateButtons() {
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-LauncherGrid::LauncherGrid(const U32String &title)
+LauncherGrid::LauncherGrid(const Common::U32String &title)
 	: LauncherDialog(title),
 	_grid(nullptr) {
 	build();
 }
 
-void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
-	U32StringArray attrs;
+void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata) {
+	Common::U32StringArray attrs;
 	Common::StringMap metadataNames;
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
 		for (uint i = 0; i < metadata.size(); ++i) {
 			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String("..."));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
 	}
 	case kGroupByEngine: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("engineid")) ?
-								metadata[i]->getVal(String("engineid")) : String("");
+			Common::U32String engineid = metadata[i]->contains(Common::String("engineid")) ?
+								metadata[i]->getVal(Common::String("engineid")) : Common::String("");
 			attrs.push_back(engineid);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Unknown Engine";
-		Common::HashMap<String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
+		Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
 				metadataNames[i->_key] = i->_value.name;
@@ -1220,12 +1220,12 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	}
 	case kGroupBySeries: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String gameid = metadata[i]->getVal(String("gameid"));
+			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "No Series";
-		Common::HashMap<String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
+		Common::HashMap<Common::String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
 		}
@@ -1233,12 +1233,12 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	}
 	case kGroupByCompany: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String gameid = metadata[i]->getVal(String("gameid"));
+			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Unknown Publisher";
-		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
+		Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
 				metadataNames[i->_key] = i->_value.name;
@@ -1250,11 +1250,11 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	}
 	case kGroupByLanguage: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String language = metadata[i]->contains(String("language")) ?
-								metadata[i]->getVal(String("language")) : String("");
+			Common::U32String language = metadata[i]->contains(Common::String("language")) ?
+								metadata[i]->getVal(Common::String("language")) : Common::String("");
 			attrs.push_back(language);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Language not detected";
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
@@ -1264,11 +1264,11 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	}
 	case kGroupByPlatform: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String platform = metadata[i]->contains(String("Platform")) ?
-								metadata[i]->getVal(String("Platform")) : String("");
+			Common::U32String platform = metadata[i]->contains(Common::String("Platform")) ?
+								metadata[i]->getVal(Common::String("Platform")) : Common::String("");
 			attrs.push_back(platform);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		metadataNames[""] = "Platform not detected";
 		const Common::PlatformDescription *p = Common::g_platforms;
 		for (; p->code; ++p) {
@@ -1279,9 +1279,9 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	case kGroupByNone:	// Fall-through intentional
 	default:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			attrs.push_back(String("All"));
+			attrs.push_back(Common::String("All"));
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		break;
 	}
 	_grid->setMetadataNames(metadataNames);
@@ -1342,7 +1342,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 }
 
 void LauncherGrid::updateListing() {
-	Array<const Common::ConfigManager::Domain *> attrs;
+	Common::Array<const Common::ConfigManager::Domain *> attrs;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
@@ -1354,7 +1354,7 @@ void LauncherGrid::updateListing() {
 		if (iter->_value.contains("id_came_from_command_line"))
 			continue;
 
-		String description;
+		Common::String description;
 
 		if (!iter->_value.tryGetVal("description", description)) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
@@ -1363,7 +1363,7 @@ void LauncherGrid::updateListing() {
 		}
 
 		if (description.empty()) {
-			String gameid;
+			Common::String gameid;
 			if (!iter->_value.tryGetVal("gameid", gameid));
 				gameid = iter->_key;
 
@@ -1414,7 +1414,7 @@ void LauncherGrid::updateButtons() {
 	}
 }
 
-void LauncherGrid::selectTarget(const String &target) {}
+void LauncherGrid::selectTarget(const Common::String &target) {}
 int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
@@ -1426,7 +1426,7 @@ void LauncherGrid::build() {
 	updateListing();
 
 	// Restore last selection
-	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
+	Common::String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
 	selectTarget(last);
 
 	// En-/disable the buttons depending on the list selection
