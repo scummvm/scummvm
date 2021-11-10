@@ -298,9 +298,9 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	}
 
 	_curEdit = 0;
-	enterNewEditListEntry(false);
-
 	_curFrame = -1;
+	enterNewEditListEntry(true); // might set _curFrame
+
 	_durationOverride = -1;
 	_scaledSurface = 0;
 	_curPalette = 0;
@@ -515,6 +515,9 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			return 0;
 
 		enterNewEditListEntry(true);
+
+		if (isEmptyEdit())
+			return 0;
 	}
 
 	const Graphics::Surface *frame = bufferNextFrame();
@@ -698,13 +701,21 @@ uint32 QuickTimeDecoder::VideoTrackHandler::findKeyFrame(uint32 frame) const {
 	return frame;
 }
 
-void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrames) {
-	// Bypass all empty edit lists first
-	while (!atLastEdit() && _parent->editList[_curEdit].mediaTime == -1)
-		_curEdit++;
+bool QuickTimeDecoder::VideoTrackHandler::isEmptyEdit() const {
+	return (_parent->editList[_curEdit].mediaTime == -1);
+}
 
+void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrames) {
 	if (atLastEdit())
 		return;
+
+	// if this is an empty edit then the only thing to do is set the
+	// time for the next frame, which is the duration of this edit.
+	if (isEmptyEdit()) {
+		_curFrame = -1;
+		_nextFrameStartTime = getCurEditTimeOffset() + getCurEditTrackDuration();
+		return;
+	}
 
 	uint32 mediaTime = _parent->editList[_curEdit].mediaTime;
 	uint32 frameNum = 0;
@@ -793,8 +804,12 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 }
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getRateAdjustedFrameTime() const {
-	// Figure out what time the next frame is at taking the edit list rate into account
-	Common::Rational offsetFromEdit = Common::Rational(_nextFrameStartTime - getCurEditTimeOffset()) / _parent->editList[_curEdit].mediaRate;
+	// Figure out what time the next frame is at taking the edit list rate into account,
+	// unless this is an empty edit, in which case the rate isn't applicable.
+	Common::Rational offsetFromEdit = Common::Rational(_nextFrameStartTime - getCurEditTimeOffset());
+	if (!isEmptyEdit()) {
+		offsetFromEdit /= _parent->editList[_curEdit].mediaRate;
+	}
 	uint32 convertedTime = offsetFromEdit.toInt();
 
 	if ((offsetFromEdit.getNumerator() % offsetFromEdit.getDenominator()) > (offsetFromEdit.getDenominator() / 2))
