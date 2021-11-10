@@ -35,7 +35,7 @@
 #include "common/system.h"
 #include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
-#include "recorderdialog.h"
+#include "gui/recorderdialog.h"
 
 #define MAX_RECORDS_NAMES 0xFF
 

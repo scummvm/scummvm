@@ -20,7 +20,7 @@
  *
  */
 
-#include "editrecorddialog.h"
+#include "gui/editrecorddialog.h"
 #include "gui/widgets/edittext.h"
 #include "common/translation.h"
 
