@@ -23,7 +23,6 @@
 #ifndef GUI_METADATA_PARSER_H
 #define GUI_METADATA_PARSER_H
 
-#include "common/scummsys.h"
 #include "common/xmlparser.h"
 
 namespace GUI {
