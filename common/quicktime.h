@@ -93,7 +93,7 @@ protected:
 
 	struct TimeToSampleEntry {
 		int count;
-		int duration;
+		int duration; // media time
 	};
 
 	struct SampleToChunkEntry {
@@ -103,9 +103,9 @@ protected:
 	};
 
 	struct EditListEntry {
-		uint32 trackDuration;
-		uint32 timeOffset;
-		int32 mediaTime;
+		uint32 trackDuration; // movie time
+		uint32 timeOffset;    // movie time
+		int32 mediaTime;      // media time
 		Rational mediaRate;
 	};
 
@@ -148,7 +148,7 @@ protected:
 		uint32 *sampleSizes;
 		uint32 keyframeCount;
 		uint32 *keyframes;
-		int32 timeScale;
+		int32 timeScale; // media time
 
 		uint16 width;
 		uint16 height;
@@ -158,18 +158,17 @@ protected:
 
 		Common::Array<EditListEntry> editList;
 
-		uint32 frameCount;
-		uint32 duration;
-		uint32 mediaDuration;
-		uint32 startTime;
+		uint32 frameCount;    // from stts
+		uint32 duration;      // movie time
+		uint32 mediaDuration; // media time
 		Rational scaleFactorX;
 		Rational scaleFactorY;
 	};
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
-	uint32 _timeScale;
-	uint32 _duration;
+	uint32 _timeScale;      // movie time
+	uint32 _duration;       // movie time
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;

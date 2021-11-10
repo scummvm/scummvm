@@ -294,7 +294,7 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	checkEditListBounds();
 
 	_curEdit = 0;
-	enterNewEditList(false);
+	enterNewEditListEntry(false);
 
 	_curFrame = -1;
 	_durationOverride = -1;
@@ -379,12 +379,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 			_curEdit++;
 
 		if (!atLastEdit())
-			enterNewEditList(true);
+			enterNewEditListEntry(true);
 
 		return true;
 	}
 
-	enterNewEditList(false);
+	enterNewEditListEntry(false);
 
 	// One extra check for the end of a track
 	if (atLastEdit()) {
@@ -402,7 +402,7 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 			_nextFrameStartTime += _durationOverride;
 			_durationOverride = -1;
 		} else {
-			_nextFrameStartTime += getFrameDuration();
+			_nextFrameStartTime += getCurFrameDuration();
 		}
 	}
 
@@ -504,7 +504,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 		if (atLastEdit())
 			return 0;
 
-		enterNewEditList(true);
+		enterNewEditListEntry(true);
 	}
 
 	const Graphics::Surface *frame = bufferNextFrame();
@@ -516,7 +516,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			_durationOverride = -1;
 		} else {
 			// Just need to subtract the time
-			_nextFrameStartTime -= getFrameDuration();
+			_nextFrameStartTime -= getCurFrameDuration();
 		}
 	} else {
 		if (_durationOverride >= 0) {
@@ -524,7 +524,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
  			_nextFrameStartTime += _durationOverride;
 			_durationOverride = -1;
 		} else {
-			_nextFrameStartTime += getFrameDuration();
+			_nextFrameStartTime += getCurFrameDuration();
 		}
 	}
 
@@ -664,7 +664,7 @@ Common::SeekableReadStream *QuickTimeDecoder::VideoTrackHandler::getNextFramePac
 	return stream->readStream(_parent->sampleSizes[_curFrame]);
 }
 
-uint32 QuickTimeDecoder::VideoTrackHandler::getFrameDuration() {
+uint32 QuickTimeDecoder::VideoTrackHandler::getCurFrameDuration() {
 	uint32 curFrameIndex = 0;
 	for (int32 i = 0; i < _parent->timeToSampleCount; i++) {
 		curFrameIndex += _parent->timeToSample[i].count;
@@ -688,7 +688,7 @@ uint32 QuickTimeDecoder::VideoTrackHandler::findKeyFrame(uint32 frame) const {
 	return frame;
 }
 
-void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
+void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrames) {
 	// Bypass all empty edit lists first
 	while (!atLastEdit() && _parent->editList[_curEdit].mediaTime == -1)
 		_curEdit++;
@@ -811,7 +811,7 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTimeOffset() const {
 }
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
-	// Need to convert to the track scale
+	// convert from movie time scale to the track's media time scale
 	return _parent->editList[_curEdit].trackDuration * _parent->timeScale / _decoder->_timeScale;
 }
 

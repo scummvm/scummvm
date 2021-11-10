@@ -368,7 +368,6 @@ int QuickTimeParser::readTRAK(Atom atom) {
 	Track *track = new Track();
 
 	track->codecType = CODEC_TYPE_MOV_OTHER;
-	track->startTime = 0; // XXX: check
 	_tracks.push_back(track);
 
 	return readDefault(atom);
@@ -837,7 +836,6 @@ QuickTimeParser::Track::Track() {
 	codecType = CODEC_TYPE_MOV_OTHER;
 	frameCount = 0;
 	duration = 0;
-	startTime = 0;
 	mediaDuration = 0;
 }
 
