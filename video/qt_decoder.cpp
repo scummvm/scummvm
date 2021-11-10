@@ -51,6 +51,7 @@ namespace Video {
 QuickTimeDecoder::QuickTimeDecoder() {
 	_scaledSurface = 0;
 	_width = _height = 0;
+	_enableEditListBoundsCheckQuirk = false;
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
@@ -292,7 +293,9 @@ Audio::SeekableAudioStream *QuickTimeDecoder::AudioTrackHandler::getSeekableAudi
 }
 
 QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
-	checkEditListBounds();
+	if (decoder->_enableEditListBoundsCheckQuirk) {
+		checkEditListBounds();
+	}
 
 	_curEdit = 0;
 	enterNewEditListEntry(false);
@@ -308,6 +311,12 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_ditherFrame = 0;
 }
 
+// FIXME: This check breaks valid QuickTime movies, such as the KQ6 Mac opening.
+// It doesn't take media rate into account and mixes up units that are in movie
+// time scale and media time scale, which is easy to do since they're often the
+// same value. Other decoder bugs have been fixed since this was written, so it
+// would be good to re-evaluate what the problem was with the Riven Spanish video.
+// It's now disabled for everything except Riven.
 void QuickTimeDecoder::VideoTrackHandler::checkEditListBounds() {
 	// Check all the edit list entries are within the bounds of the media
 	// In the Spanish version of Riven, the last edit of the video ogk.mov
