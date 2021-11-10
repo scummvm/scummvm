@@ -396,7 +396,7 @@ enum {
 	kDelCmd = 'DEL '
 };
 
-SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32String &buttonLabel, bool saveMode)
+SaveLoadChooserSimple::SaveLoadChooserSimple(const Common::U32String &title, const Common::U32String &buttonLabel, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(nullptr), _chooseButton(nullptr), _deleteButton(nullptr), _gfxWidget(nullptr),
 	_container(nullptr) {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
@@ -693,7 +693,7 @@ void SaveLoadChooserSimple::close() {
 	_metaEngine = nullptr;
 	_target.clear();
 	_saveList.clear();
-	_list->setList(U32StringArray());
+	_list->setList(Common::U32StringArray());
 
 	SaveLoadChooserDialog::close();
 }
@@ -703,7 +703,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 
 	int curSlot = 0;
 	int saveSlot = 0;
-	U32StringArray saveNames;
+	Common::U32StringArray saveNames;
 	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games

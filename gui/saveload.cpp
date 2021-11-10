@@ -31,7 +31,7 @@
 
 namespace GUI {
 
-SaveLoadChooser::SaveLoadChooser(const U32String &title, const U32String &buttonLabel, bool saveMode)
+SaveLoadChooser::SaveLoadChooser(const Common::U32String &title, const Common::U32String &buttonLabel, bool saveMode)
 	: _impl(nullptr), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
 }
 
@@ -83,7 +83,7 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 	return runModalWithMetaEngineAndTarget(g_engine->getMetaEngine(), ConfMan.getActiveDomainName());
 }
 
-int SaveLoadChooser::runModalWithMetaEngineAndTarget(const MetaEngine *engine, const String &target) {
+int SaveLoadChooser::runModalWithMetaEngineAndTarget(const MetaEngine *engine, const Common::String &target) {
 	selectChooser(engine);
 	if (!_impl)
 		return -1;
@@ -94,7 +94,7 @@ int SaveLoadChooser::runModalWithMetaEngineAndTarget(const MetaEngine *engine, c
 
 	// Set up the game domain as newly active domain, so
 	// target specific savepath will be checked
-	String oldDomain = ConfMan.getActiveDomainName();
+	Common::String oldDomain = ConfMan.getActiveDomainName();
 	ConfMan.setActiveDomain(target);
 
 	int ret;

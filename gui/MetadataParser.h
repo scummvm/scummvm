@@ -27,48 +27,46 @@
 
 namespace GUI {
 
-using Common::String;
-
 struct MetadataGame {
-	String id;
-	String name;
-	String engine_id;
-	String company_id;
-	String moby_id;
-	String datafiles;
-	String series_id;
+	Common::String id;
+	Common::String name;
+	Common::String engine_id;
+	Common::String company_id;
+	Common::String moby_id;
+	Common::String datafiles;
+	Common::String series_id;
 
 	MetadataGame() {}
-	MetadataGame(const String i, const String n, const String eid, const String cid, const String mid, const String df, const String sid)
+	MetadataGame(const Common::String i, const Common::String n, const Common::String eid, const Common::String cid, const Common::String mid, const Common::String df, const Common::String sid)
 		: id(i), name(n), engine_id(eid), company_id(cid), moby_id(mid), datafiles(df), series_id(sid) {}
 };
 
 struct MetadataEngine {
-	String id;
-	String name;
-	String alt_name;
+	Common::String id;
+	Common::String name;
+	Common::String alt_name;
 	bool enabled;
 
 	MetadataEngine() : enabled(false) {}
-	MetadataEngine(const String i, const String n, const String altn, bool e)
+	MetadataEngine(const Common::String i, const Common::String n, const Common::String altn, bool e)
 		: id(i), name(n), alt_name(altn), enabled(e) {}
 };
 
 struct MetadataSeries {
-	String id;
-	String name;
+	Common::String id;
+	Common::String name;
 
 	MetadataSeries() {}
-	MetadataSeries(const String i, const String n) : id(i), name(n) {}
+	MetadataSeries(const Common::String i, const Common::String n) : id(i), name(n) {}
 };
 
 struct MetadataCompany {
-	String id;
-	String name;
-	String alt_name;
+	Common::String id;
+	Common::String name;
+	Common::String alt_name;
 
 	MetadataCompany() {}
-	MetadataCompany(const String i, const String n, const String altn)
+	MetadataCompany(const Common::String i, const Common::String n, const Common::String altn)
 		: id(i), name(n), alt_name(altn) {}
 };
 

@@ -89,7 +89,7 @@ enum {
 */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const String &name, const U32String &text, const U32String &tooltip = U32String())
+	DomainEditTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String())
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
@@ -102,7 +102,7 @@ protected:
 	}
 };
 
-EditGameDialog::EditGameDialog(const String &domain)
+EditGameDialog::EditGameDialog(const Common::String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	EngineMan.upgradeTargetIfNecessary(domain);
 
@@ -123,12 +123,12 @@ EditGameDialog::EditGameDialog(const String &domain)
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
-	String gamePath(ConfMan.get("path", _domain));
-	String extraPath(ConfMan.get("extrapath", _domain));
-	String savePath(ConfMan.get("savepath", _domain));
+	Common::String gamePath(ConfMan.get("path", _domain));
+	Common::String extraPath(ConfMan.get("extrapath", _domain));
+	Common::String savePath(ConfMan.get("savepath", _domain));
 
 	// GAME: Determine the description string
-	String description(ConfMan.get("description", domain));
+	Common::String description(ConfMan.get("description", domain));
 	if (description.empty() && !qgd.description.empty()) {
 		description = qgd.description;
 	}
@@ -398,12 +398,12 @@ void EditGameDialog::setupGraphicsTab() {
 void EditGameDialog::open() {
 	OptionsDialog::open();
 
-	String extraPath(ConfMan.get("extrapath", _domain));
+	Common::String extraPath(ConfMan.get("extrapath", _domain));
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel(_c("None", "path"));
 	}
 
-	String savePath(ConfMan.get("savepath", _domain));
+	Common::String savePath(ConfMan.get("savepath", _domain));
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel(_("Default"));
 	}
@@ -501,17 +501,17 @@ void EditGameDialog::apply() {
 			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 	}
 
-	U32String gamePath(_gamePathWidget->getLabel());
+	Common::U32String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
 		ConfMan.set("path", gamePath, _domain);
 
-	U32String extraPath(_extraPathWidget->getLabel());
+	Common::U32String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
-	U32String savePath(_savePathWidget->getLabel());
+	Common::U32String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
 	else
@@ -649,7 +649,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kOKCmd:
 	{
 		// Write back changes made to config object
-		String newDomain(Common::convertFromU32String(_domainWidget->getEditString()));
+		Common::String newDomain(Common::convertFromU32String(_domainWidget->getEditString()));
 		if (newDomain != _domain) {
 			if (newDomain.empty()
 				|| newDomain.hasPrefix("_")

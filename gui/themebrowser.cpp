@@ -102,7 +102,7 @@ void ThemeBrowser::updateListing() {
 	const Common::String currentThemeId = g_gui.theme()->getThemeId();
 	int currentThemeIndex = 0, index = 0;
 
-	ListWidget::U32StringArray list;
+	Common::U32StringArray list;
 	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i, ++index) {
 		list.push_back(i->name);
 

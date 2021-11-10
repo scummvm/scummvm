@@ -34,19 +34,16 @@ namespace GUI {
 class EEHandler;
 
 class AboutDialog : public Dialog {
-	typedef Common::String String;
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 protected:
 	int	       _scrollPos;
 	uint32         _scrollTime;
-	U32StringArray _lines;
+	Common::U32StringArray _lines;
 	uint32         _lineHeight;
 	bool           _willClose;
 
 	int _xOff, _yOff;
 
-	void addLine(const U32String &str);
+	void addLine(const Common::U32String &str);
 
 	EEHandler	*_eeHandler;
 

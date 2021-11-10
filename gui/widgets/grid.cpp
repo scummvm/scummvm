@@ -75,7 +75,7 @@ void GridItemWidget::drawWidget() {
 	}
 	int thumbHeight = _grid->getThumbnailHeight();
 	int thumbWidth = _grid->getThumbnailWidth();
-	Array<U32String> titleLines;
+	Common::Array<Common::U32String> titleLines;
 	g_gui.getFont().wordWrapText(_activeEntry->title, thumbWidth, titleLines);
 
 	// FIXME/HACK: We reserve 1/3 of the space between two items to draw the
@@ -143,7 +143,7 @@ void GridItemWidget::drawWidget() {
 		if (titleLines.size() > 2) {
 			for (uint k = 0; (k < 3) && (titleLines[1].size() > 0); ++k)
 				titleLines[1].deleteLastChar();
-			titleLines[1] += U32String("...");
+			titleLines[1] += Common::U32String("...");
 		}
 		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
 		for (uint k = 0; k < MIN(2U, titleLines.size()); ++k) {
@@ -215,13 +215,13 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 
 	_playButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY,
 									  2 * buttonWidth + buttonSpacingX, buttonHeight,
-									  U32String("Play"), kPlayButtonCmd);
+									  Common::U32String("Play"), kPlayButtonCmd);
 	_loadButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
-									  U32String("Saves"), kLoadButtonCmd);
+									  Common::U32String("Saves"), kLoadButtonCmd);
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
-									  U32String("Edit"), kEditButtonCmd);
+									  Common::U32String("Edit"), kEditButtonCmd);
 
 	_playButton->useThemeTransparency(true);
 	_loadButton->useThemeTransparency(true);
@@ -288,7 +288,7 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 // TODO: Add BMP support, and add scaling of non-vector images.
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
 	Graphics::ManagedSurface *surf = nullptr;
-	const String path = String::format("%s/%s", ConfMan.get("iconspath").c_str(), name.c_str());
+	const Common::String path = Common::String::format("%s/%s", ConfMan.get("iconspath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
@@ -329,7 +329,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 #pragma mark -
 
-GridWidget::GridWidget(GuiObject *boss, const String &name)
+GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
 	_iconDir = ConfMan.get("iconspath");
 
@@ -372,7 +372,7 @@ GridWidget::~GridWidget() {
 	_visibleEntryList.clear();
 }
 
-const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
+const Graphics::ManagedSurface *GridWidget::filenameToSurface(const Common::String &name) {
 	for (Common::Array<GridItemInfo *>::iterator l = _visibleEntryList.begin(); l != _visibleEntryList.end(); ++l) {
 		if ((!(*l)->isHeader) && ((*l)->thumbPath == name)) {
 			return _loadedSurfaces[name];
@@ -405,7 +405,7 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	}
 }
 
-void GridWidget::setAttributeValues(const Common::Array<U32String> &attrs) {
+void GridWidget::setAttributeValues(const Common::Array<Common::U32String> &attrs) {
 	assert(attrs.size() == _dataEntryList.size());
 	for (uint i = 0; i < _dataEntryList.size(); ++i) {
 		_dataEntryList[i].attribute = attrs[i];
@@ -423,7 +423,7 @@ void GridWidget::groupEntries() {
 	_itemsInGroup.clear();
 
 	for (uint i = 0; i < _dataEntryList.size(); ++i) {
-		U32String attrVal = _dataEntryList[i].attribute;
+		Common::U32String attrVal = _dataEntryList[i].attribute;
 		if (!_groupValueIndex.contains(attrVal)) {
 			int newGroupID = _groupValueIndex.size();
 			_groupValueIndex.setVal(attrVal, newGroupID);
@@ -445,8 +445,8 @@ void GridWidget::sortGroups() {
 	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
 
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
-		U32String header = _groupHeaders[i];
-		U32String displayedHeader;
+		Common::U32String header = _groupHeaders[i];
+		Common::U32String displayedHeader;
 		if (_metadataNames.contains(header)) {
 			displayedHeader = _metadataNames[header];
 		} else {
@@ -488,7 +488,7 @@ void GridWidget::sortGroups() {
 }
 
 // Perform a binary search to find the last element before position yPos in arr.
-int lastItemBeforeY(const Array<GridItemInfo> &arr, int yPos) {
+int lastItemBeforeY(const Common::Array<GridItemInfo> &arr, int yPos) {
 	// Binary search to find the last element whose y value is less
 	// than _scrollPos, i.e., the last item of the topmost visible row.
 	int start = 0;
@@ -514,7 +514,7 @@ bool GridWidget::calcVisibleEntries() {
 	int temp = lastItemBeforeY(_sortedEntryList, _scrollPos);
 	nFirstVisibleItem = temp;
 	// We want the leftmost item from the topmost visible row, so we traverse backwards
-	while ((nFirstVisibleItem >= 0) && 
+	while ((nFirstVisibleItem >= 0) &&
 		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[temp].rect.top)) {
 			nFirstVisibleItem--;
 	}
@@ -545,15 +545,15 @@ void GridWidget::setTitlesVisible(bool vis) {
 	_isTitlesVisible = vis;
 }
 
-void GridWidget::setGroupHeaderFormat(const U32String &prefix, const U32String &suffix) {
+void GridWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix) {
 	_groupHeaderPrefix = prefix;
 	_groupHeaderSuffix = suffix;
 }
 
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
-	String gameid;
-	String engineid;
+	Common::String gameid;
+	Common::String engineid;
 
 	for (Common::Array<GridItemInfo *>::iterator iter = _visibleEntryList.begin(); iter != _visibleEntryList.end(); ++iter) {
 		GridItemInfo *entry = *iter;
@@ -574,7 +574,7 @@ void GridWidget::reloadThumbnails() {
 void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
-		String path = String::format("flags/%s.svg", l->code);
+		Common::String path = Common::String::format("flags/%s.svg", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
 		if (gfx) {
 			_languageIcons[l->id] = gfx;
@@ -587,7 +587,7 @@ void GridWidget::loadFlagIcons() {
 void GridWidget::loadPlatformIcons() {
 	const Common::PlatformDescription *l = Common::g_platforms;
 	for (; l->code; ++l) {
-		String path = String::format("platforms/%s.png", l->code);
+		Common::String path = Common::String::format("platforms/%s.png", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight);
@@ -772,7 +772,7 @@ void GridWidget::calcEntrySizes() {
 		} else {
 			int titleRows;
 			if (_isTitlesVisible) {
-				Array<U32String> titleLines;
+				Common::Array<Common::U32String> titleLines;
 				g_gui.getFont().wordWrapText(entry->title, _gridItemWidth, titleLines);
 				titleRows = MIN(2U, titleLines.size());
 			} else {
@@ -862,8 +862,8 @@ void GridWidget::scrollBarRecalc() {
 	_scrollBar->recalc();
 }
 
-void GridWidget::setFilter(const U32String &filter) {
-	U32String filt = filter;
+void GridWidget::setFilter(const Common::U32String &filter) {
+	Common::U32String filt = filter;
 	filt.toLowercase();
 
 	if (_filter == filt) // Filter was not changed
@@ -879,7 +879,7 @@ void GridWidget::setFilter(const U32String &filter) {
 		// as substrings, ignoring case.
 
 		Common::U32StringTokenizer tok(_filter);
-		U32String tmp;
+		Common::U32String tmp;
 		int n = 0;
 
 		_sortedEntryList.clear();

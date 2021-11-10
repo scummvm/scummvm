@@ -95,17 +95,17 @@ AboutDialog::AboutDialog()
 	int i;
 
 	for (i = 0; i < 1; i++)
-		_lines.push_back(U32String());
+		_lines.push_back(Common::U32String());
 
 	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
 	Common::U32String date = Common::U32String::format(_("(built on %s)"), gScummVMBuildDate);
-	_lines.push_back(U32String("C2") + date);
+	_lines.push_back(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
-		addLine(U32String(copyright_text[i]));
+		addLine(Common::U32String(copyright_text[i]));
 
 	Common::U32String features("C1");
 	features += _("Features compiled in:");
@@ -114,7 +114,7 @@ AboutDialog::AboutDialog()
 	featureList += gScummVMFeatures;
 	addLine(featureList);
 
-	_lines.push_back(U32String());
+	_lines.push_back(Common::U32String());
 
 	Common::U32String engines("C1");
 	engines += _("Available engines:");
@@ -143,27 +143,27 @@ AboutDialog::AboutDialog()
 	}
 
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
-		addLine(U32String(gpl_text[i]));
+		addLine(Common::U32String(gpl_text[i]));
 
-	_lines.push_back(U32String());
+	_lines.push_back(Common::U32String());
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
-		addLine(U32String(credits[i], Common::kUtf8));
+		addLine(Common::U32String(credits[i], Common::kUtf8));
 }
 
-void AboutDialog::addLine(const U32String &str) {
-	U32String::const_iterator strBeginItr = str.begin();
+void AboutDialog::addLine(const Common::U32String &str) {
+	Common::U32String::const_iterator strBeginItr = str.begin();
 	if (*strBeginItr == 0) {
-		_lines.push_back(U32String());
+		_lines.push_back(Common::U32String());
 	} else {
 		Common::U32String format(str.begin(), str.begin() + 2);
 		strBeginItr += 2;
-		U32String renderStr(strBeginItr, str.end());
+		Common::U32String renderStr(strBeginItr, str.end());
 
-		U32StringArray wrappedLines;
+		Common::U32StringArray wrappedLines;
 		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
 
-		for (U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
+		for (Common::U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
 		}
 	}
@@ -197,9 +197,9 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	int y = _y + _yOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
-		U32String str = _lines[line];
-		U32String::const_iterator strLineItrBegin = _lines[line].begin();
-		U32String::const_iterator strLineItrEnd = _lines[line].end();
+		Common::U32String str = _lines[line];
+		Common::U32String::const_iterator strLineItrBegin = _lines[line].begin();
+		Common::U32String::const_iterator strLineItrEnd = _lines[line].end();
 
 		Graphics::TextAlign align = Graphics::kTextAlignCenter;
 		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
@@ -246,7 +246,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 			while (strLineItrBegin != strLineItrEnd && *strLineItrBegin == ' ')
 				strLineItrBegin++;
 
-		U32String renderStr(strLineItrBegin, strLineItrEnd);
+		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
 			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,

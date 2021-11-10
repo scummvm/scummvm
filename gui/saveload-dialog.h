@@ -134,13 +134,8 @@ protected:
 };
 
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 public:
-	SaveLoadChooserSimple(const U32String &title, const U32String &buttonLabel, bool saveMode);
+	SaveLoadChooserSimple(const Common::U32String &title, const Common::U32String &buttonLabel, bool saveMode);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 

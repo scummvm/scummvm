@@ -35,13 +35,6 @@
 
 #include "engines/game.h"
 
-using Common::String;
-using Common::U32String;
-using Common::Array;
-
-typedef Array<String> StringArray;
-typedef Array<U32String> U32StringArray;
-
 namespace GUI {
 
 enum LauncherDisplayType {
@@ -109,14 +102,14 @@ protected:
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
 	Widget			*_editButton;
-	StringArray		_domains;
+	Common::StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
 	PopUpWidget		*_grpChooserPopup;
 	StaticTextWidget	*_grpChooserDesc;
 	GroupingMethod	_groupBy;
-	String			_title;
-	String			_search;
+	Common::String	_title;
+	Common::String	_search;
 	MetadataParser	_metadataParser;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -179,7 +172,7 @@ protected:
 	 *
 	 * @target	name of target to select
 	 */
-	virtual void selectTarget(const String &target) = 0;
+	virtual void selectTarget(const Common::String &target) = 0;
 	virtual int getSelected() = 0;
 private:
 	bool checkModifier(int modifier);
@@ -199,7 +192,7 @@ public:
 
 class LauncherSimple : public LauncherDialog {
 public:
-	LauncherSimple(const U32String &title);
+	LauncherSimple(const Common::U32String &title);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -208,9 +201,9 @@ public:
 
 protected:
 	void updateListing() override;
-	void groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata);
+	void groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata);
 	void updateButtons() override;
-	void selectTarget(const String &target) override;
+	void selectTarget(const Common::String &target) override;
 	int getSelected() override;
 	void build() override;
 private:
@@ -220,7 +213,7 @@ private:
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
 public:
-	LauncherGrid(const U32String &title);
+	LauncherGrid(const Common::U32String &title);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -229,9 +222,9 @@ public:
 
 protected:
 	void updateListing() override;
-	void groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata);
+	void groupEntries(const Common::Array<const Common::ConfigManager::Domain *> &metadata);
 	void updateButtons() override;
-	void selectTarget(const String &target) override;
+	void selectTarget(const Common::String &target) override;
 	int getSelected() override;
 	void build() override;
 private:

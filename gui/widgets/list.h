@@ -49,20 +49,14 @@ enum {
 /* ListWidget */
 class ListWidget : public EditableWidget {
 public:
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
-
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
-	
+
 	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, Common::U32String token);
 protected:
-	U32StringArray	_list;
-	U32StringArray		_dataList;
+	Common::U32StringArray	_list;
+	Common::U32StringArray	_dataList;
 	ColorList		_listColors;
-	Common::Array<int>		_listIndex;
+	Common::Array<int>	_listIndex;
 	bool			_editable;
 	bool			_editMode;
 	NumberingMode	_numberingMode;
@@ -72,7 +66,7 @@ protected:
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 
-	String			_quickSelectStr;
+	Common::String	_quickSelectStr;
 	uint32			_quickSelectTime;
 
 	int				_hlLeftPadding;
@@ -83,7 +77,7 @@ protected:
 	int				_bottomPadding;
 	int				_scrollBarWidth;
 
-	U32String		_filter;
+	Common::U32String	_filter;
 	bool			_quickSelect;
 	bool			_dictionarySelect;
 
@@ -97,21 +91,21 @@ protected:
 	void			*_filterMatcherArg;
 
 public:
-	ListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
+	ListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;
 
-	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
-	const U32StringArray &getList()	const			{ return _dataList; }
+	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
+	const Common::U32StringArray &getList()	const			{ return _dataList; }
 
-	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
+	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 
 	void setSelected(int item);
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	const U32String &getSelectedString() const		{ return _list[_selectedItem]; }
+	const Common::U32String &getSelectedString() const	{ return _list[_selectedItem]; }
 	ThemeEngine::FontColor getSelectionColor() const;
 
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
@@ -121,7 +115,7 @@ public:
 	int getCurrentScrollPos() const { return _currentPos; }
 
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
-	String getQuickSelectString() const 		{ return _quickSelectStr; }
+	Common::String getQuickSelectString() const { return _quickSelectStr; }
 
 	void enableDictionarySelect(bool enable)	{ _dictionarySelect = enable; }
 
@@ -134,7 +128,7 @@ public:
 	void startEditMode() override;
 	void endEditMode() override;
 
-	void setFilter(const U32String &filter, bool redraw = true);
+	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;

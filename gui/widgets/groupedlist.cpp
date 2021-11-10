@@ -37,12 +37,12 @@
 
 namespace GUI {
 
-GroupedListWidget::GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip, uint32 cmd)
+GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: ListWidget(boss, name, tooltip, cmd) {
 	_groupsVisible = true;
 }
 
-void GroupedListWidget::setList(const U32StringArray &list, const ColorList *colors) {
+void GroupedListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -71,7 +71,7 @@ void GroupedListWidget::setList(const U32StringArray &list, const ColorList *col
 	scrollBarRecalc();
 }
 
-void GroupedListWidget::setAttributeValues(const U32StringArray &attrValues) {
+void GroupedListWidget::setAttributeValues(const Common::U32StringArray &attrValues) {
 	_attributeValues = attrValues;
 	// Make sure we always have the attribute values for all the entries of the _dataList.
 	// This is not foolproof, but can prevent accidentally passing attributes for the wrong
@@ -84,7 +84,7 @@ void GroupedListWidget::setMetadataNames(const Common::StringMap &metadata) {
 	_metadataNames = metadata;
 }
 
-void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
+void GroupedListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
 	if (_dataList.size() == _listColors.size()) {
 		// If the color list has the size of the data list, we append the color.
 		_listColors.push_back(color);
@@ -105,7 +105,7 @@ void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
 	scrollBarRecalc();
 }
 
-void GroupedListWidget::setGroupHeaderFormat(const U32String &prefix, const U32String &suffix) {
+void GroupedListWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix) {
 	_groupHeaderPrefix = prefix;
 	_groupHeaderSuffix = suffix;
 }
@@ -118,8 +118,8 @@ void GroupedListWidget::groupByAttribute() {
 
 	if (_attributeValues.empty()) {
 		_groupExpanded.push_back(true);
-		_groupHeaders.push_back(String("All"));
-		_groupValueIndex.setVal(String("All"), 0);
+		_groupHeaders.push_back(Common::String("All"));
+		_groupValueIndex.setVal(Common::String("All"), 0);
 		for (uint i = 0; i < _dataList.size(); ++i) {
 			_itemsInGroup[0].push_back(i);
 		}
@@ -128,7 +128,7 @@ void GroupedListWidget::groupByAttribute() {
 	}
 
 	for (uint i = 0; i < _dataList.size(); ++i) {
-		U32StringArray::iterator attrVal = _attributeValues.begin() + i;
+		Common::U32StringArray::iterator attrVal = _attributeValues.begin() + i;
 		if (!_groupValueIndex.contains(*attrVal)) {
 			int newGroupID = _groupValueIndex.size();
 			_groupValueIndex.setVal(*attrVal, newGroupID);
@@ -152,8 +152,8 @@ void GroupedListWidget::sortGroups() {
 
 	uint curListSize = 0;
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
-		U32String header = _groupHeaders[i];
-		U32String displayedHeader;
+		Common::U32String header = _groupHeaders[i];
+		Common::U32String displayedHeader;
 		if (_metadataNames.contains(header)) {
 			displayedHeader = _metadataNames[header];
 		} else {
@@ -431,12 +431,12 @@ void GroupedListWidget::scrollToCurrent() {
 	_scrollBar->recalc();
 }
 
-void GroupedListWidget::setFilter(const U32String &filter, bool redraw) {
+void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	// FIXME: This method does not deal correctly with edit mode!
 	// Until we fix that, let's make sure it isn't called while editing takes place
 	assert(!_editMode);
 
-	U32String filt = filter;
+	Common::U32String filt = filter;
 	filt.toLowercase();
 
 	if (_filter == filt) // Filter was not changed
@@ -452,13 +452,13 @@ void GroupedListWidget::setFilter(const U32String &filter, bool redraw) {
 		// as substrings, ignoring case.
 
 		Common::U32StringTokenizer tok(_filter);
-		U32String tmp;
+		Common::U32String tmp;
 		int n = 0;
 
 		_list.clear();
 		_listIndex.clear();
 
-		for (U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
 			bool matches = true;

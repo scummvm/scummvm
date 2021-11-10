@@ -64,7 +64,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText(nullptr),
 	_gameProgressText(nullptr) {
 
-	U32StringArray l;
+	Common::U32StringArray l;
 
 	// The dir we start our scan at
 	_scanStack.push(startDir);
@@ -204,8 +204,8 @@ void MassAddDialog::handleTickle() {
 				Common::String resultLanguageCode = Common::getLanguageCode(result.language);
 
 				bool duplicate = false;
-				const StringArray &targets = _pathToTargets[path];
-				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
+				const Common::StringArray &targets = _pathToTargets[path];
+				for (Common::StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
 					// If the engineid, gameid, platform and language match -> skip it
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
