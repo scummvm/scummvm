@@ -214,7 +214,7 @@ void SoundMac::playSoundEffect(uint16 track, uint8) {
 }
 
 bool SoundMac::isPlaying() const {
-	return false;
+	return _ready && _driver->doCommand(3);
 }
 
 void SoundMac::beginFadeOut() {
