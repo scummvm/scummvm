@@ -31,8 +31,9 @@
 
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
+#include "gui/MetadataParser.h"
+
 #include "engines/game.h"
-#include "MetadataParser.h"
 
 using Common::String;
 using Common::U32String;

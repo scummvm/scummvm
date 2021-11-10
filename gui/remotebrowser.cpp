@@ -32,7 +32,7 @@
 #include "backends/networking/curl/request.h"
 #include "backends/cloud/storage.h"
 #include "backends/cloud/cloudmanager.h"
-#include "message.h"
+#include "gui/message.h"
 
 namespace GUI {
 
