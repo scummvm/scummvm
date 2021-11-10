@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-10 19:36+0000\n"
+"POT-Creation-Date: 2021-11-10 21:49+0000\n"
 "PO-Revision-Date: 2021-11-05 12:32+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
-#: engines/parallaction/metaengine.cpp:136
+#: engines/parallaction/metaengine.cpp:146
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
 msgstr "Ναι"
@@ -141,7 +141,7 @@ msgstr "Ναι"
 #: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
-#: engines/parallaction/metaengine.cpp:142
+#: engines/parallaction/metaengine.cpp:152
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
 msgstr "Όχι"
@@ -558,7 +558,7 @@ msgid "Sine"
 msgstr "Ημίτονο"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:190
+#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:191
 msgid "Triangle"
 msgstr "Τρίγωνο"
 
@@ -619,8 +619,8 @@ msgstr "Αλληλεπίδραση"
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: gui/gui-manager.cpp:160 engines/metaengine.cpp:108
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:412
+#: gui/gui-manager.cpp:160 engines/metaengine.cpp:110
+#: engines/dragons/metaengine.cpp:161 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:455
 #: engines/grim/grim.cpp:532 engines/twine/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:395 engines/wintermute/keymapper_tables.h:1263
@@ -630,8 +630,8 @@ msgstr "Κλείσιμο"
 msgid "Up"
 msgstr "Πάνω"
 
-#: gui/gui-manager.cpp:165 engines/metaengine.cpp:113
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:412
+#: gui/gui-manager.cpp:165 engines/metaengine.cpp:115
+#: engines/dragons/metaengine.cpp:167 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:460
 #: engines/grim/grim.cpp:537 engines/twine/metaengine.cpp:335
 #: engines/twine/metaengine.cpp:403 engines/wintermute/keymapper_tables.h:1269
@@ -641,8 +641,8 @@ msgstr "Πάνω"
 msgid "Down"
 msgstr "Κάτω"
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:118
-#: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:108
+#: gui/gui-manager.cpp:170 engines/metaengine.cpp:120
+#: engines/dragons/metaengine.cpp:173 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:542
 #: engines/twine/metaengine.cpp:350 engines/twine/metaengine.cpp:418
 #: engines/wintermute/keymapper_tables.h:321
@@ -653,8 +653,8 @@ msgstr "Κάτω"
 msgid "Left"
 msgstr "Αριστερά"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:123
-#: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:114
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:125
+#: engines/dragons/metaengine.cpp:179 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:547
 #: engines/twine/metaengine.cpp:342 engines/twine/metaengine.cpp:411
 #: engines/wintermute/keymapper_tables.h:327
@@ -665,7 +665,7 @@ msgstr "Αριστερά"
 msgid "Right"
 msgstr "Δεξιά"
 
-#: gui/gui-manager.cpp:180 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:180 engines/pegasus/pegasus.cpp:2815
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -797,7 +797,7 @@ msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
 #: gui/launcher.cpp:258 engines/dialogs.cpp:98 engines/engine.cpp:867
-#: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
+#: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:128
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
@@ -2367,7 +2367,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:737 engines/lab/savegame.cpp:238
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:124
+#: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:134
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:680
 #: engines/sci/engine/kfile.cpp:1080 engines/scumm/dialogs.cpp:177
@@ -2497,8 +2497,8 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ΣΦΑΛΜΑ: Αδυναμία αντιγραφής του αποθηκευμένου παιχνιδιού σε νέα θυρίδα"
 
-#: engines/engine.cpp:612 engines/metaengine.cpp:364 engines/savestate.cpp:99
-#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:180
+#: engines/engine.cpp:612 engines/metaengine.cpp:367 engines/savestate.cpp:99
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:186
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Αυτόματη αποθήκευση"
@@ -2579,41 +2579,41 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδιού για την μηχανή %s:"
 
-#: engines/metaengine.cpp:55
+#: engines/metaengine.cpp:57
 msgid "Default game keymap"
 msgstr "Προκαθορισμένες αντιστοιχίες"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
-#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:105
+#: engines/metaengine.cpp:61 backends/platform/maemo/maemo.cpp:162
+#: engines/hdb/metaengine.cpp:188 engines/parallaction/metaengine.cpp:115
 #: engines/wintermute/keymapper_tables.h:43 engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "Αριστερό Click"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
+#: engines/metaengine.cpp:67 backends/platform/maemo/maemo.cpp:166
 #: engines/wintermute/keymapper_tables.h:257
 #: engines/wintermute/keymapper_tables.h:301
 #: engines/wintermute/keymapper_tables.h:2090
 msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
-#: engines/parallaction/metaengine.cpp:111
+#: engines/metaengine.cpp:72 backends/platform/maemo/maemo.cpp:170
+#: engines/parallaction/metaengine.cpp:121
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "Δεξί Click"
 
-#: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
+#: engines/metaengine.cpp:78 engines/hdb/metaengine.cpp:239
 #: engines/mohawk/myst.cpp:597 engines/mohawk/riven.cpp:861
-#: engines/sky/metaengine.cpp:117 engines/twine/metaengine.cpp:98
+#: engines/sky/metaengine.cpp:123 engines/twine/metaengine.cpp:98
 #: engines/wintermute/keymapper_tables.h:1532
 msgid "Pause"
 msgstr "Παύση"
 
-#: engines/metaengine.cpp:81 engines/parallaction/metaengine.cpp:130
+#: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:140
 msgid "Game menu"
 msgstr "Μενού παιχνιδιού"
 
-#: engines/metaengine.cpp:87 engines/grim/grim.cpp:506
+#: engines/metaengine.cpp:89 engines/grim/grim.cpp:506
 #: engines/grim/grim.cpp:598 engines/mohawk/myst.cpp:568
 #: engines/mohawk/riven.cpp:832 engines/wintermute/keymapper_tables.h:221
 #: engines/wintermute/keymapper_tables.h:1093
@@ -2624,17 +2624,17 @@ msgstr "Μενού παιχνιδιού"
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:112
+#: engines/metaengine.cpp:95 engines/sky/metaengine.cpp:118
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
-#: engines/metaengine.cpp:99
+#: engines/metaengine.cpp:101
 msgid "Predictive input dialog"
 msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου"
 
-#: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:90
+#: engines/metaengine.cpp:105 engines/griffon/metaengine.cpp:90
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:604
-#: engines/sky/metaengine.cpp:92 engines/wintermute/keymapper_tables.h:55
+#: engines/sky/metaengine.cpp:98 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
@@ -2839,7 +2839,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:219
 #: backends/events/default/default-events.cpp:360
-#: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
+#: engines/adl/metaengine.cpp:261 engines/hdb/metaengine.cpp:256
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3109,11 +3109,11 @@ msgstr "Αριστερός Μοχλός"
 msgid "Right Stick"
 msgstr "Δεξιός Μοχλός"
 
-#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:208
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:209
 msgid "Left Shoulder"
 msgstr "Αριστερό Bumper LB"
 
-#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:214
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:215
 msgid "Right Shoulder"
 msgstr "Δεξί Bumper RB"
 
@@ -3674,17 +3674,17 @@ msgid "BSD License"
 msgstr "Άδεια BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
-#: engines/dragons/metaengine.cpp:202
+#: engines/dragons/metaengine.cpp:203
 msgid "Cross"
 msgstr "Σταυρός"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/metaengine.cpp:196
+#: engines/dragons/metaengine.cpp:197
 msgid "Circle"
 msgstr "Κύκλος"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/metaengine.cpp:184
+#: engines/dragons/metaengine.cpp:185
 msgid "Square"
 msgstr "Τετράγωνο"
 
@@ -4326,7 +4326,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Φόρτωση όπως και να 'χει"
 
-#: engines/cryomni3d/metaengine.cpp:147
+#: engines/cryomni3d/metaengine.cpp:146
 msgid "Versailles 1685 support is not compiled in"
 msgstr ""
 "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
@@ -4346,7 +4346,7 @@ msgstr ""
 "περιγραφή της διαδικασίας εξαγωγής των αρχείων DTSPEECH.XA και *.STR από το "
 "δισκάκι του παιχνιδιού."
 
-#: engines/dragons/metaengine.cpp:121
+#: engines/dragons/metaengine.cpp:122
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4363,33 +4363,33 @@ msgstr ""
 " Δείτε και εδώ https://wiki.scummvm.org/index.php?"
 "title=Datafiles#Blazing_Dragons"
 
-#: engines/dragons/metaengine.cpp:137
+#: engines/dragons/metaengine.cpp:138
 msgid "Action"
 msgstr "Πράξη"
 
-#: engines/dragons/metaengine.cpp:143
+#: engines/dragons/metaengine.cpp:144
 msgid "Change Command"
 msgstr "Αλλαγή Εντολής"
 
-#: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:127
+#: engines/dragons/metaengine.cpp:150 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:495 engines/grim/grim.cpp:587
-#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
+#: engines/hdb/metaengine.cpp:232 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:285 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Υπάρχοντα"
 
-#: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:86
+#: engines/dragons/metaengine.cpp:155 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/dragons/metaengine.cpp:220
+#: engines/dragons/metaengine.cpp:221
 msgid "Debug Graphics"
 msgstr "Αποσφαλμάτωση Γραφικών"
 
-#: engines/dragons/metaengine.cpp:225
+#: engines/dragons/metaengine.cpp:226
 msgid "Quit Game"
 msgstr "Έξοδος από το παιχνίδι"
 
@@ -4836,7 +4836,7 @@ msgid "Skip dialog lines"
 msgstr "Παράκαμψη γραμμής διαλόγου"
 
 #: engines/grim/grim.cpp:518 engines/grim/grim.cpp:610
-#: engines/hdb/metaengine.cpp:244
+#: engines/hdb/metaengine.cpp:245
 msgid "Menu"
 msgstr "Μενού"
 
@@ -4986,36 +4986,36 @@ msgstr "Ενεργοποίηση cheat"
 msgid "Debug info and level selection becomes available"
 msgstr "Γίνεται διαθέσιμη πληροφορία και επιλογή επιπέδου αποσφαλμάτωσης"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
+#: engines/hdb/metaengine.cpp:194 engines/nancy/input.cpp:178
 msgid "Move up"
 msgstr "Κίνηση πάνω"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
+#: engines/hdb/metaengine.cpp:200 engines/nancy/input.cpp:184
 msgid "Move down"
 msgstr "Κίνηση κάτω"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:206 engines/nancy/input.cpp:190
 msgid "Move left"
 msgstr "Κίνηση αριστερά"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:212 engines/nancy/input.cpp:196
 msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
-#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
+#: engines/hdb/metaengine.cpp:218 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
-#: engines/sky/metaengine.cpp:86 engines/wintermute/keymapper_tables.h:141
+#: engines/sky/metaengine.cpp:92 engines/wintermute/keymapper_tables.h:141
 #: engines/wintermute/keymapper_tables.h:1476
 msgid "Use"
 msgstr "Χρήση"
 
-#: engines/hdb/metaengine.cpp:224
+#: engines/hdb/metaengine.cpp:225
 msgid "Clear waypoints"
 msgstr "Σβήσιμο σημείων προορισμού"
 
-#: engines/hdb/metaengine.cpp:250
+#: engines/hdb/metaengine.cpp:251
 msgid "Debug"
 msgstr "Αποσφαλμάτωση"
 
@@ -5182,13 +5182,13 @@ msgid "Move Right"
 msgstr "Προχώρησε Δεξιά"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
-#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
+#: engines/pegasus/pegasus.cpp:2736 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Στρίψε Αριστερά"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:467
-#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
+#: engines/pegasus/pegasus.cpp:2743 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Στρίψε Δεξιά"
@@ -5548,19 +5548,19 @@ msgstr "Κανονικές"
 msgid "Best"
 msgstr "Βέλτιστες"
 
-#: engines/mohawk/metaengine.cpp:275
+#: engines/mohawk/metaengine.cpp:293
 msgid "Myst ME support not compiled in"
 msgstr "Η υποστήριξη για το Myst ME δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/mohawk/metaengine.cpp:280
+#: engines/mohawk/metaengine.cpp:298
 msgid "Myst support not compiled in"
 msgstr "Η υποστήριξη του Myst δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/mohawk/metaengine.cpp:287
+#: engines/mohawk/metaengine.cpp:305
 msgid "Riven support not compiled in"
 msgstr "Η υποστήριξη του Riven δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/mohawk/metaengine.cpp:301
+#: engines/mohawk/metaengine.cpp:319
 msgid "CSTime support not compiled in"
 msgstr "Η υποστήριξη του CSTime δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
@@ -5761,7 +5761,7 @@ msgstr ""
 "Οι ενημερώσεις μπορούν να ληφθούν από εδώ:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1570 engines/pegasus/pegasus.cpp:737
+#: engines/myst3/myst3.cpp:1570 engines/pegasus/pegasus.cpp:745
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
@@ -6027,47 +6027,47 @@ msgstr ""
 "\n"
 "Παρακαλούμε αναφέρετε στην ομάδα."
 
-#: engines/pegasus/pegasus.cpp:2712
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Πάνω/Μεγέθυνση/Μετακίνηση Εμπρός/Άνοιγμα Θυρών"
 
-#: engines/pegasus/pegasus.cpp:2720
+#: engines/pegasus/pegasus.cpp:2728
 msgid "Down/Zoom Out"
 msgstr "Κάτω/Σμίκρυνση"
 
-#: engines/pegasus/pegasus.cpp:2742
+#: engines/pegasus/pegasus.cpp:2750
 msgid "Action/Select"
 msgstr "Ενέργεια/Επιλογή"
 
-#: engines/pegasus/pegasus.cpp:2762
+#: engines/pegasus/pegasus.cpp:2770
 msgid "Display/Hide Inventory Tray"
 msgstr "Προβολή/Απόκρυψη Υπαρχόντων"
 
-#: engines/pegasus/pegasus.cpp:2769
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Display/Hide Biochip Tray"
 msgstr "Προβολή/Απόκρυψη μπάρας Biochip"
 
-#: engines/pegasus/pegasus.cpp:2777
+#: engines/pegasus/pegasus.cpp:2785
 msgid "Toggle Center Data Display"
 msgstr "Εναλλαγή Κεντρικής Προβολής Δεδομένων"
 
-#: engines/pegasus/pegasus.cpp:2784
+#: engines/pegasus/pegasus.cpp:2792
 msgid "Display/Hide Info Screen"
 msgstr "Προβολή/Απόκρυψη Οθόνης Πληροφοριών"
 
-#: engines/pegasus/pegasus.cpp:2791
+#: engines/pegasus/pegasus.cpp:2799
 msgid "Display/Hide Pause Menu"
 msgstr "Προβολή/Απόκρυψη Μενού Παύσης"
 
-#: engines/pegasus/pegasus.cpp:2798
+#: engines/pegasus/pegasus.cpp:2806
 msgid "Toggle Chatty AI"
 msgstr "Εναλλαγή Φλύαρου AI"
 
-#: engines/pegasus/pegasus.cpp:2813
+#: engines/pegasus/pegasus.cpp:2821
 msgid "Save Game"
 msgstr "Αποθήκευση παιχνιδιού"
 
-#: engines/pegasus/pegasus.cpp:2819
+#: engines/pegasus/pegasus.cpp:2827
 msgid "Load Game"
 msgstr "Φόρτωση Παιχνιδιού"
 
@@ -6109,7 +6109,7 @@ msgstr ""
 "Η δοκιμαστική έκδοση για Pocket PC (Pocket PC Trial version) δεν "
 "υποστηρίζεται"
 
-#: engines/saga/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:113
 msgid "I Have No Mouth support not compiled in"
 msgstr ""
 "Η υποστήριξη για το I Have No Mouth δεν έχει ενσωματωθεί στο εκτελέσιμο"
@@ -6135,7 +6135,7 @@ msgstr ""
 "Εντοπίστηκε ελλιπές παιχνίδι. Χρειάζεται να αντιγράψετε τα δεδομένα από όλα "
 "τα CD."
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:372
 msgid "(Autosave)"
 msgstr "(Αυτόματη αποθήκευση)"
 
@@ -7047,7 +7047,7 @@ msgstr "Ένταση μουσικής: "
 msgid "Subtitle speed: "
 msgstr "Ταχύτητα υποτίτλων: "
 
-#: engines/scumm/metaengine.cpp:331
+#: engines/scumm/metaengine.cpp:330
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7057,11 +7057,11 @@ msgstr ""
 "αποφυγή πειρατείας.\n"
 "Η πλήρης έκδοση είναι διαθέσιμη για αγορά από το Κατάστημα iTunes."
 
-#: engines/scumm/metaengine.cpp:422
+#: engines/scumm/metaengine.cpp:421
 msgid "HE v71+ support is not compiled in"
 msgstr "Η υποστήριξη του HE v71+ δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/metaengine.cpp:446
+#: engines/scumm/metaengine.cpp:445
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Η υποστήριξη για SCUMM v7-8 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
@@ -7197,27 +7197,27 @@ msgstr "Εισαγωγή έκδοσης δισκέτας"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
-#: engines/sky/metaengine.cpp:80
+#: engines/sky/metaengine.cpp:86
 msgid "Walk / Look / Talk"
 msgstr "Περπάτα / Κοίτα / Μίλα"
 
-#: engines/sky/metaengine.cpp:98
+#: engines/sky/metaengine.cpp:104
 msgid "Skip / Close"
 msgstr "Παράλειψη / Κλείσιμο"
 
-#: engines/sky/metaengine.cpp:106
+#: engines/sky/metaengine.cpp:112
 msgid "Open control panel"
 msgstr "Άνοιγμα πίνακα ελέγχου"
 
-#: engines/sky/metaengine.cpp:122
+#: engines/sky/metaengine.cpp:128
 msgid "Toggle fast mode"
 msgstr "Εναλλαγή γρήγορης λειτουργίας"
 
-#: engines/sky/metaengine.cpp:127
+#: engines/sky/metaengine.cpp:133
 msgid "Toggle really fast mode"
 msgstr "Εναλλαγή πολύ γρήγορης λειτουργίας"
 
-#: engines/sky/metaengine.cpp:197
+#: engines/sky/metaengine.cpp:203
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 "ΠΡΟΣΟΧΗ: Η διαγραφή της θυρίδας αυτόματης αποθήκευσης δεν υποστηρίζεται από "

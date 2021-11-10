@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-10 19:36+0000\n"
+"POT-Creation-Date: 2021-11-10 21:49+0000\n"
 "PO-Revision-Date: 2021-11-02 11:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -131,7 +131,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
-#: engines/parallaction/metaengine.cpp:136
+#: engines/parallaction/metaengine.cpp:146
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
 msgstr "Oui"
@@ -142,7 +142,7 @@ msgstr "Oui"
 #: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
-#: engines/parallaction/metaengine.cpp:142
+#: engines/parallaction/metaengine.cpp:152
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
 msgstr "Non"
@@ -556,7 +556,7 @@ msgid "Sine"
 msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:190
+#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:191
 msgid "Triangle"
 msgstr "Triangle"
 
@@ -616,8 +616,8 @@ msgstr "Interagir"
 msgid "Close"
 msgstr "Fermer"
 
-#: gui/gui-manager.cpp:160 engines/metaengine.cpp:108
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:412
+#: gui/gui-manager.cpp:160 engines/metaengine.cpp:110
+#: engines/dragons/metaengine.cpp:161 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:455
 #: engines/grim/grim.cpp:532 engines/twine/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:395 engines/wintermute/keymapper_tables.h:1263
@@ -627,8 +627,8 @@ msgstr "Fermer"
 msgid "Up"
 msgstr "Haut"
 
-#: gui/gui-manager.cpp:165 engines/metaengine.cpp:113
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:412
+#: gui/gui-manager.cpp:165 engines/metaengine.cpp:115
+#: engines/dragons/metaengine.cpp:167 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:460
 #: engines/grim/grim.cpp:537 engines/twine/metaengine.cpp:335
 #: engines/twine/metaengine.cpp:403 engines/wintermute/keymapper_tables.h:1269
@@ -638,8 +638,8 @@ msgstr "Haut"
 msgid "Down"
 msgstr "Bas"
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:118
-#: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:108
+#: gui/gui-manager.cpp:170 engines/metaengine.cpp:120
+#: engines/dragons/metaengine.cpp:173 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:542
 #: engines/twine/metaengine.cpp:350 engines/twine/metaengine.cpp:418
 #: engines/wintermute/keymapper_tables.h:321
@@ -650,8 +650,8 @@ msgstr "Bas"
 msgid "Left"
 msgstr "Gauche"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:123
-#: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:114
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:125
+#: engines/dragons/metaengine.cpp:179 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:547
 #: engines/twine/metaengine.cpp:342 engines/twine/metaengine.cpp:411
 #: engines/wintermute/keymapper_tables.h:327
@@ -662,7 +662,7 @@ msgstr "Gauche"
 msgid "Right"
 msgstr "Droite"
 
-#: gui/gui-manager.cpp:180 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:180 engines/pegasus/pegasus.cpp:2815
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -792,7 +792,7 @@ msgid "Load game:"
 msgstr "Charger le jeu :"
 
 #: gui/launcher.cpp:258 engines/dialogs.cpp:98 engines/engine.cpp:867
-#: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
+#: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:128
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
@@ -2343,7 +2343,7 @@ msgstr "Sauvegarder :"
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:737 engines/lab/savegame.cpp:238
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:124
+#: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:134
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:680
 #: engines/sci/engine/kfile.cpp:1080 engines/scumm/dialogs.cpp:177
@@ -2471,8 +2471,8 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 "ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
-#: engines/engine.cpp:612 engines/metaengine.cpp:364 engines/savestate.cpp:99
-#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:180
+#: engines/engine.cpp:612 engines/metaengine.cpp:367 engines/savestate.cpp:99
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:186
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Sauvegarde auto"
@@ -2551,41 +2551,41 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "IDs de jeu trouvés pour le moteur %s :"
 
-#: engines/metaengine.cpp:55
+#: engines/metaengine.cpp:57
 msgid "Default game keymap"
 msgstr "Contrôles par défaut du jeu"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
-#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:105
+#: engines/metaengine.cpp:61 backends/platform/maemo/maemo.cpp:162
+#: engines/hdb/metaengine.cpp:188 engines/parallaction/metaengine.cpp:115
 #: engines/wintermute/keymapper_tables.h:43 engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "Clic Gauche"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
+#: engines/metaengine.cpp:67 backends/platform/maemo/maemo.cpp:166
 #: engines/wintermute/keymapper_tables.h:257
 #: engines/wintermute/keymapper_tables.h:301
 #: engines/wintermute/keymapper_tables.h:2090
 msgid "Middle Click"
 msgstr "Clic Milieu"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
-#: engines/parallaction/metaengine.cpp:111
+#: engines/metaengine.cpp:72 backends/platform/maemo/maemo.cpp:170
+#: engines/parallaction/metaengine.cpp:121
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "Clic Droit"
 
-#: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
+#: engines/metaengine.cpp:78 engines/hdb/metaengine.cpp:239
 #: engines/mohawk/myst.cpp:597 engines/mohawk/riven.cpp:861
-#: engines/sky/metaengine.cpp:117 engines/twine/metaengine.cpp:98
+#: engines/sky/metaengine.cpp:123 engines/twine/metaengine.cpp:98
 #: engines/wintermute/keymapper_tables.h:1532
 msgid "Pause"
 msgstr "Pause"
 
-#: engines/metaengine.cpp:81 engines/parallaction/metaengine.cpp:130
+#: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:140
 msgid "Game menu"
 msgstr "Menu du jeu"
 
-#: engines/metaengine.cpp:87 engines/grim/grim.cpp:506
+#: engines/metaengine.cpp:89 engines/grim/grim.cpp:506
 #: engines/grim/grim.cpp:598 engines/mohawk/myst.cpp:568
 #: engines/mohawk/riven.cpp:832 engines/wintermute/keymapper_tables.h:221
 #: engines/wintermute/keymapper_tables.h:1093
@@ -2596,17 +2596,17 @@ msgstr "Menu du jeu"
 msgid "Skip"
 msgstr "Passer"
 
-#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:112
+#: engines/metaengine.cpp:95 engines/sky/metaengine.cpp:118
 msgid "Skip line"
 msgstr "Passer la phrase"
 
-#: engines/metaengine.cpp:99
+#: engines/metaengine.cpp:101
 msgid "Predictive input dialog"
 msgstr "Dialogue de saisie prédictive"
 
-#: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:90
+#: engines/metaengine.cpp:105 engines/griffon/metaengine.cpp:90
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:604
-#: engines/sky/metaengine.cpp:92 engines/wintermute/keymapper_tables.h:55
+#: engines/sky/metaengine.cpp:98 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -2810,7 +2810,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:219
 #: backends/events/default/default-events.cpp:360
-#: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
+#: engines/adl/metaengine.cpp:261 engines/hdb/metaengine.cpp:256
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3080,11 +3080,11 @@ msgstr "Stick Gauche"
 msgid "Right Stick"
 msgstr "Stick Droit"
 
-#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:208
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:209
 msgid "Left Shoulder"
 msgstr "Tranche Gauche"
 
-#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:214
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:215
 msgid "Right Shoulder"
 msgstr "Tranche Droite"
 
@@ -3643,17 +3643,17 @@ msgid "BSD License"
 msgstr "Licence BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
-#: engines/dragons/metaengine.cpp:202
+#: engines/dragons/metaengine.cpp:203
 msgid "Cross"
 msgstr "Croix"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/metaengine.cpp:196
+#: engines/dragons/metaengine.cpp:197
 msgid "Circle"
 msgstr "Rond"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/metaengine.cpp:184
+#: engines/dragons/metaengine.cpp:185
 msgid "Square"
 msgstr "Carré"
 
@@ -4287,7 +4287,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Charger quand même"
 
-#: engines/cryomni3d/metaengine.cpp:147
+#: engines/cryomni3d/metaengine.cpp:146
 msgid "Versailles 1685 support is not compiled in"
 msgstr "La prise en charge de Versailles 1685 n'est pas incluse"
 
@@ -4306,7 +4306,7 @@ msgstr ""
 "savoir comment extraire correctement les fichiers DTSPEECH.XA et *.STR de "
 "votre disque de jeu."
 
-#: engines/dragons/metaengine.cpp:121
+#: engines/dragons/metaengine.cpp:122
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4324,33 +4324,33 @@ msgstr ""
 "\n"
 "Voir https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
-#: engines/dragons/metaengine.cpp:137
+#: engines/dragons/metaengine.cpp:138
 msgid "Action"
 msgstr "Action"
 
-#: engines/dragons/metaengine.cpp:143
+#: engines/dragons/metaengine.cpp:144
 msgid "Change Command"
 msgstr "Changer de commande"
 
-#: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:127
+#: engines/dragons/metaengine.cpp:150 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:495 engines/grim/grim.cpp:587
-#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
+#: engines/hdb/metaengine.cpp:232 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:285 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Inventaire"
 
-#: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:86
+#: engines/dragons/metaengine.cpp:155 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Entrer"
 
-#: engines/dragons/metaengine.cpp:220
+#: engines/dragons/metaengine.cpp:221
 msgid "Debug Graphics"
 msgstr "Deboguer les Graphismes"
 
-#: engines/dragons/metaengine.cpp:225
+#: engines/dragons/metaengine.cpp:226
 msgid "Quit Game"
 msgstr "Quitter le jeu"
 
@@ -4792,7 +4792,7 @@ msgid "Skip dialog lines"
 msgstr "Passer les dialogues"
 
 #: engines/grim/grim.cpp:518 engines/grim/grim.cpp:610
-#: engines/hdb/metaengine.cpp:244
+#: engines/hdb/metaengine.cpp:245
 msgid "Menu"
 msgstr "Menu"
 
@@ -4937,36 +4937,36 @@ msgstr ""
 "Les informations de débogage et la sélection des niveaux deviennent "
 "disponibles"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
+#: engines/hdb/metaengine.cpp:194 engines/nancy/input.cpp:178
 msgid "Move up"
 msgstr "Déplacement haut"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
+#: engines/hdb/metaengine.cpp:200 engines/nancy/input.cpp:184
 msgid "Move down"
 msgstr "Déplacement bas"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:206 engines/nancy/input.cpp:190
 msgid "Move left"
 msgstr "Déplacement gauche"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:212 engines/nancy/input.cpp:196
 msgid "Move right"
 msgstr "Déplacement droite"
 
-#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
+#: engines/hdb/metaengine.cpp:218 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
-#: engines/sky/metaengine.cpp:86 engines/wintermute/keymapper_tables.h:141
+#: engines/sky/metaengine.cpp:92 engines/wintermute/keymapper_tables.h:141
 #: engines/wintermute/keymapper_tables.h:1476
 msgid "Use"
 msgstr "Utiliser"
 
-#: engines/hdb/metaengine.cpp:224
+#: engines/hdb/metaengine.cpp:225
 msgid "Clear waypoints"
 msgstr "Effacer les points de passage"
 
-#: engines/hdb/metaengine.cpp:250
+#: engines/hdb/metaengine.cpp:251
 msgid "Debug"
 msgstr "Déboguer"
 
@@ -5134,13 +5134,13 @@ msgid "Move Right"
 msgstr "Aller vers la Droite"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
-#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:268
+#: engines/pegasus/pegasus.cpp:2736 engines/twine/metaengine.cpp:268
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Tourner vers la Gauche"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:467
-#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:261
+#: engines/pegasus/pegasus.cpp:2743 engines/twine/metaengine.cpp:261
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Tourner vers la Droite"
@@ -5495,19 +5495,19 @@ msgstr "Normal"
 msgid "Best"
 msgstr "Meilleur"
 
-#: engines/mohawk/metaengine.cpp:275
+#: engines/mohawk/metaengine.cpp:293
 msgid "Myst ME support not compiled in"
 msgstr "La prise en charge de Myste ME n'est pas incluse"
 
-#: engines/mohawk/metaengine.cpp:280
+#: engines/mohawk/metaengine.cpp:298
 msgid "Myst support not compiled in"
 msgstr "La prise en charge de Myst n'est pas incluse"
 
-#: engines/mohawk/metaengine.cpp:287
+#: engines/mohawk/metaengine.cpp:305
 msgid "Riven support not compiled in"
 msgstr "La prise en charge de Riven n'est pas incluse"
 
-#: engines/mohawk/metaengine.cpp:301
+#: engines/mohawk/metaengine.cpp:319
 msgid "CSTime support not compiled in"
 msgstr "La prise en charge de CSTime n'est pas incluse"
 
@@ -5707,7 +5707,7 @@ msgstr ""
 "Les mises à jour peuvent être téléchargées à cette adresse :\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1570 engines/pegasus/pegasus.cpp:737
+#: engines/myst3/myst3.cpp:1570 engines/pegasus/pegasus.cpp:745
 msgid "Invalid file name for saving"
 msgstr "Nom de fichier invalide pour la sauvegarde"
 
@@ -5974,47 +5974,47 @@ msgstr ""
 "\n"
 "Merci de faire un rapport à l'équipe."
 
-#: engines/pegasus/pegasus.cpp:2712
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Haut/Zoom/Avancer/Ouvrir Portes"
 
-#: engines/pegasus/pegasus.cpp:2720
+#: engines/pegasus/pegasus.cpp:2728
 msgid "Down/Zoom Out"
 msgstr "Bas/Dézoom"
 
-#: engines/pegasus/pegasus.cpp:2742
+#: engines/pegasus/pegasus.cpp:2750
 msgid "Action/Select"
 msgstr "Action/Sélection"
 
-#: engines/pegasus/pegasus.cpp:2762
+#: engines/pegasus/pegasus.cpp:2770
 msgid "Display/Hide Inventory Tray"
 msgstr "Montrer/Cacher l'Inventaire"
 
-#: engines/pegasus/pegasus.cpp:2769
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Display/Hide Biochip Tray"
 msgstr "Montrer/Cacher le Biochip"
 
-#: engines/pegasus/pegasus.cpp:2777
+#: engines/pegasus/pegasus.cpp:2785
 msgid "Toggle Center Data Display"
 msgstr "Basculer l'Affichage Central"
 
-#: engines/pegasus/pegasus.cpp:2784
+#: engines/pegasus/pegasus.cpp:2792
 msgid "Display/Hide Info Screen"
 msgstr "Montrer/Cacher l'Écran d'Info"
 
-#: engines/pegasus/pegasus.cpp:2791
+#: engines/pegasus/pegasus.cpp:2799
 msgid "Display/Hide Pause Menu"
 msgstr "Montrer/Cacher le Menu de Pause"
 
-#: engines/pegasus/pegasus.cpp:2798
+#: engines/pegasus/pegasus.cpp:2806
 msgid "Toggle Chatty AI"
 msgstr "Act./Désact. IA bavarde"
 
-#: engines/pegasus/pegasus.cpp:2813
+#: engines/pegasus/pegasus.cpp:2821
 msgid "Save Game"
 msgstr "Sauvegarder"
 
-#: engines/pegasus/pegasus.cpp:2819
+#: engines/pegasus/pegasus.cpp:2827
 msgid "Load Game"
 msgstr "Charger"
 
@@ -6053,7 +6053,7 @@ msgstr "La version d'essai macOS n'est pas prise en charge"
 msgid "Pocket PC Trial version is not supported"
 msgstr "La version d'essai Pocket PC n'est pas prise en charge"
 
-#: engines/saga/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:113
 msgid "I Have No Mouth support not compiled in"
 msgstr "La prise en charge de I Have No Mouth n'est pas incluse"
 
@@ -6076,7 +6076,7 @@ msgstr "Erreur lors de la lecture des ressources du jeu."
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Jeu incomplet détecté. Vous devez copier les données de tous les CD."
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:372
 msgid "(Autosave)"
 msgstr "(Sauvegarde automatique)"
 
@@ -6981,7 +6981,7 @@ msgstr "Volume Musique : "
 msgid "Subtitle speed: "
 msgstr "Vitesse des ST : "
 
-#: engines/scumm/metaengine.cpp:331
+#: engines/scumm/metaengine.cpp:330
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -6991,11 +6991,11 @@ msgstr ""
 "éviter le piratage.\n"
 "La version complète peut être achetée sur l'iTunes Store."
 
-#: engines/scumm/metaengine.cpp:422
+#: engines/scumm/metaengine.cpp:421
 msgid "HE v71+ support is not compiled in"
 msgstr "La prise en charge de HE V71+ n'est pas incluse"
 
-#: engines/scumm/metaengine.cpp:446
+#: engines/scumm/metaengine.cpp:445
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "La prise en charge de SCUMM V7-8 n'est pas incluse"
 
@@ -7135,27 +7135,27 @@ msgstr "Intro disquette"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Utiliser l'intro de la version disquette (version CD uniquement)"
 
-#: engines/sky/metaengine.cpp:80
+#: engines/sky/metaengine.cpp:86
 msgid "Walk / Look / Talk"
 msgstr "Marcher / Regarder / Parler"
 
-#: engines/sky/metaengine.cpp:98
+#: engines/sky/metaengine.cpp:104
 msgid "Skip / Close"
 msgstr "Passer / Fermer"
 
-#: engines/sky/metaengine.cpp:106
+#: engines/sky/metaengine.cpp:112
 msgid "Open control panel"
 msgstr "Ouvrir le panneau de contrôle"
 
-#: engines/sky/metaengine.cpp:122
+#: engines/sky/metaengine.cpp:128
 msgid "Toggle fast mode"
 msgstr "Act./Désact. mode rapide"
 
-#: engines/sky/metaengine.cpp:127
+#: engines/sky/metaengine.cpp:133
 msgid "Toggle really fast mode"
 msgstr "Act./Désact. mode très rapide"
 
-#: engines/sky/metaengine.cpp:197
+#: engines/sky/metaengine.cpp:203
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 "ATTENTION : Ce moteur ne prend pas en charge la suppression de la sauvegarde "
