@@ -239,6 +239,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "legendsofoz",		"The Legends of Oz" },
 	{ "letters",			"Letters" },
 	{ "louiscatorze",		"Louis Cat Orze: The Mystery of the Queen's Necklace" },
+	{ "luxor",				"Secrets of the Luxor" },
 	{ "madcc12",			"Madeline Classroom Companion: 1st & 2nd Grade" },
 	{ "madccpk",			"Madeline Classroom Companion: Preschool & Kindergarten" },
 	{ "madpup",				"Madeline and the Magnificent Puppet Show: A Learning Journey" },
@@ -339,7 +340,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "searchlearn",     	"Search & Learn Adventures" },
 	{ "secretkeys",     	"Search for the Secret Keys with Mickey" },
 	{ "secretpaths1",		"Secret Paths in the Forest" },
-	{ "luxor",				"Secrets of the Luxor" },
+	{ "secretsluxor",		"Secrets of the Luxor" },
 	{ "sfpd",               "SFPD Homicide Case File: The Body in the Bay" },
 	{ "shellwhirl",			"Shell Whirl" },
 	{ "shr1st2nd",			"Schoolhouse Rock!: 1st & 2nd Grade Essentials" },
@@ -429,6 +430,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "alankay",			"Alan Kay CD-ROM Pack" },
 	{ "alcohol101",			"Alcohol 101" },
 	{ "alice2ocean",		"From Alice to Ocean: Alone Across the Outback" },
+	{ "amhha",				"All My Hummingbirds Have Alibis" },
 	{ "amnesty",			"Amnesty Interactive" },
 	{ "aruba",				"Aruba Interactive" },
 	{ "athletics",			"International Athletics" },
@@ -462,7 +464,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "egypt",				"Egypt: Voyage to the Land of the Pharaohs" },
 	{ "einstein",			"The Ultimate Einstein" },
 	{ "espanatomy",			"Anatomy & Physiology: The Unity of Form and Function" },
-	{ "exoticjapan",		"Exotic Japan: A Guide to Japanese Culture and Language" },
 	{ "explorers",			"Explorers of the New World" },
 	{ "flw",				"The Ultimate Frank Lloyd Wright: America's Architect" },
 	{ "fractiondecimal",	"Fractions & Decimals" },
@@ -517,6 +518,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sauniverse",     	"Scientific American Library: The Universe" },
 	{ "sciencesmart",		"Science Smart" },
 	{ "scrutiny",			"ScruTiny in the Great Round" },
+	{ "shiningflower",		"Shining Flower: HikaruHana" },
 	{ "sialmanac94",		"Sports Illustrated 1994 Multimedia Almanac" },
 	{ "sk8board",			"RIDE: An Interactive Skateboarding Experience" },
 	{ "smithamerica",		"Smithsonian's America" },
@@ -1025,6 +1027,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "encarta94",			"Microsoft Encarta '94" },
 	{ "encarta95",			"Microsoft Encarta '95" },
 	{ "encartaatlas2000",   "Microsoft Encarta Interactive World Atlas 2000" },
+	{ "exoticjapan",		"Exotic Japan: A Guide to Japanese Culture and Language" },
 	{ "famdoc3",			"The Family Doctor, 3rd Edition" },
 	{ "macworldexpo92",		"Macworld Expo CD Boston 1992" },
 	{ "manhole",			"The Manhole" },
@@ -1455,7 +1458,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 271740, Common::JA_JPN, 200),
 	MACGAME1_l("alice", "Digipak", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274018, Common::JA_JPN, 200),
 
-	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2708196, 200),
+	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2707940, 200),
+	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2410386, 200),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("beyondcyberpunk", "v1.5", "1984", "026bda630919f3692e649c00b1b52dd9", 34425, 200),
@@ -1485,9 +1489,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270851, 200), // 1994
 	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 273115, 200), // 1996
 	MACDEMO1("warlock", "v1.0 Demo", "xn--Spaceship Warlock Demo-j40n", "cfa68a1bc49251497ebde18e5fc9c217", 271099, 200),
+	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 270843, 200), // 1991
 	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 270857, 200), // 1994
 	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273121, 200), // 1996
-	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273377, 200), // ?
 
 //////////////////////////////////////////////////
 //
@@ -1521,8 +1525,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("alice2ocean", "", "From Alice to Ocean", "1ae45c23586b41997ba52e2e7c771c4c", 375466, 310),
 
-	MACGAME1("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353985, 300),
+	MACGAME1("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353729, 300),
 	MACDEMO1("amandastories", "Sampler", "AmandaStories Sampler", "60cc4ccbab898f1f444088fb5aad90c4", 1783515, 311),
+
+	// Uses audio tracks
+	MACGAME1("amhha", "", "All My Hummingbirds Have Alibis", "9c97c1cbf6f01697685d3aac1d882526", 1356802, 300),
 
 	// From Macintosh Demo Software Zenshuu CD-ROM '94 Disc 3
 	// Original filename is アニマルタウンデモ版
@@ -1584,7 +1591,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Japanese Mac demo filename is CHAOS デモ and another file is called CHAOS Demo
 	// English Mac demo from The Family Doctor, 3rd Edition
 	MACGAME1("chaos", "", "The C.H.A.O.S. Continuum", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384481, 300),
-	WINGAME1("chaos", "", "CHAOS.EXE", "7c8230a804abf9353b05627a675b5ffb", 375294, 300),
+	WINGAME1t("chaos", "", "CHAOS.EXE", "5d1d9e1ff9a43e4d5b28441ce6d642fd", 375294, 310),
 	MACDEMO1_l("chaos", "Demo", "Start CHAOS Demo", "f5277c53bacd27936158dd3867e587e2", 394939, Common::JA_JPN, 311),
 	MACDEMO1("chaos", "Demo", "xn--CHAOS Continuum Demo-3h7l", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384212, 313),
 
@@ -1600,7 +1607,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("cinemania94", "Demo",		 "CINEOVR.EXE",	 "7c8230a804abf9353b05627a675b5ffb", 1426843, 310),
 	WINDEMO1("cinemania95", "1994 Demo", "CINEDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 373209, 310),
 
-	MACGAME1("cinevolt", "", "Cinema Volta", "2ce360c9ea2da80a2c6d1040b0ad92dd", 388167, 313),
+	MACGAME1("cinevolt", "", "Cinema Volta", "2ce360c9ea2da80a2c6d1040b0ad92dd", 387911, 313),
 	WINGAME1("cinevolt", "", "CINEVOLT.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, 313),
 
 	WINGAME1_l("cklasse", "", "c-klasse.exe", "39df1c7ff23ba627ddffaa5a77f83008", 376244, Common::DE_DEU, 313),
@@ -1656,12 +1663,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("encarta95", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385729, 313),
 	WINDEMO1("encarta95", "Demo", "ENDEM95.EXE", "61d63911d437806fd473ffc31ddfc53d", 12109799, 311),
 
+	// HyperCard application, calls movie using external MacroMind Player
+	MACGAME2("exoticjapan", "", "MacroMind Player", "7f443f2e63fd497a9ad85b10dc880a91", 2196398,
+								"Exotic Japan Stack", "28bdf606d2fbec537716ceae5edfaa93", 878941, 313),
 	MACDEMO1("exoticjapan", "Sampler", "Exotic Japan Sampler", "e59139ac60997f52af77d7f03275ab30", 1790832, 311),
 
 	WINDEMO1("explorapedia", "1994 Demo", "XPLDMO6.EXE", "d61e2e1e9f9d9907005adc992a451d02", 4724919, 311),
 
 	// Main application is Hypercard, this movie is also able to be run standalone
-	WINDEMO1("famdoc3", "", "How To Use Anatomy", "2ce360c9ea2da80a2c6d1040b0ad92dd", 3747110, 313),
+	MACDEMO1("famdoc3", "", "How To Use Anatomy", "2ce360c9ea2da80a2c6d1040b0ad92dd", 3747110, 313),
 
 	// Original filename 'FANTAZION™'
 	MACGAME1_l("fantazion", "", "xn--FANTAZION-oz64c", "276bee761e48a6fd709df77d5c2f60dd", 420924, Common::JA_JPN, 310),
@@ -1770,7 +1780,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("ipc", "", "ABOUTIPC.EXE", "65d06b5fef155a2473434571aff5bc29", 4270544, 310),
 
 	// Bilingual English/Spanish
-	MACGAME1("iptr", "", "I Photograph to Remember", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 406002, 300),
+	// Uses audio tracks
+	MACGAME1("iptr", "CD", "I Photograph to Remember", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 405746, 300),
+	MACGAME1("iptr", "Hard Disk", "I Photograph to Remember", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 400353, 300),
 	MACDEMO1("iptr", "Sampler", "I Photograph to RememberBIG", "a46f8441517e09088aad16decb13580d", 2632411, 311),
 
 	// Windows version is not Director
@@ -1831,7 +1843,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("legendsofoz", "", "OZMM.EXE", "236c3b91788d7d5308691ef27fe91aa0", 369250, 313),
 
 	// Portuguese version is D4
-	MACGAME1("leonardo", "", "Leonardo the Inventor", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384471, 313),
+	MACGAME1("leonardo", "", "Leonardo the Inventor", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384215, 313),
 	WINGAME1("leonardo", "", "LEO.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 310),
 
 	WINDEMO1("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371, 310),
@@ -1958,7 +1970,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("murdertaylor", "", "Taylor French", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 300),
 	WINGAME1("murdertaylor", "", "TAYLORF.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
 
-	MACGAME1("mylk", "", "Mylk DoubleClickMe!", "8a33471513b6896d3d13b8a9c8790d86", 356280, 300),
+	MACGAME1("mylk", "", "Mylk DoubleClickMe!", "8a33471513b6896d3d13b8a9c8790d86", 356024, 300),
 
 	MACDEMO1("necrobius", "Demo", "Necrobius (Demo)", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356865, 300),
 
@@ -2086,6 +2098,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("sfk", "", "More SFK Products!", "1ae45c23586b41997ba52e2e7c771c4c", 377923, 310),
 
+	MACGAME1("shiningflower", "", "Shining Flower", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
+	MACGAME1("shiningflower", "Auto", "Shining Flower (Auto)", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
+
 	// Found on The Cat Came Back
 	WINDEMO1("sitfarm", "Demo", "MOREFUN.EXE", "65d06b5fef155a2473434571aff5bc29", 4397800, 310),
 
@@ -2097,10 +2112,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("smithamerica", "", "Smithsonian's America", "b2df07bdfe2a843e8f355a77a1cca47e", 384223, 313),
 	WINGAME1t("smithamerica", "", "AMERICA.EXE", "762716cefb27adf3156d5978ce62c0d8", 370010, 310),
 
+	// Original Mac version uses audio tracks, hybrid Mac/Win uses WAV files
 	// Das Bi-Ba-Butze-Haus published by Systhema, Munich (1995) and later by Rowohlt-Systhema (1999)
-	MACGAME1("snh", "",		   "A Silly Noisy House",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 357142, 300),
+	MACGAME1("snh",  "",				   "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353764, 300),
+	MACGAME1("snh",  "Mac/Windows hybrid", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356886, 300),
+	WINGAME1t("snh", "Mac/Windows hybrid", "SNH.EXE", "6b1c74a8dbe1f083ee942859016d3345", 378901, 310),
 	MACDEMO1("snh", "Sampler", "Silly Noisy House Sampler",	"2064fd9b1871f02d216d20e92019a7ac", 1592334, 311),
-	WINGAME1("snh", "",   "SNH.EXE",   "5a6e241994f671a1ebe664fbae394217", 378901, 300),
 	WINGAME1_l("snh", "", "DBBBH.EXE", "9e13813fd39da5e27627ee28894d6ec0", 738336, Common::DE_DEU, 311),
 
 	// Game is HyperCard based. Movies will play with --start-movie from console.
@@ -2118,7 +2135,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("supersonic", "", "Double-click me", "1ae45c23586b41997ba52e2e7c771c4c", 375446, 310),
 	WINGAME1("supersonic", "", "SUPERS.EXE", "7c8230a804abf9353b05627a675b5ffb", 375290, 310),
 
-	MACGAME1("take5", "", "Take Five", "1ae45c23586b41997ba52e2e7c771c4c", 1627245, 313),
+	// Win version requires installation, INSTALL.EXE
+	MACGAME1("take5", "", "Take Five", "1ae45c23586b41997ba52e2e7c771c4c", 1626989, 313),
 	WINGAME1("take5", "", "TAKEFIVE.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 313),
 
 	// Original filename is ~LEGEND OF PSY•S CITY~
@@ -2535,11 +2553,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("cinemac", "Sample Projector", "Sample Projector with BackDrop", "2c27791a84756be6201d281bad54f7bb", 286214, 404),
 
-	MACGAME1("circus", "", "Circus!", "dc5a87dda7a0daf46604515f7d2cca66", 320119, 400),
+	MACGAME1("circus", "", "Circus!", "dc5a87dda7a0daf46604515f7d2cca66", 319863, 400),
 	WINGAME1("circus", "", "CIRCUS.EXE", "50d81af709047f5d1310468a3cd5a248", 1503187, 400),
 	PIPGAME1_l("circus", "", "Circus!", "0d69b9bb731fba3d861a5f18e1810aa5", 61739, Common::JA_JPN, 404),
-	MACDEMO2("circus", "Demo", "Demo", 		  "dc5a87dda7a0daf46604515f7d2cca66", 308542,
-							   "DemoLoop", 	  "dc5a87dda7a0daf46604515f7d2cca66", 308542, 403),
+	MACDEMO2("circus", "Demo", "Demo", 		  "dc5a87dda7a0daf46604515f7d2cca66", 308286,
+							   "DemoLoop", 	  "dc5a87dda7a0daf46604515f7d2cca66", 308286, 403),
 	WINDEMO2("circus", "Demo", "DEMO.EXE", 	  "360f8621637354b9231059470c71fc43", 685645,
 							   "PREVIEW.EXE", "d98e36d5e525e8369458509b46587d8d", 686139, 400),
 
@@ -2603,7 +2621,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original Pippin filename is ダズロイド
 	MACGAME1("dazzeloids", "", "Dazzeloids", "c9c25d0d249d529680302a81c30852d0", 367320, 400),
-	MACDEMO1("dazzeloids", "Demo", "Dazzleoids", "77f4098988d5386794d1530065f514cd", 301953, 400),
+	MACDEMO1("dazzeloids", "Demo", "Dazzleoids", "77f4098988d5386794d1530065f514cd", 301697, 400),
 	PIPGAME1_l("dazzeloids", "", "xn--eck0br2b9l", "2324c2928417a696fca46535ded53e32", 68242, Common::JA_JPN, 400),
 	WINGAME1("dazzeloids", "", "DAZZ.EXE", "65768d30ebe836309ad2c3779a66f3ce", 1034266, 400),
 	PIPDEMO1_l("dazzeloids", "Non-interactive Demo", "xn--PippinDEMO-jx4ixivcug6w", "8b138db44d4421cc7294a9dc792ccf1b", 502657, Common::JA_JPN, 404),
@@ -2631,7 +2649,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("dirmacromedia", "v4.0.3J Demo", "Director 4.0 Demo", "e258089af01c8233db77039828cc83f8", 1488951, Common::JA_JPN, 403),
 
 	MACGAME1("dkmm2", "", "DKSDMac", "8554afe42cffb4add44bf37e48e1d954", 322917, 400),
-	WINGAME1("dkmm2", "", "DKSD2PC.EXE", "2ad79a3a4c30655ddf9aeb2ebfe8cb5b", 862849, 400),
+	WINGAME1t("dkmm2", "", "DKSD2PC.EXE", "d43fd79cc7ec54a1b2b55562f4634b49", 862849, 400),
 
 	// Mac versions are D5
 	// Het Geheim Van Dracula localized by Transposia
@@ -3012,15 +3030,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// French version was distributed by Ubi Soft
 	// English versions 2.00 and 2.0.1 were distibuted by Discis and DreamCatcher, respectively
 	// Horses of Asva demo is found on Czech Super Hry III CD from Future Media International
-	MACGAME2("jewels1", "v2.00",         "Jewels 11 Meg",   "339c89a148c4ff2c5c815c62ac006325", 483922,
-										 "NAVLOAD.Dxr",     "862688a820a7494f8a9edd196e04b5bf", 420, 404),
-	MACGAME2_l("jewels1", "",		     "Jewels 11 Meg",   "339c89a148c4ff2c5c815c62ac006325", 483922,
-										 "NAVLOAD.Dxr",     "711211bf062c3cab48ce90870900bc3b", 471, Common::FR_FRA, 404),
-	MACDEMO1("jewels1", "Demo",		     "Two-Minute Demo", "01be45e7241194dad07938e7059b88e3", 483746, 404),
+	MACGAME2("jewels1", "v2.00",         "Jewels 11 Meg",   "339c89a148c4ff2c5c815c62ac006325", 483666,
+										 "NAVLOAD.Dxr",     "862688a820a7494f8a9edd196e04b5bf", 164, 404),
+	MACGAME2_l("jewels1", "",		     "Jewels 11 Meg",   "339c89a148c4ff2c5c815c62ac006325", 483666,
+										 "NAVLOAD.Dxr",     "711211bf062c3cab48ce90870900bc3b", 215, Common::FR_FRA, 404),
+	MACDEMO1("jewels1", "Demo",		     "Two-Minute Demo", "01be45e7241194dad07938e7059b88e3", 483490, 404),
 	WINGAME2("jewels1", "v2.0.1",        "JEWELS.EXE",      "bb6d81471d166088260090472c6c3a87", 800395,
 										 "NAVLOAD.DXR",     "ff8446121236a1cbfb1fe431fea5bc09", 405042, 404),
 	WINDEMO1("jewels1", "Horses Demo",   "HORSE.EXE",		"03bbe56c80fcbca3939ba08407d99f76", 847689, 400),
-	WINDEMO2("jewels1", "Demo",		     "JEWELS.EXE",      "abcc448c035e88d4edb4a29034fd1e34", 869983,
+	WINDEMO2("jewels1", "Demo",		     "JEWELS.EXE",      "abcc448c035e88d4edb4a29034fd1e34", 863983,
 										 "PUZZ_01.DXR",     "ea75491b1be5352de158c310fcf7baf5", 267074, 400),
 	WINDEMO2("jewels1", "Nightsky Demo", "DEMO.EXE",        "ebee52d3c4280674c600177df5b09da0", 800403,
 										 "NAVLOAD.DXR",     "1f4466ba91364dd7223264b86dd5402c", 403980, 404),
@@ -3647,7 +3665,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("trekomni", "v1.1.2 Upgrade", "ST_OMNI2.EXE", "1d60aad73cc9c69776a878aa59e65230", 809781, 400),
 
 	MACGAME1("trektech", "", "STNG Technical Manual (PowerPC)", "a9bd9f3a82fcde6e4d151868e256aec7", 525946, 400),
-	MACDEMO1("trektech", "Demo", "TrekForMac", "68ed73866232194a9a5609040dc1f242", 289952, 403),
+	MACDEMO1("trektech", "Demo", "TrekForMac", "68ed73866232194a9a5609040dc1f242", 289696, 403),
 	WINGAME1("trektech", "", "NCC1701D.EXE", "02aec408cee26413a096aec9b1cb1878", 720249, 400),
 
 	// Bilingual English/Spanish
@@ -3771,9 +3789,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "SHARED.DIR", "27afa0d790af95b99ba30da10c883f92", 3570628, 404),
 	// Found on The Crystal Skull CD
 	MACDEMO2("wrath",  "", "gomac",		 "01be45e7241194dad07938e7059b88e3", 508848,
-						   "Shared.Dir", "e709f7b88f6241e4f45632beb0533ac1", 3570542, 404),
+						   "Shared.Dir", "89f558d6a6535c16ec440948d86988b8", 3570542, 404),
 	WINDEMO2t("wrath", "", "WRATH.EXE",	 "5d0ee796571b99d402a06438ae2f3d56", 696815,
-						   "Shared.Dir", "e709f7b88f6241e4f45632beb0533ac1", 3570542, 404),
+						   "SHARED.DIR", "e709f7b88f6241e4f45632beb0533ac1", 3570542, 404),
 
 	WINDEMO1("wwanimals", "Demo", "ANIMALS.EXE", "25fee176193d52cf7cbc2b604bfcbf8c", 6961631, 404),
 
@@ -3983,6 +4001,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("crusader", "", "CROISA95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427, Common::FR_FRA, 501),
 
 	// Mac version requires installation, Crystal Skull Installer, uses VISE
+	// 3 CDs, executables are only on CD 1
 	MACGAME1("crystalskull",  "", "Crystal Skull", "c148f66ae3511fb88733102aa27efe7e", 719459,  501),
 	WINGAME1t("crystalskull", "", "CRYS32.EXE",	   "3f5fd025e808943e1fa9b91ce63ef9b7", 1410495, 501),
 
@@ -4728,7 +4747,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("fpwestern", "Wacky Wanted Posters Demo", "Western Town Demo", "ade290061bd8f78051a8e872a889855c", 1031646, 601),
 	WINDEMO1("fpwestern", "Wacky Wanted Posters Demo", "WEST95.EXE", "518a98696fe1122e08410b0f157f21bf", 1512580, 602),
 
-	MACGAME1("fpxmas", "", "Christmas", "1d9149b9745e35ef93ed4cdf08ec3af7", 1032634, 602),
+	// Mac version requires installation, Christmas Installer, Stuffit
+	MACGAME1("fpxmas", "", "Christmas", "1d9149b9745e35ef93ed4cdf08ec3af7", 1032378, 602),
 	WINGAME1("fpxmas", "", "XFUN32.EXE", "518a98696fe1122e08410b0f157f21bf", 1566416, 602),
 
 	MACGAME1("fusion", "", "Start FUSION Mac", "3849d7cd0cdbe4f46333879cbed56492", 1029165, 600),
@@ -6036,7 +6056,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is ビーナスの美女のデモ
 	MACDEMO1("venus", 	  "Demo", "Venus no Bijo Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3333366, 310),
-	MACGAME1("vvalerie1", "",	  "VV",					"d830c8fa306d1bd501fbedf1cf9dd57a", 707445, 310),
+	MACGAME1("vvalerie1", "",	  "VV",					"d830c8fa306d1bd501fbedf1cf9dd57a", 707189, 310),
 	MACGAME1("vvalerie2", "",	  "VV2", 				"98229e39001a22ec1cfeb8f124c28483", 307427, 400),
 	WINGAME1("vvalerie2", "",	  "VALERIE2.EXE",		"e11ef9aad93815eaacfad6fa6a427c6b", 686367, 400),
 	MACGAME1("vveronika", "",	  "Veronika",			"43e89a8298b7dc638e2d6939fadc5234", 94329, 500),

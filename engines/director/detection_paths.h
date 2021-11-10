@@ -197,6 +197,9 @@ const char *directoryGlobs[] = {
 	"InsMilo",						// Milo and the Magical Stones
 	"dir",
 	"CHRISTMAS PRESENT",			// Christmas Present
+	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
+	"Silly Noisy House Folder",		// A Silly Noisy House
+	"Installer Files",				// Encarta '95
 	0
 };
 
