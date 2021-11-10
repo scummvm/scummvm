@@ -65,6 +65,16 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"bbvs",
+		"Loogie Demo",
+		AD_ENTRY1s("BBLOOGIE.000", "83921c65bd93be7e35056c31bd37310b", 324764),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_LOOGIE_DEMO | ADGF_DEMO | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
+	{
+		"bbvs",
 		0,
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
