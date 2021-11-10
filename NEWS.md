@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed old Waxworks AdLib music regression.
 
+ AGS:
+   - Detection list updates.
+
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
