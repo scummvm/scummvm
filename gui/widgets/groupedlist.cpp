@@ -32,14 +32,14 @@
 #include "gui/ThemeEval.h"
 
 #define kGroupTag -2
-#define isGroupHeader(x) (x <= kGroupTag)
+#define isGroupHeader(x) (_groupsVisible && ((x) <= kGroupTag))
 #define indexToGroupID(x) (kGroupTag - x)
 
 namespace GUI {
 
 GroupedListWidget::GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip, uint32 cmd)
 	: ListWidget(boss, name, tooltip, cmd) {
-
+	_groupsVisible = true;
 }
 
 void GroupedListWidget::setList(const U32StringArray &list, const ColorList *colors) {
@@ -161,16 +161,19 @@ void GroupedListWidget::sortGroups() {
 		}
 		uint groupID = _groupValueIndex[header];
 
-		_listColors.insert_at(curListSize, ThemeEngine::kFontColorNormal);
-		_listIndex.push_back(kGroupTag - groupID);
+		if (_groupsVisible) {
+			_listColors.insert_at(curListSize, ThemeEngine::kFontColorNormal);
+			_listIndex.push_back(kGroupTag - groupID);
 
-		displayedHeader.toUppercase();
-		_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
-		++curListSize;
-		
+			displayedHeader.toUppercase();
+
+			_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
+			++curListSize;
+		}
+
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_list.push_back(Common::U32String("    ") + _dataList[*k]);
+				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k]);
 				_listIndex.push_back(*k);
 				++curListSize;
 			}

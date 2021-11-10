@@ -41,6 +41,7 @@ protected:
 	U32StringArray								_attributeValues;
 	Common::StringMap							_metadataNames;
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
+	bool _groupsVisible;
 
 public:
 	GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -66,6 +67,8 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void reflowLayout() override;
+
+	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
 protected:
 	void sortGroups();

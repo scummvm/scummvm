@@ -1009,6 +1009,7 @@ void LauncherSimple::updateListing() {
 void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
 	U32StringArray attrs;
 	Common::StringMap metadataNames;
+	_list->setGroupsVisibility(true);
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
 		for (uint i = 0; i < metadata.size(); ++i) {
@@ -1095,10 +1096,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	}
 	case kGroupByNone:	// Fall-through intentional
 	default:
-		for (uint i = 0; i < metadata.size(); ++i) {
-			attrs.push_back(String("All"));
-		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setGroupsVisibility(false);
 		break;
 	}
 	_list->setMetadataNames(metadataNames);
