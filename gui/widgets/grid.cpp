@@ -295,8 +295,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		const Graphics::Surface *srcSurface = nullptr;
 		Image::PNGDecoder decoder;
 		Common::FSNode fileNode(path);
-		Common::SeekableReadStream *stream = fileNode.createReadStream();
-		if (stream) {
+		if (fileNode.exists()) {
+			Common::SeekableReadStream *stream = fileNode.createReadStream();
 			if (!decoder.loadStream(*stream)) {
 				warning("Error decoding PNG");
 				return surf;
@@ -309,20 +309,23 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 			} else if (srcSurface->format.bytesPerPixel != 1) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
 			}
-
+		} else {
+			debug(5, "GridWidget: Cannot read file '%s'", path.c_str());
 		}
 #else
 		error("No PNG support compiled");
 #endif
 	} else if (name.hasSuffix(".svg")) {
 		Common::FSNode fileNode(path);
-		Common::SeekableReadStream *stream = fileNode.createReadStream();
-		if (stream) {
+		if (fileNode.exists()) {
+			Common::SeekableReadStream *stream = fileNode.createReadStream();
 			Graphics::SVGBitmap *image = nullptr;
 			image = new Graphics::SVGBitmap(stream);
 			surf = new Graphics::ManagedSurface(renderWidth, renderHeight, *image->getPixelFormat());
 			image->render(*surf, renderWidth, renderHeight);
 			delete image;
+		} else {
+			debug(5, "GridWidget: Cannot read file '%s'", path.c_str());
 		}
 	}
 	return surf;
