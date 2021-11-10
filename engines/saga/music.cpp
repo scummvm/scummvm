@@ -349,7 +349,7 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 	int realTrackNumber = 0;
 
 	if (_vm->getGameId() == GID_ITE) {
-		if (flags == MUSIC_NORMAL && (resourceId == 13 || resourceId == 19))
+		if (resourceId != 13 && resourceId != 19)
 			flags = MUSIC_LOOP;
 		realTrackNumber = resourceId - 8;
 	} else if (_vm->getGameId() == GID_IHNM) {
