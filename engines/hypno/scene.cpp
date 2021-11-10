@@ -320,7 +320,6 @@ void HypnoEngine::runScene(Scene *scene) {
 			showConversation();
 			drawScreen();
 			_refreshConversation = false;
-			_videosPlaying.clear();
 		}
 
 		// Movies

@@ -121,6 +121,7 @@ void SpiderEngine::showConversation() {
 
 void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 	Talk *t;
+	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {
@@ -138,7 +139,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 					_refreshConversation = true;
 				} else if (it->command == "P") {
 					debugC(1, kHypnoDebugScene, "Playing %s", it->path.c_str());
-					_nextParallelVideoToPlay.push_back(MVideo(it->path, it->position, false, false, false));
+					videos.push_back(MVideo(it->path, it->position, false, false, false));
 					_refreshConversation = true;
 				} else if (it->command == "S") {
 					debugC(1, kHypnoDebugScene, "Enabling variable %s", it->variable.c_str());
@@ -157,9 +158,12 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
 	}
+	if (videos.size() > 0)
+		runIntros(videos);
 }
 
 void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
+	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {
@@ -167,11 +171,13 @@ void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
 				if (it->command == "I") {
 					debugC(1, kHypnoDebugScene, "Playing %s", it->path.c_str());
 					// Not sure why position is 50, 50 since there is only one pixel
-					_nextSequentialVideoToPlay.push_back(MVideo(it->path, Common::Point(0, 0), false, false, false));
+					videos.push_back(MVideo(it->path, Common::Point(0, 0), false, false, false));
 				}
 			}
 		}
 	}
+	if (videos.size() > 0)
+		runIntros(videos);
 }
 
 } // End of namespace Hypno
