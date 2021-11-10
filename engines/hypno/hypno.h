@@ -137,7 +137,6 @@ public:
 	void changeCursor(const Common::String &cursor);
 
 	// Actions
-	void runIntro(MVideo &video);
 	void runMenu(Hotspots hs);
 	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
@@ -163,6 +162,8 @@ public:
 	void drawScreen();
 
 	// intros
+	void runIntro(MVideo &video);
+	void runIntros(Videos &videos);
 	Common::HashMap<Filename, bool> _intros;
 
 	// levels

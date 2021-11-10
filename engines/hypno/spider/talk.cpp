@@ -27,13 +27,14 @@ namespace Hypno {
 
 void SpiderEngine::showConversation() {
 	debugC(1, kHypnoDebugScene, "Showing conversation");
-	uint32 x;
-	uint32 y;
+	uint32 x = 0;
+	uint32 y = 0;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);
 	bool activeFound = false;
 
 	// First iteration on the talk commands
-	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
+	Videos videos;
+	for (Actions::iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->boxPos != Common::Point(0, 0)) {
 			if (!(x == 0 && x == y))
@@ -42,6 +43,15 @@ void SpiderEngine::showConversation() {
 			x = a->boxPos.x;
 			y = a->boxPos.y;
 		}
+		if (!a->intro.empty() && !_intros.contains(a->intro)) {
+			videos.push_back(MVideo(a->intro, a->introPos, false, false, false));
+			_intros[a->intro] = true;
+		}
+	}
+
+	if (videos.size() > 0) {
+		runIntros(videos);
+		videos.clear();
 	}
 
 	if (x == 0 && x == y)
@@ -78,19 +88,31 @@ void SpiderEngine::showConversation() {
 	if (!activeFound) {
 		debugC(1, kHypnoDebugScene, "No active item was found in the current conversation");
 		// Final iteration on the talk commands
+		bool shouldEscape = false;
 		for (Actions::const_iterator it = _conversation.begin(); it != _conversation.end(); ++it) {
 			Talk *a = (Talk *)*it;
 			if (!a->second.empty()) {
 				debugC(1, kHypnoDebugScene, "Adding %s to play after the conversation ends", a->second.c_str());
-				_nextParallelVideoToPlay.push_back(MVideo(a->second, a->secondPos, false, false, false));
+				videos.push_back(MVideo(a->second, a->secondPos, false, false, false));
 			}
 			if (a->escape) {
-				_nextSequentialVideoToPlay = _escapeSequentialVideoToPlay;
-				_escapeSequentialVideoToPlay.clear();
+				shouldEscape = true;
 			}
 		}
+
+		if (videos.size() > 0) {
+			runIntros(videos);
+			videos.clear();
+		}
+
 		debugC(1, kHypnoDebugScene, "Clearing conversation");
 		_conversation.clear();
+
+		if (shouldEscape) {
+			runIntros(_escapeSequentialVideoToPlay);
+			_escapeSequentialVideoToPlay.clear();
+		}
+
 		drawScreen();
 	} 
 	speaker->free();

@@ -261,6 +261,8 @@ public:
 	TalkCommands commands;
 	bool active;
 	bool escape;
+	Common::Point introPos;
+	Filename intro;
 	Common::Point boxPos;
 	Filename background;
 	Common::Point backgroundPos;

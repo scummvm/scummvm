@@ -185,19 +185,27 @@ void HypnoEngine::runLevel(Common::String &name) {
 	}
 }
 
-void HypnoEngine::runIntro(MVideo &video) {
+void HypnoEngine::runIntros(Videos &videos) {
+	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
 	stopSound();
-	disableCursor();
-	playVideo(video);
+	defaultCursor();
 
-	while (!shouldQuit() && video.decoder) {
+	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+		playVideo(*it);
+	}
+
+	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					skipVideo(video);
+					for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+						if (it->decoder)
+							skipVideo(*it);
+					}
+					videos.clear();
 				}
 				break;
 
@@ -205,19 +213,36 @@ void HypnoEngine::runIntro(MVideo &video) {
 				break;
 			}
 		}
-
-		if (video.decoder) {
-			if (video.decoder->endOfVideo()) {
-				skipVideo(video);
-			} else if (video.decoder->needsUpdate()) {
-				updateScreen(video);
-				drawScreen();
+		bool playing = false;
+		for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+			assert(!it->loop);
+			if (it->decoder) {
+				if (it->decoder->endOfVideo()) {
+					it->decoder->close();
+					delete it->decoder;
+					it->decoder = nullptr;
+				} else {
+					playing = true;
+					if (it->decoder->needsUpdate()) {
+						drawScreen();
+						updateScreen(*it);
+					}
+				}
 			}
 		}
-
+		if (!playing) {
+			debugC(1, kHypnoDebugScene, "Not playing anymore!");
+			break;
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void HypnoEngine::runIntro(MVideo &video) {
+	Videos tmp;
+	tmp.push_back(video);
+	runIntros(tmp);
 }
 
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }

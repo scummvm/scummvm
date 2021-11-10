@@ -231,7 +231,10 @@ talk: INACTOK talk {
 		talk_action->second = $2;
 		talk_action->secondPos = Common::Point($3, $4); 
 		debugC(1, kHypnoDebugParser, "SECOND %s %d %d", $2, $3, $4); }
-	| INTROTOK FILENAME NUM NUM { debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); }
+	| INTROTOK FILENAME NUM NUM { 
+		talk_action->intro = $2;
+		talk_action->introPos = Common::Point($3, $4);
+		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); }
 	| DEFAULTTOK FILENAME NUM NUM { 
 		// Unsure how this is different from second
 		talk_action->second = $2;
