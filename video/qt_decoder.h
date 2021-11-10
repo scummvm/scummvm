@@ -134,7 +134,7 @@ private:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const;
-		uint32 getNextFrameStartTime() const;
+		uint32 getNextFrameStartTime() const; // milliseconds
 		const Graphics::Surface *decodeNextFrame();
 		const byte *getPalette() const;
 		bool hasDirtyPalette() const { return _curPalette; }
@@ -151,9 +151,9 @@ private:
 		Common::QuickTimeParser::Track *_parent;
 		uint32 _curEdit;
 		int32 _curFrame;
-		uint32 _nextFrameStartTime;
+		uint32 _nextFrameStartTime; // media time
 		Graphics::Surface *_scaledSurface;
-		int32 _durationOverride;
+		int32 _durationOverride;    // media time
 		const byte *_curPalette;
 		mutable bool _dirtyPalette;
 		bool _reversed;
@@ -165,13 +165,13 @@ private:
 		const Graphics::Surface *forceDither(const Graphics::Surface &frame);
 
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
-		uint32 getFrameDuration();
+		uint32 getCurFrameDuration();            // media time
 		uint32 findKeyFrame(uint32 frame) const;
-		void enterNewEditList(bool bufferFrames);
+		void enterNewEditListEntry(bool bufferFrames);
 		const Graphics::Surface *bufferNextFrame();
-		uint32 getRateAdjustedFrameTime() const;
-		uint32 getCurEditTimeOffset() const;
-		uint32 getCurEditTrackDuration() const;
+		uint32 getRateAdjustedFrameTime() const; // media time
+		uint32 getCurEditTimeOffset() const;     // media time
+		uint32 getCurEditTrackDuration() const;  // media time
 		bool atLastEdit() const;
 		bool endOfCurEdit() const;
 		void checkEditListBounds();
