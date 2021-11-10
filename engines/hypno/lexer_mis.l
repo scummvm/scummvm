@@ -64,6 +64,7 @@ ESCAPE						return ESCAPETOK;
 SECOND						return SECONDTOK;
 INTRO						return INTROTOK;
 INTR						return INTRTOK;
+SWPT						return SWPTTOK;
 DEFAULT						return DEFAULTTOK;
 WAL[0-1]					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return WALNTOK;
 \|S[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;

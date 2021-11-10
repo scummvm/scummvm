@@ -62,7 +62,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND WALNTOK
 %token<i> NUM
 %token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK MICETOK PLAYTOK ENDTOK 
-%token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK
+%token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK SWPTTOK
 %token GLOBTOK TONTOK TOFFTOK
 %token TALKTOK INACTOK FDTOK BOXXTOK ESCAPETOK SECONDTOK INTROTOK DEFAULTTOK
 %token<s> PG PA PD PH PF PE PP PI PL PS
@@ -88,7 +88,7 @@ lines: line lines
 
 line: MENUTOK mflag mflag  {
 		Hotspot *hot = new Hotspot(MakeMenu, $2); 
-		debugC(1, kHypnoDebugParser, "MENU %d.", hot->type);
+		debugC(1, kHypnoDebugParser, "MENU %s %s", $2, $3);
 		Hotspots *cur = stack->back();
 		cur->push_back(*hot);
 
@@ -125,7 +125,8 @@ line: MENUTOK mflag mflag  {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
-	|  TIMETOK NUM  { debugC(1, kHypnoDebugParser, "TIME %d", $2); } 
+	|  TIMETOK NUM  mflag { debugC(1, kHypnoDebugParser, "TIME %d", $2); } 
+	|  SWPTTOK NUM { debugC(1, kHypnoDebugParser, "SWPT %d", $2); }
 	|  BACKTOK FILENAME NUM NUM gsswitch flag flag {
 		Background *a = new Background($2, Common::Point($3, $4), $5, $6, $7);
 		Hotspots *cur = stack->back();
@@ -172,6 +173,13 @@ line: MENUTOK mflag mflag  {
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); 
 	}
+	|  INTRTOK FILENAME { 
+		Cutscene *a = new Cutscene(Common::String("cine/") + $2);
+		Hotspots *cur = stack->back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debugC(1, kHypnoDebugParser, "INTRO %s", $2); 
+	}
 	|  CUTSTOK FILENAME { 
 		Cutscene *a = new Cutscene($2);
 		Hotspots *cur = stack->back();
@@ -197,13 +205,17 @@ line: MENUTOK mflag mflag  {
 		hot->actions.push_back(talk_action);
 		talk_action = nullptr;
 		debugC(1, kHypnoDebugParser, "TALK"); }
-	|  ENDTOK RETTOK { 
+	|  ENDTOK anything RETTOK { 
 		debugC(1, kHypnoDebugParser, "explicit END");
 		g_parsedHots = stack->back();
 		stack->pop_back();
 		smenu_idx->pop_back();
 	}
 	|	RETTOK { debugC(1, kHypnoDebugParser, "implicit END"); }
+	;
+
+anything: NAME anything
+	|  // nothing
 	;
 
 alloctalk: { 
@@ -294,7 +306,7 @@ talk: INACTOK talk {
 	| /*nothing*/
 	;
 
-mflag: NAME { $$ = $1; debugC(1, kHypnoDebugParser, "name: %s", $1); }
+mflag: NAME { $$ = $1; }
 	| /* nothing */	{ $$ = scumm_strdup(""); }
 	;
 

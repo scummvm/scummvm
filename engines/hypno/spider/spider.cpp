@@ -75,7 +75,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(cl);
 
 	loadSceneLevel("bank.mi_", "", prefix);
-	//loadSceneLevel("busintro.mi_", "", prefix);
+	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
+	loadSceneLevel("buspuz.mi_", "", prefix);
 
 	loadArcadeLevel("c1", "", "spider");
 	loadArcadeLevel("c2", "", "spider");
