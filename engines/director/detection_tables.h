@@ -2926,6 +2926,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("henachoco04", "", "BENTO.EXE", "3a42f519df56d4cecac5e0915cf90f33", 2330381, Common::JA_JPN, 400),
 
+	MACGAME1_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	WINGAME1_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400),
 
 	MACGAME1_l("henachoco08", "", "yataideomase", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
