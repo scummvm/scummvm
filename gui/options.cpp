@@ -2545,7 +2545,9 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 	for (ConfigManager::DomainMap::const_iterator it = domains.begin(), end = domains.end(); it != end; ++it) {
 		const Common::String target = it->_key;
 		const ConfigManager::Domain domain = it->_value;
-		const Common::String engine = domain["engineid"];
+		// note that engineid isn't present on games that predate it
+		// and haven't been run since it was introduced.
+		const Common::String engine = domain.getValOrDefault("engineid");
 		if (const Plugin *detectionPlugin = EngineMan.findPlugin(engine)) {
 			if (const Plugin *plugin = PluginMan.getEngineFromMetaEngine(detectionPlugin)) {
 				MetaEngine &metaEngine = plugin->get<MetaEngine>();
