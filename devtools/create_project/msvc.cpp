@@ -69,7 +69,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{     "mpeg2", "mpeg2.lib",                 0,               0,                                                 "libmpeg2.lib" },
 		{    "theora", "theora.lib",                0,               0,                                                 "libtheora_static.lib" },
 		{  "freetype", "freetype.lib",              "freetyped.lib", 0,                                                 0 },
-		{      "jpeg", "jpeg.lib",                  "jpegd.lib",     0,                                                 "jpeg-static.lib" },
+		{      "jpeg", "jpeg.lib",                  0,               0,                                                 "jpeg-static.lib" },
 		{"fluidsynth", "fluidsynth.lib",            0,               0,                                                 "libfluidsynth.lib" },
 		{ "fluidlite", "fluidlite.lib",             0,               0,                                                 0 },
 		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", 0 },
