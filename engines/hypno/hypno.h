@@ -263,6 +263,7 @@ public:
 	void loadAssets() override;
 	void loadAssetsDemo();
 	void loadAssetsFullGame();
+	void showCredits() override;
 
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;

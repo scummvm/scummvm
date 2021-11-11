@@ -54,6 +54,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
+	Code *credits = new Code();
+	credits->name = "credits";
+	credits->prefix = prefix;
+	_levels["credits"] = credits;
+
 	Scene *sc;
 	ChangeLevel *cl;
 
@@ -116,6 +121,9 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("mainmenu.mi_");
 	sc->hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel("credits");
+	sc->hots[5].actions.push_back(cl);
 
 	sc = (Scene *) _levels["combmenu.mi_"]; 
 
@@ -189,7 +197,7 @@ void SpiderEngine::loadAssetsDemo() {
 	cl = new ChangeLevel("sixdemo/mis/alley.mis");
 	sc->hots[2].actions.push_back(cl);
 
-	cl = new ChangeLevel("sixdemo/puz_matr");
+	cl = new ChangeLevel("puz_matr");
 	sc->hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/shoctalk.mis");
@@ -215,17 +223,19 @@ void SpiderEngine::loadAssetsDemo() {
 	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "sixdemo");
 
 	Code *matrix = new Code();
-	matrix->name = "sixdemo/puz_matr";
+	matrix->name = "puz_matr";
 	matrix->intros.push_back("spiderman/demo/aleyc01s.smk");
 	matrix->levelIfWin = "sixdemo/mis/demo.mis";
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";
-	_levels["sixdemo/puz_matr"] = matrix;
+	_levels["puz_matr"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
 }
 
 void SpiderEngine::runCode(Code *code) {
-	if (code->name == "sixdemo/puz_matr")
+	if (code->name == "puz_matr")
 		runMatrix(code);
+	else if (code->name == "credits")
+		showCredits();
 	else
 		error("invalid puzzle");
 }
@@ -309,6 +319,12 @@ void SpiderEngine::runMatrix(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void SpiderEngine::showCredits() {
+	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
+	runIntro(video);
+	_nextLevel = "mainmenu.mi_";
 }
 
 } // End of namespace Hypno
