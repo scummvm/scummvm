@@ -136,7 +136,9 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<movies>"] = movies;
 
 	loadArcadeLevel("c31", "c52", "wetlands");
+	_levels["c31.mi_"]->levelIfLose = "c52.mi_";
 	loadArcadeLevel("c52", "<gameover>", "wetlands");
+	_levels["c52.mi_"]->levelIfLose = "<gameover>";
 
 	Transition *over = new Transition();
 	over->level = "<quit>";

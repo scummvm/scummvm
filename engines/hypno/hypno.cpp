@@ -189,7 +189,7 @@ void HypnoEngine::runIntros(Videos &videos) {
 	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
 	stopSound();
-	defaultCursor();
+	//defaultCursor();
 
 	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 		playVideo(*it);

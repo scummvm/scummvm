@@ -280,34 +280,6 @@ public:
 	Filename level;
 };
 
-class Shoot {
-public:
-	Shoot() {
-		destroyed = false;
-		video = nullptr;
-	}
-	Common::String name;
-	Filename animation;
-	Filename startSound;
-	Filename endSound;
-	Common::Point position;
-	int damage;
-	MVideo *video;
-	uint32 explosionFrame;
-	bool destroyed;
-};
-
-typedef Common::Array<Shoot> Shoots;
-
-class ShootInfo {
-public:
-	Common::String name;
-	uint32 timestamp;
-};
-
-typedef Common::List<ShootInfo> ShootSequence;
-typedef Common::Array<Common::String> Sounds;
-
 enum LevelType {
 	TransitionLevel,
 	SceneLevel,
@@ -334,24 +306,68 @@ public:
 	Hotspots hots;
 };
 
+class Shoot {
+public:
+	Shoot() {
+		destroyed = false;
+		video = nullptr;
+	}
+	Common::String name;
+	Filename animation;
+	Filename startSound;
+	Common::Point position;
+
+	uint32 timesToShoot;
+	uint32 pointsToShoot;
+	uint32 attackWeight;
+
+	// Sounds
+	Filename deathSound;
+	Filename hitSound;
+
+	MVideo *video;
+	uint32 attackFrame;
+	uint32 explosionFrame;
+	
+	bool destroyed;
+};
+
+typedef Common::Array<Shoot> Shoots;
+
+class ShootInfo {
+public:
+	Common::String name;
+	uint32 timestamp;
+};
+
+typedef Common::List<ShootInfo> ShootSequence;
+typedef Common::Array<Common::String> Sounds;
+
 class ArcadeShooting : public Level {
 public:
 	ArcadeShooting()  {
 		type = ArcadeLevel;
+		health = 100;
 	}
 	uint32 id;
 	Common::String mode;
-	Common::String levelIfWin;
-	Common::String levelIfLose;
-	Filename transitionVideo;
 	uint32 transitionTime;
-	Filenames defeatVideos;
-	Filenames winVideos;
+
+	// Videos
+	Filename transitionVideo;
+	Filename nextLevelVideo;
+	Filename defeatNoEnergyVideo;
+	Filename defeatMissBossVideo;
+
 	Filename background;
 	Filename player;
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;
+
+	// Sounds 
+	Filename backgroundSound;
+	Filename targetSound;
 	Filename shootSound;
 	Filename enemySound;
 	Filename hitSound;

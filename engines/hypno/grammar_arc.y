@@ -116,10 +116,14 @@ hline: 	CTOK NUM {
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
 			g_parsedArc->intros.push_back($2);
-		else if(Common::String("B1") == $1 || Common::String("B2") == $1)
-			g_parsedArc->winVideos.push_back($2);
-		else if(Common::String("B3") == $1 || Common::String("B4") == $1)
-			g_parsedArc->defeatVideos.push_back($2);
+		//else if (Common::String("B1") == $1) 
+		//	g_parsedArc->nextLevelVideo = $2;
+		else if (Common::String("B2") == $1)
+			g_parsedArc->nextLevelVideo = $2;
+		else if (Common::String("B3") == $1)
+			g_parsedArc->defeatNoEnergyVideo = $2;
+		else if (Common::String("B4") == $1)
+			g_parsedArc->defeatMissBossVideo = $2;
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}
@@ -135,8 +139,7 @@ hline: 	CTOK NUM {
 	}
 	| HETOK C02TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
 	| HETOK CB3TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
-	| HTOK CB3TOK NUM NUM { 
-		g_parsedArc->health = $3;
+	| HTOK CB3TOK NUM NUM {
 		debugC(1, kHypnoDebugParser, "H %d %d", $3, $4); 
 	}
 	;
@@ -248,17 +251,21 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); 
 	}
 	| CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); } 
-	| HTOK NUM  { debugC(1, kHypnoDebugParser, "H %d", $2); }
-	| WTOK NUM  { debugC(1, kHypnoDebugParser, "W %d", $2); }
-	| DTOK NUM  { 
-		shoot->damage = $2;
+	| HTOK NUM  {
+		shoot->attackFrame = $2; 
+		debugC(1, kHypnoDebugParser, "H %d", $2); }
+	| WTOK NUM  {
+		shoot->attackWeight = $2;  
+		debugC(1, kHypnoDebugParser, "W %d", $2); }
+	| DTOK NUM  {
+		shoot->pointsToShoot = $2;  
 		debugC(1, kHypnoDebugParser, "D %d", $2); 
 	}
 	| SNTOK FILENAME enc { 
 		if (Common::String("S1") == $1)
-			shoot->endSound = $2;
-		//else if (Common::String("S2") == $1)
-		//	shoot->startSound = $2;
+			shoot->deathSound = $2;
+		else if (Common::String("S2") == $1)
+			shoot->hitSound = $2;
 		 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
 	| NTOK { debugC(1, kHypnoDebugParser, "N"); }

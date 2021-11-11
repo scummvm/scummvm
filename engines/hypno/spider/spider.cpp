@@ -114,6 +114,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("combmenu.mi_");
 	sc->hots[1].actions.push_back(cl);
 
+	cl = new ChangeLevel("mainmenu.mi_");
+	sc->hots[4].actions.push_back(cl);
+
 	sc = (Scene *) _levels["combmenu.mi_"]; 
 
 	cl = new ChangeLevel("options.mi_");
@@ -125,6 +128,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("c2.mi_");
 	sc->hots[3].actions.push_back(cl);
 
+	cl = new ChangeLevel("c3.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel("c4.mi_");
+	sc->hots[5].actions.push_back(cl);
+
 	cl = new ChangeLevel("c5.mi_");
 	sc->hots[6].actions.push_back(cl);
 
@@ -133,6 +142,16 @@ void SpiderEngine::loadAssetsFullGame() {
 	
 	cl = new ChangeLevel("c9.mi_");
 	sc->hots[8].actions.push_back(cl);
+
+	cl = new ChangeLevel("c10.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	cl = new ChangeLevel("c11.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	cl = new ChangeLevel("c12.mi_");
+	sc->hots[11].actions.push_back(cl);
+
 }
 
 void SpiderEngine::loadAssetsDemo() {
