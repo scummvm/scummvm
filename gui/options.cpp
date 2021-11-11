@@ -928,7 +928,7 @@ void OptionsDialog::apply() {
 
 				ConfMan.setBool("subtitles", subtitles, _domain);
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
-			} else {
+			} else if (!_domain.empty()) {
 				ConfMan.removeKey("subtitles", _domain);
 				ConfMan.removeKey("speech_mute", _domain);
 			}
