@@ -19,7 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Kyra:
    - Added support for the Traditional Chinese version of Legend of Kyrandia 3.
-   - Added sound support for the Macintosh version of Legend of Kyrandia
+   - Added sound support for the Macintosh version of Legend of Kyrandia.
 
  Supernova:
    - Added text to speech for dialogs and object descriptions.
@@ -29,9 +29,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      versions of Loom and Indiana Jones and the Last Crusade.
 
  Xeen:
-   - Fix crash on startup loading constants from xeen.ccs
-   - Fix spell selection aborting when characters were switched
-   - Fixed some bad memory accesses
+   - Fix crash on startup loading constants from xeen.ccs.
+   - Fix spell selection aborting when characters were switched.
+   - Fixed some bad memory accesses.
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
