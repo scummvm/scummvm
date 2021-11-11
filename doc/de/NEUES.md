@@ -5,18 +5,42 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Das ResidualVM GUI-Theme wurde remastered.
+   - Fehler im Punycode-Handling wurde korrigiert.
+
+ AGOS:
+   - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
+
+ AGS:
+   - Anpassungen an den Erkennungs-Einträgen der Spiele durchgeführt.
 
  Grim:
    - Fehlerhafter Standard-Wert für die "Sprechgeschwindigkeit" korrigiert.
    - Schwarzen Bildschirm bei der Eingabe eines Spielstand-Namens korrigiert.
    - OpenGL ohne Shader wird nun als Standard-Einstellung für Grim Fandango bevorzugt.
 
+ Kyra:
+   - Grafikfehler in Legend of Kyrandia 3 behoben.
+
+ SAGA:
+   - Fehler bei der Musikwiedergabe in Inherit the Earth behoben.
+
  SCUMM:
    - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
      Versionen von Loom und Indiana Jones and the Last Crusade.
+   - Verbesserung der OPL3-Sound-Emulation für Sam&Max.
+   - Fehler bei der Musikwiedergabe in The Dig behoben.
+
+TwinE:
+   - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
+
+ Stark:
+   - OpenGL-Renderer (ohne Shader) hinzugefügt.
+   - Behandlung der automatischen Speicherung von Spielständen korrigiert.
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
+   - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
+   - Korrektur einiger fehlerhafter Speicher-Zugriffe.
 
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
