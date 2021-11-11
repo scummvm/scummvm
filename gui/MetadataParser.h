@@ -84,43 +84,52 @@ public:
 protected:
 
 	CUSTOM_XML_PARSER(MetadataParser) {
-		XML_KEY(game)
-			XML_PROP(id, true)
-			XML_PROP(name, true)
-			XML_PROP(engine_id, true)
-			XML_PROP(company_id, true)
-			XML_PROP(moby_id, true)
-			XML_PROP(datafiles, true)
-			XML_PROP(series_id, true)
+		XML_KEY(games)
+			XML_KEY(game)
+				XML_PROP(id, true)
+				XML_PROP(name, true)
+				XML_PROP(engine_id, true)
+				XML_PROP(company_id, true)
+				XML_PROP(moby_id, true)
+				XML_PROP(datafiles, true)
+				XML_PROP(wikipedia_page, true)
+				XML_PROP(series_id, true)
+			KEY_END() // game end
+		KEY_END() // games end
 
-		KEY_END() // game end
-
-		XML_KEY(engine)
-			XML_PROP(id, true)
-			XML_PROP(name, true)
-			XML_PROP(alt_name, true)
-			XML_PROP(enabled, true)
-
-		KEY_END() // engine end
+		XML_KEY(engines)
+			XML_KEY(engine)
+				XML_PROP(id, true)
+				XML_PROP(name, true)
+				XML_PROP(alt_name, true)
+				XML_PROP(enabled, true)
+			KEY_END() // engine end
+		KEY_END() // engines end
 
 		XML_KEY(series)
-			XML_PROP(id, true)
-			XML_PROP(name, true)
-
+			XML_KEY(serie)
+				XML_PROP(id, true)
+				XML_PROP(name, true)
+			KEY_END() // serie end
 		KEY_END() // series end
 
-		XML_KEY(company)
-			XML_PROP(id, true)
-			XML_PROP(name, true)
-			XML_PROP(alt_name, true)
-
-		KEY_END() // company end
+		XML_KEY(companies)
+			XML_KEY(company)
+				XML_PROP(id, true)
+				XML_PROP(name, true)
+				XML_PROP(alt_name, true)
+			KEY_END() // company end
+		KEY_END() // companies end
 	} PARSER_END()
 
 	/** Render info callbacks */
+	bool parserCallback_games(ParserNode *node);
 	bool parserCallback_game(ParserNode *node);
+	bool parserCallback_engines(ParserNode *node);
 	bool parserCallback_engine(ParserNode *node);
 	bool parserCallback_series(ParserNode *node);
+	bool parserCallback_serie(ParserNode *node);
+	bool parserCallback_companies(ParserNode *node);
 	bool parserCallback_company(ParserNode *node);
 
 	bool closedKeyCallback(ParserNode *node) override;

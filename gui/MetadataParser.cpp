@@ -36,7 +36,15 @@ MetadataParser::~MetadataParser() {
 void MetadataParser::cleanup() {
 }
 
+bool MetadataParser::parserCallback_games(ParserNode *node) {
+	return true;
+}
+
 bool MetadataParser::parserCallback_game(ParserNode *node) {
+	return true;
+}
+
+bool MetadataParser::parserCallback_engines(ParserNode *node) {
 	return true;
 }
 
@@ -45,6 +53,14 @@ bool MetadataParser::parserCallback_engine(ParserNode *node) {
 }
 
 bool MetadataParser::parserCallback_series(ParserNode *node) {
+	return true;
+}
+
+bool MetadataParser::parserCallback_serie(ParserNode *node) {
+	return true;
+}
+
+bool MetadataParser::parserCallback_companies(ParserNode *node) {
 	return true;
 }
 
@@ -60,7 +76,7 @@ bool MetadataParser::closedKeyCallback(ParserNode *node) {
 	if (node->name == "engine")
 		_engineInfo[node->values["id"]] = MetadataEngine(node->values["id"], node->values["name"], node->values["alt_name"],
 											true);
-	if (node->name == "series")
+	if (node->name == "serie")
 		_seriesInfo[node->values["id"]] = MetadataSeries(node->values["id"], node->values["name"]);
 	if (node->name == "company")
 		_companyInfo[node->values["id"]] = MetadataCompany(node->values["id"], node->values["name"], node->values["alt_name"]);
