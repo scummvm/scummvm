@@ -9,11 +9,18 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
 
+ AGOS:
+   - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
+
+ AGS:
+   - Anpassungen an den Erkennungs-Einträgen der Spiele durchgeführt.
+
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
  Kyra:
    - Unterstützung für die chinesische Version von Legend of Kyrandia 3 hinzugefügt.
+   - Unterstützung für Audio-Ausgabe in der Macintosh-Version von Legend of Kyrandia hinzugefügt.
 
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
@@ -24,6 +31,8 @@ Programmcodes finden Sie auf Englisch unter:
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
+   - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
+   - Korrektur einiger fehlerhafter Speicher-Zugriffe.
 
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
