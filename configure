@@ -829,7 +829,9 @@ Special configuration feature:
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            maemo for Nokia Maemo
                                            n64 for Nintendo 64
-                                           opendingux for Opendingux Beta
+                                           opendingux-gcw0 for GCW0 with Opendingux Beta
+                                           opendingux-lepus for Lepus with Opendingux Beta
+                                           opendingux-rg99 for RG99 with Opendingux Beta
                                            openpandora for OpenPandora
                                            ouya for OUYA
                                            ps3 for PlayStation 3
@@ -1576,7 +1578,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux | gcw0 | opendingux)
+dingux | gcw0 | opendingux-*)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -3491,7 +3493,7 @@ if test -n "$_host"; then
 			_build_hq_scalers=no
 			_mt32emu=no
 			;;
-		opendingux)
+		opendingux-*)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
 			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE"
@@ -3514,6 +3516,25 @@ if test -n "$_host"; then
 			_backend="opendingux"
 			_port_mk="backends/platform/sdl/opendingux/opendingux.mk"
 			add_line_to_config_mk 'OPENDINGUX = 1'
+			add_line_to_config_mk "OPENDINGUX_TARGET = ${_host#opendingux-}"
+			case "$_host" in
+				opendingux-gcw0)
+					;;
+				opendingux-lepus)
+					append_var DEFINES "-DLEPUS"
+					_highres=no
+					_build_hq_scalers=no
+					;;
+				opendingux-rg99)
+					append_var DEFINES "-DRS90 -DDISABLE_FANCY_THEMES"
+					_16bit=no
+					_highres=no
+					_build_hq_scalers=no
+					;;
+				*)
+					echo "WARNING: Unknown OpenDingux target"
+					;;
+			esac
 			;;
 		openpandora)
 			# Use -O3 on the OpenPandora for optimized builds.

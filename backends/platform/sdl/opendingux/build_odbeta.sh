@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG="./configure --host=opendingux --enable-release --disable-detection-full"
+CONFIG="./configure --host=opendingux-$target --enable-release --disable-detection-full"
 
 case $target in
 
@@ -10,14 +10,10 @@ case $target in
 
         lepus)
 	target2=$target
-	export DEFINES="-DLEPUS"
-        CONFIG+=" --disable-highres --disable-hq-scalers"
         ;;
 
         rg99)
 	target2=rs90
-	export DEFINES="-DRS90 -DDISABLE_FANCY_THEMES"
-        CONFIG+=" --disable-highres --disable-16bit --disable-scalers"
         ;;
         
         *)
