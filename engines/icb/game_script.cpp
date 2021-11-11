@@ -84,13 +84,16 @@ void Init_play_movie(const char *param0, bool8 param1);
 // runs the gamescript until a given bookmark then returns
 // so the pc is set to the correct place for a mission....
 void _game_script::Run_to_bookmark(const char *name) {
+	// FIXME: Branches are identical. Dead code or bug?
+#if 0
 	if ((g_mission) && (g_mission->session)) {
 		// global
 		buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
 	} else {
+#endif
 		// global
 		buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
-	}
+	//}
 
 	char command;
 	char p1[ENGINE_STRING_LEN];
