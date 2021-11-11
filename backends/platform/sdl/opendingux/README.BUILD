@@ -6,12 +6,12 @@ Running Linux on an x86/amd64 machine:
 
 2. git clone the ScummVM repository
 
-3. Run 'target=x backends/platform/sdl/opendingux/build_odbeta.sh' 
+3. Run 'backends/platform/sdl/opendingux/build_odbeta.sh x'
    where x=gcw0|lepus|rg99 
 
    Or if you want a dual opk with one launcher capable of starting games directly 
    for e.g. simplemenu integration :
-   'target=x dualopk=yes backends/platform/sdl/opendingux/build_odbeta.s' 
+   'backends/platform/sdl/opendingux/build_odbeta.sh x dualopk'
 
 4. Copy the resulting file scummvm_$(target).opk or scummvm_$(target)_dual.opk to your device
 
