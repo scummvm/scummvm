@@ -182,7 +182,7 @@ void SoundMac::playTrack(uint8 track) {
 	} else if (track == 0 || track == 1) {
 		beginFadeOut();
 		return;
-	} else if (_currentResourceSet == kMusicFinale) {
+	} else if (_currentResourceSet == kMusicFinale && track == 2) {
 		_driver->doCommand(1, 0x12c);
 		return;
 	} else {
