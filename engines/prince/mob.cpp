@@ -62,8 +62,6 @@ bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
 	while ((c = stream.readByte()))
 		_name += c;
 
-	debug("_name: %s", _name.c_str());
-
 	stream.seek(examTextOffset);
 	_examText.clear();
 	c = stream.readByte();
@@ -71,7 +69,6 @@ bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
 		_examText += c;
 		do {
 			c = stream.readByte();
-			debug("%d (%c)", c, (c >= 32 && c < 255) ? c : '.');
 			_examText += c;
 		} while (c != 255);
 	}
