@@ -82,7 +82,7 @@ public:
 		if (saveGameIdx == kSavegameFilePattern)
 			return Common::String::format("pegasus-*.sav");
 		Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
-		if (saveGameIdx < fileNames.size())
+		if (saveGameIdx < (int)fileNames.size())
 			return fileNames[saveGameIdx];
 		if (fileNames.empty())
 			return Common::String("pegasus-1.sav");
