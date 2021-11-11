@@ -1252,7 +1252,7 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+			attrs.push_back(metadata[i]->getValOrDefault("description").substr(0, 1));
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
