@@ -196,6 +196,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		switch (c - 1) {
 		case 0:
 			printLine(_currentLine);
+			_screen->updateScreen();
 			textPageBreak();
 			_numCharsPrinted = 0;
 			break;
@@ -264,6 +265,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		printLine(_currentLine);
 
 	_screen->setFont(of);
+	_screen->updateScreen();
 }
 
 char TextDisplayer_rpg::parseCommand() {
@@ -331,6 +333,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	while (_textDimData[sdx].line >= lines) {
 		if ((lines - _waitButtonSpace) <= _lineCount && _allowPageBreak) {
 			_lineCount = 0;
+			_screen->updateScreen();
 			textPageBreak();
 			_numCharsPrinted = 0;
 		}
@@ -505,7 +508,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 		_screen->printText(str, x1 & ~3, (y + 8) & ~7, col, 0);
 	} else {
 		_screen->printText(str, x1, y, col, _textDimData[sdx].color2);
-		_screen->updateScreen();
 	}
 
 	_textDimData[sdx].column += lw;

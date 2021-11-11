@@ -207,6 +207,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 				gui_drawInventoryItem(27, 1, 2);
 
 			_screen->setFont(cf);
+			_screen->updateScreen();
 
 		} else {
 			_screen->setFont(cf);
@@ -541,7 +542,6 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 		drawItemIconShape(pageNum, item, x, y);
 	}
 	_screen->_curPage = cp;
-	_screen->updateScreen();
 }
 
 void EoBCoreEngine::gui_drawCharacterStatsPage() {
@@ -1490,6 +1490,8 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 			setHandItem(itm);
 		}
 
+		_screen->updateScreen();
+
 	} else if (slot == 27) {
 		gui_displayMap();
 
@@ -1498,6 +1500,7 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 		_characters[_updateCharNum].inventory[slot] = ih;
 		gui_drawInventoryItem(slot, 1, 0);
 		recalcArmorClass(_updateCharNum);
+		_screen->updateScreen();
 	}
 }
 
@@ -2147,10 +2150,12 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + currentItem * lineH, _menuTextColor, _menuShadowColor);
 			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + newItem * lineH, _menuHighlightColor, _menuShadowColor);
+			_screen->sega_getRenderer()->render(0, 6, 20, 26, 5);
 		} else {
 			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, _menuTextColor, 0);
 			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _menuHighlightColor, 0);
 		}
+		_screen->updateScreen();
 	}
 
 	if (result != -1) {

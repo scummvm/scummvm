@@ -209,6 +209,8 @@ int EoBCoreEngine::deleteInventoryItem(int charIndex, int slot) {
 
 		if (_currentControlMode == 0)
 			gui_drawCharPortraitWithStats(charIndex);
+
+		_screen->updateScreen();
 	}
 
 	return _items[itm].value;
@@ -331,6 +333,8 @@ bool EoBCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 			res = true;
 		}
 	}
+
+	_screen->updateScreen();
 
 	return res;
 }
