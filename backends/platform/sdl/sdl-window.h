@@ -52,6 +52,11 @@ public:
 	void grabMouse(bool grab);
 
 	/**
+	 * Specify the area of the window to confine the mouse cursor.
+	 */
+	void setMouseRect(const Common::Rect &rect);
+
+	/**
 	 * Lock or unlock the mouse cursor within the window.
 	 */
 	bool lockMouse(bool lock);
@@ -124,6 +129,7 @@ public:
 private:
 	Common::Rect _desktopRes;
 	bool _inputGrabState, _inputLockState;
+	SDL_Rect grabRect;
 
 protected:
 	void getDisplayDpi(float *dpi, float *defaultDpi) const;

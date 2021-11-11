@@ -182,6 +182,8 @@ protected:
 
 	void setSystemMousePosition(const int x, const int y) override;
 
+	void notifyActiveAreaChanged() override;
+
 	void handleResizeImpl(const int width, const int height) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
