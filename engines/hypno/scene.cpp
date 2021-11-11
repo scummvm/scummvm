@@ -259,8 +259,14 @@ void HypnoEngine::runScene(Scene *scene) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
-						if (it->decoder)
+						if (it->decoder) {
 							skipVideo(*it);
+							if (it->scaled) {
+								runMenu(*stack.back());
+								drawScreen();
+							}
+						}
+
 					}
 					_videosPlaying.clear();
 

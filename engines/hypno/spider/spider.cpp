@@ -82,20 +82,21 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("bank.mi_", "", prefix);
 	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
 	loadSceneLevel("buspuz.mi_", "", prefix);
+	loadSceneLevel("alley.mi_", "", prefix);
 
-	loadArcadeLevel("c1", "", "spider");
-	loadArcadeLevel("c2", "", "spider");
-	loadArcadeLevel("c3", "", "spider");
-	loadArcadeLevel("c4", "", "spider");
-	loadArcadeLevel("c5", "", "spider");
+	loadArcadeLevel("c1", "", prefix);
+	loadArcadeLevel("c2", "", prefix);
+	loadArcadeLevel("c3", "", prefix);
+	loadArcadeLevel("c4", "", prefix);
+	loadArcadeLevel("c5", "", prefix);
 	//loadArcadeLevel("c6", "", "spider");
 	// No c7 level?
-	loadArcadeLevel("c8", "", "spider");
-	loadArcadeLevel("c9", "", "spider");
-	loadArcadeLevel("c10", "", "spider");
-	loadArcadeLevel("c11", "", "spider");
-	loadArcadeLevel("c12", "", "spider");
-	loadArcadeLevel("c13", "", "spider");
+	loadArcadeLevel("c8", "", prefix);
+	loadArcadeLevel("c9", "", prefix);
+	loadArcadeLevel("c10", "", prefix);
+	loadArcadeLevel("c11", "", prefix);
+	loadArcadeLevel("c12", "", prefix);
+	loadArcadeLevel("c13", "", prefix);
 
 	// start level
 	Transition *start = new Transition();

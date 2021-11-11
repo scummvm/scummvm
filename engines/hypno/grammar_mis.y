@@ -86,7 +86,7 @@ lines: line lines
 	; 
 
 
-line: MENUTOK mflag mflag  {
+line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = new Hotspot(MakeMenu, $2); 
 		debugC(1, kHypnoDebugParser, "MENU %s %s", $2, $3);
 		Hotspots *cur = stack->back();
