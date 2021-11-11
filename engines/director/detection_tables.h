@@ -3059,8 +3059,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("jman2", "", "Buried in Time PowerPC", "71287376e445ab9c98f0d150bb0ed175", 86324, Common::DE_DEU, 400),
 	MACDEMO1("jman2", "Demo", "Buried in Time Demo", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 400),
 	MACDEMO1("jman2", "06/22/94 Demo", "Buried in Time Demo", "cdb27c916044ae4dceb4b7326063fa03", 328895, 400),
-	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-yp97h", "cdb27c916044ae4dceb4b7326063fa03", 329851, 400),
-	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-eo0l", "cdb27c916044ae4dceb4b7326063fa03", 329851, 400),
+	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-yp97h", "cdb27c916044ae4dceb4b7326063fa03", 329595, 400),
+	MACDEMO1("jman2", "06/22/94 Demo 2", "xn--Buried in Time Demo-eo0l", "cdb27c916044ae4dceb4b7326063fa03", 329595, 400),
 	MACDEMO1("jman2", "Final Demo", "Buried in Time Demo", "cc3321069072b90f091f220bba16e4d4", 292731, 400),
 	MACDEMO1("jman2", "Gallery", "BIT Gallery", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 	MACDEMO1("jman2", "Overview", "BIT Overview", "01be45e7241194dad07938e7059b88e3", 484284, 400),
@@ -3157,7 +3157,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("makers", "", "MAKERS.EXE", "d879d7b40dd9f2eb59a2fbae5bc62306", 690883, 404),
 
 	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301861, Common::JA_JPN, 400),
-	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301925, Common::JA_JPN, 400),
+	MACDEMO1_l("manhole", "Masterpiece Edition Demo", "The Manhole DEMO", "583a2d78dfcc184f2fbabfd3187322c1", 301669, Common::JA_JPN, 400),
 
 	// Windows version on same disc is D3
 	MACGAME1("mask", "", "The Mask", "32a48ccef630fd453ac3501f72474545", 291308, 403),
@@ -3252,7 +3252,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("mrsquack", "", "QUACK.EXE", "5f80de56cd9c653721b451b752189264", 763381, 404),
 
 	// Original filename 'ＭＳ制服図鑑でも'
-	MACDEMO1_l("msseifuku", "Demo", "xn--n9juc805lw7d3myt85ddl2inba", "8ea9e9a699c61edddffd79ddd0c994d7", 289746, Common::JA_JPN, 402),
+	MACDEMO1_l("msseifuku", "Demo", "xn--n9juc805lw7d3myt85ddl2inba", "8ea9e9a699c61edddffd79ddd0c994d7", 289490, Common::JA_JPN, 402),
+	// Alternate decomposed filename format
+	MACDEMO1_l("msseifuku", "Demo", "xn--m9jwc6c242pk7ev40awn6eywzjtba", "8ea9e9a699c61edddffd79ddd0c994d7", 289490, Common::JA_JPN, 402),
 
 	// Demos from Microsoft Exposition CD
 	WINDEMO1("ms500nations",   "Demo",			  "500NAT.EXE",	  "d74e6aa33e11561a38eb82dd52b91613", 2284149, 404),
@@ -3750,10 +3752,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("vusic", "Demo", "VUSIC.EXE", "ff2c0a776d5f0c9aa5bc115d3b36676b", 693375, 400),
 
 	// Original filename 'ワロビージャックの大冒険<デモ>'
-	MACDEMO2_l("wallobee", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036,
-		"001b.mov", "2b49fe4e49f9e846fb6e78f92e9a296d", 6931,
+	MACDEMO2_l("wallobee", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 290780,
+		"001b.mov", "2b49fe4e49f9e846fb6e78f92e9a296d", 6675,
 		Common::JA_JPN, 402),
-	MACDEMO2_l("wallobee2", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 291036,
+	MACDEMO2_l("wallobee2", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 290780,
 		"000.MOV", "92db07a408eca6bc0ebc230e31e6caa4", 461940,
 		Common::JA_JPN, 402),
 
@@ -3763,6 +3765,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Published in Japan by NEC and Emotion Digital (Bandai), Taito City, Tokyo
 	WINGAME2t_l("warlock", "", "START.EXE",	   "c2ceb9ac99aaf6a5020c9e9adf42ac91", 694159,
 							   "SSWARLCK.DIR", "3713bde5de54cd74cafacbe430134022", 608862, Common::JA_JPN, 400),
+	MACDEMO2_l("warlock", "Demo", "sswdemo",	   "9e3f05103eeb6b4b356e3c7c1e9b6802", 288134,
+							   "SSWdemo.DIR", "12a30501049536d72d5d46e285f48c47", 10112, Common::JA_JPN, 402),
 
 	// Original Mac filename is わりわりワールド_デモ
 	MACDEMO1_l("wariwari", "Demo", "Wari Wari World Demo", "f808a9f231b77617fa559cf9d2da66c1", 502975, Common::JA_JPN, 400),
@@ -3915,7 +3919,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("backpackerjrdiy", "v1.1", "DIY.exe", "8a71d255edf60f7e8a0641206da26fcc", 1467987, Common::EN_ANY, 501),
 
 	// Original filename is 'かわら盤Vol.03'
-	MACGAME1_l("bandaipreviews3", "", "xn--Vol.03-953eurwbv611j", "33f733b2809b94c3301096902f642b6e", 293102, Common::JA_JPN, 402),
+	MACGAME1_l("bandaipreviews3", "", "xn--Vol.03-953eurwbv611j", "33f733b2809b94c3301096902f642b6e", 292846, Common::JA_JPN, 402),
 
 	// Based on the Australian TV children's TV series
 	// Swedish released in association with Lattjo Lajban (1998)
