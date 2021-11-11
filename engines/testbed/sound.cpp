@@ -21,10 +21,13 @@
  */
 
 #include "audio/softsynth/pcspk.h"
+#include "audio/mods/mod_xm_s3m.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
 
 #include "testbed/sound.h"
 
@@ -173,6 +176,79 @@ TestExitStatus SoundSubsystem::mixSounds() {
 	return passed;
 }
 
+const char *music[] = {
+	"music0167.xm",
+	"music0360.xm",
+	"music0077.it",
+	"music0078.it",
+	0
+};
+
+TestExitStatus SoundSubsystem::modPlayback() {
+	Testsuite::clearScreen();
+	TestExitStatus passed = kTestPassed;
+	Common::String info = "Testing Module Playback\n"
+			"You should hear 4 melodies\n";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Mod Playback\n");
+		return kTestSkipped;
+	}
+
+	Common::FSNode gameRoot(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
+
+	Common::File f;
+	Audio::Mixer *mixer = g_system->getMixer();
+	Common::Point pt(0, 100);
+	Common::Point pt2(0, 110);
+
+	for (int i = 0; music[i]; i++) {
+		f.open(music[i]);
+
+		if (!f.isOpen())
+			continue;
+
+		Audio::RewindableAudioStream *mod = Audio::makeModXmS3mStream(&f, DisposeAfterUse::NO);
+		if (!mod) {
+			Testsuite::displayMessage(Common::String::format("Could not load MOD file '%s'", music[i]));
+			f.close();
+
+			continue;
+		}
+
+		Audio::SoundHandle handle;
+
+		mixer->playStream(Audio::Mixer::kMusicSoundType, &handle, mod);
+
+		Common::EventManager *eventMan = g_system->getEventManager();
+		Common::Event event;
+
+		while (mixer->isSoundHandleActive(handle)) {
+			g_system->delayMillis(10);
+			Testsuite::writeOnScreen(Common::String::format("Playing Now: %s", music[i]), pt);
+			Testsuite::writeOnScreen("Press 'S' to stop", pt2);
+
+			if (eventMan->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_s)
+					break;
+			}
+		}
+		g_system->delayMillis(10);
+
+		mixer->stopAll();
+		f.close();
+	}
+
+	mixer->stopAll();
+
+	if (Testsuite::handleInteractiveInput("Were you able to hear the music?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! No MOD playback\n");
+		passed = kTestFailed;
+	}
+	return passed;
+}
+
 TestExitStatus SoundSubsystem::audiocdOutput() {
 	Testsuite::clearScreen();
 	TestExitStatus passed = kTestPassed;
@@ -264,6 +340,7 @@ TestExitStatus SoundSubsystem::sampleRates() {
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SimpleBeeps", &SoundSubsystem::playBeeps, true);
 	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
+	addTest("MODPlayback", &SoundSubsystem::modPlayback, true);
 
 	// Make audio-files discoverable
 	Common::FSNode gameRoot(ConfMan.get("path"));

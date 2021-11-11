@@ -45,6 +45,7 @@ namespace SoundSubsystem {
 // will contain function declarations for SoundSubsystem tests
 TestExitStatus playBeeps();
 TestExitStatus mixSounds();
+TestExitStatus modPlayback();
 TestExitStatus audiocdOutput();
 TestExitStatus sampleRates();
 }
