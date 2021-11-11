@@ -1221,7 +1221,9 @@ struct CreditsLine {
 
 void KyraEngine_LoK::seq_playCredits() {
 	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static const char stringTerms[] = { 0x5, 0xD, 0x0};
+	static const char stringTermsDef[] = { 0x5, 0xD, 0x0};
+	static const char stringTermsMac[] = { 0x5, 0xA, 0x0 };
+	const char *stringTerms = (_flags.platform == Common::kPlatformMacintosh) ? stringTermsMac : stringTermsDef;
 
 	typedef Common::List<CreditsLine> CreditsLineList;
 	CreditsLineList lines;
