@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-10 21:49+0000\n"
+"POT-Creation-Date: 2021-11-11 21:30+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -126,7 +126,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:441 gui/launcher.cpp:470 gui/launcher.cpp:513
-#: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3029 gui/options.cpp:3067 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -138,7 +138,7 @@ msgstr "हाँ"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:441 gui/launcher.cpp:470 gui/launcher.cpp:513
-#: gui/options.cpp:3027 gui/options.cpp:3065 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3029 gui/options.cpp:3067 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -245,7 +245,7 @@ msgstr "गेम की भाषा। यह आपके स्पैनि�
 #: gui/options.cpp:1418 gui/options.cpp:1431 gui/options.cpp:1445
 #: gui/options.cpp:1457 gui/options.cpp:1477 gui/options.cpp:1489
 #: gui/options.cpp:1863 gui/options.cpp:2266 gui/options.cpp:2339
-#: gui/options.cpp:2511 gui/options.cpp:2915 audio/null.cpp:41
+#: gui/options.cpp:2511 gui/options.cpp:2917 audio/null.cpp:41
 msgid "<default>"
 msgstr "<default>"
 
@@ -433,21 +433,21 @@ msgstr ""
 #: gui/editgamedialog.cpp:575 gui/editgamedialog.cpp:642 gui/options.cpp:2150
 #: gui/options.cpp:2156 gui/options.cpp:2164 gui/options.cpp:2195
 #: gui/options.cpp:2238 gui/options.cpp:2246 gui/options.cpp:2255
-#: gui/options.cpp:2622 gui/options.cpp:2628 gui/options.cpp:2635
-#: gui/options.cpp:2644 gui/options.cpp:2899 gui/options.cpp:2902
-#: gui/options.cpp:2909 gui/options.cpp:2921 gui/options.cpp:2932
+#: gui/options.cpp:2624 gui/options.cpp:2630 gui/options.cpp:2637
+#: gui/options.cpp:2646 gui/options.cpp:2901 gui/options.cpp:2904
+#: gui/options.cpp:2911 gui/options.cpp:2923 gui/options.cpp:2934
 msgctxt "path"
 msgid "None"
 msgstr "कोई नहीं"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
-#: gui/editgamedialog.cpp:646 gui/options.cpp:2144 gui/options.cpp:2616
-#: gui/options.cpp:2905 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:646 gui/options.cpp:2144 gui/options.cpp:2618
+#: gui/options.cpp:2907 backends/platform/wii/options.cpp:56
 #, fuzzy
 msgid "Default"
 msgstr "<अनुपस्थिति>"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2926
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2928
 msgid "Select SoundFont"
 msgstr ""
 
@@ -456,12 +456,12 @@ msgstr ""
 msgid "Select additional game directory"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2834
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2836
 #, fuzzy
 msgid "Select directory for saved games"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2841
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2843
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 
@@ -1365,7 +1365,7 @@ msgid "ScummVM config path: "
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2271 gui/options.cpp:2915
+#: gui/options.cpp:2271 gui/options.cpp:2917
 msgid "Last browser path: "
 msgstr ""
 
@@ -1515,7 +1515,7 @@ msgstr ""
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 
-#: gui/options.cpp:2422 gui/options.cpp:3265
+#: gui/options.cpp:2422 gui/options.cpp:3267
 #, fuzzy
 msgid "<never>"
 msgstr "कभी नहीँ"
@@ -1619,7 +1619,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:2463 gui/options.cpp:3380
+#: gui/options.cpp:2463 gui/options.cpp:3382
 msgid "Not running"
 msgstr ""
 
@@ -1675,16 +1675,16 @@ msgstr ""
 msgid "None"
 msgstr "कोई नहीं"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2570
 msgid "Ignore"
 msgstr ""
 
-#: gui/options.cpp:2569
+#: gui/options.cpp:2571
 #, fuzzy
 msgid "Disable autosave"
 msgstr "रद्द करदो"
 
-#: gui/options.cpp:2570
+#: gui/options.cpp:2572
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1693,111 +1693,111 @@ msgid ""
 "List of games:\n"
 msgstr ""
 
-#: gui/options.cpp:2579
+#: gui/options.cpp:2581
 #, fuzzy
 msgid ""
 "\n"
 "And more..."
 msgstr "नया गेम जोड़ें (A)..."
 
-#: gui/options.cpp:2580 engines/engine.cpp:582
+#: gui/options.cpp:2582 engines/engine.cpp:582
 #, fuzzy
 msgid "Move"
 msgstr "नीचे देखो"
 
-#: gui/options.cpp:2593
+#: gui/options.cpp:2595
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr ""
 
-#: gui/options.cpp:2680
+#: gui/options.cpp:2682
 msgid "Failed to change cloud storage!"
 msgstr ""
 
-#: gui/options.cpp:2683
+#: gui/options.cpp:2685
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:2773
+#: gui/options.cpp:2775
 msgid "Theme does not support selected language!"
 msgstr ""
 
-#: gui/options.cpp:2776
+#: gui/options.cpp:2778
 msgid "Theme cannot be loaded!"
 msgstr ""
 
-#: gui/options.cpp:2779
+#: gui/options.cpp:2781
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
 
-#: gui/options.cpp:2850
+#: gui/options.cpp:2852
 #, fuzzy
 msgid "Select directory for GUI themes"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/options.cpp:2860
+#: gui/options.cpp:2862
 #, fuzzy
 msgid "Select directory for extra files"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/options.cpp:2871
+#: gui/options.cpp:2873
 #, fuzzy
 msgid "Select directory for plugins"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/options.cpp:2884
+#: gui/options.cpp:2886
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
-#: gui/options.cpp:3002
+#: gui/options.cpp:3004
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 
-#: gui/options.cpp:3027
+#: gui/options.cpp:3029
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3036 gui/options.cpp:3074
+#: gui/options.cpp:3038 gui/options.cpp:3076
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/options.cpp:3049
+#: gui/options.cpp:3051
 msgid "Connecting..."
 msgstr ""
 
-#: gui/options.cpp:3065
+#: gui/options.cpp:3067
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3263 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3265 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:3372
+#: gui/options.cpp:3374
 msgid "Stop server"
 msgstr ""
 
-#: gui/options.cpp:3373
+#: gui/options.cpp:3375
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:3425
+#: gui/options.cpp:3427
 msgid "Storage connected."
 msgstr ""
 
-#: gui/options.cpp:3427
+#: gui/options.cpp:3429
 msgid "Failed to connect storage."
 msgstr ""
 
-#: gui/options.cpp:3429
+#: gui/options.cpp:3431
 msgid "Failed to connect storage: "
 msgstr ""
 
-#: gui/options.cpp:3449
+#: gui/options.cpp:3451
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
