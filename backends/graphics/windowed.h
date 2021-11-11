@@ -63,6 +63,7 @@ public:
 		_activeArea.height = getOverlayHeight();
 		_overlayVisible = true;
 		_forceRedraw = true;
+		notifyActiveAreaChanged();
 	}
 
 	void hideOverlay() override {
@@ -74,6 +75,7 @@ public:
 		_activeArea.height = getHeight();
 		_overlayVisible = false;
 		_forceRedraw = true;
+		notifyActiveAreaChanged();
 	}
 
 	bool isOverlayVisible() const override { return _overlayVisible; }
@@ -211,6 +213,7 @@ protected:
 			_activeArea.width = getWidth();
 			_activeArea.height = getHeight();
 		}
+		notifyActiveAreaChanged();
 	}
 
 	/**
@@ -221,6 +224,11 @@ protected:
 	 * @param y Y coordinate in window coordinates.
 	 */
 	virtual void setSystemMousePosition(const int x, const int y) = 0;
+
+	/**
+	 * Called whenever the active area has changed.
+	 */
+	virtual void notifyActiveAreaChanged() {}
 
 	bool showMouse(bool visible) override {
 		if (_cursorVisible == visible) {

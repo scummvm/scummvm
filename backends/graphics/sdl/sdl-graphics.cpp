@@ -282,6 +282,10 @@ void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 	}
 }
 
+void SdlGraphicsManager::notifyActiveAreaChanged() {
+	_window->setMouseRect(_activeArea.drawRect);
+}
+
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	_forceRedraw = true;
 }
