@@ -91,12 +91,12 @@ fi
 echo "Creating an iso file based on '$FOLDER'."
 
 check_for_tool mksquashfs
-if [ $(/usr/bin/mksquashfs -version | awk 'BEGIN{r=0} $3>=4{r=1} END{print r}') -eq 0 ];
+if [ $(mksquashfs -version | awk 'BEGIN{r=0} $3>=4{r=1} END{print r}') -eq 0 ];
 then
 	echo "ERROR: Your squashfs version is older then version 4, please upgrade to 4.0 or later"
 	exit 1
 fi
-/usr/bin/mksquashfs $FOLDER $OPKNAME.opk -noappend -no-exports -no-xattrs
+mksquashfs $FOLDER $OPKNAME.opk -noappend -no-exports -no-xattrs
 
 # Final message
 if [ -f $OPKNAME.opk ];
