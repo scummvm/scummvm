@@ -347,7 +347,7 @@ void GroupedListWidget::drawWidget() {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = g_gui.getFontHeight();
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
-		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleNormal;
+		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos)
