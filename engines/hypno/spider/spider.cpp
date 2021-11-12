@@ -54,6 +54,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
+	//loadLib("", "c_misc/fonts.lib", true);
+	loadLib("spider/sound.lib/", "spider/c_misc/sound.lib", true);
+
 	Code *credits = new Code();
 	credits->name = "credits";
 	credits->prefix = prefix;
@@ -64,14 +67,22 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("mainmenu.mi_", "", prefix);
 	loadSceneLevel("tryagain.mi_", "", prefix);
+
+	cl = new ChangeLevel("mainmenu.mi_");
+	sc = (Scene *) _levels["tryagain.mi_"];
+	sc->hots[1].actions.push_back(cl);
+
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
 	_levels["mv0t.mi_"]->intros.push_back("cine/ints001s.smk");
+	_levels["mv0t.mi_"]->music = "sound.lib/sm001.raw";
 
 	loadSceneLevel("roof.mi_", "decide1.mi_", prefix);
+	_levels["roof.mi_"]->music = "sound.lib/ros_mus.raw";
+
 	loadSceneLevel("decide1.mi_", "", prefix);
 	sc = (Scene *) _levels["decide1.mi_"];
 	cl = new ChangeLevel("bank.mi_");
@@ -80,11 +91,30 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(cl);
 
 	loadSceneLevel("bank.mi_", "", prefix);
+	_levels["bank.mi_"]->intros.push_back("cine/swcs001s.smk");
+
 	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
 	loadSceneLevel("buspuz.mi_", "", prefix);
+	_levels["buspuz.mi_"]->intros.push_back("cine/apts004s.smk");
 	loadSceneLevel("alley.mi_", "", prefix);
+	_levels["alley.mi_"]->levelIfWin = "<bank>";
+	_levels["alley.mi_"]->music = "alleymus.raw";
+	_levels["alley.mi_"]->intros.push_back("cine/aleyc01s.smk");
 
-	loadArcadeLevel("c1", "", prefix);
+	loadArcadeLevel("c1", "<over_apt_1>", prefix);
+	_levels["c1.mi_"]->intros.push_back("cine/ross002s.smk");
+
+	Transition *bankEasy = new Transition();
+	bankEasy->level = "buspuz.mi_";
+	bankEasy->intros.push_back("spider/cine/dia002s.smk");
+	_levels["<bank_easy>"] = bankEasy;
+
+	Transition *bankHard = new Transition();
+	bankHard->level = "buspuz.mi_";
+	bankHard->intros.push_back("spider/cine/bals003s.smk");
+	_levels["<bank_hard>"] = bankHard;
+
+	// Easy arcade levels
 	loadArcadeLevel("c2", "", prefix);
 	loadArcadeLevel("c3", "", prefix);
 	loadArcadeLevel("c4", "", prefix);
@@ -97,6 +127,29 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c11", "", prefix);
 	loadArcadeLevel("c12", "", prefix);
 	loadArcadeLevel("c13", "", prefix);
+
+	// Hard arcade levels
+	loadArcadeLevel("c1h", "", prefix);
+	loadArcadeLevel("c2h", "", prefix);
+	loadArcadeLevel("c3h", "", prefix);
+	loadArcadeLevel("c4h", "", prefix);
+	loadArcadeLevel("c5h", "", prefix);
+	//loadArcadeLevel("c6h", "", "spider");
+	// No c7h level?
+	loadArcadeLevel("c8h", "", prefix);
+	loadArcadeLevel("c9h", "", prefix);
+	loadArcadeLevel("c10h", "", prefix);
+	loadArcadeLevel("c11h", "", prefix);
+	loadArcadeLevel("c12h", "", prefix);
+	loadArcadeLevel("c13h", "", prefix);
+
+
+	// Hardcoded levels
+	Code *matrix = new Code();
+	matrix->name = "<puz_matr>";
+	matrix->intros.push_back("spider/cine/aleyc01s.smk");
+	matrix->levelIfWin = "";
+	_levels["<puz_matr>"] = matrix;
 
 	// start level
 	Transition *start = new Transition();
@@ -123,7 +176,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("mainmenu.mi_");
 	sc->hots[4].actions.push_back(cl);
 
-	cl = new ChangeLevel("credits");
+	cl = new ChangeLevel("<credits>");
 	sc->hots[5].actions.push_back(cl);
 
 	sc = (Scene *) _levels["combmenu.mi_"]; 
@@ -161,6 +214,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("c12.mi_");
 	sc->hots[11].actions.push_back(cl);
 
+	// Game overs
+	Transition *over_apt_1 = new Transition();
+	over_apt_1->level = "tryagain.mi_";
+	over_apt_1->intros.push_back("spider/cine/apts01as.smk");
+	_levels["<over_apt_1>"] = over_apt_1;
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -224,18 +282,18 @@ void SpiderEngine::loadAssetsDemo() {
 	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "sixdemo");
 
 	Code *matrix = new Code();
-	matrix->name = "puz_matr";
+	matrix->name = "<puz_matr>";
 	matrix->intros.push_back("spiderman/demo/aleyc01s.smk");
 	matrix->levelIfWin = "sixdemo/mis/demo.mis";
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";
-	_levels["puz_matr"] = matrix;
+	_levels["<puz_matr>"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
 }
 
 void SpiderEngine::runCode(Code *code) {
-	if (code->name == "puz_matr")
+	if (code->name == "<puz_matr>")
 		runMatrix(code);
-	else if (code->name == "credits")
+	else if (code->name == "<credits>")
 		showCredits();
 	else
 		error("invalid puzzle");
@@ -265,9 +323,17 @@ void SpiderEngine::runMatrix(Code *code) {
 	uint32 activeColor = _pixelFormat.RGBToColor(0, 130, 0);
 	uint32 deactiveColor = _pixelFormat.RGBToColor(0, 0, 0);
 
-	loadImage("sixdemo/puz_matr/matrixbg.smk", 0, 0, false);
-	MVideo v("sixdemo/puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
-	playVideo(v);
+	MVideo *v;
+
+	if (isDemo()) {
+		loadImage("sixdemo/puz_matr/matrixbg.smk", 0, 0, false);
+		v = new MVideo("sixdemo/puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
+	} else {
+		loadImage("spider/puz_ally/matrixbg.smk", 0, 0, false);
+		v = new MVideo("spider/puz_ally/matintro.smk", Common::Point(0, 0), false, false, false);
+	}
+
+	playVideo(*v);
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -280,7 +346,11 @@ void SpiderEngine::runMatrix(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
+				if (isDemo())
+					playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
+				else
+					playSound("spider/sound.lib/matrix.raw", 1);
+
 				if (matrix.contains(mousePos)) {
 					int x = (mousePos.x - 175) / 29;
 					int y = (mousePos.y - 96) / 29;
@@ -308,13 +378,19 @@ void SpiderEngine::runMatrix(Code *code) {
 		}
 
 		if (found) {
-			playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
+			if (isDemo())
+				playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
+			else {
+				MVideo video("spider/cine/shv001s.smk", Common::Point(0, 0), false, false, false);
+				runIntro(video);
+			}
+
 			_nextLevel = code->levelIfWin;
 			return;
 		}
 
-		if (v.decoder->needsUpdate()) {
-			updateScreen(v);
+		if (v->decoder->needsUpdate()) {
+			updateScreen(*v);
 		}
 
 		drawScreen();
