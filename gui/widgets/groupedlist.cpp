@@ -466,7 +466,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 			bool matches = true;
 			tok.reset();
 			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
+				if (!_filterMatcher(_filterMatcherArg, n, tmp, tok.nextToken())) {
 					matches = false;
 					break;
 				}
