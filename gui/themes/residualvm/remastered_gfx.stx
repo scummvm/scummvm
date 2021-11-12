@@ -26,9 +26,7 @@
 		<color name = 'background'
 				rgb = '29, 112, 149'
 		/>
-		<color name = 'brightorange'
-				rgb = '72, 137, 167'
-		/>
+
 		<color name = 'thumb_color'
 				rgb = '42, 38, 35'
 		/>
@@ -134,9 +132,9 @@
 		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg' width = '16' height = '16'/>
-		<bitmap filename = 'button_play.bmp'/>
-		<bitmap filename = 'button_load.bmp'/>
-		<bitmap filename = 'button_options.bmp'/>
+		<bitmap filename = 'button_play.bmp' scalable_file = 'button_play.svg' width = '15' height = '15'/>
+		<bitmap filename = 'button_load.bmp' scalable_file = 'button_load.svg' width = '15' height = '15'/>
+		<bitmap filename = 'button_options.bmp' scalable_file = 'button_options.svg' width = '15' height = '15'/>
 	</bitmaps>
 
 	<fonts>
@@ -1030,7 +1028,7 @@
 		<drawstep	func = 'roundedsq'
 					radius = '5'
 					fill = 'background'
-					bg_color = 'xtrabrightred'
+					bg_color = 'dialog_background'
 		/>
 	</drawdata>
 
@@ -1040,7 +1038,7 @@
 					stroke = '2'
 					fg_color = 'black'
 					fill = 'background'
-					bg_color = 'xtrabrightred'
+					bg_color = 'dialog_background'
 		/>
 	</drawdata>
 

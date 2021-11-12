@@ -183,7 +183,6 @@
 						textalign = 'center'
 				/>
 				<space />
-				<space />
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'GameList'/>
