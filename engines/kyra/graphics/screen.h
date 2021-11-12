@@ -272,6 +272,7 @@ public:
 protected:
 	uint16 _textColor[2];
 	const uint8 *_colorMap;
+	bool _border;
 
 private:
 	virtual bool hasGlyphForCharacter(uint16 c) const = 0;
@@ -285,12 +286,11 @@ private:
 	const uint8 *_glyphData;
 	uint32 _glyphDataSize;
 	const uint16 _pitch;
-	bool _border;
 };
 
 class ChineseOneByteFontLoK : public ChineseFont {
 public:
-	ChineseOneByteFontLoK(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
+	ChineseOneByteFontLoK(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2), _prvBorder(false) {}
 	~ChineseOneByteFontLoK() override {}
 	Type getType() const override { return kBIG5; }
 
@@ -298,11 +298,13 @@ private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
 	void processColorMap() override;
+
+	bool _prvBorder;
 };
 
 class ChineseTwoByteFontLoK : public ChineseFont {
 public:
-	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2), _lookupTable(lookupTable) {}
+	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2), _lookupTable(lookupTable), _prvBorder(false) {}
 	~ChineseTwoByteFontLoK() override {}
 	Type getType() const override { return kBIG5; }
 
@@ -312,6 +314,7 @@ private:
 	void processColorMap() override;
 
 	const uint16 *_lookupTable;
+	bool _prvBorder;
 };
 
 class ChineseOneByteFontMR : public ChineseFont {

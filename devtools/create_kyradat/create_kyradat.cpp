@@ -39,7 +39,7 @@
 
 
 enum {
-	kKyraDatVersion = 111
+	kKyraDatVersion = 112
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -165,6 +165,10 @@ const ExtractFilename extractFilenames[] = {
 	// PC98 specific
 	{ k1PC98StoryStrings, kStringList, true },
 	{ k1PC98IntroSfx, kRawData, false },
+
+	// Chinese version specific
+	{ k1TwoByteFontLookupTable, kRawDataBe16, true },
+	{ k1TwoByteDummyGlyph, kRawData, true },
 
 	// AMIGA specific
 	{ k1AmigaIntroSFXTable, kAmigaSfxTable, false },

@@ -44,6 +44,7 @@ const Game kyra1Games[] = {
 	{ kKyra1, kPlatformDOS, kNoSpecial, IT_ITA },
 	{ kKyra1, kPlatformDOS, kNoSpecial, ES_ESP },
 	{ kKyra1, kPlatformDOS, kOldFloppy, RU_RUS },
+	{ kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN },
 
 	{ kKyra1, kPlatformDOS, kTalkieVersion, EN_ANY },
 	{ kKyra1, kPlatformDOS, kTalkieVersion, DE_DEU },
@@ -264,6 +265,8 @@ const int kyra1FloppyNeed[] = {
 	k1ConfigStrings,
 	k1AudioTracks,
 	k1AudioTracksIntro,
+	k1TwoByteFontLookupTable,
+	k1TwoByteDummyGlyph,
 	-1
 };
 

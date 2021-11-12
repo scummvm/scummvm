@@ -3915,7 +3915,12 @@ void ChineseFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 }
 
 void ChineseOneByteFontLoK::processColorMap() {
-
+	if (_textColor[0] == 12) {
+		_prvBorder = _border;
+		_border = false;
+	} else {
+		_border = _prvBorder;
+	}
 }
 
 bool ChineseTwoByteFontLoK::hasGlyphForCharacter(uint16 c) const {

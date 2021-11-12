@@ -227,6 +227,9 @@ enum KyraResources {
 	k1AmigaIntroSFXTable,
 	k1AmigaGameSFXTable,
 
+	k1TwoByteFontLookupTable,
+	k1TwoByteDummyGlyph,
+
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,
 	k2SeqplayCreditsSpecial,

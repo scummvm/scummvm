@@ -39,6 +39,7 @@
 #include "resources/lok_dos_oldfloppy.h"
 #include "resources/lok_dos_oldfloppy_russian.h"
 #include "resources/lok_dos_spanish.h"
+#include "resources/lok_dos_chinese_trad.h"
 
 #include "resources/lok_dos_cd.h"
 #include "resources/lok_dos_cd_english.h"
@@ -334,6 +335,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, EN_ANY, &k1GUIStringsDOSEnglishProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, EN_ANY, &k1NewGameStringDOSEnglishProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, EN_ANY, &k1ConfigStringsDOSEnglishProvider },
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, EN_ANY, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, EN_ANY, &k1TwoByteDummyGlyphDOSProvider },
 	{ k1AudioTracks, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, &k1AudioTracksDOSProvider },
 	{ k1AudioTracksIntro, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, &k1AudioTracksIntroDOSProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1IntroStringsDOSGermanProvider },
@@ -358,6 +361,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1GUIStringsDOSGermanProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1NewGameStringDOSGermanProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1ConfigStringsDOSGermanProvider },
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, DE_DEU, &k1TwoByteDummyGlyphDOSProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1IntroStringsDOSFrenchProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1ItemNamesDOSFrenchProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1TakenStringsDOSFrenchProvider },
@@ -380,7 +385,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1GUIStringsDOSFrenchProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1NewGameStringDOSFrenchProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1ConfigStringsDOSFrenchProvider },
-
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, FR_FRA, &k1TwoByteDummyGlyphDOSProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1IntroStringsDOSItalianProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1ItemNamesDOSItalianProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1TakenStringsDOSItalianProvider },
@@ -403,7 +409,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1GUIStringsDOSItalianProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1NewGameStringDOSItalianProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1ConfigStringsDOSItalianProvider },
-
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, IT_ITA, &k1TwoByteDummyGlyphDOSProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1IntroStringsDOSSpanishProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1ItemNamesDOSSpanishProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1TakenStringsDOSSpanishProvider },
@@ -426,6 +433,32 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1GUIStringsDOSSpanishProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1NewGameStringDOSSpanishProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1ConfigStringsDOSSpanishProvider },
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1TwoByteDummyGlyphDOSProvider },
+	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1IntroStringsDOSChineseTradProvider },
+	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1ItemNamesDOSChineseTradProvider },
+	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1TakenStringsDOSChineseTradProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1PlacedStringsDOSChineseTradProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1DroppedStringsDOSChineseTradProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1NoDropStringsDOSChineseTradProvider },
+	{ k1PutDownString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1PutDownStringDOSChineseTradProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1WaitAmuletStringDOSChineseTradProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1BlackJewelStringDOSChineseTradProvider },
+	{ k1HealingTipString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1HealingTipStringDOSChineseTradProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1PoisonGoneStringDOSChineseTradProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1ThePoisonStringsDOSChineseTradProvider },
+	{ k1FluteStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1FluteStringsDOSChineseTradProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1WispJewelStringsDOSChineseTradProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1MagicJewelStringsDOSChineseTradProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1FlaskFullStringDOSChineseTradProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1FullFlaskStringDOSChineseTradProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1OutroHomeStringDOSChineseTradProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1VeryCleverStringDOSChineseTradProvider },
+	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1GUIStringsDOSChineseTradProvider },
+	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1NewGameStringDOSChineseTradProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1ConfigStringsDOSChineseTradProvider },
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1TwoByteFontLookupTableDOSChineseTradProvider },
+	{ k1TwoByteDummyGlyph, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1TwoByteDummyGlyphDOSChineseTradProvider },
 	{ k1KallakWritingSeq, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1KallakWritingSeqDOSOldFloppyProvider },
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1MalcolmTreeSeqDOSOldFloppyProvider },
 	{ k1WestwoodLogoSeq, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1WestwoodLogoSeqDOSOldFloppyProvider },
