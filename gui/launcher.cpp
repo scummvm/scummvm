@@ -356,8 +356,8 @@ void LauncherDialog::addGame() {
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-			String selectedDirectory = _browser->getResult().getPath();
-			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
+			Common::String selectedDirectory = _browser->getResult().getPath();
+			Common::String bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')
 				selectedDirectory += '/';
 			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\') {

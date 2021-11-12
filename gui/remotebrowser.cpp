@@ -144,7 +144,7 @@ void RemoteBrowserDialog::updateListing() {
 
 	if (!_navigationLocked) {
 		// Populate the ListWidget
-		ListWidget::U32StringArray list;
+		Common::U32StringArray list;
 		ListWidget::ColorList colors;
 		for (Common::Array<Cloud::StorageFile>::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 			if (i->isDirectory()) {
