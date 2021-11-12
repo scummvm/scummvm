@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/unzip.h"
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/action.h"
@@ -85,6 +86,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 #endif // USE_TRANSLATION
 
 	initTextToSpeech();
+	initIconsSet();
 
 	ConfMan.registerDefault("gui_theme", "scummremastered");
 	Common::String themefile(ConfMan.get("gui_theme"));
@@ -104,6 +106,26 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 
 GuiManager::~GuiManager() {
 	delete _theme;
+}
+
+void GuiManager::initIconsSet() {
+	Common::Archive *dat;
+
+	// ConfMan.get("iconspath")
+
+	Common::String path = "gui-icons.dat";
+
+	if (ConfMan.hasKey("themepath"))
+		path = normalizePath(ConfMan.get("themepath") + "/" + path, '/');
+
+	dat = Common::makeZipArchive(Common::FSNode(path));
+
+	if (!dat) {
+		warning("GUI: Could not find '%s'", path.c_str());
+		return;
+	}
+
+	_iconsSet.add(path, dat);
 }
 
 void GuiManager::computeScaleFactor() {

@@ -162,9 +162,10 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	addLayoutChooserButtons();
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
-	Common::FSDirectory *mdDir = new Common::FSDirectory(Common::String("./metadata/"));
+
 	Common::ArchiveMemberList mdFiles;
-	mdDir->listMatchingMembers(mdFiles, "*.xml");
+
+	g_gui.getIconsSet().listMatchingMembers(mdFiles, "*.xml");
 	for (Common::ArchiveMemberList::iterator md = mdFiles.begin(); md != mdFiles.end(); ++md) {
 		if (_metadataParser.loadStream((*md)->createReadStream()) == false) {
 			warning("Failed to load XML file '%s'", (*md)->getDisplayName().encode().c_str());
