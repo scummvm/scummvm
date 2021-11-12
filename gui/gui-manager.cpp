@@ -111,14 +111,34 @@ GuiManager::~GuiManager() {
 void GuiManager::initIconsSet() {
 	Common::Archive *dat;
 
-	// ConfMan.get("iconspath")
+	const char fname[] = "gui-icons.dat";
+	Common::String path;
+	Common::FSNode *fs = nullptr;
 
-	Common::String path = "gui-icons.dat";
+	if (ConfMan.hasKey("themepath")) {
+		path = normalizePath(ConfMan.get("themepath") + "/" + fname, '/');
 
-	if (ConfMan.hasKey("themepath"))
-		path = normalizePath(ConfMan.get("themepath") + "/" + path, '/');
+		fs = new Common::FSNode(path);
+		if (!fs->exists()) {
+			delete fs;
+			fs = nullptr;
+		}
+	}
 
-	dat = Common::makeZipArchive(Common::FSNode(path));
+	if (!fs && ConfMan.hasKey("iconspath")) {
+		path = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
+
+		fs = new Common::FSNode(path);
+		if (!fs->exists()) {
+			delete fs;
+			fs = nullptr;
+		}
+	}
+
+	if (!fs)
+		fs = new Common::FSNode(fname);
+
+	dat = Common::makeZipArchive(*fs);
 
 	if (!dat) {
 		warning("GUI: Could not find '%s'", path.c_str());
@@ -126,6 +146,8 @@ void GuiManager::initIconsSet() {
 	}
 
 	_iconsSet.add(path, dat);
+
+	delete fs;
 }
 
 void GuiManager::computeScaleFactor() {
