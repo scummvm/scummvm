@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-11 21:30+0000\n"
+"POT-Creation-Date: 2021-11-12 08:18+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -4393,7 +4393,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:684
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:742
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5306,7 +5306,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:683
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:741
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7270,116 +7270,116 @@ msgstr "Klarte ikkje slette fil."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:597
+#: engines/twine/detection.cpp:655
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:598
+#: engines/twine/detection.cpp:656
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:604
+#: engines/twine/detection.cpp:662
 #, fuzzy
 msgid "Enable cross fade"
 msgstr "Slå på heliummodus"
 
-#: engines/twine/detection.cpp:605
+#: engines/twine/detection.cpp:663
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
-#: engines/twine/detection.cpp:612
+#: engines/twine/detection.cpp:670
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Klarte ikkje lagre spel"
 
-#: engines/twine/detection.cpp:613
+#: engines/twine/detection.cpp:671
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:619
+#: engines/twine/detection.cpp:677
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Slå på heliummodus"
 
-#: engines/twine/detection.cpp:620
+#: engines/twine/detection.cpp:678
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Slå på heliummodus"
 
-#: engines/twine/detection.cpp:626
+#: engines/twine/detection.cpp:684
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:627
+#: engines/twine/detection.cpp:685
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:633
+#: engines/twine/detection.cpp:691
 #, fuzzy
 msgid "Enable sound"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:634
+#: engines/twine/detection.cpp:692
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:640
+#: engines/twine/detection.cpp:698
 #, fuzzy
 msgid "Enable voices"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:641
+#: engines/twine/detection.cpp:699
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Slå på Venus-hjelpesystemet"
 
-#: engines/twine/detection.cpp:647
+#: engines/twine/detection.cpp:705
 #, fuzzy
 msgid "Enable text"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:648
+#: engines/twine/detection.cpp:706
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:654
+#: engines/twine/detection.cpp:712
 #, fuzzy
 msgid "Enable movies"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:655
+#: engines/twine/detection.cpp:713
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Slå på Venus-hjelpesystemet"
 
-#: engines/twine/detection.cpp:661
+#: engines/twine/detection.cpp:719
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:662
+#: engines/twine/detection.cpp:720
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:668
+#: engines/twine/detection.cpp:726
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:669
+#: engines/twine/detection.cpp:727
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:675 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:733 engines/ultima/detection.cpp:85
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Nytt høgoppløyseleg grafikk"
 
-#: engines/twine/detection.cpp:676 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:734 engines/ultima/detection.cpp:86
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Full speltittel"
