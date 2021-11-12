@@ -56,12 +56,18 @@ static const int kSavegameVersion = 1;
 
 struct EfhGameDescription;
 
-struct EfhGraphicsStruct {
-	uint16 _vgaLineBuffer[200];
+class EfhGraphicsStruct {
+public:
+	EfhGraphicsStruct();
+	EfhGraphicsStruct(int16 *lineBuf, int16 x, int16 y, int16 width, int16 height);
+
+	int16 *_vgaLineBuffer;
 	uint16 _shiftValue;
 	uint16 _width;
 	uint16 _height;
 	Common::Rect _area;
+
+	void copy(EfhGraphicsStruct *src);
 };
 
 struct Font {
@@ -131,6 +137,11 @@ private:
 	void initialize();
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
 	void readAnimInfo();
+	void findMapFile(int16 mapId);
+	void loadNewPortrait();
+	void loadAnimImageSet();
+	void drawUnknownMenuBox();
+	void displayAnimFrame();
 	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
 	void readTileFact();
 	void readItems();
@@ -149,6 +160,8 @@ private:
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
+	int16 _vgaLineBuffer[200];
+	EfhGraphicsStruct *_vgaGraphicsStruct;
 	EfhGraphicsStruct *_graphicsStruct;
 	uint8 _tileBank[3][12000];
 	uint8 _circleImageBuf[40100];
@@ -187,7 +200,11 @@ private:
 	uint8 *_imageSetSubFilesArray[214]; // CHECKME : logically it should be 216
 	BufferBM _imageDataPtr;
 	int16 _currentTileBankImageSetId[3];
-	
+	int16 _unkRelatedToAnimImageSetId;
+	int16 _techId;
+	int16 _currentAnimImageSetId;
+	uint8 *_portraitSubFilesArray[20];
+	int16 _unkAnimRelatedIndex;
 };
 
 } // End of namespace Efh

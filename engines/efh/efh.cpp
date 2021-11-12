@@ -33,7 +33,31 @@
 
 namespace Efh {
 
-EfhEngine *EfhEngine::s_Engine = 0;
+EfhEngine *EfhEngine::s_Engine = nullptr;
+
+EfhGraphicsStruct::EfhGraphicsStruct() {
+	_vgaLineBuffer = nullptr;
+	_shiftValue = 0;
+	_width = 0;
+	_height = 0;
+	_area = Common::Rect(0, 0, 0, 0);
+}
+EfhGraphicsStruct::EfhGraphicsStruct(int16 *lineBuf, int16 x, int16 y, int16 width, int16 height) {
+	_vgaLineBuffer = lineBuf;
+	_shiftValue = 0;
+	_width = width;
+	_height = height;
+	_area = Common::Rect(x, y, x + width - 1, y + height - 1);
+}
+
+void EfhGraphicsStruct::copy(EfhGraphicsStruct *src) {
+	// Same buffer address
+	_vgaLineBuffer = src->_vgaLineBuffer;
+	_shiftValue = src->_shiftValue;
+	_width = src->_width;
+	_height = src->_height;
+	_area = src->_area;
+}
 
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_system = syst;
@@ -46,6 +70,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_platform = Common::kPlatformUnknown;
 	_mainSurface = nullptr;
 
+	_vgaGraphicsStruct = new EfhGraphicsStruct(_vgaLineBuffer, 0, 0, 320, 200);
+	
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
 	_mapBitmapRef = nullptr;
@@ -79,11 +105,21 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	for (int i = 0; i < 3; ++i)
 		_currentTileBankImageSetId[i] = -1;
+
+	_unkRelatedToAnimImageSetId = 0;
+	_techId = 0;
+	_currentAnimImageSetId = 0xFF;
+
+	for (int i = 0; i < 20; ++i)
+		_portraitSubFilesArray[i] = nullptr;
+
+	_unkAnimRelatedIndex = -1;
 }
 
 EfhEngine::~EfhEngine() {
 	delete _rnd;
 	delete _graphicsStruct;
+	delete _vgaGraphicsStruct;
 }
 
 bool EfhEngine::hasFeature(EngineFeature f) const {
@@ -91,7 +127,7 @@ bool EfhEngine::hasFeature(EngineFeature f) const {
 }
 
 const char *EfhEngine::getCopyrightString() const {
-	return "Escape From Hell (C) Electronic Arts, 1991";
+	return "Escape From Hell (C) Electronic Arts, 1990";
 }
 
 GameType EfhEngine::getGameType() const {
@@ -128,8 +164,8 @@ Common::Error EfhEngine::run() {
 }
 
 void EfhEngine::initialize() {
-	_rnd = new Common::RandomSource("efh");
-	_rnd->setSeed(42);                              // Kick random number generator
+	_rnd = new Common::RandomSource("Hell");
+	_rnd->setSeed(666);                              // Kick random number generator
 	_shouldQuit = false;
 }
 
@@ -144,23 +180,94 @@ int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
 }
 
 void EfhEngine::readAnimInfo() {
-	warning("STUB - readAnimInfo");
+	Common::String fileName = "gendata\\animinfo";
+	readFileToBuffer(fileName, _animInfo);
+}
+
+void EfhEngine::findMapFile(int16 mapId) {
+	if (_word31E9E == 0)
+		return;
+
+	Common::String fileName = Common::String::format("map\\map.%d", mapId);
+	Common::File f;
+	// The original was checking for the file and eventually asking to change floppies
+	if (!f.open(fileName))
+		error("File not found: %s", fileName.c_str());
+
+	f.close();
+}
+
+void EfhEngine::loadNewPortrait() {
+	static int16 unkConstRelatedToAnimImageSetId[19] = {0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2};
+	_unkRelatedToAnimImageSetId = unkConstRelatedToAnimImageSetId[_techId];
+
+	if (_currentAnimImageSetId == 200 + _unkRelatedToAnimImageSetId)
+		return;
+
+	findMapFile(_techId);
+	_currentAnimImageSetId = 200 + _unkRelatedToAnimImageSetId;
+	int imageSetId = _unkRelatedToAnimImageSetId + 13;
+	loadImageSet(imageSetId, _portraitBuf, _portraitSubFilesArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+}
+
+void EfhEngine::loadAnimImageSet() {
+	warning("STUB - loadAnimImageSet");
+	if (_currentAnimImageSetId == _animImageSetId || _animImageSetId == 0xFF)
+		return;
+
+	findMapFile(_techId);
+
+	_unkAnimRelatedIndex = 0;
+	_currentAnimImageSetId = _animImageSetId;
+
+	int16 animSetId = _animImageSetId + 17;
+	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+}
+
+void EfhEngine::drawUnknownMenuBox() {
+	warning("STUB - drawUnknownMenuBox");
+}
+
+void EfhEngine::displayAnimFrame() {
+	// The original had a parameter. As it was always equal to zero, it was removed in ScummVM
+	warning("STUB - displayAnimFrame");
 }
 
 void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
-	warning("STUB - displayAnimFrames");
+	if (animId == 0xFF)
+		return;
+
+	_animImageSetId = animId;
+	if (_animImageSetId == 0xFE)
+		loadNewPortrait();
+	else
+		loadAnimImageSet();
+
+	if (!displayMenuBoxFl)
+		return;
+	
+	for (int i = 0; i < 2; ++i) {
+		drawUnknownMenuBox();
+		displayAnimFrame();
+
+		if (i == 0)
+			displayFctFullScreen();
+	}
 }
 
 void EfhEngine::readTileFact() {
-	warning("STUB - readTileFact");
+	Common::String fileName = "gendata\\tilefact";
+	readFileToBuffer(fileName, _tileFact);
 }
 
 void EfhEngine::readItems() {
-	warning("STUB - readItems");
+	Common::String fileName = "gendata\\items";
+	readFileToBuffer(fileName, _items);
 }
 
 void EfhEngine::loadNPCS() {
-	warning("STUB - loadNPCS");
+	Common::String fileName = "gendata\\npcs";
+	readFileToBuffer(fileName, _npcBuf);
 }
 
 void EfhEngine::syncSoundSettings() {
@@ -177,11 +284,7 @@ void EfhEngine::initEngine() {
 	_videoMode = 2; // In the original, 2 = VGA/MCGA, EGA = 4, Tandy = 6, cga = 8.
 	memset(_bufferCharBM, 0, sizeof(_bufferCharBM));
 	_graphicsStruct = new EfhGraphicsStruct;
-	memset(_graphicsStruct->_vgaLineBuffer, 0, sizeof(_graphicsStruct->_vgaLineBuffer));
-	_graphicsStruct->_shiftValue = 0;
-	_graphicsStruct->_width = 320;
-	_graphicsStruct->_height = 200;
-	_graphicsStruct->_area = Common::Rect(0, 0, 319, 199);
+	_graphicsStruct->copy(_vgaGraphicsStruct);
 
 	for (int i = 0; i < 3; ++i) {
 		memset(_tileBank[i], 0, sizeof(_tileBank[i]));
@@ -371,7 +474,7 @@ void EfhEngine::initEngine() {
 
 	readAnimInfo();
 
-	displayAnimFrames(254, 0);
+	displayAnimFrames(0xFE, false);
 	saveAnimImageSetId();
 	readTileFact();
 	readItems();
@@ -408,6 +511,7 @@ void EfhEngine::displayFctFullScreen() {
 
 void EfhEngine::displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY) {
 	warning("STUB - displayBitmapAtPos");
+	_graphicsStruct->copy(_vgaGraphicsStruct);
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
