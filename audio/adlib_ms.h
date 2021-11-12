@@ -560,6 +560,7 @@ public:
 	 */
 	MidiChannel *getPercussionChannel() override;
 
+	using MidiDriver_Multisource::send;
 	void send(int8 source, uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
@@ -755,6 +756,17 @@ protected:
 	 * @param source The source sending the control change event.
 	 */
 	virtual void allNotesOff(uint8 channel, uint8 source);
+
+	/**
+	 * Applies the controller default settings to the controller data for the
+	 * specified source.
+	 * This will set all supported default values specified on _controllerDefaults
+	 * except sustain, which is set by deinitSource.
+	 * 
+	 * @param source The source triggering the default settings, or 0xFF to
+	 * apply controller defaults for all sources.
+	 */
+	virtual void applyControllerDefaults(uint8 source);
 
 	/**
 	 * Recalculates and writes the frequencies of the active notes on the

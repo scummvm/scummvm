@@ -197,6 +197,8 @@ void MidiDriver_MT32GM::initControlData() {
 		_controlData[i] = new MidiChannelControlData();
 		_controlData[i]->volume = _controlData[i]->scaledVolume =
 			(_nativeMT32 ? MT32_DEFAULT_CHANNEL_VOLUME : GM_DEFAULT_CHANNEL_VOLUME);
+		_controlData[i]->pitchBendSensitivity =
+			(_nativeMT32 ? MT32_PITCH_BEND_SENSITIVITY_DEFAULT : GM_PITCH_BEND_SENSITIVITY_DEFAULT);
 		if (_nativeMT32 && i >= 1 && i <= 8) {
 			_controlData[i]->program = MT32_DEFAULT_INSTRUMENTS[i - 1];
 			_controlData[i]->panPosition = MT32_DEFAULT_PANNING[i - 1];
@@ -417,6 +419,11 @@ void MidiDriver_MT32GM::processEvent(int8 source, uint32 b, uint8 outputChannel,
 		// A new source has sent an event on this channel.
 		controlData.sourceVolumeApplied = false;
 		controlData.source = source;
+
+		if (source >= 0)
+			// If the new source is a real MIDI source, apply controller
+			// default values.
+			applyControllerDefaults(source, controlData, outputChannel, channelLockedByOtherSource);
 	}
 
 	switch (command) {
@@ -426,12 +433,13 @@ void MidiDriver_MT32GM::processEvent(int8 source, uint32 b, uint8 outputChannel,
 			noteOnOff(outputChannel, command, op1, op2, source, controlData);
 		break;
 	case MIDI_COMMAND_PITCH_BEND:
-		controlData.pitchWheel = ((uint16)op2 << 7) | (uint16)op1;
-		// fall through
+		pitchBend(outputChannel, op1, op2, source, controlData, channelLockedByOtherSource);
+		break;
 	case MIDI_COMMAND_POLYPHONIC_AFTERTOUCH: // Not supported by MT-32 or GM
+		polyAftertouch(outputChannel, op1, op2, source, controlData, channelLockedByOtherSource);
+		break;
 	case MIDI_COMMAND_CHANNEL_AFTERTOUCH: // Not supported by MT-32
-		if (!channelLockedByOtherSource)
-			_driver->send(command | outputChannel, op1, op2);
+		channelAftertouch(outputChannel, op1, source, controlData, channelLockedByOtherSource);
 		break;
 	case MIDI_COMMAND_CONTROL_CHANGE:
 		controlChange(outputChannel, op1, op2, source, controlData, channelLockedByOtherSource);
@@ -446,6 +454,67 @@ void MidiDriver_MT32GM::processEvent(int8 source, uint32 b, uint8 outputChannel,
 	default:
 		warning("MidiDriver_MT32GM: Received unknown event %02x", command);
 		break;
+	}
+}
+
+void MidiDriver_MT32GM::applyControllerDefaults(uint8 source, MidiChannelControlData &controlData, uint8 outputChannel, bool channelLockedByOtherSource) {
+	if (outputChannel != MIDI_RHYTHM_CHANNEL) {
+		// Apply default bank and program only to melodic channels.
+		if (_controllerDefaults.instrumentBank >= 0 && controlData.instrumentBank != _controllerDefaults.instrumentBank) {
+			send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_BANK_SELECT_MSB, _controllerDefaults.instrumentBank);
+			send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_BANK_SELECT_LSB, 0);
+		}
+		if (_controllerDefaults.program >= 0 && controlData.program != _controllerDefaults.program) {
+			send(source, MIDI_COMMAND_PROGRAM_CHANGE | outputChannel, _controllerDefaults.program, 0);
+		}
+	} else {
+		// Apply default drumkit only to the rhythm channel.
+		if (_controllerDefaults.drumkit >= 0 && controlData.program != _controllerDefaults.drumkit) {
+			send(source, MIDI_COMMAND_PROGRAM_CHANGE | outputChannel, _controllerDefaults.drumkit, 0);
+		}
+	}
+	if (_controllerDefaults.channelPressure >= 0 && controlData.channelPressure != _controllerDefaults.channelPressure) {
+		send(source, MIDI_COMMAND_CHANNEL_AFTERTOUCH | outputChannel, _controllerDefaults.channelPressure, 0);
+	}
+	if (_controllerDefaults.pitchBend >= 0 && controlData.pitchWheel != _controllerDefaults.pitchBend) {
+		send(source, MIDI_COMMAND_PITCH_BEND | outputChannel, _controllerDefaults.pitchBend & 0x7F, _controllerDefaults.pitchBend >> 7);
+	}
+
+	if (_controllerDefaults.modulation >= 0 && controlData.modulation != _controllerDefaults.modulation) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_MODULATION, _controllerDefaults.modulation);
+	}
+	if (_controllerDefaults.volume >= 0 && controlData.volume != _controllerDefaults.volume) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_VOLUME, _controllerDefaults.volume);
+	}
+	if (_controllerDefaults.panning >= 0 && controlData.panPosition != _controllerDefaults.panning) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_PANNING, _controllerDefaults.panning);
+	}
+	if (_controllerDefaults.expression >= 0 && controlData.expression != _controllerDefaults.expression) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_EXPRESSION, _controllerDefaults.expression);
+	}
+
+	// RPN will be changed by setting pitch bend sensitivity, so store the
+	// current value.
+	uint16 rpn = controlData.rpn;
+	bool setRpn = false;
+	if (_controllerDefaults.pitchBendSensitivity >= 0 && controlData.pitchBendSensitivity != _controllerDefaults.pitchBendSensitivity) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY >> 8);
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY & 0xFF);
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_DATA_ENTRY_MSB, _controllerDefaults.pitchBendSensitivity);
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0);
+		if (rpn != controlData.rpn)
+			// Active RPN was changed; reset it to previous value (or default).
+			setRpn = true;
+	}
+	if (_controllerDefaults.rpn >= 0 && rpn != _controllerDefaults.rpn) {
+		// Set RPN to the specified default value.
+		rpn = _controllerDefaults.rpn;
+		setRpn = true;
+	}
+
+	if (setRpn) {
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_MSB, rpn >> 8);
+		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_LSB, rpn & 0xFF);
 	}
 }
 
@@ -470,6 +539,12 @@ void MidiDriver_MT32GM::noteOnOff(byte outputChannel, byte command, byte note, b
 	_driver->send(command | outputChannel, note, velocity);
 }
 
+void MidiDriver_MT32GM::polyAftertouch(byte outputChannel, byte note, byte pressure,
+		int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
+	if (!channelLockedByOtherSource)
+		_driver->send(MIDI_COMMAND_CHANNEL_AFTERTOUCH | outputChannel, note, pressure);
+}
+
 void MidiDriver_MT32GM::controlChange(byte outputChannel, byte controllerNumber, byte controllerValue, int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
 	assert(source < MAXIMUM_SOURCES);
 
@@ -481,6 +556,10 @@ void MidiDriver_MT32GM::controlChange(byte outputChannel, byte controllerNumber,
 		break;
 	case MIDI_CONTROLLER_MODULATION:
 		controlData.modulation = controllerValue;
+		break;
+	case MIDI_CONTROLLER_DATA_ENTRY_MSB:
+		if (controlData.rpn == MIDI_RPN_PITCH_BEND_SENSITIVITY)
+			controlData.pitchBendSensitivity = controllerValue;
 		break;
 	case MIDI_CONTROLLER_VOLUME:
 		controlData.volume = controllerValue;
@@ -528,14 +607,24 @@ void MidiDriver_MT32GM::controlChange(byte outputChannel, byte controllerNumber,
 			removeActiveNotes(outputChannel, true);
 		}
 		break;
+	case MIDI_CONTROLLER_RPN_LSB:
+		controlData.rpn &= 0xFF00;
+		controlData.rpn |= controllerValue;
+		break;
+	case MIDI_CONTROLLER_RPN_MSB:
+		controlData.rpn &= 0x00FF;
+		controlData.rpn |= controllerValue << 8;
+		break;
 	case MIDI_CONTROLLER_RESET_ALL_CONTROLLERS:
+		controlData.channelPressure = 0;
 		controlData.pitchWheel = MIDI_PITCH_BEND_DEFAULT;
 		controlData.modulation = 0;
-		controlData.expression = 0x7F;
+		controlData.expression = MIDI_EXPRESSION_DEFAULT;
 		controlData.sustain = false;
 		if (!channelLockedByOtherSource) {
 			removeActiveNotes(outputChannel, true);
 		}
+		controlData.rpn = MIDI_RPN_NULL;
 		break;
 	case MIDI_CONTROLLER_OMNI_ON:
 	case MIDI_CONTROLLER_OMNI_OFF:
@@ -748,6 +837,22 @@ byte MidiDriver_MT32GM::correctInstrumentBank(byte instrumentBank, byte patchId)
 
 	// Return the corrected bank, or 0xFF if no correction is needed.
 	return instrumentBank != correctedBank ? correctedBank : 0xFF;
+}
+
+void MidiDriver_MT32GM::channelAftertouch(byte outputChannel, byte pressure, int8 source,
+		MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
+	controlData.channelPressure = pressure;
+
+	if (!channelLockedByOtherSource)
+		_driver->send(MIDI_COMMAND_CHANNEL_AFTERTOUCH | outputChannel, pressure, 0);
+}
+
+void MidiDriver_MT32GM::pitchBend(byte outputChannel, uint8 pitchBendLsb, uint8 pitchBendMsb,
+		int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
+	controlData.pitchWheel = ((uint16)pitchBendMsb << 7) | (uint16)pitchBendLsb;
+
+	if (!channelLockedByOtherSource)
+		_driver->send(MIDI_COMMAND_PITCH_BEND | outputChannel, pitchBendLsb, pitchBendMsb);
 }
 
 void MidiDriver_MT32GM::sysEx(const byte *msg, uint16 length) {
@@ -972,17 +1077,21 @@ void MidiDriver_MT32GM::deinitSource(uint8 source) {
 		if (!isOutputChannelUsed(i))
 			continue;
 
-		if (_controlData[i]->source == source)
+		if (_controlData[i]->source == source) {
+			// Set the sustain default value if it is specified (typically
+			// sustain would be turned off).
+			if (_controllerDefaults.sustain >= 0 && _controlData[i]->sustain != (_controllerDefaults.sustain >= 0x40)) {
+				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_SUSTAIN, _controllerDefaults.sustain);
+			}
+
 			_controlData[i]->source = -1;
+		}
 	}
 	_availableChannels[source] = 0xFFFF;
 	// Reset the data to output channel mapping
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
 		_channelMap[source][i] = i;
 	}
-
-	// TODO Optionally reset some controllers to their
-	// default values? Pitch wheel, volume, sustain...
 }
 
 void MidiDriver_MT32GM::applySourceVolume(uint8 source) {

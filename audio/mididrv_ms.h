@@ -141,6 +141,25 @@ public:
 		FADE_ABORT_TYPE_START_VOLUME
 	};
 
+	/**
+	 * The controllers and parameters for which a default value can be set
+	 * using setControllerDefault.
+	 */
+	enum ControllerDefaultType {
+		CONTROLLER_DEFAULT_PROGRAM,
+		CONTROLLER_DEFAULT_INSTRUMENT_BANK,
+		CONTROLLER_DEFAULT_DRUMKIT,
+		CONTROLLER_DEFAULT_CHANNEL_PRESSURE,
+		CONTROLLER_DEFAULT_PITCH_BEND,
+		CONTROLLER_DEFAULT_MODULATION,
+		CONTROLLER_DEFAULT_VOLUME,
+		CONTROLLER_DEFAULT_PANNING,
+		CONTROLLER_DEFAULT_EXPRESSION,
+		CONTROLLER_DEFAULT_SUSTAIN,
+		CONTROLLER_DEFAULT_RPN,
+		CONTROLLER_DEFAULT_PITCH_BEND_SENSITIVITY
+	};
+
 protected:
 	// This stores data about a specific source of MIDI data.
 	struct MidiSource {
@@ -166,6 +185,28 @@ protected:
 		int32 fadeDuration;
 
 		MidiSource();
+	};
+
+	// Stores the default values that should be set for each controller.
+	// -1 means no explicit default should be set for that controller.
+	struct ControllerDefaults {
+		int8 program;
+		int8 instrumentBank;
+		int8 drumkit;
+
+		int8 channelPressure;
+		int16 pitchBend;
+
+		int8 modulation;
+		int8 volume;
+		int8 panning;
+		int8 expression;
+		int8 sustain;
+		int16 rpn;
+
+		int8 pitchBendSensitivity;
+
+		ControllerDefaults();
 	};
 
 public:
@@ -289,6 +330,38 @@ public:
 	bool isFading(uint8 source);
 
 	/**
+	 * Specify a controller which should be reset to its General MIDI default
+	 * value when a new track is started. See the overload for more details.
+	 * 
+	 * @param type The controller which should be reset.
+	 */
+	void setControllerDefault(ControllerDefaultType type);
+	/**
+	 * Specify a default value for a controller which should be set when a new
+	 * track is started. Use this if a game uses a MIDI controller, but does
+	 * not consistently set it to a value at the start of every track, causing
+	 * incorrect playback. Do not use this if a game depends on controller
+	 * values carrying over to the next track for correct playback.
+	 *
+	 * This functionality will not work if the fallback MIDI source -1 is used.
+	 * It is also necessary to call deinitSource whenever playback of a track
+	 * is stopped, as this sets up the contoller reset.
+	 *
+	 * Use the setControllerDefault(ControllerDefaultType) overload if the
+	 * General MIDI default value for the controller should be used.
+	 * 
+	 * @param type The controller which should be reset.
+	 * @param value The default value which should be set.
+	 */
+	void setControllerDefault(ControllerDefaultType type, int16 value);
+	/**
+	 * Clears a previously set default value for the specified controller.
+	 * 
+	 * @param type The controller for which the default value should be cleared.
+	 */
+	void clearControllerDefault(ControllerDefaultType type);
+
+	/**
 	 * Applies the user volume settings to the MIDI driver. MIDI channel
 	 * volumes will be scaled using the user volume.
 	 * This function must be called by the engine when the user has changed the
@@ -347,6 +420,9 @@ protected:
 
 	// MIDI source data
 	MidiSource _sources[MAXIMUM_SOURCES];
+
+	// Default values for each controller
+	ControllerDefaults _controllerDefaults;
 
 	// True if the driver should scale MIDI channel volume to the user
 	// specified volume settings.

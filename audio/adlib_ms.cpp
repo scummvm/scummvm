@@ -427,6 +427,7 @@ int MidiDriver_ADLIB_Multisource::open() {
 		for (int j = 0; j < MIDI_CHANNEL_COUNT; j++) {
 			_controlData[i][j].volume = _defaultChannelVolume;
 		}
+		applyControllerDefaults(i);
 	}
 
 	// Set default OPL register values.
@@ -771,6 +772,51 @@ void MidiDriver_ADLIB_Multisource::deinitSource(uint8 source) {
 	}
 
 	_allocationMutex.unlock();
+
+	applyControllerDefaults(source);
+}
+
+void MidiDriver_ADLIB_Multisource::applyControllerDefaults(uint8 source) {
+	if (source == 0xFF) {
+		// Apply controller defaults for all sources.
+		for (int i = 0; i < MAXIMUM_SOURCES; i++) {
+			applyControllerDefaults(i);
+		}
+	} else {
+		for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
+			if (_controllerDefaults.program >= 0) {
+				_controlData[source][i].program = _controllerDefaults.program;
+			}
+			if (_controllerDefaults.channelPressure >= 0) {
+				_controlData[source][i].channelPressure = _controllerDefaults.channelPressure;
+			}
+			if (_controllerDefaults.pitchBend >= 0) {
+				_controlData[source][i].pitchBend = _controllerDefaults.pitchBend;
+			}
+			if (_controllerDefaults.modulation >= 0) {
+				_controlData[source][i].modulation = _controllerDefaults.modulation;
+			}
+			if (_controllerDefaults.volume >= 0) {
+				_controlData[source][i].volume = _controllerDefaults.volume;
+			}
+			if (_controllerDefaults.panning >= 0) {
+				_controlData[source][i].panning = _controllerDefaults.panning;
+			}
+			if (_controllerDefaults.expression >= 0) {
+				_controlData[source][i].expression = _controllerDefaults.expression;
+			}
+			if (_controllerDefaults.rpn >= 0) {
+				_controlData[source][i].rpn = _controllerDefaults.rpn;
+			}
+			if (_controllerDefaults.pitchBendSensitivity >= 0) {
+				_controlData[source][i].pitchBendSensitivity = _controllerDefaults.pitchBendSensitivity;
+				_controlData[source][i].pitchBendSensitivityCents = 0;
+			}
+			// Controller defaults not supported by this driver:
+			// instrument bank, drumkit.
+			// Sustain is turned of by deinitSource.
+		}
+	}
 }
 
 void MidiDriver_ADLIB_Multisource::modulation(uint8 channel, uint8 modulation, uint8 source) {
