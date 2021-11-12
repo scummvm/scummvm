@@ -828,6 +828,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("gui/themes/scummmodern.zip");
 		files.push_back("gui/themes/scummremastered.zip");
 		files.push_back("gui/themes/residualvm.zip");
+		files.push_back("gui/themes/gui-icons.dat");
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/engine-data/access.dat");
 		files.push_back("dists/engine-data/achievements.dat");
