@@ -108,8 +108,31 @@ GuiManager::~GuiManager() {
 	delete _theme;
 }
 
+struct ArchiveMemberListBackComparator {
+	bool operator()(const Common::ArchiveMemberPtr &a, const Common::ArchiveMemberPtr &b) {
+		return a->getName() > b->getName();
+	}
+};
 void GuiManager::initIconsSet() {
 	Common::Archive *dat;
+
+	if (ConfMan.hasKey("iconspath")) {
+		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
+		Common::ArchiveMemberList iconFiles;
+
+		iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+		Common::sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
+
+		for (Common::ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			debug(2, "GUI: Loaded icon file: %s", (*ic)->getName().c_str());
+
+			dat = Common::makeZipArchive((*ic)->createReadStream());
+
+			if (dat) {
+				_iconsSet.add((*ic)->getName(), dat);
+			}
+		}
+	}
 
 	const char fname[] = "gui-icons.dat";
 	Common::String path;
@@ -146,6 +169,8 @@ void GuiManager::initIconsSet() {
 	}
 
 	_iconsSet.add(path, dat);
+
+	debug(2, "GUI: Loaded icon file: %s", path.c_str());
 
 	delete fs;
 }
