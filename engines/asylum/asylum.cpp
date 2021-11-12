@@ -73,18 +73,10 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_delayedVideoIndex = -1;
 	_previousScene = NULL;
 
-	// Game data
-	Common::String dataDir("data/");
-	if (checkGameVersion("Steam")) {
-		dataDir += getLanguageCode(getLanguage());
-		dataDir += '/';
-	}
-
 	// Add default search directories
 	const Common::FSNode gamePath(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gamePath, dataDir);
-	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "vids");
-	SearchMan.addSubDirectoryMatching(gamePath, dataDir + "music");
+	SearchMan.addSubDirectoryMatching(gamePath, "vids");
+	SearchMan.addSubDirectoryMatching(gamePath, "music");
 
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
