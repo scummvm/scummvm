@@ -467,6 +467,19 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	_multisourceDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
 	_multisourceDriver->property(MidiDriver::PROP_MILES_VERSION,
 		_vm->getEngineVersion() == kGroovieT7G ? Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
+	if (_vm->getEngineVersion() == kGroovieT7G && musicType == MT_GM)
+		// The 7th Guest GM init sets drumkit to 0x30 (Orchestra) and relies on
+		// this remaining set; tracks don't set this at start. Some tracks
+		// temporarily change the drumkit; if playback is stopped at the wrong
+		// time this will cause the changed drumkit to remain in effect.
+		// Set a default drumkit value to make sure it is set correctly at the
+		// start of each track.
+		_multisourceDriver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_DRUMKIT, 0x30);
+	if (_vm->getEngineVersion() == kGroovieT11H)
+		// Some The 11th Hour tracks use modulation, but not all tracks reset
+		// it at start. Set a default value to make sure it is reset at the
+		// start of each track.
+		_multisourceDriver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_MODULATION, 0);
 
 	int result = _driver->open();
 	if (result > 0 && result != MidiDriver::MERR_ALREADY_OPEN)
