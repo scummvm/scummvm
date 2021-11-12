@@ -735,6 +735,25 @@
 		/>
 	</drawdata>
 
+	<!-- Background of the thumbnail -->
+	<drawdata id = 'thumb_bg' cache = 'false'>
+		<drawstep	func = 'bevelsq'
+					fill = 'none'
+					/>
+	</drawdata>
+
+	<drawdata id = 'griditem_bg' cache = 'false'>
+		<drawstep	func = 'bevelsq'
+					fill = 'none'
+		/>
+	</drawdata>
+
+	<drawdata id = 'griditem_hover_bg' cache = 'false'>
+		<drawstep	func = 'bevelsq'
+					fill = 'none'
+		/>
+	</drawdata>
+
 	<drawdata id = 'caret' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'

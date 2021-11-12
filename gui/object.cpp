@@ -64,7 +64,6 @@ void GuiObject::reflowLayout() {
 		int16 w, h;
 		bool useRTL = true;
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h, useRTL) || w == -1 || h == -1) {
-			warning("widget h: %d	w: %d", h, w);
 			error("Unable to load widget position for '%s'. Please check your theme files for theme '%s'", _name.c_str(), g_gui.theme()->getThemeId().c_str());
 		}
 

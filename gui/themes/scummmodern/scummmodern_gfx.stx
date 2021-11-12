@@ -134,6 +134,7 @@
 		<bitmap filename = 'button_play.bmp'/>
 		<bitmap filename = 'button_load.bmp'/>
 		<bitmap filename = 'button_options.bmp'/>
+		<bitmap filename = 'groupbtn.bmp'/>
 	</bitmaps>
 
 	<fonts>

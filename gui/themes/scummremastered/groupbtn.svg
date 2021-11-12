@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 323.66332 323.66333"
+   xml:space="preserve"
+   sodipodi:docname="groupbtn.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   width="323.66333"
+   height="323.66333"
+   inkscape:export-filename="/Users/sev/projects/scummvm/scummvm/gui/themes/scummremastered/groupbtn.png"
+   inkscape:export-xdpi="4.75"
+   inkscape:export-ydpi="4.75"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs17" /><sodipodi:namedview
+   id="namedview15"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.1308046"
+   inkscape:cx="124.24781"
+   inkscape:cy="138.39703"
+   inkscape:window-width="1244"
+   inkscape:window-height="845"
+   inkscape:window-x="130"
+   inkscape:window-y="28"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<style
+   type="text/css"
+   id="style2">
+	.st0{fill:#99C7DC;stroke:#808285;stroke-width:6;stroke-miterlimit:10;}
+	.st1{fill:#6D6E71;stroke:#808285;stroke-width:6;stroke-miterlimit:10;}
+	.st2{fill:#6099B1;stroke:#808285;stroke-width:6;stroke-miterlimit:10;}
+</style>
+<rect
+   x="132.40854"
+   y="228.17368"
+   class="st0"
+   width="172.03999"
+   height="67.173569"
+   id="rect4-6"
+   style="fill:#99c7dc;fill-opacity:1;stroke:none;stroke-width:6;stroke-miterlimit:10" /><rect
+   x="130.79434"
+   y="35.210602"
+   class="st0"
+   width="172.03999"
+   height="67.173569"
+   id="rect4"
+   style="fill:#99c7dc;fill-opacity:1;stroke:none" />
+
+
+
+<rect
+   x="93.881874"
+   y="131.69214"
+   class="st0"
+   width="208.95247"
+   height="67.173569"
+   id="rect4-5"
+   style="fill:#3e3d3e;fill-opacity:1;stroke:none;stroke-width:6;stroke-miterlimit:10" /><path
+   class="st2"
+   d="m 14.480604,203.66393 0.19,-12.79 c -1.4,-63.98 -1.4,-63.98 -1.4,-63.98 l 64.570001,38.14 z"
+   id="path12"
+   style="fill:#000000;fill-opacity:1;stroke:none" />
+</svg>

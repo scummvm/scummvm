@@ -159,19 +159,21 @@
 						rtl = 'no'
 				/>
 				<widget name = 'Search'
-						width = '150'
+						width = '120'
 						height = 'Globals.Line.Height'
 				/>
 				<widget name = 'SearchClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
-				<widget name = 'laGroupPopupDesc'
-						type = 'OptionsLabel'
-						textalign = 'end'
+				<space size = '5' />
+				<widget name = 'GroupPic'
+						width = '17'
+						height = '17'
+						rtl = 'no'
 				/>
 				<widget name = 'laGroupPopup'
-						width = '150'
+						width = '100'
 						type = 'PopUp'
 				/>
 				<space />
@@ -243,19 +245,21 @@
 						rtl = 'no'
 				/>
 				<widget name = 'Search'
-						width = '150'
+						width = '120'
 						height = 'Globals.Line.Height'
 				/>
 				<widget name = 'SearchClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
-				<widget name = 'laGroupPopupDesc'
-						type = 'OptionsLabel'
-						textalign = 'end'
+				<space size = '5' />
+				<widget name = 'GroupPic'
+						width = '17'
+						height = '17'
+						rtl = 'no'
 				/>
 				<widget name = 'laGroupPopup'
-						width = '150'
+						width = '100'
 						type = 'PopUp'
 				/>
 				<space />

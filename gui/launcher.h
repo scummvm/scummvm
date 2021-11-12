@@ -89,6 +89,7 @@ protected:
 #ifndef DISABLE_FANCY_THEMES
 	GraphicsWidget		*_logo;
 	GraphicsWidget		*_searchPic;
+	GraphicsWidget		*_groupPic;
 #endif
 	StaticTextWidget	*_searchDesc;
 	ButtonWidget	*_searchClearButton;

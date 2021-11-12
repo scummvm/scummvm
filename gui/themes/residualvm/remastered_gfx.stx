@@ -135,6 +135,7 @@
 		<bitmap filename = 'button_play.bmp' scalable_file = 'button_play.svg' width = '15' height = '15'/>
 		<bitmap filename = 'button_load.bmp' scalable_file = 'button_load.svg' width = '15' height = '15'/>
 		<bitmap filename = 'button_options.bmp' scalable_file = 'button_options.svg' width = '15' height = '15'/>
+		<bitmap filename = 'groupbtn.bmp' scalable_file = 'groupbtn.svg' width = '16' height = '16'/>
 	</bitmaps>
 
 	<fonts>

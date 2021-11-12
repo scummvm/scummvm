@@ -51,6 +51,7 @@ namespace GUI {
 const char *const ThemeEngine::kImageLogo = "logo.bmp";
 const char *const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
 const char *const ThemeEngine::kImageSearch = "search.bmp";
+const char *const ThemeEngine::kImageGroup = "groupbtn.bmp";
 const char *const ThemeEngine::kImageEraser = "eraser.bmp";
 const char *const ThemeEngine::kImageDelButton = "delbtn.bmp";
 const char *const ThemeEngine::kImageList = "list.bmp";

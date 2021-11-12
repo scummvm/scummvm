@@ -150,7 +150,7 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr),
 	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone)
 #ifndef DISABLE_FANCY_THEMES
-	, _logo(nullptr), _searchPic(nullptr)
+	, _logo(nullptr), _searchPic(nullptr), _groupPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
@@ -186,7 +186,17 @@ LauncherDialog::~LauncherDialog() {
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
-	_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String("Group by: "));
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_grpChooserDesc = nullptr;
+		_groupPic = new GraphicsWidget(this, _title + ".GroupPic", _("Select Group by"));
+		_groupPic->setGfxFromTheme(ThemeEngine::kImageGroup);
+		_groupPic->useThemeTransparency(true);
+	} else
+#endif
+		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String("Group by: "));
+
 	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
 	// I18N: Group name for the game list
 	_grpChooserPopup->appendEntry(_c("None", "group"), kGroupByNone);
@@ -744,6 +754,19 @@ void LauncherDialog::reflowLayout() {
 			delete _searchDesc;
 			_searchDesc = nullptr;
 		}
+
+		if (!_groupPic)
+			_groupPic = new GraphicsWidget(this, _title + ".GroupPic");
+		_groupPic->setGfxFromTheme(ThemeEngine::kImageGroup);
+		_groupPic->useThemeTransparency(true);
+
+		if (_grpChooserDesc) {
+			removeWidget(_grpChooserDesc);
+			_grpChooserDesc->setNext(nullptr);
+			delete _grpChooserDesc;
+			_grpChooserDesc = nullptr;
+		}
+
 	} else {
 		if (!_searchDesc)
 			_searchDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Search:"));
@@ -753,6 +776,16 @@ void LauncherDialog::reflowLayout() {
 			_searchPic->setNext(nullptr);
 			delete _searchPic;
 			_searchPic = nullptr;
+		}
+
+		if (!_grpChooserDesc)
+			_grpChooserDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Group by:"));
+
+		if (_groupPic) {
+			removeWidget(_groupPic);
+			_groupPic->setNext(nullptr);
+			delete _groupPic;
+			_groupPic = nullptr;
 		}
 	}
 
