@@ -255,31 +255,126 @@ private:
 	const int _sjisWidthOffset;
 };
 
-class Big5Font : public Font {
+class ChineseFont : public Font {
 public:
-	Big5Font(const uint8 *oneByteData, int pitch);
-	~Big5Font() override;
+	ChineseFont(int pitch, int renderWidth, int renderHeight, int spacingWidth, int spacingHeight, int extraSpacingWidth, int extraSpacingHeight);
+	~ChineseFont() override;
 
+	bool load(Common::SeekableReadStream &data) override;
+
+	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
+	int getHeight() const override { return _spacingHeight + (_border ? _borderExtraSpacingHeight : 0); }
+	int getWidth() const override { return _spacingWidth + (_border ? _borderExtraSpacingWidth : 0); }
+	int getCharWidth(uint16 c) const override { return hasGlyphForCharacter(c) ? getWidth() : -1; }
+	void setColorMap(const uint8 *src) override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+protected:
+	uint16 _textColor[2];
+	const uint8 *_colorMap;
+
+private:
+	virtual bool hasGlyphForCharacter(uint16 c) const = 0;
+	virtual uint32 getFontOffset(uint16 c) const = 0;
+	virtual void processColorMap() = 0;
+
+	const int _spacingWidth, _spacingHeight;
+	const int _borderExtraSpacingWidth, _borderExtraSpacingHeight;
+	const int _renderWidth, _renderHeight;
+
+	const uint8 *_glyphData;
+	uint32 _glyphDataSize;
+	const uint16 _pitch;
+	bool _border;
+};
+
+class ChineseOneByteFontLoK : public ChineseFont {
+public:
+	ChineseOneByteFontLoK(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
+	~ChineseOneByteFontLoK() override {}
+	Type getType() const override { return kBIG5; }
+
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
+	void processColorMap() override;
+};
+
+class ChineseTwoByteFontLoK : public ChineseFont {
+public:
+	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2), _lookupTable(lookupTable) {}
+	~ChineseTwoByteFontLoK() override {}
+	Type getType() const override { return kBIG5; }
+
+private:
+	bool hasGlyphForCharacter(uint16 c) const override;
+	uint32 getFontOffset(uint16 c) const override;
+	void processColorMap() override;
+
+	const uint16 *_lookupTable;
+};
+
+class ChineseOneByteFontMR : public ChineseFont {
+public:
+	ChineseOneByteFontMR(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
+	~ChineseOneByteFontMR() override {}
+	Type getType() const override { return kBIG5; }
+
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return (c == 0x6187) || !(c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override { return ((c == 0x6187) ? 128 : (c & 0x7F)) * 14; }
+	void processColorMap() override;
+};
+
+class ChineseTwoByteFontMR : public ChineseFont {
+public:
+	ChineseTwoByteFontMR(int pitch) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2) {}
+	~ChineseTwoByteFontMR() override {}
+	Type getType() const override { return kBIG5; }
+
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return (c != 0x6187) && (c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override;
+	void processColorMap() override;
+};
+
+class MultiSubsetFont : public Font {
+public:
+	MultiSubsetFont(Common::Array<Font*> *subsets) : Font(), _subsets(subsets) {}
+	~MultiSubsetFont() override;
 	Type getType() const override { return kBIG5; }
 
 	bool load(Common::SeekableReadStream &data) override;
-	int getHeight() const override { return _border ? 16 : 14; }
-	int getWidth() const override { return 18; }
+
+	void setStyles(int styles) override;
+	int getHeight() const override;
+	int getWidth() const override;
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	Common::Array<Font*> *_subsets;
+};
+
+/*
+class ChineseFont : public Font {
+public:
+	ChineseFont(const uint8 *oneByteData, int pitch);
+	~ChineseFont() override;
+
+	
+
+	
+
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
-	const uint8 *_oneByteData;
-	const uint8 *_twoByteData;
-	uint32 _twoByteNumChar;
-	uint32 _twoByteDataSize;
-	const uint8 *_colorMap;
-	uint16 _textColor[2];
-	const uint16 _pitch;
-	bool _border;
-};
+	
+};*/
 
 /**
  * A class that manages KYRA palettes.

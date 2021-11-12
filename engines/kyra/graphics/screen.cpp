@@ -911,7 +911,7 @@ void Screen::setScreenPalette(const Palette &pal) {
 			Graphics::PixelFormat pixelFormat = _system->getScreenFormat();
 			for (int i = 0; i < 256; ++i)
 				_16bitConversionPalette[i] = pixelFormat.RGBToColor(screenPal[i * 3], screenPal[i * 3 + 1], screenPal[i * 3 + 2]);
-			// The whole Surface has to be converted again after each palette chance
+			// The whole Surface has to be converted again after each palette change
 			_forceFullUpdate = true;
 		}
 		return;
@@ -1337,13 +1337,22 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	int temp = 0;
 
 	if (!fnt) {
-		if (_vm->game() == GI_KYRA1 && _isAmiga)
+		if (_vm->game() == GI_KYRA1 && _isAmiga) {
 			fnt = new AMIGAFont();
-		else if (_vm->game() == GI_KYRA3 && fontId == FID_CHINESE_FNT)
-			fnt = new Big5Font(_vm->staticres()->loadRawData(k3FontData, temp), SCREEN_W);
-		else
-			fnt = new DOSFont();
+		} else if (fontId == FID_CHINESE_FNT) {
+			Common::Array<Font*> *fa = new Common::Array<Font*>;
+			fa->push_back(new ChineseOneByteFontMR(SCREEN_W));
+			fa->push_back(new ChineseTwoByteFontMR(SCREEN_W));
+			fnt = new MultiSubsetFont(fa);
 
+			if (_vm->game() == GI_KYRA3) {
+				const uint8 *oneByteData = _vm->staticres()->loadRawData(k3FontData, temp);
+				Common::MemoryReadStream str(oneByteData, temp);
+				fnt->load(str);
+			}
+		} else {
+			fnt = new DOSFont();
+		}
 		assert(fnt);
 	}
 
@@ -1352,6 +1361,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 		error("Font file '%s' is missing", filename);
 
 	bool ret = fnt->load(*file);
+
 	fnt->setColorMap(_textColorsMap);
 	delete file;
 	return ret;
@@ -3836,6 +3846,139 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 
 	_font->toggleFatPrint(_style == kStyleFat);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
+}
+
+ChineseFont::ChineseFont(int pitch, int renderWidth, int renderHeight, int spacingWidth, int spacingHeight, int extraSpacingWidth, int extraSpacingHeight) : Font(),
+	_renderWidth(renderWidth), _renderHeight(renderHeight), _spacingWidth(spacingWidth), _spacingHeight(spacingHeight), _pitch(pitch), _border(false),
+	_borderExtraSpacingWidth(extraSpacingWidth), _borderExtraSpacingHeight(extraSpacingHeight), _glyphData(0), _glyphDataSize(0) {
+}
+
+ChineseFont::~ChineseFont() {
+	delete[] _glyphData;
+}
+
+bool ChineseFont::load(Common::SeekableReadStream &data) {
+	if (_glyphData)
+		return false;
+
+	if (!data.size())
+		return false;
+
+	_glyphDataSize = data.size();
+	uint8 *dst = new uint8[_glyphDataSize];
+	if (!dst)
+		return false;
+
+	data.read(dst, _glyphDataSize);
+	_glyphData = dst;
+
+	return true;
+}
+
+void ChineseFont::setColorMap(const uint8 *src) {
+	_colorMap = src;
+	processColorMap();
+}
+
+void ChineseFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	static const int8 drawSeqNormal[4] = { 0, 0, 0, -1 };
+	static const int8 drawSeqOutline[19] = { 1, 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, -1 };
+
+	if (!hasGlyphForCharacter(c))
+		return;
+
+	uint32 offs = getFontOffset(c);
+	assert(offs < _glyphDataSize);
+	const uint8 *glyphData = _glyphData + offs;
+
+	for (const int8 *i = _border ? drawSeqOutline : drawSeqNormal; *i != -1; i += 3) {
+		const uint8 *data = glyphData;
+		uint8 *dst3 = dst;
+		dst = &dst3[i[0] + i[1] * _pitch];
+		for (int h = 0; h < _renderHeight; ++h) {
+			uint8 in = 0;
+			int bt = -1;
+			uint8 *dst2 = dst;
+			for (int x = 0; x < _renderWidth; ++x) {
+				if (bt == -1) {
+					in = *data++;
+					bt = 7;
+				}
+				if (in & (1 << (bt--)))
+					*(uint16*)dst = _textColor[i[2]];
+				dst++;
+			}
+			dst = dst2 + _pitch;
+		}
+		dst = dst3;
+	}
+}
+
+void ChineseOneByteFontLoK::processColorMap() {
+
+}
+
+bool ChineseTwoByteFontLoK::hasGlyphForCharacter(uint16 c) const {
+	return false;
+}
+
+uint32 ChineseTwoByteFontLoK::getFontOffset(uint16 c) const {
+	return 0;
+}
+
+void ChineseTwoByteFontLoK::processColorMap() {
+
+}
+
+MultiSubsetFont::~MultiSubsetFont() {
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		delete (*i);
+	delete _subsets;
+}
+
+bool MultiSubsetFont::load(Common::SeekableReadStream &data) {
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		if ((*i)->load(data))
+			return true;
+	return false;
+}
+
+void MultiSubsetFont::setStyles(int styles) {
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		(*i)->setStyles(styles);
+}
+
+int MultiSubsetFont::getHeight() const {
+	int res = 0;
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		res = MAX<int>(res, (*i)->getHeight());
+	return res;
+}
+
+int MultiSubsetFont::getWidth() const {
+	int res = 0;
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		res = MAX<int>(res, (*i)->getWidth());
+	return res;
+}
+
+int MultiSubsetFont::getCharWidth(uint16 c) const {
+	int res = 0;
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i) {
+		if ((res = (*i)->getCharWidth(c)) != -1)
+			break;
+	}
+	return res > 0 ? res : 0;
+}
+
+void MultiSubsetFont::setColorMap(const uint8 *src) {
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		(*i)->setColorMap(src);
+}
+
+void MultiSubsetFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i)
+		(*i)->drawChar(c, dst, pitch, 0);
 }
 
 #pragma mark -
