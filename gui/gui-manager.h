@@ -92,6 +92,8 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
+	Common::SearchSet &getIconsSet() { return _iconsSet; }
+
 	int16 getGUIWidth() const { return _baseWidth; }
 	int16 getGUIHeight() const { return _baseHeight; }
 	float getScaleFactor() const { return _scaleFactor; }
@@ -159,6 +161,8 @@ protected:
 	int			_topDialogLeftPadding;
 	int			_topDialogRightPadding;
 
+	Common::SearchSet _iconsSet;
+
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {
 		MousePos() : x(-1), y(-1), count(0) { time = 0; }
@@ -188,6 +192,8 @@ protected:
 
 	void initKeymap();
 	void enableKeymap(bool enabled);
+
+	void initIconsSet();
 
 	void saveState();
 	void restoreState();

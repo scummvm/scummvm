@@ -289,14 +289,12 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 // TODO: Add BMP support, and add scaling of non-vector images.
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
 	Graphics::ManagedSurface *surf = nullptr;
-	const Common::String path = Common::String::format("%s/%s", ConfMan.get("iconspath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
 		Image::PNGDecoder decoder;
-		Common::FSNode fileNode(path);
-		if (fileNode.exists()) {
-			Common::SeekableReadStream *stream = fileNode.createReadStream();
+		if (g_gui.getIconsSet().hasFile(name)) {
+			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
 			if (!decoder.loadStream(*stream)) {
 				warning("Error decoding PNG");
 				return surf;
@@ -310,22 +308,21 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
 			}
 		} else {
-			debug(5, "GridWidget: Cannot read file '%s'", path.c_str());
+			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
 		}
 #else
 		error("No PNG support compiled");
 #endif
 	} else if (name.hasSuffix(".svg")) {
-		Common::FSNode fileNode(path);
-		if (fileNode.exists()) {
-			Common::SeekableReadStream *stream = fileNode.createReadStream();
+		if (g_gui.getIconsSet().hasFile(name)) {
+			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
 			Graphics::SVGBitmap *image = nullptr;
 			image = new Graphics::SVGBitmap(stream);
 			surf = new Graphics::ManagedSurface(renderWidth, renderHeight, *image->getPixelFormat());
 			image->render(*surf, renderWidth, renderHeight);
 			delete image;
 		} else {
-			debug(5, "GridWidget: Cannot read file '%s'", path.c_str());
+			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
 		}
 	}
 	return surf;
@@ -335,8 +332,6 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_iconDir = ConfMan.get("iconspath");
-
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
@@ -578,7 +573,7 @@ void GridWidget::reloadThumbnails() {
 void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
-		Common::String path = Common::String::format("flags/%s.svg", l->code);
+		Common::String path = Common::String::format("icons/flags/%s.svg", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
 		if (gfx) {
 			_languageIcons[l->id] = gfx;
@@ -591,7 +586,7 @@ void GridWidget::loadFlagIcons() {
 void GridWidget::loadPlatformIcons() {
 	const Common::PlatformDescription *l = Common::g_platforms;
 	for (; l->code; ++l) {
-		Common::String path = Common::String::format("platforms/%s.png", l->code);
+		Common::String path = Common::String::format("icons/platforms/%s.png", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight);
