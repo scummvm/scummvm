@@ -20,6 +20,7 @@ README.txt
 scummclassic.zip
 scummmodern.zip
 scummremastered.zip
+gui-icons.dat
 scummvm.exe
 SDL2.dll
 sky.cpt
