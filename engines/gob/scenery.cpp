@@ -60,7 +60,7 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 	_animTop  = 0;
 	_animLeft = 0;
 
-	_pCaptureCounter = 0;
+	_pCaptureCounter = nullptr;
 
 	for (int i = 0; i < 70; i++) {
 		_staticPictToSprite[i] = 0;
@@ -160,7 +160,7 @@ int16 Scenery::loadStatic(char search) {
 				ptr->layers[i].planes[j].transp     = layerData.readSByte();
 			}
 		} else
-			ptr->layers[i].planes = 0;
+			ptr->layers[i].planes = nullptr;
 
 		ptr->layers[i].backResId = (int16) READ_LE_UINT16(backsPtr);
 		backsPtr += 2;
@@ -186,7 +186,7 @@ int16 Scenery::loadStatic(char search) {
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0; sprIndex--) { }
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != nullptr; sprIndex--) { }
 
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;

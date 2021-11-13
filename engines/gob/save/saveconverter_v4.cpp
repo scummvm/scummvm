@@ -53,7 +53,7 @@ int SaveConverter_v4::isOldSave(Common::InSaveFile **save) const {
 	// Not an old save, clean up
 	if (save) {
 		delete *save;
-		*save = 0;
+		*save = nullptr;
 	}
 
 	return 0;
@@ -62,14 +62,14 @@ int SaveConverter_v4::isOldSave(Common::InSaveFile **save) const {
 char *SaveConverter_v4::getDescription(Common::SeekableReadStream &save) const {
 	// The description starts at 1000
 	if (!save.seek(1000))
-		return 0;
+		return nullptr;
 
 	char *desc = new char[kSlotNameLength];
 
 	// Read the description
 	if (save.read(desc, kSlotNameLength) != kSlotNameLength) {
 		delete[] desc;
-		return 0;
+		return nullptr;
 	}
 
 	return desc;
@@ -108,26 +108,26 @@ bool SaveConverter_v4::load() {
 
 	SavePartInfo *info = readInfo(*save, kSlotNameLength, false);
 	if (!info)
-		return loadFail(0, 0, 0, save);
+		return loadFail(nullptr, nullptr, nullptr, save);
 
 	SavePartVars *vars = readVars(*save, varSize, true);
 	if (!vars)
-		return loadFail(info, 0, 0, save);
+		return loadFail(info, nullptr, nullptr, save);
 
 	SavePartMem *props = readMem(*save, 256000, true);
 	if (!props)
-		return loadFail(info, vars, 0, save);
+		return loadFail(info, vars, nullptr, save);
 
 	// We don't need the save anymore
 	delete save;
 
 	// Write all parts
 	if (!writer.writePart(0, info))
-		return loadFail(info, vars, props, 0);
+		return loadFail(info, vars, props, nullptr);
 	if (!writer.writePart(1, vars))
-		return loadFail(info, vars, props, 0);
+		return loadFail(info, vars, props, nullptr);
 	if (!writer.writePart(2, props))
-		return loadFail(info, vars, props, 0);
+		return loadFail(info, vars, props, nullptr);
 
 	// We don't need those anymore
 	delete info;
@@ -136,7 +136,7 @@ bool SaveConverter_v4::load() {
 
 	// Create the final read stream
 	if (!createStream(writer))
-		return loadFail(0, 0, 0, 0);
+		return loadFail(nullptr, nullptr, nullptr, nullptr);
 
 	return true;
 }

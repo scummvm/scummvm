@@ -86,7 +86,7 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 		Common::String slotFile = build(i);
 
 		if (!slotFile.empty()) {
-			char *desc = 0;
+			char *desc = nullptr;
 
 			if (converter && (desc = converter->getDescription(slotFile)))
 				// Old style save
@@ -117,7 +117,7 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 
 bool SlotFileIndexed::exists(int slot) const {
 	Common::InSaveFile *in = openRead(slot);
-	bool result = (in != 0);
+	bool result = (in != nullptr);
 	delete in;
 	return result;
 }
@@ -125,7 +125,7 @@ bool SlotFileIndexed::exists(int slot) const {
 Common::InSaveFile *SlotFileIndexed::openRead(int slot) const {
 	Common::String name = build(slot);
 	if (name.empty())
-		return 0;
+		return nullptr;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *result = saveMan->openForLoading(name);
 	return result;
@@ -134,7 +134,7 @@ Common::InSaveFile *SlotFileIndexed::openRead(int slot) const {
 Common::OutSaveFile *SlotFileIndexed::openWrite(int slot) const {
 	Common::String name = build(slot);
 	if (name.empty())
-		return 0;
+		return nullptr;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *result = saveMan->openForSaving(name);
 	return result;
@@ -182,7 +182,7 @@ Common::String SlotFileStatic::build() const {
 
 bool SlotFileStatic::exists() const {
 	Common::InSaveFile *in = openRead();
-	bool result = (in != 0);
+	bool result = (in != nullptr);
 	delete in;
 	return result;
 }
@@ -190,7 +190,7 @@ bool SlotFileStatic::exists() const {
 Common::InSaveFile *SlotFileStatic::openRead() const {
 	Common::String name = build();
 	if (name.empty())
-		return 0;
+		return nullptr;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *result = saveMan->openForLoading(name);
 	return result;
@@ -199,7 +199,7 @@ Common::InSaveFile *SlotFileStatic::openRead() const {
 Common::OutSaveFile *SlotFileStatic::openWrite() const {
 	Common::String name = build();
 	if (name.empty())
-		return 0;
+		return nullptr;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *result = saveMan->openForSaving(name);
 	return result;
@@ -226,7 +226,7 @@ bool SaveHandler::deleteFile() {
 
 
 TempSpriteHandler::TempSpriteHandler(GobEngine *vm) : SaveHandler(vm) {
-	_sprite = 0;
+	_sprite = nullptr;
 }
 
 TempSpriteHandler::~TempSpriteHandler() {
@@ -308,7 +308,7 @@ bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 bool TempSpriteHandler::create(uint32 width, uint32 height, bool trueColor) {
 	delete _sprite;
-	_sprite = 0;
+	_sprite = nullptr;
 
 	// Create a new temporary sprite
 	_sprite = new SavePartSprite(width, height, trueColor);
@@ -317,7 +317,7 @@ bool TempSpriteHandler::create(uint32 width, uint32 height, bool trueColor) {
 }
 
 bool TempSpriteHandler::createFromSprite(int16 dataVar, int32 size, int32 offset) {
-	return createSprite(dataVar, size, offset) != 0;
+	return createSprite(dataVar, size, offset) != nullptr;
 }
 
 SurfacePtr TempSpriteHandler::createSprite(int16 dataVar, int32 size, int32 offset) {

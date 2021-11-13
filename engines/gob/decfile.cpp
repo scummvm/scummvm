@@ -36,7 +36,7 @@ namespace Gob {
 
 DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
 				 uint16 width, uint16 height, uint8 bpp) : _vm(vm),
-	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(0) {
+	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(nullptr) {
 
 	bool bigEndian = false;
 	Common::String endianFileName = fileName;

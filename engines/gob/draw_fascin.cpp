@@ -315,7 +315,7 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 
 	if (operation == DRAW_PRINTTEXT) {
 		len = _fonts[_fontIndex]->getCharWidth();
-		adjustCoords(1, &len, 0);
+		adjustCoords(1, &len, nullptr);
 		_destSpriteX += len * strlen(_textToPrint);
 	}
 
@@ -983,7 +983,7 @@ void Draw_Fascination::activeWin(int16 id) {
 		nextId = id;
 
 		for (int j = 0; j < 10; j++) {
-			if (oldSrf[j] != 0)
+			if (oldSrf[j] != nullptr)
 				_fascinWin[j].savedSurface = oldSrf[j];
 		}
 	}

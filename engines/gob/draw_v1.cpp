@@ -342,7 +342,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		}
 	}
 
-	Font *font = 0;
+	Font *font = nullptr;
 	switch (operation) {
 	case DRAW_BLITSURF:
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],

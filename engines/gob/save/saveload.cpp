@@ -140,11 +140,11 @@ SaveLoad::SaveMode SaveLoad::getSaveMode(const char *fileName) const {
 }
 
 SaveHandler *SaveLoad::getHandler(const char *fileName) const {
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad::getDescription(const char *fileName) const {
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Gob

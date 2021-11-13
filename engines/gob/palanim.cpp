@@ -114,9 +114,9 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 	int colorCount = _vm->_global->_setAllPalette ? _vm->_global->_colorCount : 256;
 
 	for (int i = 0; i < colorCount; i++) {
-		_toFadeRed  [i] = (palDesc == 0) ? 0 : palDesc->vgaPal[i].red;
-		_toFadeGreen[i] = (palDesc == 0) ? 0 : palDesc->vgaPal[i].green;
-		_toFadeBlue [i] = (palDesc == 0) ? 0 : palDesc->vgaPal[i].blue;
+		_toFadeRed  [i] = (palDesc == nullptr) ? 0 : palDesc->vgaPal[i].red;
+		_toFadeGreen[i] = (palDesc == nullptr) ? 0 : palDesc->vgaPal[i].green;
+		_toFadeBlue [i] = (palDesc == nullptr) ? 0 : palDesc->vgaPal[i].blue;
 	}
 
 	if (allColors == 0) {

@@ -28,7 +28,7 @@
 namespace Gob {
 
 SaveLoad_Geisha::SaveFile SaveLoad_Geisha::_saveFiles[] = {
-	{"save.inf", kSaveModeSave, 0, "savegame"}
+	{"save.inf", kSaveModeSave, nullptr, "savegame"}
 };
 
 
@@ -172,7 +172,7 @@ const SaveLoad_Geisha::SaveFile *SaveLoad_Geisha::getSaveFile(const char *fileNa
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_Geisha::SaveFile *SaveLoad_Geisha::getSaveFile(const char *fileName) {
@@ -182,7 +182,7 @@ SaveLoad_Geisha::SaveFile *SaveLoad_Geisha::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_Geisha::getHandler(const char *fileName) const {
@@ -191,7 +191,7 @@ SaveHandler *SaveLoad_Geisha::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_Geisha::getDescription(const char *fileName) const {
@@ -200,7 +200,7 @@ const char *SaveLoad_Geisha::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_Geisha::getSaveMode(const char *fileName) const {

@@ -47,7 +47,7 @@ namespace Gob {
 const char *const Init::_fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
 
 Init::Init(GobEngine *vm) : _vm(vm) {
-	_palDesc = 0;
+	_palDesc = nullptr;
 }
 
 Init::~Init() {
@@ -112,7 +112,7 @@ void Init::initGame() {
 	_vm->_draw->_winCount = 0;
 
 	for (int i = 0; i < 8; i++)
-		_vm->_draw->_fonts[i] = 0;
+		_vm->_draw->_fonts[i] = nullptr;
 
 	if (_vm->isDemo()) {
 		doDemo();

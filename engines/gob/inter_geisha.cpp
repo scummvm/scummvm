@@ -50,7 +50,7 @@ namespace Gob {
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
-	_diving(0), _penetration(0) {
+	_diving(nullptr), _penetration(nullptr) {
 
 	_diving      = new Geisha::Diving(vm);
 	_penetration = new Geisha::Penetration(vm);

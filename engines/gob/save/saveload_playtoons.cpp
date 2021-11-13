@@ -27,40 +27,40 @@
 namespace Gob {
 
 SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
-	{   "did.inf", kSaveModeSave,   0, 0}, // Purpose ignored at the moment, intensively used to save things.
-	{   "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK detection file
-	{   "cat.inf", kSaveModeNone,   0, 0},
-	{ "titre.009", kSaveModeIgnore, 0, 0}, // Playtoons theoritical title files that are checked for nothing
-	{ "titre.010", kSaveModeIgnore, 0, 0},
-	{ "titre.011", kSaveModeIgnore, 0, 0},
-	{ "titre.012", kSaveModeIgnore, 0, 0},
-	{ "titre.013", kSaveModeIgnore, 0, 0},
-	{ "titre.014", kSaveModeIgnore, 0, 0},
-	{ "titre.015", kSaveModeIgnore, 0, 0},
-	{ "titre.016", kSaveModeIgnore, 0, 0},
-	{ "titre.017", kSaveModeIgnore, 0, 0},
-	{ "titre.018", kSaveModeIgnore, 0, 0},
-	{ "titre.019", kSaveModeIgnore, 0, 0},
-	{ "titre.020", kSaveModeIgnore, 0, 0},
-	{ "titre.021", kSaveModeIgnore, 0, 0},
-	{ "titre.022", kSaveModeIgnore, 0, 0},
-	{ "titre.023", kSaveModeIgnore, 0, 0},
-	{ "titre.024", kSaveModeIgnore, 0, 0},
-	{ "titre.025", kSaveModeIgnore, 0, 0},
-	{ "titre.026", kSaveModeIgnore, 0, 0},
-	{ "titre.027", kSaveModeIgnore, 0, 0},
-	{ "titre.028", kSaveModeIgnore, 0, 0},
-	{ "titre.029", kSaveModeIgnore, 0, 0},
-	{ "titre.030", kSaveModeIgnore, 0, 0},
-	{ "titre.031", kSaveModeIgnore, 0, 0},
-	{ "titre.032", kSaveModeIgnore, 0, 0},
-	{ "titre.033", kSaveModeIgnore, 0, 0},
-	{ "titre.034", kSaveModeIgnore, 0, 0},
-	{ "titre.035", kSaveModeIgnore, 0, 0},
-	{ "titre.036", kSaveModeIgnore, 0, 0},
-	{ "titre.037", kSaveModeIgnore, 0, 0},
-	{ "titre.038", kSaveModeIgnore, 0, 0},
-	{ "titre.039", kSaveModeIgnore, 0, 0},
+	{   "did.inf", kSaveModeSave,   nullptr, nullptr}, // Purpose ignored at the moment, intensively used to save things.
+	{   "dan.itk", kSaveModeNone,   nullptr, nullptr}, // Playtoons CK detection file
+	{   "cat.inf", kSaveModeNone,   nullptr, nullptr},
+	{ "titre.009", kSaveModeIgnore, nullptr, nullptr}, // Playtoons theoritical title files that are checked for nothing
+	{ "titre.010", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.011", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.012", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.013", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.014", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.015", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.016", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.017", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.018", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.019", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.020", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.021", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.022", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.023", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.024", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.025", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.026", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.027", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.028", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.029", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.030", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.031", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.032", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.033", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.034", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.035", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.036", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.037", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.038", kSaveModeIgnore, nullptr, nullptr},
+	{ "titre.039", kSaveModeIgnore, nullptr, nullptr},
 };
 
 SaveLoad_Playtoons::GameHandler::File::File(GobEngine *vm, const char *base) :
@@ -169,7 +169,7 @@ bool SaveLoad_Playtoons::GameHandler::load(int16 dataVar, int32 size, int32 offs
 
 		Common::String slotFile = _slotFile->build(slot);
 
-		SaveReader *reader = 0;
+		SaveReader *reader = nullptr;
 
 		// New save, load directly
 		reader = new SaveReader(2, slot, slotFile);
@@ -293,7 +293,7 @@ void SaveLoad_Playtoons::GameHandler::buildIndex(byte *buffer) const {
 	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
 			0, _vm->getEndianness(), varSize);
 
-	_slotFile->buildIndex(buffer, info, 0);
+	_slotFile->buildIndex(buffer, info, nullptr);
 }
 
 
@@ -316,7 +316,7 @@ const SaveLoad_Playtoons::SaveFile *SaveLoad_Playtoons::getSaveFile(const char *
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_Playtoons::SaveFile *SaveLoad_Playtoons::getSaveFile(const char *fileName) {
@@ -326,7 +326,7 @@ SaveLoad_Playtoons::SaveFile *SaveLoad_Playtoons::getSaveFile(const char *fileNa
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_Playtoons::getHandler(const char *fileName) const {
@@ -335,7 +335,7 @@ SaveHandler *SaveLoad_Playtoons::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_Playtoons::getDescription(const char *fileName) const {
@@ -344,7 +344,7 @@ const char *SaveLoad_Playtoons::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_Playtoons::getSaveMode(const char *fileName) const {

@@ -29,40 +29,40 @@ namespace Gob {
 
 SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	// Addy Junior Base
-	{"visage01.inf", kSaveModeSave, 0, "face"         }, // Child 01
-	{"visage02.inf", kSaveModeSave, 0, "face"         }, // Child 02
-	{"visage03.inf", kSaveModeSave, 0, "face"         }, // Child 03
-	{"visage04.inf", kSaveModeSave, 0, "face"         }, // Child 04
-	{"visage05.inf", kSaveModeSave, 0, "face"         }, // Child 05
-	{"visage06.inf", kSaveModeSave, 0, "face"         }, // Child 06
-	{"visage07.inf", kSaveModeSave, 0, "face"         }, // Child 07
-	{"visage08.inf", kSaveModeSave, 0, "face"         }, // Child 08
-	{"visage09.inf", kSaveModeSave, 0, "face"         }, // Child 09
-	{"visage10.inf", kSaveModeSave, 0, "face"         }, // Child 10
-	{"visage11.inf", kSaveModeSave, 0, "face"         }, // Child 11
-	{"visage12.inf", kSaveModeSave, 0, "face"         }, // Child 12
-	{"visage13.inf", kSaveModeSave, 0, "face"         }, // Child 13
-	{"visage14.inf", kSaveModeSave, 0, "face"         }, // Child 14
-	{"visage15.inf", kSaveModeSave, 0, "face"         }, // Child 15
-	{"visage16.inf", kSaveModeSave, 0, "face"         }, // Child 16
-	{  "enfant.inf", kSaveModeSave, 0, "children"     },
-	{   "debil.tmp", kSaveModeSave, 0, 0              },
-	{  "config.inf", kSaveModeSave, 0, "configuration"},
+	{"visage01.inf", kSaveModeSave, nullptr, "face"         }, // Child 01
+	{"visage02.inf", kSaveModeSave, nullptr, "face"         }, // Child 02
+	{"visage03.inf", kSaveModeSave, nullptr, "face"         }, // Child 03
+	{"visage04.inf", kSaveModeSave, nullptr, "face"         }, // Child 04
+	{"visage05.inf", kSaveModeSave, nullptr, "face"         }, // Child 05
+	{"visage06.inf", kSaveModeSave, nullptr, "face"         }, // Child 06
+	{"visage07.inf", kSaveModeSave, nullptr, "face"         }, // Child 07
+	{"visage08.inf", kSaveModeSave, nullptr, "face"         }, // Child 08
+	{"visage09.inf", kSaveModeSave, nullptr, "face"         }, // Child 09
+	{"visage10.inf", kSaveModeSave, nullptr, "face"         }, // Child 10
+	{"visage11.inf", kSaveModeSave, nullptr, "face"         }, // Child 11
+	{"visage12.inf", kSaveModeSave, nullptr, "face"         }, // Child 12
+	{"visage13.inf", kSaveModeSave, nullptr, "face"         }, // Child 13
+	{"visage14.inf", kSaveModeSave, nullptr, "face"         }, // Child 14
+	{"visage15.inf", kSaveModeSave, nullptr, "face"         }, // Child 15
+	{"visage16.inf", kSaveModeSave, nullptr, "face"         }, // Child 16
+	{  "enfant.inf", kSaveModeSave, nullptr, "children"     },
+	{   "debil.tmp", kSaveModeSave, nullptr, nullptr              },
+	{  "config.inf", kSaveModeSave, nullptr, "configuration"},
 // Addy 4 Base
-	{"config00.inf", kSaveModeSave, 0, 0              },
-	{"statev00.inf", kSaveModeSave, 0, 0              },
+	{"config00.inf", kSaveModeSave, nullptr, nullptr              },
+	{"statev00.inf", kSaveModeSave, nullptr, nullptr              },
 	// Addy 4 Grundschule
-	{ "premier.dep", kSaveModeSave, 0, 0              },
-	{ "quitter.dep", kSaveModeSave, 0, 0              },
-	{   "appel.dep", kSaveModeSave, 0, 0              },
-	{  "parole.dep", kSaveModeSave, 0, 0              },
-	{    "ado4.inf", kSaveModeSave, 0, 0              },
-	{"mcurrent.inf", kSaveModeSave, 0, 0              },
-	{   "perso.dep", kSaveModeSave, 0, 0              },
-	{ "nouveau.dep", kSaveModeSave, 0, 0              },
-	{     "adi.tmp", kSaveModeSave, 0, 0              },
-	{     "adi.inf", kSaveModeSave, 0, 0              },
-	{    "adi4.tmp", kSaveModeSave, 0, 0              }
+	{ "premier.dep", kSaveModeSave, nullptr, nullptr              },
+	{ "quitter.dep", kSaveModeSave, nullptr, nullptr              },
+	{   "appel.dep", kSaveModeSave, nullptr, nullptr              },
+	{  "parole.dep", kSaveModeSave, nullptr, nullptr              },
+	{    "ado4.inf", kSaveModeSave, nullptr, nullptr              },
+	{"mcurrent.inf", kSaveModeSave, nullptr, nullptr              },
+	{   "perso.dep", kSaveModeSave, nullptr, nullptr              },
+	{ "nouveau.dep", kSaveModeSave, nullptr, nullptr              },
+	{     "adi.tmp", kSaveModeSave, nullptr, nullptr              },
+	{     "adi.inf", kSaveModeSave, nullptr, nullptr              },
+	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr              }
 };
 
 
@@ -105,7 +105,7 @@ const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) cons
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) {
@@ -115,7 +115,7 @@ SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_v7::getHandler(const char *fileName) const {
@@ -124,7 +124,7 @@ SaveHandler *SaveLoad_v7::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_v7::getDescription(const char *fileName) const {
@@ -133,7 +133,7 @@ const char *SaveLoad_v7::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_v7::getSaveMode(const char *fileName) const {

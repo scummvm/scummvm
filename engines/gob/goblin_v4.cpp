@@ -396,7 +396,7 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	if (!obj->goblinStates)
 		return;
 
-	movePathFind(obj, 0, 0);
+	movePathFind(obj, nullptr, 0);
 	playSounds(obj);
 
 	animData = obj->pAnimData;

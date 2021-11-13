@@ -28,18 +28,18 @@
 namespace Gob {
 
 SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
-	{   "cat.inf", kSaveModeSave, 0, "savegame"},
-	{  "save.tmp", kSaveModeSave, 0, "current screen properties"},
-	{ "save0.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 0
-	{ "save1.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 1
-	{ "save2.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 2
-	{ "save3.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 3
-	{ "save4.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 4
-	{ "save5.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 5
-	{ "save6.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 6
-	{ "save7.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 7
-	{ "save8.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 8
-	{ "save9.tmp", kSaveModeSave, 0, "savegame screen properties"}  // Slot 9
+	{   "cat.inf", kSaveModeSave, nullptr, "savegame"},
+	{  "save.tmp", kSaveModeSave, nullptr, "current screen properties"},
+	{ "save0.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 0
+	{ "save1.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 1
+	{ "save2.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 2
+	{ "save3.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 3
+	{ "save4.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 4
+	{ "save5.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 5
+	{ "save6.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 6
+	{ "save7.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 7
+	{ "save8.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 8
+	{ "save9.tmp", kSaveModeSave, nullptr, "savegame screen properties"}  // Slot 9
 };
 
 
@@ -83,8 +83,8 @@ SaveLoad_v4::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveH
 
 	_lastSlot = -1;
 
-	_writer = 0;
-	_reader = 0;
+	_writer = nullptr;
+	_reader = nullptr;
 }
 
 SaveLoad_v4::GameHandler::~GameHandler() {
@@ -318,7 +318,7 @@ void SaveLoad_v4::GameHandler::buildIndex(byte *buffer) const {
 bool SaveLoad_v4::GameHandler::createReader(int slot) {
 	// If slot < 0, just check if a reader exists
 	if (slot < 0)
-		return (_reader != 0);
+		return (_reader != nullptr);
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -342,7 +342,7 @@ bool SaveLoad_v4::GameHandler::createReader(int slot) {
 
 		if (!_reader->load()) {
 			delete _reader;
-			_reader = 0;
+			_reader = nullptr;
 			return false;
 		}
 	}
@@ -353,7 +353,7 @@ bool SaveLoad_v4::GameHandler::createReader(int slot) {
 bool SaveLoad_v4::GameHandler::createWriter(int slot) {
 	// If slot < 0, just check if a writer exists
 	if (slot < 0)
-		return (_writer != 0);
+		return (_writer != nullptr);
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -518,7 +518,7 @@ const SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) cons
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) {
@@ -528,7 +528,7 @@ SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_v4::getHandler(const char *fileName) const {
@@ -537,7 +537,7 @@ SaveHandler *SaveLoad_v4::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_v4::getDescription(const char *fileName) const {
@@ -546,7 +546,7 @@ const char *SaveLoad_v4::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_v4::getSaveMode(const char *fileName) const {

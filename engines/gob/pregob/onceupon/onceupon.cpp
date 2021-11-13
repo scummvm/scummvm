@@ -169,7 +169,7 @@ OnceUpon::ScreenBackup::~ScreenBackup() {
 
 
 OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _openedArchives(false),
-	_jeudak(0), _lettre(0), _plettre(0), _glettre(0) {
+	_jeudak(nullptr), _lettre(nullptr), _plettre(nullptr), _glettre(nullptr) {
 
 }
 
@@ -200,7 +200,7 @@ void OnceUpon::init() {
 
 	if (!_jeudak || !_lettre || !_plettre || !_glettre)
 		error("OnceUpon::OnceUpon(): Failed to fonts (%d, %d, %d, %d)",
-		      _jeudak != 0, _lettre != 0, _plettre != 0, _glettre != 0);
+		      _jeudak != nullptr, _lettre != nullptr, _plettre != nullptr, _glettre != nullptr);
 
 	// Verify the language
 
@@ -250,10 +250,10 @@ void OnceUpon::deinit() {
 	delete _plettre;
 	delete _glettre;
 
-	_jeudak  = 0;
-	_lettre  = 0;
-	_plettre = 0;
-	_glettre = 0;
+	_jeudak  = nullptr;
+	_lettre  = nullptr;
+	_plettre = nullptr;
+	_glettre = nullptr;
 
 	// Close archives
 

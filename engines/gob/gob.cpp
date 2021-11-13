@@ -116,12 +116,12 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
-	_sound     = 0; _mult     = 0; _game    = 0;
-	_global    = 0; _dataIO   = 0; _goblin  = 0;
-	_vidPlayer = 0; _init     = 0; _inter   = 0;
-	_map       = 0; _palAnim  = 0; _scenery = 0;
-	_draw      = 0; _util     = 0; _video   = 0;
-	_saveLoad  = 0; _preGob   = 0;
+	_sound     = nullptr; _mult     = nullptr; _game    = nullptr;
+	_global    = nullptr; _dataIO   = nullptr; _goblin  = nullptr;
+	_vidPlayer = nullptr; _init     = nullptr; _inter   = nullptr;
+	_map       = nullptr; _palAnim  = nullptr; _scenery = nullptr;
+	_draw      = nullptr; _util     = nullptr; _video   = nullptr;
+	_saveLoad  = nullptr; _preGob   = nullptr;
 
 	_pauseStart = 0;
 
@@ -684,23 +684,23 @@ Common::Error GobEngine::initGameParts() {
 }
 
 void GobEngine::deinitGameParts() {
-	delete _preGob;    _preGob = 0;
-	delete _saveLoad;  _saveLoad = 0;
-	delete _mult;      _mult = 0;
-	delete _vidPlayer; _vidPlayer = 0;
-	delete _game;      _game = 0;
-	delete _global;    _global = 0;
-	delete _goblin;    _goblin = 0;
-	delete _init;      _init = 0;
-	delete _inter;     _inter = 0;
-	delete _map;       _map = 0;
-	delete _palAnim;   _palAnim = 0;
-	delete _scenery;   _scenery = 0;
-	delete _draw;      _draw = 0;
-	delete _util;      _util = 0;
-	delete _video;     _video = 0;
-	delete _sound;     _sound = 0;
-	delete _dataIO;    _dataIO = 0;
+	delete _preGob;    _preGob = nullptr;
+	delete _saveLoad;  _saveLoad = nullptr;
+	delete _mult;      _mult = nullptr;
+	delete _vidPlayer; _vidPlayer = nullptr;
+	delete _game;      _game = nullptr;
+	delete _global;    _global = nullptr;
+	delete _goblin;    _goblin = nullptr;
+	delete _init;      _init = nullptr;
+	delete _inter;     _inter = nullptr;
+	delete _map;       _map = nullptr;
+	delete _palAnim;   _palAnim = nullptr;
+	delete _scenery;   _scenery = nullptr;
+	delete _draw;      _draw = nullptr;
+	delete _util;      _util = nullptr;
+	delete _video;     _video = nullptr;
+	delete _sound;     _sound = nullptr;
+	delete _dataIO;    _dataIO = nullptr;
 }
 
 Common::Error GobEngine::initGraphics() {

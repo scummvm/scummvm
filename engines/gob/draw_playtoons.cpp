@@ -381,7 +381,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 
 	if (operation == DRAW_PRINTTEXT) {
 		len = _fonts[_fontIndex]->getCharWidth();
-		adjustCoords(1, &len, 0);
+		adjustCoords(1, &len, nullptr);
 		_destSpriteX += len * strlen(_textToPrint);
 	}
 

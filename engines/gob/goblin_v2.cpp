@@ -87,7 +87,7 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (y + 1) / 2;
 		*obj->pPosX = x * _vm->_map->getTilesWidth();
 	} else {
-		if ((obj->goblinStates != 0) && (obj->goblinStates[state] != 0)) {
+		if ((obj->goblinStates != nullptr) && (obj->goblinStates[state] != nullptr)) {
 			layer = obj->goblinStates[state][0].layer;
 			animation = obj->goblinStates[state][0].animation;
 			objAnim->state = state;
@@ -329,7 +329,7 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	if (!obj->goblinStates)
 		return;
 
-	movePathFind(obj, 0, 0);
+	movePathFind(obj, nullptr, 0);
 	playSounds(obj);
 
 	Mult::Mult_AnimData *animData = obj->pAnimData;

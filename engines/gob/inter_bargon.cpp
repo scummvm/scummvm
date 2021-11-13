@@ -136,7 +136,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 		_vm->_video->dirtyRectsAll();
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == kKeyEscape) ||
 				_vm->shouldQuit()) {
-			_vm->_palAnim->fade(0, -2, 0);
+			_vm->_palAnim->fade(nullptr, -2, 0);
 			_vm->_draw->_frontSurface->clear();
 			memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
@@ -157,7 +157,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 		_vm->_sound->sampleLoad(&samples[i], SOUND_SND, sndFiles[i]);
 	_vm->_sound->blasterPlayComposition(comp, 0, samples, 4);
 	_vm->_sound->blasterWaitEndPlay(true, false);
-	_vm->_palAnim->fade(0, 0, 0);
+	_vm->_palAnim->fade(nullptr, 0, 0);
 	_vm->_draw->_frontSurface->clear();
 }
 
@@ -190,7 +190,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == kKeyEscape) ||
 				_vm->shouldQuit()) {
 			_vm->_sound->blasterStop(10);
-			_vm->_palAnim->fade(0, -2, 0);
+			_vm->_palAnim->fade(nullptr, -2, 0);
 			_vm->_draw->_frontSurface->clear();
 			memset(_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);

@@ -223,14 +223,14 @@ void Inter_v5::o5_istrlen(OpFuncParams &params) {
 		_vm->_game->_script->skip(1);
 
 		strVar1 = _vm->_game->_script->readVarIndex();
-		strVar2 = _vm->_game->_script->readVarIndex(0, &type);
+		strVar2 = _vm->_game->_script->readVarIndex(nullptr, &type);
 
 		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), READ_VARO_UINT16(strVar2));
 
 	} else {
 
 		strVar1 = _vm->_game->_script->readVarIndex();
-		strVar2 = _vm->_game->_script->readVarIndex(0, &type);
+		strVar2 = _vm->_game->_script->readVarIndex(nullptr, &type);
 
 		if (_vm->_global->_language == 10) {
 			// Extra handling for Japanese strings

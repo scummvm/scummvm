@@ -78,7 +78,7 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 
 	if (!config.config->loadFromFile(file)) {
 		delete config.config;
-		config.config = 0;
+		config.config = nullptr;
 		return false;
 	}
 

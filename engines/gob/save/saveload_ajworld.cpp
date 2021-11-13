@@ -28,7 +28,7 @@
 namespace Gob {
 
 SaveLoad_AJWorld::SaveFile SaveLoad_AJWorld::_saveFiles[] = {
-	{ "menu.inf", kSaveModeSave, 0, "temporary sprite"}
+	{ "menu.inf", kSaveModeSave, nullptr, "temporary sprite"}
 };
 
 
@@ -51,7 +51,7 @@ const SaveLoad_AJWorld::SaveFile *SaveLoad_AJWorld::getSaveFile(const char *file
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_AJWorld::SaveFile *SaveLoad_AJWorld::getSaveFile(const char *fileName) {
@@ -61,7 +61,7 @@ SaveLoad_AJWorld::SaveFile *SaveLoad_AJWorld::getSaveFile(const char *fileName) 
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_AJWorld::getHandler(const char *fileName) const {
@@ -70,7 +70,7 @@ SaveHandler *SaveLoad_AJWorld::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_AJWorld::getDescription(const char *fileName) const {
@@ -79,7 +79,7 @@ const char *SaveLoad_AJWorld::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_AJWorld::getSaveMode(const char *fileName) const {

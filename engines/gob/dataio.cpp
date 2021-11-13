@@ -29,7 +29,7 @@
 
 namespace Gob {
 
-DataIO::File::File() : size(0), offset(0), compression(0), archive(0) {
+DataIO::File::File() : size(0), offset(0), compression(0), archive(nullptr) {
 }
 
 DataIO::File::File(const Common::String &n, uint32 s, uint32 o, uint8 c, Archive &a) :
@@ -100,7 +100,7 @@ byte *DataIO::unpack(Common::SeekableReadStream &src, int32 &size, uint8 compres
 
 	assert(size > 0);
 
-	byte *data = 0;
+	byte *data = nullptr;
 	if (useMalloc)
 		data = (byte *) malloc(size);
 	else
@@ -125,7 +125,7 @@ Common::SeekableReadStream *DataIO::unpack(Common::SeekableReadStream &src, uint
 
 	byte *data = unpack(src, size, compression, true);
 	if (!data)
-		return 0;
+		return nullptr;
 
 	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
@@ -207,7 +207,7 @@ void DataIO::unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 siz
 
 bool DataIO::openArchive(Common::String name, bool base) {
 	// Look for a free archive slot
-	Archive **archive = 0;
+	Archive **archive = nullptr;
 	int i = 0;
 	for (Common::Array<Archive *>::iterator it = _archives.begin(); it != _archives.end(); ++it, i++) {
 		if (!*it) {
@@ -249,7 +249,7 @@ DataIO::Archive *DataIO::openArchive(const Common::String &name) {
 	Archive *archive = new Archive;
 	if (!archive->file.open(name)) {
 		delete archive;
-		return 0;
+		return nullptr;
 	}
 
 	archive->name = name;
@@ -360,7 +360,7 @@ Common::SeekableReadStream *DataIO::getFile(const Common::String &name) {
 	// Else, try to open a matching plain file
 	Common::File f;
 	if (!f.open(name))
-		return 0;
+		return nullptr;
 
 	return f.readStream(f.size());
 }
@@ -377,14 +377,14 @@ byte *DataIO::getFile(const Common::String &name, int32 &size) {
 	// Else, try to open a matching plain file
 	Common::File f;
 	if (!f.open(name))
-		return 0;
+		return nullptr;
 
 	size = f.size();
 
 	byte *data = new byte[size];
 	if (f.read(data, size) != ((uint32) size)) {
 		delete[] data;
-		return 0;
+		return nullptr;
 	}
 
 	return data;
@@ -403,18 +403,18 @@ DataIO::File *DataIO::findFile(const Common::String &name) {
 			return &file->_value;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Common::SeekableReadStream *DataIO::getFile(File &file) {
 	if (!file.archive)
-		return 0;
+		return nullptr;
 
 	if (!file.archive->file.isOpen())
-		return 0;
+		return nullptr;
 
 	if (!file.archive->file.seek(file.offset))
-		return 0;
+		return nullptr;
 
 	Common::SeekableReadStream *rawData =
 		new Common::SafeSeekableSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
@@ -431,20 +431,20 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 
 byte *DataIO::getFile(File &file, int32 &size) {
 	if (!file.archive)
-		return 0;
+		return nullptr;
 
 	if (!file.archive->file.isOpen())
-		return 0;
+		return nullptr;
 
 	if (!file.archive->file.seek(file.offset))
-		return 0;
+		return nullptr;
 
 	size = file.size;
 
 	byte *rawData = new byte[file.size];
 	if (file.archive->file.read(rawData, file.size) != file.size) {
 		delete[] rawData;
-		return 0;
+		return nullptr;
 	}
 
 	if (file.compression == 0)

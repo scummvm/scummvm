@@ -28,11 +28,11 @@
 namespace Gob {
 
 SaveLoad_Inca2::SaveFile SaveLoad_Inca2::_saveFiles[] = {
-	{"speak.inf", kSaveModeExists, 0, 0}, // Exists = speech enabled
-	{"voice.inf", kSaveModeSave  , 0, 0}, // Contains the language of the voices
-	{"intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
-	{  "cat.inf", kSaveModeSave  , 0, "savegame"},
-	{  "ima.inf", kSaveModeSave  , 0, "screenshot"},
+	{"speak.inf", kSaveModeExists, nullptr, nullptr}, // Exists = speech enabled
+	{"voice.inf", kSaveModeSave  , nullptr, nullptr}, // Contains the language of the voices
+	{"intro.$$$", kSaveModeSave  , nullptr, "temporary sprite"},
+	{  "cat.inf", kSaveModeSave  , nullptr, "savegame"},
+	{  "ima.inf", kSaveModeSave  , nullptr, "screenshot"},
 };
 
 
@@ -74,8 +74,8 @@ SaveLoad_Inca2::GameHandler::GameHandler(GobEngine *vm, const char *target) :
 
 	buildIndex();
 
-	_writer = 0;
-	_reader = 0;
+	_writer = nullptr;
+	_reader = nullptr;
 }
 
 SaveLoad_Inca2::GameHandler::~GameHandler() {
@@ -201,7 +201,7 @@ void SaveLoad_Inca2::GameHandler::buildIndex() {
 bool SaveLoad_Inca2::GameHandler::createReader(int slot) {
 	// If slot < 0, just check if a reader exists
 	if (slot < 0)
-		return (_reader != 0);
+		return (_reader != nullptr);
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -215,7 +215,7 @@ bool SaveLoad_Inca2::GameHandler::createReader(int slot) {
 
 		if (!_reader->load()) {
 			delete _reader;
-			_reader = 0;
+			_reader = nullptr;
 			return false;
 		}
 	}
@@ -226,7 +226,7 @@ bool SaveLoad_Inca2::GameHandler::createReader(int slot) {
 bool SaveLoad_Inca2::GameHandler::createWriter(int slot) {
 	// If slot < 0, just check if a writer exists
 	if (slot < 0)
-		return (_writer != 0);
+		return (_writer != nullptr);
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -406,7 +406,7 @@ const SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName) {
@@ -416,7 +416,7 @@ SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_Inca2::getHandler(const char *fileName) const {
@@ -425,7 +425,7 @@ SaveHandler *SaveLoad_Inca2::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_Inca2::getDescription(const char *fileName) const {
@@ -434,7 +434,7 @@ const char *SaveLoad_Inca2::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_Inca2::getSaveMode(const char *fileName) const {

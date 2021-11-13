@@ -412,7 +412,7 @@ bool Penetration::MapObject::isIn(const MapObject &obj) const {
 
 
 Penetration::ManagedMouth::ManagedMouth(uint16 tX, uint16 tY, MouthType t) :
-	MapObject(tX, tY, 0, 0), mouth(0), type(t) {
+	MapObject(tX, tY, 0, 0), mouth(nullptr), type(t) {
 
 }
 
@@ -422,7 +422,7 @@ Penetration::ManagedMouth::~ManagedMouth() {
 
 
 Penetration::ManagedSub::ManagedSub(uint16 tX, uint16 tY) :
-	MapObject(tX, tY, kMapTileWidth, kMapTileHeight), sub(0) {
+	MapObject(tX, tY, kMapTileWidth, kMapTileHeight), sub(nullptr) {
 
 }
 
@@ -431,7 +431,7 @@ Penetration::ManagedSub::~ManagedSub() {
 }
 
 
-Penetration::ManagedEnemy::ManagedEnemy() : MapObject(0, 0, 0, 0), enemy(0), dead(false) {
+Penetration::ManagedEnemy::ManagedEnemy() : MapObject(0, 0, 0, 0), enemy(nullptr), dead(false) {
 }
 
 Penetration::ManagedEnemy::~ManagedEnemy() {
@@ -441,11 +441,11 @@ Penetration::ManagedEnemy::~ManagedEnemy() {
 void Penetration::ManagedEnemy::clear() {
 	delete enemy;
 
-	enemy = 0;
+	enemy = nullptr;
 }
 
 
-Penetration::ManagedBullet::ManagedBullet() : MapObject(0, 0, 0, 0), bullet(0) {
+Penetration::ManagedBullet::ManagedBullet() : MapObject(0, 0, 0, 0), bullet(nullptr) {
 }
 
 Penetration::ManagedBullet::~ManagedBullet() {
@@ -455,12 +455,12 @@ Penetration::ManagedBullet::~ManagedBullet() {
 void Penetration::ManagedBullet::clear() {
 	delete bullet;
 
-	bullet = 0;
+	bullet = nullptr;
 }
 
 
-Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
-	_shieldMeter(0), _healthMeter(0), _floor(0), _isPlaying(false) {
+Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(nullptr), _sprites(nullptr), _objects(nullptr), _sub(nullptr),
+	_shieldMeter(nullptr), _healthMeter(nullptr), _floor(0), _isPlaying(false) {
 
 	_background = new Surface(320, 200, 1);
 
@@ -587,8 +587,8 @@ void Penetration::deinit() {
 	delete _objects;
 	delete _sprites;
 
-	_objects = 0;
-	_sprites = 0;
+	_objects = nullptr;
+	_sprites = nullptr;
 }
 
 void Penetration::clearMap() {
@@ -609,7 +609,7 @@ void Penetration::clearMap() {
 
 	delete _sub;
 
-	_sub = 0;
+	_sub = nullptr;
 
 	_map->fill(kColorBlack);
 }
@@ -773,7 +773,7 @@ void Penetration::drawFloorText() {
 
 	const char **strings = kStrings[getLanguage()];
 
-	const char *floorString = 0;
+	const char *floorString = nullptr;
 	if      (_floor == 0)
 		floorString = strings[kString3rdBasement];
 	else if (_floor == 1)
@@ -840,7 +840,7 @@ void Penetration::fadeIn() {
 
 void Penetration::setPalette() {
 	// Fade to black
-	_vm->_palAnim->fade(0, 0, 0);
+	_vm->_palAnim->fade(nullptr, 0, 0);
 
 	// Set palette
 	memcpy(_vm->_draw->_vgaPalette, kPalettes[_floor], 3 * kPaletteSize);
@@ -1049,7 +1049,7 @@ bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y, MapObject *
 
 void Penetration::findPath(MapObject &obj, int x, int y, MapObject **blockedBy) {
 	if (blockedBy)
-		*blockedBy = 0;
+		*blockedBy = nullptr;
 
 	while ((x != 0) || (y != 0)) {
 		uint16 oldX = obj.mapX;

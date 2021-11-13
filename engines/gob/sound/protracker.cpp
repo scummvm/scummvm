@@ -30,7 +30,7 @@
 namespace Gob {
 
 Protracker::Protracker(Audio::Mixer &mixer) : _mixer(&mixer) {
-	_protrackerStream = 0;
+	_protrackerStream = nullptr;
 }
 
 Protracker::~Protracker() {
@@ -61,7 +61,7 @@ void Protracker::stop() {
 		_mixer->stopHandle(_handle);
 
 		delete _protrackerStream;
-		_protrackerStream = 0;
+		_protrackerStream = nullptr;
 	}
 }
 

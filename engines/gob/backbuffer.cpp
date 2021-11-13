@@ -27,7 +27,7 @@
 
 namespace Gob {
 
-BackBuffer::BackBuffer() : _background(0), _saved(false) {
+BackBuffer::BackBuffer() : _background(nullptr), _saved(false) {
 }
 
 BackBuffer::~BackBuffer() {
@@ -35,7 +35,7 @@ BackBuffer::~BackBuffer() {
 }
 
 bool BackBuffer::hasBuffer() const {
-	return _background != 0;
+	return _background != nullptr;
 }
 
 bool BackBuffer::hasSavedBackground() const {

@@ -24,7 +24,7 @@
 
 namespace Gob {
 
-dBase::dBase() : _recordData(0) {
+dBase::dBase() : _recordData(nullptr) {
 	clear();
 }
 
@@ -136,7 +136,7 @@ void dBase::clear() {
 	_records.clear();
 
 	delete[] _recordData;
-	_recordData = 0;
+	_recordData = nullptr;
 }
 
 byte dBase::getVersion() const {

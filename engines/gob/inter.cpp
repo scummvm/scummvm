@@ -46,8 +46,8 @@ Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
 		_animPalDir[i] = 0;
 	}
 
-	_breakFromLevel = 0;
-	_nestLevel = 0;
+	_breakFromLevel = nullptr;
+	_nestLevel = nullptr;
 
 	_soundEndTimeKey = 0;
 	_soundStopVal = 0;
@@ -55,7 +55,7 @@ Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
 	_lastBusyWait = 0;
 	_noBusyWait = false;
 
-	_variables = 0;
+	_variables = nullptr;
 }
 
 Inter::~Inter() {
@@ -92,7 +92,7 @@ void Inter::executeOpcodeGob(int i, OpGobParams &params) {
 	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
 			i, i, getDescOpcodeGob(i));
 
-	OpcodeEntry<OpcodeGob> *op = 0;
+	OpcodeEntry<OpcodeGob> *op = nullptr;
 
 	if (_opcodesGob.contains(i))
 		op = &_opcodesGob.getVal(i);
@@ -363,7 +363,7 @@ void Inter::delocateVars() {
 		_vm->_game->deletedVars(_variables);
 
 	delete _variables;
-	_variables = 0;
+	_variables = nullptr;
 }
 
 void Inter::storeValue(uint16 index, uint16 type, uint32 value) {
@@ -386,7 +386,7 @@ void Inter::storeValue(uint16 index, uint16 type, uint32 value) {
 
 void Inter::storeValue(uint32 value) {
 	uint16 type;
-	uint16 index = _vm->_game->_script->readVarIndex(0, &type);
+	uint16 index = _vm->_game->_script->readVarIndex(nullptr, &type);
 
 	storeValue(index, type, value);
 }
@@ -431,7 +431,7 @@ void Inter::storeString(uint16 index, uint16 type, const char *value) {
 
 void Inter::storeString(const char *value) {
 	uint16 type;
-	uint16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
+	uint16 varIndex = _vm->_game->_script->readVarIndex(nullptr, &type);
 
 	storeString(varIndex, type, value);
 }

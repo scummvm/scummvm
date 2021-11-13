@@ -59,7 +59,7 @@ Parents::Parents(GobEngine *vm, const Common::String &seq, const Common::String 
 				 const Common::String &childName, uint8 house, const Font &font,
 				 const byte *normalPalette, const byte *brightPalette, uint paletteSize) :
 	SEQFile(vm, seq),
-	_gct(0), _house(house), _font(&font),
+	_gct(nullptr), _house(house), _font(&font),
 	_paletteSize(paletteSize), _normalPalette(normalPalette), _brightPalette(brightPalette) {
 
 	// Load sounds
@@ -96,7 +96,7 @@ void Parents::play() {
 
 	// After playback, fade out
 	if (!_vm->shouldQuit())
-		_vm->_palAnim->fade(0, 0, 0);
+		_vm->_palAnim->fade(nullptr, 0, 0);
 }
 
 void Parents::handleFrameEvent() {

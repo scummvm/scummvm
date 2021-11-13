@@ -229,11 +229,11 @@ void Mult_v1::freeMultKeys() {
 		delete _animArrayY;
 		delete[] _animArrayData;
 
-		_objects = 0;
-		_renderData = 0;
-		_animArrayX = 0;
-		_animArrayY = 0;
-		_animArrayData = 0;
+		_objects = nullptr;
+		_renderData = nullptr;
+		_animArrayX = nullptr;
+		_animArrayY = nullptr;
+		_animArrayData = nullptr;
 
 		_animSurf.reset();
 		_vm->_draw->freeSprite(Draw::kAnimSurface);
@@ -242,7 +242,7 @@ void Mult_v1::freeMultKeys() {
 	}
 
 	delete _multData;
-	_multData = 0;
+	_multData = nullptr;
 }
 
 bool Mult_v1::hasMultData(uint16 multIndex) {

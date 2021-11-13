@@ -39,7 +39,7 @@ Map_v2::Map_v2(GobEngine *vm) : Map_v1(vm) {
 }
 
 Map_v2::~Map_v2() {
-	_passMap = 0;
+	_passMap = nullptr;
 }
 
 void Map_v2::loadMapObjects(const char *avjFile) {
@@ -156,7 +156,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	// In the original asm, this writes byte-wise into the variables-array
 	tmpPos = mapData.pos();
 	mapData.seek(passPos);
-	if ((variables != 0) &&
+	if ((variables != nullptr) &&
 	    (variables != _vm->_inter->_variables->getAddressOff8(0))) {
 
 		_passMap = (int8 *)variables;

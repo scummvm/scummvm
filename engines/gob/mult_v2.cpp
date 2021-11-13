@@ -41,10 +41,10 @@
 namespace Gob {
 
 Mult_v2::Mult_v2(GobEngine *vm) : Mult_v1(vm) {
-	_renderObjs = 0;
-	_multData = 0;
+	_renderObjs = nullptr;
+	_multData = nullptr;
 	for (int i = 0; i < 8; i++)
-		_multDatas[i] = 0;
+		_multDatas[i] = nullptr;
 }
 
 Mult_v2::~Mult_v2() {
@@ -127,7 +127,7 @@ void Mult_v2::loadMult(int16 resId) {
 
 	for (int i = 0; i < 4; i++) {
 		_multData->imdKeysCount[i] = 0;
-		_multData->imdKeys[i] = 0;
+		_multData->imdKeys[i] = nullptr;
 		_multData->imdIndices[i] = -1;
 
 		for (int j = 0; j < 4; j++) {
@@ -237,8 +237,8 @@ void Mult_v2::loadMult(int16 resId) {
 		}
 	}
 
-	_multData->imdFiles = 0;
-	_multData->somepointer10 = 0;
+	_multData->imdFiles = nullptr;
+	_multData->somepointer10 = nullptr;
 
 	if (hasImds)
 		loadImds(data);
@@ -346,26 +346,26 @@ void Mult_v2::freeMultKeys() {
 		delete _animArrayY;
 		delete[] _animArrayData;
 
-		_animArrayX = 0;
-		_animArrayY = 0;
-		_animArrayData = 0;
+		_animArrayX = nullptr;
+		_animArrayY = nullptr;
+		_animArrayData = nullptr;
 
 		_animDataAllocated = false;
 	}
 
 	for (int i = 0; i < 8; i++)
 		if (_multDatas[i] == _multData)
-			_multDatas[i] = 0;
+			_multDatas[i] = nullptr;
 
 	delete _multData;
-	_multData = 0;
+	_multData = nullptr;
 }
 
 bool Mult_v2::hasMultData(uint16 multIndex) {
 	if (multIndex > 7)
 		error("Multindex out of range");
 
-	return _multDatas[multIndex] != 0;
+	return _multDatas[multIndex] != nullptr;
 }
 
 void Mult_v2::setMultData(uint16 multIndex) {
@@ -380,7 +380,7 @@ void Mult_v2::zeroMultData(uint16 multIndex) {
 	if (multIndex > 7)
 		error("Multindex out of range");
 
-	_multDatas[multIndex] = 0;
+	_multDatas[multIndex] = nullptr;
 }
 
 void Mult_v2::multSub(uint16 multIndex) {
@@ -689,7 +689,7 @@ void Mult_v2::drawAnims(bool &stop) {
 
 void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	Mult_AnimData &animData = *(animObj.pAnimData);
-	Scenery::AnimLayer *animLayer = 0;
+	Scenery::AnimLayer *animLayer = nullptr;
 
 	if (animData.animation >= 0) {
 		int nAnim = animData.animation, nLayer = animData.layer;
@@ -817,7 +817,7 @@ void Mult_v2::animate() {
 			return;
 		orderArray = _orderArray;
 	} else
-		orderArray = 0;
+		orderArray = nullptr;
 
 	advanceAllObjects();
 
@@ -1066,7 +1066,7 @@ void Mult_v2::animate() {
 			if ((animData.animType < 100) || (_vm->_goblin->_gobsCount < 0))
 				newCycleAnim(animObj);
 			else if (animData.animType == 100)
-				_vm->_goblin->moveAdvance(&animObj, 0, 0, 0);
+				_vm->_goblin->moveAdvance(&animObj, nullptr, 0, 0);
 			else if (animData.animType == 101)
 				_vm->_goblin->animate(&animObj);
 		} else

@@ -43,12 +43,12 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_pcspeaker = new PCSpeaker(*_vm->_mixer);
 	_blaster = new SoundBlaster(*_vm->_mixer);
 
-	_adlPlayer = 0;
-	_mdyPlayer = 0;
-	_infogrames = 0;
-	_protracker = 0;
-	_cdrom = 0;
-	_bgatmos = 0;
+	_adlPlayer = nullptr;
+	_mdyPlayer = nullptr;
+	_infogrames = nullptr;
+	_protracker = nullptr;
+	_cdrom = nullptr;
+	_bgatmos = nullptr;
 
 	_hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
 
@@ -90,14 +90,14 @@ void Sound::convToSigned(byte *buffer, int length) {
 
 SoundDesc *Sound::sampleGetBySlot(int slot) {
 	if ((slot < 0) || (slot >= kSoundsCount))
-		return 0;
+		return nullptr;
 
 	return &_sounds[slot];
 }
 
 const SoundDesc *Sound::sampleGetBySlot(int slot) const {
 	if ((slot < 0) || (slot >= kSoundsCount))
-		return 0;
+		return nullptr;
 
 	return &_sounds[slot];
 }
@@ -354,7 +354,7 @@ void Sound::adlibPlayBgMusic() {
 		"musmac5.mid"
 	};
 
-	const char *track = 0;
+	const char *track = nullptr;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		track = tracksWin[_vm->_util->getRandom(ARRAYSIZE(tracksWin))];
 	else
@@ -754,7 +754,7 @@ void Sound::createMDYPlayer() {
 		return;
 
 	delete _adlPlayer;
-	_adlPlayer = 0;
+	_adlPlayer = nullptr;
 
 	_mdyPlayer = new MUSPlayer();
 }
@@ -764,7 +764,7 @@ void Sound::createADLPlayer() {
 		return;
 
 	delete _mdyPlayer;
-	_mdyPlayer= 0;
+	_mdyPlayer= nullptr;
 
 	_adlPlayer = new ADLPlayer();
 }

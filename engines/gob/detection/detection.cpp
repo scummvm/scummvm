@@ -104,7 +104,7 @@ const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const
 	    !dataIO.openArchive("stk3.stk", true)) {
 
 		SearchMan.clear();
-		return 0;
+		return nullptr;
 	}
 
 	Gob::OnceUponATime gameType         = Gob::kOnceUponATimeInvalid;
@@ -163,7 +163,7 @@ const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const
 	if ((gameType == Gob::kOnceUponATimeInvalid) || (platform == Gob::kOnceUponATimePlatformInvalid)) {
 		warning("GobMetaEngineDetection::detectOnceUponATime(): Detection failed (%d, %d)",
 		        (int)gameType, (int)platform);
-		return 0;
+		return nullptr;
 	}
 
 	return &Gob::fallbackOnceUpon[gameType][platform];

@@ -26,9 +26,9 @@
 namespace Gob {
 
 SoundBlaster::SoundBlaster(Audio::Mixer &mixer) : SoundMixer(mixer, Audio::Mixer::kSFXSoundType) {
-	_curSoundDesc = 0;
+	_curSoundDesc = nullptr;
 
-	_compositionSamples = 0;
+	_compositionSamples = nullptr;
 	_compositionSampleCount = 0;
 	_compositionPos = -1;
 
@@ -52,7 +52,7 @@ void SoundBlaster::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	_compositionRepCount = 0;
 
 	if (fadeLength <= 0)
-		_curSoundDesc = 0;
+		_curSoundDesc = nullptr;
 
 	SoundMixer::stop(fadeLength);
 }
@@ -136,7 +136,7 @@ void SoundBlaster::checkEndSample() {
 void SoundBlaster::endFade() {
 	if (_fadeVolStep > 0) {
 		_compositionPos = -1;
-		_curSoundDesc = 0;
+		_curSoundDesc = nullptr;
 	}
 
 	SoundMixer::endFade();
