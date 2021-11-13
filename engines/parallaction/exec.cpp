@@ -81,7 +81,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 	return;
 }
 
-ProgramExec::ProgramExec() : _modCounter(0), _instructionNames(NULL) {
+ProgramExec::ProgramExec() : _modCounter(0), _instructionNames(nullptr) {
 }
 
 
@@ -102,7 +102,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 		if (cmd->_valid && !cmd->_zone && !cmd->_zoneName.empty()) {
 			// try binding the command to a zone
 			cmd->_zone = _vm->_location.findZone(cmd->_zoneName.c_str());
-			cmd->_valid = cmd->_zone != 0;
+			cmd->_valid = cmd->_zone != nullptr;
 		}
 
 		if (!cmd->_valid) {

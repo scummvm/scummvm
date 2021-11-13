@@ -46,11 +46,11 @@ protected:
 	const byte	*_charMap;
 
 	byte mapChar(byte c) {
-		return (_charMap == 0) ? c : _charMap[c];
+		return (_charMap == nullptr) ? c : _charMap[c];
 	}
 
 public:
-	BraFont(Common::ReadStream &stream, const byte *charMap = 0) {
+	BraFont(Common::ReadStream &stream, const byte *charMap = nullptr) {
 		_charMap = charMap;
 
 		_numGlyphs = stream.readByte();
@@ -69,7 +69,7 @@ public:
 		_data = (byte *)malloc(size);
 		stream.read(_data, size);
 
-		_cp = 0;
+		_cp = nullptr;
 		_bufPitch = 0;
 	}
 
@@ -122,7 +122,7 @@ public:
 	}
 
 	void drawString(Graphics::Surface *src, int x, int y, const char *s) override {
-		if (src == NULL)
+		if (src == nullptr)
 			return;
 
 		_bufPitch = src->pitch;
@@ -303,7 +303,7 @@ protected:
 	}
 
 public:
-	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width), _cp(NULL), _bufPitch(0) {
+	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width), _cp(nullptr), _bufPitch(0) {
 	}
 
 	~DosFont() override {
@@ -327,7 +327,7 @@ public:
 	}
 
 	void drawString(Graphics::Surface *src, int x, int y, const char *s) override {
-		if (src == NULL)
+		if (src == nullptr)
 			return;
 
 		_bufPitch = src->pitch;
@@ -443,7 +443,7 @@ class AmigaFont : public Font {
 	Graphics::AmigaFont *_font;
 
 public:
-	AmigaFont(Common::SeekableReadStream *stream = NULL) {
+	AmigaFont(Common::SeekableReadStream *stream = nullptr) {
 		_font = new Graphics::AmigaFont(stream);
 	}
 	~AmigaFont() override {
@@ -464,7 +464,7 @@ protected:
 };
 
 Font *DosDisk_ns::createFont(const char *name, Cnv* cnv) {
-	Font *f = 0;
+	Font *f = nullptr;
 
 	if (!scumm_stricmp(name, "comic"))
 		f = new DosDialogueFont(cnv);

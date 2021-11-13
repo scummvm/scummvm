@@ -71,7 +71,7 @@ char *Script::readLineIntern(char *buf, size_t bufSize) {
 		warning("overflow in readLineIntern (line %i)", _line);
 	}
 	if (i == 0 && _input->eos()) {
-		return 0;
+		return nullptr;
 	}
 	buf[i] = '\0';
 	return buf;
@@ -93,11 +93,11 @@ char *Script::readLine(char *buf, size_t bufSize) {
 	bool inBlockComment = false;
 	bool ignoreLine = true;
 
-	char *line = 0;
+	char *line = nullptr;
 	do {
 		line = readLineIntern(buf, bufSize);
-		if (line == 0) {
-			return 0;
+		if (line == nullptr) {
+			return nullptr;
 		}
 
 		if (line[0] == '\0')
@@ -227,8 +227,8 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 
 
 void Parser::reset() {
-	_currentOpcodes = 0;
-	_currentStatements = 0;
+	_currentOpcodes = nullptr;
+	_currentStatements = nullptr;
 	_lookup = 0;
 
 	_statements.clear();
@@ -251,7 +251,7 @@ void Parser::popTables() {
 }
 
 void Parser::parseStatement() {
-	assert(_currentOpcodes != 0);
+	assert(_currentOpcodes != nullptr);
 
 	_lookup = _currentStatements->lookup(_tokens[0]);
 

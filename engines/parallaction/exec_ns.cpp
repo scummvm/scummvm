@@ -144,7 +144,7 @@ DECLARE_INSTRUCTION_OPCODE(invalid) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(call) {
-	_vm->callFunction(ctxt._inst->_immediate, 0);
+	_vm->callFunction(ctxt._inst->_immediate, nullptr);
 }
 
 
@@ -292,7 +292,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 }
 
 CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
-	CommandOpcodeSet *table = 0;
+	CommandOpcodeSet *table = nullptr;
 
 	SetOpcodeTable(_opcodes);
 	COMMAND_OPCODE(invalid);
@@ -317,7 +317,7 @@ CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
 ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
 	_instructionNames = _instructionNamesRes_ns;
 
-	ProgramOpcodeSet *table = 0;
+	ProgramOpcodeSet *table = nullptr;
 
 	SetOpcodeTable(_opcodes);
 	INSTRUCTION_OPCODE(invalid);

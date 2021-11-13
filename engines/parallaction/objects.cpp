@@ -47,7 +47,7 @@ Command::Command() {
 }
 
 Animation::Animation() {
-	gfxobj = NULL;
+	gfxobj = nullptr;
 	_frame = 0;
 	_z = 0;
 }
@@ -96,7 +96,7 @@ uint16 Animation::getFrameNum() const {
 }
 
 byte* Animation::getFrameData() const {
-	if (!gfxobj) return NULL;
+	if (!gfxobj) return nullptr;
 	return gfxobj->getData(_frame);
 }
 
@@ -188,7 +188,7 @@ Zone::Zone() {
 	_type = 0;
 
 	_flags = kFlagsNoName;
-	_label = 0;
+	_label = nullptr;
 
 	// BRA specific
 	_index = INVALID_ZONE_INDEX;
@@ -237,7 +237,7 @@ Question *Dialogue::findQuestion(const Common::String &name) const {
 			return _questions[i];
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void Dialogue::addQuestion(Question *q) {
@@ -364,9 +364,9 @@ void ScriptVar::setRandom(int16 seed) {
 
 ScriptVar::ScriptVar() {
 	_flags = 0;
-	_local = 0;
+	_local = nullptr;
 	_value = 0;
-	_field = 0;
+	_field = nullptr;
 }
 
 ScriptVar::~ScriptVar() {
@@ -431,7 +431,7 @@ void FixedTable::clear() {
 	uint32 deleted = 0;
 	for (uint32 i = _numFixed; i < _used; i++) {
 		free(_data[i]);
-		_data[i] = 0;
+		_data[i] = nullptr;
 		deleted++;
 	}
 

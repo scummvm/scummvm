@@ -171,7 +171,7 @@ class MainMenuInputState_BR : public MenuInputState {
 
 		for (int i = 0; i < _availItems; i++) {
 			delete _lines[i];
-			_lines[i] = 0;
+			_lines[i] = nullptr;
 		}
 	}
 
@@ -196,8 +196,8 @@ public:
 	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
 	    memset(_lines, 0, sizeof(_lines));
 
-		_menuStrings = 0;
-		_options = 0;
+		_menuStrings = nullptr;
+		_options = nullptr;
 		_availItems = 0;
 		_selection = 0;
 	}
@@ -236,7 +236,7 @@ public:
 		_vm->_system->showMouse(false);
 		cleanup();
 
-		return 0;
+		return nullptr;
 	}
 
 	void enter() override {
@@ -448,7 +448,7 @@ public:
 
 		if (close) {
 			_vm->_gfx->freeDialogueObjects();
-			return 0;
+			return nullptr;
 		}
 
 		_vm->_input->setArrowCursor();
@@ -520,7 +520,7 @@ public:
 
 		if (key == 'y' || key == 'Y') {
 			_vm->quitGame();
-			return 0;
+			return nullptr;
 		} else
 		if (key == 'n' || key == 'N') {
 			// NOTE: when the quit dialog is hidden, the in-game menu is

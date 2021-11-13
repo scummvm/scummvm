@@ -117,7 +117,7 @@ DosSoundMan_ns::~DosSoundMan_ns() {
 bool DosSoundMan_ns::isLocationSilent(const char *locationName) {
 
 	// these are the prefixes for location names with no background midi music
-	const char *noMusicPrefix[] = { "museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", 0 };
+	const char *noMusicPrefix[] = { "museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", nullptr };
 	Common::String s(locationName);
 
 	for (int i = 0; noMusicPrefix[i]; i++) {
@@ -167,7 +167,7 @@ void DosSoundMan_ns::playCharacterMusic(const char *character) {
 	}
 
 	char *name = const_cast<char *>(character);
-	const char *newMusicFile = 0;
+	const char *newMusicFile = nullptr;
 
 	if (!scumm_stricmp(name, g_dinoName)) {
 		newMusicFile = "dino";
@@ -218,7 +218,7 @@ static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
 };
 
 AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
-	_musicStream = 0;
+	_musicStream = nullptr;
 
 	// initialize the waveform for the 'beep' sound
 	beepSoundBufferSize = AMIGABEEP_SIZE * NUM_REPEATS;
@@ -242,7 +242,7 @@ AmigaSoundMan_ns::~AmigaSoundMan_ns() {
 }
 
 Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch, bool looping) {
-	Audio::AudioStream *input = 0;
+	Audio::AudioStream *input = nullptr;
 
 	if (!scumm_stricmp("beep", filename)) {
 		int rate = 11934;
@@ -287,7 +287,7 @@ void AmigaSoundMan_ns::stopSfx(uint channel) {
 
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
 	_mixer->stopHandle(_channels[channel].handle);
-	_channels[channel].stream = 0;
+	_channels[channel].stream = nullptr;
 }
 
 void AmigaSoundMan_ns::playMusic() {
@@ -310,7 +310,7 @@ void AmigaSoundMan_ns::stopMusic() {
 	if (_mixer->isSoundHandleActive(_musicHandle)) {
 		_mixer->stopHandle(_musicHandle);
 		delete _musicStream;
-		_musicStream = 0;
+		_musicStream = nullptr;
 	}
 }
 
@@ -338,8 +338,8 @@ void SoundMan_ns::setMusicFile(const char *filename) {
 	Common::strlcpy(_musicFile, filename, PATH_LEN);
 }
 
-void SoundMan_ns::execute(int command, const char *parm = 0) {
-	uint32 n = strtoul(parm, 0, 10);
+void SoundMan_ns::execute(int command, const char *parm = nullptr) {
+	uint32 n = strtoul(parm, nullptr, 10);
 	bool b = (n == 1) ? true : false;
 
 	switch (command) {

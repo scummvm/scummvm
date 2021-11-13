@@ -189,7 +189,7 @@ protected:
 
 public:
 	StringWriter_NS(Parallaction_ns *vm, Font *font) : WrappedLineFormatter(font), _vm(vm),
-		_width(0), _height(0), _color(0), _surf(NULL) { }
+		_width(0), _height(0), _color(0), _surf(nullptr) { }
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
 		StringExtent_NS	se(_font);
@@ -341,7 +341,7 @@ int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, ui
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = x;
 	balloon->obj->y = y;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_NS;
@@ -364,7 +364,7 @@ int BalloonManager_ns::setDialogueBalloon(const Common::String &text, uint16 win
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = _dialogueBalloonX[id];
 	balloon->obj->y = 10;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_NS;
@@ -398,7 +398,7 @@ int BalloonManager_ns::setLocationBalloon(const Common::String &text, bool endGa
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[kNormalColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = 5;
 	balloon->obj->y = 5;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_NS;
@@ -423,8 +423,8 @@ int BalloonManager_ns::hitTestDialogueBalloon(int x, int y) {
 
 void BalloonManager_ns::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
-		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
+		_intBalloons[i].obj = nullptr;
+		_intBalloons[i].surface = nullptr;	// no need to delete surface, since it is done by Gfx
 	}
 	_numBalloons = 0;
 }
@@ -481,7 +481,7 @@ class StringWriter_BR : public WrappedLineFormatter {
 
 protected:
 	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font), _width(0), _height(0),
-			_color(color), _x(0), _y(0), _surf(NULL) {
+			_color(color), _x(0), _y(0), _surf(nullptr) {
 
 	}
 
@@ -505,7 +505,7 @@ protected:
 
 public:
 	StringWriter_BR(Font *font) : WrappedLineFormatter(font), _width(0), _height(0),
-			_color(0), _x(0), _y(0), _surf(NULL) { }
+			_color(0), _x(0), _y(0), _surf(nullptr) { }
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
 		StringExtent_BR	se(_font);
@@ -587,7 +587,7 @@ int BalloonManager_br::setSingleBalloon(const Common::String &text, uint16 x, ui
 	cacheAnims();
 
 	int id = _numBalloons;
-	Frames *src = 0;
+	Frames *src = nullptr;
 	int srcFrame = 0;
 
 	Balloon *balloon = &_intBalloons[id];
@@ -609,7 +609,7 @@ int BalloonManager_br::setSingleBalloon(const Common::String &text, uint16 x, ui
 	_sw.write(text, 216, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = x + balloon->box.left;
 	balloon->obj->y = y + balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
@@ -623,7 +623,7 @@ int BalloonManager_br::setDialogueBalloon(const Common::String &text, uint16 win
 	cacheAnims();
 
 	int id = _numBalloons;
-	Frames *src = 0;
+	Frames *src = nullptr;
 	int srcFrame = 0;
 
 	Balloon *balloon = &_intBalloons[id];
@@ -646,7 +646,7 @@ int BalloonManager_br::setDialogueBalloon(const Common::String &text, uint16 win
 	_sw.write(text, 216, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = balloon->box.left;
 	balloon->obj->y = balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
@@ -688,7 +688,7 @@ int BalloonManager_br::setLocationBalloon(const Common::String &text, bool endGa
 
 	_sw.write(text, 240, kNormalColor, balloon->surface);
 
-	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
+	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), nullptr);
 	balloon->obj->x = 5;
 	balloon->obj->y = 5;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
@@ -709,8 +709,8 @@ int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
 
 void BalloonManager_br::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
-		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
+		_intBalloons[i].obj = nullptr;
+		_intBalloons[i].surface = nullptr;	// no need to delete surface, since it is done by Gfx
 	}
 
 	_numBalloons = 0;
@@ -726,7 +726,7 @@ void BalloonManager_br::cacheAnims() {
 
 
 BalloonManager_br::BalloonManager_br(Parallaction_br *vm, Font *font) : _vm(vm), _numBalloons(0),
-	_leftBalloon(0), _rightBalloon(0), _sw(font), _se(font) {
+	_leftBalloon(nullptr), _rightBalloon(nullptr), _sw(font), _se(font) {
 
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		_textColors[kSelectedColor] = 12;
