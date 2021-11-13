@@ -124,7 +124,7 @@ void sceneHandler27_winArcade() {
 	if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_dudeIsAiming = false;
 
-		g_nmi->_aniMan->_callback2 = 0; // Really NULL
+		g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
 		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
 
 		sceneHandler27_driverGiveVent();
@@ -147,7 +147,7 @@ void sceneHandler27_showNextBat() {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
 
 		mq->setParamInt(-1, g_vars->scene27_bat->_odelay);
-		mq->chain(0);
+		mq->chain(nullptr);
 	}
 
 	g_vars->scene27_batHandler->_priority = 1045;
@@ -159,7 +159,7 @@ int sceneHandler27_updateScreenCallback() {
 	res = g_nmi->drawArcadeOverlay(getGameLoaderInteractionController()->_flag24 == 0);
 
 	if (!res)
-		g_nmi->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = nullptr;
 
 	return res;
 }
@@ -248,7 +248,7 @@ void sceneHandler27_startAiming() {
 	g_vars->scene27_dudeIsAiming = false;
 	g_vars->scene27_maxPhaseReached = false;
 
-	g_nmi->_aniMan->_callback2 = 0; // Really NULL
+	g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
 
 	g_vars->scene27_launchPhase = g_nmi->_aniMan->_movement->_currDynamicPhaseIndex - 6;
 
@@ -498,9 +498,9 @@ void sceneHandler27_batLogic() {
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 
-		mq->chain(0);
+		mq->chain(nullptr);
 	} else {
-		g_vars->scene27_bat = 0;
+		g_vars->scene27_bat = nullptr;
 	}
 }
 

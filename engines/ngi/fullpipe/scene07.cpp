@@ -35,7 +35,7 @@
 namespace NGI {
 
 void scene07_initScene(Scene *sc) {
-	g_vars->scene07_lukeAnim = 0;
+	g_vars->scene07_lukeAnim = nullptr;
 	g_vars->scene07_lukePercent = 0;
 	g_vars->scene07_plusMinus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 

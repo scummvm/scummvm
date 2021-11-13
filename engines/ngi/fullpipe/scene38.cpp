@@ -220,7 +220,7 @@ void sceneHandler38_animateAlcoholics() {
 				if (bossAnim > 0) {
 					mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(bossAnim), 0, 0);
 
-					mq->chain(0);
+					mq->chain(nullptr);
 
 					g_vars->scene38_bossCounter = 0;
 				}
@@ -268,7 +268,7 @@ void sceneHandler38_animateAlcoholics() {
 		if (tallyAnim > 0) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(tallyAnim), 0, 0);
 
-			mq->chain(0);
+			mq->chain(nullptr);
 			g_vars->scene38_tallyCounter = 0;
 		}
 	}
@@ -312,7 +312,7 @@ void sceneHandler38_animateAlcoholics() {
 	if (shortyAnim > 0) {
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(shortyAnim), 0, 0);
 
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		g_vars->scene38_shortyCounter = 0;
 	}

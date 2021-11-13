@@ -378,7 +378,7 @@ void NGIEngine::toggleMute() {
 }
 
 void NGIEngine::playSound(int id, int flag) {
-	Sound *sound = 0;
+	Sound *sound = nullptr;
 
 	for (int i = 0; i < _currSoundListCount; i++) {
 		sound = _currSoundList1[i]->getSoundItemById(id);
@@ -458,10 +458,10 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	if (!g_nmi->_soundEnabled)
 		return;
 
-	Sound *snd = 0;
+	Sound *snd = nullptr;
 
 	for (int i = 0; i < g_nmi->_currSoundListCount; i++)
-		if ((snd = g_nmi->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != NULL)
+		if ((snd = g_nmi->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != nullptr)
 			break;
 
 	if (!snd)

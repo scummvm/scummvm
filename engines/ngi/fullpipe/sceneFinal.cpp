@@ -103,7 +103,7 @@ void sceneHandlerFinal_startFinal() {
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
-	g_nmi->_aniMan2 = 0;
+	g_nmi->_aniMan2 = nullptr;
 
 	g_nmi->_aniMan->_flags &= 0xFFFB;
 

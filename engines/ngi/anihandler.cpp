@@ -39,7 +39,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	int idx = getIndex(ani->_id);
 
 	if (idx == -1)
-		return 0;
+		return nullptr;
 
 #if 0
 	int stid = staticsId;
@@ -52,7 +52,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 			stid = ani->_movement->_staticsObj2->_staticsId;
 		} else {
 			if (!ani->_statics)
-				return 0;
+				return nullptr;
 
 			stid = ani->_statics->_staticsId;
 		}
@@ -73,7 +73,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	}
 
 	if (!_items[idx].subItems[subidx].movement)
-		return 0;
+		return nullptr;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	Common::Point point;
@@ -135,7 +135,7 @@ MGMItem::MGMItem() {
 }
 
 MGMSubItem::MGMSubItem() {
-	movement = 0;
+	movement = nullptr;
 	staticsIndex = 0;
 	field_8 = 0;
 	field_C = 0;
@@ -199,12 +199,12 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	debugC(4, kDebugPathfinding, "AniHandler::makeRunQueue(*%d)", mkQueue->ani ? mkQueue->ani->_id : -1);
 
 	if (!mkQueue->ani)
-		return 0;
+		return nullptr;
 
 	Movement *mov = mkQueue->ani->_movement;
 
 	if (!mov && !mkQueue->ani->_statics)
-		return 0;
+		return nullptr;
 
 	if (!(mkQueue->flags & 1)) {
 		if (mov)
@@ -236,7 +236,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	mov = mkQueue->ani->getMovementById(mkQueue->movementId);
 
 	if (!mov)
-		return 0;
+		return nullptr;
 
 
 	int itemIdx = getIndex(mkQueue->ani->_id);
@@ -256,10 +256,10 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	const MGMSubItem &sub2 = _items[itemIdx].subItems[st1idx + subOffset * _items[itemIdx].statics.size()];
 
 	if (subIdx != st2idx && !sub1.movement)
-		return 0;
+		return nullptr;
 
 	if (st1idx != subOffset && !sub2.movement)
-		return 0;
+		return nullptr;
 
 	int n1x = mkQueue->x1 - mkQueue->x2 - sub1.x - sub2.x;
 	int n1y = mkQueue->y1 - mkQueue->y2 - sub1.y - sub2.y;
@@ -430,14 +430,14 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 		return;
 
 	if (ani->_movement) {
-		ani->queueMessageQueue(0);
+		ani->queueMessageQueue(nullptr);
 		ani->_movement->gotoLastFrame();
 		ani->_statics = ani->_movement->_staticsObj2;
 
 		int x = ani->_movement->_ox;
 		int y = ani->_movement->_oy;
 
-		ani->_movement = 0;
+		ani->_movement = nullptr;
 
 		ani->setOXY(x, y);
 	}

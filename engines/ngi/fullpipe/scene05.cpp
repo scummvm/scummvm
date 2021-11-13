@@ -101,7 +101,7 @@ void sceneHandler05_makeManFlight() {
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	mq->chain(0);
+	mq->chain(nullptr);
 }
 
 void sceneHandler05_makeWackoFeedback() {

@@ -82,7 +82,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	StaticANIObject *ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
 
 	ani->_statics = ani->getStaticsById(ST_FLY_FLY);
-	ani->_movement = 0;
+	ani->_movement = nullptr;
 	ani->setOXY(x, y);
 	ani->_flags |= 4;
 	ani->_priority = priority;

@@ -57,7 +57,7 @@ void scene09_setupGrit(Scene *sc) {
 }
 
 void scene09_initScene(Scene *sc) {
-	g_vars->scene09_flyingBall = 0;
+	g_vars->scene09_flyingBall = nullptr;
 	g_vars->scene09_numSwallenBalls = 0;
 	g_vars->scene09_gulper = sc->getStaticANIObject1ById(ANI_GLOTATEL, -1);
 	g_vars->scene09_spitter = sc->getStaticANIObject1ById(ANI_PLEVATEL, -1);
@@ -142,7 +142,7 @@ int sceneHandler09_updateScreenCallback() {
 	int res = g_nmi->drawArcadeOverlay(g_nmi->_objectIdAtCursor == ANI_VISUNCHIK || g_vars->scene09_interactingHanger >= 0);
 
 	if (!res)
-		g_nmi->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = nullptr;
 
 	return res;
 }
@@ -181,7 +181,7 @@ void sceneHandler09_startAuntie() {
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_TTA9_GOL), 0, 1);
 
 	mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 30;
-	mq->chain(0);
+	mq->chain(nullptr);
 }
 
 void sceneHandler09_spitterClick() {
@@ -219,7 +219,7 @@ void sceneHandler09_spitterClick() {
 				g_nmi->stopAllSoundInstances(SND_9_006);
 			}
 
-			g_nmi->_aniMan2 = 0;
+			g_nmi->_aniMan2 = nullptr;
 
 			if (g_nmi->_sceneRect.left < 800)
 				g_nmi->_currentScene->_x = 800 - g_nmi->_sceneRect.left;
@@ -236,7 +236,7 @@ void sceneHandler09_eatBall() {
 		g_vars->scene09_flyingBalls.pop_back();
 		//g_vars->scene09_sceneBalls.pop_back();
 
-		g_vars->scene09_flyingBall = 0;
+		g_vars->scene09_flyingBall = nullptr;
 		g_vars->scene09_numSwallenBalls++;
 
 		if (g_vars->scene09_numSwallenBalls >= 3) {
@@ -510,7 +510,7 @@ int sceneHandler09(ExCommand *cmd) {
 	case 30:
 		if (g_vars->scene09_interactingHanger >= 0)  {
 			if (ABS(g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase) < 15) {
-				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = 0; // Really NULL
+				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = nullptr; // Really NULL
 				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->changeStatics2(ST_VSN_NORMAL);
 			}
 		}

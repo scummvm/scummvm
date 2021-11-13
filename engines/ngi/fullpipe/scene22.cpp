@@ -155,7 +155,7 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 
 		mq->addExCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 	}
 }
 
@@ -267,7 +267,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				mq->insertExCommandAt(2, ex);
 				mq->setFlags(mq->getFlags() | 1);
-				mq->chain(0);
+				mq->chain(nullptr);
 
 				g_vars->scene22_interactionIsDisabled = true;
 			} else {

@@ -78,8 +78,8 @@ bool Inventory::setItemFlags(int itemId, int flags) {
 Inventory2::Inventory2() {
 	_selectedId = -1;
 	_field_48 = -1;
-	_scene = 0;
-	_picture = 0;
+	_scene = nullptr;
+	_picture = nullptr;
 	_isInventoryOut = false;
 	_isLocked = 0;
 	_topOffset = -65;
@@ -443,7 +443,7 @@ bool Inventory2::unselectItem(bool flag) {
 			_inventoryIcons[i].isSelected = false;
 	}
 
-	g_nmi->getGameLoaderInputController()->setCursorItemPicture(0);
+	g_nmi->getGameLoaderInputController()->setCursorItemPicture(nullptr);
 
 	return true;
 }

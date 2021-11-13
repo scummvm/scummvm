@@ -51,12 +51,12 @@ struct Swinger {
 
 
 void scene18_preload() {
-	g_nmi->_scene3 = 0;
+	g_nmi->_scene3 = nullptr;
 
 	for (SceneTagList::iterator s = g_nmi->_gameProject->_sceneTagList->begin(); s != g_nmi->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
 			g_nmi->_scene3 = s->_scene;
-			s->_scene = 0;
+			s->_scene = nullptr;
 
 			g_nmi->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->freeMovementsPixelData();
 
@@ -292,7 +292,7 @@ void scene18_initScene1(Scene *sc) {
 
 	if (g_vars->scene18_enteredTrubaRight) {
 		if (sc->_sceneId == SC_19)
-			g_nmi->_aniMan2 = 0;
+			g_nmi->_aniMan2 = nullptr;
 		else
 			g_nmi->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani;
 	} else {
@@ -345,7 +345,7 @@ void scene18_initScene2(Scene *sc) {
 }
 
 void scene19_initScene2() {
-	g_nmi->_aniMan2 = 0;
+	g_nmi->_aniMan2 = nullptr;
 }
 
 int scene18_updateCursor() {
@@ -439,7 +439,7 @@ void sceneHandler18and19_showManJump() {
 		g_vars->scene18_enteredTrubaRight = false;
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 	}
 
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->sflags = 1;

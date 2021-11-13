@@ -152,7 +152,7 @@ void scene11_initScene(Scene *sc) {
 		g_vars->scene11_swingieStands = false;
 
 		if (swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting)) {
-			g_vars->scene11_swingie->_movement = 0;
+			g_vars->scene11_swingie->_movement = nullptr;
 			g_vars->scene11_swingie->_statics = g_vars->scene11_swingie->getStaticsById(ST_SWR_SIT);
 			g_vars->scene11_swingie->setOXY(144, 389);
 
@@ -160,7 +160,7 @@ void scene11_initScene(Scene *sc) {
 			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 0);
 			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 1);
 		} else {
-			g_vars->scene11_swingie->_movement = 0;
+			g_vars->scene11_swingie->_movement = nullptr;
 			g_vars->scene11_swingie->_statics = g_vars->scene11_swingie->getStaticsById(ST_SWR_SITBALD);
 			g_vars->scene11_swingie->setOXY(144, 415);
 
@@ -185,7 +185,7 @@ void scene11_initScene(Scene *sc) {
 }
 
 void sceneHandler11_restartMan() {
-	chainObjQueue(0, QU_SC11_RESTARTMAN, 1);
+	chainObjQueue(nullptr, QU_SC11_RESTARTMAN, 1);
 
 	getGameLoaderInteractionController()->enableFlag24();
 	getCurrSceneSc2MotionController()->activate();
@@ -223,7 +223,7 @@ int sceneHandler11_updateScreenCallback() {
 	int res = g_nmi->drawArcadeOverlay(g_vars->scene11_arcadeIsOn);
 
 	if (!res)
-		g_nmi->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = nullptr;
 
 	return res;
 }
@@ -244,7 +244,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
 	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
-	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
@@ -261,9 +261,9 @@ void sceneHandler11_manToSwing() {
 void sceneHandler11_putABoot() {
 	if (g_vars->scene11_boots->_flags & 4) {
 		if (g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_ONE)
-			chainObjQueue(0, QU_SC11_PUTBOOT2, 1);
+			chainObjQueue(nullptr, QU_SC11_PUTBOOT2, 1);
 	} else {
-		chainObjQueue(0, QU_SC11_PUTBOOT1, 1);
+		chainObjQueue(nullptr, QU_SC11_PUTBOOT1, 1);
 	}
 }
 
@@ -288,7 +288,7 @@ void sceneHandler11_putBoot() {
 void sceneHandler11_showSwing() {
 	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_KCH_0);
-	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(691, 371, MV_KCH_START, 0);
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 }
@@ -337,7 +337,7 @@ void sceneHandler11_swing0() {
 
 	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
-	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
@@ -352,7 +352,7 @@ void sceneHandler11_swing1() {
 
 	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
-	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_1, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
@@ -367,7 +367,7 @@ void sceneHandler11_swing2() {
 
 	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
-	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_2, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_2, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);

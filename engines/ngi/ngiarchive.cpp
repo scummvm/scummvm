@@ -128,7 +128,7 @@ const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::Path &path) c
 Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
 	if (!_headers.contains(name)) {
-		return 0;
+		return nullptr;
 	}
 
 	NgiHeader *hdr = _headers[name].get();

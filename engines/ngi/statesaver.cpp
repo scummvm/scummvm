@@ -61,16 +61,16 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 
 	v = _gameVar->getSubVarByName("OBJSTATES");
 
-	GameVar *nxt = 0;
-	GameVar *prv = 0;
-	GameVar *par = 0;
+	GameVar *nxt = nullptr;
+	GameVar *prv = nullptr;
+	GameVar *par = nullptr;
 	if (v) {
 		nxt = v->_nextVarObj;
 		prv = v->_prevVarObj;
 		par = v->_parentVarObj;
-		v->_parentVarObj = 0;
-		v->_nextVarObj = 0;
-		v->_prevVarObj = 0;
+		v->_parentVarObj = nullptr;
+		v->_nextVarObj = nullptr;
+		v->_prevVarObj = nullptr;
 	}
 
 	archive->writeObject(v);

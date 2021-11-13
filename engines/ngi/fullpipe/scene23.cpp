@@ -308,7 +308,7 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 					mq->addExCommandToEnd(cmd->createClone());
 					mq->setFlags(mq->getFlags() | 1);
-					mq->chain(0);
+					mq->chain(nullptr);
 				}
 
 				if (!g_vars->scene23_topReached)
@@ -397,7 +397,7 @@ void sceneHandler23_fromCalendar(ExCommand *cmd) {
 
 		mq->addExCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		g_vars->scene23_topReached = false;
 		g_vars->scene23_someVar = 0;
@@ -410,7 +410,7 @@ void sceneHandler23_fromStool(ExCommand *cmd) {
 
 		mq->addExCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		cmd->_messageKind = 0;
 	}
@@ -431,7 +431,7 @@ int sceneHandler23(ExCommand *cmd) {
 		break;
 
 	case MSG_SC23_HIDEGIRAFFEE:
-		g_vars->scene23_giraffee->queueMessageQueue(0);
+		g_vars->scene23_giraffee->queueMessageQueue(nullptr);
 		g_vars->scene23_giraffee->_flags &= 0xFFFB;
 		break;
 
