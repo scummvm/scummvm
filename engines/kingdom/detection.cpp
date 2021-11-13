@@ -34,7 +34,7 @@ static const DebugChannelDef debugFlagList[] = {
 
 static const PlainGameDescriptor kingdomGames[] = {
 	{"kingdom", "Kingdom: The Far Reaches"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 namespace Kingdom {
@@ -55,7 +55,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Also detects the GOG.COM version
 	{
 		"kingdom",
-		0,
+		nullptr,
 		AD_ENTRY1s("KINGDOM.EXE", "64d3e03b963396ced402f3dc958765c0", 199693),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -66,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Kingdom 3DO, provided by Strangerke
 	{
 		"kingdom",
-		0,
+		nullptr,
 		AD_ENTRY1s("launchme", "60d2c64e3cb3e22859c4fadbc121b0db", 183452),
 		Common::EN_ANY,
 		Common::kPlatform3DO,
