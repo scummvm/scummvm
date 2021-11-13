@@ -94,7 +94,7 @@ void FileManager_v2d::readBackground(const int screenIndex) {
 
 	// Read the image into dummy seq and static dib_a
 	Seq *dummySeq;                                  // Image sequence structure for Read_pcx
-	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
+	dummySeq = readPCX(_sceneryArchive1, nullptr, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 }
 

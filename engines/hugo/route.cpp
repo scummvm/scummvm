@@ -391,7 +391,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	// Look in segments[] for straight lines from destination to hero
 	for (i = 0, _routeListIndex = 0; i < _segmentNumb - 1; i++) {
 		Common::Point *routeNode;                   // Ptr to route node
-		if ((routeNode = newNode()) == 0)           // New node for new segment
+		if ((routeNode = newNode()) == nullptr)           // New node for new segment
 			return false;                           // Too many nodes
 		routeNode->y = _segment[i]._y;
 
@@ -403,7 +403,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 				routeNode->y = segPtr->_y;          // Yes, keep updating node
 			} else {
 				// No, create another node on previous segment to reach it
-				if ((routeNode = newNode()) == 0)   // Add new route node
+				if ((routeNode = newNode()) == nullptr)   // Add new route node
 					return false;                   // Too many nodes
 
 				// Find overlap between old and new segments

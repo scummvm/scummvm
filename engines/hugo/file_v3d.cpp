@@ -66,11 +66,11 @@ void FileManager_v3d::readBackground(const int screenIndex) {
 	if (screenIndex < 20) {
 		_sceneryArchive1.seek(sceneBlock._sceneOffset, SEEK_SET);
 		// Read the image into dummy seq and static dib_a
-		dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
+		dummySeq = readPCX(_sceneryArchive1, nullptr, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	} else {
 		_sceneryArchive2.seek(sceneBlock._sceneOffset, SEEK_SET);
 		// Read the image into dummy seq and static dib_a
-		dummySeq = readPCX(_sceneryArchive2, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
+		dummySeq = readPCX(_sceneryArchive2, nullptr, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	}
 	free(dummySeq);
 }

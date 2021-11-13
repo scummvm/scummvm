@@ -663,10 +663,10 @@ void Screen::drawBoundaries() {
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		Object *obj = &_vm->_object->_objects[i]; // Get pointer to object
 		if (obj->_screenIndex == *_vm->_screenPtr) {
-			if ((obj->_currImagePtr != 0) && (obj->_cycling != kCycleInvisible))
+			if ((obj->_currImagePtr != nullptr) && (obj->_cycling != kCycleInvisible))
 				drawRectangle(false, obj->_x + obj->_currImagePtr->_x1, obj->_y + obj->_currImagePtr->_y1,
 				                     obj->_x + obj->_currImagePtr->_x2, obj->_y + obj->_currImagePtr->_y2, _TLIGHTGREEN);
-			else if ((obj->_currImagePtr == 0) && (obj->_vxPath != 0) && !obj->_carriedFl)
+			else if ((obj->_currImagePtr == nullptr) && (obj->_vxPath != 0) && !obj->_carriedFl)
 				drawRectangle(false, obj->_oldx, obj->_oldy, obj->_oldx + obj->_vxPath, obj->_oldy + obj->_vyPath, _TBRIGHTWHITE);
 		}
 	}

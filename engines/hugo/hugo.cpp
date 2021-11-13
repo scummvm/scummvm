@@ -59,7 +59,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_system = syst;
 
 	setDebugger(new HugoConsole(this));
-	_rnd = 0;
+	_rnd = nullptr;
 
 	_screen = nullptr;
 	_mouse = nullptr;
@@ -530,13 +530,13 @@ bool HugoEngine::loadHugoDat() {
 }
 
 uint16 **HugoEngine::loadLongArray(Common::SeekableReadStream &in) {
-	uint16 **resArray = 0;
+	uint16 **resArray = nullptr;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		uint16 numRows = in.readUint16BE();
 		if (varnt == _gameVariant) {
 			resArray = (uint16 **)malloc(sizeof(uint16 *) * (numRows + 1));
-			resArray[numRows] = 0;
+			resArray[numRows] = nullptr;
 		}
 		for (int i = 0; i < numRows; i++) {
 			uint16 numElems = in.readUint16BE();

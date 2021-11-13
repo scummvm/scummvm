@@ -143,7 +143,7 @@ void ObjectHandler::useObject(int16 objId) {
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if (obj->_cmdIndex != 0)                     // Use non-collectible item if able
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
-		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != 0)
+		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != nullptr)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
 		else
 			return;                                       // Can't use object directly
@@ -204,7 +204,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 		if (obj->_screenIndex == *_vm->_screenPtr && (obj->_genericCmd || obj->_objValue || obj->_cmdIndex)) {
 			Seq *curImage = obj->_currImagePtr;
 			// Object must have a visible image...
-			if (curImage != 0 && obj->_cycling != kCycleInvisible) {
+			if (curImage != nullptr && obj->_cycling != kCycleInvisible) {
 				// If cursor inside object
 				if (x >= (uint16)obj->_x && x <= obj->_x + curImage->_x2 && y >= (uint16)obj->_y && y <= obj->_y + curImage->_y2) {
 					// If object is closest so far
@@ -215,7 +215,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 				}
 			} else {
 				// ...or a dummy object that has a hotspot rectangle
-				if (curImage == 0 && obj->_vxPath != 0 && !obj->_carriedFl) {
+				if (curImage == nullptr && obj->_vxPath != 0 && !obj->_carriedFl) {
 					// If cursor inside special rectangle
 					if ((int16)x >= obj->_oldx && (int16)x < obj->_oldx + obj->_vxPath && (int16)y >= obj->_oldy && (int16)y < obj->_oldy + obj->_vyPath) {
 						// If object is closest so far
