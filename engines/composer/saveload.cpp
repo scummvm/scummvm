@@ -277,7 +277,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return Common::kPathNotFile;
 
-	Common::Serializer ser(in, NULL);
+	Common::Serializer ser(in, nullptr);
 	byte magic[4];
 	ser.syncBytes(magic, 4);
 	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S')
@@ -353,7 +353,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	_needsUpdate = true;
 
 	_mixer->stopAll();
-	_audioStream = NULL;
+	_audioStream = nullptr;
 
 	// Restore the buffered audio
 	ser.syncAsSint16LE(_currSoundPriority);
@@ -376,7 +376,7 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	if (!(out = _saveFileMan->openForSaving(filename)))
 		return Common::kWritingFailed;
 
-	Common::Serializer ser(NULL, out);
+	Common::Serializer ser(nullptr, out);
 	byte magic[4] = {'C', 'M', 'P', 'S'};
 	ser.syncBytes(magic, 4);
 	ser.syncVersion(0);

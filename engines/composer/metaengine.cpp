@@ -53,7 +53,7 @@ Common::Platform ComposerEngine::getPlatform() const {
 
 bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 	const ADGameFileDescription *res = _gameDescription->desc.filesDescriptions;
-	while (res->fileName != NULL) {
+	while (res->fileName != nullptr) {
 		if (res->fileType == GAME_CONFIGFILE) {
 			return configFile.loadFromFile(res->fileName);
 		}
@@ -96,7 +96,7 @@ bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 Common::String getSaveName(Common::InSaveFile *in) {
-	Common::Serializer ser(in, NULL);
+	Common::Serializer ser(in, nullptr);
 	Common::String name;
 	uint32 tmp;
 	ser.syncAsUint32LE(tmp);

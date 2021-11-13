@@ -34,7 +34,7 @@ namespace Composer {
 // (copied from clone2727's mohawk code)
 
 Archive::Archive() {
-	_stream = 0;
+	_stream = nullptr;
 }
 
 Archive::~Archive() {
@@ -59,7 +59,7 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = 0;
+	delete _stream; _stream = nullptr;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
@@ -251,7 +251,7 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 Pipe::Pipe(Common::SeekableReadStream *stream, uint16 id) {
 	_offset = 0;
 	_stream = stream;
-	_anim = NULL;
+	_anim = nullptr;
 	_pipeId = id;
 }
 

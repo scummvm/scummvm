@@ -42,7 +42,7 @@ namespace Composer {
 
 ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("composer");
-	_audioStream = NULL;
+	_audioStream = nullptr;
 	_currSoundPriority = 0;
 	_currentTime = 0;
 	_lastTime = 0;
@@ -51,7 +51,7 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 	_mouseVisible = true;
 	_mouseEnabled = false;
 	_mouseSpriteId = 0;
-	_lastButton = NULL;
+	_lastButton = nullptr;
 }
 
 ComposerEngine::~ComposerEngine() {
@@ -520,10 +520,10 @@ void ComposerEngine::unloadLibrary(uint id) {
 		_sprites.clear();
 		i->_buttons.clear();
 
-		_lastButton = NULL;
+		_lastButton = nullptr;
 
 		_mixer->stopAll();
-		_audioStream = NULL;
+		_audioStream = nullptr;
 
 		for (uint j = 0; j < _queuedScripts.size(); j++) {
 			_queuedScripts[j]._count = 0;
@@ -679,7 +679,7 @@ const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::P
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ComposerEngine::setButtonActive(uint16 id, bool active) {
