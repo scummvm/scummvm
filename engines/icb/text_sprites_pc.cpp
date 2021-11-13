@@ -34,7 +34,7 @@ namespace ICB {
 
 #define SPACE ' ' // ASCII for space character
 
-_rgb *psTempSpeechColour = NULL;
+_rgb *psTempSpeechColour = nullptr;
 
 _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormatting) {
 	uint8 *linePtr;                                                                // used to point to the start of each line of pixels in the text sprite
@@ -143,7 +143,7 @@ _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormattin
 	if (psTempSpeechColour) {
 		memcpy(pal, pnSavePalette, 24);
 
-		psTempSpeechColour = NULL;
+		psTempSpeechColour = nullptr;
 	}
 
 	return TS_OK; // return with success

@@ -233,7 +233,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	Tdebug("text_lines.txt", "\n\n---Text Lines---\n");
 
 	// text
-	text = NULL; // game can exist with this file
+	text = nullptr; // game can exist with this file
 
 	char textFileName[100];
 
@@ -259,7 +259,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	// A copy of the code above to open the global text file.  Feel free to edit this if I've ballsed up
 	// anywhere.
-	global_text = NULL;
+	global_text = nullptr;
 
 	char global_cluster[ENGINE_STRING_LEN];
 
@@ -982,7 +982,7 @@ void _game_session::Script_cycle() {
 			}
 
 			if (!L->logic_level) { // restart the object
-				L->logic_ref[1] = 0; // completely reset L 1 so that context choose will select ok
+				L->logic_ref[1] = nullptr; // completely reset L 1 so that context choose will select ok
 				// it is acceptable to choose the logic that had previously been running
 
 				// temp reset PC the hard way
@@ -1203,7 +1203,7 @@ _linked_data_file *LoadTranslatedFile(const char *mission, const char *session) 
 	// Load in this file
 	Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead(fname.c_str());
 
-	if (stream == NULL) // if it could not be opened
+	if (stream == nullptr) // if it could not be opened
 		Fatal_error("Unable to load file %s", (const char *)fname);
 
 	uint32 len = stream->size();

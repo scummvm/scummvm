@@ -61,7 +61,7 @@ int32 ReadKey(char *key) {
 	if (!keyBacklog)
 		return (0);
 
-	if (key == NULL)
+	if (key == nullptr)
 		return 0;
 
 	*key = keyBuffer[keyPointer++];

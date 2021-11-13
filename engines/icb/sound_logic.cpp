@@ -39,7 +39,7 @@ void _sound_logic::Initialise() {
 
 	m_nNumSubscribers = 0;
 	m_nSFXSubtitleTimer = 0;
-	m_pcSFXSubtitleText = NULL;
+	m_pcSFXSubtitleText = nullptr;
 	m_nNumLinkedFloors = 0;
 
 	for (i = 0; i < SL_MAX_CONCURRENT_SOUNDS; ++i) {

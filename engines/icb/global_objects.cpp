@@ -44,25 +44,25 @@ int32 g_mega_select_g = 200;
 int32 g_mega_select_b = 200;
 
 // holds info about current mission
-_mission *g_mission = NULL;
+_mission *g_mission = nullptr;
 
 // main buffer object
 // if this remains NULL then the system knows that there are no resources present
 // this should be used as a high level indication of the situation
-res_man *rs1 = NULL;
-res_man *rs2 = NULL;
-res_man *rs3 = NULL;
+res_man *rs1 = nullptr;
+res_man *rs2 = nullptr;
+res_man *rs3 = nullptr;
 
-res_man *private_session_resman = NULL;
+res_man *private_session_resman = nullptr;
 
-res_man *rs_bg = NULL;     // pointer to which res_man to use for background buffer
-res_man *rs_icons = NULL;  // pointer to which res_man to use for icons
-res_man *rs_anims = NULL;  // pointer to which res_man to use for animation data
-res_man *rs_remora = NULL; // pointer to which res_man to use for remora graphics
-res_man *rs_font = NULL;   // pointer to which res_man to use for font data
+res_man *rs_bg = nullptr;     // pointer to which res_man to use for background buffer
+res_man *rs_icons = nullptr;  // pointer to which res_man to use for icons
+res_man *rs_anims = nullptr;  // pointer to which res_man to use for animation data
+res_man *rs_remora = nullptr; // pointer to which res_man to use for remora graphics
+res_man *rs_font = nullptr;   // pointer to which res_man to use for font data
 
 // global test only
-res_man *global_text_resman = NULL;
+res_man *global_text_resman = nullptr;
 _linked_data_file *global_text;
 
 // route-manager service object

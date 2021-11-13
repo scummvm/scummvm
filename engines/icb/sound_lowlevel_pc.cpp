@@ -44,7 +44,7 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 	// Manually open the cluster file
 	Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead(clustername.c_str());
 
-	if (stream == NULL)
+	if (stream == nullptr)
 		Fatal_error(pxVString("Failed to open cluster: %s", clustername.c_str()));
 
 	// Read in first 16 bytes so we can get the header size

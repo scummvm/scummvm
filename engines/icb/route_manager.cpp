@@ -269,7 +269,7 @@ _route_description *_game_session::Fetch_route_desc(uint32 id) {
 
 	// no route at all
 	if (!logic_structs[id]->mega->m_phase)
-		return (0);
+		return (nullptr);
 
 	return (&logic_structs[id]->mega->m_main_route);
 }
@@ -278,7 +278,7 @@ void _route_description::___init() {
 	// nethack diagnostics
 	if (diag_bars)
 		delete[] diag_bars;
-	diag_bars = 0;
+	diag_bars = nullptr;
 
 	number_of_diag_bars = 0;
 
@@ -494,7 +494,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 
 	_feature_info *monica;
 
-	const char *nico_name = NULL;
+	const char *nico_name = nullptr;
 	if (params && params[0]) {
 		nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	}

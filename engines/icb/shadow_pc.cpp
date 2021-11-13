@@ -94,7 +94,7 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p
 				  int16 zmaxLocal) {
 
 	SVECTORPC workVerts[MAX_VECTORS];
-	SVECTORPC *vertices = NULL;
+	SVECTORPC *vertices = nullptr;
 
 	vertices = workVerts;
 

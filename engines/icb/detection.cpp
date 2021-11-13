@@ -26,14 +26,14 @@ namespace ICB {
 
 static const PlainGameDescriptor icbGames[] = {
 	{ "icb", "In Cold Blood" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const char *directoryGlobs[] = {
 	"engine",
 	"linc",
 	"demo",
-	0
+	nullptr
 };
 
 static const ADGameDescription gameDescriptions[] = {

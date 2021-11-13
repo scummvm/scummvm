@@ -183,7 +183,7 @@ void _game_session::UpdateFootstep() {
 
 			// check for special mega who just has single sfx
 			if (M->footstep_special) {
-				RegisterSound(cur_id, NULL, specialFootSfx, "foot", (int8)(vol));
+				RegisterSound(cur_id, nullptr, specialFootSfx, "foot", (int8)(vol));
 			}
 			// we are an ordinary mega look for sfx
 			else {
@@ -211,7 +211,7 @@ void _game_session::UpdateFootstep() {
 					sfx = defaultFootSfx;
 
 				if (sfx)
-					RegisterSound(cur_id, NULL, sfx, "foot", (int8)(vol));
+					RegisterSound(cur_id, nullptr, sfx, "foot", (int8)(vol));
 			}
 		}
 	}

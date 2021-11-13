@@ -121,8 +121,8 @@ void _logic::___init(const char *name) {
 
 	// clear the pointer to the voxel object specific structure
 	// if these are NULL then the object is non mega
-	voxel_info = NULL;
-	mega = NULL; // clear mega info
+	voxel_info = nullptr;
+	mega = nullptr; // clear mega info
 
 	// defaults to a prop
 	image_type = PROP;
@@ -152,8 +152,8 @@ void _logic::___init(const char *name) {
 
 	// clear the logic tree
 	for (j = 0; j < TREE_SIZE; j++) {
-		logic[j] = 0;
-		logic_ref[j] = 0;
+		logic[j] = nullptr;
+		logic_ref[j] = nullptr;
 	}
 
 	// set owner rect to something safe - for fn_on_screen calls by props
@@ -192,7 +192,7 @@ void _mega::___init() {
 	auto_target_pan = ZERO_TURN; // auto target
 
 	target_pan = ZERO_TURN; // reset turn-on-spot-to pan
-	cur_parent = NULL;
+	cur_parent = nullptr;
 	cur_slice = 0;
 	number_of_barriers = 0;  // number of local barriers associated with mega position
 	number_of_nudge = 0;     // number of local barriers associated with mega position
@@ -210,7 +210,7 @@ void _mega::___init() {
 	m_phase = 0;
 
 	m_main_route.total_points = 0; // final route size
-	m_main_route.diag_bars = 0;
+	m_main_route.diag_bars = nullptr;
 	m_main_route.number_of_diag_bars = 0;
 
 	use_strike_script = 0;
@@ -677,7 +677,7 @@ void _game_session::Reset_all_objects() {
 
 	for (uint32 j = 0; j < tot_obs; j++) {
 		logic_structs[j]->logic_level = 0;
-		logic_structs[j]->logic_ref[1] = 0;
+		logic_structs[j]->logic_ref[1] = nullptr;
 	}
 }
 

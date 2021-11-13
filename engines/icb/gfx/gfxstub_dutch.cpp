@@ -60,14 +60,14 @@ typedef struct {
 	int32 ZBytesPerPixel;
 } MyRenderDevice;
 
-MyRenderDevice myRenDev = {NULL, 0, 0, NULL, 0, 0};
-RevRenderDevice *lastRevRenDev = NULL;
+MyRenderDevice myRenDev = {nullptr, 0, 0, nullptr, 0, 0};
+RevRenderDevice *lastRevRenDev = nullptr;
 
 int32 SetRenderDevice(RevRenderDevice *renderDev) {
-	lastRevRenDev = NULL;
-	if (renderDev->RGBdata == NULL)
+	lastRevRenDev = nullptr;
+	if (renderDev->RGBdata == nullptr)
 		return 1;
-	if (renderDev->Zdata == NULL)
+	if (renderDev->Zdata == nullptr)
 		return 1;
 	if (renderDev->width <= 0)
 		return 1;
@@ -99,10 +99,10 @@ int32 UnregisterTexture(TextureHandle *texture) {
 	int32 i;
 
 	for (i = 0; i < 9; i++)
-		if ((texture->pRGBA[i]) != NULL)
+		if ((texture->pRGBA[i]) != nullptr)
 			delete[](texture->pRGBA[i]);
 
-	if (texture->palette != NULL)
+	if (texture->palette != nullptr)
 		delete[](texture->palette);
 
 	delete texture;
@@ -119,21 +119,21 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 	th->h = revInput->height;
 
 	for (i = 0; i < 9; i++)
-		th->pRGBA[i] = NULL;
+		th->pRGBA[i] = nullptr;
 
 	if (revInput->palette[0] == 0xDEADBEAF) {
 		th->bpp = 4;
-		th->palette = NULL;
+		th->palette = nullptr;
 		th->pRGBA[0] = revInput->level[0];
 	} else {
 		// Complain if width or height > 256 < 1
 		if ((th->w < 1) || (th->w > 256)) {
 			delete th;
-			return NULL;
+			return nullptr;
 		}
 		if ((th->h < 1) || (th->h > 256)) {
 			delete th;
-			return NULL;
+			return nullptr;
 		}
 
 		// Complain if the width or height are not powers of 2
@@ -142,14 +142,14 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 			if (((th->w >> i) << i) != th->w) {
 				if ((th->w >> i) != 0) {
 					delete th;
-					return NULL;
+					return nullptr;
 				}
 			}
 			// ERROR
 			if (((th->h >> i) << i) != th->h) {
 				if ((th->h >> i) != 0) {
 					delete th;
-					return NULL;
+					return nullptr;
 				}
 			}
 		}
@@ -184,9 +184,9 @@ int32 DrawGouraudTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) 
 	float y;
 	span_t *pspan;
 
-	if (myRenDev.pRGB == NULL)
+	if (myRenDev.pRGB == nullptr)
 		return 0;
-	if (myTexHan.pRGBA[mip_map_level] == NULL)
+	if (myTexHan.pRGBA[mip_map_level] == nullptr)
 		return 0;
 
 	// Test for clockwise polygons
@@ -461,7 +461,7 @@ int32 DrawFlatUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
 	float y;
 	span_t *pspan;
 
-	if (myRenDev.pRGB == NULL)
+	if (myRenDev.pRGB == nullptr)
 		return 0;
 
 	// Test for clockwise polygons
@@ -604,7 +604,7 @@ int32 DrawGouraudUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z
 	float y;
 	span_t *pspan;
 
-	if (myRenDev.pRGB == NULL)
+	if (myRenDev.pRGB == nullptr)
 		return 0;
 
 	// Test for clockwise polygons
@@ -793,9 +793,9 @@ int32 DrawFlatTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
 	float y;
 	span_t *pspan;
 
-	if (myRenDev.pRGB == NULL)
+	if (myRenDev.pRGB == nullptr)
 		return 0;
-	if (myTexHan.pRGBA[mip_map_level] == NULL)
+	if (myTexHan.pRGBA[mip_map_level] == nullptr)
 		return 0;
 
 	// Test for clockwise polygons

@@ -44,7 +44,7 @@ void Init_play_movie(const char *param0, bool8 param1);
 mcodeFunctionReturnCodes fn_play_movie(int32 &result, int32 *params) { return (MS->fn_play_movie(result, params)); }
 
 mcodeFunctionReturnCodes _game_session::fn_play_movie(int32 &, int32 *params) {
-	const char *movie_name = NULL;
+	const char *movie_name = nullptr;
 	if (params && params[0]) {
 		movie_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	}

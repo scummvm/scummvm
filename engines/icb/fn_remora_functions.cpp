@@ -356,7 +356,7 @@ mcodeFunctionReturnCodes _game_session::fn_remora_warning_text(int32 &, int32 *p
 
 mcodeFunctionReturnCodes _game_session::fn_remora_blank_line(int32 &, int32 *) {
 	// Set the blank line.
-	g_oRemora->SetText(NULL, 0, 0, PIN_AT_CENTRE);
+	g_oRemora->SetText(nullptr, 0, 0, PIN_AT_CENTRE);
 
 	// Calling script can continue.
 	return (IR_CONT);

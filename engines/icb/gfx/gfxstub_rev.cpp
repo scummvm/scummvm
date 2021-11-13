@@ -90,10 +90,10 @@ void endDrawing() {
 int32 DrawSprite(int32 x0, int32 y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uint16 /*u0*/, uint16 v0, uint8 alpha, uint16 z, void *tex) {
 	int32 x, y;
 	int32 lx0, ly0;
-	TextureHandle *pthan = NULL;
+	TextureHandle *pthan = nullptr;
 	int32 lx1, ly1;
 
-	if (tex == NULL) {
+	if (tex == nullptr) {
 		return 0;
 	} else {
 		pthan = (TextureHandle *)tex;
@@ -941,8 +941,8 @@ int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2,
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
-	TextureHandle *pthan = NULL;
-	if (tex == NULL) {
+	TextureHandle *pthan = nullptr;
+	if (tex == nullptr) {
 		return 0;
 	} else {
 		pthan = (TextureHandle *)tex;
@@ -972,7 +972,7 @@ int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2,
 		}
 	}
 
-	if (tex == NULL)
+	if (tex == nullptr)
 		delete pthan;
 	return ret;
 }
@@ -1014,8 +1014,8 @@ int32 DrawFlatQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
-	TextureHandle *pthan = NULL;
-	if (tex == NULL) {
+	TextureHandle *pthan = nullptr;
+	if (tex == nullptr) {
 		return 0;
 	} else {
 		pthan = (TextureHandle *)tex;
@@ -1039,7 +1039,7 @@ int32 DrawFlatQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int
 			ret |= DrawFlatTexturedPolygon(newVerts, 3, z);
 	}
 
-	if (tex == NULL)
+	if (tex == nullptr)
 		delete pthan;
 	return ret;
 }
@@ -1071,8 +1071,8 @@ int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
-	TextureHandle *pthan = NULL;
-	if (tex == NULL) {
+	TextureHandle *pthan = nullptr;
+	if (tex == nullptr) {
 		return 0;
 	} else {
 		pthan = (TextureHandle *)tex;
@@ -1102,7 +1102,7 @@ int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 
 		}
 	}
 
-	if (tex == NULL)
+	if (tex == nullptr)
 		delete pthan;
 
 	return ret;
@@ -1149,8 +1149,8 @@ int32 DrawGouraudQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, 
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
-	TextureHandle *pthan = NULL;
-	if (tex == NULL) {
+	TextureHandle *pthan = nullptr;
+	if (tex == nullptr) {
 		return 0;
 	} else {
 		pthan = (TextureHandle *)tex;
@@ -1174,7 +1174,7 @@ int32 DrawGouraudQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, 
 			ret |= DrawGouraudTexturedPolygon(newVerts, 3, z);
 	}
 
-	if (tex == NULL)
+	if (tex == nullptr)
 		delete pthan;
 	return ret;
 }

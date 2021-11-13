@@ -95,7 +95,7 @@ _mouseEvent *MouseEvent() {
 
 		return (me);
 	}
-	return (NULL);
+	return (nullptr);
 }
 
 } // End of namespace ICB

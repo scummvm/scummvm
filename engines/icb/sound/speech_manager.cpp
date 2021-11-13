@@ -50,7 +50,7 @@ SpeechManager::SpeechManager() {
 	m_lengthInCycles = 0;
 	m_speechVol = 0;
 
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
 SpeechManager::~SpeechManager() { KillBuffer(); }
@@ -80,7 +80,7 @@ bool8 SpeechManager::StartSpeech(const char *fileName, uint32 byteOffsetToWav, i
 
 	// Open the cluster file
 	Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead(fileName);
-	if (stream == NULL)
+	if (stream == nullptr)
 		return FALSE8;
 
 	// Need to seek to the correct postion in the cluster

@@ -320,9 +320,9 @@ const char *_icon_menu::GetLastSelection() {
 		if (m_pIconList->GetIconCount() > 0)
 			return (m_pIconList->GetIcon(m_nLastSelection));
 		else
-			return (NULL);
+			return (nullptr);
 	} else {
-		return (NULL);
+		return (nullptr);
 	}
 }
 

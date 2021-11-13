@@ -53,7 +53,7 @@ _remora::_remora() {
 	m_nFlashCounter = 0;
 	m_bMainHeadingSet = FALSE8;
 	m_nCurrentPalette = 0;
-	m_pDisplayBuffer = NULL;
+	m_pDisplayBuffer = nullptr;
 
 	// Set initial zoom range and an initial zoom.
 	m_nMinZoom = REMORA_SCAN_ZOOM_HARD_LOWER;
@@ -80,7 +80,7 @@ void _remora::InitialiseRemora() {
 	m_bModeChanged = FALSE8;
 
 	// Clear any mega speech (there shouldn't be any though).
-	m_pcSpeechText = NULL;
+	m_pcSpeechText = nullptr;
 	m_nSpeechTimer = 0;
 
 	// Initially, the zoom is set at 1X and cannot be moved.  This might well change.
@@ -177,7 +177,7 @@ void _remora::DisplayCharacterSpeech(uint32 nHash) {
 		// Put the text in the buffer.
 		m_pcSpeechText = &pcText[1];
 	} else {
-		m_pcSpeechText = NULL;
+		m_pcSpeechText = nullptr;
 	}
 
 	// Initialise the counter for how int32 it will be displayed.
@@ -195,7 +195,7 @@ void _remora::SetCurrentZoom(uint32 nZoom) {
 }
 
 bool8 _remora::IsThisEmailWaiting(const char *pcEmailID) const {
-	if ((pcEmailID == NULL) || (strlen(m_pcEmailID) == 0))
+	if ((pcEmailID == nullptr) || (strlen(m_pcEmailID) == 0))
 		return (FALSE8);
 
 	if (strcmp(pcEmailID, m_pcEmailID))
@@ -880,7 +880,7 @@ void _remora::ClearAllText() {
 	m_bMainHeadingSet = FALSE8;
 
 	// These control the spoken text display.
-	m_pcSpeechText = NULL;
+	m_pcSpeechText = nullptr;
 	m_nSpeechTimer = 0;
 }
 

@@ -84,14 +84,14 @@ ClusterManager::ClusterManager() {
 	m_filelistCursor = -1;
 	m_filelistSize = 0;
 
-	m_src_fp = NULL;
-	m_dst_fp = NULL;
+	m_src_fp = nullptr;
+	m_dst_fp = nullptr;
 
 	m_currentFileSize = 0;
 	m_chunkCounter = 0;
 	m_bytesDone = 0;
 
-	m_movieMemoryPointer = NULL;
+	m_movieMemoryPointer = nullptr;
 
 	m_installDone = FALSE8;
 
@@ -244,7 +244,7 @@ char *ClusterManager::GetFileListEntry() {
 	if (m_filelistCursor == -1)
 		Fatal_error("Can't retrieve filelist entry without loading a filelist first!");
 
-	char *line = NULL;
+	char *line = nullptr;
 
 	// End of file check
 	if (m_filelistCursor < m_filelistSize) {
@@ -399,7 +399,7 @@ const char *MissionIdToName(MISSION_ID mission) {
 	}
 
 	Fatal_error("MissionIdToName() should never get here - smack AndyB");
-	return NULL;
+	return nullptr;
 }
 
 void MakeDirectoryTree(MISSION_ID /*mission*/) {

@@ -269,7 +269,7 @@ void _remora::GrabTextFormattingMemory() {
 void _remora::ReleaseTextFormattingMemory() {
 	if (m_pDisplayBuffer) {
 		delete[] m_pDisplayBuffer;
-		m_pDisplayBuffer = NULL;
+		m_pDisplayBuffer = nullptr;
 	}
 }
 
@@ -1595,7 +1595,7 @@ void _remora::SetUpSurfaceForBitmap(const char *pcBitmapName, DXrect &sSourceRec
 
 	pSurfaceBitmap = surface_manager->Lock_surface(nSurfaceID);
 	nPitch = surface_manager->Get_pitch(nSurfaceID);
-	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, pSprite->width, pSprite->height, pBitmap, 0, 0, 0, FALSE8, NULL, 255);
+	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, pSprite->width, pSprite->height, pBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 	surface_manager->Unlock_surface(nSurfaceID);
 }
 

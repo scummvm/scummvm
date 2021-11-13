@@ -155,7 +155,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 		if (skelPiece->parent != mesh->nBones) {
 			bone->parent = skeleton + skelPiece->parent;
 		} else
-			bone->parent = 0x0;
+			bone->parent = nullptr;
 	}
 
 	int32 hasUpperBodyDeform = 0;
@@ -273,7 +273,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 			pcoord = pcoord->parent;
 		}
 		*lwPtr = *workm0;
-		bone->parent = NULL;
+		bone->parent = nullptr;
 		bone->matrix = *workm0;
 	}
 
@@ -418,7 +418,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	}
 
 	// draw the shadow
-	if (smesh != NULL) {
+	if (smesh != nullptr) {
 		shadtpc = g_system->getMillis();
 		DrawShadow1PC(smesh, -1, bone2actor, &cam_pc, &act_pc, ns, ldirs, lcolours, p_n, p_d, debug, shadowBox, actor->shadowMinBox, actor->shadowMaxBox);
 		shadtpc = g_system->getMillis() - shadtpc;
@@ -428,7 +428,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	}
 
 	// Draw the accessory
-	if ((pose != NULL) && (pb != 0)) {
+	if ((pose != nullptr) && (pb != 0)) {
 		DrawModel4PC(pose, pb, bone2actor, local2screen, uvframe, debug, poseBox, &poseMinBox, &poseMaxBox);
 
 		// WARNING

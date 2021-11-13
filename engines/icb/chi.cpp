@@ -515,7 +515,7 @@ bool8 _game_session::Process_chi() {
 
 						// play gun sound
 						if (MS->logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR] != 0)
-							RegisterSound(cur_id, NULL, MS->logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR], gunDesc,
+							RegisterSound(cur_id, nullptr, MS->logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR], gunDesc,
 							              (int8)127); // have to use full version so we can give hash instead of string
 						else
 							RegisterSound(cur_id, defaultGunSfx, gunDesc); // use small version as we have string not hash

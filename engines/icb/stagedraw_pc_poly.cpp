@@ -79,16 +79,16 @@ typedef struct {
 #define ZBytesPerPixel      2                                 // 16bit z-buffer
 
 RevRenderDevice revRen;
-char *pActorBuffer = NULL;                  // buffer for drawing actors
-char *pRGB = NULL;                          // buffer for RGB data
-char *pZa = NULL;                           // buffer for actor z data
-char *pZfx = NULL;                          // buffer for fx z data
-char *pZ = NULL;                            // Current z buffer being used by the renderer
+char *pActorBuffer = nullptr;                  // buffer for drawing actors
+char *pRGB = nullptr;                          // buffer for RGB data
+char *pZa = nullptr;                           // buffer for actor z data
+char *pZfx = nullptr;                          // buffer for fx z data
+char *pZ = nullptr;                            // Current z buffer being used by the renderer
 int32 mip_map_level = 0;
 #define ZBUFFERSIZE (2 * SCREEN_WIDTH * SCREEN_DEPTH)
 
 // Stage draw composition table ... keeps track of the tiles which need drawing
-uint32 *pUsedTiles = NULL;
+uint32 *pUsedTiles = nullptr;
 
 // Init the dutch dll thing render device etc...
 void InitRevRenderDevice() {
@@ -121,7 +121,7 @@ void InitRevRenderDevice() {
 	revRen.Zdata = (uint16 *)pZa;
 	SetRenderDevice(&revRen);
 
-	if (pUsedTiles == NULL)
+	if (pUsedTiles == nullptr)
 		pUsedTiles = new uint32[TILE_COUNT]();
 }
 
@@ -131,11 +131,11 @@ void DestoryRevRenderDevice() {
 	if (pActorBuffer)
 		delete[] pActorBuffer;
 
-	pActorBuffer = NULL;
-	pRGB = NULL;
-	pZ = NULL;
-	pZa = NULL;
-	pZfx = NULL;
+	pActorBuffer = nullptr;
+	pRGB = nullptr;
+	pZ = nullptr;
+	pZa = nullptr;
+	pZfx = nullptr;
 
 	if (pUsedTiles)
 		delete[] pUsedTiles;
@@ -436,7 +436,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	myBones[NECK_DEFORMATION] = &(vox->neckBone);
 	myBones[JAW_DEFORMATION] = &(vox->jawBone);
 	myBones[LOOK_DEFORMATION] = &(vox->lookBone);
-	myBones[SPARE_DEFORMATION] = NULL; // no 4th deformation (unless player...)
+	myBones[SPARE_DEFORMATION] = nullptr; // no 4th deformation (unless player...)
 
 	// if player then update player bones
 	if (MS->player.log == act.log)
@@ -445,7 +445,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	int32 uvframe;
 
 	// For dead things do not draw the animating polygons
-	if (g_mission->session->objects == NULL || strcmp(act.log->GetName(), "StageView") == 0) {
+	if (g_mission->session->objects == nullptr || strcmp(act.log->GetName(), "StageView") == 0) {
 		uvframe = gameCycle;
 	} else {
 		c_game_object *ob = (c_game_object *)MS->objects->Fetch_item_by_name(act.log->GetName());
@@ -884,7 +884,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 							// Get a pointer to the z table
 							uint16 *zTable = pStat->GetZTileTable(tileOffset);
 
-							if (zTable != NULL) {
+							if (zTable != nullptr) {
 								uint16 *zPtr = zTable;
 								uint16 *rowAd = zActor + offset;
 
@@ -912,7 +912,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 							// Now do the semi transparencies for this prop tile
 							uint16 *tilePtrs = pStat->GetSemiTileTable(tileOffset); // pStat->GetSemiTileTable(tileOffset);
-							if ((tilePtrs != NULL) && (g_px->semitransparencies == TRUE8)) {
+							if ((tilePtrs != nullptr) && (g_px->semitransparencies == TRUE8)) {
 								uint16 *tPtr = tilePtrs;
 								uint32 *bufRGB = source + offset;
 								uint16 *bufZ = zActor + offset;
@@ -1052,7 +1052,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 						// Now add the static semitransparencies
 						uint16 *tilePtrs = sceneZ->GetSemiTileTable(tileOffset);
-						if ((tilePtrs != NULL) && (g_px->semitransparencies == TRUE8)) {
+						if ((tilePtrs != nullptr) && (g_px->semitransparencies == TRUE8)) {
 							uint16 *tPtr = tilePtrs;
 							uint32 *bufRGB = source + offset;
 							uint16 *bufZ = zActor + offset;
@@ -1195,7 +1195,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 						uint16 *zA = zActor + offset;
 						uint32 *rgbA32 = source + offset;
 						uint32 *rgbS32 = safe_ad + pitchedOffset + screenShakeOffset;
-						if (tilePtrs != NULL) {
+						if (tilePtrs != nullptr) {
 							uint16 *zPtr = tilePtrs;
 							for (int32 y = 0; y < TILE_HEIGHT; y++) {
 								uint16 *zDst = zA;
@@ -1613,7 +1613,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								uint32 *rgbA32 = source + offset;
 								uint32 *rgbS32 = safe_ad + pitchedOffset + screenShakeOffset;
 
-								if (tilePtrs != NULL) {
+								if (tilePtrs != nullptr) {
 									uint16 *zPtr = tilePtrs;
 									for (int32 y = 0; y < TILE_HEIGHT; y++) {
 										uint16 *zDst = zA;

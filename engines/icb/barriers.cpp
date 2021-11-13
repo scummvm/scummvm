@@ -546,7 +546,7 @@ void _barrier_handler::___init() {
 	for (j = 0; j < MAX_slices; j++) {
 		anim_slices[j].num_props_in_slice = 0;
 		for (uint32 l = 0; l < MAX_parents_per_anim_slice; l++)
-			anim_slices[j].anim_parents[l] = 0; // unasigned pointer
+			anim_slices[j].anim_parents[l] = nullptr; // unasigned pointer
 	}
 	for (j = 0; j < MAX_props; j++) {
 		anim_prop_info[j].barriers_per_state = 0;
@@ -720,32 +720,32 @@ void _barrier_handler::Form_route_barrier_list(PXreal x, PXreal y, PXreal z, PXr
 				} else if (((CHILDR >= RBL) && (CHILDL <= RBR)) && ((CHILDB >= RBT) && (CHILDT <= RBB))) {
 					// child is wholly inside route box - add it and delete child
 					ADD_CHILD
-					clist[j] = NULL; // delete the child now it has been absorbed
+					clist[j] = nullptr; // delete the child now it has been absorbed
 				} else if (((RBR >= CHILDL) && (RBL <= CHILDR)) && ((RBT >= CHILDT) && (RBB <= CHILDB))) {
 					// route box is wholly inside child box - expand route box, add and delete child
 					ADD_CHILD
-					clist[j] = NULL; // delete the child now it has been absorbed
+					clist[j] = nullptr; // delete the child now it has been absorbed
 					EXPAND_ROUTE_BOX
 				} else {
 					if ((CHILDL > RBL) && (CHILDL < RBR) && ((CHILDT > RBT) && (CHILDT < RBB))) {
 						// child top/left is within route box - expand route box, add and delete child
 						ADD_CHILD
-						clist[j] = NULL; // delete the child now it has been absorbed
+						clist[j] = nullptr; // delete the child now it has been absorbed
 						EXPAND_ROUTE_BOX
 					} else if ((CHILDR > RBL) && (CHILDR < RBR) && ((CHILDT > RBT) && (CHILDT < RBB))) {
 						// child top/right is within route box - expand route box, add and delete child
 						ADD_CHILD
-						clist[j] = NULL; // delete the child now it has been absorbed
+						clist[j] = nullptr; // delete the child now it has been absorbed
 						EXPAND_ROUTE_BOX
 					} else if ((CHILDL > RBL) && (CHILDL < RBR) && ((CHILDB > RBT) && (CHILDB < RBB))) {
 						// child bottom/left is within route box - expand route box, add and delete child
 						ADD_CHILD
-						clist[j] = NULL; // delete the child now it has been absorbed
+						clist[j] = nullptr; // delete the child now it has been absorbed
 						EXPAND_ROUTE_BOX
 					} else if ((CHILDR > RBL) && (CHILDR < RBR) && ((CHILDB > RBT) && (CHILDB < RBB))) {
 						// child bottom/right is within route box - expand route box, add and delete child
 						ADD_CHILD
-						clist[j] = NULL; // delete the child now it has been absorbed
+						clist[j] = nullptr; // delete the child now it has been absorbed
 						EXPAND_ROUTE_BOX
 					} else {
 						// we must check for our route line intersecting a horizontal and vertical child box edge
@@ -842,7 +842,7 @@ _parent_box *_barrier_handler::Fetch_parent_num_on_slice_y(uint32 requested_pare
 
 	// reached total?
 	if (requested_parent == slice->num_parent_boxes)
-		return (0);
+		return (nullptr);
 
 	// simply return the pointer
 
@@ -867,8 +867,8 @@ _parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXre
 	// return a pointer to the parent box of a point in world space
 	// returns 0 if the point does not lie within a parent box
 
-	_routing_slice *slice = NULL;
-	_parent_box *parent = NULL;
+	_routing_slice *slice = nullptr;
+	_parent_box *parent = nullptr;
 
 	// find correct slice according to height
 	// fetch first
@@ -906,7 +906,7 @@ _parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXre
 		}
 	}
 
-	return (0);
+	return (nullptr);
 }
 
 void _game_session::Prepare_megas_route_barriers(bool8 pl) {
@@ -915,7 +915,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 	// this system is custom for the player object - routing megas use their own system
 	// this routine fecthes the 'special' player only line-of-sight barriers too
 
-	_parent_box *par = 0;
+	_parent_box *par = nullptr;
 	_child_group *pchild;
 	uint32 total_childs;
 	uint32 j, k;
@@ -973,7 +973,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 
 	if (parent_number == slice->num_parent_boxes) {
 		// not on a legal position - can happen
-		M->cur_parent = 0; // null pointer
+		M->cur_parent = nullptr; // null pointer
 		M->number_of_barriers = 0;
 		M->number_of_nudge = 0;
 		M->number_of_animating = 0;

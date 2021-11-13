@@ -3526,7 +3526,7 @@ void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn) {
 	int32 z0, flag;
 	SVECTOR normal;
 	CVECTOR rgb;
-	POLY_F4 *face = NULL;
+	POLY_F4 *face = nullptr;
 
 	gte_NormalClip_pc(&(scrn[0]), &(scrn[1]), &(scrn[2]), &flag);
 	if (flag > 0) {

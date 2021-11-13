@@ -80,7 +80,7 @@ int32 LoadMission(int32 m, void * /*usr*/) {
 }
 
 void RestartMission(void) {
-	if (g_mission == NULL) {
+	if (g_mission == nullptr) {
 		Fatal_error("Can't restart a deleted mission");
 	}
 
@@ -99,7 +99,7 @@ void RestartMission(void) {
 	m++;
 
 	// Right : so just Load that mission
-	LoadMission(m, NULL);
+	LoadMission(m, nullptr);
 }
 
 int32 FindMissionNumber(const char *mission) {

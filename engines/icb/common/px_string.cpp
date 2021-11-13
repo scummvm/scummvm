@@ -49,7 +49,7 @@ const char *pxString::operator=(const char *str) {
 		s = new char[len];
 		memcpy((unsigned char *)s, (unsigned char *)const_cast<char *>(str), len);
 	} else
-		s = NULL; // Just the null string
+		s = nullptr; // Just the null string
 	return (s);
 }
 
@@ -63,7 +63,7 @@ void pxString::operator=(const pxString &str) {
 		s = new char[len];
 		memcpy((unsigned char *)s, (unsigned char *)str.s, len);
 	} else
-		s = NULL; // Null string
+		s = nullptr; // Null string
 }
 
 const char *pxString::operator+=(const char *adder) {
@@ -96,9 +96,9 @@ const pxString pxString::operator+(const char *adder) const {
 
 bool pxString::operator==(const char *string) const {
 	// Do a character by character comparison
-	if (s == NULL)
-		return ((bool)(string == NULL));
-	if (string == NULL)
+	if (s == nullptr)
+		return ((bool)(string == nullptr));
+	if (string == nullptr)
 		return (false);
 	return ((bool)(strcmp(s, const_cast<char *>(string)) == 0));
 }
@@ -118,7 +118,7 @@ void pxString::SetString(const char *data, uint32 len) {
 		// And null terminate it
 		s[len] = 0;
 	} else
-		s = NULL;
+		s = nullptr;
 }
 
 void pxString::Substr(pxString &rsStr, uint32 nStart, uint32 nNum) const {
@@ -215,10 +215,10 @@ void pxString::ConvertPath() {
 const pxString &pxString::Format(const char *format, ...) {
 	if (s)
 		delete[] s;
-	s = NULL;
+	s = nullptr;
 
 	// Check for a null parameter
-	if (format == NULL)
+	if (format == nullptr)
 		return (*this);
 
 	// The data could be any size. Rather than incrementally allocating memory until
@@ -228,7 +228,7 @@ const pxString &pxString::Format(const char *format, ...) {
 
 	// Allocate a start buffer
 	s = new char[startBufferSize + 2];
-	if (s == NULL)
+	if (s == nullptr)
 		return (*this);
 
 	// Process the variable arguments
@@ -246,7 +246,7 @@ const pxString &pxString::Format(const char *format, ...) {
 		// I can't see why, so I shall turn the warning off for this bit of code
 
 		// If the sllocation failed return an empty string
-		if (s == NULL)
+		if (s == nullptr)
 			return (*this);
 	}
 
@@ -289,7 +289,7 @@ pxFixedCharBuffer::pxFixedCharBuffer(uint32 len) {
 	m_data = new char[len];
 
 	// Check for an error
-	if (m_data == NULL) {
+	if (m_data == nullptr) {
 		error("pxFixedCharBuffer memory allocation error");
 	}
 }
