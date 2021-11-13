@@ -52,7 +52,7 @@ const char *PopUpMenuXObj::xlibName = "PopMenu";
 const char *PopUpMenuXObj::fileNames[] = {
 	"PopMenu",
 	"PopUp Menu XObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -68,7 +68,7 @@ static MethodProto xlibMethods[] = {
 	{ "SetItemMark",		PopUpMenuXObj::m_setItemMark,	 1, 1,  200 },	// D2
 	{ "Smart",				PopUpMenuXObj::m_smart,			 1, 1,  200 },	// D2
 	{ "SetItemIcon",		PopUpMenuXObj::m_setItemIcon,	 2, 2,  200 },	// D2
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void PopUpMenuXObj::open(int type) {

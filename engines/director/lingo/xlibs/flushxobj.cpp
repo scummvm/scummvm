@@ -45,7 +45,7 @@ namespace Director {
 const char *FlushXObj::xlibName = "FlushXObj";
 const char *FlushXObj::fileNames[] = {
 	"FlushXObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -54,7 +54,7 @@ static MethodProto xlibMethods[] = {
 	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	400 },	// D4
 	{ "Flush",				FlushXObj::m_flush,				 0, 0,  400 },	// D4
 	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void FlushXObj::open(int type) {

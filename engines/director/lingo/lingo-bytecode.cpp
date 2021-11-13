@@ -138,7 +138,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0xa1, LC::cb_objectfieldpush, "wN" },
 	{ 0xa2, LC::cb_objectfieldassign, "wN" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "wN" },
-	{ 0, 0, 0 }
+	{ 0, nullptr, nullptr }
 };
 
 static LingoV4TheEntity lingoV4TheEntity[] = {
@@ -683,7 +683,7 @@ void LC::cb_v4theentitypush() {
 
 	int firstArg = g_lingo->pop().asInt();
 	Datum result;
-	result.u.s = NULL;
+	result.u.s = nullptr;
 	result.type = VOID;
 
 	int key = (bank << 8) + firstArg;
@@ -780,7 +780,7 @@ void LC::cb_v4theentitynamepush() {
 	Common::String name = g_lingo->readString();
 
 	Datum id;
-	id.u.s = NULL;
+	id.u.s = nullptr;
 	id.type = VOID;
 
 	TheEntity *entity = g_lingo->_theEntities[name];
@@ -799,7 +799,7 @@ void LC::cb_v4theentityassign() {
 	int firstArg = g_lingo->pop().asInt();
 	Datum value = g_lingo->pop();
 	Datum result;
-	result.u.s = NULL;
+	result.u.s = nullptr;
 	result.type = VOID;
 
 	int key = (bank << 8) + firstArg;
@@ -823,7 +823,7 @@ void LC::cb_v4theentityassign() {
 	case kTEANOArgs:
 		{
 			Datum id;
-			id.u.s = NULL;
+			id.u.s = nullptr;
 			id.type = VOID;
 			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, VOID, %s, %s)", g_lingo->entity2str(entity), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);

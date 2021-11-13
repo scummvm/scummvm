@@ -570,8 +570,8 @@ bool hasExtension(Common::String filename) {
 }
 
 Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
-	const char *extsD3[] = { ".MMM", 0 };
-	const char *extsD4[] = { ".DIR", ".DXR", 0 };
+	const char *extsD3[] = { ".MMM", nullptr };
+	const char *extsD4[] = { ".DIR", ".DXR", nullptr };
 
 	const char **exts = (g_director->getVersion() >= 400) ? extsD4 : extsD3;
 	for (int i = 0; exts[i]; ++i) {

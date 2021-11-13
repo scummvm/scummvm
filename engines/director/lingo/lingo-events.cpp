@@ -76,7 +76,7 @@ struct EventHandlerType {
 
 	{ kEventGeneric,			"scummvm_generic" },
 
-	{ kEventNone, 0 }
+	{ kEventNone, nullptr }
 };
 
 void Lingo::initEventHandlerTypes() {

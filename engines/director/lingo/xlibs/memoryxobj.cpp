@@ -37,13 +37,13 @@ namespace Director {
 const char *MemoryXObj::xlibName = "Memory";
 const char *MemoryXObj::fileNames[] = {
 	"Memory XObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
 	{ "new",					MemoryXObj::m_new,			0,	0,	400 },	// D4
 	{ "Clear",					MemoryXObj::m_clear,		0,	0,	400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void MemoryXObj::open(int type) {

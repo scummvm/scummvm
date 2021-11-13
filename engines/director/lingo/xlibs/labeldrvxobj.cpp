@@ -46,14 +46,14 @@ namespace Director {
 const char *LabelDrvXObj::xlibName = "LabelDrv";
 const char *LabelDrvXObj::fileNames[] = {
 	"LabelDrv",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
 	{ "new",				LabelDrvXObj::m_new,		 0, 0,	400 },	// D4
 	{ "SetRange",			LabelDrvXObj::m_setRange,	 2, 2,  400 },	// D4
 	{ "GetDrive",			LabelDrvXObj::m_getDrive,	 1, 1,  400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void LabelDrvXObj::open(int type) {

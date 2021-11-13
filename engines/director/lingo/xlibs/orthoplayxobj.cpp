@@ -43,7 +43,7 @@ namespace Director {
 const char *OrthoPlayXObj::xlibName = "OrthoPlayXObj";
 const char *OrthoPlayXObj::fileNames[] = {
 	"OrthoPlay XObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -115,7 +115,7 @@ static MethodProto xlibMethods[] = {
 	{ "GotoOutPoint",		OrthoPlayXObj::m_gotoOutPoint,		 0, 0,  200 },	// D2
 	{ "GotoPrerollPoint",	OrthoPlayXObj::m_gotoPrerollPoint,	 0, 0,  200 },	// D2
 	{ "GotoPostrollPoint",	OrthoPlayXObj::m_gotoPostrollPoint,	 0, 0,  200 },	// D2
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void OrthoPlayXObj::open(int type) {

@@ -57,7 +57,7 @@ namespace Director {
 const char *SoundJam::xlibName = "SoundJam";
 const char *SoundJam::fileNames[] = {
 	"SoundJam",
-	0
+	nullptr
 };
 
 const int kJamChannel = 3;
@@ -74,7 +74,7 @@ static MethodProto xlibMethods[] = {
 	{ "hasSwitchHappened",	SoundJam::m_hasSwitchHappened, 0, 0, 400 },
 	{ "toggleMute",			SoundJam::m_toggleMute,		 0, 0,	400 },
 	{ "stop",				SoundJam::m_stop,			 0, 0,	400 },
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void SoundJam::open(int type) {

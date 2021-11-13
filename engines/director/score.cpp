@@ -171,7 +171,7 @@ void Score::setStartToLabel(Common::String &label) {
 void Score::gotoLoop() {
 	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
-	if (_labels == NULL) {
+	if (_labels == nullptr) {
 		_nextFrame = 1;
 		return;
 	} else {
@@ -208,7 +208,7 @@ void Score::gotoPrevious() {
 }
 
 int Score::getNextLabelNumber(int referenceFrame) {
-	if (_labels == NULL || _labels->size() == 0)
+	if (_labels == nullptr || _labels->size() == 0)
 		return 0;
 
 	Common::SortedArray<Label *>::iterator i;
@@ -234,7 +234,7 @@ int Score::getNextLabelNumber(int referenceFrame) {
 }
 
 int Score::getPreviousLabelNumber(int referenceFrame) {
-	if (_labels == NULL || _labels->size() == 0)
+	if (_labels == nullptr || _labels->size() == 0)
 		return 0;
 
 	// One label
@@ -397,7 +397,7 @@ void Score::update() {
 	}
 
 	Common::SortedArray<Label *>::iterator i;
-	if (_labels != NULL) {
+	if (_labels != nullptr) {
 		for (i = _labels->begin(); i != _labels->end(); ++i) {
 			if ((*i)->number == _currentFrame) {
 				_currentLabel = _currentFrame;

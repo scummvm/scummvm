@@ -36,13 +36,13 @@ const char *MoveMouseXObj::fileNames[] = {
 	"MoveMouse",
 	"MoveMouse.XObj",
 	"MOVEWIN",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
 	{ "new",					MoveMouseXObj::m_new,			 0, 0,	400 },	// D4
 	{ "setMouseLoc",			MoveMouseXObj::m_setMouseLoc,	 2, 2,	400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 MoveMouseXObject::MoveMouseXObject(ObjectType ObjectType) :Object<MoveMouseXObject>("MoveMouseXObj") {
