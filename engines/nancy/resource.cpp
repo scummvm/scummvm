@@ -91,7 +91,7 @@ byte *CifFile::getCifData(ResourceManager::CifInfo &info, uint *size) const {
 	if (_f->read(buf, dataSize) < dataSize) {
 		warning("Failed to read CifFile '%s'", _name.c_str());
 		delete[] buf;
-		return 0;
+		return nullptr;
 	}
 
 	if (size)
@@ -133,7 +133,7 @@ const CifFile *CifFile::load(const Common::String &name) {
 
 	if (!f->open(name + ".cif")) {
 		delete f;
-		return 0;
+		return nullptr;
 	}
 
 	char id[20];
@@ -143,7 +143,7 @@ const CifFile *CifFile::load(const Common::String &name) {
 	if (f->eos() || Common::String(id) != "CIF FILE WayneSikes") {
 		warning("Invalid id string found in CifFile '%s'", name.c_str());
 		delete f;
-		return 0;
+		return nullptr;
 	}
 
 	// 4 bytes unused
@@ -169,7 +169,7 @@ const CifFile *CifFile::load(const Common::String &name) {
 		warning("Failed to read CifFile '%s'", name.c_str());
 		delete cifFile;
 		delete f;
-		return 0;
+		return nullptr;
 	}
 
 	return cifFile;
@@ -274,13 +274,13 @@ byte *CifTree::getCifData(const Common::String &name, ResourceManager::CifInfo &
 	uint32 dataOffset;
 
 	if (!getCifInfo(name, info, &dataOffset))
-		return 0;
+		return nullptr;
 
 	Common::File f;
 
 	if (!f.open(_filename)) {
 		warning("Failed to open CifTree '%s'", _name.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	uint dataSize = (info.comp == 2 ? info.compressedSize : info.size);
@@ -290,7 +290,7 @@ byte *CifTree::getCifData(const Common::String &name, ResourceManager::CifInfo &
 		warning("Failed to read data for '%s' from CifTree '%s'", name.c_str(), _name.c_str());
 		delete[] buf;
 		f.close();
-		return 0;
+		return nullptr;
 	}
 
 	f.close();
@@ -309,7 +309,7 @@ byte *ResourceManager::getCifData(const Common::String &treeName, const Common::
 	} else {
 		const CifTree *cifTree = findCifTree(treeName);
 		if (!cifTree)
-			return 0;
+			return nullptr;
 
 		buf = cifTree->getCifData(name, info, size);
 	}
@@ -322,7 +322,7 @@ byte *ResourceManager::getCifData(const Common::String &treeName, const Common::
 			warning("Failed to decompress '%s'", name.c_str());
 			delete[] buf;
 			delete[] raw;
-			return 0;
+			return nullptr;
 		}
 		delete[] buf;
 		if (size)
@@ -418,7 +418,7 @@ void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 
 	f.skip(32); // TODO
 
-	readCifInfo20(f, info, (_hasOffsetFirst ? 0 : &chain.dataOffset));
+	readCifInfo20(f, info, (_hasOffsetFirst ? nullptr : &chain.dataOffset));
 
 	if (!_hasOffsetFirst)
 		chain.next = f.readUint16LE();
@@ -459,7 +459,7 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 
 	if (!f.open(name + '.' + ext)) {
 		warning("Failed to open CifTree '%s'", name.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	char id[20];
@@ -469,7 +469,7 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 	if (f.eos() || Common::String(id) != "CIF TREE WayneSikes") {
 		warning("Invalid id string found in CifTree '%s'", name.c_str());
 		f.close();
-		return 0;
+		return nullptr;
 	}
 
 	// 4 bytes unused
@@ -590,7 +590,7 @@ const CifExporter *CifExporter::create(uint32 version) {
 		break;
 	default:
 		warning("Version %d.%d not supported by CifExporter", version >> 16, version & 0xffff);
-		return 0;
+		return nullptr;
 	}
 
 	return exp;
@@ -622,7 +622,7 @@ const CifTree *ResourceManager::findCifTree(const Common::String &name) const {
 			return _cifTrees[i];
 
 	warning("CifTree '%s' not loaded", name.c_str());
-	return 0;
+	return nullptr;
 }
 
 void ResourceManager::initialize() {
@@ -682,7 +682,7 @@ byte *ResourceManager::getCifData(const Common::String &name, CifInfo &info, uin
 			warning("Failed to decompress '%s'", name.c_str());
 			delete[] buf;
 			delete[] raw;
-			return 0;
+			return nullptr;
 		}
 		delete[] buf;
 		if (size)

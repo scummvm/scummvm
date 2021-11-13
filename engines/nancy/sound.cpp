@@ -201,15 +201,15 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 
 	if (headerID == "DiamondWare Digitized") {
 		if (!readDiamondwareHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
-			return 0;
+			return nullptr;
 	} else if (headerID == "Her Interactive Sound") {
 		// Early HIS file
 		if (!readWaveHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
-			return 0;
+			return nullptr;
 	} else if (headerID == "HIS") {
 		stream->seek(4);
 		if (!readHISHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
-			return 0;
+			return nullptr;
 	}
 
 	byte flags = 0;
@@ -220,14 +220,14 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 			flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 		} else {
 			warning("Unsupported bitsPerSample %d found in HIS file", bitsPerSample);
-			return 0;
+			return nullptr;
 		}
 
 		if (numChannels == 2) {
 			flags |= Audio::FLAG_STEREO;
 		} else if (numChannels != 1) {
 			warning("Unsupported number of channels %d found in HIS file", numChannels);
-			return 0;
+			return nullptr;
 		}
 
 		// Raw PCM, make sure the last packet is complete
