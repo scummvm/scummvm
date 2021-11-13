@@ -90,7 +90,7 @@ public:
 		}
 
 		// Read state data
-		Common::Serializer s = Common::Serializer(saveFile, 0);
+		Common::Serializer s = Common::Serializer(saveFile, nullptr);
 		GameState::StateData data;
 		data.syncWithSaveGame(s);
 

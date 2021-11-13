@@ -173,7 +173,7 @@ WaterEffect *WaterEffect::create(Myst3Engine *vm, uint32 id) {
 
 	if (!s->loadMasks("", id, Archive::kWaterEffectMask)) {
 		delete s;
-		return 0;
+		return nullptr;
 	}
 
 	return s;
@@ -349,7 +349,7 @@ LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
 
 	if (!s->loadMasks("", id, Archive::kLavaEffectMask)) {
 		delete s;
-		return 0;
+		return nullptr;
 	}
 
 	return s;

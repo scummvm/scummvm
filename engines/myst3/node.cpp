@@ -44,9 +44,9 @@ void Face::setTextureFromJPEG(const ResourceDescription *jpegDesc) {
 Face::Face(Myst3Engine *vm) :
 		_vm(vm),
 		_textureDirty(true),
-		_texture(0),
-		_bitmap(0),
-		_finalBitmap(0) {
+		_texture(nullptr),
+		_bitmap(nullptr),
+		_finalBitmap(nullptr) {
 }
 
 void Face::addTextureDirtyRect(const Common::Rect &rect) {
@@ -73,7 +73,7 @@ void Face::uploadTexture() {
 Face::~Face() {
 	_bitmap->free();
 	delete _bitmap;
-	_bitmap = 0;
+	_bitmap = nullptr;
 
 	if (_finalBitmap) {
 		_finalBitmap->free();
@@ -257,7 +257,7 @@ void Node::update() {
 	for (uint faceId = 0; faceId < 6; faceId++) {
 		Face *face = _faces[faceId];
 
-		if (face == 0)
+		if (face == nullptr)
 			continue; // No such face in this node
 
 		if (!isFaceVisible(faceId)) {
@@ -347,8 +347,8 @@ SpotItemFace::SpotItemFace(Face *face, uint16 posX, uint16 posY):
 		_posX(posX),
 		_posY(posY),
 		_drawn(false),
-		_bitmap(0),
-		_notDrawnBitmap(0),
+		_bitmap(nullptr),
+		_notDrawnBitmap(nullptr),
 		_fadeValue(0) {
 }
 
@@ -356,13 +356,13 @@ SpotItemFace::~SpotItemFace() {
 	if (_bitmap) {
 		_bitmap->free();
 		delete _bitmap;
-		_bitmap = 0;
+		_bitmap = nullptr;
 	}
 
 	if (_notDrawnBitmap) {
 		_notDrawnBitmap->free();
 		delete _notDrawnBitmap;
-		_notDrawnBitmap = 0;
+		_notDrawnBitmap = nullptr;
 	}
 }
 

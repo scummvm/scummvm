@@ -38,7 +38,7 @@ namespace Myst3 {
 
 Dialog::Dialog(Myst3Engine *vm, uint id):
 	_vm(vm),
-	_texture(0) {
+	_texture(nullptr) {
 	// Draw on the whole screen
 	_isConstrainedToWindow = false;
 	_scaled = !_vm->isWideScreenModEnabled();
@@ -218,7 +218,7 @@ int16 GamepadDialog::update() {
 
 Menu::Menu(Myst3Engine *vm) :
 		_vm(vm),
-		_saveLoadSpotItem(0) {
+		_saveLoadSpotItem(nullptr) {
 }
 
 Menu::~Menu() {
@@ -885,7 +885,7 @@ void AlbumMenu::loadSaves() {
 		}
 
 		// Read state data
-		Common::Serializer s = Common::Serializer(saveFile, 0);
+		Common::Serializer s = Common::Serializer(saveFile, nullptr);
 		GameState::StateData data;
 		data.syncWithSaveGame(s);
 
