@@ -29,7 +29,7 @@
 
 static const PlainGameDescriptor plumbersGames[] = {
 	{"plumbers", "Plumbers Don't Wear Ties!"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -43,8 +43,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Plumbers PC version
 	{
 		"plumbers",
-		0,
-		AD_ENTRY1s("GAME.BIN", 0, 41622),
+		nullptr,
+		AD_ENTRY1s("GAME.BIN", nullptr, 41622),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -54,8 +54,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Plumbers 3DO version
 	{
 		"plumbers",
-		0,
-		AD_ENTRY1s("launchme", 0, 143300),
+		nullptr,
+		AD_ENTRY1s("launchme", nullptr, 143300),
 		Common::EN_ANY,
 		Common::kPlatform3DO,
 		ADGF_UNSTABLE,
