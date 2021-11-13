@@ -35,7 +35,7 @@ static const PlainGameDescriptor composerGames[] = {
 	{"magictales", "Magic Tales"},
 	{"princess", "Magic Tales: The Princess and the Crab"},
 	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "composer/detection_tables.h"
@@ -49,7 +49,7 @@ static const char *directoryGlobs[] = {
 	"programs",
 	"princess",
 	"sleepcub",
-	0
+	nullptr
 };
 
 class ComposerMetaEngineDetection : public AdvancedMetaEngineDetection {

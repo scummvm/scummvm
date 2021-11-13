@@ -84,8 +84,8 @@ void Animation::seekToCurrPos() {
 }
 
 void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int16 y, int16 eventParam, int32 size) {
-	Common::SeekableReadStream *stream = NULL;
-	Pipe *newPipe = NULL;
+	Common::SeekableReadStream *stream = nullptr;
+	Pipe *newPipe = nullptr;
 
 	// First, check the existing pipes.
 	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
@@ -98,7 +98,7 @@ void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int
 		// When loading from savegame, make sure we have the correct stream
 		if ((!size) || (stream->size() >= size))
 			break;
-		stream = NULL;
+		stream = nullptr;
 	}
 
 	// If we didn't find it, try the libraries.
@@ -117,7 +117,7 @@ void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int
 			// When loading from savegame, make sure we have the correct stream
 			if ((!size) || (stream->size() >= size))
 				break;
-			stream = NULL;
+			stream = nullptr;
 		}
 
 		uint32 type = j->_archive->getResourceFlags(ID_ANIM, animId);
@@ -149,9 +149,9 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		stopAnimation(*i);
 	}
 
-	Animation *anim = NULL;
+	Animation *anim = nullptr;
 	loadAnimation(anim, animId, x, y, eventParam);
-	if (anim != NULL) {
+	if (anim != nullptr) {
 		_anims.push_back(anim);
 		runEvent(kEventAnimStarted, animId, eventParam, 0);
 	}
@@ -174,7 +174,7 @@ void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOn
 			} else if (entry.op == kAnimOpPlayWave) {
 				if (_currSoundPriority >= entry.priority) {
 					_mixer->stopAll();
-					_audioStream = NULL;
+					_audioStream = nullptr;
 				}
 			}
 		} else {
@@ -204,10 +204,10 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 			return;
 		if (_currSoundPriority > priority) {
 			_mixer->stopAll();
-			_audioStream = NULL;
+			_audioStream = nullptr;
 		}
 	}
-	Common::SeekableReadStream *stream = NULL;
+	Common::SeekableReadStream *stream = nullptr;
 	bool fromPipe = true;
 	if (!bufferingOnly && hasResource(ID_WAVE, id)) {
 		stream = getResource(ID_WAVE, id);
@@ -476,7 +476,7 @@ Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const
 		sprite._id = id;
 		if (!initSprite(sprite)) {
 			debug(1, "ignoring addSprite on invalid sprite %d", id);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -521,7 +521,7 @@ const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
 			return &(*i);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ComposerEngine::dirtySprite(const Sprite &sprite) {
@@ -797,7 +797,7 @@ Common::SeekableReadStream *ComposerEngine::getStreamForSprite(uint16 id) {
 	}
 	if (hasResource(ID_BMAP, id))
 		return getResource(ID_BMAP, id);
-	return NULL;
+	return nullptr;
 }
 
 bool ComposerEngine::initSprite(Sprite &sprite) {
