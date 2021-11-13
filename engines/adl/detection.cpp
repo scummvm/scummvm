@@ -112,7 +112,7 @@ static const PlainGameDescriptor adlGames[] = {
 	{ "hires4", "Hi-Res Adventure #4: Ulysses and the Golden Fleece" },
 	{ "hires5", "Hi-Res Adventure #5: Time Zone" },
 	{ "hires6", "Hi-Res Adventure #6: The Dark Crystal" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const AdlGameDescription gameFileDescriptions[] = {
@@ -514,7 +514,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 
 	FilePropertiesMap filesProps;
 
-	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != 0; ++g) {
+	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != nullptr; ++g) {
 		ADDetectedGame game(&gameDiskDescriptions[g].desc);
 
 		// Skip games that don't meet the language/platform/extra criteria

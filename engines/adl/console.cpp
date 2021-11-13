@@ -199,7 +199,7 @@ bool Console::Cmd_Region(int argc, const char **argv) {
 		}
 
 		uint regionCount = _engine->_state.regions.size();
-		uint region = strtoul(argv[1], NULL, 0);
+		uint region = strtoul(argv[1], nullptr, 0);
 		if (region < 1 || region > regionCount) {
 			debugPrintf("Region %u out of valid range [1, %u]\n", region, regionCount);
 			return true;
@@ -227,7 +227,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		}
 
 		uint roomCount = _engine->_state.rooms.size();
-		uint room = strtoul(argv[1], NULL, 0);
+		uint room = strtoul(argv[1], nullptr, 0);
 		if (room < 1 || room > roomCount) {
 			debugPrintf("Room %u out of valid range [1, %u]\n", room, roomCount);
 			return true;
@@ -335,7 +335,7 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	}
 
 	uint varCount = _engine->_state.vars.size();
-	uint var = strtoul(argv[1], NULL, 0);
+	uint var = strtoul(argv[1], nullptr, 0);
 
 	if (var >= varCount) {
 		debugPrintf("Variable %u out of valid range [0, %u]\n", var, varCount - 1);
@@ -343,7 +343,7 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	}
 
 	if (argc == 3) {
-		uint value = strtoul(argv[2], NULL, 0);
+		uint value = strtoul(argv[2], nullptr, 0);
 		_engine->_state.vars[var] = value;
 	}
 
