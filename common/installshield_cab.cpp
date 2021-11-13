@@ -244,7 +244,7 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 	ScopedPtr<SeekableReadStream> stream(SearchMan.createReadStreamForMember(getVolumeName((entry.volume == 0) ? 1 : entry.volume)));
 	if (!stream) {
 		warning("Failed to open volume for file '%s'", name.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	if (!(entry.flags & 0x04)) {
@@ -291,7 +291,7 @@ Archive *makeInstallShieldArchive(const String &baseName) {
 	InstallShieldCabinet *cab = new InstallShieldCabinet();
 	if (!cab->open(baseName)) {
 		delete cab;
-		return 0;
+		return nullptr;
 	}
 
 	return cab;

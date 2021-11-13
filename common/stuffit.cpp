@@ -44,7 +44,7 @@ public:
 
 	bool open(const Common::String &filename);
 	void close();
-	bool isOpen() const { return _stream != 0; }
+	bool isOpen() const { return _stream != nullptr; }
 
 	// Common::Archive API implementation
 	bool hasFile(const Common::Path &path) const override;
@@ -531,7 +531,7 @@ Common::Archive *createStuffItArchive(const Common::String &fileName) {
 
 	if (!archive->open(fileName)) {
 		delete archive;
-		return 0;
+		return nullptr;
 	}
 
 	return archive;

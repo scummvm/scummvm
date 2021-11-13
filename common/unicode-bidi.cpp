@@ -45,12 +45,12 @@ uint32 GetFriBiDiParType(BiDiParagraph dir) {
 
 UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str, BiDiParagraph dir) :
 	logical(str), _pbase_dir(GetFriBiDiParType(dir)),
-	_log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+	_log_to_vis_index(nullptr), _vis_to_log_index(nullptr) {
 	initWithU32String(str);
 }
 
 UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page,
-		uint32 *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+		uint32 *pbase_dir) : logical(str), _log_to_vis_index(nullptr), _vis_to_log_index(nullptr) {
 	_pbase_dir = *pbase_dir;
 	initWithU32String(str.decode(page));
 	*pbase_dir = _pbase_dir;
@@ -62,13 +62,13 @@ UnicodeBiDiText::~UnicodeBiDiText() {
 }
 
 uint32 UnicodeBiDiText::getVisualPosition(uint32 logicalPos) const {
-	if (NULL != _log_to_vis_index && logicalPos < size()) {
+	if (nullptr != _log_to_vis_index && logicalPos < size()) {
 		return _log_to_vis_index[logicalPos];
 	}
 	return logicalPos;
 }
 uint32 UnicodeBiDiText::getLogicalPosition(uint32 visualPos) const {
-	if (NULL != _log_to_vis_index && visualPos < size()) {
+	if (nullptr != _log_to_vis_index && visualPos < size()) {
 		return _vis_to_log_index[visualPos];
 	}
 	return visualPos;
@@ -93,15 +93,15 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		visual_str,
 		(FriBidiStrIndex *)_log_to_vis_index,	// position_L_to_V_list,
 		(FriBidiStrIndex *)_vis_to_log_index,	// position_V_to_L_list,
-		NULL									// embedding_level_list
+		nullptr									// embedding_level_list
 	)) {
 		warning("initWithU32String: calling fribidi_log2vis failed");
 		delete[] visual_str;
 		delete[] _log_to_vis_index;
 		delete[] _vis_to_log_index;
 		visual = input;
-		_log_to_vis_index = NULL;
-		_vis_to_log_index = NULL;
+		_log_to_vis_index = nullptr;
+		_vis_to_log_index = nullptr;
 	} else {
 		visual = U32String((uint32 *)visual_str, input.size());
 		delete[] visual_str;
