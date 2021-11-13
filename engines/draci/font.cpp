@@ -34,8 +34,8 @@ const char * const kFontBig = "Big.fon";
 Font::Font(const Common::String &filename) {
 	_fontHeight = 0;
 	_maxCharWidth = 0;
-	_charWidths = NULL;
-	_charData = NULL;
+	_charWidths = nullptr;
+	_charData = nullptr;
 
 	loadFont(filename);
 }
@@ -123,7 +123,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
  */
 
 void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_color) const {
-	assert(dst != NULL);
+	assert(dst != nullptr);
 	assert(tx >= 0);
 	assert(ty >= 0);
 
@@ -214,7 +214,7 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
 
 void Font::drawString(Surface *dst, const Common::String &str,
 	                  int x, int y, int with_color, int spacing, bool markDirty) const {
-	assert(dst != NULL);
+	assert(dst != nullptr);
 	assert(x >= 0);
 	assert(y >= 0);
 

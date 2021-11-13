@@ -56,7 +56,7 @@ void LegacySoundArchive::openArchive(const char *path) {
 	} else {
 		debugC(1, kDraciArchiverDebugLevel, "Error");
 		delete _f;
-		_f = NULL;
+		_f = nullptr;
 		return;
 	}
 
@@ -123,9 +123,9 @@ void LegacySoundArchive::openArchive(const char *path) {
 void LegacySoundArchive::closeArchive() {
 	clearCache();
 	delete _f;
-	_f = NULL;
+	_f = nullptr;
 	delete[] _samples;
-	_samples = NULL;
+	_samples = nullptr;
 	_sampleCount = 0;
 	_path = "";
 	_opened = false;
@@ -152,7 +152,7 @@ void LegacySoundArchive::clearCache() {
 SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
 	if (i < 0 || i >= (int)_sampleCount) {
-		return NULL;
+		return nullptr;
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d from archive %s... ",
@@ -213,8 +213,8 @@ void ZipSoundArchive::openArchive(const char *path, const char *extension, Sound
 void ZipSoundArchive::closeArchive() {
 	clearCache();
 	delete _archive;
-	_archive = NULL;
-	_path = _extension = NULL;
+	_archive = nullptr;
+	_path = _extension = nullptr;
 	_sampleCount = _defaultFreq = 0;
 	_format = RAW;
 }
@@ -231,13 +231,13 @@ void ZipSoundArchive::clearCache() {
 
 SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 	if (i < 0 || i >= (int)_sampleCount) {
-		return NULL;
+		return nullptr;
 	}
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d.%s from archive %s (format %d@%d, capacity %d): ",
 		i, _extension, _path, static_cast<int> (_format), _defaultFreq, _sampleCount);
 	if (freq != 0 && (_format != RAW && _format != RAW80)) {
 		error("Cannot resample a sound in compressed format");
-		return NULL;
+		return nullptr;
 	}
 
 	// We cannot really cache anything, because createReadStreamForMember()
@@ -253,7 +253,7 @@ SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 	sample._stream = _archive->createReadStreamForMember(filename);
 	if (!sample._stream) {
 		debugC(2, kDraciArchiverDebugLevel, "Doesn't exist");
-		return NULL;
+		return nullptr;
 	} else {
 		debugC(2, kDraciArchiverDebugLevel, "Read");
 		_cache.push_back(sample);
@@ -289,7 +289,7 @@ SndHandle *Sound::getHandle() {
 
 	error("Sound::getHandle(): Too many sound handles");
 
-	return NULL;	// for compilers that don't support NORETURN
+	return nullptr;	// for compilers that don't support NORETURN
 }
 
 uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
@@ -318,7 +318,7 @@ uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 			buffer._data + skip, buffer._length - skip /* length */, DisposeAfterUse::NO);
 	}
 
-	Audio::SeekableAudioStream *reader = NULL;
+	Audio::SeekableAudioStream *reader = nullptr;
 	switch (buffer._format) {
 	case RAW:
 	case RAW80:
