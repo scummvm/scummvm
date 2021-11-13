@@ -31,7 +31,7 @@
 namespace Kyra {
 
 GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
-	_menuButtonList = 0;
+	_menuButtonList = nullptr;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
@@ -41,7 +41,7 @@ Button *GUI_v1::addButtonToList(Button *list, Button *newButton) {
 	if (!newButton)
 		return list;
 
-	newButton->nextButton = 0;
+	newButton->nextButton = nullptr;
 
 	if (list) {
 		Button *cur = list;
@@ -68,7 +68,7 @@ void GUI_v1::initMenuLayout(Menu &menu) {
 }
 
 void GUI_v1::initMenu(Menu &menu) {
-	_menuButtonList = 0;
+	_menuButtonList = nullptr;
 
 	int textX;
 	int textY;
@@ -107,7 +107,7 @@ void GUI_v1::initMenu(Menu &menu) {
 
 		if (i < 7) {
 			Button *menuButtonData = getButtonListData() + i;
-			menuButtonData->nextButton = 0;
+			menuButtonData->nextButton = nullptr;
 			menuButtonData->x = x1;
 			menuButtonData->y = y1;
 			menuButtonData->width  = menu.item[i].width - 1;
@@ -173,7 +173,7 @@ void GUI_v1::initMenu(Menu &menu) {
 		scrollUpButton->x = menu.scrollUpButtonX + menu.x;
 		scrollUpButton->y = menu.scrollUpButtonY + menu.y;
 		scrollUpButton->buttonCallback = getScrollUpButtonHandler();
-		scrollUpButton->nextButton = 0;
+		scrollUpButton->nextButton = nullptr;
 		scrollUpButton->mouseWheel = -1;
 
 		_menuButtonList = addButtonToList(_menuButtonList, scrollUpButton);
@@ -183,7 +183,7 @@ void GUI_v1::initMenu(Menu &menu) {
 		scrollDownButton->x = menu.scrollDownButtonX + menu.x;
 		scrollDownButton->y = menu.scrollDownButtonY + menu.y;
 		scrollDownButton->buttonCallback = getScrollDownButtonHandler();
-		scrollDownButton->nextButton = 0;
+		scrollDownButton->nextButton = nullptr;
 		scrollDownButton->mouseWheel = 1;
 
 		_menuButtonList = addButtonToList(_menuButtonList, scrollDownButton);
@@ -414,7 +414,7 @@ int GUI_v1::getMenuCenterStringX(const Common::String &str, int x1, int x2) {
 
 #pragma mark -
 
-MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(0) {
+MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(nullptr) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;
@@ -433,7 +433,7 @@ void MainMenu::updateAnimation() {
 		if (now > _nextUpdate) {
 			_nextUpdate = now + _anim.delay * _vm->tickLength();
 
-			_anim.anim->displayFrame(_animIntern.curFrame, 0, 0, 0, 0, 0, 0);
+			_anim.anim->displayFrame(_animIntern.curFrame, 0, 0, 0, 0, nullptr, nullptr);
 			_animIntern.curFrame += _animIntern.direction;
 			if (_animIntern.curFrame < _anim.startFrame) {
 				_animIntern.curFrame = _anim.startFrame;

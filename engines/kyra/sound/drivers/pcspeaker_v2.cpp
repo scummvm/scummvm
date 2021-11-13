@@ -48,7 +48,7 @@ MidiDriver_PCSpeaker::MidiDriver_PCSpeaker(Audio::Mixer *mixer)
 MidiDriver_PCSpeaker::~MidiDriver_PCSpeaker() {
 	_mixer->stopHandle(_mixerSoundHandle);
 	delete _speaker;
-	_speaker = 0;
+	_speaker = nullptr;
 }
 
 void MidiDriver_PCSpeaker::send(uint32 data) {

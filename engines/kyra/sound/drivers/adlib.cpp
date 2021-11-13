@@ -270,7 +270,7 @@ private:
 	OPL::OPL *_adlib;
 
 	struct QueueEntry {
-		QueueEntry() : data(0), id(0), volume(0) {}
+		QueueEntry() : data(nullptr), id(0), volume(0) {}
 		QueueEntry(uint8 *ptr, uint8 track, uint8 vol) : data(ptr), id(track), volume(vol) {}
 		uint8 *data;
 		uint8 id;
@@ -452,7 +452,7 @@ void AdLibDriver::startSound(int track, int volume) {
 	// We used to drop the new sound here, but that isn't the behavior of the original code.
 	// It would cause more issues than do any good. Now, we just have a debug message and
 	// then drop the oldest sound, like the original driver...
-	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0)
+	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != nullptr)
 		debugC(3, kDebugLevelSound, "AdLibDriver: Program queue full, dropping track %d", _programQueue[_programQueueEnd].id);
 
 	_programQueue[_programQueueEnd] = QueueEntry(trackData, track, volume);
@@ -463,7 +463,7 @@ bool AdLibDriver::isChannelPlaying(int channel) const {
 	Common::StackLock lock(_mutex);
 
 	assert(channel >= 0 && channel <= 9);
-	return (_channels[channel].dataptr != 0);
+	return (_channels[channel].dataptr != nullptr);
 }
 
 void AdLibDriver::stopAllChannels() {
@@ -474,7 +474,7 @@ void AdLibDriver::stopAllChannels() {
 
 		Channel &chan = _channels[_curChannel];
 		chan.priority = 0;
-		chan.dataptr = 0;
+		chan.dataptr = nullptr;
 
 		if (channel != 9)
 			noteOff(chan);
@@ -1723,7 +1723,7 @@ int AdLibDriver::update_clearChannel(Channel &channel, const uint8 *values) {
 	// Stop channel
 	Channel &channel2 = _channels[_curChannel];
 	channel2.duration = channel2.priority = 0;
-	channel2.dataptr = 0;
+	channel2.dataptr = nullptr;
 	channel2.opExtraLevel2 = 0;
 
 	if (_curChannel != 9) {

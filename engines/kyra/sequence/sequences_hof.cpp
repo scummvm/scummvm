@@ -224,7 +224,7 @@ private:
 
 	// HOF credits
 	void playHoFTalkieCredits();
-	void displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
+	void displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = nullptr, const char *const *specialData = nullptr);
 
 	bool _talkieFinaleExtraFlag;
 
@@ -336,27 +336,27 @@ private:
 #endif // ENABLE_LOL
 };
 
-SeqPlayer_HOF *SeqPlayer_HOF::_instance = 0;
+SeqPlayer_HOF *SeqPlayer_HOF::_instance = nullptr;
 
 SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system, bool startupSaveLoadable) : _vm(vm), _screen(screen), _system(system), _startupSaveLoadable(startupSaveLoadable), _tickLength(1000000/60) {
 	// We use a static pointer for pauseEngine functionality. Since we don't
 	// ever need more than one SeqPlayer_HOF object at the same time we keep
 	// this simple and just add an assert to detect typos, regressions, etc.
-	assert(_instance == 0);
+	assert(_instance == nullptr);
 
 	memset(_animSlots, 0, sizeof(_animSlots));
 	memset(_textSlots, 0, sizeof(_textSlots));
 	memset(_hofDemoActiveItemAnim, 0, sizeof(_hofDemoActiveItemAnim));
 
-	_screenHoF = _vm->game() == GI_KYRA2 ? (Screen_HoF*)screen : 0;
-	_config = 0;
+	_screenHoF = _vm->game() == GI_KYRA2 ? (Screen_HoF*)screen : nullptr;
+	_config = nullptr;
 	_result = 0;
-	_sequenceSoundList = 0;
-	_hofDemoAnimData = 0;
-	_hofDemoShapeData = 0;
+	_sequenceSoundList = nullptr;
+	_hofDemoAnimData = nullptr;
+	_hofDemoShapeData = nullptr;
 	_isFinale = false;
 	_preventLooping = false;
-	_menu = 0;
+	_menu = nullptr;
 	_abortRequested = false;
 	_pauseStart = 0;
 
@@ -399,7 +399,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 				delete[] _sequenceSoundList[i];
 		}
 		delete[] _sequenceSoundList;
-		_sequenceSoundList = 0;
+		_sequenceSoundList = nullptr;
 	}
 
 	const char *const *seqSoundList = _vm->staticres()->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
@@ -425,7 +425,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 			strcpy(tmpSndLst[i], seqSoundList[i]);
 	}
 
-	tlkfiles = seqSoundList = 0;
+	tlkfiles = seqSoundList = nullptr;
 	_vm->staticres()->unloadId(k2SeqplayTlkFiles);
 	_vm->staticres()->unloadId(k2SeqplaySfxFiles);
 	_sequenceSoundList = tmpSndLst;
@@ -439,7 +439,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 		if (_vm->game() == GI_KYRA2) {
 			_hofDemoAnimData = _vm->staticres()->loadHoFSeqItemAnimData(k2SeqplayShapeAnimData, tempSize);
-			uint8 *shp = _vm->resource()->fileData("ICONS.SHP", 0);
+			uint8 *shp = _vm->resource()->fileData("ICONS.SHP", nullptr);
 			uint32 outsize = READ_LE_UINT16(shp + 4);
 			_hofDemoShapeData = new uint8[outsize];
 			Screen::decodeFrame4(shp + 10, _hofDemoShapeData, outsize);
@@ -449,7 +449,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 		}
 	} else {
 		const MainMenu::StaticData data = {
-			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
+			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], nullptr },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xD7, 0xD6 },
 			{ 0xD8, 0xDA, 0xD9, 0xD8 },
 			(_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
@@ -463,7 +463,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 }
 
 SeqPlayer_HOF::~SeqPlayer_HOF() {
-	_instance = 0;
+	_instance = nullptr;
 
 	if (_sequenceSoundList) {
 		for (int i = 0; i < _sequenceSoundListSize; i++) {
@@ -471,7 +471,7 @@ SeqPlayer_HOF::~SeqPlayer_HOF() {
 				delete[] _sequenceSoundList[i];
 		}
 		delete[] _sequenceSoundList;
-		_sequenceSoundList = NULL;
+		_sequenceSoundList = nullptr;
 	}
 
 	delete[] _tempString;
@@ -562,21 +562,21 @@ void SeqPlayer_HOF::pause(bool toggle) {
 
 void SeqPlayer_HOF::setupCallbacks() {
 #define SCB(x) &SeqPlayer_HOF::cbHOF_##x
-	static const SeqProc seqCallbacksHoF[] = { 0, SCB(westwood), SCB(title), SCB(overview), SCB(library), SCB(hand), SCB(point), SCB(zanfaun), SCB(funters), SCB(ferb), SCB(fish), SCB(fheep), SCB(farmer), SCB(fuards), SCB(firates), SCB(frash) };
-	static const SeqProc nestedSeqCallbacksHoF[] = { SCB(figgle), SCB(over1), SCB(over2), SCB(forest), SCB(dragon), SCB(darm), SCB(library2), SCB(library2), SCB(marco), SCB(hand1a), SCB(hand1b), SCB(hand1c), SCB(hand2), SCB(hand3), 0 };
+	static const SeqProc seqCallbacksHoF[] = { nullptr, SCB(westwood), SCB(title), SCB(overview), SCB(library), SCB(hand), SCB(point), SCB(zanfaun), SCB(funters), SCB(ferb), SCB(fish), SCB(fheep), SCB(farmer), SCB(fuards), SCB(firates), SCB(frash) };
+	static const SeqProc nestedSeqCallbacksHoF[] = { SCB(figgle), SCB(over1), SCB(over2), SCB(forest), SCB(dragon), SCB(darm), SCB(library2), SCB(library2), SCB(marco), SCB(hand1a), SCB(hand1b), SCB(hand1c), SCB(hand2), SCB(hand3), nullptr };
 #undef SCB
 #define SCB(x) &SeqPlayer_HOF::cbHOFDEMO_##x
 	static const SeqProc seqCallbacksHoFDemo[] = {	SCB(virgin), SCB(westwood), SCB(title), SCB(hill), SCB(outhome), SCB(wharf), SCB(dinob), SCB(fisher) };
-	static const SeqProc nestedSeqCallbacksHoFDemo[] = { SCB(wharf2), SCB(dinob2), SCB(water), SCB(bail), SCB(dig), 0 };
+	static const SeqProc nestedSeqCallbacksHoFDemo[] = { SCB(wharf2), SCB(dinob2), SCB(water), SCB(bail), SCB(dig), nullptr };
 #undef SCB
 #ifdef ENABLE_LOL
 #define SCB(x) &SeqPlayer_HOF::cbLOLDEMO_##x
 	static const SeqProc seqCallbacksLoLDemo[] = { SCB(scene1), 0, SCB(scene2), 0, SCB(scene3), 0, SCB(scene4), 0, SCB(scene5), SCB(text5), SCB(scene6), 0 };
 #undef SCB
 #else
-	static const SeqProc seqCallbacksLoLDemo[] = { 0 };
+	static const SeqProc seqCallbacksLoLDemo[] = { nullptr };
 #endif
-	static const SeqProc nestedSeqCallbacksLoLDemo[] = { 0 };
+	static const SeqProc nestedSeqCallbacksLoLDemo[] = { nullptr };
 
 	static const SeqProc *const seqCallbacks[] = { seqCallbacksHoF, seqCallbacksHoFDemo, seqCallbacksLoLDemo};
 	static const SeqProc *const nestedSeqCallbacks[] = { nestedSeqCallbacksHoF, nestedSeqCallbacksHoFDemo, nestedSeqCallbacksLoLDemo};
@@ -664,12 +664,12 @@ void SeqPlayer_HOF::playScenes() {
 		}
 
 		if (_config->seqProc[_curScene] && !(_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie))
-			(this->*_config->seqProc[_curScene])(0, 0, 0, -1);
+			(this->*_config->seqProc[_curScene])(nullptr, 0, 0, -1);
 
 		if (sq.flags & 1) {
 			anim.open(sq.wsaFile, 0, &_screen->getPalette(0));
 			if (!(sq.flags & 2))
-				anim.displayFrame(0, 2, sq.xPos, sq.yPos, 0x4000, 0, 0);
+				anim.displayFrame(0, 2, sq.xPos, sq.yPos, 0x4000, nullptr, nullptr);
 		}
 
 		if (sq.flags & 4) {
@@ -710,7 +710,7 @@ void SeqPlayer_HOF::playScenes() {
 				updateAllNestedAnimations();
 
 				if (_config->seqProc[_curScene])
-					(this->*_config->seqProc[_curScene])(0, 0, 0, 0);
+					(this->*_config->seqProc[_curScene])(nullptr, 0, 0, 0);
 
 				updateSubTitles();
 
@@ -727,7 +727,7 @@ void SeqPlayer_HOF::playScenes() {
 		}
 
 		if (_config->seqProc[_curScene] && !(_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie))
-			(this->*_config->seqProc[_curScene])(0, 0, 0, -2);
+			(this->*_config->seqProc[_curScene])(nullptr, 0, 0, -2);
 
 		uint32 textTimeOut = ticksTillSubTitlesTimeout();
 		setCountDown(MAX<uint32>(textTimeOut, sq.timeout));
@@ -927,7 +927,7 @@ void SeqPlayer_HOF::nestedFrameFadeTransition(const char *cmpFile) {
 	_screen->copyPage(10, 2);
 	_screen->copyPage(4, 10);
 	_screen->clearPage(6);
-	_screen->loadBitmap(cmpFile, 6, 6, 0);
+	_screen->loadBitmap(cmpFile, 6, 6, nullptr);
 	_screen->copyPage(12, 4);
 
 	for (int i = 0; i < 3; i++) {
@@ -994,7 +994,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 			(this->*callback)(wsaObj, x, y, wsaObj ? _animCurrentFrame % wsaObj->frames() : _animCurrentFrame);
 
 		if (wsaObj)
-			wsaObj->displayFrame(_animCurrentFrame % wsaObj->frames(), 2, x, y, 0, 0, 0);
+			wsaObj->displayFrame(_animCurrentFrame % wsaObj->frames(), 2, x, y, 0, nullptr, nullptr);
 
 		_screen->copyPage(2, 12);
 
@@ -1071,7 +1071,7 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 		setCountDown(_animDuration);
 
 		if (wsaObj)
-			wsaObj->displayFrame(curframe % wsaObj->frames(), 2, animPosX, animPosY, 0, 0, 0);
+			wsaObj->displayFrame(curframe % wsaObj->frames(), 2, animPosX, animPosY, 0, nullptr, nullptr);
 
 		_screen->copyPage(2, 12);
 		updateSubTitles();
@@ -1121,11 +1121,11 @@ void SeqPlayer_HOF::startNestedAnimation(int animSlot, int sequenceID) {
 
 	_animSlots[animSlot].movie->close();
 
-	_animSlots[animSlot].movie->open(s.wsaFile, 0, 0);
+	_animSlots[animSlot].movie->open(s.wsaFile, 0, nullptr);
 
 	if (!_animSlots[animSlot].movie->opened()) {
 		delete _animSlots[animSlot].movie;
-		_animSlots[animSlot].movie = 0;
+		_animSlots[animSlot].movie = nullptr;
 		return;
 	}
 
@@ -1163,7 +1163,7 @@ void SeqPlayer_HOF::unloadNestedAnimation(int animSlot) {
 	if (_animSlots[animSlot].movie) {
 		_animSlots[animSlot].movie->close();
 		delete _animSlots[animSlot].movie;
-		_animSlots[animSlot].movie = 0;
+		_animSlots[animSlot].movie = nullptr;
 	}
 }
 
@@ -1177,7 +1177,7 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 	case 0:
 		xa = -_animSlots[animSlot].movie->xAdd();
 		ya = -_animSlots[animSlot].movie->yAdd();
-		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
+		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, nullptr, nullptr);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
 							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 2);
 		break;
@@ -1185,7 +1185,7 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 	case 1:
 		xa = -_animSlots[animSlot].movie->xAdd();
 		ya = -_animSlots[animSlot].movie->yAdd();
-		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
+		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, nullptr, nullptr);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
 							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 1);
 		break;
@@ -1194,21 +1194,21 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 		waitForSubTitlesTimeout();
 		xa = -_animSlots[animSlot].movie->xAdd();
 		ya = -_animSlots[animSlot].movie->yAdd();
-		_animSlots[animSlot].movie->displayFrame(21, 8, xa, ya, 0, 0, 0);
+		_animSlots[animSlot].movie->displayFrame(21, 8, xa, ya, 0, nullptr, nullptr);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
 							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 0, 2);
 		break;
 
 	case 3:
 		_screen->copyPage(2, 10);
-		_animSlots[animSlot].movie->displayFrame(0, 2, 0, 0, 0, 0, 0);
+		_animSlots[animSlot].movie->displayFrame(0, 2, 0, 0, 0, nullptr, nullptr);
 		_screen->copyPage(2, 12);
 		nestedFrameFadeTransition("scene2.cmp");
 		break;
 
 	case 4:
 		_screen->copyPage(2, 10);
-		_animSlots[animSlot].movie->displayFrame(0, 2, 0, 0, 0, 0, 0);
+		_animSlots[animSlot].movie->displayFrame(0, 2, 0, 0, 0, nullptr, nullptr);
 		_screen->copyPage(2, 12);
 		nestedFrameFadeTransition("scene3.cmp");
 		break;
@@ -1238,10 +1238,10 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 
 	if (_animSlots[animSlot].movie) {
 		if (_animSlots[animSlot].flags & 0x20) {
-			_animSlots[animSlot].movie->displayFrame(_animSlots[animSlot].control[currentFrame].index, 2, _animSlots[animSlot].x, _animSlots[animSlot].y, 0x4000, 0, 0);
+			_animSlots[animSlot].movie->displayFrame(_animSlots[animSlot].control[currentFrame].index, 2, _animSlots[animSlot].x, _animSlots[animSlot].y, 0x4000, nullptr, nullptr);
 			_animSlots[animSlot].frameDelay = _animSlots[animSlot].control[currentFrame].delay;
 		} else {
-			_animSlots[animSlot].movie->displayFrame(currentFrame % _animSlots[animSlot].movie->frames(), 2, _animSlots[animSlot].x, _animSlots[animSlot].y, 0x4000, 0, 0);
+			_animSlots[animSlot].movie->displayFrame(currentFrame % _animSlots[animSlot].movie->frames(), 2, _animSlots[animSlot].x, _animSlots[animSlot].y, 0x4000, nullptr, nullptr);
 		}
 	}
 
@@ -1291,7 +1291,7 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 
 void SeqPlayer_HOF::playSoundEffect(uint16 id, int16 vol) {
 	assert(id < _sequenceSoundListSize);
-	_vm->sound()->voicePlay(_sequenceSoundList[id], 0, vol);
+	_vm->sound()->voicePlay(_sequenceSoundList[id], nullptr, vol);
 }
 
 void SeqPlayer_HOF::playSoundAndDisplaySubTitle(uint16 id) {
@@ -1300,7 +1300,7 @@ void SeqPlayer_HOF::playSoundAndDisplaySubTitle(uint16 id) {
 	if (id < 12 && !(_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) && _vm->textEnabled())
 		displaySubTitle(id, 160, 168, _textDuration[id], 160);
 
-	_vm->sound()->voicePlay(_sequenceSoundList[id], 0);
+	_vm->sound()->voicePlay(_sequenceSoundList[id], nullptr);
 }
 
 void SeqPlayer_HOF::printFadingText(uint16 strID, int x, int y, const uint8 *colorMap, uint8 textcolor) {
@@ -1437,7 +1437,7 @@ char *SeqPlayer_HOF::preprocessString(const char *srcStr, int width) {
 	}
 	dstStr[lineStart + linePos] = 0;
 
-	return strlen(_tempString) ? dstStr : 0;
+	return strlen(_tempString) ? dstStr : nullptr;
 }
 
 void SeqPlayer_HOF::waitForSubTitlesTimeout() {
@@ -1505,7 +1505,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 	memcpy(dataPtr, talkieCredits, talkieCreditsSize);
 	_vm->staticres()->unloadId(k2SeqplayCredits);
 
-	displayHoFTalkieScrollText(dataPtr, &d, 2, 6, 5, 1, Screen::FID_GOLDFONT_FNT, Screen::FID_GOLDFONT_FNT, 0, talkieCreditsSpecial);
+	displayHoFTalkieScrollText(dataPtr, &d, 2, 6, 5, 1, Screen::FID_GOLDFONT_FNT, Screen::FID_GOLDFONT_FNT, nullptr, talkieCreditsSpecial);
 	delayTicks(8);
 
 	delete[] dataPtr;
@@ -1536,7 +1536,7 @@ void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, 
 		ScrollTextData() {
 			x = 0;      // 0  11
 			y = 0;		// 2  13
-			text = 0;	// 4  15
+			text = nullptr;	// 4  15
 			unk1 = 0;   // 8  19
 			height = 0; // 9  20
 			adjust = 0; // 10 21
@@ -3090,8 +3090,8 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 			return 0;
 
 		if (!_callbackCurrentFrame) {
-			_screen->loadBitmap("adtext.cps", 4, 4, 0);
-			_screen->loadBitmap("adtext2.cps", 6, 6, 0);
+			_screen->loadBitmap("adtext.cps", 4, 4, nullptr);
+			_screen->loadBitmap("adtext2.cps", 6, 6, nullptr);
 			_screen->copyPageMemory(6, 0, 4, 64000, 1024);
 			_screen->copyPageMemory(6, 1023, 6, 0, 64000);
 			_scrollProgressCounter = 0;
@@ -3374,14 +3374,14 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 		return;
 	}
 	_screen->hideMouse();
-	ci->displayFrame(0, 2, 0, 0, 0, 0, 0);
+	ci->displayFrame(0, 2, 0, 0, 0, nullptr, nullptr);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
 		uint32 end = _system->getMillis() + 50;
 		if (skipFlag())
 			break;
-		ci->displayFrame(i, 2, 0, 0, 0, 0, 0);
+		ci->displayFrame(i, 2, 0, 0, 0, nullptr, nullptr);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		uint32 cur = _system->getMillis();
@@ -3392,7 +3392,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 	}
 	if (!skipFlag()) {
 		uint32 end = _system->getMillis() + 50;
-		ci->displayFrame(0, 2, 0, 0, 0, 0, 0);
+		ci->displayFrame(0, 2, 0, 0, 0, nullptr, nullptr);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		uint32 cur = _system->getMillis();
@@ -3447,7 +3447,7 @@ void LoLEngine::pauseDemoPlayer(bool toggle) {
 
 void KyraEngine_HoF::seq_makeBookOrCauldronAppear(int type) {
 	_screen->hideMouse();
-	showMessage(0, 0xCF);
+	showMessage(nullptr, 0xCF);
 
 	if (type == 1)
 		seq_makeBookAppear();
@@ -3455,7 +3455,7 @@ void KyraEngine_HoF::seq_makeBookOrCauldronAppear(int type) {
 		loadInvWsa("CAULDRON.WSA", 1, 6, 0, -2, -2, 1);
 
 	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
-	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
+	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, nullptr);
 
 	static const uint8 bookCauldronRects[] = {
 		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
@@ -3484,7 +3484,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 
 	displayInvWsaLastFrame();
 
-	showMessage(0, 0xCF);
+	showMessage(nullptr, 0xCF);
 
 	loadInvWsa("BOOK2.WSA", 0, 4, 2, -1, -1, 0);
 
@@ -3501,7 +3501,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 
 		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
-		_invWsa.wsa->displayFrame(_invWsa.curFrame, _invWsa.page, 0, 0, 0x4000, 0, 0);
+		_invWsa.wsa->displayFrame(_invWsa.curFrame, _invWsa.page, 0, 0, 0x4000, nullptr, nullptr);
 
 		if (_invWsa.page)
 			_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);

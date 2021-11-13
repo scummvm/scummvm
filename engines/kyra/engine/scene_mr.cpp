@@ -33,7 +33,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	++_enterNewSceneLock;
 	_screen->hideMouse();
 
-	showMessage(0, 0xF0, 0xF0);
+	showMessage(nullptr, 0xF0, 0xF0);
 	if (_inventoryState)
 		hideInventory();
 
@@ -284,7 +284,7 @@ void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 
 void KyraEngine_MR::unloadScene() {
 	delete[] _sceneStrings;
-	_sceneStrings = 0;
+	_sceneStrings = nullptr;
 	_emc->unload(&_sceneScriptData);
 	freeSceneShapes();
 	freeSceneAnims();
@@ -293,7 +293,7 @@ void KyraEngine_MR::unloadScene() {
 void KyraEngine_MR::freeSceneShapes() {
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i) {
 		delete[] _sceneShapes[i];
-		_sceneShapes[i] = 0;
+		_sceneShapes[i] = nullptr;
 	}
 }
 
@@ -303,7 +303,7 @@ void KyraEngine_MR::loadScenePal() {
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".COL");
 
-	_screen->loadBitmap(filename, 3, 3, 0);
+	_screen->loadBitmap(filename, 3, 3, nullptr);
 	_screen->getPalette(2).copy(_screen->getCPagePtr(3), 0, 144);
 	_screen->getPalette(2).fill(0, 1, 0);
 
@@ -330,13 +330,13 @@ void KyraEngine_MR::loadSceneMsc() {
 	minY = stream->readSint16LE();
 	height = stream->readSint16LE();
 	delete stream;
-	stream = 0;
+	stream = nullptr;
 	_maskPageMinY = minY;
 	_maskPageMaxY = minY + height - 1;
 
 	_screen->setShapePages(5, 3, _maskPageMinY, _maskPageMaxY);
 
-	_screen->loadBitmap(filename, 5, 5, 0, true);
+	_screen->loadBitmap(filename, 5, 5, nullptr, true);
 
 	// HACK
 	uint8 *data = new uint8[320*200];
@@ -371,7 +371,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	if (shapesCount > 0) {
 		strcpy(filename, scene.filename1);
 		strcat(filename, "9.CPS");
-		_screen->loadBitmap(filename, 3, 3, 0);
+		_screen->loadBitmap(filename, 3, 3, nullptr);
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 		for (int i = 0; i < shapesCount; ++i) {
@@ -387,11 +387,11 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 		_screen->_curPage = pageBackUp;
 	}
 	delete stream;
-	stream = 0;
+	stream = nullptr;
 
 	strcpy(filename, scene.filename1);
 	strcat(filename, ".CPS");
-	_screen->loadBitmap(filename, 3, 3, 0);
+	_screen->loadBitmap(filename, 3, 3, nullptr);
 
 	Common::fill(_specialSceneScriptState, ARRAYEND(_specialSceneScriptState), false);
 	_sceneEnterX1 = 160;
@@ -465,7 +465,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 	_mainCharacter.x3 = _mainCharacter.x1 - (_charScale >> 4) - 1;
 	_mainCharacter.y3 = _mainCharacter.y1 - (_charScale >> 6) - 1;
 	obj->needRefresh = true;
-	_animList = 0;
+	_animList = nullptr;
 
 	for (int i = 0; i < 16; ++i) {
 		const SceneAnim &anim = _sceneAnims[i];
@@ -489,7 +489,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 		if ((anim.flags & 4) && anim.shapeIndex != -1)
 			obj->shapePtr = _sceneShapes[anim.shapeIndex];
 		else
-			obj->shapePtr = 0;
+			obj->shapePtr = nullptr;
 
 		if (anim.flags & 8) {
 			obj->shapeIndex3 = anim.shapeIndex;
@@ -525,7 +525,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 			obj->xPos1 = item.x;
 			obj->yPos1 = item.y;
 			animSetupPaletteEntry(obj);
-			obj->shapePtr = 0;
+			obj->shapePtr = nullptr;
 			obj->shapeIndex1 = obj->shapeIndex2 = item.id + 248;
 			obj->xPos2 = item.x;
 			obj->yPos2 = item.y;
@@ -636,7 +636,7 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 
 		int ret = 0;
 		if (moveTable == moveTableStart || moveTable[1] == 8)
-			ret = updateCharPos(0, 0);
+			ret = updateCharPos(nullptr, 0);
 		else
 			ret = updateCharPos(moveTable, 0);
 

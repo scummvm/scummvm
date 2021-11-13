@@ -180,7 +180,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 
 GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), _screen(screen) {
 	_lastScreenUpdate = 0;
-	_menu = 0;
+	_menu = nullptr;
 	_pressFlag = false;
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
@@ -243,7 +243,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 
 		int x = list->x;
 		int y = list->y;
-		assert(_screen->getScreenDim(list->dimTableIndex) != 0);
+		assert(_screen->getScreenDim(list->dimTableIndex) != nullptr);
 
 		if (x < 0)
 			x += _screen->getScreenDim(list->dimTableIndex)->w << 3;
@@ -307,7 +307,7 @@ void GUI_LoK::processButton(Button *button) {
 		return;
 
 	int processType = 0;
-	const uint8 *shape = 0;
+	const uint8 *shape = nullptr;
 	Button::Callback callback;
 
 	int flags = (button->flags2 & 5);
@@ -333,7 +333,7 @@ void GUI_LoK::processButton(Button *button) {
 
 	int x = button->x;
 	int y = button->y;
-	assert(_screen->getScreenDim(button->dimTableIndex) != 0);
+	assert(_screen->getScreenDim(button->dimTableIndex) != nullptr);
 	if (x < 0)
 		x += _screen->getScreenDim(button->dimTableIndex)->w << 3;
 
@@ -503,7 +503,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 
 	_toplevelMenu = 0;
 	if (_vm->_menuDirectlyToLoad) {
-		loadGameMenu(0);
+		loadGameMenu(nullptr);
 	} else {
 		if (!caller)
 			_toplevelMenu = 4;
@@ -966,7 +966,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 			menu.item[4].labelString = _textSpeedString;
 		} else {
 			menu.item[4].enabled = 0;
-			menu.item[4].labelString = 0;
+			menu.item[4].labelString = nullptr;
 		}
 
 		switch (_vm->_configVoice) {
@@ -988,7 +988,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 			clickableOffset = 5;
 
 		menu.item[4].enabled = 0;
-		menu.item[4].labelString = 0;
+		menu.item[4].labelString = nullptr;
 	}
 
 	switch (_vm->_configTextspeed) {

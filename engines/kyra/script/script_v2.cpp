@@ -119,7 +119,7 @@ int KyraEngine_v2::o2_delay(EMCState *script) {
 	if (stackPos(1)) {
 		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
 		while (_system->getMillis() < maxWaitTime) {
-			int inputFlag = checkInput(0);
+			int inputFlag = checkInput(nullptr);
 			removeInputTop();
 
 			if (inputFlag == 198 || inputFlag == 199)
@@ -159,7 +159,7 @@ int KyraEngine_v2::o2_waitForConfirmationClick(EMCState *script) {
 	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
 
 	while (_system->getMillis() < maxWaitTime) {
-		int inputFlag = checkInput(0);
+		int inputFlag = checkInput(nullptr);
 		removeInputTop();
 
 		if (inputFlag == 198 || inputFlag == 199) {

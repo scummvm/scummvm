@@ -238,7 +238,7 @@ void KyraEngine_HoF::updateSceneAnim(int anim, int newFrame) {
 		animObject->shapeIndex3 = 0xFFFF;
 		animObject->animNum = 0xFFFF;
 	} else {
-		animObject->shapePtr = 0;
+		animObject->shapePtr = nullptr;
 		animObject->shapeIndex3 = newFrame;
 		animObject->animNum = anim;
 	}
@@ -283,7 +283,7 @@ void KyraEngine_HoF::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) 
 			y = obj->yPos2;
 		}
 
-		_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, int(flags | layer), 0, 0);
+		_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, int(flags | layer), nullptr, nullptr);
 	}
 }
 

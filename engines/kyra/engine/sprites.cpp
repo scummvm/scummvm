@@ -33,10 +33,10 @@ Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) : _rnd("kyraSprites") {
 	_res = vm->resource();
 	_screen = vm->screen();
 	_system = system;
-	_dat = 0;
+	_dat = nullptr;
 	memset(_anims, 0, sizeof(_anims));
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
-	_spriteDefStart = 0;
+	_spriteDefStart = nullptr;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
 }
@@ -55,9 +55,9 @@ void Sprites::setupSceneAnims() {
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		delete[] _anims[i].background;
-		_anims[i].background = 0;
+		_anims[i].background = nullptr;
 
-		if (_anims[i].script != 0) {
+		if (_anims[i].script != nullptr) {
 			data = _anims[i].script;
 
 			assert(READ_LE_UINT16(data) == 0xFF86);
@@ -125,7 +125,7 @@ void Sprites::updateSceneAnims() {
 	uint16 sound;
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].script == 0 || !_anims[i].play || (_anims[i].nextRun != 0 && _anims[i].nextRun > currTime))
+		if (_anims[i].script == nullptr || !_anims[i].play || (_anims[i].nextRun != 0 && _anims[i].nextRun > currTime))
 			continue;
 
 		data = _anims[i].curPos;
@@ -324,7 +324,7 @@ void Sprites::updateSceneAnims() {
 		case 0xFFAA:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Reset Brandon's sprite");
-			_vm->animator()->actors()->sceneAnimPtr = 0;
+			_vm->animator()->actors()->sceneAnimPtr = nullptr;
 			_vm->animator()->actors()->bkgdChangeFlag = 1;
 			_vm->animator()->actors()->refreshFlag = 1;
 			_vm->animator()->restoreAllObjectBackgrounds();
@@ -388,7 +388,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	uint32 fileSize;
 
 	delete[] _dat;
-	_spriteDefStart = 0;
+	_spriteDefStart = nullptr;
 
 	_res->exists(filename, true);
 	_dat = _res->fileData(filename, &fileSize);
@@ -499,7 +499,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 void Sprites::freeSceneShapes() {
 	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++) {
 		delete[] _sceneShapes[i];
-		_sceneShapes[i] = 0;
+		_sceneShapes[i] = nullptr;
 	}
 }
 
@@ -510,7 +510,7 @@ void Sprites::loadSceneShapes() {
 	freeSceneShapes();
 	memset( _sceneShapes, 0, sizeof(_sceneShapes));
 
-	if (_spriteDefStart == 0)
+	if (_spriteDefStart == nullptr)
 		return;
 
 	int bakPage = _screen->_curPage;

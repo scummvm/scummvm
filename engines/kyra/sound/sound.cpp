@@ -80,7 +80,7 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
 	Common::String filename;
 
-	Audio::SeekableAudioStream *audioStream = 0;
+	Audio::SeekableAudioStream *audioStream = nullptr;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		filename = file;
 		filename += _supportedCodecs[i].fileext;
@@ -95,7 +95,7 @@ Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
 
 	if (!audioStream) {
 		warning("Couldn't load sound file '%s'", file);
-		return 0;
+		return nullptr;
 	} else {
 		return audioStream;
 	}
@@ -362,7 +362,7 @@ const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 	{ ".FLA", Audio::makeFLACStream },
 #endif // USE_FLAC
 
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 } // End of namespace Kyra

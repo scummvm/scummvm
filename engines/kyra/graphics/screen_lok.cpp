@@ -32,19 +32,19 @@ namespace Kyra {
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system, _screenDimTable, _screenDimTableCount) {
 	_vm = vm;
-	_unkPtr1 = _unkPtr2 = 0;
+	_unkPtr1 = _unkPtr2 = nullptr;
 	_bitBlitNum = 0;
 }
 
 Screen_LoK::~Screen_LoK() {
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
 		delete[] _saveLoadPage[i];
-		_saveLoadPage[i] = 0;
+		_saveLoadPage[i] = nullptr;
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
 		delete[] _saveLoadPageOvl[i];
-		_saveLoadPageOvl[i] = 0;
+		_saveLoadPageOvl[i] = nullptr;
 	}
 
 	delete[] _unkPtr1;
@@ -154,7 +154,7 @@ void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page / 2]);
 	delete[] _saveLoadPage[page / 2];
-	_saveLoadPage[page / 2] = 0;
+	_saveLoadPage[page / 2] = nullptr;
 
 	if (_saveLoadPageOvl[page / 2]) {
 		uint8 *dstPage = getOverlayPtr(page);
@@ -165,7 +165,7 @@ void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 
 		memcpy(dstPage, _saveLoadPageOvl[page / 2], SCREEN_OVL_SJIS_SIZE);
 		delete[] _saveLoadPageOvl[page / 2];
-		_saveLoadPageOvl[page / 2] = 0;
+		_saveLoadPageOvl[page / 2] = nullptr;
 	}
 }
 
@@ -180,11 +180,11 @@ void Screen_LoK::queryPageFromDisk(const char *file, int page, uint8 *buffer) {
 
 void Screen_LoK::deletePageFromDisk(int page) {
 	delete[] _saveLoadPage[page / 2];
-	_saveLoadPage[page / 2] = 0;
+	_saveLoadPage[page / 2] = nullptr;
 
 	if (_saveLoadPageOvl[page / 2]) {
 		delete[] _saveLoadPageOvl[page / 2];
-		_saveLoadPageOvl[page / 2] = 0;
+		_saveLoadPageOvl[page / 2] = nullptr;
 	}
 }
 

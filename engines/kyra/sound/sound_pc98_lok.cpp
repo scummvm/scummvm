@@ -30,7 +30,7 @@
 namespace Kyra {
 
 SoundPC98_LoK::SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _currentResourceSet(0) {
+	Sound(vm, mixer), _musicTrackData(nullptr), _sfxTrackData(nullptr), _lastTrack(-1), _driver(nullptr), _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -39,7 +39,7 @@ SoundPC98_LoK::~SoundPC98_LoK() {
 	delete[] _sfxTrackData;
 	delete _driver;
 	for (int i = 0; i < 3; i++)
-		initAudioResourceInfo(i, 0);
+		initAudioResourceInfo(i, nullptr);
 }
 
 bool SoundPC98_LoK::init() {
@@ -53,7 +53,7 @@ bool SoundPC98_LoK::init() {
 void SoundPC98_LoK::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new Common::String(((SoundResourceInfo_PC98*)info)->pattern) : 0;
+		_resInfo[set] = info ? new Common::String(((SoundResourceInfo_PC98*)info)->pattern) : nullptr;
 	}
 }
 
@@ -71,7 +71,7 @@ bool SoundPC98_LoK::hasSoundFile(uint file) const {
 void SoundPC98_LoK::loadSoundFile(uint) {
 	if (_currentResourceSet == kMusicIntro) {
 		delete[] _sfxTrackData;
-		_sfxTrackData = 0;
+		_sfxTrackData = nullptr;
 
 		int dataSize = 0;
 		const uint8 *tmp = _vm->staticres()->loadRawData(k1PC98IntroSfx, dataSize);
@@ -88,7 +88,7 @@ void SoundPC98_LoK::loadSoundFile(uint) {
 
 void SoundPC98_LoK::loadSoundFile(Common::String file) {
 	delete[] _sfxTrackData;
-	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
+	_sfxTrackData = _vm->resource()->fileData(file.c_str(), nullptr);
 }
 
 void SoundPC98_LoK::playTrack(uint8 track) {
@@ -101,7 +101,7 @@ void SoundPC98_LoK::playTrack(uint8 track) {
 
 	Common::String musicFile = Common::String::format(resPattern(), track);
 	delete[] _musicTrackData;
-	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), 0);
+	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), nullptr);
 	if (_musicEnabled)
 		_driver->loadMusicData(_musicTrackData);
 

@@ -77,8 +77,8 @@ const int8 AUDStream::WSTable4Bit[] = {
 };
 
 AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _endOfData(true), _rate(0),
-	_processedSize(0), _totalSize(0), _length(0, 1), _bytesLeft(0), _outBuffer(0),
-	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
+	_processedSize(0), _totalSize(0), _length(0, 1), _bytesLeft(0), _outBuffer(nullptr),
+	_outBufferOffset(0), _outBufferSize(0), _inBuffer(nullptr), _inBufferSize(0) {
 
 	if (_stream->size() < 8) {
 		warning("No AUD file: too short");

@@ -27,7 +27,7 @@
 #include "common/endian.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _filename(0) {
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(nullptr), _filename(nullptr) {
 #define OPCODE(x) { &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
 		// 0x00
@@ -128,8 +128,8 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	Common::strlcpy(_scriptData->filename, filename, 13);
 
-	_scriptData = 0;
-	_filename = 0;
+	_scriptData = nullptr;
+	_filename = nullptr;
 
 	return true;
 }
@@ -142,13 +142,13 @@ void EMCInterpreter::unload(EMCData *data) {
 	delete[] data->ordr;
 	delete[] data->data;
 
-	data->text = 0;
-	data->ordr = data->data = 0;
+	data->text = nullptr;
+	data->ordr = data->data = nullptr;
 }
 
 void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {
 	scriptStat->dataPtr = data;
-	scriptStat->ip = 0;
+	scriptStat->ip = nullptr;
 	scriptStat->stack[EMCState::kStackLastEntry] = 0;
 	scriptStat->bp = EMCState::kStackSize+1;
 	scriptStat->sp = EMCState::kStackLastEntry;
@@ -219,7 +219,7 @@ bool EMCInterpreter::run(EMCState *script) {
 		(this->*(_opcodes[opcode].proc))(script);
 	}
 
-	return (script->ip != 0);
+	return (script->ip != nullptr);
 }
 
 #pragma mark -
@@ -247,7 +247,7 @@ void EMCInterpreter::op_pushRetOrPos(EMCState *script) {
 		break;
 
 	default:
-		script->ip = 0;
+		script->ip = nullptr;
 	}
 }
 
@@ -275,7 +275,7 @@ void EMCInterpreter::op_popRetOrPos(EMCState *script) {
 
 	case 1:
 		if (script->sp >= EMCState::kStackLastEntry) {
-			script->ip = 0;
+			script->ip = nullptr;
 		} else {
 			script->bp = script->stack[script->sp++];
 			script->ip = script->dataPtr->data + script->stack[script->sp++];
@@ -283,7 +283,7 @@ void EMCInterpreter::op_popRetOrPos(EMCState *script) {
 		break;
 
 	default:
-		script->ip = 0;
+		script->ip = nullptr;
 	}
 }
 
@@ -348,7 +348,7 @@ void EMCInterpreter::op_negate(EMCState *script) {
 
 	default:
 		warning("Unknown negation func: %d", _parameter);
-		script->ip = 0;
+		script->ip = nullptr;
 	}
 }
 
@@ -438,14 +438,14 @@ void EMCInterpreter::op_eval(EMCState *script) {
 	}
 
 	if (error)
-		script->ip = 0;
+		script->ip = nullptr;
 	else
 		script->stack[--script->sp] = ret;
 }
 
 void EMCInterpreter::op_setRetAndJmp(EMCState *script) {
 	if (script->sp >= EMCState::kStackLastEntry) {
-		script->ip = 0;
+		script->ip = nullptr;
 	} else {
 		script->retValue = script->stack[script->sp++];
 		uint16 temp = script->stack[script->sp++];

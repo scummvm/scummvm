@@ -34,7 +34,7 @@ namespace Kyra {
 
 void KyraEngine_HoF::loadButtonShapes() {
 	const uint8 *src = _screen->getCPagePtr(3);
-	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
+	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, nullptr);
 
 	_gui->_scrollUpButton.data0ShapePtr = _buttonShapes[0] = _screen->makeShapeCopy(src, 0);
 	_gui->_scrollUpButton.data2ShapePtr = _buttonShapes[1] = _screen->makeShapeCopy(src, 1);
@@ -258,7 +258,7 @@ void KyraEngine_HoF::redrawInventory(int page) {
 
 void KyraEngine_HoF::scrollInventoryWheel() {
 	WSAMovie_v2 movie(this);
-	movie.open("INVWHEEL.WSA", 0, 0);
+	movie.open("INVWHEEL.WSA", 0, nullptr);
 	int frames = movie.opened() ? movie.frames() : 6;
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
 	uint8 overlay[0x100];
@@ -269,7 +269,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 	bool breakFlag = false;
 	for (int i = 0; i <= 6 && !breakFlag; ++i) {
 		if (movie.opened()) {
-			movie.displayFrame(i % frames, 0, 0, 0, 0, 0, 0);
+			movie.displayFrame(i % frames, 0, 0, 0, 0, nullptr, nullptr);
 			_screen->updateScreen();
 		}
 
@@ -332,7 +332,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	}
 
 	_screen->hideMouse();
-	showMessage(0, 0xCF);
+	showMessage(nullptr, 0xCF);
 	displayInvWsaLastFrame();
 	_bookNewPage = _bookCurPage;
 
@@ -421,29 +421,29 @@ void KyraEngine_HoF::loadBookBkgd() {
 			strcpy(filename, "_BOOKA.CPS");
 	}
 
-	_screen->loadBitmap(filename, 3, 3, 0);
+	_screen->loadBitmap(filename, 3, 3, nullptr);
 }
 
 void KyraEngine_HoF::showBookPage() {
 	char filename[16];
 
 	sprintf(filename, "PAGE%.01X.%s", _bookCurPage, _languageExtension[_lang]);
-	uint8 *leftPage = _res->fileData(filename, 0);
+	uint8 *leftPage = _res->fileData(filename, nullptr);
 	if (!leftPage) {
 		// some floppy version use a TXT extension
 		sprintf(filename, "PAGE%.01X.TXT", _bookCurPage);
-		leftPage = _res->fileData(filename, 0);
+		leftPage = _res->fileData(filename, nullptr);
 	}
 
 	int leftPageY = _bookPageYOffset[_bookCurPage];
 
 	sprintf(filename, "PAGE%.01X.%s", _bookCurPage+1, _languageExtension[_lang]);
-	uint8 *rightPage = 0;
+	uint8 *rightPage = nullptr;
 	if (_bookCurPage != _bookMaxPage) {
-		rightPage = _res->fileData(filename, 0);
+		rightPage = _res->fileData(filename, nullptr);
 		if (!rightPage) {
 			sprintf(filename, "PAGE%.01X.TXT", _bookCurPage);
-			rightPage = _res->fileData(filename, 0);
+			rightPage = _res->fileData(filename, nullptr);
 		}
 	}
 
@@ -476,7 +476,7 @@ void KyraEngine_HoF::bookLoop() {
 	GUI_V2_BUTTON(bookButtons[4], 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookNextPage);
 
-	Button *buttonList = 0;
+	Button *buttonList = nullptr;
 
 	for (uint i = 0; i < ARRAYSIZE(bookButtons); ++i)
 		buttonList = _gui->addButtonToList(buttonList, &bookButtons[i]);
@@ -581,7 +581,7 @@ int KyraEngine_HoF::cauldronClearButton(Button *button) {
 	snd_playSoundEffect(0x25);
 	loadInvWsa("PULL.WSA", 1, 6, 0, -1, -1, 1);
 	loadInvWsa("CAULD00.WSA", 1, 7, 0, 0xD4, 0x0F, 1);
-	showMessage(0, 0xCF);
+	showMessage(nullptr, 0xCF);
 	setCauldronState(0, 0);
 	clearCauldronTable();
 	snd_playSoundEffect(0x57);
@@ -638,7 +638,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 				snd_playSoundEffect(0x6C);
 				++_cauldronUseCount;
 				if (_cauldronStateTable[_cauldronState] <= _cauldronUseCount && _cauldronUseCount) {
-					showMessage(0, 0xCF);
+					showMessage(nullptr, 0xCF);
 					setCauldronState(0, true);
 					clearCauldronTable();
 				}
@@ -672,7 +672,7 @@ int GUI_HoF::optionsButton(Button *button) {
 	if (!_screen->isMouseVisible() && button)
 		return 0;
 
-	_vm->showMessage(0, 0xCF);
+	_vm->showMessage(nullptr, 0xCF);
 
 	if (_vm->_mouseState < -1) {
 		_vm->_mouseState = -1;
@@ -709,7 +709,7 @@ int GUI_HoF::optionsButton(Button *button) {
 
 		_loadedSave = false;
 
-		loadMenu(0);
+		loadMenu(nullptr);
 
 		if (_loadedSave) {
 			if (_restartGame)

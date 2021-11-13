@@ -118,7 +118,7 @@ void KyraEngine_MR::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 				flags |= 0x8000;
 			x = obj->xPos2 - _sceneAnimMovie[obj->animNum]->xAdd();
 			y = obj->yPos2 - _sceneAnimMovie[obj->animNum]->yAdd();
-			_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, flags | layer, 0, 0);
+			_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, flags | layer, nullptr, nullptr);
 		}
 	}
 }
@@ -293,7 +293,7 @@ void KyraEngine_MR::updateSceneAnim(int anim, int newFrame) {
 		animObject->shapeIndex3 = 0xFFFF;
 		animObject->animNum = 0xFFFF;
 	} else {
-		animObject->shapePtr = 0;
+		animObject->shapePtr = nullptr;
 		animObject->shapeIndex3 = newFrame;
 		animObject->animNum = anim;
 	}
@@ -329,7 +329,7 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 		strcpy(anim.filename, filename);
 
 	if (flags & 8) {
-		_sceneAnimMovie[animId]->open(filename, 1, 0);
+		_sceneAnimMovie[animId]->open(filename, 1, nullptr);
 		if (_sceneAnimMovie[animId]->opened()) {
 			anim.wsaFlag = 1;
 			if (x2 == -1)
@@ -369,7 +369,7 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 	if ((anim.flags & 4) && anim.shapeIndex != -1)
 		obj->shapePtr = _sceneShapes[anim.shapeIndex];
 	else
-		obj->shapePtr = 0;
+		obj->shapePtr = nullptr;
 
 	if (anim.flags & 8) {
 		obj->shapeIndex3 = anim.shapeIndex;

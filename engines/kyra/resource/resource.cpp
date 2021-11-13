@@ -72,7 +72,7 @@ bool Resource::reset() {
 			static const char *const list[] = {
 				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
 				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK", "SND.PAK", "STARTUP.PAK", "XMI.PAK",
-				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
+				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", nullptr
 			};
 
 			loadProtectedFiles(list);
@@ -136,7 +136,7 @@ bool Resource::reset() {
 
 		if (!_vm->gameFlags().isTalkie && !_vm->gameFlags().isDemo) {
 			static const char *const list[] = {
-				"GENERAL.PAK", 0
+				"GENERAL.PAK", nullptr
 			};
 
 			loadProtectedFiles(list);
@@ -280,7 +280,7 @@ void Resource::listFiles(const Common::String &pattern, Common::ArchiveMemberLis
 uint8 *Resource::fileData(const char *file, uint32 *size) {
 	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	uint32 bufferSize = stream->size();
 	uint8 *buffer = new uint8[bufferSize];
@@ -327,7 +327,7 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 
 Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file, int endianness) {
 	Common::SeekableReadStream *stream = _files.createReadStreamForMember(file);
-	return stream ? new EndianAwareStreamWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm)) : 0;
+	return stream ? new EndianAwareStreamWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm)) : nullptr;
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {
@@ -338,9 +338,9 @@ Common::Archive *Resource::loadArchive(const Common::String &name, Common::Archi
 	Common::SeekableReadStream *stream = member->createReadStream();
 
 	if (!stream)
-		return 0;
+		return nullptr;
 
-	Common::Archive *archive = 0;
+	Common::Archive *archive = nullptr;
 	for (LoaderList::const_iterator i = _loaders.begin(); i != _loaders.end(); ++i) {
 		if ((*i)->checkFilename(name)) {
 			if ((*i)->isLoadable(name, *stream)) {
@@ -356,7 +356,7 @@ Common::Archive *Resource::loadArchive(const Common::String &name, Common::Archi
 	delete stream;
 
 	if (!archive)
-		return 0;
+		return nullptr;
 
 	_archiveCache[name] = archive;
 	return archive;
@@ -369,7 +369,7 @@ Common::Archive *Resource::loadInstallerArchive(const Common::String &file, cons
 
 	Common::Archive *archive = InstallerLoader::load(this, file, ext, offset);
 	if (!archive)
-		return 0;
+		return nullptr;
 
 	_archiveCache[file] = archive;
 	return archive;

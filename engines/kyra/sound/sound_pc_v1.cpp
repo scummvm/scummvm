@@ -41,10 +41,10 @@ const int SoundPC_v1::_kyra1SoundTriggers[] = {
 const int SoundPC_v1::_kyra1NumSoundTriggers = ARRAYSIZE(SoundPC_v1::_kyra1SoundTriggers);
 
 SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
-	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0), _type(type) {
+	: Sound(vm, mixer), _driver(nullptr), _trackEntries(), _soundDataPtr(nullptr), _type(type) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 
-	_soundTriggers = 0;
+	_soundTriggers = nullptr;
 	_numSoundTriggers = 0;
 	_sfxPlayingSound = -1;
 	_soundFileLoaded.clear();
@@ -89,7 +89,7 @@ SoundPC_v1::~SoundPC_v1() {
 	delete _driver;
 	delete[] _soundDataPtr;
 	for (int i = 0; i < 3; i++)
-		initAudioResourceInfo(i, 0);
+		initAudioResourceInfo(i, nullptr);
 }
 
 bool SoundPC_v1::init() {
@@ -187,7 +187,7 @@ void SoundPC_v1::resetTrigger() {
 void SoundPC_v1::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : nullptr;
 	}
 }
 
@@ -200,7 +200,7 @@ void SoundPC_v1::selectAudioResourceSet(int set) {
 
 bool SoundPC_v1::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
-		return (res()->fileList[file] != 0);
+		return (res()->fileList[file] != nullptr);
 	return false;
 }
 
@@ -223,7 +223,7 @@ void SoundPC_v1::internalLoadFile(Common::String file) {
 	if (_soundDataPtr)
 		haltTrack();
 
-	uint8 *fileData = 0; uint32 fileSize = 0;
+	uint8 *fileData = nullptr; uint32 fileSize = 0;
 
 	fileData = _vm->resource()->fileData(file.c_str(), &fileSize);
 	if (!fileData) {

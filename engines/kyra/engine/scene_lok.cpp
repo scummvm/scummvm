@@ -270,7 +270,7 @@ void KyraEngine_LoK::moveCharacterToPos(int character, int facing, int xpos, int
 }
 
 void KyraEngine_LoK::setCharacterPositionWithUpdate(int character) {
-	setCharacterPosition(character, 0);
+	setCharacterPosition(character, nullptr);
 	_sprites->updateSceneAnims();
 	_timer->update();
 	_animator->updateAllObjectShapes();
@@ -290,7 +290,7 @@ int KyraEngine_LoK::setCharacterPosition(int character, int *facingTable) {
 		_characterList[character].x1 += _charAddXPosTable[_characterList[character].facing];
 		_characterList[character].y1 += _charAddYPosTable[_characterList[character].facing];
 		if (_characterList[character].sceneId == _currentCharacter->sceneId)
-			setCharacterPositionHelper(character, 0);
+			setCharacterPositionHelper(character, nullptr);
 	}
 	return 0;
 }
@@ -384,7 +384,7 @@ void KyraEngine_LoK::loadSceneMsc() {
 	strcat(fileNameBuffer, ".MSC");
 	_screen->fillRect(0, 0, 319, 199, 0, 5);
 	_res->exists(fileNameBuffer, true);
-	_screen->loadBitmap(fileNameBuffer, 3, 5, 0);
+	_screen->loadBitmap(fileNameBuffer, 3, 5, nullptr);
 }
 
 void KyraEngine_LoK::startSceneScript(int brandonAlive) {
@@ -397,9 +397,9 @@ void KyraEngine_LoK::startSceneScript(int brandonAlive) {
 	_screen->clearPage(3);
 	_res->exists(fileNameBuffer, true);
 	// FIXME: check this hack for amiga version
-	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? &_screen->getPalette(0) : 0));
+	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? &_screen->getPalette(0) : nullptr));
 	_sprites->loadSceneShapes();
-	_exitListPtr = 0;
+	_exitListPtr = nullptr;
 
 	_scaleMode = 1;
 	for (int i = 0; i < 145; ++i)
@@ -949,7 +949,7 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 
 		int temp = 0;
 		if (table == tableStart || table[1] == 8)
-			temp = setCharacterPosition(0, 0);
+			temp = setCharacterPosition(0, nullptr);
 		else
 			temp = setCharacterPosition(0, table);
 

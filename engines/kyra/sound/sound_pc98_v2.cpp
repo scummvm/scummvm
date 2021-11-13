@@ -35,7 +35,7 @@
 namespace Kyra {
 
 SoundTownsPC98_v2::SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _useFmSfx(false), _currentResourceSet(0) {
+	Sound(vm, mixer), _currentSFX(nullptr), _musicTrackData(nullptr), _sfxTrackData(nullptr), _lastTrack(-1), _driver(nullptr), _useFmSfx(false), _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -44,7 +44,7 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 	delete[] _sfxTrackData;
 	delete _driver;
 	for (int i = 0; i < 3; i++)
-		initAudioResourceInfo(i, 0);
+		initAudioResourceInfo(i, nullptr);
 }
 
 bool SoundTownsPC98_v2::init() {
@@ -91,7 +91,7 @@ bool SoundTownsPC98_v2::init() {
 void SoundTownsPC98_v2::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_TownsPC98V2(*(SoundResourceInfo_TownsPC98V2*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_TownsPC98V2(*(SoundResourceInfo_TownsPC98V2*)info) : nullptr;
 	}
 }
 
@@ -104,13 +104,13 @@ void SoundTownsPC98_v2::selectAudioResourceSet(int set) {
 
 bool SoundTownsPC98_v2::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
-		return (res()->fileList[file] != 0);
+		return (res()->fileList[file] != nullptr);
 	return false;
 }
 
 void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
 	delete[] _sfxTrackData;
-	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
+	_sfxTrackData = _vm->resource()->fileData(file.c_str(), nullptr);
 }
 
 void SoundTownsPC98_v2::process() {
@@ -133,13 +133,13 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 
 	beginFadeOut();
 
-	Common::String musicFile = res()->pattern ? Common::String::format(res()->pattern, track) : (res()->fileList ? res()->fileList[track] : 0);
+	Common::String musicFile = res()->pattern ? Common::String::format(res()->pattern, track) : (res()->fileList ? res()->fileList[track] : nullptr);
 	if (musicFile.empty())
 		return;
 
 	delete[] _musicTrackData;
 
-	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), 0);
+	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), nullptr);
 	_driver->loadMusicData(_musicTrackData, true);
 
 	if (_musicEnabled == 2 && trackNum != -1) {
@@ -195,7 +195,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 
 	Common::String fileName = Common::String::format( _vm->game() == GI_LOL ? patternLOL : patternHOF, file);
 
-	uint8 *data = _vm->resource()->fileData(fileName.c_str(), 0);
+	uint8 *data = _vm->resource()->fileData(fileName.c_str(), nullptr);
 	uint8 *src = data;
 	if (!src)
 		return 0;
