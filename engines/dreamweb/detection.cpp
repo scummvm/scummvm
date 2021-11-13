@@ -37,7 +37,7 @@
 
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {

@@ -69,9 +69,9 @@ void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y,
 		return;
 
 	uint8 dummyWidth, dummyHeight;
-	if (width == NULL)
+	if (width == nullptr)
 		width = &dummyWidth;
-	if (height == NULL)
+	if (height == nullptr)
 		height = &dummyHeight;
 	if (_foreignRelease)
 		y -= 3;
@@ -242,7 +242,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 				break;
 			}
 			c = modifyChar(c);
-			printChar(_monitorCharset, &x, _monAdY, c, 0, NULL, NULL, true);
+			printChar(_monitorCharset, &x, _monAdY, c, 0, nullptr, nullptr, true);
 			_cursLocX = x;
 			_cursLocY = _monAdY;
 			_mainTimer = 1;

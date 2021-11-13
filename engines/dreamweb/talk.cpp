@@ -47,7 +47,7 @@ void DreamWebEngine::talk() {
 		{ 273,320,157,198,&DreamWebEngine::getBack1 },
 		{ 240,290,2,44,&DreamWebEngine::moreTalk },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	do {
@@ -217,7 +217,7 @@ bool DreamWebEngine::hangOnPQ() {
 	RectWithCallback quitList[] = {
 		{ 273,320,157,198,&DreamWebEngine::getBack1 },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	uint16 speechFlag = 0;

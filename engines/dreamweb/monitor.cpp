@@ -108,7 +108,7 @@ void DreamWebEngine::useMon() {
 int DreamWebEngine::findCommand(const char *const cmdList[]) {
 	// Loop over all commands in the list and see if we get a match
 	int cmd = 0;
-	while (cmdList[cmd] != NULL) {
+	while (cmdList[cmd] != nullptr) {
 		const char *cmdStr = cmdList[cmd];
 		const char *inputStr = _inputLine;
 		// Compare the command, char by char, to see if we get a match.
@@ -133,7 +133,7 @@ bool DreamWebEngine::execCommand() {
 		"READ",
 		"LOGON",
 		"KEYS",
-		NULL
+		nullptr
 	};
 
 	static const char *const comlistFR[] = {
@@ -143,7 +143,7 @@ bool DreamWebEngine::execCommand() {
 		"LIRE",
 		"CONNEXION",
 		"TOUCHES", // should be CLES but it is translated as TOUCHES in the game...
-		NULL
+		nullptr
 	};
 
 	static const char *const comlistDE[] = {
@@ -153,7 +153,7 @@ bool DreamWebEngine::execCommand() {
 		"LIES",
 		"ZUGRIFF",
 		"DATEN",
-		NULL
+		nullptr
 	};
 
 	static const char *const comlistIT[] = {
@@ -163,7 +163,7 @@ bool DreamWebEngine::execCommand() {
 		"LEGGI",
 		"ACCEDI",
 		"CHIAVI",
-		NULL
+		nullptr
 	};
 
 	static const char *const comlistES[] = {
@@ -173,7 +173,7 @@ bool DreamWebEngine::execCommand() {
 		"LEER",
 		"ACCESO",
 		"CLAVES",
-		NULL
+		nullptr
 	};
 
 	if (_inputLine[0] == 0) {
@@ -276,7 +276,7 @@ void DreamWebEngine::printLogo() {
 void DreamWebEngine::input() {
 	memset(_inputLine, 0, sizeof(_inputLine));
 	_curPos = 0;
-	printChar(_monitorCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
+	printChar(_monitorCharset, _monAdX, _monAdY, '>', 0, nullptr, nullptr);
 	multiDump(_monAdX, _monAdY, 6, 8);
 	_monAdX += 6;
 	_cursLocX = _monAdX;
@@ -308,7 +308,7 @@ void DreamWebEngine::input() {
 			continue;
 		multiGet(_mapStore + _curPos * 256, _monAdX, _monAdY, 8, 8);
 		uint8 charWidth;
-		printChar(_monitorCharset, _monAdX, _monAdY, currentKey, 0, &charWidth, NULL);
+		printChar(_monitorCharset, _monAdX, _monAdY, currentKey, 0, &charWidth, nullptr);
 		_inputLine[_curPos * 2 + 1] = charWidth;
 		_monAdX += charWidth;
 		++_curPos;
@@ -384,7 +384,7 @@ void DreamWebEngine::showCurrentFile() {
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = modifyChar(c);
-		printChar(_monitorCharset, &x, 37, c, 0, NULL, NULL);
+		printChar(_monitorCharset, &x, 37, c, 0, nullptr, nullptr);
 	}
 }
 
@@ -526,7 +526,7 @@ const char *DreamWebEngine::getKeyAndLogo(const char *foundString) {
 		monMessage(12);	// "Access denied, key required -"
 		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -542,7 +542,7 @@ const char *DreamWebEngine::searchForString(const char *topic, const char *text)
 			c = makeCaps(*text++);
 
 			if (c == '*' || (delim == '=' && c == 34))
-				return 0;
+				return nullptr;
 
 			if (c == delim) {
 				delimCount++;

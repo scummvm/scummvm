@@ -162,7 +162,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 				{ 144,176,64,96,&DreamWebEngine::setPickup },
 				{ 0,50,50,200,&DreamWebEngine::examineInventory },
 				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 0xFFFF,0,0,0,nullptr }
 			};
 			checkCoords(examList);
 			break;
@@ -176,7 +176,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamWebEngine::useOpened },
 				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::inToInv },
 				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 0xFFFF,0,0,0,nullptr }
 			};
 			checkCoords(invList1);
 			break;
@@ -187,7 +187,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::selectOb },
 				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 0xFFFF,0,0,0,nullptr }
 			};
 			checkCoords(withList1);
 			break;
@@ -601,7 +601,7 @@ void DreamWebEngine::purgeALocation(uint8 index) {
 }
 
 const uint8 *DreamWebEngine::getObTextStart() {
-	const uint8 *textBase = 0;
+	const uint8 *textBase = nullptr;
 	const uint8 *text;
 	uint16 textOff = 0;
 	if (_objectType == kFreeObjectType) {
