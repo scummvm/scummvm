@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-13 14:33+0000\n"
+"POT-Creation-Date: 2021-11-13 20:22+0000\n"
 "PO-Revision-Date: 2021-11-01 06:30+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -127,7 +127,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -139,7 +139,7 @@ msgstr "Igen"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -249,7 +249,7 @@ msgstr ""
 #: gui/options.cpp:1420 gui/options.cpp:1433 gui/options.cpp:1447
 #: gui/options.cpp:1459 gui/options.cpp:1479 gui/options.cpp:1491
 #: gui/options.cpp:1865 gui/options.cpp:2285 gui/options.cpp:2358
-#: gui/options.cpp:2530 gui/options.cpp:2955 audio/null.cpp:41
+#: gui/options.cpp:2532 gui/options.cpp:2957 audio/null.cpp:41
 msgid "<default>"
 msgstr "<alapértelmezett>"
 
@@ -436,22 +436,22 @@ msgstr "Statisztika"
 #: gui/editgamedialog.cpp:575 gui/editgamedialog.cpp:642 gui/options.cpp:2155
 #: gui/options.cpp:2161 gui/options.cpp:2167 gui/options.cpp:2175
 #: gui/options.cpp:2206 gui/options.cpp:2249 gui/options.cpp:2257
-#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2643
-#: gui/options.cpp:2649 gui/options.cpp:2655 gui/options.cpp:2662
-#: gui/options.cpp:2671 gui/options.cpp:2936 gui/options.cpp:2939
-#: gui/options.cpp:2942 gui/options.cpp:2949 gui/options.cpp:2961
-#: gui/options.cpp:2972
+#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2645
+#: gui/options.cpp:2651 gui/options.cpp:2657 gui/options.cpp:2664
+#: gui/options.cpp:2673 gui/options.cpp:2938 gui/options.cpp:2941
+#: gui/options.cpp:2944 gui/options.cpp:2951 gui/options.cpp:2963
+#: gui/options.cpp:2974
 msgctxt "path"
 msgid "None"
 msgstr "Nincs"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
-#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2637
-#: gui/options.cpp:2945 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2639
+#: gui/options.cpp:2947 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Alapértelmezett"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2966
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2968
 msgid "Select SoundFont"
 msgstr "SoundFont kiválasztás"
 
@@ -459,11 +459,11 @@ msgstr "SoundFont kiválasztás"
 msgid "Select additional game directory"
 msgstr "Válassz mappát a játék kiegészítõkhöz"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2861
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2863
 msgid "Select directory for saved games"
 msgstr "Válaszz játékmentéseknek mappát"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2868
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2870
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "A kiválasztott mappába nem lehet írni, válassz egy másikat."
 
@@ -956,7 +956,7 @@ msgstr "%d Mappa átvizsgálva..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "%d új játékot találtam, %d elõzõleg hozzáadott játék kihagyva..."
 
-#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2465
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2467
 msgid "Open URL"
 msgstr "URL megnyitása"
 
@@ -1476,7 +1476,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVM konfigurációs path: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2290 gui/options.cpp:2955
+#: gui/options.cpp:2290 gui/options.cpp:2957
 msgid "Last browser path: "
 msgstr "Utolsó böngésző elérési út: "
 
@@ -1566,27 +1566,27 @@ msgstr ""
 "A ScummVM-é helyett az eredeti rendszer fájlböngészõjét használhatja egy "
 "fájl vagy könyvtár kiválasztásához."
 
-#: gui/options.cpp:2402 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2403 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Frissítés ellenõrzés:"
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2403
 msgid "How often to check ScummVM updates"
 msgstr "Milyen gyakran ellenõrizze a ScummVM frissítéseket"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2414
 msgid "Check now"
 msgstr "Ellenõrzés most"
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active storage:"
 msgstr "Aktív tároló:"
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active cloud storage"
 msgstr "Aktív felhõ tároló"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2431
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
@@ -1594,221 +1594,221 @@ msgstr ""
 "4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
 "engedélyezd:"
 
-#: gui/options.cpp:2431
+#: gui/options.cpp:2433
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
 "engedélyezd:"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Enable storage"
 msgstr "Tároló engedélyezése"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Confirm you want to use this account for this storage"
 msgstr "Erõsítsd meg, hogy ezt a fiókot akarod használni a tároláshoz"
 
-#: gui/options.cpp:2434 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2436 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Felhasználó:"
 
-#: gui/options.cpp:2434
+#: gui/options.cpp:2436
 msgid "Username used by this storage"
 msgstr "Felhasználónév ehhez a tárolóhoz"
 
-#: gui/options.cpp:2435
+#: gui/options.cpp:2437
 msgid "<none>"
 msgstr "<nincs>"
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Used space:"
 msgstr "Használt hely:"
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVM mentésekhez használt hely ezen a tárolón"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "Last sync:"
 msgstr "Utolsó szink:"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Mikor volt az utoljára mentett játékok szinkronizálása ezen a tárolón"
 
-#: gui/options.cpp:2441 gui/options.cpp:3310
+#: gui/options.cpp:2443 gui/options.cpp:3312
 msgid "<never>"
 msgstr "<soha>"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2445
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
 "betöltésekor."
 
-#: gui/options.cpp:2445
+#: gui/options.cpp:2447
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
 "betöltésekor."
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Sync now"
 msgstr "Szink most"
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Start saved games sync"
 msgstr "Indítsd el a mentett játékok szinkronizálását"
 
-#: gui/options.cpp:2449
+#: gui/options.cpp:2451
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
-#: gui/options.cpp:2451
+#: gui/options.cpp:2453
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Download game files"
 msgstr "Játék fájlok letöltése"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Open downloads manager dialog"
 msgstr "Letöltéskezelõ párbeszédablak megnyitása"
 
-#: gui/options.cpp:2455
+#: gui/options.cpp:2457
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
-#: gui/options.cpp:2457
+#: gui/options.cpp:2459
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Disconnect"
 msgstr "Szétkapcsolás"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Stop using this storage on this device"
 msgstr "Hagyd abba a tároló használatát ezen az eszközön"
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2463
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
-#: gui/options.cpp:2463
+#: gui/options.cpp:2465
 msgid "This storage is not connected yet! To connect,"
 msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
-#: gui/options.cpp:2464
+#: gui/options.cpp:2466
 msgid "1. Open this link:"
 msgstr "1. Nyisd meg ezt a linket:"
 
-#: gui/options.cpp:2467
+#: gui/options.cpp:2469
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. Szerezd be a kódot, és írd be ide:"
 
-#: gui/options.cpp:2469
+#: gui/options.cpp:2471
 msgid "2. Get the code and enter it here:"
 msgstr "2. Szerezd be a kódot, és írd be ide:"
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste"
 msgstr "Beilleszt"
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste code from clipboard"
 msgstr "Kód beillesztése vágólapról"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "3. Connect"
 msgstr "3. Kapcsolódás"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "Connect your cloud storage account"
 msgstr "Csatlakozás a felhõtároló fiókodhoz"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run server"
 msgstr "Szerver futtatás"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run local webserver"
 msgstr "Helyi webszerver futtatása"
 
-#: gui/options.cpp:2482 gui/options.cpp:3425
+#: gui/options.cpp:2484 gui/options.cpp:3427
 msgid "Not running"
 msgstr "Nem fut"
 
-#: gui/options.cpp:2486
+#: gui/options.cpp:2488
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/gyökér/ Útvonal:"
 
-#: gui/options.cpp:2486 gui/options.cpp:2488 gui/options.cpp:2489
+#: gui/options.cpp:2488 gui/options.cpp:2490 gui/options.cpp:2491
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 "Válaszd ki, melyik könyvtár jelenjen meg /gyökér/ néven a Fájlkezelõben"
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2490
 msgid "/root/ Path:"
 msgstr "/gyökér/ Útvonal:"
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Server's port:"
 msgstr "Szerver portja:"
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Port for server to use"
 msgstr "Port a kiszolgáló számára"
 
-#: gui/options.cpp:2499
+#: gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
-
-#: gui/options.cpp:2500
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
 #: gui/options.cpp:2502
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
+
+#: gui/options.cpp:2504
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
 
-#: gui/options.cpp:2503
+#: gui/options.cpp:2505
 msgid "Closing options dialog will stop the server."
 msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2517
 msgid "Use Text to speech"
 msgstr "Használd a Szövegbõl beszédet"
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2517
 msgid "Will read text in gui on mouse over."
 msgstr "Olvassa a szöveget gui-ban az egérrel."
 
-#: gui/options.cpp:2528
+#: gui/options.cpp:2530
 msgid "None"
 msgstr "Semmi"
 
-#: gui/options.cpp:2589
+#: gui/options.cpp:2591
 msgid "Ignore"
 msgstr "Mellőz"
 
-#: gui/options.cpp:2590
+#: gui/options.cpp:2592
 msgid "Disable autosave"
 msgstr "Automentés letiltás"
 
-#: gui/options.cpp:2591
+#: gui/options.cpp:2593
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1823,7 +1823,7 @@ msgstr ""
 "felülírja a mentést).\n"
 "A játékok listája:\n"
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2602
 msgid ""
 "\n"
 "And more..."
@@ -1831,31 +1831,31 @@ msgstr ""
 "\n"
 "És több..."
 
-#: gui/options.cpp:2601 engines/engine.cpp:582
+#: gui/options.cpp:2603 engines/engine.cpp:582
 msgid "Move"
 msgstr "Mozgás"
 
-#: gui/options.cpp:2614
+#: gui/options.cpp:2616
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "HIBA: Nem sikerült áthelyezni a következő mentett játékokat:\n"
 
-#: gui/options.cpp:2707
+#: gui/options.cpp:2709
 msgid "Failed to change cloud storage!"
 msgstr "Felhõtároló csere nem sikerült!"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2712
 msgid "Another cloud storage is already active."
 msgstr "Egy másik felhõtároló már aktív."
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Theme does not support selected language!"
 msgstr "A téma nem támogatja a választott nyelvet!"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid "Theme cannot be loaded!"
 msgstr "A témát nem lehet betölteni!"
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1863,29 +1863,29 @@ msgstr ""
 "\n"
 "A különbözõ beállítások visszaállítva."
 
-#: gui/options.cpp:2877
+#: gui/options.cpp:2879
 msgid "Select directory for GUI themes"
 msgstr "GUI téma mappa kiválasztása"
 
-#: gui/options.cpp:2887
+#: gui/options.cpp:2889
 #, fuzzy
 #| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "GUI téma mappa kiválasztása"
 
-#: gui/options.cpp:2897
+#: gui/options.cpp:2899
 msgid "Select directory for extra files"
 msgstr "Mappa választás az extra fájloknak"
 
-#: gui/options.cpp:2908
+#: gui/options.cpp:2910
 msgid "Select directory for plugins"
 msgstr "Plugin mappa kiválasztása"
 
-#: gui/options.cpp:2921
+#: gui/options.cpp:2923
 msgid "Select directory for Files Manager /root/"
 msgstr "Válassz mappát a Fájlkezelõnek /gyökér/"
 
-#: gui/options.cpp:3042
+#: gui/options.cpp:3044
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1893,47 +1893,47 @@ msgstr ""
 "URL megnyitás nem sikerült!\n"
 "Kérjük, navigálj az oldalra manuálisan."
 
-#: gui/options.cpp:3067
+#: gui/options.cpp:3069
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Egy másik tároló már mûködik. Meg akarod szakítani?"
 
-#: gui/options.cpp:3076 gui/options.cpp:3114
+#: gui/options.cpp:3078 gui/options.cpp:3116
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Várj amíg a jelenlegi tároló befejezi és próbáld újra."
 
-#: gui/options.cpp:3089
+#: gui/options.cpp:3091
 msgid "Connecting..."
 msgstr "Csatlakozás ..."
 
-#: gui/options.cpp:3105
+#: gui/options.cpp:3107
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ez a tároló már aktív. Meg akarod szakítani?"
 
-#: gui/options.cpp:3308 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3310 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<épp most>"
 
-#: gui/options.cpp:3417
+#: gui/options.cpp:3419
 msgid "Stop server"
 msgstr "Szerver leállítás"
 
-#: gui/options.cpp:3418
+#: gui/options.cpp:3420
 msgid "Stop local webserver"
 msgstr "Helyi webszerver leállítása"
 
-#: gui/options.cpp:3470
+#: gui/options.cpp:3472
 msgid "Storage connected."
 msgstr "Tároló csatlakoztatva."
 
-#: gui/options.cpp:3472
+#: gui/options.cpp:3474
 msgid "Failed to connect storage."
 msgstr "Nem sikerült csatlakoztatni a tárolót."
 
-#: gui/options.cpp:3474
+#: gui/options.cpp:3476
 msgid "Failed to connect storage: "
 msgstr "Nem sikerült csatlakoztatni a tárolót. "
 
-#: gui/options.cpp:3494
+#: gui/options.cpp:3496
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

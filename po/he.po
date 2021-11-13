@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-13 14:33+0000\n"
+"POT-Creation-Date: 2021-11-13 20:22+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -126,7 +126,7 @@ msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -138,7 +138,7 @@ msgstr "כן"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -245,7 +245,7 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 #: gui/options.cpp:1420 gui/options.cpp:1433 gui/options.cpp:1447
 #: gui/options.cpp:1459 gui/options.cpp:1479 gui/options.cpp:1491
 #: gui/options.cpp:1865 gui/options.cpp:2285 gui/options.cpp:2358
-#: gui/options.cpp:2530 gui/options.cpp:2955 audio/null.cpp:41
+#: gui/options.cpp:2532 gui/options.cpp:2957 audio/null.cpp:41
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -433,22 +433,22 @@ msgstr ""
 #: gui/editgamedialog.cpp:575 gui/editgamedialog.cpp:642 gui/options.cpp:2155
 #: gui/options.cpp:2161 gui/options.cpp:2167 gui/options.cpp:2175
 #: gui/options.cpp:2206 gui/options.cpp:2249 gui/options.cpp:2257
-#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2643
-#: gui/options.cpp:2649 gui/options.cpp:2655 gui/options.cpp:2662
-#: gui/options.cpp:2671 gui/options.cpp:2936 gui/options.cpp:2939
-#: gui/options.cpp:2942 gui/options.cpp:2949 gui/options.cpp:2961
-#: gui/options.cpp:2972
+#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2645
+#: gui/options.cpp:2651 gui/options.cpp:2657 gui/options.cpp:2664
+#: gui/options.cpp:2673 gui/options.cpp:2938 gui/options.cpp:2941
+#: gui/options.cpp:2944 gui/options.cpp:2951 gui/options.cpp:2963
+#: gui/options.cpp:2974
 msgctxt "path"
 msgid "None"
 msgstr "לא נבחר"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
-#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2637
-#: gui/options.cpp:2945 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2639
+#: gui/options.cpp:2947 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "ברירת מחדל"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2966
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2968
 msgid "Select SoundFont"
 msgstr "בחירת SoundFont"
 
@@ -456,11 +456,11 @@ msgstr "בחירת SoundFont"
 msgid "Select additional game directory"
 msgstr "בחר תיקיה על קבצי משחק נוספים"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2861
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2863
 msgid "Select directory for saved games"
 msgstr "בחירת תיקיה לשמירת משחקים"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2868
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2870
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "לא ניתן לכתוב את הספרייה שנבחרה. בחר אחד אחר."
 
@@ -948,7 +948,7 @@ msgstr "נסרקו %d תיקיות ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "התגלו %d משחקים חדשים, דולג על %d משחקים קיימים ..."
 
-#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2465
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2467
 msgid "Open URL"
 msgstr "פתח כתובת אתר"
 
@@ -1466,7 +1466,7 @@ msgid "ScummVM config path: "
 msgstr "נתיב ההגדרות של ScummVM "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2290 gui/options.cpp:2955
+#: gui/options.cpp:2290 gui/options.cpp:2957
 msgid "Last browser path: "
 msgstr ""
 
@@ -1552,239 +1552,239 @@ msgid ""
 msgstr ""
 "השתמש בדפדפן קבצי המערכת המקורי במקום ב- ScummVM כדי לבחור קובץ או ספרייה."
 
-#: gui/options.cpp:2402 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2403 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "בדיקת עדכון:"
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2403
 msgid "How often to check ScummVM updates"
 msgstr "באיזו תדירות לבדוק עדכוני ScummVM"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2414
 msgid "Check now"
 msgstr "בדוק עכשיו"
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active storage:"
 msgstr "אחסון פעיל:"
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active cloud storage"
 msgstr "אחסון ענן פעיל"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2431
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2431
+#: gui/options.cpp:2433
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Enable storage"
 msgstr "אפשר אחסון"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Confirm you want to use this account for this storage"
 msgstr "אשר שברצונך להשתמש בחשבון זה לאחסון זה"
 
-#: gui/options.cpp:2434 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2436 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "שם משתמש:"
 
-#: gui/options.cpp:2434
+#: gui/options.cpp:2436
 msgid "Username used by this storage"
 msgstr "שם משתמש בשימוש באחסון זה"
 
-#: gui/options.cpp:2435
+#: gui/options.cpp:2437
 msgid "<none>"
 msgstr "<אין>"
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Used space:"
 msgstr "מקום משומש:"
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "שטח שמשמש את המשחקים השמורים של ScummVM באחסון זה"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "Last sync:"
 msgstr "סנכרון אחרון:"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "When was the last time saved games were synced with this storage"
 msgstr "מתי הייתה הפעם האחרונה שסונכרנו משחקים עם אחסון זה"
 
-#: gui/options.cpp:2441 gui/options.cpp:3310
+#: gui/options.cpp:2443 gui/options.cpp:3312
 msgid "<never>"
 msgstr "<never>"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2445
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2445
+#: gui/options.cpp:2447
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Sync now"
 msgstr "סנכרן כעת"
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Start saved games sync"
 msgstr "התחל סנכרון משחקים שנשמר"
 
-#: gui/options.cpp:2449
+#: gui/options.cpp:2451
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2451
+#: gui/options.cpp:2453
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Download game files"
 msgstr "הורד קבצי משחק"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Open downloads manager dialog"
 msgstr "פתח את תיבת הדו-שיח של מנהל ההורדות"
 
-#: gui/options.cpp:2455
+#: gui/options.cpp:2457
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2457
+#: gui/options.cpp:2459
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Disconnect"
 msgstr "נתק"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Stop using this storage on this device"
 msgstr "הפסק להשתמש באחסון זה במכשיר זה"
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2463
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2463
+#: gui/options.cpp:2465
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2464
+#: gui/options.cpp:2466
 msgid "1. Open this link:"
 msgstr "1. פתח את הקישור הזה:"
 
-#: gui/options.cpp:2467
+#: gui/options.cpp:2469
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2469
+#: gui/options.cpp:2471
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste"
 msgstr "הדבק"
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste code from clipboard"
 msgstr "הדבק קוד מהלוח"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "3. Connect"
 msgstr "3. התחבר"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "Connect your cloud storage account"
 msgstr "חבר את חשבון האחסון בענן שלך"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run server"
 msgstr "הפעל את השרת"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run local webserver"
 msgstr "הפעל שרת אינטרנט מקומי"
 
-#: gui/options.cpp:2482 gui/options.cpp:3425
+#: gui/options.cpp:2484 gui/options.cpp:3427
 msgid "Not running"
 msgstr "לא רץ"
 
-#: gui/options.cpp:2486
+#: gui/options.cpp:2488
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2486 gui/options.cpp:2488 gui/options.cpp:2489
+#: gui/options.cpp:2488 gui/options.cpp:2490 gui/options.cpp:2491
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "בחר איזו ספרייה תוצג כ / root / במנהל הקבצים"
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2490
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Server's port:"
 msgstr "יציאת השרת:"
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Port for server to use"
 msgstr "יציאה לשימוש בשרת"
 
-#: gui/options.cpp:2499
+#: gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
-
-#: gui/options.cpp:2500
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
 #: gui/options.cpp:2502
-msgid "Run server to manage files with browser (in the same network)."
-msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
-
-#: gui/options.cpp:2503
+msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2504
+msgid "Run server to manage files with browser (in the same network)."
+msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
+
+#: gui/options.cpp:2505
+msgid "Closing options dialog will stop the server."
+msgstr "שיח אפשרויות הסגירה יעצור את השרת."
+
+#: gui/options.cpp:2517
 msgid "Use Text to speech"
 msgstr "השתמש בטקסט לדיבור"
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2517
 msgid "Will read text in gui on mouse over."
 msgstr "יקרא טקסט בגוי על העכבר מעל."
 
-#: gui/options.cpp:2528
+#: gui/options.cpp:2530
 msgid "None"
 msgstr "ללא"
 
-#: gui/options.cpp:2589
+#: gui/options.cpp:2591
 msgid "Ignore"
 msgstr ""
 
-#: gui/options.cpp:2590
+#: gui/options.cpp:2592
 #, fuzzy
 msgid "Disable autosave"
 msgstr "שמירת המשחק נכשלה"
 
-#: gui/options.cpp:2591
+#: gui/options.cpp:2593
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1793,39 +1793,39 @@ msgid ""
 "List of games:\n"
 msgstr ""
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2602
 #, fuzzy
 msgid ""
 "\n"
 "And more..."
 msgstr "ה~ו~ספת משחק..."
 
-#: gui/options.cpp:2601 engines/engine.cpp:582
+#: gui/options.cpp:2603 engines/engine.cpp:582
 #, fuzzy
 msgid "Move"
 msgstr "לחזור"
 
-#: gui/options.cpp:2614
+#: gui/options.cpp:2616
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr ""
 
-#: gui/options.cpp:2707
+#: gui/options.cpp:2709
 msgid "Failed to change cloud storage!"
 msgstr "שינוי האחסון בענן נכשל!"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2712
 msgid "Another cloud storage is already active."
 msgstr "אחסון ענן נוסף כבר פעיל."
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Theme does not support selected language!"
 msgstr "הנושא אינו תומך בשפה שנבחרה!"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid "Theme cannot be loaded!"
 msgstr "לא ניתן לטעון את הנושא!"
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1833,29 +1833,29 @@ msgstr ""
 "\n"
 "הגדרות שונות ישוחזרו."
 
-#: gui/options.cpp:2877
+#: gui/options.cpp:2879
 msgid "Select directory for GUI themes"
 msgstr "בחר ספרייה לנושאי GUI"
 
-#: gui/options.cpp:2887
+#: gui/options.cpp:2889
 #, fuzzy
 #| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "בחר ספרייה לנושאי GUI"
 
-#: gui/options.cpp:2897
+#: gui/options.cpp:2899
 msgid "Select directory for extra files"
 msgstr "בחר ספרייה לקבצים נוספים"
 
-#: gui/options.cpp:2908
+#: gui/options.cpp:2910
 msgid "Select directory for plugins"
 msgstr "בחר ספרייה עבור תוספים"
 
-#: gui/options.cpp:2921
+#: gui/options.cpp:2923
 msgid "Select directory for Files Manager /root/"
 msgstr "בחר ספרייה עבור מנהל הקבצים / root /"
 
-#: gui/options.cpp:3042
+#: gui/options.cpp:3044
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1863,47 +1863,47 @@ msgstr ""
 "פתיחת כתובת האתר נכשלה!\n"
 "אנא נווט לדף זה באופן ידני."
 
-#: gui/options.cpp:3067
+#: gui/options.cpp:3069
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון אחר עובד עכשיו. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:3076 gui/options.cpp:3114
+#: gui/options.cpp:3078 gui/options.cpp:3116
 msgid "Wait until current Storage finishes up and try again."
 msgstr "המתן עד לסיום האחסון הנוכחי ונסה שוב."
 
-#: gui/options.cpp:3089
+#: gui/options.cpp:3091
 msgid "Connecting..."
 msgstr "מתחבר ..."
 
-#: gui/options.cpp:3105
+#: gui/options.cpp:3107
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון זה עובד כעת. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:3308 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3310 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<עכשיו>"
 
-#: gui/options.cpp:3417
+#: gui/options.cpp:3419
 msgid "Stop server"
 msgstr "עצור את השרת"
 
-#: gui/options.cpp:3418
+#: gui/options.cpp:3420
 msgid "Stop local webserver"
 msgstr "עצור את שרת האינטרנט המקומי"
 
-#: gui/options.cpp:3470
+#: gui/options.cpp:3472
 msgid "Storage connected."
 msgstr "אחסון מחובר."
 
-#: gui/options.cpp:3472
+#: gui/options.cpp:3474
 msgid "Failed to connect storage."
 msgstr "חיבור האחסון נכשל."
 
-#: gui/options.cpp:3474
+#: gui/options.cpp:3476
 msgid "Failed to connect storage: "
 msgstr "חיבור האחסון נכשל: "
 
-#: gui/options.cpp:3494
+#: gui/options.cpp:3496
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

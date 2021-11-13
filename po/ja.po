@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-13 14:33+0000\n"
+"POT-Creation-Date: 2021-11-13 20:22+0000\n"
 "PO-Revision-Date: 2021-11-01 06:30+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -125,7 +125,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -137,7 +137,7 @@ msgstr "はい"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3067 gui/options.cpp:3105 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3069 gui/options.cpp:3107 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -247,7 +247,7 @@ msgstr "ゲームの言語です。スペイン語版を英語版に変換はし
 #: gui/options.cpp:1420 gui/options.cpp:1433 gui/options.cpp:1447
 #: gui/options.cpp:1459 gui/options.cpp:1479 gui/options.cpp:1491
 #: gui/options.cpp:1865 gui/options.cpp:2285 gui/options.cpp:2358
-#: gui/options.cpp:2530 gui/options.cpp:2955 audio/null.cpp:41
+#: gui/options.cpp:2532 gui/options.cpp:2957 audio/null.cpp:41
 msgid "<default>"
 msgstr "<デフォルト>"
 
@@ -434,22 +434,22 @@ msgstr "統計"
 #: gui/editgamedialog.cpp:575 gui/editgamedialog.cpp:642 gui/options.cpp:2155
 #: gui/options.cpp:2161 gui/options.cpp:2167 gui/options.cpp:2175
 #: gui/options.cpp:2206 gui/options.cpp:2249 gui/options.cpp:2257
-#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2643
-#: gui/options.cpp:2649 gui/options.cpp:2655 gui/options.cpp:2662
-#: gui/options.cpp:2671 gui/options.cpp:2936 gui/options.cpp:2939
-#: gui/options.cpp:2942 gui/options.cpp:2949 gui/options.cpp:2961
-#: gui/options.cpp:2972
+#: gui/options.cpp:2265 gui/options.cpp:2274 gui/options.cpp:2645
+#: gui/options.cpp:2651 gui/options.cpp:2657 gui/options.cpp:2664
+#: gui/options.cpp:2673 gui/options.cpp:2938 gui/options.cpp:2941
+#: gui/options.cpp:2944 gui/options.cpp:2951 gui/options.cpp:2963
+#: gui/options.cpp:2974
 msgctxt "path"
 msgid "None"
 msgstr "未設定"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
-#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2637
-#: gui/options.cpp:2945 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:646 gui/options.cpp:2149 gui/options.cpp:2639
+#: gui/options.cpp:2947 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "デフォルト"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2966
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2968
 msgid "Select SoundFont"
 msgstr "SoundFontファイルを選択してください"
 
@@ -457,11 +457,11 @@ msgstr "SoundFontファイルを選択してください"
 msgid "Select additional game directory"
 msgstr "ゲームの追加データのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:620 gui/options.cpp:2861
+#: gui/editgamedialog.cpp:620 gui/options.cpp:2863
 msgid "Select directory for saved games"
 msgstr "セーブデータのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:627 gui/options.cpp:2868
+#: gui/editgamedialog.cpp:627 gui/options.cpp:2870
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "選択されたディレクトリーに保存できません。別の場所を選択してください。"
 
@@ -954,7 +954,7 @@ msgstr ""
 "新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されていま"
 "す..."
 
-#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2465
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2467
 msgid "Open URL"
 msgstr "URLを開く"
 
@@ -1472,7 +1472,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVMの設定パス： "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2290 gui/options.cpp:2955
+#: gui/options.cpp:2290 gui/options.cpp:2957
 msgid "Last browser path: "
 msgstr "最後に使用したブラウザーのパス： "
 
@@ -1559,244 +1559,244 @@ msgstr ""
 "ファイルやフォルダーを選ぶ時、ScummVMのファイルブラウザの代わりにシステムの"
 "ファイルブラウザを使う。"
 
-#: gui/options.cpp:2402 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2403 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "アップデートの確認："
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2403
 msgid "How often to check ScummVM updates"
 msgstr "ScummVMのアップデートの自動確認の頻度"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2414
 msgid "Check now"
 msgstr "今すぐ確認"
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active storage:"
 msgstr "使用中ストレージ："
 
-#: gui/options.cpp:2420
+#: gui/options.cpp:2422
 msgid "Active cloud storage"
 msgstr "使用中のクラウドストレージ"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2431
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
-#: gui/options.cpp:2431
+#: gui/options.cpp:2433
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Enable storage"
 msgstr "有効にする"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2434
 msgid "Confirm you want to use this account for this storage"
 msgstr "ストレージにこのアカウントを使うことを確認する"
 
-#: gui/options.cpp:2434 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2436 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "ユーザー名："
 
-#: gui/options.cpp:2434
+#: gui/options.cpp:2436
 msgid "Username used by this storage"
 msgstr "このストーレジのユーザー名"
 
-#: gui/options.cpp:2435
+#: gui/options.cpp:2437
 msgid "<none>"
 msgstr "＜なし＞"
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Used space:"
 msgstr "使用容量："
 
-#: gui/options.cpp:2437
+#: gui/options.cpp:2439
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVMのセーブデータの現在使用中容量"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "Last sync:"
 msgstr "前回の同期："
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2442
 msgid "When was the last time saved games were synced with this storage"
 msgstr "前回クラウドストーレジにセーブデータを同期した時"
 
-#: gui/options.cpp:2441 gui/options.cpp:3310
+#: gui/options.cpp:2443 gui/options.cpp:3312
 msgid "<never>"
 msgstr "＜無い＞"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2445
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2445
+#: gui/options.cpp:2447
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Sync now"
 msgstr "今すぐ同期"
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2448
 msgid "Start saved games sync"
 msgstr "セーブデータの同期を始まる"
 
-#: gui/options.cpp:2449
+#: gui/options.cpp:2451
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2451
+#: gui/options.cpp:2453
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Download game files"
 msgstr "ゲームデータをダウンロードする"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2454
 msgid "Open downloads manager dialog"
 msgstr "ダウンロード管理のダイアログを開く"
 
-#: gui/options.cpp:2455
+#: gui/options.cpp:2457
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2457
+#: gui/options.cpp:2459
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Disconnect"
 msgstr "切断"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2460
 msgid "Stop using this storage on this device"
 msgstr "このデバイスでストーレジの使用を停止する"
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2463
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "まだ接続していません！接続するには、"
 
-#: gui/options.cpp:2463
+#: gui/options.cpp:2465
 msgid "This storage is not connected yet! To connect,"
 msgstr "まだ接続していません！接続するには、"
 
-#: gui/options.cpp:2464
+#: gui/options.cpp:2466
 msgid "1. Open this link:"
 msgstr "１。このリンクを開いて："
 
-#: gui/options.cpp:2467
+#: gui/options.cpp:2469
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "２。コードを取得して、ここに入力して："
 
-#: gui/options.cpp:2469
+#: gui/options.cpp:2471
 msgid "2. Get the code and enter it here:"
 msgstr "２。コードを取得して、ここに入力して："
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste"
 msgstr "貼り付け"
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2473
 msgid "Paste code from clipboard"
 msgstr "クリップボードから貼り付ける"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "3. Connect"
 msgstr "３。接続する"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "Connect your cloud storage account"
 msgstr "クラウドストーレジを接続する"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run server"
 msgstr "サーバーを起動"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2483
 msgid "Run local webserver"
 msgstr "ローカルサーバーを起動する"
 
-#: gui/options.cpp:2482 gui/options.cpp:3425
+#: gui/options.cpp:2484 gui/options.cpp:3427
 msgid "Not running"
 msgstr "停止中"
 
-#: gui/options.cpp:2486
+#: gui/options.cpp:2488
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2486 gui/options.cpp:2488 gui/options.cpp:2489
+#: gui/options.cpp:2488 gui/options.cpp:2490 gui/options.cpp:2491
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "ファイルマネジャーの/root/に使うフォルダーを選択する"
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2490
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Server's port:"
 msgstr "サーバーのポート番号："
 
-#: gui/options.cpp:2494
+#: gui/options.cpp:2496
 msgid "Port for server to use"
 msgstr "使用するサーバーのポート番号"
 
-#: gui/options.cpp:2499
+#: gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
-
-#: gui/options.cpp:2500
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
 #: gui/options.cpp:2502
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
+
+#: gui/options.cpp:2504
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
-#: gui/options.cpp:2503
+#: gui/options.cpp:2505
 msgid "Closing options dialog will stop the server."
 msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2517
 msgid "Use Text to speech"
 msgstr "テキストの読み上げ機能を使用する"
 
-#: gui/options.cpp:2515
+#: gui/options.cpp:2517
 msgid "Will read text in gui on mouse over."
 msgstr "マウスオーバーで文字を読み上げます。"
 
-#: gui/options.cpp:2528
+#: gui/options.cpp:2530
 msgid "None"
 msgstr "なし"
 
-#: gui/options.cpp:2589
+#: gui/options.cpp:2591
 msgid "Ignore"
 msgstr "無視"
 
-#: gui/options.cpp:2590
+#: gui/options.cpp:2592
 msgid "Disable autosave"
 msgstr "オートセーブを無効化"
 
-#: gui/options.cpp:2591
+#: gui/options.cpp:2593
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1809,7 +1809,7 @@ msgstr ""
 "この警告を無視できます(上書き前に確認されます)。\n"
 "対象のゲーム：\n"
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2602
 msgid ""
 "\n"
 "And more..."
@@ -1817,31 +1817,31 @@ msgstr ""
 "\n"
 "続きを表示..."
 
-#: gui/options.cpp:2601 engines/engine.cpp:582
+#: gui/options.cpp:2603 engines/engine.cpp:582
 msgid "Move"
 msgstr "移動"
 
-#: gui/options.cpp:2614
+#: gui/options.cpp:2616
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "エラー：セーブデータの移動に失敗しました:\n"
 
-#: gui/options.cpp:2707
+#: gui/options.cpp:2709
 msgid "Failed to change cloud storage!"
 msgstr "クラウドストレージの変更に失敗しました!"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2712
 msgid "Another cloud storage is already active."
 msgstr "他のクラウドストーレジは既に使用中です。"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Theme does not support selected language!"
 msgstr "テーマは選択された言語をサポートしていません!"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid "Theme cannot be loaded!"
 msgstr "テーマを読み込みできませんでした！"
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1849,29 +1849,29 @@ msgstr ""
 "\n"
 "設定を復元します。"
 
-#: gui/options.cpp:2877
+#: gui/options.cpp:2879
 msgid "Select directory for GUI themes"
 msgstr "GUIテーマのフォルダーを選択してください"
 
-#: gui/options.cpp:2887
+#: gui/options.cpp:2889
 #, fuzzy
 #| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "GUIテーマのフォルダーを選択してください"
 
-#: gui/options.cpp:2897
+#: gui/options.cpp:2899
 msgid "Select directory for extra files"
 msgstr "追加ファイルのフォルダーを選択してください"
 
-#: gui/options.cpp:2908
+#: gui/options.cpp:2910
 msgid "Select directory for plugins"
 msgstr "プラグインのフォルダーを選択してください"
 
-#: gui/options.cpp:2921
+#: gui/options.cpp:2923
 msgid "Select directory for Files Manager /root/"
 msgstr "ルートディレクトリーとして使用するフォルダーを選択してください"
 
-#: gui/options.cpp:3042
+#: gui/options.cpp:3044
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1879,47 +1879,47 @@ msgstr ""
 "URLを開けませんでした!\n"
 "このページに手動で遷移してください。"
 
-#: gui/options.cpp:3067
+#: gui/options.cpp:3069
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
 
-#: gui/options.cpp:3076 gui/options.cpp:3114
+#: gui/options.cpp:3078 gui/options.cpp:3116
 msgid "Wait until current Storage finishes up and try again."
 msgstr "ストレージへのアップロード完了後に再実施してください。"
 
-#: gui/options.cpp:3089
+#: gui/options.cpp:3091
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: gui/options.cpp:3105
+#: gui/options.cpp:3107
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "ストレージを使用中です。切断してもよろしいですか?"
 
-#: gui/options.cpp:3308 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3310 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "＜只今＞"
 
-#: gui/options.cpp:3417
+#: gui/options.cpp:3419
 msgid "Stop server"
 msgstr "サーバーを停止"
 
-#: gui/options.cpp:3418
+#: gui/options.cpp:3420
 msgid "Stop local webserver"
 msgstr "ローカルサーバーを停止する"
 
-#: gui/options.cpp:3470
+#: gui/options.cpp:3472
 msgid "Storage connected."
 msgstr "ストーレジ接続済み。"
 
-#: gui/options.cpp:3472
+#: gui/options.cpp:3474
 msgid "Failed to connect storage."
 msgstr "ストレージの接続に失敗しました。"
 
-#: gui/options.cpp:3474
+#: gui/options.cpp:3476
 msgid "Failed to connect storage: "
 msgstr "ストレージの接続に失敗しました： "
 
-#: gui/options.cpp:3494
+#: gui/options.cpp:3496
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
