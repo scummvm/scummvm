@@ -28,7 +28,7 @@
 
 static const PlainGameDescriptor hdbGames[] = {
 	{"hdb", "Hyperspace Delivery Boy!"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #define GAMEOPTION_CHEATMODE GUIO_GAMEOPTIONS1

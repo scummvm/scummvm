@@ -1291,7 +1291,7 @@ void Gfx::drawBonusStars() {
 		_starsInfo.active = false;
 		delete _starsInfo.gfx[0];
 		delete _starsInfo.gfx[1];
-		_starsInfo.gfx[0] = _starsInfo.gfx[1] = 0;
+		_starsInfo.gfx[0] = _starsInfo.gfx[1] = nullptr;
 	}
 }
 
