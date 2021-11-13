@@ -37,7 +37,7 @@ static const PlainGameDescriptor hypnoGames[] = {
 	{"sinistersix", "Marvel Comics Spider-Man: The Sinister Six"},
 	{"wetlands", "Wetlands"},
 	{"soldierboyz", "Soldier Boyz"},
-	{0, 0}};
+	{nullptr, nullptr}};
 
 static const ADGameDescription gameDescriptions[] = {
 	{
@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"sinistersix", // US release
-		0,
+		nullptr,
 		AD_ENTRY2s("DATA.Z", "a1f71005a45e6ee454bb0bf3868dff54", 8766307,
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::EN_USA,
@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"sinistersix", // ES release
-		0,
+		nullptr,
 		AD_ENTRY2s("SPIDER.EXE", "dbd912d6f6724c6d44775fc19cfa8ca0", 483871,
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::ES_ESP,
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"sinistersix", // HE release
-		0,
+		nullptr,
 		AD_ENTRY2s("SPIDER.EXE", "dbd912d6f6724c6d44775fc19cfa8ca0", 483359,
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::HE_ISR,
@@ -113,7 +113,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // Wetlands (US)
-		0,
+		nullptr,
 		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::EN_USA,
@@ -123,7 +123,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // Wetlands (FR)
-		0,
+		nullptr,
 		AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 629575,
 			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::FR_FRA,
@@ -133,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // Wetlands (ES)
-		0,
+		nullptr,
 		AD_ENTRY2s("wetlands.exe", "8d0f3630523da827bb25e665b7d3f879", 644055,
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::ES_ESP,
@@ -163,7 +163,7 @@ static const char *const directoryGlobs[] = {
 	"factory",
 	"movie",
 	"c_misc",
-	NULL
+	nullptr
 };
 
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
