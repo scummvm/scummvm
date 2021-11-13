@@ -71,7 +71,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 		PSPPixelFormat::Type &paletteType,
 		bool &swapRedBlue) {
 	swapRedBlue = false;	 // no red-blue swap by default
-	PSPPixelFormat::Type *target = 0;	// which one we'll be filling
+	PSPPixelFormat::Type *target = nullptr;	// which one we'll be filling
 
 	if (!pf) {	// Default, pf is NULL
 		bufferType = Type_Palette_8bit;

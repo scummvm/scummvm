@@ -85,7 +85,7 @@ void SdlMixerManager::init() {
 		debug(1, "SDL mixer sound format: %d differs from desired: %d", _obtained.format, desired.format);
 		SDL_CloseAudio();
 
-		if (SDL_OpenAudio(&fmt, NULL) != 0) {
+		if (SDL_OpenAudio(&fmt, nullptr) != 0) {
 			warning("Could not open audio device: %s", SDL_GetError());
 
 			// The mixer is not marked as ready
@@ -204,7 +204,7 @@ void SdlMixerManager::suspendAudio() {
 int SdlMixerManager::resumeAudio() {
 	if (!_audioSuspended)
 		return -2;
-	if (SDL_OpenAudio(&_obtained, NULL) < 0) {
+	if (SDL_OpenAudio(&_obtained, nullptr) < 0) {
 		return -1;
 	}
 	SDL_PauseAudio(0);

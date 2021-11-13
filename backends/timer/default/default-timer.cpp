@@ -45,13 +45,13 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 
 	const uint32 nextFireTime = newSlot->nextFireTime;
 	TimerSlot *slot = head;
-	newSlot->next = 0;
+	newSlot->next = nullptr;
 
 	// Insert the new slot into the sorted list of already scheduled
 	// timers in such a way that the list stays sorted...
 	while (true) {
 		assert(slot);
-		if (slot->next == 0 || nextFireTime < slot->next->nextFireTime) {
+		if (slot->next == nullptr || nextFireTime < slot->next->nextFireTime) {
 			newSlot->next = slot->next;
 			slot->next = newSlot;
 			return;
@@ -63,7 +63,7 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 
 DefaultTimerManager::DefaultTimerManager() :
 	_timerCallbackNext(0),
-	_head(0) {
+	_head(nullptr) {
 
 	_head = new TimerSlot();
 }
@@ -77,7 +77,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 		delete slot;
 		slot = next;
 	}
-	_head = 0;
+	_head = nullptr;
 }
 
 void DefaultTimerManager::handler() {
@@ -150,7 +150,7 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	slot->interval = interval;
 	slot->nextFireTime = g_system->getMillis() + interval / 1000;
 	slot->nextFireTimeMicro = interval % 1000;
-	slot->next = 0;
+	slot->next = nullptr;
 
 	insertPrioQueue(_head, slot);
 

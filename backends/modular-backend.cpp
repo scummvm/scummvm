@@ -33,13 +33,13 @@
 
 ModularGraphicsBackend::ModularGraphicsBackend()
 	:
-	_graphicsManager(0) {
+	_graphicsManager(nullptr) {
 
 }
 
 ModularGraphicsBackend::~ModularGraphicsBackend() {
 	delete _graphicsManager;
-	_graphicsManager = 0;
+	_graphicsManager = nullptr;
 }
 
 bool ModularGraphicsBackend::hasFeature(Feature f) {
@@ -293,16 +293,16 @@ void ModularGraphicsBackend::saveScreenshot() {
 
 ModularMixerBackend::ModularMixerBackend()
 	:
-	_mixerManager(0) {
+	_mixerManager(nullptr) {
 
 }
 
 ModularMixerBackend::~ModularMixerBackend() {
 	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
 	delete _audiocdManager;
-	_audiocdManager = 0;
+	_audiocdManager = nullptr;
 	delete _mixerManager;
-	_mixerManager = 0;
+	_mixerManager = nullptr;
 }
 
 MixerManager *ModularMixerBackend::getMixerManager() {

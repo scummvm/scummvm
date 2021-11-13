@@ -126,7 +126,7 @@ StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMod
 
 	if (handle)
 		return new StdioStream(handle);
-	return 0;
+	return nullptr;
 }
 
 #endif

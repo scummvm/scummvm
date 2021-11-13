@@ -564,7 +564,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 		// Read the current window position
 		int _xWindowPos;
-		SDL_GetWindowPosition(_window->getSDLWindow(), &_xWindowPos, NULL);
+		SDL_GetWindowPosition(_window->getSDLWindow(), &_xWindowPos, nullptr);
 
 		// Relocate the window to the center of the screen in case we try to draw
 		// outside the window area. In this case, _xWindowPos always returns 0.

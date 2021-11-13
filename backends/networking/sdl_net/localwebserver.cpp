@@ -84,7 +84,7 @@ void localWebserverTimer(void *ignored) {
 
 void LocalWebserver::startTimer(int interval) {
 	Common::TimerManager *manager = g_system->getTimerManager();
-	if (manager->installTimerProc(localWebserverTimer, interval, 0, "Networking::LocalWebserver's Timer")) {
+	if (manager->installTimerProc(localWebserverTimer, interval, nullptr, "Networking::LocalWebserver's Timer")) {
 		_timerStarted = true;
 	} else {
 		warning("Failed to install Networking::LocalWebserver's timer");
@@ -110,7 +110,7 @@ void LocalWebserver::start(bool useMinimalMode) {
 
 	// Create a listening TCP socket
 	IPaddress ip;
-	if (SDLNet_ResolveHost(&ip, NULL, _serverPort) == -1) {
+	if (SDLNet_ResolveHost(&ip, nullptr, _serverPort) == -1) {
 		error("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
 
@@ -286,7 +286,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 
 	// default way (might work everywhere, surely works on Windows)
 	const char *name = SDLNet_ResolveIP(ip);
-	if (name == NULL) {
+	if (name == nullptr) {
 		warning("LocalWebserver: SDLNet_ResolveIP: %s", SDLNet_GetError());
 	} else {
 		IPaddress localIp;

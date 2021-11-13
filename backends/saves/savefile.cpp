@@ -81,10 +81,10 @@ int64 OutSaveFile::size() const {
 }
 
 bool SaveFileManager::copySavefile(const String &oldFilename, const String &newFilename, bool compress) {
-	InSaveFile *inFile = 0;
-	OutSaveFile *outFile = 0;
+	InSaveFile *inFile = nullptr;
+	OutSaveFile *outFile = nullptr;
 	uint32 size = 0;
-	void *buffer = 0;
+	void *buffer = nullptr;
 	bool success = false;
 
 	inFile = openForLoading(oldFilename);
@@ -100,7 +100,7 @@ bool SaveFileManager::copySavefile(const String &oldFilename, const String &newF
 			inFile->read(buffer, size);
 			bool error = inFile->err();
 			delete inFile;
-			inFile = 0;
+			inFile = nullptr;
 
 			if (!error) {
 				outFile->write(buffer, size);

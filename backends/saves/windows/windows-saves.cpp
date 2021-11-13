@@ -44,7 +44,7 @@ WindowsSaveFileManager::WindowsSaveFileManager(bool isPortable) {
 	}
 
 	_tcscat(defaultSavepath, TEXT("\\Saved games"));
-	if (!CreateDirectory(defaultSavepath, NULL)) {
+	if (!CreateDirectory(defaultSavepath, nullptr)) {
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
 			error("Cannot create ScummVM Saved games folder");
 	}
