@@ -171,7 +171,7 @@ public:
 	SourceScaler();
 	virtual ~SourceScaler();
 
-	virtual void deinitialize() override;
+	void deinitialize() override;
 
 	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding) final;
 

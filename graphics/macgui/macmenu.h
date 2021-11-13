@@ -52,9 +52,9 @@ public:
 	MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm);
 	~MacMenu();
 
-	virtual ManagedSurface *getBorderSurface() override { return nullptr; }
-	virtual const Common::Rect &getInnerDimensions() override { return _dims; }
-	virtual bool isDirty() override { return _contentIsDirty || _dimensionsDirty; }
+	ManagedSurface *getBorderSurface() override { return nullptr; }
+	const Common::Rect &getInnerDimensions() override { return _dims; }
+	bool isDirty() override { return _contentIsDirty || _dimensionsDirty; }
 
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm);
@@ -77,9 +77,9 @@ public:
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
 
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
-	virtual bool draw(bool forceRedraw = false) override { return false; }
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) override {}
+	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	bool draw(bool forceRedraw = false) override { return false; }
+	void blit(ManagedSurface *g, Common::Rect &dest) override {}
 
 	bool processEvent(Common::Event &event) override;
 

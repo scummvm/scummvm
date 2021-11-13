@@ -226,7 +226,7 @@ public:
 	 * of the window, although move() and resize() might be more comfortable.
 	 * @param r The desired dimensions of the window.
 	 */
-	virtual void setDimensions(const Common::Rect &r) override;
+	void setDimensions(const Common::Rect &r) override;
 
 	/**
 	 * Set a background pattern for the window.
@@ -239,13 +239,13 @@ public:
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 
-	virtual bool draw(bool forceRedraw = false) override;
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
+	bool draw(bool forceRedraw = false) override;
+	void blit(ManagedSurface *g, Common::Rect &dest) override;
 
-	virtual const Common::Rect &getInnerDimensions() override { return _innerDims; }
-	virtual ManagedSurface *getBorderSurface() override { return &_borderSurface; }
+	const Common::Rect &getInnerDimensions() override { return _innerDims; }
+	ManagedSurface *getBorderSurface() override { return &_borderSurface; }
 
 	/**
 	 * Centers the window using the dimensions of the parent window manager, or undoes this; does
@@ -258,7 +258,7 @@ public:
 	 * Most often called from the WM.
 	 * @param active Target state.
 	 */
-	virtual void setActive(bool active) override;
+	void setActive(bool active) override;
 	/**
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
@@ -291,8 +291,8 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	virtual bool processEvent(Common::Event &event) override;
-	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
+	bool processEvent(Common::Event &event) override;
+	bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
 	/**
 	 * Set arbitrary border from a BMP data stream, with custom border offsets.
@@ -344,7 +344,7 @@ public:
 	void markAllDirty();
 	void mergeDirtyRects();
 
-	virtual bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
+	bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
 	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
 	void resizeBorderSurface();
