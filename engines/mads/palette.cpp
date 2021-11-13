@@ -724,7 +724,7 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 	int32 minDist = 0x7fffffff;
 	byte palData[PALETTE_SIZE];
 
-	if (paletteData == NULL) {
+	if (paletteData == nullptr) {
 		g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
 		paletteData = &palData[0];
 	}
