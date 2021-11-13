@@ -43,7 +43,7 @@ const Inventory::ItemData Inventory::_availableItems[8] = {
 Inventory::Inventory(Myst3Engine *vm) :
 		Window(),
 		_vm(vm),
-		_texture(0) {
+		_texture(nullptr) {
 	_scaled = !_vm->isWideScreenModEnabled();
 	initializeTexture();
 }
@@ -327,7 +327,7 @@ void Inventory::updateCursor() {
 
 DragItem::DragItem(Myst3Engine *vm, uint id):
 		_vm(vm),
-		_texture(0),
+		_texture(nullptr),
 		_frame(1) {
 	// Draw on the whole screen
 	_isConstrainedToWindow = false;

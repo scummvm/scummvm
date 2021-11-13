@@ -31,7 +31,7 @@ namespace Myst3 {
 
 static const PlainGameDescriptor myst3Games[] = {
 	{ "myst3", "Myst III Exile" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -47,7 +47,7 @@ static const char *directoryGlobs[] = {
 	"M3Data",
 	"MYST3BIN",
 	"TEXT",
-	0
+	nullptr
 };
 
 #define MYST3ENTRY(lang, langFile, md5lang, extra, flags)                       \
@@ -105,36 +105,36 @@ static const char *directoryGlobs[] = {
 
 static const Myst3GameDescription gameDescriptions[] = {
 	// Initial US release (English only) v1.0
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "19dcba1074f235ec2119313242d891de", 0, kLocMonolingual)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "19dcba1074f235ec2119313242d891de", nullptr, kLocMonolingual)
 
 	// Initial US release (English only) v1.22
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", 0, kLocMonolingual)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", nullptr, kLocMonolingual)
 
 	// European releases (Country language + English) (1.2)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "0e8019cfaeb58c2de00ac114cf122220", 0, kLocMulti2)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", 0, kLocMulti2)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "1b2fa162a951fa4ed65617dd3f0c8a53", 0, kLocMulti2) // #1323, andrews05
-	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "906645a87ac1cbbd2b88c277c2b4fda2", 0, kLocMulti2) // #1323, andrews05
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "28003569d9536cbdf6020aee8e9bcd15", 0, kLocMulti2) // #1323, goodoldgeorge
-	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "8075e4e822e100ec79a5842a530dbe24", 0, kLocMulti2)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "0e8019cfaeb58c2de00ac114cf122220", nullptr, kLocMulti2)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", nullptr, kLocMulti2)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "1b2fa162a951fa4ed65617dd3f0c8a53", nullptr, kLocMulti2) // #1323, andrews05
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "906645a87ac1cbbd2b88c277c2b4fda2", nullptr, kLocMulti2) // #1323, andrews05
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "28003569d9536cbdf6020aee8e9bcd15", nullptr, kLocMulti2) // #1323, goodoldgeorge
+	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "8075e4e822e100ec79a5842a530dbe24", nullptr, kLocMulti2)
 
 	// Russian release (Russian only) (1.2)
-	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kLocMonolingual)
+	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", nullptr, kLocMonolingual)
 
 	// Hebrew release (Hebrew only) (1.2 - Patched using the patch CD)
-	MYST3ENTRY(Common::HE_ISR, "HEBREW.m3u",   "16fbbe420fed366249a8d44a759f966c", 0, kLocMonolingual) // #1348, BLooperZ
+	MYST3ENTRY(Common::HE_ISR, "HEBREW.m3u",   "16fbbe420fed366249a8d44a759f966c", nullptr, kLocMonolingual) // #1348, BLooperZ
 
 	// Japanese release (1.2)
-	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kLocMulti2)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", nullptr, kLocMulti2)
 	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "1e7c3156417978a1187fa6bc0e2cfafc", "Subtitles only", kLocMulti2)
 
 	// Multilingual CD release (1.21)
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "b62ca55aa17724cddbbcc78cba988337", 0, kLocMulti6)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "73519070cba1c7bea599adbddeae304f", 0, kLocMulti6)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "c4a8d8fb0eb3fecb9c435a8517bc1f9a", 0, kLocMulti6)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", 0, kLocMulti6)
-	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", 0, kLocMulti6)
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kLocMulti6)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "b62ca55aa17724cddbbcc78cba988337", nullptr, kLocMulti6)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "73519070cba1c7bea599adbddeae304f", nullptr, kLocMulti6)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "c4a8d8fb0eb3fecb9c435a8517bc1f9a", nullptr, kLocMulti6)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", nullptr, kLocMulti6)
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", nullptr, kLocMulti6)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", nullptr, kLocMulti6)
 
 	{
 		// Chinese (Simplified) CD release (1.22LC)

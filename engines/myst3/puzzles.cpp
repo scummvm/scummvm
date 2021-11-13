@@ -440,7 +440,7 @@ void Puzzles::resonanceRingsLaunchBall() {
 
 		bool isOnLightButton = false;
 
-		const LightFrames *frames = 0;
+		const LightFrames *frames = nullptr;
 		int32 currentLightFrame = _vm->_state->getVar(33);
 
 		// Look is the mini ball is on a light button
@@ -788,7 +788,7 @@ void Puzzles::pinball(int16 var) {
 			int32 jumpPositionLeft = 50 * ((leftSideFrame + 25) / 50);
 			int32 jumpPositionRight = 50 * ((rightSideFrame + 25) / 50);
 
-			const BallJump *jump = 0;
+			const BallJump *jump = nullptr;
 
 			for (uint i = 0; i < ARRAYSIZE(jumps); i++) {
 				int32 filter = jumps[i].filter;
@@ -983,7 +983,7 @@ void Puzzles::pinball(int16 var) {
 }
 
 const Puzzles::PegCombination *Puzzles::_pinballFindCombination(uint16 var, const PegCombination pegs[], uint16 size) {
-	const PegCombination *combination = 0;
+	const PegCombination *combination = nullptr;
 
 	for (uint i = 0; i < size; i++) {
 		bool good = true;
@@ -1289,7 +1289,7 @@ void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
 
 	uint16 node = _vm->_state->getLocationNode();
 
-	const CodeData *code = 0;
+	const CodeData *code = nullptr;
 	for (uint i = 0; i < ARRAYSIZE(codes); i++)
 		if (codes[i].node == node) {
 			code = &codes[i];
@@ -1519,7 +1519,7 @@ static void copySurfaceRect(Graphics::Surface *dest, const Common::Point &destPo
 }
 
 void Puzzles::projectorLoadBitmap(uint16 bitmap) {
-	assert(_vm->_projectorBackground == 0 && "Previous background not yet used.");
+	assert(_vm->_projectorBackground == nullptr && "Previous background not yet used.");
 
 	// This surface is freed by the destructor of the movie that uses it
 	_vm->_projectorBackground = new Graphics::Surface();
@@ -1546,7 +1546,7 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 }
 
 void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
-	assert(_vm->_projectorBackground != 0 && "Projector background already used.");
+	assert(_vm->_projectorBackground != nullptr && "Projector background already used.");
 
 	// Nothing to do if the spotitem is not enabled
 	if (!_vm->_state->getVar(26))

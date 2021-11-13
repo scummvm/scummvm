@@ -41,7 +41,7 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 
 	tglGenTextures(1, &id);
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0, internalFormat, sourceFormat, 0);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0, internalFormat, sourceFormat, nullptr);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 

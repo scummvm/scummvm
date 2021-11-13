@@ -390,7 +390,7 @@ SoundChannel::SoundChannel(Myst3Engine *vm) :
 		_playing(false),
 		_fading(false),
 		_id(0),
-		_stream(0),
+		_stream(nullptr),
 		_age(0),
 		_ambientFadeOutDelay(0),
 		_volume(0),
@@ -555,7 +555,7 @@ void SoundChannel::stop() {
 	_stopWhenSilent = true;
 	_hasFadeArray = false;
 
-	_stream = 0;
+	_stream = nullptr;
 	_length = Audio::Timestamp();
 }
 

@@ -537,7 +537,7 @@ void GameState::newGame() {
 }
 
 Common::Error GameState::load(Common::InSaveFile *saveFile) {
-	Common::Serializer s = Common::Serializer(saveFile, 0);
+	Common::Serializer s = Common::Serializer(saveFile, nullptr);
 	Common::Error loadError = _data.syncWithSaveGame(s);
 
 	_data.gameRunning = true;
@@ -550,7 +550,7 @@ Common::Error GameState::load(Common::InSaveFile *saveFile) {
 }
 
 Common::Error GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail, bool isAutosave) {
-	Common::Serializer s = Common::Serializer(0, saveFile);
+	Common::Serializer s = Common::Serializer(nullptr, saveFile);
 
 	// Update save creation info
 	TimeDate t;

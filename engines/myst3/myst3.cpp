@@ -65,19 +65,19 @@ namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		Engine(syst), _system(syst), _gameDescription(version),
-		_db(0), _scriptEngine(0),
-		_state(0), _node(0), _scene(0), _archiveNode(0),
-		_cursor(0), _inventory(0), _gfx(0), _menu(0),
-		_rnd(0), _sound(0), _ambient(0),
+		_db(nullptr), _scriptEngine(nullptr),
+		_state(nullptr), _node(nullptr), _scene(nullptr), _archiveNode(nullptr),
+		_cursor(nullptr), _inventory(nullptr), _gfx(nullptr), _menu(nullptr),
+		_rnd(nullptr), _sound(nullptr), _ambient(nullptr),
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_inputEscapePressedNotConsumed(false),
 		_interactive(false),
-		_menuAction(0), _projectorBackground(0),
-		_shakeEffect(0), _rotationEffect(0),
+		_menuAction(0), _projectorBackground(nullptr),
+		_shakeEffect(nullptr), _rotationEffect(nullptr),
 		_backgroundSoundScriptLastRoomId(0),
 		_backgroundSoundScriptLastAgeId(0),
-		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
+		_transition(nullptr), _frameLimiter(nullptr), _inventoryManualHide(false) {
 
 	// Add subdirectories to the search path to allow running from a full HDD install
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -223,7 +223,7 @@ Common::Error Myst3Engine::run() {
 
 bool Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 	Archive *archive = new Archive();
-	bool opened = archive->open(file.c_str(), 0);
+	bool opened = archive->open(file.c_str(), nullptr);
 
 	if (opened) {
 		_archivesCommon.push_back(archive);
@@ -400,7 +400,7 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Myst3Engine::updateCursor() {
@@ -1067,7 +1067,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		movie = new ScriptedMovie(this, id);
 	} else {
 		movie = new ProjectorMovie(this, id, _projectorBackground);
-		_projectorBackground = 0;
+		_projectorBackground = nullptr;
 		_state->setMovieUseBackground(0);
 	}
 

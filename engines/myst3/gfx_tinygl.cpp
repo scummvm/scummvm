@@ -42,7 +42,7 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		Renderer(system),
-		_fb(NULL) {
+		_fb(nullptr) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
