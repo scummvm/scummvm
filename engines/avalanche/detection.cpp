@@ -36,12 +36,12 @@ namespace Avalanche {
 
 static const PlainGameDescriptor avalancheGames[] = {
 	{"avalanche", "Lord Avalot d'Argent"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"avalanche", 0,
+		"avalanche", nullptr,
 		AD_ENTRY2s("avalot.sez",	"de10eb353228013da3d3297784f81ff9", 48763,
 				   "mainmenu.avd",	"89f31211af579a872045b175cc264298", 18880),
 		Common::EN_ANY,
