@@ -256,7 +256,7 @@ bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
 	}
 
 	_imageFile = argv[1];
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {
@@ -280,7 +280,7 @@ bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
 
 	_videoFile = argv[1];
 	_videoFile += ".avf";
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
@@ -329,7 +329,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 
 	NancySceneState.changeScene((uint16)atoi(argv[1]), 0, 0, false);
 	NancySceneState._state = State::Scene::kLoad;
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
