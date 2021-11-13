@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-13 20:22+0000\n"
+"POT-Creation-Date: 2021-11-13 20:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -668,6 +668,14 @@ msgstr ""
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
+msgstr ""
+
+#: gui/launcher.cpp:198
+msgid "Group by: "
+msgstr ""
+
+#: gui/launcher.cpp:200
+msgid "Select a criteria to group the entries"
 msgstr ""
 
 #. I18N: Group name for the game list
