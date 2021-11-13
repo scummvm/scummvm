@@ -6444,12 +6444,34 @@ static const uint16 kq6PatchFeatureEventHandling[] = {
 	PATCH_END
 };
 
+// KQ6 Mac sets a three second delay before playing its QuickTime opening movie
+//  in order to sync it with the music, but setting Script:seconds produces
+//  inconsistent delays. (See GK1 cartoon timing patches.) Converting the delay
+//  from seconds to ticks results in consistent timing in sync with the movie.
+//
+// Applies to: English Mac only
+// Responsible method: showMovie:changeState(2)
+static const uint16 kq6MacSignatureMacOpeningMovieDelay[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x03,                         // ldi 03
+	0x65, 0x1c,                         // aTop seconds [ seconds = 3 ]
+	0x33, 0x24,                         // jmp 24       [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq6MacPatchMacOpeningMovieDelay[] = {
+	0x34, PATCH_UINT16(0x00b4),         // ldi 00b4
+	0x64, PATCH_UINT16(0x0020),         // aTop ticks [ ticks = 180 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
 	{  true,    80, "fix guard dog music",                            1, kq6SignatureGuardDogMusic,                kq6PatchGuardDogMusic },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,   105, "Mac: opening movie delay",                       1, kq6MacSignatureMacOpeningMovieDelay,      kq6MacPatchMacOpeningMovieDelay },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
