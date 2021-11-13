@@ -35,13 +35,13 @@ static const DebugChannelDef debugFlagList[] = {
 namespace Private {
 static const PlainGameDescriptor privateGames[] = {
 	{ "private-eye", "Private Eye" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"private-eye",  // US release
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.z", "b682118cda6a42fa89833cae2b8824bd", 271895,
 		   "intro.smk", "270a1d0a29df122fc3d1d38e655161a7", 7310984),
 		Common::EN_USA,
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye",  // EU release (UK)
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.z", "d9ce391395701615e8b5d04bc4bf7ec3", 284699,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
@@ -101,7 +101,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (ES)
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.ex_", "f41770550ab717086b2d0c805fef4b8f", 498176,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
@@ -121,7 +121,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (FR)
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.ex_", "ae0dec43b2f54d45c8a1c93e97092141", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::FR_FRA,
@@ -131,7 +131,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (DE)
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.ex_", "5ca171c4e8d804c7277887277d049f03", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::DE_DEU,
@@ -161,7 +161,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye",  // RU release
-		0,
+		nullptr,
 		AD_ENTRY2s("pvteye.z", "b682118cda6a42fa89833cae2b8824bd", 271895,
 		   "intro.smk", "61cc13c9e4e2affd574087209df5c4a4", 7241368),
 		Common::RU_RUS,
@@ -171,7 +171,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // MacOS release (US)
-		0,
+		nullptr,
 		AD_ENTRY2s("game.mac", "33553cc04813d3f658bbe9d548377878", 81894,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
@@ -190,7 +190,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // MacOS demo (US)
-		0,
+		nullptr,
 		AD_ENTRY2s("demogame.mac", "cfbceaa8b91f0f53c745db61d1bc9749", 6103,
 		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
@@ -214,7 +214,7 @@ static const ADGameDescription gameDescriptions[] = {
 static const char *const directoryGlobs[] = {
 	"support",
 	"intro",
-	0
+	nullptr
 };
 
 class PrivateMetaEngineDetection : public AdvancedMetaEngineDetection {
