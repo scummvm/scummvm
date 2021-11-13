@@ -35,7 +35,7 @@ namespace CryOmni3D {
 static const PlainGameDescriptor cryomni3DGames[] = {
 	{"atlantis", "Atlantis: The Lost Tales"},
 	{"versailles", "Versailles 1685"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {

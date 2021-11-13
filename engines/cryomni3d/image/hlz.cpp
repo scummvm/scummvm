@@ -34,8 +34,8 @@
 namespace Image {
 
 HLZFileDecoder::HLZFileDecoder() {
-	_surface = 0;
-	_codec = 0;
+	_surface = nullptr;
+	_codec = nullptr;
 }
 
 HLZFileDecoder::~HLZFileDecoder() {
@@ -44,8 +44,8 @@ HLZFileDecoder::~HLZFileDecoder() {
 
 void HLZFileDecoder::destroy() {
 	delete _codec;
-	_codec = 0;
-	_surface = 0;
+	_codec = nullptr;
+	_surface = nullptr;
 }
 
 bool HLZFileDecoder::loadStream(Common::SeekableReadStream &stream) {
