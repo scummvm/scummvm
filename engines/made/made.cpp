@@ -47,7 +47,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_eventKey = 0;
 	_autoStopSound = false;
 	_soundEnergyIndex = 0;
-	_soundEnergyArray = 0;
+	_soundEnergyArray = nullptr;
 	_musicBeatStart = 0;
 	_cdTimeStart = 0;
 	_introMusicDigital = true;

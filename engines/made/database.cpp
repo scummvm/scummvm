@@ -39,7 +39,7 @@ namespace Made {
 	< 0x7FFE  object
 */
 
-Object::Object() : _objData(NULL), _freeData(false) {
+Object::Object() : _objData(nullptr), _freeData(false) {
 	_objSize = 0;
 }
 
@@ -52,7 +52,7 @@ const char *Object::getString() {
 	if (getClass() == 0x7FFF)
 		return (const char*)getData();
 	else
-		return NULL;
+		return nullptr;
 }
 
 void Object::setString(const char *str) {
@@ -327,7 +327,7 @@ void GameDatabase::setObjectString(int16 index, const char *str) {
 int16 *GameDatabase::findObjectPropertyCached(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	uint32 id = (objectIndex << 16) | propertyId;
 	ObjectPropertyCacheMap::iterator iter = _objectPropertyCache.find(id);
-	int16 *propertyPtr = NULL;
+	int16 *propertyPtr = nullptr;
 	if (iter != _objectPropertyCache.end()) {
 		propertyPtr = (*iter)._value;
 	} else {
@@ -386,7 +386,7 @@ void GameDatabase::dumpObject(int16 index) {
 
 /* GameDatabaseV2 */
 
-GameDatabaseV2::GameDatabaseV2(MadeEngine *vm) : GameDatabase(vm), _gameText(NULL) {
+GameDatabaseV2::GameDatabaseV2(MadeEngine *vm) : GameDatabase(vm), _gameText(nullptr) {
 }
 
 GameDatabaseV2::~GameDatabaseV2() {
@@ -550,7 +550,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 	// Now check in the object hierarchy of the given object
 	int16 parentObjectIndex = obj->getClass();
 	if (parentObjectIndex == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	while (parentObjectIndex != 0) {
@@ -587,7 +587,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 	}
 
 	debug(1, "findObjectProperty(%04X, %04X) Property not found", objectIndex, propertyId);
-	return NULL;
+	return nullptr;
 
 }
 
@@ -783,7 +783,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 	// Now check in the object hierarchy of the given object
 	int16 parentObjectIndex = obj->getClass();
 	if (parentObjectIndex == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	while (parentObjectIndex != 0) {
@@ -829,13 +829,13 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
 const char *GameDatabaseV3::getString(uint16 offset) {
 	// Not used in version 3 games
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Made

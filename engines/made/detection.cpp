@@ -32,7 +32,7 @@ static const PlainGameDescriptor madeGames[] = {
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
 	{"rodney", "Rodney's Funscreen"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "made/detection_tables.h"

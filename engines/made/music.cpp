@@ -38,7 +38,7 @@ namespace Made {
 
 const uint8 MusicPlayer::MT32_GOODBYE_MSG[] = { 0x52, 0x65, 0x74, 0x75, 0x72, 0x6E, 0x20, 0x54, 0x6F, 0x20, 0x5A, 0x6F, 0x72, 0x6B, 0x20, 0x53, 0x6F, 0x6F, 0x6E, 0x21 };
 
-MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(0) {
+MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(nullptr) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_driverType = MidiDriver::getMusicType(dev);
 	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
@@ -90,7 +90,7 @@ MusicPlayer::~MusicPlayer() {
 		delete _parser;
 	}
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
@@ -112,7 +112,7 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource) {
 	if (_parser) {
 		_parser->unloadMusic();
 	} else {
-		_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+		_parser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
 
 		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());
