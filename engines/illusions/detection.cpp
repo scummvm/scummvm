@@ -29,7 +29,7 @@
 static const PlainGameDescriptor illusionsGames[] = {
 	{ "bbdou", "Beavis and Butt-head Do U" },
 	{ "duckman", "Duckman" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 namespace Illusions {
@@ -38,7 +38,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{
 			"bbdou",
-			0,
+			nullptr,
 			AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -51,7 +51,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{
 			"duckman",
-			0,
+			nullptr,
 			AD_ENTRY1s("duckman.gam", "172c0514f3793041718159cf9cf9935f", 29560832),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -77,7 +77,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{
 			"duckman",
-			0,
+			nullptr,
 			AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -90,7 +90,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{
 			"duckman",
-			0,
+			nullptr,
 			AD_ENTRY1s("duckman.gam", "a65f9b58427b3543882bddf36abe5878", 29564928),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
@@ -107,7 +107,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 
 static const char * const directoryGlobs[] = {
 	"resource",
-	0
+	nullptr
 };
 
 class IllusionsMetaEngineDetection : public AdvancedMetaEngineDetection {

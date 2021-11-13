@@ -181,7 +181,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 	initUpdateFunctions();
 
-	_fader = 0;
+	_fader = nullptr;
 
 	_scriptOpcodes = new ScriptOpcodes_BBDOU(this);
 	_stack = new ScriptStack();
@@ -367,7 +367,7 @@ void IllusionsEngine_BBDOU::loadSpecialCode(uint32 resId) {
 
 void IllusionsEngine_BBDOU::unloadSpecialCode(uint32 resId) {
 	delete _specialCode;
-	_specialCode = 0;
+	_specialCode = nullptr;
 }
 
 void IllusionsEngine_BBDOU::notifyThreadId(uint32 &threadId) {
@@ -574,7 +574,7 @@ bool IllusionsEngine_BBDOU::enterScene(uint32 sceneId, uint32 threadId) {
 		// After that the game is ready and a savegame can finally be loaded.
 		_canResumeFromSavegame = true;
 	}
-	return sceneInfo != 0;
+	return sceneInfo != nullptr;
 }
 
 void IllusionsEngine_BBDOU::exitScene(uint32 threadId) {
@@ -611,7 +611,7 @@ void IllusionsEngine_BBDOU::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
 	uint activeScenesCount = _activeScenes.getActiveScenesCount();
 	while (activeScenesCount > 0) {
 		uint32 activeSceneId;
-		_activeScenes.getActiveSceneInfo(activeScenesCount, &activeSceneId, 0);
+		_activeScenes.getActiveSceneInfo(activeScenesCount, &activeSceneId, nullptr);
 		if (activeSceneId == sceneId)
 			break;
 		exitScene(threadId);

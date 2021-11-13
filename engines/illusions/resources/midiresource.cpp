@@ -52,7 +52,7 @@ void MidiMusic::load(Common::SeekableReadStream &stream) {
 // MidiGroupResource
 
 MidiGroupResource::MidiGroupResource()
-	: _midiMusicCount(0), _midiMusic(0) {
+	: _midiMusicCount(0), _midiMusic(nullptr) {
 }
 
 MidiGroupResource::~MidiGroupResource() {
@@ -78,7 +78,7 @@ void MidiGroupResource::load(byte *data, uint32 dataSize) {
 // MidiGroupInstance
 
 MidiGroupInstance::MidiGroupInstance(IllusionsEngine *vm)
-	: _vm(vm), _midiGroupResource(0) {
+	: _vm(vm), _midiGroupResource(nullptr) {
 }
 
 void MidiGroupInstance::load(Resource *resource) {

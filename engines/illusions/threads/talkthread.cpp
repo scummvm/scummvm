@@ -66,13 +66,13 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 	_textStartTime = 0;
 	_textEndTime = 0;
 	_textDurationElapsed = 0;
-	_entryText = 0;
-	_currEntryText = 0;
+	_entryText = nullptr;
+	_currEntryText = nullptr;
 	_voiceDurationElapsed = 0;
 	_voiceDuration = duration;
 	_voiceStartTime = getCurrentTime();
 	_voiceEndTime = _voiceStartTime + duration;
-	_entryTblPtr = 0;
+	_entryTblPtr = nullptr;
 
 	if (callingThreadId) {
 		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
@@ -106,7 +106,7 @@ int TalkThread::onUpdate() {
 	case 3:
 		talkEntry = getTalkResourceEntry(_talkId);
 		_flags = 0;
-		_currEntryText = 0;
+		_currEntryText = nullptr;
 		_entryText = talkEntry->_text;
 		_entryTblPtr = talkEntry->_tblPtr;
 		if (_sequenceId1) {

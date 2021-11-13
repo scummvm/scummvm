@@ -25,7 +25,7 @@
 namespace Illusions {
 
 GameState::GameState()
-	: _writeBufferSize(0), _writeBuffer(0), _readStream(0) {
+	: _writeBufferSize(0), _writeBuffer(nullptr), _readStream(nullptr) {
 }
 
 GameState::~GameState() {
@@ -58,7 +58,7 @@ void GameState::write(Common::WriteStream *out) {
 
 void GameState::deleteReadStream() {
 	delete _readStream;
-	_readStream = 0;
+	_readStream = nullptr;
 }
 
 Common::WriteStream *GameState::newWriteStream() {

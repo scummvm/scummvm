@@ -95,7 +95,7 @@ void BaseMenu::enterMenu() {
 // BaseMenuSystem
 
 BaseMenuSystem::BaseMenuSystem(IllusionsEngine *vm)
-	: _vm(vm), _isTimeOutEnabled(false), _menuChoiceOffset(0) {
+	: _vm(vm), _isTimeOutEnabled(false), _menuChoiceOffset(nullptr) {
 }
 
 BaseMenuSystem::~BaseMenuSystem() {

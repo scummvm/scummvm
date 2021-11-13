@@ -43,7 +43,7 @@ InventoryItem::InventoryItem(uint32 objectId, uint32 sequenceId)
 // InventorySlot
 
 InventorySlot::InventorySlot(uint32 namedPointId)
-	: _namedPointId(namedPointId), _objectId(0), _inventoryItem(0) {
+	: _namedPointId(namedPointId), _objectId(0), _inventoryItem(nullptr) {
 }
 
 // InventoryBag
@@ -76,7 +76,7 @@ bool InventoryBag::addInventoryItem(InventoryItem *inventoryItem, InventorySlot 
 void InventoryBag::removeInventoryItem(InventoryItem *inventoryItem) {
 	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
 		if ((*it)->_inventoryItem && (*it)->_inventoryItem->_objectId == inventoryItem->_objectId)
-			(*it)->_inventoryItem = 0;
+			(*it)->_inventoryItem = nullptr;
 	}
 }
 
@@ -99,7 +99,7 @@ void InventoryBag::buildItems() {
 		if (inventoryItem) {
 			++inventoryItem->_timesPresent;
 			if (!inventoryItem->_assigned || inventoryItem->_flag || inventoryItem->_timesPresent > 1)
-				inventorySlot->_inventoryItem = 0;
+				inventorySlot->_inventoryItem = nullptr;
 		}
 	}
 }
@@ -108,7 +108,7 @@ void InventoryBag::clear() {
 	for (InventorySlotsIterator it = _inventorySlots.begin();
 		it != _inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
-		inventorySlot->_inventoryItem = 0;
+		inventorySlot->_inventoryItem = nullptr;
 	}
 }
 
@@ -117,12 +117,12 @@ InventorySlot *InventoryBag::getInventorySlot(uint32 objectId) {
 		if (_inventorySlots[i]->_objectId == objectId)
 			return _inventorySlots[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 	uint minDistance = 0xFFFFFFFF;
-	InventorySlot *minDistanceSlot = 0;
+	InventorySlot *minDistanceSlot = nullptr;
 	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		Common::Point slotPos = _vm->getNamedPointPosition(inventorySlot->_namedPointId);
@@ -163,7 +163,7 @@ void BbdouInventory::addInventoryItem(uint32 objectId) {
 	inventoryItem->_assigned = true;
 	if (!assigned && !inventoryItem->_flag) {
 		for (uint i = 0; i < _inventoryBags.size(); ++i) {
-			if (!_inventoryBags[i]->addInventoryItem(inventoryItem, 0))
+			if (!_inventoryBags[i]->addInventoryItem(inventoryItem, nullptr))
 				inventoryItem->_assigned = false;
 		}
 	}
@@ -243,7 +243,7 @@ InventoryBag *BbdouInventory::getInventoryBag(uint32 sceneId) {
 		if (_inventoryBags[i]->_sceneId == sceneId)
 			return _inventoryBags[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 InventoryItem *BbdouInventory::getInventoryItem(uint32 objectId) {
@@ -251,7 +251,7 @@ InventoryItem *BbdouInventory::getInventoryItem(uint32 objectId) {
 		if (_inventoryItems[i]->_objectId == objectId)
 			return _inventoryItems[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 void BbdouInventory::refresh() {
@@ -282,7 +282,7 @@ void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
 		if (inventoryItem->_assigned && !inventoryItem->_flag &&
 			inventoryItem->_timesPresent == 0 &&
 			inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
-			inventoryBag->addInventoryItem(inventoryItem, 0);
+			inventoryBag->addInventoryItem(inventoryItem, nullptr);
 	}
 }
 
@@ -376,7 +376,7 @@ void BbdouInventory::putBackInventoryItem(uint32 objectId, Common::Point cursorP
 			inventoryBag->addInventoryItem(inventoryItem, inventorySlot);
 		} else {
 			if (!inventoryBag->hasInventoryItem(objectId))
-				inventoryBag->addInventoryItem(inventoryItem, 0);
+				inventoryBag->addInventoryItem(inventoryItem, nullptr);
 		}
 	}
 	refresh();

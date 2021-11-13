@@ -138,7 +138,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_unpauseControlActorFlag = false;
 	_lastUpdateTime = 0;
 
-	_currWalkOverlappedControl = 0;
+	_currWalkOverlappedControl = nullptr;
 
 	_pauseCtr = 0;
 	_doScriptThreadInit = false;
@@ -352,7 +352,7 @@ int IllusionsEngine_Duckman::updateScreenShaker(uint flags) {
 	if (_screenShaker->_finished) {
 		notifyThreadId(_screenShaker->_notifyThreadId);
 		delete _screenShaker;
-		_screenShaker = 0;
+		_screenShaker = nullptr;
 		_screen->setScreenOffset(Common::Point(0, 0));
 		return 2;
 	}
@@ -472,7 +472,7 @@ bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
 			if (runTriggerCause(9, 0, overlappedControl->_objectId)) {
 				delete control->_actor->_pathNode;
 				control->_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
-				control->_actor->_pathNode = 0;
+				control->_actor->_pathNode = nullptr;
 				control->_actor->_pathPoints = 0;
 				control->_actor->_pathPointsCount = 0;
 				_threads->terminateThreadChain(control->_actor->_walkCallerThreadId1);
@@ -484,7 +484,7 @@ bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
 			}
 		}
 	} else {
-		_currWalkOverlappedControl = 0;
+		_currWalkOverlappedControl = nullptr;
 	}
 	return result;
 }
@@ -598,7 +598,7 @@ void IllusionsEngine_Duckman::placeCursorControl(Control *control, uint32 sequen
 	_cursor._control = control;
 	_cursor._actorIndex = 1;
 	_cursor._savedActorIndex = 1;
-	_cursor._currOverlappedControl = 0;
+	_cursor._currOverlappedControl = nullptr;
 	_cursor._sequenceId1 = sequenceId;
 	_cursor._field14[0] = true;
 	_cursor._field14[1] = true;
@@ -613,7 +613,7 @@ void IllusionsEngine_Duckman::placeCursorControl(Control *control, uint32 sequen
 	_cursor._field14[6] = _cursor._sequenceId2 != 0 && _cursor._objectId != 0;
 	_cursor._field14[7] = false;
 	_cursor._field14[8] = false;
-	_cursor._op113_choiceOfsPtr = 0;
+	_cursor._op113_choiceOfsPtr = nullptr;
 	_cursor._notifyThreadId30 = 0;
 	_cursor._dialogItemsCount = 0;
 	_cursor._overlappedObjectId = 0;
@@ -640,13 +640,13 @@ void IllusionsEngine_Duckman::hideCursor() {
 
 void IllusionsEngine_Duckman::initCursor() {
 	_cursor._gameState = 1;
-	_cursor._control = 0;
+	_cursor._control = nullptr;
 	_cursor._position.x = 160;
 	_cursor._position.y = 100;
 	_cursor._objectId = 0;
 	_cursor._actorIndex = 1;
 	_cursor._savedActorIndex = 1;
-	_cursor._currOverlappedControl = 0;
+	_cursor._currOverlappedControl = nullptr;
 	_cursor._sequenceId1 = 0;
 	_cursor._sequenceId2 = 0;
 	_cursor._field14[0] = true;
@@ -662,7 +662,7 @@ void IllusionsEngine_Duckman::initCursor() {
 	_cursor._field14[10] = false;
 	_cursor._field14[11] = false;
 	_cursor._field14[12] = false;
-	_cursor._op113_choiceOfsPtr = 0;
+	_cursor._op113_choiceOfsPtr = nullptr;
 	_cursor._notifyThreadId30 = 0;
 	_cursor._dialogItemsCount = 0;
 	_cursor._overlappedObjectId = 0;
@@ -699,7 +699,7 @@ void IllusionsEngine_Duckman::disableCursorVerb(int verbNum) {
 		_cursor._actorIndex = getCursorActorIndex();
 		setCursorActorIndex(_cursor._actorIndex, 1, 0);
 		startCursorSequence();
-		_cursor._currOverlappedControl = 0;
+		_cursor._currOverlappedControl = nullptr;
 	}
 }
 
@@ -765,7 +765,7 @@ void IllusionsEngine_Duckman::startCursorHoldingObject(uint32 objectId, uint32 s
 	_cursor._field14[6] = true;
 	_cursor._control->startSequenceActor(sequenceId, 2, 0);
 	setCursorActorIndex(_cursor._actorIndex, 1, 0);
-	_cursor._currOverlappedControl = 0;
+	_cursor._currOverlappedControl = nullptr;
 }
 
 void IllusionsEngine_Duckman::stopCursorHoldingObject() {
@@ -1075,7 +1075,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 			setCursorActorIndex(_cursor._actorIndex, 1, 0);
 			startCursorSequence();
 		}
-		_cursor._currOverlappedControl = 0;
+		_cursor._currOverlappedControl = nullptr;
 		foundOverlapped = false;
 	}
 
@@ -1101,7 +1101,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 			_cursor._actorIndex = _cursor._savedActorIndex;
 		setCursorActorIndex(_cursor._actorIndex, 1, 0);
 		startCursorSequence();
-		_cursor._currOverlappedControl = 0;
+		_cursor._currOverlappedControl = nullptr;
 	}
 
 	if (_input->pollEvent(kEventLeftClick)) {

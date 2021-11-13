@@ -81,9 +81,9 @@ bool MusicPlayer::isPlaying() {
 MidiPlayer::MidiPlayer()
 	: _isIdle(true), _isPlaying(false), _isCurrentlyPlaying(false), _isLooped(false),
 	_loopedMusicId(0), _queuedMusicId(0), _loadedMusicId(0),
-	_data(0), _dataSize(0) {
+	_data(nullptr), _dataSize(0) {
 
-	_data = 0;
+	_data = nullptr;
 	_dataSize = 0;
 	_isGM = false;
 
@@ -186,7 +186,7 @@ void MidiPlayer::sysMidiPlay(uint32 musicId) {
 void MidiPlayer::sysMidiStop() {
 	Audio::MidiPlayer::stop();
 	delete[] _data;
-	_data = 0;
+	_data = nullptr;
 	_dataSize = 0;
 	_loadedMusicId = 0;
 }
@@ -300,7 +300,7 @@ bool VoicePlayer::isCued() {
 // Sound
 
 Sound::Sound(uint32 soundEffectId, uint32 soundGroupId, bool looping)
-	: _stream(0), _soundEffectId(soundEffectId), _soundGroupId(soundGroupId), _looping(looping) {
+	: _stream(nullptr), _soundEffectId(soundEffectId), _soundGroupId(soundGroupId), _looping(looping) {
 	load();
 }
 
@@ -322,7 +322,7 @@ void Sound::unload() {
 	debug(1, "Sound::unload() %08X", _soundEffectId);
 	stop();
 	delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 }
 
 void Sound::play(int16 volume, int16 pan) {
@@ -480,7 +480,7 @@ Sound *SoundMan::getSound(uint32 soundEffectId) {
 		if ((*it)->_soundEffectId == soundEffectId)
 			return *it;
 	}
-	return 0;
+	return nullptr;
 }
 
 void SoundMan::updateMidi() {

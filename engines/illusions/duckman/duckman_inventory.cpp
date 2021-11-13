@@ -145,7 +145,7 @@ DMInventorySlot *DuckmanInventory::findInventorySlot(uint32 objectId) {
 		if (_inventorySlots[i]._objectId == objectId)
 			return &_inventorySlots[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 DMInventoryItem *DuckmanInventory::findInventoryItem(uint32 objectId) {
@@ -153,12 +153,12 @@ DMInventoryItem *DuckmanInventory::findInventoryItem(uint32 objectId) {
 		if (_inventoryItems[i]._objectId == objectId)
 			return &_inventoryItems[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 DMInventorySlot *DuckmanInventory::findClosestInventorySlot(Common::Point pos) {
 	int minDistance = 0xFFFFFF;
-	DMInventorySlot *minInventorySlot = 0;
+	DMInventorySlot *minInventorySlot = nullptr;
 	for (uint i = 0; i < _inventorySlots.size(); ++i) {
 		DMInventorySlot *inventorySlot = &_inventorySlots[i];
 		if (inventorySlot->_objectId == 0) {

@@ -30,7 +30,7 @@ namespace Illusions {
 Cursor::Cursor(IllusionsEngine *vm)
 	: _vm(vm) {
 	_status = 1;
-	_control = 0;
+	_control = nullptr;
 	_x = 320;
 	_y = 240;
 	_cursorNum = 1;
