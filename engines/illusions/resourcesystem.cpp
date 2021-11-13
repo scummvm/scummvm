@@ -54,7 +54,7 @@ void Resource::loadData(BaseResourceReader *resReader) {
 
 void Resource::unloadData() {
 	free(_data);
-	_data = 0;
+	_data = nullptr;
 	_dataSize = 0;
 }
 

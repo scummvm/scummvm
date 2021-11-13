@@ -108,7 +108,7 @@ CharInfo *FontResource::getCharInfo(uint16 c) {
 		if (_charRanges[i].containsChar(c))
 			return _charRanges[i].getCharInfo(c);
 	}
-	return 0;
+	return nullptr;
 }
 
 const Common::Rect FontResource::calculateRectForText(uint16 *text, uint textLength) {

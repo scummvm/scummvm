@@ -115,7 +115,7 @@ ObjectInteractModeMap::ObjectInteractModeMap() {
 }
 
 void ObjectInteractModeMap::setObjectInteractMode(uint32 objectId, int value) {
-	ObjectInteractMode *objectInteractMode = 0;
+	ObjectInteractMode *objectInteractMode = nullptr;
 	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i) {
 		if (_objectVerbs[i]._objectId == objectId) {
 			objectInteractMode = &_objectVerbs[i];
@@ -150,7 +150,7 @@ int ObjectInteractModeMap::getObjectInteractMode(uint32 objectId) {
 // BbdouSpecialCode
 
 BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
-	: _vm(vm), _credits(0) {
+	: _vm(vm), _credits(nullptr) {
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
 	_inventory = new BbdouInventory(_vm, this);
@@ -650,7 +650,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 
 		cursorPos = getBackgroundCursorPos(cursorPos);
 		bool foundOverlapped = false;
-		Control *overlappedControl = 0;
+		Control *overlappedControl = nullptr;
 
 		if (cursorData._flags & 1) {
 			foundOverlapped = false;
@@ -816,7 +816,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 			if (control2 && control2->_actor) {
 				if (_shooterStatus[i].gridX != gridX && (!_shooterStatus[i].flag || !control2->_actor->_seqCodeIp)) {
 					_shooterStatus[i].gridX = gridX;
-					control2->_actor->_seqCodeIp = 0;
+					control2->_actor->_seqCodeIp = nullptr;
 					control2->startSequenceActor(anim.sequenceIds1[gridX], 2, 0);
 				}
 			}
@@ -826,7 +826,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 
 	Common::Point cursorPos = getBackgroundCursorPos(screenCursorPos);
 	bool foundOverlapped = false;
-	Control *overlappedControl = 0;
+	Control *overlappedControl = nullptr;
 
 	if (cursorData._flags & 1)
 		foundOverlapped = false;

@@ -57,7 +57,7 @@ void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menu
 
 void DuckmanMenuSystem::clearMenus() {
 	for (int i = 0; i < kDuckmanLastMenuIndex; ++i) {
-		_menus[i] = 0;
+		_menus[i] = nullptr;
 	}
 }
 
@@ -135,7 +135,7 @@ BaseMenu *DuckmanMenuSystem::createMainMenuDemo() {
 }
 
 BaseMenu *DuckmanMenuSystem::createLoadGameMenu() {
-	return 0; // TODO
+	return nullptr; // TODO
 }
 
 BaseMenu *DuckmanMenuSystem::createLoadGameFailedMenu() {
@@ -405,7 +405,7 @@ void MenuActionInventoryAddRemove::execute() {
 
 MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm)
 			: BaseMenuAction(menuSystem), menu(baseMenu), _type(type), _vm(vm) {
-	_menuItem = NULL;
+	_menuItem = nullptr;
 }
 
 void MenuActionUpdateSlider::execute() {

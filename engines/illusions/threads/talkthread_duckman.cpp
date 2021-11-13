@@ -79,14 +79,14 @@ int TalkThread_Duckman::onUpdate() {
 	case 2:
 		talkEntry = getTalkResourceEntry(_talkId);
 		_flags = 0;
-		_currEntryText = 0;
+		_currEntryText = nullptr;
 		_entryText = talkEntry->_text;
 		_entryTblPtr = talkEntry->_tblPtr;
 		if (_sequenceId1) {
 			_pauseCtrPtr = &_pauseCtr;
 			_pauseCtr = 0;
 		} else {
-			_pauseCtrPtr = 0;
+			_pauseCtrPtr = nullptr;
 			_flags |= 2;
 			_flags |= 1;
 		}

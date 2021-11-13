@@ -75,9 +75,9 @@ void BbdouBubble::init() {
 		_icons[i]._sequenceId = 0;
 	}
 
-	_currBubbleStyle = 0;
-	_showingBubbleStyle = 0;
-	_hidingBubbleStyle = 0;
+	_currBubbleStyle = nullptr;
+	_showingBubbleStyle = nullptr;
+	_hidingBubbleStyle = nullptr;
 	_sourcePt.x = 0;
 	_sourcePt.y = 0;
 	_destPt.x = 0;
@@ -109,7 +109,7 @@ void BbdouBubble::show() {
 	}
 
 	_showingBubbleStyle = _currBubbleStyle;
-	_currBubbleStyle = 0;
+	_currBubbleStyle = nullptr;
 
 	calcBubbleTrail(_sourcePt, _destPt);
 
@@ -132,7 +132,7 @@ void BbdouBubble::show() {
 
 void BbdouBubble::hide() {
 	_hidingBubbleStyle = _showingBubbleStyle;
-	_showingBubbleStyle = 0;
+	_showingBubbleStyle = nullptr;
 	if (_hidingBubbleStyle) {
 		Control *bubbleControl = _vm->_dict->getObjectControl(_hidingBubbleStyle->_objectId);
 		bubbleControl->startSequenceActor(_hidingBubbleStyle->_hideSequenceId, 2, 0);

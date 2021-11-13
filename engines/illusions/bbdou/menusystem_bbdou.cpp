@@ -56,7 +56,7 @@ void BBDOUMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuCh
 
 void BBDOUMenuSystem::clearMenus() {
 	for (int i = 0; i < kBBDOULastMenuIndex; ++i) {
-		_menus[i] = 0;
+		_menus[i] = nullptr;
 	}
 }
 
@@ -85,15 +85,15 @@ BaseMenu *BBDOUMenuSystem::createMenuById(int menuId) {
 }
 
 BaseMenu *BBDOUMenuSystem::createMainMenu() {
-	return 0; // TODO
+	return nullptr; // TODO
 }
 
 BaseMenu *BBDOUMenuSystem::createLoadGameMenu() {
-	return 0; // TODO
+	return nullptr; // TODO
 }
 
 BaseMenu *BBDOUMenuSystem::createOptionsMenu() {
-	return 0; // TODO
+	return nullptr; // TODO
 }
 
 BaseMenu *BBDOUMenuSystem::createPauseMenu() {

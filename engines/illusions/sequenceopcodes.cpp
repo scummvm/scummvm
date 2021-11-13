@@ -57,7 +57,7 @@ typedef Common::Functor2Mem<Control*, OpCall&, void, SequenceOpcodes> SequenceOp
 void SequenceOpcodes::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < 256; ++i) {
-		_opcodes[i] = 0;
+		_opcodes[i] = nullptr;
 	}
 	// Register opcodes
 	OPCODE(1, opYield);
@@ -132,7 +132,7 @@ void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 			control->_actor->_entryTblPtr += 2;
 		} else {
 			control->_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
-			control->_actor->_entryTblPtr = 0;
+			control->_actor->_entryTblPtr = nullptr;
 			control->_actor->_notifyThreadId2 = 0;
 			_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 			opCall._result = 1;
@@ -147,10 +147,10 @@ void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 }
 
 void SequenceOpcodes::opEndSequence(Control *control, OpCall &opCall) {
-	control->_actor->_seqCodeIp = 0;
+	control->_actor->_seqCodeIp = nullptr;
 	if (control->_actor->_flags & Illusions::ACTOR_FLAG_800) {
 		control->_actor->_flags &= ~Illusions::ACTOR_FLAG_800;
-		control->_actor->_frames = 0;
+		control->_actor->_frames = nullptr;
 		control->_actor->_frameIndex = 0;
 		control->_actor->_newFrameIndex = 0;
 		_vm->_resSys->unloadResourceById(control->_actor->_sequenceId);

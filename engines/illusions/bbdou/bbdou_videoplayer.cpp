@@ -33,7 +33,7 @@ namespace Illusions {
 // BBDOUVideoPlayer
 
 BBDOUVideoPlayer::BBDOUVideoPlayer(IllusionsEngine_BBDOU *vm)
-	: _vm(vm), _videoDecoder(0), _callingThreadId(0), _objectId(0) {
+	: _vm(vm), _videoDecoder(nullptr), _callingThreadId(0), _objectId(0) {
 }
 
 BBDOUVideoPlayer::~BBDOUVideoPlayer() {
@@ -52,7 +52,7 @@ void BBDOUVideoPlayer::start(uint32 videoId, uint32 objectId, uint32 priority, u
 	_videoDecoder = new Video::AVIDecoder();
 	if (!_videoDecoder->loadFile(filename)) {
 		delete _videoDecoder;
-		_videoDecoder = 0;
+		_videoDecoder = nullptr;
 		warning("Unable to open video %s", filename.c_str());
 		notifyCallingThread();
 		return;
@@ -63,7 +63,7 @@ void BBDOUVideoPlayer::start(uint32 videoId, uint32 objectId, uint32 priority, u
 void BBDOUVideoPlayer::stop() {
 	_vm->_input->discardAllEvents();
 	delete _videoDecoder;
-	_videoDecoder = 0;
+	_videoDecoder = nullptr;
 	notifyCallingThread();
 	_objectId = 0;
 }
@@ -96,7 +96,7 @@ void BBDOUVideoPlayer::update() {
 }
 
 bool BBDOUVideoPlayer::isPlaying() const {
-	return _videoDecoder != 0;
+	return _videoDecoder != nullptr;
 }
 
 void BBDOUVideoPlayer::notifyCallingThread() {

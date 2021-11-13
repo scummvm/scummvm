@@ -32,7 +32,7 @@
 namespace Illusions {
 
 ScreenText::ScreenText(IllusionsEngine *vm)
-	: _vm(vm), _surface(0) {
+	: _vm(vm), _surface(nullptr) {
 }
 
 ScreenText::~ScreenText() {
@@ -202,7 +202,7 @@ void ScreenText::freeTextSurface() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
+		_surface = nullptr;
 	}
 }
 

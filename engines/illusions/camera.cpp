@@ -46,7 +46,7 @@ Camera::Camera(IllusionsEngine *vm)
 	_activeState._panYShl = _screenMidY << 16;
 	_activeState._panTargetPoint.x = _screenMidX;
 	_activeState._panTargetPoint.y = 240;
-	_activeState._panToPositionPtr = 0;
+	_activeState._panToPositionPtr = nullptr;
 	_activeState._panNotifyId = 0;
 	_activeState._trackingLimits.x = 0;
 	_activeState._trackingLimits.y = 0;
@@ -74,7 +74,7 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 	_activeState._panXShl = _activeState._currPan.x << 16;
 	_activeState._panYShl = _activeState._currPan.y << 16;
 	_vm->_backgroundInstances->refreshPan();
-	_activeState._panToPositionPtr = 0;
+	_activeState._panToPositionPtr = nullptr;
 	_activeState._panObjectId = 0;
 	_activeState._panNotifyId = 0;
 	_activeState._trackingLimits.x = 0;
@@ -139,7 +139,7 @@ void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 		_activeState._trackingLimits.x = 0;
 		_activeState._trackingLimits.y = 0;
 		_activeState._pointFlags = 0;
-		_activeState._panToPositionPtr = 0;
+		_activeState._panToPositionPtr = nullptr;
 		_activeState._panNotifyId = panNotifyId;
 		_activeState._panStartTime = getCurrentTime();
 		recalcPan(_activeState._panStartTime);
@@ -172,7 +172,7 @@ void Camera::stopPan() {
 	_activeState._panSpeed = 1;
 	_activeState._panXShl = _activeState._currPan.x << 16;
 	_activeState._panYShl = _activeState._currPan.y << 16;
-	_activeState._panToPositionPtr = 0;
+	_activeState._panToPositionPtr = nullptr;
 	_activeState._panObjectId = 0;
 	_activeState._panNotifyId = 0;
 	_activeState._pointFlags = 0;

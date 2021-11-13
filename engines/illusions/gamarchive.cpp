@@ -25,7 +25,7 @@
 namespace Illusions {
 
 GamArchive::GamArchive(const char *filename)
-	: _fd(0), _groupCount(0), _groups(0) {
+	: _fd(nullptr), _groupCount(0), _groups(nullptr) {
 	_fd = new Common::File();
 	if (!_fd->open(filename))
 		error("GamArchive::GamArchive() Could not open %s", filename);
@@ -80,7 +80,7 @@ const GamGroupEntry *GamArchive::getGroupEntry(uint32 sceneId) {
 		if (_groups[i]._id == sceneId)
 			return &_groups[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 const GamFileEntry *GamArchive::getFileEntry(const GamGroupEntry *groupEntry, uint32 resId) {
@@ -88,7 +88,7 @@ const GamFileEntry *GamArchive::getFileEntry(const GamGroupEntry *groupEntry, ui
 		if (groupEntry->_files[i]._id == resId)
 			return &groupEntry->_files[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 const GamFileEntry *GamArchive::getGroupFileEntry(uint32 sceneId, uint32 resId) {

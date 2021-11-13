@@ -29,7 +29,7 @@ namespace Illusions {
 // GenericResourceLoader
 
 void GenericResourceLoader::load(Resource *resource) {
-	resource->_instance = 0;
+	resource->_instance = nullptr;
 }
 
 bool GenericResourceLoader::isFlag(int flag) {

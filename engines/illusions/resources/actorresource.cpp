@@ -292,7 +292,7 @@ FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
 		if (actorInstance->_pauseCtr <= 0 && actorInstance->_actorResource->containsSequence(sequence))
 			return &actorInstance->_actorResource->_frames;
 	}
-	return 0;
+	return nullptr;
 }
 
 ActorInstance *ActorInstanceList::findActorByResource(ActorResource *actorResource) {
@@ -300,7 +300,7 @@ ActorInstance *ActorInstanceList::findActorByResource(ActorResource *actorResour
 		if ((*it)->_actorResource == actorResource)
 			return (*it);
 	}
-	return 0;
+	return nullptr;
 }
 
 bool ActorInstanceList::findNamedPoint(uint32 namedPointId, Common::Point &pt) {

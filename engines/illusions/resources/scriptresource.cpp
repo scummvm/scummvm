@@ -41,7 +41,7 @@ bool ScriptResourceLoader::isFlag(int flag) {
 // Properties
 
 Properties::Properties()
-	: _count(0), _properties(0) {
+	: _count(0), _properties(nullptr) {
 }
 
 void Properties::init(uint count, byte *properties) {
@@ -100,7 +100,7 @@ void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
 // BlockCounters
 
 BlockCounters::BlockCounters()
-	: _count(0), _blockCounters(0) {
+	: _count(0), _blockCounters(nullptr) {
 }
 
 void BlockCounters::init(uint count, byte *blockCounters) {
@@ -165,7 +165,7 @@ void TriggerCause::load(Common::SeekableReadStream &stream) {
 // TriggerObject
 
 TriggerObject::TriggerObject()
-	: _causesCount(0), _causes(0) {
+	: _causesCount(0), _causes(nullptr) {
 }
 
 TriggerObject::~TriggerObject() {
@@ -213,8 +213,8 @@ void TriggerObject::fixupSceneInfosDuckman() {
 // SceneInfo
 
 SceneInfo::SceneInfo()
-	: _triggerObjectsCount(0), _triggerObjects(0),
-	_resourcesCount(0), _resources(0) {
+	: _triggerObjectsCount(0), _triggerObjects(nullptr),
+	_resourcesCount(0), _resources(nullptr) {
 }
 
 SceneInfo::~SceneInfo() {
@@ -267,7 +267,7 @@ TriggerObject *SceneInfo::findTriggerObject(uint32 objectId) {
 		if (_triggerObjects[i]._objectId == objectId)
 			return &_triggerObjects[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 void SceneInfo::fixupSceneInfosDuckman() {
@@ -279,7 +279,7 @@ void SceneInfo::fixupSceneInfosDuckman() {
 // ScriptResource
 
 ScriptResource::ScriptResource()
-	: _codeOffsets(0), _objectMap(0) {
+	: _codeOffsets(nullptr), _objectMap(nullptr) {
 }
 
 ScriptResource::~ScriptResource() {
@@ -381,7 +381,7 @@ byte *ScriptResource::getCode(uint32 codeOffs) {
 SceneInfo *ScriptResource::getSceneInfo(uint32 index) {
 	if (index > 0 && index <= _sceneInfosCount)
 		return &_sceneInfos[index - 1];
-	return 0;
+	return nullptr;
 }
 
 uint32 ScriptResource::getObjectActorTypeId(uint32 objectId) {
@@ -407,7 +407,7 @@ void ScriptInstance::load(Resource *resource) {
 
 void ScriptInstance::unload() {
 	delete _vm->_scriptResource;
-	_vm->_scriptResource = 0;
+	_vm->_scriptResource = nullptr;
 }
 
 } // End of namespace Illusions

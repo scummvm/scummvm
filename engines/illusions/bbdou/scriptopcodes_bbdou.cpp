@@ -58,7 +58,7 @@ typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_BBDOU> S
 void ScriptOpcodes_BBDOU::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < 256; ++i) {
-		_opcodes[i] = 0;
+		_opcodes[i] = nullptr;
 	}
 	// Register opcodes
 	OPCODE(2, opSuspend);
@@ -282,7 +282,7 @@ void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCal
 	uint scenesCount = _vm->_activeScenes.getActiveScenesCount();
 	if (scenesCount > 0) {
 		uint32 currSceneId;
-		_vm->_activeScenes.getActiveSceneInfo(scenesCount, &currSceneId, 0);
+		_vm->_activeScenes.getActiveSceneInfo(scenesCount, &currSceneId, nullptr);
 		// TODO krnfileDump(currSceneId);
 	}
 	if (!_vm->enterScene(sceneId, opCall._callerThreadId))

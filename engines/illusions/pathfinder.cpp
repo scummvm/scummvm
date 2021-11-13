@@ -96,7 +96,7 @@ void PathFinder::postProcess(Common::Point sourcePt, PointArray *foundPath) {
 
 bool PathFinder::isLineBlocked(PathLine &line) {
 	for (uint i = 0; i < _walkRects->size(); ++i) {
-		if (calcLineStatus(line, (*_walkRects)[i], 0) != 3)
+		if (calcLineStatus(line, (*_walkRects)[i], nullptr) != 3)
 			return true;
 	}
 	return false;

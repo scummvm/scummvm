@@ -62,7 +62,7 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 // TalkResource
 
 TalkResource::TalkResource()
-	: _talkEntriesCount(0), _talkEntries(0) {
+	: _talkEntriesCount(0), _talkEntries(nullptr) {
 }
 
 TalkResource::~TalkResource() {
@@ -153,7 +153,7 @@ TalkInstance *TalkInstanceList::findTalkItem(uint32 talkId) {
 		if ((*it)->_talkId == talkId)
 			return (*it);
 	}
-	return 0;
+	return nullptr;
 }
 
 TalkInstance *TalkInstanceList::findTalkItemBySceneId(uint32 sceneId) {
@@ -161,7 +161,7 @@ TalkInstance *TalkInstanceList::findTalkItemBySceneId(uint32 sceneId) {
 		if ((*it)->_sceneId == sceneId)
 			return (*it);
 	}
-	return 0;
+	return nullptr;
 }
 
 void TalkInstanceList::pauseBySceneId(uint32 sceneId) {

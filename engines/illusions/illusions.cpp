@@ -128,7 +128,7 @@ Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
 	Control *control = getObjectControl(objectId);
 	if (control && control->_actor)
 		return &control->_actor->_position;
-	return 0;
+	return nullptr;
 }
 
 uint32 IllusionsEngine::getElapsedUpdateTime() {

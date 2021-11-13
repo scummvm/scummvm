@@ -56,7 +56,7 @@ void SoundEffect::load(Common::SeekableReadStream &stream) {
 // SoundGroupResource
 
 SoundGroupResource::SoundGroupResource()
-	: _soundEffects(0) {
+	: _soundEffects(nullptr) {
 }
 
 SoundGroupResource::~SoundGroupResource() {
@@ -82,7 +82,7 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 // SoundGroupInstance
 
 SoundGroupInstance::SoundGroupInstance(IllusionsEngine *vm)
-	: _vm(vm), _soundGroupResource(0) {
+	: _vm(vm), _soundGroupResource(nullptr) {
 }
 
 void SoundGroupInstance::load(Resource *resource) {

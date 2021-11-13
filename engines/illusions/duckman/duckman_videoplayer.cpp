@@ -31,7 +31,7 @@ namespace Illusions {
 // DuckmanVideoPlayer
 
 DuckmanVideoPlayer::DuckmanVideoPlayer(IllusionsEngine_Duckman *vm)
-	: _vm(vm), _videoDecoder(0) {
+	: _vm(vm), _videoDecoder(nullptr) {
 }
 
 DuckmanVideoPlayer::~DuckmanVideoPlayer() {
@@ -46,7 +46,7 @@ void DuckmanVideoPlayer::start(uint32 videoId, uint32 callingThreadId) {
 	_videoDecoder = new Video::AVIDecoder();
 	if (!_videoDecoder->loadFile(filename)) {
 		delete _videoDecoder;
-		_videoDecoder = 0;
+		_videoDecoder = nullptr;
 		warning("Unable to open video %s", filename.c_str());
 		return;
 	}
@@ -56,7 +56,7 @@ void DuckmanVideoPlayer::start(uint32 videoId, uint32 callingThreadId) {
 void DuckmanVideoPlayer::stop() {
 	_vm->_input->discardAllEvents();
 	delete _videoDecoder;
-	_videoDecoder = 0;
+	_videoDecoder = nullptr;
 	if (_callingThreadId != 0) {
 		_vm->notifyThreadId(_callingThreadId);
 		_callingThreadId = 0;
@@ -94,7 +94,7 @@ void DuckmanVideoPlayer::update() {
 }
 
 bool DuckmanVideoPlayer::isPlaying() const {
-	return _videoDecoder != 0;
+	return _videoDecoder != nullptr;
 }
 
 } // End of namespace Illusions

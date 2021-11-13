@@ -168,7 +168,7 @@ Thread *ThreadList::findThread(uint32 threadId) {
 		if ((*it)->_threadId == threadId && !(*it)->_terminated)
 			return (*it);
 	}
-	return 0;
+	return nullptr;
 }
 
 void ThreadList::suspendId(uint32 threadId) {

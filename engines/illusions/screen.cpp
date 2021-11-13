@@ -132,7 +132,7 @@ void SpriteDrawQueue::insertSurface(Graphics::Surface *surface, WidthHeight &dim
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_surface = surface;
 	item->_dimensions = dimensions;
-	item->_drawFlags = 0;
+	item->_drawFlags = nullptr;
 	item->_kind = 0;
 	item->_drawPosition.x = -drawPosition.x;
 	item->_drawPosition.y = -drawPosition.y;
@@ -150,7 +150,7 @@ void SpriteDrawQueue::insertTextSurface(Graphics::Surface *surface, WidthHeight 
 	item->_surface = surface;
 	item->_drawPosition = drawPosition;
 	item->_dimensions = dimensions;
-	item->_drawFlags = 0;
+	item->_drawFlags = nullptr;
 	item->_kind = 0;
 	item->_controlPosition.x = 0;
 	item->_controlPosition.y = 0;

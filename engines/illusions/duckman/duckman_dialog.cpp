@@ -96,7 +96,7 @@ void DuckmanDialogSystem::startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, u
 		_vm->_cursor._dialogItemsCount = 0;
 		_vm->_cursor._overlappedObjectId = 0;
 		_vm->_cursor._op113_choiceOfsPtr = choiceOfsPtr;
-		_vm->_cursor._currOverlappedControl = 0;
+		_vm->_cursor._currOverlappedControl = nullptr;
 
 		/* TODO?
 		if (!_vm->_input->getCursorMouseMode())
@@ -150,7 +150,7 @@ void DuckmanDialogSystem::updateDialogState() {
 		currOverlappedControl->setActorIndex(1);
 		currOverlappedControl->startSequenceActor(currOverlappedControl->_actor->_sequenceId, 2, 0);
 		_vm->playSoundEffect(10);
-		_vm->_cursor._currOverlappedControl = 0;
+		_vm->_cursor._currOverlappedControl = nullptr;
 		_vm->_cursor._overlappedObjectId = 0;
 		_vm->startCursorSequence();
 		_vm->setCursorActorIndex(6, 1, 0);
@@ -168,7 +168,7 @@ void DuckmanDialogSystem::updateDialogState() {
 			_vm->_cursor._gameState = 2;
 			_vm->_cursor._dialogItemsCount = 0;
 			_vm->_cursor._overlappedObjectId = 0;
-			_vm->_cursor._op113_choiceOfsPtr = 0;
+			_vm->_cursor._op113_choiceOfsPtr = nullptr;
 			_vm->_cursor._control->disappearActor();
 		}
 	}

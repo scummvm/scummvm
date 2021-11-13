@@ -54,7 +54,7 @@ TriggerFunction *TriggerFunctions::find(uint32 sceneId, uint32 verbId, uint32 ob
 	ItemsIterator it = findInternal(sceneId, verbId, objectId2, objectId);
 	if (it != _triggerFunctions.end())
 		return (*it);
-	return 0;
+	return nullptr;
 }
 
 void TriggerFunctions::removeBySceneId(uint32 sceneId) {
