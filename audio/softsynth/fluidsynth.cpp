@@ -459,16 +459,16 @@ void MidiDriver_FluidSynth::setEngineSoundFont(Common::SeekableReadStream *sound
 
 class FluidSynthMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "FluidSynth";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "fluidsynth";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices FluidSynthMusicPlugin::getDevices() const {

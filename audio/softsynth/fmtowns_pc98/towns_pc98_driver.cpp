@@ -121,15 +121,15 @@ public:
 	TownsPC98_MusicChannelSSG(TownsPC98_AudioDriver *driver, uint8 regOffs, uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
 	virtual ~TownsPC98_MusicChannelSSG();
 
-	virtual void reset();
-	virtual void loadData(uint8 *data);
-	void processEvents();
-	void processFrequency();
+	void reset() override;
+	void loadData(uint8 *data) override;
+	void processEvents() override;
+	void processFrequency() override;
 
 	void protect();
 	void restore();
 
-	void fadeStep();
+	void fadeStep() override;
 
 protected:
 	void keyOn();
@@ -166,8 +166,8 @@ public:
 		TownsPC98_MusicChannelSSG(driver, regOffs, flgs, num, key, prt, id) {}
 	virtual ~TownsPC98_SfxChannel() {}
 
-	void reset();
-	void loadData(uint8 *data);
+	void reset() override;
+	void loadData(uint8 *data) override;
 };
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
@@ -176,8 +176,8 @@ public:
 	TownsPC98_MusicChannelPCM(TownsPC98_AudioDriver *driver, uint8 regOffs, uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
 	virtual ~TownsPC98_MusicChannelPCM();
 
-	void loadData(uint8 *data);
-	void processEvents();
+	void loadData(uint8 *data) override;
+	void processEvents() override;
 
 private:
 	bool processControlEvent(uint8 cmd);

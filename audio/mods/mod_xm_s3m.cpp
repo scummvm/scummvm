@@ -162,10 +162,10 @@ public:
 	bool loadSuccess() const { return _loadSuccess; }
 
 	// Implement virtual functions
-	virtual int readBuffer(int16 *buffer, const int numSamples) override;
-	virtual bool isStereo() const override { return true; }
-	virtual int getRate() const override { return _sampleRate; }
-	virtual bool endOfData() const override { return _dataLeft <= 0; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _sampleRate; }
+	bool endOfData() const override { return _dataLeft <= 0; }
 
 	ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int rate, int interpolation);
 	~ModXmS3mStream();

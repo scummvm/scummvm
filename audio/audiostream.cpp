@@ -331,29 +331,29 @@ public:
 	~QueuingAudioStreamImpl();
 
 	// Implement the AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return _stereo; }
-	virtual int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return _stereo; }
+	int getRate() const override { return _rate; }
 
-	virtual bool endOfData() const {
+	bool endOfData() const override {
 		Common::StackLock lock(_mutex);
 		return _queue.empty() || _queue.front()._stream->endOfData();
 	}
 
-	virtual bool endOfStream() const {
+	bool endOfStream() const override {
 		Common::StackLock lock(_mutex);
 		return _finished && _queue.empty();
 	}
 
 	// Implement the QueuingAudioStream API
-	virtual void queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+	void queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse) override;
 
-	virtual void finish() {
+	void finish() override {
 		Common::StackLock lock(_mutex);
 		_finished = true;
 	}
 
-	uint32 numQueuedStreams() const {
+	uint32 numQueuedStreams() const override {
 		Common::StackLock lock(_mutex);
 		return _queue.size();
 	}
@@ -443,17 +443,17 @@ public:
 			delete _parentStream;
 	}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		// Cap us off so we don't read past _totalSamples
 		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
 		_samplesRead += samplesRead;
 		return samplesRead;
 	}
 
-	bool endOfData() const { return _parentStream->endOfData() || reachedLimit(); }
-	bool endOfStream() const { return _parentStream->endOfStream() || reachedLimit(); }
-	bool isStereo() const { return _parentStream->isStereo(); }
-	int getRate() const { return _parentStream->getRate(); }
+	bool endOfData() const override { return _parentStream->endOfData() || reachedLimit(); }
+	bool endOfStream() const override { return _parentStream->endOfStream() || reachedLimit(); }
+	bool isStereo() const override { return _parentStream->isStereo(); }
+	int getRate() const override { return _parentStream->getRate(); }
 
 private:
 	int getChannels() const { return isStereo() ? 2 : 1; }
@@ -474,10 +474,10 @@ AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp 
  */
 class NullAudioStream : public AudioStream {
 public:
-	bool isStereo() const { return false; }
-	int getRate() const;
-	int readBuffer(int16 *data, const int numSamples) { return 0; }
-	bool endOfData() const { return true; }
+	bool isStereo() const override { return false; }
+	int getRate() const override;
+	int readBuffer(int16 *data, const int numSamples) override { return 0; }
+	bool endOfData() const override { return true; }
 };
 
 int NullAudioStream::getRate() const {

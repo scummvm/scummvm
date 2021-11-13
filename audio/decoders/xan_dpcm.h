@@ -57,7 +57,7 @@ public:
 	 XanDPCMStream(int rate, int channels);
 
 protected:
-	virtual AudioStream *makeStream(Common::SeekableReadStream *data) override;
+	AudioStream *makeStream(Common::SeekableReadStream *data) override;
 };
 
 

@@ -83,7 +83,7 @@ protected:
 
 	void parseNextEvent(EventInfo &info) override;
 
-	virtual void resetTracking() override {
+	void resetTracking() override {
 		MidiParser::resetTracking();
 		_loopCount = -1;
 	}

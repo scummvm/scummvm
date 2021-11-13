@@ -47,7 +47,7 @@ public:
 		_shift[1] = 4;
 	};
 
-	virtual int readBuffer(int16 *buffer, const int numSamples) override {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		int i = 0;
 		for (; i < numSamples; i++) {
 			int32 *pshift = ((_channels == 2 && (i % 2)) ? _shift + 1 : _shift);
@@ -74,15 +74,15 @@ public:
 		return i;
 	}
 
-	virtual bool isStereo() const override {
+	bool isStereo() const override {
 		return _channels == 2;
 	}
 
-	virtual int getRate() const override {
+	int getRate() const override {
 		return _rate;
 	}
 
-	virtual bool endOfData() const override {
+	bool endOfData() const override {
 		return _data->eos();
 	}
 

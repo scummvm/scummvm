@@ -130,33 +130,33 @@ public:
 #endif
 	}
 
-	MidiDriver *device();
-	byte getNumber() { return _channel; }
-	void release() { _allocated = false; }
+	MidiDriver *device() override;
+	byte getNumber() override { return _channel; }
+	void release() override { _allocated = false; }
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
 	// Regular messages
-	void noteOff(byte note);
-	void noteOn(byte note, byte velocity);
-	void programChange(byte program);
-	void pitchBend(int16 bend);
+	void noteOff(byte note) override;
+	void noteOn(byte note, byte velocity) override;
+	void programChange(byte program) override;
+	void pitchBend(int16 bend) override;
 
 	// Control Change messages
-	void controlChange(byte control, byte value);
-	void modulationWheel(byte value);
-	void volume(byte value);
-	void panPosition(byte value);
-	void pitchBendFactor(byte value);
-	void detune(byte value);
-	void priority(byte value);
-	void sustain(bool value);
-	void effectLevel(byte value) { return; } // Not supported
-	void chorusLevel(byte value) { return; } // Not supported
-	void allNotesOff();
+	void controlChange(byte control, byte value) override;
+	void modulationWheel(byte value) override;
+	void volume(byte value) override;
+	void panPosition(byte value) override;
+	void pitchBendFactor(byte value) override;
+	void detune(byte value) override;
+	void priority(byte value) override;
+	void sustain(bool value) override;
+	void effectLevel(byte value) override { return; } // Not supported
+	void chorusLevel(byte value) override { return; } // Not supported
+	void allNotesOff() override;
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr) override;
 };
 
 // FYI (Jamieson630)
@@ -173,19 +173,19 @@ protected:
 public:
 	~AdLibPercussionChannel();
 
-	void noteOff(byte note);
-	void noteOn(byte note, byte velocity);
-	void programChange(byte program) { }
+	void noteOff(byte note) override;
+	void noteOn(byte note, byte velocity) override;
+	void programChange(byte program) override { }
 
 	// Control Change messages
-	void modulationWheel(byte value) { }
-	void pitchBendFactor(byte value) { }
-	void detune(byte value) { }
-	void priority(byte value) { }
-	void sustain(bool value) { }
+	void modulationWheel(byte value) override { }
+	void pitchBendFactor(byte value) override { }
+	void detune(byte value) override { }
+	void priority(byte value) override { }
+	void sustain(bool value) override { }
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
 private:
 	byte _notes[256];
@@ -947,7 +947,7 @@ public:
 	MidiChannel *allocateChannel() override;
 	MidiChannel *getPercussionChannel() override { return &_percussion; } // Percussion partially supported
 
-	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 private:
 	bool _scummSmallHeader; // FIXME: This flag controls a special mode for SCUMM V3 games
@@ -2291,16 +2291,16 @@ void MidiDriver_ADLIB::adlibNoteOnEx(int chan, byte note, int mod) {
 
 class AdLibEmuMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("AdLib emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "adlib";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices AdLibEmuMusicPlugin::getDevices() const {

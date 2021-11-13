@@ -300,15 +300,15 @@ float Paula::filterCalculateA0(int rate, int cutoff) {
 
 class AmigaMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("Amiga Audio emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "amiga";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices AmigaMusicPlugin::getDevices() const {
