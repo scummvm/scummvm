@@ -77,8 +77,8 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::ReadStreamEndian *stream
 }
 
 LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
-	_code = NULL;
-	_mhk = NULL;
+	_code = nullptr;
+	_mhk = nullptr;
 
 	_baseId = 0;
 	_cascade = false;
@@ -144,9 +144,9 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_rnd = new Common::RandomSource("livingbooks");
 
-	_sound = NULL;
-	_video = NULL;
-	_page = NULL;
+	_sound = nullptr;
+	_video = nullptr;
+	_page = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// Rugrats
@@ -208,7 +208,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	Common::Event event;
 	while (!shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
-			LBItem *found = NULL;
+			LBItem *found = nullptr;
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
@@ -330,7 +330,7 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
 			LBCode tempCode(this, 0);
 			uint offset = tempCode.parseCode(command);
-			tempCode.runCode(NULL, offset);
+			tempCode.runCode(nullptr, offset);
 		}
 	}
 }
@@ -370,11 +370,11 @@ void MohawkEngine_LivingBooks::destroyPage() {
 	delete _page;
 	assert(_items.empty());
 	assert(_orderedItems.empty());
-	_page = NULL;
+	_page = nullptr;
 
 	_notifyEvents.clear();
 
-	_focus = NULL;
+	_focus = nullptr;
 }
 
 // Replace any colons (originally a slash) with another character
@@ -644,7 +644,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 				_page->itemDestroyed(delayedEvent.item);
 				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
-					_focus = NULL;
+					_focus = nullptr;
 				break;
 			case kLBDelayedEventSetNotVisible:
 				_items[i]->setVisible(false);
@@ -713,7 +713,7 @@ LBItem *MohawkEngine_LivingBooks::getItemById(uint16 id) {
 		if (_items[i]->getId() == id)
 			return _items[i];
 
-	return NULL;
+	return nullptr;
 }
 
 LBItem *MohawkEngine_LivingBooks::getItemByName(Common::String name) {
@@ -721,7 +721,7 @@ LBItem *MohawkEngine_LivingBooks::getItemByName(Common::String name) {
 		if (_items[i]->getName() == name)
 			return _items[i];
 
-	return NULL;
+	return nullptr;
 }
 
 void MohawkEngine_LivingBooks::setFocus(LBItem *focus) {
@@ -1483,7 +1483,7 @@ void LBAnimationNode::loadScript(uint16 resourceId) {
 		entry.size = size;
 
 		if (!size) {
-			entry.data = NULL;
+			entry.data = nullptr;
 		} else {
 			entry.data = new byte[entry.size];
 			scriptStream->read(entry.data, entry.size);
@@ -2020,9 +2020,9 @@ uint16 LBAnimation::getParentId() {
 
 LBScriptEntry::LBScriptEntry() {
 	state = 0;
-	data = NULL;
-	argvParam = NULL;
-	argvTarget = NULL;
+	data = nullptr;
+	argvParam = nullptr;
+	argvTarget = nullptr;
 }
 
 LBScriptEntry::~LBScriptEntry() {
@@ -2558,7 +2558,7 @@ void LBItem::handleMouseMove(Common::Point pos) {
 }
 
 void LBItem::handleMouseUp(Common::Point pos) {
-	_vm->setFocus(NULL);
+	_vm->setFocus(nullptr);
 	runScript(kLBEventMouseUp);
 	runScript(kLBEventMouseUpIn);
 }
@@ -3341,7 +3341,7 @@ LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common:
 	debug(3, "new LBPaletteItem");
 
 	_fadeInStart = 0;
-	_palette = NULL;
+	_palette = nullptr;
 }
 
 LBPaletteItem::~LBPaletteItem() {
@@ -3732,7 +3732,7 @@ LBItem *LBPictureItem::createClone() {
 }
 
 LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
-	_anim = NULL;
+	_anim = nullptr;
 	_running = false;
 	debug(3, "new LBAnimationItem");
 }
@@ -3939,7 +3939,7 @@ LBItem *LBMiniGameItem::createClone() {
 LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBProxyItem");
 
-	_page = NULL;
+	_page = nullptr;
 }
 
 LBProxyItem::~LBProxyItem() {
@@ -3974,7 +3974,7 @@ void LBProxyItem::load() {
 
 void LBProxyItem::unload() {
 	delete _page;
-	_page = NULL;
+	_page = nullptr;
 
 	LBItem::unload();
 }

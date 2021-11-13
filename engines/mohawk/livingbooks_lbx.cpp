@@ -108,7 +108,7 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
 			LBCode tempCode(_vm, 0);
 			uint offset = tempCode.parseCode(command);
-			tempCode.runCode(NULL, offset);
+			tempCode.runCode(nullptr, offset);
 		}
 		}
 		return false;
