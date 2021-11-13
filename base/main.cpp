@@ -118,18 +118,18 @@ static const Plugin *detectPlugin() {
 	// At this point the engine ID and game ID must be known
 	if (engineId.empty()) {
 		warning("The engine ID is not set for target '%s'", ConfMan.getActiveDomainName().c_str());
-		return 0;
+		return nullptr;
 	}
 
 	if (gameId.empty()) {
 		warning("The game ID is not set for target '%s'", ConfMan.getActiveDomainName().c_str());
-		return 0;
+		return nullptr;
 	}
 
 	const Plugin *plugin = EngineMan.findPlugin(engineId);
 	if (!plugin) {
 		warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineId.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	// Query the plugin for the game descriptor
@@ -139,7 +139,7 @@ static const Plugin *detectPlugin() {
 	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	return plugin;
@@ -163,7 +163,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::String target = ConfMan.getActiveDomainName();
 	Common::Error err = Common::kNoError;
-	Engine *engine = 0;
+	Engine *engine = nullptr;
 
 #if defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
 	// HACK: We set up the requested graphics mode setting here to allow the
@@ -435,7 +435,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
-		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
+		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), nullptr, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
 		settings.erase("debuglevel"); // This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
@@ -569,13 +569,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 
 	// Unless a game was specified, show the launcher dialog
-	if (0 == ConfMan.getActiveDomain())
+	if (nullptr == ConfMan.getActiveDomain())
 		launcherDialog();
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
-	while (0 != ConfMan.getActiveDomain()) {
+	while (nullptr != ConfMan.getActiveDomain()) {
 		saveLastLaunchedTarget(ConfMan.getActiveDomainName());
 
 		EngineMan.upgradeTargetIfNecessary(ConfMan.getActiveDomainName());
@@ -703,7 +703,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 		// reset the graphics to default
 		setupGraphics(system);
-		if (0 == ConfMan.getActiveDomain()) {
+		if (nullptr == ConfMan.getActiveDomain()) {
 			launcherDialog();
 		}
 	}
