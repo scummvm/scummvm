@@ -78,15 +78,15 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	//{ kMenuAbout,		"About",			kMenuActionAbout, 0, true},
 
 	{ kMenuFile,		"New",				kMenuActionNew, 0, true },
-	{ kMenuFile,		NULL,				0, 0, false },
+	{ kMenuFile,		nullptr,				0, 0, false },
 	{ kMenuFile,		"Open...",			kMenuActionOpen, 0, true },
 	{ kMenuFile,		"Save",				kMenuActionSave, 0, true },
 	{ kMenuFile,		"Save as...",		kMenuActionSaveAs, 0, true },
-	{ kMenuFile,		NULL,				0, 0, false },
+	{ kMenuFile,		nullptr,				0, 0, false },
 	{ kMenuFile,		"Quit",				kMenuActionQuit, 0, true },
 
 	{ kMenuEdit,		"Undo",				kMenuActionUndo, 'Z', false },
-	{ kMenuEdit,		NULL,				0, 0, false },
+	{ kMenuEdit,		nullptr,				0, 0, false },
 	{ kMenuEdit,		"Cut",				kMenuActionCut, 'K', false },
 	{ kMenuEdit,		"Copy",				kMenuActionCopy, 'C', false },
 	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', false },
@@ -95,7 +95,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, false },
 	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, false },
 
-	{ 0,				NULL,				0, 0, false }
+	{ 0,				nullptr,				0, 0, false }
 };
 
 
@@ -112,16 +112,16 @@ void menuCommandsCallback(int action, Common::String &text, void *data);
 Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_engine = engine;
 	_resourceManager = resman;
-	_windowData = NULL;
-	_controlData = NULL;
+	_windowData = nullptr;
+	_controlData = nullptr;
 	_draggedObj.id = 0;
 	_draggedObj.pos = Common::Point(0, 0);
-	_dialog = NULL;
+	_dialog = nullptr;
 
 	_cursor = new Cursor(this);
 
 	_consoleText = new ConsoleText(this);
-	_graphics = NULL;
+	_graphics = nullptr;
 
 	initGUI();
 }
@@ -931,7 +931,7 @@ void Gui::showPrebuiltDialog(PrebuiltDialogs type) {
 }
 
 bool Gui::isDialogOpen() {
-	return _dialog != NULL;
+	return _dialog != nullptr;
 }
 
 void Gui::setTextInput(const Common::String &str) {
@@ -940,7 +940,7 @@ void Gui::setTextInput(const Common::String &str) {
 
 void Gui::closeDialog() {
 	delete _dialog;
-	_dialog = NULL;
+	_dialog = nullptr;
 }
 
 void Gui::getTextFromUser() {
@@ -1037,7 +1037,7 @@ Graphics::MacWindow *Gui::findWindow(WindowReference reference) {
 	}
 	switch (reference) {
 	case MacVenture::kNoWindow:
-		return NULL;
+		return nullptr;
 	case MacVenture::kCommandsWindow:
 		return _controlsWindow;
 	case MacVenture::kMainGameWindow:
@@ -1051,9 +1051,9 @@ Graphics::MacWindow *Gui::findWindow(WindowReference reference) {
 	case MacVenture::kDiplomaWindow:
 		return _diplomaWindow;
 	default:
-		return NULL;
+		return nullptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Gui::ensureInventoryOpen(WindowReference reference, ObjID id) {

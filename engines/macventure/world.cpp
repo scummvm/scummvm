@@ -38,8 +38,8 @@ namespace MacVenture {
 World::World(MacVentureEngine *engine, Common::MacResManager *resMan) {
 	_resourceManager = resMan;
 	_engine = engine;
-	_saveGame = NULL;
-	_gameText = NULL;
+	_saveGame = nullptr;
+	_gameText = nullptr;
 
 	startNewGame();
 

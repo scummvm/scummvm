@@ -38,7 +38,7 @@ namespace MacVenture {
 
 // SoundManager
 SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
-	_container = NULL;
+	_container = nullptr;
 	Common::String filename = engine->getFilePath(kSoundPathID);
 	_container = new Container(filename);
 	_mixer = mixer;

@@ -58,7 +58,7 @@ static const PlainGameDescriptor macventureGames[] = {
 	{ "deja_vu", "Deja Vu"},
 	{ "deja_vu2", "Deja Vu II"},
 	{ "uninvited", "Uninvited."},
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 namespace MacVenture {
