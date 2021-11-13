@@ -38,7 +38,6 @@ struct KeybindingRecord {
 	const char *_releaseMethod;
 	const char *_key;
 	const char *_joy;
-	const uint16 _flags;
 };
 
 static const KeybindingRecord COMMON_KEYS[] = {
