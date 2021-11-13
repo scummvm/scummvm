@@ -102,7 +102,7 @@ typedef Common::Functor1Mem<ScriptOpCall&, void, ScriptOpcodes> ScriptOpcodeI;
 void ScriptOpcodes::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < DRAGONS_NUM_SCRIPT_OPCODES; ++i) {
-		_opcodes[i] = 0;
+		_opcodes[i] = nullptr;
 	}
 	// Register opcodes
 	OPCODE(1, opUnk1);

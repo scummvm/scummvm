@@ -84,7 +84,7 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 
 }
 
-Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
+Background::Background() : _priorityLayer(nullptr), _points2(nullptr), _data(nullptr) {
 	_layerSurface[0] = nullptr;
 	_layerSurface[1] = nullptr;
 	_layerSurface[2] = nullptr;
