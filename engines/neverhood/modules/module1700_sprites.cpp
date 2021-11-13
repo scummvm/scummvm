@@ -39,7 +39,7 @@ SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32
 		SetMessageHandler(&SsScene1705Tape::handleMessage);
 	} else {
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 	}
 	_collisionBoundsOffset = _drawOffset;
 	_collisionBoundsOffset.x -= 4;
@@ -59,7 +59,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_TAPE, _tapeIndex, 1);
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;

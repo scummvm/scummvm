@@ -90,7 +90,7 @@ SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 	loadSound(1, 0x78184098);
 	SetUpdateHandler(&SsScene1302Fence::update);
 	SetMessageHandler(&SsScene1302Fence::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void SsScene1302Fence::update() {
@@ -103,12 +103,12 @@ uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case NM_KLAYMEN_OPEN_DOOR:
 		playSound(0);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		break;
 	case NM_KLAYMEN_CLOSE_DOOR:
 		playSound(1);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
 		break;
 	default:
@@ -122,7 +122,7 @@ void SsScene1302Fence::suMoveDown() {
 		_y += 8;
 	else {
 		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -131,7 +131,7 @@ void SsScene1302Fence::suMoveUp() {
 		_y -= 8;
 	else {
 		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -174,7 +174,7 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 		playSound(0, 0x470007EE);
 		stopAnimation();
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;
@@ -204,7 +204,7 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 	case NM_KLAYMEN_USE_OBJECT:
 		setGlobalVar(V_HAS_NEEDLE, 1);
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;
@@ -401,7 +401,7 @@ void AsScene1307Key::suRemoveKey() {
 		updateBounds();
 		_pointIndex++;
 	} else {
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -414,7 +414,7 @@ void AsScene1307Key::suInsertKey() {
 		if (_pointIndex == 7)
 			playSound(0);
 	} else {
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 	}
 }
@@ -759,7 +759,7 @@ void KmScene1305::stCrashDown() {
 	_acceptInput = false;
 	startAnimationByHash(0x000BAB02, 0x88003000, 0);
 	SetUpdateHandler(&Klaymen::update);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
 	NextState(&KmScene1305::stCrashDownFinished);
 }

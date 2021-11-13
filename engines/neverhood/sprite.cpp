@@ -28,8 +28,8 @@ namespace Neverhood {
 // Sprite
 
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
-	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),
-	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(NULL) {
+	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(nullptr), _filterXCb(nullptr), _filterYCb(nullptr),
+	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(nullptr) {
 
 	_drawOffset.x = 0;
 	_drawOffset.y = 0;
@@ -213,9 +213,9 @@ void AnimatedSprite::init() {
 	_plFirstFrameIndex = 0;
 	_currFrameIndex = 0;
 	_currStickFrameIndex = -1;
-	_finalizeStateCb = NULL;
-	_currStateCb = NULL;
-	_nextStateCb = NULL;
+	_finalizeStateCb = nullptr;
+	_currStateCb = nullptr;
+	_nextStateCb = nullptr;
 	_newStickFrameIndex = -1;
 	_newStickFrameHash = 0;
 	_frameChanged = false;
@@ -477,10 +477,10 @@ void AnimatedSprite::setFinalizeState(AnimationCb finalizeStateCb) {
 void AnimatedSprite::gotoState(AnimationCb currStateCb) {
 	if (_finalizeStateCb) {
 		AnimationCb cb = _finalizeStateCb;
-		_finalizeStateCb = NULL;
+		_finalizeStateCb = nullptr;
 		(this->*cb)();
 	}
-	_nextStateCb = NULL;
+	_nextStateCb = nullptr;
 	_currStateCb = currStateCb;
 	if (_currStateCb)
 		(this->*_currStateCb)();
@@ -489,15 +489,15 @@ void AnimatedSprite::gotoState(AnimationCb currStateCb) {
 void AnimatedSprite::gotoNextState() {
 	if (_finalizeStateCb) {
 		AnimationCb cb = _finalizeStateCb;
-		_finalizeStateCb = NULL;
+		_finalizeStateCb = nullptr;
 		(this->*cb)();
 	}
 	if (_nextStateCb) {
 		_currStateCb = _nextStateCb;
-		_nextStateCb = NULL;
+		_nextStateCb = nullptr;
 		(this->*_currStateCb)();
 	} else {
-		_currStateCb = NULL;
+		_currStateCb = nullptr;
 	}
 }
 

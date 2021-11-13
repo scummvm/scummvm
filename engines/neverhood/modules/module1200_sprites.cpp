@@ -61,7 +61,7 @@ AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32
 		SetMessageHandler(&AsScene1201Tape::handleMessage);
 	} else {
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 	}
 }
 
@@ -75,7 +75,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_TAPE, _nameHash, 1);
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;
@@ -273,7 +273,7 @@ void AsScene1201TntMan::suMoving() {
 void AsScene1201TntMan::stStanding() {
 	startAnimation(0x654913D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsScene1201TntMan::stComingDown() {
@@ -782,7 +782,7 @@ void KmScene1201::stCloseEyes() {
 		startAnimation(0x5420E254, 0, -1);
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmLowLevel);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -816,7 +816,7 @@ void KmScene1201::stFetchMatch() {
 		startAnimation(0x9CAA0218, 0, -1);
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&KmScene1201::hmMatch);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 		NextState(&KmScene1201::stLightMatch);
 	}
 }
@@ -828,7 +828,7 @@ void KmScene1201::stLightMatch() {
 	startAnimation(0x1222A513, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&KmScene1201::hmMatch);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 uint32 KmScene1201::hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender) {

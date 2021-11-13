@@ -48,7 +48,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_rectFlag = false;
 	_newDeltaXType = -1;
 	_soundCounter = 0;
-	_pathPoints = NULL;
+	_pathPoints = nullptr;
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
 
@@ -57,7 +57,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	SetUpdateHandler(&AsCommonCar::update);
 	SetMessageHandler(&AsCommonCar::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 AsCommonCar::~AsCommonCar() {
@@ -98,7 +98,7 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_SCENE_LEAVE:
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 		break;
 	case NM_POSITION_CHANGE:
 		// Set the current position without moving
@@ -167,7 +167,7 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 					if (_currPointIndex == 0)
 						moveToPrevPoint();
 					else
-						SetSpriteUpdate(NULL);
+						SetSpriteUpdate(nullptr);
 				} else {
 					if (minMatchIndex > _currPointIndex)
 						moveToNextPoint();
@@ -246,7 +246,7 @@ uint32 AsCommonCar::hmLeaveCar(int messageNum, const MessageParam &param, Entity
 
 void AsCommonCar::stCarAtHome() {
 	bool doDeltaX = _doDeltaX;
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	_hasAgainDestPoint = false;
 	_hasAgainDestPointIndex = false;
 	_isBraking = false;
@@ -427,7 +427,7 @@ void AsCommonCar::stTurnCarMoveToNextPoint() {
 
 void AsCommonCar::stTurnCarMoveToPrevPoint() {
 	// Turn to left/right #3
-	FinalizeState(NULL);
+	FinalizeState(nullptr);
 	_isBusy = true;
 	startAnimation(0xF46A0324, 0, -1);
 	SetUpdateHandler(&AsCommonCar::update);
@@ -480,7 +480,7 @@ void AsCommonCar::moveToPrevPoint() {
 }
 
 void AsCommonCar::stBrakeMoveToPrevPoint() {
-	FinalizeState(NULL);
+	FinalizeState(nullptr);
 	_isBusy = true;
 	_isBraking = true;
 	startAnimation(0x192ADD30, 0, -1);

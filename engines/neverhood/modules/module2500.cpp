@@ -337,7 +337,7 @@ void Scene2501::update() {
 		_asCar->setVisible(true);
 		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->handleUpdate();
-		_klaymen = NULL;
+		_klaymen = nullptr;
 		_carStatus = 0;
 	}
 	updateKlaymenClipRect();

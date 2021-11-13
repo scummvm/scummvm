@@ -124,7 +124,7 @@ void Module1000::updateScene() {
 }
 
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asDoor(NULL), _asWindow(NULL) {
+	: Scene(vm, parentModule), _asDoor(nullptr), _asWindow(nullptr) {
 
 	Sprite *tempSprite;
 
@@ -402,7 +402,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case NM_POSITION_CHANGE:
-		_messageList = NULL;
+		_messageList = nullptr;
 		break;
 	case NM_KLAYMEN_CLIMB_LADDER:
 		_isClimbingLadder = true;

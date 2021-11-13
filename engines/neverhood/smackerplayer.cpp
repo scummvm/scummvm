@@ -32,7 +32,7 @@ namespace Neverhood {
 // SmackerSurface
 
 SmackerSurface::SmackerSurface(NeverhoodEngine *vm)
-	: BaseSurface(vm, 0, 0, 0, "smacker"), _smackerFrame(NULL) {
+	: BaseSurface(vm, 0, 0, 0, "smacker"), _smackerFrame(nullptr) {
 }
 
 void SmackerSurface::draw() {
@@ -61,7 +61,7 @@ void SmackerSurface::unsetSmackerFrame() {
 	_sysRect.y = 0;
 	_sysRect.width = 0;
 	_sysRect.height = 0;
-	_smackerFrame = NULL;
+	_smackerFrame = nullptr;
 }
 
 // SmackerDoubleSurface
@@ -103,7 +103,7 @@ void NeverhoodSmackerDecoder::forceSeekToFrame(uint frame) {
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused)
 	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _videoDone(false), _paused(paused),
-	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
+	_palette(nullptr), _smackerDecoder(nullptr), _smackerSurface(nullptr), _stream(nullptr), _smackerFirst(true),
 	_drawX(-1), _drawY(-1) {
 
 	SetUpdateHandler(&SmackerPlayer::update);
@@ -120,7 +120,7 @@ SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash,
 SmackerPlayer::~SmackerPlayer() {
 	close();
 	delete _smackerSurface;
-	_smackerSurface = NULL;
+	_smackerSurface = nullptr;
 }
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
@@ -152,9 +152,9 @@ void SmackerPlayer::close() {
 	delete _smackerDecoder;
 	delete _palette;
 	// NOTE The SmackerDecoder deletes the _stream
-	_smackerDecoder = NULL;
-	_palette = NULL;
-	_stream = NULL;
+	_smackerDecoder = nullptr;
+	_palette = nullptr;
+	_stream = nullptr;
 	_smackerSurface->unsetSmackerFrame();
 }
 

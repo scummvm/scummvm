@@ -30,7 +30,7 @@
 
 static const PlainGameDescriptor neverhoodGames[] = {
 	{"neverhood", "The Neverhood Chronicles"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 namespace Neverhood {
@@ -40,7 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Neverhood English version
 	{
 		"neverhood",
-		0,
+		nullptr,
 		AD_ENTRY1s("hd.blb", "22958d968458c9ff221aee38577bb2b2", 4279716),
 		Common::EN_ANY,
 		Common::kPlatformWindows,

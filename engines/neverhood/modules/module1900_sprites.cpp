@@ -140,7 +140,7 @@ void AsScene1907Symbol::suTryToPlugIn() {
 	if (_currStep == 16) {
 		_x -= _smallDeltaX;
 		_y -= _smallDeltaY;
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -191,7 +191,7 @@ void AsScene1907Symbol::suMoveDown() {
 	if (_y >= kAsScene1907SymbolPluggedInDownPositions[_elementIndex].y) {
 		_y = kAsScene1907SymbolPluggedInDownPositions[_elementIndex].y;
 		_isMoving = false;
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -211,7 +211,7 @@ void AsScene1907Symbol::suMoveUp() {
 	if (_y < kAsScene1907SymbolPluggedInPositions[_elementIndex].y) {
 		_y = kAsScene1907SymbolPluggedInPositions[_elementIndex].y;
 		_isMoving = false;
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -284,7 +284,7 @@ void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 	_newStickFrameIndex = 0;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	updateBounds();
 	playSound(2);
 }
@@ -294,7 +294,7 @@ void AsScene1907Symbol::stPlugIn() {
 	_currPositionIndex = _newPositionIndex;
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	if (_elementIndex == 8)
 		sendMessage(_parentScene, 0x2001, 0);
 }

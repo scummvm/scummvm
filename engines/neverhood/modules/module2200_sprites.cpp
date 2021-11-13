@@ -319,7 +319,7 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 
 void SsScene2202PuzzleCube::stopMoving() {
 	loadSprite(kSsScene2202PuzzleCubeFileHashes2[_cubeSymbol], kSLFCenteredDrawOffset);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	_isMoving = false;
 	sendMessage(_parentScene, NM_POSITION_CHANGE, _cubePosition);
 }
@@ -336,7 +336,7 @@ AsCommonKey::AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, 
 	} else {
 		// If Klaymen already has the key or it's already inserted then don't show it
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 	}
 }
 
@@ -350,7 +350,7 @@ uint32 AsCommonKey::handleMessage(int messageNum, const MessageParam &param, Ent
 	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_KEY, _keyIndex, 1);
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;
@@ -458,7 +458,7 @@ AsScene2206DoorSpikes::AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHas
 		_x -= 63;
 	SetUpdateHandler(&AsScene2206DoorSpikes::update);
 	SetMessageHandler(&AsScene2206DoorSpikes::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsScene2206DoorSpikes::update() {
@@ -472,13 +472,13 @@ uint32 AsScene2206DoorSpikes::handleMessage(int messageNum, const MessageParam &
 	case NM_KLAYMEN_OPEN_DOOR:
 		_deltaIndex = 0;
 		playSound(0, 0x032746E0);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		SetSpriteUpdate(&AsScene2206DoorSpikes::suOpen);
 		break;
 	case NM_KLAYMEN_CLOSE_DOOR:
 		_deltaIndex = 0;
 		playSound(0, 0x002642C0);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		SetSpriteUpdate(&AsScene2206DoorSpikes::suClose);
 		break;
 	default:
@@ -493,7 +493,7 @@ void AsScene2206DoorSpikes::suOpen() {
 		_deltaIndex++;
 	} else {
 		SetMessageHandler(&AsScene2206DoorSpikes::handleMessage);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -503,7 +503,7 @@ void AsScene2206DoorSpikes::suClose() {
 		_deltaIndex++;
 	} else {
 		SetMessageHandler(&AsScene2206DoorSpikes::handleMessage);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -512,7 +512,7 @@ AsScene2206Platform::AsScene2206Platform(NeverhoodEngine *vm, uint32 fileHash)
 
 	SetUpdateHandler(&AsScene2206Platform::update);
 	SetMessageHandler(&AsScene2206Platform::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsScene2206Platform::update() {
@@ -525,7 +525,7 @@ uint32 AsScene2206Platform::handleMessage(int messageNum, const MessageParam &pa
 	switch (messageNum) {
 	case 0x4803:
 		_yDelta = 0;
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		SetSpriteUpdate(&AsScene2206Platform::suMoveDown);
 		break;
 	default:
@@ -544,7 +544,7 @@ SsScene2206TestTube::SsScene2206TestTube(NeverhoodEngine *vm, Scene *parentScene
 
 	if (getGlobalVar(V_HAS_TEST_TUBE)) {
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 	} else
 		SetMessageHandler(&SsScene2206TestTube::handleMessage);
 	_collisionBoundsOffset = _drawOffset;
@@ -561,7 +561,7 @@ uint32 SsScene2206TestTube::handleMessage(int messageNum, const MessageParam &pa
 	case NM_KLAYMEN_USE_OBJECT:
 		setGlobalVar(V_HAS_TEST_TUBE, 1);
 		setVisible(false);
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		break;
 	default:
 		break;
@@ -807,7 +807,7 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 
 void AsScene2207WallRobotAnimation::stStartAnimation() {
 	if (!_idle) {
-		NextState(NULL);
+		NextState(nullptr);
 	} else {
 		startAnimation(0xCCFD6090, 0, -1);
 		_idle = false;
@@ -862,7 +862,7 @@ uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const Messa
 
 void AsScene2207WallCannonAnimation::stStartAnimation() {
 	if (!_idle) {
-		NextState(NULL);
+		NextState(nullptr);
 	} else {
 		setVisible(true);
 		startAnimation(0x8CAA0099, 0, -1);
