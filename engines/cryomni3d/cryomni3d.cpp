@@ -211,7 +211,7 @@ Image::ImageDecoder *CryOmni3DEngine::loadHLZ(const Common::String &filename) {
 	if (!imageDecoder->loadStream(file)) {
 		warning("Failed to open hlz file %s", fname.c_str());
 		delete imageDecoder;
-		imageDecoder = 0;
+		imageDecoder = nullptr;
 		return nullptr;
 	}
 
