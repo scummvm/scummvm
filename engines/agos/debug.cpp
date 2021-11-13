@@ -40,11 +40,11 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		opcode = READ_BE_UINT16(p);
 		p += 2;
 		if (opcode == 10000)
-			return NULL;
+			return nullptr;
 	} else {
 		opcode = *p++;
 		if (opcode == 255)
-			return NULL;
+			return nullptr;
 	}
 
 	if (getGameType() == GType_PP) {
@@ -67,7 +67,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		st = s = elvira1_opcodeNameTable[opcode];
 	}
 
-	if (s == NULL) {
+	if (s == nullptr) {
 		error("dumpOpcode: INVALID OPCODE %d", opcode);
 	}
 
@@ -79,7 +79,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		switch (*s++) {
 		case 'x':
 			debugN("\n");
-			return NULL;
+			return nullptr;
 		case '|':
 			debugN("\n");
 			return p;
@@ -177,7 +177,7 @@ void AGOSEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 
 	for (;;) {
 		p = dumpOpcode(p);
-		if (p == NULL)
+		if (p == nullptr)
 			break;
 	}
 }
@@ -203,7 +203,7 @@ void AGOSEngine::dumpSubroutines() {
 void AGOSEngine::dumpAllSubroutines() {
 	for (int i = 0; i < 65536; i++) {
 		Subroutine *sub = getSubroutineByID(i);
-		if (sub != NULL) {
+		if (sub != nullptr) {
 			dumpSubroutine(sub);
 		}
 	}
@@ -243,7 +243,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			strn = str = pn_videoOpcodeNameTable[opcode];
 		}
 
-		if (strn == NULL) {
+		if (strn == nullptr) {
 			error("dumpVideoScript: Invalid Opcode %d", opcode);
 		}
 
@@ -335,7 +335,7 @@ void AGOSEngine::dumpAllVgaScriptFiles() {
 		loadZone(z, false);
 
 		VgaPointersEntry *vpe = &_vgaBufferPointers[zoneNum];
-		if (vpe->vgaFile1 != NULL) {
+		if (vpe->vgaFile1 != nullptr) {
 			_curVgaFile1 = vpe->vgaFile1;
 			dumpVgaFile(_curVgaFile1);
 		}
@@ -646,7 +646,7 @@ void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 
 	uint16 zone = (getGameType() == GType_PN) ? 0 : zoneNum;
 	VgaPointersEntry *vpe = &_vgaBufferPointers[zone];
-	if (vpe->vgaFile1 == NULL || vpe->vgaFile2 == NULL)
+	if (vpe->vgaFile1 == nullptr || vpe->vgaFile2 == nullptr)
 		return;
 
 	const byte *vga1 = vpe->vgaFile1;

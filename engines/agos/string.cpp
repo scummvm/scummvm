@@ -42,14 +42,14 @@ void AGOSEngine::uncompressText(byte *ptr) {
 		if (a == 0)
 			return;
 		ptr = uncompressToken(a, ptr);
-		if (ptr == 0)
+		if (ptr == nullptr)
 			return;
 	}
 }
 
 byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
-	byte *ptr1 = 0;
-	byte *ptr2 = 0;
+	byte *ptr1 = nullptr;
+	byte *ptr2 = nullptr;
 	byte b;
 	int count1 = 0;
 
@@ -64,7 +64,7 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 		b = a;
 		a = *ptr++;
 		if (a == 0)		/* Need to return such that next byte   */
-			return 0;	/* is used as two byte token		*/
+			return nullptr;	/* is used as two byte token		*/
 
 		_awaitTwoByteToken = 0;
 		ptr1 = _twoByteTokens;
@@ -178,7 +178,7 @@ TextLocation *AGOSEngine::getTextLocation(uint a) {
 	default:
 		error("getTextLocation: Invalid text location %d", a);
 	}
-	return NULL;	// for compilers that don't support NORETURN
+	return nullptr;	// for compilers that don't support NORETURN
 }
 
 void AGOSEngine::allocateStringTable(int num) {
@@ -422,7 +422,7 @@ bool AGOSEngine::printTextOf(uint a, uint x, uint y) {
 			Subroutine *sub;
 			_variableArray[84] = a;
 			sub = getSubroutineByID(5003);
-			if (sub != NULL)
+			if (sub != nullptr)
 				startSubroutineEx(sub);
 			return true;
 		}
@@ -450,11 +450,11 @@ bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	const byte *stringPtr;
 	uint16 pixels, w;
 
-	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
+	if (item == nullptr || item == _dummyItem2 || item == _dummyItem3)
 		return false;
 
 	subObject = (SubObject *)findChildOfType(item, kObjectType);
-	if (subObject == NULL)
+	if (subObject == nullptr)
 		return false;
 
 	stringPtr = getStringPtrByID(subObject->objectName);
@@ -997,7 +997,7 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 uint16 AGOSEngine_Waxworks::checkFit(char *ptr, int width, int lines) {
 	int countw = 0;
 	int countl = 0;
-	char *x = NULL;
+	char *x = nullptr;
 	while (*ptr) {
 		if (*ptr == '\n')
 			return 1;

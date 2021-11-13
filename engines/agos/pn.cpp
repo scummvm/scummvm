@@ -30,13 +30,13 @@ namespace AGOS {
 AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
 	: AGOSEngine(system, gd) {
 
-	_stackbase = 0;
+	_stackbase = nullptr;
 	_tagOfActiveDoline = 0;
 	_dolineReturnVal = 0;
 
-	_dataBase = 0;
+	_dataBase = nullptr;
 	_dataBaseSize = 0;
-	_textBase = 0;
+	_textBase = nullptr;
 	_textBaseSize = 0;
 
 	memset(_buffer, 0, sizeof(_buffer));
@@ -48,15 +48,15 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
 	memset(_objectName1, 0, sizeof(_objectName1));
 	memset(_objectName2, 0, sizeof(_objectName2));
 
-	_dragStore = 0;
+	_dragStore = nullptr;
 	_hitCalled = 0;
 	_inputReady = false;
 	_inputting = false;
 	_intputCounter = 0;
 	_inputMax = 0;
 	_mousePrintFG = 0;
-	_mouseString = 0;
-	_mouseString1 = 0;
+	_mouseString = nullptr;
+	_mouseString1 = nullptr;
 	memset(_inMessage, 0, sizeof(_inMessage));
 	memset(_placeMessage, 0, sizeof(_placeMessage));
 
@@ -74,15 +74,15 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
 	_havinit = 0;
 	_seed = 0;
 
-	_curwrdptr = 0;
-	_inpp = 0;
+	_curwrdptr = nullptr;
+	_inpp = nullptr;
 	_fnst = 0;
 	_linembr = 0;
 	_linct = 0;
 	_procnum = 0;
 
-	_linebase = 0;
-	_workptr = 0;
+	_linebase = nullptr;
+	_workptr = nullptr;
 }
 
 AGOSEngine_PN::~AGOSEngine_PN() {
@@ -113,7 +113,7 @@ const byte egaPalette[48] = {
 Common::Error AGOSEngine_PN::go() {
 	loadGamePcFile();
 
-	if (getFileName(GAME_ICONFILE) != NULL) {
+	if (getFileName(GAME_ICONFILE) != nullptr) {
 		loadIconFile();
 	}
 
@@ -121,7 +121,7 @@ Common::Error AGOSEngine_PN::go() {
 
 	vc34_setMouseOff();
 
-	addVgaEvent(_frameCount, ANIMATE_INT, NULL, 0, 0);
+	addVgaEvent(_frameCount, ANIMATE_INT, nullptr, 0, 0);
 
 	if (getFeatures() & GF_EGA) {
 		// Set EGA Palette

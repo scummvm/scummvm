@@ -418,7 +418,7 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 
 		if (_rightButtonDown) {
 			_rightButtonDown = false;
-			setVerb(NULL);
+			setVerb(nullptr);
 		}
 	} else if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
@@ -451,7 +451,7 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 	_leftButtonOld = _leftButton;
 
 	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown) {
+	if (_lastHitArea3 == nullptr && _leftButtonDown) {
 		_leftButtonDown = false;
 		x = 1;
 	} else {
@@ -461,7 +461,7 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 
 	boxController(_mouse.x, _mouse.y, x);
 	_lastHitArea3 = _lastHitArea;
-	if (x == 1 && _lastHitArea == NULL)
+	if (x == 1 && _lastHitArea == nullptr)
 		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
@@ -583,7 +583,7 @@ void AGOSEngine::handleMouseMoved() {
 		_needHitAreaRecalc++;
 
 	if (_leftButtonOld == 0 && _leftButton != 0) {
-		_lastClickRem = 0;
+		_lastClickRem = nullptr;
 		boxController(_mouse.x, _mouse.y, 3);
 	}
 	_leftButtonOld = _leftButton;
@@ -596,7 +596,7 @@ void AGOSEngine::handleMouseMoved() {
 			goto boxstuff;
 	}
 
-	if (_leftButton != 0 && _dragAccept && _lastClickRem != NULL) {
+	if (_leftButton != 0 && _dragAccept && _lastClickRem != nullptr) {
 		_dragCount++;
 		if (_dragCount == 20) {
 			_dragMode = true;

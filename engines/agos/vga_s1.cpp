@@ -95,7 +95,7 @@ static const uint8 customPalette[96] = {
 };
 
 void AGOSEngine_Simon1::vc22_setPalette() {
-	byte *offs, *palptr = 0, *src;
+	byte *offs, *palptr = nullptr, *src;
 	uint16 a = 0, b, num, palSize = 0;
 
 	a = vcReadNextWord();

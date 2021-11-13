@@ -60,7 +60,7 @@ uint AGOSEngine_Elvira2::itemGetIconNumber(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
 	uint offs;
 
-	if (child == NULL || !(child->objectFlags & kOFIcon))
+	if (child == nullptr || !(child->objectFlags & kOFIcon))
 		return 0;
 
 	offs = getOffsetOfChild2Param(child, 0x10);
@@ -83,7 +83,7 @@ void AGOSEngine::createPlayer() {
 	_currentPlayer->noun = 10000;
 
 	p = (SubPlayer *)allocateChildBlock(_currentPlayer, kPlayerType, sizeof(SubPlayer));
-	if (p == NULL)
+	if (p == nullptr)
 		error("createPlayer: player create failure");
 
 	p->size = 0;
@@ -97,7 +97,7 @@ void AGOSEngine::createPlayer() {
 }
 
 Child *AGOSEngine::findChildOfType(Item *i, uint type) {
-	Item *b = NULL;
+	Item *b = nullptr;
 	Child *child = i->children;
 
 	for (; child; child = child->next) {
@@ -114,14 +114,14 @@ Child *AGOSEngine::findChildOfType(Item *i, uint type) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int AGOSEngine::getUserFlag(Item *item, int a) {
 	SubUserFlag *subUserFlag;
 
 	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-	if (subUserFlag == NULL)
+	if (subUserFlag == nullptr)
 		return 0;
 
 	int max = (getGameType() == GType_ELVIRA1) ? 7 : 3;
@@ -134,11 +134,11 @@ int AGOSEngine::getUserFlag(Item *item, int a) {
 int AGOSEngine::getUserFlag1(Item *item, int a) {
 	SubUserFlag *subUserFlag;
 
-	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
+	if (item == nullptr || item == _dummyItem2 || item == _dummyItem3)
 		return -1;
 
 	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-	if (subUserFlag == NULL)
+	if (subUserFlag == nullptr)
 		return 0;
 
 	if (a < 0 || a > 7)
@@ -151,7 +151,7 @@ void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 
 	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-	if (subUserFlag == NULL) {
+	if (subUserFlag == nullptr) {
 		subUserFlag = (SubUserFlag *)allocateChildBlock(item, kUserFlagType, sizeof(SubUserFlag));
 	}
 
@@ -165,7 +165,7 @@ int AGOSEngine::getUserItem(Item *item, int n) {
 	SubUserFlag *subUserFlag;
 
 	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-	if (subUserFlag == NULL)
+	if (subUserFlag == nullptr)
 		return 0;
 
 	if (n < 0 || n > 0)
@@ -178,7 +178,7 @@ void AGOSEngine::setUserItem(Item *item, int n, int m) {
 	SubUserFlag *subUserFlag;
 
 	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-	if (subUserFlag == NULL) {
+	if (subUserFlag == nullptr) {
 		subUserFlag = (SubUserFlag *)allocateChildBlock(item, kUserFlagType, sizeof(SubUserFlag));
 	}
 
@@ -187,15 +187,15 @@ void AGOSEngine::setUserItem(Item *item, int n, int m) {
 }
 
 bool AGOSEngine::isRoom(Item *item) {
-	return findChildOfType(item, kRoomType) != NULL;
+	return findChildOfType(item, kRoomType) != nullptr;
 }
 
 bool AGOSEngine::isObject(Item *item) {
-	return findChildOfType(item, kObjectType) != NULL;
+	return findChildOfType(item, kObjectType) != nullptr;
 }
 
 bool AGOSEngine::isPlayer(Item *item) {
-	return findChildOfType(item, kPlayerType) != NULL;
+	return findChildOfType(item, kPlayerType) != nullptr;
 }
 
 uint AGOSEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
@@ -250,7 +250,7 @@ Item *AGOSEngine::getNextItemPtrStrange() {
 	case -5:
 		return _dummyItem2;
 	case -7:
-		return NULL;
+		return nullptr;
 	case -9:
 		return _dummyItem3;
 	default:
@@ -359,7 +359,7 @@ void AGOSEngine::linkItem(Item *item, Item *parent) {
 	id = itemPtrToID(parent);
 	item->parent = id;
 
-	if (parent != 0) {
+	if (parent != nullptr) {
 		item->next = parent->child;
 		parent->child = itemPtrToID(item);
 	} else {
@@ -399,7 +399,7 @@ Item *AGOSEngine::findInByClass(Item *i, int16 m) {
 		}
 		i = derefItem(i->next);
 	}
-	return NULL;
+	return nullptr;
 }
 
 Item *AGOSEngine::nextInByClass(Item *i, int16 m) {
@@ -415,7 +415,7 @@ Item *AGOSEngine::nextInByClass(Item *i, int16 m) {
 		}
 		i = derefItem(i->next);
 	}
-	return NULL;
+	return nullptr;
 }
 
 Item *AGOSEngine::findMaster(int16 a, int16 n) {
@@ -423,14 +423,14 @@ Item *AGOSEngine::findMaster(int16 a, int16 n) {
 
 	for (j = 1; j < _itemArraySize; j++) {
 		Item *item = derefItem(j);
-		if (item == NULL)
+		if (item == nullptr)
 			continue;
 
 		if (wordMatch(item, a, n))
 			return item;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Item *AGOSEngine::nextMaster(Item *i, int16 a, int16 n) {
@@ -439,14 +439,14 @@ Item *AGOSEngine::nextMaster(Item *i, int16 a, int16 n) {
 
 	for (j = first; j < _itemArraySize; j++) {
 		Item *item = derefItem(j);
-		if (item == NULL)
+		if (item == nullptr)
 			continue;
 
 		if (wordMatch(item, a, n))
 			return item;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint AGOSEngine::itemPtrToID(Item *id) {

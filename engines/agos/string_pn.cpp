@@ -115,7 +115,7 @@ void AGOSEngine_PN::getObjectName(char *v, uint16 x) {
 
 void AGOSEngine_PN::pcl(const char *s) {
 	Common::strlcat(_sb, s, 80);
-	if (strchr(s, '\n') == 0) {
+	if (strchr(s, '\n') == nullptr) {
 		for (char *str = _sb; *str; str++)
 			windowPutChar(_windowArray[_curWindow], *str);
 		strcpy(_sb, "");

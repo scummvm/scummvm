@@ -95,14 +95,14 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 // I have currently not implemented dynamic channel allocation.
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
-		: _masterVolume(143), _opl(0),
-		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+		: _masterVolume(143), _opl(nullptr),
+		  _adlibTimerProc(nullptr), _adlibTimerParam(nullptr), _isOpen(false) {
 	memset(_channelMapping, 0, sizeof(_channelMapping));
 	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
 	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
 	memset(_percussionKeyNoteMapping, 0, sizeof(_percussionKeyNoteMapping));
 
-	_instrumentTable = NULL;
+	_instrumentTable = nullptr;
 	_instrumentCount = 0;
 	_musicDrvMode = false;
 	_percussionReg = 0x20;
@@ -428,7 +428,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operatorNr, byte velocity) {
 	byte operatorReg = 0;
 	byte regValue40h = 0;
-	const InstrumentEntry *curInstrument = NULL;
+	const InstrumentEntry *curInstrument = nullptr;
 
 	// Adjust velocity with the master volume
 	uint16 adjustedVelocity = CLIP<uint16>((velocity * _masterVolume) / 255, 0, 0x3F);
@@ -769,7 +769,7 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 }
 
 MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
-	byte  *driverData = NULL;
+	byte  *driverData = nullptr;
 	uint16 driverDataSize = 0;
 	bool   isMusicDrvFile = false;
 

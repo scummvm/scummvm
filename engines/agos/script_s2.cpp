@@ -358,7 +358,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (getFeatures() & GF_TALKIE) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+		if (subObject != nullptr && subObject->objectFlags & kOFVoice) {
 			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
 
 			if (subObject->objectFlags & kOFNumber) {
@@ -411,7 +411,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 
 	}
 
-	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
+	if (subObject != nullptr && subObject->objectFlags & kOFText && _subtitles) {
 		const char *stringPtr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
 		TextLocation *tl = getTextLocation(vgaSpriteId);
 		char buf[256];
@@ -431,7 +431,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 			}
 			stringPtr = buf;
 		}
-		if (stringPtr != NULL)
+		if (stringPtr != nullptr)
 			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 	}
 }

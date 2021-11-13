@@ -87,7 +87,7 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 void AGOSEngine::changeWindow(uint a) {
 	a &= 7;
 
-	if (_windowArray[a] == NULL || _curWindow == a)
+	if (_windowArray[a] == nullptr || _curWindow == a)
 		return;
 
 	_curWindow = a;
@@ -97,13 +97,13 @@ void AGOSEngine::changeWindow(uint a) {
 }
 
 void AGOSEngine::closeWindow(uint a) {
-	if (_windowArray[a] == NULL)
+	if (_windowArray[a] == nullptr)
 		return;
 	removeIconArray(a);
 	resetWindow(_windowArray[a]);
-	_windowArray[a] = NULL;
+	_windowArray[a] = nullptr;
 	if (_curWindow == a) {
-		_textWindow = NULL;
+		_textWindow = nullptr;
 		changeWindow(0);
 	}
 }
@@ -308,17 +308,17 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	ha->priority = 999;
 
 	while (!shouldQuit()) {
-		_lastHitArea = NULL;
-		_lastHitArea3 = NULL;
+		_lastHitArea = nullptr;
+		_lastHitArea3 = nullptr;
 
 		while (!shouldQuit()) {
-			if (_lastHitArea3 != 0)
+			if (_lastHitArea3 != nullptr)
 				break;
 			delay(1);
 		}
 
 		ha = _lastHitArea;
-		if (ha == NULL) {
+		if (ha == nullptr) {
 		} else if (ha->id == 0x7FFF) {
 			break;
 		}

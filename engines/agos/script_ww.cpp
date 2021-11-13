@@ -288,8 +288,8 @@ void AGOSEngine_Waxworks::executeOpcode(int opcode) {
 void AGOSEngine_Waxworks::oww_goto() {
 	// 55: set itemA parent
 	uint item = getNextItemID();
-	if (derefItem(item) == NULL) {
-		setItemParent(me(), NULL);
+	if (derefItem(item) == nullptr) {
+		setItemParent(me(), nullptr);
 		loadRoomItems(item);
 	}
 	setItemParent(me(), derefItem(item));
@@ -365,18 +365,18 @@ void AGOSEngine_Waxworks::oww_pauseGame() {
 	haltAnimation();
 
 	while (!shouldQuit()) {
-		_lastHitArea = NULL;
-		_lastHitArea3 = NULL;
+		_lastHitArea = nullptr;
+		_lastHitArea3 = nullptr;
 
 		while (!shouldQuit()) {
-			if (_lastHitArea3 != 0)
+			if (_lastHitArea3 != nullptr)
 				break;
 			delay(1);
 		}
 
 		ha = _lastHitArea;
 
-		if (ha == NULL) {
+		if (ha == nullptr) {
 		} else if (ha->id == 200) {
 			break;
 		} else if (ha->id == 201) {
@@ -412,7 +412,7 @@ void AGOSEngine_Waxworks::oww_boxPObj() {
 	// 188: print object name to box
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
-	if (subObject != NULL && subObject->objectFlags & kOFText)
+	if (subObject != nullptr && subObject->objectFlags & kOFText)
 		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 

@@ -194,7 +194,7 @@ const char *AGOSEngine::getFileName(int type) const {
 		if (_gameDescription->desc.filesDescriptions[i].fileType == type)
 			return _gameDescription->desc.filesDescriptions[i].fileName;
 	}
-	return NULL;
+	return nullptr;
 }
 
 #ifdef ENABLE_AGOS2
