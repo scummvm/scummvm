@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-13 14:33+0000\n"
-"PO-Revision-Date: 2021-11-01 08:24+0000\n"
+"PO-Revision-Date: 2021-11-13 18:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -688,46 +688,38 @@ msgstr "???"
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
-msgstr ""
+msgstr "Выбрать сортировку по группам"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "Не завдано"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "Перша сторінка"
+msgstr "Перша літера"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "Серія"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "Видавник"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Мова:"
+msgstr "Мова"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Платформа:"
+msgstr "Платформа"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -855,7 +847,7 @@ msgstr "Виберіть гру:"
 
 #: gui/launcher.cpp:782
 msgid "Group by:"
-msgstr ""
+msgstr "Групувати по:"
 
 #: gui/launcher.cpp:824 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -901,42 +893,36 @@ msgstr "Реда~г~. гру..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1116 gui/launcher.cpp:1303
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Невідомий варіант"
+msgstr "Невідомий движок"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1134 gui/launcher.cpp:1335
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Невідомий автор"
+msgstr "Невідомий видавник"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1152 gui/launcher.cpp:1321
 msgid "No Series"
-msgstr ""
+msgstr "Без серії"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1167 gui/launcher.cpp:1354
 msgid "Language not detected"
-msgstr ""
+msgstr "Мова не визначена"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1182 gui/launcher.cpp:1369
 msgid "Platform not detected"
-msgstr ""
+msgstr "Платформа не визначена"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1380 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Усі"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1452,18 +1438,13 @@ msgid "Theme Path:"
 msgstr "Шлях до тем:"
 
 #: gui/options.cpp:2254
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "Шлях /root/:"
+msgstr "Шлях до іконок:"
 
 #: gui/options.cpp:2256
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "Корінний шлях:"
+msgstr "Шлях до іконок:"
 
 #: gui/options.cpp:2262 gui/options.cpp:2264 gui/options.cpp:2265
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1886,10 +1867,8 @@ msgid "Select directory for GUI themes"
 msgstr "Виберіть папку для тем GUI"
 
 #: gui/options.cpp:2887
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Виберіть папку для тем GUI"
+msgstr "Виберіть папку для іконок для GUI"
 
 #: gui/options.cpp:2897
 msgid "Select directory for extra files"
@@ -2201,10 +2180,8 @@ msgid "Play"
 msgstr "Грати"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Записати"
+msgstr "Зберігання"
 
 #: base/main.cpp:651
 msgid "Error running game:"
