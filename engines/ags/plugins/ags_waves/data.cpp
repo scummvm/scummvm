@@ -43,7 +43,7 @@ void AGSWaves::SaveVariable(ScriptMethodParams &params) {
 void AGSWaves::ReadVariable(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 
-	if (GameDatavalue[id] == NULL) {
+	if (GameDatavalue[id] == nullptr) {
 		params._result = _engine->CreateScriptString("");
 	} else {
 		params._result = _engine->CreateScriptString(GameDatavalue[id]);
@@ -111,9 +111,9 @@ void AGSWaves::GetGDState(ScriptMethodParams &params) {
 
 void AGSWaves::ResetAllGD(ScriptMethodParams &params) {
 	for (int i = 0; i <= usedTokens; i++) {
-		if (Token[i] != NULL)
+		if (Token[i] != nullptr)
 			free(Token[i]);
-		Token[i] = NULL;
+		Token[i] = nullptr;
 		TokenUnUsed[i] = true;
 	}
 	usedTokens = 0;

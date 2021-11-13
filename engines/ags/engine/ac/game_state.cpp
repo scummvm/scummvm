@@ -347,13 +347,13 @@ int GameState::GetRoomCameraCount() const {
 
 ScriptViewport *GameState::GetScriptViewport(int index) {
 	if (index < 0 || (size_t)index >= _roomViewports.size())
-		return NULL;
+		return nullptr;
 	return _scViewportRefs[index].first;
 }
 
 ScriptCamera *GameState::GetScriptCamera(int index) {
 	if (index < 0 || (size_t)index >= _roomCameras.size())
-		return NULL;
+		return nullptr;
 	return _scCameraRefs[index].first;
 }
 

@@ -972,7 +972,7 @@ void GameLoopUntilNotMoving(const short *move) {
 }
 
 void GameLoopUntilNoOverlay() {
-	GameLoopUntilEvent(UNTIL_NOOVERLAY, 0);
+	GameLoopUntilEvent(UNTIL_NOOVERLAY, nullptr);
 }
 
 

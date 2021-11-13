@@ -180,10 +180,10 @@ void AGSWaves::StartingValues() {
 
 	int j = 0;
 	while (j < 2) {
-		globalStream[j].Filename = NULL;
+		globalStream[j].Filename = nullptr;
 		globalStream[j].repeat = 0;
 		globalStream[j].volume = 0;
-		globalStream[j].Vorbis = NULL;
+		globalStream[j].Vorbis = nullptr;
 		globalStream[j].fix_click = false;
 		j++;
 	}
