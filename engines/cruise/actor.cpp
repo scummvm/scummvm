@@ -65,7 +65,7 @@ actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int
 		pCurrentEntry = pCurrentEntry->next;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int nclick_noeud;
@@ -636,14 +636,14 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 		return (-1);
 	}
 
-	valide_noeud(select_noeud, point_select, &nclick_noeud, NULL);
+	valide_noeud(select_noeud, point_select, &nclick_noeud, nullptr);
 
 	flag_aff_chemin = 0;
 
 	/******* cherche le deuxieme noeud ******/
 
 	num = 0;
-	while (num < NUM_PERSONS && persoTable[num] != NULL)
+	while (num < NUM_PERSONS && persoTable[num] != nullptr)
 		num++;
 
 	if (num == NUM_PERSONS) {

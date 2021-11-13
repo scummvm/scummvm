@@ -116,7 +116,7 @@ void CruiseEngine::deinitialize() {
 	for (int i = 0; i < 8; ++i) {
 		if (backgroundScreens[i]) {
 			MemFree(backgroundScreens[i]);
-			backgroundScreens[i] = NULL;
+			backgroundScreens[i] = nullptr;
 		}
 	}
 }
@@ -148,7 +148,7 @@ bool CruiseEngine::loadLanguageStrings() {
 
 	} else {
 		// Try and use one of the pre-defined language lists
-		const char **p = NULL;
+		const char **p = nullptr;
 		switch (getLanguage()) {
 		case Common::EN_ANY:
 			p = englishLanguageStrings;

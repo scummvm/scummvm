@@ -216,7 +216,7 @@ public:
 
 	static void updateCallback(void *ref);
 
-	bool songLoaded() const { return _sfxData != NULL; }
+	bool songLoaded() const { return _sfxData != nullptr; }
 	bool songPlayed() const { return _songPlayed; }
 	bool playing() const { return _playing; }
 	uint8 numOrders() const { assert(_sfxData); return _sfxData[470]; }
@@ -232,7 +232,7 @@ public:
 byte *readBundleSoundFile(const char *name) {
 	// Load the correct file
 	int fileIdx = findFileInDisks(name);
-	if (fileIdx < 0) return NULL;
+	if (fileIdx < 0) return nullptr;
 
 	int unpackedSize = volumePtrToFileDescriptor[fileIdx].extSize + 2;
 	byte *data = (byte *)MemAlloc(unpackedSize);
@@ -579,7 +579,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 	: _playing(false), _songPlayed(false), _driver(driver) {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
-	_sfxData = NULL;
+	_sfxData = nullptr;
 	_fadeOutCounter = 0;
 	_driver->setUpdateCallback(updateCallback, this);
 
@@ -592,7 +592,7 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 }
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
-	_driver->setUpdateCallback(NULL, NULL);
+	_driver->setUpdateCallback(nullptr, nullptr);
 	stop();
 }
 
@@ -619,7 +619,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 	}
 
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-		_instrumentsData[i] = NULL;
+		_instrumentsData[i] = nullptr;
 
 		char instrument[64];
 		memset(instrument, 0, 64); // Clear the data first
@@ -738,10 +738,10 @@ void PCSoundFxPlayer::handlePattern(int channel, const byte *patternData) {
 void PCSoundFxPlayer::unload() {
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
 		MemFree(_instrumentsData[i]);
-		_instrumentsData[i] = NULL;
+		_instrumentsData[i] = nullptr;
 	}
 	MemFree(_sfxData);
-	_sfxData = NULL;
+	_sfxData = nullptr;
 	_songPlayed = true;
 }
 

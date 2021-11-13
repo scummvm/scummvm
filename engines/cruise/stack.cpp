@@ -61,7 +61,7 @@ void pushPtr(void *ptr) {
 
 void *popPtr() {
 	if (positionInStack <= 0) {
-		return (0);
+		return (nullptr);
 	}
 
 	positionInStack--;

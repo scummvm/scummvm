@@ -29,11 +29,11 @@ bool PCFadeFlag;
 
 char *getText(int textIndex, int overlayIndex) {
 	if (!overlayTable[overlayIndex].ovlData) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (!overlayTable[overlayIndex].ovlData->stringTable) {
-		return NULL;
+		return nullptr;
 	}
 
 	return overlayTable[overlayIndex].ovlData->stringTable[textIndex].

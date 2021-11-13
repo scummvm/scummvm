@@ -307,26 +307,26 @@ const byte mouseCursorMagnifyingGlass[] = {
 };
 
 const char *englishLanguageStrings[13] = {
-	"Pause", NULL, NULL, NULL, NULL, "Inventory", "Speak about...", "Player Menu", NULL,
+	"Pause", nullptr, nullptr, nullptr, nullptr, "Inventory", "Speak about...", "Player Menu", nullptr,
 	"Save", "Load", "Start Again", "Quit"
 };
 const char *frenchLanguageStrings[13] = {
-	"", NULL, NULL, NULL, NULL, "Inventaire", "Parler de...", "Menu Joueur", NULL,
+	"", nullptr, nullptr, nullptr, nullptr, "Inventaire", "Parler de...", "Menu Joueur", nullptr,
 	"Sauvegarde", "Chargement", "Recommencer le jeu", "Quitter"
 };
 // The original Amiga version does use "Speilermen\xFC" instead of "Spielermen\xFC", if we want to correct
 // this typo, we can easily do so.
 const char *germanLanguageStrings[13] = {
-	" ", NULL, NULL, NULL, NULL, "Inventar", "Sprechen ""\xFC""ber", "Speilermen\xFC", "Speicherlaufwerk",
+	" ", nullptr, nullptr, nullptr, nullptr, "Inventar", "Sprechen ""\xFC""ber", "Speilermen\xFC", "Speicherlaufwerk",
 	"Speichern", "Laden", "Neu beginnen", "Ende"
 };
 const char *italianLanguageStrings[13] = {
-	"Pausa", NULL, NULL, NULL, NULL, "Inventario", "Parla di...", "Menu giocatore", NULL,
+	"Pausa", nullptr, nullptr, nullptr, nullptr, "Inventario", "Parla di...", "Menu giocatore", nullptr,
 	"Salva", "Carica", "Ricomincia", "Esci"
 };
 
 const char *spanishLanguageStrings[13] = {
-	"Pausa", NULL, NULL, NULL, NULL, "Inventario", "Hablar de...", "Menu del jugador", NULL,
+	"Pausa", nullptr, nullptr, nullptr, nullptr, "Inventario", "Hablar de...", "Menu del jugador", nullptr,
 	"Salvar", "Cargar", "Recomenzar", "Salir"
 };
 

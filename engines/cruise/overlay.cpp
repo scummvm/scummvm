@@ -34,7 +34,7 @@ int numOfLoadedOverlay;
 void initOverlayTable() {
 	for (int i = 0; i < 90; i++) {
 		overlayTable[i].overlayName[0] = 0;
-		overlayTable[i].ovlData = NULL;
+		overlayTable[i].ovlData = nullptr;
 		overlayTable[i].alreadyLoaded = 0;
 		overlayTable[i].executeScripts = 0;
 	}
@@ -111,7 +111,7 @@ int freeOverlay(int overlayIdx) {
 	MemFree(ovlDataPtr->arrayNameRelocGlob);
 
 	MemFree(ovlDataPtr);
-	overlayTable[overlayIdx].ovlData = NULL;
+	overlayTable[overlayIdx].ovlData = nullptr;
 
 	debug(1, "freeOverlay: finish !");
 
@@ -202,28 +202,28 @@ int loadOverlay(const char *scriptName) {
 	debug(1, "OVL loading done...");
 
 	Common::MemoryReadStream s(unpackedBuffer, unpackedSize, DisposeAfterUse::YES);
-	unpackedBuffer = NULL;
+	unpackedBuffer = nullptr;
 
 	ovlData = overlayTable[scriptIdx].ovlData;
 
 	// Skip pointers
 	s.skip(60);
 
-	ovlData->arrayProc = NULL;
-	ovlData->ptr1 = NULL;
-	ovlData->arrayObject = NULL;
-	ovlData->arrayStates = NULL;
-	ovlData->arrayObjVar = NULL;
-	ovlData->stringTable = NULL;
-	ovlData->arraySymbGlob = NULL;
-	ovlData->arrayRelocGlob = NULL;
-	ovlData->arrayMsgRelHeader = NULL;
-	ovlData->nameVerbGlob = NULL;
-	ovlData->arrayNameObj = NULL;
-	ovlData->arrayNameRelocGlob = NULL;
-	ovlData->arrayNameSymbGlob = NULL;
-	ovlData->data4Ptr = NULL;
-	ovlData->ptr8 = NULL;
+	ovlData->arrayProc = nullptr;
+	ovlData->ptr1 = nullptr;
+	ovlData->arrayObject = nullptr;
+	ovlData->arrayStates = nullptr;
+	ovlData->arrayObjVar = nullptr;
+	ovlData->stringTable = nullptr;
+	ovlData->arraySymbGlob = nullptr;
+	ovlData->arrayRelocGlob = nullptr;
+	ovlData->arrayMsgRelHeader = nullptr;
+	ovlData->nameVerbGlob = nullptr;
+	ovlData->arrayNameObj = nullptr;
+	ovlData->arrayNameRelocGlob = nullptr;
+	ovlData->arrayNameSymbGlob = nullptr;
+	ovlData->data4Ptr = nullptr;
+	ovlData->ptr8 = nullptr;
 	ovlData->numProc = s.readUint16BE();
 	ovlData->numRel = s.readUint16BE();
 	ovlData->numSymbGlob = s.readUint16BE();
@@ -338,7 +338,7 @@ int loadOverlay(const char *scriptName) {
 
 		for (int i = 0; i < ovlData->numProc; i++) {
 			s.skip(4);
-			ovlData->arrayProc[i].dataPtr = NULL;
+			ovlData->arrayProc[i].dataPtr = nullptr;
 			ovlData->arrayProc[i].sizeOfData = s.readUint16BE();
 			ovlData->arrayProc[i].offsetToSubData3 = s.readUint16BE();
 			ovlData->arrayProc[i].offsetToImportData = s.readUint16BE();
@@ -388,7 +388,7 @@ int loadOverlay(const char *scriptName) {
 
 		for (int i = 0; i < ovlData->numRel; i++) {
 			s.skip(4);
-			ovlData->ptr1[i].dataPtr = NULL;
+			ovlData->ptr1[i].dataPtr = nullptr;
 			ovlData->ptr1[i].sizeOfData = s.readUint16BE();
 			ovlData->ptr1[i].offsetToSubData3 = s.readUint16BE();
 			ovlData->ptr1[i].offsetToImportData = s.readUint16BE();
@@ -550,7 +550,7 @@ int loadOverlay(const char *scriptName) {
 		}
 
 		Common::MemoryReadStream s2(unpackedBuffer, unpackedSize, DisposeAfterUse::YES);
-		unpackedBuffer = NULL;
+		unpackedBuffer = nullptr;
 
 		ovlData->specialString1Length = s2.readUint16BE();
 		if (ovlData->specialString1Length) {

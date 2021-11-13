@@ -40,24 +40,24 @@ objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx) {
 	objDataStruct *var_6;
 
 	if (ovlIdx < 1 || objIdx < 0)
-		return NULL;
+		return nullptr;
 
 	if (!overlayTable[ovlIdx].ovlData)
-		return NULL;
+		return nullptr;
 
 	if (overlayTable[ovlIdx].ovlData->numObj <= objIdx)
-		return NULL;
+		return nullptr;
 
 	var_6 = overlayTable[ovlIdx].ovlData->arrayObject;
 
 	if (!var_6)
-		return NULL;
+		return nullptr;
 
 	return (&var_6[objIdx]);
 }
 
 int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery *returnParam) {
-	objectParams *ptr2 = 0;
+	objectParams *ptr2 = nullptr;
 	objDataStruct *ptr;
 	ovlDataStruct *ovlData;
 //  int16 type;
@@ -228,7 +228,7 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 	//char* ptr3 = NULL;
 	objDataStruct *ptr;
 	ovlDataStruct *ovlData;
-	objectParams *ptr2 = 0;
+	objectParams *ptr2 = nullptr;
 
 	ptr = getObjectDataFromOverlay(overlayIdx, param2);
 
@@ -312,7 +312,7 @@ const char *getObjectName(int index, const char *string) {
 	const char *ptr = string;
 
 	if (!string)
-		return NULL;
+		return nullptr;
 
 	int i = 0;
 //	int j = 0;

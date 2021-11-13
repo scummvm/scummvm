@@ -189,8 +189,8 @@ void initBigVar3() {
 			MemFree(filesDatabase[i].subData.ptr);
 		}
 
-		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptrMask = NULL;
+		filesDatabase[i].subData.ptr = nullptr;
+		filesDatabase[i].subData.ptrMask = nullptr;
 
 		filesDatabase[i].subData.index = -1;
 		filesDatabase[i].subData.resourceType = 0;
@@ -198,7 +198,7 @@ void initBigVar3() {
 }
 
 void resetPtr2(scriptInstanceStruct *ptr) {
-	ptr->nextScriptPtr = NULL;
+	ptr->nextScriptPtr = nullptr;
 	ptr->scriptNumber = -1;
 }
 
@@ -214,27 +214,27 @@ void resetActorPtr(actorStruct *ptr) {
 		} while (p);
 	}
 
-	ptr->next = NULL;
-	ptr->prev = NULL;
+	ptr->next = nullptr;
+	ptr->prev = nullptr;
 }
 
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param) {
 	ovlDataStruct *ovlData = overlayTable[scriptNumber].ovlData;
 
 	if (!ovlData) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (param < 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (ovlData->numProc <= param) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (!ovlData->arrayProc) {
-		return NULL;
+		return nullptr;
 	}
 
 	return (&ovlData->arrayProc[param]);
@@ -244,19 +244,19 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 	ovlDataStruct *ovlData = overlayTable[scriptNumber].ovlData;
 
 	if (!ovlData) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (param < 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (ovlData->numRel <= param) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (!ovlData->ptr1) {
-		return NULL;
+		return nullptr;
 	}
 
 	return &ovlData->ptr1[param];
@@ -279,12 +279,12 @@ uint8 *getDataFromData3(ovlData3Struct *ptr, int param) {
 	uint8 *dataPtr;
 
 	if (!ptr)
-		return (NULL);
+		return (nullptr);
 
 	dataPtr = ptr->dataPtr;
 
 	if (!dataPtr)
-		return (NULL);
+		return (nullptr);
 
 	switch (param) {
 	case 0:
@@ -300,7 +300,7 @@ uint8 *getDataFromData3(ovlData3Struct *ptr, int param) {
 	case 5:
 		return (dataPtr + ptr->offsetToSubData5);
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -414,8 +414,8 @@ void resetFileEntry(int32 entryNumber) {
 	if (filesDatabase[entryNumber].subData.ptrMask)
 		MemFree(filesDatabase[entryNumber].subData.ptrMask);
 
-	filesDatabase[entryNumber].subData.ptr = NULL;
-	filesDatabase[entryNumber].subData.ptrMask = NULL;
+	filesDatabase[entryNumber].subData.ptr = nullptr;
+	filesDatabase[entryNumber].subData.ptrMask = nullptr;
 	filesDatabase[entryNumber].widthInColumn = 0;
 	filesDatabase[entryNumber].width = 0;
 	filesDatabase[entryNumber].resType = OBJ_TYPE_LINE;
@@ -429,7 +429,7 @@ void resetFileEntry(int32 entryNumber) {
 uint8 *mainProc14(uint16 overlay, uint16 idx) {
 	assert(0);
 
-	return NULL;
+	return nullptr;
 }
 
 void CruiseEngine::initAllData() {
@@ -446,7 +446,7 @@ void CruiseEngine::initAllData() {
 	soundList[2].frameNum = -1;
 	soundList[3].frameNum = -1;
 
-	menuTable[0] = NULL;
+	menuTable[0] = nullptr;
 
 	for (int i = 0; i < 2000; i++)
 		globalVars[i] = 0;
@@ -455,8 +455,8 @@ void CruiseEngine::initAllData() {
 		backgroundTable[i].name[0] = 0;
 
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
-		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptrMask = NULL;
+		filesDatabase[i].subData.ptr = nullptr;
+		filesDatabase[i].subData.ptrMask = nullptr;
 	}
 
 	initBigVar3();
@@ -784,7 +784,7 @@ void buildInventory(int X, int Y) {
 	pMenu = createMenu(X, Y, _vm->langString(ID_INVENTORY));
 	menuTable[1] = pMenu;
 
-	if (pMenu == NULL)
+	if (pMenu == nullptr)
 		return;
 
 	int numObjectInInventory = 0;
@@ -811,7 +811,7 @@ void buildInventory(int X, int Y) {
 
 	if (numObjectInInventory == 0) {
 		freeMenu(menuTable[1]);
-		menuTable[1] = NULL;
+		menuTable[1] = nullptr;
 	}
 }
 
@@ -822,12 +822,12 @@ menuElementStruct *currentMenuElement;
 menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	menuElementStruct *pMenuElement;
 
-	if (pMenu == NULL) {
-		return NULL;
+	if (pMenu == nullptr) {
+		return nullptr;
 	}
 
 	if (pMenu->numElements == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	pMenuElement = pMenu->ptrNextElement;
@@ -844,7 +844,7 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 		pMenuElement = pMenuElement->next;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool createDialog(int objOvl, int objIdx, int x, int y) {
@@ -896,9 +896,9 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						char verbName[80];
 						verbName[0]	= 0;
 
-						ovlDataStruct *ovl2 = NULL;
-						ovlDataStruct *ovl3 = NULL;
-						ovlDataStruct *ovl4 = NULL;
+						ovlDataStruct *ovl2 = nullptr;
+						ovlDataStruct *ovl3 = nullptr;
+						ovlDataStruct *ovl4 = nullptr;
 
 						if (verbOvl > 0)
 							ovl2 = overlayTable[verbOvl].ovlData;
@@ -992,8 +992,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					char verbName[80];
 					verbName[0]	= 0;
 
-					ovlDataStruct *ovl2 = NULL;
-					ovlDataStruct *ovl3 = NULL;
+					ovlDataStruct *ovl2 = nullptr;
+					ovlDataStruct *ovl3 = nullptr;
 
 					if (verbOvl > 0)
 						ovl2 = overlayTable[verbOvl].ovlData;
@@ -1051,14 +1051,14 @@ int processInventory() {
 			int var4 = pMenuElementSub->header;
 
 			freeMenu(menuTable[1]);
-			menuTable[1] = NULL;
+			menuTable[1] = nullptr;
 
 			findRelation(var2, var4, currentMenuElementX + 80, currentMenuElementY);
 
 			return 1;
 		} else {
 			freeMenu(menuTable[1]);
-			menuTable[1] = NULL;
+			menuTable[1] = nullptr;
 		}
 	}
 
@@ -1066,12 +1066,12 @@ int processInventory() {
 }
 
 void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
-	if (pMenuElement == NULL)
+	if (pMenuElement == nullptr)
 		return;
 
 	menuElementSubStruct* pCurrent = pMenuElement;
 
-	while (pCurrent != NULL) {
+	while (pCurrent != nullptr) {
 		int ovlIdx = pCurrent->ovlIdx;
 		int header = pCurrent->header;
 
@@ -1218,12 +1218,12 @@ int findHighColor() {
 }
 
 void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
-	if (pMenuElement == NULL)
+	if (pMenuElement == nullptr)
 		return;
 
 	menuElementSubStruct* pCurrent = pMenuElement;
 
-	while (pCurrent != NULL) {
+	while (pCurrent != nullptr) {
 		int ovlIdx = pCurrent->ovlIdx;
 		int header = pCurrent->header;
 
@@ -1354,20 +1354,20 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 void closeAllMenu() {
 	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
-		menuTable[0] = NULL;
+		menuTable[0] = nullptr;
 	}
 
 	if (menuTable[1]) {
 		freeMenu(menuTable[1]);
-		menuTable[1] = NULL;
+		menuTable[1] = nullptr;
 	}
 	if (linkedMsgList) {
 		assert(0);
 //					freeMsgList(linkedMsgList);
 	}
 
-	linkedMsgList = NULL;
-	linkedRelation = NULL;
+	linkedMsgList = nullptr;
+	linkedRelation = nullptr;
 }
 
 bool checkInput(int16 *buttonPtr) {
@@ -1494,7 +1494,7 @@ int CruiseEngine::processInput() {
 			changeCursor(CURSOR_NORMAL);
 		}
 
-		if ((menuTable[0] == NULL) && (!buttonDown)) {
+		if ((menuTable[0] == nullptr) && (!buttonDown)) {
 			int dialogFound = createDialog(dialogueOvl, dialogueObj, xdial, 0);
 
 			if (menuTable[0]) {
@@ -1502,7 +1502,7 @@ int CruiseEngine::processInput() {
 					currentActiveMenu = 0;
 				} else {
 					freeMenu(menuTable[0]);
-					menuTable[0] = NULL;
+					menuTable[0] = nullptr;
 					currentActiveMenu = -1;
 				}
 			} else {
@@ -1514,15 +1514,15 @@ int CruiseEngine::processInput() {
 					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
 
 					freeMenu(menuTable[0]);
-					menuTable[0] = NULL;
+					menuTable[0] = nullptr;
 
 					if (linkedMsgList) {
 						assert(0);
 						//					freeMsgList(linkedMsgList);
 					}
 
-					linkedMsgList = NULL;
-					linkedRelation = NULL;
+					linkedMsgList = nullptr;
+					linkedRelation = nullptr;
 
 					changeCursor(CURSOR_NORMAL);
 					currentActiveMenu = -1;
@@ -1550,14 +1550,14 @@ int CruiseEngine::processInput() {
 						callSubRelation(linkedRelation, objOvl, objIdx);
 					}
 					freeMenu(menuTable[0]);
-					menuTable[0] = NULL;
+					menuTable[0] = nullptr;
 				}
 
 				if (linkedMsgList) {
 //					freeMsgList(linkedMsgList);
 				}
-				linkedMsgList = NULL;
-				linkedRelation = NULL;
+				linkedMsgList = nullptr;
+				linkedRelation = nullptr;
 				changeCursor(CURSOR_NORMAL);
 			} else { // call sub relation when clicking in inventory
 				if (menuTable[0] && menuTable[1]) {
@@ -1576,7 +1576,7 @@ int CruiseEngine::processInput() {
 			// manage click on object menu
 			if (menuDown == 0) {
 				// Handle left click on an object
-				if (menuTable[0] == 0) {
+				if (menuTable[0] == nullptr) {
 					int objOvl;
 					int objIdx;
 					int objType;
@@ -1592,7 +1592,7 @@ int CruiseEngine::processInput() {
 							} else {
 								// object has a name but no relation, just move the character
 								freeMenu(menuTable[0]);
-								menuTable[0] = NULL;
+								menuTable[0] = nullptr;
 
 								aniX = mouseX;
 								aniY = mouseY;
@@ -1619,7 +1619,7 @@ int CruiseEngine::processInput() {
 						// if there is a linked relation, close menu
 						if (!linkedRelation) {
 							freeMenu(menuTable[0]);
-							menuTable[0] = NULL;
+							menuTable[0] = nullptr;
 							changeCursor(CURSOR_NORMAL);
 						} else { // else create the message for the linked relation
 							char text[80];
@@ -1651,15 +1651,15 @@ int CruiseEngine::processInput() {
 			keyboardCode = Common::KEYCODE_INVALID;
 
 			// close object menu if there is no linked relation
-			if ((linkedRelation == 0) && (menuTable[0])) {
+			if ((linkedRelation == nullptr) && (menuTable[0])) {
 				freeMenu(menuTable[0]);
-				menuTable[0] = NULL;
+				menuTable[0] = nullptr;
 				selectDown = 0;
 				menuDown = 0;
 				currentActiveMenu = -1;
 			}
 
-			if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL)) {
+			if ((!selectDown) && (!menuDown) && (menuTable[1] == nullptr)) {
 				buildInventory(mouseX, mouseY);
 
 				if (menuTable[1]) {
@@ -1768,7 +1768,7 @@ void CruiseEngine::mainLoop() {
 
 	currentActiveMenu = -1;
 	autoMsg = -1;
-	linkedRelation = 0;
+	linkedRelation = nullptr;
 	userWait = false;
 	autoTrack = false;
 

@@ -24,7 +24,7 @@
 
 namespace Cruise {
 
-uint8 *_systemFNT = NULL;
+uint8 *_systemFNT = nullptr;
 
 uint8 itemColor = 1;
 uint8 selectColor = 3;
@@ -59,7 +59,7 @@ int16 autoTrack;
 int16 currentDiskNumber = 1;
 
 int16 volumeNumEntry;
-fileEntry *volumePtrToFileDescriptor = NULL;
+fileEntry *volumePtrToFileDescriptor = nullptr;
 
 uint32 volumeFileDescriptorSize;
 int16 volumeSizeOfEntry;

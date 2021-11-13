@@ -215,11 +215,11 @@ int initCt(const char *ctpName) {
 
 	if (!loadCtFromSave) {
 		for (int i = 0; i < 10; i++) {
-			persoTable[i] = NULL;
+			persoTable[i] = nullptr;
 		}
 	}
-	uint8* ptr = NULL;
-	if (!loadFileSub1(&ptr, ctpName, 0)) {
+	uint8* ptr = nullptr;
+	if (!loadFileSub1(&ptr, ctpName, nullptr)) {
 		MemFree(ptr);
 		return (-18);
 	}

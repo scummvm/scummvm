@@ -99,7 +99,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 void loadFNT(const char *fileName) {
 	uint8 header[4];
 
-	_systemFNT = NULL;
+	_systemFNT = nullptr;
 
 	Common::File fontFileHandle;
 
@@ -115,7 +115,7 @@ void loadFNT(const char *fileName) {
 
 		_systemFNT = (uint8 *)mallocAndZero(fontSize);
 
-		if (_systemFNT != NULL) {
+		if (_systemFNT != nullptr) {
 			fontFileHandle.seek(4);
 			fontFileHandle.read(_systemFNT, fontSize);
 
@@ -148,7 +148,7 @@ void initSystem() {
 
 	for (i = 0; i < 64; i++) {
 		strcpy(preloadData[i].name, "");
-		preloadData[i].ptr = NULL;
+		preloadData[i].ptr = nullptr;
 		preloadData[i].nofree = 0;
 	}
 
@@ -299,7 +299,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 
 	// check if string is empty
 	if (!string) {
-		return NULL;
+		return nullptr;
 	}
 	// check if font has been loaded, else get system font
 	if (fontFileIndex != -1) {
@@ -313,7 +313,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 	}
 
 	if (!fontPtr) {
-		return NULL;
+		return nullptr;
 	}
 
 	fontPtr_Desc = (const FontEntry *)((const uint8 *)fontPtr + sizeof(FontInfo));
@@ -333,7 +333,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 	numLines = getTextLineCount(rightBorder_X, wordSpacingWidth, fontPtr_Desc, string);	// ok
 
 	if (!numLines) {
-		return NULL;
+		return nullptr;
 	}
 
 	stringHeight = ((wordSpacingHeight + lineHeight + 2) * numLines) + 1;
