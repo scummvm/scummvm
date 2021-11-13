@@ -179,7 +179,7 @@ MinigameBbAnt::Obj *MinigameBbAnt::getFreeObject() {
 	for (int i = 12; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 0)
 			return &_objects[i];
-	return 0;
+	return nullptr;
 }
 
 void MinigameBbAnt::initObjects() {

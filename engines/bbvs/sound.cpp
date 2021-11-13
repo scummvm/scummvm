@@ -29,7 +29,7 @@
 
 namespace Bbvs {
 
-Sound::Sound() : _stream(0) {
+Sound::Sound() : _stream(nullptr) {
 }
 
 Sound::~Sound() {
