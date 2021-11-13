@@ -240,8 +240,6 @@ public:
 protected:
 	const uint8 *_colorMap;
 	Common::SharedPtr<Graphics::FontSJIS> _font;
-	int _sjisWidth, _asciiWidth;
-	int _fontHeight;
 	const bool _drawOutline;
 	int _style;
 

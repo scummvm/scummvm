@@ -97,9 +97,21 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 }
 
 SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, 0) {
-	_sjisWidth = _font->getMaxFontWidth();
-	_fontHeight = _font->getFontHeight();
-	_asciiWidth = _font->getCharWidth('a');
+}
+
+int SJISFontLarge::getHeight() const {
+	return _font->getFontHeight();
+}
+
+int SJISFontLarge::getWidth() const {
+	return _font->getMaxFontWidth();
+}
+
+int SJISFontLarge::getCharWidth(uint16 c) const {
+	if (c <= 0x7F || (c >= 0xA1 && c <= 0xDF))
+		return _font->getCharWidth('a');
+	else
+		return getWidth();
 }
 
 void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {

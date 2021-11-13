@@ -3794,24 +3794,21 @@ void AMIGAFont::unload() {
 SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
 	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kStyleNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
-	_sjisWidth = _font->getMaxFontWidth() >> 1;
-	_fontHeight = _font->getFontHeight() >> 1;
-	_asciiWidth = _font->getCharWidth('a') >> 1;
 }
 
 int SJISFont::getHeight() const {
-	return _fontHeight;
+	return _font->getFontHeight() >> 1;
 }
 
 int SJISFont::getWidth() const {
-	return _sjisWidth + _sjisWidthOffset;
+	return (_font->getMaxFontWidth() >> 1) + _sjisWidthOffset;
 }
 
 int SJISFont::getCharWidth(uint16 c) const {
 	if (c <= 0x7F || (c >= 0xA1 && c <= 0xDF))
-		return _asciiWidth;
+		return _font->getCharWidth('a') >> 1;
 	else
-		return _sjisWidth + _sjisWidthOffset;
+		return getWidth();
 }
 
 void SJISFont::setColorMap(const uint8 *src) {
