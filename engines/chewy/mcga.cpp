@@ -129,13 +129,24 @@ void setpixel_mcga(int16 x, int16 y, int16 farbe) {
 	line_mcga(x, y, x, y, farbe);
 }
 
+static Graphics::Surface getScreen() {
+	Graphics::Surface s;
+	s.format = Graphics::PixelFormat::createFormatCLUT8();
+	s.w = s.pitch = SCREEN_WIDTH;
+	s.h = SCREEN_HEIGHT;
+	s.setPixels(screenP);
+	return s;
+}
+
 uint8 getpix(int16 x, int16 y) {
-	byte *pixel = (byte *)g_screen->getBasePtr(x, y);
+	Graphics::Surface s = getScreen();
+	byte *pixel = (byte *)s.getBasePtr(x, y);
 	return *pixel;
 }
 
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	g_screen->drawLine(x1, y1, x2, y2, farbe);
+	Graphics::Surface s = getScreen();
+	s.drawLine(x1, y1, x2, y2, farbe);
 }
 
 void mem2mcga(const byte *ptr) {
