@@ -257,18 +257,13 @@ bool MenuGump::OnTextInput(int unicode) {
 
 //static
 void MenuGump::showMenu() {
-	Gump *gump = Ultima8Engine::get_instance()->getMenuGump();
-
-	if (gump) {
-		gump->Close();
-	} else {
-		if (GAME_IS_U8)
-			gump = new MenuGump();
-		else
-			gump = new CruMenuGump();
-		gump->InitGump(0);
-		gump->setRelativePosition(CENTER);
-	}
+	ModalGump *gump;
+	if (GAME_IS_U8)
+		gump = new MenuGump();
+	else
+		gump = new CruMenuGump();
+	gump->InitGump(0);
+	gump->setRelativePosition(CENTER);
 }
 
 //static

@@ -462,8 +462,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	// Save config here....
 
-	_textModes.clear();
-
 	// reset mouse cursor
 	_mouse->popAllCursors();
 	_mouse->pushMouseCursor();
@@ -728,30 +726,10 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 	GraphicSysInit();
 }
 
-void Ultima8Engine::enterTextMode(Gump *gump) {
-	if (!_textModes.empty()) {
-		_textModes.remove(gump->getObjId());
-	}
-	_textModes.push_front(gump->getObjId());
-
-	_avatarMoverProcess->clearMovementFlag(AvatarMoverProcess::MOVE_ANY_DIRECTION);
-	_avatarMoverProcess->clearMovementFlag(AvatarMoverProcess::MOVE_JUMP);
-}
-
-void Ultima8Engine::leaveTextMode(Gump *gump) {
-	if (!_textModes.empty())
-		_textModes.remove(gump->getObjId());
-}
-
 void Ultima8Engine::handleEvent(const Common::Event &event) {
-	// Text mode input. A few hacks here
-	Gump *gump = nullptr;
-	while (!_textModes.empty()) {
-		gump = dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
-		if (gump)
-			break;
-
-		_textModes.pop_front();
+	Gump *gump = _desktopGump->FindGump<ModalGump>();
+	if (gump) {
+		_avatarMoverProcess->resetMovementFlags();
 	}
 
 	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
@@ -1114,8 +1092,6 @@ void Ultima8Engine::resetEngine() {
 	_desktopGump = nullptr;
 	_gameMapGump = nullptr;
 	_inverterGump = nullptr;
-
-	_textModes.clear();
 
 	// reset mouse cursor
 	_mouse->popAllCursors();
@@ -1696,13 +1672,6 @@ void Ultima8Engine::showSplashScreen() {
 	// Handle a single event to get the splash screen shown
 	Common::Event event;
 	_events->pollEvent(event);
-}
-
-Gump *Ultima8Engine::getMenuGump() const {
-	if (_textModes.empty())
-		return nullptr;
-
-	return dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
 }
 
 } // End of namespace Ultima8

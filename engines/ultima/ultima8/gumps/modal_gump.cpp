@@ -48,9 +48,6 @@ ModalGump::~ModalGump() {
 void ModalGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	// lock keyboard
-	Ultima8Engine::get_instance()->enterTextMode(this);
-
 	Kernel::get_instance()->pause();
 
 	AudioProcess *ap = AudioProcess::get_instance();
@@ -76,9 +73,6 @@ uint16 ModalGump::TraceObjId(int32 mx, int32 my) {
 }
 
 void ModalGump::Close(bool no_del) {
-	// free keyboard
-	Ultima8Engine::get_instance()->leaveTextMode(this);
-
 	Kernel::get_instance()->unpause();
 
 	AudioProcess *ap = AudioProcess::get_instance();

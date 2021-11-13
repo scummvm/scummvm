@@ -57,7 +57,9 @@ public:
 	virtual void clearMovementFlag(uint32 mask) {
 		_movementFlags &= ~mask;
 	}
-
+	void resetMovementFlags() {
+		_movementFlags = 0;
+	}
 	void onMouseDown(int button, int32 mx, int32 my);
 	void onMouseUp(int button);
 

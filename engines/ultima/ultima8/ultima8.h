@@ -74,7 +74,6 @@ private:
 
 	static Ultima8Engine *_instance;
 
-	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
 	bool _fontOverride;
 	bool _fontAntialiasing;
 	// Audio Mixer
@@ -351,12 +350,6 @@ public:
 	//! \return true if succesful.
 	bool newGame(int saveSlot = -1);
 
-	//! Enter gump text mode (aka Unicode keyhandling)
-	void enterTextMode(Gump *);
-
-	//! Leave gump text mode (aka Unicode keyhandling)
-	void leaveTextMode(Gump *);
-
 	//! Display an error message box
 	//! \param message The message to display on the box
 	void Error(Std::string message, Std::string title = Std::string());
@@ -383,8 +376,6 @@ public:
 	void makeCheater() {
 		_hasCheated = true;
 	}
-	Gump *getMenuGump() const;
-
 	bool isInterpolationEnabled() const {
 		return _interpolate;
 	}
