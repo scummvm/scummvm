@@ -1876,7 +1876,8 @@ msgstr "Selecciona el directorio de temas"
 
 #: gui/options.cpp:2887
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Selecciona el directorio de las miniaturas del iniciador de la interfaz"
+msgstr ""
+"Selecciona el directorio de las miniaturas del iniciador de la interfaz"
 
 #: gui/options.cpp:2897
 msgid "Select directory for extra files"
