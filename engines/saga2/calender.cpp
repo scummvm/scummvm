@@ -74,7 +74,7 @@ void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 void CalenderTime::update() {
-	const char *text = NULL;
+	const char *text = nullptr;
 
 	if (++_frameInHour >= kFramesPerHour) {
 		_frameInHour = 0;

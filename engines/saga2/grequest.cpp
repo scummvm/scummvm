@@ -53,7 +53,7 @@ int16 SplitString(
 
 	for (count = 0; count < maxStrings;) {
 		textStart[count++] = text;
-		if ((text = strchr(text, delimiter)) == NULL) break;
+		if ((text = strchr(text, delimiter)) == nullptr) break;
 		*text++ = '\0';
 	}
 	return count;
@@ -66,7 +66,7 @@ static void handleRequestEvent(gEvent &ev) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -354,12 +354,12 @@ int16 GameDialogA(
 	                 200,
 	                 100),
 	          0,
-	          NULL,
+	          nullptr,
 	          windowText,
 	          buttonText,
 	          args);
 
-	if (win == NULL) {
+	if (win == nullptr) {
 		//  REM: perhaps a memory alert of some sort???
 		error("Unable to open requester window.");
 	}
@@ -407,11 +407,11 @@ int16 GameDisplayA(
 	                 200,
 	                 100),
 	          0,
-	          NULL,
+	          nullptr,
 	          windowText,
 	          args);
 
-	if (win == NULL) {
+	if (win == nullptr) {
 		//  REM: perhaps a memory alert of some sort???
 		error("Unable to open requester window.");
 	}

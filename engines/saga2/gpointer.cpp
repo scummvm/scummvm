@@ -49,7 +49,7 @@ gMousePointer::gMousePointer(gDisplayPort &port) {
 	videoPort = &port;
 
 	//  no imagery at this time.
-	pointerImage = NULL;
+	pointerImage = nullptr;
 }
 
 gMousePointer::~gMousePointer() {

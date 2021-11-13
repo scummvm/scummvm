@@ -522,7 +522,7 @@ void Speech::dispose() {
 
 		//  De-allocate the speech data
 		delete[] _speechImage.data;
-		_speechImage.data = NULL;
+		_speechImage.data = nullptr;
 
 		//  Clear the number of active buttons
 		speechLineCount = speechButtonCount = 0;
@@ -550,13 +550,13 @@ void updateSpeech() {
 	Speech          *sp;
 
 	//  if there is a speech object
-	if ((sp = speechList.currentActive()) != NULL) {
+	if ((sp = speechList.currentActive()) != nullptr) {
 		//  If there is no bitmap, then set one up.
 		if (!(sp->speechFlags & Speech::spActive)) {
 			sp->setupActive();
 
 			//  If speech failed to set up, then skip it
-			if (sp->_speechImage.data == NULL) {
+			if (sp->_speechImage.data == nullptr) {
 				sp->dispose();
 				return;
 			}
@@ -587,7 +587,7 @@ void Speech::abortSpeech() {
 	//  Start by displaying first frame straight off, no delay
 	speechFinished.set(0);
 	if (speechFlags & spHasVoice) {
-		PlayVoice(0);
+		PlayVoice(nullptr);
 	}
 }
 
@@ -601,7 +601,7 @@ void abortSpeech() {
 void deleteSpeech(ObjectID id) {         // voice sound sample ID
 	Speech *sp;
 
-	while ((sp = speechList.findSpeech(id)) != NULL) sp->dispose();
+	while ((sp = speechList.findSpeech(id)) != nullptr) sp->dispose();
 }
 
 //-----------------------------------------------------------------------
@@ -882,7 +882,7 @@ SpeechTaskList::SpeechTaskList(Common::InSaveFile *in) {
 	//  Restore the speeches
 	for (int i = 0; i < count; i++) {
 		Speech *sp = new Speech;
-		assert(sp != NULL);
+		assert(sp != nullptr);
 		debugC(3, kDebugSaveload, "Loading Speech %d", i++);
 
 		_inactiveList.push_back(sp);
@@ -975,7 +975,7 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 	GameObject          *obj = GameObject::objectAddress(id);
 
 	//  Actors cannot speak if not in the world
-	if (obj->world() != currentWorld) return NULL;
+	if (obj->world() != currentWorld) return nullptr;
 
 	if (speechCount() >= MAX_SPEECH_PTRS) {
 		warning("Too many speech tasks: > %d", MAX_SPEECH_PTRS);
@@ -986,7 +986,7 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 #if DEBUG
 	if (sp == NULL) fatal("Ran out of Speech Tasks, Object = %s\n", obj->objName());
 #endif
-	if (sp == NULL) return NULL;
+	if (sp == nullptr) return nullptr;
 
 	debugC(1, kDebugTasks, "Speech: New Task: %p for %p (%s) (flags = %d) (total = %d)", (void *)sp, (void *)obj, obj->objName(), flags, speechCount());
 
@@ -1064,7 +1064,7 @@ APPFUNC(cmdClickSpeech) {
 
 	case gEventMouseDown:
 
-		if ((sp = speechList.currentActive()) != NULL) {
+		if ((sp = speechList.currentActive()) != nullptr) {
 			sp->selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage.size.x, sp->_textPort);
 		}
 		break;

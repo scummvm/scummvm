@@ -304,7 +304,7 @@ void TaskStackList::updateTaskStacks() {
 			//  Update the task stack and delete it if it is done
 			if ((result = ts->update()) != taskNotDone) {
 				Actor *a = ts->getActor();
-				assert(a != NULL);
+				assert(a != nullptr);
 
 				a->handleTaskCompletion(result);
 			}
@@ -919,7 +919,7 @@ void TetheredWanderTask::fixup() {
 	//	Restore the gotoTether pointer
 	gotoTether = _gotoTetherID != NoTask
 				 ?	(GotoRegionTask *)getTaskAddress(_gotoTetherID)
-				 :	NULL;
+				 :	nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -947,7 +947,7 @@ void TetheredWanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(maxV);
 
 	//  Archive gotoTether ID
-	if (gotoTether != NULL)
+	if (gotoTether != nullptr)
 		out->writeSint16LE(getTaskID(gotoTether));
 	else
 		out->writeSint16LE(NoTask);
@@ -975,10 +975,10 @@ int16 TetheredWanderTask::getType() const {
 //----------------------------------------------------------------------
 
 void TetheredWanderTask::abortTask() {
-	if (gotoTether != NULL) {
+	if (gotoTether != nullptr) {
 		gotoTether->abortTask();
 		delete gotoTether;
-		gotoTether = NULL;
+		gotoTether = nullptr;
 	} else {
 		MotionTask *actorMotion = stack->getActor()->_moveTask;
 
@@ -1009,17 +1009,17 @@ TaskResult TetheredWanderTask::handleWander() {
 
 	if (actorLoc.u < minU || actorLoc.u >= maxU
 	        ||  actorLoc.v < minV || actorLoc.v >= maxV) {
-		if (gotoTether != NULL)
+		if (gotoTether != nullptr)
 			gotoTether->update();
 		else {
 			gotoTether = new GotoRegionTask(stack, minU, minV, maxU, maxV);
-			if (gotoTether != NULL) gotoTether->update();
+			if (gotoTether != nullptr) gotoTether->update();
 		}
 	} else {
-		if (gotoTether != NULL) {
+		if (gotoTether != nullptr) {
 			gotoTether->abortTask();
 			delete gotoTether;
-			gotoTether = NULL;
+			gotoTether = nullptr;
 		}
 
 		bool            startWander = false;
@@ -1085,7 +1085,7 @@ void GotoTask::fixup() {
 	//	Convert wanderID to a Task pointer
 	wander = _wanderID != NoTask
 	         ? (WanderTask *)getTaskAddress(_wanderID)
-	         :   NULL;
+	         :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1104,7 +1104,7 @@ void GotoTask::write(Common::MemoryWriteStreamDynamic *out) const {
 
 	//  Convert the wander Task pointer to a TaskID and store it
 	//  in the buffer
-	if (wander != NULL)
+	if (wander != nullptr)
 		out->writeSint16LE(getTaskID(wander));
 	else
 		out->writeSint16LE(NoTask);
@@ -1132,7 +1132,7 @@ void GotoTask::abortTask() {
 	if (wander) {
 		wander->abortTask();
 		delete wander;
-		wander = NULL;
+		wander = nullptr;
 	} else {
 		MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
@@ -1171,9 +1171,9 @@ TaskResult GotoTask::update() {
 	//  If we have a destination, walk there, else wander
 	if (immediateDest != Nowhere) {
 		//  If wandering, cut it out
-		if (wander != NULL) {
+		if (wander != nullptr) {
 			delete wander;
-			wander = NULL;
+			wander = nullptr;
 		}
 
 		//  Determine if there is aready a motion task, and if so,
@@ -1181,7 +1181,7 @@ TaskResult GotoTask::update() {
 		MotionTask  *actorMotion = a->_moveTask;
 		TilePoint   actorLoc = a->getLocation();
 
-		if (actorMotion != NULL && actorMotion->isWalkToDest()) {
+		if (actorMotion != nullptr && actorMotion->isWalkToDest()) {
 			bool        runState = run();
 			TilePoint   motionTarget = actorMotion->getTarget();
 
@@ -1220,11 +1220,11 @@ TaskResult GotoTask::update() {
 	} else {
 		//  If wandering, update the wander task else set up a new
 		//  wander task
-		if (wander != NULL)
+		if (wander != nullptr)
 			wander->update();
 		else {
 			wander = new WanderTask(stack);
-			if (wander != NULL) wander->update();
+			if (wander != nullptr) wander->update();
 		}
 
 		return taskNotDone;
@@ -1553,7 +1553,7 @@ GotoObjectTask::GotoObjectTask(Common::InSaveFile *in, TaskID id) :
 	//  Restore the targetObj pointer
 	targetObj = targetID != Nothing
 	            ?   GameObject::objectAddress(targetID)
-	            :   NULL;
+	            :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1570,7 +1570,7 @@ void GotoObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	GotoObjectTargetTask::write(out);
 
-	if (targetObj != NULL)
+	if (targetObj != nullptr)
 		out->writeUint16LE(targetObj->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -1620,7 +1620,7 @@ GotoActorTask::GotoActorTask(Common::InSaveFile *in, TaskID id) :
 	ObjectID targetID = in->readUint16LE();
 	targetActor =   targetID != Nothing
 	                ? (Actor *)GameObject::objectAddress(targetID)
-	                :   NULL;
+	                :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1637,7 +1637,7 @@ void GotoActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	GotoObjectTargetTask::write(out);
 
-	if (targetActor != NULL)
+	if (targetActor != nullptr)
 		out->writeUint16LE(targetActor->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -1699,7 +1699,7 @@ void GoAwayFromTask::fixup() {
 
 	goTask = _goTaskID != NoTask
 	         ? (GotoLocationTask *)getTaskAddress(_goTaskID)
-	         :   NULL;
+	         :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1715,7 +1715,7 @@ void GoAwayFromTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	Task::write(out);
 
 	//  Store the subTask's ID
-	if (goTask != NULL)
+	if (goTask != nullptr)
 		out->writeSint16LE(getTaskID(goTask));
 	else
 		out->writeSint16LE(NoTask);
@@ -1740,10 +1740,10 @@ void GoAwayFromTask::mark() {
 //	Abort this task
 
 void GoAwayFromTask::abortTask() {
-	if (goTask != NULL) {
+	if (goTask != nullptr) {
 		goTask->abortTask();
 		delete goTask;
-		goTask = NULL;
+		goTask = nullptr;
 	}
 }
 
@@ -1784,7 +1784,7 @@ TaskResult GoAwayFromTask::update() {
 	} else
 		dest = actorLoc + dirTable_[a->_currentFacing];
 
-	if (goTask != NULL) {
+	if (goTask != nullptr) {
 		if (goTask->getTarget() != dest)
 			goTask->changeTarget(dest);
 
@@ -1793,7 +1793,7 @@ TaskResult GoAwayFromTask::update() {
 		if ((goTask =   flags & run
 		                ?   new GotoLocationTask(stack, dest, 0)
 		                :   new GotoLocationTask(stack, dest))
-		        !=  NULL)
+		        !=  nullptr)
 			goTask->update();
 	}
 
@@ -1814,7 +1814,7 @@ GoAwayFromObjectTask::GoAwayFromObjectTask(Common::InSaveFile *in, TaskID id) :
 	//  Convert the ID to an object pointer
 	obj = objectID != Nothing
 		? GameObject::objectAddress(objectID)
-		: NULL;
+		: nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1832,7 +1832,7 @@ void GoAwayFromObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	GoAwayFromTask::write(out);
 
 	//  Store the object's ID
-	if (obj != NULL)
+	if (obj != nullptr)
 		out->writeUint16LE(obj->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -2089,7 +2089,7 @@ TaskResult HuntTask::update() {
 			GotoTask    *gotoResult;
 
 			//  Try to set up a goto subtask
-			if ((gotoResult = setupGoto()) != NULL) {
+			if ((gotoResult = setupGoto()) != nullptr) {
 				if (huntFlags & huntWander) removeWanderTask();
 
 				subTask = gotoResult;
@@ -2097,7 +2097,7 @@ TaskResult HuntTask::update() {
 			} else {
 				//  If we couldn't setup a goto task, setup a wander task
 				if (!(huntFlags & huntWander)) {
-					if ((subTask = new WanderTask(stack)) != NULL)
+					if ((subTask = new WanderTask(stack)) != nullptr)
 						huntFlags |= huntWander;
 				}
 			}
@@ -2190,7 +2190,7 @@ GotoTask *HuntLocationTask::setupGoto() {
 	//  If there is somewhere to go, setup a goto task, else return NULL
 	return  currentTarget != Nowhere
 	        ?   new GotoLocationTask(stack, currentTarget)
-	        :   NULL;
+	        :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -2309,7 +2309,7 @@ TaskResult HuntToBeNearLocationTask::atTargetUpdate() {
 
 HuntObjectTask::HuntObjectTask(TaskStack *ts, const ObjectTarget &ot) :
 	HuntTask(ts),
-	currentTarget(NULL) {
+	currentTarget(nullptr) {
 	assert(ot.size() <= sizeof(targetMem));
 	debugC(2, kDebugTasks, " - HuntObjectTask");
 	//  Copy the target to the target buffer
@@ -2323,7 +2323,7 @@ HuntObjectTask::HuntObjectTask(Common::InSaveFile *in, TaskID id) : HuntTask(in,
 	//  Convert the ID to a GameObject pointer
 	currentTarget = currentTargetID != Nothing
 	                ?   GameObject::objectAddress(currentTargetID)
-	                :   NULL;
+	                :   nullptr;
 
 	//  Reconstruct the object target
 	readTarget(targetMem, in);
@@ -2344,7 +2344,7 @@ void HuntObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	HuntTask::write(out);
 
 	//  Store the ID
-	if (currentTarget != NULL)
+	if (currentTarget != nullptr)
 		out->writeByte(currentTarget->thisID());
 	else
 		out->writeByte(Nothing);
@@ -2369,7 +2369,7 @@ GotoTask *HuntObjectTask::setupGoto() {
 	//  return NULL
 	return  currentTarget
 	        ?   new GotoObjectTask(stack, currentTarget)
-	        :   NULL;
+	        :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -2653,7 +2653,7 @@ HuntActorTask::HuntActorTask(
     bool                trackFlag) :
 	HuntTask(ts),
 	flags(trackFlag ? track : 0),
-	currentTarget(NULL) {
+	currentTarget(nullptr) {
 	assert(at.size() <= sizeof(targetMem));
 	debugC(2, kDebugTasks, " - HuntActorTask");
 	//  Copy the target to the target buffer
@@ -2670,7 +2670,7 @@ HuntActorTask::HuntActorTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, i
 	//  Convert the ID to a GameObject pointer
 	currentTarget = currentTargetID != Nothing
 	                ? (Actor *)GameObject::objectAddress(currentTargetID)
-	                :   NULL;
+	                :   nullptr;
 
 	//  Reconstruct the object target
 	readTarget(targetMem, in);
@@ -2695,7 +2695,7 @@ void HuntActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(flags);
 
 	//  Store the ID
-	if (currentTarget != NULL)
+	if (currentTarget != nullptr)
 		out->writeUint16LE(currentTarget->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -2722,14 +2722,14 @@ GotoTask *HuntActorTask::setupGoto() {
 	            ?   new GotoActorTask( stack, currentTarget, flags & track )
 	            :   NULL;
 	*/
-	if (currentTarget != NULL) {
+	if (currentTarget != nullptr) {
 		return new GotoActorTask(
 		           stack,
 		           currentTarget,
 		           flags & track);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -2769,7 +2769,7 @@ void HuntToBeNearActorTask::fixup() {
 	//  Convert the task ID to a task pointer
 	goAway = _goAwayID != NoTask
 	         ? (GoAwayFromObjectTask *)getTaskAddress(_goAwayID)
-	         :   NULL;
+	         :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -2790,7 +2790,7 @@ void HuntToBeNearActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	HuntActorTask::write(out);
 
 	//  Store the task ID
-	if (goAway != NULL)
+	if (goAway != nullptr)
 		out->writeSint16LE(getTaskID(goAway));
 	else
 		out->writeSint16LE(NoTask);
@@ -2891,10 +2891,10 @@ bool HuntToBeNearActorTask::atTarget() {
 	        &&  stack->getActor()->inRange(targetLoc, range))
 		return true;
 	else {
-		if (goAway != NULL) {
+		if (goAway != nullptr) {
 			goAway->abortTask();
 			delete goAway;
-			goAway = NULL;
+			goAway = nullptr;
 		}
 
 		return false;
@@ -2904,10 +2904,10 @@ bool HuntToBeNearActorTask::atTarget() {
 //----------------------------------------------------------------------
 
 void HuntToBeNearActorTask::atTargetabortTask() {
-	if (goAway != NULL) {
+	if (goAway != nullptr) {
 		goAway->abortTask();
 		delete goAway;
-		goAway = NULL;
+		goAway = nullptr;
 	}
 }
 
@@ -2920,10 +2920,10 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 	if (stack->getActor()->inRange(targetLoc, tooClose))
 		return taskNotDone;
 
-	if (goAway != NULL) {
+	if (goAway != nullptr) {
 		goAway->abortTask();
 		delete goAway;
-		goAway = NULL;
+		goAway = nullptr;
 	}
 
 	return taskSucceeded;
@@ -2938,9 +2938,9 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 	//  Determine if we're TOO close
 	if (a->inRange(targetLoc, tooClose)) {
 		//  Setup a go away task if necessary and update it
-		if (goAway == NULL) {
+		if (goAway == nullptr) {
 			goAway = new GoAwayFromObjectTask(stack, currentTarget);
-			if (goAway != NULL) goAway->update();
+			if (goAway != nullptr) goAway->update();
 		} else
 			goAway->update();
 
@@ -2948,10 +2948,10 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 	}
 
 	//  Delete the go away task if it exists
-	if (goAway != NULL) {
+	if (goAway != nullptr) {
 		goAway->abortTask();
 		delete goAway;
-		goAway = NULL;
+		goAway = nullptr;
 	}
 
 	return taskSucceeded;
@@ -3072,9 +3072,9 @@ void HuntToKillTask::evaluateTarget() {
 
 	//  Determine if its time to reevaluate the current target actor
 	if (targetEvaluateCtr == 0
-	        || (currentTarget != NULL
+	        || (currentTarget != nullptr
 	            &&  currentTarget->isDead())) {
-		Actor               *bestTarget = NULL;
+		Actor               *bestTarget = nullptr;
 		ActorProto          *proto = (ActorProto *)a->proto();
 		int16               i;
 		Actor               *actorArray[16];
@@ -3130,7 +3130,7 @@ void HuntToKillTask::evaluateTarget() {
 					score =     closenessScore(distArray[i]) * 16
 					            /   actorArray[i]->defenseScore();
 
-					if (score > bestScore || bestTarget == NULL) {
+					if (score > bestScore || bestTarget == nullptr) {
 						bestScore = score;
 						bestTarget = actorArray[i];
 					}
@@ -3159,7 +3159,7 @@ void HuntToKillTask::evaluateTarget() {
 					score =     closenessScore(distArray[i])
 					            *   actorArray[i]->offenseScore();
 
-					if (score > bestScore || bestTarget == NULL) {
+					if (score > bestScore || bestTarget == nullptr) {
 						bestScore = score;
 						bestTarget = actorArray[i];
 					}
@@ -3189,7 +3189,7 @@ void HuntToKillTask::evaluateTarget() {
 					            *   actorArray[i]->offenseScore()
 					            /   actorArray[i]->defenseScore();
 
-					if (score > bestScore || bestTarget == NULL) {
+					if (score > bestScore || bestTarget == nullptr) {
 						bestScore = score;
 						bestTarget = actorArray[i];
 					}
@@ -3220,7 +3220,7 @@ void HuntToKillTask::evaluateTarget() {
 
 bool HuntToKillTask::atTarget() {
 	//  Determine if we're in attack range of the current target
-	return      currentTarget != NULL
+	return      currentTarget != nullptr
 	            &&  stack->getActor()->inAttackRange(
 	                currentTarget->getLocation());
 }
@@ -3267,24 +3267,24 @@ void HuntToKillTask::evaluateWeapon() {
 	int                 bestWeaponRating;
 	ContainerIterator   iter(a);
 
-	bestWeapon = NULL;
+	bestWeapon = nullptr;
 	bestWeaponRating = 0;
 	currentWeapon = a->offensiveObject();
 	//  If the current offensive object is the actor himself then there
 	//  is no current weapon.
-	if (currentWeapon == a) currentWeapon = NULL;
+	if (currentWeapon == a) currentWeapon = nullptr;
 
 	if (!isAutoWeaponSet() && isPlayerActor(a)) {
-		WeaponProto     *weaponProto =  currentWeapon != NULL
+		WeaponProto     *weaponProto =  currentWeapon != nullptr
 		                                ? (WeaponProto *)currentWeapon->proto()
-		                                :   NULL;
+		                                :   nullptr;
 
-		if (currentTarget == NULL) {
+		if (currentTarget == nullptr) {
 			warning("%s: currentTarget = NULL (return)", a->objName());
 			return;
 		}
 
-		if (currentWeapon == NULL
+		if (currentWeapon == nullptr
 		        ||      weaponProto->weaponRating(
 		            a->thisID(),
 		            actorID,
@@ -3329,13 +3329,13 @@ void HuntToKillTask::evaluateWeapon() {
 		}
 	}
 
-	if (bestWeapon != NULL) {
+	if (bestWeapon != nullptr) {
 		if (bestWeapon != currentWeapon)
 			bestWeapon->use(actorID);
 	}
 	//  If there is no useful best weapon and the actor is currently
 	//  wielding a weapon, un-wield the weapon
-	else if (currentWeapon != NULL)
+	else if (currentWeapon != nullptr)
 		currentWeapon->use(actorID);
 }
 
@@ -3354,7 +3354,7 @@ HuntToGiveTask::HuntToGiveTask(Common::InSaveFile *in, TaskID id) : HuntActorTas
 	//  Convert the object ID to a pointer
 	objToGive = objToGiveID != Nothing
 	            ?   GameObject::objectAddress(objToGiveID)
-	            :   NULL;
+	            :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -3373,7 +3373,7 @@ void HuntToGiveTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	HuntActorTask::write(out);
 
 	//  Store the ID
-	if (objToGive != NULL)
+	if (objToGive != nullptr)
 		out->writeUint16LE(objToGive->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -3434,7 +3434,7 @@ TaskResult HuntToGiveTask::atTargetUpdate() {
 bool BandTask::BandingRepulsorIterator::first(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	assert(a->_leader != NULL && a->_leader->_followers != NULL);
+	assert(a->_leader != nullptr && a->_leader->_followers != nullptr);
 
 	band = a->_leader->_followers;
 	bandIndex = 0;
@@ -3460,7 +3460,7 @@ bool BandTask::BandingRepulsorIterator::first(
 bool BandTask::BandingRepulsorIterator::next(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	assert(a->_leader != NULL && a->_leader->_followers != NULL);
+	assert(a->_leader != nullptr && a->_leader->_followers != nullptr);
 	assert(band == a->_leader->_followers);
 	assert(bandIndex < band->size());
 
@@ -3504,7 +3504,7 @@ void BandTask::fixup() {
 	//  Convert the TaskID to a Task pointer
 	attend = _attendID != NoTask
 	         ? (AttendTask *)getTaskAddress(_attendID)
-	         :   NULL;
+	         :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -3525,7 +3525,7 @@ void BandTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	HuntTask::write(out);
 
 	//  Store the attend task ID
-	if (attend != NULL)
+	if (attend != nullptr)
 		out->writeSint16LE(getTaskID(attend));
 	else
 		out->writeSint16LE(NoTask);
@@ -3580,7 +3580,7 @@ void BandTask::evaluateTarget() {
 
 		RepulsorIterator    *repulsorIter = getNewRepulsorIterator();
 
-		if (repulsorIter == NULL) return;
+		if (repulsorIter == nullptr) return;
 
 		//  Count the leader as two band members to double his
 		//  repulsion
@@ -3683,10 +3683,10 @@ bool BandTask::atTarget() {
 
 	if ((actorLoc - currentTarget).quickHDistance() > 6
 	        ||  ABS(actorLoc.z - currentTarget.z) > kMaxStepHeight) {
-		if (attend != NULL) {
+		if (attend != nullptr) {
 			attend->abortTask();
 			delete attend;
-			attend = NULL;
+			attend = nullptr;
 		}
 
 		return false;
@@ -3698,10 +3698,10 @@ bool BandTask::atTarget() {
 //----------------------------------------------------------------------
 
 void BandTask::atTargetabortTask() {
-	if (attend != NULL) {
+	if (attend != nullptr) {
 		attend->abortTask();
 		delete attend;
-		attend = NULL;
+		attend = nullptr;
 	}
 }
 
@@ -3716,11 +3716,11 @@ TaskResult BandTask::atTargetEvaluate() {
 TaskResult BandTask::atTargetUpdate() {
 	Actor       *a = stack->getActor();
 
-	if (attend != NULL)
+	if (attend != nullptr)
 		attend->update();
 	else {
 		attend = new AttendTask(stack, a->_leader);
-		if (attend != NULL)
+		if (attend != nullptr)
 			attend->update();
 	}
 
@@ -3885,7 +3885,7 @@ void FollowPatrolRouteTask::fixup() {
 	//  Convert the TaskID to a Task pointer
 	gotoWayPoint = _gotoWayPointID != NoTask
 	               ? (GotoLocationTask *)getTaskAddress(_gotoWayPointID)
-	               :   NULL;
+	               :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -3908,7 +3908,7 @@ void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	Task::write(out);
 
 	//  Store the gotoWayPoint ID
-	if (gotoWayPoint != NULL)
+	if (gotoWayPoint != nullptr)
 		out->writeSint16LE(getTaskID(gotoWayPoint));
 	else
 		out->writeSint16LE(NoTask);
@@ -3952,7 +3952,7 @@ void FollowPatrolRouteTask::abortTask() {
 	if (gotoWayPoint) {
 		gotoWayPoint->abortTask();
 		delete gotoWayPoint;
-		gotoWayPoint = NULL;
+		gotoWayPoint = nullptr;
 	}
 }
 
@@ -3998,10 +3998,10 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 	        == (currentWayPoint.v >> kTileUVShift)
 	        &&  ABS(actorLoc.z - currentWayPoint.z) <= kMaxStepHeight) {
 		//  Delete the gotoWayPoint task
-		if (gotoWayPoint != NULL) {
+		if (gotoWayPoint != nullptr) {
 			gotoWayPoint->abortTask();
 			delete gotoWayPoint;
-			gotoWayPoint = NULL;
+			gotoWayPoint = nullptr;
 		}
 
 		//  If this way point is the specified last way point,
@@ -4025,11 +4025,11 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 
 	//  Setup a gotoWayPoint task if one doesn't already exist and
 	//  update it
-	if (gotoWayPoint != NULL)
+	if (gotoWayPoint != nullptr)
 		gotoWayPoint->update();
 	else {
 		gotoWayPoint = new GotoLocationTask(stack, currentWayPoint);
-		if (gotoWayPoint != NULL) gotoWayPoint->update();
+		if (gotoWayPoint != nullptr) gotoWayPoint->update();
 	}
 
 	return taskNotDone;
@@ -4072,7 +4072,7 @@ AttendTask::AttendTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Convert the object ID to a pointer
 	obj = objID != Nothing
 		? GameObject::objectAddress(objID)
-		: NULL;
+		: nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -4091,7 +4091,7 @@ void AttendTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	Task::write(out);
 
 	//  Store the object ID
-	if (obj != NULL)
+	if (obj != nullptr)
 		out->writeUint16LE(obj->thisID());
 	else
 		out->writeUint16LE(Nothing);
@@ -4110,7 +4110,7 @@ void AttendTask::abortTask() {
 	MotionTask  *actorMotion = stack->getActor()->_moveTask;
 
 	//  Determine if we need to abort the actor motion
-	if (actorMotion != NULL && actorMotion->isTurn())
+	if (actorMotion != nullptr && actorMotion->isTurn())
 		actorMotion->finishTurn();
 }
 

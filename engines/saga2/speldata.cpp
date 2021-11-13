@@ -213,7 +213,7 @@ static void loadMagicData() {
 	spellRes =  auxResFile->newContext(
 	                MKTAG('S', 'P', 'E', 'L'),
 	                "spell resources");
-	if (spellRes == NULL || !spellRes->_valid)
+	if (spellRes == nullptr || !spellRes->_valid)
 		error("Error accessing spell resource group.\n");
 	i = 1;
 	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
@@ -228,7 +228,7 @@ static void loadMagicData() {
 		        MKTAG('I', 'N', 'F', i),
 		        "spell");
 
-		if (rsi == NULL)
+		if (rsi == nullptr)
 			error("Unable to load data for spell %d", i);
 
 		spellBook[rsi->spell].setupFromResource(rsi);
@@ -249,7 +249,7 @@ static void loadMagicData() {
 		        MKTAG('E', 'F', 'F', i),
 		        "spell effect");
 
-		if (rse == NULL)
+		if (rse == nullptr)
 			error("Unable to load effects for spell %d", i);
 
 		if (rse->spell)

@@ -174,7 +174,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		break;
 
 	case builtinAbstract:
-		*callTab = NULL;
+		*callTab = nullptr;
 
 		return (uint16 *)addr;
 
@@ -186,7 +186,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 	if (script != 0 && lookupExport(script, vtSeg, vtOffset)) {
 		return (uint16 *)segmentAddress(vtSeg, vtOffset);
 	} else
-		return NULL;
+		return nullptr;
 }
 
 uint8 *segmentAddress(uint16 segment, uint16 offset) {
@@ -507,7 +507,7 @@ int16 RRandom(int16 c, int16 s, int16 id) {
 /* ============================================================================ *
                                 Main interpreter
  * ============================================================================ */
-void print_script_name(uint8 *codePtr, const char *descr = NULL) {
+void print_script_name(uint8 *codePtr, const char *descr = nullptr) {
 	char    scriptName[32];
 	uint8   *sym = codePtr - 1;
 	uint8   length = MIN<uint>(*sym, sizeof scriptName - 1);
@@ -827,7 +827,7 @@ bool Thread::interpret() {
 
 				vtableEntry = vtable + (w * 2);
 
-				if (vtable == NULL) {
+				if (vtable == nullptr) {
 					//  Do nothing...
 				} else if (vtableEntry[0] != 0xffff) { // It's a SAGA func
 					programCounter.offset = (pc - codeSeg);
@@ -1681,13 +1681,13 @@ void Thread::clearExtended() {
 void initScripts() {
 	//  Open the script resource group
 	scriptRes = scriptResFile->newContext(sagaID,  "script resources");
-	if (scriptRes == NULL)
+	if (scriptRes == nullptr)
 		error("Unable to open script resource file!\n");
 
 	//  Load the data segment
 	dataSegment = scriptRes->loadResource(dataSegID, "saga data segment");
 
-	if (dataSegment == NULL)
+	if (dataSegment == nullptr)
 		error("Unable to load the SAGA data segment");
 
 	dataSegSize = scriptRes->getSize(dataSegID, "saga data segment");
@@ -1696,7 +1696,7 @@ void initScripts() {
 //	Common::hexdump(dataSegment, dataSegSize);
 
 	exportSegment = scriptRes->loadResource(exportSegID, "saga export segment");
-	assert(exportSegment != NULL);
+	assert(exportSegment != nullptr);
 
 //	Common::hexdump(exportSegment, scriptRes->getSize(exportSegID, "saga export segment"));
 
@@ -1714,7 +1714,7 @@ void cleanupScripts() {
 
 	if (scriptRes)
 		scriptResFile->disposeContext(scriptRes);
-	scriptRes = NULL;
+	scriptRes = nullptr;
 }
 
 //-----------------------------------------------------------------------

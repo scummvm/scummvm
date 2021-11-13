@@ -675,7 +675,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 				deactivate();                       // deactivate the text box
 		}
 
-		if (onEnter != NULL) {
+		if (onEnter != nullptr) {
 			gEvent ev;
 			ev.eventType = gEventKeyDown ;
 			ev.value = 1;
@@ -687,7 +687,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	} else if (key == Common::ASCII_ESCAPE) {               // escape key
 		revertEdit();
 		deactivate();                       // deactivate the text box
-		if (onEscape != NULL) {
+		if (onEscape != nullptr) {
 			gEvent ev;
 			ev.eventType = gEventKeyDown ;
 			ev.value = 1;

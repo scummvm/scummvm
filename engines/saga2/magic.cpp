@@ -107,7 +107,7 @@ SkillProto *skillProtoFromID(int16 spellOrObjectID) {
 // initialization call to connect skill prototypes with their spells
 void initializeSkill(SkillProto *oNo, SpellID sNo) {
 	if (sNo > 0 && sNo < totalSpellBookPages) {
-		if (spellBook[sNo].getProto() != NULL)
+		if (spellBook[sNo].getProto() != nullptr)
 			error("Duplicate prototype for spell %d", sNo);
 		spellBook[sNo].setProto(oNo);
 	} else
@@ -131,11 +131,11 @@ bool nonUsable(SkillProto *spell) {
 //-----------------------------------------------------------------------
 // test a target for viability in a given spell
 bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, SkillProto *skill) {
-	assert(enactor != NULL);
-	assert(skill != NULL);
+	assert(enactor != nullptr);
+	assert(skill != nullptr);
 	SpellStuff &sp = spellBook[skill->getSpellID()];
 	int32 range = sp.getRange();
-	if (target != NULL && target->thisID() != Nothing) {
+	if (target != nullptr && target->thisID() != Nothing) {
 #if RANGE_CHECKING
 		if (range > 0 &&
 		        range > (
@@ -161,7 +161,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 			return sp.canTarget(spellTargCaster);
 		return sp.canTarget(spellTargObject);
 	}
-	if (tag != NULL) {
+	if (tag != nullptr) {
 		if (range > 0 &&
 		        range > (
 		            enactor->getWorldLocation() -

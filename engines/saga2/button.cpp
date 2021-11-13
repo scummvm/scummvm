@@ -43,7 +43,7 @@ extern void playMemSound(uint32 s); // play click # s
  * ======================================================================= */
 
 void GfxCompImage::init() {
-	_compImages      = NULL;
+	_compImages      = nullptr;
 	_max             = 0;
 	_min             = 0;
 	_internalAlloc   = false;
@@ -53,7 +53,7 @@ void GfxCompImage::init() {
 }
 
 GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
-                       AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
+                       AppFunc *cmd) : gControl(list, box, nullptr, ident, cmd) {
 	// setup a single image configuration
 
 	init();
@@ -72,7 +72,7 @@ GfxCompImage::GfxCompImage(gPanelList &list,
                        char a, char b, char c,
                        uint16 resNum, uint16 numImages,
                        uint16 ident,
-                       AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
+                       AppFunc *cmd) : gControl(list, box, nullptr, ident, cmd) {
 	uint16 i, rNum;
 
 	init();
@@ -95,7 +95,7 @@ GfxCompImage::GfxCompImage(gPanelList &list,
 
 	// get rid of this context
 	resFile->disposeContext(resContext);
-	resContext = NULL;
+	resContext = nullptr;
 }
 
 GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, const char *text, textPallete &pal, uint16 ident,
@@ -118,7 +118,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, con
 
 GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void **images,
                        int16 numRes, int16 initial,
-                       uint16 ident, AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
+                       uint16 ident, AppFunc *cmd) : gControl(list, box, nullptr, ident, cmd) {
 	init();
 
 	if (!images)
@@ -219,7 +219,7 @@ void *GfxCompImage::getCurrentCompImage() {
 	if (_compImages) {
 		return _compImages[_currentImage];  // return the image pointed to by compImage
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -297,7 +297,7 @@ void GfxCompImage::drawClipped(gPort &port,
  * ===================================================================== */
 
 GfxSpriteImage::GfxSpriteImage(gPanelList &list, const Rect16 &box, GameObject *object, char,
-                           uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
+                           uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd) {
 	// get the prototype for the object
 	ProtoObj *proto = object->proto();
 
@@ -324,7 +324,7 @@ void GfxSpriteImage::drawClipped(gPort &port,
 	map.size = _sprPtr->size;
 
 	map.data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
-	if (map.data == NULL) return;
+	if (map.data == nullptr) return;
 
 	memset(map.data, 0, map.bytes());
 
@@ -347,11 +347,11 @@ void GfxCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
 	if (con) {
 		_forImage = LoadResource(con, res1, "CBtn fore image");
 		_resImage = LoadResource(con, res2, "CBtn res image");
-		_dimImage    = NULL;
+		_dimImage    = nullptr;
 	} else {
-		_forImage    = NULL;
-		_resImage    = NULL;
-		_dimImage    = NULL;
+		_forImage    = nullptr;
+		_resImage    = nullptr;
+		_dimImage    = nullptr;
 	}
 
 	_internalAlloc   = true;
@@ -368,40 +368,40 @@ void GfxCompButton::loadImages(hResID contextID, hResID res1, hResID res2) {
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, hResID resID1, hResID resID2, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), _extent(box) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd), _extent(box) {
 	loadImages(con, resID1, resID2);
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResID contextID, hResID resID1, hResID resID2, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), _extent(box) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd), _extent(box) {
 	loadImages(contextID, resID1, resID2);
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), _extent(box) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd), _extent(box) {
 	loadImages(con, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResID contextID, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), _extent(box) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd), _extent(box) {
 	loadImages(contextID, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, int16 butNum, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), _extent(box) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd), _extent(box) {
 	loadImages(con, MKTAG('B', 'T', 'N', butNum), MKTAG('B', 'T', 'N', butNum + 1));
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		_forImage    = images[0];
 		_resImage    = images[1];
-		_dimImage    = NULL;
+		_dimImage    = nullptr;
 	} else {
-		_forImage    = NULL;
-		_resImage    = NULL;
-		_dimImage    = NULL;
+		_forImage    = nullptr;
+		_resImage    = nullptr;
+		_dimImage    = nullptr;
 	}
 
 	_internalAlloc   = false;
@@ -410,15 +410,15 @@ GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images,
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, 0, 0, text, pal, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		_forImage    = images[0];
 		_resImage    = images[1];
-		_dimImage    = NULL;
+		_dimImage    = nullptr;
 	} else {
-		_forImage    = NULL;
-		_resImage    = NULL;
-		_dimImage    = NULL;
+		_forImage    = nullptr;
+		_resImage    = nullptr;
+		_dimImage    = nullptr;
 	}
 
 	_internalAlloc   = false;
@@ -427,19 +427,19 @@ GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images,
 }
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, void *newDimImage, bool dimNess, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		_forImage    = images[0];
 		_resImage    = images[1];
 	} else {
-		_forImage    = NULL;
-		_resImage    = NULL;
+		_forImage    = nullptr;
+		_resImage    = nullptr;
 	}
 
 	if (newDimImage) {
 		_dimImage = newDimImage;
 	} else {
-		_dimImage = NULL;
+		_dimImage = nullptr;
 	}
 
 	_internalAlloc   = false;
@@ -449,17 +449,17 @@ GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images,
 
 
 GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
-                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd)
+                         AppFunc *cmd) : GfxCompImage(list, box, nullptr, ident, cmd)
 
 {
 	if (image) {
 		_forImage    = image;
 		_resImage    = image;
-		_dimImage    = NULL;
+		_dimImage    = nullptr;
 	} else {
-		_forImage    = NULL;
-		_resImage    = NULL;
-		_dimImage    = NULL;
+		_forImage    = nullptr;
+		_resImage    = nullptr;
+		_dimImage    = nullptr;
 	}
 
 	_internalAlloc   = false;
@@ -467,7 +467,7 @@ GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void *image, u
 	_extent          = box;
 }
 
-GfxCompButton::GfxCompButton(gPanelList &list, const StaticRect &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const StaticRect &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, nullptr, 0, 0, text, pal, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		_forImage = images[0];
 		_resImage = images[1];
@@ -483,10 +483,10 @@ GfxCompButton::GfxCompButton(gPanelList &list, const StaticRect &box, void **ima
 	_extent        = box;
 }
 
-GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, cmd) {
-	_forImage    = NULL;
-	_resImage    = NULL;
-	_dimImage    = NULL;
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : GfxCompImage(list, box, nullptr, 0, cmd) {
+	_forImage    = nullptr;
+	_resImage    = nullptr;
+	_dimImage    = nullptr;
 
 	_internalAlloc   = false;
 	_dimmed          = false;
@@ -497,17 +497,17 @@ GfxCompButton::~GfxCompButton() {
 	if (_internalAlloc) {
 		if (_forImage) {
 			free(_forImage);
-			_forImage = NULL;
+			_forImage = nullptr;
 		}
 
 		if (_resImage) {
 			free(_resImage);
-			_resImage = NULL;
+			_resImage = nullptr;
 		}
 
 		if (_dimImage) {
 			free(_dimImage);
-			_dimImage = NULL;
+			_dimImage = nullptr;
 		}
 	}
 }
@@ -644,7 +644,7 @@ void GfxOwnerSelCompButton::select(uint16 val) {
 ************************************************************************/
 
 GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 resStart, int16 numRes, int16 initial, uint16 ident,
-                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)nullptr, 0, ident, cmd) {
 	int16   i, k;
 
 
@@ -664,9 +664,9 @@ GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, hResCo
 }
 
 GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void **newImages, int16 numRes, int16 initial, uint16 ident,
-                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)nullptr, 0, ident, cmd) {
 	if (!newImages) {
-		_images  = NULL;
+		_images  = nullptr;
 		_max     = 0;
 		_min     = 0;
 		_current = 0;
@@ -687,9 +687,9 @@ GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void *
 
 GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void **newImages,
                                  int16 numRes, int16 initial, bool hitResponse, uint16 ident,
-                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)nullptr, 0, ident, cmd) {
 	if (!newImages) {
-		_images  = NULL;
+		_images  = nullptr;
 		_max     = 0;
 		_min     = 0;
 		_current = 0;
@@ -719,7 +719,7 @@ GfxMultCompButton::~GfxMultCompButton() {
 		}
 
 		free(_images);
-		_images = NULL;
+		_images = nullptr;
 	}
 }
 

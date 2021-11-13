@@ -116,9 +116,9 @@ gPanel::gPanel(gPanelList &list, const StaticRect &box,
 
 gPanel::~gPanel() {
 	if (this == g_vm->_toolBase->mousePanel)
-		g_vm->_toolBase->mousePanel = NULL;
+		g_vm->_toolBase->mousePanel = nullptr;
 	if (this == g_vm->_toolBase->activePanel)
-		g_vm->_toolBase->activePanel = NULL;
+		g_vm->_toolBase->activePanel = nullptr;
 }
 void gPanel::draw() {}
 void gPanel::drawClipped(gPort &, const Point16 &, const Rect16 &) {}
@@ -172,7 +172,7 @@ bool gPanel::activate(gEventType) {
 }
 
 void gPanel::deactivate() {
-	if (isActive()) g_vm->_toolBase->activePanel = NULL;
+	if (isActive()) g_vm->_toolBase->activePanel = nullptr;
 }
 
 void gPanel::makeActive() {
@@ -190,7 +190,7 @@ void gPanel::drawTitle(enum text_positions placement) {
 	Rect16          r = _extent;
 	const gPixelMap *img = nullptr;
 
-	if (title == NULL)
+	if (title == nullptr)
 		return;
 
 	if (imageLabel) {
@@ -248,11 +248,11 @@ void gPanel::drawTitle(enum text_positions placement) {
 }
 
 gPanel *gPanel::hitTest(const Point16 &p) {
-	return enabled && !ghosted && _extent.ptInside(p) ? this : NULL;
+	return enabled && !ghosted && _extent.ptInside(p) ? this : nullptr;
 }
 
 gPanel *gPanel::keyTest(int16) {
-	return NULL;
+	return nullptr;
 }
 
 /* ===================================================================== *
@@ -271,7 +271,7 @@ gPanelList::gPanelList(gWindow &win, const Rect16 &box, char *newTitle,
 //  Constructor for standalone panels..
 
 gPanelList::gPanelList(gPanelList &list)
-	: gPanel(list, list.window.getExtent(), NULL, 0, NULL) {
+	: gPanel(list, list.window.getExtent(), nullptr, 0, nullptr) {
 	window.contents.push_back(this);
 }
 
@@ -353,11 +353,11 @@ gPanel *gPanelList::hitTest(const Point16 &p) {
 	if (enabled && !ghosted) {
 		for (Common::List<gPanel *>::iterator it = contents.begin(); it != contents.end(); ++it) {
 			ctl = *it;
-			if ((result = ctl->hitTest(p)) != NULL)
+			if ((result = ctl->hitTest(p)) != nullptr)
 				return result;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 gPanel *gPanelList::keyTest(int16 key) {
@@ -367,12 +367,12 @@ gPanel *gPanelList::keyTest(int16 key) {
 	if (enabled && !ghosted) {
 		for (Common::List<gPanel *>::iterator it = contents.reverse_begin(); it != contents.end(); --it) {
 			ctl = *it;
-			if ((result = ctl->keyTest(key)) != NULL)
+			if ((result = ctl->keyTest(key)) != nullptr)
 				return result;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /* ===================================================================== *
@@ -386,7 +386,7 @@ StaticRect    gWindow::dragExtent = {0, 0, 0, 0};            // dragging extent
 StaticPoint16 gWindow::dragOffset = {0, 0};            // offset to window origin
 
 gWindow::gWindow(const Rect16 &box, uint16 ident, const char saveName[], AppFunc *cmd)
-	: gPanelList(*this, box, NULL, ident, cmd)
+	: gPanelList(*this, box, nullptr, ident, cmd)
 	  //, saver(WIIFF_POS|WIIFS_NORMAL|WIIFE_ONEXIT,iniFile,saveName,box,this)
 {
 	openFlag = false;
@@ -435,7 +435,7 @@ bool gWindow::open() {
 	g_vm->_toolBase->leavePanel();
 	g_vm->_toolBase->windowList.push_front(this);
 	g_vm->_toolBase->activeWindow = this;
-	g_vm->_toolBase->setActive(NULL);
+	g_vm->_toolBase->setActive(nullptr);
 
 //	g_vm->_pointer->hide();
 //	if (backSave) backSave->save( *globalPort );
@@ -468,7 +468,7 @@ void gWindow::close() {
 	g_vm->_toolBase->windowList.remove(this);
 
 	g_vm->_toolBase->mouseWindow = g_vm->_toolBase->activeWindow = g_vm->_toolBase->windowList.front();
-	g_vm->_toolBase->mousePanel = g_vm->_toolBase->activePanel = NULL;
+	g_vm->_toolBase->mousePanel = g_vm->_toolBase->activePanel = nullptr;
 }
 
 //  Move the window to the front...
@@ -479,7 +479,7 @@ void gWindow::toFront() {            // re-order the windows
 	g_vm->_toolBase->windowList.remove(this);
 	g_vm->_toolBase->windowList.push_front(this);
 
-	g_vm->_toolBase->activePanel = NULL;
+	g_vm->_toolBase->activePanel = nullptr;
 	g_vm->_toolBase->activeWindow = this;
 
 	//  redraw the window
@@ -663,7 +663,7 @@ void gControl::ghost(bool sel) {
 }
 
 gPanel *gControl::keyTest(int16 key) {
-	return accelKey == key ? this : NULL;
+	return accelKey == key ? this : nullptr;
 }
 
 //  For many controls, the only drawing routine we need is the
@@ -685,7 +685,7 @@ void gControl::draw() {
 
 gGenericControl::gGenericControl(gPanelList &list, const Rect16 &box,
                                  uint16 ident, AppFunc *cmd)
-	: gControl(list, box, NULL, ident, cmd) {
+	: gControl(list, box, nullptr, ident, cmd) {
 	dblClickFlag = false;
 }
 
@@ -737,13 +737,13 @@ void gGenericControl::draw() {
 void gToolBase::setActive(gPanel *ctl) {
 	if (activePanel && activePanel == ctl)  return;
 	if (activePanel) activePanel->deactivate();
-	if (ctl == NULL || ctl->activate(gEventNone)) activePanel = ctl;
+	if (ctl == nullptr || ctl->activate(gEventNone)) activePanel = ctl;
 }
 
 void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	gWindow         *w = activeWindow;
 	gPanel          *ctl,
-	                *pickPanel = NULL;
+	                *pickPanel = nullptr;
 	static gMouseState prevState;
 	static int32    lastClickTime = 0x8000;
 	static Point16  lastClickPos;
@@ -789,12 +789,12 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	        &&  prevState.right != _curMouseState.right) {
 		lastMouseMoveTime = msg.timeStamp;
 		if (mouseHintSet)
-			setMouseTextF(NULL);
+			setMouseTextF(nullptr);
 	}
 
 	//  If there is no active window, then do nothing.
 
-	if (w == NULL) {
+	if (w == nullptr) {
 		prevState = _curMouseState;
 		return;
 	}
@@ -821,7 +821,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 
 	if (((_curMouseState.left  && !leftDrag)            // if left button hit
 	        || (_curMouseState.right && !rightDrag))      // or right button hit
-	        && activePanel != NULL) {           // and a panel is active
+	        && activePanel != nullptr) {           // and a panel is active
 		//  Then we have a button hit event. If the button hit
 		//  is occuring outside the panel, then it should be
 		//  deselected.
@@ -854,7 +854,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 				pickPos.x = _curMouseState.pos.x - w->_extent.x;
 				pickPos.y = _curMouseState.pos.y - w->_extent.y;
 
-				if ((ctl = w->hitTest(pickPos)) != NULL)
+				if ((ctl = w->hitTest(pickPos)) != nullptr)
 					pickPanel = ctl;
 				else
 					pickPanel = w;
@@ -911,7 +911,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 			mousePanel = pickPanel;
 			mousePanel->pointerMove(msg);
 		} else
-			mousePanel = NULL;
+			mousePanel = nullptr;
 	}
 
 	//  Fix up flags because earlier code may have changed them
@@ -957,7 +957,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 
 				if (activeWindow && activeWindow->isModal()) {
 					mouseWindow = activeWindow;
-				} else if (mouseWindow == NULL) {
+				} else if (mouseWindow == nullptr) {
 					mouseWindow = &mousePanel->window;
 				}
 
@@ -997,7 +997,7 @@ void gToolBase::leavePanel() {
 		msg.pointerLeave = 1;
 
 		mousePanel->pointerMove(msg);
-		mousePanel = NULL;
+		mousePanel = nullptr;
 	}
 
 	if (activePanel) activePanel->deactivate();
@@ -1042,7 +1042,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 		if (k != 0) {
 			k = toupper(k);
 
-			if ((ctl = w->keyTest(k)) != NULL) {
+			if ((ctl = w->keyTest(k)) != nullptr) {
 				if (activePanel == ctl) return;
 				if (activePanel) activePanel->deactivate();
 				if (ctl->activate(gEventKeyDown)) {
@@ -1117,7 +1117,7 @@ void LockUI(bool state) {
 		if (lockUINest <= 0) {
 			g_vm->_pointer->hide();
 			enableUIKeys(false);
-			g_vm->_toolBase->setActive(NULL);
+			g_vm->_toolBase->setActive(nullptr);
 		}
 		lockUINest++;
 	} else {

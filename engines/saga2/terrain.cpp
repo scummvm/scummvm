@@ -37,7 +37,7 @@ extern WorldMapData     *mapList;
 
 static int16        prevMapNum;
 static StaticTilePoint prevCoords = {(int16)minint16, (int16)minint16, (int16)minint16};
-static MetaTilePtr  prevMeta = NULL;
+static MetaTilePtr  prevMeta = nullptr;
 
 /* ===================================================================== *
    Terrain damage info
@@ -133,12 +133,12 @@ uint32 tileTerrain(
 		prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 	}
 
-	if (metaPtr == NULL) return 0L;
+	if (metaPtr == nullptr) return 0L;
 
 	for (int i = 0; i < maxPlatforms; i++) {
 		Platform    *p;
 
-		if ((p = metaPtr->fetchPlatform(mapNum, i)) == NULL)
+		if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 			continue;
 
 		if (p->flags & plVisible) {
@@ -611,8 +611,8 @@ int16 tileSlopeHeight(
 	prevMapNum = mapNum;
 	prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 
-	if (metaPtr != NULL) {
-		highestTile.surfaceTile = lowestTile.surfaceTile = NULL;
+	if (metaPtr != nullptr) {
+		highestTile.surfaceTile = lowestTile.surfaceTile = nullptr;
 		highestSupportHeight = -100;
 		lowestSupportHeight = 0x7FFF;
 
@@ -622,7 +622,7 @@ int16 tileSlopeHeight(
 		for (i = 0; i < maxPlatforms; i++) {
 			Platform    *p;
 
-			if ((p = metaPtr->fetchPlatform(mapNum, i)) == NULL)
+			if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 				continue;
 
 			if (p->flags & plVisible) {
@@ -668,7 +668,7 @@ int16 tileSlopeHeight(
 						highestTile = sti;
 						highestSupportHeight = supportHeight;
 						highestSupportPlatform = i;
-					} else if (highestTile.surfaceTile == NULL &&
+					} else if (highestTile.surfaceTile == nullptr &&
 					           supportHeight <= lowestSupportHeight &&
 					           (ti->combinedTerrainMask() &
 					            (terrainSurface | terrainRaised))) {
@@ -693,8 +693,8 @@ int16 tileSlopeHeight(
 	}
 
 	if (stiResult) {
-		stiResult->surfaceTile = NULL;
-		stiResult->surfaceTAG = NULL;
+		stiResult->surfaceTile = nullptr;
+		stiResult->surfaceTAG = nullptr;
 		stiResult->surfaceHeight = 0;
 	}
 	if (platformResult) *platformResult = 0;
@@ -745,7 +745,7 @@ uint32 objectTerrain(GameObject *obj, StandingTileInfo &sti) {
 	uint32          terrain;
 	TilePoint       loc = obj->getLocation();
 
-	sti.surfaceTAG = NULL;
+	sti.surfaceTAG = nullptr;
 
 	terrain = volumeTerrain(mapNum,
 	                        loc,
@@ -765,8 +765,8 @@ uint32 objectTerrain(GameObject *obj, StandingTileInfo &sti) {
 		//  If the character is indeed standing ON the landscape
 		//  REM: This depends on the nature of the tile I think!!!
 
-		if (sti.surfaceTile == NULL
-		        ||  sti.surfaceTAG == NULL
+		if (sti.surfaceTile == nullptr
+		        ||  sti.surfaceTAG == nullptr
 		        ||  !(sti.surfaceRef.flags & trTileSensitive)
 		        ||  loc.z >= tHeight + 2
 		        /* ||   loc.z >= standingTile->attrs.terrainHeight */) {
@@ -789,7 +789,7 @@ int16 checkBlocked(
 	GameObject      *blockObj;
 	GameWorld       *world;
 
-	if (blockResultObj) *blockResultObj = NULL;
+	if (blockResultObj) *blockResultObj = nullptr;
 
 
 	//  check to make sure the actor recognizes terrain
@@ -844,7 +844,7 @@ int16 checkWalkable(
 	if (supportHeight < loc.z - kMaxStepHeight * 4)
 		return blockageTerrain;
 
-	if (sti.surfaceTile != NULL) {
+	if (sti.surfaceTile != nullptr) {
 		int16               subTileU,
 		                    subTileV,
 		                    mask;
@@ -872,7 +872,7 @@ int16 checkContact(
 	GameObject      *blockObj;
 	GameWorld       *world;
 
-	if (blockResultObj) *blockResultObj = NULL;
+	if (blockResultObj) *blockResultObj = nullptr;
 
 	terrain = volumeTerrain(mapNum,
 	                        loc,

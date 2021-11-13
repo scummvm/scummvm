@@ -54,7 +54,7 @@ requestInfo     rInfo;
 bool autoMapCheat = false;
 #endif
 
-static AutoMap     *pAutoMap = NULL;
+static AutoMap     *pAutoMap = nullptr;
 
 /* ===================================================================== *
    Constants
@@ -137,9 +137,9 @@ static const StaticRect scrollBtnRect = {
 
 
 StaticWindow autoMapDecorations[numAutoMapPanels] = {
-	{autoMapTopPanelRect, NULL, autoMapTopPanelResID},
-	{autoMapMidPanelRect, NULL, autoMapMidPanelResID},
-	{autoMapBotPanelRect, NULL, autoMapBotPanelResID}
+	{autoMapTopPanelRect, nullptr, autoMapTopPanelResID},
+	{autoMapMidPanelRect, nullptr, autoMapMidPanelResID},
+	{autoMapBotPanelRect, nullptr, autoMapBotPanelResID}
 };
 
 
@@ -199,7 +199,7 @@ void AutoMap::locateRegion() {
 	WorldMapData *wMap = &mapList[currentWorld->mapNum];
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
-	assert(areaRes != NULL);
+	assert(areaRes != nullptr);
 
 	stream = loadResourceToStream(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
 	regionCount = stream->readUint16LE();
@@ -289,7 +289,7 @@ gPanel *AutoMap::keyTest(int16 key) {
 	case Common::KEYCODE_PAGEDOWN:
 		return this;
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -352,7 +352,7 @@ bool AutoMap::pointerHit(gPanelMessage &msg) {
 		if (win)
 			ri = (requestInfo *)win->userData;
 		else
-			ri = NULL;
+			ri = nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -565,7 +565,7 @@ int16 openAutoMap() {
 	closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages);
 	scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2);
 
-	pAutoMap = new AutoMap(autoMapRect, (uint8 *)_summaryData, 0, NULL);
+	pAutoMap = new AutoMap(autoMapRect, (uint8 *)_summaryData, 0, nullptr);
 
 	new GfxCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
 
@@ -591,7 +591,7 @@ int16 openAutoMap() {
 	unloadImageRes(scrollBtnImage, 2);
 	free(_summaryData);
 	resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 	// clean up the backwindow
 	mainWindow->invalidate(&autoMapRect);
@@ -608,7 +608,7 @@ APPFUNC(cmdAutoMapQuit) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;

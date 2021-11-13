@@ -69,11 +69,11 @@ ActorAssignment::~ActorAssignment() {
 
 	//  Determine if the actor has a task initiated by this assignment
 	if (a->_currentGoal == actorGoalFollowAssignment
-	        &&  a->_curTask != NULL) {
+	        &&  a->_curTask != nullptr) {
 		//  If so, abort it
 		a->_curTask->abortTask();
 		delete a->_curTask;
-		a->_curTask = NULL;
+		a->_curTask = nullptr;
 	}
 
 	a->_flags &= ~hasAssignment;
@@ -106,19 +106,19 @@ bool ActorAssignment::isValid() {
 //	Create a TaskStack for this actor and plug in the assignment's Task.
 
 TaskStack *ActorAssignment::createTask() {
-	if (!taskNeeded()) return NULL;
+	if (!taskNeeded()) return nullptr;
 
 	Actor       *a = getActor();
-	TaskStack   *ts = NULL;
+	TaskStack   *ts = nullptr;
 
-	if ((ts = newTaskStack(a)) != NULL) {
+	if ((ts = newTaskStack(a)) != nullptr) {
 		Task    *task = getTask(ts);
 
-		if (task != NULL)
+		if (task != nullptr)
 			ts->setTask(task);
 		else {
 			delete ts;
-			ts = NULL;
+			ts = nullptr;
 		}
 	}
 
@@ -700,7 +700,7 @@ AttendAssignment::AttendAssignment(Actor *a, Common::SeekableReadStream *stream)
 	objID = stream->readUint16LE();
 
 	//  Convert the object ID to an object pointer
-	_obj = objID != Nothing ? GameObject::objectAddress(objID) : NULL;
+	_obj = objID != Nothing ? GameObject::objectAddress(objID) : nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -721,7 +721,7 @@ void AttendAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	ObjectID    objID;
 
 	//  Convert the object pointer to an object ID
-	objID = _obj != NULL ? _obj->thisID() : Nothing;
+	objID = _obj != nullptr ? _obj->thisID() : Nothing;
 
 	//  Store the object ID
 	out->writeUint16LE(objID);
@@ -781,13 +781,13 @@ void readAssignment(Actor *a, Common::InSaveFile *in) {
 int32 assignmentArchiveSize(Actor *a) {
 	ActorAssignment     *assign = a->getAssignment();
 
-	return assign != NULL ? sizeof(int16) + assign->archiveSize() : 0;
+	return assign != nullptr ? sizeof(int16) + assign->archiveSize() : 0;
 }
 
 void writeAssignment(Actor *a, Common::MemoryWriteStreamDynamic *out) {
 	ActorAssignment *assign = a->getAssignment();
 
-	if (assign != NULL) {
+	if (assign != nullptr) {
 		out->writeSint16LE(assign->type());
 
 		assign->write(out);

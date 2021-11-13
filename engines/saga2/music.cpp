@@ -38,7 +38,7 @@
 
 namespace Saga2 {
 
-Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
+Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(nullptr) {
 	static const char *opl2InstDefFilename = "SAMPLE.AD";
 	static const char *opl3InstDefFilename = "SAMPLE.OPL";
 
@@ -91,7 +91,7 @@ Music::~Music() {
 		delete _parser;
 	}
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
@@ -118,7 +118,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (_parser) {
 		_parser->unloadMusic();
 	} else {
-		_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+		_parser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
 
 		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());

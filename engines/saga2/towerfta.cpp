@@ -339,11 +339,11 @@ INITIALIZER(initDisplay) {
 TERMINATOR(termDisplay) {
 	if (trioControls) {
 		delete trioControls;
-		trioControls = NULL;
+		trioControls = nullptr;
 	}
 	if (indivControls) {
 		delete indivControls;
-		indivControls = NULL;
+		indivControls = nullptr;
 	}
 }
 

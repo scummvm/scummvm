@@ -241,7 +241,7 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
-	while (ti != NULL) {
+	while (ti != nullptr) {
 		//  If this has the tile ID we are looking for
 		if (isTarget(sti)) {
 			uint16  dist;
@@ -296,7 +296,7 @@ int16 TileTarget::where(
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
-	while (ti != NULL) {
+	while (ti != nullptr) {
 		//  Determine if this tile has tile ID we're looking
 		//  for
 		if (isTarget(sti)) {
@@ -473,7 +473,7 @@ TilePoint MetaTileTarget::where(
 
 	//  get the first metatile in region
 	mt = mIter.first(&metaCoords);
-	while (mt != NULL) {
+	while (mt != nullptr) {
 		if (isTarget(mt, world->mapNum, metaCoords)) {
 			uint16  dist;
 
@@ -527,7 +527,7 @@ int16 MetaTileTarget::where(
 
 	//  Get the first metatile in tile region
 	mt = mIter.first(&metaCoords);
-	while (mt != NULL) {
+	while (mt != nullptr) {
 		if (isTarget(mt, world->mapNum, metaCoords)) {
 			uint16  dist;
 
@@ -776,7 +776,7 @@ TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
 
 	//  Iterate through each object in the vicinity
 	for (iter.first(&objPtr, &dist);
-	        objPtr != NULL;
+	        objPtr != nullptr;
 	        iter.next(&objPtr, &dist)) {
 		//  Skip this object if we've already found a closer
 		//  object
@@ -837,13 +837,13 @@ GameObject *ObjectTarget::object(
 	CircularObjectIterator  objIter(world, tp, maxObjDist);
 
 	GameObject     *objPtr,
-	               *bestObj = NULL;
+	               *bestObj = nullptr;
 	int16                   dist,
 	                        bestDist = maxint16;
 
 	//  Iterate through each object in the vicinity
 	for (objIter.first(&objPtr, &dist);
-	        objPtr != NULL;
+	        objPtr != nullptr;
 	        objIter.next(&objPtr, &dist)) {
 		//  Skip this object if we have already found a closer object
 		if (dist > 0 && dist < bestDist) {
@@ -1020,7 +1020,7 @@ GameObject *SpecificObjectTarget::object(
 			return o;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1155,7 +1155,7 @@ SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
 	//  Convert the actor ID into an Actor pointer
 	a = actorID != Nothing
 	    ? (Actor *)GameObject::objectAddress(actorID)
-	    :   NULL;
+	    :   nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1168,7 +1168,7 @@ inline int32 SpecificActorTarget::archiveSize() const {
 
 void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Convert the actor pointer to an actor ID;
-	ObjectID actorID = a != NULL ? a->thisID() : Nothing;
+	ObjectID actorID = a != nullptr ? a->thisID() : Nothing;
 
 	//  Store the actor ID
 	out->writeUint16LE(actorID);
@@ -1267,7 +1267,7 @@ GameObject *SpecificActorTarget::object(
 			return a;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1305,7 +1305,7 @@ Actor *SpecificActorTarget::actor(
 			return a;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------

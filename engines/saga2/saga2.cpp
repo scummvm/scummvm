@@ -360,7 +360,7 @@ struct dataChunks {
 	{ &pgRightImageData,		0x004EECB0, 256 },
 	{ &autoWalkImageData,		0x004EEDB0, 228 },
 	{ &gaugeImageData,			0x004EF257, 241 },
-	{ NULL,						0,			0 }
+	{ nullptr,						0,			0 }
 };
 
 void Saga2Engine::loadExeResources() {

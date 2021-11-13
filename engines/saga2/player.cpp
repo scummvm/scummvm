@@ -568,17 +568,17 @@ void setCenterActor(PlayerActorID newCenter) {
 	g_vm->_cnm->setPlayerNum(newCenter);
 	setEnchantmentDisplay();
 
-	if (a->_curTask != NULL) {
+	if (a->_curTask != nullptr) {
 		a->_curTask->abortTask();
 		delete a->_curTask;
-		a->_curTask = NULL;
+		a->_curTask = nullptr;
 	}
 
 	//  Set the new centers fight stance based upon his aggression state
 	a->setFightStance(g_vm->_playerList[newCenter]->isAggressive());
 
 	// band actors to new center if banding button set
-	for (player = iter.first(); player != NULL; player = iter.next()) {
+	for (player = iter.first(); player != nullptr; player = iter.next()) {
 		player->resolveBanding();
 	}
 
@@ -668,7 +668,7 @@ void autoAdjustAggression() {
 				//  Iterate through the objects in this player actor's
 				//  active region to determine if their are enemy actor's
 				//  in the vicinity.
-				for (iter.first(&obj); obj != NULL; iter.next(&obj)) {
+				for (iter.first(&obj); obj != nullptr; iter.next(&obj)) {
 					Actor       *a;
 
 					if (!isActor(obj)) continue;
@@ -726,7 +726,7 @@ void setBrotherBanding(bool enabled) {
 			PlayerActor         *player;
 
 			//  Update the state of the banding
-			for (player = iter.first(); player != NULL; player = iter.next()) {
+			for (player = iter.first(); player != nullptr; player = iter.next()) {
 				player->resolveBanding();
 			}
 		}
@@ -786,7 +786,7 @@ void handlePlayerActorDeath(PlayerActorID id) {
 		PlayerActor                 *newCenter;
 		LivingPlayerActorIterator   iter;
 
-		if ((newCenter = iter.first()) != NULL)
+		if ((newCenter = iter.first()) != nullptr)
 			setCenterActor(getPlayerActorID(newCenter));
 		else
 			allPlayerActorsDead = true;
@@ -818,11 +818,11 @@ void transportCenterBand(const Location &loc) {
 	LivingPlayerActorIterator   iter;
 
 	center->move(loc);
-	if (center->_moveTask != NULL)
+	if (center->_moveTask != nullptr)
 		center->_moveTask->finishWalk();
 
 	for (player = iter.first();
-	        player != NULL;
+	        player != nullptr;
 	        player = iter.next()) {
 		Actor       *a = player->getActor();
 
@@ -845,7 +845,7 @@ void transportCenterBand(const Location &loc) {
 
 			if (dest != Nowhere) {
 				a->move(Location(dest, loc.context));
-				if (a->_moveTask != NULL)
+				if (a->_moveTask != nullptr)
 					a->_moveTask->finishWalk();
 				player->resolveBanding();
 			}
