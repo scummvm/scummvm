@@ -238,12 +238,12 @@ int getNumMaxEntiresInSet(uint8 *ptr) {
 }
 
 int loadFile(const char* name, int idx, int destIdx) {
-	uint8 *ptr = NULL;
+	uint8 *ptr = nullptr;
 	fileTypeEnum fileType;
 
 	fileType = getFileType(name);
 
-	loadFileSub1(&ptr, name, NULL);
+	loadFileSub1(&ptr, name, nullptr);
 
 	switch (fileType) {
 	case type_SET: {
@@ -280,12 +280,12 @@ int loadFile(const char* name, int idx, int destIdx) {
 }
 
 int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numIdx) {
-	uint8 *ptr = NULL;
+	uint8 *ptr = nullptr;
 	fileTypeEnum fileType;
 
 	fileType = getFileType(name);
 
-	loadFileSub1(&ptr, name, NULL);
+	loadFileSub1(&ptr, name, nullptr);
 
 	switch (fileType) {
 	case type_SET: {
@@ -320,14 +320,14 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 }
 
 int loadFullBundle(const char *name, int startIdx) {
-	uint8 *ptr = NULL;
+	uint8 *ptr = nullptr;
 	fileTypeEnum fileType;
 
 	fileType = getFileType(name);
 
-	loadFileSub1(&ptr, name, NULL);
+	loadFileSub1(&ptr, name, nullptr);
 
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return 0;
 
 	switch (fileType) {
@@ -375,7 +375,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	uint8 *destPtr = filesDatabase[fileIndex].subData.ptr;
 
-	if (destPtr != NULL) {
+	if (destPtr != nullptr) {
 		memcpy(destPtr, ptr2, loadFileVar1);
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;

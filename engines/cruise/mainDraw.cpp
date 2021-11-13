@@ -1272,7 +1272,7 @@ void drawCtp() {
 #endif
 
 void drawMenu(menuStruct *pMenu) {
-	if (pMenu == NULL)
+	if (pMenu == nullptr)
 		return;
 
 	if (pMenu->numElements == 0)
@@ -1405,7 +1405,7 @@ void mainDraw(bool waitFl) {
 		}
 	}
 
-	autoCellHead.next = NULL;
+	autoCellHead.next = nullptr;
 
 	currentObjPtr = cellHead.next;
 

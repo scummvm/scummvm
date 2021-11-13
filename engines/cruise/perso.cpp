@@ -33,7 +33,7 @@ int16 numPoly;
 void freePerso(int persoIdx) {
 	if (persoTable[persoIdx]) {
 		MemFree(persoTable[persoIdx]);
-		persoTable[persoIdx] = NULL;
+		persoTable[persoIdx] = nullptr;
 	}
 }
 
@@ -46,11 +46,11 @@ void freeCTP() {
 	if (_vm->_polyStruct) {
 		_vm->_polyStructNorm.clear();
 		_vm->_polyStructExp.clear();
-		_vm->_polyStruct = NULL;
+		_vm->_polyStruct = nullptr;
 	}
 
-	ctpVar17 = NULL;
-	_vm->_polyStruct = NULL;
+	ctpVar17 = nullptr;
+	_vm->_polyStruct = nullptr;
 
 	strcpy((char *)currentCtpName, "");
 }

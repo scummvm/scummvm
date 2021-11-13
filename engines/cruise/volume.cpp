@@ -25,7 +25,7 @@
 
 namespace Cruise {
 
-uint8 *PAL_ptr = NULL;
+uint8 *PAL_ptr = nullptr;
 
 int16 numLoadedPal;
 int16 fileData2;
@@ -58,7 +58,7 @@ void closePal() {
 		_vm->_PAL_file.close();
 
 		MemFree(PAL_ptr);
-		PAL_ptr = NULL;
+		PAL_ptr = nullptr;
 
 		numLoadedPal = 0;
 		fileData2 = 0;
@@ -304,7 +304,7 @@ int closeCnf() {
 	for (long int i = 0; i < numOfDisks; i++) {
 		if (volumeData[i].ptr) {
 			MemFree(volumeData[i].ptr);
-			volumeData[i].ptr = NULL;
+			volumeData[i].ptr = nullptr;
 		}
 	}
 
@@ -321,7 +321,7 @@ int16 readVolCnf() {
 
 	for (int i = 0; i < 20; i++) {
 		volumeData[i].ident[0] = 0;
-		volumeData[i].ptr = NULL;
+		volumeData[i].ptr = nullptr;
 		volumeData[i].diskNumber = i + 1;
 		volumeData[i].size = 0;
 	}

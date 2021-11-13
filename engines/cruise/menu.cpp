@@ -44,7 +44,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry->y = Y;
 	entry->stringPtr = menuName;
 	entry->numElements = 0;
-	entry->ptrNextElement = NULL;
+	entry->ptrNextElement = nullptr;
 	entry->gfx = renderText(160, menuName);
 
 	return entry;
@@ -70,7 +70,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
 						assert(pSubStruct);
 
-						pSubStruct->pNext = NULL;
+						pSubStruct->pNext = nullptr;
 						pSubStruct->ovlIdx = ovlIdx;
 						pSubStruct->header = headerIdx;
 
@@ -103,12 +103,12 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 		assert(pSubStruct);
 
 		pNewElement->string = menuText;
-		pNewElement->next = NULL;
+		pNewElement->next = nullptr;
 		pNewElement->selected = false;
 		pNewElement->color = color;
 		pNewElement->gfx = renderText(160, menuText);
 
-		if (var_6 == NULL) {
+		if (var_6 == nullptr) {
 			pMenu->ptrNextElement = pNewElement;
 		} else {
 			var_6->next = pNewElement;
@@ -116,7 +116,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 
 		pNewElement->ptrSub = pSubStruct;
 
-		pSubStruct->pNext = NULL;
+		pSubStruct->pNext = nullptr;
 		pSubStruct->ovlIdx = ovlIdx;
 		pSubStruct->header = headerIdx;
 
@@ -261,7 +261,7 @@ int playerMenu(int menuX, int menuY) {
 		int retourMenu = processMenu(menuTable[0]);
 
 		freeMenu(menuTable[0]);
-		menuTable[0] = NULL;
+		menuTable[0] = nullptr;
 		currentMouseButton = 0;
 
 		switch (retourMenu) {

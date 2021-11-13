@@ -64,25 +64,25 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	strToUpper(overlayName);
 	strToUpper(functionName);
 	if (strlen((char *)overlayName) == 0)
-		return NULL;
+		return nullptr;
 
 	idx = findOverlayByName2(overlayName);
 
 	if (idx == -4)
-		return (NULL);
+		return (nullptr);
 
 	if (overlayTable[idx].alreadyLoaded == 0)
-		return (NULL);
+		return (nullptr);
 
 	if (!overlayTable[idx].ovlData)
-		return (NULL);
+		return (nullptr);
 
 	numSymbGlob = overlayTable[idx].ovlData->numSymbGlob;
 	currentExportEntry = overlayTable[idx].ovlData->arraySymbGlob;
 	entity1Name = overlayTable[idx].ovlData->arrayNameSymbGlob;
 
 	if (!entity1Name)
-		return (0);
+		return (nullptr);
 
 	for (int i = 0; i < numSymbGlob; i++) {
 		char exportedName[256];
@@ -100,7 +100,7 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 		currentExportEntry++;
 	}
 
-	return (NULL);
+	return (nullptr);
 }
 
 int updateScriptImport(int ovlIdx) {

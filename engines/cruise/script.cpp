@@ -59,7 +59,7 @@ int32 opcodeType0() {
 		index = saveOpcodeVar;
 		// fall through
 	case 1: {
-		uint8 *address = 0;
+		uint8 *address = nullptr;
 		int type = getByteFromScript();
 		int ovl = getByteFromScript();
 		short int offset = getShortFromScript();
@@ -150,7 +150,7 @@ int32 opcodeType1()	{
 
 		int var_C = short1;
 
-		uint8 *ptr = 0;
+		uint8 *ptr = nullptr;
 		int type2;
 
 		if (!var_6)
@@ -229,7 +229,7 @@ int32 opcodeType2() {
 		index = saveOpcodeVar;
 		// fall through
 	case 1: {
-		uint8* adresse = NULL;
+		uint8* adresse = nullptr;
 		int type = getByteFromScript();
 		int overlay = getByteFromScript();
 
@@ -464,7 +464,7 @@ int32 opcodeType9() {		// stop script
 
 void setupFuncArray() {
 	for (int i = 0; i < 64; i++)
-		opcodeTypeTable[i] = NULL;
+		opcodeTypeTable[i] = nullptr;
 
 	opcodeTypeTable[1] = opcodeType0;
 	opcodeTypeTable[2] = opcodeType1;
@@ -509,13 +509,13 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	else if (scriptType == 30)
 		data3Ptr = scriptFunc1Sub2(overlayNumber, param);
 	else
-		return (NULL);
+		return (nullptr);
 
 	if (!data3Ptr)
-		return (NULL);
+		return (nullptr);
 
 	if (!data3Ptr->dataPtr)
-		return (NULL);
+		return (nullptr);
 
 	var_C = data3Ptr->sysKey;
 	oldTail = scriptHandlePtr;
@@ -526,15 +526,15 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	scriptInstanceStruct *tempPtr = (scriptInstanceStruct *)mallocAndZero(sizeof(scriptInstanceStruct));
 
 	if (!tempPtr)
-		return (NULL);
+		return (nullptr);
 
-	tempPtr->data = NULL;
+	tempPtr->data = nullptr;
 
 	if (var_C)
 		tempPtr->data = (uint8 *) mallocAndZero(var_C);
 
 	tempPtr->dataSize = var_C;
-	tempPtr->nextScriptPtr = NULL;
+	tempPtr->nextScriptPtr = nullptr;
 	tempPtr->scriptOffset = 0;
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
@@ -621,7 +621,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		}
 	} while (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]());
 
-	currentScriptPtr = NULL;
+	currentScriptPtr = nullptr;
 
 	return (0);
 }

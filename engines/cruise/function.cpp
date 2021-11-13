@@ -439,20 +439,20 @@ int16 Op_KillMenu() {
 	// Free menus, if active
 	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
-		menuTable[0] = NULL;
+		menuTable[0] = nullptr;
 		currentActiveMenu = -1;
 	}
 
 	if (menuTable[1]) {
 		freeMenu(menuTable[1]);
-		menuTable[1] = NULL;
+		menuTable[1] = nullptr;
 		currentActiveMenu = -1;
 	}
 
 	// Free the message list
 //	if (linkedMsgList) freeMsgList(linkedMsgList);
-	linkedMsgList = NULL;
-	linkedRelation = NULL;
+	linkedMsgList = nullptr;
+	linkedRelation = nullptr;
 
 	return 0;
 }
@@ -1101,7 +1101,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 
 	actorStruct *pNewElement = (actorStruct *) MemAlloc(sizeof(actorStruct));
 	if (!pNewElement)
-		return NULL;
+		return nullptr;
 
 	memset(pNewElement, 0, sizeof(actorStruct));
 	pNewElement->next = pPrevious->next;
@@ -1163,7 +1163,7 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 			pl2->next = pl4;
 			pl3 = pl4;
 
-			if (pl3 == NULL)
+			if (pl3 == nullptr)
 				pl3 = pHead;
 
 			pl3->prev = pl->prev;
@@ -1701,7 +1701,7 @@ int16 Op_DialogOff() {
 
 	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
-		menuTable[0] = NULL;
+		menuTable[0] = nullptr;
 		changeCursor(CURSOR_NORMAL);
 		currentActiveMenu = -1;
 	}
@@ -1776,7 +1776,7 @@ int16 Op_YMenuItem() {
 
 
 int16 Op_Menu() {
-	return (int16)(menuTable[0] != NULL);
+	return (int16)(menuTable[0] != nullptr);
 }
 
 int16 Op_AutoControl() {
@@ -1843,7 +1843,7 @@ int16 Op_UserWait() {
 }
 
 opcodeFunction opcodeTablePtr[] = {
-	NULL, // 0x00
+	nullptr, // 0x00
 	Op_FadeIn,
 	Op_FadeOut,
 	Op_LoadBackground,
@@ -1858,11 +1858,11 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_LoadOverlay,
 	Op_SetColor,
 	Op_PlayFX,
-	NULL,	// used to be debug
+	nullptr,	// used to be debug
 
 	Op_FreeOverlay, // 0x10
 	Op_FindOverlay,
-	NULL,	// used to be exec debug
+	nullptr,	// used to be exec debug
 	Op_AddMessage,
 	Op_RemoveMessage,
 	Op_UserWait,
@@ -1933,7 +1933,7 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_MouseEnd,
 	Op_MsgExist,
 	Op_SetFont,
-	NULL, // MergeMsg
+	nullptr, // MergeMsg
 	Op_Display,
 	Op_GetMouseX,
 	Op_GetMouseY,
@@ -1954,7 +1954,7 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_Sizeof,
 	Op_Preload,
 	Op_FreePreload,
-	NULL, // DeletePreload
+	nullptr, // DeletePreload
 	Op_VBL,
 	Op_LoadFrame,
 	Op_FreezeOverlay,

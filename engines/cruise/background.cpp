@@ -28,7 +28,7 @@ namespace Cruise {
 
 uint8 colorMode = 0;
 
-uint8 *backgroundScreens[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };	// wasn't initialized in original, but it's probably better
+uint8 *backgroundScreens[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };	// wasn't initialized in original, but it's probably better
 bool backgroundChanged[8] = { false, false, false, false, false, false, false, false };
 backgroundTableStruct backgroundTable[8];
 
@@ -107,7 +107,7 @@ int loadBackground(const char *name, int idx) {
 	backgroundChanged[idx] = true;
 
 	ptrToFree = gfxModuleData.pPage10;
-	if (loadFileSub1(&ptrToFree, name, NULL) < 0) {
+	if (loadFileSub1(&ptrToFree, name, nullptr) < 0) {
 		if (ptrToFree != gfxModuleData.pPage10)
 			MemFree(ptrToFree);
 
