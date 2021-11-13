@@ -49,9 +49,9 @@
 namespace Groovie {
 
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
-	Engine(syst), _gameDescription(gd), _script(NULL),
-	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
+	Engine(syst), _gameDescription(gd), _script(nullptr),
+	_resMan(nullptr), _grvCursorMan(nullptr), _videoPlayer(nullptr), _musicPlayer(nullptr),
+	_graphicsMan(nullptr), _macResFork(nullptr), _waitingForInput(false), _font(nullptr),
 	_spookyMode(false) {
 
 	// Adding the default directories
@@ -413,9 +413,9 @@ void GroovieEngine::waitForInput() {
 }
 
 SoundEffectQueue::SoundEffectQueue() {
-	_vm = NULL;
-	_player = NULL;
-	_file = NULL;
+	_vm = nullptr;
+	_player = nullptr;
+	_file = nullptr;
 }
 
 void SoundEffectQueue::setVM(GroovieEngine *vm) {
@@ -469,7 +469,7 @@ void SoundEffectQueue::tick() {
 void SoundEffectQueue::deleteFile() {
 	if (_file) {
 		delete _file;
-		_file = NULL;
+		_file = nullptr;
 		_vm->_script->setBitFlag(0, false);
 	}
 }

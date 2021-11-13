@@ -31,7 +31,7 @@
 namespace Groovie {
 
 VideoPlayer::VideoPlayer(GroovieEngine *vm) :
-	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false), _flags(0),
+	_vm(vm), _syst(vm->_system), _file(nullptr), _audioStream(nullptr), _fps(0), _overrideSpeed(false), _flags(0),
 	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0), _frameTimeDrift(0) {
 }
 
@@ -48,7 +48,7 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 		_begunPlaying = false;
 		return true;
 	} else {
-		_file = NULL;
+		_file = nullptr;
 		return false;
 	}
 }
@@ -83,14 +83,14 @@ bool VideoPlayer::playFrame() {
 
 	// The file has been completely processed
 	if (end) {
-		_file = NULL;
+		_file = nullptr;
 
 		// Wait for pending audio
 		if (_audioStream) {
 			if (_audioStream->endOfData() || isFastForwarding()) {
 				// Mark the audio stream as finished (no more data will be appended)
 				_audioStream->finish();
-				_audioStream = NULL;
+				_audioStream = nullptr;
 			} else {
 				// Don't end if there's still audio playing
 				end = false;

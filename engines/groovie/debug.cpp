@@ -54,7 +54,7 @@ Debugger::~Debugger() {
 }
 
 int Debugger::getNumber(const char *arg) {
-	return strtol(arg, (char **)NULL, 0);
+	return strtol(arg, (char **)nullptr, 0);
 }
 
 bool Debugger::cmd_step(int argc, const char **argv) {

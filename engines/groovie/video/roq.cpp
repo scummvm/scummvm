@@ -127,7 +127,7 @@ void ROQPlayer::stopAudioStream() {
 	if (_audioStream) {
 		g_system->getMixer()->stopHandle(_soundHandle);
 	}
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
 uint16 ROQPlayer::loadInternal() {
@@ -257,9 +257,9 @@ void ROQPlayer::buildShowBuf() {
 
 	// Select the destination buffer according to the given flags
 	int destOffset = 0;
-	Graphics::Surface *maskBuf = NULL;
+	Graphics::Surface *maskBuf = nullptr;
 	Graphics::Surface *srcBuf = _currBuf;
-	Graphics::Surface *destBuf = NULL;
+	Graphics::Surface *destBuf = nullptr;
 	if (_flagMasked) {
 		srcBuf = _bg;
 		maskBuf = _currBuf;
@@ -288,7 +288,7 @@ void ROQPlayer::buildShowBuf() {
 		byte *in = (byte *)srcBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
 		byte *inOvr = (byte *)_overBuf->getBasePtr(startX, line);
 		byte *out = (byte *)destBuf->getBasePtr(startX, line + destOffset);
-		byte *mask = NULL;
+		byte *mask = nullptr;
 		if (_flagMasked) {
 			mask = (byte *)maskBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
 		}

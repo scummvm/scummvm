@@ -35,7 +35,7 @@ namespace Groovie {
 // Cursor Manager
 
 GrvCursorMan::GrvCursorMan(OSystem *system) :
-	_syst(system), _lastTime(0), _current(255), _cursor(NULL), _lastFrame(0) {
+	_syst(system), _lastTime(0), _current(255), _cursor(nullptr), _lastFrame(0) {
 }
 
 GrvCursorMan::~GrvCursorMan() {
@@ -141,7 +141,7 @@ const uint GrvCursorMan_t7g::_cursorPal[NUM_STYLES] = {0, 0, 0, 0, 2, 0, 1, 3, 5
 GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork) :
 	GrvCursorMan(system) {
 
-	Common::SeekableReadStream *robgjd = 0;
+	Common::SeekableReadStream *robgjd = nullptr;
 
 	if (macResFork) {
 		// Open the cursors file from the resource fork

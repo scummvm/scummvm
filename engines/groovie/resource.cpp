@@ -39,7 +39,7 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	// Get the information about the resource
 	ResInfo resInfo;
 	if (!getResInfo(fileRef, resInfo)) {
-		return NULL;
+		return nullptr;
 	}
 
 	debugC(1, kDebugResource, "Groovie::Resource: Opening resource %d", fileRef);
@@ -50,7 +50,7 @@ Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
 	// Do we know the name of the required GJD?
 	if (resInfo.gjd >= _gjds.size()) {
 		error("Groovie::Resource: Unknown GJD %d", resInfo.gjd);
-		return NULL;
+		return nullptr;
 	}
 
 	debugC(1, kDebugResource, "Groovie::Resource: Opening resource (%s, %d, %d, %d)", _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size, resInfo.disks);
@@ -58,7 +58,7 @@ Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
 	// Does it exist?
 	if (!Common::File::exists(_gjds[resInfo.gjd])) {
 		error("Groovie::Resource: %s not found (resInfo.disks: %d)", _gjds[resInfo.gjd].c_str(), resInfo.disks);
-		return NULL;
+		return nullptr;
 	}
 
 	// Open the pack file
@@ -66,7 +66,7 @@ Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
 	if (!gjdFile->open(_gjds[resInfo.gjd].c_str())) {
 		delete gjdFile;
 		error("Groovie::Resource: Couldn't open %s", _gjds[resInfo.gjd].c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	// Save the used gjd file (except xmi and gamwav)
@@ -137,7 +137,7 @@ uint32 ResMan_t7g::getRef(Common::String name) {
 	Common::String rlFileName(t7g_gjds[_lastGjd]);
 	rlFileName += ".rl";
 
-	Common::SeekableReadStream *rlFile = 0;
+	Common::SeekableReadStream *rlFile = nullptr;
 
 	if (_macResFork) {
 		// Open the RL file from the resource fork
@@ -189,7 +189,7 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	Common::String rlFileName(t7g_gjds[resInfo.gjd]);
 	rlFileName += ".rl";
 
-	Common::SeekableReadStream *rlFile = 0;
+	Common::SeekableReadStream *rlFile = nullptr;
 
 	if (_macResFork) {
 		// Open the RL file from the resource fork
