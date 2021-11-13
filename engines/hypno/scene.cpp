@@ -56,7 +56,7 @@ const static char *sceneVariables[] = {
 	"GS_COMBATJSON",
 	"GS_COMBATLEVEL",
 	"GS_PUZZLELEVEL",
-	NULL
+	nullptr
 };
 
 void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
@@ -408,13 +408,13 @@ void HypnoEngine::runScene(Scene *scene) {
 			debugC(1, kHypnoDebugScene, "Removing a hotspot list!");
 			stack.pop_back();
 			runMenu(*stack.back());
-			_nextHotsToRemove = NULL;
+			_nextHotsToRemove = nullptr;
 			drawScreen();
 		} else if (_nextHotsToAdd) {
 			debugC(1, kHypnoDebugScene, "Adding a hotspot list!");
 			stack.push_back(_nextHotsToAdd);
 			runMenu(*stack.back());
-			_nextHotsToAdd = NULL;
+			_nextHotsToAdd = nullptr;
 			drawScreen();
 		}
 
