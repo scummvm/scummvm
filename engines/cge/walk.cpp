@@ -201,7 +201,7 @@ void Walk::reach(Sprite *spr, int mode) {
 		}
 	}
 	// note: insert SNAIL commands in reverse order
-	_vm->_commandHandler->insertCommand(kCmdPause, -1, 64, NULL);
+	_vm->_commandHandler->insertCommand(kCmdPause, -1, 64, nullptr);
 	_vm->_commandHandler->insertCommand(kCmdSeq, -1, kTSeq + mode, this);
 	if (spr) {
 		_vm->_commandHandler->insertCommand(kCmdWait, -1, -1, _vm->_hero);

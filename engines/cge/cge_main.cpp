@@ -247,7 +247,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 	}
 
 	// Get in the savegame
-	syncGame(readStream, NULL, tiny);
+	syncGame(readStream, nullptr, tiny);
 
 	delete readStream;
 	return true;
@@ -260,7 +260,7 @@ bool CGEEngine::savegameExists(int slotNumber) {
 	Common::String slotName = getSaveStateName(slotNumber);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
-	bool result = saveFile != NULL;
+	bool result = saveFile != nullptr;
 	delete saveFile;
 	return result;
 }
@@ -276,7 +276,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 		_midiPlayer->killMidi();
 
 	// Load the game
-	loadGame(slot, NULL);
+	loadGame(slot, nullptr);
 	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
 	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
@@ -325,7 +325,7 @@ void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
-	syncGame(NULL, saveFile, false);
+	syncGame(nullptr, saveFile, false);
 
 	// Finish writing out game data
 	saveFile->finalize();
@@ -397,20 +397,20 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 		if (!tiny) { // load sprites & pocket
 			while (readStream->pos() < readStream->size()) {
-				Sprite S(this, NULL);
+				Sprite S(this, nullptr);
 				S.sync(s);
 
-				S._prev = S._next = NULL;
-				Sprite *spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)
-					  : new Sprite(this, NULL);
-				assert(spr != NULL);
+				S._prev = S._next = nullptr;
+				Sprite *spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, nullptr)
+					  : new Sprite(this, nullptr);
+				assert(spr != nullptr);
 				*spr = S;
 				_vga->_spareQ->append(spr);
 			}
 
 			for (int i = 0; i < kPocketNX; i++) {
 				int r = _pocref[i];
-				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
+				_pocket[i] = (r < 0) ? nullptr : _vga->_spareQ->locate(r);
 			}
 		}
 	}
@@ -459,7 +459,7 @@ WARN_UNUSED_RESULT bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, Sa
 void CGEEngine::heroCover(int cvr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::heroCover(%d)", cvr);
 
-	_commandHandler->addCommand(kCmdCover, 1, cvr, NULL);
+	_commandHandler->addCommand(kCmdCover, 1, cvr, nullptr);
 }
 
 void CGEEngine::trouble(int seq, int text) {
@@ -524,13 +524,13 @@ void CGEEngine::loadMapping() {
 	}
 }
 
-Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+Square::Square(CGEEngine *vm) : Sprite(vm, nullptr), _vm(vm) {
 	_flags._kill = true;
 	_flags._bDel = false;
 
 	BitmapPtr *MB = new BitmapPtr[2];
 	MB[0] = new Bitmap(_vm, "BRICK");
-	MB[1] = NULL;
+	MB[1] = nullptr;
 	setShapeList(MB);
 }
 
@@ -557,13 +557,13 @@ void CGEEngine::setMapBrick(int x, int z) {
 void CGEEngine::keyClick() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::keyClick()");
 
-	_commandHandlerTurbo->addCommand(kCmdSound, -1, 5, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSound, -1, 5, nullptr);
 }
 
 void CGEEngine::resetQSwitch() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::resetQSwitch()");
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, 123,  0, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 123,  0, nullptr);
 	keyClick();
 }
 
@@ -571,9 +571,9 @@ void CGEEngine::quit() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::quit()");
 
 	static Choice QuitMenu[] = {
-		{ NULL, &CGEEngine::startCountDown },
-		{ NULL, &CGEEngine::resetQSwitch   },
-		{ NULL, &CGEEngine::dummy          }
+		{ nullptr, &CGEEngine::startCountDown },
+		{ nullptr, &CGEEngine::resetQSwitch   },
+		{ nullptr, &CGEEngine::dummy          }
 	};
 
 	if (_commandHandler->idle() && !_hero->_flags._hide) {
@@ -584,7 +584,7 @@ void CGEEngine::quit() {
 			QuitMenu[0]._text = _text->getText(kQuit);
 			QuitMenu[1]._text = _text->getText(kNoQuit);
 			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(kQuitTitle));
-			_commandHandlerTurbo->addCommand(kCmdSeq, 123, 1, NULL);
+			_commandHandlerTurbo->addCommand(kCmdSeq, 123, 1, nullptr);
 			keyClick();
 		}
 	}
@@ -617,7 +617,7 @@ void CGEEngine::showBak(int ref) {
 
 	_bitmapPalette = _vga->_sysPal;
 	spr->expand();
-	_bitmapPalette = NULL;
+	_bitmapPalette = nullptr;
 	spr->show(2);
 	_vga->copyPage(1, 2);
 	_sys->setPal();
@@ -731,7 +731,7 @@ void CGEEngine::switchScene(int newScene) {
 		return;
 
 	if (newScene < 0) {
-		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
+		_commandHandler->addCommand(kCmdLabel, -1, 0, nullptr);  // wait for repaint
 		_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame); // quit game
 	} else {
 		_now = newScene;
@@ -746,13 +746,13 @@ void CGEEngine::switchScene(int newScene) {
 		killText();
 		if (!_startupMode)
 			keyClick();
-		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
+		_commandHandler->addCommand(kCmdLabel, -1, 0, nullptr);  // wait for repaint
 		_commandHandler->addCallback(kCmdExec,  0, 0, kXScene); // switch scene
 
 	}
 }
 
-System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+System::System(CGEEngine *vm) : Sprite(vm, nullptr), _vm(vm) {
 	_funDel = kHeroFun0;
 	setPal();
 	tick();
@@ -769,7 +769,7 @@ void System::setPal() {
 
 void System::funTouch() {
 	uint16 n = (_vm->_flag[0]) ? kHeroFun1 : kHeroFun0; // PAIN flag
-	if (_vm->_talk == NULL || n > _funDel)
+	if (_vm->_talk == nullptr || n > _funDel)
 		_funDel = n;
 }
 
@@ -782,7 +782,7 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 			// The sound is uselessly annoying and noisy, so it has been removed
 			_vm->killText();
 			if (_vm->_startupMode == 1) {
-				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
+				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 				return;
 			}
 		}
@@ -790,7 +790,7 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 		if (_vm->_startupMode)
 			return;
 		int selectedScene = 0;
-		_vm->_infoLine->update(NULL);
+		_vm->_infoLine->update(nullptr);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select scene?
 				if (y >= kSceneY && y < kSceneY + kSceneNy * kSceneDy &&
@@ -864,7 +864,7 @@ void System::tick() {
 void CGEEngine::switchColorMode() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchColorMode()");
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, nullptr);
 	keyClick();
 	_vga->setColors(_vga->_sysPal, 64);
 }
@@ -875,7 +875,7 @@ void CGEEngine::switchColorMode() {
 void CGEEngine::switchMusic() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, 122, (_music = !_music), NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 122, (_music = !_music), nullptr);
 	keyClick();
 
 	if (_music)
@@ -918,7 +918,7 @@ void CGEEngine::killSprite() {
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
 	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _sprite);
-	_sprite = NULL;
+	_sprite = nullptr;
 }
 
 void CGEEngine::optionTouch(int opt, uint16 mask) {
@@ -969,7 +969,7 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 		}
 
 	if ((mask & kMouseRightUp) && _vm->_commandHandler->idle()) {
-		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _vm->_pocket[_vm->_pocPtr] : NULL;
+		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _vm->_pocket[_vm->_pocPtr] : nullptr;
 		if (ps) {
 			if (_flags._kept || _vm->_hero->distance(this) < kDistMax) {
 				if (works(ps)) {
@@ -985,7 +985,7 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 			} else {
 				if (_vm->_hero->distance(this) < kDistMax) {
 					if (_flags._port) {
-						if (_vm->findPocket(NULL) < 0) {
+						if (_vm->findPocket(nullptr) < 0) {
 							_vm->pocFul();
 						} else {
 							_vm->_commandHandler->addCommand(kCmdReach, -1, -1, this);
@@ -1028,10 +1028,10 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	                              "Left", "Right", "Top", "Bottom",
 	                              "Seq", "Near", "Take",
 	                              "Portable", "Transparent",
-	                              NULL
+	                              nullptr
 	                            };
 	static const char *Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
-	                              "FLY", NULL
+	                              "FLY", nullptr
 	                            };
 
 	int shpcnt = 0;
@@ -1067,20 +1067,20 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 			case 0: // Name - will be taken in Expand routine
 				break;
 			case 1: // Type
-				if ((type = takeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
+				if ((type = takeEnum(Type, strtok(nullptr, " \t,;/"))) < 0)
 					error("Bad line %d [%s]", lcnt, fname);
 				break;
 			case 2: // Phase
 				shpcnt++;
 				break;
 			case 3: // East
-				east = (atoi(strtok(NULL, " \t,;/")) != 0);
+				east = (atoi(strtok(nullptr, " \t,;/")) != 0);
 				break;
 			case 11: // Portable
-				port = (atoi(strtok(NULL, " \t,;/")) != 0);
+				port = (atoi(strtok(nullptr, " \t,;/")) != 0);
 				break;
 			case 12: // Transparent
-				tran = (atoi(strtok(NULL, " \t,;/")) != 0);
+				tran = (atoi(strtok(nullptr, " \t,;/")) != 0);
 				break;
 			}
 		}
@@ -1095,14 +1095,14 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	switch (type) {
 	case 1:
 		// AUTO
-		_sprite = new Sprite(this, NULL);
+		_sprite = new Sprite(this, nullptr);
 		if (_sprite) {
 			_sprite->gotoxy(col, row);
 		}
 		break;
 	case 2:
 		{ // WALK
-		Walk *w = new Walk(this, NULL);
+		Walk *w = new Walk(this, nullptr);
 		if (w && ref == 1) {
 			w->gotoxy(col, row);
 			if (_hero)
@@ -1118,13 +1118,13 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 		break;
 	case 5:
 		{ // FLY
-		Fly *f = new Fly(this, NULL);
+		Fly *f = new Fly(this, nullptr);
 		_sprite = f;
 		break;
 		}
 	default:
 		// DEAD
-		_sprite = new Sprite(this, NULL);
+		_sprite = new Sprite(this, nullptr);
 		if (_sprite)
 			_sprite->gotoxy(col, row);
 		break;
@@ -1174,43 +1174,43 @@ void CGEEngine::loadScript(const char *fname) {
 		ok = false;   // not OK if break
 
 		// sprite ident number
-		if ((p = strtok(tmpStr, " \t\n")) == NULL)
+		if ((p = strtok(tmpStr, " \t\n")) == nullptr)
 			break;
 		int SpI = atoi(p);
 
 		// sprite file name
 		char *SpN;
-		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((SpN = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 
 		// sprite scene
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 		int SpA = atoi(p);
 
 		// sprite column
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 		int SpX = atoi(p);
 
 		// sprite row
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 		int SpY = atoi(p);
 
 		// sprite Z pos
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 		int SpZ = atoi(p);
 
 		// sprite life
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = strtok(nullptr, " ,;/\t\n")) == nullptr)
 			break;
 		bool BkG = atoi(p) == 0;
 
 		ok = true;    // no break: OK
 
-		_sprite = NULL;
+		_sprite = nullptr;
 		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
 		if (_sprite && BkG)
 			_sprite->_flags._back = true;
@@ -1226,7 +1226,7 @@ Sprite *CGEEngine::locate(int ref) {
 }
 
 Sprite *CGEEngine::spriteAt(int x, int y) {
-	Sprite *spr = NULL, * tail = _vga->_showQ->last();
+	Sprite *spr = nullptr, * tail = _vga->_showQ->last();
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (! spr->_flags._hide && ! spr->_flags._tran) {
@@ -1253,7 +1253,7 @@ void CGEEngine::killText() {
 		return;
 
 	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _talk);
-	_talk = NULL;
+	_talk = nullptr;
 }
 
 void CGEEngine::mainLoop() {
@@ -1312,10 +1312,10 @@ void CGEEngine::loadUser() {
 	// set scene
 	if (_mode == 0) {
 		// user .SVG file found - load it from slot 0
-		loadGame(0, NULL);
+		loadGame(0, nullptr);
 	} else if (_mode == 1) {
 		// Load either initial game state savegame or launcher specified savegame
-		loadGame(_startGameSlot, NULL);
+		loadGame(_startGameSlot, nullptr);
 	} else {
 		error("Creating setup savegames not supported");
 	}
@@ -1355,9 +1355,9 @@ void CGEEngine::runGame() {
 
 	loadUser();
 
-	if ((_sprite = _vga->_spareQ->locate(121)) != NULL)
+	if ((_sprite = _vga->_spareQ->locate(121)) != nullptr)
 		_commandHandlerTurbo->addCommand(kCmdSeq, -1, _vga->_mono, _sprite);
-	if ((_sprite = _vga->_spareQ->locate(122)) != NULL)
+	if ((_sprite = _vga->_spareQ->locate(122)) != nullptr)
 		_sprite->step(_music);
 	_commandHandlerTurbo->addCommand(kCmdSeq, -1, _music, _sprite);
 	if (!_music)
@@ -1365,7 +1365,7 @@ void CGEEngine::runGame() {
 
 	if (_resman->exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
-		_miniShp[0] = _miniShp[1] = NULL;
+		_miniShp[0] = _miniShp[1] = nullptr;
 
 		loadSprite("MINI", -1, 0, kMiniX, kMiniY);
 		expandSprite(_miniScene = _sprite);  // NULL is ok
@@ -1384,7 +1384,7 @@ void CGEEngine::runGame() {
 		if (_resman->exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
 			delete _shadow;
-			if ((_shadow = _sprite) != NULL) {
+			if ((_shadow = _sprite) != nullptr) {
 				_shadow->_ref = 2;
 				_shadow->_flags._tran = true;
 				_shadow->_flags._kill = false;
@@ -1396,7 +1396,7 @@ void CGEEngine::runGame() {
 
 	_infoLine->gotoxy(kInfoX, kInfoY);
 	_infoLine->_flags._tran = true;
-	_infoLine->update(NULL);
+	_infoLine->update(nullptr);
 	_vga->_showQ->insert(_infoLine);
 
 	_debugLine->_z = 126;
@@ -1431,14 +1431,14 @@ void CGEEngine::runGame() {
 	if (!_endGame && canSaveGameStateCurrently())
 		qGame();
 
-	_keyboard->setClient(NULL);
-	_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
-	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, NULL);
+	_keyboard->setClient(nullptr);
+	_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 	_mouse->off();
 	_vga->_showQ->clear();
 	_vga->_spareQ->clear();
-	_hero = NULL;
-	_shadow = NULL;
+	_hero = nullptr;
+	_shadow = nullptr;
 }
 
 void CGEEngine::movie(const char *ext) {
@@ -1459,9 +1459,9 @@ void CGEEngine::movie(const char *ext) {
 		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
 
-		_keyboard->setClient(NULL);
-		_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
-		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, NULL);
+		_keyboard->setClient(nullptr);
+		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 		_vga->_showQ->clear();
 		_vga->_spareQ->clear();
 	}
@@ -1474,8 +1474,8 @@ bool CGEEngine::showTitle(const char *name) {
 	_bitmapPalette = _vga->_sysPal;
 	BitmapPtr *LB = new BitmapPtr[2];
 	LB[0] = new Bitmap(this, name);
-	LB[1] = NULL;
-	_bitmapPalette = NULL;
+	LB[1] = nullptr;
+	_bitmapPalette = nullptr;
 
 	Sprite D(this, LB);
 	D._flags._kill = true;

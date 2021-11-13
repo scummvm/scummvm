@@ -57,8 +57,8 @@ Seq *getConstantSeq(bool seqFlag) {
 
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
-	  _ext(NULL), _ref(-1), _scene(0), _vm(vm) {
+	  _next(nullptr), _prev(nullptr), _seqPtr(kNoSeq), _time(0),
+	  _ext(nullptr), _ref(-1), _scene(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
 	_ref = 0;
@@ -67,14 +67,14 @@ Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	_time = 0;
 	_seqPtr = 0;
 	_shpCnt = 0;
-	_prev = _next = NULL;
+	_prev = _next = nullptr;
 
 	setShapeList(shpP);
 }
 
 Sprite::~Sprite() {
 	if (_vm->_sprite == this)
-		_vm->_sprite = NULL;
+		_vm->_sprite = nullptr;
 
 	contract();
 }
@@ -82,7 +82,7 @@ Sprite::~Sprite() {
 BitmapPtr Sprite::shp() {
 	SprExt *e = _ext;
 	if (!e || !e->_seq)
-		return NULL;
+		return nullptr;
 
 	int i = e->_seq[_seqPtr]._now;
 	if (i >= _shpCnt)
@@ -91,7 +91,7 @@ BitmapPtr Sprite::shp() {
 }
 
 BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
-	BitmapPtr *r = (_ext) ? _ext->_shpList : NULL;
+	BitmapPtr *r = (_ext) ? _ext->_shpList : nullptr;
 
 	_shpCnt = 0;
 	_w = 0;
@@ -121,7 +121,7 @@ bool Sprite::works(Sprite *spr) {
 		return false;
 
 	CommandHandler::Command *c = spr->_ext->_take;
-	if (c != NULL) {
+	if (c != nullptr) {
 		c += spr->_takePtr;
 		if (c->_ref == _ref)
 			if (c->_commandType != kCmdLabel || (c->_val == 0 || c->_val == _vm->_now))
@@ -134,7 +134,7 @@ bool Sprite::works(Sprite *spr) {
 Seq *Sprite::setSeq(Seq *seq) {
 	if (_ext) {
 		free(_ext->_seq);
-		_ext->_seq = NULL;
+		_ext->_seq = nullptr;
 	}
 
 	expand();
@@ -160,7 +160,7 @@ CommandHandler::Command *Sprite::snList(SnList type) {
 	SprExt *e = _ext;
 	if (e)
 		return (type == kNear) ? e->_near : e->_take;
-	return NULL;
+	return nullptr;
 }
 
 void Sprite::setName(char *newName) {
@@ -169,11 +169,11 @@ void Sprite::setName(char *newName) {
 
 	if (_ext->_name) {
 		delete[] _ext->_name;
-		_ext->_name = NULL;
+		_ext->_name = nullptr;
 	}
 	if (newName) {
 		_ext->_name = new char[strlen(newName) + 1];
-		assert(_ext->_name != NULL);
+		assert(_ext->_name != nullptr);
 		strcpy(_ext->_name, newName);
 	}
 }
@@ -183,18 +183,18 @@ Sprite *Sprite::expand() {
 		return this;
 
 	_ext = new SprExt;
-	assert(_ext != NULL);
+	assert(_ext != nullptr);
 	if (!*_file)
 		return this;
 
-	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
+	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", nullptr };
 	char fname[kPathMax];
 
 	Common::Array<BitmapPtr> shplist;
 	for (int i = 0; i < _shpCnt + 1; ++i)
 		shplist.push_back(NULL);
 
-	Seq *seq = NULL;
+	Seq *seq = nullptr;
 	int shapeCount = 0,
 	    seqCount = 0,
 	    nearCount = 0,
@@ -202,8 +202,8 @@ Sprite *Sprite::expand() {
 	    maxnow = 0,
 	    maxnxt = 0;
 
-	CommandHandler::Command *nearList = NULL;
-	CommandHandler::Command *takeList = NULL;
+	CommandHandler::Command *nearList = nullptr;
+	CommandHandler::Command *takeList = nullptr;
 	_vm->mergeExt(fname, _file, kSprExt);
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(_vm, fname);
@@ -224,7 +224,7 @@ Sprite *Sprite::expand() {
 			switch (_vm->takeEnum(Comd, strtok(tmpStr, " =\t"))) {
 			case 0:
 				// Name
-				setName(strtok(NULL, ""));
+				setName(strtok(nullptr, ""));
 				break;
 			case 1:
 				// Phase
@@ -233,18 +233,18 @@ Sprite *Sprite::expand() {
 					shplist.push_back(NULL);
 					++_shpCnt;
 				}
-				shplist[shapeCount++] = new Bitmap(_vm, strtok(NULL, " \t,;/"));
+				shplist[shapeCount++] = new Bitmap(_vm, strtok(nullptr, " \t,;/"));
 				break;
 			case 2:
 				// Seq
 				seq = (Seq *)realloc(seq, (seqCount + 1) * sizeof(*seq));
-				assert(seq != NULL);
+				assert(seq != nullptr);
 				Seq *s;
 				s = &seq[seqCount++];
-				s->_now = atoi(strtok(NULL, " \t,;/"));
+				s->_now = atoi(strtok(nullptr, " \t,;/"));
 				if (s->_now > maxnow)
 					maxnow = s->_now;
-				s->_next = atoi(strtok(NULL, " \t,;/"));
+				s->_next = atoi(strtok(nullptr, " \t,;/"));
 				switch (s->_next) {
 				case 0xFF:
 					s->_next = seqCount;
@@ -257,35 +257,35 @@ Sprite *Sprite::expand() {
 				}
 				if (s->_next > maxnxt)
 					maxnxt = s->_next;
-				s->_dx = atoi(strtok(NULL, " \t,;/"));
-				s->_dy = atoi(strtok(NULL, " \t,;/"));
-				s->_dly = atoi(strtok(NULL, " \t,;/"));
+				s->_dx = atoi(strtok(nullptr, " \t,;/"));
+				s->_dy = atoi(strtok(nullptr, " \t,;/"));
+				s->_dly = atoi(strtok(nullptr, " \t,;/"));
 				break;
 			case 3:
 				// Near
 				if (_nearPtr == kNoPtr)
 					break;
 				nearList = (CommandHandler::Command *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
-				assert(nearList != NULL);
+				assert(nearList != nullptr);
 				c = &nearList[nearCount++];
-				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(nullptr, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
-				c->_ref = atoi(strtok(NULL, " \t,;/"));
-				c->_val = atoi(strtok(NULL, " \t,;/"));
-				c->_spritePtr = NULL;
+				c->_ref = atoi(strtok(nullptr, " \t,;/"));
+				c->_val = atoi(strtok(nullptr, " \t,;/"));
+				c->_spritePtr = nullptr;
 				break;
 			case 4:
 				// Take
 				if (_takePtr == kNoPtr)
 					break;
 				takeList = (CommandHandler::Command *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
-				assert(takeList != NULL);
+				assert(takeList != nullptr);
 				c = &takeList[takeCount++];
-				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(nullptr, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
-				c->_ref = atoi(strtok(NULL, " \t,;/"));
-				c->_val = atoi(strtok(NULL, " \t,;/"));
-				c->_spritePtr = NULL;
+				c->_ref = atoi(strtok(nullptr, " \t,;/"));
+				c->_val = atoi(strtok(nullptr, " \t,;/"));
+				c->_spritePtr = nullptr;
 				break;
 			default:
 				break;
@@ -343,7 +343,7 @@ Sprite *Sprite::contract() {
 	free(e->_take);
 
 	delete e;
-	_ext = NULL;
+	_ext = nullptr;
 
 	return this;
 }
@@ -396,7 +396,7 @@ void Sprite::killXlat() {
 	free(m);
 
 	for (BitmapPtr *b = _ext->_shpList; *b; b++)
-		(*b)->_m = NULL;
+		(*b)->_m = nullptr;
 	_flags._xlat = false;
 }
 
@@ -460,14 +460,14 @@ void Sprite::hide() {
 BitmapPtr Sprite::ghost() {
 	SprExt *e = _ext;
 	if (!e->_b1)
-		return NULL;
+		return nullptr;
 
-	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)NULL);
-	assert(bmp != NULL);
+	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)nullptr);
+	assert(bmp != nullptr);
 	bmp->_w = e->_b1->_w;
 	bmp->_h = e->_b1->_h;
 	bmp->_b = new HideDesc[bmp->_h];
-	assert(bmp->_b != NULL);
+	assert(bmp->_b != nullptr);
 	bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
 	bmp->_map = (e->_y1 << 16) + e->_x1;
 	return bmp;
@@ -539,7 +539,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(unused);	// _next
 }
 
-Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {
+Queue::Queue(bool show) : _head(nullptr), _tail(nullptr), _show(show) {
 }
 
 Queue::~Queue() {
@@ -617,8 +617,8 @@ Sprite *Queue::remove(Sprite *spr) {
 		spr->_next->_prev = spr->_prev;
 	if (spr->_prev)
 		spr->_prev->_next = spr->_next;
-	spr->_prev = NULL;
-	spr->_next = NULL;
+	spr->_prev = nullptr;
+	spr->_next = nullptr;
 	return spr;
 }
 
@@ -627,12 +627,12 @@ Sprite *Queue::locate(int ref) {
 		if (spr->_ref == ref)
 			return spr;
 	}
-	return NULL;
+	return nullptr;
 }
 
-Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0), _vm(vm) {
-	_oldColors = NULL;
-	_newColors = NULL;
+Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(false), _mono(0), _vm(vm) {
+	_oldColors = nullptr;
+	_newColors = nullptr;
 	_showQ = new Queue(true);
 	_spareQ = new Queue(false);
 	_sysPal = new Dac[kPalCount];
@@ -970,42 +970,42 @@ void Bitmap::hide(int16 x, int16 y) {
 
 /*--------------------------------------------------------------------------*/
 
-HorizLine::HorizLine(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+HorizLine::HorizLine(CGEEngine *vm) : Sprite(vm, nullptr), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *HL = new BitmapPtr[2];
 	HL[0] = new Bitmap(_vm, "HLINE");
-	HL[1] = NULL;
+	HL[1] = nullptr;
 
 	setShapeList(HL);
 }
 
-SceneLight::SceneLight(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+SceneLight::SceneLight(CGEEngine *vm) : Sprite(vm, nullptr), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *PR = new BitmapPtr[2];
 	PR[0] = new Bitmap(_vm, "PRESS");
-	PR[1] = NULL;
+	PR[1] = nullptr;
 
 	setShapeList(PR);
 }
 
-Speaker::Speaker(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
+Speaker::Speaker(CGEEngine *vm): Sprite(vm, nullptr), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *SP = new BitmapPtr[3];
 	SP[0] = new Bitmap(_vm, "SPK_L");
 	SP[1] = new Bitmap(_vm, "SPK_R");
-	SP[2] = NULL;
+	SP[2] = nullptr;
 
 	setShapeList(SP);
 }
 
-PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
+PocLight::PocLight(CGEEngine *vm): Sprite(vm, nullptr), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *LI = new BitmapPtr[5];
 	LI[0] = new Bitmap(_vm, "LITE0");
 	LI[1] = new Bitmap(_vm, "LITE1");
 	LI[2] = new Bitmap(_vm, "LITE2");
 	LI[3] = new Bitmap(_vm, "LITE3");
-	LI[4] = NULL;
+	LI[4] = nullptr;
 
 	setShapeList(LI);
 

@@ -40,7 +40,7 @@ Font::Font(CGEEngine *vm, const char *name) : _vm(vm) {
 	_pos = (uint16 *)malloc(kPosSize * sizeof(uint16));
 	_widthArr = (uint8 *)malloc(kWidSize);
 
-	assert((_map != NULL) && (_pos != NULL) && (_widthArr != NULL));
+	assert((_map != nullptr) && (_pos != nullptr) && (_widthArr != nullptr));
 	_vm->mergeExt(_path, name, kFontExt);
 	load();
 }
@@ -76,16 +76,16 @@ uint16 Font::width(const char *text) {
 }
 
 Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace)
-	: Sprite(vm, NULL), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
-	_ts = NULL;
+	: Sprite(vm, nullptr), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
+	_ts = nullptr;
 	_flags._syst = true;
 	update(text);
 }
 
 
 Talk::Talk(CGEEngine *vm)
-	: Sprite(vm, NULL), _mode(kTBPure), _vm(vm) {
-	_ts = NULL;
+	: Sprite(vm, nullptr), _mode(kTBPure), _vm(vm) {
+	_ts = nullptr;
 	_flags._syst = true;
 	_wideSpace = false;
 }
@@ -124,7 +124,7 @@ void Talk::update(const char *text) {
 
 		_ts = new BitmapPtr[2];
 		_ts[0] = box(mw, mh);
-		_ts[1] = NULL;
+		_ts[1] = nullptr;
 	}
 
 	m = _ts[0]->_m + ln * mw + hmarg;
@@ -168,7 +168,7 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 		h = 8;
 	uint16 n = w * h;
 	uint8 *b = (uint8 *)malloc(n);
-	assert(b != NULL);
+	assert(b != nullptr);
 	memset(b, kTextColBG, n);
 
 	if (_mode) {
@@ -202,10 +202,10 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 	return new Bitmap(_vm, w, h, b);
 }
 
-InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) {
+InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(nullptr), _vm(vm) {
 	if (!_ts) {
 		_ts = new BitmapPtr[2];
-		_ts[1] = NULL;
+		_ts[1] = nullptr;
 	}
 
 	_ts[0] = new Bitmap(_vm, w, kFontHigh, kTextColBG);
