@@ -35,7 +35,7 @@
 
 namespace Common {
 
-MDCT::MDCT(int bits, bool inverse, double scale) : _bits(bits), _fft(0) {
+MDCT::MDCT(int bits, bool inverse, double scale) : _bits(bits), _fft(nullptr) {
 	_size = 1 << bits;
 
 	_fft = new FFT(_bits - 2, inverse);

@@ -1070,7 +1070,7 @@ static const float sineWindow4096[4096] = {
 };
 
 static const float *sineWindows[13] = {
-	0             , 0             , 0             , 0            , 0            ,
+	nullptr             , nullptr             , nullptr             , nullptr            , nullptr            ,
 	sineWindow32  , sineWindow64  , sineWindow128 , sineWindow256, sineWindow512,
 	sineWindow1024, sineWindow2048, sineWindow4096
 };

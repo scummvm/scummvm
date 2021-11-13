@@ -330,7 +330,7 @@ size_t String::rfind(char c, size_t pos) const {
 }
 
 size_t String::findFirstOf(char c, size_t pos) const {
-	const char *strP = (pos >= _size) ? 0 : strchr(_str + pos, c);
+	const char *strP = (pos >= _size) ? nullptr : strchr(_str + pos, c);
 	return strP ? strP - _str : npos;
 }
 
@@ -907,7 +907,7 @@ const char *scumm_strcasestr(const char *s, const char *find) {
 		do {
 			do {
 				if ((sc = *s++) == 0)
-					return (NULL);
+					return (nullptr);
 			} while ((char)tolower((unsigned char)sc) != c);
 		} while (scumm_strnicmp(s, find, len) != 0);
 		s--;
