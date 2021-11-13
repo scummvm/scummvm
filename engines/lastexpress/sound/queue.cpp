@@ -39,7 +39,7 @@ SoundQueue::SoundQueue(LastExpressEngine *engine) : _engine(engine) {
 	 _flag = 0;
 
 	_subtitlesFlag = 0;
-	_currentSubtitle = NULL;
+	_currentSubtitle = nullptr;
 	//_soundCacheData = NULL;
 }
 
@@ -52,11 +52,11 @@ SoundQueue::~SoundQueue() {
 		SAFE_DELETE(*i);
 	_subtitles.clear();
 
-	_currentSubtitle = NULL;
+	_currentSubtitle = nullptr;
 	//SAFE_DELETE(_soundCacheData);
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ void SoundQueue::updateQueue() {
 
 	for (Common::List<SoundEntry *>::iterator it = _soundList.begin(); it != _soundList.end(); ++it) {
 		SoundEntry *entry = *it;
-		if (entry == NULL)
+		if (entry == nullptr)
 			error("[SoundQueue::updateQueue] Invalid entry found in sound queue");
 
 		// Original removes the entry data from the cache and sets the archive as not loaded
@@ -145,7 +145,7 @@ void SoundQueue::destroyAllSound() {
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		SoundEntry *entry = (*i);
-		if (entry == NULL)
+		if (entry == nullptr)
 			error("[SoundQueue::destroyAllSound] Invalid entry found in sound queue");
 
 		// Delete entry
@@ -210,7 +210,7 @@ SoundEntry *SoundQueue::getEntry(EntityIndex index) {
 			return *i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 SoundEntry *SoundQueue::getEntry(Common::String name) {
@@ -222,7 +222,7 @@ SoundEntry *SoundQueue::getEntry(Common::String name) {
 			return *i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 SoundEntry *SoundQueue::getEntry(SoundTag tag) {
@@ -231,7 +231,7 @@ SoundEntry *SoundQueue::getEntry(SoundTag tag) {
 			return *i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint32 SoundQueue::getEntryTime(EntityIndex index) {
@@ -243,16 +243,16 @@ uint32 SoundQueue::getEntryTime(EntityIndex index) {
 }
 
 bool SoundQueue::isBuffered(EntityIndex entity) {
-	return (getEntry(entity) != NULL);
+	return (getEntry(entity) != nullptr);
 }
 
 bool SoundQueue::isBuffered(Common::String filename, bool testForEntity) {
 	SoundEntry *entry = getEntry(filename);
 
 	if (testForEntity)
-		return entry != NULL && entry->getEntity() != kEntityPlayer;
+		return entry != nullptr && entry->getEntity() != kEntityPlayer;
 
-	return (entry != NULL);
+	return (entry != nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ bool SoundQueue::isBuffered(Common::String filename, bool testForEntity) {
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::updateSubtitles() {
 	uint32 index = 0;
-	SubtitleEntry *subtitle = NULL;
+	SubtitleEntry *subtitle = nullptr;
 
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 		uint32 current_index = 0;

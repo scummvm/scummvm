@@ -46,7 +46,7 @@ State::~State() {
 	SAFE_DELETE(_flags);
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void State::reset() {
@@ -68,7 +68,7 @@ bool State::isNightTime() const {
 }
 
 void State::getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes) {
-	if (hours == NULL || minutes == NULL)
+	if (hours == nullptr || minutes == nullptr)
 		error("[State::getHourMinutes] Invalid parameters passed");
 
 	*hours = (uint8)((time % 1296000) / 54000);

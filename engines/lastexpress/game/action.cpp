@@ -336,7 +336,7 @@ public:
 
 	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const override { return _func != 0 && _t != 0; }
+	bool isValid() const override { return _func != nullptr && _t != nullptr; }
 	Res operator()(Arg v1) const override {
 		return (_t->*_func)(v1);
 	}
@@ -400,7 +400,7 @@ Action::~Action() {
 	_actions.clear();
 
 	// Zero-out passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

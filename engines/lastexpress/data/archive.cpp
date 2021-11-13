@@ -102,12 +102,12 @@ Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::
 	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
-		return NULL;
+		return nullptr;
 
 	Common::File *archive = new Common::File();
 	if (!archive->open(_filename)) {
 		delete archive;
-		return NULL;
+		return nullptr;
 	}
 
 	return new Common::SeekableSubReadStream(archive, fDesc->_value.offset * _archiveSectorSize, fDesc->_value.offset * _archiveSectorSize + fDesc->_value.size * _archiveSectorSize, DisposeAfterUse::YES);

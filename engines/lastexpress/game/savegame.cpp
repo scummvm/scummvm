@@ -346,15 +346,15 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 // Constructors
 //////////////////////////////////////////////////////////////////////////
 
-SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL), _gameTicksLastSavegame(0), _entity(kEntityPlayer) {
+SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(nullptr), _gameTicksLastSavegame(0), _entity(kEntityPlayer) {
 }
 
 SaveLoad::~SaveLoad() {
 	clear(true);
-	_savegame = NULL;
+	_savegame = nullptr;
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void SaveLoad::initStream() {
@@ -382,7 +382,7 @@ void SaveLoad::flushStream(GameId id) {
 void SaveLoad::create(GameId id) {
 	initStream();
 
-	Common::Serializer ser(NULL, _savegame);
+	Common::Serializer ser(nullptr, _savegame);
 	SavegameMainHeader header;
 	header.saveLoadWithSerializer(ser);
 
@@ -396,7 +396,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 	loadStream(id);
 
 	// Get the main header
-	Common::Serializer ser(_savegame, NULL);
+	Common::Serializer ser(_savegame, nullptr);
 	SavegameMainHeader mainHeader;
 	mainHeader.saveLoadWithSerializer(ser);
 	if (!mainHeader.isValid())
@@ -530,7 +530,7 @@ void SaveLoad::loadGame(uint32 index) {
 	header.brightness = getState()->brightness;
 	header.volume = getState()->volume;
 
-	Common::Serializer ser(NULL, _savegame);
+	Common::Serializer ser(nullptr, _savegame);
 	header.saveLoadWithSerializer(ser);
 
 	// TODO
@@ -564,7 +564,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 
 		// Load entry header
 		SavegameEntryHeader entry;
-		Common::Serializer ser(_savegame, NULL);
+		Common::Serializer ser(_savegame, nullptr);
 		entry.saveLoadWithSerializer(ser);
 
 		if (!entry.isValid()) {
@@ -610,7 +610,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 
 	// Write the main header
 	_savegame->seek(0);
-	Common::Serializer ser(NULL, _savegame);
+	Common::Serializer ser(nullptr, _savegame);
 	header.saveLoadWithSerializer(ser);
 
 	flushStream(getMenu()->getGameId());
@@ -636,7 +636,7 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 	// Rewind stream
 	stream->seek(0);
 
-	Common::Serializer ser(stream, NULL);
+	Common::Serializer ser(stream, nullptr);
 	header->saveLoadWithSerializer(ser);
 
 	// Validate the header
@@ -711,7 +711,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	uint32 originalPosition = (uint32)_savegame->pos();
 
 	// Write header
-	Common::Serializer ser(NULL, _savegame);
+	Common::Serializer ser(nullptr, _savegame);
 	header.saveLoadWithSerializer(ser);
 
 	// Write game data
@@ -764,7 +764,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 
 	// Load entry header
 	SavegameEntryHeader entry;
-	Common::Serializer ser(_savegame, NULL);
+	Common::Serializer ser(_savegame, nullptr);
 	entry.saveLoadWithSerializer(ser);
 
 	if (!entry.isValid())

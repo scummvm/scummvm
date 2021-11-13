@@ -172,7 +172,7 @@ void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Arr
 				(*paramsTypeSetters)[_data.callbacks[i]](&_parameters[i]);
 		}
 		Common::MemoryReadStream paramsStream(buf, sizeof(buf));
-		Common::Serializer paramsSerializer(&paramsStream, NULL);
+		Common::Serializer paramsSerializer(&paramsStream, nullptr);
 		for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
 			_parameters[i].saveLoadWithSerializer(paramsSerializer);
 	}
@@ -198,7 +198,7 @@ Entity::~Entity() {
 	SAFE_DELETE(_data);
 
 	// Zero-out passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void Entity::setup(ChapterIndex index) {

@@ -34,12 +34,12 @@
 namespace LastExpress {
 
 Fighter::Fighter(LastExpressEngine *engine) : _engine(engine) {
-	_opponent = NULL;
-	_fight = NULL;
+	_opponent = nullptr;
+	_fight = nullptr;
 
 	_sequenceIndex = 0;
-	_sequence = NULL;
-	_frame = NULL;
+	_sequence = nullptr;
+	_frame = nullptr;
 	_frameIndex = 0;
 
 	_field_24 = 0;
@@ -62,11 +62,11 @@ Fighter::~Fighter() {
 		SAFE_DELETE(_sequences[i]);
 
 	// Zero-out passed pointers
-	_sequence = NULL;
-	_opponent = NULL;
-	_fight = NULL;
+	_sequence = nullptr;
+	_opponent = nullptr;
+	_fight = nullptr;
 
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

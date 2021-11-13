@@ -33,7 +33,7 @@
 
 namespace LastExpress {
 
-Clock::Clock(LastExpressEngine *engine) : _engine(engine), _frameMinutes(NULL), _frameHour(NULL), _frameSun(NULL), _frameDate(NULL) {
+Clock::Clock(LastExpressEngine *engine) : _engine(engine), _frameMinutes(nullptr), _frameHour(nullptr), _frameSun(nullptr), _frameDate(nullptr) {
 	_frameMinutes = new SequenceFrame(loadSequence("eggmin.seq"), 0, true);
 	_frameHour = new SequenceFrame(loadSequence("egghour.seq"), 0, true);
 	_frameSun = new SequenceFrame(loadSequence("sun.seq"), 0, true);
@@ -47,7 +47,7 @@ Clock::~Clock() {
 	SAFE_DELETE(_frameDate);
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void Clock::clear() {

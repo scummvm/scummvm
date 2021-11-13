@@ -41,7 +41,7 @@ namespace LastExpress {
 
 SceneManager::SceneManager(LastExpressEngine *engine) : _engine(engine),
 	_flagNoEntity(false), _flagDrawEntities(false), _flagDrawSequences(false), _flagCoordinates(false),
-	_coords(0, 0, 480, 640), _clockHours(NULL), _clockMinutes(NULL) {
+	_coords(0, 0, 480, 640), _clockHours(nullptr), _clockMinutes(nullptr) {
 	_sceneLoader = new SceneLoader();
 }
 
@@ -61,7 +61,7 @@ SceneManager::~SceneManager() {
 	SAFE_DELETE(_sceneLoader);
 
 	// Zero-out passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

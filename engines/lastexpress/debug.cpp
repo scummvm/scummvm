@@ -54,7 +54,7 @@
 
 namespace LastExpress {
 
-Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL), _numParams(0), _commandParams(NULL) {
+Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(nullptr), _numParams(0), _commandParams(nullptr) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Register the debugger commands
@@ -97,11 +97,11 @@ Debugger::~Debugger() {
 	SAFE_DELETE(_soundStream);
 	resetCommand();
 
-	_command = NULL;
-	_commandParams = NULL;
+	_command = nullptr;
+	_commandParams = nullptr;
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -119,12 +119,12 @@ void Debugger::resetCommand() {
 			free(_commandParams[i]);
 
 	free(_commandParams);
-	_commandParams = NULL;
+	_commandParams = nullptr;
 	_numParams = 0;
 }
 
 int Debugger::getNumber(const char *arg) const {
-	return strtol(arg, (char **)NULL, 0);
+	return strtol(arg, (char **)nullptr, 0);
 }
 
 void Debugger::copyCommand(int argc, const char **argv) {
@@ -136,7 +136,7 @@ void Debugger::copyCommand(int argc, const char **argv) {
 
 	for (int i = 0; i < _numParams; i++) {
 		_commandParams[i] = (char *)malloc(strlen(argv[i]) + 1);
-		if (_commandParams[i] == NULL)
+		if (_commandParams[i] == nullptr)
 			error("[Debugger::copyCommand] Cannot allocate memory for command parameters");
 
 		memset(_commandParams[i], 0, strlen(argv[i]) + 1);
@@ -144,7 +144,7 @@ void Debugger::copyCommand(int argc, const char **argv) {
 	}
 
 	// Exit the debugger!
-	cmdExit(0, 0);
+	cmdExit(0, nullptr);
 }
 
 void Debugger::callCommand() {
@@ -343,7 +343,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowFrame);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 			Sequence sequence(filename);
 			if (sequence.load(getArchive(filename))) {
@@ -405,7 +405,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowBg);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 			clearBg(GraphicsManager::kBackgroundC);
 
@@ -460,7 +460,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySeq);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 			Sequence *sequence = new Sequence(filename);
 			if (sequence->load(getArchive(filename))) {
@@ -577,7 +577,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySbe);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 			SubtitleManager subtitle(_engine->getFont());
 			if (subtitle.load(getArchive(filename))) {
@@ -643,7 +643,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlayNis);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 			// Make sure we are not called in a loop
 			_numParams = 0;
@@ -700,7 +700,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdLoadScene);
 			copyCommand(argc, argv);
 
-			return cmdExit(0, 0);
+			return cmdExit(0, nullptr);
 		} else {
 
 			clearBg(GraphicsManager::kBackgroundAll);
@@ -881,7 +881,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 			redrawScreen();
 
 			// Load the beetle game
-			Action *action = NULL;
+			Action *action = nullptr;
 			Beetle *beetle = new Beetle(_engine);
 			if (!beetle->isLoaded())
 				beetle->load();
@@ -912,7 +912,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 					case Common::EVENT_MOUSEMOVE: {
 						// Update cursor
 						CursorStyle style = kCursorNormal;
-						SceneHotspot *hotspot = NULL;
+						SceneHotspot *hotspot = nullptr;
 						if (scene->checkHotSpot(ev.mouse, &hotspot)) {
 							if (!action)
 								action = new Action(_engine);

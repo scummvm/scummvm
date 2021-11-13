@@ -39,7 +39,7 @@
 
 namespace LastExpress {
 
-Animation::Animation() : _stream(NULL), _currentChunk(NULL), _overlay(NULL), _background1(NULL), _background2(NULL), _backgroundCurrent(0), _audio(NULL), _startTime(0), _changed(false) {
+Animation::Animation() : _stream(nullptr), _currentChunk(nullptr), _overlay(nullptr), _background1(nullptr), _background2(nullptr), _backgroundCurrent(0), _audio(nullptr), _startTime(0), _changed(false) {
 }
 
 Animation::~Animation() {
@@ -55,7 +55,7 @@ void Animation::reset() {
 	_backgroundCurrent = 0;
 	_chunks.clear();
 
-	_currentChunk = NULL;
+	_currentChunk = nullptr;
 
 	SAFE_DELETE(_stream);
 }
@@ -101,7 +101,7 @@ bool Animation::process() {
 	if (!_currentChunk)
 		error("[Animation::process] Current chunk iterator is invalid");
 
-	if (_stream == NULL || _chunks.size() == 0)
+	if (_stream == nullptr || _chunks.size() == 0)
 		error("[Animation::process] Trying to show an animation before loading data");
 
 	// TODO: - subtract the time paused by the GUI
@@ -111,7 +111,7 @@ bool Animation::process() {
 	int32 currentFrame = (g_system->getMillis() - _startTime) * 3 / 100;
 
 	// Process all chunks until the current frame
-	while (!_changed && _currentChunk != NULL && currentFrame > _currentChunk->frame && !hasEnded()) {
+	while (!_changed && _currentChunk != nullptr && currentFrame > _currentChunk->frame && !hasEnded()) {
 		switch(_currentChunk->type) {
 		//TODO: some info chunks are probably subtitle/sync related
 		case kChunkTypeUnknown1:

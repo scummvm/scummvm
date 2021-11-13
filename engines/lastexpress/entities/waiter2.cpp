@@ -705,7 +705,7 @@ void Waiter2::serveTable(const SavePoint &savepoint, const char *seq1, EntityInd
 			getEntities()->clearSequences(kEntityWaiter2);
 			*parameter = 0;
 
-			if (parameter2 != NULL)
+			if (parameter2 != nullptr)
 				*parameter2 = 0;
 
 			callbackAction();

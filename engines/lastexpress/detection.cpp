@@ -28,7 +28,7 @@ namespace LastExpress {
 static const PlainGameDescriptor lastExpressGames[] = {
 	// Games
 	{"lastexpress", "The Last Express"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -219,7 +219,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 static const char *const directoryGlobs[] = {
 		"data", // GOG release
-		0
+		nullptr
 };
 
 class LastExpressMetaEngineDetection : public AdvancedMetaEngineDetection {
