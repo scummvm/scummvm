@@ -249,7 +249,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qId), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 	}
 }
 

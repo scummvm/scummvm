@@ -85,7 +85,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
 	g_vars->scene04_mamasha = sc->getStaticANIObject1ById(ANI_MAMASHA_4, -1);
 	g_vars->scene04_boot = sc->getStaticANIObject1ById(ANI_SC4_BOOT, -1);
-	g_vars->scene04_ladder = 0;
+	g_vars->scene04_ladder = nullptr;
 
 	StaticANIObject *koz = sc->getStaticANIObject1ById(ANI_KOZAWKA, -1);
 
@@ -187,7 +187,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_bottleIsTaken = false;
 	g_vars->scene04_soundPlaying = false;
 	g_vars->scene04_kozyawkaOnLadder = false;
-	g_vars->scene04_walkingKozyawka = 0;
+	g_vars->scene04_walkingKozyawka = nullptr;
 	g_vars->scene04_bottleWeight = 2;
 	g_vars->scene04_dynamicPhaseIndex = 0;
 
@@ -228,7 +228,7 @@ bool sceneHandler04_friesAreWalking() {
 			Movement *koz;
 
 			if (!g_vars->scene04_walkingKozyawka
-				 || (koz = g_vars->scene04_walkingKozyawka->_movement) == 0
+				 || (koz = g_vars->scene04_walkingKozyawka->_movement) == nullptr
 				 || koz->_id != MV_KZW_WALKPLANK
 				 || koz->_currDynamicPhaseIndex < 10
 				 || koz->_currDynamicPhaseIndex > 41)
@@ -334,7 +334,7 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	mq->chain(0);
+	mq->chain(nullptr);
 
 	g_vars->scene04_dudeOnLadder = 1;
 
@@ -404,7 +404,7 @@ void sceneHandler04_clickLadder() {
 					postExCommand(g_nmi->_aniMan->_id, 2, 1095, 434, 0, -1);
 				}
 			} else {
-				sceneHandler04_walkClimbLadder(0);
+				sceneHandler04_walkClimbLadder(nullptr);
 			}
 		}
 	}
@@ -473,7 +473,7 @@ void sceneHandler04_dropBottle() {
 				break;
 			}
 
-		koz->queueMessageQueue(0);
+		koz->queueMessageQueue(nullptr);
 		koz->hide();
 
 		g_vars->scene04_kozyawkiObjList.push_back(koz);
@@ -557,7 +557,7 @@ void sceneHandler04_manFromBottle() {
 	if (g_vars->scene04_ladder)
 		delete g_vars->scene04_ladder;
 
-	g_vars->scene04_ladder = 0;
+	g_vars->scene04_ladder = nullptr;
 
 	getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->activate();
 	getGameLoaderInteractionController()->enableFlag24();
@@ -663,7 +663,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
 
 		delete mq2;
-		mq2 = 0;
+		mq2 = nullptr;
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
@@ -871,8 +871,8 @@ void sceneHandler04_shootKozyawka() {
 						phase = kozTrajectory6[idx];
 				}
 
-				g_vars->scene04_walkingKozyawka->queueMessageQueue(0);
-				g_vars->scene04_walkingKozyawka->_movement = 0;
+				g_vars->scene04_walkingKozyawka->queueMessageQueue(nullptr);
+				g_vars->scene04_walkingKozyawka->_movement = nullptr;
 				g_vars->scene04_walkingKozyawka->_statics = g_vars->scene04_walkingKozyawka->getStaticsById(ST_KZW_RIGHT);
 
 				MessageQueue *mq;
@@ -934,7 +934,7 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 	  }
 
 	mq->_flags |= 1;
-	mq->chain(0);
+	mq->chain(nullptr);
 
 	g_vars->scene04_dudeInBottle = false;
 	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
@@ -951,7 +951,7 @@ void sceneHandler04_walkKozyawka() {
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
 		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_odelay);
-		mq->chain(0);
+		mq->chain(nullptr);
 	}
 }
 
@@ -1020,10 +1020,10 @@ void sceneHandler04_springWobble() {
 }
 
 void sceneHandler04_leaveScene() {
-	g_nmi->_aniMan2 = 0;
+	g_nmi->_aniMan2 = nullptr;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
-	ExCommand *ex = 0;
+	ExCommand *ex = nullptr;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
 		if (mq->getExCommandByIndex(i)->_messageKind == 27) {
@@ -1038,7 +1038,7 @@ void sceneHandler04_leaveScene() {
 
 	ex->_y = g_vars->scene04_bottle->_oy - 304;
 
-	mq->chain(0);
+	mq->chain(nullptr);
 
 	g_vars->scene04_var07 = false;
 	g_vars->scene04_dudeOnLadder = 0;
@@ -1187,7 +1187,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 						if (g_vars->scene04_ladder)
 							delete g_vars->scene04_ladder;
 
-						g_vars->scene04_ladder = 0;
+						g_vars->scene04_ladder = nullptr;
 						g_vars->scene04_dudeOnLadder = 0;
 
 						ex->_messageKind = 0;
@@ -1232,8 +1232,8 @@ void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
 	g_vars->scene04_kozyawkiAni.push_back(ani);
 
 	g_vars->scene04_bottleWeight += 2;
-	g_vars->scene04_walkingKozyawka = 0;
-	g_vars->scene04_lastKozyawka = 0;
+	g_vars->scene04_walkingKozyawka = nullptr;
+	g_vars->scene04_lastKozyawka = nullptr;
 
 	if (g_vars->scene04_kozyawkiAni.size() > 1 )
 		g_vars->scene04_objectIsTaken = false;
@@ -1284,7 +1284,7 @@ void sceneHandler04_takeKozyawka() {
 		g_vars->scene04_kozyawkiAni.pop_front();
 
 		if (koz) {
-			koz->queueMessageQueue(0);
+			koz->queueMessageQueue(nullptr);
 			koz->hide();
 
 			g_vars->scene04_kozyawkiObjList.push_back(koz);
@@ -1341,7 +1341,7 @@ void sceneHandler04_winArcade() {
 
 			g_vars->scene04_walkingKozyawka->changeStatics2(ST_KZW_EMPTY);
 			g_vars->scene04_walkingKozyawka->hide();
-			g_vars->scene04_walkingKozyawka = 0;
+			g_vars->scene04_walkingKozyawka = nullptr;
 		}
 
 		g_vars->scene04_objectIsTaken = false;
@@ -1382,7 +1382,7 @@ int sceneHandler04(ExCommand *ex) {
 		g_vars->scene04_coinPut = false;
 
 		if (g_vars->scene04_dudeInBottle)
-			sceneHandler04_animOutOfBottle(0);
+			sceneHandler04_animOutOfBottle(nullptr);
 
 		sceneHandler04_handTake();
 		sceneHandler04_stopSound();
@@ -1410,7 +1410,7 @@ int sceneHandler04(ExCommand *ex) {
 		if (g_vars->scene04_walkingKozyawka) {
 			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
 			g_vars->scene04_walkingKozyawka->hide();
-			g_vars->scene04_walkingKozyawka = 0;
+			g_vars->scene04_walkingKozyawka = nullptr;
 		}
 
 		if (g_vars->scene04_soundPlaying)
@@ -1451,7 +1451,7 @@ int sceneHandler04(ExCommand *ex) {
 				if (g_vars->scene04_soundPlaying) {
 					if (g_nmi->_aniMan->_movement) {
 						if (g_nmi->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
-							g_nmi->_aniMan2 = 0;
+							g_nmi->_aniMan2 = nullptr;
 
 							if (g_nmi->_sceneRect.left > 380)
 								g_nmi->_currentScene->_x = 380 - g_nmi->_sceneRect.left;
@@ -1475,7 +1475,7 @@ int sceneHandler04(ExCommand *ex) {
 				sceneHandler04_clickLadder();
 
 			if (g_vars->scene04_dudeInBottle && g_vars->scene04_hand->_movement)
-				sceneHandler04_animOutOfBottle(0);
+				sceneHandler04_animOutOfBottle(nullptr);
 
 			if (g_vars->scene04_coinPut && g_vars->scene04_clockCanGo && !g_vars->scene04_handIsDown && !g_vars->scene04_soundPlaying)
 				sceneHandler04_goClock();
@@ -1530,7 +1530,7 @@ int sceneHandler04(ExCommand *ex) {
 					break;
 				}
 
-				sceneHandler04_gotoLadder(0);
+				sceneHandler04_gotoLadder(nullptr);
 
 				break;
 			}
@@ -1581,7 +1581,7 @@ int sceneHandler04(ExCommand *ex) {
 			g_vars->scene04_handIsDown = true;
 
 			if (g_vars->scene04_dudeInBottle)
-				sceneHandler04_animOutOfBottle(0);
+				sceneHandler04_animOutOfBottle(nullptr);
 
 			sceneHandler04_handTake();
 		}
@@ -1628,7 +1628,7 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_GOTOLADDER:
-		sceneHandler04_gotoLadder(0);
+		sceneHandler04_gotoLadder(nullptr);
 		break;
 
 	case MSG_SC4_COINPUT:

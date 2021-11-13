@@ -258,7 +258,7 @@ void sceneHandler32_potLogic(ExCommand *cmd) {
 			mq->addExCommandToEnd(cmd->createClone());
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();

@@ -38,39 +38,39 @@
 namespace NGI {
 
 Vars::Vars() {
-	sceneIntro_aniin1man = 0;
+	sceneIntro_aniin1man = nullptr;
 	sceneIntro_needSleep = true;
 	sceneIntro_needGetup = false;
 	sceneIntro_skipIntro = true;
 	sceneIntro_playing = false;
 	sceneIntro_needBlackout = false;
 
-	swallowedEgg1 = 0;
-	swallowedEgg2 = 0;
-	swallowedEgg3 = 0;
+	swallowedEgg1 = nullptr;
+	swallowedEgg2 = nullptr;
+	swallowedEgg3 = nullptr;
 
-	scene01_picSc01Osk = 0;
-	scene01_picSc01Osk2 = 0;
+	scene01_picSc01Osk = nullptr;
+	scene01_picSc01Osk2 = nullptr;
 
-	scene02_guvTheDrawer = 0;
+	scene02_guvTheDrawer = nullptr;
 	scene02_boxDelay = 0;
 	scene02_boxOpen = false;
 
-	scene03_eggeater = 0;
-	scene03_domino = 0;
+	scene03_eggeater = nullptr;
+	scene03_domino = nullptr;
 
-	scene04_bottle = 0;
-	scene04_hand = 0;
-	scene04_plank = 0;
-	scene04_clock = 0;
-	scene04_hand = 0;
-	scene04_spring = 0;
-	scene04_mamasha = 0;
-	scene04_boot = 0;
-	scene04_speaker = 0;
+	scene04_bottle = nullptr;
+	scene04_hand = nullptr;
+	scene04_plank = nullptr;
+	scene04_clock = nullptr;
+	scene04_hand = nullptr;
+	scene04_spring = nullptr;
+	scene04_mamasha = nullptr;
+	scene04_boot = nullptr;
+	scene04_speaker = nullptr;
 	scene04_musicStage = 0;
 
-	scene04_ladder = 0;
+	scene04_ladder = nullptr;
 	scene04_coinPut = false;
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
@@ -84,7 +84,7 @@ Vars::Vars() {
 
 	scene04_bottleIsTaken = false;
 	scene04_kozyawkaOnLadder = false;
-	scene04_walkingKozyawka = 0;
+	scene04_walkingKozyawka = nullptr;
 	scene04_bottleWeight = 0;
 	scene04_var07 = false;
 	scene04_ladderClickable = false;
@@ -100,14 +100,14 @@ Vars::Vars() {
 	scene04_clockCanGo = false;
 	scene04_objectIsTaken = false;
 	scene04_springOffset = 0;
-	scene04_lastKozyawka = 0;
+	scene04_lastKozyawka = nullptr;
 	scene04_springDelay = 0;
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
 
-	scene05_handle = 0;
-	scene05_wacko = 0;
-	scene05_bigHatch = 0;
+	scene05_handle = nullptr;
+	scene05_wacko = nullptr;
+	scene05_bigHatch = nullptr;
 	scene05_wackoTicker = 0;
 	scene05_handleFlipper = 0;
 	scene05_floatersTicker = 0;
@@ -116,16 +116,16 @@ Vars::Vars() {
 	scene06_manY = 0;
 	scene06_ballX = 0;
 	scene06_ballY = 0;
-	scene06_mumsy = 0;
-	scene06_someBall = 0;
-	scene06_invHandle = 0;
-	scene06_liftButton = 0;
-	scene06_ballDrop = 0;
+	scene06_mumsy = nullptr;
+	scene06_someBall = nullptr;
+	scene06_invHandle = nullptr;
+	scene06_liftButton = nullptr;
+	scene06_ballDrop = nullptr;
 	scene06_arcadeEnabled = false;
 	scene06_aimingBall = false;
-	scene06_currentBall = 0;
-	scene06_ballInHands = 0;
-	scene06_flyingBall = 0;
+	scene06_currentBall = nullptr;
+	scene06_ballInHands = nullptr;
+	scene06_flyingBall = nullptr;
 	scene06_numBallsGiven = 0;
 	scene06_mumsyNumBalls = 0;
 	scene06_eggieTimeout = 0;
@@ -136,18 +136,18 @@ Vars::Vars() {
 	scene06_sceneClickX = 0;
 	scene06_sceneClickY = 0;
 	scene06_mumsyPos = 0;
-	scene06_mumsyJumpBk = 0;
-	scene06_mumsyJumpFw = 0;
+	scene06_mumsyJumpBk = nullptr;
+	scene06_mumsyJumpFw = nullptr;
 	scene06_mumsyJumpBkPercent = 0;
 	scene06_mumsyJumpFwPercent = 0;
 
-	scene07_lukeAnim = 0;
+	scene07_lukeAnim = nullptr;
 	scene07_lukePercent = 0;
-	scene07_plusMinus = 0;
+	scene07_plusMinus = nullptr;
 
-	scene08_batuta = 0;
-	scene08_vmyats = 0;
-	scene08_clock = 0;
+	scene08_batuta = nullptr;
+	scene08_vmyats = nullptr;
+	scene08_clock = nullptr;
 	scene08_inAir = false;
 	scene08_flyingUp = false;
 	scene08_onBelly = false;
@@ -157,11 +157,11 @@ Vars::Vars() {
 	scene08_stairsVisible = true;
 	scene08_manOffsetY = 0;
 
-	scene09_flyingBall = 0;
+	scene09_flyingBall = nullptr;
 	scene09_numSwallenBalls = 0;
-	scene09_gulper = 0;
-	scene09_spitter = 0;
-	scene09_grit = 0;
+	scene09_gulper = nullptr;
+	scene09_spitter = nullptr;
+	scene09_grit = nullptr;
 	scene09_dudeY = 0;
 	scene09_gulperIsPresent = true;
 	scene09_dudeIsOnLadder = false;
@@ -179,17 +179,17 @@ Vars::Vars() {
 	scene09_hangerOffsets[3].x = 0;
 	scene09_hangerOffsets[3].y = 0;
 
-	scene10_gum = 0;
-	scene10_packet = 0;
-	scene10_packet2 = 0;
-	scene10_inflater = 0;
-	scene10_ladder = 0;
+	scene10_gum = nullptr;
+	scene10_packet = nullptr;
+	scene10_packet2 = nullptr;
+	scene10_inflater = nullptr;
+	scene10_ladder = nullptr;
 	scene10_hasGum = 0;
 
-	scene11_swingie = 0;
-	scene11_boots = 0;
-	scene11_dudeOnSwing = 0;
-	scene11_hint = 0;
+	scene11_swingie = nullptr;
+	scene11_boots = nullptr;
+	scene11_dudeOnSwing = nullptr;
+	scene11_hint = nullptr;
 	scene11_arcadeIsOn = false;
 	scene11_scrollIsEnabled = false;
 	scene11_scrollIsMaximized = false;
@@ -214,15 +214,15 @@ Vars::Vars() {
 	scene12_fly = 0;
 	scene12_flyCountdown = 0;
 
-	scene13_whirlgig = 0;
-	scene13_guard = 0;
-	scene13_handleR = 0;
-	scene13_handleL = 0;
-	scene13_bridge = 0;
+	scene13_whirlgig = nullptr;
+	scene13_guard = nullptr;
+	scene13_handleR = nullptr;
+	scene13_handleL = nullptr;
+	scene13_bridge = nullptr;
 	scene13_guardDirection = false;
 	scene13_dudeX = 0;
 
-	scene14_grandma = 0;
+	scene14_grandma = nullptr;
 	scene14_sceneDeltaX = 0;
 	scene14_sceneDeltaY = 0;
 	scene14_arcadeIsOn = false;
@@ -231,8 +231,8 @@ Vars::Vars() {
 	scene14_dudeCanKick = false;
 	scene14_sceneDiffX = 0;
 	scene14_sceneDiffY = 0;
-	scene14_pink = 0;
-	scene14_flyingBall = 0;
+	scene14_pink = nullptr;
+	scene14_flyingBall = nullptr;
 	scene14_balls.clear();
 	scene14_grandmaIsHere = false;
 	scene14_dudeX = 0;
@@ -247,18 +247,18 @@ Vars::Vars() {
 	scene14_hitsLeft = 0;
 
 	scene15_chantingCountdown = 0;
-	scene15_plusminus = 0;
-	scene15_ladder = 0;
-	scene15_boot = 0;
+	scene15_plusminus = nullptr;
+	scene15_ladder = nullptr;
+	scene15_boot = nullptr;
 
 	scene16_figures.clear();
-	scene16_walkingBoy = 0;
-	scene16_walkingGirl = 0;
+	scene16_walkingBoy = nullptr;
+	scene16_walkingGirl = nullptr;
 	scene16_walkingCount = 0;
-	scene16_wire = 0;
-	scene16_mug = 0;
-	scene16_jettie = 0;
-	scene16_boot = 0;
+	scene16_wire = nullptr;
+	scene16_mug = nullptr;
+	scene16_jettie = nullptr;
+	scene16_boot = nullptr;
 	scene16_girlIsLaughing = false;
 	scene16_sound = 0;
 	scene16_placeIsOccupied = false;
@@ -267,12 +267,12 @@ Vars::Vars() {
 	scene17_sugarIsShown = false;
 	scene17_sceneOldEdgeX = 0;
 	scene17_flyCountdown = 0;
-	scene17_hand = 0;
+	scene17_hand = nullptr;
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
 	scene18_inScene18p1 = false;
-	scene18_whirlgig = 0;
+	scene18_whirlgig = nullptr;
 	scene18_wheelCenterX = 0;
 	scene18_wheelCenterY = 0;
 	scene18_bridgeIsConvoluted = false;
@@ -294,9 +294,9 @@ Vars::Vars() {
 	scene18_manWheelPosTo = -1;
 	scene18_kidWheelPos = 0;
 	scene18_kidWheelPosTo = 0;
-	scene18_boy = 0;
-	scene18_girl = 0;
-	scene18_domino = 0;
+	scene18_boy = nullptr;
+	scene18_girl = nullptr;
+	scene18_domino = nullptr;
 	scene18_boyJumpX = 290;
 	scene18_boyJumpY = -363;
 	scene18_girlJumpX = 283;
@@ -305,42 +305,42 @@ Vars::Vars() {
 	scene19_enteredTruba3 = false;
 
 	scene20_fliesCountdown = 0;
-	scene20_grandma = 0;
+	scene20_grandma = nullptr;
 
-	scene21_giraffeBottom = 0;
+	scene21_giraffeBottom = nullptr;
 	scene21_giraffeBottomX = 0;
 	scene21_giraffeBottomY = 0;
 	scene21_pipeIsOpen = false;
 	scene21_wigglePos = 0.0;
 	scene21_wiggleTrigger = 0;
 
-	scene22_bag = 0;
-	scene22_giraffeMiddle = 0;
+	scene22_bag = nullptr;
+	scene22_giraffeMiddle = nullptr;
 	scene22_dudeIsOnStool = false;
 	scene22_interactionIsDisabled = false;
 	scene22_craneIsOut = true;
 	scene22_numBagFalls = 1;
 
-	scene23_calend0 = 0;
-	scene23_calend1 = 0;
-	scene23_calend2 = 0;
-	scene23_calend3 = 0;
+	scene23_calend0 = nullptr;
+	scene23_calend1 = nullptr;
+	scene23_calend2 = nullptr;
+	scene23_calend3 = nullptr;
 	scene23_topReached = false;
 	scene23_isOnStool = false;
 	scene23_someVar = 0;
-	scene23_giraffeTop = 0;
-	scene23_giraffee = 0;
+	scene23_giraffeTop = nullptr;
+	scene23_giraffee = nullptr;
 
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
 	scene24_waterIsOn = false;
-	scene24_water = 0;
-	scene24_jet = 0;
-	scene24_drop = 0;
+	scene24_water = nullptr;
+	scene24_jet = nullptr;
+	scene24_drop = nullptr;
 
-	scene25_water = 0;
-	scene25_board = 0;
-	scene25_drop = 0;
+	scene25_water = nullptr;
+	scene25_board = nullptr;
+	scene25_drop = nullptr;
 	scene25_dudeIsOnBoard = false;
 	scene25_waterIsPresent = false;
 	scene25_boardIsSelectable = false;
@@ -349,18 +349,18 @@ Vars::Vars() {
 	scene25_bearders.clear();
 	scene25_sneezeFlipper = false;
 
-	scene26_chhi = 0;
-	scene26_drop = 0;
-	scene26_sockPic = 0;
-	scene26_sock = 0;
-	scene26_activeVent = 0;
+	scene26_chhi = nullptr;
+	scene26_drop = nullptr;
+	scene26_sockPic = nullptr;
+	scene26_sock = nullptr;
+	scene26_activeVent = nullptr;
 
-	scene27_hitZone = 0;
-	scene27_driver = 0;
-	scene27_maid = 0;
-	scene27_batHandler = 0;
+	scene27_hitZone = nullptr;
+	scene27_driver = nullptr;
+	scene27_maid = nullptr;
+	scene27_batHandler = nullptr;
 	scene27_driverHasVent = true;
-	scene27_bat = 0;
+	scene27_bat = nullptr;
 	scene27_dudeIsAiming = false;
 	scene27_maxPhaseReached = false;
 	scene27_wipeIsNeeded = false;
@@ -373,16 +373,16 @@ Vars::Vars() {
 
 	scene28_fliesArePresent = true;
 	scene28_beardedDirection = true;
-	scene28_darkeningObject = 0;
-	scene28_lighteningObject = 0;
+	scene28_darkeningObject = nullptr;
+	scene28_lighteningObject = nullptr;
 	scene28_headDirection = false;
 	scene28_headBeardedFlipper = false;
 	scene28_lift6inside = false;
 
-	scene29_porter = 0;
-	scene29_shooter1 = 0;
-	scene29_shooter2 = 0;
-	scene29_ass = 0;
+	scene29_porter = nullptr;
+	scene29_shooter1 = nullptr;
+	scene29_shooter2 = nullptr;
+	scene29_ass = nullptr;
 	scene29_manIsRiding = false;
 	scene29_arcadeIsOn = false;
 	scene29_reachedFarRight = false;
@@ -396,12 +396,12 @@ Vars::Vars() {
 	scene29_manX = 0;
 	scene29_manY = 0;
 
-	scene30_leg = 0;
+	scene30_leg = nullptr;
 	scene30_liftFlag = 1;
 
 	scene31_chantingCountdown = 0;
-	scene31_cactus = 0;
-	scene31_plusMinus = 0;
+	scene31_cactus = nullptr;
+	scene31_plusMinus = nullptr;
 
 	scene32_flagIsWaving = false;
 	scene32_flagNeedsStopping = false;
@@ -409,16 +409,16 @@ Vars::Vars() {
 	scene32_cactusCounter = -1;
 	scene32_dudeOnLadder = false;
 	scene32_cactusIsGrowing = false;
-	scene32_flag = 0;
-	scene32_cactus = 0;
-	scene32_massOrange = 0;
-	scene32_massBlue = 0;
-	scene32_massGreen = 0;
-	scene32_button = 0;
+	scene32_flag = nullptr;
+	scene32_cactus = nullptr;
+	scene32_massOrange = nullptr;
+	scene32_massBlue = nullptr;
+	scene32_massGreen = nullptr;
+	scene32_button = nullptr;
 
-	scene33_mug = 0;
-	scene33_jettie = 0;
-	scene33_cube = 0;
+	scene33_mug = nullptr;
+	scene33_jettie = nullptr;
+	scene33_cube = nullptr;
 	scene33_cubeX = -1;
 	scene33_handleIsDown = false;
 
@@ -427,39 +427,39 @@ Vars::Vars() {
 		scene33_ventsState[i] = 0;
 	}
 
-	scene34_cactus = 0;
-	scene34_vent = 0;
-	scene34_hatch = 0;
-	scene34_boot = 0;
+	scene34_cactus = nullptr;
+	scene34_vent = nullptr;
+	scene34_hatch = nullptr;
+	scene34_boot = nullptr;
 	scene34_dudeClimbed = false;
 	scene34_dudeOnBoard = false;
 	scene34_dudeOnCactus = false;
 	scene34_fliesCountdown = 0;
 
-	scene35_hose = 0;
-	scene35_bellyInflater = 0;
+	scene35_hose = nullptr;
+	scene35_bellyInflater = nullptr;
 	scene35_flowCounter = 0;
 	scene35_fliesCounter = 0;
 
-	scene36_rotohrust = 0;
-	scene36_scissors = 0;
+	scene36_rotohrust = nullptr;
+	scene36_scissors = nullptr;
 
 	scene37_rings.clear();
 	scene37_lastDudeX = -1;
 	scene37_pipeIsOpen = 0;
-	scene37_plusMinus1 = 0;
-	scene37_plusMinus2 = 0;
-	scene37_plusMinus3 = 0;
+	scene37_plusMinus1 = nullptr;
+	scene37_plusMinus2 = nullptr;
+	scene37_plusMinus3 = nullptr;
 	scene37_soundFlipper = 0;
 	scene37_dudeX = 0;
 
-	scene38_boss = 0;
-	scene38_tally = 0;
-	scene38_shorty = 0;
-	scene38_domino0 = 0;
-	scene38_dominos = 0;
-	scene38_domino1 = 0;
-	scene38_bottle = 0;
+	scene38_boss = nullptr;
+	scene38_tally = nullptr;
+	scene38_shorty = nullptr;
+	scene38_domino0 = nullptr;
+	scene38_dominos = nullptr;
+	scene38_domino1 = nullptr;
+	scene38_bottle = nullptr;
 	scene38_bossCounter = 0;
 	scene38_lastBossAnim = 0;
 	scene38_bossAnimCounter = 0;
@@ -475,7 +475,7 @@ Vars::Vars() {
 	sceneFinal_var03 = 0;
 	sceneFinal_trackHasStarted = false;
 
-	selector = 0;
+	selector = nullptr;
 }
 
 static int scenes[] = {
@@ -553,8 +553,8 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 
 	_aniMan->setOXY(0, 0);
 	_aniMan->clearFlags();
-	_aniMan->_callback1 = 0; // Really NULL
-	_aniMan->_callback2 = 0; // Really NULL
+	_aniMan->_callback1 = nullptr; // Really NULL
+	_aniMan->_callback2 = nullptr; // Really NULL
 	_aniMan->_shadowsOn = 1;
 
 	_scrollSpeed = 8;
@@ -564,7 +564,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	_flgCanOpenMap = true;
 
 	if (entrance._sceneId == SC_DBGMENU) {
-		_inventoryScene = 0;
+		_inventoryScene = nullptr;
 	} else {
 		_gameLoader->loadScene(SC_INV);
 		getGameLoaderInventory()->rebuildItemRects();
@@ -589,7 +589,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	_currentScene = scene;
 	scene->addStaticANIObject(_aniMan, 1);
 	_scene2 = scene;
-	_aniMan->_movement = 0;
+	_aniMan->_movement = nullptr;
 	_aniMan->_statics = _aniMan->getStaticsById(ST_MAN_EMPTY);
 	_aniMan->setOXY(0, 0);
 
@@ -610,7 +610,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	p->setFlags(p->_flags & 0xFFFB);
 
 	removeMessageHandler(2, -1);
-	_updateScreenCallback = 0;
+	_updateScreenCallback = nullptr;
 
 	switch (entrance._sceneId) {
 	case SC_INTRO1:

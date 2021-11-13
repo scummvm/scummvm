@@ -378,7 +378,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		if (picAniInfo.staticsId) {
 			ani->_statics = ani->getStaticsById(picAniInfo.staticsId);
 		} else {
-			ani->_statics = 0;
+			ani->_statics = nullptr;
 		}
 
 		if (picAniInfo.movementId) {
@@ -386,7 +386,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 			if (ani->_movement)
 				ani->_movement->setDynamicPhaseIndex(picAniInfo.dynamicPhaseIndex);
 		} else {
-			ani->_movement = 0;
+			ani->_movement = nullptr;
 		}
 
 		ani->setOXY(picAniInfo.ox, picAniInfo.oy);
@@ -682,7 +682,7 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	// TODO: It looks like this doesn't really work.
 	if (x < (g_nmi->_pictureScale + _width - 1) / g_nmi->_pictureScale &&
 			y < (g_nmi->_pictureScale + _height - 1) / g_nmi->_pictureScale &&
-			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
+			_memoryObject2 != nullptr && _memoryObject2->_rows != nullptr)
 		return _memoryObject2->_rows[x][2 * y];
 
 	return 0;
@@ -1129,8 +1129,8 @@ void Shadows::init() {
 	StaticANIObject *st;
 	Movement *mov;
 
-	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != 0
-		&& ((mov = st->getMovementById(_movementId)) != 0))
+	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != nullptr
+		&& ((mov = st->getMovementById(_movementId)) != nullptr))
 		initMovement(mov);
 }
 
@@ -1163,7 +1163,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 	int min = 1000;
 
 	if (!_items.size())
-		return 0;
+		return nullptr;
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int w = abs(width - _items[i].width);

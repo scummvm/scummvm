@@ -49,13 +49,13 @@ InputController::InputController() {
 	_cursorBounds.right = 0;
 	_cursorBounds.bottom = 0;
 
-	_cursorItemPicture = 0;
+	_cursorItemPicture = nullptr;
 }
 
 InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
-	g_nmi->_inputController = 0;
+	g_nmi->_inputController = nullptr;
 
 	for (uint i = 0; i < _cursorsArray.size(); i++)
 		delete _cursorsArray[i];

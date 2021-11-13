@@ -37,7 +37,7 @@
 namespace NGI {
 
 Ring::Ring() {
-	ani = 0;
+	ani = nullptr;
 	x = 0;
 	y = 0;
 	numSubRings = 0;

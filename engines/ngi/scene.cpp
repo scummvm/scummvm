@@ -36,7 +36,7 @@
 namespace NGI {
 
 Scene *NGIEngine::accessScene(int sceneId) {
-	SceneTag *t = 0;
+	SceneTag *t = nullptr;
 
 	for (SceneTagList::iterator s = _gameProject->_sceneTagList->begin(); s != _gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == sceneId) {
@@ -46,7 +46,7 @@ Scene *NGIEngine::accessScene(int sceneId) {
 	}
 
 	if (!t)
-		return 0;
+		return nullptr;
 
 	if (!t->_scene) {
 		t->loadScene();
@@ -230,7 +230,7 @@ bool Scene::load(MfcArchive &file) {
 
 			_soundList->loadFile(slsname, nlname);
 		} else {
-			_soundList->loadFile(slsname, 0);
+			_soundList->loadFile(slsname, nullptr);
 		}
 	}
 
@@ -281,7 +281,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 			return _staticANIObjectList1[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 StaticANIObject *Scene::getStaticANIObject1ByName(const Common::String &name, int a3) {
@@ -290,7 +290,7 @@ StaticANIObject *Scene::getStaticANIObject1ByName(const Common::String &name, in
 			return _staticANIObjectList1[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Scene::deleteStaticANIObject(StaticANIObject *obj) {
@@ -342,7 +342,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 			return _picObjList[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
@@ -351,7 +351,7 @@ PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int 
 			return _picObjList[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Scene::deletePictureObject(PictureObject *obj) {
@@ -370,7 +370,7 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 		if (_messageQueueList[i]->_dataId == messageId)
 			return _messageQueueList[i];
 
-	return 0;
+	return nullptr;
 }
 
 MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {
@@ -378,7 +378,7 @@ MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {
 		if (_messageQueueList[i]->_queueName == name)
 			return _messageQueueList[i];
 
-	return 0;
+	return nullptr;
 }
 
 void Scene::preloadMovements(GameVar *var) {
@@ -418,7 +418,7 @@ void Scene::initObjectCursors(const char *varname) {
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
-		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
+		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != nullptr) {
 			if (obj->_id < minId)
 				minId = obj->_id;
 			if (obj->_id > maxId)
@@ -605,7 +605,7 @@ void Scene::updateScrolling2() {
 }
 
 StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
-	StaticANIObject *res = 0;
+	StaticANIObject *res = nullptr;
 
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
 		StaticANIObject *p = _staticANIObjectList1[i];
@@ -620,7 +620,7 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 }
 
 PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
-	PictureObject *res = 0;
+	PictureObject *res = nullptr;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
@@ -634,7 +634,7 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 }
 
 int Scene::getPictureObjectIdAtPos(int x, int y) {
-	PictureObject *resp = 0;
+	PictureObject *resp = nullptr;
 	int res = 0;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {

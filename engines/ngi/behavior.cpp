@@ -30,7 +30,7 @@
 namespace NGI {
 
 BehaviorManager::BehaviorManager() {
-	_scene = 0;
+	_scene = nullptr;
 	_isActive = 1;
 }
 
@@ -144,7 +144,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh) {
 	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani._objectName));
 
-	MessageQueue *mq = 0;
+	MessageQueue *mq = nullptr;
 
 	if (beh._flags & 1) {
 		uint rnd = g_nmi->_rnd.getRandomNumber(32767);
@@ -220,7 +220,7 @@ BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(StaticANIObje
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void BehaviorInfo::clear() {
@@ -328,7 +328,7 @@ BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *m
 }
 
 BehaviorMove::BehaviorMove(GameVar *subvar, Scene *sc, int *delay) {
-	_messageQueue = 0;
+	_messageQueue = nullptr;
 	_delay = 0;
 	_percent = 0;
 	_flags = 0;

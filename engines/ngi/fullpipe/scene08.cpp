@@ -215,7 +215,7 @@ int sceneHandler08_updateScreenCallback() {
 	res = g_nmi->drawArcadeOverlay(g_vars->scene08_inArcade);
 
 	if (!res)
-		g_nmi->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = nullptr;
 
 	return res;
 }
@@ -325,7 +325,7 @@ void sceneHandler08_badLuck() {
 	mq->addExCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(0);
+	mq->chain(nullptr);
 
 	g_nmi->setObjectState(sO_StairsUp_8, g_nmi->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 

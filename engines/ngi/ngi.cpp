@@ -78,12 +78,12 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	_lastInputTicks = 0;
 	_lastButtonUpTicks = 0;
 
-	_currArchive = 0;
+	_currArchive = nullptr;
 
 	_soundEnabled = true;
 	_flgSoundList = true;
 
-	_inputController = 0;
+	_inputController = nullptr;
 	_inputDisabled = false;
 
 	_normalSpeed = true;
@@ -91,9 +91,9 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	_currentCheat = -1;
 	_currentCheatPos = 0;
 
-	_liftEnterMQ = 0;
-	_liftExitMQ = 0;
-	_lift = 0;
+	_liftEnterMQ = nullptr;
+	_liftExitMQ = nullptr;
+	_lift = nullptr;
 	_lastLiftButton = nullptr;
 	_liftX = 0;
 	_liftY = 0;
@@ -111,7 +111,7 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	_isProcessingMessages = false;
 
 	_musicAllowed = -1;
-	_musicGameVar = 0;
+	_musicGameVar = nullptr;
 	_musicMinDelay = 0;
 	_musicMaxDelay = 0;
 	_musicLocal = 0;
@@ -159,7 +159,7 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 
 	_minCursorId = 0xffff;
 	_maxCursorId = 0;
-	_objectAtCursor = 0;
+	_objectAtCursor = nullptr;
 	_objectIdAtCursor = 0;
 
 	_arcadeOverlay = nullptr;
@@ -455,9 +455,9 @@ void NGIEngine::freeGameLoader() {
 	setCursor(0);
 	_floaters->stopAll();
 	_gameLoader.reset();
-	_currentScene = 0;
-	_scene2 = 0;
-	_loaderScene = 0;
+	_currentScene = nullptr;
+	_scene2 = nullptr;
+	_loaderScene = nullptr;
 }
 
 void NGIEngine::cleanup() {
@@ -493,7 +493,7 @@ void NGIEngine::updateScreen() {
 	//if (inputArFlag)
 	//	updateGame_inputArFlag();
 
-	if (_modalObject || (_flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != 0))) {
+	if (_modalObject || (_flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != nullptr))) {
 		if (_flgGameIsRunning) {
 			if (_modalObject->init(42)) {
 				_modalObject->update();

@@ -152,7 +152,7 @@ bool GameLoader::readSavegame(const char *fname) {
 		if (g_nmi->_currentScene)
 			unloadScene(g_nmi->_currentScene->_sceneId);
 
-		g_nmi->_currentScene = 0;
+		g_nmi->_currentScene = nullptr;
 
 		if (_preloadCallback)
 			_preloadCallback(preloadItem, 50);
@@ -307,7 +307,7 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 	_gameLoader->_savegameCallback = gameLoaderSavegameCallback;
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
-	_scene2 = 0;
+	_scene2 = nullptr;
 
 	_movTable.reset(_aniMan->countMovements());
 
@@ -397,11 +397,11 @@ bool GameProject::load(MfcArchive &file) {
 }
 
 GameVar::GameVar() {
-	_subVars = 0;
-	_parentVarObj = 0;
-	_nextVarObj = 0;
-	_prevVarObj = 0;
-	_field_14 = 0;
+	_subVars = nullptr;
+	_parentVarObj = nullptr;
+	_nextVarObj = nullptr;
+	_prevVarObj = nullptr;
+	_field_14 = nullptr;
 	_varType = 0;
 	_value.floatValue = 0;
 
@@ -418,7 +418,7 @@ GameVar::~GameVar() {
 		} else if (_parentVarObj->_field_14 == this) {
 			_parentVarObj->_field_14 = _nextVarObj;
 		} else {
-			_parentVarObj = 0;
+			_parentVarObj = nullptr;
 		}
 	}
 
@@ -428,8 +428,8 @@ GameVar::~GameVar() {
 	if (_nextVarObj)
 		_nextVarObj->_prevVarObj = _prevVarObj;
 
-	_prevVarObj = 0;
-	_nextVarObj = 0;
+	_prevVarObj = nullptr;
+	_nextVarObj = nullptr;
 
 	GameVar *s = _subVars;
 
@@ -488,9 +488,9 @@ bool GameVar::load(MfcArchive &file) {
 }
 
 GameVar *GameVar::getSubVarByName(const Common::String &name) {
-	GameVar *sv = 0;
+	GameVar *sv = nullptr;
 
-	if (_subVars != 0) {
+	if (_subVars != nullptr) {
 		sv = _subVars;
 		for (;sv && scumm_stricmp(sv->_varName.c_str(), name.c_str()); sv = sv->_nextVarObj)
 			;
@@ -529,7 +529,7 @@ int GameVar::getSubVarAsInt(const Common::String &name) {
 
 GameVar *GameVar::addSubVarAsInt(const Common::String &name, int value) {
 	if (getSubVarByName(name)) {
-		return 0;
+		return nullptr;
 	} else {
 		GameVar *var = new GameVar();
 
@@ -538,7 +538,7 @@ GameVar *GameVar::addSubVarAsInt(const Common::String &name, int value) {
 
 		var->_varName = name;
 
-		return (addSubVar(var) != 0) ? var : 0;
+		return (addSubVar(var) != 0) ? var : nullptr;
 	}
 }
 
@@ -581,7 +581,7 @@ GameVar *GameVar::getSubVarByIndex(int idx) {
 		sub = sub->_nextVarObj;
 
 		if (!sub)
-			return 0;
+			return nullptr;
 	}
 
 	return sub;

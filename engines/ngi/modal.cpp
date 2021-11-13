@@ -422,10 +422,10 @@ finish:
 }
 
 ModalMap::ModalMap() {
-	_mapScene = 0;
-	_pic = NULL;
-	_picI03 = NULL;
-	_highlightedPic = NULL;
+	_mapScene = nullptr;
+	_pic = nullptr;
+	_picI03 = nullptr;
+	_highlightedPic = nullptr;
 	_isRunning = false;
 	_rect1 = g_nmi->_sceneRect;
 	_x = g_nmi->_currentScene->_x;
@@ -879,7 +879,7 @@ PictureObject *ModalMap::getScenePicture(int sceneId) {
 
 PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 	if (!obj)
-		return NULL;
+		return nullptr;
 
 	switch (obj->_id) {
 	case PIC_MAP_S01:
@@ -960,7 +960,7 @@ PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 	case PIC_MAP_S38:
 		return _mapScene->getPictureObjectById(PIC_MAP_H38, 0);
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -1241,7 +1241,7 @@ void ModalCredits::update() {
 }
 
 ModalMainMenu::ModalMainMenu() {
-	_lastArea = 0;
+	_lastArea = nullptr;
 	_hoverAreaId = 0;
 	_mfield_34 = 0;
 	_scene = g_nmi->accessScene(SC_MAINMENU);
@@ -1270,14 +1270,14 @@ ModalMainMenu::ModalMainMenu() {
 	_areas.push_back(MenuArea());
 	area = &_areas.back();
 	area->picIdL = PIC_MNU_EXIT_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
 	_areas.push_back(MenuArea());
 	area = &_areas.back();
 	area->picIdL = PIC_MNU_CONTINUE_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
@@ -1285,7 +1285,7 @@ ModalMainMenu::ModalMainMenu() {
 		_areas.push_back(MenuArea());
 		area = &_areas.back();
 		area->picIdL = PIC_MNU_SAVE_L;
-		area->picObjD = 0;
+		area->picObjD = nullptr;
 		area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 		area->picObjL->_flags &= 0xFFFB;
 	}
@@ -1293,21 +1293,21 @@ ModalMainMenu::ModalMainMenu() {
 	_areas.push_back(MenuArea());
 	area = &_areas.back();
 	area->picIdL = PIC_MNU_LOAD_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
 	_areas.push_back(MenuArea());
 	area = &_areas.back();
 	area->picIdL = PIC_MNU_RESTART_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
 	_areas.push_back(MenuArea());
 	area = &_areas.back();
 	area->picIdL = PIC_MNU_AUTHORS_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
@@ -1379,7 +1379,7 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 
 	if (message->_messageNum == 30) {
 		if (_lastArea)
-			_lastArea = 0;
+			_lastArea = nullptr;
 
 		return false;
 	}
@@ -1717,7 +1717,7 @@ void ModalMainMenu::enableDebugMenuButton() {
 	_areas.push_back(MenuArea());
 	MenuArea *area = &_areas.back();
 	area->picIdL = PIC_MNU_DEBUG_L;
-	area->picObjD = 0;
+	area->picObjD = nullptr;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
@@ -1753,8 +1753,8 @@ void ModalMainMenu::setSliderPos() {
 }
 
 ModalHelp::ModalHelp() {
-	_mainMenuScene = 0;
-	_bg = 0;
+	_mainMenuScene = nullptr;
+	_bg = nullptr;
 	_isRunning = false;
 	_rect = g_nmi->_sceneRect;
 	_hx = g_nmi->_currentScene->_x;
@@ -1817,10 +1817,10 @@ void ModalHelp::launch() {
 }
 
 ModalQuery::ModalQuery() {
-	_bgScene = 0;
-	_bg = 0;
-	_okBtn = 0;
-	_cancelBtn = 0;
+	_bgScene = nullptr;
+	_bg = nullptr;
+	_okBtn = nullptr;
+	_cancelBtn = nullptr;
 	_queryResult = -1;
 }
 
@@ -1976,19 +1976,19 @@ ModalSaveGame::ModalSaveGame() {
 	_oldBgX = 0;
 	_oldBgY = 0;
 
-	_bgr = 0;
-	_okD = 0;
-	_okL = 0;
-	_cancelD = 0;
-	_cancelL = 0;
-	_emptyD = 0;
-	_emptyL = 0;
-	_fullD = 0;
-	_fullL = 0;
-	_menuScene = 0;
+	_bgr = nullptr;
+	_okD = nullptr;
+	_okL = nullptr;
+	_cancelD = nullptr;
+	_cancelL = nullptr;
+	_emptyD = nullptr;
+	_emptyL = nullptr;
+	_fullD = nullptr;
+	_fullL = nullptr;
+	_menuScene = nullptr;
 	_queryRes = -1;
 	_rect = g_nmi->_sceneRect;
-	_queryDlg = 0;
+	_queryDlg = nullptr;
 	_mode = 1;
 
 	_objtype = kObjTypeModalSaveGame;
@@ -2015,7 +2015,7 @@ bool ModalSaveGame::init(int counterdiff) {
 				_queryRes = -1;
 
 			delete _queryDlg;
-			_queryDlg = 0;
+			_queryDlg = nullptr;
 		}
 
 		return true;
@@ -2136,7 +2136,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 
 char *ModalSaveGame::getSaveName() {
 	if (_queryRes < 0)
-		return 0;
+		return nullptr;
 
 	return _files[_queryRes - 1].filename;
 }
@@ -2267,7 +2267,7 @@ void ModalSaveGame::processMouse(int x, int y) {
 				if (!_files[i].empty) {
 					_queryDlg = new ModalQuery;
 
-					_queryDlg->create(_menuScene, 0, PIC_MOV_BGR);
+					_queryDlg->create(_menuScene, nullptr, PIC_MOV_BGR);
 				}
 			}
 
@@ -2300,7 +2300,7 @@ void ModalSaveGame::saveload() {
 			if (_parentObj) {
 				delete _parentObj;
 
-				_parentObj = 0;
+				_parentObj = nullptr;
 			}
 
 			g_nmi->stopAllSoundStreams();
@@ -2312,9 +2312,9 @@ void ModalSaveGame::saveload() {
 }
 
 ModalDemo::ModalDemo() {
-	_bg = 0;
-	_button = 0;
-	_text = 0;
+	_bg = nullptr;
+	_button = nullptr;
+	_text = nullptr;
 
 	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		_clickedQuit = 0;
@@ -2323,7 +2323,7 @@ ModalDemo::ModalDemo() {
 		_clickedQuit = -1;
 		_countdown = 1000;
 	}
-	_scene = 0;
+	_scene = nullptr;
 }
 
 ModalDemo::~ModalDemo() {
@@ -2489,7 +2489,7 @@ void NGIEngine::openMainMenu() {
 
 		Scene *sc = accessScene(SC_MAINMENU);
 
-		q->create(sc, 0, 0);
+		q->create(sc, nullptr, 0);
 
 		g_nmi->_modalObject = q;
 

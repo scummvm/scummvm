@@ -138,7 +138,7 @@ void sceneHandler29_winArcade() {
 			ani->hide();
 		}
 
-		g_vars->scene29_ass->queueMessageQueue(0);
+		g_vars->scene29_ass->queueMessageQueue(nullptr);
 		g_vars->scene29_ass->_flags &= 0xFFFB;
 
 		chainQueue(QU_SC29_ESCAPE, 1);
@@ -432,7 +432,7 @@ int sceneHandler29_updateScreenCallback() {
 	res = g_nmi->drawArcadeOverlay(g_vars->scene29_arcadeIsOn);
 
 	if (!res)
-		g_nmi->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = nullptr;
 
 	return res;
 }
@@ -549,7 +549,7 @@ void sceneHandler29_shootersEscape() {
 
 			chainQueue(QU_SC29_ESCAPE, 1);
 
-			g_vars->scene29_ass->queueMessageQueue(0);
+			g_vars->scene29_ass->queueMessageQueue(nullptr);
 			g_vars->scene29_ass->hide();
 
 			g_nmi->setObjectState(sO_LeftPipe_29, g_nmi->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
@@ -602,7 +602,7 @@ void sceneHandler29_animBearded() {
 					mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC29_BRDOUT1), 0, 1);
 
 					mq->setParamInt(-1, ani->_odelay);
-					mq->chain(0);
+					mq->chain(nullptr);
 
 					g_vars->scene29_bearders[i]->wbflag = 0;
 					g_vars->scene29_bearders[i]->wbcounter = 0;
@@ -622,7 +622,7 @@ void sceneHandler29_animBearded() {
 						mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC29_BRDOUT2), 0, 1);
 
 						mq->setParamInt(-1, ani->_odelay);
-						mq->chain(0);
+						mq->chain(nullptr);
 
 						g_vars->scene29_bearders[i]->wbflag = 0;
 						g_vars->scene29_bearders[i]->wbcounter = 0;
@@ -663,7 +663,7 @@ void sceneHandler29_animBearded() {
 
 			mq->getExCommandByIndex(0)->_x = newx;
 			mq->setParamInt(-1, ani->_odelay);
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			g_vars->scene29_bearders[i]->wbflag = 1;
 			g_vars->scene29_bearders[i]->wbcounter = 0;

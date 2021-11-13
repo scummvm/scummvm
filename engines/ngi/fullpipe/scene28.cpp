@@ -39,8 +39,8 @@ namespace NGI {
 void scene28_initScene(Scene *sc) {
 	g_vars->scene28_fliesArePresent = true;
 	g_vars->scene28_beardedDirection = true;
-	g_vars->scene28_darkeningObject = 0;
-	g_vars->scene28_lighteningObject = 0;
+	g_vars->scene28_darkeningObject = nullptr;
+	g_vars->scene28_lighteningObject = nullptr;
 	g_vars->scene28_headDirection = false;
 	g_vars->scene28_headBeardedFlipper = false;
 	g_vars->scene28_lift6inside = false;
@@ -71,7 +71,7 @@ void sceneHandler28_lift1ShowAfter() {
 void sceneHandler28_makeFaces(ExCommand *cmd) {
 	g_nmi->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0)->_flags &= 0xFFFB;
 
-	g_vars->scene28_lighteningObject = 0;
+	g_vars->scene28_lighteningObject = nullptr;
 
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 	if (mq) {
@@ -107,7 +107,7 @@ void sceneHandler28_trySecondaryPers() {
 			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.left - 20;
 			mq->getExCommandByIndex(0)->_param = 1;
 			mq->setParamInt(-1, 1);
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
@@ -115,7 +115,7 @@ void sceneHandler28_trySecondaryPers() {
 			mq->getExCommandByIndex(0)->_y += 20;
 			mq->getExCommandByIndex(0)->_param = 2;
 			mq->setParamInt(-1, 2);
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
@@ -126,7 +126,7 @@ void sceneHandler28_trySecondaryPers() {
 			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 20;
 			mq->getExCommandByIndex(0)->_param = 1;
 			mq->setParamInt(-1, 1);
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
@@ -134,7 +134,7 @@ void sceneHandler28_trySecondaryPers() {
 			mq->getExCommandByIndex(0)->_y += 20;
 			mq->getExCommandByIndex(0)->_param = 2;
 			mq->setParamInt(-1, 2);
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
@@ -145,7 +145,7 @@ void sceneHandler28_trySecondaryPers() {
 		mq->getExCommandByIndex(0)->_y += 40;
 		mq->getExCommandByIndex(0)->_param = 3;
 		mq->setParamInt(-1, 3);
-		mq->chain( 0);
+		mq->chain( nullptr);
 
 		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
 	} else {
@@ -160,7 +160,7 @@ void sceneHandler28_trySecondaryPers() {
 		}
 
 		mq->getExCommandByIndex(0)->_x = x;
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		g_vars->scene28_headDirection = !g_vars->scene28_headDirection;
 	}
@@ -451,7 +451,7 @@ int sceneHandler28(ExCommand *cmd) {
 			} else {
 				g_vars->scene28_darkeningObject->_flags &= 0xFFFB;
 
-				g_vars->scene28_darkeningObject = 0;
+				g_vars->scene28_darkeningObject = nullptr;
 			}
 		}
 
@@ -461,7 +461,7 @@ int sceneHandler28(ExCommand *cmd) {
 			} else {
 				g_vars->scene28_lighteningObject->_picture->setAlpha(0xff);
 
-				g_vars->scene28_lighteningObject = 0;
+				g_vars->scene28_lighteningObject = nullptr;
 			}
 		}
 

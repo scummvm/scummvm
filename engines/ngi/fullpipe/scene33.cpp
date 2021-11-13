@@ -41,7 +41,7 @@ const int ventsInit[9] = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 void scene33_initScene(Scene *sc) {
 	g_vars->scene33_mug = sc->getStaticANIObject1ById(ANI_MUG_33, -1);
 	g_vars->scene33_jettie = sc->getStaticANIObject1ById(ANI_JETTIE_FLOW, -1);
-	g_vars->scene33_cube = 0;
+	g_vars->scene33_cube = nullptr;
 	g_vars->scene33_cubeX = -1;
 	g_vars->scene33_handleIsDown = false;
 
@@ -166,8 +166,8 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 	if (!ani->_movement) {
 		sceneHandler33_switchVent(ani);
 
-		StaticANIObject *vent1 = 0;
-		StaticANIObject *vent2 = 0;
+		StaticANIObject *vent1 = nullptr;
+		StaticANIObject *vent2 = nullptr;
 
 		switch (ani->_odelay) {
 		case 0:
@@ -207,7 +207,7 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 }
 
 void sceneHandler33_clickZones(ExCommand *cmd) {
-	StaticANIObject *closest = 0;
+	StaticANIObject *closest = nullptr;
 	double mindist = 1e10;
 
 	for (uint i = 0; i < g_nmi->_currentScene->_staticANIObjectList1.size(); i++) {

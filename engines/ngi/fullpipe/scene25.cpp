@@ -236,7 +236,7 @@ void sceneHandler25_animateBearders() {
 
 		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_odelay);
 		mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-		mq->chain(0);
+		mq->chain(nullptr);
 
 		g_vars->scene25_beardersCounter = 0;
 
@@ -245,14 +245,14 @@ void sceneHandler25_animateBearders() {
 
 			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_odelay);
 			mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-			mq->chain(0);
+			mq->chain(nullptr);
 
 			if (g_nmi->_rnd.getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
 				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_odelay);
 				mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-				mq->chain(0);
+				mq->chain(nullptr);
 			}
 		}
 	}
@@ -451,7 +451,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 	int pnty = pnt->y;
 	int numObsolete = -1;
 	int minDistance = 20000;
-	ExCommand *lastEx = 0;
+	ExCommand *lastEx = nullptr;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
 		int curDistance = abs(pnty - aniY);

@@ -250,7 +250,7 @@ ObjstateCommand *ObjstateCommand::createClone() {
 }
 
 MessageQueue::MessageQueue() {
-	_field_14 = 0;
+	_field_14 = nullptr;
 	_parId = 0;
 	_dataId = 0;
 	_id = 0;
@@ -262,7 +262,7 @@ MessageQueue::MessageQueue() {
 }
 
 MessageQueue::MessageQueue(int dataId) {
-	_field_14 = 0;
+	_field_14 = nullptr;
 	_parId = 0;
 	_dataId = dataId;
 	_id = g_nmi->_globalMessageQueueList->compact();
@@ -337,7 +337,7 @@ bool MessageQueue::load(MfcArchive &file) {
 	}
 
 	_id = -1;
-	_field_14 = 0;
+	_field_14 = nullptr;
 	_parId = 0;
 	_isFinished = 0;
 
@@ -405,7 +405,7 @@ void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	if (idx >= getCount())
-		return 0;
+		return nullptr;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
 
@@ -581,7 +581,7 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 		ex = getExCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
-				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
+				if ((mov = obj->getMovementById(ex->_messageNum)) != nullptr) {
 					if (ex->_z >= 1)
 						res += ex->_z;
 					else
@@ -629,7 +629,7 @@ MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 			return *s;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void GlobalMessageQueueList::deleteQueueById(int id) {
@@ -727,7 +727,7 @@ void clearMessages() {
 bool removeMessageHandler(int16 id, int pos) {
 	if (g_nmi->_messageHandlers) {
 		MessageHandler *curItem = g_nmi->_messageHandlers;
-		MessageHandler *prevItem = 0;
+		MessageHandler *prevItem = nullptr;
 		int curPos = 0;
 
 		while (id != curItem->id) {
@@ -781,13 +781,13 @@ MessageHandler *getMessageHandlerById(int16 id) {
 	MessageHandler *curItem = g_nmi->_messageHandlers;
 
 	if (!curItem)
-		return 0;
+		return nullptr;
 
 	while (id != curItem->id) {
 		curItem = curItem->nextItem;
 
 		if (!curItem)
-			return 0;
+			return nullptr;
 	}
 
 	return curItem;
@@ -803,7 +803,7 @@ bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExComm
 		msg->callback = callback;
 		msg->index = index;
 	} else {
-		msg->nextItem = 0;
+		msg->nextItem = nullptr;
 		msg->id = id;
 		msg->callback = callback;
 		msg->index = 0;
@@ -890,7 +890,7 @@ void clearMessageHandlers() {
 			curItem = nextItem;
 		} while (nextItem);
 
-		g_nmi->_messageHandlers = 0;
+		g_nmi->_messageHandlers = nullptr;
 	}
 }
 

@@ -47,7 +47,7 @@ static const PlainGameDescriptor ngiGames[] = {
 	{"ngi", 		"Nikita Game Interface game"},
 	{"fullpipe",	"Full Pipe"},
 	{"mdream",		"Magic Dream"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 namespace NGI {
@@ -58,7 +58,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"mdream",
-			0,
+			nullptr,
 			AD_ENTRY1s("0001.nl", "079d02921a938ec9740598316450d526", 11848423),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
@@ -72,7 +72,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"fullpipe",
-			0,
+			nullptr,
 			AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
@@ -86,7 +86,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"fullpipe",
-			0,
+			nullptr,
 			AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -100,7 +100,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"fullpipe",
-			0,
+			nullptr,
 			AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
 			Common::ET_EST,
 			Common::kPlatformWindows,
@@ -114,7 +114,7 @@ static const NGIGameDescription gameDescriptions[] = {
 	{
 		{
 			"fullpipe",
-			0,
+			nullptr,
 			AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -162,7 +162,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM | ADGF_DEMO,
-			0
+			nullptr
 		},
 		GID_FULLPIPE
 	},

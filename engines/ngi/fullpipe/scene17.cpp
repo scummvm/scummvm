@@ -97,7 +97,7 @@ void sceneHandler17_drop() {
 		mug->changeStatics2(ST_MUG17_EMPTY);
 		chainQueue(QU_SC17_FILLMUG_DROP, 0);
 	} else if (jet) {
-		jet->queueMessageQueue(0);
+		jet->queueMessageQueue(nullptr);
 		chainQueue(QU_JET17_DROP, 0);
 	}
 }
