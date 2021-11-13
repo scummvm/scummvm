@@ -191,7 +191,7 @@ void GriffonEngine::setupAudio() {
 void GriffonEngine::updateMusic() {
 	static int loopseta = 0;
 
-	DataChunk *iplaysound = NULL;
+	DataChunk *iplaysound = nullptr;
 
 	if (config.music) {
 		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
@@ -201,11 +201,11 @@ void GriffonEngine::updateMusic() {
 			iplaysound = _musicBoss;
 
 		if (iplaysound == _musicBoss && _playingBoss)
-			iplaysound = NULL;
+			iplaysound = nullptr;
 		if (iplaysound == _musicGardens1 && _playingGardens)
-			iplaysound = NULL;
+			iplaysound = nullptr;
 
-		if (iplaysound != NULL) {
+		if (iplaysound != nullptr) {
 			haltSoundChannel(_musicChannel);
 
 			_playingBoss = (iplaysound == _musicBoss);

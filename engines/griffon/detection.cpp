@@ -28,7 +28,7 @@
 
 static const PlainGameDescriptor griffonGames[] = {
 	{"griffon", "The Griffon Legend"},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
@@ -51,7 +51,7 @@ namespace Griffon {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"griffon",
-		NULL,
+		nullptr,
 		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
