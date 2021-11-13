@@ -28,7 +28,7 @@
 
 namespace Lilliput {
 
-LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
+LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(nullptr) {
 	_cubeSet = 0;
 	_lastRandomValue = 0;
 	_scriptForVal = 0;
@@ -47,7 +47,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_monitoredAttr[1] = 1;
 	_monitoredAttr[2] = 2;
 	_monitoredAttr[3] = 3;
-	_barAttrPtr = NULL;
+	_barAttrPtr = nullptr;
 	_word1825E = Common::Point(0, 0);
 
 	for (int i = 0; i < 20; i++) {
@@ -1798,7 +1798,7 @@ byte LilliputScript::OC_CurrentCharacterVar0AndVar1Equals() {
 	byte var1 = _currScript->readUint16LE() & 0xFF;
 	byte var2 = _currScript->readUint16LE() & 0xFF;
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 
 	if ((var1 == _vm->_currentCharacterAttributes[0]) && (var2 == _vm->_currentCharacterAttributes[1]))
 		return 1;
@@ -1810,7 +1810,7 @@ byte LilliputScript::OC_CurrentCharacterVar0Equals() {
 	debugC(1, kDebugScript, "OC_CurrentCharacterVar0Equals()");
 
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	if (_vm->_currentCharacterAttributes[0] == curByte)
 		return 1;
 	return 0;
@@ -1891,7 +1891,7 @@ byte LilliputScript::OC_skipNextOpcode() {
 byte LilliputScript::OC_CheckCurrentCharacterAttr2() {
 	debugC(1, kDebugScript, "OC_CheckCurrentCharacterAttr2()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	if (_vm->_currentCharacterAttributes[2] == 1)
 		return 1;
 	return 0;
@@ -1926,7 +1926,7 @@ byte LilliputScript::OC_CheckCurrentCharacterAttr0And() {
 byte LilliputScript::OC_IsCurrentCharacterAttr0LessEqualThan() {
 	debugC(1, kDebugScript, "OC_IsCurrentCharacterAttr0LessEqualThan()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 
 	if (curByte <= _vm->_currentCharacterAttributes[0])
@@ -1950,7 +1950,7 @@ byte LilliputScript::OC_isCarried() {
 byte LilliputScript::OC_CheckCurrentCharacterAttr1() {
 	debugC(1, kDebugScript, "OC_CheckCurrentCharacterAttr1()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 
 	if (_vm->_currentCharacterAttributes[1] == curByte)
@@ -1974,7 +1974,7 @@ byte LilliputScript::OC_isCurrentCharacterSpecial() {
 byte LilliputScript::OC_CurrentCharacterAttr3Equals1() {
 	debugC(1, kDebugScript, "OC_CurrentCharacterAttr3Equals1()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	if (_vm->_currentCharacterAttributes[3] == 1)
 		return 1;
 
@@ -2411,7 +2411,7 @@ void LilliputScript::OC_setHost() {
 void LilliputScript::OC_changeMapCube() {
 	debugC(1, kDebugScript, "OC_changeMapCube()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	Common::Point var1 = Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
 	byte var2 = _vm->_currentCharacterAttributes[6];
 
@@ -2529,7 +2529,7 @@ void LilliputScript::OC_enableCurrentCharacterScript() {
 void LilliputScript::OC_IncCurrentCharacterVar1() {
 	debugC(1, kDebugScript, "OC_IncCurrentCharacterVar1()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	++_vm->_currentCharacterAttributes[1];
 }
 
@@ -2707,14 +2707,14 @@ void LilliputScript::OC_setCurrentCharacterAttr2() {
 	debugC(1, kDebugScript, "OC_setCurrentCharacterAttr2()");
 
 	int curWord = _currScript->readUint16LE();
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	_vm->_currentCharacterAttributes[2] = curWord & 0xFF;
 }
 
 void LilliputScript::OC_clearCurrentCharacterAttr2() {
 	debugC(1, kDebugScript, "OC_clearCurrentCharacterAttr2()");
 
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 	_vm->_currentCharacterAttributes[2] = 0;
 }
 
@@ -2985,7 +2985,7 @@ void LilliputScript::OC_setCurrentCharacterAttr3() {
 	debugC(1, kDebugScript, "OC_setCurrentCharacterAttr3()");
 
 	byte var1 = _currScript->readUint16LE() & 0xFF;
-	assert(_vm->_currentCharacterAttributes != NULL);
+	assert(_vm->_currentCharacterAttributes != nullptr);
 
 	_vm->_currentCharacterAttributes[3] = var1;
 }

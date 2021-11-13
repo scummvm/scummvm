@@ -38,7 +38,7 @@
 
 namespace Lilliput {
 
-LilliputEngine *LilliputEngine::s_Engine = 0;
+LilliputEngine *LilliputEngine::s_Engine = nullptr;
 
 static const byte _basisPalette[768] = {
 	0,  0,  0,  0,  0,  42, 0,  42, 0,  0,  42, 42,
@@ -112,7 +112,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_system = syst;
 
 	setDebugger(new LilliputConsole(this));
-	_rnd = 0;
+	_rnd = nullptr;
 	_mousePos = Common::Point(0, 0);
 	_oldMousePos = Common::Point(0, 0);
 	_mouseDisplayPos = Common::Point(0, 0);
@@ -208,13 +208,13 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterVariables[i] = 0;
 	}
 
-	_currentCharacterAttributes = NULL;
-	_bufferIdeogram = NULL;
-	_bufferMen = NULL;
-	_bufferMen2 = NULL;
-	_bufferIsoChars = NULL;
-	_bufferIsoMap = NULL;
-	_bufferCubegfx = NULL;
+	_currentCharacterAttributes = nullptr;
+	_bufferIdeogram = nullptr;
+	_bufferMen = nullptr;
+	_bufferMen2 = nullptr;
+	_bufferIsoChars = nullptr;
+	_bufferIsoMap = nullptr;
+	_bufferCubegfx = nullptr;
 
 	_sequencesArr = nullptr;
 	_packedStringIndex = nullptr;
@@ -2247,7 +2247,7 @@ void LilliputEngine::checkInterfaceActivationDelay() {
 void LilliputEngine::displayHeroismIndicator() {
 	debugC(2, kDebugEngine, "displayHeroismIndicator()");
 
-	if (_scriptHandler->_barAttrPtr == NULL)
+	if (_scriptHandler->_barAttrPtr == nullptr)
 		return;
 
 	int var1 = (_scriptHandler->_barAttrPtr[0] * 25) >> 8;
