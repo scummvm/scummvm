@@ -56,7 +56,7 @@ bool Keyboard::getKey(Common::Event &event) {
 			return false;
 		// Display ScummVM version and translation strings
 		for (int i = 0; i < 3; i++)
-			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
+			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, nullptr);
 		return false;
 	case Common::KEYCODE_F5:
 		_vm->saveGameDialog();
