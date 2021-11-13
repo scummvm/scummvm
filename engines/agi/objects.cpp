@@ -109,7 +109,7 @@ int AgiEngine::loadObjects(Common::File &fp) {
 int AgiEngine::readObjects(Common::File &fp, int flen) {
 	uint8 *mem;
 
-	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
+	if ((mem = (uint8 *)calloc(1, flen + 32)) == nullptr) {
 		fp.close();
 		return errNotEnoughMemory;
 	}

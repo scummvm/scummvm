@@ -47,8 +47,8 @@ SoundGen::~SoundGen() {
 //
 
 AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu) {
-	if (data == NULL || len < 2) // Check for too small resource or no resource at all
-		return NULL;
+	if (data == nullptr || len < 2) // Check for too small resource or no resource at all
+		return nullptr;
 	uint16 type = READ_LE_UINT16(data);
 
 	// For V1 sound resources
@@ -71,7 +71,7 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 	}
 
 	warning("Sound resource (%d) has unknown type (0x%04x). Not using the sound", resnum, type);
-	return NULL;
+	return nullptr;
 }
 
 PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
@@ -83,7 +83,7 @@ PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	if ((_type & 0xFF) == 0x01)
 		_type = AGI_SOUND_4CHN;
 
-	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
+	_isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_len >= 2);
 
 	if (!_isValid) // Check for errors
 		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", resnum, _type, len);
@@ -115,7 +115,7 @@ void SoundMgr::unloadSound(int resnum) {
 
 		// Release the sound resource's data
 		delete _vm->_game.sounds[resnum];
-		_vm->_game.sounds[resnum] = NULL;
+		_vm->_game.sounds[resnum] = nullptr;
 		_vm->_game.dirSound[resnum].flags &= ~RES_LOADED;
 	}
 }
@@ -132,7 +132,7 @@ void SoundMgr::unloadSound(int resnum) {
 void SoundMgr::startSound(int resnum, int flag) {
 	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
 
-	if (_vm->_game.sounds[resnum] == NULL) // Is this needed at all?
+	if (_vm->_game.sounds[resnum] == nullptr) // Is this needed at all?
 		return;
 
 	stopSound();

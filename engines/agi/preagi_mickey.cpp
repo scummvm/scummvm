@@ -288,7 +288,7 @@ void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
 
 void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow, int x, int y) {
 	int iWord;
-	int *sel = 0;
+	int *sel = nullptr;
 
 	switch (iRow) {
 	case 0:
@@ -315,7 +315,7 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int 
 
 bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow) {
 	Common::Event event;
-	int *sel = 0;
+	int *sel = nullptr;
 	int nWords;
 	int x, y;
 	int goIndex = -1, northIndex = -1, southIndex = -1, eastIndex = -1, westIndex = -1;

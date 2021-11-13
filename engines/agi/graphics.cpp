@@ -65,10 +65,10 @@ GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
 	_pixels = 0;
 	_displayPixels = 0;
 
-	_activeScreen = NULL;
-	_gameScreen = NULL;
-	_priorityScreen = NULL;
-	_displayScreen = NULL;
+	_activeScreen = nullptr;
+	_gameScreen = nullptr;
+	_priorityScreen = nullptr;
+	_displayScreen = nullptr;
 }
 
 /**
@@ -1203,7 +1203,7 @@ void GfxMgr::shakeScreen(int16 repeatCount) {
 	int16 shakeHorizontalPixels = SHAKE_HORIZONTAL_PIXELS * (2 + _displayWidthMulAdjust);
 	int16 shakeVerticalPixels = SHAKE_VERTICAL_PIXELS * (1 + _displayHeightMulAdjust);
 
-	if ((blackSpace = (uint8 *)calloc(shakeHorizontalPixels * _displayScreenWidth, 1)) == NULL)
+	if ((blackSpace = (uint8 *)calloc(shakeHorizontalPixels * _displayScreenWidth, 1)) == nullptr)
 		return;
 
 	shakeCount = repeatCount * 8; // effectively 4 shakes per repeat

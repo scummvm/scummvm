@@ -552,7 +552,7 @@ int AgiEngine::runGame() {
 	} while (_restartGame);
 
 	delete _menu;
-	_menu = NULL;
+	_menu = nullptr;
 
 	releaseImageStack();
 

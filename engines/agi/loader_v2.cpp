@@ -58,7 +58,7 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 	flen = fp.pos();
 	fp.seek(0, SEEK_SET);
 
-	if ((mem = (uint8 *)malloc(flen + 32)) == NULL) {
+	if ((mem = (uint8 *)malloc(flen + 32)) == nullptr) {
 		fp.close();
 		return errNotEnoughMemory;
 	}
@@ -142,7 +142,7 @@ int AgiLoader_v2::unloadResource(int16 resourceType, int16 resourceNr) {
  * routine. NULL is returned if unsucsessfull.
  */
 uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
-	uint8 *data = NULL;
+	uint8 *data = nullptr;
 	char x[6];
 	Common::File fp;
 	unsigned int sig;
@@ -158,14 +158,14 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		if ((sig = READ_BE_UINT16((uint8 *) x)) == 0x1234) {
 			agid->len = READ_LE_UINT16((uint8 *) x + 3);
 			data = (uint8 *)calloc(1, agid->len + 32);
-			if (data != NULL) {
+			if (data != nullptr) {
 				fp.read(data, agid->len);
 			} else {
 				error("AgiLoader_v2::loadVolRes out of memory");
 			}
 		} else {
 			warning("AgiLoader_v2::loadVolRes: bad signature %04x", sig);
-			return 0;
+			return nullptr;
 		}
 		fp.close();
 	} else {
@@ -183,7 +183,7 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
  */
 int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 	int ec = errOK;
-	uint8 *data = NULL;
+	uint8 *data = nullptr;
 
 	debugC(3, kDebugLevelResources, "(t = %d, n = %d)", resourceType, resourceNr);
 	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
@@ -222,7 +222,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 		unloadResource(RESOURCETYPE_PICTURE, resourceNr);
 		data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 
-		if (data != NULL) {
+		if (data != nullptr) {
 			_vm->_game.pictures[resourceNr].rdata = data;
 			_vm->_game.dirPic[resourceNr].flags |= RES_LOADED;
 		} else {
@@ -236,7 +236,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
 
-		if (data != NULL) {
+		if (data != nullptr) {
 			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
 			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;

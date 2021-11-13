@@ -47,7 +47,7 @@ static bool sortSpriteHelper(const Sprite &entry1, const Sprite &entry2) {
 }
 
 void SpritesMgr::buildRegularSpriteList() {
-	ScreenObjEntry *screenObj = NULL;
+	ScreenObjEntry *screenObj = nullptr;
 	uint16 givenOrderNr = 0;
 
 	freeList(_spriteRegularList);
@@ -64,7 +64,7 @@ void SpritesMgr::buildRegularSpriteList() {
 }
 
 void SpritesMgr::buildStaticSpriteList() {
-	ScreenObjEntry *screenObj = NULL;
+	ScreenObjEntry *screenObj = nullptr;
 	uint16 givenOrderNr = 0;
 
 	freeList(_spriteStaticList);
@@ -360,7 +360,7 @@ void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 
 void SpritesMgr::showSprites(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-	ScreenObjEntry *screenObjPtr = NULL;
+	ScreenObjEntry *screenObjPtr = nullptr;
 
 	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
 		Sprite &sprite = *iter;
@@ -405,7 +405,7 @@ void SpritesMgr::showAllSpriteLists() {
  */
 void SpritesMgr::showObject(int16 viewNr) {
 	ScreenObjEntry screenObj;
-	uint8 *backgroundBuffer = NULL;
+	uint8 *backgroundBuffer = nullptr;
 
 	_vm->agiLoadResource(RESOURCETYPE_VIEW, viewNr);
 	_vm->setView(&screenObj, viewNr);

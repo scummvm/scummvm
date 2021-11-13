@@ -1172,7 +1172,7 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	}
 
 	delete _game.sounds[0];
-	_game.sounds[0] = 0;
+	_game.sounds[0] = nullptr;
 
 	return !shouldQuit() && !skippedSound;
 }

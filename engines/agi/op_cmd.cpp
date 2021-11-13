@@ -1750,7 +1750,7 @@ void cmdSetMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", textNr, state->_curLogic->numTexts);
 
-	if (state->_curLogic->texts != NULL && (textNr - 1) <= state->_curLogic->numTexts) {
+	if (state->_curLogic->texts != nullptr && (textNr - 1) <= state->_curLogic->numTexts) {
 		const char *menuText = state->_curLogic->texts[textNr - 1];
 
 		state->_vm->_menu->addMenu(menuText);
@@ -1763,7 +1763,7 @@ void cmdSetMenuItem(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", textNr, state->_curLogic->numTexts);
 
-	if (state->_curLogic->texts != NULL && textNr <= state->_curLogic->numTexts) {
+	if (state->_curLogic->texts != nullptr && textNr <= state->_curLogic->numTexts) {
 		const char *menuItemText = state->_curLogic->texts[textNr];
 
 		state->_vm->_menu->addMenuItem(menuItemText, controllerSlot);
@@ -2065,7 +2065,7 @@ void cmdSetCursorChar(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *textMgr = state->_vm->_text;
 	uint16 textNr = parameter[0] - 1;
 
-	if (state->_curLogic->texts != NULL && textNr <= state->_curLogic->numTexts) {
+	if (state->_curLogic->texts != nullptr && textNr <= state->_curLogic->numTexts) {
 		textMgr->inputSetCursorChar(*state->_curLogic->texts[textNr]);
 	} else {
 		// default

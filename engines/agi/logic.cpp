@@ -69,7 +69,7 @@ int AgiEngine::decodeLogic(int16 logicNr) {
 	// cover header info
 	m0 += mstart + 3;
 
-	if (curLogic->texts != NULL) {
+	if (curLogic->texts != nullptr) {
 		// move list of strings into list to make real pointers
 		for (mc = 0; mc < curLogic->numTexts; mc++) {
 			mend = READ_LE_UINT16(m0 + mc * 2);

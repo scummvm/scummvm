@@ -262,7 +262,7 @@ void SoundGen2GS::advanceMidiPlayer() {
 	uint8 parm1, parm2;
 	static uint8 cmd, chn;
 
-	if (_playingSound == -1 || _vm->_game.sounds[_playingSound] == NULL) {
+	if (_playingSound == -1 || _vm->_game.sounds[_playingSound] == nullptr) {
 		warning("Error playing Apple IIGS MIDI sound resource");
 		_playing = false;
 		return;
@@ -463,7 +463,7 @@ IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	_len = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 	_ticks = 0;
-	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
+	_isValid = (_type == AGI_SOUND_MIDI) && (_data != nullptr) && (_len >= 2);
 
 	if (!_isValid) // Check for errors
 		warning("Error creating Apple IIGS midi sound from resource %d (Type %d, length %d)", resnum, _type, len);
@@ -511,7 +511,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 		stream.seek(sampleStartPos);
 		_sample = new int8[_header.sampleSize];
 
-		if (_sample != NULL) {
+		if (_sample != nullptr) {
 			_isValid = convertWave(stream, _sample, _header.sampleSize);
 
 			if (_isValid) {
@@ -624,7 +624,7 @@ bool IIgsSampleHeader::finalize(int8 *sampleData) {
 bool SoundGen2GS::loadInstruments() {
 	// Get info on the particular Apple IIGS AGI game's executable
 	const IIgsExeInfo *exeInfo = getIIgsExeInfo((enum AgiGameID)_vm->getGameID());
-	if (exeInfo == NULL) {
+	if (exeInfo == nullptr) {
 		warning("Unsupported Apple IIGS game, not loading instruments");
 		return false;
 	}
@@ -740,7 +740,7 @@ const IIgsExeInfo *SoundGen2GS::getIIgsExeInfo(enum AgiGameID gameid) const {
 	for (int i = 0; i < ARRAYSIZE(IIgsExeInfos); i++)
 		if (IIgsExeInfos[i].gameid == gameid)
 			return &IIgsExeInfos[i];
-	return NULL;
+	return nullptr;
 }
 
 bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeInfo &exeInfo) {

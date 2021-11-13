@@ -73,7 +73,7 @@ int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
 	unsigned int i;
 
 	fp->seek(offs, SEEK_SET);
-	if ((mem = (uint8 *)malloc(len + 32)) != NULL) {
+	if ((mem = (uint8 *)malloc(len + 32)) != nullptr) {
 		fp->read(mem, len);
 
 		// set all directory resources to gone
@@ -202,7 +202,7 @@ int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
  */
 uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	char x[8];
-	uint8 *data = NULL, *compBuffer;
+	uint8 *data = nullptr, *compBuffer;
 	Common::File fp;
 	Common::String path;
 
@@ -261,7 +261,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
  */
 int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 	int ec = errOK;
-	uint8 *data = NULL;
+	uint8 *data = nullptr;
 
 	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
 		return errBadResource;
@@ -279,7 +279,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 			_vm->_game.logics[resourceNr].data = data;
 
 			// uncompressed logic files need to be decrypted
-			if (data != NULL) {
+			if (data != nullptr) {
 				// resloaded flag gets set by decode logic
 				// needed to build string table
 				ec = _vm->decodeLogic(resourceNr);
@@ -305,7 +305,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 		if (~_vm->_game.dirPic[resourceNr].flags & RES_LOADED) {
 			unloadResource(RESOURCETYPE_PICTURE, resourceNr);
 			data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
-			if (data != NULL) {
+			if (data != nullptr) {
 				_vm->_game.pictures[resourceNr].rdata = data;
 				_vm->_game.dirPic[resourceNr].flags |= RES_LOADED;
 			} else {
@@ -318,7 +318,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 			break;
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
-		if (data != NULL) {
+		if (data != nullptr) {
 			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
 			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
@@ -337,7 +337,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 
 		unloadResource(RESOURCETYPE_VIEW, resourceNr);
 		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
-		if (data != NULL) {
+		if (data != nullptr) {
 			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;
 			ec = _vm->decodeView(data, _vm->_game.dirView[resourceNr].len, resourceNr);
 			free(data);
