@@ -156,7 +156,7 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 	_isEGA = LureEngine::getReference().isEGA();
 	if (_isEGA) {
 		// Setup for EGA animation
-		_lineRefs = NULL;
+		_lineRefs = nullptr;
 
 		// Reset the palette and clear the screen for EGA decoding
 		screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
@@ -169,8 +169,8 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 		// Set pointers for animation
 		_pPixelsStart = _pPixels = pSrc;
 		_pPixelsEnd = _decodedData->data() + _decodedData->size() - 1;
-		_pLinesStart = _pLines = NULL;
-		_pLinesEnd = NULL;
+		_pLinesStart = _pLines = nullptr;
+		_pLinesEnd = nullptr;
 
 	} else {
 		// Setup for VGA animation
@@ -215,7 +215,7 @@ AnimAbortType AnimationSequence::show() {
 	// Loop through displaying the animations
 	while (_loops > 0) {
 		if (_pPixels < _pPixelsEnd && (_isEGA || _pLines < _pLinesEnd)) {
-			if ((soundFrame != NULL) && (soundFrame->rolandSoundId != 0xFF) && (frameCtr == 0))
+			if ((soundFrame != nullptr) && (soundFrame->rolandSoundId != 0xFF) && (frameCtr == 0))
 				Sound.musicInterface_Play(
 					Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId, soundFrame->music);
 
@@ -242,10 +242,10 @@ AnimAbortType AnimationSequence::show() {
 		result = delay(_frameDelay * 1000 / 50);
 		if (result != ABORT_NONE) return result;
 
-		if ((soundFrame != NULL) && (++frameCtr == soundFrame->numFrames)) {
+		if ((soundFrame != nullptr) && (++frameCtr == soundFrame->numFrames)) {
 			frameCtr = 0;
 			++soundFrame;
-			if (soundFrame->numFrames == 0) soundFrame = NULL;
+			if (soundFrame->numFrames == 0) soundFrame = nullptr;
 		}
 	}
 

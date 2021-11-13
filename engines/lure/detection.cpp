@@ -31,7 +31,7 @@
 
 static const PlainGameDescriptor lureGames[] = {
 	{"lure", "Lure of the Temptress"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 

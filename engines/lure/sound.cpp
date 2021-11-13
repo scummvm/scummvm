@@ -47,7 +47,7 @@ SoundManager::SoundManager() {
 
 	_descs = disk.getEntry(SOUND_DESC_RESOURCE_ID);
 	_numDescs = _descs->size() / sizeof(SoundDescResource);
-	_soundData = NULL;
+	_soundData = nullptr;
 	_paused = false;
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
@@ -72,7 +72,7 @@ SoundManager::SoundManager() {
 
 SoundManager::~SoundManager() {
 	if (_driver)
-		_driver->setTimerCallback(this, NULL);
+		_driver->setTimerCallback(this, nullptr);
 
 	removeSounds();
 	_activeSounds.clear();
@@ -88,7 +88,7 @@ SoundManager::~SoundManager() {
 		_driver->stopAllNotes();
 		_driver->close();
 		delete _driver;
-		_driver = NULL;
+		_driver = nullptr;
 	}
 }
 
@@ -127,7 +127,7 @@ void SoundManager::loadSection(uint16 sectionId) {
 
 	if (_soundData) {
 		delete _soundData;
-		_driver->setTimerCallback(this, NULL);
+		_driver->setTimerCallback(this, nullptr);
 	}
 
 	_soundData = Disk::getReference().getEntry(sectionId);
@@ -137,7 +137,7 @@ void SoundManager::loadSection(uint16 sectionId) {
 }
 
 bool SoundManager::initCustomTimbres(bool canAbort) {
-	if (!_isRoland || !_nativeMT32 || _mt32Driver == NULL)
+	if (!_isRoland || !_nativeMT32 || _mt32Driver == nullptr)
 		return false;
 
 	if (!_soundData)
@@ -316,7 +316,7 @@ void SoundManager::addSound2(uint8 soundIndex) {
 	} else {
 		SoundDescResource &descEntry = soundDescs()[soundIndex];
 		SoundDescResource *rec = findSound(descEntry.soundNumber);
-		if (rec == NULL)
+		if (rec == nullptr)
 			// Sound isn't active, so go and add it
 			addSound(soundIndex, false);
 	}
@@ -378,7 +378,7 @@ SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
 
 	// Signal that sound wasn't found
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "SoundManager::findSound - sound not found");
-	return NULL;
+	return nullptr;
 }
 
 void SoundManager::tidySounds() {
@@ -500,7 +500,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, bool isMusic, uint8 nu
 	if (soundNum > _soundsTotal)
 		error("Invalid sound index %d requested", soundNum);
 
-	if (_driver == NULL)
+	if (_driver == nullptr)
 		// Only play sounds if a sound driver is active
 		return;
 
@@ -763,7 +763,7 @@ MidiMusic::MidiMusic(MidiDriver_Multisource *driver, uint8 soundNum, bool isMus,
 	// Check whether the music data is compressed - if so, decompress it for the duration
 	// of playing the sound
 
-	_decompressedSound = NULL;
+	_decompressedSound = nullptr;
 	if ((*_soundData == 'C') || (*_soundData == 'c')) {
 		uint32 packedSize = size - 0x201;
 		_decompressedSound = Memory::allocate(packedSize * 2);
@@ -982,7 +982,7 @@ void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, byte *data, uint16
 }
 
 MidiDriver_ADLIB_Lure::InstrumentInfo MidiDriver_ADLIB_Lure::determineInstrument(uint8 channel, uint8 source, uint8 note) {
-	InstrumentInfo instrument = { 0, 0, 0 };
+	InstrumentInfo instrument = { 0, nullptr, 0 };
 
 	// Lure does not use a rhythm channel.
 	instrument.oplNote = note;

@@ -71,7 +71,7 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	uint16 offset = res.getHotspotScript(scriptIndex);
 	Hotspot *hotspot = res.getActiveHotspot(hotspotId);
 
-	if (hotspot != NULL) {
+	if (hotspot != nullptr) {
 		hotspot->setHotspotScript(offset);
 	} else {
 		HotspotData *hs = res.getHotspot(hotspotId);
@@ -561,7 +561,7 @@ void Script::checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3) {
 
 void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 destCharacterId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
-	if (hotspot != NULL)
+	if (hotspot != nullptr)
 		hotspot->showMessage(messageId, destCharacterId);
 }
 
@@ -589,7 +589,7 @@ void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 
 	uint16 dataId = res.getCharOffset(index);
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
-	assert(entry != NULL);
+	assert(entry != nullptr);
 
 	Hotspot *h = res.getActiveHotspot(hotspotId);
 	assert(h);
@@ -775,7 +775,7 @@ void Script::checkSound(uint16 soundNumber, uint16 v2, uint16 v3) {
 	Sound.tidySounds();
 
 	SoundDescResource *rec = Sound.findSound(soundNumber);
-	Resources::getReference().fieldList().setField(GENERAL, (rec != NULL) ? 1 : 0);
+	Resources::getReference().fieldList().setField(GENERAL, (rec != nullptr) ? 1 : 0);
 }
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
@@ -853,7 +853,7 @@ static const SequenceMethodRecord scriptMethods[] = {
 	{64, Script::randomToGeneral},
 	{65, Script::checkCellDoor},
 	{66, Script::checkSound},
-	{0xff, NULL}};
+	{0xff, nullptr}};
 
 static const char *scriptOpcodes[] = {
 	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "EQUALS", "NOT_EQUALS",
@@ -1104,7 +1104,7 @@ uint16 Script::execute(uint16 startOffset) {
 			if (gDebugLevel >= ERROR_DETAILED) {
 				// Set up the debug string for the method call
 				if (rec->methodIndex == 0xff) strcat(debugInfo, " INVALID INDEX");
-				else if (scriptMethodNames[param] == NULL) strcat(debugInfo, " UNKNOWN METHOD");
+				else if (scriptMethodNames[param] == nullptr) strcat(debugInfo, " UNKNOWN METHOD");
 				else {
 					strcat(debugInfo, " ");
 					Common::strlcat(debugInfo, scriptMethodNames[param], MAX_DESC_SIZE);

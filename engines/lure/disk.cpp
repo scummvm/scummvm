@@ -33,7 +33,7 @@
 
 namespace Lure {
 
-static Disk *int_disk = NULL;
+static Disk *int_disk = nullptr;
 
 Disk &Disk::getReference() {
 	return *int_disk;
@@ -41,13 +41,13 @@ Disk &Disk::getReference() {
 
 Disk::Disk() {
 	_fileNum = 0xff;
-	_fileHandle = NULL;
+	_fileHandle = nullptr;
 	int_disk = this;
 }
 
 Disk::~Disk() {
 	delete _fileHandle;
-	int_disk = NULL;
+	int_disk = nullptr;
 }
 
 uint8 Disk::indexOf(uint16 id, bool suppressError) {

@@ -98,12 +98,12 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 Room::Room(): _screen(Screen::getReference()) {
 	int_room = this;
 
-	_roomData = NULL;
-	_talkDialog = NULL;
+	_roomData = nullptr;
+	_talkDialog = nullptr;
 	_hotspotId = 0;
 	_hotspotName[0] = '\0';
 	_statusLine[0] = '\0';
-	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = NULL;
+	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = nullptr;
 	_numLayers = 0;
 	_showInfo = false;
 	_isExit = false;
@@ -120,7 +120,7 @@ Room::~Room() {
 		delete _layers[layerNum];
 
 	delete _talkDialog;
-	int_room = NULL;
+	int_room = nullptr;
 }
 
 Room &Room::getReference() {
@@ -168,7 +168,7 @@ void Room::checkRoomHotspots() {
 	Mouse &m = Mouse::getReference();
 	Resources &res = Resources::getReference();
 	HotspotDataList &list = res.hotspotData();
-	HotspotData *entry = NULL;
+	HotspotData *entry = nullptr;
 	int16 currentX = m.x();
 	int16 currentY = m.y();
 	HotspotDataList::iterator i;
@@ -230,7 +230,7 @@ void Room::checkRoomHotspots() {
 	if (i == list.end()) {
 		_hotspotId = 0;
 		_hotspotNameId = 0;
-		_hotspot = NULL;
+		_hotspot = nullptr;
 	} else {
 		_hotspotNameId = entry->nameId;
 		_hotspot = entry;
@@ -319,10 +319,10 @@ void Room::addLayers(Hotspot &h) {
 		// Check foreground layers for an occupied one
 
 		int layerNum = 1;
-		while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
+		while ((layerNum < 4) && (_layers[layerNum] != nullptr) &&
 				(_layers[layerNum]->getCell(xStart, yEnd) == 0xff))
 			++layerNum;
-		if ((layerNum == 4) || (_layers[layerNum] == NULL)) continue;
+		if ((layerNum == 4) || (_layers[layerNum] == nullptr)) continue;
 
 		int16 ye = yEnd - NUM_EDGE_RECTS;
 		for (int16 yCtr = 0; yCtr < numY; ++yCtr, --ye) {
@@ -335,10 +335,10 @@ void Room::addLayers(Hotspot &h) {
 void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	Surface &s = _screen.screen();
 
-	while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
+	while ((layerNum < 4) && (_layers[layerNum] != nullptr) &&
 			(_layers[layerNum]->getCell(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) >= 0xfe))
 		++layerNum;
-	if ((layerNum == 4) || (_layers[layerNum] == NULL)) return;
+	if ((layerNum == 4) || (_layers[layerNum] == nullptr)) return;
 
 	RoomLayer *layer = _layers[layerNum];
 
@@ -360,10 +360,10 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 
 void Room::blockMerge() {
 	for (int layerNum1 = 0; layerNum1 < 3; ++layerNum1) {
-		if (_layers[layerNum1] == NULL) break;
+		if (_layers[layerNum1] == nullptr) break;
 
 		for (int layerNum2 = layerNum1 + 1; layerNum2 < 4; ++layerNum2) {
-			if (_layers[layerNum2] == NULL) break;
+			if (_layers[layerNum2] == nullptr) break;
 
 			for (int yp = 0; yp < NUM_VERT_RECTS; ++yp) {
 				for (int xp = 0; xp < NUM_HORIZ_RECTS; ++xp) {
@@ -390,7 +390,7 @@ void Room::blockMerge() {
 
 void Room::layersPostProcess() {
 	for (int layerNum = 1; layerNum < 4; ++layerNum) {
-		if (_layers[layerNum] == NULL)
+		if (_layers[layerNum] == nullptr)
 			continue;
 
 		// Layer optimisation
@@ -481,7 +481,7 @@ void Room::update() {
 	if (_talkDialog)  {
 		// Make sure the character is still active and in the viewing room
 		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
-		if ((talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber))
+		if ((talkCharacter != nullptr) && (talkCharacter->roomNumber() == _roomNumber))
 			_talkDialog->copyTo(&s, _talkDialogX, _talkDialogY);
 	}
 
@@ -506,7 +506,7 @@ void Room::update() {
 
 	// Debug - if the bottle object is on layer 0FEh, then display it's surface
 	Hotspot *displayHotspot = res.getActiveHotspot(BOTTLE_HOTSPOT_ID);
-	if ((displayHotspot != NULL) && (displayHotspot->layer() == 0xfe))
+	if ((displayHotspot != nullptr) && (displayHotspot->layer() == 0xfe))
 		displayHotspot->frames().copyTo(&s);
 
 	// If show information is turned on, show extra debugging information
@@ -568,7 +568,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		for (int layerNum = 0; layerNum < _numLayers; ++layerNum) {
 			if (_layers[layerNum]) {
 				delete _layers[layerNum];
-				_layers[layerNum] = NULL;
+				_layers[layerNum] = nullptr;
 			}
 		}
 
@@ -697,7 +697,7 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 
 	if (_talkDialog) {
 		delete _talkDialog;
-		_talkDialog = NULL;
+		_talkDialog = nullptr;
 	}
 /*
 	if (res.getTalkingCharacter() != 0) {
@@ -762,7 +762,7 @@ bool Room::checkInTalkDialog() {
 }
 
 void Room::saveToStream(Common::WriteStream *stream) {
-	if (_talkDialog == NULL)
+	if (_talkDialog == nullptr)
 		stream->writeUint16LE(0);
 	else
 		_talkDialog->saveToStream(stream);
@@ -778,7 +778,7 @@ void Room::loadFromStream(Common::ReadStream *stream) {
 
 	if (_talkDialog) {
 		delete _talkDialog;
-		_talkDialog = NULL;
+		_talkDialog = nullptr;
 	}
 
 	if (saveVersion >= 26)

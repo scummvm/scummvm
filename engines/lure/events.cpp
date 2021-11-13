@@ -31,7 +31,7 @@
 
 namespace Lure {
 
-static Mouse *int_mouse = NULL;
+static Mouse *int_mouse = nullptr;
 
 Mouse &Mouse::getReference() {
 	return *int_mouse;
@@ -146,7 +146,7 @@ void Mouse::waitForRelease() {
 
 /*--------------------------------------------------------------------------*/
 
-static Events *int_events = NULL;
+static Events *int_events = nullptr;
 
 Events::Events() {
 	int_events = this;

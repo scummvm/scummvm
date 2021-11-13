@@ -31,7 +31,7 @@
 
 namespace Lure {
 
-static Screen *int_disk = NULL;
+static Screen *int_disk = nullptr;
 
 Screen &Screen::getReference() {
 	return *int_disk;
@@ -69,7 +69,7 @@ void Screen::setSystemPalette(Palette *p, uint16 start, uint16 num) {
 // Defaults the palette to an empty set
 
 void Screen::setPaletteEmpty(int numEntries) {
-	Palette emptyPalette(numEntries, NULL, RGB64);
+	Palette emptyPalette(numEntries, nullptr, RGB64);
 	setSystemPalette(&emptyPalette, 0, numEntries);
 	_palette->copyFrom(&emptyPalette);
 /*

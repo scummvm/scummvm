@@ -59,10 +59,10 @@ static const uint16 ewanExtraGraphic2[] = {
 	20,21,22,23,24,0};
 
 static const BarEntry default_barList[3] = {
-	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], NULL, NULL}, 13, NULL},
-	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], NULL, NULL}, 14, NULL},
+	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], nullptr, nullptr}, 13, nullptr},
+	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], nullptr, nullptr}, 14, nullptr},
 	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0],
-		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
+		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, nullptr}
 };
 
 const RoomTranslationRecord roomTranslations[] = {
@@ -153,7 +153,7 @@ RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 			return rec;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // Room paths
@@ -629,7 +629,7 @@ HotspotActionList *HotspotActionSet::getActions(uint16 recordId) {
 		if (list->recordId == recordId) return list;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // The following class holds the set of offsets for a character's talk set
@@ -832,7 +832,7 @@ void SequenceDelayList::loadFromStream(Common::ReadStream *stream) {
 // undergoes default argument promotion, which might be the case for enum
 // types.
 CharacterScheduleEntry::CharacterScheduleEntry(int theAction, ...) {
-	_parent = NULL;
+	_parent = nullptr;
 	_action = (Action)theAction;
 
 	va_list u_Arg;
@@ -904,17 +904,17 @@ CharacterScheduleEntry *CharacterScheduleEntry::next() {
 		for (i = _parent->begin(); i != _parent->end(); ++i) {
 			if ((*i).get() == this) {
 				++i;
-				CharacterScheduleEntry *result = (i == _parent->end()) ? NULL : (*i).get();
+				CharacterScheduleEntry *result = (i == _parent->end()) ? nullptr : (*i).get();
 				return result;
 			}
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 CharacterScheduleEntry::id() {
-	return (_parent == NULL) ? 0 : _parent->getId(this);
+	return (_parent == nullptr) ? 0 : _parent->getId(this);
 }
 
 CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId) {
@@ -932,12 +932,12 @@ CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint1
 
 CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterScheduleSet *currentSet) {
 	// Respond to the special no entry with no record
-	if (id == 0xffff) return NULL;
+	if (id == 0xffff) return nullptr;
 
 	// Handle jumps within a current set versus external jumps
 	if ((id >> 10) == 0) {
 		// Jump within current set
-		if (currentSet == NULL)
+		if (currentSet == nullptr)
 			error("Local support data jump encountered outside of a support data sequence");
 	} else {
 		// Inter-set jump - locate the appropriate set
@@ -1008,7 +1008,7 @@ RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 		if (v->roomNumber() == roomNumber)
 			return v;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void RandomActionSet::saveToStream(Common::WriteStream *stream) const {
@@ -1193,7 +1193,7 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 
 void BarmanLists::saveToStream(Common::WriteStream *stream) const {
 	for (int index = 0; index < 3; ++index) {
-		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
+		uint16 value = (_barList[index].currentCustomer == nullptr) ? 0 :
 			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
 		stream->writeUint16LE(value);
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
@@ -1210,7 +1210,7 @@ void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 	reset();
 	for (int index = 0; index < numEntries; ++index) {
 		int16 value = stream->readUint16LE();
-		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL :
+		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? nullptr :
 			&_barList[index].customers[value - 1];
 
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
@@ -1316,13 +1316,13 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 
 CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
 	_action = newAction;
-	_supportData = NULL;
+	_supportData = nullptr;
 	_dynamicSupportData = false;
 	_roomNumber = roomNum;
 }
 
 CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) {
-	assert(data->parent() != NULL);
+	assert(data->parent() != nullptr);
 	_action = newAction;
 	_supportData = data;
 	_dynamicSupportData = false;
@@ -1344,8 +1344,8 @@ CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
 	_roomNumber = src->_roomNumber;
 	if (!_dynamicSupportData)
 		_supportData = src->_supportData;
-	else if (src->_supportData == NULL)
-		_supportData = NULL;
+	else if (src->_supportData == nullptr)
+		_supportData = nullptr;
 	else {
 		_supportData = new CharacterScheduleEntry(src->_supportData);
 	}
@@ -1385,7 +1385,7 @@ void CurrentActionEntry::saveToStream(Common::WriteStream *stream) const {
 CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	uint8 actionNum = stream->readByte();
-	if (actionNum == 0xff) return NULL;
+	if (actionNum == 0xff) return nullptr;
 	CurrentActionEntry *result;
 
 	uint16 roomNumber = stream->readUint16LE();
@@ -1470,7 +1470,7 @@ void CurrentActionStack::loadFromStream(Common::ReadStream *stream) {
 	CurrentActionEntry *rec;
 
 	_actions.clear();
-	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
+	while ((rec = CurrentActionEntry::loadFromStream(stream)) != nullptr)
 		_actions.push_back(ActionsList::value_type(rec));
 }
 

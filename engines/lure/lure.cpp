@@ -37,7 +37,7 @@
 
 namespace Lure {
 
-static LureEngine *int_engine = NULL;
+static LureEngine *int_engine = nullptr;
 
 LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
 	: Engine(system), _gameDescription(gameDesc), _rnd("lure") {
@@ -188,7 +188,7 @@ const char *LureEngine::generateSaveName(int slotNumber) {
 bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	Common::WriteStream *f = this->_saveFileMan->openForSaving(
 		generateSaveName(slotNumber));
-	if (f == NULL)
+	if (f == nullptr)
 		return false;
 
 	f->write("lure", 5);
@@ -212,7 +212,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 bool LureEngine::loadGame(uint8 slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));
-	if (f == NULL)
+	if (f == nullptr)
 		return false;
 
 	// Check for header
@@ -257,8 +257,8 @@ void LureEngine::syncSoundSettings() {
 Common::String *LureEngine::detectSave(int slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));
-	if (f == NULL) return NULL;
-	Common::String *result = NULL;
+	if (f == nullptr) return nullptr;
+	Common::String *result = nullptr;
 
 	// Check for header
 	char buffer[5];
