@@ -67,20 +67,20 @@ public:
 	virtual ~MidiDriver_EAS();
 
 	// MidiDriver
-	virtual int open();
-	virtual bool isOpen() const;
-	virtual void close();
-	virtual void send(uint32 b) override;
-	virtual void sysEx(const byte *msg, uint16 length);
-	virtual void setTimerCallback(void *timerParam,
-								Common::TimerManager::TimerProc timerProc);
-	virtual uint32 getBaseTempo();
+	int open() override;
+	bool isOpen() const override;
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	void setTimerCallback(void *timerParam,
+								Common::TimerManager::TimerProc timerProc) override;
+	uint32 getBaseTempo() override;
 
 	// AudioStream
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const;
-	virtual int getRate() const;
-	virtual bool endOfData() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override;
+	int getRate() const override;
+	bool endOfData() const override;
 
 private:
 	struct EASLibConfig {

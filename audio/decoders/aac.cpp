@@ -44,7 +44,7 @@ public:
 	          DisposeAfterUse::Flag disposeExtraData);
 	~AACDecoder();
 
-	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
+	AudioStream *decodeFrame(Common::SeekableReadStream &stream) override;
 
 private:
 	NeAACDecHandle _handle;

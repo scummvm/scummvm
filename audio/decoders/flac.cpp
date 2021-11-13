@@ -127,18 +127,18 @@ public:
 	FLACStream(Common::SeekableReadStream *inStream, bool dispose);
 	virtual ~FLACStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return _streaminfo.channels >= 2; }
-	int getRate() const { return _streaminfo.sample_rate; }
-	bool endOfData() const {
+	bool isStereo() const override { return _streaminfo.channels >= 2; }
+	int getRate() const override { return _streaminfo.sample_rate; }
+	bool endOfData() const override {
 		// End of data is reached if there either is no valid stream data available,
 		// or if we reached the last sample and completely emptied the sample cache.
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
-	bool seek(const Timestamp &where);
-	Timestamp getLength() const { return _length; }
+	bool seek(const Timestamp &where) override;
+	Timestamp getLength() const override { return _length; }
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC; }
 protected:

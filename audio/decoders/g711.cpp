@@ -56,7 +56,7 @@ public:
 		_channels(channels) {
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples) override {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		int samples;
 
 		for (samples = 0; samples < numSamples; samples++) {
@@ -69,20 +69,20 @@ public:
 		return samples;
 	}
 
-	virtual bool isStereo() const override { return (_channels == 2); }
-	virtual int getRate() const override { return _rate; }
-	virtual bool endOfData() const override { return _stream->eos(); }
-	virtual bool seek(const Timestamp &where) override {
+	bool isStereo() const override { return (_channels == 2); }
+	int getRate() const override { return _rate; }
+	bool endOfData() const override { return _stream->eos(); }
+	bool seek(const Timestamp &where) override {
 		const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
 		return _stream->seek(seekSample, SEEK_SET);
 	}
-	virtual Timestamp getLength() const override {
+	Timestamp getLength() const override {
 		return Timestamp(0, _stream->size() / _channels, _rate);
 	}
 };
 
 class G711ALawStream : public G711AudioStream {
-	virtual int16 decodeSample(uint8 val) override {
+	int16 decodeSample(uint8 val) override {
 		val ^= 0x55;
 
 		int t = val & QUANT_MASK;
@@ -106,7 +106,7 @@ SeekableAudioStream *makeALawStream(Common::SeekableReadStream *stream, DisposeA
 }
 
 class G711MuLawStream : public G711AudioStream {
-	virtual int16 decodeSample(uint8 val) override {
+	int16 decodeSample(uint8 val) override {
 		val = ~val;
 
 		int t = ((val & QUANT_MASK) << 3) + BIAS;

@@ -33,7 +33,7 @@ public:
 	static PC98AudioCoreInternal *addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 	static void releaseRef(PC98AudioCore *owner);
 
-	bool init();
+	bool init() override;
 
 	void writePort(uint16 port, uint8 value);
 	uint8 readPort(uint16 port);
@@ -53,8 +53,8 @@ private:
 	bool assignPluginDriver(PC98AudioCore *owner, PC98AudioPluginDriver *driver, bool externalMutexHandling = false);
 	void removePluginDriver(PC98AudioCore *owner);
 
-	void timerCallbackA();
-	void timerCallbackB();
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 	uint16 _musicVolume;
 	uint16 _sfxVolume;

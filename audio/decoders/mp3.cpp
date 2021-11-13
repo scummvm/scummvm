@@ -53,9 +53,9 @@ public:
 	BaseMP3Stream();
 	virtual ~BaseMP3Stream();
 
-	bool endOfData() const { return _state == MP3_STATE_EOS; }
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
+	bool endOfData() const override { return _state == MP3_STATE_EOS; }
+	bool isStereo() const override { return _channels == 2; }
+	int getRate() const override { return _rate; }
 
 protected:
 	void decodeMP3Data(Common::ReadStream &stream);
@@ -98,9 +98,9 @@ public:
 	MP3Stream(Common::SeekableReadStream *inStream,
 	               DisposeAfterUse::Flag dispose);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool seek(const Timestamp &where);
-	Timestamp getLength() const { return _length; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool seek(const Timestamp &where) override;
+	Timestamp getLength() const override { return _length; }
 
 protected:
 	Common::ScopedPtr<Common::SeekableReadStream> _inStream;
@@ -118,13 +118,13 @@ public:
 	~PacketizedMP3Stream();
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const;
-	bool endOfStream() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override;
+	bool endOfStream() const override;
 
 	// PacketizedAudioStream API
-	void queuePacket(Common::SeekableReadStream *packet);
-	void finish();
+	void queuePacket(Common::SeekableReadStream *packet) override;
+	void finish() override;
 
 private:
 	Common::Mutex _mutex;

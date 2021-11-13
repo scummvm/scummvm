@@ -32,7 +32,7 @@ public:
 	SynthWrapper(Synth &useSynth) : synth(useSynth)
 	{}
 
-	void getOutputSamples(FloatSample *outBuffer, unsigned int size) {
+	void getOutputSamples(FloatSample *outBuffer, unsigned int size) override {
 		synth.render(outBuffer, size);
 	}
 };

@@ -75,14 +75,14 @@ public:
 			DisposeAfterUse::Flag disposeAfterUse);
 	~ASFStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool endOfData() const;
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _sampleRate; }
-	Timestamp getLength() const { return Audio::Timestamp(_duration / 10000, _sampleRate); }
-	bool seek(const Timestamp &where);
-	bool rewind();
+	bool endOfData() const override;
+	bool isStereo() const override { return _channels == 2; }
+	int getRate() const override { return _sampleRate; }
+	Timestamp getLength() const override { return Audio::Timestamp(_duration / 10000, _sampleRate); }
+	bool seek(const Timestamp &where) override;
+	bool rewind() override;
 
 private:
 	// Packet data
