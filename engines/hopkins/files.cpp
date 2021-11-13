@@ -90,7 +90,7 @@ bool FileManager::fileExists(const Common::String &file) {
  * Search file in Cat file
  */
 byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fileFoundFl) {
-	byte *ptr = NULL;
+	byte *ptr = nullptr;
 	fileFoundFl = true;
 	Common::File f;
 
@@ -102,7 +102,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_INI:
 		if (!f.exists("RES_INI.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_INI.CAT");
@@ -112,7 +112,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_REP:
 		if (!f.exists("RES_REP.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_REP.CAT");
@@ -122,7 +122,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_LIN:
 		if (!f.exists("RES_LIN.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_LIN.CAT");
@@ -132,7 +132,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_PER:
 		if (!f.exists("RES_PER.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_PER.CAT");
@@ -142,7 +142,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_PIC:
 		if (!f.exists("PIC.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("PIC.CAT");
@@ -151,7 +151,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_SAN:
 		if (!f.exists("RES_SAN.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_SAN.CAT");
@@ -160,7 +160,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 	case RES_SLI:
 		if (!f.exists("RES_SLI.CAT")) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile("RES_SLI.CAT");
@@ -189,7 +189,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 
 		if (!f.exists(tmpFilename)) {
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		ptr = loadFile(tmpFilename);
@@ -219,7 +219,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 		if (name == "FINIS") {
 			_vm->_globals->freeMemory(ptr);
 			fileFoundFl = false;
-			return NULL;
+			return nullptr;
 		}
 
 		offsetVal += 23;
@@ -234,14 +234,14 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 		f.seek(_catalogPos);
 
 		byte *catData = _vm->_globals->allocMemory(_catalogSize);
-		if (catData == NULL)
+		if (catData == nullptr)
 			error("CHARGE_FICHIER");
 
 		readStream(f, catData, _catalogSize);
 		f.close();
 		result = catData;
 	} else {
-		result = NULL;
+		result = nullptr;
 	}
 
 	return result;

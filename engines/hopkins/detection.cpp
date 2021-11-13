@@ -35,7 +35,7 @@ static const DebugChannelDef debugFlagList[] = {
 
 static const PlainGameDescriptor hopkinsGames[] = {
 	{"hopkins", "Hopkins FBI"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "hopkins/detection_tables.h"
@@ -67,7 +67,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 const static char *directoryGlobs[] = {
 	"voice",
 	"link",
-	0
+	nullptr
 };
 
 class HopkinsMetaEngineDetection : public AdvancedMetaEngineDetection {

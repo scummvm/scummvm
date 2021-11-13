@@ -767,7 +767,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 		case 46: {
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 564, 420);
 			_vm->_objectsMan->_zoneNum = -1;
 			do {
@@ -776,7 +776,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->removeSprite(0);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_soundMan->loadSample(1, "SOUND44.WAV");
@@ -1002,7 +1002,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->_oldCharacterPosX = _vm->_objectsMan->getSpriteX(0);
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 445, 332);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
@@ -1011,7 +1011,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->removeSprite(0);
 			_vm->_objectsMan->setBobAnimation(7);
 			_vm->_objectsMan->setBobAnimDataIdx(7, 0);
@@ -1125,7 +1125,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->_oldCharacterPosX = _vm->_objectsMan->getSpriteX(0);
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 119, 268);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
@@ -1134,7 +1134,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->removeSprite(0);
 			_vm->_objectsMan->setBobAnimation(11);
 			_vm->_objectsMan->setBobAnimation(8);
@@ -1450,7 +1450,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->_oldCharacterPosX = _vm->_objectsMan->getSpriteX(0);
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			switch (_vm->_globals->_saveData->_data[svField253]) {
 			case 1:
 				_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 201, 294);
@@ -1470,7 +1470,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->removeSprite(0);
 			_vm->_objectsMan->setSpriteIndex(0, 60);
 			_vm->_soundMan->loadSample(1, "SOUND63.WAV");
@@ -1704,7 +1704,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 361, 325);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsMan->_zoneNum = -1;
@@ -1714,7 +1714,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_globals->_exitId = 59;
 			break;
 			}
@@ -1732,7 +1732,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 361, 325);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsMan->_zoneNum = -1;
@@ -1742,7 +1742,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_globals->_exitId = 59;
 			break;
 			}
@@ -1923,7 +1923,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				_vm->_soundMan->_specialSoundNum = 0;
 			}
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 330, 418);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsMan->_zoneNum = 0;
@@ -1933,7 +1933,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->setSpriteIndex(0, 64);
 			_vm->_globals->_exitId = _vm->_globals->_saveData->_data[svField401];
 			_vm->_globals->_disableInventFl = false;
@@ -1953,7 +1953,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_objectsMan->getBobAnimDataIdx(1) != 9);
 			_vm->_objectsMan->stopBobAnimation(1);
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 330, 314);
 			_vm->_objectsMan->_zoneNum = 0;
@@ -1964,7 +1964,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->setSpriteIndex(0, 64);
 			_vm->_objectsMan->setBobAnimation(2);
 			_vm->_soundMan->playSoundFile("SOUND66.WAV");
@@ -2045,7 +2045,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->resetOldDirection();
 			_vm->_objectsMan->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesMan->_route = (RouteItem *)NULL;
+			_vm->_linesMan->_route = (RouteItem *)nullptr;
 			_vm->_linesMan->_route = _vm->_linesMan->findRoute(_vm->_objectsMan->getSpriteX(0), _vm->_objectsMan->getSpriteY(0), 488, 280);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
@@ -2054,7 +2054,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
-			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
+			} while (_vm->_linesMan->_route != (RouteItem *)nullptr);
 			_vm->_objectsMan->removeSprite(0);
 			bool playFl = false;
 			_vm->_objectsMan->setBobAnimation(7);

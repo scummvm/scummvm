@@ -68,13 +68,13 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_lastLine = 0;
 	_maxLineIdx = 0;
 	_pathFindingMaxDepth = 0;
-	_testRoute0 = NULL;
-	_testRoute1 = NULL;
-	_testRoute2 = NULL;
-	_lineBuf = NULL;
-	_route = NULL;
+	_testRoute0 = nullptr;
+	_testRoute1 = nullptr;
+	_testRoute2 = nullptr;
+	_lineBuf = nullptr;
+	_route = nullptr;
 	_currentSegmentId = 0;
-	_largeBuf = NULL;
+	_largeBuf = nullptr;
 	_zoneSkipCount = 0;
 	_hotspotTextColor = 0;
 	_forceHideText = false;
@@ -389,7 +389,7 @@ bool LinesManager::checkCollisionLine(int xp, int yp, int *foundDataIdx, int *fo
 	for (int curLineIdx = startLineIdx; curLineIdx <= endLineIdx; curLineIdx++) {
 		lineData = _lineItem[curLineIdx]._lineData;
 
-		if (lineData == NULL)
+		if (lineData == nullptr)
 			continue;
 
 		bool collisionFl = true;
@@ -808,7 +808,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 		int endLineIdx = 2 * _lineItem[startLineIdx - 1]._lineDataEndIdx;
 
 		int16 *lineData = _lineItem[startLineIdx - 1]._lineData;
-		if (lineData == NULL)
+		if (lineData == nullptr)
 			break;
 		while (lineData[endLineIdx - 2] != lineX || lineY != lineData[endLineIdx - 1]) {
 			--curLineIdx;
@@ -839,7 +839,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 		int curLineIdx = endLineIdx + 1;
 		int nextLineDataEndIdx = 2 * _lineItem[curLineIdx]._lineDataEndIdx;
 		int16 *lineData = _lineItem[curLineIdx]._lineData;
-		if (lineData == NULL)
+		if (lineData == nullptr)
 			break;
 		for (;;) {
 			curLineDataEndIdx = nextLineDataEndIdx;
@@ -910,7 +910,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 	int minLineY = 0;
 	for (int i = startLineIdx; i <= endLineIdx; ++i) {
 		int16 *lineData = _lineItem[i]._lineData;
-		if (lineData == NULL)
+		if (lineData == nullptr)
 			error("error in genial routine");
 		if (i == startLineIdx) {
 			minLineY = MIN(lineData[1], lineData[2 * _lineItem[i]._lineDataEndIdx - 1]);
@@ -1108,13 +1108,13 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 	if (!_vm->_globals->_checkDistanceFl) {
 		if (abs(fromX - _oldRouteFromX) <= 4 && abs(fromY - _oldRouteFromY) <= 4 &&
 		    abs(_oldRouteDestX - destX) <= 4 && abs(_oldRouteDestY - clipDestY) <= 4)
-			return NULL;
+			return nullptr;
 
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
-			return NULL;
+			return nullptr;
 
 		if (_oldZoneNum > 0 && _vm->_objectsMan->_zoneNum > 0 && _oldZoneNum == _vm->_objectsMan->_zoneNum)
-			return NULL;
+			return nullptr;
 	}
 	_vm->_globals->_checkDistanceFl = false;
 	_oldZoneNum = _vm->_objectsMan->_zoneNum;
@@ -1134,7 +1134,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		clipDestY = _vm->_globals->_characterMaxPosY;
 
 	if (abs(fromX - clipDestX) <= 3 && abs(fromY - clipDestY) <= 3)
-		return NULL;
+		return nullptr;
 
 	for (int i = 0; i <= 8; ++i) {
 		collLineIdxArr[i] = -1;
@@ -1213,7 +1213,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 	if (collLineIdxArr[DIR_LEFT] < 0)
 		deltaArr[DIR_LEFT] = INVALID_LINE_VALUE;
 	if (collLineIdxArr[DIR_UP] == -1 && collLineIdxArr[DIR_RIGHT] == -1 && collLineIdxArr[DIR_DOWN] == -1 && collLineIdxArr[DIR_LEFT] == -1)
-		return NULL;
+		return nullptr;
 
 	if (collLineIdxArr[DIR_DOWN] != -1 && deltaArr[DIR_UP] >= deltaArr[DIR_DOWN] && deltaArr[DIR_RIGHT] >= deltaArr[DIR_DOWN] && deltaArr[DIR_LEFT] >= deltaArr[DIR_DOWN]) {
 		curLineIdx = collLineIdxArr[DIR_DOWN];
@@ -2173,7 +2173,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		_bestRoute[superRouteIdx].invalidate();
 		result = &_bestRoute[0];
 	} else {
-		result = NULL;
+		result = nullptr;
 	}
 	return result;
 }
@@ -2727,7 +2727,7 @@ void LinesManager::initSquareZones() {
 
 	for (int idx = 0; idx < MAX_LINES + 1; ++idx) {
 		int16 *dataP = _zoneLine[idx]._zoneData;
-		if (dataP == NULL)
+		if (dataP == nullptr)
 			continue;
 
 		SquareZoneItem *curZone = &_squareZone[_zoneLine[idx]._bobZoneIdx];
@@ -2762,22 +2762,22 @@ void LinesManager::clearAll() {
 		_zone[idx]._spriteIndex = 0;
 	}
 
-	_testRoute0 = NULL;
-	_testRoute1 = NULL;
-	_testRoute2 = NULL;
-	_lineBuf = NULL;
-	_route = NULL;
+	_testRoute0 = nullptr;
+	_testRoute1 = nullptr;
+	_testRoute2 = nullptr;
+	_lineBuf = nullptr;
+	_route = nullptr;
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_lineItem[idx]._lineDataEndIdx = 0;
 		_lineItem[idx]._direction = DIR_NONE;
 		_lineItem[idx]._directionRouteInc = DIR_NONE;
 		_lineItem[idx]._directionRouteDec = DIR_NONE;
-		_lineItem[idx]._lineData = NULL;
+		_lineItem[idx]._lineData = nullptr;
 
 		_zoneLine[idx]._count = 0;
 		_zoneLine[idx]._bobZoneIdx = 0;
-		_zoneLine[idx]._zoneData = NULL;
+		_zoneLine[idx]._zoneData = nullptr;
 	}
 
 	for (int idx = 0; idx < 100; ++idx)
@@ -2787,11 +2787,11 @@ void LinesManager::clearAll() {
 	_testRoute1 = new RouteItem[8334];
 	_testRoute2 = new RouteItem[8334];
 	if (!_testRoute0)
-		_testRoute0 = NULL;
+		_testRoute0 = nullptr;
 	if (!_testRoute1)
-		_testRoute1 = NULL;
+		_testRoute1 = nullptr;
 	if (!_testRoute2)
-		_testRoute2 = NULL;
+		_testRoute2 = nullptr;
 
 	_largeBuf = _vm->_globals->allocMemory(10000);
 	_lineBuf = (int16 *)(_largeBuf);
@@ -2820,7 +2820,7 @@ void LinesManager::resetLines() {
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
 		_lineItem[idx]._lineDataEndIdx = 0;
-		_lineItem[idx]._lineData = NULL;
+		_lineItem[idx]._lineData = nullptr;
 	}
 }
 
@@ -2884,7 +2884,7 @@ void LinesManager::checkZone() {
 	if (_zoneSkipCount <= 1)
 		return;
 
-	if (_vm->_globals->_freezeCharacterFl || (_route == NULL) || _zoneSkipCount > 4) {
+	if (_vm->_globals->_freezeCharacterFl || (_route == nullptr) || _zoneSkipCount > 4) {
 		_zoneSkipCount = 0;
 		int zoneId;
 		if (_oldMouseX != mouseX || _oldMouseY != oldMouseY) {

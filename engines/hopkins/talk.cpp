@@ -37,10 +37,10 @@ namespace Hopkins {
 
 TalkManager::TalkManager(HopkinsEngine *vm) {
 	_vm = vm;
-	_characterBuffer = NULL;
-	_characterPalette = NULL;
-	_characterSprite = NULL;
-	_characterAnim = NULL;
+	_characterBuffer = nullptr;
+	_characterPalette = nullptr;
+	_characterSprite = nullptr;
+	_characterAnim = nullptr;
 	_characterSize = 0;
 	_dialogueMesgId1 = _dialogueMesgId2 = _dialogueMesgId3 = _dialogueMesgId4 = 0;
 	_paletteBufferIdx = 0;
@@ -719,7 +719,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 					loopCond = true;
 				if (bufIndx > bufferSize) {
 					_vm->_animMan->_animBqe[idx]._enabledFl = false;
-					_vm->_animMan->_animBqe[idx]._data = NULL;
+					_vm->_animMan->_animBqe[idx]._data = nullptr;
 					return false;
 				}
 				++bufIndx;
@@ -768,11 +768,11 @@ void TalkManager::handleAnswer(int zone, int verb) {
 	byte verbObj = verb;
 
 	bool outerLoopFl;
-	byte *ptr = NULL;
+	byte *ptr = nullptr;
 	do {
 		outerLoopFl = false;
 		bool tagFound = false;
-		if (_vm->_globals->_answerBuffer == NULL)
+		if (_vm->_globals->_answerBuffer == nullptr)
 			return;
 
 		byte *curAnswerBuf = _vm->_globals->_answerBuffer;
@@ -1019,7 +1019,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	byte *oldAnswerBufferPtr = _vm->_globals->_answerBuffer;
-	_vm->_globals->_answerBuffer = NULL;
+	_vm->_globals->_answerBuffer = nullptr;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsMan->loadLinkFile(screenFilename);
 	_vm->_objectsMan->_charactersEnabledFl = true;

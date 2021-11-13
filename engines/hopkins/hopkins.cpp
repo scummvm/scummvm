@@ -1194,7 +1194,7 @@ bool HopkinsEngine::runFull() {
 			_objectsMan->_forestFl = true;
 			Common::String im = Common::String::format("IM%d", _globals->_exitId);
 			_soundMan->playSound(13);
-			if (_objectsMan->_forestSprite == NULL) {
+			if (_objectsMan->_forestSprite == nullptr) {
 				_objectsMan->_forestSprite = _objectsMan->loadSprite("HOPDEG.SPR");
 				_soundMan->loadSample(1, "SOUND41.WAV");
 			}
@@ -1276,7 +1276,7 @@ bool HopkinsEngine::runFull() {
 		case 62:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->sceneControl2("IM62", "IM62", NULL, "IM62", 21, false);
+			_objectsMan->sceneControl2("IM62", "IM62", nullptr, "IM62", 21, false);
 			break;
 
 		case 63:
@@ -1306,7 +1306,7 @@ bool HopkinsEngine::runFull() {
 		case 67:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->sceneControl2("IM67", "IM67", NULL, "IM67", 21, false);
+			_objectsMan->sceneControl2("IM67", "IM67", nullptr, "IM67", 21, false);
 			break;
 
 		case 68:
@@ -1324,7 +1324,7 @@ bool HopkinsEngine::runFull() {
 		case 70:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->sceneControl2("IM70", "IM70", NULL, "IM70", 21, false);
+			_objectsMan->sceneControl2("IM70", "IM70", nullptr, "IM70", 21, false);
 			break;
 
 		case 71:
@@ -2078,7 +2078,7 @@ void HopkinsEngine::playEnding() {
 	_globals->_cityMapEnabledFl = false;
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_soundMan->playSound(26);
-	_linesMan->_route = NULL;
+	_linesMan->_route = nullptr;
 	_globals->_freezeCharacterFl = true;
 	_globals->_exitId = 0;
 	_soundMan->loadSample(1, "SOUND90.WAV");
@@ -2826,7 +2826,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_graphicsMan->setColorPercentage(251, 100, 100, 100);
 	_graphicsMan->setColorPercentage(254, 0, 0, 0);
 	_objectsMan->animateSprite(0);
-	_linesMan->_route = NULL;
+	_linesMan->_route = nullptr;
 	_events->mouseOn();
 	_events->changeMouseCursor(4);
 

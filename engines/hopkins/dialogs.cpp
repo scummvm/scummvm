@@ -45,9 +45,9 @@ DialogsManager::DialogsManager(HopkinsEngine *vm) {
 	_inventX = _inventY = 0;
 	_oldInventX = 0;
 	_inventWidth = _inventHeight = 0;
-	_inventWin1 = NULL;
-	_inventBuf2 = NULL;
-	_inventoryIcons = NULL;
+	_inventWin1 = nullptr;
+	_inventBuf2 = nullptr;
+	_inventoryIcons = nullptr;
 }
 
 DialogsManager::~DialogsManager() {
@@ -57,8 +57,8 @@ DialogsManager::~DialogsManager() {
 }
 
 void DialogsManager::clearAll() {
-	_inventWin1 = NULL;
-	_inventBuf2 = NULL;
+	_inventWin1 = nullptr;
+	_inventBuf2 = nullptr;
 }
 
 void DialogsManager::loadIcons() {
@@ -351,7 +351,7 @@ void DialogsManager::showInventory() {
 		_vm->_events->getMouseY();
 		_vm->_events->refreshScreenAndEvents();
 	}
-	_inventWin1 = NULL;
+	_inventWin1 = nullptr;
 
 	bool loopFl;
 	do {
