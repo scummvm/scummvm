@@ -1041,8 +1041,9 @@ void LauncherSimple::updateListing() {
 
 		if (description.empty()) {
 			Common::String gameid;
-			if (!iter->_value.tryGetVal("gameid", gameid));
+			if (!iter->_value.tryGetVal("gameid", gameid)) {
 				gameid = iter->_key;
+			}
 
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 		}
@@ -1461,8 +1462,9 @@ void LauncherGrid::updateListing() {
 
 		if (description.empty()) {
 			Common::String gameid;
-			if (!iter->_value.tryGetVal("gameid", gameid));
+			if (!iter->_value.tryGetVal("gameid", gameid)) {
 				gameid = iter->_key;
+			}
 
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 		}
