@@ -47,11 +47,11 @@ public:
 			int popAnim = -1, int openPoppedAnim = -1, int openPoppedFrame = -1, int grabLeft = -1, int grabTop = -1, int grabRight = -1,
 			int grabBottom = -1, int openEmptyAnim = -1, int openEmptyFrame = -1, int itemID = -1, int takenFlagOffset = -1,
 			int podStatusFlagOffset = -1, int returnDepth = -1, int popSwordAnim = -1);
-	virtual int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	virtual int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 protected:
 	Common::Rect _openDoor;
@@ -220,8 +220,8 @@ class DoubleZoomIn : public SceneBase {
 public:
 	DoubleZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int leftA, int topA, int rightA, int bottomA, int depthA, int leftB, int topB, int rightB, int bottomB, int depthB);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _zoomRegion[2];
@@ -279,8 +279,8 @@ class NerveNavigation : public SceneBase {
 public:
 	NerveNavigation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _nerve;
@@ -315,8 +315,8 @@ int NerveNavigation::specifyCursor(Window *viewWindow, const Common::Point &poin
 class ArmControls : public SceneBase {
 public:
 	ArmControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _controls[3];
@@ -355,7 +355,7 @@ int ArmControls::specifyCursor(Window *viewWindow, const Common::Point &pointLoc
 class OpenAlienDoorA : public SceneBase {
 public:
 	OpenAlienDoorA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 OpenAlienDoorA::OpenAlienDoorA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -384,11 +384,11 @@ int OpenAlienDoorA::postEnterRoom(Window *viewWindow, const Location &priorLocat
 class AlienDoorAEncounter : public SceneBase {
 public:
 	AlienDoorAEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	uint32 _timerStart;
@@ -478,7 +478,7 @@ int AlienDoorAEncounter::timerCallback(Window *viewWindow) {
 class AlienDoorAMoveDeath : public SceneBase {
 public:
 	AlienDoorAMoveDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int timerCallback(Window *viewWindow) override;
 };
 
 AlienDoorAMoveDeath::AlienDoorAMoveDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -493,7 +493,7 @@ int AlienDoorAMoveDeath::timerCallback(Window *viewWindow) {
 class AlienDoorBOpen : public SceneBase {
 public:
 	AlienDoorBOpen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 AlienDoorBOpen::AlienDoorBOpen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -520,11 +520,11 @@ int AlienDoorBOpen::postEnterRoom(Window *viewWindow, const Location &priorLocat
 class AlienDoorBEncounter : public SceneBase {
 public:
 	AlienDoorBEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	uint32 _timerStart;
@@ -606,9 +606,9 @@ int AlienDoorBEncounter::specifyCursor(Window *viewWindow, const Common::Point &
 class EncounterAmbassadorFirstZoom : public SceneBase {
 public:
 	EncounterAmbassadorFirstZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _panel;
@@ -666,10 +666,10 @@ int EncounterAmbassadorFirstZoom::specifyCursor(Window *viewWindow, const Common
 class AmbassadorEncounterPodField : public SceneBase {
 public:
 	AmbassadorEncounterPodField(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	uint32 _timerStart;
@@ -722,8 +722,8 @@ int AmbassadorEncounterPodField::timerCallback(Window *viewWindow) {
 class AmbassadorEncounterPodWalkForward : public SceneBase {
 public:
 	AmbassadorEncounterPodWalkForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	uint32 _timerStart;
@@ -753,10 +753,10 @@ int AmbassadorEncounterPodWalkForward::timerCallback(Window *viewWindow) {
 class AmbassadorEncounterTransportArmsOff : public SceneBase {
 public:
 	AmbassadorEncounterTransportArmsOff(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int timerCallback(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int timerCallback(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	uint32 _timerStart;
@@ -816,8 +816,8 @@ int AmbassadorEncounterTransportArmsOff::specifyCursor(Window *viewWindow, const
 class NormalTransporter : public SceneBase {
 public:
 	NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickRegion;
@@ -860,9 +860,9 @@ int NormalTransporter::specifyCursor(Window *viewWindow, const Common::Point &po
 class EntryWithoutLensFilter : public SceneBase {
 public:
 	EntryWithoutLensFilter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _transPlayed;
@@ -910,7 +910,7 @@ int EntryWithoutLensFilter::timerCallback(Window *viewWindow) {
 class PlayPodAudio : public SceneBase {
 public:
 	PlayPodAudio(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int untransAudio, int transSoundID);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _untransSoundID;
@@ -939,8 +939,8 @@ class InorganicPodTransDeath : public SceneBase {
 public:
 	InorganicPodTransDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1, int deathScene = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickRegion;
@@ -1011,10 +1011,10 @@ int CheeseGirlPod::specifyCursor(Window *viewWindow, const Common::Point &pointL
 class TransporterStatusRead : public SceneBase {
 public:
 	TransporterStatusRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int gdiPaint(Window *viewWindow);
-	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow) override;
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _currentRegion;

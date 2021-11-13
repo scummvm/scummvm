@@ -49,8 +49,8 @@ enum {
 class PlaceCeramicBowl : public SceneBase {
 public:
 	PlaceCeramicBowl(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int timerCallback(Window *viewWindow);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _dropped;
@@ -109,12 +109,12 @@ int PlaceCeramicBowl::timerCallback(Window *viewWindow) {
 class AdjustWheels : public SceneBase {
 public:
 	AdjustWheels(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	void preDestructor();
-	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
-	int gdiPaint(Window *viewWindow);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	void preDestructor() override;
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer) override;
+	int gdiPaint(Window *viewWindow) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	AVIFrames _leftWheelFrames;
@@ -335,8 +335,8 @@ int AdjustWheels::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 class DateCombinationRead : public SceneBase {
 public:
 	DateCombinationRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int gdiPaint(Window *viewWindow);
-	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow) override;
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _currentRegion;
@@ -395,10 +395,10 @@ public:
 	ViewSingleTranslation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int translatedTextID = -1, int left = -1, int top = -1, int right = -1, int bottom = -1,
 			int flagAOffset = -1, int flagBOffset = -1, int visitedFlagOffset = -1);
-	int gdiPaint(Window *viewWindow);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _textTranslated;
@@ -489,9 +489,9 @@ public:
 			int topZoomDepth = 0, int topLeft = -1, int topTop = -1, int topRight = -1, int topBottom = -1,
 			int rightZoomDepth = 0, int rightLeft = -1, int rightTop = -1, int rightRight = -1, int rightBottom = -1,
 			int offeringHeadZoomDepth = 0, int offeringHeadLeft = -1, int offeringHeadTop = -1, int offeringHeadRight = -1, int offeringHeadBottom = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _topZoomDepth;
@@ -568,10 +568,10 @@ class GenericCavernDoorOfferingHead : public SceneBase {
 public:
 	GenericCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int correctOfferingID = -1, int correctOfferingDestDepth = 0, int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	DestinationScene _correctDestination;
@@ -740,11 +740,11 @@ class DeathGodCavernDoorOfferingHead : public SceneBase {
 public:
 	DeathGodCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int correctOfferingDestDepth = 0, int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	DestinationScene _correctDestination;
@@ -896,9 +896,9 @@ int DeathGodCavernDoorOfferingHead::specifyCursor(Window *viewWindow, const Comm
 class WealthGodRopeDrop : public SceneBase {
 public:
 	WealthGodRopeDrop(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
 
 private:
 	Common::Rect _dropRope;
@@ -961,11 +961,11 @@ public:
 	WaterGodBridgeJump(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int movieFileNameID = 0, int playingStartingFrame = 0, int sequenceStartingFrame = 0, int framesPerCycle = 0,
 			int jumpFudgeFrames = 0, int sequenceLength = 0, bool jumpMidCycle = false, int frameOffsetToEndOfSwing = 0);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
-	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
+	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status) override;
 
 private:
 	int _movieID;
@@ -1088,13 +1088,13 @@ public:
 			int headID = 0, int clickLeft = -1, int clickTop = -1, int clickRight = -1, int clickBottom = -1,
 			int emptyClosedStill = -1, int emptyOpenStill = -1, int fullClosedStill = -1, int fullOpenStill = -1,
 			int emptyClosedAnim = -1, int emptyOpenAnim = -1, int fullClosedAnim = -1, int fullOpenAnim = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	int _headID;
@@ -1413,9 +1413,9 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 class ArrowGodDepthChange : public SceneBase {
 public:
 	ArrowGodDepthChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _scheduledDepthChange;
@@ -1631,12 +1631,12 @@ bool ArrowGodDepthChange::adjustSpearVolume(Window *viewWindow) {
 class DeathGodAltar : public SceneBase {
 public:
 	DeathGodAltar(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _heartPool;
@@ -1762,12 +1762,12 @@ class DeathGodPuzzleBox : public SceneBase {
 public:
 	DeathGodPuzzleBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~DeathGodPuzzleBox();
-	void preDestructor();
-	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
-	int gdiPaint(Window *viewWindow);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	void preDestructor() override;
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer) override;
+	int gdiPaint(Window *viewWindow) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _puzzleIndexes[4];
@@ -1993,8 +1993,8 @@ bool DeathGodPuzzleBox::isPuzzleSolved() const {
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _glass;
@@ -2042,8 +2042,8 @@ class WalkVolumeChange : public SceneBase {
 public:
 	WalkVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			byte newVolume = 0, uint32 volumeChangeTime = 0, int stepCount = -1, int entryEffectFileNameID = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
 
 private:
 	byte _newVolume;
@@ -2078,8 +2078,8 @@ int WalkVolumeChange::preExitRoom(Window *viewWindow, const Location &newLocatio
 class AdjustSecondaryAmbientOnEntry : public SceneBase {
 public:
 	AdjustSecondaryAmbientOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
 };
 
 AdjustSecondaryAmbientOnEntry::AdjustSecondaryAmbientOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -2103,7 +2103,7 @@ class WalkDualAmbientVolumeChange : public SceneBase {
 public:
 	WalkDualAmbientVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			byte newVolume = 0, byte secondVolume = 0, uint32 volumeChangeTime = 0, int stepCount = -1);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
 
 private:
 	byte _newVolume;

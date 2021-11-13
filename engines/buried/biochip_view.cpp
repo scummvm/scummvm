@@ -94,10 +94,10 @@ class JumpBiochipViewWindow : public Window {
 public:
 	JumpBiochipViewWindow(BuriedEngine *vm, Window *parent);
 
-	void onPaint();
-	void onLButtonDown(const Common::Point &point, uint flags);
-	void onLButtonUp(const Common::Point &point, uint flags);
-	void onMouseMove(const Common::Point &point, uint flags);
+	void onPaint() override;
+	void onLButtonDown(const Common::Point &point, uint flags) override;
+	void onLButtonUp(const Common::Point &point, uint flags) override;
+	void onMouseMove(const Common::Point &point, uint flags) override;
 
 private:
 	Common::Rect _missionBriefing;
@@ -366,8 +366,8 @@ public:
 	EvidenceBioChipViewWindow(BuriedEngine *vm, Window *parent);
 	~EvidenceBioChipViewWindow();
 
-	void onPaint();
-	void onLButtonUp(const Common::Point &point, uint flags);
+	void onPaint() override;
+	void onLButtonUp(const Common::Point &point, uint flags) override;
 
 private:
 	Common::Rect _evidence[6];
@@ -501,10 +501,10 @@ public:
 	InterfaceBioChipViewWindow(BuriedEngine *vm, Window *parent);
 	~InterfaceBioChipViewWindow();
 
-	void onPaint();
-	void onLButtonDown(const Common::Point &point, uint flags);
-	void onLButtonUp(const Common::Point &point, uint flags);
-	void onMouseMove(const Common::Point &point, uint flags);
+	void onPaint() override;
+	void onLButtonDown(const Common::Point &point, uint flags) override;
+	void onLButtonUp(const Common::Point &point, uint flags) override;
+	void onMouseMove(const Common::Point &point, uint flags) override;
 
 private:
 	Common::Rect _save;
@@ -674,8 +674,8 @@ class FilesBioChipViewWindow : public Window {
 public:
 	FilesBioChipViewWindow(BuriedEngine *vm, Window *parent);
 
-	void onPaint();
-	void onLButtonUp(const Common::Point &point, uint flags);
+	void onPaint() override;
+	void onLButtonUp(const Common::Point &point, uint flags) override;
 
 private:
 	int _curPage;

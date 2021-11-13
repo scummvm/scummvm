@@ -52,9 +52,9 @@ enum {
 class BaseOxygenTimer : public SceneBase {
 public:
 	BaseOxygenTimer(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	virtual int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	virtual int preExitRoom(Window *viewWindow, const Location &priorLocation);
-	virtual int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 protected:
 	uint32 _entryStartTime;
@@ -183,9 +183,9 @@ public:
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
 			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
 			int doorFlag = -1, int doorFlagValue = 0);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _clicked;
@@ -431,8 +431,8 @@ int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &pri
 class HabitatWingIceteroidDoor : public BaseOxygenTimer {
 public:
 	HabitatWingIceteroidDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _doorHandle;
@@ -496,8 +496,8 @@ public:
 	IceteroidPodTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1, int timeZone = -1,
 			int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _engageButton;
@@ -535,8 +535,8 @@ public:
 	IceteroidElevatorExtremeControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int upTimeZone = -1, int upEnvironment = -1, int upNode = -1, int upFacing = -1, int upOrientation = -1, int upDepth = -1, int upAnimID = -1,
 			int downTimeZone = -1, int downEnvironment = -1, int downNode = -1, int downFacing = -1, int downOrientation = -1, int downDepth = -1, int downAnimID = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _up, _down;
@@ -591,8 +591,8 @@ int IceteroidElevatorExtremeControls::specifyCursor(Window *viewWindow, const Co
 class IceteroidZoomInMineControls : public BaseOxygenTimer {
 public:
 	IceteroidZoomInMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _controls;
@@ -629,8 +629,8 @@ int IceteroidZoomInMineControls::specifyCursor(Window *viewWindow, const Common:
 class IceteroidMineControls : public BaseOxygenTimer {
 public:
 	IceteroidMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _mineButton, _makeOxygenButton;
@@ -708,8 +708,8 @@ int IceteroidMineControls::specifyCursor(Window *viewWindow, const Common::Point
 class IceteroidZoomInDispenser : public BaseOxygenTimer {
 public:
 	IceteroidZoomInDispenser(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _controls;
@@ -899,7 +899,7 @@ int IceteroidDispenserControls::droppedItem(Window *viewWindow, int itemID, cons
 class PlaySoundExitingForward : public BaseOxygenTimer {
 public:
 	PlaySoundExitingForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundFileNameID);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
 
 private:
 	int _soundFileNameID;
@@ -920,8 +920,8 @@ int PlaySoundExitingForward::postExitRoom(Window *viewWindow, const Location &ne
 class TakeWaterCanister : public BaseOxygenTimer {
 public:
 	TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _canister;
@@ -968,8 +968,8 @@ int TakeWaterCanister::specifyCursor(Window *viewWindow, const Common::Point &po
 class ScienceWingZoomIntoPanel : public BaseOxygenTimer {
 public:
 	ScienceWingZoomIntoPanel(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _cursorID;
@@ -1007,10 +1007,10 @@ class ScienceWingPanelInterface : public BaseOxygenTimer {
 public:
 	ScienceWingPanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~ScienceWingPanelInterface();
-	void preDestructor();
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int gdiPaint(Window *viewWindow);
+	void preDestructor() override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int gdiPaint(Window *viewWindow) override;
 
 private:
 	Common::Rect _stationRegions[15];
@@ -1238,8 +1238,8 @@ int ScienceWingPanelInterface::gdiPaint(Window *viewWindow) {
 class ScienceWingMachineRoomDoor : public BaseOxygenTimer {
 public:
 	ScienceWingMachineRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _cursorID;
@@ -1357,10 +1357,10 @@ int NexusDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocat
 class NexusPuzzle : public SceneBase {
 public:
 	NexusPuzzle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int gdiPaint(Window *viewWindow);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int gdiPaint(Window *viewWindow) override;
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _lights[7];
@@ -1577,7 +1577,7 @@ int NexusPuzzle::specifyCursor(Window *viewWindow, const Common::Point &pointLoc
 class NexusEnd : public SceneBase {
 public:
 	NexusEnd(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 NexusEnd::NexusEnd(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -1619,8 +1619,8 @@ class HabitatWingLockedDoor : public BaseOxygenTimer {
 public:
 	HabitatWingLockedDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int newFrameID = -1, int beepSoundID = -1, int voSoundID = -1, int left = 0, int top = 0, int right = 0, int bottom = 0);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _newFrameID;
@@ -1679,9 +1679,9 @@ BaseOxygenTimerInSpace::BaseOxygenTimerInSpace(BuriedEngine *vm, Window *viewWin
 class BaseOxygenTimerCapacitance : public SceneBase {
 public:
 	BaseOxygenTimerCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	virtual int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	virtual int preExitRoom(Window *viewWindow, const Location &priorLocation);
-	virtual int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 protected:
 	uint32 _entryStartTime;
@@ -1804,11 +1804,11 @@ int BaseOxygenTimerCapacitance::timerCallback(Window *viewWindow) {
 class CapacitanceToHabitatDoorClosed : public BaseOxygenTimerCapacitance {
 public:
 	CapacitanceToHabitatDoorClosed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
 
 private:
 	Common::Rect _metalBar;
@@ -1935,11 +1935,11 @@ int CapacitanceToHabitatDoorClosed::droppedItem(Window *viewWindow, int itemID, 
 class CapacitanceToHabitatDoorOpen : public BaseOxygenTimerCapacitance {
 public:
 	CapacitanceToHabitatDoorOpen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
 
 private:
 	Common::Rect _metalBar;
@@ -2021,10 +2021,10 @@ class CapacitancePanelInterface : public BaseOxygenTimerCapacitance {
 public:
 	CapacitancePanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~CapacitancePanelInterface();
-	void preDestructor();
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int gdiPaint(Window *viewWindow);
+	void preDestructor() override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int gdiPaint(Window *viewWindow) override;
 
 private:
 	Common::Rect _stationRegions[15];
@@ -2393,8 +2393,8 @@ public:
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0,
 			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
 			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _cursorID;
@@ -2433,8 +2433,8 @@ int ClickChangeSceneCapacitance::specifyCursor(Window *viewWindow, const Common:
 class CapacitanceDockingBayDoor : public BaseOxygenTimerCapacitance {
 public:
 	CapacitanceDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _door;
@@ -2498,9 +2498,9 @@ int CapacitanceDockingBayDoor::specifyCursor(Window *viewWindow, const Common::P
 class ScanningRoomEntryScan : public SceneBase {
 public:
 	ScanningRoomEntryScan(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	DestinationScene _savedForwardData;
@@ -2562,8 +2562,8 @@ int ScanningRoomEntryScan::timerCallback(Window *viewWindow) {
 class ScanningRoomWalkWarning : public SceneBase {
 public:
 	ScanningRoomWalkWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	DestinationScene _savedForwardData;
@@ -2605,9 +2605,9 @@ int ScanningRoomWalkWarning::timerCallback(Window *viewWindow) {
 class ScanningRoomDockingBayDoor : public SceneBase {
 public:
 	ScanningRoomDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int timerCallback(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int timerCallback(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _audioEnded;
@@ -2673,8 +2673,8 @@ int ScanningRoomDockingBayDoor::specifyCursor(Window *viewWindow, const Common::
 class ScanningRoomScienceWingDoor : public SceneBase {
 public:
 	ScanningRoomScienceWingDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _doorRegion;
@@ -2714,9 +2714,9 @@ int ScanningRoomScienceWingDoor::specifyCursor(Window *viewWindow, const Common:
 class ArthurScanningRoomConversation : public SceneBase {
 public:
 	ArthurScanningRoomConversation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _yes;
@@ -2820,9 +2820,9 @@ int ArthurScanningRoomConversation::specifyCursor(Window *viewWindow, const Comm
 class ScanningRoomNexusDoorNormalFacing : public SceneBase {
 public:
 	ScanningRoomNexusDoorNormalFacing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickable;
@@ -2872,8 +2872,8 @@ int ScanningRoomNexusDoorNormalFacing::specifyCursor(Window *viewWindow, const C
 class ScanningRoomNexusDoorZoomInCodePad : public SceneBase {
 public:
 	ScanningRoomNexusDoorZoomInCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _controls;
@@ -2911,12 +2911,12 @@ class ScanningRoomNexusDoorCodePad : public SceneBase {
 public:
 	ScanningRoomNexusDoorCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~ScanningRoomNexusDoorCodePad();
-	void preDestructor();
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int onCharacter(Window *viewWindow, const Common::KeyState &character);
-	int gdiPaint(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	void preDestructor() override;
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int onCharacter(Window *viewWindow, const Common::KeyState &character) override;
+	int gdiPaint(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _numbers[10];
@@ -3066,9 +3066,9 @@ int ScanningRoomNexusDoorCodePad::specifyCursor(Window *viewWindow, const Common
 class ScanningRoomNexusDoorPullHandle : public SceneBase {
 public:
 	ScanningRoomNexusDoorPullHandle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _handle;
@@ -3114,8 +3114,8 @@ int ScanningRoomNexusDoorPullHandle::specifyCursor(Window *viewWindow, const Com
 class MachineRoomExitDoor : public SceneBase {
 public:
 	MachineRoomExitDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickable;
@@ -3151,10 +3151,10 @@ int MachineRoomExitDoor::specifyCursor(Window *viewWindow, const Common::Point &
 class MachineRoomTamperedSculpture : public SceneBase {
 public:
 	MachineRoomTamperedSculpture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickable;
@@ -3233,8 +3233,8 @@ int MachineRoomTamperedSculpture::specifyCursor(Window *viewWindow, const Common
 class MachineRoomHarmonicsInterface : public SceneBase {
 public:
 	MachineRoomHarmonicsInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _testButton;
@@ -3455,8 +3455,8 @@ int MachineRoomHarmonicsInterface::specifyCursor(Window *viewWindow, const Commo
 class MachineRoomHarmonicsZoomIn : public SceneBase {
 public:
 	MachineRoomHarmonicsZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickRegion;
@@ -3494,9 +3494,9 @@ public:
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
 			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
 			int doorFlag = -1, int doorFlagValue = 0);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _clicked;
@@ -3593,8 +3593,8 @@ ScanningRoomNexusDoorToGlobe::ScanningRoomNexusDoorToGlobe(BuriedEngine *vm, Win
 class MachineRoomEntry : public SceneBase {
 public:
 	MachineRoomEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundID = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	int _soundID;
@@ -3638,7 +3638,7 @@ class DockingBayPlaySoundEntering : public SceneBase {
 public:
 	DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int soundFileNameID = -1, int flagOffset = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _soundFileNameID;
@@ -3668,8 +3668,8 @@ class MachineRoomPlayAnim : public SceneBase {
 public:
 	MachineRoomPlayAnim(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickable;
