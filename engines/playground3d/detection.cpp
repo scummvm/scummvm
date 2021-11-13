@@ -27,14 +27,14 @@
 
 static const PlainGameDescriptor playground3d_setting[] = {
 	{ "playground3d", "Playground 3d: the testing and plaground environment for 3d renderers" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription playground3dDescriptions[] = {
 	{
 		"playground3d",
 		"",
-		AD_ENTRY1("PLAYGROUND3D", 0),
+		AD_ENTRY1("PLAYGROUND3D", nullptr),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,

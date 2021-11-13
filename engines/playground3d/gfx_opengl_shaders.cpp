@@ -75,7 +75,7 @@ void ShaderRenderer::init() {
 
 	glEnable(GL_DEPTH_TEST);
 
-	static const char *cubeAttributes[] = { "position", "normal", "color", "texcoord", NULL };
+	static const char *cubeAttributes[] = { "position", "normal", "color", "texcoord", nullptr };
 	_cubeShader = OpenGL::ShaderGL::fromFiles("playground3d_cube", cubeAttributes);
 	_cubeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
 	_cubeShader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
