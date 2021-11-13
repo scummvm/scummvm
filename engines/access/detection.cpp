@@ -28,7 +28,7 @@
 static const PlainGameDescriptor AccessGames[] = {
 	{"amazon", "Amazon: Guardians of Eden"},
 	{"martian", "Martian Memorandum"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {
