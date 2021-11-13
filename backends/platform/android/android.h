@@ -86,11 +86,11 @@ public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
-	virtual void initBackend() override;
+	void initBackend() override;
 
-	virtual bool hasFeature(OSystem::Feature f) override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
-	virtual bool getFeatureState(OSystem::Feature f) override;
+	bool hasFeature(OSystem::Feature f) override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) override;
 
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
@@ -118,33 +118,33 @@ private:
 	void pushEvent(const Common::Event &event);
 
 public:
-	virtual bool pollEvent(Common::Event &event) override;
-	virtual Common::HardwareInputSet *getHardwareInputSet() override;
-	virtual Common::KeymapArray getGlobalKeymaps() override;
-	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
+	bool pollEvent(Common::Event &event) override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
+	Common::KeymapArray getGlobalKeymaps() override;
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
-	virtual void registerDefaultSettings(const Common::String &target) const override;
-	virtual GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
-	virtual void applyBackendSettings() override;
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void applyBackendSettings() override;
 
-	virtual uint32 getMillis(bool skipRecord = false) override;
-	virtual void delayMillis(uint msecs) override;
-	virtual Common::MutexInternal *createMutex() override;
+	uint32 getMillis(bool skipRecord = false) override;
+	void delayMillis(uint msecs) override;
+	Common::MutexInternal *createMutex() override;
 
-	virtual void quit() override;
+	void quit() override;
 
-	virtual void setWindowCaption(const Common::U32String &caption) override;
+	void setWindowCaption(const Common::U32String &caption) override;
 
-	virtual Audio::Mixer *getMixer() override;
-	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
-	virtual void logMessage(LogMessageType::Type type, const char *message) override;
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
-	virtual bool openUrl(const Common::String &url) override;
-	virtual bool hasTextInClipboard() override;
-	virtual Common::U32String getTextFromClipboard() override;
-	virtual bool setTextInClipboard(const Common::U32String &text) override;
-	virtual bool isConnectionLimited() override;
-	virtual Common::String getSystemLanguage() const override;
+	Audio::Mixer *getMixer() override;
+	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
+	void logMessage(LogMessageType::Type type, const char *message) override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	bool openUrl(const Common::String &url) override;
+	bool hasTextInClipboard() override;
+	Common::U32String getTextFromClipboard() override;
+	bool setTextInClipboard(const Common::U32String &text) override;
+	bool isConnectionLimited() override;
+	Common::String getSystemLanguage() const override;
 };
 
 #endif

@@ -34,23 +34,23 @@ public:
 	void initSurface();
 	void deinitSurface();
 
-	virtual void updateScreen() override;
+	void updateScreen() override;
 
-	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
+	void displayMessageOnOSD(const Common::U32String &msg) override;
 
 	bool notifyMousePosition(Common::Point &mouse);
 	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 
-	virtual float getHiDPIScreenFactor() const override;
+	float getHiDPIScreenFactor() const override;
 
 protected:
-	virtual void setSystemMousePosition(const int x, const int y) override {}
+	void setSystemMousePosition(const int x, const int y) override {}
 
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
-	virtual void refreshScreen() override;
+	void refreshScreen() override;
 
-	virtual void *getProcAddress(const char *name) const override;
+	void *getProcAddress(const char *name) const override;
 
 };
 

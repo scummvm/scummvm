@@ -44,21 +44,21 @@ protected:
 public:
 	RoninCDFileNode(const Common::String &path) : _path(path) {}
 
-	virtual bool exists() const override { return true; }
-	virtual Common::String getName() const override { return lastPathComponent(_path, '/'); }
-	virtual Common::U32String getDisplayName() const override { return getName(); }
-	virtual Common::String getPath() const override { return _path; }
-	virtual bool isDirectory() const override { return false; }
-	virtual bool isReadable() const override { return true; }
-	virtual bool isWritable() const override { return false; }
+	bool exists() const override { return true; }
+	Common::String getName() const override { return lastPathComponent(_path, '/'); }
+	Common::U32String getDisplayName() const override { return getName(); }
+	Common::String getPath() const override { return _path; }
+	bool isDirectory() const override { return false; }
+	bool isReadable() const override { return true; }
+	bool isWritable() const override { return false; }
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const override { return NULL; }
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override { return false; }
-	virtual AbstractFSNode *getParent() const override;
+	AbstractFSNode *getChild(const Common::String &n) const override { return NULL; }
+	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override { return false; }
+	AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream() override;
-	virtual Common::SeekableWriteStream *createWriteStream() override { return 0; }
-	virtual bool createDirectory() override { return false; }
+	Common::SeekableReadStream *createReadStream() override;
+	Common::SeekableWriteStream *createWriteStream() override { return 0; }
+	bool createDirectory() override { return false; }
 
 	static AbstractFSNode *makeFileNodePath(const Common::String &path);
 };
@@ -68,11 +68,11 @@ class RoninCDDirectoryNode final : public RoninCDFileNode {
 public:
 	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {}
 
-	virtual bool isDirectory() const override { return true; }
-	virtual AbstractFSNode *getChild(const Common::String &n) const override;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
-	virtual Common::SeekableReadStream *createReadStream() override { return 0; }
-	virtual bool createDirectory() override { return true; }
+	bool isDirectory() const override { return true; }
+	AbstractFSNode *getChild(const Common::String &n) const override;
+	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	Common::SeekableReadStream *createReadStream() override { return 0; }
+	bool createDirectory() override { return true; }
 };
 
 /* A file/directory which does not exist */
@@ -80,9 +80,9 @@ class RoninCDNonexistingNode final : public RoninCDFileNode {
 public:
 	RoninCDNonexistingNode(const Common::String &path) : RoninCDFileNode(path) {}
 
-	virtual bool exists() const override { return false; }
-	virtual bool isReadable() const override { return false; }
-	virtual Common::SeekableReadStream *createReadStream() override { return 0; }
+	bool exists() const override { return false; }
+	bool isReadable() const override { return false; }
+	Common::SeekableReadStream *createReadStream() override { return 0; }
 };
 
 AbstractFSNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {

@@ -36,14 +36,14 @@ public:
 	OSystem_SDL_Maemo();
 	~OSystem_SDL_Maemo();
 
-	virtual void init() override;
-	virtual void initBackend() override;
-	virtual void quit() override;
-	virtual void fatalError() override;
-	virtual void setWindowCaption(const Common::U32String &caption) override;
-	virtual Common::HardwareInputSet *getHardwareInputSet() override;
-	virtual Common::KeymapArray getGlobalKeymaps() override;
-	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
+	void init() override;
+	void initBackend() override;
+	void quit() override;
+	void fatalError() override;
+	void setWindowCaption(const Common::U32String &caption) override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
+	Common::KeymapArray getGlobalKeymaps() override;
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Model getModel() { return _model; }
 

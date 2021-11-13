@@ -35,34 +35,34 @@ public:
 	OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window);
 	virtual ~OpenGLSdlGraphicsManager();
 
-	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
-	virtual bool getFeatureState(OSystem::Feature f) const override;
+	bool hasFeature(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-	virtual void updateScreen() override;
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
+	void updateScreen() override;
 
-	virtual float getHiDPIScreenFactor() const override;
+	float getHiDPIScreenFactor() const override;
 
 	// EventObserver API
-	virtual bool notifyEvent(const Common::Event &event) override;
+	bool notifyEvent(const Common::Event &event) override;
 
 	// SdlGraphicsManager API
-	virtual void notifyVideoExpose() override;
-	virtual void notifyResize(const int width, const int height) override;
+	void notifyVideoExpose() override;
+	void notifyResize(const int width, const int height) override;
 
 protected:
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
-	virtual void refreshScreen() override;
+	void refreshScreen() override;
 
-	virtual void *getProcAddress(const char *name) const override;
+	void *getProcAddress(const char *name) const override;
 
-	virtual void handleResizeImpl(const int width, const int height) override;
+	void handleResizeImpl(const int width, const int height) override;
 
-	virtual bool saveScreenshot(const Common::String &filename) const override;
+	bool saveScreenshot(const Common::String &filename) const override;
 
-	virtual int getGraphicsModeScale(int mode) const override {
+	int getGraphicsModeScale(int mode) const override {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);

@@ -94,14 +94,14 @@ public:
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
-	virtual bool showMouse(bool visible) override;
-	virtual bool lockMouse(bool lock) override;
+	bool showMouse(bool visible) override;
+	bool lockMouse(bool lock) override;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
 	void saveScreenshot() override;
 
 	// Override from Common::EventObserver
-	virtual bool notifyEvent(const Common::Event &event) override;
+	bool notifyEvent(const Common::Event &event) override;
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -133,7 +133,7 @@ public:
 	 */
 	SdlWindow *getWindow() const { return _window; }
 
-	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+	void initSizeHint(const Graphics::ModeList &modes) override;
 
 	Common::Keymap *getKeymap();
 
@@ -180,9 +180,9 @@ protected:
 #endif
 	}
 
-	virtual void setSystemMousePosition(const int x, const int y) override;
+	void setSystemMousePosition(const int x, const int y) override;
 
-	virtual void handleResizeImpl(const int width, const int height) override;
+	void handleResizeImpl(const int width, const int height) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:

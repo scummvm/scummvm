@@ -36,15 +36,15 @@ public:
 	Win32UpdateManager(SdlWindow_Win32 *window);
 	virtual ~Win32UpdateManager();
 
-	virtual void checkForUpdates() override;
+	void checkForUpdates() override;
 
-	virtual void setAutomaticallyChecksForUpdates(UpdateState state) override;
-	virtual UpdateState getAutomaticallyChecksForUpdates() override;
+	void setAutomaticallyChecksForUpdates(UpdateState state) override;
+	UpdateState getAutomaticallyChecksForUpdates() override;
 
-	virtual void setUpdateCheckInterval(int interval) override;
-	virtual int getUpdateCheckInterval() override;
+	void setUpdateCheckInterval(int interval) override;
+	int getUpdateCheckInterval() override;
 
-	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t) override;
+	bool getLastUpdateCheckTimeAndDate(TimeDate &t) override;
 
 private:
 	static int canShutdownCallback();

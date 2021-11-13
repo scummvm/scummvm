@@ -35,9 +35,9 @@ class ChRootFilesystemFactory final : public FilesystemFactory {
 public:
 	explicit ChRootFilesystemFactory(const Common::String &root);
 
-	virtual AbstractFSNode *makeRootFileNode() const override;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+	AbstractFSNode *makeRootFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 private:
 	const Common::String _root;

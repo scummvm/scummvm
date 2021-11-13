@@ -32,7 +32,7 @@
 
 class WiiDLObject final : public PPCDLObject {
 protected:
-	virtual void flushDataCache(void *ptr, uint32 len) const override {
+	void flushDataCache(void *ptr, uint32 len) const override {
 		DCFlushRange(ptr, len);
 		ICInvalidateRange(ptr, len);
 	}

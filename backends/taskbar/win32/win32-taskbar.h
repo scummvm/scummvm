@@ -36,13 +36,13 @@ public:
 	Win32TaskbarManager(SdlWindow_Win32 *window);
 	virtual ~Win32TaskbarManager();
 
-	virtual void setOverlayIcon(const Common::String &name, const Common::String &description) override;
-	virtual void setProgressValue(int completed, int total) override;
-	virtual void setProgressState(TaskbarProgressState state) override;
-	virtual void setCount(int count) override;
-	virtual void addRecent(const Common::String &name, const Common::String &description) override;
-	virtual void notifyError() override;
-	virtual void clearError() override;
+	void setOverlayIcon(const Common::String &name, const Common::String &description) override;
+	void setProgressValue(int completed, int total) override;
+	void setProgressState(TaskbarProgressState state) override;
+	void setCount(int count) override;
+	void addRecent(const Common::String &name, const Common::String &description) override;
+	void notifyError() override;
+	void clearError() override;
 
 private:
 	SdlWindow_Win32 *_window;

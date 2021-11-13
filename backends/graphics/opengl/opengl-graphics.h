@@ -60,64 +60,64 @@ public:
 	virtual ~OpenGLGraphicsManager();
 
 	// GraphicsManager API
-	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
-	virtual bool getFeatureState(OSystem::Feature f) const override;
+	bool hasFeature(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
-	virtual int getGraphicsMode() const override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
+	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
+	int getGraphicsMode() const override;
 
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
+	Graphics::PixelFormat getScreenFormat() const override;
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
-	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
-	virtual int getDefaultStretchMode() const override;
-	virtual bool setStretchMode(int mode) override;
-	virtual int getStretchMode() const override;
+	const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	int getDefaultStretchMode() const override;
+	bool setStretchMode(int mode) override;
+	int getStretchMode() const override;
 
-	virtual void beginGFXTransaction() override;
-	virtual OSystem::TransactionError endGFXTransaction() override;
+	void beginGFXTransaction() override;
+	OSystem::TransactionError endGFXTransaction() override;
 
-	virtual int getScreenChangeID() const override;
+	int getScreenChangeID() const override;
 
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 
-	virtual int16 getWidth() const override;
-	virtual int16 getHeight() const override;
+	int16 getWidth() const override;
+	int16 getHeight() const override;
 
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
-	virtual void fillScreen(uint32 col) override;
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
+	void fillScreen(uint32 col) override;
 
-	virtual void updateScreen() override;
+	void updateScreen() override;
 
-	virtual Graphics::Surface *lockScreen() override;
-	virtual void unlockScreen() override;
+	Graphics::Surface *lockScreen() override;
+	void unlockScreen() override;
 
-	virtual void setFocusRectangle(const Common::Rect& rect) override;
-	virtual void clearFocusRectangle() override;
+	void setFocusRectangle(const Common::Rect& rect) override;
+	void clearFocusRectangle() override;
 
-	virtual int16 getOverlayWidth() const override;
-	virtual int16 getOverlayHeight() const override;
+	int16 getOverlayWidth() const override;
+	int16 getOverlayHeight() const override;
 
-	virtual Graphics::PixelFormat getOverlayFormat() const override;
+	Graphics::PixelFormat getOverlayFormat() const override;
 
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
-	virtual void clearOverlay() override;
-	virtual void grabOverlay(Graphics::Surface &surface) const override;
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	void clearOverlay() override;
+	void grabOverlay(Graphics::Surface &surface) const override;
 
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
+	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
-	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
-	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
+	void displayMessageOnOSD(const Common::U32String &msg) override;
+	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	// PaletteManager interface
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
 	/**
@@ -309,9 +309,9 @@ protected:
 	 */
 	bool getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const;
 
-	virtual bool gameNeedsAspectRatioCorrection() const override;
-	virtual void recalculateDisplayAreas() override;
-	virtual void handleResizeImpl(const int width, const int height) override;
+	bool gameNeedsAspectRatioCorrection() const override;
+	void recalculateDisplayAreas() override;
+	void handleResizeImpl(const int width, const int height) override;
 
 	/**
 	 * The default pixel format of the backend.

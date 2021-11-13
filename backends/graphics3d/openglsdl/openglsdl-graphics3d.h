@@ -47,70 +47,70 @@ public:
 	virtual ~OpenGLSdlGraphics3dManager();
 
 	// GraphicsManager API - Features
-	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual bool getFeatureState(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool hasFeature(OSystem::Feature f) const override;
+	bool getFeatureState(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
-	virtual int getGraphicsMode() const override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
+	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
+	int getGraphicsMode() const override;
 
-	virtual void beginGFXTransaction() override;
-	virtual OSystem::TransactionError endGFXTransaction() override;
+	void beginGFXTransaction() override;
+	OSystem::TransactionError endGFXTransaction() override;
 
 	// GraphicsManager API - Graphics mode
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override { return _overlayFormat; }
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override {
+	Graphics::PixelFormat getScreenFormat() const override { return _overlayFormat; }
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const override {
 		Common::List<Graphics::PixelFormat> supportedFormats;
 		return supportedFormats;
 	}
 #endif
-	virtual int getScreenChangeID() const override { return _screenChangeCount; }
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-	virtual int16 getHeight() const override;
-	virtual int16 getWidth() const override;
+	int getScreenChangeID() const override { return _screenChangeCount; }
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
+	int16 getHeight() const override;
+	int16 getWidth() const override;
 
 	// GraphicsManager API - Draw methods
-	virtual void updateScreen() override;
+	void updateScreen() override;
 	// Following methods are not used by 3D graphics managers
-	virtual void setPalette(const byte *colors, uint start, uint num) override {}
-	virtual void grabPalette(byte *colors, uint start, uint num) const override {}
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
-	virtual Graphics::Surface *lockScreen() override { return nullptr; }
-	virtual void unlockScreen() override {}
-	virtual void fillScreen(uint32 col) override {}
-	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override {};
-	virtual void setFocusRectangle(const Common::Rect& rect) override {}
-	virtual void clearFocusRectangle() override {}
+	void setPalette(const byte *colors, uint start, uint num) override {}
+	void grabPalette(byte *colors, uint start, uint num) const override {}
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
+	Graphics::Surface *lockScreen() override { return nullptr; }
+	void unlockScreen() override {}
+	void fillScreen(uint32 col) override {}
+	void setShakePos(int shakeXOffset, int shakeYOffset) override {};
+	void setFocusRectangle(const Common::Rect& rect) override {}
+	void clearFocusRectangle() override {}
 
 	// GraphicsManager API - Overlay
-	virtual void showOverlay() override;
-	virtual void hideOverlay() override;
-	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
-	virtual void clearOverlay() override;
-	virtual void grabOverlay(Graphics::Surface &surface) const override;
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	void showOverlay() override;
+	void hideOverlay() override;
+	Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
+	void clearOverlay() override;
+	void grabOverlay(Graphics::Surface &surface) const override;
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
-	virtual bool isOverlayVisible() const override { return _overlayVisible; }
+	bool isOverlayVisible() const override { return _overlayVisible; }
 
 	// GraphicsManager API - Mouse
-	virtual bool showMouse(bool visible) override;
-	virtual void warpMouse(int x, int y) override;
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) override {}
+	bool showMouse(bool visible) override;
+	void warpMouse(int x, int y) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
+	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 
 	// SdlGraphicsManager API
-	virtual void notifyVideoExpose() override {};
-	virtual void notifyResize(const int width, const int height) override;
+	void notifyVideoExpose() override {};
+	void notifyResize(const int width, const int height) override;
 
-	virtual bool gameNeedsAspectRatioCorrection() const override { return false; }
-	virtual int getGraphicsModeScale(int mode) const override { return 1; }
+	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	int getGraphicsModeScale(int mode) const override { return 1; }
 
 	void transformMouseCoordinates(Common::Point &point);
-	virtual bool notifyMousePosition(Common::Point &mouse) override {
+	bool notifyMousePosition(Common::Point &mouse) override {
 		transformMouseCoordinates(mouse);
 
 		return true;
@@ -153,7 +153,7 @@ protected:
 	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
 	                             uint screenWidth, uint screenHeight);
 
-	virtual bool saveScreenshot(const Common::String &filename) const override;
+	bool saveScreenshot(const Common::String &filename) const override;
 
 	uint _engineRequestedWidth, _engineRequestedHeight;
 

@@ -32,10 +32,10 @@ public:
 	OSystem_SDL_Symbian();
 
 	// Override from OSystem_SDL
-	virtual void init() override;
-	virtual void initBackend() override;
-	virtual Common::String getDefaultConfigFileName() override;
-	virtual bool hasFeature(Feature f) override;
+	void init() override;
+	void initBackend() override;
+	Common::String getDefaultConfigFileName() override;
+	bool hasFeature(Feature f) override;
 
 	void quitWithErrorMsg(const char *msg);
 
@@ -43,7 +43,7 @@ public:
 
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
-	virtual bool openUrl(const Common::String &url) override;
+	bool openUrl(const Common::String &url) override;
 protected:
 	TFileName _localpath;
 };

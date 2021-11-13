@@ -32,9 +32,9 @@
  */
 class AmigaOSFilesystemFactory final : public FilesystemFactory {
 public:
-	virtual AbstractFSNode *makeRootFileNode() const override;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+	AbstractFSNode *makeRootFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 };
 
 #endif /*AMIGAOS_FILESYSTEM_FACTORY_H*/

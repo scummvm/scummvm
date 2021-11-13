@@ -36,10 +36,10 @@
 class PthreadMutexInternal final : public Common::MutexInternal {
 public:
 	PthreadMutexInternal();
-	virtual ~PthreadMutexInternal() override;
+	~PthreadMutexInternal() override;
 
-	virtual bool lock() override;
-	virtual bool unlock() override;
+	bool lock() override;
+	bool unlock() override;
 
 private:
 	pthread_mutex_t _mutex;

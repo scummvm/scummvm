@@ -36,10 +36,10 @@
 class WiiMutexInternal final : public Common::MutexInternal {
 public:
 	WiiMutexInternal();
-	virtual ~WiiMutexInternal() override;
+	~WiiMutexInternal() override;
 
-	virtual bool lock() override;
-	virtual bool unlock() override;
+	bool lock() override;
+	bool unlock() override;
 
 private:
 	mutex_t _mutex;

@@ -63,19 +63,19 @@ public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
 
-	virtual void init() override;
-	virtual bool pollEvent(Common::Event &event) override;
-	virtual void pushEvent(const Common::Event &event) override;
-	virtual void purgeMouseEvents() override;
-	virtual void purgeKeyboardEvents() override;
+	void init() override;
+	bool pollEvent(Common::Event &event) override;
+	void pushEvent(const Common::Event &event) override;
+	void purgeMouseEvents() override;
+	void purgeKeyboardEvents() override;
 
-	virtual Common::Point getMousePos() const override { return _mousePos; }
-	virtual int getButtonState() const override { return _buttonState; }
-	virtual int getModifierState() const override { return _modifierState; }
-	virtual int shouldQuit() const override { return _shouldQuit; }
-	virtual int shouldReturnToLauncher() const override { return _shouldReturnToLauncher; }
-	virtual void resetReturnToLauncher() override { _shouldReturnToLauncher = false; }
-	virtual void resetQuit() override { _shouldQuit = false; }
+	Common::Point getMousePos() const override { return _mousePos; }
+	int getButtonState() const override { return _buttonState; }
+	int getModifierState() const override { return _modifierState; }
+	int shouldQuit() const override { return _shouldQuit; }
+	int shouldReturnToLauncher() const override { return _shouldReturnToLauncher; }
+	void resetReturnToLauncher() override { _shouldReturnToLauncher = false; }
+	void resetQuit() override { _shouldQuit = false; }
 
 	Common::Keymapper *getKeymapper() override { return _keymapper; }
 	Common::Keymap *getGlobalKeymap() override;

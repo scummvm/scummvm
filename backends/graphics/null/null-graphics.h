@@ -54,7 +54,7 @@ public:
 		_format = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 	}
 
-	virtual int getScreenChangeID() const override { return 0; }
+	int getScreenChangeID() const override { return 0; }
 
 	void beginGFXTransaction() override {}
 	OSystem::TransactionError endGFXTransaction() override { return OSystem::kTransactionSuccess; }

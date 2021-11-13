@@ -55,7 +55,7 @@ class ShaderUniformInteger : public ShaderUniformValue {
 public:
 	ShaderUniformInteger(GLint value) : _value(value) {}
 
-	virtual void set(GLint location) const override;
+	void set(GLint location) const override;
 
 private:
 	const GLint _value;
@@ -68,7 +68,7 @@ class ShaderUniformFloat : public ShaderUniformValue {
 public:
 	ShaderUniformFloat(GLfloat value) : _value(value) {}
 
-	virtual void set(GLint location) const override;
+	void set(GLint location) const override;
 
 private:
 	const GLfloat _value;
@@ -83,7 +83,7 @@ public:
 		memcpy(_matrix, mat44, sizeof(_matrix));
 	}
 
-	virtual void set(GLint location) const override;
+	void set(GLint location) const override;
 
 private:
 	GLfloat _matrix[4*4];

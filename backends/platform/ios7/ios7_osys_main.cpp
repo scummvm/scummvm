@@ -68,7 +68,7 @@ public:
 			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
 	}
 
-	virtual bool removeSavefile(const Common::String &filename) override {
+	bool removeSavefile(const Common::String &filename) override {
 		Common::String chrootedFile = getSavePath() + "/" + filename;
 		Common::String realFilePath = _sandboxRootPath + chrootedFile;
 

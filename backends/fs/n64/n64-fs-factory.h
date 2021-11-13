@@ -31,9 +31,9 @@
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
 class N64FilesystemFactory final : public FilesystemFactory {
-	virtual AbstractFSNode *makeRootFileNode() const override;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+	AbstractFSNode *makeRootFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 };
 
 #endif /*N64_FILESYSTEM_FACTORY_H*/
