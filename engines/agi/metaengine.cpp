@@ -96,7 +96,7 @@ void AgiBase::initVersion() {
 }
 
 const char *AgiBase::getDiskName(uint16 id) {
-	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName != NULL; i++)
+	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName != nullptr; i++)
 		if (_gameDescription->desc.filesDescriptions[i].fileType == id)
 			return _gameDescription->desc.filesDescriptions[i].fileName;
 
@@ -359,7 +359,7 @@ bool AgiBase::canSaveGameStateCurrently() {
 int AgiEngine::agiDetectGame() {
 	int ec = errOK;
 
-	assert(_gameDescription != NULL);
+	assert(_gameDescription != nullptr);
 
 	if (getVersion() <= 0x2001) {
 		_loader = new AgiLoader_v1(this);

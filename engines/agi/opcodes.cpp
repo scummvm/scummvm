@@ -46,7 +46,7 @@ const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
 };
 
 const AgiOpCodeDefinitionEntry opCodesV1[] = {
-	{ "return",             "",         NULL },                 // 00
+	{ "return",             "",         nullptr },              // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
 	{ "assignn",            "vn",       &cmdAssignN },          // 03
@@ -170,7 +170,7 @@ AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
 };
 
 AgiOpCodeDefinitionEntry opCodesV2[] = {
-	{ "return",             "",         NULL },                 // 00
+	{ "return",             "",         nullptr },              // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
 	{ "assignn",            "vn",       &cmdAssignN },          // 03

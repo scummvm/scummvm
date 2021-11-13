@@ -256,7 +256,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_noSaveLoadAllowed = false;
 
 	_rnd = new Common::RandomSource("agi");
-	_sound = 0;
+	_sound = nullptr;
 
 	initFeatures();
 	initVersion();
@@ -362,7 +362,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_allowSynthetic = false;
 
-	_intobj = NULL;
+	_intobj = nullptr;
 
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
@@ -372,7 +372,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	resetControllers();
 
-	_game._curLogic = NULL;
+	_game._curLogic = nullptr;
 	_veryFirstInitialCycle = true;
 	_instructionCounter = 0;
 	resetGetVarSecondsHeuristic();

@@ -108,11 +108,11 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 				debugPrintf("AGI command wants %d arguments\n", opCodes[i].parameterSize);
 				return 0;
 			}
-			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
-			p[1] = argv[3] ? (char)strtoul(argv[3], NULL, 0) : 0;
-			p[2] = argv[4] ? (char)strtoul(argv[4], NULL, 0) : 0;
-			p[3] = argv[5] ? (char)strtoul(argv[5], NULL, 0) : 0;
-			p[4] = argv[6] ? (char)strtoul(argv[6], NULL, 0) : 0;
+			p[0] = argv[2] ? (char)strtoul(argv[2], nullptr, 0) : 0;
+			p[1] = argv[3] ? (char)strtoul(argv[3], nullptr, 0) : 0;
+			p[2] = argv[4] ? (char)strtoul(argv[4], nullptr, 0) : 0;
+			p[3] = argv[5] ? (char)strtoul(argv[5], nullptr, 0) : 0;
+			p[4] = argv[6] ? (char)strtoul(argv[6], nullptr, 0) : 0;
 
 			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", opCodes[i].name, argv[1], argv[2], argv[3]);
 
@@ -147,10 +147,10 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 	int scriptNr = 0;
 	int scriptTextCount = 0;
 	int scriptTextNr = 0;
-	const char *scriptTextPtr = NULL;
-	const char *wordScanPtr = NULL;
-	const char *wordStartPtr = NULL;
-	const char *versionStartPtr = NULL;
+	const char *scriptTextPtr = nullptr;
+	const char *wordScanPtr = nullptr;
+	const char *wordStartPtr = nullptr;
+	const char *versionStartPtr = nullptr;
 	int wordLen = 0;
 	char curChar = 0;
 	int versionLen = 0;
@@ -364,7 +364,7 @@ bool Console::Cmd_Step(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_debug.steps = strtoul(argv[1], NULL, 0);
+	_vm->_debug.steps = strtoul(argv[1], nullptr, 0);
 
 	return true;
 }
@@ -385,7 +385,7 @@ bool Console::Cmd_Cont(int argc, const char **argv) {
 
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc == 2) {
-		_vm->newRoom(strtoul(argv[1], NULL, 0));
+		_vm->newRoom(strtoul(argv[1], nullptr, 0));
 	}
 
 	debugPrintf("Current room: %d\n", _vm->getVar(0));
@@ -398,7 +398,7 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 
 	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
-	uint8 *code = NULL;
+	uint8 *code = nullptr;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
 	int parameterSize;
@@ -444,7 +444,7 @@ bool Console::Cmd_ShowMap(int argc, const char **argv) {
 		debugPrintf("Map %d is not available.\n", map);
 		return true;
 	}
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::Cmd_ScreenObj(int argc, const char **argv) {
@@ -630,7 +630,7 @@ bool Console::Cmd_DisableAutomaticSave(int argc, const char **argv) {
 }
 
 bool Console::parseInteger(const char *argument, int &result) {
-	char *endPtr = 0;
+	char *endPtr = nullptr;
 	int idxLen = strlen(argument);
 	const char *lastChar = argument + idxLen - (idxLen == 0 ? 0 : 1);
 

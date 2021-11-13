@@ -37,7 +37,7 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	_words = words;
 	_gfx = gfx;
 
-	_systemUI = NULL;
+	_systemUI = nullptr;
 
 	memset(&_messageState, 0, sizeof(_messageState));
 	_textPos.row = 0;
@@ -239,8 +239,8 @@ byte TextMgr::calculateTextBackground(byte background) {
 }
 
 void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
-	const char *logicTextPtr = NULL;
-	char *processedTextPtr   = NULL;
+	const char *logicTextPtr = nullptr;
+	char *processedTextPtr   = nullptr;
 
 	charPos_Push();
 	charPos_Set(textRow, textColumn);
@@ -347,7 +347,7 @@ void TextMgr::displayCharacter(byte character, bool disabledLook) {
 }
 
 void TextMgr::print(int16 textNr) {
-	const char *logicTextPtr = NULL;
+	const char *logicTextPtr = nullptr;
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
 		messageBox(logicTextPtr);
@@ -575,7 +575,7 @@ bool TextMgr::statusEnabled() {
 }
 
 void TextMgr::statusDraw() {
-	char *statusTextPtr = NULL;
+	char *statusTextPtr = nullptr;
 
 	charAttrib_Push();
 	charPos_Push();
@@ -1182,7 +1182,7 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 // ===============================================================
 
 static void safeStrcat(Common::String &p, const char *t) {
-	if (t != NULL)
+	if (t != nullptr)
 		p += t;
 }
 
@@ -1207,7 +1207,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 			switch (*originalText++) {
 				int i;
 			case 'v':
-				i = strtoul(originalText, NULL, 10);
+				i = strtoul(originalText, nullptr, 10);
 				while (*originalText >= '0' && *originalText <= '9')
 					originalText++;
 				sprintf(z, "%015i", _vm->getVar(i));
@@ -1215,7 +1215,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 				i = 99;
 				if (*originalText == '|') {
 					originalText++;
-					i = strtoul(originalText, NULL, 10);
+					i = strtoul(originalText, nullptr, 10);
 					while (*originalText >= '0' && *originalText <= '9')
 						originalText++;
 				}
@@ -1231,23 +1231,23 @@ char *TextMgr::stringPrintf(const char *originalText) {
 				safeStrcat(resultString, z + i);
 				break;
 			case '0':
-				i = strtoul(originalText, NULL, 10) - 1;
+				i = strtoul(originalText, nullptr, 10) - 1;
 				safeStrcat(resultString, _vm->objectName(i));
 				break;
 			case 'g':
-				i = strtoul(originalText, NULL, 10) - 1;
+				i = strtoul(originalText, nullptr, 10) - 1;
 				safeStrcat(resultString, _vm->_game.logics[0].texts[i]);
 				break;
 			case 'w':
-				i = strtoul(originalText, NULL, 10) - 1;
+				i = strtoul(originalText, nullptr, 10) - 1;
 				safeStrcat(resultString, _vm->_words->getEgoWord(i));
 				break;
 			case 's':
-				i = strtoul(originalText, NULL, 10);
+				i = strtoul(originalText, nullptr, 10);
 				safeStrcat(resultString, stringPrintf(_vm->_game.strings[i]));
 				break;
 			case 'm':
-				i = strtoul(originalText, NULL, 10) - 1;
+				i = strtoul(originalText, nullptr, 10) - 1;
 				if (_vm->_game.logics[_vm->_game.curLogicNr].numTexts > i)
 					safeStrcat(resultString, stringPrintf(_vm->_game.logics[_vm->_game.curLogicNr].texts[i]));
 				break;

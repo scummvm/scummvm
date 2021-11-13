@@ -171,12 +171,12 @@ int AgiLoader_v1::deinit() {
 }
 
 uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
-	uint8 *data = NULL;
+	uint8 *data = nullptr;
 	Common::File fp;
 	int offset = agid->offset;
 
 	if (offset == _EMPTY)
-		return NULL;
+		return nullptr;
 
 	if (offset > IMAGE_SIZE) {
 		fp.open(_filenameDisk1);
@@ -190,7 +190,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	int signature = fp.readUint16BE();
 	if (signature != 0x1234) {
 		warning("AgiLoader_v1::loadVolRes: bad signature %04x", signature);
-		return NULL;
+		return nullptr;
 	}
 
 	fp.readByte();
@@ -205,7 +205,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 
 int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 	int ec = errOK;
-	uint8 *data = NULL;
+	uint8 *data = nullptr;
 
 	debugC(3, kDebugLevelResources, "(t = %d, n = %d)", resourceType, resourceNr);
 	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
@@ -244,7 +244,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 		unloadResource(RESOURCETYPE_PICTURE, resourceNr);
 		data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 
-		if (data != NULL) {
+		if (data != nullptr) {
 			_vm->_game.pictures[resourceNr].rdata = data;
 			_vm->_game.dirPic[resourceNr].flags |= RES_LOADED;
 		} else {
@@ -258,7 +258,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
 
-		if (data != NULL) {
+		if (data != nullptr) {
 			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
 			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;

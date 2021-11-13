@@ -126,7 +126,7 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-	_v1data = NULL;
+	_v1data = nullptr;
 	_v1size = 0;
 }
 
@@ -297,7 +297,7 @@ int SoundGenPCJr::getNextNote_v1(int ch) {
 	byte *data = _v1data;
 	uint32 len = _v1size;
 
-	if (len <= 0 || data == NULL) {
+	if (len <= 0 || data == nullptr) {
 		_channel[ch].avail = 0;
 		_channel[ch].attenuation = 0x0F;
 		_channel[ch].attenuationCopy = 0x0F;

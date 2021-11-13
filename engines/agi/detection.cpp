@@ -75,7 +75,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"winnie", "Winnie the Pooh in the Hundred Acre Wood"},
 	{"xmascard", "Xmas Card"},
 
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "agi/detection_tables.h"
@@ -268,7 +268,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		const WagProperty *wagGameLastEdit = wagFileParser.getProperty(WagProperty::PC_GAMELAST);
 
 		// If there is an AGI version number in the *.wag file then let's use it
-		if (wagAgiVer != NULL && wagFileParser.checkAgiVersionProperty(*wagAgiVer)) {
+		if (wagAgiVer != nullptr && wagFileParser.checkAgiVersionProperty(*wagAgiVer)) {
 			// TODO/FIXME: Check that version number is something we support before trying to use it.
 			//     If the version number is unsupported then it'll get switched to 0x2917 later.
 			//     But there's the possibility that file based detection has detected something else
@@ -277,24 +277,24 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		}
 
 		// Set gameid according to *.wag file information if it's present and it doesn't contain whitespace.
-		if (wagGameID != NULL && !Common::String(wagGameID->getData()).contains(" ")) {
+		if (wagGameID != nullptr && !Common::String(wagGameID->getData()).contains(" ")) {
 			_gameid = wagGameID->getData();
 			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", _gameid.c_str());
 		}
 
 		// Set game description and extra according to *.wag file information if they're present
-		if (wagGameDesc != NULL) {
+		if (wagGameDesc != nullptr) {
 			description = wagGameDesc->getData();
 			debug(3, "Agi::fallbackDetector: Game description (%s) from WAG file", wagGameDesc->getData());
 
 			// If there's game version in the *.wag file, set extra to it
-			if (wagGameVer != NULL) {
+			if (wagGameVer != nullptr) {
 				_extra = wagGameVer->getData();
 				debug(3, "Agi::fallbackDetector: Game version (%s) from WAG file", wagGameVer->getData());
 			}
 
 			// If there's game last edit date in the *.wag file, add it to extra
-			if (wagGameLastEdit != NULL) {
+			if (wagGameLastEdit != nullptr) {
 				if (!_extra.empty())
 					_extra += " ";
 				_extra += wagGameLastEdit->getData();

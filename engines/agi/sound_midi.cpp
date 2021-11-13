@@ -62,7 +62,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	_data = data; // Save the resource pointer
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
-	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
+	_isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_len >= 2);
 
 	if (!_isValid) // Check for errors
 		warning("Error creating MIDI sound from resource %d (Type %d, length %d)", resnum, _type, len);

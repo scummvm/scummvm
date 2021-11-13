@@ -32,7 +32,7 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_gfx = gfx;
 
 	_resourceNr = 0;
-	_data = NULL;
+	_data = nullptr;
 	_dataSize = 0;
 	_dataOffset = 0;
 	_dataOffsetNibble = false;

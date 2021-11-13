@@ -388,7 +388,7 @@ bool AgiEngine::testIfCode(int16 logicNr) {
 
 	while (!(shouldQuit() || _restartGame) && !endTest) {
 		if (_debug.enabled && (_debug.logic0 || logicNr))
-			debugConsole(logicNr, lTEST_MODE, NULL);
+			debugConsole(logicNr, lTEST_MODE, nullptr);
 
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
