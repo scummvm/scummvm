@@ -2399,18 +2399,20 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	}
 
 #ifdef USE_UPDATES
-	_updatesPopUpDesc = new StaticTextWidget(boss, prefix + "UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
-	_updatesPopUp = new PopUpWidget(boss, prefix + "UpdatesPopup");
+	if (g_system->getUpdateManager()) {
+		_updatesPopUpDesc = new StaticTextWidget(boss, prefix + "UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
+		_updatesPopUp = new PopUpWidget(boss, prefix + "UpdatesPopup");
 
-	const int *vals = Common::UpdateManager::getUpdateIntervals();
-	while (*vals != -1) {
-		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
-		vals++;
+		const int *vals = Common::UpdateManager::getUpdateIntervals();
+		while (*vals != -1) {
+			_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
+			vals++;
+		}
+
+		_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
+
+		new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(), kUpdatesCheckCmd);
 	}
-
-	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
-
-	new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(), kUpdatesCheckCmd);
 #endif // USE_UPDATES
 }
 
@@ -2687,9 +2689,9 @@ void GlobalOptionsDialog::apply() {
 		_autosavePeriodPopUp->setSelected(0);
 
 #ifdef USE_UPDATES
-	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
-
 	if (g_system->getUpdateManager()) {
+		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+		
 		if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
 			g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
 		} else {
