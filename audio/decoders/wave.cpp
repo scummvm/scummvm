@@ -91,10 +91,10 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// 8 bit data is unsigned, 16 bit data signed
 
 
-	if (wavType != 0)
+	if (wavType != nullptr)
 		*wavType = type;
 
-	if (blockAlign_ != 0)
+	if (blockAlign_ != nullptr)
 		*blockAlign_ = blockAlign;
 #if 0
 	debug("WAVE information:");
@@ -194,7 +194,7 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 	if (!loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
 		if (disposeAfterUse == DisposeAfterUse::YES)
 			delete stream;
-		return 0;
+		return nullptr;
 	}
 	int channels = (flags & Audio::FLAG_STEREO) ? 2 : 1;
 	int bytesPerSample = (flags & Audio::FLAG_24BITS) ? 3 : ((flags & Audio::FLAG_16BITS) ? 2 : 1);
@@ -228,7 +228,7 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 
 	// If the format is unsupported, we already returned earlier, but just in case
 	delete dataStream;
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Audio

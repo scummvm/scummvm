@@ -90,7 +90,7 @@ static Bit32u calcBasePitch(const Partial *partial, const TimbreParam::PartialPa
 	basePitch += fineToPitch(patchTemp->patch.fineTune);
 
 	const ControlROMPCMStruct *controlROMPCMStruct = partial->getControlROMPCMStruct();
-	if (controlROMPCMStruct != NULL) {
+	if (controlROMPCMStruct != nullptr) {
 		basePitch += (Bit32s(controlROMPCMStruct->pitchMSB) << 8) | Bit32s(controlROMPCMStruct->pitchLSB);
 	} else {
 		if ((partialParam->wg.waveform & 1) == 0) {

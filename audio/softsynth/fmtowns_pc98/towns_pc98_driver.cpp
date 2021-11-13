@@ -193,7 +193,7 @@ private:
 TownsPC98_MusicChannel::TownsPC98_MusicChannel(TownsPC98_AudioDriver *driver, uint8 regOffs, uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) : _driver(driver),
 _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),	_part(prt), _idFlag(id), _ticksLeft(0), _algorithm(0), _instr(0), _totalLevel(0),
 _frqBlockMSB(0), _duration(0), _block(0), _vbrInitDelayHi(0), _vbrInitDelayLo(0), _vbrDuration(0), _vbrCurDelay(0), _vbrDurLeft(0), _pitchBend(0),
-_sustain(false), _fading(false), _dataPtr(0), _vbrModInitVal(0), _vbrModCurVal(0), _frequency(0) {
+_sustain(false), _fading(false), _dataPtr(nullptr), _vbrModInitVal(0), _vbrModCurVal(0), _frequency(0) {
 	CONTROL(f0_setPatch);
 	CONTROL(f1_presetOutputLevel);
 	CONTROL(f2_duration);
@@ -617,7 +617,7 @@ TownsPC98_MusicChannelSSG::~TownsPC98_MusicChannelSSG() {
 	for (Common::Array<const ControlEvent*>::iterator i = _controlEvents.begin(); i != _controlEvents.end(); ++i)
 		delete *i;
 	delete[] _envPatchData;
-	_envPatchData = 0;
+	_envPatchData = nullptr;
 }
 
 void TownsPC98_MusicChannelSSG::reset() {
@@ -898,7 +898,7 @@ bool TownsPC98_MusicChannelSSG::control_ff_endOfTrack(uint8 para) {
 	return false;
 }
 
-uint8 *TownsPC98_MusicChannelSSG::_envPatchData = 0;
+uint8 *TownsPC98_MusicChannelSSG::_envPatchData = nullptr;
 
 const uint8 TownsPC98_MusicChannelSSG::_envData[256] = {
 	0x00, 0x00, 0xFF, 0xFF, 0x00, 0x81, 0x00, 0x00,
@@ -1065,11 +1065,11 @@ bool TownsPC98_MusicChannelPCM::control_ff_endOfTrack(uint8 para) {
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) :
-	_channels(0), _ssgChannels(0), _sfxChannels(0),
+	_channels(nullptr), _ssgChannels(nullptr), _sfxChannels(nullptr),
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-	_rhythmChannel(0),
+	_rhythmChannel(nullptr),
 #endif
-	_sfxData(0), _sfxOffs(0), _patchData(0), _sfxBuffer(0), _musicBuffer(0), _trackPtr(0),
+	_sfxData(nullptr), _sfxOffs(0), _patchData(nullptr), _sfxBuffer(nullptr), _musicBuffer(nullptr), _trackPtr(nullptr),
 	_levelPresets(type == kTypeTowns ? _levelPresetFMTOWNS : _levelPresetPC98),
 	_updateChannelsFlag(type == kType26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
 	_updateSSGFlag(type == kTypeTowns ? 0x00 : 0x07), _finishedSSGFlag(0),
@@ -1239,7 +1239,7 @@ void TownsPC98_AudioDriver::reset() {
 	_fading = 0;
 	_looping = 0;
 	_musicTickCounter = 0;
-	_sfxData = 0;
+	_sfxData = nullptr;
 
 	_pc98a->reset();
 	setMusicTempo(84);
@@ -1401,7 +1401,7 @@ void TownsPC98_AudioDriver::startSoundEffect() {
 	}
 
 	_pc98a->setSoundEffectChanMask(volFlags);
-	_sfxData = 0;
+	_sfxData = nullptr;
 }
 
 void TownsPC98_AudioDriver::setMusicTempo(uint8 tempo) {

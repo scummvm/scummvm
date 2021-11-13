@@ -119,7 +119,7 @@ IIRResampler::Constants::Constants(const unsigned int useSectionsCount, const II
 }
 
 IIRResampler::IIRResampler(const Quality quality) :
-	constants(0, 0.0f, NULL, quality)
+	constants(0, 0.0f, nullptr, quality)
 {}
 
 IIRResampler::IIRResampler(const unsigned int useSectionsCount, const IIRCoefficient useFIR, const IIRSection useSections[]) :

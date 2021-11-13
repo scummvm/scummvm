@@ -285,7 +285,7 @@ class CopyRateConverter : public RateConverter {
 	st_sample_t *_buffer;
 	st_size_t _bufferSize;
 public:
-	CopyRateConverter() : _buffer(0), _bufferSize(0) {}
+	CopyRateConverter() : _buffer(nullptr), _bufferSize(0) {}
 	~CopyRateConverter() {
 		free(_buffer);
 	}

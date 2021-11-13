@@ -80,7 +80,7 @@ MidiStreamParserImpl::MidiStreamParserImpl(MidiReceiver &useReceiver, MidiReport
 	streamBufferSize = 0;
 	runningStatus = 0;
 
-	reserved = NULL;
+	reserved = nullptr;
 }
 
 MidiStreamParserImpl::~MidiStreamParserImpl() {

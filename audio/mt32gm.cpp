@@ -87,7 +87,7 @@ void MidiDriver_MT32GM::timerCallback(void *data) {
 }
 
 MidiDriver_MT32GM::MidiDriver_MT32GM(MusicType midiType) :
-		_driver(0),
+		_driver(nullptr),
 		_nativeMT32(false),
 		_enableGS(false),
 		_midiDataReversePanning(false),
@@ -131,11 +131,11 @@ MidiDriver_MT32GM::MidiDriver_MT32GM(MusicType midiType) :
 
 MidiDriver_MT32GM::~MidiDriver_MT32GM() {
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
-	_driver = 0;
+	_driver = nullptr;
 
 	if (_controlData) {
 		for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
@@ -305,7 +305,7 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 
 			// Note: All Roland GS devices support CM-64/32L maps
 
-			if (getPercussionChannel() != 0) {
+			if (getPercussionChannel() != nullptr) {
 				// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
 				// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
 				// Bank select MSB: bank 0
@@ -318,7 +318,7 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 
 			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
 			for (i = 0; i < 16; ++i) {
-				if (getPercussionChannel() != 0 && i == getPercussionChannel()->getNumber())
+				if (getPercussionChannel() != nullptr && i == getPercussionChannel()->getNumber())
 					continue;
 				// Bank select MSB: bank 127 (CM-64/32L)
 				send((127 << 16) | (MIDI_CONTROLLER_BANK_SELECT_MSB << 8) | (MIDI_COMMAND_CONTROL_CHANGE | i));
@@ -878,13 +878,13 @@ void MidiDriver_MT32GM::clearSysExQueue() {
 MidiChannel *MidiDriver_MT32GM::allocateChannel() {
 	if (_driver)
 		return _driver->allocateChannel();
-	return 0;
+	return nullptr;
 }
 
 MidiChannel *MidiDriver_MT32GM::getPercussionChannel() {
 	if (_driver)
 		return _driver->getPercussionChannel();
-	return 0;
+	return nullptr;
 }
 
 bool MidiDriver_MT32GM::isOutputChannelUsed(int8 outputChannel) {

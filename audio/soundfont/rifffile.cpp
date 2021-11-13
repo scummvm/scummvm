@@ -38,9 +38,9 @@ void Chunk::SetData(const void *src, uint32 datasize) {
 
 	// set the size and copy from the data source
 	datasize = GetPaddedSize(_size);
-	if (_data != NULL) {
+	if (_data != nullptr) {
 		delete[] _data;
-		_data = NULL;
+		_data = nullptr;
 	}
 	_data = new uint8[datasize];
 	memcpy(_data, src, _size);

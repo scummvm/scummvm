@@ -83,7 +83,7 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
 	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3 },
 #endif
-	{ 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0 }
 };
 
 Config::DriverId Config::parse(const Common::String &name) {
@@ -101,7 +101,7 @@ const Config::EmulatorDescription *Config::findDriver(DriverId id) {
 			return &_drivers[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Config::DriverId Config::detect(OplType type) {
@@ -181,7 +181,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 		// be found, thus stop here.
 		if (driver == -1) {
 			warning("No OPL emulator available for type %d", type);
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -191,7 +191,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 			return new MAME::OPL();
 		else
 			warning("MAME OPL emulator only supports OPL2 emulation");
-		return 0;
+		return nullptr;
 
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
@@ -229,7 +229,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 		warning("Unsupported OPL emulator %d", driver);
 		// TODO: Maybe we should add some dummy emulator too, which just outputs
 		// silence as sound?
-		return 0;
+		return nullptr;
 	}
 }
 

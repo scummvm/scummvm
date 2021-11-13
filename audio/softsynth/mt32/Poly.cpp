@@ -27,16 +27,16 @@
 namespace MT32Emu {
 
 Poly::Poly() {
-	part = NULL;
+	part = nullptr;
 	key = 255;
 	velocity = 255;
 	sustain = false;
 	activePartialCount = 0;
 	for (int i = 0; i < 4; i++) {
-		partials[i] = NULL;
+		partials[i] = nullptr;
 	}
 	state = POLY_Inactive;
-	next = NULL;
+	next = nullptr;
 }
 
 void Poly::setPart(Part *usePart) {
@@ -48,7 +48,7 @@ void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain,
 		// This should never happen
 		part->getSynth()->printDebug("Resetting active poly. Active partial count: %i\n", activePartialCount);
 		for (int i = 0; i < 4; i++) {
-			if (partials[i] != NULL && partials[i]->isActive()) {
+			if (partials[i] != nullptr && partials[i]->isActive()) {
 				partials[i]->deactivate();
 				activePartialCount--;
 			}
@@ -63,7 +63,7 @@ void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain,
 	activePartialCount = 0;
 	for (int i = 0; i < 4; i++) {
 		partials[i] = newPartials[i];
-		if (newPartials[i] != NULL) {
+		if (newPartials[i] != nullptr) {
 			activePartialCount++;
 			state = POLY_Playing;
 		}
@@ -102,7 +102,7 @@ bool Poly::startDecay() {
 
 	for (int t = 0; t < 4; t++) {
 		Partial *partial = partials[t];
-		if (partial != NULL) {
+		if (partial != nullptr) {
 			partial->startDecayAll();
 		}
 	}
@@ -115,7 +115,7 @@ bool Poly::startAbort() {
 	}
 	for (int t = 0; t < 4; t++) {
 		Partial *partial = partials[t];
-		if (partial != NULL) {
+		if (partial != nullptr) {
 			partial->startAbort();
 			part->getSynth()->abortingPoly = this;
 		}
@@ -126,7 +126,7 @@ bool Poly::startAbort() {
 void Poly::backupCacheToPartials(PatchCache cache[4]) {
 	for (int partialNum = 0; partialNum < 4; partialNum++) {
 		Partial *partial = partials[partialNum];
-		if (partial != NULL) {
+		if (partial != nullptr) {
 			partial->backupCache(cache[partialNum]);
 		}
 	}
@@ -166,14 +166,14 @@ bool Poly::isActive() const {
 void Poly::partialDeactivated(Partial *partial) {
 	for (int i = 0; i < 4; i++) {
 		if (partials[i] == partial) {
-			partials[i] = NULL;
+			partials[i] = nullptr;
 			activePartialCount--;
 		}
 	}
 	if (activePartialCount == 0) {
 		state = POLY_Inactive;
 		if (part->getSynth()->abortingPoly == this) {
-			part->getSynth()->abortingPoly = NULL;
+			part->getSynth()->abortingPoly = nullptr;
 		}
 	}
 	part->partialDeactivated(this);

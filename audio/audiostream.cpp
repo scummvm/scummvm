@@ -67,7 +67,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
-	SeekableAudioStream *stream = NULL;
+	SeekableAudioStream *stream = nullptr;
 	Common::File *fileHandle = new Common::File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS); ++i) {
@@ -76,14 +76,14 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 		if (fileHandle->isOpen()) {
 			// Create the stream object
 			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, DisposeAfterUse::YES);
-			fileHandle = 0;
+			fileHandle = nullptr;
 			break;
 		}
 	}
 
 	delete fileHandle;
 
-	if (stream == NULL)
+	if (stream == nullptr)
 		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
 
 	return stream;
@@ -161,7 +161,7 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 		if (start >= end) {
 			warning("makeLoopingAudioStream: start (%d) >= end (%d)", start.msecs(), end.msecs());
 			delete stream;
-			return 0;
+			return nullptr;
 		}
 
 		return makeLoopingAudioStream(new SubSeekableAudioStream(stream, start, end), loops);

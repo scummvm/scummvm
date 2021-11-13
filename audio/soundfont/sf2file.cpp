@@ -420,25 +420,25 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 		sampOffset = samp.dwEnd + 46;  // plus the 46 padding samples required by sf2 spec
 
 		// Search through all regions for an associated sampInfo structure with this sample
-		SynthSampInfo *sampInfo = NULL;
+		SynthSampInfo *sampInfo = nullptr;
 		for (size_t j = 0; j < numInstrs; j++) {
 			SynthInstr *instr = synthfile->_vInstrs[j];
 
 			size_t numRgns = instr->_vRgns.size();
 			for (size_t k = 0; k < numRgns; k++) {
 				SynthRgn *rgn = instr->_vRgns[k];
-				if (rgn->_tableIndex == i && rgn->_sampinfo != NULL) {
+				if (rgn->_tableIndex == i && rgn->_sampinfo != nullptr) {
 					sampInfo = rgn->_sampinfo;
 					break;
 				}
 			}
-			if (sampInfo != NULL)
+			if (sampInfo != nullptr)
 				break;
 		}
 		//  If we didn't find a rgn association, then it should be in the SynthWave structure.
-		if (sampInfo == NULL)
+		if (sampInfo == nullptr)
 			sampInfo = wave->_sampinfo;
-		assert(sampInfo != NULL);
+		assert(sampInfo != nullptr);
 
 		samp.dwStartloop = samp.dwStart + sampInfo->_ulLoopStart;
 		samp.dwEndloop = samp.dwStartloop + sampInfo->_ulLoopLength;

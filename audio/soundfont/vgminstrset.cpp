@@ -58,7 +58,7 @@ bool VGMInstrSet::Load() {
 	if (_aInstrs.size() == 0)
 		return false;
 
-	if (_sampColl != NULL) {
+	if (_sampColl != nullptr) {
 		if (!_sampColl->Load()) {
 			error("Failed to load VGMSampColl");
 		}

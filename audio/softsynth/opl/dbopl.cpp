@@ -1022,7 +1022,7 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	default:
 		break;
 	}
-	return 0;
+	return nullptr;
 }
 
 /*
@@ -1480,7 +1480,7 @@ void InitTables( void ) {
 		TremoloTable[TREMOLO_TABLE - 1 - i] = val;
 	}
 	//Create a table with offsets of the channels from the start of the chip
-	DBOPL::Chip* chip = 0;
+	DBOPL::Chip* chip = nullptr;
 	for ( Bitu i = 0; i < 32; i++ ) {
 		Bitu index = i & 0xf;
 		if ( index >= 9 ) {
@@ -1508,7 +1508,7 @@ void InitTables( void ) {
 		if ( chNum >= 12 )
 			chNum += 16 - 12;
 		Bitu opNum = ( i % 8 ) / 3;
-		DBOPL::Channel* chan = 0;
+		DBOPL::Channel* chan = nullptr;
 		Bitu blah = reinterpret_cast<size_t>( &(chan->op[opNum]) );
 		OpOffsetTable[i] = ChanOffsetTable[ chNum ] + blah;
 	}

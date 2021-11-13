@@ -196,7 +196,7 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 		}
 
 		if (!sample[i].len) {
-			sample[i].data = 0;
+			sample[i].data = nullptr;
 		} else {
 			sample[i].data = new int8[sample[i].len];
 			st.read((byte *)sample[i].data, sample[i].len);
@@ -207,9 +207,9 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 }
 
 Module::Module() {
-	pattern = 0;
+	pattern = nullptr;
 	for (int i = 0; i < NUM_SAMPLES; ++i) {
-		sample[i].data = 0;
+		sample[i].data = nullptr;
 	}
 }
 

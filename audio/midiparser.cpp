@@ -33,7 +33,7 @@
 
 MidiParser::MidiParser() :
 _hangingNotesCount(0),
-_driver(0),
+_driver(nullptr),
 _timerRate(0x4A0000),
 _ppqn(96),
 _tempo(500000),
@@ -53,7 +53,7 @@ _doParse(true),
 _pause(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
-	_nextEvent.start = NULL;
+	_nextEvent.start = nullptr;
 	_nextEvent.delta = 0;
 	_nextEvent.event = 0;
 	_nextEvent.length = 0;
@@ -136,7 +136,7 @@ void MidiParser::activeNote(byte channel, byte note, bool active) {
 }
 
 void MidiParser::hangingNote(byte channel, byte note, uint32 timeLeft, bool recycle) {
-	NoteTimer *best = 0;
+	NoteTimer *best = nullptr;
 	NoteTimer *ptr = _hangingNotes;
 	int i;
 
@@ -222,7 +222,7 @@ void MidiParser::onTimer() {
 		// Process the next info.
 		if (info.event < 0x80) {
 			warning("Bad command or running status %02X", info.event);
-			_position._playPos = 0;
+			_position._playPos = nullptr;
 			return;
 		}
 

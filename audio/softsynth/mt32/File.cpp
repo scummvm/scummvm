@@ -27,14 +27,14 @@ namespace MT32Emu {
 AbstractFile::AbstractFile() : sha1DigestCalculated(false) {
 	sha1Digest[0] = 0;
 
-	reserved = NULL;
+	reserved = nullptr;
 }
 
 AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest) : sha1DigestCalculated(true) {
 	memcpy(sha1Digest, useSHA1Digest, sizeof(SHA1Digest) - 1);
 	sha1Digest[sizeof(SHA1Digest) - 1] = 0; // Ensure terminator char.
 
-	reserved = NULL;
+	reserved = nullptr;
 }
 
 const File::SHA1Digest &AbstractFile::getSHA1() {
@@ -49,7 +49,7 @@ const File::SHA1Digest &AbstractFile::getSHA1() {
 	}
 
 	const Bit8u *data = getData();
-	if (data == NULL) {
+	if (data == nullptr) {
 		return sha1Digest;
 	}
 

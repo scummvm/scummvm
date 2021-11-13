@@ -73,7 +73,7 @@ static const struct {
 	{ MT_SEGACD,	GUIO_MIDISEGACD },
 	{ MT_GM,		GUIO_MIDIGM },
 	{ MT_MT32,		GUIO_MIDIMT32 },
-	{ 0,			0 },
+	{ 0,			nullptr },
 };
 
 Common::String MidiDriver::musicType2GUIO(uint32 musicType) {
@@ -385,7 +385,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 }
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
-	MidiDriver *driver = 0;
+	MidiDriver *driver = nullptr;
 	const PluginList p = MusicMan.getPlugins();
 	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();

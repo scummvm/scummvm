@@ -559,7 +559,7 @@ const MilesMT32InstrumentEntry *MidiDriver_Miles_Midi::searchCustomInstrument(by
 			return instrumentPtr;
 		instrumentPtr++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId, bool useSysExQueue) {
@@ -649,7 +649,7 @@ int16 MidiDriver_Miles_Midi::installCustomTimbre(byte patchBank, byte patchId) {
 	int16 customTimbreId = -1;
 	int16 leastUsedTimbreId = -1;
 	uint32 leastUsedTimbreNoteCounter = _noteCounter;
-	const MilesMT32InstrumentEntry *instrumentPtr = NULL;
+	const MilesMT32InstrumentEntry *instrumentPtr = nullptr;
 
 	// Check, if requested instrument is actually available
 	instrumentPtr = searchCustomInstrument(patchBank, patchId);
@@ -787,21 +787,21 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instru
 MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename) {
 	assert(midiType == MT_MT32 || midiType == MT_GM || midiType == MT_GS);
 
-	MilesMT32InstrumentEntry *instrumentTablePtr = NULL;
+	MilesMT32InstrumentEntry *instrumentTablePtr = nullptr;
 	uint16                    instrumentTableCount = 0;
 
 	if (midiType == MT_MT32 && !instrumentDataFilename.empty()) {
 		// Load MT32 instrument data from file SAMPLE.MT
 		Common::File *fileStream = new Common::File();
 		uint32        fileSize = 0;
-		byte         *fileDataPtr = NULL;
+		byte         *fileDataPtr = nullptr;
 		uint32        fileDataOffset = 0;
 		uint32        fileDataLeft = 0;
 
 		byte curBankId;
 		byte curPatchId;
 
-		MilesMT32InstrumentEntry *instrumentPtr = NULL;
+		MilesMT32InstrumentEntry *instrumentPtr = nullptr;
 		uint32                    instrumentOffset;
 		uint16                    instrumentDataSize;
 
@@ -916,7 +916,7 @@ void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 			continue;
 
 		MidiChannelEntry &channel = _midiChannels[i];
-		MilesMidiChannelControlData *channelData = 0;
+		MilesMidiChannelControlData *channelData = nullptr;
 		bool channelLockedByOtherSource = false;
 		// Apply the new source volume to this channel if this source is active
 		// on this channel, or if it was active on the channel before it was

@@ -362,7 +362,7 @@ void MidiDriver_ADLIB_Multisource::ActiveNote::init() {
 	noteCounterValue = 0;
 
 	instrumentId = 0;
-	instrumentDef = 0;
+	instrumentDef = nullptr;
 
 	channelAllocated = false;
 }
@@ -373,7 +373,7 @@ bool MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::OplType oplType) {
 
 MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType) :
 		_oplType(oplType),
-		_opl(0),
+		_opl(nullptr),
 		_isOpen(false),
 		_accuracyMode(ACCURACY_MODE_SB16_WIN95),
 		_allocationMode(ALLOCATION_MODE_DYNAMIC),
@@ -455,7 +455,7 @@ void MidiDriver_ADLIB_Multisource::close() {
 	if (_opl) {
 		_opl->stop();
 		delete _opl;
-		_opl = 0;
+		_opl = nullptr;
 	}
 }
 
@@ -501,12 +501,12 @@ uint32 MidiDriver_ADLIB_Multisource::getBaseTempo() {
 
 MidiChannel *MidiDriver_ADLIB_Multisource::allocateChannel() {
 	// This driver does not use MidiChannel objects.
-	return 0;
+	return nullptr;
 }
 
 MidiChannel *MidiDriver_ADLIB_Multisource::getPercussionChannel() {
 	// This driver does not use MidiChannel objects.
-	return 0;
+	return nullptr;
 }
 
 void MidiDriver_ADLIB_Multisource::send(int8 source, uint32 b) {
@@ -1083,7 +1083,7 @@ void MidiDriver_ADLIB_Multisource::recalculateVolumes(uint8 channel, uint8 sourc
 }
 
 MidiDriver_ADLIB_Multisource::InstrumentInfo MidiDriver_ADLIB_Multisource::determineInstrument(uint8 channel, uint8 source, uint8 note) {
-	InstrumentInfo instrument = { 0, 0, 0 };
+	InstrumentInfo instrument = { 0, nullptr, 0 };
 
 	if (channel == MIDI_RHYTHM_CHANNEL) {
 		// On the rhythm channel, the note played indicates which instrument

@@ -45,13 +45,13 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 		// "normal" snd resources
 		if (stream->readUint16BE() != 1) {
 			warning("makeMacSndStream(): Unsupported data type count");
-			return 0;
+			return nullptr;
 		}
 
 		if (stream->readUint16BE() != 5) {
 			// 5 == sampled
 			warning("makeMacSndStream(): Unsupported data type");
-			return 0;
+			return nullptr;
 		}
 
 		stream->readUint32BE(); // initialization option
@@ -60,13 +60,13 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 		stream->readUint16BE(); // reference count (unused)
 	} else {
 		warning("makeMacSndStream(): Unknown format type %d", sndType);
-		return 0;
+		return nullptr;
 	}
 
 	// We really should never get this as long as we have sampled data only
 	if (stream->readUint16BE() != 1) {
 		warning("makeMacSndStream(): Unsupported command count");
-		return 0;
+		return nullptr;
 	}
 
 	uint16 command = stream->readUint16BE();
@@ -75,7 +75,7 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	// 0x8051 - bufferCmd (with dataOffsetFlag set): play a sample sound
 	if (command != 0x8050 && command != 0x8051) {
 		warning("makeMacSndStream(): Unsupported command %04x", command);
-		return 0;
+		return nullptr;
 	}
 
 	stream->readUint16BE(); // 0
@@ -94,7 +94,7 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	if (encoding != 0) {
 		// 0 == PCM
 		warning("makeMacSndStream(): Unsupported compression %d", encoding);
-		return 0;
+		return nullptr;
 	}
 
 	stream->skip(soundDataOffset);

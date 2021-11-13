@@ -115,7 +115,7 @@ static int calcBasicAmp(const Tables *tables, const Partial *partial, const MemP
 		if (amp < 0) {
 			return 0;
 		}
-		if (rhythmTemp != NULL) {
+		if (rhythmTemp != nullptr) {
 			amp -= tables->levelToAmpSubtraction[rhythmTemp->outputLevel];
 			if (amp < 0) {
 				return 0;
