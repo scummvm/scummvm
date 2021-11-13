@@ -18,6 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * this code on November 10th, 2021, to be use in closed-source products.
+ * Therefore, any contributions (commits) to it will also be dual-licensed.
+ *
  */
 
 #ifndef GROOVIE_LOGIC_GALLERY_H
@@ -70,7 +76,7 @@ namespace Groovie {
  * |           | 20/2D  |              21/2E                      |
  * +-----------+--------+-----------------------------------------+
  */
- 
+
 class GalleryGame {
 public:
 	GalleryGame() {
@@ -79,10 +85,10 @@ public:
 #endif
 	}
 	void run(byte *scriptVariables);
-	
+
 private:
 	byte galleryAI(byte *pieceStatus, int depth);
-	
+
 	static const byte kGalleryLinks[21][10];
 
 	void test();

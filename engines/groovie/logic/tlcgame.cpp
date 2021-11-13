@@ -18,6 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * this code on November 10th, 2021, to be use in closed-source products.
+ * Therefore, any contributions (commits) to it will also be dual-licensed.
+ *
  */
 
 #include "groovie/logic/tlcgame.h"
@@ -237,7 +243,7 @@ void TlcGame::getRegionRewind() {
 
 
 int TlcGame::getRegionNext(uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) {
-	
+
 	// Check if initialization was done
 	if (_curQuestNumAnswers < 0) {
 		warning("TLC:GetRegionNext: Uninitialized call to getRegionNext.");
@@ -294,7 +300,7 @@ void TlcGame::epInit() {
 	int i;
 	int numEpisodesInDB;
 	uint32 scoreDataOffset;
-	
+
 	// Delete previous question data
 	delete[] _epQuestionsData;
 
@@ -632,7 +638,7 @@ void TlcGame::epResultQuestion() {
 
 	_epScoreBin[scoreBinId] = _epScoreBin[scoreBinId] + 1;
 
-	debugC(1, kDebugLogic, "TLC:EpResultQuest: Answer: %d -> Inc bin[%d] -> bin[0..5] = %d, %d, %d, %d, %d, %d", 
+	debugC(1, kDebugLogic, "TLC:EpResultQuest: Answer: %d -> Inc bin[%d] -> bin[0..5] = %d, %d, %d, %d, %d, %d",
 		answerIdx+1, scoreBinId, _epScoreBin[0], _epScoreBin[1], _epScoreBin[2], _epScoreBin[3], _epScoreBin[4], _epScoreBin[5]);
 }
 /*
