@@ -33,7 +33,7 @@
 
 static const PlainGameDescriptor queenGames[] = {
 	{"queen", "Flight of the Amazon Queen"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #define GAMEOPTION_ALT_INTRO  GUIO_GAMEOPTIONS1

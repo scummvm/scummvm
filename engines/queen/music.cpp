@@ -37,7 +37,7 @@ namespace Queen {
 MidiMusic::MidiMusic(QueenEngine *vm)
 	: _isPlaying(false), _isLooping(false),
 	_randomLoop(false), _masterVolume(192),
-	_buf(0), _rnd("queenMusic") {
+	_buf(nullptr), _rnd("queenMusic") {
 
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	_queuePos = _lastSong = _currentSong = 0;
@@ -92,7 +92,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 }
 
 MidiMusic::~MidiMusic() {
-	_driver->setTimerCallback(0, 0);
+	_driver->setTimerCallback(nullptr, nullptr);
 	_parser->unloadMusic();
 	delete _parser;
 	_driver->close();
@@ -281,7 +281,7 @@ void MidiMusic::playMusic() {
 	if (*prevSong == 'C' || *prevSong == 'c') {
 		if (_buf) {
 			delete[] _buf;
-			_buf = 0;
+			_buf = nullptr;
 		}
 	}
 
