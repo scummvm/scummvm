@@ -72,7 +72,7 @@ static UTYPE_INFO *find_utype(int type) {
 		if (utypes[i].id == type)
 			return &utypes[i];
 
-	return NULL;
+	return nullptr;
 }
 
 void set_uformat(int type) {
@@ -1254,7 +1254,7 @@ const char *ustrstr(const char *s1, const char *s2) {
 		s1 += uwidth(s1);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int usetat(char *s, int index, int c) {

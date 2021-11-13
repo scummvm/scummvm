@@ -500,7 +500,7 @@ int IsMusicVoxAvailable() {
 
 ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) {
 	if (!play_voice_nonblocking(ch->index_id, sndid, as_speech))
-		return NULL;
+		return nullptr;
 	return &_G(scrAudioChannel)[SCHAN_SPEECH];
 }
 

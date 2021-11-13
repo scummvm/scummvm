@@ -49,7 +49,7 @@ using namespace AGS::Shared;
 ScriptCamera *Camera_Create() {
 	auto cam = _GP(play).CreateRoomCamera();
 	if (!cam)
-		return NULL;
+		return nullptr;
 	return _GP(play).RegisterRoomCamera(cam->GetID());
 }
 
@@ -237,7 +237,7 @@ RuntimeScriptValue Sc_Camera_SetSize(void *self, const RuntimeScriptValue *param
 ScriptViewport *Viewport_Create() {
 	auto view = _GP(play).CreateRoomViewport();
 	if (!view)
-		return NULL;
+		return nullptr;
 	return _GP(play).RegisterRoomViewport(view->GetID());
 }
 
