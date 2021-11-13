@@ -23,8 +23,8 @@ gui/ThemeEngine.cpp
 gui/unknown-game-dialog.cpp
 gui/updates-dialog.cpp
 gui/widget.cpp
-gui/widget/grid.cpp
-gui/widget/groupedlist.cpp
+gui/widgets/grid.cpp
+gui/widgets/groupedlist.cpp
 
 base/main.cpp
 
