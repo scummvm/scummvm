@@ -1537,8 +1537,8 @@ void Interpreter::O_INITDIALOG() {
 		_string = string + adressOfFirstSequence;
 
 		for (int i = 0; i < 32; i++) {
-			_vm->_dialogBoxAddr[i] = 0;
-			_vm->_dialogOptAddr[i] = 0;
+			_vm->_dialogBoxAddr[i] = nullptr;
+			_vm->_dialogOptAddr[i] = nullptr;
 		}
 
 		for (int i = 0; i < 4 * 32; i++) {
@@ -1574,7 +1574,7 @@ void Interpreter::O_INITDIALOG() {
 
 		int freeHSlot = 0;
 		for (int i = 31; i >= 0; i--) {
-			if (_vm->_dialogOptAddr[i] != 0) {
+			if (_vm->_dialogOptAddr[i] != nullptr) {
 				i++;
 				freeHSlot = i;
 				_flags->setFlagValue(Flags::VOICE_H_LINE, i);

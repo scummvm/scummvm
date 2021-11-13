@@ -771,7 +771,7 @@ void PrinceEngine::leftMouseButton() {
 						if (!text._str) {
 							continue;
 						}
-						text._str = 0;
+						text._str = nullptr;
 						text._time = 0;
 					}
 				}

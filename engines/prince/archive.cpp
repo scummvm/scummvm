@@ -158,7 +158,7 @@ const Common::ArchiveMemberPtr PtcArchive::getMember(const Common::Path &path) c
 Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
 	if (!_items.contains(name)) {
-		return 0;
+		return nullptr;
 	}
 
 	debug(8, "PtcArchive::createReadStreamForMember(%s)", name.c_str());
@@ -166,7 +166,7 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 	const FileEntry &entryHeader = _items[name];
 
 	if (entryHeader._size < 4)
-		return 0;
+		return nullptr;
 
 	uint32 size = entryHeader._size;
 

@@ -264,7 +264,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 		int shadWallDown = 0;
 		int shadWallBitAddr = 0;
 		int shadWallBitMask = 0;
-		byte *shadWallDestAddr = 0;
+		byte *shadWallDestAddr = nullptr;
 		int shadWallPosY = 0;
 		int shadWallSkipX = 0;
 		int shadWallModulo = 0;
