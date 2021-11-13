@@ -60,7 +60,7 @@ reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc
 	}
 
 	if (methodNum == -1) {
-		if (lookupSelector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+		if (lookupSelector(_segMan, objAddr, slc, nullptr, &addr) != kSelectorMethod) {
 			error("getDetectionAddr: target selector is not a method of object %s", objName.c_str());
 			return NULL_REG;
 		}
@@ -388,7 +388,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 			if (SELECTOR(overlay) != -1) {
 				// The game has an overlay selector, check how it calls kDrawPic
 				// to determine the graphics functions type used
-				if (lookupSelector(_segMan, rmObjAddr, SELECTOR(overlay), NULL, NULL) == kSelectorMethod) {
+				if (lookupSelector(_segMan, rmObjAddr, SELECTOR(overlay), nullptr, nullptr) == kSelectorMethod) {
 					if (!autoDetectGfxFunctionsType()) {
 						warning("Graphics functions detection failed, taking an educated guess");
 

@@ -73,8 +73,8 @@ public:
 	int open() override { return open(kMaxChannels); }
 	void close() override;
 	void send(uint32 b) override;
-	MidiChannel *allocateChannel() override { return NULL; }
-	MidiChannel *getPercussionChannel() override { return NULL; }
+	MidiChannel *allocateChannel() override { return nullptr; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 
 	// AudioStream
 	bool isStereo() const override { return false; }

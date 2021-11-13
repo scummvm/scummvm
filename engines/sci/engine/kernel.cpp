@@ -174,8 +174,8 @@ void Kernel::loadSelectorNames() {
 static uint16 *parseKernelSignature(const char *kernelName, const char *writtenSig) {
 	const char *curPos;
 	char curChar;
-	uint16 *result = NULL;
-	uint16 *writePos = NULL;
+	uint16 *result = nullptr;
+	uint16 *writePos = nullptr;
 	int size = 0;
 	bool validType = false;
 	bool optionalType = false;
@@ -185,7 +185,7 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 
 	// No signature given? no signature out
 	if (!writtenSig)
-		return NULL;
+		return nullptr;
 
 	// First, we check how many bytes the result will be
 	//  we also check, if the written signature makes any sense
@@ -439,7 +439,7 @@ static const SignatureDebugType signatureDebugTypeList[] = {
 	{ SIG_TYPE_NODE,          "node" },
 	{ SIG_TYPE_ERROR,         "error" },
 	{ SIG_IS_INVALID,         "invalid" },
-	{ 0,                      NULL }
+	{ 0,                      nullptr }
 };
 
 static void kernelSignatureDebugType(Common::String &signatureDetailsStr, const uint16 type) {
@@ -593,11 +593,11 @@ void Kernel::mapFunctions(GameFeatures *features) {
 		Common::String kernelName = _kernelNames[id];
 
 		// Reset the table entry
-		_kernelFuncs[id].function = NULL;
-		_kernelFuncs[id].signature = NULL;
-		_kernelFuncs[id].name = NULL;
-		_kernelFuncs[id].workarounds = NULL;
-		_kernelFuncs[id].subFunctions = NULL;
+		_kernelFuncs[id].function = nullptr;
+		_kernelFuncs[id].signature = nullptr;
+		_kernelFuncs[id].name = nullptr;
+		_kernelFuncs[id].workarounds = nullptr;
+		_kernelFuncs[id].subFunctions = nullptr;
 		_kernelFuncs[id].subFunctionCount = 0;
 		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
@@ -645,7 +645,7 @@ void Kernel::mapFunctions(GameFeatures *features) {
 			_kernelFuncs[id].workarounds = kernelMap->workarounds;
 			if (kernelMap->subFunctions) {
 				// Get version for subfunction identification
-				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).getOffset();
+				SciVersion mySubVersion = (SciVersion)kernelMap->function(nullptr, 0, nullptr).getOffset();
 				// Now check whats the highest subfunction-id for this version
 				const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
 				uint16 subFunctionCount = 0;

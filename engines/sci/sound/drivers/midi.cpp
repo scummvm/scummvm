@@ -125,7 +125,7 @@ static const byte defaultSci32GMPatch[] = {
 };
 #endif
 
-Mt32ToGmMapList *Mt32dynamicMappings = NULL;
+Mt32ToGmMapList *Mt32dynamicMappings = nullptr;
 
 class MidiPlayer_Midi : public MidiPlayer {
 public:
@@ -260,7 +260,7 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 	const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 	for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
 		delete[] (*it).name;
-		(*it).name = 0;
+		(*it).name = nullptr;
 	}
 
 	Mt32dynamicMappings->clear();
@@ -1060,7 +1060,7 @@ bool MidiPlayer_Midi::readD110SysEx() {
 byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 	int i = 0;
 
-	if (Mt32dynamicMappings != NULL) {
+	if (Mt32dynamicMappings != nullptr) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
 			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
@@ -1080,7 +1080,7 @@ byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 	int i = 0;
 
-	if (Mt32dynamicMappings != NULL) {
+	if (Mt32dynamicMappings != nullptr) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
 			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
@@ -1244,7 +1244,7 @@ void MidiPlayer_Midi::resetMt32() {
 }
 
 int MidiPlayer_Midi::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	assert(resMan != nullptr);
 
 	int retval = _driver->open();
 	if (retval != 0) {
@@ -1414,7 +1414,7 @@ void MidiPlayer_Midi::close() {
 		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, _mt32LCDSize), true);
 	}
 
-	_driver->setTimerCallback(NULL, NULL);
+	_driver->setTimerCallback(nullptr, nullptr);
 	_driver->close();
 }
 

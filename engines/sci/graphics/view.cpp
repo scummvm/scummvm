@@ -419,7 +419,7 @@ uint16 GfxView::getCelCount(int16 loopNo) const {
 }
 
 Palette *GfxView::getPalette() {
-	return _embeddedPal ? &_viewPalette : NULL;
+	return _embeddedPal ? &_viewPalette : nullptr;
 }
 
 bool GfxView::isScaleable() {

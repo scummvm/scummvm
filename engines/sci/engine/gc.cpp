@@ -200,7 +200,7 @@ void run_gc(EngineState *s) {
 	for (uint seg = 1; seg < heap.size(); seg++) {
 		SegmentObj *mobj = heap[seg];
 
-		if (mobj != NULL) {
+		if (mobj != nullptr) {
 #ifdef GC_DEBUG_CODE
 			const SegmentType type = mobj->getType();
 			segnames[type] = segmentTypeNames[type];

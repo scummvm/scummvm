@@ -94,8 +94,8 @@ void EngineState::reset(bool isRestoring) {
 
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
-	stack_base = 0;
-	stack_top = 0;
+	stack_base = nullptr;
+	stack_top = nullptr;
 
 	r_acc = NULL_REG;
 	r_prev = NULL_REG;
@@ -387,7 +387,7 @@ Common::String SciEngine::strSplitLanguage(const char *str, uint16 *languageSpli
 
 	// Don't add subtitle when separator is not set, subtitle language is not set, or
 	// string contains only one language
-	if ((sep == NULL) || (subtitleLanguage == K_LANG_NONE) || (foundLanguage == K_LANG_NONE))
+	if ((sep == nullptr) || (subtitleLanguage == K_LANG_NONE) || (foundLanguage == K_LANG_NONE))
 		return retval;
 
 	// Add subtitle, unless the subtitle language doesn't match the languages in the string

@@ -647,7 +647,7 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 	} else if (!strcmp(token, "nil")) {
 		nextToken = kParseNil;
 	} else {
-		nextValue = strtol(token, NULL, 0);
+		nextValue = strtol(token, nullptr, 0);
 		nextToken = kParseNumber;
 	}
 
@@ -688,11 +688,11 @@ bool Console::parseResourceNumber36(const char *userParameter, uint16 &resourceN
 	}
 
 	// input: RRRNNVVCCS
-	resourceNumber = strtol(Common::String(userParameter, 3).c_str(), 0, 36);
-	uint16 noun = strtol(Common::String(userParameter + 3, 2).c_str(), 0, 36);
-	uint16 verb = strtol(Common::String(userParameter + 5, 2).c_str(), 0, 36);
-	uint16 cond = strtol(Common::String(userParameter + 7, 2).c_str(), 0, 36);
-	uint16 seq = strtol(Common::String(userParameter + 9, 1).c_str(), 0, 36);
+	resourceNumber = strtol(Common::String(userParameter, 3).c_str(), nullptr, 36);
+	uint16 noun = strtol(Common::String(userParameter + 3, 2).c_str(), nullptr, 36);
+	uint16 verb = strtol(Common::String(userParameter + 5, 2).c_str(), nullptr, 36);
+	uint16 cond = strtol(Common::String(userParameter + 7, 2).c_str(), nullptr, 36);
+	uint16 seq = strtol(Common::String(userParameter + 9, 1).c_str(), nullptr, 36);
 	resourceTuple = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
 	return true;
 }
@@ -759,7 +759,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, uint32 resourceTuple) {
 	const char *resourceTypeName = getResourceTypeName(resourceType);
 	ResourceId resourceId;
-	Resource *resource = NULL;
+	Resource *resource = nullptr;
 	char outFileName[50];
 
 	switch (resourceType) {
@@ -1062,7 +1062,7 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 		debugPrintf("Calling this command with the room number (in decimal or hexadecimal) changes the room\n");
 	} else {
 		Common::String roomNumberStr = argv[1];
-		int roomNumber = strtol(roomNumberStr.c_str(), NULL, roomNumberStr.hasSuffix("h") ? 16 : 10);
+		int roomNumber = strtol(roomNumberStr.c_str(), nullptr, roomNumberStr.hasSuffix("h") ? 16 : 10);
 		_engine->_gamestate->setRoomNumber(roomNumber);
 		debugPrintf("Room number changed to %d (%x in hex)\n", roomNumber, roomNumber);
 	}
@@ -1120,7 +1120,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 
 	ResourceType restype = parseResourceType(argv[1]);
 	int resNumber = 0, resMax = 0;
-	Resource *script = NULL;
+	Resource *script = nullptr;
 
 	if (restype == kResourceTypeInvalid) {
 		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
@@ -1231,7 +1231,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 	SciVersion doSoundVersion = _engine->_features->detectDoSoundType();
 	MidiPlayer *player = MidiPlayer_Midi_create(doSoundVersion);
-	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion, 0);
+	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion, nullptr);
 	parser->setMidiDriver(player);
 
 	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeSound);
@@ -1265,7 +1265,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			continue;
 		}
 
-		parser->loadMusic(track, NULL, channelFilterMask, doSoundVersion);
+		parser->loadMusic(track, nullptr, channelFilterMask, doSoundVersion);
 		SciSpan<const byte> channelData = parser->getMixedData();
 
 		byte curEvent = 0, prevEvent = 0, command = 0;
@@ -1393,7 +1393,7 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 		debugPrintf("Example: %s test_0__XX 1 255\n", argv[0]);
 		debugPrintf("The above example will map the MT-32 instrument \"test 0  XX\" to GM instrument 1\n\n");
 	} else {
-		if (Mt32dynamicMappings != NULL) {
+		if (Mt32dynamicMappings != nullptr) {
 			Mt32ToGmMap newMapping;
 			char *instrumentName = new char[11];
 			Common::strlcpy(instrumentName, argv[1], 11);
@@ -1410,7 +1410,7 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 	}
 
 	debugPrintf("Current dynamic mappings:\n");
-	if (Mt32dynamicMappings != NULL) {
+	if (Mt32dynamicMappings != nullptr) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
 			debugPrintf("\"%s\" -> %d / %d\n", (*it).name, (*it).gmInstr, (*it).gmRhythmKey);
@@ -1632,13 +1632,13 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		return true;
 	}
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 // The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
@@ -1843,7 +1843,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			spec[len++] = 0xfe;
 			spec[len++] = 0xf6;
 		} else {
-			uint32 s = strtol(argv[p], 0, 16);
+			uint32 s = strtol(argv[p], nullptr, 16);
 			if (s >= 0xf0 && s <= 0xff) {
 				spec[len++] = s;
 			} else {
@@ -2037,7 +2037,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
-		return cmdExit(0, 0);
+		return cmdExit(0, nullptr);
 	} else {
 		debugPrintf("Unknown video file type\n");
 		return true;
@@ -2607,7 +2607,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		debugPrintf("Map %d is not available.\n", map);
 		return true;
 	}
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdSongLib(int argc, const char **argv) {
@@ -2653,7 +2653,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 
 	// TODO: Maybe also add a playBed option.
 	g_sci->_soundCmd->startNewSound(number);
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdToggleSound(int argc, const char **argv) {
@@ -2874,8 +2874,8 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	const char *varType_pre = strchr(varAbbrev, *argv[1]);
 	int varType;
 	int varIndex = 0;
-	reg_t *curValue = NULL;
-	const char *setValue = NULL;
+	reg_t *curValue = nullptr;
+	const char *setValue = nullptr;
 
 	if (!varType_pre) {
 		debugPrintf("Invalid variable type '%c'\n", *argv[1]);
@@ -3344,9 +3344,9 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 	Common::List<SegmentId> segmentNrList;
 
 	SegmentType curSegmentType = SEG_TYPE_INVALID;
-	SegmentObj *curSegmentObj = NULL;
-	Script *curScriptObj = NULL;
-	const byte *curScriptData = NULL;
+	SegmentObj *curSegmentObj = nullptr;
+	Script *curScriptObj = nullptr;
+	const byte *curScriptData = nullptr;
 
 	segmentNrList.clear();
 	if (scriptNr < 0) {
@@ -3372,9 +3372,9 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 	int showTypeCount = 0;
 
 	reg_t objectPos;
-	const char *objectNamePtr = NULL;
-	const byte *stringPtr = NULL;
-	const byte *saidPtr = NULL;
+	const char *objectNamePtr = nullptr;
+	const byte *stringPtr = nullptr;
+	const byte *saidPtr = nullptr;
 
 	Common::List<SegmentId>::iterator it;
 	const Common::List<SegmentId>::iterator end = segmentNrList.end();
@@ -3462,7 +3462,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 		_debugState.runningStep = atoi(argv[1]) - 1;
 	_debugState.debugging = true;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdStepOver(int argc, const char **argv) {
@@ -3475,7 +3475,7 @@ bool Console::cmdStepEvent(int argc, const char **argv) {
 	_debugState.stopOnEvent = true;
 	_debugState.debugging = true;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
@@ -3483,7 +3483,7 @@ bool Console::cmdStepRet(int argc, const char **argv) {
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size() - 1;
 	_debugState.debugging = true;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdStepGlobal(int argc, const char **argv) {
@@ -3497,7 +3497,7 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 	_debugState.seekSpecial = atoi(argv[1]);
 	_debugState.debugging = true;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
@@ -3530,7 +3530,7 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 	}
 	_debugState.debugging = true;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdDisassemble(int argc, const char **argv) {
@@ -3569,7 +3569,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, NULL, &addr) != kSelectorMethod) {
+	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, nullptr, &addr) != kSelectorMethod) {
 		debugPrintf("Not a method.\n");
 		return true;
 	}
@@ -3826,12 +3826,12 @@ bool Console::cmdSend(int argc, const char **argv) {
 	}
 
 	const Object *o = _engine->_gamestate->_segMan->getObject(object);
-	if (o == NULL) {
+	if (o == nullptr) {
 		debugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
 	}
 
-	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, NULL, NULL);
+	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, nullptr, nullptr);
 
 	if (selector_type == kSelectorNone) {
 		debugPrintf("Object does not support selector: \"%s\"\n", selectorName);
@@ -4580,7 +4580,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 		return true;
 	}
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool Console::cmdAddresses(int argc, const char **argv) {
@@ -4605,7 +4605,7 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 // Returns 0 on success
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 	// Pointer to the part of str which contains a numeric offset (if any)
-	const char *offsetStr = NULL;
+	const char *offsetStr = nullptr;
 
 	// Flag that tells whether the value stored in offsetStr is an absolute offset,
 	// or a relative offset against dest->offset.
@@ -4642,7 +4642,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 			return 1; // No matching register
 
 		if (!*offsetStr)
-			offsetStr = NULL;
+			offsetStr = nullptr;
 		else if (*offsetStr != '+' && *offsetStr != '-')
 			return 1;
 	} else if (*str == '&') { // Script relative: "&SCRIPT-ID:OFFSET"
@@ -4836,7 +4836,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 }
 
 bool Console::parseInteger(const char *argument, int &result) {
-	char *endPtr = 0;
+	char *endPtr = nullptr;
 	int idxLen = strlen(argument);
 	const char *lastChar = argument + idxLen - (idxLen == 0 ? 0 : 1);
 

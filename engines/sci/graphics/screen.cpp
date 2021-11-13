@@ -181,7 +181,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
 	const Graphics::PixelFormat *format = &format8;
 	if (ConfMan.getBool("rgb_rendering"))
-		format = 0; // Backend's preferred mode; RGB if available
+		format = nullptr; // Backend's preferred mode; RGB if available
 
 	if (g_sci->hasMacIconBar()) {
 		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
@@ -209,14 +209,14 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		if (_paletteModsEnabled)
 			_paletteMapScreen = (byte *)calloc(_displayPixels, 1);
 		else
-			_paletteMapScreen = 0;
+			_paletteMapScreen = nullptr;
 	} else {
-		_displayedScreen = 0;
-		_palette = 0;
-		_rgbScreen = 0;
-		_paletteMapScreen = 0;
+		_displayedScreen = nullptr;
+		_palette = nullptr;
+		_rgbScreen = nullptr;
+		_paletteMapScreen = nullptr;
 	}
-	_backupScreen = 0;
+	_backupScreen = nullptr;
 }
 
 GfxScreen::~GfxScreen() {
@@ -908,7 +908,7 @@ int16 *GfxScreen::unditherGetDitheredBgColors() {
 	if (_unditheringEnabled)
 		return _ditheredPicColors;
 	else
-		return NULL;
+		return nullptr;
 }
 
 void GfxScreen::debugShowMap(int mapNo) {

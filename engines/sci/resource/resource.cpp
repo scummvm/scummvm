@@ -303,7 +303,7 @@ ResourceSource *ResourceManager::addPatchDir(const Common::String &dirname) {
 	ResourceSource *newsrc = new DirectoryResourceSource(dirname);
 
 	_sources.push_back(newsrc);
-	return 0;
+	return nullptr;
 }
 
 ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) {
@@ -313,7 +313,7 @@ ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) 
 			return src;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // Resource manager constructors and operations
@@ -402,7 +402,7 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	}
 	// failed
 	delete file;
-	return NULL;
+	return nullptr;
 }
 
 void ResourceManager::disposeVolumeFileStream(Common::SeekableReadStream *fileStream, Sci::ResourceSource *source) {
@@ -445,7 +445,7 @@ static Common::Array<uint32> resTypeToMacTags(ResourceType type);
 
 void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	ResourceType type = res->getType();
-	Common::SeekableReadStream *stream = 0;
+	Common::SeekableReadStream *stream = nullptr;
 
 	if (type == kResourceTypeAudio36 || type == kResourceTypeSync36) {
 		// Handle audio36/sync36, convert back to audio/sync
@@ -749,7 +749,7 @@ int ResourceManager::addAppropriateSources() {
 }
 
 int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fslist) {
-	ResourceSource *map = 0;
+	ResourceSource *map = nullptr;
 	Common::Array<ResourceSource *> sci21Maps;
 
 #ifdef ENABLE_SCI32
@@ -1013,7 +1013,7 @@ void ResourceManager::init() {
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
-	_audioMapSCI1 = NULL;
+	_audioMapSCI1 = nullptr;
 #ifdef ENABLE_SCI32
 	_currentDiscNo = 1;
 #endif
@@ -1021,7 +1021,7 @@ void ResourceManager::init() {
 		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
 		addSource(_patcher);
 	} else {
-		_patcher = NULL;
+		_patcher = nullptr;
 	};
 
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
@@ -1214,7 +1214,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	Resource *retval = testResource(id);
 
 	if (!retval)
-		return NULL;
+		return nullptr;
 
 	if (retval->_status == kResStatusNoMalloc)
 		loadResource(retval);
@@ -1296,9 +1296,9 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 }
 
 ResVersion ResourceManager::detectMapVersion() {
-	Common::SeekableReadStream *fileStream = 0;
+	Common::SeekableReadStream *fileStream = nullptr;
 	byte buff[6];
-	ResourceSource *rsrc= 0;
+	ResourceSource *rsrc= nullptr;
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
@@ -1339,7 +1339,7 @@ ResVersion ResourceManager::detectMapVersion() {
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
 		fileStream->seek(0, SEEK_SET);
 		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
-			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL) {
+			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == nullptr) {
 				delete fileStream;
 				return kResVersionSci1Middle;
 			}
@@ -1400,7 +1400,7 @@ ResVersion ResourceManager::detectMapVersion() {
 }
 
 ResVersion ResourceManager::detectVolVersion() {
-	Common::SeekableReadStream *fileStream = 0;
+	Common::SeekableReadStream *fileStream = nullptr;
 	ResourceSource *rsrc;
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
@@ -1594,8 +1594,8 @@ bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple) {
-	Common::SeekableReadStream *fileStream = 0;
-	Resource *newrsc = 0;
+	Common::SeekableReadStream *fileStream = nullptr;
+	Resource *newrsc = nullptr;
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
 	ResourceType checkForType = resourceType;
 
@@ -1714,12 +1714,12 @@ ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filen
 	// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
 
 	// Skip patch type character
-	uint16 resourceNr = strtol(Common::String(filename.c_str() + 1, 3).c_str(), 0, 36); // 3 characters
-	uint16 noun = strtol(Common::String(filename.c_str() + 4, 2).c_str(), 0, 36);       // 2 characters
-	uint16 verb = strtol(Common::String(filename.c_str() + 6, 2).c_str(), 0, 36);       // 2 characters
+	uint16 resourceNr = strtol(Common::String(filename.c_str() + 1, 3).c_str(), nullptr, 36); // 3 characters
+	uint16 noun = strtol(Common::String(filename.c_str() + 4, 2).c_str(), nullptr, 36);       // 2 characters
+	uint16 verb = strtol(Common::String(filename.c_str() + 6, 2).c_str(), nullptr, 36);       // 2 characters
 	// Skip '.'
-	uint16 cond = strtol(Common::String(filename.c_str() + 9, 2).c_str(), 0, 36);       // 2 characters
-	uint16 seq = strtol(Common::String(filename.c_str() + 11, 1).c_str(), 0, 36);       // 1 character
+	uint16 cond = strtol(Common::String(filename.c_str() + 9, 2).c_str(), nullptr, 36);       // 2 characters
+	uint16 seq = strtol(Common::String(filename.c_str() + 11, 1).c_str(), nullptr, 36);       // 1 character
 
 	return ResourceId(type, resourceNr, noun, verb, cond, seq);
 }
@@ -1849,7 +1849,7 @@ void ResourceManager::readResourcePatches() {
 
 			// SCI1 scheme
 			if (Common::isDigit(name[0])) {
-				char *end = 0;
+				char *end = nullptr;
 				resourceNr = strtol(name.c_str(), &end, 10);
 				bAdd = (*end == '.'); // Ensure the next character is the period
 			} else {
@@ -1871,7 +1871,7 @@ void ResourceManager::readResourcePatches() {
 }
 
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
-	Common::SeekableReadStream *fileStream = 0;
+	Common::SeekableReadStream *fileStream = nullptr;
 	ResourceType type = kResourceTypeInvalid;	// to silence a false positive in MSVC
 	uint16 number, id;
 	uint32 offset;
@@ -1950,7 +1950,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 }
 
 int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
-	Common::SeekableReadStream *fileStream = 0;
+	Common::SeekableReadStream *fileStream = nullptr;
 
 	if (map->_resourceFile) {
 		fileStream = map->_resourceFile->createReadStream();
@@ -2030,7 +2030,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 			}
 
-			Resource *resource =  NULL;
+			Resource *resource =  nullptr;
 			if (!_resMap.tryGetVal(resId,resource)) {
 				addResource(resId, source, fileOffset, 0, map->getLocationName());
 			} else {
@@ -2386,7 +2386,7 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 		return errorNum;
 
 	// getting a decompressor
-	Decompressor *dec = NULL;
+	Decompressor *dec = nullptr;
 	switch (compression) {
 	case kCompNone:
 		dec = new Decompressor;
@@ -2445,7 +2445,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 
 	// Test 10 views to see if any are compressed
 	for (int i = 0; i < 1000; i++) {
-		Common::SeekableReadStream *fileStream = 0;
+		Common::SeekableReadStream *fileStream = nullptr;
 		Resource *res = testResource(ResourceId(kResourceTypeView, i));
 
 		if (!res)

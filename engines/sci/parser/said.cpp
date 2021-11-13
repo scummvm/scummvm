@@ -91,7 +91,7 @@ static ParseTreeNode* said_next_node() {
 static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
 	pos->type = kParseTreeLeafNode;
 	pos->value = value;
-	pos->right = 0;
+	pos->right = nullptr;
 
 	return pos;
 }
@@ -99,7 +99,7 @@ static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
 static ParseTreeNode* said_word_node(ParseTreeNode* pos, int value) {
 	pos->type = kParseTreeWordNode;
 	pos->value = value;
-	pos->right = 0;
+	pos->right = nullptr;
 
 	return pos;
 }
@@ -163,7 +163,7 @@ static bool said_attach_subtree(ParseTreeNode* pos, int major, int minor,
 				said_leaf_node(said_next_node(), major),
 				said_branch_attach_left(subtree,
 					said_leaf_node(said_next_node(), minor))),
-			0));
+			nullptr));
 
 	return retval;
 }
@@ -206,7 +206,7 @@ static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	nonempty = true;
 
@@ -263,7 +263,7 @@ static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	bool found;
 
@@ -345,7 +345,7 @@ static bool parseRef(ParseTreeNode* parentNode) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	ParseTreeNode* newParent = parentNode;
 
@@ -362,7 +362,7 @@ static bool parseRef(ParseTreeNode* parentNode) {
 
 			newParent = newParent->right;
 
-			newNode = said_branch_node(said_next_node(), 0, 0);
+			newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 			found = parseRef(newNode);
 
@@ -435,7 +435,7 @@ static bool parseListEntry(ParseTreeNode* parentNode) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	bool found;
 
@@ -522,7 +522,7 @@ static bool parseExpr(ParseTreeNode* parentNode) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	bool ret = false;
 	bool found;
@@ -557,7 +557,7 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 	int curTreePos = said_tree_pos;
 	ParseTreeNode* curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode* newNode = said_branch_node(said_next_node(), nullptr, nullptr);
 
 	bool ret = false;
 
@@ -600,7 +600,7 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 	if (said_tokens[said_token] == TOKEN_GT) {
 		said_token++;
 
-		newNode = said_branch_node(said_next_node(), 0,
+		newNode = said_branch_node(said_next_node(), nullptr,
 						said_leaf_node(said_next_node(), TOKEN_GT));
 
 		said_attach_subtree(newParent, 0x14B, TOKEN_GT, newNode);
@@ -622,7 +622,7 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 static bool buildSaidTree() {
 	said_branch_node(said_tree, &said_tree[1], &said_tree[2]);
 	said_leaf_node(&said_tree[1], 0x141); // Magic number #1
-	said_branch_node(&said_tree[2], &said_tree[3], 0);
+	said_branch_node(&said_tree[2], &said_tree[3], nullptr);
 	said_leaf_node(&said_tree[3], 0x13f); // Magic number #2
 
 	said_tree_pos = SAID_TREE_START;
@@ -636,7 +636,7 @@ static bool buildSaidTree() {
 		// No terminator, so parse error.
 
 		// Rollback
-		said_tree[2].right = 0;
+		said_tree[2].right = nullptr;
 		said_token = 0;
 		said_tree_pos = SAID_TREE_START;
 		return false;

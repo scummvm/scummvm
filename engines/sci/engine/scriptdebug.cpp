@@ -83,7 +83,7 @@ void DebugState::updateActiveBreakpointTypes() {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode, bool printCSyntax) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
-	Script *script_entity = NULL;
+	Script *script_entity = nullptr;
 	reg_t retval = make_reg32(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
@@ -351,7 +351,7 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 
 			while (stackframe > 0) {
 				int argc = sb[- stackframe + 1].getOffset();
-				const char *name = NULL;
+				const char *name = nullptr;
 				reg_t called_obj_addr = s->xs->objp;
 
 				if (opcode == op_send)
@@ -371,7 +371,7 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 				if (!s->_segMan->getObject(called_obj_addr)) {
 					debugN("INVALID_OBJ");
 				} else {
-					switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
+					switch (lookupSelector(s->_segMan, called_obj_addr, selector, nullptr, &fun_ref)) {
 					case kSelectorMethod:
 						debugN("FUNCT");
 						argc += restmod;

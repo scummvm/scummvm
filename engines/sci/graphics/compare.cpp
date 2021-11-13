@@ -109,7 +109,7 @@ uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
 }
 
 void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
-	GfxView *view = NULL;
+	GfxView *view = nullptr;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)readSelectorValue(_segMan, objectReference, SELECTOR(view));
 	int16 loopNo = readSelectorValue(_segMan, objectReference, SELECTOR(loop));
@@ -123,7 +123,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	view = _cache->getView(viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
 
-	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
+	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), nullptr, nullptr) == kSelectorVariable) {
 		setNSRect(objectReference, celRect);
 	}
 }
@@ -203,7 +203,7 @@ bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo,
 }
 
 void GfxCompare::kernelBaseSetter(reg_t object) {
-	if (lookupSelector(_segMan, object, SELECTOR(brLeft), NULL, NULL) == kSelectorVariable) {
+	if (lookupSelector(_segMan, object, SELECTOR(brLeft), nullptr, nullptr) == kSelectorVariable) {
 		int16 x = readSelectorValue(_segMan, object, SELECTOR(x));
 		int16 y = readSelectorValue(_segMan, object, SELECTOR(y));
 		int16 z = (SELECTOR(z) > -1) ? readSelectorValue(_segMan, object, SELECTOR(z)) : 0;

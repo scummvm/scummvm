@@ -49,7 +49,7 @@ public:
 	};
 
 	MidiDriver_AdLib(SciVersion version) : _version(version), _isSCI0(version < SCI_VERSION_1_EARLY), _playSwitch(true), _masterVolume(15),
-		_numVoiceMax(version == SCI_VERSION_0_EARLY ? 8 : kVoices), _rhythmKeyMap(), _opl(0), _adlibTimerParam(0), _adlibTimerProc(0), _stereo(false), _isOpen(false) { }
+		_numVoiceMax(version == SCI_VERSION_0_EARLY ? 8 : kVoices), _rhythmKeyMap(), _opl(nullptr), _adlibTimerParam(nullptr), _adlibTimerProc(nullptr), _stereo(false), _isOpen(false) { }
 	~MidiDriver_AdLib() override { }
 
 	// MidiDriver
@@ -59,8 +59,8 @@ public:
 	void send(uint32 b) override;
 	void initTrack(SciSpan<const byte> &header);
 
-	MidiChannel *allocateChannel() override { return NULL; }
-	MidiChannel *getPercussionChannel() override { return NULL; }
+	MidiChannel *allocateChannel() override { return nullptr; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 	bool isOpen() const override { return _isOpen; }
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
@@ -180,7 +180,7 @@ public:
 	MidiPlayer_AdLib(SciVersion soundVersion) : MidiPlayer(soundVersion) { _driver = new MidiDriver_AdLib(soundVersion); }
 	~MidiPlayer_AdLib() override {
 		delete _driver;
-		_driver = 0;
+		_driver = nullptr;
 	}
 
 	int open(ResourceManager *resMan) override;
@@ -907,7 +907,7 @@ uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
 
 
 int MidiPlayer_AdLib::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	assert(resMan != nullptr);
 
 	// Load up the patch.003 file, parse out the instruments
 	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 3), false);

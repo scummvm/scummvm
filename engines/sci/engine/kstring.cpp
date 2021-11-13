@@ -48,8 +48,8 @@ reg_t kStrCat(EngineState *s, int argc, reg_t *argv) {
 	//  However Space Quest 4 PC-9801 doesn't
 	if ((g_sci->getLanguage() == Common::JA_JPN)
 		&& (getSciVersion() <= SCI_VERSION_01)) {
-		s1 = g_sci->strSplit(s1.c_str(), NULL);
-		s2 = g_sci->strSplit(s2.c_str(), NULL);
+		s1 = g_sci->strSplit(s1.c_str(), nullptr);
+		s2 = g_sci->strSplit(s2.c_str(), nullptr);
 	}
 
 	s1 += s2;
@@ -585,7 +585,7 @@ reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv) {
 reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 	Common::String format = s->_segMan->getString(argv[1]);
 	Common::String sep_str;
-	const char *sep = NULL;
+	const char *sep = nullptr;
 	if (!argv[2].isNull()) {
 		sep_str = s->_segMan->getString(argv[2]);
 		sep = sep_str.c_str();

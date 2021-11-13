@@ -62,7 +62,7 @@ void Script::freeScript(const bool keepLocalsSegment) {
 	if (!keepLocalsSegment) {
 		_localsSegment = 0;
 	}
-	_localsBlock = NULL;
+	_localsBlock = nullptr;
 	_localsCount = 0;
 
 	_lockers = 1;
@@ -638,14 +638,14 @@ Object *Script::getObject(uint32 offset) {
 	if (_objects.contains(offset))
 		return &_objects[offset];
 	else
-		return 0;
+		return nullptr;
 }
 
 const Object *Script::getObject(uint32 offset) const {
 	if (_objects.contains(offset))
 		return &_objects[offset];
 	else
-		return 0;
+		return nullptr;
 }
 
 Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
@@ -951,7 +951,7 @@ SegmentRef Script::dereference(reg_t pointer) {
 
 LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
 	if (!getLocalsCount()) { // No locals
-		return NULL;
+		return nullptr;
 	} else {
 		LocalVariables *locals;
 
@@ -987,7 +987,7 @@ void Script::initializeLocals(SegManager *segMan) {
 }
 
 void Script::syncLocalsBlock(SegManager *segMan) {
-	_localsBlock = (_localsSegment == 0) ? NULL : (LocalVariables *)(segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS));
+	_localsBlock = (_localsSegment == 0) ? nullptr : (LocalVariables *)(segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS));
 }
 
 void Script::initializeClasses(SegManager *segMan) {

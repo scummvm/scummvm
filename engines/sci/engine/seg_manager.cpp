@@ -186,7 +186,7 @@ void SegManager::deallocate(SegmentId seg) {
 
 bool SegManager::isHeapObject(reg_t pos) const {
 	const Object *obj = getObject(pos);
-	if (obj == NULL || (obj && obj->isFreed()))
+	if (obj == nullptr || (obj && obj->isFreed()))
 		return false;
 	Script *scr = getScriptIfLoaded(pos.getSegment());
 	return !(scr && scr->isMarkedAsDeleted());
@@ -213,7 +213,7 @@ Script *SegManager::getScript(const SegmentId seg) {
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) const {
 	SegmentId actualSegment = getActualSegment(seg);
 	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment] || _heap[actualSegment]->getType() != SEG_TYPE_SCRIPT)
-		return 0;
+		return nullptr;
 	return (Script *)_heap[actualSegment];
 }
 
@@ -227,7 +227,7 @@ SegmentId SegManager::findSegmentByType(int type) const {
 SegmentObj *SegManager::getSegmentObj(SegmentId seg) const {
 	SegmentId actualSegment = getActualSegment(seg);
 	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
-		return 0;
+		return nullptr;
 	return _heap[actualSegment];
 }
 
@@ -245,9 +245,9 @@ SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) const {
 
 Object *SegManager::getObject(reg_t pos) const {
 	SegmentObj *mobj = getSegmentObj(pos.getSegment());
-	Object *obj = NULL;
+	Object *obj = nullptr;
 
-	if (mobj != NULL) {
+	if (mobj != nullptr) {
 		if (mobj->getType() == SEG_TYPE_CLONES) {
 			CloneTable &ct = *(CloneTable *)mobj;
 			if (ct.isValidEntry(pos.getOffset()))
@@ -473,7 +473,7 @@ byte *SegManager::getHunkPointer(reg_t addr) {
 
 	if (!ht || !ht->isValidEntry(addr.getOffset())) {
 		// Valid SCI behavior, e.g. when loading/quitting
-		return NULL;
+		return nullptr;
 	}
 
 	return (byte *)ht->at(addr.getOffset()).mem;
@@ -535,14 +535,14 @@ reg_t SegManager::newNode(reg_t value, reg_t key) {
 List *SegManager::lookupList(reg_t addr) {
 	if (getSegmentType(addr.getSegment()) != SEG_TYPE_LISTS) {
 		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
-		return NULL;
+		return nullptr;
 	}
 
 	ListTable &lt = *(ListTable *)_heap[addr.getSegment()];
 
 	if (!lt.isValidEntry(addr.getOffset())) {
 		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
-		return NULL;
+		return nullptr;
 	}
 
 	return &(lt[addr.getOffset()]);
@@ -550,23 +550,23 @@ List *SegManager::lookupList(reg_t addr) {
 
 Node *SegManager::lookupNode(reg_t addr, bool stopOnDiscarded) {
 	if (addr.isNull())
-		return NULL; // Non-error null
+		return nullptr; // Non-error null
 
 	SegmentType type = getSegmentType(addr.getSegment());
 
 	if (type != SEG_TYPE_NODES) {
 		error("Attempt to use non-node %04x:%04x (type %d) as list node", PRINT_REG(addr), type);
-		return NULL;
+		return nullptr;
 	}
 
 	NodeTable &nt = *(NodeTable *)_heap[addr.getSegment()];
 
 	if (!nt.isValidEntry(addr.getOffset())) {
 		if (!stopOnDiscarded)
-			return NULL;
+			return nullptr;
 
 		error("Attempt to use invalid or discarded reference %04x:%04x as list node", PRINT_REG(addr));
-		return NULL;
+		return nullptr;
 	}
 
 	return &(nt[addr.getOffset()]);
@@ -589,7 +589,7 @@ static void *derefPtr(SegManager *segMan, reg_t pointer, int entries, bool wantR
 	SegmentRef ret = segMan->dereference(pointer);
 
 	if (!ret.isValid())
-		return NULL;
+		return nullptr;
 
 	if (ret.isRaw != wantRaw) {
 		warning("Dereferencing pointer %04x:%04x (type %d) which is %s, but expected %s", PRINT_REG(pointer),
@@ -600,12 +600,12 @@ static void *derefPtr(SegManager *segMan, reg_t pointer, int entries, bool wantR
 
 	if (!wantRaw && ret.skipByte) {
 		warning("Unaligned pointer read: %04x:%04x expected with word alignment", PRINT_REG(pointer));
-		return NULL;
+		return nullptr;
 	}
 
 	if (entries > ret.maxSize) {
 		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
-		return NULL;
+		return nullptr;
 	}
 
 	if (ret.isRaw)
@@ -912,7 +912,7 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	if (size) {
 		d._buf = (byte *)calloc(size, 1);
 	} else {
-		d._buf = NULL;
+		d._buf = nullptr;
 	}
 
 	d._description = descr;

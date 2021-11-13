@@ -56,7 +56,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_volume = 127;
 
 	_resetOnPause = false;
-	_pSnd = 0;
+	_pSnd = nullptr;
 
 	_mainThreadCalled = false;
 
@@ -67,7 +67,7 @@ MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 	// we do this, so that MidiParser won't be able to call his own ::allNotesOff()
 	//  this one would affect all channels and we can't let that happen
-	_driver = 0;
+	_driver = nullptr;
 }
 
 void MidiParser_SCI::mainThreadBegin() {
@@ -449,8 +449,8 @@ void MidiParser_SCI::unloadMusic() {
 		_music->removeTrackInitCommandsFromQueue(_pSnd);
 	}
 	_numTracks = 0;
-	_pSnd = 0;
-	_track = 0;
+	_pSnd = nullptr;
+	_track = nullptr;
 	_activeTrack = 255;
 	_resetOnPause = false;
 	_mixedData.clear();

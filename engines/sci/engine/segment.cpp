@@ -37,7 +37,7 @@ namespace Sci {
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
 SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
-	SegmentObj *mem = 0;
+	SegmentObj *mem = nullptr;
 	switch (type) {
 	case SEG_TYPE_SCRIPT:
 		mem = new Script();
@@ -155,7 +155,7 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 		} else {
 			error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
 		}
-		ret.reg = 0;
+		ret.reg = nullptr;
 	}
 	return ret;
 }

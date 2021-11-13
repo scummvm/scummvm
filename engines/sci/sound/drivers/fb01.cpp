@@ -146,8 +146,8 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL),
-	_numParts(version > SCI_VERSION_0_LATE ? kVoices : 0), _isOpen(false), _missingFiles(0) {
+MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(nullptr), _timerProc(nullptr),
+	_numParts(version > SCI_VERSION_0_LATE ? kVoices : 0), _isOpen(false), _missingFiles(nullptr) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -157,7 +157,7 @@ MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _pla
 
 MidiPlayer_Fb01::~MidiPlayer_Fb01() {
 	if (_driver)
-		_driver->setTimerCallback(NULL, NULL);
+		_driver->setTimerCallback(nullptr, nullptr);
 	close();
 	delete _driver;
 }
@@ -520,7 +520,7 @@ void MidiPlayer_Fb01::midiTimerCallback(void *p) {
 }
 
 void MidiPlayer_Fb01::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	_driver->setTimerCallback(NULL, NULL);
+	_driver->setTimerCallback(nullptr, nullptr);
 
 	_timerParam = timer_param;
 	_timerProc = timer_proc;
@@ -554,7 +554,7 @@ void MidiPlayer_Fb01::sendBanks(const SciSpan<const byte> &data) {
 }
 
 int MidiPlayer_Fb01::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	assert(resMan != nullptr);
 
 	int retval = _driver->open();
 	if (retval != 0) {
@@ -630,7 +630,7 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 
 void MidiPlayer_Fb01::close() {
 	if (_driver)
-		_driver->setTimerCallback(NULL, NULL);
+		_driver->setTimerCallback(nullptr, nullptr);
 	_isOpen = false;
 	if (_driver)
 		_driver->close();

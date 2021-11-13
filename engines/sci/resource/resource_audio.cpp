@@ -729,7 +729,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		_sources.remove(_audioMapSCI1);
 		delete _audioMapSCI1;
 
-		_audioMapSCI1 = NULL;
+		_audioMapSCI1 = nullptr;
 	}
 
 	Common::String filename = Common::String::format("AUDIO%03d", language);
@@ -982,7 +982,7 @@ SoundResource::Track *SoundResource::getTrackByType(byte type) {
 		if (_tracks[trackNr].type == type)
 			return &_tracks[trackNr];
 	}
-	return NULL;
+	return nullptr;
 }
 
 SoundResource::Track *SoundResource::getDigitalTrack() {
@@ -990,7 +990,7 @@ SoundResource::Track *SoundResource::getDigitalTrack() {
 		if (_tracks[trackNr].digitalChannelNr != -1)
 			return &_tracks[trackNr];
 	}
-	return NULL;
+	return nullptr;
 }
 
 // Gets the filter mask for SCI0 sound resources

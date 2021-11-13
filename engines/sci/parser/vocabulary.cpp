@@ -31,13 +31,13 @@
 namespace Sci {
 
 Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan), _foreign(foreign) {
-	_parserRules = NULL;
+	_parserRules = nullptr;
 
 	memset(_parserNodes, 0, sizeof(_parserNodes));
 	// Mark parse tree as unused
 	_parserNodes[0].type = kParseTreeLeafNode;
 	_parserNodes[0].value = 0;
-	_parserNodes[0].right = 0;
+	_parserNodes[0].right = nullptr;
 
 	_synonyms.clear(); // No synonyms
 
@@ -67,7 +67,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 			_parserRules = buildGNF();
 	} else {
 		debug(2, "Assuming that this game does not use a parser.");
-		_parserRules = NULL;
+		_parserRules = nullptr;
 	}
 
 	loadAltInputs();
@@ -661,7 +661,7 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 	unsigned char c;
 	int wordLen = 0;
 
-	*error = NULL;
+	*error = nullptr;
 
 	do {
 		c = sentence[pos_in_sentence++];
@@ -826,7 +826,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 	if (type == kParseNumber) {
 		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
 		_parserNodes[*pos].value = nr;
-		_parserNodes[*pos].right = 0;
+		_parserNodes[*pos].right = nullptr;
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {
@@ -853,7 +853,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 			} else if (!strcmp(token, "nil")) {
 				nextToken = kParseNil;
 			} else {
-				nextValue = strtol(token, NULL, 0);
+				nextValue = strtol(token, nullptr, 0);
 				nextToken = kParseNumber;
 			}
 		}
@@ -899,7 +899,7 @@ static ParseTreeNode* scanForMajor(ParseTreeNode *tree, int major) {
 		if (node_major(tree) == major)
 			return tree;
 		else
-			return 0;
+			return nullptr;
 	}
 
 	ParseTreeNode* ptr = tree->right;
@@ -913,12 +913,12 @@ static ParseTreeNode* scanForMajor(ParseTreeNode *tree, int major) {
 	}
 
 	if (major == 0x141)
-		return 0;
+		return nullptr;
 
 	// If not found, go into a 0x141 and try again
 	tree = scanForMajor(tree, 0x141);
 	if (!tree)
-		return 0;
+		return nullptr;
 	return scanForMajor(tree, major);
 }
 

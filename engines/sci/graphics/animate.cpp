@@ -200,7 +200,7 @@ void GfxAnimate::makeSortedList(List *list) {
 	_lastCastData.clear();
 
 	// Fill the list
-	for (listNr = 0; curNode != 0; listNr++) {
+	for (listNr = 0; curNode != nullptr; listNr++) {
 		AnimateEntry listEntry;
 		const reg_t curObject = curNode->value;
 		listEntry.object = curObject;
@@ -255,7 +255,7 @@ void GfxAnimate::makeSortedList(List *list) {
 }
 
 void GfxAnimate::fill(byte &old_picNotValid) {
-	GfxView *view = NULL;
+	GfxView *view = nullptr;
 	AnimateList::iterator it;
 	const AnimateList::iterator end = _list.end();
 
@@ -576,7 +576,7 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
-	GfxView *view = NULL;
+	GfxView *view = nullptr;
 	AnimateList::iterator it;
 	const AnimateList::iterator end = _list.end();
 

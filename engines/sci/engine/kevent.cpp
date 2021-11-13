@@ -76,7 +76,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		reg_t iconObj = NULL_REG;
 		if (g_sci->_gfxMacIconBar->handleEvents(curEvent, iconObj)) {
 			if (!iconObj.isNull()) {
-				invokeSelector(s, iconObj, SELECTOR(select), argc, argv, 0, NULL);
+				invokeSelector(s, iconObj, SELECTOR(select), argc, argv, 0, nullptr);
 			}
 
 			// The mouse press event was handled by the mac icon bar so change

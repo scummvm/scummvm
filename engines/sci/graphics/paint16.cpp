@@ -49,8 +49,8 @@ GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *ca
 	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
 
 	// _animate and _text16 will be initialized later on
-	_animate = NULL;
-	_text16 = NULL;
+	_animate = nullptr;
+	_text16 = nullptr;
 }
 
 GfxPaint16::~GfxPaint16() {
@@ -145,7 +145,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 			// need to get coordinates from upscaledHiresHandle. I'm not sure if
 			// this is what we are supposed to do or if there is some other bug
 			// that actually makes coordinates to be 0 in the first place.
-			byte *memoryPtr = NULL;
+			byte *memoryPtr = nullptr;
 			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
 			if (memoryPtr) {
 				Common::Rect upscaledHiresRect;
@@ -350,7 +350,7 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 }
 
 void GfxPaint16::bitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
-	byte *memoryPtr = NULL;
+	byte *memoryPtr = nullptr;
 
 	if (!memoryHandle.isNull()) {
 		memoryPtr = _segMan->getHunkPointer(memoryHandle);
@@ -362,7 +362,7 @@ void GfxPaint16::bitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
 }
 
 void GfxPaint16::bitsRestore(reg_t memoryHandle) {
-	byte *memoryPtr = NULL;
+	byte *memoryPtr = nullptr;
 
 	if (!memoryHandle.isNull()) {
 		memoryPtr = _segMan->getHunkPointer(memoryHandle);

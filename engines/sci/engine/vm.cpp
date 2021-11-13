@@ -185,7 +185,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
+				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, nullptr) == kSelectorVariable) {
 					reg_t *clientVar = varp.getPointer(s->_segMan);
 					*clientVar = value;
 				}
@@ -228,7 +228,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
 	if (!exportAddr)
-		return NULL;
+		return nullptr;
 
 	assert(argp[0].toUint16() == argc); // The first argument is argc
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
@@ -293,7 +293,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			error("Send to invalid selector 0x%x (%s) of object at %04x:%04x", 0xffff & selector, g_sci->getKernel()->getSelectorName(0xffff & selector).c_str(), PRINT_REG(send_obj));
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
-		StackPtr curSP = NULL;
+		StackPtr curSP = nullptr;
 		reg_t curFP = make_reg32(0, 0);
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
@@ -330,7 +330,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	// those will get executed by op_ret later.
 	_exec_varselectors(s);
 
-	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
+	return s->_executionStack.empty() ? nullptr : &(s->_executionStack.back());
 }
 
 static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kernelSubCallNr, int argc, reg_t *argv) {
@@ -383,7 +383,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		s->r_acc = kernelCall.function(s, argc, argv);
 
 		if (g_sci->checkKernelBreakpoint(kernelCall.name))
-			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
+			logKernelCall(&kernelCall, nullptr, s, argc, argv, s->r_acc);
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -580,9 +580,9 @@ void run_vm(EngineState *s) {
 	s->r_rest = 0;	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
-	ExecStack *xs_new = NULL;
+	ExecStack *xs_new = nullptr;
 	Object *obj = s->_segMan->getObject(s->xs->objp);
-	Script *scr = 0;
+	Script *scr = nullptr;
 	Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
@@ -1433,7 +1433,7 @@ void run_vm(EngineState *s) {
 
 reg_t *ObjVarRef::getPointer(SegManager *segMan) const {
 	Object *o = segMan->getObject(obj);
-	return o ? &o->getVariableRef(varindex) : 0;
+	return o ? &o->getVariableRef(varindex) : nullptr;
 }
 
 reg_t *ExecStack::getVarPointer(SegManager *segMan) const {
