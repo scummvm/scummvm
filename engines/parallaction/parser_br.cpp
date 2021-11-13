@@ -837,21 +837,21 @@ void LocationParser_br::parseNoneData(ZonePtr z) {
 
 typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
-	0,	// no type
+	nullptr,	// no type
 	&LocationParser_br::parseExamineData,
 	&LocationParser_br::parseDoorData,
 	&LocationParser_br::parseGetData,
 	&LocationParser_br::parseMergeData,
-	0,	// taste
+	nullptr,	// taste
 	&LocationParser_br::parseHearData,
-	0,	// feel
+	nullptr,	// feel
 	&LocationParser_br::parseSpeakData,
 	&LocationParser_br::parseNoneData,
-	0,	// trap
-	0,	// you
-	0,	// command
+	nullptr,	// trap
+	nullptr,	// you
+	nullptr,	// command
 	&LocationParser_br::parsePathData,
-	0,	// box
+	nullptr,	// box
 };
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
@@ -1133,7 +1133,7 @@ void LocationParser_br::init() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode *> *table = nullptr;
 
 	SetOpcodeTable(_commandParsers);
 	WARNING_PARSER(unexpected);
@@ -1236,7 +1236,7 @@ void ProgramParser_br::init() {
 
 	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode *> *table = nullptr;
 
 	SetOpcodeTable(_instructionParsers);
 	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition

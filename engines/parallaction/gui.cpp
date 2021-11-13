@@ -27,7 +27,7 @@
 namespace Parallaction {
 
 bool MenuInputHelper::run() {
-	if (_newState == 0) {
+	if (_newState == nullptr) {
 		debugC(3, kDebugExec, "MenuInputHelper has set NULL state");
 		return false;
 	}
@@ -73,7 +73,7 @@ void Parallaction::runGuiFrame() {
 
 void Parallaction::cleanupGui() {
 	delete _menuHelper;
-	_menuHelper = 0;
+	_menuHelper = nullptr;
 }
 
 void Parallaction::setInternLanguage(uint id) {

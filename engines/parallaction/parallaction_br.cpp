@@ -44,16 +44,16 @@ const char *Parallaction_br::_partNames[] = {
 };
 
 Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0), _soundManI(0) {
-	_audioCommandsNamesRes = 0;
+	_locationParser(nullptr), _programParser(nullptr), _soundManI(nullptr) {
+	_audioCommandsNamesRes = nullptr;
 	_part = 0;
 	_nextPart = 0;
 	_subtitleY = 0;
-	_subtitle[0] = 0;
-	_subtitle[1] = 0;
-	_countersNames = 0;
-	_callables = 0;
-	_walker = 0;
+	_subtitle[0] = nullptr;
+	_subtitle[1] = nullptr;
+	_countersNames = nullptr;
+	_callables = nullptr;
+	_walker = nullptr;
 }
 
 Common::Error Parallaction_br::init() {
@@ -93,12 +93,12 @@ Common::Error Parallaction_br::init() {
 	_part = -1;
 	_nextPart = -1;
 
-	_subtitle[0] = 0;
-	_subtitle[1] = 0;
+	_subtitle[0] = nullptr;
+	_subtitle[1] = nullptr;
 
 	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 
-	_countersNames = 0;
+	_countersNames = nullptr;
 
 	_saveLoad = new SaveLoad_br(this, _saveFileMan);
 
@@ -187,13 +187,13 @@ Common::Error Parallaction_br::go() {
 
 void Parallaction_br::freeFonts() {
 	delete _menuFont;
-	_menuFont  = 0;
+	_menuFont  = nullptr;
 
 	delete _dialogueFont;
-	_dialogueFont = 0;
+	_dialogueFont = nullptr;
 
 	// no need to delete _labelFont, since it is using the same buffer as _menuFont
-	_labelFont = 0;
+	_labelFont = nullptr;
 }
 
 
@@ -229,8 +229,8 @@ void Parallaction_br::freeCharacter() {
 	delete _char._talk;
 	delete _char._ani->gfxobj;
 
-	_char._talk = 0;
-	_char._ani->gfxobj = 0;
+	_char._talk = nullptr;
+	_char._ani->gfxobj = nullptr;
 }
 
 void Parallaction_br::freeLocation(bool removeAll) {
@@ -266,9 +266,9 @@ void Parallaction_br::cleanupGame() {
 	delete _objectsNames;
 	delete _countersNames;
 
-	_globalFlagsNames = 0;
-	_objectsNames = 0;
-	_countersNames = 0;
+	_globalFlagsNames = nullptr;
+	_objectsNames = nullptr;
+	_countersNames = nullptr;
 
 	_numLocations = 0;
 	g_globalFlags = 0;
@@ -393,9 +393,9 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 	// load background, mask and path
 	_disk->loadScenery(*out._info,
-		out._backgroundName.empty() ? 0 : out._backgroundName.c_str(),
-		out._maskName.empty()       ? 0 : out._maskName.c_str(),
-		out._pathName.empty()       ? 0 : out._pathName.c_str());
+		out._backgroundName.empty() ? nullptr : out._backgroundName.c_str(),
+		out._maskName.empty()       ? nullptr : out._maskName.c_str(),
+		out._pathName.empty()       ? nullptr : out._pathName.c_str());
 	// assign background
 	_gfx->setBackground(kBackgroundLocation, out._info);
 

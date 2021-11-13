@@ -138,12 +138,12 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u._filename.c_str()) : _vm->_char._talk;
 	_answerer = _vm->_char._talk;
 
-	_cmdList = 0;
+	_cmdList = nullptr;
 	_answerId = 0;
 
 	_faceId = 0;
 
-	_q = NULL;
+	_q = nullptr;
 	memset(_visAnswers, 0, sizeof(_visAnswers));
 	_numVisAnswers = 0;
 
@@ -295,7 +295,7 @@ void DialogueManager::runQuestion() {
 
 
 void DialogueManager::nextAnswer() {
-	if (_q->_answers[0] == NULL) {
+	if (_q->_answers[0] == nullptr) {
 		transitionToState(DIALOGUE_OVER);
 		return;
 	}
@@ -333,7 +333,7 @@ void DialogueManager::runAnswer() {
 
 void DialogueManager::nextQuestion() {
 	_q = _dialogue->findQuestion(_q->_answers[_answerId]->_followingName);
-	if (_q == 0) {
+	if (_q == nullptr) {
 		transitionToState(DIALOGUE_OVER);
 	} else {
 		transitionToState(displayQuestion() ? RUN_QUESTION : NEXT_ANSWER);
@@ -555,7 +555,7 @@ void Parallaction::exitDialogueMode() {
 void Parallaction::destroyDialogueManager() {
 	// destroy the _dialogueMan here
 	delete _dialogueMan;
-	_dialogueMan = 0;
+	_dialogueMan = nullptr;
 }
 
 void Parallaction::runDialogueFrame() {

@@ -128,10 +128,10 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::P
 	debugC(3, kDebugDisk, "NSArchive::createReadStreamForMember(%s)", name.c_str());
 
 	if (name.empty())
-		return 0;
+		return nullptr;
 
 	uint32 index = lookup(name.c_str());
-	if (index == _numFiles) return 0;
+	if (index == _numFiles) return nullptr;
 
 	debugC(9, kDebugDisk, "NSArchive::createReadStreamForMember: '%s' found in slot %i", name.c_str(), index);
 
@@ -158,7 +158,7 @@ const Common::ArchiveMemberPtr NSArchive::getMember(const Common::Path &path) co
 	Common::String name = path.toString();
 	uint32 index = lookup(name.c_str());
 
-	const char *item = 0;
+	const char *item = nullptr;
 	if (index < _numFiles) {
 		item = _archiveDir[index];
 	}
@@ -241,7 +241,7 @@ void Disk_ns::setLanguage(uint16 language) {
 #pragma mark -
 
 
-DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm), _gfx(NULL) {
+DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm), _gfx(nullptr) {
 
 }
 
@@ -503,7 +503,7 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 	// load bitmap
 	loadBackground(info, filename);
 
-	if (mask == 0) {
+	if (mask == nullptr) {
 		return;
 	}
 
@@ -537,7 +537,7 @@ Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 
 
 Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
-	return 0;
+	return nullptr;
 }
 
 
@@ -805,7 +805,7 @@ void AmigaDisk_ns::patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint1
 void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height) {
 
 	byte *baseFrame = src;
-	byte *tempBuffer = 0;
+	byte *tempBuffer = nullptr;
 
 	uint16 planeSize = bytesPerPlane * height;
 
@@ -814,7 +814,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 
 			uint size = READ_BE_UINT32(src + 4);
 
-			if (tempBuffer == 0)
+			if (tempBuffer == nullptr)
 				tempBuffer = (byte *)malloc(planeSize * NUM_PLANES);
 
 			memcpy(tempBuffer, baseFrame, planeSize * NUM_PLANES);
@@ -885,7 +885,7 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 		return ret;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 
@@ -1012,7 +1012,7 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 
 	loadBackground(info, filename);
 
-	if (mask == 0) {
+	if (mask == nullptr) {
 		loadMask_internal(info, background);
 		loadPath_internal(info, background);
 	} else {

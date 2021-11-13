@@ -278,14 +278,14 @@ public:
 
 		_isOpen = false;
 
-		_opl = NULL;
+		_opl = nullptr;
 		memset(_voices, 0, sizeof(_voices));
 
 		_lastVoice = 0;
 		_percussionMask = 0;
 
-		_adlibTimerProc = NULL;
-		_adlibTimerParam = NULL;
+		_adlibTimerProc = nullptr;
+		_adlibTimerParam = nullptr;
 	}
 
 	int open() override;
@@ -797,7 +797,7 @@ MidiChannel *AdLibDriver::allocateChannel() {
 			return &_channels[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void AdLibDriver::onTimer() {

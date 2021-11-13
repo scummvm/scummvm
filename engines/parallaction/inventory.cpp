@@ -150,7 +150,7 @@ Inventory *Parallaction_br::findInventory(const char *name) {
 	if (!scumm_stricmp(name, "doug")) {
 		return _dougInventory;
 	}
-	return 0;
+	return nullptr;
 }
 
 InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props) : _vm(vm), _props(props) {
@@ -375,21 +375,21 @@ void Parallaction_br::initInventory() {
 void Parallaction_ns::destroyInventory() {
 	delete _inventoryRenderer;
 	delete _inventory;
-	_inventory = 0;
-	_inventoryRenderer = 0;
+	_inventory = nullptr;
+	_inventoryRenderer = nullptr;
 }
 
 void Parallaction_br::destroyInventory() {
 	delete _inventoryRenderer;
-	_inventory = 0;
-	_inventoryRenderer = 0;
+	_inventory = nullptr;
+	_inventoryRenderer = nullptr;
 
 	delete _dinoInventory;
 	delete _donnaInventory;
 	delete _dougInventory;
-	_dinoInventory = 0;
-	_donnaInventory = 0;
-	_dougInventory = 0;
+	_dinoInventory = nullptr;
+	_donnaInventory = nullptr;
+	_dougInventory = nullptr;
 }
 
 

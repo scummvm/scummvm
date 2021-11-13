@@ -888,8 +888,8 @@ Answer *LocationParser_ns::parseAnswer() {
 Common::String LocationParser_ns::parseDialogueString() {
 	char buf[400];
 	char *line = _script->readLine(buf, 400);
-	if (line == 0) {
-		return 0;
+	if (line == nullptr) {
+		return nullptr;
 	}
 	return Common::String(line);
 }
@@ -1039,7 +1039,7 @@ void LocationParser_ns::parse(Script *script) {
 
 	ctxt.end = false;
 	_script = script;
-	ctxt.filename = 0;//filename;
+	ctxt.filename = nullptr;//filename;
 
 	_parser->reset();
 	_parser->pushTables(&_locationParsers, _locationStmt);
@@ -1107,7 +1107,7 @@ void LocationParser_ns::init() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_ns), _locationZoneStmtRes_ns);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_ns), _locationAnimStmtRes_ns);
 
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode *> *table = nullptr;
 
 	SetOpcodeTable(_commandParsers);
 	WARNING_PARSER(unexpected);
@@ -1177,7 +1177,7 @@ void ProgramParser_ns::init() {
 
 	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_ns), _instructionNamesRes_ns);
 
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode *> *table = nullptr;
 	SetOpcodeTable(_instructionParsers);
 	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition
 	INSTRUCTION_PARSER(animation);	// on
@@ -1220,7 +1220,7 @@ Common::String LocationParser_ns::parseComment() {
 	} while (true);
 
 	if (comment.size() == 0) {
-		return 0;
+		return nullptr;
 	}
 
 	return comment;
@@ -1446,19 +1446,19 @@ void LocationParser_ns::parseNoneData(ZonePtr z) {
 
 typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
-	0,	// no type
+	nullptr,	// no type
 	&LocationParser_ns::parseExamineData,
 	&LocationParser_ns::parseDoorData,
 	&LocationParser_ns::parseGetData,
 	&LocationParser_ns::parseMergeData,
-	0,	// taste
+	nullptr,	// taste
 	&LocationParser_ns::parseHearData,
-	0,	// feel
+	nullptr,	// feel
 	&LocationParser_ns::parseSpeakData,
 	&LocationParser_ns::parseNoneData,
-	0,	// trap
-	0,	// you
-	0	// command
+	nullptr,	// trap
+	nullptr,	// you
+	nullptr	// command
 };
 
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {

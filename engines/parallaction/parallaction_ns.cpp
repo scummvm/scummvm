@@ -109,7 +109,7 @@ void LocationName::bind(const char *s) {
 	char *tok = strtok(_buf.begin(), ".");
 	while (tok) {
 		list.push_back(tok);
-		tok = strtok(NULL, ".");
+		tok = strtok(nullptr, ".");
 	}
 
 	if (list.size() < 1 || list.size() > 4)
@@ -135,19 +135,19 @@ void LocationName::bind(const char *s) {
 }
 
 Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0), _walker(0) {
-	_soundManI = 0;
+	_locationParser(nullptr), _programParser(nullptr), _walker(nullptr) {
+	_soundManI = nullptr;
 	_score = 0;
 	_inTestResult = 0;
-	_callables = 0;
+	_callables = nullptr;
 	num_foglie = 0;
 	_sarcophagusDeltaX = 0;
 	_movingSarcophagus = 0;
 	_freeSarcophagusSlotX = 0;
 	_intro = 0;
 
-	_testResultLabels[0] = 0;
-	_testResultLabels[1] = 0;
+	_testResultLabels[0] = nullptr;
+	_testResultLabels[1] = nullptr;
 }
 
 Common::Error Parallaction_ns::init() {
@@ -205,8 +205,8 @@ Common::Error Parallaction_ns::init() {
 
 	_score = 1;
 
-	_testResultLabels[0] = 0;
-	_testResultLabels[1] = 0;
+	_testResultLabels[0] = nullptr;
+	_testResultLabels[1] = nullptr;
 
 	Parallaction::init();
 
@@ -237,7 +237,7 @@ void Parallaction_ns::destroyTestResultLabels() {
 	for (int i = 0; i < 2; ++i) {
 		_gfx->unregisterLabel(_testResultLabels[i]);
 		delete _testResultLabels[i];
-		_testResultLabels[i] = 0;
+		_testResultLabels[i] = nullptr;
 	}
 }
 
@@ -248,10 +248,10 @@ void Parallaction_ns::freeFonts() {
 	delete _menuFont;
 	delete _introFont;
 
-	_menuFont  = 0;
-	_dialogueFont = 0;
-	_labelFont = 0;
-	_introFont = 0;
+	_menuFont  = nullptr;
+	_dialogueFont = nullptr;
+	_labelFont = nullptr;
+	_introFont = nullptr;
 }
 
 
@@ -319,7 +319,7 @@ void Parallaction_ns::changeBackground(const char* background, const char* mask,
 		return;
 	}
 
-	if (path == 0) {
+	if (path == nullptr) {
 		path = mask;
 	}
 
@@ -509,12 +509,12 @@ void Parallaction_ns::freeCharacter() {
 	delete _objects;
 	delete _objectsNames;
 
-	_char._talk = 0;
-	_char._head = 0;
-	_char._ani->gfxobj = 0;
+	_char._talk = nullptr;
+	_char._head = nullptr;
+	_char._ani->gfxobj = nullptr;
 
-	_objects = 0;
-	_objectsNames = 0;
+	_objects = nullptr;
+	_objectsNames = nullptr;
 }
 
 void Parallaction_ns::freeLocation(bool removeAll) {

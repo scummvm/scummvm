@@ -280,7 +280,7 @@ void Gfx::setProjectorPos(int x, int y) {
 }
 
 void Gfx::setProjectorProgram(int16 *data) {
-	if (_nextProjectorPos == 0) {
+	if (_nextProjectorPos == nullptr) {
 		_nextProjectorPos = data;
 	}
 }
@@ -419,7 +419,7 @@ void Gfx::updateScreen() {
 	// is needed
 	_overlayMode = false;
 
-	bool skipBackground = (_backgroundInfo->bg.getPixels() == 0);	// don't render frame if background is missing
+	bool skipBackground = (_backgroundInfo->bg.getPixels() == nullptr);	// don't render frame if background is missing
 
 	if (!skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
@@ -569,15 +569,15 @@ void Gfx::showFloatingLabel(GfxObj *label) {
 }
 
 void Gfx::hideFloatingLabel() {
-	if (_floatingLabel != 0) {
+	if (_floatingLabel != nullptr) {
 		_floatingLabel->clearFlags(kGfxObjVisible);
 	}
-	_floatingLabel = 0;
+	_floatingLabel = nullptr;
 }
 
 
 void Gfx::updateFloatingLabel() {
-	if (_floatingLabel == 0) {
+	if (_floatingLabel == nullptr) {
 		return;
 	}
 
@@ -685,7 +685,7 @@ void Gfx::hideLabel(GfxObj *label) {
 
 void Gfx::freeLabels() {
 	_labels.clear();
-	_floatingLabel = 0;
+	_floatingLabel = nullptr;
 }
 
 void Gfx::unregisterLabel(GfxObj *label) {
@@ -719,7 +719,7 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 
 
 Gfx::Gfx(Parallaction* vm) :
-	_vm(vm), _disk(vm->_disk), _backgroundInfo(0),
+	_vm(vm), _disk(vm->_disk), _backgroundInfo(nullptr),
 	_scrollPosX(0), _scrollPosY(0),_minScrollX(0), _maxScrollX(0),
 	_minScrollY(0), _maxScrollY(0),
 	_requestedHScrollSteps(0), _requestedVScrollSteps(0),
@@ -732,12 +732,12 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
-	_floatingLabel = 0;
+	_floatingLabel = nullptr;
 
-	_backgroundInfo = 0;
+	_backgroundInfo = nullptr;
 
 	_halfbrite = false;
-	_nextProjectorPos = 0;
+	_nextProjectorPos = nullptr;
 	_hbCircleRadius = 0;
 
 	_overlayMode = false;
@@ -824,7 +824,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	}
 
 	_hbCircleRadius = 0;
-	_nextProjectorPos = 0;
+	_nextProjectorPos = nullptr;
 
 	delete _backgroundInfo;
 	_backgroundInfo = info;
@@ -868,7 +868,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 }
 
 
-BackgroundInfo::BackgroundInfo() : _x(0), _y(0), width(0), height(0), _mask(0), _path(0) {
+BackgroundInfo::BackgroundInfo() : _x(0), _y(0), width(0), height(0), _mask(nullptr), _path(nullptr) {
 	layers[0] = layers[1] = layers[2] = layers[3] = 0;
 	memset(ranges, 0, sizeof(ranges));
 }
@@ -880,7 +880,7 @@ BackgroundInfo::~BackgroundInfo() {
 }
 
 bool BackgroundInfo::hasMask() {
-	return _mask != 0;
+	return _mask != nullptr;
 }
 
 void BackgroundInfo::clearMaskData() {
@@ -891,7 +891,7 @@ void BackgroundInfo::clearMaskData() {
 	}
 	_maskPatches.clear();
 	delete _mask;
-	_mask = 0;
+	_mask = nullptr;
 	_maskBackup.free();
 }
 
@@ -941,7 +941,7 @@ void BackgroundInfo::setPaletteRange(int index, const PaletteFxRange& range) {
 }
 
 bool BackgroundInfo::hasPath() {
-	return _path != 0;
+	return _path != nullptr;
 }
 
 void BackgroundInfo::clearPathData() {
@@ -952,7 +952,7 @@ void BackgroundInfo::clearPathData() {
 	}
 	_pathPatches.clear();
 	delete _path;
-	_path = 0;
+	_path = nullptr;
 	_pathBackup.free();
 }
 
@@ -989,7 +989,7 @@ void BackgroundInfo::togglePathPatch(uint id, int x, int y, bool apply) {
 	}
 }
 
-MaskBuffer::MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
+MaskBuffer::MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(nullptr), bigEndian(true) {
 }
 
 MaskBuffer::~MaskBuffer() {
@@ -1021,7 +1021,7 @@ void MaskBuffer::create(uint16 width, uint16 height) {
 
 void MaskBuffer::free() {
 	::free(data);
-	data = 0;
+	data = nullptr;
 	w = 0;
 	h = 0;
 	internalWidth = 0;
@@ -1072,7 +1072,7 @@ void MaskBuffer::bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx,
 
 
 
-PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
+PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(nullptr), bigEndian(true) {
 }
 
 PathBuffer::~PathBuffer() {
@@ -1100,7 +1100,7 @@ void PathBuffer::create(uint16 width, uint16 height) {
 
 void PathBuffer::free() {
 	::free(data);
-	data = 0;
+	data = nullptr;
 	w = 0;
 	h = 0;
 	internalWidth = 0;

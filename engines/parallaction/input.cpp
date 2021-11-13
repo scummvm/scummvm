@@ -73,11 +73,11 @@ Input::Input(Parallaction *vm) : _vm(vm) {
 	_inputMode = 0;
 	_hasKeyPressEvent = false;
 
-	_dinoCursor = 0;
-	_dougCursor = 0;
-	_donnaCursor = 0;
-	_comboArrow = 0;
-	_mouseArrow = 0;
+	_dinoCursor = nullptr;
+	_dougCursor = nullptr;
+	_donnaCursor = nullptr;
+	_comboArrow = nullptr;
+	_mouseArrow = nullptr;
 
 	initCursors();
 }
@@ -472,7 +472,7 @@ void Input::getAbsoluteCursorPos(Common::Point& p) const {
 
 void Input::initCursors() {
 
-	_dinoCursor = _donnaCursor = _dougCursor = 0;
+	_dinoCursor = _donnaCursor = _dougCursor = nullptr;
 
 	switch (_gameType) {
 	case GType_Nippon:
