@@ -27,12 +27,12 @@
 
 static const PlainGameDescriptor chewyGames[] = {
 	{"chewy", "Chewy: Esc from F5"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const char *directoryGlobs[] = {
 	"txt",
-	0
+	nullptr
 };
 
 namespace Chewy {
@@ -42,7 +42,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 	{
 		{
 			"chewy",
-			0,
+			nullptr,
 			AD_ENTRY1s("atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -55,7 +55,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		// Chewy - ESC from F5 - Spanish fanmade translation
 		{
 			"chewy",
-			0,
+			nullptr,
 			AD_ENTRY1s("atds.tap", "b1210066a524fe0f88862f44671ed97d", 226988),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
@@ -72,7 +72,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		// Provided by lotharsm
 		{
 			"chewy",
-			0,
+			nullptr,
 			AD_ENTRY1s("atds.tap", "c117e884cc5b4bbe50ae1217d13916c4", 231071),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -89,7 +89,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		// Provided by lotharsm
 		{
 			"chewy",
-			0,
+			nullptr,
 			AD_ENTRY1s("atds.tap", "e22f97761c0e7772ec99660f2277b1a4", 231001),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -106,7 +106,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		// CD-ROM has the label "DEMO"
 		{
 			"chewy",
-			0,
+			nullptr,
 			AD_ENTRY1s("atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
