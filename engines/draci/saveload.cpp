@@ -85,7 +85,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	Common::String filename = vm.getSavegameFile(saveGameIdx);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *f = saveMan->openForSaving(filename);
-	if (f == NULL)
+	if (f == nullptr)
 		return Common::kNoGameDataFoundError;
 
 	TimeDate curTime;
@@ -105,7 +105,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 		return Common::kWritingFailed;
 	} else {
 		// Create the remainder of the savegame
-		Common::Serializer s(NULL, f);
+		Common::Serializer s(nullptr, f);
 		vm._game->synchronize(s, header.version);
 
 		f->finalize();
@@ -120,7 +120,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *f = saveMan->openForLoading(vm->getSavegameFile(saveGameIdx));
 
-	if (f == NULL) {
+	if (f == nullptr) {
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -135,7 +135,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	vm->_game->deleteObjectAnimations();
 
 	// Synchronise the remaining data of the savegame
-	Common::Serializer s(f, NULL);
+	Common::Serializer s(f, nullptr);
 	vm->_game->synchronize(s, header.version);
 	delete f;
 

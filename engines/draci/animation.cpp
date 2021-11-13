@@ -339,7 +339,7 @@ Animation *AnimationManager::getAnimation(int id) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void AnimationManager::insert(Animation *anim, bool allocateIndex) {
@@ -494,7 +494,7 @@ void AnimationManager::deleteAfterIndex(int index) {
 const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 	Common::List<Animation *>::const_iterator it;
 
-	Animation *retval = NULL;
+	Animation *retval = nullptr;
 
 	// Get transparent color for the current screen
 	const int transparent = _vm->_screen->getSurface()->getTransparentColor();
@@ -510,7 +510,7 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 
 		const Drawable *frame = anim->getConstCurrentFrame();
 
-		if (frame == NULL) {
+		if (frame == nullptr) {
 			continue;
 		}
 
@@ -534,7 +534,7 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 		if (matches) {
 			if (anim->getID() > kOverlayImage || anim->getID() < kSpeechText) {
 				return anim;
-			} else if (retval == NULL) {
+			} else if (retval == nullptr) {
 				retval = anim;
 			}
 		}

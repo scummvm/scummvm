@@ -78,7 +78,7 @@ Sprite::Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool c
  *  pixel.
  */
 Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise)
-	: _ownsData(false), _data(NULL), _mirror(false) {
+	: _ownsData(false), _data(nullptr), _mirror(false) {
 
 	Common::MemoryReadStream reader(sprite_data, length);
 	_width = reader.readSint16LE();

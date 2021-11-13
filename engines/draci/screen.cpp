@@ -40,7 +40,7 @@ Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 3 * kNumColors; ++i) {
 		_blackPalette[i] = 0;
 	}
-	setPalette(NULL, 0, kNumColors);
+	setPalette(nullptr, 0, kNumColors);
 	this->clearScreen();
 }
 

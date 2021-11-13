@@ -395,7 +395,7 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 
 void WalkingState::stopWalking() {
 	_path.clear();
-	_callback = NULL;
+	_callback = nullptr;
 }
 
 void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2,
@@ -450,9 +450,9 @@ void WalkingState::callback() {
 	debugC(2, kDraciWalkingDebugLevel, "Calling walking callback");
 
 	const GPL2Program &originalCallback = *_callback;
-	_callback = NULL;
+	_callback = nullptr;
 	_vm->_script->runWrapper(originalCallback, _callbackOffset, true, false);
-	_callbackLast = NULL;
+	_callbackLast = nullptr;
 	_callbackOffset = 0;
 }
 

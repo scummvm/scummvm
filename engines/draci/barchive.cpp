@@ -105,7 +105,7 @@ void BArchive::openDFW(const Common::String &path) {
 		_f.readUint16LE(); // Compressed length again (already read from the index table)
 		_files[i]._stopper = _f.readByte();
 
-		_files[i]._data = NULL; // File data will be read in on demand
+		_files[i]._data = nullptr; // File data will be read in on demand
 		_files[i]._crc = 0; // Dummy value; not used in DFW archives
 	}
 
@@ -217,7 +217,7 @@ void BArchive::openArchive(const Common::String &path) {
 			"Compression type flag is non-zero (file is compressed)");
 
 		_files[i]._crc = _f.readByte();	// CRC checksum of the file
-		_files[i]._data = NULL;		// File data will be read in on demand
+		_files[i]._data = nullptr;		// File data will be read in on demand
 		_files[i]._stopper = 0;		// Dummy value; not used in BAR files, needed in DFW
 	}
 
@@ -252,7 +252,7 @@ void BArchive::closeArchive() {
 	_f.close();
 
 	_opened = false;
-	_files = NULL;
+	_files = nullptr;
 	_fileCount = 0;
 }
 
@@ -268,7 +268,7 @@ BAFile *BArchive::loadFileBAR(uint i) {
 	// Else open archive and read in requested file
 	if (!_f.isOpen()) {
 		debugC(2, kDraciArchiverDebugLevel, "Error");
-		return NULL;
+		return nullptr;
 	}
 
 	// Read in the file (without the file header)
@@ -302,7 +302,7 @@ BAFile *BArchive::loadFileDFW(uint i) {
 	// Else open archive and read in requested file
 	if (!_f.isOpen()) {
 		debugC(2, kDraciArchiverDebugLevel, "Error");
-		return NULL;
+		return nullptr;
 	}
 
 	// Seek to raw data of the file
@@ -375,7 +375,7 @@ void BArchive::clearCache() {
 const BAFile *BArchive::getFile(uint i) {
 	// Check whether requested file exists
 	if (i >= _fileCount) {
-		return NULL;
+		return nullptr;
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ",

@@ -41,8 +41,8 @@ namespace Draci {
 void Script::setupCommandList() {
 	/** A table of all the commands the game player uses */
 	static const GPL2Command gplCommands[] = {
-		{ 0,  0, "gplend",            0, { },                                NULL },
-		{ 0,  1, "exit",              0, { },                                NULL },
+		{ 0,  0, "gplend",            0, { },                                nullptr },
+		{ 0,  1, "exit",              0, { },                                nullptr },
 		{ 1,  1, "goto",              1, { kGPL2Ident },                     &Script::c_Goto },
 		{ 2,  1, "Let",               2, { kGPL2Ident, kGPL2Math },          &Script::c_Let },
 		{ 3,  1, "if",                2, { kGPL2Math, kGPL2Ident },          &Script::c_If },
@@ -88,18 +88,18 @@ void Script::setupCommandList() {
 		{ 25, 1, "PushNewRoom",       0, { },                                &Script::pushNewRoom },
 		{ 25, 2, "PopNewRoom",        0, { },                                &Script::popNewRoom },
 		// The following commands are not used in the original game files.
-		{ 16, 1, "RepaintInventory",  0, { },                                NULL },
-		{ 16, 2, "ExitInventory",     0, { },                                NULL },
-		{ 17, 1, "ExitMap",           0, { },                                NULL },
-		{ 18, 4, "FadeOutMusic",      1, { kGPL2Num },                       NULL },
-		{ 18, 5, "FadeInMusic",       1, { kGPL2Num },                       NULL },
+		{ 16, 1, "RepaintInventory",  0, { },                                nullptr },
+		{ 16, 2, "ExitInventory",     0, { },                                nullptr },
+		{ 17, 1, "ExitMap",           0, { },                                nullptr },
+		{ 18, 4, "FadeOutMusic",      1, { kGPL2Num },                       nullptr },
+		{ 18, 5, "FadeInMusic",       1, { kGPL2Num },                       nullptr },
 		// The following commands are not even defined in the game
 		// sources, but their numbers are allocated for internal
 		// purposes of the old player.
-		{ 26, 1, "ShowCheat",         0, { },                                NULL },
-		{ 26, 2, "HideCheat",         0, { },                                NULL },
-		{ 26, 3, "ClearCheat",        1, { kGPL2Num },                       NULL },
-		{ 27, 1, "FeedPassword",      3, { kGPL2Num, kGPL2Num, kGPL2Num },   NULL }
+		{ 26, 1, "ShowCheat",         0, { },                                nullptr },
+		{ 26, 2, "HideCheat",         0, { },                                nullptr },
+		{ 26, 3, "ClearCheat",        1, { kGPL2Num },                       nullptr },
+		{ 27, 1, "FeedPassword",      3, { kGPL2Num, kGPL2Num, kGPL2Num },   nullptr }
 	};
 
 	/** Operators used by the mathematical evaluator */
@@ -141,7 +141,7 @@ void Script::setupCommandList() {
 		// The following function is not even defined in the game
 		// sources, but its number is allocated for internal purposes
 		// of the old player.
-		{ NULL, "Cheat" },
+		{ nullptr, "Cheat" },
 	};
 
 	_commandList = gplCommands;
@@ -543,13 +543,13 @@ void Script::icoStat(const Common::Array<int> &params) {
 		// Remove the item from the inventory and release its animations.
 		_vm->_game->removeItem(item);
 		item->_anim->del();
-		item->_anim = NULL;
+		item->_anim = nullptr;
 
 		// If the item was in the hand, remove it from the hands and,
 		// if the cursor was set to this item (as opposed to, say, an
 		// arrow leading outside a location), set it to standard.
 		if (_vm->_game->getCurrentItem() == item) {
-			_vm->_game->setCurrentItem(NULL);
+			_vm->_game->setCurrentItem(nullptr);
 			_vm->_game->setPreviousItemPosition(-1);
 			if (_vm->_mouse->getCursorType() >= kItemCursor) {
 				_vm->_mouse->setCursorType(kNormalCursor);
@@ -728,7 +728,7 @@ void Script::talk(const Common::Array<int> &params) {
 
 	// Fetch the dubbing
 	SoundSample *sample = _vm->_sound->isMutedVoice()
-		? NULL : _vm->_dubbingArchive->getSample(sentenceID, 0);
+		? nullptr : _vm->_dubbingArchive->getSample(sentenceID, 0);
 
 	// Set the string and text color
 	surface->markDirtyRect(speechFrame->getRect(kNoDisplacement));
@@ -887,7 +887,7 @@ void Script::fadePalettePlay(const Common::Array<int> &params) {
 
 void Script::setPalette(const Common::Array<int> &params) {
 	if (_vm->_game->getScheduledPalette() == -1) {
-		_vm->_screen->setPalette(NULL, 0, kNumColors);
+		_vm->_screen->setPalette(nullptr, 0, kNumColors);
 	} else {
 		const BAFile *f;
 		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
@@ -981,7 +981,7 @@ int Script::handleMathExpression(Common::ReadStream *reader) const {
 			func = _functionList[value-1];
 
 			// If not yet implemented
-			if (func._handler == 0) {
+			if (func._handler == nullptr) {
 				stk.pop();
 
 				// Pushing dummy value
@@ -1067,7 +1067,7 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) const {
 		++i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1182,7 +1182,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 
 		GPLHandler handler = cmd->_handler;
 
-		if (handler != 0) {
+		if (handler != nullptr) {
 			// Call the handler for the current command
 			(this->*(cmd->_handler))(params);
 		}
