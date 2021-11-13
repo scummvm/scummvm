@@ -211,7 +211,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_fov = -1.0;
 	_nclip = -1;
 	_fclip = -1;
-	_selectedTexture = NULL;
+	_selectedTexture = nullptr;
 	_emergTexture = 0;
 	_maxLights = 8;
 	_lights = new GLSLight[_maxLights];
@@ -272,7 +272,7 @@ void GfxOpenGLS::setupZBuffer() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, nextHigher2((int)width), nextHigher2((int)height), 0, format, type, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, nextHigher2((int)width), nextHigher2((int)height), 0, format, type, nullptr);
 	glActiveTexture(GL_TEXTURE0);
 
 	_zBufTexCrop = Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height));
@@ -322,7 +322,7 @@ void GfxOpenGLS::setupPrimitives() {
 	_currentPrimitive = 0;
 	for (uint32 i = 0; i < numVBOs; ++i) {
 		glBindBuffer(GL_ARRAY_BUFFER, _primitiveVBOs[i]);
-		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4)
@@ -330,7 +330,7 @@ void GfxOpenGLS::setupPrimitives() {
 
 	glGenBuffers(1, &_irisVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _irisVBO);
-	glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 
 	_irisProgram->enableVertexAttribute("position", _irisVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
@@ -371,18 +371,18 @@ GLuint GfxOpenGLS::nextPrimitive() {
 void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 
-	static const char* commonAttributes[] = {"position", "texcoord", NULL};
+	static const char* commonAttributes[] = {"position", "texcoord", nullptr};
 	_backgroundProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_background" : "grim_background", commonAttributes);
 	_smushProgram = OpenGL::ShaderGL::fromFiles("grim_smush", commonAttributes);
 	_textProgram = OpenGL::ShaderGL::fromFiles("grim_text", commonAttributes);
 	_emergProgram = OpenGL::ShaderGL::fromFiles("grim_emerg", commonAttributes);
 
-	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", NULL};
+	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", nullptr};
 	_actorProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_actorLightsProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_actorlights" : "grim_actorlights", actorAttributes);
 	_spriteProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_sprite" : "grim_actor", actorAttributes);
 
-	static const char* primAttributes[] = { "position", NULL };
+	static const char* primAttributes[] = { "position", nullptr };
 	_shadowPlaneProgram = OpenGL::ShaderGL::fromFiles("grim_shadowplane", primAttributes);
 	_primitiveProgram = OpenGL::ShaderGL::fromFiles("grim_primitive", primAttributes);
 
@@ -401,7 +401,7 @@ void GfxOpenGLS::setupShaders() {
 	setupPrimitives();
 
 	if (!isEMI) {
-		_blastVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+		_blastVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 
@@ -853,7 +853,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 
 void GfxOpenGLS::finishActorDraw() {
-	_currentActor = NULL;
+	_currentActor = nullptr;
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glDisable(GL_CULL_FACE);
@@ -919,8 +919,8 @@ void GfxOpenGLS::drawShadowPlanes() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sud->_indicesVBO);
 	const uint32 attribPos = _shadowPlaneProgram->getAttribute("position")._idx;
 	glEnableVertexAttribArray(attribPos);
-	glVertexAttribPointer(attribPos, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), 0);
-	glDrawElements(GL_TRIANGLES, 3 * sud->_numTriangles, GL_UNSIGNED_SHORT, 0);
+	glVertexAttribPointer(attribPos, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), nullptr);
+	glDrawElements(GL_TRIANGLES, 3 * sud->_numTriangles, GL_UNSIGNED_SHORT, nullptr);
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
@@ -1022,7 +1022,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
 
-	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_SHORT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -1039,7 +1039,7 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 	actorShader->use();
 	actorShader->setUniform("extraMatrix", _matrixStack.top());
 
-	const Material *curMaterial = NULL;
+	const Material *curMaterial = nullptr;
 	for (int i = 0; i < mesh->_numFaces;) {
 		const MeshFace *face = &mesh->_faces[i];
 
@@ -1074,7 +1074,7 @@ void GfxOpenGLS::drawDimPlane() {
 	_dimPlaneProgram->setUniform1f("dim", _dimLevel);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glEnable(GL_DEPTH_TEST);
@@ -1135,7 +1135,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	_spriteProgram->setUniform("uniformColor", color);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -1209,7 +1209,7 @@ void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *
 	char *texdata = new char[texture->_width * texture->_height * 4];
 	char *texdatapos = texdata;
 
-	if (cmap != NULL) { // EMI doesn't have colour-maps
+	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		int bytes = 4;
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
@@ -1313,8 +1313,8 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 		bitmap->_texIds = textures;
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
-		byte *texData = 0;
-		byte *texOut = 0;
+		byte *texData = nullptr;
+		byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
 		GLint type = GL_UNSIGNED_BYTE;
@@ -1324,7 +1324,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
-				if (texData == 0)
+				if (texData == nullptr)
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
@@ -1360,7 +1360,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, actualWidth, actualHeight, 0, format, type, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, actualWidth, actualHeight, 0, format, type, nullptr);
 
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap->_width, bitmap->_height, format, type, texOut);
 		}
@@ -1379,8 +1379,8 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 		}
 	} else {
 		bitmap->_numTex = 0;
-		bitmap->_texIds = NULL;
-		bitmap->_userData = NULL;
+		bitmap->_texIds = nullptr;
+		bitmap->_userData = nullptr;
 	}
 }
 
@@ -1436,7 +1436,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 		shader->setUniform("offsetXY", Math::Vector2d(float(dx) / _gameWidth, float(dy) / _gameHeight));
 		shader->setUniform("sizeWH", Math::Vector2d(width / _gameWidth, height / _gameHeight));
 		shader->setUniform("texcrop", Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height)));
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
@@ -1454,7 +1454,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 
 void GfxOpenGLS::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	static int prevX = -1, prevY = -1;
-	static char *prevData = NULL;
+	static char *prevData = nullptr;
 
 	if (prevX == x && prevY == y && data == prevData)
 		return;
@@ -1476,7 +1476,7 @@ void GfxOpenGLS::destroyBitmap(BitmapData *bitmap) {
 	if (textures) {
 		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
 		delete[] textures;
-		bitmap->_texIds = 0;
+		bitmap->_texIds = nullptr;
 	}
 	OpenGL::ShaderGL *shader = (OpenGL::ShaderGL *)bitmap->_userData;
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -1667,7 +1667,7 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 	_textProgram->setUniform("color", colors);
 	glBindTexture(GL_TEXTURE_2D, td->texture);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
 }
@@ -1677,7 +1677,7 @@ void GfxOpenGLS::destroyTextObject(TextObject *text) {
 	if (!text->isBlastDraw()) {
 		glDeleteBuffers(1, &td->shader->getAttributeAt(0)._vbo);
 	}
-	text->setUserData(NULL);
+	text->setUserData(nullptr);
 
 	delete td->shader;
 	delete td;
@@ -2005,7 +2005,7 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, frameFormat, nextHigher2(width), nextHigher2(height), 0, frameFormat, frameType, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, frameFormat, nextHigher2(width), nextHigher2(height), 0, frameFormat, frameType, nullptr);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, frame->format.bytesPerPixel);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, frameFormat, frameType, bitmap);
@@ -2027,7 +2027,7 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	_smushProgram->setUniform("swizzle", _smushSwizzle);
 	glBindTexture(GL_TEXTURE_2D, _smushTexId);
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
@@ -2138,7 +2138,7 @@ void GfxOpenGLS::createMesh(Mesh *mesh) {
 	}
 
 	if (meshInfo.empty()) {
-		mesh->_userData = NULL;
+		mesh->_userData = nullptr;
 		return;
 	}
 
