@@ -43,7 +43,7 @@ namespace CGE2 {
 
 static const PlainGameDescriptor CGE2Games[] = {
 		{ "sfinx", "Sfinx" },
-		{ 0, 0 }
+		{ nullptr, nullptr }
 };
 
 static const ADGameDescription gameDescriptions[] = {
@@ -162,7 +162,7 @@ public:
 static ADGameDescription s_fallbackDesc = {
 	"sfinx",
 	"Unknown version",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	AD_ENTRY1(nullptr, nullptr), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
 	ADGF_NO_FLAGS,
@@ -170,8 +170,8 @@ static ADGameDescription s_fallbackDesc = {
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &s_fallbackDesc, { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
+	{ &s_fallbackDesc, { "vol.cat", "vol.dat", nullptr } },
+	{ nullptr, { nullptr } }
 };
 
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides

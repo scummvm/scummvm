@@ -170,7 +170,7 @@ DataCk *Fx::loadWave(EncryptedStream *file) {
 	byte *data = (byte *)malloc(file->size());
 
 	if (!data)
-		return 0;
+		return nullptr;
 
 	file->read(data, file->size());
 
