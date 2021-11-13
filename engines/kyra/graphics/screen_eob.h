@@ -381,6 +381,10 @@ public:
 	SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font);
 	~SJISFontLarge() override {}
 
+	int getHeight() const override;
+	int getWidth() const override;
+	int getCharWidth(uint16 c) const override;
+
 	bool usesOverlay() const override { return false; }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 };
