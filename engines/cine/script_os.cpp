@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-const Opcode *OSScript::_opcodeTable = 0;
+const Opcode *OSScript::_opcodeTable = nullptr;
 unsigned int OSScript::_numOpcodes = 0;
 
 void OSScript::setupTable() {
@@ -62,9 +62,9 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_compareVar, "bc" },
 		{ &FWScript::o1_modifyObjectParam2, "bbb" },
 		/* 10 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_loadMask0, "b" },
 		/* 14 */
 		{ &FWScript::o1_unloadMask0, "b" },
@@ -77,7 +77,7 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_addSpriteFilledToBgList, "b" },
 		{ &FWScript::o1_clearBgIncrustList, "" },
 		/* 1C */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_label, "l" },
 		{ &FWScript::o1_goto, "b" },
 		{ &FWScript::o1_gotoIfSup, "b" },
@@ -90,56 +90,56 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_gotoIfDiff, "b" },
 		{ &FWScript::o1_removeLabel, "b" },
 		{ &FWScript::o1_loop, "bb" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		/* 28 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 2C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 30 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_startGlobalScript, "b" },
 		{ &FWScript::o1_endGlobalScript, "b" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		/* 34 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 38 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_loadAnim, "s" },
 		/* 3C */
 		{ &FWScript::o1_loadBg, "s" },
 		{ &FWScript::o2_loadCt, "s" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o2_loadPart, "s" },
 		/* 40 */
 		{ &FWScript::o1_closePart, "" },
 		{ &FWScript::o1_loadNewPrcName, "bs" },
 		{ &FWScript::o1_requestCheckPendingDataLoad, "" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		/* 44 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_blitAndFade, "" },
 		{ &FWScript::o1_fadeToBlack, "" },
 		{ &FWScript::o1_transformPaletteRange, "bbwww" },
 		/* 48 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_setDefaultMenuBgColor, "b" },
 		{ &FWScript::o1_palRotate, "bbb" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		/* 4C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_break, "" },
 		/* 50 */
 		{ &FWScript::o1_endScript, "x" },
@@ -147,24 +147,24 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_loadGlobalVar, "bc" },
 		{ &FWScript::o1_compareGlobalVar, "bc" },
 		/* 54 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 58 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_declareFunctionName, "s" },
 		{ &FWScript::o1_freePartRange, "bb" },
 		{ &FWScript::o1_unloadAllMasks, "" },
 		/* 5C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 60 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_setScreenDimensions, "wwww" },
 		/* 64 */
 		{ &FWScript::o1_displayBackground, "" },
@@ -177,7 +177,7 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_disallowPlayerInput, "" },
 		{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
 		/* 6C */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_loadMusic, "s" },
 		{ &FWScript::o1_playMusic, "" },
 		{ &FWScript::o1_fadeOutMusic, "" },
@@ -187,9 +187,9 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x73. TODO: Name this opcode properly. */
 		{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x72. */
 		/* 74 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o2_playSample, "bbwbww" },
 		/* 78 */
 		{ &FWScript::o2_playSampleAlt, "bbwbww" },
@@ -197,9 +197,9 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_loadMask5, "b" },
 		{ &FWScript::o1_unloadMask5, "b" }, /* Last opcode used by Future Wars. */
 		/* 7C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o2_addSeqListElement, "bbbbwww" },
 		/* 80 */
 		{ &FWScript::o2_removeSeq, "bb" },
@@ -214,7 +214,7 @@ void OSScript::setupTable() {
 		/* 88 */
 		{ &FWScript::o2_gotoIfEquNearest, "b" },
 		{ &FWScript::o2_gotoIfDiffNearest, "b" },
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o2_startObjectScript, "b" },
 		/* 8C */
 		{ &FWScript::o2_stopObjectScript, "b" },
@@ -224,16 +224,16 @@ void OSScript::setupTable() {
 		/* 90 */
 		{ &FWScript::o2_loadAbs, "bs" },
 		{ &FWScript::o2_loadBg, "b" },
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 94 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x6B and 0xA9. */
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* 98 */
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		{ &FWScript::o2_wasZoneChecked, "b" },
 		{ &FWScript::o2_op9B, "wwwwwwww" }, /* TODO: Name this opcode properly. */
 		/* 9C */
@@ -249,10 +249,10 @@ void OSScript::setupTable() {
 		/* A4 */
 		{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
 		{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
-		{ 0, 0 },
-		{ 0, 0 },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
 		/* A8 */
-		{ 0, 0 },
+		{ nullptr, nullptr },
 		{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcodes 0x6B and 0x95. */
 	};
 	OSScript::_opcodeTable = (const Opcode *)opcodeTable;
@@ -297,12 +297,12 @@ void OSScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 co
  */
 const char *OSScriptInfo::opcodeInfo(byte opcode) const {
 	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (!OSScript::_opcodeTable[opcode - 1].args) {
 		warning("Undefined opcode 0x%02X in OSScriptInfo::opcodeInfo", opcode - 1);
-		return NULL;
+		return nullptr;
 	}
 
 	return OSScript::_opcodeTable[opcode - 1].args;
@@ -314,12 +314,12 @@ const char *OSScriptInfo::opcodeInfo(byte opcode) const {
  */
 OpFunc OSScriptInfo::opcodeHandler(byte opcode) const {
 	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (!OSScript::_opcodeTable[opcode - 1].proc) {
 		warning("Undefined opcode 0x%02X in OSScriptInfo::opcodeHandler", opcode - 1);
-		return NULL;
+		return nullptr;
 	}
 
 	return OSScript::_opcodeTable[opcode - 1].proc;

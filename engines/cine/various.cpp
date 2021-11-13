@@ -594,7 +594,7 @@ void processInventory(int16 x, int16 y) {
 	renderer->drawFrame();
 	renderer->popMenu();
 	delete menu;
-	menu = 0;
+	menu = nullptr;
 
 	manageEvents(PROCESS_INVENTORY, UNTIL_MOUSE_BUTTON_DOWN_UP);
 
@@ -1399,7 +1399,7 @@ uint16 executePlayerInput() {
 }
 
 void drawSprite(Common::List<overlay>::iterator it, const byte *spritePtr, const byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
-	byte *msk = NULL;
+	byte *msk = nullptr;
 	int16 maskX, maskY, maskWidth, maskHeight;
 	uint16 maskSpriteIdx;
 

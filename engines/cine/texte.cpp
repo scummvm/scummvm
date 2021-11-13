@@ -795,7 +795,7 @@ void freeErrmessDat() {
 	if (allocatedFailureMessages) {
 		free(const_cast<const char **>(failureMessages));
 	}
-	failureMessages = 0;
+	failureMessages = nullptr;
 	allocatedFailureMessages = false;
 }
 

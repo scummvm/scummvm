@@ -41,9 +41,9 @@
 
 namespace Cine {
 
-Sound *g_sound = 0;
+Sound *g_sound = nullptr;
 
-CineEngine *g_cine = 0;
+CineEngine *g_cine = nullptr;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	: Engine(syst),

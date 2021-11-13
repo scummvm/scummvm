@@ -32,7 +32,7 @@
 static const PlainGameDescriptor cineGames[] = {
 	{"fw", "Future Wars"},
 	{"os", "Operation Stealth"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "cine/detection_tables.h"

@@ -39,7 +39,7 @@
 namespace Cine {
 
 byte *collisionPage;
-FWRenderer *renderer = NULL;
+FWRenderer *renderer = nullptr;
 
 #define DEFAULT_MESSAGE_BG 1
 #define DEFAULT_CMD_Y 185
@@ -119,7 +119,7 @@ void plotPoint(int x, int y, int color, void *data) {
 /**
  * Initialize renderer
  */
-FWRenderer::FWRenderer() : _savedBackBuffers(), _background(NULL), _backupPal(), _cmd(""),
+FWRenderer::FWRenderer() : _savedBackBuffers(), _background(nullptr), _backupPal(), _cmd(""),
 	_messageBg(DEFAULT_MESSAGE_BG), _cmdY(DEFAULT_CMD_Y), _backBuffer(new byte[_screenSize]),
 	_activePal(), _changePal(0), _showCollisionPage(false), _fadeToBlackLastCalledMs(0) {
 
@@ -162,7 +162,7 @@ bool FWRenderer::initialize() {
 void FWRenderer::clear() {
 	delete[] _background;
 
-	_background = NULL;
+	_background = nullptr;
 	_backupPal.clear();
 	_activePal.clear();
 
@@ -672,7 +672,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
-		if (sprite->mask() != NULL) {
+		if (sprite->mask() != nullptr) {
 			memcpy(mask, sprite->mask(), len);
 		} else {
 			// This case happens in French Amiga Future Wars (Bug #10643) when
@@ -1202,7 +1202,7 @@ void FWRenderer::pushMenu(Menu *menu) {
 
 Menu *FWRenderer::popMenu() {
 	if (_menuStack.empty())
-		return 0;
+		return nullptr;
 
 	Menu *menu = _menuStack.top();
 	_menuStack.pop();
@@ -1210,8 +1210,8 @@ Menu *FWRenderer::popMenu() {
 }
 
 void FWRenderer::clearMenuStack() {
-	Menu *menu = 0;
-	while ((menu = popMenu()) != 0)
+	Menu *menu = nullptr;
+	while ((menu = popMenu()) != nullptr)
 		delete menu;
 }
 
@@ -2136,7 +2136,7 @@ void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int1
 }
 
 void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp) {
-	byte *pMask = NULL;
+	byte *pMask = nullptr;
 
 	// draw the mask based on next objects in the list
 	Common::List<overlay>::iterator it;
@@ -2151,7 +2151,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 		if ((pCurrentOverlay->type == 5) || ((pCurrentOverlay->type == 21) && (pCurrentOverlay->x == overlayPtr->objIdx))) {
 			AnimData *sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 
-			if (pMask == NULL) {
+			if (pMask == nullptr) {
 				pMask = new byte[width * height];
 
 				for (int i = 0; i < height; i++) {

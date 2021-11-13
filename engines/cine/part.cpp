@@ -268,7 +268,7 @@ byte *readBundleFile(int16 foundFileIdx, uint32 *size) {
 	}
 
 	// Set the size variable if a pointer to it has been given
-	if (size != NULL) {
+	if (size != nullptr) {
 		*size = g_cine->_partBuffer[foundFileIdx].unpackedSize;
 	}
 
@@ -278,7 +278,7 @@ byte *readBundleFile(int16 foundFileIdx, uint32 *size) {
 byte *readBundleSoundFileOS(const char *entryName, uint32 *size) {
 	int16 index = findFileInBundle(entryName);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	}
 
 	return readBundleFile(index, size);
@@ -286,7 +286,7 @@ byte *readBundleSoundFileOS(const char *entryName, uint32 *size) {
 
 byte *readBundleSoundFileFW(const char *entryName, uint32 *size) {
 	int16 index;
-	byte *data = 0;
+	byte *data = nullptr;
 	char previousPartName[15] = "";
 
 	if (g_cine->getGameType() == Cine::GType_FW) {

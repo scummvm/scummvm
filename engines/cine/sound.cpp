@@ -293,7 +293,7 @@ void PCSoundDriver::resetChannel(int channel) {
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
-	: _upCb(0), _upRef(0), _mixer(mixer) {
+	: _upCb(nullptr), _upRef(nullptr), _mixer(mixer) {
 
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
@@ -400,7 +400,7 @@ void AdLibSoundDriver::onTimer() {
 }
 
 void AdLibSoundDriver::setupPreloadedInstrument(int channel) {
-	setupInstrument(NULL, channel, false);
+	setupInstrument(nullptr, channel, false);
 }
 
 void AdLibSoundDriver::setupInstrument(const byte *data, int channel, bool loadData) {
@@ -659,7 +659,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-	: _output(output), _callback(0), _mutex() {
+	: _output(output), _callback(nullptr), _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -1001,7 +1001,7 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 	: _playing(false), _driver(driver), _mutex() {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
-	_sfxData = NULL;
+	_sfxData = nullptr;
 	_fadeOutCounter = 0;
 	_driver->setUpdateCallback(updateCallback, this);
 }
@@ -1009,7 +1009,7 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 PCSoundFxPlayer::~PCSoundFxPlayer() {
 	Common::StackLock lock(_mutex);
 
-	_driver->setUpdateCallback(NULL, NULL);
+	_driver->setUpdateCallback(nullptr, nullptr);
 	stop();
 }
 
@@ -1033,7 +1033,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 	}
 
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-		_instrumentsData[i] = NULL;
+		_instrumentsData[i] = nullptr;
 		char instrument[64];
 		memset(instrument, 0, 64); // Clear the data first
 		memcpy(instrument, _sfxData + 20 + i * 30, 12);
@@ -1051,7 +1051,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 				data && instrumentSize > 0x16) {
 				instrumentSize -= 0x16;
 				byte *tmp = (byte *)calloc(instrumentSize, 1);
-				if (tmp == NULL) {
+				if (tmp == nullptr) {
 					error("PCSoundFxPlayer::load('%s'): Out of memory (%d bytes)", song, instrumentSize);
 				}
 				memcpy(tmp, data + 0x16, instrumentSize);
@@ -1171,10 +1171,10 @@ void PCSoundFxPlayer::handlePattern(int channel, const byte *patternData) {
 void PCSoundFxPlayer::unload() {
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
 		free(_instrumentsData[i]);
-		_instrumentsData[i] = NULL;
+		_instrumentsData[i] = nullptr;
 	}
 	free(_sfxData);
-	_sfxData = NULL;
+	_sfxData = nullptr;
 }
 
 MusicType Sound::musicType() {
@@ -1182,7 +1182,7 @@ MusicType Sound::musicType() {
 }
 
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _soundDriver(0) {
+	: Sound(mixer, vm), _soundDriver(nullptr) {
 
 	_currentMusic = 0;
 	_currentMusicStatus = 0;
@@ -1342,7 +1342,7 @@ void PCSound::stopSound(int channel) {
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
 	_musicType = MT_AMIGA;
-	_moduleStream = 0;
+	_moduleStream = nullptr;
 	// The original is using the following timer frequency:
 	// 0.709379Mhz / 8000 = 88.672375Hz
 	// 1000000 / 88.672375Hz = 11277.46944863us
@@ -1395,7 +1395,7 @@ void PaulaSound::loadMusic(const char *name) {
 		// look for separate files
 		Common::File f;
 		if (f.open(name)) {
-			_moduleStream = Audio::makeSoundFxStream(&f, 0, _mixer->getOutputRate());
+			_moduleStream = Audio::makeSoundFxStream(&f, nullptr, _mixer->getOutputRate());
 			foundFile = true;
 		}
 	} else {
