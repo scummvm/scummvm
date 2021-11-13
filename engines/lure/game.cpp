@@ -35,10 +35,10 @@
 
 namespace Lure {
 
-static Game *int_game = NULL;
+static Game *int_game = nullptr;
 
 bool Game::isCreated() {
-	return int_game != NULL;
+	return int_game != nullptr;
 }
 
 Game &Game::getReference() {
@@ -208,7 +208,7 @@ void Game::execute() {
 					case Common::KEYCODE_KP_PLUS:
 						if (_debugFlag) {
 							while (++roomNum <= 51)
-								if (res.getRoom(roomNum) != NULL) break;
+								if (res.getRoom(roomNum) != nullptr) break;
 							if (roomNum == 52) roomNum = 1;
 							room.setRoomNumber(roomNum);
 						}
@@ -217,7 +217,7 @@ void Game::execute() {
 					case Common::KEYCODE_KP_MINUS:
 						if (_debugFlag) {
 							if (roomNum == 1) roomNum = 55;
-							while (res.getRoom(--roomNum) == NULL)
+							while (res.getRoom(--roomNum) == nullptr)
 								;
 							room.setRoomNumber(roomNum);
 						}
@@ -406,7 +406,7 @@ void Game::displayChuteAnimation() {
 	delete anim;
 
 	if (result != ABORT_END_INTRO) {
-		anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, true, 5, NULL, 4);
+		anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, true, 5, nullptr, 4);
 		result = anim->show();
 		delete anim;
 	}
@@ -539,7 +539,7 @@ void Game::handleRightClickMenu() {
 		actions &= 0xFF7FFFFF;
 
 	action = NONE;
-	hotspot = NULL;
+	hotspot = nullptr;
 
 	bool breakFlag = false;
 	while (!breakFlag) {
@@ -627,14 +627,14 @@ void Game::handleRightClickMenu() {
 	if (action != NONE) {
 		player->stopWalking();
 
-		if (hotspot == NULL) {
+		if (hotspot == nullptr) {
 			doAction(action, 0, itemId);
 		} else {
 			if (action != TELL) {
 				// Add the hotspot name to the status line and then go do the action
 				if ((itemId != 0xffff) && (action != GIVE) && (action != USE)) {
 					HotspotData *itemHotspot = res.getHotspot(itemId);
-					if (itemHotspot != NULL)
+					if (itemHotspot != nullptr)
 						strings.getString(itemHotspot->nameId, statusLine);
 				}
 				else

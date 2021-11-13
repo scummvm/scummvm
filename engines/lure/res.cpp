@@ -30,7 +30,7 @@
 
 namespace Lure {
 
-static Resources *int_resources = NULL;
+static Resources *int_resources = nullptr;
 
 Resources &Resources::getReference() {
 	return *int_resources;
@@ -97,7 +97,7 @@ void Resources::reset() {
 	_fieldList.reset();
 	_barmanLists.reset();
 	_talkState = TALK_NONE;
-	_activeTalkData = NULL;
+	_activeTalkData = nullptr;
 
 	reloadData();
 }
@@ -112,7 +112,7 @@ void Resources::reloadData() {
 	uint16 *v;
 
 	// Get the palette subset data
-	_paletteSubset = isEGA ? NULL : new Palette(ALT_PALETTE_RESOURCE_ID);
+	_paletteSubset = isEGA ? nullptr : new Palette(ALT_PALETTE_RESOURCE_ID);
 
 	// Load room data
 	mb = d.getEntry(ROOM_DATA_RESOURCE_ID);
@@ -359,7 +359,7 @@ void Resources::reloadData() {
 	_messagesData = d.getEntry(MESSAGES_LIST_RESOURCE_ID);
 	_talkDialogData = d.getEntry(TALK_DIALOG_RESOURCE_ID);
 
-	_activeTalkData = NULL;
+	_activeTalkData = nullptr;
 	_currentAction = NONE;
 	_talkState = TALK_NONE;
 	_talkSelection = 0;
@@ -377,7 +377,7 @@ RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
 			return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 Resources::getHotspotScript(uint16 index) {
@@ -392,7 +392,7 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 		if (rec->roomNumber == roomNumber) return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool Resources::checkHotspotExtent(HotspotData *hotspot) {
@@ -448,7 +448,7 @@ HotspotData *Resources::getHotspot(uint16 hotspotId) {
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Hotspot *Resources::getActiveHotspot(uint16 hotspotId) {
@@ -459,7 +459,7 @@ Hotspot *Resources::getActiveHotspot(uint16 hotspotId) {
 		if (rec->hotspotId() == hotspotId) return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -471,7 +471,7 @@ HotspotOverrideData *Resources::getHotspotOverride(uint16 hotspotId) {
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
@@ -482,7 +482,7 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 		if (rec->animRecordId == animRecordId) return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int Resources::getAnimationIndex(HotspotAnimData *animData) {
@@ -512,7 +512,7 @@ TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
 		TalkHeaderData *rec = (*i).get();
 		if (rec->characterId == hotspotId) return rec;
 	}
-	return NULL;
+	return nullptr;
 }
 
 HotspotActionList *Resources::getHotspotActions(uint16 actionsOffset) {
@@ -548,12 +548,12 @@ uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0
 Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	Resources &resources = Resources::getReference();
 	HotspotData *res = getHotspot(hotspotId);
-	if (!res) return NULL;
+	if (!res) return nullptr;
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
 
 	// Make sure that the hotspot isn't already active
 	Hotspot *h = getActiveHotspot(hotspotId);
-	if (h != NULL)
+	if (h != nullptr)
 		return h;
 
 	// If it's NPC with a schedule, then activate the schedule
@@ -650,7 +650,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Hotspot *Resources::addHotspot(uint16 hotspotId) {
@@ -733,7 +733,7 @@ void Resources::copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y) {
 
 void Resources::setTalkData(uint16 offset) {
 	if (offset == 0) {
-		_activeTalkData = NULL;
+		_activeTalkData = nullptr;
 		return;
 	}
 
@@ -759,7 +759,7 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 		HotspotData const &rec = **i;
 		if (!rec.npcSchedule.isEmpty()) {
 			Hotspot *h = getActiveHotspot(rec.hotspotId);
-			if (h == NULL) {
+			if (h == nullptr) {
 				stream->writeUint16LE(rec.hotspotId);
 				rec.npcSchedule.saveToStream(stream);
 			}
@@ -790,7 +790,7 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	}
 
 	_talkState = TALK_NONE;
-	_activeTalkData = NULL;
+	_activeTalkData = nullptr;
 
 	if (saveVersion >= 31) {
 		// Load in any schedules for non-active NPCS

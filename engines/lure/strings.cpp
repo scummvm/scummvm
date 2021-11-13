@@ -29,13 +29,13 @@
 
 namespace Lure {
 
-StringData *int_strings = NULL;
+StringData *int_strings = nullptr;
 
 StringData::StringData() {
 	int_strings = this;
 	Disk &disk = Disk::getReference();
 
-	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr) _chars[ctr] = NULL;
+	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr) _chars[ctr] = nullptr;
 	_numChars = 0;
 	_names = Disk::getReference().getEntry(NAMES_RESOURCE_ID);
 	_strings[0] = disk.getEntry(STRINGS_RESOURCE_ID);
@@ -56,7 +56,7 @@ StringData::StringData() {
 }
 
 StringData::~StringData() {
-	int_strings = NULL;
+	int_strings = nullptr;
 
 	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr)
 		if (_chars[ctr]) delete _chars[ctr];
@@ -166,7 +166,7 @@ char StringData::readCharacter() {
 		searchValue |= readBit() << (numBits - 1);
 
 		// Scan through list for a match
-		for (int index = 0; _chars[index] != NULL; ++index) {
+		for (int index = 0; _chars[index] != nullptr; ++index) {
 			if ((_chars[index]->_numBits == numBits) &&
 				(_chars[index]->_sequence == searchValue))
 				return _chars[index]->_ascii;
@@ -203,7 +203,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			const char *p = (ch == '1') ? hotspotName : characterName;
 			int article = !includeArticles ? 0 : ((ch == '1') ? hotspotArticle : characterArticle);
 
-			if (p != NULL) {
+			if (p != nullptr) {
 				if (article > 0) {
 					strcpy(destPos, stringList.getString(S_ARTICLE_LIST + article - 1));
 					strcat(destPos, p);

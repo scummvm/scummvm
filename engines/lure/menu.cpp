@@ -57,7 +57,7 @@ MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 
 MenuRecord::~MenuRecord() {
 	free(_entries);
-	_entries = NULL;
+	_entries = nullptr;
 }
 
 const char *MenuRecord::getEntry(uint8 index) {
@@ -67,7 +67,7 @@ const char *MenuRecord::getEntry(uint8 index) {
 
 /*--------------------------------------------------------------------------*/
 
-static Menu *int_menu = NULL;
+static Menu *int_menu = nullptr;
 
 const MenuRecordLanguage menuList[] = {
 	{Common::EN_ANY, {{40, 87, 3, 7}, {127, 179, 13, 12}, {224, 281, 27, 10}}},
@@ -101,7 +101,7 @@ Menu::Menu() {
 	_menus[2] = new MenuRecord(&rec->menus[2], 3,
 		sl.getString(S_QUIT), sl.getString(S_SLOW_TEXT), sl.getString(S_SOUND_ON));
 
-	_selectedMenu = NULL;
+	_selectedMenu = nullptr;
 }
 
 Menu::~Menu() {
@@ -124,8 +124,8 @@ uint8 Menu::execute() {
 	system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0,
 		FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
 
-	_selectedMenu = NULL;
-	_surfaceMenu = NULL;
+	_selectedMenu = nullptr;
+	_surfaceMenu = nullptr;
 	_selectedIndex = 0;
 
 	while (mouse.lButton() || mouse.rButton()) {
@@ -141,7 +141,7 @@ uint8 Menu::execute() {
 						toggleHighlight(_selectedMenu);
 						screen.updateArea(0, 0, FULL_SCREEN_WIDTH, _surfaceMenu->height() + 8);
 						delete _surfaceMenu;
-						_surfaceMenu = NULL;
+						_surfaceMenu = nullptr;
 						_selectedIndex = 0;
 					}
 
@@ -183,7 +183,7 @@ uint8 Menu::execute() {
 	// Restore the previous screen
 	screen.update();
 
-	if ((_selectedMenu == NULL) || (_selectedIndex == 0)) return MENUITEM_NONE;
+	if ((_selectedMenu == nullptr) || (_selectedIndex == 0)) return MENUITEM_NONE;
 	else if (_selectedMenu == _menus[0])
 		return MENUITEM_CREDITS;
 	else if (_selectedMenu == _menus[1]) {
@@ -217,7 +217,7 @@ MenuRecord *Menu::getMenuAt(int x) {
 		if ((x >= _menus[ctr]->hsxstart()) && (x <= _menus[ctr]->hsxend()))
 			return _menus[ctr];
 
-	return NULL;
+	return nullptr;
 }
 
 uint8 Menu::getIndexAt(uint16 x, uint16 y) {

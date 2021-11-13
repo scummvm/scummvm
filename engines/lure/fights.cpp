@@ -39,11 +39,11 @@ const FighterRecord initialFighterList[3] = {
 	0, 0, 0, 0, 0xDDC, PLAYER_ID}
 };
 
-FightsManager *int_fights = NULL;
+FightsManager *int_fights = nullptr;
 
 FightsManager::FightsManager() : _rnd(LureEngine::getReference().rnd()) {
 	int_fights = this;
-	_fightData = NULL;
+	_fightData = nullptr;
 	_mouseFlags = 0;
 	_keyDown = KS_UP;
 	reset();
