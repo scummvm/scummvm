@@ -103,7 +103,7 @@ void GfxTransitions::init() {
 	_oldScreen = new byte[_screen->getDisplayHeight() * _screen->getDisplayWidth()];
 
 	if (getSciVersion() >= SCI_VERSION_1_LATE)
-		_translationTable = NULL;
+		_translationTable = nullptr;
 	else
 		_translationTable = oldTransitionIDs;
 
@@ -156,7 +156,7 @@ void GfxTransitions::updateScreenAndWait(uint32 shouldBeAtMsec) {
 const GfxTransitionTranslateEntry *GfxTransitions::translateNumber (int16 number, const GfxTransitionTranslateEntry *tablePtr) {
 	while (1) {
 		if (tablePtr->orgId == 255)
-			return NULL;
+			return nullptr;
 		if (tablePtr->orgId == number)
 			return tablePtr;
 		tablePtr++;

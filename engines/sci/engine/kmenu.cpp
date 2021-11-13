@@ -80,7 +80,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), nullptr).c_str(), colorPen, colorBack);
 	}
 	return s->r_acc;
 }

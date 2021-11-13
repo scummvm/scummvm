@@ -207,7 +207,7 @@ static const char *const selectorNameTable[] = {
 	"vol",          // SQ6
 	"walkIconItem", // SQ6
 #endif
-	NULL
+	nullptr
 };
 
 enum ScriptPatcherSelectors {
@@ -21795,7 +21795,7 @@ ScriptPatcher::ScriptPatcher() {
 	for (selectorNr = 0; selectorNr < selectorCount; selectorNr++)
 		_selectorIdTable[selectorNr] = -1;
 
-	_runtimeTable = NULL;
+	_runtimeTable = nullptr;
 	_isMacSci11 = false;
 }
 
@@ -22218,9 +22218,9 @@ void ScriptPatcher::enablePatch(const SciScriptPatcherEntry *patchTable, const c
 }
 
 void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
-	const SciScriptPatcherEntry *signatureTable = NULL;
-	const SciScriptPatcherEntry *curEntry = NULL;
-	SciScriptPatcherRuntimeEntry *curRuntimeEntry = NULL;
+	const SciScriptPatcherEntry *signatureTable = nullptr;
+	const SciScriptPatcherEntry *curEntry = nullptr;
+	SciScriptPatcherRuntimeEntry *curRuntimeEntry = nullptr;
 	const Sci::SciGameId gameId = g_sci->getGameId();
 
 	switch (gameId) {

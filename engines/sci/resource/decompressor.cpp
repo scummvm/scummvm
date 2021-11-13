@@ -152,7 +152,7 @@ void DecompressorLZW::init(Common::ReadStream *src, byte *dest, uint32 nPacked, 
 
 int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 								uint32 nUnpacked) {
-	byte *buffer = NULL;
+	byte *buffer = nullptr;
 
 	switch (_compression) {
 	case kCompLZW:	// SCI0 LZW compression

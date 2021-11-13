@@ -128,7 +128,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = addWindow(Common::Rect(0, offTop, _screen->getScriptWidth(), _screen->getScriptHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = addWindow(Common::Rect(0, offTop, _screen->getScriptWidth(), _screen->getScriptHeight()), nullptr, nullptr, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
 	if (_usesOldGfxFunctions)
@@ -210,12 +210,12 @@ reg_t GfxPorts::kernelGetActive() {
 }
 
 reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
-	Window *wnd = NULL;
+	Window *wnd = nullptr;
 
 	if (restoreRect.bottom != 0 && restoreRect.right != 0)
 		wnd = addWindow(dims, &restoreRect, title, style, priority, false);
 	else
-		wnd = addWindow(dims, NULL, title, style, priority, false);
+		wnd = addWindow(dims, nullptr, title, style, priority, false);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	drawWindow(wnd);
@@ -422,7 +422,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft, pwnd->rect.top + pwnd->dims.top - oldtop);
 
-	if (restoreRect == 0)
+	if (restoreRect == nullptr)
 		pwnd->restoreRect = pwnd->dims;
 
 	if (pwnd->restoreRect.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&

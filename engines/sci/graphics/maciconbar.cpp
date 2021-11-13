@@ -43,7 +43,7 @@ GfxMacIconBar::GfxMacIconBar() {
 	else
 		_inventoryIndex = 4;
 
-	_inventoryIcon = 0;
+	_inventoryIcon = nullptr;
 	_allDisabled = true;
 }
 
@@ -56,7 +56,7 @@ void GfxMacIconBar::initIcons(uint16 count, reg_t *objs) {
 	freeIcons();
 	_iconBarItems.clear();
 	_lastX = 0;
-	_inventoryIcon = 0;
+	_inventoryIcon = nullptr;
 	_allDisabled = true;
 
 	for (uint16 i = 0; i < count; i++) {
@@ -93,7 +93,7 @@ void GfxMacIconBar::addIcon(reg_t obj) {
 	if (iconIndex != _inventoryIndex)
 		item.selectedImage = createImage(iconIndex, true);
 	else
-		item.selectedImage = 0;
+		item.selectedImage = nullptr;
 
 	item.enabled = true;
 
@@ -195,7 +195,7 @@ void GfxMacIconBar::setIconEnabled(int16 iconIndex, bool enabled) {
 }
 
 void GfxMacIconBar::setInventoryIcon(int16 icon) {
-	Graphics::Surface *surface = 0;
+	Graphics::Surface *surface = nullptr;
 
 	if (icon >= 0)
 		surface = loadPict(ResourceId(kResourceTypeMacPict, icon));
@@ -206,7 +206,7 @@ void GfxMacIconBar::setInventoryIcon(int16 icon) {
 		if ((icon < 0) || surface) {
 			_inventoryIcon->free();
 			delete _inventoryIcon;
-			_inventoryIcon = 0;
+			_inventoryIcon = nullptr;
 		}
 	}
 
@@ -220,12 +220,12 @@ Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
 	Resource *res = g_sci->getResMan()->findResource(id, false);
 
 	if (!res || res->size() == 0)
-		return 0;
+		return nullptr;
 
 	Image::PICTDecoder pictDecoder;
 	Common::MemoryReadStream stream(res->toStream());
 	if (!pictDecoder.loadStream(stream))
-		return 0;
+		return nullptr;
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*pictDecoder.getSurface());

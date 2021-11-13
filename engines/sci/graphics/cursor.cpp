@@ -52,10 +52,10 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 
 	_zoomZoneActive = false;
 	_zoomZone = Common::Rect();
-	_zoomCursorView = 0;
+	_zoomCursorView = nullptr;
 	_zoomCursorLoop = 0;
 	_zoomCursorCel = 0;
-	_zoomPicView = 0;
+	_zoomPicView = nullptr;
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
 
@@ -442,9 +442,9 @@ void GfxCursor::kernelClearZoomZone() {
 	_zoomMultiplier = 0;
 	_zoomZoneActive = false;
 	delete _zoomCursorView;
-	_zoomCursorView = 0;
+	_zoomCursorView = nullptr;
 	delete _zoomPicView;
-	_zoomPicView = 0;
+	_zoomPicView = nullptr;
 	_cursorSurface.clear();
 }
 

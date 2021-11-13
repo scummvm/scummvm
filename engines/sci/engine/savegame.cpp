@@ -703,9 +703,9 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
 	if (s.isLoading()) {
-		soundRes = 0;
-		pMidiParser = 0;
-		pStreamAud = 0;
+		soundRes = nullptr;
+		pMidiParser = nullptr;
+		pStreamAud = nullptr;
 		reverb = -1;	// invalid reverb, will be initialized in processInitSound()
 	}
 }
@@ -1420,7 +1420,7 @@ bool gamestate_restore(EngineState *s, int saveId) {
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	SavegameMetadata meta;
 
-	Common::Serializer ser(fh, 0);
+	Common::Serializer ser(fh, nullptr);
 	sync_SavegameMetadata(ser, meta);
 
 	if (fh->eos()) {

@@ -364,10 +364,10 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 }
 
 Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
-	Audio::SeekableAudioStream *audioSeekStream = 0;
-	Audio::RewindableAudioStream *audioStream = 0;
+	Audio::SeekableAudioStream *audioSeekStream = nullptr;
+	Audio::RewindableAudioStream *audioStream = nullptr;
 	uint32 size = 0;
-	byte *data = 0;
+	byte *data = nullptr;
 	byte flags = 0;
 	Sci::Resource *audioRes;
 
@@ -377,14 +377,14 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		audioRes = _resMan->findResource(ResourceId(kResourceTypeAudio, number), false);
 		if (!audioRes) {
 			warning("Failed to find audio entry %i", number);
-			return NULL;
+			return nullptr;
 		}
 	} else {
 		audioRes = _resMan->findResource(ResourceId(kResourceTypeAudio36, volume, number), false);
 		if (!audioRes) {
 			warning("Failed to find audio entry (%i, %i, %i, %i, %i)", volume, (number >> 24) & 0xff,
 					(number >> 16) & 0xff, (number >> 8) & 0xff, number & 0xff);
-			return NULL;
+			return nullptr;
 		}
 	}
 

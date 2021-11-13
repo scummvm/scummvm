@@ -246,7 +246,7 @@ void Kernel::mapSelectors() {
 reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 	ObjVarRef address;
 
-	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
+	if (lookupSelector(segMan, object, selectorId, &address, nullptr) != kSelectorVariable)
 		return NULL_REG;
 
 	if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
@@ -274,7 +274,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 		error("Attempt to write to invalid selector %d. Address %04x:%04x, %s", selectorId, PRINT_REG(object), origin.toString().c_str());
 	}
 
-	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable) {
+	if (lookupSelector(segMan, object, selectorId, &address, nullptr) != kSelectorVariable) {
 		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
 		error("Selector '%s' of object could not be written to. Address %04x:%04x, %s", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.toString().c_str());
 	}
@@ -301,7 +301,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	stackframe[0] = make_reg(0, selectorId);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
+	slc_type = lookupSelector(s->_segMan, object, selectorId, nullptr, nullptr);
 
 	if (slc_type == kSelectorNone) {
 		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();

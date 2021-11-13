@@ -123,7 +123,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,    "-super-", 4102 },
 	//
 	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,     "-info-", 4103 },
-	{        SCI_VERSION_NONE,           SCI_VERSION_NONE,            0,    0 }
+	{        SCI_VERSION_NONE,           SCI_VERSION_NONE,      nullptr,    0 }
 };
 
 struct ClassReference {

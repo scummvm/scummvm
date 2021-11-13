@@ -71,7 +71,7 @@ struct ParseRuleList {
 
 	void print() const;
 
-	ParseRuleList(ParseRule *r) : rule(r), next(0) {
+	ParseRuleList(ParseRule *r) : rule(r), next(nullptr) {
 		int term = rule->_data[rule->_firstSpecial];
 		terminal = ((term & TOKEN_TERMINAL) ? term : 0);
 	}
@@ -150,7 +150,7 @@ static ParseRule *_vinsert(ParseRule *turkey, ParseRule *stuffing) {
 
 	// If no TOKEN_NON_NT found, or if it doesn't match the id of 'stuffing', abort.
 	if ((firstnt == turkey->_data.size()) || (turkey->_data[firstnt] != stuffing->_id))
-		return NULL;
+		return nullptr;
 
 	// Create a new rule as a copy of 'turkey', where the token firstnt has been substituted
 	// by the rule 'stuffing'.
@@ -183,7 +183,7 @@ static ParseRule *_vbuild_rule(const parse_tree_branch_t *branch) {
 		else if (type > VOCAB_TREE_NODE_LAST_WORD_STORAGE)
 			tokens += 5;
 		else
-			return NULL; // invalid
+			return nullptr; // invalid
 	}
 
 	ParseRule *rule = new ParseRule();
@@ -225,7 +225,7 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWordList &input) {
 	int dep;
 
 	if (!rule->_numSpecials)
-		return NULL;
+		return nullptr;
 
 	dep = rule->_data[rule->_firstSpecial];
 
@@ -270,7 +270,7 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWordList &input) {
 
 		return retval;
 	} else
-		return NULL;
+		return nullptr;
 }
 
 void Vocabulary::freeRuleList(ParseRuleList *list) {
@@ -332,7 +332,7 @@ static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
 	assert(list);
 	if (!list->next || (list->next->terminal)) {
 		ParseRuleList *tmp = list->next;
-		list->next = NULL;
+		list->next = nullptr;
 		return tmp;
 	} else
 		return _vocab_split_rule_list(list->next);
@@ -342,8 +342,8 @@ static void _vocab_free_empty_rule_list(ParseRuleList *list) {
 	assert(list);
 	if (list->next)
 		_vocab_free_empty_rule_list(list->next);
-	list->next = 0;
-	list->rule = 0;
+	list->next = nullptr;
+	list->rule = nullptr;
 	delete list;
 }
 
@@ -363,7 +363,7 @@ static int _vocab_rule_list_length(ParseRuleList *list) {
 }
 
 static ParseRuleList *_vocab_clone_rule_list_by_id(ParseRuleList *list, int id) {
-	ParseRuleList *result = NULL;
+	ParseRuleList *result = nullptr;
 	ParseRuleList *seeker = list;
 
 	while (seeker) {
@@ -380,7 +380,7 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	int iterations = 0;
 	int termrules = 0;
 	int ntrules_nr;
-	ParseRuleList *ntlist = NULL;
+	ParseRuleList *ntlist = nullptr;
 	ParseRuleList *tlist, *new_tlist;
 	Console *con = g_sci->getSciDebugger();
 
@@ -388,7 +388,7 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 		ParseRule *rule = _vbuild_rule(&_parserBranches[i]);
 		if (!rule) {
 			freeRuleList(ntlist);
-			return NULL;
+			return nullptr;
 		}
 		ntlist = _vocab_add_rule(ntlist, rule);
 	}
@@ -400,10 +400,10 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 		con->debugPrintf("Starting with %d rules\n", ntrules_nr);
 
 	new_tlist = tlist;
-	tlist = NULL;
+	tlist = nullptr;
 
 	do {
-		ParseRuleList *new_new_tlist = NULL;
+		ParseRuleList *new_new_tlist = nullptr;
 		ParseRuleList *ntseeker, *tseeker;
 
 		ntseeker = ntlist;
@@ -437,7 +437,7 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 		con->debugPrintf("%d allocd rules\n", _allocd_rules);
 		con->debugPrintf("Freeing rule list...\n");
 		freeRuleList(tlist);
-		return NULL;
+		return nullptr;
 	}
 
 	return tlist;
@@ -447,8 +447,8 @@ static int _vbpt_pareno(ParseTreeNode *nodes, int *pos, int base) {
 	// Opens parentheses
 	nodes[base].left = &nodes[(*pos) + 1];
 	nodes[++(*pos)].type = kParseTreeBranchNode;
-	nodes[*pos].left = 0;
-	nodes[*pos].right = 0;
+	nodes[*pos].left = nullptr;
+	nodes[*pos].right = nullptr;
 	return *pos;
 }
 
@@ -456,8 +456,8 @@ static int _vbpt_parenc(ParseTreeNode *nodes, int *pos, int paren) {
 	// Closes parentheses for appending
 	nodes[paren].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
-	nodes[*pos].left = 0;
-	nodes[*pos].right = 0;
+	nodes[*pos].left = nullptr;
+	nodes[*pos].right = nullptr;
 	return *pos;
 }
 
@@ -466,11 +466,11 @@ static int _vbpt_append(ParseTreeNode *nodes, int *pos, int base, int value) {
 	nodes[base].left = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeLeafNode;
 	nodes[*pos].value = value;
-	nodes[*pos].right = 0;
+	nodes[*pos].right = nullptr;
 	nodes[base].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
-	nodes[*pos].left = 0;
-	nodes[*pos].right = 0;
+	nodes[*pos].left = nullptr;
+	nodes[*pos].right = nullptr;
 	return *pos;
 }
 
@@ -478,7 +478,7 @@ static int _vbpt_terminate(ParseTreeNode *nodes, int *pos, int base, int value) 
 	// Terminates, overwriting a nextwrite forknode
 	nodes[base].type = kParseTreeLeafNode;
 	nodes[base].value = value;
-	nodes[base].right = 0;
+	nodes[base].right = nullptr;
 	return *pos;
 }
 static int _vbpt_append_word(ParseTreeNode *nodes, int *pos, int base, int value) {
@@ -487,8 +487,8 @@ static int _vbpt_append_word(ParseTreeNode *nodes, int *pos, int base, int value
 	nodes[base].value = value;
 	nodes[base].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
-	nodes[*pos].left = 0;
-	nodes[*pos].right = 0;
+	nodes[*pos].left = nullptr;
+	nodes[*pos].right = nullptr;
 	return *pos;
 }
 
@@ -496,7 +496,7 @@ static int _vbpt_terminate_word(ParseTreeNode *nodes, int *pos, int base, int va
 	// Terminates, overwriting a nextwrite forknode
 	nodes[base].type = kParseTreeWordNode;
 	nodes[base].value = value;
-	nodes[base].right = 0;
+	nodes[base].right = nullptr;
 	return *pos;
 }
 
@@ -537,14 +537,14 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 	Console *con = g_sci->getSciDebugger();
 	// Get the start rules:
 	ParseRuleList *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
-	ParseRuleList *results = NULL;
+	ParseRuleList *results = nullptr;
 	uint word = 0;
 	const uint words_nr = words.size();
 	ResultWordListList::const_iterator words_iter;
 
 	for (words_iter = words.begin(); words_iter != words.end(); ++words_iter, ++word) {
-		ParseRuleList *new_work = NULL;
-		ParseRuleList *reduced_rules = NULL;
+		ParseRuleList *new_work = nullptr;
+		ParseRuleList *reduced_rules = nullptr;
 		ParseRuleList *seeker, *subseeker;
 
 		if (verbose)
@@ -559,7 +559,7 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 			seeker = seeker->next;
 		}
 
-		if (reduced_rules == NULL) {
+		if (reduced_rules == nullptr) {
 			freeRuleList(work);
 			if (verbose)
 				con->debugPrintf("No results.\n");
@@ -593,7 +593,7 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 		work = new_work;
 		if (verbose)
 			con->debugPrintf("Now at %d candidates\n", _vocab_rule_list_length(work));
-		if (work == NULL) {
+		if (work == nullptr) {
 			if (verbose)
 				con->debugPrintf("No results.\n");
 			return 1;
@@ -618,11 +618,11 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 
 		_parserNodes[1].type = kParseTreeLeafNode;
 		_parserNodes[1].value = 0x141;
-		_parserNodes[1].right = 0;
+		_parserNodes[1].right = nullptr;
 
 		_parserNodes[2].type = kParseTreeBranchNode;
-		_parserNodes[2].left = 0;
-		_parserNodes[2].right = 0;
+		_parserNodes[2].left = nullptr;
+		_parserNodes[2].right = nullptr;
 
 		pos = 2;
 

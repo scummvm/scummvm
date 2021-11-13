@@ -159,7 +159,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
 	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 } // End of namespace Sci
@@ -177,7 +177,7 @@ static const char *directoryGlobs[] = {
 	"msg",
 	"spanish",
 	"patches",
-	0
+	nullptr
 };
 
 class SciMetaEngineDetection : public AdvancedMetaEngineDetection {

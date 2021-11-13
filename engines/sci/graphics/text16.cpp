@@ -49,10 +49,10 @@ GfxText16::~GfxText16() {
 }
 
 void GfxText16::init() {
-	_font = NULL;
-	_codeFonts = NULL;
+	_font = nullptr;
+	_codeFonts = nullptr;
 	_codeFontsCount = 0;
-	_codeColors = NULL;
+	_codeColors = nullptr;
 	_codeColorsCount = 0;
 	_useEarlyGetLongestTextCalculations = g_sci->_features->useEarlyGetLongestTextCalculations();
 }
@@ -62,14 +62,14 @@ GuiResourceId GfxText16::GetFontId() {
 }
 
 GfxFont *GfxText16::GetFont() {
-	if ((_font == NULL) || (_font->getResourceId() != _ports->_curPort->fontId))
+	if ((_font == nullptr) || (_font->getResourceId() != _ports->_curPort->fontId))
 		_font = _cache->getFont(_ports->_curPort->fontId);
 
 	return _font;
 }
 
 void GfxText16::SetFont(GuiResourceId fontId) {
-	if ((_font == NULL) || (_font->getResourceId() != fontId))
+	if ((_font == nullptr) || (_font->getResourceId() != fontId))
 		_font = _cache->getFont(fontId);
 
 	_ports->_curPort->fontId = _font->getResourceId();
@@ -103,7 +103,7 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	//  c -> sets textColor to current port pen color
 	//  cX -> sets textColor to _textColors[X-1]
 	curCode = textCode[0];
-	curCodeParm = strtol(textCode+1, NULL, 10);
+	curCodeParm = strtol(textCode+1, nullptr, 10);
 	if (!Common::isDigit(textCode[1])) {
 		curCodeParm = -1;
 	}
@@ -196,7 +196,7 @@ static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar = 0;
 	const char *textStartPtr = textPtr;
-	const char *lastSpacePtr = NULL;
+	const char *lastSpacePtr = nullptr;
 	int16 lastSpaceCharCount = 0;
 	int16 curCharCount = 0, resultCharCount = 0;
 	uint16 curWidth = 0, tempWidth = 0;

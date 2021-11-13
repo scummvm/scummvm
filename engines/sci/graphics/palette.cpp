@@ -82,7 +82,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 
 	palVaryInit();
 
-	_macClut = 0;
+	_macClut = nullptr;
 	loadMacIconBarPalette();
 
 	switch (_resMan->getViewType()) {
