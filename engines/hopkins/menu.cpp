@@ -44,7 +44,7 @@ MenuManager::MenuManager(HopkinsEngine *vm) {
 }
 
 int MenuManager::menu() {
-	byte *spriteData = NULL;
+	byte *spriteData = nullptr;
 	MenuSelection menuIndex;
 	Common::Point mousePos;
 	signed int result;

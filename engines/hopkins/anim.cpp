@@ -198,7 +198,7 @@ void AnimationManager::playAnim(const Common::String &hiresName, const Common::S
  */
 void AnimationManager::playAnim2(const Common::String &hiresName, const Common::String &lowresName, uint32 rate1, uint32 rate2, uint32 rate3) {
 	int oldScrollPosX = 0;
-	byte *screenP = NULL;
+	byte *screenP = nullptr;
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -508,7 +508,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 						innerLoopCond = true;
 					if (bufSize < curBufferPos) {
 						_animBqe[animIndex]._enabledFl = false;
-						_animBqe[animIndex]._data = NULL;
+						_animBqe[animIndex]._data = nullptr;
 						return;
 					}
 					++curBufferPos;
@@ -781,12 +781,12 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 void AnimationManager::initAnimBqe() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_animBqe[idx]._data = NULL;
+		_animBqe[idx]._data = nullptr;
 		_animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx]._data = NULL;
+		Bank[idx]._data = nullptr;
 		Bank[idx]._loadedFl = false;
 		Bank[idx]._filename = "";
 		Bank[idx]._fileHeader = 0;

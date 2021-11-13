@@ -57,7 +57,7 @@ bool SaveLoadManager::save(const Common::String &file, const void *buf, size_t n
 
 bool SaveLoadManager::saveExists(const Common::String &file) {
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(file);
-	bool result = savefile != NULL;
+	bool result = savefile != nullptr;
 	delete savefile;
 	return result;
 }
@@ -69,7 +69,7 @@ bool SaveLoadManager::saveFile(const Common::String &file, const void *buf, size
 
 void SaveLoadManager::load(const Common::String &file, byte *buf) {
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(file);
-	if (savefile == NULL)
+	if (savefile == nullptr)
 		error("Error opening file - %s", file.c_str());
 
 	int32 filesize = savefile->size();
@@ -156,7 +156,7 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 		return Common::kCreatingFileFailed;
 
 	// Set up the serializer
-	Common::Serializer serializer(NULL, savefile);
+	Common::Serializer serializer(nullptr, savefile);
 
 	// Write out the savegame header
 	hopkinsSavegameHeader header;
@@ -182,7 +182,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 		return Common::kReadingFailed;
 
 	// Set up the serializer
-	Common::Serializer serializer(savefile, NULL);
+	Common::Serializer serializer(savefile, nullptr);
 
 	// Read in the savegame header
 	hopkinsSavegameHeader header;

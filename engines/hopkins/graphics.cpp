@@ -42,17 +42,17 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_initGraphicsFl = false;
 	_screenWidth = _screenHeight = 0;
 	_screenLineSize = 0;
-	_palettePixels = NULL;
+	_palettePixels = nullptr;
 	_lineNbr = 0;
-	_videoPtr = NULL;
+	_videoPtr = nullptr;
 	_scrollOffset = 0;
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	_backBuffer = NULL;
-	_frontBuffer = NULL;
-	_screenBuffer = NULL;
-	_backupScreen = NULL;
+	_backBuffer = nullptr;
+	_frontBuffer = nullptr;
+	_screenBuffer = nullptr;
+	_backupScreen = nullptr;
 	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
@@ -113,7 +113,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_frontBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 		_screenBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
-		_videoPtr = NULL;
+		_videoPtr = nullptr;
 		_screenWidth = width;
 		_screenHeight = height;
 
@@ -145,7 +145,7 @@ void GraphicsManager::lockScreen() {
 void GraphicsManager::unlockScreen() {
 	assert(_videoPtr);
 	if (--_lockCounter == 0) {
-		_videoPtr = NULL;
+		_videoPtr = nullptr;
 	}
 }
 
@@ -1143,7 +1143,7 @@ void GraphicsManager::displayDirtyRects() {
 
 void GraphicsManager::displayRefreshRects() {
 	debugC(1, kDebugGraphics, "displayRefreshRects() start");
-	Graphics::Surface *screenSurface = NULL;
+	Graphics::Surface *screenSurface = nullptr;
 	if (_showDirtyRects) {
 		screenSurface = g_system->lockScreen();
 		g_system->copyRectToScreen(_screenBuffer, _screenLineSize, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -1910,7 +1910,7 @@ void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height
  */
 void GraphicsManager::backupScreen() {
 	// Allocate a new data block for the screen, if necessary
-	if (_vm->_graphicsMan->_backupScreen == NULL)
+	if (_vm->_graphicsMan->_backupScreen == nullptr)
 		_vm->_graphicsMan->_backupScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Backup the screen
@@ -1928,7 +1928,7 @@ void GraphicsManager::restoreScreen() {
 	Common::copy(_vm->_graphicsMan->_backupScreen, _vm->_graphicsMan->_backupScreen +
 		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backBuffer);
 	_vm->_globals->freeMemory(_vm->_graphicsMan->_backupScreen);
-	_backupScreen = NULL;
+	_backupScreen = nullptr;
 }
 
 } // End of namespace Hopkins

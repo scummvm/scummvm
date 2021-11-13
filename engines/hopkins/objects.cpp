@@ -61,7 +61,7 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 		Common::fill((byte *)&_hidingItem[i], (byte *)&_hidingItem[i] + sizeof(HidingItem), 0);
 
 	for (int i = 0; i < 6; ++i)
-		_hidingItemData[i] = NULL;
+		_hidingItemData[i] = nullptr;
 
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&_liste[i], (byte *)&_liste[i] + sizeof(ListeItem), 0);
@@ -78,10 +78,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_saveLoadX = _saveLoadY = 0;
 	_oldCharacterPosX = _oldCharacterPosY = 0;
 	_eraseVisibleCounter = 0;
-	_saveLoadSprite = NULL;
-	_saveLoadSprite2 = NULL;
-	_spritePtr = NULL;
-	_oldSpriteData = NULL;
+	_saveLoadSprite = nullptr;
+	_saveLoadSprite2 = nullptr;
+	_spritePtr = nullptr;
+	_oldSpriteData = nullptr;
 	_saveLoadFl = false;
 	_visibleFl = false;
 	_zoneNum = 0;
@@ -101,10 +101,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_curObjectIndex = 0;
 	_forestFl = false;
 	_mapCarPosX = _mapCarPosY = 0;
-	_forestSprite = NULL;
-	_gestureBuf = NULL;
+	_forestSprite = nullptr;
+	_gestureBuf = nullptr;
 	_curGestureFile = 0;
-	_headSprites = NULL;
+	_headSprites = nullptr;
 	_homeRateCounter = 0;
 	_lastDirection = DIR_NONE;
 	_oldDirection = DIR_NONE;
@@ -112,7 +112,7 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_objectWidth = _objectHeight = 0;
 	_hidingActiveFl = false;
 	_curObjectFileNum = 0;
-	_objectDataBuf = NULL;
+	_objectDataBuf = nullptr;
 	_charactersEnabledFl = false;
 	_refreshBobMode10Fl = false;
 }
@@ -170,7 +170,7 @@ void ObjectsManager::resetHidingItems() {
 
 	for (int idx = 0; idx <= 20; ++idx) {
 		HidingItem *hid = &_hidingItem[idx];
-		hid->_spriteData = NULL;
+		hid->_spriteData = nullptr;
 		hid->_x = 0;
 		hid->_y = 0;
 		hid->_spriteIndex = 0;
@@ -193,7 +193,7 @@ void ObjectsManager::changeObject(int objIndex) {
 }
 
 byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
-	byte *dataP = NULL;
+	byte *dataP = nullptr;
 	int objectFileNum = _objectAuthIcons[objIndex]._objectFileNum;
 	int idx = _objectAuthIcons[objIndex]._idx;
 
@@ -219,7 +219,7 @@ byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 		dataP = _vm->_events->_objectBuf;
 	} else {
 		dataP = _vm->_globals->allocMemory(height * width);
-		if (dataP == NULL)
+		if (dataP == nullptr)
 			error("CAPTURE_OBJET");
 
 		capture_mem_sprite(_objectDataBuf, dataP, idx);
@@ -574,7 +574,7 @@ void ObjectsManager::resetBob(int idx) {
 	ListeItem &item = _liste2[idx];
 
 	bob._bobMode = 0;
-	bob._spriteData = NULL;
+	bob._spriteData = nullptr;
 	bob._xp = 0;
 	bob._yp = 0;
 	bob._frameIndex = 0;
@@ -582,7 +582,7 @@ void ObjectsManager::resetBob(int idx) {
 	bob._moveChange1 = 0;
 	bob._moveChange2 = 0;
 	bob._disabledAnimationFl = false;
-	bob._animData = NULL;
+	bob._animData = nullptr;
 	bob._bobMode10 = false;
 	bob._bobModeChange = 0;
 	bob._modeChangeCtr = 0;
@@ -1008,7 +1008,7 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 
 		bob->_bobMode10 = false;
-		if (bob->_animData == NULL || bob->_disabledAnimationFl || bob->_modeChangeCtr == 0 || bob->_modeChangeCtr < -1) {
+		if (bob->_animData == nullptr || bob->_disabledAnimationFl || bob->_modeChangeCtr == 0 || bob->_modeChangeCtr < -1) {
 			if (bob->_bobModeChange == 1 || bob->_bobModeChange == 2)
 				bob->_bobMode10 = true;
 			continue;
@@ -1161,14 +1161,14 @@ void ObjectsManager::displayVBob() {
 			vbob->_surface = _vm->_globals->freeMemory(vbob->_surface);
 
 			vbob->_displayMode = 0;
-			vbob->_spriteData = NULL;
+			vbob->_spriteData = nullptr;
 			vbob->_xp = 0;
 			vbob->_yp = 0;
 			vbob->_oldX = 0;
 			vbob->_oldY = 0;
 			vbob->_frameIndex = 0;
 			vbob->_oldFrameIndex = 0;
-			vbob->_oldSpriteData = NULL;
+			vbob->_oldSpriteData = nullptr;
 		}
 
 		if (vbob->_displayMode == 3) {
@@ -1246,7 +1246,7 @@ int ObjectsManager::getSpriteY(int idx) {
  */
 void ObjectsManager::clearSprite() {
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		_sprite[idx]._spriteData = NULL;
+		_sprite[idx]._spriteData = nullptr;
 		_sprite[idx]._animationType = 0;
 	}
 
@@ -1333,7 +1333,7 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 }
 
 void ObjectsManager::goHome() {
-	if (_vm->_linesMan->_route == NULL)
+	if (_vm->_linesMan->_route == nullptr)
 		return;
 
 	if (_homeRateCounter > 1) {
@@ -1370,11 +1370,11 @@ void ObjectsManager::goHome() {
 				zoneId = _vm->_globals->_saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
-			_vm->_linesMan->_route = NULL;
+			_vm->_linesMan->_route = nullptr;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
-			_vm->_linesMan->_route = NULL;
+			_vm->_linesMan->_route = nullptr;
 			_oldDirection = DIR_NONE;
 			if (zoneId > 0) {
 				ZoneItem *curZone = &_vm->_linesMan->_zone[zoneId];
@@ -1591,7 +1591,7 @@ void ObjectsManager::goHome() {
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _oldDirection + 59);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesMan->_route = NULL;
+			_vm->_linesMan->_route = nullptr;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
@@ -1652,7 +1652,7 @@ void ObjectsManager::goHome() {
 }
 
 void ObjectsManager::goHome2() {
-	if (_vm->_linesMan->_route == NULL)
+	if (_vm->_linesMan->_route == nullptr)
 		return;
 
 	int realSpeed = 2;
@@ -1715,7 +1715,7 @@ void ObjectsManager::goHome2() {
 		break;
 	}
 
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 }
 
 /**
@@ -1806,7 +1806,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals->_cityMapEnabledFl = true;
 	_vm->_graphicsMan->_noFadingFl = false;
 	_vm->_globals->_freezeCharacterFl = false;
-	_spritePtr = NULL;
+	_spritePtr = nullptr;
 	_vm->_globals->_exitId = 0;
 	_vm->_globals->_checkDistanceFl = true;
 	_vm->_soundMan->playSound(31);
@@ -1835,7 +1835,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsMan->scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsMan->_scrollOffset = getSpriteX(0) - 320;
 	animateSprite(0);
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	_vm->_graphicsMan->setColorPercentage(252, 100, 100, 100);
 	_vm->_graphicsMan->setColorPercentage(253, 100, 100, 100);
 	_vm->_graphicsMan->setColorPercentage(251, 100, 100, 100);
@@ -1877,7 +1877,7 @@ void ObjectsManager::handleCityMap() {
 		_vm->_linesMan->checkZone();
 		goHome2();
 
-		if (_vm->_linesMan->_route == NULL && _vm->_globals->_actionMoveTo)
+		if (_vm->_linesMan->_route == nullptr && _vm->_globals->_actionMoveTo)
 			paradise();
 		_vm->_events->refreshScreenAndEvents();
 
@@ -1972,13 +1972,13 @@ void ObjectsManager::handleLeftButton() {
 	}
 	_vm->_globals->_actionMoveTo = false;
 	RouteItem *oldRoute = _vm->_linesMan->_route;
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
-			_vm->_linesMan->_route = NULL;
+			_vm->_linesMan->_route = nullptr;
 			setSpriteIndex(0, _oldDirectionSpriteIdx);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesMan->_route = NULL;
+			_vm->_linesMan->_route = nullptr;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
@@ -2032,7 +2032,7 @@ void ObjectsManager::handleLeftButton() {
 				&& _curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_events->_mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
-		_vm->_linesMan->_route = NULL;
+		_vm->_linesMan->_route = nullptr;
 		getSpriteX(0);
 		getSpriteY(0);
 	}
@@ -2149,7 +2149,7 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_vm->_linesMan->resetLinesNumb();
 	_vm->_linesMan->resetLastLine();
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 	_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 	_vm->_events->_startPos.x = 0;
@@ -2159,7 +2159,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals->_actionMoveTo = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	_oldDirection = DIR_NONE;
 	_vm->_graphicsMan->resetDirtyRects();
 }
@@ -2176,7 +2176,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, 532, 25, 65, 40, _vm->_graphicsMan->_frontBuffer, 532, 25);
 	_vm->_graphicsMan->addDirtyRect(532, 25, 597, 65);
 	_vm->_globals->_checkDistanceFl = true;
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
@@ -2622,7 +2622,7 @@ void ObjectsManager::loadObjectIniFile() {
 	data = _vm->_fileIO->searchCat(file, RES_INI, fileFoundFl);
 	if (!fileFoundFl) {
 		data = _vm->_fileIO->loadFile(file);
-		if (data == NULL)
+		if (data == nullptr)
 			error("INI file %s not found", file.c_str());
 	}
 
@@ -3143,7 +3143,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 
 		nbytes = f.size();
 		ptr = _vm->_globals->allocMemory(nbytes);
-		if (ptr == NULL)
+		if (ptr == nullptr)
 			error("INILINK");
 		_vm->_fileIO->readStream(f, ptr, nbytes);
 		f.close();
@@ -3771,7 +3771,7 @@ void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Co
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	_vm->_soundMan->playSound(soundNum);
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_globals->_exitId = 0;
 	if (!backgroundFile.empty())
@@ -3791,7 +3791,7 @@ void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Co
 	if (_vm->_globals->_screenId == 61) {
 		addStaticSprite(_vm->_globals->_characterSpriteBuf, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
-		_vm->_linesMan->_route = NULL;
+		_vm->_linesMan->_route = nullptr;
 		computeAndSetSpriteSize();
 	}
 	_vm->_graphicsMan->setColorPercentage(252, 100, 100, 100);
@@ -3809,7 +3809,7 @@ void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Co
 		_oldCharacterPosX = getSpriteX(0);
 		_oldDirection = DIR_NONE;
 		_homeRateCounter = 0;
-		_vm->_linesMan->_route = NULL;
+		_vm->_linesMan->_route = nullptr;
 		_vm->_linesMan->_route = _vm->_linesMan->findRoute(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals->_checkDistanceFl = true;
 		do {
@@ -3918,7 +3918,7 @@ void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const C
 	computeAndSetSpriteSize();
 	animateSprite(0);
 	enableHidingBehavior();
-	_vm->_linesMan->_route = NULL;
+	_vm->_linesMan->_route = nullptr;
 	computeAndSetSpriteSize();
 	sceneSpecialIni();
 	_vm->_events->_mouseSpriteId = 4;
@@ -3949,7 +3949,7 @@ void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const C
 					int yp = _vm->_events->getMouseY();
 
 					if ((xCheck == xp) && (yCheck == yp)) {
-						_vm->_linesMan->_route = NULL;
+						_vm->_linesMan->_route = nullptr;
 						paradise();
 						if (_vm->_globals->_exitId)
 							breakFlag = true;
@@ -3965,8 +3965,8 @@ void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const C
 		if (!_vm->_globals->_exitId) {
 			_vm->_dialog->testDialogOpening();
 			_vm->_linesMan->checkZone();
-			if (_vm->_linesMan->_route == NULL
-					|| (goHome(), _vm->_linesMan->_route == NULL)) {
+			if (_vm->_linesMan->_route == nullptr
+					|| (goHome(), _vm->_linesMan->_route == nullptr)) {
 				if (_vm->_globals->_actionMoveTo)
 					paradise();
 			}
@@ -4027,7 +4027,7 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 		hid->_x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
 		hid->_y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
 		hid->_yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
-		if (spriteData == NULL) {
+		if (spriteData == nullptr) {
 			hid->_useCount = 0;
 		} else {
 			hid->_spriteData = spriteData;
@@ -4051,9 +4051,9 @@ void ObjectsManager::initVBob() {
 		vbob->_xp = 0;
 		vbob->_yp = 0;
 		vbob->_frameIndex = 0;
-		vbob->_surface = NULL;
-		vbob->_spriteData = NULL;
-		vbob->_oldSpriteData = NULL;
+		vbob->_surface = nullptr;
+		vbob->_spriteData = nullptr;
+		vbob->_oldSpriteData = nullptr;
 	}
 }
 
@@ -4065,8 +4065,8 @@ void ObjectsManager::clearVBob() {
 		vbob->_yp = 0;
 		vbob->_frameIndex = 0;
 		vbob->_surface = _vm->_globals->freeMemory(vbob->_surface);
-		vbob->_spriteData = NULL;
-		vbob->_oldSpriteData = NULL;
+		vbob->_spriteData = nullptr;
+		vbob->_oldSpriteData = nullptr;
 	}
 }
 

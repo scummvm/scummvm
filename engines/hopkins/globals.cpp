@@ -77,7 +77,7 @@ Globals::Globals(HopkinsEngine *vm) {
 	_speed = 1;
 	_eventMode = EVENTMODE_DEFAULT;
 	_exitId = 0;
-	_characterSpriteBuf = 0;
+	_characterSpriteBuf = nullptr;
 	_screenId = 0;
 	_prevScreenId = 0;
 	_characterMaxPosY = 0;
@@ -105,11 +105,11 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
-	_levelSpriteBuf = NULL;
-	_saveData = NULL;
-	_answerBuffer = NULL;
-	_characterSpriteBuf = NULL;
-	_optionDialogSpr = NULL;
+	_levelSpriteBuf = nullptr;
+	_saveData = nullptr;
+	_answerBuffer = nullptr;
+	_characterSpriteBuf = nullptr;
+	_optionDialogSpr = nullptr;
 
 	// Reset flags
 	_censorshipFl = false;
@@ -128,7 +128,7 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
 	freeMemory(_characterSpriteBuf);
-	free(NULL);
+	free(nullptr);
 }
 
 void Globals::setConfig() {
@@ -174,9 +174,9 @@ void Globals::setConfig() {
 void Globals::clearAll() {
 	_vm->_fontMan->clearAll();
 	_vm->_dialog->clearAll();
-	_answerBuffer = NULL;
-	_levelSpriteBuf = NULL;
-	_saveData = NULL;
+	_answerBuffer = nullptr;
+	_levelSpriteBuf = nullptr;
+	_saveData = nullptr;
 	_vm->_objectsMan->_curObjectIndex = 0;
 
 	_vm->_linesMan->clearAll();
@@ -204,14 +204,14 @@ void Globals::loadCharacterData() {
 byte *Globals::allocMemory(int count) {
 	byte *result = (byte *)malloc(count);
 	if (!result)
-		result = NULL;
+		result = nullptr;
 	return result;
 }
 
 byte *Globals::freeMemory(byte *p) {
 	if (p)
 		free(p);
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Hopkins

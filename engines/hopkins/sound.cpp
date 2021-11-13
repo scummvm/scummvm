@@ -60,9 +60,9 @@ private:
 
 Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	if (stream->readUint32BE() != MKTAG('C', 'R', 'Y', 'O'))
-		return 0;
+		return nullptr;
 	if (stream->readUint32BE() != MKTAG('_', 'A', 'P', 'C'))
-		return 0;
+		return nullptr;
 	stream->readUint32BE(); // version
 	stream->readUint32LE(); // out size
 	uint32 rate = stream->readUint32LE();
@@ -77,7 +77,7 @@ public:
 	TwaAudioStream(Common::String name, Common::SeekableReadStream *stream) {
 		_name = name;
 		_cueSheet.clear();
-		_cueStream = NULL;
+		_cueStream = nullptr;
 		_cue = 0;
 		_loadedCue = -1;
 
@@ -99,7 +99,7 @@ public:
 
 	~TwaAudioStream() override {
 		delete _cueStream;
-		_cueStream = NULL;
+		_cueStream = nullptr;
 	}
 
 	bool isStereo() const override {
@@ -111,7 +111,7 @@ public:
 	}
 
 	bool endOfData() const override {
-		return _cueStream == NULL;
+		return _cueStream == nullptr;
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) override {
@@ -147,7 +147,7 @@ protected:
 		}
 
 		delete _cueStream;
-		_cueStream = NULL;
+		_cueStream = nullptr;
 		_loadedCue = _cueSheet[nr];
 
 		Common::String filename = Common::String::format("%s_%02d", _name.c_str(), _cueSheet[nr]);
@@ -793,7 +793,7 @@ bool SoundManager::removeWavSample(int wavIndex) {
 
 	_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
 	delete _sWav[wavIndex]._audioStream;
-	_sWav[wavIndex]._audioStream = NULL;
+	_sWav[wavIndex]._audioStream = nullptr;
 	_sWav[wavIndex]._active = false;
 
 	return true;
