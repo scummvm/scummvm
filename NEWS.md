@@ -36,7 +36,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Windows port:
    - Added "Portable Mode" in which the executable's directory is used to store
      application files if a scummvm.ini file is present, instead of the user's
-	 profile directory.
+     profile directory.
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
