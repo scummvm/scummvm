@@ -114,7 +114,7 @@ namespace Director {
 const char *CDROMXObj::xlibName = "AppleAudioCD";
 const char *CDROMXObj::fileNames[] = {
 	"CD-ROM XObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -146,7 +146,7 @@ static MethodProto xlibMethods[] = {
 	{ "ScanFwd",		CDROMXObj::m_scanFwd,		 4, 4,  200 },	// D2
 	{ "ScanBwd",		CDROMXObj::m_scanBwd,		 4, 4,  200 },	// D2
 	{ "StopScan",		CDROMXObj::m_stopScan,		 0, 0,  200 },	// D2
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void CDROMXObj::open(int type) {

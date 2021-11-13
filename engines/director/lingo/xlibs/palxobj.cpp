@@ -49,13 +49,13 @@ namespace Director {
 const char *PalXObj::xlibName = "FixPalette";
 const char *PalXObj::fileNames[] = {
 	"PalXObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
 	{ "new",				PalXObj::m_new,				 4, 4,	400 },	// D4
 	{ "PatchIt",			PalXObj::m_patchIt,			 0, 0,  400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void PalXObj::open(int type) {

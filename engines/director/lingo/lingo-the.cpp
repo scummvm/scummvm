@@ -154,7 +154,7 @@ TheEntity entities[] = {
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,400, false },//			D4 p
 	{ kTheWindow,			"window",			true,  400, false },	//			D4
 	{ kTheWindowList,		"windowList",		false, 400, false },	//			D4 p
-	{ kTheNOEntity, NULL, false, 0, false }
+	{ kTheNOEntity, nullptr, false, 0, false }
 };
 
 TheEntityField fields[] = {
@@ -289,7 +289,7 @@ TheEntityField fields[] = {
 
 	{ kTheSoundEntity,"volume",		kTheVolume,		300 },//		D3 p
 
-	{ kTheNOEntity, NULL, kTheNOField, 0 }
+	{ kTheNOEntity, nullptr, kTheNOField, 0 }
 };
 
 void Lingo::initTheEntities() {

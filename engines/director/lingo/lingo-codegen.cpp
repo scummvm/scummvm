@@ -262,7 +262,7 @@ int LingoCompiler::codeFloat(double f) {
 }
 
 int LingoCompiler::codeInt(int val) {
-	inst i = 0;
+	inst i = nullptr;
 	WRITE_UINT32(&i, val);
 	code1(i);
 
@@ -274,7 +274,7 @@ int LingoCompiler::codeCmd(const Common::String &s, int numpar) {
 
 	codeString(s.c_str());
 
-	inst num = 0;
+	inst num = nullptr;
 	WRITE_UINT32(&num, numpar);
 	code1(num);
 
@@ -286,7 +286,7 @@ int LingoCompiler::codeFunc(const Common::String &s, int numpar) {
 
 	codeString(s.c_str());
 
-	inst num = 0;
+	inst num = nullptr;
 	WRITE_UINT32(&num, numpar);
 	code1(num);
 
@@ -381,13 +381,13 @@ void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
 	
 	for (uint i = 0; i < _currentLoop->nextRepeats.size(); i++) {
 		uint nextRepeatPos = _currentLoop->nextRepeats[i];
-		inst jmpOffset = 0;
+		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, nextTargetPos - nextRepeatPos);
 		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset; 
 	}
 	for (uint i = 0; i < _currentLoop->exitRepeats.size(); i++) {
 		uint exitRepeatPos = _currentLoop->exitRepeats[i];
-		inst jmpOffset = 0;
+		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, exitTargetPos - exitRepeatPos);
 		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset; 
 	}
@@ -804,11 +804,11 @@ bool LingoCompiler::visitInstanceNode(InstanceNode *node) {
 bool LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
 	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
-	code2(LC::c_jumpifz, 0);
+	code2(LC::c_jumpifz, nullptr);
 	COMPILE_LIST(node->stmts);
 	uint endPos = _currentAssembly->size();
 
-	inst jzOffset = 0;
+	inst jzOffset = nullptr;
 	WRITE_UINT32(&jzOffset, endPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
 
@@ -820,20 +820,20 @@ bool LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
 bool LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
 	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
-	code2(LC::c_jumpifz, 0);
+	code2(LC::c_jumpifz, nullptr);
 	COMPILE_LIST(node->stmts1);
 
 	uint jmpPos = _currentAssembly->size();
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	uint block2StartPos = _currentAssembly->size();
 	COMPILE_LIST(node->stmts2);
 	uint endPos = _currentAssembly->size();
 
-	inst jzOffset = 0;
+	inst jzOffset = nullptr;
 	WRITE_UINT32(&jzOffset, block2StartPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
 
-	inst jmpOffset = 0;
+	inst jmpOffset = nullptr;
 	WRITE_UINT32(&jmpOffset, endPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
 
@@ -849,17 +849,17 @@ bool LingoCompiler::visitRepeatWhileNode(RepeatWhileNode *node) {
 	uint startPos = _currentAssembly->size();
 	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
-	code2(LC::c_jumpifz, 0);
+	code2(LC::c_jumpifz, nullptr);
 	COMPILE_LIST(node->stmts);
 	uint jmpPos = _currentAssembly->size();
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	uint endPos = _currentAssembly->size();
 
-	inst jzOffset = 0;
+	inst jzOffset = nullptr;
 	WRITE_UINT32(&jzOffset, endPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
 
-	inst jmpOffset = 0;
+	inst jmpOffset = nullptr;
 	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
 
@@ -887,7 +887,7 @@ bool LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 		code1(LC::c_le);
 	}
 	uint jzPos = _currentAssembly->size();
-	code2(LC::c_jumpifz, 0);
+	code2(LC::c_jumpifz, nullptr);
 
 	COMPILE_LIST(node->stmts);
 
@@ -903,14 +903,14 @@ bool LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	codeVarSet(*node->var);
 
 	uint jmpPos = _currentAssembly->size();
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	uint endPos = _currentAssembly->size();
 
-	inst jzOffset = 0;
+	inst jzOffset = nullptr;
 	WRITE_UINT32(&jzOffset, endPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
 
-	inst jmpOffset = 0;
+	inst jmpOffset = nullptr;
 	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
 
@@ -940,7 +940,7 @@ bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
 	codeInt(2);
 	code1(LC::c_le); 
 	uint jzPos = _currentAssembly->size();
-	code2(LC::c_jumpifz, 0);
+	code2(LC::c_jumpifz, nullptr);
 
 	code1(LC::c_stackpeek);	// get list
 	codeInt(2);
@@ -956,16 +956,16 @@ bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
 	code1(LC::c_add);	// Increment counter
 
 	uint jmpPos = _currentAssembly->size();
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	uint endPos = _currentAssembly->size();
 	code1(LC::c_stackdrop);	// remove list, size, counter
 	codeInt(3);
 
-	inst jzOffset = 0;
+	inst jzOffset = nullptr;
 	WRITE_UINT32(&jzOffset, endPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
 
-	inst jmpOffset = 0;
+	inst jmpOffset = nullptr;
 	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
 
@@ -983,7 +983,7 @@ bool LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
 		return false;
 	}
 	_currentLoop->nextRepeats.push_back(_currentAssembly->size());
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	return true;
 }
 
@@ -995,7 +995,7 @@ bool LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
 		return false;
 	}
 	_currentLoop->exitRepeats.push_back(_currentAssembly->size());
-	code2(LC::c_jump, 0);
+	code2(LC::c_jump, nullptr);
 	return true;
 }
 

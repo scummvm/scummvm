@@ -75,7 +75,7 @@ struct MCIToken {
 
 	{ kMCITokenNone, kMCITokenWait,   "wait", 0 },
 
-	{ kMCITokenNone, kMCITokenNone,   0, 0 }
+	{ kMCITokenNone, kMCITokenNone,   nullptr, 0 }
 };
 
 void Lingo::func_mci(const Common::String &name) {
@@ -166,8 +166,8 @@ void Lingo::func_mci(const Common::String &name) {
 				return;
 			}
 
-			uint32 from = strtol(params[1].c_str(), 0, 10);
-			uint32 to = strtol(params[2].c_str(), 0, 10);
+			uint32 from = strtol(params[1].c_str(), nullptr, 10);
+			uint32 to = strtol(params[2].c_str(), nullptr, 10);
 
 			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
 		}

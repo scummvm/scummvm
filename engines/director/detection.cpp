@@ -44,7 +44,7 @@ static struct CustomTarget {
 	{"d3-win", "win", "300" },
 	{"d4-win", "win", "400" },
 	{"director-movie", "win", "400" },
-	{ NULL, 0, 0 }
+	{ nullptr, nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -79,7 +79,7 @@ public:
 		_directoryGlobs = Director::directoryGlobs;
 
 		// initialize customTarget hashmap here
-		for (int i = 0; customTargetList[i].name != NULL; i++)
+		for (int i = 0; customTargetList[i].name != nullptr; i++)
 			_customTarget[customTargetList[i].name] = true;
 	}
 
@@ -108,7 +108,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 	{
 		"director",
 		"",
-		AD_ENTRY1(0, 0),
+		AD_ENTRY1(nullptr, nullptr),
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_TAILMD5,	// We calculate tail of the projector
@@ -132,7 +132,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 	desc->desc.flags = ADGF_TAILMD5;
 	desc->desc.platform = Common::kPlatformWindows;
 	desc->desc.guiOptions = GUIO0();
-	desc->desc.filesDescriptions[0].fileName = 0;
+	desc->desc.filesDescriptions[0].fileName = nullptr;
 	desc->version = 0;
 	desc->gameGID = Director::GID_GENERIC;
 
@@ -153,7 +153,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			Common::String targetID, gameName, platform, version, tmp;
 
 			// First, fill the info based on the filename
-			for (int i = 0; customTargetList[i].name != NULL; i++) {
+			for (int i = 0; customTargetList[i].name != nullptr; i++) {
 				if (fileName.equalsIgnoreCase(customTargetList[i].name)) {
 					targetID = "director-fallback";
 					platform = customTargetList[i].platform;

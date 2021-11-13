@@ -77,7 +77,7 @@ static struct PredefinedProto {
 	// script object and Xtra
 	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	400 },			// D4
 
-	{ 0, 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0, 0 }
 };
 
 static MethodProto windowMethods[] = {
@@ -87,7 +87,7 @@ static MethodProto windowMethods[] = {
 	{ "open",					LM::m_open,					 0, 0,	400 },			// D4
 	{ "moveToBack",				LM::m_moveToBack,			 0, 0,	400 },			// D4
 	{ "moveToFront",			LM::m_moveToFront,			 0, 0,	400 },			// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void Lingo::initMethods() {
@@ -132,7 +132,7 @@ static struct XLibProto {
 	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
 	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ MoveMouseXObj::fileNames,		MoveMouseXObj::open,	MoveMouseXObj::close,		kXObj,					400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, nullptr, 0, 0 }
 
 };
 

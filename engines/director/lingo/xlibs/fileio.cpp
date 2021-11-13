@@ -35,7 +35,7 @@ namespace Director {
 const char *FileIO::xlibName = "FileIO";
 const char *FileIO::fileNames[] = {
 	"FileIO",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -56,7 +56,7 @@ static MethodProto xlibMethods[] = {
 	{ "status",					FileIO::m_status,			 0, 0,	200 },	// D2
 	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
 	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void FileIO::open(int type) {
@@ -154,7 +154,7 @@ void FileIO::m_new(int nargs) {
 		option = option.substr(1);
 		Common::String mask = prefix + "*.txt";
 
-		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
+		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;

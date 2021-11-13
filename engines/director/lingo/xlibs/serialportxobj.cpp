@@ -39,7 +39,7 @@ namespace Director {
 const char *SerialPortXObj::xlibName = "SerialPort";
 const char *SerialPortXObj::fileNames[] = {
 	"SerialPort",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -54,7 +54,7 @@ static MethodProto xlibMethods[] = {
 	{ "ConfigChan",			SerialPortXObj::m_configChan,	 2, 2,  200 },	// D2
 	{ "HShakeChan",			SerialPortXObj::m_hShakeChan,	 3, 3,  200 },	// D2
 	{ "SetUp",				SerialPortXObj::m_setUp,		 3, 3,  200 },	// D2
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void SerialPortXObj::open(int type) {

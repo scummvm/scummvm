@@ -30,10 +30,10 @@
 namespace Director {
 
 DIBDecoder::DIBDecoder() {
-	_surface = 0;
-	_palette = 0;
+	_surface = nullptr;
+	_palette = nullptr;
 	_paletteColorCount = 0;
-	_codec = 0;
+	_codec = nullptr;
 }
 
 DIBDecoder::~DIBDecoder() {
@@ -41,14 +41,14 @@ DIBDecoder::~DIBDecoder() {
 }
 
 void DIBDecoder::destroy() {
-	_surface = 0;	// It is deleted by BitmapRawDecoder
+	_surface = nullptr;	// It is deleted by BitmapRawDecoder
 
 	delete[] _palette;
-	_palette = 0;
+	_palette = nullptr;
 	_paletteColorCount = 0;
 
 	delete _codec;
-	_codec = 0;
+	_codec = nullptr;
 }
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
@@ -134,7 +134,7 @@ BITDDecoder::~BITDDecoder() {
 void BITDDecoder::destroy() {
 	_surface->free();
 	delete _surface;
-	_surface = 0;
+	_surface = nullptr;
 
 	_paletteColorCount = 0;
 }

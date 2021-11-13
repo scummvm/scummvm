@@ -549,8 +549,8 @@ void Cast::loadCastChildren() {
 		uint16 imgId = c->_key;
 		uint16 realId = 0;
 
-		Image::ImageDecoder *img = NULL;
-		Common::SeekableReadStream *pic = NULL;
+		Image::ImageDecoder *img = nullptr;
+		Common::SeekableReadStream *pic = nullptr;
 
 		if (_version >= kFileVer400) {
 			if (bitmapCast->_children.size() > 0) {
@@ -574,7 +574,7 @@ void Cast::loadCastChildren() {
 			}
 		}
 
-		if (pic == NULL) {
+		if (pic == nullptr) {
 			warning("Cast::loadCastChildren(): Bitmap image %d not found", imgId);
 			continue;
 		}
@@ -642,7 +642,7 @@ void Cast::loadSoundCasts() {
 			tag = soundCast->_children[0].tag;
 		}
 
-		Common::SeekableReadStreamEndian *sndData = NULL;
+		Common::SeekableReadStreamEndian *sndData = nullptr;
 
 		if (!_castArchive->hasResource(tag, sndId)) {
 			if (_castArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId))
@@ -654,7 +654,7 @@ void Cast::loadSoundCasts() {
 			sndData = _castArchive->getResource(tag, sndId);
 		}
 
-		if (sndData != NULL) {
+		if (sndData != nullptr) {
 			if (sndData->size() == 0) {
 				// audio file is linked, load from the filesystem
 				AudioFileDecoder *audio = new AudioFileDecoder(_castsInfo[c->_key]->fileName);
@@ -691,7 +691,7 @@ Common::String Cast::getVideoPath(int castId) {
 		tag = digitalVideoCast->_children[0].tag;
 	}
 
-	Common::SeekableReadStreamEndian *videoData = NULL;
+	Common::SeekableReadStreamEndian *videoData = nullptr;
 
 	switch (tag) {
 	case MKTAG('M', 'o', 'o', 'V'):
@@ -702,7 +702,7 @@ Common::String Cast::getVideoPath(int castId) {
 		break;
 	}
 
-	if (videoData == NULL || videoData->size() == 0) {
+	if (videoData == nullptr || videoData->size() == 0) {
 		// video file is linked, load from the filesystem
 
 		Common::String filename = _castsInfo[castId]->fileName;

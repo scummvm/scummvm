@@ -228,7 +228,7 @@ static BuiltinProto builtins[] = {
 	// XCMD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, 400, FBLTIN },
 
-	{ 0, 0, 0, 0, 0, VOIDSYM }
+	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
 void Lingo::initBuiltIns() {
@@ -316,7 +316,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {
 	if (_stack[_stack.size() - nargs + arg].type == VOID) {
-		if (_stack[_stack.size() - nargs + arg].u.s != NULL)
+		if (_stack[_stack.size() - nargs + arg].u.s != nullptr)
 			g_lingo->_stack[_stack.size() - nargs + arg].type = STRING;
 		else
 			warning("Incorrect convertVOIDtoString for arg %d of %d", arg, nargs);

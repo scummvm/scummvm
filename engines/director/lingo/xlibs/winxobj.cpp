@@ -42,7 +42,7 @@ const char *RearWindowXObj::xlibName = "RearWindow";
 const char *RearWindowXObj::fileNames[] = {
 	"RearWindow.Xobj",
 	"winXObj",
-	0
+	nullptr
 };
 
 static MethodProto xlibMethods[] = {
@@ -50,7 +50,7 @@ static MethodProto xlibMethods[] = {
 	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4
 	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
 	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
-	{ 0, 0, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void RearWindowXObj::open(int type) {

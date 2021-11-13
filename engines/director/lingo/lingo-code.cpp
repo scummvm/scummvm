@@ -68,7 +68,7 @@ static struct FuncDescr {
 	const char *name;
 	const char *args;
 } funcDescr[] = {
-	{ 0,					"STOP",				""  },
+	{ nullptr,					"STOP",				""  },
 	{ LC::c_asserterror,	"c_asserterror",	"" },
 	{ LC::c_asserterrordone,"c_asserterrordone","" },
 	{ LC::c_add,			"c_add",			"" },
@@ -173,7 +173,7 @@ static struct FuncDescr {
 	{ LC::cb_zeropush,		"cb_zeropush",		"" },
 	{ LC::c_stackpeek,		"c_stackpeek",		"i" },
 	{ LC::c_stackdrop,		"c_stackdrop",		"i" },
-	{ 0, 0, 0 }
+	{ nullptr, nullptr, nullptr }
 };
 
 void Lingo::initFuncs() {
@@ -195,7 +195,7 @@ void Lingo::push(Datum d) {
 
 void Lingo::pushVoid() {
 	Datum d;
-	d.u.s = NULL;
+	d.u.s = nullptr;
 	d.type = VOID;
 	push(d);
 }
@@ -408,7 +408,7 @@ void LC::c_intpush() {
 
 void LC::c_voidpush() {
 	Datum d;
-	d.u.s = NULL;
+	d.u.s = nullptr;
 	d.type = VOID;
 	g_lingo->push(d);
 }
@@ -1554,7 +1554,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
 				while (nargs < funcSym.nargs) {
 					Datum d;
-					d.u.s = NULL;
+					d.u.s = nullptr;
 					d.type = VOID;
 					g_lingo->push(d);
 					nargs++;

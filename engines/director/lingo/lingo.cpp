@@ -146,7 +146,7 @@ PCell::PCell(const Datum &prop, const Datum &val) {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	_currentScript = 0;
+	_currentScript = nullptr;
 	_currentScriptContext = nullptr;
 
 	_currentChannelId = -1;
@@ -160,7 +160,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
-	_localvars = NULL;
+	_localvars = nullptr;
 
 	//kTheEntities
 	_itemDelimiter = ',';
@@ -556,7 +556,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 	if (d1Type == STRING) {
 		Common::String src = d1.asString();
 		if (!src.empty()) {
-			char *endPtr = 0;
+			char *endPtr = nullptr;
 			strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
 				d1Type = FLOAT;
@@ -566,7 +566,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 	if (d2Type == STRING) {
 		Common::String src = d2.asString();
 		if (!src.empty()) {
-			char *endPtr = 0;
+			char *endPtr = nullptr;
 			strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
 				d2Type = FLOAT;
@@ -731,7 +731,7 @@ int Datum::asInt() const {
 	case STRING:
 		{
 			Common::String src = asString();
-			char *endPtr = 0;
+			char *endPtr = nullptr;
 			int result = strtol(src.c_str(), &endPtr, 10);
 			if (*endPtr == 0) {
 				res = result;
@@ -766,7 +766,7 @@ double Datum::asFloat() const {
 	switch (type) {
 	case STRING:		{
 			Common::String src = asString();
-			char *endPtr = 0;
+			char *endPtr = nullptr;
 			double result = strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
 				res = result;

@@ -30,7 +30,7 @@ bool isspec(Common::u32char_type_t c) {
 	if (c > 127)
 		return false;
 
-	return strchr("-+*/%^:,()><&[]=", (char)c) != NULL;
+	return strchr("-+*/%^:,()><&[]=", (char)c) != nullptr;
 }
 
 static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::u32char_type_t **newP = nullptr) {

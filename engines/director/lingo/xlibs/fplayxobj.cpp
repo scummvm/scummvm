@@ -40,7 +40,7 @@ namespace Director {
 const char *FPlayXObj::xlibName = "FPlay";
 const char *FPlayXObj::fileNames[] = {
 	"FPlayXObj",
-	0
+	nullptr
 };
 
 static BuiltinProto builtins[] = {
@@ -52,7 +52,7 @@ static BuiltinProto builtins[] = {
 	{ "FileName",		FPlayXObj::b_filename,	-1,0, 200, FBLTIN },
 	{ "InputLevel",		FPlayXObj::b_inputlevel,-1,0, 200, FBLTIN },
 	{ "FSound",			FPlayXObj::b_fsound,	 0,0, 200, FBLTIN },
-	{ 0, 0, 0, 0, 0, VOIDSYM }
+	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
 void FPlayXObj::open(int type) {

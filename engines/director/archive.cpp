@@ -36,7 +36,7 @@ namespace Director {
 // Base Archive code
 
 Archive::Archive() {
-	_stream = 0;
+	_stream = nullptr;
 	_isBigEndian = true;
 }
 
@@ -72,7 +72,7 @@ void Archive::close() {
 	if (_stream)
 		delete _stream;
 
-	_stream = 0;
+	_stream = nullptr;
 }
 
 int Archive::getFileSize() {
@@ -205,7 +205,7 @@ uint32 Archive::convertTagToUppercase(uint32 tag) {
 
 // Mac Archive code
 
-MacArchive::MacArchive() : Archive(), _resFork(0) {
+MacArchive::MacArchive() : Archive(), _resFork(nullptr) {
 }
 
 MacArchive::~MacArchive() {
@@ -215,7 +215,7 @@ MacArchive::~MacArchive() {
 void MacArchive::close() {
 	Archive::close();
 	delete _resFork;
-	_resFork = 0;
+	_resFork = nullptr;
 }
 
 bool MacArchive::openFile(const Common::String &fileName) {
