@@ -74,10 +74,10 @@ CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm) : _vm(vm) {
 			error("failed to load rollover font");
 	}
 
-	_uiFeature = NULL;
-	_dialogTextFeature = NULL;
-	_rolloverTextFeature = NULL;
-	_bubbleTextFeature = NULL;
+	_uiFeature = nullptr;
+	_dialogTextFeature = nullptr;
+	_rolloverTextFeature = nullptr;
+	_bubbleTextFeature = nullptr;
 
 	_draggedItem = 0;
 
@@ -194,21 +194,21 @@ void CSTimeInterface::install() {
 
 	// TODO: store/reset these
 
-	_dialogTextFeature = _vm->getView()->installViewFeature(0, 0, NULL);
+	_dialogTextFeature = _vm->getView()->installViewFeature(0, 0, nullptr);
 	_dialogTextFeature->_data.bounds = _dialogTextRect;
 	_dialogTextFeature->_data.bitmapIds[0] = 0;
 	// We don't set a port.
 	_dialogTextFeature->_moveProc = (Module::FeatureProc)&CSTimeModule::dialogTextMoveProc;
 	_dialogTextFeature->_drawProc = (Module::FeatureProc)&CSTimeModule::dialogTextDrawProc;
-	_dialogTextFeature->_timeProc = NULL;
+	_dialogTextFeature->_timeProc = nullptr;
 	_dialogTextFeature->_flags = kFeatureOldSortForeground; // FIXME: not in original
 
-	_rolloverTextFeature = _vm->getView()->installViewFeature(0, 0, NULL);
+	_rolloverTextFeature = _vm->getView()->installViewFeature(0, 0, nullptr);
 	_rolloverTextFeature->_data.bounds = Common::Rect(0 + 100, 340 + 5, 640 - 100, 480 - 25);
 	_rolloverTextFeature->_data.bitmapIds[0] = 0;
 	_rolloverTextFeature->_moveProc = (Module::FeatureProc)&CSTimeModule::rolloverTextMoveProc;
 	_rolloverTextFeature->_drawProc = (Module::FeatureProc)&CSTimeModule::rolloverTextDrawProc;
-	_rolloverTextFeature->_timeProc = NULL;
+	_rolloverTextFeature->_timeProc = nullptr;
 	_rolloverTextFeature->_flags = kFeatureOldSortForeground; // FIXME: not in original
 }
 
@@ -218,7 +218,7 @@ void CSTimeInterface::draw() {
 		uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop;
 		assert(flags == 0x4800000);
 		uint16 resourceId = 100; // TODO
-		_uiFeature = _vm->getView()->installViewFeature(resourceId, flags, NULL);
+		_uiFeature = _vm->getView()->installViewFeature(resourceId, flags, nullptr);
 		// TODO: special-case for case 20
 	} else {
 		_uiFeature->resetFeatureScript(1, 0);
@@ -617,19 +617,19 @@ void CSTimeInterface::drawTextToBubble(Common::String *text) {
 		error("unknown bubble type %d in drawTextToBubble", bubbleId);
 	}
 
-	_bubbleTextFeature = _vm->getView()->installViewFeature(0, 0, NULL);
+	_bubbleTextFeature = _vm->getView()->installViewFeature(0, 0, nullptr);
 	_bubbleTextFeature->_data.bounds = bounds;
 	_bubbleTextFeature->_data.bitmapIds[0] = 0;
 	_bubbleTextFeature->_moveProc = (Module::FeatureProc)&CSTimeModule::bubbleTextMoveProc;
 	_bubbleTextFeature->_drawProc = (Module::FeatureProc)&CSTimeModule::bubbleTextDrawProc;
-	_bubbleTextFeature->_timeProc = NULL;
+	_bubbleTextFeature->_timeProc = nullptr;
 	_bubbleTextFeature->_flags = kFeatureOldSortForeground; // FIXME: not in original
 }
 
 void CSTimeInterface::closeBubble() {
 	if (_bubbleTextFeature)
 		_vm->getView()->removeFeature(_bubbleTextFeature, true);
-	_bubbleTextFeature = NULL;
+	_bubbleTextFeature = nullptr;
 }
 
 void CSTimeInterface::startDragging(uint16 id) {
@@ -646,7 +646,7 @@ void CSTimeInterface::startDragging(uint16 id) {
 	}
 
 	uint32 dragFlags = (grabbedFromInventory() ? 0x800 : 0x600);
-	_vm->getView()->dragFeature((NewFeature *)invObj->feature, _grabPoint, 4, dragFlags, NULL);
+	_vm->getView()->dragFeature((NewFeature *)invObj->feature, _grabPoint, 4, dragFlags, nullptr);
 
 	if (_vm->getCase()->getId() == 1 && id == 2) {
 		// Hardcoded behavior for the torch in the first case.
@@ -735,24 +735,24 @@ void CSTimeInterface::stopDragging() {
 	// Deal with the actual drop.
 	if (grabbedFromInventory()) {
 		if (!consumeObj) {
-			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, NULL);
+			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, nullptr);
 			// TODO: playSound(151);
 		} else if (_draggedItem != TIME_CUFFS_ID) {
-			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, NULL);
+			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, nullptr);
 			_vm->_haveInvItem[_draggedItem] = 0;
-			invObj->feature = NULL;
+			invObj->feature = nullptr;
 			invObj->featureDisabled = true;
 			_inventoryDisplay->removeItem(_draggedItem);
 		} else if (!_inventoryDisplay->getCuffsState()) {
 			// Inactive cuffs.
 			// TODO: We never actually get here? Which would explain why it makes no sense.
-			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, NULL);
-			invObj->feature = NULL;
+			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, nullptr);
+			invObj->feature = nullptr;
 		} else {
 			// Active cuffs.
-			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, NULL);
+			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, nullptr);
 			_vm->_haveInvItem[_draggedItem] = 0;
-			invObj->feature = NULL;
+			invObj->feature = nullptr;
 			invObj->featureDisabled = true;
 		}
 
@@ -763,11 +763,11 @@ void CSTimeInterface::stopDragging() {
 		_inventoryDisplay->draw();
 	} else {
 		uint32 dragFlags = 0x600;
-		_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, dragFlags, NULL);
+		_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, dragFlags, nullptr);
 
 		if (_inventoryDisplay->_invRect.contains(mousePos)) {
 			// Dropped into the inventory.
-			invObj->feature = NULL;
+			invObj->feature = nullptr;
 			if (invObj->canTake) {
 				dropItemInInventory(_draggedItem);
 				if (invObj->hotspotId)
@@ -790,12 +790,12 @@ void CSTimeInterface::stopDragging() {
 			CSTimeEvent event;
 			event.param1 = 0xffff;
 			if (consumeObj) {
-				invObj->feature = NULL;
+				invObj->feature = nullptr;
 				invObj->featureDisabled = true;
 				event.type = kCSTimeEventDisableHotspot;
 				event.param2 = invObj->hotspotId;
 			} else {
-				invObj->feature = NULL;
+				invObj->feature = nullptr;
 				event.type = kCSTimeEventAddFeature;
 				event.param2 = invObj->featureId;
 			}
@@ -843,7 +843,7 @@ void CSTimeInterface::dropItemInInventory(uint16 id) {
 		return;
 
 	_vm->_haveInvItem[id] = 1;
-	_vm->getCase()->_inventoryObjs[id]->feature = NULL;
+	_vm->getCase()->_inventoryObjs[id]->feature = nullptr;
 
 	_inventoryDisplay->insertItemInDisplay(id);
 
@@ -1087,7 +1087,7 @@ void CSTimeInventoryDisplay::draw() {
 				id = 100 + 12;
 				flags &= ~kFeatureNewNoLoop;
 			}
-			invObj->feature = _vm->getView()->installViewFeature(id, flags, NULL);
+			invObj->feature = _vm->getView()->installViewFeature(id, flags, nullptr);
 		} else {
 			Common::Point pos((_itemRect[i].left + _itemRect[i].right) / 2, (_itemRect[i].top + _itemRect[i].bottom) / 2);
 			uint16 id = 9000 + (invObj->id - 1);
@@ -1166,7 +1166,7 @@ void CSTimeInventoryDisplay::removeItem(uint16 id) {
 	CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[id];
 	if (invObj->feature) {
 		_vm->getView()->removeFeature(invObj->feature, true);
-		invObj->feature = NULL;
+		invObj->feature = nullptr;
 	}
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++)
 		if (_displayedItems[i] == id)
@@ -1261,7 +1261,7 @@ void CSTimeInventoryDisplay::activateCuffs(bool active) {
 	if (invObj->feature)
 		_vm->getView()->removeFeature(invObj->feature, true);
 	uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop;
-	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, NULL);
+	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, nullptr);
 	invObj->featureDisabled = false;
 }
 
@@ -1271,7 +1271,7 @@ void CSTimeInventoryDisplay::setCuffsFlashing() {
 	if (invObj->feature)
 		_vm->getView()->removeFeature(invObj->feature, true);
 	uint32 flags = kFeatureSortStatic | 0x2000;
-	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, NULL);
+	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, nullptr);
 	invObj->featureDisabled = false;
 }
 
@@ -1286,7 +1286,7 @@ bool CSTimeInventoryDisplay::isItemDisplayed(uint16 id) {
 
 CSTimeBook::CSTimeBook(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_state = 0;
-	_smallBookFeature = NULL;
+	_smallBookFeature = nullptr;
 }
 
 CSTimeBook::~CSTimeBook() {
@@ -1294,15 +1294,15 @@ CSTimeBook::~CSTimeBook() {
 
 void CSTimeBook::drawSmallBook() {
 	if (!_smallBookFeature) {
-		_smallBookFeature = _vm->getView()->installViewFeature(101, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
+		_smallBookFeature = _vm->getView()->installViewFeature(101, kFeatureSortStatic | kFeatureNewNoLoop, nullptr);
 	} else {
-		_smallBookFeature->resetFeature(false, NULL, 0);
+		_smallBookFeature->resetFeature(false, nullptr, 0);
 	}
 }
 
 CSTimeCarmenNote::CSTimeCarmenNote(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_state = 0;
-	_feature = NULL;
+	_feature = nullptr;
 	clearPieces();
 }
 
@@ -1377,7 +1377,7 @@ void CSTimeCarmenNote::drawSmallNote() {
 
 	if (_feature)
 		_vm->getView()->removeFeature(_feature, true);
-	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
+	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, nullptr);
 }
 
 void CSTimeCarmenNote::drawBigNote() {
@@ -1398,7 +1398,7 @@ void CSTimeCarmenNote::drawBigNote() {
 
 	if (_feature)
 		_vm->getView()->removeFeature(_feature, true);
-	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
+	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, nullptr);
 	// FIXME: attach note drawing proc
 	_state = 2;
 }
