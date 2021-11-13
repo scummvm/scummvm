@@ -332,10 +332,10 @@ void QObjectPetka::update(int time) {
 			}
 			flc->setFrame(-1);
 			if (flc->getCurFrame() == (int32)flc->getFrameCount() - 1) {
-				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
+				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, nullptr);
 			}
 			if (flc->getCurFrame() + 1 == (int32)flc->getFrameCount() / 2) {
-				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, 0);
+				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, nullptr);
 			}
 
 			if (_field7C && flc->getCurFrame() == 0)
