@@ -206,7 +206,7 @@ bool Console::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: %s <sound hash>\n", argv[0]);
 	} else {
-		uint32 soundHash = strtol(argv[1], NULL, 0);
+		uint32 soundHash = strtol(argv[1], nullptr, 0);
 		AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem(_vm, soundHash);
 		soundItem->setVolume(100);
 		soundItem->playSound(false);
@@ -226,7 +226,7 @@ bool Console::Cmd_CheckResource(int argc, const char **argv) {
 		debugPrintf("Gets information about a resource\n");
 		debugPrintf("Usage: %s <resource hash>\n", argv[0]);
 	} else {
-		uint32 resourceHash = strtol(argv[1], NULL, 0);
+		uint32 resourceHash = strtol(argv[1], nullptr, 0);
 		ResourceHandle handle;
 
 		_vm->_res->queryResource(resourceHash, handle);
@@ -245,7 +245,7 @@ bool Console::Cmd_DumpResource(int argc, const char **argv) {
 		debugPrintf("Dumps a resource to disk\n");
 		debugPrintf("Usage: %s <resource hash> <output file>\n", argv[0]);
 	} else {
-		uint32 resourceHash = strtol(argv[1], NULL, 0);
+		uint32 resourceHash = strtol(argv[1], nullptr, 0);
 		const char *outFileName = argv[2];
 		ResourceHandle handle;
 

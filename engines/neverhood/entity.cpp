@@ -47,7 +47,7 @@ Entity *MessageParam::asEntity() const {
 }
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(nullptr), _priority(priority), _soundResources(NULL) {
+	: _vm(vm), _updateHandlerCb(nullptr), _messageHandlerCb(nullptr), _priority(priority), _soundResources(nullptr) {
 }
 
 Entity::~Entity() {
@@ -114,7 +114,7 @@ SoundResource *Entity::getSoundResource(uint index) {
 	if (!_soundResources) {
 		_soundResources = new SoundResource*[kMaxSoundResources];
 		for (uint i = 0; i < kMaxSoundResources; ++i)
-			_soundResources[i] = NULL;
+			_soundResources[i] = nullptr;
 	}
 	if (!_soundResources[index])
 		_soundResources[index] = new SoundResource(_vm);

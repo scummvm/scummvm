@@ -572,7 +572,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	} else {
-		_ssTrackShadowBackground = NULL;
+		_ssTrackShadowBackground = nullptr;
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
@@ -833,8 +833,8 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	} else {
-		_ssTrackShadowBackground = NULL;
-		_asCarShadow = NULL;
+		_ssTrackShadowBackground = nullptr;
+		_asCarShadow = nullptr;
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
@@ -954,8 +954,8 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	} else {
-		_ssTrackShadowBackground = NULL;
-		_asCarShadow = NULL;
+		_ssTrackShadowBackground = nullptr;
+		_asCarShadow = nullptr;
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 

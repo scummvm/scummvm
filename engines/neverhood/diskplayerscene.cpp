@@ -247,7 +247,7 @@ void DiskplayerPlayButton::release() {
 
 DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene, int slotIndex, bool isAvailable)
 	: Entity(vm, 0), _diskplayerScene(diskplayerScene), _isLocked(false), _isBlinking(false),
-	_blinkCountdown(0), _initialBlinkCountdown(2), _inactiveSlot(NULL), _appearSlot(NULL), _activeSlot(NULL) {
+	_blinkCountdown(0), _initialBlinkCountdown(2), _inactiveSlot(nullptr), _appearSlot(nullptr), _activeSlot(nullptr) {
 
 	if (isAvailable && slotIndex < 20) {
 		_inactiveSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes1[slotIndex], 1100));

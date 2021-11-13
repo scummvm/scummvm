@@ -148,8 +148,8 @@ void AsScene1401Mouse::suSuckedIn() {
 		playSound(0, 0x0E32247F);
 		stopAnimation();
 		setVisible(false);
-		SetMessageHandler(NULL);
-		SetSpriteUpdate(NULL);
+		SetMessageHandler(nullptr);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -187,8 +187,8 @@ void AsScene1401Cheese::suSuckedIn() {
 		playSound(0, 0x18020439);
 		stopAnimation();
 		setVisible(false);
-		SetMessageHandler(NULL);
-		SetSpriteUpdate(NULL);
+		SetMessageHandler(nullptr);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -454,14 +454,14 @@ void AsCommonProjector::stSuckedIn() {
 		stopAnimation();
 		setVisible(false);
 		SetMessageHandler(&Sprite::handleMessage);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
 void AsCommonProjector::stIdle() {
 	startAnimation(0x10E3042B, 0, -1);
 	SetMessageHandler(&AsCommonProjector::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsCommonProjector::stMoving() {
@@ -475,14 +475,14 @@ void AsCommonProjector::stMoving() {
 void AsCommonProjector::stStartLockedInSlot() {
 	startAnimation(0x80C32213, 0, -1);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	NextState(&AsCommonProjector::stStayLockedInSlot);
 }
 
 void AsCommonProjector::stStayLockedInSlot() {
 	startAnimation(0xD23B207F, 0, -1);
 	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsCommonProjector::stStartProjecting() {
@@ -492,7 +492,7 @@ void AsCommonProjector::stStartProjecting() {
 	_vm->_soundMan->addSound(0x05331081, 0xCE428854);
 	_vm->_soundMan->playSoundLooping(0xCE428854);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	NextState(&AsCommonProjector::stLockedInSlot);
 }
 
@@ -500,7 +500,7 @@ void AsCommonProjector::stLockedInSlot() {
 	sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 	startAnimation(0xD833207F, 0, -1);
 	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsCommonProjector::stStopProjecting() {
@@ -509,7 +509,7 @@ void AsCommonProjector::stStopProjecting() {
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->deleteSound(0xCE428854);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	NextState(&AsCommonProjector::stStayLockedInSlot);
 }
 
@@ -785,7 +785,7 @@ void AsScene1407Mouse::stIdleLookAtGoodHole() {
 	setDoDeltaX(kScene1407MouseHoles[kScene1407MouseSections[_currSectionIndex].goodHoleIndex].x < _x ? 1 : 0);
 	startAnimation(0x72215194, 0, -1);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsScene1407Mouse::stWalkToDest() {
@@ -811,8 +811,8 @@ void AsScene1407Mouse::stGoThroughHole() {
 	setVisible(false);
 	_countdown = 12;
 	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
-	SetMessageHandler(NULL);
-	SetSpriteUpdate(NULL);
+	SetMessageHandler(nullptr);
+	SetSpriteUpdate(nullptr);
 	NextState(&AsScene1407Mouse::stArriveAtHole);
 }
 

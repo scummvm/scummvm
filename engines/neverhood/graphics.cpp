@@ -28,7 +28,7 @@ namespace Neverhood {
 
 BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, Common::String name)
 	: _vm(vm), _priority(priority), _visible(true), _transparent(true),
-	_clipRects(NULL), _clipRectsCount(0), _version(0), _name(name) {
+	_clipRects(nullptr), _clipRectsCount(0), _version(0), _name(name) {
 
 	_drawRect.x = 0;
 	_drawRect.y = 0;
@@ -153,7 +153,7 @@ void ShadowSurface::draw() {
 
 FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
 	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
-	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
+	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(nullptr) {
 
 	_tracking = new NPointArray();
 	*_tracking = *tracking;
@@ -162,7 +162,7 @@ FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsP
 
 FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
 	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
-	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
+	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(nullptr) {
 
 	SpriteResource fontSpriteResource(_vm);
 	fontSpriteResource.load(fileHash, true);
@@ -262,13 +262,13 @@ void parseBitmapResource(const byte *sprite, bool *rle, NDimensions *dimensions,
 			*palette = sprite;
 		sprite += 1024;
 	} else if (palette)
-		*palette = NULL;
+		*palette = nullptr;
 
 	if (flags & BF_HAS_IMAGE) {
 		if (pixels)
 			*pixels = sprite;
 	} else if (pixels)
-		*pixels = NULL;
+		*pixels = nullptr;
 
 }
 

@@ -74,7 +74,7 @@ static const uint32 kMakingOfSmackerFileHashList[] = {
 };
 
 MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _savegameList(NULL) {
+	: Module(vm, parentModule), _savegameList(nullptr) {
 
 	SetMessageHandler(&MenuModule::handleMessage);
 
@@ -231,7 +231,7 @@ void MenuModule::createDeleteGameMenu() {
 void MenuModule::refreshSaveGameList() {
 	_savegameSlot = -1;
 	delete _savegameList;
-	_savegameList = NULL;
+	_savegameList = nullptr;
 	_savegameList = new SavegameList();
 	loadSavegameList();
 }
@@ -243,7 +243,7 @@ void MenuModule::handleLoadGameMenuAction(bool doLoad) {
 		leaveModule(0);
 	}
 	delete _savegameList;
-	_savegameList = NULL;
+	_savegameList = nullptr;
 }
 
 void MenuModule::handleSaveGameMenuAction(bool doSave, bool doQuery) {
@@ -264,7 +264,7 @@ void MenuModule::handleSaveGameMenuAction(bool doSave, bool doQuery) {
 		createScene(MAIN_MENU, -1);
 	}
 	delete _savegameList;
-	_savegameList = NULL;
+	_savegameList = nullptr;
 }
 
 void MenuModule::handleDeleteGameMenuAction(bool doDelete) {
@@ -273,7 +273,7 @@ void MenuModule::handleDeleteGameMenuAction(bool doDelete) {
 		_vm->removeGameState(_savegameSlot);
 	}
 	delete _savegameList;
-	_savegameList = NULL;
+	_savegameList = nullptr;
 }
 
 void MenuModule::loadSavegameList() {
@@ -592,12 +592,12 @@ TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateM
 	int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect)
 	: Widget(vm, x, y, parentScene,	1000, 1000),
 	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
-	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
+	_cursorSurface(nullptr), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
 	_modified(false), _readOnly(false) {
 
 	_maxVisibleChars = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 	_cursorPos = 0;
-	_textLabelWidget = NULL;
+	_textLabelWidget = nullptr;
 
 	SetUpdateHandler(&TextEditWidget::update);
 	SetMessageHandler(&TextEditWidget::handleMessage);
@@ -916,7 +916,7 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 	uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
 	uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
 	uint32 textFileHash1, uint32 textFileHash2)
-	: Scene(vm, parentModule), _currWidget(NULL), _savegameList(savegameList) {
+	: Scene(vm, parentModule), _currWidget(nullptr), _savegameList(savegameList) {
 
 	bool isSave = (textEditCursorFileHash != 0);
 
@@ -1122,7 +1122,7 @@ static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kLoadGameMenuButtonFileHashes, kLoadGameMenuButtonCollisionBounds,
 		0x98620234, 0x201C2474,
-		0x2023098E, NULL /* &kLoadGameMenuMouseRect */,
+		0x2023098E, nullptr /* &kLoadGameMenuMouseRect */,
 		0x04040409, 263, 142, kLoadGameMenuListBoxRect,
 		0x10924C03, 0, 263, 48, kLoadGameMenuTextEditRect,
 		0x0BC600A3, 0x0F960021) {
@@ -1157,7 +1157,7 @@ static const NRect kDeleteGameMenuTextEditRect = { 0, 0, 320, 17 };
 DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kDeleteGameMenuButtonFileHashes, kDeleteGameMenuButtonCollisionBounds,
 		0x4080E01C, 0x728523ED,
-		0x0E018400, NULL,
+		0x0E018400, nullptr,
 		0xA5584211, 61, 64, kDeleteGameMenuListBoxRect,
 		0x250A3060, 0, 49, 414, kDeleteGameMenuTextEditRect,
 		0x80083C01, 0x84181E81) {

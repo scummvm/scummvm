@@ -486,7 +486,7 @@ void KmScene2401::stTrySpitIntoPipe() {
 		startAnimation(0x1808B150, 0, -1);
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&KmScene2401::hmSpit);
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 	}
 }
 
@@ -498,7 +498,7 @@ void KmScene2401::spitIntoPipe() {
 	startAnimation(0x1B08B553, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&KmScene2401::hmSpit);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 	NextState(&KmScene2401::stContSpitIntoPipe);
 }
 
@@ -508,7 +508,7 @@ void KmScene2401::stContSpitIntoPipe() {
 	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&KmScene2401::hmSpit);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 KmScene2402::KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)

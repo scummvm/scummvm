@@ -74,7 +74,7 @@ enum {
 };
 
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
+	: Module(vm, nullptr), _moduleNum(-1), _prevChildObject(nullptr), _prevModuleNum(-1),
 	_restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
 	_mainMenuRequested(false) {
 
@@ -86,7 +86,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 GameModule::~GameModule() {
 	_vm->_soundMan->deleteSoundGroup(0x002D0031);
 	delete _childObject;
-	_childObject = NULL;
+	_childObject = nullptr;
 }
 
 void GameModule::handleMouseMove(int16 x, int16 y) {
@@ -435,8 +435,8 @@ void GameModule::checkRequests() {
 		_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 		delete _childObject;
 		delete _prevChildObject;
-		_childObject = NULL;
-		_prevChildObject = NULL;
+		_childObject = nullptr;
+		_prevChildObject = nullptr;
 		_prevModuleNum = 0;
 		createModuleByHash(getGlobalVar(V_MODULE_NAME));
 	}
@@ -831,7 +831,7 @@ void GameModule::updateMenuModule() {
 		_vm->_screen->restoreParams();
 		_childObject = _prevChildObject;
 		sendMessage(_childObject, NM_MOUSE_SHOW, 0);
-		_prevChildObject = NULL;
+		_prevChildObject = nullptr;
 		_moduleNum = _prevModuleNum;
 		SetUpdateHandler(&GameModule::updateModule);
 	}

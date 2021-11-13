@@ -481,7 +481,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _asBalloon(NULL) {
+	: Scene(vm, parentModule), _asBalloon(nullptr) {
 
 	SetMessageHandler(&Scene1303::handleMessage);
 
@@ -522,7 +522,7 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asNeedle(NULL) {
+	: Scene(vm, parentModule), _asNeedle(nullptr) {
 
 	SetMessageHandler(&Scene1304::handleMessage);
 
@@ -790,7 +790,7 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 }
 
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _countdown(0), _asCurrKey(NULL),
+	: Scene(vm, parentModule), _countdown(0), _asCurrKey(nullptr),
 	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
 	Sprite *tempSprite;
@@ -830,7 +830,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 			_asKeys[keyIndex] = insertSprite<AsScene1307Key>(this, keyIndex, _clipRects);
 			addCollisionSprite(_asKeys[keyIndex]);
 		} else {
-			_asKeys[keyIndex] = NULL;
+			_asKeys[keyIndex] = nullptr;
 		}
 	}
 
@@ -905,7 +905,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 					sendMessage(_asKeys[keyIndex], 0x2000, 1);
 			sendMessage(_asCurrKey, 0x2004, 1);
 		}
-		_asCurrKey = NULL;
+		_asCurrKey = nullptr;
 		_isInsertingKey = false;
 		break;
 	case 0x4826:
@@ -930,7 +930,7 @@ static const uint32 kScene1308NumberFileHashes[] = {
 };
 
 Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isProjecting(false), _asProjector(NULL) {
+	: Scene(vm, parentModule), _isProjecting(false), _asProjector(nullptr) {
 
 	_vm->gameModule()->initKeySlotsPuzzle();
 
@@ -956,7 +956,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssNumber3 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 2)], 2);
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
-	_sprite4 = NULL;
+	_sprite4 = nullptr;
 	_sprite5 = nullptr;
 
 	if (which < 0) {
@@ -1014,7 +1014,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)nullptr);
 		addCollisionSprite(_asProjector);
 		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_asProjector->setRepl(64, 0);

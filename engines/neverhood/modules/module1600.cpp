@@ -190,7 +190,7 @@ void Module1600::updateScene() {
 }
 
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
+	: Scene(vm, parentModule), _asCar(nullptr), _countdown1(0) {
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 
@@ -355,7 +355,7 @@ void Scene1608::upUpperFloor() {
 		_asCar->setVisible(true);
 		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->handleUpdate();
-		_klaymen = NULL;
+		_klaymen = nullptr;
 		_carStatus = 0;
 	}
 	updateKlaymenCliprect();

@@ -160,7 +160,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 		startAnimation(0xC68C2299, 0, -1);
 		break;
 	case NM_ANIMATION_STOP:
-		SetMessageHandler(NULL);
+		SetMessageHandler(nullptr);
 		setGlobalVar(V_WINDOW_OPEN, 1);
 		setVisible(false);
 		break;
@@ -400,7 +400,7 @@ AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 	setClipRect(clipRect);
 	SetUpdateHandler(&AsScene1002Door::update);
 	SetMessageHandler(&AsScene1002Door::handleMessage);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void AsScene1002Door::update() {
@@ -429,7 +429,7 @@ void AsScene1002Door::suOpenDoor() {
 	if (_y > 49) {
 		_y -= 8;
 		if (_y < 49) {
-			SetSpriteUpdate(NULL);
+			SetSpriteUpdate(nullptr);
 			_y = 49;
 		}
 		_needRefresh = true;
@@ -440,7 +440,7 @@ void AsScene1002Door::suCloseDoor() {
 	if (_y < 239) {
 		_y += 8;
 		if (_y > 239) {
-			SetSpriteUpdate(NULL);
+			SetSpriteUpdate(nullptr);
 			_y = 239;
 		}
 		_needRefresh = true;
@@ -787,7 +787,7 @@ void AsScene1002VenusFlyTrap::stRingGrabbed() {
 void AsScene1002VenusFlyTrap::stKlaymenInside() {
 	startAnimation(0x31303094, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
-	SetMessageHandler(NULL);
+	SetMessageHandler(nullptr);
 	NextState(&AsScene1002VenusFlyTrap::stKlaymenInsideMoving);
 	_countdown = 24;
 }
@@ -1106,7 +1106,7 @@ void KmScene1001::stWakeUp() {
 	startAnimation(0x527AC970, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void KmScene1001::stSleeping() {
@@ -1115,7 +1115,7 @@ void KmScene1001::stSleeping() {
 	startAnimation(0x5A38C110, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&KmScene1001::hmSleeping);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 uint32 KmScene1001::hmSleeping(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1311,7 +1311,7 @@ void KmScene1002::stHangOnRing() {
 	startAnimation(0x4829E0B8, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLowLevel);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 void KmScene1002::stJumpToRing1() {
@@ -1369,7 +1369,7 @@ void KmScene1002::stHoldRing3() {
 	startAnimation(0x4A293FB0, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&KmScene1002::hmHoldRing3);
-	SetSpriteUpdate(NULL);
+	SetSpriteUpdate(nullptr);
 }
 
 uint32 KmScene1002::hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1438,7 +1438,7 @@ void KmScene1002::stDropFromRing() {
 	if (_attachedSprite) {
 		_x = _attachedSprite->getX();
 		sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
-		_attachedSprite = NULL;
+		_attachedSprite = nullptr;
 	}
 	_busyStatus = 2;
 	_acceptInput = false;

@@ -102,8 +102,8 @@ static const uint32 kScene1201InitArray[] = {
 };
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _creatureExploded(false), _asMatch(NULL), _asTntMan(NULL),
-	_asCreature(NULL), _asTntManRope(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
+	: Scene(vm, parentModule), _creatureExploded(false), _asMatch(nullptr), _asTntMan(nullptr),
+	_asCreature(nullptr), _asTntManRope(nullptr), _asLeftDoor(nullptr), _asRightDoor(nullptr), _asTape(nullptr) {
 
 	int16 topY1, topY2, topY3, topY4;
 	int16 x1, x2;
@@ -188,7 +188,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 		setBackground(0x4019A2C4);
 		setPalette(0x4019A2C4);
-		_asRightDoor = NULL;
+		_asRightDoor = nullptr;
 	} else {
 		setBackground(0x40206EC5);
 		setPalette(0x40206EC5);
@@ -271,7 +271,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_MATCH_STATUS) == 0)
 		setGlobalVar(V_MATCH_STATUS, 1);
 
-	_asMatch = NULL;
+	_asMatch = nullptr;
 
 	if (getGlobalVar(V_MATCH_STATUS) < 3) {
 		_asMatch = insertSprite<AsScene1201Match>(this);

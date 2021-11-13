@@ -595,7 +595,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 
 Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _isSolved(false), _leaveScene(false), _isCubeMoving(false),
-	_ssMovingCube(NULL), _ssDoneMovingCube(NULL) {
+	_ssMovingCube(nullptr), _ssDoneMovingCube(nullptr) {
 
 	_vm->gameModule()->initCubeSymbolsPuzzle();
 
@@ -648,14 +648,14 @@ void Scene2202::update() {
 		if (freeCubePosition != -1) {
 			setSurfacePriority(_ssMovingCube->getSurface(), 700);
 			sendMessage(_ssMovingCube, 0x2001, freeCubePosition);
-			_ssMovingCube = NULL;
+			_ssMovingCube = nullptr;
 			_isCubeMoving = true;
 		}
 	}
 
 	if (_ssDoneMovingCube) {
 		setSurfacePriority(_ssDoneMovingCube->getSurface(), _surfacePriority);
-		_ssDoneMovingCube = NULL;
+		_ssDoneMovingCube = nullptr;
 		if (testIsSolved()) {
 			playSound(0);
 			setGlobalVar(V_TILE_PUZZLE_SOLVED, 1);
@@ -1160,11 +1160,11 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 0)], 0);
 		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 1)], 1);
 		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 2)], 2);
-		_asTape = NULL;
-		_asLever = NULL;
-		_asWallRobotAnimation = NULL;
-		_asWallCannonAnimation = NULL;
-		_ssButton = NULL;
+		_asTape = nullptr;
+		_asLever = nullptr;
+		_asWallRobotAnimation = nullptr;
+		_asWallCannonAnimation = nullptr;
+		_ssButton = nullptr;
 		_klaymen->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
 		_asElevator->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
 	}

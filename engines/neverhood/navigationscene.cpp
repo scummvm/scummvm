@@ -83,7 +83,7 @@ void NavigationScene::update() {
 		_smackerFileHash = 0;
 	} else if (_smackerDone) {
 		if (_leaveSceneAfter) {
-			_vm->_screen->setSmackerDecoder(NULL);
+			_vm->_screen->setSmackerDecoder(nullptr);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else {
 			const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
@@ -170,7 +170,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
 		} else {
-			_vm->_screen->setSmackerDecoder(NULL);
+			_vm->_screen->setSmackerDecoder(nullptr);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
@@ -187,7 +187,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
 		} else {
-			_vm->_screen->setSmackerDecoder(NULL);
+			_vm->_screen->setSmackerDecoder(nullptr);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
@@ -195,7 +195,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	case 3:
 	case 4:
 		if (navigationItem.middleFlag) {
-			_vm->_screen->setSmackerDecoder(NULL);
+			_vm->_screen->setSmackerDecoder(nullptr);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else if (navigationItem.middleSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.middleSmackerFileHash;

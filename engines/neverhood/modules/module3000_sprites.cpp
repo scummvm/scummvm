@@ -307,7 +307,7 @@ uint32 AsScene3009HorizontalIndicator::handleMessage(int messageNum, const Messa
 void AsScene3009HorizontalIndicator::suMoveLeft() {
 	_x -= 6;
 	if (_x < 92) {
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 		_x = 92;
 	}
 }
@@ -315,7 +315,7 @@ void AsScene3009HorizontalIndicator::suMoveLeft() {
 void AsScene3009HorizontalIndicator::suMoveRight() {
 	_x += 6;
 	if (_x > 533) {
-		SetSpriteUpdate(NULL);
+		SetSpriteUpdate(nullptr);
 		_x = 533;
 	}
 }

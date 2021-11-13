@@ -48,7 +48,7 @@ uint32 SafeMutexedSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	return Common::SafeSeekableSubReadStream::read(dataPtr, dataSize);
 }
 
-BlbArchive::BlbArchive() : _extData(NULL) {
+BlbArchive::BlbArchive() : _extData(nullptr) {
 }
 
 BlbArchive::~BlbArchive() {
@@ -91,7 +91,7 @@ void BlbArchive::open(const Common::String &filename) {
 		BlbArchiveEntry &entry = _entries[i];
 		entry.type = _fd.readByte();
 		entry.comprType = _fd.readByte();
-		entry.extData = NULL;
+		entry.extData = nullptr;
 		extDataOffsets[i] = _fd.readUint16LE();
 		entry.timeStamp = _fd.readUint32LE();
 		entry.offset = _fd.readUint32LE();
@@ -107,7 +107,7 @@ void BlbArchive::open(const Common::String &filename) {
 		_extData = new byte[header.extDataSize];
 		_fd.read(_extData, header.extDataSize);
 		for (uint i = 0; i < header.fileCount; i++)
-			_entries[i].extData = extDataOffsets[i] > 0 ? _extData + extDataOffsets[i] - 1 : NULL;
+			_entries[i].extData = extDataOffsets[i] > 0 ? _extData + extDataOffsets[i] - 1 : nullptr;
 	}
 
 	delete[] extDataOffsets;

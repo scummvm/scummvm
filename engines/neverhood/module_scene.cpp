@@ -29,7 +29,7 @@
 namespace Neverhood {
 
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
-	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
+	: Entity(vm, 0), _parentModule(parentModule), _childObject(nullptr),
 	_done(false), _sceneType(kSceneTypeNormal) {
 
 	SetMessageHandler(&Module::handleMessage);
@@ -108,7 +108,7 @@ bool Module::updateChild() {
 			if (_sceneType == kSceneTypeNavigation)
 				_navigationAreaType = navigationScene()->getNavigationAreaType();
 			delete _childObject;
-			_childObject = NULL;
+			_childObject = nullptr;
 			_sceneType = kSceneTypeNormal;
 			return false;
 		}

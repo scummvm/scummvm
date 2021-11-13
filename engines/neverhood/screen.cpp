@@ -27,8 +27,8 @@
 namespace Neverhood {
 
 Screen::Screen(NeverhoodEngine *vm)
-	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL),
-	_yOffset(0), _fullRefresh(false), _frameDelay(0), _savedSmackerDecoder(NULL),
+	: _vm(vm), _paletteData(nullptr), _paletteChanged(false), _smackerDecoder(nullptr),
+	_yOffset(0), _fullRefresh(false), _frameDelay(0), _savedSmackerDecoder(nullptr),
 	_savedFrameDelay(0), _savedYOffset(0) {
 
 	_ticks = _vm->_system->getMillis();
@@ -152,7 +152,7 @@ void Screen::setPaletteData(byte *paletteData) {
 void Screen::unsetPaletteData(byte *paletteData) {
 	if (_paletteData == paletteData) {
 		_paletteChanged = false;
-		_paletteData = NULL;
+		_paletteData = nullptr;
 	}
 }
 
