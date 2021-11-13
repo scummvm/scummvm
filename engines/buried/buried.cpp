@@ -86,7 +86,7 @@ Common::Error BuriedEngine::run() {
 	setDebugger(new BuriedConsole(this));
 
 	if (isTrueColor()) {
-		initGraphics(640, 480, 0);
+		initGraphics(640, 480, nullptr);
 
 		if (_system->getScreenFormat().bytesPerPixel == 1)
 			return Common::kUnsupportedColorMode;

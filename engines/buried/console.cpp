@@ -228,12 +228,12 @@ FrameWindow *BuriedConsole::getFrameWindow() {
 
 	if (!frameWindow) {
 		debugPrintf("Main window not yet created!\n");
-		return 0;
+		return nullptr;
 	}
 
 	if (!frameWindow->isGameInProgress()) {
 		debugPrintf("The game is currently not in progress!\n");
-		return 0;
+		return nullptr;
 	}
 
 	return frameWindow;

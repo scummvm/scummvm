@@ -50,7 +50,7 @@
 
 namespace Buried {
 
-FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, 0) {
+FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, nullptr) {
 	// Initialize member variables
 	_mainChildWindow = nullptr;
 	_controlDown = false;
@@ -110,7 +110,7 @@ bool FrameWindow::showTitleSequence() {
 	x = (_rect.right - video->getRect().right) / 2;
 	y = (_rect.bottom - video->getRect().bottom) / 2;
 
-	video->setWindowPos(0, x, y, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosShowWindow);
+	video->setWindowPos(nullptr, x, y, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosShowWindow);
 	video->playVideo();
 	enableWindow(true);
 

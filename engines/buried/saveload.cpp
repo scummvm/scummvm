@@ -144,7 +144,7 @@ bool BuriedEngine::loadState(Common::SeekableReadStream *saveFile, Location &loc
 	if (saveFile->eos() || memcmp(header, s_savedGameHeader, kSavedGameHeaderSizeAlt) != 0)
 		return false;
 
-	Common::Serializer s(saveFile, 0);
+	Common::Serializer s(saveFile, nullptr);
 
 	if (!syncLocation(s, location))
 		return false;
@@ -173,7 +173,7 @@ bool BuriedEngine::loadState(Common::SeekableReadStream *saveFile, Location &loc
 bool BuriedEngine::saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems) {
 	saveFile->write(s_savedGameHeader, kSavedGameHeaderSize);
 
-	Common::Serializer s(0, saveFile);
+	Common::Serializer s(nullptr, saveFile);
 
 	if (!syncLocation(s, location))
 		return false;

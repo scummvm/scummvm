@@ -95,7 +95,7 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 		_dragFrames = new AVIFrames(dragFramesFileName);
 	} else {
 		// The full version uses bitmaps
-		_dragFrames = NULL;
+		_dragFrames = nullptr;
 	}
 }
 

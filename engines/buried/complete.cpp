@@ -269,7 +269,7 @@ void CompletionWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		if (!_gageVideo->openVideo("BITDATA/FUTAPT/FA_FIN.BTV"))
 			error("Failed to load finale video");
 
-		_gageVideo->setWindowPos(0, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
+		_gageVideo->setWindowPos(nullptr, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 		_gageVideo->enableWindow(false);
 		_gageVideo->showWindow(kWindowShow);
 		_gageVideo->playVideo();

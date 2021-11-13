@@ -219,7 +219,7 @@ bool SoundManager::adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte
 }
 
 bool SoundManager::isAmbientSoundPlaying() {
-	return _soundData[kAmbientIndexBase + _lastAmbient]->_handle != 0;
+	return _soundData[kAmbientIndexBase + _lastAmbient]->_handle != nullptr;
 }
 
 bool SoundManager::setSecondaryAmbientSound(const Common::String &fileName, bool fade, byte finalVolumeLevel) {
@@ -723,7 +723,7 @@ bool SoundManager::Sound::load(const Common::String &fileName) {
 		return false;
 
 	_soundData = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-	return _soundData != 0;
+	return _soundData != nullptr;
 }
 
 bool SoundManager::Sound::start() {

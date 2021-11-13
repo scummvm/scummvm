@@ -50,7 +50,7 @@ MovieDisplayWindow::MovieDisplayWindow(BuriedEngine *vm, Window *parent, const C
 	if (!_movie->openVideo(movie))
 		error("Failed to open movie '%s'", movie.c_str());
 
-	_movie->setWindowPos(0, movieLeft, movieTop, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
+	_movie->setWindowPos(nullptr, movieLeft, movieTop, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 	_movie->enableWindow(false);
 
 	_timer = 0;

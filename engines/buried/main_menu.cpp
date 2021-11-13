@@ -207,7 +207,7 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				VideoWindow *video = new VideoWindow(_vm, this);
 
 				if (video->openVideo("BITDATA/INTRO/INTRO_O.BTV")) {
-					video->setWindowPos(0, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
+					video->setWindowPos(nullptr, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 					video->enableWindow(false);
 					video->showWindow(kWindowShow);
 					_vm->_sound->stop();

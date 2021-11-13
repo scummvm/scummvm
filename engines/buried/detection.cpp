@@ -32,7 +32,7 @@
 
 static const PlainGameDescriptor buriedGames[] = {
 	{"buried", "The Journeyman Project 2: Buried in Time"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "buried/detection_tables.h"
@@ -42,7 +42,7 @@ namespace Buried {
 static const char *directoryGlobs[] = {
 	"win31",
 	"manual",
-	0
+	nullptr
 };
 
 } // End of namespace Buried
