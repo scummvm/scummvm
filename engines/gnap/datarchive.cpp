@@ -93,7 +93,7 @@ void DatManager::close(int index) {
 byte *DatManager::loadResource(int resourceId) {
 	const int datIndex = ridToDatIndex(resourceId);
 	const int entryIndex = ridToEntryIndex(resourceId);
-	return _datArchives[datIndex] ? _datArchives[datIndex]->load(entryIndex) : 0;
+	return _datArchives[datIndex] ? _datArchives[datIndex]->load(entryIndex) : nullptr;
 }
 
 uint32 DatManager::getResourceType(int resourceId) {

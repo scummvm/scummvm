@@ -31,7 +31,7 @@
 
 static const PlainGameDescriptor gnapGames[] = {
 	{ "gnap", "Gnap" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {
