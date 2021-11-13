@@ -217,8 +217,8 @@ uint16 frequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 class MidiDriver_SH_AdLib : public MidiDriver {
 public:
 	MidiDriver_SH_AdLib(Audio::Mixer *mixer)
-		: _masterVolume(15), _opl(0),
-		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+		: _masterVolume(15), _opl(nullptr),
+		  _adlibTimerProc(nullptr), _adlibTimerParam(nullptr), _isOpen(false) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
 	~MidiDriver_SH_AdLib() override { }
@@ -227,8 +227,8 @@ public:
 	int open() override;
 	void close() override;
 	void send(uint32 b) override;
-	MidiChannel *allocateChannel() override { return NULL; }
-	MidiChannel *getPercussionChannel() override { return NULL; }
+	MidiChannel *allocateChannel() override { return nullptr; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 	bool isOpen() const override { return _isOpen; }
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
@@ -251,7 +251,7 @@ private:
 		byte   currentA0hReg;
 		byte   currentB0hReg;
 
-		adlib_ChannelEntry() : inUse(false), inUseTimer(0), currentInstrumentPtr(NULL), currentNote(0),
+		adlib_ChannelEntry() : inUse(false), inUseTimer(0), currentInstrumentPtr(nullptr), currentNote(0),
 								currentA0hReg(0), currentB0hReg(0) { }
 	};
 

@@ -434,7 +434,7 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	_animateObject = 0;
 	_animateStartFrame = 0;
 	_animateFrameDelay = 0;
-	_animateFrames = NULL;
+	_animateFrames = nullptr;
 	_animateFrame = 0;
 
 	// Save a copy of the original palette
@@ -499,7 +499,7 @@ void Logo::nextFrame() {
 			} else {
 				_animateObject = 0;
 				_animateFrameDelay = 0;
-				_animateFrames = NULL;
+				_animateFrames = nullptr;
 				_animateStartFrame = 0;
 				_animateFrame = 0;
 			}

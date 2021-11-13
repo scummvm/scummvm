@@ -964,8 +964,8 @@ bool Scene::loadScene(const Common::String &filename) {
 			error("Could not open file - %s", roomBackgroundFilename.c_str());
 
 		int totalPixelCount = SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT;
-		uint16 *roomBackgroundDataPtr = NULL;
-		uint16 *pixelSourcePtr = NULL;
+		uint16 *roomBackgroundDataPtr = nullptr;
+		uint16 *pixelSourcePtr = nullptr;
 		uint16 *pixelDestPtr = (uint16 *)screen._backBuffer1.getPixels();
 		uint16  curPixel = 0;
 		uint32  roomBackgroundStreamSize = roomBackgroundStream.size();

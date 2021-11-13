@@ -29,7 +29,7 @@
 static const PlainGameDescriptor sherlockGames[] = {
 	{ "scalpel", "The Case of the Serrated Scalpel" },
 	{ "rosetattoo", "The Case of the Rose Tattoo" },
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {

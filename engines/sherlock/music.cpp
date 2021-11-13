@@ -72,7 +72,7 @@ MidiParser_SH::MidiParser_SH() {
 MidiParser_SH::~MidiParser_SH() {
 	Common::StackLock lock(_mutex);
 	unloadMusic();
-	_driver = NULL;
+	_driver = nullptr;
 }
 
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
@@ -209,7 +209,7 @@ void MidiParser_SH::unloadMusic() {
 
 	if (_musData) {
 		delete[] _musData;
-		_musData = NULL;
+		_musData = nullptr;
 		_musDataSize = 0;
 	}
 
@@ -219,8 +219,8 @@ void MidiParser_SH::unloadMusic() {
 /*----------------------------------------------------------------*/
 
 Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
-	_midiDriver = NULL;
-	_midiParser = NULL;
+	_midiDriver = nullptr;
+	_midiParser = nullptr;
 	_musicType = MT_NULL;
 	_musicPlaying = false;
 	_midiOption = false;
@@ -336,7 +336,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 Music::~Music() {
 	stopMusic();
 	if (_midiDriver) {
-		_midiDriver->setTimerCallback(this, NULL);
+		_midiDriver->setTimerCallback(this, nullptr);
 	}
 	if (_midiParser) {
 		_midiParser->stopPlaying();
