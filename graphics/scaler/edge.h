@@ -28,14 +28,14 @@ class EdgePlugin : public SourceScaler {
 public:
 
 	EdgePlugin();
-	virtual void initialize(const Graphics::PixelFormat &format) override;
-	virtual uint increaseFactor() override;
-	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual bool useOldSource() const override { return true; }
-	virtual uint extraPixels() const override { return 1; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
+	void initialize(const Graphics::PixelFormat &format) override;
+	uint increaseFactor() override;
+	uint decreaseFactor() override;
+	bool canDrawCursor() const override { return false; }
+	bool useOldSource() const override { return true; }
+	uint extraPixels() const override { return 1; }
+	const char *getName() const override;
+	const char *getPrettyName() const override;
 
 protected:
 

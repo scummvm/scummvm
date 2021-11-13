@@ -27,13 +27,13 @@
 class DotMatrixPlugin : public ScalerPluginObject {
 public:
 	DotMatrixPlugin();
-	virtual void initialize(const Graphics::PixelFormat &format) override;
-	virtual uint increaseFactor() override;
-	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual uint extraPixels() const override { return 0; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
+	void initialize(const Graphics::PixelFormat &format) override;
+	uint increaseFactor() override;
+	uint decreaseFactor() override;
+	bool canDrawCursor() const override { return false; }
+	uint extraPixels() const override { return 0; }
+	const char *getName() const override;
+	const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;

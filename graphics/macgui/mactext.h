@@ -159,15 +159,15 @@ public:
 	virtual ~MacText();
 
 	virtual void resize(int w, int h);
-	virtual bool processEvent(Common::Event &event) override;
+	bool processEvent(Common::Event &event) override;
 
-	virtual bool needsRedraw() override { return _contentIsDirty || _cursorDirty; }
+	bool needsRedraw() override { return _contentIsDirty || _cursorDirty; }
 
 	void render();
 	void undrawCursor();
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
-	virtual bool draw(bool forceRedraw = false) override;
+	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	bool draw(bool forceRedraw = false) override;
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
@@ -182,7 +182,7 @@ public:
 	void setAlignOffset(TextAlign align);
 	TextAlign getAlign() { return _textAlignment; }
 	virtual Common::Point calculateOffset();
-	virtual void setActive(bool active) override;
+	void setActive(bool active) override;
 	void setEditable(bool editable);
 
 	void setColors(uint32 fg, uint32 bg) override;
