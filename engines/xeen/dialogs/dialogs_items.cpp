@@ -327,7 +327,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							ErrorScroll::show(_vm, Res.CANNOT_REMOVE_CURSED_ITEM);
 						else if (destItems.isFull())
 							ErrorScroll::show(_vm, Common::String::format(
-													   Res.CATEGORY_BACKPACK_IS_FULL[category], c->_name.c_str()));
+													   Res.CATEGORY_BACKPACK_IS_FULL[category], newChar->_name.c_str()));
 						else {
 							XeenItem &destItem = destItems[INV_ITEMS_TOTAL - 1];
 							destItem = srcItem;
