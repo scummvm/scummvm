@@ -250,7 +250,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				((GameUIWindow *)_parent)->_navArrowWindow->updateAllArrows(0, 0, 0, 0, 0);
 
 				VideoWindow *video = new VideoWindow(_vm, this);
-				video->setWindowPos(0, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
+				video->setWindowPos(nullptr, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
 				if (!video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME))) {
 					error("Failed to load cloaking video");
 				}
@@ -286,7 +286,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_status = 0;
 
 				VideoWindow *video = new VideoWindow(_vm, this);
-				video->setWindowPos(0, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
+				video->setWindowPos(nullptr, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
 				if (!video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME))) {
 					error("Failed to load cloaking video");
 				}

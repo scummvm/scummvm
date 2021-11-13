@@ -53,7 +53,7 @@ InventoryInfoWindow::InventoryInfoWindow(BuriedEngine *vm, Window *parent, int c
 	if (!_videoWindow->openVideo(_vm->getFilePath(_vm->isDemo() ? IDS_INVENTORY_SPIN_FILENAME_DEMO : IDS_INVENTORY_SPIN_FILENAME)))
 		error("Failed to load inventory info file");
 
-	_videoWindow->setWindowPos(0, 268, 17, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosShowWindow);
+	_videoWindow->setWindowPos(nullptr, 268, 17, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosShowWindow);
 	_videoWindow->enableWindow(false);
 
 	_timer = setTimer(100);

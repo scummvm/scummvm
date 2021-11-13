@@ -732,7 +732,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		error("Failed to play small jump movie");
 
 	// Reposition
-	jumpMovie->setWindowPos(0, 0, 28, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
+	jumpMovie->setWindowPos(nullptr, 0, 28, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
 
 	// Notify the BioChip of the change
 	((GameUIWindow *)_parent)->_bioChipRightWindow->jumpInitiated(false);
@@ -784,7 +784,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	if (!jumpMovie->openVideo(fileName))
 		error("Failed to play movie '%s'", fileName.c_str());
 
-	jumpMovie->setWindowPos(0, 0, 0, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
+	jumpMovie->setWindowPos(nullptr, 0, 0, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
 
 	// Show and disable the window
 	jumpMovie->enableWindow(false);
@@ -865,7 +865,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
 		error("Failed to play small jump movie");
 
-	jumpMovie->setWindowPos(0, 0, 28, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
+	jumpMovie->setWindowPos(nullptr, 0, 28, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
 
 	// Notify the BioChip of the change
 	((GameUIWindow *)_parent)->_bioChipRightWindow->jumpEnded(false);
@@ -1370,14 +1370,14 @@ const Graphics::Surface *SceneViewWindow::getStillFrame(int frameIndex) {
 
 Graphics::Surface *SceneViewWindow::getCycleFrameCopy(int frameIndex) {
 	if (!isCyclingEnabled())
-		return 0;
+		return nullptr;
 
 	return _cycleFrames->getFrameCopy(frameIndex);
 }
 
 const Graphics::Surface *SceneViewWindow::getCycleFrame(int frameIndex) {
 	if (!isCyclingEnabled())
-		return 0;
+		return nullptr;
 
 	return _cycleFrames->getFrame(frameIndex);
 }
@@ -1888,7 +1888,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimation(int left, int top, int wi
 		_asyncMovieFileName = fileName;
 	}
 
-	_asyncMovie->setWindowPos(0, left, top, width, height, kWindowPosNoZOrder);
+	_asyncMovie->setWindowPos(nullptr, left, top, width, height, kWindowPosNoZOrder);
 	_asyncMovie->enableWindow(false);
 
 	_asyncMovieStartFrame = animData->startFrame;
@@ -1933,7 +1933,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimation(int left, int top, int wi
 		_asyncMovieFileName = fileName;
 	}
 
-	_asyncMovie->setWindowPos(0, left, top, width, height, kWindowPosNoZOrder);
+	_asyncMovie->setWindowPos(nullptr, left, top, width, height, kWindowPosNoZOrder);
 	_asyncMovie->enableWindow(false);
 
 	_asyncMovieStartFrame = (startPosition < 0) ? 0 : startPosition;
@@ -1978,7 +1978,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimationExtern(int left, int top, 
 		_asyncMovieFileName = fileName;
 	}
 
-	_asyncMovie->setWindowPos(0, left, top, width, height, kWindowPosNoZOrder);
+	_asyncMovie->setWindowPos(nullptr, left, top, width, height, kWindowPosNoZOrder);
 	_asyncMovie->enableWindow(false);
 
 	_asyncMovieStartFrame = (startPosition < 0) ? 0 : startPosition;
@@ -2614,7 +2614,7 @@ int SceneViewWindow::droppedItem(int itemID, const Common::Point &location, int 
 }
 
 bool SceneViewWindow::updatePrebufferWithSprite(Sprite &spriteData) {
-	if (_currentSprite.image != spriteData.image && _currentSprite.image != 0) {
+	if (_currentSprite.image != spriteData.image && _currentSprite.image != nullptr) {
 		_currentSprite.image->free();
 		delete _currentSprite.image;
 	}

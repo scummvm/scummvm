@@ -201,7 +201,7 @@ Graphics::Surface *GraphicsManager::getBitmap(Common::SeekableReadStream *stream
 	Image::BitmapDecoder decoder;
 	if (!decoder.loadStream(*stream)) {
 		delete stream;
-		return 0;
+		return nullptr;
 	}
 
 	delete stream;

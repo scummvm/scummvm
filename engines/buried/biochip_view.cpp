@@ -784,7 +784,7 @@ Window *BioChipMainViewWindow::createBioChipSpecificViewWindow(int bioChipID) {
 	}
 
 	// No entry for this BioChip
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Buried
