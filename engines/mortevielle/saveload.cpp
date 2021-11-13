@@ -77,7 +77,7 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
 	Common::SeekableReadStream *stream = g_system->getSavefileManager()->openForLoading(filename);
 
 	Common::File f;
-	if (stream == NULL) {
+	if (stream == nullptr) {
 		if (!f.open(filename)) {
 			warning("Unable to open save file '%s'", filename.c_str());
 			return false;
@@ -101,7 +101,7 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
 	}
 
 	// Read the game contents
-	Common::Serializer sz(stream, NULL);
+	Common::Serializer sz(stream, nullptr);
 	sync_save(sz);
 
 	g_vm->_coreVar = g_vm->_saveStruct;
@@ -158,7 +158,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	writeSavegameHeader(f, saveName);
 
 	// Write out the savegame contents
-	Common::Serializer sz(NULL, f);
+	Common::Serializer sz(nullptr, f);
 	sync_save(sz);
 
 	// Close the save file

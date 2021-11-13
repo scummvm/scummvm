@@ -28,7 +28,7 @@
 
 static const PlainGameDescriptor MortevielleGame[] = {
 	{"mortevielle", "Mortville Manor"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {
