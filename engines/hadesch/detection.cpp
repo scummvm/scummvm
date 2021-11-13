@@ -41,7 +41,7 @@ static const DebugChannelDef debugFlagList[] = {
 namespace Hadesch {
 static const PlainGameDescriptor hadeschGames[] = {
 	{"hadesch", "Hades Challenge"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 // The list is pretty long but it's because we need just a few files but
@@ -63,7 +63,7 @@ static const char *const directoryGlobs[] = {
 	"Hades - Copy To Hard Drive",
 	"Hades Challenge",
 	"Hades_Challenge",
-	0
+	nullptr
 };
 }
 
