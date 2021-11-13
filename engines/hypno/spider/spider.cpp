@@ -96,6 +96,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["bank.mi_"]->levelIfWin = "alley.mi_";
 
 	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
+	loadSceneLevel("busint.mi_", "buspuz.mi_", prefix);
 	loadSceneLevel("buspuz.mi_", "", prefix);
 	_levels["buspuz.mi_"]->intros.push_back("cine/apts004s.smk");
 	_levels["buspuz.mi_"]->intros.push_back("cine/blcs001s.smk");

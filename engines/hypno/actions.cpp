@@ -113,11 +113,15 @@ bool HypnoEngine::runGlobal(Global *a) {
 		_sceneState[a->variable] = 0;
 	else if (a->command == "TOGGLE")
 		_sceneState[a->variable] = !_sceneState[a->variable];
-	else if (a->command == "CHECK")
+	else if (a->command == "CHECK") {
+		if (!_sceneState[a->variable]) // Clear any video to play
+			_nextSequentialVideoToPlay.clear();
 		return _sceneState[a->variable];
-	else if (a->command == "NCHECK")
+	} else if (a->command == "NCHECK") {
+		if (_sceneState[a->variable]) // Clear any video to play
+			_nextSequentialVideoToPlay.clear();
 		return !_sceneState[a->variable];
-	else
+	} else
 		error("Invalid command %s", a->command.c_str());
 	return true;
 }
