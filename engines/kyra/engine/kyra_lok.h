@@ -480,6 +480,9 @@ protected:
 
 	uint8 _configTextspeed;
 
+	Screen::FontId _defaultFont;
+	int _defaultLineSpacing;
+
 	Animator_LoK *_animator;
 	SeqPlayer *_seq;
 	Sprites *_sprites;

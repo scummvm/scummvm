@@ -96,6 +96,8 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
+	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_defaultLineSpacing = (_flags.lang == Common::ZH_TWN) ? 2 : 0;
 }
 
 KyraEngine_LoK::~KyraEngine_LoK() {
@@ -299,7 +301,14 @@ Common::Error KyraEngine_LoK::go() {
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 
-	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	if (_flags.lang == Common::ZH_TWN) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "ASCII.FNT");
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "KYRANDIA.FNT");
+		_screen->setTextMarginRight(312);
+	}
+
+	_screen->setFont(_defaultFont);
+	_screen->_lineSpacing = _defaultLineSpacing;
 
 	_screen->setScreenDim(0);
 
@@ -348,7 +357,6 @@ void KyraEngine_LoK::startup() {
 	else
 		_sound->loadSoundFile(0);
 
-//	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	loadMouseShapes();
@@ -421,7 +429,8 @@ void KyraEngine_LoK::startup() {
 			saveGameStateIntern(0, "New game", nullptr);
 		}
 	} else {
-		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		_screen->setFont(_defaultFont);;
+		_screen->_lineSpacing = _defaultLineSpacing;
 		loadGameStateCheck(_gameToLoad);
 		_gameToLoad = -1;
 	}

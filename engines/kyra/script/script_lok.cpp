@@ -1043,7 +1043,7 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 	_screen->updateScreen();
 	_screen->showMouse();
 
-	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN)
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN && _flags.lang != Common::ZH_TWN)
 		_screen->setFont(Screen::FID_6_FNT);
 	return 0;
 }
@@ -1056,7 +1056,7 @@ int KyraEngine_LoK::o1_specialEventRemoveBrynnsNote(EMCState *script) {
 	_screen->updateScreen();
 	_screen->showMouse();
 
-	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN)
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN && _flags.lang != Common::ZH_TWN)
 		_screen->setFont(Screen::FID_8_FNT);
 	return 0;
 }

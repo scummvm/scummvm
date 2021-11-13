@@ -484,4 +484,54 @@ void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
 	_system->getPaletteManager()->setPalette(palette, 0, 16);
 }
 
+ChineseOneByteFontLoK::ChineseOneByteFontLoK(int pitch) : ChineseFont(pitch, 8, 14, 9, 17, 0, 0) {
+	_border = _pixelColorShading = false;
+}
+
+void ChineseOneByteFontLoK::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0];
+}
+
+ChineseTwoByteFontLoK::ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable, uint32 lookupTableSize) : ChineseFont(pitch, 15, 14, 18, 17, 0, 0),
+_lookupTable(lookupTable), _lookupTableSize(lookupTableSize) {
+	assert(lookupTable);
+}
+
+bool ChineseTwoByteFontLoK::hasGlyphForCharacter(uint16 c) const {
+	for (uint32 i = 0; i < _lookupTableSize; ++i) {
+		if (_lookupTable[i] == c)
+			return true;
+	}
+	return false;
+}
+
+uint32 ChineseTwoByteFontLoK::getFontOffset(uint16 c) const {
+	for (uint32 i = 0; i < _lookupTableSize; ++i) {
+		if (_lookupTable[i] == c)
+			return i * 28;
+	}
+	return 0;
+}
+
+void ChineseTwoByteFontLoK::processColorMap() {
+	_border = (_colorMap[0] == 12);
+	uint8 cs = _colorMap[1];
+
+	if (_colorMap[1] == 9)
+		cs = 83;
+	else if (_colorMap[1] == 5)
+		cs = 207;
+	else if (_colorMap[1] == 2)
+		cs = 74;
+	else if (_colorMap[1] == 15)
+		cs = 161;
+	else if (_colorMap[1] > 15 && _colorMap[1] < 248)
+		cs += 1;
+
+	_textColor[0] = _colorMap[1] | (cs << 8);
+	_textColor[0] = TO_LE_16(_textColor[0]);
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+}
+
 } // End of namespace Kyra

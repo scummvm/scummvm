@@ -636,9 +636,11 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 					charIdx++;
 				}
 				charStr[1] = charStr[2] = '\0';
-				if (_vm->gameFlags().lang == Common::JA_JPN)
+				if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN) {
 					charStr[1] = _vm->seqTextsTable()[_seqDisplayedText][++_seqDisplayedChar];
-				if (_vm->gameFlags().lang == Common::HE_ISR) {
+					_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
+					_seqDisplayedTextX += _screen->getTextWidth(charStr);
+				} else if (_vm->gameFlags().lang == Common::HE_ISR) {
 					_seqDisplayedTextX -= _screen->getCharWidth((uint8)charStr[0]);
 					_screen->printText(revBuffer, _seqDisplayedTextX, 180, 0xF, 0xC);
 				} else {

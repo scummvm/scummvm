@@ -277,27 +277,23 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 
 	char *processedString = _text->preprocessString(chatStr);
 	int lineNum = _text->buildMessageSubstrings(processedString);
+	if (_flags.lang == Common::ZH_TWN)
+		lineNum = (strlen(chatStr) + 31) >> 5;
 
 	int16 yPos = _characterList[charNum].y1;
 	yPos -= ((_scaleTable[yPos] * _characterList[charNum].height) >> 8);
 	yPos -= 8;
-	yPos -= lineNum * 10;
+	yPos -= lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
-	if (yPos < 11)
-		yPos = 11;
-
-	if (yPos > 100)
-		yPos = 100;
-
-	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum * 10;
+	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);;
+	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
 	const bool printText = textEnabled();
 
 	if (printText) {
 		_animator->restoreAllObjectBackgrounds();
 
-		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
+		_screen->copyRegion(8, _text->_talkMessageY, 8, 136, 304, _text->_talkMessageH, 2, 2);
 
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
 	}
@@ -314,11 +310,11 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 	if (printText) {
 		_animator->restoreAllObjectBackgrounds();
 
-		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
+		_screen->copyRegion(8, 136, 8, _text->_talkMessageY, 304, _text->_talkMessageH, 2, 2);
 		_animator->preserveAllBackgrounds();
 		_animator->prepDrawAllObjects();
 
-		_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
+		_screen->copyRegion(8, _text->_talkMessageY, 8, _text->_talkMessageY, 304, _text->_talkMessageH, 2, 0);
 		_animator->flagAllObjectsForRefresh();
 		_animator->copyChangedObjectsForward(0);
 	}
@@ -330,7 +326,17 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 }
 
 void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
-	_screen->fillRect(8, 143, 311, 152, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
+	int boxY1 = 143;
+	int boxY2 = 152;
+	int col2 = _flags.platform == Common::kPlatformAmiga ? 19 : 12;
+
+	if (_flags.lang == Common::ZH_TWN) {
+		boxY1 = 140;
+		boxY2 = 153;
+		col2 = 0;
+	}
+
+	_screen->fillRect(8, boxY1, 311, boxY2, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (color != 19) {
@@ -351,10 +357,10 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	}
 
 	if (_flags.lang != Common::HE_ISR) {
-		_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
+		_text->printText(sentence, 8, boxY1, 0xFF, col2, 0);
 	} else {
 		_screen->_charSpacing = -2;
-		_text->printText(sentence, 311 - _screen->getTextWidth(sentence), 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
+		_text->printText(sentence, 311 - _screen->getTextWidth(sentence), boxY1, 0xFF, col2, 0);
 		_screen->_charSpacing = 0;
 	}
 	setTextFadeTimerCountdown(15);
@@ -363,14 +369,18 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 
 void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, int color) {
 	char sentenceCommand[500];
-	if (_flags.lang != Common::HE_ISR) {
-		Common::strlcpy(sentenceCommand, str1, sizeof(sentenceCommand));
+	if (_flags.lang == Common::ZH_TWN) {
+		Common::strlcpy(sentenceCommand, str2 ? str2 : str1, sizeof(sentenceCommand));
 		if (str2)
-			Common::strlcat(sentenceCommand, str2, sizeof(sentenceCommand));
-	} else {
+			Common::strlcat(sentenceCommand, str1, sizeof(sentenceCommand));
+	} else if (_flags.lang == Common::HE_ISR) {
 		if (str2)
 			Common::strlcpy(sentenceCommand, str2, sizeof(sentenceCommand));
 		Common::strlcat(sentenceCommand, str1, sizeof(sentenceCommand));
+	} else {
+		Common::strlcpy(sentenceCommand, str1, sizeof(sentenceCommand));
+		if (str2)
+			Common::strlcat(sentenceCommand, str2, sizeof(sentenceCommand));
 	}
 
 	drawSentenceCommand(sentenceCommand, color);

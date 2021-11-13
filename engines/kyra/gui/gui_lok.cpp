@@ -687,12 +687,12 @@ int GUI_LoK::loadGameMenu(Button *button) {
 }
 
 void GUI_LoK::redrawTextfield() {
-	_screen->fillRect(38, 91, 287, 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
+	_screen->fillRect(38, 91, 287, _vm->gameFlags().lang == Common::ZH_TWN ? 107 : 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
 
 	_screen->_charSpacing = -2;
 	int width = _screen->getTextWidth(_savegameName);
-	_screen->fillRect(39 + width, 93, 45 + width, 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
+	_screen->fillRect(39 + width, 93, 45 + width, _vm->gameFlags().lang == Common::ZH_TWN ? 105 : 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
 	_screen->_charSpacing = 0;
 
 	_screen->updateScreen();
@@ -745,7 +745,7 @@ int GUI_LoK::saveGame(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	Screen::FontId cf = _screen->setFont(Screen::FID_8_FNT);
+	Screen::FontId cf = _screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 
 	if (_savegameOffset == 0 && _vm->_gameToLoad == 0) {
 		_savegameName[0] = 0;
@@ -763,7 +763,7 @@ int GUI_LoK::saveGame(Button *button) {
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
 		checkTextfieldInput();
-		cf = _screen->setFont(Screen::FID_8_FNT);
+		cf = _screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 		updateSavegameString();
 		_screen->setFont(cf);
 		processHighlights(_menu[3]);

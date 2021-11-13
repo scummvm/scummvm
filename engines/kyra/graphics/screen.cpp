@@ -1341,11 +1341,15 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			fnt = new AMIGAFont();
 		} else if (fontId == FID_CHINESE_FNT) {
 			Common::Array<Font*> *fa = new Common::Array<Font*>;
-			fa->push_back(new ChineseOneByteFontMR(SCREEN_W));
-			fa->push_back(new ChineseTwoByteFontMR(SCREEN_W));
-			fnt = new MultiSubsetFont(fa);
-
-			if (_vm->game() == GI_KYRA3) {
+			if (_vm->game() == GI_KYRA1) {
+				const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
+				fa->push_back(new ChineseOneByteFontLoK(SCREEN_W));
+				fa->push_back(new ChineseTwoByteFontLoK(SCREEN_W, lookupTable, temp));
+				fnt = new MultiSubsetFont(fa);
+			} else if (_vm->game() == GI_KYRA3) {
+				fa->push_back(new ChineseOneByteFontMR(SCREEN_W));
+				fa->push_back(new ChineseTwoByteFontMR(SCREEN_W));
+				fnt = new MultiSubsetFont(fa);
 				const uint8 *oneByteData = _vm->staticres()->loadRawData(k3FontData, temp);
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
@@ -3847,7 +3851,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 
 ChineseFont::ChineseFont(int pitch, int renderWidth, int renderHeight, int spacingWidth, int spacingHeight, int extraSpacingWidth, int extraSpacingHeight) : Font(),
 	_renderWidth(renderWidth), _renderHeight(renderHeight), _spacingWidth(spacingWidth), _spacingHeight(spacingHeight), _pitch(pitch), _border(false),
-	_borderExtraSpacingWidth(extraSpacingWidth), _borderExtraSpacingHeight(extraSpacingHeight), _glyphData(0), _glyphDataSize(0) {
+	_borderExtraSpacingWidth(extraSpacingWidth), _borderExtraSpacingHeight(extraSpacingHeight), _glyphData(0), _glyphDataSize(0), _pixelColorShading(true) {
 }
 
 ChineseFont::~ChineseFont() {
@@ -3901,35 +3905,18 @@ void ChineseFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 					in = *data++;
 					bt = 7;
 				}
-				if (in & (1 << (bt--)))
-					*(uint16*)dst = _textColor[i[2]];
+				if (in & (1 << (bt--))) {
+					if (_pixelColorShading)
+						*(uint16*)dst = _textColor[i[2]];
+					else
+						*dst = _textColor[i[2]] & 0xff;
+				}
 				dst++;
 			}
 			dst = dst2 + _pitch;
 		}
 		dst = dst3;
 	}
-}
-
-void ChineseOneByteFontLoK::processColorMap() {
-	if (_textColor[0] == 12) {
-		_prvBorder = _border;
-		_border = false;
-	} else {
-		_border = _prvBorder;
-	}
-}
-
-bool ChineseTwoByteFontLoK::hasGlyphForCharacter(uint16 c) const {
-	return false;
-}
-
-uint32 ChineseTwoByteFontLoK::getFontOffset(uint16 c) const {
-	return 0;
-}
-
-void ChineseTwoByteFontLoK::processColorMap() {
-
 }
 
 MultiSubsetFont::~MultiSubsetFont() {

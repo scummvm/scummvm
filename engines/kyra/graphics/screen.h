@@ -269,6 +269,7 @@ public:
 
 protected:
 	uint16 _textColor[2];
+	bool _pixelColorShading;
 	const uint8 *_colorMap;
 	bool _border;
 
@@ -286,9 +287,9 @@ private:
 	const uint16 _pitch;
 };
 
-class ChineseOneByteFontLoK : public ChineseFont {
+class ChineseOneByteFontLoK final : public ChineseFont {
 public:
-	ChineseOneByteFontLoK(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2), _prvBorder(false) {}
+	ChineseOneByteFontLoK(int pitch);
 	~ChineseOneByteFontLoK() override {}
 	Type getType() const override { return kBIG5; }
 
@@ -296,13 +297,11 @@ private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
 	void processColorMap() override;
-
-	bool _prvBorder;
 };
 
-class ChineseTwoByteFontLoK : public ChineseFont {
+class ChineseTwoByteFontLoK final : public ChineseFont {
 public:
-	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2), _lookupTable(lookupTable), _prvBorder(false) {}
+	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable, uint32 lookupTableSize);
 	~ChineseTwoByteFontLoK() override {}
 	Type getType() const override { return kBIG5; }
 
@@ -312,10 +311,10 @@ private:
 	void processColorMap() override;
 
 	const uint16 *_lookupTable;
-	bool _prvBorder;
+	uint32 _lookupTableSize;
 };
 
-class ChineseOneByteFontMR : public ChineseFont {
+class ChineseOneByteFontMR final : public ChineseFont {
 public:
 	ChineseOneByteFontMR(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
 	~ChineseOneByteFontMR() override {}
@@ -327,7 +326,7 @@ private:
 	void processColorMap() override;
 };
 
-class ChineseTwoByteFontMR : public ChineseFont {
+class ChineseTwoByteFontMR final : public ChineseFont {
 public:
 	ChineseTwoByteFontMR(int pitch) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2) {}
 	~ChineseTwoByteFontMR() override {}
@@ -339,12 +338,17 @@ private:
 	void processColorMap() override;
 };
 
-class MultiSubsetFont : public Font {
+class MultiSubsetFont final : public Font {
 public:
 	MultiSubsetFont(Common::Array<Font*> *subsets) : Font(), _subsets(subsets) {}
 	~MultiSubsetFont() override;
 	Type getType() const override { return kBIG5; }
 
+	// Caveat: This method will try to load a font into the first subset slot it finds.
+	// It expects the load method of the subset font to return false if the slot has
+	// already been filled. It will then try the next slot. So, unlike other fonts the
+	// subset fonts cannot be allowed to call the load method as often as they want
+	// (which we never did anyway - we only ever load each font exactly one time).
 	bool load(Common::SeekableReadStream &data) override;
 
 	void setStyles(int styles) override;
@@ -357,25 +361,6 @@ public:
 private:
 	Common::Array<Font*> *_subsets;
 };
-
-/*
-class ChineseFont : public Font {
-public:
-	ChineseFont(const uint8 *oneByteData, int pitch);
-	~ChineseFont() override;
-
-	
-
-	
-
-	int getCharWidth(uint16 c) const override;
-	void setColorMap(const uint8 *src) override;
-	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
-
-private:
-	
-};*/
 
 /**
  * A class that manages KYRA palettes.

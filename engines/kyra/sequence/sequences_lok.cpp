@@ -105,7 +105,7 @@ void KyraEngine_LoK::seq_intro() {
 	}
 
 	_seq->setCopyViewOffs(true);
-	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont(_defaultFont);
 	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
@@ -250,25 +250,15 @@ bool KyraEngine_LoK::seq_introStory() {
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
 		return false;
 
-	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformDOS) || _flags.platform == Common::kPlatformAmiga)
-		_screen->loadBitmap("TEXT.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::DE_DEU)
-		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::FR_FRA || (_flags.lang == Common::ES_ESP && _flags.isTalkie)  /* Spanish fan made over French CD version */ )
-		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::ES_ESP)
-		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::IT_ITA && !_flags.isTalkie)
-		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::IT_ITA && _flags.isTalkie)
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::RU_RUS && _flags.isTalkie)
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::HE_ISR)
-		_screen->loadBitmap("TEXT_HEB.CPS", 3, 3, &_screen->getPalette(0));
-	else
+	bool success = false;
+	static const char *pattern[] = { "", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB" };
+	for (int i = 0; i < ARRAYSIZE(pattern) && !success; ++i) {
+		Common::String tryFile = Common::String::format("TEXT%s.CPS", pattern[i]);
+		if ((success = _res->exists(tryFile.c_str())))
+			_screen->loadBitmap(tryFile.c_str(), 3, 3, &_screen->getPalette(0));
+	}
+
+	if (!success)
 		warning("no story graphics file found");
 
 	if (_flags.platform == Common::kPlatformAmiga)
