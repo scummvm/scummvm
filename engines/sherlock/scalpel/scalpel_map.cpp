@@ -153,7 +153,7 @@ int ScalpelMap::show() {
 	screen.clear();
 
 	// Load the entire map
-	ImageFile *bigMap = NULL;
+	ImageFile *bigMap = nullptr;
 	if (!IS_3DO) {
 		// PC
 		bigMap = new ImageFile("bigmap.vgs");

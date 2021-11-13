@@ -41,7 +41,7 @@ const byte mt32ReverbDataSysEx[] = {
 class MidiDriver_MT32 : public MidiDriver {
 public:
 	MidiDriver_MT32() {
-		_driver = NULL;
+		_driver = nullptr;
 		_isOpen = false;
 		_nativeMT32 = false;
 		_baseFreq = 250;
@@ -62,12 +62,12 @@ public:
 	MidiChannel *allocateChannel() override {
 		if (_driver)
 			return _driver->allocateChannel();
-		return NULL;
+		return nullptr;
 	}
 	MidiChannel *getPercussionChannel() override {
 		if (_driver)
 			return _driver->getPercussionChannel();
-		return NULL;
+		return nullptr;
 	}
 
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override {
@@ -103,11 +103,11 @@ public:
 MidiDriver_MT32::~MidiDriver_MT32() {
 	Common::StackLock lock(_mutex);
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
-	_driver = NULL;
+	_driver = nullptr;
 }
 
 int MidiDriver_MT32::open() {

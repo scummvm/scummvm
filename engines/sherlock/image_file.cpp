@@ -381,7 +381,7 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 		streamLeft -= celDataSize;
 
 		// always 16 bits per pixel (RGB555)
-		decompress3DOCelFrame(frame, data_, celDataSize, 16, NULL);
+		decompress3DOCelFrame(frame, data_, celDataSize, 16, nullptr);
 
 		delete[] data_;
 
@@ -399,7 +399,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 	int32  chunkStartPos = 0;
 	uint32 chunkTag = 0;
 	uint32 chunkSize = 0;
-	byte  *chunkDataPtr = NULL;
+	byte  *chunkDataPtr = nullptr;
 
 	// ANIM chunk (animation header for animation files)
 	bool   animFound = false;
@@ -596,7 +596,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 			// Decompress/copy this frame
 			if (!plutFound) {
-				decompress3DOCelFrame(imageFrame, chunkDataPtr, dataSize, ccbPRE0_bitsPerPixel, NULL);
+				decompress3DOCelFrame(imageFrame, chunkDataPtr, dataSize, ccbPRE0_bitsPerPixel, nullptr);
 			} else {
 				decompress3DOCelFrame(imageFrame, chunkDataPtr, dataSize, ccbPRE0_bitsPerPixel, &plutRGBlookupTable);
 			}
@@ -721,7 +721,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			imageFrame._size = 0;
 
 			// Decompress/copy this frame
-			decompress3DOCelFrame(imageFrame, celDataPtr, celDataSize, ccbPRE0_bitsPerPixel, NULL);
+			decompress3DOCelFrame(imageFrame, celDataPtr, celDataSize, ccbPRE0_bitsPerPixel, nullptr);
 
 			delete[] celDataPtr;
 
@@ -907,9 +907,9 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	uint32 header_maxChar = 0;
 	uint32 header_charCount = 0;
 
-	byte  *widthTablePtr = NULL;
+	byte  *widthTablePtr = nullptr;
 	uint32 bitsTableSize = 0;
-	byte  *bitsTablePtr = NULL;
+	byte  *bitsTablePtr = nullptr;
 
 	stream.skip(2); // Unknown bytes
 	stream.skip(2); // Unknown bytes (0x000E)
@@ -938,7 +938,7 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	// Now extract all characters
 	uint16      curChar = 0;
 	const byte *curBitsLinePtr = bitsTablePtr;
-	const byte *curBitsPtr = NULL;
+	const byte *curBitsPtr = nullptr;
 	byte        curBitsLeft = 0;
 	uint32      curCharHeightLeft = 0;
 	uint32      curCharWidthLeft = 0;

@@ -45,7 +45,7 @@ bool ScalpelDebugger::cmd3DO_PlayMovie(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	_3doPlayMovieFile = filename;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 bool ScalpelDebugger::cmd3DO_PlayAudio(int argc, const char **argv) {
