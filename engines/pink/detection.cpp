@@ -29,7 +29,7 @@
 static const PlainGameDescriptor pinkGames[] = {
 	{"peril", "The Pink Panther: Passport to Peril"},
 	{"pokus", "The Pink Panther: Hokus Pokus Pink"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "pink/detection_tables.h"

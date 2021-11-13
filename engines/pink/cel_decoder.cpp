@@ -64,7 +64,7 @@ uint16 CelDecoder::getTransparentColourIndex() const {
 const Graphics::Surface *CelDecoder::getCurrentFrame() const {
 	const CelVideoTrack *track = (const CelVideoTrack *)getTrack(0);
 	if (!track)
-		return 0;
+		return nullptr;
 	return track->getCurrentFrame();
 }
 

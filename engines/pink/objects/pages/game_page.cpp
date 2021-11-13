@@ -51,7 +51,7 @@ void GamePage::toConsole() const {
 void GamePage::deserialize(Archive &archive) {
 	Page::deserialize(archive);
 	_module = static_cast<Module *>(archive.readObject());
-	assert(dynamic_cast<Module *>(_module) != 0);
+	assert(dynamic_cast<Module *>(_module) != nullptr);
 }
 
 void GamePage::load(Archive &archive) {

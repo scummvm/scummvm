@@ -32,7 +32,7 @@ WalkShortestPath::WalkShortestPath(WalkMgr *manager)
 WalkLocation *WalkShortestPath::next(WalkLocation *start, WalkLocation *destination) {
 	if (start == destination)
 		return nullptr;
-	add(start, 0.0, 0);
+	add(start, 0.0, nullptr);
 	while (build() != destination) {}
 	return getNearestNeighbor(destination);
 }
