@@ -844,7 +844,7 @@ void EventManager::processCommandQueue() {
 			displMan.drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_waitForInputMaxVerticalBlankCount = 0;
 			_primaryMouseInput = _primaryMouseInputPartySleeping;
-			_secondaryMouseInput = 0;
+			_secondaryMouseInput = nullptr;
 			_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
 			_secondaryKeyboardInput = nullptr;
 			discardAllInput();
@@ -890,7 +890,7 @@ void EventManager::processCommandQueue() {
 		primaryKeyboardInputBackup = _primaryKeyboardInput;
 		secondaryKeyboardInputBackup = _secondaryKeyboardInput;
 		_primaryMouseInput = _primaryMouseInputFrozenGame;
-		_secondaryMouseInput = 0;
+		_secondaryMouseInput = nullptr;
 		_primaryKeyboardInput = _primaryKeyboardInputFrozenGame;
 		_secondaryKeyboardInput = nullptr;
 		discardAllInput();

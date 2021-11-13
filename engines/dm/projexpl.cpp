@@ -377,7 +377,7 @@ void ProjExpl::projectileDelete(Thing projectileThing, Thing *groupSlot, int16 m
 	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	Thing projectileSlotThing = projectile->_slot;
 	if (projectileSlotThing.getType() != kDMThingTypeExplosion) {
-		if (groupSlot != NULL) {
+		if (groupSlot != nullptr) {
 			Thing previousThing = *groupSlot;
 			if (previousThing == _vm->_thingEndOfList) {
 				Thing *genericThing = (Thing *)_vm->_dungeonMan->getThingData(projectileSlotThing);
@@ -415,7 +415,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		uint16 stepEnergy = curEvent->_Cu._projectile.getStepEnergy();
 		if (projectile->_kineticEnergy <= stepEnergy) {
 			_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell = projectileThing, Thing(0), destinationMapX, destinationMapY);
-			projectileDelete(projectileThingNewCell, NULL, destinationMapX, destinationMapY);
+			projectileDelete(projectileThingNewCell, nullptr, destinationMapX, destinationMapY);
 			return;
 		}
 		projectile->_kineticEnergy -= stepEnergy;

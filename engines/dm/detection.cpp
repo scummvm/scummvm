@@ -35,7 +35,7 @@ namespace DM {
 
 static const PlainGameDescriptor DMGames[] = {
 	{"dm", "Dungeon Master"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DMADGameDescription gameDescriptions[] = {

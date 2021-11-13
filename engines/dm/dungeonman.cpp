@@ -1478,7 +1478,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 								} else {
 									projExpl.projectileDeleteEvent(squareThing);
 									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
-									projExpl.projectileDelete(squareThing, 0, currMapX, currMapY);
+									projExpl.projectileDelete(squareThing, nullptr, currMapX, currMapY);
 								}
 								break;
 							case kDMThingTypeArmour:
