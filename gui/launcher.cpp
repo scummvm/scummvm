@@ -197,7 +197,7 @@ void LauncherDialog::build() {
 #endif
 		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String(_("Group by: ")));
 
-	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String(_("Select a criteria to group the entries"`)), kSetGroupMethodCmd);
+	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String(_("Select a criteria to group the entries")), kSetGroupMethodCmd);
 	// I18N: Group name for the game list
 	_grpChooserPopup->appendEntry(_c("None", "group"), kGroupByNone);
 	// I18N: Group name for the game list, grouped by the first letter of the game title
