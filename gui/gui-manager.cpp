@@ -555,7 +555,7 @@ void GuiManager::runLoop() {
 		// Delay until the allocated frame time is elapsed to match the target frame rate.
 		// In case we have vsync enabled, we force a minimum frame duration of 1 millisecond
 		// since otherwise, we'd have a very sluggish cursor on 60Hz displays.
-		if (ConfMan.getBool("vsync")) {
+		if (g_system->getFeatureState(OSystem::kFeatureVSync)) {
 			_system->delayMillis(1);
 		} else {
 			uint32 actualFrameDuration = _system->getMillis(true) - frameStartTime;
