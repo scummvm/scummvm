@@ -68,7 +68,7 @@ public:
 	 *
 	 * The periodical polling is used to update the OSD messages.
 	 */
-	virtual bool pollEvent(Common::Event &event) override;
+	bool pollEvent(Common::Event &event) override;
 
 private:
 	Mutex _mutex;

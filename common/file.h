@@ -167,14 +167,14 @@ public:
 	bool err() const override;
 	void clearErr() override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
 
-	virtual bool flush() override;
+	bool flush() override;
 
-	virtual int64 pos() const override;
+	int64 pos() const override;
 
-	virtual bool seek(int64 offset, int whence = SEEK_SET) override;
-	virtual int64 size() const override;
+	bool seek(int64 offset, int whence = SEEK_SET) override;
+	int64 size() const override;
 };
 
 /** @} */

@@ -371,29 +371,29 @@ public:
 	 * Check for the existence of a file in the cache. A full match of relative path and file name
 	 * is needed for success.
 	 */
-	virtual bool hasFile(const Path &path) const;
+	bool hasFile(const Path &path) const override;
 
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
+	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const override;
 
 	/**
 	 * Return a list of all the files in the cache.
 	 */
-	virtual int listMembers(ArchiveMemberList &list) const;
+	int listMembers(ArchiveMemberList &list) const override;
 
 	/**
 	 * Get an ArchiveMember representation of the specified file. A full match of relative
 	 * path and file name is needed for success.
 	 */
-	virtual const ArchiveMemberPtr getMember(const Path &path) const;
+	const ArchiveMemberPtr getMember(const Path &path) const override;
 
 	/**
 	 * Open the specified file. A full match of relative path and file name is needed
 	 * for success.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
 };
 
 /** @} */
