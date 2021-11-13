@@ -94,7 +94,7 @@ void KIALog::clearFuture() {
 	while (currentIndex != _firstIndex) {
 		if (_entries[currentIndex].data) {
 			delete[] _entries[currentIndex].data;
-			_entries[currentIndex].data = 0;
+			_entries[currentIndex].data = nullptr;
 			_entries[currentIndex].dataSize = 0;
 		}
 		currentIndex = (currentIndex + 1) % kSize;

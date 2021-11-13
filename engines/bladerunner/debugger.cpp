@@ -748,7 +748,7 @@ const struct SceneList {
 	{ 4, "UG12", 84, 96 },   { 4, "UG13", 85, 97 },  { 4, "UG14", 86, 98 },   { 4, "UG15", 87, 99 },
 	{ 4, "UG16", 16, 100 },  { 4, "UG17", 88, 101 }, { 4, "UG18", 89, 102 },  { 4, "UG19", 90, 103 },
 
-	{ 0, NULL, 0, 0 }
+	{ 0, nullptr, 0, 0 }
 };
 
 // Auxialliary method to validate chapter, set and scene combination
@@ -1136,7 +1136,7 @@ const struct OverlayAndScenesVQAsList {
 	{ 6, "VKKASH", true },   { 6, "PS02ELEV", false },{ 6, "ESPER", false },   { 6, "VKDEKT", true },   { 6, "MA06ELEV", false },
 	{ 6, "VKBOB", true },    { 6, "SCORE", false },
 
-	{ 0, NULL, false }
+	{ 0, nullptr, false }
 };
 
 /**
