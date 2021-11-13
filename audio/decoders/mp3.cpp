@@ -544,7 +544,7 @@ SeekableAudioStream *makeMP3Stream(
 #endif
 	if (s && s->endOfData()) {
 		delete s;
-		return 0;
+		return nullptr;
 	} else {
 		return s;
 	}

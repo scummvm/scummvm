@@ -379,7 +379,7 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 	for (int i = 1; i <= numInstruments; ++i) {
 		Sample &sample = instruments[i].samples[0];
 		if (!sample.length) {
-			sample.data = 0;
+			sample.data = nullptr;
 		} else {
 			sample.data = new int16[sample.length + 1];
 			readSampleSint8(st, sample.length, sample.data);

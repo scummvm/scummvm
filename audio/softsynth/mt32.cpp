@@ -265,7 +265,7 @@ void MidiDriver_MT32::close() {
 	_isOpen = false;
 
 	// Detach the player callback handler
-	setTimerCallback(NULL, NULL);
+	setTimerCallback(nullptr, nullptr);
 	// Detach the mixer callback handler
 	_mixer->stopHandle(_mixerSoundHandle);
 
@@ -307,7 +307,7 @@ MidiChannel *MidiDriver_MT32::allocateChannel() {
 			return chan;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 MidiChannel *MidiDriver_MT32::getPercussionChannel() {

@@ -108,7 +108,7 @@ protected:
 
 public:
 	AdLibPart() {
-		_voice = 0;
+		_voice = nullptr;
 		_pitchBend = 0;
 		_pitchBendFactor = 2;
 		//_transposeEff = 0;
@@ -120,7 +120,7 @@ public:
 		_priEff = 0;
 		_pan = 64;
 
-		_owner = 0;
+		_owner = nullptr;
 		_allocated = false;
 		_channel = 0;
 
@@ -1303,8 +1303,8 @@ void AdLibPercussionChannel::noteOff(byte note) {
 }
 
 void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
-	const AdLibInstrument *inst = NULL;
-	const AdLibInstrument *sec  = NULL;
+	const AdLibInstrument *inst = nullptr;
+	const AdLibInstrument *sec  = nullptr;
 
 	// The custom instruments have priority over the default mapping
 	// We do not support custom instruments in OPL3 mode though.
@@ -1387,9 +1387,9 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	_opl3Mode = false;
 #endif
 
-	_regCache = 0;
+	_regCache = nullptr;
 #ifdef ENABLE_OPL3
-	_regCacheSecondary = 0;
+	_regCacheSecondary = nullptr;
 #endif
 
 	_timerCounter = 0;
@@ -1404,9 +1404,9 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	_percussion.init(this, 9);
 	_timerIncrease = 0xD69;
 	_timerThreshold = 0x411B;
-	_opl = 0;
-	_adlibTimerProc = 0;
-	_adlibTimerParam = 0;
+	_opl = nullptr;
+	_adlibTimerProc = nullptr;
+	_adlibTimerParam = nullptr;
 	_isOpen = false;
 }
 
@@ -1477,7 +1477,7 @@ void MidiDriver_ADLIB::close() {
 
 	// Turn off the OPL emulation
 	delete _opl;
-	_opl = 0;
+	_opl = nullptr;
 
 	free(_regCache);
 #ifdef ENABLE_OPL3
@@ -1592,7 +1592,7 @@ MidiChannel *MidiDriver_ADLIB::allocateChannel() {
 			return part;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // All the code brought over from IMuseAdLib
@@ -1678,7 +1678,7 @@ void MidiDriver_ADLIB::mcOff(AdLibVoice *voice) {
 		tmp->_next = voice->_next;
 	else
 		voice->_part->_voice = voice->_next;
-	voice->_part = NULL;
+	voice->_part = nullptr;
 }
 
 void MidiDriver_ADLIB::mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s11) {
@@ -1959,7 +1959,7 @@ void MidiDriver_ADLIB::partKeyOn(AdLibPart *part, const AdLibInstrument *instr, 
 }
 
 AdLibVoice *MidiDriver_ADLIB::allocateVoice(byte pri) {
-	AdLibVoice *ac, *best = NULL;
+	AdLibVoice *ac, *best = nullptr;
 	int i;
 
 	for (i = 0; i < 9; i++) {
@@ -1978,7 +1978,7 @@ AdLibVoice *MidiDriver_ADLIB::allocateVoice(byte pri) {
 
 	/* SCUMM V3 games don't have note priorities, first comes wins. */
 	if (_scummSmallHeader)
-		return NULL;
+		return nullptr;
 
 	if (best)
 		mcOff(best);
@@ -1989,7 +1989,7 @@ void MidiDriver_ADLIB::linkMc(AdLibPart *part, AdLibVoice *voice) {
 	voice->_part = part;
 	voice->_next = (AdLibVoice *)part->_voice;
 	part->_voice = voice;
-	voice->_prev = NULL;
+	voice->_prev = nullptr;
 
 	if (voice->_next)
 		voice->_next->_prev = voice;

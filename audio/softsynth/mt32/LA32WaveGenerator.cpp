@@ -269,7 +269,7 @@ void LA32WaveGenerator::initSynth(const bool useSawtoothWaveform, const Bit8u us
 	resonanceAmpSubtraction = (32 - resonance) << 10;
 	resAmpDecayFactor = Tables::getInstance().resAmpDecayFactor[resonance >> 2] << 2;
 
-	pcmWaveAddress = NULL;
+	pcmWaveAddress = nullptr;
 	active = true;
 }
 
@@ -330,7 +330,7 @@ bool LA32WaveGenerator::isActive() const {
 }
 
 bool LA32WaveGenerator::isPCMWave() const {
-	return pcmWaveAddress != NULL;
+	return pcmWaveAddress != nullptr;
 }
 
 Bit32u LA32WaveGenerator::getPCMInterpolationFactor() const {

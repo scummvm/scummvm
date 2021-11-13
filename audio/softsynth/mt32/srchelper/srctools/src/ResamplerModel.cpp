@@ -120,7 +120,7 @@ void ResamplerModel::freeResamplerModel(FloatSampleProvider &model, FloatSampleP
 	FloatSampleProvider *currentStage = &model;
 	while (currentStage != &source) {
 		CascadeStage *cascadeStage = dynamic_cast<CascadeStage *>(currentStage);
-		if (cascadeStage == NULL) return;
+		if (cascadeStage == nullptr) return;
 		FloatSampleProvider &prevStage = cascadeStage->source;
 		delete currentStage;
 		currentStage = &prevStage;

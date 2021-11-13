@@ -140,8 +140,8 @@ public:
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
-	MidiChannel *allocateChannel() override { return NULL; }
-	MidiChannel *getPercussionChannel() override { return NULL; }
+	MidiChannel *allocateChannel() override { return nullptr; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 
 	bool isOpen() const override { return _isOpen; }
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
@@ -182,7 +182,7 @@ private:
 		byte   currentActiveVoicesCount;
 
 		MidiChannelEntry() : currentPatchBank(0),
-							currentInstrumentPtr(NULL),
+							currentInstrumentPtr(nullptr),
 							currentPitchBender(MIDI_PITCH_BEND_DEFAULT),
 							currentPitchRange(0),
 							currentVoiceProtection(0),
@@ -214,7 +214,7 @@ private:
 
 		VirtualFmVoiceEntry(): inUse(false),
 								actualMidiChannel(0),
-								currentInstrumentPtr(NULL),
+								currentInstrumentPtr(nullptr),
 								isPhysical(false), physicalFmVoice(0),
 								currentPriority(0),
 								currentOriginalMidiNote(0),
@@ -288,7 +288,7 @@ private:
 };
 
 MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
-	: _masterVolume(15), _opl(0), _isOpen(false) {
+	: _masterVolume(15), _opl(nullptr), _isOpen(false) {
 
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
@@ -551,7 +551,7 @@ int16 MidiDriver_Miles_AdLib::searchFreePhysicalFmVoiceChannel() {
 }
 
 void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) {
-	const InstrumentEntry *instrumentPtr = NULL;
+	const InstrumentEntry *instrumentPtr = nullptr;
 
 	if (velocity == 0) {
 		noteOff(midiChannel, note);
@@ -1141,7 +1141,7 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 }
 
 void MidiDriver_Miles_AdLib::programChange(byte midiChannel, byte patchId) {
-	const InstrumentEntry *instrumentPtr = NULL;
+	const InstrumentEntry *instrumentPtr = nullptr;
 	byte patchBank = _midiChannels[midiChannel].currentPatchBank;
 
 	//warning("patch channel %d, patch %x, bank %x", midiChannel, patchId, patchBank);
@@ -1167,7 +1167,7 @@ const InstrumentEntry *MidiDriver_Miles_AdLib::searchInstrument(byte bankId, byt
 		instrumentPtr++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void MidiDriver_Miles_AdLib::pitchBendChange(byte midiChannel, byte parameter1, byte parameter2) {

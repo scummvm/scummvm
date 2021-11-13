@@ -39,7 +39,7 @@ static inline void *createDelegate(Synth &synth, double targetSampleRate, Sample
 	return new InternalResampler(synth, targetSampleRate, quality);
 #else
 	(void)synth, (void)targetSampleRate, (void)quality;
-	return NULL;
+	return nullptr;
 #endif
 }
 

@@ -148,11 +148,11 @@ ASFStream::Packet::~Packet() {
 }
 
 ASFStream::ASFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) : _stream(stream), _disposeAfterUse(disposeAfterUse) {
-	_extraData = 0;
-	_lastPacket = 0;
+	_extraData = nullptr;
+	_lastPacket = nullptr;
 	_curPacket = 0;
-	_codec = 0;
-	_curAudioStream = 0;
+	_codec = nullptr;
+	_curAudioStream = nullptr;
 	_curSequenceNumber = 1; // They always start at one
 
 	ASFGUID guid = ASFGUID(*_stream);
@@ -274,10 +274,10 @@ bool ASFStream::rewind() {
 
 	// Reset our packet counter
 	_curPacket = 0;
-	delete _lastPacket; _lastPacket = 0;
+	delete _lastPacket; _lastPacket = nullptr;
 
 	// Delete a stream if we have one
-	delete _curAudioStream; _curAudioStream = 0;
+	delete _curAudioStream; _curAudioStream = nullptr;
 
 	// Reset this too
 	_curSequenceNumber = 1;
@@ -381,7 +381,7 @@ Codec *ASFStream::createCodec() {
 		error("ASFStream::createAudioStream(): Unknown compression 0x%04x", _compression);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 AudioStream *ASFStream::createAudioStream() {
@@ -413,7 +413,7 @@ AudioStream *ASFStream::createAudioStream() {
 	if (_codec)
 		return _codec->decodeFrame(*stream);
 
-	return 0;
+	return nullptr;
 }
 
 int ASFStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -425,7 +425,7 @@ int ASFStream::readBuffer(int16 *buffer, const int numSamples) {
 
 			if (_curAudioStream->endOfData()) {
 				delete _curAudioStream;
-				_curAudioStream = 0;
+				_curAudioStream = nullptr;
 			}
 		}
 
@@ -452,7 +452,7 @@ SeekableAudioStream *makeASFStream(
 
 	if (s && s->endOfData()) {
 		delete s;
-		return 0;
+		return nullptr;
 	}
 
 	return s;

@@ -218,11 +218,11 @@ int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	fluid_set_log_function(FLUID_PANIC, logHandler, NULL);
-	fluid_set_log_function(FLUID_ERR, logHandler, NULL);
-	fluid_set_log_function(FLUID_WARN, logHandler, NULL);
-	fluid_set_log_function(FLUID_INFO, logHandler, NULL);
-	fluid_set_log_function(FLUID_DBG, logHandler, NULL);
+	fluid_set_log_function(FLUID_PANIC, logHandler, nullptr);
+	fluid_set_log_function(FLUID_ERR, logHandler, nullptr);
+	fluid_set_log_function(FLUID_WARN, logHandler, nullptr);
+	fluid_set_log_function(FLUID_INFO, logHandler, nullptr);
+	fluid_set_log_function(FLUID_DBG, logHandler, nullptr);
 
 #if FS_API_VERSION >= 0x0200
 	// When provided with in-memory SoundFont data, only use the configured
@@ -439,7 +439,7 @@ MidiChannel *MidiDriver_FluidSynth::allocateChannel() {
 		if (i != 9 && _midiChannels[i].allocate())
 			return &_midiChannels[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {

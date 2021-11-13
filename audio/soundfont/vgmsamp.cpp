@@ -66,7 +66,7 @@ double VGMSamp::GetCompressionRatio() {
 VGMSampColl::VGMSampColl(RawFile *rawfile, uint32 offset, uint32 length,
 						 Common::String theName)
 		: VGMFile(rawfile, offset, length, theName),
-		  _parInstrSet(NULL),
+		  _parInstrSet(nullptr),
 		  _bLoaded(false),
 		  _sampDataOffset(0) {
 	AddContainer<VGMSamp>(_samples);

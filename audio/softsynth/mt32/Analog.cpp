@@ -239,7 +239,7 @@ public:
 
 	template <class Sample>
 	void produceOutput(Sample *outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, Bit32u outLength) {
-		if (outStream == NULL) {
+		if (outStream == nullptr) {
 			leftChannelLPF.addPositionIncrement(outLength);
 			rightChannelLPF.addPositionIncrement(outLength);
 			return;
@@ -276,7 +276,7 @@ Analog *Analog::createAnalog(const AnalogOutputMode mode, const bool oldMT32Anal
 	default:
 		break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 template<>

@@ -49,7 +49,7 @@ void LA32FloatWaveGenerator::initSynth(const bool useSawtoothWaveform, const Bit
 	wavePos = 0.0f;
 	lastFreq = 0.0f;
 
-	pcmWaveAddress = NULL;
+	pcmWaveAddress = nullptr;
 	active = true;
 }
 
@@ -278,7 +278,7 @@ bool LA32FloatWaveGenerator::isActive() const {
 }
 
 bool LA32FloatWaveGenerator::isPCMWave() const {
-	return pcmWaveAddress != NULL;
+	return pcmWaveAddress != nullptr;
 }
 
 void LA32FloatPartialPair::init(const bool useRingModulated, const bool useMixed) {

@@ -92,7 +92,7 @@ const char *MidiDriver::getErrorName(int error_code) {
 
 MidiDriver_MPU401::MidiDriver_MPU401() :
 	MidiDriver(),
-	_timer_proc(0),
+	_timer_proc(nullptr),
 	_channel_mask(0xFFFF) // Permit all 16 channels by default
 {
 
@@ -108,7 +108,7 @@ MidiDriver_MPU401::~MidiDriver_MPU401() {
 void MidiDriver_MPU401::close() {
 	if (_timer_proc) {
 		g_system->getTimerManager()->removeTimerProc(_timer_proc);
-		_timer_proc = 0;
+		_timer_proc = nullptr;
 	}
 	if (isOpen()) {
 		for (int i = 0; i < 16; ++i)
@@ -140,7 +140,7 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 			return chan;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MidiDriver_MPU401::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {

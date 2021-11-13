@@ -50,7 +50,7 @@ namespace MAME {
 OPL::~OPL() {
 	stop();
 	MAME::OPLDestroy(_opl);
-	_opl = 0;
+	_opl = nullptr;
 }
 
 bool OPL::init() {
@@ -61,7 +61,7 @@ bool OPL::init() {
 
 	_opl = MAME::makeAdLibOPL(g_system->getMixer()->getOutputRate());
 
-	return (_opl != 0);
+	return (_opl != nullptr);
 }
 
 void OPL::reset() {
@@ -248,7 +248,7 @@ static int RATE_0[16]=
 static int num_lock = 0;
 
 /* work table */
-static void *cur_chip = NULL;	/* current chip point */
+static void *cur_chip = nullptr;	/* current chip point */
 /* currenct chip state */
 /* static OPLSAMPLE  *bufL,*bufR; */
 static OPL_CH *S_CH;
@@ -681,22 +681,22 @@ static int OPLOpenTable(void) {
 #else
 
 	/* allocate dynamic tables */
-	if ((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
+	if ((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == nullptr)
 		return 0;
 
-	if ((SIN_TABLE = (int **)malloc(SIN_ENT * 4 * sizeof(int *))) == NULL) {
+	if ((SIN_TABLE = (int **)malloc(SIN_ENT * 4 * sizeof(int *))) == nullptr) {
 		free(TL_TABLE);
 		return 0;
 	}
 #endif
 
-	if ((AMS_TABLE = (int *)malloc(AMS_ENT * 2 * sizeof(int))) == NULL) {
+	if ((AMS_TABLE = (int *)malloc(AMS_ENT * 2 * sizeof(int))) == nullptr) {
 		free(TL_TABLE);
 		free(SIN_TABLE);
 		return 0;
 	}
 
-	if ((VIB_TABLE = (int *)malloc(VIB_ENT * 2 * sizeof(int))) == NULL) {
+	if ((VIB_TABLE = (int *)malloc(VIB_ENT * 2 * sizeof(int))) == nullptr) {
 		free(TL_TABLE);
 		free(SIN_TABLE);
 		free(AMS_TABLE);
@@ -1010,7 +1010,7 @@ static int OPL_LockTable(void) {
 	if (num_lock>1)
 		return 0;
 	/* first time */
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	/* allocate total level table (128kb space) */
 	if (!OPLOpenTable()) {
 		num_lock--;
@@ -1025,7 +1025,7 @@ static void OPL_UnLockTable(void) {
 	if (num_lock)
 		return;
 	/* last time */
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	OPLCloseTable();
 }
 
@@ -1122,15 +1122,15 @@ FM_OPL *OPLCreate(int type, int clock, int rate) {
 	int max_ch = 9; /* normaly 9 channels */
 
 	if (OPL_LockTable() == -1)
-		return NULL;
+		return nullptr;
 	/* allocate OPL state space */
 	state_size  = sizeof(FM_OPL);
 	state_size += sizeof(OPL_CH) * max_ch;
 
 	/* allocate memory block */
 	ptr = (char *)calloc(state_size, 1);
-	if (ptr == NULL)
-		return NULL;
+	if (ptr == nullptr)
+		return nullptr;
 
 	/* clear */
 	memset(ptr, 0, state_size);

@@ -42,7 +42,7 @@ static inline void configureSystemLocale() {
 
 using std::ios_base;
 
-FileStream::FileStream() : ifsp(*new std::ifstream), data(NULL), size(0)
+FileStream::FileStream() : ifsp(*new std::ifstream), data(nullptr), size(0)
 {}
 
 FileStream::~FileStream() {
@@ -64,24 +64,24 @@ size_t FileStream::getSize() {
 }
 
 const Bit8u *FileStream::getData() {
-	if (data != NULL) {
+	if (data != nullptr) {
 		return data;
 	}
 	if (!ifsp.is_open()) {
-		return NULL;
+		return nullptr;
 	}
 	if (getSize() == 0) {
-		return NULL;
+		return nullptr;
 	}
 	Bit8u *fileData = new Bit8u[size];
-	if (fileData == NULL) {
-		return NULL;
+	if (fileData == nullptr) {
+		return nullptr;
 	}
 	ifsp.seekg(0);
 	ifsp.read(reinterpret_cast<char *>(fileData), std::streamsize(size));
 	if (size_t(ifsp.tellg()) != size) {
 		delete[] fileData;
-		return NULL;
+		return nullptr;
 	}
 	data = fileData;
 	close();

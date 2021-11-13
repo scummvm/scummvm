@@ -95,7 +95,7 @@ public:
 	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, int8 source = -1) :
 			_callbackProc(proc),
 			_callbackData(data),
-			_newTimbreListDriver(0),
+			_newTimbreListDriver(nullptr),
 			_source(source),
 			_loopCount(-1) {
 		memset(_loop, 0, sizeof(_loop));
@@ -130,14 +130,14 @@ bool MidiParser_XMIDI::hasJumpIndex(uint8 index) {
 	if (_activeTrack >= _numTracks)
 		return false;
 
-	return index < MAXIMUM_TRACK_BRANCHES && _trackBranches[_activeTrack][index] != 0;
+	return index < MAXIMUM_TRACK_BRANCHES && _trackBranches[_activeTrack][index] != nullptr;
 }
 
 bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 	if (_activeTrack >= _numTracks || _pause)
 		return false;
 
-	if (index >= MAXIMUM_TRACK_BRANCHES || _trackBranches[_activeTrack][index] == 0) {
+	if (index >= MAXIMUM_TRACK_BRANCHES || _trackBranches[_activeTrack][index] == nullptr) {
 		warning("MidiParser-XMIDI: jumpToIndex called with invalid sequence branch index %x", index);
 		return false;
 	}

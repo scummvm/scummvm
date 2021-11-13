@@ -36,7 +36,7 @@ namespace Audio {
 RewindableAudioStream *make3DO_ADP4AudioStream(Common::SeekableReadStream *stream, uint16 sampleRate, bool stereo, uint32 *audioLengthMSecsPtr, DisposeAfterUse::Flag disposeAfterUse, audio_3DO_ADP4_PersistentSpace *persistentSpace) {
 	if (stereo) {
 		warning("make3DO_ADP4Stream(): stereo currently not supported");
-		return 0;
+		return nullptr;
 	}
 
 	if (audioLengthMSecsPtr) {
@@ -104,7 +104,7 @@ int16 Audio3DO_ADP4_Stream::decodeSample(byte compressedNibble) {
 // Writes the requested amount (or less) of samples into buffer and returns the amount of samples, that got written
 int Audio3DO_ADP4_Stream::readBuffer(int16 *buffer, const int numSamples) {
 	int8  byteCache[AUDIO_3DO_CACHE_SIZE];
-	int8 *byteCachePtr = NULL;
+	int8 *byteCachePtr = nullptr;
 	int   byteCacheSize = 0;
 	int   requestedBytesLeft = 0;
 	int   decodedSamplesCount = 0;
@@ -220,7 +220,7 @@ bool Audio3DO_SDX2_Stream::rewind() {
 // Writes the requested amount (or less) of samples into buffer and returns the amount of samples, that got written
 int Audio3DO_SDX2_Stream::readBuffer(int16 *buffer, const int numSamples) {
 	int8  byteCache[AUDIO_3DO_CACHE_SIZE];
-	int8 *byteCachePtr = NULL;
+	int8 *byteCachePtr = nullptr;
 	int   byteCacheSize = 0;
 	int   requestedBytesLeft = numSamples; // 1 byte per 16-bit sample
 	int   decodedSamplesCount = 0;
@@ -323,7 +323,7 @@ RewindableAudioStream *make3DO_SDX2AudioStream(Common::SeekableReadStream *strea
 	if (stereo) {
 		if (stream->size() & 1) {
 			warning("make3DO_SDX2Stream(): stereo data is uneven size");
-			return 0;
+			return nullptr;
 		}
 	}
 

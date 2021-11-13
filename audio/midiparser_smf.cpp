@@ -49,7 +49,7 @@ protected:
 	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
 
 public:
-	MidiParser_SMF(int8 source = -1) : _buffer(0), _malformedPitchBends(false), _source(source) { }
+	MidiParser_SMF(int8 source = -1) : _buffer(nullptr), _malformedPitchBends(false), _source(source) { }
 	~MidiParser_SMF();
 
 	bool loadMusic(byte *data, uint32 size) override;
@@ -247,7 +247,7 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 	// If this is a Type 1 MIDI, we need to now compress
 	// our tracks down into a single Type 0 track.
 	free(_buffer);
-	_buffer = 0;
+	_buffer = nullptr;
 
 	if (midiType == 1) {
 		// FIXME: Doubled the buffer size to prevent crashes with the
@@ -345,7 +345,7 @@ void MidiParser_SMF::compressToType0() {
 			// META
 			event = *(pos++);
 			if (event == 0x2F && activeTracks > 1) {
-				trackPos[bestTrack] = 0;
+				trackPos[bestTrack] = nullptr;
 				write = false;
 			} else {
 				pos2 = pos;
@@ -356,7 +356,7 @@ void MidiParser_SMF::compressToType0() {
 				--activeTracks;
 		} else {
 			warning("Bad MIDI command %02X", (int)event);
-			trackPos[bestTrack] = 0;
+			trackPos[bestTrack] = nullptr;
 		}
 
 		// Update all tracks' deltas

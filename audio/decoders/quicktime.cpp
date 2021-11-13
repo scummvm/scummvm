@@ -168,7 +168,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 		} else {
 			warning("Unsupported QuickTime STSD audio version %d", stsdVersion);
 			delete entry;
-			return 0;
+			return nullptr;
 		}
 
 		// Version 0 files don't have some variables set, so we'll do that here
@@ -183,7 +183,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 		return entry;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 QuickTimeAudioDecoder::QuickTimeAudioTrack::QuickTimeAudioTrack(QuickTimeAudioDecoder *decoder, Common::QuickTimeParser::Track *parentTrack) {
@@ -582,7 +582,7 @@ QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser:
 	_samplesPerFrame = 0;
 	_bytesPerFrame = 0;
 	_bitsPerSample = 0;
-	_codec = 0;
+	_codec = nullptr;
 }
 
 QuickTimeAudioDecoder::AudioSampleDesc::~AudioSampleDesc() {
@@ -623,7 +623,7 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 
 AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::SeekableReadStream *stream) const {
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	if (_codec) {
 		// If we've loaded a codec, make sure we use first
@@ -650,11 +650,11 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 	}
 
 	error("Unsupported audio codec");
-	return NULL;
+	return nullptr;
 }
 
 void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
-	delete _codec; _codec = 0;
+	delete _codec; _codec = nullptr;
 
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):
@@ -716,7 +716,7 @@ SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {
 
 	if (!audioStream->openFromFile(filename)) {
 		delete audioStream;
-		return 0;
+		return nullptr;
 	}
 
 	return audioStream;
@@ -727,7 +727,7 @@ SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, Dis
 
 	if (!audioStream->openFromStream(stream, disposeAfterUse)) {
 		delete audioStream;
-		return 0;
+		return nullptr;
 	}
 
 	return audioStream;

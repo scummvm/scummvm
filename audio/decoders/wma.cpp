@@ -71,14 +71,14 @@ WMACodec::WMACodec(int version, uint32 sampleRate, uint8 channels,
 	_resetBlockLengths(true), _curFrame(0), _frameLen(0), _frameLenBits(0),
 	_blockSizeCount(0), _framePos(0), _curBlock(0), _blockLen(0), _blockLenBits(0),
 	_nextBlockLenBits(0), _prevBlockLenBits(0), _byteOffsetBits(0),
-	_hgainHuffman(0), _expHuffman(0), _lastSuperframeLen(0), _lastBitoffset(0) {
+	_hgainHuffman(nullptr), _expHuffman(nullptr), _lastSuperframeLen(0), _lastBitoffset(0) {
 
 	for (int i = 0; i < 2; i++) {
-		_coefHuffman[i] = 0;
+		_coefHuffman[i] = nullptr;
 
-		_coefHuffmanRunTable  [i] = 0;
-		_coefHuffmanLevelTable[i] = 0;
-		_coefHuffmanIntTable  [i] = 0;
+		_coefHuffmanRunTable  [i] = nullptr;
+		_coefHuffmanLevelTable[i] = nullptr;
+		_coefHuffmanIntTable  [i] = nullptr;
 	}
 
 	if ((_version != 1) && (_version != 2))
@@ -339,7 +339,7 @@ void WMACodec::evalMDCTScales(float highFreq) {
 
 		} else {
 			// Hardcoded tables
-			const uint8 *table = 0;
+			const uint8 *table = nullptr;
 
 			int t = _frameLenBits - kBlockBitsMin - k;
 			if (t < 3) {
@@ -544,7 +544,7 @@ void WMACodec::initLSPToCurve() {
 AudioStream *WMACodec::decodeFrame(Common::SeekableReadStream &data) {
 	Common::SeekableReadStream *stream = decodeSuperFrame(data);
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	return makeRawStream(stream, _sampleRate, _audioFlags, DisposeAfterUse::YES);
 }
@@ -553,7 +553,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 	uint32 size = data.size();
 	if (size < _blockAlign) {
 		warning("WMACodec::decodeSuperFrame(): size < _blockAlign");
-		return 0;
+		return nullptr;
 	}
 
 	if (_blockAlign)
@@ -562,7 +562,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 	Common::BitStream8MSB bits(data);
 
 	int    outputDataSize = 0;
-	int16 *outputData     = 0;
+	int16 *outputData     = nullptr;
 
 	_curFrame = 0;
 
@@ -580,7 +580,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 			_lastSuperframeLen = 0;
 			_lastBitoffset     = 0;
 
-			return 0;
+			return nullptr;
 		}
 
 		// Number of frames in this superframe + overhang from the last superframe
@@ -636,7 +636,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 		// Decode the frames
 		for (int i = 0; i < newFrameCount; i++, _curFrame++)
 			if (!decodeFrame(bits, outputData))
-				return 0;
+				return nullptr;
 
 		// Check if we've got new overhang data
 		int remainingBits = bits.size() - bits.pos();
@@ -669,14 +669,14 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 		// Decode the frame
 		if (!decodeFrame(bits, outputData)) {
 			delete[] outputData;
-			return 0;
+			return nullptr;
 		}
 	}
 
 	// And return our PCM output data as a stream, if available
 
 	if (!outputData)
-		return 0;
+		return nullptr;
 
 	return new Common::MemoryReadStream((byte *) outputData, outputDataSize * 2, DisposeAfterUse::YES);
 }

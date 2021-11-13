@@ -47,7 +47,7 @@ MusicDevices TownsEmuMusicPlugin::getDevices() const {
 }
 
 Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = 0;
+	*mididriver = nullptr;
 	return Common::kUnknownError;
 }
 
@@ -72,7 +72,7 @@ MusicDevices PC98EmuMusicPlugin::getDevices() const {
 }
 
 Common::Error PC98EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = 0;
+	*mididriver = nullptr;
 	return Common::kUnknownError;
 }
 
@@ -97,7 +97,7 @@ MusicDevices SegaCDSoundPlugin::getDevices() const {
 }
 
 Common::Error SegaCDSoundPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = 0;
+	*mididriver = nullptr;
 	return Common::kUnknownError;
 }
 

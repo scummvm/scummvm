@@ -44,8 +44,8 @@ MidiDriver_Multisource::MidiDriver_Multisource() :
 		_userMute(false),
 		_timerRate(0),
 		_fadeDelay(0),
-		_timer_param(0),
-		_timer_proc(0) {
+		_timer_param(nullptr),
+		_timer_proc(nullptr) {
 	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
 		// Default source type: 0 = music, 1+ = SFX
 		_sources[i].type = (i == 0 ? SOURCE_TYPE_MUSIC : SOURCE_TYPE_SFX);

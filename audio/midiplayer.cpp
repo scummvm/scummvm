@@ -28,9 +28,9 @@
 namespace Audio {
 
 MidiPlayer::MidiPlayer() :
-	_driver(0),
-	_parser(0),
-	_midiData(0),
+	_driver(nullptr),
+	_parser(nullptr),
+	_midiData(nullptr),
 	_isLooping(false),
 	_isPlaying(false),
 	_masterVolume(0),
@@ -51,10 +51,10 @@ MidiPlayer::~MidiPlayer() {
 
 	// Unhook & unload the driver
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
-		_driver = 0;
+		_driver = nullptr;
 	}
 }
 
@@ -170,14 +170,14 @@ void MidiPlayer::stop() {
 		// but unloadMusic also does. To suppress double notes-off,
 		// we reset the midi driver of _parser before deleting it.
 		// This smells very fishy, in any case.
-		_parser->setMidiDriver(0);
+		_parser->setMidiDriver(nullptr);
 
 		delete _parser;
-		_parser = NULL;
+		_parser = nullptr;
 	}
 
 	free(_midiData);
-	_midiData = 0;
+	_midiData = nullptr;
 }
 
 void MidiPlayer::pause() {

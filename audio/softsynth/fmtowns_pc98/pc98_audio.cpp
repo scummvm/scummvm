@@ -92,9 +92,9 @@ PC98AudioCoreInternal::~PC98AudioCoreInternal() {
 
 PC98AudioCoreInternal *PC98AudioCoreInternal::addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type) {
 	_refCount++;
-	if (_refCount == 1 && _refInstance == 0)
+	if (_refCount == 1 && _refInstance == nullptr)
 		_refInstance = new PC98AudioCoreInternal(mixer, owner, driver, type);
-	else if (_refCount < 2 || _refInstance == 0)
+	else if (_refCount < 2 || _refInstance == nullptr)
 		error("PC98AudioCoreInternal::addNewRef(): Internal reference management failure");
 	else if (!_refInstance->assignPluginDriver(owner, driver))
 		error("PC98AudioCoreInternal::addNewRef(): Plugin driver conflict");
@@ -113,7 +113,7 @@ void PC98AudioCoreInternal::releaseRef(PC98AudioCore *owner) {
 			_refInstance->removePluginDriver(owner);
 	} else {
 		delete _refInstance;
-		_refInstance = 0;
+		_refInstance = nullptr;
 	}
 }
 
@@ -216,7 +216,7 @@ bool PC98AudioCoreInternal::assignPluginDriver(PC98AudioCore *owner, PC98AudioPl
 void PC98AudioCoreInternal::removePluginDriver(PC98AudioCore *owner) {
 	Common::StackLock lock(_mutex);
 	if (_drvOwner == owner)
-		_drv = 0;
+		_drv = nullptr;
 }
 
 void PC98AudioCoreInternal::timerCallbackA() {
@@ -229,7 +229,7 @@ void PC98AudioCoreInternal::timerCallbackB() {
 		_drv->timerCallbackB();
 }
 
-PC98AudioCoreInternal *PC98AudioCoreInternal::_refInstance = 0;
+PC98AudioCoreInternal *PC98AudioCoreInternal::_refInstance = nullptr;
 
 int PC98AudioCoreInternal::_refCount = 0;
 
@@ -239,7 +239,7 @@ PC98AudioCore::PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver,
 
 PC98AudioCore::~PC98AudioCore() {
 	PC98AudioCoreInternal::releaseRef(this);
-	_internal = 0;
+	_internal = nullptr;
 }
 
 bool PC98AudioCore::init() {

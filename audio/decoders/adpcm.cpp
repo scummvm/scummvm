@@ -607,7 +607,7 @@ PacketizedAudioStream *makePacketizedADPCMStream(ADPCMType type, int rate, int c
 	case kADPCMOki:
 	case kADPCMXA:
 	case kADPCMDVI:
-		return 0;
+		return nullptr;
 	default:
 		break;
 	}

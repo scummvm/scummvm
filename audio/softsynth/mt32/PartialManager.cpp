@@ -46,7 +46,7 @@ PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 PartialManager::~PartialManager(void) {
 	for (unsigned int i = 0; i < synth->getPartialCount(); i++) {
 		delete partialTable[i];
-		if (freePolys[i] != NULL) delete freePolys[i];
+		if (freePolys[i] != nullptr) delete freePolys[i];
 	}
 	delete[] partialTable;
 	delete[] inactivePartials;
@@ -97,7 +97,7 @@ Partial *PartialManager::allocPartial(int partNum) {
 		const Partial *partial = partialTable[i];
 		synth->printDebug("[Partial %d]: activation=%d, owner part=%d\n", i, partial->isActive(), partial->getOwnerPart());
 	}
-	return NULL;
+	return nullptr;
 }
 
 unsigned int PartialManager::getFreePartialCount() {
@@ -257,7 +257,7 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 
 const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 	if (partialNum > synth->getPartialCount() - 1) {
-		return NULL;
+		return nullptr;
 	}
 	return partialTable[partialNum];
 }
@@ -265,12 +265,12 @@ const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 Poly *PartialManager::assignPolyToPart(Part *part) {
 	if (firstFreePolyIndex < synth->getPartialCount()) {
 		Poly *poly = freePolys[firstFreePolyIndex];
-		freePolys[firstFreePolyIndex] = NULL;
+		freePolys[firstFreePolyIndex] = nullptr;
 		firstFreePolyIndex++;
 		poly->setPart(part);
 		return poly;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void PartialManager::polyFreed(Poly *poly) {
@@ -279,7 +279,7 @@ void PartialManager::polyFreed(Poly *poly) {
 		for (Bit32u partNum = 0; partNum < 9; partNum++) {
 			const Poly *activePoly = synth->getPart(partNum)->getFirstActivePoly();
 			Bit32u polyCount = 0;
-			while (activePoly != NULL) {
+			while (activePoly != nullptr) {
 				activePoly = activePoly->getNext();
 				polyCount++;
 			}
@@ -289,7 +289,7 @@ void PartialManager::polyFreed(Poly *poly) {
 		firstFreePolyIndex--;
 		freePolys[firstFreePolyIndex] = poly;
 	}
-	poly->setPart(NULL);
+	poly->setPart(nullptr);
 }
 
 void PartialManager::partialDeactivated(int partialIndex) {

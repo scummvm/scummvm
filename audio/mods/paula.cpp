@@ -73,8 +73,8 @@ Paula::~Paula() {
 void Paula::clearVoice(byte voice) {
 	assert(voice < NUM_VOICES);
 
-	_voice[voice].data = 0;
-	_voice[voice].dataRepeat = 0;
+	_voice[voice].data = nullptr;
+	_voice[voice].dataRepeat = nullptr;
 	_voice[voice].length = 0;
 	_voice[voice].lengthRepeat = 0;
 	_voice[voice].period = 0;

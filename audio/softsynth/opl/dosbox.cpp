@@ -149,7 +149,7 @@ uint8 Chip::read() {
 	return ret;
 }
 
-OPL::OPL(Config::OplType type) : _type(type), _rate(0), _emulator(0) {
+OPL::OPL(Config::OplType type) : _type(type), _rate(0), _emulator(nullptr) {
 }
 
 OPL::~OPL() {
@@ -159,7 +159,7 @@ OPL::~OPL() {
 
 void OPL::free() {
 	delete _emulator;
-	_emulator = 0;
+	_emulator = nullptr;
 }
 
 bool OPL::init() {

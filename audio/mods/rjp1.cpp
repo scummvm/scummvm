@@ -308,7 +308,7 @@ bool Rjp1::executeSongSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *
 			} else {
 				code = offs[0];
 				if (code == 0) {
-					p = 0;
+					p = nullptr;
 					channel->active = false;
 					_vars.activeChannelsMask &= ~(1 << _vars.currentChannel);
 					loop = false;
@@ -581,7 +581,7 @@ AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::Seekab
 		return stream;
 	}
 	delete stream;
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Audio

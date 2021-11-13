@@ -134,11 +134,11 @@ private:
 	static int _refCount;
 };
 
-SegaAudioInterfaceInternal *SegaAudioInterfaceInternal::_refInstance = 0;
+SegaAudioInterfaceInternal *SegaAudioInterfaceInternal::_refInstance = nullptr;
 int SegaAudioInterfaceInternal::_refCount = 0;
 
 SegaAudioInterfaceInternal::SegaAudioInterfaceInternal(Audio::Mixer *mixer, SegaAudioInterface *owner, SegaAudioPluginDriver *driver) :TownsPC98_FmSynth(mixer, TownsPC98_FmSynth::kTypeTowns),
-	_drv(driver), _drvOwner(owner),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _pcmBanks(0), _pcmDev(0), _psgDev(0), _pcmChan(0), _ready(false) {
+	_drv(driver), _drvOwner(owner),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _pcmBanks(nullptr), _pcmDev(nullptr), _psgDev(nullptr), _pcmChan(nullptr), _ready(false) {
 }
 
 SegaAudioInterfaceInternal::~SegaAudioInterfaceInternal() {
@@ -158,9 +158,9 @@ SegaAudioInterfaceInternal::~SegaAudioInterfaceInternal() {
 
 SegaAudioInterfaceInternal *SegaAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, SegaAudioInterface *owner, SegaAudioPluginDriver *driver) {
 	_refCount++;
-	if (_refCount == 1 && _refInstance == 0)
+	if (_refCount == 1 && _refInstance == nullptr)
 		_refInstance = new SegaAudioInterfaceInternal(mixer, owner, driver);
-	else if (_refCount < 2 || _refInstance == 0)
+	else if (_refCount < 2 || _refInstance == nullptr)
 		error("SegaAudioInterfaceInternal::addNewRef(): Internal reference management failure");
 	else if (!_refInstance->assignPluginDriver(owner, driver))
 		error("SegaAudioInterfaceInternal::addNewRef(): Plugin driver conflict");
@@ -179,7 +179,7 @@ void SegaAudioInterfaceInternal::releaseRef(SegaAudioInterface *owner) {
 			_refInstance->removePluginDriver(owner);
 	} else {
 		delete _refInstance;
-		_refInstance = 0;
+		_refInstance = nullptr;
 	}
 }
 
@@ -300,7 +300,7 @@ bool SegaAudioInterfaceInternal::assignPluginDriver(SegaAudioInterface *owner, S
 void SegaAudioInterfaceInternal::removePluginDriver(SegaAudioInterface *owner) {
 	Common::StackLock lock(_mutex);
 	if (_drvOwner == owner)
-		_drv = 0;
+		_drv = nullptr;
 }
 
 void SegaAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
@@ -432,7 +432,7 @@ SegaAudioInterface::SegaAudioInterface(Audio::Mixer *mixer, SegaAudioPluginDrive
 
 SegaAudioInterface::~SegaAudioInterface() {
 	SegaAudioInterfaceInternal::releaseRef(this);
-	_internal = 0;
+	_internal = nullptr;
 }
 
 bool SegaAudioInterface::init() {

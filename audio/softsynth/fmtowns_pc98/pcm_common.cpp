@@ -23,7 +23,7 @@
 #include "audio/softsynth/fmtowns_pc98/pcm_common.h"
 #include "audio/mixer.h"
 
-PCMChannel_Base::PCMChannel_Base() : _vol(0), _data(0), _dataEnd(0), _loopLen(0), _pos(0), _loopStart(0), _step(0), _panLeft(7), _panRight(7), _activeOutput(false)  {
+PCMChannel_Base::PCMChannel_Base() : _vol(0), _data(nullptr), _dataEnd(0), _loopLen(0), _pos(0), _loopStart(0), _step(0), _panLeft(7), _panRight(7), _activeOutput(false)  {
 }
 
 PCMChannel_Base::~PCMChannel_Base() {
@@ -32,7 +32,7 @@ PCMChannel_Base::~PCMChannel_Base() {
 
 void PCMChannel_Base::clear() {
 	_vol = 0;
-	_data = 0;
+	_data = nullptr;
 	_dataEnd = 0;
 	_loopLen = 0;
 	_pos = 0;

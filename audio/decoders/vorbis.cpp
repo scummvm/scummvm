@@ -125,7 +125,7 @@ VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 	_length(0, 1000),
 	_bufferEnd(ARRAYEND(_buffer)) {
 
-	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
+	int res = ov_open_callbacks(inStream, &_ovFile, nullptr, 0, g_stream_wrap);
 	if (res < 0) {
 		warning("Could not create Vorbis stream (%d)", res);
 		_pos = _bufferEnd;
@@ -206,7 +206,7 @@ bool VorbisStream::refill() {
 						0,
 						2,	// 16 bit
 						1,	// signed
-						NULL);
+						nullptr);
 #endif
 #endif
 		if (result == OV_HOLE) {
@@ -246,7 +246,7 @@ SeekableAudioStream *makeVorbisStream(
 	SeekableAudioStream *s = new VorbisStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;
-		return 0;
+		return nullptr;
 	} else {
 		return s;
 	}
