@@ -154,7 +154,7 @@ void CmdState::init() {
 }
 
 Command::Command(QueenEngine *vm)
-	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL), _vm(vm) {
+	: _cmdList(nullptr), _cmdArea(nullptr), _cmdObject(nullptr), _cmdInventory(nullptr), _cmdGameState(nullptr), _vm(vm) {
 	_cmdText = CmdText::makeCmdTextInstance(CmdText::COMMAND_Y_POS, vm);
 }
 
@@ -183,7 +183,7 @@ void Command::executeCurrentAction() {
 	if (_mouseKey == Input::MOUSE_RBUTTON && _state.subject[0] > 0) {
 
 		ObjectData *od = _vm->logic()->objectData(_state.subject[0]);
-		if (od == NULL || od->name <= 0) {
+		if (od == nullptr || od->name <= 0) {
 			cleanupCurrentAction();
 			return;
 		}
@@ -400,7 +400,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 }
 
 ObjectData *Command::findObjectData(uint16 objRoomNum) const {
-	ObjectData *od = NULL;
+	ObjectData *od = nullptr;
 	if (objRoomNum != 0) {
 		objRoomNum += _vm->logic()->currentRoomData();
 		od = _vm->logic()->objectData(objRoomNum);
@@ -409,7 +409,7 @@ ObjectData *Command::findObjectData(uint16 objRoomNum) const {
 }
 
 ItemData *Command::findItemData(Verb invNum) const {
-	ItemData *id = NULL;
+	ItemData *id = nullptr;
 	uint16 itNum = _vm->logic()->findInventoryItem(invNum - VERB_INV_FIRST);
 	if (itNum != 0) {
 		id = _vm->logic()->itemData(itNum);
@@ -542,7 +542,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 			// because this is an exit object, see if there is
 			// a walk off point and set (x,y) accordingly
 			WalkOffData *wod = _vm->logic()->walkOffPointForObject(objNum);
-			if (wod != NULL) {
+			if (wod != nullptr) {
 				x = wod->x;
 				y = wod->y;
 			}
@@ -634,7 +634,7 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 
 void Command::grabSelectedItem() {
 	ItemData *id = findItemData(_state.verb);
-	if (id == NULL || id->name <= 0) {
+	if (id == nullptr || id->name <= 0) {
 		return;
 	}
 
@@ -690,7 +690,7 @@ void Command::grabSelectedItem() {
 
 void Command::grabSelectedNoun() {
 	ObjectData *od = findObjectData(_state.noun);
-	if (od == NULL || od->name <= 0) {
+	if (od == nullptr || od->name <= 0) {
 		// selected a turned off object, so just walk
 		clear(true);
 		_state.noun = 0;
@@ -1274,7 +1274,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	}
 
 	ObjectData *od = findObjectData(_state.noun);
-	if (od == NULL || od->name <= 0) {
+	if (od == nullptr || od->name <= 0) {
 		_state.oldNoun = _state.noun;
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		if (_state.action != VERB_NONE) {
@@ -1307,7 +1307,7 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 
 		if (isVerbInv(_state.verb)) {
 			ItemData *id = findItemData(_state.verb);
-			if (id != NULL && id->name > 0) {
+			if (id != nullptr && id->name > 0) {
 				if (_state.action == VERB_NONE) {
 					Verb v = State::findDefaultVerb(id->state);
 					_cmdText->setVerb((v == VERB_NONE) ? VERB_LOOK_AT : v);

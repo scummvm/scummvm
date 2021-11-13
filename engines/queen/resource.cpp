@@ -59,7 +59,7 @@ static int compareResourceEntry(const void *a, const void *b) {
 }
 
 Resource::Resource()
-	: _resourceEntries(0), _resourceTable(NULL) {
+	: _resourceEntries(0), _resourceTable(nullptr) {
 	memset(&_version, 0, sizeof(_version));
 
 	_currentResourceFileNum = 1;
@@ -95,7 +95,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	Common::String entryName(filename);
 	entryName.toUppercase();
 
-	ResourceEntry *re = NULL;
+	ResourceEntry *re = nullptr;
 	re = (ResourceEntry *)bsearch(entryName.c_str(), _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
 	return re;
 }
@@ -103,9 +103,9 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) {
 	debug(7, "Resource::loadFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
-	assert(re != NULL);
+	assert(re != nullptr);
 	uint32 sz = re->size - skipBytes;
-	if (size != NULL) {
+	if (size != nullptr) {
 		*size = sz;
 	}
 	byte *dstBuf = new byte[sz];
@@ -117,7 +117,7 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) 
 void Resource::loadTextFile(const char *filename, Common::StringArray &stringList) {
 	debug(7, "Resource::loadTextFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
-	assert(re != NULL);
+	assert(re != nullptr);
 	seekResourceFile(re->bundle, re->offset);
 	Common::SeekableSubReadStream stream(&_resourceFile, re->offset, re->offset + re->size);
 	while (true) {
@@ -140,7 +140,7 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 		ver->queenTblOffset = 0;
 	} else {
 		const RetailGameVersion *gameVersion = detectGameVersionFromSize(f->size());
-		if (gameVersion == NULL) {
+		if (gameVersion == nullptr) {
 			warning("Unknown/unsupported FOTAQ version");
 			return false;
 		}
@@ -235,7 +235,7 @@ void Resource::checkJASVersion() {
 		return;
 	}
 	ResourceEntry *re = resourceEntry("QUEEN.JAS");
-	assert(re != NULL);
+	assert(re != nullptr);
 	uint32 offset = re->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;
@@ -306,18 +306,18 @@ const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
 			return &_gameVersions[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Common::File *Resource::findSound(const char *filename, uint32 *size) {
-	assert(strstr(filename, ".SB") != NULL || strstr(filename, ".AMR") != NULL || strstr(filename, ".INS") != NULL);
+	assert(strstr(filename, ".SB") != nullptr || strstr(filename, ".AMR") != nullptr || strstr(filename, ".INS") != nullptr);
 	ResourceEntry *re = resourceEntry(filename);
 	if (re) {
 		*size = re->size;
 		seekResourceFile(re->bundle, re->offset);
 		return &_resourceFile;
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Queen

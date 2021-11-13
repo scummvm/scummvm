@@ -580,7 +580,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 		frameCount++;
 
 		if (_vm->input()->cutawayQuit())
-			return NULL;
+			return nullptr;
 	}
 
 	if (object.animType == 1) {
@@ -682,7 +682,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 			}
 
 			if (_vm->input()->cutawayQuit())
-				return NULL;
+				return nullptr;
 
 			if (objAnim[i].song > 0)
 				_vm->sound()->playSong(objAnim[i].song);
@@ -705,7 +705,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 		}
 
 		if (_vm->input()->cutawayQuit())
-			return NULL;
+			return nullptr;
 	}
 
 	return ptr;
@@ -779,7 +779,7 @@ void Cutaway::handlePersonRecord(
 
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFilePrefix);
-			_vm->logic()->makePersonSpeak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix);
+			_vm->logic()->makePersonSpeak(sentence, (object.objectNumber == OBJECT_JOE) ? nullptr : &p, voiceFilePrefix);
 		}
 
 	}

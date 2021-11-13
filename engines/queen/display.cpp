@@ -95,9 +95,9 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 
 	_dynalum.valid = false;
 	delete[] _dynalum.mskBuf;
-	_dynalum.mskBuf = NULL;
+	_dynalum.mskBuf = nullptr;
 	delete[] _dynalum.lumBuf;
-	_dynalum.lumBuf = NULL;
+	_dynalum.lumBuf = nullptr;
 
 	if (!isPalFadingDisabled(roomNum)) {
 		char filename[20];
@@ -752,7 +752,7 @@ void Display::drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, 
 }
 
 void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
-	if (data != NULL) {
+	if (data != nullptr) {
 		if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 			uint8 *dst = _panelBuf + y * PANEL_W + x;
 			for (int j = 0; j < h; ++j) {

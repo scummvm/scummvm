@@ -136,12 +136,12 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 	assert(bankslot < MAX_BANKS_NUMBER);
 	PackedBank *bank = &_banks[bankslot];
-	assert(bank->data != NULL);
+	assert(bank->data != nullptr);
 
 	assert(dstframe < MAX_FRAMES_NUMBER);
 	BobFrame *bf = &_frames[dstframe];
 	delete[] bf->data;
-	bf->data = NULL;
+	bf->data = nullptr;
 
 	const uint8 *p = bank->data + bank->indexes[srcframe];
 
@@ -178,7 +178,7 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 	assert(bankslot < MAX_BANKS_NUMBER);
 	PackedBank *bank = &_banks[bankslot];
-	assert(bank->data != NULL);
+	assert(bank->data != nullptr);
 
 	assert(dstframe < MAX_FRAMES_NUMBER);
 	BobFrame *bf = &_frames[dstframe];
@@ -223,7 +223,7 @@ BobFrame *BankManager::fetchFrame(uint32 index) {
 	debug(9, "BankManager::fetchFrame(%d)", index);
 	assert(index < MAX_FRAMES_NUMBER);
 	BobFrame *bf = &_frames[index];
-	assert((bf->width == 0 && bf->height == 0) || bf->data != 0);
+	assert((bf->width == 0 && bf->height == 0) || bf->data != nullptr);
 	return bf;
 }
 

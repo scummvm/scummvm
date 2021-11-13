@@ -68,7 +68,7 @@ bool Talk::speak(
 }
 
 Talk::Talk(QueenEngine *vm)
-	: _vm(vm), _fileData(NULL) {
+	: _vm(vm), _fileData(nullptr) {
 	_vm->input()->talkQuitReset();
 }
 
@@ -91,7 +91,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	memset(&person, 0, sizeof(Person));
 	_vm->logic()->initPerson(personInRoom, "", false, &person);
 
-	if (NULL == person.name) {
+	if (nullptr == person.name) {
 		error("Invalid person object");
 	}
 
@@ -178,7 +178,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (_vm->input()->talkQuit())
 				break;
 
-			speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
+			speak(_talkString[selectedSentence], nullptr, _joeVoiceFilePrefix[selectedSentence]);
 		} else {
 			if (person.actor->bobNum > 0) {
 				speak(_talkString[0], &person, otherVoiceFilePrefix);
@@ -335,7 +335,7 @@ void Talk::findDialogueString(uint16 offset, int16 id, int16 max, char *str) {
 			getString(_fileData, offset, str, MAX_STRING_LENGTH, 4);
 			break;
 		} else {
-			getString(_fileData, offset, NULL, MAX_STRING_LENGTH, 4);
+			getString(_fileData, offset, nullptr, MAX_STRING_LENGTH, 4);
 		}
 	}
 }
@@ -437,14 +437,14 @@ void Talk::initialTalk() {
 		if (joeString[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
-			speak(joeString, NULL, voiceFilePrefix);
+			speak(joeString, nullptr, voiceFilePrefix);
 		}
 	} else {
 		// Already spoken to them, choose second response
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
-			speak(joe2String, NULL, voiceFilePrefix);
+			speak(joe2String, nullptr, voiceFilePrefix);
 		}
 	}
 }
@@ -700,7 +700,7 @@ void Talk::defaultAnimation(
 
 		int len = countSpaces(segment);
 		while (1) {
-			if (parameters != NULL) {
+			if (parameters != nullptr) {
 
 				int bf;
 				if (segment[0] == ' ')
@@ -888,7 +888,7 @@ void Talk::speakSegment(
 
 	//int SF = _vm->grid()->findScale(textX, textY);
 
-	const SpeechParameters *parameters = NULL;
+	const SpeechParameters *parameters = nullptr;
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
@@ -1344,7 +1344,7 @@ int16 Talk::selectSentence() {
 	if (selectedSentence > 0) {
 		_vm->display()->clearTexts(0, 198);
 
-		speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
+		speak(_talkString[selectedSentence], nullptr, _joeVoiceFilePrefix[selectedSentence]);
 	}
 
 	_vm->display()->clearTexts(151, 151);
