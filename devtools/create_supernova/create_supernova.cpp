@@ -13,7 +13,7 @@
 const char *lang[] = {
 	"en",
 	"it",
-	NULL
+	nullptr
 };
 
 void writeDatafile(File& outputFile, int fileNumber, const char* language, int part) {

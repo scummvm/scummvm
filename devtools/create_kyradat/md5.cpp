@@ -228,7 +228,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	FILE *f;
 
 	f = fopen(name, "rb");
-	if (f == NULL) {
+	if (f == nullptr) {
 		printf("md5_file couldn't open '%s'\n", name);
 		return false;
 	}

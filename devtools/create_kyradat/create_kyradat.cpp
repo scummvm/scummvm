@@ -1163,7 +1163,7 @@ const ExtractFilename *getFilenameDesc(const int id) {
 		if (i->id == id)
 			return i;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool isLangSpecific(const int id) {

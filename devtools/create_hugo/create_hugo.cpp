@@ -855,7 +855,7 @@ int main(int argc, char *argv[]) {
 	FILE* src_file;
 	char buf[2];
 	src_file = fopen("btn_1.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_1.bmp");
 		fclose(outFile);
 		return -1;
@@ -871,7 +871,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_1_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_1_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -887,7 +887,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_2.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_2.bmp");
 		fclose(outFile);
 		return -1;
@@ -903,7 +903,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_2_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_2_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -919,7 +919,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_3.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_3.bmp");
 		fclose(outFile);
 		return -1;
@@ -935,7 +935,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_3_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_3_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -951,7 +951,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_4.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_4.bmp");
 		fclose(outFile);
 		return -1;
@@ -967,7 +967,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_4_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_4_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -983,7 +983,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_5.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_5.bmp");
 		fclose(outFile);
 		return -1;
@@ -999,7 +999,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_5_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_5_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -1015,7 +1015,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_6.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_6.bmp");
 		fclose(outFile);
 		return -1;
@@ -1031,7 +1031,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_6_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_6_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -1047,7 +1047,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_7.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_7.bmp");
 		fclose(outFile);
 		return -1;
@@ -1063,7 +1063,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_7_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_7_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -1079,7 +1079,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_8.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_8.bmp");
 		fclose(outFile);
 		return -1;
@@ -1095,7 +1095,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_8_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_8_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -1111,7 +1111,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_9.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_9.bmp");
 		fclose(outFile);
 		return -1;
@@ -1127,7 +1127,7 @@ int main(int argc, char *argv[]) {
 	fclose(src_file);
 
 	src_file = fopen("btn_9_off.bmp", "rb");
-	if (src_file == NULL) {
+	if (src_file == nullptr) {
 		perror("btn_9_off.bmp");
 		fclose(outFile);
 		return -1;
@@ -1263,7 +1263,7 @@ void writeScreenActs(FILE *outFile, const uint16 *screenActs[], int nbrElem) {
 
 	writeUint16BE(outFile, nbrElem);
 	for (int i = 0; i < nbrElem; i++) {
-		if (screenActs[i] == 0)
+		if (screenActs[i] == nullptr)
 			writeUint16BE(outFile, 0);
 		else {
 			nbrSubElem = 1;
@@ -1283,7 +1283,7 @@ void writeObjectArray(FILE *outFile, const object_t objects[], int nbrElem) {
 	for (int i = 0; i < nbrElem; i++) {
 		writeUint16BE(outFile, objects[i].nounIndex);
 		writeUint16BE(outFile, objects[i].dataIndex);
-		if (objects[i].stateDataIndex == NULL)
+		if (objects[i].stateDataIndex == nullptr)
 			writeUint16BE(outFile, 0);
 		else {
 			nbrSubElem = 1;
@@ -1337,7 +1337,7 @@ void writeActListArray(FILE *outFile, const actList actListArr[], int nbrElem) {
 
 	writeUint16BE(outFile, nbrElem);
 	for (int i = 0; i < nbrElem; i++) {
-		for (nbrSubElem = 0; actListArr[i][nbrSubElem] != NULL; nbrSubElem++)
+		for (nbrSubElem = 0; actListArr[i][nbrSubElem] != nullptr; nbrSubElem++)
 			;
 		writeUint16BE(outFile, nbrSubElem);
 		for (int j = 0; j < nbrSubElem; j++) {

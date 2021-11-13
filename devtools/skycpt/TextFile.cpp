@@ -25,7 +25,7 @@
 
 TextFile::TextFile(const char *name) {
 	FILE *inf = fopen(name, "r");
-	_lines = NULL;
+	_lines = nullptr;
 	if (!inf) {
 		printf("Unable to open file %s\n", name);
 		getchar();
@@ -54,7 +54,7 @@ uint32 crop(char *line) {
 
 char *TextFile::giveLine(uint32 num) {
 	if (num >= _numLines)
-		return NULL;
+		return nullptr;
 	else
 		return _lines[num];
 }

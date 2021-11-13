@@ -220,7 +220,7 @@ XcodeProvider::Group *XcodeProvider::Group::getChildGroup(const std::string &nam
 }
 
 XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path) {
-	if (_rootSourceGroup == NULL) {
+	if (_rootSourceGroup == nullptr) {
 		assert(path == _projectRoot);
 		_rootSourceGroup = new Group(this, "Sources", path, path);
 		_groups.add(_rootSourceGroup);
@@ -272,7 +272,7 @@ void XcodeProvider::addBuildFile(const std::string &id, const std::string &name,
 
 XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
 	: ProjectProvider(global_warnings, project_warnings, version) {
-	_rootSourceGroup = NULL;
+	_rootSourceGroup = nullptr;
 }
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {

@@ -816,7 +816,7 @@ static const unsigned char spanishCharsetDataV2[] = {
 	0x08, 0x0c, 0x0e, 0xff, 0xff, 0x0e, 0x0c, 0x08,
 };
 
-unsigned char *specialCharsetData = NULL;
+unsigned char *specialCharsetData = nullptr;
 int numSpecialChars = 0;
 
 void compressCharset(const unsigned char *data, const char *var, const char *name) {
@@ -884,7 +884,7 @@ int main(int /*argc*/, char ** /*argv*/) {
 	printf("};\n");
 
 	free(specialCharsetData);
-	specialCharsetData = NULL;
+	specialCharsetData = nullptr;
 
 	return 0;
 }

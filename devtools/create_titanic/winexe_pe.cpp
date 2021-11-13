@@ -31,7 +31,7 @@
 namespace Common {
 
 PEResources::PEResources() {
-	_exe = 0;
+	_exe = nullptr;
 }
 
 PEResources::~PEResources() {
@@ -41,7 +41,7 @@ PEResources::~PEResources() {
 void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
-	delete _exe; _exe = 0;
+	delete _exe; _exe = nullptr;
 }
 
 bool PEResources::loadFromEXE(File *stream) {
@@ -207,7 +207,7 @@ File *PEResources::getResource(const WinResourceID &type, const WinResourceID &i
 	Array<WinResourceID> langList = getLangList(type, id);
 
 	if (langList.empty())
-		return 0;
+		return nullptr;
 
 	const Resource &resource = _resources[type][id][langList[0]];
 	byte *data = (byte *)malloc(resource.size);
@@ -221,17 +221,17 @@ File *PEResources::getResource(const WinResourceID &type, const WinResourceID &i
 
 File *PEResources::getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
-		return 0;
+		return nullptr;
 
 	const IDMap &idMap = _resources[type];
 
 	if (!idMap.contains(id))
-		return 0;
+		return nullptr;
 
 	const LangMap &langMap = idMap[id];
 
 	if (!langMap.contains(lang))
-		return 0;
+		return nullptr;
 
 	const Resource &resource = langMap[lang];
 	byte *data = (byte *)malloc(resource.size);

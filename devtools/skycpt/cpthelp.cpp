@@ -24,7 +24,7 @@
 #include "cpthelp.h"
 
 void assertEmpty(CptObj *cpt) {
-	assert((cpt->len == 0) && (cpt->data == NULL) && (cpt->dbgName == NULL) && (cpt->type == 0));
+	assert((cpt->len == 0) && (cpt->data == nullptr) && (cpt->dbgName == nullptr) && (cpt->type == 0));
 }
 
 uint16 getInfo(const char *line, const char *type, char *nameDest) {

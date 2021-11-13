@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	const char *dat_name = "teenagent.dat";
 
 	FILE *fout = fopen(dat_name, "wb");
-	if (fout == NULL) {
+	if (fout == nullptr) {
 		perror("opening output file");
 		exit(1);
 	}

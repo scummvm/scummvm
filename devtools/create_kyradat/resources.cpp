@@ -4572,7 +4572,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieDemoVersion, EN_ANY, &kLoLCharacterDefsDOSCDDemoProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieDemoVersion, FR_FRA, &kLoLCharacterDefsDOSCDDemoProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieDemoVersion, DE_DEU, &kLoLCharacterDefsDOSCDDemoProvider },
-	{ kMaxResIDs, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, NULL }
+	{ kMaxResIDs, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, nullptr }
 };
 
 const ResourceProvider *obtainResourceProviders() {

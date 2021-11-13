@@ -92,7 +92,7 @@ static const StringMap platformMap[] = {
 	{ "All?",		"kPlatformUnknown" },
 	{ "All",		"kPlatformUnknown" },
 
-	{ 0,			"kPlatformUnknown" }
+	{ nullptr,			"kPlatformUnknown" }
 };
 
 static const StringMap langMap[] = {
@@ -119,7 +119,7 @@ static const StringMap langMap[] = {
 	{ "All",	"UNK_LANG" },
 	{ "All?",	"UNK_LANG" },
 
-	{ 0,		"UNK_LANG" }
+	{ nullptr,		"UNK_LANG" }
 };
 
 static const char *php_header =
@@ -166,13 +166,13 @@ static void parseEntry(Entry *entry, char *line) {
 
 	/* Split at the tabs */
 	entry->md5 = strtok(line, "\t\n\r");
-	entry->size = strtok(NULL, "\t\n\r");
-	entry->language = strtok(NULL, "\t\n\r");
-	entry->platform = strtok(NULL, "\t\n\r");
-	entry->variant = strtok(NULL, "\t\n\r");
-	entry->extra = strtok(NULL, "\t\n\r");
-	entry->desc = strtok(NULL, "\t\n\r");
-	entry->infoSource = strtok(NULL, "\t\n\r");
+	entry->size = strtok(nullptr, "\t\n\r");
+	entry->language = strtok(nullptr, "\t\n\r");
+	entry->platform = strtok(nullptr, "\t\n\r");
+	entry->variant = strtok(nullptr, "\t\n\r");
+	entry->extra = strtok(nullptr, "\t\n\r");
+	entry->desc = strtok(nullptr, "\t\n\r");
+	entry->infoSource = strtok(nullptr, "\t\n\r");
 }
 
 static int isEmptyLine(const char *line) {

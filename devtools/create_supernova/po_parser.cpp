@@ -5,7 +5,7 @@
 
 #include "po_parser.h"
 
-PoMessageList::PoMessageList() : _list(NULL), _size(0), _allocated(0) {
+PoMessageList::PoMessageList() : _list(nullptr), _size(0), _allocated(0) {
 }
 
 PoMessageList::~PoMessageList() {
@@ -15,11 +15,11 @@ PoMessageList::~PoMessageList() {
 }
 
 int PoMessageList::compareString(const char* left, const char* right) {
-	if (left == NULL && right == NULL)
+	if (left == nullptr && right == nullptr)
 		return 0;
-	if (left == NULL)
+	if (left == nullptr)
 		return -1;
-	if (right == NULL)
+	if (right == nullptr)
 		return 1;
 	return strcmp(left, right);
 }
@@ -32,7 +32,7 @@ int PoMessageList::compareMessage(const char *msgLeft, const char *contextLeft, 
 }
 
 void PoMessageList::insert(const char *translation, const char *msg, const char *context) {
-	if (msg == NULL || *msg == '\0' || translation == NULL || *translation == '\0')
+	if (msg == nullptr || *msg == '\0' || translation == nullptr || *translation == '\0')
 		return;
 
 	// binary-search for the insertion index
@@ -68,8 +68,8 @@ void PoMessageList::insert(const char *translation, const char *msg, const char 
 }
 
 const char *PoMessageList::findTranslation(const char *msg, const char *context) {
-	if (msg == NULL || *msg == '\0')
-		return NULL;
+	if (msg == nullptr || *msg == '\0')
+		return nullptr;
 
 	// binary-search for the message
 	int leftIndex = 0;
@@ -84,13 +84,13 @@ const char *PoMessageList::findTranslation(const char *msg, const char *context)
 		else
 			leftIndex = midIndex + 1;
 	}
-	return NULL;
+	return nullptr;
 }
 
 PoMessageList *parsePoFile(const char *file) {
 	FILE *inFile = fopen(file, "r");
 	if (!inFile)
-		return NULL;
+		return nullptr;
 
 	char msgidBuf[1024], msgctxtBuf[1024], msgstrBuf[1024];
 	char line[1024], *currentBuf = msgstrBuf;
@@ -198,8 +198,8 @@ char *parseLine(const char *line, const char *field) {
 	// It is used to parse the header of the po files to find the language name
 	// and the charset.
 	const char *str = strstr(line, field);
-	if (str == NULL)
-		return NULL;
+	if (str == nullptr)
+		return nullptr;
 	str += strlen(field);
 	// Skip spaces
 	while (*str != '\0' && isspace(*str)) {
@@ -211,7 +211,7 @@ char *parseLine(const char *line, const char *field) {
 		++len;
 	}
 	if (len == 0)
-		return NULL;
+		return nullptr;
 	// Create result string
 	char *result = new char[len + 1];
 	strncpy(result, str, len);

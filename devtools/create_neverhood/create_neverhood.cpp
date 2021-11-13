@@ -81,7 +81,7 @@ byte *getData(uint32 offset) {
 }
 
 const char *getStringP(uint32 offset) {
-	return offset != 0 ? (const char*)getData(offset) : NULL;
+	return offset != 0 ? (const char*)getData(offset) : nullptr;
 }
 
 uint32 calcHash(const char *value) {

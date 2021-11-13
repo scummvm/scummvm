@@ -72,7 +72,7 @@ void writeUint32BE(FILE *fp, uint32 value) {
 
 int stringSize(const char *string) {
 	// Each string is preceded by its size coded on 2 bytes
-	if (string == NULL)
+	if (string == nullptr)
 		return 2;
 	int len = strlen(string) + 1;
 	return 2 + len;
@@ -83,7 +83,7 @@ int stringSize(const char *string) {
 
 void writeString(FILE *fp, const char *string) {
 	// Each string is preceded by its size coded on 2 bytes
-	if (string == NULL) {
+	if (string == nullptr) {
 		writeUint16BE(fp, 0);
 		return;
 	}
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 		int len = strlen(argv[i]);
 		if (scumm_stricmp(argv[i] + len - 2, "po") == 0) {
 			PoMessageEntryList *po = parsePoFile(argv[i], messageIds);
-			if (po != NULL) {
+			if (po != nullptr) {
 				translations.push_back(po);
 				++numLangs;
 			}
