@@ -42,10 +42,10 @@ namespace Buried {
 class LairEntry : public SceneBase {
 public:
 	LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
-	int onCharacter(Window *viewWindow, const Common::KeyState &character);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
+	int onCharacter(Window *viewWindow, const Common::KeyState &character) override;
 
 private:
 	int _movieIndex;
@@ -397,9 +397,9 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 class ReplicatorInterface : public SceneBase {
 public:
 	ReplicatorInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _currentItem;
@@ -482,12 +482,12 @@ class TransporterControls : public SceneBase {
 public:
 	TransporterControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~TransporterControls();
-	void preDestructor();
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int onCharacter(Window *viewWindow, const Common::KeyState &character);
-	int gdiPaint(Window *viewWindow);
+	void preDestructor() override;
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int onCharacter(Window *viewWindow, const Common::KeyState &character) override;
+	int gdiPaint(Window *viewWindow) override;
 
 private:
 	Common::Rect _monitor, _retract;
@@ -671,8 +671,8 @@ int TransporterControls::gdiPaint(Window *viewWindow) {
 class GeneratorCoreZoom : public SceneBase {
 public:
 	GeneratorCoreZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickableArea;
@@ -718,11 +718,11 @@ int GeneratorCoreZoom::specifyCursor(Window *viewWindow, const Common::Point &po
 class GeneratorCoreAcquire : public SceneBase {
 public:
 	GeneratorCoreAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _currentStatus;
@@ -831,8 +831,8 @@ int GeneratorCoreAcquire::specifyCursor(Window *viewWindow, const Common::Point 
 class ZoomInPostItAndINN : public SceneBase {
 public:
 	ZoomInPostItAndINN(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _postItNote;
@@ -883,7 +883,7 @@ int ZoomInPostItAndINN::specifyCursor(Window *viewWindow, const Common::Point &p
 class CompleteTransport : public SceneBase {
 public:
 	CompleteTransport(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int timerCallback(Window *viewWindow) override;
 };
 
 CompleteTransport::CompleteTransport(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -939,7 +939,7 @@ ClickChangeScenePostIt::ClickChangeScenePostIt(BuriedEngine *vm, Window *viewWin
 class PlayTransporterClosing : public SceneBase {
 public:
 	PlayTransporterClosing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
 };
 
 PlayTransporterClosing::PlayTransporterClosing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :

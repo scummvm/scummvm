@@ -43,8 +43,8 @@ namespace Buried {
 class TopOfTowerGuardEncounter : public SceneBase {
 public:
 	TopOfTowerGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer) override;
 
 private:
 	bool _showGuard;
@@ -83,9 +83,9 @@ int TopOfTowerGuardEncounter::paint(Window *viewWindow, Graphics::Surface *preBu
 class TowerStairsGuardEncounter : public SceneBase {
 public:
 	TowerStairsGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _busy;
@@ -138,7 +138,7 @@ int TowerStairsGuardEncounter::preExitRoom(Window *viewWindow, const Location &n
 class WallSlideDeath : public SceneBase {
 public:
 	WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
 };
 
 WallSlideDeath::WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -167,7 +167,7 @@ enum {
 class ExplodingWallSafeDistance : public SceneBase {
 public:
 	ExplodingWallSafeDistance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _timerStarted;
@@ -212,7 +212,7 @@ int ExplodingWallSafeDistance::timerCallback(Window *viewWindow) {
 class ExplodingWallDeath : public SceneBase {
 public:
 	ExplodingWallDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int timerCallback(Window *viewWindow) override;
 };
 
 ExplodingWallDeath::ExplodingWallDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -237,8 +237,8 @@ int ExplodingWallDeath::timerCallback(Window *viewWindow) {
 class KeepInitialWallClimb : public SceneBase {
 public:
 	KeepInitialWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
 
 private:
 	Common::Rect _windowRect;
@@ -281,9 +281,9 @@ int KeepInitialWallClimb::draggingItem(Window *viewWindow, int itemID, const Com
 class KeepFinalWallClimb : public SceneBase {
 public:
 	KeepFinalWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	bool _exitStarted;
@@ -332,10 +332,10 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 class KingsStudyGuard : public SceneBase {
 public:
 	KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postExitRoom(Window *viewWindow, const Location &priorLocation) override;
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 };
 
 KingsStudyGuard::KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -388,11 +388,11 @@ int KingsStudyGuard::timerCallback(Window *viewWindow) {
 class SmithyBench : public SceneBase {
 public:
 	SmithyBench(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	byte _status;
@@ -588,8 +588,8 @@ void SmithyBench::resetBackgroundBitmap() {
 class PickupKingsStudyBooksA : public SceneBase {
 public:
 	PickupKingsStudyBooksA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _diaryA, _diaryB;
@@ -647,7 +647,7 @@ int PickupKingsStudyBooksA::specifyCursor(Window *viewWindow, const Common::Poin
 class MainWallCatapultService : public SceneBase {
 public:
 	MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int timerCallback(Window *viewWindow) override;
 };
 
 MainWallCatapultService::MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -682,8 +682,8 @@ int MainWallCatapultService::timerCallback(Window *viewWindow) {
 class MiddleBaileyFootprintCapture : public SceneBase {
 public:
 	MiddleBaileyFootprintCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _footprint;
@@ -729,8 +729,8 @@ int MiddleBaileyFootprintCapture::specifyCursor(Window *viewWindow, const Common
 class TreasureRoomSwordCapture : public SceneBase {
 public:
 	TreasureRoomSwordCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _footprint;
@@ -793,9 +793,9 @@ public:
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int timeZone = -1, int environment = -1, int node = -1,
 			int facing = -1, int orientation = -1, int depth = -1, int flagOffset = 0, int data = -1, int startFrame = -1,
 			int length = -1, int animDB = -1);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _clicked;
@@ -878,10 +878,10 @@ public:
 	StorageRoomCheckUnlock(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int flagOffset = 0, int itemID = 0, int filledFrameIndex = 0, int animID = 0, int depthA = 0, int depthB = 0,
 			int left = 0, int top = 0, int right = 0, int bottom = 0);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _flagOffset;
@@ -959,7 +959,7 @@ int StorageRoomCheckUnlock::specifyCursor(Window *viewWindow, const Common::Poin
 class DeliverLightMessage : public SceneBase {
 public:
 	DeliverLightMessage(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 DeliverLightMessage::DeliverLightMessage(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -976,8 +976,8 @@ int DeliverLightMessage::postEnterRoom(Window *viewWindow, const Location &prior
 class KingsChamberGuardEncounter : public SceneBase {
 public:
 	KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int timerCallback(Window *viewWindow) override;
 
 private:
 	uint32 _startingTime;

@@ -41,7 +41,7 @@ class OldApartmentSuitCap : public SceneBase {
 public:
 	OldApartmentSuitCap(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation)
 			: SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {}
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 int OldApartmentSuitCap::postEnterRoom(Window *viewWindow, const Location &priorLocation) {

@@ -43,9 +43,9 @@ public:
 	OvenDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int openAnimID = 0, int closeAnimID = 0, int openFrame = 0, int closedFrame = 0, int flagOffset = 0,
 			int left = 0, int top = 0, int right = 0, int bottom = 0);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _openAnimationID;
@@ -119,8 +119,8 @@ int OvenDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocati
 class KitchenUnitTurnOn : public SceneBase {
 public:
 	KitchenUnitTurnOn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _powerButton;
@@ -154,8 +154,8 @@ int KitchenUnitTurnOn::specifyCursor(Window *viewWindow, const Common::Point &po
 class KitchenUnitTitleScreen : public SceneBase {
 public:
 	KitchenUnitTitleScreen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _menuButton;
@@ -198,8 +198,8 @@ int KitchenUnitTitleScreen::specifyCursor(Window *viewWindow, const Common::Poin
 class KitchenUnitMainMenu : public SceneBase {
 public:
 	KitchenUnitMainMenu(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _menuButton;
@@ -264,10 +264,10 @@ class KitchenUnitAutoChef : public SceneBase {
 public:
 	KitchenUnitAutoChef(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~KitchenUnitAutoChef();
-	void preDestructor();
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int gdiPaint(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	void preDestructor() override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int gdiPaint(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _menuButton;
@@ -347,12 +347,12 @@ class KitchenUnitShopNet : public SceneBase {
 public:
 	KitchenUnitShopNet(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~KitchenUnitShopNet();
-	void preDestructor();
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int onCharacter(Window *viewWindow, const Common::KeyState &character);
-	int gdiPaint(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int preExitRoom(Window *viewWindow, const Location &priorLocation);
+	void preDestructor() override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int onCharacter(Window *viewWindow, const Common::KeyState &character) override;
+	int gdiPaint(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _status;
@@ -617,10 +617,10 @@ class KitchenUnitPostBox : public SceneBase {
 public:
 	KitchenUnitPostBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	~KitchenUnitPostBox();
-	void preDestructor();
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int gdiPaint(Window *viewWindow);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	void preDestructor() override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int gdiPaint(Window *viewWindow) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _packageCount;
@@ -831,13 +831,13 @@ void KitchenUnitPostBox::changeBackgroundBitmap() {
 class EnvironSystemControls : public SceneBase {
 public:
 	EnvironSystemControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _environCart;
@@ -1022,10 +1022,10 @@ int EnvironSystemControls::specifyCursor(Window *viewWindow, const Common::Point
 class EnvironGenoVideo : public SceneBase {
 public:
 	EnvironGenoVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _returnRegion;
@@ -1087,8 +1087,8 @@ FlagChangeBackground::FlagChangeBackground(BuriedEngine *vm, Window *viewWindow,
 class ClickZoomInTopOfBookshelf : public SceneBase {
 public:
 	ClickZoomInTopOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _awardZoom, _bookZoom;
@@ -1139,8 +1139,8 @@ class ClickZoomToyShelf : public SceneBase {
 public:
 	ClickZoomToyShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _toyZooms[4];
@@ -1188,8 +1188,8 @@ public:
 	ToyClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int returnDepth = -1, int clickAnimation = -1, int returnAnimation = -1);
 
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _clickRect;
@@ -1243,8 +1243,8 @@ int ToyClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocati
 class ClickOnCoffeeTable : public SceneBase {
 public:
 	ClickOnCoffeeTable(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _toyClickRect;
@@ -1295,8 +1295,8 @@ int ClickOnCoffeeTable::specifyCursor(Window *viewWindow, const Common::Point &p
 class ClickZoomInBottomOfBookshelf : public SceneBase {
 public:
 	ClickZoomInBottomOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _leftClocks;
@@ -1347,8 +1347,8 @@ int ClickZoomInBottomOfBookshelf::specifyCursor(Window *viewWindow, const Common
 class RightClockShelf : public SceneBase {
 public:
 	RightClockShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _alienClock;
@@ -1406,8 +1406,8 @@ int RightClockShelf::specifyCursor(Window *viewWindow, const Common::Point &poin
 class MainDeskView : public SceneBase {
 public:
 	MainDeskView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _papers;
@@ -1489,11 +1489,11 @@ int MainDeskView::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 class ViewVidPhone : public SceneBase {
 public:
 	ViewVidPhone(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &newLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int preExitRoom(Window *viewWindow, const Location &newLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
+	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status) override;
 
 private:
 	Common::Rect _playButton;
@@ -1620,9 +1620,9 @@ int ViewVidPhone::movieCallback(Window *viewWindow, VideoWindow *movie, int anim
 class MainEnvironDoorDown : public SceneBase {
 public:
 	MainEnvironDoorDown(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	bool _doorOpen;
@@ -1694,7 +1694,7 @@ int MainEnvironDoorDown::specifyCursor(Window *viewWindow, const Common::Point &
 class MainEnvironDoorExit : public SceneBase {
 public:
 	MainEnvironDoorExit(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 MainEnvironDoorExit::MainEnvironDoorExit(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -1721,8 +1721,8 @@ public:
 			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
 			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
 			int soundFileNameID = -1, int soundLeft = -1, int soundTop = -1, int soundRight = -1, int soundBottom = -1);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	int _cursorID;
@@ -1781,8 +1781,8 @@ int ClickOnBooks::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 class ClickEnvironNatureScenes : public SceneBase {
 public:
 	ClickEnvironNatureScenes(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _controls;
@@ -1825,9 +1825,9 @@ int ClickEnvironNatureScenes::specifyCursor(Window *viewWindow, const Common::Po
 class ViewEnvironCart : public SceneBase {
 public:
 	ViewEnvironCart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int timerCallback(Window *viewWindow);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int timerCallback(Window *viewWindow) override;
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 };
 
 ViewEnvironCart::ViewEnvironCart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -1891,8 +1891,8 @@ int ViewEnvironCart::specifyCursor(Window *viewWindow, const Common::Point &poin
 class MainEnvironSitDownClick : public SceneBase {
 public:
 	MainEnvironSitDownClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
 	Common::Rect _environRect;
@@ -1930,7 +1930,7 @@ int MainEnvironSitDownClick::specifyCursor(Window *viewWindow, const Common::Poi
 class EnvironDoorExitSound : public SceneBase {
 public:
 	EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation) override;
 };
 
 EnvironDoorExitSound::EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
