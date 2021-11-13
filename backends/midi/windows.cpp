@@ -165,16 +165,16 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 
 class WindowsMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("Windows MIDI");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "windows";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices WindowsMusicPlugin::getDevices() const {

@@ -86,7 +86,7 @@ public:
 	~StaticPluginProvider() {
 	}
 
-	virtual PluginList getPlugins() {
+	PluginList getPlugins() override {
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \

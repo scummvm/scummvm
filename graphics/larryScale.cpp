@@ -143,7 +143,7 @@ public:
 	explicit MarginedBitmapWriter(MarginedBitmap<Color> &target)
 		: _target(target) {}
 
-	void writeRow(int y, const LarryScaleColor *row) {
+	void writeRow(int y, const LarryScaleColor *row) override {
 		memcpy(_target.getPointerTo(0, y), row, _target.getWidth() * sizeof(Color));
 	}
 };

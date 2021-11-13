@@ -333,14 +333,14 @@ class SilentAudioStream : public Audio::AudioStream {
 public:
 	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		memset(buffer, 0, numSamples * 2);
 		return numSamples;
 	}
 
-	bool endOfData() const { return false; } // it never ends!
-	bool isStereo() const { return _isStereo; }
-	int getRate() const { return _rate; }
+	bool endOfData() const override { return false; } // it never ends!
+	bool isStereo() const override { return _isStereo; }
+	int getRate() const override { return _rate; }
 
 private:
 	int _rate;

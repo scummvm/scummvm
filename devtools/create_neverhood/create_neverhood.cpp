@@ -393,7 +393,7 @@ class RectList : public StaticDataList<RectItem> {
 class MessageList : public StaticDataList<MessageItem> {
 public:
 
-	virtual bool specialLoadList(uint32 count, uint32 offset) {
+	bool specialLoadList(uint32 count, uint32 offset) override {
 		// Special code for message lists which are set at runtime (but otherwise constant)
 		switch (offset) {
 		// Scene 1002 rings
