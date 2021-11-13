@@ -22,8 +22,8 @@
 
 // Based on code by omergilad.
 
-#ifndef GUI_ANIMATION_ANIMATION_H
-#define GUI_ANIMATION_ANIMATION_H
+#ifndef GUI_ANIMATION_ALPHA_ANIMATION_H
+#define GUI_ANIMATION_ALPHA_ANIMATION_H
 
 #include "gui/animation/Animation.h"
 
@@ -50,4 +50,4 @@ protected:
 
 } // End of namespace GUI
 
-#endif /* GUI_ANIMATION_ANIMATION_H */
+#endif /* GUI_ANIMATION_ALPHA_ANIMATION_H */
