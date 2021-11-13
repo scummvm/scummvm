@@ -70,6 +70,11 @@ const byte t7gMidiInitScript[] = {
 	0x43, 0x00								// returnscript 00
 };
 
+enum kSpecialVariableTypes {
+	kVarTypeArray = 0x23,
+	kVarType2DArray = 0x7C
+};
+
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(UINT_MAX), _cellGame(NULL), _lastCursor(0xff),
@@ -368,13 +373,13 @@ uint8 Script::readScriptChar(bool allow7C, bool limitVal, bool limitVar) {
 		data &= 0x7F;
 	}
 
-	if (allow7C && (data == 0x7C)) {
+	if (allow7C && (data == kVarType2DArray)) {
 		// Index a bidimensional array
 		uint8 parta, partb;
 		parta = readScriptChar(false, false, false);
 		partb = readScriptChar(false, true, true);
 		result = _variables[0x0A * parta + partb + 0x19];
-	} else if (data == 0x23) {
+	} else if (data == kVarTypeArray) {
 		// Index an array
 		data = readScript8bits();
 		if (limitVar) {
@@ -393,16 +398,16 @@ void Script::readScriptString(Common::String &str) {
 
 	while ((c = readScript8bits())) {
 		switch (c) {
-		case 0x23:
+		case kVarTypeArray:
 			c = readScript8bits();
 			c = _variables[c - 0x61] + 0x30;
 			if (_version == kGroovieT7G) {
 				if (c >= 0x41 && c <= 0x5A) {
-					c += 0x20;
+					c += ' ';
 				}
 			}
 			break;
-		case 0x7C:
+		case kVarType2DArray:
 			uint8 parta, partb;
 			parta = readScriptChar(false, false, false);
 			partb = readScriptChar(false, false, false);
@@ -411,7 +416,7 @@ void Script::readScriptString(Common::String &str) {
 		default:
 			if (_version == kGroovieT7G) {
 				if (c >= 0x41 && c <= 0x5A) {
-					c += 0x20;
+					c += ' ';
 				}
 			}
 		}
