@@ -70,7 +70,7 @@
 #include "common/translation.h"
 
 Win32DialogManager::Win32DialogManager(SdlWindow_Win32 *window) : _window(window) {
-	CoInitialize(NULL);
+	CoInitialize(nullptr);
 }
 
 Win32DialogManager::~Win32DialogManager() {
@@ -82,14 +82,14 @@ HRESULT winCreateItemFromParsingName(PCWSTR pszPath, IBindCtx *pbc, REFIID riid,
 	typedef HRESULT(WINAPI *SHFunc)(PCWSTR, IBindCtx *, REFIID, void **);
 
 	SHFunc func = (SHFunc)(void *)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHCreateItemFromParsingName");
-	if (func == NULL)
+	if (func == nullptr)
 		return E_NOTIMPL;
 
 	return func(pszPath, pbc, riid, ppv);
 }
 
 HRESULT getShellPath(IShellItem *item, Common::String &path) {
-	LPWSTR name = NULL;
+	LPWSTR name = nullptr;
 	HRESULT hr = item->GetDisplayName(SIGDN_FILESYSPATH, &name);
 	if (SUCCEEDED(hr)) {
 		char *str = Win32::unicodeToAnsi(name);
@@ -107,9 +107,9 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 	if (!Win32::confirmWindowsVersion(6, 0))
 		return result;
 
-	IFileOpenDialog *dialog = NULL;
+	IFileOpenDialog *dialog = nullptr;
 	HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
-		NULL,
+		nullptr,
 		CLSCTX_INPROC_SERVER,
 		IID_IFileOpenDialog,
 		reinterpret_cast<void **> (&(dialog)));
@@ -141,8 +141,8 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 		LPWSTR str;
 		if (ConfMan.hasKey("browser_lastpath")) {
 			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
-			IShellItem *item = NULL;
-			hr = winCreateItemFromParsingName(str, NULL, IID_IShellItem, reinterpret_cast<void **> (&(item)));
+			IShellItem *item = nullptr;
+			hr = winCreateItemFromParsingName(str, nullptr, IID_IShellItem, reinterpret_cast<void **> (&(item)));
 			if (SUCCEEDED(hr)) {
 				hr = dialog->SetDefaultFolder(item);
 			}
@@ -154,7 +154,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 
 		if (SUCCEEDED(hr)) {
 			// Get the selection from the user
-			IShellItem *selectedItem = NULL;
+			IShellItem *selectedItem = nullptr;
 			hr = dialog->GetResult(&selectedItem);
 			if (SUCCEEDED(hr)) {
 				Common::String path;
@@ -167,7 +167,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 			}
 
 			// Save last path
-			IShellItem *lastFolder = NULL;
+			IShellItem *lastFolder = nullptr;
 			hr = dialog->GetFolder(&lastFolder);
 			if (SUCCEEDED(hr)) {
 				Common::String path;

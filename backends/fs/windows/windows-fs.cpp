@@ -81,7 +81,7 @@ const char* WindowsFilesystemNode::tcharToChar(const TCHAR *str) {
 	return str;
 #else
 	static char multiByteString[MAX_PATH];
-	WideCharToMultiByte(CP_UTF8, 0, str, _tcslen(str) + 1, multiByteString, MAX_PATH, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, str, _tcslen(str) + 1, multiByteString, MAX_PATH, nullptr, nullptr);
 	return multiByteString;
 #endif
 }
@@ -202,7 +202,7 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	assert(_isValid || _isPseudoRoot);
 
 	if (_isPseudoRoot)
-		return 0;
+		return nullptr;
 
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (_path.size() > 3) {
@@ -229,7 +229,7 @@ Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream() {
 }
 
 bool WindowsFilesystemNode::createDirectory() {
-	if (CreateDirectory(charToTchar(_path.c_str()), NULL) != 0)
+	if (CreateDirectory(charToTchar(_path.c_str()), nullptr) != 0)
 		setFlags();
 
 	return _isValid && _isDirectory;

@@ -40,7 +40,7 @@ ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, 
 	typedef ULONGLONG(WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
 
 	VerSetConditionMaskFunction verSetConditionMask = (VerSetConditionMaskFunction)(void *)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerSetConditionMask");
-	if (verSetConditionMask == NULL)
+	if (verSetConditionMask == nullptr)
 		return 0;
 
 	return verSetConditionMask(dwlConditionMask, dwTypeMask, dwConditionMask);
@@ -50,7 +50,7 @@ BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwType
 	typedef BOOL(WINAPI *VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA versionInformation, DWORD typeMask, DWORDLONG conditionMask);
 
 	VerifyVersionInfoFunction verifyVersionInfo = (VerifyVersionInfoFunction)(void *)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerifyVersionInfoA");
-	if (verifyVersionInfo == NULL)
+	if (verifyVersionInfo == nullptr)
 		return FALSE;
 
 	return verifyVersionInfo(lpVersionInformation, dwTypeMask, dwlConditionMask);
@@ -129,7 +129,7 @@ wchar_t *ansiToUnicode(const char *s) {
 #else
 	uint codePage = CP_UTF8;
 #endif
-	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
+	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, nullptr, 0);
 
 	if (size > 0) {
 		LPWSTR result = (LPWSTR)calloc(size, sizeof(WCHAR));
@@ -137,7 +137,7 @@ wchar_t *ansiToUnicode(const char *s) {
 			return result;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 char *unicodeToAnsi(const wchar_t *s) {
@@ -146,15 +146,15 @@ char *unicodeToAnsi(const wchar_t *s) {
 #else
 	uint codePage = CP_UTF8;
 #endif
-	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
+	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, nullptr, 0, nullptr, nullptr);
 
 	if (size > 0) {
 		char *result = (char *)calloc(size, sizeof(char));
-		if (WideCharToMultiByte(codePage, 0, s, -1, result, size, 0, 0) != 0)
+		if (WideCharToMultiByte(codePage, 0, s, -1, result, size, nullptr, nullptr) != 0)
 			return result;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 TCHAR *stringToTchar(const Common::String& s) {
@@ -188,7 +188,7 @@ char **getArgvUtf8(int *argc) {
 	for (int i = 0; i < *argc; ++i) {
 		argv[i] = Win32::unicodeToAnsi(wargv[i]);
 	}
-	argv[*argc] = NULL; // null terminated array
+	argv[*argc] = nullptr; // null terminated array
 
 	LocalFree(wargv);
 	return argv;

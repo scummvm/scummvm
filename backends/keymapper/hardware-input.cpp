@@ -229,7 +229,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"LMETA",     KEYCODE_LMETA,     "Left "  META_KEY_NAME },
 	{"RMETA",     KEYCODE_RMETA,     "Right " META_KEY_NAME },
 
-	{0, KEYCODE_INVALID, 0}
+	{nullptr, KEYCODE_INVALID, nullptr}
 };
 
 // TODO: Add NUM_LOCK

@@ -106,15 +106,15 @@ void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t lengt
 
 bool PngLoader::basicImageLoad() {
 	DEBUG_ENTER_FUNC();
-	_pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	_pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!_pngPtr)
 		return false;
 
-	png_set_error_fn(_pngPtr, (png_voidp) NULL, (png_error_ptr) NULL, warningFn);
+	png_set_error_fn(_pngPtr, (png_voidp) nullptr, (png_error_ptr) nullptr, warningFn);
 
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
-		png_destroy_read_struct(&_pngPtr, NULL, NULL);
+		png_destroy_read_struct(&_pngPtr, nullptr, nullptr);
 		return false;
 	}
 	// Set the png lib to use our read function
@@ -126,12 +126,12 @@ bool PngLoader::basicImageLoad() {
 	png_read_info(_pngPtr, _infoPtr);
 	int interlaceType;
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
-		&_colorType, &interlaceType, NULL, NULL);
+		&_colorType, &interlaceType, nullptr, nullptr);
 	_channels = png_get_channels(_pngPtr, _infoPtr);
 
 	if (_colorType & PNG_COLOR_MASK_PALETTE) {
 		int paletteSize;
-		png_get_PLTE(_pngPtr, _infoPtr, NULL, &paletteSize);
+		png_get_PLTE(_pngPtr, _infoPtr, nullptr, &paletteSize);
 		_paletteSize = paletteSize;
 	}
 
@@ -145,7 +145,7 @@ bool PngLoader::findImageDimensions() {
 	bool status = basicImageLoad();
 
 	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, png_get_rowbytes(_pngPtr, _infoPtr));
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
+	png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
 	return status;
 }
 
@@ -156,7 +156,7 @@ bool PngLoader::loadImageIntoBuffer() {
 	DEBUG_ENTER_FUNC();
 
 	if (!basicImageLoad()) {
-		png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
+		png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
 		return false;
 	}
 	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
@@ -197,18 +197,18 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
-		png_destroy_read_struct(&_pngPtr, NULL, NULL);
+		png_destroy_read_struct(&_pngPtr, nullptr, nullptr);
 		PSP_ERROR("Couldn't allocate line\n");
 		return false;
 	}
 
 	for (size_t y = 0; y < _height; y++) {
-		png_read_row(_pngPtr, line, NULL);
+		png_read_row(_pngPtr, line, nullptr);
 		_buffer->copyFromRect(line, rowBytes, 0, y, _width, 1);	// Copy into buffer
 	}
 	free(line);
 	png_read_end(_pngPtr, _infoPtr);
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
+	png_destroy_read_struct(&_pngPtr, &_infoPtr, nullptr);
 
 	return true;
 }

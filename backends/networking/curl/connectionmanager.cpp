@@ -38,7 +38,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0) {
+ConnectionManager::ConnectionManager(): _multi(nullptr), _timerStarted(false), _frame(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
@@ -130,7 +130,7 @@ void connectionsThread(void *ignored) {
 
 void ConnectionManager::startTimer(int interval) {
 	Common::TimerManager *manager = g_system->getTimerManager();
-	if (manager->installTimerProc(connectionsThread, interval, 0, "Networking::ConnectionManager's Timer")) {
+	if (manager->installTimerProc(connectionsThread, interval, nullptr, "Networking::ConnectionManager's Timer")) {
 		_timerStarted = true;
 	} else {
 		warning("Failed to install Networking::ConnectionManager's timer");

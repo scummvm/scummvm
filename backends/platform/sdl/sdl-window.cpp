@@ -258,7 +258,7 @@ void SdlWindow::getDisplayDpi(float *dpi, float *defaultDpi) const {
 
 	if (dpi) {
 #if SDL_VERSION_ATLEAST(2, 0, 4)
-		if (SDL_GetDisplayDPI(getDisplayIndex(), NULL, dpi, NULL) != 0) {
+		if (SDL_GetDisplayDPI(getDisplayIndex(), nullptr, dpi, nullptr) != 0) {
 			*dpi = systemDpi;
 		}
 #else

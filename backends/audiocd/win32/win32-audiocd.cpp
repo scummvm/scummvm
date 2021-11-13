@@ -140,7 +140,7 @@ bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
 	           buffer,
 	           kBytesPerFrame,
 	           &bytesReturned,
-	           NULL);
+	           nullptr);
 }
 
 
@@ -199,7 +199,7 @@ bool Win32AudioCDManager::openCD(int drive) {
 	// Construct the drive path and try to open it
 	Common::String drivePath = Common::String::format("\\\\.\\%c:", drives[drive]);
 	TCHAR *tDrivePath = Win32::stringToTchar(drivePath);
-	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	free(tDrivePath);
 	if (_driveHandle == INVALID_HANDLE_VALUE) {
 		warning("Failed to open drive %c:\\, error %d", drives[drive], (int)GetLastError());
@@ -232,7 +232,7 @@ bool Win32AudioCDManager::openCD(const Common::String &drive) {
 	// Construct the drive path and try to open it
 	Common::String drivePath = Common::String::format("\\\\.\\%c:", drives[0]);
 	TCHAR *tDrivePath = Win32::stringToTchar(drivePath);
-	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	free(tDrivePath);
 	if (_driveHandle == INVALID_HANDLE_VALUE) {
 		warning("Failed to open drive %c:\\, error %d", drives[0], (int)GetLastError());
@@ -323,7 +323,7 @@ bool Win32AudioCDManager::loadTOC() {
 	                  &tocData,
 	                  sizeof(tocData),
 	                  &bytesReturned,
-	                  NULL);
+	                  nullptr);
 	if (!result) {
 		debug("Failed to query the CD TOC: %d", (int)GetLastError());
 		return false;
@@ -362,7 +362,7 @@ Win32AudioCDManager::DriveList Win32AudioCDManager::detectDrives() {
 		Common::String gamePath = ConfMan.get("path");
 		TCHAR *tGamePath = Win32::stringToTchar(gamePath);
 		TCHAR fullPath[MAX_PATH];
-		DWORD result = GetFullPathName(tGamePath, MAX_PATH, fullPath, 0);
+		DWORD result = GetFullPathName(tGamePath, MAX_PATH, fullPath, nullptr);
 		free(tGamePath);
 
 		if (result > 0 && result < sizeof(fullPath) && Common::isAlpha(fullPath[0]) && fullPath[1] == ':' && tryAddDrive(toupper(fullPath[0]), drives))

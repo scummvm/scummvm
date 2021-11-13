@@ -31,7 +31,7 @@
 #include <windows.h>
 
 void SdlWindow_Win32::setupIcon() {
-	HMODULE handle = GetModuleHandle(NULL);
+	HMODULE handle = GetModuleHandle(nullptr);
 	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
 	if (ico) {
 		HWND hwnd = getHwnd();
@@ -60,7 +60,7 @@ HWND SdlWindow_Win32::getHwnd() {
 		return wminfo.window;
 #endif
 	}
-	return NULL;
+	return nullptr;
 }
 
 #endif

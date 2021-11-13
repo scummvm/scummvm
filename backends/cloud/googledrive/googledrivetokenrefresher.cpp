@@ -112,7 +112,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
-	_headersList = 0;
+	_headersList = nullptr;
 	for (uint32 i = 0; i < headers.size(); ++i)
 		CurlJsonRequest::addHeader(headers[i]);
 }

@@ -87,7 +87,7 @@ void OSystem_Win32::init() {
 
 WORD GetCurrentSubsystem() {
 	// HMODULE is the module base address. And the PIMAGE_DOS_HEADER is located at the beginning.
-	PIMAGE_DOS_HEADER EXEHeader = (PIMAGE_DOS_HEADER)GetModuleHandle(NULL);
+	PIMAGE_DOS_HEADER EXEHeader = (PIMAGE_DOS_HEADER)GetModuleHandle(nullptr);
 	assert(EXEHeader->e_magic == IMAGE_DOS_SIGNATURE);
 	// PIMAGE_NT_HEADERS is bitness dependant.
 	// Conveniently, since it's for our own process, it's always the correct bitness.
@@ -160,7 +160,7 @@ bool OSystem_Win32::displayLogFile() {
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
 	TCHAR *tLogFilePath = Win32::stringToTchar(_logFilePath);
-	HINSTANCE shellExec = ShellExecute(getHwnd(), NULL, tLogFilePath, NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE shellExec = ShellExecute(getHwnd(), nullptr, tLogFilePath, nullptr, nullptr, SW_SHOWNORMAL);
 	if ((intptr_t)shellExec > 32) {
 		free(tLogFilePath);
 		return true;
@@ -175,14 +175,14 @@ bool OSystem_Win32::displayLogFile() {
 
 	TCHAR cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
 	_stprintf(cmdLine, TEXT("rundll32 shell32.dll,OpenAs_RunDLL %s"), tLogFilePath);
-	BOOL result = CreateProcess(NULL,
+	BOOL result = CreateProcess(nullptr,
 	                            cmdLine,
-	                            NULL,
-	                            NULL,
+	                            nullptr,
+	                            nullptr,
 	                            FALSE,
 	                            NORMAL_PRIORITY_CLASS,
-	                            NULL,
-	                            NULL,
+	                            nullptr,
+	                            nullptr,
 	                            &startupInfo,
 	                            &processInformation);
 	free(tLogFilePath);
@@ -197,7 +197,7 @@ bool OSystem_Win32::displayLogFile() {
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
 	TCHAR *tUrl = Win32::stringToTchar(url);
-	HINSTANCE result = ShellExecute(getHwnd(), NULL, tUrl, NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE result = ShellExecute(getHwnd(), nullptr, tUrl, nullptr, nullptr, SW_SHOWNORMAL);
 	free(tUrl);
 	// ShellExecute returns a value greater than 32 if successful
 	if ((intptr_t)result <= 32) {
@@ -252,7 +252,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		_tcscat(picturesPath, TEXT("\\Screenshots\\"));
 	} else {
 		// Use the My Pictures folder
-		if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
+		if (SHGetFolderPathFunc(nullptr, CSIDL_MYPICTURES, nullptr, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
 			warning("Unable to access My Pictures directory");
 			return Common::String();
 		}
@@ -261,7 +261,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 
 	// If the directory already exists (as it should in most cases),
 	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
-	if (!CreateDirectory(picturesPath, NULL)) {
+	if (!CreateDirectory(picturesPath, nullptr)) {
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
 			error("Cannot create ScummVM Screenshots folder");
 	}
@@ -289,8 +289,8 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		if (Win32::getApplicationDataDirectory(configFile)) {
 			_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
 
-			FILE *tmp = NULL;
-			if ((tmp = _tfopen(configFile, TEXT("r"))) == NULL) {
+			FILE *tmp = nullptr;
+			if ((tmp = _tfopen(configFile, TEXT("r"))) == nullptr) {
 				// Check windows directory
 				TCHAR oldConfigFile[MAX_PATH];
 				uint ret = GetWindowsDirectory(oldConfigFile, MAX_PATH);
@@ -330,7 +330,7 @@ Common::String OSystem_Win32::getDefaultLogFileName() {
 			return Common::String();
 		}
 		_tcscat(logFile, TEXT("\\Logs"));
-		CreateDirectory(logFile, NULL);
+		CreateDirectory(logFile, nullptr);
 	}
 
 	_tcscat(logFile, TEXT("\\scummvm.log"));
@@ -349,7 +349,7 @@ bool OSystem_Win32::detectPortableConfigFile() {
 	Win32::getProcessDirectory(portableConfigFile, MAX_PATH);
 	_tcscat(portableConfigFile, TEXT("\\" DEFAULT_CONFIG_FILE));
 	FILE *file = _tfopen(portableConfigFile, TEXT("r"));
-	if (file == NULL) {
+	if (file == nullptr) {
 		return false;
 	}
 	fclose(file);
@@ -359,7 +359,7 @@ bool OSystem_Win32::detectPortableConfigFile() {
 	// (Notepad++ does this too.)
 	if (Win32::confirmWindowsVersion(6, 0)) {
 		TCHAR programFiles[MAX_PATH];
-		if (SHGetFolderPathFunc(NULL, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, programFiles) == S_OK) {
+		if (SHGetFolderPathFunc(nullptr, CSIDL_PROGRAM_FILES, nullptr, SHGFP_TYPE_CURRENT, programFiles) == S_OK) {
 			_tcscat(portableConfigFile, TEXT("\\"));
 			if (_tcsstr(portableConfigFile, programFiles) == portableConfigFile) {
 				return false;
@@ -398,7 +398,7 @@ BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName
 }
 
 Win32ResourceArchive::Win32ResourceArchive() {
-	EnumResourceNames(NULL, MAKEINTRESOURCE(256), &EnumResNameProc, (LONG_PTR)this);
+	EnumResourceNames(nullptr, MAKEINTRESOURCE(256), &EnumResNameProc, (LONG_PTR)this);
 }
 
 bool Win32ResourceArchive::hasFile(const Common::Path &path) const {
@@ -428,26 +428,26 @@ const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Pat
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
 	TCHAR *tName = Win32::stringToTchar(name);
-	HRSRC resource = FindResource(NULL, tName, MAKEINTRESOURCE(256));
+	HRSRC resource = FindResource(nullptr, tName, MAKEINTRESOURCE(256));
 	free(tName);
 
-	if (resource == NULL)
-		return 0;
+	if (resource == nullptr)
+		return nullptr;
 
-	HGLOBAL handle = LoadResource(NULL, resource);
+	HGLOBAL handle = LoadResource(nullptr, resource);
 
-	if (handle == NULL)
-		return 0;
+	if (handle == nullptr)
+		return nullptr;
 
 	const byte *data = (const byte *)LockResource(handle);
 
-	if (data == NULL)
-		return 0;
+	if (data == nullptr)
+		return nullptr;
 
-	uint32 size = SizeofResource(NULL, resource);
+	uint32 size = SizeofResource(nullptr, resource);
 
 	if (size == 0)
-		return 0;
+		return nullptr;
 
 	return new Common::MemoryReadStream(data, size);
 }

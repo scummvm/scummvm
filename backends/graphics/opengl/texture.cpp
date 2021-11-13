@@ -91,7 +91,7 @@ void GLTexture::create() {
 	if (_width != 0 && _height != 0) {
 		// Allocate storage for OpenGL texture.
 		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
-		                     0, _glFormat, _glType, NULL));
+		                     0, _glFormat, _glType, nullptr));
 	}
 }
 
@@ -135,7 +135,7 @@ void GLTexture::setSize(uint width, uint height) {
 		if (oldWidth != _width || oldHeight != _height) {
 			bind();
 			GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width,
-			                     _height, 0, _glFormat, _glType, NULL));
+			                     _height, 0, _glFormat, _glType, nullptr));
 		}
 	}
 }

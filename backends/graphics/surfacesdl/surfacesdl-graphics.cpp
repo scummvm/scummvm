@@ -59,7 +59,7 @@
 
 static OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"surfacesdl", _s("SDL Surface"), GFX_SURFACESDL},
-	{0, 0, 0}
+	{nullptr, nullptr, 0}
 };
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -90,7 +90,7 @@ static AspectRatio getDesiredAspectRatio() {
 	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
 
 	for (size_t i = 0; i < AR_COUNT; i++) {
-		assert(desiredAspectRatioAsStrings[i] != NULL);
+		assert(desiredAspectRatioAsStrings[i] != nullptr);
 
 		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
 			return desiredAspectRatios[i];
@@ -114,11 +114,11 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
 #endif
-	_screen(0), _tmpscreen(0),
+	_screen(nullptr), _tmpscreen(nullptr),
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_useOldSrc(false),
-	_overlayscreen(0), _tmpscreen2(0),
+	_overlayscreen(nullptr), _tmpscreen2(nullptr),
 	_screenChangeCount(0),
 	_mouseData(nullptr), _mouseSurface(nullptr),
 	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
@@ -151,7 +151,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = false;
 #endif
 
-	_scalerPlugin = NULL;
+	_scalerPlugin = nullptr;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
@@ -842,7 +842,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	const Uint32 aMask = ((0xFF >> format.aLoss) << format.aShift);
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
 						_screenFormat.bytesPerPixel * 8, rMask, gMask, bMask, aMask);
-	if (_screen == NULL)
+	if (_screen == nullptr)
 		error("allocating _screen failed");
 
 #ifdef USE_RGB_COLOR
@@ -891,7 +891,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	detectSupportedFormats();
 #endif
 
-	if (_hwScreen == NULL) {
+	if (_hwScreen == nullptr) {
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwScreen is hosed.
 
@@ -920,7 +920,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 						_hwScreen->format->Bmask,
 						_hwScreen->format->Amask);
 
-	if (_tmpscreen == NULL)
+	if (_tmpscreen == nullptr)
 		error("allocating _tmpscreen failed");
 
 	if (_useOldSrc) {
@@ -936,7 +936,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 						_hwScreen->format->Bmask,
 						_hwScreen->format->Amask);
 
-	if (_overlayscreen == NULL)
+	if (_overlayscreen == nullptr)
 		error("allocating _overlayscreen failed");
 
 	_overlayFormat = convertSDLPixelFormat(_overlayscreen->format);
@@ -949,7 +949,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 						_hwScreen->format->Bmask,
 						_hwScreen->format->Amask);
 
-	if (_tmpscreen2 == NULL)
+	if (_tmpscreen2 == nullptr)
 		error("allocating _tmpscreen2 failed");
 
 	return true;
@@ -958,7 +958,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	if (_screen) {
 		SDL_FreeSurface(_screen);
-		_screen = NULL;
+		_screen = nullptr;
 	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -967,33 +967,33 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 
 	if (_hwScreen) {
 		SDL_FreeSurface(_hwScreen);
-		_hwScreen = NULL;
+		_hwScreen = nullptr;
 	}
 
 	if (_tmpscreen) {
 		SDL_FreeSurface(_tmpscreen);
-		_tmpscreen = NULL;
+		_tmpscreen = nullptr;
 	}
 
 	if (_tmpscreen2) {
 		SDL_FreeSurface(_tmpscreen2);
-		_tmpscreen2 = NULL;
+		_tmpscreen2 = nullptr;
 	}
 
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
-		_overlayscreen = NULL;
+		_overlayscreen = nullptr;
 	}
 
 #ifdef USE_OSD
 	if (_osdMessageSurface) {
 		SDL_FreeSurface(_osdMessageSurface);
-		_osdMessageSurface = NULL;
+		_osdMessageSurface = nullptr;
 	}
 
 	if (_osdIconSurface) {
 		SDL_FreeSurface(_osdIconSurface);
-		_osdIconSurface = NULL;
+		_osdIconSurface = nullptr;
 	}
 #endif
 
@@ -1013,22 +1013,22 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	// Keep around the old _screen & _overlayscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
-	_screen = NULL;
+	_screen = nullptr;
 	SDL_Surface *old_overlayscreen = _overlayscreen;
-	_overlayscreen = NULL;
+	_overlayscreen = nullptr;
 
 	// Release the HW screen surface
 	if (_hwScreen) {
 		SDL_FreeSurface(_hwScreen);
-		_hwScreen = NULL;
+		_hwScreen = nullptr;
 	}
 	if (_tmpscreen) {
 		SDL_FreeSurface(_tmpscreen);
-		_tmpscreen = NULL;
+		_tmpscreen = nullptr;
 	}
 	if (_tmpscreen2) {
 		SDL_FreeSurface(_tmpscreen2);
-		_tmpscreen2 = NULL;
+		_tmpscreen2 = nullptr;
 	}
 
 	// Setup the new GFX mode
@@ -1045,8 +1045,8 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// Restore old screen content
-	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
-	SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
+	SDL_BlitSurface(old_screen, nullptr, _screen, nullptr);
+	SDL_BlitSurface(old_overlayscreen, nullptr, _overlayscreen, nullptr);
 
 	// Free the old surfaces
 	SDL_FreeSurface(old_screen);
@@ -1133,7 +1133,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			// do that in theory, but it won't unless the factor actually changes (which it doesn't). Now, the code
 			// in SourceScaler::setSource() looks a bit fishy, e. g. the *src argument isn't even used. But otherwise
 			// it does what we want here at least...
-			_scalerPlugin->setSource(0, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+			_scalerPlugin->setSource(nullptr, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 		}
 
 		origSurf = _screen;
@@ -1346,7 +1346,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 }
 
 bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
-	assert(_hwScreen != NULL);
+	assert(_hwScreen != nullptr);
 
 	Common::StackLock lock(_graphicsMutex);
 
@@ -1420,7 +1420,7 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int
 	assert(_transactionMode == kTransactionNone);
 	assert(buf);
 
-	if (_screen == NULL) {
+	if (_screen == nullptr) {
 		warning("SurfaceSdlGraphicsManager::copyRectToScreen: _screen == NULL");
 		return;
 	}
@@ -1715,7 +1715,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 void SurfaceSdlGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	assert(_transactionMode == kTransactionNone);
 
-	if (_overlayscreen == NULL)
+	if (_overlayscreen == nullptr)
 		return;
 
 	if (SDL_LockSurface(_overlayscreen) == -1)
@@ -1736,7 +1736,7 @@ void SurfaceSdlGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
-	if (_overlayscreen == NULL)
+	if (_overlayscreen == nullptr)
 		return;
 
 	const byte *src = (const byte *)buf;
@@ -2332,7 +2332,7 @@ void SurfaceSdlGraphicsManager::removeOSDMessage() {
 		_forceRedraw = true;
 	}
 
-	_osdMessageSurface = NULL;
+	_osdMessageSurface = nullptr;
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
 }
 
@@ -2367,12 +2367,12 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 void SurfaceSdlGraphicsManager::drawOSD() {
 	if (_osdMessageSurface) {
 		SDL_Rect dstRect = getOSDMessageRect();
-		SDL_BlitSurface(_osdMessageSurface, 0, _hwScreen, &dstRect);
+		SDL_BlitSurface(_osdMessageSurface, nullptr, _hwScreen, &dstRect);
 	}
 
 	if (_osdIconSurface) {
 		SDL_Rect dstRect = getOSDIconRect();
-		SDL_BlitSurface(_osdIconSurface, 0, _hwScreen, &dstRect);
+		SDL_BlitSurface(_osdIconSurface, nullptr, _hwScreen, &dstRect);
 	}
 }
 
@@ -2632,7 +2632,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	viewport.h = _activeArea.drawRect.height();
 
 	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _screenTexture, NULL, &viewport);
+	SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
 	SDL_RenderPresent(_renderer);
 }
 

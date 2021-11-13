@@ -87,10 +87,10 @@ OSystem_SDL::OSystem_SDL()
 #ifdef USE_SDL_NET
 	_initedSDLnet(false),
 #endif
-	_logger(0),
-	_eventSource(0),
+	_logger(nullptr),
+	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
-	_window(0) {
+	_window(nullptr) {
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -105,24 +105,24 @@ OSystem_SDL::~OSystem_SDL() {
 	// of our managers must be deleted *before* we call SDL_Quit().
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
-	_savefileManager = 0;
+	_savefileManager = nullptr;
 	if (_graphicsManager) {
 		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
-	_graphicsManager = 0;
+	_graphicsManager = nullptr;
 	delete _window;
-	_window = 0;
+	_window = nullptr;
 	delete _eventManager;
-	_eventManager = 0;
+	_eventManager = nullptr;
 	delete _eventSourceWrapper;
 	_eventSourceWrapper = nullptr;
 	delete _eventSource;
-	_eventSource = 0;
+	_eventSource = nullptr;
 	delete _audiocdManager;
-	_audiocdManager = 0;
+	_audiocdManager = nullptr;
 	delete _mixerManager;
-	_mixerManager = 0;
+	_mixerManager = nullptr;
 
 #ifdef ENABLE_EVENTRECORDER
 	// HACK HACK HACK
@@ -132,10 +132,10 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _timerManager;
 #endif
 
-	_timerManager = 0;
+	_timerManager = nullptr;
 
 	delete _logger;
-	_logger = 0;
+	_logger = nullptr;
 
 #ifdef USE_DISCORD
 	delete _presence;
@@ -161,11 +161,11 @@ void OSystem_SDL::init() {
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
-	if (_window == 0)
+	if (_window == nullptr)
 		_window = new SdlWindow();
 
 #if defined(USE_TASKBAR)
-	if (_taskbarManager == 0)
+	if (_taskbarManager == nullptr)
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
@@ -232,7 +232,7 @@ void OSystem_SDL::initBackend() {
 	// Search for legacy gfx_mode and replace it
 	ScalerMan.updateOldSettings();
 
-	if (_graphicsManager == 0) {
+	if (_graphicsManager == nullptr) {
 #ifdef USE_OPENGL
 		// Setup a list with both SDL and OpenGL graphics modes. We only do
 		// this whenever the subclass did not already set up an graphics
@@ -263,15 +263,15 @@ void OSystem_SDL::initBackend() {
 		}
 #endif
 
-		if (_graphicsManager == 0) {
+		if (_graphicsManager == nullptr) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 		}
 	}
 
-	if (_savefileManager == 0)
+	if (_savefileManager == nullptr)
 		_savefileManager = new DefaultSaveFileManager();
 
-	if (_mixerManager == 0) {
+	if (_mixerManager == nullptr) {
 		_mixerManager = new SdlMixerManager();
 		// Setup and start mixer
 		_mixerManager->init();
@@ -282,7 +282,7 @@ void OSystem_SDL::initBackend() {
 
 	g_eventRec.registerTimerManager(new SdlTimerManager());
 #else
-	if (_timerManager == 0)
+	if (_timerManager == nullptr)
 		_timerManager = new SdlTimerManager();
 #endif
 
@@ -518,7 +518,7 @@ Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// First log to stdout/stderr
-	FILE *output = 0;
+	FILE *output = nullptr;
 
 	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
 		output = stdout;
@@ -665,7 +665,7 @@ void OSystem_SDL::delayMillis(uint msecs) {
 }
 
 void OSystem_SDL::getTimeAndDate(TimeDate &td, bool skipRecord) const {
-	time_t curTime = time(0);
+	time_t curTime = time(nullptr);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
 	td.tm_min = t.tm_min;
@@ -818,12 +818,12 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		}
 
 		// Next setup the cursor again
-		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+		CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
 		CursorMan.popCursor();
 
 		// Next setup cursor palette if needed
 		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
-			CursorMan.pushCursorPalette(0, 0, 0);
+			CursorMan.pushCursorPalette(nullptr, 0, 0);
 			CursorMan.popCursorPalette();
 		}
 

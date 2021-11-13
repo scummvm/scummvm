@@ -59,7 +59,7 @@ void SdlGraphicsManager::deactivateManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
 
-	_eventSource->setGraphicsManager(0);
+	_eventSource->setGraphicsManager(nullptr);
 }
 
 SdlGraphicsManager::State SdlGraphicsManager::getState() const {

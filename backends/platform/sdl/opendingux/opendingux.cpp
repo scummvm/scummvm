@@ -57,7 +57,7 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
 	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
-	{0,			Common::KEYCODE_INVALID,	0			}
+	{nullptr,			Common::KEYCODE_INVALID,	nullptr			}
 };
 
 static const Common::HardwareInputTableEntry odJoystickButtons[] = {
@@ -145,7 +145,7 @@ void OSystem_SDL_Opendingux::initBackend() {
         }
 #endif
 	// Create the savefile manager
-	if (_savefileManager == 0) {
+	if (_savefileManager == nullptr) {
 		_savefileManager = new DefaultSaveFileManager(SAVE_PATH);
 	}
 
