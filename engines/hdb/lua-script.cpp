@@ -947,7 +947,7 @@ static int dialogChoice(lua_State *L) {
 	const char *title = lua_tostring(L, 1);
 	const char *text = lua_tostring(L, 2);
 	const char *func = lua_tostring(L, 3);
-	const char *choice[10] = {0,0,0,0,0,0,0,0,0,0};
+	const char *choice[10] = {nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr};
 
 	int	amount = lua_gettop(L) - 3;
 	if (amount > 9)
@@ -1368,7 +1368,7 @@ static int openFile(lua_State *L) {
 
 	lua_pop(L, 2); // drop 2 parameters
 
-	lua_pushlightuserdata(L, 0);
+	lua_pushlightuserdata(L, nullptr);
 
 	return 1;
 }

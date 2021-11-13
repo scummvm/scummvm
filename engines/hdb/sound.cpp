@@ -1519,7 +1519,7 @@ void Sound::playSound(int index) {
 		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	}
 
-	if (audioStream == 0) {
+	if (audioStream == nullptr) {
 		warning("playSound: sound %d is corrupt", index);
 		return;
 	}
@@ -1583,7 +1583,7 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	}
 
-	if (audioStream == 0) {
+	if (audioStream == nullptr) {
 		warning("playSoundEx: sound %d is corrupt", index);
 		return;
 	}
