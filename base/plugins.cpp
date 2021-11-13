@@ -254,7 +254,7 @@ void FilePluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 
 #pragma mark -
 
-PluginManager *PluginManager::_instance = NULL;
+PluginManager *PluginManager::_instance = nullptr;
 
 PluginManager &PluginManager::instance() {
 	if (_instance)
@@ -345,7 +345,7 @@ void PluginManagerUncached::init() {
 	_allEnginePlugins.clear();
 	ConfMan.setBool("always_run_fallback_detection_extern", false);
 
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false); // empty the engine plugins
 
 #ifndef DETECTION_STATIC
 	Common::String detectPluginName = "detection";
@@ -433,7 +433,7 @@ bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename)
 	if (filename.empty())
 		return false;
 
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
 	PluginList::iterator i;
 	for (i = _allEnginePlugins.begin(); i != _allEnginePlugins.end(); ++i) {
@@ -509,7 +509,7 @@ void PluginManagerUncached::unloadDetectionPlugin() {
 #endif
 
 void PluginManagerUncached::loadFirstPlugin() {
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
 	// let's try to find one we can load
 	for (_currentPlugin = _allEnginePlugins.begin(); _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
@@ -521,7 +521,7 @@ void PluginManagerUncached::loadFirstPlugin() {
 }
 
 bool PluginManagerUncached::loadNextPlugin() {
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
 	if (!_currentPlugin || _currentPlugin == _allEnginePlugins.end())
 		return false;
@@ -590,11 +590,11 @@ void PluginManager::loadAllPluginsOfType(PluginType type) {
 
 void PluginManager::unloadAllPlugins() {
 	for (int i = 0; i < PLUGIN_TYPE_MAX; i++)
-		unloadPluginsExcept((PluginType)i, NULL);
+		unloadPluginsExcept((PluginType)i, nullptr);
 }
 
 void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
-	Plugin *found = NULL;
+	Plugin *found = nullptr;
 	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
 		if (*p == plugin) {
 			found = *p;
@@ -606,7 +606,7 @@ void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, b
 		}
 	}
 	_pluginsInMem[type].clear();
-	if (found != NULL) {
+	if (found != nullptr) {
 		_pluginsInMem[type].push_back(found);
 	}
 }
@@ -816,7 +816,7 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 		if (engineId == (*iter)->get<MetaEngineDetection>().getEngineId())
 			return *iter;
 
-	return 0;
+	return nullptr;
 }
 
 const Plugin *PluginManager::findLoadedPlugin(const Common::String &engineId) {
@@ -826,7 +826,7 @@ const Plugin *PluginManager::findLoadedPlugin(const Common::String &engineId) {
 		if (engineId == (*iter)->get<MetaEngine>().getName())
 			return *iter;
 
-	return 0;
+	return nullptr;
 }
 
 const Plugin *PluginManager::findEnginePlugin(const Common::String &engineId) {
@@ -855,7 +855,7 @@ const Plugin *PluginManager::findEnginePlugin(const Common::String &engineId) {
 		}
 	} while (PluginMan.loadNextPlugin());
 
-	return 0;
+	return nullptr;
 }
 
 QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
@@ -1030,7 +1030,7 @@ Plugin *ScalerManager::findScalerPlugin(const char *name) const {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 uint ScalerManager::findScalerPluginIndex(const char *name) const {

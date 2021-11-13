@@ -520,7 +520,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 	// Iterate over all command line arguments and parse them into our string map.
 	for (int i = 1; i < argc; ++i) {
 		s = argv[i];
-		s2 = (i < argc-1) ? argv[i+1] : 0;
+		s2 = (i < argc-1) ? argv[i+1] : nullptr;
 
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
@@ -1463,7 +1463,7 @@ void upgradeTargets() {
 		DetectionResults detectionResults = EngineMan.detectGames(files);
 		DetectedGames candidates = detectionResults.listRecognizedGames();
 
-		DetectedGame *g = 0;
+		DetectedGame *g = nullptr;
 
 		// We proceed as follows:
 		// * If detection failed to produce candidates, skip.
