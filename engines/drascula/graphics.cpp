@@ -400,7 +400,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	*tmpMessageCurLine = 0;
 	// Get a word from the message
 	char* curWord = strtok(msg, " ");
-	while (curWord != NULL) {
+	while (curWord != nullptr) {
 		// Check if the word and the current line fit on screen
 		if (tmpMessageCurLine[0] != '\0')
 			Common::strlcat(tmpMessageCurLine, " ", 50);
@@ -416,8 +416,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		}
 
 		// Get next word
-		curWord = strtok(NULL, " ");
-		if (curWord == NULL) {
+		curWord = strtok(nullptr, " ");
+		if (curWord == nullptr) {
 			// The original has an interesting bug that if we split the text on several lines
 			// a space is added at the end (which impacts the alignment, and may even cause the line
 			// to become too long).
