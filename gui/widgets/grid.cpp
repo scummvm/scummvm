@@ -340,6 +340,11 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
+	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+
+	_scrollWindowPaddingX = _minGridXSpacing;
+	_scrollWindowPaddingY = _minGridYSpacing;
 
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -347,8 +352,10 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
+	_scrollSpeed = 1;
 	_firstVisibleItem = 0;
 	_lastVisibleItem = 0;
+	_rows = 0;
 	_itemsPerRow = 0;
 
 	_innerHeight = 0;
@@ -357,8 +364,15 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_scrollWindowWidth = 0;
 	_gridYSpacing = 0;
 	_gridXSpacing = 0;
+	_gridHeaderHeight = kLineHeight;
+	_gridHeaderWidth = 0;
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
+	_gridItemWidth = _thumbnailWidth;
+	_trayHeight = kLineHeight * 3;
 
 	_selectedEntry = nullptr;
+	_tray = nullptr;
+	_isGridInvalid = true;
 }
 
 GridWidget::~GridWidget() {
