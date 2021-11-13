@@ -34,6 +34,11 @@ Programmcodes finden Sie auf Englisch unter:
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
 
+ Windows-Portierung:
+   - "Portabler Modus" hinzugefügt, der die von ScummVM erstellten Dateien (Spielstände, Screenshots...)
+     nicht wie üblich im Benutzerprofil-Ordner, sondern in dem Verzeichnis ablegt, in welchem sich
+     die ScummVM-Programmdatei befindet, sofern dort eine scummvm.ini-Datei existiert.
+
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
