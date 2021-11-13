@@ -709,7 +709,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		// Redraw the grid, before we open the tray dialog
 		draw();
 		openTrayAtSelected();
-		// Fallthrough is intentional
+		// fall through
 	default:
 		sendCommand(cmd, 0);
 		break;
