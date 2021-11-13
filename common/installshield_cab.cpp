@@ -64,10 +64,10 @@ public:
 	void close();
 
 	// Archive API implementation
-	virtual bool hasFile(const Path &path) const;
-	virtual int listMembers(ArchiveMemberList &list) const;
-	virtual const ArchiveMemberPtr getMember(const Path &path) const;
-	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
+	bool hasFile(const Path &path) const override;
+	int listMembers(ArchiveMemberList &list) const override;
+	const ArchiveMemberPtr getMember(const Path &path) const override;
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
 
 private:
 	struct FileEntry {

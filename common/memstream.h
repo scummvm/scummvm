@@ -126,13 +126,13 @@ public:
 		return dataSize;
 	}
 
-	virtual int64 pos() const override { return _pos; }
-	virtual int64 size() const override { return _bufSize; }
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _bufSize; }
 
-	virtual bool err() const override { return _err; }
-	virtual void clearErr() override { _err = false; }
+	bool err() const override { return _err; }
+	void clearErr() override { _err = false; }
 
-	virtual bool seek(int64 offset, int whence = SEEK_SET) override { return false; }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return false; }
 };
 
 /**
@@ -144,7 +144,7 @@ private:
 public:
 	SeekableMemoryWriteStream(byte *buf, uint32 len) : MemoryWriteStream(buf, len), _ptrOrig(buf) {}
 
-	virtual bool seek(int64 offset, int whence = SEEK_SET) override {
+	bool seek(int64 offset, int whence = SEEK_SET) override {
 		switch (whence) {
 		case SEEK_END:
 			// SEEK_END works just like SEEK_SET, only 'reversed',
@@ -232,12 +232,12 @@ public:
 		return dataSize;
 	}
 
-	virtual int64 pos() const override { return _pos; }
-	virtual int64 size() const override { return _size; }
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _size; }
 
 	byte *getData() { return _data; }
 
-	virtual bool seek(int64 offs, int whence = SEEK_SET) override {
+	bool seek(int64 offs, int whence = SEEK_SET) override {
 		// Pre-Condition
 		assert(_pos <= _size);
 		switch (whence) {
@@ -325,7 +325,7 @@ public:
 		return dataSize;
 	}
 
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override {
+	uint32 read(void *dataPtr, uint32 dataSize) override {
 		if (_length < dataSize) {
 			dataSize = _length;
 			_eos = true;
@@ -343,11 +343,11 @@ public:
 		return dataSize;
 	}
 
-	virtual int64 pos() const override { return _pos - _length; }
-	virtual int64 size() const override { return _size; }
-	virtual bool seek(int64, int) override { return false; }
-	virtual bool eos() const override { return _eos; }
-	virtual void clearErr() override { _eos = false; }
+	int64 pos() const override { return _pos - _length; }
+	int64 size() const override { return _size; }
+	bool seek(int64, int) override { return false; }
+	bool eos() const override { return _eos; }
+	void clearErr() override { _eos = false; }
 
 	byte *getData() { return _data; }
 };

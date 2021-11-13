@@ -60,9 +60,9 @@ private:
 public:
 	virtual ~LuaFileConfig();
 
-	virtual bool eof() const override { return _readPos >= _readData.size(); }
-	virtual size_t read(void *ptr, size_t size, size_t count) override;
-	virtual size_t write(const char *ptr, size_t count) override;
+	bool eof() const override { return _readPos >= _readData.size(); }
+	size_t read(void *ptr, size_t size, size_t count) override;
+	size_t write(const char *ptr, size_t count) override;
 };
 
 class LuaFileRead : public LuaFileProxy {
@@ -74,9 +74,9 @@ public:
 public:
 	virtual ~LuaFileRead() {}
 
-	virtual bool eof() const override;
-	virtual size_t read(void *ptr, size_t size, size_t count) override;
-	virtual size_t write(const char *ptr, size_t count) override;
+	bool eof() const override;
+	size_t read(void *ptr, size_t size, size_t count) override;
+	size_t write(const char *ptr, size_t count) override;
 };
 
 } // End of namespace Lua

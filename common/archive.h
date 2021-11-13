@@ -252,17 +252,17 @@ public:
 	 */
 	void setPriority(const String& name, int priority);
 
-	virtual bool hasFile(const Path &path) const;
-	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
-	virtual int listMembers(ArchiveMemberList &list) const;
+	bool hasFile(const Path &path) const override;
+	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const override;
+	int listMembers(ArchiveMemberList &list) const override;
 
-	virtual const ArchiveMemberPtr getMember(const Path &path) const;
+	const ArchiveMemberPtr getMember(const Path &path) const override;
 
 	/**
 	 * Implement createReadStreamForMember from the Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
 
 	/**
 	 * Ignore clashes when adding directories. For more details, see the corresponding parameter

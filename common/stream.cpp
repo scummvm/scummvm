@@ -314,11 +314,11 @@ public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 	virtual ~BufferedReadStream();
 
-	virtual bool eos() const { return _eos; }
-	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
+	bool eos() const override { return _eos; }
+	bool err() const override { return _parentStream->err(); }
+	void clearErr() override { _eos = false; _parentStream->clearErr(); }
 
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
@@ -416,10 +416,10 @@ protected:
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
-	virtual int64 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual int64 size() const { return _parentStream->size(); }
+	int64 pos() const override { return _parentStream->pos() - (_bufSize - _pos); }
+	int64 size() const override { return _parentStream->size(); }
 
-	virtual bool seek(int64 offset, int whence = SEEK_SET);
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
