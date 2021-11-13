@@ -74,11 +74,9 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
-	MetaEngine::setGameMenuActive(false);
 }
 
 void ShapeViewerGump::InitGump(Gump *newparent, bool take_focus) {
-	MetaEngine::setGameMenuActive(true);
 	ModalGump::InitGump(newparent, take_focus);
 }
 

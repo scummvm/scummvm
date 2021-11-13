@@ -70,12 +70,9 @@ MenuGump::MenuGump(bool nameEntryMode)
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
 	palman->untransformPalette(PaletteManager::Pal_Game);
-
-	MetaEngine::setGameMenuActive(true);
 }
 
 MenuGump::~MenuGump() {
-	MetaEngine::setGameMenuActive(false);
 }
 
 

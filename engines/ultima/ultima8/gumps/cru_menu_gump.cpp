@@ -66,11 +66,9 @@ CruMenuGump::CruMenuGump()
 		// Play the menu music
 		musicprocess->playMusic(track);
 	}
-	MetaEngine::setGameMenuActive(true);
 }
 
 CruMenuGump::~CruMenuGump() {
-	MetaEngine::setGameMenuActive(false);
 }
 
 void CruMenuGump::Close(bool no_del) {
