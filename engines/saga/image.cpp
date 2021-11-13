@@ -295,7 +295,7 @@ void SagaEngine::flipImage(byte *imageBuffer, int columns, int scanlines) {
 
 	tmp_scan.resize(columns);
 	flip_tmp = tmp_scan.getBuffer();
-	if (flip_tmp == NULL) {
+	if (flip_tmp == nullptr) {
 		return;
 	}
 

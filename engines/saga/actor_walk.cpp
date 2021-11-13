@@ -190,7 +190,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	_vm->_sound->stopVoice();
 	_activeSpeech.stringsCount = 0;
 	_activeSpeech.playing = false;
-	_protagonist = NULL;
+	_protagonist = nullptr;
 
 	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		actor->_inScene = false;
@@ -216,7 +216,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	}
 
 	// _protagonist can be null while loading a game from the command line
-	if (_protagonist == NULL)
+	if (_protagonist == nullptr)
 		return;
 
 	if ((actorsEntrance >= 0) && (!_vm->_scene->_entryList.empty())) {
@@ -667,7 +667,7 @@ void Actor::handleActions(int msec, bool setup) {
 		}
 
 		if ((actor->_currentAction >= kActionWalkToPoint) && (actor->_currentAction <= kActionWalkDir)) {
-			hitZone = NULL;
+			hitZone = nullptr;
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				actor->_location.toScreenPointUV(hitPoint);
@@ -688,7 +688,7 @@ void Actor::handleActions(int msec, bool setup) {
 			if (_vm->getGameId() == GID_IHNM) {
 				if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
 					if (hitPoint.x <= 300)
-						hitZone = NULL;
+						hitZone = nullptr;
 			}
 
 			if (hitZone != actor->_lastZone) {

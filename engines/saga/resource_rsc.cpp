@@ -100,7 +100,7 @@ void ResourceContext_RSC::processPatches(Resource *resource, const GamePatchDesc
 						resourceData->patchData->_patchFile->close();
 					} else {
 						delete resourceData->patchData;
-						resourceData->patchData = NULL;
+						resourceData->patchData = nullptr;
 					}
 				}
 			}

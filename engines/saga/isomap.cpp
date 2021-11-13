@@ -369,7 +369,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 void IsoMap::draw() {
 	_tileClip = _vm->_scene->getSceneClip();
 	_vm->_gfx->drawRect(_tileClip, 0);
-	drawTiles(NULL);
+	drawTiles(nullptr);
 }
 
 void IsoMap::setMapPosition(int x, int y) {
@@ -465,7 +465,7 @@ void IsoMap::drawTiles(const Location *location) {
 				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 			}
 
-			if (location != NULL) {
+			if (location != nullptr) {
 				rLocation.u() = location->u() - (u2 << 7);
 				rLocation.v() = location->v() - (v2 << 7);
 				rLocation.z = location->z;
@@ -510,7 +510,7 @@ void IsoMap::drawTiles(const Location *location) {
 				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 			}
 
-			if (location != NULL) {
+			if (location != nullptr) {
 				rLocation.u() = location->u() - (u2 << 7);
 				rLocation.v() = location->v() - (v2 << 7);
 				rLocation.z = location->z;
@@ -678,7 +678,7 @@ void IsoMap::drawPlatform(uint16 platformIndex, const Point &point, int16 absU, 
 						tileIndex = findMulti(tileIndex, absU + u, absV + v, absH);
 					}
 
-					drawTile(tileIndex, s, NULL);
+					drawTile(tileIndex, s, nullptr);
 				}
 			}
 		}
@@ -727,7 +727,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 		return;
 	}
 
-	if (location != NULL) {
+	if (location != nullptr) {
 		if (location->z <= -16) {
 			if (location->z <= -48) {
 				if (location->u() < -THRESH8 || location->v() < -THRESH8) {
@@ -1052,7 +1052,7 @@ IsoTileData *IsoMap::getTile(int16 u, int16 v, int16 z) {
 	tileIndex = getTileIndex(u, v, z);
 
 	if (tileIndex == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (tileIndex & SAGA_MULTI_TILE) {
@@ -1257,35 +1257,35 @@ bool IsoMap::findNearestChasm(int16 &u0, int16 &v0, uint16 &direction) {
 	v = v0;
 
 	for (i = 1; i < 5; i++) {
-		if (getTile(u - i, v, 6) == NULL) {
+		if (getTile(u - i, v, 6) == nullptr) {
 			u0 = u - i - 1;
 			v0 = v;
 			direction = kDirDownLeft;
 			return true;
 		}
 
-		if (getTile(u, v - i, 6) == NULL) {
+		if (getTile(u, v - i, 6) == nullptr) {
 			u0 = u;
 			v0 = v - i - 1;
 			direction = kDirDownRight;
 			return true;
 		}
 
-		if (getTile(u - i, v - i, 6) == NULL) {
+		if (getTile(u - i, v - i, 6) == nullptr) {
 			u0 = u - i - 1;
 			v0 = v - i - 1;
 			direction = kDirDown;
 			return true;
 		}
 
-		if (getTile(u + i, v - i, 6) == NULL) {
+		if (getTile(u + i, v - i, 6) == nullptr) {
 			u0 = u + i + 1;
 			v0 = v - i - 1;
 			direction = kDirDownRight;
 			return true;
 		}
 
-		if (getTile(u - i, v + i, 6) == NULL) {
+		if (getTile(u - i, v + i, 6) == nullptr) {
 			u0 = u + i + 1;
 			v0 = v - i - 1;
 			direction = kDirLeft;
@@ -1294,21 +1294,21 @@ bool IsoMap::findNearestChasm(int16 &u0, int16 &v0, uint16 &direction) {
 	}
 
 	for (i = 1; i < 5; i++) {
-		if (getTile(u + i, v, 6) == NULL) {
+		if (getTile(u + i, v, 6) == nullptr) {
 			u0 = u + i + 1;
 			v0 = v;
 			direction = kDirUpRight;
 			return true;
 		}
 
-		if (getTile(u, v + i, 6) == NULL) {
+		if (getTile(u, v + i, 6) == nullptr) {
 			u0 = u;
 			v0 = v + i + 1;
 			direction = kDirUpLeft;
 			return true;
 		}
 
-		if (getTile(u + i, v + i, 6) == NULL) {
+		if (getTile(u + i, v + i, 6) == nullptr) {
 			u0 = u + i + 1;
 			v0 = v + i + 1;
 			direction = kDirUp;
@@ -1370,7 +1370,7 @@ void IsoMap::findDragonTilePath(ActorData* actor, const Location &start, const L
 			}
 
 			tile = getTile(u1, v1, _platformHeight);
-			if (tile != NULL) {
+			if (tile != nullptr) {
 				mask = tile->terrainMask;
 				if (((mask != 0     ) && (tile->getFGDAttr() >= kTerrBlock)) ||
 				    ((mask != 0xFFFF) && (tile->getBGDAttr() >= kTerrBlock))) {

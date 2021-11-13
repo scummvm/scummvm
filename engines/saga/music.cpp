@@ -48,9 +48,9 @@ namespace Saga {
 
 const uint8 Music::MT32_GOODBYE_MSG[] = { 0x47, 0x6F, 0x6F, 0x64, 0x62, 0x79, 0x65, 0x21, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _parser(0), _driver(0), _driverPC98(0), _musicContext(0) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _parser(nullptr), _driver(nullptr), _driverPC98(nullptr), _musicContext(nullptr) {
 	_currentVolume = 0;
-	_currentMusicBuffer = NULL;
+	_currentMusicBuffer = nullptr;
 
 	if (_vm->getPlatform() == Common::kPlatformPC98) {
 		_musicType = _driverType = MT_PC98;
@@ -190,7 +190,7 @@ Music::~Music() {
 		delete _parser;
 	}
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
@@ -323,7 +323,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
-		_parser = 0;
+		_parser = nullptr;
 	}
 	if (_driverPC98)
 		_driverPC98->reset();
@@ -344,7 +344,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 }
 
 bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
-	Audio::SeekableAudioStream *audioStream = NULL;
+	Audio::SeekableAudioStream *audioStream = nullptr;
 	uint32 loopStart = 0;
 	int realTrackNumber = 0;
 
@@ -360,7 +360,7 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 	char trackName[2][16];
 	sprintf(trackName[0], "track%d", realTrackNumber);
 	sprintf(trackName[1], "track%02d", realTrackNumber);
-	Audio::SeekableAudioStream *stream = 0;
+	Audio::SeekableAudioStream *stream = nullptr;
 	for (int i = 0; i < 2; ++i) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
@@ -373,7 +373,7 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
-			if (_digitalMusicContext != NULL) {
+			if (_digitalMusicContext != nullptr) {
 				loopStart = 0;
 				// Fix ITE sunstatm/sunspot score
 				if (resourceId == MUSIC_SUNSPOT)
@@ -484,7 +484,7 @@ void Music::playMidi(uint32 resourceId, MusicFlags flags) {
 
 		// Check if the game is using XMIDI or SMF music
 		if (!memcmp(_currentMusicBuffer->getBuffer(), "FORM", 4)) {
-			_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+			_parser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
 		} else {
 			_parser = MidiParser::createParser_SMF(0);
 		}

@@ -53,7 +53,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	//initialize member variables
 	_abortEnabled = true;
 	_skipSpeeches = false;
-	_conversingThread = NULL;
+	_conversingThread = nullptr;
 	_firstObjectSet = false;
 	_secondObjectNeeded = false;
 	_pendingVerb = getVerbType(kVerbNone);
@@ -69,12 +69,12 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
 	_scriptContext = _vm->_resource->getContext(GAME_SCRIPTFILE);
-	if (_scriptContext == NULL) {
+	if (_scriptContext == nullptr) {
 		error("Script::Script() script context not found");
 	}
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (resourceContext == NULL) {
+	if (resourceContext == nullptr) {
 		error("Script::Script() resource context not found");
 	}
 
@@ -1196,7 +1196,7 @@ void Script::doVerb() {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 
-			if (hitZone == NULL)
+			if (hitZone == nullptr)
 				return;
 
 			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
@@ -1373,7 +1373,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 
-	hitZone = NULL;
+	hitZone = nullptr;
 
 	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
@@ -1383,7 +1383,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	if (hitZone != NULL) {
+	if (hitZone != nullptr) {
 		if (_vm->getGameId() == GID_ITE) {
 			if (hitZone->getFlags() & kHitZoneNoWalk) {
 				_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
@@ -1515,7 +1515,7 @@ void Script::whichObject(const Point& mousePoint) {
 	newRightButtonVerb = getVerbType(kVerbNone);
 
 	// _protagonist can be null while loading a game from the command line
-	if (_vm->_actor->_protagonist == NULL)
+	if (_vm->_actor->_protagonist == nullptr)
 		return;
 
 	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {

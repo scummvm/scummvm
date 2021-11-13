@@ -55,7 +55,7 @@ SndHandle *Sound::getHandle() {
 
 	error("Sound::getHandle(): Too many sound handles");
 
-	return NULL;	// for compilers that don't support NORETURN
+	return nullptr;	// for compilers that don't support NORETURN
 }
 
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,

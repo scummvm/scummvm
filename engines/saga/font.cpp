@@ -216,7 +216,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 
 	for (;;) {
 		foundPointer = strchr(searchPointer, ' ');
-		if (foundPointer == NULL) {
+		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
 		} else {
@@ -267,7 +267,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 			w_total += w;
 			len_total += len;
 			wc++;
-			if (foundPointer == NULL) {
+			if (foundPointer == nullptr) {
 				// Since word hit NULL but fit, we are done
 				textPoint2.x = textPoint.x - (w_total / 2);
 				textPoint2.y = textPoint.y;
@@ -353,7 +353,7 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 
 	for (;;) {
 		foundPointer = strchr(searchPointer, ' ');
-		if (foundPointer == NULL) {
+		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
 		} else {
@@ -371,7 +371,7 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 			}
 			// Wrap what we've got and restart
 			textPoint.y += h + TEXT_LINESPACING;
-			if (foundPointer == NULL) {
+			if (foundPointer == nullptr) {
 				// Since word hit NULL but fit, we are done
 				return textPoint.y + h;
 			}
@@ -384,7 +384,7 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 			w_total += w;
 			len_total += len;
 			wc++;
-			if (foundPointer == NULL) {
+			if (foundPointer == nullptr) {
 				// Since word hit NULL but fit, we are done
 				return textPoint.y + h;
 			}
@@ -541,7 +541,7 @@ void DefaultFont::loadFont(FontData *font, uint32 fontResourceId) {
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
 	fontContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (fontContext == NULL) {
+	if (fontContext == nullptr) {
 		error("DefaultFont::Font() resource context not found");
 	}
 
@@ -696,7 +696,7 @@ void DefaultFont::createOutline(FontData *font) {
 	}
 }
 
-SJISFont::SJISFont(SagaEngine *vm) : Font(vm), _font(0) {
+SJISFont::SJISFont(SagaEngine *vm) : Font(vm), _font(nullptr) {
 	_font = Graphics::FontSJIS::createFont(vm->getPlatform());
 	assert(_font);
 }
@@ -710,7 +710,7 @@ void SJISFont::textDrawRect(FontId fontId, const char *text, const Common::Rect 
 	int curW = 0;
 	int numChar = 0;
 	const char *pos = text;
-	const char *last = 0;
+	const char *last = nullptr;
 	int checkWidth = (rect.width() - 16) & ~7;
 
 	for (uint16 c = fetchChar(pos); c; c = fetchChar(pos)) {
@@ -727,7 +727,7 @@ void SJISFont::textDrawRect(FontId fontId, const char *text, const Common::Rect 
 			if (c == (uint16)'\r' || c == (uint16)'\n')
 				last++;
 			pos = text = last;
-			last = 0;
+			last = nullptr;
 			curW = 0;
 		} else {
 			numChar++;
