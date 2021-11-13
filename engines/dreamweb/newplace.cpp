@@ -83,7 +83,7 @@ void DreamWebEngine::selectLocation() {
 			{ 104,216,138,192,&DreamWebEngine::destSelect },
 			{ 273,320,157,198,&DreamWebEngine::getBack1 },
 			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
+			{ 0xFFFF,0,0,0,nullptr }
 		};
 		checkCoords(destList);
 	}

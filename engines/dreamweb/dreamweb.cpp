@@ -49,7 +49,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_personText(kNumPersonTexts) {
 
 	_vSyncPrevTick = 0;
-	_sound = 0;
+	_sound = nullptr;
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
@@ -81,8 +81,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 	_speechLoaded = false;
 
-	_backdropBlocks = 0;
-	_reelList = 0;
+	_backdropBlocks = nullptr;
+	_reelList = nullptr;
 
 	_oldSubject._type = 0;
 	_oldSubject._index = 0;
@@ -249,7 +249,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	for (uint i = 0; i < kNumReelRoutines+1; i++)
 		memset(&_reelRoutines[i], 0, sizeof(ReelRoutine));
 
-	_personData = 0;
+	_personData = nullptr;
 
 	for (uint i = 0; i < 16; i++)
 		memset(&_openInvList[i], 0, sizeof(ObjectRef));
@@ -263,7 +263,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	for (uint i = 0; i < kNumChanges; i++)
 		memset(&_listOfChanges[i], 0, sizeof(Change));
 
-	_currentCharset = 0;
+	_currentCharset = nullptr;
 
 	for (uint i = 0; i < 36; i++)
 		memset(&_pathData[i], 0, sizeof(RoomPaths));

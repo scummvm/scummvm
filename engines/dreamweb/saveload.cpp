@@ -148,7 +148,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
 				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
 				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 0xFFFF,0,0,0,nullptr }
 			};
 			checkCoords(loadlist);
 			if (_getBack == 2)
@@ -244,7 +244,7 @@ void DreamWebEngine::saveGame() {
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
 				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
 				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 0xFFFF,0,0,0,nullptr }
 			};
 			checkCoords(savelist);
 		}
@@ -337,7 +337,7 @@ void DreamWebEngine::doSaveLoad() {
 		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
 		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamWebEngine::discOps },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	bool firstOps = true;
@@ -431,7 +431,7 @@ void DreamWebEngine::discOps() {
 		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamWebEngine::saveGame },
 		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	do {
@@ -531,7 +531,7 @@ void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
 	outSaveFile->write(descbuf, len[0]);
 	// TODO: Convert more to serializer?
-	Common::Serializer s(0, outSaveFile);
+	Common::Serializer s(nullptr, outSaveFile);
 	syncGameVars(s, _vars);
 
 	// the Extras segment:
@@ -613,7 +613,7 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	}
 
 	// TODO: Use serializer for more?
-	Common::Serializer s(inSaveFile, 0);
+	Common::Serializer s(inSaveFile, nullptr);
 	syncGameVars(s, _vars);
 
 	// the Extras segment:

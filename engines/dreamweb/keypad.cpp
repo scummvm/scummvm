@@ -43,7 +43,7 @@ void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamWebEngine::buttonEnter },
 		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamWebEngine::quitKey },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	getRidOfReels();
@@ -259,7 +259,7 @@ void DreamWebEngine::useMenu() {
 		RectWithCallback menuList[] = {
 			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamWebEngine::quitKey },
 			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
+			{ 0xFFFF,0,0,0,nullptr }
 		};
 		checkCoords(menuList);
 	} while ((_getBack != 1) && !_quitRequested);
@@ -388,7 +388,7 @@ void DreamWebEngine::checkFolderCoords() {
 		{ 143,300,6,194, &DreamWebEngine::nextFolder },
 		{ 0,143,6,194, &DreamWebEngine::lastFolder },
 		{ 0,320,0,200, &DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0, 0 }
+		{ 0xFFFF,0,0,0, nullptr }
 	};
 	checkCoords(folderList);
 }
@@ -519,7 +519,7 @@ void DreamWebEngine::enterSymbol() {
 			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotLeft },
 			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotRight },
 			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
+			{ 0xFFFF,0,0,0,nullptr }
 		};
 		checkCoords(symbolList);
 	} while ((_getBack == 0) && !_quitRequested);
@@ -735,7 +735,7 @@ void DreamWebEngine::useDiary() {
 		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamWebEngine::diaryKeyP },
 		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamWebEngine::quitKey },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	do {

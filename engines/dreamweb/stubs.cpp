@@ -1008,7 +1008,7 @@ void DreamWebEngine::dumpTimedText() {
 		assert(!_needToDumpTimed);
 
 		tt = &_previousTimedTemp;
-		_previousTimedTemp._string = 0;
+		_previousTimedTemp._string = nullptr;
 		_previousTimedTemp._timeCount = 0;
 	} else if (_needToDumpTimed != 1) {
 		return;
@@ -1780,7 +1780,7 @@ void DreamWebEngine::mainScreen() {
 			{ 226,244,26,40,&DreamWebEngine::saveLoad },
 			{ 240,260,100,124,&DreamWebEngine::madmanRun },
 			{ 0,320,0,200,&DreamWebEngine::identifyOb },
-			{ 0xFFFF,0,0,0,0 }
+			{ 0xFFFF,0,0,0,nullptr }
 		};
 		checkCoords(mainList);
 	} else {
@@ -1791,7 +1791,7 @@ void DreamWebEngine::mainScreen() {
 			{ 226+48,244+48,26,40,&DreamWebEngine::saveLoad },
 			{ 240,260,100,124,&DreamWebEngine::madmanRun },
 			{ 0,320,0,200,&DreamWebEngine::identifyOb },
-			{ 0xFFFF,0,0,0,0 }
+			{ 0xFFFF,0,0,0,nullptr }
 		};
 		checkCoords(mainList2);
 	}
@@ -2015,14 +2015,14 @@ void DreamWebEngine::getRidOfTempText() {
 
 void DreamWebEngine::getRidOfAll() {
 	delete[] _backdropBlocks;
-	_backdropBlocks = 0;
+	_backdropBlocks = nullptr;
 
 	_setFrames.clear();
 	_reel1.clear();
 	_reel2.clear();
 	_reel3.clear();
 	delete[] _reelList;
-	_reelList = 0;
+	_reelList = nullptr;
 	_personText.clear();
 	_setDesc.clear();
 	_blockDesc.clear();
@@ -2077,7 +2077,7 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	delete[] _reelList;
 	if (len[7] <= 36*sizeof(RoomPaths)) {
 		file.read((uint8 *)_pathData, len[7]);
-		_reelList = 0;
+		_reelList = nullptr;
 	} else {
 		file.read((uint8 *)_pathData, 36*sizeof(RoomPaths));
 		unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
@@ -2627,7 +2627,7 @@ void DreamWebEngine::decide() {
 		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
 		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamWebEngine::loadOld },
 		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 0xFFFF,0,0,0,nullptr }
 	};
 
 	do {
