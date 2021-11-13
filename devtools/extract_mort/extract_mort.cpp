@@ -44,11 +44,11 @@ private:
 public:
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
-		return (f != NULL);
+		return (f != nullptr);
 	}
 	void close() {
 		fclose(f);
-		f = NULL;
+		f = nullptr;
 	}
 	int seek(int32 offset, int whence = SEEK_SET) {
 		return fseek(f, offset, whence);

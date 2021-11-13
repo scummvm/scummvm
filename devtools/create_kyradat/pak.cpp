@@ -31,7 +31,7 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 		return true;
 
 	delete _fileList;
-	_fileList = 0;
+	_fileList = nullptr;
 
 	FILE *pakfile = fopen(file, "rb");
 	if (!pakfile)
@@ -47,7 +47,7 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 
 	fclose(pakfile);
 
-	const char *currentName = 0;
+	const char *currentName = nullptr;
 
 	uint32 startoffset = _isAmiga ? READ_BE_UINT32(buffer) : READ_LE_UINT32(buffer);
 	uint32 endoffset = 0;
@@ -73,7 +73,7 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 		assert(data);
 		memcpy(data, buffer + startoffset, endoffset - startoffset);
 		addFile(currentName, data, endoffset - startoffset);
-		data = 0;
+		data = nullptr;
 
 		if (endoffset == filesize)
 			break;
@@ -152,7 +152,7 @@ bool PAKFile::outputAllFiles() {
 }
 
 bool PAKFile::outputFileAs(const char *f, const char *fn) {
-	FileList *cur = (_fileList != 0) ? _fileList->findEntry(f) : 0;
+	FileList *cur = (_fileList != nullptr) ? _fileList->findEntry(f) : nullptr;
 
 	if (!cur) {
 		error("file '%s' not found", f);
@@ -177,10 +177,10 @@ bool PAKFile::outputFileAs(const char *f, const char *fn) {
 }
 
 const uint8 *PAKFile::getFileData(const char *file, uint32 *size) {
-	FileList *cur = (_fileList != 0) ? _fileList->findEntry(file) : 0;
+	FileList *cur = (_fileList != nullptr) ? _fileList->findEntry(file) : nullptr;
 
 	if (!cur)
-		return 0;
+		return nullptr;
 
 	if (size)
 		*size = cur->size;
@@ -234,10 +234,10 @@ bool PAKFile::addFile(const char *name, uint8 *data, uint32 size) {
 }
 
 bool PAKFile::removeFile(const char *name) {
-	for (FileList *cur = _fileList, *last = 0; cur; last = cur, cur = cur->next) {
+	for (FileList *cur = _fileList, *last = nullptr; cur; last = cur, cur = cur->next) {
 		if (scumm_stricmp(cur->filename, name) == 0) {
 			FileList *next = cur->next;
-			cur->next = 0;
+			cur->next = nullptr;
 			delete cur;
 			if (last)
 				last->next = next;

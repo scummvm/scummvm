@@ -173,7 +173,7 @@ const Game * const gameDescs[] = {
 	lolGames,
 	eob1Games,
 	eob2Games,
-	0
+	nullptr
 };
 
 // Need tables
@@ -4435,7 +4435,7 @@ const GameNeed gameNeedTable[] = {
 	//{ kEoB2, kPlatformPC98, kNoSpecial, eob2PC98Need },
 	{ kEoB2, kPlatformFMTowns, kNoSpecial, eob2FMTownsNeed },
 
-	{ -1, -1, -1, 0 }
+	{ -1, -1, -1, nullptr }
 };
 
 } // end of anonymous namespace
@@ -4446,5 +4446,5 @@ const int *getNeedList(const Game *g) {
 			return need->entries;
 	}
 
-	return 0;
+	return nullptr;
 }

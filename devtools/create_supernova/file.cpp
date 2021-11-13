@@ -2,12 +2,12 @@
 
 bool File::open(const char *filename, AccessMode mode) {
 	f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
-	return (f != NULL);
+	return (f != nullptr);
 }
 
 void File::close() {
 	fclose(f);
-	f = NULL;
+	f = nullptr;
 }
 
 int File::seek(int32 offset, int whence) {

@@ -108,7 +108,7 @@ std::map<std::string, bool> isEngineEnabled;
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
 	// Initialize random number generator for UUID creation
-	std::srand((unsigned int)std::time(0));
+	std::srand((unsigned int)std::time(nullptr));
 #endif
 
 	if (argc < 2) {
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
-	const MSVCVersion *msvc = NULL;
+	const MSVCVersion *msvc = nullptr;
 	int msvcVersion = 0;
 
 	// Parse command line arguments
@@ -451,7 +451,7 @@ int main(int argc, char *argv[]) {
 	StringList globalWarnings;
 	std::map<std::string, StringList> projectWarnings;
 
-	CreateProjectTool::ProjectProvider *provider = NULL;
+	CreateProjectTool::ProjectProvider *provider = nullptr;
 
 	switch (projectType) {
 	default:
@@ -1239,7 +1239,7 @@ const MSVCVersion *getMSVCVersion(int version) {
 			return &s_msvc[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int getInstalledMSVC() {
@@ -1248,9 +1248,9 @@ int getInstalledMSVC() {
 	// Use the Visual Studio Installer to get the latest version
 	const char *vsWhere = "\"\"%PROGRAMFILES(X86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -legacy -property installationVersion\"";
 	FILE *pipe = _popen(vsWhere, "rt");
-	if (pipe != NULL) {
+	if (pipe != nullptr) {
 		char version[50];
-		if (fgets(version, 50, pipe) != NULL) {
+		if (fgets(version, 50, pipe) != nullptr) {
 			latest = atoi(version);
 		}
 		_pclose(pipe);
@@ -1260,12 +1260,12 @@ int getInstalledMSVC() {
 	if (latest == 0) {
 		HKEY key;
 		LONG err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7"), 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
-		if (err == ERROR_SUCCESS && key != NULL) {
+		if (err == ERROR_SUCCESS && key != nullptr) {
 			const MSVCList msvc = getAllMSVCVersions();
 			for (MSVCList::const_reverse_iterator i = msvc.rbegin(); i != msvc.rend(); ++i) {
 				std::ostringstream version;
 				version << i->version << ".0";
-				err = RegQueryValueExA(key, version.str().c_str(), NULL, NULL, NULL, NULL);
+				err = RegQueryValueExA(key, version.str().c_str(), nullptr, nullptr, nullptr, nullptr);
 				if (err == ERROR_SUCCESS) {
 					latest = i->version;
 					break;
@@ -1460,7 +1460,7 @@ FileList listDirectory(const std::string &dir) {
 
 void createDirectory(const std::string &dir) {
 #if defined(_WIN32) || defined(WIN32)
-	if (!CreateDirectoryA(dir.c_str(), NULL)) {
+	if (!CreateDirectoryA(dir.c_str(), nullptr)) {
 		if (GetLastError() != ERROR_ALREADY_EXISTS) {
 			error("Could not create folder \"" + dir + "\"");
 		}
@@ -1496,7 +1496,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 	FileList files = listDirectory(dir);
 
 	if (files.empty())
-		return 0;
+		return nullptr;
 
 	FileNode *result = new FileNode(dir);
 	assert(result);
@@ -1532,7 +1532,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 
 	if (result->children.empty()) {
 		delete result;
-		return 0;
+		return nullptr;
 	} else {
 		result->children.sort(compareNodes);
 		return result;

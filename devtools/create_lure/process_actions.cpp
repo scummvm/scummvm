@@ -380,7 +380,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
 		randomActions[roomIndex].offset = lureExe.readWord();
 		randomActions[roomIndex].numEntries = 0;
-		randomActions[roomIndex].entries = NULL;
+		randomActions[roomIndex].entries = nullptr;
 	}
 
 	// Next get the set of offsetes for the start of each sequence
@@ -540,7 +540,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 
 	// Free up the random room action array
 	for (roomIndex = 0; roomIndex < 1; ++roomIndex) {
-		if (randomActions[roomIndex].entries != NULL)
+		if (randomActions[roomIndex].entries != nullptr)
 			delete[] randomActions[roomIndex].entries;
 	}
 	delete[] randomActions;

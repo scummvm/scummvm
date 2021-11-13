@@ -1333,49 +1333,49 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 
 #define NUM_TEXT_ENTRIES 56
 const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
-	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use",
-	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL,
+	"Get", nullptr, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use",
+	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", nullptr,
 	"Drink", "Status", "Go to", "Return", "Bribe", "Examine",
 	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text\x8B",
 	"Slow Text\x8B", "Sound on", "Sound off", "(nothing)", " for ", " to ", " on ",
 	"and then", "finish", "Are you sure (y/n)?",
 	"You are carrying ", "nothing", "You have ", "groat", "groats",
-	NULL, "the ", "a ", "a ", "an ", "an ", "an ", "an ", NULL, NULL
+	nullptr, "the ", "a ", "a ", "an ", "an ", "an ", "an ", nullptr, nullptr
 };
 
 const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
-	"Prendi", NULL,	"Spingi", "Tira", "Aziona", "Apri", "Chiudi", "Blocca",
+	"Prendi", nullptr, "Spingi", "Tira", "Aziona", "Apri", "Chiudi", "Blocca",
 	"Sblocca", "Usa", "Dai", "Parla con", "Ordina a", "Compra", "Guarda", "Osserva",
-	"Guarda attraverso", "Chiedi", NULL,  "Bevi", "Stato", "Vai a", "Ritorna",
+	"Guarda attraverso", "Chiedi", nullptr, "Bevi", "Stato", "Vai a", "Ritorna",
 	"Corrompi", "Esamina",
 	"Crediti", "Ricomincia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento\x8B",
 	"Testo veloce\x8B",  "Sonoro acceso", "Sonoro spento",
 	"(niente)", " per ", " a ", " su ",
 	"e poi", "finito", "Sei sicuro (s/n)?",
 	"Stai portando ", "niente", "Hai ", "soldo", "soldi",
-	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL, NULL, NULL
+	nullptr, "l' ", "la ", nullptr, "le ", "i ", "il ", nullptr, nullptr, nullptr
 };
 
 const char frenchUnlockStr[] = {'D', '\x7f', 'v', 'e', 'r', 'r', 'o', 'u', 'i', 'l', 'l', 'e', '\0'};
 const char frenchCreditsStr[] = {'C', 'r', '\x7f', 'd', 'i', 't', 's', '\0'};
 
 const char *frenchTextStrings[NUM_TEXT_ENTRIES] = {
-	"Prends", NULL, "Pousse", "Tire", "Actionne", "Ouvre", "Ferme", "Verrouille",
-	frenchUnlockStr, "Utilise", "Donne", "Parle \0x81", "Dis \x81", NULL,
-	"Regarde", "Observe", "Regarde par", "Demande \x81", NULL, "Bois", "Statut",
+	"Prends", nullptr, "Pousse", "Tire", "Actionne", "Ouvre", "Ferme", "Verrouille",
+	frenchUnlockStr, "Utilise", "Donne", "Parle \0x81", "Dis \x81", nullptr,
+	"Regarde", "Observe", "Regarde par", "Demande \x81", nullptr, "Bois", "Statut",
 	"Va \x81", "Reviens", "Corromps", "Examine",
 	frenchCreditsStr, "Recommencer", "Sauvegarder", "Restituer", "Quitter",
 	"Texte rapide\x8b", "Texte lent  \x8b", "Avec son", "Sans son",
 	"(rien)", " avec ", " \x81 ", " sur ", "et puis", "fin",
 	"Vous  \x83tes s\x89r (o/n)?",
 	"Vous avez ", "rien", "et vous avez ", "sou", "sous",
-	NULL, "les", "l'", "l'", "le", "le", "la", "la", NULL, NULL
+	nullptr, "les", "l'", "l'", "le", "le", "la", "la", nullptr, nullptr
 };
 
 const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
-	"Nimm", NULL, "Schiebe", "Ziehe", "Bet\x8dtige", "\x90" "ffne", "Schlie\x92h" "e",
+	"Nimm", nullptr, "Schiebe", "Ziehe", "Bet\x8dtige", "\x90" "ffne", "Schlie\x92h" "e",
 	"Sperre", "Steck Schl\x8cssel in", "Benutze", "Gib", "Sprich mit", "Befehl an",
-	NULL, "Betrachte", "Betrachte", "Schau durch", "Verlange", NULL, "Trink",
+	nullptr, "Betrachte", "Betrachte", "Schau durch", "Verlange", nullptr, "Trink",
 	"Status", "Geh zu", "Zur\x8c" "ck", "Besteche", "Untersuche",
 	"Mitwirkende", "Spiel neu starten", "Spiel sichern", "Gesichertes Spiel laden",
 	"Abbrechen", "Schneller Text\x8b",
@@ -1386,14 +1386,14 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 };
 
 const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
-	"Coge", NULL, "Empuja", "Tira de", "Opera", "Abre", "Cierra", "Atranca", "Desatranca", "Usa",
-	"Dale", "Habla con", "Dile a", "Compra", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", NULL,
+	"Coge", nullptr, "Empuja", "Tira de", "Opera", "Abre", "Cierra", "Atranca", "Desatranca", "Usa",
+	"Dale", "Habla con", "Dile a", "Compra", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", nullptr,
 	"Bebe", "Estado", "Ve a", "Regresa", "Sobornar", "Examinar",
 	"Cr\x7f" "ditos", "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto r\x98pido\x8b",
 	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
 	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
 	"Llevas ", "nada", "y tienes ", "moneda", "monedas",
-	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", NULL, NULL
+	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", nullptr, nullptr
 };
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
@@ -1410,7 +1410,7 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	// Calculate the total needed space
 	totalSize = sizeof(uint16);
 	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
-		if (textStrings[index] != NULL)
+		if (textStrings[index] != nullptr)
 			totalSize += strlen(textStrings[index]);
 		++totalSize;
 	}
@@ -1421,7 +1421,7 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	char *p = (char *) data + sizeof(uint16);
 
 	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
-		if (textStrings[index] == NULL)
+		if (textStrings[index] == nullptr)
 			*p++ = '\0';
 		else {
 			strcpy(p, textStrings[index]);
@@ -1485,7 +1485,7 @@ const DecoderEntry englishDecoders[] = {
 	{"111111111111101", '\xa7'}, {"1111111111111100", '/'}, {"1111111111111101", 'Q'},
 	{"11111111111111100", '\xa8'}, {"11111111111111101", '('}, {"111111111111111100", ')'},
 	{"111111111111111101", '\x99'}, {"11111111111111111", '\xa9'},
-	{NULL, '\0'}
+	{nullptr, '\0'}
 };
 
 const DecoderEntry konamiDecoders[] = {
@@ -1531,7 +1531,7 @@ const DecoderEntry konamiDecoders[] = {
 	{ "11111111111111100", '\x99' }, { "111111111111111010", '(' }, { "111111111111111011", ')' },
 	{ "111111111111111100", '\xB2' }, { "111111111111111101", '\xDA' },
 	{ "11111111111111111", '\xEC' },
-	{ NULL, '\0' }
+	{ nullptr, '\0' }
 };
 
 const DecoderEntry italianDecoders[] = {
@@ -1564,7 +1564,7 @@ const DecoderEntry italianDecoders[] = {
 	{"1111111111111100", (char) 0x4B}, {"1111111111111101", (char) 0x22}, {"111111111111111000", (char) 0x09},
 	{"111111111111111001", (char) 0x28}, {"11111111111111101", (char) 0x29}, {"111111111111111100", (char) 0x4A},
 	{"111111111111111101", (char) 0x59}, {"11111111111111111", (char) 0x78},
-	{NULL, '\0'}
+	{nullptr, '\0'}
 };
 
 const DecoderEntry frenchDecoders[] = {
@@ -1609,7 +1609,7 @@ const DecoderEntry frenchDecoders[] = {
 	{"1111111111111011", (char) 0x28}, {"1111111111111100", (char) 0x29}, {"1111111111111101", (char) 0x5A},
 	{"11111111111111100", (char) 0x86}, {"11111111111111101", (char) 0x58}, {"11111111111111110", (char) 0x84},
 	{"11111111111111111", (char) 0xA2},
-	{NULL, '\0'}
+	{nullptr, '\0'}
 };
 
 const DecoderEntry germanDecoders[] = {
@@ -1653,7 +1653,7 @@ const DecoderEntry germanDecoders[] = {
 	{"11111111111111010", (char) 0xBC}, {"11111111111111011", (char) 0x28}, {"111111111111111000", (char) 0x29},
 	{"111111111111111001", (char) 0x59}, {"11111111111111101", (char) 0xBB}, {"11111111111111110", (char) 0xBD},
 	{"11111111111111111", (char) 0xC0},
-	{NULL, '\0'}
+	{nullptr, '\0'}
 };
 
 const DecoderEntry spanishDecoders[] = {
@@ -1688,7 +1688,7 @@ const DecoderEntry spanishDecoders[] = {
 	{"1111111111111100", (char) 0x5A}, {"1111111111111101", (char) 0x8C}, {"11111111111111100", (char) 0x28},
 	{"11111111111111101", (char) 0x29}, {"11111111111111110", (char) 0x4B}, {"111111111111111110", (char) 0x58},
 	{"111111111111111111", (char) 0x91},
-	{NULL, '\0'}
+	{nullptr, '\0'}
 };
 
 void save_string_decoder_data(byte *&data, uint16 &totalSize) {
@@ -1702,7 +1702,7 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 
 	totalSize = 1;
 	const DecoderEntry *pSrc = list;
-	while (pSrc->sequence != NULL) {
+	while (pSrc->sequence != nullptr) {
 		totalSize += strlen(pSrc->sequence) + 2;
 		++pSrc;
 	}
@@ -1711,7 +1711,7 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 	char *pDest = (char *)data;
 
 	pSrc = list;
-	while (pSrc->sequence != NULL) {
+	while (pSrc->sequence != nullptr) {
 		*pDest++ = pSrc->character;
 		strcpy(pDest, pSrc->sequence);
 		pDest += strlen(pSrc->sequence) + 1;
@@ -1872,7 +1872,7 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 		break;
 
 	default:
-		data = NULL;
+		data = nullptr;
 		size = 0;
 		resourceId = 0xffff;
 		break;
@@ -1955,7 +1955,7 @@ void createFile(const char *outFilename) {
 
 	resourceFlag = true;
 	for (int resIndex=0; resIndex < 0xBE; ++resIndex) {
-		resourceData = NULL;
+		resourceData = nullptr;
 
 		// Get next data entry
 		if (resourceFlag)
@@ -2054,7 +2054,7 @@ bool validate_executable() {
 
 
 int main(int argc, char *argv[]) {
-	const char /**inFilename,*/ *outFilename = 0;
+	const char /**inFilename,*/ *outFilename = nullptr;
 
 	if (argc == 1) {
 		printf("Format: %s output_filename [lureExecutable ..]\n", argv[0]);
