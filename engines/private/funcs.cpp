@@ -142,8 +142,8 @@ static void fLoadGame(ArgArray args) {
 	m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
 	m.cursor = *args[2].u.sym->name;
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	if (g_private->_loadGameMask.surf)
 		g_private->_loadGameMask.surf->free();
 	delete g_private->_loadGameMask.surf;
@@ -158,8 +158,8 @@ static void fSaveGame(ArgArray args) {
 	m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
 	m.cursor = *args[1].u.sym->name;
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	if (g_private->_saveGameMask.surf)
 		g_private->_saveGameMask.surf->free();
 	delete g_private->_saveGameMask.surf;
@@ -255,8 +255,8 @@ static void fDossierChgSheet(ArgArray args) {
 	m.surf = g_private->loadMask(s, x, y, true);
 	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	if (p == 0)
 		g_private->_dossierPrevSheetMask = m;
 	else if (p == 1)
@@ -278,8 +278,8 @@ static void fDossierPrevSuspect(ArgArray args) {
 	m.surf = g_private->loadMask(s, x, y, true);
 	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	g_private->_dossierPrevSuspectMask = m;
 	g_private->_masks.push_front(m);
 }
@@ -295,8 +295,8 @@ static void fDossierNextSuspect(ArgArray args) {
 	m.surf = g_private->loadMask(s, x, y, true);
 	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	g_private->_dossierNextSuspectMask = m;
 	g_private->_masks.push_front(m);
 }
@@ -361,12 +361,12 @@ static void fInventory(ArgArray args) {
 		if (v1.type == NAME) {
 			m.flag1 = g_private->maps.lookupVariable(v1.u.sym->name);
 		} else
-			m.flag1 = NULL;
+			m.flag1 = nullptr;
 
 		if (v2.type == NAME) {
 			m.flag2 = g_private->maps.lookupVariable(v2.u.sym->name);
 		} else
-			m.flag2 = NULL;
+			m.flag2 = nullptr;
 
 		g_private->_masks.push_front(m);
 		g_private->_toTake = true;
@@ -591,8 +591,8 @@ static void _fMask(ArgArray args, bool drawn) {
 	m.surf = g_private->loadMask(s, x, y, drawn);
 	m.nextSetting = e;
 	m.cursor = *c;
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	m.point = Common::Point(x, y);
 	g_private->_masks.push_front(m);
 }
@@ -604,7 +604,7 @@ static void fMaskDrawn(ArgArray args) {
 	_fMask(args, true);
 }
 
-static void fAddSound(Common::String sound, const char *t, Symbol *flag = NULL, int val = 0) {
+static void fAddSound(Common::String sound, const char *t, Symbol *flag = nullptr, int val = 0) {
 	if (sound == "\"\"")
 		return;
 
@@ -685,8 +685,8 @@ static void fSoundArea(ArgArray args) {
 		m.surf = g_private->loadMask(s, 0, 0, true);
 		m.cursor = *args[2].u.sym->name;
 		m.nextSetting = "";
-		m.flag1 = NULL;
-		m.flag2 = NULL;
+		m.flag1 = nullptr;
+		m.flag2 = nullptr;
 		if (g_private->_AMRadioArea.surf)
 			g_private->_AMRadioArea.surf->free();
 		delete g_private->_AMRadioArea.surf;
@@ -696,8 +696,8 @@ static void fSoundArea(ArgArray args) {
 		m.surf = g_private->loadMask(s, 0, 0, true);
 		m.cursor = *args[2].u.sym->name;
 		m.nextSetting = "";
-		m.flag1 = NULL;
-		m.flag2 = NULL;
+		m.flag1 = nullptr;
+		m.flag2 = nullptr;
 		if (g_private->_policeRadioArea.surf)
 			g_private->_policeRadioArea.surf->free();
 		delete g_private->_policeRadioArea.surf;
@@ -707,8 +707,8 @@ static void fSoundArea(ArgArray args) {
 		m.surf = g_private->loadMask(s, 0, 0, true);
 		m.cursor = *args[2].u.sym->name;
 		m.nextSetting = "";
-		m.flag1 = NULL;
-		m.flag2 = NULL;
+		m.flag1 = nullptr;
+		m.flag2 = nullptr;
 		if (g_private->_phoneArea.surf)
 			g_private->_phoneArea.surf->free();
 		delete g_private->_phoneArea.surf;
@@ -821,7 +821,7 @@ const FuncTable funcTable[] = {
 	{fSafeDigit, "SafeDigit"},
 	{fCRect, "CRect"},
 
-	{0, 0}};
+	{nullptr, nullptr}};
 
 void call(const char *name, const ArgArray &args) {
 	Common::String n(name);

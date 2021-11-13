@@ -1231,7 +1231,7 @@ yyreduce:
                             {
         (yyval.inst) = g_vm->_progp;
         code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
-        code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL));
+        code2(constpush, (Inst) g_private->maps.constant(NUM, 1, nullptr));
         code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto"));
         code1(funcpush);
         }
@@ -1316,13 +1316,13 @@ yyreduce:
 
   case 23: /* define: NAME ',' define  */
 #line 158 "engines/private/grammar.y"
-                          { g_private->maps.defineSymbol((yyvsp[-2].s), NULL); }
+                          { g_private->maps.defineSymbol((yyvsp[-2].s), nullptr); }
 #line 1320 "engines/private/grammar.cpp"
     break;
 
   case 24: /* define: NAME  */
 #line 159 "engines/private/grammar.y"
-                          { g_private->maps.defineSymbol((yyvsp[0].s), NULL); }
+                          { g_private->maps.defineSymbol((yyvsp[0].s), nullptr); }
 #line 1326 "engines/private/grammar.cpp"
     break;
 
@@ -1331,7 +1331,7 @@ yyreduce:
                                {
                                (yyval.inst) = g_vm->_progp;
                                code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
-                               code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL));
+                               code2(constpush, (Inst) g_private->maps.constant(NUM, 1, nullptr));
                                code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto"));
                                code1(funcpush);
                                }
@@ -1348,7 +1348,7 @@ yyreduce:
 #line 171 "engines/private/grammar.y"
                                       {
                                (yyval.inst) = (yyvsp[-2].inst);
-                               code2(constpush, (Inst) g_private->maps.constant(NUM, (yyvsp[-1].narg), NULL));
+                               code2(constpush, (Inst) g_private->maps.constant(NUM, (yyvsp[-1].narg), nullptr));
                                code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-4].s)));
                                code1(funcpush);
                                }
@@ -1393,19 +1393,19 @@ yyreduce:
 
   case 34: /* value: NULLTOK  */
 #line 189 "engines/private/grammar.y"
-                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
+                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, nullptr)); }
 #line 1397 "engines/private/grammar.cpp"
     break;
 
   case 35: /* value: FALSETOK  */
 #line 190 "engines/private/grammar.y"
-                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
+                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, nullptr)); }
 #line 1403 "engines/private/grammar.cpp"
     break;
 
   case 36: /* value: TRUETOK  */
 #line 191 "engines/private/grammar.y"
-                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL)); }
+                   { code2(constpush, (Inst) g_private->maps.constant(NUM, 1, nullptr)); }
 #line 1409 "engines/private/grammar.cpp"
     break;
 

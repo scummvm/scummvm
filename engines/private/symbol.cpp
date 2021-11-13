@@ -141,22 +141,22 @@ void SymbolMaps::installAll(const char *n) {
 		//debug("name %s", s.c_str());
 		if (strcmp(n, "settings") == 0) {
 			//debug("new setting %s", n);
-			assert(r == NULL);
+			assert(r == nullptr);
 			install(s, NAME, 0, s.c_str(), r, &settings);
 		} else if (strcmp(n, "variables") == 0) {
-			assert(r == NULL);
-			install(s, NAME, 0, NULL, r, &variables);
+			assert(r == nullptr);
+			install(s, NAME, 0, nullptr, r, &variables);
 			variableList.push_front(s);
 		} else if (strcmp(n, "cursors") == 0) {
-			assert(r == NULL);
-			install(s, NAME, 0, NULL, r, &cursors);
+			assert(r == nullptr);
+			install(s, NAME, 0, nullptr, r, &cursors);
 		} else if (strcmp(n, "locations") == 0) {
-			assert(r == NULL);
-			install(s, NAME, 0, NULL, r, &locations);
+			assert(r == nullptr);
+			install(s, NAME, 0, nullptr, r, &locations);
 			locationList.push_front(s);
 		} else if (strcmp(n, "rects") == 0) {
-			assert(r != NULL);
-			install(s, RECT, 0, NULL, r, &rects);
+			assert(r != nullptr);
+			install(s, RECT, 0, nullptr, r, &rects);
 		} else
 			error("invalid symbol type");
 	}

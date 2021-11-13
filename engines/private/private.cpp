@@ -43,7 +43,7 @@
 
 namespace Private {
 
-PrivateEngine *g_private = NULL;
+PrivateEngine *g_private = nullptr;
 extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
@@ -132,7 +132,7 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	Common::File *test = new Common::File();
-	Common::SeekableReadStream *file = NULL;
+	Common::SeekableReadStream *file = nullptr;
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
 		file = test;
@@ -169,7 +169,7 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 			}
 		}
 	}
-	if (file == NULL)
+	if (file == nullptr)
 		error("Unknown version");
 	return file;
 }
@@ -488,7 +488,7 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
 }
 
 bool PrivateEngine::inMask(Graphics::Surface *surf, Common::Point mousePos) {
-	if (surf == NULL)
+	if (surf == nullptr)
 		return false;
 
 	mousePos = mousePos - _origin;
@@ -686,7 +686,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 				ns = m.nextSetting;
 			}
 
-			if (m.flag1 != NULL) { // TODO: check this
+			if (m.flag1 != nullptr) { // TODO: check this
 				setSymbol(m.flag1, 1);
 				// an item was taken
 				if (_toTake) {
@@ -695,7 +695,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 				}
 			}
 
-			if (m.flag2 != NULL) {
+			if (m.flag2 != nullptr) {
 				setSymbol(m.flag2, 1);
 			}
 			break;
@@ -708,7 +708,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
-	if (_AMRadioArea.surf == NULL)
+	if (_AMRadioArea.surf == nullptr)
 		return;
 
 	if (_AMRadio.empty())
@@ -722,7 +722,7 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
-	if (_policeRadioArea.surf == NULL)
+	if (_policeRadioArea.surf == nullptr)
 		return;
 
 	if (_policeRadio.empty())
@@ -736,7 +736,7 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 }
 
 void PrivateEngine::checkPhoneCall() {
-	if (_phoneArea.surf == NULL)
+	if (_phoneArea.surf == nullptr)
 		return;
 
 	if (_phone.empty())
@@ -747,7 +747,7 @@ void PrivateEngine::checkPhoneCall() {
 }
 
 void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
-	if (_phoneArea.surf == NULL)
+	if (_phoneArea.surf == nullptr)
 		return;
 
 	if (_phone.empty())
@@ -778,7 +778,7 @@ void PrivateEngine::loadDossier() {
 }
 
 bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
-	if (_dossierNextSuspectMask.surf == NULL)
+	if (_dossierNextSuspectMask.surf == nullptr)
 		return false;
 
 	if (inMask(_dossierNextSuspectMask.surf, mousePos)) {
@@ -796,7 +796,7 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 }
 
 bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
-	if (_dossierNextSheetMask.surf == NULL)
+	if (_dossierNextSheetMask.surf == nullptr)
 		return false;
 
 	if (inMask(_dossierPrevSheetMask.surf, mousePos)) {
@@ -813,7 +813,7 @@ bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
 }
 
 bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
-	if (_dossierNextSheetMask.surf == NULL)
+	if (_dossierNextSheetMask.surf == nullptr)
 		return false;
 
 	if (inMask(_dossierNextSheetMask.surf, mousePos)) {
@@ -831,7 +831,7 @@ bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
 }
 
 bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
-	if (_dossierPrevSuspectMask.surf == NULL)
+	if (_dossierPrevSuspectMask.surf == nullptr)
 		return false;
 
 	if (inMask(_dossierPrevSuspectMask.surf, mousePos)) {
@@ -849,7 +849,7 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 }
 
 bool PrivateEngine::selectSafeDigit(Common::Point mousePos) {
-	if (_safeDigitArea[0].surf == NULL)
+	if (_safeDigitArea[0].surf == nullptr)
 		return false;
 
 	mousePos = mousePos - _origin;
@@ -876,8 +876,8 @@ void PrivateEngine::addSafeDigit(uint32 d, Common::Rect *rect) {
 	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), _safeDigit[d]), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
 	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	_safeDigitArea[d] = m;
 	drawScreen();
 }
@@ -885,7 +885,7 @@ void PrivateEngine::addSafeDigit(uint32 d, Common::Rect *rect) {
 
 void PrivateEngine::renderSafeDigit(uint32 d) {
 
-	if (_safeDigitArea[d].surf != NULL) {
+	if (_safeDigitArea[d].surf != nullptr) {
 		_safeDigitArea[d].surf->free();
 		delete _safeDigitArea[d].surf;
 		_safeDigitArea[d].clear();
@@ -895,14 +895,14 @@ void PrivateEngine::renderSafeDigit(uint32 d) {
 	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), _safeDigit[d]), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
 	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
-	m.flag1 = NULL;
-	m.flag2 = NULL;
+	m.flag1 = nullptr;
+	m.flag2 = nullptr;
 	_safeDigitArea[d] = m;
 	drawScreen();
 }
 
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
-	if (_loadGameMask.surf == NULL)
+	if (_loadGameMask.surf == nullptr)
 		return;
 
 	if (inMask(_loadGameMask.surf, mousePos)) {
@@ -911,7 +911,7 @@ void PrivateEngine::selectLoadGame(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectSaveGame(Common::Point mousePos) {
-	if (_saveGameMask.surf == NULL)
+	if (_saveGameMask.surf == nullptr)
 		return;
 
 	if (inMask(_saveGameMask.surf, mousePos)) {
@@ -1184,7 +1184,7 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 		stopSound(true);
 	}
 
-	Audio::SoundHandle *sh = NULL;
+	Audio::SoundHandle *sh = nullptr;
 	if (background) {
 		_mixer->stopHandle(_bgSoundHandle);
 		sh = &_bgSoundHandle;
