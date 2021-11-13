@@ -302,7 +302,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			else
 				hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
 
-			if (hitZone == NULL)
+			if (hitZone == nullptr)
 				return;
 
 			scriptEntryPointNumber = hitZone->getScriptNumber();
@@ -628,14 +628,14 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 	else
 		hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
 
-	if (hitZone == NULL)
+	if (hitZone == nullptr)
 		return;
 
 	if (flag) {
 		hitZone->setFlag(kHitZoneEnabled);
 	} else {
 		hitZone->clearFlag(kHitZoneEnabled);
-		_vm->_actor->_protagonist->_lastZone = NULL;
+		_vm->_actor->_protagonist->_lastZone = nullptr;
 	}
 }
 
@@ -1530,7 +1530,7 @@ void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 		}
 	}
 
-	_conversingThread = NULL;
+	_conversingThread = nullptr;
 	wakeUpThreads(kWaitTypeDialogBegin);
 }
 

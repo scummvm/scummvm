@@ -572,7 +572,7 @@ int Events::handleInterval(Event *event) {
 
 EventColumns *Events::chain(EventColumns *eventColumns, const Event &event) {
 
-	if (eventColumns == NULL) {
+	if (eventColumns == nullptr) {
 		EventColumns tmp;
 
 		_eventList.push_back(tmp);

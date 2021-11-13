@@ -97,7 +97,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 }
 
 bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
-	if (_fileName == NULL) // IHNM special case
+	if (_fileName == nullptr) // IHNM special case
 		return true;
 
 	if (!_file.open(_fileName))
@@ -328,7 +328,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 	// ITE uses several patch files which are loaded and then not needed
 	// anymore (as they're in memory), so close them here. IHNM uses only
 	// 1 patch file, which is reused, so don't close it
-	if (resourceData->patchData != NULL && _vm->getGameId() == GID_ITE)
+	if (resourceData->patchData != nullptr && _vm->getGameId() == GID_ITE)
 		file->close();
 }
 
@@ -339,7 +339,7 @@ ResourceContext *Resource::getContext(uint16 fileType, int serial) {
 			return context;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Saga

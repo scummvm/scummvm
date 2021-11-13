@@ -48,11 +48,11 @@ namespace Saga {
 #define RID_IHNM_SFX_LUT 265
 #define RID_IHNMDEMO_SFX_LUT 222
 
-SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL), _voiceSerial(-1) {
+SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(nullptr), _voiceContext(nullptr), _voiceSerial(-1) {
 
 	// Load sound module resource file contexts
 	_sfxContext = _vm->_resource->getContext(GAME_SOUNDFILE);
-	if (_sfxContext == NULL) {
+	if (_sfxContext == nullptr) {
 		error("SndRes::SndRes resource context not found");
 	}
 
@@ -125,8 +125,8 @@ void SndRes::setVoiceBank(int serial) {
 		return;
 
 	// Close previous voice bank file
-	if (_voiceContext != NULL) {
-		file = _voiceContext->getFile(NULL);
+	if (_voiceContext != nullptr) {
+		file = _voiceContext->getFile(nullptr);
 		if (file->isOpen()) {
 			file->close();
 		}
@@ -249,7 +249,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
-		if (_vm->getGameId() == GID_ITE && resourceId == 4 && context->getResourceData(resourceId)->patchData != NULL)
+		if (_vm->getGameId() == GID_ITE && resourceId == 4 && context->getResourceData(resourceId)->patchData != nullptr)
 			uncompressedSound = true;
 
 		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
@@ -285,7 +285,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 	}
 
-	buffer.stream = 0;
+	buffer.stream = nullptr;
 
 	// Check for LE sounds
 	if (!context->isBigEndian())
@@ -409,7 +409,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundFLAC: {
 		readS.skip(9); // skip sfx header
 
-		Audio::SeekableAudioStream *audStream = 0;
+		Audio::SeekableAudioStream *audStream = nullptr;
 		Common::SeekableReadStream *memStream = READ_STREAM(soundResourceLength - 9);
 
 		if (resourceType == kSoundMP3) {
@@ -445,7 +445,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	if (onlyHeader) {
 		delete buffer.stream;
-		buffer.stream = 0;
+		buffer.stream = nullptr;
 	}
 
 	return result;

@@ -126,7 +126,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	// Load interface module resource file context
 	_interfaceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (_interfaceContext == NULL) {
+	if (_interfaceContext == nullptr) {
 		error("Interface::Interface() resource context not found");
 	}
 
@@ -135,7 +135,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_mainPanel.buttonsCount = _vm->getDisplayInfo().mainPanelButtonsCount;
 
 	for (i = 0; i < kVerbTypeIdsMax; i++) {
-		_verbTypeToPanelButton[i] = NULL;
+		_verbTypeToPanelButton[i] = nullptr;
 	}
 
 	for (i = 0; i < _mainPanel.buttonsCount; i++) {
@@ -162,7 +162,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resourceData);
 		_vm->decodeBGImage(resourceData, _optionPanel.image, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
 	} else {
-		_optionPanel.buttons = NULL;
+		_optionPanel.buttons = nullptr;
 		_optionPanel.buttonsCount = 0;
 		_optionPanel.sprites.clear();
 	}
@@ -217,13 +217,13 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	_mainPanel.x = _vm->getDisplayInfo().mainPanelXOffset;
 	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
-	_mainPanel.currentButton = NULL;
+	_mainPanel.currentButton = nullptr;
 	_inventoryUpButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryUpButtonIndex);
 	_inventoryDownButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryDownButtonIndex);
 
 	_conversePanel.x = _vm->getDisplayInfo().conversePanelXOffset;
 	_conversePanel.y = _vm->getDisplayInfo().conversePanelYOffset;
-	_conversePanel.currentButton = NULL;
+	_conversePanel.currentButton = nullptr;
 	_converseUpButton = _conversePanel.getButton(_vm->getDisplayInfo().converseUpButtonIndex);
 	_converseDownButton = _conversePanel.getButton(_vm->getDisplayInfo().converseDownButtonIndex);
 
@@ -232,7 +232,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	_optionPanel.x = _vm->getDisplayInfo().optionPanelXOffset;
 	_optionPanel.y = _vm->getDisplayInfo().optionPanelYOffset;
-	_optionPanel.currentButton = NULL;
+	_optionPanel.currentButton = nullptr;
 	_optionSaveFileSlider = _optionPanel.getButton(_vm->getDisplayInfo().optionSaveFileSliderIndex);
 	_optionSaveFilePanel = _optionPanel.getButton(_vm->getDisplayInfo().optionSaveFilePanelIndex);
 
@@ -242,7 +242,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_quitPanel.imageHeight = _vm->getDisplayInfo().quitPanelHeight;
 	_quitPanel.buttons = _vm->getDisplayInfo().quitPanelButtons;
 	_quitPanel.buttonsCount = _vm->getDisplayInfo().quitPanelButtonsCount;
-	_quitPanel.currentButton = NULL;
+	_quitPanel.currentButton = nullptr;
 
 	_loadPanel.x = _vm->getDisplayInfo().loadPanelXOffset;
 	_loadPanel.y = _vm->getDisplayInfo().loadPanelYOffset;
@@ -250,7 +250,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_loadPanel.imageHeight = _vm->getDisplayInfo().loadPanelHeight;
 	_loadPanel.buttons = _vm->getDisplayInfo().loadPanelButtons;
 	_loadPanel.buttonsCount = _vm->getDisplayInfo().loadPanelButtonsCount;
-	_loadPanel.currentButton = NULL;
+	_loadPanel.currentButton = nullptr;
 
 	_savePanel.x = _vm->getDisplayInfo().savePanelXOffset;
 	_savePanel.y = _vm->getDisplayInfo().savePanelYOffset;
@@ -259,7 +259,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_savePanel.buttons = _vm->getDisplayInfo().savePanelButtons;
 	_savePanel.buttonsCount = _vm->getDisplayInfo().savePanelButtonsCount;
 	_saveEdit = _savePanel.getButton(_vm->getDisplayInfo().saveEditIndex);
-	_savePanel.currentButton = NULL;
+	_savePanel.currentButton = nullptr;
 
 	_protectPanel.x = _vm->getDisplayInfo().protectPanelXOffset;
 	_protectPanel.y = _vm->getDisplayInfo().protectPanelYOffset;
@@ -268,7 +268,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_protectPanel.buttons = _vm->getDisplayInfo().protectPanelButtons;
 	_protectPanel.buttonsCount = _vm->getDisplayInfo().protectPanelButtonsCount;
 	_protectEdit = _protectPanel.getButton(_vm->getDisplayInfo().protectEditIndex);
-	_protectPanel.currentButton = NULL;
+	_protectPanel.currentButton = nullptr;
 
 	_active = true;
 	_panelMode = _lockedMode = kPanelNull;
@@ -402,14 +402,14 @@ void Interface::setMode(int mode) {
 		// FIXME: Implement IHNM differences from ExecuteInventoryPanel for IHNM (though I believe they're already
 		// implemented)
 
-		_mainPanel.currentButton = NULL;
+		_mainPanel.currentButton = nullptr;
 		break;
 	case kPanelConverse:
-		_conversePanel.currentButton = NULL;
+		_conversePanel.currentButton = nullptr;
 		converseDisplayText();
 		break;
 	case kPanelOption:
-		_optionPanel.currentButton = NULL;
+		_optionPanel.currentButton = nullptr;
 		_vm->fillSaveList();
 		calcOptionSaveSlider();
 		if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
@@ -417,13 +417,13 @@ void Interface::setMode(int mode) {
 		}
 		break;
 	case kPanelLoad:
-		_loadPanel.currentButton = NULL;
+		_loadPanel.currentButton = nullptr;
 		break;
 	case kPanelQuit:
-		_quitPanel.currentButton = NULL;
+		_quitPanel.currentButton = nullptr;
 		break;
 	case kPanelSave:
-		_savePanel.currentButton = NULL;
+		_savePanel.currentButton = nullptr;
 		_textInputMaxWidth = _saveEdit->width - 10;
 		_textInput = true;
 		_textInputStringLength = strlen(_textInputString);
@@ -444,7 +444,7 @@ void Interface::setMode(int mode) {
 	case kPanelProtect:
 		if (_vm->getGameId() == GID_ITE) {
 			// This is used as the copy protection panel in ITE
-			_protectPanel.currentButton = NULL;
+			_protectPanel.currentButton = nullptr;
 			_textInputMaxWidth = _protectEdit->width - 10;
 			_textInput = true;
 			_textInputString[0] = 0;
@@ -705,7 +705,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 			return;
 	}
 
-	assert(text != NULL);
+	assert(text != nullptr);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
 	if (_vm->_render->getFlags() & RF_MAP || _vm->_interface->getMode() == kPanelPlacard)
@@ -769,7 +769,7 @@ void Interface::draw() {
 		_vm->_gfx->drawRegion(rect, _mainPanel.image.getBuffer());
 
 		for (int i = 0; i < kVerbTypeIdsMax; i++) {
-			if (_verbTypeToPanelButton[i] != NULL) {
+			if (_verbTypeToPanelButton[i] != nullptr) {
 				drawVerbPanel(_verbTypeToPanelButton[i]);
 			}
 		}
@@ -1019,7 +1019,7 @@ void Interface::handleQuitUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
 	_quitPanel.currentButton = quitHitTest(mousePoint);
-	releasedButton = (_quitPanel.currentButton != NULL) && (_quitPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	releasedButton = (_quitPanel.currentButton != nullptr) && (_quitPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
 		_quitPanel.zeroAllButtonState();
@@ -1035,7 +1035,7 @@ void Interface::handleQuitClick(const Point& mousePoint) {
 
 	_quitPanel.zeroAllButtonState();
 
-	if (_quitPanel.currentButton == NULL) {
+	if (_quitPanel.currentButton == nullptr) {
 		return;
 	}
 
@@ -1043,7 +1043,7 @@ void Interface::handleQuitClick(const Point& mousePoint) {
 }
 
 void Interface::setQuit(PanelButton *panelButton) {
-	_quitPanel.currentButton = NULL;
+	_quitPanel.currentButton = nullptr;
 	switch (panelButton->id) {
 		case kTextCancel:
 			setMode(kPanelOption);
@@ -1087,7 +1087,7 @@ void Interface::handleLoadUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
 	_loadPanel.currentButton = loadHitTest(mousePoint);
-	releasedButton = (_loadPanel.currentButton != NULL) && (_loadPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	releasedButton = (_loadPanel.currentButton != nullptr) && (_loadPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
 		_loadPanel.zeroAllButtonState();
@@ -1103,7 +1103,7 @@ void Interface::handleLoadClick(const Point& mousePoint) {
 
 	_loadPanel.zeroAllButtonState();
 
-	if (_loadPanel.currentButton == NULL) {
+	if (_loadPanel.currentButton == nullptr) {
 		return;
 	}
 
@@ -1111,7 +1111,7 @@ void Interface::handleLoadClick(const Point& mousePoint) {
 }
 
 void Interface::setLoad(PanelButton *panelButton) {
-	_loadPanel.currentButton = NULL;
+	_loadPanel.currentButton = nullptr;
 	switch (panelButton->id) {
 		case kTextOK:
 			if (_vm->getGameId() == GID_ITE) {
@@ -1337,7 +1337,7 @@ void Interface::handleSaveUpdate(const Point& mousePoint) {
 
 	validateSaveButtons();
 
-	releasedButton = (_savePanel.currentButton != NULL) &&
+	releasedButton = (_savePanel.currentButton != nullptr) &&
 		(_savePanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
@@ -1356,7 +1356,7 @@ void Interface::handleSaveClick(const Point& mousePoint) {
 
 	_savePanel.zeroAllButtonState();
 
-	if (_savePanel.currentButton == NULL) {
+	if (_savePanel.currentButton == nullptr) {
 		_textInput = false;
 		return;
 	}
@@ -1368,7 +1368,7 @@ void Interface::handleSaveClick(const Point& mousePoint) {
 }
 
 void Interface::setSave(PanelButton *panelButton) {
-	_savePanel.currentButton = NULL;
+	_savePanel.currentButton = nullptr;
 	uint titleNumber;
 	char *fileName;
 
@@ -1447,7 +1447,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 
 	validateOptionButtons();
 
-	releasedButton = (_optionPanel.currentButton != NULL) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	releasedButton = (_optionPanel.currentButton != nullptr) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
 		_optionPanel.zeroAllButtonState();
@@ -1467,7 +1467,7 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 
 	_optionPanel.zeroAllButtonState();
 
-	if (_optionPanel.currentButton == NULL) {
+	if (_optionPanel.currentButton == nullptr) {
 		return;
 	}
 
@@ -1544,7 +1544,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 		case kGameObjectHitZone:
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(obj));
 
-			if (hitZone == NULL)
+			if (hitZone == nullptr)
 				return;
 
 			if (hitZone->getFlags() & kHitZoneEnabled)
@@ -1582,7 +1582,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 }
 
 void Interface::setOption(PanelButton *panelButton) {
-	_optionPanel.currentButton = NULL;
+	_optionPanel.currentButton = nullptr;
 	switch (panelButton->id) {
 	case kTextContinuePlaying:
 		ConfMan.flushToDisk();
@@ -1946,7 +1946,7 @@ void Interface::handleMainClick(const Point& mousePoint) {
 
 	panelButton = _mainPanel.hitTest(mousePoint, kPanelAllButtons);
 
-	if (panelButton != NULL) {
+	if (panelButton != nullptr) {
 		if (panelButton->type == kPanelButtonArrow) {
 			panelButton->state = 1;
 			converseChangePos(panelButton->id);
@@ -2008,7 +2008,7 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 
 	bool changed = false;
 
-	if ((panelButton != NULL) && (panelButton->type == kPanelButtonArrow)) {
+	if ((panelButton != nullptr) && (panelButton->type == kPanelButtonArrow)) {
 		if (panelButton->state == 1) {
 			inventoryChangePos(panelButton->id);
 		}
@@ -2150,7 +2150,7 @@ void Interface::drawInventory() {
 
 void Interface::setVerbState(int verb, int state) {
 	PanelButton * panelButton = getPanelButtonByVerbType(verb);
-	if (panelButton == NULL) return;
+	if (panelButton == nullptr) return;
 	if (state == 2) {
 		state = (_mainPanel.currentButton == panelButton) ? 1 : 0;
 	}
@@ -2671,7 +2671,7 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 	changed = last != _conversePanel.currentButton;
 
 
-	if (_conversePanel.currentButton == NULL) {
+	if (_conversePanel.currentButton == nullptr) {
 		_conversePos = -1;
 		if (changed) {
 			draw();
@@ -2695,7 +2695,7 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 void Interface::handleConverseClick(const Point& mousePoint) {
 	_conversePanel.currentButton = converseHitTest(mousePoint);
 
-	if (_conversePanel.currentButton == NULL) {
+	if (_conversePanel.currentButton == nullptr) {
 		return;
 	}
 

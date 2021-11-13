@@ -140,7 +140,7 @@ void SagaEngine::fillSaveList() {
 		slotNumber = atoi(slot);
 		if (slotNumber >= 0 && slotNumber < MAX_SAVES) {
 			name = calcSaveFileName(slotNumber);
-			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
+			if ((in = _saveFileMan->openForLoading(name)) != nullptr) {
 				_saveHeader.type = in->readUint32BE();
 				_saveHeader.size = in->readUint32LE();
 				_saveHeader.version = in->readUint32LE();

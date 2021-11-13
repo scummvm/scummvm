@@ -103,7 +103,7 @@ int Scene::ITEStartProc() {
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
 	firstScene.sceneSkipTarget = true;
-	firstScene.sceneProc = NULL;
+	firstScene.sceneProc = nullptr;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
 	firstScene.chapter = -1;
@@ -257,7 +257,7 @@ EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, c
 	TextListEntry textEntry;
 	TextListEntry *entry;
 	Event event;
-	EventColumns *eventColumns = NULL;
+	EventColumns *eventColumns = nullptr;
 
 	textEntry.knownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorBrightWhite : kKnownColorSubtitleTextColor;
 	textEntry.effectKnownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorVerbTextShadow : kKnownColorTransparent;
@@ -394,7 +394,7 @@ int Scene::ITEIntroAnimProc(int param) {
 
 int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 	Event event;
-	EventColumns *eventColumns = NULL;
+	EventColumns *eventColumns = nullptr;
 	const IntroDialogue *dialogue;
 
 	int lang = 0;
@@ -476,7 +476,7 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 
 int Scene::ITEIntroCaveDemoProc(int param) {
 	Event event;
-	EventColumns *eventColumns = NULL;
+	EventColumns *eventColumns = nullptr;
 
 	switch (param) {
 	case SCENE_BEGIN:

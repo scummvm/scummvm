@@ -42,10 +42,10 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 	_cutawayActive = false;
 
 	for (i = 0; i < MAX_ANIMATIONS; i++)
-		_animations[i] = NULL;
+		_animations[i] = nullptr;
 
 	for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++)
-		_cutawayAnimations[i] = NULL;
+		_cutawayAnimations[i] = nullptr;
 }
 
 Anim::~Anim() {
@@ -461,7 +461,7 @@ void Anim::setCycles(uint16 animId, int cycles) {
 }
 
 int Anim::getCycles(uint16 animId) {
-	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL)
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == nullptr)
 		return 0;
 
 	return getAnimation(animId)->cycles;
@@ -483,7 +483,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	if (animId < MAX_ANIMATIONS && _cutawayActive)
 		return;
 
-	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL) {
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == nullptr) {
 		// In IHNM, cutaways without an animation bit are not rendered, but the framecount
 		// needs to be updated
 		_vm->_frameCount++;
@@ -610,16 +610,16 @@ void Anim::reset() {
 	uint16 i;
 
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
-		if (_animations[i] != NULL) {
+		if (_animations[i] != nullptr) {
 			delete _animations[i];
-			_animations[i] = NULL;
+			_animations[i] = nullptr;
 		}
 	}
 
 	for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
-		if (_cutawayAnimations[i] != NULL) {
+		if (_cutawayAnimations[i] != nullptr) {
 			delete _cutawayAnimations[i];
-			_cutawayAnimations[i] = NULL;
+			_cutawayAnimations[i] = nullptr;
 		}
 	}
 }
@@ -649,7 +649,7 @@ int16 Anim::getCurrentFrame(uint16 animId) {
 }
 
 void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength) {
-	byte *writePointer = NULL;
+	byte *writePointer = nullptr;
 
 	uint16 xStart = 0;
 	uint16 yStart = 0;
@@ -917,7 +917,7 @@ void Anim::animInfo() {
 	_vm->_console->debugPrintf("There are %d animations loaded:\n", animCount);
 
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
-		if (_animations[i] == NULL) {
+		if (_animations[i] == nullptr) {
 			continue;
 		}
 

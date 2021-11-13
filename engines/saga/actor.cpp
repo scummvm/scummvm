@@ -39,7 +39,7 @@
 namespace Saga {
 
 ActorData::ActorData() {
-	_frames = NULL;
+	_frames = nullptr;
 	_frameListResourceId = 0;
 	_speechColor = 0;
 	_inScene = false;
@@ -50,7 +50,7 @@ ActorData::ActorData() {
 	_actionDirection = 0;
 	_actionCycle = 0;
 	_targetObject = 0;
-	_lastZone = NULL;
+	_lastZone = nullptr;
 
 	_cycleFrameSequence = 0;
 	_cycleDelay = 0;
@@ -123,7 +123,7 @@ void ActorData::loadState(uint32 version, Common::InSaveFile *in) {
 	_actionCycle = in->readSint32LE();
 	_targetObject = in->readUint16LE();
 
-	_lastZone = NULL;
+	_lastZone = nullptr;
 	_cycleFrameSequence = in->readSint32LE();
 	_cycleDelay = in->readByte();
 	_cycleTimeCount = in->readByte();
@@ -222,7 +222,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathList.resize(600);
 	_pathListIndex = 0;
 
-	_centerActor = _protagonist = NULL;
+	_centerActor = _protagonist = nullptr;
 	_protagState = 0;
 	_lastTickMsec = 0;
 
@@ -238,7 +238,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (_actorContext == NULL) {
+	if (_actorContext == nullptr) {
 		error("Actor::Actor() resource context not found");
 	}
 
@@ -341,7 +341,7 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 	uint curFrameIndex;
 	int resourceId = actor->_spriteListResourceId;
 
-	if (actor->_frames != NULL) {
+	if (actor->_frames != nullptr) {
 		for (ActorFrameSequences::const_iterator i = actor->_frames->begin(); i != actor->_frames->end(); ++i) {
 			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 				curFrameIndex = i->directions[orient].frameIndex;
@@ -535,7 +535,7 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	ActorData *actor;
 	actor = getActor(actorId);
-	actor->_lastZone = NULL;
+	actor->_lastZone = nullptr;
 
 	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance(), kTransitionNoFade);
 	if (_vm->_interface->getMode() != kPanelSceneSubstitute) {
@@ -601,7 +601,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 	}
 
 	if (actorId == ID_PROTAG) {
-		if (_protagonist == NULL) {
+		if (_protagonist == nullptr) {
 			error("_protagonist == NULL");
 		}
 		return _protagonist;
@@ -715,7 +715,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	}
 #endif
 
-	return NULL;
+	return nullptr;
 }
 
 void Actor::handleSpeech(int msec) {
@@ -942,7 +942,7 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber = 0;
-	SpriteList *spriteList = NULL;
+	SpriteList *spriteList = nullptr;
 
 	createDrawOrderList();
 
@@ -977,7 +977,7 @@ void Actor::drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunc
 }
 
 void Actor::createDrawOrderList() {
-	CompareFunction compareFunction = 0;
+	CompareFunction compareFunction = nullptr;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
@@ -1073,7 +1073,7 @@ void Actor::drawActors() {
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber = 0;
-	SpriteList *spriteList = NULL;
+	SpriteList *spriteList = nullptr;
 
 	createDrawOrderList();
 

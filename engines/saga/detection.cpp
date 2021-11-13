@@ -30,7 +30,7 @@
 static const PlainGameDescriptor sagaGames[] = {
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "saga/detection_tables.h"
@@ -38,7 +38,7 @@ static const PlainGameDescriptor sagaGames[] = {
 class SagaMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	SagaMetaEngineDetection() : AdvancedMetaEngineDetection(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		static const char *const DIRECTORY_GLOBS[2] = { "music", 0 };
+		static const char *const DIRECTORY_GLOBS[2] = { "music", nullptr };
 		_maxScanDepth = 2;
 		_directoryGlobs = DIRECTORY_GLOBS;
 	}
