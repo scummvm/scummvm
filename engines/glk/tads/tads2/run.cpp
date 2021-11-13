@@ -79,7 +79,7 @@ static void run_new(runcxdef *ctx, uchar *noreg *codepp,
 
 	/* set up its vocabulary, inheriting from the class */
 	if (sccnt)
-		supivoc1((struct supcxdef *)0, ctx->runcxvoc,
+		supivoc1((struct supcxdef *)nullptr, ctx->runcxvoc,
 			vocinh(ctx->runcxvoc, objn), objn, TRUE, VOCFNEW);
 
 	/* run the constructor */
@@ -117,7 +117,7 @@ static void run_delete(runcxdef *ctx, uchar *noreg *codepp,
 
 	/* make sure it was allocated with "new" */
 	voci = vocinh(vctx, objn);
-	if (voci == 0 || !(voci->vociflg & VOCIFNEW))
+	if (voci == nullptr || !(voci->vociflg & VOCIFNEW))
 		runsig(ctx, ERR_BADDEL);
 
 	/* run the destructor */
@@ -610,7 +610,7 @@ uchar *runfind(uchar *lst, runsdef *item)
 		}
 		curlen = datsiz(*lst, lst + 1) + 1;
 	}
-	return((uchar *)0);
+	return((uchar *)nullptr);
 }
 
 /* add values */
@@ -741,7 +741,7 @@ int runsub(runcxdef *ctx, runsdef *val, runsdef *val2, uint below)
 			val->runsv.runsvstr = ctx->runcxhp;
 			ctx->runcxhp = dst;
 		}
-		else if ((sublist = runfind(val->runsv.runsvstr, val2)) != 0)
+		else if ((sublist = runfind(val->runsv.runsvstr, val2)) != nullptr)
 		{
 			subsize = datsiz(*sublist, sublist + 1) + 1;
 			listsize = runsiz(val);
@@ -779,7 +779,7 @@ static uint runcpsav(runcxdef *ctx, uchar *noreg *cp, objnum obj, prpnum prop)
 	ofs = *cp - mcmobjptr(ctx->runcxmem, (mcmon)obj);
 
 	/* clear the pointer so the caller knows the object is unlocked */
-	*cp = 0;
+	*cp = nullptr;
 
 	/* unlock the object, and return the derived offset */
 	mcmunlck(ctx->runcxmem, (mcmon)obj);

@@ -68,7 +68,7 @@ void bifyon(bifcxdef *ctx, int argc)
 	tioreset(ctx->bifcxtio);
 
 	/* read a line of text */
-	if (tiogets(ctx->bifcxtio, (char *)0, rsp, (int)sizeof(rsp)))
+	if (tiogets(ctx->bifcxtio, (char *)nullptr, rsp, (int)sizeof(rsp)))
 		runsig(ctx->bifcxrun, ERR_RUNQUIT);
 
 	/* if we're in HTML mode, close the input font tag */
@@ -306,7 +306,7 @@ void bifsav(bifcxdef *ctx, int argc)
 	bifcntargs(ctx, 1, argc);
 	fn = runpopstr(ctx->bifcxrun);
 	bifcstr(ctx, buf, (size_t)sizeof(buf), fn);
-	os_defext(buf, ctx->bifcxsavext != 0 ? ctx->bifcxsavext : "sav");
+	os_defext(buf, ctx->bifcxsavext != nullptr ? ctx->bifcxsavext : "sav");
 	err = fiosav(ctx->bifcxrun->runcxvoc, buf, ctx->bifcxrun->runcxgamename);
 	runpush(ctx->bifcxrun, runclog(err), &val);
 }
@@ -337,7 +337,7 @@ void bifrso(bifcxdef *ctx, int argc)
 		/* get string parameter - it's the filename */
 		fn = runpopstr(ctx->bifcxrun);
 		bifcstr(ctx, buf, (size_t)sizeof(buf), fn);
-		os_defext(buf, ctx->bifcxsavext != 0 ? ctx->bifcxsavext : "sav");
+		os_defext(buf, ctx->bifcxsavext != nullptr ? ctx->bifcxsavext : "sav");
 	}
 
 	/* try restoring the file */
@@ -424,7 +424,7 @@ void bifinp(bifcxdef *ctx, int argc)
 	tioreset(ctx->bifcxtio);
 
 	/* read a line of text */
-	if (tiogets(ctx->bifcxtio, (char *)0, inbuf, (int)sizeof(inbuf)))
+	if (tiogets(ctx->bifcxtio, (char *)nullptr, inbuf, (int)sizeof(inbuf)))
 		runsig(ctx->bifcxrun, ERR_RUNQUIT);
 
 	/* push the string, converting escapes */
@@ -449,7 +449,7 @@ void bifnfy(bifcxdef *ctx, int argc)
 		tm = VOCDTIM_EACH_TURN;
 
 	vocsetfd(voc, voc->voccxalm, objn, prp, tm,
-			 (runsdef *)0, ERR_MANYNFY);
+			 (runsdef *)nullptr, ERR_MANYNFY);
 }
 
 
@@ -464,7 +464,7 @@ void bifunn(bifcxdef *ctx, int argc)
 	objn = runpopobj(ctx->bifcxrun);
 	prop = runpopprp(ctx->bifcxrun);
 	vocremfd(voc, voc->voccxalm, objn, prop,
-			 (runsdef *)0, ERR_NONFY);
+			 (runsdef *)nullptr, ERR_NONFY);
 }
 
 /* trace on/off */
@@ -916,7 +916,7 @@ static const char *bif_stristr(const char *s1, const char *s2)
 			return (const char *)s1;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 /*
@@ -965,13 +965,13 @@ void bifask(bifcxdef *ctx, int argc)
 		{
 			"save",
 			"write",
-			0
+			nullptr
 		};
 		static const char *game_strs[] =
 		{
 			"restore",
 			"game",
-			0
+			nullptr
 		};
 		const char **sp;
 
@@ -998,7 +998,7 @@ void bifask(bifcxdef *ctx, int argc)
 		file_type = OSFTSAVE;
 
 		/* look for any one of the "save" substrings */
-		for (sp = save_strs ; *sp != 0 ; ++sp)
+		for (sp = save_strs ; *sp != nullptr ; ++sp)
 		{
 			/* check to see if this substring matches */
 			if (bif_stristr(pbuf, *sp))
@@ -1016,9 +1016,9 @@ void bifask(bifcxdef *ctx, int argc)
 		 *   find any of them, be conservative and make no assumptions
 		 *   about the file type
 		 */
-		for (sp = game_strs ; *sp != 0 ; ++sp)
+		for (sp = game_strs ; *sp != nullptr ; ++sp)
 		{
-			if (bif_stristr(pbuf, *sp) == 0)
+			if (bif_stristr(pbuf, *sp) == nullptr)
 			{
 				/*
 				 *   this one doesn't match - don't make assumptions about
@@ -1034,7 +1034,7 @@ void bifask(bifcxdef *ctx, int argc)
 		/* check for a transcript */
 		if (file_type == OSFTUNK
 			&& prompt_type == OS_AFP_SAVE
-			&& bif_stristr(pbuf, "script") != 0)
+			&& bif_stristr(pbuf, "script") != nullptr)
 		{
 			/* looks like a log file */
 			file_type = OSFTLOG;
@@ -2167,7 +2167,7 @@ void bifwrd(bifcxdef *ctx, int argc)
 	}
 
 	/* now build a list of strings from the words, if there are any */
-	if (v != 0 && voclistlen(v) != 0 && v->vocolfst != 0 && v->vocollst != 0)
+	if (v != nullptr && voclistlen(v) != 0 && v->vocolfst != nullptr && v->vocollst != nullptr)
 	{
 		for (dst = buf + 2, src = (const uchar *)v->vocolfst ;
 			 src <= (const uchar *)v->vocollst ; src += len + 1)
@@ -2521,7 +2521,7 @@ void biffopen(bifcxdef *ctx, int argc)
 	/* allocate a filenum for the file */
 	for (fnum = 0 ; fnum < BIFFILMAX ; ++fnum)
 	{
-		if (ctx->bifcxfile[fnum].fp == 0)
+		if (ctx->bifcxfile[fnum].fp == nullptr)
 			break;
 	}
 	if (fnum == BIFFILMAX)
@@ -2595,7 +2595,7 @@ void biffopen(bifcxdef *ctx, int argc)
 	 *   current file safety level, which overrides our current setting.
 	 */
 	appctx = ctx->bifcxappctx;
-	if (appctx != 0 && appctx->get_io_safety_level != 0)
+	if (appctx != nullptr && appctx->get_io_safety_level != nullptr)
 	{
 		/*
 		 *   ask the host system for the current level, and override any
@@ -2721,7 +2721,7 @@ void biffopen(bifcxdef *ctx, int argc)
 	}
 
 	/* if we couldn't open it, return nil */
-	if (fp == 0)
+	if (fp == nullptr)
 	{
 		runpnil(ctx->bifcxrun);
 		return;
@@ -2752,15 +2752,15 @@ static osfildef *bif_get_file(bifcxdef *ctx, int *fnump, int *bin_modep)
 
 	/* get the file number and make sure it's valid */
 	fnum = runpopnum(ctx->bifcxrun);
-	if (fnum < 0 || fnum >= BIFFILMAX || ctx->bifcxfile[fnum].fp == 0)
+	if (fnum < 0 || fnum >= BIFFILMAX || ctx->bifcxfile[fnum].fp == nullptr)
 		runsig(ctx->bifcxrun, ERR_BADFILE);
 
 	/* put the validated file number, if the caller wants it */
-	if (fnump != 0)
+	if (fnump != nullptr)
 		*fnump = (int)fnum;
 
 	/* set the binary-mode flag, if the caller wants it */
-	if (bin_modep != 0)
+	if (bin_modep != nullptr)
 		*bin_modep = ((ctx->bifcxfile[fnum].flags & BIFFIL_F_BINARY) != 0);
 
 	/* return the file array pointer */
@@ -2774,11 +2774,11 @@ void biffclose(bifcxdef *ctx, int argc)
 
 	/* get the file number */
 	bifcntargs(ctx, 1, argc);
-	fp = bif_get_file(ctx, &fnum, 0);
+	fp = bif_get_file(ctx, &fnum, nullptr);
 
 	/* close the file and release the slot */
 	osfcls(fp);
-	ctx->bifcxfile[fnum].fp = 0;
+	ctx->bifcxfile[fnum].fp = nullptr;
 }
 
 void bifftell(bifcxdef *ctx, int argc)
@@ -2787,7 +2787,7 @@ void bifftell(bifcxdef *ctx, int argc)
 
 	/* get the file number */
 	bifcntargs(ctx, 1, argc);
-	fp = bif_get_file(ctx, (int *)0, 0);
+	fp = bif_get_file(ctx, (int *)nullptr, nullptr);
 
 	/* return the seek position */
 	runpnum(ctx->bifcxrun, osfpos(fp));
@@ -2800,7 +2800,7 @@ void biffseek(bifcxdef *ctx, int argc)
 
 	/* get the file pointer */
 	bifcntargs(ctx, 2, argc);
-	fp = bif_get_file(ctx, (int *)0, 0);
+	fp = bif_get_file(ctx, (int *)nullptr, nullptr);
 
 	/* get the seek position, and seek there */
 	pos = runpopnum(ctx->bifcxrun);
@@ -2813,7 +2813,7 @@ void biffseekeof(bifcxdef *ctx, int argc)
 
 	/* get the file pointer */
 	bifcntargs(ctx, 1, argc);
-	fp = bif_get_file(ctx, (int *)0, 0);
+	fp = bif_get_file(ctx, (int *)nullptr, nullptr);
 
 	/* seek to the end */
 	osfseek(fp, 0L, OSFSK_END);
@@ -2829,7 +2829,7 @@ void biffwrite(bifcxdef *ctx, int argc)
 
 	/* get the file */
 	bifcntargs(ctx, 2, argc);
-	fp = bif_get_file(ctx, (int *)0, &bin_mode);
+	fp = bif_get_file(ctx, (int *)nullptr, &bin_mode);
 
 	/* get the value to write */
 	runpop(ctx->bifcxrun, &val);
@@ -2957,7 +2957,7 @@ void biffread(bifcxdef *ctx, int argc)
 
 	/* get the file pointer */
 	bifcntargs(ctx, 1, argc);
-	fp = bif_get_file(ctx, (int *)0, &bin_mode);
+	fp = bif_get_file(ctx, (int *)nullptr, &bin_mode);
 
 	if (bin_mode)
 	{
@@ -3281,7 +3281,7 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 		 *   take no additional arguments
 		 */
 		bifcntargs(ctx, 1, argc);
-		if (os_get_sysinfo(id, 0, &result))
+		if (os_get_sysinfo(id, nullptr, &result))
 		{
 			/* we got a valid result - return it */
 			runpnum(ctx->bifcxrun, result);
@@ -3313,13 +3313,13 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 		 *   colors.
 		 */
 		bifcntargs(ctx, 1, argc);
-		if (os_get_sysinfo(SYSINFO_HTML, 0, &result) && result != 0)
+		if (os_get_sysinfo(SYSINFO_HTML, nullptr, &result) && result != 0)
 		{
 			/*
 			 *   we're in HTML mode, so ask the underlying HTML OS
 			 *   implementation for its level of text color support
 			 */
-			if (os_get_sysinfo(id, 0, &result))
+			if (os_get_sysinfo(id, nullptr, &result))
 			{
 				/* push the OS-level result */
 				runpnum(ctx->bifcxrun, result);
@@ -3531,7 +3531,7 @@ void bifregroup(bifcxdef *ctx, int argc)
 	reg = &ctx->bifcxregex.regs[grp];
 
 	/* if the group wasn't set, return nil */
-	if (reg->start_ofs == 0 || reg->end_ofs == 0)
+	if (reg->start_ofs == nullptr || reg->end_ofs == nullptr)
 	{
 		runpnil(ctx->bifcxrun);
 		return;
@@ -3981,7 +3981,7 @@ void bifgetobj(bifcxdef *ctx, int argc)
 
 	case 3:
 		/* direct object */
-		obj = (voc->voccxdobj == 0 ? MCMONINV : voc->voccxdobj->vocolobj);
+		obj = (voc->voccxdobj == nullptr ? MCMONINV : voc->voccxdobj->vocolobj);
 		break;
 
 	case 4:
@@ -3991,7 +3991,7 @@ void bifgetobj(bifcxdef *ctx, int argc)
 
 	case 5:
 		/* indirect object */
-		obj = (voc->voccxiobj == 0 ? MCMONINV : voc->voccxiobj->vocolobj);
+		obj = (voc->voccxiobj == nullptr ? MCMONINV : voc->voccxiobj->vocolobj);
 		break;
 
 	case 6:
@@ -4319,8 +4319,8 @@ void bifresexists(bifcxdef *ctx, int argc)
 	 *   supports external resource loading
 	 */
 	appctx = ctx->bifcxappctx;
-	found = (appctx != 0
-			 && appctx->resfile_exists != 0
+	found = (appctx != nullptr
+			 && appctx->resfile_exists != nullptr
 			 && (*appctx->resfile_exists)(appctx->resfile_exists_ctx,
 										  resname, strlen(resname)));
 

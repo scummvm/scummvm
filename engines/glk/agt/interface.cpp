@@ -630,7 +630,7 @@ void prompt_out(int n)
 	if (PURE_INPUT && n == 1) agt_textcolor(-1);
 	if (n == 1) {
 		agt_newline();
-		gen_sysmsg(1, ">", MSG_MAIN, NULL);
+		gen_sysmsg(1, ">", MSG_MAIN, nullptr);
 	}
 	if (n == 2) agt_puts("? ");
 	agt_textcolor(7);
@@ -672,23 +672,23 @@ void set_test_mode(fc_type fc) {
 	log_in = readopen(fc, fLOG, &errstr);
 
 	if (make_test) {
-		if (errstr == NULL)
+		if (errstr == nullptr)
 			fatal("Log file already exists.");
-		log_out = writeopen(fc, fLOG, NULL, &errstr);
-		if (errstr != NULL)
+		log_out = writeopen(fc, fLOG, nullptr, &errstr);
+		if (errstr != nullptr)
 			fatal("Couldn't create log file.");
 		logflag = 1;
 		return;
 	}
 
 	logdelay = 0;
-	if (errstr != NULL)
+	if (errstr != nullptr)
 		fatal("Couldn't open log file.");
 	logflag = 2;
 
 	script_on = 1;
-	scriptfile = writeopen(fc, fSCR, NULL, &errstr);
-	if (errstr != NULL)
+	scriptfile = writeopen(fc, fSCR, nullptr, &errstr);
+	if (errstr != nullptr)
 		fatal("Couldn't open script file.");
 }
 

@@ -116,7 +116,7 @@ void create_paths(char *full_path) {
 
 	/* FIND THE LAST SLASH IN THE SPECIFIED GAME PATH AND REMOVE THE GAME
 	 * FILE SUFFIX IF ANY EXISTS */
-	last_slash = (char *)NULL;
+	last_slash = (char *)nullptr;
 
 	/* GET A POINTER TO THE LAST SLASH IN THE FULL PATH */
 	last_slash = strrchr(full_path, DIR_SEPARATOR);
@@ -133,7 +133,7 @@ void create_paths(char *full_path) {
 	}
 
 	/* STORE THE GAME PATH AND THE GAME FILENAME PARTS SEPARATELY */
-	if (last_slash == (const char *) NULL) {
+	if (last_slash == (const char *) nullptr) {
 		/* GAME MUST BE IN CURRENT DIRECTORY SO THERE WILL BE NO GAME PATH */
 		strcpy(prefix, full_path);
 		game_path[0] = 0;

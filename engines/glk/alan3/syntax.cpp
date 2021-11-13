@@ -64,19 +64,19 @@ static SyntaxEntry *findSyntaxEntry(int verbCode) {
 			return stx;
 			break;
 		}
-	return NULL;
+	return nullptr;
 }
 
 
 /*======================================================================*/
 SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
-	SyntaxEntry *foundStx = NULL;
+	SyntaxEntry *foundStx = nullptr;
 	if (isPreBeta2(header->version)) {
 		foundStx = findSyntaxEntryForPreBeta2(verbCode, foundStx);
 	} else {
 		foundStx = findSyntaxEntry(verbCode);
 	}
-	if (foundStx == NULL)
+	if (foundStx == nullptr)
 		// No matching syntax
 		R0CALL1(error, M_WHAT)
 	return foundStx;

@@ -39,7 +39,7 @@ void printMessage(MsgKind msg) {    /* IN - message number */
 }
 
 
-static void (*errorHandler)(MsgKind msg) = NULL;
+static void (*errorHandler)(MsgKind msg) = nullptr;
 
 /*======================================================================*/
 void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message number */
@@ -50,7 +50,7 @@ void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message n
 
 /*======================================================================*/
 void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
-	if (errorHandler != NULL)
+	if (errorHandler != nullptr)
 		errorHandler(msgno);
 	else {
 		/* Print an error message and longjmp to main loop. */

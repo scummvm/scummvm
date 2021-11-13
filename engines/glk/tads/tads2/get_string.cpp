@@ -64,7 +64,7 @@ int getstring(const char *prompt, char *buf, int bufl)
 
 	/* show prompt if one was given and flush output */
 	savemoremode = setmore(0);
-	if (prompt != 0)
+	if (prompt != nullptr)
 	{
 		/* display the prompt text */
 		outformat(prompt);
@@ -76,12 +76,12 @@ int getstring(const char *prompt, char *buf, int bufl)
 	outreset();
 
 	/* read from the command input file if we have one */
-	if (scrfp != 0)
+	if (scrfp != nullptr)
 	{
 		int quiet = scrquiet;
 
 		/* try reading from command input file */
-		if ((result = qasgets(buf, bufl)) == 0)
+		if ((result = qasgets(buf, bufl)) == nullptr)
 		{
 			/*
 			 *   End of command input file; return to reading the
@@ -93,7 +93,7 @@ int getstring(const char *prompt, char *buf, int bufl)
 			 *   command here but instead handle it later when we check to
 			 *   see if we need to read from the keyboard.
 			 */
-			if (quiet && prompt != 0)
+			if (quiet && prompt != nullptr)
 				outformat(prompt);
 			outflushn(0);
 			outreset();
@@ -116,7 +116,7 @@ int getstring(const char *prompt, char *buf, int bufl)
 	}
 
 	/* if we don't have a script file, read from the keyboard */
-	if (scrfp == 0)
+	if (scrfp == nullptr)
 	{
 		/* update the status line */
 		runstat();
@@ -129,7 +129,7 @@ int getstring(const char *prompt, char *buf, int bufl)
 		 *   value; otherwise, we successfully read a command, so return
 		 *   zero
 		 */
-		retval = (result == 0);
+		retval = (result == nullptr);
 	}
 
 	/* restore the original "more" mode */
@@ -152,7 +152,7 @@ int getstring(const char *prompt, char *buf, int bufl)
 		 *   appropriate
 		 */
 		out_logfile_print(buf, TRUE);
-		if (cmdfile != 0)
+		if (cmdfile != nullptr)
 		{
 			os_fprintz(cmdfile, ">");
 			os_fprintz(cmdfile, buf);

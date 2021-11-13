@@ -114,7 +114,7 @@ void *sx_realloc(void *pointer, size_t size) {
 	}
 
 	if (pointer == sx_zero_allocation)
-		pointer = NULL;
+		pointer = nullptr;
 
 	allocated = realloc(pointer, size);
 	if (!allocated)
@@ -168,7 +168,7 @@ static const sc_char NUL = '\0';
 static sc_bool sx_isspace(sc_char character) {
 	static const sc_char *const WHITESPACE = "\t\n\v\f\r ";
 
-	return character != NUL && strchr(WHITESPACE, character) != NULL;
+	return character != NUL && strchr(WHITESPACE, character) != nullptr;
 }
 
 static sc_bool sx_isprint(sc_char character) {

@@ -34,7 +34,7 @@ TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gam
 
 void TADS2::runGame() {
 	// Initialize the OS layer
-	os_init(nullptr, nullptr, 0, 0, 0);
+	os_init(nullptr, nullptr, nullptr, nullptr, 0);
 	os_instbrk(true);
 
 	char name[255];

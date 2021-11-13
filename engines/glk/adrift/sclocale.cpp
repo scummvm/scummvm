@@ -135,7 +135,7 @@ struct sc_locale_table_t {
  * Define a single static locale table set.  This set re-initializes if it
  * detects a locale change.
  */
-static sc_locale_table_t loc_locale_tables = {NULL, {0}, {0}, {0}, {0}, {0}};
+static sc_locale_table_t loc_locale_tables = {nullptr, {0}, {0}, {0}, {0}, {0}};
 
 
 /*
@@ -225,7 +225,7 @@ static const sc_locale_t CYRILLIC_LOCALE = {
 static const sc_locale_t *const AVAILABLE_LOCALES[] = {
 	&LATIN1_LOCALE,
 	&CYRILLIC_LOCALE,
-	NULL
+	nullptr
 };
 
 /*
@@ -256,7 +256,7 @@ static const sc_char *loc_locate_signature_in_date(const sc_char *date) {
 	if (converted == 3 && strlen(signature) == SIGNATURE_LENGTH)
 		return strstr(date, signature);
 	else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -297,7 +297,7 @@ static sc_bool loc_compare_locale_signatures(const char *signature, const sc_loc
 static const sc_locale_t *loc_find_matching_locale(const sc_char *date,
 		const sc_locale_t *const *locales) {
 	const sc_char *signature;
-	const sc_locale_t *matched = NULL;
+	const sc_locale_t *matched = nullptr;
 
 	/* Get the month part of date, and if valid, search locale signatures. */
 	signature = loc_locate_signature_in_date(date);
@@ -385,7 +385,7 @@ static sc_int loc_ascii_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int
  * if none yet set.
  */
 sc_bool loc_set_locale(const sc_char *name) {
-	const sc_locale_t *matched = NULL;
+	const sc_locale_t *matched = nullptr;
 	const sc_locale_t *const *iterator;
 	assert(name);
 

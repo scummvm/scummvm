@@ -217,7 +217,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 	rbool special_arg1;  /* Is the first argument a special 0-length argument? */
 
 	oprec->negate = oprec->failmsg = oprec->disambig = 0;
-	oprec->errmsg = NULL;
+	oprec->errmsg = nullptr;
 	oprec->op = -1;
 	oprec->opdata = &illegal_def;
 	oprec->argcnt = 0;
@@ -336,7 +336,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 static rbool decode_args(int ip_, op_rec *oprec) {
 	rbool grammer_arg; /* Have NOUN/OBJECT that is 0 and so failed argok tests */
 
-	if (oprec->errmsg != NULL) {
+	if (oprec->errmsg != nullptr) {
 		if (!PURE_ERROR)
 			writeln(oprec->errmsg);
 		return 0;
@@ -412,7 +412,7 @@ typedef struct {
 } subcall_rec;
 
 
-static subcall_rec *substack = NULL;
+static subcall_rec *substack = nullptr;
 static short subcnt = 0;
 static short subsize = 0;
 
@@ -428,7 +428,7 @@ static rbool push_subcall(int cnum, int ip_, int failaddr) {
 		rm_trap = 0;
 		substack = (subcall_rec *)rrealloc(substack, subsize * sizeof(subcall_rec));
 		rm_trap = 1;
-		if (substack == NULL) { /* out of memory */
+		if (substack == nullptr) { /* out of memory */
 			substack = savestack;
 			return 0;
 		}
@@ -748,7 +748,7 @@ static rbool fix_objrec(parse_rec **objrec, word match,
 						int real_obj,
 						parse_rec *actrec, parse_rec *dobjrec,
 						parse_rec *iobjrec) {
-	if (real_obj) *objrec = make_parserec(real_obj, NULL);
+	if (real_obj) *objrec = make_parserec(real_obj, nullptr);
 	else if (match == ext_code[wdobject]) *objrec = copy_parserec(iobjrec);
 	else if (match == ext_code[wdnoun]) *objrec = copy_parserec(dobjrec);
 	else if (match == ext_code[wdname]) *objrec = copy_parserec(actrec);
@@ -957,7 +957,7 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
 	assert(m_actor != 0);
 
 	if (aver >= AGX00) {
-		if (start != NULL) *start = verbptr[DIR_ADDR_CODE];
+		if (start != nullptr) *start = verbptr[DIR_ADDR_CODE];
 		*end = verbend[DIR_ADDR_CODE];
 		return;
 	}
@@ -969,7 +969,7 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
 		}
 	*end = i;
 
-	if (start == NULL) return;
+	if (start == nullptr) return;
 
 	for (i = verbptr[DIR_ADDR_CODE]; i <= *end; i++)
 		if (creat_fix[command[i].actor - first_creat]
@@ -1071,7 +1071,7 @@ int scan_metacommand(integer m_actor, int vcode,
 				/* REDIRECT :If we do a redirect from a broader grammar to a
 				   narrower grammer, it will be noted so that certain types
 				   of grammer checking can be disabled. */
-				if (redir_flag != NULL) {
+				if (redir_flag != nullptr) {
 					if (*redir_flag < 2
 					        && redir_narrows_grammar(&command[oldi], &command[i]))
 						*redir_flag = 2;
@@ -1134,7 +1134,7 @@ int scan_metacommand(integer m_actor, int vcode,
 				if (m_actor == 0)
 					scanend = verbend[vcode];
 				else
-					scan_for_actor(m_actor, NULL, &scanend);
+					scan_for_actor(m_actor, nullptr, &scanend);
 				m_verb = syntbl[auxsyn[vcode]];
 
 				i--; /* Cause the last command to restart,

@@ -57,7 +57,7 @@ int ip_back, parse_ip;
 static int vnum;  /* Verb number from synonym scan */
 
 /* Pointers to negative-terminated arrays of possible nouns */
-static parse_rec *lactor = NULL, *lobj = NULL, *lnoun = NULL;
+static parse_rec *lactor = nullptr, *lobj = nullptr, *lnoun = nullptr;
 
 static int ambig_flag = 0;
 /* Was last input ambiguous? (so player could be entering
@@ -81,7 +81,7 @@ int all_err_msg[] = {73, 83, 113, 103, /* open, close, lock, unlock: 15 - 18 */
 static void freeall(void) {
 	rfree(lnoun);
 	rfree(lobj);
-	lnoun = lobj = NULL;
+	lnoun = lobj = nullptr;
 }
 
 
@@ -546,7 +546,7 @@ static rbool ident_objrec(parse_rec *p1, parse_rec *p2) {
 static parse_rec *fix_actor(parse_rec *alist) {
 	int i, cnt;
 
-	assert(alist != NULL);
+	assert(alist != nullptr);
 	if (alist[0].info == D_ALL) { /* ALL?! */
 		rfree(alist);
 		return new_list();
@@ -644,7 +644,7 @@ static int score_disambig(parse_rec *rec, int ambig_type)
 	if (ambig_type == 1) /* ACTOR */
 		return DISAMBIG_SUCC;
 	else if (ambig_type == 2) /* NOUN */
-		return check_obj(lactor, vnum, rec, prep, NULL);
+		return check_obj(lactor, vnum, rec, prep, nullptr);
 	else if (ambig_type == 3) /* IOBJ */
 		return check_obj(lactor, vnum, lnoun, prep, rec);
 	else fatal("Invalid ambig_type!");
@@ -674,7 +674,7 @@ static parse_rec *expand_all(parse_rec *lnoun_) {
 	creature[i].scratch = 0;
 	objloop(i)
 	if (((verbflag[vnum]&VERB_GLOBAL) != 0 || visible(i))
-	        && (lnoun_ == NULL || !scan_andrec(i, lnoun_))) {
+	        && (lnoun_ == nullptr || !scan_andrec(i, lnoun_))) {
 		temp_obj.obj = i;
 		if (score_disambig(&temp_obj, 2) >= 500) {
 			if (tnoun(i)) noun[i - first_noun].scratch = 1;
@@ -950,7 +950,7 @@ static parse_rec *disambig(int ambig_set, parse_rec *list, parse_rec *truenoun)
 /* ambig_set = 1 for actor, 2 for noun, 3 for object */
 {
 	if (ambig_flag == ambig_set || ambig_flag == 0) { /* restart where we left off...*/
-		if (truenoun == NULL || truenoun[0].info == D_END) disambig_ofs = -1;
+		if (truenoun == nullptr || truenoun[0].info == D_END) disambig_ofs = -1;
 		disambig_ofs = disambig_phrase(&list, truenoun, disambig_ofs, ambig_set);
 		if (disambig_ofs == -1) ambig_flag = 0; /* Success */
 		else if (disambig_ofs == -2) ambig_flag = -1; /* Error: elim all choices */
@@ -1085,7 +1085,7 @@ static parse_rec *parse_a_noun(void)
 			nlist = add_rec(nlist, -input[oip], numval, D_NUM);
 
 		/* Next handle the flag nouns and global nouns */
-		if (globalnoun != NULL)
+		if (globalnoun != nullptr)
 			for (i = 0; i < numglobal; i++)
 				if (input[oip] == globalnoun[i])
 					nlist = add_rec(nlist, -input[oip], 0, D_GLOBAL);
@@ -1191,7 +1191,7 @@ static int parse_cmd(void)
 	/* First go looking for an actor. */
 	ap = ip;
 	new_actor = 0;
-	if (lactor == NULL) {
+	if (lactor == nullptr) {
 		new_actor = 1;
 		lactor = parse_noun(0, 1);
 		/* Check that actor is a creature. */
@@ -1252,7 +1252,7 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 		rfree(lactor);
 		rfree(lobj);
 		lactor = lnoun;
-		lnoun = NULL;
+		lnoun = nullptr;
 		vp = ip; /* Replace TELL with new verb */
 		vnum = id_verb(); /* May increment ip (ip points att last word in verb) */
 		goto TELLHack;  /* Go back up and reparse the sentence from
@@ -1327,7 +1327,7 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 
 
 static void v_undo(void) {
-	if (undo_state == NULL) {
+	if (undo_state == nullptr) {
 		writeln("There is insufficiant memory to support UNDO");
 		ip = -1;
 		return;
@@ -1356,7 +1356,7 @@ rbool parse(void)
 	int fixword;
 	int start_ip;
 
-	currnoun = NULL;
+	currnoun = nullptr;
 	start_ip = ip;
 	/* First, we need to see if someone has issued an OOPS command.
 	   OOPS commands are always assumed to stand alone. (i.e. no
@@ -1388,7 +1388,7 @@ rbool parse(void)
 			ambig_flag = 0;
 			rfree(currnoun);
 			freeall();
-			currnoun = NULL;
+			currnoun = nullptr;
 		}
 	}
 
@@ -1450,7 +1450,7 @@ rbool parse(void)
 	   we save the undo state before executing if this is the first command
 	   in a sequence. (That is, UNDO undoes whole lines of commands,
 	   not just individual commands) */
-	if (start_ip == 0 && undo_state != NULL) {
+	if (start_ip == 0 && undo_state != nullptr) {
 		undo_state = getstate(undo_state);
 		can_undo = 1;
 	}
@@ -1465,7 +1465,7 @@ rbool parse(void)
 
 	/* Now we clear lnoun and lobj; lactor is handled elsewhere since
 	   we might have FRED, GET ROCK THEN GO NORTH */
-	lnoun = lobj = NULL;
+	lnoun = lobj = nullptr;
 
 	/* Finally check for THENs */
 
@@ -1495,8 +1495,8 @@ void menu_cmd(void) {
 	int nm_size, nm_width; /* Size and width of noun menu */
 
 
-	nounval = NULL;
-	nounmenu = NULL;
+	nounval = nullptr;
+	nounmenu = nullptr;
 	/* Get verb+prep */
 	choice = agt_menu("", vm_size, vm_width, verbmenu);
 	if (choice == -1 || doing_restore) return;
@@ -1590,7 +1590,7 @@ void menu_cmd(void) {
 		return;
 	}
 
-	if (undo_state != NULL) {
+	if (undo_state != nullptr) {
 		undo_state = getstate(undo_state);
 		can_undo = 1;
 	}
@@ -1599,7 +1599,7 @@ void menu_cmd(void) {
 	tmpobj(&actrec);
 	actrec.obj = 0;
 	exec(&actrec, vnum_, lnoun, prep_, &mobj);
-	lnoun = NULL; /* exec() is responsible for freeing lnoun */
+	lnoun = nullptr; /* exec() is responsible for freeing lnoun */
 }
 
 

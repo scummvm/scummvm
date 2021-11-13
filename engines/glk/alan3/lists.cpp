@@ -44,7 +44,7 @@ int lengthOfArrayImplementation(void *array_of_any_type, int element_size_in_byt
 	int length;
 	int element_size = element_size_in_bytes / sizeof(Aword);
 	Aword *array = (Aword *)array_of_any_type;
-	if (array == NULL)
+	if (array == nullptr)
 		syserr("Taking length of NULL array");
 	for (length = 0; !isEndOfArray(&array[length * element_size]); length++)
 		;

@@ -80,13 +80,13 @@ void OS_LOADDS fioldobj(void *ctx0, mclhd handle, uchar *ptr, ushort siz)
 /* shut down load-on-demand subsystem (close load file) */
 void fiorcls(fiolcxdef *ctx)
 {
-	if (ctx != 0 && ctx->fiolcxfp != 0)
+	if (ctx != nullptr && ctx->fiolcxfp != nullptr)
 	{
 		/* close the file */
 		osfcls(ctx->fiolcxfp);
 
 		/* forget the file object */
-		ctx->fiolcxfp = 0;
+		ctx->fiolcxfp = nullptr;
 	}
 }
 
@@ -101,7 +101,7 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 	/*
 	 *   resource map - if the host system is interested, tell it about it
 	 */
-	if (appctx != 0)
+	if (appctx != nullptr)
 	{
 		ulong entry_cnt;
 		ulong i;
@@ -146,7 +146,7 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 		}
 
 		/* tell the host system where the resources start */
-		if (appctx->set_resmap_seek != 0)
+		if (appctx->set_resmap_seek != nullptr)
 		{
 			long pos = osfpos(fp);
 			(*appctx->set_resmap_seek)(appctx->set_resmap_seek_ctx,
@@ -377,7 +377,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
 			if (bsiz && bsiz < OSMALMAX
-				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != 0)
+				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != nullptr)
 			{
 				uchar *p1;
 				ulong  siz2;
@@ -538,7 +538,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
 			if (bsiz && bsiz < OSMALMAX
-				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != 0)
+				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != nullptr)
 			{
 				uchar *p1;
 				ulong  siz2;
@@ -721,7 +721,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
 			if (bsiz && bsiz < OSMALMAX
-				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != 0)
+				&& (bufp = p = (uchar *)osmalloc((size_t)bsiz)) != nullptr)
 			{
 				uchar *p1;
 				ulong  siz2;
@@ -742,7 +742,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 							   xor_seed, xor_inc);
 					vocadd2(vctx, (prpnum)osrp2(p+4), (objnum)osrp2(p+6),
 							osrp2(p+8), p + 10, len1,
-							(len2 ? p + 10 + len1 : (uchar*)0), len2);
+							(len2 ? p + 10 + len1 : (uchar*)nullptr), len2);
 
 					p += 10 + len1 + len2;
 					bsiz -= 10 + len1 + len2;
@@ -766,7 +766,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 							   xor_seed, xor_inc);
 					vocadd2(vctx, (prpnum)osrp2(buf+4), (objnum)osrp2(buf+6),
 							osrp2(buf+8), buf + 10, len1,
-							(len2 ? buf + 10 + len1 : (uchar*)0), len2);
+							(len2 ? buf + 10 + len1 : (uchar*)nullptr), len2);
 					curpos += 10 + len1 + len2;
 				}
 			}
@@ -849,7 +849,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		else if (fioisrsc(buf, "SRC"))
 		{
 			/* skip source file id's if there's no debugger context */
-			if (vctx->voccxrun->runcxdbg == 0)
+			if (vctx->voccxrun->runcxdbg == nullptr)
 			{
 				osfseek(fp, endpos + startofs, OSFSK_SET);
 				continue;
@@ -869,7 +869,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			 *   (line-number-based) source debugging information in the
 			 *   file -- set the new-style debug info flag
 			 */
-			if (vctx->voccxrun->runcxdbg != 0)
+			if (vctx->voccxrun->runcxdbg != nullptr)
 				vctx->voccxrun->runcxdbg->dbgcxflg |= DBGCXFLIN2;
 
 			/* the contents are empty - skip the block */
@@ -919,7 +919,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			if (osfrb(fp, buf, 2)) errsig(ec, ERR_RDGAM);
 			if (pcntptr) *pcntptr = osrp2(buf);
 		}
-		else if (fioisrsc(buf, "TADSPP") && tctx != 0)
+		else if (fioisrsc(buf, "TADSPP") && tctx != nullptr)
 		{
 			tok_read_defines(tctx, fp, ec);
 		}
@@ -979,10 +979,10 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 	 *   get the display filename - use the real filename if one is
 	 *   provided, otherwise use the name of the executable file itself
 	 */
-	display_fname = (fname != 0 ? fname : exename);
+	display_fname = (fname != nullptr ? fname : exename);
 
 	/* save the filename in G_os_gamename */
-	if (display_fname != 0)
+	if (display_fname != nullptr)
 	{
 		size_t copylen;
 
@@ -998,16 +998,16 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 		G_os_gamename[0] = '\0';
 
 	/* open the file and read and check file header */
-	fp = (fname != 0 ? osfoprb(fname, OSFTGAME)
+	fp = (fname != nullptr ? osfoprb(fname, OSFTGAME)
 					 : os_exeseek(exename, "TGAM"));
-	if (fp == 0)
+	if (fp == nullptr)
 		errsig(vctx->voccxerr, ERR_OPRGAM);
 
 	/*
 	 *   we've identified the .GAM file source - tell the host system
 	 *   about it, if it's interested
 	 */
-	if (appctx != 0 && appctx->set_game_name != 0)
+	if (appctx != nullptr && appctx->set_game_name != nullptr)
 		(*appctx->set_game_name)(appctx->set_game_name_ctx, display_fname);
 
 	/* remember starting location in file */
@@ -1029,7 +1029,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 	 *   as the .GAM file, with the .GAM suffix replaced by suffixes from
 	 *.  RS0 to .RS9.
 	 */
-	if (appctx != 0 && appctx->add_resfile != 0)
+	if (appctx != nullptr && appctx->add_resfile != nullptr)
 	{
 		char suffix_lc[4];
 		char suffix_uc[4];
@@ -1059,7 +1059,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 			 *   resource path, use it, otherwise use the same directory
 			 *   that contains the .GAM file.
 			 */
-			if (appctx->ext_res_path != 0)
+			if (appctx->ext_res_path != nullptr)
 			{
 				/*
 				 *   There's an explicit resource path - append the root
@@ -1077,7 +1077,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 				 *   filename, including directory, so that we look in the
 				 *   same directory that contains the .GAM file
 				 */
-				if (base_name != 0)
+				if (base_name != nullptr)
 					strcpy(resname, base_name);
 				else
 					resname[0] = '\0';
@@ -1092,7 +1092,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 			fpres = osfoprb(resname, OSFTGAME);
 
 			/* if that didn't work, try the upper-case name */
-			if (fpres == 0)
+			if (fpres == nullptr)
 			{
 				/* replace the suffix with the upper-case version */
 				os_remext(resname);
@@ -1103,7 +1103,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 			}
 
 			/* if we opened it successfully, read it */
-			if (fpres != 0)
+			if (fpres != nullptr)
 			{
 				/* tell the host system about it */
 				resfileno = (*appctx->add_resfile)
@@ -1625,7 +1625,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 	struct fiosav_cb_ctx  fnctx;
 
 	/* open the output file */
-	if ((fp = osfopwb(fname, OSFTSAVE)) == 0)
+	if ((fp = osfopwb(fname, OSFTSAVE)) == nullptr)
 		return TRUE;
 
 	/*
@@ -1634,7 +1634,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 	 *   run-time and restore the game by specifying only the saved game
 	 *   file.
 	 */
-	if (game_fname != 0)
+	if (game_fname != nullptr)
 	{
 		size_t len;
 
@@ -1659,7 +1659,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 		if (!*vpg) continue;
 		for (v = *vpg, obj = (i << 8), j = 0 ; j < 256 ; ++v, ++obj, ++j)
 		{
-			if (*v != 0)
+			if (*v != nullptr)
 			{
 				/* write object if it's dirty */
 				if (mcmobjdirty(mctx, (mcmon)obj))

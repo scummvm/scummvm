@@ -118,7 +118,7 @@ void *sc_realloc(void *pointer, size_t size) {
 	}
 
 	if (pointer == sc_zero_allocation)
-		pointer = NULL;
+		pointer = nullptr;
 
 	allocated = realloc(pointer, size);
 	if (!allocated)

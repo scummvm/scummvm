@@ -84,7 +84,7 @@ bool Archetype::initialize() {
 	NullStr = NewConstStr("null");
 
 	// GLK window
-	_mainWindow = glk_window_open(0, 0, 0, wintype_TextBuffer);
+	_mainWindow = glk_window_open(nullptr, 0, 0, wintype_TextBuffer);
 	glk_set_window(_mainWindow);
 
 	// Check for savegame to load

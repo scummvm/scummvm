@@ -29,7 +29,7 @@ namespace Alan3 {
 
 /* PUBLIC DATA */
 
-Aword *memory = NULL;
+Aword *memory = nullptr;
 static ACodeHeader dummyHeader; /* Dummy to use until memory allocated */
 ACodeHeader *header = &dummyHeader;
 int memTop = 0;         /* Top of load memory */
@@ -39,7 +39,7 @@ int memTop = 0;         /* Top of load memory */
 void *allocate(unsigned long lengthInBytes) {
 	void *p = (void *)calloc((size_t)lengthInBytes, 1);
 
-	if (p == NULL)
+	if (p == nullptr)
 		syserr("Out of memory.");
 
 	return p;
@@ -66,14 +66,14 @@ typedef struct {
 	void *voidp;
 } PointerMapEntry;
 
-static PointerMapEntry *pointerMap = NULL;
+static PointerMapEntry *pointerMap = nullptr;
 static int pointerMapSize = 0;
 static int nextAptr = 1;
 
 /*======================================================================*/
 void resetPointerMap(void) {
-	if (pointerMap != NULL) free(pointerMap);
-	pointerMap = NULL;
+	if (pointerMap != nullptr) free(pointerMap);
+	pointerMap = nullptr;
 	pointerMapSize = 0;
 }
 
@@ -95,12 +95,12 @@ void *fromAptr(Aptr aptr) {
 Aptr toAptr(void *ptr) {
 	int index;
 
-	if (pointerMap == NULL) {
+	if (pointerMap == nullptr) {
 		pointerMap = (PointerMapEntry *)allocate(sizeof(PointerMapEntry));
 		pointerMapSize = 1;
 	}
 
-	for (index = 0; index < pointerMapSize && pointerMap[index].voidp != NULL; index++)
+	for (index = 0; index < pointerMapSize && pointerMap[index].voidp != nullptr; index++)
 		;
 	if (index == pointerMapSize) {
 		pointerMap = (PointerMapEntry *)realloc(pointerMap, (index + 1) * sizeof(PointerMapEntry));

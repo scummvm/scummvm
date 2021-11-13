@@ -213,7 +213,7 @@ static const sc_parse_schema_t V400_PARSE_SCHEMA[] = {
 		"ALR",
 		"$Original $Replacement"
 	},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 /* Version 3.9 TAF file properties descriptor table. */
@@ -347,7 +347,7 @@ static const sc_parse_schema_t V390_PARSE_SCHEMA[] = {
 		"ALR",
 		"$Original $Replacement"
 	},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 /* Version 3.8 TAF file properties descriptor table. */
@@ -447,7 +447,7 @@ static const sc_parse_schema_t V380_PARSE_SCHEMA[] = {
 		"SYNONYM",
 		"$Replacement $Original"
 	},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 
@@ -467,20 +467,20 @@ static const sc_parse_schema_t *parse_select_schema(sc_tafref_t taf) {
 		return V380_PARSE_SCHEMA;
 	default:
 		sc_fatal("parse_select_schema: invalid TAF file version\n");
-		return NULL;
+		return nullptr;
 	}
 }
 
 
 /* The uncompressed TAF file from which we get all our data. */
-static sc_tafref_t parse_taf = NULL;
+static sc_tafref_t parse_taf = nullptr;
 static sc_int parse_tafline = 0;
 
 /* The parse schema selected for this TAF file. */
-static sc_parse_schema_t const *parse_schema = NULL;
+static sc_parse_schema_t const *parse_schema = nullptr;
 
 /* Properties bundle and trace flag, set before parsing. */
-static sc_prop_setref_t parse_bundle = NULL;
+static sc_prop_setref_t parse_bundle = nullptr;
 static sc_bool parse_trace = FALSE;
 
 /*
@@ -687,7 +687,7 @@ static const sc_char *parse_get_string_property(void) {
 
 
 /* Pushback line, and pushback requested flag. */
-static const sc_char *parse_pushback_line = NULL;
+static const sc_char *parse_pushback_line = nullptr;
 static sc_bool parse_use_pushback = FALSE;
 
 /*
@@ -1012,7 +1012,7 @@ static void parse_expression(CONTEXT, const sc_char *expression) {
  * string is malloc'ed, and the caller needs to handle that.
  */
 static sc_char *parse_read_multiline(CONTEXT) {
-	const sc_byte *separator = NULL;
+	const sc_byte *separator = nullptr;
 	const sc_char *line;
 	sc_char *multiline;
 
@@ -1142,7 +1142,7 @@ struct sc_parse_resource_t {
 enum { RESOURCE_GROW_INCREMENT = 32 };
 static sc_int parse_resources_length = 0;
 static sc_int parse_resources_size = 0;
-static sc_parse_resource_t *parse_resources = NULL;
+static sc_parse_resource_t *parse_resources = nullptr;
 
 
 /*
@@ -1159,7 +1159,7 @@ static void parse_clear_v400_resources_table(void) {
 			sc_free(parse_resources[index_].name);
 
 		sc_free(parse_resources);
-		parse_resources = NULL;
+		parse_resources = nullptr;
 	}
 	parse_resources_length = 0;
 	parse_resources_size = 0;
@@ -1835,7 +1835,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
 		hide_objects = typehideobjects % V390_V380_ALT_TYPEHIDE_MULT;
 
 		parse_fixup_v390_v380_room_alt(m1, type, "AltRes",
-		                               m2, var2, NULL,
+		                               m2, var2, nullptr,
 		                               hide_objects, changed, var3,
 		                               display_room);
 	}
@@ -1862,7 +1862,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
 		hide_objects = 0;
 
 		parse_fixup_v390_v380_room_alt(m1, type, "Task2Res",
-		                               m2, var2, NULL,
+		                               m2, var2, nullptr,
 		                               hide_objects, changed, var3,
 		                               display_room);
 	}
@@ -1886,7 +1886,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
 		hide_objects = 0;
 
 		parse_fixup_v390_v380_room_alt(m1, type, "Task1Res",
-		                               m2, var2, NULL,
+		                               m2, var2, nullptr,
 		                               hide_objects, changed, var3,
 		                               display_room);
 	}
@@ -1909,7 +1909,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
 		hide_objects = 0;
 
 		parse_fixup_v390_v380_room_alt(m1, type, "LastRes",
-		                               m2, var2, NULL,
+		                               m2, var2, nullptr,
 		                               hide_objects, changed, var3,
 		                               display_room);
 	}
@@ -3370,9 +3370,9 @@ sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
 	if (context._break) {
 		// Error with one of the TAF file lines
 		parse_clear_v400_resources_table();
-		parse_taf = NULL;
-		parse_bundle = NULL;
-		parse_schema = NULL;
+		parse_taf = nullptr;
+		parse_bundle = nullptr;
+		parse_schema = nullptr;
 		parse_depth = 0;
 		return FALSE;
 	}
@@ -3399,9 +3399,9 @@ sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
 	prop_solidify(parse_bundle);
 
 	/* Return successfully. */
-	parse_taf = NULL;
-	parse_bundle = NULL;
-	parse_schema = NULL;
+	parse_taf = nullptr;
+	parse_bundle = nullptr;
+	parse_schema = nullptr;
 	parse_depth = 0;
 	return TRUE;
 }

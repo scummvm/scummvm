@@ -38,7 +38,7 @@ struct sx_scr_stream_t {
 	sc_bool is_open;
 	sc_bool is_writable;
 };
-static sx_scr_stream_t scr_serialization_stream = {NULL, 0, FALSE, FALSE};
+static sx_scr_stream_t scr_serialization_stream = {nullptr, 0, FALSE, FALSE};
 
 
 /*
@@ -59,11 +59,11 @@ void *file_open_file_callback(sc_bool is_save) {
 	if (stream->is_open) {
 		error("File open error: %s",
 		                "stream is in use (script limitation)");
-		return NULL;
+		return nullptr;
 	} else if (is_save && stream->data) {
 		error("File open error: %s",
 		                "stream has not been read (script limitation)");
-		return NULL;
+		return nullptr;
 	}
 
 	/*
@@ -71,10 +71,10 @@ void *file_open_file_callback(sc_bool is_save) {
 	 * no data available for a read-only open.
 	 */
 	if (is_save) {
-		stream->data = NULL;
+		stream->data = nullptr;
 		stream->length = 0;
 	} else if (!stream->data)
-		return NULL;
+		return nullptr;
 
 	stream->is_open = TRUE;
 	stream->is_writable = is_save;
@@ -147,7 +147,7 @@ void file_close_file_callback(void *opaque) {
 	 */
 	if (!stream->is_writable) {
 		sx_free(stream->data);
-		stream->data = NULL;
+		stream->data = nullptr;
 		stream->length = 0;
 	}
 	stream->is_writable = FALSE;
@@ -164,7 +164,7 @@ void file_cleanup(void) {
 	sx_scr_stream_t *const stream = &scr_serialization_stream;
 
 	sx_free(stream->data);
-	stream->data = NULL;
+	stream->data = nullptr;
 	stream->length = 0;
 	stream->is_writable = FALSE;
 	stream->is_open = FALSE;

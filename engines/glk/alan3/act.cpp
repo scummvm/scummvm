@@ -33,12 +33,12 @@ namespace Alan3 {
 
 /*----------------------------------------------------------------------*/
 static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
-	static AltInfo *altInfos = NULL; /* Need to survive lots of different exits...*/
+	static AltInfo *altInfos = nullptr; /* Need to survive lots of different exits...*/
 	int altIndex;
 	bool flag;
 
 	/* Did we leave anything behind last time... */
-	if (altInfos != NULL)
+	if (altInfos != nullptr)
 		free(altInfos);
 
 	altInfos = findAllAlternatives(verb, parameters);
@@ -53,7 +53,7 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 
 	/* Now perform actions! First try any BEFORE or ONLY from inside out */
 	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
-		if (altInfos[altIndex].alt != 0) // TODO Can this ever be NULL? Why?
+		if (altInfos[altIndex].alt != nullptr) // TODO Can this ever be NULL? Why?
 			if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE
 			        || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
 				FUNC1(executedOk, flag, &altInfos[altIndex])
@@ -66,7 +66,7 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 
 	/* Then execute any not declared as AFTER, i.e. the default */
 	for (altIndex = 0; !altInfos[altIndex].end; altIndex++) {
-		if (altInfos[altIndex].alt != 0) {
+		if (altInfos[altIndex].alt != nullptr) {
 			if (altInfos[altIndex].alt->qual != (Aword)Q_AFTER) {
 				FUNC1(executedOk, flag, &altInfos[altIndex])
 				if (!flag)
@@ -77,7 +77,7 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 
 	/* Finally, the ones declared as AFTER */
 	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
-		if (altInfos[altIndex].alt != 0) {
+		if (altInfos[altIndex].alt != nullptr) {
 			FUNC1(executedOk, flag, &altInfos[altIndex])
 			if (!flag)
 				CALL0(abortPlayerCommand)

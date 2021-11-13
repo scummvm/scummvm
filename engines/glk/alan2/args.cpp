@@ -35,9 +35,9 @@ static void switches(unsigned argc, char *argv[]) {
 void args(int argc, char *argv[]) {
 	char *prgnam;
 
-	if ((prgnam = strrchr(argv[0], '\\')) == NULL
-	        && (prgnam = strrchr(argv[0], '/')) == NULL
-	        && (prgnam = strrchr(argv[0], ':')) == NULL)
+	if ((prgnam = strrchr(argv[0], '\\')) == nullptr
+	        && (prgnam = strrchr(argv[0], '/')) == nullptr
+	        && (prgnam = strrchr(argv[0], ':')) == nullptr)
 		prgnam = argv[0];
 	else
 		prgnam++;
@@ -50,7 +50,7 @@ void args(int argc, char *argv[]) {
 	if (advnam[0] == '\0')
 		/* No game given, try program name */
 		if (scumm_stricmp(prgnam, PROGNAME) != 0
-		        && strstr(prgnam, PROGNAME) == 0)
+		        && strstr(prgnam, PROGNAME) == nullptr)
 			advnam = scumm_strdup(argv[0]);
 }
 

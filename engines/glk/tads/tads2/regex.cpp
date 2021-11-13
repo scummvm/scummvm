@@ -150,7 +150,7 @@ void re_init(re_context *ctx, errcxdef *errctx)
 	ctx->errctx = errctx;
 
 	/* no tuple array yet */
-	ctx->tuple_arr = 0;
+	ctx->tuple_arr = nullptr;
 	ctx->tuples_alloc = 0;
 
 	/* clear states */
@@ -160,7 +160,7 @@ void re_init(re_context *ctx, errcxdef *errctx)
 	ctx->cur_group = 0;
 
 	/* no string buffer yet */
-	ctx->strbuf = 0;
+	ctx->strbuf = nullptr;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -174,10 +174,10 @@ static void re_reset(re_context *ctx)
 	/* delete any range tables we've allocated */
 	for (i = 0 ; i < ctx->next_state ; ++i)
 	{
-		if (ctx->tuple_arr[i].char_range != 0)
+		if (ctx->tuple_arr[i].char_range != nullptr)
 		{
 			mchfre(ctx->tuple_arr[i].char_range);
-			ctx->tuple_arr[i].char_range = 0;
+			ctx->tuple_arr[i].char_range = nullptr;
 		}
 	}
 
@@ -199,17 +199,17 @@ void re_delete(re_context *ctx)
 	re_reset(ctx);
 
 	/* if we've allocated an array, delete it */
-	if (ctx->tuple_arr != 0)
+	if (ctx->tuple_arr != nullptr)
 	{
 		mchfre(ctx->tuple_arr);
-		ctx->tuple_arr = 0;
+		ctx->tuple_arr = nullptr;
 	}
 
 	/* if we allocated a string buffer, delete it */
-	if (ctx->strbuf != 0)
+	if (ctx->strbuf != nullptr)
 	{
 		mchfre(ctx->strbuf);
-		ctx->strbuf = 0;
+		ctx->strbuf = nullptr;
 	}
 }
 
@@ -266,7 +266,7 @@ static re_state_id re_alloc_state(re_context *ctx)
 	ctx->tuple_arr[ctx->next_state].next_state_2 = RE_STATE_INVALID;
 	ctx->tuple_arr[ctx->next_state].ch = RE_EPSILON;
 	ctx->tuple_arr[ctx->next_state].flags = 0;
-	ctx->tuple_arr[ctx->next_state].char_range = 0;
+	ctx->tuple_arr[ctx->next_state].char_range = nullptr;
 
 	/* return the new state's ID */
 	return ctx->next_state++;
@@ -1181,7 +1181,7 @@ static int re_match(re_context *ctx, const char *entire_str,
 					 *   if this register isn't defined, there's nothing
 					 *   to match, so fail
 					 */
-					if (group_reg->start_ofs == 0 || group_reg->end_ofs == 0)
+					if (group_reg->start_ofs == nullptr || group_reg->end_ofs == nullptr)
 						return -1;
 
 					/* calculate the length of the register value */
@@ -1492,14 +1492,14 @@ static void re_save_search_str(re_context *ctx, const char *str, size_t len)
 	}
 
 	/* if the current buffer isn't big enough, allocate a new one */
-	if (ctx->strbuf == 0 || ctx->strbufsiz < len)
+	if (ctx->strbuf == nullptr || ctx->strbufsiz < len)
 	{
 		/*
 		 *   free any previous buffer - its contents are no longer
 		 *   important, since we're about to overwrite it with a new
 		 *   string
 		 */
-		if (ctx->strbuf != 0)
+		if (ctx->strbuf != nullptr)
 			mchfre(ctx->strbuf);
 
 		/*

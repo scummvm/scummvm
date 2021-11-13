@@ -42,7 +42,7 @@ uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment) {
 	else {
 		errsig(ctx, ERR_NOMEM);
 		NOTREACHEDV(uchar *);
-		return 0;
+		return nullptr;
 	}
 }
 

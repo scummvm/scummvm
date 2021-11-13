@@ -27,7 +27,7 @@ namespace Alan3 {
 
 /* PUBLIC DATA */
 int eventQueueSize = 0;
-EventQueueEntry *eventQueue = NULL;
+EventQueueEntry *eventQueue = nullptr;
 int eventQueueTop = 0;
 EventEntry *events;
 

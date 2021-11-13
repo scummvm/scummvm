@@ -115,7 +115,7 @@ static tokdfdef *tok_find_define(tokcxdef *ctx, const char *sym, int len)
 	}
 
 	/* didn't find anything */
-	return 0;
+	return nullptr;
 }
 
 /*
@@ -271,7 +271,7 @@ void tok_del_define(tokcxdef *ctx, const char *sym, int len)
 	hsh = tokdfhsh(sym, len);
 
 	/* search the chain for this symbol */
-	for (prv = 0, df = ctx->tokcxdf[hsh] ; df ; prv = df, df = df->nxt)
+	for (prv = nullptr, df = ctx->tokcxdf[hsh] ; df ; prv = df, df = df->nxt)
 	{
 		/* if this one matches, delete it */
 		if (df->len == len && !memcmp(df->nm, sym, (size_t)len))
@@ -391,7 +391,7 @@ static void tok_ifdef_ifndef(tokcxdef *ctx, const char *p, int len, int is_ifdef
 	sym = tok_casefold_defsym(ctx, mysym, sym, symlen);
 
 	/* see if we can find it in the table, and set the status accordingly */
-	found = (tok_find_define(ctx, sym, symlen) != 0);
+	found = (tok_find_define(ctx, sym, symlen) != nullptr);
 
 	/* invert the test if this is an ifndef */
 	if (!is_ifdef) found = !found;
@@ -1001,12 +1001,12 @@ nexttoken:
 
 			/* check to see if it's defined */
 			tok->toktyp = TOKTNUMBER;
-			tok->tokval = (tok_find_define(ctx, q, symlen) != 0);
+			tok->tokval = (tok_find_define(ctx, q, symlen) != nullptr);
 			goto done;
 		}
 
 		/* substitute the preprocessor #define, if any */
-		if ((df = tok_find_define(ctx, tok->toknam, l)) != 0)
+		if ((df = tok_find_define(ctx, tok->toknam, l)) != nullptr)
 		{
 			/* save the current parsing position */
 			if (ctx->tokcxmlvl >= TOKMACNEST)
@@ -1487,7 +1487,7 @@ void tokaddinc(tokcxdef *ctx, char *path, int pathlen)
 								(sizeof(tokpdef) + pathlen - 1),
 								"tokaddinc");
 	newpath->tokplen = pathlen;
-	newpath->tokpnxt = (tokpdef *)0;
+	newpath->tokpnxt = (tokpdef *)nullptr;
 	memcpy(newpath->tokpdir, path, (size_t)pathlen);
 
 	/* link in at end of list (if no list yet, newpath becomes first entry) */

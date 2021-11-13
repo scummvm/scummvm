@@ -37,7 +37,7 @@ extern Aword *memory;
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 static Aaddr memorySize = 0;
-static Aword *addressesDone = NULL;
+static Aword *addressesDone = nullptr;
 static int numberDone = 0;
 static int doneSize = 0;
 

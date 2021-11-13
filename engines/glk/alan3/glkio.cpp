@@ -41,7 +41,7 @@ GlkIO::GlkIO(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 
 bool GlkIO::initialize() {
 	// first, open a window for error output
-	glkMainWin = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	glkMainWin = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (glkMainWin == nullptr)
 		return false;
 
@@ -136,7 +136,7 @@ void GlkIO::statusLine(CONTEXT) {
 
 	glk_set_window(glkStatusWin);
 	glk_window_clear(glkStatusWin);
-	glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+	glk_window_get_size(glkStatusWin, &glkWidth, nullptr);
 
 	onStatusLine = TRUE;
 	col = 1;
@@ -182,7 +182,7 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 
 	} else if (readingCommands) {
 		if (glk_get_line_stream(commandFile, buffer, maxLen) == 0) {
-			glk_stream_close(commandFile, NULL);
+			glk_stream_close(commandFile, nullptr);
 			readingCommands = FALSE;
 		} else {
 			glk_set_style(style_Input);
@@ -211,7 +211,7 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 			buffer[event.val1] = 0;
 			commandFileRef = glk_fileref_create_by_name(fileusage_InputRecord + fileusage_TextMode, &buffer[1], 0);
 			commandFile = glk_stream_open_file(commandFileRef, filemode_Read, 0);
-			if (commandFile != NULL)
+			if (commandFile != nullptr)
 				if (glk_get_line_stream(commandFile, buffer, maxLen) != 0) {
 					readingCommands = TRUE;
 					glk_set_style(style_Input);

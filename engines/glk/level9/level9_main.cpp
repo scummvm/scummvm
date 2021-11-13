@@ -641,7 +641,7 @@ void FreeMemory() {
 	}
 	if (bitmap) {
 		free(bitmap);
-		bitmap = NULL;
+		bitmap = nullptr;
 	}
 	if (scriptfile) {
 		delete scriptfile;
@@ -2078,20 +2078,20 @@ int scaley(int y) {
 void detect_gfx_mode() {
 	if (g_vm->_detection._gameType == L9_V3) {
 		/* These V3 games use graphics logic similar to the V2 games */
-		if (strstr(FirstLine, "price of magik") != 0)
+		if (strstr(FirstLine, "price of magik") != nullptr)
 			gfx_mode = GFX_V3A;
-		else if (strstr(FirstLine, "the archers") != 0)
+		else if (strstr(FirstLine, "the archers") != nullptr)
 			gfx_mode = GFX_V3A;
-		else if (strstr(FirstLine, "secret diary of adrian mole") != 0)
+		else if (strstr(FirstLine, "secret diary of adrian mole") != nullptr)
 			gfx_mode = GFX_V3A;
-		else if ((strstr(FirstLine, "worm in paradise") != 0)
-		         && (strstr(FirstLine, "silicon dreams") == 0))
+		else if ((strstr(FirstLine, "worm in paradise") != nullptr)
+		         && (strstr(FirstLine, "silicon dreams") == nullptr))
 			gfx_mode = GFX_V3A;
-		else if (strstr(FirstLine, "growing pains of adrian mole") != 0)
+		else if (strstr(FirstLine, "growing pains of adrian mole") != nullptr)
 			gfx_mode = GFX_V3B;
-		else if (strstr(FirstLine, "jewels of darkness") != 0 && picturesize < 11000)
+		else if (strstr(FirstLine, "jewels of darkness") != nullptr && picturesize < 11000)
 			gfx_mode = GFX_V3B;
-		else if (strstr(FirstLine, "silicon dreams") != 0) {
+		else if (strstr(FirstLine, "silicon dreams") != nullptr) {
 			if (picturesize > 11000
 			        || (startdata[0] == 0x14 && startdata[1] == 0x7d)  /* Return to Eden /SD (PC) */
 			        || (startdata[0] == 0xd7 && startdata[1] == 0x7c)) /* Worm in Paradise /SD (PC) */

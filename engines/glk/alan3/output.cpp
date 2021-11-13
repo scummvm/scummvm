@@ -69,7 +69,7 @@ void getPageSize(void) {
 /*----------------------------------------------------------------------*/
 static int updateColumn(int currentColumn, const char *string) {
 	const char *newlinePosition = strrchr(string, '\n');
-	if (newlinePosition != NULL)
+	if (newlinePosition != nullptr)
 		return &string[strlen(string)] - newlinePosition;
 	else
 		return currentColumn + strlen(string);
@@ -373,7 +373,7 @@ static bool punctuationNext(char *str) {
 	const char *punctuation = strchr(".,!?", str[0]);
 	bool end = str[1] == '\0';
 	bool space = isSpaceEquivalent(&str[1]);
-	return (punctuation != NULL && (end || space));
+	return (punctuation != nullptr && (end || space));
 }
 
 
@@ -399,7 +399,7 @@ void output(const char *original) {
 		space();            /* Output space if needed (& not inhibited) */
 
 	/* Output string up to symbol and handle the symbol */
-	while ((symptr = strchr(str, '$')) != (char *) NULL) {
+	while ((symptr = strchr(str, '$')) != (char *) nullptr) {
 		ch = *symptr;       /* Terminate before symbol */
 		*symptr = '\0';
 		if (strlen(str) > 0) {
@@ -426,7 +426,7 @@ void output(const char *original) {
 	}
 
 	if (needSpace)
-		capitalize = strchr("!?.", str[strlen(str) - 1]) != 0;
+		capitalize = strchr("!?.", str[strlen(str) - 1]) != nullptr;
 
 	anyOutput = TRUE;
 	free(copy);

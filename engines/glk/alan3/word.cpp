@@ -32,7 +32,7 @@ namespace Alan3 {
 /* PUBLIC DATA */
 
 /* List of parsed words, index into dictionary */
-Word *playerWords = NULL;
+Word *playerWords = nullptr;
 int currentWordIndex; /* An index into the list of playerWords */
 int firstWord, lastWord;  /* Index for the first and last words for this command */
 
@@ -55,7 +55,7 @@ void ensureSpaceForPlayerWords(int size) {
 
 	if (playerWordsLength < size + 1) {
 		playerWords = (Word *)realloc(playerWords, newLength * sizeof(Word));
-		if (playerWords == NULL)
+		if (playerWords == nullptr)
 			syserr("Out of memory in 'ensureSpaceForPlayerWords()'");
 		playerWordsLength = newLength;
 	}

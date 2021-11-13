@@ -133,7 +133,7 @@ bool is_end_define(String s) {
 extern Common::Array<String> split_lines(String data);
 
 // FIXME: This requires global constructor
-reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
+reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) nullptr);
 
 void GeasFile::read_into(const Common::Array<String> &in_data,
 						 String in_parent, uint cur_line, bool recurse,
@@ -300,8 +300,8 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 		"function", "selection", "synonyms", "text", "timer"
 	};
 
-	reserved_words recursive_passes("game", "room", (char *) NULL),
-	               object_passes("game", "room", "objects", (char *) NULL);
+	reserved_words recursive_passes("game", "room", (char *) nullptr),
+	               object_passes("game", "room", "objects", (char *) nullptr);
 
 
 	//Common::Array <GeasBlock> outv;
@@ -311,16 +311,16 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 		bool recursive = recursive_passes[this_pass];
 		//bool is_object = object_passes[this_pass];
 
-		reserved_words actions((char *) NULL), props((char *) NULL);
+		reserved_words actions((char *) nullptr), props((char *) nullptr);
 		// SENSITIVE?
 		if (this_pass == "room") {
-			props = reserved_words("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) NULL);
-			actions = reserved_words("description", "script", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) NULL);
+			props = reserved_words("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) nullptr);
+			actions = reserved_words("description", "script", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) nullptr);
 		}
 		// SENSITIVE?
 		else if (this_pass == "object") {
-			props = reserved_words("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) NULL);
-			actions = reserved_words("look", "examine", "speak", "take", "gain", "lose", "use", "give", (char *) NULL);
+			props = reserved_words("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) nullptr);
+			actions = reserved_words("look", "examine", "speak", "take", "gain", "lose", "use", "give", (char *) nullptr);
 		}
 
 		depth = 0;

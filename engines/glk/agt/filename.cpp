@@ -47,7 +47,7 @@ const char *extname[] = {
 #ifdef PATH_SEP
 static const char *path_sep = PATH_SEP;
 #else
-static const char *path_sep = NULL;
+static const char *path_sep = nullptr;
 #endif
 
 /* This returns the options to use when opening the given file type */
@@ -69,7 +69,7 @@ const char *filetype_info(filetype ft, rbool rw) {
 	}
 	if (ft == fLOG) return rw ? "w" : "r";
 	fatal("INTERNAL ERROR: Invalid filetype.");
-	return NULL;
+	return nullptr;
 }
 
 
@@ -105,17 +105,17 @@ char *assemble_filename(const char *path, const char *root,
 	char *name;
 
 	len1 = len2 = len3 = 0;
-	if (path != NULL) len1 = strlen(path);
-	if (root != NULL) len2 = strlen(root);
-	if (ext != NULL) len3 = strlen(ext);
+	if (path != nullptr) len1 = strlen(path);
+	if (root != nullptr) len2 = strlen(root);
+	if (ext != nullptr) len3 = strlen(ext);
 	name = (char *)rmalloc(len1 + len2 + len3 + 1);
-	if (path != NULL) memcpy(name, path, len1);
+	if (path != nullptr) memcpy(name, path, len1);
 #ifdef PREFIX_EXT
 	if (ext != NULL) memcpy(name + len1, ext, len3);
 	if (root != NULL) memcpy(name + len1 + len3, root, len2);
 #else
-	if (root != NULL) memcpy(name + len1, root, len2);
-	if (ext != NULL) memcpy(name + len1 + len2, ext, len3);
+	if (root != nullptr) memcpy(name + len1, root, len2);
+	if (ext != nullptr) memcpy(name + len1 + len2, ext, len3);
 #endif
 	name[len1 + len2 + len3] = 0;
 	return name;
@@ -145,7 +145,7 @@ static rbool smatch(char c, const char *matchset) {
 static int find_path_sep(const char *name) {
 	int i;
 
-	if (path_sep == NULL)
+	if (path_sep == nullptr)
 		return -1;
 	for (i = strlen(name) - 1; i >= 0; i--)
 		if (smatch(name[i], path_sep)) break;
@@ -201,7 +201,7 @@ static char *extract_piece(const char *name, int extlen, rbool isext) {
 		len = xlen;
 		xlen = tmp;
 	}
-	if (len == 0) return NULL;
+	if (len == 0) return nullptr;
 	root = (char *)rmalloc((len + 1) * sizeof(char));
 #ifdef PREFIX_EXT
 	first = isext ? 1 : 0;
@@ -293,7 +293,7 @@ fc_type init_file_context(const char *name, filetype ft) {
 
 	p = find_path_sep(fc->gamename);
 	if (p < 0)
-		fc->path = NULL;
+		fc->path = nullptr;
 	else {
 		fc->path = (char *)rmalloc((p + 2) * sizeof(char));
 		memcpy(fc->path, fc->gamename, p + 1);
@@ -330,12 +330,12 @@ fc_type convert_file_context(fc_type fc, filetype ft, const char *name) {
 	local_ftype = (ft == fSAV || ft == fSCR || ft == fLOG);
 	if (BATCH_MODE || make_test) local_ftype = 0;
 
-	if (name == NULL) {
+	if (name == nullptr) {
 		nfc = (file_context_rec *)rmalloc(sizeof(file_context_rec));
-		nfc->gamename = NULL;
-		nfc->path = NULL;
+		nfc->gamename = nullptr;
+		nfc->path = nullptr;
 		nfc->shortname = rstrdup(fc->shortname);
-		nfc->ext = NULL;
+		nfc->ext = nullptr;
 		nfc->ft = fNONE;
 		nfc->special = 0;
 	} else {
@@ -343,7 +343,7 @@ fc_type convert_file_context(fc_type fc, filetype ft, const char *name) {
 	}
 
 	/* If path already defined, then combine paths. */
-	if (!local_ftype && nfc->path != NULL && !absolute_path(nfc->path)) {
+	if (!local_ftype && nfc->path != nullptr && !absolute_path(nfc->path)) {
 		char *newpath;
 		newpath = nfc->path;
 		newpath = assemble_filename(fc->path, nfc->path, "");
@@ -353,7 +353,7 @@ fc_type convert_file_context(fc_type fc, filetype ft, const char *name) {
 
 	/* scripts, save-games and logs should go in  the working directory,
 	   not the game directory, so leave nfc->path equal to NULL for them. */
-	if (!local_ftype && nfc->path == NULL)
+	if (!local_ftype && nfc->path == nullptr)
 		nfc->path = rstrdup(fc->path); /* Put files in game directory */
 	return nfc;
 }
@@ -387,7 +387,7 @@ static genfile try_open_file(const char *path, const char *root,
 static genfile findread(file_context_rec *fc, filetype ft) {
 	genfile f;
 
-	f = NULL;
+	f = nullptr;
 
 	if (ft == fAGT_STD) {
 		f = try_open_file(fc->path, AGTpSTD, "", filetype_info(ft, 0), 0);
@@ -395,7 +395,7 @@ static genfile findread(file_context_rec *fc, filetype ft) {
 	}
 	if (ft == fAGX || ft == fNONE) /* Try opening w/o added extension */
 		f = try_open_file(fc->path, fc->shortname, fc->ext, filetype_info(ft, 0), 0);
-	if (f == NULL)
+	if (f == nullptr)
 		f = try_open_file(fc->path, fc->shortname, extname[ft], filetype_info(ft, 0), 0);
 	return f;
 }
@@ -408,9 +408,9 @@ static genfile findread(file_context_rec *fc, filetype ft) {
 genfile readopen(fc_type fc, filetype ft, const char **errstr) {
 	genfile f;
 
-	*errstr = NULL;
+	*errstr = nullptr;
 	f = findread(fc, ft);
-	if (f == NULL) {
+	if (f == nullptr) {
 		*errstr = "Cannot open file";
 	}
 	return f;
@@ -421,7 +421,7 @@ rbool fileexist(fc_type fc, filetype ft) {
 
 	if (fc->special) return 0;
 	f = try_open_file(fc->path, fc->shortname, extname[ft], filetype_info(ft, 0), 1);
-	if (f != NULL) { /* File already exists */
+	if (f != nullptr) { /* File already exists */
 		readclose(f);
 		return 1;
 	}
@@ -434,17 +434,17 @@ genfile writeopen(fc_type fc, filetype ft,
 	char *name;
 	genfile f;
 
-	*errstr = NULL;
-	name = NULL;
+	*errstr = nullptr;
+	name = nullptr;
 
 	{
 		name = assemble_filename(FC(fc)->path, FC(fc)->shortname, extname[ft]);
 		f = fopen(name, filetype_info(ft, 1));
 	}
-	if (f == NULL) {
+	if (f == nullptr) {
 		*errstr = "Cannot open file";
 	}
-	if (pfileid == NULL)
+	if (pfileid == nullptr)
 		rfree(name);
 	else
 		*pfileid = name;
@@ -453,7 +453,7 @@ genfile writeopen(fc_type fc, filetype ft,
 
 
 rbool filevalid(genfile f, filetype ft) {
-	return (f != NULL);
+	return (f != nullptr);
 }
 
 
@@ -470,8 +470,8 @@ void binseek(genfile f, long offset) {
 long varread(genfile f, void *buff, long recsize, long recnum, const char **errstr) {
 	long num;
 
-	*errstr = NULL;
-	assert(f != NULL);
+	*errstr = nullptr;
+	assert(f != nullptr);
 
 	num = fread(buff, recsize, recnum, f);
 	if (num != recnum)
@@ -485,14 +485,14 @@ rbool binread(genfile f, void *buff, long recsize, long recnum, const char **err
 	long num;
 
 	num = varread(f, buff, recsize, recnum, errstr);
-	if (num < recsize * recnum && *errstr == NULL)
+	if (num < recsize * recnum && *errstr == nullptr)
 		*errstr = rstrdup("Unexpected end of file.");
-	return (*errstr == NULL);
+	return (*errstr == nullptr);
 }
 
 
 rbool binwrite(genfile f, void *buff, long recsize, long recnum, rbool ferr) {
-	assert(f != NULL);
+	assert(f != nullptr);
 
 	if (fwrite(buff, recsize, recnum, f) != (size_t)recnum) {
 		if (ferr) fatal("binwrite");
@@ -502,13 +502,13 @@ rbool binwrite(genfile f, void *buff, long recsize, long recnum, rbool ferr) {
 }
 
 void readclose(genfile f) {
-	assert(f != NULL);
+	assert(f != nullptr);
 
 	fclose(f);
 }
 
 void writeclose(genfile f, file_id_type fileid) {
-	assert(f != NULL);
+	assert(f != nullptr);
 	rfree(fileid);
 
 	fclose(f);
@@ -519,7 +519,7 @@ long binsize(genfile f)
 {
 	long pos, leng;
 
-	assert(f != NULL);
+	assert(f != nullptr);
 
 	pos = ftell(f);
 	fseek(f, 0, SEEK_END);
@@ -538,7 +538,7 @@ rbool textrewind(genfile f) {
 
 
 genfile badfile(filetype ft) {
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace AGT

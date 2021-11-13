@@ -145,7 +145,7 @@ void open_descr(fc_type fc) {
 	tline buff;
 
 	fd_desc = readopen(fc, fDSS, &errstr);
-	if (errstr != NULL)  fatal(errstr);
+	if (errstr != nullptr)  fatal(errstr);
 	desc_size = binsize(fd_desc);
 	if (DIAG) {
 		char *s;
@@ -187,7 +187,7 @@ void open_descr(fc_type fc) {
 		else rprintf("  [plaintext: %d/%d]\n", alpha, cnt);
 	}
 
-	mem_descr = NULL;
+	mem_descr = nullptr;
 	if (desc_size <= descr_maxmem) {
 		/* This is where we need to read the data in and convert it:
 		   encrypted Pascal strings --> plaintext C strings */
@@ -195,7 +195,7 @@ void open_descr(fc_type fc) {
 		mem_descr = (char *)rmalloc(desc_size);
 		/* Read in the whole file */
 		binread(fd_desc, mem_descr, desc_size, 1, &errstr);
-		if (errstr != NULL) fatal(errstr);
+		if (errstr != nullptr) fatal(errstr);
 		for (i = 0; i < desc_size; i += sizeof(tline))
 			convert_agt_descr((uchar *)(mem_descr + i));
 		/* Decode and convert to C string */
@@ -204,11 +204,11 @@ void open_descr(fc_type fc) {
 
 
 void close_descr(void) {
-	if (mem_descr != NULL)
+	if (mem_descr != nullptr)
 		rfree(mem_descr);
 	else {
 		readclose(fd_desc);
-		fd_desc = NULL;
+		fd_desc = nullptr;
 	}
 }
 
@@ -219,10 +219,10 @@ descr_line *agt_read_descr(long start, long len) {
 	long i;
 	const char *errstr;
 
-	if (len == -1 || start == -1) return NULL;
+	if (len == -1 || start == -1) return nullptr;
 	lines = (descr_line *)rmalloc(sizeof(descr_line) * (len + 1));
 
-	if (mem_descr != NULL) {
+	if (mem_descr != nullptr) {
 		d = ((tline *)mem_descr) + start;
 		for (i = 0; i < len; i++)
 			lines[i] = (char *)(d + i);
@@ -230,13 +230,13 @@ descr_line *agt_read_descr(long start, long len) {
 		d = (tline *)rmalloc(sizeof(tline) * len);
 		binseek(fd_desc, start * sizeof(tline));
 		binread(fd_desc, d, sizeof(tline), len, &errstr);
-		if (errstr != NULL) fatal(errstr);
+		if (errstr != nullptr) fatal(errstr);
 		for (i = 0; i < len; i++) {
 			lines[i] = (char *)(d + i);
 			convert_agt_descr((uchar *)(d + i));
 		}
 	}
-	lines[len] = NULL; /* Mark end of array */
+	lines[len] = nullptr; /* Mark end of array */
 	return lines;
 }
 
@@ -295,7 +295,7 @@ static void read_da2(fc_type fc) {
 		setb(seen);
 		seti(key);
 		setb(locked_door);
-		if (room_inside != NULL)
+		if (room_inside != nullptr)
 			room_inside[i] = fixsign16(buff[bp], buff[bp + 1]);
 		bp += 2; /* Skip # of nouns in this room */
 
@@ -403,7 +403,7 @@ static void read_da3(fc_type fc) {
 		setb(shootable);
 		seti(num_shots);
 		seti(points);
-		if (noun_inside != NULL)
+		if (noun_inside != nullptr)
 			noun_inside[i] = fixsign16(buff[bp], buff[bp + 1]);
 		bp += 2; /* Skip # of nouns contained in this one */
 		setb(win);
@@ -466,7 +466,7 @@ static void read_da4(fc_type fc) {
 		seti(weapon);
 		setb(hostile);
 		seti(points);
-		if (creat_inside != NULL)
+		if (creat_inside != nullptr)
 			creat_inside[i] = fixsign16(buff[bp], buff[bp + 1]);
 		bp += 2; /* Skip # of nouns the creature is carrying */
 		seti(counter);
@@ -567,7 +567,7 @@ static void read_da5(fc_type fc) {
 	buffopen(fc, fDA5, CREC_SIZE, "command", last_cmd);
 
 	if (aver >= AGT15F) cmd_ptr = (long *)rmalloc(sizeof(long) * last_cmd);
-	else cmd_ptr = NULL;
+	else cmd_ptr = nullptr;
 
 	bp = 0;
 	for (i = 0; i < last_cmd; i++) {
@@ -686,7 +686,7 @@ static void read_da6(fc_type fc)
 					command[i].data[ip] = fixsign16(cbuf[bp * 2L], cbuf[bp * 2L + 1]);
 			}
 		} else {
-			command[i].data = NULL;
+			command[i].data = nullptr;
 			command[i].cmdsize = 0;
 		}
 	rfree(cbuf);
@@ -880,7 +880,7 @@ static void read_line(genfile fd, const char *typestr)
 		} else chop_newline(linebuffer);
 		linenum++;
 	}
-	if (debug_da1 && typestr != NULL) {
+	if (debug_da1 && typestr != nullptr) {
 		rprintf("%s %4d:%s", typestr, linenum, linebuffer);
 		if (bhold) rprintf("     *");
 		writeln("");
@@ -894,7 +894,7 @@ static void report(const char *s, genfile fd) {
 }
 
 static int isbool(genfile fd) {
-	read_line(fd, NULL);
+	read_line(fd, nullptr);
 	bhold = 1;
 	return (strncasecmp(linebuffer, "TRUE", 4) == 0 ||
 	        strncasecmp(linebuffer, "FALSE", 5) == 0);
@@ -903,7 +903,7 @@ static int isbool(genfile fd) {
 static int isnum(genfile fd) {
 	char *errstr;
 
-	read_line(fd, NULL);
+	read_line(fd, nullptr);
 	bhold = 1;
 	(void)strtol(linebuffer, &errstr, 10);
 	while (*errstr == '\n' || *errstr == '\r') errstr++;
@@ -920,15 +920,15 @@ static rbool readrbool(genfile fd) {
 
 static long readnum(genfile fd) {
 	read_line(fd, "NUM ");
-	return strtol(linebuffer, NULL, 10);
+	return strtol(linebuffer, nullptr, 10);
 }
 
 
 static void readptr(genfile fd, descr_ptr *desc) {
 	read_line(fd, "PTR ");
-	desc->start = strtol(linebuffer, NULL, 10);
+	desc->start = strtol(linebuffer, nullptr, 10);
 	read_line(fd, "LEN");
-	desc->size = strtol(linebuffer, NULL, 10);
+	desc->size = strtol(linebuffer, nullptr, 10);
 }
 
 
@@ -1107,16 +1107,16 @@ noun inside information; this is used by agtout */
 
 	num_rflags = num_nflags = num_cflags = 0;
 	num_rprops = num_nprops = num_cprops = 0;
-	objflag = NULL;
-	objprop = NULL;
-	attrtable = NULL;
-	proptable = NULL;
+	objflag = nullptr;
+	objprop = nullptr;
+	attrtable = nullptr;
+	proptable = nullptr;
 	oflag_cnt = 0;
 	oprop_cnt = 0;
-	propstr = NULL;
+	propstr = nullptr;
 	propstr_size = 0;
-	vartable = NULL;
-	flagtable = NULL;
+	vartable = nullptr;
+	flagtable = nullptr;
 
 
 
@@ -1126,9 +1126,9 @@ noun inside information; this is used by agtout */
 	   should be allocated first */
 
 	synlist = (slist *)rmalloc(sizeof(slist) * TOTAL_VERB);
-	comblist = NULL; /* The original AGT didn't support multi-word verbs */
+	comblist = nullptr; /* The original AGT didn't support multi-word verbs */
 	num_comb = 0;
-	userprep = NULL; /* ... nor did it allow user-defined prepostions */
+	userprep = nullptr; /* ... nor did it allow user-defined prepostions */
 	num_prep = 0;
 
 	if (numglobal > 0)
@@ -1468,27 +1468,27 @@ static void set_da1_null(void)
 /* Set pointers that are malloc'd by try_read_da1 to NULL, to clear
  the way for free_da1_stuff to recover them */
 {
-	static_str = NULL;
+	static_str = nullptr;
 	ss_end = ss_size = 0;
-	command = NULL;
-	cmd_ptr = NULL;
-	synlist = NULL;
-	userstr = NULL;
-	sub_name = NULL;
-	globalnoun = NULL;
-	err_ptr = NULL;
-	quest_ptr = ans_ptr = NULL;
-	question = answer = NULL;
-	msg_ptr = room_ptr = help_ptr = special_ptr = NULL;
-	noun_ptr = push_ptr = pull_ptr = text_ptr = turn_ptr = play_ptr = NULL;
-	room_inside = noun_inside = creat_inside = NULL;
-	creat_ptr = ask_ptr = talk_ptr = NULL;
-	pictlist = pixlist = fontlist = songlist = NULL;
-	room = NULL;
-	noun = NULL;
-	creature = NULL;
-	command = NULL;
-	t_pictlist = t_pixlist = t_fontlist = t_songlist = NULL;
+	command = nullptr;
+	cmd_ptr = nullptr;
+	synlist = nullptr;
+	userstr = nullptr;
+	sub_name = nullptr;
+	globalnoun = nullptr;
+	err_ptr = nullptr;
+	quest_ptr = ans_ptr = nullptr;
+	question = answer = nullptr;
+	msg_ptr = room_ptr = help_ptr = special_ptr = nullptr;
+	noun_ptr = push_ptr = pull_ptr = text_ptr = turn_ptr = play_ptr = nullptr;
+	room_inside = noun_inside = creat_inside = nullptr;
+	creat_ptr = ask_ptr = talk_ptr = nullptr;
+	pictlist = pixlist = fontlist = songlist = nullptr;
+	room = nullptr;
+	noun = nullptr;
+	creature = nullptr;
+	command = nullptr;
+	t_pictlist = t_pixlist = t_fontlist = t_songlist = nullptr;
 }
 
 
@@ -1548,7 +1548,7 @@ static rbool read_da1(fc_type fc, rbool diag)
 	ver = 0;
 	aver = 0;
 	top_quest = 0; /* Highest question actually referenced; set by fixcmd */
-	fda1 = openfile(fc, fDA1, NULL, 0);
+	fda1 = openfile(fc, fDA1, nullptr, 0);
 	if (!filevalid(fda1, fDA1)) return 0;
 
 	if (DIAG) {
@@ -1671,13 +1671,13 @@ static void finish_read(rbool cleanup)
 			rfree(quest_ptr);
 			rfree(ans_ptr);
 		} else {
-			if (question != NULL)
+			if (question != nullptr)
 				question = (tline *)rrealloc(question, top_quest * sizeof(tline));
-			if (answer != NULL)
+			if (answer != nullptr)
 				answer = (tline *)rrealloc(answer, top_quest * sizeof(tline));
-			if (quest_ptr != NULL)
+			if (quest_ptr != nullptr)
 				quest_ptr = (descr_ptr *)rrealloc(quest_ptr, top_quest * sizeof(descr_ptr));
-			if (ans_ptr != NULL)
+			if (ans_ptr != nullptr)
 				ans_ptr = (descr_ptr *)rrealloc(ans_ptr, top_quest * sizeof(descr_ptr));
 		}
 	}
@@ -1703,7 +1703,7 @@ rbool readagt(fc_type fc, rbool diag)
 /* If diag==1, then extra diagnostic information is preserved */
 {
 	agx_file = 0;
-	mem_descr = NULL;
+	mem_descr = nullptr;
 	build_fixchar();
 	init_dict();
 	if (!read_da1(fc, diag)) return 0; /* Couldn't open DA1 file */

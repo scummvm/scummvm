@@ -167,7 +167,7 @@ static void setupHeader(ACodeHeader tmphdr) {
 static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
 	int i;
 	/* No memory allocated yet? */
-	if (memory == NULL) {
+	if (memory == nullptr) {
 		memory = (Aword *)allocate(tmphdr.size * sizeof(Aword));
 	}
 
@@ -428,12 +428,12 @@ static void initStaticData(void) {
 	}
 
 	/* Scores, if already allocated, copy initial data */
-	if (scores == NULL)
+	if (scores == nullptr)
 		scores = (Aword *)duplicate((Aword *) pointerTo(header->scores), header->scoreCount * sizeof(Aword));
 	else
 		memcpy(scores, pointerTo(header->scores), header->scoreCount * sizeof(Aword));
 
-	if (literals == NULL)
+	if (literals == nullptr)
 		literals = (LiteralEntry *)allocate(sizeof(Aword) * (MAXPARAMS + 1));
 
 	stxs = (SyntaxEntry *) pointerTo(header->syntaxTableAddress);
@@ -738,7 +738,7 @@ static void moveActor(CONTEXT, int theActor) {
 
 /*======================================================================*/
 void run(void) {
-	Stack theStack = NULL;
+	Stack theStack = nullptr;
 	Context ctx;
 
 	openFiles();

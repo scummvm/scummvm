@@ -175,7 +175,7 @@ static void cfg_option(int optnum, char *optstr[], rbool lastpass)
 {
 	rbool setflag;
 
-	if (optnum == 0 || optstr[0] == NULL) return;
+	if (optnum == 0 || optstr[0] == nullptr) return;
 
 	if (strncasecmp(optstr[0], "no_", 3) == 0) {
 		optstr[0] += 3;
@@ -226,19 +226,19 @@ rbool parse_config_line(char *buff, rbool lastpass) {
 	int optc;
 
 	optc = 0;
-	opt[0] = NULL;
+	opt[0] = nullptr;
 	for (p = buff; *p; p++) {
 		if (isspace(*p)) {  /* Whitespace */
-			if (opt[optc] != NULL) { /*... which means this is the first whitespace */
+			if (opt[optc] != nullptr) { /*... which means this is the first whitespace */
 				if (optc == 50) return 0; /* Too many */
-				opt[++optc] = NULL;
+				opt[++optc] = nullptr;
 			}
 			*p = 0;
 		} else  /* No whitespace */
-			if (opt[optc] == NULL) /* ...this is the first non-whitespace */
+			if (opt[optc] == nullptr) /* ...this is the first non-whitespace */
 				opt[optc] = p;
 	}
-	if (opt[optc] != NULL) opt[++optc] = NULL;
+	if (opt[optc] != nullptr) opt[++optc] = nullptr;
 	cfg_option(optc, opt, lastpass);
 	return 1;
 }
@@ -293,7 +293,7 @@ void read_opt(fc_type fc) {
 	genfile optfile;
 
 	have_opt = 0;
-	optfile = openbin(fc, fOPT, NULL, 0);
+	optfile = openbin(fc, fOPT, nullptr, 0);
 	if (filevalid(optfile, fOPT)) {
 		if (!binread(optfile, opt_data, 14, 1, &errstr))
 			fatal("Invalid OPT file.");
@@ -341,14 +341,14 @@ descr_line *read_ttl(fc_type fc) {
 	int i, j, height;
 	descr_line *buff;
 
-	ttlfile = openfile(fc, fTTL, NULL, 0);
+	ttlfile = openfile(fc, fTTL, nullptr, 0);
 	/* "Warning: Could not open title file '%s'." */
-	if (!filevalid(ttlfile, fTTL)) return NULL;
+	if (!filevalid(ttlfile, fTTL)) return nullptr;
 	build_fixchar();
 
 	buff = (descr_line *)rmalloc(sizeof(descr_line));
 	i = 0;
-	while (NULL != (buff[i] = readln(ttlfile, NULL, 0))) {
+	while (nullptr != (buff[i] = readln(ttlfile, nullptr, 0))) {
 		if (strncmp(buff[i], "END OF FILE", 11) == 0) break;
 		else if (aver >= AGT18 && aver <= AGT18MAX && check_dollar(buff[i]))
 			statusmode = 4;
@@ -357,14 +357,14 @@ descr_line *read_ttl(fc_type fc) {
 				buff[i][j] = fixchar[(uchar)buff[i][j]];
 			/* Advance i and set the next pointer to NULL */
 			buff = (descr_line *)rrealloc(buff, sizeof(descr_line) * (++i + 1));
-			buff[i] = NULL;
+			buff[i] = nullptr;
 		}
 		rfree(buff[i]);
 	}
 	readclose(ttlfile);
 
 	rfree(buff[i]);
-	while (buff[i] == NULL || strlen(buff[i]) <= 1) { /* Discard 'empty' lines */
+	while (buff[i] == nullptr || strlen(buff[i]) <= 1) { /* Discard 'empty' lines */
 		if (i == 0) break;
 		rfree(buff[i]);
 		i--;
@@ -381,8 +381,8 @@ descr_line *read_ttl(fc_type fc) {
 
 void free_ttl(descr_line *title) {
 	int i;
-	if (title == NULL) return;
-	for (i = 0; title[i] != NULL; i++)
+	if (title == nullptr) return;
+	for (i = 0; title[i] != nullptr; i++)
 		rfree(title[i]);
 	rfree(title);
 }
@@ -416,7 +416,7 @@ void add_verbrec(const char *verb_line, rbool addnew) {
 
 	s[0] = verbStr.firstChar();
 	s[1] = 0;
-	verbinfo[vm_size].objnum = strtol(s, NULL, 10) - 1;
+	verbinfo[vm_size].objnum = strtol(s, nullptr, 10) - 1;
 
 	verbStr.deleteChar(0);
 	verbStr.deleteChar(0);
@@ -452,7 +452,7 @@ void init_verbrec(void)
 /* Fill in vnum field */
 /* UNDO, RESTART, MENU  */
 {
-	verbinfo = NULL;
+	verbinfo = nullptr;
 	vm_size = 0;
 	newindex = 0;
 	if (freeze_mode) newindex = 1;  /* Don't include MENU option if we can't
@@ -469,7 +469,7 @@ void read_voc(fc_type fc) {
 	genfile vocfile;
 
 	init_verbrec();
-	vocfile = openfile(fc, fVOC, NULL, 0);
+	vocfile = openfile(fc, fVOC, nullptr, 0);
 	if (filevalid(vocfile, fVOC)) { /* Vocabulary file exists */
 		while (readln(vocfile, linbuf, 79))
 			add_verbrec(linbuf, 0);
@@ -490,16 +490,16 @@ void read_voc(fc_type fc) {
 static genfile insfile = BAD_TEXTFILE;
 static char *ins_buff;
 
-static descr_line *ins_descr = NULL;
+static descr_line *ins_descr = nullptr;
 static int ins_line;  /* Current instruction line */
 
 
 /* Return 1 on success, 0 on failure */
 rbool open_ins_file(fc_type fc, rbool report_error) {
-	ins_buff = NULL;
+	ins_buff = nullptr;
 	ins_line = 0;
 
-	if (ins_descr != NULL) return 1;
+	if (ins_descr != nullptr) return 1;
 
 	if (filevalid(insfile, fINS)) {
 		textrewind(insfile);
@@ -508,7 +508,7 @@ rbool open_ins_file(fc_type fc, rbool report_error) {
 
 	if (agx_file) {
 		ins_descr = read_descr(ins_ptr.start, ins_ptr.size);
-		if (ins_descr != NULL) return 1;
+		if (ins_descr != nullptr) return 1;
 
 		/* Note that if the AGX file doesn't contain an INS block, we
 		   don't immediatly give up but try opening <fname>.INS */
@@ -517,19 +517,19 @@ rbool open_ins_file(fc_type fc, rbool report_error) {
 	insfile = openfile(fc, fINS,
 	                   report_error
 	                   ? "Sorry, Instructions aren't available for this game"
-	                   : NULL,
+	                   : nullptr,
 	                   0);
 	return (filevalid(insfile, fINS));
 }
 
 char *read_ins_line(void) {
 	if (ins_descr) {
-		if (ins_descr[ins_line] != NULL)
+		if (ins_descr[ins_line] != nullptr)
 			return ins_descr[ins_line++];
-		else return NULL;
+		else return nullptr;
 	} else {
 		rfree(ins_buff);
-		ins_buff = readln(insfile, NULL, 0);
+		ins_buff = readln(insfile, nullptr, 0);
 		return ins_buff;
 	}
 }
@@ -537,7 +537,7 @@ char *read_ins_line(void) {
 void close_ins_file(void) {
 	if (ins_descr) {
 		free_descr(ins_descr);
-		ins_descr = NULL;
+		ins_descr = nullptr;
 	} else if (filevalid(insfile, fINS)) {
 		rfree(ins_buff);
 		readclose(insfile);
@@ -553,15 +553,15 @@ descr_line *read_ins(fc_type fc) {
 	int i;
 
 	i = 0;
-	txt = NULL;
+	txt = nullptr;
 	if (open_ins_file(fc, 0)) {  /* Instruction file exists */
-		while (NULL != (buff = read_ins_line())) {
+		while (nullptr != (buff = read_ins_line())) {
 			/* Enlarge txt; we use (i+2) here to leave space for the trailing \0 */
 			txt = (descr_line *)rrealloc(txt, sizeof(descr_ptr) * (i + 2));
 			txt[i++] = rstrdup(buff);
 		}
-		if (txt != NULL)
-			txt[i] = 0; /* There is space for this since we used (i+2) above */
+		if (txt != nullptr)
+			txt[i] = nullptr; /* There is space for this since we used (i+2) above */
 		close_ins_file();
 	}
 	return txt;
@@ -570,8 +570,8 @@ descr_line *read_ins(fc_type fc) {
 
 void free_ins(descr_line *instr) {
 	int i;
-	if (instr == NULL) return;
-	for (i = 0; instr[i] != NULL; i++)
+	if (instr == nullptr) return;
+	for (i = 0; instr[i] != nullptr; i++)
 		rfree(instr[i]);
 	rfree(instr);
 }

@@ -455,7 +455,7 @@ int Processor::direct_call(zword addr) {
 	saved_zargc = zargc;
 
 	// Call routine directly
-	call(addr, 0, 0, 2);
+	call(addr, 0, nullptr, 2);
 
 	// Restore operands and operand count
 	for (i = 0; i < 8; i++)

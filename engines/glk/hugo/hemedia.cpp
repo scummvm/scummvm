@@ -70,7 +70,7 @@ int Hugo::loadres(HUGO_FILE infile, int reslen, int type) {
 		reslen -= n;
 	}
 
-	glk_stream_close(stream, NULL);
+	glk_stream_close(stream, nullptr);
 
 	return idVal;
 }

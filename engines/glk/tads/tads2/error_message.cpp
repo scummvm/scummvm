@@ -33,11 +33,11 @@ errcxdef *lerini() {
 	// allocate an error context
 	if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
 		// failure
-		return((errcxdef *)0);
+		return((errcxdef *)nullptr);
 	}
 
 	// initialize the error context
-	errcx->errcxfp  = (osfildef *)0;                  /* no error file handle */
+	errcx->errcxfp  = (osfildef *)nullptr;                  /* no error file handle */
 	errcx->errcxofs = 0;                      /* no offset in argument buffer */
 	errcx->errcxlog = ltk_errlog;                    /* error logging routine */
 	errcx->errcxlgc = errcx;                         /* error logging context */

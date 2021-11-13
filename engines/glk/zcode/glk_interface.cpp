@@ -516,7 +516,7 @@ void GlkInterface::showBeyondZorkTitle() {
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	if (saveSlot == -1) {
-		winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
+		winid_t win = glk_window_open(nullptr, 0, 0, wintype_Graphics, 0);
 		if (glk_image_draw_scaled(win, 1, 0, 0, g_vm->_screen->w, g_vm->_screen->h))
 			_events->waitForPress();
 

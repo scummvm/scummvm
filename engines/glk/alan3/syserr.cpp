@@ -68,7 +68,7 @@ void setSyserrHandler(void (*f)(const char *)) {
 // TODO Make syserr() use ... as printf()
 void syserr(const char *description) {
 	lin = 0;
-	if (handler == NULL) {
+	if (handler == nullptr) {
 		const char *blurb = "<If you are the creator of this piece of Interactive Fiction, \
 please help debug this Alan system error. Collect *all* the sources, and, if possible, an \
 exact transcript of the commands that led to this error, in a zip-file and send \
@@ -81,7 +81,7 @@ it to support@alanif.se. Thank you!>";
 
 /*======================================================================*/
 void apperr(const char *description) {
-	if (handler == NULL) {
+	if (handler == nullptr) {
 		const char *blurb = "<If you are playing this piece of Interactive Fiction, \
 please help the author to debug this programming error. Send an exact \
 transcript of the commands that led to this error to the author. Thank you! \
@@ -93,7 +93,7 @@ If you *are* the author, then you have to figure this out before releasing the g
 
 /*======================================================================*/
 void playererr(CONTEXT, const char *description) {
-	if (handler == NULL) {
+	if (handler == nullptr) {
 		const char *blurb = "<You have probably done something that is not exactly right.>";
 		runtimeError(context, "PLAYER ERROR: ", description, blurb);
 	} else

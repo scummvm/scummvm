@@ -45,7 +45,7 @@ struct StateStackStructure {
 /*----------------------------------------------------------------------*/
 static void *reallocate(void *from, int newSize) {
 	void *newArea = realloc(from, newSize * sizeof(void *));
-	if (newArea == NULL)
+	if (newArea == nullptr)
 		syserr("Out of memory in 'reallocateStack()'");
 	return newArea;
 }
@@ -62,7 +62,7 @@ StateStackP createStateStack(int elementSize) {
 
 /*======================================================================*/
 void deleteStateStack(StateStackP stateStack) {
-	if (stateStack != NULL) {
+	if (stateStack != nullptr) {
 		while (stateStack->stackPointer > 0) {
 			stateStack->stackPointer--;
 			deallocateGameState((GameState *)stateStack->states[stateStack->stackPointer]);
@@ -99,7 +99,7 @@ void pushGameState(StateStackP stateStack, void *gameState) {
 	void *element = allocate(stateStack->elementSize);
 	memcpy(element, gameState, stateStack->elementSize);
 	ensureSpaceForGameState(stateStack);
-	stateStack->commands[stateStack->stackPointer] = NULL;
+	stateStack->commands[stateStack->stackPointer] = nullptr;
 	stateStack->states[stateStack->stackPointer++] = element;
 }
 

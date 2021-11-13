@@ -31,13 +31,13 @@ namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-Parameter *globalParameters = NULL;
+Parameter *globalParameters = nullptr;
 
 /*======================================================================*/
 Parameter *newParameter(int id) {
 	Parameter *parameter = NEW(Parameter);
 	parameter->instance = id;
-	parameter->candidates = NULL;
+	parameter->candidates = nullptr;
 
 	return parameter;
 }
@@ -56,7 +56,7 @@ void freeParameterArray(ParameterArray arrayPointer) {
 	Parameter *p;
 
 	for (p = arrayPointer; !isEndOfArray(p); p++)
-		if (p->candidates != NULL)
+		if (p->candidates != nullptr)
 			freeParameterArray(p->candidates);
 	deallocate(arrayPointer);
 }
@@ -64,7 +64,7 @@ void freeParameterArray(ParameterArray arrayPointer) {
 
 /*======================================================================*/
 Parameter *ensureParameterArrayAllocated(ParameterArray currentArray) {
-	if (currentArray == NULL)
+	if (currentArray == nullptr)
 		return newParameterArray();
 	else {
 		clearParameterArray(currentArray);
@@ -75,7 +75,7 @@ Parameter *ensureParameterArrayAllocated(ParameterArray currentArray) {
 
 /*======================================================================*/
 bool parameterArrayIsEmpty(ParameterArray array) {
-	return array == NULL || lengthOfParameterArray(array) == 0;
+	return array == nullptr || lengthOfParameterArray(array) == 0;
 }
 
 
@@ -84,14 +84,14 @@ void clearParameter(Parameter *parameter) {
 	Parameter *candidates = parameter->candidates;
 	memset(parameter, 0, sizeof(Parameter));
 	parameter->candidates = candidates;
-	if (parameter->candidates != NULL)
+	if (parameter->candidates != nullptr)
 		clearParameterArray(parameter->candidates);
 }
 
 
 /*======================================================================*/
 void setGlobalParameters(ParameterArray newParameters) {
-	if (globalParameters == NULL)
+	if (globalParameters == nullptr)
 		globalParameters = newParameterArray();
 	copyParameterArray(globalParameters, newParameters);
 }
@@ -99,7 +99,7 @@ void setGlobalParameters(ParameterArray newParameters) {
 
 /*======================================================================*/
 Parameter *getGlobalParameters(void) {
-	if (globalParameters == NULL)
+	if (globalParameters == nullptr)
 		globalParameters = newParameterArray();
 	return globalParameters;
 }
@@ -149,7 +149,7 @@ void compressParameterArray(Parameter theArray[]) {
 int lengthOfParameterArray(Parameter theArray[]) {
 	int i = 0;
 
-	if (theArray == NULL) return 0;
+	if (theArray == nullptr) return 0;
 
 	while (!isEndOfArray(&theArray[i]))
 		i++;
@@ -161,9 +161,9 @@ int lengthOfParameterArray(Parameter theArray[]) {
 bool equalParameterArrays(Parameter parameters1[], Parameter parameters2[]) {
 	int i;
 
-	if ((parameters1 == NULL) != (parameters2 == NULL))
+	if ((parameters1 == nullptr) != (parameters2 == nullptr))
 		return FALSE;
-	if (parameters1 == NULL) // Because then parameter2 is also NULL
+	if (parameters1 == nullptr) // Because then parameter2 is also NULL
 		return TRUE;
 	for (i = 0; !isEndOfArray(&parameters1[i]); i++) {
 		if (isEndOfArray(&parameters2[i])) return FALSE;
@@ -187,20 +187,20 @@ void copyParameter(Parameter *to, Parameter *from) {
 	Parameter *toCandidates = to->candidates;
 
 	*to = *from;
-	if (from->candidates != NULL) {
-		if (toCandidates == NULL)
+	if (from->candidates != nullptr) {
+		if (toCandidates == nullptr)
 			to->candidates = newParameterArray();
 		else
 			to->candidates = toCandidates;
 		copyParameterArray(to->candidates, from->candidates);
-	} else if (toCandidates != NULL)
+	} else if (toCandidates != nullptr)
 		freeParameterArray(toCandidates);
 }
 
 
 /*======================================================================*/
 void addParameterToParameterArray(ParameterArray theArray, Parameter *theParameter) {
-	if (theArray == NULL) syserr("Adding to null parameter array");
+	if (theArray == nullptr) syserr("Adding to null parameter array");
 
 	uint i;
 
@@ -218,9 +218,9 @@ void addParameterToParameterArray(ParameterArray theArray, Parameter *theParamet
 void copyParameterArray(ParameterArray to, ParameterArray from) {
 	int i;
 
-	if (to == NULL && from == NULL) return;
+	if (to == nullptr && from == nullptr) return;
 
-	if (to == NULL)
+	if (to == nullptr)
 		syserr("Copying to null parameter array");
 	else {
 		clearParameterArray(to);
@@ -234,7 +234,7 @@ void copyParameterArray(ParameterArray to, ParameterArray from) {
 void subtractParameterArrays(Parameter theArray[], Parameter remove[]) {
 	int i;
 
-	if (remove == NULL) return;
+	if (remove == nullptr) return;
 
 	for (i = 0; !isEndOfArray(&theArray[i]); i++)
 		if (inParameterArray(remove, theArray[i].instance))

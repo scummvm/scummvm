@@ -48,8 +48,8 @@ extern char         error_buffer[];
 
 int                 lines_written;
 
-Common::WriteStream *outputFile = NULL;
-Common::SeekableReadStream *inputFile = NULL;
+Common::WriteStream *outputFile = nullptr;
+Common::SeekableReadStream *inputFile = nullptr;
 
 char                *stripped_line;
 
@@ -142,8 +142,8 @@ int jpp() {
 int process_file(const char *sourceFile1, char *sourceFile2) {
 	char            temp_buffer1[1025];
 	char            temp_buffer2[1025];
-	Common::File *srcFile = NULL;
-	char           *includeFile = NULL;
+	Common::File *srcFile = nullptr;
+	char           *includeFile = nullptr;
 
 	/* THIS FUNCTION WILL CREATE A PROCESSED FILE THAT HAS HAD ALL
 	 * LEADING AND TRAILING WHITE SPACE REMOVED AND ALL INCLUDED
@@ -151,7 +151,7 @@ int process_file(const char *sourceFile1, char *sourceFile2) {
 	srcFile = File::openForReading(sourceFile1);
 
 	if (!srcFile) {
-		if (sourceFile2 != NULL) {
+		if (sourceFile2 != nullptr) {
 			srcFile = File::openForReading(sourceFile2);
 			if (!srcFile) {
 				sprintf(error_buffer, CANT_OPEN_OR, sourceFile1, sourceFile2);
@@ -177,12 +177,12 @@ int process_file(const char *sourceFile1, char *sourceFile2) {
 		        (!strncmp(text_buffer, "#debug", 6) & !release)) {
 			includeFile = strrchr(text_buffer, '"');
 
-			if (includeFile != NULL)
+			if (includeFile != nullptr)
 				*includeFile = 0;
 
 			includeFile = strchr(text_buffer, '"');
 
-			if (includeFile != NULL) {
+			if (includeFile != nullptr) {
 				strcpy(temp_buffer1, game_path);
 				strcat(temp_buffer1, includeFile + 1);
 				strcpy(temp_buffer2, include_directory);

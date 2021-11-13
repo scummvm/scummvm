@@ -41,7 +41,7 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(win
 		_lastSeen(0), _scrollPos(0), _scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1),
 		_inBuf(nullptr), _lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0),
 		_ladjn(0), _radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr), _spaced(0), _dashed(0),
-		_copyBuf(0), _copyPos(0) {
+		_copyBuf(nullptr), _copyPos(0) {
 	_type = wintype_TextBuffer;
 	_history.resize(HISTORYLEN);
 
@@ -1600,8 +1600,8 @@ void TextBufferWindow::scrollResize() {
 		_lines[i]._repaint = false;
 		_lines[i]._lm = 0;
 		_lines[i]._rm = 0;
-		_lines[i]._lPic = 0;
-		_lines[i]._rPic = 0;
+		_lines[i]._lPic = nullptr;
+		_lines[i]._rPic = nullptr;
 		_lines[i]._lHyper = 0;
 		_lines[i]._rHyper = 0;
 		_lines[i]._len = 0;

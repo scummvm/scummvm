@@ -102,7 +102,7 @@ static void gagt_fatal(const char *string) {
 		error("INTERNAL ERROR: %s", string);
 
 	/* Cancel all possible pending window input events. */
-	g_vm->glk_cancel_line_event(g_vm->gagt_main_window, NULL);
+	g_vm->glk_cancel_line_event(g_vm->gagt_main_window, nullptr);
 	g_vm->glk_cancel_char_event(g_vm->gagt_main_window);
 
 	/* Print a message indicating the error. */
@@ -265,7 +265,7 @@ int agt_rand(int a, int b) {
  */
 static void gagt_workround_menus() {
 	free(verbmenu);
-	verbmenu = NULL;
+	verbmenu = nullptr;
 
 	menu_mode = 0;
 }
@@ -286,7 +286,7 @@ static int gagt_workround_fileexist(fc_type fc, filetype ft) {
 	genfile file;
 	const char *errstr;
 
-	errstr = NULL;
+	errstr = nullptr;
 	file = readopen(fc, ft, &errstr);
 
 	if (file) {
@@ -660,8 +660,8 @@ static void gagt_iso_to_cp(const unsigned char *from_string, unsigned char *to_s
  * that don't support separate windows.  We also need a copy of the last
  * status buffer printed for non-windowing Glk libraries, for comparison.
  */
-static char *gagt_status_buffer = NULL,
-			 *gagt_status_buffer_printed = NULL;
+static char *gagt_status_buffer = nullptr,
+			 *gagt_status_buffer_printed = nullptr;
 
 /*
  * Indication that we are in mid-delay.  The delay is silent, and can look
@@ -892,7 +892,7 @@ static void gagt_status_redraw() {
 			parent = g_vm->glk_window_get_parent(g_vm->gagt_status_window);
 			g_vm->glk_window_set_arrangement(parent,
 			                                 winmethod_Above | winmethod_Fixed,
-			                                 height, NULL);
+			                                 height, nullptr);
 
 			gagt_status_update();
 		}
@@ -929,10 +929,10 @@ static void gagt_status_in_delay(int inside_delay) {
  */
 static void gagt_status_cleanup() {
 	free(gagt_status_buffer);
-	gagt_status_buffer = NULL;
+	gagt_status_buffer = nullptr;
 
 	free(gagt_status_buffer_printed);
-	gagt_status_buffer_printed = NULL;
+	gagt_status_buffer_printed = nullptr;
 }
 
 
@@ -1437,14 +1437,14 @@ struct gagt_line_s {
  * Definition of the actual page buffer.  This is a doubly-linked list of
  * lines, with a tail pointer to facilitate adding entries at the end.
  */
-static gagt_lineref_t gagt_page_head = NULL,
-					  gagt_page_tail = NULL;
+static gagt_lineref_t gagt_page_head = nullptr,
+					  gagt_page_tail = nullptr;
 
 /*
  * Definition of the current output line; this one is appended to on
  * agt_puts(), and transferred into the page buffer on agt_newline().
  */
-static gagt_string_t gagt_current_buffer = { NULL, NULL, 0, 0 };
+static gagt_string_t gagt_current_buffer = { nullptr, nullptr, 0, 0 };
 
 /*
  * gagt_string_append()
@@ -1481,14 +1481,14 @@ static void gagt_string_append(gagt_stringref_t buffer, const char *string,
 
 static void gagt_string_transfer(gagt_stringref_t from, gagt_stringref_t to) {
 	*to = *from;
-	from->data = from->attributes = NULL;
+	from->data = from->attributes = nullptr;
 	from->allocation = from->length = 0;
 }
 
 static void gagt_string_free(gagt_stringref_t buffer) {
 	free(buffer->data);
 	free(buffer->attributes);
-	buffer->data = buffer->attributes = NULL;
+	buffer->data = buffer->attributes = nullptr;
 	buffer->allocation = buffer->length = 0;
 }
 
@@ -1579,7 +1579,7 @@ static void gagt_output_delete() {
 		free(line);
 	}
 
-	gagt_page_head = gagt_page_tail = NULL;
+	gagt_page_head = gagt_page_tail = nullptr;
 
 	gagt_string_free(&gagt_current_buffer);
 }
@@ -1651,11 +1651,11 @@ void agt_newline() {
 		line->is_hyphenated = gagt_is_string_hyphenated(&line->buffer);
 
 		/* For now, default the remaining page buffer fields for the line. */
-		line->paragraph = NULL;
+		line->paragraph = nullptr;
 		line->font_hint = HINT_NONE;
 
 		/* Add to the list, creating a new list if necessary. */
-		line->next = NULL;
+		line->next = nullptr;
 		line->prior = gagt_page_tail;
 		if (gagt_page_head)
 			gagt_page_tail->next = line;
@@ -1740,8 +1740,8 @@ struct gagt_paragraph_s {
  * A doubly-linked list of paragraphs, with a tail pointer to facilitate
  * adding entries at the end.
  */
-static gagt_paragraphref_t gagt_paragraphs_head = NULL,
-						   gagt_paragraphs_tail = NULL;
+static gagt_paragraphref_t gagt_paragraphs_head = nullptr,
+						   gagt_paragraphs_tail = nullptr;
 
 /*
  * gagt_paragraphs_delete()
@@ -1760,7 +1760,7 @@ static void gagt_paragraphs_delete() {
 		free(paragraph);
 	}
 
-	gagt_paragraphs_head = gagt_paragraphs_tail = NULL;
+	gagt_paragraphs_head = gagt_paragraphs_tail = nullptr;
 }
 
 
@@ -1777,7 +1777,7 @@ static gagt_lineref_t gagt_find_paragraph_start(const gagt_lineref_t begin) {
 	 * Advance line to the beginning of the next paragraph, stopping on the
 	 * first non-blank line, or at the end of the page buffer.
 	 */
-	match = NULL;
+	match = nullptr;
 	for (line = begin; line; line = gagt_get_next_page_line(line)) {
 		if (!line->is_blank) {
 			match = line;
@@ -1959,12 +1959,12 @@ static void gagt_paragraph_page() {
 		paragraph = (gagt_paragraphref_t)gagt_malloc(sizeof(*paragraph));
 		paragraph->magic = GAGT_PARAGRAPH_MAGIC;
 		paragraph->first_line = start;
-		paragraph->special = NULL;
+		paragraph->special = nullptr;
 		paragraph->line_count = 1;
 		paragraph->id = gagt_paragraphs_tail ? gagt_paragraphs_tail->id + 1 : 0;
 
 		/* Add to the list, creating a new list if necessary. */
-		paragraph->next = NULL;
+		paragraph->next = nullptr;
 		paragraph->prior = gagt_paragraphs_tail;
 		if (gagt_paragraphs_head)
 			gagt_paragraphs_tail->next = paragraph;
@@ -1994,7 +1994,7 @@ static void gagt_paragraph_page() {
 		if (line)
 			start = gagt_find_paragraph_start(line);
 		else
-			start = NULL;
+			start = nullptr;
 	}
 }
 
@@ -2052,7 +2052,7 @@ static gagt_lineref_t gagt_get_next_paragraph_line(const gagt_lineref_t line) {
 	if (next_line && next_line->paragraph == line->paragraph)
 		return next_line;
 	else
-		return NULL;
+		return nullptr;
 }
 
 static gagt_lineref_t gagt_get_prior_paragraph_line(const gagt_lineref_t line) {
@@ -2063,7 +2063,7 @@ static gagt_lineref_t gagt_get_prior_paragraph_line(const gagt_lineref_t line) {
 	if (prior_line && prior_line->paragraph == line->paragraph)
 		return prior_line;
 	else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -2708,7 +2708,7 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	},
 
 	/* End of table sentinel entry.  Do not delete. */
-	{0, {NULL}, NULL}
+	{0, {nullptr}, nullptr}
 };
 
 
@@ -2767,7 +2767,7 @@ static gagt_specialref_t gagt_find_equivalent_special(gagt_paragraphref_t paragr
 	gagt_specialref_t special, match;
 
 	/* Check each special paragraph entry for a match against this paragraph. */
-	match = NULL;
+	match = nullptr;
 	for (special = GAGT_SPECIALS; special->replace; special++) {
 		if (gagt_compare_special_paragraph(special, paragraph)) {
 			match = special;
@@ -3700,10 +3700,10 @@ static void gagt_command_script(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, NULL);
-		g_vm->gagt_transcript_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, nullptr);
+		g_vm->gagt_transcript_stream = nullptr;
 
-		g_vm->glk_window_set_echo_stream(g_vm->gagt_main_window, NULL);
+		g_vm->glk_window_set_echo_stream(g_vm->gagt_main_window, nullptr);
 
 		gagt_normal_string("Glk transcript is now off.\n");
 	}
@@ -3765,8 +3765,8 @@ static void gagt_command_inputlog(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, NULL);
-		g_vm->gagt_inputlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, nullptr);
+		g_vm->gagt_inputlog_stream = nullptr;
 
 		gagt_normal_string("Glk input log is now off.\n");
 	}
@@ -3833,8 +3833,8 @@ static void gagt_command_readlog(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
-		g_vm->gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, nullptr);
+		g_vm->gagt_readlog_stream = nullptr;
 
 		gagt_normal_string("Glk read log is now off.\n");
 	}
@@ -4170,7 +4170,7 @@ static void gagt_command_statusline(const char *argument) {
 
 		/* Expand the status window down to a second line. */
 		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(g_vm->gagt_status_window),
-		                                 winmethod_Above | winmethod_Fixed, 2, NULL);
+		                                 winmethod_Above | winmethod_Fixed, 2, nullptr);
 		g_vm->gagt_extended_status_enabled = TRUE;
 
 		gagt_normal_string("Glk status line mode is now 'extended'.\n");
@@ -4185,7 +4185,7 @@ static void gagt_command_statusline(const char *argument) {
 
 		/* Shrink the status window down to one line. */
 		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(g_vm->gagt_status_window),
-		                                 winmethod_Above | winmethod_Fixed, 1, NULL);
+		                                 winmethod_Above | winmethod_Fixed, 1, nullptr);
 		g_vm->gagt_extended_status_enabled = FALSE;
 
 		gagt_normal_string("Glk status line mode is now 'short'.\n");
@@ -4294,7 +4294,7 @@ static gagt_command_t GAGT_COMMAND_TABLE[] = {
 	{"version",        gagt_command_version,        FALSE},
 	{"commands",       gagt_command_commands,       TRUE},
 	{"help",           gagt_command_help,           TRUE},
-	{NULL, NULL, FALSE}
+	{nullptr, nullptr, FALSE}
 };
 
 
@@ -4349,7 +4349,7 @@ static void gagt_command_help(const char *cmd) {
 		return;
 	}
 
-	matched = NULL;
+	matched = nullptr;
 	for (entry = GAGT_COMMAND_TABLE; entry->command; entry++) {
 		if (gagt_strncasecmp(cmd, entry->command, strlen(cmd)) == 0) {
 			if (matched) {
@@ -4560,7 +4560,7 @@ static int gagt_command_escape(const char *string) {
 		 * the cmd passed in.
 		 */
 		matches = 0;
-		matched = NULL;
+		matched = nullptr;
 		for (entry = GAGT_COMMAND_TABLE; entry->command; entry++) {
 			if (gagt_strncasecmp(cmd, entry->command, strlen(cmd)) == 0) {
 				matches++;
@@ -4620,7 +4620,7 @@ static gagt_abbreviation_t GAGT_ABBREVIATIONS[] = {
 	{'k', "attack"},   {'l', "look"},   {'p', "open"},
 	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
 	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', NULL}
+	{'\0', nullptr}
 };
 
 
@@ -4644,7 +4644,7 @@ static void gagt_expand_abbreviations(char *buffer, int size) {
 
 	/* Scan the abbreviations table for a match. */
 	abbreviation = g_vm->glk_char_to_lower((unsigned char) command_[0]);
-	expansion = NULL;
+	expansion = nullptr;
 	for (entry = GAGT_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
 			expansion = entry->expansion;
@@ -4736,8 +4736,8 @@ char *agt_input(int in_type) {
 		 * We're at the end of the log stream.  Close it, and then continue
 		 * on to request a line from Glk.
 		 */
-		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
-		g_vm->gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, nullptr);
+		g_vm->gagt_readlog_stream = nullptr;
 	}
 
 	/* Set this up as a read buffer for the main window, and wait. */
@@ -4884,8 +4884,8 @@ char agt_getkey(rbool echo_char) {
 		 * We're at the end of the log stream.  Close it, and then continue
 		 * on to request a character from Glk.
 		 */
-		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
-		g_vm->gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, nullptr);
+		g_vm->gagt_readlog_stream = nullptr;
 	}
 
 	/*
@@ -5063,7 +5063,7 @@ void init_interface() {
 	 * If it fails, we'll return, and the caller can detect this by looking
 	 * for a NULL main window.
 	 */
-	g_vm->gagt_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	g_vm->gagt_main_window = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (!g_vm->gagt_main_window)
 		return;
 
@@ -5544,7 +5544,7 @@ static void gagt_main() {
 	if (!(gagt_workround_fileexist(fc, fAGX)
 	        || gagt_workround_fileexist(fc, fDA1))) {
 		if (g_vm->gagt_status_window)
-			g_vm->glk_window_close(g_vm->gagt_status_window, NULL);
+			g_vm->glk_window_close(g_vm->gagt_status_window, nullptr);
 		gagt_header_string("Glk AGiliTy Error\n\n");
 		gagt_normal_string("Can't find or open game '");
 		gagt_normal_string(g_vm->gagt_gamefile);
@@ -5574,16 +5574,16 @@ static void gagt_main() {
 
 	/* Close any open transcript, input log, and/or read log. */
 	if (g_vm->gagt_transcript_stream) {
-		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, NULL);
-		g_vm->gagt_transcript_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, nullptr);
+		g_vm->gagt_transcript_stream = nullptr;
 	}
 	if (g_vm->gagt_inputlog_stream) {
-		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, NULL);
-		g_vm->gagt_inputlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, nullptr);
+		g_vm->gagt_inputlog_stream = nullptr;
 	}
 	if (g_vm->gagt_readlog_stream) {
-		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
-		g_vm->gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, nullptr);
+		g_vm->gagt_readlog_stream = nullptr;
 	}
 }
 
@@ -5679,7 +5679,7 @@ void gagt_finalizer() {
 		 */
 		if (g_vm->gagt_main_window) {
 			g_vm->glk_cancel_char_event(g_vm->gagt_main_window);
-			g_vm->glk_cancel_line_event(g_vm->gagt_main_window, NULL);
+			g_vm->glk_cancel_line_event(g_vm->gagt_main_window, nullptr);
 
 			g_vm->glk_set_style(style_Alert);
 			g_vm->glk_put_string("\n\nHit any key to exit.\n");

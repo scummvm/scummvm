@@ -311,7 +311,7 @@ static sc_prop_noderef_t prop_find_child(sc_prop_noderef_t parent, sc_int type, 
 	}
 
 	/* No matching child found. */
-	return NULL;
+	return nullptr;
 }
 
 
@@ -344,8 +344,8 @@ static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
 	}
 
 	/* Initialize property and child list to visible nulls. */
-	child->property.voidp = NULL;
-	child->child_list = NULL;
+	child->property.voidp = nullptr;
+	child->child_list = nullptr;
 
 	/* Make a brief check for obvious overwrites. */
 	if (!parent->child_list && parent->property.voidp)
@@ -734,16 +734,16 @@ static sc_prop_setref_t prop_create_empty() {
 
 	/* Begin with an empty strings dictionary. */
 	bundle->dictionary_length = 0;
-	bundle->dictionary = NULL;
+	bundle->dictionary = nullptr;
 
 	/* Begin with no allocated node pools. */
 	bundle->node_pools_length = 0;
-	bundle->node_pools = NULL;
+	bundle->node_pools = nullptr;
 	bundle->node_count = 0;
 
 	/* Begin with no adopted addresses. */
 	bundle->orphans_length = 0;
-	bundle->orphans = NULL;
+	bundle->orphans = nullptr;
 
 	/* Leave open for insertions. */
 	bundle->is_readonly = FALSE;
@@ -753,12 +753,12 @@ static sc_prop_setref_t prop_create_empty() {
 	 * ensuring that every set has at least one node and one allocated pool.
 	 */
 	bundle->root_node = prop_new_node(bundle);
-	bundle->root_node->child_list = NULL;
+	bundle->root_node->child_list = nullptr;
 	bundle->root_node->name.string = "ROOT";
-	bundle->root_node->property.voidp = NULL;
+	bundle->root_node->property.voidp = nullptr;
 
 	/* No taf is yet connected with this set. */
-	bundle->taf = NULL;
+	bundle->taf = nullptr;
 
 	return bundle;
 }
@@ -793,25 +793,25 @@ void prop_destroy(sc_prop_setref_t bundle) {
 		sc_free(bundle->dictionary[index_]);
 	bundle->dictionary_length = 0;
 	sc_free(bundle->dictionary);
-	bundle->dictionary = NULL;
+	bundle->dictionary = nullptr;
 
 	/* Free adopted addresses. */
 	for (index_ = 0; index_ < bundle->orphans_length; index_++)
 		sc_free(bundle->orphans[index_]);
 	bundle->orphans_length = 0;
 	sc_free(bundle->orphans);
-	bundle->orphans = NULL;
+	bundle->orphans = nullptr;
 
 	/* Walk the tree, destroying the child list for each node found. */
 	prop_destroy_child_list(bundle->root_node);
-	bundle->root_node = NULL;
+	bundle->root_node = nullptr;
 
 	/* Destroy each node pool. */
 	for (index_ = 0; index_ < bundle->node_pools_length; index_++)
 		sc_free(bundle->node_pools[index_]);
 	bundle->node_pools_length = 0;
 	sc_free(bundle->node_pools);
-	bundle->node_pools = NULL;
+	bundle->node_pools = nullptr;
 
 	/* Destroy any taf associated with the bundle. */
 	if (bundle->taf)
@@ -837,7 +837,7 @@ sc_prop_setref_t prop_create(const sc_tafref_t taf) {
 	/* Populate it with data parsed from the taf file. */
 	if (!parse_game(taf, bundle)) {
 		prop_destroy(bundle);
-		return NULL;
+		return nullptr;
 	}
 
 	/* Note the taf for destruction later, and return the new set. */

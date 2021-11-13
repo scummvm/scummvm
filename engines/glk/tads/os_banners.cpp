@@ -79,7 +79,7 @@ struct banner_contents_t {
 	uint len;
 };
 
-static osbanid_t os_banners = NULL;
+static osbanid_t os_banners = nullptr;
 static uint os_banner_count = 999;
 
 extern winid_t mainwin;
@@ -108,15 +108,15 @@ osbanid_t os_banner_init() {
 	osbanid_t instance;
 	instance = (osbanid_t)malloc(sizeof(os_banner_t));
 	if (!instance)
-		return 0;
+		return nullptr;
 
 	instance->id = ++ os_banner_count;
 	instance->valid = 1;
 
-	instance->prev = 0;
-	instance->next = 0;
-	instance->children = 0;
-	instance->parent = 0;
+	instance->prev = nullptr;
+	instance->next = nullptr;
+	instance->children = nullptr;
+	instance->parent = nullptr;
 
 	instance->method = 0;
 	instance->size = 0;
@@ -126,14 +126,14 @@ osbanid_t os_banner_init() {
 	instance->cheight = 0;
 	instance->cwidth = 0;
 
-	instance->contents = 0;
+	instance->contents = nullptr;
 	instance->style = style_Normal;
 	instance->newline = 0;
 	instance->move = 0;
 	instance->x = 0;
 	instance->y = 0;
 
-	instance->win = 0;
+	instance->win = nullptr;
 
 	return instance;
 }
@@ -142,7 +142,7 @@ osbanid_t os_banner_insert(osbanid_t parent, uint operation, osbanid_t other,
 						   uint method, uint size, uint type, uint status)
 {
 	if (!parent || !(parent->valid))
-		return 0;
+		return nullptr;
 
 	if (operation == OS_BANNER_BEFORE || operation == OS_BANNER_AFTER)
 		if (!other || !(other->valid) || !(other->parent == parent))
@@ -150,7 +150,7 @@ osbanid_t os_banner_insert(osbanid_t parent, uint operation, osbanid_t other,
 
 	osbanid_t baby = os_banner_init();
 	if (!baby)
-		return 0;
+		return nullptr;
 	baby->parent = parent;
 
 	if (!(parent->children))
@@ -295,8 +295,8 @@ void os_banners_close(osbanid_t banner)
 
 	if (banner->win && (banner->win != mainwin))
 	{
-		g_vm->glk_window_close(banner->win, 0);
-		banner->win = 0;
+		g_vm->glk_window_close(banner->win, nullptr);
+		banner->win = nullptr;
 	}
 }
 
@@ -343,10 +343,10 @@ contentid_t banner_contents_init(void)
 	contentid_t instance;
 	instance = (contentid_t)malloc(sizeof(banner_contents_t));
 	if (!instance)
-		return 0;
+		return nullptr;
 
-	instance->banner = 0;
-	instance->next = 0;
+	instance->banner = nullptr;
+	instance->next = nullptr;
 
 	instance->style = style_Normal;
 	instance->newline = 0;
@@ -354,7 +354,7 @@ contentid_t banner_contents_init(void)
 	instance->x = 0;
 	instance->y = 0;
 
-	instance->chars = 0;
+	instance->chars = nullptr;
 	instance->len = 0;
 
 	return instance;
@@ -442,13 +442,13 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
 	uint gstatus = (style & OS_BANNER_STYLE_TAB_ALIGN);
 
 	if (gparent && !(gparent->valid))
-		return 0;
+		return nullptr;
 
 	if (!os_banners)
 	{
 		os_banners = os_banner_init();
 		if (!os_banners)
-			return 0;
+			return nullptr;
 		os_banners->win = mainwin;
 	}
 
@@ -639,7 +639,7 @@ void os_banner_clear(void *banner_handle)
 	}
 
 	banner_contents_clear(banner->contents);
-	banner->contents = 0;
+	banner->contents = nullptr;
 	banner->newline = 0;
 	banner->move = 0;
 	banner->x = 0;

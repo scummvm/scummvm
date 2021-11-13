@@ -225,7 +225,7 @@ void ComprehendGame::console_println(const char *text) {
 	while (*p) {
 		switch (*p) {
 		case '\n':
-			word = NULL;
+			word = nullptr;
 			word_len = 0;
 			g_comprehend->print("\n");
 			p++;
@@ -372,7 +372,7 @@ Item *ComprehendGame::get_item_by_noun(byte noun) {
 		if (_items[i]._word == noun)
 			return &_items[i];
 
-	return NULL;
+	return nullptr;
 }
 
 int ComprehendGame::get_item_id(byte noun) {
@@ -392,7 +392,7 @@ void ComprehendGame::update_graphics() {
 	if (!g_comprehend->isGraphicsEnabled())
 		return;
 
-	type = roomIsSpecial(_currentRoomCopy, NULL);
+	type = roomIsSpecial(_currentRoomCopy, nullptr);
 
 	switch (type) {
 	case ROOM_IS_DARK:

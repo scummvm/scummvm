@@ -198,7 +198,7 @@ void DebuggerDumper::dumpFunction(uint functionNum) {
 
 	print("[%.4x] (%u instructions)\n", functionNum, func.size());
 	for (uint i = 0; i < func.size(); i++) {
-		Common::String line = dumpInstruction(_game, NULL, &func[i]);
+		Common::String line = dumpInstruction(_game, nullptr, &func[i]);
 		print("%s\n", line.c_str());
 	}
 

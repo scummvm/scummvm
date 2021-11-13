@@ -236,7 +236,7 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 {
 	word w;
 
-	if (obj_rec == NULL) {
+	if (obj_rec == nullptr) {
 		strcpy(fill_buff, "");
 		return;
 	}
@@ -369,7 +369,7 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 	if (context == MSG_PARSE) {
 		/* The only special subsitution allowed is $word$. */
 		if (match_str(pvarname, "WORD$")) {
-			if (pword == NULL) fill_buff[0] = 0;
+			if (pword == nullptr) fill_buff[0] = 0;
 			else rstrncpy(fill_buff, pword, FILL_SIZE);
 			return 1;
 		} else return 0;
@@ -489,7 +489,7 @@ static char *wordvar_match(const char **pvarname, char match_type,
 	start = *pvarname;
 	if (match_type == '$') {
 		i = wordcode_match(pvarname, fill_buff, context, pword);
-		if (i == 0) return NULL;
+		if (i == 0) return nullptr;
 		/* Now need to fix capitalization */
 		switch (capstate(start)) {
 		case 0:
@@ -506,18 +506,18 @@ static char *wordvar_match(const char **pvarname, char match_type,
 	} else {  /* So match type is '#' */
 		if (match_str(pvarname, "VAR")) {
 			hold_val = extract_number(pvarname, VAR_NUM, '#');
-			if (hold_val < 0) return NULL;
+			if (hold_val < 0) return nullptr;
 			hold_val = agt_var[hold_val];
 		} else if (match_str(pvarname, "CNT") ||
 		           match_str(pvarname, "CTR")) {
 			hold_val = extract_number(pvarname, CNT_NUM, '#');
-			if (hold_val < 0) return NULL;
+			if (hold_val < 0) return nullptr;
 			hold_val = cnt_val(agt_counter[hold_val]);
 		} else if (match_str(pvarname, "PROP")) {
 			extract_prop_val(pvarname, &hold_prop, &hold_val, 1, '#');
 			if (hold_prop == BAD_PROP) hold_val = 0;
 		} else
-			return NULL;
+			return nullptr;
 
 		/* Now to convert hold_val into a string */
 		sprintf(fill_buff, "%d", hold_val);
@@ -558,7 +558,7 @@ static char  *format_line(const char *s, int context, const char *pword)
 			oldp = p++;  /* Save old value in case we are wrong and then
 		  increment p */
 			fill_word = wordvar_match(&p, fill_type, context, pword);
-			if (fill_word == NULL) {
+			if (fill_word == nullptr) {
 				/*i.e. no match-- so just copy it verbatim */
 				t[i++] = fill_type;
 				just_seen_adj = 0;
@@ -617,9 +617,9 @@ static void gen_print_descr(descr_ptr dp_, rbool nl,
 	textbold = 0;
 	agt_par(1);
 	txt = read_descr(dp_.start, dp_.size);
-	if (txt != NULL)
-		for (j = 0; txt[j] != NULL; j++)
-			lineout(txt[j], nl || (txt[j + 1] != NULL), context, pword);
+	if (txt != nullptr)
+		for (j = 0; txt[j] != nullptr; j++)
+			lineout(txt[j], nl || (txt[j + 1] != nullptr), context, pword);
 	free_descr(txt);
 	agt_par(0);
 	agt_textcolor(7);
@@ -627,7 +627,7 @@ static void gen_print_descr(descr_ptr dp_, rbool nl,
 }
 
 void print_descr(descr_ptr dp_, rbool nl) {
-	gen_print_descr(dp_, nl, MSG_DESC, NULL);
+	gen_print_descr(dp_, nl, MSG_DESC, nullptr);
 }
 
 void quote(int msgnum) {
@@ -637,11 +637,11 @@ void quote(int msgnum) {
 	int len;
 
 	txt = read_descr(msg_ptr[msgnum - 1].start, msg_ptr[msgnum - 1].size);
-	if (txt != NULL) {
-		for (len = 0; txt[len] != NULL; len++);
+	if (txt != nullptr) {
+		for (len = 0; txt[len] != nullptr; len++);
 		qptr = (char **)rmalloc(len * sizeof(char *));
 		for (i = 0; i < len; i++)
-			qptr[i] = format_line(txt[i], MSG_DESC, NULL);
+			qptr[i] = format_line(txt[i], MSG_DESC, nullptr);
 		free_descr(txt);
 		textbox(qptr, len, TB_BORDER | TB_CENTER);
 		rfree(qptr);
@@ -692,9 +692,9 @@ void gen_sysmsg(int msgid, const char *s, int context, const char *pword)
 
 	if (DEBUG_SMSG) rprintf("\nSTD %d", msgid);
 
-	use_game_msg = ((PURE_SYSMSG || s == NULL)
+	use_game_msg = ((PURE_SYSMSG || s == nullptr)
 	                && msgid != 0 && msgid <= NUM_ERR
-	                && err_ptr != NULL);
+	                && err_ptr != nullptr);
 
 	if (use_game_msg) {
 		/* Check for fall-back messages */
@@ -714,7 +714,7 @@ void gen_sysmsg(int msgid, const char *s, int context, const char *pword)
 	if (!use_game_msg) {
 		/* Either the game doesn't redefine the message, or we're ignoring
 		   redefinitions */
-		if (s == NULL) return;
+		if (s == nullptr) return;
 		pronoun_mode = 1;
 		lineout(s, nl, context, pword);
 		pronoun_mode = !PURE_PROSUB;
@@ -723,7 +723,7 @@ void gen_sysmsg(int msgid, const char *s, int context, const char *pword)
 
 
 void sysmsg(int msgid, const char *s) {
-	gen_sysmsg(msgid, s, MSG_RUN, NULL);
+	gen_sysmsg(msgid, s, MSG_RUN, nullptr);
 }
 
 
@@ -741,7 +741,7 @@ void alt_sysmsg(int msgid, const char *s, parse_rec *new_dobjrec, parse_rec *new
 	iobj = p_obj(new_iobjrec);
 	iobj_rec = new_iobjrec;
 
-	gen_sysmsg(msgid, s, MSG_RUN, NULL);
+	gen_sysmsg(msgid, s, MSG_RUN, nullptr);
 
 	dobj = save_dobj;
 	dobj_rec = save_dobjrec;
@@ -753,7 +753,7 @@ void alt_sysmsg(int msgid, const char *s, parse_rec *new_dobjrec, parse_rec *new
 void sysmsgd(int msgid, const char *s, parse_rec *new_dobjrec)
 /* Front end for sysmsg w/alternative direct object */
 {
-	alt_sysmsg(msgid, s, new_dobjrec, NULL);
+	alt_sysmsg(msgid, s, new_dobjrec, nullptr);
 }
 
 
@@ -797,33 +797,33 @@ static rbool check_answer(char *ans, long start, long size)
 		loop over them */
 
 	astr = read_descr(start, size);
-	if (astr == NULL) {
+	if (astr == nullptr) {
 		if (!PURE_ERROR)
 			writeln("GAME ERROR: Empty answer field.");
 		return 1;
 	}
 
 	match_mode = 0;
-	for (i = 0; astr[i] != NULL; i++)
-		if (strstr(astr[i], "OR") != NULL) {
+	for (i = 0; astr[i] != nullptr; i++)
+		if (strstr(astr[i], "OR") != nullptr) {
 			match_mode = 1;
 			break;
 		}
 
 	corr = ans;
-	for (i = 0; astr[i] != NULL; i++) { /* loop over all lines of the answer */
+	for (i = 0; astr[i] != nullptr; i++) { /* loop over all lines of the answer */
 		p = astr[i];
 		do {
 			q = strstr(p, "OR");
 			r = strstr(p, "AND");
-			if (q == NULL || (r != NULL && r < q)) q = r;
-			if (q == NULL) q = p + strlen(p); /* i.e. points at the concluding null */
+			if (q == nullptr || (r != nullptr && r < q)) q = r;
+			if (q == nullptr) q = p + strlen(p); /* i.e. points at the concluding null */
 			corr2 = match_string(corr, p, q - p);
-			if (corr2 == NULL && match_mode == 0) {
+			if (corr2 == nullptr && match_mode == 0) {
 				free_descr(astr);
 				return 0;
 			}
-			if (corr2 != NULL && match_mode == 1) {
+			if (corr2 != nullptr && match_mode == 1) {
 				free_descr(astr);
 				return 1;
 			}
@@ -847,12 +847,12 @@ rbool match_answer(char *ans, int anum) {
 
 	for (corr = ans; *corr != 0; corr++)
 		*corr = tolower(*corr);
-	if (answer != NULL) {
+	if (answer != nullptr) {
 		/* corr=strstr(ans,answer[anum]); */
 		corr = match_string(ans, answer[anum], strlen(answer[anum]));
 		rfree(ans);
-		if (corr == NULL) return 0;
-	} else if (ans_ptr != NULL) {
+		if (corr == nullptr) return 0;
+	} else if (ans_ptr != nullptr) {
 		ans_corr = check_answer(ans, ans_ptr[anum].start, ans_ptr[anum].size);
 		rfree(ans);
 		return ans_corr;
@@ -870,9 +870,9 @@ rbool ask_question(int qnum)
 	qnum--;
 
 	/* Now actually ask the question and compare the answers */
-	if (question != NULL)
+	if (question != nullptr)
 		writeln(question[qnum]);
-	else if (quest_ptr != NULL)
+	else if (quest_ptr != nullptr)
 		print_descr(quest_ptr[qnum], 1);
 	else {
 		writeln("INT ERR: Invalid question pointer");
@@ -893,12 +893,12 @@ long read_number(void) {
 
 	n = 1;
 	do {
-		if (n != 1) gen_sysmsg(218, "Please enter a *number*. ", MSG_MAIN, NULL);
+		if (n != 1) gen_sysmsg(218, "Please enter a *number*. ", MSG_MAIN, nullptr);
 		s = agt_readline(1);
 		n = strtol(s, &err, 10);
-		if (err == s) err = NULL;
+		if (err == s) err = nullptr;
 		rfree(s);
-	} while (err == NULL);
+	} while (err == nullptr);
 	return n;
 }
 
@@ -1001,7 +1001,7 @@ void look_room(void) {
 	compute_seen();
 	writeln("");
 	if (islit()) {
-		if (room[loc].name != NULL && room[loc].name[0] != 0 &&
+		if (room[loc].name != nullptr && room[loc].name[0] != 0 &&
 		        (!PURE_ROOMTITLE)) {
 			agt_textcolor(-1);  /* Emphasized text on */
 			writestr(room[loc].name);
@@ -1045,7 +1045,7 @@ static void run_autoverb(void) {
 
 	if (room[loc].autoverb != 0) {
 		v0 = verb_code(room[loc].autoverb);
-		(void)scan_metacommand(0, v0, 0, 0, 0, NULL);
+		(void)scan_metacommand(0, v0, 0, 0, 0, nullptr);
 	}
 	free_all_parserec();
 	vb = savevb;
@@ -1083,7 +1083,7 @@ static void creat_initdesc(void) {
 void listpictname(const char *s) {
 	static rbool first_pict = 1; /* True until we output first picture */
 
-	if (s == NULL) {
+	if (s == nullptr) {
 		if (!first_pict) writeln(""); /* Trailing newline */
 		first_pict = 1;
 		return;
@@ -1114,7 +1114,7 @@ void list_viewable(void)
 {
 	int i;
 
-	listpictname(NULL);
+	listpictname(nullptr);
 
 	if (room[loc].pict != 0)
 		listpictname("scene");
@@ -1128,7 +1128,7 @@ void list_viewable(void)
 	for (i = 0; i < maxpix; i++)
 		if (room[loc].PIX_bits & (1L << i))
 			listpictname(dict[pix_name[i]]);
-	listpictname(NULL);
+	listpictname(nullptr);
 }
 
 
@@ -1337,7 +1337,7 @@ static int save_vnum;
 static word save_prep;
 static parse_rec save_actor;
 static parse_rec save_obj;
-parse_rec *save_lnoun = NULL;
+parse_rec *save_lnoun = nullptr;
 
 
 
@@ -1350,7 +1350,7 @@ void exec(parse_rec *actor_, int vnum,
 	if (vnum == verb_code(ext_code[wagain]) && lnoun[0].info == D_END
 	        && iobj_->info == D_END &&
 	        (actor_->info == D_END || actor_->obj == save_actor.obj))
-		if (save_lnoun == NULL) {
+		if (save_lnoun == nullptr) {
 			rfree(lnoun);
 			sysmsg(186,
 			       "You can't use AGAIN until you've entered at least one command.");
@@ -1362,7 +1362,7 @@ void exec(parse_rec *actor_, int vnum,
 			memcpy(iobj_, &save_obj, sizeof(parse_rec));
 			rfree(lnoun);
 			lnoun = save_lnoun;
-			save_lnoun = NULL;
+			save_lnoun = nullptr;
 		}
 	else
 		realverb = input[vp];
@@ -1371,12 +1371,12 @@ void exec(parse_rec *actor_, int vnum,
 	runverbs(actor_, vnum, lnoun, prep_, iobj_);
 
 	if (cmd_saveable) {
-		if (save_lnoun != NULL) rfree(save_lnoun);
+		if (save_lnoun != nullptr) rfree(save_lnoun);
 
 		memcpy(&save_actor, actor_, sizeof(parse_rec));
 		save_vnum = vnum;
 		save_lnoun = lnoun;
-		lnoun = NULL;
+		lnoun = nullptr;
 		save_prep = prep_;
 		memcpy(&save_obj, iobj_, sizeof(parse_rec));
 	} else

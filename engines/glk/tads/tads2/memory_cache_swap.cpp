@@ -34,7 +34,7 @@ void mcsini(mcscxdef *ctx, mcmcx1def *gmemctx, ulong maxsiz,
 			osfildef *fp, char *swapfilename, errcxdef *errctx) {
 	uchar *p;
 
-	ctx->mcscxtab = (mcsdsdef **)0; /* anticipate failure */
+	ctx->mcscxtab = (mcsdsdef **)nullptr; /* anticipate failure */
 
 	/* allocate space from the low-level heap for page table and one page */
 	p = mchalo(errctx, ((MCSPAGETAB * sizeof(mcsdsdef *)) + (MCSPAGECNT * sizeof(mcsdsdef))), "mcsini");
@@ -57,11 +57,11 @@ void mcsini(mcscxdef *ctx, mcmcx1def *gmemctx, ulong maxsiz,
 	 *   store the swap filename - make a copy so that the caller doesn't
 	 *   have to retain the original copy (in case it's on the stack)
 	 */
-	if (swapfilename != 0) {
+	if (swapfilename != nullptr) {
 		ctx->mcscxfname = (char *)mchalo(errctx, (strlen(swapfilename) + 1), "mcsini");
 		strcpy(ctx->mcscxfname, swapfilename);
 	} else {
-		ctx->mcscxfname = 0;
+		ctx->mcscxfname = nullptr;
 	}
 }
 

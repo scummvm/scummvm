@@ -249,7 +249,7 @@ static void edit_str() {
 	char buff[10];
 	char *tmpstr;
 
-	if (MAX_USTR == 0 || userstr == NULL) {
+	if (MAX_USTR == 0 || userstr == nullptr) {
 		writeln("This game doesn't contain any user strings");
 		return;
 	}

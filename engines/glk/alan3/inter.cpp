@@ -53,9 +53,9 @@ bool fail = FALSE;
 /* PRIVATE DATA */
 
 static int pc;
-static Stack stack = NULL;
+static Stack stack = nullptr;
 
-static void (*interpreterMock)(Aaddr adr) = NULL;
+static void (*interpreterMock)(Aaddr adr) = nullptr;
 
 
 /*======================================================================*/
@@ -438,7 +438,7 @@ void interpret(CONTEXT, Aaddr adr) {
 	Aword i;
 
 	/* Check for mock implementation */
-	if (interpreterMock != NULL) {
+	if (interpreterMock != nullptr) {
 		interpreterMock(adr);
 		return;
 	}

@@ -187,7 +187,7 @@ static const sx_test_data_t SHOULD_MATCH[] = {
 
 	{"???]", "abc]"}, {"[z-a]", "z"},
 	{"[a-z", "a"}, {"[a-", "a"}, {"[a", "a"}, {"[[", "["},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 static const sx_test_data_t SHOULD_NOT_MATCH[] = {
@@ -213,7 +213,7 @@ static const sx_test_data_t SHOULD_NOT_MATCH[] = {
 	{"*[a-z]*abc?xyz", "AabcQxyz"}, {"*[a-z]*abc?xyz", "aabcxyz"},
 
 	{"[z-a]", "a"}, {"[z-a]", "b"}, {"[", "a"}, {"[[", "a"},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 
