@@ -37,7 +37,7 @@ namespace Dragons {
 
 
 Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
-		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
+		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(nullptr), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	_mapTransitionEffectSceneID = 2;
 	_data_800633ee = 0;
 

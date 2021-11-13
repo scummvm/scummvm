@@ -80,7 +80,7 @@ typedef Common::Functor0Mem<void, SpecialOpcodes> SpecialOpcodeI;
 void SpecialOpcodes::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < DRAGONS_NUM_SPECIAL_OPCODES; ++i) {
-		_opcodes[i] = 0;
+		_opcodes[i] = nullptr;
 	}
 	// Register opcodes
 	OPCODE(1, spcCatapultMiniGame);

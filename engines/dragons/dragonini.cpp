@@ -26,7 +26,7 @@
 namespace Dragons {
 
 #define DRAGON_INI_STRUCT_SIZE 0x22
-DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _dragonINI(0) {
+DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _dragonINI(nullptr) {
 	reset();
 }
 

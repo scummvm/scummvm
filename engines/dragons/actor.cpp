@@ -135,7 +135,7 @@ Actor *ActorManager::getActorByDisplayOrder(uint16 position) {
 Actor::Actor(uint16 id) : _actorID(id) {
 	_actorResource = nullptr;
 	_resourceID = -1;
-	_seqCodeIp = 0;
+	_seqCodeIp = nullptr;
 	_priorityLayer = 3;
 	_x_pos = 160;
 	_y_pos = 110;

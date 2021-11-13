@@ -26,7 +26,7 @@
 
 static const PlainGameDescriptor dragonsGames[] = {
 		{ "dragons", "Blazing Dragons" },
-		{ 0, 0 }
+		{ nullptr, nullptr }
 };
 
 namespace Dragons {
@@ -35,7 +35,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
 					Common::EN_USA,
 					Common::kPlatformPSX,
@@ -47,7 +47,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
 					Common::EN_GRB,
 					Common::kPlatformPSX,
@@ -59,7 +59,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
 					Common::DE_DEU,
 					Common::kPlatformPSX,
@@ -71,7 +71,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
 					Common::FR_FRA,
 					Common::kPlatformPSX,
@@ -84,7 +84,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY2s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464,
 							   "dtspeech.xa", "7f7ace860e5dd3696b51eace20215274", 182138880),
 					Common::RU_RUS,
@@ -100,7 +100,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 	{
 			{
 					"dragons",
-					0,
+					nullptr,
 					AD_ENTRY1s("bigfile.dat", "92b938703611789e1a007d6dfac7ef7e", 51668736),
 					Common::EN_USA,
 					Common::kPlatformPSX,
@@ -117,7 +117,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 
 static const char * const directoryGlobs[] = {
 	"resource",
-	0
+	nullptr
 };
 
 class DragonsMetaEngineDetection : public AdvancedMetaEngineDetection {

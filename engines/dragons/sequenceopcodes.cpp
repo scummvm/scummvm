@@ -74,7 +74,7 @@ typedef Common::Functor2Mem<Actor*, OpCall&, void, SequenceOpcodes> SequenceOpco
 void SequenceOpcodes::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < DRAGONS_NUM_SEQ_OPCODES; ++i) {
-		_opcodes[i] = 0;
+		_opcodes[i] = nullptr;
 	}
 	// Register opcodes
 	OPCODE(1, opSetFramePointer);
