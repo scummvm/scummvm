@@ -60,7 +60,7 @@ bool Alan2::initialize() {
 		_advName = Common::String(_advName.c_str(), _advName.size() - 4);
 
 	// first, open a window for error output
-	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	glkMainWin = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (glkMainWin == nullptr)
 		::error("FATAL ERROR: Cannot open initial window");
 

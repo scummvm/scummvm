@@ -27,7 +27,7 @@ namespace Hugo {
 
 void Hugo::hugo_init_screen() {
 	// Open the main window...
-	mainwin = currentwin = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	mainwin = currentwin = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
 	assert(mainwin);
 
 	// ...and set it up for default output

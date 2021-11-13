@@ -470,7 +470,7 @@ void memo_next_command(sc_memo_setref_t memento, const sc_char **command,
 		*turns = history->turns;
 	} else {
 		/* Return NULL and zeroes if no more commands available. */
-		*command = NULL;
+		*command = nullptr;
 		*sequence = 0;
 		*timestamp = 0;
 		*turns = 0;
@@ -523,7 +523,7 @@ const sc_char *memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
 	 * efficient here, but this is a rarely called function so we'll do it the
 	 * simpler way.
 	 */
-	matched = NULL;
+	matched = nullptr;
 	for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++) {
 		sc_historyref_t history;
 
@@ -539,7 +539,7 @@ const sc_char *memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
 	 * history was not full, this will still return NULL as it should, since
 	 * this unused history's command found by the search above will be NULL.
 	 */
-	return matched ? matched->command : NULL;
+	return matched ? matched->command : nullptr;
 }
 
 

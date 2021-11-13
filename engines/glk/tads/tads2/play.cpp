@@ -96,7 +96,7 @@ startover:
 		 *   a game directly from the command line AND there's an
 		 *   initRestore function defined.
 		 */
-		if (restore_fname == 0 || voc->voccxinitrestore == MCMONINV)
+		if (restore_fname == nullptr || voc->voccxinitrestore == MCMONINV)
 		{
 			ERRBEGIN(ec)
 			{
@@ -134,7 +134,7 @@ startover:
 		restore_fname = filbuf;
 
 	/* check for a file to restore */
-	if (restore_fname != 0)
+	if (restore_fname != nullptr)
 	{
 		/*
 		 *   Check to see if the game file supports the initRestore
@@ -197,7 +197,7 @@ startover:
 		}
 
 		/* forget the saved game name, in case we restore */
-		restore_fname = 0;
+		restore_fname = nullptr;
 	}
 
 	/* clear out the redo command buffer */

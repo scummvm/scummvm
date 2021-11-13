@@ -234,7 +234,7 @@ sc_char *obj_state_name(sc_gameref_t game, sc_int objnum) {
 			count--;
 	}
 	if (count != 1)
-		return NULL;
+		return nullptr;
 
 	/* Find the end of the state string. */
 	for (last = first; last < length; last++) {

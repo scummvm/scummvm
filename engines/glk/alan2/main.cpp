@@ -174,12 +174,12 @@ void statusline() {
 	int pcol = col;
 	uint i;
 
-	if (NULL == glkStatusWin)
+	if (nullptr == glkStatusWin)
 		return;
 
 	g_vm->glk_set_window(glkStatusWin);
 	g_vm->glk_window_clear(glkStatusWin);
-	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, nullptr);
 
 	g_vm->glk_set_style(style_User1);
 	for (i = 0; i < glkWidth; i++)
@@ -265,7 +265,7 @@ void clear() {
 void *allocate(unsigned long len /* IN - Length to allocate */) {
 	void *p = (void *)malloc((size_t)len);
 
-	if (p == NULL)
+	if (p == nullptr)
 		syserr("Out of memory.");
 
 	return p;
@@ -433,7 +433,7 @@ void output(const char original[]) {
 	if (str[0] != '$' || str[1] != '$')
 		space();            /* Output space if needed (& not inhibited) */
 
-	while ((symptr = strchr(str, '$')) != (char *) NULL) {
+	while ((symptr = strchr(str, '$')) != (char *) nullptr) {
 		ch = *symptr;       /* Terminate before symbol */
 		*symptr = '\0';
 		if (strlen(str) > 0) {
@@ -730,16 +730,16 @@ static AltElem *findalt(
 	AltElem *alt;
 
 	if (vrbsadr == 0)
-		return (NULL);
+		return (nullptr);
 
 	for (vrb = (VrbElem *) addrTo(vrbsadr); !endOfTable(vrb); vrb++)
 		if ((int)vrb->code == cur.vrb) {
 			for (alt = (AltElem *) addrTo(vrb->alts); !endOfTable(alt); alt++)
 				if (alt->param == param || alt->param == 0)
 					return alt;
-			return NULL;
+			return nullptr;
 		}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -757,27 +757,27 @@ Boolean possible() {
 	fail = FALSE;
 	alt[0] = findalt(header->vrbs, 0);
 	/* Perform global checks */
-	if (alt[0] != 0 && alt[0]->checks != 0) {
+	if (alt[0] != nullptr && alt[0]->checks != 0) {
 		if (!trycheck(alt[0]->checks, FALSE)) return FALSE;
 		if (fail) return FALSE;
 	}
 
 	/* Now CHECKs in this location */
 	alt[1] = findalt(locs[cur.loc - LOCMIN].vrbs, 0);
-	if (alt[1] != 0 && alt[1]->checks != 0)
+	if (alt[1] != nullptr && alt[1]->checks != 0)
 		if (!trycheck(alt[1]->checks, FALSE))
 			return FALSE;
 
 	for (i = 0; params[i].code != EOD; i++) {
 		alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
 		/* CHECKs in a possible parameter */
-		if (alt[i + 2] != 0 && alt[i + 2]->checks != 0)
+		if (alt[i + 2] != nullptr && alt[i + 2]->checks != 0)
 			if (!trycheck(alt[i + 2]->checks, FALSE))
 				return FALSE;
 	}
 
 	for (i = 0; i < 2 || params[i - 2].code != EOD; i++)
-		if (alt[i] != 0 && alt[i]->action != 0)
+		if (alt[i] != nullptr && alt[i]->action != 0)
 			break;
 	if (i >= 2 && params[i - 2].code == EOD)
 		/* Didn't find any code for this verb/object combination */
@@ -803,7 +803,7 @@ static void do_it(CONTEXT) {
 	fail = FALSE;
 	alt[0] = findalt(header->vrbs, 0);
 	/* Perform global checks */
-	if (alt[0] != 0 && alt[0]->checks != 0) {
+	if (alt[0] != nullptr && alt[0]->checks != 0) {
 		if (trcflg)
 			printf("\n<VERB %d, CHECK, GLOBAL:>\n", cur.vrb);
 		if (!trycheck(alt[0]->checks, TRUE)) return;
@@ -812,7 +812,7 @@ static void do_it(CONTEXT) {
 
 	/* Now CHECKs in this location */
 	alt[1] = findalt(locs[cur.loc - LOCMIN].vrbs, 0);
-	if (alt[1] != 0 && alt[1]->checks != 0) {
+	if (alt[1] != nullptr && alt[1]->checks != 0) {
 		if (trcflg)
 			printf("\n<VERB %d, CHECK, in LOCATION:>\n", cur.vrb);
 		if (!trycheck(alt[1]->checks, TRUE)) return;
@@ -821,7 +821,7 @@ static void do_it(CONTEXT) {
 
 	for (i = 0; params[i].code != EOD; i++) {
 		if (isLit(params[i].code))
-			alt[i + 2] = 0;
+			alt[i + 2] = nullptr;
 		else {
 			if (isObj(params[i].code))
 				alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
@@ -830,7 +830,7 @@ static void do_it(CONTEXT) {
 			else
 				syserr("Illegal parameter type.");
 			/* CHECKs in the parameters */
-			if (alt[i + 2] != 0 && alt[i + 2]->checks != 0) {
+			if (alt[i + 2] != nullptr && alt[i + 2]->checks != 0) {
 				if (trcflg)
 					printf("\n<VERB %d, CHECK, in Parameter #%d:>\n", cur.vrb, i);
 				if (!trycheck(alt[i + 2]->checks, TRUE)) return;
@@ -841,7 +841,7 @@ static void do_it(CONTEXT) {
 
 	/* Check for anything to execute... */
 	for (i = 0; i < 2 || params[i - 2].code != EOD; i++)
-		if (alt[i] != 0 && alt[i]->action != 0)
+		if (alt[i] != nullptr && alt[i]->action != 0)
 			break;
 	if (i >= 2 && params[i - 2].code == EOD) {
 		// Didn't find any code for this verb/object combination
@@ -857,7 +857,7 @@ static void do_it(CONTEXT) {
 		done[i] = FALSE;
 	i--;
 	while (i >= 0) {
-		if (alt[i] != 0)
+		if (alt[i] != nullptr)
 			if (alt[i]->qual == (Aword)Q_BEFORE || alt[i]->qual == (Aword)Q_ONLY) {
 				if (alt[i]->action != 0) {
 					if (trcflg) {
@@ -883,7 +883,7 @@ static void do_it(CONTEXT) {
 
 	/* Then execute any not declared as AFTER, i.e. the default */
 	for (i = 0; i < 2 || params[i - 2].code != EOD; i++) {
-		if (alt[i] != 0)
+		if (alt[i] != nullptr)
 			if (alt[i]->qual != (Aword)Q_AFTER) {
 				if (!done[i] && alt[i]->action != 0) {
 					if (trcflg) {
@@ -905,7 +905,7 @@ static void do_it(CONTEXT) {
 	/* Finally, the ones declared as after */
 	i--;
 	while (i >= 0) {
-		if (alt[i] != 0)
+		if (alt[i] != nullptr)
 			if (!done[i] && alt[i]->action != 0) {
 				if (trcflg) {
 					if (i == 0)
@@ -1081,7 +1081,7 @@ static void load() {
 	/* Allocate and load memory */
 
 	/* No memory allocated yet? */
-	if (memory == NULL) {
+	if (memory == nullptr) {
 #ifdef V25COMPATIBLE
 		if (tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5)
 			/* We need some more memory to expand 2.5 format*/

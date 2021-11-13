@@ -693,7 +693,7 @@ enum {
 };
 
 /* #O#A(#O#)-style expression, for tokenizing. */
-static const sc_char *restr_expression = NULL;
+static const sc_char *restr_expression = nullptr;
 static sc_int restr_index = 0;
 
 /*
@@ -709,7 +709,7 @@ static void restr_tokenize_start(const sc_char *expression) {
 }
 
 static void restr_tokenize_end(void) {
-	restr_expression = NULL;
+	restr_expression = nullptr;
 	restr_index = 0;
 }
 
@@ -750,7 +750,7 @@ static sc_int restr_eval_stack = 0;
 static sc_int restr_eval_restriction = 0;
 
 /* The current game used to evaluate restrictions, and the task in question. */
-static sc_gameref_t restr_eval_game = NULL;
+static sc_gameref_t restr_eval_game = nullptr;
 static sc_int restr_eval_task = 0;
 
 /* The id of the lowest-indexed failing restriction. */
@@ -953,7 +953,7 @@ static const sc_char *restr_get_fail_message(sc_gameref_t game, sc_int task, sc_
 	message = prop_get_string(bundle, "S<-sisis", vt_key);
 
 	/* Return it, or NULL if empty. */
-	return !sc_strempty(message) ? message : NULL;
+	return !sc_strempty(message) ? message : nullptr;
 }
 
 
@@ -999,7 +999,7 @@ sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pa
 			sc_trace("Restr: task %ld has no restrictions\n", task);
 
 		*pass = TRUE;
-		*fail_message = NULL;
+		*fail_message = nullptr;
 		return TRUE;
 	}
 
@@ -1045,7 +1045,7 @@ sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pa
 	 */
 	*pass = result;
 	if (result)
-		*fail_message = NULL;
+		*fail_message = nullptr;
 	else
 		*fail_message = restr_get_fail_message(game, task, lowest_fail);
 	return TRUE;

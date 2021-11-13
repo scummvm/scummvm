@@ -48,7 +48,7 @@ char *os_fill_buffer(char *buf, size_t len)
 
 #else
 
-static uint32 *input = 0;
+static uint32 *input = nullptr;
 static uint max = 0;
 
 void os_put_buffer(const char *buf, size_t len) {

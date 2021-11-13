@@ -517,14 +517,14 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 	game->filter = filter;
 
 	/* Set memento to NULL for now; it's added later. */
-	game->memento = NULL;
+	game->memento = nullptr;
 
 	/* Initialize for no debugger. */
-	game->debugger = NULL;
+	game->debugger = nullptr;
 
 	/* Initialize the undo buffers to NULL for now. */
-	game->temporary = NULL;
-	game->undo = NULL;
+	game->temporary = nullptr;
+	game->undo = nullptr;
 	game->undo_available = FALSE;
 
 	/* Create rooms state array. */
@@ -740,11 +740,11 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 	game->score = 0;
 	game->bold_room_names = TRUE;
 	game->verbose = FALSE;
-	game->current_room_name = NULL;
-	game->status_line = NULL;
-	game->title = NULL;
-	game->author = NULL;
-	game->hint_text = NULL;
+	game->current_room_name = nullptr;
+	game->status_line = nullptr;
+	game->title = nullptr;
+	game->author = nullptr;
+	game->hint_text = nullptr;
 
 	/* Resource controls. */
 	res_clear_resource(&game->requested_sound);
@@ -816,7 +816,7 @@ static void gs_string_copy(sc_char **to_string, const sc_char *from_string) {
 		*to_string = (sc_char *)sc_malloc(strlen(from_string) + 1);
 		strcpy(*to_string, from_string);
 	} else
-		*to_string = NULL;
+		*to_string = nullptr;
 }
 
 

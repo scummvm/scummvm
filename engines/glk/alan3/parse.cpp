@@ -68,7 +68,7 @@ typedef void (*ParameterParser)(CONTEXT, Parameter parameters[]);
 
 
 /* PRIVATE DATA */
-static Pronoun *pronouns = NULL;
+static Pronoun *pronouns = nullptr;
 
 
 /* Syntax Parameters */
@@ -94,7 +94,7 @@ static void addParameterForWord(Parameter *parameters, int wordIndex) {
 
 /*----------------------------------------------------------------------*/
 static Pronoun *allocatePronounArray(Pronoun *currentList) {
-	if (currentList == NULL)
+	if (currentList == nullptr)
 		currentList = (Pronoun *)allocate(sizeof(Pronoun) * (MAXPARAMS + 1));
 	clearPronounList(currentList);
 	return currentList;
@@ -344,7 +344,7 @@ static bool lastPossibleNoun(int wordIndex) {
 
 /*----------------------------------------------------------------------*/
 static void updateWithReferences(Parameter result[], int wordIndex, Aint * (*referenceFinder)(int wordIndex)) {
-	static Parameter *references = NULL; /* Instances referenced by a word */
+	static Parameter *references = nullptr; /* Instances referenced by a word */
 	references = ensureParameterArrayAllocated(references);
 
 	copyReferencesToParameterArray(referenceFinder(wordIndex), references);
@@ -635,7 +635,7 @@ static char *parameterNumberAndName(int parameterNumber) {
 	/* HERE SHOULD BE current.syntax */
 	char *parameterName = parameterNameInSyntax(current.syntax, parameterNumber);
 
-	if (parameterName != NULL)
+	if (parameterName != nullptr)
 		sprintf(buffer, "%s(#%d)", parameterName, parameterNumber);
 	else
 		sprintf(buffer, "#%d", parameterNumber);
@@ -754,7 +754,7 @@ static ElementEntry *elementForParameter(ElementEntry *elms) {
 	while (!isEndOfArray(elms) && elms->code != 0)
 		elms++;
 	if (isEndOfArray(elms))
-		return NULL;
+		return nullptr;
 	return elms;
 }
 
@@ -763,7 +763,7 @@ static ElementEntry *elementForEndOfSyntax(ElementEntry *elms) {
 	while (!isEndOfArray(elms) && (Aword)elms->code != EOS)
 		elms++;
 	if (isEndOfArray(elms)) /* No match for EOS! */
-		return NULL;
+		return nullptr;
 	return elms;
 }
 
@@ -772,7 +772,7 @@ static ElementEntry *elementForWord(ElementEntry *elms, Aint wordCode) {
 	while (!isEndOfArray(elms) && elms->code != wordCode)
 		elms++;
 	if (isEndOfArray(elms))
-		return NULL;
+		return nullptr;
 	return elms;
 }
 
@@ -796,7 +796,7 @@ static ElementEntry *parseInputAccordingToSyntax(CONTEXT, SyntaxEntry *syntax, P
 	ElementEntry *nextElement = currentElement;
 
 	int parameterCount = 0;
-	while (nextElement != NULL) {
+	while (nextElement != nullptr) {
 		/* Traverse the possible branches of currentElement to find a match, let the actual input control what we look for */
 		parameterPositions[parameterCount].endOfList = TRUE;
 
@@ -809,7 +809,7 @@ static ElementEntry *parseInputAccordingToSyntax(CONTEXT, SyntaxEntry *syntax, P
 		if (isInstanceReferenceWord(currentWordIndex)) {
 			/* If so, save word info for this parameterPosition */
 			nextElement = elementForParameter(currentElement);
-			if (nextElement != NULL) {
+			if (nextElement != nullptr) {
 				// Create parameter structure for the parameter position based on player words
 				// but without resolving them
 				ParameterPosition *parameterPosition = &parameterPositions[parameterCount];
@@ -828,7 +828,7 @@ static ElementEntry *parseInputAccordingToSyntax(CONTEXT, SyntaxEntry *syntax, P
 		if (isPrepositionWord(currentWordIndex) || isVerbWord(currentWordIndex)) {
 			/* A preposition? Or rather, an intermediate word? */
 			nextElement = elementForWord(currentElement, dictionary[playerWords[currentWordIndex].code].code);
-			if (nextElement != NULL) {
+			if (nextElement != nullptr) {
 				currentWordIndex++; /* Word matched, go to next */
 				currentElement = (ElementEntry *) pointerTo(nextElement->next);
 				continue;
@@ -840,9 +840,9 @@ static ElementEntry *parseInputAccordingToSyntax(CONTEXT, SyntaxEntry *syntax, P
 			R0CALL1(errorButAfterAll, currentWordIndex)
 
 		/* If we get here we couldn't match anything... */
-		nextElement = NULL;
+		nextElement = nullptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -871,7 +871,7 @@ static bool anyAll(ParameterPosition parameterPositions[]) {
 /*----------------------------------------------------------------------*/
 static void checkRestrictedParameters(CONTEXT, ParameterPosition parameterPositions[], ElementEntry elms[]) {
 	RestrictionEntry *restriction;
-	static Parameter *localParameters = NULL;
+	static Parameter *localParameters = nullptr;
 	int i;
 
 	localParameters = ensureParameterArrayAllocated(localParameters);
@@ -911,7 +911,7 @@ static void checkRestrictedParameters(CONTEXT, ParameterPosition parameterPositi
 		parameterPositions[restriction->parameterNumber - 1].checked = TRUE;
 	}
 	freeParameterArray(localParameters);
-	localParameters = NULL;
+	localParameters = nullptr;
 }
 
 
@@ -959,7 +959,7 @@ static void restrictParametersAccordingToSyntax(CONTEXT, ParameterPosition param
 
 /*----------------------------------------------------------------------*/
 static void matchPronoun(CONTEXT, Parameter *parameter) {
-	static Parameter *pronounInstances = NULL;
+	static Parameter *pronounInstances = nullptr;
 	pronounInstances = ensureParameterArrayAllocated(pronounInstances);
 
 	int pronounCandidateCount = getPronounInstances(playerWords[parameter->firstWord].code, pronounInstances);
@@ -1022,7 +1022,7 @@ static void findCandidates(CONTEXT, Parameter parameters[], void (*instanceMatch
 
 /*----------------------------------------------------------------------*/
 static void handleFailedParse(CONTEXT, ElementEntry *elms) {
-	if (elms == NULL)
+	if (elms == nullptr)
 		error(context, M_WHAT);
 	else if (elms->next == 0) { /* No verb code, verb not declared! */
 		/* TODO Does this ever happen? */
@@ -1145,7 +1145,7 @@ static Parameter *disambiguate00N(CONTEXT, Parameter allCandidates[], Parameter 
 		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
 		R0CALL1(errorNoSuch, allCandidates[0]);
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguate01N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
@@ -1153,7 +1153,7 @@ static Parameter *disambiguate01N(CONTEXT, Parameter allCandidates[], Parameter 
 		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
 		R0CALL1(errorNoSuch, allCandidates[0])
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguate0MN(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
@@ -1161,7 +1161,7 @@ static Parameter *disambiguate0MN(CONTEXT, Parameter allCandidates[], Parameter 
 		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
 		R0CALL1(errorNoSuch, allCandidates[0])
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguate10N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
@@ -1177,29 +1177,29 @@ static Parameter *disambiguate1MN(CONTEXT, Parameter allCandidates[], Parameter 
 }
 static Parameter *disambiguateM0N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguateM1N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguateMMN(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 
 static Parameter *disambiguate00Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	errorNoSuch(context, allCandidates[0]);
-	return NULL;
+	return nullptr;
 }
 static Parameter *disambiguate01Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return allCandidates;
 }
 static Parameter *disambiguate0MY(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, allCandidates)
-	return NULL;
+	return nullptr;
 }
 static Parameter *disambiguate10Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
@@ -1212,15 +1212,15 @@ static Parameter *disambiguate1MY(CONTEXT, Parameter allCandidates[], Parameter 
 }
 static Parameter *disambiguateM0Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 static Parameter *disambiguateM1Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 static Parameter *disambiguateMMY(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	R0CALL1(errorWhichOne, presentCandidates)
-	return NULL;
+	return nullptr;
 }
 
 static DisambiguationHandlerTable disambiguationHandlerTable = {
@@ -1273,7 +1273,7 @@ static DisambiguationHandlerTable disambiguationHandlerTable = {
 
 /*----------------------------------------------------------------------*/
 static void disambiguateCandidates(CONTEXT, Parameter *allCandidates, bool omnipotent, bool (*reachable)(int), DisambiguationHandlerTable handler) {
-	static Parameter *presentCandidates = NULL;
+	static Parameter *presentCandidates = nullptr;
 	int present;
 	int distant;
 	Parameter *result;
@@ -1349,8 +1349,8 @@ static void disambiguate(CONTEXT, ParameterPosition parameterPositions[], Elemen
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 static void tryParam(CONTEXT, Parameter parameters[], Parameter multipleParameters[]) {
 	ElementEntry *element;      /* Pointer to element list */
-	static ParameterPosition *parameterPositions = NULL;
-	if (parameterPositions != NULL)
+	static ParameterPosition *parameterPositions = nullptr;
+	if (parameterPositions != nullptr)
 		deallocateParameterPositions(parameterPositions);
 
 	// TODO newParameterPositionArray()!!!! Or even reallocatePP.. or cleanPP..
@@ -1366,7 +1366,7 @@ static void tryParam(CONTEXT, Parameter parameters[], Parameter multipleParamete
 	convertMultipleCandidatesToMultipleParameters(parameterPositions, multipleParameters);
 
 	deallocateParameterPositions(parameterPositions);
-	parameterPositions = NULL;
+	parameterPositions = nullptr;
 }
 
 
@@ -1471,8 +1471,8 @@ static void parseInstanceCommand(CONTEXT, Parameter parameters[], Parameter mult
 /*======================================================================*/
 void parse(CONTEXT) {
 	/* longjmp's ahead so these need to survive to not leak memory */
-	static Parameter *parameters = NULL;
-	static Parameter *multipleParameters = NULL;
+	static Parameter *parameters = nullptr;
+	static Parameter *multipleParameters = nullptr;
 	parameters = ensureParameterArrayAllocated(parameters);
 	multipleParameters = ensureParameterArrayAllocated(multipleParameters);
 
@@ -1512,9 +1512,9 @@ void parse(CONTEXT) {
 		clearParameterArray(previousMultipleParameters);
 
 	freeParameterArray(parameters);
-	parameters = NULL;
+	parameters = nullptr;
 	freeParameterArray(multipleParameters);
-	multipleParameters = NULL;
+	multipleParameters = nullptr;
 }
 
 } // End of namespace Alan3

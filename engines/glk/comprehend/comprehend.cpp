@@ -83,7 +83,7 @@ void Comprehend::runGame() {
 }
 
 void Comprehend::initialize() {
-	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	_bottomWindow = (TextBufferWindow *)glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
 	glk_set_window(_bottomWindow);
 
 	showGraphics();

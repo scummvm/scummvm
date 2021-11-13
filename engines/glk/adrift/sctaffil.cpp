@@ -134,7 +134,7 @@ static sc_tafref_t taf_create_empty(void) {
 	memset(taf->header, 0, sizeof(taf->header));
 	taf->version = TAF_VERSION_NONE;
 	taf->total_in_bytes = 0;
-	taf->slabs = NULL;
+	taf->slabs = nullptr;
 	taf->slab_count = 0;
 	taf->slabs_allocated = 0;
 	taf->is_unterminated = FALSE;
@@ -476,7 +476,7 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 		if (in_bytes != VERSION_HEADER_SIZE) {
 			sc_error("taf_create: not enough data for standard TAF header\n");
 			taf_destroy(taf);
-			return NULL;
+			return nullptr;
 		}
 
 		/* Handle different TAF versions */
@@ -495,14 +495,14 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 				sc_error("taf_create:"
 				         " not enough data for extended TAF header\n");
 				taf_destroy(taf);
-				return NULL;
+				return nullptr;
 			}
 
 			taf->version = TAF_VERSION_400;
 
 		} else {
 			taf_destroy(taf);
-			return NULL;
+			return nullptr;
 		}
 	} else {
 		/* Saved games are always considered to be for ScummVM, version 5.0. */
@@ -537,7 +537,7 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 	}
 	if (!status) {
 		taf_destroy(taf);
-		return NULL;
+		return nullptr;
 	}
 
 	/* Return successfully. */
@@ -606,7 +606,7 @@ const sc_char *taf_next_line(sc_tafref_t taf) {
 	}
 
 	/* No more lines, so return NULL. */
-	return NULL;
+	return nullptr;
 }
 
 

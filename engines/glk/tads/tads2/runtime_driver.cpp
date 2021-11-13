@@ -139,7 +139,7 @@ struct runsdef *dbgfrfind(dbgcxdef *ctx, objnum frobj, uint frofs)
 	VARUSED(frobj);
 	VARUSED(frofs);
 	errsig(ctx->dbgcxerr, ERR_INACTFR);
-	return 0;
+	return nullptr;
 }
 
 void dbgss(struct dbgcxdef *ctx, uint ofs, int instr, int err,
@@ -214,7 +214,7 @@ static void trdusage(errcxdef *ec)
 	 *   hard-coded text in the message identifying the app
 	 */
 	first = ERR_TRUS1;
-	if (ec->errcxappctx != 0 && ec->errcxappctx->usage_app_name != 0)
+	if (ec->errcxappctx != nullptr && ec->errcxappctx->usage_app_name != nullptr)
 	{
 		char buf[128];
 		char buf2[128];
@@ -256,16 +256,16 @@ static void trdusage_s(errcxdef *ec)
 static void trdmain1(errcxdef *ec, int argc, char *argv[],
 					 appctxdef *appctx, const char *save_ext)
 {
-	osfildef  *swapfp = (osfildef *)0;
+	osfildef  *swapfp = (osfildef *)nullptr;
 	runcxdef   runctx;
 	bifcxdef   bifctx;
 	voccxdef   vocctx;
 	void     (*bif[100])(struct bifcxdef *, int);
-	mcmcxdef  *mctx = 0;
-	mcmcx1def *globalctx = 0;
+	mcmcxdef  *mctx = nullptr;
+	mcmcx1def *globalctx = nullptr;
 	dbgcxdef   dbg;
 	supcxdef   supctx;
-	char      *swapname = 0;
+	char      *swapname = nullptr;
 	char       swapbuf[OSFNMAX];
 	char     **argp;
 	char      *arg;
@@ -282,7 +282,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	char       inbuf[OSFNMAX];
 	ulong      cachelimit = 0xffffffff;
 	ushort     undosiz = TRD_UNDOSIZ;      /* default undo context size 16k */
-	objucxdef *undoptr = 0;
+	objucxdef *undoptr = nullptr;
 	uint       flags;         /* flags used to write the file we're reading */
 	objnum     preinit;         /* preinit object, if we need to execute it */
 	uint       heapsiz = TRD_HEAPSIZ;
@@ -295,8 +295,8 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	ulong      totsize;
 	extern voccxdef *main_voc_ctx;
 	int        safety_read, safety_write;          /* file I/O safety level */
-	char      *restore_file = 0;                    /* .SAV file to restore */
-	char      *charmap = 0;                           /* character map file */
+	char      *restore_file = nullptr;                    /* .SAV file to restore */
+	char      *charmap = nullptr;                           /* character map file */
 	int        charmap_none;       /* explicitly do not use a character set */
 	int        doublespace = TRUE;        /* formatter double-space setting */
 
@@ -396,7 +396,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 						trdusage_s(ec);
 
 					/* tell the host system about the setting */
-					if (appctx != 0 && appctx->set_io_safety_level != 0)
+					if (appctx != nullptr && appctx->set_io_safety_level != nullptr)
 						(*appctx->set_io_safety_level)
 							(appctx->io_safety_level_ctx,
 							 safety_read, safety_write);
@@ -455,7 +455,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	}
 
 	/* presume we won't take the .gam from the application executable */
-	exefile = 0;
+	exefile = nullptr;
 
 	/* get input name argument, and make sure it's the last argument */
 	if (i == argc)
@@ -476,14 +476,14 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 		 */
 
 		/* presume we won't find a game attached to the executable file */
-		infile = 0;
+		infile = nullptr;
 		use_exe = FALSE;
 
 		/*
 		 *   see if we have a saved game to restore, and it specifies the
 		 *   GAM file that saved it
 		 */
-		if (restore_file != 0)
+		if (restore_file != nullptr)
 		{
 			/* try getting the game name from the restore file */
 			if (fiorso_getgame(restore_file, inbuf, sizeof(inbuf)))
@@ -497,12 +497,12 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 		 *   it that didn't work, try to read from os-dependent part of
 		 *   program being executed
 		 */
-		if (infile == 0)
+		if (infile == nullptr)
 		{
 			/* try opening the executable file */
 			exefile = (argv && argv[0] ? argv[0] : "TRX");
 			fp = os_exeseek(exefile, "TGAM");
-			if (fp != 0)
+			if (fp != nullptr)
 			{
 				/* see if there's a game file attached to the executable */
 				curpos = osfpos(fp);
@@ -520,13 +520,13 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 		 *   if we didn't find a game in the executable, try the host
 		 *   system callback
 		 */
-		if (infile == 0 && !use_exe)
+		if (infile == nullptr && !use_exe)
 		{
 			/*
 			 *   ask the host system callback what to do - if we don't
 			 *   have a host system callback, or the callback
 			 */
-			if (appctx != 0 && appctx->get_game_name != 0)
+			if (appctx != nullptr && appctx->get_game_name != nullptr)
 			{
 				/* call the host system callback */
 				if ((*appctx->get_game_name)(appctx->get_game_name_ctx,
@@ -583,8 +583,8 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	if (swapena && swapsize)
 	{
 		swapfp = os_create_tempfile(swapname, swapbuf);
-		if (swapname == 0) swapname = swapbuf;
-		if (swapfp == 0) errsig(ec, ERR_OPSWAP);
+		if (swapname == nullptr) swapname = swapbuf;
+		if (swapfp == nullptr) errsig(ec, ERR_OPSWAP);
 	}
 
 	/* load the character map */
@@ -598,14 +598,14 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	/* initialize cache manager context */
 	globalctx = mcmini(cachelimit, 128, swapsize, swapfp, swapname, ec);
 	mctx = mcmcini(globalctx, 128, fioldobj, &fiolctx,
-				   objrevert, (void *)0);
+				   objrevert, (void *)nullptr);
 	mctx->mcmcxrvc = mctx;
 
 	/* set up an undo context */
 	if (undosiz)
 		undoptr = objuini(mctx, undosiz, vocdundo, vocdusz, &vocctx);
 	else
-		undoptr = (objucxdef *)0;
+		undoptr = (objucxdef *)nullptr;
 
 	/* set up vocabulary context */
 	vocini(&vocctx, ec, mctx, &runctx, undoptr, 100, 100, 200);
@@ -625,9 +625,9 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	myheap = mchalo(ec, heapsiz, "runtime heap");
 
 	/* get the absolute path for the input file */
-	if (infile != 0)
+	if (infile != nullptr)
 		os_get_abs_filename(infile_abs, sizeof(infile_abs), infile);
-	else if (exefile != 0)
+	else if (exefile != nullptr)
 		os_get_abs_filename(infile_abs, sizeof(infile_abs), exefile);
 	else
 		infile_abs[0] = '\0';
@@ -646,38 +646,38 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	runctx.runcxundo = undoptr;
 	runctx.runcxbcx = &bifctx;
 	runctx.runcxbi = bif;
-	runctx.runcxtio = (tiocxdef *)0;
+	runctx.runcxtio = (tiocxdef *)nullptr;
 	runctx.runcxdbg = &dbg;
 	runctx.runcxvoc = &vocctx;
 	runctx.runcxdmd = supcont;
 	runctx.runcxdmc = &supctx;
-	runctx.runcxext = 0;
+	runctx.runcxext = nullptr;
 	runctx.runcxgamename = infile;
 	runctx.runcxgamepath = infile_path;
 
 	/* set up setup context */
 	supctx.supcxerr = ec;
 	supctx.supcxmem = mctx;
-	supctx.supcxtab = (tokthdef *)0;
-	supctx.supcxbuf = (uchar *)0;
+	supctx.supcxtab = (tokthdef *)nullptr;
+	supctx.supcxbuf = (uchar *)nullptr;
 	supctx.supcxlen = 0;
 	supctx.supcxvoc = &vocctx;
 	supctx.supcxrun = &runctx;
 
 	/* set up debug context */
-	dbg.dbgcxtio = (tiocxdef *)0;
+	dbg.dbgcxtio = (tiocxdef *)nullptr;
 	dbg.dbgcxmem = mctx;
 	dbg.dbgcxerr = ec;
-	dbg.dbgcxtab = (tokthdef *)0;
+	dbg.dbgcxtab = (tokthdef *)nullptr;
 	dbg.dbgcxfcn = 0;
 	dbg.dbgcxdep = 0;
 	dbg.dbgcxflg = 0;
-	dbg.dbgcxlin = (lindef *)0;                      /* no line sources yet */
+	dbg.dbgcxlin = (lindef *)nullptr;                      /* no line sources yet */
 
 	/* set up built-in function context */
 	bifctx.bifcxerr = ec;
 	bifctx.bifcxrun = &runctx;
-	bifctx.bifcxtio = (tiocxdef *)0;
+	bifctx.bifcxtio = (tiocxdef *)nullptr;
 	bifctx.bifcxrnd = 0;
 	bifctx.bifcxrndset = FALSE;
 	bifctx.bifcxappctx = appctx;
@@ -692,15 +692,15 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	supbif(&supctx, bif, (int)(sizeof(bif)/sizeof(bif[0])));
 
 	/* set up status line hack */
-	runistat(&vocctx, &runctx, (tiocxdef *)0);
+	runistat(&vocctx, &runctx, (tiocxdef *)nullptr);
 
 	/* turn on the "busy" cursor before loading */
 	os_csr_busy(TRUE);
 
 	/* read the game from the binary file */
-	fiord(mctx, &vocctx, (struct tokcxdef *)0,
+	fiord(mctx, &vocctx, (struct tokcxdef *)nullptr,
 		  infile, exefile, &fiolctx, &preinit, &flags,
-		  (struct tokpdef *)0, (uchar **)0, (uint *)0, (uint *)0,
+		  (struct tokpdef *)nullptr, (uchar **)nullptr, (uint *)nullptr, (uint *)nullptr,
 		  (preload ? 2 : 0), appctx, argv[0]);
 	loadopen = TRUE;
 
@@ -708,7 +708,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	os_csr_busy(FALSE);
 
 	/* play the game */
-	plygo(&runctx, &vocctx, (tiocxdef *)0, preinit, restore_file);
+	plygo(&runctx, &vocctx, (tiocxdef *)nullptr, preinit, restore_file);
 
 	/* close load file */
 	fiorcls(&fiolctx);
@@ -735,30 +735,30 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 			fiorcls(&fiolctx);
 
 		/* vocctx is going out of scope - forget the global reference to it */
-		main_voc_ctx = 0;
+		main_voc_ctx = nullptr;
 
 		/* delete the voc context */
 		vocterm(&vocctx);
 
 		/* delete the undo context */
-		if (undoptr != 0)
+		if (undoptr != nullptr)
 			objuterm(undoptr);
 
 		/* release the object cache structures */
-		if (mctx != 0)
+		if (mctx != nullptr)
 			mcmcterm(mctx);
-		if (globalctx != 0)
+		if (globalctx != nullptr)
 			mcmterm(globalctx);
 	ERRENDCLN(ec)
 
 	/* vocctx is going out of scope - forget the global reference to it */
-	main_voc_ctx = 0;
+	main_voc_ctx = nullptr;
 
 	/* delete the voc contxt */
 	vocterm(&vocctx);
 
 	/* delete the undo context */
-	if (undoptr != 0)
+	if (undoptr != nullptr)
 		objuterm(undoptr);
 
 	/* release the object cache structures */
@@ -818,10 +818,10 @@ void trd_close_swapfile(runcxdef *runctx)
 	mcscxdef        *mcsctx;
 
 	/* if no run context was supplied, find it from the main voc context */
-	if (runctx == 0)
+	if (runctx == nullptr)
 	{
 		/* if there is no main voc context, we're out of luck */
-		if (main_voc_ctx == 0)
+		if (main_voc_ctx == nullptr)
 			return;
 
 		/* get the run context */
@@ -834,24 +834,24 @@ void trd_close_swapfile(runcxdef *runctx)
 	mcsctx = &globalctx->mcmcxswc;
 
 	/* if we have a swap file open, close it */
-	if (mcsctx->mcscxfp != 0)
+	if (mcsctx->mcscxfp != nullptr)
 	{
 		/* close the file */
 		osfcls(mcsctx->mcscxfp);
 
 		/* forget about the file, so we don't try to close it again */
-		mcsctx->mcscxfp = (osfildef *)0;
+		mcsctx->mcscxfp = (osfildef *)nullptr;
 	}
 
 	/* if we have a filename, delete the file */
-	if (mcsctx->mcscxfname != 0)
+	if (mcsctx->mcscxfname != nullptr)
 	{
 		/* delete the file */
 		osfdel_temp(mcsctx->mcscxfname);
 
 		/* forget the filename, so we don't try to delete the file again */
 		mchfre(mcsctx->mcscxfname);
-		mcsctx->mcscxfname = 0;
+		mcsctx->mcscxfname = nullptr;
 	}
 }
 
@@ -864,7 +864,7 @@ int trdmain(int argc, char *argv[], appctxdef *appctx, const char *save_ext)
 
 	errctx.errcxlog = trdlogerr;
 	errctx.errcxlgc = &errctx;
-	errctx.errcxfp  = (osfildef *)0;
+	errctx.errcxfp  = (osfildef *)nullptr;
 	errctx.errcxofs = 0;
 	errctx.errcxappctx = appctx;
 	fp = oserrop(argv[0]);
@@ -891,7 +891,7 @@ int trdmain(int argc, char *argv[], appctxdef *appctx, const char *save_ext)
 			errclog(&errctx);
 
 		/* close the error file */
-		if (errctx.errcxfp != 0)
+		if (errctx.errcxfp != nullptr)
 			osfcls(errctx.errcxfp);
 
 		/* pause before exiting if the OS desires it */
@@ -902,7 +902,7 @@ int trdmain(int argc, char *argv[], appctxdef *appctx, const char *save_ext)
 	ERREND(&errctx)
 
 	/* close the error file if we opened it */
-	if (errctx.errcxfp != 0)
+	if (errctx.errcxfp != nullptr)
 		osfcls(errctx.errcxfp);
 
 	/* successful completion */

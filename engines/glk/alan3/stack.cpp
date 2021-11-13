@@ -44,7 +44,7 @@ Stack createStack(int size) {
 
 /*======================================================================*/
 void deleteStack(Stack theStack) {
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("deleting a NULL stack");
 
 	deallocate(theStack->stack);
@@ -62,7 +62,7 @@ int stackDepth(Stack theStack) {
 void dumpStack(Stack theStack) {
 	int i;
 
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	printf("[");
@@ -76,7 +76,7 @@ void dumpStack(Stack theStack) {
 
 /*======================================================================*/
 void push(Stack theStack, Aptr i) {
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	if (theStack->stackp == theStack->stackSize)
@@ -87,7 +87,7 @@ void push(Stack theStack, Aptr i) {
 
 /*======================================================================*/
 Aptr pop(Stack theStack) {
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	if (theStack->stackp == 0)
@@ -98,7 +98,7 @@ Aptr pop(Stack theStack) {
 
 /*======================================================================*/
 Aptr top(Stack theStack) {
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	return theStack->stack[theStack->stackp - 1];
@@ -111,7 +111,7 @@ Aptr top(Stack theStack) {
 void newFrame(Stack theStack, Aint noOfLocals) {
 	int n;
 
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	push(theStack, theStack->framePointer);
@@ -130,7 +130,7 @@ Aptr getLocal(Stack theStack, Aint framesBelow, Aint variableNumber) {
 	if (variableNumber < 1)
 		syserr("Reading a non-existing block-local variable.");
 
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	frame = theStack->framePointer;
@@ -151,7 +151,7 @@ void setLocal(Stack theStack, Aint framesBelow, Aint variableNumber, Aptr value)
 	if (variableNumber < 1)
 		syserr("Writing a non-existing block-local variable.");
 
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	frame = theStack->framePointer;
@@ -164,7 +164,7 @@ void setLocal(Stack theStack, Aint framesBelow, Aint variableNumber, Aptr value)
 
 /*======================================================================*/
 void endFrame(Stack theStack) {
-	if (theStack == NULL)
+	if (theStack == nullptr)
 		syserr("NULL stack not supported anymore");
 
 	theStack->stackp = theStack->framePointer;

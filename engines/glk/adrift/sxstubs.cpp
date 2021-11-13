@@ -41,12 +41,12 @@ static sc_bool stub_trace = FALSE;
  * Input/output handler functions.  If assigned, calls to os_* functions are
  * routed here to allow the script runner to catch interpeter i/o.
  */
-static sc_bool(*stub_read_line)(sc_char *, sc_int) = NULL;
-static void (*stub_print_string)(const sc_char *) = NULL;
-static void *(*stub_open_file)(sc_bool) = NULL;
-static sc_int(*stub_read_file)(void *, sc_byte *, sc_int) = NULL;
-static void (*stub_write_file)(void *, const sc_byte *, sc_int) = NULL;
-static void (*stub_close_file)(void *) = NULL;
+static sc_bool(*stub_read_line)(sc_char *, sc_int) = nullptr;
+static void (*stub_print_string)(const sc_char *) = nullptr;
+static void *(*stub_open_file)(sc_bool) = nullptr;
+static sc_int(*stub_read_file)(void *, sc_byte *, sc_int) = nullptr;
+static void (*stub_write_file)(void *, const sc_byte *, sc_int) = nullptr;
+static void (*stub_close_file)(void *) = nullptr;
 
 /* Flags for whether to report tags and resources via stub_print_string(). */
 static sc_int stub_show_resources = 0;
@@ -79,12 +79,12 @@ stub_attach_handlers(sc_bool(*read_line)(sc_char *, sc_int),
 
 void
 stub_detach_handlers(void) {
-	stub_read_line = NULL;
-	stub_print_string = NULL;
-	stub_open_file = NULL;
-	stub_read_file = NULL;
-	stub_write_file = NULL;
-	stub_close_file = NULL;
+	stub_read_line = nullptr;
+	stub_print_string = nullptr;
+	stub_open_file = nullptr;
+	stub_read_file = nullptr;
+	stub_write_file = nullptr;
+	stub_close_file = nullptr;
 
 	stub_show_resources = 0;
 	stub_show_tags = 0;
@@ -282,7 +282,7 @@ os_open_file(sc_bool is_save) {
 	if (stub_open_file)
 		opaque = stub_open_file(is_save);
 	else
-		opaque = NULL;
+		opaque = nullptr;
 
 	if (stub_trace) {
 		if (opaque)

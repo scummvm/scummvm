@@ -2800,7 +2800,7 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore
 	assert(game_stream);
 
 	/* Open a temporary Glk main window. */
-	window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	window = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (window) {
 		/* Clear and initialize the temporary window. */
 		g_vm->glk_window_clear(window);
@@ -2907,7 +2907,7 @@ static void gsc_main() {
 	}
 
 	/* Create the Glk window, and set its stream as the current one. */
-	gsc_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	gsc_main_window = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (!gsc_main_window) {
 		gsc_fatal("GLK: Can't open main window");
 		g_vm->glk_exit();

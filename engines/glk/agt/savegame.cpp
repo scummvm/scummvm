@@ -154,7 +154,7 @@ static file_info fi_savecreat[] = {
 };
 
 static file_info fi_saveustr[] = {
-	{FT_TLINE, DT_DEFAULT, NULL, 0},
+	{FT_TLINE, DT_DEFAULT, nullptr, 0},
 	endrec
 };
 
@@ -168,12 +168,12 @@ uchar *getstate(uchar *gs)
 	rbool new_block; /* True if we allocate a new block */
 	long bp;
 
-	if (gs == NULL) {
+	if (gs == nullptr) {
 		rm_trap = 0; /* Don't exit on out-of-memory condition */
 		gs = (uchar *)rmalloc(state_size); /* This should be enough. */
 		rm_trap = 1;
-		if (gs == NULL) /* This is why we set rm_trap to 0 before calling rmalloc */
-			return NULL;
+		if (gs == nullptr) /* This is why we set rm_trap to 0 before calling rmalloc */
+			return nullptr;
 		new_block = 1;
 	} else new_block = 0;
 
@@ -202,13 +202,13 @@ uchar *getstate(uchar *gs)
 	bp += write_recarray(creature, sizeof(creat_rec),
 	                     rangefix(maxcreat - first_creat + 1),
 	                     fi_savecreat, bp);
-	if (userstr != NULL)
+	if (userstr != nullptr)
 		bp += write_recarray(userstr, sizeof(tline), MAX_USTR, fi_saveustr, bp);
-	if (objflag != NULL)
+	if (objflag != nullptr)
 		bp += write_recblock(objflag, FT_BYTE, objextsize(0), bp);
-	if (objprop != NULL)
+	if (objprop != nullptr)
 		bp += write_recblock(objprop, FT_INT32, objextsize(1), bp);
-	set_internal_buffer(NULL);
+	set_internal_buffer(nullptr);
 	gs[0] = bp & 0xFF;
 	gs[1] = (bp >> 8) & 0xFF;
 	gs[2] = (bp >> 16) & 0xFF;
@@ -257,7 +257,7 @@ void putstate(uchar *gs) { /* Restores games state. */
 	fi_savecreat[0].ptr = creat_ptr;
 	bp = 6;
 
-	read_globalrec(fi_savehead, 0, bp, 0);
+	read_globalrec(fi_savehead, nullptr, bp, 0);
 	bp += compute_recsize(fi_savehead);
 	read_recblock(flag, FT_BYTE, FLAG_NUM + 1, bp, 0);
 	bp += ft_leng[FT_BYTE] * (FLAG_NUM + 1);
@@ -267,36 +267,36 @@ void putstate(uchar *gs) { /* Restores games state. */
 	bp += ft_leng[FT_INT32] * (VAR_NUM + 1);
 
 	numrec = rangefix(maxroom - first_room + 1);
-	read_recarray(room, sizeof(room_rec), numrec, fi_saveroom, 0, bp, 0);
+	read_recarray(room, sizeof(room_rec), numrec, fi_saveroom, nullptr, bp, 0);
 	bp += compute_recsize(fi_saveroom) * numrec;
 	numrec = rangefix(maxnoun - first_noun + 1);
-	read_recarray(noun, sizeof(noun_rec), numrec, fi_savenoun, 0, bp, 0);
+	read_recarray(noun, sizeof(noun_rec), numrec, fi_savenoun, nullptr, bp, 0);
 	bp += compute_recsize(fi_savenoun) * numrec;
 	numrec = rangefix(maxcreat - first_creat + 1);
-	read_recarray(creature, sizeof(creat_rec), numrec, fi_savecreat, 0, bp, 0);
+	read_recarray(creature, sizeof(creat_rec), numrec, fi_savecreat, nullptr, bp, 0);
 	bp += compute_recsize(fi_savecreat) * numrec;
-	if (userstr != NULL) {
-		read_recarray(userstr, sizeof(tline), MAX_USTR, fi_saveustr, 0, bp, 0);
+	if (userstr != nullptr) {
+		read_recarray(userstr, sizeof(tline), MAX_USTR, fi_saveustr, nullptr, bp, 0);
 		bp += ft_leng[FT_TLINE] * MAX_USTR;
 	}
-	if (objflag != NULL) {
+	if (objflag != nullptr) {
 		i = objextsize(0);
 		read_recblock(objflag, FT_BYTE, i, bp, 0);
 		bp += ft_leng[FT_BYTE] * i;
 	}
-	if (objprop != NULL) {
+	if (objprop != nullptr) {
 		i = objextsize(1);
 		read_recblock(objprop, FT_INT32, i, bp, 0);
 		bp += ft_leng[FT_INT32] * i;
 	}
-	set_internal_buffer(NULL);
+	set_internal_buffer(nullptr);
 
 	if (skip_descr)   /* Need to "fix" position information. This is a hack. */
 		/* Basically, this sets the position of each object to its default */
 		/* The problem here is that the usual position info is invalid-- we've
 		   changed games, and hence dictionaries */
 		for (i = 0; i < maxnoun - first_noun; i++) {
-			if (noun[i].position != NULL && noun[i].position[0] != 0)
+			if (noun[i].position != nullptr && noun[i].position[0] != 0)
 				noun[i].pos_prep = -1;
 			else noun[i].pos_prep = 0;
 		}
@@ -305,7 +305,7 @@ void putstate(uchar *gs) { /* Restores games state. */
 			if (noun[i].pos_prep == -1)
 				noun[i].position = noun[i].initpos;
 			else
-				noun[i].position = NULL;
+				noun[i].position = nullptr;
 
 	init_vals();
 	skip_descr = 0; /* If we set this to 1, restore it to its original state */
@@ -330,7 +330,7 @@ void init_state_sys(void)
 	             + ft_leng[FT_BYTE] * objextsize(0)
 	             + ft_leng[FT_INT32] * objextsize(1)
 	             + 6;  /* Six bytes in header */
-	if (userstr != NULL) state_size += ft_leng[FT_TLINE] * MAX_USTR;
+	if (userstr != nullptr) state_size += ft_leng[FT_TLINE] * MAX_USTR;
 }
 
 
@@ -342,11 +342,11 @@ extern Common::Error savegame(Common::WriteStream *savefile) {
 	long size;
 
 #ifndef UNDO_SAVE
-	gs = getstate(NULL);
+	gs = getstate(nullptr);
 #else
 	gs = undo_state;
 #endif
-	if (gs == NULL) {
+	if (gs == nullptr) {
 		writeln("Insufficiant memory to support SAVE.");
 		return Common::kWritingFailed;
 	}

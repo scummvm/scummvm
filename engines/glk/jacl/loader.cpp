@@ -59,9 +59,9 @@ extern struct synonym_type      *synonym_table;
 extern struct filter_type       *filter_table;
 
 
-struct string_type *current_string = NULL;
-struct integer_type *current_integer = NULL;
-struct integer_type *last_system_integer = NULL;
+struct string_type *current_string = nullptr;
+struct integer_type *current_integer = nullptr;
+struct integer_type *last_system_integer = nullptr;
 
 extern struct string_type *current_cstring;
 extern struct cinteger_type *current_cinteger;
@@ -97,15 +97,15 @@ void read_gamefile() {
 	long            start_of_file = 0;
 	long            bit_mask;
 
-	filter_type *current_filter = NULL;
-	filter_type *new_filter = NULL;
-	attribute_type *current_attribute = NULL;
-	attribute_type *new_attribute = NULL;
-	cinteger_type *resolved_cinteger = NULL;
-	synonym_type *current_synonym = NULL;
-	synonym_type *new_synonym = NULL;
-	function_type *current_function = NULL;
-	name_type *current_name = NULL;
+	filter_type *current_filter = nullptr;
+	filter_type *new_filter = nullptr;
+	attribute_type *current_attribute = nullptr;
+	attribute_type *new_attribute = nullptr;
+	cinteger_type *resolved_cinteger = nullptr;
+	synonym_type *current_synonym = nullptr;
+	synonym_type *new_synonym = nullptr;
+	function_type *current_function = nullptr;
+	name_type *current_name = nullptr;
 
 	char            function_name[81];
 
@@ -235,7 +235,7 @@ void read_gamefile() {
 	/* CREATE A DUMMY FUNCTION TO BE USED WHEN AN ERROR MESSAGE
 	   IS PRINTED AS A RESULT OF CODE CALLED BY THE INTERPRETER */
 	if ((function_table = (struct function_type *)
-	                      malloc(sizeof(struct function_type))) == NULL)
+	                      malloc(sizeof(struct function_type))) == nullptr)
 		outofmem();
 	else {
 		current_function = function_table;
@@ -244,7 +244,7 @@ void read_gamefile() {
 		current_function->self = 0;
 		current_function->call_count = 0;
 		current_function->call_count_backup = 0;
-		current_function->next_function = NULL;
+		current_function->next_function = nullptr;
 	}
 
 	executing_function = function_table;
@@ -271,7 +271,7 @@ void read_gamefile() {
 
 	while (result) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == nullptr);
 		else if (text_buffer[0] == '{') {
 			while (result) {
 				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
@@ -288,19 +288,19 @@ void read_gamefile() {
 			}
 		} else {
 			if (!strcmp(word[0], "grammar")) {
-				if (word[++wp] == NULL) {
+				if (word[++wp] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else {
-					if (grammar_table == NULL) {
+					if (grammar_table == nullptr) {
 						if ((grammar_table = (struct word_type *)
-						                     malloc(sizeof(struct word_type))) == NULL)
+						                     malloc(sizeof(struct word_type))) == nullptr)
 							outofmem();
 						else {
 							strncpy(grammar_table->word, word[wp], 40);
 							grammar_table->word[40] = 0;
-							grammar_table->next_sibling = NULL;
-							grammar_table->first_child = NULL;
+							grammar_table->next_sibling = nullptr;
+							grammar_table->first_child = nullptr;
 							build_grammar_table(grammar_table);
 						}
 					} else
@@ -308,7 +308,7 @@ void read_gamefile() {
 				}
 			} else if (!strcmp(word[0], "object")
 			           || !strcmp(word[0], "location")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, OBJ_TYPE)) {
@@ -322,13 +322,13 @@ void read_gamefile() {
 						return;
 					} else {
 						if ((object[objects] = (struct object_type *)
-						                       malloc(sizeof(struct object_type))) == NULL)
+						                       malloc(sizeof(struct object_type))) == nullptr)
 							outofmem();
 
 						strncpy(object[objects]->label, word[1], 40);
 
 						object[objects]->label[40] = 0;
-						object[objects]->first_plural = NULL;
+						object[objects]->first_plural = nullptr;
 
 						strcpy(object[objects]->described, object[objects]->label);
 						strcpy(object[objects]->inventory, object[objects]->label);
@@ -343,15 +343,15 @@ void read_gamefile() {
 					object[objects]->nosave = FALSE;
 				}
 			} else if (!strcmp(word[0], "synonym")) {
-				if (word[++wp] == NULL) {
+				if (word[++wp] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else {
 					if ((new_synonym = (struct synonym_type *)
-					                   malloc(sizeof(struct synonym_type))) == NULL)
+					                   malloc(sizeof(struct synonym_type))) == nullptr)
 						outofmem();
 					else {
-						if (synonym_table == NULL) {
+						if (synonym_table == nullptr) {
 							synonym_table = new_synonym;
 						} else {
 							current_synonym->next_synonym = new_synonym;
@@ -360,14 +360,14 @@ void read_gamefile() {
 					current_synonym = new_synonym;
 					strncpy(current_synonym->original, word[wp], 40);
 					current_synonym->original[40] = 0;
-					if (word[++wp] == NULL) {
+					if (word[++wp] == nullptr) {
 						noproperr(line);
 						errors++;
 					} else {
 						strncpy(current_synonym->standard, word[wp], 40);
 						current_synonym->standard[40] = 0;
 					}
-					current_synonym->next_synonym = NULL;
+					current_synonym->next_synonym = nullptr;
 				}
 			} else if (!strcmp(word[0], "parameter")) {
 #ifdef UNUSED
@@ -413,7 +413,7 @@ void read_gamefile() {
 				warning("parameter");
 #endif
 			} else if (!strcmp(word[0], "constant")) {
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else {
@@ -421,7 +421,7 @@ void read_gamefile() {
 					   ADDITIONAL CONSTANTS IF REQUIRED */
 					index = 2;
 
-					while (word[index] != NULL && index < MAX_WORDS) {
+					while (word[index] != nullptr && index < MAX_WORDS) {
 						if (quoted[index] == TRUE || !validate(word[index])) {
 							if (legal_label_check(word[1], line, CSTR_TYPE)) {
 								errors++;
@@ -443,20 +443,20 @@ void read_gamefile() {
 					}
 				}
 			} else if (!strcmp(word[0], "attribute")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, ATT_TYPE)) {
 					errors++;
-				} else if (current_attribute != NULL && current_attribute->value == 1073741824) {
+				} else if (current_attribute != nullptr && current_attribute->value == 1073741824) {
 					maxatterr(line, 1);
 					errors++;
 				} else {
 					if ((new_attribute = (struct attribute_type *)
-					                     malloc(sizeof(struct attribute_type))) == NULL)
+					                     malloc(sizeof(struct attribute_type))) == nullptr)
 						outofmem();
 					else {
-						if (attribute_table == NULL) {
+						if (attribute_table == nullptr) {
 							attribute_table = new_attribute;
 							new_attribute->value = 1;
 						} else {
@@ -466,21 +466,21 @@ void read_gamefile() {
 						current_attribute = new_attribute;
 						strncpy(current_attribute->name, word[1], 40);
 						current_attribute->name[40] = 0;
-						current_attribute->next_attribute = NULL;
+						current_attribute->next_attribute = nullptr;
 					}
 
 					/* CHECK IF MORE THAN ONE VALUE IS SUPPLIED AND CREATE
 					   ADDITIONAL CONSTANTS IF REQUIRED */
 					index = 2;
-					while (word[index] != NULL && index < MAX_WORDS) {
+					while (word[index] != nullptr && index < MAX_WORDS) {
 						if (legal_label_check(word[index], line, ATT_TYPE)) {
 							errors++;
-						} else if (current_attribute != NULL && current_attribute->value == 1073741824) {
+						} else if (current_attribute != nullptr && current_attribute->value == 1073741824) {
 							maxatterr(line, index);
 							errors++;
 						} else {
 							if ((new_attribute = (struct attribute_type *)
-							                     malloc(sizeof(struct attribute_type))) == NULL)
+							                     malloc(sizeof(struct attribute_type))) == nullptr)
 								outofmem();
 							else {
 								current_attribute->next_attribute = new_attribute;
@@ -488,40 +488,40 @@ void read_gamefile() {
 								current_attribute = new_attribute;
 								strncpy(current_attribute->name, word[index], 40);
 								current_attribute->name[40] = 0;
-								current_attribute->next_attribute = NULL;
+								current_attribute->next_attribute = nullptr;
 							}
 						}
 						index++;
 					}
 				}
 			} else if (!strcmp(word[0], "string")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, STR_TYPE)) {
 					errors++;
 				} else {
-					if (word[2] == NULL) {
+					if (word[2] == nullptr) {
 						create_string(word[1], "");
 					} else {
 						create_string(word[1], word[2]);
 						index = 3;
-						while (word[index] != NULL && index < MAX_WORDS) {
+						while (word[index] != nullptr && index < MAX_WORDS) {
 							create_string(word[1], word[index]);
 							index++;
 						}
 					}
 				}
 			} else if (!strcmp(word[0], "filter")) {
-				if (word[++wp] == NULL) {
+				if (word[++wp] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else {
 					if ((new_filter = (struct filter_type *)
-					                  malloc(sizeof(struct filter_type))) == NULL)
+					                  malloc(sizeof(struct filter_type))) == nullptr)
 						outofmem();
 					else {
-						if (filter_table == NULL) {
+						if (filter_table == nullptr) {
 							filter_table = new_filter;
 						} else {
 							current_filter->next_filter = new_filter;
@@ -529,11 +529,11 @@ void read_gamefile() {
 						current_filter = new_filter;
 						strncpy(current_filter->word, word[wp], 40);
 						current_filter->word[40] = 0;
-						current_filter->next_filter = NULL;
+						current_filter->next_filter = nullptr;
 					}
 				}
 			} else if (!strcmp(word[0], "string_array")) {
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, STR_TYPE)) {
@@ -552,7 +552,7 @@ void read_gamefile() {
 					}
 				}
 			} else if (!strcmp(word[0], "integer_array")) {
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, INT_TYPE)) {
@@ -560,7 +560,7 @@ void read_gamefile() {
 				} else {
 					int default_value, x;
 
-					if (word[3] != NULL) {
+					if (word[3] != nullptr) {
 						default_value = value_of(word[3], FALSE);
 						if (!value_resolved) {
 							unkvalerr(line, 3);
@@ -582,7 +582,7 @@ void read_gamefile() {
 					}
 				}
 			} else if (!strcmp(word[0], "integer")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					noproperr(line);
 					errors++;
 				} else if (legal_label_check(word[1], line, INT_TYPE)) {
@@ -593,7 +593,7 @@ void read_gamefile() {
 					/* CHECK IF MORE THAN ONE VALUE IS SUPPLIED AND CREATE
 					   ADDITIONAL VARIABLES IF REQUIRED */
 					index = 3;
-					while (word[index] != NULL && index < MAX_WORDS) {
+					while (word[index] != nullptr && index < MAX_WORDS) {
 						create_integer(word[1], 0);
 						index++;
 					}
@@ -623,17 +623,17 @@ void read_gamefile() {
 	 *************************************************************************/
 
 	/* IF NO SIZE IS SPECIFIED FOR THE STATUS WINDOW, SET IT TO 1 */
-	if (integer_resolve("status_window") == NULL) {
+	if (integer_resolve("status_window") == nullptr) {
 		create_integer("status_window", 1);
 	}
 
 	/* IF NO STRING IS SPECIFIED FOR THE COMMAND PROMPT, SET IT TO "^> " */
-	if (string_resolve("command_prompt") == NULL) {
+	if (string_resolve("command_prompt") == nullptr) {
 		create_string("command_prompt", "^> ");
 	}
 
 	/* IF NO STRING IS SPECIFIED FOR THE GAME_TITLE, SET IT TO THE FILENAME */
-	if (cstring_resolve("game_title") == NULL) {
+	if (cstring_resolve("game_title") == nullptr) {
 		create_cstring("game_title", prefix);
 	}
 
@@ -661,7 +661,7 @@ void read_gamefile() {
 
 	while (result) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == nullptr);
 		else if (text_buffer[0] == '{') {
 			word[wp]++;         /* MOVE THE START OF THE FIRST WORD ONLY
 								 * TO PAST THE '{'. */
@@ -669,13 +669,13 @@ void read_gamefile() {
 				nofnamerr(line);
 				errors++;
 			} else {
-				while (word[wp] != NULL && wp < MAX_WORDS) {
+				while (word[wp] != nullptr && wp < MAX_WORDS) {
 					if (word[wp][0] == '+') {
 						strncpy(function_name, word[wp], 80);
 						function_name[80] = 0;
 						self_parent = 0;
 					} else if (word[wp][0] == '*') {
-						const char *last_underscore = (char *)NULL;
+						const char *last_underscore = (char *)nullptr;
 
 						/* ALLOW MANUAL NAMING OF ASSOCIATED FUNCTIONS */
 						/* TO GIVE CLASS-LIKE BEHAVIOR */
@@ -685,7 +685,7 @@ void read_gamefile() {
 						/* LOOK FOR THE FINAL UNDERSCORE AND SEE IF */
 						/* IT IS FOLLOWED BY AN OBJECT LABEL */
 						last_underscore = strrchr(word[wp], '_');
-						if (last_underscore != NULL) {
+						if (last_underscore != nullptr) {
 							self_parent = object_resolve(last_underscore + 1);
 						} else {
 							self_parent = 0;
@@ -699,9 +699,9 @@ void read_gamefile() {
 						strcat(function_name, object[object_count]->label);
 						self_parent = object_count;
 					}
-					if (function_table == NULL) {
+					if (function_table == nullptr) {
 						if ((function_table = (struct function_type *)
-						                      malloc(sizeof(struct function_type))) == NULL)
+						                      malloc(sizeof(struct function_type))) == nullptr)
 							outofmem();
 						else {
 							// STORE THE NUMBER OF FUNCTION DEFINED TO
@@ -715,12 +715,12 @@ void read_gamefile() {
 							current_function->call_count = 0;
 							current_function->call_count_backup = 0;
 							current_function->self = self_parent;
-							current_function->next_function = NULL;
+							current_function->next_function = nullptr;
 						}
 					} else {
 						if ((current_function->next_function =
 						            (struct function_type *)
-						            malloc(sizeof(struct function_type))) == NULL)
+						            malloc(sizeof(struct function_type))) == nullptr)
 							outofmem();
 						else {
 							// STORE THE NUMBER OF FUNCTION DEFINED TO
@@ -734,7 +734,7 @@ void read_gamefile() {
 							current_function->call_count = 0;
 							current_function->call_count_backup = 0;
 							current_function->self = self_parent;
-							current_function->next_function = NULL;
+							current_function->next_function = nullptr;
 						}
 					}
 					wp++;
@@ -757,7 +757,7 @@ void read_gamefile() {
 		}
 		else if (!strcmp(word[0], "string_array")) {
 		} else if (!strcmp(word[0], "integer_array")) {
-			if (word[2] == NULL) {
+			if (word[2] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else {
@@ -775,7 +775,7 @@ void read_gamefile() {
 				}
 			}
 		} else if (!strcmp(word[0], "integer")) {
-			if (word[2] != NULL) {
+			if (word[2] != nullptr) {
 				current_integer = current_integer->next_integer;
 				current_integer->value = value_of(word[2], FALSE);
 				if (!value_resolved) {
@@ -783,7 +783,7 @@ void read_gamefile() {
 					errors++;
 				}
 				index = 3;
-				while (word[index] != NULL && index < MAX_WORDS) {
+				while (word[index] != nullptr && index < MAX_WORDS) {
 					current_integer = current_integer->next_integer;
 					current_integer->value = value_of(word[index], FALSE);
 					if (!value_resolved) {
@@ -807,14 +807,14 @@ void read_gamefile() {
 		else if (!strcmp(word[0], "grammar"));
 		else if (!strcmp(word[0], "filter"));
 		else if (!strcmp(word[0], "has")) {
-			if (word[1] == NULL) {
+			if (word[1] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else if (object_count == 0) {
 				noobjerr(line);
 				errors++;
 			} else {
-				for (index = 1; word[index] != NULL && index < MAX_WORDS; index++) {
+				for (index = 1; word[index] != nullptr && index < MAX_WORDS; index++) {
 					if ((bit_mask = attribute_resolve(word[index]))) {
 						object[object_count]->attributes = object[object_count]->attributes | bit_mask;
 					} else if ((bit_mask = user_attribute_resolve(word[index]))) {
@@ -845,60 +845,60 @@ void read_gamefile() {
 
 			if ((object[object_count]->first_name =
 			            (struct name_type *) malloc(sizeof(struct name_type)))
-			        == NULL)
+			        == nullptr)
 				outofmem();
 			else {
 				current_name = object[object_count]->first_name;
-				if (word[2] != NULL) {
+				if (word[2] != nullptr) {
 					strncpy(current_name->name, word[2], 40);
 				} else {
 					strncpy(current_name->name, object[object_count]->label, 40);
 				}
 				current_name->name[40] = 0;
-				current_name->next_name = NULL;
+				current_name->next_name = nullptr;
 			}
 
 			wp = 3;
 
-			while (word[wp] != NULL && wp < MAX_WORDS) {
+			while (word[wp] != nullptr && wp < MAX_WORDS) {
 				if ((current_name->next_name = (struct name_type *)
-				                               malloc(sizeof(struct name_type))) == NULL)
+				                               malloc(sizeof(struct name_type))) == nullptr)
 					outofmem();
 				else {
 					current_name = current_name->next_name;
 					strncpy(current_name->name, word[wp], 40);
 					current_name->name[40] = 0;
-					current_name->next_name = NULL;
+					current_name->next_name = nullptr;
 				}
 				wp++;
 			}
 		} else if (!strcmp(word[0], "plural")) {
-			if (word[1] == NULL) {
+			if (word[1] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else {
 				if ((object[object_count]->first_plural =
 				            (struct name_type *) malloc(sizeof(struct name_type)))
-				        == NULL)
+				        == nullptr)
 					outofmem();
 				else {
 					current_name = object[object_count]->first_plural;
 					strncpy(current_name->name, word[1], 40);
 					current_name->name[40] = 0;
-					current_name->next_name = NULL;
+					current_name->next_name = nullptr;
 				}
 
 				wp = 2;
 
-				while (word[wp] != NULL && wp < MAX_WORDS) {
+				while (word[wp] != nullptr && wp < MAX_WORDS) {
 					if ((current_name->next_name = (struct name_type *)
-					                               malloc(sizeof(struct name_type))) == NULL)
+					                               malloc(sizeof(struct name_type))) == nullptr)
 						outofmem();
 					else {
 						current_name = current_name->next_name;
 						strncpy(current_name->name, word[wp], 40);
 						current_name->name[40] = 0;
-						current_name->next_name = NULL;
+						current_name->next_name = nullptr;
 					}
 					wp++;
 				}
@@ -916,7 +916,7 @@ void read_gamefile() {
 			} else
 				player = object_count;
 		} else if (!strcmp(word[0], "short")) {
-			if (word[2] == NULL) {
+			if (word[2] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else if (object_count == 0) {
@@ -929,7 +929,7 @@ void read_gamefile() {
 				object[object_count]->inventory[40] = 0;
 			}
 		} else if (!strcmp(word[0], "definite")) {
-			if (word[1] == NULL) {
+			if (word[1] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else if (object_count == 0) {
@@ -940,7 +940,7 @@ void read_gamefile() {
 				object[object_count]->definite[10] = 0;
 			}
 		} else if (!strcmp(word[0], "long")) {
-			if (word[1] == NULL) {
+			if (word[1] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else if (object_count == 0) {
@@ -950,9 +950,9 @@ void read_gamefile() {
 				strncpy(object[object_count]->described, word[1], 80);
 				object[object_count]->described[80] = 0;
 			}
-		} else if ((resolved_cinteger = cinteger_resolve(word[0])) != NULL) {
+		} else if ((resolved_cinteger = cinteger_resolve(word[0])) != nullptr) {
 			index = resolved_cinteger->value;
-			if (word[1] == NULL) {
+			if (word[1] == nullptr) {
 				noproperr(line);
 				errors++;
 			} else if (object_count == 0) {
@@ -1004,39 +1004,39 @@ void read_gamefile() {
 void build_grammar_table(struct word_type *pointer) {
 	do {
 		if (!strcmp(word[wp], pointer->word)) {
-			if (pointer->first_child == NULL && word[wp + 1] != NULL) {
+			if (pointer->first_child == nullptr && word[wp + 1] != nullptr) {
 				if ((pointer->first_child = (struct word_type *)
 				                            malloc(sizeof(struct word_type)))
-				        == NULL)
+				        == nullptr)
 					outofmem();
 				else {
 					pointer = pointer->first_child;
 					strncpy(pointer->word, word[++wp], 40);
 					pointer->word[40] = 0;
-					pointer->next_sibling = NULL;
-					pointer->first_child = NULL;
+					pointer->next_sibling = nullptr;
+					pointer->first_child = nullptr;
 				}
 			} else {
 				pointer = pointer->first_child;
 				wp++;
 			}
 		} else {
-			if (pointer->next_sibling == NULL) {
+			if (pointer->next_sibling == nullptr) {
 				if ((pointer->next_sibling = (struct word_type *)
 				                             malloc(sizeof(struct word_type)))
-				        == NULL)
+				        == nullptr)
 					outofmem();
 				else {
 					pointer = pointer->next_sibling;
 					strncpy(pointer->word, word[wp], 40);
 					pointer->word[40] = 0;
-					pointer->next_sibling = NULL;
-					pointer->first_child = NULL;
+					pointer->next_sibling = nullptr;
+					pointer->first_child = nullptr;
 				}
 			} else
 				pointer = pointer->next_sibling;
 		}
-	} while (word[wp] != NULL && wp < MAX_WORDS);
+	} while (word[wp] != nullptr && wp < MAX_WORDS);
 }
 
 int legal_label_check(const char *label_word, int line, int type) {
@@ -1078,7 +1078,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 		}
 	}
 
-	while (integer_pointer != NULL && type != INT_TYPE) {
+	while (integer_pointer != nullptr && type != INT_TYPE) {
 		if (!strcmp(label_word, integer_pointer->name)) {
 			sprintf(error_buffer, USED_LABEL_INT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
@@ -1089,7 +1089,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 	}
 
 
-	while (cinteger_pointer != NULL && type != CINT_TYPE) {
+	while (cinteger_pointer != nullptr && type != CINT_TYPE) {
 		if (!strcmp(label_word, cinteger_pointer->name)) {
 			sprintf(error_buffer, USED_LABEL_CINT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
@@ -1099,7 +1099,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 			cinteger_pointer = cinteger_pointer->next_cinteger;
 	}
 
-	while (string_pointer != NULL && type != STR_TYPE) {
+	while (string_pointer != nullptr && type != STR_TYPE) {
 		if (!strcmp(label_word, string_pointer->name)) {
 			sprintf(error_buffer, USED_LABEL_STR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
@@ -1109,7 +1109,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 			string_pointer = string_pointer->next_string;
 	}
 
-	while (cstring_pointer != NULL && type != CSTR_TYPE) {
+	while (cstring_pointer != nullptr && type != CSTR_TYPE) {
 		if (!strcmp(label_word, cstring_pointer->name)) {
 			sprintf(error_buffer, USED_LABEL_CSTR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
@@ -1120,7 +1120,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 	}
 
 	/* DON'T CHECK FOR ATT_TYPE AS YOU CAN'T HAVE ATTRIBUTE ARRAYS. */
-	while (attribute_pointer != NULL) {
+	while (attribute_pointer != nullptr) {
 		if (!strcmp(label_word, attribute_pointer->name)) {
 			sprintf(error_buffer, USED_LABEL_ATT, line, label_word);
 			write_text(error_buffer);
@@ -1178,7 +1178,7 @@ void restart_game() {
 	/* FREE ALL OBJECTS */
 	for (index = 1; index <= objects; index++) {
 		current_name = object[index]->first_name;
-		while (current_name->next_name != NULL) {
+		while (current_name->next_name != nullptr) {
 			next_name = current_name->next_name;
 			free(current_name);
 			current_name = next_name;
@@ -1189,157 +1189,157 @@ void restart_game() {
 
 	/* FREE ALL VARIABLES */
 
-	if (integer_table != NULL) {
-		if (integer_table->next_integer != NULL) {
+	if (integer_table != nullptr) {
+		if (integer_table->next_integer != nullptr) {
 			do {
 				curr_integer = integer_table;
 				previous_integer = integer_table;
-				while (curr_integer->next_integer != NULL) {
+				while (curr_integer->next_integer != nullptr) {
 					previous_integer = curr_integer;
 					curr_integer = curr_integer->next_integer;
 				}
 				free(curr_integer);
-				previous_integer->next_integer = NULL;
+				previous_integer->next_integer = nullptr;
 			} while (previous_integer != integer_table);
 		}
 
 		free(integer_table);
-		integer_table = NULL;
+		integer_table = nullptr;
 	}
 
 	/* FREE ALL FUNCTIONS */
-	if (function_table != NULL) {
-		if (function_table->next_function != NULL) {
+	if (function_table != nullptr) {
+		if (function_table->next_function != nullptr) {
 			do {
 				current_function = function_table;
 				previous_function = function_table;
-				while (current_function->next_function != NULL) {
+				while (current_function->next_function != nullptr) {
 					previous_function = current_function;
 					current_function = current_function->next_function;
 				}
 				free(current_function);
-				previous_function->next_function = NULL;
+				previous_function->next_function = nullptr;
 			} while (previous_function != function_table);
 		}
 
 		free(function_table);
-		function_table = NULL;
+		function_table = nullptr;
 	}
 
 	/* FREE ALL FILTERS */
-	if (filter_table != NULL) {
-		if (filter_table->next_filter != NULL) {
+	if (filter_table != nullptr) {
+		if (filter_table->next_filter != nullptr) {
 			do {
 				current_filter = filter_table;
 				previous_filter = filter_table;
-				while (current_filter->next_filter != NULL) {
+				while (current_filter->next_filter != nullptr) {
 					previous_filter = current_filter;
 					current_filter = current_filter->next_filter;
 				}
 				free(current_filter);
-				previous_filter->next_filter = NULL;
+				previous_filter->next_filter = nullptr;
 			} while (previous_filter != filter_table);
 		}
 
 		free(filter_table);
-		filter_table = NULL;
+		filter_table = nullptr;
 	}
 
 	/* FREE ALL STRINGS */
-	if (string_table != NULL) {
-		if (string_table->next_string != NULL) {
+	if (string_table != nullptr) {
+		if (string_table->next_string != nullptr) {
 			do {
 				curr_string = string_table;
 				previous_string = string_table;
-				while (curr_string->next_string != NULL) {
+				while (curr_string->next_string != nullptr) {
 					previous_string = curr_string;
 					curr_string = curr_string->next_string;
 				}
 				free(curr_string);
-				previous_string->next_string = NULL;
+				previous_string->next_string = nullptr;
 			} while (previous_string != string_table);
 		}
 
 		free(string_table);
-		string_table = NULL;
+		string_table = nullptr;
 	}
 
 	/* FREE ALL ATTRIBUTES */
-	if (attribute_table != NULL) {
-		if (attribute_table->next_attribute != NULL) {
+	if (attribute_table != nullptr) {
+		if (attribute_table->next_attribute != nullptr) {
 			do {
 				current_attribute = attribute_table;
 				previous_attribute = attribute_table;
-				while (current_attribute->next_attribute != NULL) {
+				while (current_attribute->next_attribute != nullptr) {
 					previous_attribute = current_attribute;
 					current_attribute = current_attribute->next_attribute;
 				}
 				free(current_attribute);
-				previous_attribute->next_attribute = NULL;
+				previous_attribute->next_attribute = nullptr;
 			} while (previous_attribute != attribute_table);
 		}
 
 		free(attribute_table);
-		attribute_table = NULL;
+		attribute_table = nullptr;
 	}
 
 	/* FREE ALL CONSTANTS */
-	if (cinteger_table != NULL) {
-		if (cinteger_table->next_cinteger != NULL) {
+	if (cinteger_table != nullptr) {
+		if (cinteger_table->next_cinteger != nullptr) {
 			do {
 				current_cinteger = cinteger_table;
 				previous_cinteger = cinteger_table;
-				while (current_cinteger->next_cinteger != NULL) {
+				while (current_cinteger->next_cinteger != nullptr) {
 					previous_cinteger = current_cinteger;
 					current_cinteger = current_cinteger->next_cinteger;
 				}
 				free(current_cinteger);
-				previous_cinteger->next_cinteger = NULL;
+				previous_cinteger->next_cinteger = nullptr;
 			} while (previous_cinteger != cinteger_table);
 		}
 
 		free(cinteger_table);
-		cinteger_table = NULL;
+		cinteger_table = nullptr;
 	}
 
-	if (cstring_table != NULL) {
-		if (cstring_table->next_string != NULL) {
+	if (cstring_table != nullptr) {
+		if (cstring_table->next_string != nullptr) {
 			do {
 				curr_string = cstring_table;
 				previous_string = cstring_table;
-				while (curr_string->next_string != NULL) {
+				while (curr_string->next_string != nullptr) {
 					previous_string = curr_string;
 					curr_string = curr_string->next_string;
 				}
 				free(curr_string);
-				previous_string->next_string = NULL;
+				previous_string->next_string = nullptr;
 			} while (previous_string != cstring_table);
 		}
 
 		free(cstring_table);
-		cstring_table = NULL;
+		cstring_table = nullptr;
 	}
 
 	/* FREE ALL SYNONYMS */
-	if (synonym_table != NULL) {
-		if (synonym_table->next_synonym != NULL) {
+	if (synonym_table != nullptr) {
+		if (synonym_table->next_synonym != nullptr) {
 			do {
 				current_synonym = synonym_table;
 				previous_synonym = synonym_table;
-				while (current_synonym->next_synonym != NULL) {
+				while (current_synonym->next_synonym != nullptr) {
 					previous_synonym = current_synonym;
 					current_synonym = current_synonym->next_synonym;
 				}
 				free(current_synonym);
-				previous_synonym->next_synonym = NULL;
+				previous_synonym->next_synonym = nullptr;
 			} while (previous_synonym != synonym_table);
 		}
 		free(synonym_table);
-		synonym_table = NULL;
+		synonym_table = nullptr;
 	}
 
 	free_from(grammar_table);
-	grammar_table = NULL;
+	grammar_table = nullptr;
 
 	read_gamefile();
 }
@@ -1361,13 +1361,13 @@ void set_defaults() {
 }
 
 void create_cinteger(const char *name, int value) {
-	struct cinteger_type *new_cinteger = NULL;
+	struct cinteger_type *new_cinteger = nullptr;
 
 	if ((new_cinteger = (struct cinteger_type *)
-	                    malloc(sizeof(struct cinteger_type))) == NULL) {
+	                    malloc(sizeof(struct cinteger_type))) == nullptr) {
 		outofmem();
 	} else {
-		if (cinteger_table == NULL) {
+		if (cinteger_table == nullptr) {
 			cinteger_table = new_cinteger;
 		} else {
 			current_cinteger->next_cinteger = new_cinteger;
@@ -1377,22 +1377,22 @@ void create_cinteger(const char *name, int value) {
 		strncpy(current_cinteger->name, name, 40);
 		current_cinteger->name[40] = 0;
 		current_cinteger->value = value;
-		current_cinteger->next_cinteger = NULL;
+		current_cinteger->next_cinteger = nullptr;
 	}
 }
 
 void create_integer(const char *name, int value) {
-	struct integer_type *new_integer = NULL;
+	struct integer_type *new_integer = nullptr;
 
 	if ((new_integer = (struct integer_type *)
-	                   malloc(sizeof(struct integer_type))) == NULL) {
+	                   malloc(sizeof(struct integer_type))) == nullptr) {
 		outofmem();
 	} else {
 		/* KEEP A COUNT OF HOW MANY INTEGERS ARE DEFINED TO
 		 * VALIDATE SAVED GAMES */
 		integers++;
 
-		if (integer_table == NULL) {
+		if (integer_table == nullptr) {
 			integer_table = new_integer;
 		} else {
 			current_integer->next_integer = new_integer;
@@ -1401,22 +1401,22 @@ void create_integer(const char *name, int value) {
 		strncpy(current_integer->name, name, 40);
 		current_integer->name[40] = 0;
 		current_integer->value = value;
-		current_integer->next_integer = NULL;
+		current_integer->next_integer = nullptr;
 	}
 }
 
 void create_string(const char *name, const char *value) {
-	struct string_type *new_string = NULL;
+	struct string_type *new_string = nullptr;
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL) {
+	                  malloc(sizeof(struct string_type))) == nullptr) {
 		outofmem();
 	} else {
 		/* KEEP A COUNT OF HOW MANY STRINGS ARE DEFINED TO
 		 * VALIDATE SAVED GAMES */
 		strings++;
 
-		if (string_table == NULL) {
+		if (string_table == nullptr) {
 			string_table = new_string;
 		} else {
 			current_string->next_string = new_string;
@@ -1425,7 +1425,7 @@ void create_string(const char *name, const char *value) {
 		strncpy(current_string->name, name, 40);
 		current_string->name[40] = 0;
 
-		if (value != NULL) {
+		if (value != nullptr) {
 			strncpy(current_string->value, value, 255);
 		} else {
 			/* IF NO VALUE IS SUPPLIED, JUST NULL-TERMINATE
@@ -1434,18 +1434,18 @@ void create_string(const char *name, const char *value) {
 		}
 
 		current_string->value[255] = 0;
-		current_string->next_string = NULL;
+		current_string->next_string = nullptr;
 	}
 }
 
 void create_cstring(const char *name, const char *value) {
-	struct string_type *new_string = NULL;
+	struct string_type *new_string = nullptr;
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL) {
+	                  malloc(sizeof(struct string_type))) == nullptr) {
 		outofmem();
 	} else {
-		if (cstring_table == NULL) {
+		if (cstring_table == nullptr) {
 			cstring_table = new_string;
 		} else {
 			current_cstring->next_string = new_string;
@@ -1454,7 +1454,7 @@ void create_cstring(const char *name, const char *value) {
 		strncpy(current_cstring->name, name, 40);
 		current_cstring->name[40] = 0;
 
-		if (value != NULL) {
+		if (value != nullptr) {
 			strncpy(current_cstring->value, value, 255);
 		} else {
 			/* IF NO VALUE IS SUPPLIED, JUST NULL-TERMINATE
@@ -1463,7 +1463,7 @@ void create_cstring(const char *name, const char *value) {
 		}
 
 		current_cstring->value[255] = 0;
-		current_cstring->next_string = NULL;
+		current_cstring->next_string = nullptr;
 	}
 }
 
@@ -1472,201 +1472,201 @@ void create_language_constants() {
 	 * ARE MISSING FROM THE GAME THAT IS BEING LOADED. DEFAULT
 	 * TO THE NATIVE_LANGUAGE SETTING IN language.h */
 
-	if (cstring_resolve("COMMENT_IGNORED") == NULL)
+	if (cstring_resolve("COMMENT_IGNORED") == nullptr)
 		create_cstring("COMMENT_IGNORED", COMMENT_IGNORED);
-	if (cstring_resolve("COMMENT_RECORDED") == NULL)
+	if (cstring_resolve("COMMENT_RECORDED") == nullptr)
 		create_cstring("COMMENT_RECORDED", COMMENT_RECORDED);
-	if (cstring_resolve("YES_WORD") == NULL)
+	if (cstring_resolve("YES_WORD") == nullptr)
 		create_cstring("YES_WORD", YES_WORD);
-	if (cstring_resolve("NO_WORD") == NULL)
+	if (cstring_resolve("NO_WORD") == nullptr)
 		create_cstring("NO_WORD", NO_WORD);
-	if (cstring_resolve("YES_OR_NO") == NULL)
+	if (cstring_resolve("YES_OR_NO") == nullptr)
 		create_cstring("YES_OR_NO", YES_OR_NO);
-	if (cstring_resolve("INVALID_SELECTION") == NULL)
+	if (cstring_resolve("INVALID_SELECTION") == nullptr)
 		create_cstring("INVALID_SELECTION", INVALID_SELECTION);
-	if (cstring_resolve("RESTARTING") == NULL)
+	if (cstring_resolve("RESTARTING") == nullptr)
 		create_cstring("RESTARTING", RESTARTING);
-	if (cstring_resolve("RETURN_GAME") == NULL)
+	if (cstring_resolve("RETURN_GAME") == nullptr)
 		create_cstring("RETURN_GAME", RETURN_GAME);
-	if (cstring_resolve("SCRIPTING_ON") == NULL)
+	if (cstring_resolve("SCRIPTING_ON") == nullptr)
 		create_cstring("SCRIPTING_ON", SCRIPTING_ON);
-	if (cstring_resolve("SCRIPTING_OFF") == NULL)
+	if (cstring_resolve("SCRIPTING_OFF") == nullptr)
 		create_cstring("SCRIPTING_OFF", SCRIPTING_OFF);
-	if (cstring_resolve("SCRIPTING_ALREADY_OFF") == NULL)
+	if (cstring_resolve("SCRIPTING_ALREADY_OFF") == nullptr)
 		create_cstring("SCRIPTING_ALREADY_OFF", SCRIPTING_ALREADY_OFF);
-	if (cstring_resolve("SCRIPTING_ALREADY_ON") == NULL)
+	if (cstring_resolve("SCRIPTING_ALREADY_ON") == nullptr)
 		create_cstring("SCRIPTING_ALREADY_ON", SCRIPTING_ALREADY_ON);
-	if (cstring_resolve("CANT_WRITE_SCRIPT") == NULL)
+	if (cstring_resolve("CANT_WRITE_SCRIPT") == nullptr)
 		create_cstring("CANT_WRITE_SCRIPT", CANT_WRITE_SCRIPT);
-	if (cstring_resolve("ERROR_READING_WALKTHRU") == NULL)
+	if (cstring_resolve("ERROR_READING_WALKTHRU") == nullptr)
 		create_cstring("ERROR_READING_WALKTHRU", ERROR_READING_WALKTHRU);
-	if (cstring_resolve("BAD_OOPS") == NULL)
+	if (cstring_resolve("BAD_OOPS") == nullptr)
 		create_cstring("BAD_OOPS", BAD_OOPS);
-	if (cstring_resolve("CANT_CORRECT") == NULL)
+	if (cstring_resolve("CANT_CORRECT") == nullptr)
 		create_cstring("CANT_CORRECT", CANT_CORRECT);
-	if (cstring_resolve("SURE_QUIT") == NULL)
+	if (cstring_resolve("SURE_QUIT") == nullptr)
 		create_cstring("SURE_QUIT", SURE_QUIT);
-	if (cstring_resolve("SURE_RESTART") == NULL)
+	if (cstring_resolve("SURE_RESTART") == nullptr)
 		create_cstring("SURE_RESTART", SURE_RESTART);
-	if (cstring_resolve("NOT_CLEVER") == NULL)
+	if (cstring_resolve("NOT_CLEVER") == nullptr)
 		create_cstring("NOT_CLEVER", NOT_CLEVER);
-	if (cstring_resolve("NO_MOVES") == NULL)
+	if (cstring_resolve("NO_MOVES") == nullptr)
 		create_cstring("NO_MOVES", NO_MOVES);
-	if (cstring_resolve("TYPE_NUMBER") == NULL)
+	if (cstring_resolve("TYPE_NUMBER") == nullptr)
 		create_cstring("TYPE_NUMBER", TYPE_NUMBER);
-	if (cstring_resolve("BY") == NULL)
+	if (cstring_resolve("BY") == nullptr)
 		create_cstring("BY", BY);
-	if (cstring_resolve("REFERRING_TO") == NULL)
+	if (cstring_resolve("REFERRING_TO") == nullptr)
 		create_cstring("REFERRING_TO", REFERRING_TO);
-	if (cstring_resolve("WALKTHRU_WORD") == NULL)
+	if (cstring_resolve("WALKTHRU_WORD") == nullptr)
 		create_cstring("WALKTHRU_WORD", WALKTHRU_WORD);
-	if (cstring_resolve("INFO_WORD") == NULL)
+	if (cstring_resolve("INFO_WORD") == nullptr)
 		create_cstring("INFO_WORD", INFO_WORD);
-	if (cstring_resolve("RESTART_WORD") == NULL)
+	if (cstring_resolve("RESTART_WORD") == nullptr)
 		create_cstring("RESTART_WORD", RESTART_WORD);
-	if (cstring_resolve("AGAIN_WORD") == NULL)
+	if (cstring_resolve("AGAIN_WORD") == nullptr)
 		create_cstring("AGAIN_WORD", AGAIN_WORD);
-	if (cstring_resolve("SCRIPT_WORD") == NULL)
+	if (cstring_resolve("SCRIPT_WORD") == nullptr)
 		create_cstring("SCRIPT_WORD", SCRIPT_WORD);
-	if (cstring_resolve("UNSCRIPT_WORD") == NULL)
+	if (cstring_resolve("UNSCRIPT_WORD") == nullptr)
 		create_cstring("UNSCRIPT_WORD", UNSCRIPT_WORD);
-	if (cstring_resolve("QUIT_WORD") == NULL)
+	if (cstring_resolve("QUIT_WORD") == nullptr)
 		create_cstring("QUIT_WORD", QUIT_WORD);
-	if (cstring_resolve("UNDO_WORD") == NULL)
+	if (cstring_resolve("UNDO_WORD") == nullptr)
 		create_cstring("UNDO_WORD", UNDO_WORD);
-	if (cstring_resolve("OOPS_WORD") == NULL)
+	if (cstring_resolve("OOPS_WORD") == nullptr)
 		create_cstring("OOPS_WORD", OOPS_WORD);
-	if (cstring_resolve("FROM_WORD") == NULL)
+	if (cstring_resolve("FROM_WORD") == nullptr)
 		create_cstring("FROM_WORD", FROM_WORD);
-	if (cstring_resolve("EXCEPT_WORD") == NULL)
+	if (cstring_resolve("EXCEPT_WORD") == nullptr)
 		create_cstring("EXCEPT_WORD", EXCEPT_WORD);
-	if (cstring_resolve("FOR_WORD") == NULL)
+	if (cstring_resolve("FOR_WORD") == nullptr)
 		create_cstring("FOR_WORD", FOR_WORD);
-	if (cstring_resolve("BUT_WORD") == NULL)
+	if (cstring_resolve("BUT_WORD") == nullptr)
 		create_cstring("BUT_WORD", BUT_WORD);
-	if (cstring_resolve("AND_WORD") == NULL)
+	if (cstring_resolve("AND_WORD") == nullptr)
 		create_cstring("AND_WORD", AND_WORD);
-	if (cstring_resolve("THEN_WORD") == NULL)
+	if (cstring_resolve("THEN_WORD") == nullptr)
 		create_cstring("THEN_WORD", THEN_WORD);
-	if (cstring_resolve("OF_WORD") == NULL)
+	if (cstring_resolve("OF_WORD") == nullptr)
 		create_cstring("OF_WORD", OF_WORD);
-	if (cstring_resolve("SHE_WORD") == NULL)
+	if (cstring_resolve("SHE_WORD") == nullptr)
 		create_cstring("SHE_WORD", SHE_WORD);
-	if (cstring_resolve("HE_WORD") == NULL)
+	if (cstring_resolve("HE_WORD") == nullptr)
 		create_cstring("HE_WORD", HE_WORD);
-	if (cstring_resolve("THAT_WORD") == NULL)
+	if (cstring_resolve("THAT_WORD") == nullptr)
 		create_cstring("THAT_WORD", THAT_WORD);
-	if (cstring_resolve("THEM_WORD") == NULL)
+	if (cstring_resolve("THEM_WORD") == nullptr)
 		create_cstring("THEM_WORD", THEM_WORD);
-	if (cstring_resolve("THOSE_WORD") == NULL)
+	if (cstring_resolve("THOSE_WORD") == nullptr)
 		create_cstring("THOSE_WORD", THOSE_WORD);
-	if (cstring_resolve("THEY_WORD") == NULL)
+	if (cstring_resolve("THEY_WORD") == nullptr)
 		create_cstring("THEY_WORD", THEY_WORD);
-	if (cstring_resolve("IT_WORD") == NULL)
+	if (cstring_resolve("IT_WORD") == nullptr)
 		create_cstring("IT_WORD", IT_WORD);
-	if (cstring_resolve("ITSELF_WORD") == NULL)
+	if (cstring_resolve("ITSELF_WORD") == nullptr)
 		create_cstring("ITSELF_WORD", ITSELF_WORD);
-	if (cstring_resolve("HIM_WORD") == NULL)
+	if (cstring_resolve("HIM_WORD") == nullptr)
 		create_cstring("HIM_WORD", HIM_WORD);
-	if (cstring_resolve("HIMSELF_WORD") == NULL)
+	if (cstring_resolve("HIMSELF_WORD") == nullptr)
 		create_cstring("HIMSELF_WORD", HIMSELF_WORD);
-	if (cstring_resolve("HER_WORD") == NULL)
+	if (cstring_resolve("HER_WORD") == nullptr)
 		create_cstring("HER_WORD", HER_WORD);
-	if (cstring_resolve("HERSELF_WORD") == NULL)
+	if (cstring_resolve("HERSELF_WORD") == nullptr)
 		create_cstring("HERSELF_WORD", HERSELF_WORD);
-	if (cstring_resolve("THEMSELVES_WORD") == NULL)
+	if (cstring_resolve("THEMSELVES_WORD") == nullptr)
 		create_cstring("THEMSELVES_WORD", THEMSELVES_WORD);
-	if (cstring_resolve("YOU_WORD") == NULL)
+	if (cstring_resolve("YOU_WORD") == nullptr)
 		create_cstring("YOU_WORD", YOU_WORD);
-	if (cstring_resolve("YOURSELF_WORD") == NULL)
+	if (cstring_resolve("YOURSELF_WORD") == nullptr)
 		create_cstring("YOURSELF_WORD", YOURSELF_WORD);
-	if (cstring_resolve("ONES_WORD") == NULL)
+	if (cstring_resolve("ONES_WORD") == nullptr)
 		create_cstring("ONES_WORD", ONES_WORD);
-	if (cstring_resolve("NO_MULTI_VERB") == NULL)
+	if (cstring_resolve("NO_MULTI_VERB") == nullptr)
 		create_cstring("NO_MULTI_VERB", NO_MULTI_VERB);
-	if (cstring_resolve("NO_MULTI_START") == NULL)
+	if (cstring_resolve("NO_MULTI_START") == nullptr)
 		create_cstring("NO_MULTI_START", NO_MULTI_START);
-	if (cstring_resolve("PERSON_CONCEALING") == NULL)
+	if (cstring_resolve("PERSON_CONCEALING") == nullptr)
 		create_cstring("PERSON_CONCEALING", PERSON_CONCEALING);
-	if (cstring_resolve("PERSON_POSSESSIVE") == NULL)
+	if (cstring_resolve("PERSON_POSSESSIVE") == nullptr)
 		create_cstring("PERSON_POSSESSIVE", PERSON_POSSESSIVE);
-	if (cstring_resolve("CONTAINER_CLOSED") == NULL)
+	if (cstring_resolve("CONTAINER_CLOSED") == nullptr)
 		create_cstring("CONTAINER_CLOSED", CONTAINER_CLOSED);
-	if (cstring_resolve("CONTAINER_CLOSED_FEM") == NULL)
+	if (cstring_resolve("CONTAINER_CLOSED_FEM") == nullptr)
 		create_cstring("CONTAINER_CLOSED_FEM", CONTAINER_CLOSED_FEM);
-	if (cstring_resolve("FROM_NON_CONTAINER") == NULL)
+	if (cstring_resolve("FROM_NON_CONTAINER") == nullptr)
 		create_cstring("FROM_NON_CONTAINER", FROM_NON_CONTAINER);
-	if (cstring_resolve("DOUBLE_EXCEPT") == NULL)
+	if (cstring_resolve("DOUBLE_EXCEPT") == nullptr)
 		create_cstring("DOUBLE_EXCEPT", DOUBLE_EXCEPT);
-	if (cstring_resolve("NONE_HELD") == NULL)
+	if (cstring_resolve("NONE_HELD") == nullptr)
 		create_cstring("NONE_HELD", NONE_HELD);
-	if (cstring_resolve("NO_OBJECTS") == NULL)
+	if (cstring_resolve("NO_OBJECTS") == nullptr)
 		create_cstring("NO_OBJECTS", NO_OBJECTS);
-	if (cstring_resolve("NO_FILENAME") == NULL)
+	if (cstring_resolve("NO_FILENAME") == nullptr)
 		create_cstring("NO_FILENAME", NO_FILENAME);
-	if (cstring_resolve("MOVE_UNDONE") == NULL)
+	if (cstring_resolve("MOVE_UNDONE") == nullptr)
 		create_cstring("MOVE_UNDONE", MOVE_UNDONE);
-	if (cstring_resolve("NO_UNDO") == NULL)
+	if (cstring_resolve("NO_UNDO") == nullptr)
 		create_cstring("NO_UNDO", NO_UNDO);
-	if (cstring_resolve("CANT_SAVE") == NULL)
+	if (cstring_resolve("CANT_SAVE") == nullptr)
 		create_cstring("CANT_SAVE", CANT_SAVE);
-	if (cstring_resolve("CANT_RESTORE") == NULL)
+	if (cstring_resolve("CANT_RESTORE") == nullptr)
 		create_cstring("CANT_RESTORE", CANT_RESTORE);
-	if (cstring_resolve("GAME_SAVED") == NULL)
+	if (cstring_resolve("GAME_SAVED") == nullptr)
 		create_cstring("GAME_SAVED", GAME_SAVED);
-	if (cstring_resolve("INCOMPLETE_SENTENCE") == NULL)
+	if (cstring_resolve("INCOMPLETE_SENTENCE") == nullptr)
 		create_cstring("INCOMPLETE_SENTENCE", INCOMPLETE_SENTENCE);
-	if (cstring_resolve("UNKNOWN_OBJECT") == NULL)
+	if (cstring_resolve("UNKNOWN_OBJECT") == nullptr)
 		create_cstring("UNKNOWN_OBJECT", UNKNOWN_OBJECT);
-	if (cstring_resolve("UNKNOWN_OBJECT_END") == NULL)
+	if (cstring_resolve("UNKNOWN_OBJECT_END") == nullptr)
 		create_cstring("UNKNOWN_OBJECT_END", UNKNOWN_OBJECT_END);
-	if (cstring_resolve("CANT_USE_WORD") == NULL)
+	if (cstring_resolve("CANT_USE_WORD") == nullptr)
 		create_cstring("CANT_USE_WORD", CANT_USE_WORD);
-	if (cstring_resolve("IN_CONTEXT") == NULL)
+	if (cstring_resolve("IN_CONTEXT") == nullptr)
 		create_cstring("IN_CONTEXT", IN_CONTEXT);
-	if (cstring_resolve("DONT_SEE") == NULL)
+	if (cstring_resolve("DONT_SEE") == nullptr)
 		create_cstring("DONT_SEE", DONT_SEE);
-	if (cstring_resolve("HERE_WORD") == NULL)
+	if (cstring_resolve("HERE_WORD") == nullptr)
 		create_cstring("HERE_WORD", HERE_WORD);
-	if (cstring_resolve("BAD_SAVED_GAME") == NULL)
+	if (cstring_resolve("BAD_SAVED_GAME") == nullptr)
 		create_cstring("BAD_SAVED_GAME", BAD_SAVED_GAME);
-	if (cstring_resolve("ARENT") == NULL)
+	if (cstring_resolve("ARENT") == nullptr)
 		create_cstring("ARENT", ARENT);
-	if (cstring_resolve("ISNT") == NULL)
+	if (cstring_resolve("ISNT") == nullptr)
 		create_cstring("ISNT", ISNT);
-	if (cstring_resolve("ARE") == NULL)
+	if (cstring_resolve("ARE") == nullptr)
 		create_cstring("ARE", ARE);
-	if (cstring_resolve("IS") == NULL)
+	if (cstring_resolve("IS") == nullptr)
 		create_cstring("IS", IS);
-	if (cstring_resolve("DONT") == NULL)
+	if (cstring_resolve("DONT") == nullptr)
 		create_cstring("DONT", DONT);
-	if (cstring_resolve("DOESNT") == NULL)
+	if (cstring_resolve("DOESNT") == nullptr)
 		create_cstring("DOESNT", DOESNT);
-	if (cstring_resolve("DO") == NULL)
+	if (cstring_resolve("DO") == nullptr)
 		create_cstring("DO", DO);
-	if (cstring_resolve("DOES") == NULL)
+	if (cstring_resolve("DOES") == nullptr)
 		create_cstring("DOES", DOES);
-	if (cstring_resolve("SCORE_UP") == NULL)
+	if (cstring_resolve("SCORE_UP") == nullptr)
 		create_cstring("SCORE_UP", SCORE_UP);
-	if (cstring_resolve("POINT") == NULL)
+	if (cstring_resolve("POINT") == nullptr)
 		create_cstring("POINT", POINT);
-	if (cstring_resolve("POINTS") == NULL)
+	if (cstring_resolve("POINTS") == nullptr)
 		create_cstring("POINTS", POINTS);
-	if (cstring_resolve("STARTING") == NULL)
+	if (cstring_resolve("STARTING") == nullptr)
 		create_cstring("STARTING", STARTING);
-	if (cstring_resolve("NO_IT") == NULL)
+	if (cstring_resolve("NO_IT") == nullptr)
 		create_cstring("NO_IT", NO_IT);
-	if (cstring_resolve("NO_IT_END") == NULL)
+	if (cstring_resolve("NO_IT_END") == nullptr)
 		create_cstring("NO_IT_END", NO_IT_END);
-	if (cstring_resolve("BACK_REFERENCE") == NULL)
+	if (cstring_resolve("BACK_REFERENCE") == nullptr)
 		create_cstring("BACK_REFERENCE", BACK_REFERENCE);
-	if (cstring_resolve("BACK_REFERENCE_END") == NULL)
+	if (cstring_resolve("BACK_REFERENCE_END") == nullptr)
 		create_cstring("BACK_REFERENCE_END", BACK_REFERENCE_END);
-	if (cstring_resolve("WHEN_YOU_SAY") == NULL)
+	if (cstring_resolve("WHEN_YOU_SAY") == nullptr)
 		create_cstring("WHEN_YOU_SAY", WHEN_YOU_SAY);
-	if (cstring_resolve("MUST_SPECIFY") == NULL)
+	if (cstring_resolve("MUST_SPECIFY") == nullptr)
 		create_cstring("MUST_SPECIFY", MUST_SPECIFY);
-	if (cstring_resolve("OR_WORD") == NULL)
+	if (cstring_resolve("OR_WORD") == nullptr)
 		create_cstring("OR_WORD", OR_WORD);
 }
 

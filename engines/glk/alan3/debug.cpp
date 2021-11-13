@@ -58,7 +58,7 @@ static void showAttributes(AttributeEntry *attrib) {
 	int i;
 	char str[80];
 
-	if (attrib == 0)
+	if (attrib == nullptr)
 		return;
 
 	i = 1;
@@ -151,7 +151,7 @@ static void listInstances(CONTEXT, char *pattern) {
 	bool found = FALSE;
 
 	for (ins = 1; ins <= header->instanceMax; ins++) {
-		if (pattern == NULL || (pattern != NULL && match(pattern, idOfInstance(context, ins)))) {
+		if (pattern == nullptr || (pattern != nullptr && match(pattern, idOfInstance(context, ins)))) {
 			if (!found) {
 				output("Instances:");
 				found = TRUE;
@@ -159,7 +159,7 @@ static void listInstances(CONTEXT, char *pattern) {
 			CALL1(listInstance, ins)
 		}
 	}
-	if (pattern != NULL && !found)
+	if (pattern != nullptr && !found)
 		output("No instances matched the pattern.");
 }
 
@@ -428,13 +428,13 @@ char *readSourceLine(int file, int line) {
 	frefid_t sourceFileRef = g_vm->glk_fileref_create_by_name(fileusage_TextMode, sourceFileName(file), 0);
 	strid_t sourceFile = g_vm->glk_stream_open_file(sourceFileRef, filemode_Read, 0);
 
-	if (sourceFile != NULL) {
+	if (sourceFile != nullptr) {
 		for (count = 0; count < line; count++) {
 			if (!readLine(*sourceFile, buffer, SOURCELINELENGTH))
-				return NULL;
+				return nullptr;
 
 			// If not read the whole line, or no newline, try to read again
-			while (strchr(buffer, '\n') == NULL) {
+			while (strchr(buffer, '\n') == nullptr) {
 				if (!readLine(*sourceFile, buffer, SOURCELINELENGTH))
 					break;
 			}
@@ -444,13 +444,13 @@ char *readSourceLine(int file, int line) {
 		return buffer;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*======================================================================*/
 void showSourceLine(int fileNumber, int line) {
 	char *buffer = readSourceLine(fileNumber, line);
-	if (buffer != NULL) {
+	if (buffer != nullptr) {
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = '\0';
 		printf("<%05d>: %s", line, buffer);
@@ -653,7 +653,7 @@ static const DebugParseEntry commandEntries[] = {
 	{"exit", "", EXIT_COMMAND, "exit to game, enter 'debug' to get back"},
 	{"x", "", EXIT_COMMAND, "d:o"},
 	{"quit", "", QUIT_COMMAND, "quit game"},
-	{NULL, NULL, '\0', NULL}
+	{nullptr, nullptr, '\0', nullptr}
 };
 
 static const DebugParseEntry traceSubcommand[] = {
@@ -662,7 +662,7 @@ static const DebugParseEntry traceSubcommand[] = {
 	{"instructions", "", TRACE_INSTRUCTION_COMMAND, ""},
 	{"pushs", "", TRACE_PUSH_COMMAND, ""},
 	{"stacks", "", TRACE_STACK_COMMAND, ""},
-	{NULL, NULL, '\0', NULL}
+	{nullptr, nullptr, '\0', nullptr}
 };
 
 
@@ -691,13 +691,13 @@ static void handleHelpCommand() {
 	const DebugParseEntry *entry = commandEntries;
 
 	int maxLength = 0;
-	for (entry = commandEntries; entry->command != NULL; entry++) {
+	for (entry = commandEntries; entry->command != nullptr; entry++) {
 		if (strlen(entry->command) + strlen(entry->parameter) > (uint)maxLength)
 			maxLength = strlen(entry->command) + strlen(entry->parameter);
 	}
 
 	output("$nADBG Commands (can be abbreviated):");
-	for (entry = commandEntries; entry->command != NULL; entry++) {
+	for (entry = commandEntries; entry->command != nullptr; entry++) {
 		char buf[200];
 		sprintf(buf, "$i%s %s %s$n$t$t-- %s", entry->command, entry->parameter, padding(entry, maxLength), entry->helpText);
 		output(buf);
@@ -707,22 +707,22 @@ static void handleHelpCommand() {
 
 /*----------------------------------------------------------------------*/
 static const DebugParseEntry *findEntry(char *command, const DebugParseEntry *entry) {
-	while (entry->command != NULL) {
+	while (entry->command != nullptr) {
 		if (scumm_strnicmp(command, entry->command, strlen(command)) == 0)
 			return entry;
 		entry++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
 /*----------------------------------------------------------------------*/
 static char parseDebugCommand(char *command) {
 	const DebugParseEntry *entry = findEntry(command, commandEntries);
-	if (entry != NULL) {
+	if (entry != nullptr) {
 		if (strlen(command) < strlen(entry->command)) {
 			/* See if there are any more partial matches */
-			if (findEntry(command, entry + 1) != NULL)
+			if (findEntry(command, entry + 1) != nullptr)
 				/* TODO: we should list the possible matches somehow */
 				return AMBIGUOUS_COMMAND;
 		}
@@ -813,15 +813,15 @@ static void toggleStackTrace() {
 
 /*----------------------------------------------------------------------*/
 static int parseTraceCommand() {
-	char *subcommand = strtok(NULL, "");
+	char *subcommand = strtok(nullptr, "");
 	const DebugParseEntry *entry;
-	if (subcommand == 0)
+	if (subcommand == nullptr)
 		return UNKNOWN_COMMAND;
 	else {
 		entry = findEntry(subcommand, traceSubcommand);
-		if (entry != NULL) {
+		if (entry != nullptr) {
 			if (strlen(subcommand) < strlen(entry->command)) {
-				if (findEntry(subcommand, entry + 1) != NULL)
+				if (findEntry(subcommand, entry + 1) != nullptr)
 					return AMBIGUOUS_COMMAND;
 			}
 			return entry->code;
@@ -880,16 +880,16 @@ static void handleTraceCommand() {
 
 /*----------------------------------------------------------------------*/
 static void handleBreakCommand(int fileNumber) {
-	char *parameter = strtok(NULL, ":");
-	if (parameter != NULL && Common::isAlpha((int)parameter[0])) {
+	char *parameter = strtok(nullptr, ":");
+	if (parameter != nullptr && Common::isAlpha((int)parameter[0])) {
 		fileNumber = sourceFileNumber(parameter);
 		if (fileNumber == -1) {
 			printf("No such file: '%s'\n", parameter);
 			return;
 		}
-		parameter = strtok(NULL, "");
+		parameter = strtok(nullptr, "");
 	}
-	if (parameter == NULL)
+	if (parameter == nullptr)
 		listBreakpoints();
 	else
 		setBreakpoint(fileNumber, atoi(parameter));
@@ -898,8 +898,8 @@ static void handleBreakCommand(int fileNumber) {
 
 /*----------------------------------------------------------------------*/
 static void handleDeleteCommand(bool calledFromBreakpoint, int line, int fileNumber) {
-	char *parameter = strtok(NULL, "");
-	if (parameter == NULL) {
+	char *parameter = strtok(nullptr, "");
+	if (parameter == nullptr) {
 		if (calledFromBreakpoint)
 			deleteBreakpoint(line, fileNumber);
 		else
@@ -921,8 +921,8 @@ static void handleNextCommand(bool calledFromBreakpoint) {
 
 /*----------------------------------------------------------------------*/
 static void handleLocationsCommand(CONTEXT) {
-	char *parameter = strtok(NULL, "");
-	if (parameter == 0)
+	char *parameter = strtok(nullptr, "");
+	if (parameter == nullptr)
 		listLocations(context);
 	else
 		showLocation(context, atoi(parameter));
@@ -931,8 +931,8 @@ static void handleLocationsCommand(CONTEXT) {
 
 /*----------------------------------------------------------------------*/
 static void handleActorsCommand(CONTEXT) {
-	char *parameter = strtok(NULL, "");
-	if (parameter == NULL)
+	char *parameter = strtok(nullptr, "");
+	if (parameter == nullptr)
 		listActors(context);
 	else
 		showActor(context, atoi(parameter));
@@ -941,8 +941,8 @@ static void handleActorsCommand(CONTEXT) {
 
 /*----------------------------------------------------------------------*/
 static void handleClassesCommand(CONTEXT) {
-	char *parameter = strtok(NULL, "");
-	if (parameter == NULL || strchr(parameter, '*') != 0) {
+	char *parameter = strtok(nullptr, "");
+	if (parameter == nullptr || strchr(parameter, '*') != nullptr) {
 		output("Classes:");
 		showClassHierarchy(1, 0);
 		listInstances(context, parameter);
@@ -956,8 +956,8 @@ static void handleClassesCommand(CONTEXT) {
 
 /*----------------------------------------------------------------------*/
 static void handleObjectsCommand(CONTEXT) {
-	char *parameter = strtok(NULL, "");
-	if (parameter == NULL)
+	char *parameter = strtok(nullptr, "");
+	if (parameter == nullptr)
 		listObjects(context);
 	else
 		showObject(context, atoi(parameter));
@@ -966,10 +966,10 @@ static void handleObjectsCommand(CONTEXT) {
 
 /*----------------------------------------------------------------------*/
 static void handleInstancesCommand(CONTEXT) {
-	char *parameter = strtok(NULL, "");
+	char *parameter = strtok(nullptr, "");
 	uint i;
 
-	if (parameter == NULL || strchr(parameter, '*') != 0)
+	if (parameter == nullptr || strchr(parameter, '*') != nullptr)
 		listInstances(context, parameter);
 	else if (Common::isDigit((int)parameter[0]))
 		showInstance(context, atoi(parameter));

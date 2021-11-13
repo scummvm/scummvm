@@ -42,7 +42,7 @@ ScriptEntry *scriptOf(int actor) {
 		if (!isEndOfArray(scr))
 			return scr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -51,7 +51,7 @@ StepEntry *stepOf(int actor) {
 	StepEntry *step;
 	ScriptEntry *scr = scriptOf(actor);
 
-	if (scr == NULL) return NULL;
+	if (scr == nullptr) return nullptr;
 
 	step = (StepEntry *)pointerTo(scr->steps);
 	step = &step[admin[actor].step];
@@ -64,7 +64,7 @@ StepEntry *stepOf(int actor) {
 void describeActor(CONTEXT, int actor) {
 	ScriptEntry *script = scriptOf(actor);
 
-	if (script != NULL && script->description != 0) {
+	if (script != nullptr && script->description != 0) {
 		CALL1(interpret, script->description)
 	} else if (hasDescription(actor)) {
 		CALL1(describeAnything, actor)

@@ -110,17 +110,17 @@ static char uppChrs[] = {
 
 
 int isSpace(int c) {            /* IN - Native character to test */
-	return (c != '\0' && strchr(spcChrs, c) != 0);
+	return (c != '\0' && strchr(spcChrs, c) != nullptr);
 }
 
 
 int isLower(int c) {            /* IN - Native character to test */
-	return (c != '\0' && strchr(lowChrs, c) != 0);
+	return (c != '\0' && strchr(lowChrs, c) != nullptr);
 }
 
 
 int isUpper(int c) {            /* IN - Native character to test */
-	return (c != '\0' && strchr(uppChrs, c) != 0);
+	return (c != '\0' && strchr(uppChrs, c) != nullptr);
 }
 
 int isLetter(int c) {           /* IN - Native character to test */
@@ -158,13 +158,13 @@ char *strupp(char str[]) {      /* INOUT - Native string to convert */
 
 int isLowerCase(int c) {        /* IN - ISO character to test */
 	static char lowChars[] = "abcdefghijklmnopqrstuvwxyz\340\341\342\343\344\345\346\347\351\352\353\354\355\356\357\360\361\362\363\364\365\366\370\371\372\373\374\375\376\377";
-	return (c != '\0' && strchr(lowChars, c) != 0);
+	return (c != '\0' && strchr(lowChars, c) != nullptr);
 }
 
 
 int isUpperCase(int c) {        /* IN - ISO character to test */
 	static char upperChars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337";
-	return (c != '\0' && strchr(upperChars, c) != 0);
+	return (c != '\0' && strchr(upperChars, c) != nullptr);
 }
 
 

@@ -157,7 +157,7 @@ void move_in_dir(int obj, int dir) {
 /*  Stack routines:   Manipulating the expression stack                */
 /* ------------------------------------------------------------------- */
 
-static long *stack = NULL;
+static long *stack = nullptr;
 static int sp = 0; /* Stack pointer */
 static int stacksize = 0; /* Actual space allocated to the stack */
 

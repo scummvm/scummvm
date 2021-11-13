@@ -36,7 +36,7 @@ namespace TADS2 {
  *   that routines that don't have any other access to it (such as
  *   Unix-style signal handlers) can reach it.
  */
-voccxdef *main_voc_ctx = 0;
+voccxdef *main_voc_ctx = nullptr;
 
 #ifdef VOCW_IN_CACHE
 vocwdef *vocwget(voccxdef *ctx, uint idx)
@@ -259,7 +259,7 @@ void vocadd2(voccxdef *ctx, prpnum p, objnum objn, int classflg,
 	}
 
 	/* look for a free vocdef entry of the same size */
-	for (prv = (vocdef *)0, v = ctx->voccxfre ; v ; prv = v, v = v->vocnxt)
+	for (prv = (vocdef *)nullptr, v = ctx->voccxfre ; v ; prv = v, v = v->vocnxt)
 		if (v->voclen == len + len2) break;
 
 	if (v)
@@ -312,7 +312,7 @@ static void voc_parse_words(char **wrdtxt, int *len, char **wrd2, int *len2)
 	else
 	{
 		/* no space ==> no second word */
-		*wrd2 = (char *)0;
+		*wrd2 = (char *)nullptr;
 	}
 }
 
@@ -351,7 +351,7 @@ void vociadd(voccxdef *ctx, objnum obj, objnum loc,
 	vocialo(ctx, obj);
 
 	/* look in free list for an entry that's big enough */
-	for (prv = (vocidef *)0, min = (vocidef *)0, v = ctx->voccxifr ; v ;
+	for (prv = (vocidef *)nullptr, min = (vocidef *)nullptr, v = ctx->voccxifr ; v ;
 		 prv = v, v = v->vocinxt)
 	{
 		if (v->vocinsc == numsc)
@@ -399,7 +399,7 @@ void vociadd(voccxdef *ctx, objnum obj, objnum loc,
 	}
 
 	/* set up the entry */
-	if (vocinh(ctx, obj) != (vocidef *)0) errsig(ctx->voccxerr, ERR_VOCINUS);
+	if (vocinh(ctx, obj) != (vocidef *)nullptr) errsig(ctx->voccxerr, ERR_VOCINUS);
 	v->vociloc = loc;
 	v->vociilc = MCMONINV;
 	v->vociflg = (flags & ~VOCIFXLAT);
@@ -463,7 +463,7 @@ void vocrevert(voccxdef *vctx)
 	 *   Revert the vocabulary list: delete all newly added words, and
 	 *   undelete all original words marked as deleted.
 	 */
-	vocdel1(vctx, MCMONINV, (char *)0, 0, TRUE, TRUE, FALSE);
+	vocdel1(vctx, MCMONINV, (char *)nullptr, 0, TRUE, TRUE, FALSE);
 }
 
 /* initialize voc context */
@@ -517,15 +517,15 @@ void vocini(voccxdef *vocctx, errcxdef *errctx, mcmcxdef *memctx,
 	vocctx->voccxactor = MCMONINV;
 	vocctx->voccxverb = MCMONINV;
 	vocctx->voccxprep = MCMONINV;
-	vocctx->voccxdobj = 0;
-	vocctx->voccxiobj = 0;
+	vocctx->voccxdobj = nullptr;
+	vocctx->voccxiobj = nullptr;
 
 	vocctx->voccxunknown = 0;
 	vocctx->voccxlastunk = 0;
 
-	vocctx->voc_stk_ptr = 0;
-	vocctx->voc_stk_cur = 0;
-	vocctx->voc_stk_end = 0;
+	vocctx->voc_stk_ptr = nullptr;
+	vocctx->voc_stk_cur = nullptr;
+	vocctx->voc_stk_end = nullptr;
 
 	/* allocate fuses, daemons, notifiers */
 	vocinialo(vocctx, &vocctx->voccxfus, (vocctx->voccxfuc = fuses));
@@ -545,14 +545,14 @@ void vocterm(voccxdef *ctx)
 	voctermfree(ctx->voccxalm);
 
 	/* delete the private stack */
-	if (ctx->voc_stk_ptr != 0)
+	if (ctx->voc_stk_ptr != nullptr)
 		mchfre(ctx->voc_stk_ptr);
 }
 
 /* clean up the vocab context */
 void voctermfree(vocddef *what)
 {
-	if (what != 0)
+	if (what != nullptr)
 		mchfre(what);
 }
 
@@ -681,7 +681,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 	for (i = VOCHASHSIZ, vp = ctx->voccxhsh ; i ; ++vp, --i)
 	{
 		/* go through all words in this hash chain */
-		for (prv = (vocdef *)0, v = *vp ; v ; v = nxt)
+		for (prv = (vocdef *)nullptr, v = *vp ; v ; v = nxt)
 		{
 			/* remember next word in hash chain */
 			nxt = v->vocnxt;
@@ -711,7 +711,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 			deleted_vocdef = FALSE;
 
 			/* go through all object relations for this word */
-			for (prvw = 0, idx = v->vocwlst, vw = vocwget(ctx, idx) ; vw ;
+			for (prvw = nullptr, idx = v->vocwlst, vw = vocwget(ctx, idx) ; vw ;
 				 vw = nxtw, idx = nxtidx)
 			{
 				/* remember next word in relation list */
@@ -741,7 +741,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 					 *   match)
 					 */
 					do_del = (vw->vocwobj == objn
-							  && (wrd1 == 0 || vw->vocwtyp == prp));
+							  && (wrd1 == nullptr || vw->vocwtyp == prp));
 
 					/*
 					 *   if we're not in really_delete mode, and the word
@@ -814,7 +814,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 /* delete all vocabulary for an object */
 void vocdel(voccxdef *ctx, objnum objn)
 {
-	vocdel1(ctx, objn, (char *)0, (prpnum)0, TRUE, FALSE, FALSE);
+	vocdel1(ctx, objn, (char *)nullptr, (prpnum)0, TRUE, FALSE, FALSE);
 }
 
 /* delete object inheritance records for a particular object */
@@ -824,7 +824,7 @@ void vocidel(voccxdef *ctx, objnum obj)
 
 	/* get entry out of page table, and clear page table slot */
 	v = vocinh(ctx, obj);
-	vocinh(ctx, obj) = (vocidef *)0;
+	vocinh(ctx, obj) = (vocidef *)nullptr;
 
 	/* link into free list */
 	if (v)

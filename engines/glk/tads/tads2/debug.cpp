@@ -266,7 +266,7 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 	uchar   buf[TOKNAMMAX + 1];
 	uint    len;
 	const uchar  *p = buf;
-	const char *typ = 0;
+	const char *typ = nullptr;
 
 	switch(val->runstyp)
 	{

@@ -72,7 +72,7 @@ static const sc_strings_t DEBUG_COMMANDS[] = {
 	{"clearevents", DEBUG_CLEAREVENTS}, {"cleartasks", DEBUG_CLEARTASKS},
 	{"clearvariables", DEBUG_CLEARVARIABLES}, {"watchall", DEBUG_WATCHALL},
 	{"clearall", DEBUG_CLEARALL}, {"random", DEBUG_RANDOM}, {"quit", DEBUG_QUIT},
-	{NULL, DEBUG_NONE}
+	{nullptr, DEBUG_NONE}
 };
 
 /*
@@ -204,7 +204,7 @@ static void debug_finalize(sc_gameref_t game) {
 	sc_free(debug);
 
 	/* Remove the debug reference from the game. */
-	game->debugger = NULL;
+	game->debugger = nullptr;
 }
 
 
@@ -1340,9 +1340,9 @@ static void debug_dump_common(sc_gameref_t game, sc_command_t command,
 
 	/* Initialize variables to avoid gcc warnings. */
 	limit = 0;
-	class_ = NULL;
-	filter_function = NULL;
-	dumper_function = NULL;
+	class_ = nullptr;
+	filter_function = nullptr;
+	dumper_function = nullptr;
 
 	/* Switch to undo game on relevant commands. */
 	switch (command) {
@@ -1405,7 +1405,7 @@ static void debug_dump_common(sc_gameref_t game, sc_command_t command,
 	case DEBUG_VARIABLES:
 	case DEBUG_OLDVARIABLES:
 		class_ = "Variable";
-		filter_function = NULL;
+		filter_function = nullptr;
 		dumper_function = debug_dump_variable;
 		limit = debug_variable_count(game);
 		break;
@@ -1611,8 +1611,8 @@ static void debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
 
 	/* Initialize variables to avoid gcc warnings. */
 	limit = 0;
-	class_ = NULL;
-	watchpoints = NULL;
+	class_ = nullptr;
+	watchpoints = nullptr;
 	action = FALSE;
 
 	/* Set action to TRUE or FALSE, for setting/clearing watchpoints. */
@@ -2484,7 +2484,7 @@ void debug_set_enabled(sc_gameref_t game, sc_bool enable) {
 sc_bool debug_get_enabled(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
-	return debug != NULL;
+	return debug != nullptr;
 }
 
 } // End of namespace Adrift

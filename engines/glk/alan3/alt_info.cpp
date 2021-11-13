@@ -75,7 +75,7 @@ static void traceAltInfo(CONTEXT, AltInfo *alt) {
 		break;
 	case PARAMETER_LEVEL: {
 		char *parameterName = parameterNameInSyntax(current.verb, alt->parameter);
-		if (parameterName != NULL)
+		if (parameterName != nullptr)
 			printf("in parameter %s(#%d)=", parameterName, alt->parameter);
 		else
 			printf("in parameter #%d=", alt->parameter);
@@ -100,7 +100,7 @@ static void traceVerbCheck(CONTEXT, AltInfo *alt, bool execute) {
 
 /*======================================================================*/
 bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute) {
-	if (altInfo->alt != NULL && altInfo->alt->checks != 0) {
+	if (altInfo->alt != nullptr && altInfo->alt->checks != 0) {
 		R0CALL2(traceVerbCheck, altInfo, execute)
 
 		// TODO Why does this not generate a regression error with !
@@ -153,7 +153,7 @@ bool executedOk(CONTEXT, AltInfo *altInfo) {
 
 /*======================================================================*/
 bool canBeExecuted(AltInfo *altInfo) {
-	return altInfo->alt != NULL && altInfo->alt->action != 0;
+	return altInfo->alt != nullptr && altInfo->alt->action != 0;
 }
 
 
@@ -193,7 +193,7 @@ static void addAlternative(AltInfoArray altInfos, int verb, int level, Aint para
 	AltInfo *altInfoP = nextFreeAltInfo(altInfos);
 
 	altInfoP->alt = (*finder)(verb, parameterNumber, theInstance, theClass);
-	if (altInfoP->alt != NULL) {
+	if (altInfoP->alt != nullptr) {
 		primeAltInfo(altInfoP, level, parameterNumber, theInstance, theClass);
 		altInfoP[1].end = TRUE;
 	}
@@ -256,7 +256,7 @@ bool anyCheckFailed(CONTEXT, AltInfoArray altInfo, bool execute) {
 	int altIndex;
 	bool flag;
 
-	if (altInfo != NULL)
+	if (altInfo != nullptr)
 		for (altIndex = 0; !altInfo[altIndex].end; altIndex++) {
 			current.instance = altInfo[altIndex].instance;
 
@@ -272,7 +272,7 @@ bool anythingToExecute(AltInfo altInfo[]) {
 	int altIndex;
 
 	/* Check for anything to execute... */
-	if (altInfo != NULL)
+	if (altInfo != nullptr)
 		for (altIndex = 0; !altInfo[altIndex].end; altIndex++)
 			if (canBeExecuted(&altInfo[altIndex]))
 				return TRUE;
@@ -293,7 +293,7 @@ static VerbEntry *findVerbEntry(int verbCode, VerbEntry *entries) {
 				return verbEntry;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -302,17 +302,17 @@ static AltEntry *findAlternative(Aaddr verbTableAddress, int verbCode, int param
 	AltEntry *alt;
 	VerbEntry *verbEntry;
 
-	if (verbTableAddress == 0) return NULL;
+	if (verbTableAddress == 0) return nullptr;
 
 	verbEntry = findVerbEntry(verbCode, (VerbEntry *) pointerTo(verbTableAddress));
-	if (verbEntry != NULL)
+	if (verbEntry != nullptr)
 		for (alt = (AltEntry *) pointerTo(verbEntry->alts); !isEndOfArray(alt); alt++) {
 			if (alt->param == parameterNumber || alt->param == 0) {
 				if (verbEntry->code < 0) current.meta = TRUE;
 				return alt;
 			}
 		}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -360,7 +360,7 @@ static bool possibleWithFinder(CONTEXT, int verb, Parameter parameters[], AltInf
 	else
 		anything = anythingToExecute(allAlternatives);
 
-	if (allAlternatives != NULL)
+	if (allAlternatives != nullptr)
 		deallocate(allAlternatives);
 
 	return (anything);

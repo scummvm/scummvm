@@ -408,7 +408,7 @@ static void do_log_print(out_stream_info *stream, const char *str)
 	VARUSED(stream);
 
 	/* display to the log file */
-	if (logfp != 0 && G_os_moremode)
+	if (logfp != nullptr && G_os_moremode)
 	{
 		os_fprintz(logfp, str);
 		osfflush(logfp);
@@ -568,312 +568,312 @@ struct amp_tbl_t {
  *   table.
  */
 static struct amp_tbl_t amp_tbl[] = {
-	{ "AElig", 198, 0 },
-	{ "Aacute", 193, 0 },
-	{ "Abreve", 258, 0 },
-	{ "Acirc", 194, 0 },
-	{ "Agrave", 192, 0 },
-	{ "Alpha", 913, 0 },
-	{ "Aogon", 260, 0 },
-	{ "Aring", 197, 0 },
-	{ "Atilde", 195, 0 },
-	{ "Auml", 196, 0 },
-	{ "Beta", 914, 0 },
-	{ "Cacute", 262, 0 },
-	{ "Ccaron", 268, 0 },
-	{ "Ccedil", 199, 0 },
-	{ "Chi", 935, 0 },
-	{ "Dagger", 8225, 0 },
-	{ "Dcaron", 270, 0 },
-	{ "Delta", 916, 0 },
-	{ "Dstrok", 272, 0 },
-	{ "ETH", 208, 0 },
-	{ "Eacute", 201, 0 },
-	{ "Ecaron", 282, 0 },
-	{ "Ecirc", 202, 0 },
-	{ "Egrave", 200, 0 },
-	{ "Eogon", 280, 0 },
-	{ "Epsilon", 917, 0 },
-	{ "Eta", 919, 0 },
-	{ "Euml", 203, 0 },
-	{ "Gamma", 915, 0 },
-	{ "Iacute", 205, 0 },
-	{ "Icirc", 206, 0 },
-	{ "Igrave", 204, 0 },
-	{ "Iota", 921, 0 },
-	{ "Iuml", 207, 0 },
-	{ "Kappa", 922, 0 },
-	{ "Lacute", 313, 0 },
-	{ "Lambda", 923, 0 },
-	{ "Lcaron", 317, 0 },
-	{ "Lstrok", 321, 0 },
-	{ "Mu", 924, 0 },
-	{ "Nacute", 323, 0 },
-	{ "Ncaron", 327, 0 },
-	{ "Ntilde", 209, 0 },
-	{ "Nu", 925, 0 },
-	{ "OElig", 338, 0 },
-	{ "Oacute", 211, 0 },
-	{ "Ocirc", 212, 0 },
-	{ "Odblac", 336, 0 },
-	{ "Ograve", 210, 0 },
-	{ "Omega", 937, 0 },
-	{ "Omicron", 927, 0 },
-	{ "Oslash", 216, 0 },
-	{ "Otilde", 213, 0 },
-	{ "Ouml", 214, 0 },
-	{ "Phi", 934, 0 },
-	{ "Pi", 928, 0 },
-	{ "Prime", 8243, 0 },
-	{ "Psi", 936, 0 },
-	{ "Racute", 340, 0 },
-	{ "Rcaron", 344, 0 },
-	{ "Rho", 929, 0 },
-	{ "Sacute", 346, 0 },
-	{ "Scaron", 352, 0 },
-	{ "Scedil", 350, 0 },
-	{ "Sigma", 931, 0 },
-	{ "THORN", 222, 0 },
-	{ "Tau", 932, 0 },
-	{ "Tcaron", 356, 0 },
-	{ "Tcedil", 354, 0 },
-	{ "Theta", 920, 0 },
-	{ "Uacute", 218, 0 },
-	{ "Ucirc", 219, 0 },
-	{ "Udblac", 368, 0 },
-	{ "Ugrave", 217, 0 },
-	{ "Upsilon", 933, 0 },
-	{ "Uring", 366, 0 },
-	{ "Uuml", 220, 0 },
-	{ "Xi", 926, 0 },
-	{ "Yacute", 221, 0 },
-	{ "Yuml", 376, 0 },
-	{ "Zacute", 377, 0 },
-	{ "Zcaron", 381, 0 },
-	{ "Zdot", 379, 0 },
-	{ "Zeta", 918, 0 },
-	{ "aacute", 225, 0 },
-	{ "abreve", 259, 0 },
-	{ "acirc", 226, 0 },
-	{ "acute", 180, 0 },
-	{ "aelig", 230, 0 },
-	{ "agrave", 224, 0 },
-	{ "alefsym", 8501, 0 },
-	{ "alpha", 945, 0 },
-	{ "amp", '&', 0 },
-	{ "and", 8743, 0 },
-	{ "ang", 8736, 0 },
-	{ "aogon", 261, 0 },
-	{ "aring", 229, 0 },
-	{ "asymp", 8776, 0 },
-	{ "atilde", 227, 0 },
-	{ "auml", 228, 0 },
-	{ "bdquo", 8222, 0 },
-	{ "beta", 946, 0 },
-	{ "breve", 728, 0 },
-	{ "brvbar", 166, 0 },
-	{ "bull", 8226, 0 },
-	{ "cacute", 263, 0 },
-	{ "cap", 8745, 0 },
-	{ "caron", 711, 0 },
-	{ "ccaron", 269, 0 },
-	{ "ccedil", 231, 0 },
-	{ "cedil", 184, 0 },
-	{ "cent", 162, 0 },
-	{ "chi", 967, 0 },
-	{ "circ", 710, 0 },
-	{ "clubs", 9827, 0 },
-	{ "cong", 8773, 0 },
-	{ "copy", 169, 0 },
-	{ "crarr", 8629, 0 },
-	{ "cup", 8746, 0 },
-	{ "curren", 164, 0 },
-	{ "dArr", 8659, 0 },
-	{ "dagger", 8224, 0 },
-	{ "darr", 8595, 0 },
-	{ "dblac", 733, 0 },
-	{ "dcaron", 271, 0 },
-	{ "deg", 176, 0 },
-	{ "delta", 948, 0 },
-	{ "diams", 9830, 0 },
-	{ "divide", 247, 0 },
-	{ "dot", 729, 0 },
-	{ "dstrok", 273, 0 },
-	{ "eacute", 233, 0 },
-	{ "ecaron", 283, 0 },
-	{ "ecirc", 234, 0 },
-	{ "egrave", 232, 0 },
-	{ "emdash", 8212, 0 },
-	{ "empty", 8709, 0 },
-	{ "endash", 8211, 0 },
-	{ "eogon", 281, 0 },
-	{ "epsilon", 949, 0 },
-	{ "equiv", 8801, 0 },
-	{ "eta", 951, 0 },
-	{ "eth", 240, 0 },
-	{ "euml", 235, 0 },
-	{ "exist", 8707, 0 },
-	{ "fnof", 402, 0 },
-	{ "forall", 8704, 0 },
-	{ "frac12", 189, 0 },
-	{ "frac14", 188, 0 },
-	{ "frac34", 190, 0 },
-	{ "frasl", 8260, 0 },
-	{ "gamma", 947, 0 },
-	{ "ge", 8805, 0 },
-	{ "gt", '>', 0 },
-	{ "hArr", 8660, 0 },
-	{ "harr", 8596, 0 },
-	{ "hearts", 9829, 0 },
-	{ "hellip", 8230, 0 },
-	{ "iacute", 237, 0 },
-	{ "icirc", 238, 0 },
-	{ "iexcl", 161, 0 },
-	{ "igrave", 236, 0 },
-	{ "image", 8465, 0 },
-	{ "infin", 8734, 0 },
-	{ "int", 8747, 0 },
-	{ "iota", 953, 0 },
-	{ "iquest", 191, 0 },
-	{ "isin", 8712, 0 },
-	{ "iuml", 239, 0 },
-	{ "kappa", 954, 0 },
-	{ "lArr", 8656, 0 },
-	{ "lacute", 314, 0 },
-	{ "lambda", 955, 0 },
-	{ "lang", 9001, 0 },
-	{ "laquo", 171, 0 },
-	{ "larr", 8592, 0 },
-	{ "lcaron", 318, 0 },
-	{ "lceil", 8968, 0 },
-	{ "ldq", 8220, 0 },
-	{ "ldquo", 8220, 0 },
-	{ "le", 8804, 0 },
-	{ "lfloor", 8970, 0 },
-	{ "lowast", 8727, 0 },
-	{ "loz", 9674, 0 },
-	{ "lsaquo", 8249, 0 },
-	{ "lsq", 8216, 0 },
-	{ "lsquo", 8216, 0 },
-	{ "lstrok", 322, 0 },
-	{ "lt", '<', 0 },
-	{ "macr", 175, 0 },
-	{ "mdash", 8212, 0 },
-	{ "micro", 181, 0 },
-	{ "middot", 183, 0 },
-	{ "minus", 8722, 0 },
-	{ "mu", 956, 0 },
-	{ "nabla", 8711, 0 },
-	{ "nacute", 324, 0 },
-	{ "nbsp", QSPACE, 0 },
-	{ "ncaron", 328, 0 },
-	{ "ndash", 8211, 0 },
-	{ "ne", 8800, 0 },
-	{ "ni", 8715, 0 },
-	{ "not", 172, 0 },
-	{ "notin", 8713, 0 },
-	{ "nsub", 8836, 0 },
-	{ "ntilde", 241, 0 },
-	{ "nu", 957, 0 },
-	{ "oacute", 243, 0 },
-	{ "ocirc", 244, 0 },
-	{ "odblac", 337, 0 },
-	{ "oelig", 339, 0 },
-	{ "ogon", 731, 0 },
-	{ "ograve", 242, 0 },
-	{ "oline", 8254, 0 },
-	{ "omega", 969, 0 },
-	{ "omicron", 959, 0 },
-	{ "oplus", 8853, 0 },
-	{ "or", 8744, 0 },
-	{ "ordf", 170, 0 },
-	{ "ordm", 186, 0 },
-	{ "oslash", 248, 0 },
-	{ "otilde", 245, 0 },
-	{ "otimes", 8855, 0 },
-	{ "ouml", 246, 0 },
-	{ "para", 182, 0 },
-	{ "part", 8706, 0 },
-	{ "permil", 8240, 0 },
-	{ "perp", 8869, 0 },
-	{ "phi", 966, 0 },
-	{ "pi", 960, 0 },
-	{ "piv", 982, 0 },
-	{ "plusmn", 177, 0 },
-	{ "pound", 163, 0 },
-	{ "prime", 8242, 0 },
-	{ "prod", 8719, 0 },
-	{ "prop", 8733, 0 },
-	{ "psi", 968, 0 },
-	{ "quot", '"', 0 },
-	{ "rArr", 8658, 0 },
-	{ "racute", 341, 0 },
-	{ "radic", 8730, 0 },
-	{ "rang", 9002, 0 },
-	{ "raquo", 187, 0 },
-	{ "rarr", 8594, 0 },
-	{ "rcaron", 345, 0 },
-	{ "rceil", 8969, 0 },
-	{ "rdq", 8221, 0 },
-	{ "rdquo", 8221, 0 },
-	{ "real", 8476, 0 },
-	{ "reg", 174, 0 },
-	{ "rfloor", 8971, 0 },
-	{ "rho", 961, 0 },
-	{ "rsaquo", 8250, 0 },
-	{ "rsq", 8217, 0 },
-	{ "rsquo", 8217, 0 },
-	{ "sacute", 347, 0 },
-	{ "sbquo", 8218, 0 },
-	{ "scaron", 353, 0 },
-	{ "scedil", 351, 0 },
-	{ "sdot", 8901, 0 },
-	{ "sect", 167, 0 },
-	{ "shy", 173, 0 },
-	{ "sigma", 963, 0 },
-	{ "sigmaf", 962, 0 },
-	{ "sim", 8764, 0 },
-	{ "spades", 9824, 0 },
-	{ "sub", 8834, 0 },
-	{ "sube", 8838, 0 },
-	{ "sum", 8721, 0 },
-	{ "sup", 8835, 0 },
-	{ "sup1", 185, 0 },
-	{ "sup2", 178, 0 },
-	{ "sup3", 179, 0 },
-	{ "supe", 8839, 0 },
-	{ "szlig", 223, 0 },
-	{ "tau", 964, 0 },
-	{ "tcaron", 357, 0 },
-	{ "tcedil", 355, 0 },
-	{ "there4", 8756, 0 },
-	{ "theta", 952, 0 },
-	{ "thetasym", 977, 0 },
-	{ "thorn", 254, 0 },
-	{ "thorn", 254, 0 },
-	{ "tilde", 732, 0 },
-	{ "times", 215, 0 },
-	{ "trade", 8482, 0 },
-	{ "uArr", 8657, 0 },
-	{ "uacute", 250, 0 },
-	{ "uarr", 8593, 0 },
-	{ "ucirc", 251, 0 },
-	{ "udblac", 369, 0 },
-	{ "ugrave", 249, 0 },
-	{ "uml", 168, 0 },
-	{ "upsih", 978, 0 },
-	{ "upsilon", 965, 0 },
-	{ "uring", 367, 0 },
-	{ "uuml", 252, 0 },
-	{ "weierp", 8472, 0 },
-	{ "xi", 958, 0 },
-	{ "yacute", 253, 0 },
-	{ "yen", 165, 0 },
-	{ "yuml", 255, 0 },
-	{ "zacute", 378, 0 },
-	{ "zcaron", 382, 0 },
-	{ "zdot", 380, 0 },
-	{ "zeta", 950, 0 }
+	{ "AElig", 198, nullptr },
+	{ "Aacute", 193, nullptr },
+	{ "Abreve", 258, nullptr },
+	{ "Acirc", 194, nullptr },
+	{ "Agrave", 192, nullptr },
+	{ "Alpha", 913, nullptr },
+	{ "Aogon", 260, nullptr },
+	{ "Aring", 197, nullptr },
+	{ "Atilde", 195, nullptr },
+	{ "Auml", 196, nullptr },
+	{ "Beta", 914, nullptr },
+	{ "Cacute", 262, nullptr },
+	{ "Ccaron", 268, nullptr },
+	{ "Ccedil", 199, nullptr },
+	{ "Chi", 935, nullptr },
+	{ "Dagger", 8225, nullptr },
+	{ "Dcaron", 270, nullptr },
+	{ "Delta", 916, nullptr },
+	{ "Dstrok", 272, nullptr },
+	{ "ETH", 208, nullptr },
+	{ "Eacute", 201, nullptr },
+	{ "Ecaron", 282, nullptr },
+	{ "Ecirc", 202, nullptr },
+	{ "Egrave", 200, nullptr },
+	{ "Eogon", 280, nullptr },
+	{ "Epsilon", 917, nullptr },
+	{ "Eta", 919, nullptr },
+	{ "Euml", 203, nullptr },
+	{ "Gamma", 915, nullptr },
+	{ "Iacute", 205, nullptr },
+	{ "Icirc", 206, nullptr },
+	{ "Igrave", 204, nullptr },
+	{ "Iota", 921, nullptr },
+	{ "Iuml", 207, nullptr },
+	{ "Kappa", 922, nullptr },
+	{ "Lacute", 313, nullptr },
+	{ "Lambda", 923, nullptr },
+	{ "Lcaron", 317, nullptr },
+	{ "Lstrok", 321, nullptr },
+	{ "Mu", 924, nullptr },
+	{ "Nacute", 323, nullptr },
+	{ "Ncaron", 327, nullptr },
+	{ "Ntilde", 209, nullptr },
+	{ "Nu", 925, nullptr },
+	{ "OElig", 338, nullptr },
+	{ "Oacute", 211, nullptr },
+	{ "Ocirc", 212, nullptr },
+	{ "Odblac", 336, nullptr },
+	{ "Ograve", 210, nullptr },
+	{ "Omega", 937, nullptr },
+	{ "Omicron", 927, nullptr },
+	{ "Oslash", 216, nullptr },
+	{ "Otilde", 213, nullptr },
+	{ "Ouml", 214, nullptr },
+	{ "Phi", 934, nullptr },
+	{ "Pi", 928, nullptr },
+	{ "Prime", 8243, nullptr },
+	{ "Psi", 936, nullptr },
+	{ "Racute", 340, nullptr },
+	{ "Rcaron", 344, nullptr },
+	{ "Rho", 929, nullptr },
+	{ "Sacute", 346, nullptr },
+	{ "Scaron", 352, nullptr },
+	{ "Scedil", 350, nullptr },
+	{ "Sigma", 931, nullptr },
+	{ "THORN", 222, nullptr },
+	{ "Tau", 932, nullptr },
+	{ "Tcaron", 356, nullptr },
+	{ "Tcedil", 354, nullptr },
+	{ "Theta", 920, nullptr },
+	{ "Uacute", 218, nullptr },
+	{ "Ucirc", 219, nullptr },
+	{ "Udblac", 368, nullptr },
+	{ "Ugrave", 217, nullptr },
+	{ "Upsilon", 933, nullptr },
+	{ "Uring", 366, nullptr },
+	{ "Uuml", 220, nullptr },
+	{ "Xi", 926, nullptr },
+	{ "Yacute", 221, nullptr },
+	{ "Yuml", 376, nullptr },
+	{ "Zacute", 377, nullptr },
+	{ "Zcaron", 381, nullptr },
+	{ "Zdot", 379, nullptr },
+	{ "Zeta", 918, nullptr },
+	{ "aacute", 225, nullptr },
+	{ "abreve", 259, nullptr },
+	{ "acirc", 226, nullptr },
+	{ "acute", 180, nullptr },
+	{ "aelig", 230, nullptr },
+	{ "agrave", 224, nullptr },
+	{ "alefsym", 8501, nullptr },
+	{ "alpha", 945, nullptr },
+	{ "amp", '&', nullptr },
+	{ "and", 8743, nullptr },
+	{ "ang", 8736, nullptr },
+	{ "aogon", 261, nullptr },
+	{ "aring", 229, nullptr },
+	{ "asymp", 8776, nullptr },
+	{ "atilde", 227, nullptr },
+	{ "auml", 228, nullptr },
+	{ "bdquo", 8222, nullptr },
+	{ "beta", 946, nullptr },
+	{ "breve", 728, nullptr },
+	{ "brvbar", 166, nullptr },
+	{ "bull", 8226, nullptr },
+	{ "cacute", 263, nullptr },
+	{ "cap", 8745, nullptr },
+	{ "caron", 711, nullptr },
+	{ "ccaron", 269, nullptr },
+	{ "ccedil", 231, nullptr },
+	{ "cedil", 184, nullptr },
+	{ "cent", 162, nullptr },
+	{ "chi", 967, nullptr },
+	{ "circ", 710, nullptr },
+	{ "clubs", 9827, nullptr },
+	{ "cong", 8773, nullptr },
+	{ "copy", 169, nullptr },
+	{ "crarr", 8629, nullptr },
+	{ "cup", 8746, nullptr },
+	{ "curren", 164, nullptr },
+	{ "dArr", 8659, nullptr },
+	{ "dagger", 8224, nullptr },
+	{ "darr", 8595, nullptr },
+	{ "dblac", 733, nullptr },
+	{ "dcaron", 271, nullptr },
+	{ "deg", 176, nullptr },
+	{ "delta", 948, nullptr },
+	{ "diams", 9830, nullptr },
+	{ "divide", 247, nullptr },
+	{ "dot", 729, nullptr },
+	{ "dstrok", 273, nullptr },
+	{ "eacute", 233, nullptr },
+	{ "ecaron", 283, nullptr },
+	{ "ecirc", 234, nullptr },
+	{ "egrave", 232, nullptr },
+	{ "emdash", 8212, nullptr },
+	{ "empty", 8709, nullptr },
+	{ "endash", 8211, nullptr },
+	{ "eogon", 281, nullptr },
+	{ "epsilon", 949, nullptr },
+	{ "equiv", 8801, nullptr },
+	{ "eta", 951, nullptr },
+	{ "eth", 240, nullptr },
+	{ "euml", 235, nullptr },
+	{ "exist", 8707, nullptr },
+	{ "fnof", 402, nullptr },
+	{ "forall", 8704, nullptr },
+	{ "frac12", 189, nullptr },
+	{ "frac14", 188, nullptr },
+	{ "frac34", 190, nullptr },
+	{ "frasl", 8260, nullptr },
+	{ "gamma", 947, nullptr },
+	{ "ge", 8805, nullptr },
+	{ "gt", '>', nullptr },
+	{ "hArr", 8660, nullptr },
+	{ "harr", 8596, nullptr },
+	{ "hearts", 9829, nullptr },
+	{ "hellip", 8230, nullptr },
+	{ "iacute", 237, nullptr },
+	{ "icirc", 238, nullptr },
+	{ "iexcl", 161, nullptr },
+	{ "igrave", 236, nullptr },
+	{ "image", 8465, nullptr },
+	{ "infin", 8734, nullptr },
+	{ "int", 8747, nullptr },
+	{ "iota", 953, nullptr },
+	{ "iquest", 191, nullptr },
+	{ "isin", 8712, nullptr },
+	{ "iuml", 239, nullptr },
+	{ "kappa", 954, nullptr },
+	{ "lArr", 8656, nullptr },
+	{ "lacute", 314, nullptr },
+	{ "lambda", 955, nullptr },
+	{ "lang", 9001, nullptr },
+	{ "laquo", 171, nullptr },
+	{ "larr", 8592, nullptr },
+	{ "lcaron", 318, nullptr },
+	{ "lceil", 8968, nullptr },
+	{ "ldq", 8220, nullptr },
+	{ "ldquo", 8220, nullptr },
+	{ "le", 8804, nullptr },
+	{ "lfloor", 8970, nullptr },
+	{ "lowast", 8727, nullptr },
+	{ "loz", 9674, nullptr },
+	{ "lsaquo", 8249, nullptr },
+	{ "lsq", 8216, nullptr },
+	{ "lsquo", 8216, nullptr },
+	{ "lstrok", 322, nullptr },
+	{ "lt", '<', nullptr },
+	{ "macr", 175, nullptr },
+	{ "mdash", 8212, nullptr },
+	{ "micro", 181, nullptr },
+	{ "middot", 183, nullptr },
+	{ "minus", 8722, nullptr },
+	{ "mu", 956, nullptr },
+	{ "nabla", 8711, nullptr },
+	{ "nacute", 324, nullptr },
+	{ "nbsp", QSPACE, nullptr },
+	{ "ncaron", 328, nullptr },
+	{ "ndash", 8211, nullptr },
+	{ "ne", 8800, nullptr },
+	{ "ni", 8715, nullptr },
+	{ "not", 172, nullptr },
+	{ "notin", 8713, nullptr },
+	{ "nsub", 8836, nullptr },
+	{ "ntilde", 241, nullptr },
+	{ "nu", 957, nullptr },
+	{ "oacute", 243, nullptr },
+	{ "ocirc", 244, nullptr },
+	{ "odblac", 337, nullptr },
+	{ "oelig", 339, nullptr },
+	{ "ogon", 731, nullptr },
+	{ "ograve", 242, nullptr },
+	{ "oline", 8254, nullptr },
+	{ "omega", 969, nullptr },
+	{ "omicron", 959, nullptr },
+	{ "oplus", 8853, nullptr },
+	{ "or", 8744, nullptr },
+	{ "ordf", 170, nullptr },
+	{ "ordm", 186, nullptr },
+	{ "oslash", 248, nullptr },
+	{ "otilde", 245, nullptr },
+	{ "otimes", 8855, nullptr },
+	{ "ouml", 246, nullptr },
+	{ "para", 182, nullptr },
+	{ "part", 8706, nullptr },
+	{ "permil", 8240, nullptr },
+	{ "perp", 8869, nullptr },
+	{ "phi", 966, nullptr },
+	{ "pi", 960, nullptr },
+	{ "piv", 982, nullptr },
+	{ "plusmn", 177, nullptr },
+	{ "pound", 163, nullptr },
+	{ "prime", 8242, nullptr },
+	{ "prod", 8719, nullptr },
+	{ "prop", 8733, nullptr },
+	{ "psi", 968, nullptr },
+	{ "quot", '"', nullptr },
+	{ "rArr", 8658, nullptr },
+	{ "racute", 341, nullptr },
+	{ "radic", 8730, nullptr },
+	{ "rang", 9002, nullptr },
+	{ "raquo", 187, nullptr },
+	{ "rarr", 8594, nullptr },
+	{ "rcaron", 345, nullptr },
+	{ "rceil", 8969, nullptr },
+	{ "rdq", 8221, nullptr },
+	{ "rdquo", 8221, nullptr },
+	{ "real", 8476, nullptr },
+	{ "reg", 174, nullptr },
+	{ "rfloor", 8971, nullptr },
+	{ "rho", 961, nullptr },
+	{ "rsaquo", 8250, nullptr },
+	{ "rsq", 8217, nullptr },
+	{ "rsquo", 8217, nullptr },
+	{ "sacute", 347, nullptr },
+	{ "sbquo", 8218, nullptr },
+	{ "scaron", 353, nullptr },
+	{ "scedil", 351, nullptr },
+	{ "sdot", 8901, nullptr },
+	{ "sect", 167, nullptr },
+	{ "shy", 173, nullptr },
+	{ "sigma", 963, nullptr },
+	{ "sigmaf", 962, nullptr },
+	{ "sim", 8764, nullptr },
+	{ "spades", 9824, nullptr },
+	{ "sub", 8834, nullptr },
+	{ "sube", 8838, nullptr },
+	{ "sum", 8721, nullptr },
+	{ "sup", 8835, nullptr },
+	{ "sup1", 185, nullptr },
+	{ "sup2", 178, nullptr },
+	{ "sup3", 179, nullptr },
+	{ "supe", 8839, nullptr },
+	{ "szlig", 223, nullptr },
+	{ "tau", 964, nullptr },
+	{ "tcaron", 357, nullptr },
+	{ "tcedil", 355, nullptr },
+	{ "there4", 8756, nullptr },
+	{ "theta", 952, nullptr },
+	{ "thetasym", 977, nullptr },
+	{ "thorn", 254, nullptr },
+	{ "thorn", 254, nullptr },
+	{ "tilde", 732, nullptr },
+	{ "times", 215, nullptr },
+	{ "trade", 8482, nullptr },
+	{ "uArr", 8657, nullptr },
+	{ "uacute", 250, nullptr },
+	{ "uarr", 8593, nullptr },
+	{ "ucirc", 251, nullptr },
+	{ "udblac", 369, nullptr },
+	{ "ugrave", 249, nullptr },
+	{ "uml", 168, nullptr },
+	{ "upsih", 978, nullptr },
+	{ "upsilon", 965, nullptr },
+	{ "uring", 367, nullptr },
+	{ "uuml", 252, nullptr },
+	{ "weierp", 8472, nullptr },
+	{ "xi", 958, nullptr },
+	{ "yacute", 253, nullptr },
+	{ "yen", 165, nullptr },
+	{ "yuml", 255, nullptr },
+	{ "zacute", 378, nullptr },
+	{ "zcaron", 382, nullptr },
+	{ "zdot", 380, nullptr },
+	{ "zeta", 950, nullptr }
 };
 
 
@@ -964,7 +964,7 @@ static void t_outline(out_stream_info *stream, int nl,
 		 *   Skip the MORE prompt if this stream doesn't use it.
 		 */
 		if (stream->use_more_mode
-			&& scrfp == 0
+			&& scrfp == nullptr
 			&& G_os_moremode
 			&& nl != 0 && nl != 4
 			&& stream->linecnt++ >= G_os_pagelength)
@@ -980,7 +980,7 @@ static void t_outline(out_stream_info *stream, int nl,
 		for (i = 0, dst = buf ; txt[i] != '\0' ; ++i)
 		{
 			/* if the attribute is changing, notify osifc */
-			if (attr != 0 && attr[i] != stream->os_attr)
+			if (attr != nullptr && attr[i] != stream->os_attr)
 			{
 				/* flush the preceding text */
 				if (dst != buf)
@@ -1089,7 +1089,7 @@ static void outflushn_stream(out_stream_info *stream, int nl)
 		case 3:
 		case 4:
 			/* no newline - just flush out what we have with no suffix */
-			suffix = 0;
+			suffix = nullptr;
 			break;
 
 		case 1:
@@ -1110,7 +1110,7 @@ static void outflushn_stream(out_stream_info *stream, int nl)
 			else
 			{
 				/* don't add a newline */
-				suffix = 0;
+				suffix = nullptr;
 			}
 			break;
 
@@ -1141,13 +1141,13 @@ static void outflushn_stream(out_stream_info *stream, int nl)
 					  &stream->attrbuf[stream->preview]);
 
 			/* write the suffix, if any */
-			if (suffix != 0)
-				t_outline(stream, 0, suffix, 0);
+			if (suffix != nullptr)
+				t_outline(stream, 0, suffix, nullptr);
 		}
 
 		/* generate an HTML line break if necessary */
 		if (nl == 1 && stream->html_mode && stream->html_target)
-			t_outline(stream, 0, "<BR HEIGHT=0>", 0);
+			t_outline(stream, 0, "<BR HEIGHT=0>", nullptr);
 
 		if (nl == 0)
 		{
@@ -1235,7 +1235,7 @@ static void outblank_stream(out_stream_info *stream)
 		outstring_stream(stream, "<BR>");
 
 	/* write out the newline */
-	t_outline(stream, 1, "\n", 0);
+	t_outline(stream, 1, "\n", nullptr);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1665,7 +1665,7 @@ static void outchar_html_stream(out_stream_info *stream,
 	 *   expansion; otherwise, use the default expansion.
 	 */
 	if (ampptr >= amp_tbl + sizeof(amp_tbl)/sizeof(amp_tbl[0])
-		|| ampptr->expan == 0)
+		|| ampptr->expan == nullptr)
 	{
 		char xlat_buf[50];
 
@@ -1744,7 +1744,7 @@ static char nextout_copy(const char **s, size_t *slen,
 						 char prv, out_stream_info *stream)
 {
 	/* if there's a stream, write the previous character to the stream */
-	if (stream != 0)
+	if (stream != nullptr)
 		outchar_stream(stream, prv);
 
 	/* return the next character */
@@ -1818,7 +1818,7 @@ static int outformatlen_stream(out_stream_info *stream,
 	int      done = 0;
 	char     fmsbuf[40];       /* space for constructing translation string */
 	uint     fmslen;
-	char    *f = 0;
+	char    *f = nullptr;
 	char    *f1;
 	int      infmt = 0;
 
@@ -2422,7 +2422,7 @@ static int outformatlen_stream(out_stream_info *stream,
 				char tagbuf[50];
 				int is_end_tag;
 				c = read_tag(tagbuf, sizeof(tagbuf), &is_end_tag,
-							 &s, &slen, 0);
+							 &s, &slen, nullptr);
 
 				/*
 				 *   Check to see if we recognize the tag.  We only
@@ -2811,7 +2811,7 @@ static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, 
 		/* if we've converged, look no further */
 		if (lo > hi || lo >= sizeof(amp_tbl)/sizeof(amp_tbl[0]))
 		{
-			ampptr = 0;
+			ampptr = nullptr;
 			break;
 		}
 
@@ -2832,7 +2832,7 @@ static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, 
 			if (cur == hi && cur == 0)
 			{
 				/* we've failed to find it */
-				ampptr = 0;
+				ampptr = nullptr;
 				break;
 			}
 
@@ -2852,7 +2852,7 @@ static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, 
 		/* name ended with semicolon - skip the semicolon */
 		c = nextout(sp, slenp);
 	}
-	else if (ampptr != 0)
+	else if (ampptr != nullptr)
 	{
 		int skipcnt;
 
@@ -2863,13 +2863,13 @@ static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, 
 	}
 
 	/* if we found the entry, write out the character */
-	if (ampptr != 0)
+	if (ampptr != nullptr)
 	{
 		/*
 		 *   if this one has an external mapping table entry, use the mapping
 		 *   table entry; otherwise, use the default OS routine mapping
 		 */
-		if (ampptr->expan != 0)
+		if (ampptr->expan != nullptr)
 		{
 			/*
 			 *   we have an explicit expansion from the mapping table file -
@@ -3072,7 +3072,7 @@ int outformatlen(const char *s, uint slen) {
 	ret = outformatlen_stream(&G_std_disp, orig_s, orig_slen);
 
 	/* if there's a log file, write to the log file as well */
-	if (logfp != 0)
+	if (logfp != nullptr)
 	{
 		outformatlen_stream(&G_log_disp, orig_s, orig_slen);
 		osfflush(logfp);
@@ -3104,7 +3104,7 @@ void outblank()
 	outblank_stream(&G_std_disp);
 
 	/* if we're logging, generate the newline to the log file as well */
-	if (logfp != 0)
+	if (logfp != nullptr)
 	{
 		outblank_stream(&G_log_disp);
 		osfflush(logfp);
@@ -3165,7 +3165,7 @@ int tiologopn(tiocxdef *ctx, char *fn)
 	G_log_disp.html_mode = G_std_disp.html_mode;
 
 	/* return 0 on success, non-zero on failure */
-	return (logfp == 0);
+	return (logfp == nullptr);
 }
 
 /*
@@ -3174,7 +3174,7 @@ int tiologopn(tiocxdef *ctx, char *fn)
 int tiologcls(tiocxdef *ctx)
 {
 	/* if we have a file, close it */
-	if (logfp != 0)
+	if (logfp != nullptr)
 	{
 		/* close the handle */
 		osfcls(logfp);
@@ -3183,7 +3183,7 @@ int tiologcls(tiocxdef *ctx)
 		os_settype(logfname, OSFTLOG);
 
 		/* forget about our log file handle */
-		logfp = 0;
+		logfp = nullptr;
 	}
 
 	/* success */
@@ -3206,7 +3206,7 @@ int tiologcls(tiocxdef *ctx)
 void out_logfile_print(const char *txt, int nl)
 {
 	/* if there's no log file, there's nothing to do */
-	if (logfp == 0)
+	if (logfp == nullptr)
 		return;
 
 	/* add the text */
@@ -3450,7 +3450,7 @@ void outflushn(int nl)
 	outflushn_stream(&G_std_disp, nl);
 
 	/* flush the log stream, if we have an open log file */
-	if (logfp != 0)
+	if (logfp != nullptr)
 	{
 		outflushn_stream(&G_log_disp, nl);
 		osfflush(logfp);

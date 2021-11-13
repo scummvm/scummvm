@@ -50,7 +50,7 @@ void draw_banner() {
 		strid_t stream = g_vm->glk_window_get_stream(bannerwin);
 
 		g_vm->glk_set_style_stream(stream, style_User1);
-		g_vm->glk_window_get_size(bannerwin, &width, NULL);
+		g_vm->glk_window_get_size(bannerwin, &width, nullptr);
 		for (index = 0; index < width; index++)
 			g_vm->glk_put_char_stream(stream, ' ');
 		g_vm->glk_window_move_cursor(bannerwin, 1, 0);

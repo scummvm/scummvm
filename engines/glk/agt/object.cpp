@@ -38,7 +38,7 @@ namespace AGT {
 
 /* Make artificial parse record for an object */
 parse_rec *make_parserec(int obj, parse_rec *rec) {
-	if (rec == NULL) rec = (parse_rec *)rmalloc(sizeof(parse_rec));
+	if (rec == nullptr) rec = (parse_rec *)rmalloc(sizeof(parse_rec));
 	rec->obj = obj;
 	rec->info = D_NOUN;
 	rec->noun = it_name(obj);
@@ -57,7 +57,7 @@ void tmpobj(parse_rec *objrec) {
 
 parse_rec *copy_parserec(parse_rec *rec) {
 	parse_rec *newrec;
-	if (rec == NULL) return NULL;
+	if (rec == nullptr) return nullptr;
 	newrec = (parse_rec *)rmalloc(sizeof(parse_rec));
 	memcpy(newrec, rec, sizeof(parse_rec));
 	return newrec;
@@ -91,7 +91,7 @@ static const char *it_sdesc(int item) {
 	if (tnoun(item)) return noun[item - first_noun].shortdesc;
 	if (tcreat(item)) return creature[item - first_creat].shortdesc;
 	if (item < 0) return dict[-item];
-	return NULL;
+	return nullptr;
 }
 
 rbool it_possess(int item) {
@@ -254,7 +254,7 @@ void it_reposition(int item, int newloc, rbool save_pos) {
 			noun[item - first_noun].pos_prep = 0;
 			noun[item - first_noun].pos_name = 0;
 			noun[item - first_noun].nearby_noun = 0;
-			noun[item - first_noun].position = NULL;
+			noun[item - first_noun].position = nullptr;
 #if 0  /* I think this was wrong, so I'm commenting it out. */
 			noun[item - first_noun].initdesc = 0;
 #endif
@@ -283,7 +283,7 @@ void it_reposition(int item, int newloc, rbool save_pos) {
 		noun[i].nearby_noun = 0;
 		noun[i].pos_prep = 0;
 		noun[i].pos_name = 0;
-		noun[i].position = NULL;
+		noun[i].position = nullptr;
 	}
 }
 
@@ -776,7 +776,7 @@ static void rundesc(int i, descr_ptr dp_[], const char *shortdesc, int msgid) {
 	if (dp_[i].size > 0)
 		print_descr(dp_[i], 1);
 	else if (!invischeck(shortdesc))
-		raw_lineout(shortdesc, 1, MSG_DESC, NULL);
+		raw_lineout(shortdesc, 1, MSG_DESC, nullptr);
 	else sysmsg(msgid, "$You$ see nothing unexpected.");
 }
 
@@ -840,7 +840,7 @@ static int print_obj(int obj, int ind_lev)
 	if (tcreat(obj) && creature[obj - first_creat].initdesc != 0)
 		return 0; /* Don't print normal description if printing initdesc */
 
-	s0 = NULL;
+	s0 = nullptr;
 	sdesc_flag = !player_has(obj); /* This should be tested. */
 	sdesc_flag = sdesc_flag || (ind_lev > 1);  /* It seems that AGT uses the
 						sdesc for describing items
@@ -868,7 +868,7 @@ static int print_obj(int obj, int ind_lev)
 	} else if (!invischeck(s)) {
 		retval = 1; /* We're actually going to print something */
 		for (i = 0; i < ind_lev; i++) writestr("   ");
-		raw_lineout(s, sdesc_flag, MSG_DESC, NULL);
+		raw_lineout(s, sdesc_flag, MSG_DESC, nullptr);
 		/* Do $word$ formatting if sdesc */
 		/* Need to output container */
 		parent = it_loc(obj);
@@ -950,10 +950,10 @@ static void *compute_addr(int obj, int prop, const prop_struct *ptable) {
 	} else if (tcreat(obj)) {
 		base = (void *)(&creature[obj - first_creat]);
 		ofs = ptable[prop].creature;
-	} else return NULL;
+	} else return nullptr;
 
 	if (ofs == -1) /* Field doesn't exist in this type of object */
-		return NULL;
+		return nullptr;
 
 	return (void *)(((char *)base) + ofs);
 }
@@ -964,7 +964,7 @@ long getprop(int obj, int prop) {
 
 	if (prop >= NUM_PROP) return 0;
 	paddr = (integer *)compute_addr(obj, prop, proplist);
-	if (paddr == NULL) return 0;
+	if (paddr == nullptr) return 0;
 	return *paddr;
 }
 
@@ -977,7 +977,7 @@ void setprop(int obj, int prop, long val) {
 	}
 
 	paddr = (integer *)compute_addr(obj, prop, proplist);
-	if (paddr == NULL) {
+	if (paddr == nullptr) {
 		writeln("GAME ERROR: Property-object mismatch.");
 		return;
 	}
@@ -989,7 +989,7 @@ rbool getattr(int obj, int prop) {
 
 	if (prop >= NUM_ATTR) return 0;
 	paddr = (rbool *)compute_addr(obj, prop, attrlist);
-	if (paddr == NULL) return 0;
+	if (paddr == nullptr) return 0;
 	return *paddr;
 }
 
@@ -1002,7 +1002,7 @@ void setattr(int obj, int prop, rbool val) {
 	}
 
 	paddr = (rbool *)compute_addr(obj, prop, attrlist);
-	if (paddr == NULL) {
+	if (paddr == nullptr) {
 		writeln("GAME ERROR: Property-object mismatch.");
 		return;
 	}

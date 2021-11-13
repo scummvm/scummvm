@@ -83,7 +83,7 @@ static const sc_html_tags_t HTML_TAGS_TABLE[] = {
 	{"b", 1, SC_TAG_BOLD}, {"/b", 2, SC_TAG_ENDBOLD},
 	{"u", 1, SC_TAG_UNDERLINE}, {"/u", 2, SC_TAG_ENDUNDERLINE},
 	{"c", 1, SC_TAG_COLOR}, {"/c", 2, SC_TAG_ENDCOLOR},
-	{NULL, 0, SC_TAG_UNKNOWN}
+	{nullptr, 0, SC_TAG_UNKNOWN}
 };
 
 /*
@@ -144,7 +144,7 @@ sc_filterref_t pf_create(void) {
 	filter->magic = PRINTFILTER_MAGIC;
 	filter->buffer_length = 0;
 	filter->buffer_allocation = 0;
-	filter->buffer = NULL;
+	filter->buffer = nullptr;
 	filter->new_sentence = FALSE;
 	filter->is_muted = FALSE;
 	filter->needs_filtering = FALSE;
@@ -191,8 +191,8 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 	 * Begin with NULL buffer and name strings for lazy allocation, and clear
 	 * interpolation detection flag.
 	 */
-	buffer = NULL;
-	name = NULL;
+	buffer = nullptr;
+	name = nullptr;
 	is_interpolated = FALSE;
 
 	/* Run through the string looking for variables. */
@@ -271,7 +271,7 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 			strcat(buffer, marker);
 		} else {
 			sc_free(buffer);
-			buffer = NULL;
+			buffer = nullptr;
 		}
 	}
 
@@ -298,7 +298,7 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 	vt_key[1].integer = alr;
 	vt_key[2].string = "Original";
 	original = prop_get_string(bundle, "S<-sis", vt_key);
-	replacement = NULL;
+	replacement = nullptr;
 
 	/* Ignore pathological empty originals. */
 	if (original[0] == NUL)
@@ -342,7 +342,7 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 
 	/* Write back buffer, and if replacement set, the buffer was altered. */
 	*buffer = buffer_;
-	return replacement != NULL;
+	return replacement != nullptr;
 }
 
 
@@ -364,7 +364,7 @@ static sc_char *pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
 	 * lot of allocation and copying, we use two buffers to help with repeated
 	 * ALR replacement.
 	 */
-	buffer1 = buffer2 = NULL;
+	buffer1 = buffer2 = nullptr;
 	buffer = &buffer1;
 
 	/* Run through each ALR that exists. */
@@ -421,7 +421,7 @@ static sc_char *pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
 		sc_free(buffer1);
 		return buffer2;
 	} else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -653,15 +653,15 @@ static sc_char *pf_filter_internal(const sc_char *string, sc_var_setref_t vars, 
 			alr_applied = (sc_bool *)sc_malloc(alr_count * sizeof(*alr_applied));
 			memset(alr_applied, FALSE, alr_count * sizeof(*alr_applied));
 		} else
-			alr_applied = NULL;
+			alr_applied = nullptr;
 	} else {
 		/* Not including ALRs, so set alr count to 0, and flags to NULL. */
 		alr_count = 0;
-		alr_applied = NULL;
+		alr_applied = nullptr;
 	}
 
 	/* Loop for a sort-of arbitrary number of passes; probably enough. */
-	current = NULL;
+	current = nullptr;
 	for (iteration = 0; iteration < ITERATION_LIMIT; iteration++) {
 		sc_int inner_iteration;
 		const sc_char *initial;
@@ -760,7 +760,7 @@ sc_char *pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
 	sc_char *current;
 
 	/* Filter this string, excluding ALRs replacements. */
-	current = pf_filter_internal(string, vars, NULL);
+	current = pf_filter_internal(string, vars, nullptr);
 
 	/* Our contract is to return an allocated string; copy if required. */
 	if (!current) {
@@ -910,7 +910,7 @@ const sc_char *pf_get_buffer(sc_filterref_t filter) {
 		assert(filter->buffer[filter->buffer_length] == NUL);
 		return filter->buffer;
 	} else
-		return NULL;
+		return nullptr;
 }
 
 sc_char *pf_transfer_buffer(sc_filterref_t filter) {
@@ -931,7 +931,7 @@ sc_char *pf_transfer_buffer(sc_filterref_t filter) {
 		/* Clear all filter fields down to empty values. */
 		filter->buffer_length = 0;
 		filter->buffer_allocation = 0;
-		filter->buffer = NULL;
+		filter->buffer = nullptr;
 		filter->new_sentence = FALSE;
 		filter->is_muted = FALSE;
 		filter->needs_filtering = FALSE;
@@ -939,7 +939,7 @@ sc_char *pf_transfer_buffer(sc_filterref_t filter) {
 		/* Return the allocated buffered text. */
 		return retval;
 	} else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -955,7 +955,7 @@ void pf_empty(sc_filterref_t filter) {
 	filter->buffer_length = 0;
 	filter->buffer_allocation = 0;
 	sc_free(filter->buffer);
-	filter->buffer = NULL;
+	filter->buffer = nullptr;
 	filter->new_sentence = FALSE;
 	filter->is_muted = FALSE;
 	filter->needs_filtering = FALSE;
@@ -1314,7 +1314,7 @@ sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 
 	/* Begin with a NULL buffer for lazy allocation. */
 	buffer_allocation = 0;
-	buffer = NULL;
+	buffer = nullptr;
 
 	/* Loop over each word in the string. */
 	current = string + strspn(string, WHITESPACE);

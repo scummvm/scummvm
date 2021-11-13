@@ -26,7 +26,7 @@ namespace Glk {
 namespace AdvSys {
 
 bool GlkInterface::initialize() {
-	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	_window = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
 	return _window != nullptr;
 }
 

@@ -34,13 +34,13 @@ namespace Quest {
 void report_error(const String &s);
 
 // FIXME: This requires global constructor
-reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) NULL);
+reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) nullptr);
 
 // FIXME: This requires global constructor
 //reserved_words room_tag_property("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
 
 void GeasFile::debug_print(String s) const {
-	if (gi == NULL)
+	if (gi == nullptr)
 		cerr << s << endl;
 	else
 		gi->debug_print(s);
@@ -55,7 +55,7 @@ const GeasBlock *GeasFile::find_by_name(String type, String name) const {
 		if (ci_equal(block(type, i).name, name))
 			return &block(type, i);
 	}
-	return NULL;
+	return nullptr;
 }
 
 const GeasBlock &GeasFile::block(String type, uint index) const {
@@ -108,12 +108,12 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 
 	uint c1, c2;
 	String tok, line;
-	reserved_words *rw = NULL;
+	reserved_words *rw = nullptr;
 
 	const GeasBlock *gb = find_by_name("object", obj);
 	rw = &obj_tag_property;
 
-	if (gb == NULL) {
+	if (gb == nullptr) {
 		cerr << "No such object found, aborting\n";
 		//return rv;
 		return;
@@ -154,7 +154,7 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 				get_type_keys(param_contents(tok), rv);
 		}
 		//else if (has (tag_property, tok) && tag_property[tok])
-		else if (rw != NULL && rw->has(tok)) {
+		else if (rw != nullptr && rw->has(tok)) {
 			String tok1 = next_token(line, c1, c2);
 			if (is_param(tok1))
 				rv.insert(tok);
@@ -167,7 +167,7 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 void GeasFile::get_type_keys(String typen, Set<String> &rv) const {
 	cerr << "get_type_keys (" << typen << ", " << rv << ")\n";
 	const GeasBlock *gb = find_by_name("type", typen);
-	if (gb == NULL) {
+	if (gb == nullptr) {
 		cerr << "  g_t_k: Nonexistent type\n";
 		return;
 	}
@@ -237,7 +237,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 
 	String not_prop = "not " + propname;
 	uint c1, c2;
-	assert(geasBlock != NULL);
+	assert(geasBlock != nullptr);
 	//assert (geasBlock->data != NULL);
 	for (uint i = 0; i < geasBlock->data.size(); i ++) {
 		String line = geasBlock->data[i];
@@ -288,7 +288,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 void GeasFile::get_type_property(String typenamex, String propname, bool &bool_rv, String &string_rv) const {
 	//cerr << "  Checking type <" << typenamex << "> for prop <" << propname << ">\n";
 	const GeasBlock *geasBlock = find_by_name("type", typenamex);
-	if (geasBlock == NULL) {
+	if (geasBlock == nullptr) {
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}
@@ -363,7 +363,7 @@ bool GeasFile::obj_of_type(String objname, String typenamex) const {
 	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 
 	uint c1, c2;
-	assert(geasBlock != NULL);
+	assert(geasBlock != nullptr);
 	for (uint i = 0; i < geasBlock->data.size(); i ++) {
 		String line = geasBlock->data[i];
 		String tok = first_token(line, c1, c2);
@@ -387,7 +387,7 @@ bool GeasFile::type_of_type(String subtype, String supertype) const {
 		return true;
 	//cerr << "  Checking type <" << subtype << "> for type <" << supertype << ">\n";
 	const GeasBlock *geasBlock = find_by_name("type", subtype);
-	if (geasBlock == NULL) {
+	if (geasBlock == nullptr) {
 		debug_print("t_o_t: Nonexistent type " + subtype);
 		return false;
 	}
@@ -484,7 +484,7 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 void GeasFile::get_type_action(String typenamex, String actname, bool &bool_rv, String &string_rv) const {
 	//cerr << "  Checking type <" << typenamex << "> for action <" << actname << ">\n";
 	const GeasBlock *geasBlock = find_by_name("type", typenamex);
-	if (geasBlock == NULL) {
+	if (geasBlock == nullptr) {
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}

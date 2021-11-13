@@ -242,7 +242,7 @@ uint GlkAPI::glk_window_get_type(winid_t win) {
 winid_t GlkAPI::glk_window_get_parent(winid_t win) {
 	if (!win) {
 		warning("window_get_parent: invalid ref");
-		return 0;
+		return nullptr;
 	}
 
 	return win->_parent;

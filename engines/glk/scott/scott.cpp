@@ -31,7 +31,7 @@ namespace Scott {
 
 Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		_currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
-		_bottomWindow(0), _topWindow(0), _bitFlags(0), _saveSlot(-1) {
+		_bottomWindow(nullptr), _topWindow(nullptr), _bitFlags(0), _saveSlot(-1) {
 	Common::fill(&_nounText[0], &_nounText[16], '\0');
 	Common::fill(&_counters[0], &_counters[16], 0);
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
@@ -41,7 +41,7 @@ void Scott::runGame() {
 	int vb, no;
 	initialize();
 
-	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	_bottomWindow = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
 	if (_bottomWindow == nullptr) {
 		glk_exit();
 		return;

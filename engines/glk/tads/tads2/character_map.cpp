@@ -95,7 +95,7 @@ static int cmap_load_internal(char *filename)
 	int sysblk;
 
 	/* if there's no mapping file, use the default mapping */
-	if (filename == 0)
+	if (filename == nullptr)
 	{
 		/* initialize with the default mapping */
 		cmap_init_default();
@@ -106,7 +106,7 @@ static int cmap_load_internal(char *filename)
 
 	/* open the file */
 	fp = osfoprb(filename, OSFTCMAP);
-	if (fp == 0)
+	if (fp == nullptr)
 		return 1;
 
 	/* check the signature */
@@ -255,7 +255,7 @@ int cmap_load(char *filename)
 	 *   a character set (if not, this simply establishes the default
 	 *   setting, so we haven't explicitly loaded anything)
 	 */
-	if (filename != 0)
+	if (filename != nullptr)
 		S_cmap_loaded = TRUE;
 
 	/* success */

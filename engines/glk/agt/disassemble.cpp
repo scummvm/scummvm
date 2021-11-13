@@ -42,8 +42,8 @@ static void print_msg(descr_ptr dptr) {
 	descr_line *txt;
 
 	txt = read_descr(dptr.start, dptr.size);
-	if (txt != NULL) {
-		for (j = 0; txt[j] != NULL; j++) {
+	if (txt != nullptr) {
+		for (j = 0; txt[j] != nullptr; j++) {
 			dbgprintf("\n");
 			debugout(txt[j]);
 		}
@@ -85,7 +85,7 @@ void print_special_obj(int i)
 		dval = 0; /* Silence compiler warnings. */
 		fatal("INTERNAL ERROR: Invalid *dval* in print_special_obj.");
 	}
-	if (dbgflagptr == NULL)
+	if (dbgflagptr == nullptr)
 		/* This determines whether we are linked with agtout or agil */
 		return;
 	s = getname(dval);
@@ -147,10 +147,10 @@ int argout(int dtype, int dval, int optype) {
 				dbgprintf("RoomFlag%d", dval);
 				break;
 			case AGT_QUEST:  /* Question */
-				if (dval <= MaxQuestion && dval >= 1 && question != NULL) {
+				if (dval <= MaxQuestion && dval >= 1 && question != nullptr) {
 					dbgprintf("\nQ%d:%s\n", dval, question[dval - 1]);
 					dbgprintf("[A:%s]", answer[dval - 1]);
-				} else if (quest_ptr != NULL) {
+				} else if (quest_ptr != nullptr) {
 					dbgprintf("\nQ%d: ", dval);
 					print_msg(quest_ptr[dval - 1]);
 					dbgprintf("[A:");
@@ -158,7 +158,7 @@ int argout(int dtype, int dval, int optype) {
 				}
 				break;
 			case AGT_MSG: /* Message */
-				if (dval > last_message || dval < 1 || msg_ptr == NULL)
+				if (dval > last_message || dval < 1 || msg_ptr == nullptr)
 					dbgprintf("ILLEGAL MESSAGE");
 				else {
 					dbgprintf("(Msg%d)", dval);
@@ -167,7 +167,7 @@ int argout(int dtype, int dval, int optype) {
 				}
 				break;
 			case AGT_ERR: /* Message */
-				if (dval > NUM_ERR || dval < 1 || err_ptr == NULL)
+				if (dval > NUM_ERR || dval < 1 || err_ptr == nullptr)
 					dbgprintf("ILLEGAL MESSAGE");
 				else {
 					dbgprintf("(Std%d)", dval);
@@ -176,7 +176,7 @@ int argout(int dtype, int dval, int optype) {
 				}
 				break;
 			case AGT_STR: /* String */
-				if (dval - 1 >= MAX_USTR || userstr == NULL)
+				if (dval - 1 >= MAX_USTR || userstr == nullptr)
 					dbgprintf("ILLEGAL STRING");
 				else
 					dbgprintf("\nStr%d:%s", dval, userstr[dval]);

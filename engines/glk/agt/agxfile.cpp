@@ -481,7 +481,7 @@ static file_info fi_creat[] = {
 };
 
 static file_info fi_cmdhead[] = {
-	{FT_CMDPTR, DT_CMDPTR, NULL, 0},
+	{FT_CMDPTR, DT_CMDPTR, nullptr, 0},
 	r(FT_INT16, xx, cmd_rec, actor),
 	r(FT_WORD, xx, cmd_rec, verbcmd), r(FT_WORD, xx, cmd_rec, nouncmd),
 	r(FT_WORD, xx, cmd_rec, objcmd), r(FT_WORD, xx, cmd_rec, prep),
@@ -507,7 +507,7 @@ static file_info fi_descptr[] = {
 };
 
 static file_info fi_tline[] = {
-	{FT_TLINE, xx, NULL, 0},
+	{FT_TLINE, xx, nullptr, 0},
 	endrec
 };
 
@@ -556,7 +556,7 @@ static file_info fi_flagrec[] = { /* Ext R2-R2 */
 static void set_endrec(file_info *fi, int index) {
 	fi[index].ftype = FT_END;
 	fi[index].dtype = 0;
-	fi[index].ptr = NULL;
+	fi[index].ptr = nullptr;
 	fi[index].offset = 0;
 }
 
@@ -576,10 +576,10 @@ const char base_nostr[] = "no";
 
 static void conv_fstr(const char **s, rbool yes, rbool to_intern) {
 	if (to_intern) {  /* Convert to internal form */
-		assert(*s != NULL);
+		assert(*s != nullptr);
 		if (*s == static_str) *s = yes ? base_yesstr : base_nostr;
 	} else { /* convert to external form */
-		if (*s == NULL || *s == base_yesstr || *s == base_nostr)
+		if (*s == nullptr || *s == base_yesstr || *s == base_nostr)
 			*s = static_str;
 	}
 }
@@ -605,7 +605,7 @@ static void fix_objflag_str(rbool to_intern) {
 static long descr_ofs;
 
 void agx_close_descr(void) {
-	if (mem_descr != NULL)
+	if (mem_descr != nullptr)
 		rfree(mem_descr);
 	else if (descr_ofs != -1)
 		buffclose(); /* This closes the whole AGX file */
@@ -616,10 +616,10 @@ descr_line *agx_read_descr(long start, long size) {
 	descr_line *txt;
 	char *buff;
 
-	if (size <= 0) return NULL;
+	if (size <= 0) return nullptr;
 
-	if (mem_descr == NULL && descr_ofs != -1)
-		buff = (char *)read_recblock(NULL, FT_CHAR, size,
+	if (mem_descr == nullptr && descr_ofs != -1)
+		buff = (char *)read_recblock(nullptr, FT_CHAR, size,
 		                             descr_ofs + start, size * ft_leng[FT_CHAR]);
 	else
 		buff = mem_descr + start;
@@ -633,7 +633,7 @@ descr_line *agx_read_descr(long start, long size) {
 	for (line = 1; line < len;) /* Determine where each of the lines is */
 		if (buff[i++] == 0)
 			txt[line++] = buff + i;
-	txt[len] = NULL; /* Mark the end of the array */
+	txt[len] = nullptr; /* Mark the end of the array */
 	return txt;
 }
 
@@ -735,10 +735,10 @@ typedef struct {  /* Entries in the index header of the AGX file */
 } index_rec;
 
 static file_info fi_index[] = {
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, file_offset)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, blocksize)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, numrec)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, recsize)},
+	{FT_UINT32, DT_DEFAULT, nullptr, offsetof(index_rec, file_offset)},
+	{FT_UINT32, DT_DEFAULT, nullptr, offsetof(index_rec, blocksize)},
+	{FT_UINT32, DT_DEFAULT, nullptr, offsetof(index_rec, numrec)},
+	{FT_UINT32, DT_DEFAULT, nullptr, offsetof(index_rec, recsize)},
 	endrec
 };
 
@@ -766,16 +766,16 @@ struct file_head_rec  {
 };
 
 static file_info fi_header[] = {
-	{FT_UINT32, DT_LONG, NULL, offsetof(file_head_rec, fileid)}, /* File ID */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ver_own)}, /* Owner */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, version)}, /* Version */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ext_own)}, /*Ext owner*/
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, extnum)}, /* Ext vers */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk1)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk2)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, fallback_ext)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, res2)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(file_head_rec, res1)},
+	{FT_UINT32, DT_LONG, nullptr, offsetof(file_head_rec, fileid)}, /* File ID */
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, ver_own)}, /* Owner */
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, version)}, /* Version */
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, ext_own)}, /*Ext owner*/
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, extnum)}, /* Ext vers */
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, eol_chk1)},
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, eol_chk2)},
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, fallback_ext)},
+	{FT_BYTE, DT_DEFAULT, nullptr, offsetof(file_head_rec, res2)},
+	{FT_UINT32, DT_DEFAULT, nullptr, offsetof(file_head_rec, res1)},
 	endrec
 };
 
@@ -803,7 +803,7 @@ int read_agx(fc_type fc, rbool diag) {
 	int index_start;
 
 	agx_file = 1;
-	fsize = buffopen(fc, fAGX, 16, NULL, 1);
+	fsize = buffopen(fc, fAGX, 16, nullptr, 1);
 	if (fsize == 0) {
 		agx_file = 0;
 		return 0;
@@ -861,7 +861,7 @@ int read_agx(fc_type fc, rbool diag) {
 	/* This assumes that the file is long enough to absorb any
 	   'extra' blocks we read in in early versions with fewer blocks. */
 	/* (Right now, this must be true: the next block alone is big enough) */
-	index = (index_rec *)read_recarray(NULL, sizeof(index_rec), AGX_NUMBLOCK,
+	index = (index_rec *)read_recarray(nullptr, sizeof(index_rec), AGX_NUMBLOCK,
 	                                   fi_index, "File Index", index_start,
 	                                   index_recsize * AGX_NUMBLOCK);
 
@@ -926,33 +926,33 @@ int read_agx(fc_type fc, rbool diag) {
 
 	/* Need to read in ss_array before rooms/nouns/creatures */
 	ss_size = ss_end = index[13].numrec;
-	static_str = (char *)read_recblock(NULL, FT_CHAR,
+	static_str = (char *)read_recblock(nullptr, FT_CHAR,
 	                                   index[13].numrec, index[13].file_offset,
 	                                   index[13].blocksize);
 
 	synptr = syntbl_size = index[19].numrec;
-	syntbl = (word *)read_recblock(NULL, FT_WORD, index[19].numrec, index[19].file_offset,
+	syntbl = (word *)read_recblock(nullptr, FT_WORD, index[19].numrec, index[19].file_offset,
 	                               index[19].blocksize);
 
 	maxroom = first_room + index[2].numrec - 1;
 	set_roomdesc(fi_room);
-	room = (room_rec *)read_recarray(NULL, sizeof(room_rec), index[2].numrec,
+	room = (room_rec *)read_recarray(nullptr, sizeof(room_rec), index[2].numrec,
 	                                 fi_room, "Room", index[2].file_offset, index[2].blocksize);
 
 	maxnoun = first_noun + index[3].numrec - 1;
 	set_noundesc(fi_noun);
-	noun = (noun_rec *)read_recarray(NULL, sizeof(noun_rec), index[3].numrec,
+	noun = (noun_rec *)read_recarray(nullptr, sizeof(noun_rec), index[3].numrec,
 	                                 fi_noun, "Noun", index[3].file_offset, index[3].blocksize);
 
 	last_obj = maxcreat = first_creat + index[4].numrec - 1;
 	set_creatdesc(fi_creat);
-	creature = (creat_rec *)read_recarray(NULL, sizeof(creat_rec), index[4].numrec,
+	creature = (creat_rec *)read_recarray(nullptr, sizeof(creat_rec), index[4].numrec,
 	                                      fi_creat, "Creature", index[4].file_offset,
 	                                      index[4].blocksize);
 
 	last_cmd = index[5].numrec;
 	set_cmdptr(fi_cmdhead);
-	command = (cmd_rec *)read_recarray(NULL, sizeof(cmd_rec), index[5].numrec,
+	command = (cmd_rec *)read_recarray(nullptr, sizeof(cmd_rec), index[5].numrec,
 	                                   fi_cmdhead, "Metacommand", index[5].file_offset,
 	                                   index[5].blocksize);
 	if (filehead.ext_own != 'R' && filehead.fallback_ext <= 1) {
@@ -961,33 +961,33 @@ int read_agx(fc_type fc, rbool diag) {
 	}
 
 	NUM_ERR = index[6].numrec;
-	err_ptr = (descr_ptr *)read_recarray(NULL, sizeof(descr_ptr), index[6].numrec,
+	err_ptr = (descr_ptr *)read_recarray(nullptr, sizeof(descr_ptr), index[6].numrec,
 	                                     fi_descptr, "Error Message", index[6].file_offset,
 	                                     index[6].blocksize);
 
 	last_message = index[7].numrec;
-	msg_ptr = (descr_ptr *)read_recarray(NULL, sizeof(descr_ptr), index[7].numrec,
+	msg_ptr = (descr_ptr *)read_recarray(nullptr, sizeof(descr_ptr), index[7].numrec,
 	                                     fi_descptr, "Message", index[7].file_offset,
 	                                     index[7].blocksize);
 
 	MaxQuestion = index[8].numrec;
-	question = answer = NULL;
-	quest_ptr = (descr_ptr *)read_recarray(NULL, sizeof(descr_ptr), index[8].numrec,
+	question = answer = nullptr;
+	quest_ptr = (descr_ptr *)read_recarray(nullptr, sizeof(descr_ptr), index[8].numrec,
 	                                       fi_descptr, "Question", index[8].file_offset,
 	                                       index[8].blocksize);
 	if (index[9].numrec != index[8].numrec)
 		fatal("File corrputed: questions and answers don't match.");
-	ans_ptr = (descr_ptr *)read_recarray(NULL, sizeof(descr_ptr), index[9].numrec,
+	ans_ptr = (descr_ptr *)read_recarray(nullptr, sizeof(descr_ptr), index[9].numrec,
 	                                     fi_descptr, "Answer", index[9].file_offset,
 	                                     index[9].blocksize);
 
 	MAX_USTR = index[10].numrec;
-	userstr = (tline *)read_recarray(NULL, sizeof(tline), index[10].numrec,
+	userstr = (tline *)read_recarray(nullptr, sizeof(tline), index[10].numrec,
 	                                 fi_tline, "User String", index[10].file_offset,
 	                                 index[10].blocksize);
 
 	MAX_SUB = index[14].numrec;
-	sub_name = (word *)read_recblock(NULL, FT_WORD, index[14].numrec, index[14].file_offset,
+	sub_name = (word *)read_recblock(nullptr, FT_WORD, index[14].numrec, index[14].file_offset,
 	                                 index[14].blocksize);
 
 	if (index[16].numrec > MAX_PIX) {
@@ -1001,7 +1001,7 @@ int read_agx(fc_type fc, rbool diag) {
 	              index[16].blocksize);
 
 	numglobal = index[17].numrec;
-	globalnoun = (word *)read_recblock(NULL, FT_WORD,
+	globalnoun = (word *)read_recblock(nullptr, FT_WORD,
 	                                   index[17].numrec, index[17].file_offset,
 	                                   index[17].blocksize);
 
@@ -1017,25 +1017,25 @@ int read_agx(fc_type fc, rbool diag) {
 
 
 	DVERB = index[15].numrec - old_base_verb - MAX_SUB;
-	synlist = (slist *)read_recblock(NULL, FT_SLIST, index[15].numrec, index[15].file_offset,
+	synlist = (slist *)read_recblock(nullptr, FT_SLIST, index[15].numrec, index[15].file_offset,
 	                                 index[15].blocksize);
 	correct_synlist();
 
 	num_comb = index[28].numrec;
-	comblist = (slist *)read_recblock(NULL, FT_SLIST, index[28].numrec, index[28].file_offset,
+	comblist = (slist *)read_recblock(nullptr, FT_SLIST, index[28].numrec, index[28].file_offset,
 	                                  index[28].blocksize);
 
 	num_prep = index[29].numrec;
-	userprep = (slist *)read_recblock(NULL, FT_SLIST, index[29].numrec, index[29].file_offset,
+	userprep = (slist *)read_recblock(nullptr, FT_SLIST, index[29].numrec, index[29].file_offset,
 	                                  index[29].blocksize);
 
 	/* dicstr must be read in before dict */
 	dictstrsize = dictstrptr = index[20].numrec;
-	dictstr = (char *)read_recblock(NULL, FT_CHAR, index[20].numrec, index[20].file_offset,
+	dictstr = (char *)read_recblock(nullptr, FT_CHAR, index[20].numrec, index[20].file_offset,
 	                                index[20].blocksize);
 
 	dp = index[21].numrec;
-	dict = (char **)read_recblock(NULL, FT_DICTPTR,
+	dict = (char **)read_recblock(nullptr, FT_DICTPTR,
 	                              index[21].numrec, index[21].file_offset,
 	                              index[21].blocksize);
 
@@ -1048,20 +1048,20 @@ int read_agx(fc_type fc, rbool diag) {
 	}
 
 	maxpict = index[23].numrec;
-	pictlist = (filename *)read_recblock(NULL, FT_STR, index[23].numrec, index[23].file_offset,
+	pictlist = (filename *)read_recblock(nullptr, FT_STR, index[23].numrec, index[23].file_offset,
 	                                     index[23].blocksize);
 	maxpix = index[24].numrec;
-	pixlist = (filename *)read_recblock(NULL, FT_STR, index[24].numrec, index[24].file_offset,
+	pixlist = (filename *)read_recblock(nullptr, FT_STR, index[24].numrec, index[24].file_offset,
 	                                    index[24].blocksize);
 	maxfont = index[25].numrec;
-	fontlist = (filename *)read_recblock(NULL, FT_STR, index[25].numrec, index[25].file_offset,
+	fontlist = (filename *)read_recblock(nullptr, FT_STR, index[25].numrec, index[25].file_offset,
 	                                     index[25].blocksize);
 	maxsong = index[26].numrec;
-	songlist = (filename *)read_recblock(NULL, FT_STR, index[26].numrec, index[26].file_offset,
+	songlist = (filename *)read_recblock(nullptr, FT_STR, index[26].numrec, index[26].file_offset,
 	                                     index[26].blocksize);
 
 	vm_size = index[27].numrec;
-	verbinfo = (verbentry_rec *)read_recarray(NULL, sizeof(verbentry_rec), index[27].numrec,
+	verbinfo = (verbentry_rec *)read_recarray(nullptr, sizeof(verbentry_rec), index[27].numrec,
 	           fi_verbentry, "Menu Vocabulary", index[27].file_offset,
 	           index[27].blocksize);
 
@@ -1072,13 +1072,13 @@ int read_agx(fc_type fc, rbool diag) {
 	if (index[31].numrec != (uint32)objextsize(1))
 		fatal("Object property block not of the correct size.");
 
-	objflag = (uchar *)read_recblock(NULL, FT_BYTE, index[30].numrec, index[30].file_offset,
+	objflag = (uchar *)read_recblock(nullptr, FT_BYTE, index[30].numrec, index[30].file_offset,
 	                                 index[30].blocksize);
-	objprop = (long *)read_recblock(NULL, FT_INT32, index[31].numrec, index[31].file_offset,
+	objprop = (long *)read_recblock(nullptr, FT_INT32, index[31].numrec, index[31].file_offset,
 	                                index[31].blocksize);
 
 	oflag_cnt = index[32].numrec;
-	attrtable = (attrdef_rec *)read_recarray(NULL, sizeof(attrdef_rec), index[32].numrec,
+	attrtable = (attrdef_rec *)read_recarray(nullptr, sizeof(attrdef_rec), index[32].numrec,
 	            fi_attrrec, "Object Flag Table",
 	            index[32].file_offset,
 	            index[32].blocksize);
@@ -1086,7 +1086,7 @@ int read_agx(fc_type fc, rbool diag) {
 	   block 36 has been read in. */
 
 	oprop_cnt = index[33].numrec;
-	proptable = (propdef_rec *)read_recarray(NULL, sizeof(propdef_rec), index[33].numrec,
+	proptable = (propdef_rec *)read_recarray(nullptr, sizeof(propdef_rec), index[33].numrec,
 	            fi_proprec, "Object Property Table",
 	            index[33].file_offset,
 	            index[33].blocksize);
@@ -1095,29 +1095,29 @@ int read_agx(fc_type fc, rbool diag) {
 		/* Non-standard extension */
 //    int i;
 		for (i = 0; i < oflag_cnt; i++) /* These are converted later */
-			attrtable[i].ystr = NULL;
-		attrtable[i].nstr = NULL;
+			attrtable[i].ystr = nullptr;
+		attrtable[i].nstr = nullptr;
 		for (i = 0; i < oprop_cnt; i++)
 			proptable[i].str_cnt = 0;
 		propstr_size = 0;
-		propstr = NULL;
-		vartable = NULL;
-		flagtable = NULL;
+		propstr = nullptr;
+		vartable = nullptr;
+		flagtable = nullptr;
 	} else { /* Normal case */
 		propstr_size = index[34].numrec;
-		propstr = (const char **)read_recblock(NULL, FT_STR, index[34].numrec,
+		propstr = (const char **)read_recblock(nullptr, FT_STR, index[34].numrec,
 		                                       index[34].file_offset, index[34].blocksize);
 
 		if (index[35].numrec && index[35].numrec != (uint32)VAR_NUM + 1)
 			fatal("AGX file corrupted: variable itemization table size mismatch.");
-		vartable = (vardef_rec *)read_recarray(NULL, sizeof(vardef_rec), index[35].numrec,
+		vartable = (vardef_rec *)read_recarray(nullptr, sizeof(vardef_rec), index[35].numrec,
 		                                       fi_varrec, "Variable Itemization Table",
 		                                       index[35].file_offset,
 		                                       index[35].blocksize);
 
 		if (index[36].numrec && index[36].numrec != (uint32)FLAG_NUM + 1)
 			fatal("AGX file corrupted: flag itemization table size mismatch.");
-		flagtable = (flagdef_rec *)read_recarray(NULL, sizeof(flagdef_rec), index[36].numrec,
+		flagtable = (flagdef_rec *)read_recarray(nullptr, sizeof(flagdef_rec), index[36].numrec,
 		            fi_flagrec, "Flag Itemization Table",
 		            index[36].file_offset,
 		            index[36].blocksize);
@@ -1133,14 +1133,14 @@ int read_agx(fc_type fc, rbool diag) {
 	   agxread() but during play */
 	if ((long)index[11].blocksize <= descr_maxmem) {
 		/* ... if we decided to load descriptions into memory */
-		mem_descr = (char *)read_recblock(NULL, FT_CHAR, index[11].numrec,
+		mem_descr = (char *)read_recblock(nullptr, FT_CHAR, index[11].numrec,
 		                                  index[11].file_offset,
 		                                  index[11].blocksize);
 		buffclose(); /* Don't need to keep it open */
 		descr_ofs = -1;
 	} else {
 		descr_ofs = index[11].file_offset;
-		mem_descr = NULL;
+		mem_descr = nullptr;
 	}
 	reinit_dict();
 	return 1;
@@ -1239,8 +1239,8 @@ void agx_create(fc_type fc) {
 
 	/* This writes random data to the file; their only purpose
 	   is to prevent problems with seeking beyond the end of file */
-	write_recarray(NULL, sizeof(file_head_rec), 1, fi_header, 0);
-	write_recarray(NULL, sizeof(index_rec), AGX_NUMBLOCK, fi_index, 16);
+	write_recarray(nullptr, sizeof(file_head_rec), 1, fi_header, 0);
+	write_recarray(nullptr, sizeof(index_rec), AGX_NUMBLOCK, fi_index, 16);
 
 	old_base_verb = BASE_VERB; /* This will be constant for any given version
 				  of the interpreter, but may change across
@@ -1297,7 +1297,7 @@ static void agx_finish_index(void) {
 	gindex[6].numrec = NUM_ERR;
 	gindex[7].numrec = last_message;
 	gindex[8].numrec = gindex[9].numrec = MaxQuestion;
-	if (userstr != NULL)
+	if (userstr != nullptr)
 		gindex[10].numrec = MAX_USTR;
 	else gindex[10].numrec = 0;
 	gindex[13].numrec = ss_end;
@@ -1341,18 +1341,18 @@ void write_descr(descr_ptr *dp_, descr_line *txt) {
 	char *buff, *buffptr, *src;
 
 	size = 0;
-	if (txt == NULL) {
+	if (txt == nullptr) {
 		dp_->start = 0;
 		dp_->size = 0;
 		return;
 	}
 
-	for (i = 0; txt[i] != NULL; i++) /* Compute size */
+	for (i = 0; txt[i] != nullptr; i++) /* Compute size */
 		size += strlen(txt[i]) + 1; /* Remember trailing \0 */
 	buff = (char *)rmalloc(sizeof(char) * size);
 
 	buffptr = buff;
-	for (i = 0; txt[i] != NULL; i++) {
+	for (i = 0; txt[i] != nullptr; i++) {
 		for (src = txt[i]; *src != 0; src++, buffptr++)
 			*buffptr = *src;
 		*buffptr++ = 0;
@@ -1422,7 +1422,7 @@ void agx_write(void) {
 	write_recarray(ans_ptr, sizeof(descr_ptr), gindex[9].numrec,
 	               fi_descptr, gindex[9].file_offset);
 
-	if (userstr != NULL)
+	if (userstr != nullptr)
 		write_recarray(userstr, sizeof(tline), gindex[10].numrec,
 		               fi_tline, gindex[10].file_offset);
 

@@ -49,14 +49,14 @@ void Windows::setup(bool isVersion6) {
 	if (isVersion6) {
 		// For graphic games we have a background window covering the entire screen for greater
 		// flexibility of wher we draw pictures, and the lower and upper areas sit on top of them
-		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
+		_background = g_vm->glk_window_open(nullptr, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
 
 		Window &w = _windows[0];
 		w[X_SIZE] = g_vm->h_screen_width;
 		w[Y_SIZE] = g_vm->h_screen_height;
 	} else {
-		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+		_lower = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
 
 		_lower.update();

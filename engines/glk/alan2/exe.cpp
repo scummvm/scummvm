@@ -811,15 +811,15 @@ static void dscrobj(Aword obj) {
 }
 
 static void dscract(Aword act) {
-	ScrElem *scr = NULL;
+	ScrElem *scr = nullptr;
 
 	if (acts[act - ACTMIN].script != 0) {
 		for (scr = (ScrElem *) addrTo(acts[act - ACTMIN].scradr); !endOfTable(scr); scr++)
 			if (scr->code == acts[act - ACTMIN].script)
 				break;
-		if (endOfTable(scr)) scr = NULL;
+		if (endOfTable(scr)) scr = nullptr;
 	}
-	if (scr != NULL && scr->dscr != 0)
+	if (scr != nullptr && scr->dscr != 0)
 		interpret(scr->dscr);
 	else if (acts[act - ACTMIN].dscr != 0)
 		interpret(acts[act - ACTMIN].dscr);
@@ -1125,7 +1125,7 @@ Aword contains(Aptr string, Aptr substring) {
 	strlow((char *)string);
 	strlow((char *)substring);
 
-	found = (strstr((char *)string, (char *)substring) != 0);
+	found = (strstr((char *)string, (char *)substring) != nullptr);
 
 	free((char *)string);
 	free((char *)substring);

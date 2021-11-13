@@ -96,7 +96,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 	if (!path)
 	{
 		path = &fakepath;
-		fakepath.tokpnxt = (tokpdef *)0;
+		fakepath.tokpnxt = (tokpdef *)nullptr;
 		fakepath.tokplen = 0;
 	}
 
@@ -125,7 +125,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 		fbuf[len + flen] = '\0';
 
 		/* attempt to open this file */
-		if ((fp = osfoprs(fbuf, OSFTTEXT)) != 0)
+		if ((fp = osfoprs(fbuf, OSFTTEXT)) != nullptr)
 			break;
 	}
 
@@ -134,9 +134,9 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 	 *   let the debugger UI try to find the file.  If nothing works, give
 	 *   up and return failure.
 	 */
-	if (fp == 0
-		&& (!os_locate(filename, flen, (char *)0, fbuf, sizeof(fbuf))
-			|| (fp = osfoprs(fbuf, OSFTTEXT)) == 0))
+	if (fp == nullptr
+		&& (!os_locate(filename, flen, (char *)nullptr, fbuf, sizeof(fbuf))
+			|| (fp = osfoprs(fbuf, OSFTTEXT)) == nullptr))
 	{
 		/*
 		 *   Ask the debugger UI for advice.  If the debugger isn't
@@ -144,7 +144,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 		 */
 		if (!dbgu_find_src(filename, flen, fbuf, sizeof(fbuf),
 						   must_find_file))
-			return 0;
+			return nullptr;
 
 		/* try opening the file */
 		if (fbuf[0] == '\0')
@@ -153,7 +153,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 			 *   we didn't get a filename - the UI wants to defer finding
 			 *   the file until later
 			 */
-			fp = 0;
+			fp = nullptr;
 		}
 		else
 		{
@@ -165,12 +165,12 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 		 *   if the file isn't present, and we're required to find it,
 		 *   return failure
 		 */
-		if (fp == 0 && must_find_file)
-			return 0;
+		if (fp == nullptr && must_find_file)
+			return nullptr;
 	}
 
 	/* figure out how much space we need for the file's full name */
-	if (fp == 0)
+	if (fp == nullptr)
 	{
 		/*
 		 *   we didn't find the file, so we don't yet know its name - use
@@ -460,10 +460,10 @@ int linfload(osfildef *fp, dbgcxdef *dbgctx, errcxdef *ec, tokpdef *path)
 	}
 
 	/* if we opened the file, close it - don't hold all files open */
-	if (linf->linffp != 0)
+	if (linf->linffp != nullptr)
 	{
 		osfcls(linf->linffp);
-		linf->linffp = 0;
+		linf->linffp = nullptr;
 	}
 
 	/* link into debug line source chain */
@@ -870,7 +870,7 @@ void linfdis(lindef *lin)
 	if (linf->linffp)
 	{
 		osfcls(linf->linffp);
-		linf->linffp = (osfildef *)0;
+		linf->linffp = (osfildef *)nullptr;
 	}
 
 #   undef linf
@@ -902,7 +902,7 @@ void linfact(lindef *lin)
 	else
 	{
 		/* there's no file to open */
-		linf->linffp = 0;
+		linf->linffp = nullptr;
 	}
 
 #   undef linf
@@ -978,7 +978,7 @@ int linfgets(lindef *lin, uchar *buf, uint siz)
 	startpos = osfpos(linf->linffp);
 
 	/* read the next line */
-	ret = (osfgets((char *)buf, siz, linf->linffp) != 0);
+	ret = (osfgets((char *)buf, siz, linf->linffp) != nullptr);
 	if (!ret)
 		return ret;
 

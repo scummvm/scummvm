@@ -59,7 +59,7 @@ struct game_state {
 
 /* PRIVATE DATA */
 static GameState gameState;     /* TODO: Make pointer, then we don't have to copy to stack, we can just use the pointer */
-static StateStackP stateStack = NULL;
+static StateStackP stateStack = nullptr;
 
 static char *playerCommand;
 
@@ -116,7 +116,7 @@ void deallocateGameState(GameState *gState) {
 
 	if (gState->eventQueueTop > 0) {
 		deallocate(gState->eventQueue);
-		gState->eventQueue = NULL;
+		gState->eventQueue = nullptr;
 	}
 	if (gState->scores)
 		deallocate(gState->scores);
@@ -133,14 +133,14 @@ void forgetGameState(void) {
 	char *playerCmd;
 	popGameState(stateStack, &gameState, &playerCmd);
 	deallocateGameState(&gameState);
-	if (playerCmd != NULL)
+	if (playerCmd != nullptr)
 		deallocate(playerCmd);
 }
 
 
 /*======================================================================*/
 void initStateStack(void) {
-	if (stateStack != NULL)
+	if (stateStack != nullptr)
 		deleteStateStack(stateStack);
 	stateStack = createStateStack(sizeof(GameState));
 }
@@ -149,7 +149,7 @@ void initStateStack(void) {
 /*======================================================================*/
 void terminateStateStack(void) {
 	deleteStateStack(stateStack);
-	stateStack = NULL;
+	stateStack = nullptr;
 }
 
 
@@ -166,7 +166,7 @@ static Set **collectSets(void) {
 	Set **sets;
 	int i;
 
-	if (count == 0) return NULL;
+	if (count == 0) return nullptr;
 
 	sets = (Set **)allocate(count * sizeof(Set));
 
@@ -185,7 +185,7 @@ static char **collectStrings(void) {
 	char **strings;
 	int i;
 
-	if (count == 0) return NULL;
+	if (count == 0) return nullptr;
 
 	strings = (char **)allocate(count * sizeof(char *));
 
@@ -225,8 +225,8 @@ static void collectInstanceData(void) {
 /*----------------------------------------------------------------------*/
 static void collectScores(void) {
 	gameState.score = current.score;
-	if (scores == NULL)
-		gameState.scores = NULL;
+	if (scores == nullptr)
+		gameState.scores = nullptr;
 	else
 		gameState.scores = (Aword *)duplicate(scores, header->scoreCount * sizeof(Aword));
 }
@@ -238,7 +238,7 @@ void rememberGameState(void) {
 	collectInstanceData();
 	collectScores();
 
-	if (stateStack == NULL)
+	if (stateStack == nullptr)
 		initStateStack();
 
 	pushGameState(stateStack, &gameState);
@@ -269,7 +269,7 @@ static void recallSets(Set **sets) {
 	entry = (SetInitEntry *)pointerTo(header->setInitTable);
 	for (i = 0; i < count; i++) {
 		setAttribute(admin[entry[i].instanceCode].attributes, entry[i].attributeCode, toAptr(sets[i]));
-		sets[i] = NULL; /* Since we reuse the saved set, we need to clear the pointer */
+		sets[i] = nullptr; /* Since we reuse the saved set, we need to clear the pointer */
 	}
 }
 
@@ -297,7 +297,7 @@ static void recallStrings(char **strings) {
 	entry = (StringInitEntry *)pointerTo(header->stringInitTable);
 	for (i = 0; i < count; i++) {
 		setAttribute(admin[entry[i].instanceCode].attributes, entry[i].attributeCode, toAptr(strings[i]));
-		strings[i] = NULL;      /* Since we reuse the saved, we need to clear the state */
+		strings[i] = nullptr;      /* Since we reuse the saved, we need to clear the state */
 	}
 }
 
@@ -315,7 +315,7 @@ static void recallEvents(void) {
 /*----------------------------------------------------------------------*/
 static void recallInstances(void) {
 
-	if (admin == NULL)
+	if (admin == nullptr)
 		syserr("admin[] == NULL in recallInstances()");
 
 	memcpy(admin, gameState.admin,

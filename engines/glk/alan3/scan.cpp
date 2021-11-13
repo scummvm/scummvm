@@ -47,7 +47,7 @@ bool continued = FALSE;
 static char buf[1000]; /* The input buffer */
 static char isobuf[1000]; /* The input buffer in ISO */
 static bool eol = TRUE; /* Looking at End of line? Yes, initially */
-static char *token = NULL;
+static char *token = nullptr;
 
 
 /*======================================================================*/
@@ -102,7 +102,7 @@ static char *gettoken(char *txtBuf) {
 	static char *marker;
 	static char oldch;
 
-	if (txtBuf == NULL)
+	if (txtBuf == nullptr)
 		*marker = oldch;
 	else
 		marker = txtBuf;
@@ -121,7 +121,7 @@ static char *gettoken(char *txtBuf) {
 			marker++;
 		marker++;
 	} else if (*marker == '\0' || *marker == '\n' || *marker == ';')
-		return NULL;
+		return nullptr;
 	else
 		marker++;
 	oldch = *marker;
@@ -169,20 +169,20 @@ static void getLine(CONTEXT) {
 
 		strcpy(isobuf, buf);
 		token = gettoken(isobuf);
-		if (token != NULL) {
+		if (token != nullptr) {
 			if (strcmp("debug", token) == 0 && header->debug) {
 				debugOption = TRUE;
 				CALL3(debug, FALSE, 0, 0)
 
-				token = NULL;
+				token = nullptr;
 			} else if (strcmp("undo", token) == 0) {
-				token = gettoken(NULL);
-				if (token != NULL) /* More tokens? */
+				token = gettoken(nullptr);
+				if (token != nullptr) /* More tokens? */
 					CALL1(error, M_WHAT)
 				CALL0(undo)
 			}
 		}
-	} while (token == NULL);
+	} while (token == nullptr);
 	eol = FALSE;
 }
 
@@ -196,8 +196,8 @@ void scan(CONTEXT) {
 	if (continued) {
 		/* Player used '.' to separate commands. Read next */
 		para();
-		token = gettoken(NULL); /* Or did he just finish the command with a full stop? */
-		if (token == NULL) {
+		token = gettoken(nullptr); /* Or did he just finish the command with a full stop? */
+		if (token == nullptr) {
 			CALL0(getLine)
 		}
 		continued = FALSE;
@@ -236,7 +236,7 @@ void scan(CONTEXT) {
 		} else
 			CALL1(unknown, token)
 		setEndOfArray(&playerWords[i]);
-		eol = (token = gettoken(NULL)) == NULL;
+		eol = (token = gettoken(nullptr)) == nullptr;
 	} while (!eol);
 }
 

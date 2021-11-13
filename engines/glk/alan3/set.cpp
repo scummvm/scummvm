@@ -159,8 +159,8 @@ bool equalSets(Set *set1, Set *set2) {
 
 /*======================================================================*/
 void freeSet(Set *theSet) {
-	if (theSet != NULL) {
-		if (theSet->members != NULL)
+	if (theSet != nullptr) {
+		if (theSet->members != nullptr)
 			deallocate(theSet->members);
 		deallocate(theSet);
 	}

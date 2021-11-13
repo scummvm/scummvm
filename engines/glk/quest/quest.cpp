@@ -122,7 +122,7 @@ bool Quest::initialize() {
 	glk_stylehint_set(wintype_TextBuffer, style_User2, stylehint_ReverseColor, 1);
 
 	// Open the main window
-	mainglkwin = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	mainglkwin = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
 	if (!mainglkwin)
 		return false;
 	glk_set_window(mainglkwin);
@@ -137,7 +137,7 @@ bool Quest::initialize() {
 			winmethod_Below | winmethod_Fixed,
 			1, wintype_TextBuffer, 0);
 	else
-		inputwin = NULL;
+		inputwin = nullptr;
 
 	if (!inputwin)
 		inputwin = mainglkwin;

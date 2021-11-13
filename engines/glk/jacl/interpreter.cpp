@@ -66,7 +66,7 @@ const char *strcasestr(const char *s, const char *find) {
 		do {
 			do {
 				if ((sc = *s++) == 0)
-					return (NULL);
+					return (nullptr);
 			} while ((char)tolower((unsigned char)sc) != c);
 		} while (scumm_strnicmp(s, find, len) != 0);
 		s--;
@@ -89,7 +89,7 @@ const char *location_attributes[] = {
 	"VISITED ", "DARK ", "ON_WATER ", "UNDER_WATER ", "WITHOUT_AIR ", "OUTDOORS ",
 	"MID_AIR ", "TIGHT_ROPE ", "POLLUTED ", "SOLVED ", "MID_WATER ", "DARKNESS ",
 	"MAPPED ", "KNOWN ",
-	NULL
+	nullptr
 };
 
 const char *object_attributes[] = {
@@ -98,19 +98,19 @@ const char *object_attributes[] = {
 	"CONTAINER ", "SURFACE ", "PLURAL ", "FLAMMABLE ", "BURNING ", "LOCATION ",
 	"ON ", "DAMAGED ", "FEMALE ", "POSSESSIVE ", "OUT_OF_REACH ", "TOUCHED ",
 	"SCORED ", "SITTING ", "NPC ", "DONE ", "GAS ", "NO_TAB ",
-	"NOT_IMPORTANT ", NULL
+	"NOT_IMPORTANT ", nullptr
 };
 
 const char *object_elements[] = {
 	"parent", "capacity", "mass", "bearing", "velocity", "next", "previous",
 	"child", "index", "status", "state", "counter", "points", "class", "x", "y",
-	NULL
+	nullptr
 };
 
 const char *location_elements[] = {
 	"north", "south", "east", "west", "northeast", "northwest", "southeast",
 	"southwest", "up", "down", "in", "out", "points", "class", "x", "y",
-	NULL
+	nullptr
 };
 
 struct csv_parser               parser_csv;
@@ -127,16 +127,16 @@ int                             field_no = 0;
 struct stack_type               backup[STACK_SIZE];
 struct proxy_type               proxy_backup[STACK_SIZE];
 
-struct function_type *resolved_function = NULL;
-struct string_type *resolved_string = NULL;
+struct function_type *resolved_function = nullptr;
+struct string_type *resolved_string = nullptr;
 
-struct string_type *new_string = NULL;
-struct string_type *current_cstring = NULL;
-struct string_type *previous_cstring = NULL;
+struct string_type *new_string = nullptr;
+struct string_type *current_cstring = nullptr;
+struct string_type *previous_cstring = nullptr;
 
-struct cinteger_type *new_cinteger = NULL;
-struct cinteger_type *current_cinteger = NULL;
-struct cinteger_type *previous_cinteger = NULL;
+struct cinteger_type *new_cinteger = nullptr;
+struct cinteger_type *current_cinteger = nullptr;
+struct cinteger_type *previous_cinteger = nullptr;
 
 long                            bit_mask;
 extern int                      encrypted;
@@ -150,8 +150,8 @@ char                            csv_buffer[1024];
 int                             resolved_attribute;
 
 /* THE ITERATION VARIABLE USED FOR LOOPS */
-int                             *loop_integer = NULL;
-int                             *select_integer = NULL;
+int                             *loop_integer = nullptr;
+int                             *select_integer = nullptr;
 
 int                             criterion_value = 0;
 int                             criterion_type = 0;
@@ -281,14 +281,14 @@ void terminate(int code) {
 
 	/* CLOSE THE SOUND CHANNELS */
 	for (index = 0; index < 8; index++) {
-		if (sound_channel[index] != NULL) {
+		if (sound_channel[index] != nullptr) {
 			g_vm->glk_schannel_destroy(sound_channel[index]);
 		}
 	}
 
 	/* CLOSE THE STREAM */
-	if (game_stream != NULL) {
-		g_vm->glk_stream_close(game_stream, NULL);
+	if (game_stream != nullptr) {
+		g_vm->glk_stream_close(game_stream, nullptr);
 	}
 
 	g_vm->glk_exit();
@@ -307,7 +307,7 @@ void build_proxy() {
 
 	/* LOOP THROUGH ALL THE PARAMETERS OF THE PROXY COMMAND
 	   AND BUILD THE MOVE TO BE ISSUED ON THE PLAYER'S BEHALF */
-	for (index = 1; word[index] != NULL; index++) {
+	for (index = 1; word[index] != nullptr; index++) {
 		strcat(proxy_buffer, text_of_word(index));
 	}
 
@@ -328,7 +328,7 @@ void cb1(void *s, size_t i, void *not_used) {
 
 	sprintf(temp_buffer, "field[%d]", field_no);
 
-	if ((resolved_cstring = cstring_resolve(temp_buffer)) != NULL) {
+	if ((resolved_cstring = cstring_resolve(temp_buffer)) != nullptr) {
 		//write_text("Resolved ");
 		//write_text(temp_buffer);
 		//write_text("^");
@@ -350,7 +350,7 @@ void cb2(int c, void *not_used) {
 	// THE END OF THE RECORD HAS BEEN REACHED, EXPORT THE NUMBER OF FIELDS READ
 	struct cinteger_type *resolved_cinteger;
 
-	if ((resolved_cinteger = cinteger_resolve("field_count")) != NULL) {
+	if ((resolved_cinteger = cinteger_resolve("field_count")) != nullptr) {
 		resolved_cinteger->value = field_no;
 	}
 }
@@ -385,7 +385,7 @@ int execute(const char *funcname) {
 	/* GET THE FUNCTION OBJECT BY THE FUNCTION NAME */
 	resolved_function = function_resolve(called_name);
 
-	if (resolved_function == NULL) {
+	if (resolved_function == nullptr) {
 		//printf("--- failed to find %s\n", called_name);
 		return (FALSE);
 	}
@@ -434,7 +434,7 @@ int execute(const char *funcname) {
 
 	while (text_buffer[0] != 125 && !interrupted) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == nullptr);
 		else if (!strcmp(word[0], "endwhile")) {
 			currentLevel--;
 			if (currentLevel < executionLevel) {
@@ -540,7 +540,7 @@ int execute(const char *funcname) {
 				top_of_do_loop = ftell(file);
 #endif
 			} else if (!strcmp(word[0], "until")) {
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -557,7 +557,7 @@ int execute(const char *funcname) {
 					}
 				}
 			} else if (!strcmp(word[0], "untilall")) {
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -588,7 +588,7 @@ int execute(const char *funcname) {
 
 				// infile REMAINS OPEN DURING THE ITERATION, ONLY NEEDS
 				// OPENING THE FIRST TIME
-				if (infile == NULL) {
+				if (infile == nullptr) {
 					strcpy(temp_buffer, data_directory);
 					strcat(temp_buffer, prefix);
 					strcat(temp_buffer, "-");
@@ -597,18 +597,18 @@ int execute(const char *funcname) {
 
 					infile = File::openForReading(temp_buffer);
 
-					if (word[2] != NULL && !strcmp(word[2], "skip_header")) {
+					if (word[2] != nullptr && !strcmp(word[2], "skip_header")) {
 						assert(infile);
 						infile->read(csv_buffer, 1024);
 					}
 				}
 
-				if (infile == NULL) {
+				if (infile == nullptr) {
 					sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
 					log_error(error_buffer, LOG_ONLY);
-					infile = NULL;
+					infile = nullptr;
 				} else {
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 						noproprun();
 						return (exit_function(TRUE));
@@ -621,18 +621,18 @@ int execute(const char *funcname) {
 							i = strlen(csv_buffer);
 							//sprintf (temp_buffer, "Read ~%s~ with %d bytes.^", csv_buffer, i);
 							//write_text(temp_buffer);
-							if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (void *) NULL) != (uint)i) {
+							if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (void *) nullptr) != (uint)i) {
 								sprintf(error_buffer, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
 								log_error(error_buffer, PLUS_STDOUT);
 								delete infile;
-								infile = NULL;
+								infile = nullptr;
 							} else {
 								// A LINE HAS BEEN SUCCESSFULLY READ, EXECUTE THE CONTENTS OF THE LOOP
 								executionLevel++;
 							}
 						} else {
 							delete infile;
-							infile = NULL;
+							infile = nullptr;
 						}
 					}
 				}
@@ -662,7 +662,7 @@ int execute(const char *funcname) {
 
 				// infile REMAINS OPEN DURING THE ITERATION, ONLY NEEDS
 				// OPENING THE FIRST TIME
-				if (infile == NULL) {
+				if (infile == nullptr) {
 					strcpy(in_name, data_directory);
 					strcat(in_name, prefix);
 					strcat(in_name, "-");
@@ -672,7 +672,7 @@ int execute(const char *funcname) {
 					infile = File::openForReading(in_name);
 				}
 
-				if (outfile == NULL) {
+				if (outfile == nullptr) {
 					// OPEN A TEMPORARY OUTPUT FILE TO WRITE THE MODIFICATIONS TO
 					strcpy(out_name, data_directory);
 					strcat(out_name, prefix);
@@ -685,21 +685,21 @@ int execute(const char *funcname) {
 					outfile = File::openForWriting(out_name);
 				}
 
-				if (infile == NULL) {
+				if (infile == nullptr) {
 					sprintf(error_buffer, "Failed to open input CSV file ~%s\n", in_name);
 					log_error(error_buffer, LOG_ONLY);
-					if (outfile != NULL) {
+					if (outfile != nullptr) {
 						delete outfile;
-						outfile = NULL;
+						outfile = nullptr;
 					}
 					return (exit_function(TRUE));
 				} else {
-					if (outfile == NULL) {
+					if (outfile == nullptr) {
 						sprintf(error_buffer, "Failed to open output CSV file ~%s~\n", out_name);
 						log_error(error_buffer, LOG_ONLY);
-						if (infile != NULL) {
+						if (infile != nullptr) {
 							delete infile;
-							infile = NULL;
+							infile = nullptr;
 						}
 						return (exit_function(TRUE));
 					} else {
@@ -739,7 +739,7 @@ int execute(const char *funcname) {
 							}
 						}
 #endif
-						if (word[1] == NULL) {
+						if (word[1] == nullptr) {
 							/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 							noproprun();
 							return (exit_function(TRUE));
@@ -755,7 +755,7 @@ int execute(const char *funcname) {
 									read_lck.l_type = F_UNLCK;  // SETTING A READ LOCK
 									fcntl(read_fd, F_SETLK, &read_lck);
 									delete infile;
-									infile = NULL;
+									infile = nullptr;
 								} else {
 									// A LINE HAS BEEN SUCCESSFULLY READ, EXECUTE THE CONTENTS OF THE LOOP
 									executionLevel++;
@@ -771,8 +771,8 @@ int execute(const char *funcname) {
 
 								rename(out_name, in_name);
 
-								outfile = NULL;
-								infile = NULL;
+								outfile = nullptr;
+								infile = nullptr;
 							}
 						}
 					}
@@ -782,7 +782,7 @@ int execute(const char *funcname) {
 				/* THIS LOOP COMES BACK TO THE START OF THE LINE CURRENTLY
 				   EXECUTING, NOT THE LINE AFTER */
 				top_of_while = before_command;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -794,7 +794,7 @@ int execute(const char *funcname) {
 				/* THIS LOOP COMES BACK TO THE START OF THE LINE CURRENTLY
 				   EXECUTING, NOT THE LINE AFTER */
 				top_of_while = before_command;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -809,7 +809,7 @@ int execute(const char *funcname) {
 #else
 				top_of_loop = ftell(file);
 #endif
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					// IF NONE IS SUPPLIED DEFAULT TO noun3
 					loop_integer = &noun[2];
 				} else {
@@ -818,7 +818,7 @@ int execute(const char *funcname) {
 
 					// IF THE SUPPLIED CONTAINER CAN'T BE RESOLVED
 					// DEFAULT TO noun3
-					if (loop_integer == NULL)
+					if (loop_integer == nullptr)
 						loop_integer = &noun[2];
 				}
 
@@ -850,11 +850,11 @@ int execute(const char *funcname) {
 #else
 				top_of_select = ftell(file);
 #endif
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
-				} else if (word[2] == NULL) {
+				} else if (word[2] == nullptr) {
 					// IF NONE IS SUPPLIED DEFAULT TO noun3
 					select_integer = &noun[2];
 				} else {
@@ -863,7 +863,7 @@ int execute(const char *funcname) {
 
 					// IF THE SUPPLIED CONTAINER CAN'T BE RESOLVED
 					// DEFAULT TO noun3
-					if (select_integer == NULL) {
+					if (select_integer == nullptr) {
 						select_integer = &noun[2];
 					}
 				}
@@ -925,7 +925,7 @@ int execute(const char *funcname) {
 
 					while (text_buffer[0] != '}') {
 						encapsulate();
-						if (word[0] != NULL && !strcmp(word[0], "endselect")) {
+						if (word[0] != nullptr && !strcmp(word[0], "endselect")) {
 							break;
 						}
 #ifdef GLK
@@ -956,7 +956,7 @@ int execute(const char *funcname) {
 				executionLevel--;
 #ifdef GLK
 			} else if (!strcmp(word[0], "cursor")) {
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -972,7 +972,7 @@ int execute(const char *funcname) {
 
 				if (SOUND_SUPPORTED->value) {
 					/* SET THE CHANNEL TO STOP, IF SUPPLIED */
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						channel = 0;
 					} else {
 						channel = value_of(word[1], TRUE);
@@ -989,7 +989,7 @@ int execute(const char *funcname) {
 
 				if (SOUND_SUPPORTED->value) {
 					/* SET THE CHANNEL TO STOP, IF SUPPLIED */
-					if (word[2] == NULL) {
+					if (word[2] == nullptr) {
 						channel = 0;
 					} else {
 						channel = value_of(word[2], TRUE);
@@ -1000,7 +1000,7 @@ int execute(const char *funcname) {
 						}
 					}
 
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 						noproprun();
 						return (exit_function(TRUE));
@@ -1031,7 +1031,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "timer")) {
 				if (TIMER_SUPPORTED->value && TIMER_ENABLED->value) {
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 						noproprun();
 						return (exit_function(TRUE));
@@ -1054,7 +1054,7 @@ int execute(const char *funcname) {
 
 				if (SOUND_SUPPORTED->value && SOUND_ENABLED->value) {
 					/* SET THE CHANNEL TO USE, IF SUPPLIED */
-					if (word[2] == NULL) {
+					if (word[2] == nullptr) {
 						channel = 0;
 					} else {
 						channel = value_of(word[2], TRUE);
@@ -1066,13 +1066,13 @@ int execute(const char *funcname) {
 					}
 
 					/* SET THE NUMBER OF REPEATS, IF SUPPLIED */
-					if (word[3] == NULL) {
+					if (word[3] == nullptr) {
 						repeats = 1;
 					} else {
 						repeats = value_of(word[3], TRUE);
 					}
 
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 						noproprun();
 						return (exit_function(TRUE));
@@ -1089,7 +1089,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "image")) {
 				if (GRAPHICS_SUPPORTED->value && GRAPHICS_ENABLED->value) {
-					if (word[1] == NULL) {
+					if (word[1] == nullptr) {
 						/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 						noproprun();
 						return (exit_function(TRUE));
@@ -1101,13 +1101,13 @@ int execute(const char *funcname) {
 					}
 				}
 			} else if (!strcmp(word[0], "askstring") || !strcmp(word[0], "getstring")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
 					/* GET A POINTER TO THE STRING BEING MODIFIED */
-					if ((resolved_string = string_resolve(word[1])) == NULL) {
+					if ((resolved_string = string_resolve(word[1])) == nullptr) {
 						unkstrrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -1128,9 +1128,9 @@ int execute(const char *funcname) {
 					insist = TRUE;
 				}
 
-				if (word[3] != NULL) {
+				if (word[3] != nullptr) {
 					ask_integer = container_resolve(word[1]);
-					if (ask_integer == NULL) {
+					if (ask_integer == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -1149,9 +1149,9 @@ int execute(const char *funcname) {
 					return (exit_function(TRUE));
 				}
 			} else if (!strcmp(word[0], "getyesorno")) {
-				if (word[1] != NULL) {
+				if (word[1] != nullptr) {
 					ask_integer = container_resolve(word[1]);
-					if (ask_integer == NULL) {
+					if (ask_integer == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -1170,7 +1170,7 @@ int execute(const char *funcname) {
 				terminate(0);
 				return 0;
 			} else if (!strcmp(word[0], "more")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					more("[MORE]");
 				} else {
 					more(word[1]);
@@ -1178,7 +1178,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "style")) {
 				/* THIS COMMAND IS USED TO OUTPUT ANSI CODES OR SET GLK
 				 * STREAM STYLES */
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -1211,7 +1211,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "flush")) {
 			} else if (!strcmp(word[0], "hyperlink")) {
 				/* OUTPUT LINK TEXT AS PLAIN TEXT UNDER Glk */
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					noproprun();
 					pop_stack();
 					return (TRUE);
@@ -1621,7 +1621,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "execute") || !strcmp(word[0], "call")) {
 				/* CALLS ANOTHER JACL FUNCTION */
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -1629,17 +1629,17 @@ int execute(const char *funcname) {
 					/* RESOLVE ALL THE TEXT AND STORE IT IN A TEMPORARY BUFFER*/
 					string_buffer[0] = 0;
 
-					for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+					for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 						strcat(string_buffer, arg_text_of_word(counter));
 					}
 
-					if (function_resolve(string_buffer) == NULL && !strcmp(word[0], "execute")) {
+					if (function_resolve(string_buffer) == nullptr && !strcmp(word[0], "execute")) {
 						char *argstart;
 
 						/* REMOVE ANY PARAMETERS FROM FUNCTION NAME
 						   BEFORE DISPLAYING ERROR MESSAGE */
 						argstart = strchr(string_buffer, '<');
-						if (argstart != NULL)
+						if (argstart != nullptr)
 							*argstart = 0;
 
 						sprintf(error_buffer, UNDEFINED_FUNCTION, executing_function->name, string_buffer);
@@ -1650,7 +1650,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "points")) {
 				/* INCREASE THE PLAYER'S SCORE AND POTENTIALLY INFORM THEM OF THE INCREASE */
-				if (word[1] != NULL) {
+				if (word[1] != nullptr) {
 					SCORE->value += value_of(word[1], TRUE);
 					if (NOTIFY->value) {
 #ifdef GLK
@@ -1752,23 +1752,23 @@ int execute(const char *funcname) {
 					if (encrypted) jacl_decrypt(text_buffer);
 				}
 			} else if (!strcmp(word[0], "mesg")) {
-				for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+				for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 					warning("%s", text_of_word(counter));
 				}
 			} else if (!strcmp(word[0], "error")) {
 				write_text("ERROR: In function ~");
 				write_text(executing_function->name);
 				write_text("~, ");
-				for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+				for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 					write_text(text_of_word(counter));
 				}
 			} else if (!strcmp(word[0], "debug") && DEBUG->value) {
 				write_text("DEBUG: ");
-				for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+				for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 					write_text(text_of_word(counter));
 				}
 			} else if (!strcmp(word[0], "write")) {
-				for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+				for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 					output = text_of_word(counter);
 					if (*output != 0) {
 						// IF THE OUTPUT ISN'T AN EMPTY STRING, DISPLAY IT
@@ -1776,12 +1776,12 @@ int execute(const char *funcname) {
 					}
 				}
 			} else if (!strcmp(word[0], "length")) {
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
-					if ((container = container_resolve(word[1])) == NULL) {
+					if ((container = container_resolve(word[1])) == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -1789,12 +1789,12 @@ int execute(const char *funcname) {
 					*container = strlen(text_of(word[2]));
 				}
 			} else if (!strcmp(word[0], "savegame")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if ((container = container_resolve(word[1])) == NULL) {
+					if ((container = container_resolve(word[1])) == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					} else {
@@ -1802,12 +1802,12 @@ int execute(const char *funcname) {
 					}
 				}
 			} else if (!strcmp(word[0], "restoregame")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if ((container = container_resolve(word[1])) == NULL) {
+					if ((container = container_resolve(word[1])) == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					} else {
@@ -1836,22 +1836,22 @@ int execute(const char *funcname) {
 				char split_buffer[256] = "";
 				char container_buffer[256] = "";
 				char delimiter[256] = "";
-				char *match = NULL;
-				struct string_type *resolved_splitstring = NULL;
+				char *match = nullptr;
+				struct string_type *resolved_splitstring = nullptr;
 
 				strcpy(split_buffer, text_of_word(2));
 				strcpy(delimiter, text_of_word(3));
 
 				char *source = split_buffer;
 
-				if (word[4] == NULL) {
+				if (word[4] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
 					split_container = container_resolve(var_text_of_word(1));
 
-					if (split_container == NULL) {
+					if (split_container == nullptr) {
 						unkvarrun(var_text_of_word(1));
 						return (exit_function(TRUE));
 					} else {
@@ -1867,7 +1867,7 @@ int execute(const char *funcname) {
 							strcat(container_buffer, integer_buffer);
 							strcat(container_buffer, "]");
 
-							if ((resolved_splitstring = string_resolve(container_buffer)) == NULL) {
+							if ((resolved_splitstring = string_resolve(container_buffer)) == nullptr) {
 								unkstrrun(var_text_of_word(4));
 								return (exit_function(TRUE));
 							} else {
@@ -1882,7 +1882,7 @@ int execute(const char *funcname) {
 						strcat(container_buffer, integer_buffer);
 						strcat(container_buffer, "]");
 
-						if ((resolved_splitstring = string_resolve(container_buffer)) == NULL) {
+						if ((resolved_splitstring = string_resolve(container_buffer)) == nullptr) {
 							unkstrrun(word[1]);
 							return (exit_function(TRUE));
 						} else {
@@ -1894,21 +1894,21 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "setstring") ||
 			           !strcmp(word[0], "addstring")) {
 				char setstring_buffer[2048] = "";
-				struct string_type *resolved_setstring = NULL;
+				struct string_type *resolved_setstring = nullptr;
 
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
 					/* GET A POINTER TO THE STRING BEING MODIFIED */
-					if ((resolved_setstring = string_resolve(var_text_of_word(1))) == NULL) {
+					if ((resolved_setstring = string_resolve(var_text_of_word(1))) == nullptr) {
 						unkstrrun(word[1]);
 						return (exit_function(TRUE));
 					}
 
 					/* RESOLVE ALL THE TEXT AND STORE IT IN A TEMPORARY BUFFER*/
-					for (counter = 2; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+					for (counter = 2; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 						strcat(setstring_buffer, text_of_word(counter));
 					}
 
@@ -1925,16 +1925,16 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "padstring")) {
 				char setstring_buffer[2048] = "";
-				struct string_type *resolved_setstring = NULL;
+				struct string_type *resolved_setstring = nullptr;
 				string_buffer[0] = 0;
 
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
 					/* GET A POINTER TO THE STRING BEING MODIFIED */
-					if ((resolved_setstring = string_resolve(word[1])) == NULL) {
+					if ((resolved_setstring = string_resolve(word[1])) == nullptr) {
 						unkstrrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -1951,7 +1951,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "return")) {
 				/* RETURN FROM THIS FUNCTION, POSSIBLY RETURNING AN INTEGER VALUE */
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					return (exit_function(TRUE));
 				} else {
 					index = value_of(word[1], TRUE);
@@ -1960,7 +1960,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "position")) {
 				/* MOVE AN OBJECT TO ITS NEW X,Y COORDINATES BASED ON ITS CURRENT VALUES
 				 * FOR x, y, bearing, velocity */
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -1982,12 +1982,12 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "bearing")) {
 				/* CALCULATE THE BEARING BETWEEN TWO OBJECTS */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if ((container = container_resolve(word[1])) == NULL) {
+					if ((container = container_resolve(word[1])) == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					}
@@ -2004,7 +2004,7 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
+							if (container != nullptr
 							        && object_1 != FALSE
 							        && object_2 != FALSE) {
 								*container = bearing((double) object[object_1]->X,
@@ -2017,7 +2017,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "distance")) {
 				/* CALCULATE THE DISTANCE BETWEEN TWO OBJECTS */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -2036,7 +2036,7 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
+							if (container != nullptr
 							        && object_1 != FALSE
 							        && object_2 != FALSE) {
 								*container = distance((double)
@@ -2055,7 +2055,7 @@ int execute(const char *funcname) {
 			           !strcmp(word[0], "npc_to")) {
 				/* CALCULATE THE FIRST DIRECTION TO TRAVEL IN GET TO
 				 * A SPECIFIED LOCATION */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -2074,7 +2074,7 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
+							if (container != nullptr
 							        && object_1 != FALSE
 							        && object_2 != FALSE) {
 								if (!strcmp(word[0], "dir_to")) {
@@ -2088,19 +2088,19 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "set")) {
 				/* SET THE VALUE OF AN ELEMENT TO A SUPPLIED INTEGER */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
 					container = container_resolve(var_text_of_word(1));
 
-					if (container == NULL) {
+					if (container == nullptr) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					} else {
 						int mark = 2; // SET mark TO POINT TO THE FIRST OPERATOR
-						while (word[mark + 1] != NULL) {
+						while (word[mark + 1] != nullptr) {
 							counter = value_of(word[mark + 1], TRUE);
 
 							if (word[mark][0] == '+')
@@ -2137,7 +2137,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "ensure")) {
 				/* USED TO GIVE OR TAKE AN ATTRIBUTE TO OR FROM AND OBJECT */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -2180,7 +2180,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "append")) {
 				int first = TRUE;
 
-				if (word[2] == NULL) {
+				if (word[2] == nullptr) {
 					// NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND
 					noproprun();
 					return (exit_function(TRUE));
@@ -2193,11 +2193,11 @@ int execute(const char *funcname) {
 
 					outfile = File::openForWriting(temp_buffer);
 
-					if (outfile == NULL) {
+					if (outfile == nullptr) {
 						sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else {
-						for (counter = 2; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+						for (counter = 2; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 							output = text_of_word(counter);
 							if (*output != 0) {
 								if (first == FALSE) {
@@ -2216,20 +2216,20 @@ int execute(const char *funcname) {
 					}
 
 					delete outfile;
-					outfile = NULL;
+					outfile = nullptr;
 				}
 			} else if (!strcmp(word[0], "insert")) {
 				int first = TRUE;
 
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					// NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if (outfile == NULL) {
+					if (outfile == nullptr) {
 						log_error("Insert statement not inside an 'update' loop.", PLUS_STDOUT);
 					} else {
-						for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+						for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 							output = text_of_word(counter);
 							if (*output != 0) {
 								if (first == FALSE) {
@@ -2245,7 +2245,7 @@ int execute(const char *funcname) {
 					}
 				}
 			} else if (!strcmp(word[0], "inspect")) {
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					// NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND
 					noproprun();
 					return (exit_function(TRUE));
@@ -2255,7 +2255,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "move")) {
 				/* THIS COMMAND IS USED TO MOVE AN OBJECT TO HAVE ANOTHER PARENT
 				 * INCLUDING MODIFYING ALL QUANTITY VALUES BASED ON THE OBJECTS MASS */
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun();
 					return (exit_function(TRUE));
@@ -2283,7 +2283,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "ifstringall")) {
 				/* CHECK IF A STRING EQUALS OR CONTAINS ANOTHER STRING */
 				currentLevel++;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -2293,7 +2293,7 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "ifstring")) {
 				/* CHECK IF A STRING EQUALS OR CONTAINS ANOTHER STRING */
 				currentLevel++;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -2302,7 +2302,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "ifexecute")) {
 				currentLevel++;
-				if (word[1] == NULL) {
+				if (word[1] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -2310,7 +2310,7 @@ int execute(const char *funcname) {
 					/* RESOLVE ALL THE TEXT AND STORE IT IN A TEMPORARY BUFFER*/
 					string_buffer[0] = 0;
 
-					for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
+					for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
 						strcat(string_buffer, arg_text_of_word(counter));
 					}
 
@@ -2320,7 +2320,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "if")) {
 				currentLevel++;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -2329,7 +2329,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "ifall")) {
 				currentLevel++;
-				if (word[3] == NULL) {
+				if (word[3] == nullptr) {
 					/* NOT ENOUGH PARAMETERS SUPPLIED FOR THIS COMMAND */
 					noproprun(0);
 					return (exit_function(TRUE));
@@ -2370,18 +2370,18 @@ int execute(const char *funcname) {
 }
 
 int exit_function(int return_code) {
-	if (infile != NULL) {
+	if (infile != nullptr) {
 		read_lck.l_type = F_UNLCK;  // SETTING A READ LOCK
 		fcntl(read_fd, F_SETLK, &read_lck);
 		delete infile;
-		infile = NULL;
+		infile = nullptr;
 	}
 
-	if (outfile != NULL) {
+	if (outfile != nullptr) {
 		write_lck.l_type = F_UNLCK; // SETTING A WRITE LOCK
 		fcntl(write_fd, F_SETLK, &write_lck);
 		delete outfile;
-		outfile = NULL;
+		outfile = nullptr;
 	}
 
 	/* POP THE STACK REGARDLESS OF THE RETURN CODE */
@@ -2397,7 +2397,7 @@ char *object_names(int object_index, char *names_buffer) {
 	struct name_type *current_name = object[object_index]->first_name;
 	names_buffer[0] = 0;
 
-	while (current_name != NULL) {
+	while (current_name != nullptr) {
 		strcat(names_buffer, " ");
 		strcat(names_buffer, current_name->name);
 		current_name = current_name->next_name;
@@ -2587,16 +2587,16 @@ void set_arguments(const char *function_call) {
 	argument_buffer[index] = 0;
 
 	/* CLEAR THE NEXT ARGUMENT POINTER */
-	arg_ptr[position] = NULL;
+	arg_ptr[position] = nullptr;
 
 	/* STORE THE INTEGER VALUE OF EACH ARGUMENT PASSED*/
 	index = 0;
-	while (arg_ptr[index] != NULL) {
+	while (arg_ptr[index] != nullptr) {
 		//arg_value[index] = value_of(arg_ptr[index], TRUE);
 
-		if ((resolved_integer = integer_resolve(arg_ptr[index])) != NULL) {
+		if ((resolved_integer = integer_resolve(arg_ptr[index])) != nullptr) {
 			arg_value[index] = resolved_integer->value;
-		} else if ((resolved_cinteger = cinteger_resolve(arg_ptr[index])) != NULL) {
+		} else if ((resolved_cinteger = cinteger_resolve(arg_ptr[index])) != nullptr) {
 			arg_value[index] = resolved_cinteger->value;
 		} else if (object_element_resolve(arg_ptr[index])) {
 			arg_value[index] = oec;
@@ -2625,7 +2625,7 @@ void set_arguments(const char *function_call) {
 
 	/* CREATE A CONSTANT FOR EACH ARGUMENT AFTER THE CORE FUNCTION NAME */
 	index = 0;
-	while (arg_ptr[index] != NULL) {
+	while (arg_ptr[index] != nullptr) {
 		if (index == 0) noun[3] = arg_value[index];
 		add_cinteger("arg", arg_value[index]);
 		//printf("--- %s = %s\n", arg_ptr[index], arg_text_of(arg_ptr[index]));
@@ -2680,7 +2680,7 @@ void pop_stack() {
 
 	executing_function = backup[stack].function;
 
-	if (executing_function != NULL) {
+	if (executing_function != nullptr) {
 		strncpy(function_name, executing_function->name, 80);
 		strncpy(cstring_resolve("function_name")->value, executing_function->name, 80);
 	}
@@ -2721,9 +2721,9 @@ void push_stack(int32 file_pointer) {
 		return;
 	} else {
 		backup[stack].infile = infile;
-		infile = NULL;
+		infile = nullptr;
 		backup[stack].outfile = outfile;
-		outfile = NULL;
+		outfile = nullptr;
 		backup[stack].function = executing_function;
 		backup[stack].address = file_pointer;
 		backup[stack].wp = wp;
@@ -2766,13 +2766,13 @@ void push_stack(int32 file_pointer) {
 		index = 0;
 		current_cinteger = cinteger_table;
 
-		if (current_cinteger != NULL) {
+		if (current_cinteger != nullptr) {
 			do {
 				if (!strcmp(current_cinteger->name, "arg")) {
 					backup[stack].arguments[index++] = current_cinteger->value;
 				}
 				current_cinteger = current_cinteger->next_cinteger;
-			} while (current_cinteger != NULL);
+			} while (current_cinteger != nullptr);
 		}
 
 		// STORE THE NUMBER OF ARGUMENTS PASSED TO THIS FUNCTION
@@ -2783,14 +2783,14 @@ void push_stack(int32 file_pointer) {
 		index = 0;
 		current_cstring = cstring_table;
 
-		if (current_cstring != NULL) {
+		if (current_cstring != nullptr) {
 			do {
 				if (!strcmp(current_cstring->name, "string_arg")) {
 					strncpy(backup[stack].str_arguments[index++], current_cstring->value, 255);
 				}
 
 				current_cstring = current_cstring->next_string;
-			} while (current_cstring != NULL);
+			} while (current_cstring != nullptr);
 		}
 	}
 
@@ -2876,13 +2876,13 @@ void push_proxy() {
 		/* PUSH ALL THE CURRENT COMMAND INTEGERS ONTO THE STACK */
 		counter = 0;
 
-		if (current_cinteger != NULL) {
+		if (current_cinteger != nullptr) {
 			do {
 				if (!strcmp(current_cinteger->name, "$integer")) {
 					proxy_backup[proxy_stack].integer[counter++] = current_cinteger->value;
 				}
 				current_cinteger = current_cinteger->next_cinteger;
-			} while (current_cinteger != NULL);
+			} while (current_cinteger != nullptr);
 		}
 
 		proxy_backup[proxy_stack].integercount = counter;
@@ -2891,7 +2891,7 @@ void push_proxy() {
 		text = 0;
 		command = 0;
 
-		if (current_cstring != NULL) {
+		if (current_cstring != nullptr) {
 			do {
 				if (!strcmp(current_cstring->name, "$string")) {
 					strncpy(proxy_backup[proxy_stack].text[text++], current_cstring->value, 255);
@@ -2901,7 +2901,7 @@ void push_proxy() {
 				}
 
 				current_cstring = current_cstring->next_string;
-			} while (current_cstring != NULL);
+			} while (current_cstring != nullptr);
 		}
 
 		proxy_backup[proxy_stack].textcount = counter;
@@ -2921,7 +2921,7 @@ int condition() {
 
 	first = 1;
 
-	while (word[first + 2] != NULL && ((first + 2) < MAX_WORDS)) {
+	while (word[first + 2] != nullptr && ((first + 2) < MAX_WORDS)) {
 		if (logic_test(first))
 			return (TRUE);
 		else
@@ -2937,7 +2937,7 @@ int and_condition() {
 
 	first = 1;
 
-	while (word[first + 2] != NULL && ((first + 2) < MAX_WORDS)) {
+	while (word[first + 2] != nullptr && ((first + 2) < MAX_WORDS)) {
 		if (logic_test(first) == FALSE)
 			return (FALSE);
 		else
@@ -3068,7 +3068,7 @@ int strcondition() {
 
 	first = 1;
 
-	while (word[first + 2] != NULL && ((first + 2) < MAX_WORDS)) {
+	while (word[first + 2] != nullptr && ((first + 2) < MAX_WORDS)) {
 		if (str_test(first))
 			return (TRUE);
 		else
@@ -3082,7 +3082,7 @@ int and_strcondition() {
 
 	first = 1;
 
-	while (word[first + 2] != NULL && ((first + 2) < MAX_WORDS)) {
+	while (word[first + 2] != nullptr && ((first + 2) < MAX_WORDS)) {
 		if (str_test(first) == FALSE)
 			return (FALSE);
 		else
@@ -3155,15 +3155,15 @@ void add_cinteger(const char *name, int value) {
 	/* THIS FUNCTION ADDS A NEW JACL CONSTANT TO THE LIST */
 
 	if ((new_cinteger = (struct cinteger_type *)
-	                    malloc(sizeof(struct cinteger_type))) == NULL)
+	                    malloc(sizeof(struct cinteger_type))) == nullptr)
 		outofmem();
 	else {
-		if (cinteger_table == NULL) {
+		if (cinteger_table == nullptr) {
 			cinteger_table = new_cinteger;
 		} else {
 			/* FIND LAST CONSTANT IN LIST */
 			current_cinteger = cinteger_table;
-			while (current_cinteger->next_cinteger != NULL) {
+			while (current_cinteger->next_cinteger != nullptr) {
 				current_cinteger = current_cinteger->next_cinteger;
 			}
 			current_cinteger->next_cinteger = new_cinteger;
@@ -3171,7 +3171,7 @@ void add_cinteger(const char *name, int value) {
 		strncpy(new_cinteger->name, name, 40);
 		new_cinteger->name[40] = 0;
 		new_cinteger->value = value;
-		new_cinteger->next_cinteger = NULL;
+		new_cinteger->next_cinteger = nullptr;
 	}
 }
 
@@ -3179,10 +3179,10 @@ void clear_cinteger(const char *name) {
 	/* FREE CONSTANTS THAT HAVE SUPPLIED NAME*/
 
 	//printf("--- clear integer %s\n", name);
-	if (cinteger_table != NULL) {
+	if (cinteger_table != nullptr) {
 		current_cinteger = cinteger_table;
 		previous_cinteger = cinteger_table;
-		while (current_cinteger != NULL) {
+		while (current_cinteger != nullptr) {
 			//sprintf(temp_buffer, "--- checking integer %s^", current_cinteger->name);
 			//write_text(temp_buffer);
 			if (!strcmp(current_cinteger->name, name)) {
@@ -3213,15 +3213,15 @@ void add_cstring(const char *name, const char *value) {
 	/* ADD A STRING CONSTANT WITH THE SUPPLIED NAME AND VALUE */
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL)
+	                  malloc(sizeof(struct string_type))) == nullptr)
 		outofmem();
 	else {
-		if (cstring_table == NULL) {
+		if (cstring_table == nullptr) {
 			cstring_table = new_string;
 		} else {
 			/* FIND LAST STRING IN LIST */
 			current_cstring = cstring_table;
-			while (current_cstring->next_string != NULL) {
+			while (current_cstring->next_string != nullptr) {
 				current_cstring = current_cstring->next_string;
 			}
 			current_cstring->next_string = new_string;
@@ -3230,16 +3230,16 @@ void add_cstring(const char *name, const char *value) {
 		new_string->name[40] = 0;
 		strncpy(new_string->value, value, 255);
 		new_string->value[255] = 0;
-		new_string->next_string = NULL;
+		new_string->next_string = nullptr;
 	}
 }
 
 void clear_cstring(const char *name) {
 	/* FREE CONSTANTS THAT HAVE SUPPLIED NAME*/
-	if (cstring_table != NULL) {
+	if (cstring_table != nullptr) {
 		current_cstring = cstring_table;
 		previous_cstring = cstring_table;
-		while (current_cstring != NULL) {
+		while (current_cstring != nullptr) {
 			if (!strcmp(current_cstring->name, name)) {
 				/* FREE THIS STRING */
 				if (previous_cstring == current_cstring) {
@@ -3280,7 +3280,7 @@ void inspect(int object_num)  {
 		write_text("^has location attributes: ");
 		index = 0;
 		attribute_value = 1;
-		while (location_attributes[index] != NULL) {
+		while (location_attributes[index] != nullptr) {
 			if (object[object_num]->attributes & attribute_value) {
 				write_text(location_attributes[index]);
 			}
@@ -3292,7 +3292,7 @@ void inspect(int object_num)  {
 		write_text("^has object attributes: ");
 		index = 0;
 		attribute_value = 1;
-		while (object_attributes[index] != NULL) {
+		while (object_attributes[index] != nullptr) {
 			if (object[object_num]->attributes & attribute_value) {
 				write_text(object_attributes[index]);
 			}
@@ -3304,7 +3304,7 @@ void inspect(int object_num)  {
 		attribute_value = 1;
 	}
 
-	if (pointer != NULL) {
+	if (pointer != nullptr) {
 		// THERE ARE USER ATTRIBUTES, SO CHECK IF THIS OBJECT OR LOCATION
 		// HAS ANY OF THEM
 		do {
@@ -3314,14 +3314,14 @@ void inspect(int object_num)  {
 			}
 
 			pointer = pointer->next_attribute;
-		} while (pointer != NULL);
+		} while (pointer != nullptr);
 	}
 
 	write_text("^");
 
 	index = 0;
 	if (object[object_num]->attributes & LOCATION) {
-		while (location_elements[index] != NULL) {
+		while (location_elements[index] != nullptr) {
 			if (index < 12) {
 				if (object[object_num]->integer[index] < 1 || object[object_num]->integer[index] > objects) {
 					sprintf(temp_buffer, "%s: nowhere (%d)^", location_elements[index], object[object_num]->integer[index]);
@@ -3335,7 +3335,7 @@ void inspect(int object_num)  {
 			index++;
 		}
 	} else {
-		while (object_elements[index] != NULL) {
+		while (object_elements[index] != nullptr) {
 			if (index == 0) {
 				sprintf(temp_buffer, "%s: %s (%d)^", object_elements[index], object[object[object_num]->integer[index]]->label, object[object_num]->integer[index]);
 			} else {

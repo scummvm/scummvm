@@ -67,7 +67,7 @@ char G_os_gamename[OSFNMAX];
 int os_init(int *argc, char *argv[], const char *prompt,
 			char *buf, int bufsiz)
 {
-	mainwin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	mainwin = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (!mainwin)
 		error("fatal: could not open window!\n");
 
@@ -90,7 +90,7 @@ int os_init(int *argc, char *argv[], const char *prompt,
 		statusbg = 0;
 
 	/* close statuswin; reopened on request */
-	g_vm->glk_window_close(statuswin, 0);
+	g_vm->glk_window_close(statuswin, nullptr);
 
 	statuswin = nullptr;
 
@@ -318,7 +318,7 @@ void os_status(int stat)
 
 	if (stat == 1)
 	{
-		if (statuswin == NULL)
+		if (statuswin == nullptr)
 		{
 			g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 			statuswin = g_vm->glk_window_open(mainwin,
@@ -366,7 +366,7 @@ static void os_status_redraw(void) {
 	if (!statuswin)
 		return;
 
-	g_vm->glk_window_get_size(statuswin, &wid, NULL);
+	g_vm->glk_window_get_size(statuswin, &wid, nullptr);
 	div = wid - strlen(rbuf) - 3;
 
 	sprintf(fmt, " %%%ds %%s ", - (int)div);
@@ -532,7 +532,7 @@ int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
 		gusage = fileusage_Data;
 
 	fileref = g_vm->glk_fileref_create_by_prompt(gusage, (FileMode)gprompt, 0);
-	if (fileref == NULL)
+	if (fileref == nullptr)
 		return OS_AFE_CANCEL;
 
 	strcpy(fname_buf, g_vm->garglk_fileref_get_name(fileref));

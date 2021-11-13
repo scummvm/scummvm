@@ -41,13 +41,13 @@ Word *dict_find_word_by_string(ComprehendGame *game,
 	uint i;
 
 	if (!string)
-		return NULL;
+		return nullptr;
 
 	for (i = 0; i < game->_words.size(); i++)
 		if (word_match(&game->_words[i], string))
 			return &game->_words[i];
 
-	return NULL;
+	return nullptr;
 }
 
 Word *dict_find_word_by_index_type(ComprehendGame *game,
@@ -60,7 +60,7 @@ Word *dict_find_word_by_index_type(ComprehendGame *game,
 			return &game->_words[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Word *find_dict_word_by_index(ComprehendGame *game,
@@ -73,7 +73,7 @@ Word *find_dict_word_by_index(ComprehendGame *game,
 			return &game->_words[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool dict_match_index_type(ComprehendGame *game, const char *word,

@@ -698,7 +698,7 @@ static void init0_dict(void)
 	dictstrptr = 4; /* Point just after 'any' */
 	dictstrsize = DICT_GRAN;
 	dp = 1;
-	syntbl = NULL;
+	syntbl = nullptr;
 	synptr = 0;
 	syntbl_size = 0; /* Clear synonym table */
 }
@@ -806,15 +806,15 @@ static void enter_verbs(int vp, const char *s)
 
 
 void init_dict(void) {
-	dict = NULL;
-	verblist = NULL;
-	syntbl = NULL;
+	dict = nullptr;
+	verblist = nullptr;
+	syntbl = nullptr;
 	no_syn = 0;
-	auxsyn = NULL;
-	preplist = NULL;
-	verbflag = NULL;
-	auxcomb = NULL;
-	old_agt_verb = NULL;
+	auxsyn = nullptr;
+	preplist = nullptr;
+	verbflag = nullptr;
+	auxcomb = nullptr;
+	old_agt_verb = nullptr;
 	num_auxcomb = 0;
 }
 
@@ -865,7 +865,7 @@ void reinit_dict(void)
 	no_syn = no_auxsyn;
 
 	auxsyn = (slist *)rmalloc(sizeof(slist) * TOTAL_VERB);
-	auxcomb = NULL;
+	auxcomb = nullptr;
 	num_auxcomb = 0;
 	preplist = (slist *)rmalloc(sizeof(slist) * TOTAL_VERB);
 	verbflag = (uchar *)rmalloc(sizeof(uchar) * TOTAL_VERB);
@@ -899,13 +899,13 @@ void reinit_dict(void)
 		addsyn(-1);
 	}
 	no_syn = 0; /* Return to usual state */
-	verblist = NULL;
+	verblist = nullptr;
 
 	/* Now initialize old_agt_verb array */
-	for (i = 0; old_agt_verb_str[i] != NULL; i++);
+	for (i = 0; old_agt_verb_str[i] != nullptr; i++);
 	rfree(old_agt_verb);
 	old_agt_verb = (word *)rmalloc(sizeof(word) * (i + 1));
-	for (i = 0; old_agt_verb_str[i] != NULL; i++) {
+	for (i = 0; old_agt_verb_str[i] != nullptr; i++) {
 		old_agt_verb[i] = search_dict(old_agt_verb_str[i]);
 		assert(old_agt_verb[i] != -1);
 	}
@@ -1346,8 +1346,8 @@ descr_line *read_descr(long start, long size) {
 }
 
 void free_descr(descr_line *txt) {
-	if (txt == NULL) return;
-	if (mem_descr == NULL)
+	if (txt == nullptr) return;
+	if (mem_descr == nullptr)
 		rfree(txt[0]);  /* First free the string block containing the text...*/
 	rfree(txt);    /* ... then the array of pointers to it */
 }
@@ -1571,9 +1571,9 @@ void init_flags(void) {
 	bold_mode = 0;
 	dbg_nomsg = 0; /* Print out MSG arguments to metacommands */
 	debug_mode = 0;
-	dbgflagptr = NULL;
-	dbgvarptr = NULL;
-	dbgcntptr = NULL;
+	dbgflagptr = nullptr;
+	dbgvarptr = nullptr;
+	dbgcntptr = nullptr;
 	no_auxsyn = 0;
 	text_file = 0;
 #ifdef PATH_SEP

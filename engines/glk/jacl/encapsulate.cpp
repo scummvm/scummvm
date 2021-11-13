@@ -120,7 +120,7 @@ encapsulate() {
 
 	/* NULL OUT ALL THE WORD POINTERS BEYOND THE LAST WORD */
 	for (index = position; index < MAX_WORDS; index++)
-		word[index] = NULL;
+		word[index] = nullptr;
 
 	wp = 0;
 }
@@ -221,7 +221,7 @@ command_encapsulate() {
 
 	// NULL OUT ALL THE WORD POINTERS BEYOND THE LAST WORD
 	for (index = position; index < MAX_WORDS; index++) {
-		word[index] = NULL;
+		word[index] = nullptr;
 	}
 
 	wp = 0;
@@ -238,19 +238,19 @@ jacl_truncate() {
 	struct filter_type *filter = filter_table;
 
 	// REMOVE ALL THE DEFINED 'filter's FROM THE PLAYER'S COMMAND
-	if (filter != NULL) {
-		while (word[position] != NULL) {
+	if (filter != nullptr) {
+		while (word[position] != nullptr) {
 			match = FALSE;
 			do {
 				if (!strcmp(word[position], filter->word)) {
-					for (index = position; word[index + 1] != NULL;
+					for (index = position; word[index + 1] != nullptr;
 					        index++)
 						word[index] = word[index + 1];
-					word[index] = NULL;
+					word[index] = nullptr;
 					match = TRUE;
 				}
 				filter = filter->next_filter;
-			} while (filter != NULL && !match);
+			} while (filter != nullptr && !match);
 			filter = filter_table;
 			if (!match)
 				position++;
@@ -258,15 +258,15 @@ jacl_truncate() {
 	}
 
 	// SUBTITUTE ALL THE DEFINED 'synonym's IN THE PLAYER'S COMMAND
-	if (synonym_table != NULL) {
-		for (counter = 0; word[counter] != NULL; counter++) {
+	if (synonym_table != nullptr) {
+		for (counter = 0; word[counter] != nullptr; counter++) {
 			synonym = synonym_table;
 			do {
 				if (!strcmp(word[counter], synonym->original)) {
 					word[counter] = synonym->standard;
 					break;
 				}
-				if (synonym->next_synonym != NULL)
+				if (synonym->next_synonym != nullptr)
 					synonym = synonym->next_synonym;
 				else
 					break;

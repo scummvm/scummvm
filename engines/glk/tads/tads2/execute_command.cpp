@@ -123,7 +123,7 @@ static void vocdusav(voccxdef *ctx, vocddef *what)
 	ushort     siz = sizeof(what) + sizeof(*what) + 1;
 
 	/* if we don't need to save undo, quit now */
-	if (uc == 0 || !objuok(uc))
+	if (uc == nullptr || !objuok(uc))
 		return;
 
 	/* reserve space for our record */
@@ -280,7 +280,7 @@ void vocdusave_me(voccxdef *ctx, objnum old_me)
 	objucxdef *uc = ctx->voccxundo;
 
 	/* if we don't need to save undo, there's nothing to do */
-	if (uc == 0 || !objuok(uc))
+	if (uc == nullptr || !objuok(uc))
 		return;
 
 	/* reserve space for our record */
@@ -433,7 +433,7 @@ void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 
 			/* record the information */
 			what->vocdfn = func;
-			if (val != 0)
+			if (val != nullptr)
 				OSCPYSTRUCT(what->vocdarg, *val);
 			what->vocdprp = prop;
 			what->vocdtim = tm;
@@ -713,14 +713,14 @@ static void exe_get_tpl(voccxdef *ctx, objnum verb,
 						uint *tplofs, uint *actofs)
 {
 	/* look up the new-style template first */
-	*tplofs = objgetap(ctx->voccxmem, verb, PRP_TPL2, (objnum *)0, FALSE);
+	*tplofs = objgetap(ctx->voccxmem, verb, PRP_TPL2, (objnum *)nullptr, FALSE);
 
 	/* if there's no new-style template, look up the old-style template */
 	if (*tplofs == 0)
-		*tplofs = objgetap(ctx->voccxmem, verb, PRP_TPL, (objnum *)0, FALSE);
+		*tplofs = objgetap(ctx->voccxmem, verb, PRP_TPL, (objnum *)nullptr, FALSE);
 
 	/* also look to see if the verb has an Action method */
-	*actofs = objgetap(ctx->voccxmem, verb, PRP_ACTION, (objnum *)0, FALSE);
+	*actofs = objgetap(ctx->voccxmem, verb, PRP_ACTION, (objnum *)nullptr, FALSE);
 }
 
 
@@ -827,13 +827,13 @@ static void exe_save_again_obj(vocoldef *againv, const vocoldef *objv,
 							   char **bufp)
 {
 	/* if there's an object, save it */
-	if (objv != 0)
+	if (objv != nullptr)
 	{
 		/* copy the object information structure */
 		memcpy(againv, objv, sizeof(*againv));
 
 		/* copy the original command words to the "again" buffer */
-		if (objv->vocolfst != 0 && objv->vocollst != 0)
+		if (objv->vocolfst != nullptr && objv->vocollst != nullptr)
 		{
 			size_t copylen;
 
@@ -911,8 +911,8 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	int       err;
 	runcxdef *rcx = ctx->voccxrun;
 	objnum    prep = *prepptr;
-	objnum    dobj = (dobjv != 0 ? dobjv->vocolobj : MCMONINV);
-	objnum    iobj = (iobjv != 0 ? iobjv->vocolobj : MCMONINV);
+	objnum    dobj = (dobjv != nullptr ? dobjv->vocolobj : MCMONINV);
+	objnum    iobj = (iobjv != nullptr ? iobjv->vocolobj : MCMONINV);
 	int       tplflags;
 	int       dobj_first;
 	objnum    old_tio_actor;
@@ -1076,7 +1076,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 			ctx->voccxlsv = verb;
 			ctx->voccxlsp = prep;
 			ctx->voccxlssty = newstyle;
-			if (tpl != 0)
+			if (tpl != nullptr)
 				memcpy(ctx->voccxlst, tpl,
 					   (size_t)(newstyle ? VOCTPL2SIZ : VOCTPLSIZ));
 
@@ -1099,7 +1099,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	}
 
 	/* remember the flags */
-	tplflags = (tpl != 0 && newstyle ? voctplflg(tpl) : 0);
+	tplflags = (tpl != nullptr && newstyle ? voctplflg(tpl) : 0);
 	dobj_first = (tplflags & VOCTPLFLG_DOBJ_FIRST);
 
 	/* set up actor for tio subsystem - format strings need to know */
@@ -1164,7 +1164,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	 *   check to see if the verb has verbAction defined - if so, invoke
 	 *   the method
 	 */
-	if (objgetap(ctx->voccxmem, verb, PRP_VERBACTION, (objnum *)0, FALSE))
+	if (objgetap(ctx->voccxmem, verb, PRP_VERBACTION, (objnum *)nullptr, FALSE))
 	{
 		/* call verb.verbAction(actor, dobj, prep, iobj) */
 		runpobj(rcx, iobj);
@@ -1307,7 +1307,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	}
 	else if (iobj == MCMONINV)
 	{
-		if (!objgetap(ctx->voccxmem, dobj, voctplvd(tpl), (objnum *)0, FALSE))
+		if (!objgetap(ctx->voccxmem, dobj, voctplvd(tpl), (objnum *)nullptr, FALSE))
 		{
 			/* display the error */
 			exeperr(ctx, verb, dobj, MCMONINV, MCMONINV);
@@ -1347,7 +1347,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	else
 	{
 		/* check to see if the verDoVerb and verIoVerb methods exist */
-		if (!objgetap(ctx->voccxmem, dobj, voctplvd(tpl), (objnum *)0, FALSE))
+		if (!objgetap(ctx->voccxmem, dobj, voctplvd(tpl), (objnum *)nullptr, FALSE))
 		{
 			/* no verDoVerb method - show a default message */
 			exeperr(ctx, verb, dobj, MCMONINV, MCMONINV);
@@ -1358,7 +1358,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 			/* skip to the end of the turn */
 			goto skipToFuses;
 		}
-		else if (!objgetap(ctx->voccxmem, iobj, voctplvi(tpl), (objnum *)0,
+		else if (!objgetap(ctx->voccxmem, iobj, voctplvi(tpl), (objnum *)nullptr,
 						   FALSE))
 		{
 			/* no verIoVerb method - show a default mesage */
@@ -1710,7 +1710,7 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 	 *   older multisdesc (or even older sdesc) approach
 	 */
 	if (objgetap(ctx->voccxmem, objn, PRP_PREFIXDESC,
-				 (objnum *)0, FALSE) != 0)
+				 (objnum *)nullptr, FALSE) != 0)
 	{
 		runsdef val;
 
@@ -1747,7 +1747,7 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 	 *   use sdesc if multisdesc doesn't exist for this object)
 	 */
 	if (objgetap(ctx->voccxmem, objn, PRP_MULTISDESC,
-				 (objnum *)0, FALSE) == 0)
+				 (objnum *)nullptr, FALSE) == 0)
 	{
 		/* there's no multisdesc defined - use the plain sdesc */
 		runppr(rcx, objn, PRP_SDESC, 0);
@@ -1778,7 +1778,7 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 	 *   count the direct objects; we'll iterate over the direct objects,
 	 *   so we execute the command once per direct object
 	 */
-	exec_cnt = dobj_cnt = (dolist != 0 ? voclistlen(dolist) : 0);
+	exec_cnt = dobj_cnt = (dolist != nullptr ? voclistlen(dolist) : 0);
 
 	/*
 	 *   if there are no direct objects, we still must execute the command
@@ -1830,13 +1830,13 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 		int show_multi_prefix;
 
 		/* get the current direct object, if we have one */
-		dobj = (dolist != 0 ? &dolist[i] : 0);
+		dobj = (dolist != nullptr ? &dolist[i] : nullptr);
 
 		/*
 		 *   If we have a number or string, set the current one in
 		 *   numObj/strObj
 		 */
-		if (dolist != 0)
+		if (dolist != nullptr)
 		{
 			if (dolist[i].vocolflg == VOCS_STR)
 			{
@@ -1862,7 +1862,7 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 		 *   each iteration with the name of the object we're acting on
 		 *   currently.  In other cases, there is no prefix.
 		 */
-		show_multi_prefix = ((multi_flags != 0 || dobj_cnt > 1) && dobj != 0);
+		show_multi_prefix = ((multi_flags != 0 || dobj_cnt > 1) && dobj != nullptr);
 
 		/*
 		 *   Execute the command for this object.  For every object except
@@ -1985,9 +1985,9 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 		if (actofs != 0)
 		{
 			/* execute the "action" method */
-			err = exe1cmd(ctx, actor, verb, 0, &prep, 0, FALSE,
-						  0, FALSE, TRUE, validate_dobj, validate_iobj,
-						  0, 0, 0, FALSE, 0);
+			err = exe1cmd(ctx, actor, verb, nullptr, &prep, nullptr, FALSE,
+						  nullptr, FALSE, TRUE, validate_dobj, validate_iobj,
+						  nullptr, 0, 0, FALSE, 0);
 		}
 		else
 		{
@@ -2005,7 +2005,7 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 		if (voctplfnd(ctx, verb, MCMONINV, tpl, &newstyle))
 		{
 			/* execute the command */
-			err = exe1cmd(ctx, actor, verb, &dobjv, &prep, 0, FALSE,
+			err = exe1cmd(ctx, actor, verb, &dobjv, &prep, nullptr, FALSE,
 						  tpl, newstyle, TRUE, validate_dobj, validate_iobj,
 						  &dobjv, 0, 1, FALSE, 0);
 		}
@@ -2276,7 +2276,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 		 *   we need space to store the strings for the words in this noun
 		 *   phrase
 		 */
-		for (p = dolist[i].vocolfst ; p != 0 && p <= dolist[i].vocollst ;
+		for (p = dolist[i].vocolfst ; p != nullptr && p <= dolist[i].vocollst ;
 			 p += curlen + 1)
 		{
 			/*
@@ -2347,7 +2347,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 		lstp += 2;
 
 		/* store the word strings in the sub-sublist */
-		for (p = dolist[i].vocolfst ; p != 0 && p <= dolist[i].vocollst ;
+		for (p = dolist[i].vocolfst ; p != nullptr && p <= dolist[i].vocollst ;
 			 p += curlen + 1)
 		{
 			/* get this string's length */
@@ -2505,10 +2505,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 	/* look up the verb based on the verb and verb-prep */
 	n = vocffw(ctx, vverb, (int)strlen(vverb),
 			   vprep, (vprep ? (int)strlen(vprep) : 0), PRP_VERB,
-			   (vocseadef *)0);
+			   (vocseadef *)nullptr);
 
 	/* if we didn't find a verb template, we can't process the sentence */
-	if (n == 0)
+	if (n == nullptr)
 	{
 		/* try parseUnknownVerb, and show an error if that doesn't handle it */
 		if (try_unknown_verb(ctx, actor, cmd, typelist, wrdcnt, next_word,
@@ -2620,9 +2620,9 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		{
 			if (actofs || verb == ctx->voccxvag)
 			{
-				if ((err = exeloop(ctx, actor, verb, (vocoldef *)0, &prep,
-								   (vocoldef *)0, multi_flags,
-								   (uchar *)0, 0)) != 0)
+				if ((err = exeloop(ctx, actor, verb, (vocoldef *)nullptr, &prep,
+								   (vocoldef *)nullptr, multi_flags,
+								   (uchar *)nullptr, 0)) != 0)
 					goto exit_error;
 			}
 			else
@@ -2698,7 +2698,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 							{
 								o = osrp2(l + 1);
 								if (!objgetap(ctx->voccxmem, o, voctplvd(tpl),
-											  (objnum *)0, FALSE))
+											  (objnum *)nullptr, FALSE))
 									continue;
 
 								tiohide(ctx->voccxtio);
@@ -2725,10 +2725,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						{
 							dolist[0].vocolobj = defobj;
 							dolist[0].vocolflg = 0;
-							dolist[0].vocolfst = dolist[0].vocollst = 0;
+							dolist[0].vocolfst = dolist[0].vocollst = nullptr;
 							dolist[1].vocolobj = MCMONINV;
 							dolist[1].vocolflg = 0;
-							dolist[1].vocolfst = dolist[1].vocollst = 0;
+							dolist[1].vocolfst = dolist[1].vocollst = nullptr;
 
 							runrst(rcx);
 							if (ctx->voccxpdef2 != MCMONINV)
@@ -2798,7 +2798,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/* save it/them/him/her, and execute the command */
 				exesaveit(ctx, dolist1);
 				if ((err = exeloop(ctx, actor, verb, dolist1, &prep,
-								   (vocoldef *)0, multi_flags,
+								   (vocoldef *)nullptr, multi_flags,
 								   tpl, newstyle)) != 0)
 					goto exit_error;
 			}
@@ -2908,7 +2908,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 							{
 								o = osrp2(l + 1);
 								if (!objgetap(ctx->voccxmem, o, voctplvi(tpl),
-											  (objnum *)0, FALSE))
+											  (objnum *)nullptr, FALSE))
 									continue;
 
 								tiohide(ctx->voccxtio);
@@ -2934,10 +2934,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					{
 						iolist[0].vocolobj = defobj;
 						iolist[0].vocolflg = 0;
-						iolist[0].vocolfst = iolist[0].vocollst = 0;
+						iolist[0].vocolfst = iolist[0].vocollst = nullptr;
 						iolist[1].vocolobj = MCMONINV;
 						iolist[1].vocolflg = 0;
-						iolist[1].vocolfst = iolist[1].vocollst = 0;
+						iolist[1].vocolfst = iolist[1].vocollst = nullptr;
 
 						/* tell the user what we're assuming */
 						runrst(rcx);
@@ -3240,7 +3240,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 														: voctplvi(tpl));
 
 						if (!objgetap(ctx->voccxmem, o, verprop,
-									  (objnum *)0, FALSE))
+									  (objnum *)nullptr, FALSE))
 							continue;
 
 						tiohide(ctx->voccxtio);
@@ -3300,19 +3300,19 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					{
 						dolist[0].vocolobj = defobj;
 						dolist[0].vocolflg = 0;
-						dolist[0].vocolfst = dolist[0].vocollst = 0;
+						dolist[0].vocolfst = dolist[0].vocollst = nullptr;
 						dolist[1].vocolobj = MCMONINV;
 						dolist[1].vocolflg = 0;
-						dolist[1].vocolfst = dolist[1].vocollst = 0;
+						dolist[1].vocolfst = dolist[1].vocollst = nullptr;
 					}
 					else
 					{
 						iolist[0].vocolobj = defobj;
 						iolist[0].vocolflg = 0;
-						iolist[0].vocolfst = iolist[0].vocollst = 0;
+						iolist[0].vocolfst = iolist[0].vocollst = nullptr;
 						iolist[1].vocolobj = MCMONINV;
 						iolist[1].vocolflg = 0;
-						iolist[1].vocolfst = iolist[1].vocollst = 0;
+						iolist[1].vocolfst = iolist[1].vocollst = nullptr;
 					}
 
 					/* tell the user what we're assuming */
@@ -3355,7 +3355,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				rundisc(rcx);
 
 			/* make sure output capturing is off for the prompt */
-			tiocapture(ctx->voccxtio, (mcmcxdef *)0, FALSE);
+			tiocapture(ctx->voccxtio, (mcmcxdef *)nullptr, FALSE);
 			tioclrcapture(ctx->voccxtio);
 
 			/*
@@ -3436,7 +3436,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					 *   multiple distinct objects were specified.
 					 */
 					vcnt = voclistlen(dolist);
-					for (distinct = 0, i = 0, lastfst = 0 ; i < vcnt ; ++i)
+					for (distinct = 0, i = 0, lastfst = nullptr ; i < vcnt ; ++i)
 					{
 						/* if the first word is different here, note it */
 						if (lastfst != dolist[i].vocolfst)
@@ -3613,7 +3613,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			ctx->voccxunknown = 1;
 
 			/* get the types */
-			exenewlist[cnt] = 0;
+			exenewlist[cnt] = nullptr;
 			if (vocgtyp(ctx, exenewlist, exenewtype, cmdbuf))
 			{
 				/*
@@ -3647,8 +3647,8 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 				/* get the preposition */
 				vp = vocffw(ctx, exenewlist[0], (int)strlen(exenewlist[0]),
-							(char *)0, 0, PRP_PREP, (vocseadef *)0);
-				if (vp != 0 && vp->vocwobj == prep)
+							(char *)nullptr, 0, PRP_PREP, (vocseadef *)nullptr);
+				if (vp != nullptr && vp->vocwobj == prep)
 					++exenewpos;
 			}
 

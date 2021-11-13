@@ -43,7 +43,7 @@ int cmdtog(errcxdef *ec, int prv, char *argp, int ofs,
 
 	default:
 		/* invalid - display usage if we have a callback for it */
-		if (usagefn != 0)
+		if (usagefn != nullptr)
 			(*usagefn)(ec);
 		NOTREACHEDV(int);
 		return 0;
@@ -69,14 +69,14 @@ char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc, int ofs,
 		 */
 		++(*ip);
 		++(*argpp);
-		ret = (*ip >= argc ? 0 : **argpp);
+		ret = (*ip >= argc ? nullptr : **argpp);
 	}
 
 	/*
 	 *   if we didn't find the argument, it's an error - display usage if
 	 *   we have a valid usage callback
 	 */
-	if ((ret == 0 || *ret == 0) && usagefn != 0)
+	if ((ret == nullptr || *ret == 0) && usagefn != nullptr)
 		(*usagefn)(ec);
 
 	return ret;

@@ -174,7 +174,7 @@ mcmcx1def *mcmini(ulong max, uint pages, ulong swapsize,
 	ctx->mcmcxhpch = (mcmhdef *)chunk;           /* set start of heap chain */
 	chunk += sizeof(mcmhdef);
 	rem -= sizeof(mcmhdef);
-	ctx->mcmcxhpch->mcmhnxt = (mcmhdef *)0;    /* no next heap in chain yet */
+	ctx->mcmcxhpch->mcmhnxt = (mcmhdef *)nullptr;    /* no next heap in chain yet */
 
 	/* allocate the first page */
 	*(mcmon *)chunk = 0;               /* set object number header in chunk */
@@ -238,7 +238,7 @@ void mcmterm(mcmcx1def *ctx)
 	 *   sub-allocated the context structure itself and the page table out of
 	 *   that memory.
 	 */
-	for (cur = ctx->mcmcxhpch ; cur != 0 && cur->mcmhnxt != 0 ; cur = nxt)
+	for (cur = ctx->mcmcxhpch ; cur != nullptr && cur->mcmhnxt != nullptr ; cur = nxt)
 	{
 		/* remember the next chunk, and delete this one */
 		nxt = cur->mcmhnxt;
@@ -310,13 +310,13 @@ startover:
 
 error:
 	*nump = MCMONINV;
-	return((uchar *)0);
+	return((uchar *)nullptr);
 }
 
 static void mcmcliexp(mcmcxdef *cctx, mcmon clinum)
 {
 	/* add global number to client mapping table at client number */
-	if (cctx->mcmcxmtb[clinum >> 8] == (mcmon *)0)
+	if (cctx->mcmcxmtb[clinum >> 8] == (mcmon *)nullptr)
 	{
 		mcmcx1def *ctx = cctx->mcmcxgl;
 		int        i;
@@ -342,7 +342,7 @@ uchar *mcmalo0(mcmcxdef *cctx, ushort siz, mcmon *nump,
 	MCMGLBCTX(ctx);
 
 	/* try once */
-	if ((ret = mcmalo1(ctx, siz, &glb)) != 0)
+	if ((ret = mcmalo1(ctx, siz, &glb)) != nullptr)
 		goto done;
 
 	/* collect some garbage */
@@ -352,7 +352,7 @@ uchar *mcmalo0(mcmcxdef *cctx, ushort siz, mcmon *nump,
 	for ( ;; )
 	{
 		/* try again */
-		if ((ret = mcmalo1(ctx, siz, &glb)) != 0)
+		if ((ret = mcmalo1(ctx, siz, &glb)) != nullptr)
 			goto done;
 
 		/* nothing left to swap? */
@@ -360,7 +360,7 @@ uchar *mcmalo0(mcmcxdef *cctx, ushort siz, mcmon *nump,
 			break;
 
 		/* try yet again */
-		if ((ret = mcmalo1(ctx, siz, &glb)) != 0)
+		if ((ret = mcmalo1(ctx, siz, &glb)) != nullptr)
 			goto done;
 
 		/* collect garbage once again */
@@ -368,7 +368,7 @@ uchar *mcmalo0(mcmcxdef *cctx, ushort siz, mcmon *nump,
 	}
 
 	/* try again */
-	if ((ret = mcmalo1(ctx, siz, &glb)) != 0)
+	if ((ret = mcmalo1(ctx, siz, &glb)) != nullptr)
 		goto done;
 
 	/* we have no other way of getting more memory, so signal an error */
@@ -485,7 +485,7 @@ uchar *mcmrealo(mcmcxdef *cctx, mcmon cliobj, ushort newsize)
 		/* see if there's a free block after this block */
 		p = o->mcmoptr;
 		nxt = *(mcmon *)(p + o->mcmosiz);
-		nxto = (nxt == MCMONINV) ? (mcmodef *)0 : mcmgobje(ctx, nxt);
+		nxto = (nxt == MCMONINV) ? (mcmodef *)nullptr : mcmgobje(ctx, nxt);
 
 		if (nxto && ((nxto->mcmoflg & MCMOFFREE)
 					 && nxto->mcmosiz >= newsize - o->mcmosiz))
@@ -657,7 +657,7 @@ startover:
 
 error:
 	*nump = MCMONINV;
-	return((mcmodef *)0);
+	return((mcmodef *)nullptr);
 }
 
 /* find free block:  find a block from the free pool to satisfy allocation */
@@ -671,7 +671,7 @@ static mcmodef *mcmffb(mcmcx1def *ctx, ushort siz, mcmon *nump)
 
 	MCMGLBCTX(ctx);
 
-	for (minn = MCMONINV, mino = 0, n = ctx->mcmcxfre ; n != MCMONINV ;
+	for (minn = MCMONINV, mino = nullptr, n = ctx->mcmcxfre ; n != MCMONINV ;
 		 n = o->mcmonxt)
 	{
 		o = mcmgobje(ctx, n);
@@ -734,8 +734,8 @@ static void mcmunl(mcmcx1def *ctx, mcmon n, mcmon *lst)
 		o->mcmoflg &= ~MCMOFLRU;
 	}
 
-	nxt = o->mcmonxt == MCMONINV ? (mcmodef *)0 : mcmgobje(ctx, o->mcmonxt);
-	prv = o->mcmoprv == MCMONINV ? (mcmodef *)0 : mcmgobje(ctx, o->mcmoprv);
+	nxt = o->mcmonxt == MCMONINV ? (mcmodef *)nullptr : mcmgobje(ctx, o->mcmonxt);
+	prv = o->mcmoprv == MCMONINV ? (mcmodef *)nullptr : mcmgobje(ctx, o->mcmoprv);
 
 	/* set back link for next object, if there is a next object */
 	if (nxt) nxt->mcmoprv = o->mcmoprv;
@@ -810,13 +810,13 @@ static uchar *mcmhalo(mcmcx1def *ctx)
 
 	MCMGLBCTX(ctx);
 
-	if (ctx->mcmcxmax < MCMCHUNK) return((uchar *)0);
+	if (ctx->mcmcxmax < MCMCHUNK) return((uchar *)nullptr);
 
 	ERRBEGIN(ctx->mcmcxerr)
 		chunk = mchalo(ctx->mcmcxerr, size, "mcmhalo");
 	ERRCATCH_ERRCODE_UNUSED(ctx->mcmcxerr)
 		ctx->mcmcxmax = 0;      /* remember we can't allocate anything more */
-		return((uchar *)0);                             /* return no memory */
+		return((uchar *)nullptr);                             /* return no memory */
 	ERREND(ctx->mcmcxerr)
 
 	ctx->mcmcxmax -= MCMCHUNK;
@@ -873,7 +873,7 @@ static uchar *mcmffh(mcmcx1def *ctx, uchar *p)
 		if (o->mcmoflg & MCMOFFREE) return(p);
 		p += osrndsz(sizeof(mcmon)) + o->mcmosiz;  /* move on to next chunk */
 	}
-	return((uchar *)0);                      /* no more free blocks in heap */
+	return((uchar *)nullptr);                      /* no more free blocks in heap */
 }
 
 #ifdef NEVER
@@ -1106,7 +1106,7 @@ uchar *mcmlck(mcmcxdef *ctx, mcmon objnum)
 	if ((o->mcmoflg & MCMOFFREE) != 0 || mcmc2g(ctx, objnum) == MCMONINV)
 	{
 		errsig(ctx->mcmcxgl->mcmcxerr, ERR_INVOBJ);
-		return 0;
+		return nullptr;
 	}
 	else if (o->mcmoflg & MCMOFPRES)
 	{

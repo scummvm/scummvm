@@ -101,17 +101,17 @@ static const byte upperCaseCharacters[] = {
 
 
 int isSpace(unsigned int c) {
-	return (c != '\0' && strchr((const char *)spaceCharacters, c) != 0);
+	return (c != '\0' && strchr((const char *)spaceCharacters, c) != nullptr);
 }
 
 
 int isLower(unsigned int c) {
-	return (c != '\0' && strchr((const char *)lowerCaseCharacters, c) != 0);
+	return (c != '\0' && strchr((const char *)lowerCaseCharacters, c) != nullptr);
 }
 
 
 int isUpper(unsigned int c) {
-	return (c != '\0' && strchr((const char *)upperCaseCharacters, c) != 0);
+	return (c != '\0' && strchr((const char *)upperCaseCharacters, c) != nullptr);
 }
 
 int isLetter(unsigned int c) {
@@ -321,7 +321,7 @@ char *baseNameStart(char *fullPathName) {
 	int i;
 
 	for (i = strlen(fullPathName) - 1; i > 0; i--)
-		if (strchr(delimiters, fullPathName[i]) != NULL)
+		if (strchr(delimiters, fullPathName[i]) != nullptr)
 			return &fullPathName[i + 1];
 	return (fullPathName);
 }

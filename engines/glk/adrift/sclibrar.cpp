@@ -1008,12 +1008,12 @@ static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 /* List of direction names, for printing and counting exits. */
 static const sc_char *const DIRNAMES_4[] = {
 	"north", "east", "south", "west", "up", "down", "in", "out",
-	NULL
+	nullptr
 };
 static const sc_char *const DIRNAMES_8[] = {
 	"north", "east", "south", "west", "up", "down", "in", "out",
 	"northeast", "southeast", "southwest", "northwest",
-	NULL
+	nullptr
 };
 
 
@@ -1497,7 +1497,7 @@ sc_bool lib_cmd_hints(sc_gameref_t game) {
 
 	/* If the game has hints, display any relevant ones. */
 	if (game_has_hints) {
-		if (run_hint_iterate(game, NULL)) {
+		if (run_hint_iterate(game, nullptr)) {
 			if (if_confirm(SC_CONF_VIEW_HINTS))
 				if_display_hints(game);
 		} else
@@ -1709,8 +1709,8 @@ sc_bool lib_cmd_statusline(sc_gameref_t game) {
 	 * Retrieve the game's name and author, the description of the current
 	 * game room, and any formatted game status line.
 	 */
-	run_get_attributes(game, &name, &author, NULL, NULL,
-	                   &score, NULL, &room, &status, NULL, NULL, NULL, NULL);
+	run_get_attributes(game, &name, &author, nullptr, nullptr,
+	                   &score, nullptr, &room, &status, nullptr, nullptr, nullptr, nullptr);
 
 	/* If nothing is yet determined, print the game name and author. */
 	if (!room || sc_strempty(room)) {
@@ -2331,7 +2331,7 @@ sc_bool lib_cmd_examine_self(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_int task, object, count, trail;
-	const sc_char *description, *position = NULL;
+	const sc_char *description, *position = nullptr;
 
 	/* Get selection task. */
 	vt_key[0].string = "Globals";
@@ -2649,7 +2649,7 @@ static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *v
 }
 
 static sc_int lib_disambiguate_object(sc_gameref_t game, const sc_char *verb, sc_bool *is_ambiguous) {
-	return lib_disambiguate_object_common(game, verb, NULL, -1, is_ambiguous);
+	return lib_disambiguate_object_common(game, verb, nullptr, -1, is_ambiguous);
 }
 
 static sc_int lib_disambiguate_object_extended(sc_gameref_t game, const sc_char *verb,
@@ -3354,7 +3354,7 @@ static sc_bool lib_try_game_command_common(sc_gameref_t game, const sc_char *ver
 }
 
 static sc_bool lib_try_game_command_short(sc_gameref_t game, const sc_char *verb, sc_int object) {
-	return lib_try_game_command_common(game, verb, object, NULL, -1, FALSE, FALSE);
+	return lib_try_game_command_common(game, verb, object, nullptr, -1, FALSE, FALSE);
 }
 
 static sc_bool lib_try_game_command_with_object(sc_gameref_t game, const sc_char *verb,
@@ -4326,7 +4326,7 @@ sc_bool lib_cmd_take_all(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_take_not_associated_filter, -1,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_take_backend(game);
@@ -4544,7 +4544,7 @@ sc_bool lib_cmd_take_all_from(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_take_from_filter, associate,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_take_from_object_backend(game, associate);
@@ -4687,7 +4687,7 @@ sc_bool lib_cmd_take_all_from_npc(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_take_from_npc_filter, associate,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_take_from_npc_backend(game, associate);
@@ -4927,7 +4927,7 @@ sc_bool lib_cmd_drop_all(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_drop_filter, -1,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_drop_backend(game);
@@ -5037,7 +5037,7 @@ sc_bool lib_cmd_give_object_npc(sc_gameref_t game) {
 		return is_ambiguous;
 
 	/* Get the referenced npc, and if none, consider complete. */
-	npc = lib_disambiguate_npc(game, "give to", NULL);
+	npc = lib_disambiguate_npc(game, "give to", nullptr);
 	if (npc == -1)
 		return TRUE;
 
@@ -5338,7 +5338,7 @@ sc_bool lib_cmd_wear_all(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_wear_filter, -1,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_wear_backend(game);
@@ -5576,7 +5576,7 @@ sc_bool lib_cmd_remove_all(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_remove_filter, -1,
-	                                    NULL);
+	                                    nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_remove_backend(game);
@@ -5959,8 +5959,8 @@ static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 	 * capacity checks are meaningless.
 	 */
 	if (!obj_indirectly_held_by_player(game, object)) {
-		if (lib_object_too_heavy(game, object, NULL)
-		        || lib_object_too_large(game, object, NULL))
+		if (lib_object_too_heavy(game, object, nullptr)
+		        || lib_object_too_large(game, object, nullptr))
 			return;
 	}
 
@@ -6012,7 +6012,7 @@ sc_bool lib_cmd_unlock_object_with(sc_gameref_t game) {
 		pf_buffer_string(filter, "What do you want to unlock that with?\n");
 		return TRUE;
 	}
-	key = lib_disambiguate_object(game, "unlock that with", NULL);
+	key = lib_disambiguate_object(game, "unlock that with", nullptr);
 	if (key == -1)
 		return TRUE;
 
@@ -6201,7 +6201,7 @@ sc_bool lib_cmd_lock_object_with(sc_gameref_t game) {
 		pf_buffer_string(filter, "What do you want to lock that with?\n");
 		return TRUE;
 	}
-	key = lib_disambiguate_object(game, "lock that with", NULL);
+	key = lib_disambiguate_object(game, "lock that with", nullptr);
 	if (key == -1)
 		return TRUE;
 
@@ -6930,7 +6930,7 @@ sc_bool lib_cmd_put_all_in(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_put_in_not_container_filter,
-	                                    container, NULL);
+	                                    container, nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_put_in_backend(game, container);
@@ -7298,7 +7298,7 @@ sc_bool lib_cmd_put_all_on(sc_gameref_t game) {
 	gs_set_multiple_references(game);
 	objects = lib_apply_multiple_filter(game,
 	                                    lib_put_on_not_supporter_filter,
-	                                    supporter, NULL);
+	                                    supporter, nullptr);
 	gs_clear_multiple_references(game);
 	if (objects > 0)
 		lib_put_on_backend(game, supporter);
@@ -7545,7 +7545,7 @@ sc_bool lib_cmd_attack_npc_with(sc_gameref_t game) {
 		return is_ambiguous;
 
 	/* Get the referenced object, and if none, consider complete. */
-	object = lib_disambiguate_object(game, "attack with", NULL);
+	object = lib_disambiguate_object(game, "attack with", nullptr);
 	if (object == -1)
 		return TRUE;
 
@@ -7918,8 +7918,8 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 		sc_bool is_ambiguous;
 
 		/* Initialize variables to avoid gcc warnings. */
-		disambiguate = NULL;
-		cant_do_that = NULL;
+		disambiguate = nullptr;
+		cant_do_that = nullptr;
 		movement_mask = 0;
 
 		/* Set disambiguation and not amenable messages. */
@@ -8761,7 +8761,7 @@ sc_bool lib_cmd_shout(sc_gameref_t game) {
 
 sc_bool lib_cmd_say(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
-	const sc_char *string = NULL;
+	const sc_char *string = nullptr;
 
 	switch (sc_randomint(1, 5)) {
 	case 1:
@@ -8840,7 +8840,7 @@ sc_bool lib_cmd_whistle(sc_gameref_t game) {
 
 sc_bool lib_cmd_interrogation(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
-	const sc_char *string = NULL;
+	const sc_char *string = nullptr;
 
 	switch (sc_randomint(1, 17)) {
 	case 1:

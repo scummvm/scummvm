@@ -541,7 +541,7 @@ static char *wordWithCode(int classBit, int code) {
 			return (char *)pointerTo(dictionary[w].string);
 	sprintf(str, "Could not find word of class %d with code %d.", classBit, code);
 	syserr(str);
-	return NULL;
+	return nullptr;
 }
 
 

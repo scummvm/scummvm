@@ -128,7 +128,7 @@ uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop)
 	uint    valsiz;
 
 	/* get the start of the object */
-	ofs = objgetp(ctx, objn, prop, 0);
+	ofs = objgetp(ctx, objn, prop, nullptr);
 	if (ofs == 0)
 		return 0;
 
@@ -213,11 +213,11 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 		 *   tell the caller which object this came from, if the caller
 		 *   wants to know
 		 */
-		if (orn != 0)
+		if (orn != nullptr)
 			*orn = obj;
 
 		/* if the caller wants to know the type, return it */
-		if (ortyp != 0)
+		if (ortyp != nullptr)
 			*ortyp = typ;
 
 		/* return the property offset */
@@ -268,11 +268,11 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 	}
 
 	/* set return pointer and return the offset of what we found */
-	if (orn != 0)
+	if (orn != nullptr)
 		*orn = osavn;
 
 	/* return the object type if the caller wanted it */
-	if (ortyp != 0)
+	if (ortyp != nullptr)
 		*ortyp = typsav;
 
 	/* return the offset of the property if we found one, or zero if not */
@@ -300,7 +300,7 @@ uint objgetap(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 	 *   even if the caller doesn't care about the original object number,
 	 *   we do, so provide our own location to store it if necessary
 	 */
-	if (ornp == 0)
+	if (ornp == nullptr)
 		ornp = &orn;
 
 	/* keep going until we've finished translating synonyms */
@@ -381,7 +381,7 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
 	prpdef *nxt;
 	size_t  movsiz;
 
-	pofs = objgetp(mctx, objn, prop, (dattyp *)0);  /* try to find property */
+	pofs = objgetp(mctx, objn, prop, (dattyp *)nullptr);  /* try to find property */
 	if (!pofs) return;                   /* not defined - nothing to delete */
 
 	objptr = (objdef *)mcmlck(mctx, objn);            /* get lock on object */
@@ -437,9 +437,9 @@ void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 	ERRBEGIN(ctx->mcmcxgl->mcmcxerr)
 	{
 		/* get the previous value of the property, if any */
-		pofs = objgetp(ctx, objn, prop, (dattyp *)0);
+		pofs = objgetp(ctx, objn, prop, (dattyp *)nullptr);
 		p = objofsp(objptr, pofs);
-		prop_was_set = (p != 0);
+		prop_was_set = (p != nullptr);
 
 		/* start the undo record if we are keeping undo information */
 		if (undoctx && objuok(undoctx))
@@ -452,7 +452,7 @@ void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 				if (prpflg(p) & PRPFORG)
 				{
 					cmd = OBJUOVR;                     /* override original */
-					p = (prpdef *)0;       /* pretend it doesn't even exist */
+					p = (prpdef *)nullptr;       /* pretend it doesn't even exist */
 				}
 				else cmd = OBJUCHG;                      /* change property */
 			}
@@ -724,7 +724,7 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 
 	case OBJUOVR:
 		objdelp(mctx, objn, prop, FALSE);  /* delete the non-original value */
-		pofs = objgetp(mctx, objn, prop, (dattyp *)0);  /* get ignored prop */
+		pofs = objgetp(mctx, objn, prop, (dattyp *)nullptr);  /* get ignored prop */
 		objptr = (objdef *)mcmlck(mctx, objn);           /* lock the object */
 		prpflg(objofsp(objptr, pofs)) &= ~PRPFIGN;     /* no longer ignored */
 		mcmunlck(mctx, objn);                          /* unlock the object */
@@ -733,7 +733,7 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 	case OBJUCHG:
 		memcpy(pr, p, (size_t)PRPHDRSIZ);
 		p += PRPHDRSIZ;
-		objsetp(mctx, objn, prop, prptype(pr), (void *)p, (objucxdef *)0);
+		objsetp(mctx, objn, prop, prptype(pr), (void *)p, (objucxdef *)nullptr);
 		break;
 
 	case OBJUCLI:

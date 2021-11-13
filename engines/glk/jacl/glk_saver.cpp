@@ -64,12 +64,12 @@ bool save_game(strid_t save) {
 	write_integer(save, functions);
 	write_integer(save, strings);
 
-	while (current_integer != NULL) {
+	while (current_integer != nullptr) {
 		write_integer(save, current_integer->value);
 		current_integer = current_integer->next_integer;
 	}
 
-	while (current_function != NULL) {
+	while (current_function != nullptr) {
 		write_integer(save, current_function->call_count);
 		current_function = current_function->next_function;
 	}
@@ -87,7 +87,7 @@ bool save_game(strid_t save) {
 	}
 
 	// Write out all the current values of the string variables
-	while (current_string != NULL) {
+	while (current_string != nullptr) {
 		for (index = 0; index < 255; index++) {
 			g_vm->glk_put_char_stream(save, current_string->value[index]);
 		}
@@ -131,16 +131,16 @@ bool restore_game(strid_t save, bool warn) {
 		if (warn == FALSE) {
 			log_error(cstring_resolve("BAD_SAVED_GAME")->value, PLUS_STDOUT);
 		}
-		g_vm->glk_stream_close(save, NULL);
+		g_vm->glk_stream_close(save, nullptr);
 		return (FALSE);
 	}
 
-	while (current_integer != NULL) {
+	while (current_integer != nullptr) {
 		current_integer->value = read_integer(save);
 		current_integer = current_integer->next_integer;
 	}
 
-	while (current_function != NULL) {
+	while (current_function != nullptr) {
 		current_function->call_count = read_integer(save);
 		current_function = current_function->next_function;
 	}
@@ -157,7 +157,7 @@ bool restore_game(strid_t save, bool warn) {
 		object[index]->user_attributes = read_integer(save);
 	}
 
-	while (current_string != NULL) {
+	while (current_string != nullptr) {
 		for (index = 0; index < 255; index++) {
 			current_string->value[index] = g_vm->glk_get_char_stream(save);
 		}

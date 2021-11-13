@@ -163,13 +163,13 @@ static sc_bool npc_room_in_roomgroup(sc_gameref_t game, sc_int room, sc_int grou
 static const sc_char *const DIRNAMES_4[] = {
 	"the north", "the east", "the south", "the west", "above", "below",
 	"inside", "outside",
-	NULL
+	nullptr
 };
 static const sc_char *const DIRNAMES_8[] = {
 	"the north", "the east", "the south", "the west", "above", "below",
 	"inside", "outside",
 	"the north-east", "the south-east", "the south-west", "the north-west",
-	NULL
+	nullptr
 };
 
 /*

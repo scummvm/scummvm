@@ -112,7 +112,7 @@ void Magnetic::ms_freemem() {
 		free(undo[1]);
 	if (restart)
 		free(restart);
-	code = string = string2 = string3 = dict = undo[0] = undo[1] = restart = 0;
+	code = string = string2 = string3 = dict = undo[0] = undo[1] = restart = nullptr;
 	if (gfx_data)
 		free(gfx_data);
 	if (gfx_buf)
@@ -124,7 +124,7 @@ void Magnetic::ms_freemem() {
 	delete gfx_fp;
 
 	gfx_data = gfx_buf = gfx2_hdr = gfx2_buf = nullptr;
-	gfx2_name = 0;
+	gfx2_name = nullptr;
 	gfx_fp = nullptr;
 	gfx_ver = 0;
 	gfxtable = table_dist = 0;
@@ -140,8 +140,8 @@ void Magnetic::ms_freemem() {
 		free(hints);
 	if (hint_contents)
 		free(hint_contents);
-	hints = 0;
-	hint_contents = 0;
+	hints = nullptr;
+	hint_contents = nullptr;
 	if (snd_hdr)
 		free(snd_hdr);
 	if (snd_buf)
@@ -221,7 +221,7 @@ type8 Magnetic::init_gfx2(type8 *header) {
 		free(gfx2_hdr);
 		delete gfx_fp;
 		gfx_buf = nullptr;
-		gfx2_hdr = 0;
+		gfx2_hdr = nullptr;
 		gfx_fp = nullptr;
 		return 1;
 	}
@@ -402,7 +402,7 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 				/* Allocate memory for hints */
 				hints = (ms_hint *)malloc(MAX_HINTS * sizeof(struct ms_hint));
 				hint_contents = (type8 *)malloc(MAX_HCONTENTS);
-				if ((hints != 0) && (hint_contents != 0)) {
+				if ((hints != nullptr) && (hint_contents != nullptr)) {
 					/* Read number of blocks */
 					if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
 						return 0;
@@ -474,8 +474,8 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 						free(hints);
 					if (hint_contents)
 						free(hint_contents);
-					hints = 0;
-					hint_contents = 0;
+					hints = nullptr;
+					hint_contents = nullptr;
 				}
 			}
 			hnt_fp.close();
@@ -655,7 +655,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 	type32 j;
 #endif
 
-	if (is_anim != 0)
+	if (is_anim != nullptr)
 		*is_anim = 0;
 	gfx2_name = name;
 
@@ -670,7 +670,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 	if (header_pos < 0)
 		header_pos = find_name_in_header(name, 0);
 	if (header_pos < 0)
-		return 0;
+		return nullptr;
 
 	offset = read_l(gfx2_hdr + header_pos + 8);
 	length = read_l(gfx2_hdr + header_pos + 12);
@@ -683,18 +683,18 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 
 		gfx2_buf = (type8 *)malloc(length);
 		if (!gfx2_buf)
-			return 0;
+			return nullptr;
 
 		if (!gfx_fp->seek(offset)) {
 			free(gfx2_buf);
 			gfx2_buf = nullptr;
-			return 0;
+			return nullptr;
 		}
 
 		if (gfx_fp->read(gfx2_buf, length) != length) {
 			free(gfx2_buf);
 			gfx2_buf = nullptr;
-			return 0;
+			return nullptr;
 		}
 
 		for (i = 0; i < 16; i++)
@@ -706,7 +706,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 		main_pic.height = read_w2(gfx2_buf + 44);
 		main_pic.wbytes = (type16)(main_pic.data_size / main_pic.height);
 		main_pic.plane_step = (type16)(main_pic.wbytes / 4);
-		main_pic.mask = (type8 *)0;
+		main_pic.mask = (type8 *)nullptr;
 		extract_frame(&main_pic);
 
 		*w = main_pic.width;
@@ -720,14 +720,14 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 			type16 frame_count;
 			type16 value1, value2;
 
-			if (is_anim != 0)
+			if (is_anim != nullptr)
 				*is_anim = 1;
 
 			current = anim_data + 6;
 			frame_count = read_w2(anim_data + 2);
 			if (frame_count > MAX_ANIMS) {
 				ms_fatal("animation frame array too short");
-				return 0;
+				return nullptr;
 			}
 
 			/* Loop through each animation frame */
@@ -738,7 +738,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 				anim_frame_table[i].height = read_w2(current + 6);
 				anim_frame_table[i].wbytes = (type16)(anim_frame_table[i].data_size / anim_frame_table[i].height);
 				anim_frame_table[i].plane_step = (type16)(anim_frame_table[i].wbytes / 4);
-				anim_frame_table[i].mask = (type8 *)0;
+				anim_frame_table[i].mask = (type8 *)nullptr;
 
 				current += anim_frame_table[i].data_size + 12;
 				value1 = read_w2(current - 2);
@@ -758,7 +758,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 			pos_table_size = read_w2(current - 2);
 			if (pos_table_size > MAX_POSITIONS) {
 				ms_fatal("animation position array too short");
-				return 0;
+				return nullptr;
 			}
 
 #ifdef LOGGFX_EXT
@@ -770,7 +770,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 
 				if (pos_table_count[i] > MAX_ANIMS) {
 					ms_fatal("animation position array too short");
-					return 0;
+					return nullptr;
 				}
 
 				for (j = 0; j < pos_table_count[i]; j++) {
@@ -801,7 +801,7 @@ type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal
 #endif
 		return gfx_buf;
 	}
-	return 0;
+	return nullptr;
 }
 
 type8 *Magnetic::ms_extract(type32 pic, type16 *w, type16 *h, type16 *pal, type8 *is_anim) {
@@ -818,7 +818,7 @@ type8 *Magnetic::ms_extract(type32 pic, type16 *w, type16 *h, type16 *pal, type8
 			break;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 type8 Magnetic::ms_animate(struct ms_position **positions, type16 *count) {
@@ -826,13 +826,13 @@ type8 Magnetic::ms_animate(struct ms_position **positions, type16 *count) {
 	type8 got_anim = 0;
 	type16 i, j, ttable;
 
-	if ((gfx_buf == 0) || (gfx2_buf == 0) || (gfx_ver != 2))
+	if ((gfx_buf == nullptr) || (gfx2_buf == nullptr) || (gfx_ver != 2))
 		return 0;
 	if ((pos_table_size == 0) || (command_index < 0))
 		return 0;
 
 	*count = 0;
-	*positions = (struct ms_position *)0;
+	*positions = (struct ms_position *)nullptr;
 
 	while (got_anim == 0) {
 		if (pos_table_max >= 0) {
@@ -983,7 +983,7 @@ type8 *Magnetic::ms_get_anim_frame(type16s number, type16 *width, type16 *height
 		return gfx_buf;
 	}
 #endif
-	return 0;
+	return nullptr;
 }
 
 type8 Magnetic::ms_anim_is_repeating() const {
@@ -1014,7 +1014,7 @@ type8 *Magnetic::sound_extract(const char *name, type32 *length, type16 *tempo) 
 	if (header_pos < 0)
 		header_pos = find_name_in_sndheader(name);
 	if (header_pos < 0)
-		return 0;
+		return nullptr;
 
 	*tempo = read_w(snd_hdr + header_pos + 8);
 	offset = read_l(snd_hdr + header_pos + 10);
@@ -1022,9 +1022,9 @@ type8 *Magnetic::sound_extract(const char *name, type32 *length, type16 *tempo) 
 
 	if (offset != 0) {
 		if (!snd_buf)
-			return 0;
+			return nullptr;
 		if (!snd_fp->seek(offset) || snd_fp->read(snd_buf, *length) != *length)
-			return 0;
+			return nullptr;
 
 		return snd_buf;
 	}
@@ -2219,7 +2219,7 @@ void Magnetic::do_line_a() {
 			case 10: /* Open window commands */
 				switch ((code + a1reg + 3)[0]) {
 				case 4: /* Help/Hints */
-					if (hints != 0) {
+					if (hints != nullptr) {
 						if (ms_showhints(hints) == 0)
 							show_hints_text(hints, 0);
 					} else
@@ -2239,7 +2239,7 @@ void Magnetic::do_line_a() {
 			case 13: /* Music */
 				switch ((code + a1reg + 3)[0]) {
 				case 0: /* stop music */
-					ms_playmusic(0, 0, 0);
+					ms_playmusic(nullptr, 0, 0);
 					break;
 				default: /* play music */
 #ifdef LOGSND
@@ -2249,7 +2249,7 @@ void Magnetic::do_line_a() {
 						type32 length = 0;
 						type16 tempo = 0;
 						type8 *midi = sound_extract((const char *)(code + a1reg + 3), &length, &tempo);
-						if (midi != NULL)
+						if (midi != nullptr)
 							ms_playmusic(midi, length, tempo);
 					}
 					break;

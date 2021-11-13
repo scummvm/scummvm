@@ -88,13 +88,13 @@ static const sc_expr_multichar_t FUNCTION_TOKENS[] = {
 	{"mod", 3, TOK_MOD}, {"abs", 3, TOK_ABS}, {"len", 3, TOK_LEN},
 	{"val", 3, TOK_VAL}, {"and", 3, TOK_AND}, {"mid", 3, TOK_MID},
 	{"str", 3, TOK_STR}, {"or", 2, TOK_OR}, {"if", 2, TOK_IF},
-	{NULL, 0, TOK_NONE}
+	{nullptr, 0, TOK_NONE}
 };
 static const sc_expr_multichar_t OPERATOR_TOKENS[] = {
 	{"&&", 2, TOK_AND}, {"||", 2, TOK_OR},
 	{"==", 2, TOK_EQUAL}, {"!=", 2, TOK_NOT_EQUAL},
 	{"<>", 2, TOK_NOT_EQUAL}, {">=", 2, TOK_GREATER_EQ}, {"<=", 2, TOK_LESS_EQ},
-	{NULL, 0, TOK_NONE}
+	{nullptr, 0, TOK_NONE}
 };
 
 
@@ -119,10 +119,10 @@ static sc_int expr_multichar_search(const sc_char *name, const sc_expr_multichar
 
 
 /* Tokenizer variables. */
-static const sc_char *expr_expression = NULL;
+static const sc_char *expr_expression = nullptr;
 static sc_int expr_index = 0;
 static sc_vartype_t expr_token_value;
-static sc_char *expr_temporary = NULL;
+static sc_char *expr_temporary = nullptr;
 static sc_int expr_current_token = TOK_NONE;
 
 /*
@@ -173,8 +173,8 @@ static void expr_tokenize_start(const sc_char *expression) {
 static void expr_tokenize_end(void) {
 	/* Deallocate temporary strings, clear expression. */
 	sc_free(expr_temporary);
-	expr_temporary = NULL;
-	expr_expression = NULL;
+	expr_temporary = nullptr;
+	expr_expression = nullptr;
 	expr_index = 0;
 	expr_current_token = TOK_NONE;
 }
@@ -339,7 +339,7 @@ static sc_int expr_next_token(void) {
 	 * Get the basic next token.  We may adjust it later for unary minus/plus
 	 * depending on what it is, and the prior token.
 	 */
-	token_value.voidp = NULL;
+	token_value.voidp = nullptr;
 	token = expr_next_token_unadjusted(&token_value);
 
 	/* Special handling for unary minus/plus signs. */
@@ -419,7 +419,7 @@ static sc_stack_t expr_eval_stack[MAX_NESTING_DEPTH];
 static sc_int expr_eval_stack_index = 0;
 
 /* Variables set to reference for %...% values. */
-static sc_var_setref_t expr_varset = NULL;
+static sc_var_setref_t expr_varset = nullptr;
 
 /*
  * expr_eval_start()
@@ -675,7 +675,7 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 		 * position, starting at 1, or 0 if not found.  Then free the popped
 		 * strings, and push back the result.
 		 */
-		search = (val1[0] != NUL) ? strstr(val1, val2) : NULL;
+		search = (val1[0] != NUL) ? strstr(val1, val2) : nullptr;
 		result = (!search) ? 0 : search - val1 + 1;
 		sc_free(val1);
 		sc_free(val2);

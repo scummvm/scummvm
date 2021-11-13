@@ -1301,7 +1301,7 @@ static void gln_graphics_locate_bitmaps(const char *gamefile) {
 	bitmap_type = DetectBitmaps(dirname);
 	if (bitmap_type == NO_BITMAPS) {
 		free(dirname);
-		gln_graphics_bitmap_directory = NULL;
+		gln_graphics_bitmap_directory = nullptr;
 		gln_graphics_bitmap_type = NO_BITMAPS;
 		return;
 	}
@@ -4649,7 +4649,7 @@ void gln_main(const char *filename) {
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	/* Create the main Glk window, and set its stream as current. */
-	gln_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	gln_main_window = g_vm->glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 0);
 	if (!gln_main_window) {
 		gln_fatal("GLK: Can't open main window");
 		g_vm->glk_exit();

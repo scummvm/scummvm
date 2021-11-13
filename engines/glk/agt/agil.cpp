@@ -163,11 +163,11 @@ static void print_title(fc_type fc) {
 	else
 		buff = read_ttl(fc);
 
-	if (buff == NULL) {
+	if (buff == nullptr) {
 		writeln("");
 		writeln("");
 		s = formal_name(fc, fNONE);
-		if (s != NULL) {
+		if (s != nullptr) {
 			s[0] = toupper(s[0]);
 			agt_center(1);
 			agt_textcolor(-1);
@@ -186,7 +186,7 @@ static void print_title(fc_type fc) {
 		writeln("");
 		height = 0;
 	} else {
-		if (buff[0] != NULL && strncasecmp(buff[0], "COLORS", 6) == 0) {
+		if (buff[0] != nullptr && strncasecmp(buff[0], "COLORS", 6) == 0) {
 			/* Do screen colors */
 			skip_line = 1;
 		} else skip_line = 0;
@@ -194,7 +194,7 @@ static void print_title(fc_type fc) {
 		   starting with spaces. We use height as a loop variable
 		   and center_mode to store the count temporarily. */
 		center_mode = 0;
-		for (height = skip_line; buff[height] != NULL; height++)
+		for (height = skip_line; buff[height] != nullptr; height++)
 			if (!emptyline((uchar *)buff[height])) {
 				if (rspace(buff[height][0])) center_mode++;
 				else center_mode--;
@@ -220,7 +220,7 @@ static void print_title(fc_type fc) {
 
 	agt_textcolor(7);
 	agt_center(1);
-	if (buff != NULL) {
+	if (buff != nullptr) {
 		if (aver < AGX00 && height <= screen_height - 6)
 			writeln("[Created with Malmberg and Welch's Adventure Game Toolkit]");
 		if (height <= screen_height - 9) writeln("");
@@ -255,7 +255,7 @@ void print_instructions(fc_type fc) {
 
 	writeln("INSTRUCTIONS:");
 	if (open_ins_file(fc, 1)) {  /* Instruction file exists */
-		while (NULL != (buffer = read_ins_line())) {
+		while (nullptr != (buffer = read_ins_line())) {
 			for (s = (uchar *)buffer; *s != 0; s++) *s = trans_ascii[*s];
 			writeln(buffer);
 		}
@@ -443,9 +443,9 @@ static void game_end(void) {
 		writeln("");
 		agt_center(1);
 		if (winflag)
-			gen_sysmsg(148, "***** $You$ have won! *****", MSG_MAIN, NULL);
+			gen_sysmsg(148, "***** $You$ have won! *****", MSG_MAIN, nullptr);
 		if (deadflag)
-			gen_sysmsg(147, "***** $You$ have died! *****", MSG_MAIN, NULL);
+			gen_sysmsg(147, "***** $You$ have died! *****", MSG_MAIN, nullptr);
 		writeln("");
 		writeln("");
 		agt_center(0);
@@ -454,16 +454,16 @@ static void game_end(void) {
 		if (curr_lives > 1) { /* Resurrection code */
 			if (curr_lives == max_lives)
 				gen_sysmsg(151, "Hmmm.... so $you$'ve gotten $your$self killed. "
-				           "Would you like me to try a resurrection?", MSG_MAIN, NULL);
+				           "Would you like me to try a resurrection?", MSG_MAIN, nullptr);
 			else gen_sysmsg(152, "<Sigh>  $You$'ve died *again*. "
 				                "Would you like me to try another resurrection?",
-				                MSG_MAIN, NULL);
+				                MSG_MAIN, nullptr);
 			if (yesno("? ")) {  /* Now do resurrection */
 				curr_lives--;
 				quitflag = deadflag = 0;
 				gen_sysmsg(154,
 				           "$You$ emerge coughing from a cloud of dark green smoke.",
-				           MSG_MAIN, NULL);
+				           MSG_MAIN, nullptr);
 				writeln("");
 				loc = resurrect_room - first_room;
 				newlife_flag = 1;
@@ -473,7 +473,7 @@ static void game_end(void) {
 				return;
 			} else writeln("As you wish...");
 		} else if (max_lives > 1)
-			gen_sysmsg(153, "$You$'ve used up all of $your$ lives.", MSG_MAIN, NULL);
+			gen_sysmsg(153, "$You$'ve used up all of $your$ lives.", MSG_MAIN, nullptr);
 	}
 	writeln("");
 	print_score();
@@ -481,15 +481,15 @@ static void game_end(void) {
 	done_flag = quitflag; /* If player has QUIT, don't ask again */
 	while (!done_flag && !quitflag) {
 		writestr("Would you like to ");
-		if (restart_state != NULL) writestr("restart, ");
+		if (restart_state != nullptr) writestr("restart, ");
 		writestr("restore");
-		if (undo_state != NULL && can_undo)
+		if (undo_state != nullptr && can_undo)
 			writestr(", undo,");
-		else if (restart_state != NULL) writestr(",");
+		else if (restart_state != nullptr) writestr(",");
 		writestr(" or quit? ");
 		s = agt_readline(5);
 		if (strncasecmp(s, "RESTART", 7) == 0)
-			if (restart_state != NULL) {
+			if (restart_state != nullptr) {
 				restart_game();
 				done_flag = 1;
 			} else writeln("Sorry, I'm unable to do that because of limited memory.");
@@ -498,7 +498,7 @@ static void game_end(void) {
 				done_flag = 1;
 			} else writeln("(RESTORE failed)");
 		else if (strncasecmp(s, "UNDO", 4) == 0)
-			if (can_undo && undo_state != NULL) {
+			if (can_undo && undo_state != nullptr) {
 				putstate(undo_state);
 				done_flag = 1;
 			} else writeln("Insufficiant memory to support UNDO");
@@ -606,7 +606,7 @@ static int init(void) {
 		agt_var[i] = 0;
 
 	for (i = 0; i <= maxnoun - first_noun; i++) {
-		if (noun[i].position == NULL || noun[i].position[0] == '\0')
+		if (noun[i].position == nullptr || noun[i].position[0] == '\0')
 			noun[i].pos_prep = 0;
 		else noun[i].pos_prep = -1;
 		noun[i].pos_name = 0;
@@ -633,17 +633,17 @@ static int init(void) {
 			   game states */
 	tmp1 = (uchar *)rmalloc(MEM_MARGIN); /* Preserve some work space */
 
-	tmp2 = getstate(NULL); /* Make sure we have space to save */
-	if (tmp2 == NULL) can_save = 0;
+	tmp2 = getstate(nullptr); /* Make sure we have space to save */
+	if (tmp2 == nullptr) can_save = 0;
 	else can_save = 1;
 
-	if (tmp2 != NULL)
-		undo_state = getstate(NULL);
-	else undo_state = NULL;
+	if (tmp2 != nullptr)
+		undo_state = getstate(nullptr);
+	else undo_state = nullptr;
 
-	if (undo_state != NULL)
-		restart_state = getstate(NULL);
-	else restart_state = NULL;
+	if (undo_state != nullptr)
+		restart_state = getstate(nullptr);
+	else restart_state = nullptr;
 
 	rfree(tmp1);
 	rfree(tmp2);
@@ -691,7 +691,7 @@ static void fix_dummy(void) {
 	else {
 		PURE_DOT = FORCE_PURE_DOT;
 		for (i = 0; i < dp && !PURE_DOT; i++)
-			if (strchr(dict[i], '.') != NULL && /* i.e. dict[i] contains period */
+			if (strchr(dict[i], '.') != nullptr && /* i.e. dict[i] contains period */
 			        i != ext_code[wp])   /* The period itself _is_ a dictionary word:
 				avoid this false match */
 				PURE_DOT = 1;
@@ -703,9 +703,9 @@ static void fix_dummy(void) {
 static void fix_prompt(void) {
 	descr_line *d;
 
-	if (err_ptr == NULL) return;
+	if (err_ptr == nullptr) return;
 	d = read_descr(err_ptr[0].start, err_ptr[0].size);
-	if (d == NULL) return;
+	if (d == nullptr) return;
 	if (strncasecmp(d[0], "What Now?", 9) == 0)
 		err_ptr[0].size = err_ptr[0].start = 0;
 	free_descr(d);
@@ -750,7 +750,7 @@ static fc_type setup_game(fc_type fc)
 
 	/* Now that we *have* PATH information, go looking for the games */
 	/* At the very least, it creates an rmalloc'd copy of game_name */
-	read_config(openfile(fc, fCFG, NULL, 0), 0);
+	read_config(openfile(fc, fCFG, nullptr, 0), 0);
 	text_file = 0;
 	/* First pass through game specific config file */
 	build_trans_ascii();
@@ -768,7 +768,7 @@ static fc_type setup_game(fc_type fc)
 		menu_mode = opt_data[5];   /* See agtread.c for discussion of OPT file
 				format */
 	text_file = 1;
-	read_config(openfile(fc, fCFG, NULL, 0), 1); /*Game specific config file*/
+	read_config(openfile(fc, fCFG, nullptr, 0), 1); /*Game specific config file*/
 	text_file = 0;
 	if (min_ver > AGIL_VERID) {
 		if (FORCE_VERSION)
@@ -825,7 +825,7 @@ static fc_type setup_game(fc_type fc)
 	set_statline();
 	if (can_save == 0) {
 		writeln("[Insufficiant memory to support SAVE, RESTORE, or UNDO]");
-	} else if (undo_state == NULL)
+	} else if (undo_state == nullptr)
 		writeln("[Insufficiant memory to support UNDO]");
 	do_look = do_autoverb = 1;
 	newroom();

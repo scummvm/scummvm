@@ -115,7 +115,7 @@ void parser() {
 	// GRAMMAR TREE OF POSSIBLE COMMANDS
 
 	struct word_type *pointer;
-	struct word_type *matched_word = NULL;
+	struct word_type *matched_word = nullptr;
 
 	int             index;
 	int             current_noun = 0;
@@ -146,7 +146,7 @@ void parser() {
 	//printf("--- clear action\n");
 	clear_cstring("action");
 
-	if (grammar_table == NULL) {
+	if (grammar_table == nullptr) {
 		// THERE ARE NO USER DEFINED COMMANDS AVAILABLE, SO THE USER'S
 		// COMMAND IS INEVITABLY INVALID
 		//printf("--- no grammar table\n");
@@ -159,7 +159,7 @@ void parser() {
 	// START AT THE TOP OF THE GRAMMAR TREE
 	pointer = grammar_table;
 
-	while (word[wp] != NULL && pointer != NULL) {
+	while (word[wp] != nullptr && pointer != nullptr) {
 		//printf("--- wp = %d\n", wp);
 		//printf("--- word[%d] = %s\n", wp, word[wp]);
 		object_expected = FALSE;
@@ -168,12 +168,12 @@ void parser() {
 			// CONSIDER THIS THE END OF THIS COMMAND AS 'THEN' IS
 			// TREATED LIKE A FULL STOP
 			break;
-		} else if ((matched_word = exact_match(pointer)) != NULL) {
+		} else if ((matched_word = exact_match(pointer)) != nullptr) {
 			// THIS WORD WAS AN EXACT MATCH FOR ONE OF THE POSSIBLE WORDS
 			// AT THE CURRENT GRAMMAR TREE LEVEL - MOVE ON!
 			pointer = matched_word;
 			pointer = pointer->first_child;
-		} else if ((matched_word = object_match(pointer, current_noun)) != NULL) {
+		} else if ((matched_word = object_match(pointer, current_noun)) != nullptr) {
 			// THIS WAS AN OBJECT PLACE HOLDER AT THIS GRAMMAR LEVEL AND
 			// THIS POINT IN THE PLAYER'S COMMAND COULD BE RESOLVED TO
 			// AT LEAST ONE OBJECT
@@ -206,7 +206,7 @@ void parser() {
 			pointer = pointer->first_child;
 		} else {
 			// THIS IS AN UNKNOWN WORD
-			if (oops_word == -1 && word[wp] != NULL) {
+			if (oops_word == -1 && word[wp] != nullptr) {
 				oops_word = wp;
 			}
 
@@ -226,7 +226,7 @@ void parser() {
 		}
 	};
 
-	if (pointer == NULL) {
+	if (pointer == nullptr) {
 		// THIS CAN ONLY HAPPEN IF MOVING THE POINTER TO ITS
 		// FIRST CHILD RESULTS IN A NULL - AN INCOMPLETE
 		// GRAMMAR STATEMENT.
@@ -340,7 +340,7 @@ void parser() {
 			//printf("--- move to next grammar sibling\n");
 			// MOVE THROUGH THE OPTIONS AT THIS LEVEL OF THE GRAMMAR TREE
 			// TO FIND THE ACTION THAT MATCHES THIS COMMAND
-			if (pointer->next_sibling == NULL) {
+			if (pointer->next_sibling == nullptr) {
 				break;
 			} else {
 				pointer = pointer->next_sibling;
@@ -560,9 +560,9 @@ struct word_type *object_match(struct word_type *iterator, int noun_number) {
 		if (custom_error == TRUE) {
 			/* AN ERROR OCCURRED IN THE FIRST OBJECT PLACEHOLDER, DON'T
 			 * TRY ANY OTHERS */
-			return (NULL);
+			return (nullptr);
 		}
-	} while ((iterator = iterator->next_sibling) != NULL);
+	} while ((iterator = iterator->next_sibling) != nullptr);
 
 	/* THERE WERE NO OBJECT PLACE HOLDERS OR, IF THERE WERE, NO
 	 * MATCHING OBJECTS COULD BE RESOLVED */
@@ -575,7 +575,7 @@ struct word_type *object_match(struct word_type *iterator, int noun_number) {
 		custom_error = TRUE;
 	}
 
-	return (NULL);
+	return (nullptr);
 }
 
 struct word_type *exact_match(struct word_type *pointer) {
@@ -605,16 +605,16 @@ struct word_type *exact_match(struct word_type *pointer) {
 			wp++;
 			return (iterator);
 		}
-	} while ((iterator = iterator->next_sibling) != NULL);
+	} while ((iterator = iterator->next_sibling) != nullptr);
 
 	/* THERE WERE NO EXACT MATCHES, SO RETURN FALSE */
-	return (NULL);
+	return (nullptr);
 }
 
 int is_terminator(struct word_type *scope_word) {
 	struct word_type *terminator = scope_word->first_child;
 
-	if (terminator != NULL) {
+	if (terminator != nullptr) {
 		/* THERE MAY NO BE ANY MORE POSSIBLE WORDS IN THIS COMMAND
 		 * BUT THERE SHOULD ALWAYS AT LEAST BE A BASE FUNCTION NAME */
 		do {
@@ -626,7 +626,7 @@ int is_terminator(struct word_type *scope_word) {
 			            && validate(word[wp]))) {
 				return (TRUE);
 			}
-		} while ((terminator = terminator->next_sibling) != NULL);
+		} while ((terminator = terminator->next_sibling) != nullptr);
 	}
 
 	return (FALSE);
@@ -649,7 +649,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 		return (FALSE);
 	}
 
-	while (word[wp] != NULL) {
+	while (word[wp] != nullptr) {
 		/* LOOP THROUGH WORDS IN THE PLAYER'S INPUT ENDING WHEN EITHER
 		 * THERE ARE NO MORE WORDS OR ONE OF THE CHILD NODES OF THE
 		 * CURRENT scope_word NODE IS REACHED INDICATING THERE ARE NO
@@ -663,7 +663,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 
 			wp++;
 
-			if (word[wp] != NULL && !strcmp(word[wp], cstring_resolve("FOR_WORD")->value)) {
+			if (word[wp] != nullptr && !strcmp(word[wp], cstring_resolve("FOR_WORD")->value)) {
 				/* SKIP PAST THE WORD 'FOR' */
 				wp++;
 			}
@@ -920,18 +920,18 @@ int get_from_object(struct word_type *scope_word, int noun_number) {
 
 	/* SEE IF 'FROM' IS ONE OF THE TERMINATORS OF THIS CURRENT OBJECT
 	 * PLACEHOLDER. IF SO, DON'T LOOK FOR A FROM OBJECT */
-	if (terminator != NULL) {
+	if (terminator != nullptr) {
 		//printf("--- checking if terminator word (%s) is from\n", terminator->word);
 		if (!strcmp(cstring_resolve("FROM_WORD")->value, terminator->word)) {
 			//printf("--- from is a terminator, don't get a from object\n");
 			return (TRUE);
 		}
-		while ((terminator = terminator->next_sibling) != NULL);
+		while ((terminator = terminator->next_sibling) != nullptr);
 	}
 
 	/* LOOP FROM THE CURRENT WORD TO THE NEXT TERMINATOR AND LOOK FOR THE
 	 * WORD 'FROM' AND STORE THE FOLLOWING OBJECT */
-	while (word[wp] != NULL) {
+	while (word[wp] != nullptr) {
 		//printf("--- from loop checking %s\n", word[wp]);
 		if (!strcmp(word[wp], cstring_resolve("FROM_WORD")->value)) {
 			from_word = word[wp];
@@ -1102,7 +1102,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 	backup_pointer = wp;
 	everything = FALSE;
 
-	if (word[wp] == NULL) {
+	if (word[wp] == nullptr) {
 		/* NOTHING TO RESOLVE... */
 		return (FALSE);
 	}
@@ -1120,7 +1120,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		/* FIRST WORD IS AN INTEGER AND SECOND WORD IS 'OF' SO
 		 * TREAT THIS AS A LIMIT QUALIFIER BEFORE STARTING TO
 		 * PROCESS THE REST OF THE WORDS */
-		if (word[wp + 1] != NULL && !strcmp(word[wp + 1], cstring_resolve("OF_WORD")->value)) {
+		if (word[wp + 1] != nullptr && !strcmp(word[wp + 1], cstring_resolve("OF_WORD")->value)) {
 			return_limit = atoi(word[wp]);
 
 			/* MAKE SURE THE RETURN LIMIT IS SOMETHING SENSIBLE */
@@ -1144,7 +1144,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 	// HAS USED TO REFER TO THE OBJECT
 	error_buffer[0] = 0;
 
-	while (word[wp] != NULL) {
+	while (word[wp] != nullptr) {
 		// ADD THE WORDS USED TO error_buffer FOR POSSIBLE USE
 		// IN A DISABMIGUATE EMESSAGE
 		if (first_word == FALSE) {
@@ -1158,7 +1158,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		/* RESET TERMINATOR TO THE FIRST OF THE TERMINATING WORDS */
 		terminator = scope_word->first_child;
 
-		if (terminator != NULL) {
+		if (terminator != nullptr) {
 			/* THERE MAY NO BE ANY MORE POSSIBLE WORDS IN THIS COMMAND
 			 * BUT THERE SHOULD ALWAYS AT LEAST BE A BASE FUNCTION NAME */
 			do {
@@ -1187,7 +1187,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 						break;
 					}
 				}
-			} while ((terminator = terminator->next_sibling) != NULL);
+			} while ((terminator = terminator->next_sibling) != nullptr);
 		}
 
 		if (done == TRUE) {
@@ -1230,7 +1230,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 			}
 			//printf("--- exiting for loop\n");
 
-			if (word[wp + 1] != NULL && !strcmp(cstring_resolve("OF_WORD")->value, word[wp + 1])) {
+			if (word[wp + 1] != nullptr && !strcmp(cstring_resolve("OF_WORD")->value, word[wp + 1])) {
 				/* MOVE PAST THE 'OF' IF IT IS NEXT */
 				wp++;
 			}
@@ -1319,7 +1319,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 				} else {
 					current_name = object[index]->first_name;
 
-					while (current_name != NULL) {
+					while (current_name != nullptr) {
 						/* LOOP THROUGH ALL THE CURRENT OBJECTS NAMES */
 						if (!strcmp(word[wp], current_name->name)) {
 							/* CURRENT WORD MATCHES THE CURRENT NAME
@@ -1337,7 +1337,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 					/* NOW LOOP THROUGH ALL THE OJBECTS PLURAL NAMES */
 					current_name = object[index]->first_plural;
 
-					while (current_name != NULL) {
+					while (current_name != nullptr) {
 						/* LOOP THROUGH ALL THE CURRENT OBJECTS NAMES */
 						if (!strcmp(word[wp], current_name->name)) {
 							/* CURRENT WORD MATCHES THE CURRENT NAME
@@ -1397,7 +1397,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 
 			/* THIS WORD IS A LIKELY BE INCORRECT AS IT DIDN'T MATCH
 			 * ANY OBJECTS */
-			if (oops_word == -1 && word[wp] != NULL) {
+			if (oops_word == -1 && word[wp] != nullptr) {
 				oops_word = wp;
 			}
 
@@ -1473,7 +1473,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		if (confidence[index] != FALSE && return_limit == 1) {
 			current_name = object[index]->first_name;
 			counter = 0;
-			while (current_name != NULL) {
+			while (current_name != nullptr) {
 				counter++;
 				current_name = current_name->next_name;
 			}
@@ -1729,7 +1729,7 @@ void diagnose() {
 		TIME->value = FALSE;
 		return;
 	}
-	if (word[wp] == NULL)
+	if (word[wp] == nullptr)
 		write_text(cstring_resolve("INCOMPLETE_SENTENCE")->value);
 	else if (object_expected && wp != 0) {
 		write_text(cstring_resolve("UNKNOWN_OBJECT")->value);
