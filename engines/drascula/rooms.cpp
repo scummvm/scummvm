@@ -138,7 +138,7 @@ void DrasculaEngine::setupRoomsTable() {
 }
 
 void DrasculaEngine::freeRoomsTable() {
-	if (_roomHandlers == 0)
+	if (_roomHandlers == nullptr)
 		return;
 
 	for (uint32 i = 0; i < _roomHandlers->roomParsers.size(); i++)
@@ -154,7 +154,7 @@ void DrasculaEngine::freeRoomsTable() {
 	_roomHandlers->roomUpdaters.clear();
 
 	delete _roomHandlers;
-	_roomHandlers = 0;
+	_roomHandlers = nullptr;
 }
 
 bool DrasculaEngine::roomParse(int rN, int fl) {

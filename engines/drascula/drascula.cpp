@@ -37,37 +37,37 @@
 namespace Drascula {
 
 DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	_charMap = 0;
-	_itemLocations = 0;
-	_polX = 0;
-	_polY = 0;
-	_verbBarX = 0;
-	_x1d_menu = 0;
-	_y1d_menu = 0;
-	_frameX = 0;
-	_candleX = 0;
-	_candleY = 0;
-	_pianistX = 0;
-	_drunkX = 0;
-	_roomPreUpdates = 0;
-	_roomUpdates = 0;
-	_roomActions = 0;
-	_text = 0;
-	_textd = 0;
-	_textb = 0;
-	_textbj = 0;
-	_texte = 0;
-	_texti = 0;
-	_textl = 0;
-	_textp = 0;
-	_textt = 0;
-	_textvb = 0;
-	_textsys = 0;
-	_texthis = 0;
-	_textverbs = 0;
-	_textmisc = 0;
-	_textd1 = 0;
-	_talkSequences = 0;
+	_charMap = nullptr;
+	_itemLocations = nullptr;
+	_polX = nullptr;
+	_polY = nullptr;
+	_verbBarX = nullptr;
+	_x1d_menu = nullptr;
+	_y1d_menu = nullptr;
+	_frameX = nullptr;
+	_candleX = nullptr;
+	_candleY = nullptr;
+	_pianistX = nullptr;
+	_drunkX = nullptr;
+	_roomPreUpdates = nullptr;
+	_roomUpdates = nullptr;
+	_roomActions = nullptr;
+	_text = nullptr;
+	_textd = nullptr;
+	_textb = nullptr;
+	_textbj = nullptr;
+	_texte = nullptr;
+	_texti = nullptr;
+	_textl = nullptr;
+	_textp = nullptr;
+	_textt = nullptr;
+	_textvb = nullptr;
+	_textsys = nullptr;
+	_texthis = nullptr;
+	_textverbs = nullptr;
+	_textmisc = nullptr;
+	_textd1 = nullptr;
+	_talkSequences = nullptr;
 	_currentSaveSlot = 0;
 
 	term_int = 0;
@@ -150,17 +150,17 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_rightMouseButton = 0;
 	*textName = 0;
 
-	crosshairCursor = 0;
-	mouseCursor = 0;
-	bgSurface = 0;
-	backSurface = 0;
-	cursorSurface = 0;
-	drawSurface3 = 0;
-	drawSurface2 = 0;
-	tableSurface = 0;
-	extraSurface = 0;
-	screenSurface = 0;
-	frontSurface = 0;
+	crosshairCursor = nullptr;
+	mouseCursor = nullptr;
+	bgSurface = nullptr;
+	backSurface = nullptr;
+	cursorSurface = nullptr;
+	drawSurface3 = nullptr;
+	drawSurface2 = nullptr;
+	tableSurface = nullptr;
+	extraSurface = nullptr;
+	screenSurface = nullptr;
+	frontSurface = nullptr;
 	previousMusic = 0;
 	roomMusic = 0;
 
@@ -175,7 +175,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	_keyBufferHead = _keyBufferTail = 0;
 
-	_roomHandlers = 0;
+	_roomHandlers = nullptr;
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -1103,7 +1103,7 @@ char **DrasculaEngine::loadTexts(Common::File &in) {
 	int numTexts = in.readUint16BE();
 	char **res = (char **)malloc(sizeof(char *) * numTexts);
 	int entryLen;
-	char *pos = 0;
+	char *pos = nullptr;
 	int len;
 
 	for (int lang = 0; lang < _numLangs; lang++) {
