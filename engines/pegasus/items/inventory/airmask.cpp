@@ -31,7 +31,7 @@
 
 namespace Pegasus {
 
-AirMask *g_airMask = 0;
+AirMask *g_airMask = nullptr;
 
 //	Based on full == 100, which is scale used by GetAirLeft().
 static const TimeValue kOxygenLowThreshold = 25;
@@ -54,7 +54,7 @@ AirMask::AirMask(const ItemID id, const NeighborhoodID neighborhood, const RoomI
 
 AirMask::~AirMask() {
 	g_allHotspots.removeOneHotspot(kAirMaskToggleSpotID);
-	g_airMask = 0;
+	g_airMask = nullptr;
 }
 
 void AirMask::writeToStream(Common::WriteStream *stream) {

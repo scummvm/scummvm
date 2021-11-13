@@ -37,7 +37,7 @@ DisplayElement::DisplayElement(const DisplayElementID id) : IDObject(id) {
 	_elementIsVisible = false;
 	_elementOrder = 0;
 	_triggeredElement = this;
-	_nextElement = 0;
+	_nextElement = nullptr;
 }
 
 DisplayElement::~DisplayElement() {
@@ -315,7 +315,7 @@ bool FrameSequence::isSequenceOpen() const {
 Sprite::Sprite(const DisplayElementID id) : DisplayElement(id) {
 	_numFrames = 0;
 	_currentFrameNum = 0xffffffff;
-	_currentFrame = 0;
+	_currentFrame = nullptr;
 }
 
 Sprite::~Sprite() {
@@ -333,7 +333,7 @@ void Sprite::discardFrames() {
 
 		_frameArray.clear();
 		_numFrames = 0;
-		_currentFrame = 0;
+		_currentFrame = nullptr;
 		_currentFrameNum = 0xffffffff;
 		setBounds(0, 0, 0, 0);
 	}
@@ -401,7 +401,7 @@ void Sprite::setCurrentFrameIndex(const int32 frameNum) {
 	if (frameNum < 0) {
 		if (_currentFrameNum != 0xffffffff) {
 			_currentFrameNum = 0xffffffff;
-			_currentFrame = 0;
+			_currentFrame = nullptr;
 			triggerRedraw();
 		}
 	} else if (_numFrames > 0) {
@@ -416,7 +416,7 @@ void Sprite::setCurrentFrameIndex(const int32 frameNum) {
 
 SpriteFrame *Sprite::getFrame(const int32 index) {
 	if (index < 0 || (uint32)index >= _numFrames)
-		return 0;
+		return nullptr;
 
 	return _frameArray[index].frame;
 }

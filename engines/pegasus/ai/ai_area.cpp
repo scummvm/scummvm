@@ -38,7 +38,7 @@
 
 namespace Pegasus {
 
-AIArea *g_AIArea = 0;
+AIArea *g_AIArea = nullptr;
 
 AIArea::AIArea(InputHandler *nextHandler) : InputHandler(nextHandler), _leftAreaMovie(kAILeftAreaID),
 		_middleAreaMovie(kAIMiddleAreaID), _rightAreaMovie(kAIRightAreaID), _AIMovie(kAIMovieID) {
@@ -71,7 +71,7 @@ AIArea::~AIArea() {
 	for (AIRuleList::iterator it = _AIRules.begin(); it != _AIRules.end(); it++)
 		delete *it;
 
-	g_AIArea = 0;
+	g_AIArea = nullptr;
 }
 
 // Save last state of AI rules...

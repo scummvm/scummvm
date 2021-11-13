@@ -30,7 +30,7 @@ namespace Pegasus {
 
 GameInteraction::GameInteraction(const InteractionID id, Neighborhood *nextHandler) : IDObject(id), InputHandler(nextHandler) {
 	_isInteracting = false;
-	_savedHandler = 0;
+	_savedHandler = nullptr;
 	_owner = nextHandler;
 }
 

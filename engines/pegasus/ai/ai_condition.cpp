@@ -234,9 +234,9 @@ bool AICurrentItemCondition::fireCondition() {
 	InventoryItem *item = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
 
 	if (_item == kNoItemID)
-		return item == 0;
+		return item == nullptr;
 
-	return item != 0 && item->getObjectID() == _item;
+	return item != nullptr && item->getObjectID() == _item;
 }
 
 AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip)  {
@@ -247,9 +247,9 @@ bool AICurrentBiochipCondition::fireCondition() {
 	BiochipItem *biochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
 
 	if (_biochip == kNoItemID)
-		return biochip == 0;
+		return biochip == nullptr;
 
-	return biochip != 0 && biochip->getObjectID() == _biochip;
+	return biochip != nullptr && biochip->getObjectID() == _biochip;
 }
 
 AIItemStateCondition::AIItemStateCondition(const ItemID item, const ItemState state) {
@@ -259,7 +259,7 @@ AIItemStateCondition::AIItemStateCondition(const ItemID item, const ItemState st
 
 bool AIItemStateCondition::fireCondition() {
 	Item *item = g_allItems.findItemByID(_item);
-	return item != 0 && item->getItemState() == _state;
+	return item != nullptr && item->getItemState() == _state;
 }
 
 AIEnergyMonitorCondition::AIEnergyMonitorCondition(const int32 energyThreshold) {
@@ -267,7 +267,7 @@ AIEnergyMonitorCondition::AIEnergyMonitorCondition(const int32 energyThreshold) 
 }
 
 bool AIEnergyMonitorCondition::fireCondition() {
-	return g_energyMonitor != 0 && g_energyMonitor->getCurrentEnergy() < _energyThreshold;
+	return g_energyMonitor != nullptr && g_energyMonitor->getCurrentEnergy() < _energyThreshold;
 }
 
 AILastExtraCondition::AILastExtraCondition(const ExtraID lastExtra) {

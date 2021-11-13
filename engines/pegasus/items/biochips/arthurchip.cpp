@@ -88,7 +88,7 @@ static const char *kArthurWisdomMovies[] = {
 	"Images/AI/Globals/XGLOBA62"
 };
 
-ArthurChip *g_arthurChip = 0;
+ArthurChip *g_arthurChip = nullptr;
 
 ArthurChip::ArthurChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _arthurWisdomHotspot(kArthurWisdomSpotID),
@@ -118,7 +118,7 @@ ArthurChip::ArthurChip(const ItemID id, const NeighborhoodID neighborhood, const
 }
 
 ArthurChip::~ArthurChip() {
-	g_arthurChip = NULL;
+	g_arthurChip = nullptr;
 
 	g_allHotspots.removeOneHotspot(kArthurWisdomSpotID);
 	g_allHotspots.removeOneHotspot(kChattyArthurSpotID);

@@ -41,7 +41,7 @@ static const CoordType kMaxVelocity = 20;
 PlanetMover::PlanetMover() {
 	setScale(kRovingScale);
 	_dropping = false;
-	_planetMovie = 0;
+	_planetMovie = nullptr;
 }
 
 void PlanetMover::startMoving(Movie *planetMovie) {

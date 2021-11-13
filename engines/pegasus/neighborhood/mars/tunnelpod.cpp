@@ -67,8 +67,8 @@ enum {
 TunnelPod::TunnelPod(Neighborhood *handler) : ChaseInteraction(kMarsTunnelPodInteractionID, handler,
 						kMarsTunnelPodNotificationID, (PegasusEngine *)g_engine), _tunnelMainMovie(kNoDisplayElement),
 						_tunnelAltMovie(kNoDisplayElement), _deathMovie(kNoDisplayElement) {
-	_currentMovie = NULL;
-	_currentCallBack = NULL;
+	_currentMovie = nullptr;
+	_currentCallBack = nullptr;
 }
 
 void TunnelPod::setSoundFXLevel(const uint16 fxLevel) {
@@ -218,8 +218,8 @@ void TunnelPod::branchLeft() {
 	branchStart = 0;
 	branchEnd = 0;
 	flag = 0;
-	movie = NULL;
-	callBack = NULL;
+	movie = nullptr;
+	callBack = nullptr;
 	switch (_tunnelState) {
 	case kTunnelLaunch:
 		branchStart = kBranch1MainStart;
@@ -277,8 +277,8 @@ void TunnelPod::branchRight() {
 	branchStart = 0;
 	branchEnd = 0;
 	flag = 0;
-	movie = NULL;
-	callBack = NULL;
+	movie = nullptr;
+	callBack = nullptr;
 	switch (_tunnelState) {
 	case kTunnelLaunch:
 		switchTo(_deathMovie, _deathCallBack);
@@ -352,7 +352,7 @@ void TunnelPod::dontBranch() {
 
 void TunnelPod::switchTo(Movie &movie, NotificationCallBack &callBack) {
 	if (_currentMovie != &movie) {
-		if (_currentMovie != NULL) {
+		if (_currentMovie != nullptr) {
 			_currentMovie->stop();
 			_currentMovie->hide();
 			_currentMovie->stopDisplaying();

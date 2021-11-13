@@ -37,7 +37,7 @@ static const float kJunkXTarget = 0;
 static const float kJunkYTarget = 0;
 static const float kJunkZTarget = kJunkMinDistance;
 
-SpaceJunk *g_spaceJunk = 0;
+SpaceJunk *g_spaceJunk = nullptr;
 
 SpaceJunk::SpaceJunk(const DisplayElementID id) : ScalingMovie(id) {
 	_timer.setScale(kJunkTimeScale);
@@ -46,7 +46,7 @@ SpaceJunk::SpaceJunk(const DisplayElementID id) : ScalingMovie(id) {
 }
 
 SpaceJunk::~SpaceJunk() {
-	g_spaceJunk = 0;
+	g_spaceJunk = nullptr;
 }
 
 void SpaceJunk::launchJunk(int16 whichJunk, CoordType xOrigin, CoordType yOrigin) {

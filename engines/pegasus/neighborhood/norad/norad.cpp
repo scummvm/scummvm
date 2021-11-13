@@ -111,7 +111,7 @@ GameInteraction *Norad::makeInteraction(const InteractionID interactionID) {
 	case kNoradSubPlatformInteractionID:
 		return new SubPlatform(this);
 	default:
-		return 0;
+		return nullptr;
 	}
 }
 

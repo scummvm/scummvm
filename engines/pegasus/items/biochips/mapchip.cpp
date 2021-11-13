@@ -30,7 +30,7 @@
 
 namespace Pegasus {
 
-MapChip *g_map = 0;
+MapChip *g_map = nullptr;
 
 MapChip::MapChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction) {
@@ -39,7 +39,7 @@ MapChip::MapChip(const ItemID id, const NeighborhoodID neighborhood, const RoomI
 }
 
 MapChip::~MapChip() {
-	g_map = 0;
+	g_map = nullptr;
 }
 
 void MapChip::writeToStream(Common::WriteStream *stream) {

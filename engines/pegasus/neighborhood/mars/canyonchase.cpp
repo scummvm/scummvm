@@ -87,8 +87,8 @@ void MusicTimerEvent::fire() {
 CanyonChase::CanyonChase(Neighborhood *handler) : ChaseInteraction(kMarsCanyonChaseInteractionID, handler,
 							kMarsCanyonChaseNotificationID, (PegasusEngine *)g_engine), _canyonMovie1(kNoDisplayElement),
 							_canyonMovie2(kNoDisplayElement), _deathMovie(kNoDisplayElement), _genoMovie(kNoDisplayElement) {
-	_currentMovie = NULL;
-	_currentCallBack = NULL;
+	_currentMovie = nullptr;
+	_currentCallBack = nullptr;
 }
 
 void CanyonChase::setSoundFXLevel(const uint16 fxLevel) {
@@ -468,7 +468,7 @@ void CanyonChase::hideControlsHint() {
 
 void CanyonChase::switchTo(Movie &movie, NotificationCallBack &callBack) {
 	if (_currentMovie != &movie) {
-		if (_currentMovie != NULL) {
+		if (_currentMovie != nullptr) {
 			_currentMovie->stop();
 			_currentMovie->hide();
 			_currentMovie->stopDisplaying();

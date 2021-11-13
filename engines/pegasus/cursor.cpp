@@ -66,8 +66,8 @@ void Cursor::addCursorFrames(uint16 id) {
 		info.tag = cursStream->readUint16BE();
 		info.hotspot.x = cursStream->readUint16BE();
 		info.hotspot.y = cursStream->readUint16BE();
-		info.surface = 0;
-		info.palette = 0;
+		info.surface = nullptr;
+		info.palette = nullptr;
 		info.colorCount = 0;
 		_info.push_back(info);
 	}

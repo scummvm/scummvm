@@ -30,7 +30,7 @@
 namespace Pegasus {
 
 Blinker::Blinker() {
-	_sprite = 0;
+	_sprite = nullptr;
 	_frame1 = -1;
 	_frame2 = -1;
 	_blinkDuration = 0;
@@ -51,7 +51,7 @@ void Blinker::startBlinking(Sprite *sprite, int32 frame1, int32 frame2, uint32 n
 void Blinker::stopBlinking() {
 	if (_sprite) {
 		_sprite->setCurrentFrameIndex(_frame2);
-		_sprite = 0;
+		_sprite = nullptr;
 		stop();
 	}
 }
@@ -72,7 +72,7 @@ enum {
 	kEnergyExpiredFlag = 1
 };
 
-EnergyMonitor *g_energyMonitor = 0;
+EnergyMonitor *g_energyMonitor = nullptr;
 
 EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWarningLightID) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
@@ -116,7 +116,7 @@ EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWar
 }
 
 EnergyMonitor::~EnergyMonitor() {
-	g_energyMonitor = 0;
+	g_energyMonitor = nullptr;
 }
 
 void EnergyMonitor::setEnergyValue(const uint32 value) {

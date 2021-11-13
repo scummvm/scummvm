@@ -42,7 +42,7 @@ InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood,
 		delete leftInfo;
 	} else {
 		_leftAreaInfo.numEntries = 0;
-		_leftAreaInfo.entries = 0;
+		_leftAreaInfo.entries = nullptr;
 	}
 
 	Common::SeekableReadStream *inventoryInfo = vm->_resFork->getResource(MKTAG('I', 'n', 'v', 'I'), kItemBaseResID + id);

@@ -27,7 +27,7 @@
 
 namespace Pegasus {
 
-Compass *g_compass = 0;
+Compass *g_compass = nullptr;
 
 Compass::Compass() : FaderAnimation(kCompassID) {
 	// Initialize it to east...
@@ -36,7 +36,7 @@ Compass::Compass() : FaderAnimation(kCompassID) {
 }
 
 Compass::~Compass() {
-	g_compass = 0;
+	g_compass = nullptr;
 }
 
 void Compass::initCompass() {

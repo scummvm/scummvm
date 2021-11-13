@@ -29,7 +29,7 @@
 
 namespace Pegasus {
 
-OpticalChip *g_opticalChip = 0;
+OpticalChip *g_opticalChip = nullptr;
 
 OpticalChip::OpticalChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _ariesHotspot(kAriesSpotID), _mercuryHotspot(kMercurySpotID),

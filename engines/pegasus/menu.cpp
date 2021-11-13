@@ -31,7 +31,7 @@
 namespace Pegasus {
 
 GameMenu::GameMenu(const uint32 id) : IDObject(id), InputHandler((InputHandler *)((PegasusEngine *)g_engine)) {
-	_previousHandler = 0;
+	_previousHandler = nullptr;
 	_lastCommand = kMenuCmdNoCommand;
 }
 

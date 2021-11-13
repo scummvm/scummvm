@@ -54,7 +54,7 @@ void StriderCallBack::callBack() {
 
 static const TimeValue kStridingSlop = 39;
 
-Neighborhood *g_neighborhood = 0;
+Neighborhood *g_neighborhood = nullptr;
 
 Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id)
 		: InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName), _navMovie(kNavMovieID), _stridingCallBack(this),
@@ -67,7 +67,7 @@ Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const C
 	allowInput(true);
 	resetLastExtra();
 	g_neighborhood = this;
-	_currentInteraction = 0;
+	_currentInteraction = nullptr;
 	_doneWithInteraction = false;
 	_croppedMovie.setDisplayOrder(kCroppedMovieLayer);
 }
@@ -77,7 +77,7 @@ Neighborhood::~Neighborhood() {
 		_vm->getAllHotspots().remove(*it);
 
 	_neighborhoodHotspots.deleteHotspots();
-	g_neighborhood = 0;
+	g_neighborhood = nullptr;
 
 	loadLoopSound1("");
 	loadLoopSound2("");
@@ -991,7 +991,7 @@ HotspotInfoTable::Entry *Neighborhood::findHotspotEntry(const HotSpotID id) {
 		if (it->hotspot == id)
 			return &(*it);
 
-	return 0;
+	return nullptr;
 }
 
 void Neighborhood::hideNav() {
@@ -1256,7 +1256,7 @@ void Neighborhood::throwAwayInterface() {
 	_navMovie.releaseMovie();
 	_pushIn.deallocateSurface();
 	_turnPush.stopDisplaying();
-	_turnPush.setInAndOutElements(0, 0);
+	_turnPush.setInAndOutElements(nullptr, nullptr);
 	_turnPush.disposeAllCallBacks();
 
 	for (HotspotList::iterator it = _neighborhoodHotspots.begin(); it != _neighborhoodHotspots.end(); it++)
@@ -1416,7 +1416,7 @@ void Neighborhood::setUpAIRules() {
 
 GameInteraction *Neighborhood::makeInteraction(const InteractionID interactionID) {
 	if (interactionID == kNoInteractionID)
-		return 0;
+		return nullptr;
 
 	return new GameInteraction(interactionID, this);
 }
@@ -1444,7 +1444,7 @@ void Neighborhood::bumpIntoWall() {
 }
 
 void Neighborhood::zoomUpOrBump() {
-	Hotspot *zoomSpot = 0;
+	Hotspot *zoomSpot = nullptr;
 
 	for (HotspotList::iterator it = _vm->getAllHotspots().begin(); it != _vm->getAllHotspots().end(); it++) {
 		Hotspot *hotspot = *it;
@@ -1454,7 +1454,7 @@ void Neighborhood::zoomUpOrBump() {
 
 			if (entry && entry->hotspotRoom == GameState.getCurrentRoom() && entry->hotspotDirection == GameState.getCurrentDirection()) {
 				if (zoomSpot) {
-					zoomSpot = 0;
+					zoomSpot = nullptr;
 					break;
 				} else {
 					zoomSpot = hotspot;

@@ -56,7 +56,7 @@ static const ItemState s_highlightState[4][3][7] = {
 	}
 };
 
-AIChip *g_AIChip = 0;
+AIChip *g_AIChip = nullptr;
 
 AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _briefingSpot(kAIBriefingSpotID), _scanSpot(kAIScanSpotID),
@@ -92,7 +92,7 @@ AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID 
 }
 
 AIChip::~AIChip() {
-	g_AIChip = NULL;
+	g_AIChip = nullptr;
 
 	g_allHotspots.removeOneHotspot(kAIBriefingSpotID);
 	g_allHotspots.removeOneHotspot(kAIScanSpotID);

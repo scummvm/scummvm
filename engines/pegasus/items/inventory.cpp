@@ -109,7 +109,7 @@ bool Inventory::itemInInventory(Item *item) {
 }
 
 bool Inventory::itemInInventory(ItemID id) {
-	return findItemByID(id) != NULL;
+	return findItemByID(id) != nullptr;
 }
 
 Item *Inventory::getItemAt(int32 index) {
@@ -118,7 +118,7 @@ Item *Inventory::getItemAt(int32 index) {
 		if (i == index)
 			return *it;
 
-	return 0;
+	return nullptr;
 }
 
 ItemID Inventory::getItemIDAt(int32 index) {

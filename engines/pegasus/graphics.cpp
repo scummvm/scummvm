@@ -42,7 +42,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 
 	_backLayer = kMinAvailableOrder;
 	_frontLayer = kMaxAvailableOrder;
-	_firstDisplayElement = _lastDisplayElement = 0;
+	_firstDisplayElement = _lastDisplayElement = nullptr;
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
 	_curSurface = &_workArea;
 	_erase = false;
@@ -77,7 +77,7 @@ void GraphicsManager::addDisplayElement(DisplayElement *newElement) {
 
 	if (_firstDisplayElement) {
 		DisplayElement *runner = _firstDisplayElement;
-		DisplayElement *lastRunner = 0;
+		DisplayElement *lastRunner = nullptr;
 
 		// Search for first element whose display order is greater than
 		// the new element's and add the new element just before it.
@@ -116,8 +116,8 @@ void GraphicsManager::removeDisplayElement(DisplayElement *oldElement) {
 
 	if (oldElement == _firstDisplayElement) {
 		if (oldElement == _lastDisplayElement) {
-			_firstDisplayElement = 0;
-			_lastDisplayElement = 0;
+			_firstDisplayElement = nullptr;
+			_lastDisplayElement = nullptr;
 		} else {
 			_firstDisplayElement = oldElement->_nextElement;
 		}
@@ -146,7 +146,7 @@ void GraphicsManager::removeDisplayElement(DisplayElement *oldElement) {
 		}
 	}
 
-	oldElement->_nextElement = 0;
+	oldElement->_nextElement = nullptr;
 	oldElement->_elementIsDisplaying = false;
 }
 
@@ -156,7 +156,7 @@ void GraphicsManager::updateDisplay() {
 		if (_erase)
 			_workArea.fillRect(_dirtyRect, _workArea.format.RGBToColor(0, 0, 0));
 
-		for (DisplayElement *runner = _firstDisplayElement; runner != 0; runner = runner->_nextElement) {
+		for (DisplayElement *runner = _firstDisplayElement; runner != nullptr; runner = runner->_nextElement) {
 			Common::Rect bounds;
 			runner->getBounds(bounds);
 
@@ -187,7 +187,7 @@ DisplayElement *GraphicsManager::findDisplayElement(const DisplayElementID id) {
 		runner = runner->_nextElement;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void GraphicsManager::doFadeOutSync(const TimeValue time, const TimeScale scale, bool isBlack) {

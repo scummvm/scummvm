@@ -29,7 +29,7 @@
 
 namespace Pegasus {
 
-ShieldChip *g_shield = 0;
+ShieldChip *g_shield = nullptr;
 
 ShieldChip::ShieldChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction) {
