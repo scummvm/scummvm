@@ -33,7 +33,7 @@ static const PlainGameDescriptor lilliputGames[] = {
 	// Games
 	{"robin", "Adventures of Robin Hood"},
 	{"rome", "Rome: Pathway to Power"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -50,7 +50,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 	// Robin Hood English
 	{
 		{
-			"robin", 0,
+			"robin", nullptr,
 			AD_ENTRY2s("erules.prg", "92aaf84693a8948497ad57864fa31c2a", 71010,
 					   "isomap.dta", "bad97eae03a4db3e99565e39b0b3c06a", 16384),
 			Common::EN_ANY,
@@ -63,7 +63,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 	// Robin Hood French
 	{
 		{
-			"robin", 0,
+			"robin", nullptr,
 			AD_ENTRY2s("frules.prg", "cf076c5ebfe8b3571e74a6a46d79426f", 76660,
 					   "isomap.dta", "bad97eae03a4db3e99565e39b0b3c06a", 16384),
 			Common::FR_FRA,
@@ -76,7 +76,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 	// Robin Hood German
 	{
 		{
-			"robin", 0,
+			"robin", nullptr,
 			AD_ENTRY2s("grules.prg", "b53b7353dc1e841b206a64851e7bc58c", 78050,
 					   "isomap.dta", "bad97eae03a4db3e99565e39b0b3c06a", 16384),
 			Common::DE_DEU,
@@ -89,7 +89,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 	// Robin Hood Italian
 	{
 		{
-			"robin", 0,
+			"robin", nullptr,
 			AD_ENTRY2s("irules.prg", "4d69ed3cda1e1d73585905517ea705d1", 75654,
 					   "isomap.dta", "bad97eae03a4db3e99565e39b0b3c06a", 16384),
 			Common::IT_ITA,
