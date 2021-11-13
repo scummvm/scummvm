@@ -125,7 +125,7 @@ void GfxSurface::decode(const byte *pSrc) {
 
 	byte *pDest = &outputBuffer[0];
 	const byte *pSrcStart = pSrc;
-	const byte *pLookup = NULL;
+	const byte *pLookup = nullptr;
 
 	byte *lookupTable = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
 	byte *srcBuffer   = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
