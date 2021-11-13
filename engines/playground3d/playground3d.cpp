@@ -45,7 +45,7 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 }
 
 Playground3dEngine::Playground3dEngine(OSystem *syst)
-		: Engine(syst), _system(syst), _frameLimiter(0),
+		: Engine(syst), _system(syst), _frameLimiter(nullptr),
 		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0),
 		_clearColor(0.0f, 0.0f, 0.0f, 1.0f), _fade(1.0f), _fadeIn(false) {
 }
