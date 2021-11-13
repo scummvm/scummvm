@@ -43,7 +43,7 @@
 namespace Access {
 
 AccessVIDMovieDecoder::AccessVIDMovieDecoder()
-	: _stream(0), _videoTrack(0), _audioTrack(0) {
+	: _stream(nullptr), _videoTrack(nullptr), _audioTrack(nullptr) {
 	_streamSeekOffset = 0;
 	_streamVideoIndex = 0;
 	_streamAudioIndex = 0;
@@ -207,8 +207,8 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 void AccessVIDMovieDecoder::close() {
 	Video::VideoDecoder::close();
 
-	delete _stream; _stream = 0;
-	_videoTrack = 0;
+	delete _stream; _stream = nullptr;
+	_videoTrack = nullptr;
 
 	_indexCacheTable.clear();
 }
@@ -656,8 +656,8 @@ AccessVIDMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 }
 
 void AccessVIDMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, byte chunkId) {
-	Common::SeekableReadStream *rawAudioStream = 0;
-	Audio::RewindableAudioStream *audioStream = 0;
+	Common::SeekableReadStream *rawAudioStream = nullptr;
+	Audio::RewindableAudioStream *audioStream = nullptr;
 	uint32 audioLengthMSecs = 0;
 
 	if (chunkId == kVIDMovieChunkId_AudioFirstChunk) {

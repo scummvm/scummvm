@@ -134,7 +134,7 @@ bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	_playMovieFile = filename;
 
-	return cmdExit(0, 0);
+	return cmdExit(0, nullptr);
 }
 
 /*------------------------------------------------------------------------*/
