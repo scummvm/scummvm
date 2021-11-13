@@ -72,7 +72,6 @@ void SpiderEngine::showConversation() {
 			}
 			if (!path.empty()) {
 				activeFound = true;
-				frame = frame;
 				Graphics::Surface *surf = decodeFrame("dialog/" + path, frame);
 
 				drawImage(*speaker, x, y, false);
