@@ -144,7 +144,7 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
  * Read _catchallList from Hugo.dat
  */
 void Parser::loadCatchallList(Common::ReadStream &in) {
-	Background *wrkCatchallList = 0;
+	Background *wrkCatchallList = nullptr;
 	Background tmpBG;
 	memset(&tmpBG, 0, sizeof(tmpBG));
 
@@ -183,7 +183,7 @@ const char *Parser::useBG(const char *name) {
 
 void Parser::freeParser() {
 	if (_arrayReqs) {
-		for (int i = 0; _arrayReqs[i] != 0; i++)
+		for (int i = 0; _arrayReqs[i] != nullptr; i++)
 			free(_arrayReqs[i]);
 		free(_arrayReqs);
 		_arrayReqs = nullptr;
@@ -404,7 +404,7 @@ void Parser::command(const char *format, ...) {
  * Locate any member of object name list appearing in command line
  */
 bool Parser::isWordPresent(char **wordArr) const {
-	if (wordArr != 0) {
+	if (wordArr != nullptr) {
 		debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
 
 		for (int i = 0; strlen(wordArr[i]); i++) {

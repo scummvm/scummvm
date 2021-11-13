@@ -202,11 +202,11 @@ char **TextHandler::loadTexts(Common::ReadStream &in) {
 
 void TextHandler::loadAllTexts(Common::ReadStream &in) {
 	// Read textData
-	_textData = loadTextsVariante(in, 0);
+	_textData = loadTextsVariante(in, nullptr);
 
 	// Read stringtData
 	// Only Hugo 1 DOS should use this array
-	_stringtData = loadTextsVariante(in, 0);
+	_stringtData = loadTextsVariante(in, nullptr);
 
 	// Read arrayNouns
 	_arrayNouns = loadTextsArray(in);
@@ -221,7 +221,7 @@ void TextHandler::loadAllTexts(Common::ReadStream &in) {
 	_textEngine = loadTexts(in);
 
 	// Read textIntro
-	_textIntro = loadTextsVariante(in, 0);
+	_textIntro = loadTextsVariante(in, nullptr);
 
 	// Read textMouse
 	_textMouse = loadTexts(in);
@@ -230,7 +230,7 @@ void TextHandler::loadAllTexts(Common::ReadStream &in) {
 	_textParser = loadTexts(in);
 
 	// Read textUtil
-	_textUtil = loadTextsVariante(in, 0);
+	_textUtil = loadTextsVariante(in, nullptr);
 }
 
 void TextHandler::freeTexts(char **ptr) {

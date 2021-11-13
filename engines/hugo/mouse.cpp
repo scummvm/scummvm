@@ -375,7 +375,7 @@ void MouseHandler::readHotspot(Common::ReadStream &in, Hotspot &hotspot) {
  * Load hotspots data from hugo.dat
  */
 void MouseHandler::loadHotspots(Common::ReadStream &in) {
-	Hotspot *wrkHotspots = 0;
+	Hotspot *wrkHotspots = nullptr;
 	Hotspot tmp;
 	memset(&tmp, 0, sizeof(tmp));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {

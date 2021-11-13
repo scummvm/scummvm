@@ -69,7 +69,7 @@ const char *Parser_v1d::findNextNoun(const char *noun) const {
 				return _vm->_text->getNoun(i, 0);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 /**
@@ -395,7 +395,7 @@ void Parser_v1d::lineHandler() {
 
 	// Find the first verb in the line
 	const char *verb = findVerb();
-	const char *noun = 0;                           // Noun not found yet
+	const char *noun = nullptr;                           // Noun not found yet
 	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
 
 	if (verb) {                                     // OK, verb found.  Try to match with object

@@ -107,8 +107,8 @@ Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imag
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Allocate memory for Seq if 0
-	if (seqPtr == 0) {
-		if ((seqPtr = (Seq *)malloc(sizeof(Seq))) == 0)
+	if (seqPtr == nullptr) {
+		if ((seqPtr = (Seq *)malloc(sizeof(Seq))) == nullptr)
 			error("Insufficient memory to run game.");
 	}
 
@@ -128,7 +128,7 @@ Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imag
 	uint16 size = pcxSurface->w * pcxSurface->h;
 
 	// Allocate memory for image data if NULL
-	if (imagePtr == 0)
+	if (imagePtr == nullptr)
 		imagePtr = (byte *)malloc((size_t) size);
 
 	assert(imagePtr);
@@ -176,19 +176,19 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 	}
 
 	bool  firstImgFl = true;                        // Initializes pcx read function
-	Seq *seqPtr = 0;                              // Ptr to sequence structure
+	Seq *seqPtr = nullptr;                              // Ptr to sequence structure
 
 	// Now read the images into an images list
 	for (int j = 0; j < objPtr->_seqNumb; j++) {     // for each sequence
 		for (int k = 0; k < objPtr->_seqList[j]._imageNbr; k++) { // each image
 			if (k == 0) {                           // First image
 				// Read this image - allocate both seq and image memory
-				seqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
+				seqPtr = readPCX(_objectsArchive, nullptr, nullptr, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
 				objPtr->_seqList[j]._seqPtr = seqPtr;
 				firstImgFl = false;
 			} else {                                // Subsequent image
 				// Read this image - allocate both seq and image memory
-				seqPtr->_nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
+				seqPtr->_nextSeqPtr = readPCX(_objectsArchive, nullptr, nullptr, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
 				seqPtr = seqPtr->_nextSeqPtr;
 			}
 
@@ -585,7 +585,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 	Seq *dummySeq;                                // Dummy Seq for image data
 	switch (id) {
 	case UIF_IMAGES:                                // Read uif images file
-		dummySeq = readPCX(ip, 0, buf, true, getUifFilename());
+		dummySeq = readPCX(ip, nullptr, buf, true, getUifFilename());
 		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
