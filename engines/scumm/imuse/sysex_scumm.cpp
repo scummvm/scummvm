@@ -104,7 +104,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	case 1:
 		// Shut down a part. [Bug #1849, comments]
 		part = player->getPart(p[0]);
-		if (part != NULL)
+		if (part != nullptr)
 			part->uninit();
 		break;
 

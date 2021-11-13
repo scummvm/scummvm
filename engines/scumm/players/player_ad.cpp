@@ -79,7 +79,7 @@ Player_AD::~Player_AD() {
 	stopAllSounds();
 	Common::StackLock lock(_mutex);
 	delete _opl2;
-	_opl2 = 0;
+	_opl2 = nullptr;
 }
 
 void Player_AD::setMusicVolume(int vol) {
@@ -195,7 +195,7 @@ void Player_AD::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::StackLock lock(_mutex);
 
 	if (s.getVersion() < VER(95)) {
-		IMuse *dummyImuse = IMuse::create(_vm->_system, NULL, NULL);
+		IMuse *dummyImuse = IMuse::create(_vm->_system, nullptr, nullptr);
 		dummyImuse->saveLoadIMuse(s, _vm, false);
 		delete dummyImuse;
 		return;

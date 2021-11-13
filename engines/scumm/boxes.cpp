@@ -339,7 +339,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	float m, oldM;
 
 	// Do nothing if the given scale table doesn't exist
-	if (resptr == 0)
+	if (resptr == nullptr)
 		return;
 
 	if (resptr[0] == resptr[199]) {
@@ -453,12 +453,12 @@ byte ScummEngine::getNumBoxes() {
 Box *ScummEngine::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr || box == 255)
-		return NULL;
+		return nullptr;
 
 	// WORKAROUND: The NES version of Maniac Mansion attempts to set flags for boxes 2-4
 	// when there are only three boxes (0-2) when walking out to the garage.
 	if ((_game.id == GID_MANIAC) && (_game.platform == Common::kPlatformNES) && (box >= ptr[0]))
-		return NULL;
+		return nullptr;
 
 	// WORKAROUND: In "pass to adventure", the loom demo, when bobbin enters
 	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.

@@ -30,7 +30,7 @@ namespace Scumm {
 Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
 	: Player_V2Base(scumm, mixer, true), _cmsVoicesBase(), _cmsVoices(),
 	  _cmsChips(), _midiDelay(0), _octaveMask(0), _looping(0), _tempo(0),
-	  _tempoSum(0), _midiData(0), _midiSongBegin(0), _musicTimer(0),
+	  _tempoSum(0), _midiData(nullptr), _midiSongBegin(nullptr), _musicTimer(0),
 	  _musicTimerTicks(0), _voiceTimer(0), _loadedMidiSong(0),
 	  _outputTableReady(0), _midiChannel(), _midiChannelUse(),
 	  _lastMidiCommand(0) {
@@ -98,9 +98,9 @@ void Player_V2CMS::stopAllSounds() {
 		clear_channel(i);
 	}
 	_next_nr = _current_nr = 0;
-	_next_data = _current_data = 0;
-	_midiData = 0;
-	_midiSongBegin = 0;
+	_next_data = _current_data = nullptr;
+	_midiData = nullptr;
+	_midiSongBegin = nullptr;
 	_midiDelay = 0;
 	_musicTimer = _musicTimerTicks = 0;
 	offAllChannels();
@@ -111,19 +111,19 @@ void Player_V2CMS::stopSound(int nr) {
 
 	if (_next_nr == nr) {
 		_next_nr = 0;
-		_next_data = 0;
+		_next_data = nullptr;
 	}
 	if (_current_nr == nr) {
 		for (int i = 0; i < 4; i++) {
 			clear_channel(i);
 		}
 		_current_nr = 0;
-		_current_data = 0;
+		_current_data = nullptr;
 		chainNextSound();
 	}
 	if (_loadedMidiSong == nr) {
-		_midiData = 0;
-		_midiSongBegin = 0;
+		_midiData = nullptr;
+		_midiSongBegin = nullptr;
 		_midiDelay = 0;
 		offAllChannels();
 	}
@@ -160,7 +160,7 @@ void Player_V2CMS::startSound(int nr) {
 		if (!_current_nr) {
 			nr = 0;
 			_next_nr = 0;
-			_next_data = 0;
+			_next_data = nullptr;
 		}
 
 		if (nr != _current_nr
@@ -228,7 +228,7 @@ void Player_V2CMS::loadMidiData(byte *data, int sound) {
 	for (int i = 0; i < 8; ++i) {
 		_cmsVoices[i].chanNumber = 0xFF;
 		_cmsVoices[i].curVolume = 0;
-		_cmsVoices[i].nextVoice = 0;
+		_cmsVoices[i].nextVoice = nullptr;
 	}
 
 	_midiDelay = 0;
@@ -262,7 +262,7 @@ void Player_V2CMS::processMidiData() {
 						currentData = _midiData = _midiSongBegin;
 						continue;
 					}
-					_midiData = _midiSongBegin = 0;
+					_midiData = _midiSongBegin = nullptr;
 					_midiDelay = 0;
 					_loadedMidiSong = 0;
 					offAllChannels();
@@ -350,7 +350,7 @@ void Player_V2CMS::playVoice() {
 	}
 
 	_octaveMask = 0xF0;
-	Voice2 *voice = 0;
+	Voice2 *voice = nullptr;
 	for (int i = 0; i < 8; ++i) {
 		voice = &_cmsVoices[i];
 		_octaveMask = ~_octaveMask;
@@ -479,8 +479,8 @@ void Player_V2CMS::offAllChannels() {
 }
 
 Player_V2CMS::Voice2 *Player_V2CMS::getFreeVoice() {
-	Voice2 *curVoice = 0;
-	Voice2 *selected = 0;
+	Voice2 *curVoice = nullptr;
+	Voice2 *selected = nullptr;
 	uint8 volume = 0xFF;
 
 	for (int i = 0; i < 8; ++i) {
@@ -569,7 +569,7 @@ Player_V2CMS::Voice2 *Player_V2CMS::getPlayVoice(byte param) {
 	Voice2 *curVoice = _midiChannel[channelNum];
 
 	if (curVoice) {
-		Voice2 *prevVoice = 0;
+		Voice2 *prevVoice = nullptr;
 		while (true) {
 			if (curVoice->playingNote == param)
 				break;
@@ -577,7 +577,7 @@ Player_V2CMS::Voice2 *Player_V2CMS::getPlayVoice(byte param) {
 			prevVoice = curVoice;
 			curVoice = curVoice->nextVoice;
 			if (!curVoice)
-				return 0;
+				return nullptr;
 		}
 
 		if (prevVoice)
@@ -593,7 +593,7 @@ void Player_V2CMS::clearNote(byte *&data) {
 	Voice2 *voice = getPlayVoice(*data);
 	if (voice) {
 		voice->chanNumber = 0xFF;
-		voice->nextVoice = 0;
+		voice->nextVoice = nullptr;
 		voice->nextProcessState = Voice2::kEnvelopeRelease;
 	}
 	data += 2;

@@ -35,12 +35,12 @@ Codec37Decoder::Codec37Decoder(int width, int height) {
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3 + 0x13600;
 	_deltaBuf = (byte *)calloc(_deltaSize, sizeof(byte));
-	if (_deltaBuf == 0)
+	if (_deltaBuf == nullptr)
 		error("unable to allocate decoder buffer");
 	_deltaBufs[0] = _deltaBuf + 0x4D80;
 	_deltaBufs[1] = _deltaBuf + 0xE880 + _frameSize;
 	_offsetTable = new int16[255];
-	if (_offsetTable == 0)
+	if (_offsetTable == nullptr)
 		error("unable to allocate decoder offset table");
 	_curtable = 0;
 	_prevSeqNb = 0;
@@ -51,16 +51,16 @@ Codec37Decoder::Codec37Decoder(int width, int height) {
 Codec37Decoder::~Codec37Decoder() {
 	if (_offsetTable) {
 		delete[] _offsetTable;
-		_offsetTable = 0;
+		_offsetTable = nullptr;
 		_tableLastPitch = -1;
 		_tableLastIndex = -1;
 	}
 	if (_deltaBuf) {
 		free(_deltaBuf);
 		_deltaSize = 0;
-		_deltaBuf = 0;
-		_deltaBufs[0] = 0;
-		_deltaBufs[1] = 0;
+		_deltaBuf = nullptr;
+		_deltaBufs[0] = nullptr;
+		_deltaBufs[1] = nullptr;
 	}
 }
 

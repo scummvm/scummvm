@@ -191,7 +191,7 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 #endif
 	saveInfos(out);
 
-	Common::Serializer ser(0, out);
+	Common::Serializer ser(nullptr, out);
 	ser.setVersion(CURRENT_VER);
 	saveLoadWithSerializer(ser);
 	return true;
@@ -230,7 +230,7 @@ void ScummEngine_v4::prepareSavegame() {
 
 	// free memory of the last prepared savegame
 	delete _savePreparedSavegame;
-	_savePreparedSavegame = NULL;
+	_savePreparedSavegame = nullptr;
 
 	// store headerless savegame in a compressed memory stream
 	memStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::NO);
@@ -257,7 +257,7 @@ bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 	SaveGameHeader hdr;
 	uint32 nread, nwritten;
 
-	out = 0;
+	out = nullptr;
 	success = true;
 
 	// check if savegame was successfully stored in memory
@@ -447,7 +447,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	//
 	// Now do the actual loading
 	//
-	Common::Serializer ser(in, 0);
+	Common::Serializer ser(in, nullptr);
 	ser.setVersion(hdr.ver);
 	saveLoadWithSerializer(ser);
 	delete in;
@@ -564,7 +564,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	clearTextSurface();
 
-	_lastCodePtr = NULL;
+	_lastCodePtr = nullptr;
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
 
@@ -589,7 +589,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	//
 	// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
 	if (_game.platform == Common::kPlatformNES) {
-		runScript(5, 0, 0, 0);
+		runScript(5, 0, 0, nullptr);
 
 		if (VAR(224)) {
 			_sound->addSoundToQueue(VAR(224));
@@ -633,7 +633,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
 
 bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
-	Common::InSaveFile *in = 0;
+	Common::InSaveFile *in = nullptr;
 	bool result = false;
 
 	desc.clear();

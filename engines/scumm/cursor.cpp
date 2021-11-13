@@ -136,7 +136,7 @@ void ScummEngine::updateCursor() {
 void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
-	if (vs == NULL) {
+	if (vs == nullptr) {
 		debug(0, "grabCursor: invalid Y %d", y);
 		return;
 	}
@@ -315,7 +315,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		bomp = findResource(MKTAG('B','O','M','P'), dataptr);
 	}
 
-	if (bomp != NULL)
+	if (bomp != nullptr)
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);

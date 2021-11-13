@@ -52,7 +52,7 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
+		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, nullptr);
 	}
 
 	// If the camera moved and text is visible, remove it
@@ -68,7 +68,7 @@ void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 	camera._follows = a->_number;
 
 	if (!a->isInCurrentRoom()) {
-		startScene(a->getRoom(), 0, 0);
+		startScene(a->getRoom(), nullptr, 0);
 		camera._mode = kFollowActorCameraMode;
 		camera._cur.x = a->getPos().x;
 		setCameraAt(camera._cur.x, 0);
@@ -94,7 +94,7 @@ void ScummEngine::clampCameraPos(Common::Point *pt) {
 void ScummEngine::moveCamera() {
 	int pos = camera._cur.x;
 	int t;
-	Actor *a = NULL;
+	Actor *a = nullptr;
 	const bool snapToX = (_snapScroll || (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X)));
 
 	camera._cur.x &= 0xFFF8;
@@ -163,7 +163,7 @@ void ScummEngine::moveCamera() {
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT) && pos != camera._cur.x) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
+		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, nullptr);
 	}
 }
 

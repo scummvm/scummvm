@@ -54,7 +54,7 @@ static uint32 GetCRC(byte *data, int len) {
 
 class V2A_Sound {
 public:
-	V2A_Sound() : _id(0), _mod(NULL) { }
+	V2A_Sound() : _id(0), _mod(nullptr) { }
 	virtual ~V2A_Sound() {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) = 0;
 	virtual bool update() = 0;
@@ -79,15 +79,15 @@ public:
 template<int numChan>
 class V2A_Sound_Base : public V2A_Sound {
 public:
-	V2A_Sound_Base() : _offset(0), _size(0), _data(0) { }
-	V2A_Sound_Base(uint16 offset, uint16 size) : _offset(offset), _size(size), _data(0) { }
+	V2A_Sound_Base() : _offset(0), _size(0), _data(nullptr) { }
+	V2A_Sound_Base(uint16 offset, uint16 size) : _offset(offset), _size(size), _data(nullptr) { }
 	void stop() override {
 		assert(_id);
 		for (int i = 0; i < numChan; i++)
 			_mod->stopChannel(_id | (i << 8));
 		_id = 0;
 		free(_data);
-		_data = 0;
+		_data = nullptr;
 	}
 protected:
 	const uint16 _offset;
@@ -1844,7 +1844,7 @@ static V2A_Sound *findSound(unsigned long crc) {
 	CRCToSound(0x59976529, V2A_Sound_Music(0x088E, 0x092E, 0x048E, 0x05EE, 0x074E, 0x07EE, 0x112E, true)); // Zak 49
 	CRCToSound(0xED1EED02, V2A_Sound_Music(0x08D0, 0x0950, 0x0440, 0x07E0, 0x08B0, 0x08C0, 0x1350, false)); // Zak 112
 	CRCToSound(0x5A16C037, V2A_Sound_Music(0x634A, 0x64CA, 0x049A, 0x18FA, 0x398A, 0x511A, 0x6CCA, false)); // Zak 95
-	return NULL;
+	return nullptr;
 }
 
 Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
@@ -1855,7 +1855,7 @@ Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
 
 	for (i = 0; i < V2A_MAXSLOTS; i++) {
 		_slot[i].id = 0;
-		_slot[i].sound = NULL;
+		_slot[i].sound = nullptr;
 	}
 
 	_mod = new Player_MOD(mixer);
@@ -1890,7 +1890,7 @@ void Player_V2A::stopAllSounds() {
 			continue;
 		_slot[i].sound->stop();
 		delete _slot[i].sound;
-		_slot[i].sound = NULL;
+		_slot[i].sound = nullptr;
 		_slot[i].id = 0;
 	}
 }
@@ -1904,7 +1904,7 @@ void Player_V2A::stopSound(int nr) {
 		return;
 	_slot[i].sound->stop();
 	delete _slot[i].sound;
-	_slot[i].sound = NULL;
+	_slot[i].sound = nullptr;
 	_slot[i].id = 0;
 }
 
@@ -1914,7 +1914,7 @@ void Player_V2A::startSound(int nr) {
 	assert(data);
 	uint32 crc = GetCRC(data + 0x0A, READ_BE_UINT16(data + 0x08));
 	V2A_Sound *snd = findSound(crc);
-	if (snd == NULL) {
+	if (snd == nullptr) {
 		warning("player_v2a - sound %i not recognized yet (crc %08X)", nr, crc);
 		return;
 	}
@@ -1939,7 +1939,7 @@ void Player_V2A::updateSound() {
 		if ((_slot[i].id) && (!_slot[i].sound->update())) {
 			_slot[i].sound->stop();
 			delete _slot[i].sound;
-			_slot[i].sound = NULL;
+			_slot[i].sound = nullptr;
 			_slot[i].id = 0;
 		}
 	}

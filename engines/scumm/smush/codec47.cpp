@@ -145,7 +145,7 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 	int32 b1, b2;
 	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	const int8 *table47_1 = 0, *table47_2 = 0;
+	const int8 *table47_1 = nullptr, *table47_2 = nullptr;
 	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
@@ -529,7 +529,7 @@ Codec47Decoder::Codec47Decoder(int width, int height) {
 	_height = height;
 	_tableBig = (byte *)malloc(256 * 388);
 	_tableSmall = (byte *)malloc(256 * 128);
-	if ((_tableBig != NULL) && (_tableSmall != NULL)) {
+	if ((_tableBig != nullptr) && (_tableSmall != nullptr)) {
 		makeTablesInterpolation(4);
 		makeTablesInterpolation(8);
 	}
@@ -545,24 +545,24 @@ Codec47Decoder::Codec47Decoder(int width, int height) {
 Codec47Decoder::~Codec47Decoder() {
 	if (_tableBig) {
 		free(_tableBig);
-		_tableBig = NULL;
+		_tableBig = nullptr;
 	}
 	if (_tableSmall) {
 		free(_tableSmall);
-		_tableSmall = NULL;
+		_tableSmall = nullptr;
 	}
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		free(_deltaBuf);
 		_deltaSize = 0;
-		_deltaBuf = NULL;
-		_deltaBufs[0] = NULL;
-		_deltaBufs[1] = NULL;
+		_deltaBuf = nullptr;
+		_deltaBufs[0] = nullptr;
+		_deltaBufs[1] = nullptr;
 	}
 }
 
 bool Codec47Decoder::decode(byte *dst, const byte *src) {
-	if ((_tableBig == NULL) || (_tableSmall == NULL) || (_deltaBuf == NULL))
+	if ((_tableBig == nullptr) || (_tableSmall == nullptr) || (_deltaBuf == nullptr))
 		return false;
 
 	_offset1 = _deltaBufs[1] - _curBuf;

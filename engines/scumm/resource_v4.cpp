@@ -181,7 +181,7 @@ void ScummEngine_v4::readMAXS(int blockSize) {
 	_numArray = 50;
 	_numVerbs = 100;
 	_numNewNames = 50;
-	_objectRoomTable = NULL;
+	_objectRoomTable = nullptr;
 	_numCharsets = 9;					// 9
 	_numInventory = 80;					// 80
 	_numGlobalScripts = 200;

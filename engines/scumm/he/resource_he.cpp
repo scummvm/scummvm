@@ -62,12 +62,12 @@ ResExtractor::CachedCursor *ResExtractor::findCachedCursor(int id) {
 		if (_cursorCache[i].valid && _cursorCache[i].id == id)
 			return &_cursorCache[i];
 
-	return NULL;
+	return nullptr;
 }
 
 ResExtractor::CachedCursor *ResExtractor::getCachedCursorSlot() {
 	uint32 minLastUsed = 0;
-	CachedCursor *r = NULL;
+	CachedCursor *r = nullptr;
 
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
 		CachedCursor *cc = &_cursorCache[i];
@@ -90,7 +90,7 @@ ResExtractor::CachedCursor *ResExtractor::getCachedCursorSlot() {
 void ResExtractor::setCursor(int id) {
 	CachedCursor *cc = findCachedCursor(id);
 
-	if (cc != NULL) {
+	if (cc != nullptr) {
 		debug(7, "Found cursor %d in cache slot %lu", id, (long)(cc - _cursorCache));
 	} else {
 		cc = getCachedCursorSlot();
@@ -160,12 +160,12 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 }
 
 MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
-	_resMgr = NULL;
+	_resMgr = nullptr;
 }
 
 bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	// Create the MacResManager if not created already
-	if (_resMgr == NULL) {
+	if (_resMgr == nullptr) {
 		_resMgr = new Common::MacResManager();
 		if (!_resMgr->open(_vm->generateFilename(-3)))
 			error("Cannot open file %s", _fileName.c_str());

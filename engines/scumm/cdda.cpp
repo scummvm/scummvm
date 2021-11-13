@@ -110,11 +110,11 @@ Audio::SeekableAudioStream *makeCDDAStream(
 	Audio::SeekableAudioStream *s = new CDDAStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;
-		return 0;
+		return nullptr;
 	} else {
 		return s;
 	}
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Scumm

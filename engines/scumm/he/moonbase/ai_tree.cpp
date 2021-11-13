@@ -41,7 +41,7 @@ Tree::Tree(AI *ai) : _ai(ai) {
 	pBaseNode = new Node;
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
-	_currentNode = 0;
+	_currentNode = nullptr;
 	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
@@ -52,7 +52,7 @@ Tree::Tree(IContainedObject *contents, AI *ai) : _ai(ai) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
-	_currentNode = 0;
+	_currentNode = nullptr;
 	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
@@ -63,7 +63,7 @@ Tree::Tree(IContainedObject *contents, int maxDepth, AI *ai) : _ai(ai) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = MAX_NODES;
-	_currentNode = 0;
+	_currentNode = nullptr;
 	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
@@ -74,7 +74,7 @@ Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes, AI *ai) : _ai
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = maxNodes;
-	_currentNode = 0;
+	_currentNode = nullptr;
 	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
@@ -97,7 +97,7 @@ Tree::Tree(const Tree *sourceTree, AI *ai) : _ai(ai) {
 	_maxDepth = sourceTree->getMaxDepth();
 	_maxNodes = sourceTree->getMaxNodes();
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
-	_currentNode = 0;
+	_currentNode = nullptr;
 	_currentChildIndex = 0;
 
 	duplicateTree(sourceTree->getBaseNode(), pBaseNode);
@@ -108,7 +108,7 @@ Tree::~Tree() {
 	Node *pNodeItr = pBaseNode;
 
 	// Depth first traversal of nodes to delete them
-	while (pNodeItr != NULL) {
+	while (pNodeItr != nullptr) {
 		// If any children are left, move to one of them
 		if (!(pNodeItr->getChildren().empty())) {
 			pNodeItr = pNodeItr->popChild();
@@ -117,7 +117,7 @@ Tree::~Tree() {
 			Node *pTemp = pNodeItr;
 			pNodeItr = pNodeItr->getParent();
 			delete pTemp;
-			pTemp = NULL;
+			pTemp = nullptr;
 		}
 	}
 
@@ -127,17 +127,17 @@ Tree::~Tree() {
 Node *Tree::aStarSearch() {
 	Common::SortedArray<TreeNode *> mmfpOpen(compareTreeNodes);
 
-	Node *currentNode = NULL;
+	Node *currentNode = nullptr;
 	float currentT;
 
-	Node *retNode = NULL;
+	Node *retNode = nullptr;
 
 	float temp = pBaseNode->getContainedObject()->calcT();
 
 	if (static_cast<int>(temp) != SUCCESS) {
 		mmfpOpen.insert(new TreeNode(pBaseNode->getObjectT(), pBaseNode));
 
-		while (mmfpOpen.size() && (retNode == NULL)) {
+		while (mmfpOpen.size() && (retNode == nullptr)) {
 			currentNode = mmfpOpen.front()->node;
 			mmfpOpen.erase(mmfpOpen.begin());
 
@@ -167,7 +167,7 @@ Node *Tree::aStarSearch() {
 
 
 Node *Tree::aStarSearch_singlePassInit() {
-	Node *retNode = NULL;
+	Node *retNode = nullptr;
 
 	_currentChildIndex = 1;
 
@@ -184,7 +184,7 @@ Node *Tree::aStarSearch_singlePassInit() {
 
 Node *Tree::aStarSearch_singlePass() {
 	float currentT = 0.0;
-	Node *retNode = NULL;
+	Node *retNode = nullptr;
 
 	static int maxTime = 0;
 
@@ -227,7 +227,7 @@ Node *Tree::aStarSearch_singlePass() {
 			}
 
 			if (!(_currentMap->size()) && (currentT != SUCCESS)) {
-				assert(_currentNode != NULL);
+				assert(_currentNode != nullptr);
 				retNode = _currentNode;
 			}
 		}

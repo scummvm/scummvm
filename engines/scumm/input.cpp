@@ -483,10 +483,10 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		prepareSavegame();
 		if (_game.id == GID_MANIAC && _game.version == 0) {
-			runScript(2, 0, 0, 0);
+			runScript(2, 0, 0, nullptr);
 		}
 		if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
-			runScript(163, 0, 0, 0);
+			runScript(163, 0, 0, nullptr);
 		}
 	}
 
@@ -544,12 +544,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
+			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 		openMainMenuDialog();		// Display global main menu
 
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
+			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 
 	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 		confirmRestartDialog();

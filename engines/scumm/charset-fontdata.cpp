@@ -591,7 +591,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	_fontHeight = 8;
 	_curId = 0;
 
-	const byte *replacementMap = NULL, *replacementData = NULL;
+	const byte *replacementMap = nullptr, *replacementData = nullptr;
 	int replacementChars = 0;
 
 	switch (language) {

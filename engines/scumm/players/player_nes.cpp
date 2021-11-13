@@ -611,7 +611,7 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 		_slot[i].framesleft = 0;
 		_slot[i].type = 0;
 		_slot[i].offset = 0;
-		_slot[i].data = NULL;
+		_slot[i].data = nullptr;
 	}
 
 	for (i = 0; i < NUMCHANS; i++) {
@@ -625,7 +625,7 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 	}
 	isSFXplaying = wasSFXplaying = false;
 
-	auxData1 = auxData2 = NULL;
+	auxData1 = auxData2 = nullptr;
 	numNotes = 0;
 
 	APU_writeControl(0);

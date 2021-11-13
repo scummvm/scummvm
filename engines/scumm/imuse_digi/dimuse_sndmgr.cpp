@@ -315,7 +315,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::allocSlot() {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
@@ -400,7 +400,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 
 	const bool header_outside = ((_vm->_game.id == GID_CMI) && !(_vm->_game.features & GF_DEMO));
 	bool result = false;
-	byte *ptr = NULL;
+	byte *ptr = nullptr;
 
 	switch (soundType) {
 	case IMUSE_RESOURCE:
@@ -409,9 +409,9 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 		_vm->ensureResourceLoaded(rtSound, soundId);
 		_vm->_res->lock(rtSound, soundId);
 		ptr = _vm->getResourceAddress(rtSound, soundId);
-		if (ptr == NULL) {
+		if (ptr == nullptr) {
 			closeSound(sound);
-			return NULL;
+			return nullptr;
 		}
 		sound->resPtr = ptr;
 		break;
@@ -424,7 +424,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 		if (!result) {
 			closeSound(sound);
-			return NULL;
+			return nullptr;
 		}
 		if (sound->compressed) {
 			char fileName[24];
@@ -433,7 +433,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			Common::SeekableReadStream *rmapFile = sound->bundle->getFile(fileName, offset, size);
 			if (!rmapFile) {
 				closeSound(sound);
-				return NULL;
+				return nullptr;
 			}
 			prepareSoundFromRMAP(rmapFile, sound, offset, size);
 			strcpy(sound->name, soundName);
@@ -443,19 +443,19 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			sound->disk = disk;
 			return sound;
 		} else if (soundName[0] == 0) {
-			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside, rawBundle) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside, rawBundle) == 0 || ptr == nullptr) {
 				closeSound(sound);
 				free(ptr);
-				return NULL;
+				return nullptr;
 			}
 		} else {
-			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside, rawBundle) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside, rawBundle) == 0 || ptr == nullptr) {
 				closeSound(sound);
 				free(ptr);
-				return NULL;
+				return nullptr;
 			}
 		}
-		sound->resPtr = 0;
+		sound->resPtr = nullptr;
 		break;
 	default:
 		error("ImuseDigiSndMgr::openSound() Unknown soundType %d (trying to load sound %d)", soundType, soundId);
@@ -618,7 +618,7 @@ void ImuseDigiSndMgr::getSyncSizeAndPtrById(SoundDesc *soundDesc, int number, in
 		*sync_ptr = soundDesc->sync[number].ptr;
 	} else {
 		sync_size = 0;
-		*sync_ptr = NULL;
+		*sync_ptr = nullptr;
 	}
 }
 
@@ -751,7 +751,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		size = soundDesc->compressedStream->readBuffer((int16 *)*buf, size / 2) * 2;
 		if (soundDesc->compressedStream->endOfData() || soundDesc->endFlag) {
 			delete soundDesc->compressedStream;
-			soundDesc->compressedStream = NULL;
+			soundDesc->compressedStream = nullptr;
 			soundDesc->lastFileName[0] = 0;
 			soundDesc->endFlag = true;
 		}

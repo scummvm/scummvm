@@ -291,7 +291,7 @@ void ScummEngine::readIndexFile() {
 	}
 
 	if (checkTryMedia(_fileHandle)) {
-		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
+		displayMessage(nullptr, "You're trying to run game encrypted by ActiveMark. This is not supported.");
 		quitGame();
 
 		return;
@@ -749,7 +749,7 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 		idx &= ~0x33539000;
 
 	if (!_res->validateResource("getResourceAddress", type, idx))
-		return NULL;
+		return nullptr;
 
 	// If the resource is missing, but loadable from the game data files, try to do so.
 	if (!_res->_types[type][idx]._address && _res->_types[type]._mode != kDynamicResTypeMode) {
@@ -759,7 +759,7 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 	ptr = (byte *)_res->_types[type][idx]._address;
 	if (!ptr) {
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", nameOfResType(type), idx);
-		return NULL;
+		return nullptr;
 	}
 
 	_res->setResourceCounter(type, idx, 1);
@@ -775,8 +775,8 @@ byte *ScummEngine::getStringAddress(ResId idx) {
 
 byte *ScummEngine_v6::getStringAddress(ResId idx) {
 	byte *addr = getResourceAddress(rtString, idx);
-	if (addr == NULL)
-		return NULL;
+	if (addr == nullptr)
+		return nullptr;
 	// Skip over the ArrayHeader
 	return addr + 6;
 }
@@ -824,7 +824,7 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
-		return NULL;
+		return nullptr;
 
 	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
@@ -840,7 +840,7 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	expireResources(size);
 
 	byte *ptr = new byte[size + SAFETY_AREA]();
-	if (ptr == NULL) {
+	if (ptr == nullptr) {
 		error("createResource(%s,%d): Out of memory while allocating %d", nameOfResType(type), idx, size);
 	}
 
@@ -853,7 +853,7 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 }
 
 ResourceManager::Resource::Resource() {
-	_address = 0;
+	_address = nullptr;
 	_size = 0;
 	_flags = 0;
 	_status = 0;
@@ -863,12 +863,12 @@ ResourceManager::Resource::Resource() {
 
 ResourceManager::Resource::~Resource() {
 	delete[] _address;
-	_address = 0;
+	_address = nullptr;
 }
 
 void ResourceManager::Resource::nuke() {
 	delete[] _address;
-	_address = 0;
+	_address = nullptr;
 	_size = 0;
 	_flags = 0;
 	_status &= ~RS_MODIFIED;
@@ -910,7 +910,7 @@ bool ResourceManager::validateResource(const char *str, ResType type, ResId idx)
 
 void ResourceManager::nukeResource(ResType type, ResId idx) {
 	byte *ptr = _types[type][idx]._address;
-	if (ptr != NULL) {
+	if (ptr != nullptr) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
 		_allocatedSize -= _types[type][idx]._size;
 		_types[type][idx].nuke();
@@ -925,13 +925,13 @@ const byte *ScummEngine::findResourceData(uint32 tag, const byte *ptr) {
 	else
 		ptr = findResource(tag, ptr);
 
-	if (ptr == NULL)
-		return NULL;
+	if (ptr == nullptr)
+		return nullptr;
 	return ptr + _resourceHeaderSize;
 }
 
 int ScummEngine::getResourceDataSize(const byte *ptr) const {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return 0;
 
 	if (_game.features & GF_OLD_BUNDLE)
@@ -1153,7 +1153,7 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 bool ResourceManager::isResourceLoaded(ResType type, ResId idx) const {
 	if (!validateResource("isResourceLoaded", type, idx))
 		return false;
-	return _types[type][idx]._address != NULL;
+	return _types[type][idx]._address != nullptr;
 }
 
 void ResourceManager::resourceStats() {
@@ -1183,7 +1183,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 	// Used to be 50, which wasn't enough for MI2 and FOA. See bugs
 	// #1591, #1600 and #1607.
 	_numNewNames = 150;
-	_objectRoomTable = NULL;
+	_objectRoomTable = nullptr;
 
 	_fileHandle->readUint16LE();                      // 50
 	_numCharsets = _fileHandle->readUint16LE();       // 9
@@ -1280,7 +1280,7 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 		_numGlobalObjects = _fileHandle->readUint16LE();
 		_numNewNames = 50;
 
-		_objectRoomTable = NULL;
+		_objectRoomTable = nullptr;
 		_numGlobalScripts = 200;
 
 		if (_game.heversion >= 70) {
@@ -1453,18 +1453,18 @@ ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
 
 const byte *ResourceIterator::findNext(uint32 tag) {
 	uint32 size = 0;
-	const byte *result = 0;
+	const byte *result = nullptr;
 
 	if (_smallHeader) {
 		uint16 smallTag = newTag2Old(tag);
 		do {
 			if (_pos >= _size)
-				return 0;
+				return nullptr;
 
 			result = _ptr;
 			size = READ_LE_UINT32(result);
 			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
+				return nullptr;	// Avoid endless loop
 
 			_pos += size;
 			_ptr += size;
@@ -1472,12 +1472,12 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 	} else {
 		do {
 			if (_pos >= _size)
-				return 0;
+				return nullptr;
 
 			result = _ptr;
 			size = READ_BE_UINT32(result + 4);
 			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
+				return nullptr;	// Avoid endless loop
 
 			_pos += size;
 			_ptr += size;
@@ -1499,7 +1499,7 @@ const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 			curpos = 0;
 		} else {
 			assert(searchin);
-			return NULL;
+			return nullptr;
 		}
 	} else {
 		searchin += 4;
@@ -1517,14 +1517,14 @@ const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 		size = READ_BE_UINT32(searchin + 4);
 		if ((int32)size <= 0) {
 			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
-			return NULL;
+			return nullptr;
 		}
 
 		curpos += size;
 		searchin += size;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const byte *findResourceSmall(uint32 tag, const byte *searchin) {
@@ -1533,7 +1533,7 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 
 	smallTag = newTag2Old(tag);
 	if (smallTag == 0)
-		return NULL;
+		return nullptr;
 
 	assert(searchin);
 
@@ -1549,14 +1549,14 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 
 		if ((int32)size <= 0) {
 			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
-			return NULL;
+			return nullptr;
 		}
 
 		curpos += size;
 		searchin += size;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 newTag2Old(uint32 newTag) {

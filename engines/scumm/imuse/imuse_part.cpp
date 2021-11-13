@@ -38,10 +38,10 @@ namespace Scumm {
 
 Part::Part() {
 	_slot = 0;
-	_next = 0;
-	_prev = 0;
-	_mc = 0;
-	_player = 0;
+	_next = nullptr;
+	_prev = nullptr;
+	_mc = nullptr;
+	_player = nullptr;
 	_pitchbend = 0;
 	_pitchbend_factor = 0;
 	_transpose = 0;
@@ -78,13 +78,13 @@ void Part::saveLoadWithSerializer(Common::Serializer &ser) {
 		ser.syncAsUint16LE(num);
 	} else {
 		ser.syncAsUint16LE(num);
-		_next = (num ? &_se->_parts[num - 1] : 0);
+		_next = (num ? &_se->_parts[num - 1] : nullptr);
 
 		ser.syncAsUint16LE(num);
-		_prev = (num ? &_se->_parts[num - 1] : 0);
+		_prev = (num ? &_se->_parts[num - 1] : nullptr);
 
 		ser.syncAsUint16LE(num);
-		_player = (num ? &_se->_players[num - 1] : 0);
+		_player = (num ? &_se->_players[num - 1] : nullptr);
 	}
 
 	ser.syncAsSint16LE(_pitchbend, VER(8));
@@ -280,10 +280,10 @@ void Part::noteOff(byte note) {
 }
 
 void Part::init() {
-	_player = NULL;
-	_next = NULL;
-	_prev = NULL;
-	_mc = NULL;
+	_player = nullptr;
+	_next = nullptr;
+	_prev = nullptr;
+	_mc = nullptr;
 }
 
 void Part::setup(Player *player) {
@@ -309,7 +309,7 @@ void Part::setup(Player *player) {
 	_modwheel = 0;
 	_bank = 0;
 	_pedal = false;
-	_mc = NULL;
+	_mc = nullptr;
 }
 
 void Part::uninit() {
@@ -317,14 +317,14 @@ void Part::uninit() {
 		return;
 	off();
 	_player->removePart(this);
-	_player = NULL;
+	_player = nullptr;
 }
 
 void Part::off() {
 	if (_mc) {
 		_mc->allNotesOff();
 		_mc->release();
-		_mc = NULL;
+		_mc = nullptr;
 	}
 }
 

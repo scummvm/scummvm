@@ -56,9 +56,9 @@ uint16 Player::_active_notes[128];
 //////////////////////////////////////////////////
 
 Player::Player() :
-	_midi(NULL),
-	_parser(NULL),
-	_parts(NULL),
+	_midi(nullptr),
+	_parser(nullptr),
+	_parts(nullptr),
 	_active(false),
 	_scanning(false),
 	_id(0),
@@ -79,7 +79,7 @@ Player::Player() :
 	_isMT32(false),
 	_isMIDI(false),
 	_supportsPercussion(false),
-	_se(0),
+	_se(nullptr),
 	_vol_chan(0),
 	_abort(false),
 	_music_tick(0),
@@ -89,7 +89,7 @@ Player::Player() :
 Player::~Player() {
 	if (_parser) {
 		delete _parser;
-		_parser = 0;
+		_parser = nullptr;
 	}
 }
 
@@ -109,7 +109,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	_isMIDI = _se->isMIDI(sound);
 	_supportsPercussion = _se->supportsPercussion(sound);
 
-	_parts = NULL;
+	_parts = nullptr;
 	_active = true;
 	_midi = midi;
 	_id = sound;
@@ -122,7 +122,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 
 	if (start_seq_sound(sound) != 0) {
 		_active = false;
-		_midi = NULL;
+		_midi = nullptr;
 		return false;
 	}
 
@@ -152,13 +152,13 @@ void Player::clear() {
 
 	if (_parser) {
 		_parser->unloadMusic();
-		_parser->setMidiDriver(NULL);
+		_parser->setMidiDriver(nullptr);
 	}
 
 	uninit_parts();
 	_se->ImFireAllTriggers(_id);
 	_active = false;
-	_midi = NULL;
+	_midi = nullptr;
 	_id = 0;
 	_note_offset = 0;
 }
@@ -180,7 +180,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	}
 
 	ptr = _se->findStartOfSound(sound);
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return -1;
 
 	if (!memcmp(ptr, "RO", 2)) {
@@ -274,7 +274,7 @@ void Player::send(uint32 b) {
 	switch (cmd >> 4) {
 	case 0x8: // Key Off
 		if (!_scanning) {
-			if ((part = getPart(chan)) != 0)
+			if ((part = getPart(chan)) != nullptr)
 				part->noteOff(param1);
 		} else {
 			_active_notes[param1] &= ~(1 << chan);
@@ -286,7 +286,7 @@ void Player::send(uint32 b) {
 		if (!_scanning) {
 			if (_isMT32 && !_se->isNativeMT32())
 				param2 = (((param2 * 3) >> 2) + 32) & 0x7F;
-			if ((part = getPart(chan)) != 0)
+			if ((part = getPart(chan)) != nullptr)
 				part->noteOn(param1, param2);
 		} else {
 			_active_notes[param1] |= (1 << chan);
@@ -642,7 +642,7 @@ Part *Player::getActivePart(uint8 chan) {
 			return part;
 		part = part->_next;
 	}
-	return 0;
+	return nullptr;
 }
 
 Part *Player::getPart(uint8 chan) {
@@ -653,11 +653,11 @@ Part *Player::getPart(uint8 chan) {
 	part = _se->allocate_part(_priority, _midi);
 	if (!part) {
 		debug(1, "No parts available");
-		return NULL;
+		return nullptr;
 	}
 
 	// Insert part into front of parts list
-	part->_prev = NULL;
+	part->_prev = nullptr;
 	part->_next = _parts;
 	if (_parts)
 		_parts->_prev = part;
@@ -928,7 +928,7 @@ int Player::addParameterFader(int param, int target, int time) {
 	}
 
 	ParameterFader *ptr = &_parameterFaders[0];
-	ParameterFader *best = 0;
+	ParameterFader *best = nullptr;
 	int i;
 	for (i = ARRAYSIZE(_parameterFaders); i; --i, ++ptr) {
 		if (ptr->param == param) {
@@ -1014,7 +1014,7 @@ void Player::removePart(Part *part) {
 		part->_prev->_next = part->_next;
 	else
 		_parts = part->_next;
-	part->_next = part->_prev = 0;
+	part->_next = part->_prev = nullptr;
 }
 
 void Player::fixAfterLoad() {
@@ -1056,7 +1056,7 @@ static void syncWithSerializer(Common::Serializer &s, ParameterFader &pf) {
 void Player::saveLoadWithSerializer(Common::Serializer &s) {
 	if (!s.isSaving() && _parser) {
 		delete _parser;
-		_parser = 0;
+		_parser = nullptr;
 		_parserType = kParserTypeNone;
 	}
 	_music_tick = _parser ? _parser->getTick() : 0;
@@ -1067,7 +1067,7 @@ void Player::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint16LE(num);
 	} else {
 		s.syncAsUint16LE(num);
-		_parts = (num ? &_se->_parts[num - 1] : 0);
+		_parts = (num ? &_se->_parts[num - 1] : nullptr);
 	}
 
 	s.syncAsByte(_active, VER(8));

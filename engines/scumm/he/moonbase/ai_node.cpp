@@ -32,14 +32,14 @@ IContainedObject::IContainedObject(IContainedObject &sourceContainedObject) {
 int Node::_nodeCount = 0;
 
 Node::Node() {
-	_parent = NULL;
+	_parent = nullptr;
 	_depth = 0;
 	_nodeCount++;
-	_contents = NULL;
+	_contents = nullptr;
 }
 
 Node::Node(Node *sourceNode) {
-	_parent = NULL;
+	_parent = nullptr;
 	_children = sourceNode->getChildren();
 
 	_depth = sourceNode->getDepth();
@@ -48,9 +48,9 @@ Node::Node(Node *sourceNode) {
 }
 
 Node::~Node() {
-	if (_contents != NULL) {
+	if (_contents != nullptr) {
 		delete _contents;
-		_contents = NULL;
+		_contents = nullptr;
 	}
 
 	_nodeCount--;
@@ -72,7 +72,7 @@ int Node::generateChildren() {
 		int completionFlag;
 
 		IContainedObject *thisContObj = _contents->createChildObj(i, completionFlag);
-		assert(!(thisContObj != NULL && completionFlag == 0));
+		assert(!(thisContObj != nullptr && completionFlag == 0));
 
 		if (!completionFlag) {
 			_children.pop_back();
@@ -82,7 +82,7 @@ int Node::generateChildren() {
 
 		i++;
 
-		if (thisContObj != NULL) {
+		if (thisContObj != nullptr) {
 			tempNode->setContainedObject(thisContObj);
 		} else {
 			_children.pop_back();
@@ -113,7 +113,7 @@ int Node::generateNextChild() {
 	int compFlag;
 	IContainedObject *thisContObj = _contents->createChildObj(i, compFlag);
 
-	if (thisContObj != NULL) {
+	if (thisContObj != nullptr) {
 		tempNode->setContainedObject(thisContObj);
 	} else {
 		_children.pop_back();
@@ -139,10 +139,10 @@ Node *Node::popChild() {
 Node *Node::getFirstStep() {
 	Node *currentNode = this;
 
-	if (currentNode->getParent() == NULL)
+	if (currentNode->getParent() == nullptr)
 		return currentNode;
 
-	while (currentNode->getParent()->getParent() != NULL)
+	while (currentNode->getParent()->getParent() != nullptr)
 		currentNode = currentNode->getParent();
 
 	assert(currentNode->getDepth() == 1);

@@ -526,7 +526,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->_talkColor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 13:		// SO_ACTOR_NAME
-			loadPtrToResource(rtActorName, a->_number, NULL);
+			loadPtrToResource(rtActorName, a->_number, nullptr);
 			break;
 		case 14:		// SO_INIT_ANIMATION
 			a->_initFrame = getVarOrDirectByte(PARAM_1);
@@ -1397,7 +1397,7 @@ void ScummEngine_v5::o5_loadRoom() {
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
 	if (!(_game.features & GF_SMALL_HEADER) || room != _currentRoom)
-		startScene(room, 0, 0);
+		startScene(room, nullptr, 0);
 
 	_fullRedraw = true;
 }
@@ -1979,7 +1979,7 @@ void ScummEngine_v5::o5_roomOps() {
 			}
 
 			Common::OutSaveFile *file = _saveFileMan->openForSaving(filename);
-			if (file != NULL) {
+			if (file != nullptr) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
 				file->write(ptr, resStrLen(ptr) + 1);
@@ -2008,7 +2008,7 @@ void ScummEngine_v5::o5_roomOps() {
 			}
 
 			Common::InSaveFile *file = _saveFileMan->openForLoading(filename);
-			if (file != NULL) {
+			if (file != nullptr) {
 				byte *ptr;
 				const int len = file->size();
 				ptr = (byte *)malloc(len + 1);
@@ -2354,7 +2354,7 @@ void ScummEngine_v5::o5_stringOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* loadstring */
-		loadPtrToResource(rtString, getVarOrDirectByte(PARAM_1), NULL);
+		loadPtrToResource(rtString, getVarOrDirectByte(PARAM_1), nullptr);
 		break;
 
 	case 2:											/* copystring */
@@ -2372,7 +2372,7 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
-		if (ptr == NULL)
+		if (ptr == nullptr)
 			error("String %d does not exist", a);
 		ptr[b] = c;
 		break;
@@ -2382,7 +2382,7 @@ void ScummEngine_v5::o5_stringOps() {
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		ptr = getResourceAddress(rtString, a);
-		if (ptr == NULL)
+		if (ptr == nullptr)
 			error("String %d does not exist", a);
 		setResult(ptr[b]);
 		break;
@@ -2436,7 +2436,7 @@ void ScummEngine_v5::o5_verbOps() {
 			}
 			break;
 		case 2:		// SO_VERB_NAME
-			loadPtrToResource(rtVerb, slot, NULL);
+			loadPtrToResource(rtVerb, slot, nullptr);
 			if (slot == 0)
 				_res->nukeResource(rtVerb, slot);
 			vs->type = kTextVerbType;

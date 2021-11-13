@@ -104,7 +104,7 @@ void ScummEngine::loadCJKFont() {
 			   (_game.version >= 7 && (_language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
 			   (_game.version >= 3 && _language == Common::ZH_CHN)) {
 		int numChar = 0;
-		const char *fontFile = NULL;
+		const char *fontFile = nullptr;
 
 		switch (_language) {
 		case Common::KO_KOR:
@@ -185,13 +185,13 @@ void ScummEngine::loadKorFont() {
 	if (_useMultiFont) {
 		debug("Loading Korean Multi Font System");
 		_numLoadedFont = 0;
-		_2byteFontPtr = NULL;
+		_2byteFontPtr = nullptr;
 		_2byteWidth = 0;
 		_2byteHeight = 0;
 		for (int i = 0; i < 20; i++) {
 			char fontFile[256];
 			snprintf(fontFile, sizeof(fontFile), "korean%02d.fnt", i);
-			_2byteMultiFontPtr[i] = NULL;
+			_2byteMultiFontPtr[i] = nullptr;
 			if (fp.open(fontFile)) {
 				_numLoadedFont++;
 				fp.readByte();
@@ -204,7 +204,7 @@ void ScummEngine::loadKorFont() {
 				warning("#%d, size %d, height =%d", i, fontSize, _2byteMultiHeight[i]);
 				fp.read(_2byteMultiFontPtr[i], fontSize);
 				fp.close();
-				if (_2byteFontPtr == NULL) {	// for non-initialized Smushplayer drawChar
+				if (_2byteFontPtr == nullptr) {	// for non-initialized Smushplayer drawChar
 					_2byteFontPtr = _2byteMultiFontPtr[i];
 					_2byteWidth = _2byteMultiWidth[i];
 					_2byteHeight = _2byteMultiHeight[i];
@@ -238,7 +238,7 @@ void ScummEngine::loadKorFont() {
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
 	if (_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine)
-		return 0;
+		return nullptr;
 
 	switch (_language) {
 	case Common::KO_KOR:
@@ -251,7 +251,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 				int charsetId = 5;
 				int numChar = 1413;
 				byte *charsetPtr = getResourceAddress(rtCharset, charsetId);
-				if (charsetPtr == 0)
+				if (charsetPtr == nullptr)
 					error("ScummEngine::get2byteCharPtr: charset %d not found", charsetId);
 				memcpy(_2byteFontPtr, charsetPtr + 46, _2byteWidth * _2byteHeight * numChar / 8);
 			}
@@ -349,7 +349,7 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	_curId = id;
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
-	if (_fontPtr == 0)
+	if (_fontPtr == nullptr)
 		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
 	if (_vm->_game.version == 4)
@@ -398,7 +398,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	_curId = id;
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
-	if (_fontPtr == 0)
+	if (_fontPtr == nullptr)
 		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
 	_bytesPerPixel = 1;
@@ -841,7 +841,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 
 	assertRange(0, _curId, _vm->_numCharsets - 1, "charset");
 
-	if ((vs = _vm->findVirtScreen(_top)) == NULL) {
+	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
 		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
 		return;
 	}
@@ -981,7 +981,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	assertRange(1, _curId, _vm->_numCharsets - 1, "charset");
 
-	if ((vs = _vm->findVirtScreen(_top)) == NULL && (vs = _vm->findVirtScreen(_top + getFontHeight())) == NULL)
+	if ((vs = _vm->findVirtScreen(_top)) == nullptr && (vs = _vm->findVirtScreen(_top + getFontHeight())) == nullptr)
 		return;
 
 	if (chr == '@')
@@ -1078,7 +1078,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask) {
 	byte *dstPtr;
-	byte *back = NULL;
+	byte *back = nullptr;
 	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bytesPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bytesPerPixel == 0)) {
@@ -1242,7 +1242,7 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	// Indy4 Amiga always uses the room or verb palette map to match colors to
 	// the currently setup palette, thus we need to select it over here too.
 	// Done like the original interpreter.
-	byte *amigaMap = 0;
+	byte *amigaMap = nullptr;
 	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4) {
 		if (_drawScreen == kVerbVirtScreen)
 			amigaMap = _vm->_verbPalette;
@@ -1507,7 +1507,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 
 	_correctFontSpacing = correctFontSpacing;
 	_pad = false;
-	_glyphSurface = NULL;
+	_glyphSurface = nullptr;
 
 	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
 	// used for the text boxes. The smaller font can be used for a
@@ -1685,7 +1685,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	VirtScreen *vs;
 
-	if ((vs = _vm->findVirtScreen(_top)) == NULL) {
+	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
 		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
 		return;
 	}
@@ -2134,7 +2134,7 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	if (_top == 0)
 		_top = 16;
 
-	if ((vs = _vm->findVirtScreen(_top)) == NULL)
+	if ((vs = _vm->findVirtScreen(_top)) == nullptr)
 		return;
 
 	if (chr == '@')
@@ -2313,7 +2313,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 
 	if (useFontRomCharacter(chr) && !noSjis) {
 		setupShadowMode();
-		_charPtr = 0;
+		_charPtr = nullptr;
 		_sjisCurChar = chr;
 
 		_width = getCharWidth(chr);

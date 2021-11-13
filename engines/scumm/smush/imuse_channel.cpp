@@ -34,7 +34,7 @@ ImuseChannel::ImuseChannel(int32 track) : SmushChannel(track) {
 }
 
 bool ImuseChannel::isTerminated() const {
-	return (_dataSize <= 0 && _sbuffer == 0);
+	return (_dataSize <= 0 && _sbuffer == nullptr);
 }
 
 bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1, int32) {
@@ -149,7 +149,7 @@ void ImuseChannel::decode() {
 	if (remaining_size) {
 		_srbufferSize -= remaining_size;
 		assert(_inData);
-		if (_tbuffer == 0) {
+		if (_tbuffer == nullptr) {
 			_tbuffer = (byte *)malloc(remaining_size);
 			memcpy(_tbuffer, _sbuffer + _sbufferSize - remaining_size, remaining_size);
 			_tbufferSize = remaining_size;
@@ -223,7 +223,7 @@ byte *ImuseChannel::getSoundData() {
 	assert(_dataSize > 0);
 	_dataSize -= _srbufferSize;
 
-	_sbuffer = 0;
+	_sbuffer = nullptr;
 	_sbufferSize = 0;
 
 	return tmp;

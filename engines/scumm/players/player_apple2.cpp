@@ -355,7 +355,7 @@ const byte AppleII_SoundFunction5_Noise::_noiseTable[256] = {
  ************************************/
 
 Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _mixer(mixer), _vm(scumm), _soundFunc(0) {
+	: _mixer(mixer), _vm(scumm), _soundFunc(nullptr) {
 	resetState();
 	setSampleRate(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -370,10 +370,10 @@ void Player_AppleII::resetState() {
 	_soundNr = 0;
 	_type = 0;
 	_loop = 0;
-	_params = NULL;
+	_params = nullptr;
 	_speakerState = 0;
 	delete _soundFunc;
-	_soundFunc = 0;
+	_soundFunc = nullptr;
 	_sampleConverter.reset();
 }
 
@@ -428,7 +428,7 @@ bool Player_AppleII::updateSound() {
 		--_loop;
 		if (_loop <= 0) {
 			delete _soundFunc;
-			_soundFunc = 0;
+			_soundFunc = nullptr;
 		} else {
 			// reset function state on each loop
 			_soundFunc->init(this, _params);

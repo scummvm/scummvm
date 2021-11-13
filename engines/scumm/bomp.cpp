@@ -200,9 +200,9 @@ void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 siz
 void drawBomp(const BompDrawData &bd) {
 	const byte *src;
 	byte *dst;
-	byte *mask = 0;
+	byte *mask = nullptr;
 	Common::Rect clip;
-	byte *scalingYPtr = 0;
+	byte *scalingYPtr = nullptr;
 	byte skip_y_bits = 0x80;
 	byte skip_y_new = 0;
 	byte tmp;

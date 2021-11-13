@@ -38,13 +38,13 @@ Player_MOD::Player_MOD(Audio::Mixer *mixer)
 		_channels[i].id = 0;
 		_channels[i].vol = 0;
 		_channels[i].freq = 0;
-		_channels[i].input = NULL;
+		_channels[i].input = nullptr;
 		_channels[i].ctr = 0;
 		_channels[i].pos = 0;
 	}
 
-	_playproc = NULL;
-	_playparam = NULL;
+	_playproc = nullptr;
+	_playparam = nullptr;
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
@@ -70,8 +70,8 @@ void Player_MOD::setUpdateProc(ModUpdateProc *proc, void *param, int freq) {
 }
 void Player_MOD::clearUpdateProc() {
 	Common::StackLock lock(_mutex);
-	_playproc = NULL;
-	_playparam = NULL;
+	_playproc = nullptr;
+	_playparam = nullptr;
 	_mixamt = 0;
 }
 
@@ -114,7 +114,7 @@ void Player_MOD::stopChannel(int id) {
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
 			delete _channels[i].input;
-			_channels[i].input = NULL;
+			_channels[i].input = nullptr;
 			_channels[i].id = 0;
 			_channels[i].vol = 0;
 			_channels[i].freq = 0;
