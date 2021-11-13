@@ -51,8 +51,8 @@ class Cursor : public Graphics::MacCursor {
 	bool operator==(const Cursor &c);
 	bool operator==(const CursorRef &c);
 
-	virtual byte getKeyColor() const override { return _keyColor; }
-	virtual const byte *getPalette() const override { return _usePalette ? _palette : nullptr; }
+	byte getKeyColor() const override { return _keyColor; }
+	const byte *getPalette() const override { return _usePalette ? _palette : nullptr; }
 
  public:
 	Graphics::MacCursorType _cursorType;

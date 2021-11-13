@@ -52,7 +52,7 @@ public:
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
-	virtual void init() override;
+	void init() override;
 	void handleInput(NancyInput &input);
 
 	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, NancyFlag dontWrap = kFalse, uint16 format = 2, const Common::String &palette = Common::String());

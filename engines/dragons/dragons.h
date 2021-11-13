@@ -244,7 +244,7 @@ private:
 	void (*_sceneUpdateFunction)();
 	void (*_vsyncUpdateFunction)();
 protected:
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	DragonsEngine(OSystem *syst, const ADGameDescription *desc);
 	~DragonsEngine();

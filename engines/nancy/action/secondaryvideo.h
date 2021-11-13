@@ -41,13 +41,13 @@ public:
 	PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom, 8), channel(chan) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
-	virtual void init() override;
-	virtual void updateGraphics() override;
-	virtual void onPause(bool pause) override;
-	virtual void handleInput(NancyInput &input) override;
+	void init() override;
+	void updateGraphics() override;
+	void onPause(bool pause) override;
+	void handleInput(NancyInput &input) override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 	Common::String _filename;
 	Common::String _paletteFilename;
@@ -62,8 +62,8 @@ public:
 	Common::Array<SecondaryVideoDescription> _videoDescs; // 0x35
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
+	bool isViewportRelative() const override { return true; }
 
 	Graphics::ManagedSurface _fullFrame;
 	HoverState _hoverState = kNoHover;

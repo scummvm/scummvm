@@ -94,7 +94,7 @@ public:
 	/**
 	 * Updates the debugger
 	 */
-	virtual void onFrame() override;
+	void onFrame() override;
 };
 
 } // End of namespace Xeen

@@ -40,8 +40,8 @@ public:
 	Movie(Myst3Engine *vm, uint16 id);
 	virtual ~Movie();
 
-	virtual void draw() override;
-	virtual void drawOverlay() override;
+	void draw() override;
+	void drawOverlay() override;
 
 	/** Increase or decrease the movie's pause level by one */
 	void pause(bool pause);

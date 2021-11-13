@@ -116,7 +116,7 @@ class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	void createMatte(Common::Rect &bbox);
 	Graphics::Surface *getMatte(Common::Rect &bbox);
@@ -147,8 +147,8 @@ public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~DigitalVideoCastMember();
 
-	virtual bool isModified() override;
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+	bool isModified() override;
+	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	bool loadVideo(Common::String path);
 	void startVideo(Channel *channel);
@@ -201,8 +201,8 @@ public:
 	FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~FilmLoopCastMember();
 
-	virtual bool isModified() override;
-	//virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+	bool isModified() override;
+	//Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
 
@@ -229,8 +229,8 @@ public:
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	virtual uint32 getForeColor() override { return _fgCol; }
-	virtual uint32 getBackColor() override { return _bgCol; }
+	uint32 getForeColor() override { return _fgCol; }
+	uint32 getBackColor() override { return _bgCol; }
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -247,18 +247,18 @@ private:
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
-	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
+	void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
 	void setText(const Common::U32String &text);
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
+	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	virtual bool isEditable() override { return _editable; }
-	virtual void setEditable(bool editable) override { _editable = editable; }
-	virtual void updateFromWidget(Graphics::MacWidget *widget) override;
+	bool isEditable() override { return _editable; }
+	void setEditable(bool editable) override { _editable = editable; }
+	void updateFromWidget(Graphics::MacWidget *widget) override;
 	Graphics::TextAlign getAlignment();
 
-	virtual uint32 getBackColor() override { return _bgcolor; }
-	virtual uint32 getForeColor() override { return _fgcolor; }
+	uint32 getBackColor() override { return _bgcolor; }
+	uint32 getForeColor() override { return _fgcolor; }
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;

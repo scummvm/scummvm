@@ -54,15 +54,15 @@ public:
 		return "petka";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Red Comrades";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Red Comrades (C) S.K.I.F.";
 	}
 
-	virtual const DebugChannelDef *getDebugChannels() const override {
+	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
 };

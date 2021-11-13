@@ -28,19 +28,19 @@
 
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "nancy";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
-	virtual int getMaximumSaveSlot() const override;
+	int getMaximumSaveSlot() const override;
 
-	virtual Common::KeymapArray initKeymaps(const char *target) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
-	virtual void registerDefaultSettings(const Common::String &target) const override;
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {

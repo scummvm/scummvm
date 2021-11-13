@@ -40,9 +40,9 @@ public:
 	Textbox(RenderObject &redrawFrom);
 	virtual ~Textbox();
 
-	virtual void init() override;
-	virtual void registerGraphics() override;
-	virtual void updateGraphics() override;
+	void init() override;
+	void registerGraphics() override;
+	void updateGraphics() override;
 	void handleInput(NancyInput &input);
 
 	void drawTextbox();

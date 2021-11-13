@@ -62,7 +62,7 @@ private:
 class LogOutputTarget : public AGS3::AGS::Shared::IOutputHandler {
 public:
 	LogOutputTarget();
-	virtual ~LogOutputTarget() override;
+	~LogOutputTarget() override;
 
 	void PrintMessage(const AGS3::AGS::Shared::DebugMessage &msg) override;
 };

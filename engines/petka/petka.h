@@ -89,7 +89,7 @@ public:
 
 	void loadChapter(byte chapter);
 
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	bool hasFeature(EngineFeature f) const override;
 
@@ -106,7 +106,7 @@ public:
 	Common::RandomSource &getRnd();
 	const Common::String &getSpeechPath();
 
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;

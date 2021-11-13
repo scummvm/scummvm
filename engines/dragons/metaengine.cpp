@@ -37,12 +37,12 @@ public:
 		return "dragons";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual SaveStateList listSaves(const char *target) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 

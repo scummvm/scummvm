@@ -204,7 +204,7 @@ public:
 	BitmapPtr *_miniShpList;
 	int        _startGameSlot;
 
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	void cge_main();
 	void switchScene(int newScene);

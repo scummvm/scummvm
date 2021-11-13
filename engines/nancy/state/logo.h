@@ -40,8 +40,8 @@ public:
 	Logo() : _state(kInit), _startTicks(0) { }
 
 	// State API
-	virtual void process() override;
-	virtual void onStateExit() override;
+	void process() override;
+	void onStateExit() override;
 
 private:
 	void init();

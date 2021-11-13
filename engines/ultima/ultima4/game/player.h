@@ -243,7 +243,7 @@ public:
 	/**
 	 * Put the party member to sleep
 	 */
-	virtual void putToSleep() override;
+	void putToSleep() override;
 
 	/**
 	 * Wakes up the party member

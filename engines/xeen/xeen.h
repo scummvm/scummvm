@@ -276,7 +276,7 @@ public:
 	/**
 	* Returns true if an autosave can be created
 	*/
-	virtual bool canSaveAutosaveCurrently() override;
+	bool canSaveAutosaveCurrently() override;
 
 	/**
 	 * Show a cutscene

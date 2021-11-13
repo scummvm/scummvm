@@ -46,8 +46,8 @@ public:
 	virtual ~Help();
 
 	// State API
-	virtual void process() override;
-	virtual void onStateExit() override { destroy(); };
+	void process() override;
+	void onStateExit() override { destroy(); };
 
 private:
 	void init();

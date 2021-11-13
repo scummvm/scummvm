@@ -36,7 +36,7 @@ public:
 	Scrollbar(RenderObject &redrawFrom, uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
 	virtual ~Scrollbar() = default;
 
-	virtual void init() override;
+	void init() override;
 
 	void handleInput(NancyInput &input);
 

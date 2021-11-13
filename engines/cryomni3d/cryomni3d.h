@@ -191,12 +191,12 @@ public:
 	CryOmni3DEngine_HNMPlayer(OSystem *syst, const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc) {}
 	~CryOmni3DEngine_HNMPlayer() override {}
 
-	virtual bool displayToolbar(const Graphics::Surface *original) override { return false; }
-	virtual bool hasPlaceDocumentation() override { return false; }
-	virtual bool displayPlaceDocumentation() override { return false; }
-	virtual uint displayOptions() override { return 0; }
-	virtual void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override {}
-	virtual void setupPalette(const byte *colors, uint start, uint num) override {}
+	bool displayToolbar(const Graphics::Surface *original) override { return false; }
+	bool hasPlaceDocumentation() override { return false; }
+	bool displayPlaceDocumentation() override { return false; }
+	uint displayOptions() override { return 0; }
+	void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override {}
+	void setupPalette(const byte *colors, uint start, uint num) override {}
 };
 
 } // End of namespace CryOmni3D

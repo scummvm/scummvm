@@ -60,11 +60,11 @@ public:
 		return "buried";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "The Journeyman Project 2: Buried in Time";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "The Journeyman Project 2: Buried in Time (C) Presto Studios";
 	}
 };

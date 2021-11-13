@@ -218,7 +218,7 @@ private:
 	uint16 _mouseSpriteId;
 	Common::Point _mouseOffset;
 
-	virtual Common::String getSaveStateName(int slot) const override;
+	Common::String getSaveStateName(int slot) const override;
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
 	Common::String mangleFilename(Common::String filename);

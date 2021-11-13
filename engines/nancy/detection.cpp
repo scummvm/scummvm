@@ -231,19 +231,19 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "nancy";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Nancy Drew";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
 	}
 
-	virtual const DebugChannelDef *getDebugChannels() const override {
+	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
 };

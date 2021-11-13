@@ -36,7 +36,7 @@ public:
 	void init(const Common::String &imageName);
 
 protected:
-	virtual void init() override {}
+	void init() override {}
 };
 
 } // End of namespace UI

@@ -36,12 +36,12 @@ public:
 	LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
 	virtual ~LeverPuzzle() {}
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
-	virtual void handleInput(NancyInput &input) override;
-	virtual void onPause(bool pause) override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void handleInput(NancyInput &input) override;
+	void onPause(bool pause) override;
 
 	Common::String _imageName; // 0x0
 	Common::Array<Common::Array<Common::Rect>> _srcRects; // 0xA, 0xC0 bytes
@@ -64,8 +64,8 @@ public:
 	SolveState _solveState = kNotSolved;
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
+	bool isViewportRelative() const override { return true; }
 
 	void drawLever(uint id);
 };

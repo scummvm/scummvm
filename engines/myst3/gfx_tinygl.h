@@ -37,27 +37,27 @@ public:
 	TinyGLRenderer(OSystem *_system);
 	virtual ~TinyGLRenderer();
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void clear() override;
-	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
+	void clear() override;
+	void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;
 
-	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) override;
+	void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
 	                                Texture *texture) override;
 
-	virtual void drawCube(Texture **textures) override;
-	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
+	void drawCube(Texture **textures) override;
+	void draw2DText(const Common::String &text, const Common::Point &position) override;
 
-	virtual Graphics::Surface *getScreenshot() override;
+	Graphics::Surface *getScreenshot() override;
 
-	virtual void flipBuffer() override;
+	void flipBuffer() override;
 private:
 	void drawFace(uint face, Texture *texture);
 

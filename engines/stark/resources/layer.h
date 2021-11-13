@@ -60,9 +60,9 @@ public:
 	virtual ~Layer();
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
-	virtual void saveLoad(ResourceSerializer *serializer) override;
-	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
+	void readData(Formats::XRCReadStream *stream) override;
+	void saveLoad(ResourceSerializer *serializer) override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Obtain the render entries for all items, including the background */
 	virtual Gfx::RenderEntryArray listRenderEntries() = 0;

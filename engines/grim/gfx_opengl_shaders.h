@@ -42,67 +42,67 @@ public:
 	 * @param screenW		the width of the context
 	 * @param screenH		the height of the context
 	 */
-	virtual void setupScreen(int screenW, int screenH) override;
+	void setupScreen(int screenW, int screenH) override;
 
 	/**
 	 * Query whether the current context is hardware-accelerated
 	 *
 	 * @return true if hw-accelerated, false otherwise
 	 */
-	virtual bool isHardwareAccelerated() override { return true; };
-	virtual bool supportsShaders() override { return true; }
-	virtual void setupCameraFrustum(float fov, float nclip, float fclip) override;
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) override;
+	bool isHardwareAccelerated() override { return true; };
+	bool supportsShaders() override { return true; }
+	void setupCameraFrustum(float fov, float nclip, float fclip) override;
+	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
+	void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) override;
 
-	virtual Math::Matrix4 getModelView() override;
-	virtual Math::Matrix4 getProjection() override;
+	Math::Matrix4 getModelView() override;
+	Math::Matrix4 getProjection() override;
 
-	virtual void clearScreen() override;
-	virtual void clearDepthBuffer() override;
+	void clearScreen() override;
+	void clearDepthBuffer() override;
 
 	/**
 	 *	Swap the buffers, making the drawn screen visible
 	 */
-	virtual void flipBuffer() override;
+	void flipBuffer() override;
 
-	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
-	virtual void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
+	void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
 	void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) override;
-	virtual void startActorDraw(const Actor *actor) override;
+	void startActorDraw(const Actor *actor) override;
 
-	virtual void finishActorDraw() override;
-	virtual void setShadow(Shadow *shadow) override;
-	virtual void drawShadowPlanes() override;
-	virtual void setShadowMode() override;
-	virtual void clearShadowMode() override;
-	virtual bool isShadowModeActive() override;
-	virtual void setShadowColor(byte r, byte g, byte b) override;
-	virtual void getShadowColor(byte *r, byte *g, byte *b) override;
-	virtual void destroyShadow(Shadow *shadow) override;
+	void finishActorDraw() override;
+	void setShadow(Shadow *shadow) override;
+	void drawShadowPlanes() override;
+	void setShadowMode() override;
+	void clearShadowMode() override;
+	bool isShadowModeActive() override;
+	void setShadowColor(byte r, byte g, byte b) override;
+	void getShadowColor(byte *r, byte *g, byte *b) override;
+	void destroyShadow(Shadow *shadow) override;
 
-	virtual void set3DMode() override;
+	void set3DMode() override;
 
-	virtual void translateViewpointStart() override;
-	virtual void translateViewpoint(const Math::Vector3d &vec) override;
-	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) override;
-	virtual void rotateViewpoint(const Math::Matrix4 &rot) override;
-	virtual void translateViewpointFinish() override;
+	void translateViewpointStart() override;
+	void translateViewpoint(const Math::Vector3d &vec) override;
+	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) override;
+	void rotateViewpoint(const Math::Matrix4 &rot) override;
+	void translateViewpointFinish() override;
 
-	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) override;
-	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
-	virtual void drawSprite(const Sprite *sprite) override;
-	virtual void drawMesh(const Mesh *mesh) override;
-	virtual void drawDimPlane() override;
+	void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) override;
+	void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
+	void drawSprite(const Sprite *sprite) override;
+	void drawMesh(const Mesh *mesh) override;
+	void drawDimPlane() override;
 
-	virtual void enableLights() override;
-	virtual void disableLights() override;
-	virtual void setupLight(Light *light, int lightId) override;
-	virtual void turnOffLight(int lightId) override;
+	void enableLights() override;
+	void disableLights() override;
+	void setupLight(Light *light, int lightId) override;
+	void turnOffLight(int lightId) override;
 
-	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
-	virtual void selectTexture(const Texture *texture) override;
-	virtual void destroyTexture(Texture *texture) override;
+	void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
+	void selectTexture(const Texture *texture) override;
+	void destroyTexture(Texture *texture) override;
 
 	/**
 	 * Prepares a bitmap for drawing
@@ -117,7 +117,7 @@ public:
 	 * @see destroyBitmap
 	 * @see drawBitmap
 	 */
-	virtual void createBitmap(BitmapData *bitmap) override;
+	void createBitmap(BitmapData *bitmap) override;
 
 	/**
 	 * Draws a bitmap
@@ -127,7 +127,7 @@ public:
 	 * @see createBitmap
 	 * @see destroyBitmap
 	 */
-	virtual void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer = 0) override;
+	void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer = 0) override;
 
 	/**
 	 * Deletes any internal references and representations of a bitmap
@@ -138,26 +138,26 @@ public:
 	 * @see createBitmap
 	 * @see drawBitmap
 	 */
-	virtual void destroyBitmap(BitmapData *bitmap) override;
+	void destroyBitmap(BitmapData *bitmap) override;
 
-	virtual void createFont(Font *font) override;
-	virtual void destroyFont(Font *font) override;
+	void createFont(Font *font) override;
+	void destroyFont(Font *font) override;
 
-	virtual void createTextObject(TextObject *text) override;
-	virtual void drawTextObject(const TextObject *text) override;
-	virtual void destroyTextObject(TextObject *text) override;
+	void createTextObject(TextObject *text) override;
+	void drawTextObject(const TextObject *text) override;
+	void destroyTextObject(TextObject *text) override;
 
-	virtual Bitmap *getScreenshot(int w, int h, bool useStored) override;
-	virtual void storeDisplay() override;
-	virtual void copyStoredToDisplay() override;
+	Bitmap *getScreenshot(int w, int h, bool useStored) override;
+	void storeDisplay() override;
+	void copyStoredToDisplay() override;
 
 	/**
 	 * Dims the entire screen
 	 * Sets the entire screen to 10% of its current brightness,
 	 * and converts it to grayscale.
 	 */
-	virtual void dimScreen() override;
-	virtual void dimRegion(int x, int y, int w, int h, float level) override;
+	void dimScreen() override;
+	void dimRegion(int x, int y, int w, int h, float level) override;
 
 	/**
 	 * Draw a completely opaque Iris around the specified rectangle.
@@ -167,14 +167,14 @@ public:
 	 * @param x		the width of the Iris
 	 * @param y		the height of the Iris
 	 */
-	virtual void irisAroundRegion(int x1, int y1, int x2, int y2) override;
+	void irisAroundRegion(int x1, int y1, int x2, int y2) override;
 
-	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) override;
-	virtual void loadEmergFont() override;
+	void drawEmergString(int x, int y, const char *text, const Color &fgColor) override;
+	void loadEmergFont() override;
 
-	virtual void drawRectangle(const PrimitiveObject *primitive) override;
-	virtual void drawLine(const PrimitiveObject *primitive) override;
-	virtual void drawPolygon(const PrimitiveObject *primitive) override;
+	void drawRectangle(const PrimitiveObject *primitive) override;
+	void drawLine(const PrimitiveObject *primitive) override;
+	void drawPolygon(const PrimitiveObject *primitive) override;
 
 	/**
 	 * Prepare a movie-frame for drawing
@@ -186,8 +186,8 @@ public:
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
-	virtual void prepareMovieFrame(Graphics::Surface* frame) override;
-	virtual void drawMovieFrame(int offsetX, int offsetY) override;
+	void prepareMovieFrame(Graphics::Surface* frame) override;
+	void drawMovieFrame(int offsetX, int offsetY) override;
 
 	/**
 	 * Release the currently prepared movie-frame, if one exists.
@@ -195,20 +195,20 @@ public:
 	 * @see drawMovieFrame
 	 * @see prepareMovieFrame
 	 */
-	virtual void releaseMovieFrame() override;
+	void releaseMovieFrame() override;
 
-	virtual const char *getVideoDeviceName() override;
+	const char *getVideoDeviceName() override;
 
-	virtual void renderBitmaps(bool render) override;
-	virtual void renderZBitmaps(bool render) override;
+	void renderBitmaps(bool render) override;
+	void renderZBitmaps(bool render) override;
 
-	virtual void createMesh(Mesh *mesh) override;
-	virtual void destroyMesh(const Mesh *mesh) override;
-	virtual void createEMIModel(EMIModel *model) override;
-	virtual void updateEMIModel(const EMIModel* model) override;
-	virtual void destroyEMIModel(EMIModel *model) override;
+	void createMesh(Mesh *mesh) override;
+	void destroyMesh(const Mesh *mesh) override;
+	void createEMIModel(EMIModel *model) override;
+	void updateEMIModel(const EMIModel* model) override;
+	void destroyEMIModel(EMIModel *model) override;
 
-	virtual void setBlendMode(bool additive) override;
+	void setBlendMode(bool additive) override;
 
 protected:
 	void setupShaders();

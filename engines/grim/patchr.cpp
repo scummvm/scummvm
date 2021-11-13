@@ -39,13 +39,13 @@ public:
 	bool load(Common::SeekableReadStream *file, const Common::String &patchName);
 
 	// Common::ReadStream implementation
-	virtual bool eos() const override;
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	bool eos() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	// Common::SeekableReadStream implementation
-	virtual int64 pos() const override;
-	virtual int64 size() const override;
-	virtual bool seek(int64 offset, int whence = SEEK_SET) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 
 private:
 	// Consts

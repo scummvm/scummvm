@@ -39,8 +39,8 @@ public:
 	Common::String getString();
 
 protected:
-	virtual void handleKeyDown(Common::KeyState state) override;
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	bool _hasTextField;

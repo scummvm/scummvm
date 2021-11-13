@@ -89,9 +89,9 @@ class Myst3Engine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual void syncSoundSettings() override;
-	virtual void pauseEngineIntern(bool pause) override;
+	Common::Error run() override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 public:
 	GameState *_state;

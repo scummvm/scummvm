@@ -42,7 +42,7 @@ class AVFDecoder : public Video::VideoDecoder {
 public:
 	virtual ~AVFDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream) override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	const Graphics::Surface *decodeFrame(uint frameNr);
 	void addFrameTime(const uint16 timeToAdd);
 
@@ -53,21 +53,21 @@ private:
 		AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat);
 		virtual ~AVFVideoTrack();
 
-		virtual uint16 getWidth() const override { return _width; }
-		virtual uint16 getHeight() const override { return _height; }
-		virtual Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-		virtual int getCurFrame() const override { return _curFrame; }
-		virtual int getFrameCount() const override { return _frameCount; }
-		virtual bool isSeekable() const override { return true; }
-		virtual bool seek(const Audio::Timestamp &time) override;
-		virtual bool setReverse(bool reverse) override;
-		virtual bool isReversed() const override { return _reversed; }
-		virtual bool endOfTrack() const override;
-		virtual const Graphics::Surface *decodeNextFrame() override;
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override;
+		bool setReverse(bool reverse) override;
+		bool isReversed() const override { return _reversed; }
+		bool endOfTrack() const override;
+		const Graphics::Surface *decodeNextFrame() override;
 		const Graphics::Surface *decodeFrame(uint frameNr);
 
 	protected:
-		virtual Common::Rational getFrameRate() const override { return Common::Rational(1000, _frameTime); }
+		Common::Rational getFrameRate() const override { return Common::Rational(1000, _frameTime); }
 
 	private:
 		struct ChunkInfo {

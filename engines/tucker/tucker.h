@@ -447,7 +447,7 @@ public:
 
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
-	virtual bool canSaveAutosaveCurrently() override;
+	bool canSaveAutosaveCurrently() override;
 
 	static bool isAutosaveAllowed(const char *target);
 protected:
@@ -740,8 +740,8 @@ protected:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	SavegameError writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header);
-	virtual int getAutosaveSlot() const override { return kAutoSaveSlot; }
-	virtual Common::String getSaveStateName(int slot) const override {
+	int getAutosaveSlot() const override { return kAutoSaveSlot; }
+	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("%s.%d", _targetName.c_str(), slot);
 	}
 

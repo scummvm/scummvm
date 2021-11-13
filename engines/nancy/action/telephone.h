@@ -50,11 +50,11 @@ public:
 		_selected(0) {}
 	virtual ~Telephone() {}
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
-	virtual void handleInput(NancyInput &input) override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void handleInput(NancyInput &input) override;
 
 	Common::String _imageName; // 0x00
 	Common::Array<Common::Rect> _srcRects; // 0xA, 12
@@ -82,8 +82,8 @@ public:
 	uint _selected;
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return "Telephone"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return "Telephone"; }
+	bool isViewportRelative() const override { return true; }
 
 	void drawButton(uint id);
 	void undrawButton(uint id);

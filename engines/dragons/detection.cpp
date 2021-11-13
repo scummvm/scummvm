@@ -131,11 +131,11 @@ public:
 		return "dragons";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Blazing Dragons";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "(C) 1996 The Illusions Gaming Company";
 	}
 };

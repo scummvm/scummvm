@@ -59,7 +59,7 @@ class GrimEngine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 public:
 	enum EngineMode {
@@ -195,7 +195,7 @@ public:
 	void debugLua(const Common::String &str);
 
 protected:
-	virtual void pauseEngineIntern(bool pause) override;
+	void pauseEngineIntern(bool pause) override;
 
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
