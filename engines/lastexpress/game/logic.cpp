@@ -79,7 +79,7 @@ Logic::~Logic() {
 	SAFE_DELETE(_state);
 
 	// Zero-out passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 
 	// Check hotspots
 	int location = 0;
-	SceneHotspot *hotspot = NULL;
+	SceneHotspot *hotspot = nullptr;
 	Scene *scene = getScenes()->get(getState()->scene);
 
 	for (Common::Array<SceneHotspot *>::iterator it = scene->getHotspots()->begin(); it != scene->getHotspots()->end(); ++it) {
@@ -551,7 +551,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 			 && !getInventory()->isEggHighlighted()
 			 && !getInventory()->isMagnifierInUse()) {
 				int location = 0;
-				SceneHotspot *hotspot = NULL;
+				SceneHotspot *hotspot = nullptr;
 				Scene *scene = getScenes()->get(getState()->scene);
 
 				// Check all hotspots

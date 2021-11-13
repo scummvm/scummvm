@@ -232,7 +232,7 @@ Common::String Scene::toString() {
 
 //////////////////////////////////////////////////////////////////////////
 // SceneLoader
-SceneLoader::SceneLoader() : _stream(NULL) {}
+SceneLoader::SceneLoader() : _stream(nullptr) {}
 
 SceneLoader::~SceneLoader() {
 	clear();
@@ -285,10 +285,10 @@ bool SceneLoader::load(Common::SeekableReadStream *stream) {
 
 Scene *SceneLoader::get(SceneIndex index) {
 	if (_scenes.empty())
-		return NULL;
+		return nullptr;
 
 	if (index > _scenes.size())
-		return NULL;
+		return nullptr;
 
 	// Load the hotspots if needed
 	_scenes[(uint)index]->loadHotspots(_stream);

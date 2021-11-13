@@ -98,7 +98,7 @@ void Cursor::setStyle(CursorStyle style) {
 
 const uint16 *Cursor::getCursorImage(CursorStyle style) const {
 	if (!checkStyle(style))
-		return NULL;
+		return nullptr;
 
 	return _cursors[style].image;
 }

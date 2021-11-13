@@ -187,7 +187,7 @@ Entities::~Entities() {
 	_entities.clear();
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ int Entities::getCompartments1(int index) const {
 // Savegame
 //////////////////////////////////////////////////////////////////////////
 void Entities::saveLoadWithSerializer(Common::Serializer &s) {
-	_header->saveLoadWithSerializer(s, NULL);
+	_header->saveLoadWithSerializer(s, nullptr);
 	for (uint i = 1; i < _entities.size(); i++)
 		_entities[i]->saveLoadWithSerializer(s);
 }
@@ -432,8 +432,8 @@ void Entities::updateFields() const {
 }
 
 void Entities::updateFrame(EntityIndex entityIndex) const {
-	Sequence *sequence = NULL;
-	int16 *currentFrame = NULL;
+	Sequence *sequence = nullptr;
+	int16 *currentFrame = nullptr;
 	bool found = false;
 
 	if (getData(entityIndex)->direction == kDirectionSwitch) {
@@ -518,7 +518,7 @@ void Entities::updateSequences() const {
 				data->sequence = data->sequence2;
 				data->sequenceName = data->sequenceName2;
 
-				data->sequence2 = NULL;
+				data->sequence2 = nullptr;
 				data->sequenceName2 = "";
 			}
 
@@ -1263,7 +1263,7 @@ void Entities::copySequenceData(EntityIndex entityIndex) const {
 		data->direction = data->directionSwitch;
 
 	// Clear sequence 3
-	data->sequence2 = NULL;
+	data->sequence2 = nullptr;
 	data->sequenceName2 = "";
 	data->field_4AA = false;
 	data->directionSwitch = kDirectionNone;
@@ -1430,7 +1430,7 @@ void Entities::drawSequences(EntityIndex entityIndex, EntityDirection direction,
 		} else {
 			data->sequence = data->sequence2;
 			data->sequenceName = data->sequenceName2;
-			data->sequence2 = NULL;
+			data->sequence2 = nullptr;
 		}
 
 		data->sequenceName2 = "";

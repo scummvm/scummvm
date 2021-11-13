@@ -133,7 +133,7 @@ Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String 
 	// Check if the file exits in the archive
 	if (!hasFile(name)) {
 		debugC(2, kLastExpressDebugResource, "Error opening file: %s", name.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	debugC(2, kLastExpressDebugResource, "Opening file: %s", name.c_str());
@@ -186,7 +186,7 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Com
 			return stream;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -196,14 +196,14 @@ Background *ResourceManager::loadBackground(const Common::String &name) const {
 	// Open the resource
 	Common::SeekableReadStream *stream = createReadStreamForMember(name + ".bg");
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	// Create the new background & load the data
 	Background *bg = new Background();
 	if (!bg->load(stream)) {
 		delete bg;
 		// stream should be freed by the Background instance
-		return NULL;
+		return nullptr;
 	}
 
 	return bg;
@@ -213,14 +213,14 @@ Cursor *ResourceManager::loadCursor() const {
 	// Open the resource
 	Common::SeekableReadStream *stream = createReadStreamForMember("cursors.tbm");
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	// Create the new background
 	Cursor *c = new Cursor();
 	if (!c->load(stream)) {
 		delete c;
 		// stream should be freed by the Cursor instance
-		return NULL;
+		return nullptr;
 	}
 
 	return c;
@@ -230,14 +230,14 @@ Font *ResourceManager::loadFont() const {
 	// Open the resource
 	Common::SeekableReadStream *stream = createReadStreamForMember("font.dat");
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	// Create the new background
 	Font *f = new Font();
 	if (!f->load(stream)) {
 		delete f;
 		// stream should be freed by the Font instance
-		return NULL;
+		return nullptr;
 	}
 
 	return f;

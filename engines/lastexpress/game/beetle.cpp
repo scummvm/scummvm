@@ -32,13 +32,13 @@
 
 namespace LastExpress {
 
-Beetle::Beetle(LastExpressEngine *engine) : _engine(engine), _data(NULL) {}
+Beetle::Beetle(LastExpressEngine *engine) : _engine(engine), _data(nullptr) {}
 
 Beetle::~Beetle() {
 	SAFE_DELETE(_data);
 
 	// Free passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void Beetle::load() {
@@ -104,9 +104,9 @@ void Beetle::load() {
 	_data->field_D9 = 10;
 	_data->coordOffset = 5;
 	_data->coordY = 178;
-	_data->currentSequence = 0;
+	_data->currentSequence = nullptr;
 	_data->offset = 0;
-	_data->frame = NULL;
+	_data->frame = nullptr;
 	_data->field_D5 = 0;
 	_data->indexes[0] = 29;
 	_data->field_DD = 0;
@@ -195,7 +195,7 @@ void Beetle::drawUpdate() {
 	if (!_data)
 		error("[Beetle::drawUpdate] Sequences have not been loaded");
 
-	if (_data->frame != NULL) {
+	if (_data->frame != nullptr) {
 		getScenes()->setCoordinates(_data->frame);
 		getScenes()->removeFromQueue(_data->frame);
 	}
@@ -243,7 +243,7 @@ void Beetle::drawUpdate() {
 		_data->currentFrame = 0;
 		if (_data->indexes[_data->offset] == 29) {
 			SAFE_DELETE(_data->frame);
-			_data->currentSequence = NULL; // pointer to existing sequence
+			_data->currentSequence = nullptr; // pointer to existing sequence
 			return;
 		}
 	}

@@ -142,10 +142,10 @@ static const struct {
 // Menu
 //////////////////////////////////////////////////////////////////////////
 Menu::Menu(LastExpressEngine *engine) : _engine(engine),
-	_seqTooltips(NULL), _seqEggButtons(NULL), _seqButtons(NULL), _seqAcorn(NULL), _seqCity1(NULL), _seqCity2(NULL), _seqCity3(NULL), _seqCredits(NULL),
+	_seqTooltips(nullptr), _seqEggButtons(nullptr), _seqButtons(nullptr), _seqAcorn(nullptr), _seqCity1(nullptr), _seqCity2(nullptr), _seqCity3(nullptr), _seqCredits(nullptr),
 	_gameId(kGameBlue), _hasShownStartScreen(false), _hasShownIntro(false),
 	_isShowingCredits(false), _isGameStarted(false), _isShowingMenu(false),
-	_creditsSequenceIndex(0), _checkHotspotsTicks(15),  _mouseFlags(Common::EVENT_INVALID), _lastHotspot(NULL),
+	_creditsSequenceIndex(0), _checkHotspotsTicks(15),  _mouseFlags(Common::EVENT_INVALID), _lastHotspot(nullptr),
 	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _lastIndex(0), _delta(0), _handleTimeDelta(false) {
 
 	_clock = new Clock(_engine);
@@ -165,7 +165,7 @@ Menu::~Menu() {
 	SAFE_DELETE(_seqCity3);
 	SAFE_DELETE(_seqCredits);
 
-	_lastHotspot = NULL;
+	_lastHotspot = nullptr;
 
 	// Cleanup frames
 	for (MenuFrames::iterator it = _frames.begin(); it != _frames.end(); it++)
@@ -174,7 +174,7 @@ Menu::~Menu() {
 	_frames.clear();
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ void Menu::eventMouse(const Common::Event &ev) {
 		}
 	} else {
 		// Check for hotspots
-		SceneHotspot *hotspot = NULL;
+		SceneHotspot *hotspot = nullptr;
 		getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse, &hotspot);
 
 		if (_lastHotspot != hotspot || ev.type == Common::EVENT_LBUTTONUP) {
@@ -961,7 +961,7 @@ void Menu::checkHotspots() {
 	if (_isShowingCredits)
 		return;
 
-	SceneHotspot *hotspot = NULL;
+	SceneHotspot *hotspot = nullptr;
 	getScenes()->get(getState()->scene)->checkHotSpot(getCoords(), &hotspot);
 
 	if (hotspot)
@@ -971,7 +971,7 @@ void Menu::checkHotspots() {
 }
 
 void Menu::hideOverlays() {
-	_lastHotspot = NULL;
+	_lastHotspot = nullptr;
 
 	// Hide all menu overlays
 	for (MenuFrames::iterator it = _frames.begin(); it != _frames.end(); it++)

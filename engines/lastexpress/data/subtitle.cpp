@@ -40,8 +40,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 class Subtitle {
 public:
-	Subtitle() : _timeStart(0), _timeStop(0), _topLength(0), _topText(NULL),
-		_bottomLength(0), _bottomText(NULL) {}
+	Subtitle() : _timeStart(0), _timeStop(0), _topLength(0), _topText(nullptr),
+		_bottomLength(0), _bottomText(nullptr) {}
 	~Subtitle() { reset(); }
 
 	bool load(Common::SeekableReadStream *in);
@@ -66,8 +66,8 @@ private:
 void Subtitle::reset() {
 	delete[] _topText;
 	delete[] _bottomText;
-	_topText = NULL;
-	_bottomText = NULL;
+	_topText = nullptr;
+	_bottomText = nullptr;
 }
 
 template<typename T>
@@ -76,7 +76,7 @@ T *newArray(size_t n) {
 		return new T[n];
 
 	// n is too large
-	return NULL;
+	return nullptr;
 }
 
 bool Subtitle::load(Common::SeekableReadStream *in) {
@@ -146,7 +146,7 @@ SubtitleManager::~SubtitleManager() {
 	reset();
 
 	// Zero passed pointers
-	_font = NULL;
+	_font = nullptr;
 }
 
 void SubtitleManager::reset() {

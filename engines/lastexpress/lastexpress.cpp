@@ -54,13 +54,13 @@ namespace LastExpress {
 
 LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd),
-	_debugger(NULL), _random("lastexpress"), _cursor(NULL),
-	_font(NULL), _logic(NULL), _menu(NULL),
+	_debugger(nullptr), _random("lastexpress"), _cursor(nullptr),
+	_font(nullptr), _logic(nullptr), _menu(nullptr),
 	_lastFrameCount(0),
-	_graphicsMan(NULL), _resMan(NULL),
-	_sceneMan(NULL), _soundMan(NULL),
-	_eventMouse(NULL), _eventTick(NULL),
-	_eventMouseBackup(NULL), _eventTickBackup(NULL)
+	_graphicsMan(nullptr), _resMan(nullptr),
+	_sceneMan(nullptr), _soundMan(nullptr),
+	_eventMouse(nullptr), _eventTick(nullptr),
+	_eventMouseBackup(nullptr), _eventTickBackup(nullptr)
 	{
 	// Setup mixer
 	Engine::syncSoundSettings();
@@ -89,7 +89,7 @@ LastExpressEngine::~LastExpressEngine() {
 	SAFE_DELETE(_eventTickBackup);
 
 	// Zero passed pointers
-	_gameDescription = NULL;
+	_gameDescription = nullptr;
 }
 
 // TODO: which error should we return when some game files are missing/corrupted?
@@ -262,7 +262,7 @@ bool LastExpressEngine::handleEvents() {
 /// Event Handling
 ///////////////////////////////////////////////////////////////////////////////////
 void LastExpressEngine::backupEventHandlers() {
-	if (_eventMouseBackup != NULL || _eventTickBackup != NULL)
+	if (_eventMouseBackup != nullptr || _eventTickBackup != nullptr)
 		error("[LastExpressEngine::backupEventHandlers] backup event handlers are already set");
 
 	_eventMouseBackup = _eventMouse;
@@ -270,7 +270,7 @@ void LastExpressEngine::backupEventHandlers() {
 }
 
 void LastExpressEngine::restoreEventHandlers() {
-	if (_eventMouseBackup == NULL || _eventTickBackup == NULL)
+	if (_eventMouseBackup == nullptr || _eventTickBackup == nullptr)
 		error("[LastExpressEngine::restoreEventHandlers] restore called before backing up the event handlers");
 
 	// Cleanup previous event handlers
@@ -280,8 +280,8 @@ void LastExpressEngine::restoreEventHandlers() {
 	_eventMouse = _eventMouseBackup;
 	_eventTick = _eventTickBackup;
 
-	_eventMouseBackup = NULL;
-	_eventTickBackup = NULL;
+	_eventMouseBackup = nullptr;
+	_eventTickBackup = nullptr;
 }
 
 void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, EventHandler::EventFunction *tick) {

@@ -489,12 +489,12 @@ uint32 SimpleSound::getTimeMS() {
 //////////////////////////////////////////////////////////////////////////
 // StreamedSound
 //////////////////////////////////////////////////////////////////////////
-StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
+StreamedSound::StreamedSound() : _as(nullptr), _loaded(false) {}
 
 StreamedSound::~StreamedSound() {
 	stop(); // should execute before disposal of _as, so don't move in ~SimpleSound
 	delete _as;
-	_as = NULL;
+	_as = nullptr;
 }
 
 bool StreamedSound::load(Common::SeekableReadStream *stream, uint32 volume, bool looped, uint32 startBlock) {
@@ -563,7 +563,7 @@ AppendableSound::~AppendableSound() {
 	finish();
 	stop();
 
-	_as = NULL;
+	_as = nullptr;
 }
 
 void AppendableSound::queueBuffer(const byte *data, uint32 size) {

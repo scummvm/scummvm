@@ -47,8 +47,8 @@
 namespace LastExpress {
 
 Fight::FightData::FightData() {
-	player = NULL;
-	opponent = NULL;
+	player = nullptr;
+	opponent = nullptr;
 
 	index = 0;
 
@@ -62,15 +62,15 @@ Fight::FightData::~FightData() {
 	SAFE_DELETE(opponent);
 }
 
-Fight::Fight(LastExpressEngine *engine) : _engine(engine), _data(NULL), _endType(kFightEndLost), _state(0), _handleTimer(false) {
+Fight::Fight(LastExpressEngine *engine) : _engine(engine), _data(nullptr), _endType(kFightEndLost), _state(0), _handleTimer(false) {
 }
 
 Fight::~Fight() {
 	clearData();
-	_data = NULL;
+	_data = nullptr;
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 
 		// Check hotspots
 		Scene *scene = getScenes()->get(getState()->scene);
-		SceneHotspot *hotspot = NULL;
+		SceneHotspot *hotspot = nullptr;
 
 		if (!scene->checkHotSpot(ev.mouse, &hotspot)) {
 			_engine->getCursor()->setStyle(kCursorNormal);
@@ -170,7 +170,7 @@ void Fight::handleTick(const Common::Event &ev, bool isProcessing) {
 	if (!_data || _data->index)
 		return;
 
-	SceneHotspot *hotspot = NULL;
+	SceneHotspot *hotspot = nullptr;
 	if (!getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse, &hotspot) || !_data->player->canInteract((Fighter::FightAction)hotspot->action)) {
 		_engine->getCursor()->setStyle(kCursorNormal);
 	} else {

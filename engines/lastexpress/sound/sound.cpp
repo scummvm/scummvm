@@ -127,7 +127,7 @@ SoundManager::~SoundManager() {
 	SAFE_DELETE(_queue);
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ void SoundManager::playLocomotiveSound() {
 
 const char *SoundManager::getDialogName(EntityIndex entity) const {
 	if (_queue->isBuffered(kEntityTables4))
-		return NULL;
+		return nullptr;
 	switch (entity) {
 	case kEntityAnna:
 		if (getEvent(kEventAnnaDialogGoToJerusalem))
@@ -674,7 +674,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 		break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

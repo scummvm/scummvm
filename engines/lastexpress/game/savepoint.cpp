@@ -32,12 +32,12 @@ namespace LastExpress {
 
 SavePoints::SavePoints(LastExpressEngine *engine) : _engine(engine) {
 	for (int i = 0; i < 40; i++)
-		_callbacks[i] = NULL;
+		_callbacks[i] = nullptr;
 }
 
 SavePoints::~SavePoints() {
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	point.param.intValue = param;
 
 	Callback *callback = getCallback(entity1);
-	if (callback != NULL && callback->isValid()) {
+	if (callback != nullptr && callback->isValid()) {
 		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%d", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param);
 		(*callback)(point);
 	}
@@ -166,7 +166,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	strncpy((char *)&point.param.charValue, param.c_str(), 6);
 
 	Callback *callback = getCallback(entity1);
-	if (callback != NULL && callback->isValid()) {
+	if (callback != nullptr && callback->isValid()) {
 		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%s", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param.c_str());
 		(*callback)(point);
 	}
@@ -183,7 +183,7 @@ void SavePoints::callAndProcess() {
 	while (isRunning) {
 
 		Callback *callback = getCallback(index);
-		if (callback != NULL && callback->isValid()) {
+		if (callback != nullptr && callback->isValid()) {
 			(*callback)(savepoint);
 			isRunning = getFlags()->isGameRunning;
 		}

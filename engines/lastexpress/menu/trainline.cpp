@@ -71,7 +71,7 @@ static const struct {
 	{210, kTimeCityConstantinople}
 };
 
-TrainLine::TrainLine(LastExpressEngine *engine) : _engine(engine), _frameLine1(NULL), _frameLine2(NULL) {
+TrainLine::TrainLine(LastExpressEngine *engine) : _engine(engine), _frameLine1(nullptr), _frameLine2(nullptr) {
 	_frameLine1 = new SequenceFrame(loadSequence("line1.seq"), 0, true);
 	_frameLine2 = new SequenceFrame(loadSequence("line2.seq"), 0, true);
 }
@@ -81,7 +81,7 @@ TrainLine::~TrainLine() {
 	SAFE_DELETE(_frameLine2);
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 void TrainLine::clear() {

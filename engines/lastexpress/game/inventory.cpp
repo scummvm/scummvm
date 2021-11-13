@@ -44,7 +44,7 @@ namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
 	_showingHourGlass(false), _blinkingDirection(1), _blinkingBrightness(0),
-	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
+	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(nullptr) {
 
 	//_inventoryRect = Common::Rect(0, 0, 32, 32);
 	_menuEggRect = Common::Rect(608, 448, 640, 480);
@@ -56,10 +56,10 @@ Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem
 }
 
 Inventory::~Inventory() {
-	_itemScene = NULL;
+	_itemScene = nullptr;
 
 	// Zero passed pointers
-	_engine = NULL;
+	_engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

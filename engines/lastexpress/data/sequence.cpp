@@ -76,7 +76,7 @@ void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
 
 // AnimFrame
 
-AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool /* ignoreSubtype */) : _palette(NULL) {
+AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool /* ignoreSubtype */) : _palette(nullptr) {
 	_palSize = 1;
 	// TODO: use just the needed rectangle
 	_image.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
@@ -340,7 +340,7 @@ Sequence::~Sequence() {
 void Sequence::reset() {
 	_frames.clear();
 	delete _stream;
-	_stream = NULL;
+	_stream = nullptr;
 }
 
 Sequence *Sequence::load(Common::String name, Common::SeekableReadStream *stream, byte field30) {
@@ -348,7 +348,7 @@ Sequence *Sequence::load(Common::String name, Common::SeekableReadStream *stream
 
 	if (!sequence->load(stream, field30)) {
 		delete sequence;
-		return NULL;
+		return nullptr;
 	}
 
 	return sequence;
@@ -409,11 +409,11 @@ AnimFrame *Sequence::getFrame(uint16 index) {
 	FrameInfo *frame = getFrameInfo(index);
 
 	if (!frame)
-		return NULL;
+		return nullptr;
 
 	// Skip "invalid" frames
 	if (frame->compressionType == 0)
-		return NULL;
+		return nullptr;
 
 	debugC(9, kLastExpressDebugGraphics, "Decoding sequence %s: frame %d / %d", _name.c_str(), index, _frames.size() - 1);
 
@@ -427,7 +427,7 @@ SequenceFrame::~SequenceFrame() {
 		delete _sequence;
 	}
 
-	_sequence = NULL;
+	_sequence = nullptr;
 }
 
 Common::Rect SequenceFrame::draw(Graphics::Surface *surface) {
