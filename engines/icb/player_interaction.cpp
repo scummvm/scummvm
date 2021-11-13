@@ -311,7 +311,7 @@ __mode_return _player::Player_interact() {
 				//      get the address of the script we want to run
 				const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
 
-				if (pc == NULL)
+				if (pc == nullptr)
 					Fatal_error("Object [%s] has no interact script", iobject->GetName());
 
 				//      now run the action context script which may or may not set a new script on level 1
@@ -329,7 +329,7 @@ __mode_return _player::Player_interact() {
 		// get the address of the script we want to run
 		const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
 
-		if (pc == NULL)
+		if (pc == nullptr)
 			Fatal_error("Object [%s] has no interact script", iobject->GetName());
 
 		interact_lock = TRUE8; // switch the lock on

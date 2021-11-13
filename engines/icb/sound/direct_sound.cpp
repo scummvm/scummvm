@@ -39,9 +39,9 @@
 
 namespace ICB {
 
-MusicManager *g_theMusicManager = NULL;
-SpeechManager *g_theSpeechManager = NULL;
-FxManager *g_theFxManager = NULL;
+MusicManager *g_theMusicManager = nullptr;
+SpeechManager *g_theSpeechManager = nullptr;
+FxManager *g_theFxManager = nullptr;
 bool8 g_TimerOn = TRUE8;
 
 Common::TimerManager::TimerProc g_timer_id;
@@ -72,19 +72,19 @@ bool8 Close_Sound_Engine() {
 	// Destroy the fx manager
 	if (g_theFxManager) {
 		delete g_theFxManager;
-		g_theFxManager = NULL;
+		g_theFxManager = nullptr;
 	}
 
 	// Destroy the music manager
 	if (g_theMusicManager) {
 		delete g_theMusicManager;
-		g_theMusicManager = NULL;
+		g_theMusicManager = nullptr;
 	}
 
 	// Destroy the speech manager
 	if (g_theSpeechManager) {
 		delete g_theSpeechManager;
-		g_theSpeechManager = NULL;
+		g_theSpeechManager = nullptr;
 	}
 	g_icb->_mixer->stopAll();
 

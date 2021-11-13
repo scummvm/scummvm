@@ -41,7 +41,7 @@ const int32 PTR_ARRAY_MAX(1024);
 uint32 encodePtr(uint8 *ptr) {
 	PointerReference ptrRef;
 
-	ptrdiff_t diff = ptr - (uint8 *)0;
+	ptrdiff_t diff = ptr - (uint8 *)nullptr;
 	ptrRef.ref = (uint32)(diff & 0xFFFFFFFF);
 	ptrRef.ptr = ptr;
 
@@ -65,7 +65,7 @@ uint32 encodePtr(uint8 *ptr) {
 
 uint8 *resolvePtr(uint32 ref) {
 	if (ref == 0)
-		return NULL;
+		return nullptr;
 
 	// do a linear search
 	for (Common::Array<PointerReference>::iterator it = g_ptrArray->begin(); it < g_ptrArray->end(); it++) {
@@ -74,7 +74,7 @@ uint8 *resolvePtr(uint32 ref) {
 
 			// purge
 			it->ref = 0;
-			it->ptr = 0;
+			it->ptr = nullptr;
 
 			return ptr;
 		}
@@ -82,7 +82,7 @@ uint8 *resolvePtr(uint32 ref) {
 
 	error("MemoryUtil::resolvePtr(%08x) COULD NOT RESOLVE POINTER!\n", ref);
 
-	return NULL;
+	return nullptr;
 }
 
 void clearAllPtrs(void) { g_ptrArray->clear(); }

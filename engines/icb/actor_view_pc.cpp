@@ -178,7 +178,7 @@ void ChangeAnimPlaying(const char *pose, const char *anim, bool8 forwards, int32
 	}
 
 	// Require anim parameter
-	if (anim == NULL)
+	if (anim == nullptr)
 		Fatal_error("ChangeAnimPlaying() cannot set active animation to NULL!");
 
 	// Remake raj filename
@@ -453,7 +453,7 @@ void DrawFrame(const int32 frame) {
 	BoneDeformation *myBones[MAX_DEFORMABLE_BONES];
 
 	for (int32 i = 0; i < MAX_DEFORMABLE_BONES; i++) {
-		myBones[i] = NULL;
+		myBones[i] = nullptr;
 	}
 
 	// Shadow stuff to play with

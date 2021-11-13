@@ -69,7 +69,7 @@ _map_marker *_marker::Fetch_marker_by_object_name(const char *name) {
 	}
 
 	// not found
-	return (NULL);
+	return (nullptr);
 }
 
 } // End of namespace ICB

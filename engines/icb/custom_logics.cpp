@@ -223,7 +223,7 @@ void _game_session::Custom_button_operated_door() {
 
 			// close sound
 			if (logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR] != 0)
-				RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR], closeDesc,
+				RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR], closeDesc,
 				              (int8)127); // have to use full version so we can give hash instead of string
 			else
 				RegisterSound(cur_id, defaultCloseSfx, closeDesc); // use small version as we have string not hash
@@ -263,7 +263,7 @@ void _game_session::Custom_button_operated_door() {
 
 				// open sound
 				if (logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR] != 0)
-					RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR], openDesc,
+					RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR], openDesc,
 					              (int8)127); // have to use full version so we can give hash instead of string
 				else
 					RegisterSound(cur_id, defaultOpenSfx, openDesc); // use small version as we have string not hash
@@ -357,7 +357,7 @@ void _game_session::Custom_auto_door() {
 			CAD_STATE = CAD_CLOSING;
 			// close sound
 			if (logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR] != 0)
-				RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR], closeDesc,
+				RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[CLOSE_SFX_VAR], closeDesc,
 				              (int8)127); // have to use full version so we can give hash instead of string
 			else
 				RegisterSound(cur_id, defaultCloseSfx, closeDesc); // use small version as we have string not hash
@@ -392,7 +392,7 @@ void _game_session::Custom_auto_door() {
 
 			// open sound
 			if (logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR] != 0)
-				RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR], openDesc,
+				RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[OPEN_SFX_VAR], openDesc,
 				              (int8)127); // have to use full version so we can give hash instead of string
 			else
 				RegisterSound(cur_id, defaultOpenSfx, openDesc); // use small version as we have string not hash

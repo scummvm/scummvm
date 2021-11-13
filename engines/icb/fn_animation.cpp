@@ -665,7 +665,7 @@ mcodeFunctionReturnCodes _game_session::fn_play_generic_anim(int32 &, int32 *par
 
 	bool8 ret;
 
-	const char *anim_name = NULL;
+	const char *anim_name = nullptr;
 	if (params && params[0]) {
 		anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	}
@@ -735,7 +735,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim(int32 &, int32
 	// return    IR_CONT or
 	//			IR_REPEAT
 
-	const char *anim_name = NULL;
+	const char *anim_name = nullptr;
 	if (params && params[0]) {
 		anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	}
@@ -1155,7 +1155,7 @@ mcodeFunctionReturnCodes _game_session::fn_play_custom_anim(int32 &result, int32
 		return IR_REPEAT;
 	}
 
-	return (fn_play_generic_anim(result, 0));
+	return (fn_play_generic_anim(result, nullptr));
 }
 
 mcodeFunctionReturnCodes _game_session::fn_reverse_custom_anim(int32 &, int32 *params) {
@@ -1247,7 +1247,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim(int32 &result, 
 		return (IR_REPEAT);
 	}
 
-	return (fn_easy_play_generic_anim(result, 0));
+	return (fn_easy_play_generic_anim(result, nullptr));
 }
 
 mcodeFunctionReturnCodes _game_session::fn_apply_bullet(int32 &, int32 *) {
@@ -1313,7 +1313,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 
 	// gun sound
 	if (logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR] != 0)
-		RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR], gunDesc, (int8)127); // have to use full version so we can give hash instead of string
+		RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[GUNSHOT_SFX_VAR], gunDesc, (int8)127); // have to use full version so we can give hash instead of string
 	else
 		RegisterSound(cur_id, defaultGunSfx, gunDesc); // use small version as we have string not hash
 
@@ -1415,7 +1415,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	if (missed) {
 		// gun sound
 		if (logic_structs[cur_id]->sfxVars[RICOCHET_SFX_VAR] != 0)
-			RegisterSound(cur_id, NULL, logic_structs[cur_id]->sfxVars[RICOCHET_SFX_VAR], ricochetDesc,
+			RegisterSound(cur_id, nullptr, logic_structs[cur_id]->sfxVars[RICOCHET_SFX_VAR], ricochetDesc,
 			              (int8)127); // have to use full version so we can give hash instead of string
 		else
 			RegisterSound(cur_id, defaultRicochetSfx, ricochetDesc); // use small version as we have string not hash

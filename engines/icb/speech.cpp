@@ -456,8 +456,8 @@ void _game_session::Service_speech() {
 		speech_object = (c_game_object *)objects->Fetch_item_by_name("scenes");
 		cur_id = objects->Fetch_item_number_by_name("scenes");
 		L = logic_structs[cur_id];
-		I = 0;
-		M = 0;
+		I = nullptr;
+		M = nullptr;
 
 		// run the script
 		ret = RunScript(const_cast<const char *&>(speech_info[CONV_ID].script_pc), speech_object);

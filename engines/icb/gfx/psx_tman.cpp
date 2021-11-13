@@ -73,14 +73,14 @@ TextureInfo *TextureManager::FindTexture(uint32 id, uint32 age) {
 		slot++;
 	}
 	// printf( "Texture %X not found", id );
-	return NULL;
+	return nullptr;
 }
 
 TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, uint32 id, uint32 age, uint16 imgW, uint16 imgH) {
 	// printf( "Adding Texture %X", id );
 	if (id == 0) {
 		Message_box("AddTexture 0 ID");
-		return NULL;
+		return nullptr;
 	}
 
 	// Try to find a slot for it
@@ -254,7 +254,7 @@ PaletteInfo *TextureManager::FindPalette(uint32 id, uint32 age) {
 		}
 		slot++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 PaletteInfo *TextureManager::AddPalette(uint32 * /*clut_ptr*/, uint32 id, uint32 age) {
@@ -269,7 +269,7 @@ PaletteInfo *TextureManager::AddPalette(uint32 * /*clut_ptr*/, uint32 id, uint32
 		nPalettesUsed++;
 		return slot;
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace ICB

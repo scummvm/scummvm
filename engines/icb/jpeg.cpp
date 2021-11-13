@@ -70,18 +70,18 @@ JpegDecoder::JpegDecoder() {
 
 JpegDecoder::~JpegDecoder() {
 	delete[] ac_tables;
-	ac_tables = NULL;
+	ac_tables = nullptr;
 	delete[] dc_tables;
-	dc_tables = NULL;
+	dc_tables = nullptr;
 
 	delete[] quantization_tables;
-	quantization_tables = NULL;
+	quantization_tables = nullptr;
 	delete[] components;
-	components = NULL;
+	components = nullptr;
 	delete[] component_indices;
-	component_indices = NULL;
+	component_indices = nullptr;
 	delete[] scan_components;
-	scan_components = NULL;
+	scan_components = nullptr;
 }
 
 void JpegDecoder::Initialize() {
@@ -1029,13 +1029,13 @@ JpegDecoderComponent::JpegDecoderComponent() {
 	v_sampling = 0;
 	h_sampling = 0;
 	last_dc_value = 0;
-	ac_table = NULL;
-	dc_table = NULL;
-	quantization_table = NULL;
+	ac_table = nullptr;
+	dc_table = nullptr;
+	quantization_table = nullptr;
 	noninterleaved_rows = 0;
 	noninterleaved_cols = 0;
-	data_units = NULL;
-	upsample_data = NULL;
+	data_units = nullptr;
+	upsample_data = nullptr;
 	return;
 }
 
@@ -1046,9 +1046,9 @@ JpegDecoderComponent::JpegDecoderComponent() {
 //
 JpegDecoderComponent::~JpegDecoderComponent() {
 	delete[] data_units;
-	data_units = NULL;
+	data_units = nullptr;
 	delete[] upsample_data;
-	upsample_data = NULL;
+	upsample_data = nullptr;
 }
 
 //
@@ -1071,7 +1071,7 @@ void JpegDecoderComponent::SetQuantizationTable(JpegDecoderQuantizationTable &ta
 //    decoder:  The jpeg decoder this component belongs to.
 //
 void JpegDecoderComponent::AllocateComponentBuffers(const JpegDecoder &decoder) {
-	if (data_units == NULL) {
+	if (data_units == nullptr) {
 		// Determine sampling for the component. This is the amount of
 		// stretching needed for the component.
 		v_sampling = decoder.max_vertical_frequency / vertical_frequency;
@@ -1096,9 +1096,9 @@ void JpegDecoderComponent::AllocateComponentBuffers(const JpegDecoder &decoder) 
 //
 void JpegDecoderComponent::FreeComponentBuffers() {
 	delete[] data_units;
-	data_units = NULL;
+	data_units = nullptr;
 	delete[] upsample_data;
-	upsample_data = NULL;
+	upsample_data = nullptr;
 }
 
 //
@@ -1186,7 +1186,7 @@ void JpegDecoderComponent::Upsample() {
 	if (imagesize == 0)
 		return; // No data for this component yet.
 
-	if (upsample_data == NULL)
+	if (upsample_data == nullptr)
 		upsample_data = new uint8[imagesize];
 
 	// Simple case where component does not need to be upsampled.

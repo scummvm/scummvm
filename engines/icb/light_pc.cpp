@@ -78,7 +78,7 @@ int32 prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXSh
 	lampBounce[1] = 0;
 	lampBounce[2] = 0;
 
-	if (lamplist == NULL) {
+	if (lamplist == nullptr) {
 		return prepareLightsGlobalPC(lDirects);
 	}
 
@@ -120,7 +120,7 @@ int32 prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXSh
 
 	uint32 num = lamplist->n;
 
-	PSXLamp *plamp = NULL;
+	PSXLamp *plamp = nullptr;
 	PSXLampState *plampstate;
 
 	uint32 state;

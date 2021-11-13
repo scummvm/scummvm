@@ -52,7 +52,7 @@ MusicManager::MusicManager() {
 	m_fading = 0;
 	m_adjustFadeVol = 0;
 
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
 MusicManager::~MusicManager() {
@@ -106,7 +106,7 @@ bool8 MusicManager::LoadMusic(const char *clusterName, uint32 byteOffsetToWav, i
 
 	// Open the cluster file
 	Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead(clusterName);
-	if (stream == NULL)
+	if (stream == nullptr)
 		return FALSE8;
 
 	// Need to seek to the correct postion in the cluster

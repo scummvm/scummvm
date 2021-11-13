@@ -34,7 +34,7 @@ namespace ICB {
 const char *hashTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345";
 
 uint32 EngineHashString(const char *fn) {
-	if (fn == NULL)
+	if (fn == nullptr)
 		return 0;
 	char *f;
 	char c;

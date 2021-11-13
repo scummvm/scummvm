@@ -363,9 +363,9 @@ void res_man::Advance_time_stamp() {
 }
 
 res_man::res_man() {
-	memory_base = NULL;
+	memory_base = nullptr;
 	max_mem_blocks = 0;
-	mem_list = NULL;
+	mem_list = nullptr;
 }
 
 res_man::res_man(uint32 memory_tot) {
@@ -704,7 +704,7 @@ uint8 *res_man::Internal_open(RMParams *params, int32 *ret_len) {
 		}
 		// otherwise we're doing an async so it's alright to return 9
 		else
-			return 0x00000000;
+			return nullptr;
 	}
 
 	// Pass the 8-byte aligned length back to calling function
@@ -712,7 +712,7 @@ uint8 *res_man::Internal_open(RMParams *params, int32 *ret_len) {
 		*ret_len = params->len;
 
 	if (mem_list[params->search].protect)
-		return 0x00000000;
+		return nullptr;
 
 	return ptr;
 }
@@ -734,7 +734,7 @@ uint8 *res_man::LoadFile(int32 &cluster_search, RMParams *params) {
 	// if we are preloading the cluster
 	if (params->not_ready_yet) {
 		// printf("LoadFile cluster not ready yet");
-		return NULL;
+		return nullptr;
 	}
 
 	// align to 8 byte boundary in length so that next resource will adjoin legally

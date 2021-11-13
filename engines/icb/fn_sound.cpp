@@ -162,7 +162,7 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sfx(int32 &, int32 *params) {
 	const char *sub = strstr(const_cast<char *>(snd), "::");
 
 	// if object name is given in form obj::snd then extract both parts
-	if (sub != NULL) {
+	if (sub != nullptr) {
 		char tempObj[64];
 		char tempSnd[64];
 

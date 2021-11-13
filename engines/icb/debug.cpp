@@ -116,7 +116,7 @@ void _game_session::Show_lit_unlit_diagnostics() {
 	// Draw the lights at their screen positions and with their base colours
 	if (SetOK()) {
 		rlp_API *lights = set.GetPRig();
-		if (lights != NULL) {
+		if (lights != nullptr) {
 			for (j = 0; j < lights->nLamps; j++) {
 				PSXLamp *pLamp = (PSXLamp *)lights->GetLamp(j);
 				uint32 state = pLamp->nStates - 1;

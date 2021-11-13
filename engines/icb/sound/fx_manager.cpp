@@ -55,7 +55,7 @@ FxManager::FxManager() {
 		m_effects[id].pitch = 0;
 		m_effects[id].pan = 0;
 		m_effects[id].volume = 0;
-		m_effects[id]._stream = NULL;
+		m_effects[id]._stream = nullptr;
 	}
 }
 

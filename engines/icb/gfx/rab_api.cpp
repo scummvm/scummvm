@@ -36,7 +36,7 @@ namespace ICB {
 // values with zero
 Bone_Frame *rab_API::GetFrame(const int32 f) {
 	Bone_Frame *curFrm = GetCurrentFrame();
-	Bone_Frame *prevFrm = NULL;
+	Bone_Frame *prevFrm = nullptr;
 
 	if (f != currentFrame) {
 		// Decode and decompress the data from the animation frame into
@@ -173,7 +173,7 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 				}
 				break;
 			}
-			default: { return NULL; }
+			default: { return nullptr; }
 			}
 		}
 		curFrm->poseBone = frm->poseBone;

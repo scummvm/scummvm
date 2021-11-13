@@ -118,7 +118,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		pyIconBitmap = surface_manager->Lock_surface(m_pnIconSurfaceIDs[i]);
 		uint32 nPitch = surface_manager->Get_pitch(m_pnIconSurfaceIDs[i]);
 		// Load the icon into the surface
-		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
+		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// convert it to b/w
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
 		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
@@ -145,7 +145,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
 		// Load the icon hilight
-		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
+		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// Unlock the surface
 		surface_manager->Unlock_surface(m_pnHiLiteSurfaceIDs[i]);
 	}
@@ -206,7 +206,7 @@ void _icon_menu::ReActivate() {
 		uint32 nPitch = surface_manager->Get_pitch(m_pnIconSurfaceIDs[i]);
 
 		// Load the icon into the surface
-		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
+		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// convert it to b/w
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
 		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
@@ -232,7 +232,7 @@ void _icon_menu::ReActivate() {
 		uint8 *pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
 		// Load the icon hilight
-		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
+		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// Unlock the surface
 		surface_manager->Unlock_surface(m_pnHiLiteSurfaceIDs[i]);
 		// Set the transparency keys for the icon
@@ -483,7 +483,7 @@ void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
 	nPitch = surface_manager->Get_pitch(nSurfaceID);
 
 	// Draw the icon into the surface.
-	SpriteXYFrameDraw(p8Bitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
+	SpriteXYFrameDraw(p8Bitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 
 	// Finished drawing the icon into the surfaces so we can unlock them.
 	surface_manager->Unlock_surface(nSurfaceID);
@@ -635,8 +635,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcArrowIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
 	// Draw the two frames onto their respective surfaces.
-	SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
-	SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, NULL, 255);
+	SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+	SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
 	// Finished drawing the icon into the surfaces so we can unlock them.
 	surface_manager->Unlock_surface(m_nLeftArrowID);
@@ -665,8 +665,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcArrowIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
 	// Draw the two frames onto their respective surfaces.
-	SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, NULL, 255);
-	SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, NULL, 255);
+	SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+	SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
 	// Finished drawing the icon into the surfaces so we can unlock them.
 	surface_manager->Unlock_surface(m_nRightArrowID);

@@ -568,7 +568,7 @@ _set::_set() {
 	set_cluster[0] = '\0';
 	m_setOk = 0;
 	m_TotalPropSurfaces = 0;
-	m_props = 0;
+	m_props = nullptr;
 	memset(m_propSurfaces, 0x00, sizeof(int32) * MAX_PROP_STATES);
 	InitWeather(WEATHER_NONE, 0, 0, 0, 0, 0);
 }
@@ -640,7 +640,7 @@ void _set::Reset() {
 		surface_manager->Kill_surface(bg_buffer_id);
 
 		delete m_props;
-		m_props = 0;
+		m_props = nullptr;
 	}
 
 	m_setOk = 0;
