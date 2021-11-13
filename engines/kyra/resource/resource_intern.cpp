@@ -65,11 +65,11 @@ Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common
 	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
-		return 0;
+		return nullptr;
 
 	Common::SeekableReadStream *parent = _file->createReadStream();
 	if (!parent)
-		return 0;
+		return nullptr;
 
 	return new Common::SeekableSubReadStream(parent, fDesc->_value.offset, fDesc->_value.offset + fDesc->_value.size, DisposeAfterUse::YES);
 }
@@ -97,7 +97,7 @@ TlkArchive::~TlkArchive() {
 
 bool TlkArchive::hasFile(const Common::Path &path) const {
 	Common::String name = path.toString();
-	return (findFile(name) != 0);
+	return (findFile(name) != nullptr);
 }
 
 int TlkArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -123,11 +123,11 @@ Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::
 	Common::String name = path.toString();
 	const uint32 *fileDesc = findFile(name);
 	if (!fileDesc)
-		return 0;
+		return nullptr;
 
 	Common::SeekableReadStream *parent = _file->createReadStream();
 	if (!parent)
-		return 0;
+		return nullptr;
 
 	parent->seek(fileDesc[1], SEEK_SET);
 	const uint32 size = parent->readUint32LE();
@@ -141,11 +141,11 @@ const uint32 *TlkArchive::findFile(const Common::String &name) const {
 	uppercaseName.toUppercase();
 
 	if (!uppercaseName.hasSuffix(".AUD"))
-		return 0;
+		return nullptr;
 
 	uint32 id;
 	if (sscanf(uppercaseName.c_str(), "%08u.AUD", &id) != 1)
-		return 0;
+		return nullptr;
 
 	// Binary search for the file entry
 	int leftIndex = 0;
@@ -167,7 +167,7 @@ const uint32 *TlkArchive::findFile(const Common::String &name) const {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 // -> CachedArchive implementation
@@ -220,7 +220,7 @@ Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Commo
 	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
-		return 0;
+		return nullptr;
 
 	return new Common::MemoryReadStream(fDesc->_value.data, fDesc->_value.size, DisposeAfterUse::NO);
 }
@@ -297,11 +297,11 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
 	if (filesize < 4)
-		return 0;
+		return nullptr;
 
 	Common::ScopedPtr<PlainArchive> result(new PlainArchive(memberFile));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	int32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
@@ -319,21 +319,21 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize || startoffset < 0) {
 			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
-			return 0;
+			return nullptr;
 		}
 
 		file = readString(stream);
 
 		if (stream.eos()) {
 			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
-			return 0;
+			return nullptr;
 		}
 
 		// Quit now if we encounter an empty string
 		if (file.empty()) {
 			if (firstFile) {
 				warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
-				return 0;
+				return nullptr;
 			} else {
 				break;
 			}
@@ -344,7 +344,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 
 		if (endoffset < 0 && stream.pos() != firstOffset) {
 			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
-			return 0;
+			return nullptr;
 		}
 
 		if (!endoffset || stream.pos() == firstOffset)
@@ -414,7 +414,7 @@ Common::Archive *ResLoaderInsMalcolm::load(Common::ArchiveMemberPtr memberFile, 
 	Common::List<Common::String> filenames;
 	Common::ScopedPtr<PlainArchive> result(new PlainArchive(memberFile));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	// thanks to eriktorbjorn for this code (a bit modified though)
 	stream.seek(3, SEEK_SET);
@@ -611,7 +611,7 @@ private:
 	uint16 *_tables16[3];
 };
 
-FileExpander::FileExpander() : _src(0) {
+FileExpander::FileExpander() : _src(nullptr) {
 	_tables[0] = new uint8[3914];
 	assert(_tables[0]);
 
@@ -779,7 +779,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 	}
 
 	delete _src;
-	_src = 0;
+	_src = nullptr;
 
 	return true;
 }
@@ -787,7 +787,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt) {
 	uint8 *tbl1 = _tables[srcIndex];
 	uint8 *tbl2 = _tables[dstIndex];
-	uint8 *tbl3 = dstIndex2 == 0xFF ? 0 : _tables[dstIndex2];
+	uint8 *tbl3 = dstIndex2 == 0xFF ? nullptr : _tables[dstIndex2];
 
 	if (!cnt)
 		return;
@@ -958,7 +958,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	InsArchive newArchive;
 	Common::List<InsArchive> archives;
 
-	Common::SeekableReadStream *tmpFile = 0;
+	Common::SeekableReadStream *tmpFile = nullptr;
 
 	for (int8 currentFile = 1; currentFile; currentFile++) {
 		sprintf(filenameExt, extension.c_str(), currentFile);
@@ -995,7 +995,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 		bytesleft -= cs;
 
 		delete tmpFile;
-		tmpFile = 0;
+		tmpFile = nullptr;
 
 		pos += cs;
 		if (cs == size) {
@@ -1021,8 +1021,8 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	CachedArchive::InputEntry newEntry;
 	uint32 insize = 0;
 	uint32 outsize = 0;
-	uint8 *inbuffer = 0;
-	uint8 *outbuffer = 0;
+	uint8 *inbuffer = nullptr;
+	uint8 *outbuffer = nullptr;
 	uint32 inPart1 = 0;
 	uint32 inPart2 = 0;
 	uint8 compressionType = 0;
@@ -1055,7 +1055,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 				if (pos > size) {
 					pos -= size;
 					delete tmpFile;
-					tmpFile = 0;
+					tmpFile = nullptr;
 					continue;
 				}
 			} else {
@@ -1070,7 +1070,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						memcpy(outbuffer, inbuffer, outsize);
 
 					delete[] inbuffer;
-					inbuffer = 0;
+					inbuffer = nullptr;
 
 					newEntry.data = outbuffer;
 					newEntry.size = outsize;
@@ -1160,7 +1160,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 							memcpy(outbuffer, inbuffer, outsize);
 
 						delete[] inbuffer;
-						inbuffer = 0;
+						inbuffer = nullptr;
 						newEntry.data = outbuffer;
 						newEntry.size = outsize;
 						newEntry.name = entryStr;
@@ -1190,7 +1190,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 				}
 			}
 			delete tmpFile;
-			tmpFile = 0;
+			tmpFile = nullptr;
 		}
 	}
 

@@ -34,12 +34,12 @@ namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	: Engine(system), _flags(flags), _rnd("kyra") {
-	_res = 0;
-	_sound = 0;
-	_text = 0;
-	_staticres = 0;
-	_timer = 0;
-	_emc = 0;
+	_res = nullptr;
+	_sound = nullptr;
+	_text = nullptr;
+	_staticres = nullptr;
+	_timer = nullptr;
+	_emc = nullptr;
 
 	_configRenderMode = Common::kRenderDefault;
 	_configNullSound = false;
@@ -50,7 +50,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 		_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
-	_trackMap = 0;
+	_trackMap = nullptr;
 	_trackMapSize = 0;
 	_lastMusicCommand = -1;
 	_curSfxFile = _curMusicTheme = -1;
@@ -119,7 +119,7 @@ Common::Error KyraEngine_v1::init() {
 				else
 					type = Sound::kMidiGM;
 
-				MidiDriver *driver = 0;
+				MidiDriver *driver = nullptr;
 
 				if (musicType == MT_PCSPK) {
 					driver = new MidiDriver_PCSpeaker(_mixer);
@@ -260,7 +260,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - Common::KEYCODE_0);
-					saveGameStateIntern(saveLoadSlot, savegameName, 0);
+					saveGameStateIntern(saveLoadSlot, savegameName, nullptr);
 				}
 			} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_q) {

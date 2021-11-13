@@ -34,7 +34,7 @@ namespace Kyra {
 GUI::GUI(KyraEngine_v1 *kyra) : _vm(kyra), _screen(kyra->screen()) {
 	_saveSlotsListUpdateNeeded = true;
 	_savegameListSize = 0;
-	_savegameList = 0;
+	_savegameList = nullptr;
 }
 
 GUI::~GUI() {
@@ -42,7 +42,7 @@ GUI::~GUI() {
 		for (int i = 0; i < _savegameListSize; i++)
 			delete[] _savegameList[i];
 		delete[] _savegameList;
-		_savegameList = 0;
+		_savegameList = nullptr;
 	}
 }
 
@@ -124,13 +124,13 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 					Util::convertUTF8ToDOS(*listEntry, buffSize);
 				delete in;
 			} else {
-				*listEntry = 0;
+				*listEntry = nullptr;
 				error("GUI::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
 			}
 		}
 
 	} else {
-		_savegameList = 0;
+		_savegameList = nullptr;
 	}
 }
 

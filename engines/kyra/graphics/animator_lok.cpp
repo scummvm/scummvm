@@ -32,7 +32,7 @@ Animator_LoK::Animator_LoK(KyraEngine_LoK *vm, OSystem *system) {
 	_screen = vm->screen();
 	_initOk = false;
 	_system = system;
-	_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
+	_screenObjects = _actors = _items = _sprites = _objectQueue = nullptr;
 	_noDrawShapesFlag = 0;
 
 	_actorBkgBackUp[0] = new uint8[_screen->getRectSize(8, 69)]();
@@ -60,7 +60,7 @@ void Animator_LoK::close() {
 	if (_initOk) {
 		_initOk = false;
 		delete[] _screenObjects;
-		_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
+		_screenObjects = _actors = _items = _sprites = _objectQueue = nullptr;
 	}
 }
 
@@ -390,7 +390,7 @@ void Animator_LoK::animRemoveGameItem(int index) {
 	restoreAllObjectBackgrounds();
 
 	AnimObject *animObj = &_items[index];
-	animObj->sceneAnimPtr = 0;
+	animObj->sceneAnimPtr = nullptr;
 	animObj->animFrameNumber = -1;
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
@@ -463,16 +463,16 @@ Animator_LoK::AnimObject *Animator_LoK::objectRemoveQueue(AnimObject *queue, Ani
 
 	if (cur == queue) {
 		if (!cur)
-			return 0;
+			return nullptr;
 		return cur->nextAnimObject;
 	}
 
 	if (!cur->nextAnimObject) {
 		if (cur == rem) {
 			if (!prev)
-				return 0;
+				return nullptr;
 			else
-				prev->nextAnimObject = 0;
+				prev->nextAnimObject = nullptr;
 		}
 	} else {
 		if (cur == rem)
@@ -507,14 +507,14 @@ Animator_LoK::AnimObject *Animator_LoK::objectQueue(AnimObject *queue, AnimObjec
 		add->nextAnimObject = cur;
 	} else {
 		cur->nextAnimObject = add;
-		add->nextAnimObject = 0;
+		add->nextAnimObject = nullptr;
 	}
 	return queue;
 }
 
 void Animator_LoK::addObjectToQueue(AnimObject *object) {
 	if (!_objectQueue)
-		_objectQueue = objectAddHead(0, object);
+		_objectQueue = objectAddHead(nullptr, object);
 	else
 		_objectQueue = objectQueue(_objectQueue, object);
 }
@@ -524,7 +524,7 @@ void Animator_LoK::refreshObject(AnimObject *object) {
 	if (_objectQueue)
 		_objectQueue = objectQueue(_objectQueue, object);
 	else
-		_objectQueue = objectAddHead(0, object);
+		_objectQueue = objectAddHead(nullptr, object);
 }
 
 void Animator_LoK::makeBrandonFaceMouse() {

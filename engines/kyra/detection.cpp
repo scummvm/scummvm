@@ -48,7 +48,7 @@ static const DebugChannelDef debugFlagList[] = {
 const char *const directoryGlobs[] = {
 	"malcolm",
 	"data", // LOL GOG release
-	0
+	nullptr
 };
 
 const ADExtraGuiOptionsMap gameGuiOptions[] = {

@@ -27,7 +27,7 @@
 namespace Kyra {
 
 Screen_v2::Screen_v2(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
-	: Screen(vm, system, dimTable, dimTableSize), _wsaFrameAnimBuffer(0) {
+	: Screen(vm, system, dimTable, dimTableSize), _wsaFrameAnimBuffer(nullptr) {
 	_wsaFrameAnimBuffer = new uint8[1024];
 	assert(_wsaFrameAnimBuffer);
 }
@@ -194,7 +194,7 @@ const uint8 *Screen_v2::getPtrToShape(const uint8 *shpFile, int shape) {
 	uint16 shapes = READ_LE_UINT16(shpFile);
 
 	if (shapes <= shape)
-		return 0;
+		return nullptr;
 
 	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
 
@@ -205,7 +205,7 @@ uint8 *Screen_v2::getPtrToShape(uint8 *shpFile, int shape) {
 	uint16 shapes = READ_LE_UINT16(shpFile);
 
 	if (shapes <= shape)
-		return 0;
+		return nullptr;
 
 	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
 
@@ -235,7 +235,7 @@ uint16 Screen_v2::getShapeSize(const uint8 *shp) {
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
 	const uint8 *shape = getPtrToShape(src, index);
 	if (!shape)
-		return 0;
+		return nullptr;
 
 	int size = getShapeSize(shape);
 

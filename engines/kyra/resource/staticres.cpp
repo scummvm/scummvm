@@ -150,7 +150,7 @@ bool StaticResource::loadStaticResourceFile() {
 			continue;
 		}
 
-		delete file; file = 0;
+		delete file; file = nullptr;
 
 		if (!res->loadPakFile(staticDataFilename(), *i))
 			continue;
@@ -209,7 +209,7 @@ bool StaticResource::tryKyraDatLoad() {
 	}
 
 	delete index;
-	index = 0;
+	index = nullptr;
 
 	if (!found)
 		return false;
@@ -282,7 +282,7 @@ bool StaticResource::init() {
 		{ kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData) },
 #endif
 
-		{ 0, 0, 0 }
+		{ 0, nullptr, nullptr }
 	};
 #undef proc
 	_fileLoader = fileTypeTable;
@@ -335,7 +335,7 @@ bool StaticResource::prefetchId(int id) {
 		return true;
 	}
 
-	const void *ptr = 0;
+	const void *ptr = nullptr;
 	int type = -1, size = -1;
 
 	if (checkResList(id, type, ptr, size))
@@ -396,36 +396,36 @@ bool StaticResource::checkResList(int id, int &type, const void *&ptr, int &size
 
 const StaticResource::FileType *StaticResource::getFiletype(int type) {
 	if (!_fileLoader)
-		return 0;
+		return nullptr;
 
 	for (int i = 0; _fileLoader[i].load; ++i) {
 		if (_fileLoader[i].type == type)
 			return &_fileLoader[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 const void *StaticResource::getData(int id, int requesttype, int &size) {
-	const void *ptr = 0;
+	const void *ptr = nullptr;
 	int type = -1;
 	size = 0;
 
 	if (checkResList(id, type, ptr, size)) {
 		if (type == requesttype)
 			return ptr;
-		return 0;
+		return nullptr;
 	}
 
 	if (!prefetchId(id))
-		return 0;
+		return nullptr;
 
 	if (checkResList(id, type, ptr, size)) {
 		if (type == requesttype)
 			return ptr;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 bool StaticResource::loadDummy(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -582,7 +582,7 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 			size += (num_c * sizeof(FrameControl));
 
 		} else {
-			tmp_n[i].wsaControl = 0;
+			tmp_n[i].wsaControl = nullptr;
 		}
 	}
 
@@ -642,7 +642,7 @@ void StaticResource::freeDummy(void *&ptr, int &size) {
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8 *)ptr;
 	delete[] data;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
@@ -651,28 +651,28 @@ void StaticResource::freeStringTable(void *&ptr, int &size) {
 	while (size--)
 		delete[] data[size];
 	delete[] data;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
 void StaticResource::freeShapeTable(void *&ptr, int &size) {
 	Shape *data = (Shape *)ptr;
 	delete[] data;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
 void StaticResource::freeAmigaSfxTable(void *&ptr, int &size) {
 	AmigaSfxTable *data = (AmigaSfxTable *)ptr;
 	delete[] data;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
 void StaticResource::freeRoomTable(void *&ptr, int &size) {
 	Room *data = (Room *)ptr;
 	delete[] data;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
@@ -692,7 +692,7 @@ void StaticResource::freeHoFSequenceData(void *&ptr, int &size) {
 	delete[] h->nestedSeq;
 
 	delete h;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
@@ -701,7 +701,7 @@ void StaticResource::freeHoFSeqItemAnimData(void *&ptr, int &size) {
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
@@ -710,7 +710,7 @@ void StaticResource::freeItemAnimDefinition(void *&ptr, int &size) {
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
-	ptr = 0;
+	ptr = nullptr;
 	size = 0;
 }
 
@@ -791,7 +791,7 @@ void KyraEngine_LoK::initStaticResource() {
 		assert(_roomTable);
 
 		memcpy(_roomTable, tempRoomList, _roomTableSize * sizeof(Room));
-		tempRoomList = 0;
+		tempRoomList = nullptr;
 
 		_staticres->unloadId(k1RoomList);
 	}
@@ -804,7 +804,7 @@ void KyraEngine_LoK::initStaticResource() {
 		assert(_defaultShapeTable);
 
 		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize * sizeof(Shape));
-		tempShapeTable = 0;
+		tempShapeTable = nullptr;
 
 		_staticres->unloadId(k1DefaultShapes);
 	}
@@ -837,7 +837,7 @@ void KyraEngine_LoK::initStaticResource() {
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
-	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
+	_screen->loadBitmap("MOUSE.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
 	_shapes[0] = _screen->encodeShape(0, 0, 8, 10, 0);
 	_shapes[1] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
@@ -847,7 +847,7 @@ void KyraEngine_LoK::loadMouseShapes() {
 	_shapes[5] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
 	_shapes[6] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
 	_shapes[360] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
-	_screen->setMouseCursor(1, 1, 0);
+	_screen->setMouseCursor(1, 1, nullptr);
 	_screen->setMouseCursor(1, 1, _shapes[0]);
 	_screen->setShapePages(5, 3);
 }
@@ -860,12 +860,12 @@ void KyraEngine_LoK::loadCharacterShapes() {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
-			_shapes[i + 7] = 0;
+			_shapes[i + 7] = nullptr;
 			continue;
 		}
 		if (shape->imageIndex != curImage) {
 			assert(shape->imageIndex < _characterImageTableSize);
-			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
+			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, nullptr);
 			curImage = shape->imageIndex;
 		}
 		_shapes[i + 7] = _screen->encodeShape(shape->x << 3, shape->y, shape->w << 3, shape->h, 1);
@@ -874,7 +874,7 @@ void KyraEngine_LoK::loadCharacterShapes() {
 }
 
 void KyraEngine_LoK::loadSpecialEffectShapes() {
-	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
+	_screen->loadBitmap("EFFECTS.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
 
 	int currShape;
@@ -894,10 +894,10 @@ void KyraEngine_LoK::loadSpecialEffectShapes() {
 void KyraEngine_LoK::loadItems() {
 	int shape;
 
-	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
+	_screen->loadBitmap("JEWELS3.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
 
-	_shapes[323] = 0;
+	_shapes[323] = nullptr;
 
 	for (shape = 1; shape < 6; shape++)
 		_shapes[323 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
@@ -921,7 +921,7 @@ void KyraEngine_LoK::loadItems() {
 		_shapes[shape] = _screen->encodeShape((shape - 355) * 32, 85,  32, 17, 0);
 
 
-	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
+	_screen->loadBitmap("ITEMS.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
 
 	for (int i = 0; i < 107; i++) {
@@ -937,7 +937,7 @@ void KyraEngine_LoK::loadItems() {
 }
 
 void KyraEngine_LoK::loadButtonShapes() {
-	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, 0);
+	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, nullptr);
 	_screen->_curPage = 2;
 	_gui->_scrollUpButton.data0ShapePtr = _screen->encodeShape(0, 0, 24, 14, 1);
 	_gui->_scrollUpButton.data1ShapePtr = _screen->encodeShape(24, 0, 24, 14, 1);
@@ -954,19 +954,19 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformDOS) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("MAIN15.CPS", page, page, &_screen->getPalette(0));
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
-		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_ENG.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::FR_FRA || (_flags.lang == Common::ES_ESP && _flags.isTalkie)  /* Spanish fan made over French CD version */ )
-		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_FRE.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::DE_DEU)
-		_screen->loadBitmap("MAIN_GER.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_GER.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::ES_ESP)
-		_screen->loadBitmap("MAIN_SPA.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_SPA.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::IT_ITA)
-		_screen->loadBitmap("MAIN_ITA.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_ITA.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::RU_RUS)
-		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_ENG.CPS", page, page, nullptr);
 	else if (_flags.lang == Common::HE_ISR)
-		_screen->loadBitmap("MAIN_HEB.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_HEB.CPS", page, page, nullptr);
 	else
 		warning("no main graphics file found");
 
@@ -1004,16 +1004,16 @@ void KyraEngine_HoF::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
-		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
-		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(nullptr, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(nullptr, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(nullptr, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.86", 0, 0);
-		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.86", 0, 0);
-		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(nullptr, 0, "intro%d.86", nullptr, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(nullptr, 0, "km%02d.86", nullptr, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(nullptr, 0, "finale%d.86", nullptr, 0);
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
@@ -1127,52 +1127,52 @@ void GUI_LoK::initStaticResource() {
 	Button::Callback loadGameMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGameMenu);
 	Button::Callback cancelSubMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::cancelSubMenu);
 
-	GUI_V1_MENU(_menu[0], -1, -1, 0x100, 0x8B, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, 0x40, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, 0x51, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, 0x6E, 0xDC, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[0], -1, -1, 0x100, 0x8B, 248, 249, 250, nullptr, 251, -1, 8, 0, 5, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, 0x40, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, 0x51, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, 0x6E, 0xDC, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[0].item[0].callback = loadGameMenuFunctor;
 	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGameMenu);
 	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
 	_menu[0].item[3].callback = quitPlayingFunctor;
 	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
 
-	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, nullptr, 254, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
 	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmNo);
 
-	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124);
-	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, 0x27, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[1], 1, 0, 0, 0, -1, 255, 0x38, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[2], 1, 0, 0, 0, -1, 255, 0x49, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[3], 1, 0, 0, 0, -1, 255, 0x5A, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[4], 1, 0, 0, 0, -1, 255, 0x6B, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, nullptr, 251, -1, 8, 0, 6, 132, 22, 132, 124);
+	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, 0x27, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[1], 1, 0, 0, 0, -1, 255, 0x38, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[2], 1, 0, 0, 0, -1, 255, 0x49, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[3], 1, 0, 0, 0, -1, 255, 0x5A, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[4], 1, 0, 0, 0, -1, 255, 0x6B, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[2].item[5].callback = cancelSubMenuFunctor;
 
-	GUI_V1_MENU(_menu[3], -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 24, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 179, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[3], -1, -1, 288, 67, 248, 249, 250, nullptr, 251, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 24, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 179, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 
-	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, nullptr, 251, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[4].item[0].callback = loadGameMenuFunctor;
 	_menu[4].item[1].callback = quitPlayingFunctor;
 
-	GUI_V1_MENU(_menu[5], -1, -1, 0x130, 0x99, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 0xA5, 0, 0x1E, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x20, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, 0xA5, 0, 0x2F, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x31, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 0xA5, 0, 0x40, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x42, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, 0x51, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x53, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, 0x62, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x65, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, 0x7F, 0x6C, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU(_menu[5], -1, -1, 0x130, 0x99, 248, 249, 250, nullptr, 251, -1, 8, 0, 6, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 0xA5, 0, 0x1E, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0x10, 0x20, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, 0xA5, 0, 0x2F, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0x10, 0x31, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 0xA5, 0, 0x40, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0x10, 0x42, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, 0x51, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0x10, 0x53, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, 0x62, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, nullptr, 0x10, 0x65, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, 0x7F, 0x6C, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, nullptr, 0, 0, 0, 0);
 	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeMusic);
 	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeSounds);
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
@@ -1233,7 +1233,7 @@ void KyraEngine_LoK::setupButtonData() {
 
 	for (int i = 1; i < 15; ++i)
 		_buttonDataListPtr[i - 1] = &_buttonData[i];
-	_buttonDataListPtr[14] = 0;
+	_buttonDataListPtr[14] = nullptr;
 }
 
 const uint8 KyraEngine_LoK::_magicMouseItemStartFrame[] = {

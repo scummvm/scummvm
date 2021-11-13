@@ -41,17 +41,17 @@ void KyraEngine_v2::runAnimationScript(const char *filename, int allowSkip, int 
 
 	if (_animShapeFiledata && newShapes) {
 		uninitAnimationShapes(_animShapeCount, _animShapeFiledata);
-		_animShapeFiledata = 0;
+		_animShapeFiledata = nullptr;
 		_animShapeCount = 0;
 	}
 
 	while (_emc->isValid(&_animationScriptState))
 		_emc->run(&_animationScriptState);
 
-	uint8 *fileData = 0;
+	uint8 *fileData = nullptr;
 
 	if (newShapes)
-		_animShapeFiledata = _res->fileData(_animShapeFilename, 0);
+		_animShapeFiledata = _res->fileData(_animShapeFilename, nullptr);
 
 	fileData = _animShapeFiledata;
 
@@ -68,7 +68,7 @@ void KyraEngine_v2::runAnimationScript(const char *filename, int allowSkip, int 
 	if (shapeUnload) {
 		uninitAnimationShapes(_animShapeCount, fileData);
 		_animShapeCount = 0;
-		_animShapeFiledata = 0;
+		_animShapeFiledata = nullptr;
 	}
 
 	_emc->unload(&_animationScriptData);

@@ -286,12 +286,12 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	if (loadedZTable != _characterShapeFile)
 		loadCharacterShapes(_characterShapeFile);
 
-	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
+	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, nullptr);
 	if (!queryGameFlag(1))
 		_screen->copyRegion(0xCE, 0x90, 0xCE, 0x90, 0x2C, 0x2C, 2, 0, Screen::CR_NO_P_CHECK);
 	if (!queryGameFlag(2))
 		_screen->copyRegion(0xFA, 0x90, 0xFA, 0x90, 0x46, 0x2C, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
+	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, nullptr);
 	if (queryGameFlag(1))
 		_screen->copyRegion(0xCE, 0x90, 0xCE, 0x90, 0x2C, 0x2C, 2, 0, Screen::CR_NO_P_CHECK);
 	if (queryGameFlag(2))

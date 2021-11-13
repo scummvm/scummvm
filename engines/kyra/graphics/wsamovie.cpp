@@ -28,7 +28,7 @@
 namespace Kyra {
 
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
-	: Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
+	: Movie(vm), _frameData(nullptr), _frameOffsTable(nullptr), _offscreenBuffer(nullptr), _deltaBuffer(nullptr) {
 }
 
 WSAMovie_v1::~WSAMovie_v1() {
@@ -49,7 +49,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 	_width = READ_LE_UINT16(wsaData); wsaData += 2;
 	_height = READ_LE_UINT16(wsaData); wsaData += 2;
 	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
-	_offscreenBuffer = NULL;
+	_offscreenBuffer = nullptr;
 	_flags = 0;
 	if (_vm->gameFlags().useAltShapeHeader) {
 		flags = READ_LE_UINT16(wsaData);
@@ -139,7 +139,7 @@ void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, uint16 f
 	_y = y;
 	_drawPage = pageNum;
 
-	uint8 *dst = 0;
+	uint8 *dst = nullptr;
 	if (_flags & WF_OFFSCREEN_DECODE)
 		dst = _offscreenBuffer;
 	else
@@ -220,7 +220,7 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
+WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(nullptr) {}
 
 int WSAMovieAmiga::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
@@ -236,7 +236,7 @@ int WSAMovieAmiga::open(const char *filename, int offscreenDecode, Palette *palB
 void WSAMovieAmiga::close() {
 	if (_opened) {
 		delete[] _buffer;
-		_buffer = 0;
+		_buffer = nullptr;
 	}
 	WSAMovie_v1::close();
 }
@@ -338,7 +338,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 	Screen::convertAmigaGfx(dst, _width, _height, 5, (_flags & WF_FLIPPED) != 0);
 
 	src = dst;
-	dst = 0;
+	dst = nullptr;
 	int dstPitch = 0;
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		dst = _offscreenBuffer;
@@ -377,7 +377,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	_width = READ_LE_UINT16(wsaData); wsaData += 2;
 	_height = READ_LE_UINT16(wsaData); wsaData += 2;
 	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
-	_offscreenBuffer = NULL;
+	_offscreenBuffer = nullptr;
 	_flags = 0;
 	flags = READ_LE_UINT16(wsaData); wsaData += 2;
 

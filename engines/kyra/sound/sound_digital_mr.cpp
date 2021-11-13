@@ -36,7 +36,7 @@ namespace Kyra {
 class KyraAudioStream : public Audio::SeekableAudioStream {
 public:
 	KyraAudioStream(Audio::SeekableAudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
-	~KyraAudioStream() override { delete _impl; _impl = 0; }
+	~KyraAudioStream() override { delete _impl; _impl = nullptr; }
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return _impl->isStereo(); }
@@ -104,7 +104,7 @@ int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 SoundDigital_MR::SoundDigital_MR(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
-		_sounds[i].stream = 0;
+		_sounds[i].stream = nullptr;
 }
 
 SoundDigital_MR::~SoundDigital_MR() {
@@ -113,7 +113,7 @@ SoundDigital_MR::~SoundDigital_MR() {
 }
 
 int SoundDigital_MR::playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume, bool loop, int channel) {
-	Sound *use = 0;
+	Sound *use = nullptr;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
 		use = &_sounds[channel];
@@ -148,7 +148,7 @@ int SoundDigital_MR::playSound(const char *filename, uint8 priority, Audio::Mixe
 		}
 	}
 
-	Common::SeekableReadStream *stream = 0;
+	Common::SeekableReadStream *stream = nullptr;
 	int usedCodec = -1;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		Common::String file = filename;
@@ -178,7 +178,7 @@ int SoundDigital_MR::playSound(const char *filename, uint8 priority, Audio::Mixe
 	assert(use->stream);
 	if (use->stream->endOfData()) {
 		delete use->stream;
-		use->stream = 0;
+		use->stream = nullptr;
 
 		return -1;
 	}
@@ -212,7 +212,7 @@ void SoundDigital_MR::stopSound(int channel) {
 
 	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
 	_mixer->stopHandle(_sounds[channel].handle);
-	_sounds[channel].stream = 0;
+	_sounds[channel].stream = nullptr;
 }
 
 void SoundDigital_MR::stopAllSounds() {
@@ -242,7 +242,7 @@ const SoundDigital_MR::AudioCodecs SoundDigital_MR::_supportedCodecs[] = {
 	{ ".MP3", Audio::makeMP3Stream },
 #endif // USE_MAD
 	{ ".AUD", makeAUDStream },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 } // End of namespace Kyra

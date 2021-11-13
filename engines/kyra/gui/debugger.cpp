@@ -81,7 +81,7 @@ bool Debugger::cmdLoadPalette(int argc, const char **argv) {
 		}
 
 		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
-		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
+		_vm->screen()->loadBitmap(argv[1], 5, 5, nullptr);
 		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
 		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
 

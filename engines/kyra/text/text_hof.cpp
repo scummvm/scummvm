@@ -289,7 +289,7 @@ void KyraEngine_HoF::objectChatProcess(const char *script) {
 		_emc->run(&_chatScriptState);
 
 	_animShapeFilename[2] = _characterShapeFile + '0';
-	uint8 *shapeBuffer = _res->fileData(_animShapeFilename, 0);
+	uint8 *shapeBuffer = _res->fileData(_animShapeFilename, nullptr);
 	if (shapeBuffer) {
 		int shapeCount = initAnimationShapes(shapeBuffer);
 
@@ -436,7 +436,7 @@ void KyraEngine_HoF::updateDlgBuffer() {
 		filename += 'G';
 
 	delete[] _dlgBuffer;
-	_dlgBuffer = _res->fileData(filename.c_str(), 0);
+	_dlgBuffer = _res->fileData(filename.c_str(), nullptr);
 }
 
 void KyraEngine_HoF::loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2) {

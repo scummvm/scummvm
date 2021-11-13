@@ -34,18 +34,18 @@ namespace Kyra {
 
 SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver, kType type) : Sound(vm, mixer) {
 	_driver = driver;
-	_output = 0;
+	_output = nullptr;
 
-	_musicFile = _sfxFile = 0;
+	_musicFile = _sfxFile = nullptr;
 	_currentResourceSet = 0;
 	memset(&_resInfo, 0, sizeof(_resInfo));
 
-	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, 0);
+	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, nullptr, 0);
 	assert(_music);
 	_music->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 	_music->property(MidiParser::mpDisableAutoStartPlayback, true);
 	for (int i = 0; i < 3; ++i) {
-		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, i + 1);
+		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, nullptr, i + 1);
 		assert(_sfx[i]);
 		_sfx[i]->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 		_sfx[i]->property(MidiParser::mpDisableAutoStartPlayback, true);
@@ -84,7 +84,7 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 
 SoundMidiPC::~SoundMidiPC() {
 	Common::StackLock lock(_mutex);
-	_output->setTimerCallback(0, 0);
+	_output->setTimerCallback(nullptr, nullptr);
 
 	delete _music;
 	for (int i = 0; i < 3; ++i)
@@ -99,7 +99,7 @@ SoundMidiPC::~SoundMidiPC() {
 	delete[] _musicFile;
 
 	for (int i = 0; i < 3; i++)
-		initAudioResourceInfo(i, 0);
+		initAudioResourceInfo(i, nullptr);
 }
 
 bool SoundMidiPC::init() {
@@ -125,8 +125,8 @@ bool SoundMidiPC::init() {
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
 	// Load MT-32 and GM initialization files
-	const char* midiFile = 0;
-	const char* pakFile = 0;
+	const char* midiFile = nullptr;
+	const char* pakFile = nullptr;
 	if (_nativeMT32 && _type == kMidiMT32) {
 		if (_vm->game() == GI_KYRA1) {
 			midiFile = "INTRO";
@@ -210,7 +210,7 @@ void SoundMidiPC::updateVolumeSettings() {
 void SoundMidiPC::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : nullptr;
 	}
 }
 
@@ -223,7 +223,7 @@ void SoundMidiPC::selectAudioResourceSet(int set) {
 
 bool SoundMidiPC::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
-		return (res()->fileList[file] != 0);
+		return (res()->fileList[file] != nullptr);
 	return false;
 }
 

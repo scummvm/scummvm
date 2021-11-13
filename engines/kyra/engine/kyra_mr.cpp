@@ -51,17 +51,17 @@ const KyraEngine_v2::EngineDesc KyraEngine_MR::_mrEngineDesc = {
 };
 
 KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _mrEngineDesc) {
-	_soundDigital = 0;
+	_soundDigital = nullptr;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1";
 	_lastMusicCommand = -1;
-	_itemBuffer1 = _itemBuffer2 = 0;
-	_scoreFile = 0;
-	_cCodeFile = 0;
-	_scenesFile = 0;
-	_itemFile = 0;
-	_gamePlayBuffer = 0;
-	_interface = _interfaceCommandLine = 0;
+	_itemBuffer1 = _itemBuffer2 = nullptr;
+	_scoreFile = nullptr;
+	_cCodeFile = nullptr;
+	_scenesFile = nullptr;
+	_itemFile = nullptr;
+	_gamePlayBuffer = nullptr;
+	_interface = _interfaceCommandLine = nullptr;
 	// The slightly larger interface is used in the Chinese version regardless of the actual language setting.
 	_interfaceCommandLineSize = flags.hasExtraLanguage ? 4800 : 3840;
 	_interfaceCommandLineH = _interfaceCommandLineSize / Screen::SCREEN_W;
@@ -69,12 +69,12 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_interfaceCommandLineY2 = 156 - _interfaceCommandLineH;
 	_interfaceSize = flags.hasExtraLanguage ? 18880 : 17920;
 	_interfaceH = _interfaceSize / Screen::SCREEN_W;
-	_costPalBuffer = 0;
+	_costPalBuffer = nullptr;
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
-	_gfxBackUpRect = 0;
-	_paletteOverlay = 0;
-	_sceneList = 0;
+	_gfxBackUpRect = nullptr;
+	_paletteOverlay = nullptr;
+	_sceneList = nullptr;
 	_mainCharacter.sceneId = 9;
 	_mainCharacter.height = 0x4C;
 	_mainCharacter.facing = 5;
@@ -82,16 +82,16 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainCharacter.walkspeed = 5;
 	memset(_activeItemAnim, 0, sizeof(_activeItemAnim));
 	_nextAnimItem = 0;
-	_text = 0;
+	_text = nullptr;
 	_commandLineY = 189;
 	_inventoryState = false;
 	memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
 	_overwriteSceneFacing = false;
 	_maskPageMinY = _maskPageMaxY = 0;
-	_sceneStrings = 0;
+	_sceneStrings = nullptr;
 	_enterNewSceneLock = 0;
 	_mainCharX = _mainCharY = -1;
-	_animList = 0;
+	_animList = nullptr;
 	_drawNoShapeFlag = false;
 	_wasPlayingVQA = false;
 	_lastCharPalLayer = -1;
@@ -106,7 +106,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_loadingState = false;
 	_noStartupChat = false;
 	_pathfinderFlag = 0;
-	_talkObjectList = 0;
+	_talkObjectList = nullptr;
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	_voiceSoundChannel = -1;
@@ -118,12 +118,12 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentChapter = 1;
 	_unkHandleSceneChangeFlag = false;
 	memset(_sceneShapeDescs, 0, sizeof(_sceneShapeDescs));
-	_cnvFile = _dlgBuffer = 0;
+	_cnvFile = _dlgBuffer = nullptr;
 	_curDlgChapter = _curDlgIndex = _curDlgLang = -1;
 	_isStartupDialog = 0;
-	_stringBuffer = 0;
-	_menu = 0;
-	_menuAnim = 0;
+	_stringBuffer = nullptr;
+	_menu = nullptr;
+	_menuAnim = nullptr;
 	_dialogSceneAnim = _dialogSceneScript = -1;
 	memset(&_dialogScriptData, 0, sizeof(_dialogScriptData));
 	memset(&_dialogScriptState, 0, sizeof(_dialogScriptState));
@@ -132,20 +132,20 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_nextIdleAnim = 0;
 	_nextIdleType = false;
 	_inventoryScrollSpeed = -1;
-	_invWsa = 0;
+	_invWsa = nullptr;
 	_invWsaFrame = -1;
 	_score = 0;
 	memset(_scoreFlagTable, 0, sizeof(_scoreFlagTable));
-	_mainButtonData = 0;
-	_mainButtonList = 0;
+	_mainButtonData = nullptr;
+	_mainButtonList = nullptr;
 	_mainButtonListInitialized = false;
 	_enableInventory = true;
 	_goodConscienceShown = false;
 	_goodConscienceAnim = -1;
 	_goodConsciencePosition = false;
 	_menuDirectlyToLoad = false;
-	_optionsFile = 0;
-	_actorFile = 0;
+	_optionsFile = nullptr;
+	_actorFile = nullptr;
 	_chatAltFlag = false;
 	_albumChatActive = false;
 	memset(&_album, 0, sizeof(_album));
@@ -287,14 +287,14 @@ Common::Error KyraEngine_MR::go() {
 
 		for (int i = 0; i < 64 && !shouldQuit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !shouldQuit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
@@ -349,7 +349,7 @@ void KyraEngine_MR::initMainMenu() {
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
-		{ _mainMenuStrings[0], _mainMenuStrings[1], _mainMenuStrings[2], _mainMenuStrings[3], 0 },
+		{ _mainMenuStrings[0], _mainMenuStrings[1], _mainMenuStrings[2], _mainMenuStrings[3], nullptr },
 		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 },
 		_lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT, 240
@@ -366,9 +366,9 @@ void KyraEngine_MR::initMainMenu() {
 
 void KyraEngine_MR::uninitMainMenu() {
 	delete _menuAnim;
-	_menuAnim = 0;
+	_menuAnim = nullptr;
 	delete _menu;
-	_menu = 0;
+	_menu = nullptr;
 }
 
 void KyraEngine_MR::playVQA(const char *name) {
@@ -514,7 +514,7 @@ void KyraEngine_MR::preinit() {
 }
 
 void KyraEngine_MR::initMouseShapes() {
-	uint8 *data = _res->fileData("MOUSE.SHP", 0);
+	uint8 *data = _res->fileData("MOUSE.SHP", nullptr);
 	assert(data);
 	for (int i = 0; i <= 6; ++i)
 		_gameShapes[i] = _screen->makeShapeCopy(data, i);
@@ -610,9 +610,9 @@ void KyraEngine_MR::startup() {
 	_res->exists("MOODOMTR.WSA", true);
 	_invWsa = new WSAMovie_v2(this);
 	assert(_invWsa);
-	_invWsa->open("MOODOMTR.WSA", 1, 0);
+	_invWsa->open("MOODOMTR.WSA", 1, nullptr);
 	_invWsaFrame = 6;
-	saveGameStateIntern(0, "New Game", 0);
+	saveGameStateIntern(0, "New Game", nullptr);
 	if (_gameToLoad == -1)
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	else
@@ -637,12 +637,12 @@ void KyraEngine_MR::loadCostPal() {
 }
 
 void KyraEngine_MR::loadShadowShape() {
-	_screen->loadBitmap("SHADOW.CSH", 3, 3, 0);
+	_screen->loadBitmap("SHADOW.CSH", 3, 3, nullptr);
 	addShapeToPool(_screen->getCPagePtr(3), 421, 0);
 }
 
 void KyraEngine_MR::loadExtrasShapes() {
-	_screen->loadBitmap("EXTRAS.CSH", 3, 3, 0);
+	_screen->loadBitmap("EXTRAS.CSH", 3, 3, nullptr);
 	for (int i = 0; i < 20; ++i)
 		addShapeToPool(_screen->getCPagePtr(3), i+433, i);
 	addShapeToPool(_screen->getCPagePtr(3), 453, 20);
@@ -650,24 +650,24 @@ void KyraEngine_MR::loadExtrasShapes() {
 }
 
 void KyraEngine_MR::loadInterfaceShapes() {
-	_screen->loadBitmap("INTRFACE.CSH", 3, 3, 0);
+	_screen->loadBitmap("INTRFACE.CSH", 3, 3, nullptr);
 	for (int i = 422; i <= 432; ++i)
 		addShapeToPool(_screen->getCPagePtr(3), i, i-422);
 }
 
 void KyraEngine_MR::loadInterface() {
-	_screen->loadBitmap("INTRFACE.CPS", 3, 3, 0);
+	_screen->loadBitmap("INTRFACE.CPS", 3, 3, nullptr);
 	memcpy(_interface, _screen->getCPagePtr(3), _interfaceSize);
 	memcpy(_interfaceCommandLine, _screen->getCPagePtr(3), _interfaceCommandLineSize);
 }
 
 void KyraEngine_MR::initItems() {
-	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
+	_screen->loadBitmap("ITEMS.CSH", 3, 3, nullptr);
 
 	for (int i = 248; i <= 319; ++i)
 		addShapeToPool(_screen->getCPagePtr(3), i, i-248);
 
-	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
+	_screen->loadBitmap("ITEMS2.CSH", 3, 3, nullptr);
 
 	for (int i = 320; i <= 397; ++i)
 		addShapeToPool(_screen->getCPagePtr(3), i, i-320);
@@ -910,7 +910,7 @@ void KyraEngine_MR::runLoop() {
 			removeHandItem();
 			delay(5);
 			_drawNoShapeFlag = 0;
-			_gui->optionsButton(0);
+			_gui->optionsButton(nullptr);
 			_deathHandler = -1;
 
 			if (!_runFlag || shouldQuit())
@@ -1249,7 +1249,7 @@ void KyraEngine_MR::restoreGfxRect32x32(int x, int y) {
 
 int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	delete[] buffer;
-	buffer = 0;
+	buffer = nullptr;
 
 	uint32 size = 0;
 	Common::String nBuf = file;

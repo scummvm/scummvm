@@ -34,7 +34,7 @@
 
 namespace Kyra {
 
-TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system) : _vm(engine), _screen(screen_v2), _system(system), _currentTim(0) {
+TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system) : _vm(engine), _screen(screen_v2), _system(system), _currentTim(nullptr) {
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
 #define cmd_return(n) cmd_return_##n
@@ -86,7 +86,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
 
-	_langData = 0;
+	_langData = nullptr;
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
@@ -95,11 +95,11 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	else
 		_drawPage2 = 8;
 
-	_animator = new TimAnimator(0, screen_v2, 0, false);
+	_animator = new TimAnimator(nullptr, screen_v2, nullptr, false);
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
-	_tim = 0;
+	_tim = nullptr;
 }
 
 TIMInterpreter::~TIMInterpreter() {
@@ -137,7 +137,7 @@ bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
 	if (!_vm->resource()->exists(filename))
-		return 0;
+		return nullptr;
 
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream)
@@ -175,7 +175,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	_tim->lolCharacter = 0;
 
 	TIM *r = _tim;
-	_tim = 0;
+	_tim = nullptr;
 	return r;
 }
 
@@ -186,12 +186,12 @@ void TIMInterpreter::unload(TIM *&tim) const {
 	delete[] tim->text;
 	delete[] tim->avtl;
 	delete tim;
-	tim = 0;
+	tim = nullptr;
 }
 
 void TIMInterpreter::setLangData(const char *filename) {
 	delete[] _langData;
-	_langData = _vm->resource()->fileData(filename, 0);
+	_langData = _vm->resource()->fileData(filename, nullptr);
 }
 
 int TIMInterpreter::exec(TIM *tim, bool loop) {
@@ -244,7 +244,7 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 					break;
 
 				case 22:
-					cur.loopIp = 0;
+					cur.loopIp = nullptr;
 					break;
 
 				default:
@@ -299,7 +299,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 
 	const bool sjisMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode);
 	if (filename[0] && (_vm->speechEnabled() || !_vm->gameFlags().isTalkie))
-		_vm->sound()->voicePlay(filename, 0, 255, 255, !_vm->gameFlags().isTalkie);
+		_vm->sound()->voicePlay(filename, nullptr, 255, 255, !_vm->gameFlags().isTalkie);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
@@ -460,7 +460,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 }
 
 int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
-	Movie *wsa = 0;
+	Movie *wsa = nullptr;
 
 	const bool isLoLDemo = _vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie && _vm->game() == GI_LOL;
 
@@ -491,7 +491,7 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 			wsa = new WSAMovie_v2(_vm);
 		assert(wsa);
 
-		wsa->open(file.c_str(), wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
+		wsa->open(file.c_str(), wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : nullptr);
 	}
 
 	if (wsa && wsa->opened()) {
@@ -517,7 +517,7 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 		}
 
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1), 15, nullptr);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -535,14 +535,14 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 				_screen->updateScreen();
 			}
 
-			wsa->displayFrame(0, 0, x, y, 0, 0, 0);
+			wsa->displayFrame(0, 0, x, y, 0, nullptr, nullptr);
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, nullptr);
 	} else {
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1), 15, nullptr);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -560,7 +560,7 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, nullptr);
 	}
 
 	_animator->init(index, wsa, x, y, wsaFlags, 0);
@@ -575,14 +575,14 @@ int TIMInterpreter::freeAnimStruct(int index) {
 
 char *TIMInterpreter::getTableEntry(uint idx) {
 	if (!_langData)
-		return 0;
+		return nullptr;
 	else
 		return (char *)(_langData + READ_LE_UINT16(_langData + (idx<<1)));
 }
 
 const char *TIMInterpreter::getCTableEntry(uint idx) const {
 	if (!_langData)
-		return 0;
+		return nullptr;
 	else
 		return (const char *)(_langData + READ_LE_UINT16(_langData + (idx<<1)));
 }
@@ -593,7 +593,7 @@ int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 		return 0;
 	}
 
-	if (_commands[cmd].proc == 0) {
+	if (_commands[cmd].proc == nullptr) {
 		warning("Calling unimplemented TIM command %d from file '%s'", cmd, _currentTim->filename);
 		return 0;
 	}
@@ -613,7 +613,7 @@ int TIMInterpreter::cmd_initFunc0(const uint16 *param) {
 
 int TIMInterpreter::cmd_stopCurFunc(const uint16 *param) {
 	if (_currentFunc < TIM::kCountFuncs)
-		_currentTim->func[_currentFunc].ip = 0;
+		_currentTim->func[_currentFunc].ip = nullptr;
 	if (!_currentFunc)
 		_finished = true;
 	return -2;
@@ -621,7 +621,7 @@ int TIMInterpreter::cmd_stopCurFunc(const uint16 *param) {
 
 void TIMInterpreter::stopAllFuncs(TIM *tim) {
 	for (int i = 0; i < TIM::kCountFuncs; ++i)
-		tim->func[i].ip = 0;
+		tim->func[i].ip = nullptr;
 }
 
 int TIMInterpreter::cmd_initWSA(const uint16 *param) {
@@ -672,7 +672,7 @@ int TIMInterpreter::cmd_initFunc(const uint16 *param) {
 int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 	uint16 func = *param;
 	assert(func < TIM::kCountFuncs);
-	_currentTim->func[func].ip = 0;
+	_currentTim->func[func].ip = nullptr;
 	return 1;
 }
 
@@ -736,7 +736,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
-		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, 255, true);
+		_vm->sound()->voicePlay(_vocFiles[index].c_str(), nullptr, volume, 255, true);
 	else if (index == 7 && !_vm->gameFlags().isTalkie)
 		_vm->sound()->playTrack(index);
 	else
@@ -784,7 +784,7 @@ int TIMInterpreter::cmd_continueLoop(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_resetLoopIp(const uint16 *param) {
-	_currentTim->func[_currentFunc].loopIp = 0;
+	_currentTim->func[_currentFunc].loopIp = nullptr;
 	return 1;
 }
 
@@ -828,7 +828,7 @@ int TIMInterpreter::cmd_initFuncNow(const uint16 *param) {
 int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 	uint16 func = *param;
 	assert(func < TIM::kCountFuncs);
-	_currentTim->func[func].ip = 0;
+	_currentTim->func[func].ip = nullptr;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;
 }

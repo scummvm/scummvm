@@ -37,7 +37,7 @@
 
 namespace Kyra {
 
-SoundMacRes::SoundMacRes() : _macRes(0) {
+SoundMacRes::SoundMacRes() : _macRes(nullptr) {
 	_macRes = new Common::MacResManager();
 }
 
@@ -113,7 +113,7 @@ bool SoundMacRes::init() {
 }
 
 Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
-	Common::SeekableReadStream *res = 0;
+	Common::SeekableReadStream *res = nullptr;
 	for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
 		if (!_macRes->open(Common::Path(*i)))
 			warning("SoundMacRes::getResource(): Error opening data file: '%s'", i->c_str());
@@ -129,7 +129,7 @@ void SoundMacRes::setQuality(bool hi) {
 	_resFiles.push_back(_kyraMacExe);
 }
 
-SoundMac::SoundMac(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _driver(0), _res(0), _currentResourceSet(-1), _resIDMusic(0), _ready(false) {
+SoundMac::SoundMac(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _driver(nullptr), _res(nullptr), _currentResourceSet(-1), _resIDMusic(nullptr), _ready(false) {
 }
 
 SoundMac::~SoundMac() {

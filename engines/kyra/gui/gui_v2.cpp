@@ -31,12 +31,12 @@
 namespace Kyra {
 
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()) {
-	_backUpButtonList = _specialProcessButton = 0;
+	_backUpButtonList = _specialProcessButton = nullptr;
 	_buttonListChanged = false;
 	_lastScreenUpdate = 0;
 	_flagsModifier = 0;
 
-	_currentMenu = 0;
+	_currentMenu = nullptr;
 	_isDeathMenu = false;
 	_isSaveMenu = false;
 	_isLoadMenu = false;
@@ -67,7 +67,7 @@ void GUI_v2::processButton(Button *button) {
 	int entry = button->flags2 & 5;
 
 	byte val1 = 0, val2 = 0, val3 = 0;
-	const uint8 *dataPtr = 0;
+	const uint8 *dataPtr = nullptr;
 	Button::Callback callback;
 	if (entry == 1) {
 		val1 = button->data1Val1;
@@ -135,7 +135,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		return inputFlag & 0x7FFF;
 
 	if (_backUpButtonList != buttonList || _buttonListChanged) {
-		_specialProcessButton = 0;
+		_specialProcessButton = nullptr;
 		//flagsModifier |= 0x2200;
 		_backUpButtonList = buttonList;
 		_buttonListChanged = false;
@@ -177,7 +177,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 	if (_specialProcessButton) {
 		buttonList = _specialProcessButton;
 		if (_specialProcessButton->flags & 8)
-			_specialProcessButton = 0;
+			_specialProcessButton = nullptr;
 	}
 
 	int returnValue = 0;
@@ -330,13 +330,13 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		}
 
 		if ((flags & 0x8800) == 0x8800) {
-			_specialProcessButton = 0;
+			_specialProcessButton = nullptr;
 			if (!progress || (buttonList->flags & 4))
 				buttonList->flags2 &= ~6;
 		}
 
 		if (!progress && buttonList == _specialProcessButton && !(buttonList->flags & 0x40))
-			_specialProcessButton = 0;
+			_specialProcessButton = nullptr;
 
 		if ((buttonList->flags2 & 0x18) != ((buttonList->flags2 & 3) << 3))
 			processButton(buttonList);
@@ -443,7 +443,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	KyraEngine_v2::SaveHeader header;
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != nullptr) {
 			Common::String s = header.description;
 			s = Util::convertUTF8ToDOS(s);
 
@@ -780,7 +780,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 			}
 		} else if (_keyPressed.keycode == Common::KEYCODE_ESCAPE || _cancelNameInput) {
 			running = false;
-			return 0;
+			return nullptr;
 		} else if ((_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) && curPos > 0) {
 			drawTextfieldBlock(x2, y2, c2);
 			--curPos;

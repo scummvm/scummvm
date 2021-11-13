@@ -46,7 +46,7 @@ void KyraEngine_LoK::seq_demo() {
 	_screen->fadeToBlack();
 
 	_screen->clearPage(0);
-	_screen->loadBitmap("TOP.CPS", 7, 7, 0);
+	_screen->loadBitmap("TOP.CPS", 7, 7, nullptr);
 	_screen->loadBitmap("BOTTOM.CPS", 5, 5, &_screen->getPalette(0));
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
@@ -141,7 +141,7 @@ bool KyraEngine_LoK::seq_introPublisherLogos() {
 		}
 	} else if (_flags.platform == Common::kPlatformMacintosh && _res->exists("MP_GOLD.CPS")) {
 		_screen->loadPalette("MP_GOLD.COL", _screen->getPalette(0));
-		_screen->loadBitmap("MP_GOLD.CPS", 3, 3, 0);
+		_screen->loadBitmap("MP_GOLD.CPS", 3, 3, nullptr);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
@@ -158,13 +158,13 @@ bool KyraEngine_LoK::seq_introLogos() {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->loadPaletteTable("INTRO.PAL", 0);
-		_screen->loadBitmap("BOTTOM.CPS", 3, 5, 0);
-		_screen->loadBitmap("TOP.CPS", 3, 3, 0);
+		_screen->loadBitmap("BOTTOM.CPS", 3, 5, nullptr);
+		_screen->loadBitmap("TOP.CPS", 3, 3, nullptr);
 		_screen->copyRegion(0, 0, 0, 111, 320, 64, 2, 0);
 		_screen->copyRegion(0, 91, 0, 8, 320, 109, 2, 0);
 		_screen->copyRegion(0, 0, 0, 0, 320, 190, 0, 2);
 	} else {
-		_screen->loadBitmap("TOP.CPS", 7, 7, 0);
+		_screen->loadBitmap("TOP.CPS", 7, 7, nullptr);
 		_screen->loadBitmap("BOTTOM.CPS", 5, 5, &_screen->getPalette(0));
 		_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 		_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
@@ -358,7 +358,7 @@ void KyraEngine_LoK::seq_createAmuletJewel(int jewel, int page, int noSound, int
 			delayWithTicks(3);
 		}
 
-		const uint16 *opcodes = 0;
+		const uint16 *opcodes = nullptr;
 		switch (jewel - 1) {
 		case 0:
 			opcodes = specialJewelTable1;
@@ -1049,16 +1049,16 @@ int KyraEngine_LoK::seq_playEnd() {
 
 		_finalA = createWSAMovie();
 		assert(_finalA);
-		_finalA->open("finala.wsa", 1, 0);
+		_finalA->open("finala.wsa", 1, nullptr);
 
 		_finalB = createWSAMovie();
 		assert(_finalB);
-		_finalB->open("finalb.wsa", 1, 0);
+		_finalB->open("finalb.wsa", 1, nullptr);
 
 		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
-		_finalC->open("finalc.wsa", 1, 0);
+		_finalC->open("finalc.wsa", 1, nullptr);
 
 		_screen->_curPage = 0;
 		_beadStateVar = 0;
@@ -1110,7 +1110,7 @@ int KyraEngine_LoK::seq_playEnd() {
 
 			_finalA = createWSAMovie();
 			assert(_finalA);
-			_finalA->open("finald.wsa", 1, 0);
+			_finalA->open("finald.wsa", 1, nullptr);
 
 			delayUntil(nextTime);
 			snd_playSoundEffect(0x40);
@@ -1121,13 +1121,13 @@ int KyraEngine_LoK::seq_playEnd() {
 				else if (i == 20)
 					snd_playSoundEffect(_flags.platform == Common::kPlatformPC98 ? 0x13 : 0x0E);
 				nextTime = _system->getMillis() + 8 * _tickLength;
-				_finalA->displayFrame(i, 0, 8, 8, 0, 0, 0);
+				_finalA->displayFrame(i, 0, 8, 8, 0, nullptr, nullptr);
 				_screen->updateScreen();
 			}
 
 			nextTime = _system->getMillis() + 300 * _tickLength;
 			delete _finalA;
-			_finalA = 0;
+			_finalA = nullptr;
 			delayUntil(nextTime);
 
 			seq_playEnding();
@@ -1250,7 +1250,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	if (_flags.platform == Common::kPlatformFMTowns && _configMusic == 1)
 		snd_playWanderScoreViaMap(53, 1);
 
-	uint8 *buffer = 0;
+	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
@@ -1360,7 +1360,7 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->updateScreen();
 		}
 
-		if (checkInput(0, false)) {
+		if (checkInput(nullptr, false)) {
 			removeInputTop();
 			finished = true;
 		}
@@ -1482,7 +1482,7 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 			*specialString = 0;
 		}
 
-		if (checkInput(0, false)) {
+		if (checkInput(nullptr, false)) {
 			removeInputTop();
 			break;
 		}
@@ -1503,7 +1503,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 2:
 		if (_system->getMillis() >= _malcolmTimer2) {
-			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 			++_malcolmFrame;
@@ -1518,7 +1518,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 		if (_system->getMillis() < _malcolmTimer1) {
 			if (_system->getMillis() >= _malcolmTimer2) {
 				_malcolmFrame = _rnd.getRandomNumberRng(14, 17);
-				_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+				_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 				_screen->updateScreen();
 				_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 			}
@@ -1530,7 +1530,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 4:
 		if (_system->getMillis() >= _malcolmTimer2) {
-			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 			++_malcolmFrame;
@@ -1544,7 +1544,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 5:
 		if (_system->getMillis() >= _malcolmTimer2) {
-			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 			++_malcolmFrame;
@@ -1558,7 +1558,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 	case 6:
 		if (_unkEndSeqVar4) {
 			if (_malcolmFrame <= 33 && _system->getMillis() >= _malcolmTimer2) {
-				_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+				_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 				_screen->updateScreen();
 				_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 				++_malcolmFrame;
@@ -1583,7 +1583,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 8:
 		if (_system->getMillis() >= _malcolmTimer2) {
-			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, 0, 0);
+			_finalA->displayFrame(_malcolmFrame, 0, 8, 46, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			_malcolmTimer2 = _system->getMillis() + 8 * _tickLength;
 			++_malcolmFrame;
@@ -1600,7 +1600,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 		snd_playSoundEffect(12);
 		for (int i = 0; i < 18; ++i) {
 			_malcolmTimer2 = _system->getMillis() + 4 * _tickLength;
-			_finalC->displayFrame(i, 0, 16, 50, 0, 0, 0);
+			_finalC->displayFrame(i, 0, 16, 50, 0, nullptr, nullptr);
 			_screen->updateScreen();
 			delayUntil(_malcolmTimer2);
 		}
@@ -1801,14 +1801,14 @@ int KyraEngine_LoK::handleBeadState() {
 					uint32 nextRun = 0;
 					for (int i = 0; i < 8; ++i) {
 						nextRun = _system->getMillis() + _tickLength;
-						_finalB->displayFrame(i, 0, 224, 8, 0, 0, 0);
+						_finalB->displayFrame(i, 0, 224, 8, 0, nullptr, nullptr);
 						_screen->updateScreen();
 						delayUntil(nextRun);
 					}
 					snd_playSoundEffect(0x0D);
 					for (int i = 7; i >= 0; --i) {
 						nextRun = _system->getMillis() + _tickLength;
-						_finalB->displayFrame(i, 0, 224, 8, 0, 0, 0);
+						_finalB->displayFrame(i, 0, 224, 8, 0, nullptr, nullptr);
 						_screen->updateScreen();
 						delayUntil(nextRun);
 					}
@@ -1919,7 +1919,7 @@ int KyraEngine_LoK::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) 
 
 void KyraEngine_LoK::setupPanPages() {
 	_screen->savePageToDisk("BKGD.PG", 2);
-	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
+	_screen->loadBitmap("BEAD.CPS", 3, 3, nullptr);
 	if (_flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformAmiga) {
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
@@ -1949,20 +1949,20 @@ void KyraEngine_LoK::setupPanPages() {
 
 void KyraEngine_LoK::freePanPages() {
 	delete[] _endSequenceBackUpRect;
-	_endSequenceBackUpRect = 0;
+	_endSequenceBackUpRect = nullptr;
 	for (int i = 0; i <= 19; ++i) {
 		delete[] _panPagesTable[i];
-		_panPagesTable[i] = 0;
+		_panPagesTable[i] = nullptr;
 	}
 }
 
 void KyraEngine_LoK::closeFinalWsa() {
 	delete _finalA;
-	_finalA = 0;
+	_finalA = nullptr;
 	delete _finalB;
-	_finalB = 0;
+	_finalB = nullptr;
 	delete _finalC;
-	_finalC = 0;
+	_finalC = nullptr;
 	freePanPages();
 	_endSequenceNeedLoading = 1;
 }

@@ -86,9 +86,9 @@ static int DEBUG_BUFFERS_COUNT = 0;
 class ShStBuffer {
 public:
 	ShStBuffer(const ShStBuffer &buff) : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { if (lifes) (*lifes)++; }
-	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(0) { if (allocate) memcpy(crtbuf(), p, cb); }
-	ShStBuffer() : ShStBuffer(0, 0) {}
-	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(0) { s->read(crtbuf(), len); }
+	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(nullptr) { if (allocate) memcpy(crtbuf(), p, cb); }
+	ShStBuffer() : ShStBuffer(nullptr, 0) {}
+	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr) { s->read(crtbuf(), len); }
 	~ShStBuffer() { dcrlif(); }
 	void operator=(Common::SeekableReadStream *s) { operator=(ShStBuffer(s)); }
 	void operator=(const ShStBuffer &buff) {
@@ -387,8 +387,8 @@ public:
 
 public:
 	struct HSSoundEffectVoice {
-		HSSoundEffectVoice() : enabled(false), loopStartDuration(0), loopEndDuration(0), duration(0), sync(0), dataPtr(0), numSamples(0), rate(0), loopStart(0), loopEnd(0),
-			resId(0), numLoops(0), b4(0), vblProc(0), cb(0), baseNote(60) {}
+		HSSoundEffectVoice() : enabled(false), loopStartDuration(0), loopEndDuration(0), duration(0), sync(0), dataPtr(nullptr), numSamples(0), rate(0), loopStart(0), loopEnd(0),
+			resId(0), numLoops(0), b4(0), vblProc(nullptr), cb(nullptr), baseNote(60) {}
 		bool enabled;
 		uint32 loopStartDuration;
 		uint32 loopEndDuration;
@@ -485,8 +485,8 @@ private:
 
 HSAudioStream::HSAudioStream(HSLowLevelDriver *drv, uint32 scummVMOutputrate, uint32 deviceRate, uint32 feedBufferSize, bool output16Bit) : Audio::AudioStream(), _drv(drv),
 _outputRate(scummVMOutputrate), _intRate(deviceRate), _buffSize(feedBufferSize), _outputByteSize(output16Bit ? 2 : 1), _isStereo(false), _vblSmpQty(0), _vblSmpQtyRem(0),
-_vblCountDown(0), _vblCountDownRem(0), _buffPos(0), _buffStart(0), _buffEnd(0), _rateConvCnt(0), _volMusic(0x10000), _volSfx(0x10000),
-_vblCbProc(0) {
+_vblCountDown(0), _vblCountDownRem(0), _buffPos(nullptr), _buffStart(nullptr), _buffEnd(nullptr), _rateConvCnt(0), _volMusic(0x10000), _volSfx(0x10000),
+_vblCbProc(nullptr) {
 	assert(drv);
 	_vblSmpQty = scummVMOutputrate / 60;
 	_vblSmpQtyRem = scummVMOutputrate % 60;
@@ -560,11 +560,11 @@ void HSAudioStream::runVblTasl() {
 		(*_vblCbProc)();
 }
 
-HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(0), _mutex(mutex), _sampleConvertBuffer(0), _interpolationTable(0), _transCycleLenDef(0),
-_interpolationTable2(0), _amplitudeScaleBuffer(0), _songFlags(0), _amplitudeScaleFlags(0), _interpolationMode(kNone), _numChanMusic(0), _convertUnitSize(0), _numChanSfx(0),
-_midiCurCmd(0), _convertBufferNumUnits(0), _songLoop(false), _chan(0), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(0), _songData(),
-_midiData(), _trackState(0), _sndInterpolateType(0), _song_transpose(0), _song_tickLen(0), _song_tempo(0), _song_ticksPerSecond(0), _song_internalTempo(0), _midiFastForward(false),
-_midiBusy(false), _pcmDstBufferSize(370), _midiMaxNotesPlayed(0), _songTicker(0), _transBuffer(0), _wtable(0), _wtableCount(0), _convertUnitSizeLast(0), _numChanSfxLast(0),
+HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(nullptr), _mutex(mutex), _sampleConvertBuffer(nullptr), _interpolationTable(nullptr), _transCycleLenDef(0),
+_interpolationTable2(nullptr), _amplitudeScaleBuffer(nullptr), _songFlags(0), _amplitudeScaleFlags(0), _interpolationMode(kNone), _numChanMusic(0), _convertUnitSize(0), _numChanSfx(0),
+_midiCurCmd(0), _convertBufferNumUnits(0), _songLoop(false), _chan(nullptr), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(nullptr), _songData(),
+_midiData(), _trackState(nullptr), _sndInterpolateType(0), _song_transpose(0), _song_tickLen(0), _song_tempo(0), _song_ticksPerSecond(0), _song_internalTempo(0), _midiFastForward(false),
+_midiBusy(false), _pcmDstBufferSize(370), _midiMaxNotesPlayed(0), _songTicker(0), _transBuffer(nullptr), _wtable(nullptr), _wtableCount(0), _convertUnitSizeLast(0), _numChanSfxLast(0),
 _wtableCount2(0), _pmDataTrm(0x8000) {
 #define HSOPC(x)	_hsOpcodes.push_back(new HSOpcode(this, &HSLowLevelDriver::x))
 	HSOPC(cmd_startSong);
@@ -663,7 +663,7 @@ template<typename T> void HSLowLevelDriver::generateData(T *dst, uint32 len) {
 
 int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 	Common::SeekableReadStream *song = _res->getResource(va_arg(arg, int), 'SONG');
-	Common::SeekableReadStream *midi = 0;
+	Common::SeekableReadStream *midi = nullptr;
 	if (song) {
 		uint16 idm = song->readUint16BE();
 		if (!(midi = _res->getResource(idm, 'MIDI')))
@@ -758,11 +758,11 @@ int HSLowLevelDriver::cmd_releaseSongData(va_list &arg) {
 int HSLowLevelDriver::cmd_deinit(va_list &arg) {
 	send(7);
 	delete[] _sampleConvertBuffer;
-	_sampleConvertBuffer = 0;
+	_sampleConvertBuffer = nullptr;
 	delete[] _amplitudeScaleBuffer;
-	_amplitudeScaleBuffer = 0;
+	_amplitudeScaleBuffer = nullptr;
 	delete[] _interpolationTable;
-	_interpolationTable = 0;
+	_interpolationTable = nullptr;
 	return 0;
 }
 
@@ -815,7 +815,7 @@ int HSLowLevelDriver::cmd_playSoundEffect(va_list &arg) {
 	chan->pmData = &_pmDataTrm;
 	chan->stateCur.dataPos = vc->dataPtr;
 	chan->dataEnd = vc->dataPtr + vc->numSamples;
-	chan->loopStart = chan->loopEnd = 0;
+	chan->loopStart = chan->loopEnd = nullptr;
 	chan->numLoops = &vc->numLoops;
 	chan->imode = _interpolationMode ? kSimple : kNone;
 
@@ -982,7 +982,7 @@ void HSLowLevelDriver::createTables() {
 	if (_sampleConvertBuffer) {
 		if (_convertUnitSize != _convertUnitSizeLast || _numChanSfx != _numChanSfxLast || _convertBufferNumUnits - _numChanSfx != _numChanMusic) {
 			delete[] _sampleConvertBuffer;
-			_sampleConvertBuffer = 0;
+			_sampleConvertBuffer = nullptr;
 		}
 	}
 
@@ -1595,8 +1595,8 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		return;
 	}
 
-	const uint8 *snd = 0;
-	const NoteRangeSubset *nrs = 0;
+	const uint8 *snd = nullptr;
+	const NoteRangeSubset *nrs = nullptr;
 	uint16 note2 = 0;
 	uint16 flags = 0;
 	uint8 flags2 = 0;
@@ -1668,7 +1668,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		return;
 
 	int busy = 0;
-	HSSoundChannel *chan = 0;
+	HSSoundChannel *chan = nullptr;
 
 	for (int i = 0; i < _numChanMusic && !chan; ++i) {
 		HSSoundChannel *c = &_chan[i];
@@ -1719,7 +1719,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 
 	chan->stateCur.dataPos = snd + 22;
 	chan->dataEnd = chan->stateCur.dataPos + READ_BE_UINT32(snd + 4);
-	chan->loopStart = chan->loopEnd = 0;
+	chan->loopStart = chan->loopEnd = nullptr;
 	uint32 loopStart = READ_BE_UINT32(snd + 12);
 	uint32 loopEnd = READ_BE_UINT32(snd + 16);
 
@@ -1728,7 +1728,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		chan->loopEnd = chan->stateCur.dataPos + loopEnd;
 	}
 
-	chan->numLoops = 0;
+	chan->numLoops = nullptr;
 	chan->imode = (!(flags & 0x8000) && (((_songFlags & 0x2000) || ((_songFlags & 0x1000) && (flags2 & 0x80 || _sndInterpolateType == n))))) ? _interpolationMode : kNone;
 
 	chan->prg = prg;
@@ -1904,10 +1904,10 @@ const uint32 HSLowLevelDriver::_periods[156] = {
 	0x00658598, 0x006b93da, 0x0071fd4c, 0x0078c1f0
 };
 
-HSSoundSystem *HSSoundSystem::_refInstance = 0;
+HSSoundSystem *HSSoundSystem::_refInstance = nullptr;
 int HSSoundSystem::_refCount = 0;
 
-HSSoundSystem::HSSoundSystem(SoundMacRes *res, Audio::Mixer *mixer) : _res(res), _mixer(mixer), _driver(0), _voicestr(0), _vblTask(0), _sampleSlots(0), _voices(0), _sync(0),
+HSSoundSystem::HSSoundSystem(SoundMacRes *res, Audio::Mixer *mixer) : _res(res), _mixer(mixer), _driver(nullptr), _voicestr(nullptr), _vblTask(nullptr), _sampleSlots(nullptr), _voices(nullptr), _sync(0),
 _numChanSfx(0), _numSampleSlots(0), _currentSong(-1), _ready(false), _isFading(false), _sfxDuration(0), _fadeState(0), _fadeStep(0), _fadeStepTicksCounter(0), _fadeDirection(false),
 _fadeComplete(false), _fadeStepTicks(0), _volumeMusic(Audio::Mixer::kMaxMixerVolume), _volumeSfx(Audio::Mixer::kMaxMixerVolume), _mutex(mixer->mutex()) {
 	DEBUG_BUFFERS_COUNT = 0;
@@ -1926,9 +1926,9 @@ HSSoundSystem::~HSSoundSystem() {
 HSSoundSystem *HSSoundSystem::open(SoundMacRes *res, Audio::Mixer *mixer) {
 	_refCount++;
 
-	if (_refCount == 1 && _refInstance == 0)
+	if (_refCount == 1 && _refInstance == nullptr)
 		_refInstance = new HSSoundSystem(res, mixer);
-	else if (_refCount < 2 || _refInstance == 0)
+	else if (_refCount < 2 || _refInstance == nullptr)
 		error("HSSoundSystem::open(): Internal ref management failure");
 
 	return _refInstance;
@@ -1942,7 +1942,7 @@ void HSSoundSystem::close() {
 
 	if (!_refCount) {
 		delete _refInstance;
-		_refInstance = 0;
+		_refInstance = nullptr;
 	}
 }
 
@@ -2003,7 +2003,7 @@ void HSSoundSystem::releaseSamples() {
 		releaseSamplesFromSlot(_sampleSlots[i]);
 
 	delete[] _sampleSlots;
-	_sampleSlots = 0;
+	_sampleSlots = nullptr;
 	_numSampleSlots = 0;
 }
 
@@ -2032,7 +2032,7 @@ void HSSoundSystem::startSoundEffect(int id, int rate) {
 		slot->reverse = false;
 	}
 
-	playSamples(slot->samples, slot->numSamples, rate ? rate : slot->rate, id, 0, 0, 0, 0, 0, 0);
+	playSamples(slot->samples, slot->numSamples, rate ? rate : slot->rate, id, 0, 0, 0, 0, nullptr, nullptr);
 }
 
 void HSSoundSystem::enqueueSoundEffect(int id, int rate, int note) {
@@ -2241,7 +2241,7 @@ void HSSoundSystem::setupSfxChannels(int num) {
 	for (int i = 0; i < _numChanSfx; ++i)
 		delete _voices[i];
 	delete[] _voices;
-	_voices = 0;
+	_voices = nullptr;
 
 	_numChanSfx = num;
 	if (num <= 0)
@@ -2254,7 +2254,7 @@ void HSSoundSystem::setupSfxChannels(int num) {
 }
 
 HSSoundSystem::HSSoundEffectVoice *HSSoundSystem::findFreeVoice() const {
-	HSSoundEffectVoice *chan = 0;
+	HSSoundEffectVoice *chan = nullptr;
 	for (int i = 0; i < _numChanSfx; ++i) {
 		if (_voices[i] && !_voices[i]->enabled) {
 			chan = _voices[i];
@@ -2289,7 +2289,7 @@ HSSoundSystem::HSSoundEffectVoice *HSSoundSystem::findVoice(uint16 id) const {
 		if (_voices[i] && _voices[i]->resId == id)
 			return _voices[i];
 	}
-	return 0;
+	return nullptr;
 }
 
 int HSSoundSystem::doCommandIntern(int cmd, ...) {
@@ -2303,8 +2303,8 @@ int HSSoundSystem::doCommandIntern(int cmd, ...) {
 
 bool HSSoundSystem::loadSamplesIntoSlot(uint16 id, SampleSlot &slot, bool registerOnly) const {
 	slot.resId = id;
-	slot.data = 0;
-	uint8 *data = 0;
+	slot.data = nullptr;
+	uint8 *data = nullptr;
 
 	if (registerOnly)
 		return true;
@@ -2340,7 +2340,7 @@ bool HSSoundSystem::loadSamplesIntoSlot(uint16 id, SampleSlot &slot, bool regist
 	} else if (type) {
 		warning("SoundSystem::loadSamplesIntoSlot(): Unexpected resource header type '%d' encountered", type);
 		delete[] data;
-		data = 0;
+		data = nullptr;
 	}
 
 	slot.data = data;
@@ -2354,11 +2354,11 @@ void HSSoundSystem::deltaDecompress(uint8 *out, uint8 *in, uint32 outSize, uint3
 
 void HSSoundSystem::releaseSamplesFromSlot(SampleSlot &slot) {
 	delete[] slot.data;
-	slot.data = slot.samples = 0;
+	slot.data = slot.samples = nullptr;
 }
 
 HSSoundSystem::SampleSlot *HSSoundSystem::findSampleSlot(int id) const {
-	SampleSlot *res = 0;
+	SampleSlot *res = nullptr;
 	for (int i = 0; i <_numSampleSlots; ++i) {
 		SampleSlot &s = _sampleSlots[i];
 		if (s.resId != id)
@@ -2631,13 +2631,13 @@ bool HSTriangulizer::process(const ShStBuffer &src, uint8 *dst, uint16, uint16) 
 	return true;
 }
 
-HalestormDriver::HalestormDriver(SoundMacRes *res, Audio::Mixer *mixer) : _hs(0) {
+HalestormDriver::HalestormDriver(SoundMacRes *res, Audio::Mixer *mixer) : _hs(nullptr) {
 	_hs = HSSoundSystem::open(res, mixer);
 }
 
 HalestormDriver::~HalestormDriver() {
 	HSSoundSystem::close();
-	_hs = 0;
+	_hs = nullptr;
 }
 
 bool HalestormDriver::init(bool hiQuality, InterpolationMode imode, bool output16bit) {
