@@ -55,9 +55,9 @@ public:
 	InventoryBox(RenderObject &redrawFrom);
 	virtual ~InventoryBox();
 
-	virtual void init() override;
-	virtual void updateGraphics() override;
-	virtual void registerGraphics() override;
+	void init() override;
+	void updateGraphics() override;
+	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
 	// To be called from Scene
@@ -82,8 +82,8 @@ private:
 			_curFrame(0) {}
 		virtual ~Curtains() = default;
 
-		virtual void init() override;
-		virtual void updateGraphics() override;
+		void init() override;
+		void updateGraphics() override;
 
 		void setOpen(bool open) { _areOpen = open; }
 

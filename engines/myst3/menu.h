@@ -174,7 +174,7 @@ class Dialog : public Drawable {
 public:
 	Dialog(Myst3Engine *vm, uint id);
 	virtual ~Dialog();
-	virtual void draw() override;
+	void draw() override;
 	virtual int16 update() = 0;
 
 protected:

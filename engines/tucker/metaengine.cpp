@@ -85,7 +85,7 @@ public:
 		return Tucker::kLastSaveSlot;
 	}
 
-	virtual int getAutosaveSlot() const override {
+	int getAutosaveSlot() const override {
 		return Tucker::kAutoSaveSlot;
 	}
 

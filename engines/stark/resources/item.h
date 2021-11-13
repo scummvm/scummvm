@@ -82,10 +82,10 @@ public:
 	virtual ~Item();
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
-	virtual void onGameLoop() override;
-	virtual void saveLoad(ResourceSerializer *serializer) override;
-	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
+	void readData(Formats::XRCReadStream *stream) override;
+	void onGameLoop() override;
+	void saveLoad(ResourceSerializer *serializer) override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Is the item present in the scene */
 	bool isEnabled() const;
@@ -143,10 +143,10 @@ public:
 	virtual ~ItemVisual();
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
-	virtual void onAllLoaded() override;
-	virtual void saveLoad(ResourceSerializer *serializer) override;
-	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
+	void readData(Formats::XRCReadStream *stream) override;
+	void onAllLoaded() override;
+	void saveLoad(ResourceSerializer *serializer) override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	// Item API
 	void setEnabled(bool enabled) override;
@@ -391,7 +391,7 @@ public:
 	virtual ~FloorPositionedImageItem();
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
@@ -476,7 +476,7 @@ public:
 	virtual ~ImageItem();
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;

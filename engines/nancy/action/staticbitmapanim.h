@@ -40,11 +40,11 @@ public:
 	PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom, 7), _isInterruptible(interruptible) {}
 	virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
-	virtual void onPause(bool pause) override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void onPause(bool pause) override;
 
 	Common::String _imageName;
 
@@ -74,8 +74,8 @@ public:
 	bool _isInterruptible;
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return _isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return _isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
+	bool isViewportRelative() const override { return true; }
 
 	void setFrame(uint frame);
 

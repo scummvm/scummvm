@@ -33,7 +33,7 @@ public:
 	void registerOpcodes() override;
 
 protected:
-	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) override;
+	bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) override;
 	void setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore);
 	static uint convertEmiVolumeToMixer(uint emiVolume);
 	static uint convertMixerVolumeToEmi(uint volume);

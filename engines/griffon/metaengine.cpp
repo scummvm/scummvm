@@ -43,7 +43,7 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual int getAutosaveSlot() const override {
+	int getAutosaveSlot() const override {
 		return 4;
 	}
 	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;

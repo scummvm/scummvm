@@ -33,9 +33,9 @@ public:
 	const char *getName() const override {
 		return "icb";
 	}
-	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
+	bool hasFeature(MetaEngineFeature f) const override { return false; }
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };

@@ -49,8 +49,8 @@ private:
 	bool loadFile(const Common::String &filename) override;
 	bool _demo;
 	bool bikCheck(Common::SeekableReadStream *stream, uint32 pos);
-	virtual void deinit() override;
-	virtual void handleFrame() override;
+	void deinit() override;
+	void handleFrame() override;
 };
 
 } // end of namespace Grim

@@ -52,7 +52,7 @@ public:
 	virtual ~FloorFace();
 
 	// Resource API
-	virtual void onAllLoaded() override;
+	void onAllLoaded() override;
 
 	/** Return true if the point is inside the face when both are projected on a Z=0 plane*/
 	bool isPointInside(const Math::Vector3d &point) const;

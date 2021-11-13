@@ -405,7 +405,7 @@ public:
 	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
-	virtual Common::String getSaveStateName(int slot) const override {
+	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("%s.s%02u", _targetName.c_str(), slot);
 	}
 

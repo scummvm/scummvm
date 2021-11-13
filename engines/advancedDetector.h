@@ -381,7 +381,7 @@ public:
 	 *
 	 * @return A list of extra GUI options for an engine plugin and target.
 	 */
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
 	/**
@@ -468,7 +468,7 @@ public:
 	 * By the time this is called, it is assumed that there is only one
 	 * plugin engine loaded in memory.
 	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
 	/**
 	 * A createInstance implementation for subclasses. To be called after the base
@@ -483,7 +483,7 @@ public:
 	 *
 	 * @see MetaEngine::getName().
 	 */
-	virtual const char *getName() const override = 0;
+	const char *getName() const override = 0;
 
 public:
 	/**

@@ -39,15 +39,15 @@ public:
 	ShaderRenderer(OSystem *_system);
 	virtual ~ShaderRenderer();
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void clear(const Math::Vector4d &clearColor) override;
+	void clear(const Math::Vector4d &clearColor) override;
 
-	virtual void setupViewport(int x, int y, int width, int height) override;
-	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
-	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
-	virtual void dimRegionInOut(float fade) override;
-	virtual void drawInViewport() override;
+	void setupViewport(int x, int y, int width, int height) override;
+	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	void dimRegionInOut(float fade) override;
+	void drawInViewport() override;
 
 private:
 	OpenGL::ShaderGL *_cubeShader;

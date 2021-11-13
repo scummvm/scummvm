@@ -458,7 +458,7 @@ public:
 	}
 
 protected:
-	virtual uint16 height() override {
+	uint16 height() override {
 		return _font->getFontHeight();
 	}
 };

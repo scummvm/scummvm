@@ -42,8 +42,8 @@ public:
 	Credits() : _state(kInit), _background(), _text(_background), _pixelsToScroll(0) {}
 
 	// State API
-	virtual void process() override;
-	virtual void onStateExit() override { destroy(); };
+	void process() override;
+	void onStateExit() override { destroy(); };
 
 protected:
 	void init();

@@ -37,7 +37,7 @@ struct RunTimeClassType {
 
 #define ENABLE_RUNTIME_CLASSTYPE() \
 	static const RunTimeClassType ClassType; \
-	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
+	const RunTimeClassType & GetClassType() const override { return ClassType; }
 
 #define ENABLE_RUNTIME_CLASSTYPE_BASE() \
 	static const RunTimeClassType ClassType; \

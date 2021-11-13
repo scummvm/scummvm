@@ -49,7 +49,7 @@ struct SavePoint;
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_VFUNCTION(name) \
-	virtual void setup_##name() override; \
+	void setup_##name() override; \
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_FUNCTION_1(name, param1) \
@@ -57,7 +57,7 @@ struct SavePoint;
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_VFUNCTION_1(name, param1) \
-	virtual void setup_##name(param1) override; \
+	void setup_##name(param1) override; \
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_FUNCTION_2(name, param1, param2) \
@@ -65,7 +65,7 @@ struct SavePoint;
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_VFUNCTION_2(name, param1, param2) \
-	virtual void setup_##name(param1, param2) override; \
+	void setup_##name(param1, param2) override; \
 	void name(const SavePoint &savepoint);
 
 #define DECLARE_FUNCTION_3(name, param1, param2, param3) \

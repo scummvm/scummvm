@@ -222,7 +222,7 @@ public:
 	bool saveExists();
 	bool saveExists(uint16 slotNo);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
-	virtual Common::String getSaveStateName(int slot) const override;
+	Common::String getSaveStateName(int slot) const override;
 	uint32 findBufferSize();
 
 	void startGame();

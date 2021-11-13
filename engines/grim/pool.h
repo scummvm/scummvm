@@ -141,7 +141,7 @@ public:
 	void setId(int id);
 
 	int getId() const override;
-	virtual int32 getTag() const override { return T::getStaticTag(); }
+	int32 getTag() const override { return T::getStaticTag(); }
 
 	static Pool &getPool();
 

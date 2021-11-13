@@ -628,7 +628,7 @@ protected:
 	virtual void loadVcnData(const char *file, const uint8 *cgaMapping);
 	virtual Common::SeekableReadStreamEndian *getVmpData(const char *file);
 	void loadBlockProperties(const char *mazFile) override;
-	virtual const uint8 *getBlockFileData(int levelIndex) override;
+	const uint8 *getBlockFileData(int levelIndex) override;
 	const uint8 *getBlockFileData(const char *mazFile);
 	Common::String getBlockFileName(int levelIndex, int sub);
 	void loadDecorations(const char *cpsFile, const char *decFile);

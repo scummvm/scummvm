@@ -266,7 +266,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
-	virtual Common::String getSaveStateName(int slot) const override;
+	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
 
 	FileManager *_file;

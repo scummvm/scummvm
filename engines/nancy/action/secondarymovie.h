@@ -42,12 +42,12 @@ public:
 	PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
 	virtual ~PlaySecondaryMovie();
 
-	virtual void init() override;
-	virtual void updateGraphics() override;
-	virtual void onPause(bool pause) override;
+	void init() override;
+	void updateGraphics() override;
+	void onPause(bool pause) override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 	Common::String _videoName; // 0x00
 
@@ -65,8 +65,8 @@ public:
 	Common::Array<SecondaryVideoDescription> _videoDescs; // 0xD4
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
+	bool isViewportRelative() const override { return true; }
 
 	AVFDecoder _decoder;
 	int _curViewportFrame = -1;

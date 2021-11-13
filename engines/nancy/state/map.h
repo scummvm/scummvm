@@ -48,8 +48,8 @@ public:
 	virtual ~Map();
 
 	// State API
-	virtual void process() override;
-	virtual void onStateExit() override;
+	void process() override;
+	void onStateExit() override;
 
 private:
 	struct Location {

@@ -360,7 +360,7 @@ protected:
 
 	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
-	virtual int getAutosaveSlot() const override { return 999; }
+	int getAutosaveSlot() const override { return 999; }
 
 	const char *getSavegameFilename(int num);
 	Common::String _savegameFilename;

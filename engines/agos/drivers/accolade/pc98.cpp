@@ -37,7 +37,7 @@ public:
 	};
 public:
 	PC98CommonDriver();
-	virtual ~PC98CommonDriver() override {};
+	~PC98CommonDriver() override {};
 
 	bool isOpen() const override { return _isOpen; }
 	void send(uint32 b) override;

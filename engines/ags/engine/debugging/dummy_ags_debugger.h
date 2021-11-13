@@ -30,18 +30,18 @@ namespace AGS3 {
 struct DummyAGSDebugger : IAGSEditorDebugger {
 public:
 
-	virtual bool Initialize() override {
+	bool Initialize() override {
 		return false;
 	}
-	virtual void Shutdown() override {
+	void Shutdown() override {
 	}
-	virtual bool SendMessageToEditor(const char *message) override {
+	bool SendMessageToEditor(const char *message) override {
 		return false;
 	}
-	virtual bool IsMessageAvailable() override {
+	bool IsMessageAvailable() override {
 		return false;
 	}
-	virtual char *GetNextMessage() override {
+	char *GetNextMessage() override {
 		return NULL;
 	}
 };

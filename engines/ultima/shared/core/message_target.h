@@ -46,7 +46,7 @@ struct MSGMAP {
 #define DECLARE_MESSAGE_MAP \
 protected: \
 	static const Ultima::Shared::MSGMAP *getThisMessageMap(); \
-	virtual const Ultima::Shared::MSGMAP *getMessageMap() const override
+	const Ultima::Shared::MSGMAP *getMessageMap() const override
 
 #define DECLARE_MESSAGE_MAP_BASE \
 protected: \

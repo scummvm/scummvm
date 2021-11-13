@@ -84,13 +84,13 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const override { return "In Cold Blood Engine"; }
+	const char *getName() const override { return "In Cold Blood Engine"; }
 
 	const char *getEngineId() const override {
 		return "icb";
 	}
 
-	virtual const char *getOriginalCopyright() const override { return "(C) 2000 Revolution Software Ltd"; }
+	const char *getOriginalCopyright() const override { return "(C) 2000 Revolution Software Ltd"; }
 };
 
 } // End of namespace ICB

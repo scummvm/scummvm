@@ -38,8 +38,8 @@ public:
 	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false), _buttonDown(_background, 5) {}
 
 	// State API
-	virtual void process() override;
-	virtual void onStateExit() override;
+	void process() override;
+	void onStateExit() override;
 
 private:
 	void init();

@@ -51,7 +51,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual int getAutosaveSlot() const override { return 999; }
+	int getAutosaveSlot() const override { return 999; }
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };

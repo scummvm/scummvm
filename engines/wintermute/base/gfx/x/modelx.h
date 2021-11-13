@@ -178,8 +178,8 @@ public:
 	bool setMaterialTheora(const char *materialName, const char *theoraFilename);
 	bool initializeSimple();
 
-	virtual bool invalidateDeviceObjects() override;
-	virtual bool restoreDeviceObjects() override;
+	bool invalidateDeviceObjects() override;
+	bool restoreDeviceObjects() override;
 
 	bool unloadAnimation(const char *animName);
 

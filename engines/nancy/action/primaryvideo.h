@@ -73,13 +73,13 @@ public:
 	PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
 	virtual ~PlayPrimaryVideoChan0();
 
-	virtual void init() override;
-	virtual void updateGraphics() override;
-	virtual void onPause(bool pause) override;
+	void init() override;
+	void updateGraphics() override;
+	void onPause(bool pause) override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
-	virtual void handleInput(NancyInput &input) override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void handleInput(NancyInput &input) override;
 
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalResponses();
@@ -109,8 +109,8 @@ public:
 	int16 _pickedResponse = -1;
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
+	bool isViewportRelative() const override { return true; }
 };
 
 } // End of namespace Action

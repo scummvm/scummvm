@@ -126,7 +126,7 @@ public:
 	uint32 getTimerDelay() const;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	virtual Common::String getSaveStateName(int slot) const override;
+	Common::String getSaveStateName(int slot) const override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 

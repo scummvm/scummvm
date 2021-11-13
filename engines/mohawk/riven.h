@@ -181,7 +181,7 @@ public:
 	void runOptionsDialog();
 
 	// Save / Load
-	virtual bool canSaveAutosaveCurrently() override;
+	bool canSaveAutosaveCurrently() override;
 
 	/**
 	 * Has the game ended, or has the user requested to quit?

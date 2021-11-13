@@ -30,7 +30,7 @@ namespace Nancy {
 class NancyOptionsWidget : public GUI::OptionsContainerWidget {
 public:
 	NancyOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
-	virtual ~NancyOptionsWidget() override {};
+	~NancyOptionsWidget() override {};
 
 	void load() override;
 	bool save() override;

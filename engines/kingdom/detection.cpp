@@ -88,11 +88,11 @@ public:
 		return "kingdom";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Kingdom: The Far Reaches' Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Kingdom: The far Reaches (C) 1995 Virtual Image Productions";
 	}
 

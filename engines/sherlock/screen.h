@@ -185,7 +185,7 @@ public:
 	/**
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
-	virtual void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
+	void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
 
 
 	// Rose Tattoo specific methods

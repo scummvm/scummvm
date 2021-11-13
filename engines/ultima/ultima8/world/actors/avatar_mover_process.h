@@ -46,7 +46,7 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-	virtual void saveData(Common::WriteStream *ws) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	bool hasMovementFlags(uint32 flags) const {
 		return (_movementFlags & flags) != 0;

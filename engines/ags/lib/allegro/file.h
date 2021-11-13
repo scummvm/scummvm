@@ -193,7 +193,7 @@ public:
 		return _vTable->pf_ferror(_userData);
 	}
 
-	virtual void *pack_get_userdata() const override {
+	void *pack_get_userdata() const override {
 		return _userData;
 	}
 };

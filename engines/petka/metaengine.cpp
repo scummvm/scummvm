@@ -33,12 +33,12 @@ public:
 		return "petka";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const override { return 17; }
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override { return 17; }
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {

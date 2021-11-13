@@ -80,13 +80,13 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual bool canSaveAutosaveCurrently() override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	bool canSaveAutosaveCurrently() override;
 
 	const char *getCopyrightString() const;
 	uint32 getGameFlags() const;
@@ -138,7 +138,7 @@ private:
 		NancyState::NancyState prevState = NancyState::kNone;
 	};
 
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	void bootGameEngine();
 

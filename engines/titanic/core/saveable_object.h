@@ -54,7 +54,7 @@ public:
 
 #define CLASSDEF \
 	static ClassDef *_type; \
-	virtual ClassDef *getType() const override { return _type; }
+	ClassDef *getType() const override { return _type; }
 
 class CSaveableObject {
 	typedef CSaveableObject *(*CreateFunction)();

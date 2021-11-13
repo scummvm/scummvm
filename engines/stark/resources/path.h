@@ -104,7 +104,7 @@ public:
 	};
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	// Path API
 	uint getEdgeCount() const override;
@@ -134,7 +134,7 @@ public:
 	};
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	// Path API
 	uint getEdgeCount() const override;

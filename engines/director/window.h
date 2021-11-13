@@ -117,7 +117,7 @@ public:
 	Common::String getCurrentPath() const { return _currentPath; }
 	DirectorSound *getSoundManager() const { return _soundManager; }
 
-	virtual void setVisible(bool visible, bool silent = false) override;
+	void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
@@ -132,7 +132,7 @@ public:
 	Common::String getSharedCastPath();
 
 	// events.cpp
-	virtual bool processEvent(Common::Event &event) override;
+	bool processEvent(Common::Event &event) override;
 
 	// tests.cpp
 	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);

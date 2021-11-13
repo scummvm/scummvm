@@ -64,12 +64,12 @@ public:
 	/**
 	 * Does the get action
 	 */
-	virtual void get() override;
+	void get() override;
 
 	/**
 	 * Does the steal action
 	 */
-	virtual void steal() override;
+	void steal() override;
 };
 
 } // End of namespace Widgets

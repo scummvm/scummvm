@@ -111,7 +111,7 @@ public:
 	/**
 	 * Clear the window
 	 */
-	virtual void clear() override;
+	void clear() override;
 
 	/**
 	 * Draw a rectangle in the given area

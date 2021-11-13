@@ -98,8 +98,8 @@ public:
 	bool canSaveGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
-	virtual int getAutosaveSlot() const override { return 99; }
-	virtual Common::String getSaveStateName(int slot) const override;
+	int getAutosaveSlot() const override { return 99; }
+	Common::String getSaveStateName(int slot) const override;
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);

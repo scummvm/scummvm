@@ -102,7 +102,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-	virtual Common::String getSaveStateName(int slot) const override {
+	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("SKY-VM.%03d", slot);
 	}
 

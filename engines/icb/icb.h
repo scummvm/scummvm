@@ -46,7 +46,7 @@ public:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 private:
 	void initGfx(bool hwAccel, bool fullscreen);

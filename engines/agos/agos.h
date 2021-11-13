@@ -213,9 +213,9 @@ protected:
 		return go();
 	}
 
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
-	virtual void pauseEngineIntern(bool pause) override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;

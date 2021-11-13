@@ -36,12 +36,12 @@ public:
 	OrderingPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
 	virtual ~OrderingPuzzle() {}
 
-	virtual void init() override;
+	void init() override;
 
-	virtual void readData(Common::SeekableReadStream &stream) override;
-	virtual void execute() override;
-	virtual void handleInput(NancyInput &input) override;
-	virtual void onPause(bool pause) override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void handleInput(NancyInput &input) override;
+	void onPause(bool pause) override;
 
 	Common::String _imageName; // 0x00
 	Common::Array<Common::Rect> _srcRects; // 0xC, 15
@@ -64,8 +64,8 @@ public:
 	Time _solveSoundPlayTime;
 
 protected:
-	virtual Common::String getRecordTypeName() const override { return "OrderingPuzzle"; }
-	virtual bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return "OrderingPuzzle"; }
+	bool isViewportRelative() const override { return true; }
 
 	void drawElement(uint id);
 	void undrawElement(uint id);
