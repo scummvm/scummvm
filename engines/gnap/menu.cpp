@@ -161,7 +161,7 @@ void GnapEngine::insertInventorySprites() {
 	for (int i = 0; i < 9; ++i) {
 		_menuInventoryIndices[i] = -1;
 		_gameSys->removeSpriteDrawItem(_menuInventorySprites[_sceneClickedHotspot], 261);
-		_menuInventorySprites[i] = 0;
+		_menuInventorySprites[i] = nullptr;
 	}
 
 	_menuSpritesIndex = 0;
@@ -192,7 +192,7 @@ void GnapEngine::removeInventorySprites() {
 	for (int j = 0; j < _menuSpritesIndex; ++j) {
 		if (_menuInventorySprites[j]) {
 			deleteSurface(&_menuInventorySprites[j]);
-			_menuInventorySprites[j] = 0;
+			_menuInventorySprites[j] = nullptr;
 			_menuInventoryIndices[j] = -1;
 		}
 	}
