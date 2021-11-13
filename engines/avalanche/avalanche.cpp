@@ -360,7 +360,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 
 	_totalTime += getTimeInSeconds() - _startTime;
 
-	Common::Serializer sz(NULL, f);
+	Common::Serializer sz(nullptr, f);
 	synchronize(sz);
 	f->finalize();
 	delete f;
@@ -413,7 +413,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	resetAllVariables();
 
-	Common::Serializer sz(f, NULL);
+	Common::Serializer sz(f, nullptr);
 	synchronize(sz);
 	delete f;
 

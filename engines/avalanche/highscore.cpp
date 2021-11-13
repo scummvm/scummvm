@@ -61,7 +61,7 @@ void HighScore::saveHighScores() {
 		warning("Can't create file 'scores.avd', high scores are not saved.");
 		return;
 	}
-	Common::Serializer sz(NULL, f);
+	Common::Serializer sz(nullptr, f);
 	syncHighScores(sz);
 	f->finalize();
 	delete f;
@@ -75,7 +75,7 @@ void HighScore::loadHighScroes() {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading("scores.avd");
 		if (!f)
 			return;
-		Common::Serializer sz(f, NULL);
+		Common::Serializer sz(f, nullptr);
 		syncHighScores(sz);
 		delete f;
 	}
