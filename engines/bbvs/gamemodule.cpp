@@ -26,11 +26,11 @@
 namespace Bbvs {
 
 GameModule::GameModule()
-	: _bgSpriteCount(0), _bgSpriteIndices(0), _bgSpritePriorities(0), _walkRectsCount(0),
-	_walkRects(0), _sceneExitsCount(0), _sceneExits(0), _bgObjectsCount(0), _bgObjects(0),
-	_animationsCount(0), _animations(0), _sceneObjectDefsCount(0), _sceneObjectDefs(0),
-	_sceneObjectInitsCount(0), _sceneObjectInits(0), _actionsCount(0), _actions(0),
-	_sceneSoundsCount(0), _sceneSounds(0), _preloadSoundsCount(0), _preloadSounds(0) {
+	: _bgSpriteCount(0), _bgSpriteIndices(nullptr), _bgSpritePriorities(nullptr), _walkRectsCount(0),
+	_walkRects(nullptr), _sceneExitsCount(0), _sceneExits(nullptr), _bgObjectsCount(0), _bgObjects(nullptr),
+	_animationsCount(0), _animations(nullptr), _sceneObjectDefsCount(0), _sceneObjectDefs(nullptr),
+	_sceneObjectInitsCount(0), _sceneObjectInits(nullptr), _actionsCount(0), _actions(nullptr),
+	_sceneSoundsCount(0), _sceneSounds(nullptr), _preloadSoundsCount(0), _preloadSounds(nullptr) {
 }
 
 GameModule::~GameModule() {
@@ -242,17 +242,17 @@ void GameModule::unload() {
 	delete[] _actions;
 	delete[] _sceneSounds;
 	delete[] _preloadSounds;
-	_bgSpriteIndices = 0;
-	_bgSpritePriorities = 0;
-	_walkRects = 0;
-	_sceneExits = 0;
-	_bgObjects = 0;
-	_animations = 0;
-	_sceneObjectDefs = 0;
-	_sceneObjectInits = 0;
-	_actions = 0;
-	_sceneSounds = 0;
-	_preloadSounds = 0;
+	_bgSpriteIndices = nullptr;
+	_bgSpritePriorities = nullptr;
+	_walkRects = nullptr;
+	_sceneExits = nullptr;
+	_bgObjects = nullptr;
+	_animations = nullptr;
+	_sceneObjectDefs = nullptr;
+	_sceneObjectInits = nullptr;
+	_actions = nullptr;
+	_sceneSounds = nullptr;
+	_preloadSounds = nullptr;
 }
 
 void GameModule::loadBgSprites(Common::SeekableReadStream &s) {

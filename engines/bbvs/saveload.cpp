@@ -161,7 +161,7 @@ void BbvsEngine::loadgame(const char *filename) {
 		obj->turnTicks = in->readUint32LE();
 		obj->walkDestPt.x = in->readUint16LE();
 		obj->walkDestPt.y = in->readUint16LE();
-		obj->anim = obj->animIndex > 0 ? _gameModule->getAnimation(obj->animIndex) : 0;
+		obj->anim = obj->animIndex > 0 ? _gameModule->getAnimation(obj->animIndex) : nullptr;
 	}
 
 	updateWalkableRects();
@@ -174,7 +174,7 @@ void BbvsEngine::loadgame(const char *filename) {
 		}
 	}
 
-	_currAction = 0;
+	_currAction = nullptr;
 	_currActionCommandIndex = -1;
 
 	delete in;

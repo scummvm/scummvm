@@ -86,7 +86,7 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 		animIndex = sceneObject->sceneObjectDef->animIndices[kWalkTurnTbl[sceneObject->turnValue]];
 	}
 
-	Animation *anim = 0;
+	Animation *anim = nullptr;
 	if (animIndex > 0)
 		anim = _gameModule->getAnimation(animIndex);
 
@@ -97,7 +97,7 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 			sceneObject->frameTicks = 1;
 			sceneObject->frameIndex = anim->frameCount - 1;
 		} else {
-			sceneObject->anim = 0;
+			sceneObject->anim = nullptr;
 			sceneObject->animIndex = 0;
 			sceneObject->frameTicks = 0;
 			sceneObject->frameIndex = 0;
@@ -285,7 +285,7 @@ WalkArea *BbvsEngine::getWalkAreaAtPos(const Common::Point &pt) {
 		if (walkArea->contains(pt))
 			return walkArea;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool BbvsEngine::canButtheadWalkToDest(const Common::Point &destPt) {

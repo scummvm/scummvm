@@ -976,7 +976,7 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 		{
 			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
 			if (actionCommand->param == 0) {
-				sceneObject->anim = 0;
+				sceneObject->anim = nullptr;
 				sceneObject->animIndex = 0;
 				sceneObject->frameTicks = 0;
 				sceneObject->frameIndex = 0;
@@ -1039,7 +1039,7 @@ bool BbvsEngine::processCurrAction() {
 				break;
 
 			if (actionCommand->cmd == kActionCmdMoveObject || actionCommand->cmd == kActionCmdAnimObject) {
-				SceneObjectAction *sceneObjectAction = 0;
+				SceneObjectAction *sceneObjectAction = nullptr;
 				// See if there's already an entry for the SceneObject
 				for (uint j = 0; j < _sceneObjectActions.size(); ++j)
 					if (_sceneObjectActions[j].sceneObjectIndex == actionCommand->sceneObjectIndex) {
@@ -1147,7 +1147,7 @@ void BbvsEngine::updateCommon() {
 					evalActionResults(_currAction->results);
 					if (_gameState == kGSDialog)
 						updateDialogConditions();
-					_currAction = 0;
+					_currAction = nullptr;
 					_currActionCommandTimeStamp = 0;
 					_currActionCommandIndex = -1;
 					updateSceneObjectsTurnValue();
@@ -1351,7 +1351,7 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 
 	_sound->unloadSounds();
 
-	Minigame *minigame = 0;
+	Minigame *minigame = nullptr;
 
 	switch (minigameNum) {
 	case kMinigameBbLoogie:

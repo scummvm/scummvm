@@ -241,14 +241,14 @@ MinigameBbLoogie::Obj *MinigameBbLoogie::getFreeObject() {
 	for (int i = 0; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 0)
 			return &_objects[i];
-	return 0;
+	return nullptr;
 }
 
 MinigameBbLoogie::Obj *MinigameBbLoogie::findLoogieObj(int startObjIndex) {
 	for (int i = startObjIndex; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 3)
 			return &_objects[i];
-	return 0;
+	return nullptr;
 }
 
 bool MinigameBbLoogie::isHit(Obj *obj1, Obj *obj2) {

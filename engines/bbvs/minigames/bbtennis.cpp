@@ -224,14 +224,14 @@ MinigameBbTennis::Obj *MinigameBbTennis::getFreeObject() {
 	for (int i = 0; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 0)
 			return &_objects[i];
-	return 0;
+	return nullptr;
 }
 
 MinigameBbTennis::Obj *MinigameBbTennis::findTennisBall(int startObjIndex) {
 	for (int i = startObjIndex; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 2)
 			return &_objects[i];
-	return 0;
+	return nullptr;
 }
 
 bool MinigameBbTennis::isHit(Obj *obj1, Obj *obj2) {

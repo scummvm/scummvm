@@ -27,7 +27,7 @@
 
 static const PlainGameDescriptor bbvsGames[] = {
 	{ "bbvs", "Beavis and Butt-head in Virtual Stupidity" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 namespace Bbvs {
@@ -35,7 +35,7 @@ namespace Bbvs {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"bbvs",
-		0,
+		nullptr,
 		AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"bbvs",
-		0,
+		nullptr,
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
@@ -90,7 +90,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 static const char * const directoryGlobs[] = {
 	"vnm",
-	0
+	nullptr
 };
 
 class BbvsMetaEngineDetection : public AdvancedMetaEngineDetection {
