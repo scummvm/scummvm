@@ -170,7 +170,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 		if (totalDice > 0 && trg->getObject() && isActor(trg->getObject()))
 			offensiveNotification(ac, (Actor *) trg->getObject());
 	} else {
-		ac = NULL;
+		ac = nullptr;
 		totalDice = dice + 6;
 		ObjectID pID = cst->possessor();
 		if (pID != Nothing) {
@@ -197,7 +197,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 	totalDamage = clamp(0, totalDamage, currentLevel(a, type));
 
 	drainLevel(cst, a, type, totalDamage);
-	if (ac != NULL)
+	if (ac != nullptr)
 		drainLevel(cst, ac, type, -totalDamage);
 }
 
@@ -504,7 +504,7 @@ SPECIALSPELL(DispellCurses) {
 		Actor               *a = (Actor *) trg->getObject();
 		GameObject          *obj;
 		ContainerIterator   iter(a);
-		GameObject          *ToBeDeleted = NULL;
+		GameObject          *ToBeDeleted = nullptr;
 
 		clearEnchantments(a);
 

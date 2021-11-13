@@ -57,7 +57,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	_bytepos = 0;
 	_handle = &_file;
 	_base = nullptr;
-	_parent = 0;
+	_parent = nullptr;
 
 	if (!_res->_valid)
 		return;

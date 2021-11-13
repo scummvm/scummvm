@@ -121,7 +121,7 @@ void drawPlatform(
 					int16 trFlags;
 
 					TileInfo *ti = p.fetchTile(g_vm->_currentMapNum, pCoords, origin, &imageData, h, trFlags);
-					if (ti == NULL)
+					if (ti == nullptr)
 						continue;
 
 					int16 y = tilePos.y - h;

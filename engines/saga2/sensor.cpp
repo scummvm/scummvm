@@ -126,7 +126,7 @@ void readSensor(int16 ctr, Common::InSaveFile *in) {
 }
 
 void writeSensor(Sensor *sensor, Common::MemoryWriteStreamDynamic *out) {
-	assert(sensor != NULL);
+	assert(sensor != nullptr);
 
 	//  Store the sensor type
 	out->writeSint16LE(sensor->getType());
@@ -161,7 +161,7 @@ void checkSensors() {
 			}
 
 			if (sensor->check(info, sFlags)) {
-				assert(info.sensedObject != NULL);
+				assert(info.sensedObject != nullptr);
 				assert(isObject(info.sensedObject) || isActor(info.sensedObject));
 
 				sensor->getObject()->senseObject(sensor->thisID(), info.sensedObject->thisID());
@@ -178,7 +178,7 @@ void checkSensors() {
 //----------------------------------------------------------------------
 
 void assertEvent(const GameEvent &ev) {
-	assert(ev.directObject != NULL);
+	assert(ev.directObject != nullptr);
 	assert(isObject(ev.directObject) || isActor(ev.directObject));
 
 	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
@@ -189,7 +189,7 @@ void assertEvent(const GameEvent &ev) {
 			    sensor->thisID(),
 			    ev.type,
 			    ev.directObject->thisID(),
-			    ev.indirectObject != NULL
+			    ev.indirectObject != nullptr
 			    ?   ev.indirectObject->thisID()
 			    :   Nothing);
 		}
@@ -327,7 +327,7 @@ SensorList *fetchSensorList(GameObject *obj) {
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /* ===================================================================== *
@@ -486,7 +486,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	iter.first(&objToTest);
 
 	for (iter.first(&objToTest);
-	        objToTest != NULL;
+	        objToTest != nullptr;
 	        iter.next(&objToTest)) {
 		if (senseFlags & (1 << actorBlind))
 			continue;

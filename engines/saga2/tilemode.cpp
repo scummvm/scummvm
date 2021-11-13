@@ -63,7 +63,7 @@ class gStickyDragControl : public gGenericControl {
 	bool    sticky;
 
 public:
-	gStickyDragControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = NULL);
+	gStickyDragControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = nullptr);
 
 	void setSticky(bool s) {
 		sticky = s;
@@ -163,7 +163,7 @@ static bool navigationDelayed = false;
 //Tile Mode GameMode Object
 
 GameMode            TileMode = {
-	NULL,                                   // no previous mode
+	nullptr,                                // no previous mode
 	false,                                  // mode is not nestable
 	TileModeSetup,
 	TileModeCleanup,
@@ -182,7 +182,7 @@ Alarm               updateAlarm,            // max coord update rate
                     pathFindAlarm;          // mouse click rate for path find
 bool                tileLockFlag;           // true if tile mode is locked
 
-GameObject          *mouseObject = NULL;    // object being dragged
+GameObject          *mouseObject = nullptr;    // object being dragged
 StaticPoint32       lastMousePos = {0, 0};           // Last mouse position over map
 static bool         mousePressed,           // State of mouse button
        clickActionDone = true; // Flag indication wether current
@@ -358,7 +358,7 @@ bool areThereActiveEnemies() {
 	ActiveRegionObjectIterator  iter;
 	GameObject                  *obj = nullptr;
 
-	for (iter.first(&obj); obj != NULL; iter.next(&obj)) {
+	for (iter.first(&obj); obj != nullptr; iter.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
 		        && ((Actor *)obj)->_disposition == dispositionEnemy)
@@ -376,10 +376,10 @@ void CheckCombatMood() {
 	static bool         wasHostile = false;
 
 	ar = getActiveRegion(getCenterActorPlayerID());
-	if (ar == NULL) return;
+	if (ar == nullptr) return;
 
 	world = ar->getWorld();
-	if (world == NULL || !isWorld(world)) return;
+	if (world == nullptr || !isWorld(world)) return;
 
 	//  Search for hostile monsters.
 
@@ -394,7 +394,7 @@ void CheckCombatMood() {
 
 	wasHostile = false;
 	clearActiveFactions();
-	for (iter8.first(&obj); obj != NULL; iter8.next(&obj)) {
+	for (iter8.first(&obj); obj != nullptr; iter8.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
 		        && ((Actor *)obj)->_disposition == dispositionEnemy) {
@@ -417,7 +417,7 @@ static void evalMouseState() {
 
 	g_vm->_mouseInfo->setDoable(interruptable);
 
-	if (g_vm->_mouseInfo->getObject() != NULL) {
+	if (g_vm->_mouseInfo->getObject() != nullptr) {
 		GameObject  *mObj = g_vm->_mouseInfo->getObject();
 
 		//  If the mouse pointer has an object and the intention
@@ -426,10 +426,10 @@ static void evalMouseState() {
 		//  and if so, wether the other object is within the
 		//  use range of the center actor
 		if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
-			assert(obj != NULL);
+			assert(obj != nullptr);
 
 			if (mObj->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
-				GameObject  *tob = pickedObject != Nothing ? obj : NULL;
+				GameObject  *tob = pickedObject != Nothing ? obj : nullptr;
 				// If it's a spell we need to do more complex testing
 				//   to see if the current target is valid
 				g_vm->_mouseInfo->setDoable(
@@ -565,7 +565,7 @@ static void evalMouseState() {
 
 	if (mousePressed
 	        &&  !clickActionDone
-	        &&  g_vm->_mouseInfo->getObject() == NULL) {
+	        &&  g_vm->_mouseInfo->getObject() == nullptr) {
 		a = getCenterActor();
 
 		//  Since the mouse is being dragged, initiate
@@ -576,7 +576,7 @@ static void evalMouseState() {
 			        &&  !navigationDelayed) {
 				MotionTask  *mt = a->_moveTask;
 
-				if (mt == NULL || !mt->isWalk()) {
+				if (mt == nullptr || !mt->isWalk()) {
 					navigateDirect(walkToPos, runFlag);
 				} else if (updateAlarm.check()) {
 					mt->changeDirectTarget(
@@ -688,7 +688,7 @@ void TileModeCleanup() {
 	delete tileMapControl;
 
 //	This Fixes the mousePanel That's not set up
-	g_vm->_toolBase->mousePanel = NULL;
+	g_vm->_toolBase->mousePanel = nullptr;
 
 	mainWindow->removeDecorations();
 }
@@ -794,7 +794,7 @@ void TileModeHandleTask() {
 				//  without regard to the actual shape of the terrain.
 				tilePickPos = pickTilePos(lastMousePos, a->getLocation());
 				tilePickExactPos = tilePickPos;
-				pickedTAI = NULL;
+				pickedTAI = nullptr;
 			} else {
 				//  Calculate the mouse's position on the tilemap,
 				//  including the shape of the terrain. Actually
@@ -825,7 +825,7 @@ void TileModeHandleTask() {
 				lastPickedObject = pickedObject;
 
 				//  Remove current mouse cursor text and gauge
-				g_vm->_mouseInfo->setText(NULL);
+				g_vm->_mouseInfo->setText(nullptr);
 				g_vm->_mouseInfo->clearGauge();
 
 				//  If mouse in on object set alarm to determine when
@@ -1067,13 +1067,13 @@ static APPFUNC(cmdClickTileMap) {
 		if (ev.value & gGenericControl::leave) {
 			mousePressed = false;
 
-			if (g_vm->_mouseInfo->getObject() == NULL)
+			if (g_vm->_mouseInfo->getObject() == nullptr)
 				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 			g_vm->_mouseInfo->setDoable(true);
 
 			//  Remove any mouse text
 			lastPickedObject = Nothing;
-			g_vm->_mouseInfo->setText(NULL);
+			g_vm->_mouseInfo->setText(nullptr);
 			g_vm->_mouseInfo->clearGauge();
 		}
 		lastMousePos.set(ev.mouse.x, ev.mouse.y);
@@ -1092,7 +1092,7 @@ static APPFUNC(cmdClickTileMap) {
 			Actor       *centerActorPtr =
 			    (Actor *)GameObject::objectAddress(centerActorID);
 
-			if ((mouseObject = g_vm->_mouseInfo->getObject()) != NULL) {
+			if ((mouseObject = g_vm->_mouseInfo->getObject()) != nullptr) {
 				//  If we are using an intangible object (spell) then consider
 				//  the owner of the spell to be the center actor for the rest
 				//  of this action.
@@ -1130,7 +1130,7 @@ static APPFUNC(cmdClickTileMap) {
 						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
-				} else if (pickedTAI != NULL) {
+				} else if (pickedTAI != nullptr) {
 					//  we dropped the object onto active terrain
 
 					if (g_vm->_mouseInfo->getDoable()) {
@@ -1239,7 +1239,7 @@ static APPFUNC(cmdClickTileMap) {
 			else {
 				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
 				        &&  g_vm->_mouseInfo->getDoable()) {
-					if (pickedTAI == NULL) {
+					if (pickedTAI == nullptr) {
 						navigateDirect(walkToPos, false);
 						//      ( ( gGenericControl * )ev.panel )->disableDblClick();
 					} else {
@@ -1292,7 +1292,7 @@ static APPFUNC(cmdClickTileMap) {
 
 		navigationDelayed = false;
 
-		if ((mouseObject = g_vm->_mouseInfo->getObject()) != NULL) {
+		if ((mouseObject = g_vm->_mouseInfo->getObject()) != nullptr) {
 			g_vm->_mouseInfo->replaceObject();
 			MotionTask::useObject(*getCenterActor(), *mouseObject);
 		} else if (pickedObject != Nothing) {
@@ -1316,7 +1316,7 @@ static APPFUNC(cmdClickTileMap) {
 					clickActionDone = true;
 				}
 			}
-		} else if (pickedTAI != NULL) {
+		} else if (pickedTAI != nullptr) {
 			Actor       *a = getCenterActor();
 			TilePoint   TAILoc;
 

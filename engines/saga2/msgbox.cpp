@@ -87,7 +87,7 @@ int16 userDialog(const char *title, const char *msg, const char *btnMsg1, const 
 int16 FTAMessageBox(const char *msg, const char *btnMsg1, const char *btnMsg2) {
 	int16 rv = -1;
 	if (userDialogAvailable()) {
-		rv = (0 == userDialog(ERROR_HEADING, msg, btnMsg1, btnMsg2, NULL));
+		rv = (0 == userDialog(ERROR_HEADING, msg, btnMsg1, btnMsg2, nullptr));
 	} else
 		rv = MsgBox(msg, btnMsg1, btnMsg2);
 	return rv;
@@ -114,7 +114,7 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -142,7 +142,7 @@ ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMs
 	// button one
 	if (btnMsg1) {
 		new SimpleButton(*this, butBox(numBtns, 0), btnMsg1, 0, cmdMessageWindow);
-		if ((eq = strchr(btnMsg1, '_')) != NULL) {
+		if ((eq = strchr(btnMsg1, '_')) != nullptr) {
 			eq++;
 			if (eq)
 				mbChs1Text[strlen(mbChs1Text)] = *eq;
@@ -152,7 +152,7 @@ ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMs
 	// button two
 	if (btnMsg2) {
 		new SimpleButton(*this, butBox(numBtns, 1), btnMsg2, 1, cmdMessageWindow);
-		if ((eq = strchr(btnMsg2, '_')) != NULL) {
+		if ((eq = strchr(btnMsg2, '_')) != nullptr) {
 			eq++;
 			if (eq)
 				mbChs2Text[strlen(mbChs2Text)] = *eq;
@@ -197,7 +197,7 @@ void ErrorWindow::ErrorModeHandleKey(short key, short) {
 }
 
 GameMode        SimpleMode = {
-	NULL,                                   // no previous mode
+	nullptr,                                // no previous mode
 	false,                                  // mode is not nestable
 	ErrorWindow::ErrorModeSetup,
 	ErrorWindow::ErrorModeCleanup,

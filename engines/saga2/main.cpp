@@ -185,7 +185,7 @@ void main_saga2() {
 	cleanExit = gameInitialized;
 
 	if (gameInitialized)
-		mainLoop(cleanExit, 0, NULL);
+		mainLoop(cleanExit, 0, nullptr);
 
 	shutdownGame();
 	gameInitialized = false;
@@ -562,17 +562,17 @@ inline char drive(char *path) {
 static bool openResource(pHResource &hr, const char *fileName) {
 	if (hr)
 		delete hr;
-	hr = NULL;
+	hr = nullptr;
 
 	hr = new hResource(fileName);
 
-	while (hr == NULL || !hr->_valid) {
+	while (hr == nullptr || !hr->_valid) {
 		if (hr) delete hr;
-		hr = NULL;
+		hr = nullptr;
 		hr = new hResource(fileName);
 	}
 
-	if (hr == NULL || !hr->_valid) {
+	if (hr == nullptr || !hr->_valid) {
 		error("openResource: Cannot open resource: %s", fileName);
 //		return false;
 	}
@@ -624,17 +624,17 @@ bool openResources() {
 
 void closeResources() {
 	delete soundResFile;
-	soundResFile = NULL;
+	soundResFile = nullptr;
 	delete voiceResFile;
-	voiceResFile = NULL;
+	voiceResFile = nullptr;
 	delete scriptResFile;
-	scriptResFile = NULL;
+	scriptResFile = nullptr;
 	delete auxResFile;
-	auxResFile = NULL;
+	auxResFile = nullptr;
 	delete objResFile;
-	objResFile = NULL;
+	objResFile = nullptr;
 	delete resFile;
-	resFile = NULL;
+	resFile = nullptr;
 }
 
 /********************************************************************/
@@ -749,7 +749,7 @@ bool initGUIMessagers() {
 		char debItem[16];
 		sprintf(debItem, "Status%1.1d", i);
 		Status[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort);
-		if (Status[i] == NULL)
+		if (Status[i] == nullptr)
 			return false;
 		sprintf(debItem, "Status%2.2d", i + 10);
 		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 20, 21 + (11 * i));
@@ -765,9 +765,9 @@ bool initGUIMessagers() {
 void cleanupGUIMessagers() {
 	for (int i = 0; i < 10; i++) {
 		if (Status[i]) delete Status[i];
-		Status[i] = NULL;
+		Status[i] = nullptr;
 		if (Status2[i]) delete Status2[i];
-		Status2[i] = NULL;
+		Status2[i] = nullptr;
 	}
 	cleanupUserDialog();
 }

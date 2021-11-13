@@ -510,7 +510,7 @@ int16 gPort::drawClippedString(
 	if (tempMap.bytes() == 0)
 		return 0;
 	tempMap.data = (uint8 *)TempAlloc(tempMap.bytes());
-	if (tempMap.data != NULL) {
+	if (tempMap.data != nullptr) {
 		//  Fill the buffer with background pen if we're
 		//  not doing a transparent blit.
 

@@ -4426,7 +4426,7 @@ void readyContainerSetup() {
 		                      trioReadyContInfo[i].rows,
 		                      trioReadyContInfo[i].cols,
 		                      trioReadyContInfo[i].rows,
-		                      0);
+		                      nullptr);
 
 		TrioCviews[i]->draw();
 	}
@@ -4442,7 +4442,7 @@ void readyContainerSetup() {
 	                  indivReadyContInfoTop.rows,
 	                  indivReadyContInfoTop.cols,
 	                  indivReadyContInfoTop.rows,
-	                  0);
+	                  nullptr);
 
 	indivCviewTop->draw();
 
@@ -4457,7 +4457,7 @@ void readyContainerSetup() {
 	                  indivReadyContInfoBot.rows,
 	                  indivReadyContInfoBot.cols,
 	                  indivReadyContInfoBot.rows,
-	                  0);
+	                  nullptr);
 	indivCviewBot->setScrollOffset(1);   // set the object draw up by one
 	indivCviewBot->draw();
 

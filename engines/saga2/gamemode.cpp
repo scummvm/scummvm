@@ -37,17 +37,17 @@ namespace Saga2 {
 
 //Initialize Static GameObject Data Members
 
-GameMode    *GameMode::currentMode = NULL;  // pointer to current mode.
-GameMode    *GameMode::newMode = NULL;      // next mode to run
+GameMode    *GameMode::currentMode = nullptr;  // pointer to current mode.
+GameMode    *GameMode::newMode = nullptr;      // next mode to run
 
-GameMode       *GameMode::modeStackPtr[Max_Modes] = { NULL };
-GameMode       *GameMode::newmodeStackPtr[Max_Modes] = { NULL };
+GameMode       *GameMode::modeStackPtr[Max_Modes] = { nullptr };
+GameMode       *GameMode::newmodeStackPtr[Max_Modes] = { nullptr };
 int         GameMode::modeStackCtr = 0;
 int         GameMode::newmodeStackCtr = 0;
 int         GameMode::newmodeFlag = false;
 
 void GameMode::modeUnStack() {
-	modeStackPtr[modeStackCtr] = NULL;                        //Always Start Cleanup At modeStackCtr
+	modeStackPtr[modeStackCtr] = nullptr;                        //Always Start Cleanup At modeStackCtr
 	modeStackPtr[modeStackCtr--]->cleanup();
 	return;
 }
@@ -56,9 +56,9 @@ void GameMode::modeUnStack(int StopHere) {
 	if (!modeStackCtr)   //If Nothing Currently On The Stack
 		return;
 	for (int i = modeStackCtr - 1; i >= StopHere; i--) { //Stop Here Is How Far You Want To Unstack
-		if (modeStackPtr[i] != NULL)
+		if (modeStackPtr[i] != nullptr)
 			modeStackPtr[i]->cleanup();
-		modeStackPtr[i] = NULL;                        //Always Start Cleanup At modeStackCtr
+		modeStackPtr[i] = nullptr;                        //Always Start Cleanup At modeStackCtr
 		modeStackCtr--;                        //Always Start Cleanup At modeStackCtr
 	}
 	return;
@@ -99,7 +99,7 @@ void GameMode::SetStack(GameMode *modeFirst, ...) {
 
 	//Put List In New Array Of GameMode Object Pointers
 
-	while (thisMode != 0) {
+	while (thisMode != nullptr) {
 		newmodeStackPtr[newmodeStackCtr] = thisMode;
 		newmodeStackCtr++;
 		thisMode  = va_arg(Modes, GameMode *);

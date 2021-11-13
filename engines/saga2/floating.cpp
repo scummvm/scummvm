@@ -68,7 +68,7 @@ extern bool         allPlayerActorsDead;
 //  Constructor for a background window
 DecoratedWindow::DecoratedWindow(const Rect16 &r, uint16 ident, const char saveas[], AppFunc *cmd)
 	: gWindow(r, ident, saveas, cmd) {
-	decorations = NULL;
+	decorations = nullptr;
 	numDecorations = 0;
 }
 
@@ -325,7 +325,7 @@ bool                DragBar::update;
 FloatingWindow      *DragBar::dragWindow;
 
 DragBar::DragBar(gPanelList &list, const Rect16 &r)
-	: gControl(list, r, NULL, 0, NULL) {
+	: gControl(list, r, nullptr, 0, nullptr) {
 }
 
 bool DragBar::activate(gEventType) {
@@ -370,7 +370,7 @@ void DragBar::pointerDrag(gPanelMessage &msg) {
 void DragBar::pointerRelease(gPanelMessage &) {
 	deactivate();
 	update = false;             // just in case
-	dragWindow = NULL;
+	dragWindow = nullptr;
 }
 
 
@@ -483,7 +483,7 @@ LabeledButton::LabeledButton(gPanelList &list,
 	             cmd) {
 	const char *underscore;
 
-	if ((underscore = strchr(title, '_')) != NULL)
+	if ((underscore = strchr(title, '_')) != nullptr)
 		accelKey = toupper(underscore[1]);
 }
 
@@ -592,7 +592,7 @@ bool FloatingWindow::open() {
 
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
-	g_vm->_mouseInfo->setText(NULL);
+	g_vm->_mouseInfo->setText(nullptr);
 	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 
 	return gWindow::open();

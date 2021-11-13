@@ -57,7 +57,7 @@ ObjectID EnchantObject(
 	enchProto = g_vm->_objectProtos[enchantmentProto];
 
 	ench = GameObject::newObject(); //Create Enchantment
-	if (ench == NULL) return Nothing;
+	if (ench == nullptr) return Nothing;
 
 	//  Fill in the enchantment object. Note that the 'hitpoints'
 	//  of an enchantment are actually the duration of it's life
@@ -247,7 +247,7 @@ void evalObjectEnchantments(GameObject *obj) {
 EnchantmentIterator::EnchantmentIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
 	baseObject = container;
-	wornObject = NULL;
+	wornObject = nullptr;
 	nextID = Nothing;
 }
 
@@ -268,7 +268,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 			//  If we were searching a 'worn' object, then pop up a level
 			if (wornObject) {
 				nextID = wornObject->IDNext();
-				wornObject = NULL;
+				wornObject = nullptr;
 				continue;
 			}
 
@@ -282,7 +282,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 		uint16          cSet = proto->containmentSet();
 
 		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
-		        &&  wornObject == NULL
+		        &&  wornObject == nullptr
 		        &&  proto->isObjectBeingUsed(object)) {
 			wornObject = object;
 			nextID = object->IDChild();

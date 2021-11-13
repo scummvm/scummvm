@@ -396,7 +396,7 @@ bool ActorProto::acceptDamageAction(
 		possessorID = GameObject::objectAddress(enactor)->possessor();
 		enactorPtr =    possessorID != Nothing
 		                ? (Actor *)GameObject::objectAddress(possessorID)
-		                :   NULL;
+		                :   nullptr;
 	}
 
 	if (vitality > 0) {
@@ -406,7 +406,7 @@ bool ActorProto::acceptDamageAction(
 		            || (damageScore > 2 && (int16)g_vm->_rnd->getRandomNumber(vitality - 1) < (damageScore * 2))))
 			makeGruntSound(gruntStyle, al);
 
-		if (enactorPtr != NULL) {
+		if (enactorPtr != nullptr) {
 			enactorPtr->handleSuccessfulStrike(
 			    a,
 			    damageScore < vitality ? damageScore : vitality);
@@ -417,7 +417,7 @@ bool ActorProto::acceptDamageAction(
 		if (damageScore >= vitality) {
 			MotionTask::die(*a);
 			AddFactionTally(a->_faction, factionNumKills, 1);
-			if (enactorPtr != NULL)
+			if (enactorPtr != nullptr)
 				enactorPtr->handleSuccessfulKill(a);
 		} else
 			a->handleDamageTaken(damageScore);
@@ -531,7 +531,7 @@ bool ActorProto::acceptStrikeAction(
 	hitChance -= armorAttribs.defenseBonus;
 
 	//  Factor in dodging bonus if any
-	if (a->_moveTask != NULL && a->_moveTask->isDodging(enactorPtr))
+	if (a->_moveTask != nullptr && a->_moveTask->isDodging(enactorPtr))
 		hitChance -= dodgingBonus;
 
 	hitChance = MAX<uint8>(hitChance, 5);
@@ -544,7 +544,7 @@ bool ActorProto::acceptStrikeAction(
 		bool            blocked = false;
 
 		//  Test for block success
-		if (blockingObj != NULL) {
+		if (blockingObj != nullptr) {
 			hitChance =     avgHitChance
 			                + ((int)skillIndex
 			                   - (int)blockingObj->proto()->getSkillValue(dObj))
@@ -621,7 +621,7 @@ bool ActorProto::acceptInsertionAtAction(
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)dObjPtr;
 	GameObject  *itemPtr = GameObject::objectAddress(item);
-	GameObject  *extractedObj = NULL;
+	GameObject  *extractedObj = nullptr;
 	Location    oldLoc(itemPtr->getLocation(), itemPtr->IDParent());
 
 	bool        result;
@@ -632,7 +632,7 @@ bool ActorProto::acceptInsertionAtAction(
 		if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 		extractedObj = itemPtr->extractMerged(itemPtr->getExtra() - num);
-		if (extractedObj == NULL)
+		if (extractedObj == nullptr)
 			return false;
 
 		extractedObj->move(oldLoc);
@@ -669,7 +669,7 @@ bool ActorProto::acceptInsertionAtAction(
 		result = true;
 	} else {
 		itemPtr->move(oldLoc);
-		if (extractedObj != NULL)
+		if (extractedObj != nullptr)
 			GameObject::mergeWith(extractedObj, itemPtr, extractedObj->getExtra());
 		result = false;
 	}
@@ -708,7 +708,7 @@ void ActorProto::initiateAttack(ObjectID attacker, ObjectID target) {
 	GameObject  *targetPtr = GameObject::objectAddress(target);
 
 	//  Start the attack motion
-	if (attackerPtr->_appearance != NULL) {
+	if (attackerPtr->_appearance != nullptr) {
 		if (attackerPtr->isActionAvailable(actionSwingHigh))
 			MotionTask::oneHandedSwing(*attackerPtr, *targetPtr);
 		else if (attackerPtr->isActionAvailable(actionTwoHandSwingHigh))
@@ -992,12 +992,12 @@ void Actor::init(
 	_poseInfo.leftObjectOffset.x = _poseInfo.leftObjectOffset.y = 0;
 	_poseInfo.rightObjectOffset.x = _poseInfo.rightObjectOffset.y = 0;
 
-	_appearance          = NULL;
+	_appearance          = nullptr;
 	_cycleCount          = 0;
 	_kludgeCount         = 0;
-	_moveTask            = NULL;
+	_moveTask            = nullptr;
 	_enchantmentFlags    = 0L;
-	_curTask             = NULL;
+	_curTask             = nullptr;
 	_currentGoal         = actorGoalFollowAssignment;
 	_deactivationCounter = 0;
 	_assignment = nullptr;
@@ -1013,12 +1013,12 @@ void Actor::init(
 	_effectiveImmunity   = 0;
 	_recPointsPerUpdate      = BASE_REC_RATE;
 	_currentRecoveryPoints   = 0;
-	_leader              = NULL;
-	_followers           = NULL;
+	_leader              = nullptr;
+	_followers           = nullptr;
 	_followersID = NoBand;
 	for (int i = 0; i < ARMOR_COUNT; i++)
 		_armorObjects[i] = Nothing;
-	_currentTarget       = NULL;
+	_currentTarget       = nullptr;
 	for (int i = 0; i < actorScriptVars; i++)
 		_scriptVar[i] = 0;
 
@@ -1096,9 +1096,9 @@ Actor::Actor() {
 
 Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype   =   prototype != NULL
+	prototype   =   prototype != nullptr
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
-	                :   NULL;
+	                :   nullptr;
 
 	//  Copy the resource fields
 	_faction             = res.faction;
@@ -1133,12 +1133,12 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	_poseInfo.leftObjectOffset.x = _poseInfo.leftObjectOffset.y = 0;
 	_poseInfo.rightObjectOffset.x = _poseInfo.rightObjectOffset.y = 0;
 
-	_appearance          = NULL;
+	_appearance          = nullptr;
 	_cycleCount          = 0;
 	_kludgeCount         = 0;
-	_moveTask            = NULL;
+	_moveTask            = nullptr;
 	_enchantmentFlags    = 0L;
-	_curTask             = NULL;
+	_curTask             = nullptr;
 	_currentGoal         = actorGoalFollowAssignment;
 	_deactivationCounter = 0;
 	_assignment = nullptr;
@@ -1153,13 +1153,13 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	_effectiveImmunity   = 0;
 	_recPointsPerUpdate      = BASE_REC_RATE;
 	_currentRecoveryPoints   = 0;
-	_leader              = NULL;
+	_leader              = nullptr;
 	_leaderID           = Nothing;
-	_followers           = NULL;
+	_followers           = nullptr;
 	_followersID = NoBand;
 	for (int i = 0; i < ARMOR_COUNT; i++)
 		_armorObjects[i] = Nothing;
-	_currentTarget       = NULL;
+	_currentTarget       = nullptr;
 	_currentTargetID    = Nothing;
 	for (int i = 0; i < actorScriptVars; i++)
 		_scriptVar[i] = 0;
@@ -1280,7 +1280,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 //	Destructor
 
 Actor::~Actor() {
-	if (_appearance != NULL) ReleaseActorAppearance(_appearance);
+	if (_appearance != nullptr) ReleaseActorAppearance(_appearance);
 
 	if (getAssignment())
 		delete getAssignment();
@@ -1306,7 +1306,7 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 
 	//  Modify the protoype temporarily so the GameObject::write()
 	//  will store the index correctly
-	if (prototype != NULL)
+	if (prototype != nullptr)
 		prototype = g_vm->_objectProtos[getProtoNum()];
 
 	GameObject::write(out, false);
@@ -1350,16 +1350,16 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint16LE(_recPointsPerUpdate);
 	out->writeUint16LE(_currentRecoveryPoints);
 
-	_leaderID = (_leader != NULL) ? _leader->thisID() : Nothing;
+	_leaderID = (_leader != nullptr) ? _leader->thisID() : Nothing;
 
 	out->writeUint16LE(_leaderID);
 
-	_followersID = (_followers != NULL) ? getBandID(_followers) : NoBand;
+	_followersID = (_followers != nullptr) ? getBandID(_followers) : NoBand;
 
 	out->writeSint16LE(_followersID);
 	out->write(_armorObjects, ARMOR_COUNT * 2);
 
-	_currentTargetID = _currentTarget != NULL ? _currentTarget->thisID() : Nothing;
+	_currentTargetID = _currentTarget != nullptr ? _currentTarget->thisID() : Nothing;
 
 	out->writeUint16LE(_currentTargetID);
 	out->write(_scriptVar, sizeof(_scriptVar));
@@ -1398,10 +1398,10 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(4, kDebugSaveload, "... _effectiveImmunity = %d", _effectiveImmunity);
 	debugC(4, kDebugSaveload, "... _recPointsPerUpdate = %d", _recPointsPerUpdate);
 	debugC(4, kDebugSaveload, "... _currentRecoveryPoints = %d", _currentRecoveryPoints);
-	debugC(4, kDebugSaveload, "... _leaderID = %d", _leader != NULL ? _leader->thisID() : Nothing);
-	debugC(4, kDebugSaveload, "... _followersID = %d", _followers != NULL ? getBandID(_followers) : NoBand);
+	debugC(4, kDebugSaveload, "... _leaderID = %d", _leader != nullptr ? _leader->thisID() : Nothing);
+	debugC(4, kDebugSaveload, "... _followersID = %d", _followers != nullptr ? getBandID(_followers) : NoBand);
 //	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
-	debugC(4, kDebugSaveload, "... _currentTargetID = %d", _currentTarget != NULL ? _currentTarget->thisID() : Nothing);
+	debugC(4, kDebugSaveload, "... _currentTargetID = %d", _currentTarget != nullptr ? _currentTarget->thisID() : Nothing);
 //	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
 }
 
@@ -1478,34 +1478,34 @@ void Actor::deleteActor() {
 	}
 
 	//  Kill task
-	if (_curTask != NULL) {
+	if (_curTask != nullptr) {
 		_curTask->abortTask();
 		delete _curTask;
-		_curTask = NULL;
+		_curTask = nullptr;
 	}
 
 	//  Kill motion task
-	if (_moveTask != NULL)
+	if (_moveTask != nullptr)
 		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (_leader != NULL) {
+	if (_leader != nullptr) {
 		assert(isActor(_leader));
 
 		_leader->removeFollower(this);
-		_leader = NULL;
-	} else if (_followers != NULL) {
+		_leader = nullptr;
+	} else if (_followers != nullptr) {
 		int16       i;
 
 		for (i = 0; i < _followers->size(); i++) {
 			Actor   *follower = (*_followers)[i];
 
-			follower->_leader = NULL;
+			follower->_leader = nullptr;
 			follower->evaluateNeeds();
 		}
 
 		delete _followers;
-		_followers = NULL;
+		_followers = nullptr;
 	}
 
 	//  Place in limbo
@@ -1520,7 +1520,7 @@ void Actor::deleteActor() {
 //	Cause the actor to stop his current motion task is he is interruptable
 
 void Actor::stopMoving() {
-	if (_moveTask != NULL && isInterruptable())
+	if (_moveTask != nullptr && isInterruptable())
 		_moveTask->remove();
 }
 
@@ -1543,22 +1543,22 @@ void Actor::die() {
 	runObjectMethod(dObj, Method_Actor_onDie, scf);
 
 	//  Kill task
-	if (_curTask != NULL) {
+	if (_curTask != nullptr) {
 		_curTask->abortTask();
 		delete _curTask;
-		_curTask = NULL;
+		_curTask = nullptr;
 	}
 
 	//  Kill motion task
-	if (_moveTask != NULL)
+	if (_moveTask != nullptr)
 		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (_leader != NULL) {
+	if (_leader != nullptr) {
 		assert(isActor(_leader));
 
 		_leader->removeFollower(this);
-		_leader = NULL;
+		_leader = nullptr;
 	}
 
 	if (actorToPlayerID(this, playerID))
@@ -1641,22 +1641,22 @@ void Actor::deactivateActor() {
 	debugC(1, kDebugActors, "Actors: De-activated %d  (%s)", thisID() - 32768, objName());
 
 	//  Kill task
-	if (_curTask != NULL) {
+	if (_curTask != nullptr) {
 		_curTask->abortTask();
 		delete _curTask;
-		_curTask = NULL;
+		_curTask = nullptr;
 	}
 
 	//  Kill motion task
-	if (_moveTask != NULL)
+	if (_moveTask != nullptr)
 		_moveTask->remove();
 
 	//  If banded, remove from band
-	if (_leader != NULL) {
+	if (_leader != nullptr) {
 		assert(isActor(_leader));
 
 		_leader->removeFollower(this);
-		_leader = NULL;
+		_leader = nullptr;
 	}
 
 	//  Temporary actors get deleted upon deactivation
@@ -1697,14 +1697,14 @@ void Actor::lobotomize() {
 	scriptCallFrame scf;
 
 	//  Kill task
-	if (_curTask != NULL) {
+	if (_curTask != nullptr) {
 		_curTask->abortTask();
 		delete _curTask;
-		_curTask = NULL;
+		_curTask = nullptr;
 	}
 
 	//  Kill motion task
-	if (_moveTask != NULL)
+	if (_moveTask != nullptr)
 		_moveTask->remove();
 
 	_flags |= lobotomized;
@@ -1824,26 +1824,26 @@ GameObject *Actor::offensiveObject() {
 //	and optionally their scondary defensive object
 
 void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
-	assert(priPtr != NULL);
+	assert(priPtr != nullptr);
 
 	GameObject      *leftHandObjPtr,
 	                *rightHandObjPtr,
-	                *primary = NULL,
-	                 *secondary = NULL;
+	                *primary = nullptr,
+	                 *secondary = nullptr;
 
 	//  Get a pointer to the left hand object
 	leftHandObjPtr =    _leftHandObject != Nothing
 	                    ? (assert(isObject(_leftHandObject))
 	                       ,   GameObject::objectAddress(_leftHandObject))
-	                    :   NULL;
+	                    :   nullptr;
 
 	//  Get a pointer to the right hand object
 	rightHandObjPtr =   _rightHandObject != Nothing
 	                    ? (assert(isObject(_rightHandObject))
 	                       ,   GameObject::objectAddress(_rightHandObject))
-	                    :   NULL;
+	                    :   nullptr;
 
-	if (leftHandObjPtr != NULL) {
+	if (leftHandObjPtr != nullptr) {
 		GameObject      **rightHandObjDest;
 
 		if (leftHandObjPtr->proto()->canBlock()) {
@@ -1855,11 +1855,11 @@ void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
 			//  Right hand object may be primary
 			rightHandObjDest = &primary;
 
-		if (rightHandObjPtr != NULL && rightHandObjPtr->proto()->canBlock())
+		if (rightHandObjPtr != nullptr && rightHandObjPtr->proto()->canBlock())
 			//  Right hand object is defensive
 			*rightHandObjDest = rightHandObjPtr;
 	} else {
-		if (rightHandObjPtr != NULL && rightHandObjPtr->proto()->canBlock())
+		if (rightHandObjPtr != nullptr && rightHandObjPtr->proto()->canBlock())
 			//  Right hand object is primary defensive object
 			primary = rightHandObjPtr;
 	}
@@ -1867,7 +1867,7 @@ void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
 	//  Return the primary pointer
 	*priPtr = primary;
 	//  Return the secondary pointer
-	if (secPtr != NULL) *secPtr = secondary;
+	if (secPtr != nullptr) *secPtr = secondary;
 }
 
 //-----------------------------------------------------------------------
@@ -1875,9 +1875,9 @@ void Actor::defensiveObject(GameObject **priPtr, GameObject **secPtr) {
 //	blocking, if any
 
 GameObject *Actor::blockingObject(Actor *attacker) {
-	return  _moveTask != NULL
+	return  _moveTask != nullptr
 	        ?   _moveTask->blockingObject(attacker)
-	        :   NULL;
+	        :   nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -1897,7 +1897,7 @@ void Actor::totalArmorAttributes(ArmorAttributes &armorAttribs) {
 		if (_armorObjects[i] != Nothing) {
 			ProtoObj    *armorProto = GameObject::protoAddress(_armorObjects[i]);
 
-			assert(armorProto != NULL);
+			assert(armorProto != nullptr);
 
 			armorAttribs.damageAbsorbtion += armorProto->damageAbsorbtion;
 			if (armorProto->damageDivider != 0)
@@ -1912,7 +1912,7 @@ void Actor::totalArmorAttributes(ArmorAttributes &armorAttribs) {
 
 bool Actor::inAttackRange(const TilePoint &tp) {
 	GameObject  *weapon = offensiveObject();
-	uint16      range = weapon != NULL ? weapon->proto()->maximumRange : 0;
+	uint16      range = weapon != nullptr ? weapon->proto()->maximumRange : 0;
 
 	return inRange(tp, MAX(range, (uint16)kDefaultReach));
 }
@@ -1923,7 +1923,7 @@ bool Actor::inAttackRange(const TilePoint &tp) {
 void Actor::attack(GameObject *target) {
 	GameObject  *weapon = offensiveObject();
 
-	if (weapon != NULL)
+	if (weapon != nullptr)
 		weapon->proto()->initiateAttack(thisID(), target->thisID());
 }
 
@@ -1968,7 +1968,7 @@ int16 Actor::offenseScore() {
 	int16           score = 0;
 	GameObject      *weapon = offensiveObject();
 
-	if (weapon != NULL) {
+	if (weapon != nullptr) {
 		ProtoObj    *proto = weapon->proto();
 
 		score += proto->weaponDamage + (proto->maximumRange / kTileUVSize);
@@ -2001,7 +2001,7 @@ int16 Actor::defenseScore() {
 
 	defensiveObject(&shield);
 
-	if (shield != NULL) {
+	if (shield != nullptr) {
 		ProtoObj    *proto = shield->proto();
 
 		score += proto->defenseBonus;
@@ -2046,7 +2046,7 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (_appearance == NULL) return 0;
+	if (_appearance == nullptr) return 0;
 
 	//  If this animation has no frames, then return false
 	anim = _appearance->animation(newState);
@@ -2129,7 +2129,7 @@ bool Actor::nextAnimationFrame() {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (_appearance == NULL) {
+	if (_appearance == nullptr) {
 		if (_animationFlags & animateOnHold) {
 			return false;
 		} else if (_animationFlags & animateRepeat) {
@@ -2219,12 +2219,12 @@ void Actor::dropInventory() {
 
 	for (obj =  _data.childID != Nothing
 	            ?   GameObject::objectAddress(_data.childID)
-	            :   NULL;
-	        obj != NULL;
+	            :   nullptr;
+	        obj != nullptr;
 	        obj = nextObj) {
 		nextObj =   obj->IDNext() != Nothing
 		            ?   GameObject::objectAddress(obj->IDNext())
-		            :   NULL;
+		            :   nullptr;
 
 		//  Delete intangible objects and drop tangible objects
 		if (obj->containmentSet() & ProtoObj::isIntangible)
@@ -2312,9 +2312,9 @@ void Actor::updateAppearance(int32) {
 			if (_flags & fightStance) {
 				GameObject      *weapon = offensiveObject();
 
-				if (weapon == this) weapon = NULL;
+				if (weapon == this) weapon = nullptr;
 
-				if (weapon != NULL) {
+				if (weapon != nullptr) {
 					ProtoObj        *weaponProto = weapon->proto();
 
 					setAction(weaponProto->fightStanceAction(thisID()), 0);
@@ -2394,10 +2394,10 @@ bool Actor::setAvailableAction(int16 action1, int16 action2, int16 action3, int1
 
 void Actor::setGoal(uint8 newGoal) {
 	if (_currentGoal != newGoal) {
-		if (_curTask != NULL) {
+		if (_curTask != nullptr) {
 			_curTask->abortTask();
 			delete _curTask;
-			_curTask = NULL;
+			_curTask = nullptr;
 		}
 
 		_currentGoal = newGoal;
@@ -2428,24 +2428,24 @@ void Actor::evaluateNeeds() {
 					if (isAggressive(playerID))
 						setGoal(actorGoalAttackEnemy);
 					else {
-						if (_leader != NULL && inBandingRange())
+						if (_leader != nullptr && inBandingRange())
 							setGoal(actorGoalAvoidEnemies);
 						else
 							setGoal(actorGoalPreserveSelf);
 					}
-				} else if (_leader != NULL && inBandingRange()) {
+				} else if (_leader != nullptr && inBandingRange()) {
 					setGoal(actorGoalFollowLeader);
 				} else {
 					setGoal(actorGoalFollowAssignment);
 				}
-			} else if (_leader != NULL && inBandingRange()) {
+			} else if (_leader != nullptr && inBandingRange()) {
 				setGoal(actorGoalFollowLeader);
 			} else {
 				setGoal(actorGoalFollowAssignment);
 			}
 		} else {
 			if (_disposition == dispositionEnemy
-			        &&  _appearance != NULL
+			        &&  _appearance != nullptr
 			        &&  !hasEffect(actorNotDefenseless)) {
 				GameObject              *obj;
 				bool                    foundWeapon = false;
@@ -2472,13 +2472,13 @@ void Actor::evaluateNeeds() {
 
 			if (_flags & afraid || hasEffect(actorFear) || hasEffect(actorRepelUndead)) {
 				setGoal(actorGoalPreserveSelf);
-			} else if (_leader != NULL && inBandingRange()) {
+			} else if (_leader != nullptr && inBandingRange()) {
 				setGoal(_leader->evaluateFollowerNeeds(this));
 			} else {
 				SenseInfo       info;
 
 				if (_disposition == dispositionEnemy
-				        && (getAssignment() == NULL
+				        && (getAssignment() == nullptr
 				            ||  canSenseProtaganist(
 				                info,
 				                maxSenseRange)
@@ -2508,10 +2508,10 @@ void Actor::updateState() {
 	if (_actionCounter != 0 && _actionCounter != maxuint8)
 		_actionCounter--;
 
-	if (_appearance != NULL
+	if (_appearance != nullptr
 	        &&  isDead()
 	        &&  isInterruptable()
-	        && (_moveTask == NULL
+	        && (_moveTask == nullptr
 	            ||  _moveTask->motionType != MotionTask::motionTypeDie)) {
 		int16       deadState = isActionAvailable(actionDead)
 		                        ?   actionDead
@@ -2530,7 +2530,7 @@ void Actor::updateState() {
 		if (_flags & specialAttack) {
 			_flags &= ~specialAttack;
 
-			if (_currentTarget != NULL) {
+			if (_currentTarget != nullptr) {
 				scriptCallFrame scf;
 				ObjectID        dObj = thisID();
 
@@ -2555,7 +2555,7 @@ void Actor::updateState() {
 
 			//  Iterate until there is no assignment, or the current
 			//  assignment is valid
-			while (assign != NULL && !assign->isValid()) {
+			while (assign != nullptr && !assign->isValid()) {
 				g_vm->_act->_updatesViaScript++;
 				scriptCallFrame scf;
 				ObjectID        dObj = thisID();
@@ -2582,9 +2582,9 @@ void Actor::updateState() {
 
 			//  If there is no assignment at this point, call the
 			//  schedule to setup a new assignment.
-			if (assign == NULL && _schedule != 0) {
+			if (assign == nullptr && _schedule != 0) {
 				g_vm->_act->_updatesViaScript++;
-				assert(_curTask == NULL);
+				assert(_curTask == nullptr);
 
 				scriptCallFrame scf;
 
@@ -2601,18 +2601,18 @@ void Actor::updateState() {
 			}
 
 			//  Have the assignment create a new task
-			if (assign != NULL && _curTask == NULL)
+			if (assign != nullptr && _curTask == nullptr)
 				_curTask = assign->createTask();
 		}
 		break;
 
 		case actorGoalPreserveSelf:
 
-			if (_leader != NULL || _followers != NULL)
+			if (_leader != nullptr || _followers != nullptr)
 				disband();
 
-			if (_curTask == NULL) {
-				if ((_curTask = newTaskStack(this)) != NULL) {
+			if (_curTask == nullptr) {
+				if ((_curTask = newTaskStack(this)) != nullptr) {
 					Task    *task = new GoAwayFromActorTask(
 					                    _curTask,
 					                    ActorPropertyTarget(
@@ -2621,11 +2621,11 @@ void Actor::updateState() {
 					                        :   actorPropIDEnemy),
 					                    true);
 
-					if (task != NULL)
+					if (task != nullptr)
 						_curTask->setTask(task);
 					else {
 						delete _curTask;
-						_curTask = NULL;
+						_curTask = nullptr;
 					}
 				}
 			}
@@ -2633,9 +2633,9 @@ void Actor::updateState() {
 
 		case actorGoalAttackEnemy:
 
-			if (_curTask == NULL) {
-				if ((_curTask = newTaskStack(this)) != NULL) {
-					uint8   disp =  _leader != NULL
+			if (_curTask == nullptr) {
+				if ((_curTask = newTaskStack(this)) != nullptr) {
+					uint8   disp =  _leader != nullptr
 					                ?   _leader->_disposition
 					                :   _disposition;
 
@@ -2646,11 +2646,11 @@ void Actor::updateState() {
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy));
 
-					if (task != NULL)
+					if (task != nullptr)
 						_curTask->setTask(task);
 					else {
 						delete _curTask;
-						_curTask = NULL;
+						_curTask = nullptr;
 					}
 				}
 			}
@@ -2659,9 +2659,9 @@ void Actor::updateState() {
 		case actorGoalFollowLeader:
 
 			assert(isActor(_leader));
-			assert(_followers == NULL);
+			assert(_followers == nullptr);
 
-			if (_curTask == NULL)
+			if (_curTask == nullptr)
 				_curTask = _leader->createFollowerTask(this);
 
 			break;
@@ -2669,17 +2669,17 @@ void Actor::updateState() {
 		case actorGoalAvoidEnemies:
 
 			assert(isActor(_leader));
-			assert(_followers == NULL);
+			assert(_followers == nullptr);
 
-			if (_curTask == NULL) {
-				if ((_curTask = newTaskStack(this)) != NULL) {
+			if (_curTask == nullptr) {
+				if ((_curTask = newTaskStack(this)) != nullptr) {
 					Task    *task = new BandAndAvoidEnemiesTask(_curTask);
 
-					if (task != NULL)
+					if (task != nullptr)
 						_curTask->setTask(task);
 					else {
 						delete _curTask;
-						_curTask = NULL;
+						_curTask = nullptr;
 					}
 				}
 			}
@@ -2694,7 +2694,7 @@ void Actor::updateState() {
 void Actor::handleTaskCompletion(TaskResult result) {
 	//  The task is done, get rid of it
 	delete _curTask;
-	_curTask = NULL;
+	_curTask = nullptr;
 
 	switch (_currentGoal) {
 	case actorGoalFollowAssignment: {
@@ -2702,7 +2702,7 @@ void Actor::handleTaskCompletion(TaskResult result) {
 
 		//  If we've gotten to this point, there had better be an
 		//  assignment, or something is amiss
-		assert(assign != NULL);
+		assert(assign != nullptr);
 
 		//  Notify the assignment
 		assign->handleTaskCompletion(result);
@@ -2777,9 +2777,9 @@ void Actor::handleDamageTaken(uint8 damage) {
 				moraleBase -= moraleBase / 2;
 
 			//  Determine how many fellow band members this actor has.
-			if (_leader != NULL)
+			if (_leader != nullptr)
 				fellowBandMembers = _leader->_followers->size();
-			else if (_followers != NULL)
+			else if (_followers != nullptr)
 				fellowBandMembers = _followers->size();
 			else
 				fellowBandMembers = 0;
@@ -2843,7 +2843,7 @@ void Actor::handleSuccessfulKill(Actor *target) {
 		player->vitalityAdvance(points / ratio);
 
 		aStr =  target->getNameIndex() == 0
-		        ?   strchr(vowels, toupper(monsterName[0])) == NULL
+		        ?   strchr(vowels, toupper(monsterName[0])) == nullptr
 		        ?   "a "
 		        :   "an "
 		        :   "";
@@ -2898,13 +2898,13 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 		//  objects
 		defensiveObject(&primary, &secondary);
 
-		canBlockWithPrimary =       primary != NULL
+		canBlockWithPrimary =       primary != nullptr
 		                            &&  canBlockWith(primary, relativeDir);
 
 		if (canBlockWithPrimary) {
 			bool            canBlockWithSecondary;
 
-			canBlockWithSecondary =     secondary != NULL
+			canBlockWithSecondary =     secondary != nullptr
 			                            &&  canBlockWith(
 			                                secondary,
 			                                relativeDir);
@@ -2918,9 +2918,9 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 				defenseObj = primary;
 			}
 		} else
-			defenseObj = NULL;
+			defenseObj = nullptr;
 
-		if (defenseObj != NULL) {
+		if (defenseObj != nullptr) {
 			//  Start a defensive motion
 			defenseObj->proto()->initiateDefense(
 			    defenseObj->thisID(),
@@ -2939,26 +2939,26 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 //	well.
 
 void Actor::bandWith(Actor *newLeader) {
-	assert(_leader == NULL);
+	assert(_leader == nullptr);
 
 	//  If the actor we're banding with is not the leader, then band
 	//  with his leader
-	if (newLeader->_leader != NULL) {
+	if (newLeader->_leader != nullptr) {
 		newLeader = newLeader->_leader;
-		assert(newLeader->_leader == NULL);
+		assert(newLeader->_leader == nullptr);
 	}
 
 	//  If this actor himself does not have followers then its really
 	//  simple, otherwise we need to band all of this actor's followers
 	//  with the new leader.
-	if (_followers == NULL) {
+	if (_followers == nullptr) {
 		if (newLeader->addFollower(this)) _leader = newLeader;
 	} else {
 		int16       i,
 		            oldFollowerCount = _followers->size();
 		Actor       **oldFollowers = new Actor * [oldFollowerCount];
 
-		if (oldFollowers != NULL) {
+		if (oldFollowers != nullptr) {
 			//  Copy the list followers
 			for (i = 0; i < oldFollowerCount; i++) {
 				oldFollowers[i] = (*_followers)[i];
@@ -2969,7 +2969,7 @@ void Actor::bandWith(Actor *newLeader) {
 			for (i = 0; i < oldFollowerCount; i++)
 				oldFollowers[i]->disband();
 
-			assert(_followers == NULL);
+			assert(_followers == nullptr);
 
 			//  Add this actor and all of the old followers to the new
 			//  leader's followers.
@@ -2991,23 +2991,23 @@ void Actor::bandWith(Actor *newLeader) {
 //	Simply causes this actor to be removed from his current band.
 
 void Actor::disband() {
-	if (_leader != NULL) {
+	if (_leader != nullptr) {
 		_leader->removeFollower(this);
-		_leader = NULL;
+		_leader = nullptr;
 
 		evaluateNeeds();
-	} else if (_followers != NULL) {
+	} else if (_followers != nullptr) {
 		int16       i;
 
 		for (i = 0; i < _followers->size(); i++) {
 			Actor   *follower = (*_followers)[i];
 
-			follower->_leader = NULL;
+			follower->_leader = nullptr;
 			follower->evaluateNeeds();
 		}
 
 		delete _followers;
-		_followers = NULL;
+		_followers = nullptr;
 	}
 }
 
@@ -3017,11 +3017,11 @@ void Actor::disband() {
 bool Actor::addFollower(Actor *newBandMember) {
 	//  The new band member should not be a leader of another band or
 	//  a follower of another leader
-	assert(newBandMember->_leader == NULL);
-	assert(newBandMember->_followers == NULL);
+	assert(newBandMember->_leader == nullptr);
+	assert(newBandMember->_followers == nullptr);
 
 	//  Allocate a new band, if needed
-	if (_followers == NULL && (_followers = new Band(this)) == NULL)
+	if (_followers == nullptr && (_followers = new Band(this)) == nullptr)
 		return false;
 
 	return _followers->add(newBandMember);
@@ -3032,14 +3032,14 @@ bool Actor::addFollower(Actor *newBandMember) {
 
 void Actor::removeFollower(Actor *bandMember) {
 	assert(bandMember->_leader == this);
-	assert(_followers != NULL);
+	assert(_followers != nullptr);
 
 	int16       i;
 
 	_followers->remove(bandMember);
 	if (_followers->size() == 0) {
 		delete _followers;
-		_followers = NULL;
+		_followers = nullptr;
 	} else {
 		uint16      moraleBonus = 0;
 
@@ -3077,16 +3077,16 @@ void Actor::removeFollower(Actor *bandMember) {
 TaskStack *Actor::createFollowerTask(Actor *bandMember) {
 	assert(bandMember->_leader == this);
 
-	TaskStack   *ts = NULL;
+	TaskStack   *ts = nullptr;
 
-	if ((ts = newTaskStack(bandMember)) != NULL) {
+	if ((ts = newTaskStack(bandMember)) != nullptr) {
 		Task    *task = new BandTask(ts);
 
-		if (task != NULL)
+		if (task != nullptr)
 			ts->setTask(task);
 		else {
 			delete ts;
-			ts = NULL;
+			ts = nullptr;
 		}
 	}
 
@@ -3116,7 +3116,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 //  Returns 0 if not moving, 1 if path being calculated,
 //  2 if path being followed.
 bool Actor::pathFindState() {
-	if (_moveTask == NULL)
+	if (_moveTask == nullptr)
 		return 0;
 	if (_moveTask->pathFindTask)
 		return 1;
@@ -3228,7 +3228,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 //	sense a protaganist within a specified range
 
 bool Actor::canSenseProtaganistIndirectly(SenseInfo &info, int16 range) {
-	if (_followers != NULL) {
+	if (_followers != nullptr) {
 		int         i;
 
 		for (i = 0; i < _followers->size(); i++) {
@@ -3248,7 +3248,7 @@ bool Actor::canSenseSpecificActorIndirectly(
     SenseInfo   &info,
     int16       range,
     Actor       *a) {
-	if (_followers != NULL) {
+	if (_followers != nullptr) {
 		int         i;
 
 		for (i = 0; i < _followers->size(); i++) {
@@ -3268,7 +3268,7 @@ bool Actor::canSenseSpecificObjectIndirectly(
     SenseInfo   &info,
     int16       range,
     ObjectID    obj) {
-	if (_followers != NULL) {
+	if (_followers != nullptr) {
 		int         i;
 
 		for (i = 0; i < _followers->size(); i++) {
@@ -3288,7 +3288,7 @@ bool Actor::canSenseActorPropertyIndirectly(
     SenseInfo           &info,
     int16               range,
     ActorPropertyID     prop) {
-	if (_followers != NULL) {
+	if (_followers != nullptr) {
 		int         i;
 
 		for (i = 0; i < _followers->size(); i++) {
@@ -3308,7 +3308,7 @@ bool Actor::canSenseObjectPropertyIndirectly(
     SenseInfo           &info,
     int16               range,
     ObjectPropertyID    prop) {
-	if (_followers != NULL) {
+	if (_followers != nullptr) {
 		int         i;
 
 		for (i = 0; i < _followers->size(); i++) {
@@ -3416,7 +3416,7 @@ void setCombatBehavior(bool enabled) {
 
 	g_vm->_act->_combatBehaviorEnabled = enabled;
 
-	for (player = iter.first(); player != NULL; player = iter.next())
+	for (player = iter.first(); player != nullptr; player = iter.next())
 		player->getActor()->evaluateNeeds();
 }
 

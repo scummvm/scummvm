@@ -969,7 +969,7 @@ bool NewTempPort(gPort &port, int width, int height) {
 	gPixelMap       *map;
 
 	map = (gPixelMap *)TempAlloc(width * height + sizeof(gPixelMap));
-	if (map != NULL) {
+	if (map != nullptr) {
 		map->data = (uint8 *)(map + 1);
 		map->size.x = width;
 		map->size.y = height;
@@ -1008,7 +1008,7 @@ bool NewTempPort(gPort &port, int width, int height) {
 */
 void DisposeTempPort(gPort &port) {
 	if (port.map) TempFree(port.map);
-	port.map = NULL;
+	port.map = nullptr;
 }
 
 } // end of namespace Saga2

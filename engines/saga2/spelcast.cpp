@@ -63,11 +63,11 @@ int32 scatterer(int32 i, int32 m, int32 s);
 SpellStuff::SpellStuff() {
 	master = nullSpell;
 	display = nullSpell;
-	prototype = NULL;
+	prototype = nullptr;
 	targetableTypes = spellTargNone;
 	targetTypes = spellApplyNone;
-	effects = NULL;
-	targets = NULL;
+	effects = nullptr;
+	targets = nullptr;
 	manaType = sManaIDSkill;
 	manaUse = 0;
 	shape = eAreaInvisible;
@@ -113,7 +113,7 @@ bool SpellStuff::safe() {
 //	add an internal effect to a spell
 
 void SpellStuff::addEffect(ProtoEffect *pe) {
-	if (effects == NULL)
+	if (effects == nullptr)
 		effects = pe;
 	else {
 		ProtoEffect *tail;
@@ -139,7 +139,7 @@ void SpellStuff::killEffects() {
 	if (effects) {
 		delete effects;
 	}
-	effects = NULL;
+	effects = nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -205,7 +205,7 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 	if (effects && targets) {
 		for (SpellTarget *t = targets; t; t = t->next) {
 			if (safe() &&
-			        t->getObject() != NULL &&
+			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
 			        !canTarget(spellTargCaster))
 				continue;
@@ -365,7 +365,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 //	add a target to the target list
 
 void SpellStuff::addTarget(SpellTarget *trg) {
-	if (targets == NULL)
+	if (targets == nullptr)
 		targets = trg;
 	else {
 		SpellTarget *t = targets;
@@ -385,7 +385,7 @@ void SpellStuff::removeTargetList() {
 	case eAreaProjectile:
 	case eAreaExchange:
 	case eAreaMissle:
-		targets = NULL;
+		targets = nullptr;
 		break;
 	case eAreaWall:
 	case eAreaCone:
@@ -395,12 +395,12 @@ void SpellStuff::removeTargetList() {
 	case eAreaStorm:
 	case eAreaSquare:
 		if (targets) delete targets;
-		targets = NULL;
+		targets = nullptr;
 		break;
 	default:
 		error("bad spell");
 	}
-	assert(targets == NULL);
+	assert(targets == nullptr);
 }
 
 //-----------------------------------------------------------------------
@@ -638,11 +638,11 @@ SpellInstance::~SpellInstance() {
 	for (int32 i = 0; i < eList.count; i++) {
 		if (eList.displayList[i].efx)
 			delete eList.displayList[i].efx;
-		eList.displayList[i].efx = NULL;
+		eList.displayList[i].efx = nullptr;
 	}
 	if (target)
 		delete target;
-	target = NULL;
+	target = nullptr;
 }
 
 // ------------------------------------------------------------------
@@ -676,7 +676,7 @@ void SpellInstance::termEffect() {
 		for (int32 i = 0; i < eList.count; i++) {
 			if (eList.displayList[i].efx) {
 				delete eList.displayList[i].efx;
-				eList.displayList[i].efx = NULL;
+				eList.displayList[i].efx = nullptr;
 			}
 		}
 }
@@ -705,7 +705,7 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 bool SpellInstance::buildList() {
 	if (eList.dissipated()) {
 		termEffect();
-		if (effect->next == NULL)
+		if (effect->next == nullptr)
 			return false;
 		effect = effect->next;
 		effSeq++;
@@ -860,14 +860,14 @@ void Effectron::bump() {
 int16 tileNopeHeight(
     const TilePoint &pt,
     Effectron *obj,
-    StandingTileInfo *sti = NULL);
+    StandingTileInfo *sti = nullptr);
 
 //-----------------------------------------------------------------------
 // clone of checkContact()
 blockageType checkNontact(
     Effectron *obj,
     const TilePoint &loc,
-    GameObject **blockResultObj = NULL);
+    GameObject **blockResultObj = nullptr);
 
 //-----------------------------------------------------------------------
 // clone of objectCollision()
@@ -883,7 +883,7 @@ blockageType checkNontact(
 	int32           terrain;
 	GameObject      *blockObj;
 
-	if (blockResultObj) *blockResultObj = NULL;
+	if (blockResultObj) *blockResultObj = nullptr;
 
 	terrain = volumeTerrain(mapNum,
 	                        loc,
@@ -940,9 +940,9 @@ int16 tileNopeHeight(
 		prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 	}
 
-	if (metaPtr == NULL) return 0L;
+	if (metaPtr == nullptr) return 0L;
 
-	highestTile.surfaceTile = lowestTile.surfaceTile = NULL;
+	highestTile.surfaceTile = lowestTile.surfaceTile = nullptr;
 	highestSupportHeight = -100;
 	lowestSupportHeight = 0x7FFF;
 
@@ -952,7 +952,7 @@ int16 tileNopeHeight(
 	for (int i = 0; i < maxPlatforms; i++) {
 		Platform    *p;
 
-		if ((p = metaPtr->fetchPlatform(mapNum, i)) == NULL)
+		if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 			continue;
 
 		if (p->flags & plVisible) {
@@ -995,7 +995,7 @@ int16 tileNopeHeight(
 				            (terrainSurface | terrainRaised))) {
 					highestTile = sti;
 					highestSupportHeight = supportHeight;
-				} else if (highestTile.surfaceTile == NULL &&
+				} else if (highestTile.surfaceTile == nullptr &&
 				           supportHeight <= lowestSupportHeight &&
 				           (ti->combinedTerrainMask() &
 				            (terrainSurface | terrainRaised))) {
@@ -1015,8 +1015,8 @@ int16 tileNopeHeight(
 		return lowestSupportHeight;
 	}
 	if (stiResult) {
-		stiResult->surfaceTile = NULL;
-		stiResult->surfaceTAG = NULL;
+		stiResult->surfaceTile = nullptr;
+		stiResult->surfaceTAG = nullptr;
 		stiResult->surfaceHeight = 0;
 	}
 	return 0;
@@ -1041,7 +1041,7 @@ GameObject *objectNollision(Effectron *obj, const TilePoint &loc) {
 	CircularObjectIterator  iter(obj->world(), loc, obj->brdCall() + 32);
 
 	for (iter.first(&obstacle);
-	        obstacle != NULL;
+	        obstacle != nullptr;
 	        iter.next(&obstacle)) {
 		TilePoint   tp = obstacle->getLocation();
 		ProtoObj    *proto = obstacle->proto();
@@ -1057,7 +1057,7 @@ GameObject *objectNollision(Effectron *obj, const TilePoint &loc) {
 			return obstacle;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // end of namespace Saga2

@@ -240,12 +240,12 @@ void loadTimers(Common::InSaveFile *in) {
 
 		timer = new Timer(in);
 
-		assert(timer != NULL);
+		assert(timer != nullptr);
 
 		//  Get the objects's timer list
 		timerList = fetchTimerList(timer->getObject());
 
-		assert(timerList != NULL);
+		assert(timerList != nullptr);
 
 		//  Append this timer to the objects's timer list
 		timerList->_timers.push_back(timer);

@@ -41,7 +41,7 @@ void ModalModeHandleTask() {}
 void ModalModeHandleKey(short, short);
 
 GameMode        ModalMode = {
-	NULL,                                   // no previous mode
+	nullptr,                                // no previous mode
 	false,                                  // mode is not nestable
 	ModalModeSetup,
 	ModalModeCleanup,
@@ -56,14 +56,14 @@ extern void updateWindowSection(const Rect16 &r);
    Modal Window class member functions
  * ===================================================================== */
 
-ModalWindow *ModalWindow::current = NULL;
+ModalWindow *ModalWindow::current = nullptr;
 
 ModalWindow::ModalWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 		: DecoratedWindow(r, ident, "DialogWindow", cmd) {
 	prevModeStackCtr = 0;
 
 	for (int i = 0; i < Max_Modes; i++)
-		prevModeStackPtr[i] = 0;
+		prevModeStackPtr[i] = nullptr;
 }
 
 ModalWindow::~ModalWindow() {
@@ -80,7 +80,7 @@ bool ModalWindow::isModal() {
 bool ModalWindow::open() {
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
-	g_vm->_mouseInfo->setText(NULL);
+	g_vm->_mouseInfo->setText(nullptr);
 	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 
 	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);

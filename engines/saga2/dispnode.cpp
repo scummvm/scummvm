@@ -110,9 +110,9 @@ void drawDisplayList() {
 
 void  DisplayNodeList::init(uint16 s) {
 	for (int i = 0; i < s; i++) {
-		displayList[i].efx = NULL;
-		displayList[i].nextDisplayed = NULL;
-		displayList[i].object = NULL;
+		displayList[i].efx = nullptr;
+		displayList[i].nextDisplayed = nullptr;
+		displayList[i].object = nullptr;
 		displayList[i].type = nodeTypeObject;
 	}
 }
@@ -163,12 +163,12 @@ void DisplayNodeList::draw() {
 	                *spellSet;
 
 	objectSet = objectSprites;
-	if (objectSet == NULL)
+	if (objectSet == nullptr)
 		error("Object sprites have been dumped!\n");
 
 	if (g_vm->getGameId() == GID_FTA2) {
 		spellSet = spellSprites;
-		if (spellSet == NULL)
+		if (spellSet == nullptr)
 			error("Spell sprites have been dumped!\n");
 	}
 
@@ -219,15 +219,15 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				Actor       *a = (Actor *)obj;
 
 				//  Release the actor appearance if loaded
-				if (a->_appearance != NULL) {
+				if (a->_appearance != nullptr) {
 					ReleaseActorAppearance(a->_appearance);
-					a->_appearance = NULL;
+					a->_appearance = nullptr;
 				}
 			}
 		}
 	}
 
-	if (currentWorld == NULL) return;
+	if (currentWorld == nullptr) return;
 
 	DispRegionObjectIterator    iter(currentWorld, viewCenter, loadDist);
 	GameObject *obj = nullptr;
@@ -237,7 +237,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 
 	if (fromScratch)
 		//  Reset the list...
-		DisplayNodeList::head = NULL;
+		DisplayNodeList::head = nullptr;
 
 	for (id = iter.first(&obj, &dist);
 	        id != Nothing;
@@ -256,7 +256,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				//  If actor is newly entered to the arena
 				//  (appearance == NULL), then load the
 				//  actor's appearance.
-				if (a->_appearance == NULL) {
+				if (a->_appearance == nullptr) {
 					a->_appearance =
 					    LoadActorAppearance(a->_appearanceID, sprStandBank);
 				}
@@ -289,7 +289,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 		GameObject  *ob = sortList[i];
 		DisplayNode **search;
 		TilePoint oLoc = ob->getLocation();
-		dn->nextDisplayed = NULL;
+		dn->nextDisplayed = nullptr;
 		dn->object = ob;
 
 		dn->type = nodeTypeObject;
@@ -378,8 +378,8 @@ void DisplayNode::drawObject() {
 	mCoords.z = 0;
 
 	//  Do not display objects that are on a ripped roof
-	if ((mt = mapList[g_vm->_currentMapNum].lookupMeta(mCoords)) != NULL) {
-		if ((rt = mt->ripTable(g_vm->_currentMapNum)) != NULL) {
+	if ((mt = mapList[g_vm->_currentMapNum].lookupMeta(mCoords)) != nullptr) {
+		if ((rt = mt->ripTable(g_vm->_currentMapNum)) != nullptr) {
 			if (objCoords.z >= rt->zTable[tCoords.u][tCoords.v]) {
 				//  Disable hit-test on the object's box
 				hitBox.width = -1;
@@ -696,7 +696,7 @@ void DisplayNode::drawObject() {
 			//          sc->colorTable = aa->schemeList ? mainColors : identityColors;
 			sc->flipped = (poseFlags & ActorPose::actorFlipped);
 
-			assert(sc->sp != NULL);
+			assert(sc->sp != nullptr);
 			assert(sc->sp->size.x > 0);
 			assert(sc->sp->size.y > 0);
 			assert(sc->sp->size.x < 255);
@@ -714,7 +714,7 @@ void DisplayNode::drawObject() {
 				sc->sp =    prot->getOrientedSprite(
 				                ob,
 				                a->_poseInfo.leftObjectIndex);
-				assert(sc->sp != NULL);
+				assert(sc->sp != nullptr);
 				sc->offset = a->_poseInfo.leftObjectOffset;
 				assert(sc->offset.x < 1000);
 				assert(sc->offset.x > -1000);
@@ -736,7 +736,7 @@ void DisplayNode::drawObject() {
 				sc->sp =    prot->getOrientedSprite(
 				                ob,
 				                a->_poseInfo.rightObjectIndex);
-				assert(sc->sp != NULL);
+				assert(sc->sp != nullptr);
 				assert(sc->sp->size.x > 0);
 				assert(sc->sp->size.y > 0);
 				assert(sc->sp->size.x < 255);
@@ -811,7 +811,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 	SpriteSet       *objectSet;
 
 	objectSet = objectSprites;
-	if (objectSet == NULL)
+	if (objectSet == nullptr)
 		error("Object sprites have been dumped!");
 
 	for (dn = DisplayNodeList::head; dn; dn = dn->nextDisplayed) {
@@ -846,7 +846,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 
 						aa = a->_appearance;
 
-						if (aa == NULL) continue;
+						if (aa == nullptr) continue;
 
 						sprPtr = aa->spriteBanks[a->_poseInfo.actorFrameBank];
 						ss = sprPtr;

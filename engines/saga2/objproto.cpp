@@ -152,7 +152,7 @@ bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID item) {
 //  UseOn active item command
 bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
 	assert(dObj != Nothing);
-	assert(item != NULL);
+	assert(item != nullptr);
 
 	int16   scrResult;
 
@@ -412,7 +412,7 @@ bool ProtoObj::dropOn(
     const Location  &loc,
     int16           num) {
 	assert(dObj != Nothing);
-	assert(target != NULL);
+	assert(target != nullptr);
 	assert(isWorld(loc.context));
 
 	return dropOnAction(dObj, enactor, target, loc, num);
@@ -791,7 +791,7 @@ uint16  ProtoObj::containmentSet() {
 
 //  return the sprite data
 ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int16 count) {
-	ObjectSpriteInfo    sprInfo = { NULL, static_cast<bool>((flags & objPropFlipped) != 0) };
+	ObjectSpriteInfo    sprInfo = { nullptr, static_cast<bool>((flags & objPropFlipped) != 0) };
 	int16               openOffset = ((flags & objPropVisOpen) && obj->isOpen()) ? 1 : 0;
 
 	switch (spr) {
@@ -833,7 +833,7 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 
 //  return the address of the sprite when held in hand
 Sprite *ProtoObj::getOrientedSprite(GameObject *obj, int16 offset) {
-	return NULL;
+	return nullptr;
 }
 
 int16 ProtoObj::stdActionScript(
@@ -895,12 +895,12 @@ void ProtoObj::initiateDefense(ObjectID, ObjectID, ObjectID) {}
 
 //  Get projectile for missile weapons
 GameObject *ProtoObj::getProjectile(ObjectID, ObjectID) {
-	return NULL;
+	return nullptr;
 }
 
 //  Get spell from a magic object
 GameObject *ProtoObj::getSpell(ObjectID) {
-	return NULL;
+	return nullptr;
 }
 
 //  Determine if this type of object can block an attack
@@ -1067,7 +1067,7 @@ bool InventoryProto::dropAction(
 		ProtoObj            *enactorProto = enactorPtr->proto();
 		TilePoint           enactorLoc(enactorPtr->getLocation());
 		TilePoint           vector = loc - enactorLoc;
-		GameObject          *extractedObj = NULL;
+		GameObject          *extractedObj = nullptr;
 
 		//  Split the merged object if needed.
 		if (dObjPtr->isMergeable()           //  If mergeable
@@ -1075,7 +1075,7 @@ bool InventoryProto::dropAction(
 			if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 			extractedObj = dObjPtr->extractMerged(dObjPtr->getExtra() - num);
-			if (extractedObj == NULL)
+			if (extractedObj == nullptr)
 				return false;
 
 			extractedObj->move(
@@ -1112,7 +1112,7 @@ bool InventoryProto::dropAction(
 			}
 
 			if (startPt == Nowhere) {
-				if (extractedObj != NULL)
+				if (extractedObj != nullptr)
 					GameObject::mergeWith(extractedObj, dObjPtr, extractedObj->getExtra());
 				return false;
 			}
@@ -1142,7 +1142,7 @@ bool InventoryProto::dropOnAction(
     const Location  &loc,
     int16           num) {
 	assert(dObj != Nothing);
-	assert(target != NULL);
+	assert(target != nullptr);
 	assert(isWorld(loc.context));
 
 	if (drop(dObj, enactor, loc, num)) {
@@ -1340,7 +1340,7 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	GameObject  *itemPtr = GameObject::objectAddress(item);
-	GameObject  *extractedObj = NULL;
+	GameObject  *extractedObj = nullptr;
 	Location    oldLoc(itemPtr->getLocation(), itemPtr->IDParent());
 
 	//  Split the merged object if needed.
@@ -1349,7 +1349,7 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
 		if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 		extractedObj = itemPtr->extractMerged(itemPtr->getExtra() - num);
-		if (extractedObj == NULL)
+		if (extractedObj == nullptr)
 			return false;
 
 		extractedObj->move(oldLoc);
@@ -1362,7 +1362,7 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
 		return true;
 	}
 	itemPtr->move(oldLoc);
-	if (extractedObj != NULL)
+	if (extractedObj != nullptr)
 		GameObject::mergeWith(extractedObj, itemPtr, extractedObj->getExtra());
 
 	return false;
@@ -1549,10 +1549,10 @@ bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 		leftHandObjectPtr = a->_leftHandObject != Nothing
 		                    ?   GameObject::objectAddress(a->_leftHandObject)
-		                    :   NULL;
+		                    :   nullptr;
 
 		if (dObjPtr->proto()->isTwoHanded(enactor)
-		        || (leftHandObjectPtr != NULL
+		        || (leftHandObjectPtr != nullptr
 		            &&  leftHandObjectPtr->proto()->isTwoHanded(enactor)))
 			a->holdInLeftHand(Nothing);
 
@@ -1710,7 +1710,7 @@ uint8 MeleeWeaponProto::weaponRating(
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->_appearance != NULL
+	if (wielder->_appearance != nullptr
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -1929,13 +1929,13 @@ uint8 BowProto::weaponRating(
 	assert(isActor(wielderID));
 	assert(isObject(targetID) || isActor(targetID));
 
-	if (getProjectile(weaponID_, wielderID) == NULL) return 0;
+	if (getProjectile(weaponID_, wielderID) == nullptr) return 0;
 
 	Actor       *wielder = (Actor *)GameObject::objectAddress(wielderID);
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->_appearance != NULL
+	if (wielder->_appearance != nullptr
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -2024,7 +2024,7 @@ uint8 WeaponWandProto::weaponRating(
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->_appearance != NULL
+	if (wielder->_appearance != nullptr
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -2065,7 +2065,7 @@ int16 WeaponWandProto::fightStanceAction(ObjectID actor) {
 //	return the address of the sprite when held in hand
 
 Sprite *ProjectileProto::getOrientedSprite(GameObject *, int16) {
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -2574,7 +2574,7 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
     GameObject *obj,
     enum spriteTypes spr,
     int16) {
-	ObjectSpriteInfo    sprInfo = { NULL, false };
+	ObjectSpriteInfo    sprInfo = { nullptr, false };
 
 	switch (spr) {
 	case objOnGround:
@@ -2670,7 +2670,7 @@ bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &lo
 	if (isWorld(loc.context)) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 
-		if (validTarget(enactorPtr, NULL, NULL, this))
+		if (validTarget(enactorPtr, nullptr, nullptr, this))
 			return useOn(dObj, enactor, loc);
 
 		return false;
@@ -2688,7 +2688,7 @@ bool SkillProto::dropOnAction(ObjectID dObj, ObjectID enactor, ObjectID target, 
 	if (isWorld(targetPtr->IDParent())) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 
-		if (validTarget(enactorPtr, targetPtr, NULL, this))
+		if (validTarget(enactorPtr, targetPtr, nullptr, this))
 			return useOn(dObj, enactor, target);
 	}
 
@@ -2703,10 +2703,10 @@ bool SkillProto::dropOnAction(
     int16           num) {
 	assert(isActor(enactor));
 
-	if (target != NULL) {
+	if (target != nullptr) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 
-		if (validTarget(enactorPtr, NULL, target, this))
+		if (validTarget(enactorPtr, nullptr, target, this))
 			return useOn(dObj, enactor, target);
 	}
 

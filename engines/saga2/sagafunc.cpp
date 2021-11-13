@@ -503,7 +503,7 @@ int16 scriptActorSay(int16 *args) {
 	//  If so, then retrieve it. If not, then build a new one and
 	//  retrieve it.
 	sp = speechList.findSpeech(obj->thisID());
-	if (sp == NULL) {
+	if (sp == nullptr) {
 		uint16  spFlags = 0;
 
 		if (flags & speakNoAnimate) spFlags |= Speech::spNoAnimate;
@@ -511,7 +511,7 @@ int16 scriptActorSay(int16 *args) {
 
 		sp = speechList.newTask(obj->thisID(), spFlags);
 
-		if (sp == NULL) return 0;
+		if (sp == nullptr) return 0;
 	}
 
 	//  Loop through each of the arguments.
@@ -528,7 +528,7 @@ int16 scriptActorSay(int16 *args) {
 	if (!(flags & speakContinued)) {
 		//  If we're going to wait for it synchronously
 		if (flags & speakWait) {
-			thisThread->waitForEvent(Thread::waitOther, 0);
+			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			sp->setWakeUp(getThreadID(thisThread));
 		}
 
@@ -554,7 +554,7 @@ int16 scriptActorSayText(int16 *args) {
 	//  Determine if a speech record is being built for this actor.
 	//  If so, then retrieve it. If not, then fail.
 	sp = speechList.findSpeech(obj->thisID());
-	if (sp == NULL) return 0;
+	if (sp == nullptr) return 0;
 
 	stringf(buffer, sizeof buffer, args[0], &args[1]);
 	sp->append(buffer, 0);
@@ -1428,7 +1428,7 @@ int16 scriptActorSetSchedule(int16 *args) {
 
 		a->_schedule = (uint16)args[0];
 
-		if (a->getAssignment() != NULL)
+		if (a->getAssignment() != nullptr)
 			delete a->getAssignment();
 
 		return (int16)oldSchedule;
@@ -1589,7 +1589,7 @@ int16 scriptActorTurn(int16 *args) {
 		uint16      flags = args[1];
 
 		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, 0);
+			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, args[0] & 7);
 		} else {
 			MotionTask::turn(*a, args[0] & 7);
@@ -1620,7 +1620,7 @@ int16 scriptActorTurnTowards(int16 *args) {
 		       -   a->getLocation()).quickDir();
 
 		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, 0);
+			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, dir);
 		} else {
 			MotionTask::turn(*a, dir);
@@ -1645,7 +1645,7 @@ int16 scriptActorWalk(int16 *args) {
 		uint16      flags = args[3];
 
 		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, 0);
+			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::walkToDirect(
 			    getThreadID(thisThread), *a, dest, flags & moveRun);
 		} else {
@@ -1672,7 +1672,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
@@ -1682,7 +1682,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 		            thisThread->argCount >= 4
 		            ?   args[3]
 		            :   -1)
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1704,7 +1704,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
@@ -1713,7 +1713,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 		            (uint8)args[2],
 		            args[3],
 		            args[4])
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1737,13 +1737,13 @@ int16 scriptActorAssignBeNearLocation(int16 *args) {
 		TilePoint   targetLoc = TilePoint(args[1], args[2], args[3]);
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new HuntToBeNearLocationAssignment(a,
 		            args[0],
 		            targetLoc,
 		            args[4])
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1770,14 +1770,14 @@ int16 scriptActorAssignBeNearActor(int16 *args) {
 		targetActor = (Actor *)GameObject::objectAddress(args[1]);
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new HuntToBeNearActorAssignment(a,
 		            args[0],
 		            targetActor,
 		            args[2],
 		            args[3])
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1799,13 +1799,13 @@ int16 scriptActorAssignKillActor(int16 *args) {
 		targetActor = (Actor *)GameObject::objectAddress(args[1]);
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new HuntToKillAssignment(a,
 		            args[0],
 		            targetActor,
 		            args[2])
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1827,7 +1827,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		TileRegion  tetherReg;
 		int16       &minU = args[1],
@@ -1854,7 +1854,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 		            (uint16)args[0]
 		            *   CalenderTime::kFramesPerHour,
 		            tetherReg)
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1871,14 +1871,14 @@ int16 scriptActorAssignAttend(int16 *args) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
 		//  Delete the actor's current assignment
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new AttendAssignment(a,
 		            (g_vm->_calender->frameInDay()
 		             + (uint16)args[0])
 		            %   CalenderTime::kFramesPerDay,
 		            GameObject::objectAddress(args[1]))
-		        !=  NULL)
+		        !=  nullptr)
 			return true;
 	}
 
@@ -1894,7 +1894,7 @@ int16 scriptActorRemoveAssignment(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		if (a->getAssignment() != NULL) delete a->getAssignment();
+		if (a->getAssignment() != nullptr) delete a->getAssignment();
 	}
 
 	return 0;
@@ -1941,7 +1941,7 @@ int16 scriptActorGetLeader(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->_leader != NULL ? a->_leader->thisID() : Nothing;
+		return a->_leader != nullptr ? a->_leader->thisID() : Nothing;
 	}
 
 	return 0;
@@ -1956,7 +1956,7 @@ int16 scriptActorNumFollowers(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->_followers != NULL ? a->_followers->size() : 0;
+		return a->_followers != nullptr ? a->_followers->size() : 0;
 	}
 
 	return 0;
@@ -1971,7 +1971,7 @@ int16 scriptActorGetFollower(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		assert(a->_followers != NULL);
+		assert(a->_followers != nullptr);
 		assert(args[0] < a->_followers->size());
 
 		return (*a->_followers)[args[0]]->thisID();
@@ -2068,7 +2068,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	ProtoObj    *currencyProto = g_vm->_objectProtos[args[0]];
 	int32       paymentAmount = args[1];
 	int32       paymentFound = 0;
-	GameObject  *obj, *delObj = NULL;
+	GameObject  *obj, *delObj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
 	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;
@@ -2525,7 +2525,7 @@ int16 scriptTagSetAnimation(int16 *args) {
 	//  If we want to wait until finished
 	if (args[0] & tileAnimateWait) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, 0);
+		thisThread->waitForEvent(Thread::waitOther, nullptr);
 
 		//  And start the tile animation
 		TileActivityTask::doScript(*ai, args[1], getThreadID(thisThread));
@@ -2548,7 +2548,7 @@ int16 scriptTagSetWait(int16 *args) {
 
 	if (TileActivityTask::setWait(ai, getThreadID(thisThread))) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, 0);
+		thisThread->waitForEvent(Thread::waitOther, nullptr);
 	}
 
 	return 0;
@@ -2744,7 +2744,7 @@ void writeLog( char *str )
 }
 */
 void writeLog(char *str) {
-	FILE        *logFile = NULL;
+	FILE        *logFile = nullptr;
 #ifdef __WATCOMC__
 	time_t time_of_day;
 	auto char buf[26];
@@ -2770,7 +2770,7 @@ void writeLog(char *str) {
 }
 
 void writeObject(char *str) {
-	FILE        *logFile = NULL;
+	FILE        *logFile = nullptr;
 	logFile = fopen("objfile.txt", "a+t");
 	if (logFile) {
 		fputs(str, logFile);
@@ -2820,9 +2820,9 @@ int16 scriptMessageDialog(int16 *args) {
 
 	userDialog(STRING(args[0]),
 	           STRING(args[1]),
-	           args[2] ? STRING(args[2]) : NULL,
-	           NULL,
-	           NULL);
+	           args[2] ? STRING(args[2]) : nullptr,
+	           nullptr,
+	           nullptr);
 
 //	WriteStatusF( 1, buffer );
 	return 0;
@@ -2838,9 +2838,9 @@ int16 scriptChoiceDialog(int16 *args) {
 
 	userDialog(STRING(args[0]),
 	           STRING(args[1]),
-	           args[2] ? STRING(args[2]) : NULL,
-	           args[3] ? STRING(args[3]) : NULL,
-	           args[4] ? STRING(args[4]) : NULL);
+	           args[2] ? STRING(args[2]) : nullptr,
+	           args[3] ? STRING(args[3]) : nullptr,
+	           args[4] ? STRING(args[4]) : nullptr);
 
 //	WriteStatusF( 1, buffer );
 	return 0;
@@ -2902,7 +2902,7 @@ int16 scriptSetGameMode(int16 *args) {
 int16 scriptWait(int16 *args) {
 	MONOLOG(Wait);
 	thisThread->waitAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitDelay, 0);
+	thisThread->waitForEvent(Thread::waitDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -2910,7 +2910,7 @@ int16 scriptWait(int16 *args) {
 int16 scriptWaitFrames(int16 *args) {
 	MONOLOG(WaitFrames);
 	thisThread->waitFrameAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitFrameDelay, 0);
+	thisThread->waitForEvent(Thread::waitFrameDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -2965,7 +2965,7 @@ int16 scriptMakeObject(int16 *args) {
 
 	//  REM: We need to throw some kind of SAGA exception...?
 	//  (We don't have SAGA exceptions, only the C kind...)
-	if (obj == NULL) {
+	if (obj == nullptr) {
 		return 0;
 	}
 
@@ -3025,7 +3025,7 @@ int16 scriptMakeActor(int16 *args) {
 
 	//  REM: We need to throw some kind of SAGA exception...?
 	//  (We don't have SAGA exceptions, only the C kind...)
-	if (a == NULL) {
+	if (a == nullptr) {
 		return 0;
 	}
 
@@ -3086,7 +3086,7 @@ int16 scriptPlaySoundFrom(int16 *args) {
 	int32       soundID;
 	soundID = parse_res_id(sID);
 	GameObject *go = GameObject::objectAddress(args[1]);
-	assert(go != NULL);
+	assert(go != nullptr);
 	if (soundID) playSoundAt(soundID, go->notGetWorldLocation());
 
 	return 0;
@@ -3278,7 +3278,7 @@ int16 scriptAssertEvent(int16 *args) {
 	ev.directObject = GameObject::objectAddress(args[1]);
 	ev.indirectObject = args[2] != Nothing
 	                    ?   GameObject::objectAddress(args[2])
-	                    :   NULL;
+	                    :   nullptr;
 
 	assertEvent(ev);
 
@@ -3519,7 +3519,7 @@ int16 scriptSearchRegion(int16 *args) {
 	//  Get a pointer to the world
 	assert(isWorld(args[0]));
 	worldPtr = (GameWorld *)GameObject::objectAddress(args[0]);
-	assert(worldPtr != NULL);
+	assert(worldPtr != nullptr);
 
 	minP.u = MIN(args[1], args[3]);
 	minP.v = MIN(args[2], args[4]);
@@ -3532,9 +3532,9 @@ int16 scriptSearchRegion(int16 *args) {
 	RegionalObjectIterator  iter(worldPtr, minP, maxP);
 
 	//  Iterate through the search region
-	for (searchObj = iter.first(NULL);
+	for (searchObj = iter.first(nullptr);
 	        searchObj != Nothing;
-	        searchObj = iter.next(NULL)) {
+	        searchObj = iter.next(nullptr)) {
 		//  Starting from the 5th argument, until we reach argCount,
 		//  see if the iterated object matches one in the arg list
 		for (int i = 5; i < thisThread->argCount; i++) {
@@ -3561,9 +3561,9 @@ int countObjectsInRegion(GameWorld *worldPtr, TileRegion &tr) {
 	                             tr.min,
 	                             tr.max);
 
-	for (searchObj = iter.first(NULL), count = 0;
+	for (searchObj = iter.first(nullptr), count = 0;
 	        searchObj != Nothing;
-	        searchObj = iter.next(NULL)) {
+	        searchObj = iter.next(nullptr)) {
 		count++;
 	}
 
@@ -3584,9 +3584,9 @@ void listObjectsInRegion(
 	                             tr.min,
 	                             tr.max);
 
-	for (searchObj = iter.first(NULL);
+	for (searchObj = iter.first(nullptr);
 	        searchObj != Nothing;
-	        searchObj = iter.next(NULL)) {
+	        searchObj = iter.next(nullptr)) {
 		*list++ = searchObj;
 	}
 }
@@ -3617,8 +3617,8 @@ int16 scriptSwapRegions(int16 *args) {
 	worldPtr1 = (GameWorld *)GameObject::objectAddress(worldID1);
 	worldPtr2 = (GameWorld *)GameObject::objectAddress(worldID2);
 
-	assert(worldPtr1 != NULL);
-	assert(worldPtr2 != NULL);
+	assert(worldPtr1 != nullptr);
+	assert(worldPtr2 != nullptr);
 
 	region1.min.u = args[1];
 	region1.min.v = args[2];

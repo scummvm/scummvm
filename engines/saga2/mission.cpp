@@ -37,7 +37,7 @@ ActiveMission       activeMissions[32];
 
 ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 	int             i;
-	ActiveMission   *ms = NULL;
+	ActiveMission   *ms = nullptr;
 
 	for (i = 0; i < ARRAYSIZE(activeMissions); i++) {
 		if (!(activeMissions[i]._data.missionFlags & inUse)) {
@@ -46,7 +46,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 		}
 	}
 
-	if (!ms) return NULL;
+	if (!ms) return nullptr;
 
 	ms->_data.missionID   = i;
 	ms->_data.generatorID = genID;

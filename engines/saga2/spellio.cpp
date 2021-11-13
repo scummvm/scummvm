@@ -228,7 +228,7 @@ void cleanupSpellState() {
 // cleanup active spells
 
 StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
-	GameObject *go = NULL;
+	GameObject *go = nullptr;
 	ActiveItem *ai;
 	type = st.getType();
 	loc = st.getPoint();
@@ -236,7 +236,7 @@ StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 		if (type == SpellTarget::spellTargetObject)
 			go = st.getObject();
 		else
-			go = NULL;
+			go = nullptr;
 	}
 
 	if (go)
@@ -247,7 +247,7 @@ StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 	if (type == SpellTarget::spellTargetTAG)
 		ai = st.getTAG();
 	else
-		ai = NULL;
+		ai = nullptr;
 
 	if (ai)
 		tag = ai->thisID();
@@ -328,15 +328,15 @@ void StorageSpellInstance::write(Common::MemoryWriteStreamDynamic *out) {
 SpellTarget::SpellTarget(StorageSpellTarget &sst) {
 	type = (SpellTarget::spellTargetType) sst.type;
 	loc = sst.loc;
-	next = NULL;
+	next = nullptr;
 	if (sst.obj != Nothing)
 		obj = GameObject::objectAddress(sst.obj);
 	else
-		obj = NULL;
+		obj = nullptr;
 	if (sst.tag != NoActiveItem)
 		tag = ActiveItem::activeItemAddress(sst.tag);
 	else
-		tag = NULL;
+		tag = nullptr;
 }
 
 SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
@@ -411,7 +411,7 @@ void SpellDisplayList::wipe() {
 	for (int i = 0; i < maxCount; i++)
 		if (spells[i]) {
 			delete spells[i];
-			spells[i] = NULL;
+			spells[i] = nullptr;
 			count--;
 		}
 

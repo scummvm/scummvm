@@ -212,7 +212,7 @@ ContainerView::ContainerView(
     ContainerNode   &nd,
     const ContainerAppearanceDef &app,
     AppFunc         *cmd)
-	: gControl(list, rect, NULL, 0, cmd),
+	: gControl(list, rect, nullptr, 0, cmd),
 	  iconOrigin(app.iconOrigin),
 	  iconSpacing(app.iconSpacing),
 	  visibleRows(app.rows),
@@ -255,7 +255,7 @@ void ContainerView::totalObjects() {
 	totalBulk   = 0;
 	numObjects  = 0;
 
-	if (containerObject == NULL) return;
+	if (containerObject == nullptr) return;
 
 	RecursiveContainerIterator  iter(containerObject);
 
@@ -288,7 +288,7 @@ ObjectID ContainerView::getObject(int16 slotNum) {
 	ObjectID        objID;
 	GameObject      *item;
 
-	if (containerObject == NULL) return Nothing;
+	if (containerObject == nullptr) return Nothing;
 
 	ContainerIterator   iter(containerObject);
 
@@ -468,7 +468,7 @@ GameObject *ContainerView::getObject(const TilePoint &slot) {
 
 	item = containerObject->child();
 
-	while (item != NULL) {
+	while (item != nullptr) {
 		//  Skip objects that are stacked behind other objects
 		if (item->getLocation().z != 0) {
 			ProtoObj *proto = item->proto();
@@ -488,7 +488,7 @@ GameObject *ContainerView::getObject(const TilePoint &slot) {
 		item = item->next();
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -500,7 +500,7 @@ ObjectID ContainerView::pickObjectID(const Point16 &pickPos) {
 	slot = pickObjectSlot(pickPos);
 	item = getObject(slot);
 
-	if (item != NULL) {
+	if (item != nullptr) {
 		return item->thisID();
 	} else {
 		return 0;
@@ -531,7 +531,7 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
 		g_vm->_cnm->_lastPickedObjectID = Nothing;
 		g_vm->_cnm->_lastPickedObjectQuantity = -1;
-		g_vm->_mouseInfo->setText(NULL);
+		g_vm->_mouseInfo->setText(nullptr);
 		g_vm->_cnm->_mouseText[0] = 0;
 
 		// static bool that tells if the mouse cursor
@@ -550,7 +550,7 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 
 			if (!node.isAccessable(getCenterActorID())) {
 				g_vm->_mouseInfo->setDoable(false);
-			} else if (mouseObject == NULL) {
+			} else if (mouseObject == nullptr) {
 				g_vm->_mouseInfo->setDoable(true);
 			} else {
 				g_vm->_mouseInfo->setDoable(containerObject->canContain(mouseObject->thisID()));
@@ -576,7 +576,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	if (msg.doubleClick && !g_vm->_cnm->_alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
-		if (mouseObject != NULL) {
+		if (mouseObject != nullptr) {
 			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
 			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
@@ -627,7 +627,7 @@ void ContainerView::pointerRelease(gPanelMessage &) {
 		g_vm->_cnm->_objToGet->take(getCenterActorID(), g_vm->_cnm->_numPicked);
 
 		// reset the flags and pointer dealing with merged object movement
-		g_vm->_cnm->_objToGet = NULL;
+		g_vm->_cnm->_objToGet = nullptr;
 		g_vm->_cnm->_numPicked = 1;
 		g_vm->_cnm->_amountIndY = -1;
 	}
@@ -670,7 +670,7 @@ void ContainerView::clickOn(
     gPanelMessage &,
     GameObject *,
     GameObject *cObj) {
-	if (cObj != NULL) {
+	if (cObj != nullptr) {
 		if (cObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 			if (!rightButtonState()) {
 				//  just get the object into the cursor
@@ -678,7 +678,7 @@ void ContainerView::clickOn(
 			} else {
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
-				g_vm->_mouseInfo->setText(NULL);
+				g_vm->_mouseInfo->setText(nullptr);
 				g_vm->_cnm->_mouseText[0] = 0;
 			}
 		} else {
@@ -701,7 +701,7 @@ void ContainerView::dblClickOn(
     gPanelMessage &,
     GameObject *mObj,
     GameObject *) {
-	if (mObj != NULL) {
+	if (mObj != nullptr) {
 		ObjectID        possessor = mObj->possessor();
 		ProtoObj        *proto = mObj->proto();
 		PlayerActorID   pID;
@@ -737,7 +737,7 @@ void ContainerView::dropPhysical(
 		                containerObject->thisID());
 
 		//  check if no object in the current slot
-		if (cObj == NULL) {
+		if (cObj == nullptr) {
 			MotionTask::dropObject(*centerActor, *mObj, loc, num);
 
 			WriteStatusF(6, "No object state");
@@ -758,7 +758,7 @@ void ContainerView::usePhysical(
 	assert(g_vm->_mouseInfo->getObject() == mObj);
 	assert(mObj->containmentSet() & ProtoObj::isTangible);
 
-	if (cObj == NULL) {
+	if (cObj == nullptr) {
 		dropPhysical(msg, mObj, cObj);
 	} else {
 		g_vm->_mouseInfo->replaceObject();
@@ -781,7 +781,7 @@ void ContainerView::useConcept(
 	if (containerObject->canContain(mObj->thisID())) {
 		ObjectID    centerActorID = getCenterActorID();
 
-		if (cObj == NULL) {
+		if (cObj == nullptr) {
 			//  If there is no object already in this slot drop the
 			//  mouse object here
 
@@ -813,7 +813,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	// set the mouse text to null if there is no object to get hints about
 	if (slotID == Nothing) {
 		// clear out the mouse text
-		g_vm->_mouseInfo->setText(NULL);
+		g_vm->_mouseInfo->setText(nullptr);
 		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the last picked thingy
@@ -837,7 +837,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		g_vm->_cnm->_lastPickedObjectQuantity    = slotObject->getExtra();
 
 		// clear out the mouse text
-		g_vm->_mouseInfo->setText(NULL);
+		g_vm->_mouseInfo->setText(nullptr);
 		g_vm->_cnm->_mouseText[0] = 0;
 
 		// reset the alarm flag
@@ -894,7 +894,7 @@ ReadyContainerView::ReadyContainerView(
 		backImages  = backgrounds;
 		numIm       = numRes;
 	} else {
-		backImages  = NULL;
+		backImages  = nullptr;
 		numIm       = 0;
 	}
 }
@@ -1065,7 +1065,7 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
                                  const char saveas[])
 	: FloatingWindow(nd.position, 0, saveas, cmdWindowFunc) {
 	//  Initialize view to NULL.
-	view = NULL;
+	view = nullptr;
 
 	// create the close button for this window
 	closeCompButton = new GfxCompButton(
@@ -1104,8 +1104,8 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	assert(view != NULL);
-	assert(scrollCompButton != NULL);
+	assert(view != nullptr);
+	assert(scrollCompButton != nullptr);
 }
 
 /* ===================================================================== *
@@ -1119,7 +1119,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 	const int weightIndicatorType = 2;
 	objRect = app.iconRect;
 	deathFlag = nd.getType() == ContainerNode::deadType;
-	containerSpriteImg = NULL;
+	containerSpriteImg = nullptr;
 
 	// setup the mass and weight indicator
 	if (deathFlag) {
@@ -1127,7 +1127,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		setDecorations(deathDecorations,
 		               ARRAYSIZE(deathDecorations),
 		               containerRes, 'F', 'R', 'M');
-		massWeightIndicator = NULL;
+		massWeightIndicator = nullptr;
 	} else {
 		const StaticWindow *winDecs[] =  {
 			brassDecorations,
@@ -1185,7 +1185,7 @@ void TangibleContainerWindow::setContainerSprite() {
 	                         view->containerObject,
 	                         dummy,
 	                         0,
-	                         NULL);
+	                         nullptr);
 }
 
 void TangibleContainerWindow::massBulkUpdate() {
@@ -1222,7 +1222,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 	                             0,
 	                             cmdMindContainerFunc);          // mind app func
 
-	assert(mindSelectorCompButton != NULL);
+	assert(mindSelectorCompButton != nullptr);
 
 	mindSelectorCompButton->setResponse(false);
 
@@ -1253,8 +1253,8 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	assert(view != NULL);
-	assert(scrollCompButton != NULL);
+	assert(view != nullptr);
+	assert(scrollCompButton != nullptr);
 }
 
 /* ===================================================================== *
@@ -1301,7 +1301,7 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 	}
 
 	//  Fill in the initial values.
-	window      = NULL;
+	window      = nullptr;
 	type        = typ;
 	object      = id;
 	owner       = ownerID;
@@ -1319,7 +1319,7 @@ ContainerWindow *ContainerNode::getWindow() {
 
 //  Return the container view for a container node, if it is visible
 ContainerView   *ContainerNode::getView() {
-	return window ? &window->getView() : NULL;
+	return window ? &window->getView() : nullptr;
 }
 
 //  Destructor
@@ -1338,7 +1338,7 @@ void ContainerNode::read(Common::InSaveFile *in) {
 	owner = in->readByte();
 	position.read(in);
 	mindType = in->readByte();
-	window = NULL;
+	window = nullptr;
 	action = 0;
 
 	bool shown = in->readUint16LE();
@@ -1362,24 +1362,24 @@ void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeByte(owner);
 	position.write(out);
 	out->writeByte(mindType);
-	out->writeUint16LE(window != NULL);
+	out->writeUint16LE(window != nullptr);
 
 	debugC(4, kDebugSaveload, "... object = %d", object);
 	debugC(4, kDebugSaveload, "... type = %d", type);
 	debugC(4, kDebugSaveload, "... owner = %d", owner);
 	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", position.x, position.y, position.width, position.height);
 	debugC(4, kDebugSaveload, "... mindType = %d", mindType);
-	debugC(4, kDebugSaveload, "... shown = %d", window != NULL);
+	debugC(4, kDebugSaveload, "... shown = %d", window != nullptr);
 }
 
 //  Close the container window, but leave the node.
 void ContainerNode::hide() {
 	//  close the window, but don't close the object.
-	if (type != readyType && window != NULL) {
+	if (type != readyType && window != nullptr) {
 		position = window->getExtent();     //  Save old window position
 		window->close();
 		delete window;
-		window = NULL;
+		window = nullptr;
 	}
 }
 
@@ -1390,7 +1390,7 @@ void ContainerNode::show() {
 	assert(proto);
 
 	//  open the window; Object should already be "open"
-	if (window == NULL) {
+	if (window == nullptr) {
 		switch (type) {
 		case physicalType:
 			physicalContainerAppearance.rows    = proto->getViewableRows();
@@ -1447,7 +1447,7 @@ ContainerNode *ContainerManager::find(ObjectID id) {
 		if ((*it)->object == id)
 			return *it;
 
-	return NULL;
+	return nullptr;
 }
 
 ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
@@ -1455,7 +1455,7 @@ ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
 		if ((*it)->object == id && (*it)->type == type)
 			return *it;
 
-	return NULL;
+	return nullptr;
 }
 
 //  returns true if the object represented by the container can be
@@ -1576,7 +1576,7 @@ extern int16 openMindType;
 //  kind of container is appropriate, and also if a container of that
 //  type is already open.
 ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
-	ContainerNode   *cn = NULL;
+	ContainerNode   *cn = nullptr;
 	GameObject      *obj = GameObject::objectAddress(id);
 	PlayerActorID   owner;
 
@@ -1603,7 +1603,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 
 	//  If node was successfull created, and we wanted it open, and the owner
 	//  is the center actor or no-actor then make the container window visible.
-	if (cn != NULL
+	if (cn != nullptr
 	        &&  open
 	        && (owner == getCenterActorID() || owner == ContainerNode::nobody)) {
 		cn->show();
@@ -1653,7 +1653,7 @@ void initContainers() {
 		return;
 	}
 
-	if (containerRes == NULL)
+	if (containerRes == nullptr)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
 	g_vm->_cnm->_selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
@@ -1665,8 +1665,8 @@ void cleanupContainers() {
 	if (containerRes)
 		resFile->disposeContext(containerRes);
 
-	g_vm->_cnm->_selImage = NULL;
-	containerRes = NULL;
+	g_vm->_cnm->_selImage = nullptr;
+	containerRes = nullptr;
 }
 
 void initContainerNodes() {
@@ -1863,7 +1863,7 @@ APPFUNC(cmdMindContainerFunc) {
 		}
 
 		if (ev.value == GfxCompImage::leave) {
-			g_vm->_mouseInfo->setText(NULL);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -1880,14 +1880,14 @@ APPFUNC(cmdCloseButtonFunc) {
 		updateContainerWindows();
 
 		// make sure the hint text goes away
-		if (g_vm->_mouseInfo->getObject() == NULL) {
-			g_vm->_mouseInfo->setText(NULL);
+		if (g_vm->_mouseInfo->getObject() == nullptr) {
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
 		} else if (ev.value == GfxCompImage::leave) {
-			g_vm->_mouseInfo->setText(NULL);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -1907,7 +1907,7 @@ APPFUNC(cmdScrollFunc) {
 		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
 		} else if (ev.value == GfxCompImage::leave) {
-			g_vm->_mouseInfo->setText(NULL);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }

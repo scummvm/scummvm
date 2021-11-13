@@ -49,7 +49,7 @@ namespace Saga2 {
 static void loadWeaponData();
 
 ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
-	ProtoEffect *pe = NULL;
+	ProtoEffect *pe = nullptr;
 
 	/* int16 item = */stream->readSint16LE();	// spell ID
 	int16 effectGroup = stream->readSint16LE();	// effect group
@@ -69,7 +69,7 @@ ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 
 	switch (effectGroup) {
 	case effectNone:
-		return NULL;
+		return nullptr;
 
 	case effectAttrib:
 		pe = new ProtoEnchantment(makeEnchantmentID(effectGroup, effectType, baseDamage), reserved0, reserved1);
@@ -144,14 +144,14 @@ GameObject *getShieldItem(GameObject *defender) {
    WeaponProtoEffect member functions
  * ===================================================================== */
 WeaponProtoEffect::~WeaponProtoEffect() {
-	if (_effect != NULL)
+	if (_effect != nullptr)
 		delete _effect;
 }
 
 void WeaponProtoEffect::implement(Actor *enactor, GameObject *target, GameObject *, uint8) {
 	SpellTarget targ(target);
 
-	if (_effect != NULL)
+	if (_effect != nullptr)
 		_effect->implement(enactor, &targ);
 }
 
@@ -172,12 +172,12 @@ void WeaponStrikeEffect::implement(Actor *enactor, GameObject *target, GameObjec
 }
 
 WeaponStuff::WeaponStuff() {
-	_effects = NULL;
+	_effects = nullptr;
 	_master = kNullWeapon;
 }
 
 WeaponStuff::~WeaponStuff() {
-	while (_effects != NULL) {
+	while (_effects != nullptr) {
 		WeaponEffect *curEffect = _effects;
 
 		_effects = _effects->_next;
@@ -187,7 +187,7 @@ WeaponStuff::~WeaponStuff() {
 }
 
 void WeaponStuff::killEffects() {
-	while (_effects != NULL) {
+	while (_effects != nullptr) {
 		WeaponEffect *curEffect = _effects;
 
 		_effects = _effects->_next;
@@ -232,10 +232,10 @@ void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 		we = new WeaponProtoEffect(stream);
 	}
 
-	if (we == NULL)
+	if (we == nullptr)
 		error("failed to alloc weapon effect");
 
-	if (_effects == NULL)
+	if (_effects == nullptr)
 		_effects = we;
 	else {
 		WeaponEffect *tail;
@@ -246,7 +246,7 @@ void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 }
 
 void WeaponStuff::implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8 strength) {
-	for (WeaponEffect *we = _effects; we != NULL; we = we->_next)
+	for (WeaponEffect *we = _effects; we != nullptr; we = we->_next)
 		we->implement(enactor, target, strikingObj, strength);
 }
 
@@ -254,7 +254,7 @@ void WeaponStuff::implement(Actor *enactor, GameObject *target, GameObject *stri
 
 static void loadWeaponData() {
 	hResContext *spellRes = auxResFile->newContext(MKTAG('I', 'T', 'E', 'M'), "weapon resources");
-	if (spellRes == NULL || !spellRes->_valid)
+	if (spellRes == nullptr || !spellRes->_valid)
 		error("Error accessing weapon resource group.");
 
 	debugC(1, kDebugLoading, "Loading Weapon Data");

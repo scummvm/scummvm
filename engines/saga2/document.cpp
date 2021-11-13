@@ -150,7 +150,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	decRes = resFile->newContext(app.groupID, "docimage context");
 
 	// init con pointer to NULL
-	illustrationCon = NULL;
+	illustrationCon = nullptr;
 
 	// set the maxium string length
 	maxSize = maxPages * maxLines * maxChars;
@@ -181,7 +181,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 
 	// null out the image pointer array
 	for (int16 i = 0; i < maxPages; i++) {
-		images[i] = NULL;
+		images[i] = nullptr;
 	}
 
 	makePages();
@@ -193,7 +193,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 
 }
@@ -210,12 +210,12 @@ CDocument::~CDocument() {
 	// get rid of the working text buffer
 	if (text) {
 		delete[] text;
-		text = NULL;
+		text = nullptr;
 	}
 
 	if (origText) {
 		delete[] origText;
-		origText = NULL;
+		origText = nullptr;
 	}
 
 	// get rid of the resource context
@@ -271,7 +271,7 @@ gPanel *CDocument::keyTest(int16 key) {
 	case Common::KEYCODE_DOWN:
 		return this;
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -322,7 +322,7 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 		requestInfo     *ri;
 
 		win = getWindow();      // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -729,7 +729,7 @@ int16 openScroll(uint16 textScript) {
 
 
 	// point to book
-	CDocument       *win = NULL;
+	CDocument       *win = nullptr;
 
 	// close button
 	GfxCompButton     *closeScroll;
@@ -744,7 +744,7 @@ int16 openScroll(uint16 textScript) {
 	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
 
 	// create the window
-	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, NULL);
+	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, nullptr);
 
 	// make the quit button
 	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
@@ -788,7 +788,7 @@ int16 openBook(uint16 textScript) {
 
 
 	// point to book
-	CDocument       *win = NULL;
+	CDocument       *win = nullptr;
 
 	GfxCompButton *closeBook;
 	hResContext *decRes;
@@ -796,7 +796,7 @@ int16 openBook(uint16 textScript) {
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// create the window
-	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, NULL);
+	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, nullptr);
 
 	// make the quit button
 	closeBook = new GfxCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
@@ -834,7 +834,7 @@ int16 openParchment(uint16 textScript) {
 
 
 	// point to book
-	CDocument       *win = NULL;
+	CDocument       *win = nullptr;
 
 	GfxCompButton *closeParchment;
 	hResContext *decRes;
@@ -842,7 +842,7 @@ int16 openParchment(uint16 textScript) {
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// create the window
-	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, NULL);
+	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, nullptr);
 	// make the quit button
 	closeParchment = new GfxCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
 	closeParchment->accelKey = 0x1B;
@@ -870,7 +870,7 @@ APPFUNC(cmdDocumentQuit) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;

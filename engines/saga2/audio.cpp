@@ -103,23 +103,23 @@ void startAudio() {
 	uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
 
 	musicRes = soundResFile->newContext(musicID, "music resource");
-	if (musicRes == NULL)
+	if (musicRes == nullptr)
 		error("Musicians on Strike (No music resource context)!\n");
 
 	soundRes = soundResFile->newContext(soundID, "sound resource");
-	if (soundRes == NULL)
+	if (soundRes == nullptr)
 		error("No sound effect resource context!\n");
 
 	longRes = soundResFile->newContext(soundID, "long sound resource");
-	if (longRes == NULL)
+	if (longRes == nullptr)
 		error("No sound effect resource context!\n");
 
 	loopRes = soundResFile->newContext(loopedID, "loops resource");
-	if (loopRes == NULL)
+	if (loopRes == nullptr)
 		error("No loop effect resource context!\n");
 
 	voiceRes = voiceResFile->newContext(voiceID, "voice resource");
-	if (voiceRes == NULL)
+	if (voiceRes == nullptr)
 		error("Laryngitis Error (No voice resource context)!\n");
 
 	g_vm->_audio->initAudioInterface(musicRes);
@@ -129,7 +129,7 @@ void startAudio() {
 		g_vm->_audio->_clickSizes[0] = 0;
 		g_vm->_audio->_clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
 		g_vm->_audio->_clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
-		g_vm->_audio->_clickData[0] = NULL;
+		g_vm->_audio->_clickData[0] = nullptr;
 		g_vm->_audio->_clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
 		g_vm->_audio->_clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 	}
@@ -240,7 +240,7 @@ void suspendAudio() {
 
 void resumeAudio() {
 	if (g_vm->_audio) {
-		if (soundRes != NULL || voiceRes != NULL) {
+		if (soundRes != nullptr || voiceRes != nullptr) {
 			g_vm->_audio->resume();
 			resumeLoops();
 			resumeMusic();
@@ -499,7 +499,7 @@ uint32 parse_res_id(char IDstr[]) {
 	uint32 a[5] = {0, 0, 0, 0, 0};
 	uint32 a2;
 	uint32 i, j;
-	assert(IDstr != NULL);
+	assert(IDstr != nullptr);
 	if (strlen(IDstr)) {
 		for (i = 0, j = 0; i < strlen(IDstr); i++) {
 			if (IDstr[i] == ':') {
@@ -517,42 +517,42 @@ uint32 parse_res_id(char IDstr[]) {
 // playback aliases
 
 void PlaySound(char IDstr[]) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playSound(0);
 	else
 		playSound(parse_res_id(IDstr));
 }
 
 void PlayLongSound(char IDstr[]) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playLongSound(0);
 	else
 		playLongSound(parse_res_id(IDstr));
 }
 
 void PlayVoice(char IDstr[]) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playVoice(0);
 	else
 		playVoice(parse_res_id(IDstr));
 }
 
 void PlayLoop(char IDstr[]) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playLoop(0);
 	else
 		playLoop(parse_res_id(IDstr));
 }
 
 void PlayLoopAt(char IDstr[], Location l) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playLoop(0);
 	else
 		playLoopAt(parse_res_id(IDstr), l);
 }
 
 void PlayMusic(char IDstr[]) {
-	if (IDstr == NULL)
+	if (IDstr == nullptr)
 		playMusic(0);
 	else
 		playMusic(parse_res_id(IDstr));
@@ -738,13 +738,13 @@ bool bufCheckResID(hResContext *hrc, uint32 s) {
 }
 
 bool hResCheckResID(hResContext *hrc, uint32 s) {
-	if (hrc != NULL)
+	if (hrc != nullptr)
 		return hrc->seek(s);
 	return false;
 }
 
 bool hResCheckResID(hResContext *hrc, uint32 s[]) {
-	if (s != NULL) {
+	if (s != nullptr) {
 		if (s[0] == 0)
 			return false;
 

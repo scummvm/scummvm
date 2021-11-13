@@ -50,7 +50,7 @@ CVideoBox::CVideoBox(const Rect16 &box,
 	vidDec[1].set(vidPanRects[1], vidPan2ResID);
 
 	// null out the decRes pointer
-	decRes = NULL;
+	decRes = nullptr;
 
 	rInfo.result = -1;
 	rInfo.running = false;
@@ -60,7 +60,7 @@ CVideoBox::~CVideoBox() {
 	// remove the resource handle
 	if (decRes)
 		resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 	// stop video if not done
 	g_vm->abortVideo();
@@ -90,7 +90,7 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 	requestInfo     *ri;
 
 	win = getWindow();      // get the window pointer
-	ri = win ? (requestInfo *)win->userData : NULL;
+	ri = win ? (requestInfo *)win->userData : nullptr;
 
 	if (ri) {
 		ri->running = 0;
@@ -176,7 +176,7 @@ int16 openVidBox(char *fileName) {
 
 	g_vm->_pal->quickSavePalette();
 	// create a video box
-	CVideoBox videoBox(area, 0, NULL);
+	CVideoBox videoBox(area, 0, nullptr);
 
 	// open this video box
 	int16 result = videoBox.openVidBox(fileName);

@@ -208,9 +208,9 @@ static const StaticRect *saveLoadTextRects[kNumSaveLoadTexts] = {
 // save/load dialog window decorations
 
 static StaticWindow saveWindowDecorations[kNumSaveLoadPanels] = {
-	{SLTopPanel, NULL, SLTopPanelResID},
-	{SLMidPanel, NULL, SLMidPanelResID},
-	{SLBotPanel, NULL, SLBotPanelResID}
+	{SLTopPanel, nullptr, SLTopPanelResID},
+	{SLMidPanel, nullptr, SLMidPanelResID},
+	{SLBotPanel, nullptr, SLBotPanelResID}
 };
 
 
@@ -444,9 +444,9 @@ static const StaticRect *optionsTextRects[] = {
 // options dialog window decorations
 
 static StaticWindow optionsDecorations[kNumOptionsPanels] = {
-	{optTopPanel, NULL, optTopPanelResID},
-	{optMidPanel, NULL, optMidPanelResID},
-	{optBotPanel, NULL, optBotPanelResID}
+	{optTopPanel, nullptr, optTopPanelResID},
+	{optMidPanel, nullptr, optMidPanelResID},
+	{optBotPanel, nullptr, optBotPanelResID}
 };
 
 
