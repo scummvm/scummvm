@@ -31,12 +31,12 @@
 namespace Pegasus {
 
 SpriteDragger::SpriteDragger() {
-	_draggingSprite = 0;
+	_draggingSprite = nullptr;
 	_limitRect = Common::Rect(-30000, -30000, 30000, 30000);
 	_slopRect = Common::Rect(-30000, -30000, 30000, 30000);
 	_dragOffset.x = 0;
 	_dragOffset.y = 0;
-	_lastHotspot = 0;
+	_lastHotspot = nullptr;
 }
 
 void SpriteDragger::setDragSprite(Sprite *newSprite) {

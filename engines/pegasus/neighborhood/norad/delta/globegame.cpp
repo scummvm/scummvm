@@ -986,7 +986,7 @@ void GlobeGame::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	input.getInputLocation(where);
 	Hotspot *spot = g_allHotspots.findHotspot(where);
 
-	if (((PegasusEngine *)g_engine)->_cursor->isVisible() && spot != 0 &&
+	if (((PegasusEngine *)g_engine)->_cursor->isVisible() && spot != nullptr &&
 			spot->getObjectID() == kNorad79SiloAreaSpotID && findClickedSilo(input) != -1) {
 		_targetHighlightUpperLeft.show();
 		_targetHighlightUpperRight.show();

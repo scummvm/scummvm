@@ -203,12 +203,12 @@ int operator!=(const Input &arg1, const Input &arg2) {
 	return !operator==(arg1, arg2);
 }
 
-InputHandler *InputHandler::_inputHandler = 0;
+InputHandler *InputHandler::_inputHandler = nullptr;
 bool InputHandler::_invalHotspots = false;
 InputBits InputHandler::_lastFilter = kFilterNoInput;
 
 InputHandler *InputHandler::setInputHandler(InputHandler *currentHandler) {
-	InputHandler *result = 0;
+	InputHandler *result = nullptr;
 
 	if (_inputHandler != currentHandler && (!_inputHandler || _inputHandler->releaseInputFocus())) {
 		result = _inputHandler;
@@ -223,7 +223,7 @@ InputHandler *InputHandler::setInputHandler(InputHandler *currentHandler) {
 void InputHandler::pollForInput() {
 	if (_inputHandler) {
 		Input input;
-		Hotspot *cursorSpot = 0;
+		Hotspot *cursorSpot = nullptr;
 
 		InputHandler::getInput(input, cursorSpot);
 		if (_inputHandler->isClickInput(input, cursorSpot))
@@ -332,7 +332,7 @@ bool InputHandler::wantsCursor() {
 	return false;
 }
 
-Tracker *Tracker::_currentTracker = 0;
+Tracker *Tracker::_currentTracker = nullptr;
 
 void Tracker::handleInput(const Input &input, const Hotspot *) {
 	if (stopTrackingInput(input))
@@ -350,7 +350,7 @@ void Tracker::startTracking(const Input &) {
 
 void Tracker::stopTracking(const Input &) {
 	if (isTracking()) {
-		_currentTracker = NULL;
+		_currentTracker = nullptr;
 		InputHandler::setInputHandler(_savedHandler);
 	}
 }

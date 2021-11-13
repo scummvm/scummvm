@@ -38,7 +38,7 @@ namespace Pegasus {
 
 Surface::Surface() {
 	_ownsSurface = false;
-	_surface = 0;
+	_surface = nullptr;
 }
 
 Surface::~Surface() {
@@ -52,7 +52,7 @@ void Surface::deallocateSurface() {
 			delete _surface;
 		}
 
-		_surface = 0;
+		_surface = nullptr;
 		_bounds = Common::Rect();
 		_ownsSurface = false;
 	}

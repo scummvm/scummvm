@@ -79,28 +79,28 @@
 
 namespace Pegasus {
 
-PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc),
+PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(nullptr), _gameDescription(gamedesc),
 		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID), _itemDragger(this), _bigInfoMovie(kNoDisplayElement),
 		_smallInfoMovie(kNoDisplayElement) {
-	_continuePoint = 0;
+	_continuePoint = nullptr;
 	_saveAllowed = _loadAllowed = true;
 	_saveRequested = _loadRequested = false;
-	_gameMenu = 0;
+	_gameMenu = nullptr;
 	_deathReason = kDeathStranded;
-	_neighborhood = 0;
+	_neighborhood = nullptr;
 	_FXLevel = 0x80;
 	_ambientLevel = 0x80;
 	_gameMode = kNoMode;
 	_switchModesSync = false;
-	_draggingItem = 0;
+	_draggingItem = nullptr;
 	_dragType = kDragNoDrag;
-	_idlerHead = 0;
+	_idlerHead = nullptr;
 	_currentCD = 1;
-	_introTimer = 0;
+	_introTimer = nullptr;
 	_toggleRequested = false;
 	_chattyAI = true;
 	_chattyArthur = true;
-	_aiSaveStream = 0;
+	_aiSaveStream = nullptr;
 	_heardOverviewVoice = false;
 }
 
@@ -422,7 +422,7 @@ void PegasusEngine::addIdler(Idler *idler) {
 	idler->_nextIdler = _idlerHead;
 	if (_idlerHead)
 		_idlerHead->_prevIdler = idler;
-	idler->_prevIdler = 0;
+	idler->_prevIdler = nullptr;
 	_idlerHead = idler;
 }
 
@@ -433,12 +433,12 @@ void PegasusEngine::removeIdler(Idler *idler) {
 		idler->_nextIdler->_prevIdler = idler->_prevIdler;
 	if (idler == _idlerHead)
 		_idlerHead = idler->_nextIdler;
-	idler->_nextIdler = 0;
-	idler->_prevIdler = 0;
+	idler->_nextIdler = nullptr;
+	idler->_prevIdler = nullptr;
 }
 
 void PegasusEngine::giveIdleTime() {
-	for (Idler *idler = _idlerHead; idler != 0; idler = idler->_nextIdler)
+	for (Idler *idler = _idlerHead; idler != nullptr; idler = idler->_nextIdler)
 		idler->useIdleTime();
 }
 
@@ -454,8 +454,8 @@ bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 	// Dispose currently running stuff
 	lowerInventoryDrawerSync();
 	lowerBiochipDrawerSync();
-	useMenu(0);
-	useNeighborhood(0);
+	useMenu(nullptr);
+	useNeighborhood(nullptr);
 	removeAllItemsFromInventory();
 	removeAllItemsFromBiochips();
 	_currentItemID = kNoItemID;
@@ -769,7 +769,7 @@ void PegasusEngine::receiveNotification(Notification *notification, const Notifi
 				showTempScreen("Images/Demo/NGsplashScrn.pict");
 
 				if (shouldQuit()) {
-					useMenu(0);
+					useMenu(nullptr);
 					return;
 				}
 
@@ -824,7 +824,7 @@ void PegasusEngine::introTimerExpired() {
 
 		bool skipped = false;
 
-		Video::VideoDecoder *video = 0;
+		Video::VideoDecoder *video = nullptr;
 
 #ifdef USE_THEORADEC
 		if (isDVD()) {
@@ -832,7 +832,7 @@ void PegasusEngine::introTimerExpired() {
 
 			if (!video->loadFile(_introDirectory + "/LilMovie_hq.ogg")) {
 				delete video;
-				video = 0;
+				video = nullptr;
 			}
 		}
 #endif
@@ -994,18 +994,18 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 				}
 
 				_gfx->doFadeOutSync();
-				useMenu(0);
+				useMenu(nullptr);
 				_gfx->enableErase();
 				_gfx->updateDisplay();
 				_gfx->disableErase();
 
-				Video::VideoDecoder *video = 0;
+				Video::VideoDecoder *video = nullptr;
 				if (GameState.getEasterEgg()) {
 #ifdef USE_THEORADEC
 					video = new Video::TheoraDecoder();
 					if (!video->loadFile(_introDirectory + "/Closing_hq2.ogg")) {
 						delete video;
-						video = 0;
+						video = nullptr;
 					}
 #endif
 					if (!video) {
@@ -1018,7 +1018,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 					video = new Video::TheoraDecoder();
 					if (!video->loadFile(_introDirectory + "/Closing_hq1.ogg")) {
 						delete video;
-						video = 0;
+						video = nullptr;
 					}
 #endif
 					if (!video) {
@@ -1045,7 +1045,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 					video = new Video::TheoraDecoder();
 					if (!video->loadFile(_introDirectory + "/Closing_hq3.ogg")) {
 						delete video;
-						video = 0;
+						video = nullptr;
 					}
 #endif
 					if (!video) {
@@ -1214,7 +1214,7 @@ void PegasusEngine::doInterfaceOverview() {
 	static const Common::Rect hiddenSpot = Common::Rect(595, 417, 595 + 4, 417 + 5);
 
 	_gfx->doFadeOutSync();
-	useMenu(0);
+	useMenu(nullptr);
 
 	Picture leftBackground(kNoDisplayElement);
 	leftBackground.initFromPICTFile("Images/Interface/OVLeft.mac");
@@ -1486,7 +1486,7 @@ InventoryItem *PegasusEngine::getCurrentInventoryItem() {
 	if (g_interface)
 		return g_interface->getCurrentInventoryItem();
 
-	return 0;
+	return nullptr;
 }
 
 bool PegasusEngine::itemInInventory(InventoryItem *item) {
@@ -1501,7 +1501,7 @@ BiochipItem *PegasusEngine::getCurrentBiochip() {
 	if (g_interface)
 		return g_interface->getCurrentBiochip();
 
-	return 0;
+	return nullptr;
 }
 
 bool PegasusEngine::itemInBiochips(BiochipItem *item) {
@@ -1677,11 +1677,11 @@ void PegasusEngine::throwAwayEverything() {
 	else
 		_currentBiochipID = kNoItemID;
 
-	useMenu(0);
-	useNeighborhood(0);
+	useMenu(nullptr);
+	useNeighborhood(nullptr);
 
 	delete g_interface;
-	g_interface = 0;
+	g_interface = nullptr;
 }
 
 InputBits PegasusEngine::getInputFilter() {
@@ -1810,7 +1810,7 @@ void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
 
 void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 	if (_neighborhood)
-		useNeighborhood(0);
+		useNeighborhood(nullptr);
 
 	// Sub chase is special
 	if (neighborhoodID == kNoradSubChaseID) {
@@ -1861,7 +1861,7 @@ void PegasusEngine::startNewGame() {
 		Arthur.resetArthurState();
 
 	_gfx->doFadeOutSync();
-	useMenu(0);
+	useMenu(nullptr);
 
 	_gfx->enableErase();
 	_gfx->updateDisplay();
@@ -1965,7 +1965,7 @@ void PegasusEngine::makeNeighborhood(NeighborhoodID neighborhoodID, Neighborhood
 }
 
 bool PegasusEngine::wantsCursor() {
-	return _gameMenu == 0;
+	return _gameMenu == nullptr;
 }
 
 void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot) {
@@ -2359,7 +2359,7 @@ void PegasusEngine::pauseMenu(bool menuUp) {
 		_menuPauseToken.clear();
 		_screenDimmer.hide();
 		_screenDimmer.stopDisplaying();
-		useMenu(0);
+		useMenu(nullptr);
 		g_AIArea->checkMiddleArea();
 	}
 }

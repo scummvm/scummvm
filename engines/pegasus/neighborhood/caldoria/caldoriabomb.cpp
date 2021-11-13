@@ -930,8 +930,8 @@ bool setEdgeUsed(BombEdgeList edges, VertexType fromVertex, VertexType toVertex)
 	while (numEdges--) {
 		VertexType *p = anEdge;
 		VertexType numVerts = *++p;
-		VertexType *fromPtr = 0;
-		VertexType *toPtr = 0;
+		VertexType *fromPtr = nullptr;
+		VertexType *toPtr = nullptr;
 		VertexType i = numVerts;
 		p++;
 

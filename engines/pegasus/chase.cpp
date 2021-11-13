@@ -42,7 +42,7 @@ ChaseInteraction::ChaseInteraction(const InteractionID interactionID, Neighborho
 	// TRIPLE SUPER ULTRA HACK
 	// This avoids a nasty optimization bug I have been unable to track down
 	// after days and days of searching. Let's just ship the game already.
-	setNextHandler(0);
+	setNextHandler(nullptr);
 
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 }

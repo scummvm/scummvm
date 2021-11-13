@@ -424,7 +424,7 @@ void NoradDelta::arriveAtNorad68West() {
 
 	BiochipItem *retScan = _vm->getCurrentBiochip();
 
-	if (retScan != 0 && retScan->getObjectID() == kRetinalScanBiochip) {
+	if (retScan != nullptr && retScan->getObjectID() == kRetinalScanBiochip) {
 		((RetScanChip *)retScan)->searchForLaser();
 		succeedRetinalScan();
 	} else {
@@ -864,7 +864,7 @@ uint NoradDelta::getNumHints() {
 		case MakeRoomView(kNorad68, kWest):
 			if (_vm->playerHasItemID(kRetinalScanBiochip)) {
 				BiochipItem *retScan = _vm->getCurrentBiochip();
-				if (retScan == 0 || retScan->getObjectID() != kRetinalScanBiochip)
+				if (retScan == nullptr || retScan->getObjectID() != kRetinalScanBiochip)
 					numHints = 2;
 			} else if (!GameState.isCurrentDoorOpen()) {
 				numHints = 2;
@@ -943,7 +943,7 @@ bool NoradDelta::canSolve() {
 
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad68, kWest)) {
 		BiochipItem *biochip = _vm->getCurrentBiochip();
-		if (biochip != 0 && biochip->getObjectID() != kRetinalScanBiochip)
+		if (biochip != nullptr && biochip->getObjectID() != kRetinalScanBiochip)
 			return true;
 	}
 
@@ -958,7 +958,7 @@ void NoradDelta::doSolve() {
 			_vm->addItemToBiochips((BiochipItem *)_vm->getAllItems().findItemByID(kRetinalScanBiochip));
 
 		BiochipItem *biochip = _vm->getCurrentBiochip();
-		if (biochip != 0 && biochip->getObjectID() != kRetinalScanBiochip && g_interface)
+		if (biochip != nullptr && biochip->getObjectID() != kRetinalScanBiochip && g_interface)
 			g_interface->setCurrentBiochipID(kRetinalScanBiochip);
 
 		Hotspot *spot = _vm->getAllHotspots().findHotspotByID(kNorad68WestSpotID);

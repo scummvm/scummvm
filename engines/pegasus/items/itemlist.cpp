@@ -61,7 +61,7 @@ Item *ItemList::findItemByID(const ItemID id) {
 		if ((*it)->getObjectID() == id)
 			return *it;
 
-	return 0;
+	return nullptr;
 }
 
 void ItemList::resetAllItems() {

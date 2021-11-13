@@ -143,7 +143,7 @@ void Mars::init() {
 
 	Hotspot *attackSpot = _vm->getAllHotspots().findHotspotByID(kAttackRobotHotSpotID);
 	attackSpot->setMaskedHotspotFlags(kDropItemSpotFlag, kDropItemSpotFlag);
-	_attackingItem = NULL;
+	_attackingItem = nullptr;
 
 	forceStridingStop(kMars08, kNorth, kAltMarsNormal);
 
@@ -164,7 +164,7 @@ GameInteraction *Mars::makeInteraction(const InteractionID interactionID) {
 	case kMarsCanyonChaseInteractionID:
 		return new CanyonChase(this);
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -2853,7 +2853,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			break;
 		case kMars48RobotDefends:
 			_vm->addItemToInventory(_attackingItem);
-			_attackingItem = 0;
+			_attackingItem = nullptr;
 			if (_privateFlags.getFlag(kMarsPrivateRobotTiredOfWaitingFlag)) {
 				startExtraSequence(kMars48RobotKillsPlayer, kExtraCompletedFlag, kFilterNoInput);
 				loadLoopSound2("", 0x100, 0, 0);
@@ -3118,7 +3118,7 @@ void Mars::spotCompleted() {
 
 void Mars::startUpFromFinishedTunnelPod() {
 	arriveAt(kMars45, kSouth);
-	if (g_AIArea != NULL)
+	if (g_AIArea != nullptr)
 		g_AIArea->checkMiddleArea();
 }
 
@@ -3136,7 +3136,7 @@ void Mars::doCanyonChase() {
 	_spotSounds.initFromQuickTime(getSoundSpotsName());
 	_spotSounds.setVolume(_vm->getSoundFXLevel());
 
-	Video::VideoDecoder *video = 0;
+	Video::VideoDecoder *video = nullptr;
 
 #ifdef USE_THEORADEC
 	if (_vm->isDVD()) {
@@ -3144,7 +3144,7 @@ void Mars::doCanyonChase() {
 
 		if (!video->loadFile("Images/Mars/M44ESA_hq.ogg")) {
 			delete video;
-			video = 0;
+			video = nullptr;
 		}
 	}
 #endif
@@ -3881,7 +3881,7 @@ void Mars::playSpaceAmbient() {
 void Mars::transportOutFromSpaceChase(bool destroyedShip) {
 	throwAwayMarsShuttle();
 
-	Video::VideoDecoder *video = 0;
+	Video::VideoDecoder *video = nullptr;
 
 #ifdef USE_THEORADEC
 	if (_vm->isDVD()) {
@@ -3890,11 +3890,11 @@ void Mars::transportOutFromSpaceChase(bool destroyedShip) {
 		if (destroyedShip) {
 			if (!video->loadFile("Images/Mars/M98EAP_hq.ogg")) {
 				delete video;
-				video = 0;
+				video = nullptr;
 			}
 		} else if (!video->loadFile("Images/Mars/M98EAE_hq.ogg")) {
 			delete video;
-			video = 0;
+			video = nullptr;
 		}
 	}
 #endif

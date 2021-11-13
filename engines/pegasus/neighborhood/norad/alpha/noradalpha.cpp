@@ -183,7 +183,7 @@ void NoradAlpha::start() {
 				if (itemNeighborhood == getObjectID())
 					_fillingStationItem = item;
 				else
-					_fillingStationItem = 0;
+					_fillingStationItem = nullptr;
 			}
 		}
 	}
@@ -773,10 +773,10 @@ void NoradAlpha::clickInHotspot(const Input &input, const Hotspot *cursorSpot) {
 void NoradAlpha::takeItemFromRoom(Item *item) {
 	if (GameState.getCurrentRoom() == kNorad01West) {
 		if (_fillingStationItem == item) {
-			_fillingStationItem = 0;
+			_fillingStationItem = nullptr;
 			GameState.setNoradGassed(false);
 			checkAirMask();
-			((NoradAlphaFillingStation *)_currentInteraction)->newFillingItem(0);
+			((NoradAlphaFillingStation *)_currentInteraction)->newFillingItem(nullptr);
 			forceStridingStop(kNorad03, kEast, kAltNoradAlphaNormal);
 		}
 	}

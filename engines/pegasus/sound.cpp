@@ -35,9 +35,9 @@
 namespace Pegasus {
 
 Sound::Sound() {
-	_stream = 0;
+	_stream = nullptr;
 	_volume = 0xFF;
-	_fader = 0;
+	_fader = nullptr;
 }
 
 Sound::~Sound() {
@@ -46,7 +46,7 @@ Sound::~Sound() {
 
 void Sound::disposeSound() {
 	stopSound();
-	delete _stream; _stream = 0;
+	delete _stream; _stream = nullptr;
 }
 
 void Sound::initFromAIFFFile(const Common::String &fileName) {
@@ -81,7 +81,7 @@ void Sound::initFromQuickTime(const Common::String &fileName) {
 
 void Sound::attachFader(SoundFader *fader) {
 	if (_fader)
-		_fader->attachSound(0);
+		_fader->attachSound(nullptr);
 
 	_fader = fader;
 
@@ -148,7 +148,7 @@ bool Sound::isPlaying() {
 }
 
 bool Sound::isSoundLoaded() const {
-	return _stream != 0;
+	return _stream != nullptr;
 }
 
 SoundTimeBase::SoundTimeBase() {

@@ -30,7 +30,7 @@
 
 static const PlainGameDescriptor pegasusGames[] = {
 	{"pegasus", "The Journeyman Project: Pegasus Prime"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 

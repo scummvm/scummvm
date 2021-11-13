@@ -229,7 +229,7 @@ Hotspot *HotspotList::findHotspot(const Common::Point where) {
 		if ((*it)->pointInSpot(where))
 			return *it;
 
-	return 0;
+	return nullptr;
 }
 
 HotSpotID HotspotList::findHotspotID(const Common::Point where) {
@@ -242,7 +242,7 @@ Hotspot *HotspotList::findHotspotByID(const HotSpotID id) {
 		if ((*it)->getObjectID() == id)
 			return *it;
 
-	return 0;
+	return nullptr;
 }
 
 Hotspot *HotspotList::findHotspotByMask(const HotSpotFlags flags) {
@@ -250,7 +250,7 @@ Hotspot *HotspotList::findHotspotByMask(const HotSpotFlags flags) {
 		if (((*it)->getHotspotFlags() & flags) == flags)
 			return *it;
 
-	return 0;
+	return nullptr;
 }
 
 void HotspotList::activateMaskedHotspots(const HotSpotFlags flags) {

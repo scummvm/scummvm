@@ -29,7 +29,7 @@
 namespace Pegasus {
 
 AutoDragger::AutoDragger() {
-	_draggingElement = NULL;
+	_draggingElement = nullptr;
 	_lastTime = 0;
 	initCallBack(this, kCallBackAtExtremes);
 }
@@ -58,7 +58,7 @@ void AutoDragger::autoDrag(DisplayElement *dragElement, const Common::Point &sta
 void AutoDragger::stopDragging() {
 	cancelCallBack();
 	stopIdling();
-	_draggingElement = 0;
+	_draggingElement = nullptr;
 	_startLocation = Common::Point();
 	_stopLocation = Common::Point();
 	_lastTime = 0;

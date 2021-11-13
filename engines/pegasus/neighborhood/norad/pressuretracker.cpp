@@ -32,7 +32,7 @@ namespace Pegasus {
 
 PressureTracker::PressureTracker(PressureDoor *pressureDoor) {
 	_pressureDoor = pressureDoor;
-	_trackSpot = 0;
+	_trackSpot = nullptr;
 	_trackTime = 0;
 	_trackButton = nullptr;
 }

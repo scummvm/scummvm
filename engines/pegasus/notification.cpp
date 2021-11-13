@@ -39,7 +39,7 @@ Notification::Notification(const NotificationID id, NotificationManager *owner) 
 
 Notification::~Notification() {
 	for (uint i = 0; i < _receivers.size(); i++)
-		_receivers[i].receiver->newNotification(NULL);
+		_receivers[i].receiver->newNotification(nullptr);
 
 	if (_owner)
 		_owner->removeNotification(this);
@@ -98,7 +98,7 @@ int operator!=(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
 }
 
 NotificationReceiver::NotificationReceiver() {
-	_notification = NULL;
+	_notification = nullptr;
 }
 
 NotificationReceiver::~NotificationReceiver() {
@@ -137,7 +137,7 @@ void NotificationManager::removeNotification(Notification *notification) {
 
 void NotificationManager::detachNotifications() {
 	for (NotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
-		(*it)->_owner = 0;
+		(*it)->_owner = nullptr;
 }
 
 void NotificationManager::checkNotifications() {

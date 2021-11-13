@@ -193,7 +193,7 @@ void FaderAnimation::setFaderValue(const int32 newValue) {
 }
 
 SoundFader::SoundFader() {
-	_sound = 0;
+	_sound = nullptr;
 	_masterVolume = 0xff;
 }
 

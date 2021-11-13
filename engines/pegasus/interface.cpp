@@ -33,9 +33,9 @@
 
 namespace Pegasus {
 
-Interface *g_interface = 0;
+Interface *g_interface = nullptr;
 
-Interface::Interface() : InputHandler(0), _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)((PegasusEngine *)g_engine)),
+Interface::Interface() : InputHandler(nullptr), _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)((PegasusEngine *)g_engine)),
 			_currentItemSpot(kCurrentItemSpotID), _currentBiochipSpot(kCurrentBiochipSpotID),
 			_background1(kInterface1ID), _background2(kInterface2ID), _background3(kInterface3ID),
 			_background4(kInterface4ID), _datePicture(kDateID), _inventoryPush(kInventoryPushID),
@@ -43,8 +43,8 @@ Interface::Interface() : InputHandler(0), _interfaceNotification(kInterfaceNotif
 			_inventoryPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getItemsInventory()),
 			_biochipPush(kBiochipPushID), _biochipLid(kBiochipLidID, kNoDisplayElement),
 			_biochipPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getBiochipsInventory()) {
-	g_energyMonitor = 0;
-	_previousHandler = 0;
+	g_energyMonitor = nullptr;
+	_previousHandler = nullptr;
 	_inventoryRaised = false;
 	_biochipRaised = false;
 	_playingEndMessage = false;
@@ -53,7 +53,7 @@ Interface::Interface() : InputHandler(0), _interfaceNotification(kInterfaceNotif
 
 Interface::~Interface() {
 	throwAwayInterface();
-	g_interface = 0;
+	g_interface = nullptr;
 }
 
 void Interface::throwAwayInterface() {
@@ -175,7 +175,7 @@ void Interface::validateInventoryPanel() {
 		_inventoryPanel.initInventoryImage(&_inventoryPush);
 		_inventoryPanel.moveElementTo(kInventoryPushLeft, kInventoryPushTop);
 		_inventoryPush.setSlideDirection(kSlideUpMask);
-		_inventoryPush.setInAndOutElements(&_inventoryPanel, 0);
+		_inventoryPush.setInAndOutElements(&_inventoryPanel, nullptr);
 		_inventoryPush.setDisplayOrder(kInventoryPushOrder);
 		_inventoryPush.startDisplaying();
 
@@ -225,7 +225,7 @@ void Interface::validateBiochipPanel() {
 		_biochipPanel.initInventoryImage(&_biochipPush);
 		_biochipPanel.moveElementTo(kBiochipPushLeft, kBiochipPushTop);
 		_biochipPush.setSlideDirection(kSlideUpMask);
-		_biochipPush.setInAndOutElements(&_biochipPanel, 0);
+		_biochipPush.setInAndOutElements(&_biochipPanel, nullptr);
 		_biochipPush.setDisplayOrder(kBiochipPushOrder);
 		_biochipPush.startDisplaying();
 

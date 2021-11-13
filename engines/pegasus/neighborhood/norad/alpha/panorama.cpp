@@ -40,7 +40,7 @@ Panorama::~Panorama() {
 void Panorama::blankFields() {
 	_viewBounds = Common::Rect();
 	_drawBounds = Common::Rect();
-	_mask = 0;
+	_mask = nullptr;
 	_panoramaWidth = 0;
 	_panoramaHeight = 0;
 	_stripWidth = 0;

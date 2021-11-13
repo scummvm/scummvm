@@ -111,8 +111,8 @@ uint32 ScreenFader::fadePixel(uint32 color, int32 percent) const {
 }
 
 Transition::Transition(const DisplayElementID id) : FaderAnimation(id) {
-	_outPicture = 0;
-	_inPicture = 0;
+	_outPicture = nullptr;
+	_inPicture = nullptr;
 }
 
 void Transition::setBounds(const Common::Rect &r) {

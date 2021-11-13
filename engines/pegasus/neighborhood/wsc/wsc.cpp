@@ -526,8 +526,8 @@ void WSC::init() {
 
 	_extraMovieCallBack.setNotification(&_neighborhoodNotification);
 
-	_cachedZoomSpot = 0;
-	_argonSprite = 0;
+	_cachedZoomSpot = nullptr;
+	_argonSprite = nullptr;
 
 	// HACK: Fix the drag item for picking up the Sinclair Key Card
 	HotspotInfoTable::Entry *entry = findHotspotEntry(kWSC02SouthTakeArgonSpotID);
@@ -2003,7 +2003,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			_privateFlags.setFlag(kWSCPrivateLabMessagesOpenFlag, false);
 			if (_cachedZoomSpot) {
 				zoomTo(_cachedZoomSpot);
-				_cachedZoomSpot = 0;
+				_cachedZoomSpot = nullptr;
 			}
 			break;
 		case kWSC02TurnOnMorphScreen:
@@ -2118,7 +2118,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			setCurrentActivation(kActivationW61MessagesOff);
 			if (_cachedZoomSpot) {
 				zoomTo(_cachedZoomSpot);
-				_cachedZoomSpot = 0;
+				_cachedZoomSpot = nullptr;
 			}
 			break;
 		case kW61SouthScreenOnWithGun:
@@ -2134,7 +2134,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			setCurrentActivation(kActivationW61SouthOff);
 			if (_cachedZoomSpot) {
 				zoomTo(_cachedZoomSpot);
-				_cachedZoomSpot = 0;
+				_cachedZoomSpot = nullptr;
 			}
 			break;
 		case kW62ZoomOutFromRobot:
@@ -2229,7 +2229,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			break;
 		case kW98MorphsToRobot:
 			if (_argonSprite) {
-				delete _argonSprite; _argonSprite = 0;
+				delete _argonSprite; _argonSprite = nullptr;
 				startExtraSequence(kW98RobotGassed, kExtraCompletedFlag, kFilterNoInput);
 			} else if (_privateFlags.getFlag(kWSCPrivateClickedCatwalkCableFlag)) {
 				startExtraSequence(kW98RobotShocked, kExtraCompletedFlag, kFilterNoInput);

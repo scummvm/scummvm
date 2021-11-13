@@ -33,7 +33,7 @@
 namespace Pegasus {
 
 Movie::Movie(const DisplayElementID id) : Animation(id) {
-	_video = 0;
+	_video = nullptr;
 	setScale(600);
 }
 
@@ -46,7 +46,7 @@ Movie::~Movie() {
 void Movie::releaseMovie() {
 	if (_video) {
 		delete _video;
-		_video = 0;
+		_video = nullptr;
 		disposeAllCallBacks();
 		deallocateSurface();
 	}
@@ -92,7 +92,7 @@ void Movie::redrawMovieWorld() {
 			return;
 
 		// Make sure we have a surface in the current pixel format
-		Graphics::Surface *convertedFrame = 0;
+		Graphics::Surface *convertedFrame = nullptr;
 
 		if (frame->format != g_system->getScreenFormat()) {
 			convertedFrame = frame->convertTo(g_system->getScreenFormat());

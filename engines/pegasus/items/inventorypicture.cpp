@@ -41,7 +41,7 @@ InventoryPicture::InventoryPicture(const DisplayElementID id, InputHandler *next
 		_currentItem = (Item *)_inventory->getItemAt(0);
 	} else {
 		_currentItemIndex = -1;
-		_currentItem = 0;
+		_currentItem = nullptr;
 	}
 
 	_active = false;
@@ -103,7 +103,7 @@ void InventoryPicture::setCurrentItemIndex(int32 index) {
 	if (index >= _inventory->getNumItems())
 		index = _inventory->getNumItems() - 1;
 
-	Item *currentItem = 0;
+	Item *currentItem = nullptr;
 	if (index >= 0)
 		currentItem = (Item *)_inventory->getItemAt(index);
 
