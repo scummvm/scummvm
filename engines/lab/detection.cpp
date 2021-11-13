@@ -33,7 +33,7 @@
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrinth of Time" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription labDescriptions[] = {
@@ -64,7 +64,7 @@ static const ADGameDescription labDescriptions[] = {
 			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
 			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
 			{ "wyrmkeep",0, "97c7064c54c28b952d37c4ebff6efa50", 52286 }, // game/spict/intro
-			{ NULL, 0, NULL, 0 }
+			{ nullptr, 0, nullptr, 0 }
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -90,7 +90,7 @@ static const char *const directoryGlobs[] = {
 		"rooms",
 		"h2",
 		"intro",
-		0
+		nullptr
 };
 
 
