@@ -60,7 +60,7 @@ void VDXPlayer::stopAudioStream() {
 	if (_audioStream) {
 		g_system->getMixer()->stopHandle(_soundHandle);
 	}
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
 uint16 VDXPlayer::loadInternal() {
@@ -137,7 +137,7 @@ uint16 VDXPlayer::loadInternal() {
 
 bool VDXPlayer::playFrameInternal() {
 	byte currRes = 0x80;
-	Common::ReadStream *vdxData = 0;
+	Common::ReadStream *vdxData = nullptr;
 	while (currRes == 0x80) {
 		currRes = _file->readByte();
 
@@ -184,7 +184,7 @@ bool VDXPlayer::playFrameInternal() {
 				error("Groovie::VDX: Invalid resource type: %d", currRes);
 		}
 		delete vdxData;
-		vdxData = 0;
+		vdxData = nullptr;
 	}
 
 	// Wait until the current frame can be shown
@@ -505,7 +505,7 @@ void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colors, uint16 imageWidth)
 	// Move the pointers to the beginning of the current block
 	int32 blockOff = _origX + _origY * imageWidth;
 	dest += blockOff;
-	byte *fgBuf = 0;
+	byte *fgBuf = nullptr;
 	if (_flagSeven) {
 		fgBuf = (byte *)_fg->getPixels() + offset + blockOff;
 		//byte *bgBuf = (byte *)_bg->getPixels() + offset + blockOff;

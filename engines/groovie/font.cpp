@@ -28,7 +28,7 @@
 
 namespace Groovie {
 
-T7GFont::T7GFont() : _maxHeight(0), _maxWidth(0), _glyphs(0) {
+T7GFont::T7GFont() : _maxHeight(0), _maxWidth(0), _glyphs(nullptr) {
 }
 
 T7GFont::~T7GFont() {

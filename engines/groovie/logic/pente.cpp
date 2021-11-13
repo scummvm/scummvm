@@ -121,7 +121,7 @@ void PenteGame::buildLookupTable() {
 
 void PenteGame::penteDeInit() {
 	delete _table;
-	_table = NULL;
+	_table = nullptr;
 }
 
 void PenteGame::penteInit(uint width, uint height, uint length) {
@@ -642,7 +642,7 @@ void PenteGame::opQueryPiece(byte *vars) {
 
 void PenteGame::run(byte *vars) {
 	byte op = vars[4];
-	if (_table == NULL && op != 0) {
+	if (_table == nullptr && op != 0) {
 		penteInit(20, 15, 5);
 	}
 	debugC(kDebugLogic, "penteOp vars[4]: %d", (int)op);
@@ -694,7 +694,7 @@ void PenteGame::run(byte *vars) {
 }
 
 PenteGame::PenteGame() : _random("PenteGame") {
-	_table = NULL;
+	_table = nullptr;
 	_nextCapturedSpot = -1;
 	_animateCapturesBitMask = 0;
 	_previousMove = 0;

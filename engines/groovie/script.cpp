@@ -76,9 +76,9 @@ enum kSpecialVariableTypes {
 };
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
-	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(UINT_MAX), _cellGame(NULL), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts"), _tlcGame(0) {
+	_code(nullptr), _savedCode(nullptr), _stacktop(0), _debugger(nullptr), _vm(vm),
+	_videoFile(nullptr), _videoRef(UINT_MAX), _cellGame(nullptr), _lastCursor(0xff),
+	_version(version), _random("GroovieScripts"), _tlcGame(nullptr) {
 
 	// Initialize the opcode set depending on the engine version
 	if (version == kGroovieT7G) {
@@ -150,7 +150,7 @@ void Script::timerTick() {
 }
 
 bool Script::loadScript(Common::String filename) {
-	Common::SeekableReadStream *scriptfile = 0;
+	Common::SeekableReadStream *scriptfile = nullptr;
 
 	if (_vm->_macResFork) {
 		// Try to open the script file from the resource fork
@@ -226,7 +226,7 @@ void Script::directGameLoad(int slot) {
 	}
 
 	uint16 targetInstruction;
-	const byte *midiInitScript = 0;
+	const byte *midiInitScript = nullptr;
 	uint8 midiInitScriptSize = 0;
 
 	// HACK: We set the slot to load in the appropriate variable, and set the
@@ -860,7 +860,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 			// Close the file
 			delete _videoFile;
-			_videoFile = NULL;
+			_videoFile = nullptr;
 			_videoRef = UINT_MAX;
 
 			// Clear the input events while playing the video
@@ -912,7 +912,7 @@ void Script::o_inputloopstart() {	//0x0B
 	debugC(5, kDebugScript, "Groovie::Script: Input loop start");
 
 	// For TLC the regions for many questions are in an extra database. Reset internal region counters
-	if (_version == kGroovieTLC && _tlcGame != NULL) {
+	if (_version == kGroovieTLC && _tlcGame != nullptr) {
 #ifdef ENABLE_GROOVIE2
 		_tlcGame->getRegionRewind();
 #endif
@@ -967,7 +967,7 @@ void Script::o_hotspot_rect() {
 	uint8 cursor = readScript8bits();
 
 	// TLC: The regions for many questions are in an extra database
-	if (_version == kGroovieTLC && left == 0 && top == 0 && right == 0 && bottom == 0 && _tlcGame != NULL) {
+	if (_version == kGroovieTLC && left == 0 && top == 0 && right == 0 && bottom == 0 && _tlcGame != nullptr) {
 #ifdef ENABLE_GROOVIE2
 		if (_tlcGame->getRegionNext(left, top, right, bottom) < 0) {
 			debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d SKIPPED", left, top, right, bottom, address, cursor);
@@ -1835,7 +1835,7 @@ void Script::o_returnscript() {
 	delete[] _code;
 	_code = _savedCode;
 	_codeSize = _savedCodeSize;
-	_savedCode = NULL;
+	_savedCode = nullptr;
 	_currentInstruction = _savedInstruction;
 
 	// Restore the stack
