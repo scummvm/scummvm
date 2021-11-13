@@ -285,6 +285,7 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     destination_dir.mkdir(parents=True, exist_ok=True)
     for hpath, obj in vol.iter_paths():
+        # Encode the path
         upath = destination_dir
         for el in hpath:
             if japanese:
@@ -294,8 +295,11 @@ def extract_volume(args: argparse.Namespace) -> int:
 
             upath /= el
 
+        # Write the file to disk
         if isinstance(obj, machfs.Folder):
             upath.mkdir(exist_ok=True)
+            # Set the modified time for folders
+            os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
         else:
             print(upath)
             file = obj.data
@@ -303,6 +307,10 @@ def extract_volume(args: argparse.Namespace) -> int:
                 file = file_to_macbin(obj, hpath[-1].encode("mac_roman"))
             upath.write_bytes(file)
             os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
+            # This needs to be done after writing files as writing files resets
+            # the parent folder's modified time that was set before
+            parent_folder_modtime = vol.get(hpath[:-1]).mddate - 2082844800
+            os.utime(upath.parent, (parent_folder_modtime, parent_folder_modtime))
     return 0
 
 
