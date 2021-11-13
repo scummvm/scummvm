@@ -47,7 +47,7 @@ Font::Font(const byte *data) : _dataPtr(data) {
 	_itemHeight = _dataPtr[1];
 	_startItem  = _dataPtr[2];
 	_endItem    = _dataPtr[3];
-	_charWidths = 0;
+	_charWidths = nullptr;
 
 	uint8 rowAlignedBits = (_itemWidth - 1) / 8 + 1;
 
@@ -89,7 +89,7 @@ bool Font::hasChar(uint8 c) const {
 }
 
 bool Font::isMonospaced() const {
-	return _charWidths == 0;
+	return _charWidths == nullptr;
 }
 
 void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
@@ -158,11 +158,11 @@ void Font::drawString(const Common::String &str, int16 x, int16 y, int16 color1,
 const byte *Font::getCharData(uint8 c) const {
 	if (_endItem == 0) {
 		warning("Font::getCharData(): _endItem == 0");
-		return 0;
+		return nullptr;
 	}
 
 	if ((c < _startItem) || (c > _endItem))
-		return 0;
+		return nullptr;
 
 	return _data + (c - _startItem) * _itemSize;
 }

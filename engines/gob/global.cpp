@@ -105,7 +105,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_vgaPalette[14].red = 0x3F; _vgaPalette[14].green = 0x3F; _vgaPalette[14].blue = 0x15;
 	_vgaPalette[15].red = 0x3F; _vgaPalette[15].green = 0x3F; _vgaPalette[15].blue = 0x3F;
 
-	_pPaletteDesc = 0;
+	_pPaletteDesc = nullptr;
 
 	_setAllPalette  = false;
 	_dontSetPalette = false;

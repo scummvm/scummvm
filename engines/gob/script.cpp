@@ -36,11 +36,11 @@ Script::Script(GobEngine *vm) : _vm(vm) {
 
 	_finished = true;
 
-	_totData = 0;
-	_totPtr = 0;
+	_totData = nullptr;
+	_totPtr = nullptr;
 	_totSize = 0;
 
-	_lom = 0;
+	_lom = nullptr;
 
 	memset(&_totProperties, 0, sizeof(TOTFile::Properties));
 }
@@ -140,9 +140,9 @@ int32 Script::getOffset(byte *ptr) const {
 
 byte *Script::getData(int32 offset) const {
 	if (!_totData)
-		return 0;
+		return nullptr;
 	if ((offset < 0) || (((uint32) offset) >= _totSize))
-		return 0;
+		return nullptr;
 
 	return _totData + offset;
 }
@@ -322,12 +322,12 @@ bool Script::evalBool() {
 }
 
 int32 Script::evalInt() {
-	evalExpr(0);
+	evalExpr(nullptr);
 	return getResultInt();
 }
 
 const char *Script::evalString() {
-	evalExpr(0);
+	evalExpr(nullptr);
 	return getResultStr();
 }
 
@@ -410,7 +410,7 @@ void Script::unload() {
 
 void Script::unloadTOT() {
 	delete _lom;
-	_lom = 0;
+	_lom = nullptr;
 
 	// Unwind the call stack
 	while (!_callStack.empty())
@@ -418,16 +418,16 @@ void Script::unloadTOT() {
 
 	delete[] _totData;
 
-	_totData = 0;
+	_totData = nullptr;
 	_totSize = 0;
-	_totPtr = 0;
+	_totPtr = nullptr;
 	_totFile.clear();
 
 	_finished = true;
 }
 
 bool Script::isLoaded() const {
-	return _totData != 0;
+	return _totData != nullptr;
 }
 
 void Script::setFinished(bool finished) {

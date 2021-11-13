@@ -28,7 +28,7 @@
 namespace Gob {
 
 MUSPlayer::MUSPlayer() : AdLib(60),
-	_songData(0), _songDataSize(0), _playPos(0), _songID(0) {
+	_songData(nullptr), _songDataSize(0), _playPos(nullptr), _songID(0) {
 
 }
 
@@ -363,10 +363,10 @@ void MUSPlayer::unloadSND() {
 void MUSPlayer::unloadMUS() {
 	delete[] _songData;
 
-	_songData     = 0;
+	_songData     = nullptr;
 	_songDataSize = 0;
 
-	_playPos = 0;
+	_playPos = nullptr;
 }
 
 uint32 MUSPlayer::getSongID() const {

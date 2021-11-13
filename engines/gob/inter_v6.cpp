@@ -264,7 +264,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 
 		_vm->_game->_script->push();
 
-		src = _vm->_game->_script->readVarIndex(&size, 0);
+		src = _vm->_game->_script->readVarIndex(&size, nullptr);
 
 		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
 				_vm->_inter->_variables->getAddressOff8((uint16) src), size * 4);

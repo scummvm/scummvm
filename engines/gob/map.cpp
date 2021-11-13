@@ -34,7 +34,7 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_passWidth =  0;
 	_mapWidth  = -1;
 	_mapHeight = -1;
-	_passMap   =  0;
+	_passMap   =  nullptr;
 
 	_screenWidth  = 0;
 	_screenHeight = 0;
@@ -47,12 +47,12 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_mapUnknownBool = false;
 
 	_wayPointCount = 0;
-	_wayPoints = 0;
+	_wayPoints = nullptr;
 
 	_nearestWayPoint = 0;
 	_nearestDest     = 0;
 
-	_itemsMap = 0;
+	_itemsMap = nullptr;
 
 	for (int i = 0; i < 40; i++) {
 		_itemPoses[i].x      = 0;
@@ -514,7 +514,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 			nextLink = 1;
 
 		if (nextLink != 0) {
-			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
+			if (checkDirectPath(nullptr, x0, y0, x1, y1) == 1)
 				return 1;
 
 			nextLink = 0;
@@ -533,7 +533,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 		}
 		if ((i0 == i1) && (_wayPoints[i0].x == x0) &&
 		    (_wayPoints[i0].y == y0)) {
-			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
+			if (checkDirectPath(nullptr, x0, y0, x1, y1) == 1)
 				return 1;
 			return 0;
 		}

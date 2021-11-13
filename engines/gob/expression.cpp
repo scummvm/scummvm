@@ -651,7 +651,7 @@ int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 }
 
 int16 Expression::parseValExpr(byte stopToken) {
-	parseExpr(stopToken, 0);
+	parseExpr(stopToken, nullptr);
 
 	return _resultInt;
 }
@@ -757,7 +757,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 
 	case OP_FUNC:
 		operation = _vm->_game->_script->readByte();
-		parseExpr(OP_END_EXPR, 0);
+		parseExpr(OP_END_EXPR, nullptr);
 
 		switch (operation) {
 		case FUNC_SQRT1:
@@ -983,12 +983,12 @@ bool Expression::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 b
 
 // Assign the result to the appropriate _result variable
 void Expression::getResult(byte operation, int32 value, byte *type) {
-	if (type != 0)
+	if (type != nullptr)
 		*type = operation;
 
 	switch (operation) {
 	case OP_NOT:
-		if (type != 0)
+		if (type != nullptr)
 			*type ^= 1;
 		break;
 
@@ -1007,7 +1007,7 @@ void Expression::getResult(byte operation, int32 value, byte *type) {
 
 	default:
 		_resultInt = 0;
-		if (type != 0)
+		if (type != nullptr)
 			*type = OP_LOAD_IMM_INT16;
 		break;
 	}

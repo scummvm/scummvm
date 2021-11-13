@@ -27,8 +27,8 @@
 namespace Gob {
 
 Infogrames::Infogrames(Audio::Mixer &mixer) : _mixer(&mixer) {
-	_instruments = 0;
-	_song = 0;
+	_instruments = nullptr;
+	_song = nullptr;
 }
 
 Infogrames::~Infogrames() {
@@ -76,7 +76,7 @@ void Infogrames::stop() {
 
 void Infogrames::clearInstruments() {
 	delete _instruments;
-	_instruments = 0;
+	_instruments = nullptr;
 }
 
 void Infogrames::clearSong() {
@@ -84,7 +84,7 @@ void Infogrames::clearSong() {
 		_mixer->stopHandle(_handle);
 
 		delete _song;
-		_song = 0;
+		_song = nullptr;
 	}
 }
 

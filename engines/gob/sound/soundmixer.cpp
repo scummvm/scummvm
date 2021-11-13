@@ -34,7 +34,7 @@ SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mix
 
 	_rate = _mixer->getOutputRate();
 	_end = true;
-	_data = 0;
+	_data = nullptr;
 	_length = 0;
 	_freq = 0;
 	_repCount = 0;
@@ -78,7 +78,7 @@ void SoundMixer::stop(int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (fadeLength <= 0) {
-		_data = 0;
+		_data = nullptr;
 		_end = true;
 		_playingSound = 0;
 		return;
@@ -204,7 +204,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 
 void SoundMixer::endFade() {
 	if (_fadeVolStep > 0) {
-		_data = 0;
+		_data = nullptr;
 		_end = true;
 		_playingSound = 0;
 	} else {

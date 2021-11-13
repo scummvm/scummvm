@@ -28,7 +28,7 @@
 
 namespace Gob {
 
-GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(0) {
+GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(nullptr) {
 	registerCmd("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
 	registerCmd("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
 	registerCmd("var8",         WRAP_METHOD(GobConsole, cmd_var8));
@@ -47,7 +47,7 @@ void GobConsole::registerCheater(Cheater *cheater) {
 }
 
 void GobConsole::unregisterCheater() {
-	_cheater = 0;
+	_cheater = nullptr;
 }
 
 bool GobConsole::cmd_varSize(int argc, const char **argv) {

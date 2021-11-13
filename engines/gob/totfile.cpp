@@ -31,7 +31,7 @@
 namespace Gob {
 
 TOTFile::TOTFile(GobEngine *vm) : _vm(vm) {
-	_stream = 0;
+	_stream = nullptr;
 
 	memset(_header, 0, 128);
 }
@@ -62,7 +62,7 @@ bool TOTFile::load(const Common::String &fileName) {
 void TOTFile::unload() {
 	delete _stream;
 
-	_stream = 0;
+	_stream = nullptr;
 }
 
 Common::SeekableReadStream *TOTFile::getStream() const {

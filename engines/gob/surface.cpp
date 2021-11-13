@@ -189,7 +189,7 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 }
 
 Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
-	_width(width), _height(height), _bpp(bpp), _vidMem(0) {
+	_width(width), _height(height), _bpp(bpp), _vidMem(nullptr) {
 
 	assert((_width > 0) && (_height > 0));
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));

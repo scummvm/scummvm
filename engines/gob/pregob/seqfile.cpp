@@ -36,7 +36,7 @@ namespace Gob {
 
 SEQFile::SEQFile(GobEngine *vm, const Common::String &fileName) : _vm(vm) {
 	for (uint i = 0; i < kObjectCount; i++)
-		_objects[i].object = 0;
+		_objects[i].object = nullptr;
 
 	Common::SeekableReadStream *seq = _vm->_dataIO->getFile(Util::setExtension(fileName, ".SEQ"));
 	if (!seq) {
@@ -137,7 +137,7 @@ const ANIFile *SEQFile::findANI(uint16 index, uint16 &animation) {
 
 	// 0xFFFF = remove animation
 	if (index == 0xFFFF)
-		return 0;
+		return nullptr;
 
 	for (Animations::const_iterator a = _animations.begin(); a != _animations.end(); ++a) {
 		if (index < (*a)->getAnimationCount()) {
@@ -148,7 +148,7 @@ const ANIFile *SEQFile::findANI(uint16 index, uint16 &animation) {
 		index -= (*a)->getAnimationCount();
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void SEQFile::play(bool abortable, uint16 endFrame, uint16 frameRate) {
@@ -164,7 +164,7 @@ void SEQFile::play(bool abortable, uint16 endFrame, uint16 frameRate) {
 	for (uint i = 0; i < kObjectCount; i++) {
 		delete _objects[i].object;
 
-		_objects[i].object = 0;
+		_objects[i].object = nullptr;
 		_objects[i].order  = 0;
 	}
 
@@ -253,7 +253,7 @@ void SEQFile::playFrame() {
 		Object &object = _objects[a->object];
 
 		delete object.object;
-		object.object = 0;
+		object.object = nullptr;
 
 		// No valid animation => remove
 		if ((a->animation == 0xFFFF) || !a->ani)

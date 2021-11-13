@@ -604,7 +604,7 @@ void SaveContainer::clear() {
 		Part *&p = *it;
 
 		delete p;
-		p = 0;
+		p = nullptr;
 	}
 }
 
@@ -626,7 +626,7 @@ bool SaveContainer::writePart(uint32 partN, const SavePart *part) {
 	// Write
 	if (!part->write(*pStream)) {
 		delete p;
-		p = 0;
+		p = nullptr;
 
 		delete pStream;
 		return false;
@@ -767,7 +767,7 @@ bool SaveContainer::write(Common::WriteStream &stream) const {
 }
 
 Common::Array<SaveContainer::PartInfo> *SaveContainer::getPartsInfo(Common::SeekableReadStream &stream) {
-	Common::Array<PartInfo> *parts = 0;
+	Common::Array<PartInfo> *parts = nullptr;
 
 	// Remember the stream's position to seek back to
 	uint32 startPos = stream.pos();
@@ -781,7 +781,7 @@ Common::Array<SaveContainer::PartInfo> *SaveContainer::getPartsInfo(Common::Seek
 	if (!header.verifyReadSize(stream)) {
 		// Seek back
 		stream.seek(startPos);
-		return 0;
+		return nullptr;
 	}
 
 	// Read the part count
@@ -807,7 +807,7 @@ Common::Array<SaveContainer::PartInfo> *SaveContainer::getPartsInfo(Common::Seek
 			// Seek back
 			stream.seek(startPos);
 			delete parts;
-			return 0;
+			return nullptr;
 		}
 
 		// Fill in the ID
@@ -819,7 +819,7 @@ Common::Array<SaveContainer::PartInfo> *SaveContainer::getPartsInfo(Common::Seek
 
 	if (stream.err()) {
 		delete parts;
-		parts = 0;
+		parts = nullptr;
 	}
 
 	// Seek back
@@ -849,7 +849,7 @@ bool SaveContainer::isSave(Common::SeekableReadStream &stream) {
 SaveReader::SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName) :
 	SaveContainer(partCount, slot), _fileName(fileName) {
 
-	_stream = 0;
+	_stream = nullptr;
 
 	_loaded = false;
 }
@@ -868,7 +868,7 @@ SaveReader::~SaveReader() {
 // Open the save and read it
 bool SaveReader::load() {
 
-	Common::InSaveFile *in = 0;
+	Common::InSaveFile *in = nullptr;
 	Common::SeekableReadStream *stream;
 
 	if (!_fileName.empty()) {
@@ -914,7 +914,7 @@ bool SaveReader::readPart(uint32 partN, SavePart *part) const {
 
 Common::InSaveFile *SaveReader::openSave(const Common::String &fileName) {
 	if (fileName.empty())
-		return 0;
+		return nullptr;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	return saveMan->openForLoading(fileName);
@@ -1024,7 +1024,7 @@ bool SaveWriter::canSave() const {
 
 Common::OutSaveFile *SaveWriter::openSave(const Common::String &fileName) {
 	if (fileName.empty())
-		return 0;
+		return nullptr;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	return saveMan->openForSaving(fileName);

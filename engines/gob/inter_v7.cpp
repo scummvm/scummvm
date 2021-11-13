@@ -46,7 +46,7 @@ namespace Gob {
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm), _cursors(0) {
+Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm), _cursors(nullptr) {
 }
 
 Inter_v7::~Inter_v7() {
@@ -175,15 +175,15 @@ void Inter_v7::o7_loadCursor() {
 		return;
 	}
 
-	Graphics::WinCursorGroup *cursorGroup = 0;
-	Graphics::Cursor *defaultCursor = 0;
+	Graphics::WinCursorGroup *cursorGroup = nullptr;
+	Graphics::Cursor *defaultCursor = nullptr;
 
 	// Load the cursor file and cursor group
 	if (loadCursorFile())
 		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
 
 	// If the requested cursor does not exist, create a default one
-	const Graphics::Cursor *cursor = 0;
+	const Graphics::Cursor *cursor = nullptr;
 	if (!cursorGroup || cursorGroup->cursors.empty() || !cursorGroup->cursors[0].cursor) {
 		defaultCursor = Graphics::makeDefaultWinCursor();
 
@@ -650,7 +650,7 @@ bool Inter_v7::loadCursorFile() {
 		return true;
 
 	delete _cursors;
-	_cursors = 0;
+	_cursors = nullptr;
 
 	return false;
 }

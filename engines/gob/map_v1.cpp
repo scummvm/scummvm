@@ -191,7 +191,7 @@ void Map_v1::loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos) {
 				new Goblin::Gob_StateLine[linesCount];
 		for (int state = 0; state < linesCount; ++state)
 			for (int col = 0; col < 6; ++col)
-				_vm->_goblin->_goblins[i]->stateMach[state][col] = 0;
+				_vm->_goblin->_goblins[i]->stateMach[state][col] = nullptr;
 
 		for (int state = 0; state < 40; ++state)
 			for (int col = 0; col < 6; ++col)
@@ -206,7 +206,7 @@ void Map_v1::loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos) {
 		for (int state = 0; state < 40; state++) {
 			for (int col = 0; col < 6; col++) {
 				if (tmpStateData[state * 6 + col] == 0) {
-					_vm->_goblin->_goblins[i]->stateMach[state][col] = 0;
+					_vm->_goblin->_goblins[i]->stateMach[state][col] = nullptr;
 					continue;
 				}
 
@@ -265,7 +265,7 @@ void Map_v1::loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos) {
 		pState = new Goblin::Gob_State;
 		memset(pState, 0, sizeof(Goblin::Gob_State));
 		_vm->_goblin->_goblins[3]->stateMach[state][0] = pState;
-		_vm->_goblin->_goblins[3]->stateMach[state][1] = 0;
+		_vm->_goblin->_goblins[3]->stateMach[state][1] = nullptr;
 
 		pState->animation = 9;
 		pState->layer = state - 40;
@@ -295,7 +295,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 		_vm->_goblin->_objects[i]->stateMach = new Goblin::Gob_StateLine[40];
 		for (int state = 0; state < 40; ++state) {
 			for (int col = 0; col < 6; ++col) {
-				_vm->_goblin->_objects[i]->stateMach[state][col] = 0;
+				_vm->_goblin->_objects[i]->stateMach[state][col] = nullptr;
 				tmpStateData[state * 6 + col] = data.readUint32LE();
 			}
 		}
@@ -309,7 +309,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 		for (int state = 0; state < 40; state++) {
 			for (int col = 0; col < 6; col++) {
 				if (tmpStateData[state * 6 + col] == 0) {
-					_vm->_goblin->_objects[i]->stateMach[state][col] = 0;
+					_vm->_goblin->_objects[i]->stateMach[state][col] = nullptr;
 					continue;
 				}
 
@@ -343,7 +343,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 	_vm->_goblin->_objects[10]->stateMach = new Goblin::Gob_StateLine[40];
 	for (int state = 0; state < 40; ++state)
 		for (int col = 0; col < 6; ++col)
-			_vm->_goblin->_objects[10]->stateMach[state][col] = 0;
+			_vm->_goblin->_objects[10]->stateMach[state][col] = nullptr;
 
 	pState = new Goblin::Gob_State;
 	memset(pState, 0, sizeof(Goblin::Gob_State));
@@ -379,13 +379,13 @@ void Map_v1::loadItemToObject(Common::SeekableReadStream &data) {
 void Map_v1::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 	if (_nearestWayPoint < _nearestDest) {
 		for (int i = _nearestWayPoint; i <= _nearestDest; i++) {
-			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
+			if (checkDirectPath(nullptr, _curGoblinX, _curGoblinY,
 				_wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}
 	} else if (_nearestWayPoint > _nearestDest) {
 		for (int i = _nearestWayPoint; i >= _nearestDest; i--) {
-			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
+			if (checkDirectPath(nullptr, _curGoblinX, _curGoblinY,
 				_wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}

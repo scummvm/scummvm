@@ -34,8 +34,8 @@ namespace Gob {
 SaveConverter::SaveConverter(GobEngine *vm, const Common::String &fileName)
 : _vm(vm), _fileName(fileName) {
 
-	_data = 0;
-	_stream = 0;
+	_data = nullptr;
+	_stream = nullptr;
 }
 
 SaveConverter::~SaveConverter() {
@@ -47,8 +47,8 @@ void SaveConverter::clear() {
 	delete[] _data;
 	delete _stream;
 
-	_data = 0;
-	_stream = 0;
+	_data = nullptr;
+	_stream = nullptr;
 }
 
 void SaveConverter::setFileName(const Common::String &fileName) {
@@ -58,7 +58,7 @@ void SaveConverter::setFileName(const Common::String &fileName) {
 
 Common::InSaveFile *SaveConverter::openSave() const {
 	if (_fileName.empty())
-		return 0;
+		return nullptr;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	return saveMan->openForLoading(_fileName);
@@ -79,7 +79,7 @@ char *SaveConverter::getDescription() const {
 
 	// Test if it's an old savd
 	if (!isOldSave(&save) || !save)
-		return 0;
+		return nullptr;
 
 	char *desc = getDescription(*save);
 
@@ -139,17 +139,17 @@ SavePartInfo *SaveConverter::readInfo(Common::SeekableReadStream &stream,
 
 	uint32 varSize = SaveHandler::getVarSize(_vm);
 	if (varSize == 0)
-		return 0;
+		return nullptr;
 
 	char *desc = getDescription(stream);
 	if (!desc)
-		return 0;
+		return nullptr;
 
 	// If it has sizes, skip them
 	if (hasSizes)
 		if (!stream.skip(descLength)) {
 			delete[] desc;
-			return 0;
+			return nullptr;
 		}
 
 	SavePartInfo *info = new SavePartInfo(descLength, (uint32) _vm->getGameType(),
@@ -170,7 +170,7 @@ byte *SaveConverter::readData(Common::SeekableReadStream &stream,
 	// Read variable data
 	if (stream.read(data, count) != count) {
 		delete[] data;
-		return 0;
+		return nullptr;
 	}
 
 	/* Check the endianness. The old save data was always written
@@ -184,14 +184,14 @@ byte *SaveConverter::readData(Common::SeekableReadStream &stream,
 		if (stream.read(sizes, count) != count) {
 			delete[] data;
 			delete[] sizes;
-			return 0;
+			return nullptr;
 		}
 
 		// Swap bytes
 		if (!swapDataEndian(data, sizes, count)) {
 			delete[] data;
 			delete[] sizes;
-			return 0;
+			return nullptr;
 		}
 
 		delete[] sizes;
@@ -201,7 +201,7 @@ byte *SaveConverter::readData(Common::SeekableReadStream &stream,
 
 		if (!stream.skip(count)) {
 			delete[] data;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -213,7 +213,7 @@ SavePartVars *SaveConverter::readVars(Common::SeekableReadStream &stream,
 
 	byte *data = readData(stream, count, endian);
 	if (!data)
-		return 0;
+		return nullptr;
 
 	SavePartVars *vars = new SavePartVars(_vm, count);
 
@@ -221,7 +221,7 @@ SavePartVars *SaveConverter::readVars(Common::SeekableReadStream &stream,
 	if (!vars->readFromRaw(data, count)) {
 		delete[] data;
 		delete vars;
-		return 0;
+		return nullptr;
 	}
 
 	delete[] data;
@@ -233,7 +233,7 @@ SavePartMem *SaveConverter::readMem(Common::SeekableReadStream &stream,
 
 	byte *data = readData(stream, count, endian);
 	if (!data)
-		return 0;
+		return nullptr;
 
 	SavePartMem *mem = new SavePartMem(count);
 
@@ -241,7 +241,7 @@ SavePartMem *SaveConverter::readMem(Common::SeekableReadStream &stream,
 	if (!mem->readFrom(data, 0, count)) {
 		delete[] data;
 		delete mem;
-		return 0;
+		return nullptr;
 	}
 
 	delete[] data;
@@ -258,14 +258,14 @@ SavePartSprite *SaveConverter::readSprite(Common::SeekableReadStream &stream,
 	byte pal[768];
 	if (palette)
 		if (stream.read(pal, 768) != 768)
-			return 0;
+			return nullptr;
 
 	byte *data = new byte[spriteSize];
 
 	// Read variable data
 	if (stream.read(data, spriteSize) != spriteSize) {
 		delete[] data;
-		return 0;
+		return nullptr;
 	}
 
 	SavePartSprite *sprite = new SavePartSprite(width, height);
@@ -273,14 +273,14 @@ SavePartSprite *SaveConverter::readSprite(Common::SeekableReadStream &stream,
 	if (!sprite->readSpriteRaw(data, spriteSize)) {
 		delete[] data;
 		delete sprite;
-		return 0;
+		return nullptr;
 	}
 
 	delete[] data;
 
 	if (palette)
 		if (!sprite->readPalette(pal))
-			return 0;
+			return nullptr;
 
 	return sprite;
 }
@@ -378,14 +378,14 @@ int SaveConverter_Notes::isOldSave(Common::InSaveFile **save) const {
 	// Not an old save, clean up
 	if (save) {
 		delete *save;
-		*save = 0;
+		*save = nullptr;
 	}
 
 	return 0;
 }
 
 char *SaveConverter_Notes::getDescription(Common::SeekableReadStream &save) const  {
-	return 0;
+	return nullptr;
 }
 
 bool SaveConverter_Notes::loadFail(SavePartVars *vars, Common::InSaveFile *save) {
@@ -414,21 +414,21 @@ bool SaveConverter_Notes::load() {
 
 	SavePartVars *vars = readVars(*save, _size, false);
 	if (!vars)
-		return loadFail(0, save);
+		return loadFail(nullptr, save);
 
 	// We don't need the save anymore
 	delete save;
 
 	// Write all parts
 	if (!writer.writePart(0, vars))
-		return loadFail(0, 0);
+		return loadFail(nullptr, nullptr);
 
 	// We don't need this anymore
 	delete vars;
 
 	// Create the final read stream
 	if (!createStream(writer))
-		return loadFail(0, 0);
+		return loadFail(nullptr, nullptr);
 
 	return true;
 }

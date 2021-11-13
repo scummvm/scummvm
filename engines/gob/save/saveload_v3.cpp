@@ -28,12 +28,12 @@
 namespace Gob {
 
 SaveLoad_v3::SaveFile SaveLoad_v3::_saveFiles[] = {
-	{    "cat.inf", kSaveModeSave  , 0, "savegame"},
-	{    "ima.inf", kSaveModeSave  , 0, "screenshot"},
-	{  "intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
-	{   "bloc.inf", kSaveModeSave  , 0, "notes"},
-	{   "prot",     kSaveModeIgnore, 0, 0},
-	{ "config",     kSaveModeIgnore, 0, 0}
+	{    "cat.inf", kSaveModeSave  , nullptr, "savegame"},
+	{    "ima.inf", kSaveModeSave  , nullptr, "screenshot"},
+	{  "intro.$$$", kSaveModeSave  , nullptr, "temporary sprite"},
+	{   "bloc.inf", kSaveModeSave  , nullptr, "notes"},
+	{   "prot",     kSaveModeIgnore, nullptr, nullptr},
+	{ "config",     kSaveModeIgnore, nullptr, nullptr}
 };
 
 
@@ -79,8 +79,8 @@ SaveLoad_v3::GameHandler::GameHandler(GobEngine *vm, const char *target,
 	memset(_index, 0, kIndexSize);
 	_hasIndex = false;
 
-	_writer = 0;
-	_reader = 0;
+	_writer = nullptr;
+	_reader = nullptr;
 }
 
 SaveLoad_v3::GameHandler::~GameHandler() {
@@ -295,7 +295,7 @@ void SaveLoad_v3::GameHandler::buildIndex(byte *buffer) const {
 bool SaveLoad_v3::GameHandler::createReader(int slot) {
 	// If slot < 0, just check if a reader exists
 	if (slot < 0)
-		return (_reader != 0);
+		return (_reader != nullptr);
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -319,7 +319,7 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 
 		if (!_reader->load()) {
 			delete _reader;
-			_reader = 0;
+			_reader = nullptr;
 			return false;
 		}
 	}
@@ -330,7 +330,7 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 bool SaveLoad_v3::GameHandler::createWriter(int slot) {
 	// If slot < 0, just check if a writer exists
 	if (slot < 0)
-		return (_writer != 0);
+		return (_writer != nullptr);
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -487,7 +487,7 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType s
 	// The Amiga version doesn't use screenshots
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		_gameHandler = new GameHandler(vm, targetName, false);
-		_screenshotHandler = 0;
+		_screenshotHandler = nullptr;
 	} else {
 		_gameHandler = new GameHandler(vm, targetName, true);
 		_screenshotHandler = new ScreenshotHandler(vm, _gameHandler, sShotType);
@@ -516,7 +516,7 @@ const SaveLoad_v3::SaveFile *SaveLoad_v3::getSaveFile(const char *fileName) cons
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_v3::SaveFile *SaveLoad_v3::getSaveFile(const char *fileName) {
@@ -526,7 +526,7 @@ SaveLoad_v3::SaveFile *SaveLoad_v3::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_v3::getHandler(const char *fileName) const {
@@ -535,7 +535,7 @@ SaveHandler *SaveLoad_v3::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_v3::getDescription(const char *fileName) const {
@@ -544,7 +544,7 @@ const char *SaveLoad_v3::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_v3::getSaveMode(const char *fileName) const {

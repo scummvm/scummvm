@@ -28,196 +28,196 @@
 namespace Gob {
 
 SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
-	{    "cat.inf", kSaveModeSave,   0, "savegame"   }, // Save file
-	{  "cata1.inf", kSaveModeSave,   0, "autosave"   }, // Autosave file
-	{    "mdo.def", kSaveModeExists, 0, 0            },
-	{  "no_cd.txt", kSaveModeExists, 0, 0            },
-	{   "vide.inf", kSaveModeIgnore, 0, 0            },
-	{"fenetre.txt", kSaveModeIgnore, 0, 0            },
-	{  "music.txt", kSaveModeIgnore, 0, 0            },
-	{  "cata2.inf", kSaveModeSave,   0, "temp save"  },
-	{  "cata3.inf", kSaveModeSave,   0, "temp save"  },
-	{  "cata2.000", kSaveModeSave,   0, "extra save" }, // Slot 00
-	{  "cata2.001", kSaveModeSave,   0, "extra save" }, // Slot 01
-	{  "cata2.002", kSaveModeSave,   0, "extra save" }, // Slot 02
-	{  "cata2.003", kSaveModeSave,   0, "extra save" }, // Slot 03
-	{  "cata2.004", kSaveModeSave,   0, "extra save" }, // Slot 04
-	{  "cata2.005", kSaveModeSave,   0, "extra save" }, // Slot 05
-	{  "cata2.006", kSaveModeSave,   0, "extra save" }, // Slot 06
-	{  "cata2.007", kSaveModeSave,   0, "extra save" }, // Slot 07
-	{  "cata2.008", kSaveModeSave,   0, "extra save" }, // Slot 08
-	{  "cata2.009", kSaveModeSave,   0, "extra save" }, // Slot 09
-	{  "cata2.010", kSaveModeSave,   0, "extra save" }, // Slot 10
-	{  "cata2.011", kSaveModeSave,   0, "extra save" }, // Slot 11
-	{  "cata2.012", kSaveModeSave,   0, "extra save" }, // Slot 12
-	{  "cata2.013", kSaveModeSave,   0, "extra save" }, // Slot 13
-	{  "cata2.014", kSaveModeSave,   0, "extra save" }, // Slot 14
-	{  "cata2.015", kSaveModeSave,   0, "extra save" }, // Slot 15
-	{  "cata2.016", kSaveModeSave,   0, "extra save" }, // Slot 16
-	{  "cata2.017", kSaveModeSave,   0, "extra save" }, // Slot 17
-	{  "cata2.018", kSaveModeSave,   0, "extra save" }, // Slot 18
-	{  "cata2.019", kSaveModeSave,   0, "extra save" }, // Slot 19
-	{  "cata2.020", kSaveModeSave,   0, "extra save" }, // Slot 20
-	{  "cata2.021", kSaveModeSave,   0, "extra save" }, // Slot 21
-	{  "cata2.022", kSaveModeSave,   0, "extra save" }, // Slot 22
-	{  "cata2.023", kSaveModeSave,   0, "extra save" }, // Slot 23
-	{  "cata2.024", kSaveModeSave,   0, "extra save" }, // Slot 24
-	{  "cata2.025", kSaveModeSave,   0, "extra save" }, // Slot 25
-	{  "cata2.026", kSaveModeSave,   0, "extra save" }, // Slot 26
-	{  "cata2.027", kSaveModeSave,   0, "extra save" }, // Slot 27
-	{  "cata2.028", kSaveModeSave,   0, "extra save" }, // Slot 28
-	{  "cata2.029", kSaveModeSave,   0, "extra save" }, // Slot 29
-	{  "cata2.030", kSaveModeSave,   0, "extra save" }, // Slot 30
-	{  "cata2.031", kSaveModeSave,   0, "extra save" }, // Slot 31
-	{  "cata2.032", kSaveModeSave,   0, "extra save" }, // Slot 32
-	{  "cata2.033", kSaveModeSave,   0, "extra save" }, // Slot 33
-	{  "cata2.034", kSaveModeSave,   0, "extra save" }, // Slot 34
-	{  "cata2.035", kSaveModeSave,   0, "extra save" }, // Slot 35
-	{  "cata2.036", kSaveModeSave,   0, "extra save" }, // Slot 36
-	{  "cata2.037", kSaveModeSave,   0, "extra save" }, // Slot 37
-	{  "cata2.038", kSaveModeSave,   0, "extra save" }, // Slot 38
-	{  "cata2.039", kSaveModeSave,   0, "extra save" }, // Slot 39
-	{  "cata2.040", kSaveModeSave,   0, "extra save" }, // Slot 40
-	{  "cata2.041", kSaveModeSave,   0, "extra save" }, // Slot 41
-	{  "cata2.042", kSaveModeSave,   0, "extra save" }, // Slot 42
-	{  "cata2.043", kSaveModeSave,   0, "extra save" }, // Slot 43
-	{  "cata2.044", kSaveModeSave,   0, "extra save" }, // Slot 44
-	{  "cata2.045", kSaveModeSave,   0, "extra save" }, // Slot 45
-	{  "cata2.046", kSaveModeSave,   0, "extra save" }, // Slot 46
-	{  "cata2.047", kSaveModeSave,   0, "extra save" }, // Slot 47
-	{  "cata2.048", kSaveModeSave,   0, "extra save" }, // Slot 48
-	{  "cata2.049", kSaveModeSave,   0, "extra save" }, // Slot 49
-	{  "cata2.050", kSaveModeSave,   0, "extra save" }, // Slot 50
-	{  "cata2.051", kSaveModeSave,   0, "extra save" }, // Slot 51
-	{  "cata2.052", kSaveModeSave,   0, "extra save" }, // Slot 52
-	{  "cata2.053", kSaveModeSave,   0, "extra save" }, // Slot 53
-	{  "cata2.054", kSaveModeSave,   0, "extra save" }, // Slot 54
-	{  "cata2.055", kSaveModeSave,   0, "extra save" }, // Slot 55
-	{  "cata2.056", kSaveModeSave,   0, "extra save" }, // Slot 56
-	{  "cata2.057", kSaveModeSave,   0, "extra save" }, // Slot 57
-	{  "cata2.058", kSaveModeSave,   0, "extra save" }, // Slot 58
-	{  "cata2.059", kSaveModeSave,   0, "extra save" }, // Slot 59
-	{  "cata3.000", kSaveModeSave,   0, "extra save" }, // Slot 00
-	{  "cata3.001", kSaveModeSave,   0, "extra save" }, // Slot 01
-	{  "cata3.002", kSaveModeSave,   0, "extra save" }, // Slot 02
-	{  "cata3.003", kSaveModeSave,   0, "extra save" }, // Slot 03
-	{  "cata3.004", kSaveModeSave,   0, "extra save" }, // Slot 04
-	{  "cata3.005", kSaveModeSave,   0, "extra save" }, // Slot 05
-	{  "cata3.006", kSaveModeSave,   0, "extra save" }, // Slot 06
-	{  "cata3.007", kSaveModeSave,   0, "extra save" }, // Slot 07
-	{  "cata3.008", kSaveModeSave,   0, "extra save" }, // Slot 08
-	{  "cata3.009", kSaveModeSave,   0, "extra save" }, // Slot 09
-	{  "cata3.010", kSaveModeSave,   0, "extra save" }, // Slot 10
-	{  "cata3.011", kSaveModeSave,   0, "extra save" }, // Slot 11
-	{  "cata3.012", kSaveModeSave,   0, "extra save" }, // Slot 12
-	{  "cata3.013", kSaveModeSave,   0, "extra save" }, // Slot 13
-	{  "cata3.014", kSaveModeSave,   0, "extra save" }, // Slot 14
-	{  "cata3.015", kSaveModeSave,   0, "extra save" }, // Slot 15
-	{  "cata3.016", kSaveModeSave,   0, "extra save" }, // Slot 16
-	{  "cata3.017", kSaveModeSave,   0, "extra save" }, // Slot 17
-	{  "cata3.018", kSaveModeSave,   0, "extra save" }, // Slot 18
-	{  "cata3.019", kSaveModeSave,   0, "extra save" }, // Slot 19
-	{  "cata3.020", kSaveModeSave,   0, "extra save" }, // Slot 20
-	{  "cata3.021", kSaveModeSave,   0, "extra save" }, // Slot 21
-	{  "cata3.022", kSaveModeSave,   0, "extra save" }, // Slot 22
-	{  "cata3.023", kSaveModeSave,   0, "extra save" }, // Slot 23
-	{  "cata3.024", kSaveModeSave,   0, "extra save" }, // Slot 24
-	{  "cata3.025", kSaveModeSave,   0, "extra save" }, // Slot 25
-	{  "cata3.026", kSaveModeSave,   0, "extra save" }, // Slot 26
-	{  "cata3.027", kSaveModeSave,   0, "extra save" }, // Slot 27
-	{  "cata3.028", kSaveModeSave,   0, "extra save" }, // Slot 28
-	{  "cata3.029", kSaveModeSave,   0, "extra save" }, // Slot 29
-	{  "cata3.030", kSaveModeSave,   0, "extra save" }, // Slot 30
-	{  "cata3.031", kSaveModeSave,   0, "extra save" }, // Slot 31
-	{  "cata3.032", kSaveModeSave,   0, "extra save" }, // Slot 32
-	{  "cata3.033", kSaveModeSave,   0, "extra save" }, // Slot 33
-	{  "cata3.034", kSaveModeSave,   0, "extra save" }, // Slot 34
-	{  "cata3.035", kSaveModeSave,   0, "extra save" }, // Slot 35
-	{  "cata3.036", kSaveModeSave,   0, "extra save" }, // Slot 36
-	{  "cata3.037", kSaveModeSave,   0, "extra save" }, // Slot 37
-	{  "cata3.038", kSaveModeSave,   0, "extra save" }, // Slot 38
-	{  "cata3.039", kSaveModeSave,   0, "extra save" }, // Slot 39
-	{  "cata3.040", kSaveModeSave,   0, "extra save" }, // Slot 40
-	{  "cata3.041", kSaveModeSave,   0, "extra save" }, // Slot 41
-	{  "cata3.042", kSaveModeSave,   0, "extra save" }, // Slot 42
-	{  "cata3.043", kSaveModeSave,   0, "extra save" }, // Slot 43
-	{  "cata3.044", kSaveModeSave,   0, "extra save" }, // Slot 44
-	{  "cata3.045", kSaveModeSave,   0, "extra save" }, // Slot 45
-	{  "cata3.046", kSaveModeSave,   0, "extra save" }, // Slot 46
-	{  "cata3.047", kSaveModeSave,   0, "extra save" }, // Slot 47
-	{  "cata3.048", kSaveModeSave,   0, "extra save" }, // Slot 48
-	{  "cata3.049", kSaveModeSave,   0, "extra save" }, // Slot 49
-	{  "cata3.050", kSaveModeSave,   0, "extra save" }, // Slot 50
-	{  "cata3.051", kSaveModeSave,   0, "extra save" }, // Slot 51
-	{  "cata3.052", kSaveModeSave,   0, "extra save" }, // Slot 52
-	{  "cata3.053", kSaveModeSave,   0, "extra save" }, // Slot 53
-	{  "cata3.054", kSaveModeSave,   0, "extra save" }, // Slot 54
-	{  "cata3.055", kSaveModeSave,   0, "extra save" }, // Slot 55
-	{  "cata3.056", kSaveModeSave,   0, "extra save" }, // Slot 56
-	{  "cata3.057", kSaveModeSave,   0, "extra save" }, // Slot 57
-	{  "cata3.058", kSaveModeSave,   0, "extra save" }, // Slot 58
-	{  "cata3.059", kSaveModeSave,   0, "extra save" }, // Slot 59
-	{  "intro.0xx", kSaveModeSave,   0, "temp sprite"}, // Autosave sprite
-	{  "intro.000", kSaveModeSave,   0, "temp sprite"}, // Slot 00
-	{  "intro.001", kSaveModeSave,   0, "temp sprite"}, // Slot 01
-	{  "intro.002", kSaveModeSave,   0, "temp sprite"}, // Slot 02
-	{  "intro.003", kSaveModeSave,   0, "temp sprite"}, // Slot 03
-	{  "intro.004", kSaveModeSave,   0, "temp sprite"}, // Slot 04
-	{  "intro.005", kSaveModeSave,   0, "temp sprite"}, // Slot 05
-	{  "intro.006", kSaveModeSave,   0, "temp sprite"}, // Slot 06
-	{  "intro.007", kSaveModeSave,   0, "temp sprite"}, // Slot 07
-	{  "intro.008", kSaveModeSave,   0, "temp sprite"}, // Slot 08
-	{  "intro.009", kSaveModeSave,   0, "temp sprite"}, // Slot 09
-	{  "intro.010", kSaveModeSave,   0, "temp sprite"}, // Slot 10
-	{  "intro.011", kSaveModeSave,   0, "temp sprite"}, // Slot 11
-	{  "intro.012", kSaveModeSave,   0, "temp sprite"}, // Slot 12
-	{  "intro.013", kSaveModeSave,   0, "temp sprite"}, // Slot 13
-	{  "intro.014", kSaveModeSave,   0, "temp sprite"}, // Slot 14
-	{  "intro.015", kSaveModeSave,   0, "temp sprite"}, // Slot 15
-	{  "intro.016", kSaveModeSave,   0, "temp sprite"}, // Slot 16
-	{  "intro.017", kSaveModeSave,   0, "temp sprite"}, // Slot 17
-	{  "intro.018", kSaveModeSave,   0, "temp sprite"}, // Slot 18
-	{  "intro.019", kSaveModeSave,   0, "temp sprite"}, // Slot 19
-	{  "intro.020", kSaveModeSave,   0, "temp sprite"}, // Slot 20
-	{  "intro.021", kSaveModeSave,   0, "temp sprite"}, // Slot 21
-	{  "intro.022", kSaveModeSave,   0, "temp sprite"}, // Slot 22
-	{  "intro.023", kSaveModeSave,   0, "temp sprite"}, // Slot 23
-	{  "intro.024", kSaveModeSave,   0, "temp sprite"}, // Slot 24
-	{  "intro.025", kSaveModeSave,   0, "temp sprite"}, // Slot 25
-	{  "intro.026", kSaveModeSave,   0, "temp sprite"}, // Slot 26
-	{  "intro.027", kSaveModeSave,   0, "temp sprite"}, // Slot 27
-	{  "intro.028", kSaveModeSave,   0, "temp sprite"}, // Slot 28
-	{  "intro.029", kSaveModeSave,   0, "temp sprite"}, // Slot 29
-	{  "intro.030", kSaveModeSave,   0, "temp sprite"}, // Slot 30
-	{  "intro.031", kSaveModeSave,   0, "temp sprite"}, // Slot 31
-	{  "intro.032", kSaveModeSave,   0, "temp sprite"}, // Slot 32
-	{  "intro.033", kSaveModeSave,   0, "temp sprite"}, // Slot 33
-	{  "intro.034", kSaveModeSave,   0, "temp sprite"}, // Slot 34
-	{  "intro.035", kSaveModeSave,   0, "temp sprite"}, // Slot 35
-	{  "intro.036", kSaveModeSave,   0, "temp sprite"}, // Slot 36
-	{  "intro.037", kSaveModeSave,   0, "temp sprite"}, // Slot 37
-	{  "intro.038", kSaveModeSave,   0, "temp sprite"}, // Slot 38
-	{  "intro.039", kSaveModeSave,   0, "temp sprite"}, // Slot 39
-	{  "intro.040", kSaveModeSave,   0, "temp sprite"}, // Slot 40
-	{  "intro.041", kSaveModeSave,   0, "temp sprite"}, // Slot 41
-	{  "intro.042", kSaveModeSave,   0, "temp sprite"}, // Slot 42
-	{  "intro.043", kSaveModeSave,   0, "temp sprite"}, // Slot 43
-	{  "intro.044", kSaveModeSave,   0, "temp sprite"}, // Slot 44
-	{  "intro.045", kSaveModeSave,   0, "temp sprite"}, // Slot 45
-	{  "intro.046", kSaveModeSave,   0, "temp sprite"}, // Slot 46
-	{  "intro.047", kSaveModeSave,   0, "temp sprite"}, // Slot 47
-	{  "intro.048", kSaveModeSave,   0, "temp sprite"}, // Slot 48
-	{  "intro.049", kSaveModeSave,   0, "temp sprite"}, // Slot 49
-	{  "intro.050", kSaveModeSave,   0, "temp sprite"}, // Slot 50
-	{  "intro.051", kSaveModeSave,   0, "temp sprite"}, // Slot 51
-	{  "intro.052", kSaveModeSave,   0, "temp sprite"}, // Slot 52
-	{  "intro.053", kSaveModeSave,   0, "temp sprite"}, // Slot 53
-	{  "intro.054", kSaveModeSave,   0, "temp sprite"}, // Slot 54
-	{  "intro.055", kSaveModeSave,   0, "temp sprite"}, // Slot 55
-	{  "intro.056", kSaveModeSave,   0, "temp sprite"}, // Slot 56
-	{  "intro.057", kSaveModeSave,   0, "temp sprite"}, // Slot 57
-	{  "intro.058", kSaveModeSave,   0, "temp sprite"}, // Slot 58
-	{  "intro.059", kSaveModeSave,   0, "temp sprite"}  // Slot 59
+	{    "cat.inf", kSaveModeSave,   nullptr, "savegame"   }, // Save file
+	{  "cata1.inf", kSaveModeSave,   nullptr, "autosave"   }, // Autosave file
+	{    "mdo.def", kSaveModeExists, nullptr, nullptr      },
+	{  "no_cd.txt", kSaveModeExists, nullptr, nullptr      },
+	{   "vide.inf", kSaveModeIgnore, nullptr, nullptr      },
+	{"fenetre.txt", kSaveModeIgnore, nullptr, nullptr      },
+	{  "music.txt", kSaveModeIgnore, nullptr, nullptr      },
+	{  "cata2.inf", kSaveModeSave,   nullptr, "temp save"  },
+	{  "cata3.inf", kSaveModeSave,   nullptr, "temp save"  },
+	{  "cata2.000", kSaveModeSave,   nullptr, "extra save" }, // Slot 00
+	{  "cata2.001", kSaveModeSave,   nullptr, "extra save" }, // Slot 01
+	{  "cata2.002", kSaveModeSave,   nullptr, "extra save" }, // Slot 02
+	{  "cata2.003", kSaveModeSave,   nullptr, "extra save" }, // Slot 03
+	{  "cata2.004", kSaveModeSave,   nullptr, "extra save" }, // Slot 04
+	{  "cata2.005", kSaveModeSave,   nullptr, "extra save" }, // Slot 05
+	{  "cata2.006", kSaveModeSave,   nullptr, "extra save" }, // Slot 06
+	{  "cata2.007", kSaveModeSave,   nullptr, "extra save" }, // Slot 07
+	{  "cata2.008", kSaveModeSave,   nullptr, "extra save" }, // Slot 08
+	{  "cata2.009", kSaveModeSave,   nullptr, "extra save" }, // Slot 09
+	{  "cata2.010", kSaveModeSave,   nullptr, "extra save" }, // Slot 10
+	{  "cata2.011", kSaveModeSave,   nullptr, "extra save" }, // Slot 11
+	{  "cata2.012", kSaveModeSave,   nullptr, "extra save" }, // Slot 12
+	{  "cata2.013", kSaveModeSave,   nullptr, "extra save" }, // Slot 13
+	{  "cata2.014", kSaveModeSave,   nullptr, "extra save" }, // Slot 14
+	{  "cata2.015", kSaveModeSave,   nullptr, "extra save" }, // Slot 15
+	{  "cata2.016", kSaveModeSave,   nullptr, "extra save" }, // Slot 16
+	{  "cata2.017", kSaveModeSave,   nullptr, "extra save" }, // Slot 17
+	{  "cata2.018", kSaveModeSave,   nullptr, "extra save" }, // Slot 18
+	{  "cata2.019", kSaveModeSave,   nullptr, "extra save" }, // Slot 19
+	{  "cata2.020", kSaveModeSave,   nullptr, "extra save" }, // Slot 20
+	{  "cata2.021", kSaveModeSave,   nullptr, "extra save" }, // Slot 21
+	{  "cata2.022", kSaveModeSave,   nullptr, "extra save" }, // Slot 22
+	{  "cata2.023", kSaveModeSave,   nullptr, "extra save" }, // Slot 23
+	{  "cata2.024", kSaveModeSave,   nullptr, "extra save" }, // Slot 24
+	{  "cata2.025", kSaveModeSave,   nullptr, "extra save" }, // Slot 25
+	{  "cata2.026", kSaveModeSave,   nullptr, "extra save" }, // Slot 26
+	{  "cata2.027", kSaveModeSave,   nullptr, "extra save" }, // Slot 27
+	{  "cata2.028", kSaveModeSave,   nullptr, "extra save" }, // Slot 28
+	{  "cata2.029", kSaveModeSave,   nullptr, "extra save" }, // Slot 29
+	{  "cata2.030", kSaveModeSave,   nullptr, "extra save" }, // Slot 30
+	{  "cata2.031", kSaveModeSave,   nullptr, "extra save" }, // Slot 31
+	{  "cata2.032", kSaveModeSave,   nullptr, "extra save" }, // Slot 32
+	{  "cata2.033", kSaveModeSave,   nullptr, "extra save" }, // Slot 33
+	{  "cata2.034", kSaveModeSave,   nullptr, "extra save" }, // Slot 34
+	{  "cata2.035", kSaveModeSave,   nullptr, "extra save" }, // Slot 35
+	{  "cata2.036", kSaveModeSave,   nullptr, "extra save" }, // Slot 36
+	{  "cata2.037", kSaveModeSave,   nullptr, "extra save" }, // Slot 37
+	{  "cata2.038", kSaveModeSave,   nullptr, "extra save" }, // Slot 38
+	{  "cata2.039", kSaveModeSave,   nullptr, "extra save" }, // Slot 39
+	{  "cata2.040", kSaveModeSave,   nullptr, "extra save" }, // Slot 40
+	{  "cata2.041", kSaveModeSave,   nullptr, "extra save" }, // Slot 41
+	{  "cata2.042", kSaveModeSave,   nullptr, "extra save" }, // Slot 42
+	{  "cata2.043", kSaveModeSave,   nullptr, "extra save" }, // Slot 43
+	{  "cata2.044", kSaveModeSave,   nullptr, "extra save" }, // Slot 44
+	{  "cata2.045", kSaveModeSave,   nullptr, "extra save" }, // Slot 45
+	{  "cata2.046", kSaveModeSave,   nullptr, "extra save" }, // Slot 46
+	{  "cata2.047", kSaveModeSave,   nullptr, "extra save" }, // Slot 47
+	{  "cata2.048", kSaveModeSave,   nullptr, "extra save" }, // Slot 48
+	{  "cata2.049", kSaveModeSave,   nullptr, "extra save" }, // Slot 49
+	{  "cata2.050", kSaveModeSave,   nullptr, "extra save" }, // Slot 50
+	{  "cata2.051", kSaveModeSave,   nullptr, "extra save" }, // Slot 51
+	{  "cata2.052", kSaveModeSave,   nullptr, "extra save" }, // Slot 52
+	{  "cata2.053", kSaveModeSave,   nullptr, "extra save" }, // Slot 53
+	{  "cata2.054", kSaveModeSave,   nullptr, "extra save" }, // Slot 54
+	{  "cata2.055", kSaveModeSave,   nullptr, "extra save" }, // Slot 55
+	{  "cata2.056", kSaveModeSave,   nullptr, "extra save" }, // Slot 56
+	{  "cata2.057", kSaveModeSave,   nullptr, "extra save" }, // Slot 57
+	{  "cata2.058", kSaveModeSave,   nullptr, "extra save" }, // Slot 58
+	{  "cata2.059", kSaveModeSave,   nullptr, "extra save" }, // Slot 59
+	{  "cata3.000", kSaveModeSave,   nullptr, "extra save" }, // Slot 00
+	{  "cata3.001", kSaveModeSave,   nullptr, "extra save" }, // Slot 01
+	{  "cata3.002", kSaveModeSave,   nullptr, "extra save" }, // Slot 02
+	{  "cata3.003", kSaveModeSave,   nullptr, "extra save" }, // Slot 03
+	{  "cata3.004", kSaveModeSave,   nullptr, "extra save" }, // Slot 04
+	{  "cata3.005", kSaveModeSave,   nullptr, "extra save" }, // Slot 05
+	{  "cata3.006", kSaveModeSave,   nullptr, "extra save" }, // Slot 06
+	{  "cata3.007", kSaveModeSave,   nullptr, "extra save" }, // Slot 07
+	{  "cata3.008", kSaveModeSave,   nullptr, "extra save" }, // Slot 08
+	{  "cata3.009", kSaveModeSave,   nullptr, "extra save" }, // Slot 09
+	{  "cata3.010", kSaveModeSave,   nullptr, "extra save" }, // Slot 10
+	{  "cata3.011", kSaveModeSave,   nullptr, "extra save" }, // Slot 11
+	{  "cata3.012", kSaveModeSave,   nullptr, "extra save" }, // Slot 12
+	{  "cata3.013", kSaveModeSave,   nullptr, "extra save" }, // Slot 13
+	{  "cata3.014", kSaveModeSave,   nullptr, "extra save" }, // Slot 14
+	{  "cata3.015", kSaveModeSave,   nullptr, "extra save" }, // Slot 15
+	{  "cata3.016", kSaveModeSave,   nullptr, "extra save" }, // Slot 16
+	{  "cata3.017", kSaveModeSave,   nullptr, "extra save" }, // Slot 17
+	{  "cata3.018", kSaveModeSave,   nullptr, "extra save" }, // Slot 18
+	{  "cata3.019", kSaveModeSave,   nullptr, "extra save" }, // Slot 19
+	{  "cata3.020", kSaveModeSave,   nullptr, "extra save" }, // Slot 20
+	{  "cata3.021", kSaveModeSave,   nullptr, "extra save" }, // Slot 21
+	{  "cata3.022", kSaveModeSave,   nullptr, "extra save" }, // Slot 22
+	{  "cata3.023", kSaveModeSave,   nullptr, "extra save" }, // Slot 23
+	{  "cata3.024", kSaveModeSave,   nullptr, "extra save" }, // Slot 24
+	{  "cata3.025", kSaveModeSave,   nullptr, "extra save" }, // Slot 25
+	{  "cata3.026", kSaveModeSave,   nullptr, "extra save" }, // Slot 26
+	{  "cata3.027", kSaveModeSave,   nullptr, "extra save" }, // Slot 27
+	{  "cata3.028", kSaveModeSave,   nullptr, "extra save" }, // Slot 28
+	{  "cata3.029", kSaveModeSave,   nullptr, "extra save" }, // Slot 29
+	{  "cata3.030", kSaveModeSave,   nullptr, "extra save" }, // Slot 30
+	{  "cata3.031", kSaveModeSave,   nullptr, "extra save" }, // Slot 31
+	{  "cata3.032", kSaveModeSave,   nullptr, "extra save" }, // Slot 32
+	{  "cata3.033", kSaveModeSave,   nullptr, "extra save" }, // Slot 33
+	{  "cata3.034", kSaveModeSave,   nullptr, "extra save" }, // Slot 34
+	{  "cata3.035", kSaveModeSave,   nullptr, "extra save" }, // Slot 35
+	{  "cata3.036", kSaveModeSave,   nullptr, "extra save" }, // Slot 36
+	{  "cata3.037", kSaveModeSave,   nullptr, "extra save" }, // Slot 37
+	{  "cata3.038", kSaveModeSave,   nullptr, "extra save" }, // Slot 38
+	{  "cata3.039", kSaveModeSave,   nullptr, "extra save" }, // Slot 39
+	{  "cata3.040", kSaveModeSave,   nullptr, "extra save" }, // Slot 40
+	{  "cata3.041", kSaveModeSave,   nullptr, "extra save" }, // Slot 41
+	{  "cata3.042", kSaveModeSave,   nullptr, "extra save" }, // Slot 42
+	{  "cata3.043", kSaveModeSave,   nullptr, "extra save" }, // Slot 43
+	{  "cata3.044", kSaveModeSave,   nullptr, "extra save" }, // Slot 44
+	{  "cata3.045", kSaveModeSave,   nullptr, "extra save" }, // Slot 45
+	{  "cata3.046", kSaveModeSave,   nullptr, "extra save" }, // Slot 46
+	{  "cata3.047", kSaveModeSave,   nullptr, "extra save" }, // Slot 47
+	{  "cata3.048", kSaveModeSave,   nullptr, "extra save" }, // Slot 48
+	{  "cata3.049", kSaveModeSave,   nullptr, "extra save" }, // Slot 49
+	{  "cata3.050", kSaveModeSave,   nullptr, "extra save" }, // Slot 50
+	{  "cata3.051", kSaveModeSave,   nullptr, "extra save" }, // Slot 51
+	{  "cata3.052", kSaveModeSave,   nullptr, "extra save" }, // Slot 52
+	{  "cata3.053", kSaveModeSave,   nullptr, "extra save" }, // Slot 53
+	{  "cata3.054", kSaveModeSave,   nullptr, "extra save" }, // Slot 54
+	{  "cata3.055", kSaveModeSave,   nullptr, "extra save" }, // Slot 55
+	{  "cata3.056", kSaveModeSave,   nullptr, "extra save" }, // Slot 56
+	{  "cata3.057", kSaveModeSave,   nullptr, "extra save" }, // Slot 57
+	{  "cata3.058", kSaveModeSave,   nullptr, "extra save" }, // Slot 58
+	{  "cata3.059", kSaveModeSave,   nullptr, "extra save" }, // Slot 59
+	{  "intro.0xx", kSaveModeSave,   nullptr, "temp sprite"}, // Autosave sprite
+	{  "intro.000", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 00
+	{  "intro.001", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 01
+	{  "intro.002", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 02
+	{  "intro.003", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 03
+	{  "intro.004", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 04
+	{  "intro.005", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 05
+	{  "intro.006", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 06
+	{  "intro.007", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 07
+	{  "intro.008", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 08
+	{  "intro.009", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 09
+	{  "intro.010", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 10
+	{  "intro.011", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 11
+	{  "intro.012", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 12
+	{  "intro.013", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 13
+	{  "intro.014", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 14
+	{  "intro.015", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 15
+	{  "intro.016", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 16
+	{  "intro.017", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 17
+	{  "intro.018", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 18
+	{  "intro.019", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 19
+	{  "intro.020", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 20
+	{  "intro.021", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 21
+	{  "intro.022", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 22
+	{  "intro.023", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 23
+	{  "intro.024", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 24
+	{  "intro.025", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 25
+	{  "intro.026", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 26
+	{  "intro.027", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 27
+	{  "intro.028", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 28
+	{  "intro.029", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 29
+	{  "intro.030", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 30
+	{  "intro.031", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 31
+	{  "intro.032", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 32
+	{  "intro.033", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 33
+	{  "intro.034", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 34
+	{  "intro.035", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 35
+	{  "intro.036", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 36
+	{  "intro.037", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 37
+	{  "intro.038", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 38
+	{  "intro.039", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 39
+	{  "intro.040", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 40
+	{  "intro.041", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 41
+	{  "intro.042", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 42
+	{  "intro.043", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 43
+	{  "intro.044", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 44
+	{  "intro.045", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 45
+	{  "intro.046", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 46
+	{  "intro.047", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 47
+	{  "intro.048", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 48
+	{  "intro.049", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 49
+	{  "intro.050", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 50
+	{  "intro.051", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 51
+	{  "intro.052", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 52
+	{  "intro.053", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 53
+	{  "intro.054", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 54
+	{  "intro.055", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 55
+	{  "intro.056", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 56
+	{  "intro.057", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 57
+	{  "intro.058", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 58
+	{  "intro.059", kSaveModeSave,   nullptr, "temp sprite"}  // Slot 59
 };
 
 
@@ -271,7 +271,7 @@ int SaveLoad_v6::GameHandler::File::getSlotRemainder(int32 offset) const {
 
 SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target,
 		SpriteHandler &spriteHandler) : SaveHandler(vm), _spriteHandler(&spriteHandler),
-		_reader(0), _writer(0), _hasExtra(false) {
+		_reader(nullptr), _writer(nullptr), _hasExtra(false) {
 
 	memset(_props, 0, kPropsSize);
 	memset(_index, 0, kIndexSize);
@@ -547,7 +547,7 @@ void SaveLoad_v6::GameHandler::buildIndex(byte *buffer) const {
 	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
 			0, _vm->getEndianness(), varSize);
 
-	_slotFile->buildIndex(buffer, info, 0, true);
+	_slotFile->buildIndex(buffer, info, nullptr, true);
 }
 
 void SaveLoad_v6::GameHandler::refreshProps() {
@@ -561,7 +561,7 @@ void SaveLoad_v6::GameHandler::refreshProps() {
 bool SaveLoad_v6::GameHandler::createReader(int slot) {
 	// If slot < 0, just check if a reader exists
 	if (slot < 0)
-		return (_reader != 0);
+		return (_reader != nullptr);
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -574,7 +574,7 @@ bool SaveLoad_v6::GameHandler::createReader(int slot) {
 		_reader = new SaveReader(5, slot, slotFile);
 		if (!_reader->load()) {
 			delete _reader;
-			_reader = 0;
+			_reader = nullptr;
 			return false;
 		}
 	}
@@ -585,7 +585,7 @@ bool SaveLoad_v6::GameHandler::createReader(int slot) {
 bool SaveLoad_v6::GameHandler::createWriter(int slot) {
 	// If slot < 0, just check if a writer exists
 	if (slot < 0)
-		return (_writer != 0);
+		return (_writer != nullptr);
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
@@ -764,7 +764,7 @@ bool SaveLoad_v6::AutoSpriteHandler::save(int16 dataVar, int32 size, int32 offse
 
 
 SaveLoad_v6::TempHandler::TempHandler(GobEngine *vm) : SaveHandler(vm),
-	_empty(true), _size(0), _data(0) {
+	_empty(true), _size(0), _data(nullptr) {
 }
 
 SaveLoad_v6::TempHandler::~TempHandler() {
@@ -815,7 +815,7 @@ bool SaveLoad_v6::TempHandler::deleteFile() {
 
 	_empty = true;
 	_size  = 0;
-	_data  = 0;
+	_data  = nullptr;
 
 	return true;
 }
@@ -894,7 +894,7 @@ const SaveLoad_v6::SaveFile *SaveLoad_v6::getSaveFile(const char *fileName) cons
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_v6::SaveFile *SaveLoad_v6::getSaveFile(const char *fileName) {
@@ -904,7 +904,7 @@ SaveLoad_v6::SaveFile *SaveLoad_v6::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_v6::getHandler(const char *fileName) const {
@@ -913,7 +913,7 @@ SaveHandler *SaveLoad_v6::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_v6::getDescription(const char *fileName) const {
@@ -922,7 +922,7 @@ const char *SaveLoad_v6::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_v6::getSaveMode(const char *fileName) const {

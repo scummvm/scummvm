@@ -252,7 +252,7 @@ void Inter_v1::checkSwitchTable(uint32 &offset) {
 	len = _vm->_game->_script->readInt8();
 	while (len != -5) {
 		for (int i = 0; i < len; i++) {
-			_vm->_game->_script->evalExpr(0);
+			_vm->_game->_script->evalExpr(nullptr);
 
 			if (_terminate)
 				return;
@@ -471,12 +471,12 @@ void Inter_v1::o1_initMult() {
 		delete[] _vm->_mult->_objects;
 		delete[] _vm->_mult->_renderData;
 
-		_vm->_mult->_objects = 0;
-		_vm->_mult->_renderObjs = 0;
+		_vm->_mult->_objects = nullptr;
+		_vm->_mult->_renderObjs = nullptr;
 
 	}
 
-	if (_vm->_mult->_objects == 0) {
+	if (_vm->_mult->_objects == nullptr) {
 		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
 		memset(_vm->_mult->_renderData, 0,
 				_vm->_mult->_objCount * 9 * sizeof(int16));
@@ -1335,7 +1335,7 @@ void Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 	int16 cmd;
 
 	gobParams.extraData = 0;
-	gobParams.objDesc = 0;
+	gobParams.objDesc = nullptr;
 	gobParams.retVarPtr.set(*_variables, 236);
 
 	cmd = _vm->_game->_script->readInt16();
@@ -1631,7 +1631,7 @@ void Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	_vm->_game->_script->evalExpr(0);
+	_vm->_game->_script->evalExpr(nullptr);
 	pos = _vm->_game->_script->readValExpr();
 
 	char *str = GET_VARO_FSTR(strVar);
@@ -1655,7 +1655,7 @@ void Inter_v1::o1_strstr(OpFuncParams &params) {
 	int16 pos;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	_vm->_game->_script->evalExpr(0);
+	_vm->_game->_script->evalExpr(nullptr);
 	resVar = _vm->_game->_script->readVarIndex();
 
 	char *res = strstr(GET_VARO_STR(strVar), _vm->_game->_script->getResultStr());
@@ -1723,7 +1723,7 @@ void Inter_v1::o1_freeFont(OpFuncParams &params) {
 	}
 
 	delete _vm->_draw->_fonts[index];
-	_vm->_draw->_fonts[index] = 0;
+	_vm->_draw->_fonts[index] = nullptr;
 }
 
 void Inter_v1::o1_readData(OpFuncParams &params) {

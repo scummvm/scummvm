@@ -211,7 +211,7 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 
 			default:
 				if (!found) {
-					_vm->_game->_script->evalExpr(0);
+					_vm->_game->_script->evalExpr(nullptr);
 					if (value == _vm->_game->_script->getResultInt())
 						found = true;
 				} else
@@ -312,12 +312,12 @@ void Inter_v2::o2_initMult() {
 		delete[] _vm->_mult->_renderObjs;
 		delete[] _vm->_mult->_orderArray;
 
-		_vm->_mult->_objects = 0;
-		_vm->_mult->_renderObjs = 0;
-		_vm->_mult->_orderArray = 0;
+		_vm->_mult->_objects = nullptr;
+		_vm->_mult->_renderObjs = nullptr;
+		_vm->_mult->_orderArray = nullptr;
 	}
 
-	if (_vm->_mult->_objects == 0) {
+	if (_vm->_mult->_objects == nullptr) {
 		_vm->_mult->_renderObjs = new Mult::Mult_Object*[_vm->_mult->_objCount];
 		memset(_vm->_mult->_renderObjs, 0,
 				_vm->_mult->_objCount * sizeof(Mult::Mult_Object*));
@@ -624,7 +624,7 @@ void Inter_v2::o2_popVars() {
 }
 
 void Inter_v2::o2_loadMapObjects() {
-	_vm->_map->loadMapObjects(0);
+	_vm->_map->loadMapObjects(nullptr);
 }
 
 void Inter_v2::o2_freeGoblins() {
@@ -773,7 +773,7 @@ void Inter_v2::o2_placeGoblin() {
 	y = _vm->_game->_script->readValExpr();
 	state = _vm->_game->_script->readValExpr();
 
-	_vm->_goblin->placeObject(0, 0, index, x, y, state);
+	_vm->_goblin->placeObject(nullptr, 0, index, x, y, state);
 }
 
 void Inter_v2::o2_initScreen() {

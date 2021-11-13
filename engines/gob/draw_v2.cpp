@@ -145,7 +145,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 		} else if (_cursorHotspotX != -1) {
 			hotspotX = _cursorHotspotX;
 			hotspotY = _cursorHotspotY;
-		} else if (_cursorHotspotsX != 0) {
+		} else if (_cursorHotspotsX != nullptr) {
 			hotspotX = _cursorHotspotsX[_cursorIndex];
 			hotspotY = _cursorHotspotsY[_cursorIndex];
 		}
@@ -403,14 +403,14 @@ void Draw_v2::printTotText(int16 id) {
 			str[MAX(strPos, strPos2)] = 0;
 			strPosBak = strPos;
 			width = strlen(str) * _fonts[fontIndex]->getCharWidth();
-			adjustCoords(1, &width, 0);
+			adjustCoords(1, &width, nullptr);
 
 			if (colCmd & 0x0F) {
 				rectLeft = offX - 2;
 				rectTop = offY - 2;
 				rectRight = offX + width + 1;
 				rectBottom = _fonts[fontIndex]->getCharHeight();
-				adjustCoords(1, &rectBottom, 0);
+				adjustCoords(1, &rectBottom, nullptr);
 				rectBottom += offY + 1;
 				adjustCoords(0, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
@@ -470,7 +470,7 @@ void Draw_v2::printTotText(int16 id) {
 			for (int i = 0; i < strPosBak; i++)
 				rectLeft += _fonts[_fontIndex]->getCharWidth(str[i]);
 
-			adjustCoords(1, &rectLeft, 0);
+			adjustCoords(1, &rectLeft, nullptr);
 			offX += rectLeft;
 			strPos = 0;
 			strPos2 = -1;

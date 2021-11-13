@@ -33,9 +33,9 @@
 namespace Gob {
 
 SoundDesc::SoundDesc() {
-	_resource = 0;
+	_resource = nullptr;
 
-	_data = _dataPtr = 0;
+	_data = _dataPtr = nullptr;
 	_size = 0;
 
 	_type = SOUND_SND;
@@ -73,7 +73,7 @@ void SoundDesc::set(SoundType type, byte *data, uint32 dSize) {
 }
 
 void SoundDesc::set(SoundType type, Resource *resource) {
-	byte *data = 0;
+	byte *data = nullptr;
 	uint32 dSize = 0;
 
 	if (resource && (resource->getSize() > 0)) {
@@ -117,14 +117,14 @@ bool SoundDesc::load(SoundType type, Resource *resource) {
 void SoundDesc::free() {
 	if (_resource) {
 		delete _resource;
-		_data = 0;
+		_data = nullptr;
 	}
 
 	delete[] _data;
 
-	_resource = 0;
-	_data = 0;
-	_dataPtr = 0;
+	_resource = nullptr;
+	_data = nullptr;
+	_dataPtr = nullptr;
 	_id = 0;
 }
 
@@ -174,7 +174,7 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 	byte wavFlags;
 	uint16 wavtype;
 
-	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavtype, 0))
+	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavtype, nullptr))
 		return false;
 
 	if (wavFlags & Audio::FLAG_16BITS) {

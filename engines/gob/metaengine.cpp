@@ -64,12 +64,12 @@ Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 namespace Gob {
 
 void GobEngine::initGame(const GOBGameDescription *gd) {
-	if (gd->startTotBase == 0)
+	if (gd->startTotBase == nullptr)
 		_startTot = "intro.tot";
 	else
 		_startTot = gd->startTotBase;
 
-	if (gd->startStkBase == 0)
+	if (gd->startStkBase == nullptr)
 		_startStk = "intro.stk";
 	else
 		_startStk = gd->startStkBase;

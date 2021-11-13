@@ -49,7 +49,7 @@ Hotspots::Hotspot::Hotspot(uint16 i,
 	funcEnter = enter;
 	funcLeave = leave;
 	funcPos   = pos;
-	script    = 0;
+	script    = nullptr;
 }
 
 void Hotspots::Hotspot::clear() {
@@ -63,7 +63,7 @@ void Hotspots::Hotspot::clear() {
 	funcEnter = 0;
 	funcLeave = 0;
 	funcPos   = 0;
-	script    = 0;
+	script    = nullptr;
 }
 
 Hotspots::Type Hotspots::Hotspot::getType() const {
@@ -1331,7 +1331,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 	int16 key   = 0;
 	int16 flags = 0;
-	Font *font = 0;
+	Font *font = nullptr;
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	if ((windowNum != 0) && (type != 0) && (type != 2))
@@ -1387,7 +1387,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		inputs[inputCount].backColor  = _vm->_game->_script->readByte();
 		inputs[inputCount].frontColor = _vm->_game->_script->readByte();
 		inputs[inputCount].length     = 0;
-		inputs[inputCount].str        = 0;
+		inputs[inputCount].str        = nullptr;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
 			inputs[inputCount].length = _vm->_game->_script->readUint16();
@@ -1579,7 +1579,7 @@ void Hotspots::evaluate() {
 
 	_vm->_game->_script->skip(6);
 
-	setCurrentHotspot(0, 0);
+	setCurrentHotspot(nullptr, 0);
 
 	bool finishedDuration = false;
 
@@ -1642,7 +1642,7 @@ void Hotspots::evaluate() {
 		if (_hotspots[index].funcEnter != 0)
 			call(_hotspots[index].funcEnter);
 
-		setCurrentHotspot(0, 0);
+		setCurrentHotspot(nullptr, 0);
 		id = 0;
 	}
 
@@ -1765,7 +1765,7 @@ void Hotspots::oPlaytoons_F_1B() {
 	shortId = _vm->_game->_script->readValExpr();
 	var2 = _vm->_game->_script->readValExpr();
 
-	_vm->_game->_script->evalExpr(0);
+	_vm->_game->_script->evalExpr(nullptr);
 
 	fontIndex = _vm->_game->_script->readValExpr();
 	var4 = _vm->_game->_script->readValExpr();

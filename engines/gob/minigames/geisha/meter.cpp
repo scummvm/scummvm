@@ -34,7 +34,7 @@ Meter::Meter(int16 x, int16 y, int16 width, int16 height, uint8 frontColor,
 			 uint8 backColor, int32 maxValue, Direction direction) :
 	_x(x), _y(y), _width(width), _height(height), _frontColor(frontColor),
 	_backColor(backColor), _value(0), _maxValue(maxValue), _direction(direction),
-	_needUpdate(true), _surface(0) {
+	_needUpdate(true), _surface(nullptr) {
 
 }
 

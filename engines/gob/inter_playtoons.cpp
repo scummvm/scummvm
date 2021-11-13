@@ -191,7 +191,7 @@ void Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
-	_vm->_game->_script->readExpr(99, 0);
+	_vm->_game->_script->readExpr(99, nullptr);
 
 	//unk_var is always set to 0 in Playtoons
 	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
@@ -350,7 +350,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	_vm->_game->_script->evalExpr(&objIndex);
 
 	for (int i = 0; i < 4; i++)
-		readVar[i] = _vm->_game->_script->readVarIndex(0, &types[0]);
+		readVar[i] = _vm->_game->_script->readVarIndex(nullptr, &types[0]);
 
 	if (objIndex == -1) {
 		warning("oPlaytoons_getObjAnimSize case -1 not implemented");
@@ -419,7 +419,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 }
 
 void Inter_Playtoons::oPlaytoons_CD_20_23() {
-	_vm->_game->_script->evalExpr(0);
+	_vm->_game->_script->evalExpr(nullptr);
 }
 
 void Inter_Playtoons::oPlaytoons_CD_25() {

@@ -243,7 +243,7 @@ uint32 VariablesBE::read32(const byte *buf) const {
 }
 
 VariableReference::VariableReference() {
-	_vars = 0;
+	_vars = nullptr;
 	_offset = 0;
 }
 

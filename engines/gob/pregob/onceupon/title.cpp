@@ -44,7 +44,7 @@ void Title::play() {
 
 	// After playback, fade out and stop the music
 	if (!_vm->shouldQuit())
-		_vm->_palAnim->fade(0, 0, 0);
+		_vm->_palAnim->fade(nullptr, 0, 0);
 
 	stopMusic();
 }

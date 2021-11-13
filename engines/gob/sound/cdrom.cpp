@@ -36,7 +36,7 @@ namespace Gob {
 CDROM::CDROM() {
 	_cdPlaying = false;
 
-	_LICbuffer = 0;
+	_LICbuffer = nullptr;
 	for (int i = 0; i < 16; i++)
 		_curTrack[i] = 0;
 	_numTracks = 0;
@@ -78,7 +78,7 @@ void CDROM::readLIC(Common::SeekableReadStream &stream) {
 
 void CDROM::freeLICBuffer() {
 	delete[] _LICbuffer;
-	_LICbuffer = 0;
+	_LICbuffer = nullptr;
 }
 
 void CDROM::startTrack(const char *trackName) {
@@ -162,7 +162,7 @@ void CDROM::stopPlaying() {
 }
 
 void CDROM::stop() {
-	_curTrackBuffer = 0;
+	_curTrackBuffer = nullptr;
 	g_system->getAudioCDManager()->stop();
 	_cdPlaying = false;
 }
@@ -173,7 +173,7 @@ void CDROM::testCD(int trySubst, const char *label) {
 		return;
 	}
 
-	_LICbuffer = 0;
+	_LICbuffer = nullptr;
 	_cdPlaying = false;
 
 	// Original checked CD label here
@@ -183,9 +183,9 @@ void CDROM::testCD(int trySubst, const char *label) {
 
 byte *CDROM::getTrackBuffer(const char *trackName) const {
 	if (!_LICbuffer || !trackName)
-		return 0;
+		return nullptr;
 
-	byte *matchPtr = 0;
+	byte *matchPtr = nullptr;
 	byte *curPtr = _LICbuffer;
 
 	for (int i = 0; i < _numTracks; i++) {

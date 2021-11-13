@@ -28,10 +28,10 @@
 namespace Gob {
 
 SaveLoad_v2::SaveFile SaveLoad_v2::_saveFiles[] = {
-	{  "cat.inf", kSaveModeSave, 0, "savegame"},
-	{  "cat.cat", kSaveModeSave, 0, "savegame"}, // Alternative file
-	{ "save.inf", kSaveModeSave, 0, "temporary sprite"},
-	{ "bloc.inf", kSaveModeSave, 0, "notes"}
+	{  "cat.inf", kSaveModeSave, nullptr, "savegame"},
+	{  "cat.cat", kSaveModeSave, nullptr, "savegame"}, // Alternative file
+	{ "save.inf", kSaveModeSave, nullptr, "temporary sprite"},
+	{ "bloc.inf", kSaveModeSave, nullptr, "notes"}
 };
 
 
@@ -122,7 +122,7 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 
 		Common::String slotFile = _slotFile->build(slot);
 
-		SaveReader *reader = 0;
+		SaveReader *reader = nullptr;
 		SaveConverter_v2 converter(_vm, slotFile);
 
 		if (converter.isOldSave()) {
@@ -277,7 +277,7 @@ const SaveLoad_v2::SaveFile *SaveLoad_v2::getSaveFile(const char *fileName) cons
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad_v2::SaveFile *SaveLoad_v2::getSaveFile(const char *fileName) {
@@ -287,7 +287,7 @@ SaveLoad_v2::SaveFile *SaveLoad_v2::getSaveFile(const char *fileName) {
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
-	return 0;
+	return nullptr;
 }
 
 SaveHandler *SaveLoad_v2::getHandler(const char *fileName) const {
@@ -296,7 +296,7 @@ SaveHandler *SaveLoad_v2::getHandler(const char *fileName) const {
 	if (saveFile)
 		return saveFile->handler;
 
-	return 0;
+	return nullptr;
 }
 
 const char *SaveLoad_v2::getDescription(const char *fileName) const {
@@ -305,7 +305,7 @@ const char *SaveLoad_v2::getDescription(const char *fileName) const {
 	if (saveFile)
 		return saveFile->description;
 
-	return 0;
+	return nullptr;
 }
 
 SaveLoad::SaveMode SaveLoad_v2::getSaveMode(const char *fileName) const {

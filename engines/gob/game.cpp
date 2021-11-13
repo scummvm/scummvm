@@ -47,12 +47,12 @@ Environments::Environments(GobEngine *vm) : _vm(vm) {
 
 		e.cursorHotspotX = 0;
 		e.cursorHotspotY = 0;
-		e.variables      = 0;
-		e.script         = 0;
-		e.resources      = 0;
+		e.variables      = nullptr;
+		e.script         = nullptr;
+		e.resources      = nullptr;
 
 		for (int j = 0; j < 17; j++)
-			m.fonts[j] = 0;
+			m.fonts[j] = nullptr;
 	}
 }
 
@@ -170,7 +170,7 @@ bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const
 void Environments::deleted(Variables *variables) {
 	for (uint i = 0; i < kEnvironmentCount; i++) {
 		if (_environments[i].variables == variables)
-			_environments[i].variables = 0;
+			_environments[i].variables = nullptr;
 	}
 }
 
@@ -188,7 +188,7 @@ bool Environments::clearMedia(uint8 env) {
 
 	for (int i = 0; i < 17; i++) {
 		delete m.fonts[i];
-		m.fonts[i] = 0;
+		m.fonts[i] = nullptr;
 	}
 
 	return true;
@@ -216,7 +216,7 @@ bool Environments::setMedia(uint8 env) {
 	int n = MIN(Draw::kFontCount, 17);
 	for (int i = 0; i < n; i++) {
 		m.fonts[i] = _vm->_draw->_fonts[i];
-		_vm->_draw->_fonts[i] = 0;
+		_vm->_draw->_fonts[i] = nullptr;
 	}
 
 	return true;
@@ -244,7 +244,7 @@ bool Environments::getMedia(uint8 env) {
 	for (int i = 0; i < n; i++) {
 		delete _vm->_draw->_fonts[i];
 		_vm->_draw->_fonts[i] = m.fonts[i];
-		m.fonts[i]= 0;
+		m.fonts[i]= nullptr;
 	}
 
 	return true;
@@ -253,8 +253,8 @@ bool Environments::getMedia(uint8 env) {
 
 TotFunctions::TotFunctions(GobEngine *vm) : _vm(vm) {
 	for (uint8 i = 0; i < kTotCount; i++) {
-		_tots[i].script    = 0;
-		_tots[i].resources = 0;
+		_tots[i].script    = nullptr;
+		_tots[i].resources = nullptr;
 	}
 }
 
@@ -279,8 +279,8 @@ void TotFunctions::freeTot(Tot &tot) {
 	delete tot.script;
 	delete tot.resources;
 
-	tot.script    = 0;
-	tot.resources = 0;
+	tot.script    = nullptr;
+	tot.resources = nullptr;
 
 	tot.file.clear();
 	tot.functions.clear();
@@ -382,9 +382,9 @@ bool TotFunctions::unload(const Common::String &totFile) {
 	Tot &tot = _tots[index];
 
 	if (_vm->_game->_script == tot.script)
-		_vm->_game->_script = 0;
+		_vm->_game->_script = nullptr;
 	if (_vm->_game->_resources == tot.resources)
-		_vm->_game->_resources = 0;
+		_vm->_game->_resources = nullptr;
 
 	freeTot(tot);
 
@@ -862,7 +862,7 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 		warning("Addy Stub: Game::totSub(), flags & 0x80");
 
 	if (flags & 5)
-		_vm->_inter->_variables = 0;
+		_vm->_inter->_variables = nullptr;
 
 	_curTotFile = totFile + ".TOT";
 
@@ -961,11 +961,11 @@ void Game::deletedVars(Variables *variables) {
 void Game::clearUnusedEnvironment() {
 	if (!_environments.has(_script)) {
 		delete _script;
-		_script = 0;
+		_script = nullptr;
 	}
 	if (!_environments.has(_resources)) {
 		delete _resources;
-		_resources = 0;
+		_resources = nullptr;
 	}
 }
 

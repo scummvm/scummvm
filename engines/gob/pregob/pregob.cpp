@@ -55,7 +55,7 @@ void PreGob::fadeOut() {
 		return;
 
 	// Fade to black
-	_vm->_palAnim->fade(0, 0, 0);
+	_vm->_palAnim->fade(nullptr, 0, 0);
 
 	_fadedOut = true;
 }
@@ -104,7 +104,7 @@ void PreGob::setPalette(const byte *palette, uint16 size) {
 }
 
 void PreGob::addCursor() {
-	CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+	CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
 }
 
 void PreGob::removeCursor() {

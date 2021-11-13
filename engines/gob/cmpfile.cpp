@@ -37,7 +37,7 @@ namespace Gob {
 CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
 				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+	_surface(nullptr), _coordinates(nullptr) {
 
 	if (baseName.empty())
 		return;
@@ -57,7 +57,7 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
 CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::String &rxyFile,
 				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+	_surface(nullptr), _coordinates(nullptr) {
 
 	if (cmpFile.empty() || !_vm->_dataIO->hasFile(cmpFile))
 		return;
@@ -71,7 +71,7 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::Str
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::SeekableReadStream &rxy,
 				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+	_surface(nullptr), _coordinates(nullptr) {
 
 	loadRXY(rxy);
 	createSurface();
@@ -82,7 +82,7 @@ CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::Seekabl
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp,
 				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+	_surface(nullptr), _coordinates(nullptr) {
 
 	createRXY();
 	createSurface();
@@ -96,7 +96,7 @@ CMPFile::~CMPFile() {
 }
 
 bool CMPFile::empty() const {
-	return (_surface == 0) || (_coordinates == 0);
+	return (_surface == nullptr) || (_coordinates == nullptr);
 }
 
 uint16 CMPFile::getSpriteCount() const {
@@ -117,7 +117,7 @@ void CMPFile::loadCMP(const Common::String &cmp) {
 }
 
 void CMPFile::loadRXY(const Common::String &rxy) {
-	Common::SeekableReadStream *dataRXY = 0;
+	Common::SeekableReadStream *dataRXY = nullptr;
 	if (!rxy.empty())
 		dataRXY = _vm->_dataIO->getFile(rxy);
 

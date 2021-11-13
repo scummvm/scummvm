@@ -27,14 +27,14 @@
 
 namespace Gob {
 
-ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _cmp(0),
+ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _cmp(nullptr),
 	_visible(false), _paused(false), _mode(kModeContinuous), _x(0), _y(0) {
 
 	setAnimation(0);
 	setPosition();
 }
 
-ANIObject::ANIObject(const CMPFile &cmp) : _ani(0), _cmp(&cmp),
+ANIObject::ANIObject(const CMPFile &cmp) : _ani(nullptr), _cmp(&cmp),
 	_visible(false), _paused(false), _mode(kModeContinuous), _x(0), _y(0) {
 
 	setAnimation(0);

@@ -118,7 +118,7 @@ void Goblin_v3::placeObject(Gob_Object *objDesc, char animated,
 	if (!obj.goblinStates)
 		return;
 
-	if ((state != -1) && (obj.goblinStates[state] != 0)) {
+	if ((state != -1) && (obj.goblinStates[state] != nullptr)) {
 		if (state == 8)
 			objAnim.curLookDir = 0;
 		else if (state == 9)

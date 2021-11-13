@@ -357,7 +357,7 @@ void Util::getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons) {
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;
 	*pY = mouse.y + _vm->_video->_scrollOffsetY - _vm->_video->_screenDeltaY;
 
-	if (pButtons != 0)
+	if (pButtons != nullptr)
 		*pButtons = _mouseButtons;
 }
 
@@ -560,7 +560,7 @@ void Util::cleanupStr(char *str) {
 		}
 
 		end = strchr(start + 1, ' ');
-		start = end ? end + 1 : 0;
+		start = end ? end + 1 : nullptr;
 	}
 }
 
@@ -571,23 +571,23 @@ void Util::listInsertFront(List *list, void *data) {
 	if (list->pHead) {
 		node->pData = data;
 		node->pNext = list->pHead;
-		node->pPrev = 0;
+		node->pPrev = nullptr;
 		list->pHead->pPrev = node;
 		list->pHead = node;
 	} else {
 		list->pHead = node;
 		list->pTail = node;
 		node->pData = data;
-		node->pNext = 0;
-		node->pPrev = 0;
+		node->pNext = nullptr;
+		node->pPrev = nullptr;
 	}
 }
 
 void Util::listInsertBack(List *list, void *data) {
 	ListNode *node;
 
-	if (list->pHead != 0) {
-		if (list->pTail == 0) {
+	if (list->pHead != nullptr) {
+		if (list->pTail == nullptr) {
 			list->pTail = list->pHead;
 			warning("Util::listInsertBack(): Broken list");
 		}
@@ -595,7 +595,7 @@ void Util::listInsertBack(List *list, void *data) {
 		node = new ListNode;
 		node->pData = data;
 		node->pPrev = list->pTail;
-		node->pNext = 0;
+		node->pNext = nullptr;
 		list->pTail->pNext = node;
 		list->pTail = node;
 	} else
@@ -603,14 +603,14 @@ void Util::listInsertBack(List *list, void *data) {
 }
 
 void Util::listDropFront(List *list) {
-	if (list->pHead->pNext == 0) {
+	if (list->pHead->pNext == nullptr) {
 		delete list->pHead;
-		list->pHead = 0;
-		list->pTail = 0;
+		list->pHead = nullptr;
+		list->pTail = nullptr;
 	} else {
 		list->pHead = list->pHead->pNext;
 		delete list->pHead->pPrev;
-		list->pHead->pPrev = 0;
+		list->pHead->pPrev = nullptr;
 	}
 }
 

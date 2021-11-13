@@ -29,7 +29,7 @@
 namespace Gob {
 
 ADLPlayer::ADLPlayer() : AdLib(1000),
-	_songData(0), _songDataSize(0), _playPos(0) {
+	_songData(nullptr), _songDataSize(0), _playPos(nullptr) {
 
 }
 
@@ -44,10 +44,10 @@ void ADLPlayer::unload() {
 
 	delete[] _songData;
 
-	_songData     = 0;
+	_songData     = nullptr;
 	_songDataSize = 0;
 
-	_playPos = 0;
+	_playPos = nullptr;
 }
 
 uint32 ADLPlayer::pollMusic(bool first) {

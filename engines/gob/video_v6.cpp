@@ -70,7 +70,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 	data += 4;
 
 	const byte *srcData = data;
-	byte *uncBuf = 0;
+	byte *uncBuf = nullptr;
 
 	if (*srcData++ != 0) {
 		uint32 size = READ_LE_UINT32(data);
