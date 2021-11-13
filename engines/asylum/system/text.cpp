@@ -34,7 +34,7 @@ namespace Asylum {
 
 Text::Text(AsylumEngine *engine) : _vm(engine) {
 	_curFontFlags = 0;
-	_fontResource = 0;
+	_fontResource = nullptr;
 	_transTableNum = 0;
 }
 
@@ -49,7 +49,7 @@ ResourceId Text::loadFont(ResourceId resourceId) {
 	ResourceId previousFont = _fontResource ? _fontResource->getResourceId() : kResourceNone;
 
 	delete _fontResource;
-	_fontResource = NULL;
+	_fontResource = nullptr;
 
 	if (resourceId != kResourceNone) {
 		_fontResource = new GraphicResource(_vm, resourceId);

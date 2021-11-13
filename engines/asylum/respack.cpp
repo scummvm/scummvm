@@ -149,7 +149,7 @@ void ResourcePack::init(const Common::String &filename) {
 		// Read the offset of the next entry to determine the size of this one
 		nextOffset = (i < entryCount - 1) ? _packFile.readUint32LE() : (uint32)_packFile.size();
 		entry.size = (nextOffset > 0) ? nextOffset - prevOffset : (uint32)_packFile.size() - prevOffset;
-		entry.data = NULL;
+		entry.data = nullptr;
 
 		_resources[i] = entry;
 
@@ -159,7 +159,7 @@ void ResourcePack::init(const Common::String &filename) {
 
 ResourceEntry *ResourcePack::get(uint16 index) {
 	if (index > _resources.size() - 1)
-		return NULL;
+		return nullptr;
 
 	if (!_resources[index].data) {
 		// Load the requested resource if it's not loaded already

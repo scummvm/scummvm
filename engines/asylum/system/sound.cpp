@@ -111,7 +111,7 @@ void Sound::changeMusic(int32 index, int32 musicStatusExt) {
 }
 
 bool Sound::isPlaying(ResourceId resourceId) {
-	return (getPlayingItem(resourceId) != NULL);
+	return (getPlayingItem(resourceId) != nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -246,7 +246,7 @@ int32 Sound::calculatePanningAtPoint(const Common::Point &point) {
 void Sound::stop(ResourceId resourceId) {
 	SoundQueueItem *item = getPlayingItem(resourceId);
 
-	if (item != NULL)
+	if (item != nullptr)
 		_mixer->stopHandle(item->handle);
 }
 
@@ -289,7 +289,7 @@ SoundQueueItem *Sound::getItem(ResourceId resourceId) {
 		if (resourceId == _soundQueue[i].resourceId)
 			return &_soundQueue[i];
 
-	return NULL;
+	return nullptr;
 }
 
 SoundQueueItem *Sound::getPlayingItem(ResourceId resourceId) {
@@ -298,7 +298,7 @@ SoundQueueItem *Sound::getPlayingItem(ResourceId resourceId) {
 			&& _mixer->isSoundHandleActive(_soundQueue[i].handle))
 			return &_soundQueue[i];
 
-	return NULL;
+	return nullptr;
 }
 
 SoundQueueItem *Sound::addToQueue(ResourceId resourceId) {

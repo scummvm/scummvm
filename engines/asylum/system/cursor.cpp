@@ -33,7 +33,7 @@ namespace Asylum {
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
 Cursor::Cursor(AsylumEngine *engine) : _vm(engine),
-	_state(0), _cursorRes(NULL), _nextTick(0), _frameStep(0),
+	_state(0), _cursorRes(nullptr), _nextTick(0), _frameStep(0),
 	_graphicResourceId(kResourceNone), _currentFrame(0), _lastFrameIndex(0), _counter(0), _animation(kCursorAnimationNone),
 	_forceHide(false) {
 }

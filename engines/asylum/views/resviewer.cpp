@@ -61,7 +61,7 @@ static const int resPackSizes[] = {
 };
 
 ResourceViewer::ResourceViewer(AsylumEngine *engine) : _vm(engine), _resource(_vm) {
-	_handler = NULL;
+	_handler = nullptr;
 	_resourceId = kResourceNone;
 	_frameIndex = _frameCount = 0;
 	_frameIncrement = 1;

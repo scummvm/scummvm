@@ -507,7 +507,7 @@ void Actor::update() {
 				break;
 
 			case 1:
-				getSpecial()->run(NULL, _index);
+				getSpecial()->run(nullptr, _index);
 				return;
 
 			case 10:
@@ -554,7 +554,7 @@ void Actor::update() {
 			setVolume();
 
 		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-			getSpecial()->run(NULL, _index);
+			getSpecial()->run(nullptr, _index);
 
 		updateReflectionData();
 
@@ -614,7 +614,7 @@ void Actor::update() {
 			setVolume();
 
 		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-			getSpecial()->run(NULL, _index);
+			getSpecial()->run(nullptr, _index);
 
 		updateReflectionData();
 
@@ -674,7 +674,7 @@ void Actor::update() {
 		setVolume();
 
 	if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-		getSpecial()->run(NULL, _index);
+		getSpecial()->run(nullptr, _index);
 
 	updateReflectionData();
 

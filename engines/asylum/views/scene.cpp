@@ -57,7 +57,7 @@ int g_debugSceneRects;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
-	_polygons(NULL), _ws(NULL) {
+	_polygons(nullptr), _ws(nullptr) {
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
@@ -2155,7 +2155,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (diffY)
 			getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffX, diffY).toInt());
 
-		if (param != NULL && abs(diffY) <= abs(*coord3)) {
+		if (param != nullptr && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
 			*param = 0;
 			return true;
@@ -2166,7 +2166,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 
 		getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffY, diffX).toInt());
 
-		if (param != NULL && abs(diffX) <= abs(*coord3)) {
+		if (param != nullptr && abs(diffX) <= abs(*coord3)) {
 			*targetX = -1;
 			return true;
 		}

@@ -43,7 +43,7 @@ int g_debugDrawRects;
 #define TRANSPARENCY_TABLE_SIZE (256 * 256)
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
-	_useColorKey(false), _transTableCount(0), _transTable(NULL), _transTableBuffer(NULL) {
+	_useColorKey(false), _transTableCount(0), _transTable(nullptr), _transTableBuffer(nullptr) {
 	_backBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	_flag = -1;
@@ -116,7 +116,7 @@ void Screen::drawTransparent(GraphicResource *resource, uint32 frameIndex, const
 
 void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceIdDestination, const Common::Point &destination, bool colorKey) {
 	GraphicFrame *frame = resource->getFrame(frameIndex);
-	ResourceEntry *resourceMask = NULL;
+	ResourceEntry *resourceMask = nullptr;
 
 	// Compute coordinates
 	Common::Rect src;
@@ -330,7 +330,7 @@ void Screen::updatePalette(int32 param) {
 			_mainPalette[j + 2] = _currentPalette[j + 2];
 		}
 
-		setupPalette(NULL, 0, 0);
+		setupPalette(nullptr, 0, 0);
 		paletteFade(0, 25, 10);
 	} else {
 		// Get the current action palette
@@ -349,7 +349,7 @@ void Screen::updatePalette(int32 param) {
 			_mainPalette[j + 2] = (byte)((1.0 - fParam) * 4 * paletteData[j + 2] + fParam * _currentPalette[j + 2]);
 		}
 
-		setupPalette(NULL, 0, 0);
+		setupPalette(nullptr, 0, 0);
 	}
 }
 
@@ -397,7 +397,7 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 	}
 
 	stopPaletteFadeTimer();
-	setupPalette(NULL, 0, 0);
+	setupPalette(nullptr, 0, 0);
 }
 
 void Screen::stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta) {
@@ -425,7 +425,7 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 			_mainPalette[j + 2] = (byte)(palette[j + 2] + i * (blue  - palette[j + 2]) / colorDelta);
 		}
 
-		setupPalette(NULL, 0, 0);
+		setupPalette(nullptr, 0, 0);
 
 		g_system->delayMillis((uint32)ticksWait);
 
@@ -478,7 +478,7 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 			_mainPalette[j + 2] = (byte)(original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta);
 		}
 
-		setupPalette(NULL, 0, 0);
+		setupPalette(nullptr, 0, 0);
 
 		// Original waits for event and so can be interrupted in the middle of the wait
 		g_system->delayMillis((uint32)ticksWait);
@@ -506,7 +506,7 @@ void Screen::setPaletteGamma(ResourceId id) {
 }
 
 void Screen::setPaletteGamma(byte *data, byte *target) {
-	if (target == NULL)
+	if (target == nullptr)
 		target = (byte *)&_mainPalette;
 
 	// Skip first entry
@@ -546,7 +546,7 @@ void Screen::setGammaLevel(ResourceId id) {
 		error("[Screen::setGammaLevel] Resource Id is invalid");
 
 	setPaletteGamma(getPaletteData(id));
-	setupPalette(NULL, 0, 0);
+	setupPalette(nullptr, 0, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -595,8 +595,8 @@ void Screen::setupTransTables(uint32 count, ...) {
 
 void Screen::clearTransTables() {
 	free(_transTableBuffer);
-	_transTableBuffer = NULL;
-	_transTable = NULL;
+	_transTableBuffer = nullptr;
+	_transTable = nullptr;
 	_transTableCount = 0;
 }
 
@@ -915,7 +915,7 @@ void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int
 
 void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, uint16 maskWidth, Common::Rect *destination, int32 flags) {
 	byte *frameBuffer = (byte *)frame->surface.getPixels();
-	byte *mirroredBuffer = NULL;
+	byte *mirroredBuffer = nullptr;
 	int16 frameRight = frame->surface.pitch;
 	uint16 maskHeight = (uint16)sourceMask->height(); // for debugging only
 	byte nSkippedBits = ABS(sourceMask->left) % 8;

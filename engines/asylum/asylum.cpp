@@ -56,9 +56,9 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _resource(NULL), _savegame(NULL),
-	_scene(NULL), _screen(NULL), _script(NULL), _special(NULL), _speech(NULL), _sound(NULL), _text(NULL),
-	_video(NULL), _handler(NULL), _puzzles(NULL) {
+	_console(nullptr), _cursor(nullptr), _encounter(nullptr), _menu(nullptr), _resource(nullptr), _savegame(nullptr),
+	_scene(nullptr), _screen(nullptr), _script(nullptr), _special(nullptr), _speech(nullptr), _sound(nullptr), _text(nullptr),
+	_video(nullptr), _handler(nullptr), _puzzles(nullptr) {
 
 	// Init data
 	resetFlags();
@@ -71,7 +71,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	// Debug
 	_delayedSceneIndex = kResourcePackInvalid;
 	_delayedVideoIndex = -1;
-	_previousScene = NULL;
+	_previousScene = nullptr;
 
 	// Add default search directories
 	const Common::FSNode gamePath(ConfMan.get("path"));
@@ -83,7 +83,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 }
 
 AsylumEngine::~AsylumEngine() {
-	_handler = NULL;
+	_handler = nullptr;
 
 	delete _cursor;
 	delete _scene;
@@ -100,12 +100,12 @@ AsylumEngine::~AsylumEngine() {
 	delete _menu;
 	delete _resource;
 
-	_previousScene = NULL;
+	_previousScene = nullptr;
 
 	delete _rnd;
 
 	// Zero passed pointers
-	_gameDescription = NULL;
+	_gameDescription = nullptr;
 }
 
 Common::Error AsylumEngine::run() {
@@ -137,7 +137,7 @@ Common::Error AsylumEngine::run() {
 	_menu  = new Menu(this);
 	if (checkGameVersion("Demo")) {
 		if (!isAltDemo())
-			_video->play(0, NULL);
+			_video->play(0, nullptr);
 		restart();
 	} else {
 		int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -288,7 +288,7 @@ void AsylumEngine::restart() {
 	// Cleanup
 	resetFlags();
 	delete _scene;
-	_scene = NULL;
+	_scene = nullptr;
 	delete _encounter;
 	_encounter = new Encounter(this);
 	_script->resetQueue();
@@ -337,7 +337,7 @@ void AsylumEngine::playIntro() {
 		} else {
 			_sound->playMusic(kResourceNone, 0);
 
-			_video->play(1, checkGameVersion("Demo") ? NULL : _menu);
+			_video->play(1, checkGameVersion("Demo") ? nullptr : _menu);
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -501,11 +501,11 @@ void AsylumEngine::processDelayedEvents() {
 // Message handlers
 //////////////////////////////////////////////////////////////////////////
 void AsylumEngine::switchEventHandler(EventHandler *handler) {
-	if (handler == NULL && !checkGameVersion("Demo"))
+	if (handler == nullptr && !checkGameVersion("Demo"))
 		warning("[AsylumEngine::switchMessageHandler] NULL handler parameter (shouldn't happen outside of debug commands)!");
 
 	// De-init previous handler
-	if (_handler != NULL) {
+	if (_handler != nullptr) {
 		AsylumEvent deinit(EVENT_ASYLUM_DEINIT);
 		_handler->handleEvent(deinit);
 	}
@@ -517,7 +517,7 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 			delete _scene;
 			_scene = _previousScene;
 			handler = _scene;
-			_previousScene = NULL;
+			_previousScene = nullptr;
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 }
 
 void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
-	if (_handler == NULL)
+	if (_handler == nullptr)
 		error("[AsylumEngine::notify] Invalid handler parameter (cannot be NULL)!");
 
 	AsylumEvent evt(type, param1, param2);

@@ -34,7 +34,7 @@
 
 namespace Asylum {
 
-Speech::Speech(AsylumEngine *engine): _vm(engine), _textData(0), _textDataPos(0) {
+Speech::Speech(AsylumEngine *engine): _vm(engine), _textData(nullptr), _textDataPos(nullptr) {
 	_tick            = _vm->getTick();
 	_soundResourceId = kResourceNone;
 	_textResourceId  = kResourceNone;
@@ -228,8 +228,8 @@ void Speech::resetResourceIds() {
 }
 
 void Speech::resetTextData() {
-	_textData = NULL;
-	_textDataPos = NULL;
+	_textData = nullptr;
+	_textDataPos = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -264,16 +264,16 @@ void Speech::process() {
 
 	if (*(txt + strlen((const char *)txt) - 2) == 1) {
 		_textResourceId = kResourceNone;
-		_textData = 0;
-		_textDataPos = 0;
+		_textData = nullptr;
+		_textDataPos = nullptr;
 	} else if (*txt == '{') {
 		_textData = txt + 3;
-		_textDataPos = 0;
+		_textDataPos = nullptr;
 
 		getText()->loadFont(getWorld()->font1);
 		getSound()->playSound(_soundResourceId, false, Config.voiceVolume, 0);
 	} else {
-		_textData = 0;
+		_textData = nullptr;
 		_textDataPos = txt;
 
 		if (*txt == '/') {

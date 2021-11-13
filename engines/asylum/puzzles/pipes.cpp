@@ -101,10 +101,10 @@ void Peephole::startUpWater(bool flag) {
 //////////////////////////////////////////////////////////////////////////
 Connector::Connector() :
 	_id(0),
-	_position(NULL),
+	_position(nullptr),
 	_state(kBinNum0000),
 	_isConnected(false),
-	_nextConnector(NULL),
+	_nextConnector(nullptr),
 	_type(kConnectorTypeI),
 	_nextConnectorPosition(kDirectionNowhere) {
 	memset(_nodes, 0, sizeof(_nodes));
@@ -293,7 +293,7 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	_isLeverReady = false;
 	memset(&_sinks, 0, sizeof(_sinks));
 	memset(&_sources, 0, sizeof(_sources));
-	_frameIndexSpider = NULL;
+	_frameIndexSpider = nullptr;
 
 	initResources();
 	setup();
@@ -504,27 +504,27 @@ void PuzzlePipes::setup() {
 		_sources[i]->_flowValues[i] = 1;
 	}
 
-	_connectors[ 0].init(           NULL,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, 1, kConnectorTypeL);
-	_connectors[ 1].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, 1, kConnectorTypeL);
-	_connectors[ 2].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, 2, kConnectorTypeL);
-	_connectors[ 3].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, 1, kConnectorTypeL);
-	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, 2, kConnectorTypeL,  _connectors + 5, kDirectionSh);
-	_connectors[ 5].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, 1, kConnectorTypeT,  _connectors + 4, kDirectionNh);
-	_connectors[ 6].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, 1, kConnectorTypeL);
+	_connectors[ 0].init(        nullptr,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, 1, kConnectorTypeL);
+	_connectors[ 1].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,         nullptr, 1, kConnectorTypeL);
+	_connectors[ 2].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,         nullptr, 2, kConnectorTypeL);
+	_connectors[ 3].init(        nullptr,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, 1, kConnectorTypeL);
+	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,         nullptr,         nullptr, 2, kConnectorTypeL,  _connectors + 5, kDirectionSh);
+	_connectors[ 5].init(        nullptr, _peepholes + 18, _peepholes + 24, _peepholes + 15, 1, kConnectorTypeT,  _connectors + 4, kDirectionNh);
+	_connectors[ 6].init(        nullptr,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, 1, kConnectorTypeL);
 	_connectors[ 7].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, 1, kConnectorTypeT);
 	_connectors[ 8].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, 2, kConnectorTypeT);
 	_connectors[ 9].init(_peepholes +  9, _peepholes + 16, _peepholes + 19, _peepholes + 12, 8, kConnectorTypeT);
-	_connectors[10].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, 2, kConnectorTypeL);
+	_connectors[10].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,         nullptr, 2, kConnectorTypeL);
 	_connectors[11].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, 2, kConnectorTypeT);
-	_connectors[12].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, 2, kConnectorTypeL);
-	_connectors[13].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, 1, kConnectorTypeT, _connectors + 14, kDirectionSh);
-	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, 8, kConnectorTypeT, _connectors + 13, kDirectionNh);
-	_connectors[15].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, 1, kConnectorTypeI, _connectors + 19, kDirectionEt);
+	_connectors[12].init(_peepholes +  2, _peepholes + 10,         nullptr,  _peepholes + 9, 2, kConnectorTypeL);
+	_connectors[13].init(_peepholes + 13, _peepholes + 17,         nullptr, _peepholes + 16, 1, kConnectorTypeT, _connectors + 14, kDirectionSh);
+	_connectors[14].init(        nullptr, _peepholes + 21, _peepholes + 27, _peepholes + 20, 8, kConnectorTypeT, _connectors + 13, kDirectionNh);
+	_connectors[15].init(_peepholes + 10,         nullptr, _peepholes + 22, _peepholes + 17, 1, kConnectorTypeI, _connectors + 19, kDirectionEt);
 	_connectors[16].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, 2, kConnectorTypeT);
-	_connectors[17].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, 2, kConnectorTypeL);
-	_connectors[18].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, 8, kConnectorTypeL);
-	_connectors[19].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, 4, kConnectorTypeL, _connectors + 15, kDirectionWt);
-	_connectors[20].init(_peepholes + 28,            NULL, _peepholes + 36, _peepholes + 32, 4, kConnectorTypeL);
+	_connectors[17].init(_peepholes + 30, _peepholes + 32,         nullptr, _peepholes + 31, 2, kConnectorTypeL);
+	_connectors[18].init(_peepholes +  3,         nullptr, _peepholes + 14, _peepholes + 13, 8, kConnectorTypeL);
+	_connectors[19].init(_peepholes + 14,         nullptr, _peepholes + 28,         nullptr, 4, kConnectorTypeL, _connectors + 15, kDirectionWt);
+	_connectors[20].init(_peepholes + 28,         nullptr, _peepholes + 36, _peepholes + 32, 4, kConnectorTypeL);
 
 	_connectors[ 4].initGroup();
 	_connectors[13].initGroup();
