@@ -85,7 +85,7 @@ Common::SeekableReadStream *MacVentureEngine::getBorderFile(MVWindowType windowT
 	filename += (isActive ? "_act.bmp" : "_inac.bmp");
 	if (!_dataBundle->hasFile(filename)) {
 		warning("Missing border file '%s' in data bundle", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	return _dataBundle->createReadStreamForMember(filename);

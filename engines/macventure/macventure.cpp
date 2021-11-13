@@ -64,21 +64,21 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
 
-	_resourceManager = NULL;
-	_globalSettings = NULL;
-	_gui = NULL;
-	_world = NULL;
-	_scriptEngine = NULL;
-	_filenames = NULL;
+	_resourceManager = nullptr;
+	_globalSettings = nullptr;
+	_gui = nullptr;
+	_world = nullptr;
+	_scriptEngine = nullptr;
+	_filenames = nullptr;
 
-	_decodingDirectArticles = NULL;
-	_decodingNamingArticles = NULL;
-	_decodingIndirectArticles = NULL;
-	_textHuffman = NULL;
+	_decodingDirectArticles = nullptr;
+	_decodingNamingArticles = nullptr;
+	_decodingIndirectArticles = nullptr;
+	_textHuffman = nullptr;
 
-	_soundManager = NULL;
+	_soundManager = nullptr;
 
-	_dataBundle = NULL;
+	_dataBundle = nullptr;
 
 	debug("MacVenture::MacVentureEngine()");
 }
