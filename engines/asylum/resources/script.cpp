@@ -298,9 +298,9 @@ void ScriptManager::reset(uint32 count) {
 	_exit = false;
 	_processNextEntry = false;
 
-	_lastProcessedCmd = NULL;
-	_currentScript = NULL;
-	_currentQueueEntry = NULL;
+	_lastProcessedCmd = nullptr;
+	_currentScript = nullptr;
+	_currentQueueEntry = nullptr;
 }
 
 void ScriptManager::resetQueue() {
@@ -392,7 +392,7 @@ bool ScriptManager::process() {
 
 				// Run script
 				for (;;) {
-					ScriptEntry *cmd = NULL;
+					ScriptEntry *cmd = nullptr;
 					uint32 cmdIndex = 0;
 
 					if (_processNextEntry)
@@ -1986,7 +1986,7 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
 	int32 *param = &cmd->param4;
 	for (int i = 0; i < 6; i++) {
 		Object *object = getWorld()->getObjectById((ObjectId)*param);
-		if (object != NULL)
+		if (object != nullptr)
 			object->setTransparency(transparency);
 
 		++param;

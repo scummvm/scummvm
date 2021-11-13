@@ -336,7 +336,7 @@ void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32
 	if (fileCount * fileSize == 0)
 		return;
 
-	Common::Serializer ser(file, NULL);
+	Common::Serializer ser(file, nullptr);
 	data->saveLoadWithSerializer(ser);
 }
 
@@ -376,7 +376,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint
 	if (size * count == 0)
 		return;
 
-	Common::Serializer ser(NULL, file);
+	Common::Serializer ser(nullptr, file);
 	uint before = ser.bytesSynced();
 
 	// Save the data

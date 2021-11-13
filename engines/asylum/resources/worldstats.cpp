@@ -310,7 +310,7 @@ load_inventory:
 		ObjectId id = (ObjectId)stream->readUint32LE();
 
 		if (id == 0)
-			wheels[i] = NULL;
+			wheels[i] = nullptr;
 		else
 			wheels[i] = getObjectById(id);
 	}
@@ -489,7 +489,7 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 
 		if (s.isLoading()) {
 			if (id == kObjectNone)
-				wheels[i] = NULL;
+				wheels[i] = nullptr;
 			else
 				wheels[i] = getObjectById(id);
 		}
@@ -544,7 +544,7 @@ Object *WorldStats::getObjectById(ObjectId id) {
 		if (objects[i]->getId() == id)
 			return objects[i];
 
-	return NULL;
+	return nullptr;
 }
 
 void WorldStats::setWheelObjects() {

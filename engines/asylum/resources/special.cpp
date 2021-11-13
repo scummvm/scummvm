@@ -1949,7 +1949,7 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 ResourceId Special::getResourceId(Object *object, ActorIndex actorIndex) {
-	if (actorIndex == kActorInvalid && object == NULL)
+	if (actorIndex == kActorInvalid && object == nullptr)
 		error("[Special::getResourceId] Both arguments cannot be NULL/empty!");
 
 	return (actorIndex == kActorInvalid) ? object->getSoundResourceId() : getScene()->getActor(actorIndex)->getSoundResourceId();

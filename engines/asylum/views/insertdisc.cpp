@@ -32,7 +32,7 @@
 namespace Asylum {
 
 InsertDisc::InsertDisc(AsylumEngine *engine) : _vm(engine) {
-	_handler = NULL;
+	_handler = nullptr;
 	_cdNumber = -1;
 	_frameIndex = _frameCount = 0;
 }

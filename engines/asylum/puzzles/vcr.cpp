@@ -325,7 +325,7 @@ void PuzzleVCR::updateScreen() {
 		getScreen()->clear();
 
 		// setupPalette();
-		getScreen()->setupPalette(NULL, 0, 0);
+		getScreen()->setupPalette(nullptr, 0, 0);
 
 		int paletteId = _vm->checkGameVersion("Demo") ? 20 : 28;
 		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackTowerCells, paletteId));

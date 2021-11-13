@@ -919,7 +919,7 @@ bool Console::cmdRunPuzzle(int argc, const char **argv) {
 	}
 
 	EventHandler *puzzle = getPuzzles()->getPuzzle((uint32)index);
-	if (puzzle == NULL) {
+	if (puzzle == nullptr) {
 		debugPrintf("[Error] This puzzle does not exists (%d)", index);
 		return true;
 	}

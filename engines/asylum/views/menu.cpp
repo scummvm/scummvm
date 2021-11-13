@@ -203,7 +203,7 @@ void Menu::stopTestSounds() {
 }
 
 void Menu::adjustMasterVolume(int32 delta) const {
-	int32 *volume = NULL;
+	int32 *volume = nullptr;
 	int32 volumeIndex = 1;
 
 	do {
