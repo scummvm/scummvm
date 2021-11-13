@@ -349,7 +349,7 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	akct = _vm->findResourceData(MKTAG('A','K','C','T'), akos);
 	rgbs = _vm->findResourceData(MKTAG('R','G','B','S'), akos);
 
-	xmap = 0;
+	xmap = nullptr;
 	if (shadow) {
 		const uint8 *xmapPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(xmapPtr);
@@ -1084,7 +1084,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.shadowMode = _shadow_mode;
 	bdd.shadowPalette = _vm->_shadowPalette;
 
-	bdd.actorPalette = _useBompPalette ? _palette : 0;
+	bdd.actorPalette = _useBompPalette ? _palette : nullptr;
 
 	bdd.mirror = !_mirror;
 
@@ -1117,7 +1117,7 @@ void AkosRenderer::akos16SetupBitReader(const byte *src) {
 
 
 void AkosRenderer::akos16SkipData(int32 numbytes) {
-	akos16DecodeLine(0, numbytes, 0);
+	akos16DecodeLine(nullptr, numbytes, 0);
 }
 
 void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
@@ -1629,7 +1629,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			akos_queCommand(6, a, GW(2), GW(4));
 			continue;
 		case AKC_JumpTable:
-			if (akfo == NULL)
+			if (akfo == nullptr)
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
 			if (_game.heversion >= 80) {

@@ -448,7 +448,7 @@ void Player_PCE::setupWaveform(byte bank) {
 
 // A541
 void Player_PCE::procA541(channel_t *channel) {
-	channel->soundDataPtr = NULL;
+	channel->soundDataPtr = nullptr;
 	channel->controlVecShort10 = 0;
 
 	channel->controlVecShort03 = 0;

@@ -47,7 +47,7 @@ uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
 			return _hePalettes + _hePaletteSlot + 768;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
@@ -1346,16 +1346,16 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	uint32 size;
 
 	pal = findResource(MKTAG('W','R','A','P'), pal);
-	if (pal == NULL)
-		return NULL;
+	if (pal == nullptr)
+		return nullptr;
 
 	offs = findResourceData(MKTAG('O','F','F','S'), pal);
-	if (offs == NULL)
-		return NULL;
+	if (offs == nullptr)
+		return nullptr;
 
 	size = getResourceDataSize(offs) / 4;
 	if ((uint32)idx >= (uint32)size)
-		return NULL;
+		return nullptr;
 
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }

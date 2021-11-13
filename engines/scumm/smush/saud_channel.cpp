@@ -39,7 +39,7 @@ SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
 }
 
 bool SaudChannel::isTerminated() const {
-	return (_markReached && _dataSize == 0 && _sbuffer == 0);
+	return (_markReached && _dataSize == 0 && _sbuffer == nullptr);
 }
 
 bool SaudChannel::handleSubTags(int32 &offset) {
@@ -148,7 +148,7 @@ bool SaudChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 		_sbufferSize = _tbufferSize;
 		_sbuffer = _tbuffer;
 		_tbufferSize = 0;
-		_tbuffer = 0;
+		_tbuffer = nullptr;
 	} else {
 		processBuffer();
 	}
@@ -164,7 +164,7 @@ byte *SaudChannel::getSoundData() {
 		_dataSize -= _sbufferSize;
 	}
 
-	_sbuffer = 0;
+	_sbuffer = nullptr;
 	_sbufferSize = 0;
 
 	return tmp;

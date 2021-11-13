@@ -181,7 +181,7 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 		int room = atoi(argv[1]);
 		_vm->_actors[_vm->VAR(_vm->VAR_EGO)]->_room = room;
 		_vm->_sound->stopAllSounds();
-		_vm->startScene(room, 0, 0);
+		_vm->startScene(room, nullptr, 0);
 		_vm->_fullRedraw = true;
 		return false;
 	} else {
@@ -272,7 +272,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
 		_vm->stopScript(scriptnum);
 	} else if ((!strcmp(argv[2], "run")) || (!strcmp(argv[2], "start"))) {
-		_vm->runScript(scriptnum, 0, 0, 0);
+		_vm->runScript(scriptnum, 0, 0, nullptr);
 		return false;
 	} else {
 		debugPrintf("Unknown script command '%s'\nUse <kill/stop | run/start> as command\n", argv[2]);
@@ -721,7 +721,7 @@ void ScummDebugger::drawBox(int box) {
 	fillQuad(_vm, r, 13);
 
 	VirtScreen *vs = _vm->findVirtScreen(coords.ul.y);
-	if (vs != NULL)
+	if (vs != nullptr)
 		_vm->markRectAsDirty(vs->number, 0, vs->w, 0, vs->h);
 	_vm->drawDirtyScreenParts();
 	_vm->_system->updateScreen();

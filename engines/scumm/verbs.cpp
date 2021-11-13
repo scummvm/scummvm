@@ -1165,14 +1165,14 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	VerbSlot *vst = &_verbs[verb];
 	VirtScreen *vs;
 	bool twobufs;
-	const byte *imptr = 0;
+	const byte *imptr = nullptr;
 	int ydiff, xstrip;
 	int imgw, imgh;
 	int i, tmp;
 	byte *obim;
 	uint32 size;
 
-	if ((vs = findVirtScreen(y)) == NULL)
+	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
 	_gdi->disableZBuffer();

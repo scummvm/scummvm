@@ -373,7 +373,7 @@ int ScummEngine_v6::findFreeArrayId() {
 ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	if (!ah)
-		return 0;
+		return nullptr;
 
 	if (_game.heversion == 0) {
 		// Workaround for a long standing bug where we saved array headers in native
@@ -1116,7 +1116,7 @@ void ScummEngine_v6::o6_setCameraAt() {
 
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
-	startScene(room, 0, 0);
+	startScene(room, nullptr, 0);
 	if (_game.heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
 	}
@@ -1152,7 +1152,7 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		a->startWalkActor(x, y, dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (_game.id == GID_SAMNMAX && a2 == 0) {
+		if (_game.id == GID_SAMNMAX && a2 == nullptr) {
 			// WORKAROUND bug #801 SAM: Fish Farm. Note quite sure why it
 			// happens, whether it's normal or due to a bug in the ScummVM code.
 			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
@@ -1828,7 +1828,7 @@ void ScummEngine_v6::o6_actorOps() {
 		a->_talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		loadPtrToResource(rtActorName, a->_number, NULL);
+		loadPtrToResource(rtActorName, a->_number, nullptr);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->_initFrame = pop();
@@ -1937,7 +1937,7 @@ void ScummEngine_v6::o6_verbOps() {
 		}
 		break;
 	case 125:		// SO_VERB_NAME
-		loadPtrToResource(rtVerb, slot, NULL);
+		loadPtrToResource(rtVerb, slot, nullptr);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
@@ -3050,7 +3050,7 @@ void ScummEngine_v6::o6_getPixel() {
 
 	VirtScreen *vs = findVirtScreen(y);
 
-	if (vs == NULL || x > _screenWidth - 1 || x < 0) {
+	if (vs == nullptr || x > _screenWidth - 1 || x < 0) {
 		push(-1);
 		return;
 	}
@@ -3063,7 +3063,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 	int arg = pop() - 1;
 
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
-	const byte *boxd = NULL, *boxm = NULL;
+	const byte *boxd = nullptr, *boxm = nullptr;
 	int32 dboxSize, mboxSize;
 	int i;
 

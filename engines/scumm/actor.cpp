@@ -106,7 +106,7 @@ static const byte v0WalkboxSlantedModifier[0x16] = {
 
 Actor::Actor(ScummEngine *scumm, int id) :
 	_vm(scumm), _number(id) {
-	assert(_vm != 0);
+	assert(_vm != nullptr);
 }
 
 void ActorHE::initActor(int mode) {
@@ -2118,7 +2118,7 @@ Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 	if (!isValidActor(id)) {
 		debugC(DEBUG_ACTORS, "Invalid actor %d in %s (script %d, opcode 0x%x)",
 			 id, errmsg, vm.slot[_currentScript].number, _opcode);
-		return NULL;
+		return nullptr;
 	}
 	return _actors[id];
 }
@@ -3209,7 +3209,7 @@ static const char *const v0ActorNames_German[25] = {
 };
 
 const byte *Actor::getActorName() {
-	const byte *ptr = NULL;
+	const byte *ptr = nullptr;
 
 	if (_vm->_game.version == 0) {
 		if (_number) {
@@ -3225,7 +3225,7 @@ const byte *Actor::getActorName() {
 		ptr = _vm->getResourceAddress(rtActorName, _number);
 	}
 
-	if (ptr == NULL) {
+	if (ptr == nullptr) {
 		debugC(DEBUG_ACTORS, "Failed to find name of actor %d", _number);
 	}
 	return ptr;

@@ -125,7 +125,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
-	::detectGames(fslist, results, 0);
+	::detectGames(fslist, results, nullptr);
 
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {

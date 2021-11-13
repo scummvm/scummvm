@@ -961,7 +961,7 @@ void ScummEngine_v0::o_endCutscene() {
 	setMode(vm.cutSceneData[0]);
 
 	if (_currentMode == kModeKeypad) {
-		startScene(vm.cutSceneData[2], 0, 0);
+		startScene(vm.cutSceneData[2], nullptr, 0);
 		// in contrast to the normal keypad behavior we unfreeze scripts here
 		unfreezeScripts();
 	} else {

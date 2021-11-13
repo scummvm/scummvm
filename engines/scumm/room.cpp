@@ -198,7 +198,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	runEntryScript();
 	if (_game.version >= 1 && _game.version <= 2) {
-		runScript(5, 0, 0, 0);
+		runScript(5, 0, 0, nullptr);
 	} else if (_game.version >= 5 && _game.version <= 6) {
 		if (a && !_egoPositioned) {
 			int x, y;
@@ -242,7 +242,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 void ScummEngine::setupRoomSubBlocks() {
 	int i;
 	const byte *ptr;
-	byte *roomptr, *searchptr, *roomResPtr = 0;
+	byte *roomptr, *searchptr, *roomResPtr = nullptr;
 	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -323,7 +323,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	if (_game.features & GF_SMALL_HEADER) {
 		ResourceIterator localScriptIterator(searchptr, true);
-		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != nullptr) {
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 			id = ptr[0];
@@ -338,7 +338,7 @@ void ScummEngine::setupRoomSubBlocks() {
 		}
 	} else if (_game.heversion >= 90) {
 		ResourceIterator localScriptIterator2(searchptr, false);
-		while ((ptr = localScriptIterator2.findNext(MKTAG('L','S','C','2'))) != NULL) {
+		while ((ptr = localScriptIterator2.findNext(MKTAG('L','S','C','2'))) != nullptr) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -356,7 +356,7 @@ void ScummEngine::setupRoomSubBlocks() {
 		}
 
 		ResourceIterator localScriptIterator(searchptr, false);
-		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != nullptr) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -373,7 +373,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	} else {
 		ResourceIterator localScriptIterator(searchptr, false);
-		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != nullptr) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */

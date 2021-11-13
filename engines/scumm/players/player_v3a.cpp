@@ -47,7 +47,7 @@ Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer) {
 	}
 
 	_curSong = 0;
-	_songData = NULL;
+	_songData = nullptr;
 	_songPtr = 0;
 	_songDelay = 0;
 
@@ -63,7 +63,7 @@ Player_V3A::~Player_V3A() {
 	int i;
 	delete _mod;
 	if (_isinit) {
-		for (i = 0; _wavetable[i] != NULL; i++) {
+		for (i = 0; _wavetable[i] != nullptr; i++) {
 			for (int j = 0; j < 6; j++) {
 				free(_wavetable[i]->_idat[j]);
 				free(_wavetable[i]->_ldat[j]);
@@ -116,7 +116,7 @@ void Player_V3A::stopAllSounds() {
 	_curSong = 0;
 	_songPtr = 0;
 	_songDelay = 0;
-	_songData = NULL;
+	_songData = nullptr;
 	for (i = 0; i < V3A_MAXSFX; i++) {
 		if (_sfx[i].id)
 			_mod->stopChannel(_sfx[i].id | 0x100);
@@ -141,7 +141,7 @@ void Player_V3A::stopSound(int nr) {
 		_curSong = 0;
 		_songPtr = 0;
 		_songDelay = 0;
-		_songData = NULL;
+		_songData = nullptr;
 	} else {
 		i = getSfxChan(nr);
 		if (i != -1) {
@@ -184,13 +184,13 @@ void Player_V3A::startSound(int nr) {
 				if (len) {
 					_wavetable[i]->_idat[j] = (char *)malloc(len);
 					memcpy(_wavetable[i]->_idat[j],ptr + off,len);
-				} else	_wavetable[i]->_idat[j] = NULL;
+				} else	_wavetable[i]->_idat[j] = nullptr;
 				off = READ_BE_UINT16(ptr + offset + 4);
 				_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
 				if (len) {
 					_wavetable[i]->_ldat[j] = (char *)malloc(len);
 					memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
-				} else	_wavetable[i]->_ldat[j] = NULL;
+				} else	_wavetable[i]->_ldat[j] = nullptr;
 				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 				offset += 10;
 			}
@@ -202,7 +202,7 @@ void Player_V3A::startSound(int nr) {
 				offset += 4;
 			}
 		}
-		_wavetable[i] = NULL;
+		_wavetable[i] = nullptr;
 		_isinit = true;
 	}
 

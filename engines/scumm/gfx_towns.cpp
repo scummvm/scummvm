@@ -382,7 +382,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int scaleW, int s
 	assert(l->pixels);
 
 	delete[] l->bltTmpPal;
-	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : 0;
+	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : nullptr;
 
 	l->enabled = true;
 	_layers[0].onBottom = true;
@@ -433,11 +433,11 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 
 uint8 *TownsScreen::getLayerPixels(int layer, int x, int y) const {
 	if (layer < 0 || layer > 1)
-		return 0;
+		return nullptr;
 
 	const TownsScreenLayer *l = &_layers[layer];
 	if (!l->ready)
-		return 0;
+		return nullptr;
 
 	return l->pixels + y * l->pitch + (x % l->width) * l->bpp;
 }
@@ -579,7 +579,7 @@ uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
 
 template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool srcCol4bit> void TownsScreen::transferRect(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h) {
 	uint8 *dst10 = dst + y * _pitch * scaleH + x * sizeof(dstPixelType) * scaleW;
-	uint8 *dst20 = (scaleH == 2) ? dst10 + _pitch : 0;
+	uint8 *dst20 = (scaleH == 2) ? dst10 + _pitch : nullptr;
 	int pitch = _pitch * scaleH;
 
 	int x0 = (x + l->hScroll) % l->width;

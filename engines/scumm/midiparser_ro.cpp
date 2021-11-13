@@ -86,7 +86,7 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		info.event = 0xFF;
 		info.ext.type = 0x2F;
 		info.length = 0;
-		info.ext.data = 0;
+		info.ext.data = nullptr;
 		return;
 	}
 
@@ -110,7 +110,7 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 
 	case 0xF: // Marker and EOT messages
 		info.length = 0;
-		info.ext.data = 0;
+		info.ext.data = nullptr;
 		if (info.event == 0xFF) {
 			_autoLoop = true;
 			info.ext.type = 0x2F;

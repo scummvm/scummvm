@@ -93,7 +93,7 @@ using Common::File;
 namespace Scumm {
 
 // Use g_scumm from error() ONLY
-ScummEngine *g_scumm = 0;
+ScummEngine *g_scumm = nullptr;
 
 
 struct dbgChannelDesc {
@@ -108,7 +108,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
+	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
 	  _rnd("scumm")
 	  {
 
@@ -146,28 +146,28 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gameMD5[i] = (byte)tmpVal;
 	}
 
-	_fileHandle = 0;
+	_fileHandle = nullptr;
 
 	// Init all vars
-	_imuse = NULL;
-	_imuseDigital = NULL;
-	_musicEngine = NULL;
-	_townsPlayer = NULL;
-	_verbs = NULL;
-	_objs = NULL;
-	_sound = NULL;
+	_imuse = nullptr;
+	_imuseDigital = nullptr;
+	_musicEngine = nullptr;
+	_townsPlayer = nullptr;
+	_verbs = nullptr;
+	_objs = nullptr;
+	_sound = nullptr;
 	memset(&vm, 0, sizeof(vm));
-	_pauseDialog = NULL;
-	_versionDialog = NULL;
+	_pauseDialog = nullptr;
+	_versionDialog = nullptr;
 	_fastMode = 0;
-	_actors = _sortedActors = NULL;
-	_arraySlot = NULL;
-	_inventory = NULL;
-	_newNames = NULL;
-	_scummVars = NULL;
-	_roomVars = NULL;
+	_actors = _sortedActors = nullptr;
+	_arraySlot = nullptr;
+	_inventory = nullptr;
+	_newNames = nullptr;
+	_scummVars = nullptr;
+	_roomVars = nullptr;
 	_varwatch = 0;
-	_bitVars = NULL;
+	_bitVars = nullptr;
 	_numVariables = 0;
 	_numBitVariables = 0;
 	_numRoomVariables = 0;
@@ -200,9 +200,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = false;
-	_objectOwnerTable = NULL;
-	_objectRoomTable = NULL;
-	_objectStateTable = NULL;
+	_objectOwnerTable = nullptr;
+	_objectRoomTable = nullptr;
+	_objectStateTable = nullptr;
 	_numObjectsInRoom = 0;
 	_userPut = 0;
 	_userState = 0;
@@ -212,11 +212,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_lastSaveTime = 0;
 	_saveTemporaryState = false;
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
-	_scriptPointer = NULL;
-	_scriptOrgPointer = NULL;
+	_scriptPointer = nullptr;
+	_scriptOrgPointer = nullptr;
 	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_lastCodePtr = NULL;
+	_lastCodePtr = nullptr;
 	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
 	_fileOffset = 0;
@@ -225,7 +225,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_roomResource = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
-	_classData = NULL;
+	_classData = nullptr;
 	_actorToPrintStrFor = 0;
 	_sentenceNum = 0;
 	memset(_sentence, 0, sizeof(_sentence));
@@ -273,16 +273,16 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_palManipStart = 0;
 	_palManipEnd = 0;
 	_palManipCounter = 0;
-	_palManipPalette = NULL;
-	_palManipIntermediatePal = NULL;
+	_palManipPalette = nullptr;
+	_palManipIntermediatePal = nullptr;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_hePalettes = NULL;
+	_hePalettes = nullptr;
 	_hePaletteSlot = 0;
-	_16BitPalette = NULL;
-	_macScreen = NULL;
-	_macIndy3TextBox = NULL;
+	_16BitPalette = nullptr;
+	_macScreen = nullptr;
+	_macIndy3TextBox = nullptr;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsScreen = 0;
+	_townsScreen = nullptr;
 	_scrollRequest = _scrollDeltaAdjust = 0;
 	_scrollDestOffset = _scrollTimer = 0;
 	_refreshNeedCatchUp = false;
@@ -290,12 +290,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
 	_refreshArrayPos = 0;
 #ifdef USE_RGB_COLOR
-	_cjkFont = 0;
+	_cjkFont = nullptr;
 #endif
 #endif
-	_shadowPalette = NULL;
+	_shadowPalette = nullptr;
 	_shadowPaletteSize = 0;
-	_verbPalette = NULL;
+	_verbPalette = nullptr;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
@@ -308,7 +308,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
-	_charset = NULL;
+	_charset = nullptr;
 	_charsetColor = 0;
 	memset(_charsetColorMap, 0, sizeof(_charsetColorMap));
 	memset(_charsetData, 0, sizeof(_charsetData));
@@ -321,21 +321,21 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_NES_talkColor = 0;
 	_keepText = false;
 	_msgCount = 0;
-	_costumeLoader = NULL;
-	_costumeRenderer = NULL;
+	_costumeLoader = nullptr;
+	_costumeRenderer = nullptr;
 	_existLanguageFile = false;
-	_languageBuffer = 0;
+	_languageBuffer = nullptr;
 	_numTranslatedLines = 0;
-	_translatedLines = 0;
-	_languageLineIndex = 0;
-	_2byteFontPtr = 0;
+	_translatedLines = nullptr;
+	_languageLineIndex = nullptr;
+	_2byteFontPtr = nullptr;
 	_2byteWidth = 0;
 	_2byteHeight = 0;
 	_2byteShadow = 0;
 	_krStrPost = 0;
 	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
-		_2byteMultiFontPtr[i] = NULL;
+		_2byteMultiFontPtr[i] = nullptr;
 	_NESStartStrip = 0;
 
 	_skipDrawObject = 0;
@@ -617,9 +617,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	if (_game.version < 7)
 		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * sizeMult);
 	else
-		_compositeBuf = 0;
+		_compositeBuf = nullptr;
 
-	_herculesBuf = 0;
+	_herculesBuf = nullptr;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
@@ -728,7 +728,7 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	memset(&_flashlight, 0, sizeof(_flashlight));
 	_flashlight.xStrips = 7;
 	_flashlight.yStrips = 7;
-	_flashlight.buffer = NULL;
+	_flashlight.buffer = nullptr;
 
 	memset(_saveLoadVarsFilename, 0, sizeof(_saveLoadVarsFilename));
 
@@ -747,7 +747,7 @@ ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
 
-	_savePreparedSavegame = NULL;
+	_savePreparedSavegame = nullptr;
 }
 
 ScummEngine_v3::~ScummEngine_v3() {
@@ -892,9 +892,9 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	else
 		_resExtractor = new Win32ResExtractor(this);
 
-	_heV7DiskOffsets = NULL;
-	_heV7RoomOffsets = NULL;
-	_heV7RoomIntOffsets = NULL;
+	_heV7DiskOffsets = nullptr;
+	_heV7RoomOffsets = nullptr;
+	_heV7RoomIntOffsets = nullptr;
 
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
@@ -1247,7 +1247,7 @@ Common::Error ScummEngine::init() {
 
 			// We now have to determine the correct _filenamePattern. To do this
 			// we simply hardcode the possibilities.
-			const char *p1 = 0, *p2 = 0;
+			const char *p1 = nullptr, *p2 = nullptr;
 			switch (_game.id) {
 			case GID_INDY4:
 				p1 = "atlantis.%03d";
@@ -1944,7 +1944,7 @@ void ScummEngine_v3::resetScumm() {
 	}
 
 	delete _savePreparedSavegame;
-	_savePreparedSavegame = NULL;
+	_savePreparedSavegame = nullptr;
 }
 
 void ScummEngine_v4::resetScumm() {
@@ -2212,8 +2212,8 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		_musicEngine = new Player_HE(this);
 #endif
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
-		MidiDriver *nativeMidiDriver = 0;
-		MidiDriver *adlibMidiDriver = 0;
+		MidiDriver *nativeMidiDriver = nullptr;
+		MidiDriver *adlibMidiDriver = nullptr;
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
 		bool useOnlyNative = false;
 
@@ -2233,7 +2233,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			nativeMidiDriver = MidiDriver::createMidi(dev);
 		}
 
-		if (nativeMidiDriver != NULL && _native_mt32)
+		if (nativeMidiDriver != nullptr && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 		if (!useOnlyNative) {
@@ -2594,7 +2594,7 @@ load_game:
 		scummLoop_handleEffects();
 
 		if (VAR_MAIN_SCRIPT != 0xFF && VAR(VAR_MAIN_SCRIPT) != 0) {
-			runScript(VAR(VAR_MAIN_SCRIPT), 0, 0, 0);
+			runScript(VAR(VAR_MAIN_SCRIPT), 0, 0, nullptr);
 		}
 
 		// Handle mouse over effects (for verbs).
@@ -2757,7 +2757,7 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 	// update IQ points after loading
 	if (saveLoad == 2) {
 		if (_game.id == GID_INDY4)
-			runScript(145, 0, 0, 0);
+			runScript(145, 0, 0, nullptr);
 	}
 }
 
@@ -2996,7 +2996,7 @@ bool ScummEngine::startManiac() {
 				// While strictly speaking it's too broad, this matchString
 				// ignores the presence or absence of trailing path separators
 				// in either currentPath or path.
-				if (path.matchString("*maniac*", true, NULL)) {
+				if (path.matchString("*maniac*", true, nullptr)) {
 					maniacTarget = iter->_key;
 					break;
 				}

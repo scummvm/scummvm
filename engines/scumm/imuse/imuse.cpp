@@ -46,9 +46,9 @@ IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
 	_isAmiga(false),
-	_midi_adlib(NULL),
-	_midi_native(NULL),
-	_sysex(NULL),
+	_midi_adlib(nullptr),
+	_midi_native(nullptr),
+	_sysex(nullptr),
 	_paused(false),
 	_initialized(false),
 	_tempoFactor(0),
@@ -84,7 +84,7 @@ IMuseInternal::~IMuseInternal() {
 	if (_midi_adlib) {
 		_midi_adlib->close();
 		delete _midi_adlib;
-		_midi_adlib = 0;
+		_midi_adlib = nullptr;
 	}
 
 	if (_midi_native) {
@@ -96,7 +96,7 @@ IMuseInternal::~IMuseInternal() {
 
 		_midi_native->close();
 		delete _midi_native;
-		_midi_native = 0;
+		_midi_native = nullptr;
 	}
 }
 
@@ -112,17 +112,17 @@ byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 
-	if (ptr == NULL) {
+	if (ptr == nullptr) {
 		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist", sound);
-		return NULL;
+		return nullptr;
 	}
 
 	// Check for old-style headers first, like 'RO'
 	int trFlag = (kMThd | kFORM);
 	if (ptr[0] == 'R' && ptr[1] == 'O' && ptr[2] != 'L')
-		return ct == trFlag ? ptr : 0;
+		return ct == trFlag ? ptr : nullptr;
 	if (ptr[4] == 'S' && ptr[5] == 'O')
-		return ct == trFlag ? ptr + 4 : 0;
+		return ct == trFlag ? ptr + 4 : nullptr;
 
 	ptr += 4;
 	size = READ_BE_UINT32(ptr);
@@ -143,12 +143,12 @@ byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 	if (ct == (kMThd | kFORM))
 		debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d", sound);
 
-	return 0;
+	return nullptr;
 }
 
 bool IMuseInternal::isMT32(int sound) {
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return false;
 
 	uint32 tag = READ_BE_UINT32(ptr);
@@ -195,7 +195,7 @@ bool IMuseInternal::isMT32(int sound) {
 
 bool IMuseInternal::isMIDI(int sound) {
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return false;
 
 	uint32 tag = READ_BE_UINT32(ptr);
@@ -237,7 +237,7 @@ bool IMuseInternal::isMIDI(int sound) {
 
 bool IMuseInternal::supportsPercussion(int sound) {
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return false;
 
 	uint32 tag = READ_BE_UINT32(ptr);
@@ -280,7 +280,7 @@ bool IMuseInternal::supportsPercussion(int sound) {
 }
 
 MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
-	MidiDriver *driver = NULL;
+	MidiDriver *driver = nullptr;
 
 	if (isMIDI(sound)) {
 		if (_midi_native) {
@@ -296,7 +296,7 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 }
 
 Player *IMuseInternal::allocate_player(byte priority) {
-	Player *player = _players, *best = NULL;
+	Player *player = _players, *best = nullptr;
 	int i;
 	byte bestpri = 255;
 
@@ -313,7 +313,7 @@ Player *IMuseInternal::allocate_player(byte priority) {
 		return best;
 
 	debug(1, "Denying player request");
-	return NULL;
+	return nullptr;
 }
 
 void IMuseInternal::init_players() {
@@ -768,7 +768,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 	int i;
 	byte cmd = a[0] & 0xFF;
 	byte param = a[0] >> 8;
-	Player *player = NULL;
+	Player *player = nullptr;
 
 	if (!_initialized && (cmd || param))
 		return -1;
@@ -804,7 +804,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 		case 12:
 			// Sam & Max: Player-scope commands
 			player = findActivePlayer(a[1]);
-			if (player == NULL)
+			if (player == nullptr)
 				return -1;
 
 			switch (a[3]) {
@@ -1049,7 +1049,7 @@ int IMuseInternal::get_channel_volume(uint a) {
 }
 
 Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
-	Part *part, *best = NULL;
+	Part *part, *best = nullptr;
 	int i;
 
 	for (i = ARRAYSIZE(_parts), part = _parts; i != 0; i--, part++) {
@@ -1113,9 +1113,9 @@ int IMuseInternal::set_volchan(int sound, int volchan) {
 		}
 		return -1;
 	} else {
-		best = NULL;
+		best = nullptr;
 		num = 0;
-		sameid = NULL;
+		sameid = nullptr;
 		for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 			if (player->isActive()) {
 				if (player->_vol_chan == (uint16)volchan) {
@@ -1127,7 +1127,7 @@ int IMuseInternal::set_volchan(int sound, int volchan) {
 				}
 			}
 		}
-		if (sameid == NULL)
+		if (sameid == nullptr)
 			return -1;
 		if (num >= r)
 			best->clear();
@@ -1246,7 +1246,7 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// represented by MIDI SysEx block 00 xx(F7)
 	// where "xx" is the marker ID.
 	uint16 oldest_trigger = 0;
-	ImTrigger *oldest_ptr = NULL;
+	ImTrigger *oldest_ptr = nullptr;
 
 	int i;
 	ImTrigger *trig = _snm_triggers;
@@ -1420,7 +1420,7 @@ Player *IMuseInternal::findActivePlayer(int id) {
 		if (player->isActive() && player->getID() == (uint16)id)
 			return player;
 	}
-	return NULL;
+	return nullptr;
 }
 
 int IMuseInternal::get_volchan_entry(uint a) {
@@ -1441,12 +1441,12 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	_system = syst;
 	_midi_native = native_midi;
 	_midi_adlib = adlib_midi;
-	if (native_midi != NULL) {
+	if (native_midi != nullptr) {
 		_timer_info_native.imuse = this;
 		_timer_info_native.driver = native_midi;
 		initMidiDriver(&_timer_info_native);
 	}
-	if (adlib_midi != NULL) {
+	if (adlib_midi != nullptr) {
 		_timer_info_adlib.imuse = this;
 		_timer_info_adlib.driver = adlib_midi;
 		initMidiDriver(&_timer_info_adlib);
@@ -1709,7 +1709,7 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 
 	while (true) {
 		hipri = 0;
-		hipart = NULL;
+		hipart = nullptr;
 		for (i = 32, part = _parts; i; i--, part++) {
 			if (part->_player && part->_player->getMidiDriver() == midi &&
 			        !part->_percussion && part->_on &&
@@ -1722,9 +1722,9 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 		if (!hipart)
 			return;
 
-		if ((hipart->_mc = midi->allocateChannel()) == NULL) {
+		if ((hipart->_mc = midi->allocateChannel()) == nullptr) {
 			lopri = 255;
-			lopart = NULL;
+			lopart = nullptr;
 			for (i = 32, part = _parts; i; i--, part++) {
 				if (part->_mc && part->_mc->device() == midi && part->_pri_eff <= lopri) {
 					lopri = part->_pri_eff;
@@ -1732,11 +1732,11 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 				}
 			}
 
-			if (lopart == NULL || lopri >= hipri)
+			if (lopart == nullptr || lopri >= hipri)
 				return;
 			lopart->off();
 
-			if ((hipart->_mc = midi->allocateChannel()) == NULL)
+			if ((hipart->_mc = midi->allocateChannel()) == nullptr)
 				return;
 		}
 		hipart->sendAll();

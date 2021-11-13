@@ -241,20 +241,20 @@ static const int zakResourcesPerFile[59] = {
 
 static uint16 write_byte(Common::WriteStream *out, byte val) {
 	val ^= 0xFF;
-	if (out != 0)
+	if (out != nullptr)
 		out->writeByte(val);
 	return 1;
 }
 
 static uint16 write_word(Common::WriteStream *out, uint16 val) {
 	val ^= 0xFFFF;
-	if (out != 0)
+	if (out != nullptr)
 		out->writeUint16LE(val);
 	return 2;
 }
 
 ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSettings game)
-	: _stream(0), _buf(0), _game(game),
+	: _stream(nullptr), _buf(nullptr), _game(game),
 	_disk1(disk1), _disk2(disk2), _openedDisk(0) {
 
 	if (_game.id == GID_MANIAC) {
@@ -341,7 +341,7 @@ bool ScummDiskImage::open(const Common::Path &filename) {
 		return false;
 	}
 
-	extractIndex(0); // Fill in resource arrays
+	extractIndex(nullptr); // Fill in resource arrays
 
 	if (_game.features & GF_DEMO)
 		return true;
@@ -423,7 +423,7 @@ uint16 ScummDiskImage::extractIndex(Common::WriteStream *out) {
 bool ScummDiskImage::generateIndex() {
 	int bufsize;
 
-	bufsize = extractIndex(0);
+	bufsize = extractIndex(nullptr);
 
 	free(_buf);
 	_buf = (byte *)calloc(1, bufsize);
@@ -484,7 +484,7 @@ bool ScummDiskImage::generateResource(int res) {
 	if (res >= _numRooms)
 		return false;
 
-	bufsize = extractResource(0, res);
+	bufsize = extractResource(nullptr, res);
 
 	free(_buf);
 	_buf = (byte *)calloc(1, bufsize);
@@ -501,10 +501,10 @@ bool ScummDiskImage::generateResource(int res) {
 
 void ScummDiskImage::close() {
 	delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 
 	free(_buf);
-	_buf = 0;
+	_buf = nullptr;
 
 	File::close();
 }

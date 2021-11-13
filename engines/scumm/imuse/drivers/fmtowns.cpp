@@ -207,7 +207,7 @@ uint8 TownsMidiChanState::get(uint8 type) {
 }
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_in(0), _prev(0), _next(0), _adjustModTl(0), _operator2Tl(0), _note(0), _operator1Tl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
+	_in(nullptr), _prev(nullptr), _next(nullptr), _adjustModTl(0), _operator2Tl(0), _note(0), _operator1Tl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
 	_effectEnvelopes = new EffectEnvelope[2]();
 	_effectDefs = new EffectDef[2]();
 
@@ -337,7 +337,7 @@ void TownsMidiOutputChannel::connect(TownsMidiInputChannel *chan) {
 
 	_in = chan;
 	_next = chan->_out;
-	_prev = 0;
+	_prev = nullptr;
 	chan->_out = this;
 	if (_next)
 		_next->_prev = this;
@@ -355,7 +355,7 @@ void TownsMidiOutputChannel::disconnect() {
 		p->_next = n;
 	else
 		_in->_out = n;
-	_in = 0;
+	_in = nullptr;
 }
 
 bool TownsMidiOutputChannel::update() {
@@ -650,7 +650,7 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 	0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B
 };
 
-TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _chanIndex(chanIndex),
+TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(nullptr), _chanIndex(chanIndex),
 	_priority(0), _tl(0), _transpose(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0), _detune(0), _modWheel(0), _allocated(false) {
 	_instrument = new uint8[30]();
 }
@@ -822,8 +822,8 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
-	_baseTempo(10080), _chanState(0), _operatorLevelTable(0), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(nullptr), _timerProcPara(nullptr), _channels(nullptr), _out(nullptr),
+	_baseTempo(10080), _chanState(nullptr), _operatorLevelTable(nullptr), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false) {
 	_intf = new TownsAudioInterface(mixer, this, true);
 
 	_channels = new TownsMidiInputChannel*[32];
@@ -854,19 +854,19 @@ MidiDriver_TOWNS::~MidiDriver_TOWNS() {
 			delete _channels[i];
 		delete[] _channels;
 	}
-	_channels = 0;
+	_channels = nullptr;
 
 	if (_out) {
 		for (int i = 0; i < 6; i++)
 			delete _out[i];
 		delete[] _out;
 	}
-	_out = 0;
+	_out = nullptr;
 
 	delete[] _chanState;
-	_chanState = 0;
+	_chanState = nullptr;
 	delete[] _operatorLevelTable;
-	_operatorLevelTable = 0;
+	_operatorLevelTable = nullptr;
 }
 
 int MidiDriver_TOWNS::open() {
@@ -898,7 +898,7 @@ void MidiDriver_TOWNS::close() {
 
 	_isOpen = false;
 
-	setTimerCallback(0, 0);
+	setTimerCallback(nullptr, nullptr);
 	g_system->delayMillis(20);
 }
 
@@ -951,7 +951,7 @@ uint32 MidiDriver_TOWNS::getBaseTempo() {
 
 MidiChannel *MidiDriver_TOWNS::allocateChannel() {
 	if (!_isOpen)
-		return 0;
+		return nullptr;
 
 	for (int i = 0; i < 32; ++i) {
 		TownsMidiInputChannel *chan = _channels[i];
@@ -959,11 +959,11 @@ MidiChannel *MidiDriver_TOWNS::allocateChannel() {
 			return chan;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 MidiChannel *MidiDriver_TOWNS::getPercussionChannel() {
-	return 0;
+	return nullptr;
 }
 
 void MidiDriver_TOWNS::timerCallback(int timerId) {
@@ -997,7 +997,7 @@ void MidiDriver_TOWNS::updateOutputChannels() {
 }
 
 TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(uint8 pri) {
-	TownsMidiOutputChannel *res = 0;
+	TownsMidiOutputChannel *res = nullptr;
 
 	for (int i = 0; i < 6; i++) {
 		if (++_allocCurPos == 6)

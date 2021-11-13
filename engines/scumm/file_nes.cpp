@@ -43,7 +43,7 @@ struct ScummNESFile::ResourceGroup {
 	const Resource *langs[ScummNESFile::kROMsetNum];
 };
 
-ScummNESFile::ScummNESFile() : _stream(0), _buf(0), _ROMset(kROMsetNum) {
+ScummNESFile::ScummNESFile() : _stream(nullptr), _buf(nullptr), _ROMset(kROMsetNum) {
 }
 
 static const ScummNESFile::Resource res_roomgfx_usa[40] = {
@@ -921,14 +921,14 @@ const ScummNESFile::ResourceGroup res_preplist = {
 
 static uint16 write_byte(Common::WriteStream *out, byte val) {
 	val ^= 0xFF;
-	if (out != 0)
+	if (out != nullptr)
 		out->writeByte(val);
 	return 1;
 }
 
 static uint16 write_word(Common::WriteStream *out, uint16 val) {
 	val ^= 0xFFFF;
-	if (out != 0)
+	if (out != nullptr)
 		out->writeUint16LE(val);
 	return 2;
 }
@@ -951,7 +951,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 	byte cnt;
 	uint16 reslen = 0;
 
-	if (res == NULL)
+	if (res == nullptr)
 		error("extract_resource - no resource specified");
 
 	if ((res->offset == 0) && (res->length == 0))
@@ -1100,62 +1100,62 @@ struct ScummNESFile::LFLEntry {
 // based on structure of Classic PC Maniac Mansion LFL files
 // (roomgfx resources are arranged in order, one per file,
 // after the room blocks)
-static const ScummNESFile::LFLEntry lfl_01[] = { {&res_rooms, 1}, {&res_roomgfx, 1}, {&res_scripts, 57}, {&res_scripts, 61}, {&res_scripts, 76}, {&res_scripts, 105}, {&res_scripts, 111}, {&res_sounds, 5}, {&res_scripts, 132}, {&res_scripts, 148}, {&res_scripts, 155}, {&res_scripts, 156}, {&res_sounds, 39}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_02[] = { {&res_rooms, 2}, {&res_roomgfx, 2}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_03[] = { {&res_rooms, 3}, {&res_roomgfx, 3}, {&res_scripts, 21}, {&res_sounds, 26}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_04[] = { {&res_rooms, 4}, {&res_roomgfx, 4}, {&res_scripts, 46}, {&res_scripts, 56}, {&res_scripts, 137}, {&res_scripts, 146}, {&res_sounds, 12}, {&res_sounds, 11}, {&res_sounds, 13}, {&res_sounds, 42}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_05[] = { {&res_rooms, 5}, {&res_roomgfx, 5}, {&res_scripts, 30}, {&res_scripts, 31}, {&res_scripts, 32}, {&res_scripts, 33}, {&res_scripts, 34}, {&res_scripts, 35}, {&res_sounds, 22}, {&res_sounds, 23}, {&res_sounds, 24}, {&res_sounds, 21}, {&res_sounds, 46}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_06[] = { {&res_rooms, 6}, {&res_roomgfx, 6}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_07[] = { {&res_rooms, 7}, {&res_roomgfx, 7}, {&res_scripts, 17}, {&res_scripts, 58}, {&res_scripts, 59}, {&res_scripts, 60}, {&res_scripts, 74}, {&res_scripts, 81}, {&res_scripts, 82}, {&res_scripts, 150}, {&res_sounds, 14}, {&res_sounds, 15}, {&res_sounds, 16}, {&res_sounds, 17}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_08[] = { {&res_rooms, 8}, {&res_roomgfx, 8}, {&res_scripts, 7}, {&res_scripts, 12}, {&res_scripts, 13}, {&res_scripts, 47}, {&res_scripts, 48}, {&res_scripts, 49}, {&res_scripts, 154}, {&res_sounds, 32}, {&res_sounds, 33}, {&res_sounds, 36}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_09[] = { {&res_rooms, 9}, {&res_roomgfx, 9}, {&res_scripts, 10}, {&res_scripts, 11}, {&res_scripts, 45}, {&res_scripts, 55}, {&res_scripts, 84}, {&res_scripts, 85}, {&res_scripts, 86}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_10[] = { {&res_rooms, 10}, {&res_roomgfx, 10}, {&res_scripts, 24}, {&res_scripts, 149}, {&res_sounds, 28}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_11[] = { {&res_rooms, 11}, {&res_roomgfx, 11}, {&res_scripts, 166}, {&res_scripts, 167}, {&res_scripts, 168}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_12[] = { {&res_rooms, 12}, {&res_roomgfx, 12}, {&res_scripts, 51}, {&res_scripts, 103}, {&res_scripts, 104}, {&res_scripts, 161}, {&res_sounds, 63}, {&res_costumes, 14}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_13[] = { {&res_rooms, 13}, {&res_roomgfx, 13}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_14[] = { {&res_rooms, 14}, {&res_roomgfx, 14}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_15[] = { {&res_rooms, 15}, {&res_roomgfx, 15}, {&res_sounds, 27}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_16[] = { {&res_rooms, 16}, {&res_roomgfx, 16}, {&res_scripts, 14}, {&res_scripts, 121}, {&res_scripts, 122}, {&res_sounds, 40}, {&res_sounds, 64}, {&res_sounds, 68}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_17[] = { {&res_rooms, 17}, {&res_roomgfx, 17}, {&res_scripts, 20}, {&res_scripts, 100}, {&res_sounds, 25}, {&res_sounds, 44}, {&res_sounds, 2}, {&res_sounds, 50}, {&res_sounds, 52}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_18[] = { {&res_rooms, 18}, {&res_roomgfx, 18}, {&res_scripts, 25}, {&res_scripts, 26}, {&res_scripts, 27}, {&res_scripts, 28}, {&res_scripts, 64}, {&res_scripts, 65}, {&res_scripts, 66}, {&res_scripts, 67}, {&res_scripts, 68}, {&res_scripts, 69}, {&res_scripts, 70}, {&res_scripts, 71}, {&res_scripts, 73}, {&res_scripts, 101}, {&res_sounds, 35}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_19[] = { {&res_rooms, 19}, {&res_roomgfx, 19}, {&res_scripts, 36}, {&res_scripts, 37}, {&res_scripts, 38}, {&res_scripts, 39}, {&res_scripts, 40}, {&res_scripts, 152}, {&res_scripts, 153}, {&res_costumes, 10}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_20[] = { {&res_rooms, 20}, {&res_roomgfx, 20}, {&res_scripts, 107}, {&res_scripts, 108}, {&res_scripts, 109}, {&res_scripts, 110}, {&res_scripts, 159}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_21[] = { {&res_rooms, 21}, {&res_roomgfx, 21}, {&res_scripts, 41}, {&res_scripts, 42}, {&res_scripts, 43}, {&res_scripts, 53}, {&res_scripts, 136}, {&res_sounds, 29}, {&res_sounds, 20}, {&res_sounds, 37}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_22[] = { {&res_rooms, 22}, {&res_roomgfx, 22}, {&res_scripts, 15}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_23[] = { {&res_rooms, 23}, {&res_roomgfx, 23}, {&res_scripts, 77}, {&res_scripts, 79}, {&res_scripts, 80}, {&res_scripts, 83}, {&res_sounds, 41}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_24[] = { {&res_rooms, 24}, {&res_roomgfx, 24}, {&res_scripts, 18}, {&res_scripts, 19}, {&res_scripts, 78}, {&res_sounds, 7}, {&res_sounds, 3}, {&res_sounds, 18}, {&res_sounds, 34}, {&res_costumes, 12}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_25[] = { {&res_rooms, 25}, {&res_roomgfx, 25}, {&res_scripts, 29}, {&res_sounds, 30}, {&res_sounds, 31}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_26[] = { {&res_rooms, 26}, {&res_roomgfx, 26}, {&res_scripts, 87}, {&res_scripts, 88}, {&res_scripts, 89}, {&res_scripts, 90}, {&res_scripts, 91}, {&res_scripts, 92}, {&res_scripts, 93}, {&res_scripts, 94}, {&res_scripts, 95}, {&res_scripts, 96}, {&res_scripts, 97}, {&res_scripts, 98}, {&res_scripts, 116}, {&res_scripts, 151}, {&res_scripts, 174}, {&res_costumes, 11}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_27[] = { {&res_rooms, 27}, {&res_roomgfx, 27}, {&res_scripts, 16}, {&res_scripts, 52}, {&res_scripts, 54}, {&res_scripts, 113}, {&res_sounds, 45}, {&res_costumes, 19}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_28[] = { {&res_rooms, 28}, {&res_roomgfx, 28}, {&res_scripts, 22}, {&res_scripts, 23}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_29[] = { {&res_rooms, 29}, {&res_roomgfx, 29}, {&res_scripts, 75}, {&res_sounds, 43}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_30[] = { {&res_rooms, 30}, {&res_roomgfx, 30}, {&res_scripts, 63}, {&res_sounds, 0}, {&res_scripts, 123}, {&res_scripts, 125}, {&res_scripts, 126}, {&res_scripts, 127}, {&res_scripts, 129}, {&res_sounds, 55}, {&res_sounds, 59}, {&res_sounds, 60}, {&res_costumes, 8}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_31[] = { {&res_rooms, 31}, {&res_roomgfx, 31}, {&res_scripts, 99}, {&res_scripts, 115}, {&res_scripts, 117}, {&res_scripts, 119}, {&res_scripts, 147}, {&res_scripts, 157}, {&res_scripts, 158}, {&res_scripts, 160}, {&res_costumes, 13}, {&res_costumes, 9}, {&res_costumes, 23}, {&res_costumes, 24}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_32[] = { {&res_rooms, 32}, {&res_roomgfx, 32}, {&res_costumes, 15}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_33[] = { {&res_rooms, 33}, {&res_roomgfx, 33}, {&res_scripts, 120}, {&res_scripts, 135}, {&res_sounds, 56}, {&res_sounds, 57}, {&res_sounds, 58}, {&res_sounds, 1}, {&res_costumes, 22}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_34[] = { {&res_rooms, 34}, {&res_roomgfx, 34}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_35[] = { {&res_rooms, 35}, {&res_roomgfx, 35}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_36[] = { {&res_rooms, 36}, {&res_roomgfx, 36}, {&res_sounds, 10}, {&res_sounds, 4}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_37[] = { {&res_rooms, 37}, {&res_roomgfx, 37}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_38[] = { {&res_rooms, 38}, {&res_roomgfx, 38}, {&res_scripts, 138}, {&res_scripts, 139}, {&res_scripts, 140}, {&res_scripts, 141}, {&res_scripts, 142}, {&res_scripts, 143}, {&res_scripts, 144}, {&res_scripts, 145}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_39[] = { {&res_rooms, 39}, {&res_roomgfx, 39}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_40[] = { {&res_rooms, 40}, {&res_roomgfx, 0}, {&res_scripts, 112}, {&res_costumes, 17}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_41[] = { {&res_rooms, 41}, {&res_scripts, 106}, {&res_sounds, 47}, {&res_sounds, 48}, {&res_sounds, 53}, {&res_sounds, 49}, {&res_sounds, 51}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_42[] = { {&res_rooms, 42}, {&res_scripts, 124}, {&res_costumes, 18}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_43[] = { {&res_rooms, 43}, {&res_scripts, 44}, {&res_sounds, 19}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_44[] = { {&res_rooms, 44}, {&res_scripts, 102}, {&res_sounds, 6}, {&res_sounds, 38}, {&res_sounds, 8}, {&res_sounds, 9}, {&res_costumes, 1}, {&res_costumes, 2}, {&res_costumes, 5}, {&res_costumes, 6}, {&res_costumes, 3}, {&res_costumes, 4}, {&res_costumes, 7}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_45[] = { {&res_rooms, 45}, {&res_scripts, 1}, {&res_scripts, 2}, {&res_scripts, 3}, {&res_scripts, 4}, {&res_scripts, 5}, {&res_scripts, 9}, {&res_scripts, 114}, {&res_scripts, 131}, {&res_scripts, 164}, {&res_scripts, 165}, {&res_scripts, 169}, {&res_scripts, 170}, {&res_scripts, 171}, {&res_scripts, 172}, {&res_scripts, 173}, {&res_scripts, 175}, {&res_sounds, 54}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_46[] = { {&res_rooms, 46}, {&res_scripts, 130}, {&res_sounds, 65}, {&res_costumes, 0}, {&res_costumes, 21}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_47[] = { {&res_rooms, 47}, {&res_scripts, 62}, {&res_sounds, 69}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_48[] = { {&res_rooms, 48}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_49[] = { {&res_rooms, 49}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_50[] = { {&res_rooms, 50}, {&res_scripts, 133}, {&res_scripts, 163}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_51[] = { {&res_rooms, 51}, {&res_scripts, 118}, {&res_scripts, 128}, {&res_sounds, 61}, {&res_sounds, 62}, {&res_sounds, 67}, {&res_sounds, 66}, {&res_costumes, 16}, {&res_costumes, 20}, {NULL, 0} };
-static const ScummNESFile::LFLEntry lfl_52[] = { {&res_rooms, 52}, {NULL, 0} };
+static const ScummNESFile::LFLEntry lfl_01[] = { {&res_rooms, 1}, {&res_roomgfx, 1}, {&res_scripts, 57}, {&res_scripts, 61}, {&res_scripts, 76}, {&res_scripts, 105}, {&res_scripts, 111}, {&res_sounds, 5}, {&res_scripts, 132}, {&res_scripts, 148}, {&res_scripts, 155}, {&res_scripts, 156}, {&res_sounds, 39}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_02[] = { {&res_rooms, 2}, {&res_roomgfx, 2}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_03[] = { {&res_rooms, 3}, {&res_roomgfx, 3}, {&res_scripts, 21}, {&res_sounds, 26}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_04[] = { {&res_rooms, 4}, {&res_roomgfx, 4}, {&res_scripts, 46}, {&res_scripts, 56}, {&res_scripts, 137}, {&res_scripts, 146}, {&res_sounds, 12}, {&res_sounds, 11}, {&res_sounds, 13}, {&res_sounds, 42}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_05[] = { {&res_rooms, 5}, {&res_roomgfx, 5}, {&res_scripts, 30}, {&res_scripts, 31}, {&res_scripts, 32}, {&res_scripts, 33}, {&res_scripts, 34}, {&res_scripts, 35}, {&res_sounds, 22}, {&res_sounds, 23}, {&res_sounds, 24}, {&res_sounds, 21}, {&res_sounds, 46}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_06[] = { {&res_rooms, 6}, {&res_roomgfx, 6}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_07[] = { {&res_rooms, 7}, {&res_roomgfx, 7}, {&res_scripts, 17}, {&res_scripts, 58}, {&res_scripts, 59}, {&res_scripts, 60}, {&res_scripts, 74}, {&res_scripts, 81}, {&res_scripts, 82}, {&res_scripts, 150}, {&res_sounds, 14}, {&res_sounds, 15}, {&res_sounds, 16}, {&res_sounds, 17}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_08[] = { {&res_rooms, 8}, {&res_roomgfx, 8}, {&res_scripts, 7}, {&res_scripts, 12}, {&res_scripts, 13}, {&res_scripts, 47}, {&res_scripts, 48}, {&res_scripts, 49}, {&res_scripts, 154}, {&res_sounds, 32}, {&res_sounds, 33}, {&res_sounds, 36}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_09[] = { {&res_rooms, 9}, {&res_roomgfx, 9}, {&res_scripts, 10}, {&res_scripts, 11}, {&res_scripts, 45}, {&res_scripts, 55}, {&res_scripts, 84}, {&res_scripts, 85}, {&res_scripts, 86}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_10[] = { {&res_rooms, 10}, {&res_roomgfx, 10}, {&res_scripts, 24}, {&res_scripts, 149}, {&res_sounds, 28}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_11[] = { {&res_rooms, 11}, {&res_roomgfx, 11}, {&res_scripts, 166}, {&res_scripts, 167}, {&res_scripts, 168}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_12[] = { {&res_rooms, 12}, {&res_roomgfx, 12}, {&res_scripts, 51}, {&res_scripts, 103}, {&res_scripts, 104}, {&res_scripts, 161}, {&res_sounds, 63}, {&res_costumes, 14}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_13[] = { {&res_rooms, 13}, {&res_roomgfx, 13}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_14[] = { {&res_rooms, 14}, {&res_roomgfx, 14}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_15[] = { {&res_rooms, 15}, {&res_roomgfx, 15}, {&res_sounds, 27}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_16[] = { {&res_rooms, 16}, {&res_roomgfx, 16}, {&res_scripts, 14}, {&res_scripts, 121}, {&res_scripts, 122}, {&res_sounds, 40}, {&res_sounds, 64}, {&res_sounds, 68}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_17[] = { {&res_rooms, 17}, {&res_roomgfx, 17}, {&res_scripts, 20}, {&res_scripts, 100}, {&res_sounds, 25}, {&res_sounds, 44}, {&res_sounds, 2}, {&res_sounds, 50}, {&res_sounds, 52}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_18[] = { {&res_rooms, 18}, {&res_roomgfx, 18}, {&res_scripts, 25}, {&res_scripts, 26}, {&res_scripts, 27}, {&res_scripts, 28}, {&res_scripts, 64}, {&res_scripts, 65}, {&res_scripts, 66}, {&res_scripts, 67}, {&res_scripts, 68}, {&res_scripts, 69}, {&res_scripts, 70}, {&res_scripts, 71}, {&res_scripts, 73}, {&res_scripts, 101}, {&res_sounds, 35}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_19[] = { {&res_rooms, 19}, {&res_roomgfx, 19}, {&res_scripts, 36}, {&res_scripts, 37}, {&res_scripts, 38}, {&res_scripts, 39}, {&res_scripts, 40}, {&res_scripts, 152}, {&res_scripts, 153}, {&res_costumes, 10}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_20[] = { {&res_rooms, 20}, {&res_roomgfx, 20}, {&res_scripts, 107}, {&res_scripts, 108}, {&res_scripts, 109}, {&res_scripts, 110}, {&res_scripts, 159}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_21[] = { {&res_rooms, 21}, {&res_roomgfx, 21}, {&res_scripts, 41}, {&res_scripts, 42}, {&res_scripts, 43}, {&res_scripts, 53}, {&res_scripts, 136}, {&res_sounds, 29}, {&res_sounds, 20}, {&res_sounds, 37}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_22[] = { {&res_rooms, 22}, {&res_roomgfx, 22}, {&res_scripts, 15}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_23[] = { {&res_rooms, 23}, {&res_roomgfx, 23}, {&res_scripts, 77}, {&res_scripts, 79}, {&res_scripts, 80}, {&res_scripts, 83}, {&res_sounds, 41}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_24[] = { {&res_rooms, 24}, {&res_roomgfx, 24}, {&res_scripts, 18}, {&res_scripts, 19}, {&res_scripts, 78}, {&res_sounds, 7}, {&res_sounds, 3}, {&res_sounds, 18}, {&res_sounds, 34}, {&res_costumes, 12}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_25[] = { {&res_rooms, 25}, {&res_roomgfx, 25}, {&res_scripts, 29}, {&res_sounds, 30}, {&res_sounds, 31}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_26[] = { {&res_rooms, 26}, {&res_roomgfx, 26}, {&res_scripts, 87}, {&res_scripts, 88}, {&res_scripts, 89}, {&res_scripts, 90}, {&res_scripts, 91}, {&res_scripts, 92}, {&res_scripts, 93}, {&res_scripts, 94}, {&res_scripts, 95}, {&res_scripts, 96}, {&res_scripts, 97}, {&res_scripts, 98}, {&res_scripts, 116}, {&res_scripts, 151}, {&res_scripts, 174}, {&res_costumes, 11}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_27[] = { {&res_rooms, 27}, {&res_roomgfx, 27}, {&res_scripts, 16}, {&res_scripts, 52}, {&res_scripts, 54}, {&res_scripts, 113}, {&res_sounds, 45}, {&res_costumes, 19}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_28[] = { {&res_rooms, 28}, {&res_roomgfx, 28}, {&res_scripts, 22}, {&res_scripts, 23}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_29[] = { {&res_rooms, 29}, {&res_roomgfx, 29}, {&res_scripts, 75}, {&res_sounds, 43}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_30[] = { {&res_rooms, 30}, {&res_roomgfx, 30}, {&res_scripts, 63}, {&res_sounds, 0}, {&res_scripts, 123}, {&res_scripts, 125}, {&res_scripts, 126}, {&res_scripts, 127}, {&res_scripts, 129}, {&res_sounds, 55}, {&res_sounds, 59}, {&res_sounds, 60}, {&res_costumes, 8}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_31[] = { {&res_rooms, 31}, {&res_roomgfx, 31}, {&res_scripts, 99}, {&res_scripts, 115}, {&res_scripts, 117}, {&res_scripts, 119}, {&res_scripts, 147}, {&res_scripts, 157}, {&res_scripts, 158}, {&res_scripts, 160}, {&res_costumes, 13}, {&res_costumes, 9}, {&res_costumes, 23}, {&res_costumes, 24}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_32[] = { {&res_rooms, 32}, {&res_roomgfx, 32}, {&res_costumes, 15}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_33[] = { {&res_rooms, 33}, {&res_roomgfx, 33}, {&res_scripts, 120}, {&res_scripts, 135}, {&res_sounds, 56}, {&res_sounds, 57}, {&res_sounds, 58}, {&res_sounds, 1}, {&res_costumes, 22}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_34[] = { {&res_rooms, 34}, {&res_roomgfx, 34}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_35[] = { {&res_rooms, 35}, {&res_roomgfx, 35}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_36[] = { {&res_rooms, 36}, {&res_roomgfx, 36}, {&res_sounds, 10}, {&res_sounds, 4}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_37[] = { {&res_rooms, 37}, {&res_roomgfx, 37}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_38[] = { {&res_rooms, 38}, {&res_roomgfx, 38}, {&res_scripts, 138}, {&res_scripts, 139}, {&res_scripts, 140}, {&res_scripts, 141}, {&res_scripts, 142}, {&res_scripts, 143}, {&res_scripts, 144}, {&res_scripts, 145}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_39[] = { {&res_rooms, 39}, {&res_roomgfx, 39}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_40[] = { {&res_rooms, 40}, {&res_roomgfx, 0}, {&res_scripts, 112}, {&res_costumes, 17}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_41[] = { {&res_rooms, 41}, {&res_scripts, 106}, {&res_sounds, 47}, {&res_sounds, 48}, {&res_sounds, 53}, {&res_sounds, 49}, {&res_sounds, 51}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_42[] = { {&res_rooms, 42}, {&res_scripts, 124}, {&res_costumes, 18}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_43[] = { {&res_rooms, 43}, {&res_scripts, 44}, {&res_sounds, 19}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_44[] = { {&res_rooms, 44}, {&res_scripts, 102}, {&res_sounds, 6}, {&res_sounds, 38}, {&res_sounds, 8}, {&res_sounds, 9}, {&res_costumes, 1}, {&res_costumes, 2}, {&res_costumes, 5}, {&res_costumes, 6}, {&res_costumes, 3}, {&res_costumes, 4}, {&res_costumes, 7}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_45[] = { {&res_rooms, 45}, {&res_scripts, 1}, {&res_scripts, 2}, {&res_scripts, 3}, {&res_scripts, 4}, {&res_scripts, 5}, {&res_scripts, 9}, {&res_scripts, 114}, {&res_scripts, 131}, {&res_scripts, 164}, {&res_scripts, 165}, {&res_scripts, 169}, {&res_scripts, 170}, {&res_scripts, 171}, {&res_scripts, 172}, {&res_scripts, 173}, {&res_scripts, 175}, {&res_sounds, 54}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_46[] = { {&res_rooms, 46}, {&res_scripts, 130}, {&res_sounds, 65}, {&res_costumes, 0}, {&res_costumes, 21}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_47[] = { {&res_rooms, 47}, {&res_scripts, 62}, {&res_sounds, 69}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_48[] = { {&res_rooms, 48}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_49[] = { {&res_rooms, 49}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_50[] = { {&res_rooms, 50}, {&res_scripts, 133}, {&res_scripts, 163}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_51[] = { {&res_rooms, 51}, {&res_scripts, 118}, {&res_scripts, 128}, {&res_sounds, 61}, {&res_sounds, 62}, {&res_sounds, 67}, {&res_sounds, 66}, {&res_costumes, 16}, {&res_costumes, 20}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_52[] = { {&res_rooms, 52}, {nullptr, 0} };
 // remaining 'standard' resources (not used by any of the original LFL files)
-static const ScummNESFile::LFLEntry lfl_53[] = { {&res_rooms, 53}, {&res_scripts, 177}, {&res_scripts, 178}, {&res_sounds, 70}, {&res_sounds, 71}, {&res_sounds, 72}, {&res_sounds, 73}, {&res_sounds, 74}, {&res_sounds, 75}, {&res_sounds, 76}, {&res_sounds, 77}, {&res_sounds, 78}, {&res_sounds, 79}, {&res_sounds, 80}, {&res_sounds, 81}, {NULL, 0} };
+static const ScummNESFile::LFLEntry lfl_53[] = { {&res_rooms, 53}, {&res_scripts, 177}, {&res_scripts, 178}, {&res_sounds, 70}, {&res_sounds, 71}, {&res_sounds, 72}, {&res_sounds, 73}, {&res_sounds, 74}, {&res_sounds, 75}, {&res_sounds, 76}, {&res_sounds, 77}, {&res_sounds, 78}, {&res_sounds, 79}, {&res_sounds, 80}, {&res_sounds, 81}, {nullptr, 0} };
 // all 'non-standard' resources (the costume-related stuff)
-static const ScummNESFile::LFLEntry lfl_54[] = { {&res_rooms, 54}, {&res_sprdesc, 0}, {&res_sprdesc, 1}, {&res_sprlens, 0}, {&res_sprlens, 1}, {&res_sproffs, 0}, {&res_sproffs, 1}, {&res_sprdata, 0}, {&res_sprdata, 1}, {&res_costumegfx, 0}, {&res_costumegfx, 1}, {&res_sprpals, 0}, {&res_sprpals, 1}, {&res_charset, 0}, {&res_preplist, 0}, {NULL, 0} };
+static const ScummNESFile::LFLEntry lfl_54[] = { {&res_rooms, 54}, {&res_sprdesc, 0}, {&res_sprdesc, 1}, {&res_sprlens, 0}, {&res_sprlens, 1}, {&res_sproffs, 0}, {&res_sproffs, 1}, {&res_sprdata, 0}, {&res_sprdata, 1}, {&res_costumegfx, 0}, {&res_costumegfx, 1}, {&res_sprpals, 0}, {&res_sprpals, 1}, {&res_charset, 0}, {&res_preplist, 0}, {nullptr, 0} };
 
 struct ScummNESFile::LFL {
 	int num;
@@ -1217,7 +1217,7 @@ static const ScummNESFile::LFL lfls[] = {
 	{ 52, lfl_52 },
 	{ 53, lfl_53 },
 	{ 54, lfl_54 },
-	{ -1, NULL }
+	{ -1, nullptr }
 };
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -1240,15 +1240,15 @@ bool ScummNESFile::generateResource(int res) {
 	int j;
 	int bufsize = 2;
 
-	for (j = 0; lfl->entries[j].type != NULL; j++)
-		bufsize += extractResource(0, &lfl->entries[j].type->langs[_ROMset][lfl->entries[j].index], lfl->entries[j].type->type);
+	for (j = 0; lfl->entries[j].type != nullptr; j++)
+		bufsize += extractResource(nullptr, &lfl->entries[j].type->langs[_ROMset][lfl->entries[j].index], lfl->entries[j].type->type);
 
 	free(_buf);
 	_buf = (byte *)calloc(1, bufsize);
 
 	Common::MemoryWriteStream out(_buf, bufsize);
 
-	for (j = 0; lfl->entries[j].type != NULL; j++) {
+	for (j = 0; lfl->entries[j].type != nullptr; j++) {
 		const Resource *entry = &lfl->entries[j].type->langs[_ROMset][lfl->entries[j].index];
 		extractResource(&out, entry, lfl->entries[j].type->type);
 	}
@@ -1272,7 +1272,7 @@ bool ScummNESFile::generateIndex() {
 		const LFL *lfl = &lfls[i];
 		uint16 respos = 0;
 
-		for (j = 0; lfl->entries[j].type != NULL; j++) {
+		for (j = 0; lfl->entries[j].type != nullptr; j++) {
 			const LFLEntry *entry = &lfl->entries[j];
 
 			switch (entry->type->type) {
@@ -1332,7 +1332,7 @@ bool ScummNESFile::generateIndex() {
 				error("Unindexed entry found");
 				break;
 			}
-			respos += extractResource(0, &entry->type->langs[_ROMset][entry->index], entry->type->type);
+			respos += extractResource(nullptr, &entry->type->langs[_ROMset][entry->index], entry->type->type);
 		}
 	}
 
@@ -1403,10 +1403,10 @@ bool ScummNESFile::open(const Common::Path &filename) {
 
 	if (File::open(filename)) {
 		delete _stream;
-		_stream = 0;
+		_stream = nullptr;
 
 		free(_buf);
-		_buf = 0;
+		_buf = nullptr;
 
 		return true;
 	} else {
@@ -1416,10 +1416,10 @@ bool ScummNESFile::open(const Common::Path &filename) {
 
 void ScummNESFile::close() {
 	delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 
 	free(_buf);
-	_buf = 0;
+	_buf = nullptr;
 
 	File::close();
 }

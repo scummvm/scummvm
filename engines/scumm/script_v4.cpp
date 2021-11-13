@@ -59,9 +59,9 @@ void ScummEngine_v4::setupOpcodes() {
 	OPCODE(0xa2, o4_saveLoadGame);
 
 	// Disable some opcodes which are unused in v4.
-	_opcodes[0x3b].setProc(0, 0);
-	_opcodes[0x4c].setProc(0, 0);
-	_opcodes[0xbb].setProc(0, 0);
+	_opcodes[0x3b].setProc(nullptr, nullptr);
+	_opcodes[0x4c].setProc(nullptr, nullptr);
+	_opcodes[0xbb].setProc(nullptr, nullptr);
 }
 
 void ScummEngine_v4::o4_ifState() {
@@ -337,7 +337,7 @@ void ScummEngine_v4::saveIQPoints() {
 	Common::String filename = _targetName + ".iq";
 
 	file = _saveFileMan->openForSaving(filename);
-	if (file != NULL) {
+	if (file != nullptr) {
 		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
 		if (ptr) {
 			int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
@@ -353,7 +353,7 @@ void ScummEngine_v4::loadIQPoints(byte *ptr, int size) {
 	Common::String filename = _targetName + ".iq";
 
 	file = _saveFileMan->openForLoading(filename);
-	if (file != NULL) {
+	if (file != nullptr) {
 		byte *tmp = (byte *)malloc(size);
 		int nread = file->read(tmp, size);
 		if (nread == size) {

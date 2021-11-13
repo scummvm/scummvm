@@ -32,11 +32,11 @@ namespace Scumm {
 
 BundleDirCache::BundleDirCache() {
 	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		_budleDirCache[fileId].bundleTable = NULL;
+		_budleDirCache[fileId].bundleTable = nullptr;
 		_budleDirCache[fileId].fileName[0] = 0;
 		_budleDirCache[fileId].numFiles = 0;
 		_budleDirCache[fileId].isCompressed = false;
-		_budleDirCache[fileId].indexTable = NULL;
+		_budleDirCache[fileId].indexTable = nullptr;
 	}
 }
 
@@ -70,7 +70,7 @@ int BundleDirCache::matchFile(const char *filename) {
 	int fileId;
 
 	for (fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		if ((_budleDirCache[fileId].bundleTable == NULL) && (freeSlot == -1)) {
+		if ((_budleDirCache[fileId].bundleTable == nullptr) && (freeSlot == -1)) {
 			freeSlot = fileId;
 		}
 		if (scumm_stricmp(filename, _budleDirCache[fileId].fileName) == 0) {
@@ -141,14 +141,14 @@ int BundleDirCache::matchFile(const char *filename) {
 
 BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_cache = cache;
-	_bundleTable = NULL;
-	_compTable = NULL;
+	_bundleTable = nullptr;
+	_compTable = nullptr;
 	_numFiles = 0;
 	_numCompItems = 0;
 	_curSampleId = -1;
 	_fileBundleId = -1;
 	_file = new ScummFile();
-	_compInputBuff = NULL;
+	_compInputBuff = nullptr;
 }
 
 BundleMgr::~BundleMgr() {
@@ -168,7 +168,7 @@ Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offs
 		return _file;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
@@ -203,7 +203,7 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 void BundleMgr::close() {
 	if (_file->isOpen()) {
 		_file->close();
-		_bundleTable = NULL;
+		_bundleTable = nullptr;
 		_numFiles = 0;
 		_numCompItems = 0;
 		_compTableLoaded = false;
@@ -212,9 +212,9 @@ void BundleMgr::close() {
 		_outputSize = 0;
 		_curSampleId = -1;
 		free(_compTable);
-		_compTable = NULL;
+		_compTable = nullptr;
 		free(_compInputBuff);
-		_compInputBuff = NULL;
+		_compInputBuff = nullptr;
 	}
 }
 

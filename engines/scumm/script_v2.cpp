@@ -684,7 +684,7 @@ void ScummEngine_v2::o2_actorOps() {
 		a->setPalette(i, arg);
 		break;
 	case 3:		// SO_ACTOR_NAME
-		loadPtrToResource(rtActorName, a->_number, NULL);
+		loadPtrToResource(rtActorName, a->_number, nullptr);
 		break;
 	case 4:		// SO_COSTUME
 		a->setActorCostume(arg);
@@ -856,7 +856,7 @@ void ScummEngine_v2::o2_verbOps() {
 		}
 
 		// It follows the verb name
-		loadPtrToResource(rtVerb, slot, NULL);
+		loadPtrToResource(rtVerb, slot, nullptr);
 		}
 		break;
 	}
@@ -939,7 +939,7 @@ void ScummEngine_v2::o2_doSentence() {
 				}
 			}
 
-			runObjectScript(st->objectA, st->verb, isBackgroundScript, isSpecialVerb, NULL, slot);
+			runObjectScript(st->objectA, st->verb, isBackgroundScript, isSpecialVerb, nullptr, slot);
 		}
 		break;
 	case 2:
@@ -1098,7 +1098,7 @@ void ScummEngine_v2::o2_ifClassOfIs() {
 
 	byte *obcd = getOBCDFromObject(obj);
 
-	if (obcd == 0) {
+	if (obcd == nullptr) {
 		o5_jumpRelative();
 		return;
 	}
@@ -1207,7 +1207,7 @@ void ScummEngine_v2::o2_startScript() {
 		}
 	}
 
-	runScript(script, 0, 0, 0);
+	runScript(script, 0, 0, nullptr);
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
@@ -1484,7 +1484,7 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	if (x >= 0 && y >= 0) {
 		a->startWalkActor(x, y, -1);
 	}
-	runScript(5, 0, 0, 0);
+	runScript(5, 0, 0, nullptr);
 }
 
 void ScummEngine_v2::o2_setOwnerOf() {
@@ -1584,7 +1584,7 @@ void ScummEngine_v2::o2_endCutscene() {
 		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
 		} else if (vm.cutSceneData[2] != _currentRoom) {
-			startScene(vm.cutSceneData[2], 0, 0);
+			startScene(vm.cutSceneData[2], nullptr, 0);
 		}
 	} else {
 		actorFollowCamera(VAR(VAR_EGO));
@@ -1604,7 +1604,7 @@ void ScummEngine_v2::o2_chainScript() {
 	int script = getVarOrDirectByte(PARAM_1);
 	stopScript(vm.slot[_currentScript].number);
 	_currentScript = 0xFF;
-	runScript(script, 0, 0, 0);
+	runScript(script, 0, 0, nullptr);
 }
 
 void ScummEngine_v2::o2_pickupObject() {

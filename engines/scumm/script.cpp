@@ -429,7 +429,7 @@ void ScummEngine::getScriptBaseAddress() {
 	}
 
 	// The following fixes bug #2028. Confirmed against disasm.
-	if (_game.version <= 2 && _scriptOrgPointer == NULL) {
+	if (_game.version <= 2 && _scriptOrgPointer == nullptr) {
 		ss->status = ssDead;
 		_currentScript = 0xFF;
 	}
@@ -925,7 +925,7 @@ void ScummEngine::runAllScripts() {
 
 void ScummEngine::runExitScript() {
 	if (VAR_EXIT_SCRIPT != 0xFF && VAR(VAR_EXIT_SCRIPT))
-		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
+		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, nullptr);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
@@ -950,11 +950,11 @@ void ScummEngine::runExitScript() {
 			}
 		}
 
-		initializeLocals(slot, 0);
+		initializeLocals(slot, nullptr);
 		runScriptNested(slot);
 	}
 	if (VAR_EXIT_SCRIPT2 != 0xFF && VAR(VAR_EXIT_SCRIPT2))
-		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
+		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, nullptr);
 
 #ifdef ENABLE_SCUMM_7_8
 	// WORKAROUND: The spider lair (room 44) will optionally play the sound
@@ -970,7 +970,7 @@ void ScummEngine::runExitScript() {
 
 void ScummEngine::runEntryScript() {
 	if (VAR_ENTRY_SCRIPT != 0xFF && VAR(VAR_ENTRY_SCRIPT))
-		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
+		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, nullptr);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
@@ -982,11 +982,11 @@ void ScummEngine::runEntryScript() {
 		vm.slot[slot].freezeCount = 0;
 		vm.slot[slot].delayFrameCount = 0;
 		vm.slot[slot].cycle = 1;
-		initializeLocals(slot, 0);
+		initializeLocals(slot, nullptr);
 		runScriptNested(slot);
 	}
 	if (VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
-		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
+		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
 }
 
 void ScummEngine::runQuitScript() {
@@ -1320,7 +1320,7 @@ void ScummEngine_v0::runSentenceScript() {
 		// do not read in the dark
 		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
 			VAR(VAR_ACTIVE_OBJECT2) = OBJECT_V0_ID(_cmdObject2);
-			runObjectScript(_cmdObject, _cmdVerb, false, false, NULL);
+			runObjectScript(_cmdObject, _cmdVerb, false, false, nullptr);
 			return;
 		}
 	} else {
@@ -1336,7 +1336,7 @@ void ScummEngine_v0::runSentenceScript() {
 	if (_cmdVerb != kVerbWalkTo) {
 		// perform verb's fallback action
 		VAR(VAR_ACTIVE_VERB) = _cmdVerb;
-		runScript(3, 0, 0, 0);
+		runScript(3, 0, 0, nullptr);
 	}
 }
 
@@ -1507,7 +1507,7 @@ void ScummEngine::copyScriptString(byte *dst) {
 int ScummEngine::resStrLen(const byte *src) {
 	int num = 0;
 	byte chr;
-	if (src == NULL) {
+	if (src == nullptr) {
 		refreshScriptPointer();
 		src = _scriptPointer;
 	}

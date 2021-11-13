@@ -304,7 +304,7 @@ void Instrument::nativeMT32(bool native) {
 
 void Instrument::clear() {
 	delete _instrument;
-	_instrument = NULL;
+	_instrument = nullptr;
 	_type = itNone;
 }
 

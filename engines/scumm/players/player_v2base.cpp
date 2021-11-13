@@ -329,9 +329,9 @@ Player_V2Base::Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
 
 	// Initialize sound queue
 	_current_nr = _next_nr = 0;
-	_current_data = _next_data = 0;
+	_current_data = _next_data = nullptr;
 
-	_retaddr = 0;
+	_retaddr = nullptr;
 
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
@@ -378,7 +378,7 @@ void Player_V2Base::chainNextSound() {
 	if (_next_nr) {
 		chainSound(_next_nr, _next_data);
 		_next_nr = 0;
-		_next_data = 0;
+		_next_data = nullptr;
 	}
 }
 
@@ -592,7 +592,7 @@ check_stopped:
 	}
 
 	_current_nr = 0;
-	_current_data = 0;
+	_current_data = nullptr;
 	chainNextSound();
 }
 

@@ -99,7 +99,7 @@ void Player_V2::stopAllSounds() {
 		clear_channel(i);
 	}
 	_next_nr = _current_nr = 0;
-	_next_data = _current_data = 0;
+	_next_data = _current_data = nullptr;
 }
 
 void Player_V2::stopSound(int nr) {
@@ -107,14 +107,14 @@ void Player_V2::stopSound(int nr) {
 
 	if (_next_nr == nr) {
 		_next_nr = 0;
-		_next_data = 0;
+		_next_data = nullptr;
 	}
 	if (_current_nr == nr) {
 		for (int i = 0; i < 4; i++) {
 			clear_channel(i);
 		}
 		_current_nr = 0;
-		_current_data = 0;
+		_current_data = nullptr;
 		chainNextSound();
 	}
 }
@@ -146,7 +146,7 @@ void Player_V2::startSound(int nr) {
 	if (!_current_nr) {
 		nr = 0;
 		_next_nr = 0;
-		_next_data = 0;
+		_next_data = nullptr;
 	}
 
 	if (nr != _current_nr

@@ -644,7 +644,7 @@ void ScummEngine::CHARSET_1() {
 			return;
 	}
 
-	a = NULL;
+	a = nullptr;
 	if (getTalkingActor() != 0xFF)
 		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
 
@@ -1107,13 +1107,13 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_game.version >= 4) {
 		// trim from the right
 		byte *tmp = buf;
-		space = NULL;
+		space = nullptr;
 		while (*tmp) {
 			if (*tmp == ' ') {
 				if (!space)
 					space = tmp;
 			} else {
-				space = NULL;
+				space = nullptr;
 			}
 			tmp++;
 		}
@@ -1246,7 +1246,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	start = dst;
 	end = dst + dstSize;
 
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		debug(0, "Bad message in convertMessageToString, ignoring");
 		return 0;
 	}
