@@ -54,21 +54,21 @@ public:
 	 */
 	RISCOSFilesystemNode(const Common::String &path);
 
-	virtual bool exists() const override;
-	virtual Common::U32String getDisplayName() const override { return _displayName; }
-	virtual Common::String getName() const override { return _displayName; }
-	virtual Common::String getPath() const override { return _path; }
-	virtual bool isDirectory() const override { return _isDirectory; }
-	virtual bool isReadable() const override;
-	virtual bool isWritable() const override;
+	bool exists() const override;
+	Common::U32String getDisplayName() const override { return _displayName; }
+	Common::String getName() const override { return _displayName; }
+	Common::String getPath() const override { return _path; }
+	bool isDirectory() const override { return _isDirectory; }
+	bool isReadable() const override;
+	bool isWritable() const override;
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const override;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
-	virtual AbstractFSNode *getParent() const override;
+	AbstractFSNode *getChild(const Common::String &n) const override;
+	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream() override;
-	virtual Common::SeekableWriteStream *createWriteStream() override;
-	virtual bool createDirectory() override;
+	Common::SeekableReadStream *createReadStream() override;
+	Common::SeekableWriteStream *createWriteStream() override;
+	bool createDirectory() override;
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using OS_File 20.

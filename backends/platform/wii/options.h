@@ -40,8 +40,8 @@ public:
 	virtual ~WiiOptionsDialog();
 
 protected:
-	virtual void handleTickle() override;
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	bool _doubleStrike;

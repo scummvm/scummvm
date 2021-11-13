@@ -141,76 +141,76 @@ public:
 	OSystem_Wii();
 	virtual ~OSystem_Wii();
 
-	virtual void initBackend() override;
-	virtual void engineInit() override;
-	virtual void engineDone() override;
+	void initBackend() override;
+	void engineInit() override;
+	void engineDone() override;
 
-	virtual bool hasFeature(Feature f) override;
-	virtual void setFeatureState(Feature f, bool enable) override;
-	virtual bool getFeatureState(Feature f) override;
-	virtual const GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
+	bool hasFeature(Feature f) override;
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
+	const GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
+	bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
+	Graphics::PixelFormat getScreenFormat() const override;
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
-	virtual int getGraphicsMode() const override;
+	int getGraphicsMode() const override;
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format) override;
-	virtual int16 getWidth() override;
-	virtual int16 getHeight() override;
+	int16 getWidth() override;
+	int16 getHeight() override;
 
-	virtual PaletteManager *getPaletteManager() override { return this; }
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
 public:
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
+	void setCursorPalette(const byte *colors, uint start, uint num) override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h) override;
-	virtual void updateScreen() override;
-	virtual Graphics::Surface *lockScreen() override;
-	virtual void unlockScreen() override;
-	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override;
+	void updateScreen() override;
+	Graphics::Surface *lockScreen() override;
+	void unlockScreen() override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) override;
 
-	virtual void showOverlay() override;
-	virtual void hideOverlay() override;
-	virtual bool isOverlayVisible() const override { return _overlayVisible; }
-	virtual void clearOverlay() override;
-	virtual void grabOverlay(Graphics::Surface &surface) override;
+	void showOverlay() override;
+	void hideOverlay() override;
+	bool isOverlayVisible() const override { return _overlayVisible; }
+	void clearOverlay() override;
+	void grabOverlay(Graphics::Surface &surface) override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h) override;
-	virtual int16 getOverlayWidth() override;
-	virtual int16 getOverlayHeight() override;
-	virtual Graphics::PixelFormat getOverlayFormat() const override;
+	int16 getOverlayWidth() override;
+	int16 getOverlayHeight() override;
+	Graphics::PixelFormat getOverlayFormat() const override;
 
-	virtual bool showMouse(bool visible) override;
+	bool showMouse(bool visible) override;
 
-	virtual void warpMouse(int x, int y) override;
+	void warpMouse(int x, int y) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
 								bool dontScale,
 								const Graphics::PixelFormat *format) override;
 
-	virtual bool pollEvent(Common::Event &event) override;
-	virtual uint32 getMillis(bool skipRecord = false) override;
-	virtual void delayMillis(uint msecs) override;
+	bool pollEvent(Common::Event &event) override;
+	uint32 getMillis(bool skipRecord = false) override;
+	void delayMillis(uint msecs) override;
 
-	virtual Common::MutexInternal *createMutex() override;
+	Common::MutexInternal *createMutex() override;
 
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 
-	virtual void quit() override;
+	void quit() override;
 
-	virtual Audio::Mixer *getMixer() override;
-	virtual FilesystemFactory *getFilesystemFactory() override;
-	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
+	Audio::Mixer *getMixer() override;
+	FilesystemFactory *getFilesystemFactory() override;
+	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 
-	virtual void logMessage(LogMessageType::Type type, const char *message) override;
+	void logMessage(LogMessageType::Type type, const char *message) override;
 
 #ifndef GAMECUBE
-	virtual Common::String getSystemLanguage() const override;
+	Common::String getSystemLanguage() const override;
 #endif // GAMECUBE
 };
 

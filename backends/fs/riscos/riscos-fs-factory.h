@@ -32,9 +32,9 @@
  */
 class RISCOSFilesystemFactory final : public FilesystemFactory {
 protected:
-	virtual AbstractFSNode *makeRootFileNode() const override;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+	AbstractFSNode *makeRootFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 };
 
 #endif /*RISCOS_FILESYSTEM_FACTORY_H*/

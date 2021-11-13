@@ -54,7 +54,7 @@ public:
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
 
-	virtual void showOverlay() override {
+	void showOverlay() override {
 		if (_overlayVisible)
 			return;
 
@@ -65,7 +65,7 @@ public:
 		_forceRedraw = true;
 	}
 
-	virtual void hideOverlay() override {
+	void hideOverlay() override {
 		if (!_overlayVisible)
 			return;
 
@@ -76,9 +76,9 @@ public:
 		_forceRedraw = true;
 	}
 
-	virtual bool isOverlayVisible() const override { return _overlayVisible; }
+	bool isOverlayVisible() const override { return _overlayVisible; }
 
-	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override {
+	void setShakePos(int shakeXOffset, int shakeYOffset) override {
 		if (_gameScreenShakeXOffset != shakeXOffset || _gameScreenShakeYOffset != shakeYOffset) {
 			_gameScreenShakeXOffset = shakeXOffset;
 			_gameScreenShakeYOffset = shakeYOffset;
@@ -222,7 +222,7 @@ protected:
 	 */
 	virtual void setSystemMousePosition(const int x, const int y) = 0;
 
-	virtual bool showMouse(bool visible) override {
+	bool showMouse(bool visible) override {
 		if (_cursorVisible == visible) {
 			return visible;
 		}

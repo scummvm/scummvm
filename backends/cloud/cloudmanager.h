@@ -86,7 +86,7 @@ class CloudManager : public Common::Singleton<CloudManager>, public Common::Even
 	 * The periodical polling is used to update the OSD icon indicating
 	 * background sync activity.
 	 */
-	virtual bool pollEvent(Common::Event &event) override;
+	bool pollEvent(Common::Event &event) override;
 
 public:
 	CloudManager();

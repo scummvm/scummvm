@@ -27,9 +27,9 @@
 
 class OSystem_MorphOS : public OSystem_SDL {
 public:
-	virtual void init() override;
+	void init() override;
 	virtual bool hasFeature(Feature f);
-	virtual bool openUrl(const Common::String &url) override;
+	bool openUrl(const Common::String &url) override;
 };
 
 #endif

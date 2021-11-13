@@ -33,23 +33,23 @@ class ChRootFilesystemNode final : public AbstractFSNode {
 
 public:
 	ChRootFilesystemNode(const Common::String &root, const Common::String &path);
-	virtual ~ChRootFilesystemNode() override;
+	~ChRootFilesystemNode() override;
 
-	virtual bool exists() const override;
-	virtual Common::U32String getDisplayName() const override;
-	virtual Common::String getName() const override;
-	virtual Common::String getPath() const override;
-	virtual bool isDirectory() const override;
-	virtual bool isReadable() const override;
-	virtual bool isWritable() const override;
+	bool exists() const override;
+	Common::U32String getDisplayName() const override;
+	Common::String getName() const override;
+	Common::String getPath() const override;
+	bool isDirectory() const override;
+	bool isReadable() const override;
+	bool isWritable() const override;
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const override;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
-	virtual AbstractFSNode *getParent() const override;
+	AbstractFSNode *getChild(const Common::String &n) const override;
+	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream() override;
-	virtual Common::SeekableWriteStream *createWriteStream() override;
-	virtual bool createDirectory() override;
+	Common::SeekableReadStream *createReadStream() override;
+	Common::SeekableWriteStream *createWriteStream() override;
+	bool createDirectory() override;
 
 private:
 	static Common::String addPathComponent(const Common::String &path, const Common::String &component);

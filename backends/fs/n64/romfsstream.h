@@ -41,19 +41,19 @@ public:
 	static RomfsStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	RomfsStream(void *handle);
-	virtual ~RomfsStream() override;
+	~RomfsStream() override;
 
-	virtual bool err() const override;
-	virtual void clearErr() override;
-	virtual bool eos() const override;
+	bool err() const override;
+	void clearErr() override;
+	bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
-	virtual bool flush() override;
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+	bool flush() override;
 
-	virtual int64 pos() const override;
-	virtual int64 size() const override;
-	virtual bool seek(int64 offs, int whence = SEEK_SET) override;
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offs, int whence = SEEK_SET) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 #endif

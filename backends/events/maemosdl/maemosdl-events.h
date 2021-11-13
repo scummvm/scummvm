@@ -38,9 +38,9 @@ public:
 
 	bool toggleClickMode();
 protected:
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event) override;
-	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event) override;
-	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event) override;
+	bool remapKey(SDL_Event &ev, Common::Event &event) override;
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event) override;
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event) override;
 
 	bool _clickEnabled;
 };
@@ -49,7 +49,7 @@ class MaemoSdlEventObserver final : public Common::EventObserver {
 public:
 	MaemoSdlEventObserver(MaemoSdlEventSource *eventSource);
 
-	virtual bool notifyEvent(const Common::Event &event) override;
+	bool notifyEvent(const Common::Event &event) override;
 private:
 	MaemoSdlEventSource *_eventSource;
 };

@@ -236,10 +236,10 @@ namespace {
   class SelectorDiscSwap : public DiscSwap {
     using DiscSwap::DiscSwap;
   protected:
-    virtual void background() override {
+    void background() override {
 	drawBackground();
     }
-    virtual void interact() override {
+    void interact() override {
 	int mousex = 0, mousey = 0;
 	byte shiftFlags;
 

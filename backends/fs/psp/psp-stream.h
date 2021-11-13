@@ -67,7 +67,7 @@ public:
 	static PspIoStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	PspIoStream(const Common::String &path, bool writeMode);
-	virtual ~PspIoStream() override;
+	~PspIoStream() override;
 
 	SceUID open();		// open the file pointed to by the file path
 
@@ -75,13 +75,13 @@ public:
 	void clearErr() override;
 	bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
-	virtual bool flush() override;
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+	bool flush() override;
 
-	virtual int64 pos() const override;
-	virtual int64 size() const override;
-	virtual bool seek(int64 offs, int whence = SEEK_SET) override;
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offs, int whence = SEEK_SET) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	// for suspending
 	int suspend() override;		/* Suspendable interface (power manager) */

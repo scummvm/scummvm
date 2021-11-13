@@ -27,17 +27,17 @@
 
 class OSystem_Switch : public OSystem_SDL {
 public:
-	virtual void init() override;
-	virtual void initBackend() override;
-	virtual bool hasFeature(Feature f) override;
-	virtual void setFeatureState(Feature f, bool enable) override;
-	virtual bool getFeatureState(Feature f) override;
-	virtual void logMessage(LogMessageType::Type type, const char *message) override;
-	virtual Common::HardwareInputSet *getHardwareInputSet() override;
+	void init() override;
+	void initBackend() override;
+	bool hasFeature(Feature f) override;
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
+	void logMessage(LogMessageType::Type type, const char *message) override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
 	virtual Common::String getSystemLanguage() const;
 
 protected:
-	virtual Common::String getDefaultLogFileName() override;
+	Common::String getDefaultLogFileName() override;
 };
 
 #endif

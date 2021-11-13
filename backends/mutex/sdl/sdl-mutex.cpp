@@ -33,10 +33,10 @@
 class SdlMutexInternal final : public Common::MutexInternal {
 public:
 	SdlMutexInternal() { _mutex = SDL_CreateMutex(); }
-	virtual ~SdlMutexInternal() override { SDL_DestroyMutex(_mutex); }
+	~SdlMutexInternal() override { SDL_DestroyMutex(_mutex); }
 
-	virtual bool lock() override { return (SDL_mutexP(_mutex) == 0); }
-	virtual bool unlock() override { return (SDL_mutexV(_mutex) == 0); }
+	bool lock() override { return (SDL_mutexP(_mutex) == 0); }
+	bool unlock() override { return (SDL_mutexV(_mutex) == 0); }
 
 private:
 	SDL_mutex *_mutex;

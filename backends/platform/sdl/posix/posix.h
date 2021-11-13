@@ -27,28 +27,28 @@
 
 class OSystem_POSIX : public OSystem_SDL {
 public:
-	virtual bool hasFeature(Feature f) override;
+	bool hasFeature(Feature f) override;
 
-	virtual bool displayLogFile() override;
+	bool displayLogFile() override;
 
-	virtual void init() override;
-	virtual void initBackend() override;
+	void init() override;
+	void initBackend() override;
 
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
 	Common::String getScreenshotsPath() override;
 
 protected:
-	virtual Common::String getDefaultConfigFileName() override;
-	virtual Common::String getDefaultLogFileName() override;
+	Common::String getDefaultConfigFileName() override;
+	Common::String getDefaultLogFileName() override;
 
 	Common::String getXdgUserDir(const char *name);
 
-	virtual AudioCDManager *createAudioCDManager() override;
+	AudioCDManager *createAudioCDManager() override;
 
 #ifdef HAS_POSIX_SPAWN
 public:
-	virtual bool openUrl(const Common::String &url) override;
+	bool openUrl(const Common::String &url) override;
 
 protected:
 	bool launchBrowser(const Common::String& client, const Common::String &url);

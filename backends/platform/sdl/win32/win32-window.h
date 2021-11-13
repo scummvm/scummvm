@@ -29,7 +29,7 @@
 
 class SdlWindow_Win32 final : public SdlWindow {
 public:
-	virtual void setupIcon() override;
+	void setupIcon() override;
 	HWND getHwnd();
 };
 

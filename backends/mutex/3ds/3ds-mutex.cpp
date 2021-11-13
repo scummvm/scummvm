@@ -38,10 +38,10 @@
 class _3DSMutexInternal final : public Common::MutexInternal {
 public:
 	_3DSMutexInternal() { RecursiveLock_Init(&_mutex); }
-	virtual ~_3DSMutexInternal() override {}
+	~_3DSMutexInternal() override {}
 
-	virtual bool lock() override { RecursiveLock_Lock(&_mutex); return true; }
-	virtual bool unlock() override { RecursiveLock_Unlock(&_mutex); return true; }
+	bool lock() override { RecursiveLock_Lock(&_mutex); return true; }
+	bool unlock() override { RecursiveLock_Unlock(&_mutex); return true; }
 
 private:
 	RecursiveLock _mutex;

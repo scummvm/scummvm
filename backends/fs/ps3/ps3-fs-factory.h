@@ -31,7 +31,7 @@
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
 class PS3FilesystemFactory final : public POSIXFilesystemFactory {
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
 };
 
 #endif /*PS3_FILESYSTEM_FACTORY_H*/

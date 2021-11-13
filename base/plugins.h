@@ -379,18 +379,18 @@ protected:
 	bool loadPluginByFileName(const Common::String &filename);
 
 public:
-	virtual void init() override;
-	virtual void loadFirstPlugin() override;
-	virtual bool loadNextPlugin() override;
-	virtual bool loadPluginFromEngineId(const Common::String &engineId) override;
-	virtual void updateConfigWithFileName(const Common::String &engineId) override;
+	void init() override;
+	void loadFirstPlugin() override;
+	bool loadNextPlugin() override;
+	bool loadPluginFromEngineId(const Common::String &engineId) override;
+	void updateConfigWithFileName(const Common::String &engineId) override;
 #ifndef DETECTION_STATIC
-	virtual void loadDetectionPlugin() override;
-	virtual void unloadDetectionPlugin() override;
+	void loadDetectionPlugin() override;
+	void unloadDetectionPlugin() override;
 #endif
 
-	virtual void loadAllPlugins() override {} 	// we don't allow these
-	virtual void loadAllPluginsOfType(PluginType type) override {}
+	void loadAllPlugins() override {} 	// we don't allow these
+	void loadAllPluginsOfType(PluginType type) override {}
 };
 
 #endif

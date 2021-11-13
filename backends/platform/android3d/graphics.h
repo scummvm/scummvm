@@ -45,36 +45,36 @@ public:
 	virtual void beginGFXTransaction() {}
 	virtual OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
-	virtual int getGraphicsMode() const override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
+	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
+	int getGraphicsMode() const override;
 
-	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
-	virtual bool getFeatureState(OSystem::Feature f) const override;
+	bool hasFeature(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual void showOverlay() override;
-	virtual void hideOverlay() override;
-	virtual void clearOverlay() override;
-	virtual void grabOverlay(Graphics::Surface &surface) const override;
+	void showOverlay() override;
+	void hideOverlay() override;
+	void clearOverlay() override;
+	void grabOverlay(Graphics::Surface &surface) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h) override;
-	virtual int16 getOverlayHeight() const override;
-	virtual int16 getOverlayWidth() const override;
-	virtual Graphics::PixelFormat getOverlayFormat() const override;
-	virtual bool isOverlayVisible() const override { return _show_overlay; }
+	int16 getOverlayHeight() const override;
+	int16 getOverlayWidth() const override;
+	Graphics::PixelFormat getOverlayFormat() const override;
+	bool isOverlayVisible() const override { return _show_overlay; }
 
-	virtual int16 getHeight() const override;
-	virtual int16 getWidth() const override;
+	int16 getHeight() const override;
+	int16 getWidth() const override;
 
 	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h) override;
-	virtual Graphics::Surface *lockScreen() override;
-	virtual void unlockScreen() override;
+	Graphics::Surface *lockScreen() override;
+	void unlockScreen() override;
 	virtual void fillScreen(uint32 col);
 
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) {};
@@ -83,16 +83,16 @@ public:
 
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format) override;
-	virtual int getScreenChangeID() const override;
+	int getScreenChangeID() const override;
 
-	virtual bool showMouse(bool visible) override;
-	virtual void warpMouse(int x, int y) override;
-	virtual bool lockMouse(bool lock) override;
+	bool showMouse(bool visible) override;
+	void warpMouse(int x, int y) override;
+	bool lockMouse(bool lock) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
 								bool dontScale,
 								const Graphics::PixelFormat *format) override;
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
+	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 
 	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d);
@@ -103,8 +103,8 @@ public:
 	void clipMouse(Common::Point &p) const;
 
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
+	Graphics::PixelFormat getScreenFormat() const override;
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
 protected:

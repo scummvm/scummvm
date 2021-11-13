@@ -30,34 +30,34 @@ class OSystem_Win32 final : public OSystem_SDL {
 public:
 	OSystem_Win32();
 
-	virtual void init() override;
-	virtual void initBackend() override;
+	void init() override;
+	void initBackend() override;
 
 #ifdef USE_OPENGL
-	virtual GraphicsManagerType getDefaultGraphicsManager() const override;
+	GraphicsManagerType getDefaultGraphicsManager() const override;
 #endif
 
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
-	virtual bool hasFeature(Feature f) override;
+	bool hasFeature(Feature f) override;
 
-	virtual bool displayLogFile() override;
+	bool displayLogFile() override;
 
-	virtual bool openUrl(const Common::String &url) override;
+	bool openUrl(const Common::String &url) override;
 
-	virtual void logMessage(LogMessageType::Type type, const char *message) override;
+	void logMessage(LogMessageType::Type type, const char *message) override;
 
-	virtual Common::String getSystemLanguage() const override;
+	Common::String getSystemLanguage() const override;
 
-	virtual Common::String getScreenshotsPath() override;
+	Common::String getScreenshotsPath() override;
 
 protected:
-	virtual Common::String getDefaultConfigFileName() override;
-	virtual Common::String getDefaultLogFileName() override;
+	Common::String getDefaultConfigFileName() override;
+	Common::String getDefaultLogFileName() override;
 
 	// Override createAudioCDManager() to get our Windows-specific
 	// version.
-	virtual AudioCDManager *createAudioCDManager() override;
+	AudioCDManager *createAudioCDManager() override;
 
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
 

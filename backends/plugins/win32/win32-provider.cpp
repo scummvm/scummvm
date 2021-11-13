@@ -41,7 +41,7 @@ class Win32Plugin final : public DynamicPlugin {
 protected:
 	void *_dlHandle;
 
-	virtual VoidFunc findSymbol(const char *symbol) override {
+	VoidFunc findSymbol(const char *symbol) override {
 		FARPROC func = GetProcAddress((HMODULE)_dlHandle, symbol);
 		if (!func)
 			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
@@ -53,7 +53,7 @@ public:
 	Win32Plugin(const Common::String &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
-	virtual bool loadPlugin() override {
+	bool loadPlugin() override {
 		assert(!_dlHandle);
 		TCHAR *tFilename = Win32::stringToTchar(_filename);
 		_dlHandle = LoadLibrary(tFilename);
@@ -69,7 +69,7 @@ public:
 		return DynamicPlugin::loadPlugin();
 	}
 
-	virtual void unloadPlugin() override {
+	void unloadPlugin() override {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))

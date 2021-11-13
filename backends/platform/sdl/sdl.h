@@ -50,46 +50,46 @@ public:
 	 * instantiating the backend. Early needed managers are
 	 * created here.
 	 */
-	virtual void init() override;
+	void init() override;
 
-	virtual bool hasFeature(Feature f) override;
+	bool hasFeature(Feature f) override;
 
 	// Override functions from ModularBackend and OSystem
-	virtual void initBackend() override;
-	virtual void engineInit() override;
-	virtual void engineDone() override;
-	virtual void quit() override;
-	virtual void fatalError() override;
+	void initBackend() override;
+	void engineInit() override;
+	void engineDone() override;
+	void quit() override;
+	void fatalError() override;
 	Common::KeymapArray getGlobalKeymaps() override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	// Logging
-	virtual void logMessage(LogMessageType::Type type, const char *message) override;
+	void logMessage(LogMessageType::Type type, const char *message) override;
 
-	virtual Common::String getSystemLanguage() const override;
+	Common::String getSystemLanguage() const override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clipboard
-	virtual bool hasTextInClipboard() override;
-	virtual Common::U32String getTextFromClipboard() override;
-	virtual bool setTextInClipboard(const Common::U32String &text) override;
+	bool hasTextInClipboard() override;
+	Common::U32String getTextFromClipboard() override;
+	bool setTextInClipboard(const Common::U32String &text) override;
 
-	virtual void messageBox(LogMessageType::Type type, const char *message) override;
+	void messageBox(LogMessageType::Type type, const char *message) override;
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 14)
-	virtual bool openUrl(const Common::String &url) override;
+	bool openUrl(const Common::String &url) override;
 #endif
 
-	virtual void setWindowCaption(const Common::U32String &caption) override;
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
-	virtual Common::MutexInternal *createMutex() override;
-	virtual uint32 getMillis(bool skipRecord = false) override;
-	virtual void delayMillis(uint msecs) override;
-	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
-	virtual MixerManager *getMixerManager() override;
-	virtual Common::TimerManager *getTimerManager() override;
-	virtual Common::SaveFileManager *getSavefileManager() override;
+	void setWindowCaption(const Common::U32String &caption) override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	Common::MutexInternal *createMutex() override;
+	uint32 getMillis(bool skipRecord = false) override;
+	void delayMillis(uint msecs) override;
+	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
+	MixerManager *getMixerManager() override;
+	Common::TimerManager *getTimerManager() override;
+	Common::SaveFileManager *getSavefileManager() override;
 
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
@@ -177,10 +177,10 @@ protected:
 
 	enum GraphicsManagerType { GraphicsManagerSDL, GraphicsManagerOpenGL };
 	virtual GraphicsManagerType getDefaultGraphicsManager() const { return GraphicsManagerSDL; }
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags) override;
-	virtual int getGraphicsMode() const override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getDefaultGraphicsMode() const override;
+	bool setGraphicsMode(int mode, uint flags) override;
+	int getGraphicsMode() const override;
 #endif
 };
 
