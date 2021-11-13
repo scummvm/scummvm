@@ -1413,7 +1413,7 @@ void EdenGame::destroyCitadelRoom(int16 roomNum) {
 	room->_video = 0;
 	room->_level = 0;
 	_globals->_curAreaPtr->_citadelLevel = 0;
-	_globals->_curAreaPtr->_citadelRoomPtr = 0;
+	_globals->_curAreaPtr->_citadelRoomPtr = nullptr;
 	roomNum = (roomNum & ~0xFF) | room->_location;
 	for (; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_roomNum == roomNum) {
@@ -2236,7 +2236,7 @@ void EdenGame::getDataSync() {
 		_numAnimFrames = 0;
 	if (_globals->_textNum == 144)
 		_numAnimFrames = 48;
-	_animationTable = 0;
+	_animationTable = nullptr;
 }
 
 // Original name: ReadNombreFrames
@@ -3729,9 +3729,9 @@ void EdenGame::initGlobals() {
 	_globals->_areaPtr = nullptr;
 	_globals->_lastAreaPtr = nullptr;
 	_globals->_curAreaPtr = nullptr;
-	_globals->_citaAreaFirstRoom = 0;
+	_globals->_citaAreaFirstRoom = nullptr;
 	_globals->_characterPtr = nullptr;
-	_globals->_roomCharacterPtr = 0;
+	_globals->_roomCharacterPtr = nullptr;
 	_globals->_lastInfoIdx = 0;
 	_globals->_nextInfoIdx = 0;
 	_globals->_iconsIndex = 16;
@@ -7274,7 +7274,7 @@ void EdenGame::DELETEcharge_objet_mob(Cube *cubep) {
 int EdenGame::nextVal(char **ptr, char *error) {
 	char c = 0;
 	char *p = *ptr;
-	int val = strtol(p, 0, 10);
+	int val = strtol(p, nullptr, 10);
 	while ((*p >= '0' && *p <= '9' && *p != 0) || *p == '-')
 		p++;
 	while ((*p == 13 || *p == 10 || *p == ',' || *p == ' ') && *p)

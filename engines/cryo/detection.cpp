@@ -27,7 +27,7 @@
 
 static const PlainGameDescriptor cryoGames[] = {
 	{"losteden", "Lost Eden"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 namespace Cryo {
@@ -38,7 +38,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Probably not worth it
 	{
 		"losteden",
-		0,
+		nullptr,
 		AD_ENTRY1s("EDEN6.HSQ", "00b43c44cf2ac50b1a45dfad5fa5360d", 17093),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -49,8 +49,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Lost Eden PC interactive demo version
 	{
 		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 205473728),
+		nullptr,
+		AD_ENTRY1s("EDEN.DAT", nullptr, 205473728),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
@@ -60,8 +60,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Lost Eden PC version
 	{
 		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 449853776),
+		nullptr,
+		AD_ENTRY1s("EDEN.DAT", nullptr, 449853776),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Added by Strangerke
 	{
 		"losteden",
-		0,
+		nullptr,
 		AD_ENTRY1s("EDEN.DAT", "2126f14fe38b47c7a132f7937c79a2f0", 451205552),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Added by Strangerke
 	{
 		"losteden",
-		0,
+		nullptr,
 		AD_ENTRY1s("EDEN.DAT", "378b1260ac400ecf35f8843357adcca6", 448040496),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
@@ -95,8 +95,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Lost Eden DE PC version
 	{
 		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 457719104),
+		nullptr,
+		AD_ENTRY1s("EDEN.DAT", nullptr, 457719104),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
@@ -106,8 +106,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Lost Eden Mac version
 	{
 		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 489739536),
+		nullptr,
+		AD_ENTRY1s("EDEN.DAT", nullptr, 489739536),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
