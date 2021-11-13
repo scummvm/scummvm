@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-13 14:33+0000\n"
-"PO-Revision-Date: 2021-11-13 18:03+0000\n"
+"PO-Revision-Date: 2021-11-13 18:53+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -398,7 +398,7 @@ msgstr "Perc. gioco:"
 
 #: gui/editgamedialog.cpp:352 gui/options.cpp:2262
 msgid "Extra Path:"
-msgstr "Percorso extra:"
+msgstr "Extra:"
 
 #: gui/editgamedialog.cpp:352 gui/editgamedialog.cpp:354
 #: gui/editgamedialog.cpp:355
@@ -408,7 +408,7 @@ msgstr "Specifica il percorso di ulteriori dati usati dal gioco"
 #: gui/editgamedialog.cpp:354 gui/options.cpp:2264
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Perc. extra:"
+msgstr "Extra:"
 
 #: gui/editgamedialog.cpp:361 gui/options.cpp:2238
 msgid "Save Path:"
@@ -850,7 +850,7 @@ msgstr "Scegli il gioco:"
 
 #: gui/launcher.cpp:782
 msgid "Group by:"
-msgstr ""
+msgstr "Raggruppa:"
 
 #: gui/launcher.cpp:824 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -896,42 +896,36 @@ msgstr "~M~odif. gioco..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1116 gui/launcher.cpp:1303
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Variante del gioco sconosciuta"
+msgstr "Motore Sconosciuto"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1134 gui/launcher.cpp:1335
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Autore sconosciuto"
+msgstr "Editore Sconosciuto"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1152 gui/launcher.cpp:1321
 msgid "No Series"
-msgstr ""
+msgstr "Nessuna Serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1167 gui/launcher.cpp:1354
 msgid "Language not detected"
-msgstr ""
+msgstr "Lingua non rilevata"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1182 gui/launcher.cpp:1369
 msgid "Platform not detected"
-msgstr ""
+msgstr "Piattaforma non rilevata"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1380 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Tutti"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1442,26 +1436,21 @@ msgstr "Impostazioni FluidSynth"
 
 #: gui/options.cpp:2246
 msgid "Theme Path:"
-msgstr "Percorso temi:"
+msgstr "Temi:"
 
 #: gui/options.cpp:2248
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Perc. temi:"
+msgstr "Temi:"
 
 #: gui/options.cpp:2254
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "Percorso /root/:"
+msgstr "Icone:"
 
 #: gui/options.cpp:2256
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "Percorso /root/:"
+msgstr "Icone:"
 
 #: gui/options.cpp:2262 gui/options.cpp:2264 gui/options.cpp:2265
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1469,12 +1458,12 @@ msgstr "Specifica il percorso di ulteriori dati usati dai giochi o da ScummVM"
 
 #: gui/options.cpp:2271
 msgid "Plugins Path:"
-msgstr "Percorso plugin:"
+msgstr "Plugin:"
 
 #: gui/options.cpp:2273
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Perc. plugin:"
+msgstr "Plugin:"
 
 #: gui/options.cpp:2283
 msgid "ScummVM config path: "
@@ -1883,10 +1872,8 @@ msgid "Select directory for GUI themes"
 msgstr "Seleziona la cartella dei temi dell'interfaccia"
 
 #: gui/options.cpp:2887
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Seleziona la cartella dei temi dell'interfaccia"
+msgstr "Seleziona la cartella per le thumbnails dell'interfaccia"
 
 #: gui/options.cpp:2897
 msgid "Select directory for extra files"
@@ -2199,10 +2186,8 @@ msgid "Play"
 msgstr "Gioca"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Salva"
+msgstr "Salvataggi"
 
 #: base/main.cpp:651
 msgid "Error running game:"
