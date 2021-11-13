@@ -335,7 +335,7 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 	uint stringId = getNextStringID();
-	const byte *stringPtr = NULL;
+	const byte *stringPtr = nullptr;
 	uint speechId = 0;
 	TextLocation *tl;
 
@@ -369,7 +369,7 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 			tl->width = 96;
 	}
 
-	if (stringPtr != NULL && stringPtr[0] != 0 && (speechId == 0 || _subtitles))
+	if (stringPtr != nullptr && stringPtr[0] != 0 && (speechId == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)stringPtr, tl->x, tl->y, tl->width);
 
 }
@@ -391,16 +391,16 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (getFeatures() & GF_TALKIE) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+		if (subObject != nullptr && subObject->objectFlags & kOFVoice) {
 			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
 			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
-		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
+		} else if (subObject != nullptr && subObject->objectFlags & kOFNumber) {
 			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
 			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
 		}
 	}
 
-	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
+	if (subObject != nullptr && subObject->objectFlags & kOFText && _subtitles) {
 		const char *stringPtr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
 		TextLocation *tl = getTextLocation(vgaSpriteId);
 		char buf[256];
@@ -420,7 +420,7 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 			}
 			stringPtr = buf;
 		}
-		if (stringPtr != NULL && stringPtr[0] != 0)
+		if (stringPtr != nullptr && stringPtr[0] != 0)
 			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 	}
 }
@@ -492,7 +492,7 @@ void AGOSEngine_Simon1::os1_scnTxtLongText() {
 
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
-	if (stringPtr != NULL && stringPtr[0] != 0 && _subtitles)
+	if (stringPtr != nullptr && stringPtr[0] != 0 && _subtitles)
 		printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 }
 
@@ -531,9 +531,9 @@ void AGOSEngine_Simon1::os1_unloadZone() {
 	uint a = getVarOrWord();
 	VgaPointersEntry *vpe = &_vgaBufferPointers[a];
 
-	vpe->sfxFile = NULL;
-	vpe->vgaFile1 = NULL;
-	vpe->vgaFile2 = NULL;
+	vpe->sfxFile = nullptr;
+	vpe->vgaFile1 = nullptr;
+	vpe->vgaFile2 = nullptr;
 }
 
 void AGOSEngine_Simon1::os1_loadStrings() {

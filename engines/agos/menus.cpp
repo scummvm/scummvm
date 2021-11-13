@@ -41,7 +41,7 @@ void AGOSEngine::loadMenuFile() {
 
 	uint fileSize = in.size();
 	_menuBase = (byte *)malloc(fileSize);
-	if (_menuBase == NULL)
+	if (_menuBase == nullptr)
 		error("loadMenuFile: Out of memory for menu data");
 	in.read(_menuBase, fileSize);
 	in.close();
@@ -213,11 +213,11 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 
 // Elvira 2 specific
 uint AGOSEngine::menuFor_e2(Item *item) {
-	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
+	if (item == nullptr || item == _dummyItem2 || item == _dummyItem3)
 		return 0xFFFF;
 
 	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
-	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
+	if (subObject != nullptr && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];
 	}
@@ -230,11 +230,11 @@ uint AGOSEngine::menuFor_ww(Item *item, uint id) {
 	if (id != 0xFFFF && id < 10 && _textMenu[id] != 0)
 		return _textMenu[id];
 
-	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
+	if (item == nullptr || item == _dummyItem2 || item == _dummyItem3)
 		return _agosMenu;
 
 	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
-	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
+	if (subObject != nullptr && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];
 	}
@@ -281,7 +281,7 @@ void AGOSEngine::doMenuStrip(uint menuNum) {
 		_variableArray[v] = verb;
 
 		HitArea *ha = findBox(id);
-		if (ha != NULL) {
+		if (ha != nullptr) {
 			ha->flags &= ~kBFBoxDead;
 			ha->verb = verb;
 		}

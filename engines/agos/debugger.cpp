@@ -189,7 +189,7 @@ bool Debugger::Cmd_SetObjectFlag(int argc, const char **argv) {
 
 		if (obj >= 1 && obj < _vm->_itemArraySize) {
 			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), kObjectType);
-			if (o != NULL) {
+			if (o != nullptr) {
 				if (o->objectFlags & (1 << prop) && prop < 16) {
 					uint offs = _vm->getOffsetOfChild2Param(o, 1 << prop);
 					if (argc > 3) {
@@ -221,7 +221,7 @@ bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
 		uint subroutine = atoi(argv[1]);
 		Subroutine *sub;
 		sub = _vm->getSubroutineByID(subroutine);
-		if (sub != NULL)
+		if (sub != nullptr)
 			_vm->startSubroutine(sub);
 	} else
 		debugPrintf("Subroutine %d\n", _vm->_currentTable->id);
@@ -234,7 +234,7 @@ bool Debugger::Cmd_dumpImage(int argc, const char **argv) {
 		uint16 zoneNum = atoi(argv[1]);
 		_vm->loadZone(zoneNum, false);
 		VgaPointersEntry *vpe = &_vm->_vgaBufferPointers[zoneNum];
-		if (vpe->vgaFile2 != NULL) {
+		if (vpe->vgaFile2 != nullptr) {
 			_vm->dumpVgaBitmaps(zoneNum);
 		} else {
 			debugPrintf("Invalid Zone Number %d\n", zoneNum);
@@ -251,7 +251,7 @@ bool Debugger::Cmd_dumpScript(int argc, const char **argv) {
 		uint16 zoneNum = atoi(argv[1]);
 		_vm->loadZone(zoneNum, false);
 		VgaPointersEntry *vpe = &_vm->_vgaBufferPointers[zoneNum];
-		if (vpe->vgaFile1 != NULL) {
+		if (vpe->vgaFile1 != nullptr) {
 			_vm->dumpVgaFile(vpe->vgaFile1);
 		} else {
 			debugPrintf("Invalid Zone Number %d\n", zoneNum);

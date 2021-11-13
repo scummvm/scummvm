@@ -40,7 +40,7 @@
 namespace AGOS {
 
 void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
-	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
+	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = nullptr;
 	uint32 cur_time = getTime();
 
 	if (getGameId() == GID_DIMP) {
@@ -71,10 +71,10 @@ void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
 
 	if (last) {
 		last->next = te;
-		te->next = NULL;
+		te->next = nullptr;
 	} else {
 		_firstTimeStruct = te;
-		te->next = NULL;
+		te->next = nullptr;
 	}
 }
 
@@ -82,7 +82,7 @@ void AGOSEngine::delTimeEvent(TimeEvent *te) {
 	TimeEvent *cur;
 
 	if (te == _pendingDeleteTimeEvent)
-		_pendingDeleteTimeEvent = NULL;
+		_pendingDeleteTimeEvent = nullptr;
 
 	if (te == _firstTimeStruct) {
 		_firstTimeStruct = te->next;
@@ -91,11 +91,11 @@ void AGOSEngine::delTimeEvent(TimeEvent *te) {
 	}
 
 	cur = _firstTimeStruct;
-	if (cur == NULL)
+	if (cur == nullptr)
 		error("delTimeEvent: none available");
 
 	for (;;) {
-		if (cur->next == NULL)
+		if (cur->next == nullptr)
 			error("delTimeEvent: no such te");
 		if (te == cur->next) {
 			cur->next = te->next;
@@ -115,7 +115,7 @@ void AGOSEngine::invokeTimeEvent(TimeEvent *te) {
 		return;
 
 	sub = getSubroutineByID(te->subroutine_id);
-	if (sub != NULL)
+	if (sub != nullptr)
 		startSubroutineEx(sub);
 
 	_runScriptReturn1 = false;
@@ -141,12 +141,12 @@ bool AGOSEngine::kickoffTimeEvents() {
 
 	cur_time = getTime() - _gameStoppedClock;
 
-	while ((te = _firstTimeStruct) != NULL && te->time <= cur_time && !shouldQuit()) {
+	while ((te = _firstTimeStruct) != nullptr && te->time <= cur_time && !shouldQuit()) {
 		result = true;
 		_pendingDeleteTimeEvent = te;
 		invokeTimeEvent(te);
 		if (_pendingDeleteTimeEvent) {
-			_pendingDeleteTimeEvent = NULL;
+			_pendingDeleteTimeEvent = nullptr;
 			delTimeEvent(te);
 		}
 	}
@@ -322,7 +322,7 @@ void AGOSEngine::scrollEvent() {
 			}
 		}
 
-		addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+		addVgaEvent(6, SCROLL_EVENT, nullptr, 0, 0);
 	}
 }
 

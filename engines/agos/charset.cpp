@@ -65,11 +65,11 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 void AGOSEngine::doOutput(const byte *src, uint len) {
 	uint idx;
 
-	if (_textWindow == NULL)
+	if (_textWindow == nullptr)
 		return;
 
 	while (len-- != 0) {
-		if (*src != 12 && _textWindow->iconPtr != NULL &&
+		if (*src != 12 && _textWindow->iconPtr != nullptr &&
 				_fcsData1[idx = getWindowNum(_textWindow)] != 2) {
 
 			_fcsData1[idx] = 2;

@@ -1143,7 +1143,7 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 		vpe = &_vgaBufferPointers[zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
 		if (vgaScript) {
-			if (vpe->vgaFile1 != NULL)
+			if (vpe->vgaFile1 != nullptr)
 				break;
 			if (_zoneNumber != zoneNum)
 				_noOverWrite = _zoneNumber;
@@ -1152,7 +1152,7 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 			_noOverWrite = 0xFFFF;
 		} else {
 			_zoneNumber = zoneNum;
-			if (vpe->vgaFile1 != NULL)
+			if (vpe->vgaFile1 != nullptr)
 				break;
 			loadZone(zoneNum);
 		}
@@ -1231,7 +1231,7 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 		_curVgaFile2 = vpe->vgaFile2;
 
 		if (vgaScript) {
-			if (vpe->vgaFile1 != NULL)
+			if (vpe->vgaFile1 != nullptr)
 				break;
 			if (_zoneNumber != zoneNum)
 				_noOverWrite = _zoneNumber;
@@ -1243,7 +1243,7 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 			_curSfxFileSize = vpe->sfxFileEnd - vpe->sfxFile;
 			_zoneNumber = zoneNum;
 
-			if (vpe->vgaFile1 != NULL)
+			if (vpe->vgaFile1 != nullptr)
 				break;
 
 			loadZone(zoneNum);
@@ -1398,7 +1398,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 	if (getGameType() == GType_PN) {
 		AnimTable *animTable = _screenAnim1;
 		while (animTable->srcPtr) {
-			animTable->srcPtr = 0;
+			animTable->srcPtr = nullptr;
 			animTable++;
 		}
 	}
@@ -1441,7 +1441,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 
 		Graphics::Surface *screen = getBackendSurface();
 		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
-		byte *src = 0;
+		byte *src = nullptr;
 		uint srcWidth = 0;
 
 		if (getGameType() == GType_SIMON2) {

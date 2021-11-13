@@ -72,7 +72,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 		_vgaMemPtr = _vgaMemBase;
 	} else {
 		vpe = _vgaBufferPointers + zoneNum;
-		if (vpe->vgaFile1 != NULL)
+		if (vpe->vgaFile1 != nullptr)
 			return;
 	}
 
@@ -92,7 +92,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 	vpe->vgaFile1 = _block;
 	vpe->vgaFile1End = _blockEnd;
 
-	vpe->sfxFile = NULL;
+	vpe->sfxFile = nullptr;
 
 	if (getGameType() == GType_ELVIRA2) {
 		// A singe sound file is used for Amiga and AtariST versions
@@ -202,12 +202,12 @@ void AGOSEngine::checkZonePtrs() {
 		if (((vpe->vgaFile1 < _blockEnd) && (vpe->vgaFile1End > _block)) ||
 			((vpe->vgaFile2 < _blockEnd) && (vpe->vgaFile2End > _block)) ||
 			((vpe->sfxFile < _blockEnd) && (vpe->sfxFileEnd > _block))) {
-			vpe->vgaFile1 = NULL;
-			vpe->vgaFile1End = NULL;
-			vpe->vgaFile2 = NULL;
-			vpe->vgaFile2End = NULL;
-			vpe->sfxFile = NULL;
-			vpe->sfxFileEnd = NULL;
+			vpe->vgaFile1 = nullptr;
+			vpe->vgaFile1End = nullptr;
+			vpe->vgaFile2 = nullptr;
+			vpe->vgaFile2End = nullptr;
+			vpe->sfxFile = nullptr;
+			vpe->sfxFileEnd = nullptr;
 		}
 	} while (++vpe, --count);
 }

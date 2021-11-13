@@ -338,7 +338,7 @@ void AGOSEngine_PN::opn_opcode25() {
 }
 
 void AGOSEngine_PN::opn_opcode26() {
-	while ((_stackbase != NULL) && (_stackbase->classnum != kJmpClassNum))
+	while ((_stackbase != nullptr) && (_stackbase->classnum != kJmpClassNum))
 		dumpstack();
 	dumpstack();
 	setScriptReturn(true);
@@ -496,12 +496,12 @@ void AGOSEngine_PN::opn_opcode36() {
 }
 
 void AGOSEngine_PN::opn_opcode37() {
-	_curwrdptr = NULL;
+	_curwrdptr = nullptr;
 
 	_inputReady = true;
 	interact(_inputline, 49);
 
-	if ((_inpp = strchr(_inputline,'\n')) != NULL)
+	if ((_inpp = strchr(_inputline,'\n')) != nullptr)
 		*_inpp = '\0';
 	_inpp = _inputline;
 	setScriptReturn(true);
@@ -576,7 +576,7 @@ void AGOSEngine_PN::opn_opcode45() {
 
 void AGOSEngine_PN::opn_opcode46() {
 	char *x = _curwrdptr;
-	if (x == NULL) {
+	if (x == nullptr) {
 		setScriptReturn(true);
 		return;
 	}
@@ -1069,7 +1069,7 @@ void AGOSEngine_PN::addstack(int type) {
 	int i;
 
 	a = (StackFrame *)calloc(1, sizeof(StackFrame));
-	if (a == NULL)
+	if (a == nullptr)
 		error("addstack: Out of memory - stack overflow");
 
 	a->nextframe = _stackbase;
@@ -1090,7 +1090,7 @@ void AGOSEngine_PN::addstack(int type) {
 void AGOSEngine_PN::dumpstack() {
 	StackFrame *a;
 
-	if (_stackbase == NULL)
+	if (_stackbase == nullptr)
 		error("dumpstack: Stack underflow or unknown longjmp");
 
 	a = _stackbase->nextframe;
@@ -1101,12 +1101,12 @@ void AGOSEngine_PN::dumpstack() {
 void AGOSEngine_PN::popstack(int type) {
 	int i = 0;
 
-	while ((_stackbase != NULL) && (_stackbase->classnum != type)) {
+	while ((_stackbase != nullptr) && (_stackbase->classnum != type)) {
 		dumpstack();
 		++i;
 	}
 
-	if (_stackbase == NULL)
+	if (_stackbase == nullptr)
 		error("popstack: Stack underflow or unknown longjmp");
 
 	_linct = _stackbase->ll;

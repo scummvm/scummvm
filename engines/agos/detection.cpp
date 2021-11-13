@@ -60,14 +60,14 @@ static const PlainGameDescriptor agosGames[] = {
 	{"jumble", "Jumble"},
 	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "agos/detection_tables.h"
 
 static const char *const directoryGlobs[] = {
 	"execute", // Used by Simon1 Acorn CD
-	0
+	nullptr
 };
 
 using namespace AGOS;

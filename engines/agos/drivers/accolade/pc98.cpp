@@ -44,8 +44,8 @@ public:
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 	uint32 property(int prop, uint32 param) override;
 	uint32 getBaseTempo() override { return _baseTempo; }
-	MidiChannel *allocateChannel() override { return 0; }
-	MidiChannel *getPercussionChannel() override { return 0; }
+	MidiChannel *allocateChannel() override { return nullptr; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 
 protected:
 	void updateSounds();
@@ -166,7 +166,7 @@ private:
 	static const uint8 _sysexMsg[3][9];
 };
 
-PC98CommonDriver::PC98CommonDriver() : _mixer(g_engine->_mixer), _baseTempo(0), _fadeVolumeAdjust(0), _allNotes(false), _programLock(false), _isOpen(false), _noFadeRemap(false), _delayedProgramChange(false), _ngDelay(0), _timerCb(0), _musicVolume(0xff), _sfxVolume(0xff), _internalUpdateTimer(0) {
+PC98CommonDriver::PC98CommonDriver() : _mixer(g_engine->_mixer), _baseTempo(0), _fadeVolumeAdjust(0), _allNotes(false), _programLock(false), _isOpen(false), _noFadeRemap(false), _delayedProgramChange(false), _ngDelay(0), _timerCb(nullptr), _musicVolume(0xff), _sfxVolume(0xff), _internalUpdateTimer(0) {
 	memset(_partPrograms, 0, sizeof(_partPrograms));
 	memset(_chanUse, 0, sizeof(_chanUse));
 }
@@ -208,7 +208,7 @@ void PC98CommonDriver::send(uint32 b) {
 
 void PC98CommonDriver::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
 	delete _timerCb;
-	_timerCb = (_isOpen && timerParam && timerProc) ? new TimerCb(timerProc, timerParam) : 0;
+	_timerCb = (_isOpen && timerParam && timerProc) ? new TimerCb(timerProc, timerParam) : nullptr;
 }
 
 uint32 PC98CommonDriver::property(int prop, uint32 param) {
@@ -269,7 +269,7 @@ void PC98CommonDriver::reset() {
 	_ngDelay = 0;
 }
 
-PC98FMDriver::PC98FMDriver() : PC98CommonDriver(), _pc98a(0) {
+PC98FMDriver::PC98FMDriver() : PC98CommonDriver(), _pc98a(nullptr) {
 	_baseTempo = 10080;
 	_instrumentsRemap = _instrumentsRemapFM;
 	_instrumentLevelAdjust = (const int8*)_instrumentLevelAdjustFM;
@@ -317,8 +317,8 @@ int PC98FMDriver::open() {
 void PC98FMDriver::close() {
 	_isOpen = false;
 	delete _pc98a;
-	_pc98a = 0;
-	setTimerCallback(0, 0);
+	_pc98a = nullptr;
+	setTimerCallback(nullptr, nullptr);
 }
 
 void PC98FMDriver::noteOn(uint8 part, uint8 note, uint8 velo) {
@@ -530,8 +530,8 @@ const uint16 PC98FMDriver::_frequency[12] = {
 
 #define MIDIMSG32(s, p1, p2) (p2 << 16 | p1 << 8 | s)
 
-PC98MidiDriver::PC98MidiDriver(MidiDriver::DeviceHandle dev) : _dev(dev), _drv(0) {
-	_instrumentsRemap = (getMusicType(dev) == MT_MT32) ? _instrumentsRemapMT32 : (getMusicType(dev) == MT_GM ? _instrumentsRemapGM : 0);
+PC98MidiDriver::PC98MidiDriver(MidiDriver::DeviceHandle dev) : _dev(dev), _drv(nullptr) {
+	_instrumentsRemap = (getMusicType(dev) == MT_MT32) ? _instrumentsRemapMT32 : (getMusicType(dev) == MT_GM ? _instrumentsRemapGM : nullptr);
 	int8 *tbl2 = new int8[128]();
 	_instrumentLevelAdjust = tbl2;
 	_partsRemap = _partsRemapMidi;
@@ -612,14 +612,14 @@ void PC98MidiDriver::close() {
 	_isOpen = false;
 
 	if (_drv) {
-		_drv->setTimerCallback(0, 0);
+		_drv->setTimerCallback(nullptr, nullptr);
 		_mixer->stopAll();
 		_drv->close();
 		delete _drv;
-		_drv = 0;
+		_drv = nullptr;
 	}
 
-	setTimerCallback(0, 0);
+	setTimerCallback(nullptr, nullptr);
 }
 
 void PC98MidiDriver::timerCallback(void *obj) {
@@ -713,7 +713,7 @@ MidiDriver *MidiDriverPC98_create(MidiDriver::DeviceHandle dev) {
 		return new PC98FMDriver();
 	else if (type == MT_GM || type == MT_MT32)
 		return new PC98MidiDriver(dev);
-	return 0;
+	return nullptr;
 }
 
 #undef MIDIMSG32

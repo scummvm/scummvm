@@ -49,7 +49,7 @@ protected:
 	void resetTracking() override;
 
 public:
-	MidiParser_S1D() : _data(0), _noDelta(false) {}
+	MidiParser_S1D() : _data(nullptr), _noDelta(false) {}
 
 	bool loadMusic(byte *data, uint32 size) override;
 };

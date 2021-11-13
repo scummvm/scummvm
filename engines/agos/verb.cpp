@@ -212,7 +212,7 @@ void AGOSEngine_Feeble::clearName() {
 void AGOSEngine_Simon2::clearName() {
 	if (getBitFlag(79)) {
 		sendSync(202);
-		_lastNameOn = NULL;
+		_lastNameOn = nullptr;
 		return;
 	}
 
@@ -222,7 +222,7 @@ void AGOSEngine_Simon2::clearName() {
 	resetNameWindow();
 	_lastVerbOn = _currentVerbBox;
 
-	if (_currentVerbBox != NULL && !(_currentVerbBox->flags & kBFBoxDead))
+	if (_currentVerbBox != nullptr && !(_currentVerbBox->flags & kBFBoxDead))
 		printVerbOf(_currentVerbBox->id);
 }
 
@@ -235,7 +235,7 @@ void AGOSEngine_Simon1::clearName() {
 	resetNameWindow();
 	_lastVerbOn = _currentVerbBox;
 
-	if (_currentVerbBox != NULL && (ha = findBox(200)) && (ha->flags & kBFBoxDead) && !(_currentVerbBox->flags & kBFBoxDead))
+	if (_currentVerbBox != nullptr && (ha = findBox(200)) && (ha->flags & kBFBoxDead) && !(_currentVerbBox->flags & kBFBoxDead))
 		printVerbOf(_currentVerbBox->id);
 }
 
@@ -330,7 +330,7 @@ void AGOSEngine::showActionString(const byte *string) {
 	const uint len = (getGameType() == GType_WW) ? 29 : 53;
 
 	window = _windowArray[1];
-	if (window == NULL || window->textColor == 0)
+	if (window == nullptr || window->textColor == 0)
 		return;
 
 	// Arisme : hack for long strings in the French version
@@ -392,7 +392,7 @@ void AGOSEngine::handleVerbClicked(uint verb) {
 	_scriptVerb = _verbHitArea;
 
 	sub = getSubroutineByID(0);
-	if (sub == NULL)
+	if (sub == nullptr)
 		return;
 
 	result = startSubroutine(sub);
@@ -418,11 +418,11 @@ void AGOSEngine::resetNameWindow() {
 		return;
 
 	window = _windowArray[1];
-	if (window != NULL && window->textColor != 0)
+	if (window != nullptr && window->textColor != 0)
 		clearWindow(window);
 
-	_lastNameOn = NULL;
-	_lastVerbOn = NULL;
+	_lastNameOn = nullptr;
+	_lastVerbOn = nullptr;
 }
 
 HitArea *AGOSEngine::findBox(uint hitarea_id) {
@@ -438,7 +438,7 @@ HitArea *AGOSEngine::findBox(uint hitarea_id) {
 				return ha;
 		}
 	} while (ha++, --count);
-	return NULL;
+	return nullptr;
 }
 
 HitArea *AGOSEngine::findEmptyHitArea() {
@@ -461,13 +461,13 @@ void AGOSEngine::freeBox(uint index) {
 
 void AGOSEngine::enableBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
-	if (ha != NULL)
+	if (ha != nullptr)
 		ha->flags &= ~kBFBoxDead;
 }
 
 void AGOSEngine::disableBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
-	if (ha != NULL) {
+	if (ha != nullptr) {
 		ha->flags |= kBFBoxDead;
 		ha->flags &= ~kBFBoxSelected;
 		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
@@ -479,7 +479,7 @@ void AGOSEngine::disableBox(uint hitarea) {
 
 void AGOSEngine::moveBox(uint hitarea, int x, int y) {
 	HitArea *ha = findBox(hitarea);
-	if (ha != NULL) {
+	if (ha != nullptr) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			ha->x += x;
 			ha->y += y;
@@ -492,7 +492,7 @@ void AGOSEngine::moveBox(uint hitarea, int x, int y) {
 
 void AGOSEngine::undefineBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
-	if (ha != NULL) {
+	if (ha != nullptr) {
 		ha->flags = 0;
 		if (ha == _lastNameOn)
 			clearName();
@@ -502,7 +502,7 @@ void AGOSEngine::undefineBox(uint hitarea) {
 
 bool AGOSEngine::isBoxDead(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
-	if (ha == NULL)
+	if (ha == nullptr)
 		return false;
 	return (ha->flags & kBFBoxDead) == 0;
 }
@@ -591,12 +591,12 @@ void AGOSEngine::resetVerbs() {
 	_defaultVerb = id;
 
 	ha = findBox(id);
-	if (ha == NULL)
+	if (ha == nullptr)
 		return;
 
 	if (ha->flags & kBFBoxDead) {
 		_defaultVerb = 999;
-		_currentVerbBox = NULL;
+		_currentVerbBox = nullptr;
 	} else {
 		_verbHitArea = ha->verb;
 		setVerb(ha);
@@ -639,7 +639,7 @@ void AGOSEngine::setVerb(HitArea *ha) {
 		return;
 
 	if (getGameType() == GType_SIMON1) {
-		if (tmp != NULL) {
+		if (tmp != nullptr) {
 			tmp->flags |= kBFInvertTouch;
 			if (getFeatures() & GF_32COLOR)
 				invertBox(tmp, 212, 208, 212, 8);
@@ -715,7 +715,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	uint count = ARRAYSIZE(_hitAreas);
 	uint16 priority = 0;
 
-	best_ha = NULL;
+	best_ha = nullptr;
 
 	do {
 		if (ha->flags & kBFBoxInUse) {
@@ -739,7 +739,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	_currentBoxNum = 0;
 	_currentBox = best_ha;
 
-	if (best_ha == NULL)
+	if (best_ha == nullptr)
 		return;
 
 	_currentBoxNum = best_ha->id;
@@ -811,7 +811,7 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 		}
 	}
 
-	best_ha = NULL;
+	best_ha = nullptr;
 
 	do {
 		if (ha->flags & kBFBoxInUse) {
@@ -835,7 +835,7 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 	_currentBoxNum = 0;
 	_currentBox = best_ha;
 
-	if (best_ha == NULL) {
+	if (best_ha == nullptr) {
 		clearName();
 		if (getGameType() == GType_WW && _mouseCursor >= 4) {
 			_mouseCursor = 0;

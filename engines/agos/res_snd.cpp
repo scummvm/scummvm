@@ -290,7 +290,7 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	} else {
 		_midi->setLoop(true); // Must do this BEFORE loading music.
 
-		Common::SeekableReadStream *str = 0;
+		Common::SeekableReadStream *str = nullptr;
 		if (getPlatform() == Common::kPlatformPC98) {
 			str = createPak98FileStream(Common::String::format("MOD%d.PAK", music).c_str());
 			if (!str)
@@ -394,7 +394,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	dstSize = srcSize = in.size();
 	if (getGameType() == GType_PN && (getFeatures() & GF_CRUNCHED)) {
 		Common::Stack<uint32> data;
-		byte *dataOut = 0;
+		byte *dataOut = nullptr;
 		int dataOutSize = 0;
 
 		for (uint i = 0; i < srcSize / 4; ++i)
@@ -507,7 +507,7 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);
 	} else {
-		if (_curSfxFile == NULL)
+		if (_curSfxFile == nullptr)
 			return;
 
 		dst = _curSfxFile + READ_LE_UINT32(_curSfxFile + sound * 4);
@@ -526,7 +526,7 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 	uint32 offs, size = 0;
 	uint32 rate = 8000;
 
-	if (_curSfxFile == NULL)
+	if (_curSfxFile == nullptr)
 		return;
 
 	dst = _curSfxFile;

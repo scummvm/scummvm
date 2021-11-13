@@ -132,7 +132,7 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 		error("allocGamePcVars: Not a runtime database");
 
 	_itemArrayPtr = (Item **)calloc(itemArraySize, sizeof(Item *));
-	if (_itemArrayPtr == NULL)
+	if (_itemArrayPtr == nullptr)
 		error("allocGamePcVars: Out of memory for Item array");
 
 	_itemArraySize = itemArraySize;
@@ -150,7 +150,7 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 }
 
 void AGOSEngine_PN::loadGamePcFile() {
-	if (getFileName(GAME_BASEFILE) != NULL) {
+	if (getFileName(GAME_BASEFILE) != nullptr) {
 		Common::File in;
 		// Read dataBase
 		if (!in.open(getFileName(GAME_BASEFILE))) {
@@ -159,7 +159,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 
 		_dataBaseSize = in.size();
 		_dataBase = (byte *)malloc(_dataBaseSize);
-		if (_dataBase == NULL)
+		if (_dataBase == nullptr)
 			error("loadGamePcFile: Out of memory for dataBase");
 		in.read(_dataBase, _dataBaseSize);
 
@@ -167,7 +167,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 			error("Later version of system requested");
 	}
 
-	if (getFileName(GAME_TEXTFILE) != NULL) {
+	if (getFileName(GAME_TEXTFILE) != nullptr) {
 		Common::File in;
 		// Read textBase
 		if (!in.open(getFileName(GAME_TEXTFILE))) {
@@ -176,7 +176,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 
 		_textBaseSize = in.size();
 		_textBase = (byte *)malloc(_textBaseSize);
-		if (_textBase == NULL)
+		if (_textBase == nullptr)
 			error("loadGamePcFile: Out of memory for textBase");
 		in.read(_textBase, _textBaseSize);
 
@@ -188,7 +188,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 void AGOSEngine::loadGamePcFile() {
 	int fileSize;
 
-	if (getFileName(GAME_BASEFILE) != NULL) {
+	if (getFileName(GAME_BASEFILE) != nullptr) {
 		/* Read main gamexx file */
 		Common::File in;
 		if (!in.open(getFileName(GAME_BASEFILE))) {
@@ -213,7 +213,7 @@ void AGOSEngine::loadGamePcFile() {
 		}
 	}
 
-	if (getFileName(GAME_TBLFILE) != NULL) {
+	if (getFileName(GAME_TBLFILE) != nullptr) {
 		/* Read list of TABLE resources */
 		Common::File in;
 		if (!in.open(getFileName(GAME_TBLFILE))) {
@@ -223,7 +223,7 @@ void AGOSEngine::loadGamePcFile() {
 		fileSize = in.size();
 
 		_tblList = (byte *)malloc(fileSize);
-		if (_tblList == NULL)
+		if (_tblList == nullptr)
 			error("loadGamePcFile: Out of memory for strip table list");
 		in.read(_tblList, fileSize);
 
@@ -233,7 +233,7 @@ void AGOSEngine::loadGamePcFile() {
 		_tablesHeapCurPosOrg = _tablesHeapCurPos;
 	}
 
-	if (getFileName(GAME_STRFILE) != NULL) {
+	if (getFileName(GAME_STRFILE) != nullptr) {
 		/* Read list of TEXT resources */
 		Common::File in;
 		if (!in.open(getFileName(GAME_STRFILE)))
@@ -241,12 +241,12 @@ void AGOSEngine::loadGamePcFile() {
 
 		fileSize = in.size();
 		_strippedTxtMem = (byte *)malloc(fileSize);
-		if (_strippedTxtMem == NULL)
+		if (_strippedTxtMem == nullptr)
 			error("loadGamePcFile: Out of memory for strip text list");
 		in.read(_strippedTxtMem, fileSize);
 	}
 
-	if (getFileName(GAME_STATFILE) != NULL) {
+	if (getFileName(GAME_STATFILE) != nullptr) {
 		/* Read list of ROOM STATE resources */
 		Common::File in;
 		if (!in.open(getFileName(GAME_STATFILE))) {
@@ -256,7 +256,7 @@ void AGOSEngine::loadGamePcFile() {
 		_numRoomStates = in.size() / 8;
 
 		_roomStates = (RoomState *)calloc(_numRoomStates, sizeof(RoomState));
-		if (_roomStates == NULL)
+		if (_roomStates == nullptr)
 			error("loadGamePcFile: Out of memory for room state list");
 
 		for (uint s = 0; s < _numRoomStates; s++) {
@@ -268,7 +268,7 @@ void AGOSEngine::loadGamePcFile() {
 		}
 	}
 
-	if (getFileName(GAME_RMSLFILE) != NULL) {
+	if (getFileName(GAME_RMSLFILE) != nullptr) {
 		/* Read list of ROOM ITEMS resources */
 		Common::File in;
 		if (!in.open(getFileName(GAME_RMSLFILE))) {
@@ -278,12 +278,12 @@ void AGOSEngine::loadGamePcFile() {
 		fileSize = in.size();
 
 		_roomsList = (byte *)malloc(fileSize);
-		if (_roomsList == NULL)
+		if (_roomsList == nullptr)
 			error("loadGamePcFile: Out of memory for room items list");
 		in.read(_roomsList, fileSize);
 	}
 
-	if (getFileName(GAME_XTBLFILE) != NULL) {
+	if (getFileName(GAME_XTBLFILE) != nullptr) {
 		/* Read list of XTABLE resources */
 		Common::File in;
 		if (!in.open(getFileName(GAME_XTBLFILE))) {
@@ -293,7 +293,7 @@ void AGOSEngine::loadGamePcFile() {
 		fileSize = in.size();
 
 		_xtblList = (byte *)malloc(fileSize);
-		if (_xtblList == NULL)
+		if (_xtblList == nullptr)
 			error("loadGamePcFile: Out of memory for strip xtable list");
 		in.read(_xtblList, fileSize);
 
@@ -323,7 +323,7 @@ void AGOSEngine::readGamePcFile(Common::SeekableReadStream *in) {
 void AGOSEngine::readGamePcText(Common::SeekableReadStream *in) {
 	_textSize = in->readUint32BE();
 	_textMem = (byte *)malloc(_textSize);
-	if (_textMem == NULL)
+	if (_textMem == nullptr)
 		error("readGamePcText: Out of text memory");
 
 	in->read(_textMem, _textSize);
@@ -347,7 +347,7 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 		in->readUint16BE();
 		in->readUint16BE();
 		item->classFlags = in->readUint16BE();
-		item->children = NULL;
+		item->children = nullptr;
 	} else if (getGameType() == GType_ELVIRA2) {
 		item->itemName = (uint16)in->readUint32BE();
 		item->adjective = in->readUint16BE();
@@ -358,7 +358,7 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 		item->parent = (uint16)fileReadItemID(in);
 		in->readUint16BE();
 		item->classFlags = in->readUint16BE();
-		item->children = NULL;
+		item->children = nullptr;
 	} else {
 		item->adjective = in->readUint16BE();
 		item->noun = in->readUint16BE();
@@ -368,7 +368,7 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 		item->parent = (uint16)fileReadItemID(in);
 		in->readUint16BE();
 		item->classFlags = in->readUint16BE();
-		item->children = NULL;
+		item->children = nullptr;
 	}
 
 
@@ -543,7 +543,7 @@ void AGOSEngine::openGameFile() {
 	uint32 size = _gameFile->readUint32LE();
 
 	_gameOffsetsPtr = (uint32 *)malloc(size);
-	if (_gameOffsetsPtr == NULL)
+	if (_gameOffsetsPtr == nullptr)
 		error("openGameFile: Out of memory, game offsets");
 
 	_gameFile->seek(0, SEEK_SET);
@@ -965,7 +965,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			if (useError)
 				error("loadVGAVideoFile: Can't load %s", filename);
 
-			_block = _blockEnd = NULL;
+			_block = _blockEnd = nullptr;
 			return;
 		}
 
@@ -977,7 +977,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 				error("loadVGAVideoFile: Read failed");
 		} else if (getGameType() == GType_PN && (getFeatures() & GF_CRUNCHED)) {
 			Common::Stack<uint32> data;
-			byte *dataOut = 0;
+			byte *dataOut = nullptr;
 			int dataOutSize = 0;
 
 			for (uint i = 0; i < srcSize / 4; ++i) {
@@ -1050,7 +1050,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			if (useError)
 				error("loadVGAVideoFile: Can't load id %d type %d", id, type);
 
-			_block = _blockEnd = NULL;
+			_block = _blockEnd = nullptr;
 			return;
 		}
 
@@ -1062,7 +1062,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 Common::SeekableReadStream *AGOSEngine::createPak98FileStream(const char *filename) {
 	Common::File in;
 	if (!in.open(filename))
-		return 0;
+		return nullptr;
 
 	/*uint16 cmpType = */in.readUint16LE();
 	uint32 outSize = in.readUint32LE();

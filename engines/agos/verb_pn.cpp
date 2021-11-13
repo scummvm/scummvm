@@ -32,12 +32,12 @@ void AGOSEngine_PN::boxController(uint x, uint y, uint mode) {
 	HitArea *best_ha;
 	HitArea *ha = _hitAreaList;
 
-	best_ha = NULL;
+	best_ha = nullptr;
 
 	do {
 		if (!(ha->flags & kOBFBoxDisabled)) {
 			if (x >= ha->x && y >= ha->y && x - ha->x < ha->width && y - ha->y < ha->height &&
-				best_ha == NULL) {
+				best_ha == nullptr) {
 				best_ha = ha;
 			} else {
 				if (ha->flags & kOBFBoxSelected) {
@@ -54,7 +54,7 @@ void AGOSEngine_PN::boxController(uint x, uint y, uint mode) {
 		_lastHitArea = best_ha;
 	}
 
-	if (best_ha == NULL) {
+	if (best_ha == nullptr) {
 		return;
 	}
 
@@ -66,10 +66,10 @@ void AGOSEngine_PN::boxController(uint x, uint y, uint mode) {
 
 void AGOSEngine_PN::mouseHit() {
 	if (_hitCalled == 5) {
-		execMouseHit(NULL);
+		execMouseHit(nullptr);
 	} else {
 		boxController(_mouse.x, _mouse.y, 1);
-		if (_hitCalled == 4 || _lastHitArea != 0) {
+		if (_hitCalled == 4 || _lastHitArea != nullptr) {
 			execMouseHit(_lastHitArea);
 		}
 	}
@@ -114,7 +114,7 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 		_oneClick = 0;
 		_dragCount = 0;
 		_needHitAreaRecalc++;
-		if (ha != 0) {
+		if (ha != nullptr) {
 			if (ha->flags & kOBFInventoryBox)
 				hitBox5(ha);
 			else if (ha->flags & kOBFRoomBox)
@@ -124,7 +124,7 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 		}
 	} else {
 		_hitCalled = 0;
-		if (_mouseString == 0) {
+		if (_mouseString == nullptr) {
 			_mouseString = (const char *)"\r";
 		}
 	}

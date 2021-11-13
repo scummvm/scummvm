@@ -32,10 +32,10 @@ int AGOSEngine_Elvira2::canPlace(Item *x, Item *y) {
 	int ct;
 	int cap = 0;
 
-	if (o == NULL)
+	if (o == nullptr)
 		return 0;	/* Fits Fine */
 
-	xPlace(x,NULL);		/* Avoid disturbing figures */
+	xPlace(x,nullptr);		/* Avoid disturbing figures */
 	if (o)
 		cap = sizeContents(y);
 
@@ -59,10 +59,10 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	int cap = 0;
 	int wt;
 
-	if ((c == NULL) && (p == NULL))
+	if ((c == nullptr) && (p == nullptr))
 		return 0;		/* Fits Fine */
 
-	xPlace(x, NULL);		/* Avoid disturbing figures */
+	xPlace(x, nullptr);		/* Avoid disturbing figures */
 	if (c)
 		cap = sizeContents(y);
 

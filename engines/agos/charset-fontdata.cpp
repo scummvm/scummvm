@@ -1122,7 +1122,7 @@ void AGOSEngine::renderStringAmiga(uint vgaSpriteId, uint color, uint width, uin
 
 	width /= 8;	// convert width from pixels to bytes
 
-	const byte *imgSrc = NULL;
+	const byte *imgSrc = nullptr;
 	switch (_language) {
 	case Common::IT_ITA:
 		imgSrc = italian_simon1AGAFontData;

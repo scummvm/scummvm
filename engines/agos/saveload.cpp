@@ -213,7 +213,7 @@ void AGOSEngine::quickLoadOrSave() {
 
 bool AGOSEngine_Waxworks::confirmOverWrite(WindowBlock *window) {
 	Subroutine *sub = getSubroutineByID(80);
-	if (sub != NULL)
+	if (sub != nullptr)
 		startSubroutineEx(sub);
 
 	if (_variableArray[253] == 0)
@@ -577,8 +577,8 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, uint maxChar) {
 	_keyPressed.reset();
 
 	while (!shouldQuit()) {
-		_lastHitArea = NULL;
-		_lastHitArea3 = NULL;
+		_lastHitArea = nullptr;
+		_lastHitArea3 = nullptr;
 
 		do {
 			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
@@ -586,10 +586,10 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0 && !shouldQuit());
+		} while (_lastHitArea3 == nullptr && !shouldQuit());
 
 		ha = _lastHitArea;
-		if (ha == NULL || ha->id < 200) {
+		if (ha == nullptr || ha->id < 200) {
 		} else if (ha->id == 225) {
 			return ha->id;
 		} else if (ha->id == 224) {
@@ -849,8 +849,8 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, uint maxChar) {
 	_keyPressed.reset();
 
 	while (!shouldQuit()) {
-		_lastHitArea = NULL;
-		_lastHitArea3 = NULL;
+		_lastHitArea = nullptr;
+		_lastHitArea3 = nullptr;
 
 		do {
 			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
@@ -858,10 +858,10 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0 && !shouldQuit());
+		} while (_lastHitArea3 == nullptr && !shouldQuit());
 
 		ha = _lastHitArea;
-		if (ha == NULL || ha->id < 205) {
+		if (ha == nullptr || ha->id < 205) {
 		} else if (ha->id == 205) {
 			return ha->id;
 		} else if (ha->id == 206) {
@@ -1043,7 +1043,7 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 
 bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 	char ident[100];
-	Common::SeekableReadStream *f = NULL;
+	Common::SeekableReadStream *f = nullptr;
 	uint num, item_index, i;
 
 	_videoLockOut |= 0x100;
@@ -1064,7 +1064,7 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 		f = _saveFileMan->openForLoading(filename);
 	}
 
-	if (f == NULL) {
+	if (f == nullptr) {
 		_videoLockOut &= ~0x100;
 		return false;
 	}
@@ -1155,7 +1155,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	_videoLockOut |= 0x100;
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
-	if (f == NULL) {
+	if (f == nullptr) {
 		_videoLockOut &= ~0x100;
 		return false;
 	}
@@ -1226,7 +1226,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 
 bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMode) {
 	char ident[100];
-	Common::SeekableReadStream *f = NULL;
+	Common::SeekableReadStream *f = nullptr;
 	uint num, item_index, i, j;
 
 	_videoLockOut |= 0x100;
@@ -1243,7 +1243,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 		f = _saveFileMan->openForLoading(filename);
 	}
 
-	if (f == NULL) {
+	if (f == nullptr) {
 		_videoLockOut &= ~0x100;
 		return false;
 	}
@@ -1319,14 +1319,14 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 					 for (uint16 z = minNum; z <= maxNum; z++) {
 						uint16 itemNum = z + 2;
-						_itemArrayPtr[itemNum] = 0;
+						_itemArrayPtr[itemNum] = nullptr;
 					}
 				}
 			}
 		}
 
 		if (room != _currentRoom) {
-			_roomsListPtr = 0;
+			_roomsListPtr = nullptr;
 			loadRoomItems(_currentRoom);
 		}
 	}
@@ -1343,13 +1343,13 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 			uint parent = f->readUint16BE();
 			uint next = f->readUint16BE();
 
-			if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS && derefItem(item->parent) == NULL)
+			if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS && derefItem(item->parent) == nullptr)
 				item->parent = 0;
 
 			parent_item = derefItem(parent);
 			setItemParent(item, parent_item);
 
-			if (parent_item == NULL) {
+			if (parent_item == nullptr) {
 				item->parent = parent;
 				item->next = next;
 			}
@@ -1458,7 +1458,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	_videoLockOut |= 0x100;
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
-	if (f == NULL) {
+	if (f == nullptr) {
 		_videoLockOut &= ~0x100;
 		return false;
 	}
@@ -1621,7 +1621,7 @@ bool AGOSEngine_PN::badload(int8 errorNum) {
 	// Load error recovery routine
 
 	// Clear any stack
-	while (_stackbase != NULL) {
+	while (_stackbase != nullptr) {
 		dumpstack();
 	}
 
@@ -1653,7 +1653,7 @@ int AGOSEngine_PN::loadFile(const Common::String &name) {
 	haltAnimation();
 
 	f = _saveFileMan->openForLoading(name);
-	if (f == NULL) {
+	if (f == nullptr) {
 		restartAnimation();
 		return -2;
 	}
@@ -1687,7 +1687,7 @@ int AGOSEngine_PN::saveFile(const Common::String &name) {
 	haltAnimation();
 
 	f = _saveFileMan->openForSaving(name);
-	if (f == NULL) {
+	if (f == nullptr) {
 		restartAnimation();
 
 		const char *msg = "Couldn't save. ";

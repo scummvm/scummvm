@@ -44,7 +44,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		const char *strPtr = _mouseString;
 		while (*strPtr != 0 && *strPtr != 13)
 			addChar(*strPtr++);
-		_mouseString = 0;
+		_mouseString = nullptr;
 
 		chr = *strPtr;
 		if (chr == 13) {
@@ -55,7 +55,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		const char *strPtr = _mouseString1;
 		while (*strPtr != 13)
 			addChar(*strPtr++);
-		_mouseString1 = 0;
+		_mouseString1 = nullptr;
 
 		chr = *strPtr;
 		if (chr == 13) {
@@ -74,8 +74,8 @@ void AGOSEngine_PN::handleKeyboard() {
 	}
 
 	if (chr == 13) {
-		_mouseString = 0;
-		_mouseString1 = 0;
+		_mouseString = nullptr;
+		_mouseString1 = nullptr;
 		_mousePrintFG = 0;
 		_inputReady = false;
 	}

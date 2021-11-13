@@ -30,7 +30,7 @@
 namespace AGOS {
 
 MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
-	_driver = NULL;
+	_driver = nullptr;
 	_isOpen = false;
 	_nativeMT32 = false;
 	_baseFreq = 250;
@@ -42,11 +42,11 @@ MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
 MidiDriver_Accolade_MT32::~MidiDriver_Accolade_MT32() {
 	Common::StackLock lock(_mutex);
 	if (_driver) {
-		_driver->setTimerCallback(0, 0);
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
 	}
-	_driver = NULL;
+	_driver = nullptr;
 }
 
 int MidiDriver_Accolade_MT32::open() {
@@ -198,7 +198,7 @@ bool MidiDriver_Accolade_MT32::setupInstruments(byte *driverData, uint16 driverD
 }
 
 MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename) {
-	byte  *driverData = NULL;
+	byte  *driverData = nullptr;
 	uint16 driverDataSize = 0;
 	bool   isMusicDrvFile = false;
 

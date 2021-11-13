@@ -215,12 +215,12 @@ void AGOSEngine::o_oflag() {
 	// 28: item has prop
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	uint num = getVarOrByte();
-	setScriptCondition(subObject != NULL && (subObject->objectFlags & (1 << num)) != 0);
+	setScriptCondition(subObject != nullptr && (subObject->objectFlags & (1 << num)) != 0);
 }
 
 void AGOSEngine::o_destroy() {
 	// 31: set no parent
-	setItemParent(getNextItemPtr(), NULL);
+	setItemParent(getNextItemPtr(), nullptr);
 }
 
 void AGOSEngine::o_place() {
@@ -350,7 +350,7 @@ void AGOSEngine::o_oset() {
 	// 56: set child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	int value = getVarOrByte();
-	if (subObject != NULL && value >= 16)
+	if (subObject != nullptr && value >= 16)
 		subObject->objectFlags |= (1 << value);
 }
 
@@ -358,7 +358,7 @@ void AGOSEngine::o_oclear() {
 	// 57: clear child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	int value = getVarOrByte();
-	if (subObject != NULL && value >= 16)
+	if (subObject != nullptr && value >= 16)
 		subObject->objectFlags &= ~(1 << value);
 }
 
@@ -435,7 +435,7 @@ void AGOSEngine::o_process() {
 	}
 
 	Subroutine *sub = getSubroutineByID(id);
-	if (sub != NULL) {
+	if (sub != nullptr) {
 #ifdef __DS__
 		// HACK: Skip scene of Simon reading letter from Calypso
 		// due to speech segment been too large to fit into memory
@@ -469,19 +469,19 @@ void AGOSEngine::o_when() {
 
 void AGOSEngine::o_if1() {
 	// 77: has item minus 1
-	setScriptCondition(_subjectItem != NULL);
+	setScriptCondition(_subjectItem != nullptr);
 }
 
 void AGOSEngine::o_if2() {
 	// 78: has item minus 3
-	setScriptCondition(_objectItem != NULL);
+	setScriptCondition(_objectItem != nullptr);
 }
 
 void AGOSEngine::o_isCalled() {
 	// 79: childstruct fr2 is
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	uint stringId = getNextStringID();
-	setScriptCondition((subObject != NULL) && subObject->objectName == stringId);
+	setScriptCondition((subObject != nullptr) && subObject->objectName == stringId);
 }
 
 void AGOSEngine::o_is() {
@@ -1037,7 +1037,7 @@ Child *nextSub(Child *sub, int16 key) {
 			return a;
 		a = a->next;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AGOSEngine::synchChain(Item *i) {

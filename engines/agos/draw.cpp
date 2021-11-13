@@ -324,7 +324,7 @@ restart:
 	}
 
 	AnimTable *animTable = _screenAnim1;
-	while (animTable->srcPtr != 0) {
+	while (animTable->srcPtr != nullptr) {
 		if (animTable->windowNum & 0x8000) {
 			x = animTable->x + _scrollX;
 			y = animTable->y;
@@ -384,7 +384,7 @@ void AGOSEngine::dirtyClipCheck(int16 x, int16 y, int16 w, int16 h) {
 	}
 
 	AnimTable *animTable = _screenAnim1;
-	for (; animTable->srcPtr != 0; animTable++) {
+	for (; animTable->srcPtr != nullptr; animTable++) {
 		if (animTable->windowNum & 0x8000)
 			continue;
 
@@ -452,7 +452,7 @@ void AGOSEngine::restoreBackGround() {
 		drawImage(&state);
 
 		if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2) {
-			animTable->srcPtr = 0;
+			animTable->srcPtr = nullptr;
 		}
 	}
 	_backFlag = false;
@@ -468,7 +468,7 @@ void AGOSEngine::restoreBackGround() {
 			}
 			animTable++;
 		}
-		animTableTmp->srcPtr = 0;
+		animTableTmp->srcPtr = nullptr;
 	}
 }
 
@@ -512,7 +512,7 @@ void AGOSEngine::saveBackGround(VgaSprite *vsp) {
 	animTable->zoneNum = vsp->zoneNum;
 
 	animTable++;
-	animTable->srcPtr = 0;
+	animTable->srcPtr = nullptr;
 }
 
 void AGOSEngine::displayBoxStars() {
@@ -693,7 +693,7 @@ void AGOSEngine::scrollScreen() {
 	if (getGameType() == GType_SIMON2) {
 		AnimTable *animTable = _screenAnim1;
 		while (animTable->srcPtr) {
-			animTable->srcPtr = 0;
+			animTable->srcPtr = nullptr;
 			animTable++;
 		}
 

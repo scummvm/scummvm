@@ -309,7 +309,7 @@ void AGOSEngine_Elvira2::oe2_pObj() {
 	// 73: print object
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
-	if (subObject != NULL && subObject->objectFlags & kOFText)
+	if (subObject != nullptr && subObject->objectFlags & kOFText)
 		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 
@@ -341,7 +341,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	Item *i = getNextItemPtr();
 
 	SubRoom *r = (SubRoom *)findChildOfType(i, kRoomType);
-	if (r != NULL) {
+	if (r != nullptr) {
 		Subroutine *sub = getSubroutineByID(r->subroutine_id);
 		if (sub) {
 			startSubroutine(sub);
@@ -351,7 +351,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 
 	if (getGameType() == GType_ELVIRA2) {
 		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
-		if (sr != NULL) {
+		if (sr != nullptr) {
 			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
 			if (sub) {
 				startSubroutine(sub);
@@ -369,18 +369,18 @@ void AGOSEngine_Elvira2::oe2_pauseGame() {
 	haltAnimation();
 
 	while (!shouldQuit()) {
-		_lastHitArea = NULL;
-		_lastHitArea3 = NULL;
+		_lastHitArea = nullptr;
+		_lastHitArea3 = nullptr;
 
 		while (!shouldQuit()) {
-			if (processSpecialKeys() != 0 || _lastHitArea3 != 0)
+			if (processSpecialKeys() != 0 || _lastHitArea3 != nullptr)
 				break;
 			delay(1);
 		}
 
 		ha = _lastHitArea;
 
-		if (ha == NULL) {
+		if (ha == nullptr) {
 		} else if (ha->id == 201) {
 			break;
 		}
@@ -416,7 +416,7 @@ void AGOSEngine_Elvira2::oe2_ifDoorOpen() {
 	if (getGameType() == GType_WW) {
 		// WORKAROUND bug #4229: A NULL item can occur when
 		// walking through Jack the Ripper scene
-		if (i == NULL) {
+		if (i == nullptr) {
 			setScriptCondition(false);
 			return;
 		}
@@ -490,7 +490,7 @@ void AGOSEngine_Elvira2::oe2_getOValue() {
 	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 
-	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+	if (subObject != nullptr && subObject->objectFlags & (1 << prop) && prop < 16) {
 		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
 		writeNextVarContents(subObject->objectFlagValue[offs]);
 	} else {
@@ -505,7 +505,7 @@ void AGOSEngine_Elvira2::oe2_setOValue() {
 	uint prop = getVarOrByte();
 	int value = getVarOrWord();
 
-	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+	if (subObject != nullptr && subObject->objectFlags & (1 << prop) && prop < 16) {
 		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
 		subObject->objectFlagValue[offs] = value;
 	}
@@ -599,7 +599,7 @@ void AGOSEngine_Elvira2::oe2_getDollar2() {
 	if (_objectItem == _dummyItem3)
 		_objectItem = derefItem(me()->parent);
 
-	if (_objectItem != NULL) {
+	if (_objectItem != nullptr) {
 		_scriptNoun2 = _objectItem->noun;
 		_scriptAdj2 = _objectItem->adjective;
 	} else {
@@ -623,7 +623,7 @@ void AGOSEngine_Elvira2::oe2_printPlayerDamage() {
 	// 177: set player damage event
 	uint a = getVarOrByte();
 	if (_opcode177Var1 && !_opcode177Var2 && a != 0 && a <= 10) {
-		addVgaEvent(_vgaBaseDelay, PLAYER_DAMAGE_EVENT, NULL, 0, a);
+		addVgaEvent(_vgaBaseDelay, PLAYER_DAMAGE_EVENT, nullptr, 0, a);
 		_opcode177Var2 = 0;
 		_opcode177Var1 = 0;
 	}
@@ -633,7 +633,7 @@ void AGOSEngine_Elvira2::oe2_printMonsterDamage() {
 	// 178: set monster damage event
 	uint a = getVarOrByte();
 	if (_opcode178Var1 && !_opcode178Var2 && a != 0 && a <= 10) {
-		addVgaEvent(_vgaBaseDelay, MONSTER_DAMAGE_EVENT, NULL, 0, a);
+		addVgaEvent(_vgaBaseDelay, MONSTER_DAMAGE_EVENT, nullptr, 0, a);
 		_opcode178Var2 = 0;
 		_opcode178Var1 = 0;
 	}
@@ -645,7 +645,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	int16 a = getNextWord();
 	int16 n = getNextWord();
 
-	if (getGameType() == GType_ELVIRA2 && item == NULL) {
+	if (getGameType() == GType_ELVIRA2 && item == nullptr) {
 		// WORKAROUND bug #3281: A NULL item can occur when
 		// interacting with items in the dinning room
 		setScriptCondition(false);
