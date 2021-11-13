@@ -43,7 +43,7 @@ namespace CGE {
 
 static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription gameDescriptions[] = {
@@ -160,7 +160,7 @@ public:
 static ADGameDescription s_fallbackDesc = {
 	"soltys",
 	"Unknown version",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	AD_ENTRY1(nullptr, nullptr), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
 	ADGF_NO_FLAGS,
@@ -168,8 +168,8 @@ static ADGameDescription s_fallbackDesc = {
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &s_fallbackDesc, { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
+	{ &s_fallbackDesc, { "vol.cat", "vol.dat", nullptr } },
+	{ nullptr, { nullptr } }
 };
 
 ADDetectedGame CGEMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {

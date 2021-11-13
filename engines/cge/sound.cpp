@@ -47,7 +47,7 @@ DataCk::~DataCk() {
 }
 
 Sound::Sound(CGEEngine *vm) : _vm(vm) {
-	_audioStream = NULL;
+	_audioStream = nullptr;
 	_soundRepeatCount = 1;
 	open();
 }
@@ -109,14 +109,14 @@ void Sound::stop() {
 void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
 		_vm->_mixer->stopHandle(_soundHandle);
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
-Fx::Fx(CGEEngine *vm, int size) : _current(NULL), _vm(vm) {
+Fx::Fx(CGEEngine *vm, int size) : _current(nullptr), _vm(vm) {
 	_cache = new Handler[size];
 	for (_size = 0; _size < size; _size++) {
 		_cache[_size]._ref = 0;
-		_cache[_size]._wav = NULL;
+		_cache[_size]._wav = nullptr;
 	}
 }
 
@@ -130,10 +130,10 @@ void Fx::clear() {
 		if (p->_ref) {
 			p->_ref = 0;
 			delete p->_wav;
-			p->_wav = NULL;
+			p->_wav = nullptr;
 		}
 	}
-	_current = NULL;
+	_current = nullptr;
 }
 
 int Fx::find(int ref) {
@@ -191,7 +191,7 @@ DataCk *Fx::loadWave(EncryptedStream *file) {
 	byte *data = (byte *)malloc(file->size());
 
 	if (!data)
-		return 0;
+		return nullptr;
 
 	file->read(data, file->size());
 
@@ -213,7 +213,7 @@ DataCk *Fx::operator[](int ref) {
 }
 
 MusicPlayer::MusicPlayer(CGEEngine *vm) : _vm(vm) {
-	_data = NULL;
+	_data = nullptr;
 	_isGM = false;
 
 	MidiPlayer::createDriver();
@@ -242,7 +242,7 @@ void MusicPlayer::killMidi() {
 	Audio::MidiPlayer::stop();
 
 	free(_data);
-	_data = NULL;
+	_data = nullptr;
 }
 
 void MusicPlayer::loadMidi(int ref) {

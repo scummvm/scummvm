@@ -50,7 +50,7 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 
 	_ts = new BitmapPtr[2];
 	_ts[0] = new Bitmap(_vm, w, h, p);
-	_ts[1] = NULL;
+	_ts[1] = nullptr;
 	setShapeList(_ts);
 
 	_flags._slav = true;
@@ -59,11 +59,11 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	_flags._bDel = true;
 }
 
-Vmenu *Vmenu::_addr = NULL;
+Vmenu *Vmenu::_addr = nullptr;
 int Vmenu::_recent = -1;
 
 Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
-	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vmgt(NULL), _vm(vm) {
+	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(nullptr), _vmgt(nullptr), _vm(vm) {
 	Choice *cp;
 
 	_addr = this;
@@ -84,7 +84,7 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 }
 
 Vmenu::~Vmenu() {
-	_addr = NULL;
+	_addr = nullptr;
 }
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))

@@ -46,7 +46,7 @@ Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	_cache = new Handler[txtCount];
 	for (_size = 0; _size < txtCount; _size++) {
 		_cache[_size]._ref = 0;
-		_cache[_size]._text = NULL;
+		_cache[_size]._text = nullptr;
 	}
 	load();
 }
@@ -70,7 +70,7 @@ int16 Text::count() {
 		char *s;
 		assert(line.size() <= 513);
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == nullptr)
 			continue;
 		if (!Common::isDigit(*s))
 			continue;
@@ -85,7 +85,7 @@ void Text::clear() {
 		if (p->_ref) {
 			p->_ref = 0;
 			delete[] p->_text;
-			p->_text = NULL;
+			p->_text = nullptr;
 		}
 	}
 }
@@ -102,7 +102,7 @@ void Text::load() {
 		int n = line.size();
 		char *s;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == nullptr)
 			continue;
 		if (!Common::isDigit(*s))
 			continue;
@@ -129,7 +129,7 @@ char *Text::getText(int ref) {
 		return _cache[i]._text;
 
 	warning("getText: Unable to find ref %d", ref);
-	return NULL;
+	return nullptr;
 }
 
 void Text::say(const char *text, Sprite *spr) {

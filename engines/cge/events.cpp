@@ -38,7 +38,7 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-Keyboard::Keyboard(CGEEngine *vm) : _client(NULL), _vm(vm) {
+Keyboard::Keyboard(CGEEngine *vm) : _client(nullptr), _vm(vm) {
 	_keyAlt = false;
 }
 
@@ -64,7 +64,7 @@ bool Keyboard::getKey(Common::Event &event) {
 			return false;
 		// Display ScummVM version and translation strings
 		for (int i = 0; i < 5; i++)
-			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
+			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, nullptr);
 		return false;
 	case Common::KEYCODE_F5:
 		_vm->saveGameDialog();
@@ -84,7 +84,7 @@ bool Keyboard::getKey(Common::Event &event) {
 	case Common::KEYCODE_3:
 	case Common::KEYCODE_4:
 		if (event.kbd.flags & Common::KBD_ALT) {
-			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, NULL);
+			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, nullptr);
 			return false;
 		}
 		// fall through
@@ -120,13 +120,13 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
-	_hold = NULL;
+Mouse::Mouse(CGEEngine *vm) : Sprite(vm, nullptr), _busy(nullptr), _hold(nullptr), _hx(0), _vm(vm) {
+	_hold = nullptr;
 	_hx = 0;
 	_hy = 0;
 	_exist = true;
 	_buttons = 0;
-	_busy = NULL;
+	_busy = nullptr;
 	_active = false;
 	_flags._kill = false;
 
@@ -141,7 +141,7 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	BitmapPtr *MC = new BitmapPtr[3];
 	MC[0] = new Bitmap(_vm, "MOUSE");
 	MC[1] = new Bitmap(_vm, "DUMMY");
-	MC[2] = NULL;
+	MC[2] = nullptr;
 	setShapeList(MC);
 
 	gotoxy(kScrWidth / 2, kScrHeight / 2);
@@ -284,7 +284,7 @@ void EventManager::handleEvents() {
 			if (e._mask & kMouseLeftUp) {
 				if (_vm->_mouse->_hold) {
 					_vm->_mouse->_hold->_flags._hold = false;
-					_vm->_mouse->_hold = NULL;
+					_vm->_mouse->_hold = nullptr;
 				}
 			}
 			///Touched = e.Ptr;
