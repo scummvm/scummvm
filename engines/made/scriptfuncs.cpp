@@ -300,7 +300,7 @@ int16 ScriptFunctions::sfStopMusic(int16 argc, int16 *argv) {
 	if (_vm->_music->isPlaying() && _musicRes) {
 		_vm->_music->stop();
 		_vm->_res->freeResource(_musicRes);
-		_musicRes = NULL;
+		_musicRes = nullptr;
 	}
 	return 0;
 }
@@ -498,7 +498,7 @@ int16 ScriptFunctions::sfSetFont(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 
-	const char *text = NULL;
+	const char *text = nullptr;
 
 	if (_vm->getGameID() == GID_RTZ) {
 		text = _vm->_dat->getObjectString(argv[argc - 1]);

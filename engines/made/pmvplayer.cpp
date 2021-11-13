@@ -105,7 +105,7 @@ bool PmvPlayer::play(const char *filename) {
 	uint32 soundSize = 0;
 	uint32 soundChunkOfs = 0, palChunkOfs = 0;
 	uint32 palSize = 0;
-	byte *frameData = 0, *audioData, *soundData, *palData, *imageData;
+	byte *frameData = nullptr, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
 
 	uint32 skipFrames = 0;
@@ -155,7 +155,7 @@ bool PmvPlayer::play(const char *filename) {
 
 			soundSize = chunkCount * chunkSize;
 			soundData = (byte *)malloc(soundSize);
-			decompressSound(audioData + 8, soundData, chunkSize, chunkCount, NULL, soundDecoderData);
+			decompressSound(audioData + 8, soundData, chunkSize, chunkCount, nullptr, soundDecoderData);
 			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
 

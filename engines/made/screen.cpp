@@ -87,7 +87,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_textRect.top = 0;
 	_textRect.right = 320;
 	_textRect.bottom = 200;
-	_font = NULL;
+	_font = nullptr;
 	_currentFontNum = 0;
 	_fontDrawCtx.clipRect = Common::Rect(320, 200);
 	_fontDrawCtx.destSurface = _backgroundScreen;
@@ -155,7 +155,7 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
-	byte *source, *dest, *maskp = 0;
+	byte *source, *dest, *maskp = nullptr;
 	int startX = 0;
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
