@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
+#include "common/file.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -163,7 +164,17 @@ void GuiManager::initIconsSet() {
 	if (!fs)
 		fs = new Common::FSNode(fname);
 
-	dat = Common::makeZipArchive(*fs);
+	if (fs) {
+		dat = Common::makeZipArchive(*fs);
+	} else {
+		// We could be on Windows with gui-icons.dat file as an
+		// embedded resource. Try it.
+		Common::File *in = new Common::File;
+		in->open(fname);
+
+		if (in->isOpen())
+			dat = Common::makeZipArchive(in);
+	}
 
 	if (!dat) {
 		warning("GUI: Could not find '%s'", path.c_str());
