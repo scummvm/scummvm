@@ -107,7 +107,7 @@ public:
 	void drawClipped(
 	    gPort         &port,
 	    const Point16 &offset,
-	    const Rect16  &r);
+	    const Rect16  &r) override;
 };
 
 void ModalDialogWindow::positionText(
@@ -317,8 +317,8 @@ public:
 		ModalDialogWindow(r, ident, cmd, windowText, args) {
 	}
 
-	void pointerRelease(gPanelMessage &);
-	bool keyStroke(gPanelMessage &);
+	void pointerRelease(gPanelMessage &) override;
+	bool keyStroke(gPanelMessage &) override;
 };
 
 void ModalDisplayWindow::pointerRelease(gPanelMessage &) {
