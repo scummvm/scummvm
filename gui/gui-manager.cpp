@@ -155,6 +155,7 @@ void GuiManager::initIconsSet() {
 
 	if (!dat) {
 		warning("GUI: Could not find '%s'", fname);
+		delete file;
 		return;
 	}
 
