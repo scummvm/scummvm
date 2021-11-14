@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-14 13:41+0000\n"
-"PO-Revision-Date: 2021-11-14 14:26+0000\n"
+"PO-Revision-Date: 2021-11-14 14:28+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -687,46 +687,38 @@ msgstr "グループ化: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "エントリーのグループ化基準を選択"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "なし"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "最初のページ"
+msgstr "頭文字"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "シリーズ"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "販売元"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "言語："
+msgstr "言語"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "プラットフォーム："
+msgstr "機種"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -852,7 +844,7 @@ msgstr "ゲームを選択してください："
 
 #: gui/launcher.cpp:778
 msgid "Group by:"
-msgstr ""
+msgstr "グループ化:"
 
 #: gui/launcher.cpp:820 gui/saveload-dialog.cpp:368
 msgid "List view"
