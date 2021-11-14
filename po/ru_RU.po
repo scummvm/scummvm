@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-13 23:48+0000\n"
-"PO-Revision-Date: 2021-11-13 18:03+0000\n"
+"PO-Revision-Date: 2021-11-14 12:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -688,10 +688,8 @@ msgid "Select Group by"
 msgstr "Выбрать как группировать"
 
 #: gui/launcher.cpp:198
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group by: "
-msgstr "Группировать по:"
+msgstr "Группа по: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
