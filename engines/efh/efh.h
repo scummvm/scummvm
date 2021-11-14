@@ -94,6 +94,11 @@ struct BufferBM {
 	uint16 _fieldD;
 };
 
+struct CharStatus {
+	int16 _status;
+	int16 _duration;
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const EfhGameDescription *gd);
@@ -102,7 +107,6 @@ public:
 	OSystem *_system;
 	Graphics::Surface *_mainSurface;
 	Common::RandomSource *_rnd;
-
 
 	const EfhGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -140,28 +144,46 @@ private:
 	void findMapFile(int16 mapId);
 	void loadNewPortrait();
 	void loadAnimImageSet();
+	void loadHistory();
+	void loadTechMapImp(int16 fileId);
+	void loadPlacesFile(uint16 fullPlaceId, int16 unused, bool forceReloadFl);
 	void drawUnknownMenuBox();
 	void displayAnimFrame();
 	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
 	void readTileFact();
 	void readItems();
 	void loadNPCS();
+	void setDefaultNoteDuration();
+	Common::KeyCode playSong(uint8 *buffer);
+	void decryptImpFile(bool techMapFl);
+	void readImpFile(int16 id, bool techMapFl);
+	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
 	void initEngine();
+	void initMapMonsters();
 	void saveAnimImageSetId();
-	void sub15150(int i);
-	void sub12A7F();
 	void displayLowStatusScreen(int i);
 	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *destBuffer, uint8 *transfBuffer);
 	void displayFctFullScreen();
 	void displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY);
+	void displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
+	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
+	void restoreAnimImageSetId();
+	void checkProtection();
+	void loadGame();
+	void uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
+	void copyCurrentPlaceToBuffer(int id);
+
+	void sub15150(bool flag);
+	void sub12A7F();
 	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation);
 	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
-	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
+	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
 	int16 _vgaLineBuffer[200];
-	EfhGraphicsStruct *_vgaGraphicsStruct;
+	EfhGraphicsStruct *_vgaGraphicsStruct1;
+	EfhGraphicsStruct *_vgaGraphicsStruct2;
 	EfhGraphicsStruct *_graphicsStruct;
 	uint8 _tileBank[3][12000];
 	uint8 _circleImageBuf[40100];
@@ -191,7 +213,8 @@ private:
 	uint8 _defaultBoxColor;
 	FontDescr _fontDescr;
 
-	uint8 _word31E9E;
+	uint16 _word31E9E;
+	uint16 _unkVideoRelatedWord1;
 
 	int16 _oldAnimImageSetId;
 	int16 _animImageSetId;
@@ -205,6 +228,29 @@ private:
 	int16 _currentAnimImageSetId;
 	uint8 *_portraitSubFilesArray[20];
 	int16 _unkAnimRelatedIndex;
+	uint8 *_imp1PtrArray[100];
+	uint8 *_imp2PtrArray[432];
+	uint16 _fullPlaceId;
+	int16 _guessAnimationAmount;
+	uint16 _largeMapFlag; // CHECKME: bool?
+	int16 _teamCharIdArray;
+	int16 _charId;
+	int16 _word2C8B8;
+	
+	Common::Rect _initRect;
+	bool _engineInitPending;
+	bool _protectionPassed;
+
+	CharStatus _teamCharStatus[3];
+	int16 _unkArray2C8AA[3];
+	int16 _teamSize;
+	int16 _word2C872;
+	int16 _imageSetSubFilesIdx;
+
+	int16 _mapPosX, _mapPosY;
+	int16 _oldMapPosX, _oldMapPosY;
+	int16 _techDataId_MapPosX, _techDataId_MapPosY;
+	uint16 _lastMainPlaceId;
 };
 
 } // End of namespace Efh
