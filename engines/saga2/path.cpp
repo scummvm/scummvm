@@ -1202,14 +1202,14 @@ public:
 	DestinationPathRequest(Actor *a, int16 howSmart);
 
 	//  Initialize the static data members for this path request.
-	void initialize();
+	void initialize() override;
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
 	    const TilePoint &baseTileCoords,
-	    const QueueItem &qi);
+	    const QueueItem &qi) override;
 
-	bool validMove(const TilePoint &testPt);
+	bool validMove(const TilePoint &testPt) override;
 
 	//  Evaluate the cost of travelling on these stairs
 	int16 evaluateStairs(
@@ -1217,10 +1217,10 @@ public:
 	    Direction moveDir,
 	    Direction stairDir,
 	    int16 baseAltitude,
-	    int16 upperAltitude);
+	    int16 upperAltitude) override;
 
 	//  Evaluate the cost of the specified move
-	int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform);
+	int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform) override;
 };
 
 /* ===================================================================== *
@@ -1252,16 +1252,16 @@ public:
 	WanderPathRequest(Actor *a, int16 howSmart);
 
 	//  Initialize the static data members
-	void initialize();
+	void initialize() override;
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
 	    const TilePoint &baseTileCoords,
-	    const QueueItem &qi);
+	    const QueueItem &qi) override;
 
 	//  Determine if point is within the tether region if there is a
 	//  tether
-	bool validMove(const TilePoint &testPt);
+	bool validMove(const TilePoint &testPt) override;
 
 	//  Evaluate the cost of moving on the specified stairs.
 	int16 evaluateStairs(
@@ -1269,11 +1269,11 @@ public:
 	    Direction moveDir,
 	    Direction stairDir,
 	    int16 baseAltitude,
-	    int16 upperAltitude);
+	    int16 upperAltitude) override;
 
 	//  Evaluate the cost of moving from the current center location
 	//  to the specified location.
-	int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform);
+	int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform) override;
 };
 
 /* ===================================================================== *

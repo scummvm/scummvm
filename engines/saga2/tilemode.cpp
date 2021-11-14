@@ -73,11 +73,11 @@ public:
 	}
 
 private:
-	void deactivate();
+	void deactivate() override;
 
 //	void pointerMove( gPanelMessage &msg );
-	bool pointerHit(gPanelMessage &msg);
-	void pointerRelease(gPanelMessage &msg);
+	bool pointerHit(gPanelMessage &msg) override;
+	void pointerRelease(gPanelMessage &msg) override;
 };
 
 /* ===================================================================== *

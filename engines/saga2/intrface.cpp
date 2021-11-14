@@ -66,7 +66,7 @@ public:
 	ArmorAttributes  attr;
 	void drawClipped(gPort &,
 	                 const   Point16 &,
-	                 const   Rect16 &);
+	                 const   Rect16 &) override;
 
 	void setValue(PlayerActorID pID);
 
@@ -184,8 +184,8 @@ class gEnchantmentDisplay : public gControl {
 
 	uint8       iconFlags[iconCount];
 
-	void drawClipped(gPort &, const Point16 &, const Rect16 &);
-	void pointerMove(gPanelMessage &msg);
+	void drawClipped(gPort &, const Point16 &, const Rect16 &) override;
+	void pointerMove(gPanelMessage &msg) override;
 public:
 	void setValue(PlayerActorID pID);
 
