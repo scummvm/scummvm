@@ -115,7 +115,7 @@ struct ArchiveMemberListBackComparator {
 	}
 };
 void GuiManager::initIconsSet() {
-	Common::Archive *dat;
+	Common::Archive *dat = nullptr;
 
 	if (ConfMan.hasKey("iconspath")) {
 		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
@@ -139,53 +139,28 @@ void GuiManager::initIconsSet() {
 
 	const char fname[] = "gui-icons.dat";
 	Common::String path;
-	Common::FSNode *fs = nullptr;
+	Common::File *file = new Common::File;
 
-	if (ConfMan.hasKey("themepath")) {
-		path = normalizePath(ConfMan.get("themepath") + "/" + fname, '/');
+	if (ConfMan.hasKey("themepath"))
+		file->open(normalizePath(ConfMan.get("themepath") + "/" + fname, '/'));
 
-		fs = new Common::FSNode(path);
-		if (!fs->exists()) {
-			delete fs;
-			fs = nullptr;
-		}
-	}
+	if (!file->isOpen() && ConfMan.hasKey("iconspath"))
+		file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
 
-	if (!fs && ConfMan.hasKey("iconspath")) {
-		path = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
+	if (!file->isOpen())
+		file->open(fname);
 
-		fs = new Common::FSNode(path);
-		if (!fs->exists()) {
-			delete fs;
-			fs = nullptr;
-		}
-	}
-
-	if (!fs)
-		fs = new Common::FSNode(fname);
-
-	if (fs) {
-		dat = Common::makeZipArchive(*fs);
-	} else {
-		// We could be on Windows with gui-icons.dat file as an
-		// embedded resource. Try it.
-		Common::File *in = new Common::File;
-		in->open(fname);
-
-		if (in->isOpen())
-			dat = Common::makeZipArchive(in);
-	}
+	if (file->isOpen())
+		dat = Common::makeZipArchive(file);
 
 	if (!dat) {
-		warning("GUI: Could not find '%s'", path.c_str());
+		warning("GUI: Could not find '%s'", fname);
 		return;
 	}
 
-	_iconsSet.add(path, dat);
+	_iconsSet.add(path, dat, 0, false); // Do not autofree
 
 	debug(2, "GUI: Loaded icon file: %s", path.c_str());
-
-	delete fs;
 }
 
 void GuiManager::computeScaleFactor() {
