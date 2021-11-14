@@ -236,7 +236,7 @@ void Battleground::stopProjectiles() {
 
 class HandlerProjectile : public EventHandler {
 public:
-	void operator()() {
+	void operator()() override {
 		_projectile->handleEvent(_event);
 	}
 
