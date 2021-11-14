@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-14 13:41+0000\n"
-"PO-Revision-Date: 2021-11-14 12:44+0000\n"
+"PO-Revision-Date: 2021-11-14 15:02+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -693,7 +693,7 @@ msgstr "Группа по: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Указать критерий для группирования игр"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
