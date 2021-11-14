@@ -38,7 +38,7 @@ public:
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
 protected:
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		// Similar to MS IMA, but without the four-bytes-per-channel requirement
 		int samples;
 
