@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-14 13:54+0000\n"
+"POT-Creation-Date: 2021-11-14 15:19+0000\n"
 "PO-Revision-Date: 2021-11-09 18:25+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2305,12 +2305,12 @@ msgstr "PC-9801 (16 Farger)"
 msgid "Macintosh b/w"
 msgstr "Macintosh s/h"
 
-#: common/rendermode.cpp:75
+#: common/rendermode.cpp:76
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Grønn"
 
-#: common/rendermode.cpp:76
+#: common/rendermode.cpp:77
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Oransje"
