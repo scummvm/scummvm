@@ -801,14 +801,12 @@ void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 void LauncherDialog::addLayoutChooserButtons() {
 	if (_listButton) {
-		warning("Marking listButton for removal %p", (void *)_listButton);
 		removeWidget(_listButton);
 		g_gui.addToTrash(_listButton, this);
 		_listButton = nullptr;
 	}
 
 	if (_gridButton) {
-		warning("Marking gridButton for removal %p", (void *)_gridButton);
 		removeWidget(_gridButton);
 		g_gui.addToTrash(_gridButton, this);
 		_gridButton = nullptr;
