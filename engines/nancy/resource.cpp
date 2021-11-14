@@ -108,7 +108,7 @@ class CifFile20 : public CifFile {
 public:
 	CifFile20(const Common::String &name, Common::File *f) : CifFile(name, f) { }
 protected:
-	virtual void readCifInfo(Common::File &f);
+	void readCifInfo(Common::File &f) override;
 };
 
 void CifFile20::readCifInfo(Common::File &f) {
@@ -119,7 +119,7 @@ class CifFile21 : public CifFile {
 public:
 	CifFile21(const Common::String &name, Common::File *f) : CifFile(name, f) { }
 protected:
-	virtual void readCifInfo(Common::File &f);
+	void readCifInfo(Common::File &f) override;
 };
 
 void CifFile21::readCifInfo(Common::File &f) {
@@ -337,9 +337,9 @@ class CifTree20 : public CifTree {
 public:
 	CifTree20(const Common::String &name, const Common::String &ext) : CifTree(name, ext) { }
 protected:
-	virtual uint readHeader(Common::File &f);
-	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
-	virtual uint32 getVersion() const { return 0x00020000; }
+	uint readHeader(Common::File &f) override;
+	void readCifInfo(Common::File &f, CifInfoChain &chain) override;
+	uint32 getVersion() const override { return 0x00020000; }
 };
 
 uint CifTree20::readHeader(Common::File &f) {
@@ -373,9 +373,9 @@ public:
 	CifTree21(const Common::String &name, const Common::String &ext) : CifTree20(name, ext), _hasLongNames(false), _hasOffsetFirst(false) { };
 
 protected:
-	virtual uint readHeader(Common::File &f);
-	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
-	virtual uint32 getVersion() const { return 0x00020001; }
+	uint readHeader(Common::File &f) override;
+	void readCifInfo(Common::File &f, CifInfoChain &chain) override;
+	uint32 getVersion() const override { return 0x00020001; }
 
 private:
 	void determineSubtype(Common::File &f);
@@ -547,8 +547,8 @@ bool CifExporter::dump(const byte *data, uint32 size, const ResourceManager::Cif
 
 class CifExporter20 : public CifExporter {
 protected:
-	virtual void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const;
-	uint32 getVersion() const { return 0x00020000; }
+	void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const override;
+	uint32 getVersion() const override { return 0x00020000; }
 };
 
 void CifExporter20::writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const {
@@ -567,8 +567,8 @@ void CifExporter20::writeCifInfo(Common::DumpFile &f, const ResourceManager::Cif
 
 class CifExporter21 : public CifExporter20 {
 protected:
-	virtual void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const;
-	uint32 getVersion() const { return 0x00020001; }
+	void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const override;
+	uint32 getVersion() const override { return 0x00020001; }
 };
 
 void CifExporter21::writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const {
