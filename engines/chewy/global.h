@@ -115,10 +115,10 @@ extern int16 maus_old_x;
 extern int16 maus_old_y;
 extern int16 inventar_nr;
 
-extern int16 ani_invent_anf [2];
-extern int16 ani_invent_end [2];
-extern int16 ani_invent_delay[2][2];
-extern int16 ani_count[2];
+extern int16 ani_invent_anf[3];
+extern int16 ani_invent_end[3];
+extern int16 ani_invent_delay[3][2];
+extern int16 ani_count[3];
 extern int16 invent_cur_mode;
 extern int16 ak_invent;
 extern byte *inv_spr[MAX_MOV_OBJ];

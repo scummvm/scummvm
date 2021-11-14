@@ -20,6 +20,7 @@
  *
  */
 
+#include "chewy/global.h"
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/defines.h"
@@ -113,7 +114,7 @@ int16 ani_invent_delay[3][2] = {
 	{10, 10},
 	{11, 11},
 };
-int16 ani_count[3] = {38, 39, 21};
+int16 ani_count[3] = { 38, 39, 21 };
 int16 invent_cur_mode;
 byte *inv_spr[MAX_MOV_OBJ];
 
