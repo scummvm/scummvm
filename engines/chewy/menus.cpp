@@ -165,7 +165,7 @@ void plot_inventar_menu() {
 		if (ani_invent_delay[i][0] <= 0) {
 			ani_invent_delay[i][0] = ani_invent_delay[i][1];
 			++ani_count[i];
-			if (ani_count[i] > ani_invent_end[i]) {
+			if (ani_count[i] > ANI_INVENT_END[i]) {
 				ani_count[i] = ani_invent_anf[i];
 				ani_invent_delay[i][0] = 30000;
 			}

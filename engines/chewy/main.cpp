@@ -1501,7 +1501,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 									set_person_spr(P_LEFT, P_CHEWY);
 							}
 							r_val = rand() % MAX_RAND_NO_USE;
-							action_flag = start_ats_wait(rand_no_use[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+							action_flag = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 						}
 					}
 					flags.MausTxt = false;

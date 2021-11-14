@@ -42,166 +42,12 @@
 namespace Chewy {
 
 #define MAX_RAND_NO_USE 6
-uint8 rand_no_use[MAX_RAND_NO_USE] = {0, 1, 3, 4, 5, 6};
-int16 pfeil_ani;
-int16 pfeil_delay;
-int16 cur_hide_flag;
 
-int16 auto_p_nr;
+const uint8 RAND_NO_USE[MAX_RAND_NO_USE] = {0, 1, 3, 4, 5, 6};
 
-int16 timer_nr[MAX_TIMER_OBJ];
+const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
 
-int16 zoom_horizont;
-int16 zoom_mov_fak;
-
-int16 auto_obj;
-int16 ged_mov_ebene;
-
-bool cur_display;
-int16 maus_links_click;
-
-int16 person_tmp_hide[MAX_PERSON];
-int16 person_tmp_room[MAX_PERSON];
-uint32 ram_start;
-
-int16 FrameSpeed;
-
-int16 FrameSpeedTmp;
-
-int16 frame_delay_count;
-int16 show_frame;
-
-byte **ablage;
-byte *workpage;
-byte *workptr;
-byte *cur_back;
-byte **ged_mem;
-byte *pal;
-byte *spblende;
-
-byte *screen0;
-int16 scr_width;
-BlendMode fx_blend;
-
-byte *font6x8;
-byte *font8x8;
-int16 fvorx6x8;
-int16 fvorx8x8;
-int16 fvory6x8;
-short fvory8x8;
-
-char *str;
-char **ads_item_ptr;
-
-int16 ads_dia_nr;
-int16 ads_item_anz;
-int16 ads_blk_nr;
-int16 ads_push;
-
-int16 ads_tmp_dsp;
-int8 menu_display;
-int16 menu_lauflicht;
-int16 menu_item;
-int16 menu_item_vorwahl;
-int16 maus_menu_x;
-int16 maus_old_x;
-int16 maus_old_y;
-int16 inventar_nr;
-int16 ani_invent_anf [3] = {38, 39, 21};
-int16 ani_invent_end [3] = {7, 16, 24};
-int16 ani_invent_delay[3][2] = {
-	{12, 12},
-	{10, 10},
-	{11, 11},
-};
-int16 ani_count[3] = { 38, 39, 21 };
-int16 invent_cur_mode;
-byte *inv_spr[MAX_MOV_OBJ];
-
-bool life_flag;
-int16 life_x;
-int16 life_y;
-int16 life_anz;
-char *life_str;
-int16 life_handler;
-
-void (*SetUpScreenFunc)();
-
-SprInfo spr_info[MAX_PROG_ANI];
-DetectInfo detect;
-maus_info minfo;
-kb_info kbinfo;
-cur_blk curblk;
-cur_ani curani;
-Spieler spieler;
-iog_init ioptr;
-RaumBlk room_blk;
-ObjMov spieler_vector[MAX_PERSON];
-
-MovInfo spieler_mi[MAX_PERSON];
-
-ObjMov auto_mov_vector[MAX_OBJ_MOV];
-MovInfo auto_mov_obj[MAX_OBJ_MOV];
-MovPhasen mov_phasen[MAX_OBJ_MOV];
-MovLine mov_line[MAX_OBJ_MOV][5];
-TimerBlk ani_timer[MAX_TIMER_OBJ];
-room_detail_info *Rdi;
-static_detail_info *Sdi;
-ani_detail_info *Adi;
-Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-CustomInfo Ci;
-GotoPkt gpkt;
-
-taf_info *curtaf;
-taf_info *menutaf;
-taf_seq_info *howard_taf;
-taf_info *chewy;
-uint8 *chewy_ph_anz;
-uint8 *chewy_ph;
-int16 *chewy_kor;
-
-int16 person_end_phase[MAX_PERSON];
-int16 ani_stand_count[MAX_PERSON];
-
-bool ani_stand_flag[MAX_PERSON];
-
-char io_pal1[7] = {11, 60, 14, 2, 1, 5, 4};
-
-bitclass *bit;
-gedclass *ged;
-text *txt;
-Room *room;
-objekt *obj;
-timer *uhr;
-detail *det;
-effect *fx;
-atdsys *atds;
-flic *flc;
-movclass *mov;
-
-char background[] = { EPISODE1
-                    };
-char backged[] = { EPISODE1_GEP
-                 };
-char fname [80] = {0};
-
-AutoMov auto_mov[MAX_AUTO_MOV];
-
-int16 HowardMov;
-
-Stream *spz_taf_handle;
-taf_seq_info *spz_tinfo;
-int16 SpzDelay;
-int16 spz_spr_nr[MAX_SPZ_PHASEN];
-int16 spz_start;
-int16 spz_akt_id;
-
-int16 spz_p_nr;
-int16 spz_delay[MAX_PERSON];
-int16 spz_count;
-int16 spz_ani[MAX_PERSON];
-int16 SPZ_ANI_PH[][2] = {
+const int16 SPZ_ANI_PH[][2] = {
 	{   0,   12 },
 	{  12,    6 },
 	{  18,    6 },
@@ -272,6 +118,165 @@ int16 SPZ_ANI_PH[][2] = {
 	{ 333,    8 },
 	{ 341,    4 }
 };
+
+
+int16 ani_invent_anf[3] = { 38, 39, 21 };
+int16 ani_invent_delay[3][2] = {
+	{12, 12},
+	{10, 10},
+	{11, 11},
+};
+int16 ani_count[3] = { 38, 39, 21 };
+
+
+int16 pfeil_ani;
+int16 pfeil_delay;
+int16 cur_hide_flag;
+
+int16 auto_p_nr;
+
+int16 timer_nr[MAX_TIMER_OBJ];
+
+int16 zoom_horizont;
+int16 zoom_mov_fak;
+
+int16 auto_obj;
+int16 ged_mov_ebene;
+
+bool cur_display;
+int16 maus_links_click;
+
+int16 person_tmp_hide[MAX_PERSON];
+int16 person_tmp_room[MAX_PERSON];
+uint32 ram_start;
+
+int16 FrameSpeed;
+
+int16 FrameSpeedTmp;
+
+int16 frame_delay_count;
+int16 show_frame;
+
+byte **ablage;
+byte *workpage;
+byte *workptr;
+byte *cur_back;
+byte **ged_mem;
+byte *pal;
+byte *spblende;
+
+byte *screen0;
+int16 scr_width;
+BlendMode fx_blend;
+
+byte *font6x8;
+byte *font8x8;
+int16 fvorx6x8;
+int16 fvorx8x8;
+int16 fvory6x8;
+short fvory8x8;
+
+char *str;
+char **ads_item_ptr;
+
+int16 ads_dia_nr;
+int16 ads_item_anz;
+int16 ads_blk_nr;
+int16 ads_push;
+
+int16 ads_tmp_dsp;
+int8 menu_display;
+int16 menu_lauflicht;
+int16 menu_item;
+int16 menu_item_vorwahl;
+int16 maus_menu_x;
+int16 maus_old_x;
+int16 maus_old_y;
+int16 inventar_nr;
+int16 invent_cur_mode;
+byte *inv_spr[MAX_MOV_OBJ];
+
+bool life_flag;
+int16 life_x;
+int16 life_y;
+int16 life_anz;
+char *life_str;
+int16 life_handler;
+
+void (*SetUpScreenFunc)();
+
+SprInfo spr_info[MAX_PROG_ANI];
+DetectInfo detect;
+maus_info minfo;
+kb_info kbinfo;
+cur_blk curblk;
+cur_ani curani;
+Spieler spieler;
+iog_init ioptr;
+RaumBlk room_blk;
+ObjMov spieler_vector[MAX_PERSON];
+
+MovInfo spieler_mi[MAX_PERSON];
+
+ObjMov auto_mov_vector[MAX_OBJ_MOV];
+MovInfo auto_mov_obj[MAX_OBJ_MOV];
+MovPhasen mov_phasen[MAX_OBJ_MOV];
+MovLine mov_line[MAX_OBJ_MOV][5];
+TimerBlk ani_timer[MAX_TIMER_OBJ];
+room_detail_info *Rdi;
+static_detail_info *Sdi;
+ani_detail_info *Adi;
+Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+CustomInfo Ci;
+GotoPkt gpkt;
+
+taf_info *curtaf;
+taf_info *menutaf;
+taf_seq_info *howard_taf;
+taf_info *chewy;
+uint8 *chewy_ph_anz;
+uint8 *chewy_ph;
+int16 *chewy_kor;
+
+int16 person_end_phase[MAX_PERSON];
+int16 ani_stand_count[MAX_PERSON];
+
+bool ani_stand_flag[MAX_PERSON];
+
+char io_pal1[7] = {11, 60, 14, 2, 1, 5, 4};
+
+bitclass *bit;
+gedclass *ged;
+text *txt;
+Room *room;
+objekt *obj;
+timer *uhr;
+detail *det;
+effect *fx;
+atdsys *atds;
+flic *flc;
+movclass *mov;
+
+char background[] = { EPISODE1 };
+char backged[] = { EPISODE1_GEP };
+char fname [80] = {0};
+
+AutoMov auto_mov[MAX_AUTO_MOV];
+
+int16 HowardMov;
+
+Stream *spz_taf_handle;
+taf_seq_info *spz_tinfo;
+int16 SpzDelay;
+int16 spz_spr_nr[MAX_SPZ_PHASEN];
+int16 spz_start;
+int16 spz_akt_id;
+
+int16 spz_p_nr;
+int16 spz_delay[MAX_PERSON];
+int16 spz_count;
+int16 spz_ani[MAX_PERSON];
 
 int16 AkChewyTaf;
 

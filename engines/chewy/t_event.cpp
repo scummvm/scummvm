@@ -1959,7 +1959,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 			if (!ok) {
 				warning("FIXME - use of random");
 
-				ret = start_ats_wait(rand_no_use[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+				ret = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 			}
 		}
 	}

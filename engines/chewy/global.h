@@ -40,7 +40,9 @@ namespace Chewy {
 
 #define MAX_RAND_NO_USE 6
 
-extern uint8 rand_no_use[MAX_RAND_NO_USE];
+extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
+extern const int16 ANI_INVENT_END[3];
+extern const int16 SPZ_ANI_PH[][2];
 
 extern int16 pfeil_ani;
 extern int16 pfeil_delay;
@@ -116,7 +118,6 @@ extern int16 maus_old_y;
 extern int16 inventar_nr;
 
 extern int16 ani_invent_anf[3];
-extern int16 ani_invent_end[3];
 extern int16 ani_invent_delay[3][2];
 extern int16 ani_count[3];
 extern int16 invent_cur_mode;
@@ -207,7 +208,6 @@ extern taf_seq_info *PersonTaf[MAX_PERSON];
 extern uint8 PersonSpr[MAX_PERSON][8];
 
 extern int16 SpzDelay;
-// FIXME: was FILE*
 extern Stream *spz_taf_handle;
 extern taf_seq_info *spz_tinfo;
 extern int16 spz_spr_nr[MAX_SPZ_PHASEN];
@@ -215,7 +215,6 @@ extern int16 spz_start;
 extern int16 spz_akt_id;
 
 extern int16 spz_count;
-extern int16 SPZ_ANI_PH[][2];
 extern int16 spz_delay[MAX_PERSON];
 extern int16 spz_p_nr;
 extern int16 spz_ani[MAX_PERSON];
