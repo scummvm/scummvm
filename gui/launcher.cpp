@@ -737,8 +737,7 @@ void LauncherDialog::reflowLayout() {
 
 		if (_logo) {
 			removeWidget(_logo);
-			_logo->setNext(nullptr);
-			delete _logo;
+			g_gui.addToTrash(_logo, this);
 			_logo = nullptr;
 		}
 	}
@@ -750,8 +749,7 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);
-			_searchDesc->setNext(nullptr);
-			delete _searchDesc;
+			g_gui.addToTrash(_searchDesc, this);
 			_searchDesc = nullptr;
 		}
 
@@ -762,8 +760,7 @@ void LauncherDialog::reflowLayout() {
 
 		if (_grpChooserDesc) {
 			removeWidget(_grpChooserDesc);
-			_grpChooserDesc->setNext(nullptr);
-			delete _grpChooserDesc;
+			g_gui.addToTrash(_grpChooserDesc, this);
 			_grpChooserDesc = nullptr;
 		}
 
@@ -773,8 +770,7 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchPic) {
 			removeWidget(_searchPic);
-			_searchPic->setNext(nullptr);
-			delete _searchPic;
+			g_gui.addToTrash(_searchPic, this);
 			_searchPic = nullptr;
 		}
 
@@ -783,15 +779,13 @@ void LauncherDialog::reflowLayout() {
 
 		if (_groupPic) {
 			removeWidget(_groupPic);
-			_groupPic->setNext(nullptr);
-			delete _groupPic;
+			g_gui.addToTrash(_groupPic, this);
 			_groupPic = nullptr;
 		}
 	}
 
 	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(nullptr);
-	delete _searchClearButton;
+	g_gui.addToTrash(_searchClearButton, this);
 	_searchClearButton = addClearButton(this, _title + ".SearchClearButton", kSearchClearCmd);
 #endif
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -807,14 +801,16 @@ void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 void LauncherDialog::addLayoutChooserButtons() {
 	if (_listButton) {
+		warning("Marking listButton for removal %p", (void *)_listButton);
 		removeWidget(_listButton);
-		delete _listButton;
+		g_gui.addToTrash(_listButton, this);
 		_listButton = nullptr;
 	}
 
 	if (_gridButton) {
+		warning("Marking gridButton for removal %p", (void *)_gridButton);
 		removeWidget(_gridButton);
-		delete _gridButton;
+		g_gui.addToTrash(_gridButton, this);
 		_gridButton = nullptr;
 	}
 
