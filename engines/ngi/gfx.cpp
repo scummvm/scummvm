@@ -708,15 +708,15 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_type = src._type;
 	_width = src._width;
 	_height = src._height;
-	_surface = src._surface;
 	_flipping = src._flipping;
-	_surface = src._surface;
+	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
+	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_surface->copyFrom(*src._surface);
 }
 
 Bitmap::~Bitmap() {
-	// TODO: This is a hack because Graphics::Surface has terrible resource
-	// management
-	//_surface->free();
+	_surface->free();
+	delete _surface;
 }
 
 void Bitmap::load(Common::ReadStream *s) {

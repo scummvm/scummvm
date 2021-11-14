@@ -161,6 +161,7 @@ void MemoryObject::loadFile(const Common::String &filename) {
 			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.c_str(), _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
+			delete s;
 		} else {
 			// We have no object to read. This is fine
 		}
