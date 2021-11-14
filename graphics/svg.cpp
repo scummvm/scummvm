@@ -44,6 +44,7 @@ SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
 	data[size] = '\0';
 
 	_svg = nsvgParse(data, "px", 96);
+	free(data);
 
 	if (_svg == NULL)
 		error("Cannot parse SVG image");
@@ -67,6 +68,7 @@ SVGBitmap::~SVGBitmap() {
 	nsvgDelete(_svg);
 
 	delete _render;
+	delete _pixelformat;
 }
 
 void SVGBitmap::render(Graphics::ManagedSurface &target, int dw, int dh) {
