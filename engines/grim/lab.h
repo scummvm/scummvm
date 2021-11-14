@@ -48,7 +48,7 @@ class Lab : public Common::Archive {
 public:
 	bool open(const Common::String &filename, bool keepStream = false);
 	Lab();
-	virtual ~Lab();
+	~Lab();
 	// Common::Archive implementation
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;

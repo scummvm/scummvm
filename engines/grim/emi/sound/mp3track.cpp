@@ -53,7 +53,7 @@ public:
 			_done = true;
 	}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		if (_done)
 			return 0;
 
@@ -84,10 +84,10 @@ public:
 	}
 
 	bool hasLooped() const { return _hasLooped; }
-	bool endOfData() const { return _done; }
+	bool endOfData() const override { return _done; }
 
-	bool isStereo() const { return _parent->isStereo(); }
-	int getRate() const { return _parent->getRate(); }
+	bool isStereo() const override { return _parent->isStereo(); }
+	int getRate() const override { return _parent->getRate(); }
 	Audio::Timestamp getPos() const { return _pos; }
 
 private:
