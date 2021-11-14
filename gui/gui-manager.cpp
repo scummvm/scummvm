@@ -132,6 +132,8 @@ void GuiManager::initIconsSet() {
 				_iconsSet.add((*ic)->getName(), dat);
 			}
 		}
+
+		delete iconDir;
 	}
 
 	const char fname[] = "gui-icons.dat";
