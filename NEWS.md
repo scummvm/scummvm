@@ -18,7 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added text to speech for dialogs and object descriptions.
 
  Kyra:
-   - Added support for the Traditional Chinese version of Legend of Kyrandia 3.
+   - Added support for the Traditional Chinese versions of Legend of Kyrandia 1 and 3.
    - Added sound support for the Macintosh version of Legend of Kyrandia.
 
  Supernova:
