@@ -39,8 +39,8 @@ class XARCMember : public Common::ArchiveMember {
 public:
 	XARCMember(const XARCArchive *xarc, Common::ReadStream &stream, uint32 offset);
 
-	Common::SeekableReadStream *createReadStream() const;
-	Common::String getName() const { return _name; }
+	Common::SeekableReadStream *createReadStream() const override;
+	Common::String getName() const override { return _name; }
 	uint32 getLength() const { return _length; }
 	uint32 getOffset() const { return _offset; }
 
