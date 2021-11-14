@@ -411,7 +411,7 @@ Dialog *GuiManager::getTopDialog() const {
 	return _dialogStack.top();
 }
 
-void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
+void GuiManager::addToTrash(GuiObject* object, Dialog *parent) {
 	debug(7, "Adding Gui Object %p to trash", (void *)object);
 	GuiObjectTrashItem t;
 	t.object = object;
@@ -425,6 +425,14 @@ void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
 			}
 		}
 	}
+
+	for (auto it = _guiObjectTrash.begin(); it != _guiObjectTrash.end(); ++it) {
+		if (it->object == object) {
+			debug(6, "The object %p was already scheduled for deletion, skipping", (void *)(*it).object);
+			return;
+		}
+	}
+
 	_guiObjectTrash.push_back(t);
 }
 
