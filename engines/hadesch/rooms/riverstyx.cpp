@@ -58,7 +58,7 @@ public:
 	StyxShadeEndSound(Common::SharedPtr<StyxShadeInternal> internal) {
 		_internal = internal;
 	}
-	void operator()() {
+	void operator()() override {
 		_internal->resume();
 	}
 private:
