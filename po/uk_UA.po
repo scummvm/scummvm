@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-13 23:48+0000\n"
-"PO-Revision-Date: 2021-11-13 18:03+0000\n"
+"PO-Revision-Date: 2021-11-14 12:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -691,14 +691,12 @@ msgid "Select Group by"
 msgstr "Выбрать сортировку по группам"
 
 #: gui/launcher.cpp:198
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group by: "
-msgstr "Групувати по:"
+msgstr "Групувати по: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Оберіть критерій для групування"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
