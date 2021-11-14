@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-14 13:41+0000\n"
+"POT-Creation-Date: 2021-11-14 13:54+0000\n"
 "PO-Revision-Date: 2021-11-14 12:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -857,78 +857,78 @@ msgstr "Виберіть гру:"
 msgid "Group by:"
 msgstr "Групувати по:"
 
-#: gui/launcher.cpp:820 gui/saveload-dialog.cpp:368
+#: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "List view"
 msgstr "Вигляд списку"
 
-#: gui/launcher.cpp:821 gui/saveload-dialog.cpp:369
+#: gui/launcher.cpp:819 gui/saveload-dialog.cpp:369
 msgid "Grid view"
 msgstr "Вигляд сітки"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:973
 msgid "~S~tart"
 msgstr "З~а~пуск"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:973
 msgid "Start selected game"
 msgstr "Запустити вибрану гру"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:976
 msgid "~L~oad..."
 msgstr "~З~авантажити..."
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:976
 msgid "Load saved game for selected game"
 msgstr "Завантажити збережений стан для вибраної гри"
 
-#: gui/launcher.cpp:980
+#: gui/launcher.cpp:978
 msgid "Record..."
 msgstr "Запис..."
 
-#: gui/launcher.cpp:987
+#: gui/launcher.cpp:985
 msgid "~E~dit Game..."
 msgstr "Реда~г~увати гру..."
 
-#: gui/launcher.cpp:987 gui/launcher.cpp:990
+#: gui/launcher.cpp:985 gui/launcher.cpp:988
 msgid "Change game options"
 msgstr "Змінити налаштування гри"
 
-#: gui/launcher.cpp:990
+#: gui/launcher.cpp:988
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "Реда~г~. гру..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1112 gui/launcher.cpp:1299
+#: gui/launcher.cpp:1110 gui/launcher.cpp:1297
 msgid "Unknown Engine"
 msgstr "Невідомий движок"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1130 gui/launcher.cpp:1331
+#: gui/launcher.cpp:1128 gui/launcher.cpp:1329
 msgid "Unknown Publisher"
 msgstr "Невідомий видавник"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1148 gui/launcher.cpp:1317
+#: gui/launcher.cpp:1146 gui/launcher.cpp:1315
 msgid "No Series"
 msgstr "Без серії"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1163 gui/launcher.cpp:1350
+#: gui/launcher.cpp:1161 gui/launcher.cpp:1348
 msgid "Language not detected"
 msgstr "Мова не визначена"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1178 gui/launcher.cpp:1365
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1363
 msgid "Platform not detected"
 msgstr "Платформа не визначена"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:123
+#: gui/launcher.cpp:1374 gui/widgets/groupedlist.cpp:123
 msgid "All"
 msgstr "Усі"
 
