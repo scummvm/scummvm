@@ -46,6 +46,19 @@ class EventsManager;
 class Sound;
 
 class ChewyEngine : public Engine {
+	class CurrentScreen : public Graphics::Surface {
+	public:
+		CurrentScreen() {
+			w = pitch = SCREEN_WIDTH;
+			h = SCREEN_HEIGHT;
+			format = Graphics::PixelFormat::createFormatCLUT8();
+		}
+		CurrentScreen &operator=(byte *p) {
+			setPixels(p);
+			return *this;
+		}
+		byte *getPixels() { return (byte *)Graphics::Surface::getPixels(); }
+	};
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -66,6 +79,8 @@ public:
 	Sound *_sound = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	bool _canLoadSave = false;
+	CurrentScreen _currentScreen;
+
 public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
 	~ChewyEngine() override;

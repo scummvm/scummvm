@@ -28,8 +28,10 @@
 
 namespace Chewy {
 
+#define SCREEN_S g_engine->_currentScreen
+#define SCREEN g_engine->_currentScreen.getPixels()
+
 static byte saved_palette[PALETTE_SIZE];
-static byte *screenP;
 static bool screenHasDefault;
 static byte *screenDefaultP;
 static int spriteWidth;
@@ -38,7 +40,7 @@ static size_t fontWidth, fontHeight;
 int fontFirst, fontLast;
 
 void init_mcga() {
-	screenP = (byte *)g_screen->getPixels();
+	g_engine->_currentScreen = (byte *)g_screen->getPixels();
 	screenHasDefault = false;
 	screenDefaultP = nullptr;
 	spriteWidth = 0;
@@ -66,16 +68,16 @@ void hflyback_end() {
 
 void set_pointer(byte *ptr) {
 	if (ptr) {
-		screenP = ptr;
+		g_engine->_currentScreen = ptr;
 	} else if (screenHasDefault) {
-		screenP = screenDefaultP;
+		g_engine->_currentScreen = screenDefaultP;
 	} else {
-		screenP = (byte *)g_screen->getPixels();
+		g_engine->_currentScreen = (byte *)g_screen->getPixels();
 	}
 }
 
 byte *get_dispoff() {
-	return screenP;
+	return SCREEN;
 }
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
@@ -119,34 +121,22 @@ void set_palpart(byte *palette, int16 startcol, int16 anz) {
 }
 
 void clear_mcga() {
-	if (screenP == (byte *)g_screen->getPixels())
+	if (SCREEN == (byte *)g_screen->getPixels())
 		g_screen->clear();
 	else
-		Common::fill(screenP, screenP + SCREEN_WIDTH * SCREEN_HEIGHT, 0);
+		Common::fill(SCREEN, SCREEN + SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
 
 void setpixel_mcga(int16 x, int16 y, int16 farbe) {
 	line_mcga(x, y, x, y, farbe);
 }
 
-static Graphics::Surface getScreen() {
-	Graphics::Surface s;
-	s.format = Graphics::PixelFormat::createFormatCLUT8();
-	s.w = s.pitch = SCREEN_WIDTH;
-	s.h = SCREEN_HEIGHT;
-	s.setPixels(screenP);
-	return s;
-}
-
 uint8 getpix(int16 x, int16 y) {
-	Graphics::Surface s = getScreen();
-	byte *pixel = (byte *)s.getBasePtr(x, y);
-	return *pixel;
+	return *(byte *)SCREEN_S.getBasePtr(x, y);
 }
 
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	Graphics::Surface s = getScreen();
-	s.drawLine(x1, y1, x2, y2, farbe);
+	return SCREEN_S.drawLine(x1, y1, x2, y2, farbe);
 }
 
 void mem2mcga(const byte *ptr) {
@@ -156,7 +146,7 @@ void mem2mcga(const byte *ptr) {
 }
 
 void mem2mcga_masked(const byte *ptr, int16 maske) {
-	byte *destP = screenP;
+	byte *destP = SCREEN;
 	byte pixel;
 
 	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr, ++destP) {
@@ -167,7 +157,7 @@ void mem2mcga_masked(const byte *ptr, int16 maske) {
 }
 
 void mcga2mem(byte *ptr) {
-	const byte *srcP = screenP;
+	const byte *srcP = SCREEN;
 	*((uint16 *)ptr) = SCREEN_WIDTH;
 	*((uint16 *)(ptr + 2)) = SCREEN_HEIGHT;
 
@@ -191,7 +181,7 @@ void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
 void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
 	int width = *((const int16 *)sptr);
 	sptr += y * width + x;
-	byte *destP = screenP;
+	byte *destP = SCREEN;
 
 	for (int row = 0; row < SCREEN_HEIGHT;
 			++row, sptr += width, destP += SCREEN_WIDTH) {
@@ -209,10 +199,10 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
 	sptr += 2;
 
 	if (scrWidth == 0) {
-		scrP = screenP + y * SCREEN_WIDTH + x;
+		scrP = SCREEN + y * SCREEN_WIDTH + x;
 		pitch = SCREEN_WIDTH;
 	} else {
-		scrP = screenP + y * scrWidth + x;
+		scrP = SCREEN + y * scrWidth + x;
 		pitch = scrWidth;
 	}
 
@@ -234,10 +224,10 @@ void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrWidth) {
 
 	if (width >= 1 && height >= 1) {
 		if (scrWidth == 0) {
-			scrP = screenP + y * SCREEN_WIDTH + x;
+			scrP = SCREEN + y * SCREEN_WIDTH + x;
 			pitch = SCREEN_WIDTH;
 		} else {
-			scrP = screenP + y * scrWidth + x;
+			scrP = SCREEN + y * scrWidth + x;
 			pitch = scrWidth;
 		}
 
@@ -283,7 +273,7 @@ static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height,
 	if (height < 1)
 		return false;
 
-	destP = screenP + pitch * y + x;
+	destP = SCREEN + pitch * y + x;
 	return true;
 }
 
@@ -341,7 +331,7 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 
 	if (scrWidth == 0)
 		scrWidth = SCREEN_WIDTH;
-	byte *destP = screenP + (y * scrWidth) + x;
+	byte *destP = SCREEN + (y * scrWidth) + x;
 
 	for (size_t yp = 0; yp < fontHeight; ++yp, destP += scrWidth) {
 		byte *destLineP = destP;
@@ -359,7 +349,7 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 		}
 	}
 
-	if (screenP == (byte *)g_screen->getPixels())
+	if (SCREEN == (byte *)g_screen->getPixels())
 		g_screen->addDirtyRect(Common::Rect(
 			x, y, x + fontWidth, y + fontHeight));
 }
@@ -497,9 +487,9 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 
 	byte *scrP;
 	if (scrWidth == 0) {
-		scrP = screenP + y * SCREEN_WIDTH + x;
+		scrP = SCREEN + y * SCREEN_WIDTH + x;
 	} else {
-		scrP = screenP + y * scrWidth + x;
+		scrP = SCREEN + y * scrWidth + x;
 	}
 
 	clip(source, scrP, x, y);
