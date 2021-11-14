@@ -184,7 +184,7 @@ class ArthurOxygen50Action : public AIPlayMessageAction {
 public:
 	ArthurOxygen50Action();
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 };
 
 ArthurOxygen50Action::ArthurOxygen50Action() : AIPlayMessageAction("Images/AI/Mars/XMMAZB1", false, kWarningInterruption) {
@@ -203,7 +203,7 @@ class ArthurOxygen25Action : public AIPlayMessageAction {
 public:
 	ArthurOxygen25Action();
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 };
 
 ArthurOxygen25Action::ArthurOxygen25Action() : AIPlayMessageAction("Images/AI/Mars/XMMAZB2", false, kWarningInterruption) {
@@ -226,7 +226,7 @@ class ArthurOxygen5Action : public AIPlayMessageAction {
 public:
 	ArthurOxygen5Action();
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 };
 
 ArthurOxygen5Action::ArthurOxygen5Action() : AIPlayMessageAction("Images/AI/Mars/XMMAZB3", false, kWarningInterruption) {
