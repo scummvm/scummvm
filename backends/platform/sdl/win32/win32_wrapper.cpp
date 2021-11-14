@@ -24,8 +24,8 @@
 #include <windows.h>
 #include <shellapi.h> // for CommandLineToArgvW()
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
- // required for SHGetSpecialFolderPath in shlobj.h
-#define _WIN32_IE 0x400
+ // required for SHGetSpecialFolderPath and SHGFP_TYPE_CURRENT in shlobj.h
+#define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
 #include <tchar.h>

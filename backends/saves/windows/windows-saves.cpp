@@ -25,11 +25,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
- // required for SHGFP_TYPE_CURRENT in shlobj.h
-#define _WIN32_IE 0x500
-#endif
-#include <shlobj.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
