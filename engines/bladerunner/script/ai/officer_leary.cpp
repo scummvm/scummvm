@@ -1215,15 +1215,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 11;
 			_animationNext = kModelAnimationOfficerLearyCalmExplainTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		}
-		else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 11;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1278,14 +1277,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 12:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 12;
 			_animationNext = kModelAnimationOfficerLearyIndicateTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 12;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1293,14 +1292,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 13:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 13;
 			_animationNext = kModelAnimationOfficerLearyLongerExplainTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 13;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1308,14 +1307,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 14:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 14;
 			_animationNext = kModelAnimationOfficerLearyWarnOrThreatenTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 14;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1323,14 +1322,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 15:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 15;
 			_animationNext = kModelAnimationOfficerLearyUpsetOrCommandTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 15;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1338,14 +1337,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 16:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 16;
 			_animationNext = kModelAnimationOfficerLearyMoreUpsetTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 16;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1353,14 +1352,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 17:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 17;
 			_animationNext = kModelAnimationOfficerLearyUrgeOrQuestionTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 17;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1368,14 +1367,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 18:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 18;
 			_animationNext = kModelAnimationOfficerLearyHandsOnWaistTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 18;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1383,14 +1382,14 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 19:
-		if (_animationState == 1) {
+		if (_animationState == 0 || _animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 19;
 			_animationNext = kModelAnimationOfficerLearyScratchHeadApologyTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
-		} else if (_animationState > 19) {
+		} else if (_animationState < 11 || _animationState > 19) {
 			_animationState = 19;
 			_animationFrame = 0;
 			_idleModeRequestedWhileInTalkingState = false;
@@ -1398,7 +1397,15 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case 21:
-		if (_animationState == 24) {
+		// NOTE
+		// Based on the exported c file from the IDB:
+		// The *else* clause here essentially was:
+		// if (_animationState  < 21 || _animationState > 24 || (_animationState != 21 && _animationState != 24)) { }
+		// which can essentially be reduced to:
+		// if (_animationState != 21 && _animationState != 24) { }
+		// TODO maybe check dissasm code again to make sure that this is the actual intent,
+		//      since it seems that the final sub-clause overrides the previous two sub-clauses.
+		if (_animationState == 21 || _animationState == 24) {
 			if (Random_Query(0, 1)) {
 				_animationState = 25;
 			} else {
@@ -1453,7 +1460,15 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeDie:
-		if (_animationState == 24) {
+		// NOTE
+		// Based on the exported c file from the IDB:
+		// The *else* clause here essentially was:
+		// if (_animationState  < 21 || _animationState > 24 || (_animationState != 21 && _animationState != 22 && _animationState != 24)) { }
+		// which can essentially be reduced to:
+		// if (_animationState != 21 && _animationState != 22 && _animationState != 24) { }
+		// TODO maybe check dissasm code again to make sure that this is the actual intent,
+		//      since it seems that the final sub-clause overrides the previous two sub-clauses.
+		if (_animationState == 21 || _animationState == 22 || _animationState == 24) {
 			_animationState = 28;
 			_animationFrame = 0;
 		} else {
