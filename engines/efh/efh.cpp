@@ -70,7 +70,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_platform = Common::kPlatformUnknown;
 	_mainSurface = nullptr;
 
-	_vgaGraphicsStruct = new EfhGraphicsStruct(_vgaLineBuffer, 0, 0, 320, 200);
+	_vgaGraphicsStruct1 = new EfhGraphicsStruct(_vgaLineBuffer, 0, 0, 320, 200);
+	_vgaGraphicsStruct2 = new EfhGraphicsStruct();
 	
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
@@ -113,13 +114,48 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	for (int i = 0; i < 20; ++i)
 		_portraitSubFilesArray[i] = nullptr;
 
+	for (int i = 0; i < 100; ++i)
+		_imp1PtrArray[i] = nullptr;
+
+	for (int i = 0; i < 432; ++i)
+		_imp2PtrArray[i] = nullptr;
+
 	_unkAnimRelatedIndex = -1;
+
+	_initRect = Common::Rect(0, 0, 0, 0);
+	_engineInitPending = true;
+	_unkVideoRelatedWord1 = 0x0E;
+	_protectionPassed = false;
+	_fullPlaceId = 0xFF;
+	_guessAnimationAmount = 9;
+	_largeMapFlag = 0xFFFF;
+	_teamCharIdArray = 0;
+	_charId = -1;
+	_word2C8B8 = -1;
+
+	for (int i = 0; i < 3; ++i) {
+		_teamCharStatus[i]._status = 0;
+		_teamCharStatus[i]._duration = 0;
+		_unkArray2C8AA[i] = 0;
+	}
+
+	_unkArray2C8AA[2] = 1;
+	_teamSize = 1;
+	_word2C872 = 0;
+	_imageSetSubFilesIdx = 144;
+
+	_mapPosX = _mapPosY = 31;
+	_oldMapPosX = _oldMapPosY = 31;
+	_techDataId_MapPosX = _techDataId_MapPosY = 31;
+
+	_lastMainPlaceId = 0;
 }
 
 EfhEngine::~EfhEngine() {
 	delete _rnd;
 	delete _graphicsStruct;
-	delete _vgaGraphicsStruct;
+	delete _vgaGraphicsStruct1;
+	delete _vgaGraphicsStruct2;
 }
 
 bool EfhEngine::hasFeature(EngineFeature f) const {
@@ -154,9 +190,12 @@ Common::Error EfhEngine::run() {
 	CursorMan.showMouse(true);
 */
 	initEngine();
-	sub15150(-1);
+	sub15150(true);
 	sub12A7F();
 	displayLowStatusScreen(-1);
+
+	if (!_protectionPassed)
+		return Common::kNoError;
 
 	warning("STUB - Main loop");
 
@@ -224,6 +263,54 @@ void EfhEngine::loadAnimImageSet() {
 	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
 }
 
+void EfhEngine::loadHistory() {
+	Common::String fileName = "gendata\\history";
+	readFileToBuffer(fileName, _history);
+}
+
+void EfhEngine::loadTechMapImp(int16 fileId) {
+	if (fileId == 0xFF)
+		return;
+
+	_techId = fileId;
+	findMapFile(_techId);
+
+	Common::String fileName = Common::String::format("maps\\tech.%d", _techId);
+	readFileToBuffer(fileName, _hiResImageBuf);
+	uncompressBuffer(_hiResImageBuf, _techData);
+
+	fileName = Common::String::format("maps\\map.%d", _techId);
+	readFileToBuffer(fileName, _hiResImageBuf);
+	uncompressBuffer(_hiResImageBuf, _map);
+
+	loadImageSetToTileBank(1, _mapBitmapRef[0]);
+	loadImageSetToTileBank(1, _mapBitmapRef[1]);
+
+	initMapMonsters();
+	readImpFile(_techId, true);
+	displayAnimFrames(0xFE, false);
+	
+}
+
+void EfhEngine::loadPlacesFile(uint16 fullPlaceId, int16 unused, bool forceReloadFl) {
+	//TODO : Remove unused parameter when all the calls are implemented
+	if (fullPlaceId == 0xFF)
+		return;
+
+	findMapFile(_techId);
+	_fullPlaceId = fullPlaceId;
+	uint16 minPlace = _lastMainPlaceId * 20;
+	uint16 maxPlace = minPlace + 19;
+
+	if (_fullPlaceId < minPlace || _fullPlaceId > maxPlace || forceReloadFl) {
+		_lastMainPlaceId = _fullPlaceId / 20;
+		Common::String fileName = Common::String::format("maps\\places.%d", _lastMainPlaceId);
+		readFileToBuffer(fileName, _hiResImageBuf);
+		uncompressBuffer(_hiResImageBuf, _places);
+	}
+	copyCurrentPlaceToBuffer(_fullPlaceId / 20);
+}
+
 void EfhEngine::drawUnknownMenuBox() {
 	warning("STUB - drawUnknownMenuBox");
 }
@@ -270,6 +357,40 @@ void EfhEngine::loadNPCS() {
 	readFileToBuffer(fileName, _npcBuf);
 }
 
+void EfhEngine::setDefaultNoteDuration() {
+	// Original implementation is based on the int1C, which is triggered at 18.2065Hz.
+	// Every 4 times, it sets a flag (thus, approx every 220ms)
+	// The function was checking the keyboard in a loop, incrementing a counter and setting the last character read
+	// The "_defaultNoteDuration" was then set to 7 times this counter
+	//
+	// No implementation required in ScummVM
+}
+
+Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
+	warning("STUB: playSong");
+	return Common::KEYCODE_INVALID;
+}
+
+void EfhEngine::decryptImpFile(bool techMapFl) {
+	warning("STUB - decryptImpFile");	
+}
+
+void EfhEngine::readImpFile(int16 id, bool techMapFl) {
+	Common::String fileName = Common::String::format("imp\\imp.%d", id);
+
+	if (techMapFl)
+		readFileToBuffer(fileName, _imp1);
+	else
+		readFileToBuffer(fileName, _imp2);
+
+	decryptImpFile(techMapFl);
+}
+
+Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
+	warning("STUB - getLastCharAfterAnimCount");
+	return Common::KEYCODE_INVALID;
+}
+
 void EfhEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -284,7 +405,7 @@ void EfhEngine::initEngine() {
 	_videoMode = 2; // In the original, 2 = VGA/MCGA, EGA = 4, Tandy = 6, cga = 8.
 	memset(_bufferCharBM, 0, sizeof(_bufferCharBM));
 	_graphicsStruct = new EfhGraphicsStruct;
-	_graphicsStruct->copy(_vgaGraphicsStruct);
+	_graphicsStruct->copy(_vgaGraphicsStruct1);
 
 	for (int i = 0; i < 3; ++i) {
 		memset(_tileBank[i], 0, sizeof(_tileBank[i]));
@@ -314,7 +435,10 @@ void EfhEngine::initEngine() {
 	_mapMonstersPtr = &_map[902];
 	_mapGameMapPtr = &_map[2758];
 
-	_graphicsStruct->_shiftValue = 0x2000;
+	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
+	_vgaGraphicsStruct2->_shiftValue = 0x2000;
+
+	_graphicsStruct->copy(_vgaGraphicsStruct2);
 
 	_defaultBoxColor = 7;
 
@@ -480,7 +604,90 @@ void EfhEngine::initEngine() {
 	readItems();
 	loadNPCS();
 
-	warning("STUB - initEngine");
+	// Load picture room with girlfriend
+	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	fileName = "gendata\\titlsong"; 
+	readFileToBuffer(fileName, _titleSong);
+	setDefaultNoteDuration();
+	Common::KeyCode lastInput = playSong(_titleSong);
+
+	if (lastInput != Common::KEYCODE_ESCAPE) {
+		sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
+		displayFctFullScreen();
+		sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
+
+		// Load animations on previous picture with GF
+		loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+		readImpFile(100, 0);
+		lastInput = getLastCharAfterAnimCount(8);
+
+		if (lastInput != Common::KEYCODE_ESCAPE) {
+			sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+			sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
+			displayFctFullScreen();
+			sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+			sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
+			lastInput = getLastCharAfterAnimCount(80);
+			if (lastInput != Common::KEYCODE_ESCAPE) {
+				sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16, _paletteTransformationConstant);
+				sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+				sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
+				displayFctFullScreen();
+				sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16, _paletteTransformationConstant);
+				sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+				sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
+				lastInput = getLastCharAfterAnimCount(80);
+				if (lastInput != Common::KEYCODE_ESCAPE) {
+					sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16, _paletteTransformationConstant);
+					sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+					sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
+					displayFctFullScreen();
+					sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16, _paletteTransformationConstant);
+					sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+					sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
+					lastInput = getLastCharAfterAnimCount(80);
+					if (lastInput != Common::KEYCODE_ESCAPE) {
+						sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+						sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
+						displayFctFullScreen();
+						sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+						sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
+						lastInput = getLastCharAfterAnimCount(80);
+						if (lastInput != Common::KEYCODE_ESCAPE) {
+							sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+							sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
+							displayFctFullScreen();
+							sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+							sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
+							lastInput = getLastCharAfterAnimCount(80);
+							if (lastInput != Common::KEYCODE_ESCAPE) {
+								sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+								sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
+								displayFctFullScreen();
+								sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
+								sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
+								lastInput = getLastCharAfterAnimCount(80);
+							}
+						}
+					}
+				}
+			}
+		}		
+	}
+
+	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	readImpFile(99, 0);
+	_word31E9E = 0xFFFF;
+	restoreAnimImageSetId();
+
+	// Save int 24h, set new int24 to handle fatal failure
+	checkProtection();
+	loadGame();
+	_engineInitPending = false;
+	}
+
+void EfhEngine::initMapMonsters() {
+	warning("STUB - initMapMonsters");
 }
 
 void EfhEngine::saveAnimImageSetId() {
@@ -488,7 +695,7 @@ void EfhEngine::saveAnimImageSetId() {
 	_animImageSetId = 255;
 }
 
-void EfhEngine::sub15150(int i) {
+void EfhEngine::sub15150(bool flag) {
 	warning("STUB - sub15150");
 }
 
@@ -511,11 +718,21 @@ void EfhEngine::displayFctFullScreen() {
 
 void EfhEngine::displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY) {
 	warning("STUB - displayBitmapAtPos");
-	_graphicsStruct->copy(_vgaGraphicsStruct);
+	_graphicsStruct->copy(_vgaGraphicsStruct2);
+	_initRect = Common::Rect(minX, minY, maxX, maxY);
+	displayBitmap(_vgaGraphicsStruct2, _vgaGraphicsStruct1, _initRect, minX, minY);
+}
+
+void EfhEngine::displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
+	warning("STUB - displayBitmap");
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 	warning("STUB - sub24D92");
+}
+
+void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
+	warning("STUB - sub133E5");
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
@@ -533,6 +750,87 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 
 	int16 ptrIndex = bankId * 72;
 	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+}
+
+void EfhEngine::restoreAnimImageSetId() {
+	_animImageSetId = _oldAnimImageSetId;
+}
+
+void EfhEngine::checkProtection() {
+	bool successfulCheck = false;
+	uint protectionItemId = _rnd->getRandomNumber(5);
+	uint ProtectionArrayId = _rnd->getRandomNumber(14);
+	_unkVideoRelatedWord1 = 0xE;
+
+	//CHECKME : Well, yeah, some code may be missing there. Who knows.
+	
+	_protectionPassed = true;
+	sub15150(true);	
+}
+
+void EfhEngine::loadGame() {
+	// The original used a loop to check for the presence of the savegame on the current floppy.
+	// When the savegame wasn't found, it was displaying a screen asking for Disk 1 and was setting a flag used
+	// to call a function after loading right before returning.
+	//
+	// The savegame is used to initialize the engine, so this part is reimplemented.
+	// The check for existence is replaced by an error.
+	//
+	// Fun fact : it was therefore expected to overwrite the original savegame on the floppy each time you saved. What could possibly go wrong?
+
+	Common::String fileName = "gendata\\savegame";
+	Common::File f;
+
+	if (!f.open(fileName))
+		error("Missing file %s", fileName.c_str());
+
+	_techId = f.readSint16LE();
+	_fullPlaceId = f.readUint16LE();
+	_guessAnimationAmount = f.readSint16LE();
+	_largeMapFlag = f.readUint16LE();
+	_teamCharIdArray = f.readSint16LE();
+	_charId = f.readSint16LE();
+	_word2C8B8 = f.readSint16LE();
+
+	for (int i = 0; i < 3; ++i) {
+		_teamCharStatus[i]._status = f.readSint16LE();
+		_teamCharStatus[i]._duration = f.readSint16LE();
+	}
+
+	_teamSize = f.readSint16LE();
+
+	for (int i = 0; i < 3; ++i) {
+		_unkArray2C8AA[i] = f.readSint16LE();		
+	}
+
+	_word2C872 = f.readSint16LE();
+
+	_imageSetSubFilesIdx = f.readSint16LE();
+	_mapPosX = f.readSint16LE();
+	_mapPosY = f.readSint16LE();
+	_techDataId_MapPosX = f.readSint16LE();
+	_techDataId_MapPosY = f.readSint16LE();
+
+	f.close();
+
+	_oldMapPosX = _mapPosX;
+	_oldMapPosY = _mapPosY;
+	_unkRelatedToAnimImageSetId = 0;
+	loadNPCS();
+
+	loadHistory();
+	loadTechMapImp(_techId);
+
+	_lastMainPlaceId = 0xFFFF;
+	loadPlacesFile(_fullPlaceId, 0, true);
+}
+
+void EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
+	warning("TODO: uncompressBuffer");
+}
+
+void EfhEngine::copyCurrentPlaceToBuffer(int id) {
+	warning("STUB - copyCurrentPlaceToBuffer");
 }
 
 void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation) {
