@@ -50,8 +50,8 @@ class NodeTransformAddHotspots : public NodeTransform {
 public :
 	NodeTransformAddHotspots();
 
-	void read(Common::SeekableReadStream *file);
-	void apply(NodePtr &node);
+	void read(Common::SeekableReadStream *file) override;
+	void apply(NodePtr &node) override;
 
 private:
 	int32 _zipBitIndex;
