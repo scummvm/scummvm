@@ -118,6 +118,8 @@ void KyraEngine_LoK::seq_intro() {
 		}
 	}
 
+	_screen->setFont(_defaultFont);
+
 	_text->setTalkCoords(136);
 	delay(30 * _tickLength);
 	_seq->setCopyViewOffs(false);
