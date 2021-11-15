@@ -47,16 +47,15 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSavesUseExtendedFormat) ||
+		(f == kSimpleSavesNames) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
@@ -76,21 +75,8 @@ Common::Error ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	return Common::kNoError;
 }
 
-SaveStateList ChewyMetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList;
-
-	return saveList;
-}
-
 int ChewyMetaEngine::getMaximumSaveSlot() const {
 	return 999;
-}
-
-void ChewyMetaEngine::removeSaveState(const char *target, int slot) const {
-}
-
-SaveStateDescriptor ChewyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CHEWY)
