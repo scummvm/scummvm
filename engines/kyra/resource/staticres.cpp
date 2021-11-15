@@ -266,8 +266,8 @@ bool StaticResource::init() {
 		{ kLoLCompassData, proc(loadDummy), proc(freeDummy) },
 		{ kLoLFlightShpData, proc(loadDummy), proc(freeDummy) },
 #endif
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 		{ kRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 		{ kRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
 #endif
 #ifdef ENABLE_LOL
@@ -324,6 +324,10 @@ const HoFSeqItemAnimData *StaticResource::loadHoFSeqItemAnimData(int id, int &en
 
 const ItemAnimDefinition *StaticResource::loadItemAnimDefinition(int id, int &entries) {
 	return (const ItemAnimDefinition *)getData(id, k2ItemAnimDefinition, entries);
+}
+
+const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
+	return (const uint16 *)getData(id, kRawDataBe16, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -636,6 +640,18 @@ bool StaticResource::loadItemAnimDefinition(Common::SeekableReadStream &stream, 
 	return true;
 }
 
+bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() >> 1;
+
+	uint16 *r = new uint16[size];
+
+	for (int i = 0; i < size; i++)
+		r[i] = stream.readUint16BE();
+
+	ptr = r;
+	return true;
+}
+
 void StaticResource::freeDummy(void *&ptr, int &size) {
 }
 
@@ -711,6 +727,13 @@ void StaticResource::freeItemAnimDefinition(void *&ptr, int &size) {
 		delete[] d[i].frames;
 	delete[] d;
 	ptr = nullptr;
+	size = 0;
+}
+
+void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
+	uint16 *data = (uint16 *)ptr;
+	delete[] data;
+	ptr = 0;
 	size = 0;
 }
 

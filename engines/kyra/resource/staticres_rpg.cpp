@@ -26,24 +26,8 @@
 namespace Kyra {
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
-	return (const uint16 *)getData(id, kRawDataBe16, entries);
-}
-
 const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
 	return (const uint32 *)getData(id, kRawDataBe32, entries);
-}
-
-bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
-	size = stream.size() >> 1;
-
-	uint16 *r = new uint16[size];
-
-	for (int i = 0; i < size; i++)
-		r[i] = stream.readUint16BE();
-
-	ptr = r;
-	return true;
 }
 
 bool StaticResource::loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -56,13 +40,6 @@ bool StaticResource::loadRawDataBe32(Common::SeekableReadStream &stream, void *&
 
 	ptr = r;
 	return true;
-}
-
-void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
-	uint16 *data = (uint16 *)ptr;
-	delete[] data;
-	ptr = 0;
-	size = 0;
 }
 
 void StaticResource::freeRawDataBe32(void *&ptr, int &size) {

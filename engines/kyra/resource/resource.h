@@ -1252,8 +1252,8 @@ public:
 	const HoFSeqData *loadHoFSequenceData(int id, int &entries);
 	const HoFSeqItemAnimData *loadHoFSeqItemAnimData(int id, int &entries);
 	const ItemAnimDefinition *loadItemAnimDefinition(int id, int &entries);
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	const uint16 *loadRawDataBe16(int id, int &entries);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	const uint32 *loadRawDataBe32(int id, int &entries);
 #endif // (ENABLE_EOB || ENABLE_LOL)
 #ifdef ENABLE_LOL
@@ -1295,8 +1295,8 @@ private:
 	bool loadHoFSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadHoFSeqItemAnimData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadItemAnimDefinition(Common::SeekableReadStream &stream, void *&ptr, int &size);
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	bool loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #endif // (ENABLE_LOL || ENABLE_EOB)
 #ifdef ENABLE_LOL
@@ -1321,8 +1321,8 @@ private:
 	void freeHoFSequenceData(void *&ptr, int &size);
 	void freeHoFSeqItemAnimData(void *&ptr, int &size);
 	void freeItemAnimDefinition(void *&ptr, int &size);
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	void freeRawDataBe16(void *&ptr, int &size);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	void freeRawDataBe32(void *&ptr, int &size);
 #endif // (ENABLE_EOB || ENABLE_LOL)
 #ifdef ENABLE_LOL
