@@ -119,6 +119,7 @@ String parseGameGUIOptions(const String &str) {
 				c_end = str.size();
 			if (str.substr(ii, c_end - ii).equals((g_gameOptions[i].desc)))
 				res += g_gameOptions[i].option;
+			ii = c_end;
 		}
 	}
 
