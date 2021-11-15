@@ -1088,36 +1088,37 @@ void Inter_v2::o2_printText(OpFuncParams &params) {
 	}
 
 	do {
-		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
+		for (i = 0; i < 59 && (_vm->_game->_script->peekChar() != '.') &&
 				(_vm->_game->_script->peekByte() != 200); i++) {
 			buf[i] = _vm->_game->_script->readChar();
 		}
 
+		const int limit = MAX(60 - i, 0);
 		if (_vm->_game->_script->peekByte() != 200) {
 			_vm->_game->_script->skip(1);
 			switch (_vm->_game->_script->peekByte()) {
 			case TYPE_VAR_INT8:
 			case TYPE_ARRAY_INT8:
-				sprintf(buf + i, "%d",
+				snprintf(buf + i, limit, "%d",
 						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT16:
 			case TYPE_VAR_INT32_AS_INT16:
 			case TYPE_ARRAY_INT16:
-				sprintf(buf + i, "%d",
+				snprintf(buf + i, limit, "%d",
 						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
-				sprintf(buf + i, "%d",
+				snprintf(buf + i, limit, "%d",
 						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
-				sprintf(buf + i, "%s",
+				snprintf(buf + i, limit, "%s",
 						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 
