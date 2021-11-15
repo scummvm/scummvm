@@ -484,6 +484,8 @@ void AsylumEngine::processDelayedEvents() {
 		_sound->stopMusic();
 		_sound->stopAll();
 
+		resetFlags();
+
 		// Switch the scene
 		switchScene(sceneIndex);
 	}

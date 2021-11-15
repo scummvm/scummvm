@@ -773,7 +773,6 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 
 	_vm->_delayedSceneIndex = index;
 	_vm->_puzzles->reset();
-	_vm->resetFlags();
 
 	getMenu()->setGameStarted();
 
