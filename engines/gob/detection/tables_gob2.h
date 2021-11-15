@@ -254,6 +254,20 @@
 	kFeaturesCD,
 	0, 0, 0
 },
+{ // Hebrew fan translation
+	{
+		"gob2cd",
+		"v2.01",
+		AD_ENTRY1s("intro.stk", "b768039f8d0a12c39ca28dcd33d584ba", 4696209),
+		HE_ISR,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob2,
+	kFeaturesCD,
+	0, 0, 0
+},
 { // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
