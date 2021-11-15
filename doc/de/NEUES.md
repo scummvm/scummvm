@@ -8,6 +8,7 @@ Programmcodes finden Sie auf Englisch unter:
    - ScummVM benötigt nun C++11, um gebaut werden zu können.
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
+   - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
 
  AGOS:
    - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
@@ -33,6 +34,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
+
+ macOS-Port:
+   - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
 
  Windows-Portierung:
    - "Portabler Modus" hinzugefügt, der die von ScummVM erstellten Dateien (Spielstände, Screenshots...)
