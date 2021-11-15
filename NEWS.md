@@ -7,6 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now ScummVM requires C++11 for building.
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
+   - Implemented Icon view in GUI [GSoC task]
 
  AGOS:
    - Fixed old Waxworks AdLib music regression.
@@ -32,7 +33,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash on startup loading constants from xeen.ccs.
    - Fix spell selection aborting when characters were switched.
    - Fixed some bad memory accesses.
-   
+
+ macOS port:
+   - Added support for displaying OSD messages on the Touch Bar.
+
  Windows port:
    - Added "Portable Mode" in which the executable's directory is used to store
      application files if a scummvm.ini file is present, instead of the user's
