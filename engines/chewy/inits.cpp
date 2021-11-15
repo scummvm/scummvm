@@ -99,7 +99,7 @@ void standard_init() {
 	ablage = room->get_ablage();
 	ged_mem = room->get_ged_mem();
 
-	zoom_horizont = 140;
+	_G(zoom_horizont) = 140;
 	pal [765] = 63;
 	pal [766] = 63;
 	pal [767] = 63;
@@ -119,10 +119,10 @@ void var_init() {
 	Adi = &Rdi->Ainfo[0];
 
 	life_handler = false;
-	auto_p_nr = 0;
+	_G(auto_p_nr) = 0;
 	menu_item = 0;
 	inventar_nr = 0;
-	ged_mov_ebene = 1;
+	_G(ged_mov_ebene) = 1;
 	new_game();
 	spieler.MainMenuY = MENU_Y;
 	spieler.DispFlag = true;
@@ -173,8 +173,8 @@ void var_init() {
 	spieler.DisplayText = true;
 	CurrentSong = -1;
 	SetUpScreenFunc = nullptr;
-	pfeil_delay = 0;
-	pfeil_ani = 0;
+	_G(pfeil_delay) = 0;
+	_G(pfeil_ani) = 0;
 	timer_action_ctr = 0;
 	flags.CursorStatus = true;
 	savegameFlag = false;

@@ -120,31 +120,15 @@ const int16 SPZ_ANI_PH[][2] = {
 };
 
 
-int16 ani_invent_anf[3] = { 38, 39, 21 };
-int16 ani_invent_delay[3][2] = {
-	{12, 12},
-	{10, 10},
-	{11, 11},
-};
-int16 ani_count[3] = { 38, 39, 21 };
+Globals *g_globals = nullptr;
 
+Globals::Globals() {
+	g_globals = this;
+}
 
-int16 pfeil_ani;
-int16 pfeil_delay;
-int16 cur_hide_flag;
-
-int16 auto_p_nr;
-
-int16 timer_nr[MAX_TIMER_OBJ];
-
-int16 zoom_horizont;
-int16 zoom_mov_fak;
-
-int16 auto_obj;
-int16 ged_mov_ebene;
-
-bool cur_display;
-int16 maus_links_click;
+Globals::~Globals() {
+	g_globals = nullptr;
+}
 
 int16 person_tmp_hide[MAX_PERSON];
 int16 person_tmp_room[MAX_PERSON];

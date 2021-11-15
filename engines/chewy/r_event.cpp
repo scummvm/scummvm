@@ -174,15 +174,15 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 11:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r11_bork_zwinkert();
 		break;
 
 	case 12:
-		if (t_nr == timer_nr[0]) {
+		if (t_nr == _G(timer_nr)[0]) {
 			if (!is_chewy_busy())
 				r12_init_bork();
-		} else if (t_nr == timer_nr[1]) {
+		} else if (t_nr == _G(timer_nr)[1]) {
 			if (spieler.R12TransOn) {
 				spieler.R12TransOn = false;
 				start_aad_wait(30, -1);
@@ -215,9 +215,9 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 21:
-		if (t_nr == timer_nr[0]) {
+		if (t_nr == _G(timer_nr)[0]) {
 			r21_restart_spinne2();
-		} else if (t_nr == timer_nr[2])
+		} else if (t_nr == _G(timer_nr)[2])
 			r21_chewy_kolli();
 		break;
 
@@ -228,26 +228,26 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 40:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			spieler.R40PoliceStart = true;
 		else
 			default_flag = true;
 		break;
 
 	case 48:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r48_frage();
 		else
 			default_flag = true;
 		break;
 
 	case 49:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r49_calc_boy_ani();
 		break;
 
 	case 50:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r50_calc_wasser();
 		default_flag = true;
 		break;
@@ -260,14 +260,14 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 56:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r56_start_flug();
 		else
 			default_flag = true;
 		break;
 
 	case 68:
-		if (t_nr == timer_nr[0])
+		if (t_nr == _G(timer_nr)[0])
 			r68_calc_diva();
 		else
 			default_flag = true;
@@ -562,7 +562,7 @@ void enter_room(int16 eib_nr) {
 	atds->stop_ats();
 	spieler.DiaAMov = -1;
 
-	zoom_mov_fak = 1;
+	_G(zoom_mov_fak) = 1;
 	flags.ZoomMov = true;
 	for (i = 0; i < MAX_PERSON; i++) {
 		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
@@ -577,7 +577,7 @@ void enter_room(int16 eib_nr) {
 	flags.AutoAniPlay = false;
 	SetUpScreenFunc = false;
 	HowardMov = false;
-	cur_hide_flag = false;
+	_G(cur_hide_flag) = false;
 	switch (spieler.PersonRoomNr[P_CHEWY]) {
 
 	case 0:
@@ -869,7 +869,7 @@ void exit_room(int16 eib_nr) {
 		}
 		menu_item = CUR_WALK;
 		cursor_wahl(menu_item);
-		maus_links_click = false;
+		_G(maus_links_click) = false;
 		break;
 
 	case 24:
@@ -1436,7 +1436,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_TALISMAN_R12:
 		spieler.R12Talisman = true;
 		obj->hide_sib(SIB_TALISMAN_R12);
-		timer_nr[0] = room->set_timer(255, 20);
+		_G(timer_nr)[0] = room->set_timer(255, 20);
 		break;
 
 	case SIB_BANDKNOPF_R13:

@@ -159,7 +159,7 @@ void MainMenu::animate() {
 	kb_mov(1);
 	calc_maus_txt(minfo.x, minfo.y, 1);
 	cur->plot_cur();
-	maus_links_click = 0;
+	_G(maus_links_click) = 0;
 	menu_flag = 0;
 	out->setze_zeiger(nullptr);
 	out->back2screen(workpage);
@@ -225,7 +225,7 @@ void MainMenu::startGame() {
 	menu_item = 0;
 	cursor_wahl(0);
 	enter_room(-1);
-	auto_obj = 0;
+	_G(auto_obj) = 0;
 }
 
 bool MainMenu::loadGame() {
@@ -243,7 +243,7 @@ bool MainMenu::loadGame() {
 
 	cursor_wahl((spieler.inv_cur && spieler.AkInvent != -1 &&
 		menu_item == 1) ? 8 : 0);
-	cur_display = true;
+	_G(cur_display) = true;
 	restorePersonAni();
 	flags.SaveMenu = false;
 
@@ -258,9 +258,9 @@ bool MainMenu::loadGame() {
 void MainMenu::playGame() {
 	// unused1 = 0;
 	inv_disp_ok = false;
-	cur_display = true;
+	_G(cur_display) = true;
 	tmp_menu_item = 0;
-	maus_links_click = 0;
+	_G(maus_links_click) = 0;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 
 	flags.main_maus_flag = false;
@@ -274,7 +274,7 @@ void MainMenu::playGame() {
 	while (!SHOULD_QUIT && !main_loop(1)) {
 	}
 
-	auto_obj = 0;
+	_G(auto_obj) = 0;
 }
 
 void MainMenu::savePersonAni() {

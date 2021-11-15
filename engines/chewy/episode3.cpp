@@ -49,9 +49,9 @@ void r45_entry(int16 eib_nr) {
 	spieler.ScrollxStep = 2;
 	SetUpScreenFunc = r45_setup_func;
 	r45_delay = 0;
-	zoom_horizont = 150;
+	_G(zoom_horizont) = 150;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 4;
+	_G(zoom_mov_fak) = 4;
 	spieler.ZoomXy[P_HOWARD][0] = 80;
 	spieler.ZoomXy[P_HOWARD][1] = 70;
 	if (spieler.PersonRoomNr[P_HOWARD] == 46) {
@@ -68,7 +68,7 @@ void r45_entry(int16 eib_nr) {
 			ho_y = 129;
 
 			spieler.R48TaxiEntry = false;
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 		} else {
 			if (eib_nr == 72) {
 				ch_x = 259;
@@ -462,13 +462,13 @@ void r47_set_detail() {
 }
 
 void r48_entry() {
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	spieler.scrollx = 0;
 	spieler.scrolly = 0;
 	show_cur();
 	r48calc_pic();
 	SetUpScreenFunc = r48setup_func;
-	timer_nr[0] = room->set_timer(255, 20);
+	_G(timer_nr)[0] = room->set_timer(255, 20);
 
 }
 
@@ -502,7 +502,7 @@ void r48_frage() {
 		det->show_static_spr(6);
 		start_detail_wait(1, 1, ANI_RUECK);
 		det->hide_static_spr(6);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		show_cur();
 		flags.AutoAniPlay = false;
 	}
@@ -525,7 +525,7 @@ void r48setup_func() {
 			if (idx != -1) {
 				if (spieler.R48Auswahl[idx]) {
 					det->show_static_spr(1 + idx);
-					if (maus_links_click) {
+					if (_G(maus_links_click)) {
 						switch (idx) {
 						case 0:
 							r_nr = 45;
@@ -565,7 +565,7 @@ void r48setup_func() {
 							cursor_wahl(menu_item);
 							show_cur();
 							spieler.R48TaxiEntry = true;
-							maus_links_click = false;
+							_G(maus_links_click) = false;
 							set_up_screen(DO_SETUP);
 							for (i = 0; i < MAX_PERSON; i++) {
 								if (spieler.R48TaxiPerson[i]) {
@@ -586,13 +586,13 @@ void r48setup_func() {
 }
 
 void r49_entry(int16 eib_nr) {
-	zoom_horizont = 110;
+	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	spieler.ScrollxStep = 2;
 	SetUpScreenFunc = r49setup_func;
 	if (!spieler.R49BoyWeg)
-		timer_nr[0] = room->set_timer(255, 2);
+		_G(timer_nr)[0] = room->set_timer(255, 2);
 	else {
 		det->del_static_ani(0);
 		det->hide_static_spr(5);
@@ -606,7 +606,7 @@ void r49_entry(int16 eib_nr) {
 			spieler.R48TaxiEntry = false;
 			set_person_pos(527, 76, P_HOWARD, P_LEFT);
 			set_person_pos(491, 98, P_CHEWY, P_LEFT);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			spieler.scrollx = 320;
 			spieler.scrolly = 0;
 			det->start_detail(5, 1, ANI_VOR);
@@ -641,14 +641,14 @@ void r49_calc_boy_ani() {
 	}
 	det->set_static_ani(spieler.R49BoyAni, -1);
 	det->start_detail(spieler.R49BoyAni, 1, ANI_VOR);
-	uhr->reset_timer(timer_nr[0], 0);
+	uhr->reset_timer(_G(timer_nr)[0], 0);
 }
 
 void r49_calc_boy() {
 	if (!spieler.R49WegFrei) {
 		hide_cur();
 		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
 		person_end_phase[P_CHEWY] = P_LEFT;
@@ -700,7 +700,7 @@ int16 r49_use_boy() {
 		auto_scroll(164, 0);
 		flic_cut(FCUT_067, FLC_MODE);
 		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		det->del_static_ani(spieler.R49BoyAni);
 		det->stop_detail(spieler.R49BoyAni);
 		flags.NoScroll = false;
@@ -728,7 +728,7 @@ void r49_talk_boy() {
 void r49_talk_boy(int16 aad_nr) {
 	if (!spieler.R49BoyWeg) {
 		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		det->stop_detail(spieler.R49BoyAni);
 
 		det->set_static_ani(spieler.R49BoyAni, -1);
@@ -810,7 +810,7 @@ void r50_entry(int16 eib_nr) {
 	} else
 		det->start_detail(0, 255, ANI_VOR);
 	if (!spieler.R50KeyOK) {
-		timer_nr[0] = room->set_timer(1, 8);
+		_G(timer_nr)[0] = room->set_timer(1, 8);
 		r50Wasser = false;
 	} else
 		det->show_static_spr(4);
@@ -995,9 +995,9 @@ void r50setup_func() {
 
 void r51_entry() {
 	int16 i;
-	zoom_horizont = 140;
+	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 4;
+	_G(zoom_mov_fak) = 4;
 	for (i = 0; i < 2; i++)
 		det->start_detail(3 + i, 1, ANI_VOR);
 	if (spieler.PersonRoomNr[P_HOWARD] == 51) {
@@ -1289,7 +1289,7 @@ void r53_entry() {
 	atds->del_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 	start_detail_wait(0, 1, ANI_VOR);
 	det->set_static_ani(1, -1);
-	timer_nr[0] = room->set_timer(1, 7);
+	_G(timer_nr)[0] = room->set_timer(1, 7);
 	show_cur();
 }
 
@@ -1339,9 +1339,9 @@ int16 r53_use_man() {
 void r54_entry(int16 eib_nr) {
 	spieler.ScrollxStep = 2;
 	SetUpScreenFunc = r54_setup_func;
-	zoom_horizont = 106;
+	_G(zoom_horizont) = 106;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	spieler.ZoomXy[P_HOWARD][0] = 30;
 	spieler.ZoomXy[P_HOWARD][1] = 66;
 	if (spieler.R54FputzerWeg)
@@ -1355,7 +1355,7 @@ void r54_entry(int16 eib_nr) {
 				set_person_pos(290, 61, P_HOWARD, P_RIGHT);
 			}
 			set_person_pos(300, 80, P_CHEWY, P_LEFT);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			spieler.scrollx = 134;
 			spieler.scrolly = 0;
 		} else if (spieler.R55Location) {
@@ -1400,7 +1400,7 @@ void r54_calc_auto_taxi() {
 		spieler.R54HowardVorne = false;
 		go_auto_xy(290, 61, P_HOWARD, ANI_WAIT);
 		spieler.PersonRoomNr[P_HOWARD] = r_nr;
-		maus_links_click = false;
+		_G(maus_links_click) = false;
 		show_cur();
 		spieler.R48TaxiEntry = true;
 		switch_room(r_nr);
@@ -1533,7 +1533,7 @@ int16 r54_use_zelle() {
 				del_inventar(spieler.AkInvent);
 				invent_2_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_JMANS);
-				zoom_horizont = 90;
+				_G(zoom_horizont) = 90;
 				set_person_pos(283, 93, P_CHEWY, P_LEFT);
 				set_person_pos(238, 99, P_HOWARD, P_RIGHT);
 				start_aad_wait(315, -1);
@@ -1626,7 +1626,7 @@ void r54_aufzug_ab() {
 	det->hide_static_spr(12);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	spieler.PersonHide[P_CHEWY] = false;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	stop_person(P_CHEWY);
 	spieler.R55Location = false;
 }
@@ -1656,9 +1656,9 @@ short r54_use_taxi() {
 void r55_entry() {
 	spieler.ScrollxStep = 2;
 	SetUpScreenFunc = r55_setup_func;
-	zoom_horizont = 140;
+	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	spieler.R55ExitDia = 0;
 	spieler.ZoomXy[P_HOWARD][0] = 20;
 	spieler.ZoomXy[P_HOWARD][1] = 22;
@@ -1671,7 +1671,7 @@ void r55_entry() {
 		det->start_detail(8, 255, ANI_VOR);
 		det->start_detail(9, 255, ANI_VOR);
 		spieler.R55Entry ^= 1;
-		timer_nr[0] = room->set_timer(19 + (int16)spieler.R55Entry, 10);
+		_G(timer_nr)[0] = room->set_timer(19 + (int16)spieler.R55Entry, 10);
 		det->set_static_ani(19 + (int16)spieler.R55Entry, -1);
 	}
 	spieler_mi[P_HOWARD].Mode = true;
@@ -1690,7 +1690,7 @@ void r55_entry() {
 			spieler.scrollx = 136;
 			set_person_pos(400, 82, P_CHEWY, P_RIGHT);
 			start_detail_wait(3, 1, ANI_VOR);
-			timer_nr[0] = room->set_timer(4, 10);
+			_G(timer_nr)[0] = room->set_timer(4, 10);
 			det->set_static_ani(4, -1);
 			atds->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
 		} else {
@@ -2028,9 +2028,9 @@ void r55_talk_line() {
 void r56_entry() {
 	spieler.ScrollxStep = 2;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 4;
+	_G(zoom_mov_fak) = 4;
 	spieler_mi[P_HOWARD].Mode = true;
-	timer_nr[0] = room->set_timer(255, 25);
+	_G(timer_nr)[0] = room->set_timer(255, 25);
 	if (!flags.LoadGame) {
 		if (spieler.R48TaxiEntry) {
 			hide_cur();
@@ -2040,7 +2040,7 @@ void r56_entry() {
 			spieler.PersonHide[P_CHEWY] = true;
 			spieler.PersonHide[P_HOWARD] = true;
 			det->hide_static_spr(2);
-			zoom_horizont = 0;
+			_G(zoom_horizont) = 0;
 			set_person_pos(-6, 16, P_HOWARD, P_RIGHT);
 			set_person_pos(3, 42, P_CHEWY, P_RIGHT);
 			start_detail_wait(7, 1, ANI_RUECK);
@@ -2060,13 +2060,13 @@ void r56_entry() {
 			spieler_mi[P_CHEWY].Mode = true;
 			auto_move(1, P_CHEWY);
 			spieler_mi[P_CHEWY].Mode = false;
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			show_cur();
 		} else if (spieler.R62Flucht) {
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			spieler.ZoomXy[P_HOWARD][0] = 40;
 			spieler.ZoomXy[P_HOWARD][1] = 86;
-			zoom_horizont = 114;
+			_G(zoom_horizont) = 114;
 			room->set_zoom(70);
 			spieler.R62Flucht = false;
 			set_person_pos(308, 97, P_HOWARD, P_RIGHT);
@@ -2078,7 +2078,7 @@ void r56_entry() {
 			room->set_timer_status(0, TIMER_STOP);
 			det->del_static_ani(0);
 			det->set_static_ani(3, -1);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			atds->stop_aad();
 			start_aad_wait(306, -1);
 			flic_cut(FCUT_076, FLC_MODE);
@@ -2087,7 +2087,7 @@ void r56_entry() {
 	SetUpScreenFunc = r56_setup_func;
 	spieler.ZoomXy[P_HOWARD][0] = 40;
 	spieler.ZoomXy[P_HOWARD][1] = 86;
-	zoom_horizont = 114;
+	_G(zoom_horizont) = 114;
 	room->set_zoom(70);
 }
 
@@ -2104,7 +2104,7 @@ int16 r56_use_taxi() {
 		auto_move(1, P_CHEWY);
 		start_detail_wait(7, 1, ANI_RUECK);
 		det->start_detail(8, 1, ANI_VOR);
-		zoom_horizont = 0;
+		_G(zoom_horizont) = 0;
 		room->set_zoom(23);
 		spieler.ZoomXy[P_HOWARD][0] = 17;
 		spieler.ZoomXy[P_HOWARD][1] = 37;
@@ -2243,7 +2243,7 @@ void r56_setup_func() {
 		if (det->get_ani_status(10) == false) {
 			r56koch_flug = 0;
 
-			uhr->reset_timer(timer_nr[0], 0);
+			uhr->reset_timer(_G(timer_nr)[0], 0);
 		}
 		break;
 
@@ -2280,9 +2280,9 @@ void r56_setup_func() {
 }
 
 void r57_entry() {
-	zoom_horizont = 180;
+	_G(zoom_horizont) = 180;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 4;
+	_G(zoom_mov_fak) = 4;
 	SetUpScreenFunc = r57_setup_func;
 	spieler.ZoomXy[P_HOWARD][0] = 46;
 	spieler.ZoomXy[P_HOWARD][1] = 86;
@@ -2298,7 +2298,7 @@ void r57_entry() {
 			set_person_pos(4, 144, P_HOWARD, P_LEFT);
 			set_person_pos(40, 160, P_CHEWY, P_RIGHT);
 			auto_move(2, P_CHEWY);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			show_cur();
 		}
 	}
@@ -2475,7 +2475,7 @@ void r62_entry() {
 	spieler.room_e_obj[91].Attribut = 255;
 	if (!spieler.R62FirstEntry) {
 		spieler.R62TShow = false;
-		cur_hide_flag = false;
+		_G(cur_hide_flag) = false;
 		hide_cur();
 		spieler.R62FirstEntry = true;
 		set_person_pos(49, 113, P_HOWARD, P_RIGHT);
@@ -2562,14 +2562,14 @@ int16 r62_use_laura() {
 }
 
 void r63_entry() {
-	zoom_horizont = 76;
+	_G(zoom_horizont) = 76;
 	spieler.ScrollxStep = 2;
 	r63Schalter = false;
 	r63RunDia = 0;
 	if (spieler.R63FxMannWeg)
 		det->del_static_ani(5);
 	if (!spieler.R63Uhr) {
-		cur_hide_flag = false;
+		_G(cur_hide_flag) = false;
 		hide_cur();
 		det->start_detail(12, 255, ANI_VOR);
 		det->start_detail(10, 255, ANI_VOR);
@@ -2817,7 +2817,7 @@ int16 r63_use_aschenbecher() {
 	int16 action_ret = false;
 	if (is_cur_inventar(ASCHE_INV)) {
 		action_ret = true;
-		cur_hide_flag = false;
+		_G(cur_hide_flag) = false;
 		hide_cur();
 		if (spieler.R63Uhr) {
 			if (spieler.R63FxMannWeg) {
@@ -2857,7 +2857,7 @@ void r64_entry() {
 	r62Delay = 0;
 	r64TalkAni = spieler.R64Moni1Ani;
 	if (!spieler.R64ManWeg) {
-		timer_nr[0] = room->set_timer(1, 10);
+		_G(timer_nr)[0] = room->set_timer(1, 10);
 		det->set_static_ani(1, -1);
 		r64_chewy_entry();
 		if (spieler.R63Feuer) {
@@ -3012,7 +3012,7 @@ void r65_entry() {
 	spieler_vector[P_HOWARD].Xypos[0] = 150;
 	spieler_vector[P_HOWARD].Xypos[1] = 10;
 	if (spieler.PersonDia[P_HOWARD] < 10000) {
-		cur_hide_flag = false;
+		_G(cur_hide_flag) = false;
 		hide_cur();
 		start_aad_wait(spieler.PersonDia[P_HOWARD], -1);
 		show_cur();
@@ -3031,7 +3031,7 @@ void r65_exit() {
 	set_person_pos(r65tmp_ho_x, r65tmp_ho_y, P_HOWARD, -1);
 	room_blk.AadLoad = true;
 	room_blk.AtsLoad = true;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	set_person_rnr();
 }
 

@@ -233,7 +233,7 @@ void calc_z_ebene() {
 		}
 	}
 
-	for (i = 0; i < auto_obj; i++) {
+	for (i = 0; i < _G(auto_obj); i++) {
 		if (auto_mov_vector[i].Xypos[2] < 200) {
 			z_obj_sort[z_count].ObjArt = ZOBJ_AUTO_OBJ;
 			z_obj_sort[z_count].ObjNr = i;
@@ -354,19 +354,19 @@ void stop_person(int16 p_nr) {
 }
 
 void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	det->start_detail(ani_nr, rep, mode);
 	while (det->get_ani_status(ani_nr) && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 }
 
 void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	ani_detail_info *adi;
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	det->start_detail(ani_nr, rep, mode);
 	adi = det->get_ani_detail(ani_nr);
 	if (mode == ANI_VOR)
@@ -376,7 +376,7 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	while (det->get_ani_status(ani_nr) && adi->ani_count != frame && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 }
 
 void wait_detail(int16 det_nr) {
@@ -385,8 +385,8 @@ void wait_detail(int16 det_nr) {
 }
 
 void wait_show_screen(int16 frames) {
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	if (spieler.DelaySpeed > 0)
 		frames *= spieler.DelaySpeed;
 	while (--frames > 0 && !SHOULD_QUIT) {
@@ -394,26 +394,26 @@ void wait_show_screen(int16 frames) {
 			get_user_key(NO_SETUP);
 		set_up_screen(DO_SETUP);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 }
 
 void start_ani_block(int16 anz, AniBlock *ab) {
 	int16 i;
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	for (i = 0; i < anz; i++) {
 		if (ab[i].Mode == ANI_WAIT)
 			start_detail_wait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 		else
 			det->start_detail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 }
 
 void start_aad_wait(int16 dia_nr, int16 str_nr) {
 
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	talk_start_ani = -1;
 	talk_hide_static = -1;
 	set_ssi_xy();
@@ -421,7 +421,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -438,8 +438,8 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	int16 VocNr;
 	int16 vocx;
 	bool ret = false;
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	if (!flags.AtsText) {
 		flags.AtsText = true;
 		if (txt_nr != -1) {
@@ -469,13 +469,13 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 	return ret;
 }
 
 void aad_wait(int16 str_nr) {
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	if (str_nr == -1) {
 		while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
@@ -485,7 +485,7 @@ void aad_wait(int16 str_nr) {
 			set_up_screen(DO_SETUP);
 		}
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -517,22 +517,22 @@ void start_ads_wait(int16 dia_nr) {
 }
 
 void wait_auto_obj(int16 nr) {
-	tmp_maus_links = maus_links_click;
-	maus_links_click = false;
+	tmp_maus_links = _G(maus_links_click);
+	_G(maus_links_click) = false;
 	while (mov_phasen[nr].Repeat != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	maus_links_click = tmp_maus_links;
+	_G(maus_links_click) = tmp_maus_links;
 }
 
 void stop_auto_obj(int16 nr) {
-	if (nr < auto_obj) {
+	if (nr < _G(auto_obj)) {
 		mov_phasen[nr].Start = false;
 	}
 }
 
 void continue_auto_obj(int16 nr, int16 repeat) {
-	if (nr < auto_obj) {
+	if (nr < _G(auto_obj)) {
 		mov_phasen[nr].Start = 1;
 		if (repeat)
 			mov_phasen[nr].Repeat = repeat;
@@ -572,7 +572,7 @@ void init_auto_obj(int16 auto_nr, int16 *phasen, int16 lines, MovLine *mline) {
 
 void new_auto_line(int16 nr) {
 
-	if (nr < auto_obj) {
+	if (nr < _G(auto_obj)) {
 		if (mov_phasen[nr].Repeat != -1 &&
 		        mov_phasen[nr].Start) {
 
@@ -643,7 +643,7 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 int16 auto_obj_status(int16 nr) {
 	int16 status;
 	status = false;
-	if (nr < auto_obj) {
+	if (nr < _G(auto_obj)) {
 		if (mov_phasen[nr].Repeat != -1)
 			status = true;
 	}
@@ -658,13 +658,13 @@ void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y, ObjMov *om) {
 	zoom_fak_x = -zoom_fak_x;
 	zoom_fak_y = (float)zoomfak_y / (float)100.0;
 	zoom_fak_y = -zoom_fak_y;
-	if (!zoom_horizont) {
+	if (!_G(zoom_horizont)) {
 		om->Xzoom = -zoomfak_x;
 		om->Yzoom = -zoomfak_y;
 	} else {
-		if (y < zoom_horizont) {
-			om->Xzoom = (zoom_horizont - y) * zoom_fak_x;
-			om->Yzoom = (zoom_horizont - y) * zoom_fak_y;
+		if (y < _G(zoom_horizont)) {
+			om->Xzoom = (_G(zoom_horizont) - y) * zoom_fak_x;
+			om->Yzoom = (_G(zoom_horizont) - y) * zoom_fak_y;
 		} else {
 			om->Xzoom = 0;
 			om->Yzoom = 0;
@@ -981,8 +981,8 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 	tmp_vorschub = mi->Vorschub;
 	mi->Vorschub = CH_X_PIX;
 	if (flags.ZoomMov) {
-		if (om->Xzoom < 0 && zoom_mov_fak > 0) {
-			tmp = om->Xzoom / zoom_mov_fak;
+		if (om->Xzoom < 0 && _G(zoom_mov_fak) > 0) {
+			tmp = om->Xzoom / _G(zoom_mov_fak);
 			tmp = abs(tmp);
 			mi->Vorschub -= tmp;
 			if (mi->Vorschub < 2)
@@ -1117,7 +1117,7 @@ void calc_person_ani() {
 						PersonSpr[p_nr][i] = i;
 
 					if (!spieler_vector[p_nr].Count &&
-					        auto_p_nr != p_nr) {
+					        _G(auto_p_nr) != p_nr) {
 						ani_nr = (int16)p_ani[p_nr - 1][4] + (person_end_phase[p_nr] * 4);
 
 						spieler_vector[p_nr].PhAnz = 5;

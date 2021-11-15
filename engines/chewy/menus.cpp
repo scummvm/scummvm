@@ -161,20 +161,20 @@ void plot_inventar_menu() {
 	}
 
 	for (i = 0; i < 2; i++) {
-		ani_invent_delay[i][0] -= 1;
-		if (ani_invent_delay[i][0] <= 0) {
-			ani_invent_delay[i][0] = ani_invent_delay[i][1];
-			++ani_count[i];
-			if (ani_count[i] > ANI_INVENT_END[i]) {
-				ani_count[i] = ani_invent_anf[i];
-				ani_invent_delay[i][0] = 30000;
+		_G(ani_invent_delay)[i][0] -= 1;
+		if (_G(ani_invent_delay)[i][0] <= 0) {
+			_G(ani_invent_delay)[i][0] = _G(ani_invent_delay)[i][1];
+			++_G(ani_count)[i];
+			if (_G(ani_count)[i] > ANI_INVENT_END[i]) {
+				_G(ani_count)[i] = _G(ani_invent_anf)[i];
+				_G(ani_invent_delay)[i][0] = 30000;
 			}
 		}
 		if (i == 2)
 			y = 3;
 		else
 			y = 0;
-		out->sprite_set(curtaf->image[ani_count[i]],
+		out->sprite_set(curtaf->image[_G(ani_count)[i]],
 		                 WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, scr_width);
 	}
 
@@ -245,8 +245,8 @@ void invent_menu() {
 	maus_flag = 1;
 
 	for (i = 0; i < 3; i++) {
-		ani_invent_delay[i][0] = 30000;
-		ani_count[i] = ani_invent_anf[i];
+		_G(ani_invent_delay)[i][0] = 30000;
+		_G(ani_count)[i] = _G(ani_invent_anf)[i];
 	}
 
 	ret_look = -1;
@@ -922,7 +922,7 @@ void ads_menu() {
 
 		if (atds->aad_get_status() == -1 && ads_push == false &&
 		        flags.NoDiaBox == false) {
-			cur_display = true;
+			_G(cur_display) = true;
 
 			build_menu(ADS_WIN);
 			out->set_fontadr(font6x8);
@@ -943,7 +943,7 @@ void ads_menu() {
 		case 255:
 		case ENTER:
 			if (cur_y < ads_item_anz && cur_y >= 0 && ads_push == false) {
-				cur_display = false;
+				_G(cur_display) = false;
 				ads_push = true;
 				minfo.y = 159;
 				an_blk = atds->ads_item_choice(ads_blk_nr, cur_y);
@@ -980,11 +980,11 @@ void ads_menu() {
 void stop_ads_dialog() {
 	aad_wait(-1);
 	spieler.DispFlag = ads_tmp_dsp;
-	cur_display = true;
+	_G(cur_display) = true;
 	flags.ShowAtsInvTxt = true;
 	flags.MainInput = true;
 	flags.AdsDialog = false;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	atds->stop_ads();
 	if (minfo.button)
 		flags.main_maus_flag = 1;
