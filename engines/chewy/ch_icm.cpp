@@ -101,17 +101,17 @@ void get_room_nr() {
 		if (tmp <= MAX_RAUM) {
 			flags.IcmEntry = true;
 			exit_room(-1);
-			spieler.PersonRoomNr[P_CHEWY] = tmp;
-			room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
+			_G(spieler).PersonRoomNr[P_CHEWY] = tmp;
+			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			ERROR
 			out->set_palette(pal);
 
-			if (spieler.AkInvent != -1)
-				spieler.room_m_obj[spieler.AkInvent].RoomNr = -1;
+			if (_G(spieler).AkInvent != -1)
+				_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
 			obj->sort();
 
-			if (spieler.AkInvent != -1)
-				spieler.room_m_obj[spieler.AkInvent].RoomNr = 255;
+			if (_G(spieler).AkInvent != -1)
+				_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
 			auto_obj = 0;
 			enter_room(-1);
 			spieler_vector[P_CHEWY].Count = 0;
@@ -200,20 +200,20 @@ void plot_auto_mov(int16 mode) {
 
 	} else {
 		for (i = 0; i < room->room_info->AutoMovAnz; i++) {
-			out->box_fill(Rdi->AutoMov[i].X - spieler.scrollx,
-			               Rdi->AutoMov[i].Y - spieler.scrolly,
-			               Rdi->AutoMov[i].X + 10 - spieler.scrollx,
-			               Rdi->AutoMov[i].Y + 13 - spieler.scrolly, 255);
-			out->box(Rdi->AutoMov[i].X + 1 - spieler.scrollx,
-			          Rdi->AutoMov[i].Y + 1 - spieler.scrolly,
-			          Rdi->AutoMov[i].X + 9 - spieler.scrollx,
-			          Rdi->AutoMov[i].Y + 11 - spieler.scrolly, 0);
-			if (Rdi->AutoMov[i].X + 3 - spieler.scrollx > 0 &&
-			        Rdi->AutoMov[i].X + 3 - spieler.scrollx < (319 - 16) &&
-			        Rdi->AutoMov[i].Y + 3 - spieler.scrolly > 0 &&
-			        Rdi->AutoMov[i].Y + 3 - spieler.scrolly < (199 - 10))
-				out->printxy(Rdi->AutoMov[i].X + 3 - spieler.scrollx,
-				              Rdi->AutoMov[i].Y + 3 - spieler.scrolly, 0, 300, scr_width, "%d\0", i);
+			out->box_fill(Rdi->AutoMov[i].X - _G(spieler).scrollx,
+			               Rdi->AutoMov[i].Y - _G(spieler).scrolly,
+			               Rdi->AutoMov[i].X + 10 - _G(spieler).scrollx,
+			               Rdi->AutoMov[i].Y + 13 - _G(spieler).scrolly, 255);
+			out->box(Rdi->AutoMov[i].X + 1 - _G(spieler).scrollx,
+			          Rdi->AutoMov[i].Y + 1 - _G(spieler).scrolly,
+			          Rdi->AutoMov[i].X + 9 - _G(spieler).scrollx,
+			          Rdi->AutoMov[i].Y + 11 - _G(spieler).scrolly, 0);
+			if (Rdi->AutoMov[i].X + 3 - _G(spieler).scrollx > 0 &&
+			        Rdi->AutoMov[i].X + 3 - _G(spieler).scrollx < (319 - 16) &&
+			        Rdi->AutoMov[i].Y + 3 - _G(spieler).scrolly > 0 &&
+			        Rdi->AutoMov[i].Y + 3 - _G(spieler).scrolly < (199 - 10))
+				out->printxy(Rdi->AutoMov[i].X + 3 - _G(spieler).scrollx,
+				              Rdi->AutoMov[i].Y + 3 - _G(spieler).scrolly, 0, 300, scr_width, "%d\0", i);
 		}
 	}
 	if (!mode) {
@@ -269,11 +269,11 @@ void get_rect(char *spr1, int16 x1, int16 y1, char *spr2, int16 x2, int16 y2) {
 	ende = 0;
 	while (!ende) {
 		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		if (spr1 != 0)
-			out->sprite_set(spr1, x1 - spieler.scrollx, y1 - spieler.scrolly, 0);
+			out->sprite_set(spr1, x1 - _G(spieler).scrollx, y1 - _G(spieler).scrolly, 0);
 		if (spr2 != 0)
-			out->sprite_set(spr2, x2 - spieler.scrollx, y2 - spieler.scrolly, 0);
+			out->sprite_set(spr2, x2 - _G(spieler).scrollx, y2 - _G(spieler).scrolly, 0);
 		calc_mouse_scroll(ScrXy[0], ScrXy[1]);
 		switch (in->get_switch_code()) {
 
@@ -287,27 +287,27 @@ void get_rect(char *spr1, int16 x1, int16 y1, char *spr2, int16 x2, int16 y2) {
 
 			if (minfo.button == 1 && maus_rect_first == false) {
 				maus_rect_first = true;
-				koordinate[0] = minfo.x + spieler.scrollx;
-				koordinate[1] = minfo.y + spieler.scrolly;
+				koordinate[0] = minfo.x + _G(spieler).scrollx;
+				koordinate[1] = minfo.y + _G(spieler).scrolly;
 				ok = 0;
 				while (!ok) {
 					mouse_aktiv = 0;
 					cur_move = 0;
 					out->setze_zeiger(workptr);
 					calc_mouse_scroll(ScrXy[0], ScrXy[1]);
-					out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+					out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 					if (spr1 != 0)
-						out->sprite_set(spr1, x1 - spieler.scrollx, y1 - spieler.scrolly, 0);
+						out->sprite_set(spr1, x1 - _G(spieler).scrollx, y1 - _G(spieler).scrolly, 0);
 					if (spr2 != 0)
-						out->sprite_set(spr2, x2 - spieler.scrollx, y2 - spieler.scrolly, 0);
+						out->sprite_set(spr2, x2 - _G(spieler).scrollx, y2 - _G(spieler).scrolly, 0);
 					out->printxy(0, 0, 255, 0, 0, "X1 = %4d Y1 = %4d \0", koordinate[0], koordinate[1]);
 					out->printxy(0, 10, 255, 0, 0, "X = %d Y = %d ohne scroll Offset\0", minfo.x, minfo.y);
 					out->printxy(0, 20, 255, 0, 0, "X2 = %4d Y2 = %4d XOff %3d YOff %3d\0",
-					              minfo.x + spieler.scrollx, minfo.y + spieler.scrolly,
-					              (minfo.x + spieler.scrollx) - koordinate[0],
-					              (minfo.y + spieler.scrolly) - koordinate[1]);
+					              minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly,
+					              (minfo.x + _G(spieler).scrollx) - koordinate[0],
+					              (minfo.y + _G(spieler).scrolly) - koordinate[1]);
 					out->
-					box(koordinate[0] - spieler.scrollx, koordinate[1] - spieler.scrolly, minfo.x, minfo.y, 255);
+					box(koordinate[0] - _G(spieler).scrollx, koordinate[1] - _G(spieler).scrolly, minfo.x, minfo.y, 255);
 					out->back2screen(workpage);
 					if (minfo.button != 1)
 						ok = 1;
@@ -316,7 +316,7 @@ void get_rect(char *spr1, int16 x1, int16 y1, char *spr2, int16 x2, int16 y2) {
 		}
 		maus_rect_first = false;
 		out->printxy(0, 0, 255, 0, 0, "X = %d Y = %d mit scroll
-		              Offset\0", minfo.x + spieler.scrollx, minfo.y + spieler.scrolly);
+		              Offset\0", minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
 		              out->printxy(0, 10, 255, 0, 0, "X = %d Y = %d ohne scroll Offset\0", minfo.x, minfo.y);
 		              plot_maus();
 		              out->setze_zeiger(screen0);
@@ -393,12 +393,12 @@ void get_auto_mov() {
 	ani_wahl = 0;
 	ScrXy = (int16 *)ablage[room_blk.AkAblage];
 	while (!ende) {
-		out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		if (minfo.button == 1) {
 			spieler_mi[P_CHEWY].XyzStart[0] = spieler_vector[P_CHEWY].Xypos[0];
 			spieler_mi[P_CHEWY].XyzStart[1] = spieler_vector[P_CHEWY].Xypos[1];
-			spieler_mi[P_CHEWY].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + spieler.scrollx;
-			spieler_mi[P_CHEWY].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + spieler.scrolly;
+			spieler_mi[P_CHEWY].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + _G(spieler).scrollx;
+			spieler_mi[P_CHEWY].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + _G(spieler).scrolly;
 			mov->get_mov_vector(spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub, &spieler_v
 			                    ector[P_CHEWY]);
 			get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
@@ -427,23 +427,23 @@ void get_auto_mov() {
 			break;
 
 		case ALT+CURSOR_LEFT :
-			if (spieler.scrollx > 0)
-				--spieler.scrollx;
+			if (_G(spieler).scrollx > 0)
+				--_G(spieler).scrollx;
 			break;
 
 		case ALT+CURSOR_RIGHT:
-			if ((spieler.scrollx + 320) < ScrXy[0])
-				++spieler.scrollx;
+			if ((_G(spieler).scrollx + 320) < ScrXy[0])
+				++_G(spieler).scrollx;
 			break;
 
 		case ALT+CURSOR_UP :
-			if (spieler.scrolly > 0)
-				--spieler.scrolly;
+			if (_G(spieler).scrolly > 0)
+				--_G(spieler).scrolly;
 			break;
 
 		case ALT+CURSOR_DOWN :
-			if ((spieler.scrolly + 200) < ScrXy[1])
-				++spieler.scrolly;
+			if ((_G(spieler).scrolly + 200) < ScrXy[1])
+				++_G(spieler).scrolly;
 			break;
 
 		case PLUS:
@@ -516,16 +516,16 @@ void get_auto_mov() {
 				auto_nr = room->room_info->AutoMovAnz;
 				++room->room_info->AutoMovAnz;
 				Rdi->AutoMov[auto_nr].X =
-				    spieler_vector[P_CHEWY].Xypos[0] + CH_HOT_MOV_X + spieler.scrollx;
+				    spieler_vector[P_CHEWY].Xypos[0] + CH_HOT_MOV_X + _G(spieler).scrollx;
 				Rdi->AutoMov[auto_nr].Y =
-				    spieler_vector[P_CHEWY].Xypos[1] + CH_HOT_MOV_Y + spieler.scrolly;
+				    spieler_vector[P_CHEWY].Xypos[1] + CH_HOT_MOV_Y + _G(spieler).scrolly;
 			}
 			while (kbinfo.key_code != 0);
 			break;
 
 		case S_KEY + ALT:
 			save_flag = true;
-			det->save_detail(DETAILTEST, spieler.PersonRoomNr[P_CHEWY]);
+			det->save_detail(DETAILTEST, _G(spieler).PersonRoomNr[P_CHEWY]);
 			out->printxy(0, 190, 0, 255, scr_width, " Save ...\0");
 			while (kbinfo.key_code != 0);
 			while (kbinfo.key_code == 0);
@@ -563,7 +563,7 @@ void get_auto_mov() {
 			while (kbinfo.key_code != 0);
 			while (kbinfo.key_code == 0);
 			while (kbinfo.key_code != 0);
-			out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+			out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 			break;
 
 		case F2_KEY:
@@ -601,22 +601,22 @@ void get_auto_mov() {
 		out->set_vorschub(fvorx6x8, fvory6x8);
 		plot_auto_mov(1);
 		if (auto_nr != -1)
-			out->box(Rdi->AutoMov[auto_nr].X - 2 - spieler.scrollx,
-			          Rdi->AutoMov[auto_nr].Y - 2 - spieler.scrolly,
-			          Rdi->AutoMov[auto_nr].X + 12 - spieler.scrollx,
-			          Rdi->AutoMov[auto_nr].Y + 14 - spieler.scrolly, 8);
+			out->box(Rdi->AutoMov[auto_nr].X - 2 - _G(spieler).scrollx,
+			          Rdi->AutoMov[auto_nr].Y - 2 - _G(spieler).scrolly,
+			          Rdi->AutoMov[auto_nr].X + 12 - _G(spieler).scrollx,
+			          Rdi->AutoMov[auto_nr].Y + 14 - _G(spieler).scrolly, 8);
 		if (det_nr != -1) {
 			if (Adi[det_nr].zoom) {
 
 				dy = adi->y;
 				calc_zoom(dy, (int16)room->room_info->ZoomFak,
-				          spieler.ZoomXy[P_HOWARD][0],
+				          _G(spieler).ZoomXy[P_HOWARD][0],
 				          &detmov);
 			} else {
 				detmov.Xzoom = 0;
 				detmov.Yzoom = 0;
 			}
-			out->scale_set(dptr->image[det_nr], Dx - spieler.scrollx, Dy - spieler.scrolly,
+			out->scale_set(dptr->image[det_nr], Dx - _G(spieler).scrollx, Dy - _G(spieler).scrolly,
 			                detmov.Xzoom, detmov.Yzoom, 0);
 		}
 		if (info_flag) {
@@ -641,7 +641,7 @@ void get_auto_mov() {
 		for (i = 0; i < str_anz1; i++)
 			out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(no_sav, i));
 		if (ja_nein() == J_KEY) {
-			det->save_detail(DETAILTEST, spieler.PersonRoomNr[P_CHEWY]);
+			det->save_detail(DETAILTEST, _G(spieler).PersonRoomNr[P_CHEWY]);
 			out->printxy(0, 190, 0, 255, scr_width, " Save ...\0");
 		}
 	}
@@ -650,8 +650,8 @@ void get_auto_mov() {
 
 void get_scroll_val() {
 	out->setze_zeiger(0);
-	out->printxy(0, 0, 255, 300, scr_width, "SCROLL X = %3d ", spieler.scrollx);
-	out->printxy(0, 10, 255, 300, scr_width, "SCROLL Y = %3d ", spieler.scrolly);
+	out->printxy(0, 0, 255, 300, scr_width, "SCROLL X = %3d ", _G(spieler).scrollx);
+	out->printxy(0, 10, 255, 300, scr_width, "SCROLL Y = %3d ", _G(spieler).scrolly);
 	while (in->get_switch_code() != ESC);
 }
 
@@ -720,8 +720,8 @@ void set_z_ebene() {
 			spieler_mi[P_CHEWY].XyzStart[0] = spieler_vector[P_CHEWY].Xypos[0];
 			Bewegungs
 			spieler_mi[P_CHEWY].XyzStart[1] = spieler_vector[P_CHEWY].Xypos[1];
-			spieler_mi[P_CHEWY].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + spieler.scrollx;
-			spieler_mi[P_CHEWY].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + spieler.scrolly;
+			spieler_mi[P_CHEWY].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + _G(spieler).scrollx;
+			spieler_mi[P_CHEWY].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + _G(spieler).scrolly;
 			mov->
 			get_mov_vector(spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub, &spieler_vector
 			               [P_CHEWY]);
@@ -777,9 +777,9 @@ void set_z_ebene() {
 					++detail_nr;
 					det_nr = obj->mov_obj_room[detail_nr + 1];
 					image = inv_spr[det_nr];
-					Dx = spieler.room_m_obj[det_nr].X;
-					Dy = spieler.room_m_obj[det_nr].Y;
-					ly = spieler.room_m_obj[det_nr].ZEbene;
+					Dx = _G(spieler).room_m_obj[det_nr].X;
+					Dy = _G(spieler).room_m_obj[det_nr].Y;
+					ly = _G(spieler).room_m_obj[det_nr].ZEbene;
 				}
 			}
 			while (kbinfo.key_code != 0);
@@ -819,9 +819,9 @@ void set_z_ebene() {
 					--detail_nr;
 					det_nr = obj->mov_obj_room[detail_nr + 1];
 					image = inv_spr[det_nr];
-					Dx = spieler.room_m_obj[det_nr].X;
-					Dy = spieler.room_m_obj[det_nr].Y;
-					ly = spieler.room_m_obj[det_nr].ZEbene;
+					Dx = _G(spieler).room_m_obj[det_nr].X;
+					Dy = _G(spieler).room_m_obj[det_nr].Y;
+					ly = _G(spieler).room_m_obj[det_nr].ZEbene;
 				}
 			}
 			while (kbinfo.key_code != 0);
@@ -907,7 +907,7 @@ void set_z_ebene() {
 
 		case S_KEY + ALT:
 			save_flag = true;
-			det->save_detail(DETAILTEST, spieler.PersonRoomNr[P_CHEWY]);
+			det->save_detail(DETAILTEST, _G(spieler).PersonRoomNr[P_CHEWY]);
 
 			save_iib(INVENTAR_IIB);
 			out->printxy(0, 190, 0, 255, scr_width, " Save ...\0");
@@ -923,7 +923,7 @@ void set_z_ebene() {
 			} else if (detail_flag == STATIC_DETAIL) {
 				sdi->z_ebene = ly;
 			} else if (detail_flag == INVENT_DETAIL) {
-				spieler.room_m_obj[det_nr].ZEbene = ly;
+				_G(spieler).room_m_obj[det_nr].ZEbene = ly;
 			}
 			break;
 
@@ -937,7 +937,7 @@ void set_z_ebene() {
 			while (kbinfo.key_code != 0);
 			while (kbinfo.key_code == 0);
 			while (kbinfo.key_code != 0);
-			out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+			out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 			break;
 
 		case F2_KEY:
@@ -1010,9 +1010,9 @@ void set_z_ebene() {
 				detail_nr = 0;
 				det_nr = obj->mov_obj_room[detail_nr + 1];
 				image = inv_spr[det_nr];
-				Dx = spieler.room_m_obj[det_nr].X;
-				Dy = spieler.room_m_obj[det_nr].Y;
-				ly = spieler.room_m_obj[det_nr].ZEbene;
+				Dx = _G(spieler).room_m_obj[det_nr].X;
+				Dy = _G(spieler).room_m_obj[det_nr].Y;
+				ly = _G(spieler).room_m_obj[det_nr].ZEbene;
 			} else {
 				out->setze_zeiger(0);
 				out->printxy(0, 190, 0, 255, scr_width, " Kein Inventar vorhanden ...\0");
@@ -1024,17 +1024,17 @@ void set_z_ebene() {
 		calc_mouse_scroll(ScrXy[0], ScrXy[1]);
 		set_up_screen(NO_SETUP);
 		if (det_nr != -1 && plot_flag) {
-			out->scale_set(image, Dx - spieler.scrollx, Dy - spieler.scrolly,
+			out->scale_set(image, Dx - _G(spieler).scrollx, Dy - _G(spieler).scrolly,
 			                detmov.Xzoom, detmov.Yzoom, 0);
 
 			xy = (int16 *)image;
 			out->
-			box(Dx - spieler.scrollx, Dy - spieler.scrolly, Dx + xy[0] - spieler.scrollx, Dy + xy[1] - spieler.scro
+			box(Dx - _G(spieler).scrollx, Dy - _G(spieler).scrolly, Dx + xy[0] - _G(spieler).scrollx, Dy + xy[1] - _G(spieler).scro
 			    lly, 255);
 		}
 		out->set_fontadr(font6x8);
 		out->set_vorschub(fvorx6x8, fvory6x8);
-		out->linie(lx, ly - spieler.scrolly, lx + 320, ly - spieler.scrolly, 255);
+		out->linie(lx, ly - _G(spieler).scrolly, lx + 320, ly - _G(spieler).scrolly, 255);
 		if (info_flag) {
 			out->printxy(0, 0, 255, 300, scr_width, "CHEWY Z_EBENE %d LINIE Z_EBENE
 			              % d\0", spieler_vector[P_CHEWY].Xypos[1] + CH_HOT_MOV_Y - abs(spieler_vector[P_CHEWY].Yzoom), l
@@ -1058,7 +1058,7 @@ void set_z_ebene() {
 		for (i = 0; i < str_anz1; i++)
 			out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(no_sav, i));
 		if (ja_nein() == J_KEY) {
-			det->save_detail(DETAILTEST, spieler.PersonRoomNr[P_CHEWY]);
+			det->save_detail(DETAILTEST, _G(spieler).PersonRoomNr[P_CHEWY]);
 			save_iib(INVENTAR_IIB);
 			out->printxy(0, 190, 0, 255, scr_width, " Save ...\0");
 		}
@@ -1110,7 +1110,7 @@ void save_iib(char *fname) {
 				if (!chewy_fwrite(&iib_datei_header, sizeof(IibDateiHeader), 1, handle)) {
 					modul = DATEI;
 					fcode = WRITEFEHLER;
-				} else if (!chewy_fwrite(spieler.room_m_obj, sizeof(RoomMovObjekt)*MAX_MOV_OBJ, 1, handle)) {
+				} else if (!chewy_fwrite(_G(spieler).room_m_obj, sizeof(RoomMovObjekt)*MAX_MOV_OBJ, 1, handle)) {
 					modul = DATEI;
 					fcode = WRITEFEHLER;
 				}
@@ -1122,36 +1122,36 @@ void save_iib(char *fname) {
 
 void load_org() {
 	int16 i;
-	det->load_rdi(room_blk.DetFile, spieler.PersonRoomNr[P_CHEWY]);
-	obj->load(INVENTAR_IIB, &spieler.room_m_obj[0]);
+	det->load_rdi(room_blk.DetFile, _G(spieler).PersonRoomNr[P_CHEWY]);
+	obj->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
 	ERROR
-	obj->load(INVENTAR_SIB, &spieler.room_s_obj[0]);
+	obj->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
 	ERROR
 	obj->sort();
 	for (i = 0; i < MAX_MOV_OBJ; i++) {
-		spieler.InventSlot[i] = -1;
+		_G(spieler).InventSlot[i] = -1;
 	}
 	for (i = 0; i < obj->spieler_invnr[0]; i++)
-		spieler.InventSlot[i] = obj->spieler_invnr[i + 1];
+		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
 	obj->calc_all_static_detail();
 }
 
 void calc_mouse_scroll(int16 scrx, int16 scry) {
 	if (minfo.x > 319 - (curblk.xsize + 20)) {
-		if ((spieler.scrollx + 320) < scrx)
-			++spieler.scrollx;
+		if ((_G(spieler).scrollx + 320) < scrx)
+			++_G(spieler).scrollx;
 	}
 	if (minfo.x < 10) {
-		if (spieler.scrollx > 0)
-			--spieler.scrollx;
+		if (_G(spieler).scrollx > 0)
+			--_G(spieler).scrollx;
 	}
 	if (minfo.y > 199 - (curblk.ysize + 10)) {
-		if ((spieler.scrolly + 200) < scry)
-			++spieler.scrolly;
+		if ((_G(spieler).scrolly + 200) < scry)
+			++_G(spieler).scrolly;
 	}
 	if (minfo.y < 10) {
-		if (spieler.scrolly > 0)
-			--spieler.scrolly;
+		if (_G(spieler).scrolly > 0)
+			--_G(spieler).scrolly;
 	}
 }
 
@@ -1188,14 +1188,14 @@ void set_person() {
 	SetUpScreenFunc = 0;
 	out->set_fontadr(font6x8);
 	out->set_vorschub(fvorx6x8, fvory6x8);
-	spieler.ZoomXy[P_CHEWY][0] = room->room_info->ZoomFak;
-	spieler.ZoomXy[P_CHEWY][1] = room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][0] = room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][1] = room->room_info->ZoomFak;
 	while (!ende) {
 		if (minfo.button == 1) {
 			spieler_mi[p_nr].XyzStart[0] = spieler_vector[p_nr].Xypos[0];
 			spieler_mi[p_nr].XyzStart[1] = spieler_vector[p_nr].Xypos[1];
-			spieler_mi[p_nr].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + spieler.scrollx;
-			spieler_mi[p_nr].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + spieler.scrolly;
+			spieler_mi[p_nr].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + _G(spieler).scrollx;
+			spieler_mi[p_nr].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + _G(spieler).scrolly;
 			mov->
 			get_mov_vector(spieler_mi[p_nr].XyzStart, spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]
 			              );
@@ -1218,7 +1218,7 @@ void set_person() {
 			while (kbinfo.key_code != 0);
 			while (kbinfo.key_code == 0);
 			while (kbinfo.key_code != 0);
-			out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+			out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 			break;
 
 		case F2_KEY:
@@ -1250,23 +1250,23 @@ void set_person() {
 				abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, "%[0-9]3d\0", &tmp);
 				if (abfrage != 27) {
 					room->set_zoom(tmp);
-					spieler.ZoomXy[P_CHEWY][0] = room->room_info->ZoomFak;
-					spieler.ZoomXy[P_CHEWY][1] = room->room_info->ZoomFak;
+					_G(spieler).ZoomXy[P_CHEWY][0] = room->room_info->ZoomFak;
+					_G(spieler).ZoomXy[P_CHEWY][1] = room->room_info->ZoomFak;
 				}
 			} else {
 				for (i = 0; i < 2; i++)
 					out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c1, i));
-				tmp = spieler.ZoomXy[p_nr][0];
+				tmp = _G(spieler).ZoomXy[p_nr][0];
 				abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, "%[0-9]3d\0", &tmp);
 				if (abfrage != 27) {
-					spieler.ZoomXy[p_nr][0] = tmp;
+					_G(spieler).ZoomXy[p_nr][0] = tmp;
 				}
 				for (i = 0; i < 2; i++)
 					out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c2, i));
-				tmp = spieler.ZoomXy[p_nr][1];
+				tmp = _G(spieler).ZoomXy[p_nr][1];
 				abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, "%[0-9]3d\0", &tmp);
 				if (abfrage != 27) {
-					spieler.ZoomXy[p_nr][1] = tmp;
+					_G(spieler).ZoomXy[p_nr][1] = tmp;
 				}
 			}
 			x = 160;
@@ -1308,7 +1308,7 @@ void set_person() {
 		out->set_vorschub(fvorx6x8, fvory6x8);
 		if (info_flag) {
 			out->printxy(0, 0, 255, 300, scr_width, "Person x %d Person y %d", spieler_vector[p_nr].Xypos[0], spieler_vector[p_nr].Xypos[1]);
-			out->printxy(0, 10, 255, 300, scr_width, "Zoomx %d Zoomy %d", spieler.ZoomXy[p_nr][0], spieler.ZoomXy[p_nr][1]);
+			out->printxy(0, 10, 255, 300, scr_width, "Zoomx %d Zoomy %d", _G(spieler).ZoomXy[p_nr][0], _G(spieler).ZoomXy[p_nr][1]);
 			out->printxy(0, 20, 255, 300, scr_width, "ZoomHorizont %d", _G(zoom_horizont));
 			out->printxy(0, 30, 255, 300, scr_width, "AK-Zoomx %d AK-Zoomy %d", spieler_vector[p_nr].Xzoom, spieler_vector[p_nr].Yzoom);
 

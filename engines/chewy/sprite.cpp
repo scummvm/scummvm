@@ -81,26 +81,26 @@ void sprite_engine() {
 				detmov.Xzoom = 0;
 				detmov.Yzoom = 0;
 			}
-			det->plot_ani_details(spieler.scrollx, spieler.scrolly, nr, nr,
+			det->plot_ani_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr,
 			                       detmov.Xzoom, detmov.Yzoom);
 			break;
 
 		case ZOBJ_STATIC_DETAIL:
-			det->plot_static_details(spieler.scrollx, spieler.scrolly, nr, nr);
+			det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr);
 			break;
 
 		case ZOBJ_INVENTAR:
 			out->sprite_set(inv_spr[nr],
-			                 spieler.room_m_obj[nr].X - spieler.scrollx,
-			                 spieler.room_m_obj[nr].Y - spieler.scrolly, 0);
+			                 _G(spieler).room_m_obj[nr].X - _G(spieler).scrollx,
+			                 _G(spieler).room_m_obj[nr].Y - _G(spieler).scrolly, 0);
 			break;
 
 		case ZOBJ_CHEWY:
-			if (!spieler.PersonHide[P_CHEWY]) {
+			if (!_G(spieler).PersonHide[P_CHEWY]) {
 				if (!spz_ani[P_CHEWY]) {
 					spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
-					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - spieler.scrollx;
-					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - spieler.scrolly;
+					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
+					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->room_info->ZoomFak,
 					          (int16)room->room_info->ZoomFak, &spieler_vector[P_CHEWY]);
 
@@ -111,9 +111,9 @@ void sprite_engine() {
 				} else {
 					spr_nr = spz_spr_nr[spieler_vector[P_CHEWY].PhNr];
 					x = spieler_mi[P_CHEWY].XyzStart[0] + spz_tinfo->korrektur[spr_nr * 2] -
-					    spieler.scrollx;
+					    _G(spieler).scrollx;
 					y = spieler_mi[P_CHEWY].XyzStart[1] + spz_tinfo->korrektur[spr_nr * 2 + 1] -
-					    spieler.scrolly;
+					    _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1],
 					          (int16)room->room_info->ZoomFak,
 					          (int16)room->room_info->ZoomFak,
@@ -130,7 +130,7 @@ void sprite_engine() {
 		case ZOBJ_HOWARD:
 		case ZOBJ_NICHELLE:
 			p_nr = z_obj_sort[min_zeiger].ObjArt - 6;
-			if (!spieler.PersonHide[p_nr]) {
+			if (!_G(spieler).PersonHide[p_nr]) {
 				if (!spz_ani[p_nr]) {
 					ts_info = PersonTaf[p_nr];
 					spr_nr = PersonSpr[p_nr][spieler_vector[p_nr].PhNr];
@@ -141,13 +141,13 @@ void sprite_engine() {
 
 				x = spieler_mi[p_nr].XyzStart[0] +
 				    ts_info->korrektur[spr_nr * 2] -
-				    spieler.scrollx;
+				    _G(spieler).scrollx;
 				y = spieler_mi[p_nr].XyzStart[1] +
 				    ts_info->korrektur[spr_nr * 2 + 1] -
-				    spieler.scrolly;
+				    _G(spieler).scrolly;
 				calc_zoom(spieler_mi[p_nr].XyzStart[1],
-				          spieler.ZoomXy[p_nr][0],
-				          spieler.ZoomXy[p_nr][1],
+				          _G(spieler).ZoomXy[p_nr][0],
+				          _G(spieler).ZoomXy[p_nr][1],
 				          &spieler_vector[p_nr]);
 				out->scale_set(ts_info->image[spr_nr], x, y,
 				                spieler_vector[p_nr].Xzoom,
@@ -157,8 +157,8 @@ void sprite_engine() {
 			break;
 		case ZOBJ_PROGANI:
 			out->sprite_set(spr_info[nr].Image,
-			                 spr_info[nr].X - spieler.scrollx,
-			                 spr_info[nr].Y - spieler.scrolly, 0);
+			                 spr_info[nr].X - _G(spieler).scrollx,
+			                 spr_info[nr].Y - _G(spieler).scrolly, 0);
 			break;
 
 		case ZOBJ_AUTO_OBJ:
@@ -170,8 +170,8 @@ void sprite_engine() {
 			          mov_phasen[nr].ZoomFak,
 			          &auto_mov_vector[nr]);
 			out->scale_set(room_blk.DetImage[spr_nr],
-			                auto_mov_vector[nr].Xypos[0] + Cxy[0] - spieler.scrollx,
-			                auto_mov_vector[nr].Xypos[1] + Cxy[1] - spieler.scrolly,
+			                auto_mov_vector[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx,
+			                auto_mov_vector[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly,
 			                auto_mov_vector[nr].Xzoom,
 			                auto_mov_vector[nr].Yzoom, scr_width);
 			break;
@@ -188,7 +188,7 @@ void calc_z_ebene() {
 	z_count = 0;
 
 	for (i = 0; i < MAX_PERSON; i++) {
-		if (spieler.PersonRoomNr[P_CHEWY + i] == spieler.PersonRoomNr[P_CHEWY] &&
+		if (_G(spieler).PersonRoomNr[P_CHEWY + i] == _G(spieler).PersonRoomNr[P_CHEWY] &&
 		        spieler_mi[P_CHEWY + i].Id != NO_MOV_OBJ) {
 			z_obj_sort[z_count].ObjArt = ZOBJ_CHEWY + i;
 			z_obj_sort[z_count].ObjZ = spieler_vector[P_CHEWY + i].Xypos[1] +
@@ -215,10 +215,10 @@ void calc_z_ebene() {
 
 	for (i = 0; i < obj->mov_obj_room[0]; i++) {
 
-		if (spieler.room_m_obj[obj->mov_obj_room[i + 1]].ZEbene < 2000) {
+		if (_G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene < 2000) {
 			z_obj_sort[z_count].ObjArt = ZOBJ_INVENTAR;
 			z_obj_sort[z_count].ObjNr = obj->mov_obj_room[i + 1];
-			z_obj_sort[z_count].ObjZ = spieler.room_m_obj[obj->mov_obj_room[i + 1]].ZEbene;
+			z_obj_sort[z_count].ObjZ = _G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene;
 			++z_count;
 		}
 	}
@@ -268,18 +268,18 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	spieler_mi[p_nr].XyzStart[0] = x;
 	spieler_mi[p_nr].XyzStart[1] = y;
 	spieler_vector[p_nr].Count = 0;
-	spieler_vector[p_nr].Delay = spieler.DelaySpeed;
+	spieler_vector[p_nr].Delay = _G(spieler).DelaySpeed;
 	spieler_vector[p_nr].DelayCount = 0;
 	calc_zoom(spieler_mi[p_nr].XyzStart[1],
-	          spieler.ZoomXy[p_nr][0],
-	          spieler.ZoomXy[p_nr][1],
+	          _G(spieler).ZoomXy[p_nr][0],
+	          _G(spieler).ZoomXy[p_nr][1],
 	          &spieler_vector[p_nr]);
 	tmp_nr = p_nr;
 	if (p_nr >= P_NICHELLE) {
 		++tmp_nr;
 	}
-	ssi[tmp_nr].X = spieler_vector[p_nr].Xypos[0] - spieler.scrollx + spieler_mi[p_nr].HotX;
-	ssi[tmp_nr].Y = spieler_vector[p_nr].Xypos[1] - spieler.scrolly;
+	ssi[tmp_nr].X = spieler_vector[p_nr].Xypos[0] - _G(spieler).scrollx + spieler_mi[p_nr].HotX;
+	ssi[tmp_nr].Y = spieler_vector[p_nr].Xypos[1] - _G(spieler).scrolly;
 	if (!flags.ExitMov) {
 		if (p_nr == P_CHEWY) {
 			u_index = ged->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
@@ -387,8 +387,8 @@ void wait_detail(int16 det_nr) {
 void wait_show_screen(int16 frames) {
 	tmp_maus_links = _G(maus_links_click);
 	_G(maus_links_click) = false;
-	if (spieler.DelaySpeed > 0)
-		frames *= spieler.DelaySpeed;
+	if (_G(spieler).DelaySpeed > 0)
+		frames *= _G(spieler).DelaySpeed;
 	while (--frames > 0 && !SHOULD_QUIT) {
 		if (flags.AniUserAction)
 			get_user_key(NO_SETUP);
@@ -453,7 +453,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 				ret = true;
 				mem->file->select_pool_item(speech_handle, VocNr);
 				vocx = spieler_vector[0].Xypos[0] -
-				       spieler.scrollx + spieler_mi[0].HotX;
+				       _G(spieler).scrollx + spieler_mi[0].HotX;
 				ailsnd->set_stereo_pos(0, atds->get_stereo_pos(vocx));
 				ailsnd->start_db_voc(speech_handle, 0, 63);
 				ailsnd->set_stereo_pos(0, atds->get_stereo_pos(vocx));
@@ -494,8 +494,8 @@ void aad_wait(int16 str_nr) {
 void start_aad(int16 dia_nr, int16 ssi_nr) {
 	switch (ssi_nr) {
 	case 0:
-		ssi[0].X = spieler_vector[P_CHEWY].Xypos[0] - spieler.scrollx + spieler_mi[P_CHEWY].HotX;
-		ssi[0].Y = spieler_vector[P_CHEWY].Xypos[1] - spieler.scrolly;
+		ssi[0].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
+		ssi[0].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
 		atds->set_split_win(0, &ssi[0]);
 		break;
 
@@ -631,10 +631,10 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 			yoff = xy[1];
 			yoff += auto_mov_vector[nr].Yzoom;
 		}
-		if (minfo.x >= auto_mov_vector[nr].Xypos[0] + Cxy[0] - spieler.scrollx &&
-		        minfo.x <= auto_mov_vector[nr].Xypos[0] + xoff + Cxy[0] - spieler.scrollx &&
-		        minfo.y >= auto_mov_vector[nr].Xypos[1] + Cxy[1] - spieler.scrolly &&
-		        minfo.y <= auto_mov_vector[nr].Xypos[1] + yoff + Cxy[1] - spieler.scrolly)
+		if (minfo.x >= auto_mov_vector[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
+		        minfo.x <= auto_mov_vector[nr].Xypos[0] + xoff + Cxy[0] - _G(spieler).scrollx &&
+		        minfo.y >= auto_mov_vector[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly &&
+		        minfo.y <= auto_mov_vector[nr].Xypos[1] + yoff + Cxy[1] - _G(spieler).scrolly)
 			ret = true;
 	}
 	return ret;
@@ -887,13 +887,13 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 }
 
 void calc_person_end_ani(ObjMov *om, int16 p_nr) {
-	if (ani_stand_count[p_nr] >= 25 * (spieler.DelaySpeed + p_nr * 2)) {
+	if (ani_stand_count[p_nr] >= 25 * (_G(spieler).DelaySpeed + p_nr * 2)) {
 		ani_stand_count[p_nr] = 0;
 		om->PhNr = 0;
 		ani_stand_flag[p_nr] = true;
 		set_person_spr(person_end_phase[p_nr], p_nr);
 	} else if (ani_stand_flag[p_nr]) {
-		om->Delay = spieler.DelaySpeed + 1;
+		om->Delay = _G(spieler).DelaySpeed + 1;
 		if (om->PhNr < om->PhAnz - 1)
 			++om->PhNr;
 		else
@@ -914,7 +914,7 @@ void get_phase(ObjMov *om, MovInfo *mi) {
 
 				if (om->Xyvo[1] > (mi->Vorschub - 1)) {
 					om->Phase = CH_DOWN;
-					if (om->Xypos[0] - spieler.scrollx > SCREEN_WIDTH / 2)
+					if (om->Xypos[0] - _G(spieler).scrollx > SCREEN_WIDTH / 2)
 						person_end_phase[p_nr] = P_LEFT;
 					else
 						person_end_phase[p_nr] = P_RIGHT;
@@ -925,7 +925,7 @@ void get_phase(ObjMov *om, MovInfo *mi) {
 			} else {
 				if (om->Xyvo[1] < - (mi->Vorschub - 1)) {
 					om->Phase = CH_UP;
-					if (om->Xypos[0] - spieler.scrollx > SCREEN_WIDTH / 2)
+					if (om->Xypos[0] - _G(spieler).scrollx > SCREEN_WIDTH / 2)
 						person_end_phase[p_nr] = P_LEFT;
 					else
 						person_end_phase[p_nr] = P_RIGHT;
@@ -939,7 +939,7 @@ void get_phase(ObjMov *om, MovInfo *mi) {
 
 				if (om->Xyvo[1] > (mi->Vorschub - 1)) {
 					om->Phase = CH_DOWN;
-					if (om->Xypos[0] - spieler.scrollx > SCREEN_WIDTH / 2)
+					if (om->Xypos[0] - _G(spieler).scrollx > SCREEN_WIDTH / 2)
 						person_end_phase[p_nr] = P_LEFT;
 					else
 						person_end_phase[p_nr] = P_RIGHT;
@@ -950,7 +950,7 @@ void get_phase(ObjMov *om, MovInfo *mi) {
 			} else {
 				if (om->Xyvo[1] < -(mi->Vorschub - 1)) {
 					om->Phase = CH_UP;
-					if (om->Xypos[0] - spieler.scrollx > SCREEN_WIDTH / 2)
+					if (om->Xypos[0] - _G(spieler).scrollx > SCREEN_WIDTH / 2)
 						person_end_phase[p_nr] = P_LEFT;
 					else
 						person_end_phase[p_nr] = P_RIGHT;
@@ -1039,7 +1039,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		spieler_vector[p_nr].Count = 0;
 		spieler_vector[p_nr].PhNr = 0;
 		spieler_vector[p_nr].PhAnz = spr_anz;
-		spieler_vector[p_nr].Delay = spieler.DelaySpeed + spz_delay[p_nr];
+		spieler_vector[p_nr].Delay = _G(spieler).DelaySpeed + spz_delay[p_nr];
 		spieler_vector[p_nr].DelayCount = 0;
 		spz_count = count;
 		flags.MausLinks = true;
@@ -1055,7 +1055,7 @@ void calc_person_spz_ani(ObjMov *om) {
 		--spz_count;
 		if (spz_count > 0) {
 			om->PhNr = 0;
-			om->Delay = spieler.DelaySpeed + spz_delay[spz_p_nr];
+			om->Delay = _G(spieler).DelaySpeed + spz_delay[spz_p_nr];
 		} else {
 			if (spz_count != 255)
 				stop_spz();

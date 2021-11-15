@@ -29,24 +29,24 @@
 namespace Chewy {
 
 struct RoomMovObjekt {
-	int16 RoomNr;
+	int16 RoomNr = 0;
 
-	int16 X;
-	int16 Y;
-	uint8 XOff;
-	uint8 YOff;
-	int16 TxtNr;
-	int16 NeuObj;
-	int16 ActionObj;
-	uint8 ZustandAk;
-	uint8 ZustandOff;
-	uint8 ZustandFlipFlop;
-	uint8 AutoMov;
-	uint8 AniFlag;
-	uint8 Del;
-	uint8 Attribut;
-	uint8 HeldHide;
-	int16 ZEbene;
+	int16 X = 0;
+	int16 Y = 0;
+	uint8 XOff = 0;
+	uint8 YOff = 0;
+	int16 TxtNr = 0;
+	int16 NeuObj = 0;
+	int16 ActionObj = 0;
+	uint8 ZustandAk = 0;
+	uint8 ZustandOff = 0;
+	uint8 ZustandFlipFlop = 0;
+	uint8 AutoMov = 0;
+	uint8 AniFlag = 0;
+	uint8 Del = 0;
+	uint8 Attribut = 0;
+	uint8 HeldHide = 0;
+	int16 ZEbene = 0;
 
 	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
@@ -62,23 +62,23 @@ struct IibDateiHeader {
 };
 
 struct RoomStaticInventar {
-	int16 RoomNr;
-	int16 X;
-	int16 Y;
-	uint8 XOff;
-	uint8 YOff;
-	int16 InvNr;
-	int16 TxtNr;
-	uint8 HideSib;
-	uint8 Dummy;
-	uint8 ZustandAk;
-	uint8 ZustandOff;
-	uint8 ZustandFlipFlop;
-	uint8 AutoMov;
-	uint8 AniFlag;
-	uint8 HeldHide;
-	int16 StaticAk;
-	int16 StaticOff;
+	int16 RoomNr = 0;
+	int16 X = 0;
+	int16 Y = 0;
+	uint8 XOff = 0;
+	uint8 YOff = 0;
+	int16 InvNr = 0;
+	int16 TxtNr = 0;
+	uint8 HideSib = 0;
+	uint8 Dummy = 0;
+	uint8 ZustandAk = 0;
+	uint8 ZustandOff = 0;
+	uint8 ZustandFlipFlop = 0;
+	uint8 AutoMov = 0;
+	uint8 AniFlag = 0;
+	uint8 HeldHide = 0;
+	int16 StaticAk = 0;
+	int16 StaticOff = 0;
 
 	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);
@@ -92,16 +92,16 @@ struct SibDateiHeader {
 };
 
 struct RoomExit {
-	int16 RoomNr;
-	int16 X;
-	int16 Y;
-	uint8 XOff;
-	uint8 YOff;
-	int16 Exit;
-	uint8 ExitMov;
-	uint8 AutoMov;
-	uint8 Attribut;
-	uint8 dummy;
+	int16 RoomNr = 0;
+	int16 X = 0;
+	int16 Y = 0;
+	uint8 XOff = 0;
+	uint8 YOff = 0;
+	int16 Exit = 0;
+	uint8 ExitMov = 0;
+	uint8 AutoMov = 0;
+	uint8 Attribut = 0;
+	uint8 dummy = 0;
 
 	void synchronize(Common::Serializer &s);
 	bool load(Common::SeekableReadStream *src);

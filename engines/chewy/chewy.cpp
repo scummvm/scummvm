@@ -88,7 +88,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	exit_room(-1);
 
 	Common::Serializer s(stream, nullptr);
-	if (!spieler.synchronize(s)) {
+	if (!_G(spieler).synchronize(s)) {
 		fcode = READFEHLER;
 		modul = DATEI;
 		return Common::kReadingFailed;
@@ -97,27 +97,27 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		flags.LoadGame = true;
 		ERROR
 
-		if (spieler.inv_cur == true && spieler.AkInvent != -1) {
+		if (_G(spieler).inv_cur == true && _G(spieler).AkInvent != -1) {
 			menu_item = CUR_USE;
 		}
 
-		if (spieler.AkInvent != -1)
-			spieler.room_m_obj[spieler.AkInvent].RoomNr = -1;
-		room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
+		if (_G(spieler).AkInvent != -1)
+			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
+		room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 		ERROR
-		load_chewy_taf(spieler.ChewyAni);
+		load_chewy_taf(_G(spieler).ChewyAni);
 
 		fx_blend = BLEND1;
-		room->calc_invent(&room_blk, &spieler);
+		room->calc_invent(&room_blk, &_G(spieler));
 
-		if (spieler.AkInvent != -1)
-			spieler.room_m_obj[spieler.AkInvent].RoomNr = 255;
+		if (_G(spieler).AkInvent != -1)
+			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
 		obj->sort();
 
 		set_speed();
 
 		for (int i = 0; i < MAX_PERSON; i++) {
-			set_person_pos(spieler.X[i], spieler.Y[i], i, spieler.Phase[i]);
+			set_person_pos(_G(spieler).X[i], _G(spieler).Y[i], i, _G(spieler).Phase[i]);
 		}
 
 		_G(auto_obj) = 0;
@@ -135,12 +135,12 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	int16 i;
 	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 	for (i = 0; i < MAX_PERSON; i++) {
-		spieler.X[i] = spieler_vector[i].Xypos[0];
-		spieler.Y[i] = spieler_vector[i].Xypos[1];
-		spieler.Phase[i] = person_end_phase[i];
+		_G(spieler).X[i] = spieler_vector[i].Xypos[0];
+		_G(spieler).Y[i] = spieler_vector[i].Xypos[1];
+		_G(spieler).Phase[i] = person_end_phase[i];
 	}
 
-	return spieler.synchronize(s) ? Common::kNoError :
+	return _G(spieler).synchronize(s) ? Common::kNoError :
 		Common::kWritingFailed;
 }
 

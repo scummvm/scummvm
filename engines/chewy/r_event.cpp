@@ -47,15 +47,15 @@ void play_scene_ani(int16 nr, int16 mode) {
 #define ROOM_18_20 1820
 	int16 r_nr;
 	int16 tmp;
-	r_nr = spieler.PersonRoomNr[P_CHEWY] * 100 + nr;
+	r_nr = _G(spieler).PersonRoomNr[P_CHEWY] * 100 + nr;
 
 	switch (r_nr) {
 
 	case ROOM_2_3:
 		start_aad(49);
 		det->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
-		spieler.R2KabelBork = 1;
-		del_inventar(spieler.AkInvent);
+		_G(spieler).R2KabelBork = 1;
+		del_inventar(_G(spieler).AkInvent);
 		atds->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
 		atds->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
 		atds->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
@@ -71,7 +71,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 
 	case ROOM_18_20:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		break;
 
 	}
@@ -91,7 +91,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 	case ROOM_1_1:
 		det->hide_static_spr(2);
 		start_detail_wait(4, 1, ANI_VOR);
-		spieler.PersonHide[P_CHEWY] = false;
+		_G(spieler).PersonHide[P_CHEWY] = false;
 		atds->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
 		atds->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
 
@@ -118,7 +118,7 @@ void timer_action(int16 t_nr) {
 	if (ailsnd->isSpeechActive())
 		return;
 
-	switch (spieler.PersonRoomNr[P_CHEWY]) {
+	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	case 0:
 		switch (ani_nr) {
 		case 1:
@@ -126,38 +126,38 @@ void timer_action(int16 t_nr) {
 				uhr->reset_timer(t_nr, 0);
 				--timer_action_ctr;
 			} else if (!is_chewy_busy()) {
-				if (!spieler.R0FueterLab)
+				if (!_G(spieler).R0FueterLab)
 					timer_action_ctr = 2;
 
 				flags.AutoAniPlay = true;
-				if (!spieler.R0SchleimWurf) {
+				if (!_G(spieler).R0SchleimWurf) {
 					start_aad_wait(42, -1);
 					auto_move(5, 0);
 					set_person_spr(0, 0);
 
-					if (spieler.R0FueterLab < 3) {
+					if (_G(spieler).R0FueterLab < 3) {
 						start_spz(2, 255, false, 0);
-						if (spieler.R0FueterLab)
+						if (_G(spieler).R0FueterLab)
 							start_aad_wait(618, -1);
 						else
 							start_aad_wait(43, -1);
 					}
 
 					Room0::auge_ani();
-				} else if (!spieler.R0KissenWurf) {
+				} else if (!_G(spieler).R0KissenWurf) {
 					start_aad_wait(42, -1);
 					start_spz(2, 255, false, 0);
 
-					if (spieler.R0FueterLab < 3) {
+					if (_G(spieler).R0FueterLab < 3) {
 						start_aad_wait(43, -1);
-						++spieler.R0FueterLab;
+						++_G(spieler).R0FueterLab;
 					}
 
 					auto_move(3, 0);
 					set_person_pos(191, 120, P_CHEWY, P_LEFT);
 				}
 
-				if (!spieler.R0KissenWurf)
+				if (!_G(spieler).R0KissenWurf)
 					Room0::fuett_ani();
 
 				uhr->reset_timer(t_nr, 0);
@@ -183,8 +183,8 @@ void timer_action(int16 t_nr) {
 			if (!is_chewy_busy())
 				r12_init_bork();
 		} else if (t_nr == _G(timer_nr)[1]) {
-			if (spieler.R12TransOn) {
-				spieler.R12TransOn = false;
+			if (_G(spieler).R12TransOn) {
+				_G(spieler).R12TransOn = false;
 				start_aad_wait(30, -1);
 			}
 		}
@@ -203,7 +203,7 @@ void timer_action(int16 t_nr) {
 	case 17:
 		if (room->room_timer.ObjNr[ani_nr] == 2 ||
 				room->room_timer.ObjNr[ani_nr] == 3) {
-			if (spieler.R17EnergieOut)
+			if (_G(spieler).R17EnergieOut)
 				uhr->reset_timer(t_nr, 0);
 			else
 				default_flag = true;
@@ -229,7 +229,7 @@ void timer_action(int16 t_nr) {
 
 	case 40:
 		if (t_nr == _G(timer_nr)[0])
-			spieler.R40PoliceStart = true;
+			_G(spieler).R40PoliceStart = true;
 		else
 			default_flag = true;
 		break;
@@ -253,7 +253,7 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 51:
-		if (spieler.flags32_10)
+		if (_G(spieler).flags32_10)
 			r51_timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
 		else
 			default_flag = true;
@@ -295,15 +295,15 @@ void check_ged_action(int16 index) {
 	if (!flags.GedAction) {
 		flags.GedAction = true;
 		flag = false;
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 		case 1:
 			switch (index) {
 			case 0:
-				if (!spieler.R2KabelBork) {
-					if (spieler.AkInvent == KABEL_INV) {
+				if (!_G(spieler).R2KabelBork) {
+					if (_G(spieler).AkInvent == KABEL_INV) {
 						flag = 1;
-						del_inventar(spieler.AkInvent);
+						del_inventar(_G(spieler).AkInvent);
 					} else if (obj->check_inventar(KABEL_INV)) {
 						flag = 1;
 						obj->del_obj_use(KABEL_INV);
@@ -312,7 +312,7 @@ void check_ged_action(int16 index) {
 					if (flag) {
 						start_aad_wait(54, -1);
 						atds->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
-						spieler.room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
+						_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
 						obj->calc_rsi_flip_flop(KABELABDECKUNG);
 						obj->calc_all_static_detail();
 					}
@@ -326,7 +326,7 @@ void check_ged_action(int16 index) {
 			switch (index) {
 			case 0:
 				det->stop_detail(5);
-				if (!spieler.R2KabelBork) {
+				if (!_G(spieler).R2KabelBork) {
 
 					det->start_detail(6, 2, ANI_VOR);
 				} else {
@@ -341,15 +341,15 @@ void check_ged_action(int16 index) {
 		case 7:
 			switch (index) {
 			case 0:
-				if (spieler.R7BorkFlug && spieler.R7ChewyFlug) {
-					spieler.PersonHide[P_CHEWY] = true;
+				if (_G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
+					_G(spieler).PersonHide[P_CHEWY] = true;
 					start_detail_wait(20, 1, ANI_VOR);
 					det->show_static_spr(10);
-					wait_show_screen(20 * spieler.DelaySpeed);
+					wait_show_screen(20 * _G(spieler).DelaySpeed);
 					det->hide_static_spr(10);
 					set_person_pos(180, 124, P_CHEWY, P_LEFT);
-					spieler.PersonHide[P_CHEWY] = false;
-					spieler.R7ChewyFlug = false;
+					_G(spieler).PersonHide[P_CHEWY] = false;
+					_G(spieler).R7ChewyFlug = false;
 
 				}
 				break;
@@ -359,7 +359,7 @@ void check_ged_action(int16 index) {
 		case 9:
 			switch (index) {
 			case 0:
-				if (!spieler.R9Surimy)
+				if (!_G(spieler).R9Surimy)
 					r9_surimy();
 				break;
 
@@ -378,7 +378,7 @@ void check_ged_action(int16 index) {
 		case 13:
 			switch (index) {
 			case 2:
-				if (spieler.R12ChewyBork) {
+				if (_G(spieler).R12ChewyBork) {
 					stop_person(P_CHEWY);
 					r13_talk_bork();
 				}
@@ -402,7 +402,7 @@ void check_ged_action(int16 index) {
 
 		case 18:
 			if (!index) {
-				if (!spieler.R18SurimyWurf) {
+				if (!_G(spieler).R18SurimyWurf) {
 					stop_person(P_CHEWY);
 					auto_move(1, P_CHEWY);
 					start_aad(40, 0);
@@ -421,9 +421,9 @@ void check_ged_action(int16 index) {
 			if (!index) {
 				r37_dog_bell();
 			} else if (index == 1) {
-				if (spieler.R37Kloppe && !spieler.R37Mes) {
+				if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
 					stop_person(P_CHEWY);
-					spieler.R37Mes = true;
+					_G(spieler).R37Mes = true;
 					start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 					start_aad_wait(142, -1);
 				}
@@ -469,45 +469,45 @@ void check_ged_action(int16 index) {
 int16 ged_user_func(int16 idx_nr) {
 	switch (idx_nr) {
 	case 40:
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 		case 8:
-			if (spieler.R8GTuer)
+			if (_G(spieler).R8GTuer)
 				idx_nr = 0;
 			break;
 
 		case 9:
-			if (!spieler.R9Gitter)
+			if (!_G(spieler).R9Gitter)
 				idx_nr = 0;
 			break;
 
 		case 16:
-			if (!spieler.R16F5Exit)
+			if (!_G(spieler).R16F5Exit)
 				idx_nr = 0;
 			break;
 
 		case 17:
-			if (spieler.R17Location != 1)
+			if (_G(spieler).R17Location != 1)
 				idx_nr = 0;
 			break;
 
 		case 21:
-			if (!spieler.R21Laser2Weg)
+			if (!_G(spieler).R21Laser2Weg)
 				idx_nr = 0;
 			break;
 
 		case 31:
-			if (!spieler.R31KlappeZu)
+			if (!_G(spieler).R31KlappeZu)
 				idx_nr = 0;
 			break;
 
 		case 41:
-			if (!spieler.R41LolaOk)
+			if (!_G(spieler).R41LolaOk)
 				idx_nr = 0;
 			break;
 
 		case 52:
-			if (!spieler.R52LichtAn)
+			if (!_G(spieler).R52LichtAn)
 				idx_nr = 2;
 			else
 				idx_nr = 4;
@@ -516,29 +516,29 @@ int16 ged_user_func(int16 idx_nr) {
 		break;
 
 	case 41:
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 		case 17:
-			if (spieler.R17Location != 2)
+			if (_G(spieler).R17Location != 2)
 				idx_nr = 0;
 			break;
 
 		case 21:
-			if (!spieler.R21Laser1Weg) {
+			if (!_G(spieler).R21Laser1Weg) {
 				idx_nr = 0;
 			} else
 				idx_nr = 3;
 			break;
 
 		case 37:
-			if (!spieler.R37Kloppe) {
+			if (!_G(spieler).R37Kloppe) {
 
 				idx_nr = 0;
 			}
 			break;
 
 		case 52:
-			if (!spieler.R52TuerAuf)
+			if (!_G(spieler).R52TuerAuf)
 				idx_nr = 2;
 			else
 				idx_nr = 4;
@@ -555,30 +555,30 @@ void enter_room(int16 eib_nr) {
 	int16 i;
 
 	if ((!modul) && (flags.InitSound))
-		load_room_music(spieler.PersonRoomNr[P_CHEWY]);
+		load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	ERROR
-	load_chewy_taf(spieler.ChewyAni);
+	load_chewy_taf(_G(spieler).ChewyAni);
 	atds->stop_aad();
 	atds->stop_ats();
-	spieler.DiaAMov = -1;
+	_G(spieler).DiaAMov = -1;
 
 	_G(zoom_mov_fak) = 1;
 	flags.ZoomMov = true;
 	for (i = 0; i < MAX_PERSON; i++) {
 		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
-		spieler.ZoomXy[i][0] = 0;
-		spieler.ZoomXy[i][1] = 0;
+		_G(spieler).ZoomXy[i][0] = 0;
+		_G(spieler).ZoomXy[i][1] = 0;
 	}
 	flags.ZoomMov = false;
-	spieler.ZoomXy[P_CHEWY][ 0] = (int16)room->room_info->ZoomFak;
-	spieler.ZoomXy[P_CHEWY][1] = (int16)room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][ 0] = (int16)room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->room_info->ZoomFak;
 
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
 	SetUpScreenFunc = false;
 	HowardMov = false;
 	_G(cur_hide_flag) = false;
-	switch (spieler.PersonRoomNr[P_CHEWY]) {
+	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 	case 0:
 		Room0::entry();
@@ -626,8 +626,8 @@ void enter_room(int16 eib_nr) {
 
 	case 17:
 		r17_entry();
-		if (spieler.SoundSwitch) {
-			if (!spieler.R17EnergieOut)
+		if (_G(spieler).SoundSwitch) {
+			if (!_G(spieler).R17EnergieOut)
 				det->play_sound(15, 0);
 		}
 		break;
@@ -649,13 +649,13 @@ void enter_room(int16 eib_nr) {
 		break;
 
 	case 23:
-		spieler.PersonHide[P_CHEWY] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		set_person_pos(135, 69, P_CHEWY, -1);
 		break;
 
 	case 24:
 		r24_entry();
-		if (spieler.SoundSwitch)
+		if (_G(spieler).SoundSwitch)
 			det->play_sound(17, 0);
 		break;
 
@@ -816,11 +816,11 @@ void exit_room(int16 eib_nr) {
 	no_exit = false;
 	det->disable_room_sound();
 
-	switch (spieler.PersonRoomNr[P_CHEWY]) {
+	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 	case 6:
 		if (eib_nr == 8)
-			spieler.R17Location = 2;
+			_G(spieler).R17Location = 2;
 		break;
 
 	case 11:
@@ -829,14 +829,14 @@ void exit_room(int16 eib_nr) {
 
 	case 18:
 		if (eib_nr == 40)
-			spieler.R17Location = 2;
+			_G(spieler).R17Location = 2;
 		else if (eib_nr == 41)
-			spieler.R17Location = 3;
-		spieler.ScrollxStep = 1;
+			_G(spieler).R17Location = 3;
+		_G(spieler).ScrollxStep = 1;
 		flags.NoScroll = false;
-		spieler.R18Gitter = false;
-		spieler.room_e_obj[50].Attribut = 255;
-		spieler.room_e_obj[41].Attribut = AUSGANG_UNTEN;
+		_G(spieler).R18Gitter = false;
+		_G(spieler).room_e_obj[50].Attribut = 255;
+		_G(spieler).room_e_obj[41].Attribut = AUSGANG_UNTEN;
 		break;
 
 	case 19:
@@ -845,7 +845,7 @@ void exit_room(int16 eib_nr) {
 
 	case 21:
 		if (eib_nr == 47)
-			spieler.R17Location = 1;
+			_G(spieler).R17Location = 1;
 		flags.NoEndPosMovObj = false;
 		SetUpScreenFunc = 0;
 		load_chewy_taf(CHEWY_NORMAL);
@@ -856,14 +856,14 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 23:
-		spieler.PersonHide[P_CHEWY] = false;
-		switch (spieler.R23GleiterExit) {
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		switch (_G(spieler).R23GleiterExit) {
 		case 16:
 			set_person_pos(126, 110, P_CHEWY, P_RIGHT);
 			break;
 
 		case 25:
-			spieler.R25GleiterExit = true;
+			_G(spieler).R25GleiterExit = true;
 			break;
 
 		}
@@ -929,8 +929,8 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 64:
-		if (spieler.R64Moni1Ani == 5)
-			spieler.R64Moni1Ani = 3;
+		if (_G(spieler).R64Moni1Ani == 5)
+			_G(spieler).R64Moni1Ani = 3;
 		break;
 
 	case 65:
@@ -1076,15 +1076,15 @@ void exit_room(int16 eib_nr) {
 	}
 
 	if (no_exit) {
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
 		case 40:
 			r40_exit(eib_nr);
 			break;
 
 		case 42:
-			if (spieler.PersonRoomNr[P_HOWARD] == 42)
-				spieler.PersonRoomNr[P_HOWARD] = 40;
+			if (_G(spieler).PersonRoomNr[P_HOWARD] == 42)
+				_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 			break;
 
 		case 50:
@@ -1227,7 +1227,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 			}
-			if (!spieler.R43GetPgLady) {
+			if (!_G(spieler).R43GetPgLady) {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_060);
 
@@ -1273,13 +1273,13 @@ void flic_cut(int16 nr, int16 mode) {
 	ERROR;
 	ailsnd->end_sound();
 	g_events->delay(50);
-	ailsnd->set_sound_mastervol(spieler.SoundVol);
-	ailsnd->set_music_mastervol(spieler.MusicVol);
-	load_room_music(spieler.PersonRoomNr[P_CHEWY]);
+	ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
+	ailsnd->set_music_mastervol(_G(spieler).MusicVol);
+	load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	ERROR
 	room->load_sound();
 	ERROR
-	if (spieler.SoundSwitch != false)
+	if (_G(spieler).SoundSwitch != false)
 		det->enable_room_sound();
 	if (!flags.NoPalAfterFlc)
 		out->set_palette(pal);
@@ -1302,14 +1302,14 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 		atds->set_ats_str(ats_nr2, flag, ATS_DATEI);
 	if (flag) {
 		if (eib_nr1 != -1)
-			spieler.room_e_obj[eib_nr1].Attribut = spr_nr1;
+			_G(spieler).room_e_obj[eib_nr1].Attribut = spr_nr1;
 		if (eib_nr2 != -1)
-			spieler.room_e_obj[eib_nr2].Attribut = spr_nr2;
+			_G(spieler).room_e_obj[eib_nr2].Attribut = spr_nr2;
 	} else {
 		if (eib_nr1 != -1)
-			spieler.room_e_obj[eib_nr1].Attribut = 255;
+			_G(spieler).room_e_obj[eib_nr1].Attribut = 255;
 		if (eib_nr2 != -1)
-			spieler.room_e_obj[eib_nr1].Attribut = 255;
+			_G(spieler).room_e_obj[eib_nr1].Attribut = 255;
 	}
 	if (sib_nr != -1)
 		obj->calc_rsi_flip_flop(sib_nr);
@@ -1323,16 +1323,16 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	switch (sib_nr) {
 
 	case SIB_MONOKEL:
-		spieler.R0Monokel = true;
+		_G(spieler).R0Monokel = true;
 		obj->hide_sib(SIB_MONOKEL);
-		if (spieler.R0GBuch)
+		if (_G(spieler).R0GBuch)
 			atds->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case SIB_GBUCH:
-		spieler.R0GBuch = true;
+		_G(spieler).R0GBuch = true;
 		obj->hide_sib(SIB_GBUCH);
-		if (spieler.R0Monokel)
+		if (_G(spieler).R0Monokel)
 			atds->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
@@ -1341,8 +1341,8 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TERMINAL_R5:
-		if (spieler.R5Terminal) {
-			spieler.R5Terminal = 0;
+		if (_G(spieler).R5Terminal) {
+			_G(spieler).R5Terminal = 0;
 			det->stop_detail(6);
 			atds->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATEI);
 			atds->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATEI);
@@ -1366,24 +1366,24 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TKNOPF1_R7:
-		spieler.R6DoorLeftB = exit_flip_flop(3, 12, 9, 49, 35, SIB_TKNOPF2_R6,
+		_G(spieler).R6DoorLeftB = exit_flip_flop(3, 12, 9, 49, 35, SIB_TKNOPF2_R6,
 		                                     AUSGANG_OBEN, AUSGANG_LINKS,
-		                                     (int16)spieler.R6DoorLeftB);
+		                                     (int16)_G(spieler).R6DoorLeftB);
 		break;
 
 	case SIB_TKNOPF2_R7:
-		spieler.R7DoorRight = exit_flip_flop(4, 13, 14, 53, 68, SIB_TUER_R8,
+		_G(spieler).R7DoorRight = exit_flip_flop(4, 13, 14, 53, 68, SIB_TUER_R8,
 		                                     AUSGANG_RECHTS, AUSGANG_RECHTS,
-		                                     (int16)spieler.R7DoorRight);
+		                                     (int16)_G(spieler).R7DoorRight);
 		break;
 
 	case SIB_HEBEL_R7:
-		spieler.R7Hebel ^= 1;
-		atds->set_ats_str(50, spieler.R7Hebel, ATS_DATEI);
+		_G(spieler).R7Hebel ^= 1;
+		atds->set_ats_str(50, _G(spieler).R7Hebel, ATS_DATEI);
 		break;
 
 	case SIB_GIPS_R7:
-		spieler.R7RHaken = true;
+		_G(spieler).R7RHaken = true;
 		obj->show_sib(SIB_RHAKEN_R7);
 		obj->hide_sib(SIB_GIPS_R7);
 		break;
@@ -1397,9 +1397,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LHAKEN_R7:
-		if (spieler.R7SeilLeft) {
-			if (spieler.R7RHaken) {
-				spieler.R7SeilOk = true;
+		if (_G(spieler).R7SeilLeft) {
+			if (_G(spieler).R7RHaken) {
+				_G(spieler).R7SeilOk = true;
 				auto_move(4, P_CHEWY);
 				obj->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 				obj->calc_rsi_flip_flop(SIB_RHAKEN_R7);
@@ -1420,9 +1420,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TUER_R8:
-		spieler.R7DoorRight = exit_flip_flop(-1, 14, 13, 68, 53, SIB_TKNOPF2_R7,
+		_G(spieler).R7DoorRight = exit_flip_flop(-1, 14, 13, 68, 53, SIB_TKNOPF2_R7,
 		                                     AUSGANG_RECHTS, AUSGANG_RECHTS,
-		                                     (int16)spieler.R7DoorRight);
+		                                     (int16)_G(spieler).R7DoorRight);
 		break;
 
 	case SIB_DEE_PAINT_R9:
@@ -1434,24 +1434,24 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TALISMAN_R12:
-		spieler.R12Talisman = true;
+		_G(spieler).R12Talisman = true;
 		obj->hide_sib(SIB_TALISMAN_R12);
 		_G(timer_nr)[0] = room->set_timer(255, 20);
 		break;
 
 	case SIB_BANDKNOPF_R13:
-		spieler.R13Bandlauf ^= 1;
+		_G(spieler).R13Bandlauf ^= 1;
 
-		atds->set_ats_str(94, TXT_MARK_LOOK, spieler.R13Bandlauf, ATS_DATEI);
+		atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 
-		atds->set_ats_str(97, TXT_MARK_LOOK, spieler.R13Bandlauf, ATS_DATEI);
+		atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 
-		atds->set_ats_str(93, TXT_MARK_LOOK, spieler.R13Bandlauf, ATS_DATEI);
+		atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 		break;
 
 	case SIB_GITTER_R16:
 		atds->set_ats_str(125, 1, ATS_DATEI);
-		spieler.room_e_obj[33].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[33].Attribut = AUSGANG_OBEN;
 		break;
 
 	case SIB_CART1_R18:
@@ -1460,12 +1460,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
-		spieler.R18CartFach = 0;
+		_G(spieler).R18CartFach = 0;
 		cur_2_inventory();
 		break;
 
 	case SIB_TUERKNOPF_R18:
-		if (spieler.R18DoorBruecke) {
+		if (_G(spieler).R18DoorBruecke) {
 			det->disable_sound(19, 0);
 			det->enable_sound(19, 1);
 		} else {
@@ -1473,35 +1473,35 @@ int16 sib_event_no_inv(int16 sib_nr) {
 			det->disable_sound(19, 1);
 		}
 
-		if (!spieler.R6DoorLeftF) {
-			spieler.R6DoorLeftF = exit_flip_flop(-1, 8, -1, 33, -1, SIB_TKNOPF1_R6,
+		if (!_G(spieler).R6DoorLeftF) {
+			_G(spieler).R6DoorLeftF = exit_flip_flop(-1, 8, -1, 33, -1, SIB_TKNOPF1_R6,
 			                                     AUSGANG_LINKS, -1,
-			                                     (int16)spieler.R6DoorLeftF);
+			                                     (int16)_G(spieler).R6DoorLeftF);
 		}
-		spieler.R18DoorBruecke = exit_flip_flop(19, 40, 35, 148, -1, -1,
+		_G(spieler).R18DoorBruecke = exit_flip_flop(19, 40, 35, 148, -1, -1,
 		                                        AUSGANG_OBEN, AUSGANG_LINKS,
-		                                        (int16)spieler.R18DoorBruecke);
+		                                        (int16)_G(spieler).R18DoorBruecke);
 		break;
 
 	case SIB_SCHALTER1_R21:
-		det->start_detail(0, 1, spieler.R21Hebel1);
-		spieler.R21Hebel1 ^= 1;
+		det->start_detail(0, 1, _G(spieler).R21Hebel1);
+		_G(spieler).R21Hebel1 ^= 1;
 		r21_calc_laser();
-		atds->set_ats_str(126, TXT_MARK_LOOK, spieler.R21Hebel1, ATS_DATEI);
+		atds->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER2_R21:
-		det->start_detail(1, 1, spieler.R21Hebel2);
-		spieler.R21Hebel2 ^= 1;
+		det->start_detail(1, 1, _G(spieler).R21Hebel2);
+		_G(spieler).R21Hebel2 ^= 1;
 		r21_calc_laser();
-		atds->set_ats_str(127, TXT_MARK_LOOK, spieler.R21Hebel2, ATS_DATEI);
+		atds->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER3_R21:
-		det->start_detail(2, 1, spieler.R21Hebel3);
-		spieler.R21Hebel3 ^= 1;
+		det->start_detail(2, 1, _G(spieler).R21Hebel3);
+		_G(spieler).R21Hebel3 ^= 1;
 		r21_calc_laser();
-		atds->set_ats_str(128, TXT_MARK_LOOK, spieler.R21Hebel3, ATS_DATEI);
+		atds->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATEI);
 		break;
 
 	case SIB_SEIL_R21:
@@ -1517,7 +1517,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_FLUXO_R23:
-		spieler.R23FluxoFlex = false;
+		_G(spieler).R23FluxoFlex = false;
 		atds->set_ats_str(112, 0, ATS_DATEI);
 		menu_item_vorwahl = CUR_USE;
 		break;
@@ -1534,7 +1534,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_TOPF_R31:
 		obj->hide_sib(SIB_TOPF_R31);
 		atds->set_ats_str(242, 1, ATS_DATEI);
-		spieler.R31PflanzeWeg = true;
+		_G(spieler).R31PflanzeWeg = true;
 		break;
 
 	case SIB_SCHLAUCH_R26:
@@ -1568,7 +1568,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		obj->hide_sib(sib_nr);
 		det->del_static_ani(6);
 		room->set_timer_status(6, TIMER_STOP);
-		spieler.R40Geld = true;
+		_G(spieler).R40Geld = true;
 		start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(201, -1);
 		break;
@@ -1579,18 +1579,18 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_LAMPE_R52:
 		atds->del_steuer_bit(338, ATS_AKTIV_BIT, ATS_DATEI);
-		spieler.R52LichtAn ^= 1;
-		check_shad(2 * (spieler.R52LichtAn + 1), 1);
+		_G(spieler).R52LichtAn ^= 1;
+		check_shad(2 * (_G(spieler).R52LichtAn + 1), 1);
 		break;
 
 	case SIB_VISIT_R53:
 		obj->hide_sib(sib_nr);
-		spieler.R53Visit = true;
+		_G(spieler).R53Visit = true;
 		break;
 
 	case SIB_KAUTABAK_R56:
 		obj->hide_sib(sib_nr);
-		spieler.R56GetTabak = true;
+		_G(spieler).R56GetTabak = true;
 		break;
 
 	case SIB_ASCHE_R64:
@@ -1610,8 +1610,8 @@ void sib_event_inv(int16 sib_nr) {
 	switch (sib_nr) {
 
 	case SIB_TERMINAL_R5:
-		if (!spieler.R5Terminal) {
-			spieler.R5Terminal = 1;
+		if (!_G(spieler).R5Terminal) {
+			_G(spieler).R5Terminal = 1;
 			cur_2_inventory();
 			del_inventar(RED_CARD_INV);
 
@@ -1623,26 +1623,26 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TKNOPF1_R6:
-		spieler.R6DoorLeftF = exit_flip_flop(4, 8, -1, 33, -1, -1,
+		_G(spieler).R6DoorLeftF = exit_flip_flop(4, 8, -1, 33, -1, -1,
 		                                     AUSGANG_LINKS, -1,
-		                                     (int16)spieler.R6DoorLeftF);
+		                                     (int16)_G(spieler).R6DoorLeftF);
 		break;
 
 	case SIB_TKNOPF2_R6:
-		spieler.R6DoorLeftB = exit_flip_flop(5, 9, 12, 35, 49, SIB_TKNOPF1_R7,
+		_G(spieler).R6DoorLeftB = exit_flip_flop(5, 9, 12, 35, 49, SIB_TKNOPF1_R7,
 		                                     AUSGANG_LINKS, AUSGANG_OBEN,
-		                                     (int16)spieler.R6DoorLeftB);
+		                                     (int16)_G(spieler).R6DoorLeftB);
 		break;
 
 	case SIB_TKNOPF3_R6:
-		spieler.R6DoorRightB = exit_flip_flop(6, 11, 20, 37, 99, SIB_TKNOPF3_R11,
+		_G(spieler).R6DoorRightB = exit_flip_flop(6, 11, 20, 37, 99, SIB_TKNOPF3_R11,
 		                                      AUSGANG_RECHTS, AUSGANG_LINKS,
-		                                      (int16)spieler.R6DoorRightB);
+		                                      (int16)_G(spieler).R6DoorRightB);
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
-		del_inventar(spieler.AkInvent);
-		spieler.R6BolaSchild = true;
+		del_inventar(_G(spieler).AkInvent);
+		_G(spieler).R6BolaSchild = true;
 		det->show_static_spr(2);
 		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 		obj->hide_sib(SIB_BOLA_KNOPF_R6);
@@ -1667,24 +1667,24 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TKNOPF1_R11:
-		spieler.R11DoorRightF = exit_flip_flop(1, 23, -1, 87, -1, -1,
-		                                       AUSGANG_OBEN, -1, (int16)spieler.R11DoorRightF);
+		_G(spieler).R11DoorRightF = exit_flip_flop(1, 23, -1, 87, -1, -1,
+		                                       AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightF);
 		break;
 
 	case SIB_TKNOPF2_R11:
-		spieler.R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
-		                                       AUSGANG_OBEN, -1, (int16)spieler.R11DoorRightB);
+		_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
+		                                       AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
 		break;
 
 	case SIB_TKNOPF3_R11:
-		spieler.R6DoorRightB = exit_flip_flop(6, 20, 11, 99, 37, SIB_TKNOPF3_R6,
+		_G(spieler).R6DoorRightB = exit_flip_flop(6, 20, 11, 99, 37, SIB_TKNOPF3_R6,
 		                                      AUSGANG_LINKS, AUSGANG_RECHTS,
-		                                      (int16)spieler.R6DoorRightB);
+		                                      (int16)_G(spieler).R6DoorRightB);
 		break;
 
 	case SIB_ROEHRE_R12:
-		spieler.R12TalismanOk = true;
-		del_inventar(spieler.AkInvent);
+		_G(spieler).R12TalismanOk = true;
+		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
 		start_aad(115, 0);
 		break;
@@ -1695,10 +1695,10 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
-		spieler.R18CartFach = 1;
-		del_inventar(spieler.AkInvent);
-		if (spieler.R18CartTerminal == true) {
-			spieler.R18CartSave = true;
+		_G(spieler).R18CartFach = 1;
+		del_inventar(_G(spieler).AkInvent);
+		if (_G(spieler).R18CartTerminal == true) {
+			_G(spieler).R18CartSave = true;
 			start_aad_wait(120, -1);
 		} else
 			start_aad_wait(121, -1);
@@ -1711,15 +1711,15 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER2_R21:
-		spieler.R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
+		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
 		                                        AUSGANG_RECHTS, AUSGANG_RECHTS,
-		                                        (int16)spieler.R21GitterMuell);
+		                                        (int16)_G(spieler).R21GitterMuell);
 		atds->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
 		break;
 
 	case SIB_CARTRIDGE_R23:
 		r23_use_cartridge();
-		if (spieler.R18CartSave == true)
+		if (_G(spieler).R18CartSave == true)
 			atds->set_ats_str(111, 2, ATS_DATEI);
 		else
 			atds->set_ats_str(111, 1, ATS_DATEI);
@@ -1727,14 +1727,14 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_FLUXO_R23:
-		spieler.R23FluxoFlex = true;
-		del_inventar(spieler.AkInvent);
+		_G(spieler).R23FluxoFlex = true;
+		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(112, 1, ATS_DATEI);
 		menu_item_vorwahl = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(113, 0, ATS_DATEI);
 		menu_item_vorwahl = CUR_USE;
 		break;
