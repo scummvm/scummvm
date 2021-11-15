@@ -27,7 +27,7 @@
 #include "scumm/akos.h"
 #include "scumm/charset.h"
 #include "scumm/file.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v8.h"

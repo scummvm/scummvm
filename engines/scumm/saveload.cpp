@@ -29,7 +29,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/he/intern_he.h"
@@ -68,7 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 102
+#define CURRENT_VER 103
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -415,7 +415,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 #ifdef ENABLE_SCUMM_7_8
 	if (_imuseDigital) {
 		_imuseDigital->stopAllSounds();
-		_imuseDigital->resetState();
 	}
 #endif
 

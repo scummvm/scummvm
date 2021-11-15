@@ -20,22 +20,31 @@
  *
  */
 
-#ifndef SCUMM_IMUSE_DIGI_CODECS_H
-#define SCUMM_IMUSE_DIGI_CODECS_H
+#if !defined(SCUMM_IMUSE_DIGI_GROUPS_H) && defined(ENABLE_SCUMM_7_8)
+#define SCUMM_IMUSE_DIGI_GROUPS_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
+#include "common/serializer.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 
 namespace Scumm {
 
-namespace BundleCodecs {
+class IMuseDigiGroupsHandler {
 
-int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
-
-void initializeImcTables();
-void releaseImcTables();
-
-} // End of namespace BundleCodecs
+private:
+	IMuseDigital *_engine;
+	int _effVols[DIMUSE_MAX_GROUPS];
+	int _vols[DIMUSE_MAX_GROUPS];
+public:
+	IMuseDigiGroupsHandler(IMuseDigital *engine);
+	~IMuseDigiGroupsHandler();
+	int init();
+	int setGroupVol(int id, int volume);
+	int getGroupVol(int id);
+};
 
 } // End of namespace Scumm
-
 #endif

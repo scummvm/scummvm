@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/keyboard.h"
+#include "common/mutex.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
@@ -675,6 +676,10 @@ public:
 	void ensureResourceLoaded(ResType type, ResId idx);
 
 protected:
+	Common::Mutex _resourceAccessMutex; // Used in getResourceSize(), getResourceAddress() and findResource()
+										// to avoid race conditions between the audio thread of Digital iMUSE
+										// and the main SCUMM thread
+
 	int readSoundResource(ResId idx);
 	int readSoundResourceSmallHeader(ResId idx);
 	bool isResourceInUse(ResType type, ResId idx) const;

@@ -38,11 +38,13 @@ class SmushMixer;
 class StringResource;
 class Codec37Decoder;
 class Codec47Decoder;
+class IMuseDigital;
 
 class SmushPlayer {
 	friend class Insane;
 private:
 	ScummEngine_v7 *_vm;
+	IMuseDigital *_imuseDigital;
 	int32 _nbframes;
 	SmushMixer *_smixer;
 	int16 _deltaPal[0x300];
@@ -85,9 +87,9 @@ private:
 	bool _insanity;
 	bool _middleAudio;
 	bool _skipPalette;
-
+	int _iactTable[4];
 public:
-	SmushPlayer(ScummEngine_v7 *scumm);
+	SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *_imuseDigital);
 	~SmushPlayer();
 
 	void pause();

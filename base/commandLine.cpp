@@ -200,10 +200,6 @@ static const char HELP_STRING[] =
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
 #endif
-#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM)
-	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
-	"                           (default: 10)\n"
-#endif
 	"  --engine-speed=NUM       Set frame per second limit (0 - 100), 0 = no limit\n"
 	"                           (default: 60)\n"
 	"                           Grim Fandango or Escape from Monkey Island\n"
@@ -308,10 +304,6 @@ void registerDefaults() {
 #ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("tempo", 0);
 #endif
-#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM)
-	ConfMan.registerDefault("dimuse_tempo", 10);
-#endif
-
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 	ConfMan.registerDefault("alt_intro", false);
 #endif
@@ -841,10 +833,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
 #endif
-#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM)
-			DO_LONG_OPTION_INT("dimuse-tempo")
-			END_OPTION
-#endif
+
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 			DO_LONG_OPTION_BOOL("demo-mode")
 			END_OPTION

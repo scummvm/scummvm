@@ -20,22 +20,61 @@
  *
  */
 
-#ifndef SCUMM_IMUSE_DIGI_CODECS_H
-#define SCUMM_IMUSE_DIGI_CODECS_H
-
-#include "common/scummsys.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
+#include "scumm/imuse_digi/dimuse_groups.h"
 
 namespace Scumm {
 
-namespace BundleCodecs {
+IMuseDigiGroupsHandler::IMuseDigiGroupsHandler(IMuseDigital *engine) {
+	_engine = engine;
+}
 
-int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
+IMuseDigiGroupsHandler::~IMuseDigiGroupsHandler() {}
 
-void initializeImcTables();
-void releaseImcTables();
+int IMuseDigiGroupsHandler::init() {
+	for (int i = 0; i < DIMUSE_MAX_GROUPS; i++) {
+		_effVols[i] = 127;
+		_vols[i] = 127;
+	}
+	return 0;
+}
 
-} // End of namespace BundleCodecs
+int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
+	int l;
+
+	if (id >= DIMUSE_MAX_GROUPS) {
+		return -5;
+	}
+
+	if (volume == -1) {
+		return _vols[id];
+	}
+
+	if (volume > 127)
+		return -5;
+
+	if (id) {
+		_vols[id] = volume;
+		_effVols[id] = (_vols[0] * (volume + 1)) / 128;
+	} else {
+		_effVols[0] = volume;
+		_vols[0] = volume;
+
+		for (l = 1; l < DIMUSE_MAX_GROUPS; l++) {
+			_effVols[l] = (volume * (_vols[id] + 1)) / 128;
+		}
+	}
+
+	_engine->diMUSEUpdateGroupVolumes();
+	return _vols[id];
+}
+
+int IMuseDigiGroupsHandler::getGroupVol(int id) {
+	if (id >= DIMUSE_MAX_GROUPS) {
+		return -5;
+	}
+
+	return _effVols[id];
+}
 
 } // End of namespace Scumm
-
-#endif

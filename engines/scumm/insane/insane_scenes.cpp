@@ -842,7 +842,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase0(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x - 160) >> 2) + 64);
 			if (_tiresRustle) {
 				if (!smlayer_isSoundRunning(87))
 					smlayer_startSfx(87);
@@ -879,8 +879,8 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x - 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x - 160) >> 2) + 64);
 			if (!_tiresRustle) {
 				smlayer_stopSound(87);
 			} else {
@@ -900,21 +900,21 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x - 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x - 160) >> 2) + 64);
 			break;
 		case 4:
 		case 5:
 			postCase3(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x - 160) >> 2) + 64);
 			break;
 		case 6:
 			postCase5(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x - 160) >> 2) + 64);
 			break;
 		case 7:
 		case 8:
@@ -947,8 +947,8 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x - 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x - 160) >> 2) + 64);
 			break;
 		case 24:
 			if (!smlayer_isSoundRunning(90)) {
