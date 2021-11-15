@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-15 23:05+0000\n"
-"PO-Revision-Date: 2021-11-14 14:32+0000\n"
+"PO-Revision-Date: 2021-11-15 23:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6991,6 +6991,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please reinstall the game with the correct resource files."
 msgstr ""
+"ScummVM Toolsで圧縮された音声ファイルが検出されました(*.BUN/*.SOU)。\n"
+"このゲームではサポートされていないため、オーディオは無効になります。\n"
+"正しいリソースファイルでゲームを再インストールしてください。"
 
 #: engines/scumm/scumm.cpp:2121
 #, c-format
