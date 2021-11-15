@@ -663,6 +663,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
 				image = new Graphics::SVGBitmap(stream);
+				delete stream;
 				break;
 			}
 		}
