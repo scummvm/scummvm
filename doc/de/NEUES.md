@@ -19,7 +19,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
  Kyra:
-   - Unterstützung für die chinesischen Versionn von Legend of Kyrandia 1 und 3 hinzugefügt.
+   - Unterstützung für die chinesischen Versionen von Legend of Kyrandia 1 und 3 hinzugefügt.
    - Unterstützung für Audio-Ausgabe in der Macintosh-Version von Legend of Kyrandia hinzugefügt.
 
  Supernova:
