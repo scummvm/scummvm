@@ -1466,6 +1466,8 @@ void GUI_MR::fontBasedMenuResize() {
 		resizeMenu(_gameOptions, 174, 8, 30, 22, 20, 145, 32, 0);
 		resizeMenu(_audioOptions, 140, 8, 28, 22, 20, 110, 30, 0);
 		_audioOptions.item[3].y = 81;
+		_audioOptions.item[1].labelY = 47;
+		_audioOptions.item[2].labelY = 64;
 		_audioOptions.item[3].labelY = 83;
 		resizeMenu(_choiceMenu, 56, 8, 30, 0, 20, 30, 0, 0);
 		_loadMenu.numberOfItems = 6;
