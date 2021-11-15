@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-14 21:54+0000\n"
+"POT-Creation-Date: 2021-11-14 22:00+0000\n"
 "PO-Revision-Date: 2021-11-14 09:33+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -601,23 +601,23 @@ msgstr ""
 "Deseja realmente redefinir todas as configurações do FluidSynth para seus "
 "valores padrão?"
 
-#: gui/gui-manager.cpp:202
+#: gui/gui-manager.cpp:203
 msgid "GUI"
 msgstr "Interface"
 
-#: gui/gui-manager.cpp:206 engines/mohawk/myst.cpp:574
+#: gui/gui-manager.cpp:207 engines/mohawk/myst.cpp:574
 #: engines/mohawk/riven.cpp:838
 msgid "Interact"
 msgstr "Interagir"
 
-#: gui/gui-manager.cpp:211 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:212 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Fechar"
 
-#: gui/gui-manager.cpp:217 engines/metaengine.cpp:110
+#: gui/gui-manager.cpp:218 engines/metaengine.cpp:110
 #: engines/dragons/metaengine.cpp:161 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:455
 #: engines/grim/grim.cpp:532 engines/twine/metaengine.cpp:328
@@ -628,7 +628,7 @@ msgstr "Fechar"
 msgid "Up"
 msgstr "Cima"
 
-#: gui/gui-manager.cpp:222 engines/metaengine.cpp:115
+#: gui/gui-manager.cpp:223 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:167 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:460
 #: engines/grim/grim.cpp:537 engines/twine/metaengine.cpp:335
@@ -639,7 +639,7 @@ msgstr "Cima"
 msgid "Down"
 msgstr "Baixo"
 
-#: gui/gui-manager.cpp:227 engines/metaengine.cpp:120
+#: gui/gui-manager.cpp:228 engines/metaengine.cpp:120
 #: engines/dragons/metaengine.cpp:173 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:542
 #: engines/twine/metaengine.cpp:350 engines/twine/metaengine.cpp:418
@@ -651,7 +651,7 @@ msgstr "Baixo"
 msgid "Left"
 msgstr "Esquerda"
 
-#: gui/gui-manager.cpp:232 engines/metaengine.cpp:125
+#: gui/gui-manager.cpp:233 engines/metaengine.cpp:125
 #: engines/dragons/metaengine.cpp:179 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:547
 #: engines/twine/metaengine.cpp:342 engines/twine/metaengine.cpp:411
@@ -663,7 +663,7 @@ msgstr "Esquerda"
 msgid "Right"
 msgstr "Direita"
 
-#: gui/gui-manager.cpp:237 engines/pegasus/pegasus.cpp:2815
+#: gui/gui-manager.cpp:238 engines/pegasus/pegasus.cpp:2815
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
