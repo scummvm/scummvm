@@ -140,7 +140,6 @@ protected:
 	int				_itemsPerRow;
 	int				_firstVisibleItem;
 	int				_lastVisibleItem;
-	GridItemTray	*_tray;
 	bool			_isGridInvalid;
 
 	int				_scrollWindowPaddingX;

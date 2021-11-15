@@ -371,7 +371,6 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_trayHeight = kLineHeight * 3;
 
 	_selectedEntry = nullptr;
-	_tray = nullptr;
 	_isGridInvalid = true;
 }
 
@@ -852,15 +851,17 @@ void GridWidget::reflowLayout() {
 }
 
 void GridWidget::openTray(int x, int y, int entryId) {
-	_tray = new GridItemTray(this, x - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
-	_tray->runModal();
+	GridItemTray *tray = new GridItemTray(this, x - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
+	tray->runModal();
+	delete tray;
 }
 
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
-		_tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos,
+		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos,
 								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
-		_tray->runModal();
+		tray->runModal();
+		delete tray;
 	}
 }
 
