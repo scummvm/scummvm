@@ -84,13 +84,13 @@ byte *get_dispoff() {
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void setScummVMPalette(const byte *palette, uint start, uint count) {
-	byte pal[PALETTE_SIZE];
-	byte *dest = &pal[0];
+	byte tempPal[PALETTE_SIZE];
+	byte *dest = &tempPal[0];
 
 	for (uint i = 0; i < count * 3; ++i, ++palette, ++dest)
 		*dest = VGA_COLOR_TRANS(*palette);
 
-	g_system->getPaletteManager()->setPalette(pal, start, count);
+	g_system->getPaletteManager()->setPalette(tempPal, start, count);
 }
 
 void setpalette(const byte *palette) {
