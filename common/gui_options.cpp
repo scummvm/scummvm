@@ -112,9 +112,15 @@ bool checkGameGUIOption(const String &option, const String &str) {
 String parseGameGUIOptions(const String &str) {
 	String res;
 
-	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (str.contains(g_gameOptions[i].desc))
-			res += g_gameOptions[i].option;
+	for (int i = 0; g_gameOptions[i].desc; i++) {
+		for (uint32 ii = 0; ii < str.size(); ++ii) {
+			uint32 c_end = str.find(' ', ii);
+			if (c_end == (uint32)-1)
+				c_end = str.size();
+			if (str.substr(ii, c_end - ii).equals((g_gameOptions[i].desc)))
+				res += g_gameOptions[i].option;
+		}
+	}
 
 	return res;
 }
