@@ -1924,8 +1924,8 @@ static const uint16 k1TwoByteFontLookupTableDOS[] = {
 
 static const Uint16Provider k1TwoByteFontLookupTableDOSProvider = { ARRAYSIZE(k1TwoByteFontLookupTableDOS), k1TwoByteFontLookupTableDOS };
 
-static const uint8 k1TwoByteDummyGlyphDOS[] = {
+static const uint8 k1k1CreditsStringsDummyDOS[] = {
 	0
 };
 
-static const ByteProvider k1TwoByteDummyGlyphDOSProvider = { ARRAYSIZE(k1TwoByteDummyGlyphDOS), k1TwoByteDummyGlyphDOS };
+static const ByteProvider k1k1CreditsStringsDummyDOSProvider = { ARRAYSIZE(k1k1CreditsStringsDummyDOS), k1k1CreditsStringsDummyDOS };

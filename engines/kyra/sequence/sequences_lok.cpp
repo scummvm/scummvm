@@ -1221,16 +1221,31 @@ void KyraEngine_LoK::seq_playCredits() {
 	CreditsLineList lines;
 
 	_screen->disableDualPaletteMode();
-
 	_screen->hideMouse();
-	if (!_flags.isTalkie) {
+
+	Screen::FontId font1, font2;
+	int alignX3 = 157;
+	int alignX4 = 161;
+	int alignXOffs = 0;
+	int lineHeight = 10;
+	int fin = 175;
+
+	if (_flags.lang == Common::ZH_TWN) {
+		font1 = font2 = Screen::FID_CHINESE_FNT;
+		alignX3 = alignX4 = 150;
+		alignXOffs = 10;
+		lineHeight = 16;
+		fin = 160;
+	} else if (!_flags.isTalkie) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
+		font1 = Screen::FID_CRED6_FNT;
+		font2 = Screen::FID_CRED8_FNT;
+	} else {
+		font1 = font2 = Screen::FID_8_FNT;
+	}
 
-		_screen->setFont(Screen::FID_CRED8_FNT);
-	} else
-		_screen->setFont(Screen::FID_8_FNT);
-
+	_screen->setFont(font2);
 	_screen->loadBitmap("CHALET.CPS", 4, 4, &_screen->getPalette(0));
 
 	_screen->setCurPage(0);
@@ -1245,7 +1260,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98 || _flags.lang == Common::ZH_TWN) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
@@ -1283,28 +1298,24 @@ void KyraEngine_LoK::seq_playCredits() {
 
 		if (*currentString == 1) {
 			currentString++;
-
-			if (!_flags.isTalkie)
-				_screen->setFont(Screen::FID_CRED6_FNT);
+			_screen->setFont(font1);
 		} else if (*currentString == 2) {
 			currentString++;
-
-			if (!_flags.isTalkie)
-				_screen->setFont(Screen::FID_CRED8_FNT);
+			_screen->setFont(font2);
 		}
 
 		line.font = _screen->_currentFont;
 
 		if (alignment == 3)
-			line.x = 157 - _screen->getTextWidth((const char *)currentString);
+			line.x = alignX3 - _screen->getTextWidth((const char *)currentString);
 		else if (alignment == 4)
-			line.x = 161;
+			line.x = alignX4;
 		else
-			line.x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
+			line.x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1 - alignXOffs;
 
 		line.y = currentY;
 		if (lineEndCode != 5)
-			currentY += 10;
+			currentY += lineHeight;
 
 		line.str = currentString;
 
@@ -1324,7 +1335,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	while (!finished && !shouldQuit()) {
 		uint32 startLoop = _system->getMillis();
 
-		if (bottom > 175) {
+		if (bottom > fin) {
 			_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 

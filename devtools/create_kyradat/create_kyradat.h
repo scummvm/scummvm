@@ -147,7 +147,6 @@ enum kExtractID {
 	k1AmigaGameSFXTable,
 
 	k1TwoByteFontLookupTable,
-	k1TwoByteDummyGlyph,
 
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,

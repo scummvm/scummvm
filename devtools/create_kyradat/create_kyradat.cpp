@@ -39,7 +39,7 @@
 
 
 enum {
-	kKyraDatVersion = 112
+	kKyraDatVersion = 113
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -153,7 +153,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k1SpecialPalette32, kRawData, false },
 	{ k1SpecialPalette33, kRawData, false },
 
-	// CREDITS (used in FM-TOWNS and AMIGA)
+	// CREDITS (used in FM-TOWNS, AMIGA, Chinese DOS)
 	{ k1CreditsStrings, kRawData, true },
 
 	// FM-TOWNS specific
@@ -168,7 +168,6 @@ const ExtractFilename extractFilenames[] = {
 
 	// Chinese version specific
 	{ k1TwoByteFontLookupTable, kRawDataBe16, true },
-	{ k1TwoByteDummyGlyph, kRawData, true },
 
 	// AMIGA specific
 	{ k1AmigaIntroSFXTable, kAmigaSfxTable, false },
