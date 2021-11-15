@@ -62,8 +62,6 @@ const static char *sceneVariables[] = {
 void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", current.c_str());
 	Common::String name = convertPath(current);
-	// if (!prefix.empty())
-	// 	name = prefix + "/" + name;
 
 	Common::File test;
 	if (!test.open(name.c_str()))
@@ -87,7 +85,9 @@ void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::St
 void HypnoEngine::resetSceneState() {
 	uint32 i = 0;
 	while (sceneVariables[i]) {
-		_sceneState[sceneVariables[i]] = 0;
+		// Preserve difficulty level variables
+		if (sceneVariables[i] != Common::String("GS_COMBATLEVEL") && sceneVariables[i] != Common::String("GS_PUZZLELEVEL"))
+			_sceneState[sceneVariables[i]] = 0;
 		i++;
 	}
 }
@@ -214,7 +214,11 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	return false;
 }
 
+Common::String HypnoEngine::findNextLevel(const Transition *trans) { error("no code!"); }
+Common::String HypnoEngine::findNextLevel(const Common::String &level) { error("no code!"); }
+
 void HypnoEngine::runTransition(Transition *trans) {
+	Common::String nextLevel = findNextLevel(trans);
 	if (!trans->frameImage.empty()) {
 		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans->frameImage.c_str());
 		Graphics::Surface *frame = decodeFrame(trans->frameImage, trans->frameNumber);
@@ -225,11 +229,11 @@ void HypnoEngine::runTransition(Transition *trans) {
 		delete frame;
 		sframe->free();
 		delete sframe;
-		Common::String *ptr = new Common::String(trans->level);
+		Common::String *ptr = new Common::String(nextLevel);
 		if (!installTimer(2 * 1000000, ptr)) // 2 seconds
 			error("Failed to install timer");
 	} else
-		_nextLevel = trans->level;
+		_nextLevel = nextLevel;
 }
 
 

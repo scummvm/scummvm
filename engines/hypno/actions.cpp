@@ -101,7 +101,7 @@ void HypnoEngine::runEscape() {
 
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
-	disableCursor();
+	defaultCursor();
 	_music.clear();
 	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
 }

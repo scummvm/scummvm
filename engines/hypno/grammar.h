@@ -375,10 +375,21 @@ public:
 
 class Transition : public Level {
 public:
-	Transition()  {
+	Transition(Common::String level)  {
 		type = TransitionLevel;
+		nextLevel = level;
+		levelEasy = "";
+		levelHard = "";
 	}
-	Common::String level;
+	
+	Transition(Common::String easy, Common::String hard)  {
+		type = TransitionLevel;
+		levelEasy = easy;
+		levelHard = hard;
+	}
+	Common::String nextLevel;
+	Common::String levelEasy;
+	Common::String levelHard;
 	Filename frameImage;
 	uint32 frameNumber;
 };

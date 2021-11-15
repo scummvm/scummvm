@@ -89,7 +89,7 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 }
 
 void HypnoEngine::loadArcadeLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
-	Common::String arclevel = current + _difficulty + ".mi_";
+	Common::String arclevel = current + ".mi_";
 	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
 	Common::String arc;
 	Common::String list;

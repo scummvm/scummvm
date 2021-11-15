@@ -73,7 +73,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[1].actions.push_back(cl);
 
 	loadSceneLevel("options.mi_", "", prefix);
-	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
+	loadSceneLevel("levels.mi_", "", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
@@ -88,21 +88,17 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["decide1.mi_"];
 	cl = new ChangeLevel("bank.mi_");
 	sc->hots[2].actions.push_back(cl);
-	cl = new ChangeLevel("c1.mi_");
+	cl = new ChangeLevel("c1"); // depens on the difficulty
 	sc->hots[4].actions.push_back(cl);
 
 	loadSceneLevel("bank.mi_", "", prefix);
 	_levels["bank.mi_"]->intros.push_back("cine/swcs001s.smk");
-	_levels["bank.mi_"]->levelIfWin = "alley.mi_";
+	_levels["bank.mi_"]->levelIfWin = "<alley_selector>";
 
-	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
-	loadSceneLevel("busint.mi_", "buspuz.mi_", prefix);
-	loadSceneLevel("buspuz.mi_", "", prefix);
-	_levels["buspuz.mi_"]->intros.push_back("cine/apts004s.smk");
-	_levels["buspuz.mi_"]->intros.push_back("cine/blcs001s.smk");
-	_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
+	Transition *alley_selector = new Transition("alley.mi_", "<puz_matr>");
+	_levels["<alley_selector>"] = alley_selector;
 
-	loadSceneLevel("alley.mi_", "<bank_easy>", prefix);
+	loadSceneLevel("alley.mi_", "<trans_apt_2>", prefix);
 	_levels["alley.mi_"]->music = "alleymus.raw";
 	_levels["alley.mi_"]->intros.push_back("cine/aleyc01s.smk");
 
@@ -110,15 +106,39 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c1.mi_"]->intros.push_back("cine/ross002s.smk");
 	_levels["c1.mi_"]->levelIfLose = "<over_apt_1>";
 
-	Transition *trans_apt_1 = new Transition();
-	trans_apt_1->level = "busintro.mi_";
+	// Hardcoded levels
+	Code *matrix = new Code();
+	matrix->name = "<puz_matr>";
+	matrix->intros.push_back("spider/cine/aleyc01s.smk");
+	matrix->levelIfWin = "<trans_apt_2>";
+	_levels["<puz_matr>"] = matrix;
+
+	// Transitions
+	Transition *trans_apt_1 = new Transition("busintro.mi_");
+	trans_apt_1->frameImage = "spider/cine/blcs00.smk";
+	trans_apt_1->frameNumber = 0;
+	trans_apt_1->intros.push_back("spider/cine/ross004s.smk");
 	trans_apt_1->intros.push_back("spider/cine/apts002s.smk");
 	_levels["<trans_apt_1>"] = trans_apt_1;
 
-	Transition *bankEasy = new Transition();
-	bankEasy->level = "buspuz.mi_";
-	bankEasy->intros.push_back("spider/cine/dia002s.smk");
-	_levels["<bank_easy>"] = bankEasy;
+	Transition *trans_apt_2 = new Transition("busint.mi_");
+	trans_apt_2->frameImage = "spider/cine/blcs00.smk";
+	trans_apt_2->frameNumber = 0;
+	trans_apt_2->intros.push_back("spider/cine/dia002s.smk");
+	trans_apt_2->intros.push_back("spider/cine/apts004s.smk");
+	_levels["<trans_apt_2>"] = trans_apt_2;
+
+	loadSceneLevel("busint.mi_", "busintro.mi_", prefix);
+	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
+	_levels["busintro.mi_"]->intros.push_back("cine/blcs001s.smk");
+
+	loadSceneLevel("buspuz.mi_", "decide3.mi_", prefix);
+	loadSceneLevel("decide3.mi_", "", prefix);
+	//_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
+
+	// Transition *bus_transition = new Transition("buspuz.mi_");
+	// bankEasy->intros.push_back("spider/cine/dia002s.smk");
+	// _levels["<bus_transition>"] = bankEasy;
 
 	// Transition *bankHard = new Transition();
 	// bankHard->level = "buspuz.mi_";
@@ -140,31 +160,22 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c13", "", prefix);
 
 	// // Hard arcade levels
-	// loadArcadeLevel("c1h", "", prefix);
-	// loadArcadeLevel("c2h", "", prefix);
-	// loadArcadeLevel("c3h", "", prefix);
-	// loadArcadeLevel("c4h", "", prefix);
-	// loadArcadeLevel("c5h", "", prefix);
-	// //loadArcadeLevel("c6h", "", "spider");
-	// // No c7h level?
-	// loadArcadeLevel("c8h", "", prefix);
-	// loadArcadeLevel("c9h", "", prefix);
-	// loadArcadeLevel("c10h", "", prefix);
-	// loadArcadeLevel("c11h", "", prefix);
-	// loadArcadeLevel("c12h", "", prefix);
-	// loadArcadeLevel("c13h", "", prefix);
-
-
-	// // Hardcoded levels
-	// Code *matrix = new Code();
-	// matrix->name = "<puz_matr>";
-	// matrix->intros.push_back("spider/cine/aleyc01s.smk");
-	// matrix->levelIfWin = "";
-	// _levels["<puz_matr>"] = matrix;
+	loadArcadeLevel("c1h", "", prefix);
+	loadArcadeLevel("c2h", "", prefix);
+	loadArcadeLevel("c3h", "", prefix);
+	loadArcadeLevel("c4h", "", prefix);
+	loadArcadeLevel("c5h", "", prefix);
+	//loadArcadeLevel("c6h", "", "spider");
+	// No c7h level?
+	loadArcadeLevel("c8h", "", prefix);
+	loadArcadeLevel("c9h", "", prefix);
+	loadArcadeLevel("c10h", "", prefix);
+	loadArcadeLevel("c11h", "", prefix);
+	loadArcadeLevel("c12h", "", prefix);
+	loadArcadeLevel("c13h", "", prefix);
 
 	// start level
-	Transition *start = new Transition();
-	start->level = "mainmenu.mi_";
+	Transition *start = new Transition("mainmenu.mi_");
 	start->intros.push_back("spider/cine/dcine1.smk");
 	start->intros.push_back("spider/cine/dcine2.smk");
 	_levels["<start>"] = start;
@@ -178,6 +189,18 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("<quit>");
 	sc->hots[5].actions.push_back(cl);
+
+	sc = (Scene *) _levels["levels.mi_"];
+	cl = new ChangeLevel("levels.mi_");
+	sc->hots[1].actions.push_back(cl);
+	sc->hots[2].actions.push_back(cl);
+	sc->hots[3].actions.push_back(cl);
+	sc->hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel("mv0t.mi_");
+	sc->hots[5].actions.push_back(cl);
+	cl = new ChangeLevel("mainmenu.mi_");
+	sc->hots[6].actions.push_back(cl);
 
 	sc = (Scene *) _levels["options.mi_"]; 
 
@@ -195,41 +218,41 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("options.mi_");
 	sc->hots[1].actions.push_back(cl);
 
-	cl = new ChangeLevel("c1.mi_");
+	cl = new ChangeLevel("c1h.mi_");
 	sc->hots[2].actions.push_back(cl);
 
-	cl = new ChangeLevel("c2.mi_");
+	cl = new ChangeLevel("c2h.mi_");
 	sc->hots[3].actions.push_back(cl);
 
-	cl = new ChangeLevel("c3.mi_");
+	cl = new ChangeLevel("c3h.mi_");
 	sc->hots[4].actions.push_back(cl);
 
-	cl = new ChangeLevel("c4.mi_");
+	cl = new ChangeLevel("c4h.mi_");
 	sc->hots[5].actions.push_back(cl);
 
-	cl = new ChangeLevel("c5.mi_");
+	cl = new ChangeLevel("c5h.mi_");
 	sc->hots[6].actions.push_back(cl);
 
-	cl = new ChangeLevel("c8.mi_");
+	cl = new ChangeLevel("c8h.mi_");
 	sc->hots[7].actions.push_back(cl);
 	
-	cl = new ChangeLevel("c9.mi_");
+	cl = new ChangeLevel("c9h.mi_");
 	sc->hots[8].actions.push_back(cl);
 
-	cl = new ChangeLevel("c10.mi_");
+	cl = new ChangeLevel("c10h.mi_");
 	sc->hots[9].actions.push_back(cl);
 
-	cl = new ChangeLevel("c11.mi_");
+	cl = new ChangeLevel("c11h.mi_");
 	sc->hots[10].actions.push_back(cl);
 
-	cl = new ChangeLevel("c12.mi_");
+	cl = new ChangeLevel("c12h.mi_");
 	sc->hots[11].actions.push_back(cl);
 
 	// Game overs
-	Transition *over_apt_1 = new Transition();
-	over_apt_1->level = "tryagain.mi_";
+	Transition *over_apt_1 = new Transition("tryagain.mi_");
 	over_apt_1->intros.push_back("spider/cine/apts01as.smk");
 	_levels["<over_apt_1>"] = over_apt_1;
+	_nextLevel = "<start>";
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -245,8 +268,7 @@ void SpiderEngine::loadAssetsDemo() {
 		error("Failed to load any file from missions.lib");
 
 	// start level
-	Transition *start = new Transition();
-	start->level = "sixdemo/mis/demo.mis";
+	Transition *start = new Transition("sixdemo/mis/demo.mis");
 	start->intros.push_back("sixdemo/demo/dcine1.smk");
 	start->intros.push_back("sixdemo/demo/dcine2.smk");
 	_levels["<start>"] = start;
@@ -267,7 +289,7 @@ void SpiderEngine::loadAssetsDemo() {
 	cl = new ChangeLevel("sixdemo/mis/alley.mis");
 	sc->hots[2].actions.push_back(cl);
 
-	cl = new ChangeLevel("puz_matr");
+	cl = new ChangeLevel("<puz_matr>");
 	sc->hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/shoctalk.mis");
@@ -294,11 +316,12 @@ void SpiderEngine::loadAssetsDemo() {
 
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";
-	matrix->intros.push_back("spiderman/demo/aleyc01s.smk");
+	matrix->intros.push_back("sixdemo/demo/aleyc01s.smk");
 	matrix->levelIfWin = "sixdemo/mis/demo.mis";
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["<puz_matr>"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
+	_nextLevel = "<start>";
 }
 
 void SpiderEngine::runCode(Code *code) {
@@ -413,6 +436,21 @@ void SpiderEngine::showCredits() {
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
 	runIntro(video);
 	_nextLevel = "mainmenu.mi_";
+}
+
+Common::String SpiderEngine::findNextLevel(const Transition *trans) { 
+	if (trans->nextLevel.empty())
+		return _sceneState["GS_PUZZLELEVEL"] == 0 ? trans->levelEasy : trans->levelHard;
+
+	return trans->nextLevel;
+}
+
+Common::String SpiderEngine::findNextLevel(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c#") || Common::matchString(level.c_str(), "c##"))
+		return level + (_sceneState["GS_COMBATLEVEL"] == 0 ? "" : "h") + ".mi_";
+	else {
+		return level;
+	}
 }
 
 } // End of namespace Hypno

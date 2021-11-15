@@ -169,6 +169,8 @@ public:
 	// levels
 	Common::String _nextLevel;
 	Common::String _currentLevel;
+	virtual Common::String findNextLevel(const Common::String &level);
+	virtual Common::String findNextLevel(const Transition *trans);
 	uint32 _levelId;
 
 	// hotspots
@@ -252,6 +254,9 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void runCode(Code *code) override;
+	Common::String findNextLevel(const Common::String &level) override;
+	Common::String findNextLevel(const Transition *trans) override;
+
 
 private:
 	void runMainMenu(Code *code);
@@ -269,6 +274,8 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void runCode(Code *code) override;
+	Common::String findNextLevel(const Common::String &level) override;
+	Common::String findNextLevel(const Transition *trans) override;
 
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;

@@ -130,17 +130,15 @@ Common::Error HypnoEngine::run() {
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
 	// Main event loop
-	Common::Event event;
-	Common::Point mousePos;
 	loadAssets();
-	_nextLevel = "<start>";
+	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {
-		//debug("nextLevel: %s", _nextLevel.c_str());
+		debug("nextLevel: %s", _nextLevel.c_str());
 		_defaultCursor = "";
 		_prefixDir = "";
 		_videosPlaying.clear();
 		if (!_nextLevel.empty()) {
-			_currentLevel = _nextLevel;
+			_currentLevel = findNextLevel(_nextLevel);
 			_nextLevel = "";
 			runLevel(_currentLevel);
 		}
@@ -158,6 +156,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 
 	// Play intros
 	disableCursor();
+	debug("Number of videos to play: %d", _levels[name]->intros.size());
 	for (Filenames::iterator it = _levels[name]->intros.begin(); it != _levels[name]->intros.end(); ++it) {
 		MVideo v(*it, Common::Point(0, 0), false, true, false);
 		runIntro(v);
