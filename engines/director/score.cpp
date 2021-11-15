@@ -752,7 +752,7 @@ void Score::playSoundChannel(uint16 frameId) {
 	}
 
 	// Channels above 2 are only usable by Lingo.
-	if (g_director->getVersion() >= 400) {
+	if (g_director->getVersion() >= 300) {
 		sound->playPuppetSound(3);
 		sound->playPuppetSound(4);
 	}
