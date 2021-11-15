@@ -186,7 +186,7 @@ bool ailScummVM::isSpeechActive(int channel) const {
 }
 
 void ailScummVM::waitForSpeechToFinish() {
-	if (flags.InitSound && spieler.SpeechSwitch) {
+	if (flags.InitSound && _G(spieler).SpeechSwitch) {
 		while (isSpeechActive() && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}

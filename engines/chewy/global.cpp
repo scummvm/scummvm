@@ -195,7 +195,6 @@ maus_info minfo;
 kb_info kbinfo;
 cur_blk curblk;
 cur_ani curani;
-Spieler spieler;
 iog_init ioptr;
 RaumBlk room_blk;
 ObjMov spieler_vector[MAX_PERSON];

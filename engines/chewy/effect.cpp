@@ -208,7 +208,7 @@ void effect::spr_blende(byte *workpage_, byte *ablage_,
 	out->setze_zeiger(workpage_);
 
 	for (i = 0; i < 8; i++) {
-		out->map_spr2screen(ablage_, spieler.scrollx, spieler.scrolly);
+		out->map_spr2screen(ablage_, _G(spieler).scrollx, _G(spieler).scrolly);
 		out->scale_set(spr->image[0], x - (zoomx / 2), y - (zoomy / 2), zoomx, zoomy, 0);
 		out->box_fill(0, 0, 320, y - (zoomy / 2), 12);
 		out->box_fill(0, 0, x - (zoomx / 2), 200, 12);

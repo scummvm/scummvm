@@ -44,8 +44,8 @@ int16 load_ads_dia(int16 dia_nr) {
 			ads_item_ptr = atds->ads_item_ptr(ads_blk_nr, &ads_item_anz);
 			flags.AdsDialog = true;
 			ads_push = true;
-			ads_tmp_dsp = spieler.DispFlag;
-			spieler.DispFlag = false;
+			ads_tmp_dsp = _G(spieler).DispFlag;
+			_G(spieler).DispFlag = false;
 
 			set_ssi_xy();
 			ads_dia_nr = dia_nr;
@@ -62,8 +62,8 @@ void set_ssi_xy() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		if (i >= P_NICHELLE)
 			tmp = 1;
-		ssi[i + tmp].X = spieler_vector[i].Xypos[0] - spieler.scrollx + spieler_mi[i].HotX;
-		ssi[i + tmp].Y = spieler_vector[i].Xypos[1] - spieler.scrolly;
+		ssi[i + tmp].X = spieler_vector[i].Xypos[0] - _G(spieler).scrollx + spieler_mi[i].HotX;
+		ssi[i + tmp].Y = spieler_vector[i].Xypos[1] - _G(spieler).scrolly;
 		atds->set_split_win(i + tmp, &ssi[i + tmp]);
 	}
 }
@@ -145,7 +145,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 71:
 						if (is_cur_inventar(ZANGE_INV))
 							r8_hole_kohle();
-						else if (!spieler.inv_cur)
+						else if (!_G(spieler).inv_cur)
 							r8_start_verbrennen();
 						break;
 
@@ -156,16 +156,16 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 73:
-						if (!spieler.R9Gitter) {
-							spieler.PersonHide[P_CHEWY] = true;
+						if (!_G(spieler).R9Gitter) {
+							_G(spieler).PersonHide[P_CHEWY] = true;
 							start_detail_wait(5, 1, ANI_VOR);
-							spieler.PersonHide[P_CHEWY] = false;
+							_G(spieler).PersonHide[P_CHEWY] = false;
 						} else
 							action_ret = false;
 						break;
 
 					case 77:
-						if (!spieler.R10SurimyOk && !spieler.inv_cur) {
+						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
 
 							auto_move(3, P_CHEWY);
 							flc->set_custom_user_function(r6_cut_serv1);
@@ -204,7 +204,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 104:
 						if (is_cur_inventar(TRANSLATOR_INV)) {
 							auto_move(6, P_CHEWY);
-							spieler.R14Translator = true;
+							_G(spieler).R14Translator = true;
 							start_aad_wait(25, -1);
 						} else
 							action_ret = false;
@@ -227,7 +227,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 114:
-						switch_room(spieler.R23GleiterExit);
+						switch_room(_G(spieler).R23GleiterExit);
 						break;
 
 					case 117:
@@ -290,7 +290,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 165:
-						if (spieler.R16F5Exit) {
+						if (_G(spieler).R16F5Exit) {
 							invent_2_slot(29);
 							det->hide_static_spr(19);
 							atds->set_steuer_bit(158, ATS_AKTIV_BIT, ATS_DATEI);
@@ -581,7 +581,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 95:
-						if (spieler.R13Band == true)
+						if (_G(spieler).R13Band == true)
 							start_aad_wait(116, -1);
 						break;
 
@@ -590,7 +590,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 114:
-						switch_room(spieler.R23GleiterExit);
+						switch_room(_G(spieler).R23GleiterExit);
 						break;
 
 					case 227:
@@ -635,7 +635,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 122:
-						if (!spieler.R13BorkOk) {
+						if (!_G(spieler).R13BorkOk) {
 							auto_move(10, P_CHEWY);
 							r13_talk_bork();
 						}
@@ -774,11 +774,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_USE:
 					switch (txt_nr) {
 					case 90:
-						atds->set_ats_str(90, TXT_MARK_USE, spieler.R13Band);
+						atds->set_ats_str(90, TXT_MARK_USE, _G(spieler).R13Band);
 						break;
 
 					case 124:
-						if (!spieler.R16F5Exit)
+						if (!_G(spieler).R16F5Exit)
 							auto_move(5, P_CHEWY);
 						break;
 
@@ -920,10 +920,10 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 
 		case 3:
 			if (str_end_nr == 1) {
-				if (spieler.R11IdCardNr == RED_CARD_INV)
-					spieler.R11IdCardNr = YEL_CARD_INV;
+				if (_G(spieler).R11IdCardNr == RED_CARD_INV)
+					_G(spieler).R11IdCardNr = YEL_CARD_INV;
 				else
-					spieler.R11IdCardNr = RED_CARD_INV;
+					_G(spieler).R11IdCardNr = RED_CARD_INV;
 			}
 			break;
 
@@ -935,21 +935,21 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			if (blk_nr == 3) {
 				r41_sub_dia();
 			} else if (blk_nr == 0 && str_end_nr == 3) {
-				spieler.R41RepairInfo = true;
+				_G(spieler).R41RepairInfo = true;
 				stop_ads_dialog();
 			}
 			break;
 
 		case 12:
 			if (str_end_nr == 1) {
-				spieler.R41HowardDiaOK = true;
+				_G(spieler).R41HowardDiaOK = true;
 
 			}
 			break;
 
 		case 15:
 			if (blk_nr == 1 && str_end_nr == 0) {
-				spieler.R55Job = true;
+				_G(spieler).R55Job = true;
 				stop_ads_dialog();
 			}
 			break;
@@ -957,7 +957,7 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 		case 16:
 			if (blk_nr == 0) {
 				if (str_end_nr == 2) {
-					if (!spieler.R56Kneipe)
+					if (!_G(spieler).R56Kneipe)
 						atds->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI);
 				}
 			}
@@ -975,7 +975,7 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 		case 19:
 			if (blk_nr == 0) {
 				if (str_end_nr == 4) {
-					spieler.R67LiedOk = true;
+					_G(spieler).R67LiedOk = true;
 				}
 			}
 			break;
@@ -984,10 +984,10 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			if (blk_nr == 0) {
 
 				if (str_end_nr == 1) {
-					spieler.PersonHide[P_CHEWY] = true;
+					_G(spieler).PersonHide[P_CHEWY] = true;
 					start_detail_wait(28, 3, ANI_VOR);
 
-					spieler.PersonHide[P_CHEWY] = false;
+					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
 			}
 			break;
@@ -1084,7 +1084,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case 387:
 	case 393:
 		if (mode == AAD_STR_START) {
-			switch (spieler.ChewyAni) {
+			switch (_G(spieler).ChewyAni) {
 			case CHEWY_NORMAL:
 				ani_nr = CH_TALK3;
 				break;
@@ -1317,7 +1317,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 0:
 			if (mode == AAD_STR_START) {
-				if (spieler.R28ChewyPump)
+				if (_G(spieler).R28ChewyPump)
 					ani_nr = CH_PUMP_TALK;
 				else
 					ani_nr = CH_TALK3;
@@ -1467,7 +1467,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		switch (person_nr) {
 		case 2:
-			switch (spieler.PersonRoomNr[P_CHEWY]) {
+			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 42:
 				if (mode == AAD_STR_START) {
 					room->set_timer_status(8, TIMER_STOP);
@@ -1738,7 +1738,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 0:
 			if (mode == AAD_STR_START) {
-				switch (spieler.ChewyAni) {
+				switch (_G(spieler).ChewyAni) {
 				case CHEWY_NORMAL:
 					ani_nr = CH_TALK3;
 					break;
@@ -1799,11 +1799,11 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 3:
 			if (mode == AAD_STR_START) {
-				spieler.PersonHide[P_CHEWY] = true;
+				_G(spieler).PersonHide[P_CHEWY] = true;
 				talk_ani = 29;
 			} else {
 				det->stop_detail(29);
-				spieler.PersonHide[P_CHEWY] = false;
+				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 			break;
 
@@ -1831,36 +1831,36 @@ void calc_inv_use_txt(int16 test_nr) {
 		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0);
 		ERROR;
 		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], spieler.scrollx, spieler.scrolly);
+		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		out->back2screen(workpage);
 		while (in->get_switch_code() != ESC);
 		while (in->get_switch_code() != 0);
 		room->open_handle(&background[0], "rb", R_TGPDATEI);
 		ERROR
-		room->load_tgp(spieler.PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
+		room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
 		ERROR;
 		break;
 
 	case ANGEL_INV:
 	case KNOCHEN_INV:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
 		ret = del_invent_slot(test_nr);
-		spieler.InventSlot[ret] = ANGEL2_INV;
+		_G(spieler).InventSlot[ret] = ANGEL2_INV;
 		obj->change_inventar(test_nr, ANGEL2_INV, &room_blk);
 		break;
 
 	case KUERBIS1_INV:
 		ret = del_invent_slot(KUERBIS1_INV);
-		spieler.InventSlot[ret] = K_MASKE_INV;
+		_G(spieler).InventSlot[ret] = K_MASKE_INV;
 		obj->change_inventar(KUERBIS1_INV, K_MASKE_INV, &room_blk);
 		invent_2_slot(K_FLEISCH_INV);
 		invent_2_slot(K_KERNE_INV);
 		break;
 
 	case MESSER_INV:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
 		invent_2_slot(K_MASKE_INV);
@@ -1869,32 +1869,32 @@ void calc_inv_use_txt(int16 test_nr) {
 		break;
 
 	case BRIEF_INV:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
-		spieler.R42BriefMarke = true;
+		_G(spieler).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
-		spieler.InventSlot[ret] = BRIEF2_INV;
+		_G(spieler).InventSlot[ret] = BRIEF2_INV;
 		obj->change_inventar(BRIEF_INV, BRIEF2_INV, &room_blk);
 		break;
 
 	case FLASCHE_INV:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
 	case WOLLE_INV:
 		del_invent_slot(WOLLE_INV);
 		atds->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATEI);
-		spieler.R56WhiskyMix = true;
+		_G(spieler).R56WhiskyMix = true;
 		break;
 
 	case B_MARY_INV:
 	case PIRANHA_INV:
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
 		ret = del_invent_slot(test_nr);
-		spieler.InventSlot[ret] = B_MARY2_INV;
+		_G(spieler).InventSlot[ret] = B_MARY2_INV;
 		obj->change_inventar(test_nr, B_MARY2_INV, &room_blk);
 		break;
 
@@ -1939,7 +1939,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 
 	}
 	if (inv_mode != -1) {
-		txt_nr = atds->calc_inv_no_use(spieler.AkInvent, test_nr, inv_mode);
+		txt_nr = atds->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
 		ERROR
 		if (txt_nr != -1) {
 			if (!flags.InventMenu) {
@@ -1970,11 +1970,11 @@ int16 calc_person_txt(int16 p_nr) {
 	int16 txt_nr = -1;
 	switch (p_nr) {
 	case P_CHEWY:
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		case 40:
 		case 41:
 		case 42:
-			txt_nr = 219 + spieler.PersonRoomNr[P_CHEWY];
+			txt_nr = 219 + _G(spieler).PersonRoomNr[P_CHEWY];
 			break;
 
 		default:
@@ -1986,7 +1986,7 @@ int16 calc_person_txt(int16 p_nr) {
 
 	case P_HOWARD:
 		if (menu_item == CUR_USE) {
-			switch (spieler.PersonRoomNr[P_CHEWY]) {
+			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 40:
 			case 67:
 				menu_item = CUR_HOWARD;
@@ -1995,7 +1995,7 @@ int16 calc_person_txt(int16 p_nr) {
 				break;
 
 			case 42:
-				if (!spieler.R42MarkeOk) {
+				if (!_G(spieler).R42MarkeOk) {
 					menu_item = CUR_HOWARD;
 					cursor_wahl(menu_item);
 					txt_nr = 30000;
@@ -2008,7 +2008,7 @@ int16 calc_person_txt(int16 p_nr) {
 
 	case P_NICHELLE:
 		if (menu_item == CUR_USE) {
-			switch (spieler.PersonRoomNr[P_CHEWY]) {
+			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 67:
 				menu_item = CUR_NICHELLE;
 				cursor_wahl(menu_item);
@@ -2033,7 +2033,7 @@ int16 calc_person_click(int16 p_nr) {
 	int16 action_ret = false;
 	switch (p_nr) {
 	case P_CHEWY:
-		switch (spieler.AkInvent) {
+		switch (_G(spieler).AkInvent) {
 		case K_MASKE_INV:
 			r28_set_pump();
 			action_ret = true;
@@ -2047,9 +2047,9 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	case P_HOWARD:
-		switch (spieler.AkInvent) {
+		switch (_G(spieler).AkInvent) {
 		case GALA_INV:
-			if (spieler.PersonRoomNr[P_CHEWY] == 67) {
+			if (_G(spieler).PersonRoomNr[P_CHEWY] == 67) {
 				r67_kostuem_aad(378);
 				action_ret = true;
 			}
@@ -2063,12 +2063,12 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	case P_NICHELLE:
-		switch (spieler.AkInvent) {
+		switch (_G(spieler).AkInvent) {
 		case GALA_INV:
-			if (spieler.PersonRoomNr[P_CHEWY] == 67) {
+			if (_G(spieler).PersonRoomNr[P_CHEWY] == 67) {
 				r67_kostuem_aad(377);
 				action_ret = true;
-			} else if (spieler.PersonRoomNr[P_CHEWY] == 68) {
+			} else if (_G(spieler).PersonRoomNr[P_CHEWY] == 68) {
 				r68_kostuem_aad(387);
 				action_ret = true;
 			}
@@ -2095,40 +2095,40 @@ void calc_person_dia(int16 p_nr) {
 	switch (p_nr) {
 	case P_HOWARD:
 	case P_NICHELLE:
-		switch (spieler.PersonRoomNr[P_CHEWY]) {
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		case 69:
-			spieler.PersonDia[p_nr] = 381;
+			_G(spieler).PersonDia[p_nr] = 381;
 			break;
 
 		default:
-			spieler.PersonDia[p_nr] = spieler.PersonGlobalDia[p_nr];
-			room_nr = spieler.PersonDiaRoom[p_nr];
+			_G(spieler).PersonDia[p_nr] = _G(spieler).PersonGlobalDia[p_nr];
+			room_nr = _G(spieler).PersonDiaRoom[p_nr];
 			break;
 
 		}
 		atds->set_string_end_func(&r65_atds_string_start);
 		if (!room_nr) {
-			if (spieler.DiaAMov != -1)
-				auto_move(spieler.DiaAMov, P_CHEWY);
-			room_nr = spieler.PersonDiaRoom[p_nr];
-			spieler.PersonDiaRoom[p_nr] = false;
-			start_aad_wait(spieler.PersonDia[p_nr], -1);
-			spieler.PersonDiaRoom[p_nr] = room_nr;
+			if (_G(spieler).DiaAMov != -1)
+				auto_move(_G(spieler).DiaAMov, P_CHEWY);
+			room_nr = _G(spieler).PersonDiaRoom[p_nr];
+			_G(spieler).PersonDiaRoom[p_nr] = false;
+			start_aad_wait(_G(spieler).PersonDia[p_nr], -1);
+			_G(spieler).PersonDiaRoom[p_nr] = room_nr;
 		} else {
 			room_blk.AadLoad = false;
 			room_blk.AtsLoad = false;
-			spieler.PersonDiaTmpRoom[p_nr] = spieler.PersonRoomNr[P_CHEWY];
+			_G(spieler).PersonDiaTmpRoom[p_nr] = _G(spieler).PersonRoomNr[P_CHEWY];
 			save_person_rnr();
 			if (p_nr == P_HOWARD)
 				switch_room(65);
 			else if (p_nr == P_NICHELLE) {
-				if (spieler.PersonDia[P_NICHELLE] < 10000) {
+				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hide_cur();
-					start_aad_wait(spieler.PersonDia[P_NICHELLE], -1);
+					start_aad_wait(_G(spieler).PersonDia[P_NICHELLE], -1);
 					show_cur();
 				} else {
-					start_ads_wait(spieler.PersonDia[P_NICHELLE] - 10000);
+					start_ads_wait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
 				}
 			}
 		}

@@ -38,10 +38,10 @@ void load_room_music(int16 room_nr) {
 	int16 seq_end = 0;
 	int16 pattern = 0;
 	ttp_index = -1;
-	volume = spieler.MusicVol;
+	volume = _G(spieler).MusicVol;
 	lp_mode = 1;
 	play_mode = NORMAL_PLAY;
-	if (spieler.MusicSwitch && (music_handle)) {
+	if (_G(spieler).MusicSwitch && (music_handle)) {
 		switch (room_nr) {
 		case 0:
 			ttp_index = 0;
@@ -188,8 +188,8 @@ void load_room_music(int16 room_nr) {
 		if (ttp_index != -1) {
 			if (volume < 0)
 				volume = 0;
-			else if (volume > spieler.MusicVol)
-				volume = spieler.MusicVol;
+			else if (volume > _G(spieler).MusicVol)
+				volume = _G(spieler).MusicVol;
 			ailsnd->set_music_mastervol(volume);
 			ailsnd->set_loopmode(lp_mode);
 			if (ttp_index != CurrentSong) {

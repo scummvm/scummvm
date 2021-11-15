@@ -24,6 +24,17 @@
 
 namespace Chewy {
 
+void SpielerFlags::clear() {
+	// TODO: Not sure how to do this any better
+	Common::fill((byte *)this, (byte *)this + sizeof(SpielerFlags), 0);
+}
+
+void Spieler::clear() {
+	*this = Spieler();
+	_flags = this;
+	_flags->clear();
+}
+
 static void syncArray(Common::Serializer &s, uint8 *arr, size_t count) {
 	for (size_t i = 0; i < count; ++i)
 		s.syncAsByte(arr[i]);

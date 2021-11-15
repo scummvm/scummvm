@@ -88,14 +88,14 @@ void plot_main_menu() {
 
 		out->scale_set(menutaf->image[i],
 			MENU_X + deltaX + korrektur[i * 2],
-		    spieler.MainMenuY + korrektur[i * 2 + 1],
+		    _G(spieler).MainMenuY + korrektur[i * 2 + 1],
 			zoomx, zoomy, 0);
 	}
 
 	zoomx = 16;
 	zoomy = 16;
 	++m_flip;
-	if (m_flip < 12 * (spieler.DelaySpeed + 1)) {
+	if (m_flip < 12 * (_G(spieler).DelaySpeed + 1)) {
 		int deltaX = 0;
 		if (menu_item == CUR_SAVE)
 			deltaX = -40;
@@ -105,10 +105,10 @@ void plot_main_menu() {
 		int img = IMAGES[menu_item];
 		out->scale_set(menutaf->image[img],
 		    MENU_X + deltaX + korrektur[img * 2] - 5,
-		    spieler.MainMenuY + korrektur[img * 2 + 1] - 10,
+		    _G(spieler).MainMenuY + korrektur[img * 2 + 1] - 10,
 			zoomx, zoomy, 0);
 	} else {
-		if (m_flip > 15 * (spieler.DelaySpeed + 1))
+		if (m_flip > 15 * (_G(spieler).DelaySpeed + 1))
 			m_flip = 0;
 	}
 }
@@ -146,8 +146,8 @@ void plot_inventar_menu() {
 			x = (minfo.x - (WIN_INF_X)) / 54;
 			y = (minfo.y - (WIN_INF_Y + 4 + 30)) / 30;
 			k = x + (y * 5);
-			k += spieler.InventY * 5;
-			if (k < (spieler.InventY + 3) * 5)
+			k += _G(spieler).InventY * 5;
+			if (k < (_G(spieler).InventY + 3) * 5)
 				out->box_fill(WIN_INF_X + 14 + x * 54, WIN_INF_Y + 6 + 30 + y * 32,
 				               WIN_INF_X + 14 + x * 54 + 40, WIN_INF_Y + 6 + 30 + y * 32 + 24, 41);
 		}
@@ -186,13 +186,13 @@ void plot_inventar_menu() {
 	y = WIN_INF_Y + 6 + 30;
 	for (j = 0; j < 3; j++) {
 		for (i = 0; i < 5; i++) {
-			if (spieler.InventSlot[(spieler.InventY + j) * 5 + i] != -1) {
-				xy = (int16 *)inv_spr[spieler.InventSlot[(spieler.InventY + j) * 5 + i]];
+			if (_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i] != -1) {
+				xy = (int16 *)inv_spr[_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i]];
 				x1 = 40 - xy[0];
 				x1 /= 2;
 				y1 = 24 - xy[1];
 				y1 /= 2;
-				out->sprite_set(inv_spr[spieler.InventSlot[(spieler.InventY + j) * 5 + i]],
+				out->sprite_set(inv_spr[_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i]],
 				                 x1 + WIN_INF_X + 14 + i * 54,
 				                 y1 + y + 32 * j, scr_width);
 			}
@@ -214,13 +214,13 @@ void invent_menu() {
 
 	keyVal = 0;
 	flags.InventMenu = true;
-	disp_tmp = spieler.DispFlag;
-	spieler.DispFlag = false;
+	disp_tmp = _G(spieler).DispFlag;
+	_G(spieler).DispFlag = false;
 	ani_tmp = flags.AutoAniPlay;
 	flags.AutoAniPlay = true;
 	flags.StopAutoObj = true;
 	menu_display = 0;
-	tmp = spieler.MausSpeed;
+	tmp = _G(spieler).MausSpeed;
 	if (tmp > 3) {
 		tmp1 = tmp - 2;
 	} else
@@ -231,7 +231,7 @@ void invent_menu() {
 	minfo.y = 92;
 
 	invent_cur_mode = CUR_USE;
-	if (spieler.AkInvent != -1) {
+	if (_G(spieler).AkInvent != -1) {
 		cursor_wahl(CUR_AK_INVENT);
 
 	} else {
@@ -275,7 +275,7 @@ void invent_menu() {
 				case 0:
 					invent_cur_mode = CUR_USE;
 					menu_item = CUR_USE;
-					if (spieler.AkInvent == -1) {
+					if (_G(spieler).AkInvent == -1) {
 						cursor_wahl(CUR_USE);
 					} else {
 						cursor_wahl(CUR_AK_INVENT);
@@ -283,10 +283,10 @@ void invent_menu() {
 					break;
 
 				case 1:
-					if (spieler.AkInvent != -1) {
+					if (_G(spieler).AkInvent != -1) {
 						inv_rand_x = -1;
 						inv_rand_y = -1;
-						ret_look = look_invent(spieler.AkInvent, INV_ATS_MODE, -1);
+						ret_look = look_invent(_G(spieler).AkInvent, INV_ATS_MODE, -1);
 
 						taste_flag = ESC;
 					} else {
@@ -308,34 +308,34 @@ void invent_menu() {
 					inv_rand_x = (minfo.x - (WIN_INF_X)) / 54;
 					inv_rand_y = (minfo.y - (WIN_INF_Y + 4 + 30)) / 30;
 					k = inv_rand_x + (inv_rand_y * 5);
-					k += spieler.InventY * 5;
+					k += _G(spieler).InventY * 5;
 					if (invent_cur_mode == CUR_USE) {
-						if (spieler.AkInvent == -1) {
-							if (spieler.InventSlot[k] != -1) {
-								if (calc_use_invent(spieler.InventSlot[k]) == false) {
+						if (_G(spieler).AkInvent == -1) {
+							if (_G(spieler).InventSlot[k] != -1) {
+								if (calc_use_invent(_G(spieler).InventSlot[k]) == false) {
 									menu_item = CUR_USE;
-									spieler.AkInvent = spieler.InventSlot[k];
+									_G(spieler).AkInvent = _G(spieler).InventSlot[k];
 									cursor_wahl(CUR_AK_INVENT);
-									del_invent_slot(spieler.InventSlot[k]);
+									del_invent_slot(_G(spieler).InventSlot[k]);
 								}
 							}
 						} else {
-							if (spieler.InventSlot[k] != -1)
-								obj_auswerten(spieler.InventSlot[k], INVENTAR_NORMAL);
+							if (_G(spieler).InventSlot[k] != -1)
+								obj_auswerten(_G(spieler).InventSlot[k], INVENTAR_NORMAL);
 							else {
-								spieler.InventSlot[k] = spieler.AkInvent;
+								_G(spieler).InventSlot[k] = _G(spieler).AkInvent;
 								obj->sort();
-								spieler.AkInvent = -1;
+								_G(spieler).AkInvent = -1;
 								menu_item = invent_cur_mode;
 								cursor_wahl(invent_cur_mode);
 							}
 						}
 					} else if (invent_cur_mode == CUR_LOOK) {
-						if (spieler.InventSlot[k] != -1) {
-							if (calc_use_invent(spieler.InventSlot[k]) == false) {
-								spieler.AkInvent = spieler.InventSlot[k];
-								ret_look = look_invent(spieler.InventSlot[k], INV_ATS_MODE, -1);
-								spieler.AkInvent = -1;
+						if (_G(spieler).InventSlot[k] != -1) {
+							if (calc_use_invent(_G(spieler).InventSlot[k]) == false) {
+								_G(spieler).AkInvent = _G(spieler).InventSlot[k];
+								ret_look = look_invent(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
+								_G(spieler).AkInvent = -1;
 								cursor_wahl(invent_cur_mode);
 								taste_flag = ESC;
 							}
@@ -357,7 +357,7 @@ void invent_menu() {
 		if (ret_look == 0) {
 			invent_cur_mode = CUR_USE;
 			menu_item = CUR_USE;
-			if (spieler.AkInvent == -1)
+			if (_G(spieler).AkInvent == -1)
 				cursor_wahl(CUR_USE);
 			else
 				cursor_wahl(CUR_AK_INVENT);
@@ -407,7 +407,7 @@ void invent_menu() {
 				break;
 
 			case CURSOR_RIGHT:
-				if (minfo.x < 320 - spieler.CurBreite)
+				if (minfo.x < 320 - _G(spieler).CurBreite)
 					minfo.x += 3;
 				break;
 
@@ -422,19 +422,19 @@ void invent_menu() {
 				break;
 
 			case CURSOR_DOWN:
-				if (minfo.y < 197 - spieler.CurHoehe)
+				if (minfo.y < 197 - _G(spieler).CurHoehe)
 					minfo.y += 3;
 				break;
 
 			case PAGE_UP:
-				if (spieler.InventY > 0)
-					--spieler.InventY;
+				if (_G(spieler).InventY > 0)
+					--_G(spieler).InventY;
 				kbinfo.key_code = '\0';
 				break;
 
 			case PAGE_DOWN:
-				if (spieler.InventY < (MAX_MOV_OBJ / 5) - 3)
-					++spieler.InventY;
+				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
+					++_G(spieler).InventY;
 				kbinfo.key_code = '\0';
 				break;
 
@@ -480,7 +480,7 @@ void invent_menu() {
 	in->speed(tmp, tmp * 2);
 	flags.InventMenu = false;
 	flags.AutoAniPlay = ani_tmp;
-	spieler.DispFlag = disp_tmp;
+	_G(spieler).DispFlag = disp_tmp;
 	menu_display = tmp_menu;
 	flags.StopAutoObj = false;
 }
@@ -665,7 +665,7 @@ void look_invent_screen(int16 txt_mode, int16 txt_nr) {
 				case CUR_HOWARD:
 				case CUR_NICHELLE:
 					m_mode = TXT_MARK_USE;
-					if (spieler.inv_cur)
+					if (_G(spieler).inv_cur)
 						ok = false;
 					break;
 
@@ -729,7 +729,7 @@ int16 calc_use_invent(int16 inv_nr) {
 		switch (inv_nr) {
 		case GBUCH_INV:
 			ret = del_invent_slot(GBUCH_INV);
-			spieler.InventSlot[ret] = GBUCH_OPEN_INV;
+			_G(spieler).InventSlot[ret] = GBUCH_OPEN_INV;
 			obj->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &room_blk);
 			benutzt = true;
 			break;
@@ -979,7 +979,7 @@ void ads_menu() {
 
 void stop_ads_dialog() {
 	aad_wait(-1);
-	spieler.DispFlag = ads_tmp_dsp;
+	_G(spieler).DispFlag = ads_tmp_dsp;
 	_G(cur_display) = true;
 	flags.ShowAtsInvTxt = true;
 	flags.MainInput = true;
@@ -991,23 +991,23 @@ void stop_ads_dialog() {
 }
 
 void cur_2_inventory() {
-	if (spieler.AkInvent != -1) {
-		invent_2_slot(spieler.AkInvent);
-		spieler.AkInvent = -1;
+	if (_G(spieler).AkInvent != -1) {
+		invent_2_slot(_G(spieler).AkInvent);
+		_G(spieler).AkInvent = -1;
 		menu_item = CUR_WALK;
 		cursor_wahl(menu_item);
 	}
-	spieler.inv_cur = 0;
+	_G(spieler).inv_cur = 0;
 }
 
 void inventory_2_cur(int16 nr) {
-	if (spieler.AkInvent == -1) {
+	if (_G(spieler).AkInvent == -1) {
 		if (obj->check_inventar(nr)) {
 			del_invent_slot(nr);
 			menu_item = CUR_USE;
-			spieler.AkInvent = nr;
+			_G(spieler).AkInvent = nr;
 			cursor_wahl(CUR_AK_INVENT);
-			get_display_xy(&spieler.DispZx, &spieler.DispZy, spieler.AkInvent);
+			get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 		}
 	}
 }
@@ -1023,8 +1023,8 @@ void invent_2_slot(int16 nr) {
 	int16 ok;
 	ok = 0;
 	for (i = 0; i < MAX_MOV_OBJ && !ok; i++) {
-		if (spieler.InventSlot[i] == -1) {
-			spieler.InventSlot[i] = nr;
+		if (_G(spieler).InventSlot[i] == -1) {
+			_G(spieler).InventSlot[i] = nr;
 			ok = true;
 		}
 	}
@@ -1036,8 +1036,8 @@ int16 del_invent_slot(int16 nr) {
 	int16 ok;
 	ok = -1;
 	for (i = 0; i < MAX_MOV_OBJ; i++) {
-		if (spieler.InventSlot[i] == nr) {
-			spieler.InventSlot[i] = -1;
+		if (_G(spieler).InventSlot[i] == nr) {
+			_G(spieler).InventSlot[i] = -1;
 			if (ok == -1)
 				ok = i;
 		}

@@ -1025,7 +1025,7 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 							ERROR
 
 							vocx = spieler_vector[aadv.StrHeader->AkPerson].Xypos[0] -
-							       spieler.scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
+							       _G(spieler).scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
 							ailsnd->set_stereo_pos(0, get_stereo_pos(vocx));
 							ailsnd->start_db_voc(atdsv.SpeechHandle, 0, 63);
 							ailsnd->set_stereo_pos(0, get_stereo_pos(vocx));

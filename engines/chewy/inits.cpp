@@ -42,7 +42,7 @@ void standard_init() {
 	bit = new bitclass();
 	ged = new gedclass(&ged_user_func);
 	room = new Room();
-	obj = new objekt(&spieler);
+	obj = new objekt(&_G(spieler));
 	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
 	det = new detail();
 	atds = new atdsys();
@@ -124,12 +124,12 @@ void var_init() {
 	inventar_nr = 0;
 	_G(ged_mov_ebene) = 1;
 	new_game();
-	spieler.MainMenuY = MENU_Y;
-	spieler.DispFlag = true;
-	spieler.AkInvent = -1;
-	spieler.MausSpeed = 6;
-	spieler.ScrollxStep = 1;
-	spieler.ScrollyStep = 1;
+	_G(spieler).MainMenuY = MENU_Y;
+	_G(spieler).DispFlag = true;
+	_G(spieler).AkInvent = -1;
+	_G(spieler).MausSpeed = 6;
+	_G(spieler).ScrollxStep = 1;
+	_G(spieler).ScrollyStep = 1;
 
 	spieler_mi[P_CHEWY].HotX = CH_HOT_X;
 	spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
@@ -161,16 +161,16 @@ void var_init() {
 
 		ani_stand_flag[i] = false;
 		spz_delay[i] = 0;
-		spieler.PersonRoomNr[i] = -1;
-		spieler.PersonDia[i] = -1;
+		_G(spieler).PersonRoomNr[i] = -1;
+		_G(spieler).PersonDia[i] = -1;
 	}
-	spieler.PersonRoomNr[P_CHEWY] = room_start_nr;
+	_G(spieler).PersonRoomNr[P_CHEWY] = room_start_nr;
 
 	gpkt.Vorschub = spieler_mi[P_CHEWY].Vorschub;
 	init_room();
 	init_atds();
-	spieler.FramesPerSecond = 7;
-	spieler.DisplayText = true;
+	_G(spieler).FramesPerSecond = 7;
+	_G(spieler).DisplayText = true;
 	CurrentSong = -1;
 	SetUpScreenFunc = nullptr;
 	_G(pfeil_delay) = 0;
@@ -186,8 +186,8 @@ void init_room() {
 	room_blk.InvFile = INVENTAR;
 	room_blk.DetFile = DETAILTEST;
 	room_blk.InvSprAdr = &inv_spr[0];
-	room_blk.Rmo = spieler.room_m_obj;
-	room_blk.Rsi = spieler.room_s_obj;
+	room_blk.Rmo = _G(spieler).room_m_obj;
+	room_blk.Rsi = _G(spieler).room_s_obj;
 	room_blk.AadLoad = true;
 	room_blk.AtsLoad = true;
 	strcpy(room_blk.RoomDir, "room/");
@@ -206,11 +206,11 @@ void init_atds() {
 	ERROR
 	atds->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
 	ERROR
-	atds->init_ats_mode(ATS_DATEI, spieler.Ats);
+	atds->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
 
 	atds->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
 	ERROR
-	atds->init_ats_mode(INV_ATS_DATEI, spieler.InvAts);
+	atds->init_ats_mode(INV_ATS_DATEI, _G(spieler).InvAts);
 
 	atds->set_handle(ATDS_TXT, AAD_DATEI, handle, AAD_TAP_OFF, AAD_TAP_MAX);
 	ERROR
@@ -220,15 +220,15 @@ void init_atds() {
 
 	atds->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
 	ERROR
-	atds->init_ats_mode(INV_USE_DATEI, spieler.InvUse);
-	atds->init_ats_mode(INV_USE_DEF, spieler.InvUseDef);
+	atds->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
+	atds->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
 
 	atds->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
 	ERROR
-	spieler.AadSilent = 10;
-	spieler.DelaySpeed = 5;
-	spieler_vector[P_CHEWY].Delay = spieler.DelaySpeed;
-	atds->set_delay(&spieler.DelaySpeed, spieler.AadSilent);
+	_G(spieler).AadSilent = 10;
+	_G(spieler).DelaySpeed = 5;
+	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
+	atds->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
 	for (i = 0; i < AAD_MAX_PERSON; i++)
 		atds->set_split_win(i, &ssi[i]);
 	atds->set_string_end_func(&atds_string_start);
@@ -239,22 +239,22 @@ void new_game() {
 	int16 i;
 	byte *tmp;
 
-	memset(&spieler, 0, sizeof(Spieler));
+	_G(spieler).clear();
 
 	for (i = 0; i < MAX_MOV_OBJ; i++) {
-		spieler.room_m_obj[i].RoomNr = -1;
-		spieler.InventSlot[i] = -1;
+		_G(spieler).room_m_obj[i].RoomNr = -1;
+		_G(spieler).InventSlot[i] = -1;
 	}
 	for (i = 0; i < MAX_FEST_OBJ; i++)
-		spieler.room_s_obj[i].RoomNr = -1;
+		_G(spieler).room_s_obj[i].RoomNr = -1;
 	for (i = 0; i < MAX_EXIT; i++)
-		spieler.room_e_obj[i].RoomNr = -1;
+		_G(spieler).room_e_obj[i].RoomNr = -1;
 
-	obj->load(INVENTAR_IIB, &spieler.room_m_obj[0]);
+	obj->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
 	ERROR
-	obj->load(INVENTAR_SIB, &spieler.room_s_obj[0]);
+	obj->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
 	ERROR
-	obj->load(EXIT_EIB, &spieler.room_e_obj[0]);
+	obj->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 	ERROR
 
 	tmp = (byte *)calloc(ROOM_ATS_MAX, 1);
@@ -275,7 +275,7 @@ void new_game() {
 	ERROR
 
 	for (i = 0; i < ROOM_ATS_MAX; i++)
-		spieler.Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
+		_G(spieler).Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
 	tmp = (byte *)calloc(MAX_MOV_OBJ, 1);
@@ -295,12 +295,12 @@ void new_game() {
 	ERROR
 
 	for (i = 0; i < MAX_MOV_OBJ; i++)
-		spieler.InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
+		_G(spieler).InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
 	obj->sort();
 	for (i = 0; i < obj->spieler_invnr[0]; i++)
-		spieler.InventSlot[i] = obj->spieler_invnr[i + 1];
+		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
 
 	AkChewyTaf = 0;
 	load_chewy_taf(1);
@@ -356,7 +356,7 @@ void init_load() {
 	spblende = mem->void_adr("cut/blende.rnd");
 	ERROR
 
-	room->load_room(&room_blk, room_start_nr, &spieler);
+	room->load_room(&room_blk, room_start_nr, &_G(spieler));
 	ERROR
 	out->set_palette(pal);
 }
@@ -437,7 +437,7 @@ void tidy() {
 }
 
 void set_speed() {
-	in->speed(spieler.MausSpeed, spieler.MausSpeed * 2);
+	in->speed(_G(spieler).MausSpeed, _G(spieler).MausSpeed * 2);
 }
 
 #define GRAVIS 8
@@ -445,18 +445,18 @@ void set_speed() {
 
 void sound_init() {
 	flags.InitSound = false;
-	spieler.SoundSwitch = false;
-	spieler.MusicSwitch = false;
+	_G(spieler).SoundSwitch = false;
+	_G(spieler).MusicSwitch = false;
 	frequenz = 22050;
 
 	detect.SoundSource = ailsnd->init(frequenz);
 
 	if (detect.SoundSource) {
 		ailsnd->init_mix_mode();
-		spieler.MusicVol = 63;
-		spieler.SoundVol = 63;
-		ailsnd->set_music_mastervol(spieler.MusicVol);
-		ailsnd->set_sound_mastervol(spieler.SoundVol);
+		_G(spieler).MusicVol = 63;
+		_G(spieler).SoundVol = 63;
+		ailsnd->set_music_mastervol(_G(spieler).MusicVol);
+		ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
 		ailsnd->switch_music(1);
 		ailsnd->switch_sound(1);
 		flags.InitSound = true;
@@ -490,13 +490,13 @@ void sound_init() {
 			atds->set_speech_handle(speech_handle);
 
 			atds->setHasSpeech(true);
-			spieler.DisplayText = false;
+			_G(spieler).DisplayText = false;
 		}
 
 		if (!modul) {
-			spieler.SoundSwitch = true;
-			spieler.MusicSwitch = true;
-			spieler.SpeechSwitch = true;
+			_G(spieler).SoundSwitch = true;
+			_G(spieler).MusicSwitch = true;
+			_G(spieler).SpeechSwitch = true;
 		}
 	}
 }

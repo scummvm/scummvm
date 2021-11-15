@@ -46,28 +46,28 @@ int16 r65tmp_ho_y;
 void r45_entry(int16 eib_nr) {
 	int16 ch_x, ch_y;
 	int16 ho_x, ho_y;
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = r45_setup_func;
 	r45_delay = 0;
 	_G(zoom_horizont) = 150;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
-	spieler.ZoomXy[P_HOWARD][0] = 80;
-	spieler.ZoomXy[P_HOWARD][1] = 70;
-	if (spieler.PersonRoomNr[P_HOWARD] == 46) {
+	_G(spieler).ZoomXy[P_HOWARD][0] = 80;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
 		spieler_mi[P_HOWARD].Mode = true;
-		spieler.PersonRoomNr[P_HOWARD] = 45;
+		_G(spieler).PersonRoomNr[P_HOWARD] = 45;
 	}
 
 	spieler_mi[P_HOWARD].Mode = true;
 	if (!flags.LoadGame) {
-		if (spieler.R48TaxiEntry) {
+		if (_G(spieler).R48TaxiEntry) {
 			ch_x = 67;
 			ch_y = 146;
 			ho_x = 43;
 			ho_y = 129;
 
-			spieler.R48TaxiEntry = false;
+			_G(spieler).R48TaxiEntry = false;
 			_G(maus_links_click) = false;
 		} else {
 			if (eib_nr == 72) {
@@ -75,7 +75,7 @@ void r45_entry(int16 eib_nr) {
 				ch_y = 146;
 				ho_x = 304;
 				ho_y = 130;
-				spieler.scrollx = 130;
+				_G(spieler).scrollx = 130;
 			} else {
 				ch_x = 68;
 				ch_y = 132;
@@ -90,11 +90,11 @@ void r45_entry(int16 eib_nr) {
 }
 
 void r45_exit(int16 eib_nr) {
-	spieler.ScrollxStep = 1;
-	if (spieler.PersonRoomNr[P_HOWARD] == 45) {
+	_G(spieler).ScrollxStep = 1;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
 		spieler_mi[P_HOWARD].Mode = false;
 		if (eib_nr == 87) {
-			spieler.PersonRoomNr[P_HOWARD] = 40;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 		}
 	}
 	if (eib_nr == 87) {
@@ -125,7 +125,7 @@ void r45_setup_func() {
 
 	if (menu_display == 0) {
 		if (!r45_delay) {
-			r45_delay = spieler.DelaySpeed / 2;
+			r45_delay = _G(spieler).DelaySpeed / 2;
 			for (i = 0; i < R45_MAX_PERSON; i++) {
 				if (r45_pinfo[i][0] == 1) {
 					y = Adi[3 + i].y;
@@ -162,7 +162,7 @@ void r45_setup_func() {
 			}
 		} else
 			--r45_delay;
-		if (spieler.PersonRoomNr[P_HOWARD] == 45 && HowardMov != 2) {
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && HowardMov != 2) {
 			calc_person_look();
 			x = spieler_vector[P_HOWARD].Xypos[0];
 			y = 64;
@@ -190,14 +190,14 @@ int16 r45_use_taxi() {
 	int16 action_ret = false;
 	hide_cur();
 	auto_move(1, P_CHEWY);
-	if (!spieler.inv_cur) {
-		if (spieler.ChewyAni == CHEWY_PUMPKIN) {
+	if (!_G(spieler).inv_cur) {
+		if (_G(spieler).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
 			r45_talk_taxi(254);
-		} else if (!spieler.R45TaxiOk) {
+		} else if (!_G(spieler).R45TaxiOk) {
 			action_ret = true;
 			r45_talk_taxi(260);
-		} else if (spieler.R45TaxiOk) {
+		} else if (_G(spieler).R45TaxiOk) {
 			action_ret = true;
 			r45_taxi_mov();
 		}
@@ -205,7 +205,7 @@ int16 r45_use_taxi() {
 		action_ret = true;
 		del_inventar(RING_INV);
 		r45_talk_taxi(256);
-		spieler.R45TaxiOk = true;
+		_G(spieler).R45TaxiOk = true;
 		r45_taxi_mov();
 	} else if (is_cur_inventar(UHR_INV)) {
 		action_ret = true;
@@ -234,13 +234,13 @@ void r45_taxi_mov() {
 	det->del_static_ani(12);
 	det->show_static_spr(11);
 	auto_move(3, P_CHEWY);
-	spieler.PersonHide[P_CHEWY] = true;
-	spieler.R48TaxiPerson[P_CHEWY] = true;
-	if (spieler.PersonRoomNr[P_HOWARD] == 45) {
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
 		go_auto_xy(93, 127, P_HOWARD, ANI_WAIT);
-		spieler.PersonHide[P_HOWARD] = true;
-		spieler.R48TaxiPerson[P_HOWARD] = true;
-		spieler.PersonRoomNr[P_HOWARD] = 48;
+		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler).R48TaxiPerson[P_HOWARD] = true;
+		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 	}
 	det->hide_static_spr(11);
 	start_detail_wait(15, 1, ANI_VOR);
@@ -252,7 +252,7 @@ int16 r45_use_boy() {
 	int16 action_ret = false;
 	hide_cur();
 	auto_move(2, P_CHEWY);
-	if (!spieler.R45MagOk) {
+	if (!_G(spieler).R45MagOk) {
 		if (is_cur_inventar(DOLLAR175_INV)) {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
@@ -263,7 +263,7 @@ int16 r45_use_boy() {
 			start_detail_wait(1, 1, ANI_VOR);
 			room->set_timer_status(0, TIMER_START);
 			det->set_static_ani(0, -1);
-			spieler.R45MagOk = true;
+			_G(spieler).R45MagOk = true;
 		}
 	} else
 		start_aad_wait(259, -1);
@@ -274,7 +274,7 @@ int16 r45_use_boy() {
 void r45_talk_boy() {
 	int16 aad_nr;
 	hide_cur();
-	if (!spieler.R45MagOk) {
+	if (!_G(spieler).R45MagOk) {
 		auto_move(2, P_CHEWY);
 		aad_nr = 257;
 	} else
@@ -284,8 +284,8 @@ void r45_talk_boy() {
 }
 
 void r46_entry(int16 eib_nr) {
-	if (spieler.PersonRoomNr[P_HOWARD] == 45) {
-		spieler.PersonRoomNr[P_HOWARD] = 46;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
+		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
 		SetUpScreenFunc = r46setup_func;
 		if (eib_nr == 79) {
 			set_person_pos(140, 90, P_HOWARD, P_LEFT);
@@ -293,16 +293,16 @@ void r46_entry(int16 eib_nr) {
 			set_person_spr(P_LEFT, P_CHEWY);
 		}
 	}
-	if (spieler.PersonRoomNr[P_HOWARD] == 46) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
 		spieler_mi[P_HOWARD].Mode = true;
 		SetUpScreenFunc = r46setup_func;
 	}
-	if (spieler.R47SchlossOk && !spieler.R46GetLeder)
+	if (_G(spieler).R47SchlossOk && !_G(spieler).R46GetLeder)
 		r46_bodo();
 }
 
 void r46_exit() {
-	if (spieler.PersonRoomNr[P_HOWARD] == 46) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -350,13 +350,13 @@ void r46_bodo() {
 	det->stop_detail(4);
 	start_detail_wait(6, 1, ANI_VOR);
 	det->show_static_spr(3);
-	spieler.PersonHide[P_CHEWY] = true;
+	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(1, 1, ANI_VOR);
 	flic_cut(FCUT_065, FLC_MODE);
 	flic_cut(FCUT_066, FLC_MODE);
 	out->setze_zeiger(0);
 	out->cls();
-	spieler.PersonHide[P_CHEWY] = false;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	det->hide_static_spr(0);
 	det->hide_static_spr(3);
 	load_chewy_taf(CHEWY_ROCKER);
@@ -364,7 +364,7 @@ void r46_bodo() {
 	start_aad_wait(243, -1);
 	invent_2_slot(UHR_INV);
 	invent_2_slot(RING_INV);
-	spieler.R46GetLeder = true;
+	_G(spieler).R46GetLeder = true;
 	show_cur();
 }
 
@@ -378,7 +378,7 @@ void r46_kloppe() {
 		out->setze_zeiger(0);
 		out->cls();
 		start_aad(244 + i, -1);
-		delay = spieler.DelaySpeed * 50;
+		delay = _G(spieler).DelaySpeed * 50;
 		atds->print_aad(0, 0);
 		while (in->get_switch_code() == 0 && delay) {
 			out->skip_frame(1);
@@ -392,9 +392,9 @@ void r46_kloppe() {
 
 int16 r46_use_schloss() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		if (!spieler.R46GetLeder) {
+		if (!_G(spieler).R46GetLeder) {
 			auto_move(1, P_CHEWY);
 			switch_room(47);
 		} else
@@ -418,7 +418,7 @@ void r47_exit() {
 int16 r47_use_knopf(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		switch (txt_nr) {
 		case 286:
@@ -434,16 +434,16 @@ int16 r47_use_knopf(int16 txt_nr) {
 			break;
 
 		}
-		++spieler.R47Schloss[k_nr];
-		if (spieler.R47Schloss[k_nr] > 9)
-			spieler.R47Schloss[k_nr] = 0;
+		++_G(spieler).R47Schloss[k_nr];
+		if (_G(spieler).R47Schloss[k_nr] > 9)
+			_G(spieler).R47Schloss[k_nr] = 0;
 
-		if (spieler.R47Schloss[0] == 7 &&
-		        spieler.R47Schloss[1] == 6 &&
-		        spieler.R47Schloss[2] == 2)
-			spieler.R47SchlossOk = true;
+		if (_G(spieler).R47Schloss[0] == 7 &&
+		        _G(spieler).R47Schloss[1] == 6 &&
+		        _G(spieler).R47Schloss[2] == 2)
+			_G(spieler).R47SchlossOk = true;
 		else
-			spieler.R47SchlossOk = false;
+			_G(spieler).R47SchlossOk = false;
 	}
 	return action_ret;
 }
@@ -453,9 +453,9 @@ void r47_set_detail() {
 	for (i = 0; i < 10; i++)
 		det->hide_static_spr(i);
 	for (i = 0; i < 3; i++) {
-		det->show_static_spr(spieler.R47Schloss[i]);
-		det->set_static_pos(spieler.R47Schloss[i], 124 + i * 30, 96 - i * 1, false, true);
-		det->plot_static_details(0, 0, spieler.R47Schloss[i], spieler.R47Schloss[i]);
+		det->show_static_spr(_G(spieler).R47Schloss[i]);
+		det->set_static_pos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i * 1, false, true);
+		det->plot_static_details(0, 0, _G(spieler).R47Schloss[i], _G(spieler).R47Schloss[i]);
 	}
 	for (i = 0; i < 10; i++)
 		det->hide_static_spr(i);
@@ -463,8 +463,8 @@ void r47_set_detail() {
 
 void r48_entry() {
 	_G(maus_links_click) = false;
-	spieler.scrollx = 0;
-	spieler.scrolly = 0;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
 	show_cur();
 	r48calc_pic();
 	SetUpScreenFunc = r48setup_func;
@@ -476,19 +476,19 @@ void r48calc_pic() {
 	int16 i;
 	for (i = 0; i < 2; i++) {
 		atds->set_steuer_bit(312 + i, ATS_AKTIV_BIT, ATS_DATEI);
-		spieler.R48Auswahl[3 + i] = 0;
+		_G(spieler).R48Auswahl[3 + i] = 0;
 	}
-	spieler.R48Auswahl[0] = 1;
-	spieler.R48Auswahl[1] = 1;
-	spieler.R48Auswahl[2] = 1;
+	_G(spieler).R48Auswahl[0] = 1;
+	_G(spieler).R48Auswahl[1] = 1;
+	_G(spieler).R48Auswahl[2] = 1;
 
 	if (obj->check_inventar(VCARD_INV)) {
-		spieler.R48Auswahl[3] = 1;
+		_G(spieler).R48Auswahl[3] = 1;
 		atds->del_steuer_bit(312, ATS_AKTIV_BIT, ATS_DATEI);
 		det->show_static_spr(4);
 	}
 	if (obj->check_inventar(KAPPE_INV)) {
-		spieler.R48Auswahl[4] = 1;
+		_G(spieler).R48Auswahl[4] = 1;
 		atds->del_steuer_bit(313, ATS_AKTIV_BIT, ATS_DATEI);
 		det->show_static_spr(4);
 	}
@@ -523,7 +523,7 @@ void r48setup_func() {
 			cursor_wahl(CUR_ZEIGE);
 			idx = det->maus_vector(minfo.x, minfo.y);
 			if (idx != -1) {
-				if (spieler.R48Auswahl[idx]) {
+				if (_G(spieler).R48Auswahl[idx]) {
 					det->show_static_spr(1 + idx);
 					if (_G(maus_links_click)) {
 						switch (idx) {
@@ -564,17 +564,17 @@ void r48setup_func() {
 							menu_item = CUR_WALK;
 							cursor_wahl(menu_item);
 							show_cur();
-							spieler.R48TaxiEntry = true;
+							_G(spieler).R48TaxiEntry = true;
 							_G(maus_links_click) = false;
 							set_up_screen(DO_SETUP);
 							for (i = 0; i < MAX_PERSON; i++) {
-								if (spieler.R48TaxiPerson[i]) {
-									spieler.PersonHide[i] = false;
-									spieler.R48TaxiPerson[i] = false;
+								if (_G(spieler).R48TaxiPerson[i]) {
+									_G(spieler).PersonHide[i] = false;
+									_G(spieler).R48TaxiPerson[i] = false;
 								}
 							}
-							if (spieler.PersonRoomNr[P_HOWARD] == 48) {
-								spieler.PersonRoomNr[P_HOWARD] = r_nr;
+							if (_G(spieler).PersonRoomNr[P_HOWARD] == 48) {
+								_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
 							}
 							switch_room(r_nr);
 						}
@@ -589,26 +589,26 @@ void r49_entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = r49setup_func;
-	if (!spieler.R49BoyWeg)
+	if (!_G(spieler).R49BoyWeg)
 		_G(timer_nr)[0] = room->set_timer(255, 2);
 	else {
 		det->del_static_ani(0);
 		det->hide_static_spr(5);
 	}
 
-	spieler.ZoomXy[P_HOWARD][0] = 30;
-	spieler.ZoomXy[P_HOWARD][1] = 30;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	spieler_mi[P_HOWARD].Mode = true;
 	if (!flags.LoadGame) {
-		if (spieler.R48TaxiEntry) {
-			spieler.R48TaxiEntry = false;
+		if (_G(spieler).R48TaxiEntry) {
+			_G(spieler).R48TaxiEntry = false;
 			set_person_pos(527, 76, P_HOWARD, P_LEFT);
 			set_person_pos(491, 98, P_CHEWY, P_LEFT);
 			_G(maus_links_click) = false;
-			spieler.scrollx = 320;
-			spieler.scrolly = 0;
+			_G(spieler).scrollx = 320;
+			_G(spieler).scrolly = 0;
 			det->start_detail(5, 1, ANI_VOR);
 		} else if (eib_nr == 83)
 			set_person_pos(377, 78, P_HOWARD, P_LEFT);
@@ -617,11 +617,11 @@ void r49_entry(int16 eib_nr) {
 }
 
 void r49_exit(int16 eib_nr) {
-	spieler.ScrollxStep = 1;
-	if (spieler.PersonRoomNr[P_HOWARD] == 49) {
+	_G(spieler).ScrollxStep = 1;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		spieler_mi[P_HOWARD].Mode = false;
 		if (eib_nr == 80)
-			spieler.PersonRoomNr[P_HOWARD] = 50;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		else if (eib_nr == 81) {
 			SetUpScreenFunc = 0;
 			start_aad_wait(268, -1);
@@ -630,31 +630,31 @@ void r49_exit(int16 eib_nr) {
 }
 
 void r49_calc_boy_ani() {
-	if (!spieler.R49BoyAniCount) {
-		spieler.R49BoyAniCount = 3;
-		spieler.R49BoyAni = 1;
+	if (!_G(spieler).R49BoyAniCount) {
+		_G(spieler).R49BoyAniCount = 3;
+		_G(spieler).R49BoyAni = 1;
 		det->del_static_ani(0);
 	} else {
-		--spieler.R49BoyAniCount;
-		spieler.R49BoyAni = 0;
+		--_G(spieler).R49BoyAniCount;
+		_G(spieler).R49BoyAni = 0;
 		det->del_static_ani(1);
 	}
-	det->set_static_ani(spieler.R49BoyAni, -1);
-	det->start_detail(spieler.R49BoyAni, 1, ANI_VOR);
+	det->set_static_ani(_G(spieler).R49BoyAni, -1);
+	det->start_detail(_G(spieler).R49BoyAni, 1, ANI_VOR);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 }
 
 void r49_calc_boy() {
-	if (!spieler.R49WegFrei) {
+	if (!_G(spieler).R49WegFrei) {
 		hide_cur();
 		room->set_timer_status(255, TIMER_STOP);
 		uhr->reset_timer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
 		person_end_phase[P_CHEWY] = P_LEFT;
-		det->stop_detail(spieler.R49BoyAni);
+		det->stop_detail(_G(spieler).R49BoyAni);
 
-		det->del_static_ani(spieler.R49BoyAni);
+		det->del_static_ani(_G(spieler).R49BoyAni);
 		det->set_static_ani(2, -1);
 		SetUpScreenFunc = 0;
 		start_aad_wait(262, -1);
@@ -667,7 +667,7 @@ void r49_calc_boy() {
 		start_detail_wait(3, 1, ANI_VOR);
 		start_detail_wait(4, 1, ANI_RUECK);
 		SetUpScreenFunc = r49setup_func;
-		det->set_static_ani(spieler.R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni, -1);
 		room->set_timer_status(255, TIMER_START);
 		show_cur();
 	}
@@ -680,15 +680,15 @@ int16 r49_use_boy() {
 		action_ret = true;
 		hide_cur();
 		auto_move(3, P_CHEWY);
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		r49_talk_boy(265);
-		spieler.R49WegFrei = true;
-		spieler.room_e_obj[80].Attribut = AUSGANG_OBEN;
+		_G(spieler).R49WegFrei = true;
+		_G(spieler).room_e_obj[80].Attribut = AUSGANG_OBEN;
 		show_cur();
 	} else if (is_cur_inventar(CIGAR_INV)) {
 		action_ret = true;
 		hide_cur();
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		r49_talk_boy(263);
 		SetUpScreenFunc = 0;
 		auto_move(5, P_CHEWY);
@@ -701,8 +701,8 @@ int16 r49_use_boy() {
 		flic_cut(FCUT_067, FLC_MODE);
 		room->set_timer_status(255, TIMER_STOP);
 		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->del_static_ani(spieler.R49BoyAni);
-		det->stop_detail(spieler.R49BoyAni);
+		det->del_static_ani(_G(spieler).R49BoyAni);
+		det->stop_detail(_G(spieler).R49BoyAni);
 		flags.NoScroll = false;
 
 		set_person_spr(P_RIGHT, P_CHEWY);
@@ -712,39 +712,39 @@ int16 r49_use_boy() {
 		inventory_2_cur(GUM_INV);
 		atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 		SetUpScreenFunc = r49setup_func;
-		spieler.R49BoyWeg = true;
+		_G(spieler).R49BoyWeg = true;
 		show_cur();
 	}
 	return action_ret;
 }
 
 void r49_talk_boy() {
-	if (!spieler.R49BoyWeg) {
+	if (!_G(spieler).R49BoyWeg) {
 		auto_move(3, P_CHEWY);
-		r49_talk_boy(266 + spieler.R49WegFrei);
+		r49_talk_boy(266 + _G(spieler).R49WegFrei);
 	}
 }
 
 void r49_talk_boy(int16 aad_nr) {
-	if (!spieler.R49BoyWeg) {
+	if (!_G(spieler).R49BoyWeg) {
 		room->set_timer_status(255, TIMER_STOP);
 		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->stop_detail(spieler.R49BoyAni);
+		det->stop_detail(_G(spieler).R49BoyAni);
 
-		det->set_static_ani(spieler.R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni, -1);
 		det->set_static_ani(2, -1);
 		SetUpScreenFunc = 0;
 		stop_person(P_HOWARD);
 		start_aad_wait(aad_nr, -1);
 		SetUpScreenFunc = r49setup_func;
 		det->del_static_ani(2);
-		det->set_static_ani(spieler.R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni, -1);
 		room->set_timer_status(255, TIMER_START);
 	}
 }
 
 void r49_look_hotel() {
-	if (spieler.PersonRoomNr[P_HOWARD] == 49) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 
 		SetUpScreenFunc = 0;
 		stop_person(P_HOWARD);
@@ -755,20 +755,20 @@ void r49_look_hotel() {
 
 int16 r49_use_taxi() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
 		start_ani_block(2, ablock34);
 		det->show_static_spr(7);
 		auto_move(2, P_CHEWY);
-		spieler.PersonHide[P_CHEWY] = true;
-		spieler.R48TaxiPerson[P_CHEWY] = true;
-		if (spieler.PersonRoomNr[P_HOWARD] == 49) {
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 			go_auto_xy(507, 74, P_HOWARD, ANI_WAIT);
 			go_auto_xy(490, 58, P_HOWARD, ANI_WAIT);
-			spieler.PersonHide[P_HOWARD] = true;
-			spieler.R48TaxiPerson[P_HOWARD] = true;
-			spieler.PersonRoomNr[P_HOWARD] = 48;
+			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 		det->hide_static_spr(7);
 		start_detail_wait(5, 1, ANI_VOR);
@@ -780,7 +780,7 @@ int16 r49_use_taxi() {
 void r49setup_func() {
 	int16 x, y;
 	int16 ch_x;
-	if (spieler.PersonRoomNr[P_HOWARD] == 49) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		calc_person_look();
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = 64;
@@ -804,18 +804,18 @@ void r49setup_func() {
 }
 
 void r50_entry(int16 eib_nr) {
-	spieler.ScrollxStep = 2;
-	if (spieler.R50Zigarre) {
+	_G(spieler).ScrollxStep = 2;
+	if (_G(spieler).R50Zigarre) {
 		r50_stop_cigar();
 	} else
 		det->start_detail(0, 255, ANI_VOR);
-	if (!spieler.R50KeyOK) {
+	if (!_G(spieler).R50KeyOK) {
 		_G(timer_nr)[0] = room->set_timer(1, 8);
 		r50Wasser = false;
 	} else
 		det->show_static_spr(4);
 	SetUpScreenFunc = r50setup_func;
-	if (spieler.PersonRoomNr[P_HOWARD] == 50) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		spieler_mi[P_HOWARD].Mode = true;
 		if (!flags.LoadGame) {
 			if (eib_nr == 85)
@@ -827,12 +827,12 @@ void r50_entry(int16 eib_nr) {
 }
 
 void r50_exit(int16 eib_nr) {
-	spieler.ScrollxStep = 1;
-	if (spieler.PersonRoomNr[P_HOWARD] == 50) {
+	_G(spieler).ScrollxStep = 1;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		if (eib_nr == 83)
-			spieler.PersonRoomNr[P_HOWARD] = 49;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 49;
 		else
-			spieler.PersonRoomNr[P_HOWARD] = 51;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 51;
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -842,7 +842,7 @@ void r50_stop_cigar() {
 	det->del_static_ani(0);
 	atds->set_ats_str(328, 1, ATS_DATEI);
 	det->stop_detail(0);
-	spieler.R50Zigarre = true;
+	_G(spieler).R50Zigarre = true;
 }
 
 void r50_calc_wasser() {
@@ -868,7 +868,7 @@ void r50_go_page() {
 void r50_calc_treppe() {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
-		if (!spieler.R50KeyOK) {
+		if (!_G(spieler).R50KeyOK) {
 			hide_cur();
 			stop_person(P_CHEWY);
 			room->set_timer_status(1, TIMER_STOP);
@@ -887,13 +887,13 @@ int16 r50_use_gutschein() {
 	int16 action_ret = false;
 	if (is_cur_inventar(HOTEL_INV)) {
 		action_ret = true;
-		if (!spieler.R50KeyOK) {
+		if (!_G(spieler).R50KeyOK) {
 			hide_cur();
 			auto_move(3, P_CHEWY);
 			room->set_timer_status(1, TIMER_STOP);
 			r50Wasser = false;
 			r50_stop_page();
-			del_inventar(spieler.AkInvent);
+			del_inventar(_G(spieler).AkInvent);
 			start_ani_block(2, ablock36);
 			r50_aad_page(274, 8);
 		} else
@@ -907,7 +907,7 @@ int16 r50_use_gum() {
 	if (is_cur_inventar(GUM_INV)) {
 		action_ret = true;
 		hide_cur();
-		spieler.R50KeyOK = true;
+		_G(spieler).R50KeyOK = true;
 		room->set_timer_status(1, TIMER_STOP);
 		r50Wasser = false;
 		r50_stop_page();
@@ -919,7 +919,7 @@ int16 r50_use_gum() {
 		SetUpScreenFunc = 0;
 		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		hide_person();
 		start_detail_wait(2, 1, ANI_VOR);
 		det->show_static_spr(4);
@@ -941,7 +941,7 @@ int16 r50_use_gum() {
 		inventory_2_cur(KEY_INV);
 		atds->set_ats_str(323, 1, ATS_DATEI);
 		atds->set_ats_str(327, 1, ATS_DATEI);
-		spieler.room_e_obj[84].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[84].Attribut = AUSGANG_OBEN;
 		show_cur();
 	}
 	return action_ret;
@@ -957,7 +957,7 @@ void r50_aad_page(int16 aad_nr, int16 ani_nr) {
 	det->del_static_ani(ani_nr);
 	start_detail_wait(6, 1, ANI_RUECK);
 	r50_go_page();
-	if (!spieler.R50KeyOK)
+	if (!_G(spieler).R50KeyOK)
 		room->set_timer_status(1, TIMER_START);
 	show_cur();
 }
@@ -969,7 +969,7 @@ void r50setup_func() {
 		r50Wasser = false;
 		r50_go_page();
 	}
-	if (spieler.PersonRoomNr[P_HOWARD] == 50) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = 64;
@@ -1000,15 +1000,15 @@ void r51_entry() {
 	_G(zoom_mov_fak) = 4;
 	for (i = 0; i < 2; i++)
 		det->start_detail(3 + i, 1, ANI_VOR);
-	if (spieler.PersonRoomNr[P_HOWARD] == 51) {
-		spieler.ZoomXy[P_HOWARD][0] = 40;
-		spieler.ZoomXy[P_HOWARD][1] = 30;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
+		_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 		if (!flags.LoadGame) {
 			set_person_pos(88, 93, P_HOWARD, P_RIGHT);
 		}
-		if (!spieler.R51FirstEntry) {
+		if (!_G(spieler).R51FirstEntry) {
 			hide_cur();
-			spieler.R51FirstEntry = true;
+			_G(spieler).R51FirstEntry = true;
 			set_person_spr(P_LEFT, P_CHEWY);
 			start_aad_wait(283, -1);
 			show_cur();
@@ -1019,11 +1019,11 @@ void r51_entry() {
 }
 
 void r51_exit(int16 eib_nr) {
-	if (spieler.PersonRoomNr[P_HOWARD] == 51) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		if (eib_nr == 85) {
-			spieler.PersonRoomNr[P_HOWARD] = 50;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		} else
-			spieler.PersonRoomNr[P_HOWARD] = 52;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 52;
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -1031,7 +1031,7 @@ void r51_exit(int16 eib_nr) {
 void r51setup_func() {
 	int16 x, y;
 	int16 ch_y;
-	if (spieler.PersonRoomNr[P_HOWARD] == 51) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = 64;
@@ -1062,11 +1062,11 @@ int16 r51_use_door(int16 txt_nr) {
 			auto_move(8, P_CHEWY);
 			SetUpScreenFunc = 0;
 			det->show_static_spr(0);
-			if (!spieler.R51HotelRoom) {
+			if (!_G(spieler).R51HotelRoom) {
 				auto_move(11, P_HOWARD);
 				set_person_spr(P_LEFT, P_HOWARD);
-				spieler.R51HotelRoom = true;
-				spieler.room_e_obj[86].Attribut = AUSGANG_LINKS;
+				_G(spieler).R51HotelRoom = true;
+				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
 				start_aad_wait(285, -1);
 				atds->set_ats_str(329, 1, ATS_DATEI);
 				SetUpScreenFunc = r51setup_func;
@@ -1078,11 +1078,11 @@ int16 r51_use_door(int16 txt_nr) {
 
 		case 330:
 			auto_move(9, P_CHEWY);
-			if (!spieler.R51KillerWeg) {
+			if (!_G(spieler).R51KillerWeg) {
 				det->show_static_spr(1);
 				start_detail_wait(2, 1, ANI_VOR);
 				det->start_detail(5, 255, ANI_VOR);
-				if (!spieler.R52HotDogOk) {
+				if (!_G(spieler).R52HotDogOk) {
 					start_aad_wait(287, -1);
 					auto_move(12, P_CHEWY);
 					det->stop_detail(5);
@@ -1090,7 +1090,7 @@ int16 r51_use_door(int16 txt_nr) {
 					det->hide_static_spr(1);
 					start_aad_wait(284, -1);
 				} else {
-					spieler.R51KillerWeg = true;
+					_G(spieler).R51KillerWeg = true;
 					start_aad_wait(290, -1);
 					out->ausblenden(1);
 					out->setze_zeiger(0);
@@ -1127,7 +1127,7 @@ int16 r51_use_door(int16 txt_nr) {
 
 		case 333:
 			auto_move(4, P_CHEWY);
-			switch (spieler.R51DoorCount) {
+			switch (_G(spieler).R51DoorCount) {
 			case 0:
 				det->show_static_spr(3);
 				start_aad_wait(278, -1);
@@ -1137,7 +1137,7 @@ int16 r51_use_door(int16 txt_nr) {
 
 				det->show_static_spr(14);
 				start_aad_wait(279, -1);
-				++spieler.R51DoorCount;
+				++_G(spieler).R51DoorCount;
 				obj->show_sib(SIB_FLASCHE_R51);
 				obj->calc_rsi_flip_flop(SIB_FLASCHE_R51);
 				det->hide_static_spr(3);
@@ -1147,7 +1147,7 @@ int16 r51_use_door(int16 txt_nr) {
 				det->show_static_spr(3);
 				start_aad_wait(280, -1);
 				start_detail_wait(1, 1, ANI_VOR);
-				++spieler.R51DoorCount;
+				++_G(spieler).R51DoorCount;
 				obj->show_sib(SIB_KAPPE_R51);
 				obj->calc_rsi_flip_flop(SIB_KAPPE_R51);
 				det->hide_static_spr(3);
@@ -1156,7 +1156,7 @@ int16 r51_use_door(int16 txt_nr) {
 
 			default :
 				start_aad_wait(281, -1);
-				if (spieler.PersonRoomNr[P_HOWARD] == 51)
+				if (_G(spieler).PersonRoomNr[P_HOWARD] == 51)
 					start_aad_wait(282, -1);
 				break;
 
@@ -1185,25 +1185,25 @@ void r51_timer_action(int16 t_nr, int16 obj_nr) {
 void r52_entry() {
 	SetUpScreenFunc = r52setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
-	if (spieler.R52HotDogOk && !spieler.R52KakerWeg)
+	if (_G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg)
 		r52_plot_armee(0);
-	if (spieler.R52KakerWeg)
+	if (_G(spieler).R52KakerWeg)
 		det->stop_detail(0);
 	if (!flags.LoadGame) {
 		det->show_static_spr(4);
-		spieler.R52TuerAuf = true;
+		_G(spieler).R52TuerAuf = true;
 		set_person_pos(20, 50, P_HOWARD, P_LEFT);
 		set_person_pos(35, 74, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
-		spieler.R52TuerAuf = false;
+		_G(spieler).R52TuerAuf = false;
 		det->hide_static_spr(4);
 		check_shad(2, 1);
 	}
 }
 
 void r52_exit() {
-	if (spieler.PersonRoomNr[P_HOWARD] == 52) {
-		spieler.PersonRoomNr[P_HOWARD] = 51;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
+		_G(spieler).PersonRoomNr[P_HOWARD] = 51;
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -1217,9 +1217,9 @@ int16 r52_use_hot_dog() {
 		auto_move(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, ANI_VOR, P_CHEWY);
 		det->show_static_spr(0);
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		auto_move(4, P_CHEWY);
-		spieler.R52HotDogOk = true;
+		_G(spieler).R52HotDogOk = true;
 		r52_plot_armee(20);
 		atds->set_ats_str(341, 1, ATS_DATEI);
 		auto_move(2, P_CHEWY);
@@ -1228,7 +1228,7 @@ int16 r52_use_hot_dog() {
 	} else if (is_cur_inventar(KILLER_INV)) {
 		action_ret = true;
 		auto_move(5, P_CHEWY);
-		spieler.PersonHide[P_CHEWY] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(7, 1, ANI_VOR);
 		det->start_detail(8, 255, ANI_VOR);
 		for (i = 0; i < 5; i++) {
@@ -1238,11 +1238,11 @@ int16 r52_use_hot_dog() {
 		det->stop_detail(0);
 		det->stop_detail(8);
 		start_detail_wait(7, 1, ANI_RUECK);
-		spieler.PersonHide[P_CHEWY] = false;
+		_G(spieler).PersonHide[P_CHEWY] = false;
 		atds->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
 		start_aad_wait(303, -1);
 		atds->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
-		spieler.R52KakerWeg = true;
+		_G(spieler).R52KakerWeg = true;
 	}
 	show_cur();
 	return action_ret;
@@ -1257,11 +1257,11 @@ void r52_plot_armee(int16 frame) {
 }
 
 void r52_kaker_platt() {
-	if (!spieler.R52KakerJoke &&
-	        spieler.R52HotDogOk &&
-	        !spieler.R52KakerWeg &&
+	if (!_G(spieler).R52KakerJoke &&
+	        _G(spieler).R52HotDogOk &&
+	        !_G(spieler).R52KakerWeg &&
 	        !flags.ExitMov) {
-		spieler.R52KakerJoke = true;
+		_G(spieler).R52KakerJoke = true;
 		stop_person(P_CHEWY);
 		start_aad_wait(289, -1);
 	}
@@ -1270,7 +1270,7 @@ void r52_kaker_platt() {
 void r52setup_func() {
 	int16 x, y;
 	int16 ch_y;
-	if (spieler.PersonRoomNr[P_HOWARD] == 52) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
 		x = 1;
 		ch_y = spieler_vector[P_CHEWY].Xypos[1];
@@ -1298,7 +1298,7 @@ void r53_man_go() {
 	det->del_static_ani(1);
 	start_detail_wait(5, 1, ANI_VOR);
 	atds->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
-	if (!spieler.R53Visit)
+	if (!_G(spieler).R53Visit)
 		obj->show_sib(SIB_VISIT_R53);
 }
 
@@ -1309,7 +1309,7 @@ void r53_talk_man() {
 	det->del_static_ani(1);
 	start_detail_wait(2, 1, ANI_VOR);
 	det->set_static_ani(3, -1);
-	start_aad_wait(269 + (int16)spieler.R53Kostuem, -1);
+	start_aad_wait(269 + (int16)_G(spieler).R53Kostuem, -1);
 	det->del_static_ani(3);
 	start_detail_wait(4, 1, ANI_VOR);
 	r53_man_go();
@@ -1321,8 +1321,8 @@ int16 r53_use_man() {
 	if (is_cur_inventar(BESTELL_INV)) {
 		action_ret = true;
 		hide_cur();
-		spieler.R53Kostuem = true;
-		del_inventar(spieler.AkInvent);
+		_G(spieler).R53Kostuem = true;
+		del_inventar(_G(spieler).AkInvent);
 		auto_move(2, P_CHEWY);
 		start_aad_wait(271, -1);
 		room->set_timer_status(1, TIMER_STOP);
@@ -1337,51 +1337,51 @@ int16 r53_use_man() {
 }
 
 void r54_entry(int16 eib_nr) {
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = r54_setup_func;
 	_G(zoom_horizont) = 106;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	spieler.ZoomXy[P_HOWARD][0] = 30;
-	spieler.ZoomXy[P_HOWARD][1] = 66;
-	if (spieler.R54FputzerWeg)
+	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 66;
+	if (_G(spieler).R54FputzerWeg)
 		det->show_static_spr(9);
 	spieler_mi[P_HOWARD].Mode = true;
 	if (!flags.LoadGame) {
-		if (spieler.R48TaxiEntry) {
-			spieler.R48TaxiEntry = false;
-			if (spieler.PersonRoomNr[P_HOWARD] == 54) {
-				spieler.R54HowardVorne = false;
+		if (_G(spieler).R48TaxiEntry) {
+			_G(spieler).R48TaxiEntry = false;
+			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+				_G(spieler).R54HowardVorne = false;
 				set_person_pos(290, 61, P_HOWARD, P_RIGHT);
 			}
 			set_person_pos(300, 80, P_CHEWY, P_LEFT);
 			_G(maus_links_click) = false;
-			spieler.scrollx = 134;
-			spieler.scrolly = 0;
-		} else if (spieler.R55Location) {
+			_G(spieler).scrollx = 134;
+			_G(spieler).scrolly = 0;
+		} else if (_G(spieler).R55Location) {
 			r54_aufzug_ab();
-		} else if (eib_nr == 90 || spieler.R55ExitDia) {
-			if (spieler.PersonRoomNr[P_HOWARD] == 54) {
-				spieler.R54HowardVorne = false;
+		} else if (eib_nr == 90 || _G(spieler).R55ExitDia) {
+			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+				_G(spieler).R54HowardVorne = false;
 				set_person_pos(212, 61, P_HOWARD, P_RIGHT);
 			}
-			spieler.scrollx = 66;
+			_G(spieler).scrollx = 66;
 			set_person_pos(241, 85, P_CHEWY, P_LEFT);
 		}
-		if (spieler.R55ExitDia) {
-			start_aad_wait(spieler.R55ExitDia, -1);
+		if (_G(spieler).R55ExitDia) {
+			start_aad_wait(_G(spieler).R55ExitDia, -1);
 		}
-		if (spieler.R55R54First) {
-			spieler.R55R54First = false;
+		if (_G(spieler).R55R54First) {
+			_G(spieler).R55R54First = false;
 			r54_calc_auto_taxi();
 		}
 	}
 }
 
 void r54_exit(int16 eib_nr) {
-	spieler.ScrollxStep = 1;
-	if (eib_nr == 89 && spieler.PersonRoomNr[P_HOWARD] == 54) {
-		spieler.PersonRoomNr[P_HOWARD] = 55;
+	_G(spieler).ScrollxStep = 1;
+	if (eib_nr == 89 && _G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+		_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -1389,7 +1389,7 @@ void r54_exit(int16 eib_nr) {
 void r54_calc_auto_taxi() {
 	int16 r_nr;
 	r_nr = 0;
-	if (spieler.R56AbfahrtOk) {
+	if (_G(spieler).R56AbfahrtOk) {
 		r_nr = 57;
 	} else if (obj->check_inventar(KAPPE_INV)) {
 		r_nr = 56;
@@ -1397,12 +1397,12 @@ void r54_calc_auto_taxi() {
 	if (r_nr) {
 		hide_cur();
 		auto_move(7, P_CHEWY);
-		spieler.R54HowardVorne = false;
+		_G(spieler).R54HowardVorne = false;
 		go_auto_xy(290, 61, P_HOWARD, ANI_WAIT);
-		spieler.PersonRoomNr[P_HOWARD] = r_nr;
+		_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
 		_G(maus_links_click) = false;
 		show_cur();
-		spieler.R48TaxiEntry = true;
+		_G(spieler).R48TaxiEntry = true;
 		switch_room(r_nr);
 	}
 }
@@ -1410,11 +1410,11 @@ void r54_calc_auto_taxi() {
 void r54_setup_func() {
 	int16 x, y;
 	int16 ch_x;
-	if (spieler.PersonRoomNr[P_HOWARD] == 54) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 		calc_person_look();
 		ch_x = spieler_vector[P_CHEWY].Xypos[0];
-		if (spieler.R54HowardVorne != 255) {
-			if (spieler.R54HowardVorne) {
+		if (_G(spieler).R54HowardVorne != 255) {
+			if (_G(spieler).R54HowardVorne) {
 				if (ch_x < 218) {
 					x = 150;
 					y = 113;
@@ -1440,12 +1440,12 @@ void r54_setup_func() {
 int16 r54_use_schalter() {
 	int16 aad_nr;
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		hide_cur();
 		action_ret = true;
-		if (!spieler.R54FputzerWeg) {
+		if (!_G(spieler).R54FputzerWeg) {
 			auto_move(1, P_CHEWY);
-			spieler.R54HowardVorne = 255;
+			_G(spieler).R54HowardVorne = 255;
 			go_auto_xy(127, 76, P_HOWARD, ANI_WAIT);
 			go_auto_xy(14, 72, P_HOWARD, ANI_GO);
 			start_spz_wait(CH_ROCK_GET2, 1, ANI_VOR, P_CHEWY);
@@ -1453,10 +1453,10 @@ int16 r54_use_schalter() {
 			auto_move(2, P_CHEWY);
 			start_detail_wait(1, 1, ANI_VOR);
 			det->start_detail(3, 255, ANI_VOR);
-			start_aad_wait(292 + spieler.R54LiftCount, -1);
+			start_aad_wait(292 + _G(spieler).R54LiftCount, -1);
 			det->stop_detail(3);
-			++spieler.R54LiftCount;
-			if (spieler.R54LiftCount < 3) {
+			++_G(spieler).R54LiftCount;
+			if (_G(spieler).R54LiftCount < 3) {
 				start_detail_wait(2, 1, ANI_VOR);
 				det->hide_static_spr(0);
 				start_detail_wait(1, 1, ANI_RUECK);
@@ -1466,13 +1466,13 @@ int16 r54_use_schalter() {
 				det->show_static_spr(9);
 				start_detail_wait(4, 1, ANI_VOR);
 				aad_nr = 296;
-				spieler.R54FputzerWeg = true;
+				_G(spieler).R54FputzerWeg = true;
 				atds->del_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
 				atds->set_ats_str(349, 1, ATS_DATEI);
 				atds->set_ats_str(345, 1, ATS_DATEI);
 			}
 			start_aad_wait(aad_nr, -1);
-			spieler.R54HowardVorne = false;
+			_G(spieler).R54HowardVorne = false;
 		} else
 			start_aad_wait(297, -1);
 		show_cur();
@@ -1482,14 +1482,14 @@ int16 r54_use_schalter() {
 
 void r54_talk_verkauf() {
 	hide_cur();
-	if (!spieler.R54HotDogOk) {
-		if (spieler.AkInvent == DOLLAR175_INV)
+	if (!_G(spieler).R54HotDogOk) {
+		if (_G(spieler).AkInvent == DOLLAR175_INV)
 			del_inventar(DOLLAR175_INV);
 		else
 			del_invent_slot(DOLLAR175_INV);
-		spieler.R54HotDogOk = true;
+		_G(spieler).R54HotDogOk = true;
 		auto_move(3, P_CHEWY);
-		spieler.R54HowardVorne = true;
+		_G(spieler).R54HowardVorne = true;
 		start_aad_wait(299, -1);
 		room->set_timer_status(6, TIMER_STOP);
 		det->del_static_ani(6);
@@ -1516,21 +1516,21 @@ void r54_talk_verkauf() {
 int16 r54_use_zelle() {
 	int16 action_ret = false;
 	hide_cur();
-	if (spieler.inv_cur) {
+	if (_G(spieler).inv_cur) {
 		if (is_cur_inventar(JMKOST_INV)) {
 			action_ret = true;
-			if (!spieler.R54Schild) {
+			if (!_G(spieler).R54Schild) {
 				start_aad_wait(318, -1);
 			} else {
 				auto_move(5, P_CHEWY);
-				spieler.R54HowardVorne = true;
+				_G(spieler).R54HowardVorne = true;
 				SetUpScreenFunc = 0;
 				auto_scroll(176, 0);
 				go_auto_xy(239, 101, P_HOWARD, ANI_WAIT);
 				flc->set_flic_user_function(r54_cut_serv);
 				flic_cut(FCUT_069, FLC_MODE);
 				flc->remove_flic_user_function();
-				del_inventar(spieler.AkInvent);
+				del_inventar(_G(spieler).AkInvent);
 				invent_2_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_JMANS);
 				_G(zoom_horizont) = 90;
@@ -1547,7 +1547,7 @@ int16 r54_use_zelle() {
 	} else {
 		action_ret = true;
 		auto_move(6, P_CHEWY);
-		spieler.R54HowardVorne = true;
+		_G(spieler).R54HowardVorne = true;
 		start_aad_wait(319, -1);
 	}
 	show_cur();
@@ -1564,17 +1564,17 @@ int16 r54_use_azug() {
 	int16 ay;
 	int16 delay;
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
-		if (!spieler.R54LiftOk) {
-			if (spieler.R54FputzerWeg) {
+		if (!_G(spieler).R54LiftOk) {
+			if (_G(spieler).R54FputzerWeg) {
 				auto_move(8, P_CHEWY);
-				spieler.R54HowardVorne = false;
+				_G(spieler).R54HowardVorne = false;
 				start_aad_wait(298, -1);
-				spieler.PersonHide[P_CHEWY] = true;
+				_G(spieler).PersonHide[P_CHEWY] = true;
 				det->show_static_spr(12);
-				spieler.R55Location = true;
+				_G(spieler).R55Location = true;
 				SetUpScreenFunc = 0;
 				go_auto_xy(91, 62, P_HOWARD, ANI_WAIT);
 				ch_y = 68;
@@ -1586,7 +1586,7 @@ int16 r54_use_azug() {
 					if (!delay) {
 						ch_y -= 3;
 						ay -= 3;
-						delay = spieler.DelaySpeed / 2;
+						delay = _G(spieler).DelaySpeed / 2;
 					} else
 						--delay;
 					set_up_screen(DO_SETUP);
@@ -1606,7 +1606,7 @@ void r54_aufzug_ab() {
 	int16 delay;
 	set_person_pos(91, 62, P_HOWARD, P_RIGHT);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
-	spieler.scrollx = 0;
+	_G(spieler).scrollx = 0;
 	SetUpScreenFunc = r54_setup_func;
 	ch_y = -40;
 	ay = -108;
@@ -1618,97 +1618,97 @@ void r54_aufzug_ab() {
 		if (!delay) {
 			ch_y += 3;
 			ay += 3;
-			delay = spieler.DelaySpeed / 2;
+			delay = _G(spieler).DelaySpeed / 2;
 		} else
 			--delay;
 		set_up_screen(DO_SETUP);
 	}
 	det->hide_static_spr(12);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
-	spieler.PersonHide[P_CHEWY] = false;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(maus_links_click) = false;
 	stop_person(P_CHEWY);
-	spieler.R55Location = false;
+	_G(spieler).R55Location = false;
 }
 
 short r54_use_taxi() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
 		auto_move(7, P_CHEWY);
-		spieler.R48TaxiPerson[P_CHEWY] = true;
-		if (spieler.PersonRoomNr[P_HOWARD] == 54) {
-			if (spieler.R54HowardVorne) {
-				spieler.R54HowardVorne = false;
+		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+			if (_G(spieler).R54HowardVorne) {
+				_G(spieler).R54HowardVorne = false;
 				go_auto_xy(290, 61, P_HOWARD, ANI_WAIT);
 			}
-			spieler.PersonHide[P_HOWARD] = true;
-			spieler.R48TaxiPerson[P_HOWARD] = true;
-			spieler.PersonRoomNr[P_HOWARD] = 48;
+			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
-		spieler.PersonHide[P_CHEWY] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		switch_room(48);
 	}
 	return action_ret;
 }
 
 void r55_entry() {
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = r55_setup_func;
 	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	spieler.R55ExitDia = 0;
-	spieler.ZoomXy[P_HOWARD][0] = 20;
-	spieler.ZoomXy[P_HOWARD][1] = 22;
-	if (!spieler.R54FputzerWeg)
+	_G(spieler).R55ExitDia = 0;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 20;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 22;
+	if (!_G(spieler).R54FputzerWeg)
 		det->start_detail(6, 255, ANI_VOR);
 
-	if ((spieler.R55RaumOk) || (!spieler.R55RaumOk && spieler.R55ScriptWeg))
+	if ((_G(spieler).R55RaumOk) || (!_G(spieler).R55RaumOk && _G(spieler).R55ScriptWeg))
 		det->hide_static_spr(0);
-	if (!spieler.R55SekWeg) {
+	if (!_G(spieler).R55SekWeg) {
 		det->start_detail(8, 255, ANI_VOR);
 		det->start_detail(9, 255, ANI_VOR);
-		spieler.R55Entry ^= 1;
-		_G(timer_nr)[0] = room->set_timer(19 + (int16)spieler.R55Entry, 10);
-		det->set_static_ani(19 + (int16)spieler.R55Entry, -1);
+		_G(spieler).R55Entry ^= 1;
+		_G(timer_nr)[0] = room->set_timer(19 + (int16)_G(spieler).R55Entry, 10);
+		det->set_static_ani(19 + (int16)_G(spieler).R55Entry, -1);
 	}
 	spieler_mi[P_HOWARD].Mode = true;
-	if (spieler.R55Job) {
+	if (_G(spieler).R55Job) {
 		r55_rock2mans();
-		spieler.PersonRoomNr[P_HOWARD] = 54;
+		_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 	}
-	if (spieler.ChewyAni == CHEWY_JMANS) {
+	if (_G(spieler).ChewyAni == CHEWY_JMANS) {
 		set_person_pos(51, 75, P_CHEWY, P_RIGHT);
 		room->set_zoom(10);
 	}
-	if (spieler.R55EscScriptOk && !spieler.R55RaumOk)
+	if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk)
 		det->show_static_spr(0);
 	if (!flags.LoadGame) {
-		if (spieler.R55Location) {
-			spieler.scrollx = 136;
+		if (_G(spieler).R55Location) {
+			_G(spieler).scrollx = 136;
 			set_person_pos(400, 82, P_CHEWY, P_RIGHT);
 			start_detail_wait(3, 1, ANI_VOR);
 			_G(timer_nr)[0] = room->set_timer(4, 10);
 			det->set_static_ani(4, -1);
 			atds->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
 		} else {
-			spieler.scrollx = 0;
-			if (spieler.PersonRoomNr[P_HOWARD] == 55) {
+			_G(spieler).scrollx = 0;
+			if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
 				set_person_pos(21, 77, P_HOWARD, P_RIGHT);
 			}
 			det->show_static_spr(8);
 			auto_move(1, P_CHEWY);
 			hide_cur();
 			det->hide_static_spr(8);
-			if (spieler.R55SekWeg && !spieler.R55Job) {
+			if (_G(spieler).R55SekWeg && !_G(spieler).R55Job) {
 
 				set_person_spr(P_LEFT, P_CHEWY);
-				if (spieler.ChewyAni == CHEWY_ROCKER) {
+				if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
 					r55_verleger_mov(0);
 					r55_talk_line();
-					spieler.R54Schild = true;
+					_G(spieler).R54Schild = true;
 				} else {
 					r55_verleger_mov(1);
 					r55_get_job();
@@ -1722,37 +1722,37 @@ void r55_entry() {
 void r55_exit(int16 eib_nr) {
 	if (eib_nr == 90) {
 		r55_mans2rock();
-		if (spieler.PersonRoomNr[P_HOWARD] == 55) {
-			spieler.PersonRoomNr[P_HOWARD] = 54;
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
+			_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 			spieler_mi[P_HOWARD].Mode = false;
 		}
 	}
-	spieler.ScrollxStep = 1;
+	_G(spieler).ScrollxStep = 1;
 }
 
 int16 r55_use_stapel1() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
-		if (!spieler.R55ScriptWeg) {
+	if (!_G(spieler).inv_cur) {
+		if (!_G(spieler).R55ScriptWeg) {
 			action_ret = true;
-			spieler.R55ScriptWeg = true;
+			_G(spieler).R55ScriptWeg = true;
 			auto_move(4, P_CHEWY);
 			det->hide_static_spr(0);
 			auto_move(5, P_CHEWY);
 			det->show_static_spr(1);
 			atds->set_ats_str(354, 1, ATS_DATEI);
 			atds->set_ats_str(355, 1, ATS_DATEI);
-		} else if (spieler.R55EscScriptOk && !spieler.R55RaumOk) {
+		} else if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk) {
 			action_ret = true;
 			start_aad_wait(333, -1);
 		}
 	} else if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
-		if (spieler.R55ScriptWeg) {
+		if (_G(spieler).R55ScriptWeg) {
 			auto_move(4, P_CHEWY);
-			spieler.R55EscScriptOk = true;
+			_G(spieler).R55EscScriptOk = true;
 			det->show_static_spr(0);
-			del_inventar(spieler.AkInvent);
+			del_inventar(_G(spieler).AkInvent);
 			atds->set_ats_str(354, 2, ATS_DATEI);
 		} else
 			start_aad_wait(326, -1);
@@ -1774,20 +1774,20 @@ int16 r55_use_telefon() {
 	int16 delay;
 	int16 tmp_delay;
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		if (spieler.R55EscScriptOk) {
-			if (!spieler.R55RaumOk) {
+		if (_G(spieler).R55EscScriptOk) {
+			if (!_G(spieler).R55RaumOk) {
 				hide_cur();
-				spieler.R55RaumOk = true;
+				_G(spieler).R55RaumOk = true;
 				auto_move(6, P_CHEWY);
-				spieler.PersonHide[P_CHEWY] = true;
+				_G(spieler).PersonHide[P_CHEWY] = true;
 				start_detail_wait(10, 1, ANI_VOR);
 				det->start_detail(11, 255, ANI_VOR);
 				start_aad_wait(329, -1);
 				det->stop_detail(11);
 				start_detail_wait(10, 1, ANI_RUECK);
-				spieler.PersonHide[P_CHEWY] = false;
+				_G(spieler).PersonHide[P_CHEWY] = false;
 				auto_move(7, P_CHEWY);
 				flags.NoScroll = true;
 				auto_scroll(0, 0);
@@ -1802,7 +1802,7 @@ int16 r55_use_telefon() {
 				det->hide_static_spr(8);
 				atds->set_ats_str(354, 1, ATS_DATEI);
 				flic_cut(FCUT_071, FLC_MODE);
-				spieler.PersonRoomNr[P_HOWARD] = 55;
+				_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 				set_person_pos(178, 75, P_CHEWY, P_LEFT);
 				set_person_pos(66, 73, P_HOWARD, P_RIGHT);
 				SetUpScreenFunc = 0;
@@ -1810,13 +1810,13 @@ int16 r55_use_telefon() {
 				start_aad_wait(334, -1);
 				start_aad_wait(335, -1);
 				start_aad_wait(336, -1);
-				tmp_delay = spieler.DelaySpeed;
+				tmp_delay = _G(spieler).DelaySpeed;
 				for (i = 0; i < 7; i++) {
 					delay = tmp_delay;
-					if (!spieler.scrollx)
-						spieler.scrollx = 8;
+					if (!_G(spieler).scrollx)
+						_G(spieler).scrollx = 8;
 					else
-						spieler.scrollx = 0;
+						_G(spieler).scrollx = 0;
 					while (delay) {
 						out->skip_frame(1);
 						--delay;
@@ -1829,12 +1829,12 @@ int16 r55_use_telefon() {
 				invent_2_slot(EINLAD_INV);
 				del_invent_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_ROCKER);
-				spieler.PersonRoomNr[P_HOWARD] = 54;
+				_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 				spieler_mi[P_HOWARD].Mode = false;
 				show_cur();
-				spieler.R55R54First = true;
-				spieler.R55ExitDia = 337;
-				spieler.room_e_obj[89].Attribut = 255;
+				_G(spieler).R55R54First = true;
+				_G(spieler).R55ExitDia = 337;
+				_G(spieler).room_e_obj[89].Attribut = 255;
 				switch_room(54);
 			} else {
 				start_aad_wait(332, -1);
@@ -1850,19 +1850,19 @@ void r55_get_job() {
 	int16 tmp_scrollx;
 	int16 tmp_scrolly;
 	int16 r_nr;
-	spieler.PersonHide[P_CHEWY] = true;
-	tmp_scrollx = spieler.scrollx;
-	tmp_scrolly = spieler.scrolly;
-	spieler.scrollx = 0;
-	spieler.scrolly = 0;
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	tmp_scrollx = _G(spieler).scrollx;
+	tmp_scrolly = _G(spieler).scrolly;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
 	switch_room(61);
 	show_cur();
 	start_ads_wait(15);
-	spieler.PersonHide[P_CHEWY] = false;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	flags.LoadGame = true;
-	spieler.scrollx = tmp_scrollx;
-	spieler.scrolly = tmp_scrolly;
-	if (spieler.R55Job) {
+	_G(spieler).scrollx = tmp_scrollx;
+	_G(spieler).scrolly = tmp_scrolly;
+	if (_G(spieler).R55Job) {
 		r_nr = 55;
 		atds->del_steuer_bit(357, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(354, ATS_AKTIV_BIT, ATS_DATEI);
@@ -1871,7 +1871,7 @@ void r55_get_job() {
 		r_nr = 54;
 		r55_mans2rock();
 	}
-	spieler.PersonRoomNr[P_HOWARD] = r_nr;
+	_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
 	spieler_mi[P_HOWARD].Mode = true;
 	if (r_nr == 54)
 		flags.LoadGame = false;
@@ -1882,8 +1882,8 @@ void r55_get_job() {
 }
 
 void r55_mans2rock() {
-	if (spieler.ChewyAni == CHEWY_JMANS) {
-		spieler.R55ExitDia = 317;
+	if (_G(spieler).ChewyAni == CHEWY_JMANS) {
+		_G(spieler).R55ExitDia = 317;
 		load_chewy_taf(CHEWY_ROCKER);
 		del_invent_slot(LEDER_INV);
 		invent_2_slot(JMKOST_INV);
@@ -1891,7 +1891,7 @@ void r55_mans2rock() {
 }
 
 void r55_rock2mans() {
-	if (spieler.ChewyAni == CHEWY_ROCKER) {
+	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
 		load_chewy_taf(CHEWY_JMANS);
 		del_invent_slot(JMKOST_INV);
 		invent_2_slot(LEDER_INV);
@@ -1903,7 +1903,7 @@ void r55_verleger_mov(int16 mode) {
 	det->show_static_spr(11);
 	start_detail_wait(13, 1, ANI_VOR);
 	start_detail_wait(14, 1, ANI_VOR);
-	if (spieler.ChewyAni == CHEWY_JMANS)
+	if (_G(spieler).ChewyAni == CHEWY_JMANS)
 		start_spz(CH_JM_TITS, 1, ANI_VOR, P_CHEWY);
 	if (mode)
 		start_detail_wait(15, 1, ANI_VOR);
@@ -1911,25 +1911,25 @@ void r55_verleger_mov(int16 mode) {
 }
 
 void r55_strasse(int16 mode) {
-	if (!spieler.inv_cur || mode) {
+	if (!_G(spieler).inv_cur || mode) {
 		room->set_timer_status(4, TIMER_STOP);
 		det->del_static_ani(4);
 		det->stop_detail(4);
 		atds->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
 		start_detail_wait(3, 1, ANI_RUECK);
 
-		spieler.scrollx = 0;
+		_G(spieler).scrollx = 0;
 		switch_room(54);
 	}
 }
 
 int16 r55_use_kammeraus() {
 	int16 action_ret = false;
-	if (spieler.R55Location) {
+	if (_G(spieler).R55Location) {
 		if (is_cur_inventar(KILLER_INV)) {
 			action_ret = true;
-			if (spieler.R52KakerWeg) {
-				if (!spieler.R55SekWeg) {
+			if (_G(spieler).R52KakerWeg) {
+				if (!_G(spieler).R55SekWeg) {
 					hide_cur();
 					room->set_timer_status(4, TIMER_STOP);
 					det->del_static_ani(4);
@@ -1939,12 +1939,12 @@ int16 r55_use_kammeraus() {
 					flc->set_flic_user_function(r55_cut_serv);
 					flic_cut(FCUT_070, FLC_MODE);
 					flc->remove_flic_user_function();
-					room->set_timer_status(19 + (int16)spieler.R55Entry, TIMER_STOP);
-					det->stop_detail(19 + (int16)spieler.R55Entry);
-					det->del_static_ani(19 + (int16)spieler.R55Entry);
+					room->set_timer_status(19 + (int16)_G(spieler).R55Entry, TIMER_STOP);
+					det->stop_detail(19 + (int16)_G(spieler).R55Entry);
+					det->del_static_ani(19 + (int16)_G(spieler).R55Entry);
 					det->hide_static_spr(10);
-					spieler.R55ExitDia = 322;
-					spieler.R55SekWeg = true;
+					_G(spieler).R55ExitDia = 322;
+					_G(spieler).R55SekWeg = true;
 					atds->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
 					atds->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATEI);
 					r55_strasse(1);
@@ -1967,7 +1967,7 @@ int16 r55_cut_serv(int16 frame) {
 void r55_setup_func() {
 	int16 x, y;
 	int16 ch_x;
-	if (spieler.PersonRoomNr[P_HOWARD] == 55) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
 		calc_person_look();
 		ch_x = spieler_vector[P_CHEWY].Xypos[0];
 		if (ch_x < 100) {
@@ -1989,27 +1989,27 @@ void r55_setup_func() {
 
 void r55_talk_line() {
 	int16 aad_nr = 0;
-	if (spieler.R55Location == 0) {
-		if (spieler.ChewyAni == CHEWY_ROCKER) {
+	if (_G(spieler).R55Location == 0) {
+		if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
 			hide_cur();
-			if (!spieler.R55SekWeg) {
+			if (!_G(spieler).R55SekWeg) {
 				auto_move(2, P_CHEWY);
 				flags.NoScroll = true;
 				auto_scroll(136, 0);
 				aad_nr = 320;
-				spieler.R55ExitDia = 321;
-				room->set_timer_status(19 + (int16)spieler.R55Entry, TIMER_STOP);
-				det->stop_detail(19 + (int16)spieler.R55Entry);
-				det->del_static_ani(19 + (int16)spieler.R55Entry);
+				_G(spieler).R55ExitDia = 321;
+				room->set_timer_status(19 + (int16)_G(spieler).R55Entry, TIMER_STOP);
+				det->stop_detail(19 + (int16)_G(spieler).R55Entry);
+				det->del_static_ani(19 + (int16)_G(spieler).R55Entry);
 				start_detail_wait(22, 1, ANI_VOR);
 				det->set_static_ani(21, -1);
-			} else if (!spieler.R55RaumOk) {
+			} else if (!_G(spieler).R55RaumOk) {
 				auto_move(3, P_CHEWY);
 				aad_nr = 323;
-				spieler.R55ExitDia = 324;
+				_G(spieler).R55ExitDia = 324;
 			}
 			start_aad_wait(aad_nr, -1);
-			if (spieler.R55SekWeg) {
+			if (_G(spieler).R55SekWeg) {
 				det->del_static_ani(16);
 				start_detail_wait(14, 1, ANI_VOR);
 			} else {
@@ -2017,7 +2017,7 @@ void r55_talk_line() {
 				start_detail_wait(22, 1, ANI_VOR);
 			}
 			flags.NoScroll = false;
-			spieler.PersonRoomNr[P_HOWARD] = 54;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 			spieler_mi[P_HOWARD].Mode = false;
 			switch_room(54);
 			show_cur();
@@ -2026,19 +2026,19 @@ void r55_talk_line() {
 }
 
 void r56_entry() {
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	spieler_mi[P_HOWARD].Mode = true;
 	_G(timer_nr)[0] = room->set_timer(255, 25);
 	if (!flags.LoadGame) {
-		if (spieler.R48TaxiEntry) {
+		if (_G(spieler).R48TaxiEntry) {
 			hide_cur();
-			spieler.R48TaxiEntry = false;
-			spieler.scrollx = 0;
-			spieler.scrolly = 0;
-			spieler.PersonHide[P_CHEWY] = true;
-			spieler.PersonHide[P_HOWARD] = true;
+			_G(spieler).R48TaxiEntry = false;
+			_G(spieler).scrollx = 0;
+			_G(spieler).scrolly = 0;
+			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler).PersonHide[P_HOWARD] = true;
 			det->hide_static_spr(2);
 			_G(zoom_horizont) = 0;
 			set_person_pos(-6, 16, P_HOWARD, P_RIGHT);
@@ -2047,32 +2047,32 @@ void r56_entry() {
 			start_detail_wait(8, 1, ANI_VOR);
 			start_detail_wait(7, 1, ANI_VOR);
 			set_up_screen(DO_SETUP);
-			if (!spieler.R56GetTabak) {
+			if (!_G(spieler).R56GetTabak) {
 				flic_cut(FCUT_074, FLC_MODE);
 				det->show_static_spr(2);
 			}
 			room->set_zoom(23);
-			spieler.ZoomXy[P_HOWARD][0] = 17;
-			spieler.ZoomXy[P_HOWARD][1] = 37;
-			spieler.PersonHide[P_CHEWY] = false;
-			spieler.PersonHide[P_HOWARD] = false;
+			_G(spieler).ZoomXy[P_HOWARD][0] = 17;
+			_G(spieler).ZoomXy[P_HOWARD][1] = 37;
+			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler).PersonHide[P_HOWARD] = false;
 			SetUpScreenFunc = r56_setup_func;
 			spieler_mi[P_CHEWY].Mode = true;
 			auto_move(1, P_CHEWY);
 			spieler_mi[P_CHEWY].Mode = false;
 			_G(maus_links_click) = false;
 			show_cur();
-		} else if (spieler.R62Flucht) {
+		} else if (_G(spieler).R62Flucht) {
 			_G(maus_links_click) = false;
-			spieler.ZoomXy[P_HOWARD][0] = 40;
-			spieler.ZoomXy[P_HOWARD][1] = 86;
+			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
+			_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 			_G(zoom_horizont) = 114;
 			room->set_zoom(70);
-			spieler.R62Flucht = false;
+			_G(spieler).R62Flucht = false;
 			set_person_pos(308, 97, P_HOWARD, P_RIGHT);
 			set_person_pos(429, 146, P_CHEWY, P_LEFT);
-			spieler.scrollx = 262;
-			spieler.PersonHide[P_HOWARD] = false;
+			_G(spieler).scrollx = 262;
+			_G(spieler).PersonHide[P_HOWARD] = false;
 			det->show_static_spr(9);
 			det->show_static_spr(8);
 			room->set_timer_status(0, TIMER_STOP);
@@ -2085,20 +2085,20 @@ void r56_entry() {
 		}
 	}
 	SetUpScreenFunc = r56_setup_func;
-	spieler.ZoomXy[P_HOWARD][0] = 40;
-	spieler.ZoomXy[P_HOWARD][1] = 86;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 40;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	_G(zoom_horizont) = 114;
 	room->set_zoom(70);
 }
 
 void r56_exit() {
 	spieler_mi[P_HOWARD].Mode = false;
-	spieler.ScrollxStep = 1;
+	_G(spieler).ScrollxStep = 1;
 }
 
 int16 r56_use_taxi() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
 		auto_move(1, P_CHEWY);
@@ -2106,17 +2106,17 @@ int16 r56_use_taxi() {
 		det->start_detail(8, 1, ANI_VOR);
 		_G(zoom_horizont) = 0;
 		room->set_zoom(23);
-		spieler.ZoomXy[P_HOWARD][0] = 17;
-		spieler.ZoomXy[P_HOWARD][1] = 37;
+		_G(spieler).ZoomXy[P_HOWARD][0] = 17;
+		_G(spieler).ZoomXy[P_HOWARD][1] = 37;
 		spieler_mi[P_CHEWY].Mode = true;
 		go_auto_xy(3, 42, P_CHEWY, ANI_WAIT);
 		spieler_mi[P_CHEWY].Mode = false;
-		spieler.PersonHide[P_CHEWY] = true;
-		spieler.R48TaxiPerson[P_CHEWY] = true;
-		if (spieler.PersonRoomNr[P_HOWARD] == 56) {
-			spieler.PersonHide[P_HOWARD] = true;
-			spieler.R48TaxiPerson[P_HOWARD] = true;
-			spieler.PersonRoomNr[P_HOWARD] = 48;
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
+			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 		show_cur();
 		switch_room(48);
@@ -2126,9 +2126,9 @@ int16 r56_use_taxi() {
 
 void r56_talk_man() {
 	auto_move(3, P_CHEWY);
-	if (!spieler.R56AbfahrtOk) {
+	if (!_G(spieler).R56AbfahrtOk) {
 		start_ads_wait(16);
-	} else if (!spieler.R62Flucht) {
+	} else if (!_G(spieler).R62Flucht) {
 		start_aad_wait(343, -1);
 	}
 }
@@ -2143,7 +2143,7 @@ int16 r56_use_man() {
 		room->set_timer_status(0, TIMER_STOP);
 		det->del_static_ani(0);
 
-		if (!spieler.R56WhiskyMix) {
+		if (!_G(spieler).R56WhiskyMix) {
 			start_detail_wait(4, 1, ANI_VOR);
 
 			det->set_static_ani(5, -1);
@@ -2152,8 +2152,8 @@ int16 r56_use_man() {
 			room->set_timer_status(0, TIMER_START);
 			det->set_static_ani(0, -1);
 		} else {
-			del_inventar(spieler.AkInvent);
-			spieler.R56AbfahrtOk = true;
+			del_inventar(_G(spieler).AkInvent);
+			_G(spieler).R56AbfahrtOk = true;
 			start_detail_wait(6, 1, ANI_VOR);
 
 			det->set_static_ani(1, -1);
@@ -2169,17 +2169,17 @@ int16 r56_use_man() {
 
 int16 r56_use_kneipe() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		if (!atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI)) {
 			hide_cur();
 			action_ret = true;
-			if (!spieler.R56Kneipe) {
+			if (!_G(spieler).R56Kneipe) {
 				SetUpScreenFunc = 0;
 				auto_move(4, P_CHEWY);
-				spieler.PersonHide[P_CHEWY] = true;
+				_G(spieler).PersonHide[P_CHEWY] = true;
 				go_auto_xy(160, 58, P_HOWARD, ANI_WAIT);
-				spieler.PersonHide[P_HOWARD] = true;
-				spieler.R56Kneipe = true;
+				_G(spieler).PersonHide[P_HOWARD] = true;
+				_G(spieler).R56Kneipe = true;
 				flags.NoScroll = true;
 				auto_scroll(0, 0);
 				start_detail_wait(12, 3, ANI_VOR);
@@ -2189,9 +2189,9 @@ int16 r56_use_kneipe() {
 				det->stop_detail(10);
 				out->ausblenden(0);
 				set_up_screen(DO_SETUP);
-				spieler.PersonHide[P_CHEWY] = false;
-				spieler.PersonHide[P_HOWARD] = false;
-				spieler.scrollx = 0;
+				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler).PersonHide[P_HOWARD] = false;
+				_G(spieler).scrollx = 0;
 				set_person_pos(23, 70, P_HOWARD, P_RIGHT);
 				set_person_pos(50, 81, P_CHEWY, P_LEFT);
 
@@ -2248,7 +2248,7 @@ void r56_setup_func() {
 		break;
 
 	}
-	if (spieler.PersonRoomNr[P_HOWARD] == 56) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
 		ch_x = spieler_vector[P_CHEWY].Xypos[0];
 		ch_y = spieler_vector[P_CHEWY].Xypos[1];
@@ -2269,8 +2269,8 @@ void r56_setup_func() {
 	}
 	if (!atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI)) {
 		if (menu_item == CUR_WALK) {
-			if (minfo.x + spieler.scrollx >= 157 &&
-			        minfo.x + spieler.scrollx <= 204 &&
+			if (minfo.x + _G(spieler).scrollx >= 157 &&
+			        minfo.x + _G(spieler).scrollx <= 204 &&
 			        minfo.y >= 28 && minfo.y <= 89) {
 				cursor_wahl(CUR_AUSGANG_OBEN);
 			} else
@@ -2284,17 +2284,17 @@ void r57_entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	SetUpScreenFunc = r57_setup_func;
-	spieler.ZoomXy[P_HOWARD][0] = 46;
-	spieler.ZoomXy[P_HOWARD][1] = 86;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	spieler_mi[P_HOWARD].Mode = true;
-	if (spieler.R57StudioAuf)
+	if (_G(spieler).R57StudioAuf)
 		det->hide_static_spr(4);
 	if (!flags.LoadGame) {
-		if (spieler.R48TaxiEntry) {
+		if (_G(spieler).R48TaxiEntry) {
 			hide_cur();
-			spieler.R48TaxiEntry = false;
-			spieler.scrollx = 0;
-			spieler.scrolly = 0;
+			_G(spieler).R48TaxiEntry = false;
+			_G(spieler).scrollx = 0;
+			_G(spieler).scrolly = 0;
 			set_person_pos(4, 144, P_HOWARD, P_LEFT);
 			set_person_pos(40, 160, P_CHEWY, P_RIGHT);
 			auto_move(2, P_CHEWY);
@@ -2305,17 +2305,17 @@ void r57_entry() {
 }
 
 void r57_exit(int16 eib_nr) {
-	if (spieler.PersonRoomNr[P_HOWARD] == 57) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
 		spieler_mi[P_HOWARD].Mode = false;
 		if (eib_nr == 91)
-			spieler.PersonRoomNr[P_HOWARD] = 62;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 62;
 	}
 }
 
 void r57_setup_func() {
 	int16 x, y;
 	int16 ch_y;
-	if (spieler.PersonRoomNr[P_HOWARD] == 57) {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
 		calc_person_look();
 		ch_y = spieler_vector[P_CHEWY].Xypos[1];
 		if (ch_y < 145) {
@@ -2331,19 +2331,19 @@ void r57_setup_func() {
 
 int16 r57_use_taxi() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
 		auto_move(3, P_CHEWY);
 		det->show_static_spr(7);
 		go_auto_xy(16, 160, P_CHEWY, ANI_WAIT);
-		spieler.PersonHide[P_CHEWY] = true;
-		spieler.R48TaxiPerson[P_CHEWY] = true;
-		if (spieler.PersonRoomNr[P_HOWARD] == 57) {
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
 			go_auto_xy(11, 144, P_HOWARD, ANI_WAIT);
-			spieler.PersonHide[P_HOWARD] = true;
-			spieler.R48TaxiPerson[P_HOWARD] = true;
-			spieler.PersonRoomNr[P_HOWARD] = 48;
+			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 		det->hide_static_spr(7);
 		room->set_timer_status(3, TIMER_STOP);
@@ -2372,12 +2372,12 @@ int16 r57_use_pfoertner() {
 		action_ret = true;
 		SetUpScreenFunc = 0;
 		go_auto_xy(132, 130, P_HOWARD, ANI_WAIT);
-		if (spieler.R56AbfahrtOk) {
+		if (_G(spieler).R56AbfahrtOk) {
 			start_aad_wait(341, -1);
 			go_auto_xy(176, 130, P_HOWARD, ANI_WAIT);
-			del_inventar(spieler.AkInvent);
-			spieler.R57StudioAuf = true;
-			spieler.room_e_obj[91].Attribut = AUSGANG_OBEN;
+			del_inventar(_G(spieler).AkInvent);
+			_G(spieler).R57StudioAuf = true;
+			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
 			det->hide_static_spr(4);
 			start_detail_wait(6, 1, ANI_WAIT);
 			atds->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);
@@ -2400,7 +2400,7 @@ void r57_talk_pfoertner() {
 	room->set_timer_status(1, TIMER_STOP);
 	det->del_static_ani(1);
 	det->set_static_ani(3, -1);
-	if (!spieler.R57StudioAuf) {
+	if (!_G(spieler).R57StudioAuf) {
 		aad_nr = 338;
 	} else
 		aad_nr = 342;
@@ -2416,35 +2416,35 @@ void r58_entry() {
 
 void r58_exit() {
 	int16 tmp;
-	spieler.scrollx = spieler.R58TmpSx;
-	spieler.scrolly = spieler.R58TmpSy;
-	spieler_vector[P_CHEWY].Xypos[0] = spieler.R58TmpX;
-	spieler_vector[P_CHEWY].Xypos[1] = spieler.R58TmpY;
-	spieler_mi[P_CHEWY].XyzStart[0] = spieler.R58TmpX;
-	spieler_mi[P_CHEWY].XyzStart[1] = spieler.R58TmpY;
+	_G(spieler).scrollx = _G(spieler).R58TmpSx;
+	_G(spieler).scrolly = _G(spieler).R58TmpSy;
+	spieler_vector[P_CHEWY].Xypos[0] = _G(spieler).R58TmpX;
+	spieler_vector[P_CHEWY].Xypos[1] = _G(spieler).R58TmpY;
+	spieler_mi[P_CHEWY].XyzStart[0] = _G(spieler).R58TmpX;
+	spieler_mi[P_CHEWY].XyzStart[1] = _G(spieler).R58TmpY;
 	flags.MainInput = true;
 	flags.LoadGame = true;
 	show_person();
 	set_person_rnr();
-	tmp = spieler.R58TmpRoom1;
-	spieler.PersonRoomNr[P_CHEWY] = spieler.R58TmpRoom;
+	tmp = _G(spieler).R58TmpRoom1;
+	_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).R58TmpRoom;
 
 	switch_room(tmp);
 
 }
 
 void r58_look_cut_mag(int16 r_nr) {
-	spieler.R58TmpRoom = r_nr;
-	spieler.R58TmpRoom1 = spieler.PersonRoomNr[P_CHEWY];;
+	_G(spieler).R58TmpRoom = r_nr;
+	_G(spieler).R58TmpRoom1 = _G(spieler).PersonRoomNr[P_CHEWY];;
 
-	spieler.R58TmpSx = spieler.scrollx;
-	spieler.R58TmpSy = spieler.scrolly;
-	spieler.R58TmpX = spieler_vector[P_CHEWY].Xypos[0];
-	spieler.R58TmpY = spieler_vector[P_CHEWY].Xypos[1];
+	_G(spieler).R58TmpSx = _G(spieler).scrollx;
+	_G(spieler).R58TmpSy = _G(spieler).scrolly;
+	_G(spieler).R58TmpX = spieler_vector[P_CHEWY].Xypos[0];
+	_G(spieler).R58TmpY = spieler_vector[P_CHEWY].Xypos[1];
 	spieler_vector[P_CHEWY].Xypos[0] = 160;
 	spieler_vector[P_CHEWY].Xypos[1] = 100;
-	spieler.scrollx = 0;
-	spieler.scrolly = 0;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
 	flags.MainInput = false;
 	hide_person();
 	switch_room(r_nr);
@@ -2458,11 +2458,11 @@ void r58setup_func() {
 }
 
 void r59_look_poster() {
-	if (!spieler.R59PosterWeg) {
+	if (!_G(spieler).R59PosterWeg) {
 
 		atds->set_ats_str(302, 1, ATS_DATEI);
 		atds->set_ats_str(301, 1, ATS_DATEI);
-		spieler.R59PosterWeg = true;
+		_G(spieler).R59PosterWeg = true;
 		invent_2_slot(SPARK_INV);
 		switch_room(60);
 	}
@@ -2471,13 +2471,13 @@ void r59_look_poster() {
 void r62_entry() {
 	SetUpScreenFunc = r62_setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
-	spieler.R62LauraVerwandlung = 0;
-	spieler.room_e_obj[91].Attribut = 255;
-	if (!spieler.R62FirstEntry) {
-		spieler.R62TShow = false;
+	_G(spieler).R62LauraVerwandlung = 0;
+	_G(spieler).room_e_obj[91].Attribut = 255;
+	if (!_G(spieler).R62FirstEntry) {
+		_G(spieler).R62TShow = false;
 		_G(cur_hide_flag) = false;
 		hide_cur();
-		spieler.R62FirstEntry = true;
+		_G(spieler).R62FirstEntry = true;
 		set_person_pos(49, 113, P_HOWARD, P_RIGHT);
 		det->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(345, -1);
@@ -2506,14 +2506,14 @@ void r62_entry() {
 		det->del_static_ani(5);
 		start_detail_wait(7, 1, ANI_VOR);
 		show_cur();
-		spieler.R64Moni1Ani = 3;
-		spieler.R64Moni2Ani = 4;
+		_G(spieler).R64Moni1Ani = 3;
+		_G(spieler).R64Moni2Ani = 4;
 		set_person_pos(187, 43, P_CHEWY, P_RIGHT);
-		spieler.R62TShow = true;
+		_G(spieler).R62TShow = true;
 		switch_room(64);
 	} else {
 		det->del_static_ani(0);
-		spieler.PersonHide[P_HOWARD] = true;
+		_G(spieler).PersonHide[P_HOWARD] = true;
 		det->set_static_ani(4, -1);
 		det->set_static_ani(8, -1);
 		r62Delay = 0;
@@ -2523,8 +2523,8 @@ void r62_entry() {
 }
 
 void r62_setup_func() {
-	if (r62Delay <= 0 && spieler.R62TShow) {
-		r62Delay = (spieler.DelaySpeed + 1) * 60;
+	if (r62Delay <= 0 && _G(spieler).R62TShow) {
+		r62Delay = (_G(spieler).DelaySpeed + 1) * 60;
 		det->stop_detail(r62TalkAni);
 		if (r62TalkAni == 4)
 			r62TalkAni = 8;
@@ -2545,17 +2545,17 @@ int16 r62_use_laura() {
 		SetUpScreenFunc = 0;
 		det->del_static_ani(8);
 		det->stop_detail(8);
-		spieler.PersonHide[P_CHEWY] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		det->start_detail(2, 255, ANI_VOR);
 		det->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(399, -1);
-		spieler.PersonHide[P_CHEWY] = false;
+		_G(spieler).PersonHide[P_CHEWY] = false;
 		flic_cut(FCUT_077, FLC_MODE);
 		show_cur();
-		spieler.R64Moni1Ani = 0;
-		spieler.R64Moni2Ani = 0;
-		spieler.R62TShow = false;
-		spieler.R62LauraVerwandlung = true;
+		_G(spieler).R64Moni1Ani = 0;
+		_G(spieler).R64Moni2Ani = 0;
+		_G(spieler).R62TShow = false;
+		_G(spieler).R62LauraVerwandlung = true;
 		switch_room(63);
 	}
 	return action_ret;
@@ -2563,12 +2563,12 @@ int16 r62_use_laura() {
 
 void r63_entry() {
 	_G(zoom_horizont) = 76;
-	spieler.ScrollxStep = 2;
+	_G(spieler).ScrollxStep = 2;
 	r63Schalter = false;
 	r63RunDia = 0;
-	if (spieler.R63FxMannWeg)
+	if (_G(spieler).R63FxMannWeg)
 		det->del_static_ani(5);
-	if (!spieler.R63Uhr) {
+	if (!_G(spieler).R63Uhr) {
 		_G(cur_hide_flag) = false;
 		hide_cur();
 		det->start_detail(12, 255, ANI_VOR);
@@ -2582,23 +2582,23 @@ void r63_entry() {
 		det->stop_detail(11);
 		det->start_detail(10, 255, ANI_VOR);
 		show_cur();
-	} else if (!spieler.R63Feuer) {
+	} else if (!_G(spieler).R63Feuer) {
 		det->show_static_spr(10);
 		det->show_static_spr(12);
-	} else if (spieler.R62LauraVerwandlung) {
+	} else if (_G(spieler).R62LauraVerwandlung) {
 		SetUpScreenFunc = r63_setup_func;
 		cur_2_inventory();
-		spieler.scrollx = 176;
+		_G(spieler).scrollx = 176;
 		set_person_pos(424, 78, P_CHEWY, P_LEFT);
-		spieler.PersonHide[P_CHEWY] = true;
-		spieler.room_e_obj[95].Attribut = 255;
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler).room_e_obj[95].Attribut = 255;
 		r63ChewyAni = 0;
 		det->start_detail(0, 1, ANI_VOR);
 	}
 }
 
 void r63_setup_func() {
-	if (spieler.R62LauraVerwandlung) {
+	if (_G(spieler).R62LauraVerwandlung) {
 		switch (r63ChewyAni) {
 		case 0:
 			if (det->get_ani_status(0) == false) {
@@ -2612,7 +2612,7 @@ void r63_setup_func() {
 
 		case 1:
 			if (det->get_ani_status(1) == false) {
-				spieler.ScrollxStep = 4;
+				_G(spieler).ScrollxStep = 4;
 				set_person_pos(0, 0, P_CHEWY, P_RIGHT);
 				det->start_detail(22, 1, ANI_VOR);
 				det->start_detail(2, 1, ANI_VOR);
@@ -2633,13 +2633,13 @@ void r63_setup_func() {
 				if (!flags.AutoAniPlay) {
 					flags.AutoAniPlay = true;
 
-					spieler.ScrollxStep = 16;
-					spieler.scrollx -= spieler.scrollx % 16;
+					_G(spieler).ScrollxStep = 16;
+					_G(spieler).scrollx -= _G(spieler).scrollx % 16;
 					flags.NoScroll = true;
 					auto_scroll(176, 0);
 					set_person_pos(424, 78, P_CHEWY, P_LEFT);
 					flags.NoScroll = false;
-					spieler.ScrollxStep = 4;
+					_G(spieler).ScrollxStep = 4;
 					if (!r63Schalter) {
 						det->start_detail(0, 1, ANI_VOR);
 						r63ChewyAni = 0;
@@ -2655,12 +2655,12 @@ void r63_setup_func() {
 }
 
 void r63_bork_platt() {
-	spieler.R62LauraVerwandlung = false;
+	_G(spieler).R62LauraVerwandlung = false;
 	r63Schalter = false;
-	spieler.room_e_obj[95].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[95].Attribut = AUSGANG_OBEN;
 	flic_cut(FCUT_081, FLC_MODE);
 	flic_cut(FCUT_082, FLC_MODE);
-	spieler.PersonHide[P_CHEWY] = false;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	check_shad(4, 1);
 	spieler_mi[P_CHEWY].Mode = true;
 	auto_move(6, P_CHEWY);
@@ -2675,19 +2675,19 @@ void r63_bork_platt() {
 	fx_blend = BLEND3;
 	show_cur();
 	flags.MainInput = true;
-	spieler.R62Flucht = true;
-	spieler.PersonRoomNr[P_HOWARD] = 56;
+	_G(spieler).R62Flucht = true;
+	_G(spieler).PersonRoomNr[P_HOWARD] = 56;
 	switch_room(56);
 }
 
 void r63_talk_hunter() {
 	hide_cur();
 	auto_move(3, P_CHEWY);
-	if (spieler.R63Uhr)
+	if (_G(spieler).R63Uhr)
 		det->hide_static_spr(10);
 	det->start_detail(10, 255, ANI_VOR);
 	start_aad_wait(356, -1);
-	if (spieler.R63Uhr) {
+	if (_G(spieler).R63Uhr) {
 		det->show_static_spr(10);
 		det->stop_detail(10);
 	}
@@ -2697,13 +2697,13 @@ void r63_talk_hunter() {
 void r63_talk_regie() {
 	hide_cur();
 	auto_move(3, P_CHEWY);
-	if (spieler.R63Uhr)
+	if (_G(spieler).R63Uhr)
 		det->hide_static_spr(12);
 	det->stop_detail(18);
 	det->start_detail(19, 255, ANI_VOR);
 	start_aad_wait(357, -1);
 	det->stop_detail(19);
-	if (spieler.R63Uhr) {
+	if (_G(spieler).R63Uhr) {
 		det->show_static_spr(12);
 	} else {
 		det->start_detail(18, 255, ANI_VOR);
@@ -2724,7 +2724,7 @@ int16 r63_use_fx_man() {
 		action_ret = true;
 		hide_cur();
 		auto_move(1, P_CHEWY);
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		start_aad_wait(359, -1);
 		det->del_static_ani(5);
 		start_detail_wait(6, 1, ANI_VOR);
@@ -2732,7 +2732,7 @@ int16 r63_use_fx_man() {
 		start_aad_wait(362, -1);
 		det->stop_detail(7);
 		start_detail_wait(8, 1, ANI_VOR);
-		spieler.R63FxMannWeg = true;
+		_G(spieler).R63FxMannWeg = true;
 		atds->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
 	}
@@ -2741,10 +2741,10 @@ int16 r63_use_fx_man() {
 
 int16 r63_use_schalter() {
 	int16 action_ret = false;
-	if (!spieler.inv_cur) {
+	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		if (spieler.R63FxMannWeg) {
-			if (spieler.R62LauraVerwandlung) {
+		if (_G(spieler).R63FxMannWeg) {
+			if (_G(spieler).R62LauraVerwandlung) {
 				r63Schalter = true;
 				hide_cur();
 				flags.MainInput = false;
@@ -2789,7 +2789,7 @@ int16 r63_use_girl() {
 		action_ret = true;
 		hide_cur();
 		auto_move(2, P_CHEWY);
-		del_inventar(spieler.AkInvent);
+		del_inventar(_G(spieler).AkInvent);
 		det->stop_detail(12);
 		start_detail_wait(13, 1, ANI_VOR);
 		det->set_static_ani(14, -1);
@@ -2799,7 +2799,7 @@ int16 r63_use_girl() {
 		start_aad_wait(360, -1);
 		det->stop_detail(15);
 		start_detail_wait(16, 1, ANI_VOR);
-		spieler.R63Uhr = true;
+		_G(spieler).R63Uhr = true;
 		det->stop_detail(10);
 		det->stop_detail(18);
 		det->show_static_spr(10);
@@ -2819,14 +2819,14 @@ int16 r63_use_aschenbecher() {
 		action_ret = true;
 		_G(cur_hide_flag) = false;
 		hide_cur();
-		if (spieler.R63Uhr) {
-			if (spieler.R63FxMannWeg) {
+		if (_G(spieler).R63Uhr) {
+			if (_G(spieler).R63FxMannWeg) {
 				auto_move(5, P_CHEWY);
-				del_inventar(spieler.AkInvent);
+				del_inventar(_G(spieler).AkInvent);
 				flags.NoScroll = true;
 				auto_scroll(70, 0);
 				auto_move(1, P_CHEWY);
-				spieler.PersonHide[P_CHEWY] = true;
+				_G(spieler).PersonHide[P_CHEWY] = true;
 				det->start_detail(20, 255, ANI_VOR);
 				det->start_detail(10, 255, ANI_VOR);
 				det->start_detail(18, 255, ANI_VOR);
@@ -2837,9 +2837,9 @@ int16 r63_use_aschenbecher() {
 				atds->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);
 				atds->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATEI);
 				atds->set_ats_str(383, 1, ATS_DATEI);
-				spieler.R63Feuer = true;
-				spieler.PersonHide[P_CHEWY] = false;
-				spieler.scrollx = 0;
+				_G(spieler).R63Feuer = true;
+				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler).scrollx = 0;
 				set_person_pos(187, 42, P_CHEWY, P_RIGHT);
 				switch_room(64);
 				flags.NoScroll = false;
@@ -2855,20 +2855,20 @@ int16 r63_use_aschenbecher() {
 void r64_entry() {
 	SetUpScreenFunc = r64_setup_func;
 	r62Delay = 0;
-	r64TalkAni = spieler.R64Moni1Ani;
-	if (!spieler.R64ManWeg) {
+	r64TalkAni = _G(spieler).R64Moni1Ani;
+	if (!_G(spieler).R64ManWeg) {
 		_G(timer_nr)[0] = room->set_timer(1, 10);
 		det->set_static_ani(1, -1);
 		r64_chewy_entry();
-		if (spieler.R63Feuer) {
+		if (_G(spieler).R63Feuer) {
 			flc->set_flic_user_function(r64_cut_sev);
 			flic_cut(FCUT_078, FLC_MODE);
 			flc->remove_flic_user_function();
-			spieler.R64ManWeg = true;
+			_G(spieler).R64ManWeg = true;
 			det->del_static_ani(1);
 			room->set_timer_status(1, TIMER_STOP);
 			atds->set_steuer_bit(376, ATS_AKTIV_BIT, ATS_DATEI);
-			spieler.R64Moni1Ani = 5;
+			_G(spieler).R64Moni1Ani = 5;
 			r64_calc_monitor();
 			start_aad_wait(354, -1);
 		}
@@ -2880,8 +2880,8 @@ int16 r64_cut_sev(int16 frame) {
 	int16 spr_nr;
 	int16 x, y;
 	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
-	x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - spieler.scrollx;
-	y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - spieler.scrolly;
+	x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
+	y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
 	calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->room_info->ZoomFak,
 	          (int16)room->room_info->ZoomFak, &spieler_vector[P_CHEWY]);
 	out->scale_set(chewy->image[spr_nr], x, y,
@@ -2904,7 +2904,7 @@ void r64_chewy_entry() {
 
 void r64_calc_monitor() {
 	int16 str_nr = 0;
-	switch (spieler.R64Moni1Ani) {
+	switch (_G(spieler).R64Moni1Ani) {
 	case 3:
 		str_nr = 0;
 		det->set_static_ani(3, -1);
@@ -2921,7 +2921,7 @@ void r64_calc_monitor() {
 
 	}
 	atds->set_ats_str(373, str_nr, ATS_DATEI);
-	switch (spieler.R64Moni2Ani) {
+	switch (_G(spieler).R64Moni2Ani) {
 	case 4:
 		str_nr = 0;
 		det->set_static_ani(4, -1);
@@ -2936,14 +2936,14 @@ void r64_calc_monitor() {
 }
 
 void r64_setup_func() {
-	if (r62Delay <= 0 && spieler.R62TShow) {
-		r62Delay = (spieler.DelaySpeed + 1) * 60;
+	if (r62Delay <= 0 && _G(spieler).R62TShow) {
+		r62Delay = (_G(spieler).DelaySpeed + 1) * 60;
 		if (r64TalkAni == 3 || r64TalkAni == 4)
 			det->stop_detail(r64TalkAni);
 		if (r64TalkAni == 4)
-			r64TalkAni = spieler.R64Moni1Ani;
+			r64TalkAni = _G(spieler).R64Moni1Ani;
 		else
-			r64TalkAni = spieler.R64Moni2Ani;
+			r64TalkAni = _G(spieler).R64Moni2Ani;
 		if (r64TalkAni != 0)
 			det->start_detail(r64TalkAni, 255, ANI_VOR);
 	} else
@@ -2955,7 +2955,7 @@ void r64_talk_man() {
 }
 
 void r64_talk_man(int16 aad_nr) {
-	if (!spieler.R64ManWeg) {
+	if (!_G(spieler).R64ManWeg) {
 		hide_cur();
 		auto_move(4, P_CHEWY);
 		room->set_timer_status(1, TIMER_STOP);
@@ -2975,8 +2975,8 @@ int16 r64_use_tasche() {
 	int16 action_ret = false;
 	hide_cur();
 	aad_nr = -1;
-	if (!spieler.inv_cur) {
-		if (spieler.R64ManWeg) {
+	if (!_G(spieler).inv_cur) {
+		if (_G(spieler).R64ManWeg) {
 			if (!atds->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI)) {
 				auto_move(3, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET1, 1, ANI_VOR, P_CHEWY);
@@ -2999,10 +2999,10 @@ int16 r64_use_tasche() {
 
 void r65_entry() {
 	hide_person();
-	r65tmp_scrollx = spieler.scrollx;
-	r65tmp_scrolly = spieler.scrolly;
-	spieler.scrollx = 0;
-	spieler.scrolly = 0;
+	r65tmp_scrollx = _G(spieler).scrollx;
+	r65tmp_scrolly = _G(spieler).scrolly;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
 	r65tmp_ch_x = spieler_vector[P_CHEWY].Xypos[0];;
 	r65tmp_ch_y = spieler_vector[P_CHEWY].Xypos[1];;
 	r65tmp_ho_x = spieler_vector[P_HOWARD].Xypos[0];;
@@ -3011,22 +3011,22 @@ void r65_entry() {
 	spieler_vector[P_CHEWY].Xypos[1] = 80;
 	spieler_vector[P_HOWARD].Xypos[0] = 150;
 	spieler_vector[P_HOWARD].Xypos[1] = 10;
-	if (spieler.PersonDia[P_HOWARD] < 10000) {
+	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hide_cur();
-		start_aad_wait(spieler.PersonDia[P_HOWARD], -1);
+		start_aad_wait(_G(spieler).PersonDia[P_HOWARD], -1);
 		show_cur();
 	} else {
-		start_ads_wait(spieler.PersonDia[P_HOWARD] - 10000);
+		start_ads_wait(_G(spieler).PersonDia[P_HOWARD] - 10000);
 	}
 	flags.LoadGame = true;
 	show_person();
-	switch_room(spieler.PersonDiaTmpRoom[P_HOWARD]);
+	switch_room(_G(spieler).PersonDiaTmpRoom[P_HOWARD]);
 }
 
 void r65_exit() {
-	spieler.scrollx = r65tmp_scrollx;
-	spieler.scrolly = r65tmp_scrolly;
+	_G(spieler).scrollx = r65tmp_scrollx;
+	_G(spieler).scrolly = r65tmp_scrolly;
 	set_person_pos(r65tmp_ch_x, r65tmp_ch_y, P_CHEWY, -1);
 	set_person_pos(r65tmp_ho_x, r65tmp_ho_y, P_HOWARD, -1);
 	room_blk.AadLoad = true;
@@ -3038,11 +3038,11 @@ void r65_exit() {
 void r65_atds_string_start(int16 dia_nr, int16 str_nr,
                            int16 person_nr, int16 mode) {
 	int16 ani_nr;
-	if (!spieler.PersonDiaRoom[person_nr]) {
+	if (!_G(spieler).PersonDiaRoom[person_nr]) {
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
-				switch (spieler.ChewyAni) {
+				switch (_G(spieler).ChewyAni) {
 				case CHEWY_NORMAL:
 					ani_nr = CH_TALK3;
 					break;

@@ -49,9 +49,9 @@ void MainMenu::execute() {
 	cur->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
-	spieler.inv_cur = 0;
+	_G(spieler).inv_cur = 0;
 	menu_display = 0;
-	spieler.soundLoopMode = 1;
+	_G(spieler).soundLoopMode = 1;
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
@@ -61,9 +61,9 @@ void MainMenu::execute() {
 
 		cursor_wahl(20);
 		_selection = -1;
-		spieler.scrollx = spieler.scrolly = 0;
-		spieler.PersonRoomNr[0] = 98;
-		room->load_room(&room_blk, 98, &spieler);
+		_G(spieler).scrollx = _G(spieler).scrolly = 0;
+		_G(spieler).PersonRoomNr[0] = 98;
+		room->load_room(&room_blk, 98, &_G(spieler));
 		ERROR
 
 		CurrentSong = -1;
@@ -71,7 +71,7 @@ void MainMenu::execute() {
 		fx->border(workpage, 100, 0, 0);
 
 		out->set_palette(pal);
-		spieler.PersonHide[0] = 1;
+		_G(spieler).PersonHide[0] = 1;
 		show_cur();
 
 		// Wait for a selection to be made on the main menu
@@ -129,7 +129,7 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
-	int vec = det->maus_vector(minfo.x + spieler.scrollx, minfo.y + spieler.scrolly);
+	int vec = det->maus_vector(minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
 
 	if (in->get_switch_code() == 28 || minfo.button == 1) {
 		_selection = vec;
@@ -139,16 +139,16 @@ void MainMenu::screenFunc() {
 void MainMenu::animate() {
 	if (ani_timer->TimeFlag) {
 		uhr->reset_timer(0, 0);
-		spieler.DelaySpeed = FrameSpeed / spieler.FramesPerSecond;
-		spieler_vector->Delay = spieler.DelaySpeed + spz_delay[0];
+		_G(spieler).DelaySpeed = FrameSpeed / _G(spieler).FramesPerSecond;
+		spieler_vector->Delay = _G(spieler).DelaySpeed + spz_delay[0];
 		FrameSpeed = 0;
-		det->set_global_delay(spieler.DelaySpeed);
+		det->set_global_delay(_G(spieler).DelaySpeed);
 	}
 
 	++FrameSpeed;
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage],
-		spieler.scrollx, spieler.scrolly);
+		_G(spieler).scrollx, _G(spieler).scrolly);
 
 	if (SetUpScreenFunc && !menu_display && !flags.InventMenu) {
 		SetUpScreenFunc();
@@ -193,35 +193,35 @@ void MainMenu::startGame() {
 	animate();
 	exit_room(-1);
 
-	bool soundSwitch = spieler.SoundSwitch;
-	uint8 soundVol = spieler.SoundVol;
-	bool musicSwitch = spieler.MusicSwitch;
-	uint8 musicVol = spieler.MusicVol;
-	bool speechSwitch = spieler.SpeechSwitch;
-	uint8 framesPerSecond = spieler.FramesPerSecond;
-	bool displayText = spieler.DisplayText;
-	int sndLoopMode = spieler.soundLoopMode;
+	bool soundSwitch = _G(spieler).SoundSwitch;
+	uint8 soundVol = _G(spieler).SoundVol;
+	bool musicSwitch = _G(spieler).MusicSwitch;
+	uint8 musicVol = _G(spieler).MusicVol;
+	bool speechSwitch = _G(spieler).SpeechSwitch;
+	uint8 framesPerSecond = _G(spieler).FramesPerSecond;
+	bool displayText = _G(spieler).DisplayText;
+	int sndLoopMode = _G(spieler).soundLoopMode;
 
 	var_init();
 
-	spieler.SoundSwitch = soundSwitch;
-	spieler.SoundVol = soundVol;
-	spieler.MusicSwitch = musicSwitch;
-	spieler.MusicVol = musicVol;
-	spieler.SpeechSwitch = speechSwitch;
-	spieler.FramesPerSecond = framesPerSecond;
-	spieler.DisplayText = displayText;
-	spieler.soundLoopMode = sndLoopMode;
+	_G(spieler).SoundSwitch = soundSwitch;
+	_G(spieler).SoundVol = soundVol;
+	_G(spieler).MusicSwitch = musicSwitch;
+	_G(spieler).MusicVol = musicVol;
+	_G(spieler).SpeechSwitch = speechSwitch;
+	_G(spieler).FramesPerSecond = framesPerSecond;
+	_G(spieler).DisplayText = displayText;
+	_G(spieler).soundLoopMode = sndLoopMode;
 
-	spieler.PersonRoomNr[0] = 0;
-	room->load_room(&room_blk, 0, &spieler);
+	_G(spieler).PersonRoomNr[0] = 0;
+	room->load_room(&room_blk, 0, &_G(spieler));
 	ERROR
 
 	spieler_vector[P_CHEWY].Phase = 6;
 	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];
 	set_person_pos(160, 80, 0, 1);
 	fx_blend = BLEND3;
-	spieler.PersonHide[P_CHEWY] = 0;
+	_G(spieler).PersonHide[P_CHEWY] = 0;
 	menu_item = 0;
 	cursor_wahl(0);
 	enter_room(-1);
@@ -241,7 +241,7 @@ bool MainMenu::loadGame() {
 	savegameFlag = true;
 	int result = file_menue();
 
-	cursor_wahl((spieler.inv_cur && spieler.AkInvent != -1 &&
+	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
 		menu_item == 1) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
@@ -269,7 +269,7 @@ void MainMenu::playGame() {
 	cur->show_cur();
 	spieler_vector->Count = 0;
 	uhr->reset_timer(0, 0);
-	ailsnd->set_loopmode(spieler.soundLoopMode);
+	ailsnd->set_loopmode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !main_loop(1)) {
 	}

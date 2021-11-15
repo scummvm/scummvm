@@ -74,6 +74,7 @@ public:
 	int16 _timer_nr[MAX_TIMER_OBJ] = { 0 };
 public:
 	CurrentScreen _currentScreen;
+	Spieler _spieler;
 
 	int16 _pfeil_ani = 0;
 	int16 _pfeil_delay = 0;
@@ -168,7 +169,6 @@ extern maus_info minfo;
 extern kb_info kbinfo;
 extern cur_blk curblk;
 extern cur_ani curani;
-extern Spieler spieler;
 extern iog_init ioptr;
 extern RaumBlk room_blk;
 extern ObjMov spieler_vector[MAX_PERSON];

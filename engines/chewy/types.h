@@ -368,138 +368,137 @@ struct SpielerFlags {
 	uint8 flags38_1 : 1;
 	uint8 flags38_2 : 1;
 	uint8 flags38_unused : 6;
+
+	SpielerFlags() { clear(); }
+	void clear();
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 struct Spieler : public SpielerFlags {
 	Spieler() : SpielerFlags(), _flags(this) {
+		_flags->clear();
 	}
+
+	/**
+	 * Clears the game state
+	 */
+	void clear();
 
 	/**
 	 * For loading or savign the structure data
 	 */
 	bool synchronize(Common::Serializer &s);
 
-	SpielerFlags *_flags;
-	uint8 Ats[ROOM_ATS_MAX * 3];
-	uint8 InvAts[MAX_MOV_OBJ * 3];
-	uint8 InvUse[INV_USE_ATS_MAX * 3];
-	uint8 InvUseDef[40 * 3];
+	SpielerFlags *_flags = nullptr;
+	uint8 Ats[ROOM_ATS_MAX * 3] = { 0 };
+	uint8 InvAts[MAX_MOV_OBJ * 3] = { 0 };
+	uint8 InvUse[INV_USE_ATS_MAX * 3] = { 0 };
+	uint8 InvUseDef[40 * 3] = { 0 };
 
-	int16 MainMenuY;
-	int16 InvDisp;
-	int16 DispZx;
-	int16 DispZy;
-	int16 DispFlag;
-	int16 InventY;
-	int16 InventSlot[MAX_MOV_OBJ];
+	int16 MainMenuY = 0;
+	int16 InvDisp = 0;
+	int16 DispZx = 0;
+	int16 DispZy = 0;
+	int16 DispFlag = 0;
+	int16 InventY = 0;
+	int16 InventSlot[MAX_MOV_OBJ] = { 0 };
 
-	int16 AkInvent;
-	bool inv_cur;
-	int16 CurBreite;
-	int16 CurHoehe;
+	int16 AkInvent = 0;
+	bool inv_cur = 0;
+	int16 CurBreite = 0;
+	int16 CurHoehe = 0;
 
 	RoomMovObjekt room_m_obj[MAX_MOV_OBJ];
 	RoomStaticInventar room_s_obj[MAX_FEST_OBJ];
 	RoomExit room_e_obj[MAX_EXIT];
+	int16 X[MAX_PERSON] = { 0 };
+	int16 Y[MAX_PERSON] = { 0 };
+	int16 Phase[MAX_PERSON] = { 0 };
+	int16 PersonHide[MAX_PERSON] = { 0 };
+	int16 PersonRoomNr[MAX_PERSON] = { 0 };
+	int16 ZoomXy[MAX_PERSON][2] = { 0 };
+	int16 PersonGlobalDia[MAX_PERSON] = { 0 };
+	int16 PersonDia[MAX_PERSON] = { 0 };
+	int16 PersonDiaRoom[MAX_PERSON] = { 0 };
+	int16 PersonDiaTmpRoom[MAX_PERSON] = { 0 };
 
-	int16 X[MAX_PERSON];
-	int16 Y[MAX_PERSON];
-	int16 Phase[MAX_PERSON];
-	int16 PersonHide[MAX_PERSON];
-	int16 PersonRoomNr[MAX_PERSON];
-	int16 ZoomXy[MAX_PERSON][2];
+	int16 ChewyAni = 0;
+	int16 DiaAMov = 0;
+	int16 scrollx = 0;
+	int16 scrolly = 0;
+	int16 ScrollxStep = 0;
+	int16 ScrollyStep = 0;
+	int16 MausSpeed = 0;
+	int16 DelaySpeed = 0;
+	int16 AadDelay = 0;
+	int16 AadSilent = 0;
 
-	int16 ChewyAni;
+	uint8 R0FueterLab = 0;
+	uint8 R6RaumBetreten = 0;
+	uint8 R6BolaJoke = 0;
+	uint8 R7BellCount = 0;
+	uint8 R11IdCardNr = 0;
+	uint8 R12BorkCount = 0;
 
-	int16 PersonGlobalDia[MAX_PERSON];
-	int16 PersonDia[MAX_PERSON];
+	uint8 R13MonitorStatus = 0;
 
-	int16 PersonDiaRoom[MAX_PERSON];
+	uint8 R17Location = 0;
 
-	int16 PersonDiaTmpRoom[MAX_PERSON];
+	int16 R23GleiterExit = 0;
 
-	int16 DiaAMov;
+	uint8 R24Hebel[3] = { 0 };
+	uint8 R24HebelDir[3] = { 0 };
+	uint8 R24KristallLast[3] = { 0 };
+	uint8 R25SurimyGo = 0;
+	uint8 R27HowardGed = 0;
+	uint8 R28PumpTxt1 = 0;
+	uint8 R28PumpTxt = 0;
 
-	int16 scrollx;
-	int16 scrolly;
-	int16 ScrollxStep;
-	int16 ScrollyStep;
+	uint8 R31SurimyGo = 0;
+	uint8 R33SurimyGo = 0;
+	uint8 R33Munter[4] = { 0 };
 
-	int16 MausSpeed;
-	int16 DelaySpeed;
-	int16 AadDelay;
-	int16 AadSilent;
-
-	uint8 R0FueterLab;
-	uint8 R6RaumBetreten;
-	uint8 R6BolaJoke;
-	uint8 R7BellCount;
-	uint8 R11IdCardNr;
-	uint8 R12BorkCount;
-
-	uint8 R13MonitorStatus;
-
-	uint8 R17Location;
-
-	int16 R23GleiterExit;
-
-	uint8 R24Hebel[3];
-
-	uint8 R24HebelDir[3];
-
-	uint8 R24KristallLast[3];
-	uint8 R25SurimyGo;
-	uint8 R27HowardGed;
-	uint8 R28PumpTxt1;
-	uint8 R28PumpTxt;
-
-	uint8 R31SurimyGo;
-	uint8 R33SurimyGo;
-	uint8 R33Munter[4];
-
-	int16 R39TvKanal;
-	uint8 R39TvRecord;
-	uint8 R39ClintNews;
+	int16 R39TvKanal = 0;
+	uint8 R39TvRecord = 0;
+	uint8 R39ClintNews = 0;
 
 	uint8 R40PoliceAniStatus;
 	uint8 R41TrainCount;
 
-	uint8 R47Schloss[3];
-	uint8 R48TaxiPerson[MAX_PERSON];
+	uint8 R47Schloss[3] = { 0 };
+	uint8 R48TaxiPerson[MAX_PERSON] = { 0 };
+	uint8 R48Auswahl[5] = { 0 };
 
-	uint8 R48Auswahl[5];
+	uint8 R49BoyAniCount = 0;
+	uint8 R51DoorCount = 0;
+	uint8 R54LiftCount = 0;
+	uint8 R54HowardVorne = 0;
 
-	uint8 R49BoyAniCount;
-	uint8 R51DoorCount;
-	uint8 R54LiftCount;
-	uint8 R54HowardVorne;
+	short R55ExitDia = 0;
 
-	short R55ExitDia;
+	int16 R58TmpRoom = 0;
+	int16 R58TmpRoom1 = 0;
+	int16 R58TmpSx = 0;
+	int16 R58TmpSy = 0;
+	int16 R58TmpX = 0;
+	int16 R58TmpY = 0;
+	int16 R64Moni1Ani = 0;
 
-	int16 R58TmpRoom;
-	int16 R58TmpRoom1;
-	int16 R58TmpSx;
-	int16 R58TmpSy;
-	int16 R58TmpX;
-	int16 R58TmpY;
-	int16 R64Moni1Ani;
+	int16 R64Moni2Ani = 0;
 
-	int16 R64Moni2Ani;
-
-	uint8 mi[8];
-	int16 SVal1;
-	int16 SVal2;
-	int16 SVal3;
-	int16 SVal4;
-	int16 soundLoopMode;
-	bool SoundSwitch;
-	uint8 SoundVol;
-	bool MusicSwitch;
-	uint8 MusicVol;
-	bool SpeechSwitch;
-	uint8 FramesPerSecond;
-	bool DisplayText;
+	uint8 mi[8] = { 0 };
+	int16 SVal1 = 0;
+	int16 SVal2 = 0;
+	int16 SVal3 = 0;
+	int16 SVal4 = 0;
+	int16 soundLoopMode = 0;
+	bool SoundSwitch = false;
+	uint8 SoundVol = 0;
+	bool MusicSwitch = false;
+	uint8 MusicVol = 0;
+	bool SpeechSwitch = false;
+	uint8 FramesPerSecond = 0;
+	bool DisplayText = false;
 };
 
 struct AutoMov {
