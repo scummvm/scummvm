@@ -153,10 +153,9 @@ void GuiManager::initIconsSet() {
 	if (file->isOpen())
 		dat = Common::makeZipArchive(file);
 
-	delete file;
-
 	if (!dat) {
 		warning("GUI: Could not find '%s'", fname);
+		delete file;
 		return;
 	}
 
