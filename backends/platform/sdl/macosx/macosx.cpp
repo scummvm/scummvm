@@ -30,6 +30,7 @@
 #include "backends/audiocd/macosx/macosx-audiocd.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "backends/platform/sdl/macosx/macosx.h"
+#include "backends/platform/sdl/macosx/macosx-touchbar.h"
 #include "backends/platform/sdl/macosx/macosx-window.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
@@ -60,6 +61,10 @@ void *coreMIDIthread(void *threadarg) {
 
 OSystem_MacOSX::~OSystem_MacOSX() {
 	releaseMenu();
+
+#if defined(USE_OSD)
+	macOSTouchbarDestroy();
+#endif
 }
 
 void OSystem_MacOSX::init() {
@@ -74,6 +79,10 @@ void OSystem_MacOSX::init() {
 #if defined(USE_SYSDIALOGS)
 	// Initialize dialog manager
 	_dialogManager = new MacOSXDialogManager();
+#endif
+
+#if defined(USE_OSD)
+	macOSTouchbarCreate();
 #endif
 
 	// The call to query the number of MIDI devices is ubiquitously slow

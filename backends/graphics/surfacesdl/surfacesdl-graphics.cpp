@@ -50,6 +50,12 @@
 #endif
 #include "common/text-to-speech.h"
 
+#ifdef USE_OSD
+#if defined(MACOSX)
+#include "backends/platform/sdl/macosx/macosx-touchbar.h"
+#endif
+#endif
+
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SRCCOLORKEY 0
@@ -2253,6 +2259,9 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 	// Enable alpha blending
 	SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
 
+#if defined(MACOSX)
+	macOSTouchbarUpdate(msg.encode().c_str());
+#endif
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceRedraw = true;
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
@@ -2334,6 +2343,10 @@ void SurfaceSdlGraphicsManager::removeOSDMessage() {
 
 	_osdMessageSurface = nullptr;
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
+
+#if defined(MACOSX)
+	macOSTouchbarUpdate(nullptr);
+#endif
 }
 
 void SurfaceSdlGraphicsManager::updateOSD() {

@@ -38,6 +38,9 @@
 #ifdef USE_OSD
 #include "common/tokenizer.h"
 #include "common/rect.h"
+#if defined(MACOSX)
+#include "backends/platform/sdl/macosx/macosx-touchbar.h"
+#endif
 #endif
 
 #include "graphics/conversion.h"
@@ -578,6 +581,10 @@ void OpenGLGraphicsManager::updateScreen() {
 		if (_osdMessageAlpha <= 0) {
 			delete _osdMessageSurface;
 			_osdMessageSurface = nullptr;
+
+#if defined(MACOSX)
+			macOSTouchbarUpdate(nullptr);
+#endif
 		}
 	}
 
@@ -852,6 +859,10 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	}
 
 	_osdMessageSurface->updateGLTexture();
+
+#if defined(MACOSX)
+	macOSTouchbarUpdate(_osdMessageNextData.encode().c_str());
+#endif
 
 	// Init the OSD display parameters.
 	_osdMessageAlpha = kOSDMessageInitialAlpha;
