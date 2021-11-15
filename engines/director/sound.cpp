@@ -44,7 +44,7 @@ namespace Director {
 
 DirectorSound::DirectorSound(Window *window) : _window(window) {
 	uint numChannels = 2;
-	if (g_director->getVersion() >= 400) {
+	if (g_director->getVersion() >= 300) {
 		numChannels = 4;
 	}
 
