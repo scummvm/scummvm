@@ -60,6 +60,13 @@ void EfhGraphicsStruct::copy(EfhGraphicsStruct *src) {
 }
 
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "gendata");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "images");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "imp");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "maps");
+
 	_system = syst;
 	_rnd = nullptr;
 
@@ -575,7 +582,7 @@ void EfhEngine::initEngine() {
 	// }
 
 	// Load Title Screen
-	loadImageSet(11, (uint8 *)_circleImageBuf, (uint8 **)_circleImageSubFileArray, 0, _paletteTransformationConstant, (uint8 *)_hiResImageBuf, (uint8 *)_loResImageBuf);
+	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
 	displayFctFullScreen();
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
 	displayFctFullScreen();
@@ -589,11 +596,11 @@ void EfhEngine::initEngine() {
 	loadImageSetToTileBank(3, 6);
 
 	// Load 320*200 Menu screen
-	Common::String fileName = Common::String::format("images\\imageset.%d", 10);
+	Common::String fileName = Common::String::format("imageset.%d", 10);
 	readFileToBuffer(fileName, _menuBuf);
 
 	// Load 96*64 Window with pink border and yellow bottom
-	fileName = Common::String::format("images\\imageset.%d", 12);
+	fileName = Common::String::format("imageset.%d", 12);
 	readFileToBuffer(fileName, _windowWithBorderBuf);
 
 	readAnimInfo();
@@ -676,7 +683,7 @@ void EfhEngine::initEngine() {
 	}
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
-	readImpFile(99, 0);
+	readImpFile(99, false);
 	_word31E9E = 0xFFFF;
 	restoreAnimImageSetId();
 
@@ -708,7 +715,27 @@ void EfhEngine::displayLowStatusScreen(int i) {
 }
 
 void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *destBuffer, uint8 *transfBuffer) {
-	warning("STUB - loadImageSet");
+	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
+	rImageFile(fileName, buffer, subFilesArray, CGAVal, EGAVal, destBuffer, transfBuffer);
+}
+
+void EfhEngine::rImageFile(Common::String filename, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *targetBuffer) {
+	readFileToBuffer(filename, packedBuffer);
+	uncompressBuffer(packedBuffer, targetBuffer);
+
+	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (1 Bpp)
+	// => Write a class to handle that more properly
+	uint8 *ptr = targetBuffer;
+	uint16 counter = 0;
+	while (READ_LE_INT16(ptr) != 0) {
+		subFilesArray[counter] = ptr;
+		++counter;
+		int16 imageWidth = READ_LE_INT16(ptr);
+		ptr += 2;
+		int16 imageHeight = READ_LE_INT16(ptr);
+		ptr += 2;
+		ptr += (imageWidth * imageHeight);
+	}
 }
 
 void EfhEngine::displayFctFullScreen() {
@@ -757,9 +784,9 @@ void EfhEngine::restoreAnimImageSetId() {
 }
 
 void EfhEngine::checkProtection() {
-	bool successfulCheck = false;
-	uint protectionItemId = _rnd->getRandomNumber(5);
-	uint ProtectionArrayId = _rnd->getRandomNumber(14);
+	// bool successfulCheck = false;
+	// uint8 protectionItemId = _rnd->getRandomNumber(5);
+	// uint8 ProtectionArrayId = _rnd->getRandomNumber(14);
 	_unkVideoRelatedWord1 = 0xE;
 
 	//CHECKME : Well, yeah, some code may be missing there. Who knows.
@@ -826,7 +853,54 @@ void EfhEngine::loadGame() {
 }
 
 void EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
-	warning("TODO: uncompressBuffer");
+	if (compressedBuf == nullptr || destBuf == nullptr)
+		error("uncompressBuffer - Invalid pointer used in parameter list");
+
+	uint8 *curPtrDest = destBuf;
+
+	uint16 compSize = READ_LE_UINT16(compressedBuf) + 1;	
+	uint8 *curPtrCompressed = compressedBuf + 2;
+
+	for (;;) {
+		uint8 next = *curPtrCompressed;
+		++curPtrCompressed;
+		--compSize;
+		if (compSize == 0)
+			break;
+
+		if (next != 0xC3) {
+			*curPtrDest = next;
+			++curPtrDest;
+			continue;
+		}
+
+		next = *curPtrCompressed;
+		++curPtrCompressed;
+		--compSize;
+		if (compSize == 0)
+			break;
+
+		if (next == 0) {
+			*curPtrDest = 0xC3;
+			++curPtrDest;
+			continue;
+		}
+
+		uint8 loopVal = next;
+		next = *curPtrCompressed;
+		++curPtrCompressed;
+
+		for (int i = 0; i < loopVal; ++i) {
+			*curPtrDest = next;
+			++curPtrDest;
+		}
+		
+		--compSize;
+		if (compSize == 0)
+			break;
+	}
+
+	curPtrDest[0] = curPtrDest[1] = 0;
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
