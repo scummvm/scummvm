@@ -132,7 +132,7 @@ void r25_xit_gleiter() {
 	if (!spieler.R25SurimyLauf) {
 		spieler.R25SurimyLauf = true;
 		det->load_taf_seq(56, 8, 0);
-		auto_obj = 1;
+		_G(auto_obj) = 1;
 		mov_phasen[SURIMY_OBJ].AtsText = 0;
 		mov_phasen[SURIMY_OBJ].Lines = 2;
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -148,13 +148,13 @@ void r25_xit_gleiter() {
 		start_aad_wait(65, -1);
 		fx_blend = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
-		auto_obj = 0;
+		_G(auto_obj) = 0;
 	}
 }
 
 void r27_entry() {
 	if (spieler.PersonRoomNr[P_HOWARD] == 27) {
-		timer_nr[0] = room->set_timer(0, 5);
+		_G(timer_nr)[0] = room->set_timer(0, 5);
 		det->set_static_ani(0, -1);
 		atds->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
 	} else
@@ -204,9 +204,9 @@ void r27_howard_ged() {
 }
 
 void r28_entry(int16 eib_nr) {
-	zoom_horizont = 140;
+	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	spieler.ScrollxStep = 2;
 	if (spieler.R28RKuerbis)
 		det->show_static_spr(6);
@@ -622,7 +622,7 @@ void r31_surimy_go() {
 			hide_cur();
 			spieler.R31SurimyGo = 0;
 			det->load_taf_seq(39, 8, 0);
-			auto_obj = 1;
+			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
 			mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -635,7 +635,7 @@ void r31_surimy_go() {
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(157, -1);
 			wait_auto_obj(SURIMY_OBJ);
-			auto_obj = 0;
+			_G(auto_obj) = 0;
 			show_cur();
 		} else
 			++spieler.R31SurimyGo;
@@ -899,7 +899,7 @@ void r33_surimy_go() {
 			hide_cur();
 			spieler.R33SurimyGo = 0;
 			det->load_taf_seq(39, 8, 0);
-			auto_obj = 1;
+			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
 			mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -912,7 +912,7 @@ void r33_surimy_go() {
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(158, -1);
 			wait_auto_obj(SURIMY_OBJ);
-			auto_obj = 0;
+			_G(auto_obj) = 0;
 			show_cur();
 		} else
 			++spieler.R33SurimyGo;
@@ -1072,7 +1072,7 @@ void r34_xit_kuehlschrank() {
 	set_person_pos(54, 111, P_CHEWY, -1);
 	switch_room(33);
 	flags.ChewyDontGo = false;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 }
 
 void r35_entry() {
@@ -1169,19 +1169,19 @@ void r35_talk_cat() {
 }
 
 void r37_entry() {
-	zoom_horizont = 100;
+	_G(zoom_horizont) = 100;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	SetUpScreenFunc = r37_setup_func;
 	if (!flags.LoadGame) {
 		spieler.scrollx = 124;
 		set_person_pos(219, 66, P_CHEWY, P_RIGHT);
 	}
 	if (!spieler.R37Kloppe) {
-		timer_nr[1] = room->set_timer(7, 5);
+		_G(timer_nr)[1] = room->set_timer(7, 5);
 		det->set_static_ani(7, -1);
 		if (!spieler.R37HundScham) {
-			timer_nr[0] = room->set_timer(3, 4);
+			_G(timer_nr)[0] = room->set_timer(3, 4);
 			det->set_static_ani(3, -1);
 		}
 	}
@@ -1195,13 +1195,13 @@ void r37_entry() {
 }
 
 void r37_setup_func() {
-	if (maus_links_click &&
+	if (_G(maus_links_click) &&
 	        !spieler.R37Kloppe &&
 	        menu_item == CUR_WALK) {
 		if ((minfo.x + spieler.scrollx > 380 && minfo.y > 120) ||
 		        (minfo.x + spieler.scrollx > 482)) {
 			auto_move(7, P_CHEWY);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 		}
 	}
 }
@@ -1226,7 +1226,7 @@ short r37_use_wippe() {
 			spieler.scrollx = 269;
 			set_person_pos(388, 119, P_CHEWY, P_RIGHT);
 			switch_room(29);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 		} else {
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(160, -1);
@@ -1707,7 +1707,7 @@ void r39_set_tv() {
 
 void r40_entry(int16 eib_nr) {
 
-	zoom_horizont = 130;
+	_G(zoom_horizont) = 130;
 	spieler.ScrollxStep = 2;
 	if (spieler.R40Geld) {
 		det->del_static_ani(6);
@@ -1718,7 +1718,7 @@ void r40_entry(int16 eib_nr) {
 		room->set_timer_status(4, TIMER_STOP);
 	}
 	if (spieler.R40PoliceWeg == false) {
-		timer_nr[0] = room->set_timer(255, 10);
+		_G(timer_nr)[0] = room->set_timer(255, 10);
 		atds->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
 		det->hide_static_spr(15);
@@ -1774,7 +1774,7 @@ void r40_exit(int16 eib_nr) {
 				set_up_screen(DO_SETUP);
 				out->einblenden(pal, 0);
 				uhr->enable_timer();
-				maus_links_click = false;
+				_G(maus_links_click) = false;
 				start_aad_wait(238, -1);
 				r40_move_train(1);
 				flags.NoPalAfterFlc = true;
@@ -1918,7 +1918,7 @@ void r40_setup_func() {
 				det->show_static_spr(15);
 				spieler.R40PoliceAniStatus = 255;
 				room->set_timer_status(255, TIMER_START);
-				uhr->reset_timer(timer_nr[0], 0);
+				uhr->reset_timer(_G(timer_nr)[0], 0);
 				atds->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 			}
 			break;
@@ -2001,7 +2001,7 @@ int16 r40_use_schalter(int16 aad_nr) {
 			start_detail_wait(13, 1, ANI_VOR);
 			det->show_static_spr(15);
 			room->set_timer_status(255, TIMER_START);
-			uhr->reset_timer(timer_nr[0], 0);
+			uhr->reset_timer(_G(timer_nr)[0], 0);
 			show_cur();
 		}
 	}
@@ -2017,7 +2017,7 @@ void r40_talk_police() {
 		auto_move(7, P_CHEWY);
 		start_aad_wait(203, -1);
 		room->set_timer_status(255, TIMER_START);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		show_cur();
 	}
 }
@@ -2217,7 +2217,7 @@ int16 r40_use_tele() {
 				}
 				spieler.R40PoliceAb = false;
 				room->set_timer_status(255, TIMER_START);
-				uhr->reset_timer(timer_nr[0], timer_wert);
+				uhr->reset_timer(_G(timer_nr)[0], timer_wert);
 			}
 			if (dia_nr1 != 223)
 				show_cur();
@@ -2242,7 +2242,7 @@ void r41_entry() {
 	}
 	if (spieler.R41Einbruch) {
 		atds->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATEI);
-		timer_nr[0] = room->set_timer(7, 5);
+		_G(timer_nr)[0] = room->set_timer(7, 5);
 		det->set_static_ani(7, -1);
 		det->show_static_spr(6);
 		det->show_static_spr(7);
@@ -2414,7 +2414,7 @@ void r42_entry() {
 		SetUpScreenFunc = r42setup_func;
 		if (!flags.LoadGame) {
 			det->stop_detail(0);
-			timer_nr[0] = room->set_timer(8, 5);
+			_G(timer_nr)[0] = room->set_timer(8, 5);
 			det->set_static_ani(8, -1);
 			spieler.R42BeamterWach = true;
 			SetUpScreenFunc = r42setup_func;

@@ -153,10 +153,10 @@ void get_zoom_value() {
 	in ->alter_kb_handler();
 	for (i = 0; i < 2; i++)
 		out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c1, i));
-	tmp = zoom_horizont;
+	tmp = _G(zoom_horizont);
 	abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, "%[0-9]3d\0", &tmp);
 	if (abfrage != 27) {
-		zoom_horizont = tmp;
+		_G(zoom_horizont) = tmp;
 	}
 	in ->neuer_kb_handler(&kbinfo);
 }
@@ -181,7 +181,7 @@ void room_info() {
 	value[0] = 0;
 	value[1] = room->GedInfo[room_blk.AkAblage].Ebenen;
 	value[2] = auto_obj;
-	value[3] = zoom_horizont;
+	value[3] = _G(zoom_horizont);
 	value[4] = (int16)room->room_info->ZoomFak;
 	value[5] = get_max_handle();
 	auto_menu(&x, &y, str_anz, 10, c, 0);
@@ -1274,10 +1274,10 @@ void set_person() {
 			auto_menu(&x, &y, 2, 10, c1, 0);
 			for (i = 0; i < 2; i++)
 				out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c3, i));
-			tmp = zoom_horizont;
+			tmp = _G(zoom_horizont);
 			abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, "%[0-9]3d\0", &tmp);
 			if (abfrage != 27) {
-				zoom_horizont = tmp;
+				_G(zoom_horizont) = tmp;
 			}
 			in->neuer_kb_handler(&kbinfo);
 			break;
@@ -1309,7 +1309,7 @@ void set_person() {
 		if (info_flag) {
 			out->printxy(0, 0, 255, 300, scr_width, "Person x %d Person y %d", spieler_vector[p_nr].Xypos[0], spieler_vector[p_nr].Xypos[1]);
 			out->printxy(0, 10, 255, 300, scr_width, "Zoomx %d Zoomy %d", spieler.ZoomXy[p_nr][0], spieler.ZoomXy[p_nr][1]);
-			out->printxy(0, 20, 255, 300, scr_width, "ZoomHorizont %d", zoom_horizont);
+			out->printxy(0, 20, 255, 300, scr_width, "ZoomHorizont %d", _G(zoom_horizont));
 			out->printxy(0, 30, 255, 300, scr_width, "AK-Zoomx %d AK-Zoomy %d", spieler_vector[p_nr].Xzoom, spieler_vector[p_nr].Yzoom);
 
 		}

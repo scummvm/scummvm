@@ -44,24 +44,58 @@ extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
 extern const int16 ANI_INVENT_END[3];
 extern const int16 SPZ_ANI_PH[][2];
 
-extern int16 pfeil_ani;
-extern int16 pfeil_delay;
-extern int16 cur_hide_flag;
 
-extern int16 auto_p_nr;
+class Globals {
+	class CurrentScreen : public Graphics::Surface {
+	public:
+		CurrentScreen() {
+			w = pitch = SCREEN_WIDTH;
+			h = SCREEN_HEIGHT;
+			format = Graphics::PixelFormat::createFormatCLUT8();
+		}
+		CurrentScreen &operator=(byte *p) {
+			setPixels(p);
+			return *this;
+		}
+		byte *getPixels() { return (byte *)Graphics::Surface::getPixels(); }
+	};
 
-extern int16 timer_nr[MAX_TIMER_OBJ];
+public:
+	Globals();
+	~Globals();
+public:
+	int16 _ani_invent_anf[3] = { 38, 39, 21 };
+	int16 _ani_invent_delay[3][2] = {
+		{12, 12},
+		{10, 10},
+		{11, 11},
+	};
+	int16 _ani_count[3] = { 38, 39, 21 };
+	int16 _timer_nr[MAX_TIMER_OBJ] = { 0 };
+public:
+	CurrentScreen _currentScreen;
 
-extern int16 zoom_horizont;
-extern int16 zoom_mov_fak;
+	int16 _pfeil_ani = 0;
+	int16 _pfeil_delay = 0;
+	int16 _cur_hide_flag = 0;
+	int16 _auto_p_nr = 0;
 
-extern int16 auto_obj;
-extern int16 ged_mov_ebene;
+	int16 _zoom_horizont = 0;
+	int16 _zoom_mov_fak = 0;
+
+	int16 _auto_obj = 0;
+	int16 _ged_mov_ebene = 0;
+
+	bool _cur_display = false;
+	int16 _maus_links_click = 0;
+};
+
+extern Globals *g_globals;
+
+#define _G(FIELD) g_globals->_##FIELD
 
 extern int16 person_tmp_hide[MAX_PERSON];
 extern int16 person_tmp_room[MAX_PERSON];
-extern bool cur_display;
-extern int16 maus_links_click;
 
 extern char *err_str;
 extern uint32 ram_end;
@@ -117,9 +151,6 @@ extern int16 maus_old_x;
 extern int16 maus_old_y;
 extern int16 inventar_nr;
 
-extern int16 ani_invent_anf[3];
-extern int16 ani_invent_delay[3][2];
-extern int16 ani_count[3];
 extern int16 invent_cur_mode;
 extern int16 ak_invent;
 extern byte *inv_spr[MAX_MOV_OBJ];

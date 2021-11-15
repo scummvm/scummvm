@@ -25,6 +25,7 @@
 #include "engines/util.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
+#include "chewy/global.h"
 #include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
@@ -54,6 +55,7 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 
 ChewyEngine::~ChewyEngine() {
 	delete _events;
+	delete _globals;
 	delete _screen;
 	delete _sound;
 	g_engine = nullptr;
@@ -63,6 +65,7 @@ ChewyEngine::~ChewyEngine() {
 void ChewyEngine::initialize() {
 	g_screen = _screen = new Graphics::Screen();
 	_events = new EventsManager(_screen);
+	_globals = new Globals();
 	_sound = new Sound(_mixer);
 
 	_tempFiles.add(ADSH_TMP);
@@ -117,7 +120,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			set_person_pos(spieler.X[i], spieler.Y[i], i, spieler.Phase[i]);
 		}
 
-		auto_obj = 0;
+		_G(auto_obj) = 0;
 
 		enter_room(-1);
 		flags.LoadGame = false;

@@ -126,11 +126,11 @@ void Room0::entry() {
 
 	if (!flags.LoadGame) {
 		set_person_pos(150, 100, 0, 1);
-		cur_hide_flag = 0;
+		_G(cur_hide_flag) = 0;
 		hide_cur();
-		timer_nr[0] = room->set_timer(255, 3);
+		_G(timer_nr)[0] = room->set_timer(255, 3);
 
-		while (!ani_timer[timer_nr[0]].TimeFlag && !SHOULD_QUIT) {
+		while (!ani_timer[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 #ifdef TODO_REENABLE
@@ -805,9 +805,9 @@ int16 r4_sonde_comp() {
 
 	cur_2_inventory();
 	spieler.PersonHide[P_CHEWY] = true;
-	cur_display = false;
+	_G(cur_display) = false;
 	switch_room(4);
-	cur_display = true;
+	_G(cur_display) = true;
 	ende = 0;
 	curblk.sprite = room_blk.DetImage;
 	cur_x = 1;
@@ -817,7 +817,7 @@ int16 r4_sonde_comp() {
 	start_aad(46);
 	while (!ende) {
 		maus_action();
-		if (maus_links_click) {
+		if (_G(maus_links_click)) {
 			switch (in->maus_vector(minfo.x + 17, minfo.y + 7, (int16 *)console, 3)) {
 			case 0:
 				if (cur_x > 0)
@@ -872,7 +872,7 @@ int16 r4_sonde_comp() {
 	set_person_pos(118 - CH_HOT_MOV_X,
 	               164 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 	spieler_vector[P_CHEWY].DelayCount = 0;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	minfo.button = 0;
 	spieler.PersonRoomNr[P_CHEWY] = 3;
 	room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
@@ -896,7 +896,7 @@ void switch_room(int16 nr) {
 
 void r3_terminal() {
 	show_cur();
-	auto_obj = 0;
+	_G(auto_obj) = 0;
 	switch (r4_sonde_comp()) {
 	case 0:
 		r3_sonde_aufnahme();
@@ -931,7 +931,7 @@ void r3_terminal() {
 			start_ani_block(2, ablock1);
 			spieler.PersonRoomNr[P_CHEWY] = 5;
 			clear_prog_ani();
-			auto_obj = 0;
+			_G(auto_obj) = 0;
 			room->load_room(&room_blk, spieler.PersonRoomNr[P_CHEWY], &spieler);
 			ERROR
 			fx_blend = BLEND1;
@@ -943,8 +943,8 @@ void r3_terminal() {
 		break;
 
 	case 1:
-		auto_obj = 1;
-		maus_links_click = 0;
+		_G(auto_obj) = 1;
+		_G(maus_links_click) = 0;
 		minfo.button = 0;
 		stop_person(P_CHEWY);
 		start_aad_wait(51, -1);
@@ -973,7 +973,7 @@ int16 sonde_phasen[4][2] = {
 void r3_init_sonde() {
 #define SONDE_OBJ 0
 #define SONDE_OBJ1 1
-	auto_obj = 1;
+	_G(auto_obj) = 1;
 	mov_phasen[SONDE_OBJ].AtsText = 24;
 	mov_phasen[SONDE_OBJ].Lines = 3;
 	mov_phasen[SONDE_OBJ].Repeat = 255;
@@ -1013,9 +1013,9 @@ void r3_sonde_knarre() {
 	rdi = det->get_room_detail_info();
 
 	det->load_taf_seq(162, 17, 0);
-	tmp = zoom_horizont;
-	zoom_horizont = 100;
-	auto_obj = 1;
+	tmp = _G(zoom_horizont);
+	_G(zoom_horizont) = 100;
+	_G(auto_obj) = 1;
 	mov_phasen[SONDE_OBJ].Lines = 3;
 	mov_phasen[SONDE_OBJ].Repeat = 1;
 	mov_phasen[SONDE_OBJ].ZoomFak = 20;
@@ -1093,7 +1093,7 @@ void r3_sonde_knarre() {
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 	det->del_taf_tbl(162, 17, 0);
-	zoom_horizont = tmp;
+	_G(zoom_horizont) = tmp;
 	r3_init_sonde();
 
 	show_cur();
@@ -1126,10 +1126,10 @@ void r3_sonde_aufnahme() {
 	flags.AniUserAction = false;
 	hide_cur();
 	rdi = det->get_room_detail_info();
-	tmp = zoom_horizont;
-	zoom_horizont = 100;
+	tmp = _G(zoom_horizont);
+	_G(zoom_horizont) = 100;
 	anistart = false;
-	auto_obj = 1;
+	_G(auto_obj) = 1;
 	mov_phasen[SONDE_OBJ].Lines = 2;
 	mov_phasen[SONDE_OBJ].Repeat = 1;
 	mov_phasen[SONDE_OBJ].ZoomFak = 20;
@@ -1149,7 +1149,7 @@ void r3_sonde_aufnahme() {
 	}
 
 	clear_prog_ani();
-	auto_obj = 2;
+	_G(auto_obj) = 2;
 
 	spr_nr = 140;
 	for (i = 0; i < 4; i++) {
@@ -1230,8 +1230,8 @@ void r3_sonde_aufnahme() {
 		}
 	}
 	flags.AniUserAction = false;
-	zoom_horizont = tmp;
-	auto_obj = 0;
+	_G(zoom_horizont) = tmp;
+	_G(auto_obj) = 0;
 }
 
 void r2_jump_out_r1(int16 nr) {
@@ -1266,9 +1266,9 @@ void r5_knopf() {
 }
 
 void r6_entry() {
-	zoom_horizont = 80;
+	_G(zoom_horizont) = 80;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 2;
+	_G(zoom_mov_fak) = 2;
 	if (spieler.R6BolaSchild) {
 		if (spieler.R6RaumBetreten < 3) {
 			det->start_detail(7, 255, ANI_VOR);
@@ -1303,7 +1303,7 @@ MovLine r6_robo_mpkt[3] = {
 
 void r6_init_robo() {
 #define ROBO_OBJ 0
-	auto_obj = 1;
+	_G(auto_obj) = 1;
 	mov_phasen[ROBO_OBJ].AtsText = 44;
 	mov_phasen[ROBO_OBJ].Lines = 3;
 	mov_phasen[ROBO_OBJ].Repeat = 1;
@@ -1534,7 +1534,7 @@ bool r8_gips_wurf() {
 		hide_cur();
 		det->load_taf_seq(116, 30, 0);
 		auto_move(2, P_CHEWY);
-		maus_links_click = 0;
+		_G(maus_links_click) = 0;
 		spieler.PersonHide[P_CHEWY] = true;
 		del_inventar(GIPS_EIMER_INV);
 		start_detail_wait(4, 1, ANI_VOR);
@@ -1660,7 +1660,7 @@ void r9_surimy() {
 
 void r9_surimy_ani() {
 	det->load_taf_seq(91, 8, 0);
-	auto_obj = 1;
+	_G(auto_obj) = 1;
 	mov_phasen[SURIMY_OBJ].AtsText = 0;
 	mov_phasen[SURIMY_OBJ].Lines = 2;
 	mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -1715,9 +1715,9 @@ void r10_get_surimy() {
 }
 
 void r11_entry() {
-	zoom_horizont = 80;
+	_G(zoom_horizont) = 80;
 	flags.ZoomMov = true;
-	zoom_mov_fak = 2;
+	_G(zoom_mov_fak) = 2;
 
 	if (spieler.R12ChewyBork) {
 		if (!spieler.R11DoorRightB) {
@@ -1743,7 +1743,7 @@ void r11_entry() {
 		det->show_static_spr(8);
 		if (!flags.LoadGame)
 			auto_move(6, P_CHEWY);
-		timer_nr[0] = room->set_timer(255, 10);
+		_G(timer_nr)[0] = room->set_timer(255, 10);
 	}
 }
 
@@ -1752,7 +1752,7 @@ void r11_bork_zwinkert() {
 		flags.AutoAniPlay = true;
 		det->hide_static_spr(8);
 		start_ani_block(2, ablock18);
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 		det->show_static_spr(8);
 		flags.AutoAniPlay = false;
 	}
@@ -1850,8 +1850,8 @@ void r11_put_card() {
 
 void r12_entry() {
 	int16 i;
-	zoom_horizont = 150;
-	timer_nr[1] = room->set_timer(255, 20);
+	_G(zoom_horizont) = 150;
+	_G(timer_nr)[1] = room->set_timer(255, 20);
 	if (!spieler.R12Betreten) {
 		spieler.R12Betreten = true;
 		for (i = 7; i < 10; i++)
@@ -1869,7 +1869,7 @@ void r12_entry() {
 		start_aad_wait(109, -1);
 	} else {
 		if (spieler.R12Talisman == true && !spieler.R12BorkInRohr)
-			timer_nr[0] = room->set_timer(255, 20);
+			_G(timer_nr)[0] = room->set_timer(255, 20);
 		else if (spieler.R12BorkInRohr && !spieler.R12RaumOk)
 			det->show_static_spr(12);
 
@@ -1907,10 +1907,10 @@ void r12_init_bork() {
 	if (!auto_obj_status(R12_BORK_OBJ) &&
 	        !spieler.R12BorkTalk) {
 
-		if (!auto_obj)
+		if (!_G(auto_obj))
 			det->load_taf_seq(62, (85 - 62) + 1, 0);
 		if (!flags.AutoAniPlay && !flags.ChAutoMov) {
-			auto_obj = 1;
+			_G(auto_obj) = 1;
 			mov_phasen[R12_BORK_OBJ].AtsText = 120;
 			mov_phasen[R12_BORK_OBJ].Lines = 5;
 			mov_phasen[R12_BORK_OBJ].Repeat = 1;
@@ -1927,7 +1927,7 @@ void r12_init_bork() {
 				auto_mov_vector[R12_BORK_OBJ].DelayCount = 0;
 				if (spieler.R12BorkCount < 3) {
 					++spieler.R12BorkCount;
-					uhr->reset_timer(timer_nr[0], 0);
+					uhr->reset_timer(_G(timer_nr)[0], 0);
 					wait_show_screen(10);
 					start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 					start_aad_wait(14, -1);
@@ -1938,7 +1938,7 @@ void r12_init_bork() {
 				r12_bork_ok();
 			}
 		}
-		uhr->reset_timer(timer_nr[0], 0);
+		uhr->reset_timer(_G(timer_nr)[0], 0);
 	}
 }
 
@@ -2018,7 +2018,7 @@ int16 r12_use_terminal() {
 				start_aad(111, 0);
 			} else {
 				spieler.R12TransOn = true;
-				uhr->reset_timer(timer_nr[1], 0);
+				uhr->reset_timer(_G(timer_nr)[1], 0);
 			}
 		}
 		else
@@ -2123,7 +2123,7 @@ void r13_talk_bork() {
 		det->load_taf_seq(86, (97 - 86) + 1, 0);
 		spieler.PersonHide[P_CHEWY] = false;
 		det->hide_static_spr(12);
-		auto_obj = 1;
+		_G(auto_obj) = 1;
 		mov_phasen[R13_BORK_OBJ].AtsText = 122;
 		mov_phasen[R13_BORK_OBJ].Lines = 3;
 		mov_phasen[R13_BORK_OBJ].Repeat = 1;
@@ -2140,7 +2140,7 @@ void r13_talk_bork() {
 		start_aad_wait(248, -1);
 		flic_cut(FCUT_014, CFO_MODE);
 		load_chewy_taf(CHEWY_NORMAL);
-		auto_obj = 0;
+		_G(auto_obj) = 0;
 		flags.NoScroll = false;
 		atds->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
@@ -2174,7 +2174,7 @@ void r13_jmp_band() {
 			set_person_pos(292, 98, P_CHEWY, P_RIGHT);
 		} else {
 			spieler.R13Surf = true;
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 			auto_move(12, P_CHEWY);
 			start_aad_wait(117, -1);
 			flags.NoScroll = true;
@@ -2244,7 +2244,7 @@ int16 r13_monitor_knopf() {
 
 void r14_entry() {
 	spieler.R23GleiterExit = 14;
-	zoom_horizont = 310;
+	_G(zoom_horizont) = 310;
 	if (!flags.LoadGame) {
 		if (spieler.R14GleiterAuf) {
 			set_person_pos(381, 264, P_CHEWY, P_LEFT);
@@ -2384,7 +2384,7 @@ void r14_feuer() {
 }
 
 void r16_entry() {
-	zoom_horizont = 140;
+	_G(zoom_horizont) = 140;
 	if (!spieler.R16F5Exit) {
 		det->show_static_spr(4);
 		spieler.room_e_obj[32].Attribut = 255;
@@ -2415,20 +2415,20 @@ void r17_entry() {
 		det->show_static_spr(7);
 	if (spieler.R17Location == 1) {
 		flags.ZoomMov = true;
-		zoom_mov_fak = 3;
+		_G(zoom_mov_fak) = 3;
 		room->set_zoom(25);
-		zoom_horizont = 0;
+		_G(zoom_horizont) = 0;
 		spieler.scrollx = 0;
 		spieler.scrolly = 60;
 		set_person_pos(242, 146, P_CHEWY, P_LEFT);
 		r17_xit();
 	} else if (spieler.R17Location == 3) {
 		room->set_zoom(32);
-		zoom_horizont = 399;
+		_G(zoom_horizont) = 399;
 		r17_xit();
 	} else {
 		room->set_zoom(15);
-		zoom_horizont = 0;
+		_G(zoom_horizont) = 0;
 		spieler.room_e_obj[36].Attribut = 255;
 		spieler.room_e_obj[38].Attribut = 255;
 		if (spieler.R6DoorLeftF)
@@ -2507,11 +2507,11 @@ void r17_kletter_down() {
 	spieler.PersonHide[P_CHEWY] = true;
 	start_detail_wait(14, 1, ANI_VOR);
 	flags.ZoomMov = false;
-	zoom_mov_fak = 1;
+	_G(zoom_mov_fak) = 1;
 	spieler.ScrollyStep = 2;
 	room->set_zoom(32);
-	zoom_horizont = 399;
-	auto_obj = 1;
+	_G(zoom_horizont) = 399;
+	_G(auto_obj) = 1;
 	init_auto_obj(R17_CHEWY_OBJ, &r17_chewy_phasen[0][0], mov_phasen[R17_CHEWY_OBJ].Lines, (MovLine
 	              *)r17_chewy_mpkt);
 	set_person_pos(242, 350, P_CHEWY, P_LEFT);
@@ -2523,11 +2523,11 @@ void r17_kletter_up() {
 	spieler.PersonHide[P_CHEWY] = true;
 	start_detail_wait(11, 1, ANI_VOR);
 	flags.ZoomMov = true;
-	zoom_mov_fak = 3;
+	_G(zoom_mov_fak) = 3;
 	spieler.ScrollyStep = 1;
 	room->set_zoom(25);
-	zoom_horizont = 0;
-	auto_obj = 1;
+	_G(zoom_horizont) = 0;
+	_G(auto_obj) = 1;
 	init_auto_obj(R17_CHEWY_OBJ, &r17_chewy_phasen[0][0], mov_phasen[R17_CHEWY_OBJ].Lines, (MovLine
 	              *)r17_chewy_mpkt1);
 	set_person_pos(243, 146, P_CHEWY, P_LEFT);
@@ -2562,7 +2562,7 @@ void r17_calc_seil() {
 					spieler.ScrollyStep = 1;
 					spieler.PersonHide[P_CHEWY] = false;
 					flags.AutoAniPlay = false;
-					auto_obj = 0;
+					_G(auto_obj) = 0;
 					r17_xit();
 				}
 			}
@@ -2688,8 +2688,8 @@ void r18_init_borks() {
 		det->show_static_spr(bork_spr[i]);
 	for (i = 0; i < 4; i++)
 		det->hide_static_spr(bork_spr1[i]);
-	timer_nr[0] = room->set_timer(255, 10);
-	timer_nr[1] = room->set_timer(255, 15);
+	_G(timer_nr)[0] = room->set_timer(255, 10);
+	_G(timer_nr)[1] = room->set_timer(255, 15);
 	spieler.scrollx = 276;
 	spieler.scrolly = 0;
 	flags.NoScroll = true;
@@ -2700,13 +2700,13 @@ void r18_timer_action(int16 t_nr) {
 	if (!spieler.R18SurimyWurf) {
 		if (!flags.AutoAniPlay) {
 			flags.AutoAniPlay = true;
-			if (t_nr == timer_nr[0]) {
+			if (t_nr == _G(timer_nr)[0]) {
 				det->hide_static_spr(16);
 				start_detail_wait(10, 1, ANI_VOR);
 				det->show_static_spr(16);
-				uhr->reset_timer(timer_nr[0], 10);
+				uhr->reset_timer(_G(timer_nr)[0], 10);
 			}
-			else if (t_nr == timer_nr[1]) {
+			else if (t_nr == _G(timer_nr)[1]) {
 				hide_cur();
 				det->hide_static_spr(17);
 				start_detail_wait(9, 1, ANI_VOR);
@@ -2724,7 +2724,7 @@ void r18_timer_action(int16 t_nr) {
 					r18_monitor();
 				}
 				show_cur();
-				uhr->reset_timer(timer_nr[1], 15);
+				uhr->reset_timer(_G(timer_nr)[1], 15);
 			}
 			flags.AutoAniPlay = false;
 		}
@@ -2805,7 +2805,7 @@ int16 r18_calc_surimy() {
 		spieler.R18SurimyWurf = true;
 		det->load_taf_seq(245, 294 - 245 + 1, 0);
 		det->load_taf_seq(116, 170 - 116 + 1, 0);
-		auto_obj = 1;
+		_G(auto_obj) = 1;
 		mov_phasen[SURIMY_OBJ].AtsText = 0;
 		mov_phasen[SURIMY_OBJ].Lines = 2;
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -2824,7 +2824,7 @@ int16 r18_calc_surimy() {
 			stop_person(P_CHEWY);
 			spieler.PersonHide[P_CHEWY] = true;
 			start_detail_frame(17, 1, ANI_VOR, 12);
-			maus_links_click = false;
+			_G(maus_links_click) = false;
 
 			init_auto_obj(SURIMY_OBJ, &r18_surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
 			              *)r18_surimy_mpkt);
@@ -2881,7 +2881,7 @@ int16 r18_calc_surimy() {
 		flags.NoScroll = false;
 		auto_scroll(318, 0);
 		spieler.ScrollxStep = 2;
-		auto_obj = 0;
+		_G(auto_obj) = 0;
 
 		atds->set_ats_str(153, 1, ATS_DATEI);
 
@@ -2946,7 +2946,7 @@ int16 r18_go_cyberspace() {
 }
 
 void r19_entry() {
-	zoom_horizont = 250;
+	_G(zoom_horizont) = 250;
 	flags.NoScroll = true;
 	spieler.scrollx = 0;
 	spieler.scrolly = 24;
@@ -2956,7 +2956,7 @@ void r21_entry() {
 	load_chewy_taf(CHEWY_MINI);
 	r21_calc_laser();
 	r21_init_spinne();
-	timer_nr[2] = room->set_timer(255, 1);
+	_G(timer_nr)[2] = room->set_timer(255, 1);
 	flags.NoEndPosMovObj = true;
 	SetUpScreenFunc = r21setup_func;
 }
@@ -3020,7 +3020,7 @@ MovLine r21_energie_mpkt[2] = {
 
 void r21_init_spinne() {
 	det->load_taf_seq(42, (89 - 42) + 1, 0);
-	auto_obj = 2;
+	_G(auto_obj) = 2;
 
 	mov_phasen[R21_SPINNE1_OBJ].AtsText = 130;
 	mov_phasen[R21_SPINNE1_OBJ].Lines = 3;
@@ -3039,7 +3039,7 @@ void r21_init_spinne() {
 	auto_mov_vector[R21_SPINNE2_OBJ].Delay = spieler.DelaySpeed;
 	auto_mov_obj[R21_SPINNE2_OBJ].Mode = 1;
 	init_auto_obj(R21_SPINNE2_OBJ, &r21_spinne_phasen[0][0], mov_phasen[R21_SPINNE2_OBJ].Lines, (MovLine *)r21_spinne_mpkt1);
-	timer_nr[0] = room->set_timer(255, 21);
+	_G(timer_nr)[0] = room->set_timer(255, 21);
 	e_streifen = false;
 
 }
@@ -3047,13 +3047,13 @@ void r21_init_spinne() {
 void r21_restart_spinne2() {
 	mov_phasen[R21_SPINNE2_OBJ].Repeat = 1;
 	init_auto_obj(R21_SPINNE2_OBJ, &r21_spinne_phasen[0][0], mov_phasen[R21_SPINNE2_OBJ].Lines, (MovLine *)r21_spinne_mpkt1);
-	uhr->reset_timer(timer_nr[0], 0);
+	uhr->reset_timer(_G(timer_nr)[0], 0);
 	e_streifen = false;
 
 }
 
 void r21_e_streifen() {
-	auto_obj = 3;
+	_G(auto_obj) = 3;
 	mov_phasen[R21_ENERGIE_OBJ].AtsText = 0;
 	mov_phasen[R21_ENERGIE_OBJ].Lines = 2;
 	mov_phasen[R21_ENERGIE_OBJ].Repeat = 1;
@@ -3157,7 +3157,7 @@ void r21_use_gitter_energie() {
 	spieler.R21GitterEnergie = exit_flip_flop(-1, 47, -1, 131, 138, -1,
 	                           AUSGANG_UNTEN, AUSGANG_OBEN,
 	                           (int16)spieler.R21GitterEnergie);
-	auto_obj = 0;
+	_G(auto_obj) = 0;
 	spieler.R17Location = 1;
 	spieler.PersonHide[P_CHEWY] = true;
 	switch_room(17);
@@ -3247,7 +3247,7 @@ void r22_bork(int16 t_nr) {
 			start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(10, -1);
 			auto_move(3, P_CHEWY);
-			auto_obj = 1;
+			_G(auto_obj) = 1;
 			mov_phasen[R22_BORK_OBJ].AtsText = 0;
 			mov_phasen[R22_BORK_OBJ].Lines = 2;
 			mov_phasen[R22_BORK_OBJ].Repeat = 1;
@@ -3335,7 +3335,7 @@ int16 r22_malen() {
 void r23_cockpit() {
 	spieler.scrollx = 0;
 	spieler.scrolly = 0;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	switch_room(23);
 	if (spieler.R23Cartridge)
 		det->show_static_spr(3);
@@ -3389,7 +3389,7 @@ int16 r23_start_gleiter() {
 					spieler.DelaySpeed = 10;
 					start_aad_wait(59, -1);
 					stop_person(P_CHEWY);
-					maus_links_click = false;
+					_G(maus_links_click) = false;
 				} else if (spieler.R23GleiterExit == 16) {
 					out->setze_zeiger(0);
 					out->cls();
@@ -3462,7 +3462,7 @@ void r24_exit() {
 	cursor_wahl(menu_item);
 	set_person_pos(263, 144, P_CHEWY, -1);
 	spieler.scrollx = 88;
-	maus_links_click = false;
+	_G(maus_links_click) = false;
 	flags.MainInput = true;
 }
 

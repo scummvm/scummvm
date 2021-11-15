@@ -2123,7 +2123,7 @@ void calc_person_dia(int16 p_nr) {
 				switch_room(65);
 			else if (p_nr == P_NICHELLE) {
 				if (spieler.PersonDia[P_NICHELLE] < 10000) {
-					cur_hide_flag = false;
+					_G(cur_hide_flag) = false;
 					hide_cur();
 					start_aad_wait(spieler.PersonDia[P_NICHELLE], -1);
 					show_cur();

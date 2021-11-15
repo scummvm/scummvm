@@ -23,13 +23,14 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "chewy/chewy.h"
+#include "chewy/global.h"
 #include "chewy/mcga.h"
 #include "chewy/mcga_grafik.h"
 
 namespace Chewy {
 
-#define SCREEN_S g_engine->_currentScreen
-#define SCREEN g_engine->_currentScreen.getPixels()
+#define SCREEN_S _G(currentScreen)
+#define SCREEN _G(currentScreen).getPixels()
 
 static byte saved_palette[PALETTE_SIZE];
 static bool screenHasDefault;
@@ -40,7 +41,7 @@ static size_t fontWidth, fontHeight;
 int fontFirst, fontLast;
 
 void init_mcga() {
-	g_engine->_currentScreen = (byte *)g_screen->getPixels();
+	_G(currentScreen) = (byte *)g_screen->getPixels();
 	screenHasDefault = false;
 	screenDefaultP = nullptr;
 	spriteWidth = 0;
@@ -68,11 +69,11 @@ void hflyback_end() {
 
 void set_pointer(byte *ptr) {
 	if (ptr) {
-		g_engine->_currentScreen = ptr;
+		_G(currentScreen) = ptr;
 	} else if (screenHasDefault) {
-		g_engine->_currentScreen = screenDefaultP;
+		_G(currentScreen) = screenDefaultP;
 	} else {
-		g_engine->_currentScreen = (byte *)g_screen->getPixels();
+		_G(currentScreen) = (byte *)g_screen->getPixels();
 	}
 }
 
