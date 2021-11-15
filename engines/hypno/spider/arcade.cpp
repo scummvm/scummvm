@@ -58,8 +58,8 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 }
 
 void SpiderEngine::drawPlayer() {
-	uint32 ox;
-	uint32 oy;
+	uint32 ox = 0;
+	uint32 oy = 0;
 
 	if (_arcadeMode == "YC") {
 		ox = 0;
