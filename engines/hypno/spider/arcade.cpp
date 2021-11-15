@@ -35,8 +35,8 @@ static const int shootOriginIndex[9][2] = {
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	uint32 ox;
-	uint32 oy;
+	uint32 ox = 0;
+	uint32 oy = 0;
 
 	if (_arcadeMode == "YC") {
 		return; // Nothing to shoot
@@ -47,7 +47,9 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 		uint32 idx = MIN(2, target.x / (_screenW / 3)) + 3 * MIN(2, target.y / (_screenH / 3));
 		ox = 60  + shootOriginIndex[idx][0];
 		oy = 129 + shootOriginIndex[idx][1];
-	}
+	} else
+		error("Invalid arcade mode %s", _arcadeMode.c_str());
+
 	_compositeSurface->drawLine(ox, oy, target.x + 2, target.y, c);
 	_compositeSurface->drawLine(ox, oy, target.x, target.y, c);
 	_compositeSurface->drawLine(ox, oy, target.x - 2, target.y, c);
@@ -81,7 +83,9 @@ void SpiderEngine::drawPlayer() {
 			if (_playerFrameIdx >= (int)_playerFrames.size())
 				_playerFrameIdx = 0;
 		}
-	}
+	}  else
+		error("Invalid arcade mode %s", _arcadeMode.c_str());
+
 	drawImage(*_playerFrames[_playerFrameIdx], ox, oy, true);
 }
 
