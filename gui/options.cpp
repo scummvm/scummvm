@@ -57,6 +57,7 @@
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/downloaddialog.h"
+#include "gui/downloadiconsdialog.h"
 #endif
 
 #ifdef USE_SDL_NET
@@ -91,6 +92,7 @@ enum {
 	kChoosePluginsDirCmd	= 'chpl',
 	kPluginsPathClearCmd	= 'clpl',
 	kChooseThemeCmd			= 'chtf',
+	kUpdateIconsCmd			= 'upic',
 	kUpdatesCheckCmd		= 'updc',
 	kKbdMouseSpeedChanged	= 'kmsc',
 	kJoystickDeadzoneChanged= 'jodc',
@@ -2414,6 +2416,12 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 		new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(), kUpdatesCheckCmd);
 	}
 #endif // USE_UPDATES
+
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"), Common::U32String(), kUpdateIconsCmd);
+#endif
+#endif
 }
 
 #ifdef USE_CLOUD
@@ -2691,7 +2699,7 @@ void GlobalOptionsDialog::apply() {
 #ifdef USE_UPDATES
 	if (g_system->getUpdateManager()) {
 		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
-		
+
 		if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
 			g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
 		} else {
@@ -2930,6 +2938,16 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_rootPath->setLabel(path);
 			g_gui.scheduleTopDialogRedraw();
 		}
+		break;
+	}
+
+	case kUpdateIconsCmd: {
+		DownloadIconsDialog dia;
+
+		if (dia.runModal() > 0) {
+			warning("Success");
+		}
+
 		break;
 	}
 #endif

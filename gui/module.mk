@@ -46,6 +46,7 @@ ifdef USE_CLOUD
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	downloaddialog.o \
+	downloadiconsdialog.o \
 	remotebrowser.o
 endif
 endif
