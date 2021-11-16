@@ -58,10 +58,11 @@ private:
 	int scoreLateGame(Freeboard *freeboard);
 	int scoreBoard(Freeboard *board);
 	void restart(void);
-	void setClickable(Freeboard *nextBoard, Freeboard *currentBoard, byte *vars);
+	void writeBoardToVars(Freeboard *board, byte *vars);
 	void readBoardStateFromVars(byte *vars);
 	Freeboard getPossibleMove(Freeboard *freeboard, int moveSpot);
-	int getAllPossibleMoves(Freeboard *freeboard, Freeboard (&boards)[30]);
+	void checkPossibleMove(Freeboard *board, Freeboard (&boards)[30], int8 **lineSpot, int &numPossibleMoves, int moveSpot, byte player, byte opponent);
+	int getAllPossibleMoves(Freeboard *board, Freeboard (&boards)[30]);
 	int aiRecurse(Freeboard *board, int depth, int parentScore, int opponentBestScore);
 	byte aiDoBestMove(Freeboard *pBoard);
 	void initLines(void);

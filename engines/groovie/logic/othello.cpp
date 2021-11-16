@@ -65,7 +65,8 @@ int OthelloGame::scoreEdge(byte (&board)[8][8], int x, int y, int slopeX, int sl
 }
 
 int OthelloGame::scoreEarlyGame(Freeboard *freeboard) {
-	// in the early game the AI's search depth can't see far enough, so instead of the score simply being
+	// in the early game the AI's search depth can't see far enough
+	// so instead of the score simply counting the pieces, we use some heuristics
 	int scores[3];
 	scores[0] = 0;
 	scores[1] = 0;
@@ -195,14 +196,11 @@ void OthelloGame::restart(void) {
 	_board._boardstate[3][4] = _board._boardstate[4][3];
 }
 
-void OthelloGame::setClickable(Freeboard *nextBoard, Freeboard *currentBoard, byte *vars) {
+void OthelloGame::writeBoardToVars(Freeboard *board, byte *vars) {
 	for (int x = 0; x < 8; x++) {
 		for (int y = 0; y < 8; y++) {
-			byte b = _lookupPlayer[currentBoard->_boardstate[x][y]];
+			byte b = _lookupPlayer[board->_boardstate[x][y]];
 			vars[xyToVar(x, y)] = b;
-			if (nextBoard->_boardstate[x][y] == b && b != 0) {
-				vars[xyToVar(x, y)] += 32;
-			}
 		}
 	}
 	return;
@@ -263,38 +261,42 @@ Freeboard OthelloGame::getPossibleMove(Freeboard *freeboard, int moveSpot) {
 	return newboard;
 }
 
-int OthelloGame::getAllPossibleMoves(Freeboard *freeboard, Freeboard (&boards)[30]) {
+void OthelloGame::checkPossibleMove(Freeboard *board, Freeboard (&boards)[30], int8 **lineSpot, int &numPossibleMoves, int moveSpot, byte player, byte opponent) {
+	int8 *testSpot;
+	// loop through a list of slots in line with piece moveSpot, looping away from moveSpot
+	do {
+		do {
+			// skip all spots that aren't the opponent
+			testSpot = *lineSpot;
+			lineSpot++;
+			if (testSpot == NULL) // end of the null terminated line?
+				return;
+		} while (board->_boardstate[*testSpot / 8][*testSpot % 8] != opponent);
+
+		// we found the opponent, skip to the first piece that doesn't belong to the opponent
+		for (; board->_boardstate[*testSpot / 8][*testSpot % 8] == opponent; testSpot++) {
+		}
+
+		// start over again if didn't find a piece of our own on the other side
+	} while (board->_boardstate[*testSpot / 8][*testSpot % 8] != player);
+	// so we found (empty space)(opponent+)(our own piece)
+	// add this to the list of possible moves
+	boards[numPossibleMoves] = getPossibleMove(board, moveSpot);
+	boards[numPossibleMoves]._score = scoreBoard(&boards[numPossibleMoves]);
+	numPossibleMoves++;
+}
+
+int OthelloGame::getAllPossibleMoves(Freeboard *board, Freeboard (&boards)[30]) {
 	int moveSpot = 0;
 	byte player = _isAiTurn ? AI_PIECE : PLAYER_PIECE;
 	byte opponent = _isAiTurn ? PLAYER_PIECE : AI_PIECE;
 	int numPossibleMoves = 0;
 	int8 ***line = &_lines[0];
 	do {
-		if (freeboard->_boardstate[moveSpot / 8][moveSpot % 8] == 0) {
-			int8 **lineSpot = *line;
-			int8 *testSpot;
-			// loop through a list of slots in line with piece moveSpot, looping away from moveSpot
-			do {
-				do {
-					// skip all spots that aren't the opponent
-					testSpot = *lineSpot;
-					lineSpot++;
-					if (testSpot == NULL) // end of the null terminated line?
-						goto LAB_OUT;
-				} while (freeboard->_boardstate[*testSpot / 8][*testSpot % 8] != opponent);
-
-				// we found the opponent, skip to the first piece that doesn't belong to the opponent
-				for (; freeboard->_boardstate[*testSpot / 8][*testSpot % 8] == opponent; testSpot++) {}
-
-				// start over again if didn't find a piece of our own on the other side
-			} while (freeboard->_boardstate[*testSpot / 8][*testSpot % 8] != player);
-			// so we found (empty space)(opponent+)(our own piece)
-			// add this to the list of possible moves
-			boards[numPossibleMoves] = getPossibleMove(freeboard, moveSpot);
-			boards[numPossibleMoves]._score = scoreBoard(&boards[numPossibleMoves]);
-			numPossibleMoves++;
+		if (board->_boardstate[moveSpot / 8][moveSpot % 8] == 0) {
+			checkPossibleMove(board, boards, *line, numPossibleMoves, moveSpot, player, opponent);
 		}
-	LAB_OUT:
+
 		line++;
 		moveSpot++;
 		if (moveSpot > 63) {
@@ -506,7 +508,7 @@ void OthelloGame::opPlayerMove(byte *vars) {
 		vars[0] = getLeader(&_board);
 		vars[4] = 1;
 	}
-	setClickable(&_board, &_board, vars);
+	writeBoardToVars(&_board, vars);
 }
 
 // this might be for a hint move? maybe on easy mode?
@@ -526,7 +528,7 @@ void OthelloGame::op3(byte *vars) {
 		vars[0] = getLeader(&_board);
 		vars[4] = 1;
 	}
-	setClickable(&_board, &_board, vars);
+	writeBoardToVars(&_board, vars);
 }
 
 void OthelloGame::opAiMove(byte *vars) {
@@ -542,7 +544,7 @@ void OthelloGame::opAiMove(byte *vars) {
 		vars[0] = getLeader(&_board);
 		vars[4] = 0;
 	}
-	setClickable(&_board, &_board, vars);
+	writeBoardToVars(&_board, vars);
 }
 
 void OthelloGame::op5(byte *vars) {
