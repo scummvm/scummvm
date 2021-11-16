@@ -138,19 +138,25 @@ void GuiManager::initIconsSet() {
 	}
 
 	const char fname[] = "gui-icons.dat";
-	Common::String path;
 	Common::File *file = new Common::File;
 
-	if (ConfMan.hasKey("themepath"))
-		file->open(normalizePath(ConfMan.get("themepath") + "/" + fname, '/'));
+	if (ConfMan.hasKey("themepath")) {
+		Common::FSNode *fs = new Common::FSNode(normalizePath(ConfMan.get("themepath") + "/" + fname, '/'));
 
-	if (!file->isOpen() && ConfMan.hasKey("iconspath"))
+		if (!fs->exists()) {
+			delete fs;
+		} else {
+			dat = Common::makeZipArchive(*fs);
+		}
+	}
+
+	if (!dat && !file->isOpen() && ConfMan.hasKey("iconspath"))
 		file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
 
-	if (!file->isOpen())
+	if (!dat && !file->isOpen())
 		file->open(fname);
 
-	if (file->isOpen())
+	if (!dat && file->isOpen())
 		dat = Common::makeZipArchive(file);
 
 	if (!dat) {
@@ -159,9 +165,9 @@ void GuiManager::initIconsSet() {
 		return;
 	}
 
-	_iconsSet.add(path, dat, 0, false); // Do not autofree
+	_iconsSet.add(fname, dat, 0, false); // Do not autofree
 
-	debug(2, "GUI: Loaded icon file: %s", path.c_str());
+	debug(2, "GUI: Loaded icon file: %s", fname);
 }
 
 void GuiManager::computeScaleFactor() {
