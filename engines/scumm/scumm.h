@@ -988,9 +988,14 @@ protected:
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
 
+	void updateScreenShakeEffect();
+
 protected:
 	bool _shakeEnabled;
 	uint _shakeFrame;
+	uint32 _shakeNextTick;
+	uint32 _shakeTickCounter;
+
 	void setShake(int mode);
 
 	int _drawObjectQueNr;

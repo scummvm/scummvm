@@ -264,6 +264,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_doEffect = false;
 	_snapScroll = false;
 	_shakeEnabled = false;
+	_shakeNextTick = _shakeTickCounter = 0;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;
 	_screenEndStrip = 0;
@@ -2419,7 +2420,7 @@ Common::Error ScummEngine::go() {
 		// This is important for the door-closing action in the dungeon,
 		// otherwise (delta < 6) a single kid is able to escape.
 		if (_game.version == 1 && isScriptRunning(137)) {
-				delta = 6;
+			delta = 6;
 		}
 
 		// Wait...
@@ -2457,6 +2458,8 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
+
+		updateScreenShakeEffect();
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		uint32 screenUpdateTimerStart = _system->getMillis();
@@ -3072,6 +3075,8 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		_scrollTimer = 0;
 		towns_updateGfx();
 #endif
+		_shakeNextTick = _shakeTickCounter = 0;
+
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.
 		_system->updateScreen();

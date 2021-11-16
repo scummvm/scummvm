@@ -73,7 +73,7 @@ enum {
 
 #define NUM_SHAKE_POSITIONS 8
 static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
-	0, 1 * 2, 2 * 2, 1 * 2, 0 * 2, 2 * 2, 3 * 2, 1 * 2
+	0, 1, 2, 1, 0, 2, 3, 1
 };
 
 /**
@@ -531,15 +531,6 @@ void ScummEngine::drawDirtyScreenParts() {
 		vs->setDirtyRange(vs->h, 0);
 	} else {
 		updateDirtyScreen(kMainVirtScreen);
-	}
-
-	// Handle shaking
-	if (_shakeEnabled) {
-		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->setShakePos(0, shake_positions[_shakeFrame]);
-	} else if (!_shakeEnabled &&_shakeFrame != 0) {
-		_shakeFrame = 0;
-		_system->setShakePos(0, 0);
 	}
 }
 
@@ -4209,6 +4200,33 @@ void ScummEngine::unkScreenEffect6() {
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);
+}
+
+void ScummEngine::updateScreenShakeEffect() {
+	if (!_shakeEnabled) {
+		if (_shakeFrame) {
+			_shakeFrame = 0;
+			_system->setShakePos(0, 0);
+		}
+		_shakeNextTick = _shakeTickCounter = 0;
+		return;
+	}
+
+	uint32 now = _system->getMillis();
+	if (!_shakeNextTick)
+		_shakeNextTick = now;
+
+	while (now >= _shakeNextTick) {
+		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
+		_system->setShakePos(0, -shake_positions[_shakeFrame]);
+		// In DOTT (and probably all other imuse games) this runs on the imuse timer which is a PIT 0 Timer at 291304 Hz.
+		// Apparently it is the same timer setting for all sound drivers although it is set up not in the main executable
+		// but inside each respective ims driver during the driver load/init process. The screen shakes update every 8 ticks.
+		// I assume that this might be slightly different per SCUMM version, target platform etc...
+		_shakeTickCounter += ((1000000000 / 291304) * 8);
+		_shakeNextTick += (_shakeTickCounter / 1000);
+		_shakeTickCounter %= 1000;
+	}
 }
 
 } // End of namespace Scumm
