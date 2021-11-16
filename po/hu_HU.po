@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-15 23:05+0000\n"
-"PO-Revision-Date: 2021-11-01 06:30+0000\n"
+"PO-Revision-Date: 2021-11-16 10:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -682,54 +682,46 @@ msgstr "???"
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
-msgstr ""
+msgstr "Csoportosítás kiválasztás"
 
 #: gui/launcher.cpp:198
 msgid "Group by: "
-msgstr ""
+msgstr "Csoportosít: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Válassz feltételeket a csoportosításhoz"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
-msgstr "Semmi"
+msgstr "Egyik sem"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "Elsõ oldal"
+msgstr "Elsõ betű"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "Sorozatok"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "Kiadó"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Nyelv:"
+msgstr "Nyelv"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Platform:"
+msgstr "Platform"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -858,7 +850,7 @@ msgstr "Válassztott játék:"
 
 #: gui/launcher.cpp:778
 msgid "Group by:"
-msgstr ""
+msgstr "Csoportosít:"
 
 #: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -904,42 +896,36 @@ msgstr "Játékopciók..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1110 gui/launcher.cpp:1297
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Ismeretlen változat"
+msgstr "Ismeretlen Motor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1128 gui/launcher.cpp:1329
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Ismeretlen Szerzõ"
+msgstr "Ismeretlen Kiadó"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1146 gui/launcher.cpp:1315
 msgid "No Series"
-msgstr ""
+msgstr "Nem Sorozat"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1161 gui/launcher.cpp:1348
 msgid "Language not detected"
-msgstr ""
+msgstr "Nyelv nincs észlelve"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1363
 msgid "Platform not detected"
-msgstr ""
+msgstr "Platform nincs észlelve"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1374 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Mind"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1453,18 +1439,13 @@ msgid "Theme Path:"
 msgstr "Téma Mappa:"
 
 #: gui/options.cpp:2254
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/gyökér/ Útvonal:"
+msgstr "Ikon Útvonal:"
 
 #: gui/options.cpp:2256
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/gyökér/ Útvonal:"
+msgstr "Ikon Útvonal:"
 
 #: gui/options.cpp:2262 gui/options.cpp:2264 gui/options.cpp:2265
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1876,10 +1857,8 @@ msgid "Select directory for GUI themes"
 msgstr "GUI téma mappa kiválasztása"
 
 #: gui/options.cpp:2889
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "GUI téma mappa kiválasztása"
+msgstr "Válaszd ki a GUI bélyegképeinek könyvtárát"
 
 #: gui/options.cpp:2899
 msgid "Select directory for extra files"
@@ -2190,10 +2169,8 @@ msgid "Play"
 msgstr "Játék"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Mentés"
+msgstr "Mentések"
 
 #: base/main.cpp:651
 msgid "Error running game:"
@@ -7073,6 +7050,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please reinstall the game with the correct resource files."
 msgstr ""
+"A rendszer ScummVM Tools-szal tömörített hangfájlokat észlelt; *.BUN/*.SOU\n"
+"a tömörítés már nem támogatott ebben a játékban, a hang le lesz tiltva.\n"
+"Kérlek, telepítsd újra a játékot a megfelelő forrásfájlokkal."
 
 #: engines/scumm/scumm.cpp:2121
 #, c-format
