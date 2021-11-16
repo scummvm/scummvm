@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/punycode.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -193,7 +194,8 @@ Common::U32String LingoCompiler::patchLingoCode(const Common::U32String &line, L
 		}
 
 		// Now expensive ones
-		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, g_director->getGameId())
+		U32String moviename = punycode_decode(patch->movie);
+		if (movie.compareToIgnoreCase(moviename) || strcmp(patch->gameId, g_director->getGameId())
 				|| (patch->extra && strcmp(patch->extra, g_director->getExtra()))) {
 			patch++;
 			continue;
