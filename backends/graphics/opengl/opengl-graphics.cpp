@@ -67,7 +67,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	  _cursor(nullptr),
 	  _cursorHotspotX(0), _cursorHotspotY(0),
 	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-	  _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false)
+	  _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false), _shakeOffsetScaled()
 #ifdef USE_OSD
 	  , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
 	  _osdIconSurface(nullptr)
@@ -537,8 +537,8 @@ void OpenGLGraphicsManager::updateScreen() {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
-		                         _cursorX - _cursorHotspotXScaled,
-		                         _cursorY - _cursorHotspotYScaled,
+		                         _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
+		                         _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
@@ -1256,6 +1256,9 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 	                          _windowHeight - _gameDrawRect.height() - _gameDrawRect.top,
 	                          _gameDrawRect.width(),
 	                          _gameDrawRect.height());
+
+	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _activeArea.drawRect.width() / _activeArea.width,
+		_gameScreenShakeYOffset * _activeArea.drawRect.height() / _activeArea.height);
 
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);

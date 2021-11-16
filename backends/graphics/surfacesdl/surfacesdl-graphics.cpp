@@ -2143,6 +2143,11 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 		hotY = _mouseCurState.rHotY;
 	}
 
+	// The offsets must be applied if no shake view is set, since the call
+	// to convertWindowToVirtual() counteracts the move of the view port.
+	dst.x += _gameScreenShakeXOffset;
+	dst.y += _gameScreenShakeYOffset;
+
 	// The mouse is undrawn using virtual coordinates, i.e. they may be
 	// scaled and aspect-ratio corrected.
 

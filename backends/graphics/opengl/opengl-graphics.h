@@ -236,6 +236,11 @@ private:
 	 */
 	int _stretchMode;
 
+	/**
+	 * Scaled version of _gameScreenShakeXOffset and _gameScreenShakeYOffset (as a Common::Point)
+	 */
+	Common::Point _shakeOffsetScaled;
+
 protected:
 	/**
 	 * Set up the requested video mode. This takes parameters which describe
