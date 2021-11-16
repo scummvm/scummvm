@@ -179,7 +179,7 @@ public:
 	IVec3 _newHeroPos;
 
 	/** Hero Y coordinate before fall */
-	int16 _heroYBeforeFall = 0;
+	int16 _startYFalling = 0;
 
 	/** Hero type of position in scene */
 	ScenePositionType _heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube

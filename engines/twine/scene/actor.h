@@ -216,7 +216,7 @@ public:
 	/**
 	 * actor id we are standing on
 	 */
-	int32 _standOn = 0;
+	int32 _carryBy = 0;
 	int32 _zone = 0;
 
 	int32 _lastRotationAngle = ANGLE_0;

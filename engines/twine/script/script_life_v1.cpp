@@ -356,7 +356,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumGas;
 		break;
 	case kcCARRIED_BY:
-		engine->_scene->_currentScriptValue = ctx.actor->_standOn;
+		engine->_scene->_currentScriptValue = ctx.actor->_carryBy;
 		break;
 	case kcCDROM:
 		engine->_scene->_currentScriptValue = 1;

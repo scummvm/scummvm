@@ -563,7 +563,7 @@ void Extra::processExtras() {
 			extra->pos.z = extra->destPos.z * deltaT + extra->lastPos.z;
 
 			// check if extra is out of scene
-			if (extra->pos.y < 0 || extra->pos.x < 0 || extra->pos.x > 0x7E00 || extra->pos.z < 0 || extra->pos.z > 0x7E00) { // SCENE_SIZE_MAX
+			if (extra->pos.y < 0 || extra->pos.x < 0 || extra->pos.x > SCENE_SIZE_MAX || extra->pos.z < 0 || extra->pos.z > SCENE_SIZE_MAX) {
 				// if extra is Magic Ball
 				if (i == _engine->_gameState->_magicBallIdx) {
 					int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;

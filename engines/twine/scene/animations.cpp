@@ -629,13 +629,13 @@ void Animations::processActorAnimations(int32 actorIdx) {
 	}
 
 	// actor standing on another actor
-	if (actor->_standOn != -1) {
-		const ActorStruct *standOnActor = _engine->_scene->getActor(actor->_standOn);
+	if (actor->_carryBy != -1) {
+		const ActorStruct *standOnActor = _engine->_scene->getActor(actor->_carryBy);
 		processActor -= standOnActor->_collisionPos;
 		processActor += standOnActor->pos();
 
-		if (!_engine->_collision->standingOnActor(actorIdx, actor->_standOn)) {
-			actor->_standOn = -1; // no longer standing on other actor
+		if (!_engine->_collision->standingOnActor(actorIdx, actor->_carryBy)) {
+			actor->_carryBy = -1; // no longer standing on other actor
 		}
 	}
 
@@ -663,7 +663,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			_engine->_collision->checkCollisionWithActors(actorIdx);
 		}
 
-		if (actor->_standOn != -1 && actor->_dynamicFlags.bIsFalling) {
+		if (actor->_carryBy != -1 && actor->_dynamicFlags.bIsFalling) {
 			_engine->_collision->stopFalling();
 		}
 
@@ -686,19 +686,19 @@ void Animations::processActorAnimations(int32 actorIdx) {
 		}
 
 		// process wall hit while running
-		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && !_currentlyProcessedActorIdx && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
+		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
 			IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 
 			destPos.x += processActor.x;
 			destPos.z += processActor.z;
 
-			if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) { // SCENE_SIZE_MAX
+			if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
 				if (_engine->_grid->getBrickShape(destPos.x, processActor.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 
 					if (IS_HERO(_currentlyProcessedActorIdx)) {
-						_engine->_movements->_heroMoved = true;
+						_engine->_movements->_lastJoyFlag = true;
 					}
 
 					actor->addLife(-1);
@@ -718,24 +718,18 @@ void Animations::processActorAnimations(int32 actorIdx) {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
-						_engine->_movements->_heroMoved = true;
+						_engine->_movements->_lastJoyFlag = true;
 						actor->addLife(-1);
 					}
 
 					// no Z coordinate issue
-					if (_engine->_grid->getBrickShape(processActor.x, processActor.y, previousActor.z) == ShapeType::kNone) {
+					if (_engine->_grid->getBrickShape(processActor.x, processActor.y, previousActor.z) != ShapeType::kNone) {
+						if (_engine->_grid->getBrickShape(previousActor.x, processActor.y, processActor.z) != ShapeType::kNone) {
+							return;
+						} else {
+							processActor.x = previousActor.x;
+						}
 						processActor.z = previousActor.z;
-					}
-
-					// no X coordinate issue
-					if (_engine->_grid->getBrickShape(previousActor.x, processActor.y, processActor.z) == ShapeType::kNone) {
-						processActor.x = previousActor.x;
-					}
-
-					// X and Z with issue, no move
-					if (_engine->_grid->getBrickShape(processActor.x, processActor.y, previousActor.z) != ShapeType::kNone &&
-					    _engine->_grid->getBrickShape(previousActor.x, processActor.y, processActor.z) != ShapeType::kNone) {
-						return;
 					}
 				}
 			} else {
@@ -748,7 +742,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 			actor->_dynamicFlags.bIsFalling = 0;
 		} else {
-			if (actor->_staticFlags.bCanFall && actor->_standOn == -1) {
+			if (actor->_staticFlags.bCanFall && actor->_carryBy == -1) {
 				brickShape = _engine->_grid->getBrickShape(processActor.x, processActor.y - 1, processActor.z);
 
 				if (brickShape != ShapeType::kNone) {
@@ -761,9 +755,8 @@ void Animations::processActorAnimations(int32 actorIdx) {
 					if (!actor->_dynamicFlags.bIsRotationByAnim) {
 						actor->_dynamicFlags.bIsFalling = 1;
 
-						if (IS_HERO(actorIdx) && _engine->_scene->_heroYBeforeFall == 0) {
-							_engine->_scene->_heroYBeforeFall = processActor.y;
-
+						if (IS_HERO(actorIdx) && _engine->_scene->_startYFalling == 0) {
+							_engine->_scene->_startYFalling = processActor.y;
 							int32 y = processActor.y - 1 - BRICK_HEIGHT;
 							while (y > 0 && ShapeType::kNone == _engine->_grid->getBrickShape(processActor.x, y, processActor.z)) {
 								y -= BRICK_HEIGHT;
@@ -812,12 +805,12 @@ void Animations::processActorAnimations(int32 actorIdx) {
 		processActor.z = 0;
 	}
 
-	if (processActor.x > 0x7E00) { // SCENE_SIZE_MAX
-		processActor.x = 0x7E00;
+	if (processActor.x > SCENE_SIZE_MAX) {
+		processActor.x = SCENE_SIZE_MAX;
 	}
 
-	if (processActor.z > 0x7E00) { // SCENE_SIZE_MAX
-		processActor.z = 0x7E00;
+	if (processActor.z > SCENE_SIZE_MAX) {
+		processActor.z = SCENE_SIZE_MAX;
 	}
 
 	actor->_pos = processActor;

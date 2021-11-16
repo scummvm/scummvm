@@ -728,67 +728,40 @@ const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
 ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
-	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
-		return ShapeType::kNone;
-	}
-
 	if (collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (collision.y < 0 || collision.y >= GRID_SIZE_Y || collision.z < 0 || collision.z >= GRID_SIZE_Z) {
+	if (collision.x < 0 || collision.x >= GRID_SIZE_X || collision.z < 0 || collision.z >= GRID_SIZE_Z) {
 		return ShapeType::kNone;
 	}
 
 	uint8 *blockBufferPtr = _blockBuffer;
 	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
 	blockBufferPtr += collision.y * 2;
-	blockBufferPtr += (collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
+	blockBufferPtr += collision.z * (GRID_SIZE_X * GRID_SIZE_Y * 2);
 
 	uint8 blockIdx = *blockBufferPtr;
 
+	ShapeType brickShape;
 	if (blockIdx) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
-		const ShapeType brickShape = (ShapeType)blockPtr->brickShape;
-
-		const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
-		int32 currY = collision.y;
-
-		for (int32 i = 0; i < newY; i++) {
-			if (currY >= GRID_SIZE_Y) {
-				return brickShape;
-			}
-
-			blockBufferPtr += 2;
-			currY++;
-
-			if (READ_LE_INT16(blockBufferPtr) != 0) {
-				return ShapeType::kSolid;
-			}
-		}
-
-		return brickShape;
+		brickShape = (ShapeType)blockPtr->brickShape;
+	} else {
+		brickShape = (ShapeType) * (blockBufferPtr + 1);
 	}
-	const ShapeType brickShape = (ShapeType) * (blockBufferPtr + 1);
 
-	const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
-	int32 currY = collision.y;
-
-	for (int32 i = 0; i < newY; i++) {
-		if (currY >= GRID_SIZE_Y) {
-			return brickShape;
-		}
-
+	int32 ymax = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
+	// check full height
+	for (y = collision.y; ymax > 0 && y < (GRID_SIZE_Y - 1); --ymax, y++) {
 		blockBufferPtr += 2;
-		currY++;
-
-		if (READ_LE_INT16(blockBufferPtr) != 0) {
+		if (READ_LE_INT16(blockBufferPtr)) {
 			return ShapeType::kSolid;
 		}
 	}
 
-	return ShapeType::kNone;
+	return brickShape;
 }
 
 uint8 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {

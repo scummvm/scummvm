@@ -219,8 +219,8 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			int32 tmpVal = actor->_pos.z + actor->_pos.x - _engine->_grid->_camera.x - _engine->_grid->_camera.z;
 
 			// if actor is above another actor
-			if (actor->_standOn != -1) {
-				const ActorStruct *standOnActor = _engine->_scene->getActor(actor->_standOn);
+			if (actor->_carryBy != -1) {
+				const ActorStruct *standOnActor = _engine->_scene->getActor(actor->_carryBy);
 				tmpVal = standOnActor->_pos.x - _engine->_grid->_camera.x + standOnActor->_pos.z - _engine->_grid->_camera.z + 2;
 			}
 
@@ -241,7 +241,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 
 			// if use shadows
 			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->_staticFlags.bDoesntCastShadow)) {
-				if (actor->_standOn != -1) {
+				if (actor->_carryBy != -1) {
 					_engine->_actor->_shadowCoord.x = actor->_pos.x;
 					_engine->_actor->_shadowCoord.y = actor->_pos.y - 1;
 					_engine->_actor->_shadowCoord.z = actor->_pos.z;

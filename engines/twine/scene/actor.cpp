@@ -280,7 +280,7 @@ void Actor::resetActor(int16 actorIdx) {
 
 	actor->setBrickShape(ShapeType::kNone);
 	actor->_collision = -1;
-	actor->_standOn = -1;
+	actor->_carryBy = -1;
 	actor->_zone = -1;
 
 	memset(&actor->_staticFlags, 0, sizeof(StaticFlagsStruct));
@@ -338,7 +338,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 		_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 
 		if (!actorIdxAttacked) {
-			_engine->_movements->_heroMoved = true;
+			_engine->_movements->_lastJoyFlag = true;
 		}
 
 		actor->_life -= strengthOfHit;
@@ -356,8 +356,8 @@ void Actor::processActorCarrier(int32 actorIdx) {
 		return;
 	}
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
-		if (actor->_standOn == actorIdx) {
-			actor->_standOn = -1;
+		if (actor->_carryBy == actorIdx) {
+			actor->_carryBy = -1;
 		}
 	}
 }

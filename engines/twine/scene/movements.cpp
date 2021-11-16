@@ -223,7 +223,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 	case HeroBehaviourType::kAggressive:
 		if (_engine->_actor->_autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-			_heroMoved = true;
+			_lastJoyFlag = true;
 			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
 			if (!_previousLoopActionKey || actor->_anim == AnimationTypes::kStanding) {
@@ -244,13 +244,13 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_heroMoved = true;
+				_lastJoyFlag = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_heroMoved = true;
+				_lastJoyFlag = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_heroMoved = true;
+				_lastJoyFlag = true;
 			}
 		}
 		break;
@@ -302,21 +302,21 @@ void Movements::processManualMovementExecution(int actorIdx) {
 	if (!_changedCursorKeys || _heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			if (_heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
+			if (_lastJoyFlag && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
 
-		_heroMoved = false;
+		_lastJoyFlag = false;
 
 		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 			if (!_engine->_scene->_currentActorInZone) {
 				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
-			_heroMoved = true;
+			_lastJoyFlag = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 			_engine->_animations->initAnim(AnimationTypes::kBackward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
-			_heroMoved = true;
+			_lastJoyFlag = true;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
@@ -327,7 +327,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 					actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			_heroMoved = true;
+			_lastJoyFlag = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			if (actor->_anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -336,7 +336,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 					actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			_heroMoved = true;
+			_lastJoyFlag = true;
 		}
 	}
 }
@@ -372,7 +372,7 @@ void Movements::processManualAction(int actorIdx) {
 
 	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->inventoryDisabled()) {
 		if (processAttackExecution(actorIdx)) {
-			_heroMoved = true;
+			_lastJoyFlag = true;
 		}
 	}
 

@@ -543,7 +543,7 @@ void Scene::changeScene() {
 	}
 
 	_sceneHero->_pos = _newHeroPos;
-	_heroYBeforeFall = _newHeroPos.y;
+	_startYFalling = _newHeroPos.y;
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
 
@@ -568,7 +568,7 @@ void Scene::changeScene() {
 	_engine->_grid->centerOnActor(followedActor);
 
 	_engine->_gameState->_magicBallIdx = -1;
-	_engine->_movements->_heroMoved = true;
+	_engine->_movements->_lastJoyFlag = true;
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
 	_engine->_screens->_lockPalette = false;
@@ -753,7 +753,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					destPos.x += _engine->_movements->_processActor.x;
 					destPos.z += _engine->_movements->_processActor.z;
 
-					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) { // SCENE_SIZE_MAX
+					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
 						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + ANGLE_90, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {

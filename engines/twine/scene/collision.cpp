@@ -253,7 +253,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 		ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		// avoid current processed actor
-		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bComputeLowCollision && actorTest->_standOn != actorIdx) {
+		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bComputeLowCollision && actorTest->_carryBy != actorIdx) {
 			const IVec3 &minsTest = actorTest->pos() + actorTest->_boudingBox.mins;
 			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boudingBox.maxs;
 
@@ -263,7 +263,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 				if (actorTest->_staticFlags.bIsCarrierActor) {
 					if (actor->_dynamicFlags.bIsFalling || standingOnActor(actorIdx, a)) {
 						processActor.y = maxsTest.y - actor->_boudingBox.mins.y + 1;
-						actor->_standOn = a;
+						actor->_carryBy = a;
 					} else {
 						handlePushing(minsTest, maxsTest, actor, actorTest);
 					}
@@ -291,7 +291,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_entity != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_standOn != actorIdx) {
+			if (a != actorIdx && actorTest->_entity != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->pos() + actorTest->_boudingBox.mins;
 				const IVec3 maxsTest = actorTest->pos() + actorTest->_boudingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
@@ -314,7 +314,7 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 	processActor.y += y;
 	processActor.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) { // SCENE_SIZE_MAX
+	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
 		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boudingBox;
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShapeFull(processActor, bbox.maxs.y);
@@ -347,7 +347,7 @@ void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 d
 	processActor.y += y;
 	processActor.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) { // SCENE_SIZE_MAX
+	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShape(processActor);
 
@@ -373,7 +373,7 @@ void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 d
 void Collision::stopFalling() { // ReceptionObj()
 	if (IS_HERO(_engine->_animations->_currentlyProcessedActorIdx)) {
 		const IVec3 &processActor = _engine->_movements->_processActor;
-		const int32 fall = _engine->_scene->_heroYBeforeFall - processActor.y;
+		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
 
 		if (fall >= BRICK_HEIGHT * 8) {
 			const IVec3 &actorPos = _engine->_actor->_processActorPtr->pos();
@@ -395,7 +395,7 @@ void Collision::stopFalling() { // ReceptionObj()
 			}
 		}
 
-		_engine->_scene->_heroYBeforeFall = 0;
+		_engine->_scene->_startYFalling = 0;
 	} else {
 		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
 	}

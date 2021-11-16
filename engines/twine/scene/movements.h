@@ -126,7 +126,7 @@ public:
 	 */
 	bool shouldTriggerZoneAction() const;
 
-	bool _heroMoved = false;
+	bool _lastJoyFlag = false;
 
 	/** Process actor coordinate */
 	IVec3 _processActor;
