@@ -123,7 +123,7 @@ void DownloadRequest::finishDownload(bool success) {
 		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
-void DownloadRequest::finishError(Networking::ErrorResponse error) {
+void DownloadRequest::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
 	if (_localFile)
 		_localFile->close();
 	Request::finishError(error);

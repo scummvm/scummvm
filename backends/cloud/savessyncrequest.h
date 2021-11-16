@@ -55,7 +55,7 @@ class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	void fileUploadedErrorCallback(Networking::ErrorResponse error);
 	void downloadNextFile();
 	void uploadNextFile();
-	virtual void finishError(Networking::ErrorResponse error);
+	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
 	void finishSync(bool success);
 
 public:

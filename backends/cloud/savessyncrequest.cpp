@@ -411,7 +411,7 @@ Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
 	return result;
 }
 
-void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
+void SavesSyncRequest::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
 	debug(9, "SavesSync::finishError");
 	//if we were downloading a file - remember the name
 	//and make the Request close() it, so we can delete it
