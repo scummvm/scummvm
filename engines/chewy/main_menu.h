@@ -68,11 +68,6 @@ private:
 	static bool loadGame();
 
 	/**
-	 * Plays the game
-	 */
-	static void playGame();
-
-	/**
 	 * Cinema dialog
 	 */
 	static void cinema();
@@ -91,6 +86,11 @@ public:
 	 * Displays the menu
 	 */
 	static void execute();
+
+	/**
+	 * Plays the game
+	 */
+	static void playGame();
 };
 
 } // namespace Chewy
