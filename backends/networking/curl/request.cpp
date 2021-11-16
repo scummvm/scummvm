@@ -63,8 +63,8 @@ RequestState Request::state() const { return _state; }
 
 Common::String Request::date() const { return ""; }
 
-void Request::finishError(ErrorResponse error) {
-	_state = FINISHED;
+void Request::finishError(ErrorResponse error, RequestState state) {
+	_state = state;
 	if (_errorCallback)
 		(*_errorCallback)(error);
 }

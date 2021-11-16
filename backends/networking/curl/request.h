@@ -149,7 +149,7 @@ protected:
 	uint32 _retryInSeconds;
 
 	/** Sets FINISHED state and calls the _errorCallback with given error. */
-	virtual void finishError(ErrorResponse error);
+	virtual void finishError(ErrorResponse error, RequestState state = FINISHED);
 
 	/** Sets FINISHED state. Implementations might extend it if needed. */
 	virtual void finishSuccess();

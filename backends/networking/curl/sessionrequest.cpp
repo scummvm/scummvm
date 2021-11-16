@@ -75,10 +75,10 @@ char *SessionRequest::getPreparedContents() {
 	return (char *)result;
 }
 
-void SessionRequest::finishError(ErrorResponse error) {
+void SessionRequest::finishError(ErrorResponse error, RequestState state) {
 	_complete = true;
 	_success = false;
-	CurlRequest::finishError(error);
+	CurlRequest::finishError(error, PAUSED);
 }
 
 void SessionRequest::finishSuccess() {
@@ -120,6 +120,12 @@ void SessionRequest::handle() {
 	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
+		if (_stream->httpResponseCode() != 200 && _stream->httpResponseCode() != 0) {
+			warning("SessionRequest: HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
+			ErrorResponse error(this, false, true, "HTTP response code is not 200 OK", _stream->httpResponseCode());
+			finishError(error);
+			return;
+		}
 		uint32 readBytes = _stream->read(_buffer, CURL_SESSION_REQUEST_BUFFER_SIZE);
 		if (readBytes != 0)
 			if (_contentsStream.write(_buffer, readBytes) != readBytes)

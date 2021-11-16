@@ -44,7 +44,7 @@ protected:
 	/** Prepares raw bytes from _contentsStream. */
 	char *getPreparedContents();
 
-	virtual void finishError(ErrorResponse error);
+	virtual void finishError(ErrorResponse error, RequestState state = PAUSED);
 	virtual void finishSuccess();
 
 public:
