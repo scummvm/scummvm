@@ -38,6 +38,8 @@ class ButtonWidget;
 class SliderWidget;
 
 class DownloadIconsDialog : public Dialog, public CommandSender {
+	StaticTextWidget *_statusText;
+	StaticTextWidget *_errorText;
 	StaticTextWidget *_percentLabel;
 	StaticTextWidget *_downloadSizeLabel;
 	StaticTextWidget *_downloadSpeedLabel;
@@ -73,6 +75,7 @@ public:
 
 private:
 	void downloadList();
+	void calculateList();
 };
 
 } // End of namespace GUI

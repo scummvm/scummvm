@@ -53,6 +53,9 @@ DownloadIconsDialog::DownloadIconsDialog() :
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
+	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.StatusText", _("Downloading icons list..."));
+	_errorText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.ErrorText", Common::U32String(""));
+
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_progressBar = new SliderWidget(this, "GlobalOptions_DownloadIconsDialog.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -96,7 +99,6 @@ void DownloadIconsDialog::close() {
 }
 
 void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	warning("CMD is: %s", tag2str(cmd));
 	switch (cmd) {
 	case kDownloadIconsDialogButtonCmd:
 		{
@@ -115,7 +117,8 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_close = true;
 		break;
 	case kListEndedCmd:
-		warning("List download ended");
+		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), _fileHash.size()));
+		calculateList();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -204,6 +207,46 @@ void DownloadIconsDialog::downloadList() {
 		true);
 
 	rq->start();
+}
+
+void DownloadIconsDialog::calculateList() {
+	if (!ConfMan.hasKey("iconspath")) {
+		_errorText->setLabel(_("ERROR: No icons path set"));
+		return;
+	}
+
+	// Scan all files in iconspath and remove present ones from the
+	// donwloaded files list
+	Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
+	Common::ArchiveMemberList iconFiles;
+
+	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+
+	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+		Common::String fname = (*ic)->getName();
+
+		if (_fileHash.contains(fname))
+			_fileHash.erase(fname);
+	}
+
+	delete iconDir;
+
+	// Now calculate the size of the missing files
+	uint32 totalsize = 0;
+	for (auto f = _fileHash.begin(); f != _fileHash.end(); ++f) {
+		totalsize += f->_value;
+	}
+
+	if (totalsize == 0) {
+		_statusText->setLabel(_("No new icons packs available"));
+		return;
+	}
+
+	Common::String size, sizeUnits;
+	size = getHumanReadableBytes(totalsize, sizeUnits);
+
+	_statusText->setLabel(Common::U32String::format(_("Need to download %d files, %s %S"), _fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
+
 }
 
 } // End of namespace GUI

@@ -1025,6 +1025,12 @@
 
 	<dialog name = 'GlobalOptions_DownloadIconsDialog' overlays = 'Dialog.GlobalOptions'>
 		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '8'>
+			<widget name = 'StatusText'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ErrorText'
+					height = 'Globals.Line.Height'
+			/>
 			<widget name = 'ProgressBar'
 					height = 'Globals.Button.Height'
 			/>
