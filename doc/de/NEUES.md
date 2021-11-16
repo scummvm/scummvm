@@ -27,6 +27,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
  SCUMM:
+   - Neue Digital iMUSE-Engine hinzugefügt.
    - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
      Versionen von Loom und Indiana Jones and the Last Crusade.
 
