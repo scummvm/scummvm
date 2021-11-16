@@ -33,6 +33,7 @@ common/achievements.cpp
 common/error.cpp
 common/rendermode.cpp
 common/updates.cpp
+common/util.cpp
 
 dists/scummvm.appdata.xml.cpp
 

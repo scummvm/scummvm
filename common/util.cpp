@@ -24,6 +24,7 @@
 
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/translation.h"
 
 namespace Common {
 
@@ -177,28 +178,33 @@ bool isBlank(int c) {
 #pragma mark -
 
 
-Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
+Common::U32String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
 	if (bytes < 1024) {
-		unitsOut = "B";
+		// I18N: Abbreviation for 'bytes' as data size
+		unitsOut = _("B");
 		return Common::String::format("%lu", (unsigned long int)bytes);
 	}
 
 	double floating = bytes / 1024.0;
-	unitsOut = "KB";
+		// I18N: Abbreviation for 'kilobytes' as data size
+	unitsOut = _("KB");
 
 	if (floating >= 1024) {
 		floating /= 1024.0;
-		unitsOut = "MB";
+		// I18N: Abbreviation for 'megabytes' as data size
+		unitsOut = _("MB");
 	}
 
 	if (floating >= 1024) {
 		floating /= 1024.0;
-		unitsOut = "GB";
+		// I18N: Abbreviation for 'gigabytes' as data size
+		unitsOut = _("GB");
 	}
 
 	if (floating >= 1024) { // woah
 		floating /= 1024.0;
-		unitsOut = "TB";
+		// I18N: Abbreviation for 'terabytes' as data size
+		unitsOut = _("TB");
 	}
 
 	// print one digit after floating point
