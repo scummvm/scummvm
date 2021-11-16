@@ -33,7 +33,7 @@ Session::~Session() {
 	close();
 }
 
-SessionRequest *Session::get(Common::String url, DataCallback cb, ErrorCallback ecb) {
+SessionRequest *Session::get(Common::String url, DataCallback cb, ErrorCallback ecb, bool binary) {
 	// check url prefix
 	if (!_prefix.empty()) {
 		if (url.contains("://")) {
@@ -60,7 +60,7 @@ SessionRequest *Session::get(Common::String url, DataCallback cb, ErrorCallback 
 	}
 
 	if (!_request) {
-		_request = new Networking::SessionRequest(url, cb, ecb); // automatically added to ConnMan
+		_request = new Networking::SessionRequest(url, cb, ecb, binary); // automatically added to ConnMan
 		_request->connectionKeepAlive();
 	} else {
 		_request->reuse(url, cb, ecb);

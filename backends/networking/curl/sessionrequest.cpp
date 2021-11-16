@@ -31,10 +31,10 @@
 
 namespace Networking {
 
-SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb):
+SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb, bool binary):
 	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
 	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr),
-	_started(false), _complete(false), _success(false) {
+	_started(false), _complete(false), _success(false), _binary(binary) {
 
 	// automatically go under ConnMan control so nobody would be able to leak the memory
 	// but, we don't need it to be working just yet
@@ -165,6 +165,9 @@ bool SessionRequest::success() {
 }
 
 char *SessionRequest::text() {
+	if (_binary)
+		return nullptr;
+
 	if (_text == nullptr)
 		_text = getPreparedContents();
 	return _text;

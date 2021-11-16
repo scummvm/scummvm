@@ -37,6 +37,7 @@ protected:
 	byte *_buffer;
 	char *_text;
 	bool _started, _complete, _success;
+	bool _binary;
 
 	bool reuseStream();
 
@@ -47,7 +48,7 @@ protected:
 	virtual void finishSuccess();
 
 public:
-	SessionRequest(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr);
+	SessionRequest(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	virtual ~SessionRequest();
 
 	void start();
@@ -66,6 +67,10 @@ public:
 
 	char *text();
 	Common::JSONValue *json();
+
+	byte *getData() { return _contentsStream.getData(); }
+	uint32 getSize() { return _contentsStream.size(); }
+
 };
 
 } // End of namespace Networking
