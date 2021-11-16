@@ -7104,8 +7104,8 @@ msgid ""
 msgstr ""
 "Arquivos de áudio compactados com ScummVM Tools foram detectados; *.BUN/*."
 "SOU\n"
-"a compressão não é mais suportada para este jogo, o áudio será desabilitado."
-"\n"
+"a compressão não é mais suportada para este jogo, o áudio será "
+"desabilitado.\n"
 "Reinstale o jogo com os arquivos de recursos corretos."
 
 #: engines/scumm/scumm.cpp:2121
