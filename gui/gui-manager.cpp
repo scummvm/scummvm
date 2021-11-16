@@ -138,7 +138,6 @@ void GuiManager::initIconsSet() {
 	}
 
 	const char fname[] = "gui-icons.dat";
-	Common::String path;
 	Common::File *file = new Common::File;
 
 	if (ConfMan.hasKey("themepath"))
@@ -159,9 +158,9 @@ void GuiManager::initIconsSet() {
 		return;
 	}
 
-	_iconsSet.add(path, dat, 0, false); // Do not autofree
+	_iconsSet.add(file->getName(), dat, 0, false); // Do not autofree
 
-	debug(2, "GUI: Loaded icon file: %s", path.c_str());
+	debug(2, "GUI: Loaded icon file: %s", file->getName());
 }
 
 void GuiManager::computeScaleFactor() {
