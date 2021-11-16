@@ -708,7 +708,9 @@ void TwinEEngine::processOptionsMenu() {
 }
 
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
-	FrameMarker frame(this, 0);
+	g_system->delayMillis(2);
+
+	FrameMarker frame(this, 60);
 	_input->enableKeyMap(mainKeyMapId);
 
 	readKeys();
@@ -1022,13 +1024,8 @@ bool TwinEEngine::gameEngineLoop() {
 	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
 	while (_quitGame == -1) {
-		uint32 start = g_system->getMillis();
-
-		while (g_system->getMillis() < start + _cfgfile.Fps) {
-			if (runGameEngine()) {
-				return true;
-			}
-			g_system->delayMillis(1);
+		if (runGameEngine()) {
+			return true;
 		}
 		_lbaTime++;
 		if (shouldQuit()) {
