@@ -96,13 +96,8 @@ public:
 
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
-
-<<<<<<< HEAD
-	virtual int getStringWidth(int arg, const byte *text, uint strLenMax = 100000);
-=======
-	int getStringWidth(int a, const byte *str, uint strLenMax = 100000);
+	virtual int getStringWidth(int arg, const byte* text, uint strLenMax = 100000);
 	int getStringHeight(const char *str, uint strLenMax = 100000);
->>>>>>> SCUMM: COMI: Fix string wrapping when wrap flag is active
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
