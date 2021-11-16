@@ -173,12 +173,21 @@ private:
 	void loadGame();
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	void copyCurrentPlaceToBuffer(int id);
+	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
+	void drawBox(int minX, int minY, int maxX, int maxY);
+	void drawMenuBox(int minX, int minY, int maxX, int maxY, int color);
+	void displayFullScreenColoredMenuBox(int color);
 
 	void sub15150(bool flag);
 	void sub12A7F();
 	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation);
 	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
+	void sub1512B();
+	void sub221FA(uint8 *impArray, bool flag);
+	void sub15094();
+	void sub150EE();
+	void sub15018();
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -252,6 +261,9 @@ private:
 	int16 _oldMapPosX, _oldMapPosY;
 	int16 _techDataId_MapPosX, _techDataId_MapPosY;
 	uint16 _lastMainPlaceId;
+
+	uint8 _word2C86E;
+	uint8 *_dword2C856;
 };
 
 } // End of namespace Efh

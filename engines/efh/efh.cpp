@@ -156,6 +156,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_techDataId_MapPosX = _techDataId_MapPosY = 31;
 
 	_lastMainPlaceId = 0;
+	_word2C86E = 0;
+	_dword2C856 = nullptr;
 }
 
 EfhEngine::~EfhEngine() {
@@ -687,11 +689,12 @@ void EfhEngine::initEngine() {
 	_word31E9E = 0xFFFF;
 	restoreAnimImageSetId();
 
-	// Save int 24h, set new int24 to handle fatal failure
+	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure
+
 	checkProtection();
 	loadGame();
 	_engineInitPending = false;
-	}
+}
 
 void EfhEngine::initMapMonsters() {
 	warning("STUB - initMapMonsters");
@@ -703,7 +706,28 @@ void EfhEngine::saveAnimImageSetId() {
 }
 
 void EfhEngine::sub15150(bool flag) {
-	warning("STUB - sub15150");
+	uint8 mapTileInfo = getMapTileInfo(_mapPosX, _mapPosY);
+	int16 imageSetId = _currentTileBankImageSetId[mapTileInfo / 72];
+
+	int16 mapImageSetId = (imageSetId * 72) + (mapTileInfo % 72);
+	// CHECKME : Why do we compute this Id if we don't use it?
+	
+	for (int counter = 0; counter < 2; ++counter) {
+		if (counter == 0 || flag) {
+			sub1512B();
+			// TODO: _word2C86E is some kind of counter
+			if (_word2C86E != 0) {
+				// TODO: _dword2C856 is most likely an "Imp" Array
+				// Note: the original was doing the check in the opposite order, which looks really suspicious
+				if ((_dword2C856 != nullptr) && (_dword2C856[0] != 0x30)) {
+					sub221FA(_dword2C856, false);
+				}
+			}
+		}
+
+		if (counter == 0 && flag)
+			displayFctFullScreen();
+	}
 }
 
 void EfhEngine::sub12A7F() {
@@ -765,6 +789,46 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 
 void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
 	warning("STUB - sub133E5");
+}
+
+void EfhEngine::sub1512B() {
+	displayFullScreenColoredMenuBox(0);
+	sub15094();
+	sub150EE();
+	sub15018();
+	displayAnimFrame();
+	displayLowStatusScreen(0);
+}
+
+void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
+	for (uint8 counter = 0; counter < 2; ++counter) {
+		if (counter == 0 || flag) {
+			drawMenuBox(16, 115, 111, 133, 0);
+			if (impArray != nullptr) {
+				_word2C86E = 4;
+				_dword2C856 = impArray;
+				sub133E5(impArray, 17, 115, 110, 133, 0);
+			}
+		}
+	}
+}
+
+void EfhEngine::sub15094() {
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 112, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[3], 16, 0, _paletteTransformationConstant);
+}
+
+void EfhEngine::sub150EE() {
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 304, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[4], 128, 0, _paletteTransformationConstant);
+}
+
+void EfhEngine::sub15018() {
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[7], 16, 136, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[8], 16, 192, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[5], 0, 136, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[6], 304, 136, _paletteTransformationConstant);
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
@@ -907,6 +971,27 @@ uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 	decompSize += 2;
 
 	return decompSize;
+}
+
+uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
+	int size = _largeMapFlag ? 32 : 24;
+
+	return _mapGameMapPtr[mapPosX * size + mapPosY];
+}
+
+void EfhEngine::drawBox(int minX, int minY, int maxX, int maxY) {
+	warning("STUB - drawBox");
+}
+
+void EfhEngine::drawMenuBox(int minX, int minY, int maxX, int maxY, int color) {
+	uint8 oldValue = _defaultBoxColor;
+	_defaultBoxColor = color;
+	drawBox(minX, minY, maxX, maxY);
+	_defaultBoxColor = oldValue;
+}
+
+void EfhEngine::displayFullScreenColoredMenuBox(int color) {
+	drawMenuBox(0, 0, 320, 200, color);
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
