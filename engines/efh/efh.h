@@ -171,7 +171,7 @@ private:
 	void restoreAnimImageSetId();
 	void checkProtection();
 	void loadGame();
-	void uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
+	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	void copyCurrentPlaceToBuffer(int id);
 
 	void sub15150(bool flag);

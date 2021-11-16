@@ -226,7 +226,7 @@ int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
 }
 
 void EfhEngine::readAnimInfo() {
-	Common::String fileName = "gendata\\animinfo";
+	Common::String fileName = "animinfo";
 	readFileToBuffer(fileName, _animInfo);
 }
 
@@ -234,7 +234,7 @@ void EfhEngine::findMapFile(int16 mapId) {
 	if (_word31E9E == 0)
 		return;
 
-	Common::String fileName = Common::String::format("map\\map.%d", mapId);
+	Common::String fileName = Common::String::format("map.%d", mapId);
 	Common::File f;
 	// The original was checking for the file and eventually asking to change floppies
 	if (!f.open(fileName))
@@ -271,7 +271,7 @@ void EfhEngine::loadAnimImageSet() {
 }
 
 void EfhEngine::loadHistory() {
-	Common::String fileName = "gendata\\history";
+	Common::String fileName = "history";
 	readFileToBuffer(fileName, _history);
 }
 
@@ -282,11 +282,11 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	_techId = fileId;
 	findMapFile(_techId);
 
-	Common::String fileName = Common::String::format("maps\\tech.%d", _techId);
+	Common::String fileName = Common::String::format("tech.%d", _techId);
 	readFileToBuffer(fileName, _hiResImageBuf);
 	uncompressBuffer(_hiResImageBuf, _techData);
 
-	fileName = Common::String::format("maps\\map.%d", _techId);
+	fileName = Common::String::format("map.%d", _techId);
 	readFileToBuffer(fileName, _hiResImageBuf);
 	uncompressBuffer(_hiResImageBuf, _map);
 
@@ -311,7 +311,7 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, int16 unused, bool forceReloa
 
 	if (_fullPlaceId < minPlace || _fullPlaceId > maxPlace || forceReloadFl) {
 		_lastMainPlaceId = _fullPlaceId / 20;
-		Common::String fileName = Common::String::format("maps\\places.%d", _lastMainPlaceId);
+		Common::String fileName = Common::String::format("places.%d", _lastMainPlaceId);
 		readFileToBuffer(fileName, _hiResImageBuf);
 		uncompressBuffer(_hiResImageBuf, _places);
 	}
@@ -350,17 +350,17 @@ void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
 }
 
 void EfhEngine::readTileFact() {
-	Common::String fileName = "gendata\\tilefact";
+	Common::String fileName = "tilefact";
 	readFileToBuffer(fileName, _tileFact);
 }
 
 void EfhEngine::readItems() {
-	Common::String fileName = "gendata\\items";
+	Common::String fileName = "items";
 	readFileToBuffer(fileName, _items);
 }
 
 void EfhEngine::loadNPCS() {
-	Common::String fileName = "gendata\\npcs";
+	Common::String fileName = "npcs";
 	readFileToBuffer(fileName, _npcBuf);
 }
 
@@ -383,7 +383,7 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 }
 
 void EfhEngine::readImpFile(int16 id, bool techMapFl) {
-	Common::String fileName = Common::String::format("imp\\imp.%d", id);
+	Common::String fileName = Common::String::format("imp.%d", id);
 
 	if (techMapFl)
 		readFileToBuffer(fileName, _imp1);
@@ -613,7 +613,7 @@ void EfhEngine::initEngine() {
 
 	// Load picture room with girlfriend
 	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
-	fileName = "gendata\\titlsong"; 
+	fileName = "titlsong"; 
 	readFileToBuffer(fileName, _titleSong);
 	setDefaultNoteDuration();
 	Common::KeyCode lastInput = playSong(_titleSong);
@@ -721,8 +721,13 @@ void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArra
 
 void EfhEngine::rImageFile(Common::String filename, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *targetBuffer) {
 	readFileToBuffer(filename, packedBuffer);
-	uncompressBuffer(packedBuffer, targetBuffer);
-
+	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
+	// TODO: Keep this dump for debug purposes only
+	Common::DumpFile dump;
+	dump.open(filename + ".dump");
+	dump.write(targetBuffer, size);
+	// End of dump	
+	
 	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (1 Bpp)
 	// => Write a class to handle that more properly
 	uint8 *ptr = targetBuffer;
@@ -805,7 +810,7 @@ void EfhEngine::loadGame() {
 	//
 	// Fun fact : it was therefore expected to overwrite the original savegame on the floppy each time you saved. What could possibly go wrong?
 
-	Common::String fileName = "gendata\\savegame";
+	Common::String fileName = "savegame";
 	Common::File f;
 
 	if (!f.open(fileName))
@@ -852,7 +857,7 @@ void EfhEngine::loadGame() {
 	loadPlacesFile(_fullPlaceId, 0, true);
 }
 
-void EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
+uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 	if (compressedBuf == nullptr || destBuf == nullptr)
 		error("uncompressBuffer - Invalid pointer used in parameter list");
 
@@ -861,38 +866,36 @@ void EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 	uint16 compSize = READ_LE_UINT16(compressedBuf) + 1;	
 	uint8 *curPtrCompressed = compressedBuf + 2;
 
+	// Not in the original. This has been added for debug purposes (the original function doesn't return a value)
+	uint32 decompSize = 0;
+
 	for (;;) {
-		uint8 next = *curPtrCompressed;
-		++curPtrCompressed;
-		--compSize;
-		if (compSize == 0)
+		uint8 next = *curPtrCompressed++;
+		if (--compSize <= 0)
 			break;
 
 		if (next != 0xC3) {
-			*curPtrDest = next;
-			++curPtrDest;
+			*curPtrDest++ = next;
+			++decompSize;
 			continue;
 		}
 
-		next = *curPtrCompressed;
-		++curPtrCompressed;
-		--compSize;
-		if (compSize == 0)
+		next = *curPtrCompressed++;
+		if (--compSize <= 0)
 			break;
 
 		if (next == 0) {
-			*curPtrDest = 0xC3;
-			++curPtrDest;
+			*curPtrDest++ = 0xC3;
+			++decompSize;
 			continue;
 		}
-
+			
 		uint8 loopVal = next;
-		next = *curPtrCompressed;
-		++curPtrCompressed;
+		next = *curPtrCompressed++;
 
 		for (int i = 0; i < loopVal; ++i) {
-			*curPtrDest = next;
-			++curPtrDest;
+			*curPtrDest++ = next;
+			++decompSize;
 		}
 		
 		--compSize;
@@ -901,6 +904,9 @@ void EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 	}
 
 	curPtrDest[0] = curPtrDest[1] = 0;
+	decompSize += 2;
+
+	return decompSize;
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
