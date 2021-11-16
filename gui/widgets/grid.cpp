@@ -375,13 +375,21 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 }
 
 GridWidget::~GridWidget() {
-	_platformIcons.clear();
-	_languageIcons.clear();
-	_loadedSurfaces.clear();
+	unloadSurfaces(_platformIcons);
+	unloadSurfaces(_languageIcons);
+	unloadSurfaces(_loadedSurfaces);
 	_gridItems.clear();
 	_dataEntryList.clear();
 	_sortedEntryList.clear();
 	_visibleEntryList.clear();
+}
+
+template<typename T>
+void GridWidget::unloadSurfaces(Common::HashMap<T, const Graphics::ManagedSurface *> &surfaces) {
+	for (typename Common::HashMap<T, const Graphics::ManagedSurface *>::iterator i = surfaces.begin(); i != surfaces.end(); ++i) {
+		delete i->_value;
+	}
+	surfaces.clear();
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const Common::String &name) {
@@ -808,7 +816,7 @@ void GridWidget::reflowLayout() {
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
-		_loadedSurfaces.clear();
+		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
 	}

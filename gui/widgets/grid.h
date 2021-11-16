@@ -163,6 +163,9 @@ public:
 	GridWidget(GuiObject *boss, const Common::String &name);
 	~GridWidget();
 
+	template<typename T>
+	void unloadSurfaces(Common::HashMap<T, const Graphics::ManagedSurface *> &surfaces);
+
 	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
