@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "chewy/main.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
@@ -81,7 +82,15 @@ void game_main() {
 	cursor_wahl(CUR_WALK);
 	workptr = workpage + 4l;
 
-	MainMenu::execute();
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot != -1) {
+		(void)g_engine->loadGameState(saveSlot);
+		MainMenu::playGame();
+		return;
+	} else {
+		MainMenu::execute();
+	}
+
 	remove(ADSH_TMP);
 	tidy();
 	out->rest_palette();
