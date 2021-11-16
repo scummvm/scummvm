@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
-
 #include "chewy/main.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
@@ -1500,7 +1498,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 								else
 									set_person_spr(P_LEFT, P_CHEWY);
 							}
-							r_val = rand() % MAX_RAND_NO_USE;
+							r_val = g_engine->_rnd.getRandomNumber(MAX_RAND_NO_USE - 1);
 							action_flag = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 						}
 					}
