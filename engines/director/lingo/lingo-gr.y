@@ -274,6 +274,7 @@ nonemptymethodlist: methodlistline[item]			{
 
 methodlistline: '\n'				{ $$ = nullptr; }
 	| method
+	| tENDCLAUSE endargdef '\n'			{ $$ = nullptr; delete $tENDCLAUSE; } // stray `end`s are allowed for some reason
 	;
 
 // HANDLER
