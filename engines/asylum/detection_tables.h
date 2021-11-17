@@ -34,28 +34,6 @@ static const char *directoryGlobs[] = {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		// Sanitarium - English Demo
-		"asylum",
-		"Demo",
-		AD_ENTRY2s("SNTRM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
-				   "RES.000",   "57446ce089c6f9decb7f3faf41d09edf", 9022),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO0()
-	},
-	{
-		// Sanitarium - English Alt Demo
-		"asylum",
-		"Demo",
-		AD_ENTRY2s("ASYLUM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
-				   "RES.000",    "a527449397576a019cdd4884a96403e2", 9012),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO0()
-	},
-	{
 		"asylum",
 		"Unpatched",
 		{
@@ -184,6 +162,28 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		// Sanitarium - English Demo
+		"asylum",
+		"Demo",
+		AD_ENTRY2s("SNTRM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
+				   "RES.000",   "57446ce089c6f9decb7f3faf41d09edf", 9022),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		// Sanitarium - English Alt Demo
+		"asylum",
+		"Demo",
+		AD_ENTRY2s("ASYLUM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
+				   "RES.000",    "a527449397576a019cdd4884a96403e2", 9012),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER
