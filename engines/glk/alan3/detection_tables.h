@@ -41,6 +41,7 @@ const PlainGameDescriptor ALAN3_GAME_LIST[] = {
 	{ "tedpaladin", "Ted Paladin And The Case Of The Abandoned House" },
 	{ "thesealedroom", "The Sealed Room" },
 	{ "waldospie", "Waldo's Pie" },
+	{ "wyldkyndproject",  "The Wyldkynd Project" },
 
 	{ nullptr, nullptr }
 };
@@ -57,6 +58,7 @@ const GlkDetectionEntry ALAN3_GAMES[] = {
 	DT_ENTRY0("tedpaladin", "6132d401ea7c05b474e598a37b642bd9", 292486),
 	DT_ENTRY0("thesealedroom", "06a81cb30efff9c63e7f7d3aff554d3d", 306937),
 	DT_ENTRY0("waldospie", "fcd53ac4669f85845c1cbbaad6082724", 511956),
+	DT_ENTRY0("wyldkyndproject", "35b2f168cb78d7df46638dcb583f5e15", 1333195),
 	DT_END_MARKER
 };
 
