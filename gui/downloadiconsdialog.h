@@ -73,6 +73,8 @@ public:
 	void downloadListCallback(Networking::DataResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 
+	void setError(Common::U32String &msg);
+
 private:
 	void downloadList();
 	void calculateList();

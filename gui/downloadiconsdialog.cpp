@@ -71,6 +71,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 		_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _c("Cancel download", "lowres"), Common::U32String(), kDownloadIconsDialogButtonCmd);
 
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
+	_closeButton->setEnabled(false);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);
@@ -196,8 +197,14 @@ void DownloadIconsDialog::downloadListCallback(Networking::DataResponse response
 	sendCommand(kListEndedCmd, 0);
 }
 
+void DownloadIconsDialog::setError(Common::U32String &msg) {
+	_errorText->setLabel(msg);
+}
+
 void DownloadIconsDialog::errorCallback(Networking::ErrorResponse error) {
-	warning("Error %ld: %s", error.httpResponseCode, error.response.c_str());
+	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
+
+	g_dialog->setError(message);
 }
 
 void DownloadIconsDialog::downloadList() {
