@@ -27,7 +27,7 @@
 
 #include "math/rect2d.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 namespace OpenGL {
 	class FrameBuffer;
@@ -194,6 +194,6 @@ protected:
 	TransactionMode _transactionMode;
 };
 
-#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #endif

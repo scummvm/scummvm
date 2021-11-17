@@ -25,7 +25,7 @@
 
 #include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 
-#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 
 namespace Wintermute {
 
@@ -39,6 +39,6 @@ public:
 
 } // namespace Wintermute
 
-#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME)
 
 #endif

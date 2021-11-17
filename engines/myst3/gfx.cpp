@@ -29,7 +29,7 @@
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/context.h"
 #endif
 
@@ -209,7 +209,7 @@ Renderer *createRenderer(OSystem *system) {
 		initGraphics(width, height, nullptr);
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 #endif
 
@@ -225,12 +225,12 @@ Renderer *createRenderer(OSystem *system) {
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		return CreateGfxOpenGLShader(system);
 	}
 #endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		return CreateGfxOpenGL(system);
 	}

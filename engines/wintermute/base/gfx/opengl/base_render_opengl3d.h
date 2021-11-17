@@ -31,7 +31,7 @@
 #include "math/matrix4.h"
 #include "math/ray.h"
 
-#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
@@ -154,6 +154,6 @@ private:
 
 } // wintermute namespace
 
-#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME)
 
 #endif

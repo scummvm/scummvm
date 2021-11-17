@@ -29,7 +29,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
-#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
@@ -435,7 +435,7 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	// Reset it!
 #if defined(USE_OPENGL_SHADERS)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 	return true;
 }
@@ -853,4 +853,4 @@ ShadowVolume *BaseRenderOpenGL3D::createShadowVolume() {
 
 } // namespace Wintermute
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME)

@@ -84,7 +84,7 @@
 #ifdef ENABLE_WME3D
 #include "graphics/renderer.h"
 #include "engines/util.h"
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/context.h"
 #endif
 #endif
@@ -514,7 +514,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		return STATUS_OK;
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 #endif
@@ -531,11 +531,11 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 #if defined(USE_OPENGL_GAME)
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		_renderer3D = makeOpenGL3DRenderer(this);
@@ -546,7 +546,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		error("3D software renderered is not supported yet");
 	}
 	_renderer = _renderer3D;
-#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2)
+#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS)
 	if (!_playing3DGame && !_renderer3D)
 		_renderer = makeOSystemRenderer(this);
 #endif

@@ -33,7 +33,7 @@
 #include "math/matrix4.h"
 #include "math/ray.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/shader.h"
 
@@ -161,6 +161,6 @@ private:
 
 } // namespace Wintermute
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 #endif
