@@ -995,6 +995,7 @@ protected:
 	uint _shakeFrame;
 	uint32 _shakeNextTick;
 	uint32 _shakeTickCounter;
+	const uint32 _shakeTimerRate;
 
 	void setShake(int mode);
 
