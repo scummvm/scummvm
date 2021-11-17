@@ -146,6 +146,7 @@ public:
 	static const uint16 MIDI_MASTER_TUNING_FINE_DEFAULT = 0x2000;
 	static const uint8 MIDI_MASTER_TUNING_COARSE_DEFAULT = 0x40;
 
+	static const uint8 MT32_PITCH_BEND_SENSITIVITY_DEFAULT = 0x0C;
 	static const uint8 GM_PITCH_BEND_SENSITIVITY_DEFAULT = 0x02;
 
 	static const uint8 GS_RHYTHM_FIRST_NOTE = 0x1B;

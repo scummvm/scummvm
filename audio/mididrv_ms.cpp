@@ -37,6 +37,21 @@ MidiDriver_Multisource::MidiSource::MidiSource() :
 	fadePassedTime(0),
 	fadeDuration(0) { }
 
+MidiDriver_Multisource::ControllerDefaults::ControllerDefaults() :
+	// The -1 value indicates no default value should be set on the controller.
+	program(-1),
+	instrumentBank(-1),
+	drumkit(-1),
+	channelPressure(-1),
+	pitchBend(-1),
+	modulation(-1),
+	volume(-1),
+	panning(-1),
+	expression(-1),
+	sustain(-1),
+	rpn(-1),
+	pitchBendSensitivity(-1) { }
+
 MidiDriver_Multisource::MidiDriver_Multisource() :
 		_userVolumeScaling(false),
 		_userMusicVolume(192),
@@ -183,6 +198,90 @@ void MidiDriver_Multisource::updateFading() {
 	if (updatedVolume)
 		// Set the fade delay to delay the next volume update.
 		_fadeDelay = FADING_DELAY;
+}
+
+void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type) {
+	// Call the overload with the General MIDI default for the controller.
+	switch (type) {
+	case CONTROLLER_DEFAULT_PITCH_BEND:
+		setControllerDefault(type, MIDI_PITCH_BEND_DEFAULT);
+		break;
+	case CONTROLLER_DEFAULT_VOLUME:
+		setControllerDefault(type, 100);
+		break;
+	case CONTROLLER_DEFAULT_PANNING:
+		setControllerDefault(type, MIDI_PANNING_DEFAULT);
+		break;
+	case CONTROLLER_DEFAULT_EXPRESSION:
+		setControllerDefault(type, MIDI_EXPRESSION_DEFAULT);
+		break;
+	case CONTROLLER_DEFAULT_RPN:
+		setControllerDefault(type, MIDI_RPN_NULL);
+		break;
+	case CONTROLLER_DEFAULT_PITCH_BEND_SENSITIVITY:
+		setControllerDefault(type, GM_PITCH_BEND_SENSITIVITY_DEFAULT);
+		break;
+	case CONTROLLER_DEFAULT_PROGRAM:
+	case CONTROLLER_DEFAULT_INSTRUMENT_BANK:
+	case CONTROLLER_DEFAULT_DRUMKIT:
+	case CONTROLLER_DEFAULT_CHANNEL_PRESSURE:
+	case CONTROLLER_DEFAULT_MODULATION:
+	case CONTROLLER_DEFAULT_SUSTAIN:
+	default:
+		setControllerDefault(type, 0);
+		break;
+	}
+}
+
+void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, int16 value) {
+	// Set the specified default value on _controllerDefaults on the field
+	// corresponding to the specified controller.
+	switch (type) {
+	case CONTROLLER_DEFAULT_PROGRAM:
+		_controllerDefaults.program = value;
+		break;
+	case CONTROLLER_DEFAULT_INSTRUMENT_BANK:
+		_controllerDefaults.instrumentBank = value;
+		break;
+	case CONTROLLER_DEFAULT_DRUMKIT:
+		_controllerDefaults.drumkit = value;
+		break;
+	case CONTROLLER_DEFAULT_CHANNEL_PRESSURE:
+		_controllerDefaults.channelPressure = value;
+		break;
+	case CONTROLLER_DEFAULT_PITCH_BEND:
+		_controllerDefaults.pitchBend = value;
+		break;
+	case CONTROLLER_DEFAULT_MODULATION:
+		_controllerDefaults.modulation = value;
+		break;
+	case CONTROLLER_DEFAULT_VOLUME:
+		_controllerDefaults.volume = value;
+		break;
+	case CONTROLLER_DEFAULT_PANNING:
+		_controllerDefaults.panning = value;
+		break;
+	case CONTROLLER_DEFAULT_EXPRESSION:
+		_controllerDefaults.expression = value;
+		break;
+	case CONTROLLER_DEFAULT_SUSTAIN:
+		_controllerDefaults.sustain = value;
+		break;
+	case CONTROLLER_DEFAULT_RPN:
+		_controllerDefaults.rpn = value;
+		break;
+	case CONTROLLER_DEFAULT_PITCH_BEND_SENSITIVITY:
+		_controllerDefaults.pitchBendSensitivity = value;
+		break;
+	default:
+		warning("MidiDriver_Multisource::setControllerDefault - Unknown controller default type %i", type);
+		break;
+	}
+}
+
+void MidiDriver_Multisource::clearControllerDefault(ControllerDefaultType type) {
+	// Reset the default value for this controller to -1.
+	setControllerDefault(type, -1);
 }
 
 void MidiDriver_Multisource::deinitSource(uint8 source) {

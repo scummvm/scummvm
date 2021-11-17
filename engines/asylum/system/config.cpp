@@ -40,7 +40,7 @@ ConfigurationManager::ConfigurationManager() {
 	// Register engine-specific options
 	ConfMan.registerDefault("show_encounter_subtitles", true);
 	ConfMan.registerDefault("gamma_level", 0);
-	ConfMan.registerDefault("ambient_volume", -2000);
+	ConfMan.registerDefault("ambient_volume",  -750);
 	ConfMan.registerDefault("movie_volume",    -500);
 	ConfMan.registerDefault("music_volume",   -1500);
 	ConfMan.registerDefault("sfx_volume",     -1000);

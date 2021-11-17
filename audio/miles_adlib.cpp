@@ -167,6 +167,7 @@ private:
 	struct MidiChannelEntry {
 		byte   currentPatchBank;
 		const  InstrumentEntry *currentInstrumentPtr;
+		byte   currentProgram;
 		uint16 currentPitchBender;
 		byte   currentPitchRange;
 		byte   currentVoiceProtection;
@@ -183,6 +184,7 @@ private:
 
 		MidiChannelEntry() : currentPatchBank(0),
 							currentInstrumentPtr(nullptr),
+							currentProgram(0),
 							currentPitchBender(MIDI_PITCH_BEND_DEFAULT),
 							currentPitchRange(0),
 							currentVoiceProtection(0),
@@ -285,6 +287,8 @@ private:
 	const InstrumentEntry *searchInstrument(byte bankId, byte patchId);
 
 	void pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2);
+
+	void applyControllerDefaults(uint8 source);
 };
 
 MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
@@ -346,6 +350,7 @@ int MidiDriver_Miles_AdLib::open() {
 	_isOpen = true;
 
 	resetData();
+	applyControllerDefaults(0xFF);
 
 	_timerRate = getBaseTempo();
 	_opl->start(new Common::Functor0Mem<void, MidiDriver_Miles_AdLib>(this, &MidiDriver_Miles_AdLib::onTimer));
@@ -1155,6 +1160,7 @@ void MidiDriver_Miles_AdLib::programChange(byte midiChannel, byte patchId) {
 
 	// and remember it in that case for the current MIDI-channel
 	_midiChannels[midiChannel].currentInstrumentPtr = instrumentPtr;
+	_midiChannels[midiChannel].currentProgram = patchId;
 }
 
 const InstrumentEntry *MidiDriver_Miles_AdLib::searchInstrument(byte bankId, byte patchId) {
@@ -1206,6 +1212,40 @@ void MidiDriver_Miles_AdLib::deinitSource(uint8 source) {
 
 	// Stop fades and turn off non-sustained notes.
 	MidiDriver_Multisource::deinitSource(source);
+
+	applyControllerDefaults(source);
+}
+
+void MidiDriver_Miles_AdLib::applyControllerDefaults(uint8 source) {
+	if (!(source == 0 || source == 0xFF))
+		return;
+
+	for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
+		if (_controllerDefaults.program >= 0) {
+			_midiChannels[i].currentProgram = _controllerDefaults.program;
+		}
+		if (_controllerDefaults.pitchBend >= 0) {
+			_midiChannels[i].currentPitchBender = _controllerDefaults.pitchBend;
+		}
+		if (_controllerDefaults.modulation >= 0) {
+			_midiChannels[i].currentModulation = _controllerDefaults.modulation;
+		}
+		if (_controllerDefaults.volume >= 0) {
+			_midiChannels[i].currentVolume = _controllerDefaults.volume;
+		}
+		if (_controllerDefaults.panning >= 0) {
+			_midiChannels[i].currentPanning = _controllerDefaults.panning;
+		}
+		if (_controllerDefaults.expression >= 0) {
+			_midiChannels[i].currentVolumeExpression = _controllerDefaults.expression;
+		}
+		if (_controllerDefaults.pitchBendSensitivity >= 0) {
+			_midiChannels[i].currentPitchRange = _controllerDefaults.pitchBendSensitivity;
+		}
+		// Controller defaults not supported by this driver:
+		// instrument bank, drumkit, channel pressure, RPN.
+		// Sustain is turned of by deinitSource.
+	}
 }
 
 void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {

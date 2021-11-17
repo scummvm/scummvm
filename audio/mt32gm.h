@@ -142,6 +142,7 @@ protected:
 		byte program;
 		// The Roland GS instrument bank
 		byte instrumentBank;
+		byte channelPressure;
 
 		byte modulation;
 		// The volume specified by the MIDI data
@@ -153,17 +154,24 @@ protected:
 		byte expression;
 		bool sustain;
 
+		// The currently selected Registered Parameter Number
+		uint16 rpn;
+		byte pitchBendSensitivity;
+
 		MidiChannelControlData() : source(-1),
 			sourceVolumeApplied(false),
 			pitchWheel(MIDI_PITCH_BEND_DEFAULT),
 			program(0),
 			instrumentBank(0),
+			channelPressure(0),
 			modulation(0),
 			volume(0),
 			scaledVolume(0),
-			panPosition(0x40),
-			expression(0x7F),
-			sustain(false) { }
+			panPosition(MIDI_PANNING_DEFAULT),
+			expression(MIDI_EXPRESSION_DEFAULT),
+			sustain(false),
+			rpn(MIDI_RPN_NULL),
+			pitchBendSensitivity(0) { }
 	};
 
 	/**
@@ -371,6 +379,22 @@ protected:
 	virtual void processEvent(int8 source, uint32 b, uint8 outputChannel,
 		MidiChannelControlData &controlData, bool channelLockedByOtherSource = false);
 	/**
+	 * Applies the controller default settings to the specified output channel
+	 * for the specified source.
+	 * This will set all default values specified on _controllerDefaults on the
+	 * channel except sustain, which is set by deinitSource.
+	 * 
+	 * @param source The source triggering the default settings
+	 * @param controlData The control data set to use when setting the defaults
+	 * @param outputChannel The output channel on which the defaults should be
+	 * set
+	 * @param channelLockedByOtherSource True if the output channel is locked
+	 * by another source. This will prevent the defaults from actually being
+	 * sent to the MIDI device, but controlData will be updated. Default is
+	 * false.
+	 */
+	virtual void applyControllerDefaults(uint8 source, MidiChannelControlData &controlData, uint8 outputChannel, bool channelLockedByOtherSource);
+	/**
 	 * Processes a note on or off MIDI event.
 	 * This will apply source volume if necessary, update the active note
 	 * registration and send the event to the MIDI device.
@@ -382,6 +406,20 @@ protected:
 	 */
 	virtual void noteOnOff(byte outputChannel, byte command, byte note, byte velocity,
 		int8 source, MidiChannelControlData &controlData);
+	/**
+	 * Processes a polyphonic aftertouch MIDI event.
+	 * This implementation will just send the event to the MIDI device.
+	 * 
+	 * @param outputChannel The MIDI output channel for the event
+	 * @param note The note on which aftertouch should be applied
+	 * @param pressure The amount of pressure which should be applied
+	 * @param source The source of the event
+	 * @param controlData The control data set for the MIDI channel
+	 * @param channelLockedByOtherSource True if the output channel is locked
+	 * by another source. Default is false.
+	 */
+	virtual void polyAftertouch(byte outputChannel, byte note, byte pressure,
+		int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource = false);
 	/**
 	 * Process a control change MIDI event.
 	 * This will update the specified control data set and apply other
@@ -409,6 +447,36 @@ protected:
 	 */
 	virtual void programChange(byte outputChannel, byte patchId, int8 source,
 		MidiChannelControlData &controlData, bool channelLockedByOtherSource = false);
+	/**
+	 * Processes a channel aftertouch MIDI event.
+	 * This whil update the specified control data set and send the event to
+	 * the MIDI device.
+	 * 
+	 * @param outputChannel The MIDI output channel for the event
+	 * @param pressure The amount of pressure which should be applied
+	 * @param source The source of the event
+	 * @param controlData The control data set for the MIDI channel
+	 * @param channelLockedByOtherSource True if the output channel is locked
+	 * by another source. Default is false.
+	 */
+	virtual void channelAftertouch(byte outputChannel, byte pressure, int8 source,
+		MidiChannelControlData &controlData, bool channelLockedByOtherSource = false);
+	/**
+	 * Processes a pitch bend MIDI event.
+	 * This whil update the specified control data set and send the event to
+	 * the MIDI device.
+	 * 
+	 * @param outputChannel The MIDI output channel for the event
+	 * @param pitchBendLsb The pitch bend LSB
+	 * @param pitchBendMsb The pitch bend MSB
+	 * @param source The source of the event
+	 * @param controlData The control data set for the MIDI channel
+	 * @param channelLockedByOtherSource True if the output channel is locked
+	 * by another source. Default is false.
+	 */
+	virtual void pitchBend(byte outputChannel, uint8 pitchBendLsb, uint8 pitchBendMsb,
+		int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource = false);
+
 	/**
 	 * Adds a note to the active note registration.
 	 */
