@@ -2181,6 +2181,19 @@ Mortevielle
    * - Thierry Crozat
      - Improve English translation
 
+Prince
+^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - ShinjiGR
+     - English translation
+   * - Eugene Sandulenko
+     - English translation
+   * - Anna Baldur
+     - English translation
+
 Supernova
 ^^^^^^^^^
 
