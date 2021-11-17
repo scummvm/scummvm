@@ -41,8 +41,9 @@
 namespace GUI {
 
 enum {
-	kDownloadIconsDialogButtonCmd = 'Dldb',
-	kListEndedCmd = 'DLLE'
+	kDownloadCancelCmd = 'Dlcn',
+	kDownloadProceedCmd = 'Dlpr',
+	kListDownloadFinishedCmd = 'DlLE'
 };
 
 static DownloadIconsDialog *g_dialog;
@@ -65,11 +66,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_percentLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.PercentText", Common::String::format("%u %%", progress));
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSize", Common::U32String());
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
-	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kDownloadIconsDialogButtonCmd);
-	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _c("Cancel download", "lowres"), Common::U32String(), kDownloadIconsDialogButtonCmd);
-
+	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kDownloadCancelCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
 	_closeButton->setEnabled(false);
 	refreshWidgets();
@@ -101,7 +98,7 @@ void DownloadIconsDialog::close() {
 
 void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kDownloadIconsDialogButtonCmd:
+	case kDownloadCancelCmd:
 		{
 			CloudMan.setDownloadTarget(nullptr);
 			CloudMan.cancelDownload();
@@ -117,9 +114,12 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kDownloadEndedCmd:
 		_close = true;
 		break;
-	case kListEndedCmd:
+	case kListDownloadFinishedCmd:
 		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), _fileHash.size()));
 		calculateList();
+		break;
+	case kDownloadProceedCmd:
+		proceedDownload();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -194,11 +194,14 @@ void DownloadIconsDialog::downloadListCallback(Networking::DataResponse response
 		g_dialog->_fileHash.setVal(s.substr(0, pos), atol(s.substr(pos + 1).c_str()));
 	}
 
-	sendCommand(kListEndedCmd, 0);
+	sendCommand(kListDownloadFinishedCmd, 0);
 }
 
 void DownloadIconsDialog::setError(Common::U32String &msg) {
 	_errorText->setLabel(msg);
+
+	_cancelButton->setLabel(_("Close"));
+	_cancelButton->setCmd(kDownloadCancelCmd);
 }
 
 void DownloadIconsDialog::errorCallback(Networking::ErrorResponse error) {
@@ -218,7 +221,8 @@ void DownloadIconsDialog::downloadList() {
 
 void DownloadIconsDialog::calculateList() {
 	if (!ConfMan.hasKey("iconspath")) {
-		_errorText->setLabel(_("ERROR: No icons path set"));
+		Common::U32String str(_("ERROR: No icons path set"));
+		setError(str);
 		return;
 	}
 
@@ -252,8 +256,40 @@ void DownloadIconsDialog::calculateList() {
 	Common::String size, sizeUnits;
 	size = getHumanReadableBytes(totalsize, sizeUnits);
 
-	_statusText->setLabel(Common::U32String::format(_("Need to download %d files, %s %S"), _fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
+	_statusText->setLabel(Common::U32String::format(_("Detected %d new packs, %s %S"), _fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
 
+	_cancelButton->setLabel(_("Download"));
+	_cancelButton->setCmd(kDownloadProceedCmd);
+
+	_closeButton->setLabel(_("Cancel"));
+	_closeButton->setCmd(kDownloadCancelCmd);
+	_closeButton->setEnabled(true);
 }
+
+void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse response) {
+	Networking::SessionRequest *req = dynamic_cast<Networking::SessionRequest *>(response.request);
+
+	warning("Got %d bytes", req->getSize());
+}
+
+void DownloadIconsDialog::proceedDownload() {
+	_cancelButton->setLabel(_("Cancel download"));
+	_cancelButton->setCmd(kDownloadCancelCmd);
+
+	_closeButton->setLabel(_("Hide"));
+	_closeButton->setCmd(kCloseCmd);
+
+	for (auto f = _fileHash.begin(); f != _fileHash.end(); ++f) {
+		Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", f->_key.c_str());
+
+		Networking::SessionRequest *rq = _session->get(url,
+			new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),
+			new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback),
+			true);
+
+		rq->start();
+	}
+}
+
 
 } // End of namespace GUI

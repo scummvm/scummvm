@@ -1001,7 +1001,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions_DownloadIconsDialog' overlays = 'Dialog.GlobalOptions'>
+	<dialog name = 'GlobalOptions_DownloadIconsDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'
@@ -1036,7 +1036,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions_Cloud_DownloadDialog' overlays = 'Dialog.GlobalOptions'>
+	<dialog name = 'GlobalOptions_Cloud_DownloadDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
 			<widget name = 'RemoteDirectory'
 					height = 'Globals.Line.Height'
@@ -1071,7 +1071,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
+	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>

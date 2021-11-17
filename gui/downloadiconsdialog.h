@@ -71,6 +71,7 @@ public:
 	void reflowLayout() override;
 
 	void downloadListCallback(Networking::DataResponse response);
+	void downloadFileCallback(Networking::DataResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 
 	void setError(Common::U32String &msg);
@@ -78,6 +79,7 @@ public:
 private:
 	void downloadList();
 	void calculateList();
+	void proceedDownload();
 };
 
 } // End of namespace GUI
