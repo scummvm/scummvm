@@ -37,6 +37,13 @@ class StaticTextWidget;
 class ButtonWidget;
 class SliderWidget;
 
+enum IconProcessState {
+	kDownloadStateList,
+	kDownloadStateListDownloaded,
+	kDownloadStateListCalculated,
+	kDownloadStateDownloading
+};
+
 class DownloadIconsDialog : public Dialog, public CommandSender {
 	StaticTextWidget *_statusText;
 	StaticTextWidget *_errorText;
@@ -54,11 +61,6 @@ class DownloadIconsDialog : public Dialog, public CommandSender {
 	Common::U32String getSpeedLabelText();
 
 	void refreshWidgets();
-
-	Networking::Session *_session;
-
-public:
-	Common::HashMap<Common::String, uint32> _fileHash;
 
 public:
 	DownloadIconsDialog();
@@ -80,6 +82,7 @@ private:
 	void downloadList();
 	void calculateList();
 	void proceedDownload();
+	void setState(IconProcessState state);
 };
 
 } // End of namespace GUI
