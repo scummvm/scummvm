@@ -1411,6 +1411,8 @@ void EoBPC98FinalePlayer::king() {
 	static uint8 xOff[] = { 0, 48, 96, 152 };
 	static uint8 maxW[] = { 48, 48, 56, 48 };
 
+	uint32 nextScreenUpdate = _vm->_system->getMillis();
+
 	for (int i = 0; i < 4 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
 		const uint8 *xypos = xydata;
 		uint16 cx = xOff[i];
@@ -1424,14 +1426,20 @@ void EoBPC98FinalePlayer::king() {
 			if (col)
 				_screen->setPagePixel(0, cx + x + 64, y + 84, col);
 			if (ii % 48 == 0) {
-				_screen->updateScreen();
 				uint32 cur = _vm->_system->getMillis();
+				if (cur >= nextScreenUpdate) {
+					_screen->updateScreen();
+					nextScreenUpdate += 16;
+				}
 				if (nextDelay > cur)
 					_vm->_system->delayMillis(nextDelay - cur);
 				nextDelay += 5;
 			}
 		}
-		_screen->updateScreen();
+		if (_vm->_system->getMillis() >= nextScreenUpdate) {
+			_screen->updateScreen();
+			nextScreenUpdate += 16;
+		}
 	}
 
 	printSubtitle(_strings[5], 9, 24, 225);
