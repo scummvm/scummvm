@@ -164,7 +164,7 @@ public:
 class HSSong {
 public:
 	HSSong() : _data(), _flags(0), _amplitudeScaleFlags(0), _interpolateType(0), _transpose(0), _tickLen(0), _tempo(0), _ticksPerSecond(0), _internalTempo(0),
-		_numChanMusic(0), _numChanSfx(0), _convertUnitSize(0), _midiResId(0), _fastForward(false) {}
+		_numChanMusic(0), _numChanSfx(0), _convertUnitSize(0), _midiResId(0), _fastForward(false), _loop(false), _busy(false) {}
 	void load(const ShStBuffer &data);
 	void reset();
 	void release();
@@ -186,6 +186,9 @@ public:
 	int16 _transpose;
 	uint16 _tickLen;
 
+	bool _loop;
+	bool _busy;
+
 	Common::Array<uint16> _programMappings;
 	bool _fastForward;
 
@@ -199,7 +202,41 @@ private:
 	uint16 _internalTempo;
 };
 
+class HSMidiParser {
+public:
+	HSMidiParser(HSLowLevelDriver *driver);
+	~HSMidiParser();
+
+	bool loadTracks(HSSong &song);
+	bool nextTick(HSSong &song);
+	void stopResource(int id);
+	bool isPlaying() const;
+	void release();
+
+private:
+	struct TrackState {
+		Common::Array<ShStBuffer>::const_iterator data;
+		char status;
+		uint16 resId;
+		uint8 program;
+		int32 ticker;
+		const uint8 *curPos;
+	};
+
+	bool parseEvent(HSSong &song, TrackState *s);
+	void noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note, uint8 velo);
+
+	uint8 _partPrograms[16];
+	uint8 _curCmd;
+
+	ShStBuffer _data;
+	Common::Array<ShStBuffer> _tracks;
+	TrackState *_trackState;
+	HSLowLevelDriver *_driver;
+};
+
 class HSLowLevelDriver {
+	friend class HSMidiParser;
 public:
 	HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex);
 	~HSLowLevelDriver();
@@ -306,43 +343,19 @@ private:
 	const uint16 _pcmDstBufferSize;
 
 private:
-	struct MidiTrackState {
-		Common::Array<ShStBuffer>::const_iterator data;
-		char status;
-		uint16 resId;
-		uint8 program;
-		int32 ticker;
-		const uint8 *curPos;
-	};
-
-	void songStopChannel(int id);
 	bool songStart();
 	bool songInit();
-	void midiNextTick();
-	bool isMusicPlaying();
-
-	bool midiParseEvent(MidiTrackState *s);
-	void midiNoteOnOff(MidiTrackState *s, uint8 chan, uint8 note, uint8 velo);
+	void songStopAllChannels();
+	void songNextTick();
+	bool songIsPlaying();
 
 	void noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uint16 ticker, const void *handle);
 	void noteOff(uint8 part, uint8 note, const void *handle);
 
 	int16 noteFromTable();
 
-	bool _songLoop;
-	
-	ShStBuffer _midiData;
-	Common::Array<ShStBuffer> _midiTracks;
-
-	MidiTrackState *_trackState;
-	bool _midiBusy;
-	uint16 _midiMaxNotesPlayed;
-	uint32 _songTicker;
-	uint8 _midiCurCmd;
-
 	HSSong _song;
-
-	uint8 _midiPartProgram[16];
+	HSMidiParser *_midi;
 
 private:
 	void loadInstrument(int id);
@@ -642,11 +655,213 @@ void HSSong::updateTempo() {
 	_internalTempo = _fastForward ? 32767 : ((_ticksPerSecond << 6) / _tempo);
 }
 
-HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(nullptr), _mutex(mutex), _sampleConvertBuffer(nullptr), _interpolationTable(nullptr), _transCycleLenDef(0),
-_interpolationTable2(nullptr), _amplitudeScaleBuffer(nullptr), _interpolationMode(kNone), _midiData(), _trackState(nullptr), _wtable(nullptr), _wtableCount(0),
-_midiCurCmd(0), _convertBufferNumUnits(0), _songLoop(false), _chan(nullptr), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(nullptr),
-_midiBusy(false), _pcmDstBufferSize(370), _midiMaxNotesPlayed(0), _songTicker(0), _transBuffer(nullptr), _convertUnitSizeLast(0), _numChanSfxLast(0),
-_wtableCount2(0), _pmDataTrm(0x8000) {
+HSMidiParser::HSMidiParser(HSLowLevelDriver *driver) : _driver(driver), _trackState(nullptr), _tracks(), _data(), _curCmd(0) {
+	_trackState = new TrackState[24]();
+	memset(_partPrograms, 0, sizeof(_partPrograms));
+}
+
+HSMidiParser::~HSMidiParser() {
+	delete[] _trackState;
+}
+
+bool HSMidiParser::loadTracks(HSSong &song) {
+	for (int i = 0; i < ARRAYSIZE(_partPrograms); ++i)
+		_partPrograms[i] = i;
+
+	Common::SeekableReadStream *midi = _driver->_res->getResource(song._midiResId, 'MIDI');
+	if (!midi)
+		midi = _driver->_res->getResource(song._midiResId, 'Midi');
+	assert(midi);
+
+	_data = midi;
+	const uint8 *in = _data.ptr;
+	const uint8 *end = &_data.ptr[_data.len];
+	_tracks.clear();
+
+	while (in < end) {
+		if (READ_BE_UINT32(in) == 'MThd')
+			break;
+		in += 2;
+	}
+	if (in >= end)
+		return false;
+
+	int tps = READ_BE_UINT16(in + 12);
+	if (tps >= 0)
+		song.setTicksPerSecond(tps);
+
+	while (in < end) {
+		if (READ_BE_UINT32(in) == 'MTrk')
+			break;
+		++in;
+	}
+	if (in >= end)
+		return false;
+
+	do {
+		ShStBuffer track(in + 8, READ_BE_UINT32(in + 4));
+		_tracks.push_back(track);
+		in += (track.len + 8);
+	} while (in < end && READ_BE_UINT32(in) == 'MTrk');
+
+	uint8 prg = 0;
+	for (Common::Array<ShStBuffer>::const_iterator i = _tracks.begin(); i != _tracks.end(); ++i) {
+		int ch = 0;
+		for (; ch < 24; ++ch) {
+			if (!_trackState[ch].status)
+				break;
+		}
+		if (ch == 24)
+			return false;
+
+		_trackState[ch].data = i;
+		_trackState[ch].curPos = i->ptr;
+		_trackState[ch].resId = song._midiResId;
+		_trackState[ch].status = 'F';
+		_trackState[ch].ticker = 0;
+		_trackState[ch].program = prg++;
+	}
+
+	return true;
+}
+
+uint32 vlqRead(const uint8 *&s) {
+	uint32 res = 0;
+	do {
+		res = (res << 7) | (*s & 0x7f);
+	} while (*s++ & 0x80);
+	return res;
+}
+
+bool HSMidiParser::nextTick(HSSong &song) {
+	bool res = false;
+	for (int ch = 0; ch < 24; ++ch) {
+		TrackState *s = &_trackState[ch];
+		if (!s->status)
+			continue;
+
+		res = true;
+		bool checkPos = true;
+
+		if (s->status == 'F') {
+			s->status = 'R';
+			checkPos = false;
+		} else {
+			s->ticker -= song.tempo();
+			if (s->ticker >= 0)
+				continue;
+		}
+
+		bool contMain = false;
+		for (bool checkTicker = true; checkPos || checkTicker; ) {
+			if (checkPos) {
+				if (s->curPos >= &s->data->ptr[s->data->len]) {
+					s->status = '\0';
+					contMain = true;
+					break;
+				}
+				contMain = !parseEvent(song, s);
+			}
+
+			if (contMain)
+				break;
+
+			checkPos = false;
+
+			uint32 val = vlqRead(s->curPos);
+			if (val) {
+				s->ticker += (val << 6);
+				if (s->ticker >= 0)
+					checkTicker = false;
+				else
+					checkPos = true;
+			} else {
+				checkTicker = parseEvent(song, s);
+			}
+		}
+	}
+	return res;
+}
+
+void HSMidiParser::stopResource(int id) {
+	for (int i = 0; i < 24; ++i) {
+		if (id < 0 || _trackState[i].resId == id)
+			_trackState[i].status = '\0';
+	}
+
+	_driver->songStopAllChannels();
+}
+
+bool HSMidiParser::isPlaying() const {
+	for (int ch = 0; ch < 24; ++ch) {
+		if (_trackState[ch].status)
+			return true;
+	}
+	return false;
+}
+
+void HSMidiParser::release() {
+	_data = ShStBuffer();
+}
+
+bool HSMidiParser::parseEvent(HSSong &song, TrackState *s) {
+	uint8 in = *s->curPos++;
+
+	if (in < 0x80) {
+		if (s->curPos <= s->data->ptr)
+			error("HSLowLevelDriver::midiParseEvent(): Data error");
+		s->curPos--;
+		in = _curCmd;
+	} else if (in == 0xff) {
+		uint evt = *s->curPos++;
+		if (evt == 0x2f) {
+			s->status = '\0';
+			return false;
+		} else if (evt == 0x51) {
+			song.setTempo(s->curPos[1] << 16 | s->curPos[2] << 8 | s->curPos[3]);
+		}
+
+		s->curPos += vlqRead(s->curPos);
+		return true;
+	}
+
+	_curCmd = in;
+	uint8 evt = in & 0xf0;
+	uint8 chan = in & 0x0f;
+	uint8 arg1 = *s->curPos++;
+	uint8 arg2 = (evt > 0xb0 && evt < 0xe0) ? 0 : *s->curPos++;
+
+	if (evt < 0xa0)
+		noteOnOff(song, s, chan, arg1, evt == 0x90 ? arg2 : 0);
+	else if (evt == 0xc0 && (song._flags & 0x400))
+		s->program = _partPrograms[chan] = arg1;
+
+	return true;
+}
+
+void HSMidiParser::noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note, uint8 velo) {
+	uint16 prg = (song._flags & 0x800) ? s->program : _partPrograms[chan];
+
+	for (Common::Array<uint16>::const_iterator i = song._programMappings.begin(); i != song._programMappings.end(); i += 2) {
+		if (prg == i[0]) {
+			prg = i[1];
+			break;
+		}
+	}
+
+	if (note + song._transpose > 0)
+		note += song._transpose;
+
+	if (velo)
+		_driver->noteOn(chan, prg, note, velo, 10000, s);
+	else
+		_driver->noteOff(chan, note, s);
+}
+
+HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(nullptr), _mutex(mutex), _sampleConvertBuffer(nullptr), _interpolationTable(nullptr),
+_transCycleLenDef(0), _interpolationTable2(nullptr), _amplitudeScaleBuffer(nullptr), _interpolationMode(kNone), _wtable(nullptr), _wtableCount(0), _midi(nullptr),
+_convertBufferNumUnits(0), _chan(nullptr), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(nullptr), _pcmDstBufferSize(370),
+_transBuffer(nullptr), _convertUnitSizeLast(0), _numChanSfxLast(0), _wtableCount2(0), _pmDataTrm(0x8000) {
 #define HSOPC(x)	_hsOpcodes.push_back(new HSOpcode(this, &HSLowLevelDriver::x))
 	HSOPC(cmd_startSong);
 	HSOPC(cmd_stopSong);
@@ -693,8 +908,8 @@ HSLowLevelDriver::~HSLowLevelDriver() {
 	delete[] _transBuffer;
 	delete[] _wtable;
 	delete[] _instruments;
-	delete[] _trackState;
 	delete[] _chan;
+	delete _midi;
 
 	for (Common::Array<HSOpcode*>::iterator i = _hsOpcodes.begin(); i != _hsOpcodes.end(); ++i)
 		delete *i;
@@ -708,16 +923,13 @@ HSAudioStream *HSLowLevelDriver::init(uint32 scummVMOutputrate, bool output16bit
 
 	_instruments = new InstrumentEntry[128]();
 
-	_trackState = new MidiTrackState[24];
-	memset(_trackState, 0, 24 * sizeof(MidiTrackState));
-
-	memset(_midiPartProgram, 0, sizeof(_midiPartProgram));
-
 	_transBuffer = new uint16[750];
 	memset(_transBuffer, 0, 750 * sizeof(uint16));
 
 	_wtable = new int16[17];
 	memset(_wtable, 0, 17 * sizeof(int16));
+
+	_midi = new HSMidiParser(this);
 
 	_vcstr = new HSAudioStream(this, scummVMOutputrate, ASC_DEVICE_RATE, _pcmDstBufferSize, output16bit);
 	return _vcstr;
@@ -738,7 +950,7 @@ int HSLowLevelDriver::send(int cmd, ...) {
 
 template<typename T> void HSLowLevelDriver::generateData(T *dst, uint32 len) {
 	pcmNextTick();
-	midiNextTick();
+	songNextTick();
 	fillBuffer<T>(dst);
 }
 
@@ -756,31 +968,30 @@ int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 	song->seek(0);
 	_song.load(ShStBuffer(song));
 	delete song;
-	_midiData = midi;
 	delete midi;
 
 	for (int i = 0; i < 128; ++i)
 		_instruments[i].status = InstrumentEntry::kUnusable;
 
 	_song._fastForward = true;
-	songStopChannel(-1);
+	_midi->stopResource(-1);
 	if (!songStart())
 		error("HSLowLevelDriver::cmd_startSong(): Error reading song data.");
 
 	// Fast-forward through the whole song to check which instruments need to be loaded
-	bool loop = _songLoop;
-	_songLoop = false;
-	_midiBusy = true;
-	for (bool lp = true; lp; lp = isMusicPlaying())
-		midiNextTick();
+	bool loop = _song._loop;
+	_song._loop = false;
+	_song._busy = true;
+	for (bool lp = true; lp; lp = songIsPlaying())
+		songNextTick();
 
-	_songLoop = loop;
-	_midiBusy = _song._fastForward = false;
+	_song._loop = loop;
+	_song._busy = _song._fastForward = false;
 	for (int i = 0; i < 128; ++i)
 		loadInstrument(i);
 
-	_midiBusy = true;
-	songStopChannel(-1);
+	_song._busy = true;
+	_midi->stopResource(-1);
 	if (!songStart())
 		error("HSLowLevelDriver::cmd_startSong(): Error reading song data.");
 
@@ -790,7 +1001,7 @@ int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 }
 
 int HSLowLevelDriver::cmd_stopSong(va_list &arg) {
-	songStopChannel(-1);
+	_midi->stopResource(-1);
 	return 0;
 }
 
@@ -804,12 +1015,12 @@ int HSLowLevelDriver::cmd_getDriverStatus(va_list &arg) {
 }
 
 int HSLowLevelDriver::cmd_getSongStatus(va_list &arg) {
-	return isMusicPlaying() ? -1 : 0;
+	return songIsPlaying() ? -1 : 0;
 }
 
 int HSLowLevelDriver::cmd_stopSong2(va_list &arg) {
-	_songLoop = false;
-	songStopChannel(-1);
+	_song._loop = false;
+	_midi->stopResource(-1);
 	return 0;
 }
 
@@ -820,12 +1031,12 @@ int HSLowLevelDriver::smd_stopSong3(va_list &arg) {
 }
 
 int HSLowLevelDriver::cmd_releaseSongData(va_list &arg) {
-	_midiBusy = false;
+	_song._busy = false;
 	for (int i = 0; i < _song._numChanMusic; ++i)
 		_chan[i].status = -1;
 
 	_song.release();
-	_midiData = ShStBuffer();
+	_midi->release();
 	_instrumentsSharedSamples.clear();
 
 	for (int i = 0; i < 128; ++i) {
@@ -865,7 +1076,7 @@ int HSLowLevelDriver::cmd_12(va_list &arg) {
 }
 
 int HSLowLevelDriver::cmd_setLoop(va_list &arg) {
-	_songLoop = va_arg(arg, int);
+	_song._loop = va_arg(arg, int);
 	return 0;
 }
 
@@ -1129,8 +1340,6 @@ void HSLowLevelDriver::createTables() {
 				*dst++ = ((i * ii) + 0x80) >> 8;
 		}
 	}
-
-	_songTicker = 0;
 }
 
 void HSLowLevelDriver::pcmNextTick() {
@@ -1149,13 +1358,8 @@ void HSLowLevelDriver::pcmNextTick() {
 
 	Common::fill<uint16*, uint16>(_transBuffer, &_transBuffer[_smpTransLen], val);
 
-	if (!cnt) {
-		++_songTicker;
+	if (!cnt)
 		return;
-	}
-
-	if (_midiMaxNotesPlayed < cnt)
-		_midiMaxNotesPlayed = cnt;
 
 	for (int i = 0; i < _song._numChanMusic + _song._numChanSfx; ++i) {
 		if (_chan[i].status < 0)
@@ -1381,7 +1585,6 @@ void HSLowLevelDriver::pcmUpdateChannel(HSSoundChannel &chan) {
 
 	chan.stateCur.phase = ih & 0xffff;
 	chan.stateCur.dataPos = src;
-	++_songTicker;
 }
 
 #undef HS_CYCL_DEF
@@ -1434,210 +1637,41 @@ template<typename T> void HSLowLevelDriver::fillBuffer(T *dst) {
 	}
 }
 
-void HSLowLevelDriver::songStopChannel(int id) {
-	for (int i = 0; i < 24; ++i) {
-		if (id < 0 || _trackState[i].resId == id)
-			_trackState[i].status = '\0';
-	}
-
-	for (int i = 0; i < _song._numChanMusic; ++i)
-		_chan[i].status = -1;
-}
-
 bool HSLowLevelDriver::songStart() {
 	if (!songInit())
 		return false;
 	createTables();
-	_songTicker = 0;
 
 	return true;
 }
 
 bool HSLowLevelDriver::songInit() {
-	_midiMaxNotesPlayed = 0;
-	for (int i = 0; i < ARRAYSIZE(_midiPartProgram); ++i)
-		_midiPartProgram[i] = i;
-
 	_song.reset();
-
-	const uint8 *in = _midiData.ptr;
-	const uint8 *end = &_midiData.ptr[_midiData.len];
-	_midiTracks.clear();
-
-	while (in < end) {
-		if (READ_BE_UINT32(in) == 'MThd')
-			break;
-		in += 2;
-	}
-	if (in >= end)
-		return false;
-
-	int tps = READ_BE_UINT16(in + 12);
-	if (tps >= 0)
-		_song.setTicksPerSecond(tps);
-
-	while (in < end) {
-		if (READ_BE_UINT32(in) == 'MTrk')
-			break;
-		++in;
-	}
-	if (in >= end)
-		return false;
-
-	do {
-		ShStBuffer track(in + 8, READ_BE_UINT32(in + 4));
-		_midiTracks.push_back(track);
-		in += (track.len + 8);
-	} while (in < end && READ_BE_UINT32(in) == 'MTrk');
-
-	uint8 prg = 0;
-	for (Common::Array<ShStBuffer>::const_iterator i = _midiTracks.begin(); i != _midiTracks.end(); ++i) {
-		int ch = 0;
-		for (; ch < 24; ++ch) {
-			if (!_trackState[ch].status)
-				break;
-		}
-		if (ch == 24)
-			return false;
-
-		_trackState[ch].data = i;
-		_trackState[ch].curPos = i->ptr;
-		_trackState[ch].resId = _song._midiResId;
-		_trackState[ch].status = 'F';
-		_trackState[ch].ticker = 0;
-		_trackState[ch].program = prg++;
-	}
-
-	return true;
+	return _midi->loadTracks(_song);
 }
 
-uint32 vlqRead(const uint8 *&s) {
-	uint32 res = 0;
-	do {
-		res = (res << 7) | (*s & 0x7f);
-	} while (*s++ & 0x80);
-	return res;
+void HSLowLevelDriver::songStopAllChannels() {
+	for (int i = 0; i < _song._numChanMusic; ++i)
+		_chan[i].status = -1;
 }
 
-void HSLowLevelDriver::midiNextTick() {
-	if (!_midiBusy)
+void HSLowLevelDriver::songNextTick() {
+	if (!_song._busy)
 		return;
 
-	bool foundActiveTrack = false;
-	for (int ch = 0; ch < 24; ++ch) {
-		MidiTrackState *s = &_trackState[ch];
-		if (!s->status)
-			continue;
+	bool active = _midi->nextTick(_song);
 
-		foundActiveTrack = true;
-		bool checkPos = true;
-
-		if (s->status == 'F') {
-			s->status = 'R';
-			checkPos = false;
-		} else {
-			s->ticker -= _song.tempo();
-			if (s->ticker >= 0)
-				continue;
-		}
-
-		bool contMain = false;
-		for (bool checkTicker = true; checkPos || checkTicker; ) {
-			if (checkPos) {
-				if (s->curPos >= &s->data->ptr[s->data->len]) {
-					s->status = '\0';
-					contMain = true;
-					break;
-				}
-				contMain = !midiParseEvent(s);
-			}
-
-			if (contMain)
-				break;
-
-			checkPos = false;
-
-			uint32 val = vlqRead(s->curPos);
-			if (val) {
-				s->ticker += (val << 6);
-				if (s->ticker >= 0)
-					checkTicker = false;
-				else
-					checkPos = true;
-			} else {
-				checkTicker = midiParseEvent(s);
-			}
-		}
-	}
-
-	if (!foundActiveTrack && _songLoop)
+	if (!active && _song._loop)
 		songInit();
 }
 
-bool HSLowLevelDriver::isMusicPlaying() {
-	if (!_midiBusy)
+bool HSLowLevelDriver::songIsPlaying() {
+	if (!_song._busy)
 		return false;
-	if (_songLoop)
+	if (_song._loop)
 		return true;
-	for (int ch = 0; ch < 24; ++ch) {
-		if (_trackState[ch].status)
-			return true;
-	}
-	return false;
-}
 
-bool HSLowLevelDriver::midiParseEvent(MidiTrackState *s) {
-	uint8 in = *s->curPos++;
-
-	if (in < 0x80) {
-		if (s->curPos <= s->data->ptr)
-			error("HSLowLevelDriver::midiParseEvent(): Data error");
-		s->curPos--;
-		in = _midiCurCmd;
-	} else if (in == 0xff) {
-		uint evt = *s->curPos++;
-		if (evt == 0x2f) {
-			s->status = '\0';
-			return false;
-		} else if (evt == 0x51) {
-			_song.setTempo(s->curPos[1] << 16 | s->curPos[2] << 8 | s->curPos[3]);
-		}
-
-		s->curPos += vlqRead(s->curPos);
-		return true;
-	}
-
-	_midiCurCmd = in;
-	uint8 evt = in & 0xf0;
-	uint8 chan = in & 0x0f;
-	uint8 arg1 = *s->curPos++;
-	uint8 arg2 = (evt > 0xb0 && evt < 0xe0) ? 0 : *s->curPos++;
-
-	if (evt < 0xa0)
-		midiNoteOnOff(s, chan, arg1, evt == 0x90 ? arg2 : 0);
-	else if (evt == 0xc0 && (_song._flags & 0x400))
-		s->program = _midiPartProgram[chan] = arg1;
-
-	return true;
-}
-
-void HSLowLevelDriver::midiNoteOnOff(MidiTrackState *s, uint8 chan, uint8 note, uint8 velo) {
-	uint16 prg = (_song._flags & 0x800) ? s->program : _midiPartProgram[chan];
-
-	for (Common::Array<uint16>::const_iterator i = _song._programMappings.begin(); i != _song._programMappings.end(); i += 2) {
-		if (prg == i[0]) {
-			prg = i[1];
-			break;
-		}
-	}
-
-	if (note + _song._transpose > 0)
-		note += _song._transpose;
-
-	if (velo)
-		noteOn(chan, prg, note, velo, 10000, s);
-	else
-		noteOff(chan, note, s);
+	return _midi->isPlaying();
 }
 
 void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uint16 ticker, const void *handle) {
