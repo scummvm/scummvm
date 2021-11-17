@@ -108,6 +108,10 @@ PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 	_objtype = kObjTypePictureObject;
 }
 
+PictureObject::~PictureObject() {
+	delete _picture;
+}
+
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	debugC(5, kDebugLoading, "PictureObject::load()");
 	GameObject::load(file);
