@@ -4218,12 +4218,13 @@ void ScummEngine::updateScreenShakeEffect() {
 
 	while (now >= _shakeNextTick) {
 		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->setShakePos(0, -shake_positions[_shakeFrame]);
-		// In DOTT (and probably all other imuse games) this runs on the imuse timer which is a PIT 0 Timer at 291304 Hz.
+		_system->setShakePos(0, -shake_positions[_shakeFrame] * _textSurfaceMultiplier);
+		// In DOTT (and probably all other imuse games) this runs on the imuse timer which is a PIT 0 Timer at 291.304 Hz.
 		// Apparently it is the same timer setting for all sound drivers although it is set up not in the main executable
 		// but inside each respective ims driver during the driver load/init process. The screen shakes update every 8 ticks.
-		// I assume that this might be slightly different per SCUMM version, target platform etc...
-		_shakeTickCounter += ((1000000000 / 291304) * 8);
+		// LOOM uses either 236.696 Hz at 8 ticks delay or 473.297 Hz at 16 ticks delay, depending on the sound card selection.
+		// The outcome is the same...
+		_shakeTickCounter += ((1000000000 / _shakeTimerRate) * 8);
 		_shakeNextTick += (_shakeTickCounter / 1000);
 		_shakeTickCounter %= 1000;
 	}

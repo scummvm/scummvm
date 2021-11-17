@@ -109,7 +109,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
-	  _rnd("scumm")
+	  _rnd("scumm"),
+	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304)
 	  {
 
 	_localizer = nullptr;
