@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 namespace OpenGL {
 namespace BuiltinShaders {

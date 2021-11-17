@@ -24,7 +24,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"

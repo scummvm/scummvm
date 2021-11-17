@@ -25,7 +25,7 @@
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/texture.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/shader.h"
 
@@ -83,4 +83,4 @@ Math::Vector2d OpenGLSSurfaceRenderer::normalizeCurrentCoordinates(int x, int y)
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // if defined(USE_OPENGL_SHADERS)

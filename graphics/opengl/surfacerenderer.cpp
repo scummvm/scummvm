@@ -22,27 +22,27 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/surfacerenderer.h"
 
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/texture.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/shader.h"
 #endif
 
 namespace OpenGL {
 
 SurfaceRenderer *createBestSurfaceRenderer() {
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 	if (OpenGLContext.shadersSupported) {
 		return new ShaderSurfaceRenderer();
 	}
 #endif
 
-#ifndef USE_GLES2
+#if defined(USE_OPENGL_GAME)
 	return new FixedSurfaceRenderer();
 #else
 	error("Could not create an appropriate surface renderer for the current OpenGL context");
@@ -71,7 +71,7 @@ void SurfaceRenderer::enableAlphaBlending(bool enable) {
 	_alphaBlending = enable;
 }
 
-#ifndef USE_GLES2
+#if defined(USE_OPENGL_GAME)
 
 FixedSurfaceRenderer::~FixedSurfaceRenderer() {
 }
@@ -145,7 +145,7 @@ void FixedSurfaceRenderer::restorePreviousState() {
 
 #endif
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 
 ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 	const GLfloat vertices[] = {

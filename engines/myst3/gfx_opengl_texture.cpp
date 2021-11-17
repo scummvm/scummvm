@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/myst3/gfx_opengl_texture.h"
 

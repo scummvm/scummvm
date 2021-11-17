@@ -31,7 +31,7 @@
 
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 namespace OpenGL {
 	class ShaderGL;
@@ -74,4 +74,4 @@ protected:
 
 #endif // STARK_GFX_OPENGL_S_RENDERED_H
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)

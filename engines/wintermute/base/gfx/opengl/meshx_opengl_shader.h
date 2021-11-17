@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/gfx/x/meshx.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/shader.h"
 
@@ -57,6 +57,6 @@ protected:
 
 } // namespace Wintermute
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 #endif

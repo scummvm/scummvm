@@ -25,7 +25,7 @@
 
 #include "common/system.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/driver.h"
 
@@ -88,6 +88,6 @@ private:
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 #endif // STARK_GFX_OPENGLS_H

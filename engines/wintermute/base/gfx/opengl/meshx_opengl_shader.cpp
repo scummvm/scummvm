@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/gfx/x/material.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl_shader.h"
@@ -135,4 +135,4 @@ bool MeshXOpenGLShader::update(FrameNode *parentFrame) {
 
 } // namespace Wintermute
 
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
