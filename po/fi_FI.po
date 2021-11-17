@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-16 19:36+0000\n"
-"PO-Revision-Date: 2021-11-02 23:26+0000\n"
+"PO-Revision-Date: 2021-11-17 21:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -682,54 +682,46 @@ msgstr "???"
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
-msgstr ""
+msgstr "Valitse ryhmitys"
 
 #: gui/launcher.cpp:198
 msgid "Group by: "
-msgstr ""
+msgstr "Ryhmitys: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Valitse kriteeri jonka mukaan ryhmittää"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "Ei mikään"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "Ensimmäinen sivu"
+msgstr "Ensimmäinen kirjain"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "Sarja"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "Julkaisija"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Kieli:"
+msgstr "Kieli"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Alusta:"
+msgstr "Alusta"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -857,7 +849,7 @@ msgstr "Valitse peli:"
 
 #: gui/launcher.cpp:778
 msgid "Group by:"
-msgstr ""
+msgstr "Ryhmitä:"
 
 #: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -903,42 +895,36 @@ msgstr "~M~uokkaa peliä..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1110 gui/launcher.cpp:1297
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Tuntematon versio"
+msgstr "Tuntematon pelimoottori"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1128 gui/launcher.cpp:1329
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Tuntematon tekijä"
+msgstr "Tuntematon julkaisija"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1146 gui/launcher.cpp:1315
 msgid "No Series"
-msgstr ""
+msgstr "Ei sarjaa"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1161 gui/launcher.cpp:1348
 msgid "Language not detected"
-msgstr ""
+msgstr "Kieli ei tiedossa"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1363
 msgid "Platform not detected"
-msgstr ""
+msgstr "Alusta ei tiedossa"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1374 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Kaikki"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1457,18 +1443,13 @@ msgid "Theme Path:"
 msgstr "Teemojen polku:"
 
 #: gui/options.cpp:2254
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/root/-polku:"
+msgstr "Ikonipolku:"
 
 #: gui/options.cpp:2256
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/root/-polku:"
+msgstr "Ikonipolku:"
 
 #: gui/options.cpp:2262 gui/options.cpp:2264 gui/options.cpp:2265
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1885,10 +1866,8 @@ msgid "Select directory for GUI themes"
 msgstr "Valitse hakemisto käyttöliittymän teemoille"
 
 #: gui/options.cpp:2889
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Valitse hakemisto käyttöliittymän teemoille"
+msgstr "Valitse hakemisto käyttöliittymän pikkukuville"
 
 #: gui/options.cpp:2899
 msgid "Select directory for extra files"
@@ -2197,10 +2176,8 @@ msgid "Play"
 msgstr "Pelaa"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Tallenna"
+msgstr "Tallennukset"
 
 #: base/main.cpp:651
 msgid "Error running game:"
@@ -7079,6 +7056,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please reinstall the game with the correct resource files."
 msgstr ""
+"ScummVM:n työkaluilla pakattuja äänitiedostoja havaittu; *.BUN/*.SOU\n"
+"pakkaukset eivät enää ole tuettuja tässä pelissä, joten äänet eivät kuulu.\n"
+"Ole hyvä ja asenna peli uudelleen sopivien äänitiedostojen kera."
 
 #: engines/scumm/scumm.cpp:2122
 #, c-format
