@@ -167,6 +167,7 @@ class GameObject : public CObject {
 class PictureObject : public GameObject {
 public:
 	PictureObject();
+	~PictureObject();
 
 	PictureObject(PictureObject *src);
 
