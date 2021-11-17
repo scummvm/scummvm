@@ -432,6 +432,7 @@ void KyraEngine_LoK::mainLoop() {
 	static_cast<Debugger_LoK *>(getDebugger())->initialize();
 
 	_eventList.clear();
+	bool updateGfx = true;
 
 	while (!shouldQuit()) {
 		int32 frameTime = (int32)_system->getMillis();
@@ -447,7 +448,8 @@ void KyraEngine_LoK::mainLoop() {
 			snd_playSoundEffect(49);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			removeHandItem();
-			_gui->buttonMenuCallback(0);
+			_gui->buttonMenuCallback(nullptr);
+			updateGfx = !shouldQuit();
 			_deathHandler = -1;
 		}
 
@@ -476,7 +478,7 @@ void KyraEngine_LoK::mainLoop() {
 		if (skipFlag())
 			resetSkipFlag();
 
-		delay((frameTime + _gameSpeed) - _system->getMillis(), true, true);
+		delay((frameTime + _gameSpeed) - _system->getMillis(), updateGfx, true);
 	}
 }
 
