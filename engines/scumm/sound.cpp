@@ -563,8 +563,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 
 		file->seek(0, SEEK_END);
-		int fileSize = file->pos();
 #if defined(ENABLE_SCUMM_7_8)
+		int fileSize = file->pos();
 		_vm->_imuseDigital->startVoice(filename, file.release(), 0, fileSize);
 #endif
 		return;
