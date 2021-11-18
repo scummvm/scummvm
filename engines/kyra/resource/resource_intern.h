@@ -142,6 +142,11 @@ public:
 	static Common::Archive *load(Resource *owner, const Common::String &filename, const Common::String &extension, const uint8 offset);
 };
 
+class StuffItLoader {
+public:
+	static Common::Archive *load(Resource *owner, const Common::String &filename);
+};
+
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
 	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}

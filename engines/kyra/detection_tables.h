@@ -325,6 +325,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
+	{
+		{
+			"kyra1",
+			"StuffIt",
+			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "1d763e991c787431cac3786afbbdae72", 53899),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
+		},
+		KYRA1_FLOPPY_CMP_FLAGS
+	},
+
 	{ // FM-TOWNS version
 		{
 			"kyra1",

@@ -26,6 +26,8 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/macresman.h"
+#include "common/stuffit.h"
 
 namespace Kyra {
 
@@ -927,7 +929,7 @@ struct InsArchive {
 	uint32 totalSize;
 };
 
-} // end of anonymouse namespace
+} // end of anonymous namespace
 
 class CmpVocDecoder {
 public:
@@ -1196,6 +1198,20 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 
 	archives.clear();
 	return new CachedArchive(fileList);
+}
+
+Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename) {
+	Common::MacResManager resource;
+
+	if (resource.open(filename)) {
+		Common::SeekableReadStream *stream = resource.getDataFork();
+		if (stream) {
+			Common::Archive *archive = Common::createStuffItArchive(stream);
+			return archive;
+		}
+	}
+
+	error("StuffItLoader::load: Could not load %s", filename.c_str());
 }
 
 CmpVocDecoder::CmpVocDecoder() {

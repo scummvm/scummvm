@@ -25,6 +25,7 @@
  * StuffIt decompressor used in engines:
  * - grim
  * - groovie
+ * - kyra
  */
 
 #ifndef COMMON_STUFFIT_H
@@ -43,6 +44,7 @@ namespace Common {
 
 class Archive;
 class String;
+class SeekableReadStream;
 
 /**
  * This factory method creates an Archive instance corresponding to the content
@@ -51,6 +53,7 @@ class String;
  * May return 0 in case of a failure.
  */
 Archive *createStuffItArchive(const String &fileName);
+Archive *createStuffItArchive(SeekableReadStream *stream);
 
 /** @} */
 
