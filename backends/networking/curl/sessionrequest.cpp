@@ -105,7 +105,7 @@ void SessionRequest::finishSuccess() {
 	_complete = true;
 	_success = true;
 
-	if (_callback && !_localFile) {	// If localfile is present, we already called the callback
+	if (_callback) {	// If localfile is present, contentStream is empty, so it is fine
 		_response.buffer = _contentsStream.getData();
 		_response.len = _contentsStream.size();
 		_response.eos = true;
