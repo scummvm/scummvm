@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-18 21:56+0000\n"
+"POT-Creation-Date: 2021-11-18 22:33+0000\n"
 "PO-Revision-Date: 2021-11-16 17:53+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -133,7 +133,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3087 gui/options.cpp:3125 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3090 gui/options.cpp:3128 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -145,7 +145,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3087 gui/options.cpp:3125 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3090 gui/options.cpp:3128 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -311,7 +311,7 @@ msgstr ""
 #: gui/options.cpp:1422 gui/options.cpp:1435 gui/options.cpp:1449
 #: gui/options.cpp:1461 gui/options.cpp:1481 gui/options.cpp:1493
 #: gui/options.cpp:1867 gui/options.cpp:2287 gui/options.cpp:2360
-#: gui/options.cpp:2540 gui/options.cpp:2975 audio/null.cpp:41
+#: gui/options.cpp:2540 gui/options.cpp:2978 audio/null.cpp:41
 msgid "<default>"
 msgstr "<Standard>"
 
@@ -500,20 +500,20 @@ msgstr "Statistiken"
 #: gui/options.cpp:2208 gui/options.cpp:2251 gui/options.cpp:2259
 #: gui/options.cpp:2267 gui/options.cpp:2276 gui/options.cpp:2653
 #: gui/options.cpp:2659 gui/options.cpp:2665 gui/options.cpp:2672
-#: gui/options.cpp:2681 gui/options.cpp:2956 gui/options.cpp:2959
-#: gui/options.cpp:2962 gui/options.cpp:2969 gui/options.cpp:2981
-#: gui/options.cpp:2992
+#: gui/options.cpp:2681 gui/options.cpp:2959 gui/options.cpp:2962
+#: gui/options.cpp:2965 gui/options.cpp:2972 gui/options.cpp:2984
+#: gui/options.cpp:2995
 msgctxt "path"
 msgid "None"
 msgstr "Standard"
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
 #: gui/editgamedialog.cpp:646 gui/options.cpp:2151 gui/options.cpp:2647
-#: gui/options.cpp:2965 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2968 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2986
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2989
 msgid "Select SoundFont"
 msgstr "SoundFont auswählen"
 
@@ -1532,7 +1532,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVM-Konfiguration: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2292 gui/options.cpp:2975
+#: gui/options.cpp:2292 gui/options.cpp:2978
 msgid "Last browser path: "
 msgstr "Zuletzt aufgerufener Datei-Pfad: "
 
@@ -1703,7 +1703,7 @@ msgstr "Letzte Synchronisation:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
 
-#: gui/options.cpp:2451 gui/options.cpp:3330
+#: gui/options.cpp:2451 gui/options.cpp:3333
 msgid "<never>"
 msgstr "<nie>"
 
@@ -1804,7 +1804,7 @@ msgstr "Server starten"
 msgid "Run local webserver"
 msgstr "Startet den lokalen Webserver"
 
-#: gui/options.cpp:2492 gui/options.cpp:3445
+#: gui/options.cpp:2492 gui/options.cpp:3448
 msgid "Not running"
 msgstr "Nicht gestartet"
 
@@ -1949,7 +1949,7 @@ msgid "Select directory for Files Manager /root/"
 msgstr ""
 "Wählen Sie das Verzeichnis aus, welches als Stammverzeichnis ('root') dient"
 
-#: gui/options.cpp:3062
+#: gui/options.cpp:3065
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1957,49 +1957,49 @@ msgstr ""
 "Fehler beim Öffnen der URL!\n"
 "Sie sollten diese Seite manuell aufrufen."
 
-#: gui/options.cpp:3087
+#: gui/options.cpp:3090
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/options.cpp:3096 gui/options.cpp:3134
+#: gui/options.cpp:3099 gui/options.cpp:3137
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Warten Sie, bis der Cloud-Speicher fertig ist und versuchen Sie es erneut."
 
-#: gui/options.cpp:3109
+#: gui/options.cpp:3112
 msgid "Connecting..."
 msgstr "Verbinden..."
 
-#: gui/options.cpp:3125
+#: gui/options.cpp:3128
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Dieser Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/options.cpp:3328 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3331 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<gerade eben>"
 
-#: gui/options.cpp:3437
+#: gui/options.cpp:3440
 msgid "Stop server"
 msgstr "Server anhalten"
 
-#: gui/options.cpp:3438
+#: gui/options.cpp:3441
 msgid "Stop local webserver"
 msgstr "Lokalen Webserver anhalten"
 
-#: gui/options.cpp:3490
+#: gui/options.cpp:3493
 msgid "Storage connected."
 msgstr "Cloud-Speicher verbunden."
 
-#: gui/options.cpp:3492
+#: gui/options.cpp:3495
 msgid "Failed to connect storage."
 msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen."
 
-#: gui/options.cpp:3494
+#: gui/options.cpp:3497
 msgid "Failed to connect storage: "
 msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen: "
 
-#: gui/options.cpp:3514
+#: gui/options.cpp:3517
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
