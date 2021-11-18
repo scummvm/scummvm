@@ -102,6 +102,7 @@ public:
 	void updatePalette(int32 param);
 	void setupPalette(byte *buffer, int start, int count);
 
+	bool isFading() { return _isFading; }
 	void startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta);
 	void paletteFade(uint32 start, int32 ticksWait, int32 delta);
 	void stopPaletteFade(char red, char green, char blue);
