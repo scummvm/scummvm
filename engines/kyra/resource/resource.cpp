@@ -97,7 +97,16 @@ bool Resource::reset() {
 			error("Could not find Legend of Kyrandia installer file");
 		}
 
-		_files.add("installer", loadStuffItArchive(kyraInstaller));
+		Common::Archive *archive = loadStuffItArchive(kyraInstaller);
+		_files.add("installer", archive, 0, false);
+
+		Common::ArchiveMemberList members;
+		archive->listMatchingMembers(members, "*.PAK");
+		for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); ++it) {
+			Common::String name = (*it)->getName();
+			Common::Archive *pak = loadArchive(name, *it);
+			_files.add(name, pak, 0, false);
+		}
 	} else if (_vm->game() == GI_KYRA1 || _vm->game() == GI_EOB1) {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
