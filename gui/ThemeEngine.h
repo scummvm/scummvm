@@ -37,7 +37,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.52"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.53"
 
 class OSystem;
 
