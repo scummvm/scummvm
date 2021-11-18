@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.6.0 (XXXX-XX-XX)
 
+ New games:
+   - Added support for Sanitarium.
+
  General:
    - Now ScummVM requires C++11 for building.
    - Implemented enhanced filtering in the Search box. See "Understanding
