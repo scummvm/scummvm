@@ -2940,7 +2940,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+#endif
 
+#ifdef USE_LIBCURL
 	case kUpdateIconsCmd: {
 		DownloadIconsDialog dia;
 
@@ -2951,6 +2953,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+
 #endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(_c("None", "path"));
