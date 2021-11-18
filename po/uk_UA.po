@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-18 22:33+0000\n"
-"PO-Revision-Date: 2021-11-18 22:41+0000\n"
+"PO-Revision-Date: 2021-11-18 22:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -204,37 +204,27 @@ msgid "Download speed: %s %S"
 msgstr "Швидкість завантаження: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Завантажую збереження гри..."
+msgstr "Завантажую список іконок..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Завантажую збереження гри..."
+msgstr "Завантажую список іконок... %d записів"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Знайдено %d нових пакетів, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Завантажити патч"
+msgstr "Завантажити"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Завантаження закінчено.\n"
-"Не вдалося завантажити %u файлів."
+msgstr "Завантаження закінчено, завантажено %d пакетів, %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:302
 #: gui/gui-manager.cpp:218 gui/unknown-game-dialog.cpp:54
@@ -247,15 +237,15 @@ msgstr "Закрити"
 #: gui/downloadiconsdialog.cpp:307
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "ПОМИЛКА %d:%s"
 
 #: gui/downloadiconsdialog.cpp:324
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "ПОМИЛКА: Не завдано шлях до іконок"
 
 #: gui/downloadiconsdialog.cpp:354
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Не знайдено нових пакетів іконок"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -1627,10 +1617,8 @@ msgid "Check now"
 msgstr "Перевірити зараз"
 
 #: gui/options.cpp:2422
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Перевіряти оновлення:"
+msgstr "Поновити іконки"
 
 #: gui/options.cpp:2430
 msgid "Active storage:"
@@ -2384,31 +2372,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "КБ"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "МБ"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "ГБ"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "ТБ"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
@@ -7153,6 +7133,10 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please reinstall the game with the correct resource files."
 msgstr ""
+"Знайдено аудіо файли, які було скомпресовано за допомогою ScummVM Tools.\n"
+"Компресія *.BUN/*.SOU файлів більше не підтримується для цієї гри. Звук буде "
+"виключено.\n"
+"Будь-ласка скопіюйте наново файли з оригінальних дисків без компресії."
 
 #: engines/scumm/scumm.cpp:2123
 #, c-format
