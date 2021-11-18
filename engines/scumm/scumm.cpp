@@ -1651,7 +1651,7 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		GUI::MessageDialog dialog(_(
 			"Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 			"compression is not supported anymore for this game, audio will be disabled.\n"
-			"Please reinstall the game with the correct resource files."),
+			"Please copy the game from the original media without compression."),
 		_("OK"));
 		dialog.runModal();
 		_imuseDigital->disableEngine();
