@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "chewy/chewy.h"
+#include "chewy/debugger.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/main.h"
@@ -70,6 +71,7 @@ void ChewyEngine::initialize() {
 
 	_tempFiles.add(ADSH_TMP);
 	SearchMan.add("temp", &_tempFiles, 99, false);
+	setDebugger(new Debugger());
 }
 
 Common::Error ChewyEngine::run() {
