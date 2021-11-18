@@ -42,7 +42,8 @@ enum IconProcessState {
 	kDownloadStateList,
 	kDownloadStateListDownloaded,
 	kDownloadStateListCalculated,
-	kDownloadStateDownloading
+	kDownloadStateDownloading,
+	kDownloadComplete
 };
 
 class DownloadIconsDialog : public Dialog, public CommandSender {

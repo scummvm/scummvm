@@ -58,10 +58,12 @@ struct DialogState {
 } static *g_state;
 
 static uint32 getDownloadingProgress() {
-	if (!g_state)
+	if (!g_state || g_state->totalsize == 0)
 		return 0;
 
-	return 100 * g_state->downloadedsize / (g_state->totalsize ? g_state->totalsize : 1);
+	uint32 progress = (uint32)(100 * ((double)g_state->downloadedsize / (double)g_state->totalsize));
+
+	return progress;
 }
 
 static uint32 getDownloadSpeed() {
@@ -168,6 +170,21 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_closeButton->setCmd(kCloseCmd);
 		_closeButton->setEnabled(true);
 		break;
+
+	case kDownloadComplete: {
+			Common::String size, sizeUnits;
+			size = getHumanReadableBytes(g_state->totalsize, sizeUnits);
+			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
+			_closeButton->setVisible(false);
+			_cancelButton->setLabel(_("Cancel download"));
+			_cancelButton->setCmd(kDownloadCancelCmd);
+
+			_closeButton->setVisible(true);
+			_closeButton->setLabel(_("Close"));
+			_closeButton->setCmd(kCloseCmd);
+			_closeButton->setEnabled(true);
+			break;
+		}
 	}
 }
 
@@ -189,7 +206,7 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	case kDownloadEndedCmd:
-		_close = true;
+		setState(kDownloadComplete);
 		break;
 	case kListDownloadFinishedCmd:
 		setState(kDownloadStateListDownloaded);
@@ -339,7 +356,7 @@ void DownloadIconsDialog::calculateList() {
 void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
-	warning("Read %u bytes", response->len);
+	g_state->downloadedsize += response->len;
 
 	if (response->eos) {
 		sendCommand(kDownloadEndedCmd, 0);
