@@ -24,6 +24,8 @@
 #include "kyra/resource/resource_intern.h"
 
 #include "common/config-manager.h"
+#include "common/macresman.h"
+#include "common/punycode.h"
 #include "common/fs.h"
 
 namespace Kyra {
@@ -62,7 +64,41 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (_vm->game() == GI_KYRA1 || _vm->game() == GI_EOB1) {
+	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::kPlatformMacintosh && _vm->gameFlags().useInstallerPackage) {
+		const char *const tryFileNames[] = {
+			"Install Legend of Kyrandia",
+			"Install Legend of Kyrandia\xaa"
+		};
+
+		const Common::CodePage tryCodePages[] = {
+			Common::kMacRoman,
+			Common::kISO8859_1
+		};
+
+		Common::MacResManager resource;
+		Common::String kyraInstaller;
+
+		for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
+			for (int ii = 0; ii < ARRAYSIZE(tryFileNames); ++ii) {
+				Common::U32String fn(tryFileNames[ii], tryCodePages[i]);
+				kyraInstaller = fn.encode(Common::kUtf8);
+				if (resource.exists(kyraInstaller))
+					break;
+				kyraInstaller = Common::punycode_encodefilename(fn);
+				if (resource.exists(kyraInstaller))
+					break;
+				kyraInstaller.clear();
+			}
+			if (!kyraInstaller.empty())
+				break;
+		}
+
+		if (kyraInstaller.empty()) {
+			error("Could not find Legend of Kyrandia installer file");
+		}
+
+		_files.add("installer", loadStuffItArchive(kyraInstaller));
+	} else if (_vm->game() == GI_KYRA1 || _vm->game() == GI_EOB1) {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 			return true;
@@ -368,6 +404,19 @@ Common::Archive *Resource::loadInstallerArchive(const Common::String &file, cons
 		return cachedArchive->_value;
 
 	Common::Archive *archive = InstallerLoader::load(this, file, ext, offset);
+	if (!archive)
+		return nullptr;
+
+	_archiveCache[file] = archive;
+	return archive;
+}
+
+Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
+	if (cachedArchive != _archiveCache.end())
+		return cachedArchive->_value;
+
+	Common::Archive *archive = StuffItLoader::load(this, file);
 	if (!archive)
 		return nullptr;
 

@@ -43,6 +43,7 @@ public:
 	~StuffItArchive() override;
 
 	bool open(const Common::String &filename);
+	bool open(Common::SeekableReadStream *stream);
 	void close();
 	bool isOpen() const { return _stream != nullptr; }
 
@@ -90,9 +91,14 @@ static const uint32 s_magicNumbers[] = {
 };
 
 bool StuffItArchive::open(const Common::String &filename) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(filename);
+	return open(stream);
+}
+
+bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 	close();
 
-	_stream = SearchMan.createReadStreamForMember(filename);
+	_stream = stream;
 
 	if (!_stream)
 		return false;
@@ -195,7 +201,8 @@ bool StuffItArchive::open(const Common::String &filename) {
 }
 
 void StuffItArchive::close() {
-	delete _stream; _stream = nullptr;
+	delete _stream;
+	_stream = nullptr;
 	_map.clear();
 }
 
@@ -530,6 +537,17 @@ Common::Archive *createStuffItArchive(const Common::String &fileName) {
 	StuffItArchive *archive = new StuffItArchive();
 
 	if (!archive->open(fileName)) {
+		delete archive;
+		return nullptr;
+	}
+
+	return archive;
+}
+
+Common::Archive *createStuffItArchive(Common::SeekableReadStream *stream) {
+	StuffItArchive *archive = new StuffItArchive();
+
+	if (!archive->open(stream)) {
 		delete archive;
 		return nullptr;
 	}
