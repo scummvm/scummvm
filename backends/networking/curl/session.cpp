@@ -33,23 +33,32 @@ Session::~Session() {
 	close();
 }
 
-SessionRequest *Session::get(Common::String url, DataCallback cb, ErrorCallback ecb, bool binary) {
+static Common::String constructUrl(Common::String prefix, Common::String url) {
 	// check url prefix
-	if (!_prefix.empty()) {
+	if (!prefix.empty()) {
 		if (url.contains("://")) {
-			if (url.size() < _prefix.size() || url.find(_prefix) != 0) {
-				warning("Session: given URL does not match the prefix!\n\t%s\n\t%s", url.c_str(), _prefix.c_str());
-				return nullptr;
+			if (url.size() < prefix.size() || url.find(prefix) != 0) {
+				warning("Session: given URL does not match the prefix!\n\t%s\n\t%s", url.c_str(), prefix.c_str());
+				return "";
 			}
 		} else {
 			// if no schema given, just append <url> to <_prefix>
-			Common::String newUrl = _prefix;
+			Common::String newUrl = prefix;
 			if (newUrl.lastChar() != '/' && (url.size() > 0 && url.firstChar() != '/'))
 				newUrl += "/";
 			newUrl += url;
 			url = newUrl;
 		}
 	}
+
+	return url;
+}
+
+SessionRequest *Session::get(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
+	url = constructUrl(_prefix, url);
+
+	if (url.empty())
+		return nullptr;
 
 	// check if request has finished (ready to be replaced)
 	if (_request) {
@@ -60,10 +69,10 @@ SessionRequest *Session::get(Common::String url, DataCallback cb, ErrorCallback 
 	}
 
 	if (!_request) {
-		_request = new Networking::SessionRequest(url, cb, ecb, binary); // automatically added to ConnMan
+		_request = new SessionRequest(url, localFile, cb, ecb, binary); // automatically added to ConnMan
 		_request->connectionKeepAlive();
 	} else {
-		_request->reuse(url, cb, ecb);
+		_request->reuse(url, localFile, cb, ecb, binary);
 	}
 
 	return _request;

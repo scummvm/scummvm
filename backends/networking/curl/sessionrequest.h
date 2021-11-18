@@ -25,11 +25,27 @@
 
 #include "backends/networking/curl/curlrequest.h"
 #include "common/memstream.h"
-#include "common/json.h"
+
+namespace Common {
+class DumpFile;
+class JSONValue;
+}
 
 namespace Networking {
 
 #define CURL_SESSION_REQUEST_BUFFER_SIZE 512 * 1024
+
+struct SessionFileResponse {
+	byte *buffer;
+	uint32 len;
+	bool eos;
+};
+
+/**
+ * @brief Class for reading file and storing locally
+ *
+ * @return Returns SessionFileResponse in the callback
+ */
 
 class SessionRequest: public CurlRequest {
 protected:
@@ -38,6 +54,8 @@ protected:
 	char *_text;
 	bool _started, _complete, _success;
 	bool _binary;
+	Common::DumpFile *_localFile;
+	SessionFileResponse _response;
 
 	bool reuseStream();
 
@@ -46,15 +64,16 @@ protected:
 
 	virtual void finishError(ErrorResponse error, RequestState state = PAUSED);
 	virtual void finishSuccess();
+	void openLocalFile(Common::String localFile);
 
 public:
-	SessionRequest(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	SessionRequest(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	virtual ~SessionRequest();
 
 	void start();
 	void startAndWait();
 
-	void reuse(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr);
+	void reuse(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 
 	virtual void handle();
 	virtual void restart();

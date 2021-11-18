@@ -27,14 +27,17 @@
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/sessionrequest.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/json.h"
 
 namespace Networking {
 
-SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb, bool binary):
+SessionRequest::SessionRequest(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary):
 	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
-	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr),
+	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr), _localFile(nullptr),
 	_started(false), _complete(false), _success(false), _binary(binary) {
+
+	openLocalFile(localFile);
 
 	// automatically go under ConnMan control so nobody would be able to leak the memory
 	// but, we don't need it to be working just yet
@@ -44,6 +47,22 @@ SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallbac
 
 SessionRequest::~SessionRequest() {
 	delete[] _buffer;
+}
+
+void SessionRequest::openLocalFile(Common::String localFile) {
+	if (localFile.empty())
+		return;
+
+	_localFile = new Common::DumpFile();
+	if (!_localFile->open(localFile, true)) {
+		warning("SessionRequestFile: unable to open file to download into");
+		ErrorResponse error(this, false, true, "SessionRequestFile: unable to open file to download into", -1);
+		finishError(error);
+		delete _localFile;
+		return;
+	}
+
+	_binary = true; // Enforce binary
 }
 
 bool SessionRequest::reuseStream() {
@@ -86,8 +105,18 @@ void SessionRequest::finishSuccess() {
 	_complete = true;
 	_success = true;
 
-	if (_callback)
-		(*_callback)(DataResponse(this, text()));
+	if (_callback && !_localFile) {	// If localfile is present, we already called the callback
+		_response.buffer = _contentsStream.getData();
+		_response.len = _contentsStream.size();
+		_response.eos = true;
+
+		(*_callback)(DataResponse(this, &_response));
+	}
+
+	if (_localFile) {
+		_localFile->close();
+		_localFile = nullptr;
+	}
 }
 
 void SessionRequest::start() {
@@ -105,13 +134,17 @@ void SessionRequest::startAndWait() {
 	wait();
 }
 
-void SessionRequest::reuse(Common::String url, DataCallback cb, ErrorCallback ecb) {
+void SessionRequest::reuse(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
 	_url = url;
 
 	delete _callback;
 	delete _errorCallback;
 	_callback = cb;
 	_errorCallback = ecb;
+
+	_binary = binary;
+
+	openLocalFile(localFile);
 
 	restart();
 }
@@ -127,9 +160,25 @@ void SessionRequest::handle() {
 			return;
 		}
 		uint32 readBytes = _stream->read(_buffer, CURL_SESSION_REQUEST_BUFFER_SIZE);
-		if (readBytes != 0)
-			if (_contentsStream.write(_buffer, readBytes) != readBytes)
-				warning("SessionRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
+		if (readBytes != 0) {
+			if (!_localFile) {
+				if (_contentsStream.write(_buffer, readBytes) != readBytes)
+					warning("SessionRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
+			} else {
+				_response.buffer = _buffer;
+				_response.len = readBytes;
+				_response.eos = _stream->eos();
+
+				if (_localFile->write(_buffer, readBytes) != readBytes) {
+					warning("DownloadRequest: unable to write all received bytes into output file");
+					finishError(Networking::ErrorResponse(this, false, true, "DownloadRequest::handle: failed to write all bytes into a file", -1));
+					return;
+				}
+
+				if (_callback)
+					(*_callback)(DataResponse(this, &_response));
+			}
+		}
 
 		if (_stream->eos()) {
 			finishSuccess();
@@ -171,7 +220,7 @@ bool SessionRequest::success() {
 }
 
 char *SessionRequest::text() {
-	if (_binary)
+	if (_binary || _localFile)
 		return nullptr;
 
 	if (_text == nullptr)
@@ -180,6 +229,10 @@ char *SessionRequest::text() {
 }
 
 Common::JSONValue *SessionRequest::json() {
+	if (_binary)
+		error("SessionRequest::json() is called for binary stream");
+	if (_localFile)
+		error("SessionRequest::json() is called for localFile stream");
 	return Common::JSON::parse(text());
 }
 

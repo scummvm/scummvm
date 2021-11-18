@@ -38,6 +38,7 @@ class ButtonWidget;
 class SliderWidget;
 
 enum IconProcessState {
+	kDownloadStateNone,
 	kDownloadStateList,
 	kDownloadStateListDownloaded,
 	kDownloadStateListCalculated,

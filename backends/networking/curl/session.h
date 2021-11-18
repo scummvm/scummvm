@@ -36,7 +36,7 @@ public:
 	Session(Common::String prefix = "");
 	~Session();
 
-	SessionRequest *get(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	SessionRequest *get(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	void close();
 };
 

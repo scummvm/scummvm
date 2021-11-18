@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/cloud/cloudmanager.h"
+#include "backends/networking/curl/request.h"
 #include "gui/downloadiconsdialog.h"
 #include "gui/downloaddialog.h"
 #include "backends/networking/curl/session.h"
@@ -51,8 +51,22 @@ struct DialogState {
 	Networking::Session session;
 	Common::HashMap<Common::String, uint32> fileHash;
 	IconProcessState state;
+	uint32 downloadedsize;
 	uint32 totalsize;
+
+	DialogState() { state = kDownloadStateNone; downloadedsize = totalsize = 0; dialog = nullptr; }
 } static *g_state;
+
+static uint32 getDownloadingProgress() {
+	if (!g_state)
+		return 0;
+
+	return 100 * g_state->downloadedsize / (g_state->totalsize ? g_state->totalsize : 1);
+}
+
+static uint32 getDownloadSpeed() {
+	return 0;
+}
 
 DownloadIconsDialog::DownloadIconsDialog() :
 	Dialog("GlobalOptions_DownloadIconsDialog"), CommandSender(this), _close(false) {
@@ -62,7 +76,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.StatusText", _("Downloading icons list..."));
 	_errorText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.ErrorText", Common::U32String(""));
 
-	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+	uint32 progress = getDownloadingProgress();
 	_progressBar = new SliderWidget(this, "GlobalOptions_DownloadIconsDialog.ProgressBar");
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
@@ -73,8 +87,6 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kDownloadCancelCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
-
-	CloudMan.setDownloadTarget(this);
 
 	if (!g_state) {
 		g_state = new DialogState;
@@ -94,7 +106,6 @@ DownloadIconsDialog::DownloadIconsDialog() :
 }
 
 DownloadIconsDialog::~DownloadIconsDialog() {
-	CloudMan.setDownloadTarget(nullptr);
 }
 
 void DownloadIconsDialog::open() {
@@ -104,8 +115,6 @@ void DownloadIconsDialog::open() {
 }
 
 void DownloadIconsDialog::close() {
-	CloudMan.setDownloadTarget(nullptr);
-
 	if (g_state)
 		g_state->dialog = nullptr;
 
@@ -116,6 +125,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 	g_state->state = state;
 
 	switch (state) {
+	case kDownloadStateNone:
 	case kDownloadStateList:
 		_statusText->setLabel(_("Downloading icons list..."));
 		_cancelButton->setLabel(_("Cancel download"));
@@ -201,7 +211,7 @@ void DownloadIconsDialog::handleTickle() {
 		return;
 	}
 
-	int32 progress = (int32)(100 * CloudMan.getDownloadingProgress());
+	int32 progress = getDownloadingProgress();
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
 		g_gui.scheduleTopDialogRedraw();
@@ -217,30 +227,30 @@ void DownloadIconsDialog::reflowLayout() {
 
 Common::U32String DownloadIconsDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
-	downloaded = getHumanReadableBytes(CloudMan.getDownloadBytesNumber(), downloadedUnits);
-	total = getHumanReadableBytes(CloudMan.getDownloadTotalBytesNumber(), totalUnits);
+	downloaded = getHumanReadableBytes(g_state->downloadedsize, downloadedUnits);
+	total = getHumanReadableBytes(g_state->totalsize, totalUnits);
 	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
 Common::U32String DownloadIconsDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
-	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
+	speed = getHumanReadableBytes(getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
 	return Common::U32String::format(_("Download speed: %s %S"), speed.c_str(), _(speedUnits).c_str());
 }
 
 void DownloadIconsDialog::refreshWidgets() {
-	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+	uint32 progress = getDownloadingProgress();
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());
 	_downloadSpeedLabel->setLabel(getSpeedLabelText());
 	_progressBar->setValue(progress);
 }
 
-void DownloadIconsDialog::downloadListCallback(Networking::DataResponse response) {
-	Networking::SessionRequest *req = dynamic_cast<Networking::SessionRequest *>(response.request);
+void DownloadIconsDialog::downloadListCallback(Networking::DataResponse r) {
+	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
-	Common::MemoryReadStream stream(req->getData(), req->getSize());
+	Common::MemoryReadStream stream(response->buffer, response->len);
 
 	int nline = 0;
 
@@ -280,7 +290,7 @@ void DownloadIconsDialog::errorCallback(Networking::ErrorResponse error) {
 }
 
 void DownloadIconsDialog::downloadList() {
-	Networking::SessionRequest *rq = g_state->session.get("https://downloads.scummvm.org/frs/icons/LIST",
+	Networking::SessionRequest *rq = g_state->session.get("https://downloads.scummvm.org/frs/icons/LIST", "",
 		new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadListCallback),
 		new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback),
 		true);
@@ -318,27 +328,35 @@ void DownloadIconsDialog::calculateList() {
 	}
 
 	if (g_state->totalsize == 0) {
-		_statusText->setLabel(_("No new icons packs available"));
+		Common::U32String error(_("No new icons packs available"));
+		setError(error);
 		return;
 	}
 
 	setState(kDownloadStateListCalculated);
 }
 
-void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse response) {
-	Networking::SessionRequest *req = dynamic_cast<Networking::SessionRequest *>(response.request);
+void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
+	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
-	warning("Got %d bytes", req->getSize());
+	warning("Read %u bytes", response->len);
+
+	if (response->eos) {
+		sendCommand(kDownloadEndedCmd, 0);
+		return;
+	}
+
+	sendCommand(kDownloadProgressCmd, 0);
 }
 
 void DownloadIconsDialog::proceedDownload() {
 	for (auto f = g_state->fileHash.begin(); f != g_state->fileHash.end(); ++f) {
 		Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", f->_key.c_str());
+		Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + f->_key, '/');
 
-		Networking::SessionRequest *rq = g_state->session.get(url,
+		Networking::SessionRequest *rq = g_state->session.get(url, localFile,
 			new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),
-			new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback),
-			true);
+			new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback));
 
 		rq->start();
 	}
