@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	cursor.o \
 	datei.o \
 	debug.o \
+	debugger.o \
 	detail.o \
 	effect.o \
 	episode1.o \
