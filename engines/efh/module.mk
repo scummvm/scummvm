@@ -1,6 +1,7 @@
 MODULE := engines/efh
 
 MODULE_OBJS = \
+	constants.o \
 	efh.o \
 	metaengine.o
 
