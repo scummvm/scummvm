@@ -4,6 +4,9 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.6.0 (DD.MM.YYYY)
 
+ Neue Spiele:
+   - Unterstützung für Sanitarium hinzugefügt.
+
  Allgemein:
    - ScummVM benötigt nun C++11, um gebaut werden zu können.
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
