@@ -53,9 +53,10 @@ struct DialogState {
 	IconProcessState state;
 	uint32 downloadedSize;
 	uint32 totalSize;
+	uint32 totalFiles;
 	uint32 startTime;
 
-	DialogState() { state = kDownloadStateNone; downloadedSize = totalSize = 0; dialog = nullptr; }
+	DialogState() { state = kDownloadStateNone; downloadedSize = totalSize = totalFiles = startTime = 0; dialog = nullptr; }
 } static *g_state;
 
 static uint32 getDownloadingProgress() {
@@ -177,7 +178,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 	case kDownloadComplete: {
 			Common::String size, sizeUnits;
 			size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
-			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
+			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->totalFiles, size.c_str(), _(sizeUnits).c_str()));
 			_cancelButton->setVisible(false);
 			_cancelButton->setLabel(_("Cancel download"));
 			_cancelButton->setCmd(kDownloadCancelCmd);
@@ -347,6 +348,8 @@ void DownloadIconsDialog::calculateList() {
 		g_state->totalSize += f->_value;
 	}
 
+	g_state->totalFiles = g_state->fileHash.size();
+
 	if (g_state->totalSize == 0) {
 		Common::U32String error(_("No new icons packs available"));
 		setError(error);
@@ -356,14 +359,38 @@ void DownloadIconsDialog::calculateList() {
 	setState(kDownloadStateListCalculated);
 }
 
+bool DownloadIconsDialog::takeOneFile() {
+	auto f = g_state->fileHash.begin();
+
+	if (f == g_state->fileHash.end())
+		return false;
+
+	Common::String fname = f->_key;
+
+	g_state->fileHash.erase(fname);
+
+	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", fname.c_str());
+	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
+
+	Networking::SessionRequest *rq = g_state->session.get(url, localFile,
+		new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),
+		new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback));
+
+	rq->start();
+
+	return true;
+}
+
 void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
 	g_state->downloadedSize += response->len;
 
 	if (response->eos) {
-		sendCommand(kDownloadEndedCmd, 0);
-		return;
+		if (!takeOneFile()) {
+			sendCommand(kDownloadEndedCmd, 0);
+			return;
+		}
 	}
 
 	sendCommand(kDownloadProgressCmd, 0);
@@ -372,16 +399,7 @@ void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
 void DownloadIconsDialog::proceedDownload() {
 	g_state->startTime = g_system->getMillis();
 
-	for (auto f = g_state->fileHash.begin(); f != g_state->fileHash.end(); ++f) {
-		Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", f->_key.c_str());
-		Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + f->_key, '/');
-
-		Networking::SessionRequest *rq = g_state->session.get(url, localFile,
-			new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),
-			new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback));
-
-		rq->start();
-	}
+	takeOneFile();
 }
 
 

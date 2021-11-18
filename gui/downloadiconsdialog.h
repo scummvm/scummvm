@@ -85,6 +85,7 @@ private:
 	void calculateList();
 	void proceedDownload();
 	void setState(IconProcessState state);
+	bool takeOneFile();
 };
 
 } // End of namespace GUI
