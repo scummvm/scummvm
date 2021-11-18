@@ -62,6 +62,8 @@ void SessionRequest::openLocalFile(Common::String localFile) {
 		return;
 	}
 
+	debug(5, "SessionRequest: opened localfile %s", localFile.c_str());
+
 	_binary = true; // Enforce binary
 }
 
@@ -105,17 +107,17 @@ void SessionRequest::finishSuccess() {
 	_complete = true;
 	_success = true;
 
+	if (_localFile) {
+		_localFile->close();
+		_localFile = nullptr;
+	}
+
 	if (_callback) {	// If localfile is present, contentStream is empty, so it is fine
 		_response.buffer = _contentsStream.getData();
 		_response.len = _contentsStream.size();
 		_response.eos = true;
 
 		(*_callback)(DataResponse(this, &_response));
-	}
-
-	if (_localFile) {
-		_localFile->close();
-		_localFile = nullptr;
 	}
 }
 
