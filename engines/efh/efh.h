@@ -99,6 +99,21 @@ struct CharStatus {
 	int16 _duration;
 };
 
+struct MapMonster {
+	uint8 _possessivePronounSHL6;
+	uint8 _field_1;
+	uint8 _guess_fullPlaceId; // unsigned? Magic values are 0xFF and 0xFE
+	uint8 _posX;
+	uint8 _posY;
+	uint8 _itemId_Weapon;
+	uint8 _field_6;
+	uint8 _MonsterRef;
+	uint8 _field_8;
+	uint8 _field_9;
+	uint8 _groupSize;
+	uint16 _pictureRef[9];
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const EfhGameDescription *gd);
@@ -160,6 +175,7 @@ private:
 	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
 	void initEngine();
 	void initMapMonsters();
+	void loadMapMonsters();
 	void saveAnimImageSetId();
 	void displayLowStatusScreen(int i);
 	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *destBuffer, uint8 *transfBuffer);
@@ -218,6 +234,7 @@ private:
 	uint8 *_mapBitmapRef;
 	uint8 *_mapUnknownPtr;
 	uint8 *_mapMonstersPtr;
+	MapMonster _mapMonsters[64];
 	uint8 *_mapGameMapPtr;
 
 	uint8 _defaultBoxColor;

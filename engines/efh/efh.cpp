@@ -29,6 +29,8 @@
 #include "graphics/cursorman.h"
 
 #include "efh/efh.h"
+#include "efh/constants.h"
+
 #include "engines/util.h"
 
 namespace Efh {
@@ -291,6 +293,9 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	fileName = Common::String::format("map.%d", _techId);
 	readFileToBuffer(fileName, _hiResImageBuf);
 	uncompressBuffer(_hiResImageBuf, _map);
+	// This is not present in the original.
+	// The purpose is to properly load the mapMonster data in an array of struct in order to use it without being a pain afterwards
+	loadMapMonsters();
 
 	loadImageSetToTileBank(1, _mapBitmapRef[0] + 1);
 	loadImageSetToTileBank(2, _mapBitmapRef[1] + 1);
@@ -441,7 +446,24 @@ void EfhEngine::initEngine() {
 
 	_mapBitmapRef = &_map[0];
 	_mapUnknownPtr = &_map[2];
-	_mapMonstersPtr = &_map[902];
+
+	// Replaces _mapMonstersPtr which was equal to &_map[902];
+	for (int i = 0; i < 64; ++i) {
+		_mapMonsters[i]._possessivePronounSHL6 = 0;
+		_mapMonsters[i]._field_1 = 0;
+		_mapMonsters[i]._guess_fullPlaceId = 0xFF;
+		_mapMonsters[i]._posX = 0;
+		_mapMonsters[i]._posY = 0;
+		_mapMonsters[i]._itemId_Weapon = 0;
+		_mapMonsters[i]._field_6 = 0;
+		_mapMonsters[i]._MonsterRef = 0;
+		_mapMonsters[i]._field_8 = 0;
+		_mapMonsters[i]._field_9 = 0;
+		_mapMonsters[i]._groupSize = 0;
+		for (int j = 0; j < 9; ++j)
+			_mapMonsters[i]._pictureRef[j] = 0;
+	}
+	
 	_mapGameMapPtr = &_map[2758];
 
 	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
@@ -697,7 +719,50 @@ void EfhEngine::initEngine() {
 }
 
 void EfhEngine::initMapMonsters() {
-	warning("STUB - initMapMonsters");
+	for (uint8 monsterId = 0; monsterId < 64; ++monsterId) {
+		if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+			continue;
+
+		for (uint8 counter = 0; counter < 9; ++counter)
+			_mapMonsters[monsterId]._pictureRef[counter] = 0;
+
+		uint8 groupSize = _mapMonsters[monsterId]._groupSize;
+		if (groupSize == 0)
+			groupSize = _rnd->getRandomNumber(10);
+
+		for (uint8 counter = 0; counter < groupSize; ++counter) {
+			uint rand100 = _rnd->getRandomNumber(99) + 1;
+			uint16 pictureRef = _encounters[_mapMonsters[monsterId]._MonsterRef]._pictureRef;
+
+			if (rand100 <= 25) {
+				uint16 delta = _rnd->getRandomNumber((pictureRef / 2) - 1) + 1;
+				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef - delta;
+			} else if (rand100 <= 75) {
+				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef;
+			} else {
+				uint16 delta = _rnd->getRandomNumber((pictureRef / 2) - 1) + 1;
+				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef + delta;
+			}
+		}		
+	}
+}
+
+void EfhEngine::loadMapMonsters() {
+	for (int i = 0; i < 64; ++i) {
+		_mapMonsters[i]._possessivePronounSHL6 = _mapMonstersPtr[29 * i];
+		_mapMonsters[i]._field_1 = _mapMonstersPtr[29 * i + 1];
+		_mapMonsters[i]._guess_fullPlaceId = _mapMonstersPtr[29 * i + 2];
+		_mapMonsters[i]._posX = _mapMonstersPtr[29 * i + 3];
+		_mapMonsters[i]._posY = _mapMonstersPtr[29 * i + 4];
+		_mapMonsters[i]._itemId_Weapon = _mapMonstersPtr[29 * i + 5];
+		_mapMonsters[i]._field_6 = _mapMonstersPtr[29 * i + 6];
+		_mapMonsters[i]._MonsterRef = _mapMonstersPtr[29 * i + 7];
+		_mapMonsters[i]._field_8 = _mapMonstersPtr[29 * i + 8];
+		_mapMonsters[i]._field_9 = _mapMonstersPtr[29 * i + 9];
+		_mapMonsters[i]._groupSize = _mapMonstersPtr[29 * i + 10];
+		for (int j = 0; j < 9; ++j)
+			_mapMonsters[i]._pictureRef[j] = READ_LE_UINT16(&_mapMonstersPtr[29 * i + 11 + j * 2]);
+	}
 }
 
 void EfhEngine::saveAnimImageSetId() {
