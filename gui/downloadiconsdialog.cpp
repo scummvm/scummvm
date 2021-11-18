@@ -51,23 +51,26 @@ struct DialogState {
 	Networking::Session session;
 	Common::HashMap<Common::String, uint32> fileHash;
 	IconProcessState state;
-	uint32 downloadedsize;
-	uint32 totalsize;
+	uint32 downloadedSize;
+	uint32 totalSize;
+	uint32 startTime;
 
-	DialogState() { state = kDownloadStateNone; downloadedsize = totalsize = 0; dialog = nullptr; }
+	DialogState() { state = kDownloadStateNone; downloadedSize = totalSize = 0; dialog = nullptr; }
 } static *g_state;
 
 static uint32 getDownloadingProgress() {
-	if (!g_state || g_state->totalsize == 0)
+	if (!g_state || g_state->totalSize == 0)
 		return 0;
 
-	uint32 progress = (uint32)(100 * ((double)g_state->downloadedsize / (double)g_state->totalsize));
+	uint32 progress = (uint32)(100 * ((double)g_state->downloadedSize / (double)g_state->totalSize));
 
 	return progress;
 }
 
 static uint32 getDownloadSpeed() {
-	return 0;
+	uint32 speed = 1000 * ((double)g_state->downloadedSize / (g_system->getMillis() - g_state->startTime));
+
+	return speed;
 }
 
 DownloadIconsDialog::DownloadIconsDialog() :
@@ -134,7 +137,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_cancelButton->setCmd(kDownloadCancelCmd);
 		_closeButton->setVisible(false);
 
-		g_state->totalsize = 0;
+		g_state->totalSize = 0;
 		g_state->fileHash.clear();
 		break;
 
@@ -147,7 +150,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 
 	case kDownloadStateListCalculated: {
 			Common::String size, sizeUnits;
-			size = getHumanReadableBytes(g_state->totalsize, sizeUnits);
+			size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
 
 			_statusText->setLabel(Common::U32String::format(_("Detected %d new packs, %s %S"), g_state->fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
 
@@ -173,9 +176,9 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 
 	case kDownloadComplete: {
 			Common::String size, sizeUnits;
-			size = getHumanReadableBytes(g_state->totalsize, sizeUnits);
+			size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
 			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
-			_closeButton->setVisible(false);
+			_cancelButton->setVisible(false);
 			_cancelButton->setLabel(_("Cancel download"));
 			_cancelButton->setCmd(kDownloadCancelCmd);
 
@@ -244,8 +247,8 @@ void DownloadIconsDialog::reflowLayout() {
 
 Common::U32String DownloadIconsDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
-	downloaded = getHumanReadableBytes(g_state->downloadedsize, downloadedUnits);
-	total = getHumanReadableBytes(g_state->totalsize, totalUnits);
+	downloaded = getHumanReadableBytes(g_state->downloadedSize, downloadedUnits);
+	total = getHumanReadableBytes(g_state->totalSize, totalUnits);
 	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
@@ -339,12 +342,12 @@ void DownloadIconsDialog::calculateList() {
 	delete iconDir;
 
 	// Now calculate the size of the missing files
-	g_state->totalsize = 0;
+	g_state->totalSize = 0;
 	for (auto f = g_state->fileHash.begin(); f != g_state->fileHash.end(); ++f) {
-		g_state->totalsize += f->_value;
+		g_state->totalSize += f->_value;
 	}
 
-	if (g_state->totalsize == 0) {
+	if (g_state->totalSize == 0) {
 		Common::U32String error(_("No new icons packs available"));
 		setError(error);
 		return;
@@ -356,7 +359,7 @@ void DownloadIconsDialog::calculateList() {
 void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
-	g_state->downloadedsize += response->len;
+	g_state->downloadedSize += response->len;
 
 	if (response->eos) {
 		sendCommand(kDownloadEndedCmd, 0);
@@ -367,6 +370,8 @@ void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
 }
 
 void DownloadIconsDialog::proceedDownload() {
+	g_state->startTime = g_system->getMillis();
+
 	for (auto f = g_state->fileHash.begin(); f != g_state->fileHash.end(); ++f) {
 		Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", f->_key.c_str());
 		Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + f->_key, '/');
