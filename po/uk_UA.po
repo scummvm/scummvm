@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-18 21:56+0000\n"
-"PO-Revision-Date: 2021-11-14 12:37+0000\n"
+"PO-Revision-Date: 2021-11-18 22:41+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1174,7 +1174,7 @@ msgstr "Спеціальні режими растрування, які під�
 
 #: gui/options.cpp:1446
 msgid "Stretch mode:"
-msgstr "Режим розтягування:"
+msgstr "Розтягування:"
 
 #: gui/options.cpp:1458
 msgid "Scaler:"
@@ -3075,17 +3075,17 @@ msgstr "Піксельне рівномірне масштабування"
 #: backends/graphics/opengl/opengl-graphics.cpp:248
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
-msgstr "Підходить до вікна"
+msgstr "В розміри вікна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:249
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
-msgstr "Протягніть до вікна"
+msgstr "Розтягнути до вікна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:250
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
-msgstr "Підходить до вікна (4: 3)"
+msgstr "До розмірів вікна (4: 3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
 #, c-format
