@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-18 22:33+0000\n"
-"PO-Revision-Date: 2021-11-15 23:25+0000\n"
+"PO-Revision-Date: 2021-11-18 23:06+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -202,37 +202,27 @@ msgid "Download speed: %s %S"
 msgstr "Velocidad de descarga: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Descargando partidas guardadas..."
+msgstr "Descargando lista de iconos..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Descargando partidas guardadas..."
+msgstr "Descargando lista de iconos... %d elementos"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Detectado(s) %d paquete(s) nuevo(s), %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Descargar parche"
+msgstr "Descargar"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Descarga completada.\n"
-"No se han podido descargar %u archivos."
+msgstr "Descarga completada, se ha(n) descargado %d paquete(s) nuevo(s), %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:302
 #: gui/gui-manager.cpp:218 gui/unknown-game-dialog.cpp:54
@@ -245,15 +235,15 @@ msgstr "Cerrar"
 #: gui/downloadiconsdialog.cpp:307
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "ERROR %d: %s"
 
 #: gui/downloadiconsdialog.cpp:324
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "ERROR: No se ha asignado una ruta de iconos"
 
 #: gui/downloadiconsdialog.cpp:354
 msgid "No new icons packs available"
-msgstr ""
+msgstr "No hay paquetes de iconos nuevos"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -1631,10 +1621,8 @@ msgid "Check now"
 msgstr "Buscar ahora"
 
 #: gui/options.cpp:2422
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Actualizar:"
+msgstr "Actualizar iconos"
 
 #: gui/options.cpp:2430
 msgid "Active storage:"
@@ -2396,31 +2384,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
