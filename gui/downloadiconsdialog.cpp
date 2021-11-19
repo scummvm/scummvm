@@ -196,7 +196,7 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	switch (cmd) {
 	case kDownloadCancelCmd:
 		{
-			g_state->session.close();
+			g_state->session.abortRequest();
 			delete g_state;
 			g_state = nullptr;
 
