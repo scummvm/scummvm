@@ -24,6 +24,7 @@
 #define KYRA_SOUND_MACRES_H
 
 namespace Common {
+	class Archive;
 	class MacResManager;
 	class String;
 	template<class T> class Array;
@@ -33,16 +34,19 @@ namespace Kyra {
 
 class SoundMacRes {
 public:
-	SoundMacRes();
+	SoundMacRes(KyraEngine_v1 *vm);
 	~SoundMacRes();
 	bool init();
 	void setQuality(bool hi);
 	Common::SeekableReadStream *getResource(uint16 id, uint32 type);
 
 private:
+	bool _useInstaller;
+	Common::MacResManager *_macInstallerRes;
 	Common::MacResManager *_macRes;
 	Common::String _kyraMacExe;
 	Common::Array<Common::String> _resFiles;
+	Common::Archive *_stuffItArchive;
 };
 
 } // End of namespace Kyra
