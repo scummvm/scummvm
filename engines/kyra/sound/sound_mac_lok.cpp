@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/punycode.h"
+#include "common/stuffit.h"
 
 #include "audio/mixer.h"
 
@@ -37,12 +38,17 @@
 
 namespace Kyra {
 
-SoundMacRes::SoundMacRes() : _macRes(nullptr) {
+SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macInstallerRes(nullptr), _macRes(nullptr), _stuffItArchive(nullptr) {
+	_useInstaller = vm->gameFlags().useInstallerPackage;
 	_macRes = new Common::MacResManager();
+	if (_useInstaller)
+		_macInstallerRes = new Common::MacResManager();
 }
 
 SoundMacRes::~SoundMacRes() {
+	delete _stuffItArchive;
 	delete _macRes;
+	delete _macInstallerRes;
 }
 
 bool SoundMacRes::init() {
@@ -55,6 +61,11 @@ bool SoundMacRes::init() {
 	// versions, also for punycode encoded files and also for the case where the
 	// user might have just removed the last character by renaming the file.
 
+	const char *const tryInstallerNames[] = {
+		"Install Legend of Kyrandia",
+		"Install Legend of Kyrandia\xaa"
+	};
+
 	const char *const tryExeNames[] = {
 		"Legend of Kyrandia\xaa",
 		"Legend of Kyrandia"
@@ -65,9 +76,20 @@ bool SoundMacRes::init() {
 		Common::kISO8859_1
 	};
 
+	const char *const *tryNames;
+	int numTryNames;
+
+	if (_useInstaller) {
+		tryNames = tryInstallerNames;
+		numTryNames = ARRAYSIZE(tryInstallerNames);
+	} else {
+		tryNames = tryExeNames;
+		numTryNames = ARRAYSIZE(tryExeNames);
+	}
+
 	for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
-		for (int ii = 0; ii < ARRAYSIZE(tryExeNames); ++ii) {
-			Common::U32String fn(tryExeNames[ii], tryCodePages[i]);
+		for (int ii = 0; ii < numTryNames; ++ii) {
+			Common::U32String fn(tryNames[ii], tryCodePages[i]);
 			_kyraMacExe = fn.encode(Common::kUtf8);
 			if (_macRes->exists(_kyraMacExe))
 				break;
@@ -81,16 +103,25 @@ bool SoundMacRes::init() {
 	}
 
 	if (_kyraMacExe.empty()) {
-		warning("SoundMacRes::init(): Legend of Kyrandia resource fork not found");
+		warning("SoundMacRes::init(): Legend of Kyrandia %s not found",
+			_useInstaller ? "installer" : "resource fork");
 		return false;
+	}
+
+	if (_useInstaller) {
+		_macInstallerRes->open(_kyraMacExe);
+		Common::SeekableReadStream *stream = _macInstallerRes->getDataFork();
+		_stuffItArchive = Common::createStuffItArchive(stream);
 	}
 
 	setQuality(true);
 
-	for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
-		if (!_macRes->exists(*i)) {
-			warning("SoundMacRes::init(): Error opening data file: '%s'", i->c_str());
-			return false;
+	if (!_useInstaller) {
+		for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
+			if (!_macRes->exists(*i)) {
+				warning("SoundMacRes::init(): Error opening data file: '%s'", i->c_str());
+				return false;
+			}
 		}
 	}
 
@@ -114,9 +145,17 @@ bool SoundMacRes::init() {
 
 Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 	Common::SeekableReadStream *res = nullptr;
+
 	for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
-		if (!_macRes->open(Common::Path(*i)))
-			warning("SoundMacRes::getResource(): Error opening data file: '%s'", i->c_str());
+		if (_useInstaller) {
+			if (!_macRes->open(Common::Path(*i), *_stuffItArchive)) {
+				warning("SoundMacRes::getResource(): Error opening archive member: '%s'", i->c_str());
+			}
+		} else {
+			if (!_macRes->open(Common::Path(*i)))
+				warning("SoundMacRes::getResource(): Error opening data file: '%s'", i->c_str());
+		}
+
 		if ((res = _macRes->getResource(type, id)))
 			break;
 	}
@@ -126,7 +165,11 @@ Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 void SoundMacRes::setQuality(bool hi) {
 	_resFiles.clear();
 	_resFiles.push_back(hi ? "HQ_Music.res" : "LQ_Music.res");
-	_resFiles.push_back(_kyraMacExe);
+	if (_useInstaller) {
+		_resFiles.push_back("Legend of Kyrandia\xaa");
+	} else {
+		_resFiles.push_back(_kyraMacExe);
+	}
 }
 
 SoundMac::SoundMac(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _driver(nullptr), _res(nullptr), _currentResourceSet(-1), _resIDMusic(nullptr), _ready(false) {
@@ -142,7 +185,7 @@ Sound::kType SoundMac::getMusicType() const {
 }
 
 bool SoundMac::init(bool hiQuality) {
-	_res = new SoundMacRes();
+	_res = new SoundMacRes(_vm);
 	if (!(_res && _res->init()))
 		return false;
 
