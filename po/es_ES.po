@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-18 22:49+0000\n"
-"PO-Revision-Date: 2021-11-18 23:06+0000\n"
+"PO-Revision-Date: 2021-11-19 19:37+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7186,12 +7186,6 @@ msgstr ""
 "para reproducir los instrumentos. Se ha desactivado la música."
 
 #: engines/scumm/scumm.cpp:1652
-#, fuzzy
-#| msgid ""
-#| "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
-#| "compression is not supported anymore for this game, audio will be "
-#| "disabled.\n"
-#| "Please reinstall the game with the correct resource files."
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7200,7 +7194,7 @@ msgstr ""
 "Se han detectado archivos de audio comprimidos con ScummVM Tools;\n"
 "ya no se permite el uso de archivos *.BUN/*.SOU comprimidos\n"
 "para este juego, así que el audio será desactivado.\n"
-"Reinstala el juego con los archivos correctos."
+"Vuelve a copiar el juego a partir de los archivos originales sin comprimir."
 
 #: engines/scumm/scumm.cpp:2123
 #, c-format
