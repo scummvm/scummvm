@@ -54,6 +54,7 @@ Resource::~Resource() {
 	for (ArchiveMap::iterator i = _archiveCache.begin(); i != _archiveCache.end(); ++i)
 		delete i->_value;
 	_archiveCache.clear();
+	_macResMan.close();
 }
 
 bool Resource::reset() {
@@ -425,7 +426,7 @@ Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::Archive *archive = StuffItLoader::load(this, file);
+	Common::Archive *archive = StuffItLoader::load(this, file, _macResMan);
 	if (!archive)
 		return nullptr;
 

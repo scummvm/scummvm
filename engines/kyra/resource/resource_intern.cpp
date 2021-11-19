@@ -1200,13 +1200,9 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	return new CachedArchive(fileList);
 }
 
-Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename) {
-	// TODO: The resource manager has to be alive for the duration of the
-	//       game but there has to be a better way...
-	static Common::MacResManager resource;
-
-	if (resource.open(filename)) {
-		Common::SeekableReadStream *stream = resource.getDataFork();
+Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename, Common::MacResManager &macResMan) {
+	if (macResMan.open(filename)) {
+		Common::SeekableReadStream *stream = macResMan.getDataFork();
 		if (stream) {
 			Common::Archive *archive = Common::createStuffItArchive(stream);
 			return archive;
