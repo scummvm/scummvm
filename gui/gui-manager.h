@@ -132,6 +132,8 @@ public:
 
 	void redrawFull();
 
+	void initIconsSet();
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -192,8 +194,6 @@ protected:
 
 	void initKeymap();
 	void enableKeymap(bool enabled);
-
-	void initIconsSet();
 
 	void saveState();
 	void restoreState();

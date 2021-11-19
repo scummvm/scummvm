@@ -2947,7 +2947,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		DownloadIconsDialog dia;
 
 		if (dia.runModal() > 0) {
-			warning("Success");
+			if (_launcher && _launcher->getType() == kLauncherDisplayGrid)
+				_launcher->rebuild();
 		}
 
 		break;

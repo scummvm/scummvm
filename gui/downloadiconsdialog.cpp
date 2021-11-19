@@ -211,6 +211,8 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kDownloadEndedCmd:
 		setState(kDownloadComplete);
+		g_gui.initIconsSet();
+		setResult(1); // Need tell the options to refresh launcher
 		break;
 	case kListDownloadFinishedCmd:
 		setState(kDownloadStateListDownloaded);

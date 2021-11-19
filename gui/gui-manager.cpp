@@ -117,6 +117,8 @@ struct ArchiveMemberListBackComparator {
 void GuiManager::initIconsSet() {
 	Common::Archive *dat = nullptr;
 
+	_iconsSet.clear();
+
 	if (ConfMan.hasKey("iconspath")) {
 		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
 		Common::ArchiveMemberList iconFiles;
