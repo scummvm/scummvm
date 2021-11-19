@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-18 22:49+0000\n"
+"POT-Creation-Date: 2021-11-19 18:53+0000\n"
 "PO-Revision-Date: 2021-11-09 18:25+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -333,7 +333,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:212 gui/options.cpp:1814 gui/options.cpp:1979
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Grafikk"
 
@@ -1194,7 +1194,7 @@ msgstr "Strekkmodus:"
 msgid "Scaler:"
 msgstr "Skalering:"
 
-#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:413
+#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr "Fullskjermsmodus"
 
@@ -3142,29 +3142,29 @@ msgstr "SDL-overflate"
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikkfilter:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:361
+#: backends/graphics/sdl/sdl-graphics.cpp:365
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Lagret skjermbilde (%s)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:370
+#: backends/graphics/sdl/sdl-graphics.cpp:374
 msgid "Could not save screenshot"
 msgstr "Kunne ikke lagre skjermbilde"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:415
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
 msgstr "Vindusmodus"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Veksle fullskjerm"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Veksle muslåsing"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:438
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -3177,31 +3177,31 @@ msgstr "Veksle muslåsing"
 msgid "Save screenshot"
 msgstr "Lagre skjermbilde"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:444
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "Skru korrigering av bildeformat av/på"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
 msgstr "Skru skalering med lineær filtrering av/på"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Cycle through stretch modes"
 msgstr "Bla gjennom strekkmoduser"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:464
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 msgid "Increase the scale factor"
 msgstr "Øk skaleringsfaktoren"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:470
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Decrease the scale factor"
 msgstr "Minsk skaleringsfaktoren"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:476
+#: backends/graphics/sdl/sdl-graphics.cpp:480
 msgid "Switch to the next scaler"
 msgstr "Bytt til neste skaleringsmetode"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:481
+#: backends/graphics/sdl/sdl-graphics.cpp:485
 msgid "Switch to the previous scaler"
 msgstr "Bytt til forrige skaleringsmetode"
 

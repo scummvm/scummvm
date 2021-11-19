@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-18 22:49+0000\n"
+"POT-Creation-Date: 2021-11-19 18:53+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -329,7 +329,7 @@ msgid "Engine"
 msgstr "Рухавік"
 
 #: gui/editgamedialog.cpp:212 gui/options.cpp:1814 gui/options.cpp:1979
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr ""
 
@@ -1184,7 +1184,7 @@ msgstr ""
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:413
+#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr ""
 
@@ -3012,29 +3012,29 @@ msgstr ""
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:361
+#: backends/graphics/sdl/sdl-graphics.cpp:365
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:370
+#: backends/graphics/sdl/sdl-graphics.cpp:374
 msgid "Could not save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:415
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:438
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -3047,31 +3047,31 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:444
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:464
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:470
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:476
+#: backends/graphics/sdl/sdl-graphics.cpp:480
 msgid "Switch to the next scaler"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:481
+#: backends/graphics/sdl/sdl-graphics.cpp:485
 msgid "Switch to the previous scaler"
 msgstr ""
 
