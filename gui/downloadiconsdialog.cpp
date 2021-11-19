@@ -41,9 +41,9 @@
 namespace GUI {
 
 enum {
-	kDownloadCancelCmd = 'Dlcn',
 	kDownloadProceedCmd = 'Dlpr',
-	kListDownloadFinishedCmd = 'DlLE'
+	kListDownloadFinishedCmd = 'DlLE',
+	kCleanupCmd = 'DlCL'
 };
 
 struct DialogState {
@@ -91,7 +91,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_percentLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.PercentText", Common::String::format("%u %%", progress));
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSize", Common::U32String());
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
-	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kDownloadCancelCmd);
+	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kCleanupCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
 
 	if (!g_state) {
@@ -135,7 +135,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 	case kDownloadStateList:
 		_statusText->setLabel(_("Downloading icons list..."));
 		_cancelButton->setLabel(_("Cancel download"));
-		_cancelButton->setCmd(kDownloadCancelCmd);
+		_cancelButton->setCmd(kCleanupCmd);
 		_closeButton->setVisible(false);
 
 		g_state->totalSize = 0;
@@ -145,7 +145,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 	case kDownloadStateListDownloaded:
 		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), g_state->fileHash.size()));
 		_cancelButton->setLabel(_("Cancel download"));
-		_cancelButton->setCmd(kDownloadCancelCmd);
+		_cancelButton->setCmd(kCleanupCmd);
 		_closeButton->setVisible(false);
 		break;
 
@@ -160,14 +160,14 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 
 			_closeButton->setVisible(true);
 			_closeButton->setLabel(_("Cancel"));
-			_closeButton->setCmd(kDownloadCancelCmd);
+			_closeButton->setCmd(kCleanupCmd);
 			_closeButton->setEnabled(true);
 			break;
 		}
 
 	case kDownloadStateDownloading:
 		_cancelButton->setLabel(_("Cancel download"));
-		_cancelButton->setCmd(kDownloadCancelCmd);
+		_cancelButton->setCmd(kCleanupCmd);
 
 		_closeButton->setVisible(true);
 		_closeButton->setLabel(_("Hide"));
@@ -181,11 +181,11 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->totalFiles, size.c_str(), _(sizeUnits).c_str()));
 			_cancelButton->setVisible(false);
 			_cancelButton->setLabel(_("Cancel download"));
-			_cancelButton->setCmd(kDownloadCancelCmd);
+			_cancelButton->setCmd(kCleanupCmd);
 
 			_closeButton->setVisible(true);
 			_closeButton->setLabel(_("Close"));
-			_closeButton->setCmd(kCloseCmd);
+			_closeButton->setCmd(kCleanupCmd);
 			_closeButton->setEnabled(true);
 			break;
 		}
@@ -194,7 +194,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 
 void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kDownloadCancelCmd:
+	case kCleanupCmd:
 		{
 			g_state->session.abortRequest();
 			delete g_state;
@@ -302,7 +302,7 @@ void DownloadIconsDialog::setError(Common::U32String &msg) {
 	_errorText->setLabel(msg);
 
 	_cancelButton->setLabel(_("Close"));
-	_cancelButton->setCmd(kDownloadCancelCmd);
+	_cancelButton->setCmd(kCleanupCmd);
 }
 
 void DownloadIconsDialog::errorCallback(Networking::ErrorResponse error) {
