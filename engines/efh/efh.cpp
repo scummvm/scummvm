@@ -386,7 +386,39 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 }
 
 void EfhEngine::decryptImpFile(bool techMapFl) {
-	warning("STUB - decryptImpFile");	
+	uint16 counter = 0;
+	uint16 target;
+	uint8 *curPtr;
+
+	if (!techMapFl) {
+		_imp2PtrArray[++counter] = curPtr = _imp2;
+		target = 431;
+	} else {
+		_imp2PtrArray[++counter] = curPtr = _imp1;
+		target = 99;
+	}
+
+	do {
+		*curPtr = (*curPtr - 3) ^ 0xD7;
+		if (*curPtr == 0x40) {
+			curPtr += 3;
+			if (!techMapFl)
+				_imp2PtrArray[++counter] = curPtr;
+			else
+				_imp1PtrArray[++counter] = curPtr;
+		} else
+			++curPtr;
+	} while (*curPtr != 0x60 && counter <= target);
+
+	Common::DumpFile dump;
+	if (!techMapFl) {
+		dump.open("imp2_unc.dump");
+		dump.write(_imp2, curPtr - _imp2);
+	} else {
+		dump.open("imp1_unc.dump");
+		dump.write(_imp1, curPtr - _imp1);
+	}
+	dump.close();
 }
 
 void EfhEngine::readImpFile(int16 id, bool techMapFl) {
@@ -748,6 +780,8 @@ void EfhEngine::initMapMonsters() {
 }
 
 void EfhEngine::loadMapMonsters() {
+	_mapMonstersPtr = &_map[902];
+
 	for (int i = 0; i < 64; ++i) {
 		_mapMonsters[i]._possessivePronounSHL6 = _mapMonstersPtr[29 * i];
 		_mapMonsters[i]._field_1 = _mapMonstersPtr[29 * i + 1];
