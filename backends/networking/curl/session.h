@@ -37,7 +37,17 @@ public:
 	~Session();
 
 	SessionRequest *get(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	/**
+	 * @brief Gracefully close the session
+	 *
+	 */
 	void close();
+
+	/**
+	 * @brief Abort session and remove unfinished downloads if they go to local file
+	 *
+	 */
+	void abortRequest();
 };
 
 } // End of namespace Networking

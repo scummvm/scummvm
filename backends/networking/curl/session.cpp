@@ -83,4 +83,9 @@ void Session::close() {
 		_request->close();
 }
 
+void Session::abortRequest() {
+	if (_request)
+		_request->abortRequest();
+}
+
 } // End of namespace Networking

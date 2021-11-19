@@ -81,6 +81,12 @@ public:
 	/** This request DOES NOT delete automatically after calling callbacks. It gets PAUSED, and in order to make it FINISHED (i.e. delete), this method MUST be called. */
 	void close();
 
+	/**
+	 * @brief Closes the current request and removes any unfinished files
+	 *
+	 */
+	void abortRequest();
+
 	bool complete();
 	bool success();
 

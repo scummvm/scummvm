@@ -109,6 +109,7 @@ void SessionRequest::finishSuccess() {
 
 	if (_localFile) {
 		_localFile->close();
+		delete _localFile;
 		_localFile = nullptr;
 	}
 
@@ -210,6 +211,17 @@ void SessionRequest::restart() {
 }
 
 void SessionRequest::close() {
+	_state = FINISHED;
+}
+
+void SessionRequest::abortRequest() {
+	if (_localFile) {
+		_localFile->close();
+		delete _localFile;
+		_localFile = nullptr;
+
+		// TODO we need to remove file, but there is no API
+	}
 	_state = FINISHED;
 }
 
