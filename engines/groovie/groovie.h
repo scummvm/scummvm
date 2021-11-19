@@ -113,11 +113,15 @@ protected:
 
 class GroovieEngine : public Engine {
 public:
+	static const int AUTOSAVE_SLOT;
+
 	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
 	~GroovieEngine() override;
 
 	Common::Platform getPlatform() const;
 	EngineVersion getEngineVersion() const;
+
+	int getAutosaveSlot() const override;
 
 protected:
 

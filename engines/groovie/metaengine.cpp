@@ -44,6 +44,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	int getAutosaveSlot() const override;
 };
 
 Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -90,6 +91,10 @@ SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, in
 	delete savefile;
 
 	return desc;
+}
+
+int GroovieMetaEngine::getAutosaveSlot() const {
+	return GroovieEngine::AUTOSAVE_SLOT;
 }
 
 } // End of namespace Groovie

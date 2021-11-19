@@ -244,14 +244,7 @@ void Script::directGameLoad(int slot) {
 			midiInitScriptSize = sizeof(t7gMidiInitScript);
 		}
 	} else if (_version == kGroovieT11H) {
-		// WORKAROUND Slot 0 is sometimes loaded by scripts (f.e. showing the
-		// load/restart dialog during the intro). The intention is not clear to
-		// me, but it is not for loading a savegame (only slots 1-9 can be used
-		// in the original UI). In order to be able to distinguish this case
-		// from the case where the slot 0 savegame is loaded from the ScummVM
-		// UI, the slot variable is set to 0xFF here. This means that the slot
-		// 0 savegame should actually be loaded.
-		setVariable(0xF, slot == 0 ? 0xFF : slot);
+		setVariable(0xF, slot);
 		_currentInstruction = 0xE78D;
 		return;
 	} else if (_version == kGroovieCDY) {
@@ -482,24 +475,11 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
-	// WORKAROUND The game scripts sometimes call loadgame with slot 0 (f.e.
-	// during the intro when showing the load/restart dialog). The meaning of
-	// this is not clear to me, but it is not for loading a savegame, because
-	// only slots 1-9 are usable with the original UI.
-	// In case slot 0 is loaded from the ScummVM UI, the slot parameter has
-	// been set to 0xFF.
-	if (_vm->getEngineVersion() == kGroovieT11H) {
-		if (slot == 0) {
-			// Loadgame slot 0 has been called by the game scripts.
-			// TODO Figure out if anything needs to be done.
-			return;
-		} else if (slot == 0xFF) {
-			// Slot 0 has been loaded from the ScummVM UI.
-			slot = 0;
-		}
-	}
-
-	_vm->_musicPlayer->stop();
+	// The 11th Hour uses slot 0 for the Open House savegame. It loads this
+	// savegame before showing the load/restart dialog during the intro. The
+	// music should not be stopped in this case.
+	if (!(_vm->getEngineVersion() == kGroovieT11H && slot == 0))
+		_vm->_musicPlayer->stop();
 
 	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
 

@@ -48,6 +48,8 @@
 
 namespace Groovie {
 
+const int GroovieEngine::AUTOSAVE_SLOT = MAX_SAVES - 1;
+
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _script(nullptr),
 	_resMan(nullptr), _grvCursorMan(nullptr), _videoPlayer(nullptr), _musicPlayer(nullptr),
@@ -406,6 +408,10 @@ Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc,
 
 	// TODO: Use specific error codes
 	return Common::kNoError;
+}
+
+int GroovieEngine::getAutosaveSlot() const {
+	return AUTOSAVE_SLOT;
 }
 
 void GroovieEngine::waitForInput() {
