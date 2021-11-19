@@ -736,6 +736,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "djrom",				"The DJ-ROM: Da CD-Extra of Hip-Hop Music" },
 	{ "earthtia",			"アースティアサーガ ラーサーレジェンド" },					// Earthtia Saga: Larthur's Legend
 	{ "epson96",			"I Love EPSON '96 シェイプUPガールズ" },				// Shape Up Girls
+	{ "erikotamuraoz",		"Eriko Tamura: Oz" },
 	{ "fantazion",			"World Engine Fantazion" },
 	{ "ffa",				"ファンキー ファニー エイリアンズ" },				// Funky Funny Aliens
 	{ "garyukeiba",			"我流競馬" },							       		// "My style horse racing"
@@ -841,6 +842,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Japanese art and multimedia reference
 	{ "a5tours",			"A5 Tours: Special Data Library" },
+	{ "allthelunar",		"オール・ザ・ルナ LUNAR -ハイパーアプリケーションズ-" }, // All the Lunar: Hyper Applications
 	{ "aquaplanet",			"Aquaplanet" },
 	{ "asylum300",			"Asylum 300" },
 	{ "chunchunworld",		"Chun-Chun World" },
@@ -1677,6 +1679,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("fantazion", "", "xn--FANTAZION-oz64c", "276bee761e48a6fd709df77d5c2f60dd", 420924, Common::JA_JPN, 310),
 	WINGAME1_l("fantazion", "", "FTZ.EXE", "7c8230a804abf9353b05627a675b5ffb", 406250, Common::JA_JPN, 310),
 
+	MACGAME1_l("erikotamuraoz", "", "OZ", "7f443f2e63fd497a9ad85b10dc880a91", 384207, Common::JA_JPN, 313),
+	MACGAME1_l("erikotamuraoz", "Gallery OZ (16)", "Gallery OZ(16)", "7f443f2e63fd497a9ad85b10dc880a91", 384210, Common::JA_JPN, 313),
+	MACGAME1_l("erikotamuraoz", "Gallery OZ (24)", "Gallery OZ(24)", "7f443f2e63fd497a9ad85b10dc880a91", 384207, Common::JA_JPN, 313),
+
 	// All four languages on one disc. Original Mac file name is Parents’ Guide FFF
 	MACGAME1("fff",   "", "Friends",      "7f443f2e63fd497a9ad85b10dc880a91", 413963, 313),
 	WINGAME1("fff",   "", "FRIENDS.EXE",  "65d06b5fef155a2473434571aff5bc29", 384557, 313),
@@ -2145,7 +2151,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("the7colors", "", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398981, 300),
 	MACGAME1_l("the7colors", "No CD Yo! 6/21/15 hack", "xn--~LEGEND OF PSYS CITY~-u558i", "a6e50f2b8f294640a1d0cbe91a73e81c", 392267, Common::JA_JPN, 300),
 
-	MACGAME1_l("timegal", "", "TimeGal", "f5277c53bacd27936158dd3867e587e2", 392486, Common::JA_JPN, 311),
+	MACGAME1_l("timegal", "", "TimeGal", "f5277c53bacd27936158dd3867e587e2", 392230, Common::JA_JPN, 311),
 
 	// First animation fails to run on Mac emulators
 	MACGAME1("timeline", "24bit 1", "TimeLine 24bit 1", "1ae45c23586b41997ba52e2e7c771c4c", 252464, 310),
@@ -5137,6 +5143,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"Main - 7.dxr", "4fa7c071ea2e934eaf9d6f4ef3205ecf", 13068189, Common::FR_FRA, 702),
 	WINGAME2_l("affaires1", "", "StartMe.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1819926,
 								"Main - 7.dxr", "ad34b9d4987fc84c238f0e88b174fbc9", 13068061, Common::FR_FRA, 702),
+
+	WINGAME1t_l("allthelunar", "Installer", "install.exe", "f670d62dfbf3f42c475b4f09c68f1888", 1743796, Common::JA_JPN, 701),
+	MACGAME1_l("allthelunar", "Gallery", "xn--2bkwb2jyaf2iv50xg56c", "91723348f6414e84d024183554385275", 110811, Common::JA_JPN, 701),
+	WINGAME1t_l("allthelunar", "Gallery", "gallery.exe", "dc43ed7868f092e8f59a640766438b38", 13403016, Common::JA_JPN, 701),
+	MACGAME1_l("allthelunar", "Daifugo", "xn--pss84d253e", "d2404d3c2d1df0ca4125e85b1ca97e96", 22329996, Common::JA_JPN, 701),
+	WINGAME1t_l("allthelunar", "Daifugo", "DAIFUGO.exe", "d2404d3c2d1df0ca4125e85b1ca97e96", 22329996, Common::JA_JPN, 701),
+	// Japanese name 'ルーナの着信メロディメーカー'
+	// Japanese filename '着信メロディメーカー'
+	MACGAME1_l("allthelunar", "Luna no Chakushin Melody Maker", "xn--2bkuay9hyfd4f3fb5910fxrwe", "f670d62dfbf3f42c475b4f09c68f1888", 5839096, Common::JA_JPN, 701),
+	WINGAME1t_l("allthelunar", "Luna no Chakushin Melody Maker", "melody.exe", "f670d62dfbf3f42c475b4f09c68f1888", 5839096, Common::JA_JPN, 701),
 
 	WINDEMO1("artus1", "Demo", "artus.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2595828, 702),
 
