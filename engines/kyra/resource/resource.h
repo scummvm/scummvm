@@ -30,6 +30,7 @@
 #include "common/list.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/macresman.h"
 #include "common/stream.h"
 #include "common/ptr.h"
 #include "common/archive.h"
@@ -91,6 +92,8 @@ protected:
 	Common::SearchSet _files;
 	Common::SearchSet _archiveFiles;
 	Common::SearchSet _protectedFiles;
+
+	Common::MacResManager _macResMan;
 
 	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
