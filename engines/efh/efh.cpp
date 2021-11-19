@@ -1138,7 +1138,10 @@ void EfhEngine::displayFullScreenColoredMenuBox(int color) {
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
-	warning("STUB - copyCurrentPlaceToBuffer");
+	uint8 *placesPtr = &_places[576 * id];
+
+	// Note that 576 = 24 * 24
+	memcpy(_curPlace, placesPtr, 24 * 24);
 }
 
 void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation) {
