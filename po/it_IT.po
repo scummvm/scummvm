@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-19 23:56+0000\n"
+"POT-Creation-Date: 2021-11-20 00:06+0000\n"
 "PO-Revision-Date: 2021-11-19 11:21+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -2776,7 +2776,7 @@ msgstr "Finestra input predittivo"
 msgid "Confirm"
 msgstr "Conferma"
 
-#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:166
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:175
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3051,32 +3051,32 @@ msgstr "Clic disattivato"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Touchscreen 'Tap Mode' - Passaggio del cursore (clic DPad)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:227
 msgid "Center"
 msgstr "Centra"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr "Ridimensionamento pixel-perfect"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:247
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 msgid "Even pixels scaling"
 msgstr "Ridimensionamento a pixel equivalenti"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:248
+#: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr "Adatta alla finestra"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:249
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
 msgstr "Stira l'immagine per riempire la finestra"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:250
+#: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr "Adatta alla finestra (4:3)"
