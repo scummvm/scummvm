@@ -20,6 +20,7 @@
  *
  */
 
+#include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 #include "kyra/sound/sound_mac_res.h"
 #include "kyra/sound/drivers/halestorm.h"
@@ -38,17 +39,15 @@
 
 namespace Kyra {
 
-SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macInstallerRes(nullptr), _macRes(nullptr), _stuffItArchive(nullptr) {
+SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macRes(nullptr), _stuffItArchive(nullptr) {
 	_useInstaller = vm->gameFlags().useInstallerPackage;
 	_macRes = new Common::MacResManager();
 	if (_useInstaller)
-		_macInstallerRes = new Common::MacResManager();
+		_stuffItArchive = vm->resource()->getInstallerArchive();
 }
 
 SoundMacRes::~SoundMacRes() {
-	delete _stuffItArchive;
 	delete _macRes;
-	delete _macInstallerRes;
 }
 
 bool SoundMacRes::init() {
@@ -106,12 +105,6 @@ bool SoundMacRes::init() {
 		warning("SoundMacRes::init(): Legend of Kyrandia %s not found",
 			_useInstaller ? "installer" : "resource fork");
 		return false;
-	}
-
-	if (_useInstaller) {
-		_macInstallerRes->open(_kyraMacExe);
-		Common::SeekableReadStream *stream = _macInstallerRes->getDataFork();
-		_stuffItArchive = Common::createStuffItArchive(stream);
 	}
 
 	setQuality(true);
