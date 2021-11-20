@@ -26,13 +26,10 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "engines/util.h"
-#include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "efh/efh.h"
 #include "efh/constants.h"
-
-#include "engines/util.h"
-#include "graphics/palette.h"
 
 namespace Efh {
 
@@ -45,7 +42,7 @@ EfhGraphicsStruct::EfhGraphicsStruct() {
 	_height = 0;
 	_area = Common::Rect(0, 0, 0, 0);
 }
-EfhGraphicsStruct::EfhGraphicsStruct(int16 *lineBuf, int16 x, int16 y, int16 width, int16 height) {
+EfhGraphicsStruct::EfhGraphicsStruct(int8 **lineBuf, int16 x, int16 y, int16 width, int16 height) {
 	_vgaLineBuffer = lineBuf;
 	_shiftValue = 0;
 	_width = width;
@@ -284,7 +281,7 @@ void EfhEngine::loadNewPortrait() {
 	findMapFile(_techId);
 	_currentAnimImageSetId = 200 + _unkRelatedToAnimImageSetId;
 	int imageSetId = _unkRelatedToAnimImageSetId + 13;
-	loadImageSet(imageSetId, _portraitBuf, _portraitSubFilesArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(imageSetId, _portraitBuf, _portraitSubFilesArray, _hiResImageBuf);
 }
 
 void EfhEngine::loadAnimImageSet() {
@@ -298,7 +295,7 @@ void EfhEngine::loadAnimImageSet() {
 	_currentAnimImageSetId = _animImageSetId;
 
 	int16 animSetId = _animImageSetId + 17;
-	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, _hiResImageBuf);
 }
 
 void EfhEngine::loadHistory() {
@@ -533,9 +530,9 @@ void EfhEngine::initEngine() {
 	_defaultBoxColor = 7;
 
 	// Init Font
-	_fontDescr._widthArray = fontWidthArray;
-	_fontDescr._extraLines = fontExtraLinesArray;
-	_fontDescr._fontData = fontData;
+	_fontDescr._widthArray = kFontWidthArray;
+	_fontDescr._extraLines = kFontExtraLinesArray;
+	_fontDescr._fontData = kFontData;
 	_fontDescr._charHeight = 8;
 	_fontDescr._extraVerticalSpace = 3;
 	_fontDescr._extraHorizontalSpace = 1;
@@ -554,7 +551,7 @@ void EfhEngine::initEngine() {
 	// }
 
 	// Load Title Screen
-	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	displayFctFullScreen();
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
 	displayFctFullScreen();
@@ -584,7 +581,7 @@ void EfhEngine::initEngine() {
 	loadNPCS();
 
 	// Load picture room with girlfriend
-	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	fileName = "titlsong"; 
 	readFileToBuffer(fileName, _titleSong);
 	setDefaultNoteDuration();
@@ -596,7 +593,7 @@ void EfhEngine::initEngine() {
 		sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
 
 		// Load animations on previous picture with GF
-		loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+		loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 		readImpFile(100, 0);
 		lastInput = getLastCharAfterAnimCount(8);
 
@@ -654,7 +651,7 @@ void EfhEngine::initEngine() {
 		}		
 	}
 
-	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	readImpFile(99, false);
 	_word31E9E = 0xFFFF;
 	restoreAnimImageSetId();
@@ -680,7 +677,7 @@ void EfhEngine::initMapMonsters() {
 
 		for (uint8 counter = 0; counter < groupSize; ++counter) {
 			uint rand100 = _rnd->getRandomNumber(99) + 1;
-			uint16 pictureRef = _encounters[_mapMonsters[monsterId]._MonsterRef]._pictureRef;
+			uint16 pictureRef = kEncounters[_mapMonsters[monsterId]._MonsterRef]._pictureRef;
 
 			if (rand100 <= 25) {
 				uint16 delta = _rnd->getRandomNumber((pictureRef / 2) - 1) + 1;
@@ -753,12 +750,12 @@ void EfhEngine::displayLowStatusScreen(int i) {
 	warning("STUB - displayLowStatusScreen");
 }
 
-void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *destBuffer, uint8 *transfBuffer) {
+void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
 	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
-	rImageFile(fileName, buffer, subFilesArray, CGAVal, EGAVal, destBuffer, transfBuffer);
+	rImageFile(fileName, buffer, subFilesArray, destBuffer);
 }
 
-void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *transformedBuf) {
+void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
 	readFileToBuffer(filename, packedBuffer);
 	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 	// TODO: Keep this dump for debug purposes only
@@ -767,7 +764,7 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 	dump.write(targetBuffer, size);
 	// End of dump	
 	
-	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (1 Bpp)
+	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (4 Bpp)
 	// => Write a class to handle that more properly
 	uint8 *ptr = targetBuffer;
 	uint16 counter = 0;
@@ -795,8 +792,6 @@ void EfhEngine::displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 max
 
 void EfhEngine::displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
 	warning("STUB - displayBitmap");
-	
-	
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
@@ -922,7 +917,7 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 		_mapBitmapRef[bankId] = setId;
 
 	int16 ptrIndex = bankId * 72;
-	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], 0, _paletteTransformationConstant, _hiResImageBuf, _loResImageBuf);
+	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _hiResImageBuf);
 }
 
 void EfhEngine::restoreAnimImageSetId() {

@@ -60,9 +60,9 @@ struct EfhGameDescription;
 class EfhGraphicsStruct {
 public:
 	EfhGraphicsStruct();
-	EfhGraphicsStruct(int16 *lineBuf, int16 x, int16 y, int16 width, int16 height);
+	EfhGraphicsStruct(int8 **lineBuf, int16 x, int16 y, int16 width, int16 height);
 
-	int16 *_vgaLineBuffer;
+	int8 **_vgaLineBuffer;
 	uint16 _shiftValue;
 	uint16 _width;
 	uint16 _height;
@@ -175,8 +175,8 @@ private:
 	void loadMapMonsters();
 	void saveAnimImageSetId();
 	void displayLowStatusScreen(int i);
-	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *destBuffer, uint8 *transfBuffer);
-	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *transformedBuffer);
+	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
+	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
 	void displayFctFullScreen();
 	void displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY);
 	void displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
@@ -204,7 +204,7 @@ private:
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
-	int16 _vgaLineBuffer[200];
+	int8 *_vgaLineBuffer[200];
 	EfhGraphicsStruct *_vgaGraphicsStruct1;
 	EfhGraphicsStruct *_vgaGraphicsStruct2;
 	EfhGraphicsStruct *_graphicsStruct;
