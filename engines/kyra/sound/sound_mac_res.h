@@ -42,7 +42,6 @@ public:
 
 private:
 	bool _useInstaller;
-	Common::MacResManager *_macInstallerRes;
 	Common::MacResManager *_macRes;
 	Common::String _kyraMacExe;
 	Common::Array<Common::String> _resFiles;

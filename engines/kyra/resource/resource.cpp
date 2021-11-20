@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
+Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD), _installerArchive() {
 	initializeLoaders();
 
 	// Initialize directories for playing from CD or with original
@@ -98,11 +98,14 @@ bool Resource::reset() {
 			error("Could not find Legend of Kyrandia installer file");
 		}
 
-		Common::Archive *archive = loadStuffItArchive(kyraInstaller);
-		_files.add("installer", archive, 0, false);
+		_installerArchive = loadStuffItArchive(kyraInstaller);
+		if (!_installerArchive)
+			error("Failed to load Legend of Kyrandia installer file");
+
+		_files.add("installer", _installerArchive, 0, false);
 
 		Common::ArchiveMemberList members;
-		archive->listMatchingMembers(members, "*.PAK");
+		_installerArchive->listMatchingMembers(members, "*.PAK");
 		for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); ++it) {
 			Common::String name = (*it)->getName();
 			Common::Archive *pak = loadArchive(name, *it);
