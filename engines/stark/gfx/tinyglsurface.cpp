@@ -58,11 +58,8 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	Graphics::tglGetBlitImageSize(blitImage, blitTextureWidth, blitTextureHeight);
 	int posX = viewport.getX() * verOffsetXY.getX() + nativeViewport.left;
 	int posY = viewport.getY() * verOffsetXY.getY() + nativeViewport.top;
-	int dstWidth = viewport.getX() * sizeWH.getX();
-	int dstHeight = viewport.getY() * sizeWH.getY();
 	Graphics::BlitTransform transform(posX, posY);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
-	transform.scale(dstWidth, dstHeight);
 	transform.tint(1.0, 1.0 - _fadeLevel, 1.0 - _fadeLevel, 1.0 - _fadeLevel);
 	tglBlit(blitImage, transform);
 

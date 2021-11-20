@@ -24,6 +24,8 @@
 #include "engines/stark/gfx/opengl.h"
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/tinygl.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -77,7 +79,11 @@ Driver *Driver::create() {
 	}
 #endif
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		//driver = new TinyGLDriver();
+		if (StarkSettings->isAssetsModEnabled()) {
+			GUI::displayErrorDialog(Common::U32String::format(_("Software renderer does not support modded assets")));
+			return nullptr;
+		}
+		driver = new TinyGLDriver();
 	}
 
 	if (driver)
