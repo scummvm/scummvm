@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-19 20:06+0000\n"
+"POT-Creation-Date: 2021-11-19 23:56+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -135,7 +135,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3090 gui/options.cpp:3128 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3091 gui/options.cpp:3129 gui/saveload-dialog.cpp:344
 #: backends/events/default/default-events.cpp:195 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -147,7 +147,7 @@ msgstr "Так"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:137 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:422 gui/launcher.cpp:465
-#: gui/options.cpp:3090 gui/options.cpp:3128 gui/saveload-dialog.cpp:344
+#: gui/options.cpp:3091 gui/options.cpp:3129 gui/saveload-dialog.cpp:344
 #: engines/buried/buried.cpp:530 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:152
@@ -197,12 +197,12 @@ msgstr ""
 "У гэтай тэчке ўжо ёсьць \"%s\".\n"
 "Вы упэўнены, што хаціце зладаваць файлы ў гэтую тэчку?"
 
-#: gui/downloaddialog.cpp:215 gui/downloadiconsdialog.cpp:253
+#: gui/downloaddialog.cpp:215 gui/downloadiconsdialog.cpp:255
 #, fuzzy, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Зладавана %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:222 gui/downloadiconsdialog.cpp:260
+#: gui/downloaddialog.cpp:222 gui/downloadiconsdialog.cpp:262
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "Хуткасьць ладаваньня: %s %S"
@@ -232,24 +232,24 @@ msgstr "Скасаваць ладаваньне"
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 
-#: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:302
-#: gui/gui-manager.cpp:218 gui/unknown-game-dialog.cpp:54
+#: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
+#: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Закрыць"
 
-#: gui/downloadiconsdialog.cpp:307
+#: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
 msgstr ""
 
-#: gui/downloadiconsdialog.cpp:324
+#: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
 msgstr ""
 
-#: gui/downloadiconsdialog.cpp:354
+#: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr "Мова гульні. Ангельская мова гульні ня �
 #: gui/options.cpp:1422 gui/options.cpp:1435 gui/options.cpp:1449
 #: gui/options.cpp:1461 gui/options.cpp:1481 gui/options.cpp:1493
 #: gui/options.cpp:1867 gui/options.cpp:2287 gui/options.cpp:2360
-#: gui/options.cpp:2540 gui/options.cpp:2978 audio/null.cpp:41
+#: gui/options.cpp:2540 gui/options.cpp:2979 audio/null.cpp:41
 #, fuzzy
 msgid "<default>"
 msgstr "<стандартная>"
@@ -496,20 +496,20 @@ msgstr ""
 #: gui/options.cpp:2208 gui/options.cpp:2251 gui/options.cpp:2259
 #: gui/options.cpp:2267 gui/options.cpp:2276 gui/options.cpp:2653
 #: gui/options.cpp:2659 gui/options.cpp:2665 gui/options.cpp:2672
-#: gui/options.cpp:2681 gui/options.cpp:2959 gui/options.cpp:2962
-#: gui/options.cpp:2965 gui/options.cpp:2972 gui/options.cpp:2984
-#: gui/options.cpp:2995
+#: gui/options.cpp:2681 gui/options.cpp:2960 gui/options.cpp:2963
+#: gui/options.cpp:2966 gui/options.cpp:2973 gui/options.cpp:2985
+#: gui/options.cpp:2996
 msgctxt "path"
 msgid "None"
 msgstr ""
 
 #: gui/editgamedialog.cpp:408 gui/editgamedialog.cpp:515
 #: gui/editgamedialog.cpp:646 gui/options.cpp:2151 gui/options.cpp:2647
-#: gui/options.cpp:2968 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2969 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr ""
 
-#: gui/editgamedialog.cpp:568 gui/options.cpp:2989
+#: gui/editgamedialog.cpp:568 gui/options.cpp:2990
 msgid "Select SoundFont"
 msgstr ""
 
@@ -651,16 +651,16 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
 
-#: gui/gui-manager.cpp:209
+#: gui/gui-manager.cpp:211
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:213 engines/mohawk/myst.cpp:574
+#: gui/gui-manager.cpp:215 engines/mohawk/myst.cpp:574
 #: engines/mohawk/riven.cpp:838
 msgid "Interact"
 msgstr ""
 
-#: gui/gui-manager.cpp:224 engines/metaengine.cpp:110
+#: gui/gui-manager.cpp:226 engines/metaengine.cpp:110
 #: engines/dragons/metaengine.cpp:161 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:455
 #: engines/grim/grim.cpp:532 engines/twine/metaengine.cpp:328
@@ -671,7 +671,7 @@ msgstr ""
 msgid "Up"
 msgstr "Угару"
 
-#: gui/gui-manager.cpp:229 engines/metaengine.cpp:115
+#: gui/gui-manager.cpp:231 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:167 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:460
 #: engines/grim/grim.cpp:537 engines/twine/metaengine.cpp:335
@@ -682,7 +682,7 @@ msgstr "Угару"
 msgid "Down"
 msgstr ""
 
-#: gui/gui-manager.cpp:234 engines/metaengine.cpp:120
+#: gui/gui-manager.cpp:236 engines/metaengine.cpp:120
 #: engines/dragons/metaengine.cpp:173 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:542
 #: engines/twine/metaengine.cpp:350 engines/twine/metaengine.cpp:418
@@ -694,7 +694,7 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
-#: gui/gui-manager.cpp:239 engines/metaengine.cpp:125
+#: gui/gui-manager.cpp:241 engines/metaengine.cpp:125
 #: engines/dragons/metaengine.cpp:179 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:547
 #: engines/twine/metaengine.cpp:342 engines/twine/metaengine.cpp:411
@@ -706,7 +706,7 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: gui/gui-manager.cpp:244 engines/pegasus/pegasus.cpp:2815
+#: gui/gui-manager.cpp:246 engines/pegasus/pegasus.cpp:2815
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -1528,7 +1528,7 @@ msgid "ScummVM config path: "
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2292 gui/options.cpp:2978
+#: gui/options.cpp:2292 gui/options.cpp:2979
 msgid "Last browser path: "
 msgstr ""
 
@@ -1680,7 +1680,7 @@ msgstr ""
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 
-#: gui/options.cpp:2451 gui/options.cpp:3333
+#: gui/options.cpp:2451 gui/options.cpp:3334
 msgid "<never>"
 msgstr ""
 
@@ -1781,7 +1781,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:2492 gui/options.cpp:3448
+#: gui/options.cpp:2492 gui/options.cpp:3449
 msgid "Not running"
 msgstr ""
 
@@ -1913,53 +1913,53 @@ msgstr ""
 msgid "Select directory for Files Manager /root/"
 msgstr ""
 
-#: gui/options.cpp:3065
+#: gui/options.cpp:3066
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 
-#: gui/options.cpp:3090
+#: gui/options.cpp:3091
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3099 gui/options.cpp:3137
+#: gui/options.cpp:3100 gui/options.cpp:3138
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/options.cpp:3112
+#: gui/options.cpp:3113
 msgid "Connecting..."
 msgstr ""
 
-#: gui/options.cpp:3128
+#: gui/options.cpp:3129
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3331 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3332 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:3440
+#: gui/options.cpp:3441
 msgid "Stop server"
 msgstr ""
 
-#: gui/options.cpp:3441
+#: gui/options.cpp:3442
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:3493
+#: gui/options.cpp:3494
 msgid "Storage connected."
 msgstr ""
 
-#: gui/options.cpp:3495
+#: gui/options.cpp:3496
 msgid "Failed to connect storage."
 msgstr ""
 
-#: gui/options.cpp:3497
+#: gui/options.cpp:3498
 msgid "Failed to connect storage: "
 msgstr ""
 
-#: gui/options.cpp:3517
+#: gui/options.cpp:3518
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
