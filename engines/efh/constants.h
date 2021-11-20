@@ -40,10 +40,10 @@ struct Encounter {
 	uint8 _nameArticle;
 };
 
-extern const uint8 fontWidthArray[96];
-extern const uint8 fontExtraLinesArray[96];
-extern const Font fontData[96];
-extern const Encounter _encounters[];
+extern const uint8 kFontWidthArray[96];
+extern const uint8 kFontExtraLinesArray[96];
+extern const Font kFontData[96];
+extern const Encounter kEncounters[];
 
 } // End of namespace Efh
 
