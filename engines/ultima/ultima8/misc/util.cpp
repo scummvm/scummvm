@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
+template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 	// Clear the vector
 	argv.clear();
 
@@ -87,9 +87,7 @@ template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
 	if (!arg.empty()) argv.push_back(arg);
 }
 
-template void StringToArgv<Std::string>(const Std::string &args, Std::vector<Std::string> &argv);
-template void StringToArgv<istring>(const istring &args, Std::vector<istring> &argv);
-template void StringToArgv<Common::String>(const Common::String &args, Std::vector<Common::String> &argv);
+template void StringToArgv<Common::String>(const Common::String &args, Common::Array<Common::String> &argv);
 
 template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
 	// Clear the string
@@ -125,8 +123,6 @@ template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
 	}
 }
 
-template void ArgvToString<Std::string>(const Std::vector<Std::string> &argv, Std::string &args);
-template void ArgvToString<istring>(const Std::vector<istring> &argv, istring &args);
 template void ArgvToString<Common::String>(const Std::vector<Common::String> &argv, Common::String &args);
 
 template<class T> void TrimSpaces(T &str) {

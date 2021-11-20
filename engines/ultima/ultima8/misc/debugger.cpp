@@ -214,14 +214,14 @@ Debugger::~Debugger() {
 }
 
 
-void Debugger::executeCommand(const ArgsType &args) {
-	ArgvType argv;
+void Debugger::executeCommand(const Common::String &args) {
+	Common::Array<Common::String> argv;
 	StringToArgv(args, argv);
 
 	executeCommand(argv);
 }
 
-void Debugger::executeCommand(const ArgvType &argv) {
+void Debugger::executeCommand(const Common::Array<Common::String> &argv) {
 	if (argv.empty())
 		return;
 
