@@ -26,6 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Efh {
+struct Font {
+	uint8 _lines[8];
+};
 
 struct Encounter {
 	char _name[14];
@@ -37,6 +40,9 @@ struct Encounter {
 	uint8 _nameArticle;
 };
 
+extern const uint8 fontWidthArray[96];
+extern const uint8 fontExtraLinesArray[96];
+extern const Font fontData[96];
 extern const Encounter _encounters[];
 
 } // End of namespace Efh
