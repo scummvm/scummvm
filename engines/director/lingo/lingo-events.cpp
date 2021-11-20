@@ -266,6 +266,14 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 			queueMovieEvent(queue, event, eventId);
 			break;
 
+		// no-op; only handled by the primary event handler above
+		// empty case avoids them generating logs from the default
+		// unhandled event case below.
+		case kEventKeyUp:
+		case kEventKeyDown:
+		case kEventTimeout:
+			break;
+
 		default:
 			warning("registerEvent: Unhandled event %s", _lingo->_eventHandlerTypes[event]);
 		}
