@@ -763,8 +763,6 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 	_cursorDontScale = dontScale;
 
 	if (!w || !h) {
-		if (_cursor)
-			_cursor->unloadScaler();
 		delete _cursor;
 		_cursor = nullptr;
 		return;
@@ -783,17 +781,9 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 	// In case the color format has changed we will need to create the texture.
 	if (!_cursor || _cursor->getFormat() != inputFormat) {
-		if (_cursor)
-			_cursor->unloadScaler();
 		delete _cursor;
 		_cursor = nullptr;
 
-#ifdef USE_SCALERS
-		bool wantScaler = (_currentState.scaleFactor > 1) && !dontScale
-		                && _scalerPlugins[_currentState.scalerIndex]->get<ScalerPluginObject>().canDrawCursor();
-#else
-		bool wantScaler = false;
-#endif
 		GLenum glIntFormat, glFormat, glType;
 
 		Graphics::PixelFormat textureFormat;
@@ -808,14 +798,10 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
-		_cursor = createSurface(textureFormat, false, wantScaler);
+		// TODO: Enable SW scaling for cursors
+		_cursor = createSurface(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.filtering);
-#ifdef USE_SCALERS
-		if (wantScaler) {
-			_cursor->setScaler(_currentState.scalerIndex, _currentState.scaleFactor);
-		}
-#endif
 	}
 
 	_cursor->allocate(w, h);
