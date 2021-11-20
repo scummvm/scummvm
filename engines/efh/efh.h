@@ -24,14 +24,15 @@
 #define EFH_EFH_H
 
 #include "efh/detection.h"
+#include "efh/constants.h"
 
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/events.h"
 
 #include "engines/engine.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
+
 
 namespace Common {
 class RandomSource;
@@ -70,14 +71,10 @@ public:
 	void copy(EfhGraphicsStruct *src);
 };
 
-struct Font {
-	uint8 _lines[8];
-};
-
 struct FontDescr {
-	uint8 *_widthArray;
-	uint8 *_extraLines;
-	Font  *_fontData;
+	const uint8 *_widthArray;
+	const uint8 *_extraLines;
+	const Font  *_fontData;
 	uint8 _charHeight;
 	uint8 _extraVerticalSpace;
 	uint8 _extraHorizontalSpace;
