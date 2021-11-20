@@ -29,7 +29,7 @@
 
 namespace Networking {
 class Session;
-};
+}
 
 namespace GUI {
 class CommandSender;
