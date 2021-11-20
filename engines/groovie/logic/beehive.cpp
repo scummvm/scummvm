@@ -36,9 +36,6 @@ extern const int8 beehiveLogicTable1[368];
 extern const int8 beehiveLogicTable2[800];
 }
 
-Common::Array<int> overrideMoves;
-uint overrideIndex = 0;
-
 void BeehiveGame::overrideClick(byte *vars) {
 	if (overrideIndex >= overrideMoves.size())
 		return;
@@ -823,6 +820,7 @@ void BeehiveGame::tests() {
 		/**/ 25, 23, /**/ 46, 31, /**/ 31, 30, /**/ 52, 38, /**/ 29, 12, /**/ 31, 39, /**/ 35, 28, /**/ 49, 32,
 		/**/ 31, 40, /**/ 39, 47, /**/ 20, 19, /**/ 29, 37, /**/ 57, 58, /**/ 53, 46, /**/ 53, 52
 	};
+	overrideIndex = 0;
 }
 
 } // End of Groovie namespace

@@ -78,6 +78,8 @@ private:
 	#define HEXCOUNT 61
 	int8 _beehiveState[HEXCOUNT];
 
+	Common::Array<int> overrideMoves;
+	uint overrideIndex;
 };
 
 } // End of Groovie namespace
