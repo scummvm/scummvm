@@ -70,7 +70,7 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 		error("Wrong magic 2 while reading actor '%d'", id2);
 	}
 
-	_u2 = stream->readFloat();
+	_u2 = stream->readFloatLE();
 
 	uint32 numMaterials = stream->readUint32LE();
 
@@ -79,9 +79,9 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 		node->name = stream->readString();
 		stream->readUint32LE(); // CHECKME: Unknown data
 		node->texture = stream->readString();
-		node->r = stream->readFloat();
-		node->g = stream->readFloat();
-		node->b = stream->readFloat();
+		node->r = stream->readFloatLE();
+		node->g = stream->readFloatLE();
+		node->b = stream->readFloatLE();
 		_materials.push_back(node);
 	}
 
@@ -112,11 +112,11 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 			vert->_pos1 = stream->readVector3();
 			vert->_pos2 = stream->readVector3();
 			vert->_normal = stream->readVector3();
-			vert->_texS = stream->readFloat();
-			vert->_texT = stream->readFloat();
+			vert->_texS = stream->readFloatLE();
+			vert->_texT = stream->readFloatLE();
 			vert->_bone1 = stream->readUint32LE();
 			vert->_bone2 = stream->readUint32LE();
-			vert->_boneWeight = stream->readFloat();
+			vert->_boneWeight = stream->readFloatLE();
 			_vertices.push_back(vert);
 		}
 
@@ -139,7 +139,7 @@ void Model::readBones(ArchiveReadStream *stream) {
 	for (uint32 i = 0; i < numBones; ++i) {
 		BoneNode *node = new BoneNode();
 		node->_name = stream->readString();
-		node->_u1 = stream->readFloat();
+		node->_u1 = stream->readFloatLE();
 
 		uint32 len = stream->readUint32LE();
 		for (uint32 j = 0; j < len; ++j)

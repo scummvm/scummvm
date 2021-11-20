@@ -121,7 +121,7 @@ public:
 			KeyFrame keyFrame;
 			keyFrame.time = stream->readUint32LE();
 			keyFrame.essentialRotation = stream->readQuaternion();
-			keyFrame.determinant = stream->readFloat();
+			keyFrame.determinant = stream->readFloatLE();
 			keyFrame.stretchRotation = stream->readQuaternion();
 			keyFrame.scale = stream->readVector3();
 			keyFrame.translation = stream->readVector3();
@@ -141,8 +141,8 @@ public:
 			Vertex vertex;
 			vertex.animName1 = stream->readString16();
 			vertex.animName2 = stream->readString16();
-			vertex.animInfluence1 = stream->readFloat();
-			vertex.animInfluence2 = stream->readFloat();
+			vertex.animInfluence1 = stream->readFloatLE();
+			vertex.animInfluence2 = stream->readFloatLE();
 			vertex.position = stream->readVector3();
 
 			_rawVertices.push_back(vertex);
@@ -327,8 +327,8 @@ public:
 		_diffuse = stream->readVector3();
 		_specular = stream->readVector3();
 
-		_shininess = stream->readFloat();
-		_opacity = stream->readFloat();
+		_shininess = stream->readFloatLE();
+		_opacity = stream->readFloatLE();
 
 		_doubleSided = stream->readByte();
 		_textureTiling = stream->readUint32LE();
