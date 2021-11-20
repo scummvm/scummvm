@@ -185,6 +185,30 @@ Common::Platform EfhEngine::getPlatform() const {
 	return _platform;
 }
 
+void EfhEngine::initPalette() {
+	const uint8 pal[3 * 16] = {
+		0, 0, 0,
+		0, 0, 170,
+		0, 170, 0,
+		0, 170, 170,
+		170, 0, 0,
+		170, 0, 170,
+		170, 85, 0,
+		170, 170, 170,
+		85, 85, 85,
+		85, 85, 255,
+		1, 1, 1,
+		85, 255, 255,
+		255, 85, 85,
+		255, 85, 255,
+		255, 255, 85,
+		255, 255, 255
+	};
+	
+	_system->getPaletteManager()->setPalette(pal, 0, 16);
+	_system->updateScreen();
+}
+
 Common::Error EfhEngine::run() {
 	s_Engine = this;
 	initialize();
@@ -192,6 +216,8 @@ Common::Error EfhEngine::run() {
 
 	_mainSurface = new Graphics::Surface();
 	_mainSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+
+	initPalette();
 /*
 	// Setup mixer
 	syncSoundSettings();
@@ -842,7 +868,7 @@ void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArra
 	rImageFile(fileName, buffer, subFilesArray, CGAVal, EGAVal, destBuffer, transfBuffer);
 }
 
-void EfhEngine::rImageFile(Common::String filename, uint8 *buffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *targetBuffer) {
+void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, char CGAVal, char EGAVal, uint8 *packedBuffer, uint8 *transformedBuf) {
 	readFileToBuffer(filename, packedBuffer);
 	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 	// TODO: Keep this dump for debug purposes only
@@ -879,6 +905,8 @@ void EfhEngine::displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 max
 
 void EfhEngine::displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
 	warning("STUB - displayBitmap");
+	
+	
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
@@ -928,6 +956,22 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 	uint16 var3A = byte2C80C[bufferBM->_fieldD << 3];
 	//incomplete
 #endif
+
+
+	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
+	warning("%d %d - startX %d startY %d width %d height %d fieldA %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_fieldA, bufferBM->_fieldD);
+	int counter = 0;
+	for (int j = 0; j < bufferBM->_height; ++j) {
+		for (int i = 0; i < bufferBM->_fieldA; ++i) {
+			destPtr[320 * j + 2 * i] = bufferBM->_dataPtr[counter] >> 4;
+			destPtr[320 * j + 2 * i + 1] = bufferBM->_dataPtr[counter] & 0xF;
+			++counter;
+		}
+	}
+
+	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+	_system->updateScreen();
+	_system->delayMillis(200);
 }
 
 void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
