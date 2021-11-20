@@ -38,11 +38,11 @@ devtools/convbdf$(EXEEXT): $(srcdir)/devtools/convbdf.cpp
 
 devtools/md5table$(EXEEXT): $(srcdir)/devtools/md5table.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
+	+$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
 
 devtools/make-scumm-fontdata$(EXEEXT): $(srcdir)/devtools/make-scumm-fontdata.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
+	+$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
 
 # Rule to explicitly rebuild the wwwroot archive
 wwwroot:
