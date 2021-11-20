@@ -548,8 +548,9 @@ void GuiManager::runLoop() {
 		redraw();
 
 		// Delay until the allocated frame time is elapsed to match the target frame rate.
-		// In case we have vsync enabled, we force a minimum frame duration of 1 millisecond
-		// since otherwise, we'd have a very sluggish cursor on 60Hz displays.
+		// In case we have vsync enabled, we should rely on vsync to do take care about frame times.
+		// With vsync enabled, we currently have to force a frame time of 1ms since otherwise
+		// CPU usage will skyrocket on one thread as soon as no updateScreen(); calls happening.
 		if (g_system->getFeatureState(OSystem::kFeatureVSync)) {
 			_system->delayMillis(1);
 		} else {
