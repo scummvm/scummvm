@@ -12,6 +12,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
+   - Scaler werden jetzt auch im OpenGL-Grafikmodus unterstützt.
 
  AGOS:
    - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
