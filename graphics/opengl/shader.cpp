@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -33,14 +34,18 @@ namespace OpenGL {
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
 
-	// Allow load shaders from source code directory without install them
-	// It's used for development purpose
-	// FIXME: it's doesn't work with just search subdirs in 'engines'
+	// Allow load shaders from source code directory without install them.
+	// It's used for development purpose.
+	// Additionally allow load shaders outside distribution data path,
+	// 'extrapath' is used temporary in SearchMan.
 	SearchMan.addDirectory("GRIM_SHADERS", "engines/grim", 0, 2);
 	SearchMan.addDirectory("MYST3_SHADERS", "engines/myst3", 0, 2);
 	SearchMan.addDirectory("STARK_SHADERS", "engines/stark", 0, 2);
 	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 5);
 	SearchMan.addDirectory("PLAYGROUND3D_SHADERS", "engines/playground3d", 0, 2);
+	if (ConfMan.hasKey("extrapath")) {
+		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
+	}
 	file.open(Common::String("shaders/") + filename);
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
@@ -49,6 +54,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.remove("STARK_SHADERS");
 	SearchMan.remove("WINTERMUTE_SHADERS");
 	SearchMan.remove("PLAYGROUND3D_SHADERS");
+	SearchMan.remove("EXTRA_PATH");
 
 	const int32 size = file.size();
 	GLchar *shaderSource = new GLchar[size + 1];
