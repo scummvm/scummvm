@@ -96,8 +96,17 @@ public:
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);
 
 #ifdef LAYOUT_DEBUG_DIALOG
-	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts[LAYOUT_DEBUG_DIALOG]->debugDraw(screen, font);
+	void debugDraw(Graphics::ManagedSurface *screen, const Graphics::Font *font) {
+		if (_layouts.contains(LAYOUT_DEBUG_DIALOG)) {
+			_layouts[LAYOUT_DEBUG_DIALOG]->debugDraw(screen, font);
+		} else {
+			Common::String list;
+
+			for (auto l = _layouts.begin(); l != _layouts.end(); ++l)
+				list += " " + l->_key;
+
+			warning("debugDraw: Unknown layout %s\nList:%s", LAYOUT_DEBUG_DIALOG, list.c_str());
+		}
 	}
 #endif
 

@@ -27,6 +27,8 @@
 #include "common/rect.h"
 #include "graphics/font.h"
 
+//#define LAYOUT_DEBUG_DIALOG "Dialog.Launcher"
+
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
 struct Surface;
@@ -124,10 +126,9 @@ public:
 	Graphics::TextAlign getTextHAlign() { return _textHAlign; }
 
 #ifdef LAYOUT_DEBUG_DIALOG
-	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font);
-
-	virtual const char *getName() const = 0;
+	void debugDraw(Graphics::ManagedSurface *screen, const Graphics::Font *font);
 #endif
+	virtual const char *getName() const { return "<override-me>"; }
 
 protected:
 	ThemeLayout *_parent;
@@ -159,7 +160,7 @@ public:
 		_y = _defaultY;
 	}
 
-	const char *getName() const { return _name.c_str(); }
+	virtual const char *getName() const override { return _name.c_str(); }
 
 protected:
 	LayoutType getLayoutType() const override { return kLayoutMain; }
@@ -192,7 +193,7 @@ public:
 	void reflowLayoutVertical(Widget *widgetChain);
 
 #ifdef LAYOUT_DEBUG_DIALOG
-	const char *getName() const {
+	const char *getName() const override {
 		return (_type == kLayoutVertical)
 			? "Vertical Layout" : "Horizontal Layout";
 	}
@@ -234,7 +235,7 @@ public:
 
 	void reflowLayout(Widget *widgetChain) override;
 
-	virtual const char *getName() const { return _name.c_str(); }
+	virtual const char *getName() const override { return _name.c_str(); }
 
 protected:
 	LayoutType getLayoutType() const override { return kLayoutWidget; }
@@ -300,7 +301,7 @@ public:
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) override { return false; }
 	void reflowLayout(Widget *widgetChain) override {}
 #ifdef LAYOUT_DEBUG_DIALOG
-	const char *getName() const { return "SPACE"; }
+	const char *getName() const override { return "SPACE"; }
 #endif
 
 protected:
