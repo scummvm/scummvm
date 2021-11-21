@@ -187,7 +187,7 @@ private:
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	void copyCurrentPlaceToBuffer(int id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
-	void drawBox(int minX, int minY, int maxX, int maxY);
+	void drawRect(int minX, int minY, int maxX, int maxY);
 	void drawMenuBox(int minX, int minY, int maxX, int maxY, int color);
 	void displayFullScreenColoredMenuBox(int color);
 
