@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-20 16:34+0000\n"
-"PO-Revision-Date: 2021-11-15 23:25+0000\n"
+"PO-Revision-Date: 2021-11-22 01:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -200,37 +200,27 @@ msgid "Download speed: %s %S"
 msgstr "ダウンロード速度：%s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "セーブをダウンロード中..."
+msgstr "アイコンリストをDL中..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "セーブをダウンロード中..."
+msgstr "アイコンリストをDL中... %d"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%dの新規パックを検出、%s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "パッチをダウンロード"
+msgstr "ダウンロード"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"ダウンロード完了。\n"
-"%uファイルをダウンロードできませんでした。"
+msgstr "DL完了。%dパック検出しました、%s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
 #: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
@@ -243,15 +233,15 @@ msgstr "閉じる"
 #: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "エラー %d: %s"
 
 #: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "エラー：アイコンパス未指定"
 
 #: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
-msgstr ""
+msgstr "新しい利用可能なアイコンパックなし"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -1611,10 +1601,8 @@ msgid "Check now"
 msgstr "今すぐ確認"
 
 #: gui/options.cpp:2422
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "アップデートの確認："
+msgstr "アップデートアイコン"
 
 #: gui/options.cpp:2430
 msgid "Active storage:"
@@ -2348,31 +2336,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
@@ -7071,20 +7051,14 @@ msgstr ""
 "音楽は無効になります。"
 
 #: engines/scumm/scumm.cpp:1652
-#, fuzzy
-#| msgid ""
-#| "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
-#| "compression is not supported anymore for this game, audio will be "
-#| "disabled.\n"
-#| "Please reinstall the game with the correct resource files."
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
-"ScummVM Toolsで圧縮された音声ファイルが検出されました(*.BUN/*.SOU)。\n"
+"ScummVM Toolsで圧縮された音声ファイルを検出しました(*.BUN/*.SOU)。\n"
 "このゲームではサポートされていないため、オーディオは無効になります。\n"
-"正しいリソースファイルでゲームを再インストールしてください。"
+"オリジナルのメディアから、圧縮せずにコピーしてください。"
 
 #: engines/scumm/scumm.cpp:2123
 #, c-format
