@@ -41,7 +41,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.addDirectory("GRIM_SHADERS", "engines/grim", 0, 2);
 	SearchMan.addDirectory("MYST3_SHADERS", "engines/myst3", 0, 2);
 	SearchMan.addDirectory("STARK_SHADERS", "engines/stark", 0, 2);
-	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 5);
+	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 2);
 	SearchMan.addDirectory("PLAYGROUND3D_SHADERS", "engines/playground3d", 0, 2);
 	if (ConfMan.hasKey("extrapath")) {
 		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
