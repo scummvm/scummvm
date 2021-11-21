@@ -40,9 +40,8 @@
 namespace Kyra {
 
 SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macRes(nullptr), _stuffItArchive(nullptr) {
-	_useInstaller = vm->gameFlags().useInstallerPackage;
 	_macRes = new Common::MacResManager();
-	if (_useInstaller)
+	if (vm->gameFlags().useInstallerPackage)
 		_stuffItArchive = vm->resource()->getInstallerArchive();
 }
 
@@ -54,62 +53,48 @@ bool SoundMacRes::init() {
 	if (!_macRes)
 		return false;
 
-	// The original executable has a TM char as its last character (character 0xaa
-	// from Mac code page). Depending on the emulator or platform used to copy the
-	// file it might have been reencoded to something else. So I look for multiple
-	// versions, also for punycode encoded files and also for the case where the
-	// user might have just removed the last character by renaming the file.
+	if (!_stuffItArchive) {
+		// The original executable has a TM char as its last character
+		// (character 0xaa from Mac code page). Depending on the emulator or
+		// platform used to copy the file it might have been reencoded to
+		// something else. So I look for multiple versions, also for punycode
+		// encoded files and also for the case where the user might have just
+		// removed the last character by renaming the file.
 
-	const char *const tryInstallerNames[] = {
-		"Install Legend of Kyrandia",
-		"Install Legend of Kyrandia\xaa"
-	};
+		const Common::CodePage tryCodePages[] = {
+			Common::kMacRoman,
+			Common::kISO8859_1
+		};
 
-	const char *const tryExeNames[] = {
-		"Legend of Kyrandia\xaa",
-		"Legend of Kyrandia"
-	};
+		const char *const tryExeNames[] = {
+			"Legend of Kyrandia\xaa",
+			"Legend of Kyrandia"
+		};
 
-	const Common::CodePage tryCodePages[] = {
-		Common::kMacRoman,
-		Common::kISO8859_1
-	};
-
-	const char *const *tryNames;
-	int numTryNames;
-
-	if (_useInstaller) {
-		tryNames = tryInstallerNames;
-		numTryNames = ARRAYSIZE(tryInstallerNames);
-	} else {
-		tryNames = tryExeNames;
-		numTryNames = ARRAYSIZE(tryExeNames);
-	}
-
-	for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
-		for (int ii = 0; ii < numTryNames; ++ii) {
-			Common::U32String fn(tryNames[ii], tryCodePages[i]);
-			_kyraMacExe = fn.encode(Common::kUtf8);
-			if (_macRes->exists(_kyraMacExe))
+		for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
+			for (int ii = 0; ii < ARRAYSIZE(tryExeNames); ++ii) {
+				Common::U32String fn(tryExeNames[ii], tryCodePages[i]);
+				_kyraMacExe = fn.encode(Common::kUtf8);
+				if (_macRes->exists(_kyraMacExe))
+					break;
+				_kyraMacExe = Common::punycode_encodefilename(fn);
+				if (_macRes->exists(_kyraMacExe))
+					break;
+				_kyraMacExe.clear();
+			}
+			if (!_kyraMacExe.empty())
 				break;
-			_kyraMacExe = Common::punycode_encodefilename(fn);
-			if (_macRes->exists(_kyraMacExe))
-				break;
-			_kyraMacExe.clear();
 		}
-		if (!_kyraMacExe.empty())
-			break;
-	}
 
-	if (_kyraMacExe.empty()) {
-		warning("SoundMacRes::init(): Legend of Kyrandia %s not found",
-			_useInstaller ? "installer" : "resource fork");
-		return false;
+		if (_kyraMacExe.empty()) {
+			warning("SoundMacRes::init(): Legend of Kyrandia resource fork not found");
+			return false;
+		}
 	}
 
 	setQuality(true);
 
-	if (!_useInstaller) {
+	if (!_stuffItArchive) {
 		for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
 			if (!_macRes->exists(*i)) {
 				warning("SoundMacRes::init(): Error opening data file: '%s'", i->c_str());
@@ -140,7 +125,7 @@ Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 	Common::SeekableReadStream *res = nullptr;
 
 	for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
-		if (_useInstaller) {
+		if (_stuffItArchive) {
 			if (!_macRes->open(Common::Path(*i), *_stuffItArchive)) {
 				warning("SoundMacRes::getResource(): Error opening archive member: '%s'", i->c_str());
 			}
@@ -158,7 +143,7 @@ Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 void SoundMacRes::setQuality(bool hi) {
 	_resFiles.clear();
 	_resFiles.push_back(hi ? "HQ_Music.res" : "LQ_Music.res");
-	if (_useInstaller) {
+	if (_stuffItArchive) {
 		_resFiles.push_back("Legend of Kyrandia\xaa");
 	} else {
 		_resFiles.push_back(_kyraMacExe);
