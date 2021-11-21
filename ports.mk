@@ -56,7 +56,7 @@ endif
 
 # Special generic target for simple archive distribution
 
-dist-generic: $(EXECUTABLE)
+dist-generic: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p ./dist-generic/scummvm/data
 	mkdir -p ./dist-generic/scummvm/doc
 	cp $(EXECUTABLE) ./dist-generic/scummvm
@@ -74,6 +74,9 @@ endif
 ifdef DIST_FILES_SHADERS
 	mkdir -p ./dist-generic/scummvm/data/shaders
 	cp $(DIST_FILES_SHADERS) ./dist-generic/scummvm/data/shaders
+endif
+ifeq ($(DYNAMIC_MODULES),1)
+	@for i in $(PLUGINS); do cp $$i ./dist-generic/scummvm; done
 endif
 
 # Special target to create a application wrapper for Mac OS X
