@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/macresman.h"
+#include "common/punycode.h"
 #include "kyra/engine/util.h"
 
 namespace Kyra {
@@ -113,6 +115,42 @@ Common::String Util::decodeString2(const Common::String &src) {
 	char *tmp = new char[src.size() * 2 + 2];
 	Util::decodeString2(src.c_str(), tmp);
 	return tmp;
+}
+
+Common::String Util::findMacResourceFile(const char *baseName) {
+	// The original executable has a TM char as its last character (character
+	// 0xAA from Mac code page). Depending on the emulator or platform used to
+	// copy the file it might have been reencoded to something else. So I look
+	// for multiple versions, also for punycode encoded files and also for the
+	// case where the user might have just removed the last character by
+	// renaming the file.
+
+	const Common::CodePage tryCodePages[] = {
+		Common::kMacRoman,
+		Common::kISO8859_1
+	};
+
+	Common::String tryName(baseName);
+	Common::String fileName;
+
+	for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
+		for (int ii = 0; ii < 2; ++ii) {
+			Common::MacResManager resource;
+
+			Common::U32String fn(tryName, tryCodePages[i]);
+			fileName = fn.encode(Common::kUtf8);
+			if (resource.exists(fileName))
+				return fileName;
+			fileName = Common::punycode_encodefilename(fn);
+			if (resource.exists(fileName))
+				return fileName;
+
+			tryName += "\xAA";
+		}
+	}
+
+	fileName.clear();
+	return fileName;
 }
 
 } // End of namespace Kyra

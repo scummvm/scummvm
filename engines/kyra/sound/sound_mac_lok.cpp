@@ -20,6 +20,7 @@
  *
  */
 
+#include "kyra/engine/util.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 #include "kyra/sound/sound_mac_res.h"
@@ -27,7 +28,6 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
-#include "common/punycode.h"
 #include "common/stuffit.h"
 
 #include "audio/mixer.h"
@@ -54,37 +54,7 @@ bool SoundMacRes::init() {
 		return false;
 
 	if (!_stuffItArchive) {
-		// The original executable has a TM char as its last character
-		// (character 0xaa from Mac code page). Depending on the emulator or
-		// platform used to copy the file it might have been reencoded to
-		// something else. So I look for multiple versions, also for punycode
-		// encoded files and also for the case where the user might have just
-		// removed the last character by renaming the file.
-
-		const Common::CodePage tryCodePages[] = {
-			Common::kMacRoman,
-			Common::kISO8859_1
-		};
-
-		const char *const tryExeNames[] = {
-			"Legend of Kyrandia\xaa",
-			"Legend of Kyrandia"
-		};
-
-		for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
-			for (int ii = 0; ii < ARRAYSIZE(tryExeNames); ++ii) {
-				Common::U32String fn(tryExeNames[ii], tryCodePages[i]);
-				_kyraMacExe = fn.encode(Common::kUtf8);
-				if (_macRes->exists(_kyraMacExe))
-					break;
-				_kyraMacExe = Common::punycode_encodefilename(fn);
-				if (_macRes->exists(_kyraMacExe))
-					break;
-				_kyraMacExe.clear();
-			}
-			if (!_kyraMacExe.empty())
-				break;
-		}
+		_kyraMacExe = Util::findMacResourceFile("Legend of Kyrandia");
 
 		if (_kyraMacExe.empty()) {
 			warning("SoundMacRes::init(): Legend of Kyrandia resource fork not found");

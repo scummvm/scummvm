@@ -40,6 +40,8 @@ public:
 	static Common::String convertUTF8ToDOS(Common::String &str);
 	static Common::String convertISOToUTF8(Common::String &str);
 	static void convertISOToDOS(char &c);
+
+	static Common::String findMacResourceFile(const char *baseName);
 };
 
 } // End of namespace Kyra

@@ -20,12 +20,13 @@
  *
  */
 
+#include "kyra/engine/util.h"
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_intern.h"
 
 #include "common/config-manager.h"
-#include "common/macresman.h"
-#include "common/punycode.h"
+//#include "common/macresman.h"
+//#include "common/punycode.h"
 #include "common/fs.h"
 
 namespace Kyra {
@@ -66,33 +67,7 @@ bool Resource::reset() {
 		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::kPlatformMacintosh && _vm->gameFlags().useInstallerPackage) {
-		const char *const tryFileNames[] = {
-			"Install Legend of Kyrandia",
-			"Install Legend of Kyrandia\xaa"
-		};
-
-		const Common::CodePage tryCodePages[] = {
-			Common::kMacRoman,
-			Common::kISO8859_1
-		};
-
-		Common::MacResManager resource;
-		Common::String kyraInstaller;
-
-		for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
-			for (int ii = 0; ii < ARRAYSIZE(tryFileNames); ++ii) {
-				Common::U32String fn(tryFileNames[ii], tryCodePages[i]);
-				kyraInstaller = fn.encode(Common::kUtf8);
-				if (resource.exists(kyraInstaller))
-					break;
-				kyraInstaller = Common::punycode_encodefilename(fn);
-				if (resource.exists(kyraInstaller))
-					break;
-				kyraInstaller.clear();
-			}
-			if (!kyraInstaller.empty())
-				break;
-		}
+		Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
 
 		if (kyraInstaller.empty()) {
 			error("Could not find Legend of Kyrandia installer file");
