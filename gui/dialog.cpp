@@ -174,6 +174,10 @@ void Dialog::drawDialog(DrawLayer layerToDraw) {
 	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
 
 	markWidgetsAsDirty();
+
+#ifdef LAYOUT_DEBUG_DIALOG
+	return;
+#endif
 	drawWidgets();
 }
 
