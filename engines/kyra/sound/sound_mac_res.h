@@ -41,7 +41,6 @@ public:
 	Common::SeekableReadStream *getResource(uint16 id, uint32 type);
 
 private:
-	bool _useInstaller;
 	Common::MacResManager *_macRes;
 	Common::String _kyraMacExe;
 	Common::Array<Common::String> _resFiles;
