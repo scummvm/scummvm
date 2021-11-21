@@ -129,11 +129,28 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_apt_2>"] = trans_apt_2;
 
 	loadSceneLevel("busint.mi_", "busintro.mi_", prefix);
-	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
+	loadSceneLevel("busintro.mi_", "<bus_selector>", prefix);
 	_levels["busintro.mi_"]->intros.push_back("cine/blcs001s.smk");
+
+	Transition *bus_selector = new Transition("buspuz.mi_", "bushard1.mi_");
+	_levels["<bus_selector>"] = bus_selector;
+
+	loadSceneLevel("bushard1.mi_", "bushard1.mi_", prefix);
+	loadSceneLevel("bushard2.mi_", "decide3.mi_", prefix);
 
 	loadSceneLevel("buspuz.mi_", "decide3.mi_", prefix);
 	loadSceneLevel("decide3.mi_", "", prefix);
+
+	loadSceneLevel("int_roof.mi_", "", prefix);
+	loadSceneLevel("ball1.mi_", "<note>", prefix);
+	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
+	loadSceneLevel("balcony.mi_", "", prefix);
+
+	Code *note = new Code();
+	note->name = "<note>";
+	note->levelIfWin = "ball2.mi_";
+	_levels["<note>"] = note;
+
 	//_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
 
 	// Transition *bus_transition = new Transition("buspuz.mi_");
@@ -327,6 +344,8 @@ void SpiderEngine::loadAssetsDemo() {
 void SpiderEngine::runCode(Code *code) {
 	if (code->name == "<puz_matr>")
 		runMatrix(code);
+	else if (code->name == "<note>")
+		runNote(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -425,6 +444,185 @@ void SpiderEngine::runMatrix(Code *code) {
 
 		if (v->decoder->needsUpdate()) {
 			updateScreen(*v);
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
+
+void SpiderEngine::runNote(Code *code) {
+	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
+	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
+
+	const char solEasyES1[] = "hable cpn el svtp z talwe a";
+	const char solEasyES2[] = "masz jane";
+	char placeEasyES[] = "????? ??? ?? ???? ? ????? ?";
+
+	const char solEasyEN1[] = "talk with the russian and save";
+	const char solEasyEN2[] = "mary jane";
+	char placeEasyEN[] = "????? ???? ??????? ????? ??? ????";
+
+	char placeEasy2[] = "???? ????";
+
+	const char solHardES1[] = "encvenuse a tmesdzakpw p tv";
+	const char solHardES2[] = "mvjes mpsisa";
+	char placeHardES[] = "????????? ? ?????????? ? ??";
+	char placeHardES2[] = "????? ??????";
+
+	const char solHardEN1[] = "find smerdyakov or your wife";
+	const char solHardEN2[] = "dies";
+	char placeHardEN[] = "???? ?????????? ?? ???? ??? ????";
+	char placeHardEN2[] = "???? ????";
+
+	changeScreenMode("640x480");
+	Common::Point mousePos;
+	Common::Event event;
+
+	defaultCursor();
+	Common::String alpha;
+	Common::String selected = " ";
+	char *firstSentence;	
+	char *secondSentence;
+	Common::String firstSolution;
+	Common::String secondSolution;
+
+	switch (_language) {
+		case Common::EN_USA:
+			alpha = alphaEN;
+			if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+				firstSentence = (char*) &placeEasyEN;
+				secondSentence = (char*) &placeEasy2;
+				firstSolution = solEasyEN1;
+				secondSolution = solEasyEN2;
+			} else { // hard 
+				firstSentence = (char*) &placeHardEN;
+				secondSentence = (char*) &placeHardEN2;
+				firstSolution = solHardEN1;
+				secondSolution = solHardEN2;
+			}
+		break;
+	
+		case Common::ES_ESP:
+			alpha = alphaES;
+			if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+				firstSentence = (char*) &placeEasyES;
+				secondSentence = (char*) &placeEasy2;
+				firstSolution = solEasyES1; 
+				secondSolution = solEasyES2;
+			} else { // hard 
+				firstSentence = (char*) &placeHardES;
+				secondSentence = (char*) &placeHardES2;
+				firstSolution = solHardES1;
+				secondSolution = solHardES2;
+			}
+		break;
+		default:
+			error("Unsupported language");
+		break;
+	}
+
+	float firstSentenceLength = strlen(firstSentence);
+	float secondSentenceLength = strlen(secondSentence);
+	Common::Rect letterBox(22, 442, 554, 455); 
+	Common::Rect firstSentenceBox(21, 140, 560, 162); 
+	Common::Rect secondSentenceBox(21, 140, 196, 201); 
+
+	Frames letters = decodeFrames("spider/int_ball/letters.smk");
+	Common::Point size(letters[0]->w, letters[0]->h); 
+
+	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+		MVideo v("spider/int_ball/ppv007es.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		loadImage("spider/int_ball/enote.smk", 0, 0, false);
+	} else { // hard
+		MVideo v("spider/int_ball/ppv007hs.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		loadImage("spider/int_ball/hnote.smk", 0, 0, false);
+	}
+	
+	while (!shouldQuit()) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			uint32 o1x = 21;
+			uint32 o1y = 140;
+
+			uint32 o2x = 21;
+			uint32 o2y = 180;
+
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+
+				if (letterBox.contains(mousePos)) {
+					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
+					selected = alpha[idx];
+					//debug("%s", selected.c_str());
+				} else if (firstSentenceBox.contains(mousePos)) {
+					if (!selected.empty()) {
+						uint32 idx = float(mousePos.x - 21) / (firstSentenceBox.width() / firstSentenceLength);
+						//debug("idx: %d", idx);
+						if (firstSentence[idx] != ' ') {
+							firstSentence[idx] = selected[0];
+							//debug("%s", firstSentence);
+						}
+					}
+				} else if (secondSentenceBox.contains(mousePos)) {
+					if (!selected.empty()) {
+						uint32 idx = float(mousePos.x - 21) / (secondSentenceBox.width() / secondSentenceLength);
+						//debug("idx: %d", idx);
+						if (secondSentence[idx] != ' ') {
+							secondSentence[idx] = selected[0];
+							//debug("%s", secondSentence);
+						}
+					}
+				}
+
+				for (int i = 0; i < strlen(firstSentence); i++) {
+					if (firstSentence[i] != '?' && firstSentence[i] != ' ') {
+						if (firstSentence[i] == '~')
+							drawImage(*letters[26], o1x, o1y, false); // ñ
+						else  
+							drawImage(*letters[firstSentence[i]-97], o1x, o1y, false);
+
+					}
+					o1x = o1x + size.x;
+				}
+
+				for (int i = 0; i < strlen(secondSentence); i++) {
+					if (secondSentence[i] != '?' && secondSentence[i] != ' ') {
+						if (secondSentence[i] == '~')
+							drawImage(*letters[26], o2x, o2y, false); // ñ
+						else  
+							drawImage(*letters[secondSentence[i]-97], o2x, o2y, false);
+					}
+					o2x = o2x + size.x;
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (firstSentence == firstSolution && secondSentence == secondSolution) {
+			if (_sceneState["GS_PUZZLELEVEL"] == 0 && Common::File::exists("spider/int_ball/ppv008es.smk")) {
+				MVideo v("spider/int_ball/ppv008es.smk", Common::Point(0, 0), false, false, false);
+				runIntro(v);
+			} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && Common::File::exists("spider/int_ball/ppv008hs.smk")) {
+				MVideo v("spider/int_ball/ppv008hs.smk", Common::Point(0, 0), false, false, false);
+				runIntro(v);
+			}
+
+			_nextLevel = code->levelIfWin;
+			return;
 		}
 
 		drawScreen();

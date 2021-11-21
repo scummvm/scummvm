@@ -283,6 +283,7 @@ public:
 
 private:
 	void runMatrix(Code *code);
+	void runNote(Code *code);
 };
 
 class BoyzEngine : public HypnoEngine {
