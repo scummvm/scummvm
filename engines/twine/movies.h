@@ -37,13 +37,11 @@ namespace TwinE {
 /** FLA movie header structure */
 struct FLAHeaderStruct {
 	/** FLA version */
-	int8 version[6] {0};
+	int8 version[5] {0};
 	/** Number of frames */
 	int32 numOfFrames = 0;
 	/** Frames per second */
-	int8 speed = 0;
-	/** Unknown var1 */
-	int8 var1 = 0;
+	int16 speed = 0;
 	/** Frame width */
 	int16 xsize = 0;
 	/** Frame height */
@@ -52,10 +50,8 @@ struct FLAHeaderStruct {
 
 /** FLA movie frame structure */
 struct FLAFrameDataStruct {
-	/** Current frame size */
-	int16 videoSize = 0;
-	/** Unknown frameVar0 */
-	int32 frameVar0 = 0;
+	int16 nbFrames = 0;
+	int32 offsetNextFrame = 0;
 };
 
 class TwinEEngine;

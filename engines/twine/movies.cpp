@@ -164,25 +164,25 @@ void Movies::scaleFla2x() {
 void Movies::processFrame() {
 	FLASampleStruct sample;
 
-	_frameData.videoSize = _file.readSint16LE();
-	_frameData.frameVar0 = _file.readSint32LE();
-	if (_frameData.frameVar0 > _engine->_imageBuffer.w * _engine->_imageBuffer.h) {
-		warning("Skipping video frame - it would exceed the screen buffer: %i", _frameData.frameVar0);
+	_frameData.nbFrames = _file.readSint16LE();
+	_frameData.offsetNextFrame = _file.readSint32LE();
+	if (_frameData.offsetNextFrame > _engine->_imageBuffer.w * _engine->_imageBuffer.h) {
+		warning("Skipping video frame - it would exceed the screen buffer: %i", _frameData.offsetNextFrame);
 		return;
 	}
 
 	uint8 *outBuf = (uint8 *)_engine->_imageBuffer.getPixels();
-	_file.read(outBuf, _frameData.frameVar0);
+	_file.read(outBuf, _frameData.offsetNextFrame);
 
-	if ((int32)_frameData.videoSize <= 0) {
+	if ((int32)_frameData.nbFrames <= 0) {
 		return;
 	}
 
-	Common::MemoryReadStream stream(outBuf, _frameData.frameVar0);
-	for (int32 frame = 0; frame < _frameData.videoSize; ++frame) {
+	Common::MemoryReadStream stream(outBuf, _frameData.offsetNextFrame);
+	for (int32 frame = 0; frame < _frameData.nbFrames; ++frame) {
 		const uint16 opcode = stream.readUint16LE();
 		const uint16 opcodeBlockSize = stream.readUint16LE();
-		const int32 pos = stream.pos();
+		const int64 pos = stream.pos();
 
 		switch (opcode) {
 		case kLoadPalette: {
@@ -386,18 +386,18 @@ bool Movies::playMovie(const char *name) {
 	}
 
 	const uint32 version = _file.readUint32LE();
-	_file.skip(2);
+	_file.skip(2); // version field is 5 bytes - and one padding byte
 	_flaHeaderData.numOfFrames = _file.readUint32LE();
 	_flaHeaderData.speed = _file.readByte();
-	_flaHeaderData.var1 = _file.readByte();
-	debug(2, "Unknown byte in fla file: %i", _flaHeaderData.var1);
+	_file.skip(1); // padding byte
 	_flaHeaderData.xsize = _file.readUint16LE();
 	_flaHeaderData.ysize = _file.readUint16LE();
 
 	_samplesInFla = (int16)_file.readUint16LE();
-	const uint16 unk2 = _file.readUint16LE();
-	debug(2, "Unknown uint16 in fla file: %i", unk2);
+	/*const uint16 offsetFrame1 =*/ _file.readUint16LE();
 
+	// sample number int16
+	// loop int16
 	_file.skip(4 * _samplesInFla);
 
 	bool finished = false;
