@@ -36,8 +36,8 @@ struct KeybindingRecord {
 	const char *_desc;
 	const char *_pressMethod;
 	const char *_releaseMethod;
-	const char *_key;
-	const char *_joy;
+	const char *_input1;
+	const char *_input2;
 };
 
 static const KeybindingRecord COMMON_KEYS[] = {
@@ -48,10 +48,10 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_MENU, "MENU", "Game Menu", "MenuGump::showMenu", nullptr, "ESCAPE", "JOY_Y" },
 	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Show Highlight Items", "GameMapGump::startHighlightItems", "GameMapGump::stopHighlightItems", "TAB", nullptr },
 	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "h", nullptr },
-	{ ACTION_TURN_LEFT, "TURN_LEFT", "Turn Left", "AvatarMoverProcess::startTurnLeft", "AvatarMoverProcess::stopTurnLeft", "LEFT", nullptr },
-	{ ACTION_TURN_RIGHT, "TURN_RIGHT", "Turn Right", "AvatarMoverProcess::startTurnRight", "AvatarMoverProcess::stopTurnRight", "RIGHT", nullptr },
-	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", "Move Forward", "AvatarMoverProcess::startMoveForward", "AvatarMoverProcess::stopMoveForward", "UP", nullptr },
-	{ ACTION_MOVE_BACK, "MOVE_BACK", "Move Back", "AvatarMoverProcess::startMoveBack", "AvatarMoverProcess::stopMoveBack", "DOWN", nullptr },
+	{ ACTION_TURN_LEFT, "TURN_LEFT", "Turn Left", "AvatarMoverProcess::startTurnLeft", "AvatarMoverProcess::stopTurnLeft", "LEFT", "KP4" },
+	{ ACTION_TURN_RIGHT, "TURN_RIGHT", "Turn Right", "AvatarMoverProcess::startTurnRight", "AvatarMoverProcess::stopTurnRight", "RIGHT", "KP6" },
+	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", "Move Forward", "AvatarMoverProcess::startMoveForward", "AvatarMoverProcess::stopMoveForward", "UP", "KP8" },
+	{ ACTION_MOVE_BACK, "MOVE_BACK", "Move Back", "AvatarMoverProcess::startMoveBack", "AvatarMoverProcess::stopMoveBack", "DOWN", "KP2" },
 	{ ACTION_MOVE_UP, "MOVE_UP", "Move Up", "AvatarMoverProcess::startMoveUp", "AvatarMoverProcess::stopMoveUp", nullptr, "JOY_UP" },
 	{ ACTION_MOVE_DOWN, "MOVE_DOWN", "Move Down", "AvatarMoverProcess::startMoveDown", "AvatarMoverProcess::stopMoveDown", nullptr, "JOY_DOWN" },
 	{ ACTION_MOVE_LEFT, "MOVE_LEFT", "Move Left", "AvatarMoverProcess::startMoveLeft", "AvatarMoverProcess::stopMoveLeft", nullptr, "JOY_LEFT" },
@@ -76,20 +76,21 @@ static const KeybindingRecord U8_KEYS[] = {
 };
 
 static const KeybindingRecord CRUSADER_KEYS[] = {
-	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", "Next Weapon", "MainActor::nextWeapon", nullptr, "w", nullptr },
-	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", "Next Inventory Item", "MainActor::nextInvItem", nullptr, "i", nullptr },
-	{ ACTION_USE_INVENTORY, "USE_INVENTORY", "Use Inventroy Item", "MainActor::useInventoryItem", nullptr, "u", nullptr },
+	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", "Next Weapon", "MainActor::nextWeapon", nullptr, "w", "KP_MULTIPLY" },
+	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", "Next Inventory Item", "MainActor::nextInvItem", nullptr, "i", "KP_MINUS" },
+	{ ACTION_USE_INVENTORY, "USE_INVENTORY", "Use Inventroy Item", "MainActor::useInventoryItem", nullptr, "u", "KP_PERIOD" },
 	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", "Use Medical Kit", "MainActor::useMedikit", nullptr, "m", nullptr },
 	{ ACTION_USE_ENERGYCUBE, "USE_ENERGYCUBE", "Use Energy Cube", "MainActor::useEnergyCube", nullptr, "e", nullptr },
 	{ ACTION_DETONATE_BOMB, "DETONATE_BOMB", "Detonate Bomb", "MainActor::detonateBomb", nullptr, "b", nullptr },
 	// TODO: The same key should be "use datalink" in no regret.
 	{ ACTION_DROP_WEAPON, "DROP_WEAPON", "Drop Weapon", "MainActor::dropWeapon", nullptr, "C+d", nullptr },
-	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", nullptr },
-	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr },
+	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", "KP_PLUS" },
+	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", "KP_ENTER" },
 	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", "Grab Items", "ItemSelectionProcess::grabItems", nullptr, "g", nullptr },
-	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::startAttack", "AvatarMoverProcess::stopAttack", "SPACE", nullptr },
+	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::startAttack", "AvatarMoverProcess::stopAttack", "SPACE", "KP0" },
 	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr },
 	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "LCTRL", nullptr },
+	// TODO: MOVE_STEP should also be mapped to KP_DIVIDE?? Actually original key was advance, slightly different
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER" },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
@@ -147,10 +148,10 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	for (const KeybindingRecord *r = COMMON_KEYS; r->_id; ++r) {
 		act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
-		if (r->_key)
-			act->addDefaultInputMapping(r->_key);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
+		if (r->_input1)
+			act->addDefaultInputMapping(r->_input1);
+		if (r->_input2)
+			act->addDefaultInputMapping(r->_input2);
 		keyMap->addAction(act);
 	}
 
@@ -159,10 +160,10 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	for (const KeybindingRecord *r = game_keys; r->_id; ++r) {
 		act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
-		if (r->_key)
-			act->addDefaultInputMapping(r->_key);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
+		if (r->_input1)
+			act->addDefaultInputMapping(r->_input1);
+		if (r->_input2)
+			act->addDefaultInputMapping(r->_input2);
 		keyMap->addAction(act);
 	}
 
@@ -174,10 +175,10 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	for (const KeybindingRecord *r = CHEAT_KEYS; r->_id; ++r) {
 		act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
-		if (r->_key)
-			act->addDefaultInputMapping(r->_key);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
+		if (r->_input1)
+			act->addDefaultInputMapping(r->_input1);
+		if (r->_input2)
+			act->addDefaultInputMapping(r->_input2);
 		keyMap->addAction(act);
 	}
 
@@ -189,10 +190,10 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	for (const KeybindingRecord *r = DEBUG_KEYS; r->_id; ++r) {
 		act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
-		if (r->_key)
-			act->addDefaultInputMapping(r->_key);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
+		if (r->_input1)
+			act->addDefaultInputMapping(r->_input1);
+		if (r->_input2)
+			act->addDefaultInputMapping(r->_input2);
 		keyMap->addAction(act);
 	}
 #endif
