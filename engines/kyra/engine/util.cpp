@@ -133,20 +133,19 @@ Common::String Util::findMacResourceFile(const char *baseName) {
 	Common::String tryName(baseName);
 	Common::String fileName;
 
-	for (int i = 0; i < ARRAYSIZE(tryCodePages); ++i) {
-		for (int ii = 0; ii < 2; ++ii) {
+	for (int i = 0; i < 2; ++i) {
+		for (int ii = 0; ii < ARRAYSIZE(tryCodePages); ++ii) {
 			Common::MacResManager resource;
 
-			Common::U32String fn(tryName, tryCodePages[i]);
+			Common::U32String fn(tryName, tryCodePages[ii]);
 			fileName = fn.encode(Common::kUtf8);
 			if (resource.exists(fileName))
 				return fileName;
 			fileName = Common::punycode_encodefilename(fn);
 			if (resource.exists(fileName))
 				return fileName;
-
-			tryName += "\xAA";
 		}
+		tryName += "\xAA";
 	}
 
 	fileName.clear();
