@@ -79,7 +79,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	_vgaGraphicsStruct1 = new EfhGraphicsStruct(_vgaLineBuffer, 0, 0, 320, 200);
 	_vgaGraphicsStruct2 = new EfhGraphicsStruct();
-	
+
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
 	_mapBitmapRef = nullptr;
@@ -844,7 +844,7 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 
 
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
-	warning("%d %d - startX %d startY %d width %d height %d fieldA %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_fieldA, bufferBM->_fieldD);
+	// warning("%d %d - startX %d startY %d width %d height %d fieldA %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_fieldA, bufferBM->_fieldD);
 	int counter = 0;
 	for (int j = 0; j < bufferBM->_height; ++j) {
 		for (int i = 0; i < bufferBM->_fieldA; ++i) {
@@ -1051,14 +1051,42 @@ uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
 	return _mapGameMapPtr[mapPosX * size + mapPosY];
 }
 
-void EfhEngine::drawBox(int minX, int minY, int maxX, int maxY) {
-	warning("STUB - drawBox");
+void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
+	if (minY > maxY)
+		SWAP(minY, maxY);
+
+	if (minX > maxX)
+		SWAP(minX, maxX);
+	
+	// warning("drawRect - _graphicsStruct x %d -> %d, y %d -> %d", _graphicsStruct->_area.left, _graphicsStruct->_area.right, _graphicsStruct->_area.top, _graphicsStruct->_area.bottom);
+
+	minX = CLIP(minX, 0, 319);
+	maxX = CLIP(maxX, 0, 319);
+	minY = CLIP(minY, 0, 199);
+	maxY = CLIP(maxY, 0, 199);
+	
+	int deltaY = 1 + maxY - minY;
+	int deltaX = 1 + maxX - minX;
+
+	uint8 color = _defaultBoxColor & 0xF;
+	bool xorColor = (_defaultBoxColor & 0x40) != 0;
+	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(minX, minY);
+	
+	for (int line = 0; line < deltaY; ++line) {
+		for (int col = 0; col < deltaX; ++col) {
+			if (xorColor)
+				destPtr[320 * line + col] ^= color;
+			else
+				destPtr[320 * line + col] = color;
+		}
+	}
+	
 }
 
 void EfhEngine::drawMenuBox(int minX, int minY, int maxX, int maxY, int color) {
 	uint8 oldValue = _defaultBoxColor;
 	_defaultBoxColor = color;
-	drawBox(minX, minY, maxX, maxY);
+	drawRect(minX, minY, maxX, maxY);
 	_defaultBoxColor = oldValue;
 }
 
