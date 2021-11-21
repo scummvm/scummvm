@@ -217,10 +217,12 @@ protected:
 						XML_PROP(type, false)
 						XML_PROP(textalign, false)
 						XML_PROP(rtl, false)
+						XML_PROP(resolution, false)
 					KEY_END()
 
 					XML_KEY(space)
 						XML_PROP(size, false)
+						XML_PROP(resolution, false)
 					KEY_END()
 
 					XML_KEY_RECURSIVE(layout)

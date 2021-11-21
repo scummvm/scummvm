@@ -698,13 +698,12 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	Common::String var;
 
+	if (resolutionCheck(node->values["resolution"]) == false) {
+		node->ignore = true;
+		return true;
+	}
+
 	if (getParentNode(node)->name == "globals") {
-
-		if (resolutionCheck(node->values["resolution"]) == false) {
-			node->ignore = true;
-			return true;
-		}
-
 		var = "Globals." + node->values["name"] + ".";
 		if (!parseCommonLayoutProps(node, var))
 			return parserError("Error parsing Layout properties of '" + var + "'.");
@@ -859,6 +858,11 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 
 bool ThemeParser::parserCallback_space(ParserNode *node) {
 	int size = -1;
+
+	if (resolutionCheck(node->values["resolution"]) == false) {
+		node->ignore = true;
+		return true;
+	}
 
 	if (node->values.contains("size")) {
 		if (_theme->getEvaluator()->hasVar(node->values["size"]))

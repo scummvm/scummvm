@@ -194,7 +194,8 @@
 					<widget name = 'LoadGameButton'
 							type = 'Button'
 					/>
-					<space size = '10' />
+					<space size = '5'/>
+					<space size = '5' resolution = 'y>420' />
 					<widget name = 'AddGameButton'
 							type = 'Button'
 					/>
@@ -204,14 +205,16 @@
 					<widget name = 'RemoveGameButton'
 							type = 'Button'
 					/>
-					<space size = '10' />
+					<space size = '5'/>
+					<space size = '5' resolution = 'y>420' />
 					<widget name = 'OptionsButton'
 							type = 'Button'
 					/>
 					<widget name = 'AboutButton'
 							type = 'Button'
 					/>
-					<space size = '10' />
+					<space size = '5'/>
+					<space size = '5' resolution = 'y>420' />
 					<widget name = 'QuitButton'
 							type = 'Button'
 					/>
