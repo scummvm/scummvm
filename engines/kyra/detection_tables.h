@@ -334,6 +334,19 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_MACRESFORK,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
 		},
+				KYRA1_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"kyra1",
+			"StuffIt",
+			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "e279c397f46b0913abb5595e2cdce2ed", 10276153),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
+		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
 
