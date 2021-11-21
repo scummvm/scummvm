@@ -329,6 +329,9 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+	if (_engine->isDemo()) {
+		return;
+	}
 	debug("Draw trajectory index %i", trajectoryIndex);
 
 	const Trajectory *data = _engine->_resources->getTrajectory(trajectoryIndex);
