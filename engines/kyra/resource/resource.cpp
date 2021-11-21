@@ -25,13 +25,11 @@
 #include "kyra/resource/resource_intern.h"
 
 #include "common/config-manager.h"
-//#include "common/macresman.h"
-//#include "common/punycode.h"
 #include "common/fs.h"
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD), _installerArchive() {
+Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
 	initializeLoaders();
 
 	// Initialize directories for playing from CD or with original
@@ -73,14 +71,14 @@ bool Resource::reset() {
 			error("Could not find Legend of Kyrandia installer file");
 		}
 
-		_installerArchive = loadStuffItArchive(kyraInstaller);
-		if (!_installerArchive)
+		Common::Archive *archive = loadStuffItArchive(kyraInstaller);
+		if (!archive)
 			error("Failed to load Legend of Kyrandia installer file");
 
-		_files.add("installer", _installerArchive, 0, false);
+		_files.add("installer", archive, 0, false);
 
 		Common::ArchiveMemberList members;
-		_installerArchive->listMatchingMembers(members, "*.PAK");
+		archive->listMatchingMembers(members, "*.PAK");
 		for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); ++it) {
 			Common::String name = (*it)->getName();
 			Common::Archive *pak = loadArchive(name, *it);
@@ -343,6 +341,11 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	stream->read(buf, ((int32)maxSize <= stream->size()) ? maxSize : stream->size());
 	delete stream;
 	return true;
+}
+
+Common::Archive *Resource::getCachedArchive(const Common::String &file) const {
+	ArchiveMap::iterator a = _archiveCache.find(file);
+	return a != _archiveCache.end() ? a->_value : 0;
 }
 
 Common::SeekableReadStream *Resource::createReadStream(const Common::String &file) {

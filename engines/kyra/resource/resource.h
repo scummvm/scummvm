@@ -86,8 +86,7 @@ public:
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 
-	// This is only used for the Mac Stuffit Installer
-	Common::Archive *getInstallerArchive() const { return _installerArchive; }
+	Common::Archive *getCachedArchive(const Common::String &file) const;
 
 protected:
 	typedef Common::HashMap<Common::String, Common::Archive *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
@@ -109,8 +108,6 @@ protected:
 
 	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
 	LoaderList _loaders;
-
-	Common::Archive *_installerArchive;
 
 	const bool _bigEndianPlatForm;
 	KyraEngine_v1 *_vm;
