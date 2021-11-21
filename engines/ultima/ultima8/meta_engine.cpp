@@ -82,6 +82,8 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", "Use Medical Kit", "MainActor::useMedikit", nullptr, "m", nullptr },
 	{ ACTION_USE_ENERGYCUBE, "USE_ENERGYCUBE", "Use Energy Cube", "MainActor::useEnergyCube", nullptr, "e", nullptr },
 	{ ACTION_DETONATE_BOMB, "DETONATE_BOMB", "Detonate Bomb", "MainActor::detonateBomb", nullptr, "b", nullptr },
+	// TODO: The same key should be "use datalink" in no regret.
+	{ ACTION_DROP_WEAPON, "DROP_WEAPON", "Drop Weapon", "MainActor::dropWeapon", nullptr, "C+d", nullptr },
 	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", nullptr },
 	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr },
 	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", "Grab Items", "ItemSelectionProcess::grabItems", nullptr, "g", nullptr },

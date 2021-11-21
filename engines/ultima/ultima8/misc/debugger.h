@@ -223,6 +223,7 @@ private:
 	bool cmdUseMedikit(int argc, const char **argv);
 	bool cmdUseEnergyCube(int argc, const char **argv);
 	bool cmdDetonateBomb(int argc, const char **argv);
+	bool cmdDropWeapon(int argc, const char **argv);
 	bool cmdStartSelection(int argc, const char **argv);
 	bool cmdUseSelection(int argc, const char **argv);
 	bool cmdGrabItems(int argc, const char **argv);

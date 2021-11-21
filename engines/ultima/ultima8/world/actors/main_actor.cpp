@@ -736,6 +736,17 @@ void MainActor::nextWeapon() {
 	}
 }
 
+void MainActor::dropWeapon() {
+	uint16 oldweapon = _activeWeapon;
+	Item *wpn = getItem(oldweapon);
+	if (!wpn || (wpn->getShape() == 0x32e && World::get_instance()->getGameDifficulty() < 2))
+		return;
+
+	nextWeapon();
+	removeItem(wpn);
+	wpn->move(_x, _y, _z);
+}
+
 void MainActor::nextInvItem() {
 	Std::vector<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
@@ -1064,9 +1075,7 @@ void MainActor::detonateBomb() {
 			continue;
 		founditem->callUsecodeEvent_use();
 	}
-	return;
 }
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

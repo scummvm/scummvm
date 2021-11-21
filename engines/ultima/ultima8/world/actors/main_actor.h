@@ -153,6 +153,9 @@ public:
 	//! Swap to the next inventory item (Crusader)
 	void nextInvItem();
 
+	//! Drop the current weapon (Crusader)
+	void dropWeapon();
+
 	//! Check if we can absorb a hit with the shield. Returns the modified damage value.
 	int receiveShieldHit(int damage, uint16 damage_type) override;
 
