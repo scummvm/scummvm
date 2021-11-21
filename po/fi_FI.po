@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-20 16:34+0000\n"
-"PO-Revision-Date: 2021-11-17 21:26+0000\n"
+"PO-Revision-Date: 2021-11-22 01:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -201,37 +201,27 @@ msgid "Download speed: %s %S"
 msgstr "Latausnopeus: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Ladataan pelitallenteita..."
+msgstr "Ladataan ikonilistaa..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Ladataan pelitallenteita..."
+msgstr "Ladataan ikonilistaa... %d kappaletta"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Havaittiin %d uutta pakettia, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Lataa korjaus"
+msgstr "Lataa"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Lataus valmis.\n"
-"%u:n tiedoston lataus epäonnistui."
+msgstr "Lataus valmis, ladattiin %d pakkausta, %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
 #: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
@@ -244,15 +234,15 @@ msgstr "Sulje"
 #: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "VIRHE %d: %s"
 
 #: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "VIRHE: Ikonipolkua ei ole asetettu"
 
 #: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Uusia ikonipaketteja ei ole saatavilla"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -1623,10 +1613,8 @@ msgid "Check now"
 msgstr "Tarkista nyt"
 
 #: gui/options.cpp:2422
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Päivitystarkistus:"
+msgstr "Päivitä ikonit"
 
 #: gui/options.cpp:2430
 msgid "Active storage:"
@@ -2372,31 +2360,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
@@ -7136,12 +7116,6 @@ msgstr ""
 "instrumenttien lukemiseksi. Emme soita musiikkia."
 
 #: engines/scumm/scumm.cpp:1652
-#, fuzzy
-#| msgid ""
-#| "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
-#| "compression is not supported anymore for this game, audio will be "
-#| "disabled.\n"
-#| "Please reinstall the game with the correct resource files."
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
