@@ -34,8 +34,9 @@ static const char *directoryGlobs[] = {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
+		// English CD version (unpatched)
 		"asylum",
-		"Unpatched",
+		"CD Unpatched",
 		{
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
@@ -48,8 +49,10 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// English CD version (patched)
+		// Level 2 Lockout Bug patch was applied
 		"asylum",
-		"Patched", // Level 2 Lockout Bug patch was applied
+		"CD Patched",
 		{
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
@@ -62,6 +65,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// English GOG.com version
 		"asylum",
 		"GOG.com",
 		{
@@ -77,6 +81,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// French GOG.com version
 		"asylum",
 		"GOG.com",
 		{
@@ -92,6 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// English Steam version
 		"asylum",
 		"Steam",
 		{
@@ -107,6 +113,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// German Steam version
 		"asylum",
 		"Steam",
 		{
@@ -122,6 +129,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// French Steam version
 		"asylum",
 		"Steam",
 		{
@@ -137,8 +145,9 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// French CD version
 		"asylum",
-		"French Version",
+		"CD",
 		{
 			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
 			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
@@ -151,8 +160,9 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// Russian CD version
 		"asylum",
-		"Russian Version",
+		"CD",
 		{
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "1f8a262bf8b3035bd3cfda24068c4651", 263624},
@@ -165,7 +175,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		// Sanitarium - English Demo
+		// English Demo
 		"asylum",
 		"Demo",
 		AD_ENTRY2s("SNTRM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
@@ -176,7 +186,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		// Sanitarium - English Alt Demo
+		// English Alt Demo
 		"asylum",
 		"Demo",
 		AD_ENTRY2s("ASYLUM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
