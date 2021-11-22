@@ -1,1 +1,3 @@
-[SCUMMVM_STX0.8.54:ResidualVM Modern Theme Remastered:No Author]
+[SCUMMVM_STX0.9.0:ResidualVM Modern Theme Remastered:No Author]
+%using ../common
+%using ../common-svg

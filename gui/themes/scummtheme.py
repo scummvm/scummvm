@@ -7,6 +7,19 @@ import zipfile
 
 THEME_FILE_EXTENSIONS = ('.stx', '.bmp', '.fcc', '.ttf', '.png', '.svg')
 
+def zip_directory(zf, path):
+	if len(path):
+		os.chdir(path)
+		if not path.endswith("/"):
+			path += "/"
+
+	filenames = os.listdir('.')
+	filenames.sort()
+	for filename in filenames:
+		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(THEME_FILE_EXTENSIONS):
+			zf.write(filename, './' + filename)
+			print ("    Adding file: " + path + filename)
+
 def buildTheme(themeName):
 	if not os.path.isdir(themeName) or not os.path.isfile(os.path.join(themeName, "THEMERC")):
 		print ("Invalid theme name: " + themeName)
@@ -19,12 +32,17 @@ def buildTheme(themeName):
 
 	zf.write('THEMERC', './THEMERC')
 
-	filenames = os.listdir('.')
-	filenames.sort()
-	for filename in filenames:
-		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(THEME_FILE_EXTENSIONS):
-			zf.write(filename, './' + filename)
-			print ("    Adding file: " + filename)
+	zip_directory(zf, "")
+
+	oldpwd = os.getcwd()
+
+	themercFile = open("THEMERC", "r")
+	for line in themercFile:
+		if line.startswith("%using "):
+			path = line[len("%using "):-1].strip()
+			zip_directory(zf, path)
+
+	os.chdir(oldpwd)
 
 	os.chdir('../')
 
@@ -32,7 +50,7 @@ def buildTheme(themeName):
 
 def buildAllThemes():
 	for f in os.listdir('.'):
-		if os.path.isdir(os.path.join('.', f)) and not f[0] == '.':
+		if os.path.isdir(os.path.join('.', f)) and not f[0] == '.' and not f.startswith("common") and not f == "fonts":
 			buildTheme(f)
 
 def parseSTX(theme_file, def_file, subcount):
