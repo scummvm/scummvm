@@ -191,6 +191,10 @@ int IMuseDigital::startVoice(int soundId, const char *soundName, byte speakingAc
 
 			diMUSESetParam(kTalkSoundID, DIMUSE_P_TRANSPOSE, a->_talkFrequency);
 			diMUSESetParam(kTalkSoundID, DIMUSE_P_PAN, a->_talkPan);
+
+			_currentSpeechVolume = a->_talkVolume;
+			_currentSpeechFrequency = a->_talkFrequency;
+			_currentSpeechPan = a->_talkPan;
 		}
 
 		// The interpreter really calls for processStreams two times in a row,
