@@ -26,6 +26,9 @@ Programmcodes finden Sie auf Englisch unter:
  Kyra:
    - Unterstützung für die chinesischen Versionen von Legend of Kyrandia 1 und 3 hinzugefügt.
    - Unterstützung für Audio-Ausgabe in der Macintosh-Version von Legend of Kyrandia hinzugefügt.
+   - Die Macintosh-Version (ohne Sprachausgabe) von Legend of Kyrandia 1 kann nun direkt von
+     den Dateien auf der CD gespielt werden. Das bedeutet, dass Du nicht mehr den Installer
+     ausführen musst, um die Dateien zu extrahieren.
 
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
