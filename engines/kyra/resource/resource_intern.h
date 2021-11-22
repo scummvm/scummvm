@@ -145,7 +145,7 @@ public:
 
 class StuffItLoader {
 public:
-	static Common::Archive *load(Resource *owner, const Common::String &filename, Common::MacResManager &macResMan);
+	static Common::Archive *load(Resource *owner, const Common::String &filename, Common::MacResManager *macResMan);
 };
 
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
