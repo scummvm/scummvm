@@ -27,6 +27,7 @@
 #include "chewy/episode2.h"
 #include "chewy/episode3.h"
 #include "chewy/episode4.h"
+#include "chewy/episode5.h"
 
 namespace Chewy {
 
@@ -78,22 +79,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				switch (txt_mode) {
 				case TXT_MARK_LOOK:
 					switch (txt_nr) {
-					case 62:
-						action_ret = r39_use_howard();
-						break;
-
-					case 67:
-						action_ret = r8_gips_wurf();
-						break;
-
-					case 174:
-						action_ret = Room0::getPillow();
-						break;
-
-					case 175:
-						action_ret = Room0::pullSlime();
-						break;
-
 					case 229:
 						auto_move(2, P_CHEWY);
 						r39_look_tv(1);
@@ -107,12 +92,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						switch_room(46);
 						break;
 
-					case 298:
-					case 307:
-					case 308:
-						r58_exit();
-						break;
-
 					case 299:
 						switch_room(59);
 						break;
@@ -121,8 +100,18 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r59_look_poster();
 						break;
 
+					case 298:
+					case 307:
+					case 308:
+						r58_exit();
+						break;
+
 					case 316:
 						r49_look_hotel();
+						break;
+
+					case 362:
+						r56_use_kneipe();
 						break;
 
 					case 402:
@@ -142,6 +131,53 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				case TXT_MARK_USE:
 					switch (txt_nr) {
+					case 94:
+						r13_jmp_band();
+						break;
+
+					case 95:
+						if (_G(spieler).R13Band)
+							start_aad_wait(116, -1);
+						break;
+
+					case 100:
+						r13_jmp_boden();
+						break;
+
+					case 114:
+						switch_room(_G(spieler).R23GleiterExit);
+						break;
+
+					case 227:
+						r34_xit_kuehlschrank();
+						break;
+
+					case 294:
+						switch_room(46);
+						break;
+
+					case 340:
+						r55_strasse(0);
+						break;
+
+					case 362:
+						r56_use_kneipe();
+						break;
+
+					case 403:
+					case 405:
+						action_ret = r69_use_bruecke();
+						break;
+
+					case 487:
+						r81_proc1();
+						break;
+
+
+/*
+
+
+
 					case 71:
 						if (is_cur_inventar(ZANGE_INV))
 							r8_hole_kohle();
@@ -224,10 +260,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 110:
 						action_ret = r23_start_gleiter();
-						break;
-
-					case 114:
-						switch_room(_G(spieler).R23GleiterExit);
 						break;
 
 					case 117:
@@ -339,10 +371,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r34_use_kuehlschrank();
 						break;
 
-					case 227:
-						r34_xit_kuehlschrank();
-						break;
-
 					case 221:
 						r33_use_maschine();
 						break;
@@ -409,10 +437,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r47_use_knopf(txt_nr);
 						break;
 
-					case 294:
-						switch_room(46);
-						break;
-
 					case 295:
 					case 386:
 						action_ret = r45_use_taxi();
@@ -449,10 +473,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 333:
 					case 334:
 						action_ret = r51_use_door(txt_nr);
-						break;
-
-					case 340:
-						r55_strasse(0);
 						break;
 
 					case 341:
@@ -546,11 +566,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r67_use_kommode();
 						break;
 
-					case 403:
-					case 405:
-						action_ret = r69_use_bruecke();
-						break;
-
 					case 406:
 						action_ret = r68_use_papagei();
 						break;
@@ -566,7 +581,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 414:
 						action_ret = r68_use_indigo();
 						break;
-
+*/
 					default:
 						action_ret = false;
 						break;
@@ -583,10 +598,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 95:
 						if (_G(spieler).R13Band == true)
 							start_aad_wait(116, -1);
-						break;
-
-					case 100:
-						r13_jmp_boden();
 						break;
 
 					case 114:
@@ -630,6 +641,14 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r2_jump_out_r1(9);
 						break;
 
+					case 62:
+						r39_talk_howard();
+						break;
+
+					case 67:
+						r8_talk_nimoy();
+						break;
+
 					case 121:
 						r11_talk_debug();
 						break;
@@ -649,20 +668,24 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r37_talk_hahn();
 						break;
 
-					case 62:
-						r39_talk_howard();
+					case 265:
+						r41_talk_hoggy1();
+						break;
+
+					case 266:
+						r41_talk_hoggy2();
 						break;
 
 					case 274:
 						r27_talk_howard();
 						break;
 
-					case 283:
-						r40_talk_handler();
-						break;
-
 					case 275:
 						r40_talk_police();
+						break;
+
+					case 283:
+						r40_talk_handler();
 						break;
 
 					case 295:
@@ -726,28 +749,89 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r67_talk_papagei();
 						break;
 
-					case 414:
-						r68_talk_indigo();
+					case 408:
+						r68_talk_papagei();
 						break;
 
 					case 410:
 						r68_talk_keeper();
 						break;
 
-					case 408:
-						r68_talk_papagei();
+					case 414:
+						r68_talk_indigo();
+						break;
+
+					case 419:
+						r66_talk1();
+						break;
+
+					case 420:
+						r66_talk2();
+						break;
+
+					case 421:
+						r66_talk3();
+						break;
+
+					case 425:
+						r66_talk4();
+						break;
+
+					case 447:
+					case 448:
+						r76_talk1();
+						break;
+
+					case 458:
+						r76_talk2();
+						break;
+
+					case 468:
+						r82_talk1();
+						break;
+
+					case 469:
+						r82_talk2();
+						break;
+
+					case 471:
+						r82_talk3();
+						break;
+
+					case 478:
+						r84_talk1();
+						break;
+
+					case 504:
+						r84_talk2();
+						break;
+
+					case 505:
+						start_aad_wait(482, -1);
+						break;
+
+					case 506:
+						start_aad_wait(483, -1);
+						break;
+
+					case 512:
+						r89_talk1();
+						break;
+
+					case 522:
+						r94_talk1();
 						break;
 
 					default:
 						action_ret = false;
 						break;
-
 					}
 					break;
 
 				default:
 					break;
 				}
+
 			} else if (mode == ATS_ACTION_VOR) {
 				switch (txt_mode) {
 				case TXT_MARK_LOOK:
@@ -756,18 +840,21 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r33_look_schublade();
 						break;
 
+					case 389:
+						r67_look_brief();
+						break;
+
 					case 391:
 						auto_move(2, P_CHEWY);
 						break;
 
-					case 389:
-						r67_look_brief();
+					case 431:
+						auto_move(3, P_CHEWY);
 						break;
 
 					default:
 						action_ret = false;
 						break;
-
 					}
 					break;
 
@@ -790,56 +877,21 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						auto_move(1, P_CHEWY);
 						break;
 
-					case 216:
-						action_ret = r29_use_pumpe();
-						break;
-
 					case 225:
 						action_ret = r33_get_munter();
 						break;
 
-					case 229:
-						r39_use_tv();
-						break;
-
-					case 230:
-						action_ret = r32_use_howard();
-						break;
-
-					case 256:
-						action_ret = r37_use_glas();
-						break;
-
-					case 266:
-						action_ret = r41_use_brief();
-						break;
-
-					case 263:
-						action_ret = r42_use_beamter();
-						break;
-
 					case 267:
-						action_ret = r41_use_lola();
-						break;
-
-					case 269:
-						action_ret = r41_use_kasse();
+						if (!_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo)
+							atds->set_ats_str(267, 1, 1);
 						break;
 
 					case 283:
 						action_ret = r40_use_haendler();
 						break;
 
-					case 284:
-						action_ret = r40_use_bmeister();
-						break;
-
-					case 275:
-						r40_use_police();
-						break;
-
-					case 276:
-						action_ret = r40_use_tele();
+					case 423:
+						action_ret = r66_proc2();
 						break;
 
 					default:
@@ -851,20 +903,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				case TXT_MARK_WALK:
 					action_ret = false;
-					/*switch (txt_nr) {
-					default:
-						action_ret = false;
-						break;
-
-					}*/
 					break;
 
 				case TXT_MARK_TALK:
 					switch (txt_nr) {
-					case 67:
-						r8_talk_nimoy();
-						break;
-
 					case 104:
 						r14_talk_eremit();
 						break;
@@ -875,14 +917,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 263:
 						r42_talk_beamter();
-						break;
-
-					case 265:
-						r41_talk_hoggy1();
-						break;
-
-					case 266:
-						r41_talk_hoggy2();
 						break;
 
 					default:
@@ -899,8 +933,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 			flags.AtsAction = false;
 		}
-	} else
+	} else {
 		action_ret = false;
+	}
+
 	return action_ret;
 }
 

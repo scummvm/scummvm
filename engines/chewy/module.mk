@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	episode2.o \
 	episode3.o \
 	episode4.o \
+	episode5.o \
 	events.o \
 	events_base.o \
 	fehler.o \
