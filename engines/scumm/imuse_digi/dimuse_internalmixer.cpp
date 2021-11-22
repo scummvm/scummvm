@@ -32,7 +32,7 @@
 namespace Scumm {
 
 IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer) {
-	_stream = Audio::makeQueuingAudioStream(22050, true);
+	_stream = Audio::makeQueuingAudioStream(DIMUSE_SAMPLERATE, true);
 	_mixer = mixer;
 	_radioChatter = 0;
 	_amp8Table = nullptr;
