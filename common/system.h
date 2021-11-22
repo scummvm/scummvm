@@ -907,11 +907,18 @@ public:
 	virtual bool setScaler(const char *name, int factor) { return false; }
 
 	/**
-	 * Determine which stretch mode is currently active.
+	 * Determine which scaler is currently active.
 	 *
 	 * @return ID of the active stretch mode.
 	 */
 	virtual uint getScaler() const { return 0; }
+
+	/**
+	 * Determine which scale factor is currently active.
+	 *
+	 * @return The active scale factor.
+	 */
+	virtual uint getScaleFactor() const { return 1; }
 
 
 	/**

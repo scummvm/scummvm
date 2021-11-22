@@ -21,17 +21,6 @@
 
 #include "graphics/scaler/normal.h"
 
-NormalPlugin::NormalPlugin() {
-	_factor = 1;
-	_factors.push_back(1);
-#ifdef USE_SCALERS
-	_factors.push_back(2);
-	_factors.push_back(3);
-	_factors.push_back(4);
-	_factors.push_back(5);
-#endif
-}
-
 #ifdef USE_SCALERS
 
 /**
@@ -217,7 +206,7 @@ void Normal5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 }
 #endif
 
-void NormalPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void NormalScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 #ifdef USE_SCALERS
 	if (_format.bytesPerPixel == 2) {
@@ -259,7 +248,7 @@ void NormalPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 #endif
 }
 
-uint NormalPlugin::increaseFactor() {
+uint NormalScaler::increaseFactor() {
 #ifdef USE_SCALERS
 	if (_factor < 5)
 		setFactor(_factor + 1);
@@ -267,12 +256,39 @@ uint NormalPlugin::increaseFactor() {
 	return _factor;
 }
 
-uint NormalPlugin::decreaseFactor() {
+uint NormalScaler::decreaseFactor() {
 #ifdef USE_SCALERS
 	if (_factor > 1)
 		setFactor(_factor - 1);
 #endif
 	return _factor;
+}
+
+
+class NormalPlugin final : public ScalerPluginObject {
+public:
+	NormalPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return true; }
+	virtual uint extraPixels() const override { return 0; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+NormalPlugin::NormalPlugin() {
+	_factors.push_back(1);
+#ifdef USE_SCALERS
+	_factors.push_back(2);
+	_factors.push_back(3);
+	_factors.push_back(4);
+	_factors.push_back(5);
+#endif
+}
+
+Scaler *NormalPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new NormalScaler(format);
 }
 
 const char *NormalPlugin::getName() const {

@@ -21,10 +21,6 @@
 
 #include "graphics/scalerplugin.h"
 
-void ScalerPluginObject::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
 namespace {
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
@@ -47,7 +43,7 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 }
 } // End of anonymous namespace
 
-void ScalerPluginObject::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+void Scaler::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 	                           uint32 dstPitch, int width, int height, int x, int y) {
 	if (_factor == 1) {
 		if (_format.bytesPerPixel == 2) {
@@ -60,17 +56,14 @@ void ScalerPluginObject::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstP
 	}
 }
 
-SourceScaler::SourceScaler() : _width(0), _height(0), _oldSrc(NULL), _enable(false) {
+SourceScaler::SourceScaler(const Graphics::PixelFormat &format) : Scaler(format), _width(0), _height(0), _oldSrc(NULL), _enable(false) {
 }
 
 SourceScaler::~SourceScaler() {
 	if (_oldSrc != NULL)
 		delete[] _oldSrc;
-}
 
-void SourceScaler::deinitialize() {
 	_bufferedOutput.free();
-	ScalerPluginObject::deinitialize();
 }
 
 void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding) {

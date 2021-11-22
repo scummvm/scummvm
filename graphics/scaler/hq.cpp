@@ -4988,14 +4988,8 @@ static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 	}
 }
 
-HQPlugin::HQPlugin() {
+HQScaler::HQScaler(const Graphics::PixelFormat &format) : Scaler(format) {
 	_factor = 2;
-	_factors.push_back(2);
-	_factors.push_back(3);
-}
-
-void HQPlugin::initialize(const Graphics::PixelFormat &format) {
-	ScalerPluginObject::initialize(format);
 
 	if (format.bytesPerPixel == 2) {
 		InitLUT(format);
@@ -5008,12 +5002,12 @@ void HQPlugin::initialize(const Graphics::PixelFormat &format) {
 	}
 }
 
-void HQPlugin::deinitialize() {
+HQScaler::~HQScaler() {
 	free(RGBtoYUV);
 	RGBtoYUV = 0;
 }
 
-void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void HQScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		switch (_factor) {
@@ -5065,16 +5059,38 @@ void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint HQPlugin::increaseFactor() {
+uint HQScaler::increaseFactor() {
 	if (_factor < 3)
 		setFactor(_factor + 1);
 	return _factor;
 }
 
-uint HQPlugin::decreaseFactor() {
+uint HQScaler::decreaseFactor() {
 	if (_factor > 2)
 		setFactor(_factor - 1);
 	return _factor;
+}
+
+
+class HQPlugin final : public ScalerPluginObject {
+public:
+	HQPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 1; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+HQPlugin::HQPlugin() {
+	_factors.push_back(2);
+	_factors.push_back(3);
+}
+
+Scaler *HQPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new HQScaler(format);
 }
 
 const char *HQPlugin::getName() const {

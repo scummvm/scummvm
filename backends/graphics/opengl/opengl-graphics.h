@@ -84,6 +84,7 @@ public:
 	virtual uint getDefaultScaleFactor() const override;
 	virtual bool setScaler(uint mode, int factor) override;
 	virtual uint getScaler() const override;
+	virtual uint getScaleFactor() const override;
 #endif
 
 	virtual void beginGFXTransaction() override;

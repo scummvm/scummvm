@@ -23,12 +23,7 @@
 #include "graphics/scaler.h"
 #include "graphics/colormasks.h"
 
-TVPlugin::TVPlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-}
-
-void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void TVScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -44,24 +39,16 @@ void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 
 }
 
-uint TVPlugin::increaseFactor() {
+uint TVScaler::increaseFactor() {
 	return _factor;
 }
 
-uint TVPlugin::decreaseFactor() {
+uint TVScaler::decreaseFactor() {
 	return _factor;
-}
-
-const char *TVPlugin::getName() const {
-	return "tv";
-}
-
-const char *TVPlugin::getPrettyName() const {
-	return "TV";
 }
 
 template<typename ColorMask>
-void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void TVScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
 	typedef typename ColorMask::PixelType Pixel;
 
@@ -92,6 +79,35 @@ void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, 
 		p += nextlineSrc;
 		q += nextlineDst << 1;
 	}
+}
+
+
+class TVPlugin final : public ScalerPluginObject {
+public:
+	TVPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 0; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+TVPlugin::TVPlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *TVPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new TVScaler(format);
+}
+
+const char *TVPlugin::getName() const {
+	return "tv";
+}
+
+const char *TVPlugin::getPrettyName() const {
+	return "TV";
 }
 
 REGISTER_PLUGIN_STATIC(TV, PLUGIN_TYPE_SCALER, TVPlugin);

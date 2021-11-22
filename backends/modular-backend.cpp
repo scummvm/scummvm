@@ -124,6 +124,10 @@ uint ModularGraphicsBackend::getScaler() const {
 	return _graphicsManager->getScaler();
 }
 
+uint ModularGraphicsBackend::getScaleFactor() const {
+	return _graphicsManager->getScaleFactor();
+}
+
 #ifdef USE_RGB_COLOR
 
 Graphics::PixelFormat ModularGraphicsBackend::getScreenFormat() const {

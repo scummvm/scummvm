@@ -479,10 +479,12 @@ void TextureRGBA8888Swap::updateGLTexture() {
 #ifdef USE_SCALERS
 
 ScaledTexture::ScaledTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
-	: FakeTexture(glIntFormat, glFormat, glType, format, fakeFormat), _convData(nullptr), _scalerPlugin(nullptr), _scaleFactor(1), _extraPixels(0) {
+	: FakeTexture(glIntFormat, glFormat, glType, format, fakeFormat), _convData(nullptr), _scaler(nullptr), _scalerIndex(0), _scaleFactor(1), _extraPixels(0) {
 }
 
 ScaledTexture::~ScaledTexture() {
+	delete _scaler;
+
 	if (_convData) {
 		_convData->free();
 		delete _convData;
@@ -542,8 +544,8 @@ void ScaledTexture::updateGLTexture() {
 	dst = (byte *)outSurf->getBasePtr(dirtyArea.left * _scaleFactor, dirtyArea.top * _scaleFactor);
 	dstPitch = outSurf->pitch;
 
-	assert(_scalerPlugin);
-	_scalerPlugin->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+	assert(_scaler);
+	_scaler->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
 
 	dirtyArea.left   *= _scaleFactor;
 	dirtyArea.right  *= _scaleFactor;
@@ -556,26 +558,22 @@ void ScaledTexture::updateGLTexture() {
 
 void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
 	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+	const ScalerPluginObject &scalerPlugin = scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
 
 	// If the scalerIndex has changed, change scaler plugins
-	if (&scalerPlugins[scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin) {
-		if (_scalerPlugin)
-			_scalerPlugin->deinitialize();
-
-		_scalerPlugin = &scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
-		_scalerPlugin->initialize(_format);
+	if (_scaler && scalerIndex != _scalerIndex) {
+		delete _scaler;
+		_scaler = nullptr;
 	}
-	_scalerPlugin->setFactor(scaleFactor);
 
-	_scaleFactor = _scalerPlugin->getFactor();
-	_extraPixels = _scalerPlugin->extraPixels();
-}
-
-void ScaledTexture::unloadScaler() {
-	if (_scalerPlugin) {
-		_scalerPlugin->deinitialize();
-		_scalerPlugin = nullptr;
+	if (!_scaler) {
+		_scaler = scalerPlugin.createInstance(_format);
 	}
+	_scaler->setFactor(scaleFactor);
+
+	_scalerIndex = scalerIndex;
+	_scaleFactor = _scaler->getFactor();
+	_extraPixels = scalerPlugin.extraPixels();
 }
 #endif
 

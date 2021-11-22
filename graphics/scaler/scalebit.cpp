@@ -352,14 +352,7 @@ void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_
 	}
 }
 
-AdvMamePlugin::AdvMamePlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-	_factors.push_back(3);
-	_factors.push_back(4);
-}
-
-void AdvMamePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void AdvMameScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_factor != 4)
 		::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, _format.bytesPerPixel, width, height);
@@ -367,16 +360,39 @@ void AdvMamePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 		::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch * 2, srcPitch, _format.bytesPerPixel, width, height);
 }
 
-uint AdvMamePlugin::increaseFactor() {
+uint AdvMameScaler::increaseFactor() {
 	if (_factor < 4)
 		setFactor(_factor + 1);
 	return _factor;
 }
 
-uint AdvMamePlugin::decreaseFactor() {
+uint AdvMameScaler::decreaseFactor() {
 	if (_factor > 2)
 		setFactor(_factor - 1);
 	return _factor;
+}
+
+
+class AdvMamePlugin final : public ScalerPluginObject {
+public:
+	AdvMamePlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return true; }
+	virtual uint extraPixels() const override { return 4; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+AdvMamePlugin::AdvMamePlugin() {
+	_factors.push_back(2);
+	_factors.push_back(3);
+	_factors.push_back(4);
+}
+
+Scaler *AdvMamePlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new AdvMameScaler(format);
 }
 
 const char *AdvMamePlugin::getName() const {

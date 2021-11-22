@@ -30,7 +30,7 @@
 
 #include "common/rect.h"
 
-class ScalerPluginObject;
+class Scaler;
 
 namespace OpenGL {
 
@@ -232,7 +232,6 @@ public:
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
 
 	virtual void setScaler(uint scalerIndex, int scaleFactor) {}
-	virtual void unloadScaler() {}
 
 	/**
 	 * Update underlying OpenGL texture to reflect current state.
@@ -362,10 +361,10 @@ public:
 	virtual void updateGLTexture();
 
 	virtual void setScaler(uint scalerIndex, int scaleFactor);
-	virtual void unloadScaler();
 protected:
 	Graphics::Surface *_convData;
-	ScalerPluginObject *_scalerPlugin;
+	Scaler *_scaler;
+	uint _scalerIndex;
 	uint _extraPixels;
 	uint _scaleFactor;
 };

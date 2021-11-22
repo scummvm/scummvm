@@ -24,18 +24,12 @@
 
 #include "graphics/scalerplugin.h"
 
-class EdgePlugin : public SourceScaler {
+class EdgeScaler : public SourceScaler {
 public:
 
-	EdgePlugin();
-	virtual void initialize(const Graphics::PixelFormat &format) override;
+	EdgeScaler(const Graphics::PixelFormat &format);
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual bool useOldSource() const override { return true; }
-	virtual uint extraPixels() const override { return 1; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
 
 protected:
 

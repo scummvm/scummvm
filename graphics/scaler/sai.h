@@ -24,43 +24,31 @@
 
 #include "graphics/scalerplugin.h"
 
-class SAIPlugin : public ScalerPluginObject {
+class SAIScaler : public Scaler {
 public:
-	SAIPlugin();
+	SAIScaler(const Graphics::PixelFormat &format) : Scaler(format) { _factor = 2; }
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual uint extraPixels() const override { return 2; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
 };
 
-class SuperSAIPlugin : public ScalerPluginObject {
+class SuperSAIScaler : public Scaler {
 public:
-	SuperSAIPlugin();
+	SuperSAIScaler(const Graphics::PixelFormat &format) : Scaler(format) { _factor = 2; }
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual uint extraPixels() const override { return 2; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
 };
 
-class SuperEaglePlugin : public ScalerPluginObject {
+class SuperEagleScaler : public Scaler {
 public:
-	SuperEaglePlugin();
+	SuperEagleScaler(const Graphics::PixelFormat &format) : Scaler(format) { _factor = 2; }
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual uint extraPixels() const override { return 2; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
