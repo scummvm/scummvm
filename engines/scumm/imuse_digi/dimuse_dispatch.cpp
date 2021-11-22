@@ -261,6 +261,7 @@ int IMuseDigital::dispatchRelease(IMuseDigiTrack *trackPtr) {
 			do {
 				streamZoneList->useFlag = 0;
 				removeStreamZoneFromList(&dispatchToDeallocate->streamZoneList, streamZoneList);
+				streamZoneList = dispatchToDeallocate->streamZoneList;
 			} while (dispatchToDeallocate->streamZoneList);
 		}
 	}
