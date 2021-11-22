@@ -486,8 +486,8 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
  * @return			true if audio files of the expected naming scheme are found, as long as ScummVM
  *					is also built with support to the respective audio format (eg. ogg, flac, mad/mp3)
  */
-bool Engine::existExtractedCDAudioFiles() {
-	return g_system->getAudioCDManager()->existExtractedCDAudioFiles();
+bool Engine::existExtractedCDAudioFiles(uint track) {
+	return g_system->getAudioCDManager()->existExtractedCDAudioFiles(track);
 }
 
 /**

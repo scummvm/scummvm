@@ -602,7 +602,7 @@ public:
 	/**
 	 * Check if extracted CD Audio files are found.
 	 */
-	bool existExtractedCDAudioFiles();
+	bool existExtractedCDAudioFiles(uint track = 1);
 	/**
 	 * On some systems, check whether the game appears to be run
 	 * from the same CD drive, which also should play CD audio.
