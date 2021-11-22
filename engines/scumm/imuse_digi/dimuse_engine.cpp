@@ -94,14 +94,14 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SPEECH, 176000, 44000, 88000);
 		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 528000, 44000, 352000);
 	} else if (_vm->_game.id == GID_DIG && !isFTSoundEngine()) {
-		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SPEECH, 88000, 22000, 44000);
-		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 528000, 11000, 132000);
+		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SPEECH, 132000, 22000, 44000);
+		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 660000, 11000, 132000);
 	} else {
 		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SPEECH, 110000, 22000, 44000);
 		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 220000, 22000, 44000);
 	}
 
-	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SFX, 198000, 0, 0);
+	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SMUSH, 198000, 0, 0);
 
 	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
 }
@@ -110,7 +110,7 @@ IMuseDigital::~IMuseDigital() {
 	_vm->getTimerManager()->removeTimerProc(timer_handler);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SPEECH);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_MUSIC);
-	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SFX);
+	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SMUSH);
 	cmdsDeinit();
 	diMUSETerminate();
 	delete _internalMixer;
@@ -437,6 +437,33 @@ bool IMuseDigital::isEngineDisabled() {
 	return _isEngineDisabled;
 }
 
+void IMuseDigital::stopSMUSHAudio() {
+	if (!isFTSoundEngine()) {
+		if (_vm->_game.id == GID_DIG) {
+			int foundSoundId, bufSize, criticalSize, freeSpace, paused;
+			foundSoundId = diMUSEGetNextSound(0);
+			while (foundSoundId) {
+				if (diMUSEGetParam(foundSoundId, DIMUSE_P_SND_HAS_STREAM)) {
+					diMUSEQueryStream(foundSoundId, bufSize, criticalSize, freeSpace, paused);
+
+					// Here, the disasm explicitly asks for "bufSize == 193900";
+					// since this works half of the time in ScummVM (because of how we handle sound buffers),
+					// we do the check but we alternatively check for the SMUSH channel soundId, so to cover the
+					// remaining cases. This fixes instances in which exiting from a cutscene leaves both
+					// DiMUSE streams locked, with speech consequently unable to play and a "WARNING: three
+					// streams in use" message from streamerProcessStreams()
+					if (bufSize == 193900 || foundSoundId == DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_SMUSH)
+						diMUSEStopSound(foundSoundId);
+				}
+
+				foundSoundId = diMUSEGetNextSound(foundSoundId);
+			}
+		}
+
+		diMUSESetSequence(0);
+	}
+}
+
 bool IMuseDigital::isFTSoundEngine() {
 	return _isEarlyDiMUSE;
 }
@@ -702,6 +729,10 @@ int IMuseDigital::diMUSESwitchStream(int oldSoundId, int newSoundId, uint8 *cros
 
 int IMuseDigital::diMUSEProcessStreams() {
 	return cmdsHandleCmd(27);
+}
+
+void IMuseDigital::diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	waveQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
 }
 
 int IMuseDigital::diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {

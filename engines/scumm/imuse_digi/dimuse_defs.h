@@ -51,7 +51,7 @@ namespace Scumm {
 #define DIMUSE_GROUP_MUSICEFF 4
 #define DIMUSE_BUFFER_SPEECH  1
 #define DIMUSE_BUFFER_MUSIC   2
-#define DIMUSE_BUFFER_SFX     3
+#define DIMUSE_BUFFER_SMUSH     3
 
 // Parameters IDs
 #define DIMUSE_P_BOGUS_ID       0x0

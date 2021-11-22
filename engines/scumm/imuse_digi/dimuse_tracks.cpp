@@ -282,6 +282,24 @@ int IMuseDigital::tracksGetNextSound(int soundId) {
 	return foundSoundId;
 }
 
+void IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	if (!_trackList)
+		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: empty trackList, ignoring call...");
+
+	IMuseDigiTrack *track = _trackList;
+	do {
+		if (track->soundId) {
+			if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
+				streamerQueryStream(track->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
+				return;
+			}
+		}
+		track = track->next;
+	} while (track);
+
+	debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+}
+
 int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
 	if (!_trackList)
 		return -1;
