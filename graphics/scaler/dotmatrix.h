@@ -24,16 +24,11 @@
 
 #include "graphics/scalerplugin.h"
 
-class DotMatrixPlugin : public ScalerPluginObject {
+class DotMatrixScaler : public Scaler {
 public:
-	DotMatrixPlugin();
-	void initialize(const Graphics::PixelFormat &format) override;
+	DotMatrixScaler(const Graphics::PixelFormat &format);
 	uint increaseFactor() override;
 	uint decreaseFactor() override;
-	bool canDrawCursor() const override { return false; }
-	uint extraPixels() const override { return 0; }
-	const char *getName() const override;
-	const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;

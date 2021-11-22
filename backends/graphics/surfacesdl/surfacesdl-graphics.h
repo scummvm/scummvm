@@ -77,6 +77,7 @@ public:
 	uint getDefaultScaleFactor() const override;
 	bool setScaler(uint mode, int factor) override;
 	uint getScaler() const override;
+	uint getScaleFactor() const override;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
@@ -326,6 +327,7 @@ protected:
 
 	const PluginList &_scalerPlugins;
 	ScalerPluginObject *_scalerPlugin;
+	Scaler *_scaler;
 	uint _maxExtraPixels;
 	uint _extraPixels;
 

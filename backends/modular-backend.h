@@ -81,6 +81,7 @@ public:
 	using BaseBackend::setScaler;
 	bool setScaler(uint mode, int factor) override final;
 	uint getScaler() const override final;
+	uint getScaleFactor() const override final;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat getScreenFormat() const override final;
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;
