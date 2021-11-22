@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-22 06:05+0000\n"
+"POT-Creation-Date: 2021-11-22 17:38+0000\n"
 "PO-Revision-Date: 2021-11-19 21:50+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -174,7 +174,7 @@ msgstr ""
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:181 engines/scumm/scumm.cpp:1353
 #: engines/scumm/scumm.cpp:1379 engines/scumm/scumm.cpp:1401
-#: engines/scumm/scumm.cpp:1655 engines/scumm/scumm.cpp:2125
+#: engines/scumm/scumm.cpp:1669 engines/scumm/scumm.cpp:2139
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -4154,7 +4154,7 @@ msgstr "Відновити"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Швидке завантаження або збереження не підтримується в цій локації"
 
-#: engines/agos/saveload.cpp:162 engines/scumm/scumm.cpp:2737
+#: engines/agos/saveload.cpp:162 engines/scumm/scumm.cpp:2751
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4165,7 +4165,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:197 engines/scumm/scumm.cpp:2727
+#: engines/agos/saveload.cpp:197 engines/scumm/scumm.cpp:2741
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4176,7 +4176,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:205 engines/scumm/scumm.cpp:2750
+#: engines/agos/saveload.cpp:205 engines/scumm/scumm.cpp:2764
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7127,7 +7127,7 @@ msgstr ""
 "Не вдалося знайти файл програми 'Monkey Island' Macintosh аби прочитати\n"
 "з нього інструменти. Музику було вимкнено."
 
-#: engines/scumm/scumm.cpp:1652
+#: engines/scumm/scumm.cpp:1666
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7138,7 +7138,7 @@ msgstr ""
 "виключено.\n"
 "Будь-ласка скопіюйте наново файли з оригінальних дисків без компресії."
 
-#: engines/scumm/scumm.cpp:2123
+#: engines/scumm/scumm.cpp:2137
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7147,7 +7147,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:3055
+#: engines/scumm/scumm.cpp:3069
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
