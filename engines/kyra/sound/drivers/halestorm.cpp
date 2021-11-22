@@ -809,7 +809,7 @@ bool HSMidiParser::parseEvent(HSSong &song, TrackState *s) {
 
 	if (in < 0x80) {
 		if (s->curPos <= s->data->ptr)
-			error("HSLowLevelDriver::midiParseEvent(): Data error");
+			error("HSMidiParser::parseEvent(): Data error");
 		s->curPos--;
 		in = _curCmd;
 	} else if (in == 0xff) {
