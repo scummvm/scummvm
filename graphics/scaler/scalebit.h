@@ -41,17 +41,14 @@
 int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned height);
 void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height);
 
-class AdvMamePlugin : public ScalerPluginObject {
+class AdvMameScaler : public Scaler {
 public:
-	AdvMamePlugin();
-	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
+	AdvMameScaler(const Graphics::PixelFormat &format) : Scaler(format) { _factor = 2; }
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return true; }
-	virtual uint extraPixels() const override { return 4; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
+protected:
+	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
 };
 
 #endif

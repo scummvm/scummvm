@@ -81,6 +81,7 @@ public:
 	using BaseBackend::setScaler;
 	virtual bool setScaler(uint mode, int factor) override final;
 	virtual uint getScaler() const override final;
+	virtual uint getScaleFactor() const override final;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override final;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;

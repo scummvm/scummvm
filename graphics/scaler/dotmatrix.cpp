@@ -22,13 +22,8 @@
 #include "graphics/scaler/dotmatrix.h"
 #include "graphics/scaler.h"
 
-DotMatrixPlugin::DotMatrixPlugin() {
+DotMatrixScaler::DotMatrixScaler(const Graphics::PixelFormat &format) : Scaler(format) {
 	_factor = 2;
-	_factors.push_back(2);
-}
-
-void DotMatrixPlugin::initialize(const Graphics::PixelFormat &format) {
-	ScalerPluginObject::initialize(format);
 
 	if (format.bytesPerPixel == 2) {
 		uint16 *lookup16 = (uint16 *)lookup;
@@ -53,7 +48,7 @@ void DotMatrixPlugin::initialize(const Graphics::PixelFormat &format) {
 	}
 }
 
-void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void DotMatrixScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		scaleIntern<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
@@ -62,20 +57,12 @@ void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint DotMatrixPlugin::increaseFactor() {
+uint DotMatrixScaler::increaseFactor() {
 	return _factor;
 }
 
-uint DotMatrixPlugin::decreaseFactor() {
+uint DotMatrixScaler::decreaseFactor() {
 	return _factor;
-}
-
-const char *DotMatrixPlugin::getName() const {
-	return "dotmatrix";
-}
-
-const char *DotMatrixPlugin::getPrettyName() const {
-	return "DotMatrix";
 }
 
 template<typename Pixel>
@@ -84,7 +71,7 @@ static inline Pixel DOT(const Pixel *dotmatrix, Pixel c, int j, int i) {
 }
 
 template<typename Pixel>
-void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void DotMatrixScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height, int x, int y) {
 
 	const Pixel *dotmatrix = (Pixel *)lookup;
@@ -109,6 +96,35 @@ void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *d
 		p += nextlineSrc;
 		q += nextlineDst << 1;
 	}
+}
+
+
+class DotMatrixPlugin final : public ScalerPluginObject {
+public:
+	DotMatrixPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 0; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+DotMatrixPlugin::DotMatrixPlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *DotMatrixPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new DotMatrixScaler(format);
+}
+
+const char *DotMatrixPlugin::getName() const {
+	return "dotmatrix";
+}
+
+const char *DotMatrixPlugin::getPrettyName() const {
+	return "DotMatrix";
 }
 
 REGISTER_PLUGIN_STATIC(DOTMATRIX, PLUGIN_TYPE_SCALER, DotMatrixPlugin);

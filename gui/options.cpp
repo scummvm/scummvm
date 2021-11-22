@@ -646,9 +646,10 @@ void OptionsDialog::apply() {
 				ConfMan.removeKey("scale_factor", _domain);
 
 				uint defaultScaler = g_system->getDefaultScaler();
+				uint defaultScaleFactor = g_system->getDefaultScaleFactor();
 				if (g_system->getScaler() != defaultScaler)
 					graphicsModeChanged = true;
-				else if (scalerPlugins[defaultScaler]->get<ScalerPluginObject>().getFactor() != g_system->getDefaultScaleFactor())
+				else if (g_system->getScaleFactor() != defaultScaleFactor)
 					graphicsModeChanged = true;
 			}
 
@@ -1857,7 +1858,12 @@ void OptionsDialog::updateScaleFactors(uint32 tag) {
 		for (Common::Array<uint>::const_iterator it = factors.begin(); it != factors.end(); it++) {
 			_scaleFactorPopUp->appendEntry(Common::U32String::format("%dx", (*it)), (*it));
 		}
-		_scaleFactorPopUp->setSelectedTag(scalerPlugins[tag]->get<ScalerPluginObject>().getFactor());
+
+		if (g_system->getScaler() == tag) {
+			_scaleFactorPopUp->setSelectedTag(g_system->getScaleFactor());
+		} else {
+			_scaleFactorPopUp->setSelectedTag(scalerPlugins[tag]->get<ScalerPluginObject>().getDefaultFactor());
+		}
 	} else {
 		_scaleFactorPopUp->clearEntries();
 		_scaleFactorPopUp->appendEntry(_("<default>"));

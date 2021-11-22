@@ -392,12 +392,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 // SAI
 
-SAIPlugin::SAIPlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-}
-
-void SAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void SAIScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -412,12 +407,33 @@ void SAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint SAIPlugin::increaseFactor() {
+uint SAIScaler::increaseFactor() {
 	return _factor;
 }
 
-uint SAIPlugin::decreaseFactor() {
+uint SAIScaler::decreaseFactor() {
 	return _factor;
+}
+
+
+class SAIPlugin final : public ScalerPluginObject {
+public:
+	SAIPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 2; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+SAIPlugin::SAIPlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *SAIPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new SAIScaler(format);
 }
 
 const char *SAIPlugin::getName() const {
@@ -432,13 +448,7 @@ REGISTER_PLUGIN_STATIC(SAI, PLUGIN_TYPE_SCALER, SAIPlugin);
 
 // SuperSAI
 
-SuperSAIPlugin::SuperSAIPlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-}
-
-
-void SuperSAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void SuperSAIScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -453,12 +463,33 @@ void SuperSAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint SuperSAIPlugin::increaseFactor() {
+uint SuperSAIScaler::increaseFactor() {
 	return _factor;
 }
 
-uint SuperSAIPlugin::decreaseFactor() {
+uint SuperSAIScaler::decreaseFactor() {
 	return _factor;
+}
+
+
+class SuperSAIPlugin final : public ScalerPluginObject {
+public:
+	SuperSAIPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 2; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+SuperSAIPlugin::SuperSAIPlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *SuperSAIPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new SuperSAIScaler(format);
 }
 
 const char *SuperSAIPlugin::getName() const {
@@ -473,12 +504,7 @@ REGISTER_PLUGIN_STATIC(SUPERSAI, PLUGIN_TYPE_SCALER, SuperSAIPlugin);
 
 // SuperEagle
 
-SuperEaglePlugin::SuperEaglePlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-}
-
-void SuperEaglePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void SuperEagleScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -493,12 +519,33 @@ void SuperEaglePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint SuperEaglePlugin::increaseFactor() {
+uint SuperEagleScaler::increaseFactor() {
 	return _factor;
 }
 
-uint SuperEaglePlugin::decreaseFactor() {
+uint SuperEagleScaler::decreaseFactor() {
 	return _factor;
+}
+
+
+class SuperEaglePlugin final : public ScalerPluginObject {
+public:
+	SuperEaglePlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 2; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+SuperEaglePlugin::SuperEaglePlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *SuperEaglePlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new SuperEagleScaler(format);
 }
 
 const char *SuperEaglePlugin::getName() const {

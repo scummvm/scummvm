@@ -186,13 +186,7 @@ void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dst
 
 }
 
-
-PMPlugin::PMPlugin() {
-	_factor = 2;
-	_factors.push_back(2);
-}
-
-void PMPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+void PMScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -207,12 +201,34 @@ void PMPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-uint PMPlugin::increaseFactor() {
+uint PMScaler::increaseFactor() {
 	return _factor;
 }
 
-uint PMPlugin::decreaseFactor() {
+uint PMScaler::decreaseFactor() {
 	return _factor;
+}
+
+
+class PMPlugin final : public ScalerPluginObject {
+public:
+	PMPlugin();
+
+	virtual Scaler *createInstance(const Graphics::PixelFormat &format) const override;
+
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 1; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
+};
+
+
+PMPlugin::PMPlugin() {
+	_factors.push_back(2);
+}
+
+Scaler *PMPlugin::createInstance(const Graphics::PixelFormat &format) const {
+	return new PMScaler(format);
 }
 
 const char *PMPlugin::getName() const {

@@ -24,15 +24,11 @@
 
 #include "graphics/scalerplugin.h"
 
-class TVPlugin : public ScalerPluginObject {
+class TVScaler : public Scaler {
 public:
-	TVPlugin();
+	TVScaler(const Graphics::PixelFormat &format) : Scaler(format) { _factor = 2; }
 	virtual uint increaseFactor() override;
 	virtual uint decreaseFactor() override;
-	virtual bool canDrawCursor() const override { return false; }
-	virtual uint extraPixels() const override { return 0; }
-	virtual const char *getName() const override;
-	virtual const char *getPrettyName() const override;
 private:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;

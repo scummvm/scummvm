@@ -316,7 +316,7 @@ bool OpenGLGraphicsManager::setScaler(uint mode, int factor) {
 	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldState.scaleFactor))
 		newFactor = _oldState.scaleFactor;
 	else
-		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getFactor();
+		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getDefaultFactor();
 
 	_currentState.scalerIndex = mode;
 	_currentState.scaleFactor = newFactor;
@@ -326,6 +326,10 @@ bool OpenGLGraphicsManager::setScaler(uint mode, int factor) {
 
 uint OpenGLGraphicsManager::getScaler() const {
 	return _currentState.scalerIndex;
+}
+
+uint OpenGLGraphicsManager::getScaleFactor() const {
+	return _currentState.scaleFactor;
 }
 #endif
 
@@ -442,8 +446,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	} while (_transactionMode == kTransactionRollback);
 
 	if (setupNewGameScreen) {
-		if (_gameScreen)
-			_gameScreen->unloadScaler();
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
