@@ -130,13 +130,12 @@ Common::String Util::findMacResourceFile(const char *baseName) {
 		Common::kISO8859_1
 	};
 
+	Common::MacResManager resource;
 	Common::String tryName(baseName);
 	Common::String fileName;
 
 	for (int i = 0; i < 2; ++i) {
 		for (int ii = 0; ii < ARRAYSIZE(tryCodePages); ++ii) {
-			Common::MacResManager resource;
-
 			Common::U32String fn(tryName, tryCodePages[ii]);
 			fileName = fn.encode(Common::kUtf8);
 			if (resource.exists(fileName))
