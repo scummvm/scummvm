@@ -506,7 +506,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 				bufId = DIMUSE_BUFFER_MUSIC;
 				volume = 2 * userId - 400;
 			} else if (userId >= 300 && userId <= 363) {
-				bufId = DIMUSE_BUFFER_SFX;
+				bufId = DIMUSE_BUFFER_SMUSH;
 				volume = 2 * userId - 600;
 			} else {
 				free(dataBuffer);
@@ -1344,6 +1344,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(*_IACTchannel);
 			_IACTpos = 0;
+			_imuseDigital->stopSMUSHAudio();
 			break;
 		}
 		_vm->_system->delayMillis(10);
