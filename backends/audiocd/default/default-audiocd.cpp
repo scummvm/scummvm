@@ -64,7 +64,7 @@ void DefaultAudioCDManager::fillPotentialTrackNames(Common::Array<Common::String
 	trackNames.push_back(Common::String::format("track_%02d", track));
 }
 
-bool DefaultAudioCDManager::existExtractedCDAudioFiles() {
+bool DefaultAudioCDManager::existExtractedCDAudioFiles(uint track) {
 	// keep this in sync with STREAM_FILEFORMATS
 	const char *extensions[] = {
 #ifdef USE_VORBIS
@@ -82,7 +82,7 @@ bool DefaultAudioCDManager::existExtractedCDAudioFiles() {
 	};
 
 	Common::Array<Common::String> trackNames;
-	fillPotentialTrackNames(trackNames, 1);
+	fillPotentialTrackNames(trackNames, track);
 
 	for (Common::Array<Common::String>::iterator i = trackNames.begin(); i != trackNames.end(); ++i) {
 		for (const char **ext = extensions; *ext; ++ext) {

@@ -109,7 +109,7 @@ public:
 	 * Checks whether the extracted audio cd tracks exists as files in
 	 * the search paths.
 	 */
-	virtual bool existExtractedCDAudioFiles() = 0;
+	virtual bool existExtractedCDAudioFiles(uint track) = 0;
 };
 
 #endif
