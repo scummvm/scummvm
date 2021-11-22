@@ -136,7 +136,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
 	_transactionMode(kTransactionNone),
-	_scalerPlugins(ScalerMan.getPlugins()),
+	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
 	_needRestoreAfterOverlay(false) {
 
 	// allocate palette storage
@@ -157,7 +157,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = false;
 #endif
 
-	_scalerPlugin = nullptr;
+	_scaler = nullptr;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
@@ -172,6 +172,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	unloadGFXMode();
+	delete _scaler;
 	if (_mouseOrigSurface) {
 		SDL_FreeSurface(_mouseOrigSurface);
 		if (_mouseOrigSurface == _mouseSurface) {
@@ -592,7 +593,7 @@ bool SurfaceSdlGraphicsManager::setScaler(uint mode, int factor) {
 	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldVideoMode.scaleFactor))
 		newFactor = _oldVideoMode.scaleFactor;
 	else
-		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getFactor();
+		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getDefaultFactor();
 
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newFactor)
 		_transactionDetails.needHotswap = true;
@@ -619,19 +620,18 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 #endif
 		) {
 		Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
-		if (_scalerPlugin)
-			_scalerPlugin->deinitialize();
+		delete _scaler;
 
 		_scalerPlugin = &_scalerPlugins[_videoMode.scalerIndex]->get<ScalerPluginObject>();
-		_scalerPlugin->initialize(format);
+		_scaler = _scalerPlugin->createInstance(format);
 	}
 
-	_scalerPlugin->setFactor(_videoMode.scaleFactor);
+	_scaler->setFactor(_videoMode.scaleFactor);
 	_extraPixels = _scalerPlugin->extraPixels();
 	_useOldSrc = _scalerPlugin->useOldSource();
 	if (_useOldSrc) {
-		_scalerPlugin->enableSource(true);
-		_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
+		_scaler->enableSource(true);
+		_scaler->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 	}
 
@@ -646,6 +646,11 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 uint SurfaceSdlGraphicsManager::getScaler() const {
 	assert(_transactionMode == kTransactionNone);
 	return _videoMode.scalerIndex;
+}
+
+uint SurfaceSdlGraphicsManager::getScaleFactor() const {
+	assert(_transactionMode == kTransactionNone);
+	return _videoMode.scaleFactor;
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -931,7 +936,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	if (_useOldSrc) {
 		// Create surface containing previous frame's data to pass to scaler
-		_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
+		_scaler->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 	}
 
@@ -1135,11 +1140,11 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		if (_needRestoreAfterOverlay) {
 			// This is needed for the Edge scaler which seems to be the only scaler to use the "_useOldSrc" feature.
 			// Otherwise the screen will not be properly restored after removing the overlay. We need to trigger a
-			// regeneration of SourceScaler::_bufferedOutput. The call to _scalerPlugin->setFactor() down below could
+			// regeneration of SourceScaler::_bufferedOutput. The call to _scaler->setFactor() down below could
 			// do that in theory, but it won't unless the factor actually changes (which it doesn't). Now, the code
 			// in SourceScaler::setSource() looks a bit fishy, e. g. the *src argument isn't even used. But otherwise
 			// it does what we want here at least...
-			_scalerPlugin->setSource(nullptr, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+			_scaler->setSource(nullptr, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 		}
 
 		origSurf = _screen;
@@ -1154,7 +1159,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
 		scale1 = 1;
-		oldScaleFactor = _scalerPlugin->setFactor(1);
+		oldScaleFactor = _scaler->setFactor(1);
 		_needRestoreAfterOverlay = _useOldSrc;
 	}
 
@@ -1228,7 +1233,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
-				_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+				_scaler->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 					(byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 			}
 
@@ -1344,7 +1349,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Set up the old scale factor
-	_scalerPlugin->setFactor(oldScaleFactor);
+	_scaler->setFactor(oldScaleFactor);
 
 	_numDirtyRects = 0;
 	_forceRedraw = false;
@@ -1703,7 +1708,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
 
-	_scalerPlugin->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * 2, _tmpscreen->pitch,
+	_scaler->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
 #ifdef USE_ASPECT
@@ -2073,7 +2078,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		// HACK: AdvMame4x requires a height of at least 4 pixels, so we
 		// fall back on the Normal scaler when a smaller cursor is supplied.
 		if (_scalerPlugin->canDrawCursor() && (uint)_mouseCurState.h >= _extraPixels) {
-			_scalerPlugin->scale(
+			_scaler->scale(
 					(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
 					_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 					_mouseCurState.w, _mouseCurState.h, 0, 0);
@@ -2416,7 +2421,7 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
 			"%S %s%d\n%d x %d -> %d x %d",
 			_("Active graphics filter:").c_str(),
 			newScalerName,
-			_scalerPlugin->getFactor(),
+			_scaler->getFactor(),
 			_videoMode.screenWidth, _videoMode.screenHeight,
 			_hwScreen->w, _hwScreen->h);
 		displayMessageOnOSD(message);
@@ -2511,11 +2516,11 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #endif
 
 	case kActionIncreaseScaleFactor:
-		handleScalerHotkeys(_videoMode.scalerIndex, _scalerPlugin->increaseFactor());
+		handleScalerHotkeys(_videoMode.scalerIndex, _scaler->increaseFactor());
 		return true;
 
 	case kActionDecreaseScaleFactor:
-		handleScalerHotkeys(_videoMode.scalerIndex, _scalerPlugin->decreaseFactor());
+		handleScalerHotkeys(_videoMode.scalerIndex, _scaler->decreaseFactor());
 		return true;
 
 	case kActionNextScaleFilter: {
@@ -2524,7 +2529,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			scalerIndex = 0;
 		}
 
-		handleScalerHotkeys(scalerIndex, _scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getFactor());
+		handleScalerHotkeys(scalerIndex, _scaler->getFactor());
 		return true;
 	}
 
@@ -2535,7 +2540,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		}
 		scalerIndex--;
 
-		handleScalerHotkeys(scalerIndex, _scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getFactor());
+		handleScalerHotkeys(scalerIndex, _scaler->getFactor());
 		return true;
 	}
 
