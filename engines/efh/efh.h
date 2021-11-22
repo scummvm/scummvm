@@ -170,6 +170,7 @@ private:
 	void decryptImpFile(bool techMapFl);
 	void readImpFile(int16 id, bool techMapFl);
 	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
+	void playIntro();
 	void initEngine();
 	void initMapMonsters();
 	void loadMapMonsters();
@@ -190,10 +191,12 @@ private:
 	void drawRect(int minX, int minY, int maxX, int maxY);
 	void drawMenuBox(int minX, int minY, int maxX, int maxY, int color);
 	void displayFullScreenColoredMenuBox(int color);
+	Common::KeyCode handleAndMapInput(bool animFl);
+	void displayNextAnimFrame();
 
 	void sub15150(bool flag);
 	void sub12A7F();
-	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation);
+	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY);
 	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
 	void sub1512B();
@@ -201,6 +204,9 @@ private:
 	void sub15094();
 	void sub150EE();
 	void sub15018();
+	void setNumLock();
+	void unkfct_mapFunction();
+	void unkFct_anim();
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];

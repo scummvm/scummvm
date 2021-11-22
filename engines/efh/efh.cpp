@@ -458,7 +458,101 @@ void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 
 Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	warning("STUB - getLastCharAfterAnimCount");
-	return Common::KEYCODE_INVALID;
+
+	if (delay == 0)
+		return Common::KEYCODE_INVALID;
+
+	Common::Event event;
+	do {
+		_system->getEventManager()->pollEvent(event);
+	} while (event.kbd.keycode != Common::KEYCODE_INVALID);
+
+	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
+
+	uint32 lastMs = _system->getMillis();
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			--delay;
+			unkFct_anim();
+		}
+
+		lastChar = handleAndMapInput(false);
+	} 
+	
+	return lastChar;
+}
+
+void EfhEngine::playIntro() {
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+
+	// Load animations on previous picture with GF
+	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
+	readImpFile(100, 0);
+	Common::KeyCode lastInput = getLastCharAfterAnimCount(8);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
+	lastInput = getLastCharAfterAnimCount(80);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
+	lastInput = getLastCharAfterAnimCount(80);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
+	lastInput = getLastCharAfterAnimCount(80);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
+	lastInput = getLastCharAfterAnimCount(80);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
+	lastInput = getLastCharAfterAnimCount(80);
+	if (lastInput == Common::KEYCODE_ESCAPE)
+		return;
+
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
+	displayFctFullScreen();
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
+	getLastCharAfterAnimCount(80);
 }
 
 void EfhEngine::syncSoundSettings() {
@@ -553,9 +647,9 @@ void EfhEngine::initEngine() {
 	// Load Title Screen
 	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
 
 	// Load map tiles bitmaps
 	loadImageSetToTileBank(1, 1);
@@ -588,67 +682,7 @@ void EfhEngine::initEngine() {
 	Common::KeyCode lastInput = playSong(_titleSong);
 
 	if (lastInput != Common::KEYCODE_ESCAPE) {
-		sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
-		displayFctFullScreen();
-		sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
-
-		// Load animations on previous picture with GF
-		loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
-		readImpFile(100, 0);
-		lastInput = getLastCharAfterAnimCount(8);
-
-		if (lastInput != Common::KEYCODE_ESCAPE) {
-			sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-			sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
-			displayFctFullScreen();
-			sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-			sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
-			lastInput = getLastCharAfterAnimCount(80);
-			if (lastInput != Common::KEYCODE_ESCAPE) {
-				sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16, _paletteTransformationConstant);
-				sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-				sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
-				displayFctFullScreen();
-				sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16, _paletteTransformationConstant);
-				sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-				sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
-				lastInput = getLastCharAfterAnimCount(80);
-				if (lastInput != Common::KEYCODE_ESCAPE) {
-					sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16, _paletteTransformationConstant);
-					sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-					sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
-					displayFctFullScreen();
-					sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16, _paletteTransformationConstant);
-					sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-					sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
-					lastInput = getLastCharAfterAnimCount(80);
-					if (lastInput != Common::KEYCODE_ESCAPE) {
-						sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-						sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
-						displayFctFullScreen();
-						sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-						sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
-						lastInput = getLastCharAfterAnimCount(80);
-						if (lastInput != Common::KEYCODE_ESCAPE) {
-							sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-							sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
-							displayFctFullScreen();
-							sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-							sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
-							lastInput = getLastCharAfterAnimCount(80);
-							if (lastInput != Common::KEYCODE_ESCAPE) {
-								sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-								sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
-								displayFctFullScreen();
-								sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144, _paletteTransformationConstant);
-								sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
-								lastInput = getLastCharAfterAnimCount(80);
-							}
-						}
-					}
-				}
-			}
-		}		
+		playIntro();
 	}
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
@@ -795,6 +829,7 @@ void EfhEngine::displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphic
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
+#if 0
 	static uint16 byte2C80C[72] = {
 		   0,    1,    2,    3,    4,    5,    6,    7,
 		   8,    9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
@@ -807,9 +842,6 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 		   0,    0,    0,    0, 0x3F,    1, 0xC7,    0
 	};
 
-	warning("STUB - sub24D92");
-	
-#if 0
 	if (bufferBM == nullptr)
 		return;
 
@@ -842,7 +874,7 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 	//incomplete
 #endif
 
-
+	// TODO: Quick code to display stuff, may require to really reverse the actual function
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
 	// warning("%d %d - startX %d startY %d width %d height %d fieldA %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_fieldA, bufferBM->_fieldD);
 	int counter = 0;
@@ -856,7 +888,6 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
-	_system->delayMillis(200);
 }
 
 void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
@@ -886,21 +917,44 @@ void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 }
 
 void EfhEngine::sub15094() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 112, 0, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[3], 16, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 112, 0);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[3], 16, 0);
 }
 
 void EfhEngine::sub150EE() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 304, 0, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[4], 128, 0, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 304, 0);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[4], 128, 0);
 }
 
 void EfhEngine::sub15018() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[7], 16, 136, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[8], 16, 192, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[5], 0, 136, _paletteTransformationConstant);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[6], 304, 136, _paletteTransformationConstant);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[7], 16, 136);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[8], 16, 192);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[5], 0, 136);
+	sub10B77_unkDisplayFct1(_circleImageSubFileArray[6], 304, 136);
+}
+
+void EfhEngine::setNumLock() {
+	// No implementation in ScummVM
+}
+
+void EfhEngine::unkfct_mapFunction() {
+	warning("STUB - unkfct_mapFunction");
+}
+
+void EfhEngine::unkFct_anim() {
+	setNumLock();
+
+	if (_engineInitPending)
+		return;
+
+	if (_animImageSetId != 0xFF) {
+		displayNextAnimFrame();
+		displayFctFullScreen();
+		displayAnimFrame();
+	}
+
+	unkfct_mapFunction();
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
@@ -1094,6 +1148,28 @@ void EfhEngine::displayFullScreenColoredMenuBox(int color) {
 	drawMenuBox(0, 0, 320, 200, color);
 }
 
+Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
+	// The original checks for the joystick input
+	Common::Event event;
+	_system->getEventManager()->pollEvent(event);
+	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+	if (event.type == Common::EVENT_KEYUP) {
+		retVal = event.kbd.keycode;
+	} 	
+
+	if (animFl) {
+		warning("STUB - handleAndMapInput - animFl");
+	}
+	return retVal;
+}
+
+void EfhEngine::displayNextAnimFrame() {
+	if (++_unkAnimRelatedIndex >= 15)
+		_unkAnimRelatedIndex = 0;
+
+	displayAnimFrame();
+}
+
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
 	uint8 *placesPtr = &_places[576 * id];
 
@@ -1101,7 +1177,7 @@ void EfhEngine::copyCurrentPlaceToBuffer(int id) {
 	memcpy(_curPlace, placesPtr, 24 * 24);
 }
 
-void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY, uint8 guess_paletteTransformation) {
+void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY) {
 	uint16 height = READ_LE_INT16(imagePtr);
 	uint16 width = READ_LE_INT16(imagePtr + 2);
 	uint8 *imageData = imagePtr + 4;
