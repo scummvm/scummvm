@@ -789,9 +789,6 @@
 						type = 'Checkbox'
 				/>
 			</layout>
-			<widget name = 'UpdateIconsButton'
-					type = 'Button'
-			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'DiscordRpc'
 						type = 'Checkbox'
@@ -810,6 +807,9 @@
 						type = 'Button'
 				/>
 			</layout>
+			<widget name = 'UpdateIconsButton'
+					type = 'Button'
+			/>
 		</layout>
 	</dialog>
 
