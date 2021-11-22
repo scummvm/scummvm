@@ -549,18 +549,6 @@ void Actor::update() {
 			move(DIR(_direction + 6), dist);
 		}
 
-		// Finish
-		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
-			setVolume();
-
-		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-			getSpecial()->run(nullptr, _index);
-
-		updateReflectionData();
-
-		if (_field_944 != 5)
-			actionAreaCheck();
-
 		}
 		break;
 
@@ -608,18 +596,6 @@ void Actor::update() {
 				}
 			}
 		}
-
-		// Finish
-		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
-			setVolume();
-
-		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-			getSpecial()->run(nullptr, _index);
-
-		updateReflectionData();
-
-		if (_field_944 != 5)
-			actionAreaCheck();
 
 		}
 		break;
@@ -670,6 +646,7 @@ void Actor::update() {
 		break;
 	}
 
+	// Finish
 	if (_soundResourceId && getSound()->isPlaying(_soundResourceId))
 		setVolume();
 
