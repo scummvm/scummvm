@@ -3213,7 +3213,10 @@ void Actor::actionAreaCheck() {
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
 
-	if ((area->flags & 1) && !getSharedData()->getFlag(kFlagSkipScriptProcessing)) {
+	if (!(area->flags & 1))
+		return;
+
+	if (!getSharedData()->getFlag(kFlagSkipScriptProcessing)) {
 		debugC(kDebugLevelScripts, "[Script] Entered ActionArea (idx: %d, name: %s)", areaIndex, area->name);
 		debugC(kDebugLevelScripts, "[Script] Queuing Script #1 (idx: %d) for Actor (idx: %d)", actorArea->scriptIndex2, _index);
 		getScript()->queueScript(actorArea->scriptIndex2, _index);
