@@ -49,7 +49,7 @@ struct ResourceEntry {
 		if (data == NULL)
 			error("[ResourceEntry::getData] Invalid data");
 
-		return READ_UINT32(data + off);
+		return READ_LE_UINT32(data + off);
 	}
 };
 
