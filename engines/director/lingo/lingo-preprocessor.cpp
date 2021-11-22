@@ -79,6 +79,31 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 				break;
 			s++;
 			continue;
+		} else if (*s == 0xFF82) {	// Misparsed Japanese continuation
+			if (!*(s+1)) { // EOS - write as is and finish up
+				res += *s++;
+				break;
+			}
+			// Next character isn't a newline; write as is and keep
+			// going.
+			if (*(s+1) != 13) {
+				res += *s++;
+				continue;
+			}
+
+			s++;
+			// This is a bit of a hack; in MacJapanese the codepoint at
+			// C2 is the half-width katakana "tsu", so ScummVM is
+			// getting confused about what's here in the script after
+			// translating from MacJapanese to Unicode.
+			// Just swap the character out for the right Unicode character here.
+			// This can be removed if Lingo parsing is reworked to act
+			// on the original raw bytes instead of a Unicode translation.
+			res += CONTINUATION;
+			if (!*s)
+				break;
+			s++;
+			continue;
 		}
 		res += *s++;
 	}
