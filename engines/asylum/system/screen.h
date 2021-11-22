@@ -24,6 +24,7 @@
 #define ASYLUM_SYSTEM_SCREEN_H
 
 #include "common/array.h"
+#include "common/queue.h"
 #include "common/rect.h"
 
 #include "graphics/palette.h"
@@ -69,6 +70,12 @@ typedef struct GraphicQueueItem {
 		transTableNum = 0;
 	}
 } GraphicQueueItem;
+
+struct FadeParameters {
+	ResourceId resourceId;
+	int32 ticksWait;
+	int32 delta;
+};
 
 class Screen {
 public:
@@ -169,7 +176,7 @@ private:
 	ResourceId _fadeResourceId;
 	int32 _fadeTicksWait;
 	int32 _fadeDelta;
-
+	Common::Queue<FadeParameters> _fadeQueue;
 
 	byte *getPaletteData(ResourceId id);
 	void setPaletteGamma(byte *data, byte *target = NULL);

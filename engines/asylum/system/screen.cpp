@@ -373,11 +373,22 @@ void Screen::handlePaletteFadeTimer() {
 	_vm->getTimerManager()->removeTimerProc(&paletteFadeTimer);
 
 	_isFading = false;
+
+	if (!_fadeQueue.empty()) {
+		FadeParameters fadeParams = _fadeQueue.pop();
+		startPaletteFade(fadeParams.resourceId, fadeParams.ticksWait, fadeParams.delta);
+	}
 }
 
 void Screen::startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta) {
 	if (_isFading && resourceId == _fadeResourceId)
 		return;
+
+	if (_isFading) {
+		FadeParameters fadeParams = {resourceId, ticksWait, delta};
+		_fadeQueue.push(fadeParams);
+		return;
+	}
 
 	stopPaletteFadeTimer();
 	_fadeResourceId = resourceId;
