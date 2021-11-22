@@ -56,19 +56,6 @@ class U8UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(v1[1], "aa");
 	}
 
-	void test_argv_to_string() {
-		// FIXME: It would be nicer if this function didn't leave a trailing space
-		Common::Array<Common::String> v;
-		Common::String s;
-		Ultima::Ultima8::ArgvToString(v, s);
-		TS_ASSERT_EQUALS(s, "");
-
-		v.push_back("abc");
-		v.push_back("\t\nescape me \"!");
-		Ultima::Ultima8::ArgvToString(v, s);
-		TS_ASSERT_EQUALS(s, "abc \\t\\nescape\\ me\\ \\\"! ");
-	}
-
 	void test_string_to_argv() {
 		Common::Array<Common::String> v;
 		Common::String s;

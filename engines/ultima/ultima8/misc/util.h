@@ -29,8 +29,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 template<class T> void StringToArgv(const T &args, Common::Array<T> &argv);
-template<class T> void ArgvToString(const Common::Array<T> &argv, T &args);
-
 
 template<class T> void TrimSpaces(T &str);
 

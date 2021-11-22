@@ -89,42 +89,6 @@ template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 
 template void StringToArgv<Common::String>(const Common::String &args, Common::Array<Common::String> &argv);
 
-template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
-	// Clear the string
-	args.clear();
-
-	typename Std::vector<T>::const_iterator i;
-	typename T::const_iterator j;
-	int ch;
-
-	for (i = argv.begin(); i != argv.end(); ++i) {
-		for (j = i->begin(); j != i->end(); ++j) {
-			ch = *j;
-
-			// No quoting, only escaping
-
-			// Handle \, ", ', \n, \r, \t., ' '
-			if (ch == '\\' || ch == '\"' || ch == '\'' || ch == ' ') {
-				args += '\\';
-			} else if (ch == '\n') {
-				args += '\\';
-				ch = 'n';
-			} else if (ch == '\r') {
-				args += '\\';
-				ch = 'r';
-			} else if (ch == '\t') {
-				args += '\\';
-				ch = 't';
-			}
-
-			args += ch;
-		}
-		args += ' ';
-	}
-}
-
-template void ArgvToString<Common::String>(const Std::vector<Common::String> &argv, Common::String &args);
-
 template<class T> void TrimSpaces(T &str) {
 	if (str.empty()) return;
 
