@@ -58,8 +58,8 @@ class U8UtilTestSuite : public CxxTest::TestSuite {
 
 	void test_argv_to_string() {
 		// FIXME: It would be nicer if this function didn't leave a trailing space
-		Ultima::Std::vector<Ultima::Std::string> v;
-		Ultima::Std::string s;
+		Common::Array<Common::String> v;
+		Common::String s;
 		Ultima::Ultima8::ArgvToString(v, s);
 		TS_ASSERT_EQUALS(s, "");
 
@@ -70,8 +70,8 @@ class U8UtilTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_string_to_argv() {
-		Ultima::Std::string s = "";
-		Ultima::Std::vector<Ultima::Std::string> v;
+		Common::Array<Common::String> v;
+		Common::String s;
 		Ultima::Ultima8::StringToArgv(s, v);
 		TS_ASSERT_EQUALS(v.size(), 0);
 
