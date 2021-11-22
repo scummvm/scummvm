@@ -160,6 +160,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// German CD version
+		"asylum",
+		"CD",
+		{
+			{"SNTRM.DAT", 0, "f427fda37a0e29afd4acf982c4cb9fb0", 8930},
+			{"RES.000",   0, "058ea2fca583c27a8e3d7ccc16a9a3bd", 285660},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
 		// Russian CD version
 		"asylum",
 		"CD",
