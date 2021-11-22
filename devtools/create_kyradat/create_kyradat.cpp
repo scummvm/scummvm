@@ -39,7 +39,7 @@
 
 
 enum {
-	kKyraDatVersion = 113
+	kKyraDatVersion = 114
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -199,7 +199,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2IngameTimJpStrings, kStringList, false },
 	{ k2IngameShapeAnimData, k2ItemAnimDefinition, false },
 	{ k2IngameTlkDemoStrings, kStringList, true },
-
+	{ k2FontData, kRawData, true },
 
 	// MALCOLM'S REVENGE
 	{ k3MainMenuStrings, kStringList, true },
@@ -210,7 +210,6 @@ const ExtractFilename extractFilenames[] = {
 	{ k3ItemAnimData, k2ItemAnimDefinition, false },
 	{ k3ItemMagicTable, kRawData, false },
 	{ k3ItemStringMap, kRawData, false },
-	{ k3FontData, kRawData, true },
 	{ k3VqaSubtitlesIntro, kStringList, true },
 	{ k3VqaSubtitlesBoat, kStringList, true },
 

@@ -1350,7 +1350,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				fa->push_back(new ChineseOneByteFontMR(SCREEN_W));
 				fa->push_back(new ChineseTwoByteFontMR(SCREEN_W));
 				fnt = new MultiSubsetFont(fa);
-				const uint8 *oneByteData = _vm->staticres()->loadRawData(k3FontData, temp);
+				const uint8 *oneByteData = _vm->staticres()->loadRawData(k2FontData, temp);
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
 			}

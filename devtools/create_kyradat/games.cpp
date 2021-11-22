@@ -75,6 +75,7 @@ const Game kyra2Games[] = {
 	{ kKyra2, kPlatformDOS, kNoSpecial, IT_ITA },
 	{ kKyra2, kPlatformDOS, kNoSpecial, RU_RUS },
 	{ kKyra2, kPlatformDOS, kNoSpecial, ES_ESP },
+	{ kKyra2, kPlatformDOS, kNoSpecial, ZH_TWN },
 
 	{ kKyra2, kPlatformDOS, kTalkieVersion, EN_ANY },
 	{ kKyra2, kPlatformDOS, kTalkieVersion, FR_FRA },
@@ -759,6 +760,7 @@ const int kyra2FloppyNeed[] = {
 	k2IngameTracks,
 	k2IngameTalkObjIndex,
 	k2IngameShapeAnimData,
+	k2FontData,
 	-1
 };
 
@@ -811,7 +813,7 @@ const int kyra3Need[] = {
 	k3ItemAnimData,
 	k3ItemMagicTable,
 	k3ItemStringMap,
-	k3FontData,
+	k2FontData,
 	k3VqaSubtitlesIntro,
 	k3VqaSubtitlesBoat,
 	-1

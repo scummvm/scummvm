@@ -258,6 +258,7 @@ enum KyraResources {
 	k2IngameTimJpStrings,
 	k2IngameShapeAnimData,
 	k2IngameTlkDemoStrings,
+	k2FontData,
 
 	k3MainMenuStrings,
 	k3MusicFiles,
@@ -267,7 +268,6 @@ enum KyraResources {
 	k3ItemAnimData,
 	k3ItemMagicTable,
 	k3ItemStringMap,
-	k3FontData,
 
 	k3VqaSubtitlesIntro,
 	k3VqaSubtitlesBoat,

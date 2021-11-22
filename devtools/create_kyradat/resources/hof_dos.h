@@ -767,3 +767,8 @@ static const ItemAnimDefinition k2IngameShapeAnimDataDOS[14] = {
 
 static const ItemAnimDefinitionProvider k2IngameShapeAnimDataDOSProvider = { ARRAYSIZE(k2IngameShapeAnimDataDOS), k2IngameShapeAnimDataDOS };
 
+static const byte k2FontDataDOSDummy[] = {
+	0
+};
+
+static const ByteProvider k2FontDataDOSDummyProvider = { ARRAYSIZE(k2FontDataDOSDummy), k2FontDataDOSDummy };
