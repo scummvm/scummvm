@@ -446,7 +446,7 @@ void IMuseDigital::stopSMUSHAudio() {
 				if (diMUSEGetParam(foundSoundId, DIMUSE_P_SND_HAS_STREAM)) {
 					diMUSEQueryStream(foundSoundId, bufSize, criticalSize, freeSpace, paused);
 
-					// Here, the disasm explicitly asks for "bufSize == 193900";
+					// Here, the original engine for DIG explicitly asks for "bufSize == 193900";
 					// since this works half of the time in ScummVM (because of how we handle sound buffers),
 					// we do the check but we alternatively check for the SMUSH channel soundId, so to cover the
 					// remaining cases. This fixes instances in which exiting from a cutscene leaves both
