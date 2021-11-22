@@ -26,6 +26,10 @@
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 
 #include "backends/platform/sdl/macosx/macosx-compat.h"
+
+#include "common/system.h"
+#include "common/events.h"
+
 #include <Cocoa/Cocoa.h>
 #include <AppKit/NSWorkspace.h>
 
@@ -86,6 +90,12 @@ NSButton *tbButton;
 	[tbButton invalidateIntrinsicContentSize];
 }
 
+- (IBAction) actionKey : (id) sender {
+	Common::Event event;
+
+	event.type = Common::EVENT_MAINMENU;
+	g_system->getEventManager()->pushEvent(event);
+}
 
 @end
 
