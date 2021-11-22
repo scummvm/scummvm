@@ -482,7 +482,7 @@ void SpiderEngine::runNote(Code *code) {
 	defaultCursor();
 	Common::String alpha;
 	Common::String selected = " ";
-	char *firstSentence;	
+	char *firstSentence;
 	char *secondSentence;
 	Common::String firstSolution;
 	Common::String secondSolution;
@@ -584,7 +584,7 @@ void SpiderEngine::runNote(Code *code) {
 					}
 				}
 
-				for (int i = 0; i < strlen(firstSentence); i++) {
+				for (uint i = 0; i < strlen(firstSentence); i++) {
 					if (firstSentence[i] != '?' && firstSentence[i] != ' ') {
 						if (firstSentence[i] == '~')
 							drawImage(*letters[26], o1x, o1y, false); // ñ
@@ -595,7 +595,7 @@ void SpiderEngine::runNote(Code *code) {
 					o1x = o1x + size.x;
 				}
 
-				for (int i = 0; i < strlen(secondSentence); i++) {
+				for (uint i = 0; i < strlen(secondSentence); i++) {
 					if (secondSentence[i] != '?' && secondSentence[i] != ' ') {
 						if (secondSentence[i] == '~')
 							drawImage(*letters[26], o2x, o2y, false); // ñ
