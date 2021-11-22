@@ -1514,7 +1514,21 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
-		if (!existExtractedCDAudioFiles()
+		uint track;
+
+		// Usually we check if track 1 is present, but the FM Towns demos use
+		// different ones.
+
+		if (strcmp(_game.gameid, "indyzak") == 0) {
+			// Has only track 17 and 18
+			track = 17;
+		} else if (strcmp(_game.gameid, "zakloom") == 0) {
+			// Has only track 15 and 16
+			track = 15;
+		} else
+			track = 1;
+
+		if (!existExtractedCDAudioFiles(track)
 		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
 		}
