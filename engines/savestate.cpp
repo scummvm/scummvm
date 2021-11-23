@@ -98,3 +98,8 @@ bool SaveStateDescriptor::hasAutosaveName() const
 {
 	return _description.contains(_("Autosave"));
 }
+
+bool SaveStateDescriptor::isValid() const
+{
+	return _slot >= 0 && !_description.empty();
+}
