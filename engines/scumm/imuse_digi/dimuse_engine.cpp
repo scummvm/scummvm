@@ -440,7 +440,8 @@ bool IMuseDigital::isEngineDisabled() {
 void IMuseDigital::stopSMUSHAudio() {
 	if (!isFTSoundEngine()) {
 		if (_vm->_game.id == GID_DIG) {
-			int foundSoundId, bufSize, criticalSize, freeSpace, paused;
+			int foundSoundId, paused;
+			int32 bufSize, criticalSize, freeSpace;
 			foundSoundId = diMUSEGetNextSound(0);
 			while (foundSoundId) {
 				if (diMUSEGetParam(foundSoundId, DIMUSE_P_SND_HAS_STREAM)) {
