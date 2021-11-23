@@ -544,8 +544,13 @@ void ScaledTexture::updateGLTexture() {
 	dst = (byte *)outSurf->getBasePtr(dirtyArea.left * _scaleFactor, dirtyArea.top * _scaleFactor);
 	dstPitch = outSurf->pitch;
 
-	assert(_scaler);
-	_scaler->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+	if (_scaler && (uint)dirtyArea.height() >= _extraPixels) {
+		_scaler->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+	} else {
+		Graphics::scaleBlit(dst, src, dstPitch, srcPitch,
+		                    dirtyArea.width() * _scaleFactor, dirtyArea.height() * _scaleFactor,
+		                    dirtyArea.width(), dirtyArea.height(), outSurf->format);
+	}
 
 	dirtyArea.left   *= _scaleFactor;
 	dirtyArea.right  *= _scaleFactor;
