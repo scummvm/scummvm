@@ -145,7 +145,9 @@ project.xcworkspace
 /devtools/convbdf
 /devtools/convbdf.dSYM
 /devtools/md5table
+/devtools/md5table.dSYM
 /devtools/make-scumm-fontdata
+/devtools/make-scumm-fontdata.dSYM
 /devtools/create_access/create_access
 /devtools/create_cryo/create_cryo_dat
 /devtools/create_cryomni3d/create_cryomni3d_dat
