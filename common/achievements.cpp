@@ -62,7 +62,7 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 		unsetActiveDomain();
 	}
 
-	debug("AchievementsManager::setActiveDomain(): '%s'", iniFileName.c_str());
+	debug(2, "AchievementsManager::setActiveDomain(): '%s'", iniFileName.c_str());
 
 	_iniFileName = iniFileName;
 
@@ -185,7 +185,7 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 
 
 bool AchievementsManager::unsetActiveDomain() {
-	debug("AchievementsManager::unsetActiveDomain()");
+	debug(2, "AchievementsManager::unsetActiveDomain()");
 
 	_iniFileName = "";
 
@@ -220,7 +220,7 @@ bool AchievementsManager::setAchievement(const String &id) {
 		}
 	}
 
-	debug("AchievementsManager::setAchievement('%s'): '%s'", id.c_str(), displayedMessage.c_str());
+	debug(2, "AchievementsManager::setAchievement('%s'): '%s'", id.c_str(), displayedMessage.c_str());
 
 	_iniFile->setKey(id, "achievements", "true");
 	_iniFile->saveToSaveFile(_iniFileName);
