@@ -93,4 +93,21 @@ void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int
 	}
 }
 
+void ChineseOneByteFontHOF::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+	_pixelColorShading = false;
+}
+
+uint32 ChineseTwoByteFontHOF::getFontOffset(uint16 c) const {
+	c = ((c & 0x7F00) >> 2) | (c & 0x3F);
+	return c * 28;
+}
+
+void ChineseTwoByteFontHOF::processColorMap() {
+	_textColor[0] = TO_LE_16(_colorMap[1] | ((_colorMap[1] + 1) << 8));
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+	_pixelColorShading = !(_colorMap[1] == 207 || _colorMap[1] > 240);
+}
+
 } // End of namespace Kyra

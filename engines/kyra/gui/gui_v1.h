@@ -163,8 +163,11 @@ public:
 
 		uint8 menuTable[7];
 		uint8 colorTable[4];
+		const uint8 *boxCoords;
 
 		Screen::FontId font;
+		int8 lineSpacingAdjust;
+
 		uint8 altColor;
 	};
 

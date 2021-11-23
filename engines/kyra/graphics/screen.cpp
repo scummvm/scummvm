@@ -1346,9 +1346,18 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				fa->push_back(new ChineseOneByteFontLoK(SCREEN_W));
 				fa->push_back(new ChineseTwoByteFontLoK(SCREEN_W, lookupTable, temp));
 				fnt = new MultiSubsetFont(fa);
-			} else if (_vm->game() == GI_KYRA3) {
-				fa->push_back(new ChineseOneByteFontMR(SCREEN_W));
-				fa->push_back(new ChineseTwoByteFontMR(SCREEN_W));
+			} else {
+				Font *fn1 = 0;
+				Font *fn2 = 0;
+				if (_vm->game() == GI_KYRA2) {
+					fn1 = new ChineseOneByteFontHOF(SCREEN_W);
+					fn2 = new ChineseTwoByteFontHOF(SCREEN_W);
+				} else {
+					fn1 = new ChineseOneByteFontMR(SCREEN_W);
+					fn2 = new ChineseTwoByteFontMR(SCREEN_W);
+				}
+				fa->push_back(fn1);
+				fa->push_back(fn2);
 				fnt = new MultiSubsetFont(fa);
 				const uint8 *oneByteData = _vm->staticres()->loadRawData(k2FontData, temp);
 				Common::MemoryReadStream str(oneByteData, temp);
@@ -3806,6 +3815,7 @@ void AMIGAFont::unload() {
 SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
 	: _colorMap(nullptr), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kStyleNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
+	_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 }
 
 int SJISFont::getHeight() const {

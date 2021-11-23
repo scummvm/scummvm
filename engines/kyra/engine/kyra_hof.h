@@ -379,6 +379,9 @@ protected:
 	bool _fadeMessagePalette;
 	void fadeMessagePalette();
 
+	Screen::FontId _defaultFont;
+	Screen::FontId _bookFont;
+
 	// chat
 	bool _chatIsNote;
 

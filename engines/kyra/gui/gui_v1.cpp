@@ -498,6 +498,13 @@ int MainMenu::handle(int dim) {
 	int width = _screen->_curDim->w << 3;
 	int height =  _screen->_curDim->h;
 
+	if (_static.boxCoords) {
+		x = _static.boxCoords[0];
+		y = _static.boxCoords[1];
+		width = _static.boxCoords[2];
+		height = _static.boxCoords[3];
+	}
+
 	drawBox(x, y, width, height, 1);
 	drawBox(x + 1, y + 1, width - 2, height - 2, 0);
 
@@ -508,12 +515,7 @@ int MainMenu::handle(int dim) {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	int fh = _screen->getFontHeight();
-	if (_vm->gameFlags().lang == Common::JA_JPN)
-		fh++;
-	else if (_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN)
-		fh--;
-
+	int fh = _screen->getFontHeight() + _static.lineSpacingAdjust;
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * _static.menuTable[3]);
@@ -560,13 +562,9 @@ int MainMenu::handle(int dim) {
 }
 
 void MainMenu::draw(int select) {
-	int top = _screen->_curDim->sy;
+	int top = _static.boxCoords ? _static.boxCoords[1] : _screen->_curDim->sy;
 	top += _static.menuTable[1];
-	int fh = _screen->getFontHeight();
-	if (_vm->gameFlags().lang == Common::JA_JPN)
-		fh++;
-	else if (_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN)
-		fh--;
+	int fh = _screen->getFontHeight() + _static.lineSpacingAdjust;
 
 	for (int i = 0; i < _static.menuTable[3]; ++i) {
 		int curY = top + i * fh;

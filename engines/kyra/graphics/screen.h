@@ -258,6 +258,8 @@ public:
 	ChineseFont(int pitch, int renderWidth, int renderHeight, int spacingWidth, int spacingHeight, int extraSpacingWidth, int extraSpacingHeight);
 	~ChineseFont() override;
 
+	virtual Type getType() const override { return kBIG5; }
+
 	bool load(Common::SeekableReadStream &data) override;
 
 	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
@@ -290,9 +292,6 @@ private:
 class ChineseOneByteFontLoK final : public ChineseFont {
 public:
 	ChineseOneByteFontLoK(int pitch);
-	~ChineseOneByteFontLoK() override {}
-	Type getType() const override { return kBIG5; }
-
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
@@ -302,9 +301,6 @@ private:
 class ChineseTwoByteFontLoK final : public ChineseFont {
 public:
 	ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable, uint32 lookupTableSize);
-	~ChineseTwoByteFontLoK() override {}
-	Type getType() const override { return kBIG5; }
-
 private:
 	bool hasGlyphForCharacter(uint16 c) const override;
 	uint32 getFontOffset(uint16 c) const override;
@@ -314,26 +310,38 @@ private:
 	uint32 _lookupTableSize;
 };
 
-class ChineseOneByteFontMR final : public ChineseFont {
+class ChineseOneByteFontMR : public ChineseFont {
 public:
 	ChineseOneByteFontMR(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
-	~ChineseOneByteFontMR() override {}
-	Type getType() const override { return kBIG5; }
-
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return (c == 0x6187) || !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return ((c == 0x6187) ? 128 : (c & 0x7F)) * 14; }
 	void processColorMap() override;
 };
 
-class ChineseTwoByteFontMR final : public ChineseFont {
+class ChineseTwoByteFontMR : public ChineseFont {
 public:
 	ChineseTwoByteFontMR(int pitch) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2) {}
-	~ChineseTwoByteFontMR() override {}
-	Type getType() const override { return kBIG5; }
-
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return (c != 0x6187) && (c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override;
+	void processColorMap() override;
+};
+
+class ChineseOneByteFontHOF : public ChineseFont {
+public:
+	ChineseOneByteFontHOF(int pitch) : ChineseFont(pitch, 7, 14, 9, 15, 0, 0) {}
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
+	void processColorMap() override;
+};
+
+class ChineseTwoByteFontHOF : public ChineseFont {
+public:
+	ChineseTwoByteFontHOF(int pitch) : ChineseFont(pitch, 16, 14, 18, 15, 0, 0) {}
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return (c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override;
 	void processColorMap() override;
 };

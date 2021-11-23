@@ -215,6 +215,8 @@ private:
 	uint8 _textColor[2];
 	uint8 _textColorMap[16];
 	int _textDuration[33];
+	Screen::FontId _defaultFont;
+	int _lineHeight;
 
 	const char *const *_sequenceStrings;
 	const char *const *_sequenceSoundList;
@@ -382,6 +384,9 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_target = kHoF;
 	_firstScene = _loopStartScene = 0;
 
+	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+	_lineHeight = (_vm->gameFlags().lang == Common::ZH_TWN) ? 16 : 10;
+
 	int tempSize = 0;
 	_vm->resource()->unloadAllPakFiles();
 	_vm->resource()->loadPakFile(StaticResource::staticDataFilename());
@@ -434,7 +439,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 		_vm->sound()->loadSoundFile("SOUND.DAT");
 
 	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");
-	_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+	_screen->setFont(_defaultFont);
 
 	if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 		if (_vm->game() == GI_KYRA2) {
@@ -448,11 +453,25 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 			delete[] shp;
 		}
 	} else {
+		const uint8 *boxCoords = 0;
+		int ls = 0;
+		Screen::FontId fid = Screen::FID_8_FNT;
+
+		if (_vm->gameFlags().lang == Common::JA_JPN) {
+			fid = Screen::FID_SJIS_FNT;
+			ls = 1;
+		} else if (_vm->gameFlags().lang == Common::ZH_TWN) {
+			static const uint8 boxCoordsZH[] = { 0x5a, 0x81, 0x78, 0x46 };
+			boxCoords = boxCoordsZH;
+			fid = Screen::FID_CHINESE_FNT;
+			ls = 1;
+		}
+
 		const MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], nullptr },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xD7, 0xD6 },
 			{ 0xD8, 0xDA, 0xD9, 0xD8 },
-			(_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
+			boxCoords, fid, ls, 240
 		};
 
 		_menu = new MainMenu(_vm);
@@ -479,7 +498,7 @@ SeqPlayer_HOF::~SeqPlayer_HOF() {
 	delete _menu;
 
 	if (_vm->game() != GI_LOL)
-		_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		_screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT));
 }
 
 int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
@@ -674,7 +693,7 @@ void SeqPlayer_HOF::playScenes() {
 
 		if (sq.flags & 4) {
 			int cp = _screen->setCurPage(2);
-			Screen::FontId cf =	_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+			Screen::FontId cf =	_screen->setFont(_defaultFont);
 
 			if (sq.stringIndex1 != -1)
 				_screen->printText(_sequenceStrings[sq.stringIndex1], (320 - _screen->getTextWidth(_sequenceStrings[sq.stringIndex1])) / 2, 100 - _screen->getFontHeight(), 1, 0);
@@ -1404,7 +1423,7 @@ void SeqPlayer_HOF::updateSubTitles() {
 
 				uint8 textColor = (_textSlots[i].textcolor >= 0) ? _textSlots[i].textcolor : _textColor[0];
 				_screen->printText(cstr, _textSlots[i].x - (_screen->getTextWidth(cstr) / 2), yPos, textColor, 0);
-				yPos += 10;
+				yPos += _lineHeight;
 			}
 		} else {
 			_textSlots[i].duration = -1;
@@ -1785,7 +1804,7 @@ int SeqPlayer_HOF::cbHOF_title(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		int cp = _screen->setCurPage(0);
 		_screen->showMouse();
 		_system->updateScreen();
-		_result = _menu->handle(11) + 1;
+		_result = _menu->handle(_vm->gameFlags().lang == Common::ZH_TWN ? 12 : 11) + 1;
 		_updateAnimations = false;
 
 		if (_result == 1 || _result == 3) {

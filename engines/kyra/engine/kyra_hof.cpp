@@ -134,6 +134,9 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_useCharPal = false;
 
 	memset(_characterFacingCountTable, 0, sizeof(_characterFacingCountTable));
+
+	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_bookFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
 }
 
 KyraEngine_HoF::~KyraEngine_HoF() {
@@ -190,12 +193,14 @@ Common::Error KyraEngine_HoF::init() {
 
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
+	} else if (_flags.lang == Common::ZH_TWN) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "HOF.PAK");
 	} else {
 		_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
 		_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
 		_screen->loadFont(_screen->FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	}
-	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : _screen->FID_8_FNT);
+	_screen->setFont(_defaultFont);
 
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);

@@ -99,7 +99,10 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	case Common::ZH_TWN:
 		_langIntern = 1;
+		if (!_flags.hasExtraLanguage) // HOF Floppy uses ENG extensions...
+			break;
 		// fall through
+
 	case Common::JA_JPN:
 	case Common::ZH_CHN:
 		_lang = 3;
