@@ -779,6 +779,13 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		delete _cursor;
 		_cursor = nullptr;
 
+#ifdef USE_SCALERS
+		bool wantScaler = (_currentState.scaleFactor > 1) && !dontScale
+		                && _scalerPlugins[_currentState.scalerIndex]->get<ScalerPluginObject>().canDrawCursor();
+#else
+		bool wantScaler = false;
+#endif
+
 		GLenum glIntFormat, glFormat, glType;
 
 		Graphics::PixelFormat textureFormat;
@@ -793,10 +800,14 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
-		// TODO: Enable SW scaling for cursors
-		_cursor = createSurface(textureFormat, true);
+		_cursor = createSurface(textureFormat, true, wantScaler);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.filtering);
+#ifdef USE_SCALERS
+		if (wantScaler) {
+			_cursor->setScaler(_currentState.scalerIndex, _currentState.scaleFactor);
+		}
+#endif
 	}
 
 	_cursor->allocate(w, h);
