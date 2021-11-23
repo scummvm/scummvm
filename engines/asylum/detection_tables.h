@@ -190,6 +190,38 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// Unofficial Russian translation (Fargus Multimedia)
+		"asylum",
+		"GOG.com",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "1f7b3734a8da87464ce3765bd79be208", 247149},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000.SMK", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		// Unofficial Russian translation (Fargus Multimedia)
+		"asylum",
+		"Steam",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "1f7b3734a8da87464ce3765bd79be208", 247149},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
 		// Spanish fanmade translation
 		"asylum",
 		"Fanmade",
