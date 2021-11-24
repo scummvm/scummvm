@@ -156,6 +156,11 @@ void TinyGLDriver::end2DMode() {
 void TinyGLDriver::set3DMode() {
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthFunc(TGL_LESS);
+
+	// Stencil test are only used in rendering shadows
+	// They are manually enabled and disabled there
+	//tglStencilFunc(TGL_EQUAL, 0, 0xFF);
+	//tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_INCR);
 }
 
 bool TinyGLDriver::computeLightsEnabled() {
