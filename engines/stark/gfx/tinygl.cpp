@@ -172,7 +172,7 @@ Common::Rect TinyGLDriver::getUnscaledViewport() const {
 
 Graphics::Surface *TinyGLDriver::getViewportScreenshot() const {
 	Graphics::Surface *tmp = new Graphics::Surface();
-	tmp->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
+	tmp->create(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
 	Graphics::PixelBuffer buf(tmp->format, (byte *)tmp->getPixels());
