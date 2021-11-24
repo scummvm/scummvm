@@ -545,8 +545,11 @@ int16 r29_get_schlauch() {
 	return action_flag;
 }
 
-void r29_use_schlauch() {
+bool r29_use_schlauch() {
+	bool result = false;
+
 	if (is_cur_inventar(PUMPE_INV)) {
+		result = true;
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
 		det->hide_static_spr(7);
@@ -562,6 +565,8 @@ void r29_use_schlauch() {
 		set_person_pos(308, 105, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
+
+	return result;
 }
 
 void r29_schlitz_sitz() {
@@ -1054,17 +1059,26 @@ int16 r33_get_munter() {
 	return action_flag;
 }
 
-void r34_use_kuehlschrank() {
-	if (!flags.LoadGame) {
-		auto_move(3, P_CHEWY);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+bool r34_use_kuehlschrank() {
+	bool result = false;
+
+	if (!_G(spieler).inv_cur) {
+		result = true;
+
+		if (!flags.LoadGame) {
+			auto_move(3, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		}
+
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		flags.ChewyDontGo = true;
+		if (!flags.LoadGame) {
+			switch_room(34);
+		}
+		set_person_pos(160, 70, P_CHEWY, -1);
 	}
-	_G(spieler).PersonHide[P_CHEWY] = true;
-	flags.ChewyDontGo = true;
-	if (!flags.LoadGame) {
-		switch_room(34);
-	}
-	set_person_pos(160, 70, P_CHEWY, -1);
+
+	return result;
 }
 
 void r34_xit_kuehlschrank() {
@@ -2145,10 +2159,13 @@ void r40_bmeister_dia(int16 aad_nr) {
 	auto_move(9, P_CHEWY);
 }
 
-void r40_use_police() {
+bool r40_use_police() {
+	bool result = false;
+
 	if (menu_item == CUR_HOWARD) {
 		if (_G(spieler).R40PoliceWeg == false &&
 		        _G(spieler).R40PoliceAniStatus == 255) {
+			result = true;
 			_G(spieler).R40PoliceAb = true;
 			hide_cur();
 			_G(spieler).R40PoliceStart = false;
@@ -2167,8 +2184,11 @@ void r40_use_police() {
 			show_cur();
 			flags.MausLinks = false;
 		}
-	} else
+	} else {
 		start_aad_wait(225, -1);
+	}
+
+	return result;
 }
 
 int16 r40_use_tele() {

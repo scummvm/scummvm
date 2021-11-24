@@ -131,52 +131,13 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 				case TXT_MARK_USE:
 					switch (txt_nr) {
-					case 94:
-						r13_jmp_band();
+					case 62:
+						action_ret = r39_use_howard();
 						break;
 
-					case 95:
-						if (_G(spieler).R13Band)
-							start_aad_wait(116, -1);
+					case 67:
+						action_ret = r8_gips_wurf();
 						break;
-
-					case 100:
-						r13_jmp_boden();
-						break;
-
-					case 114:
-						switch_room(_G(spieler).R23GleiterExit);
-						break;
-
-					case 227:
-						r34_xit_kuehlschrank();
-						break;
-
-					case 294:
-						switch_room(46);
-						break;
-
-					case 340:
-						r55_strasse(0);
-						break;
-
-					case 362:
-						r56_use_kneipe();
-						break;
-
-					case 403:
-					case 405:
-						action_ret = r69_use_bruecke();
-						break;
-
-					case 487:
-						r81_proc1();
-						break;
-
-
-/*
-
-
 
 					case 71:
 						if (is_cur_inventar(ZANGE_INV))
@@ -185,30 +146,26 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							r8_start_verbrennen();
 						break;
 
-					case 67:
-						if (is_cur_inventar(GIPS_EIMER_INV))
-							r8_gips_wurf();
-						action_ret = false;
-						break;
-
 					case 73:
 						if (!_G(spieler).R9Gitter) {
 							_G(spieler).PersonHide[P_CHEWY] = true;
 							start_detail_wait(5, 1, ANI_VOR);
 							_G(spieler).PersonHide[P_CHEWY] = false;
-						} else
+						} else {
 							action_ret = false;
+						}
 						break;
+
 
 					case 77:
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
-
 							auto_move(3, P_CHEWY);
 							flc->set_custom_user_function(r6_cut_serv1);
 							flic_cut(FCUT_005, CFO_MODE);
 							flc->remove_custom_user_function();
-						} else
+						} else {
 							action_ret = false;
+						}
 						break;
 
 					case 79:
@@ -216,7 +173,8 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 80:
-						auto_move(3, P_CHEWY);
+						if (_G(spieler).inv_cur)
+							auto_move(3, P_CHEWY);
 						break;
 
 					case 81:
@@ -229,8 +187,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 84:
 						action_ret = r11_scanner();
-						break;
-
 						break;
 
 					case 92:
@@ -262,12 +218,16 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r23_start_gleiter();
 						break;
 
+					case 114:
+						switch_room(_G(spieler).R23GleiterExit);
+						break;
+
 					case 117:
-						action_ret = r12_use_linke_rohr();
+						action_ret = r12_chewy_trans();
 						break;
 
 					case 118:
-						action_ret = r12_chewy_trans();
+						action_ret = r12_proc1();
 						break;
 
 					case 119:
@@ -307,6 +267,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r18_calc_surimy();
 						break;
 
+					case 154:
+						action_ret = r18_use_cart_moni();
+						break;
+
 					case 158:
 						action_ret = r18_go_cyberspace();
 						break;
@@ -330,16 +294,24 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						switch_room(18);
 						break;
 
+					case 174:
+						action_ret = Room0::getPillow();
+						break;
+
+					case 175:
+						action_ret = Room0::pullSlime();
+						break;
+
 					case 179:
 						action_ret = r18_sonden_moni();
 						break;
 
-					case 154:
-						action_ret = r18_use_cart_moni();
-						break;
-
 					case 187:
 						action_ret = r25_use_gleiter();
+						break;
+
+					case 203:
+						action_ret = r32_get_script();
 						break;
 
 					case 206:
@@ -350,9 +322,16 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r33_use_schublade();
 						break;
 
+					case 212:
+						action_ret = r29_zaun_sprung();
+						break;
+
 					case 215:
-						action_ret = false;
-						r29_use_schlauch();
+						action_ret = r29_use_schlauch();
+						break;
+
+					case 216:
+						action_ret = r29_use_pumpe();
 						break;
 
 					case 218:
@@ -363,24 +342,28 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r25_gleiter_loesch();
 						break;
 
-					case 212:
-						action_ret = r29_zaun_sprung();
-						break;
-
 					case 220:
-						r34_use_kuehlschrank();
+						action_ret = r34_use_kuehlschrank();
 						break;
 
 					case 221:
 						r33_use_maschine();
 						break;
 
-					case 231:
-						r32_use_schreibmaschine();
+					case 227:
+						r34_xit_kuehlschrank();
 						break;
 
-					case 203:
-						action_ret = r32_get_script();
+					case 229:
+						action_ret = r39_use_tv();
+						break;
+
+					case 230:
+						action_ret = r32_use_howard();
+						break;
+
+					case 231:
+						r32_use_schreibmaschine();
 						break;
 
 					case 234:
@@ -391,16 +374,16 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r35_use_cat();
 						break;
 
+					case 242:
+						action_ret = r31_use_topf();
+						break;
+
 					case 244:
 						r31_open_luke();
 						break;
 
 					case 245:
 						r31_close_luke();
-						break;
-
-					case 242:
-						action_ret = r31_use_topf();
 						break;
 
 					case 249:
@@ -411,37 +394,62 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						r37_use_hahn();
 						break;
 
+					case 256:
+						action_ret = r37_use_glas();
+						break;
+
+					case 263:
+						action_ret = r42_use_beamter();
+						break;
+
 					case 264:
 						action_ret = r42_use_psack();
 						break;
 
-					case 62:
-						action_ret = r39_use_howard();
+					case 266:
+						action_ret = r41_use_brief();
+						break;
+
+					case 267:
+						action_ret = r41_use_lola();
+						break;
+
+					case 269:
+						action_ret = r41_use_kasse();
+						break;
+
+					case 275:
+						action_ret = r40_use_police();
+						break;
+
+					case 276:
+						action_ret = r40_use_tele();
 						break;
 
 					case 278:
 						action_ret = r40_use_mr_pumpkin();
 						break;
 
-					case 279:
-						action_ret = r40_use_schalter(205);
+					case 284:
+						action_ret = r40_use_bmeister();
+						break;
+
+					case 286:
+					case 289:
+					case 290:
+					case 291:
+						r47_use_knopf(txt_nr);
 						break;
 
 					case 288:
 						action_ret = r46_use_schloss();
 						break;
 
-					case 286:
-					case 292:
-					case 293:
-						r47_use_knopf(txt_nr);
+					case 294:
+						switch_room(46);
 						break;
 
 					case 295:
-					case 386:
-						action_ret = r45_use_taxi();
-						break;
-
 					case 297:
 						action_ret = r45_use_boy();
 						break;
@@ -473,6 +481,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 333:
 					case 334:
 						action_ret = r51_use_door(txt_nr);
+						break;
+
+					case 340:
+						r55_strasse(0);
 						break;
 
 					case 341:
@@ -522,12 +534,16 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r57_use_taxi();
 						break;
 
-					case 367:
-						action_ret = r56_use_taxi();
+					case 362:
+						r56_use_kneipe();
 						break;
 
 					case 366:
 						action_ret = r56_use_man();
+						break;
+
+					case 367:
+						action_ret = r56_use_taxi();
 						break;
 
 					case 371:
@@ -566,6 +582,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r67_use_kommode();
 						break;
 
+					case 403:
+					case 405:
+						action_ret = r69_use_bruecke();
+						break;
+
 					case 406:
 						action_ret = r68_use_papagei();
 						break;
@@ -581,7 +602,167 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 414:
 						action_ret = r68_use_indigo();
 						break;
-*/
+
+					case 425:
+						action_ret = r66_proc7();
+						break;
+
+					case 430:
+						action_ret = r73_proc1();
+						break;
+
+					case 433:
+						action_ret = r73_proc2();
+						break;
+
+					case 435:
+						action_ret = r74_proc1();
+						break;
+
+					case 442:
+						action_ret = r77_proc1();
+						break;
+
+					case 443:
+						action_ret = r71_proc6();
+						break;
+
+					case 450:
+						action_ret = r76_proc6();
+						break;
+
+					case 452:
+						action_ret = r76_proc7();
+						break;
+
+					case 463:
+						action_ret = r77_proc1();
+						break;
+
+					case 464:
+						action_ret = r77_proc2();
+						break;
+
+					case 467:
+					case 473:
+						action_ret = r82_proc9();
+						break;
+
+					case 468:
+						action_ret = r82_proc6();
+						break;
+
+					case 471:
+						action_ret = r82_proc3();
+						break;
+
+
+					case 481:
+					case 482:
+						action_ret = r84_proc4();
+						break;
+
+					case 487:
+						r81_proc1();
+						break;
+
+					case 490:
+						action_ret = r81_proc2();
+						break;
+
+					case 492:
+						action_ret = r88_proc2();
+						break;
+
+					case 493:
+						action_ret = r88_proc3();
+						break;
+
+					case 494:
+						action_ret = r88_proc1();
+						break;
+
+					case 495:
+						action_ret = r88_proc2();
+						break;
+
+					case 497:
+						action_ret = r86_proc2();
+						break;
+
+					case 501:
+					case 503:
+						action_ret = r87_proc2();
+						break;
+
+					case 502:
+						action_ret = r87_proc4();
+						break;
+
+					case 508:
+						action_ret = r89_proc2();
+						break;
+
+					case 509:
+						action_ret = r89_proc5();
+						break;
+
+					case 514:
+						action_ret = r89_proc4();
+						break;
+
+					case 517:
+						action_ret = r90_proc3();
+						break;
+
+					case 519:
+						action_ret = r90_proc4();
+						break;
+
+					case 520:
+						action_ret = r90_proc6();
+						break;
+
+					case 522:
+						action_ret = r94_proc3();
+						break;
+
+					case 525:
+						action_ret = r95_proc2();
+						break;
+
+					case 530:
+						action_ret = r97_proc8();
+						break;
+
+					case 531:
+						action_ret = r97_proc6();
+						break;
+
+					case 535:
+						action_ret = r97_proc11();
+						break;
+
+					case 538:
+						action_ret = r97_proc7();
+						break;
+
+					case 539:
+						action_ret = r97_proc9();
+						break;
+
+					case 541:
+						action_ret = r97_proc14();
+						break;
+
+					case 542:
+						action_ret = r97_proc5();
+						break;
+
+					case 543:
+						action_ret = r97_proc10();
+						break;
+
 					default:
 						action_ret = false;
 						break;
@@ -598,6 +779,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 95:
 						if (_G(spieler).R13Band == true)
 							start_aad_wait(116, -1);
+						break;
+
+					case 100:
+						r13_jmp_boden();
 						break;
 
 					case 114:
@@ -625,6 +810,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = r69_use_bruecke();
 						break;
 
+					case 487:
+					case 489:
+						r81_proc1();
+						break;
+						
 					default:
 						action_ret = false;
 						break;

@@ -72,7 +72,7 @@ int16 r29_use_pumpe();
 
 int16 r29_get_schlauch();
 
-void r29_use_schlauch();
+bool r29_use_schlauch();
 
 void r29_schlitz_sitz();
 
@@ -112,7 +112,7 @@ short r33_get_munter();
 
 void r33_surimy_go();
 
-void r34_use_kuehlschrank();
+bool r34_use_kuehlschrank();
 
 void r34_xit_kuehlschrank();
 
@@ -179,7 +179,7 @@ void r40_move_train(int16 mode);
 
 int16 r40_use_bmeister();
 
-void r40_use_police();
+bool r40_use_police();
 
 int16 r40_use_tele();
 

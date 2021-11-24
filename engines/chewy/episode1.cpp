@@ -2062,6 +2062,25 @@ int16 r12_chewy_trans() {
 	return action_flag;
 }
 
+int16 r12_proc1() {
+	bool result = false;
+
+	if (!_G(spieler).inv_cur) {
+		result = true;
+
+		if (_G(spieler).R12KetteLinks) {
+			_G(spieler).R12KetteLinks = false;
+			uhr->enable_timer();
+			atds->set_ats_str(117, 1, 0);
+		} else {
+			auto_move(7, 0);
+			start_aad_wait(29, -1);
+		}
+	}
+
+	return result;
+}
+
 void r13_entry() {
 	if (!_G(spieler).R12ChewyBork && !_G(spieler).R13BorkOk) {
 		out->cls();

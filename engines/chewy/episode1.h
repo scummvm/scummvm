@@ -144,6 +144,8 @@ int16 r12_use_linke_rohr();
 
 int16 r12_chewy_trans();
 
+int16 r12_proc1();
+
 void r11_chewy_bo_use();
 
 void r12_bork_ok();
