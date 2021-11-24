@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-23 22:33+0000\n"
+"POT-Creation-Date: 2021-11-24 07:07+0000\n"
 "PO-Revision-Date: 2021-11-19 21:50+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -64,7 +64,7 @@ msgstr "Вверх"
 #: gui/saveload-dialog.cpp:419 gui/saveload-dialog.cpp:490
 #: gui/saveload-dialog.cpp:794 gui/saveload-dialog.cpp:1187
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:54
-#: engines/engine.cpp:717 backends/dialogs/gtk/gtk-dialogs.cpp:64
+#: engines/engine.cpp:715 backends/dialogs/gtk/gtk-dialogs.cpp:64
 #: backends/events/default/default-events.cpp:195
 #: backends/events/default/default-events.cpp:219
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
@@ -833,14 +833,14 @@ msgstr "Поиск в списке игр"
 msgid "Search:"
 msgstr "Поиск:"
 
-#: gui/launcher.cpp:273 engines/dialogs.cpp:98 engines/engine.cpp:867
+#: gui/launcher.cpp:273 engines/dialogs.cpp:98 engines/engine.cpp:865
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Загрузить игру:"
 
-#: gui/launcher.cpp:273 engines/dialogs.cpp:98 engines/engine.cpp:867
+#: gui/launcher.cpp:273 engines/dialogs.cpp:98 engines/engine.cpp:865
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:128
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:177 engines/trecision/saveload.cpp:253
@@ -1880,7 +1880,7 @@ msgstr ""
 "\n"
 "Далее..."
 
-#: gui/options.cpp:2617 engines/engine.cpp:582
+#: gui/options.cpp:2617 engines/engine.cpp:580
 msgid "Move"
 msgstr "Переместить"
 
@@ -2471,7 +2471,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~В~ главное меню"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:896 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:894 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2490,7 +2490,7 @@ msgstr "~В~ главное меню"
 msgid "Save game:"
 msgstr "Сохранить игру:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:896 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:894 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2602,15 +2602,15 @@ msgstr ""
 "чтобы в игре появилась музыка.\n"
 "Подробности см. в документации (CD-аудио)."
 
-#: engines/engine.cpp:575
+#: engines/engine.cpp:573
 msgid "Overwrite"
 msgstr "Перетереть"
 
-#: engines/engine.cpp:576
+#: engines/engine.cpp:574
 msgid "Cancel autosave"
 msgstr "Отменить автосохранение"
 
-#: engines/engine.cpp:578
+#: engines/engine.cpp:576
 #, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
@@ -2621,21 +2621,21 @@ msgstr ""
 "можете либо перенести существующее сохранение в новый слот, Перетереть "
 "существующее сохранение или отменить автосохранения (до перезапуска ScummVM)"
 
-#: engines/engine.cpp:586
+#: engines/engine.cpp:584
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ОШИБКА: Не удалось перенести сохранение в новый слот"
 
-#: engines/engine.cpp:612 engines/metaengine.cpp:367 engines/savestate.cpp:99
+#: engines/engine.cpp:610 engines/metaengine.cpp:367 engines/savestate.cpp:99
 #: backends/platform/ios7/ios7_osys_main.cpp:249 engines/sky/metaengine.cpp:186
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Автосохранение"
 
-#: engines/engine.cpp:620
+#: engines/engine.cpp:618
 msgid "Error occurred making autosave"
 msgstr "Ошибка создания автоматического сохранения"
 
-#: engines/engine.cpp:695
+#: engines/engine.cpp:693
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2644,15 +2644,15 @@ msgstr ""
 "Не удалось прочитать сохранённую игру (%s)! Пожалуйста, обратитесь к файлу "
 "README за подробностями и указаниями к получению дальнейшей помощи."
 
-#: engines/engine.cpp:713
+#: engines/engine.cpp:711
 msgid "WARNING: "
 msgstr "ПРЕДУПРЕЖДЕНИЕ: "
 
-#: engines/engine.cpp:713
+#: engines/engine.cpp:711
 msgid " Shall we still run the game?"
 msgstr " Вы всё ещё хотите запустить игру?"
 
-#: engines/engine.cpp:714
+#: engines/engine.cpp:712
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2662,15 +2662,15 @@ msgstr ""
 "скорее всего, не будет работать стабильно, и сохранения игр могут не "
 "работать в будущих версиях ScummVM."
 
-#: engines/engine.cpp:717 engines/wintermute/wintermute.cpp:183
+#: engines/engine.cpp:715 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "Всё равно запустить"
 
-#: engines/engine.cpp:724
+#: engines/engine.cpp:722
 msgid "This game is not supported."
 msgstr "Эта игра не поддерживается."
 
-#: engines/engine.cpp:724
+#: engines/engine.cpp:722
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2678,11 +2678,11 @@ msgstr ""
 "Эта игра не поддерживается по нижеследующим причинам:\n"
 "\n"
 
-#: engines/engine.cpp:863
+#: engines/engine.cpp:861
 msgid "Loading game is currently unavailable"
 msgstr "В данный момент загрузка игры недоступна"
 
-#: engines/engine.cpp:892
+#: engines/engine.cpp:890
 msgid "Saving game is currently unavailable"
 msgstr "В данный момент сохранение игры недоступно"
 
