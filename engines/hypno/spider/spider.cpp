@@ -141,7 +141,48 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("buspuz.mi_", "decide3.mi_", prefix);
 	loadSceneLevel("decide3.mi_", "", prefix);
 
+	sc = (Scene *) _levels["decide3.mi_"];
+	cl = new ChangeLevel("alofintr.mi_");
+	sc->hots[2].actions.push_back(cl);
+	cl = new ChangeLevel("c2"); // depens on the difficulty
+	sc->hots[4].actions.push_back(cl);
+
 	loadSceneLevel("int_roof.mi_", "", prefix);
+	sc = (Scene *) _levels["int_roof.mi_"];
+	Overlay *over = (Overlay*) sc->hots[0].actions[2];
+	over->path = "int_alof\\ROOFB1.SMK"; // seems to be a bug?
+
+	loadSceneLevel("alofintr.mi_", "<boil_selector>", prefix);
+	
+	Transition *boil_selector = new Transition("boiler.mi_", "boilhard.mi_");
+	_levels["<boil_selector>"] = boil_selector;
+
+	loadSceneLevel("boiler.mi_", "", prefix);
+	sc = (Scene *) _levels["boiler.mi_"];
+	over = (Overlay*) sc->hots[0].actions[2];
+	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
+	
+	cl = new ChangeLevel("int_roof.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	loadSceneLevel("boilhard.mi_", "", prefix);
+	sc = (Scene *) _levels["boilhard.mi_"];
+	over = (Overlay*) sc->hots[0].actions[2];
+	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
+
+	cl = new ChangeLevel("int_roof.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	loadSceneLevel("alverofh.mi_", "", prefix);
+	loadSceneLevel("intercom.mi_", "", prefix);
+	loadSceneLevel("recept.mi_", "", prefix);
+
+	sc = (Scene *) _levels["recept.mi_"];
+	over = (Overlay*) sc->hots[0].actions[2];
+	over->path = "int_alof\\rec0B1.SMK"; // seems to be a bug?
+
+	loadSceneLevel("alveroff.mi_", "", prefix);
+
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
 	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
 	loadSceneLevel("balcony.mi_", "", prefix);

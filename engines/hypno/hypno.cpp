@@ -171,11 +171,10 @@ void HypnoEngine::runLevel(Common::String &name) {
 		runArcade((ArcadeShooting *) _levels[name]);
 	} else if (_levels[name]->type == CodeLevel) {
 		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());
-		//resetSceneState(); // TODO: is this required?
 		// Resolution depends on the game
 		runCode((Code *) _levels[name]);
 	} else if (_levels[name]->type == SceneLevel) {
-		debugC(1, kHypnoDebugScene, "Executing scene level %s", name.c_str());
+		debugC(1, kHypnoDebugScene, "Executing scene level %s with next level: %s", name.c_str(), _levels[name]->levelIfWin.c_str());
 		resetSceneState();
 		changeScreenMode("640x480");
 		runScene((Scene *) _levels[name]);

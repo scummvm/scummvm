@@ -93,7 +93,11 @@ void HypnoEngine::resetSceneState() {
 }
 
 bool HypnoEngine::checkSceneCompleted() {
-	return _sceneState["GS_LEVELCOMPLETE"];
+	return _sceneState["GS_LEVELCOMPLETE"] || _sceneState["GS_LEVELWON"];
+}
+
+bool HypnoEngine::checkLevelWon() {
+	return _sceneState["GS_LEVELWON"];
 }
 
 // Hotspots
@@ -238,11 +242,6 @@ void HypnoEngine::runTransition(Transition *trans) {
 
 
 void HypnoEngine::runScene(Scene *scene) {
-	_nextLoopingVideoToPlay.clear();
-	_nextParallelVideoToPlay.clear();
-	_nextSequentialVideoToPlay.clear();
-	_intros.clear();
-
 	_refreshConversation = false;
 	_conversation.clear();
 	Common::Event event;
@@ -387,7 +386,14 @@ void HypnoEngine::runScene(Scene *scene) {
 			}
 		}
 
-		if (checkSceneCompleted()) {
+		if (checkSceneCompleted() || checkLevelWon()) {
+			if(!checkLevelWon() && stack.size() > 1) {
+				debug("Executing escape instead of ending the scene");
+				runEscape();
+				_sceneState["GS_LEVELCOMPLETE"] = 0;
+				continue;
+			}
+
 			// Make sure all the videos are played before we finish
 			enableLoopingVideos = false;
 			if (_conversation.empty() && 
@@ -436,6 +442,27 @@ void HypnoEngine::runScene(Scene *scene) {
 		if (it->decoder)
 			skipVideo(*it);
 	}
+
+	for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
+		if (it->decoder)
+			skipVideo(*it);
+	}
+
+	for (Videos::iterator it = _nextSequentialVideoToPlay.begin(); it != _nextSequentialVideoToPlay.end(); ++it) {
+		if (it->decoder)
+			skipVideo(*it);
+	}
+
+	for (Videos::iterator it = _escapeSequentialVideoToPlay.begin(); it != _escapeSequentialVideoToPlay.end(); ++it) {
+		if (it->decoder)
+			skipVideo(*it);
+	}
+
+	_nextLoopingVideoToPlay.clear();
+	_nextParallelVideoToPlay.clear();
+	_nextSequentialVideoToPlay.clear();
+	_escapeSequentialVideoToPlay.clear();
+	_intros.clear();
 }
 
 void HypnoEngine::showConversation() { error("Not implemented"); }

@@ -60,6 +60,7 @@ TALK						return TALKTOK;
 INACTIVE					return INACTOK;
 4DBOX						return FDTOK;
 BOXX						return BOXXTOK;
+MPTR						return MPTRTOK;
 ESCAPE						return ESCAPETOK;
 SECOND						return SECONDTOK;
 INTRO						return INTROTOK;

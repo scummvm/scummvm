@@ -62,7 +62,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND WALNTOK
 %token<i> NUM
 %token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK MICETOK PLAYTOK ENDTOK 
-%token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK SWPTTOK
+%token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK SWPTTOK MPTRTOK
 %token GLOBTOK TONTOK TOFFTOK
 %token TALKTOK INACTOK FDTOK BOXXTOK ESCAPETOK SECONDTOK INTROTOK DEFAULTTOK
 %token<s> PG PA PD PH PF PE PP PI PL PS
@@ -198,6 +198,9 @@ line: MENUTOK mflag mflag mflag {
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
+	}
+	|  MPTRTOK FILENAME NUM NUM NUM NUM NUM {
+		debugC(1, kHypnoDebugParser, "MPTR %s %d %d %d %d %d", $2, $3, $4, $5, $6, $7);
 	}
 	|  TALKTOK alloctalk talk { 
 		Hotspots *cur = stack->back();

@@ -82,6 +82,7 @@ public:
 	Common::HashMap<Common::String, int> _sceneState;
 	void resetSceneState();
 	bool checkSceneCompleted();
+	bool checkLevelWon();
 	void runLevel(Common::String &name);
 	void runScene(Scene *scene);
 	void runArcade(ArcadeShooting *arc);

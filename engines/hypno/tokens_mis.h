@@ -79,27 +79,28 @@ extern int HYPNO_MIS_debug;
     NRTOK = 281,
     AMBITOK = 282,
     SWPTTOK = 283,
-    GLOBTOK = 284,
-    TONTOK = 285,
-    TOFFTOK = 286,
-    TALKTOK = 287,
-    INACTOK = 288,
-    FDTOK = 289,
-    BOXXTOK = 290,
-    ESCAPETOK = 291,
-    SECONDTOK = 292,
-    INTROTOK = 293,
-    DEFAULTTOK = 294,
-    PG = 295,
-    PA = 296,
-    PD = 297,
-    PH = 298,
-    PF = 299,
-    PE = 300,
-    PP = 301,
-    PI = 302,
-    PL = 303,
-    PS = 304
+    MPTRTOK = 284,
+    GLOBTOK = 285,
+    TONTOK = 286,
+    TOFFTOK = 287,
+    TALKTOK = 288,
+    INACTOK = 289,
+    FDTOK = 290,
+    BOXXTOK = 291,
+    ESCAPETOK = 292,
+    SECONDTOK = 293,
+    INTROTOK = 294,
+    DEFAULTTOK = 295,
+    PG = 296,
+    PA = 297,
+    PD = 298,
+    PH = 299,
+    PF = 300,
+    PE = 301,
+    PP = 302,
+    PI = 303,
+    PL = 304,
+    PS = 305
   };
 #endif
 
@@ -113,7 +114,7 @@ union HYPNO_MIS_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 117 "engines/hypno/tokens_mis.h" /* yacc.c:1909  */
+#line 118 "engines/hypno/tokens_mis.h" /* yacc.c:1909  */
 };
 
 typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;
