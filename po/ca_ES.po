@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-24 07:07+0000\n"
-"PO-Revision-Date: 2021-10-03 07:20+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2021-11-25 20:26+0000\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -202,19 +202,18 @@ msgid "Download speed: %s %S"
 msgstr "Velocitat de baixada: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
 msgid "Downloading icons list..."
-msgstr "Carregant la partida..."
+msgstr "S'està baixant la llista d'icones..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Carregant la partida..."
+msgstr "S'està baixant la llista d'icones... %d elements"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "S'han detectat %d paquets nous, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
 #, fuzzy
@@ -224,7 +223,7 @@ msgstr "Baixa"
 #: gui/downloadiconsdialog.cpp:181
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
+msgstr "Baixada completada, descarregats %d paquets, %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
 #: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
@@ -237,15 +236,15 @@ msgstr "Tanca"
 #: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "ERROR %d: %s"
 
 #: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "ERROR: No s'ha definit cap camí per les icones"
 
 #: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
-msgstr ""
+msgstr "No hi ha disponibles nous paquets d'icones"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -480,7 +479,7 @@ msgstr "Fites"
 
 #: gui/editgamedialog.cpp:379 engines/dialogs.cpp:345
 msgid "Statistics"
-msgstr ""
+msgstr "Estadístiques"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:509
 #: gui/editgamedialog.cpp:575 gui/editgamedialog.cpp:642 gui/options.cpp:2163
