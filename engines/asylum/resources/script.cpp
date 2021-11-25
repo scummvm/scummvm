@@ -177,7 +177,7 @@ ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	ADD_OPCODE(PlaySpeechScene2);
 	ADD_OPCODE(MoveScenePositionFromActor);
 	ADD_OPCODE(PaletteFade);
-	ADD_OPCODE(StartPaletteFadeThread);
+	ADD_OPCODE(QueuePaletteFade);
 	ADD_OPCODE(PlaySoundUpdateObject);
 	ADD_OPCODE(ActorFaceTarget);
 	ADD_OPCODE(HideMatteBars);
@@ -1500,8 +1500,8 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x45
-IMPLEMENT_OPCODE(StartPaletteFadeThread)
-	getScreen()->startPaletteFade(getWorld()->currentPaletteId, cmd->param1, cmd->param2);
+IMPLEMENT_OPCODE(QueuePaletteFade)
+	getScreen()->queuePaletteFade(getWorld()->currentPaletteId, cmd->param1, cmd->param2);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////

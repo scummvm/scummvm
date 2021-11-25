@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
-#include "common/timer.h"
 
 #include "asylum/system/screen.h"
 
@@ -51,18 +50,16 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 
 	memset(&_currentPalette, 0, sizeof(_currentPalette));
 	memset(&_mainPalette, 0, sizeof(_mainPalette));
+	memset(&_fromPalette, 0, sizeof(_fromPalette));
+	memset(&_toPalette,   0, sizeof(_toPalette));
+
 	_isFading = false;
 	_fadeStop = false;
-	_fadeResourceId = kResourceNone;
-	_fadeTicksWait = 0;
-	_fadeDelta = 0;
 
 	g_debugDrawRects = 0;
 }
 
 Screen::~Screen() {
-	_vm->getTimerManager()->removeTimerProc(&paletteFadeTimer);
-
 	_backBuffer.free();
 
 	clearTransTables();
@@ -356,47 +353,15 @@ void Screen::updatePalette(int32 param) {
 //////////////////////////////////////////////////////////////////////////
 // Palette fading
 //////////////////////////////////////////////////////////////////////////
-void Screen::paletteFadeTimer(void *refCon) {
-	((Screen *)refCon)->handlePaletteFadeTimer();
-}
-
-void Screen::handlePaletteFadeTimer() {
-	// Reset flag
-	_fadeStop = false;
-
-	// Start fading
-	_isFading = true;
-
-	paletteFadeWorker(_fadeResourceId, _fadeTicksWait, _fadeDelta);
-
-	// Remove ourselves as a timer (we finished fading or were interrupted)
-	_vm->getTimerManager()->removeTimerProc(&paletteFadeTimer);
-
-	_isFading = false;
-
-	if (!_fadeQueue.empty()) {
-		FadeParameters fadeParams = _fadeQueue.pop();
-		startPaletteFade(fadeParams.resourceId, fadeParams.ticksWait, fadeParams.delta);
-	}
-}
-
-void Screen::startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta) {
-	if (_isFading && resourceId == _fadeResourceId)
+void Screen::queuePaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta) {
+	if (_isFading && !_fadeQueue.empty() && _fadeQueue.front().resourceId == resourceId)
 		return;
 
-	if (_isFading) {
-		FadeParameters fadeParams = {resourceId, ticksWait, delta};
-		_fadeQueue.push(fadeParams);
+	if (ticksWait < 0 || delta <= 0)
 		return;
-	}
 
-	stopPaletteFadeTimer();
-	_fadeResourceId = resourceId;
-	_fadeTicksWait = ticksWait;
-	_fadeDelta = delta;
-
-	// Inverval == 1: we want to execute directly, since we are only going to be called back once
-	_vm->getTimerManager()->installTimerProc(&paletteFadeTimer, 1, this, "Palette fade timer");
+	FadeParameters fadeParams = {resourceId, ticksWait, delta, _vm->getTick(), 1};
+	_fadeQueue.push(fadeParams);
 }
 
 void Screen::stopPaletteFade(char red, char green, char blue) {
@@ -407,13 +372,19 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 		_mainPalette[i + 2] = (byte)blue;
 	}
 
-	stopPaletteFadeTimer();
+	stopQueuedPaletteFade();
 	setupPalette(nullptr, 0, 0);
 }
 
 void Screen::stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta) {
-	stopPaletteFadeTimer();
-	paletteFadeWorker(id, ticksWait, delta);
+	stopQueuedPaletteFade();
+	initQueuedPaletteFade(id, delta);
+
+	for (int i = 1; i < delta + 1; i++) {
+		runQueuedPaletteFade(id, delta, i);
+		g_system->delayMillis((uint32)ticksWait);
+		g_system->updateScreen();
+	}
 }
 
 void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
@@ -450,17 +421,45 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 	}
 }
 
-void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
-	byte *data = getPaletteData(id);
-
-	if (ticksWait < 0 || delta <= 0)
+void Screen::processPaletteFadeQueue() {
+	if (_fadeQueue.empty())
 		return;
 
+	FadeParameters *current = &_fadeQueue.front();
+	if (_vm->getTick() > current->nextTick) {
+		if (current->step > current->delta) {
+			_isFading = false;
+
+			(void)_fadeQueue.pop();
+			if (_fadeQueue.empty()) {
+				stopQueuedPaletteFade();
+				return;
+			}
+
+			current = &_fadeQueue.front();
+			initQueuedPaletteFade(current->resourceId, current->delta);
+		} else {
+			if (current->step == 1)
+				initQueuedPaletteFade(current->resourceId, current->delta);
+			current->nextTick += current->ticksWait;
+		}
+
+		runQueuedPaletteFade(current->resourceId, current->delta, current->step++);
+	}
+}
+
+void Screen::initQueuedPaletteFade(ResourceId id, int32 delta) {
+	// Reset flag
+	_fadeStop = false;
+
+	// Start fading
+	_isFading = true;
+
+	byte *data = getPaletteData(id);
+
 	// Setup our palette
-	byte original[PALETTE_SIZE];
-	byte palette[PALETTE_SIZE];
-	memcpy(&original, &_mainPalette, sizeof(original));
-	memcpy(&palette,  &_mainPalette, sizeof(palette));
+	memcpy(_fromPalette, _mainPalette, sizeof(_fromPalette));
+	memcpy(_toPalette,   _mainPalette, sizeof(_toPalette));
 
 	// Adjust palette using the target palette data
 	int16 count = READ_LE_UINT16(data);
@@ -469,39 +468,33 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 		byte *pData = data + 4;
 
 		for (int16 i = 0; i < count; i++) {
-			palette[i + start]     = (byte)(4 * pData[0]);
-			palette[i + start + 1] = (byte)(4 * pData[1]);
-			palette[i + start + 2] = (byte)(4 * pData[2]);
+			_toPalette[i + start]     = (byte)(4 * pData[0]);
+			_toPalette[i + start + 1] = (byte)(4 * pData[1]);
+			_toPalette[i + start + 2] = (byte)(4 * pData[2]);
 
 			pData += 3;
 		}
 	}
 
 	// Adjust gamma
-	setPaletteGamma(data, (byte *)&palette);
-
-	// Prepare for palette fading loop
-	int32 colorDelta = delta + 1;
-	for (int32 i = 1; i < colorDelta; i++) {
-		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
-			_mainPalette[j]     = (byte)(original[j]     + i * (palette[j]     - original[j])     / colorDelta);
-			_mainPalette[j + 1] = (byte)(original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta);
-			_mainPalette[j + 2] = (byte)(original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta);
-		}
-
-		setupPalette(nullptr, 0, 0);
-
-		// Original waits for event and so can be interrupted in the middle of the wait
-		g_system->delayMillis((uint32)ticksWait);
-		if (_fadeStop)
-			break;
-
-		// Refresh the screen
-		g_system->updateScreen();
-	}
+	setPaletteGamma(data, _toPalette);
 }
 
-void Screen::stopPaletteFadeTimer() {
+void Screen::runQueuedPaletteFade(ResourceId id, int32 delta, int i) {
+	if (_fadeStop)
+		return;
+
+	int32 colorDelta = delta + 1;
+	for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
+		_mainPalette[j]     = (byte)(_fromPalette[j]     + i * (_toPalette[j]     - _fromPalette[j])     / colorDelta);
+		_mainPalette[j + 1] = (byte)(_fromPalette[j + 1] + i * (_toPalette[j + 1] - _fromPalette[j + 1]) / colorDelta);
+		_mainPalette[j + 2] = (byte)(_fromPalette[j + 2] + i * (_toPalette[j + 2] - _fromPalette[j + 2]) / colorDelta);
+	}
+
+	setupPalette(nullptr, 0, 0);
+}
+
+void Screen::stopQueuedPaletteFade() {
 	if (!_isFading)
 		return;
 

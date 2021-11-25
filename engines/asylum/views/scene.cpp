@@ -1834,8 +1834,7 @@ void Scene::playIntroSpeech() {
 		Common::Event ev;
 		_vm->getEventManager()->pollEvent(ev);
 
-		if (!getScreen()->isFading())
-			g_system->updateScreen();
+		g_system->updateScreen();
 		g_system->delayMillis(100);
 
 	} while (getSound()->isPlaying(resourceId));
@@ -2396,8 +2395,7 @@ void Scene::preload() {
 	do {
 		title->update(_vm->getTick());
 
-		if (!getScreen()->isFading())
-			g_system->updateScreen();
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 
 		// Poll events (this ensure we don't freeze the screen)
@@ -2828,8 +2826,7 @@ void Scene::debugShowPolygon(uint32 index, uint32 color) {
 void Scene::debugHighlightPolygon(uint32 index) {
 	debugShowPolygon(index, 0x12);
 	getScreen()->copyBackBufferToScreen();
-	if (!getScreen()->isFading())
-		g_system->updateScreen();
+	g_system->updateScreen();
 }
 
 // SCENE RECTS DEBUG

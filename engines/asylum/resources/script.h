@@ -417,7 +417,7 @@ private:
 	DECLARE_OPCODE(PlaySpeechScene2);
 	DECLARE_OPCODE(MoveScenePositionFromActor);
 	DECLARE_OPCODE(PaletteFade);
-	DECLARE_OPCODE(StartPaletteFadeThread);
+	DECLARE_OPCODE(QueuePaletteFade);
 	DECLARE_OPCODE(PlaySoundUpdateObject);
 	DECLARE_OPCODE(ActorFaceTarget);
 	DECLARE_OPCODE(HideMatteBars);

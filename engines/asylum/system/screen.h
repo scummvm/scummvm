@@ -73,8 +73,10 @@ typedef struct GraphicQueueItem {
 
 struct FadeParameters {
 	ResourceId resourceId;
-	int32 ticksWait;
-	int32 delta;
+	int  ticksWait;
+	int  delta;
+	uint nextTick;
+	int  step;
 };
 
 class Screen {
@@ -110,10 +112,11 @@ public:
 	void setupPalette(byte *buffer, int start, int count);
 
 	bool isFading() { return _isFading; }
-	void startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta);
+	void queuePaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta);
 	void paletteFade(uint32 start, int32 ticksWait, int32 delta);
 	void stopPaletteFade(char red, char green, char blue);
 	void stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta);
+	void processPaletteFadeQueue();
 
 	// Gamma
 	void setPaletteGamma(ResourceId id);
@@ -147,11 +150,6 @@ public:
 	// Used by Writings puzzle
 	const Graphics::Surface &getSurface() const { return _backBuffer; };
 
-protected:
-	// Palette fading Timer
-	static void paletteFadeTimer(void *ptr);
-	void handlePaletteFadeTimer();
-
 private:
 	AsylumEngine *_vm;
 
@@ -171,18 +169,18 @@ private:
 	// Palette
 	byte _currentPalette[PALETTE_SIZE];
 	byte _mainPalette[PALETTE_SIZE];
+	byte _fromPalette[PALETTE_SIZE];
+	byte _toPalette[PALETTE_SIZE];
 	bool _isFading;
 	bool _fadeStop;
-	ResourceId _fadeResourceId;
-	int32 _fadeTicksWait;
-	int32 _fadeDelta;
 	Common::Queue<FadeParameters> _fadeQueue;
 
 	byte *getPaletteData(ResourceId id);
 	void setPaletteGamma(byte *data, byte *target = NULL);
 
-	void paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta);
-	void stopPaletteFadeTimer();
+	void stopQueuedPaletteFade();
+	void initQueuedPaletteFade(ResourceId id, int32 delta);
+	void runQueuedPaletteFade(ResourceId id, int32 delta, int i);
 
 	// Graphic queue
 	static bool graphicQueueItemComparator(const GraphicQueueItem &item1, const GraphicQueueItem &item2);

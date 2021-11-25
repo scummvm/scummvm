@@ -177,8 +177,9 @@ Common::Error AsylumEngine::run() {
 
 		_system->delayMillis(10);
 
-		if (!screen()->isFading())
-			_system->updateScreen();
+		screen()->processPaletteFadeQueue();
+
+		_system->updateScreen();
 
 		if (_scene)
 			checkAchievements();
@@ -368,8 +369,7 @@ void AsylumEngine::playIntro() {
 					}
 				}
 
-				if (!screen()->isFading())
-					_system->updateScreen();
+				_system->updateScreen();
 				_system->delayMillis(100);
 
 			} while (_sound->isPlaying(introSpeech) && !skip);

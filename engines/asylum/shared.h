@@ -430,7 +430,7 @@ enum OpcodeType {
 	kOpcodePlaySpeechScene2,
 	kOpcodeMoveScenePositionFromActor,
 	kOpcodePaletteFade,
-	kOpcodeStartPaletteFadeThread,
+	kOpcodeQueuePaletteFade,
 	kOpcodePlaySoundUpdateObject,               // 70
 	kOpcodeActorFaceTarget,
 	kOpcodeHidMatteBars,
