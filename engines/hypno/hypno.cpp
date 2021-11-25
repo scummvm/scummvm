@@ -64,7 +64,10 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
-	_variant = gd->extra;
+	if (gd->extra)
+		_variant = gd->extra;
+	else
+		_variant = "FullGame";
 	g_hypno = this;
 	g_parsedArc = new ArcadeShooting();
 	_defaultCursor = "";

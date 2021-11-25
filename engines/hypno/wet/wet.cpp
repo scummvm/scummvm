@@ -132,9 +132,9 @@ void WetEngine::loadAssetsDemoDisc() {
 	movies->frameNumber = 0;
 	_levels["<movies>"] = movies;
 
-	loadArcadeLevel("c31", "c52", "wetlands");
+	loadArcadeLevel("c31.mi_", "c52", "wetlands");
 	_levels["c31.mi_"]->levelIfLose = "c52";
-	loadArcadeLevel("c52", "<gameover>", "wetlands");
+	loadArcadeLevel("c52.mi_", "<gameover>", "wetlands");
 	_levels["c52.mi_"]->levelIfLose = "<gameover>";
 
 	Transition *over = new Transition("<quit>");
@@ -212,18 +212,18 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<main_menu>"] = menu;
 	_levels["<main_menu>"]->levelIfWin = "c11";
 
-	loadArcadeLevel("c110", "c20", "");
+	loadArcadeLevel("c110.mi_", "c20", "");
 	_levels["c110.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c111", "c20", "");
+	loadArcadeLevel("c111.mi_", "c20", "");
 	_levels["c111.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c112", "c20", "");
+	loadArcadeLevel("c112.mi_", "c20", "");
 	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c200", "???", "");
-	loadArcadeLevel("c201", "???", "");
-	loadArcadeLevel("c202", "???", "");
+	loadArcadeLevel("c200.mi_", "???", "");
+	loadArcadeLevel("c201.mi_", "???", "");
+	loadArcadeLevel("c202.mi_", "???", "");
 
 	//loadArcadeLevel("c20", "", "");
 

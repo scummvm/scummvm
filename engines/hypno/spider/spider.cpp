@@ -102,7 +102,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["alley.mi_"]->music = "alleymus.raw";
 	_levels["alley.mi_"]->intros.push_back("cine/aleyc01s.smk");
 
-	loadArcadeLevel("c1", "<trans_apt_1>", prefix);
+	loadArcadeLevel("c1.mi_", "<trans_apt_1>", prefix);
 	_levels["c1.mi_"]->intros.push_back("cine/ross002s.smk");
 	_levels["c1.mi_"]->levelIfLose = "<over_apt_1>";
 
@@ -204,33 +204,33 @@ void SpiderEngine::loadAssetsFullGame() {
 	// _levels["<bank_hard>"] = bankHard;
 
 	// Easy arcade levels
-	loadArcadeLevel("c2", "", prefix);
-	loadArcadeLevel("c3", "", prefix);
-	loadArcadeLevel("c4", "", prefix);
-	loadArcadeLevel("c5", "", prefix);
-	//loadArcadeLevel("c6", "", "spider");
+	loadArcadeLevel("c2.mi_", "", prefix);
+	loadArcadeLevel("c3.mi_", "", prefix);
+	loadArcadeLevel("c4.mi_", "", prefix);
+	loadArcadeLevel("c5.mi_", "", prefix);
+	//loadArcadeLevel("c6.mi_", "", "spider");
 	// No c7 level?
-	loadArcadeLevel("c8", "", prefix);
-	loadArcadeLevel("c9", "", prefix);
-	loadArcadeLevel("c10", "", prefix);
-	loadArcadeLevel("c11", "", prefix);
-	loadArcadeLevel("c12", "", prefix);
-	loadArcadeLevel("c13", "", prefix);
+	loadArcadeLevel("c8.mi_", "", prefix);
+	loadArcadeLevel("c9.mi_", "", prefix);
+	loadArcadeLevel("c10.mi_", "", prefix);
+	loadArcadeLevel("c11.mi_", "", prefix);
+	loadArcadeLevel("c12.mi_", "", prefix);
+	loadArcadeLevel("c13.mi_", "", prefix);
 
 	// // Hard arcade levels
-	loadArcadeLevel("c1h", "", prefix);
-	loadArcadeLevel("c2h", "", prefix);
-	loadArcadeLevel("c3h", "", prefix);
-	loadArcadeLevel("c4h", "", prefix);
-	loadArcadeLevel("c5h", "", prefix);
-	//loadArcadeLevel("c6h", "", "spider");
+	loadArcadeLevel("c1h.mi_", "", prefix);
+	loadArcadeLevel("c2h.mi_", "", prefix);
+	loadArcadeLevel("c3h.mi_", "", prefix);
+	loadArcadeLevel("c4h.mi_", "", prefix);
+	loadArcadeLevel("c5h.mi_", "", prefix);
+	//loadArcadeLevel("c6h.mi_", "", "spider");
 	// No c7h level?
-	loadArcadeLevel("c8h", "", prefix);
-	loadArcadeLevel("c9h", "", prefix);
-	loadArcadeLevel("c10h", "", prefix);
-	loadArcadeLevel("c11h", "", prefix);
-	loadArcadeLevel("c12h", "", prefix);
-	loadArcadeLevel("c13h", "", prefix);
+	loadArcadeLevel("c8h.mi_", "", prefix);
+	loadArcadeLevel("c9h.mi_", "", prefix);
+	loadArcadeLevel("c10h.mi_", "", prefix);
+	loadArcadeLevel("c11h.mi_", "", prefix);
+	loadArcadeLevel("c12h.mi_", "", prefix);
+	loadArcadeLevel("c13h.mi_", "", prefix);
 
 	// start level
 	Transition *start = new Transition("mainmenu.mi_");
@@ -331,7 +331,7 @@ void SpiderEngine::loadAssetsDemo() {
 	start->intros.push_back("sixdemo/demo/dcine2.smk");
 	_levels["<start>"] = start;
 
-	loadArcadeLevel("c1", "sixdemo/mis/demo.mis", "sixdemo");
+	loadArcadeLevel("c1.mi_", "sixdemo/mis/demo.mis", "sixdemo");
 
 	loadLib("", "sixdemo/c_misc/fonts.lib", true);
 	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib", true);
