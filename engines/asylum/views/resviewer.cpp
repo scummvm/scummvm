@@ -76,8 +76,7 @@ ResourceViewer::ResourceViewer(AsylumEngine *engine) : _vm(engine), _resource(_v
 bool ResourceViewer::setResourceId(ResourceId resourceId) {
 	if (resourceId == kResourceNone ||
 		!getResource()->get(resourceId) ||
-		strncmp((const char *)getResource()->get(resourceId)->data, "D3GR", 4) ||
-		getResource()->get(resourceId)->size == 800)
+		strncmp((const char *)getResource()->get(resourceId)->data, "D3GR", 4))
 
 		return false;
 
@@ -89,8 +88,15 @@ bool ResourceViewer::setResourceId(ResourceId resourceId) {
 
 	_frameIncrement = 1;
 	_x = _y = 0;
-	_width  = _resource.getFrame(0)->getWidth();
-	_height = _resource.getFrame(0)->getHeight();
+
+	if (isPalette(_resourceId)) {
+		_width  = 0;
+		_height = 0;
+	} else {
+		_width  = _resource.getFrame(0)->getWidth();
+		_height = _resource.getFrame(0)->getHeight();
+	}
+
 	_scroll = _width > 640 || _height > 480;
 	_resPack = RESOURCE_PACK(_resourceId);
 	_paletteIndex = 0;
@@ -105,7 +111,7 @@ bool ResourceViewer::setResourceId(ResourceId resourceId) {
 	return true;
 }
 
-void ResourceViewer::update() {
+void ResourceViewer::drawResource() {
 	int16 x, y;
 	GraphicFrame *frame = _resource.getFrame(_frameIndex);
 
@@ -118,12 +124,7 @@ void ResourceViewer::update() {
 	}
 
 	getScreen()->setPalette(MAKE_RESOURCE(_resPack, paletteIds[_resPack][_paletteIndex]));
-
-	getCursor()->hide();
-	getScreen()->clear();
 	getScreen()->draw(_resourceId, _frameIndex, Common::Point(x, y));
-	getText()->draw(Common::Point(615, 440), Common::String::format("%X", _resourceId).c_str());
-	getScreen()->copyBackBufferToScreen();
 
 	if (_frameCount > 1 && _animate) {
 		if (_frameIndex + 1 >= (int)_frameCount)
@@ -133,6 +134,33 @@ void ResourceViewer::update() {
 
 		_frameIndex += _frameIncrement;
 	}
+}
+
+bool ResourceViewer::isPalette(ResourceId resourceId) {
+	return getResource()->get(resourceId)->size == 800;
+}
+
+void ResourceViewer::drawPalette() {
+	const int size = 20;
+	const int x0 = (640 - size * 16) / 2, y0 = (480 - size * 16) / 2;
+
+	getScreen()->setPalette(_resourceId);
+	for (int i = 0, color = 0; i < 16; i++)
+		for (int j = 0; j < 16; j++, color++)
+			getScreen()->fillRect(x0 + j * size, y0 + i * size, size, size, color);
+}
+
+void ResourceViewer::update() {
+	getCursor()->hide();
+	getScreen()->clear();
+
+	if (isPalette(_resourceId))
+		drawPalette();
+	else
+		drawResource();
+
+	getText()->draw(Common::Point(615, 440), Common::String::format("%X", _resourceId).c_str());
+	getScreen()->copyBackBufferToScreen();
 }
 
 void ResourceViewer::key(const AsylumEvent &evt) {

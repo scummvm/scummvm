@@ -56,6 +56,10 @@ private:
 	int _paletteIndex;
 	bool _animate;
 
+	bool isPalette(ResourceId resourceId);
+	void drawPalette();
+	void drawResource();
+
 	void key(const AsylumEvent &evt);
 	void update();
 };
