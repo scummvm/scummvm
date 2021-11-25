@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-24 07:07+0000\n"
-"PO-Revision-Date: 2021-11-25 20:26+0000\n"
+"PO-Revision-Date: 2021-11-26 06:26+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -216,7 +216,6 @@ msgid "Detected %d new packs, %s %S"
 msgstr "S'han detectat %d paquets nous, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
 msgid "Download"
 msgstr "Baixa"
 
@@ -729,52 +728,46 @@ msgstr "???"
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
-msgstr ""
+msgstr "Selecciona grup per"
 
 #: gui/launcher.cpp:198
 msgid "Group by: "
-msgstr ""
+msgstr "Agrupa per: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Seleccioneu un criteri per agrupar les entrades"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
 msgctxt "group"
 msgid "None"
 msgstr "Cap"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
 msgid "First letter"
-msgstr "Escull l'encanteri"
+msgstr "Primera lletra"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "Sèrie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "Distribuïdora"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Llengua:"
+msgstr "Llengua"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Plataforma:"
+msgstr "Plataforma"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -906,7 +899,7 @@ msgstr "Seleccioneu el joc:"
 
 #: gui/launcher.cpp:778
 msgid "Group by:"
-msgstr ""
+msgstr "Agrupa per:"
 
 #: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -952,42 +945,36 @@ msgstr "~E~dita Joc..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1110 gui/launcher.cpp:1297
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Variant desconeguda"
+msgstr "Motor desconegut"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1128 gui/launcher.cpp:1329
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Autor desconegut"
+msgstr "Distribuïdora desconeguda"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1146 gui/launcher.cpp:1315
 msgid "No Series"
-msgstr ""
+msgstr "Sense sèrie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1161 gui/launcher.cpp:1348
 msgid "Language not detected"
-msgstr ""
+msgstr "No s'ha detectat l'idioma"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1363
 msgid "Platform not detected"
-msgstr ""
+msgstr "No s'ha detectat la plataforma"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1374 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Tots"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1056,22 +1043,22 @@ msgstr "Cada 30 minuts"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:143
 msgid "Very large"
-msgstr ""
+msgstr "Molt gran"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:145
 msgid "Large"
-msgstr ""
+msgstr "Gran"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:147 engines/nancy/dialogs.cpp:120
 msgid "Medium"
-msgstr ""
+msgstr "Mitjana"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:149
 msgid "Small"
-msgstr ""
+msgstr "Petita"
 
 #: gui/options.cpp:473 gui/options.cpp:890 gui/options.cpp:1031
 #: gui/options.cpp:1166 gui/options.cpp:1599
@@ -1186,7 +1173,7 @@ msgstr "Mode estirat:"
 
 #: gui/options.cpp:1459
 msgid "Scaler:"
-msgstr ""
+msgstr "Escalat:"
 
 #: gui/options.cpp:1472 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1194,34 +1181,32 @@ msgstr "Mode pantalla completa"
 
 #: gui/options.cpp:1474
 msgid "V-Sync"
-msgstr ""
+msgstr "Sincronia vertical"
 
 #: gui/options.cpp:1474
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
+"Espera a la sincronització vertical per actualitzar la pantalla i així "
+"evitar el parpalleig"
 
 #: gui/options.cpp:1477
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Render GUI:"
+msgstr "Renderitzador 3D del joc:"
 
 #: gui/options.cpp:1479
-#, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Render GUI:"
+msgstr "Renderitzador 3D del joc:"
 
 #: gui/options.cpp:1492
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Amb antialias (16bpp)"
+msgstr "Antialiàsing 3D:"
 
 #: gui/options.cpp:1496 engines/mohawk/dialogs.cpp:366
-#, fuzzy
 msgid "Disabled"
-msgstr "GFX desactivats"
+msgstr "Inhabilitat"
 
 #: gui/options.cpp:1508
 msgid "Filter graphics"
@@ -1236,9 +1221,8 @@ msgid "Aspect ratio correction"
 msgstr "Correcció de la relació d'aspecte"
 
 #: gui/options.cpp:1511
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Corregeix la relació d'aspecte per jocs de 320x200"
+msgstr "Corregeix la relació d'aspecte dels jocs"
 
 #: gui/options.cpp:1519
 msgid "Preferred device:"
@@ -1479,7 +1463,7 @@ msgstr "Accessibilitat"
 
 #: gui/options.cpp:2139
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Descarta els canvis i tanca el quadre de diàleg"
 
 #: gui/options.cpp:2140
 msgid "Apply"
@@ -1487,11 +1471,11 @@ msgstr "Aplicar"
 
 #: gui/options.cpp:2140
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Aplica els canvis sense tancar el quadre de diàleg"
 
 #: gui/options.cpp:2141
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Aplica els canvis i tanca el quadre de diàleg"
 
 #: gui/options.cpp:2235
 msgid "FluidSynth Settings"
@@ -1507,18 +1491,13 @@ msgid "Theme Path:"
 msgstr "Camí temes:"
 
 #: gui/options.cpp:2262
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "Directori /arrel/:"
+msgstr "Directori d'icones:"
 
 #: gui/options.cpp:2264
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "Directori /arrel/:"
+msgstr "Directori d'icones:"
 
 #: gui/options.cpp:2270 gui/options.cpp:2272 gui/options.cpp:2273
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1537,21 +1516,20 @@ msgstr "Camí de connectors:"
 
 #: gui/options.cpp:2291
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "Directori de configuració de ScummVM: "
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2298 gui/options.cpp:2985
 msgid "Last browser path: "
-msgstr ""
+msgstr "Darrer directori de l'explorador: "
 
 #: gui/options.cpp:2303
 msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:2307
-#, fuzzy
 msgid "GUI scale:"
-msgstr "Idioma de la interfície:"
+msgstr "Escala de la interfície:"
 
 #: gui/options.cpp:2314
 msgid "GUI renderer:"
@@ -1568,31 +1546,32 @@ msgstr "Auto-desat:"
 
 #: gui/options.cpp:2337
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Torna sempre al llançador en sortir d'un joc"
 
 #: gui/options.cpp:2338
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
-msgstr ""
+msgstr "Torna sempre al llançador en sortir d'un joc en lloc de tancar ScummVM."
 
 #: gui/options.cpp:2345
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Demana confirmació en sortir"
 
 #: gui/options.cpp:2346
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Demana permís en tancar ScummVM o sortir d'un joc."
 
 #: gui/options.cpp:2353
-#, fuzzy
 msgid "Enable Discord integration"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita la integració amb Discord"
 
 #: gui/options.cpp:2354
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Mostra informació al Discord sobre els jocs que esteu jugant si el client de "
+"Discord s'està executant."
 
 #: gui/options.cpp:2363
 msgid "GUI language:"
@@ -1641,15 +1620,12 @@ msgid "Check now"
 msgstr "Comprova ara"
 
 #: gui/options.cpp:2428
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Comprovació d'actualitzacions:"
+msgstr "Actualitza les icones"
 
 #: gui/options.cpp:2436
-#, fuzzy
 msgid "Active storage:"
-msgstr "Activar salvar al núvol"
+msgstr "Emmagatzematge actiu:"
 
 #: gui/options.cpp:2436
 msgid "Active cloud storage"
@@ -1660,20 +1636,23 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari "
+"és correcte i habiliteu-lo:"
 
 #: gui/options.cpp:2447
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari "
+"és correcte i habiliteu-lo:"
 
 #: gui/options.cpp:2448
-#, fuzzy
 msgid "Enable storage"
-msgstr "Activa el públic"
+msgstr "Habilita l'emmagatzematge"
 
 #: gui/options.cpp:2448
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Confirmeu que voleu utilitzar aquest compte per a aquest emmagatzematge"
 
 #: gui/options.cpp:2450 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1697,13 +1676,14 @@ msgstr ""
 "Espai usat per les partides guardades de ScummVM en aquest emmagatzematge"
 
 #: gui/options.cpp:2456
-#, fuzzy
 msgid "Last sync:"
-msgstr "Última hora de sincronització:"
+msgstr "Última sincronització:"
 
 #: gui/options.cpp:2456
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
+"Quan es van sincronitzar per última vegada les partides guardades amb aquest "
+"emmagatzematge"
 
 #: gui/options.cpp:2457 gui/options.cpp:3340
 msgid "<never>"
@@ -1713,104 +1693,108 @@ msgstr "<mai>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Les partides desades es sincronitzen automàticament en l'inici, després de "
+"desar i en carregar."
 
 #: gui/options.cpp:2461
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Les partides desades es sincronitzen automàticament en l'inici, després de "
+"desar i en carregar."
 
 #: gui/options.cpp:2462
 msgid "Sync now"
-msgstr ""
+msgstr "Sincronitza ara"
 
 #: gui/options.cpp:2462
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Iniciant el joc seleccionat"
+msgstr "Inicia la sincronització de les partides desades"
 
 #: gui/options.cpp:2465
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Es pot descarregar els fitxers del joc de la carpeta al núvol de ScummVM:"
 
 #: gui/options.cpp:2467
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Es pot descarregar els fitxers del joc de la carpeta al núvol de ScummVM:"
 
 #: gui/options.cpp:2468
-#, fuzzy
 msgid "Download game files"
-msgstr "La descàrrega ha fallat."
+msgstr "Baixa els fitxers del joc"
 
 #: gui/options.cpp:2468
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Obre el quadre de diàleg del gestor de baixades"
 
 #: gui/options.cpp:2471
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Per canviar el compte d'aquest emmagatzematge, desconnecteu-lo i connecteu-"
+"lo de nou:"
 
 #: gui/options.cpp:2473
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Per canviar el compte d'aquest emmagatzematge, desconnecteu-lo i connecteu-"
+"lo de nou:"
 
 #: gui/options.cpp:2474
-#, fuzzy
 msgid "Disconnect"
-msgstr "Connecta"
+msgstr "Desconnecta"
 
 #: gui/options.cpp:2474
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Atura l'ús d'aquest emmagatzematge en aquest dispositiu"
 
 #: gui/options.cpp:2477
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Aquest emmagatzematge encara no està connectat! Per connectar-lo,"
 
 #: gui/options.cpp:2479
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Aquest emmagatzematge encara no està connectat! Per connectar-lo,"
 
 #: gui/options.cpp:2480
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Obre aquest enllaç:"
 
 #: gui/options.cpp:2483
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obteniu el codi i introduïu-lo aquí:"
 
 #: gui/options.cpp:2485
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obteniu el codi i introduïu-lo aquí:"
 
 #: gui/options.cpp:2487
-#, fuzzy
 msgid "Paste"
-msgstr "Mode ràpid"
+msgstr "Enganxa"
 
 #: gui/options.cpp:2487
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Enganxa el codi del porta-retalls"
 
 #: gui/options.cpp:2488
-#, fuzzy
 msgid "3. Connect"
-msgstr "Connecta"
+msgstr "3. Connecta"
 
 #: gui/options.cpp:2488
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "Connecteu el vostre compte d'emmagatzematge al núvol"
 
 #: gui/options.cpp:2497
-#, fuzzy
 msgid "Run server"
-msgstr "Aturar servidor"
+msgstr "Executa el servidor"
 
 #: gui/options.cpp:2497
 msgid "Run local webserver"
-msgstr ""
+msgstr "Executa el servidor web local"
 
 #: gui/options.cpp:2498 gui/options.cpp:3455
 msgid "Not running"
@@ -1822,9 +1806,9 @@ msgid "/root/ Path:"
 msgstr "Directori /arrel/:"
 
 #: gui/options.cpp:2502 gui/options.cpp:2504 gui/options.cpp:2505
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Especifica els directoris accessibles per al gestor d'arxius"
+msgstr ""
+"Seleccioneu quin directori es mostrarà com a /arrel/ al Gestor de fitxers"
 
 #: gui/options.cpp:2504
 msgid "/root/ Path:"
@@ -1836,48 +1820,49 @@ msgstr "Port del servidor:"
 
 #: gui/options.cpp:2510
 msgid "Port for server to use"
-msgstr ""
+msgstr "Port que utilitzarà el servidor"
 
 #: gui/options.cpp:2515
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Executa el servidor per gestionar fitxers amb l'explorador (a la mateixa "
+"xarxa)."
 
 #: gui/options.cpp:2516
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Al tancar el quadre de diàleg d'opcions s'aturarà el servidor."
 
 #: gui/options.cpp:2518
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Executa el servidor per gestionar fitxers amb l'explorador (a la mateixa "
+"xarxa)."
 
 #: gui/options.cpp:2519
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Al tancar el quadre de diàleg d'opcions s'aturarà el servidor."
 
 #: gui/options.cpp:2531
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Text i Veus:"
+msgstr "Conversió de text a veu"
 
 #: gui/options.cpp:2531
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Es llegirà el text de la interfície en passar per sobre el ratolí."
 
 #: gui/options.cpp:2544
-#, fuzzy
 msgid "None"
 msgstr "Cap"
 
 #: gui/options.cpp:2605
 msgid "Ignore"
-msgstr ""
+msgstr "Ignora"
 
 #: gui/options.cpp:2606
-#, fuzzy
 msgid "Disable autosave"
-msgstr "No s'ha pogut desar l'estat del joc"
+msgstr "Inhabilita el desament automàtic"
 
 #: gui/options.cpp:2607
 msgid ""
@@ -1887,22 +1872,28 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"AVÍS: El desament automàtic s'ha habilitat. Alguns dels vostres jocs tenen "
+"partides desades en l'espai de desament automàtic. Podeu moure les partides "
+"desades existents a un nou espai, inhabilitar el desament automàtic o "
+"ignorar (us preguntarà quan el desament automàtic estigui a punt de "
+"sobreescriure una partida desada).\n"
+"Llista de jocs:\n"
 
 #: gui/options.cpp:2616
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "~A~fegeix Joc..."
+msgstr ""
+"\n"
+"I més..."
 
 #: gui/options.cpp:2617 engines/engine.cpp:580
-#, fuzzy
 msgid "Move"
-msgstr "Mou enrere"
+msgstr "Mou"
 
 #: gui/options.cpp:2630
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERROR: No s'han pogut moure les següents partides desades:\n"
 
 #: gui/options.cpp:2723
 msgid "Failed to change cloud storage!"
@@ -1910,17 +1901,15 @@ msgstr "Fallada al canviar l'emmagatzematge en línia!"
 
 #: gui/options.cpp:2726
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Un altre emmagatzematge al núvol ja està actiu."
 
 #: gui/options.cpp:2816
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "El connector de motor no suporta partides desades"
+msgstr "El tema no admet l'idioma seleccionat!"
 
 #: gui/options.cpp:2819
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "La partida NO s'ha desat"
+msgstr "No es pot carregar el tema!"
 
 #: gui/options.cpp:2822
 msgid ""
