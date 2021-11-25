@@ -72,6 +72,7 @@ public:
 	bool isDemo() const;
 	Common::Language _language;
 	Common::Platform _platform;
+	Common::String _variant;
 
 	Audio::SoundHandle _soundHandle;
 	Common::InstallShieldV3 _installerArchive;

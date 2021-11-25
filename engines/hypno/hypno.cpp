@@ -34,6 +34,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
@@ -63,6 +64,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
+	_variant = gd->extra;
 	g_hypno = this;
 	g_parsedArc = new ArcadeShooting();
 	_defaultCursor = "";

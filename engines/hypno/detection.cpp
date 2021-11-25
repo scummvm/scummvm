@@ -93,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // Personal Computer World (UK) (May 1996) - Chapter 11 demo
-		"Demo",
+		"PCWDemo",
 		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 553355,
 				"missions.lib", "6ffa658f22a00b6e17d7f920fcc13578", 12469),
 		Common::EN_GRB,
@@ -103,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // PC Gamer Disc 12 (November 1995) - Chapter 31 demo
-		"Demo",
+		"PCGDemo",
 		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 553355,
 				"missions.lib", "34b922fac8f64546c0690aa83f09e98e", 40891),
 		Common::EN_USA,

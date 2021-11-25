@@ -51,15 +51,14 @@ void WetEngine::loadAssets() {
 	}
 	_difficulty = ""; // No difficulty selection in demo
 
-	Common::String demoVersion = "Wetlands Demo Disc";
-	if (demoVersion == "Wetlands Demo Disc")
+	if (_variant == "Demo")
 		loadAssetsDemoDisc();
-	else if (demoVersion == "Personal Computer World Disc")
+	else if (_variant == "PCWDemo")
 		loadAssetsPCW();
-	else if (demoVersion == "Personal Computer Gamer Disc")
+	else if (_variant == "PCGDemo")
 		loadAssetsPCG();
 	else
-		error("Invalid demo version: \"%s\"", demoVersion.c_str());
+		error("Invalid demo version: \"%s\"", _variant.c_str());
 }
 
 
@@ -161,13 +160,14 @@ void WetEngine::loadAssetsPCW() {
 	intro->frameImage.clear();
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c11", "<gameover>", "");
+	loadArcadeLevel("c11.mis", "<gameover>", "");
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("movie/gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "c_misc/sound.lib", false);
+	_nextLevel = "<start>";
 }
 
 void WetEngine::loadAssetsPCG() {
@@ -177,20 +177,21 @@ void WetEngine::loadAssetsPCG() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Transition *intro = new Transition("c31.mi_");
+	Transition *intro = new Transition("c31.mis");
 	intro->intros.push_back("nw_logo.smk");
 	intro->intros.push_back("h.s");
 	intro->intros.push_back("wet.smk");
 	intro->frameImage.clear();
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c31", "<gameover>", "");
+	loadArcadeLevel("c31.mis", "<gameover>", "");
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "sound.lib", false);
+	_nextLevel = "<start>";
 }
 
 void WetEngine::loadAssetsFullGame() {
