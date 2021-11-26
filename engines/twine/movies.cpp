@@ -375,8 +375,6 @@ bool Movies::playMovie(const char *name) {
 		return true;
 	}
 
-	_engine->_music->stopMusic();
-
 	_fadeOut = -1;
 	_fadeOutFrames = 0;
 
