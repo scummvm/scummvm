@@ -1262,17 +1262,18 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98 || _flags.lang == Common::ZH_TWN) {
+	buffer = _res->fileData("CREDITS.TXT", &size);
+	if (!buffer) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
+		if (!bufferTmp)
+			error("KyraEngine_LoK::seq_playCredits(): Unable to find credits data (neither in file 'CREDITS.TXT' nor in static data");
+
 		buffer = new uint8[sizeTmp];
 		assert(buffer);
 		memcpy(buffer, bufferTmp, sizeTmp);
 		size = sizeTmp;
 		_staticres->unloadId(k1CreditsStrings);
-	} else {
-		buffer = _res->fileData("CREDITS.TXT", &size);
-		assert(buffer);
 	}
 
 	uint8 *nextString = buffer;
