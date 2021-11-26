@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-24 07:07+0000\n"
 "PO-Revision-Date: 2021-11-26 12:22+0000\n"
-"Last-Translator: vullunfestuc <damia.felip@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -1918,16 +1918,17 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Es restauraran diversos paràmetres."
 
 #: gui/options.cpp:2893
 msgid "Select directory for GUI themes"
 msgstr "Seleccioneu el directori dels temes"
 
 #: gui/options.cpp:2903
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Seleccioneu el directori dels temes"
+msgstr ""
+"Seleccioneu el directori per a les miniatures del llançador de la interfície"
 
 #: gui/options.cpp:2913
 msgid "Select directory for extra files"
@@ -1946,65 +1947,65 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"No s'ha pogut obrir l'URL!\n"
+"Navegueu a aquesta pàgina manualment."
 
 #: gui/options.cpp:3097
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Un altre Emmagatzematge està actiu ara. Voleu interrompre'l?"
 
 #: gui/options.cpp:3106 gui/options.cpp:3144
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 
 #: gui/options.cpp:3119
-#, fuzzy
 msgid "Connecting..."
-msgstr "Connecta"
+msgstr "S'està connectant..."
 
 #: gui/options.cpp:3135
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Aquest Emmagatzematge està actiu ara. Voleu interrompre'l?"
 
 #: gui/options.cpp:3338 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr ""
+msgstr "<ara mateix>"
 
 #: gui/options.cpp:3447
 msgid "Stop server"
 msgstr "Aturar servidor"
 
 #: gui/options.cpp:3448
-#, fuzzy
 msgid "Stop local webserver"
-msgstr "Aturar servidor"
+msgstr "Atura el servidor web local"
 
 #: gui/options.cpp:3500
 msgid "Storage connected."
-msgstr ""
+msgstr "Emmagatzematge connectat."
 
 #: gui/options.cpp:3502
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Fallada al canviar l'emmagatzematge en línia!"
+msgstr "No s'ha pogut connectar l'emmagatzematge."
 
 #: gui/options.cpp:3504
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Fallada al canviar l'emmagatzematge en línia!"
+msgstr "No s'ha pogut connectar l'emmagatzematge. "
 
 #: gui/options.cpp:3524
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"La sol·licitud ha fallat.\n"
+"Comproveu la connexió a Internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:102
 msgid "#  next"
-msgstr ""
+msgstr "#  següent"
 
 #: gui/predictivedialog.cpp:103
 msgid "add"
-msgstr ""
+msgstr "afegeix"
 
 #: gui/predictivedialog.cpp:108 gui/predictivedialog.cpp:185
 msgid "Delete char"
@@ -2012,26 +2013,26 @@ msgstr "Suprimeix personatge"
 
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:189
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:115 gui/predictivedialog.cpp:602
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:605
 msgid "*  Num"
-msgstr ""
+msgstr "*  Núm"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:608
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:62
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Enregistrar o reproduïr vídeos de partida"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:423 gui/saveload-dialog.cpp:490
@@ -2039,9 +2040,8 @@ msgid "Delete"
 msgstr "Suprimeix"
 
 #: gui/recorderdialog.cpp:69
-#, fuzzy
 msgid "Record"
-msgstr "Enregistra..."
+msgstr "Enregistra"
 
 #: gui/recorderdialog.cpp:70
 msgid "Playback"
@@ -2049,19 +2049,17 @@ msgstr "Reproducció"
 
 #: gui/recorderdialog.cpp:72 gui/widgets/grid.cpp:225
 msgid "Edit"
-msgstr ""
+msgstr "Edita"
 
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
-#, fuzzy
 msgid "Author: "
-msgstr "Autor:"
+msgstr "Autor: "
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
-#, fuzzy
 msgid "Notes: "
-msgstr "Notes:"
+msgstr "Notes: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -2076,20 +2074,20 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM no ha pogut accedir al directori especificat!"
 
 #: gui/saveload-dialog.cpp:55
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Carregant la partida..."
+msgstr "S'està baixant les partides desades..."
 
 #: gui/saveload-dialog.cpp:64
-#, fuzzy
 msgid "Run in background"
-msgstr "Mou endavant"
+msgstr "Executa en segon pla"
 
 #: gui/saveload-dialog.cpp:343
 msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"ALERTA: La partida desada té una durada de joc més llarga que l'actual. "
+"Segur que voleu sobreescriure-la?"
 
 #: gui/saveload-dialog.cpp:414 gui/saveload-dialog.cpp:594
 msgid "No date saved"
@@ -2162,56 +2160,54 @@ msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
 #: gui/ThemeEngine.cpp:278
-#, fuzzy
 msgid "Standard renderer"
-msgstr "Pintat estàndard (16bpp)"
+msgstr "Renderitzador estàndard"
 
 #: gui/ThemeEngine.cpp:278 engines/scumm/dialogs.cpp:676
 msgid "Standard"
 msgstr "Estàndard"
 
 #: gui/ThemeEngine.cpp:280
-#, fuzzy
 msgid "Antialiased renderer"
-msgstr "Pintat amb antialias (16bpp)"
+msgstr "Renderitzador antialiàsing"
 
 #: gui/ThemeEngine.cpp:280
-#, fuzzy
 msgid "Antialiased"
-msgstr "Amb antialias (16bpp)"
+msgstr "Antialiàsing"
 
 #: gui/unknown-game-dialog.cpp:49
-#, fuzzy
 msgid "Add anyway"
-msgstr "Inicia de totes maneres"
+msgstr "Afegeix de totes maneres"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Copia al porta-retalls"
 
 #: gui/unknown-game-dialog.cpp:64
-#, fuzzy
 msgid "Report game"
-msgstr "Recupera la partida:"
+msgstr "Informa del joc"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Utiilizeu el botó de sota per copiar la informació del joc requerida al "
+"porta-retalls."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
+"També podeu informar directament del joc al sistema de seguiment d'errors."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Tota la informació necessària sobre el joc s'ha copiat al porta-retalls"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Ha fallat la còpia de la informació del joc al porta-retalls!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -2219,6 +2215,9 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"ScummVM permet comprovar automàticament\n"
+"les actualitzacions i necessita accés a Internet.\n"
+"Voldrieu activar aquesta opció?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
