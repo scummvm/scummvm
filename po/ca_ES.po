@@ -2203,7 +2203,8 @@ msgstr ""
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr "Tota la informació necessària sobre el joc s'ha copiat al porta-retalls"
+msgstr ""
+"Tota la informació necessària sobre el joc s'ha copiat al porta-retalls"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
