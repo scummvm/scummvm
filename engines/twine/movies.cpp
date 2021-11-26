@@ -368,8 +368,6 @@ bool Movies::playFlaMovie(const char *flaName) {
 		return true;
 	}
 
-	_engine->_music->stopMusic();
-
 	_fadeOut = -1;
 	_fadeOutFrames = 0;
 
