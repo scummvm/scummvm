@@ -1551,7 +1551,8 @@ msgstr "Torna sempre al llançador en sortir d'un joc"
 #: gui/options.cpp:2338
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
-msgstr "Torna sempre al llançador en sortir d'un joc en lloc de tancar ScummVM."
+msgstr ""
+"Torna sempre al llançador en sortir d'un joc en lloc de tancar ScummVM."
 
 #: gui/options.cpp:2345
 msgid "Ask for confirmation on exit"
@@ -1652,7 +1653,8 @@ msgstr "Habilita l'emmagatzematge"
 
 #: gui/options.cpp:2448
 msgid "Confirm you want to use this account for this storage"
-msgstr "Confirmeu que voleu utilitzar aquest compte per a aquest emmagatzematge"
+msgstr ""
+"Confirmeu que voleu utilitzar aquest compte per a aquest emmagatzematge"
 
 #: gui/options.cpp:2450 backends/platform/wii/options.cpp:114
 msgid "Username:"
