@@ -230,6 +230,11 @@ void MinigameBbLoogie::drawSprites() {
 	buildDrawList(drawList);
 	_vm->_screen->drawDrawList(drawList, _spriteModule);
 	_vm->_screen->copyToScreen();
+	_vm->_screen->clear();
+    DrawList drawList_test;
+    buildDrawList0(drawList_test);
+    _vm->_screen->drawDrawList(drawList_test, _spriteModule);
+    _vm->_screen->copyToScreen();
 }
 
 void MinigameBbLoogie::initObjs() {
