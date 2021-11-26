@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-24 07:07+0000\n"
-"PO-Revision-Date: 2021-11-26 12:22+0000\n"
+"PO-Revision-Date: 2021-11-26 12:48+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -2225,11 +2225,11 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 "Podeu canviar aquest paràmetre més tard a la\n"
-"pestanya de Diversos al diàleg d'Opcions."
+"pestanya Diversos en el diàleg d'Opcions."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
-msgstr ""
+msgstr "Continua"
 
 #: gui/widget.cpp:411 gui/widget.cpp:413 gui/widget.cpp:419 gui/widget.cpp:421
 msgid "Clear value"
@@ -2240,10 +2240,8 @@ msgid "Play"
 msgstr "Jugar"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Desa"
+msgstr "Partides desades"
 
 #: base/main.cpp:651
 msgid "Error running game:"
@@ -2254,9 +2252,8 @@ msgid "Could not find any engine capable of running the selected game"
 msgstr "No s'ha pogut trobar cap motor capaç d'executar el joc seleccionat"
 
 #: common/achievements.cpp:231
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Fites desbloquejades: %d/%d"
+msgstr "Assoliment desbloquejat!"
 
 #: common/error.cpp:38
 msgid "No error"
