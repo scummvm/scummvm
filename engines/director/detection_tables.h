@@ -5144,7 +5144,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("affaires1", "", "StartMe.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1819926,
 								"Main - 7.dxr", "ad34b9d4987fc84c238f0e88b174fbc9", 13068061, Common::FR_FRA, 702),
 
-//	WINGAME1t_l("allthelunar", "Installer", "install.exe", "f670d62dfbf3f42c475b4f09c68f1888", 1743796, Common::JA_JPN, 701),
+	WINGAME1t_l("allthelunar", "Installer", "install.exe", "f670d62dfbf3f42c475b4f09c68f1888", 1743796, Common::JA_JPN, 701),
 	MACGAME1_l("allthelunar", "Gallery", "xn--2bkwb2jyaf2iv50xg56c", "91723348f6414e84d024183554385275", 110811, Common::JA_JPN, 701),
 	WINGAME1t_l("allthelunar", "Gallery", "gallery.exe", "dc43ed7868f092e8f59a640766438b38", 13403016, Common::JA_JPN, 701),
 	MACGAME1_l("allthelunar", "Daifugo", "xn--pss84d253e", "d2404d3c2d1df0ca4125e85b1ca97e96", 22329996, Common::JA_JPN, 701),
