@@ -1740,8 +1740,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794267, Common::JA_JPN, 311),
 
 	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
-	MACDEMO1_l("henachoco03", "Demo", "Muzukashiihon", "f5277c53bacd27936158dd3867e587e2", 1058777, Common::JA_JPN, 311),
-	MACDEMO1_l("henachoco03", "Trial Version", "ITA Choco", "f5277c53bacd27936158dd3867e587e2", 1123785, Common::JA_JPN, 311),
+	MACDEMO1_l("henachoco03", "Demo", "Muzukashiihon", "f5277c53bacd27936158dd3867e587e2", 1058521, Common::JA_JPN, 311),
+	MACDEMO1_l("henachoco03", "Trial Version", "ITA Choco", "f5277c53bacd27936158dd3867e587e2", 1123529, Common::JA_JPN, 311),
 	// Original filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
 	MACGAME1_l("henachoco03", "", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1579812, Common::JA_JPN, 311),
 
