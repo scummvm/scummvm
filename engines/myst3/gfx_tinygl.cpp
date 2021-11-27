@@ -52,10 +52,6 @@ Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
 	return new TinyGLTexture(surface);
 }
 
-void TinyGLRenderer::freeTexture(Texture *texture) {
-	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
-	delete glTexture;
-}
 
 void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");

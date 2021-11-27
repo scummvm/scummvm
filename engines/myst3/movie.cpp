@@ -205,7 +205,7 @@ void Movie::pause(bool p) {
 
 Movie::~Movie() {
 	if (_texture)
-		_vm->_gfx->freeTexture(_texture);
+		delete _texture;
 
 	delete _subtitles;
 }
