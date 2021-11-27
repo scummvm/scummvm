@@ -121,7 +121,8 @@ public:
 	virtual void initFont(const Graphics::Surface *surface);
 	virtual void freeFont();
 
-	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
+	virtual Texture *createTexture3D(const Graphics::Surface *surface) = 0;
+	virtual Texture *createTexture2D(const Graphics::Surface *surface) { return createTexture3D(surface); }
 
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,

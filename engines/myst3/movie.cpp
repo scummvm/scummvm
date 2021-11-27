@@ -96,6 +96,7 @@ void Movie::loadPosition(const ResourceDescription::VideoData &videoData) {
 	static const float scale = 50.0f;
 
 	_is3D = _vm->_state->getViewType() == kCube;
+	assert(!_texture);
 
 	Math::Vector3d planeDirection = videoData.v1;
 	planeDirection.normalize();
@@ -171,8 +172,10 @@ void Movie::drawNextFrameToTexture() {
 	if (frame) {
 		if (_texture)
 			_texture->update(frame);
+		else if (_is3D)
+			_texture = _vm->_gfx->createTexture3D(frame);
 		else
-			_texture = _vm->_gfx->createTexture(frame);
+			_texture = _vm->_gfx->createTexture2D(frame);
 	}
 }
 
@@ -213,6 +216,8 @@ Movie::~Movie() {
 void Movie::setForce2d(bool b) {
 	_force2d = b;
 	if (_force2d) {
+		if (_is3D)
+			delete _texture;
 		_is3D = false;
 	}
 }
@@ -560,8 +565,10 @@ void ProjectorMovie::update() {
 
 	if (_texture)
 		_texture->update(_frame);
+	else if (_is3D)
+		_texture = _vm->_gfx->createTexture3D(_frame);
 	else
-		_texture = _vm->_gfx->createTexture(_frame);
+		_texture = _vm->_gfx->createTexture2D(_frame);
 }
 
 } // End of namespace Myst3

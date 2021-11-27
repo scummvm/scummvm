@@ -48,8 +48,12 @@ TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 TinyGLRenderer::~TinyGLRenderer() {
 }
 
-Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
-	return new TinyGLTexture(surface);
+Texture *TinyGLRenderer::createTexture2D(const Graphics::Surface *surface) {
+	return new TinyGLTexture2D(surface);
+}
+
+Texture *TinyGLRenderer::createTexture3D(const Graphics::Surface *surface) {
+	return new TinyGLTexture3D(surface);
 }
 
 
@@ -147,6 +151,8 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
 		Texture *texture, float transparency, bool additiveBlending) {
+	TinyGLTexture2D *glTexture = static_cast<TinyGLTexture2D *>(texture);
+
 	const float sLeft = screenRect.left;
 	const float sTop = screenRect.top;
 	const float sWidth = screenRect.width();
@@ -173,14 +179,14 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	Graphics::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
-	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
+	tglBlit(glTexture->getBlitTexture(), transform);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
 }
 
 void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point &position) {
-	TinyGLTexture *glFont = static_cast<TinyGLTexture *>(_font);
+	TinyGLTexture2D *glFont = static_cast<TinyGLTexture2D *>(_font);
 
 	// The font only has uppercase letters
 	Common::String textToDraw = text;
@@ -193,7 +199,6 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDepthMask(TGL_FALSE);
 
 	tglColor3f(1.0f, 1.0f, 1.0f);
-	tglBindTexture(TGL_TEXTURE_2D, glFont->id);
 
 	int x = position.x;
 	int y = position.y;
@@ -217,7 +222,7 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 }
 
 void TinyGLRenderer::drawFace(uint face, Texture *texture) {
-	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
+	TinyGLTexture3D *glTexture = static_cast<TinyGLTexture3D *>(texture);
 
 	tglBindTexture(TGL_TEXTURE_2D, glTexture->id);
 	tglBegin(TGL_TRIANGLE_STRIP);
@@ -242,7 +247,7 @@ void TinyGLRenderer::drawCube(Texture **textures) {
 void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
 
-	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
+	TinyGLTexture3D *glTexture = static_cast<TinyGLTexture3D *>(texture);
 
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	tglEnable(TGL_BLEND);

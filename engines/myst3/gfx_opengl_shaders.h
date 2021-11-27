@@ -42,7 +42,7 @@ public:
 	void clear() override;
 	void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
 
-	Texture *createTexture(const Graphics::Surface *surface) override;
+	Texture *createTexture3D(const Graphics::Surface *surface) override;
 
 	void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,

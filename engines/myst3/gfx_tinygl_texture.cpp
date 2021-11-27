@@ -25,7 +25,34 @@
 
 namespace Myst3 {
 
-TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
+TinyGLTexture2D::TinyGLTexture2D(const Graphics::Surface *surface) {
+	width = surface->w;
+	height = surface->h;
+	format = surface->format;
+
+	_blitImage = Graphics::tglGenBlitImage();
+
+	update(surface);
+}
+
+TinyGLTexture2D::~TinyGLTexture2D() {
+	tglDeleteBlitImage(_blitImage);
+}
+
+void TinyGLTexture2D::update(const Graphics::Surface *surface) {
+	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
+}
+
+void TinyGLTexture2D::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+	// FIXME: TinyGL does not support partial texture update
+	update(surface);
+}
+
+Graphics::BlitImage *TinyGLTexture2D::getBlitTexture() const {
+	return _blitImage;
+}
+
+TinyGLTexture3D::TinyGLTexture3D(const Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
@@ -48,30 +75,22 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-	_blitImage = Graphics::tglGenBlitImage();
-
 	update(surface);
 }
 
-TinyGLTexture::~TinyGLTexture() {
+TinyGLTexture3D::~TinyGLTexture3D() {
 	tglDeleteTextures(1, &id);
-	tglDeleteBlitImage(_blitImage);
 }
 
-void TinyGLTexture::update(const Graphics::Surface *surface) {
+void TinyGLTexture3D::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, width, height, 0,
 			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
-	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
 
-void TinyGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+void TinyGLTexture3D::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
 	// FIXME: TinyGL does not support partial texture update
 	update(surface);
-}
-
-Graphics::BlitImage *TinyGLTexture::getBlitTexture() const {
-	return _blitImage;
 }
 
 } // End of namespace Myst3

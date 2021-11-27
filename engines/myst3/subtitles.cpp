@@ -239,7 +239,7 @@ void FontSubtitles::createTexture() {
 	}
 
 	if (!_texture) {
-		_texture = _vm->_gfx->createTexture(_surface);
+		_texture = _vm->_gfx->createTexture2D(_surface);
 	}
 }
 
@@ -376,7 +376,7 @@ void MovieSubtitles::drawToTexture(const Phrase *phrase) {
 	const Graphics::Surface *surface = _bink.decodeNextFrame();
 
 	if (!_texture) {
-		_texture = _vm->_gfx->createTexture(surface);
+		_texture = _vm->_gfx->createTexture2D(surface);
 	} else {
 		_texture->update(surface);
 	}

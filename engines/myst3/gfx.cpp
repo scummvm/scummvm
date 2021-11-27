@@ -81,7 +81,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::initFont(const Graphics::Surface *surface) {
-	_font = createTexture(surface);
+	_font = createTexture2D(surface);
 }
 
 void Renderer::freeFont() {
@@ -94,7 +94,7 @@ void Renderer::freeFont() {
 Texture *Renderer::copyScreenshotToTexture() {
 	Graphics::Surface *surface = getScreenshot();
 
-	Texture *texture = createTexture(surface);
+	Texture *texture = createTexture2D(surface);
 
 	surface->free();
 	delete surface;

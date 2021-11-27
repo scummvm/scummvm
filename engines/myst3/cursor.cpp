@@ -116,7 +116,7 @@ void Cursor::loadAvailableCursors() {
 		}
 
 		// Create and store the texture
-		_textures.setVal(availableCursors[i].nodeID, _vm->_gfx->createTexture(surfaceRGBA));
+		_textures.setVal(availableCursors[i].nodeID, _vm->_gfx->createTexture2D(surfaceRGBA));
 
 		surfaceRGBA->free();
 		delete surfaceRGBA;

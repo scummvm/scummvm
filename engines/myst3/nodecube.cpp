@@ -38,7 +38,7 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 		if (!jpegDesc.isValid())
 			error("Face %d does not exist", id);
 
-		_faces[i] = new Face(_vm);
+		_faces[i] = new Face(_vm, true);
 		_faces[i]->setTextureFromJPEG(&jpegDesc);
 	}
 }
