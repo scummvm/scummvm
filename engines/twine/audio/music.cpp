@@ -172,6 +172,9 @@ bool Music::playTrackMusicCd(int32 track) {
 	}
 
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
+	if (_engine->isDotEmuEnhanced()) {
+		track += 1;
+	}
 	return cdrom->play(track, 1, 0, 0);
 }
 
