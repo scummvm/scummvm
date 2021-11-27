@@ -121,7 +121,6 @@ void Music::musicFadeOut() {
 }
 
 static const char *musicTracksLba2[] = {
-	""
 	"",
 	"TADPCM1",
 	"TADPCM2",
