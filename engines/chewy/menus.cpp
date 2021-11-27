@@ -1046,4 +1046,13 @@ int16 del_invent_slot(int16 nr) {
 	return ok;
 }
 
+void remove_inventory(int16 nr) {
+	if (nr == _G(spieler).AkInvent) {
+		del_inventar(nr);
+	} else {
+		obj->del_inventar(nr, &room_blk);
+		del_invent_slot(nr);
+	}
+}
+
 } // namespace Chewy

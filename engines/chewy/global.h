@@ -392,6 +392,8 @@ void invent_2_slot(int16 nr);
 
 int16 del_invent_slot(int16 nr);
 
+void remove_inventory(int16 nr);
+
 void get_display_xy(int16 *x, int16 *y, int16 nr);
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz);
 void ads_menu();

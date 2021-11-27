@@ -1269,6 +1269,7 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 #define R67_PAPA2_DIA 10019
 #define R68_KEEPER_DIA 10020
 #define R13_BORK_DIA 33
+
 void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {
 	int16 talk_stop_ani = -1;
 	int16 talk_show_static = -1;
@@ -1283,8 +1284,8 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	stop_ani = -1;
 	altes_format = false;
 	tmp = -1;
-	switch (dia_nr) {
 
+	switch (dia_nr) {
 	case 30000:
 	case 25:
 	case 34:
@@ -2061,10 +2062,17 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 }
 
 void calc_inv_use_txt(int16 test_nr) {
+	int scrollx, scrolly;
 	int16 ret;
+
 	switch (test_nr) {
 	case GBUCH_OPEN_INV:
 	case MONOKEL_INV:
+		scrollx = _G(spieler).scrollx;
+		scrolly = _G(spieler).scrolly;
+		_G(spieler).scrollx = 0;
+		_G(spieler).scrolly = 0;
+
 		room->open_handle("BACK/GBOOK.TGP", "rb", R_TGPDATEI);
 		ERROR
 		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0);
@@ -2072,12 +2080,18 @@ void calc_inv_use_txt(int16 test_nr) {
 		out->setze_zeiger(workptr);
 		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		out->back2screen(workpage);
+
+		::error("TODO: Proper ScummVM loops below");
 		while (in->get_switch_code() != ESC);
 		while (in->get_switch_code() != 0);
-		room->open_handle(&background[0], "rb", R_TGPDATEI);
+
+		room->open_handle(EPISODE1, "rb", R_TGPDATEI);
 		ERROR
 		room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
 		ERROR;
+
+		_G(spieler).scrollx = scrollx;
+		_G(spieler).scrolly = scrolly;
 		break;
 
 	case ANGEL_INV:
@@ -2099,12 +2113,17 @@ void calc_inv_use_txt(int16 test_nr) {
 		break;
 
 	case MESSER_INV:
-		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
-		cursor_wahl(menu_item);
-		invent_2_slot(K_MASKE_INV);
-		invent_2_slot(K_FLEISCH_INV);
-		invent_2_slot(K_KERNE_INV);
+		if (_G(spieler).AkInvent == 40) {
+			del_inventar(_G(spieler).AkInvent);
+			menu_item = CUR_USE;
+			cursor_wahl(menu_item);
+			invent_2_slot(K_MASKE_INV);
+			invent_2_slot(K_FLEISCH_INV);
+			invent_2_slot(K_KERNE_INV);
+		} else if (_G(spieler).AkInvent == 88) {
+			_G(spieler).flags26_10 = true;
+			start_aad_wait(_G(spieler).PersonRoomNr[0] + 350, -1);
+		}
 		break;
 
 	case BRIEF_INV:
@@ -2121,8 +2140,10 @@ void calc_inv_use_txt(int16 test_nr) {
 		del_inventar(_G(spieler).AkInvent);
 		menu_item = CUR_USE;
 		cursor_wahl(menu_item);
+		// fall through
+
 	case WOLLE_INV:
-		del_invent_slot(WOLLE_INV);
+		remove_inventory(WOLLE_INV);
 		atds->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATEI);
 		_G(spieler).R56WhiskyMix = true;
 		break;
@@ -2137,6 +2158,41 @@ void calc_inv_use_txt(int16 test_nr) {
 		obj->change_inventar(test_nr, B_MARY2_INV, &room_blk);
 		break;
 
+	case 88:
+	case 13:
+		_G(spieler).flags26_10 = true;
+		flags.InventMenu = false;
+		start_spz(5, 255, 0, 0);
+		start_aad_wait(_G(spieler).PersonRoomNr[0] + 350, -1);
+		flags.InventMenu = true;
+		atds->set_ats_str(88, 1, 6);
+		break;
+
+	case 102:
+	case 104:
+		del_inventar(_G(spieler).AkInvent);
+		menu_item = CUR_USE;
+		cursor_wahl(CUR_USE);
+
+		ret = del_invent_slot(test_nr);
+		_G(spieler).InventSlot[ret] = 110;
+		obj->change_inventar(104, 110, &room_blk);
+		break;
+
+	case 105:
+		del_inventar(_G(spieler).AkInvent);
+		atds->set_ats_str(105, 0, 1, 6);
+		menu_item = CUR_USE;
+		cursor_wahl(CUR_USE);
+		break;
+
+	case 106:
+		del_invent_slot(106);
+		atds->set_ats_str(105, 0, 1, 6);
+		break;
+
+	default:
+		break;
 	}
 }
 
