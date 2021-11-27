@@ -210,7 +210,7 @@ private:
 	void initConfigurations();
 	/** Initialize all needed stuffs at first time running engine */
 	void initAll();
-	void initEngine();
+	void playIntro();
 	void processActorSamplePosition(int32 actorIdx);
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory(int32 w, int32 h);
@@ -242,6 +242,7 @@ public:
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
+	bool isLBASlideShow() const { return _gameType == TwineGameType::GType_LBASHOW; }
 	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDotEmuEnhanced() const { return (_gameFlags & TwinE::TF_DOTEMU_ENHANCED) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
@@ -334,6 +335,7 @@ public:
 	/**
 	 * Deplay certain seconds till proceed - Can also Skip this delay
 	 * @param time time in milliseconds to delay
+	 * @return @c true if the delay was aborted, @c false otherwise
 	 */
 	bool delaySkip(uint32 time);
 

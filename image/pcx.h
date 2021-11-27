@@ -44,6 +44,7 @@ namespace Image {
  * - Hugo
  * - Queen
  * - Tucker
+ * - TwinE
  * @{
  */
 

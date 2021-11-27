@@ -70,6 +70,7 @@
 #include "twine/scene/scene.h"
 #include "twine/script/script_life_v1.h"
 #include "twine/script/script_move_v1.h"
+#include "twine/slideshow.h"
 #include "twine/text.h"
 
 namespace TwinE {
@@ -104,7 +105,7 @@ FrameMarker::~FrameMarker() {
 	const uint32 frameTime = end - _start;
 	const uint32 maxDelay = 1000 / _fps;
 	if (frameTime > maxDelay) {
-		debug("Frame took longer than the max allowed time: %u (max is %u)", frameTime, maxDelay);
+		debug(5, "Frame took longer than the max allowed time: %u (max is %u)", frameTime, maxDelay);
 		return;
 	}
 	const uint32 waitMillis = maxDelay - frameTime;
@@ -255,8 +256,14 @@ Common::Error TwinEEngine::run() {
 
 	initGraphics(w, h);
 	allocVideoMemory(w, h);
+	if (isLBASlideShow()) {
+		playSlideShow(this);
+		return Common::kNoError;
+	}
+	_renderer->init(w, h);
+	_grid->init(w, h);
 	initAll();
-	initEngine();
+	playIntro();
 	_sound->stopSamples();
 	saveFrontBuffer();
 
@@ -380,8 +387,6 @@ void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
 
 	_workVideoBuffer.create(w, h, format);
 	_frontVideoBuffer.create(w, h, format);
-	_renderer->init(w, h);
-	_grid->init(w, h);
 }
 
 static int getLanguageTypeIndex(const char *languageName) {
@@ -476,12 +481,7 @@ void TwinEEngine::queueMovie(const char *filename) {
 	_queuedFlaMovie = filename;
 }
 
-void TwinEEngine::initEngine() {
-	_screens->clearScreen();
-
-	// Check if LBA CD-Rom is on drive
-	_music->initCdrom();
-
+void TwinEEngine::playIntro() {
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	bool abort = false;
@@ -522,9 +522,6 @@ void TwinEEngine::initEngine() {
 			_movie->playMovie("INTRO");
 		}
 	}
-	_input->enableKeyMap(uiKeyMapId);
-
-	_screens->loadMenuImage();
 }
 
 void TwinEEngine::initSceneryView() {
@@ -547,6 +544,11 @@ void TwinEEngine::initAll() {
 	_resources->initResources();
 
 	exitSceneryView();
+
+	_screens->clearScreen();
+
+	// Check if LBA CD-Rom is on drive
+	_music->initCdrom();
 }
 
 int TwinEEngine::getRandomNumber(uint max) {

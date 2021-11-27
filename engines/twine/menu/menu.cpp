@@ -764,6 +764,8 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff};
 
 bool Menu::init() {
+	_engine->_input->enableKeyMap(uiKeyMapId);
+	_engine->_screens->loadMenuImage();
 	// load menu effect file only once
 	_plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
 	memset(_plasmaEffectPtr, 0, kPlasmaEffectFilesize);

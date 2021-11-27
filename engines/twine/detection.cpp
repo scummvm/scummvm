@@ -29,6 +29,7 @@
 
 static const PlainGameDescriptor twineGames[] = {
 	{ "lba", "Little Big Adventure" },
+	{ "lbashow", "Little Big Adventure Freeware Slide Show" },
 	{ "lba2", "Little Big Adventure 2" },
 	{ nullptr,  nullptr }
 };
@@ -593,6 +594,18 @@ static const ADGameDescription twineGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE | ADGF_DEMO | TwinE::TF_MOD,
+		GUIO1(GUIO_NONE)
+	},
+
+	// LBA Freeware Slide Show
+	// 4 Apr 1994
+	{
+		"lbashow",
+		"LBA Freeware Slide Show",
+		AD_ENTRY1s("LBA_SHOW.EXE", "c1a887e38283d43f271249ad9f2a73ef", 85928),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
