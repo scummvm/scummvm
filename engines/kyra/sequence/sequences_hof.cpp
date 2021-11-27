@@ -216,7 +216,8 @@ private:
 	uint8 _textColorMap[16];
 	int _textDuration[33];
 	Screen::FontId _defaultFont;
-	int _lineHeight;
+	Screen::FontId _creditsFont;
+	Screen::FontId _creditsFont2;
 
 	const char *const *_sequenceStrings;
 	const char *const *_sequenceSoundList;
@@ -385,7 +386,8 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_firstScene = _loopStartScene = 0;
 
 	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
-	_lineHeight = (_vm->gameFlags().lang == Common::ZH_TWN) ? 16 : 10;
+	_creditsFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT;
+	_creditsFont2 = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_GOLDFONT_FNT : Screen::FID_8_FNT;
 
 	int tempSize = 0;
 	_vm->resource()->unloadAllPakFiles();
@@ -454,7 +456,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 		}
 	} else {
 		const uint8 *boxCoords = 0;
-		int ls = 0;
+		int8 ls = 0;
 		Screen::FontId fid = Screen::FID_8_FNT;
 
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
@@ -762,6 +764,9 @@ void SeqPlayer_HOF::playScenes() {
 		_curScene++;
 	}
 
+	if (_curScene - 1 == kSequenceFrash && !_vm->shouldQuit())
+		_vm->delay(1500);
+
 	resetAllTextSlots();
 	_vm->sound()->haltTrack();
 	_vm->sound()->voiceStop();
@@ -773,7 +778,7 @@ void SeqPlayer_HOF::playScenes() {
 bool SeqPlayer_HOF::checkAbortPlayback() {
 	Common::Event event;
 
-	if (_vm->skipFlag()) {
+	if (_vm->skipFlag() || _vm->shouldQuit()) {
 		_abortRequested = true;
 		_vm->resetSkipFlag();
 	}
@@ -1331,7 +1336,6 @@ void SeqPlayer_HOF::printFadingText(uint16 strID, int x, int y, const uint8 *col
 	if (_abortPlayback || _abortRequested || _vm->shouldQuit() || _result)
 		return;
 
-	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_screen->getPalette(0).fill(254, 2, 63);
 	_screen->setPaletteIndex(252, 63, 32, 48);
 	cmap[0] = colorMap[0];
@@ -1363,8 +1367,6 @@ void SeqPlayer_HOF::printFadingText(uint16 strID, int x, int y, const uint8 *col
 	resetAllTextSlots();
 
 	_textColor[0] = col0;
-
-	_screen->setFont(of);
 }
 
 int SeqPlayer_HOF::displaySubTitle(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width) {
@@ -1391,6 +1393,7 @@ int SeqPlayer_HOF::displaySubTitle(uint16 strIndex, uint16 posX, uint16 posY, in
 
 void SeqPlayer_HOF::updateSubTitles() {
 	int curPage = _screen->setCurPage(2);
+	int lineHeight = (_screen->_currentFont == Screen::FID_CHINESE_FNT) ? 16 : 10;
 	char outputStr[70];
 
 	for (int i = 0; i < 10; i++) {
@@ -1422,8 +1425,11 @@ void SeqPlayer_HOF::updateSubTitles() {
 				}
 
 				uint8 textColor = (_textSlots[i].textcolor >= 0) ? _textSlots[i].textcolor : _textColor[0];
-				_screen->printText(cstr, _textSlots[i].x - (_screen->getTextWidth(cstr) / 2), yPos, textColor, 0);
-				yPos += _lineHeight;
+				int xOffs = (_screen->_currentFont == Screen::FID_CHINESE_FNT ? string.size() * 9 : _screen->getTextWidth(cstr)) >> 1;
+				_screen->printText(cstr, _textSlots[i].x - xOffs, yPos, textColor, 0);
+				if (_screen->_currentFont == Screen::FID_CHINESE_FNT && textColor >= 240)
+					_screen->printText(cstr, _textSlots[i].x - xOffs + 1, yPos, textColor, 0);
+				yPos += lineHeight;
 			}
 		} else {
 			_textSlots[i].duration = -1;
@@ -1443,12 +1449,14 @@ char *SeqPlayer_HOF::preprocessString(const char *srcStr, int width) {
 			dstStr[lineStart + linePos++] = *srcStr++;
 		dstStr[lineStart + linePos] = 0;
 
+		Screen::FontId of = (_vm->gameFlags().lang == Common::ZH_TWN) ? _screen->setFont(_creditsFont2) : _screen->_currentFont;
 		int len = _screen->getTextWidth(&dstStr[lineStart]);
+		_screen->setFont(of);
 		if (width >= len && *srcStr) {
 			dstStr[lineStart + linePos++] = *srcStr++;
 		} else {
 			dstStr[lineStart + linePos] = '\r';
-			lineStart += linePos + 1;
+			lineStart += (linePos + 1);
 			linePos = 0;
 			if (*srcStr)
 				srcStr++;
@@ -2268,6 +2276,7 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleFirstFrame = 0;
 	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
@@ -2281,6 +2290,7 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		memset(_textColorMap, _textColor[1], 16);
 		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
+		of = _screen->setFont(_creditsFont);
 
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(81, 240, 70, _textColorMap, 252);
@@ -2288,6 +2298,7 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 12);
 		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 28 : 24);
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		_textColor[0] = 1;
 
 		if (_vm->gameFlags().isTalkie) {
@@ -2352,10 +2363,12 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleFirstFrame = 0;
 	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
 		doTransition(9);
+		of = _screen->setFont(_creditsFont2);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(34, 240, _vm->gameFlags().isTalkie ? 60 : 40, _textColorMap, 252);
 		printFadingText(35, 240, _vm->gameFlags().isTalkie ? 70 : 50, _textColorMap, _textColor[0]);
@@ -2365,6 +2378,7 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		printFadingText(39, 240, _vm->gameFlags().isTalkie ? 130 : 120, _textColorMap, _textColor[0]);
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 			printFadingText(103, 240, 130, _textColorMap, _textColor[0]);
+		_screen->setFont(of);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
@@ -2389,7 +2403,7 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleLastFrame = 14;
 		}
 		subTitleX = 116;
-		subTitleY = 90;
+		subTitleY = (_vm->gameFlags().lang == Common::ZH_TWN) ? 82 : 90;
 		subTitleW = 60;
 
 		playDialogueAnimation(24, voiceIndex, 149, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
@@ -2408,10 +2422,10 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleY = 48;
 			subTitleW = 88;
 		} else {
-			subTitleY = 60;
+			subTitleY = (_vm->gameFlags().lang == Common::ZH_TWN) ? 44 : 60;
 			subTitleW = 100;
 		}
-		subTitleX = 60;
+		subTitleX = (_vm->gameFlags().lang == Common::ZH_TWN) ? 76 : 60;
 
 		if (_vm->gameFlags().isTalkie)
 			voiceIndex = 36;
@@ -2434,12 +2448,13 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleY = 0;
 	int subTitleW = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
 		doTransition(9);
+		of = _screen->setFont(_creditsFont2);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
-
 		printFadingText(40, 240, _vm->gameFlags().isTalkie ? 55 : 40, _textColorMap, 252);
 		printFadingText(41, 240, _vm->gameFlags().isTalkie ? 65 : 50, _textColorMap, _textColor[0]);
 		printFadingText(42, 240, _vm->gameFlags().isTalkie ? 75 : 60, _textColorMap, _textColor[0]);
@@ -2448,6 +2463,7 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		printFadingText(93, 240, _vm->gameFlags().isTalkie ? 125 : 110, _textColorMap, 252);
 		printFadingText(94, 240, _vm->gameFlags().isTalkie ? 135 : 120, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		setCountDown(0);
 		break;
 
@@ -2513,6 +2529,7 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleFirstFrame = 0;
 	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
@@ -2520,6 +2537,7 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
+		of = _screen->setFont(_creditsFont2);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(49, 240, 20, _textColorMap, 252);
 		printFadingText(50, 240, 30, _textColorMap, _textColor[0]);
@@ -2538,6 +2556,7 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		printFadingText(64, 240, 160, _textColorMap, _textColor[0]);
 
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		setCountDown(0);
 		break;
 
@@ -2551,7 +2570,10 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 2:
 		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 25 : 21);
 
-		if (_vm->gameFlags().lang == Common::FR_FRA) {
+		if (_vm->gameFlags().lang == Common::ZH_TWN) {
+			subTitleX = 83;
+			subTitleY = 68;
+		} else if (_vm->gameFlags().lang == Common::FR_FRA) {
 			subTitleX = 92;
 			subTitleY = 72;
 		} else {
@@ -2593,6 +2615,7 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleY = 0;
 	int subTitleW = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
@@ -2600,6 +2623,7 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
+		of = _screen->setFont(_creditsFont2);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(45, 240, 40, _textColorMap, 252);
 		printFadingText(46, 240, 50, _textColorMap, _textColor[0]);
@@ -2614,6 +2638,7 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 			printFadingText(104, 240, 160, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		setCountDown(0);
 		break;
 
@@ -2644,6 +2669,9 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 				subTitleY = 25;
 			}
 			voiceIndex = 40;
+		} else if (_vm->gameFlags().lang == Common::ZH_TWN) {
+			subTitleX = 80;
+			subTitleY = 27;
 		}
 
 		playDialogueAnimation(29, voiceIndex, 150, subTitleX, subTitleY, subTitleW, wsaObj, 12, -21, x, y);
@@ -2664,12 +2692,13 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleW = 0;
 	int subTitleFirstFrame = 0;
 	int subTitleLastFrame = 0;
-
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
 		doTransition(9);
+		of = _screen->setFont(_creditsFont2);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(70, 240, 20, _textColorMap, 252);
 		printFadingText(71, 240, 30, _textColorMap, _textColor[0]);
@@ -2686,6 +2715,7 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		printFadingText(91, 240, 140, _textColorMap, _textColor[0]);
 		printFadingText(92, 240, 150, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		setCountDown(0);
 		break;
 
@@ -2708,11 +2738,11 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleLastFrame = 21;
 			voiceIndex = 41;
 		} else {
-			subTitleX = 62;
+			subTitleX = (_vm->gameFlags().lang == Common::ZH_TWN) ? 80 : 62;
 			subTitleFirstFrame = 9;
 			subTitleLastFrame = 13;
 		}
-		subTitleY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 :100;
+		subTitleY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 : (_vm->gameFlags().lang == Common::ZH_TWN ? 90 : 100);
 		subTitleW = 80;
 
 		playDialogueAnimation(30, voiceIndex, 137, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
@@ -2736,7 +2766,7 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleFirstFrame = 16;
 			subTitleLastFrame = 21;
 		}
-		subTitleY = 100;
+		subTitleY = (_vm->gameFlags().lang == Common::ZH_TWN) ? 80 : 100;
 		subTitleW = 100;
 
 		playDialogueAnimation(31, voiceIndex, 143, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
@@ -2758,6 +2788,7 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	int subTitleY = 0;
 	int subTitleW = 0;
 	uint16 voiceIndex = 0;
+	Screen::FontId of = _creditsFont;
 
 	switch (frm) {
 	case -2:
@@ -2765,17 +2796,56 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
+		of = _screen->setFont(_creditsFont);
 		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
-		printFadingText(76, 240, 40, _textColorMap, 252);
-		printFadingText(77, 240, 50, _textColorMap, 252);
-		printFadingText(78, 240, 60, _textColorMap, _textColor[0]);
-		printFadingText(79, 240, 70, _textColorMap, _textColor[0]);
-		printFadingText(80, 240, 80, _textColorMap, _textColor[0]);
-		printFadingText(84, 240, 100, _textColorMap, 252);
-		printFadingText(85, 240, 110, _textColorMap, _textColor[0]);
-		printFadingText(99, 240, 130, _textColorMap, 252);
-		printFadingText(100, 240, 140, _textColorMap, _textColor[0]);
+
+		if (_vm->gameFlags().lang == Common::ZH_TWN) {
+			printFadingText(103, 240, 80, _textColorMap, 252);
+			printFadingText(104, 240, 96, _textColorMap, _textColor[0]);
+			printFadingText(105, 240, 112, _textColorMap, _textColor[0]);
+			delayUntil(frameEnd);
+			_screen->fillRect(160, 0, 310, 199, 0);
+			frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
+			printFadingText(106, 240, 20, _textColorMap, 252);
+			printFadingText(107, 240, 36, _textColorMap, _textColor[0]);
+			printFadingText(108, 240, 60, _textColorMap, 252);
+			printFadingText(109, 240, 76, _textColorMap, _textColor[0]);
+			printFadingText(110, 240, 100, _textColorMap, 252);
+			printFadingText(111, 240, 116, _textColorMap, _textColor[0]);
+			printFadingText(112, 240, 132, _textColorMap, _textColor[0]);
+			printFadingText(113, 240, 156, _textColorMap, 252);
+			printFadingText(114, 240, 172, _textColorMap, _textColor[0]);
+			delayUntil(frameEnd);
+			_screen->fillRect(160, 0, 310, 199, 0);
+			frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
+			printFadingText(115, 240, 24, _textColorMap, 252);
+			printFadingText(116, 240, 40, _textColorMap, _textColor[0]);
+			printFadingText(117, 240, 64, _textColorMap, 252);
+			printFadingText(118, 240, 80, _textColorMap, _textColor[0]);
+			printFadingText(119, 240, 104, _textColorMap, 252);
+			printFadingText(120, 240, 120, _textColorMap, _textColor[0]);
+			printFadingText(121, 240, 136, _textColorMap, _textColor[0]);
+			printFadingText(122, 240, 152, _textColorMap, _textColor[0]);
+			delayUntil(frameEnd);
+			_screen->fillRect(160, 0, 310, 199, 0);
+			frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
+			printFadingText(123, 240, 3, _textColorMap, 252);
+			for (int i = 0; i < 12; ++i)
+				printFadingText(124 + i, 240, 20 + (i << 4), _textColorMap, _textColor[0]);
+
+		} else {
+			printFadingText(76, 240, 40, _textColorMap, 252);
+			printFadingText(77, 240, 50, _textColorMap, 252);
+			printFadingText(78, 240, 60, _textColorMap, _textColor[0]);
+			printFadingText(79, 240, 70, _textColorMap, _textColor[0]);
+			printFadingText(80, 240, 80, _textColorMap, _textColor[0]);
+			printFadingText(84, 240, 100, _textColorMap, 252);
+			printFadingText(85, 240, 110, _textColorMap, _textColor[0]);
+			printFadingText(99, 240, 130, _textColorMap, 252);
+			printFadingText(100, 240, 140, _textColorMap, _textColor[0]);
+		}
 		delayUntil(frameEnd);
+		_screen->setFont(of);
 		setCountDown(0);
 		break;
 
@@ -2803,7 +2873,7 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleW = 140;
 		} else {
 			subTitleX = 74;
-			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96: 108;
+			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96: (_vm->gameFlags().lang == Common::ZH_TWN ? 98 : 108);
 			subTitleW = 80;
 		}
 
@@ -2826,7 +2896,7 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			voiceIndex = 44;
 
 		subTitleX = 90;
-		subTitleY = (_vm->gameFlags().lang == Common::DE_DEU) ? 60 : 76;
+		subTitleY = (_vm->gameFlags().lang == Common::DE_DEU) ? 60 : (_vm->gameFlags().lang == Common::ZH_TWN ? 86 : 76);
 		subTitleW = 80;
 
 		playDialogueAnimation(33, voiceIndex, 143, subTitleX, subTitleY, subTitleW, wsaObj, 31, 34, x, y);
@@ -2879,7 +2949,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		if (_callbackCurrentFrame < 20 && _talkieFinaleExtraFlag) {
 			_animCurrentFrame = 0;
 		} else {
-			_animDuration = _vm->gameFlags().isTalkie ? 500 : (300 + _vm->_rnd.getRandomNumberRng(1, 300));
+			_animDuration = 500;
 			playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 26 : 22);
 			if (_talkieFinaleExtraFlag) {
 				_callbackCurrentFrame = 3;
@@ -2894,7 +2964,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 3:
 		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 27 : 23);
-		_animDuration = _vm->gameFlags().isTalkie ? 500 : (300 + _vm->_rnd.getRandomNumberRng(1, 300));
+		_animDuration = 500;
 		break;
 
 	case 4:
@@ -2905,9 +2975,9 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 27 : 23);
 		tmp = _callbackCurrentFrame / 6;
 		if (tmp == 2)
-			_animDuration = _vm->gameFlags().isTalkie ? 7 : (1 + _vm->_rnd.getRandomNumberRng(1, 10));
+			_animDuration = 7;
 		else if (tmp < 2)
-			_animDuration = _vm->gameFlags().isTalkie ? 500 : (300 + _vm->_rnd.getRandomNumberRng(1, 300));
+			_animDuration = 500;
 		break;
 
 	case 6:

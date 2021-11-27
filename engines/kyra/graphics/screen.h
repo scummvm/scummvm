@@ -310,7 +310,7 @@ private:
 	uint32 _lookupTableSize;
 };
 
-class ChineseOneByteFontMR : public ChineseFont {
+class ChineseOneByteFontMR final : public ChineseFont {
 public:
 	ChineseOneByteFontMR(int pitch) : ChineseFont(pitch, 7, 14, 9, 14, 0, 2) {}
 private:
@@ -319,7 +319,7 @@ private:
 	void processColorMap() override;
 };
 
-class ChineseTwoByteFontMR : public ChineseFont {
+class ChineseTwoByteFontMR final : public ChineseFont {
 public:
 	ChineseTwoByteFontMR(int pitch) : ChineseFont(pitch, 15, 14, 18, 14, 0, 2) {}
 private:
@@ -328,16 +328,16 @@ private:
 	void processColorMap() override;
 };
 
-class ChineseOneByteFontHOF : public ChineseFont {
+class ChineseOneByteFontHOF final : public ChineseFont {
 public:
-	ChineseOneByteFontHOF(int pitch) : ChineseFont(pitch, 7, 14, 9, 15, 0, 0) {}
+	ChineseOneByteFontHOF(int pitch) : ChineseFont(pitch, 8, 14, 9, 15, 0, 0) {}
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
 	void processColorMap() override;
 };
 
-class ChineseTwoByteFontHOF : public ChineseFont {
+class ChineseTwoByteFontHOF final : public ChineseFont {
 public:
 	ChineseTwoByteFontHOF(int pitch) : ChineseFont(pitch, 16, 14, 18, 15, 0, 0) {}
 private:
@@ -357,6 +357,7 @@ public:
 	// already been filled. It will then try the next slot. So, unlike other fonts the
 	// subset fonts cannot be allowed to call the load method as often as they want
 	// (which we never did anyway - we only ever load each font exactly one time).
+	// But this also means that different 
 	bool load(Common::SeekableReadStream &data) override;
 
 	void setStyles(int styles) override;
