@@ -118,7 +118,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 	this->_zbuf = (unsigned int *)gl_malloc(size);
 	memset(this->_zbuf, 0, size);
 
-	byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
+	byte *pixelBuffer = new byte[this->ysize * this->linesize];
 	this->pbuf.set(this->cmode, pixelBuffer);
 	this->frame_buffer_allocated = 1;
 
