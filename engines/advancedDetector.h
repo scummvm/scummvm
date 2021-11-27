@@ -399,6 +399,11 @@ protected:
 
 private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
+	void sanityCheck() const;
+	bool sanityCheckEntry(const ADGameDescription *g) const;
+
+private:
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _blackListMap;
 
 protected:
 	/**

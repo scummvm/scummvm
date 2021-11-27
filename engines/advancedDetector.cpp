@@ -577,6 +577,8 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getEngineId(), parent.getPath().c_str());
 
+	sanityCheck();
+
 	// Check which files are included in some ADGameDescription *and* whether
 	// they are present. Compute MD5s and file sizes for the available files.
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
@@ -664,6 +666,14 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		// is really missing, but the developers should better know about such
 		// cases.
 		if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
+			// Do sanity check
+			if (game.hasUnknownFiles && !sanityCheckEntry(g)) {
+				debugC(3, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d), didn't pass sanity", g->gameId, g->extra,
+					getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
+
+				continue;
+			}
+
 			if (matched.empty() || strcmp(matched.back().desc->gameId, g->gameId) != 0)
 				matched.push_back(game);
 		}
@@ -758,6 +768,20 @@ PlainGameDescriptor AdvancedMetaEngineDetection::findGame(const char *gameId) co
 	return PlainGameDescriptor::empty();
 }
 
+static const char *blackList[] = {
+	"game.exe",
+	"demo.exe",
+	"game",
+	"demo",
+	"data.z",
+	"data1.cab",
+	"data.cab",
+	"engine.exe",
+	"install.exe",
+	"play.exe",
+	0
+};
+
 AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
 	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
 	  _extraGuiOptions(extraGuiOptions) {
@@ -769,6 +793,9 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 	_directoryGlobs = NULL;
 	_matchFullPaths = false;
 	_maxAutogenLength = 15;
+
+	for (auto f = blackList; *f; f++)
+		_blackListMap.setVal(*f, true);
 }
 
 void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDesc) const {
@@ -777,6 +804,42 @@ void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDe
 		g_eventRec.processGameDescription(gameDesc);
 	}
 #endif
+}
+
+void AdvancedMetaEngineDetection::sanityCheck() const {
+	// Check if the detection entries have only files from the blacklist
+	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
+		const ADGameDescription *g = (const ADGameDescription *)descPtr;
+
+		bool blackIsPresent = false, nonBlackIsPresent = false;
+
+		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			if (_blackListMap.contains(fileDesc->fileName)) {
+				blackIsPresent = true;
+			} else {
+				nonBlackIsPresent = true;
+			}
+		}
+
+		if (blackIsPresent && !nonBlackIsPresent) {
+			debug(0, "WARNING: Detection entry for '%s' in engine '%s' contains only blacklisted names. Add more files to the entry (%s)",
+				g->gameId, getEngineId(), g->filesDescriptions[0].md5);
+		}
+	}
+}
+
+bool AdvancedMetaEngineDetection::sanityCheckEntry(const ADGameDescription *g) const {
+	bool blackIsPresent = false, nonBlackIsPresent = false;
+
+	for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (_blackListMap.contains(fileDesc->fileName)) {
+			blackIsPresent = true;
+		} else {
+			nonBlackIsPresent = true;
+		}
+	}
+
+	return !(blackIsPresent && !nonBlackIsPresent);
 }
 
 Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
