@@ -33,7 +33,6 @@
 #include "audio/mixer_intern.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
 #include "backends/modular-backend.h"

@@ -31,7 +31,6 @@
 #include "common/file.h"
 #include "engines/engine.h"
 #include "graphics/conversion.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/framebuffer.h"
 #include "graphics/opengl/surfacerenderer.h"

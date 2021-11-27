@@ -146,7 +146,6 @@ private:
 
 	// Game layer
 	GLESBaseTexture *_game_texture;
-	Graphics::PixelBuffer _game_pbuf;
 	OpenGL::FrameBuffer *_frame_buffer;
 
 	/**

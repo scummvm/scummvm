@@ -22,7 +22,6 @@
 
 #include "backends/base-backend.h"
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/scalerplugin.h"
 
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER

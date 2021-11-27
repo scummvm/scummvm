@@ -29,7 +29,6 @@
 
 #include "common/timer.h"
 #include "graphics/pixelformat.h"
-#include "graphics/pixelbuffer.h"
 
 ModularGraphicsBackend::ModularGraphicsBackend()
 	:

@@ -29,7 +29,6 @@
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "common/ustr.h"
 #include "graphics/pixelformat.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/mode.h"
 
 namespace Audio {
