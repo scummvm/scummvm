@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-11-24 07:07+0000\n"
-"PO-Revision-Date: 2021-11-19 10:58+0000\n"
+"PO-Revision-Date: 2021-11-27 12:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -7110,12 +7110,6 @@ msgstr ""
 "beolvassa a hangszereket. Zene le lessz tiltva."
 
 #: engines/scumm/scumm.cpp:1666
-#, fuzzy
-#| msgid ""
-#| "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
-#| "compression is not supported anymore for this game, audio will be "
-#| "disabled.\n"
-#| "Please reinstall the game with the correct resource files."
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7123,7 +7117,7 @@ msgid ""
 msgstr ""
 "A rendszer ScummVM Tools-szal tömörített hangfájlokat észlelt; *.BUN/*.SOU\n"
 "a tömörítés már nem támogatott ebben a játékban, a hang le lesz tiltva.\n"
-"Kérlek, telepítsd újra a játékot a megfelelő forrásfájlokkal."
+"Kérlek, másold a játékot tömörítés nélkül az eredeti adathordozóról."
 
 #: engines/scumm/scumm.cpp:2137
 #, c-format
