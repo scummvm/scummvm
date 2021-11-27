@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	input.o \
 	metaengine.o \
 	shared.o \
+	slideshow.o \
 	text.o \
 	twine.o
 
