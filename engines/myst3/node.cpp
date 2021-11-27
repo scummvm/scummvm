@@ -35,14 +35,19 @@ namespace Myst3 {
 
 void Face::setTextureFromJPEG(const ResourceDescription *jpegDesc) {
 	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
-	_texture = _vm->_gfx->createTexture(_bitmap);
+	if (_is3D) {
+		_texture = _vm->_gfx->createTexture3D(_bitmap);
+	} else {
+		_texture = _vm->_gfx->createTexture2D(_bitmap);
+	}
 
 	// Set the whole texture as dirty
 	addTextureDirtyRect(Common::Rect(_bitmap->w, _bitmap->h));
 }
 
-Face::Face(Myst3Engine *vm) :
+Face::Face(Myst3Engine *vm, bool is3D) :
 		_vm(vm),
+		_is3D(is3D),
 		_textureDirty(true),
 		_texture(nullptr),
 		_bitmap(nullptr),

@@ -44,7 +44,7 @@ public:
 	Graphics::Surface *_finalBitmap;
 	Texture *_texture;
 
-	Face(Myst3Engine *vm);
+	Face(Myst3Engine *vm, bool is3D = false);
 	~Face();
 
 	void setTextureFromJPEG(const ResourceDescription *jpegDesc);
@@ -59,6 +59,7 @@ private:
 	Common::Rect _textureDirtyRect;
 
 	Myst3Engine *_vm;
+	bool _is3D;
 };
 
 class SpotItemFace {

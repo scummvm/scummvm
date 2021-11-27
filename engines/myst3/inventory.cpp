@@ -55,7 +55,7 @@ Inventory::~Inventory() {
 void Inventory::initializeTexture() {
 	Graphics::Surface *s = _vm->loadTexture(1204);
 
-	_texture = _vm->_gfx->createTexture(s);
+	_texture = _vm->_gfx->createTexture2D(s);
 
 	s->free();
 	delete s;
@@ -345,7 +345,7 @@ DragItem::DragItem(Myst3Engine *vm, uint id):
 	_bink.start();
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
-	_texture = _vm->_gfx->createTexture(frame);
+	_texture = _vm->_gfx->createTexture2D(frame);
 }
 
 DragItem::~DragItem() {

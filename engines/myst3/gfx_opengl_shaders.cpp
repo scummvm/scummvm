@@ -115,7 +115,7 @@ ShaderRenderer::~ShaderRenderer() {
 	delete _textShader;
 }
 
-Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
+Texture *ShaderRenderer::createTexture3D(const Graphics::Surface *surface) {
 	return new OpenGLTexture(surface);
 }
 

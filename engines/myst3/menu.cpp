@@ -63,7 +63,7 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 	_bink.start();
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
-	_texture = _vm->_gfx->createTexture(frame);
+	_texture = _vm->_gfx->createTexture2D(frame);
 
 	_vm->_sound->playEffect(699, 10);
 }
