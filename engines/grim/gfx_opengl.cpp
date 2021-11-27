@@ -27,7 +27,6 @@
 #if defined(USE_OPENGL_GAME)
 
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 
 #include "math/glmath.h"
 
@@ -1062,7 +1061,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(const_cast<void  *>(bitmap->getImageData(pic).getPixels()));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(zbufPtr + i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
@@ -1095,7 +1094,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
 		byte *texData = nullptr;
-		byte *texOut = nullptr;
+		const byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
 		GLint type = GL_UNSIGNED_BYTE;
@@ -1115,7 +1114,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+				const uint16 *bitmapData = reinterpret_cast<const uint16 *>(bitmap->getImageData(pic).getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1134,9 +1133,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				texOut = texData;
 			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
 				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
 			} else {
-				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -1253,7 +1252,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
+			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (const char *)bitmap->getData(bitmap->getActiveImage() - 1).getPixels());
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
@@ -1691,7 +1690,7 @@ void GfxOpenGL::destroyTexture(Texture *texture) {
 	}
 }
 
-void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, const char *data) {
 	//if (num != 0) {
 	//  warning("Animation not handled yet in GL texture path");
 	//}
@@ -1918,13 +1917,16 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 }
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
-	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	Graphics::Surface src;
+	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	if (useStored) {
-		memcpy(src.getRawBuffer(), _storedDisplay, _screenWidth * _screenHeight * 4);
+		memcpy(src.getPixels(), _storedDisplay, _screenWidth * _screenHeight * 4);
 	} else {
-		glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
+		glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getPixels());
 	}
-	return createScreenshotBitmap(src, w, h, false);
+	Bitmap *bmp = createScreenshotBitmap(&src, w, h, false);
+	src.free();
+	return bmp;
 }
 
 void GfxOpenGL::storeDisplay() {

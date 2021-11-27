@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include "graphics/pixelbuffer.h"
+#include "graphics/surface.h"
 #include "graphics/renderer.h"
 
 #include "math/matrix3.h"
@@ -40,7 +40,6 @@
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/localize.h"
-
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
@@ -513,7 +512,6 @@ void Lua_V1::GetCurrentScript() {
 
 void Lua_V1::GetSaveGameImage() {
 	int width = 250, height = 188;
-	Bitmap *screenshot;
 	int dataSize;
 
 	lua_Object param = lua_getparam(1);
@@ -533,8 +531,9 @@ void Lua_V1::GetSaveGameImage() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	Graphics::PixelBuffer buf(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), (byte *)data);
-	screenshot = new Bitmap(buf, width, height, "screenshot");
+	Graphics::Surface buf;
+	buf.init(width, height, width * 2, (void *)data, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	Bitmap *screenshot = new Bitmap(buf, width, height, "screenshot");
 	delete[] data;
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));

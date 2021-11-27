@@ -45,7 +45,6 @@
 #if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/bitmap.h"
@@ -1294,7 +1293,7 @@ void GfxOpenGLS::destroyTexture(Texture *texture) {
 void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(const_cast<void *>(bitmap->getImageData(pic).getPixels()));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(zbufPtr + i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
@@ -1314,7 +1313,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
 		byte *texData = nullptr;
-		byte *texOut = nullptr;
+		const byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
 		GLint type = GL_UNSIGNED_BYTE;
@@ -1328,7 +1327,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+				const uint16 *bitmapData = reinterpret_cast<const uint16 *>(bitmap->getImageData(pic).getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1347,9 +1346,9 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 				texOut = texData;
 			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
 				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
 			} else {
-				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
 			}
 
 			int actualWidth = nextHigher2(bitmap->_width);
@@ -1444,7 +1443,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 	} else {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
+			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)const_cast<void *>(bitmap->getData(bitmap->getActiveImage() - 1).getPixels()));
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
@@ -2189,7 +2188,10 @@ static void readPixels(int x, int y, int width, int height, byte *buffer) {
 }
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
-	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	Graphics::Surface src;
+	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Bitmap *bmp;
+
 	if (useStored) {
 #ifdef USE_GLES2
 		GLuint frameBuffer;
@@ -2197,7 +2199,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _storedDisplay, 0);
 
-		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
+		readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &frameBuffer);
@@ -2206,16 +2208,18 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 		char *buffer = new char[_screenWidth * _screenHeight * 4];
 
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		byte *rawBuf = src.getRawBuffer();
+		byte *rawBuf = (byte *)src.getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memcpy(&(rawBuf[(_screenHeight - i - 1) * _screenWidth * 4]), &buffer[4 * _screenWidth * i], _screenWidth * 4);
 		}
 		delete[] buffer;
 #endif
 	} else {
-		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
+		readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
 	}
-	return createScreenshotBitmap(src, w, h, true);
+	bmp = createScreenshotBitmap(&src, w, h, true);
+	src.free();
+	return bmp;
 }
 
 void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {

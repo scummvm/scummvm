@@ -135,7 +135,7 @@ public:
 
 protected:
 	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
-	void drawDepthBitmap(int x, int y, int w, int h, char *data);
+	void drawDepthBitmap(int x, int y, int w, int h, const char *data);
 	void initExtensions();
 private:
 	GLuint _emergFont;

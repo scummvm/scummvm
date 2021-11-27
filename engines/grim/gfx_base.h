@@ -26,7 +26,6 @@
 #include "math/vector3d.h"
 #include "math/quat.h"
 
-#include "graphics/pixelbuffer.h"
 #include "common/str.h"
 #include "common/rect.h"
 
@@ -275,7 +274,7 @@ public:
 
 	virtual void setBlendMode(bool additive) = 0;
 protected:
-	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);
+	Bitmap *createScreenshotBitmap(Graphics::Surface *src, int w, int h, bool flipOrientation);
 	static const unsigned int _numSpecialtyTextures = 22;
 	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;

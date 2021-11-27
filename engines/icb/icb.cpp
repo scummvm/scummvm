@@ -39,7 +39,6 @@
 
 #include "audio/mixer.h"
 
-#include "graphics/pixelbuffer.h"
 
 namespace ICB {
 

@@ -33,7 +33,6 @@
 #include "engines/icb/common/px_types.h"
 
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 
 namespace ICB {
 

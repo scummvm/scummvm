@@ -36,7 +36,6 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
 namespace Stark {
@@ -176,13 +175,13 @@ Common::Rect TinyGLDriver::getUnscaledViewport() const {
 }
 
 Graphics::Surface *TinyGLDriver::getViewportScreenshot() const {
-	Graphics::Surface *tmp = new Graphics::Surface();
-	tmp->create(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
+	Graphics::Surface *tmp = _fb->copyToBuffer(getRGBAPixelFormat());
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
-	Graphics::PixelBuffer buf(tmp->format, (byte *)tmp->getPixels());
-	_fb->copyToBuffer(buf);
-	s->copyRectToSurface(tmp->getBasePtr(_viewport.left, _viewport.top), tmp->pitch, 0, 0, _viewport.width(), _viewport.height());
+	byte *src = (byte *)tmp->getPixels();
+	s->copyRectToSurface(src + tmp->pitch * _viewport.top + _viewport.left * tmp->format.bytesPerPixel,
+	                     tmp->pitch, 0, 0, _viewport.width(), _viewport.height());
+	tmp->free();
 	delete tmp;
 	return s;
 }

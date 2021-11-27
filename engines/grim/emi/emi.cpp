@@ -29,8 +29,8 @@
 #include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/actor.h"
-#include "graphics/pixelbuffer.h"
 
+#include "graphics/surface.h"
 
 namespace Grim {
 
@@ -222,19 +222,19 @@ void EMIEngine::storeSaveGameImage(SaveGame *state) {
 	// copy the actual screenshot to the correct position
 	unsigned int texWidth = 256, texHeight = 128;
 	unsigned int size = texWidth * texHeight;
-	Graphics::PixelBuffer buffer(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), size, DisposeAfterUse::YES);
-	buffer.clear(size);
-	for (unsigned int j = 0; j < 120; j++) {
-		buffer.copyBuffer(j * texWidth, j * width, width, screenshot->getData(0));
-	}
+	Graphics::Surface tmp = screenshot->getData(0);
+	Graphics::Surface *buffer = tmp.scale(texWidth, texHeight, true);
+	buffer->convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	state->beginSection('SIMG');
-	uint16 *data = (uint16 *)buffer.getRawBuffer();
+	uint16 *data = (uint16 *)buffer->getPixels();
 	for (unsigned int l = 0; l < size; l++) {
 		state->writeLEUint16(data[l]);
 	}
 	state->endSection();
 	delete screenshot;
+	buffer->free();
+	delete buffer;
 }
 
 void EMIEngine::temporaryStoreSaveGameImage() {

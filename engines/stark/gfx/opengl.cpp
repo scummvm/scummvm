@@ -36,7 +36,6 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
 namespace Stark {

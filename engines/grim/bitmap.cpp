@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 
-#include "graphics/pixelbuffer.h"
 #include "image/tga.h"
 
 #include "engines/grim/savegame.h"
@@ -137,19 +136,19 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	_colorFormat = BM_RGB565;
 	_hasTransparency = false;
 
-	_data = new Graphics::PixelBuffer[_numImages];
+	_data = new Graphics::Surface[_numImages];
 	data->seek(0x80, SEEK_SET);
 	for (int i = 0; i < _numImages; i++) {
 		data->seek(8, SEEK_CUR);
-		_data[i].create(pixelFormat, _width * _height, DisposeAfterUse::YES);
+		_data[i].create(_width, _height, pixelFormat);
 		if (codec == 0) {
 			uint32 dsize = _bpp / 8 * _width * _height;
-			data->read(_data[i].getRawBuffer(), dsize);
+			data->read(_data[i].getPixels(), dsize);
 		} else if (codec == 3) {
 			int compressed_len = data->readUint32LE();
 			char *compressed = new char[compressed_len];
 			data->read(compressed, compressed_len);
-			bool success = decompress_codec3(compressed, (char *)_data[i].getRawBuffer(), _bpp / 8 * _width * _height);
+			bool success = decompress_codec3(compressed, (char *)_data[i].getPixels(), _bpp / 8 * _width * _height);
 			delete[] compressed;
 			if (!success)
 				warning(".. when loading image %s.", _fname.c_str());
@@ -158,7 +157,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 
 #ifdef SCUMM_BIG_ENDIAN
 		if (_format == 1) {
-			uint16 *d = (uint16 *)_data[i].getRawBuffer();
+			uint16 *d = (uint16 *)_data[i].getPixels();
 			for (int j = 0; j < _width * _height; ++j) {
 				d[j] = SWAP_BYTES_16(d[j]);
 			}
@@ -175,7 +174,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	return true;
 }
 
-BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) : _fname(fname) {
+BitmapData::BitmapData(const Graphics::Surface &buf, int w, int h, const char *fname) : _fname(fname) {
 	_refCount = 1;
 	Debug::debug(Debug::Bitmaps, "New bitmap loaded: %s\n", fname);
 	_numImages = 1;
@@ -186,12 +185,11 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_format = 1;
 	_numTex = 0;
 	_texIds = nullptr;
-	_bpp = buf.getFormat().bytesPerPixel * 8;
+	_bpp = buf.format.bytesPerPixel * 8;
 	_hasTransparency = false;
 	_colorFormat = BM_RGB565;
-	_data = new Graphics::PixelBuffer[_numImages];
-	_data[0].create(buf.getFormat(), w * h, DisposeAfterUse::YES);
-	_data[0].copyBuffer(0, w * h, buf);
+	_data = new Graphics::Surface[_numImages];
+	_data[0].copyFrom(buf);
 	_loaded = true;
 	_keepData = true;
 
@@ -258,8 +256,8 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 	_bpp = 4;
 	_colorFormat = BM_RGBA;
 	_numImages = 1;
-	_data = new Graphics::PixelBuffer[1];
-	_data[0].set(pixelFormat, (unsigned char *)surf->getPixels());
+	_data = new Graphics::Surface[1];
+	_data[0].init(surf->w, surf->h, surf->pitch, surf->getPixels(), surf->format);
 
 	g_driver->createBitmap(this);
 
@@ -305,9 +303,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	}
 
 	o->seek(16, SEEK_CUR);
-	int numSubImages = o->readUint32LE();
-
-	char **data = new char *[numSubImages];
+	_numImages = o->readUint32LE();
 
 	o->seek(16, SEEK_CUR);
 	_bpp = o->readUint32LE();
@@ -318,12 +314,16 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	_height = o->readUint32LE();
 	o->seek(-8, SEEK_CUR);
 
-	int size = 4 * _width * _height;
-	for (int i = 0; i < numSubImages; ++i) {
-		data[i] = new char[size];
+	_data = new Graphics::Surface[_numImages];
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	int width = 256;
+	int height = 256;
+
+	for (int i = 0; i < _numImages; ++i) {
+		_data[i].create(width, height, pixelFormat);
 		o->seek(8, SEEK_CUR);
 		if (_bpp == 16) {
-			uint32 *d = (uint32 *)data[i];
+			uint32 *d = (uint32 *)_data[i].getPixels();
 			for (int j = 0; j < _width * _height; ++j) {
 				uint16 p = o->readUint16LE();
 				// These values are shifted left by 3 so that they saturate the color channel
@@ -336,34 +336,24 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 				WRITE_BE_UINT32(&d[j], tmp);
 			}
 		} else if (_bpp == 32) {
-			uint32 *d = (uint32 *)data[i];
+			uint32 *d = (uint32 *)_data[i].getPixels();
 			for (int j = 0; j < _width * _height; ++j) {
 				o->read(&(d[j]), 4);
 			}
 		}
 	}
+
 	_bpp = 32;
-
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	_colorFormat = BM_RGBA;
-
-	_width = 256;
-	_height = 256;
-	_numImages = numSubImages;
-	_data = new Graphics::PixelBuffer[_numImages];
-	for (int i = 0; i < _numImages; ++i) {
-		_data[i].create(pixelFormat, _width * _height, DisposeAfterUse::YES);
-		_data[i].set(pixelFormat, (byte *)data[i]);
-	}
-
-	delete[] data;
+	_width = width;
+	_height = height;
 
 	g_driver->createBitmap(this);
 #endif // ENABLE_MONKEY4
 	return true;
 }
 
-const Graphics::PixelBuffer &BitmapData::getImageData(int num) const {
+const Graphics::Surface &BitmapData::getImageData(int num) const {
 	assert(num >= 0);
 	assert(num < _numImages);
 	return _data[num];
@@ -376,7 +366,7 @@ Bitmap::Bitmap(const Common::String &fname) {
 	_currImage = 1;
 }
 
-Bitmap::Bitmap(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) {
+Bitmap::Bitmap(const Graphics::Surface &buf, int w, int h, const char *fname) {
 	_data = new BitmapData(buf, w, h, fname);
 	_currImage = 1;
 }
@@ -467,18 +457,14 @@ Bitmap::~Bitmap() {
 }
 
 const Graphics::PixelFormat &Bitmap::getPixelFormat(int num) const {
-	return getData(num).getFormat();
+	return getData(num).format;
 }
 
 void BitmapData::convertToColorFormat(int num, const Graphics::PixelFormat &format) {
-	if (_data[num].getFormat() == format) {
+	if (_data[num].format == format) {
 		return;
 	}
-
-	Graphics::PixelBuffer dst(format, _width * _height, DisposeAfterUse::NO);
-	dst.copyBuffer(0, _width * _height, _data[num]);
-	_data[num].free();
-	_data[num] = dst;
+	_data[num].convertToInPlace(format);
 }
 
 void BitmapData::convertToColorFormat(const Graphics::PixelFormat &format) {

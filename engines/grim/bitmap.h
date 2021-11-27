@@ -32,7 +32,7 @@
 #include "engines/grim/pool.h"
 
 namespace Graphics {
-class PixelBuffer;
+struct Surface;
 }
 
 namespace Common {
@@ -51,7 +51,7 @@ namespace Grim {
 class BitmapData {
 public:
 	BitmapData(const Common::String &fname);
-	BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname);
+	BitmapData(const Graphics::Surface &buf, int w, int h, const char *fname);
 	BitmapData();
 	~BitmapData();
 
@@ -72,7 +72,7 @@ public:
 	static BitmapData *getBitmapData(const Common::String &fname);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
-	const Graphics::PixelBuffer &getImageData(int num) const;
+	const Graphics::Surface &getImageData(int num) const;
 
 	/**
 	 * Convert a bitmap to another color-format.
@@ -120,7 +120,7 @@ public:
 	uint32 _numLayers;
 
 // private:
-	Graphics::PixelBuffer *_data;
+	Graphics::Surface *_data;
 	void *_userData;
 };
 
@@ -134,7 +134,7 @@ public:
 	 * @param len       the length of the data
 	 */
 	Bitmap(const Common::String &filename);
-	Bitmap(const Graphics::PixelBuffer &buf, int width, int height, const char *filename);
+	Bitmap(const Graphics::Surface &buf, int width, int height, const char *filename);
 	Bitmap();
 
 	static int32 getStaticTag() { return MKTAG('V', 'B', 'U', 'F'); }
@@ -163,8 +163,8 @@ public:
 	int getWidth() const { return _data->_width; }
 	int getHeight() const { return _data->_height; }
 
-	const Graphics::PixelBuffer &getData(int num) const { return _data->getImageData(num); }
-	const Graphics::PixelBuffer &getData() const { return getData(_currImage); }
+	const Graphics::Surface &getData(int num) const { return _data->getImageData(num); }
+	const Graphics::Surface &getData() const { return getData(_currImage); }
 	BitmapData *getBitmapData() const { return _data; }
 	void *getTexIds() const { return _data->_texIds; }
 	int getNumTex() const { return _data->_numTex; }

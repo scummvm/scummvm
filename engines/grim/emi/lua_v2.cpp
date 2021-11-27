@@ -24,21 +24,19 @@
 #include "common/foreach.h"
 #include "common/savefile.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/lua/lauxlib.h"
-#include "graphics/pixelbuffer.h"
-
 #include "engines/grim/resource.h"
 #include "engines/grim/set.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/font.h"
-
 #include "engines/grim/emi/layer.h"
 #include "engines/grim/emi/emi.h"
-
 #include "engines/grim/movie/movie.h"
 
 namespace Grim {
@@ -507,7 +505,8 @@ void Lua_V2::ThumbnailFromFile() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	Graphics::PixelBuffer buf(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), (byte *)data);
+	Graphics::Surface buf;
+	buf.init(width, height, width * 2, (void *)data, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	Bitmap *screenshot = new Bitmap(buf, width, height, "screenshot");
 	if (!screenshot) {
 		lua_pushnil();
@@ -519,7 +518,7 @@ void Lua_V2::ThumbnailFromFile() {
 	}
 
 	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	g_driver->createSpecialtyTexture(index, screenshot->getData(0).getRawBuffer(), width, height);
+	g_driver->createSpecialtyTexture(index, (const uint8 *)screenshot->getData(0).getPixels(), width, height);
 	delete screenshot;
 	delete[] data;
 	savedState->endSection();

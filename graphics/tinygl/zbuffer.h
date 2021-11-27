@@ -30,8 +30,10 @@
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/surface.h"
 #include "graphics/tinygl/texelbuffer.h"
 #include "graphics/tinygl/gl.h"
+
 #include "common/rect.h"
 
 namespace TinyGL {
@@ -111,7 +113,7 @@ struct FrameBuffer {
 	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
 	byte *getPixelBuffer() {
-		return pbuf.getRawBuffer(0);
+		return pbuf.getRawBuffer();
 	}
 
 	unsigned int *getZBuffer() {
@@ -375,12 +377,10 @@ struct FrameBuffer {
 		}
 	}
 
-	void copyToBuffer(Graphics::PixelBuffer &buf) {
-		buf.copyBuffer(0, xsize * ysize, pbuf);
-	}
-
-	void copyFromBuffer(Graphics::PixelBuffer buf) {
-		pbuf.copyBuffer(0, xsize * ysize, buf);
+	Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat) {
+		Graphics::Surface tmp;
+		tmp.init(xsize, ysize, linesize, pbuf.getRawBuffer(), cmode);
+		return tmp.convertTo(dstFormat);
 	}
 
 	void enableBlending(bool enable) {

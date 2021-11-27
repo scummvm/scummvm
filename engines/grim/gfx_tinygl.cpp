@@ -49,8 +49,8 @@ GfxBase *CreateGfxTinyGL() {
 
 GfxTinyGL::GfxTinyGL() :
 		_zb(nullptr), _alpha(1.f),
-		_currentActor(nullptr), _smushImage(nullptr) {
-	_storedDisplay = nullptr;
+		_currentActor(nullptr), _smushImage(nullptr),
+		_storedDisplay(nullptr) {
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
 	// That's necessary for EMI where some models have multiple faces which
@@ -63,6 +63,8 @@ GfxTinyGL::GfxTinyGL() :
 }
 
 GfxTinyGL::~GfxTinyGL() {
+	_storedDisplay->free();
+	delete _storedDisplay;
 	releaseMovieFrame();
 	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 		destroyTexture(&_specialtyTextures[i]);
@@ -90,8 +92,8 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	TinyGL::glInit(_zb, 256);
 	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
-	_storedDisplay.create(_pixelFormat, _gameWidth * _gameHeight, DisposeAfterUse::YES);
-	_storedDisplay.clear(_gameWidth * _gameHeight);
+	_storedDisplay = new Graphics::Surface;
+	_storedDisplay->create(_gameWidth, _gameHeight, _pixelFormat);
 
 	_currentShadowArray = nullptr;
 
@@ -886,8 +888,10 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
-			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+			Graphics::Surface buffer;
+			buffer.create(bitmap->_width, bitmap->_height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+			uint32 *buf = (uint32 *)buffer.getPixels();
+			const uint16 *bufPtr = (const uint16 *)(bitmap->getImageData(pic).getPixels());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(bufPtr + i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
@@ -896,29 +900,16 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				}
 				buf[i] = ((uint32)val) * 0x10000 / 100 / (0x10000 - val) << 14;
 			}
-			delete[] bufPtr;
-			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
+			bitmap->_data[pic].free();
+			bitmap->_data[pic] = buffer;
 			imgs[pic] = Graphics::tglGenBlitImage();
-			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(pic);
-			Graphics::Surface sourceSurface;
-			sourceSurface.setPixels(imageBuffer.getRawBuffer());
-			sourceSurface.format = imageBuffer.getFormat();
-			sourceSurface.w = bitmap->_width;
-			sourceSurface.h = bitmap->_height;
-			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
-			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
+			Graphics::tglUploadBlitImage(imgs[pic], bitmap->_data[pic], 0, false);
 		}
 	} else {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
-			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(i);
-			Graphics::Surface sourceSurface;
-			sourceSurface.setPixels(imageBuffer.getRawBuffer());
-			sourceSurface.format = imageBuffer.getFormat();
-			sourceSurface.w = bitmap->_width;
-			sourceSurface.h = bitmap->_height;
-			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
-			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, sourceSurface.format.ARGBToColor(0, 255, 0, 255), true);
+			const Graphics::Surface &imageBuffer = bitmap->getImageData(i);
+			Graphics::tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
 		}
 	}
 }
@@ -1051,33 +1042,27 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 			startColumn += font->getCharKernedWidth(ch);
 		}
 
-		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::YES);
+		Graphics::Surface buf;
+		buf.create(width, height, _pixelFormat);
 
 		uint8 *bitmapData = _textBitmap;
-
-		int txData = 0;
-		for (int i = 0; i < width * height; i++, txData++, bitmapData++) {
-			byte pixel = *bitmapData;
-			if (pixel == 0x00) {
-				buf.setPixelAt(txData, kKitmapColorkey);
-			} else if (pixel == 0x80) {
-				buf.setPixelAt(txData, blackColor);
-			} else if (pixel == 0xFF) {
-				buf.setPixelAt(txData, color);
+		for (int iy = 0; iy < height; iy++) {
+			for (int ix = 0; ix < width; ix++, bitmapData++) {
+				byte pixel = *bitmapData;
+				if (pixel == 0x00) {
+					buf.setPixel(ix, iy, kKitmapColorkey);
+				} else if (pixel == 0x80) {
+					buf.setPixel(ix, iy, blackColor);
+				} else if (pixel == 0xFF) {
+					buf.setPixel(ix, iy, color);
+				}
 			}
 		}
 
 		userData[j].width = width;
 		userData[j].height = height;
-
-		Graphics::Surface sourceSurface;
-		sourceSurface.setPixels(buf.getRawBuffer());
-		sourceSurface.format = buf.getFormat();
-		sourceSurface.w = width;
-		sourceSurface.h = height;
-		sourceSurface.pitch = sourceSurface.w * buf.getFormat().bytesPerPixel;
 		userData[j].image = Graphics::tglGenBlitImage();
-		Graphics::tglUploadBlitImage(userData[j].image, sourceSurface, kKitmapColorkey, true);
+		Graphics::tglUploadBlitImage(userData[j].image, buf, kKitmapColorkey, true);
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
 
@@ -1087,6 +1072,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 				userData[j].y = 0;
 		}
 
+		buf.free();
 		delete[] _textBitmap;
 	}
 }
@@ -1253,13 +1239,16 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 }
 
 Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
+	Bitmap *bmp;
 	if (useStored) {
-		return createScreenshotBitmap(_storedDisplay, w, h, true);
+		bmp = createScreenshotBitmap(_storedDisplay, w, h, true);
 	} else {
-		Graphics::PixelBuffer src(_pixelFormat, _screenWidth * _screenHeight, DisposeAfterUse::YES);
-		_zb->copyToBuffer(src);
-		return createScreenshotBitmap(src, w, h, true);
+		Graphics::Surface *src = _zb->copyToBuffer(_pixelFormat);
+		bmp = createScreenshotBitmap(src, w, h, true);
+		src->free();
+		delete src;
 	}
+	return bmp;
 }
 
 void GfxTinyGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
@@ -1269,7 +1258,9 @@ void GfxTinyGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, in
 
 void GfxTinyGL::storeDisplay() {
 	TinyGL::tglPresentBuffer();
-	_zb->copyToBuffer(_storedDisplay);
+	_storedDisplay->free();
+	delete _storedDisplay;
+	_storedDisplay = _zb->copyToBuffer(_pixelFormat);
 }
 
 void GfxTinyGL::copyStoredToDisplay() {

@@ -34,7 +34,6 @@
 #include "engines/stark/gfx/openglsfade.h"
 #include "engines/stark/gfx/opengltexture.h"
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/shader.h"
 

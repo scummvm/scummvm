@@ -27,6 +27,10 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace Graphics {
+	struct Surface;
+}
+
 namespace Grim {
 
 class ModelNode;
@@ -132,7 +136,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::BlitImage *_emergFont[96];
 	Graphics::BlitImage *_smushImage;
-	Graphics::PixelBuffer _storedDisplay;
+	Graphics::Surface *_storedDisplay;
 	float _alpha;
 	const Actor *_currentActor;
 	TGLenum _depthFunc;

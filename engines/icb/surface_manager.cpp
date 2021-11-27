@@ -244,15 +244,11 @@ void _surface_manager::Flip() {
 
 	flipTime = GetMicroTimer();
 
-	Graphics::PixelBuffer srcBuf;
-	srcBuf.set(screenSurface->format, (byte *)screenSurface->getPixels());
-	Graphics::PixelBuffer dstBuf;
-	dstBuf.create(g_system->getScreenFormat(), screenSurface->w * screenSurface->h, DisposeAfterUse::YES);
-	dstBuf.copyBuffer(0, screenSurface->w * screenSurface->h, srcBuf);
-
-	g_system->copyRectToScreen(dstBuf.getRawBuffer(), screenSurface->pitch,
-	                           0, 0, screenSurface->w, screenSurface->h);
+	Graphics::Surface *dstBuf = screenSurface->convertTo(g_system->getScreenFormat());
+	g_system->copyRectToScreen(dstBuf->getPixels(), dstBuf->pitch, 0, 0, dstBuf->w, dstBuf->h);
 	g_system->updateScreen();
+	dstBuf->free();
+	delete dstBuf;
 
 	flipTime = GetMicroTimer() - flipTime;
 

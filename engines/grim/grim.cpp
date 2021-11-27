@@ -39,7 +39,6 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
@@ -1314,7 +1313,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
 		screenshot->setActiveImage(0);
 		screenshot->getBitmapData()->convertToColorFormat(image_format);
-		uint16 *data = (uint16 *)screenshot->getData().getRawBuffer();
+		const uint16 *data = (const uint16 *)screenshot->getData().getPixels();
 		for (int l = 0; l < size; l++) {
 			state->writeLEUint16(data[l]);
 		}
