@@ -47,7 +47,6 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	wincursor.o \
 	yuv_to_rgb.o \
-	pixelbuffer.o \
 	opengl/context.o \
 	opengl/framebuffer.o \
 	opengl/texture.o \
@@ -72,6 +71,7 @@ MODULE_OBJS += \
 	tinygl/matrix.o \
 	tinygl/memory.o \
 	tinygl/misc.o \
+	tinygl/pixelbuffer.o \
 	tinygl/select.o \
 	tinygl/specbuf.o \
 	tinygl/texture.o \

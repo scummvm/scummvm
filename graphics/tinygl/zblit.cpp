@@ -26,10 +26,11 @@
  * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
  */
 
+#include "common/array.h"
+
 #include "graphics/tinygl/zblit.h"
 #include "graphics/tinygl/zgl.h"
-#include "graphics/pixelbuffer.h"
-#include "common/array.h"
+#include "graphics/tinygl/pixelbuffer.h"
 #include "graphics/tinygl/zdirtyrect.h"
 #include "graphics/tinygl/gl.h"
 #include <math.h>

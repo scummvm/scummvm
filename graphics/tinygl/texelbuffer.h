@@ -23,7 +23,7 @@
 #ifndef GRAPHICS_TEXELBUFFER_H
 #define GRAPHICS_TEXELBUFFER_H
 
-#include "graphics/pixelbuffer.h"
+#include "graphics/tinygl/pixelbuffer.h"
 
 namespace Graphics {
 

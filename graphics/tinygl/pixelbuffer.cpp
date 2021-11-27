@@ -20,7 +20,7 @@
  *
  */
 
-#include "graphics/pixelbuffer.h"
+#include "graphics/tinygl/pixelbuffer.h"
 
 namespace Graphics {
 

@@ -29,8 +29,8 @@
 #ifndef GRAPHICS_TINYGL_ZBUFFER_H_
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
+#include "graphics/tinygl/pixelbuffer.h"
 #include "graphics/tinygl/texelbuffer.h"
 #include "graphics/tinygl/gl.h"
 
