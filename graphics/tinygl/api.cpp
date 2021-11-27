@@ -451,9 +451,12 @@ void tglLightfv(int light, int type, const float *v) {
 	p[0].op = TinyGL::OP_Light;
 	p[1].i = light;
 	p[2].i = type;
-	// TODO: 3 composants
-	for (int i = 0; i < 4; i++)
-		p[3 + i].f = v[i];
+	for (int i = 0; i < 4; i++) {
+		if (type != TGL_SPOT_DIRECTION)
+			p[3 + i].f = v[i];
+		else
+			p[3 + i].f = 0.0f;
+	}
 
 	TinyGL::gl_add_op(p);
 }
