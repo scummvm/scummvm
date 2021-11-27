@@ -81,7 +81,7 @@ Face::~Face() {
 	}
 
 	if (_texture) {
-		_vm->_gfx->freeTexture(_texture);
+		delete _texture;
 	}
 }
 

@@ -86,7 +86,7 @@ void Renderer::initFont(const Graphics::Surface *surface) {
 
 void Renderer::freeFont() {
 	if (_font) {
-		freeTexture(_font);
+		delete _font;
 		_font = nullptr;
 	}
 }

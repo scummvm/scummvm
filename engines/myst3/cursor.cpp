@@ -126,7 +126,7 @@ void Cursor::loadAvailableCursors() {
 Cursor::~Cursor() {
 	// Free cursors textures
 	for (TextureMap::iterator it = _textures.begin(); it != _textures.end(); it++) {
-		_vm->_gfx->freeTexture(it->_value);
+		delete it->_value;
 	}
 }
 

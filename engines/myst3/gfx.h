@@ -93,6 +93,8 @@ public:
 
 class Texture {
 public:
+	virtual ~Texture() {}
+
 	uint width;
 	uint height;
 	Graphics::PixelFormat format;
@@ -101,9 +103,6 @@ public:
 	virtual void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) = 0;
 
 	static const Graphics::PixelFormat getRGBAPixelFormat();
-protected:
-	Texture() {}
-	virtual ~Texture() {}
 };
 
 class Renderer {
@@ -123,7 +122,6 @@ public:
 	virtual void freeFont();
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
-	virtual void freeTexture(Texture *texture) = 0;
 
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,

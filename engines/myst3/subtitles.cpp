@@ -517,7 +517,7 @@ Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
 
 void Subtitles::freeTexture() {
 	if (_texture) {
-		_vm->_gfx->freeTexture(_texture);
+		delete _texture;
 		_texture = nullptr;
 	}
 }

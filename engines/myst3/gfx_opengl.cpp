@@ -49,11 +49,6 @@ Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
 	return new OpenGLTexture(surface);
 }
 
-void OpenGLRenderer::freeTexture(Texture *texture) {
-	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
-	delete glTexture;
-}
-
 void OpenGLRenderer::init() {
 	debug("Initializing OpenGL Renderer");
 

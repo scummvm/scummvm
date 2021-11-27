@@ -49,7 +49,7 @@ Inventory::Inventory(Myst3Engine *vm) :
 }
 
 Inventory::~Inventory() {
-	_vm->_gfx->freeTexture(_texture);
+	delete _texture;
 }
 
 void Inventory::initializeTexture() {
@@ -349,7 +349,7 @@ DragItem::DragItem(Myst3Engine *vm, uint id):
 }
 
 DragItem::~DragItem() {
-	_vm->_gfx->freeTexture(_texture);
+	delete _texture;
 }
 
 void DragItem::drawOverlay() {

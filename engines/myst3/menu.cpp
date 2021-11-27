@@ -69,7 +69,7 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 }
 
 Dialog::~Dialog() {
-	_vm->_gfx->freeTexture(_texture);
+	delete _texture;
 }
 
 void Dialog::draw() {

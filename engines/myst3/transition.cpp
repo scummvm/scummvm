@@ -46,8 +46,7 @@ Transition::Transition(Myst3Engine *vm) :
 }
 
 Transition::~Transition() {
-	_vm->_gfx->freeTexture(_sourceScreenshot);
-
+	delete _sourceScreenshot;
 	delete _frameLimiter;
 }
 
@@ -124,8 +123,8 @@ void Transition::draw(TransitionType type) {
 		}
 	}
 
-	_vm->_gfx->freeTexture(targetScreenshot);
-	_vm->_gfx->freeTexture(_sourceScreenshot);
+	delete targetScreenshot;
+	delete _sourceScreenshot;
 	_sourceScreenshot = nullptr;
 }
 
