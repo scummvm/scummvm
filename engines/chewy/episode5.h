@@ -34,6 +34,7 @@ int r66_proc7();
 
 int r71_proc1();
 int r71_proc6();
+void r71_proc7();
 
 int r73_proc1();
 int r73_proc2();
@@ -56,6 +57,7 @@ void r82_talk2();
 void r82_talk3();
 int r82_proc3();
 int r82_proc6();
+void r82_proc8();
 int r82_proc9();
 
 void r84_talk1();

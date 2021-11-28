@@ -2449,51 +2449,254 @@ int16 calc_person_click(int16 p_nr) {
 }
 
 void calc_person_dia(int16 p_nr) {
-	int16 room_nr;
-	room_nr = false;
+	bool flag = false;
+	int16 room_nr = 0;
+	int i;
+
 	switch (p_nr) {
 	case P_HOWARD:
 	case P_NICHELLE:
-		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-		case 69:
+		switch (_G(spieler).PersonRoomNr[P_CHEWY] - 28) {
+		case 0:
+			_G(spieler).PersonDia[p_nr] = (p_nr == P_HOWARD) ? 545 : 547;
+			break;
+
+		case 18:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 542;
+			break;
+
+		case 28:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 543;
+			break;
+
+		case 38:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 540;
+			break;
+
+		case 39:
+			_G(spieler).PersonDia[p_nr] = 501;
+			break;
+
+		case 40:
+			_G(spieler).PersonDia[p_nr] = 500;
+			break;
+
+		case 41:
+			_G(spieler).PersonDia[p_nr] = 492;
+			break;
+
+		case 42:
+			if (_G(spieler).flags32_10) {
+				_G(spieler).PersonDia[p_nr] = 465;
+				if (_G(spieler).flags30_80 && !_G(spieler).flags31_1)
+					_G(spieler).PersonDia[p_nr] = 466;
+			}
+			break;
+
+		case 43:
+			if (p_nr == P_HOWARD) {
+				_G(spieler).PersonDiaRoom[1] = 1;
+				_G(spieler).PersonDia[P_HOWARD] = 470;
+			} else {
+				_G(spieler).PersonDia[P_NICHELLE] = 536;
+			}
+			break;
+
+		case 45:
+			_G(spieler).PersonDia[p_nr] = _G(spieler).flags32_2 ? 469 : 467;
+			break;
+
+		case 46:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 535;
+			else
+				flag = true;
+			break;
+
+		case 47:
+			if (!_G(spieler).flags32_10)
+				_G(spieler).PersonDia[P_NICHELLE] = 536;
+			else if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[P_NICHELLE] = 534;
+			else
+				flag = true;
+			break;
+
+		case 51:
+			if (p_nr != P_NICHELLE)
+				flag = true;
+			else if (_G(spieler).flags30_10)
+				_G(spieler).PersonDia[p_nr] = 533;
+			else
+				r82_proc8();
+			break;
+
+		case 53:
+			if (!_G(spieler).flags30_2)
+				_G(spieler).PersonDia[p_nr] = 457;
+			else
+				flag = true;
+			break;
+
+		case 54:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 532;
+			else
+				flag = true;
+			break;
+
+		case 56:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 531;
+			else
+				flag = true;
+			break;
+
+		case 57:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 530;
+			else
+				flag = true;
+			break;
+
+		case 58:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 529;
+			else
+				flag = true;
+			break;
+
+		case 59:
+			if (p_nr == P_NICHELLE) {
+				if (!_G(spieler).flags28_4) {
+					r71_proc7();
+					_G(spieler).PersonDia[p_nr] = -1;
+				}
+			} else if (!_G(spieler).flags28_4) {
+				_G(spieler).PersonDia[p_nr] = 528;
+			} else {
+				flag = true;
+			}
+			break;
+
+		case 60:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 528;
+			else
+				flag = true;
+			break;
+
+		case 61:
 			_G(spieler).PersonDia[p_nr] = 381;
 			break;
 
-		default:
-			_G(spieler).PersonDia[p_nr] = _G(spieler).PersonGlobalDia[p_nr];
-			room_nr = _G(spieler).PersonDiaRoom[p_nr];
+		case 62:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 527;
+			else
+				flag = true;
 			break;
 
+		case 63:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 526;
+			else
+				flag = true;
+			break;
+
+		case 66:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 525;
+			else
+				flag = true;
+			break;
+
+		case 67:
+			if (_G(spieler).flags32_10)
+				_G(spieler).PersonDia[p_nr] = 507;
+			else
+				flag = true;
+			break;
+
+		case 68:
+			if (_G(spieler).flags32_10)
+				_G(spieler).PersonDia[p_nr] = 497;
+			else
+				flag = true;
+			break;
+
+		case 69:
+			if (p_nr == P_HOWARD) {
+				if (_G(spieler).ChewyAni != 5)
+					_G(spieler).PersonDia[p_nr] = 565;
+				else
+					flag = true;
+			}			
+			break;
+
+		default:
+			flag = true;
+			break;
 		}
+
+		if (flag) {
+			_G(spieler).PersonDia[p_nr] = _G(spieler).PersonGlobalDia[p_nr];
+			room_nr = _G(spieler).PersonDiaRoom[p_nr];
+		}
+
 		atds->set_string_end_func(&r65_atds_string_start);
+
 		if (!room_nr) {
 			if (_G(spieler).DiaAMov != -1)
 				auto_move(_G(spieler).DiaAMov, P_CHEWY);
-			room_nr = _G(spieler).PersonDiaRoom[p_nr];
-			_G(spieler).PersonDiaRoom[p_nr] = false;
+
+			int16 tmp[3];
+			for (i = 0; i < 3; ++i) {
+				tmp[i] = _G(spieler).PersonDiaRoom[i];
+				_G(spieler).PersonDiaRoom[i] = 0;
+				_G(stopAutoMove)[i] = true;
+			}
+
 			start_aad_wait(_G(spieler).PersonDia[p_nr], -1);
-			_G(spieler).PersonDiaRoom[p_nr] = room_nr;
+
+			for (i = 0; i < 3; ++i) {
+				_G(spieler).PersonDiaRoom[i] = tmp[i];
+				_G(stopAutoMove)[i] = false;
+			}
+
+			show_cur();
 		} else {
 			room_blk.AadLoad = false;
 			room_blk.AtsLoad = false;
 			_G(spieler).PersonDiaTmpRoom[p_nr] = _G(spieler).PersonRoomNr[P_CHEWY];
 			save_person_rnr();
-			if (p_nr == P_HOWARD)
+
+			if (p_nr == P_HOWARD) {
+				_G(spieler).PersonDiaRoom[0] = 1;
 				switch_room(65);
-			else if (p_nr == P_NICHELLE) {
+				_G(spieler).PersonDiaRoom[0] = 0;
+
+			} else if (p_nr == P_NICHELLE) {
 				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hide_cur();
 					start_aad_wait(_G(spieler).PersonDia[P_NICHELLE], -1);
+					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE] != 0;
 					show_cur();
 				} else {
 					start_ads_wait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
 				}
 			}
 		}
+
 		atds->set_string_end_func(&atds_string_start);
 		break;
 
+	default:
+		break;
 	}
 }
 
