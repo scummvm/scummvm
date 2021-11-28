@@ -71,6 +71,81 @@ public:
 	void copy(EfhGraphicsStruct *src);
 };
 
+struct InvObject {
+	int16 _ref;
+	uint8 _stat1;
+	uint8 _stat2;
+
+	void init();
+};
+
+struct ItemStruct {
+	char _name[15];
+	uint8 _damage;
+	uint8 _defense;
+	uint8 _attacks;
+	uint8 _uses;
+	uint8 field_13;
+	uint8 _range;
+	uint8 _attackType;
+	uint8 field_16;
+	uint8 field17_attackTypeDefense;
+	uint8 field_18;
+	uint8 field_19;
+	uint8 field_1A;
+
+	void init();
+};
+
+struct NPCStruct {
+	char _name[9];
+	uint8 field_9;
+	uint8 field_A;
+	uint8 field_B;
+	uint8 field_C;
+	uint8 field_D;
+	uint8 field_E;
+	uint8 field_F;
+	uint8 field_10;
+	uint8 field_11;
+	uint16 field_12;
+	uint16 field_14;
+	uint32 _xp;
+	uint8 _activeScore[15];
+	uint8 _passiveScore[11];
+	uint8 _infoScore[11];
+	uint8 field_3F;
+	uint8 field_40;
+	InvObject _inventory[10];
+	uint8 _possessivePronounSHL6;
+	uint8 _speed;
+	uint8 field_6B;
+	uint8 field_6C;
+	uint8 field_6D;
+	uint8 _unkItemId;
+	uint8 field_6F;
+	uint8 field_70;
+	uint8 field_71;
+	uint8 field_72;
+	uint8 field_73;
+	int16 _hitPoints;
+	int16 _maxHP;
+	uint8 field_78;
+	uint16 field_79;
+	uint16 field_7B;
+	uint8 field_7D;
+	uint8 field_7E;
+	uint8 field_7F;
+	uint8 field_80;
+	uint8 field_81;
+	uint8 field_82;
+	uint8 field_83;
+	uint8 field_84;
+	uint8 field_85;
+
+	void init();
+};
+
 struct FontDescr {
 	const uint8 *_widthArray;
 	const uint8 *_extraLines;
@@ -86,7 +161,7 @@ struct BufferBM {
 	uint16 _startX;
 	uint16 _startY;
 	uint16 _height;
-	uint16 _fieldA;
+	uint16 _lineDataSize;
 	uint8 _paletteTransformation;
 	uint16 _fieldD;
 };
@@ -158,7 +233,7 @@ private:
 	void loadAnimImageSet();
 	void loadHistory();
 	void loadTechMapImp(int16 fileId);
-	void loadPlacesFile(uint16 fullPlaceId, int16 unused, bool forceReloadFl);
+	void loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl);
 	void drawUnknownMenuBox();
 	void displayAnimFrame();
 	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
@@ -179,8 +254,8 @@ private:
 	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
 	void displayFctFullScreen();
-	void displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY);
-	void displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
+	void copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY);
+	void copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
 	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
 	void restoreAnimImageSetId();
 	void checkProtection();
@@ -193,20 +268,46 @@ private:
 	void displayFullScreenColoredMenuBox(int color);
 	Common::KeyCode handleAndMapInput(bool animFl);
 	void displayNextAnimFrame();
+	void writeTechAndMapFiles();
+	uint16 getStringWidth(char *buffer);
+	void setTextPos(int16 textPosX, int16 textPosY);
 
 	void sub15150(bool flag);
 	void sub12A7F();
 	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY);
 	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
+	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
+	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
+	void removeObject(int16 charId, int16 objectId);
+	void totalPartyKill();
+	int16 getRandom(int16 maxVal);
+	void removeCharacterFromTeam(int16 teamMemberId);
+	void emptyFunction(int i);
+	void refreshTeamSize();
+	bool isCharacterATeamMember(int16 id);
+	void handleWinSequence();
+	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
+	void sub26437(char * str, int16 startX, int16 startY, uint16 unkFl);
+	void displayCenteredString(char * str, int16 minX, int16 maxX, int16 posY);
+	int16 chooseCharacterToReplace();
+	int16 handleCharacterJoining();
+	void drawMapWindow();
+	void copyString(uint8 *srcStr, uint8 *destStr);
+	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
 	void sub1512B();
 	void sub221FA(uint8 *impArray, bool flag);
 	void sub15094();
 	void sub150EE();
 	void sub15018();
+	void sub15A28(int16 arg0, int16 arg2);
+	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
+	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
+	int16 sub151FD(int16 posX, int16 posY);
 	void setNumLock();
 	void unkfct_mapFunction();
 	void unkFct_anim();
+	void unkFct_displayString_2(char *message);
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -224,15 +325,16 @@ private:
 	uint8 _map[7000];
 	uint8 _places[12000];
 	uint8 _curPlace[600];
-	uint8 _npcBuf[13400];
+	NPCStruct _npcBuf[100];
 	uint8 _imp1[13000];
 	uint8 _imp2[10000];
 	uint8 _titleSong[1024];
-	uint8 _items[8100];
+	ItemStruct _items[300];
 	uint8 _tileFact[864];
 	uint8 _animInfo[9000];
 	uint8 _history[256];
 	uint8 _techData[4096];
+	char _ennemyNamePt2[20];
 
 	uint8 *_mapBitmapRef;
 	uint8 *_mapUnknownPtr;
@@ -263,9 +365,9 @@ private:
 	uint16 _fullPlaceId;
 	int16 _guessAnimationAmount;
 	uint16 _largeMapFlag; // CHECKME: bool?
-	int16 _teamCharIdArray;
-	int16 _charId;
-	int16 _word2C8B8;
+	int16 _teamCharId[3];
+	int16 _textPosX;
+	int16 _textPosY;
 	
 	Common::Rect _initRect;
 	bool _engineInitPending;
@@ -275,6 +377,11 @@ private:
 	int16 _unkArray2C8AA[3];
 	int16 _teamSize;
 	int16 _word2C872;
+	int16 _word2C880;
+	int16 _word2C894;
+	int16 _word2C8D7;
+	bool _word2C87A;
+
 	int16 _imageSetSubFilesIdx;
 
 	int16 _mapPosX, _mapPosY;
