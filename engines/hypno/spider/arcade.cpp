@@ -64,7 +64,79 @@ void SpiderEngine::drawPlayer() {
 	if (_arcadeMode == "YC") {
 		ox = 0;
 		oy = 0;
-		_playerFrameIdx = _playerPosition;
+
+		if (_playerFrameIdx < 0)
+			_playerFrameIdx = 0;
+		else if (_lastPlayerPosition != _currentPlayerPosition && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) {
+
+			switch(_lastPlayerPosition) {
+				case PlayerLeft:
+					switch(_currentPlayerPosition) {
+						case PlayerUp:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 1;
+						break;
+						case PlayerDown:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 13;
+						break;
+						case PlayerRight:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 45;
+						break;
+					}
+				break;
+				case PlayerRight:
+					switch(_currentPlayerPosition) {
+						case PlayerUp:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 5;
+						break;
+						case PlayerDown:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 17;
+						break;
+						case PlayerLeft:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 33;
+						break;
+					}
+				break;
+				case PlayerDown:
+					switch(_currentPlayerPosition) {
+						case PlayerUp:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 9;
+						break;
+						case PlayerLeft:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 29;
+						break;
+						case PlayerRight:
+							_lastPlayerPosition = _currentPlayerPosition;
+							_playerFrameIdx = 41;
+						break;
+					}
+				break;
+				case PlayerUp:
+					switch(_currentPlayerPosition) {
+						case PlayerDown:
+							_playerFrameIdx = 21;
+						break;
+						case PlayerLeft:
+							_playerFrameIdx = 25;
+						break;
+						case PlayerRight:
+							_playerFrameIdx = 37;
+						break;
+					}
+				break;
+			}
+			_lastPlayerPosition = _currentPlayerPosition;
+		} else if (_playerFrameIdx % 4 != 0 && _playerFrameIdx % 4 != 3) {
+			_playerFrameIdx++;
+			_lastPlayerPosition = _currentPlayerPosition;
+		}
 	} else if (_arcadeMode == "YE") {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		uint32 idx = mousePos.x / (_screenW / 5);

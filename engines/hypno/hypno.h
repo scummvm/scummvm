@@ -59,6 +59,15 @@ enum {
 
 typedef Common::Array<Graphics::Surface *> Frames;
 
+// Player positions
+
+enum PlayerPosition {
+	PlayerUp,
+	PlayerDown,
+	PlayerLeft,
+	PlayerRight
+};
+
 class HypnoEngine : public Engine {
 private:
 	Common::RandomSource *_rnd;
@@ -197,7 +206,8 @@ public:
 
 	// Arcade
 	Common::String _arcadeMode;
-	uint32 _playerPosition;
+	uint32 _currentPlayerPosition;
+	uint32 _lastPlayerPosition;
 	int detectTarget(const Common::Point &mousePos);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);

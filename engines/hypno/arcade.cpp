@@ -126,7 +126,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_shoots.clear();
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
-	_playerPosition = 0;
+	// Only used in spider
+	_currentPlayerPosition = PlayerLeft;
+	_lastPlayerPosition = PlayerLeft;
 
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
 		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
@@ -172,13 +174,17 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					showCredits();
 					background.decoder->pauseVideo(false);
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_playerPosition = 0;
+					_lastPlayerPosition = _currentPlayerPosition; 
+					_currentPlayerPosition = PlayerLeft;
 				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					_playerPosition = 3;
+					_lastPlayerPosition = _currentPlayerPosition;
+					_currentPlayerPosition = PlayerDown;
 				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_playerPosition = 7;
+					_lastPlayerPosition = _currentPlayerPosition;
+					_currentPlayerPosition = PlayerRight;
 				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-					_playerPosition = 11;
+					_lastPlayerPosition = _currentPlayerPosition;
+					_currentPlayerPosition = PlayerUp;
 				}
 				break;
 
