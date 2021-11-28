@@ -2294,6 +2294,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 
 int16 calc_person_txt(int16 p_nr) {
 	int16 txt_nr = -1;
+
 	switch (p_nr) {
 	case P_CHEWY:
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
@@ -2311,24 +2312,42 @@ int16 calc_person_txt(int16 p_nr) {
 		break;
 
 	case P_HOWARD:
-		if (menu_item == CUR_USE) {
+		switch (menu_item) {
+		case CUR_USE:
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 40:
-			case 67:
-				menu_item = CUR_HOWARD;
-				cursor_wahl(menu_item);
-				txt_nr = 30000;
-				break;
-
-			case 42:
-				if (!_G(spieler).R42MarkeOk) {
+				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != 5) {
 					menu_item = CUR_HOWARD;
 					cursor_wahl(menu_item);
 					txt_nr = 30000;
 				}
 				break;
 
+			case 67:
+			case 71:
+				menu_item = CUR_HOWARD;
+				cursor_wahl(menu_item);
+				txt_nr = 30000;
+				break;
+
+			case 42:
+				if (!_G(spieler).R42MarkeOk && !_G(spieler).R42HoToBeamter) {
+					menu_item = CUR_HOWARD;
+					cursor_wahl(menu_item);
+					txt_nr = 30000;
+				}
+				break;
+
+			default:
+				break;
 			}
+			break;
+
+		case CUR_LOOK:
+			return (_G(spieler).PersonRoomNr[P_CHEWY] == 89) ? 513 : -1;
+
+		default:
+			break;
 		}
 		break;
 
@@ -2336,6 +2355,7 @@ int16 calc_person_txt(int16 p_nr) {
 		if (menu_item == CUR_USE) {
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 67:
+			case 71:
 				menu_item = CUR_NICHELLE;
 				cursor_wahl(menu_item);
 				txt_nr = 30000;
