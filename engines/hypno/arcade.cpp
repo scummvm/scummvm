@@ -65,7 +65,7 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
-	Common::StringTokenizer tok(data, " ,\t");
+	Common::StringTokenizer tok(data, " ,.\t");
 	Common::String t;
 	Common::String n;
 	ShootInfo si;
@@ -105,9 +105,17 @@ void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::hitPlayer() {
-	// if the player is hit, play the hit animation
-	if (_playerFrameIdx < _playerFrameSep)
-		_playerFrameIdx = _playerFrameSep;
+	if ( _playerFrameSep < _playerFrames.size()){
+		if (_playerFrameIdx < _playerFrameSep)
+			_playerFrameIdx = _playerFrameSep;
+	} else {
+		uint32 red = _pixelFormat.ARGBToColor(1, 255, 0, 0);
+		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), red);
+		drawScreen();
+	}
+	//if (!_hitSound.empty())
+	//	playSound(_soundPath + _hitSound, 1);
+
 }
 
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
@@ -119,6 +127,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
+	_hitSound = arc->hitSound;
 	_score = 0;
 	_health = arc->health;
 	_maxHealth = _health;
@@ -178,13 +187,13 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					_currentPlayerPosition = PlayerLeft;
 				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = PlayerDown;
+					_currentPlayerPosition = PlayerBottom;
 				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					_lastPlayerPosition = _currentPlayerPosition;
 					_currentPlayerPosition = PlayerRight;
 				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
 					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = PlayerUp;
+					_currentPlayerPosition = PlayerTop;
 				}
 				break;
 
@@ -253,13 +262,22 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			if ((int)si.timestamp <= background.decoder->getCurFrame()) {
 				shootSequence.pop_front();
 				for (Shoots::iterator it = arc->shoots.begin(); it != arc->shoots.end(); ++it) {
-					if (it->name == si.name && it->animation != "NONE") {
-						Shoot s = *it;
-						s.video = new MVideo(it->animation, it->position, true, false, false);
-						playVideo(*s.video);
-						s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
-						_shoots.push_back(s);
-						playSound(_soundPath + arc->enemySound, 1);
+					if (it->name == si.name) {
+
+						if (it->animation == "NONE") {
+							if (it->name[0] == _currentPlayerPosition) {
+								_health = _health - it->attackWeight;
+								hitPlayer();
+							}
+
+						} else {
+							Shoot s = *it;
+							s.video = new MVideo(it->animation, it->position, true, false, false);
+							playVideo(*s.video);
+							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
+							_shoots.push_back(s);
+							playSound(_soundPath + arc->enemySound, 1);
+						}
 					}
 				}
 			}

@@ -62,10 +62,10 @@ typedef Common::Array<Graphics::Surface *> Frames;
 // Player positions
 
 enum PlayerPosition {
-	PlayerUp,
-	PlayerDown,
-	PlayerLeft,
-	PlayerRight
+	PlayerTop = 'T',
+	PlayerBottom = 'B',
+	PlayerLeft = 'L',
+	PlayerRight = 'R'
 };
 
 class HypnoEngine : public Engine {
@@ -216,13 +216,14 @@ public:
 	virtual void hitPlayer();
 	Common::String _difficulty; 
 
-	void drawCursorArcade(const Common::Point &mousePos);
+	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();
 	virtual void drawHealth();
 	int _health;
 	int _maxHealth;
 	int _score;
 	Filename _shootSound;
+	Filename _hitSound;
 	Shoots _shoots;
 	Frames _playerFrames;
 	int _playerFrameIdx;
@@ -282,6 +283,7 @@ public:
 	void loadAssetsFullGame();
 	void showCredits() override;
 
+	void drawCursorArcade(const Common::Point &mousePos) override;
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;

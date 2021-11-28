@@ -61,7 +61,8 @@ void SpiderEngine::drawPlayer() {
 	uint32 ox = 0;
 	uint32 oy = 0;
 
-	if (_arcadeMode == "YC") {
+	if (_arcadeMode == "YC" || _arcadeMode == "YD") {
+		disableCursor(); // Not sure this a good place
 		ox = 0;
 		oy = 0;
 
@@ -72,11 +73,11 @@ void SpiderEngine::drawPlayer() {
 			switch(_lastPlayerPosition) {
 				case PlayerLeft:
 					switch(_currentPlayerPosition) {
-						case PlayerUp:
+						case PlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 1;
 						break;
-						case PlayerDown:
+						case PlayerBottom:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 13;
 						break;
@@ -88,11 +89,11 @@ void SpiderEngine::drawPlayer() {
 				break;
 				case PlayerRight:
 					switch(_currentPlayerPosition) {
-						case PlayerUp:
+						case PlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 5;
 						break;
-						case PlayerDown:
+						case PlayerBottom:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 17;
 						break;
@@ -102,9 +103,9 @@ void SpiderEngine::drawPlayer() {
 						break;
 					}
 				break;
-				case PlayerDown:
+				case PlayerBottom:
 					switch(_currentPlayerPosition) {
-						case PlayerUp:
+						case PlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 9;
 						break;
@@ -118,9 +119,9 @@ void SpiderEngine::drawPlayer() {
 						break;
 					}
 				break;
-				case PlayerUp:
+				case PlayerTop:
 					switch(_currentPlayerPosition) {
-						case PlayerDown:
+						case PlayerBottom:
 							_playerFrameIdx = 21;
 						break;
 						case PlayerLeft:
@@ -159,6 +160,12 @@ void SpiderEngine::drawPlayer() {
 		error("Invalid arcade mode %s", _arcadeMode.c_str());
 
 	drawImage(*_playerFrames[_playerFrameIdx], ox, oy, true);
+}
+
+void SpiderEngine::drawCursorArcade(const Common::Point &mousePos) {
+	if (_arcadeMode != "YC") {
+		HypnoEngine::drawCursorArcade(mousePos);
+	}
 }
 
 void SpiderEngine::drawHealth() {

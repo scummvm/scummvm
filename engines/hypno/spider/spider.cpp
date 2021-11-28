@@ -106,6 +106,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c1.mi_"]->intros.push_back("cine/ross002s.smk");
 	_levels["c1.mi_"]->levelIfLose = "<over_apt_1>";
 
+	loadArcadeLevel("c1h.mi_", "<trans_apt_1>", prefix);
+	_levels["c1h.mi_"]->intros.push_back("cine/ross002s.smk");
+	_levels["c1h.mi_"]->levelIfLose = "<over_apt_1>";
+
 	// Hardcoded levels
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";
@@ -144,7 +148,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["decide3.mi_"];
 	cl = new ChangeLevel("alofintr.mi_");
 	sc->hots[2].actions.push_back(cl);
-	cl = new ChangeLevel("c2"); // depens on the difficulty
+	cl = new ChangeLevel("c4"); // depens on the difficulty
 	sc->hots[4].actions.push_back(cl);
 
 	loadSceneLevel("int_roof.mi_", "", prefix);
@@ -174,7 +178,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[2].actions.push_back(cl);
 
 	loadSceneLevel("alverofh.mi_", "", prefix);
-	loadSceneLevel("intercom.mi_", "", prefix);
 	loadSceneLevel("recept.mi_", "", prefix);
 
 	sc = (Scene *) _levels["recept.mi_"];
@@ -183,15 +186,32 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("alveroff.mi_", "", prefix);
 
+	loadArcadeLevel("c4.mi_", "c2", prefix);
+	loadArcadeLevel("c2.mi_", "decide4.mi_", prefix);
+	loadArcadeLevel("c4h.mi_", "c2", prefix);
+	loadArcadeLevel("c2h.mi_", "decide4.mi_", prefix);
+
+	loadSceneLevel("decide4.mi_", "", prefix);
+	sc = (Scene *) _levels["decide4.mi_"];
+	cl = new ChangeLevel("ball1.mi_");
+	sc->hots[2].actions.push_back(cl);
+	cl = new ChangeLevel("c5"); // depens on the difficulty
+	sc->hots[4].actions.push_back(cl);
+
+	loadArcadeLevel("c5.mi_", "factory1.mi_", prefix);
+	loadArcadeLevel("c5h.mi_", "factory1.mi_", prefix);
+
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
 	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
-	loadSceneLevel("balcony.mi_", "", prefix);
+	loadSceneLevel("balcony.mi_", "factory1.mi_", prefix);
 
 	Code *note = new Code();
 	note->name = "<note>";
 	note->levelIfWin = "ball2.mi_";
 	_levels["<note>"] = note;
 
+	loadSceneLevel("factory1.mi_", "intercom.mi_", prefix);
+	loadSceneLevel("intercom.mi_", "", prefix);
 	//_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
 
 	// Transition *bus_transition = new Transition("buspuz.mi_");
@@ -204,10 +224,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	// _levels["<bank_hard>"] = bankHard;
 
 	// Easy arcade levels
-	loadArcadeLevel("c2.mi_", "", prefix);
 	loadArcadeLevel("c3.mi_", "", prefix);
-	loadArcadeLevel("c4.mi_", "", prefix);
-	loadArcadeLevel("c5.mi_", "", prefix);
 	//loadArcadeLevel("c6.mi_", "", "spider");
 	// No c7 level?
 	loadArcadeLevel("c8.mi_", "", prefix);
@@ -218,11 +235,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c13.mi_", "", prefix);
 
 	// // Hard arcade levels
-	loadArcadeLevel("c1h.mi_", "", prefix);
-	loadArcadeLevel("c2h.mi_", "", prefix);
 	loadArcadeLevel("c3h.mi_", "", prefix);
-	loadArcadeLevel("c4h.mi_", "", prefix);
-	loadArcadeLevel("c5h.mi_", "", prefix);
+
 	//loadArcadeLevel("c6h.mi_", "", "spider");
 	// No c7h level?
 	loadArcadeLevel("c8h.mi_", "", prefix);

@@ -132,6 +132,8 @@ hline: 	CTOK NUM {
 			g_parsedArc->music = $2;
 		else if (Common::String("S1") == $1)
 			g_parsedArc->shootSound = $2;
+		else if (Common::String("S2") == $1)
+			g_parsedArc->hitSound = $2;
 		else if (Common::String("S4") == $1)
 			g_parsedArc->enemySound = $2; 
 

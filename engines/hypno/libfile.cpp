@@ -45,7 +45,7 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 		uint32 start = libfile.size();
 		FileEntry f;
 		libfile.seek(offset);
-		debugC(1, kHypnoDebugParser, "parsing at offset %d", offset);
+		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, libfile.size());
 		while (true) {
 			f.name = "";
 			f.data.clear();
@@ -55,7 +55,7 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 					f.name += tolower(char(b));
 			}
 
-			if (!Common::isAlpha(*f.name.c_str()))
+			if (!Common::isAlnum(*f.name.c_str()))
 				break;
 
 			debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
