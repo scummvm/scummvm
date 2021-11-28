@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "backends/graphics/graphics.h"
+#include "graphics/tinygl/pixelbuffer.h"
 
 class AndroidGraphicsManager : public GraphicsManager {
 public:
@@ -146,6 +147,7 @@ private:
 
 	// Game layer
 	GLESBaseTexture *_game_texture;
+	Graphics::PixelBuffer _game_pbuf;
 	OpenGL::FrameBuffer *_frame_buffer;
 
 	/**
