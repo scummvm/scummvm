@@ -89,6 +89,8 @@ public:
 
 	bool _cur_display = false;
 	int16 _maus_links_click = 0;
+	Common::String _calc_inv_text_str1, _calc_inv_text_str2;
+	bool _calc_inv_text_set = false;
 };
 
 extern Globals *g_globals;
