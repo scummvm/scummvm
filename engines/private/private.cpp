@@ -217,10 +217,10 @@ Common::Error PrivateEngine::run() {
 	_compositeSurface->setTransparentColor(_transparentColor);
 
 	// Load the game frame once
-	_frameImage = decodeImage(_framePath);
-	_mframeImage = decodeImage(_framePath); 
+	byte *palette;
+	_frameImage = decodeImage(_framePath, nullptr);
+	_mframeImage = decodeImage(_framePath, &palette); 
 
-	const byte *palette = decodePalette(_framePath);
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
 
@@ -1232,7 +1232,7 @@ void PrivateEngine::stopSound(bool all) {
 	}
 }
 
-Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
+Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	Common::File file;
 	Common::String path = convertPath(name);
@@ -1240,24 +1240,75 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
 		error("unable to load image %s", path.c_str());
 
 	_image->loadStream(file);
-	return _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+	const Graphics::Surface *oldImage = _image->getSurface();
+	Graphics::Surface *newImage;
+
+	const byte *oldPalette = _image->getPalette();
+	byte *currentPalette;
+
+	uint16 ncolors = _image->getPaletteColorCount();
+	if (ncolors < 256) { // For some reason, requires color remapping
+		currentPalette = (byte *) malloc(3*256);
+		drawScreen();
+		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
+		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
+		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
+	} else {
+		currentPalette = (byte *) oldPalette;
+		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
+	}
+
+	if (palette != nullptr) {
+		*palette = currentPalette;
+	}
+
+	return newImage;
 }
 
-const byte *PrivateEngine::decodePalette(const Common::String &name) {
-	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
-	Common::File file;
-	Common::String path = convertPath(name);
-	if (!file.open(path))
-		error("unable to load image %s", path.c_str());
+void PrivateEngine::remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette) {
+	debugC(1, kPrivateDebugFunction, "%s(..)", __FUNCTION__);
+	byte paletteMap[256];
+	// Run through every color in old palette
+	for (int i = 0; i != ncolors; ++i) {
+		byte r0 = oldPalette[3 * i + 0];
+		byte g0 = oldPalette[3 * i + 1];
+		byte b0 = oldPalette[3 * i + 2];
 
-	_image->loadStream(file);
-	return _image->getPalette();
+		// Find the closest color in current palette
+		int closest_distance = 10000;
+		int closest_j = 0;
+		for (int j = 0; j != 256; ++j) {
+			byte r1 = currentPalette[3 * j + 0];
+			byte g1 = currentPalette[3 * j + 1];
+			byte b1 = currentPalette[3 * j + 2];
+
+			int distance = (MAX(r0, r1) - MIN(r0, r1))
+						+ (MAX(g0, g1) - MIN(g0, g1))
+						+ (MAX(b0, b1) - MIN(b0, b1));
+
+			if (distance < closest_distance) {
+				closest_distance = distance;
+				closest_j = j;
+			}
+		}
+		paletteMap[i] = closest_j;
+	}
+
+	const byte *src = (const byte*) oldImage->getPixels();
+	byte *dst = (byte *) newImage->getPixels();
+
+	int pitch = oldImage->pitch;
+	for (int y = 0; y != oldImage->h; ++y) {
+		for (int x = 0; x != oldImage->w; ++x) {
+			dst[y * pitch + x] = paletteMap[src[y * pitch + x]];
+		}
+	}
 }
 
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
-	Graphics::Surface *surf = decodeImage(name);
-	const byte *palette = decodePalette(name);
+	byte *palette;
+	Graphics::Surface *surf = decodeImage(name, &palette);
 	_compositeSurface->setPalette(palette, 0, 256);
 	_compositeSurface->setTransparentColor(_transparentColor);
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
@@ -1274,44 +1325,7 @@ void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
 
 void PrivateEngine::drawScreenFrame(const byte *newPalette) {
 	debugC(1, kPrivateDebugFunction, "%s(..)", __FUNCTION__);
-	byte paletteMap[256];
-
-	// Run through every color in frame palette
-	for (int i = 0; i != 256; ++i) {
-		byte r0 = _framePalette[3 * i + 0];
-		byte g0 = _framePalette[3 * i + 1];
-		byte b0 = _framePalette[3 * i + 2];
-
-		// Find the closest color in video palette
-		int closest_distance = 10000;
-		int closest_j = 0;
-		for (int j = 0; j != 256; ++j) {
-			byte r1 = newPalette[3 * j + 0];
-			byte g1 = newPalette[3 * j + 1];
-			byte b1 = newPalette[3 * j + 2];
-
-			int distance = (MAX(r0, r1) - MIN(r0, r1))
-			             + (MAX(g0, g1) - MIN(g0, g1))
-			             + (MAX(b0, b1) - MIN(b0, b1));
-
-			if (distance < closest_distance) {
-				closest_distance = distance;
-				closest_j = j;
-			}
-		}
-		paletteMap[i] = closest_j;
-	}
-
-	byte *src = (byte*)_frameImage->getPixels();
-	byte *dst = (byte*)_mframeImage->getPixels();
-
-	int pitch = _frameImage->pitch;
-	for (int y = 0; y != _frameImage->h; ++y) {
-		for (int x = 0; x != _frameImage->w; ++x) {
-			dst[y * pitch + x] = paletteMap[src[y * pitch + x]];
-		}
-	}
-
+	remapImage(256, _frameImage, _framePalette, _mframeImage, newPalette);
 	g_system->copyRectToScreen(_mframeImage->getPixels(), _mframeImage->pitch, 0, 0, _screenW, _screenH);
 }
 
@@ -1320,7 +1334,8 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(_screenRect, _transparentColor);
-	Graphics::Surface *csurf = decodeImage(name);
+	byte *palette;
+	Graphics::Surface *csurf = decodeImage(name, &palette);
 
 	uint32 hdiff = 0;
 	uint32 wdiff = 0;
@@ -1332,16 +1347,16 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 
 	Common::Rect crect(csurf->w - wdiff, csurf->h - hdiff);
 	surf->copyRectToSurface(*csurf, x, y, crect);
-	csurf->free();
-	delete csurf;
-	_image->destroy();
 
 	if (drawn) {
-		const byte *palette = decodePalette(name);
 		_compositeSurface->setPalette(palette, 0, 256);
 		_compositeSurface->setTransparentColor(_transparentColor);
 		drawMask(surf);
 	}
+
+	csurf->free();
+	delete csurf;
+	_image->destroy();
 
 	return surf;
 }

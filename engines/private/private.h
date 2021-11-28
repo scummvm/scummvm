@@ -200,8 +200,9 @@ public:
 	void playVideo(const Common::String &);
 	void skipVideo();
 
-	Graphics::Surface *decodeImage(const Common::String &file);
-	const byte *decodePalette(const Common::String &name);
+	Graphics::Surface *decodeImage(const Common::String &file, byte **palette);
+	//byte *decodePalette(const Common::String &name);
+	void remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame(const byte *videoPalette);
 
