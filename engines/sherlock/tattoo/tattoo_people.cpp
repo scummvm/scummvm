@@ -1380,9 +1380,8 @@ int TattooPeople::findSpeaker(int speaker) {
 			TattooPerson &p = (*this)[idx];
 
 			if (p._type == CHARACTER) {
-				Common::String name(p._name.c_str(), p._name.c_str() + 4);
-
-				if (name.equalsIgnoreCase(portrait) && p._npcName[4] >= '0' && p._npcName[4] <= '9')
+				if (scumm_strnicmp(portrait, p._npcName.c_str(), 4) == 0
+					&& Common::isDigit(p._npcName[4]))
 					return idx + CHARACTERS_INDEX;
 			}
 		}
